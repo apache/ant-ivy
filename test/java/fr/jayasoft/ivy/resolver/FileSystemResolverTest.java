@@ -39,12 +39,29 @@ public class FileSystemResolverTest extends TestCase {
     private ResolveData _data;
     private Ivy _ivy = new Ivy();
     
+    public FileSystemResolverTest() {
+        setupLastModified();
+    }
+    
     protected void setUp() throws Exception {
         _cache = new File("build/cache");
         _data = new ResolveData(_ivy, _cache, null, null, true);
         _cache.mkdirs();
     }
     
+    private void setupLastModified() {
+        // change important last modified dates cause svn doesn't keep them
+        long minute = 60 * 1000;
+        long time = new GregorianCalendar().getTimeInMillis() - (4 * minute);
+        new File("test/repositories/1/org1/mod1.1/ivys/ivy-1.0.xml").setLastModified(time);
+        time += minute;
+        new File("test/repositories/1/org1/mod1.1/ivys/ivy-1.0.1.xml").setLastModified(time);
+        time += minute;
+        new File("test/repositories/1/org1/mod1.1/ivys/ivy-1.1.xml").setLastModified(time);
+        time += minute;
+        new File("test/repositories/1/org1/mod1.1/ivys/ivy-2.0.xml").setLastModified(time);
+    }
+
     protected void tearDown() throws Exception {
         Delete del = new Delete();
         del.setProject(new Project());
@@ -104,18 +121,22 @@ public class FileSystemResolverTest extends TestCase {
         assertEquals("test", resolver.getName());
         
         resolver.addIvyPattern("test"+FS+"repositories"+FS+"checkmodified"+FS+"ivy-[revision].xml");
-        FileUtil.copy(new File("test/repositories/checkmodified/ivy-1.0-before.xml"), new File("test/repositories/checkmodified/ivy-1.0.xml"), null);
+        File modify = new File("test/repositories/checkmodified/ivy-1.0.xml");
+        FileUtil.copy(new File("test/repositories/checkmodified/ivy-1.0-before.xml"), modify, null);
+        Date pubdate = new GregorianCalendar(2004, 10, 1, 11, 0, 0).getTime();
+        modify.setLastModified(pubdate.getTime());
         
         ModuleRevisionId mrid = ModuleRevisionId.newInstance("org1", "mod1.1", "1.0");
         ResolvedModuleRevision rmr = resolver.getDependency(new DefaultDependencyDescriptor(mrid, false), _data);
         assertNotNull(rmr);
         
         assertEquals(mrid, rmr.getId());
-        Date pubdate = new GregorianCalendar(2004, 10, 1, 11, 0, 0).getTime();
         assertEquals(pubdate, rmr.getPublicationDate());
                 
         // updates ivy file in repository
-        FileUtil.copy(new File("test/repositories/checkmodified/ivy-1.0-after.xml"), new File("test/repositories/checkmodified/ivy-1.0.xml"), null);
+        FileUtil.copy(new File("test/repositories/checkmodified/ivy-1.0-after.xml"), modify, null);
+        pubdate = new GregorianCalendar(2005, 4, 1, 11, 0, 0).getTime();
+        modify.setLastModified(pubdate.getTime());
         
         // should not get the new version
         resolver.setCheckmodified(false);
@@ -123,8 +144,7 @@ public class FileSystemResolverTest extends TestCase {
         assertNotNull(rmr);
         
         assertEquals(mrid, rmr.getId());
-        pubdate = new GregorianCalendar(2004, 10, 1, 11, 0, 0).getTime();
-        assertEquals(pubdate, rmr.getPublicationDate());
+        assertEquals(new GregorianCalendar(2004, 10, 1, 11, 0, 0).getTime(), rmr.getPublicationDate());
 
         // should now get the new version
         resolver.setCheckmodified(true);
@@ -132,7 +152,6 @@ public class FileSystemResolverTest extends TestCase {
         assertNotNull(rmr);
         
         assertEquals(mrid, rmr.getId());
-        pubdate = new GregorianCalendar(2005, 4, 1, 11, 0, 0).getTime();
         assertEquals(pubdate, rmr.getPublicationDate());
     }
 
