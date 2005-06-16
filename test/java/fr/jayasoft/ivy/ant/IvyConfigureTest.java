@@ -72,6 +72,18 @@ public class IvyConfigureTest extends TestCase {
         assertEquals("myvalue", ivy.getDefaultCache().getName());
     }
 
+    public void testOverrideVariables() throws Exception {
+        String confUrl = IvyConfigureTest.class.getResource("ivyconf-props.xml").toExternalForm();
+        _configure.setUrl(confUrl);
+        
+        _configure.execute();
+        
+        Ivy ivy = getIvyInstance();
+        assertNotNull(ivy);
+        
+        assertEquals("lib/test/[artifact]-[revision].[ext]", ivy.getVariables().get("ivy.retrieve.pattern"));
+    }
+
     private Ivy getIvyInstance() {
         return (Ivy)_configure.getProject().getReference("ivy.instance");
     }

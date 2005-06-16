@@ -1,0 +1,3 @@
+<ivyconf>
+	<properties file="${ivy.conf.dir}/ivyconf-props.properties"/>
+</ivyconf>
