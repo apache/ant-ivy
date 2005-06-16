@@ -1,0 +1,11 @@
+<ivy-module version="1.0">
+    <info 
+        organisation="apache"
+        module="commons-httpclient"
+        revision="2.0.2"
+        status="release"
+        publication="20041010174300"/>
+    <dependencies>
+        <dependency name="commons-logging" rev="1.0.4" conf="default"/>
+    </dependencies>
+</ivy-module>

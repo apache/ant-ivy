@@ -1,0 +1,16 @@
+<ivy-module version="1.0">
+	<info organisation="org5"
+	       module="mod5.1"
+	       revision="4.1"
+	       status="integration"
+	       publication="20050301110000"
+	/>
+	<configurations>
+		<conf name="A"/>
+		<conf name="B"/>
+	</configurations>
+	<publications>
+		<artifact name="art51A" type="jar" conf="A"/>
+		<artifact name="art51B" type="jar" conf="B"/>
+	</publications>
+</ivy-module>

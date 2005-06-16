@@ -1,0 +1,14 @@
+<ivy-module version="1.0">
+	<info organisation="myorg"
+	       module="mymodule"
+	       revision="myrev"
+	       status="integration"
+	       publication="20041101110000"
+	/>
+	<configurations>
+		<conf name="default" visibility="public"/>
+	</configurations>
+	<dependencies>
+		<dependency name="mymodule2" rev="2.0"/>
+	</dependencies>
+</ivy-module>

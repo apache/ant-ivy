@@ -1,0 +1,16 @@
+Jayasoft (http://www.jayasoft.org) is pleased 
+to announce the availability of Ivy version 0.7, a free java based simple but powerful 
+dependency manager, featuring transitive dependencies, ant integration,
+maven repository compatibility, continuous integration features and many more.
+
+Main changes in this version are :
+- added latest sub revision feature: you can now select the latest sub revision of a module
+  using a +. For instance, "1.0+" selects the latest revision starting with 1.0.
+- retrieve now checks if files are up to date before copying them from cache. This feature
+  can be disabled using the checkUpToDate attribute in ivy configuration file.
+- do not download dependencies when not necessary during publication
+
+And more...
+
+Download and information on : http://ivy.jayasoft.org
+

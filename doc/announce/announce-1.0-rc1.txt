@@ -1,0 +1,13 @@
+After several months of development and testing, <a href="http://www.jayasoft.org">Jayasoft</a> is pleased to announce the availability of Ivy version 1.0-rc1.
+
+Ivy is a free java based dependency manager, with powerful features such as transitive dependencies, ant integration, maven repository compatibility, continuous integration and many more.
+
+Main changes in this version are :
+- new report, which indicates all the dependencies resolved, direct and transitives, with the status and place in the dependency graph for each
+- new graph report, showing all dependencies as a graph
+- better include/exclude feature, helping to get only what you need from a dependency you do not control
+
+And many more...
+
+Download and information on : http://ivy.jayasoft.org
+

@@ -1,0 +1,7 @@
+<ivy-module version="1.0">
+    <info organisation="idautomation" module="barcode" revision="4.10" />
+    <publications>
+        <artifact name="idapdf417" type="jar" />
+        <artifact name="LinearBarCode" type="jar" />
+    </publications>
+</ivy-module>

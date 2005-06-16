@@ -1,0 +1,170 @@
+   version 1.1 - 2005-06-13
+===============================
+- remote configuration (if available) of ivyrep and ibiblio patterns and roots
+- new detailed messages when ivy fails to reach an url (thanks to Nicolas)
+- new artifactproperty task, which enables to set a property for each dependency artifacts
+  resolved by ivy
+- new defaultconf attribute in ivy file dependencies, to change the default conf to use in the file
+  when no conf is specified for a dependency
+- add the ability to change the xsl file and report name pattern used by report task
+- http listing now compatible with tomcat listing (tested with 5.0.28)
+- pub revision in deliver task now defaults to timestamp if not provided by any other way
+- debug messages improvements, with configuration dump among others
+- new var task, enables to set ivy variables from ant
+- now defaults for ivyrep and ibiblio resolver are configurable by variables
+- refactoring: introduce the notion of BasicResolver, Repository, Resource, RepositoryResolver,
+  making much easier the task of writing basic resolvers
+- added checkmodified attribute on all basic resolvers, which defaults to ${ivy.resolver.default.check.modified}
+  This makes ivy check last modified date of ivy files to see it its cache is up to date
+- artifacts download are now first made to a temp file, which is renamed
+  only at the end of the download. This prevent interrupted downloads to be
+  considered as finished
+- FIX: handle proxy configuration with http-client (thanks to Nicolas)
+- FIX: remove dependency on ant outside of ant integration classes
+- FIX: resolve problem when conflicts on latest revisions 
+- FIX: allow use of any kind of URL in IvyRepResolver (both ivyroot and artroot) and IBibiblioResolver
+- FIX: chain resolver can now be used for artifacts part of dual resolver
+- FIX: now detects and warn about circular dependencies
+- FIX: cachepath task now takes pathid as parameter instead of id, to prevent
+  special handling from ant
+- FIX: ivy.xsd: set artifact minOccurs to 0 in publications
+
+Thanks to John Shields from Robert Half International, Inc.:
+- FIX: no more infinite loop when a conflict occurs between a latest subversion and a fully resolved revision
+- FIX: BasicURLHandler now closes its connections
+- FIX: ApacheURLLister now works with capital letter in revisions and truncated names
+- now use of ivy variables is allowed in ivy files
+- added a null check in pattern helper substitute
+
+   version 1.0 - 2005-04-26
+===============================
+1.0-rc3 has been promoted to 1.0 on 2005-04-26
+
+Known bugs and limitations:
+- cyclic dependencies result in StackOverflowError
+- infinite loop in rare cases when a conflict occur between a latest subversion and a fully resolved revision
+- url connections not closed properly when not using commons-httpclient
+- latest does not work with http urls in some cases, when the name of the link is truncated in the web page
+
+   version 1.0-rc3 - 2005-04-21
+===============================
+- IMPROVE: added debug messages on variables setting
+- FIX: ivyconf now able to load a properties file given as url
+- FIX: deliver pub date now actually defaults to 'now'
+- FIX: all tasks attributes now substitute ivy variables
+
+   version 1.0-rc2 - 2005-04-18
+===============================
+- IMPROVE: improved messages: more debug, more verbose, and more details on failures
+- FIX: bug with '\' in path patterns
+- FIX: bug with relative paths patterns
+- FIX: configure task tries ivy.conf.file as relative to base dir and to current dir
+- FIX: file system resolver publishes ivy files with ivy pattern
+- FIX: 0 content length considered as non existing (behaviour of jre 5.0 on linux) 
+       => empty ressources are now considered as non existing
+
+   version 1.0-rc1 - 2005-04-12
+===============================
+- add report task, which enables to generates reports of dependencies, including a graph
+  ready to be layed out by yEd
+- add exclude feature in dependency
+- include exclude feature now handles regexps
+- new latest strategy: latest revision now uses a "php version_compare" like algorithm, whereas
+  lexicographic comparison is now available in latest lexicographic
+- enhance xml resolve report details
+- FIX: better separation between root configurations
+- FIX: XmlModuleDescriptorUpdater now preserves xml header
+- FIX: modules number in report (displayed at the end of resolve)
+
+   version 0.9 - 2005-04-06
+===========================
+- clearly differenciate pattern tokens from variables, by using brackets as delimiter in pattern tokens
+  => WARNING: this introduce changes in all patterns syntax, and thus does not provide compatibility
+              with previous versions
+- ChainResolver are now able to publish (delegating the call to the first resolver in the chain)
+- DualResolver sub resolvers are now registered in Ivy
+- more precise message on eviction
+- add validate attribute on most resolvers
+- ivy files validation handling review
+- use ivy variables in ant tasks to get default values for attributes
+- documentation update for configuring ivy
+- FIX: dependencies order not taken into account during resolve
+- FIX: evicting modules also evict confs
+- FIX: NPE during resolve when a dependency ivy file has no publication date
+- FIX: check nullity of artifact download reports
+
+   version 0.8 - 2005-03-30
+===========================
+- added validate attribute on resolve, retrieve and publish, which allows to disable ivy file validation
+  against ivy.xsd (useful to parse future compatible ivy files)
+- ant properties are now available in ivyconf file
+- unified default properties in ivyconf, with better independance from url or file
+- added ext on artifacts: this enable to distinguish artifact extension from artifact
+  type, util in cases where it differs (example: 'src' type with 'zip' extension, 'ivy' type with 'xml' extension, ...)
+- added publish artifacts feature, which enable to publish declared artifacts of a module to a repository
+  described by a dependency resolver. It currently works only with filesystem resolver.
+- url resolver now handles latest with file urls and http ones (tested only with apache server)
+- added latest strategy concept: the way to determine which artifact is the latest
+  is now configurable on resolvers handling latest. 
+- added parameter on chain resolver to say if it should return first found or
+  try to find the latest among all if asked
+- a module can now publish no artifact, useful for virtual modules consisting only
+  of integration of other modules
+- added conflict management at resolve time: during resolve, modules in conflict can be evicted
+  and thus not downloaded
+- added ivyrep resolver, using ivyrep to find ivy files, and ibiblio for artifacts
+- use ivyrep instead of ibiblio as default resolver
+- added more info in ivy files (description, homepage, ivy authors, license, public repository, ...)
+- now cache layout is configurable, using cacheIvyPattern and cacheArtifactPattern
+  attributes on conf element in ivyconf.xml
+- changed default cache layout: artifacts are separated by type
+- added cachepath task, which enables to build an ant path of artifacts in cache required for a conf
+
+   version 0.7 - 2005-03-11
+===========================
+- added latest sub revision feature: you can now select the latest sub revision of a module
+  using a +. For instance, "1.0+" selects the latest revision starting with 1.0. (thanks to jonas for the idea)
+- haltonfailure now defaults to true (as suggested by Jeroen)
+- shorter info lines to better view important info (as suggested by Jeroen)
+- retrieve now checks if files are up to date before copying them from cache. This feature
+  can be disabled using the checkUpToDate attribute in ivy configuration file.
+- do not download dependencies when not necessary during publication (as suggested by Daniele)
+- bug fix: better handling of publish without recursive delivery
+
+   version 0.6.1 - 2005-02-11
+=============================
+- bug fix: conf extends problem with publications
+- bug fix: typedef badly handled in ivyconf.xml
+- bug fix: default properties loading in ivy configure loaded using task classloader
+
+   version 0.6 - 2005-02-03
+===========================
++ functional
+- added haltonfailure attribute on resolve and retrieve task, so that build can be halt when 
+  resolve or retrieve fails
+- added dependency artifacts filtering feature, enabling to work better with ibiblio
+- ibiblio resolver can now be configured to use any maven like repository, with root and pattern attributes
+- added download progression info on resolve
+- default cache is now in user home (.ivy-cache in user home), so that cache is shared
+  by default for all projects of the same user
+- added public access to method getDependencies(...) in Ivy, which resolve dependencies without
+  downloading artifacts
+- added DualResolver, which allows to have ivy files in one place and artifacts in another one
+
++ non functional
+- added some unit tests
+- deep review of ivy file reference documentation
+
++ bugs and refactoring
+- bug fix: SimpleURLResolver not handling the case when there is no ivy file
+- refactoring: URLResolver renamed to AbstractURLResolver
+- refactoring: SimpleURLResolver renamed to URLResolver
+
+   version 0.5.1 - 2005-01-16
+=============================
+- Bug Fix: NPE in publish task when no delivery.list.file is provided
+- documentation update
+
+   version 0.5 - 2005-01-12
+===========================
+initial public version

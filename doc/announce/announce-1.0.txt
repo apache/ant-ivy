@@ -1,0 +1,40 @@
+English:
+--------
+
+After several months of development and testing, <a href="http://www.jayasoft.org">Jayasoft</a> is pleased to announce the availability of Ivy version 1.0.
+
+<a href="http://ivy.jayasoft.org">Ivy</a> is a free java based dependency manager, with powerful features such as transitive dependencies, ant integration, maven repository compatibility, continuous integration, html reports and many more.
+
+Apart its strong dependency management engine, Ivy also benefits from a growing user community, a <a href="http://www.jayasoft.fr/org/ivyrep/">public repository</a> of common ivy files, and <a href="http://www.jayasoft.fr/org/modules/ivy/services.php">professional quality services</a> from the source.
+
+And leverage the power of Ivy with an evolving set of tools and plugins:
+<a href="http://www.jayasoft.org/modules/ivycruise/">Ivy CruiseControl Plugin</a> lets you integrate ivy in the famous continuous integration tool from thoughtworks: cruisecontrol.
+<a href="http://www.jayasoft.org/modules/ivyeclipseui/">Ivy Eclipse UI</a> strongly helps eclipse users to write their ivy files, with structural and data completion.
+
+Coming soon:
+Subversion Dependency Resolver, lets you use subversion to store your libraries
+Ivy Eclipse Classpath, lets you use ivy files as a library container
+
+Finally, many thanks to the users feedbacks and contributions who made this possible.
+
+Download and information on : <a href="http://ivy.jayasoft.org">http://ivy.jayasoft.org</a>
+
+French :
+--------
+Après plusieurs mois de développement et de tests, <a href="http://www.jayasoft.org">Jayasoft</a> a le plaisir d'annoncer la version 1.0 de Ivy.
+
+<a href="http://ivy.jayasoft.org">Ivy</a> est un outil de gestion de dépendances écrit en java, doté de fonctionalités avancées telles que la gestion de dépendances transitives, l'intégration dans ant, la compatibilité avec les repository maven, l'intégration continue, des fonctions de rapport avancées et bien d'autres encore.
+
+En plus de son puissant moteur de gestion de dépendances, Ivy bénéficie également d'une communauté utilisateurs grandissante, d'un repository public de fichiers ivy communs et de services professionnels directement par ses auteurs.
+
+Et profitez de toute la puissance d'une ensemble d'outils en pleine évolution :
+<a href="http://www.jayasoft.org/modules/ivycruise/">Ivy CruiseControl Plugin</a> vous permet d'intégrer ivy dans l'outil d'intégration continue de thoughtworks: cruisecontrol.
+<a href="http://www.jayasoft.org/modules/ivyeclipseui/">Ivy Eclipse UI</a> permet aux utilisateurs d'eclipse d'écrire leurs fichiers de dépendances encore plus rapidement, grâce à de la completion de structure et de données !
+
+Et bientôt :
+<b>Subversion Dependency Resolver</b> vous permettra d'utiliser subversion comme repository
+<b>Ivy Eclipse Classpath</b> vous permettra d'utiliser les dépendances Ivy directement comme library container eclipse
+
+Finalement, un grand merci aux utilisateurs, dont les retours et les contributions ont permis de faire de Ivy ce qu'il est aujourd'hui.
+
+Plus d'informations et téléchargement sur le site : http://ivy.jayasoft.org

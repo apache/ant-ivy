@@ -1,0 +1,10 @@
+<ivyconf>
+  <conf defaultResolver="chain"/>
+  <resolvers>
+    <chain name="chain">
+      <ibiblio name="1" />
+      <ibiblio name="2" />
+      <ibiblio name="3" />
+    </chain>
+  </resolvers>
+</ivyconf>

@@ -1,0 +1,12 @@
+Jayasoft (http://www.jayasoft.org) is pleased to announce the availability of Ivy version 0.8, a free java based simple but powerful dependency manager, featuring transitive dependencies, ant integration, maven repository compatibility, continuous integration features and many more.
+
+Main changes in this version are :
+- a brand new public repository of ivy files, <a href="http://www.jayasoft.fr/org/ivyrep/">ivyrep</a>, which helps leverage the transitive dependencies feature
+- url resolver now handles latest with file urls and http ones: you can now use continuous integration feature with ibiblio !
+- publish artifacts feature, which enable to easily publish declared artifacts of a module to a repository
+- conflict management at resolve time, which gives great control over conflicts management and evict modules before downloading them
+
+And many more...
+
+Download and information on : http://ivy.jayasoft.org
+

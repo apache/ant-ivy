@@ -1,0 +1,16 @@
+Jayasoft (http://www.jayasoft.org) is pleased 
+to announce the availability of Ivy version 0.6, a free java based simple but powerful 
+dependency manager, featuring transitive dependencies, ant integration,
+maven repository compatibility and many more.
+
+Main changes in this version are :
+- dependency artifacts filtering feature, enabling to work better with ibiblio
+- ibiblio resolver can now be configured to use any maven like repository
+- a new dependency resolver which allows to have ivy files in one place 
+  and artifacts in another one (named dual resolver)
+- a new logo, many thanks to ultroniks (at) hotmail.com
+
+And more...
+
+Download and information on : http://ivy.jayasoft.org
+

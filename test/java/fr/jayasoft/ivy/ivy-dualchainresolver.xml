@@ -1,0 +1,7 @@
+<ivy-module version="1.0">
+    <info organisation="jayasoft" module="dual" />
+    
+    <dependencies>
+ 		   <dependency org="xerces" name="xerces" rev="2.6.2" />
+    </dependencies>
+</ivy-module>

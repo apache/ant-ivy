@@ -1,0 +1,68 @@
+<project name="chainedresolvers-project" default="run" xmlns:ivy="antlib:fr.jayasoft.ivy.ant">
+    <!-- some variables used -->
+    <property name="lib.dir" value="${basedir}/lib" />
+    <property name="build.dir" value="${basedir}/build" />
+    <property name="src.dir" value="${basedir}/src" />
+    
+    <!-- ivy properties used -->
+    <property name="ivy.conf.dir" value="../config" />
+
+	<!-- paths used for compilation and run  -->
+    <path id="lib.path.id">
+        <fileset dir="${lib.dir}" />
+	</path>
+    <path id="run.path.id">
+        <path refid="lib.path.id" />
+        <path location="${build.dir}" />
+    </path>
+    
+    <!-- - - - - - - - - - - - - - - - - - 
+          target: configure                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="configure">
+        <ivy:configure file="${ivy.conf.dir}/ivyconf.xml" />
+    </target>
+    
+    <!-- ================================= 
+          target: resolve              
+         ================================= -->
+    <target name="resolve" depends="configure" description="--> retreive dependencies with ivy">
+        <ivy:retrieve />
+    </target>
+    
+    <!-- ================================= 
+          target: report              
+         ================================= -->
+    <target name="report" depends="resolve" description="--> generates a report of dependencies">
+        <ivy:report todir="${build.dir}"/>
+    </target>
+    
+    <!-- ================================= 
+          target: run
+         ================================= -->
+    <target name="run" depends="resolve" description="--> compile and run the project">
+        <mkdir dir="${build.dir}" />
+        <javac srcdir="${src.dir}" destdir="${build.dir}" classpathref="lib.path.id" />
+        <java classpathref="run.path.id" classname="example.Hello"/>
+    </target>
+    
+    <!-- ================================= 
+          target: clean              
+         ================================= -->
+    <target name="clean" description="--> clean the project">
+        <delete includeemptydirs="true">
+            <fileset dir="${basedir}">
+            	<exclude name="src/**" />
+            	<exclude name="build.xml" />
+		    	<exclude name="ivy.xml" />
+        	</fileset>
+    	</delete>
+    </target>
+	
+    <!-- ================================= 
+          target: clean-cache              
+         ================================= -->
+	<target name="clean-cache" description="--> clean the ivy cache">
+		<delete dir="${user.home}/.ivy-cache"/>
+	</target>
+</project>

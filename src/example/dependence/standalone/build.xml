@@ -1,0 +1,97 @@
+<project name="standalone" default="run" xmlns:ivy="antlib:fr.jayasoft.ivy.ant">
+    <!-- some variables used -->
+    <property name="lib.dir" value="${basedir}/lib" />
+    <property name="build.dir" value="${basedir}/build" />
+    <property name="classes.dir" value="${build.dir}/classes" />
+    <property name="src.dir" value="${basedir}/src" />
+
+    <!-- ivy properties used -->
+    <property name="ivy.conf.dir" value="../config" />
+    <property file="${ivy.conf.dir}/ivyconf.properties" />
+    
+    <!-- paths used for compilation and run  -->
+    <path id="lib.path.id">
+        <fileset dir="${lib.dir}" />
+	</path>
+    <path id="run.path.id">
+        <path refid="lib.path.id" />
+        <path location="${classes.dir}" />
+    </path>
+    
+    <!-- - - - - - - - - - - - - - - - - - 
+          target: configure                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="configure">
+        <ivy:configure file="${ivy.conf.dir}/ivyconf.xml" />
+    </target>
+    
+    <!-- ================================= 
+          target: resolve              
+         ================================= -->
+    <target name="resolve" depends="configure" description="--> retreive dependencies with ivy">
+        <ivy:retrieve />
+    </target>
+        
+    <!-- ================================= 
+          target: report              
+         ================================= -->
+    <target name="report" depends="resolve" description="--> generates a report of dependencies">
+        <ivy:report todir="${build.dir}"/>
+    </target>
+	
+    <!-- ================================= 
+          target: compile              
+         ================================= -->
+    <target name="compile" depends="resolve" description="--> description">
+        <mkdir dir="${classes.dir}" />
+        <javac srcdir="${src.dir}" destdir="${classes.dir}" classpathref="lib.path.id" />
+    </target>
+    
+    <!-- ================================= 
+          target: run
+         ================================= -->
+    <target name="run" depends="compile" description="--> compile and run the project">
+        <java classpathref="run.path.id" classname="standalone.Main"/>
+    </target>
+    
+    <!-- ================================= 
+          target: jar              
+         ================================= -->
+    <target name="jar" depends="compile" description="--> make a jar file for this project">
+        <propertyfile file="${classes.dir}/version.properties">
+	        <entry  key="version" type="int" operation="+" default="0" />
+		</propertyfile>
+        <property file="${classes.dir}/version.properties" />
+        <jar destfile="${build.dir}/${ant.project.name}.jar">
+            <fileset dir="${classes.dir}" />
+        </jar>
+    </target>
+
+    <!-- ================================= 
+          target: publish              
+         ================================= -->
+    <target name="publish" depends="jar" description="--> publish this project in the ivy repository">
+        <property name="revision" value="${version}"/>
+        <delete file="${build.dir}/ivy.xml"/>
+		<ivy:publish artifactspattern="${build.dir}/[artifact].[ext]" 
+			resolver="projects"
+			pubrevision="${revision}" 
+			status="release"
+		/>
+        <echo message="project ${ant.project.name} released with version ${revision}" />
+    </target>
+
+
+    <!-- ================================= 
+          target: clean              
+         ================================= -->
+    <target name="clean" description="--> clean the project">
+        <delete includeemptydirs="true">
+            <fileset dir="${basedir}">
+            	<exclude name="src/**" />
+            	<exclude name="build.xml" />
+		    	<exclude name="ivy.xml" />
+        	</fileset>
+    	</delete>
+    </target>
+</project>

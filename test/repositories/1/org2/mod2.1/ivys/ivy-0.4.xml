@@ -1,0 +1,20 @@
+<ivy-module version="1.0">
+	<info organisation="org2"
+	       module="mod2.1"
+	       revision="0.4"
+	       status="integration"
+	       publication="20050301110000"
+	/>
+	<configurations>
+		<conf name="A"/>
+		<conf name="B"/>
+	</configurations>
+	<publications>
+		<artifact name="art21A" type="jar"/>
+		<artifact name="art21B" type="jar"/>
+	</publications>
+	<dependencies>
+		<dependency org="org1" name="mod1.1" rev="1.0" conf="A->default"/>
+		<dependency org="org1" name="mod1.2" rev="2.1" conf="B->default"/>
+	</dependencies>
+</ivy-module>

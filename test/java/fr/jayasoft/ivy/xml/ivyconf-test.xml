@@ -1,0 +1,25 @@
+<ivyconf>
+	<properties file="test/java/fr/jayasoft/ivy/xml/ivyconf.properties"/>
+	<conf   defaultCache="mycache" 
+	        defaultResolver="libraries" 
+			validate="false"
+			checkUpToDate="false"
+			cacheIvyPattern="[module]/ivys/ivy-[revision].xml" 
+			cacheArtifactPattern="[module]/[type]s/[artifact]-[revision].[ext]"/>
+	<resolvers>
+		<chain name="internal">
+			<filesystem name="int1" latest="latest-time">
+				<ivy pattern="sharedrep/[organisation]/[module]/ivys/ivy-[revision].xml"/>
+				<artifact pattern="sharedrep/[organisation]/[module]/[type]s/[artifact]-[revision].[type]"/>
+			</filesystem>
+			<ibiblio name="int2"/>
+		</chain>
+		<filesystem name="libraries" latest="latest-revision">
+			<ivy pattern="${libraries.dir}/[organisation]/[module]/ivys/ivy-[revision].xml"/>
+			<artifact pattern="${libraries.dir}/[organisation]/[module]/[type]s/[artifact]-[revision].[type]"/>
+		</filesystem>
+	</resolvers>
+	<modules>
+		<module organisation="jayasoft" name=".*" resolver="internal"/>
+	</modules>
+</ivyconf>

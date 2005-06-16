@@ -1,0 +1,10 @@
+<ivyconf>
+	<typedef name="mock" classname="fr.jayasoft.ivy.resolver.MockResolver"/>
+	<resolvers>
+		<chain name="internal">
+			<mock name="mock1"/>
+			<mock name="mock2"/>
+		</chain>
+		<mock name="mock3"/>
+	</resolvers>
+</ivyconf>

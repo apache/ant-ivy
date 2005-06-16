@@ -1,0 +1,23 @@
+<ivyconf>
+  <conf defaultCache="build/cache" defaultResolver="default"/>
+  <resolvers>
+    <dual name="default">
+		<chain name="ivyfiles">
+			<filesystem name="localivy">
+				<ivy pattern="test/repositories/dual-local/[organisation]/[module]/ivy-[revision].xml" />
+			</filesystem>
+			<filesystem name="remoteivy">
+				<ivy pattern="test/repositories/dual-remote/[module]/ivy-[revision].xml" />
+			</filesystem>
+		</chain>
+		<chain name="artifacts">
+			<filesystem name="localartifacts">
+				<artifact pattern="test/repositories/dual-local/[organisation]/[module]/[artifact]-[revision].[type]" />
+			</filesystem>
+			<filesystem name="remoteartifacts">
+				<artifact pattern="test/repositories/dual-remote/[module]/[artifact]-[revision].[type]" />
+			</filesystem>
+		</chain>
+    </dual>
+  </resolvers>
+</ivyconf>

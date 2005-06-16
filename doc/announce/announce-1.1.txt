@@ -1,0 +1,14 @@
+English:
+--------
+
+<a href="http://www.jayasoft.org">Jayasoft</a> is pleased to announce the availability of Ivy version 1.1.
+
+<a href="http://ivy.jayasoft.org">Ivy</a> is a free java based dependency manager, with powerful features such as transitive dependencies, ant integration, maven repository compatibility, continuous integration, html reports and many more.
+
+Apart its strong dependency management engine, Ivy also benefits from a growing user community, a <a href="http://ivyrep.jayasoft.org/">public repository</a> of common ivy files, and <a href="http://www.jayasoft.org/services">professional quality services</a> from the source.
+
+This release includes many bug fixes, better download management, better information and debug messages, improved documentation and a brand new web site !
+ 
+Finally, many thanks to the users feedbacks and contributions who made this possible.
+
+Download and information at : <a href="http://ivy.jayasoft.org">http://ivy.jayasoft.org</a>

@@ -1,0 +1,6 @@
+<ivy-module version="1.0">
+    <info organisation="jayasoft" module="standalone"/>
+    <dependencies>
+        <dependency org="apache" name="commons-lang" rev="2.0"/>
+    </dependencies>
+</ivy-module>

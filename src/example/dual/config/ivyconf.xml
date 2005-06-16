@@ -1,0 +1,11 @@
+<ivyconf>
+  <conf defaultResolver="dual-example"/>
+  <resolvers>
+    <dual name="dual-example">
+      <filesystem name="ivys">
+        <ivy pattern="${ivy.conf.dir}/../repository/[module]-ivy-[revision].xml" />
+      </filesystem>
+      <ibiblio name="ibiblio" />
+    </dual>
+  </resolvers>
+</ivyconf>

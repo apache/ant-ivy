@@ -1,0 +1,9 @@
+<ivy-module version="1.0">
+	<info organisation="myorg"
+	       module="mymodule"
+	       status="integration"
+	       myinfoatt="myvalue"
+	>
+		<mytag myatt="myvalue"/>
+	</info>
+</ivy-module>

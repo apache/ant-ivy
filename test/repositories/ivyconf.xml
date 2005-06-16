@@ -1,0 +1,20 @@
+<ivyconf>
+	<properties file="${ivy.conf.dir}/ivyconf.properties" />
+	<conf defaultCache="${cache.dir}" defaultResolver="test"/>
+	<resolvers>
+		<chain name="test">
+			<filesystem name="1">
+				<ivy pattern="${ivy.conf.dir}/1/[organisation]/[module]/ivys/ivy-[revision].xml"/>
+				<artifact pattern="${ivy.conf.dir}/1/[organisation]/[module]/[type]s/[artifact]-[revision].[ext]"/>
+			</filesystem>
+			<dual name="2">
+				<filesystem name="2-ivy">
+					<ivy pattern="${ivy.conf.dir}/2/[module]/ivy-[revision].xml"/>
+				</filesystem>
+				<filesystem name="2-artifact">
+					<artifact pattern="${ivy.conf.dir}/2/[module]/[artifact]-[revision].[ext]"/>
+				</filesystem>
+			</dual>
+		</chain>
+	</resolvers>
+</ivyconf>

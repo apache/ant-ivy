@@ -1,0 +1,13 @@
+<ivy-module version="1.0">
+    <info organisation="jtv" module="Cupid" revision="local"/>
+    <configurations>
+        <conf name="bug" description="Is this a bug" />
+    </configurations>
+    <publications>
+        <artifact name="Cupid" type="war" conf="*" />
+    </publications> 
+    <dependencies>
+	<dependency org="jtv-foo" name="bar" rev="latest.integration" conf="bug->test" />
+	<dependency org="idautomation" name="barcode" rev="4.10" conf="bug->*" />
+    </dependencies>
+</ivy-module>

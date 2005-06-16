@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<antlib xmlns:current="ant:current">
+	<taskdef name="configure" classname="fr.jayasoft.ivy.ant.IvyConfigure"/>
+	<taskdef name="resolve" classname="fr.jayasoft.ivy.ant.IvyResolve"/>
+	<taskdef name="retrieve" classname="fr.jayasoft.ivy.ant.IvyRetrieve"/>
+	<taskdef name="deliver" classname="fr.jayasoft.ivy.ant.IvyDeliver"/>
+	<taskdef name="publish" classname="fr.jayasoft.ivy.ant.IvyPublish"/>
+	<taskdef name="extract" classname="fr.jayasoft.ivy.ant.IvyExtractFromSources"/>
+	<taskdef name="cachepath" classname="fr.jayasoft.ivy.ant.IvyCachePath"/>
+	<taskdef name="report" classname="fr.jayasoft.ivy.ant.IvyReport"/>
+	<taskdef name="var" classname="fr.jayasoft.ivy.ant.IvyVar"/>
+	<taskdef name="check" classname="fr.jayasoft.ivy.ant.IvyCheck"/>
+	<taskdef name="artifactproperty" classname="fr.jayasoft.ivy.ant.IvyArtifactProperty"/>
+</antlib>

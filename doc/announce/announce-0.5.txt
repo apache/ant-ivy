@@ -1,0 +1,35 @@
+################################ French  ########################################
+La société Jayasoft (http://www.jayasoft.org) a le plaisir d'annoncer la version 0.5, première version publique, de son outil de résolution de dépendances nommé Ivy.
+Ivy est un outil, écrit en Java, qui peut etre utilisé avec ant ou bien seul.
+
+Les principaux atouts d'Ivy sont :
+- la simplicité,
+- la flexibilité,
+- l'extensibilité,
+- l'intégration avec ant,
+- le support de dépendance de dépendance,
+- la comptatibilité avec le repository maven sur ibiblio,
+- facilite l'intégration continue,
+- la gratuité, en licence BSD.
+
+Plus d'informations et téléchargement sur le site : http://ivy.jayasoft.org
+
+
+################################ English ########################################
+Jayasoft (http://www.jayasoft.org)  is pleased to announce the availabilty of the first public beta of Ivy, version 0.5.
+Ivy is a java based simple but powerful dependency manager.
+
+Key features are :
+   * simple to use
+   * extremely flexible
+   * easily extensible
+   * xml based
+   * integrated with ant
+   * ready to use with maven ibiblio repository
+   * dependencies of dependencies
+   * eases continuous integration
+   * make your software component a lot simpler to use
+   * free (BSD license) !
+
+Download and information on : http://ivy.jayasoft.org
+

@@ -1,0 +1,10 @@
+<ivy-module version="1.0">
+
+    <info organisation="xerces" module="xerces" revision="2.6.2" status="release" />
+
+    <publications>
+        <artifact name="xercesImpl" type="jar" conf="default"/>
+        <artifact name="xmlParserAPIs" type="jar" conf="default"/>
+    </publications>
+
+</ivy-module>

@@ -1,0 +1,9 @@
+<ivyconf>
+  <resolvers>
+    <dual name="dualtoomany">
+      <ibiblio name="1" />
+      <ibiblio name="2" />
+      <ibiblio name="3" />
+    </dual>
+  </resolvers>
+</ivyconf>

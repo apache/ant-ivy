@@ -1,0 +1,17 @@
+<ivyconf>
+    <properties file="${ivy.conf.dir}/ivyconf.properties"/>
+   <conf defaultCache="${ivy.conf.dir}/cache" 
+	 defaultResolver="chain-resolvers" />
+   <resolvers>
+      <chain name="chain-resolvers" >
+        <filesystem name="lib-jtv" latest="latest-revision"> 
+              <artifact pattern="${lib.jtv}/[organisation]/[module]/[artifact]-[revision].[type]" />
+              <ivy pattern="${lib.jtv}/[organisation]/[module]/ivy-[module]-[revision].xml" /> 
+        </filesystem>
+        <filesystem name="lib-3rd" latest="latest-revision">
+            <artifact pattern="${lib.3rd}/[organisation]/[module]/[artifact]-[revision].[type]" />
+            <ivy pattern="${lib.3rd}/[organisation]/[module]/ivy-[module]-[revision].xml" /> 
+        </filesystem>
+      </chain>
+    </resolvers> 
+</ivyconf>

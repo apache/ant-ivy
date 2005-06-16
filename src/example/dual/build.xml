@@ -1,0 +1,18 @@
+<project default="clean-all">
+    
+    <!-- ================================= 
+          target: clean              
+         ================================= -->
+    <target name="clean" description="--> clean directories">
+        <ant dir="project" antfile="build.xml" target="clean" inheritall="false" inheritrefs="false" />
+    </target>
+	
+    <!-- ================================= 
+          target: clean-cache              
+         ================================= -->
+	<target name="clean-cache" description="--> clean the ivy cache">
+		<delete dir="${user.home}/.ivy-cache"/>
+	</target>
+	
+	<target name="clean-all" depends="clean, clean-cache" description="--> clean directories and ivy cache"/>
+</project>

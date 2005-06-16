@@ -1,0 +1,14 @@
+<ivy-module version="1.0">
+    <info organisation="jtv-foo" module="bar" revision="1.1.0.0" publication="20050519000007" status="release" />
+    <configurations>
+        <conf name="test" description="Demonstration of bug?"/>
+    </configurations>
+    <publications>
+        <artifact name="bar" type="jar" conf="test"/>
+        <artifact name="bar-src" type="jar" conf="test"/>
+        <artifact name="bar-config" type="zip" conf="test" />
+    </publications>
+    <dependencies>
+        <dependency org="idautomation" name="barcode" rev="4.10+" />
+     </dependencies>
+</ivy-module>

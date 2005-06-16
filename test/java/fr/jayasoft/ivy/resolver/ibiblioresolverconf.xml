@@ -1,0 +1,7 @@
+<ivyconf>
+  <conf defaultResolver="ibiblio"/>
+  <resolvers>
+  	<ibiblio name="ibiblio" root="${my.ibiblio.root}" pattern="${my.ibiblio.pattern}" />
+  	<ibiblio name="ibiblio2" root="${my.ibiblio.root}" pattern="[organisation]/jars/[artifact]-[revision].jar" />
+  </resolvers>
+</ivyconf>

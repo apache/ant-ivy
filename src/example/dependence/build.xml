@@ -1,0 +1,24 @@
+<project default="clean">
+    
+    <!-- ================================= 
+          target: clean              
+         ================================= -->
+    <target name="clean" description="--> clean directories">
+        <delete includeemptydirs="true"> 
+            <fileset dir="config" excludes="ivyconf.*" />
+		</delete>
+        <ant dir="standalone" antfile="build.xml" target="clean" inheritall="false" inheritrefs="false" />
+        <ant dir="depending" antfile="build.xml" target="clean" inheritall="false" inheritrefs="false" />
+    </target>
+
+    <!-- ================================= 
+          target: all              
+         ================================= -->
+    <target name="all" depends="clean" description="--> make the whole example of dependency">
+        <ant dir="standalone" antfile="build.xml" target="publish" inheritall="false" inheritrefs="false" />
+        <ant dir="depending" antfile="build.xml" inheritall="false" inheritrefs="false" />
+        <ant dir="standalone" antfile="build.xml" target="publish" inheritall="false" inheritrefs="false" />
+        <ant dir="depending" antfile="build.xml" inheritall="false" inheritrefs="false" />
+    </target>
+    
+</project>

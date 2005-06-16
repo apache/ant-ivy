@@ -1,0 +1,11 @@
+<ivyconf>
+  <resolvers>
+    <dual name="dualok">
+      <ibiblio name="ivy" />
+      <ibiblio name="artifact" />
+    </dual>
+    <dual name="dualnotenough">
+      <ibiblio name="1" />
+    </dual>
+  </resolvers>
+</ivyconf>

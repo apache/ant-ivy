@@ -1,0 +1,7 @@
+<ivy-module version="1.0">
+    <info organisation="jayasoft" module="ivyrep-example"/>
+    <dependencies>
+        <dependency org="apache" name="commons-lang" rev="2.0"/>
+        <dependency org="apache" name="commons-cli" rev="1.0"/>
+    </dependencies>
+</ivy-module>

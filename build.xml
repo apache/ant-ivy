@@ -1,0 +1,87 @@
+<project name="ivy" default="test" xmlns:ivy="antlib:fr.jayasoft.ivy.ant">
+	<property file="build.properties"/>
+	
+	<target name="prepare">
+	   <mkdir dir="${classes.build.dir}"/>
+	   <mkdir dir="${test.build.dir}"/>
+	   <mkdir dir="${artifacts.build.dir}"/>
+	   <mkdir dir="${test.report.dir}"/>
+	</target>
+	
+	<target name="clean">
+	   <delete dir="${classes.build.dir}"/>
+	   <delete dir="${test.build.dir}"/>
+	   <delete dir="${artifacts.build.dir}"/>
+	   <delete dir="${test.report.dir}"/>
+	   <delete dir="${build.dir}"/>
+	</target>
+	
+	<target name="clean-lib">
+    <delete dir="${lib.dir}"/>
+	</target>
+	
+	<target name="clean-examples" description="clean all examples">
+		<subant target="clean" failonerror="false">
+    		<fileset dir="src/example" includes="**/build.xml"/>
+        </subant>		
+	</target>
+	
+	<target name="clean-all" depends="clean, clean-lib, clean-examples"/>
+
+	<target name="resolve" depends="prepare">
+		<ivy:retrieve/>
+	</target>
+
+	<target name="build" depends="resolve">
+		<path id="build.classpath">
+			<fileset dir="${lib.dir}">
+				<include name="*.jar"/>
+			</fileset>
+		</path>
+		<javac 	srcdir="${src.dir}"
+		        destdir="${classes.build.dir}"
+		        classpathref="build.classpath"
+		        debug="on"/>
+	</target>
+
+	<target name="jar" depends="build">
+		<copy todir="${classes.build.dir}">
+    		<fileset dir="${src.dir}">
+      			<exclude name="**/*.java"/>
+    		</fileset>
+  		</copy>
+  		<jar 	destfile="${artifacts.build.dir}/ivy.jar"
+				basedir="${classes.build.dir}"/>
+	</target>
+	
+	<target name="test" depends="jar">
+		<path id="run.classpath">
+			<path refid="build.classpath"/>
+			<pathelement location="${artifacts.build.dir}/ivy.jar"/>
+		</path>
+		<javac 	srcdir="${test.dir}"
+		        destdir="${test.build.dir}"
+		        classpathref="run.classpath"
+		        debug="on"/>
+		<copy todir="${test.build.dir}">
+    		<fileset dir="${test.dir}">
+      			<exclude name="**/*.java"/>
+    		</fileset>
+  		</copy>
+        <junit haltonfailure="on" 
+        	   showoutput="no"
+        	   printsummary="yes">
+            <classpath>
+                <path refid="run.classpath"/>
+    			<pathelement path="${test.build.dir}"/>
+            </classpath>
+			<formatter type="xml"/>
+			<batchtest todir="${test.report.dir}">
+    		    <fileset dir="${test.dir}">
+    		    	<include name="**/*Test.java"/>
+    		    	<contains text="junit"/>
+    		    </fileset>
+			</batchtest>
+        </junit>
+	</target>
+</project>

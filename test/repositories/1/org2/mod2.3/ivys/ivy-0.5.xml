@@ -1,0 +1,12 @@
+<ivy-module version="1.0">
+	<info organisation="org2"
+	       module="mod2.3"
+	       revision="0.5"
+	       status="integration"
+	/>
+	<dependencies>
+		<dependency name="mod2.1" rev="0.3">
+			<artifact name="art21A" type="jar"/>
+		</dependency>
+	</dependencies>
+</ivy-module>

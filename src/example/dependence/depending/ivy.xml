@@ -1,0 +1,6 @@
+<ivy-module version="1.0">
+    <info organisation="jayasoft" module="depending"/>
+    <dependencies>
+        <dependency name="standalone" rev="latest.integration" />
+    </dependencies>
+</ivy-module>
