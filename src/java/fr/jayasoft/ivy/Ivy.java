@@ -1117,15 +1117,17 @@ public class Ivy implements TransferListener {
      * 
      * @param pubrevision 
      * @param resolverName the name of a resolver to use for publication
-     * @param artifactsPattern a pattern to find artifacts to publish with the given resolver
+     * @param srcArtifactPattern a pattern to find artifacts to publish with the given resolver
+     * @param srcIvyPattern a pattern to find ivy file to publish, null if ivy file should not be published
      * @return a collection of missing artifacts (those that are not published)
      * @throws ParseException
      */
-	public Collection publish(ModuleRevisionId mrid, String pubrevision, File cache, String srcArtifactPattern, String resolverName, boolean publishivy, boolean validate) throws IOException {
+	public Collection publish(ModuleRevisionId mrid, String pubrevision, File cache, String srcArtifactPattern, String resolverName, String srcIvyPattern, boolean validate) throws IOException {
         Message.info(":: publishing :: "+mrid);
         Message.verbose("\tvalidate = "+validate);
         long start = System.currentTimeMillis();
         srcArtifactPattern = substitute(srcArtifactPattern);
+        srcIvyPattern = substitute(srcIvyPattern);
         // 1) find the resolved module descriptor in cache
         File ivyFile = getIvyFileInCache(cache, mrid);
         if (!ivyFile.exists()) {
@@ -1165,9 +1167,9 @@ public class Ivy implements TransferListener {
                 missing.add(artifact);
             }
         }
-        if (publishivy) {
+        if (srcIvyPattern != null) {
             Artifact artifact = new MDArtifact(md, "ivy", "ivy", "xml");
-            if (!publish(artifact, srcArtifactPattern, resolver)) {
+            if (!publish(artifact, srcIvyPattern, resolver)) {
                 missing.add(artifact);
             }
         }

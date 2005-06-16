@@ -30,7 +30,7 @@ public class IvyPublish extends IvyTask {
     private String  _revision;
     private String  _pubRevision;
     private File 	_cache; 
-    private String 	_deliverivypattern;
+    private String 	_srcivypattern;
     private String 	_status;
     private String 	_pubdate;
     private String  _deliverTarget;
@@ -47,11 +47,25 @@ public class IvyPublish extends IvyTask {
     public void setCache(File cache) {
         _cache = cache;
     }
-    public String getDeliverivypattern() {
-        return _deliverivypattern;
+    public String getSrcivypattern() {
+        return _srcivypattern;
     }
+    public void setSrcivypattern(String destivypattern) {
+        _srcivypattern = destivypattern;
+    }
+    /**
+     * @deprecated use getSrcivypattern instead
+     * @return
+     */
+    public String getDeliverivypattern() {
+        return _srcivypattern;
+    }
+    /**
+     * @deprecated use setSrcivypattern instead
+     * @return
+     */
     public void setDeliverivypattern(String destivypattern) {
-        _deliverivypattern = destivypattern;
+        _srcivypattern = destivypattern;
     }
     public String getModule() {
         return _module;
@@ -118,8 +132,8 @@ public class IvyPublish extends IvyTask {
             _cache = ivy.getDefaultCache();
         }
         _artifactspattern = getProperty(_artifactspattern, ivy, "ivy.publish.src.artifacts.pattern");
-        if (_deliverivypattern == null) {
-            _deliverivypattern = _artifactspattern;
+        if (_srcivypattern == null) {
+            _srcivypattern = _artifactspattern;
         }
         _status = getProperty(_status, ivy, "ivy.status");
         if (_module == null || _organisation == null || _revision == null) {
@@ -144,12 +158,12 @@ public class IvyPublish extends IvyTask {
         }
         ModuleRevisionId mrid = ModuleRevisionId.newInstance(_organisation, _module, _revision);
         try {
-            File ivyFile = new File(_cache, IvyPatternHelper.substitute(_deliverivypattern, _organisation, _module, _pubRevision, "ivy", "ivy", "xml"));
+            File ivyFile = new File(_cache, IvyPatternHelper.substitute(_srcivypattern, _organisation, _module, _pubRevision, "ivy", "ivy", "xml"));
             if (_publishivy && !ivyFile.exists()) {
                 IvyDeliver deliver = new IvyDeliver();
                 deliver.setProject(getProject());
                 deliver.setCache(getCache());
-                deliver.setDeliverpattern(getDeliverivypattern());
+                deliver.setDeliverpattern(getSrcivypattern());
                 deliver.setDelivertarget(_deliverTarget);
                 deliver.setDeliveryList(_deliveryList);
                 deliver.setModule(getModule());
@@ -163,7 +177,7 @@ public class IvyPublish extends IvyTask {
                 deliver.execute();
             }
             
-            Collection missing = ivy.publish(mrid, _pubRevision, _cache, _artifactspattern, _publishResolverName, _publishivy, doValidate(ivy));
+            Collection missing = ivy.publish(mrid, _pubRevision, _cache, _artifactspattern, _publishResolverName, _publishivy?_srcivypattern:null, doValidate(ivy));
             if (_warnonmissing) {
                 for (Iterator iter = missing.iterator(); iter.hasNext();) {
                     Artifact artifact = (Artifact)iter.next();

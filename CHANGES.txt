@@ -1,3 +1,5 @@
+- publish task now uses srcivypattern for ivy files finding for delivery
+
    version 1.1 - 2005-06-13
 ===============================
 - remote configuration (if available) of ivyrep and ibiblio patterns and roots
