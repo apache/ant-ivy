@@ -8,8 +8,8 @@ package fr.jayasoft.ivy.ant;
 import java.io.File;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.types.Path;
@@ -19,6 +19,7 @@ import fr.jayasoft.ivy.Ivy;
 import fr.jayasoft.ivy.ModuleId;
 import fr.jayasoft.ivy.xml.XmlReportParser;
 
+// TODO: refactor this class and IvyCacheFileset to extract common behaviour
 public class IvyCachePath extends IvyTask {
     private String _conf;
     private String _pathid;
@@ -27,6 +28,7 @@ public class IvyCachePath extends IvyTask {
     private String _module;
     private boolean _haltOnFailure = true;
     private File _cache;
+    private String _type;
     
     public String getConf() {
         return _conf;
@@ -66,6 +68,13 @@ public class IvyCachePath extends IvyTask {
     public void setPathid(String id) {
         _pathid = id;
     }
+    public String getType() {
+        return _type;
+    }
+
+    public void setType(String type) {
+        _type = type;
+    }
     /**
      * @deprecated use setPathid instead
      * @param id
@@ -98,19 +107,26 @@ public class IvyCachePath extends IvyTask {
             Path path = new Path(getProject());
             getProject().addReference(_pathid, path);
             String[] confs = splitConfs(_conf);
-            Collection all = new HashSet();
+            Collection all = new LinkedHashSet();
             for (int i = 0; i < confs.length; i++) {
                 Artifact[] artifacts = parser.getArtifacts(new ModuleId(_organisation, _module), confs[i], _cache);
                 all.addAll(Arrays.asList(artifacts));
             }
             for (Iterator iter = all.iterator(); iter.hasNext();) {
                 Artifact artifact = (Artifact)iter.next();
-                path.createPathElement().setLocation(ivy.getArchiveFileInCache(_cache, artifact));
+                if (accept(artifact)) {
+                    path.createPathElement().setLocation(ivy.getArchiveFileInCache(_cache, artifact));
+                }
             }
         } catch (Exception ex) {
             throw new BuildException("impossible to build ivy path: "+ex.getMessage(), ex);
         }
         
+    }
+
+
+    private boolean accept(Artifact artifact) {
+        return _type == null || _type.equals(artifact.getType());
     }
 
 }

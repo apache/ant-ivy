@@ -1201,7 +1201,7 @@ public class Ivy implements TransferListener {
          * in the sorted list each descriptor by the corresponding dependency
          */
         
-        Map dependenciesMap = new HashMap();
+        Map dependenciesMap = new LinkedHashMap();
         List nulls = new ArrayList();
         for (Iterator iter = nodes.iterator(); iter.hasNext();) {
             IvyNode node = (IvyNode)iter.next();
@@ -1217,7 +1217,7 @@ public class Ivy implements TransferListener {
             }
         }
         List list = sortModuleDescriptors(dependenciesMap.keySet());
-        List ret = new ArrayList((int)(list.size()*1.3+nulls.size()));
+        List ret = new ArrayList((int)(list.size()*1.3+nulls.size())); //attempt to adjust the size to avoid too much list resizing
         for (int i=0; i<list.size(); i++) {
             ModuleDescriptor md = (ModuleDescriptor)list.get(i);
             List n = (List)dependenciesMap.get(md);
@@ -1239,18 +1239,27 @@ public class Ivy implements TransferListener {
         // one to one comparison is not suffisant since we only use
         // direct dependencies and not transitive one
         List sorted = new LinkedList();
-        for (Iterator iter = moduleDescriptors.iterator(); iter.hasNext();) {
-            ModuleDescriptor md = (ModuleDescriptor)iter.next();
+        
+        // we iterate over the original list reversely, so that last traversed are the first in order
+        // since we place md by default at the beginning of the result, this preserves the order
+        // if it doesn't need to be changed (no dependency relationship between mds).
+        
+        List from = new ArrayList(moduleDescriptors); // copy to be able to traverse reversely
+        
+        for (int i=from.size()-1; i>=0; i--) {
+            ModuleDescriptor md = (ModuleDescriptor)from.get(i);
             // a list of sorted mds that should be after the current md
             List after = new LinkedList();
             // a list of sorted mds that should be after current md and which are not
             List between = new LinkedList();  
             
             // find its place in current sorted list
+            
             int place = 0;
+            // let's check dependency relation ship with others
             for (ListIterator it2 = sorted.listIterator(); it2.hasNext();) {
                 ModuleDescriptor smd = (ModuleDescriptor)it2.next();
-                if (md.dependsOn(smd)) {
+                if (md.dependsOn(smd)) { // it depends on another, it has to be placed after
                     place = it2.nextIndex();
                     between.addAll(after);
                     after = new LinkedList();
@@ -1278,7 +1287,15 @@ public class Ivy implements TransferListener {
     }
 
     public File getArchiveFileInCache(File cache, Artifact artifact) {
-        return getArchiveFileInCache(cache, 
+        return new File(cache, getArchivePathInCache(artifact));
+    }
+    
+    public File getArchiveFileInCache(File cache, String organisation, String module, String revision, String artifact, String type, String ext) {
+        return new File(cache, getArchivePathInCache(organisation, module, revision, artifact, type, ext));
+    }
+    
+    public String getArchivePathInCache(Artifact artifact) {
+        return getArchivePathInCache( 
                 artifact.getModuleRevisionId().getOrganisation(),
                 artifact.getModuleRevisionId().getName(),
                 artifact.getModuleRevisionId().getRevision(),
@@ -1287,8 +1304,8 @@ public class Ivy implements TransferListener {
                 artifact.getExt());
     }
     
-    public File getArchiveFileInCache(File cache, String organisation, String module, String revision, String artifact, String type, String ext) {
-        return new File(cache, IvyPatternHelper.substitute(_cacheArtifactPattern, organisation, module, revision, artifact, type, ext));
+    public String getArchivePathInCache(String organisation, String module, String revision, String artifact, String type, String ext) {
+        return IvyPatternHelper.substitute(_cacheArtifactPattern, organisation, module, revision, artifact, type, ext);
     }
     
     public static String getLocalHostName() {

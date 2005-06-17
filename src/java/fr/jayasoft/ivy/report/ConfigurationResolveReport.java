@@ -34,7 +34,7 @@ public class ConfigurationResolveReport {
 	private String _conf;
 	private Date _date;
 	private Map _dependencyReports = new HashMap();
-	private Map _dependencies = new HashMap();
+	private Map _dependencies = new LinkedHashMap();
 	private Ivy _ivy;
 	private Map _modulesIdsMap = new LinkedHashMap();
 	private List _modulesIds;

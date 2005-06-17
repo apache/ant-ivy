@@ -9,8 +9,8 @@ import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
@@ -32,7 +32,7 @@ public class XmlReportParser {
         if (!report.exists()) {
             throw new IllegalStateException("no report file found for "+moduleId+" "+conf+" in "+cache);
         }
-        final Collection artifacts = new ArrayList();
+        final List artifacts = new ArrayList();
         try {
             SAXParser saxParser = SAXParserFactory.newInstance().newSAXParser();
             saxParser.parse(report, new DefaultHandler() {
