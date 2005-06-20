@@ -3,6 +3,7 @@
 - new type filtering in cachepath task
 - new cachefileset task: builds an ant fileset of artifacts in cache
 - publish task now uses srcivypattern for ivy files finding and for delivery
+- FIX: checks ivy files data consistency with asked info (org, module name and revision)
 - FIX: use AUTH configuration for configuration file
 
    version 1.1 - 2005-06-13

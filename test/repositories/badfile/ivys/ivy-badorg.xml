@@ -1,0 +1,6 @@
+<ivy-module version="1.0">
+    <info organisation="jayasoft" name="test-badorg"/>
+    <dependencies>
+		<dependency org="myorg" name="mymodule" rev="badorg"/>
+    </dependencies>
+</ivy-module>

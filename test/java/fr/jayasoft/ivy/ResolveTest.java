@@ -713,4 +713,29 @@ public class ResolveTest extends TestCase {
         assertTrue(new File("build/cache/idautomation/barcode/ivy-4.10.xml").exists());
         assertTrue(new File("build/cache/idautomation/barcode/jars/LinearBarCode-4.10.jar").exists());        
     }
+
+    public void testBadFiles() throws Exception {
+        Ivy ivy = new Ivy();
+        ivy.configure(new File("test/repositories/badfile/ivyconf.xml"));
+        
+        try {
+            ivy.resolve(new File("test/repositories/badfile/ivys/ivy-badorg.xml").toURL(), null, new String[] {"*"}, new File("build/cache"), null, true);
+            fail("bad org should have raised an exception !");
+        } catch (Exception ex) {
+            // OK, it raised an exception
+        }
+        try {
+            ivy.resolve(new File("test/repositories/badfile/ivys/ivy-badmodule.xml").toURL(), null, new String[] {"*"}, new File("build/cache"), null, true);
+            fail("bad module should have raised an exception !");
+        } catch (Exception ex) {
+            // OK, it raised an exception
+        }
+        try {
+            ivy.resolve(new File("test/repositories/badfile/ivys/ivy-badrevision.xml").toURL(), null, new String[] {"*"}, new File("build/cache"), null, true);
+            fail("bad revision should have raised an exception !");
+        } catch (Exception ex) {
+            // OK, it raised an exception
+        }
+    }
+    
 }

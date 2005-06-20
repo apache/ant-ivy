@@ -249,6 +249,18 @@ public abstract class BasicResolver extends AbstractResolver {
             try {
                 md = XmlModuleDescriptorParser.parseDescriptor(data.getIvy(), cachedIvyURL, ivyRef.getResource(), doValidate(data));
                 Message.debug("\t"+getName()+": parsed downloaded ivy file for "+mrid+" parsed="+md.getModuleRevisionId());
+                
+                // check descriptor data is in sync with resource revision and names
+                if (!mrid.getOrganisation().equals(md.getModuleRevisionId().getOrganisation())) {
+                    throw new IllegalStateException("bad organisation found in "+ivyRef.getResource()+": expected="+mrid.getOrganisation()+" found="+md.getModuleRevisionId().getOrganisation());
+                }
+                if (!mrid.getName().equals(md.getModuleRevisionId().getName())) {
+                    throw new IllegalStateException("bad module name found in "+ivyRef.getResource()+": expected="+mrid.getName()+" found="+md.getModuleRevisionId().getName());
+                }
+                if (ivyRef.getRevision() != null && md.getModuleRevisionId().getRevision() != null && 
+                        !ivyRef.getRevision().equals(md.getModuleRevisionId().getRevision())) {
+                    throw new IllegalStateException("bad revision found in "+ivyRef.getResource()+": expected="+ivyRef.getRevision()+" found="+md.getModuleRevisionId().getRevision());
+                }
             } catch (IOException ex) {
                 Message.warn("io problem while parsing ivy file: "+ivyRef.getResource()+": "+ex.getMessage());
                 return null;
