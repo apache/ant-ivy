@@ -58,6 +58,7 @@ import fr.jayasoft.ivy.resolver.DualResolver;
 import fr.jayasoft.ivy.resolver.ModuleEntry;
 import fr.jayasoft.ivy.resolver.OrganisationEntry;
 import fr.jayasoft.ivy.resolver.RevisionEntry;
+import fr.jayasoft.ivy.url.URLHandlerRegistry;
 import fr.jayasoft.ivy.util.FileUtil;
 import fr.jayasoft.ivy.util.IvyPatternHelper;
 import fr.jayasoft.ivy.util.Message;
@@ -111,6 +112,8 @@ public class Ivy implements TransferListener {
     private List _listingIgnore = new ArrayList();
 
     private boolean _repositoriesConfigured;
+
+    private boolean _useRemoteConfig = true;
     
     public Ivy() {
     	String ivyTypeDefs = System.getProperty("ivy.typedef.files");
@@ -165,19 +168,24 @@ public class Ivy implements TransferListener {
     }
     
     /**
-     * Call this method to ask ivy to configure some variables using a remote properties file
+     * Call this method to ask ivy to configure some variables using either a remote or a local properties file
      */
-    public void configureRepositories() {
+    public void configureRepositories(boolean remote) {
         if (!_repositoriesConfigured) {
-            Properties props;
-            try {
-                props = new Properties();
-                URL url = new URL("http://ivy.jayasoft.org/repository.properties");
-                Message.verbose("configuring repositories with "+url);
-                props.load(url.openStream());
-            } catch (Exception ex) {
-                Message.verbose("unable to use remote repository configuration: "+ex.getMessage());
-                props = new Properties();
+            Properties props = new Properties();
+            boolean configured = false;
+            if (_useRemoteConfig && remote) {
+                try {
+                    URL url = new URL("http://ivy.jayasoft.org/repository.properties");
+                    Message.verbose("configuring repositories with "+url);
+                    props.load(URLHandlerRegistry.getDefault().openStream(url));
+                    configured = true;
+                } catch (Exception ex) {
+                    Message.verbose("unable to use remote repository configuration: "+ex.getMessage());
+                    props = new Properties();
+                }
+            }
+            if (!configured) {
                 try {
                     props.load(Ivy.class.getResourceAsStream("repository.properties"));
                 } catch (IOException e) {
@@ -1492,6 +1500,14 @@ public class Ivy implements TransferListener {
 
     public void transferProgress(TransferEvent evt) {
         fireTransferEvent(evt);
+    }
+
+    public boolean isUseRemoteConfig() {
+        return _useRemoteConfig;
+    }
+
+    public void setUseRemoteConfig(boolean useRemoteConfig) {
+        _useRemoteConfig = useRemoteConfig;
     }
 
 }

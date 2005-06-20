@@ -410,7 +410,7 @@ public abstract class BasicResolver extends AbstractResolver {
         		adr.setDownloadStatus(DownloadStatus.NO);  
                 adr.setSize(archiveFile.length());
         	} else {
-                ResolvedResource artifactRef = findArtifactRef(artifacts[i]);
+                ResolvedResource artifactRef = findArtifactRef(artifacts[i], null);
         		if (artifactRef != null) {
     			    long start = System.currentTimeMillis();
         			try {
@@ -440,7 +440,7 @@ public abstract class BasicResolver extends AbstractResolver {
     }
     
     public boolean exists(Artifact artifact) {
-        ResolvedResource artifactRef = findArtifactRef(artifact);
+        ResolvedResource artifactRef = findArtifactRef(artifact, null);
         if (artifactRef != null) {
             return artifactRef.getResource().exists();
         }
@@ -504,9 +504,23 @@ public abstract class BasicResolver extends AbstractResolver {
 
     protected abstract ResolvedResource findIvyFileRef(DependencyDescriptor dd, ResolveData data);
 
-    protected abstract ResolvedResource findFirstArtifactRef(ModuleDescriptor md, DependencyDescriptor dd, ResolveData data);
+    protected ResolvedResource findFirstArtifactRef(ModuleDescriptor md, DependencyDescriptor dd, ResolveData data) {
+        ResolvedResource ret = null;
+        String[] conf = md.getConfigurationsNames();
+        for (int i = 0; i < conf.length; i++) {
+            Artifact[] artifacts = md.getArtifacts(conf[i]);
+            for (int j = 0; j < artifacts.length; j++) {
+                ret = findArtifactRef(artifacts[j], data.getDate());
+                if (ret != null) {
+                    return ret;
+                }
+            }
+        }
+        return null;
+    }
 
-    protected abstract ResolvedResource findArtifactRef(Artifact artifact);
+
+    protected abstract ResolvedResource findArtifactRef(Artifact artifact, Date date);
 
     protected abstract long get(Resource resource, File ivyTempFile) throws IOException;
 

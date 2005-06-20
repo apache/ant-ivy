@@ -118,6 +118,10 @@ public class XmlIvyConfigurationParser extends DefaultHandler {
                 if (cacheArtPattern != null) {
                     _ivy.setCacheArtifactPattern(_ivy.substitute(cacheArtPattern));
                 }
+                String useRemoteConfig = attributes.getValue("useRemoteConfig");
+                if (useRemoteConfig != null) {
+                    _ivy.setUseRemoteConfig(Boolean.valueOf(_ivy.substitute(useRemoteConfig)).booleanValue());
+                }
 
                 // we do not set following defaults here since no instances has been registered yet
                 _defaultResolver = attributes.getValue("defaultResolver");

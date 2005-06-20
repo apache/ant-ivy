@@ -1,3 +1,5 @@
+- new useRemoteConfig on conf tag in ivyconf.xml, tells to use remote configuration file
+  for repository config
 - new type filtering in cachepath task
 - new cachefileset task: builds an ant fileset of artifacts in cache
 - publish task now uses srcivypattern for ivy files finding and for delivery

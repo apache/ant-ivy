@@ -21,7 +21,6 @@ import java.util.Map;
 import fr.jayasoft.ivy.Artifact;
 import fr.jayasoft.ivy.DefaultArtifact;
 import fr.jayasoft.ivy.DependencyDescriptor;
-import fr.jayasoft.ivy.ModuleDescriptor;
 import fr.jayasoft.ivy.ModuleRevisionId;
 import fr.jayasoft.ivy.ResolveData;
 import fr.jayasoft.ivy.repository.Resource;
@@ -46,23 +45,8 @@ public abstract class AbstractResourceResolver extends BasicResolver {
         return findResourceUsingPatterns(dd.getDependencyRevisionId(), _ivyPatterns, "ivy", "ivy", "xml", data.getDate());
     }
 
-    protected ResolvedResource findFirstArtifactRef(ModuleDescriptor md, DependencyDescriptor dd, ResolveData data) {
-        ResolvedResource ret = null;
-        String[] conf = md.getConfigurationsNames();
-        for (int i = 0; i < conf.length; i++) {
-            Artifact[] artifacts = md.getArtifacts(conf[i]);
-            for (int j = 0; j < artifacts.length; j++) {
-                ret = findResourceUsingPatterns(dd.getDependencyRevisionId(), _artifactPatterns, artifacts[j].getName(), artifacts[j].getType(), artifacts[j].getExt(), data.getDate());
-                if (ret != null) {
-                    return ret;
-                }
-            }
-        }
-        return null;
-    }
-
-    protected ResolvedResource findArtifactRef(Artifact artifact) {
-        return findResourceUsingPatterns(artifact.getModuleRevisionId(), _artifactPatterns, artifact.getName(), artifact.getType(), artifact.getExt(), null);
+    protected ResolvedResource findArtifactRef(Artifact artifact, Date date) {
+        return findResourceUsingPatterns(artifact.getModuleRevisionId(), _artifactPatterns, artifact.getName(), artifact.getType(), artifact.getExt(), date);
     }
 
     protected ResolvedResource findResourceUsingPatterns(ModuleRevisionId moduleRevision, List patternList, String artifact, String type, String ext, Date date) {

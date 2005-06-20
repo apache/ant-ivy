@@ -6,10 +6,17 @@
 package fr.jayasoft.ivy.resolver;
 
 import java.io.File;
+import java.text.ParseException;
 import java.util.Collections;
+import java.util.Date;
+import java.util.List;
 
 import fr.jayasoft.ivy.Artifact;
+import fr.jayasoft.ivy.DependencyDescriptor;
 import fr.jayasoft.ivy.Ivy;
+import fr.jayasoft.ivy.ResolveData;
+import fr.jayasoft.ivy.ResolvedModuleRevision;
+import fr.jayasoft.ivy.report.DownloadReport;
 
 /**
  * IBiblioResolver is a resolver which can be used to resolve dependencies found
@@ -25,26 +32,28 @@ public class IBiblioResolver extends URLResolver {
     public IBiblioResolver() {
     }
     
-    public void setIvy(Ivy ivy) {
-        super.setIvy(ivy);
-        ivy.configureRepositories();
-        if (_root == null) {
-            String root = ivy.getVariable("ivy.ibiblio.default.artifact.root");
-            if (root != null) {
-                _root = root;
-            } else {
-                _root = DEFAULT_ROOT;
+    public void ensureConfigured(Ivy ivy) {
+        if (ivy != null && (_root == null || _pattern == null)) {
+            if (_root == null) {
+                String root = ivy.getVariable("ivy.ibiblio.default.artifact.root");
+                if (root != null) {
+                    _root = root;
+                } else {
+                    ivy.configureRepositories(true);
+                    _root = ivy.getVariable("ivy.ibiblio.default.artifact.root");
+                }
             }
-        }
-        if (_pattern == null) {
-            String pattern = ivy.getVariable("ivy.ibiblio.default.artifact.pattern");
-            if (pattern != null) {
-                _pattern = pattern;
-            } else {
-                _pattern = DEFAULT_PATTERN;
+            if (_pattern == null) {
+                String pattern = ivy.getVariable("ivy.ibiblio.default.artifact.pattern");
+                if (pattern != null) {
+                    _pattern = pattern;
+                } else {
+                    ivy.configureRepositories(false);
+                    _pattern = ivy.getVariable("ivy.ibiblio.default.artifact.pattern");
+                }
             }
+            updateWholePattern();
         }
-        updateWholePattern();
     }
 
     private String getWholePattern() {
@@ -58,6 +67,7 @@ public class IBiblioResolver extends URLResolver {
             throw new NullPointerException("pattern must not be null");
         }
         _pattern = pattern;
+        ensureConfigured(getIvy());
         updateWholePattern();
     }
     public String getRoot() {
@@ -78,6 +88,7 @@ public class IBiblioResolver extends URLResolver {
         } else {
             _root = root;
         }
+        ensureConfigured(getIvy());
         updateWholePattern();
     }
     
@@ -94,8 +105,35 @@ public class IBiblioResolver extends URLResolver {
     public ModuleEntry[] listModules(OrganisationEntry org) {
         return null;
     }    
+    public RevisionEntry[] listRevisions(ModuleEntry mod) {
+        ensureConfigured(getIvy());
+        return super.listRevisions(mod);
+    }
     public String getTypeName() {
         return "ibiblio";
     }
 
+    // override some methods to ensure configuration    
+    public ResolvedModuleRevision getDependency(DependencyDescriptor dd, ResolveData data) throws ParseException {
+        ensureConfigured(data.getIvy());
+        return super.getDependency(dd, data);
+    }
+    
+    protected ResolvedResource findArtifactRef(Artifact artifact, Date date) {
+        ensureConfigured(getIvy());
+        return super.findArtifactRef(artifact, date);
+    }
+    
+    public DownloadReport download(Artifact[] artifacts, Ivy ivy, File cache) {
+        ensureConfigured(ivy);
+        return super.download(artifacts, ivy, cache);
+    }
+    public boolean exists(Artifact artifact) {
+        ensureConfigured(getIvy());
+        return super.exists(artifact);
+    }
+    public List getArtifactPatterns() {
+        ensureConfigured(getIvy());
+        return super.getArtifactPatterns();
+    }
 }
