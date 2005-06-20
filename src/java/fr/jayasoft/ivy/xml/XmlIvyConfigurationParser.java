@@ -23,6 +23,7 @@ import org.xml.sax.helpers.DefaultHandler;
 
 import fr.jayasoft.ivy.Ivy;
 import fr.jayasoft.ivy.ModuleId;
+import fr.jayasoft.ivy.url.URLHandlerRegistry;
 import fr.jayasoft.ivy.util.Configurator;
 import fr.jayasoft.ivy.util.Message;
 
@@ -54,7 +55,7 @@ public class XmlIvyConfigurationParser extends DefaultHandler {
         
         InputStream stream = null;
         try {
-            stream = configuration.openStream();
+            stream = URLHandlerRegistry.getDefault().openStream(configuration);
             SAXParserFactory.newInstance().newSAXParser().parse(
                 stream,
                 this);
