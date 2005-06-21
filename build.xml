@@ -41,7 +41,9 @@
 		<javac 	srcdir="${src.dir}"
 		        destdir="${classes.build.dir}"
 		        classpathref="build.classpath"
-		        debug="on"/>
+				source="${ivy.minimum.javaversion}"
+				target="${ivy.minimum.javaversion}"
+		        debug="${debug.mode}"/>
 	</target>
 
 	<target name="jar" depends="build">
@@ -62,7 +64,9 @@
 		<javac 	srcdir="${test.dir}"
 		        destdir="${test.build.dir}"
 		        classpathref="run.classpath"
-		        debug="on"/>
+				source="${ivy.minimum.javaversion}"
+				target="${ivy.minimum.javaversion}"
+		        debug="${debug.mode}"/>
 		<copy todir="${test.build.dir}">
     		<fileset dir="${test.dir}">
       			<exclude name="**/*.java"/>
