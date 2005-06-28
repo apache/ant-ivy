@@ -30,7 +30,7 @@ public class XmlReportParser {
     public Artifact[] getArtifacts(ModuleId moduleId, String conf, File cache) throws ParseException, IOException {
         File report = new File(cache, XmlReportOutputter.getReportFileName(moduleId, conf));
         if (!report.exists()) {
-            throw new IllegalStateException("no report file found for "+moduleId+" "+conf+" in "+cache);
+            throw new IllegalStateException("no report file found for "+moduleId+" "+conf+" in "+cache+": ivy was looking for "+report);
         }
         final List artifacts = new ArrayList();
         try {

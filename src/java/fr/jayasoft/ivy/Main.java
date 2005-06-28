@@ -161,6 +161,9 @@ public class Main {
                     date,
                     validate).getModuleDescriptor();
 
+            if (confs.length == 1 && "*".equals(confs[0])) {
+                confs = md.getConfigurationsNames();
+            }
             if (line.hasOption("retrieve")) {
                 String retrievePattern = ivy.substitute(line.getOptionValue("retrieve"));
                 if (retrievePattern.indexOf("[") == -1) {
