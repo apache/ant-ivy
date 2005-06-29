@@ -73,7 +73,7 @@ public class ResolverHelper {
                     return null;
                 }
             } catch (Exception e) {
-                Message.warn("problem while listing resources in "+root+" with "+rep+": "+e.getMessage());
+                Message.warn("problem while listing resources in "+root+" with "+rep+": "+e.getClass()+" "+e.getMessage());
                 return null;
             }
         }
@@ -96,7 +96,7 @@ public class ResolverHelper {
             }
             return (String[])names.toArray(new String[names.size()]);
         } catch (Exception e) {
-            Message.warn("problem while listing resources in "+parent+" with "+rep+": "+e.getMessage());
+            Message.warn("problem while listing resources in "+parent+" with "+rep+": "+e.getClass()+" "+e.getMessage());
             return null;
         }        
     }
@@ -191,7 +191,7 @@ public class ResolverHelper {
                     Message.debug("\t\t"+ret.size()+" matched "+pattern);
                     return (String[])ret.toArray(new String[ret.size()]);
                 } catch (Exception e) {
-                    Message.warn("problem while listing files in "+root+": "+e.getMessage());
+                    Message.warn("problem while listing files in "+root+": "+e.getClass()+" "+e.getMessage());
                     return null;
                 }
             }
@@ -257,7 +257,7 @@ public class ResolverHelper {
             }
             return null;
         } catch (Exception e) {
-            Message.warn("problem while listing directories in "+root+": "+e.getMessage());
+            Message.warn("problem while listing directories in "+root+": "+e.getClass()+" "+e.getMessage());
             return null;
         }        
     }
