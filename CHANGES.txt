@@ -5,6 +5,7 @@
 - publish task now uses srcivypattern for ivy files finding and for delivery
 - FIX: checks ivy files data consistency with asked info (org, module name and revision)
 - FIX: use AUTH configuration for configuration file
+- IMPROVE: added publish handling from command line (IVY-48) 
 
    version 1.1 - 2005-06-13
 ===============================

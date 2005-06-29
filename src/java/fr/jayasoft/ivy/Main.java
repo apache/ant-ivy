@@ -66,10 +66,18 @@ public class Main {
             .hasArg()
             .withDescription(  "use given status to publish the module" )
             .create( "status" );
-        Option publish = OptionBuilder.withArgName( "publishpattern" )
+        Option deliver = OptionBuilder.withArgName( "ivypattern" )
             .hasArg()
             .withDescription(  "use given pattern as resolved ivy file pattern" )
+            .create( "deliverto" );
+        Option publishResolver = OptionBuilder.withArgName( "resolvername" )
+            .hasArg()
+            .withDescription(  "use given resolver to publish to" )
             .create( "publish" );
+        Option publishPattern = OptionBuilder.withArgName( "artpattern" )
+            .hasArg()
+            .withDescription(  "use given pattern to find artifacts to publish" )
+            .create( "publishpattern" );
         
         Options options = new Options();
 
@@ -86,7 +94,9 @@ public class Main {
         options.addOption(retrieve);
         options.addOption(revision);
         options.addOption(status);
-        options.addOption(publish);
+        options.addOption(deliver);
+        options.addOption(publishResolver);
+        options.addOption(publishPattern);
         
         return options;
     }
@@ -167,7 +177,7 @@ public class Main {
             if (line.hasOption("retrieve")) {
                 String retrievePattern = ivy.substitute(line.getOptionValue("retrieve"));
                 if (retrievePattern.indexOf("[") == -1) {
-                    retrievePattern = retrievePattern + "/lib/[conf]/[artifact].[type]";
+                    retrievePattern = retrievePattern + "/lib/[conf]/[artifact].[ext]";
                 }
                 ivy.retrieve(md.getModuleRevisionId().getModuleId(), confs, cache, retrievePattern);
             }
@@ -177,11 +187,22 @@ public class Main {
                     md.getResolvedModuleRevisionId(),
                     ivy.substitute(line.getOptionValue("revision")),
                     cache, 
-                    ivy.substitute(line.getOptionValue("publish", "ivy-[revision].xml")),
+                    ivy.substitute(line.getOptionValue("deliverto", "ivy-[revision].xml")),
                     ivy.substitute(line.getOptionValue("status", "release")),
                     date,
                     new DefaultPublishingDRResolver(),
                     validate);
+                if (line.hasOption("publish")) {
+                    ivy.publish(
+                            md.getResolvedModuleRevisionId(), 
+                            ivy.substitute(line.getOptionValue("revision")), 
+                            cache, 
+                            ivy.substitute(line.getOptionValue("publishpattern", "distrib/[type]s/[artifact]-[revision].[ext]")), 
+                            line.getOptionValue("publish"), 
+                            ivy.substitute(line.getOptionValue("deliverto", "ivy-[revision].xml")), 
+                            validate);
+                    
+                }
             }
         } catch( ParseException exp ) {
             // oops, something went wrong
