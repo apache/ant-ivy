@@ -5,7 +5,10 @@
  */
 package fr.jayasoft.ivy.resolver;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
+import java.io.Reader;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
@@ -154,6 +157,76 @@ public class FileSystemResolverTest extends TestCase {
         assertEquals(mrid, rmr.getId());
         assertEquals(pubdate, rmr.getPublicationDate());
     }
+
+    public void testChanging() throws Exception {
+        FileSystemResolver resolver = new FileSystemResolver();
+        resolver.setName("test");
+        resolver.setIvy(_ivy);
+        _ivy.addResolver(resolver);
+        assertEquals("test", resolver.getName());
+        
+        resolver.addIvyPattern("test"+FS+"repositories"+FS+"checkmodified"+FS+"ivy-[revision].xml");
+        resolver.addArtifactPattern("test"+FS+"repositories"+FS+"checkmodified"+FS+"[artifact]-[revision].[ext]");
+        File modify = new File("test/repositories/checkmodified/ivy-1.0.xml");
+        File artifact = new File("test/repositories/checkmodified/mod1.1-1.0.jar");
+        
+        // 'publish' 'before' version
+        FileUtil.copy(new File("test/repositories/checkmodified/ivy-1.0-before.xml"), modify, null);
+        FileUtil.copy(new File("test/repositories/checkmodified/mod1.1-1.0-before.jar"), artifact, null);
+        Date pubdate = new GregorianCalendar(2004, 10, 1, 11, 0, 0).getTime();
+        modify.setLastModified(pubdate.getTime());
+        
+        ModuleRevisionId mrid = ModuleRevisionId.newInstance("org1", "mod1.1", "1.0");
+        ResolvedModuleRevision rmr = resolver.getDependency(new DefaultDependencyDescriptor(mrid, false), _data);
+        assertNotNull(rmr);
+        
+        assertEquals(mrid, rmr.getId());
+        assertEquals(pubdate, rmr.getPublicationDate());
+        
+        Artifact[] artifacts = rmr.getDescriptor().getArtifacts("default");
+        resolver.download(artifacts, _ivy, _cache);
+        File archiveFileInCache = _ivy.getArchiveFileInCache(_cache, artifacts[0]);
+        assertTrue(archiveFileInCache.exists());
+        BufferedReader r = new BufferedReader(new FileReader(archiveFileInCache));
+        assertEquals("before", r.readLine());
+        r.close();
+                
+        // updates ivy file and artifact in repository 
+        FileUtil.copy(new File("test/repositories/checkmodified/ivy-1.0-after.xml"), modify, null);
+        FileUtil.copy(new File("test/repositories/checkmodified/mod1.1-1.0-after.jar"), artifact, null);
+        pubdate = new GregorianCalendar(2005, 4, 1, 11, 0, 0).getTime();
+        modify.setLastModified(pubdate.getTime());
+        // no need to update new artifact timestamp cause it isn't used
+        
+        // should not get the new version: checkmodified is false and edpendency is not told to be a changing one
+        resolver.setCheckmodified(false);
+        rmr = resolver.getDependency(new DefaultDependencyDescriptor(mrid, false), _data);
+        assertNotNull(rmr);
+        
+        assertEquals(mrid, rmr.getId());
+        assertEquals(new GregorianCalendar(2004, 10, 1, 11, 0, 0).getTime(), rmr.getPublicationDate());
+
+        assertTrue(archiveFileInCache.exists());
+        r = new BufferedReader(new FileReader(archiveFileInCache));
+        assertEquals("before", r.readLine());
+        r.close();
+
+        // should now get the new version cause we say it's a changing one
+        rmr = resolver.getDependency(new DefaultDependencyDescriptor(mrid, false, true), _data);
+        assertNotNull(rmr);
+        
+        assertEquals(mrid, rmr.getId());
+        assertEquals(pubdate, rmr.getPublicationDate());
+
+        assertFalse(archiveFileInCache.exists());
+
+        artifacts = rmr.getDescriptor().getArtifacts("default");
+        resolver.download(artifacts, _ivy, _cache);
+        assertTrue(archiveFileInCache.exists());
+        r = new BufferedReader(new FileReader(archiveFileInCache));
+        assertEquals("after", r.readLine());
+        r.close();
+}
 
     public void testLatestTime() throws Exception {
         FileSystemResolver resolver = new FileSystemResolver();

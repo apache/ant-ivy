@@ -1,3 +1,6 @@
+- new changing attribute on dependencies indicate that the dependency artifacts
+  may change even without revision change, but with only a new ivy file with new 
+  publication date
 - new useRemoteConfig on conf tag in ivyconf.xml, tells to use remote configuration file
   for repository config
 - new type filtering in cachepath task

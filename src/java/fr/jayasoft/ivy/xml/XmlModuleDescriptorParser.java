@@ -50,7 +50,7 @@ import fr.jayasoft.ivy.util.XMLHelper;
  *
  */
 public class XmlModuleDescriptorParser extends DefaultHandler {
-    private static final Collection ALLOWED_VERSIONS = Arrays.asList(new String[] {"1.0", "1.1"});
+    private static final Collection ALLOWED_VERSIONS = Arrays.asList(new String[] {"1.0", "1.1", "1.2"});
     
     private DefaultModuleDescriptor _md;
     private DefaultDependencyDescriptor _dd;
@@ -229,9 +229,10 @@ public class XmlModuleDescriptorParser extends DefaultHandler {
                     org = _md.getModuleRevisionId().getOrganisation();
                 }
                 boolean force = Boolean.valueOf(attributes.getValue("force")).booleanValue();
+                boolean changing = Boolean.valueOf(attributes.getValue("changing")).booleanValue();
                 String name = _ivy.substitute(attributes.getValue("name"));
                 String rev = _ivy.substitute(attributes.getValue("rev"));
-                _dd = new DefaultDependencyDescriptor(_md, ModuleRevisionId.newInstance(org, name, rev), force);
+                _dd = new DefaultDependencyDescriptor(_md, ModuleRevisionId.newInstance(org, name, rev), force, changing);
                 _md.addDependency(_dd);
                 String confs = attributes.getValue("conf");
                 if (confs != null && confs.length() > 0) {

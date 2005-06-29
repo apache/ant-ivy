@@ -146,6 +146,7 @@ public abstract class BasicResolver extends AbstractResolver {
         _ivyattempts.clear();
         boolean downloaded = false;
         boolean searched = false;
+        Date cachedPublicationDate = null;
         ModuleRevisionId mrid = dd.getDependencyRevisionId();
     	// check revision
 		int index = mrid.getRevision().indexOf("@");
@@ -159,9 +160,9 @@ public abstract class BasicResolver extends AbstractResolver {
             return null;
         }
     	
-        // if we do not have to check modified and if the revision is exact, we first 
-        // search for it in cache
-        if (mrid.isExactRevision() && !isCheckmodified()) {
+        // if we do not have to check modified and if the revision is exact and not changing,  
+        // we first search for it in cache
+        if (mrid.isExactRevision() && !isCheckmodified() && !dd.isChanging()) {
             ResolvedModuleRevision rmr = data.getIvy().findModuleInCache(mrid, data.getCache(), doValidate(data));
             if (rmr != null) {
                 Message.verbose("\t"+getName()+": revision in cache: "+mrid);
@@ -214,17 +215,22 @@ public abstract class BasicResolver extends AbstractResolver {
             // now let's see if we can find it in cache and if it is up to date
             ResolvedModuleRevision rmr = data.getIvy().findModuleInCache(resolvedMrid, data.getCache(), doValidate(data));
             if (rmr != null) {
-                if (!isCheckmodified()) {
+                if (!isCheckmodified() && !dd.isChanging()) {
                     Message.verbose("\t"+getName()+": revision in cache: "+resolvedMrid);
                     return searchedRmr(rmr);
                 }
                 long repLastModified = ivyRef.getLastModified();
                 long cacheLastModified = rmr.getDescriptor().getLastModified(); 
-                if (rmr.getDescriptor().isDefault() || repLastModified <= cacheLastModified) {
+                if (repLastModified <= cacheLastModified) {
                     Message.verbose("\t"+getName()+": revision in cache (not updated): "+resolvedMrid);
                     return searchedRmr(rmr);
                 } else {
                     Message.verbose("\t"+getName()+": revision in cache is not up to date: "+resolvedMrid);
+                    if (dd.isChanging()) {
+                        // ivy file has been updated, we should see if it has a new publication date
+                        // to see if a new download is required (in case the dependency is a changing one)
+                        cachedPublicationDate = rmr.getDescriptor().getResolvedPublicationDate();
+                    }
                 }
             }
             
@@ -260,6 +266,25 @@ public abstract class BasicResolver extends AbstractResolver {
                 if (ivyRef.getRevision() != null && md.getModuleRevisionId().getRevision() != null && 
                         !ivyRef.getRevision().equals(md.getModuleRevisionId().getRevision())) {
                     throw new IllegalStateException("bad revision found in "+ivyRef.getResource()+": expected="+ivyRef.getRevision()+" found="+md.getModuleRevisionId().getRevision());
+                }
+                
+                // check if publication date has changed
+                if (cachedPublicationDate != null && !cachedPublicationDate.equals(md.getResolvedPublicationDate())) {
+                    // artifacts have changed, they should be downloaded again
+                    Message.verbose("dependency "+dd+" has changed: deleting old artifacts");
+                    String[] confs = rmr.getDescriptor().getConfigurationsNames();
+                    for (int i = 0; i < confs.length; i++) {
+                        Artifact[] arts = rmr.getDescriptor().getArtifacts(confs[i]);
+                        for (int j = 0; j < arts.length; j++) {
+                            File artFile = data.getIvy().getArchiveFileInCache(data.getCache(), arts[j]);
+                            if (artFile.exists()) {
+                                Message.debug("deleting "+artFile);
+                                artFile.delete();
+                            }
+                        }
+                    }
+                } else if (dd.isChanging()){
+                    Message.verbose("dependency "+dd+" is changing, but has not changed: will trust cached artifacts if any");
                 }
             } catch (IOException ex) {
                 Message.warn("io problem while parsing ivy file: "+ivyRef.getResource()+": "+ex.getMessage());

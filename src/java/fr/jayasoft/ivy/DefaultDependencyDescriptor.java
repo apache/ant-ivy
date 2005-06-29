@@ -35,17 +35,27 @@ public class DefaultDependencyDescriptor implements DependencyDescriptor {
      * of conflicts manager
      */
     private boolean _force;
-    private ModuleRevisionId _parentId; 
+    /**
+     * Used to indicate that the dependency is a changing one, i.e. that ivy should not rely on the version to know if it can trust artifacts in cache
+     */
+    private boolean _changing; 
+    private ModuleRevisionId _parentId;
 
-    public DefaultDependencyDescriptor(ModuleDescriptor md, ModuleRevisionId mrid, boolean force) {
+    public DefaultDependencyDescriptor(ModuleDescriptor md, ModuleRevisionId mrid, boolean force, boolean changing) {
         _parentId = md.getModuleRevisionId();
         _revId = mrid;
         _force = force;
+        _changing = changing;
     }
     
     public DefaultDependencyDescriptor(ModuleRevisionId mrid, boolean force) {
+        this(mrid, force, false);
+    }
+    
+    public DefaultDependencyDescriptor(ModuleRevisionId mrid, boolean force, boolean changing) {
         _revId = mrid;
         _force = force;
+        _changing = changing;
     }
     
 	public ModuleId getDependencyId() {
@@ -188,5 +198,9 @@ public class DefaultDependencyDescriptor implements DependencyDescriptor {
     public ModuleRevisionId getParentRevisionId() {
         return _parentId;
     }
-    
+
+    public boolean isChanging() {
+        return _changing;
+    }
+
 }
