@@ -87,14 +87,23 @@ public class IvyResolve extends IvyTask {
             }
             ModuleDescriptor md = report.getModuleDescriptor();
             setResolved(md);
+            
+            // put resolved infos in ant properties and ivy variables
+            // putting them in ivy variables is important to be able to change from one resolve call to the other
             getProject().setProperty("ivy.organisation", md.getModuleRevisionId().getOrganisation());
+            ivy.setVariable("ivy.organisation", md.getModuleRevisionId().getOrganisation());
             getProject().setProperty("ivy.module", md.getModuleRevisionId().getName());
+            ivy.setVariable("ivy.module", md.getModuleRevisionId().getName());
             getProject().setProperty("ivy.revision", md.getResolvedModuleRevisionId().getRevision());
+            ivy.setVariable("ivy.revision", md.getResolvedModuleRevisionId().getRevision());
             if (_conf.trim().equals("*")) {
                 getProject().setProperty("ivy.resolved.configurations", mergeConfs(md.getConfigurationsNames()));
+                ivy.setVariable("ivy.resolved.configurations", mergeConfs(md.getConfigurationsNames()));
             } else {
                 getProject().setProperty("ivy.resolved.configurations", _conf);
+                ivy.setVariable("ivy.resolved.configurations", _conf);
             }
+            
         } catch (MalformedURLException e) {
             throw new BuildException("unable to convert given ivy file to url: "+_file, e);
         } catch (ParseException e) {

@@ -1,0 +1,10 @@
+<ivy-module version="1.0"> 
+	<info organisation="jayasoft"
+	       module="resolve-double"
+	       revision="1.0"
+	       status="release"
+	/>
+	<dependencies>
+		<dependency org="org1" name="mod1.2" rev="2.0"/>
+	</dependencies>
+</ivy-module>
