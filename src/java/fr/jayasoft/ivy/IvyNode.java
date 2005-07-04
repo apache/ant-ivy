@@ -22,9 +22,9 @@ import fr.jayasoft.ivy.util.Message;
 
 public class IvyNode {
     public static class EvictionData {
-        private IvyNode _node;
-        private ConflictManager _conflictManager;
-        private Collection _selected;
+        private IvyNode _node; // can be null in case of transitive eviction
+        private ConflictManager _conflictManager; // can be null in case of transitive eviction
+        private Collection _selected; // can be null in case of transitive eviction
         private String _rootModuleConf;
 
         public EvictionData(String rootModuleConf, IvyNode node, ConflictManager conflictManager, Collection selected) {
@@ -35,7 +35,11 @@ public class IvyNode {
         }
         
         public String toString() {
-            return _selected + " in "+ _node+" ("+_conflictManager+") ["+_rootModuleConf+"]";
+            if (_selected != null) {
+                return _selected + " in "+ _node+" ("+_conflictManager+") ["+_rootModuleConf+"]";
+            } else {
+                return "transitively ["+_rootModuleConf+"]";
+            }
         }
 
         public ConflictManager getConflictManager() {
@@ -292,12 +296,14 @@ public class IvyNode {
             String rootModuleConf = (String)iter.next();
             EvictionData ed = (EvictionData)_evicted.get(rootModuleConf);
             Collection sel = ed.getSelected();
-            for (Iterator iterator = sel.iterator(); iterator.hasNext();) {
-                IvyNode n = (IvyNode)iterator.next();
-                if (n.getRealNode().equals(this)) {
-                    // yes, we are the real node for a selected one !
-                    // we are no more evicted in this conf !
-                    iter.remove();                    
+            if (sel != null) {
+                for (Iterator iterator = sel.iterator(); iterator.hasNext();) {
+                    IvyNode n = (IvyNode)iterator.next();
+                    if (n.getRealNode().equals(this)) {
+                        // yes, we are the real node for a selected one !
+                        // we are no more evicted in this conf !
+                        iter.remove();                    
+                    }
                 }
             }
         }
@@ -314,9 +320,11 @@ public class IvyNode {
         }
         
         // bug 105: update selected data with evicted one
-        for (Iterator iter = resolved.iterator(); iter.hasNext();) {
-            IvyNode selected = (IvyNode)iter.next();
-            selected.updateDataFrom(this, rootModuleConf);
+        if (resolved != null) {
+            for (Iterator iter = resolved.iterator(); iter.hasNext();) {
+                IvyNode selected = (IvyNode)iter.next();
+                selected.updateDataFrom(this, rootModuleConf);
+            }
         }
     }
     private void updateDataFrom(IvyNode node, String rootModuleConf) {
@@ -390,7 +398,10 @@ public class IvyNode {
         Collection allEvictingNodes = new HashSet();
         for (Iterator iter = _evicted.values().iterator(); iter.hasNext();) {
             EvictionData ed = (EvictionData)iter.next();
-            allEvictingNodes.addAll(ed.getSelected());
+            Collection selected = ed.getSelected();
+            if (selected != null) {
+                allEvictingNodes.addAll(selected);
+            }
         }        
         return allEvictingNodes;
     }    
@@ -664,6 +675,15 @@ public class IvyNode {
             return new Caller[0];
         }
         return (Caller[])callers.values().toArray(new Caller[callers.values().size()]);
+    }
+
+    public Caller[] getAllCallers() {
+        Set all = new HashSet();
+        for (Iterator iter = _callersByRootConf.values().iterator(); iter.hasNext();) {
+            Map callers = (Map)iter.next();
+            all.addAll(callers.values());
+        }
+        return (Caller[])all.toArray(new Caller[all.size()]);
     }
 
     public String toString() {

@@ -352,6 +352,33 @@ public class ResolveTest extends TestCase {
         assertTrue(_ivy.getArchiveFileInCache(_cache, "org1", "mod1.2", "2.1", "mod1.2", "jar", "jar").exists());
     }
     
+    public void testTransitiveEviction() throws Exception {
+        // mod7.3 depends on mod7.2 v1.0 and on mod7.1 v2.0
+        //      mod7.2 v1.0 depends on mod7.1 v1.0 (which then should be evicted)
+        //      mod7.1 v1.0 depends on mod 1.2 v1.0 (which should be evicted by transitivity)
+
+        ResolveReport report = _ivy.resolve(new File("test/repositories/2/mod7.3/ivy-1.0.xml").toURL(),
+                null, new String[] {"*"}, _cache, null, true);
+        assertNotNull(report);
+        ModuleDescriptor md = report.getModuleDescriptor();
+        assertNotNull(md);
+        ModuleRevisionId mrid = ModuleRevisionId.newInstance("org7", "mod7.3", "1.0");
+        assertEquals(mrid, md.getModuleRevisionId());
+        
+        assertTrue(_ivy.getIvyFileInCache(_cache, mrid).exists());
+        
+        // dependencies
+        assertTrue(_ivy.getIvyFileInCache(_cache, ModuleRevisionId.newInstance("org7", "mod7.2", "1.0")).exists());
+        assertTrue(_ivy.getArchiveFileInCache(_cache, "org7", "mod7.2", "1.0", "mod7.2", "jar", "jar").exists());
+
+        assertTrue(_ivy.getIvyFileInCache(_cache, ModuleRevisionId.newInstance("org7", "mod7.1", "2.0")).exists());
+        assertTrue(_ivy.getArchiveFileInCache(_cache, "org7", "mod7.1", "2.0", "mod7.1", "jar", "jar").exists());
+
+        assertTrue(!_ivy.getArchiveFileInCache(_cache, "org7", "mod7.1", "1.0", "mod7.1", "jar", "jar").exists());
+
+        assertTrue(!_ivy.getArchiveFileInCache(_cache, "org1", "mod1.2", "2.0", "mod1.2", "jar", "jar").exists());
+    }
+    
     public void testResolveConflictInConf() throws Exception {
         // conflicts in separate confs are not conflicts
         

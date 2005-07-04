@@ -733,6 +733,7 @@ public class Ivy implements TransferListener {
             }
 		}
         
+        
         // prune and reverse sort fectched dependencies 
         Collection dependencies = new HashSet(dependenciesMap.size()); // use a Set to avoids duplicates
         for (Iterator iter = dependenciesMap.values().iterator(); iter.hasNext();) {
@@ -743,6 +744,39 @@ public class Ivy implements TransferListener {
         }
         List sortedDependencies = sortNodes(dependencies);
         Collections.reverse(sortedDependencies);
+
+        // handle transitive eviction now:
+        // if a module has been evicted then all its dependencies required 
+        // only by it should be evicted too. Since nodes are now sorted from the more dependent to 
+        // the less one, we can traverse the list and check only the direct parent and not all
+        // the ancestors
+        for (ListIterator iter = sortedDependencies.listIterator(); iter.hasNext();) {
+            IvyNode node = (IvyNode)iter.next();
+            if (!node.isCompletelyEvicted()) {
+                for (int i = 0; i < confs.length; i++) {
+                    IvyNode.Caller[] callers = node.getCallers(confs[i]);
+                    boolean allEvicted = callers.length > 0;
+                    for (int j = 0; j < callers.length; j++) {
+                        if (callers[j].getModuleRevisionId().equals(md.getModuleRevisionId())) {
+                            // the caller is the root module itself, it can't be evicted
+                            allEvicted = false;
+                            break;                            
+                        } else {
+                            IvyNode callerNode = (IvyNode)dependenciesMap.get(callers[j].getModuleRevisionId());                            
+                            if (callerNode != null && !callerNode.isEvicted(confs[i])) {
+                                allEvicted = false;
+                                break;
+                            }
+                        }
+                    }
+                    if (allEvicted) {
+                        Message.verbose("all callers are evicted for "+node+": evicting too");
+                        node.markEvicted(confs[i], null, null, null);
+                    }
+                }
+            }
+        }
+        
         return (IvyNode[])sortedDependencies.toArray(new IvyNode[sortedDependencies.size()]);
     }
 

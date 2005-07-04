@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 
@@ -69,7 +70,11 @@ public class XmlReportOutputter implements ReportOutputter {
                     }
                     if (dep.isEvicted(report.getConfiguration())) {
                         IvyNode.EvictionData ed = dep.getEvictedData(report.getConfiguration());
-                        details += " evicted=\""+ed.getConflictManager()+"\"";
+                        if (ed.getConflictManager() != null) {
+                            details += " evicted=\""+ed.getConflictManager()+"\"";
+                        } else {
+                            details += " evicted=\"transitive\"";
+                        }
                     }
                     if (dep.hasProblem()) {
                         details += " error=\""+dep.getProblem().getMessage()+"\"";
@@ -96,9 +101,12 @@ public class XmlReportOutputter implements ReportOutputter {
                     }
                     if (dep.isEvicted(report.getConfiguration())) {
                         IvyNode.EvictionData ed = dep.getEvictedData(report.getConfiguration());
-                        for (Iterator it3 = ed.getSelected().iterator(); it3.hasNext();) {
-                            IvyNode sel = (IvyNode)it3.next();
-                            out.println("\t\t\t\t<evicted-by rev=\""+sel.getResolvedId().getRevision()+"\"/>");
+                        Collection selected = ed.getSelected();
+                        if (selected != null) {
+                            for (Iterator it3 = selected.iterator(); it3.hasNext();) {
+                                IvyNode sel = (IvyNode)it3.next();
+                                out.println("\t\t\t\t<evicted-by rev=\""+sel.getResolvedId().getRevision()+"\"/>");
+                            }
                         }
                     }
                     IvyNode.Caller[] callers = dep.getCallers(report.getConfiguration());

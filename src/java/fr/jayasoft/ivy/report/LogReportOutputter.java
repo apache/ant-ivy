@@ -7,6 +7,7 @@ package fr.jayasoft.ivy.report;
 
 import java.io.File;
 import java.util.Arrays;
+import java.util.Collection;
 
 import fr.jayasoft.ivy.IvyNode;
 import fr.jayasoft.ivy.util.Message;
@@ -22,7 +23,12 @@ public class LogReportOutputter implements ReportOutputter {
         if (evicted.length > 0) {
             Message.info("\t:: evicted modules:");
             for (int i = 0; i < evicted.length; i++) {
-                Message.info("\t"+evicted[i]+" by "+evicted[i].getAllEvictingNodes()+" in "+Arrays.asList(evicted[i].getEvictedConfs()));
+                Collection allEvictingNodes = evicted[i].getAllEvictingNodes();
+                if (allEvictingNodes.isEmpty()) {
+                    Message.info("\t"+evicted[i]+" transitively in "+Arrays.asList(evicted[i].getEvictedConfs()));
+                } else {
+                    Message.info("\t"+evicted[i]+" by "+allEvictingNodes+" in "+Arrays.asList(evicted[i].getEvictedConfs()));
+                }
                 String[] confs = evicted[i].getEvictedConfs();
                 for (int j = 0; j < confs.length; j++) {
                     IvyNode.EvictionData evictedData = evicted[i].getEvictedData(confs[j]);

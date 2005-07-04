@@ -6,6 +6,7 @@
 - new type filtering in cachepath task
 - new cachefileset task: builds an ant fileset of artifacts in cache
 - publish task now uses srcivypattern for ivy files finding and for delivery
+- FIX: now handle transitive eviction (IVY-51)
 - FIX: resolve now store resolved file id in ivy variables, so that multiple resolve calls
   can be followed by multiple retrieve, each retrieve will use the last resolve info (IVY-49)
 - FIX: IllegalStateException on retrieve done from command line
