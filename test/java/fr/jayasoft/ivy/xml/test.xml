@@ -75,8 +75,8 @@
 			<include name="your.*" type="jar"/>
 			<include ext="xml"/>
 			<exclude name="toexclude"/>
-		</dependency>		
-		<dependency org="yourorg" name="yourmodule11" rev="11.1" conf="*->@" />
+		</dependency>
+		<dependency org="yourorg" name="yourmodule11" rev="11.1" conf="*->@"/>
 	</dependencies>
 	<conflicts>
 		<manager org="yourorg" module=".*" name="all"/>
