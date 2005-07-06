@@ -86,6 +86,9 @@ public class DefaultDependencyDescriptor implements DependencyDescriptor {
 		if (defConfs != null) {
 		    ret.addAll(defConfs);
 		}
+        if (ret.remove("@")) {
+            ret.add(moduleConfiguration);
+        }
 		return (String[])ret.toArray(new String[ret.size()]);
 	}
 

@@ -1,3 +1,6 @@
+- new '@' in dependency configuration mapping declaration, used to indicate that a configuration maps to itself
+  useful with *, '*->@' meaning that all configurations of the module maps to their equivalent (same name)
+  in the dependency (IVY-52)
 - new changing attribute on dependencies indicate that the dependency artifacts
   may change even without revision change, but with only a new ivy file with new 
   publication date

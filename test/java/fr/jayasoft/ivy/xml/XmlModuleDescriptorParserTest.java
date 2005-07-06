@@ -107,7 +107,7 @@ public class XmlModuleDescriptorParserTest extends TestCase {
         
         DependencyDescriptor[] dependencies = md.getDependencies();
         assertNotNull(dependencies);
-        assertEquals(11, dependencies.length);
+        assertEquals(12, dependencies.length);
         
         // no conf def => equivalent to *->*
         DependencyDescriptor dd = getDependency(dependencies, "mymodule2");
@@ -171,6 +171,17 @@ public class XmlModuleDescriptorParserTest extends TestCase {
         assertEquals(Arrays.asList(new String[] {}), Arrays.asList(dd.getDependencyConfigurations(new String[] {"myconf3", "myconf4"})));
         assertDependencyArtifactsIncludes(dd, new String[] {"myconf1", "myconf2", "myconf3", "myconf4"}, new String[0]);
         
+        // conf="*->@"
+        dd = getDependency(dependencies, "yourmodule11");
+        assertNotNull(dd);
+        assertEquals("yourorg", dd.getDependencyId().getOrganisation());
+        assertEquals("11.1", dd.getDependencyRevisionId().getRevision());
+        assertEquals(new HashSet(Arrays.asList(new String[] {"*"})), new HashSet(Arrays.asList(dd.getModuleConfigurations())));
+        assertEquals(Arrays.asList(new String[] {"myconf1"}), Arrays.asList(dd.getDependencyConfigurations("myconf1")));        
+        assertEquals(Arrays.asList(new String[] {"myconf2"}), Arrays.asList(dd.getDependencyConfigurations("myconf2")));        
+        assertEquals(Arrays.asList(new String[] {"myconf3"}), Arrays.asList(dd.getDependencyConfigurations("myconf3")));        
+        assertEquals(Arrays.asList(new String[] {"myconf4"}), Arrays.asList(dd.getDependencyConfigurations("myconf4")));        
+
         dd = getDependency(dependencies, "yourmodule6");
         assertNotNull(dd);
         assertEquals("yourorg", dd.getDependencyId().getOrganisation());
@@ -228,7 +239,7 @@ public class XmlModuleDescriptorParserTest extends TestCase {
         assertDependencyArtifactsExcludes(dd, new String[] {"myconf2"}, new String[] {"toexclude"});
         assertDependencyArtifactsExcludes(dd, new String[] {"myconf3"}, new String[] {"toexclude"});
         assertDependencyArtifactsExcludes(dd, new String[] {"myconf4"}, new String[] {"toexclude"});
-        
+                
         ConflictManager cm = md.getConflictManager(new ModuleId("yourorg", "yourmodule1"));
         assertNotNull(cm);
         assertTrue(cm instanceof NoConflictManager);
