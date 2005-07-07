@@ -60,7 +60,7 @@ public abstract class AbstractResourceResolver extends BasicResolver {
     
     protected abstract ResolvedResource findResourceUsingPattern(ModuleRevisionId mrid, String pattern, String artifact, String type, String ext, Date date);
     protected abstract ResolvedResource[] findAll(ModuleRevisionId mrid, String pattern, String artifact, String type, String ext);
-    protected abstract long get(Resource resource, File ivyTempFile) throws IOException;    
+    protected abstract long get(Resource resource, File dest) throws IOException;    
 
     /**
      * Output message to log indicating what have been done to look for an artifact which

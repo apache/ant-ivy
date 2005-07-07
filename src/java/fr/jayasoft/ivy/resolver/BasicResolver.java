@@ -144,7 +144,7 @@ public abstract class BasicResolver extends AbstractResolver {
     }    
 
     public ResolvedModuleRevision getDependency(DependencyDescriptor dd, ResolveData data) throws ParseException {
-        _ivyattempts.clear();
+        clearIvyAttempts();
         boolean downloaded = false;
         boolean searched = false;
         Date cachedPublicationDate = null;
@@ -367,7 +367,11 @@ public abstract class BasicResolver extends AbstractResolver {
         return new DefaultModuleRevision(this, md, searched, downloaded);
     }
 
-    private ResolvedModuleRevision searchedRmr(final ResolvedModuleRevision rmr) {
+    protected void clearIvyAttempts() {
+        _ivyattempts.clear();
+    }
+
+    protected ResolvedModuleRevision searchedRmr(final ResolvedModuleRevision rmr) {
         // delegate all to previously found except isSearched
         return new ResolvedModuleRevision() {                    
             public boolean isSearched() {
@@ -444,7 +448,7 @@ public abstract class BasicResolver extends AbstractResolver {
     }
 
     public DownloadReport download(Artifact[] artifacts, Ivy ivy, File cache) {
-        _artattempts.clear();
+        clearArtifactAttempts();
         DownloadReport dr = new DownloadReport();
         for (int i = 0; i < artifacts.length; i++) {
         	final ArtifactDownloadReport adr = new ArtifactDownloadReport(artifacts[i]);
@@ -487,6 +491,10 @@ public abstract class BasicResolver extends AbstractResolver {
         	}
         }
     	return dr;
+    }
+
+    protected void clearArtifactAttempts() {
+        _artattempts.clear();
     }
     
     public boolean exists(Artifact artifact) {
