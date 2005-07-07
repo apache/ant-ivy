@@ -1,3 +1,5 @@
+- new transitive attribute on dependency, which enable to disable transitive dependency
+  management on a particular dependency (thanks to Ingo Adler) (IVY-20)
 - new '@' in dependency configuration mapping declaration, used to indicate that a configuration maps to itself
   useful with *, '*->@' meaning that all configurations of the module maps to their equivalent (same name)
   in the dependency (IVY-52)

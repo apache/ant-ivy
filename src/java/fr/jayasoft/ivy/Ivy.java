@@ -825,23 +825,25 @@ public class Ivy implements TransferListener {
             for (int i = 0; i < extendedConfs.length; i++) {
                 fetchDependencies(node, extendedConfs[i], false);
             }
-            
-            Collection dependencies = node.getDependencies(conf, true);
-            for (Iterator iter = dependencies.iterator(); iter.hasNext();) {
-                IvyNode dep = (IvyNode)iter.next();
-                if (dep.isCircular()) {
-                    Message.warn("circular dependency found ! "+node.getId()+" depends on "+dep.getId()+" which is already on the same branch of dependency");
-                    continue;
-                }
-                String[] confs = dep.getRequiredConfigurations(node, conf);
-                for (int i = 0; i < confs.length; i++) {
-                    fetchDependencies(dep, confs[i], shouldBePublic);
-                }
-                // if there are still confs to fetch (usually because they have
-                // been updated when evicting another module), we fetch them now
-                confs = dep.getConfsToFetch();
-                for (int i = 0; i < confs.length; i++) {
-                    fetchDependencies(dep, confs[i], shouldBePublic);
+
+            if (node.getDependencyDescriptor() == null || node.getDependencyDescriptor().isTransitive()) {
+                Collection dependencies = node.getDependencies(conf, true);
+                for (Iterator iter = dependencies.iterator(); iter.hasNext();) {
+                    IvyNode dep = (IvyNode)iter.next();
+                    if (dep.isCircular()) {
+                        Message.warn("circular dependency found ! "+node.getId()+" depends on "+dep.getId()+" which is already on the same branch of dependency");
+                        continue;
+                    }
+                    String[] confs = dep.getRequiredConfigurations(node, conf);
+                    for (int i = 0; i < confs.length; i++) {
+                        fetchDependencies(dep, confs[i], shouldBePublic);
+                    }
+                    // if there are still confs to fetch (usually because they have
+                    // been updated when evicting another module), we fetch them now
+                    confs = dep.getConfsToFetch();
+                    for (int i = 0; i < confs.length; i++) {
+                        fetchDependencies(dep, confs[i], shouldBePublic);
+                    }
                 }
             }
         }

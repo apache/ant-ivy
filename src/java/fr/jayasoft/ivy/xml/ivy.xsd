@@ -160,6 +160,7 @@
 						            <xs:attribute name="rev" type="xs:string" use="required"/>
 						            <xs:attribute name="force" type="xs:boolean"/>
 						            <xs:attribute name="changing" type="xs:boolean" default="false"/>
+						            <xs:attribute name="transitive" type="xs:boolean" default="true"/>
 						            <xs:attribute name="conf" type="xs:string"/>
 				            	</xs:complexType>
 				      		</xs:element>

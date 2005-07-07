@@ -41,11 +41,14 @@ public class DefaultDependencyDescriptor implements DependencyDescriptor {
     private boolean _changing; 
     private ModuleRevisionId _parentId;
 
-    public DefaultDependencyDescriptor(ModuleDescriptor md, ModuleRevisionId mrid, boolean force, boolean changing) {
+    private boolean _transitive = true;
+
+    public DefaultDependencyDescriptor(ModuleDescriptor md, ModuleRevisionId mrid, boolean force, boolean changing, boolean transitive) {
         _parentId = md.getModuleRevisionId();
         _revId = mrid;
         _force = force;
         _changing = changing;
+        _transitive = transitive;
     }
     
     public DefaultDependencyDescriptor(ModuleRevisionId mrid, boolean force) {
@@ -204,6 +207,10 @@ public class DefaultDependencyDescriptor implements DependencyDescriptor {
 
     public boolean isChanging() {
         return _changing;
+    }
+
+    public boolean isTransitive() {
+        return _transitive;
     }
 
 }

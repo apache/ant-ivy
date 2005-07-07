@@ -1,0 +1,15 @@
+<ivy-module version="1.0">
+	<info organisation="org2"
+	       module="mod2.4"
+	       revision="0.3"
+	       status="integration"
+	       publication="20050701110000"
+	/>
+	<publications>
+		<artifact name="art24A" type="jar"/>
+		<artifact name="art24B" type="jar"/>
+	</publications>
+	<dependencies>
+		<dependency org="org1" name="mod1.1" rev="1.0" transitive="false"/>
+	</dependencies>
+</ivy-module>

@@ -230,9 +230,13 @@ public class XmlModuleDescriptorParser extends DefaultHandler {
                 }
                 boolean force = Boolean.valueOf(attributes.getValue("force")).booleanValue();
                 boolean changing = Boolean.valueOf(attributes.getValue("changing")).booleanValue();
+
+                String transitiveValue = attributes.getValue("transitive");
+                boolean transitive = (transitiveValue == null) ? true : Boolean.valueOf(attributes.getValue("transitive")).booleanValue();
+                
                 String name = _ivy.substitute(attributes.getValue("name"));
                 String rev = _ivy.substitute(attributes.getValue("rev"));
-                _dd = new DefaultDependencyDescriptor(_md, ModuleRevisionId.newInstance(org, name, rev), force, changing);
+                _dd = new DefaultDependencyDescriptor(_md, ModuleRevisionId.newInstance(org, name, rev), force, changing, transitive);
                 _md.addDependency(_dd);
                 String confs = attributes.getValue("conf");
                 if (confs != null && confs.length() > 0) {

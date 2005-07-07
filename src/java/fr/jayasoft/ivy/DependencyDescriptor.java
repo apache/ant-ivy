@@ -28,6 +28,7 @@ public interface DependencyDescriptor {
      * @return true if this dependency is a changing one
      */
     boolean isChanging();
+    boolean isTransitive();
     ModuleRevisionId getParentRevisionId();
     ModuleRevisionId getDependencyRevisionId();
     String[] getModuleConfigurations();
