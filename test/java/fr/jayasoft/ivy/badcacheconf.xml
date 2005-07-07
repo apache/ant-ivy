@@ -1,0 +1,9 @@
+<ivyconf>
+  <conf defaultCache="build/cache" defaultResolver="default"/>
+  <resolvers>
+	<filesystem name="default">
+		<ivy pattern="build/cache/[organisation]/[module]/ivy-[revision].xml" />
+		<artifact pattern="[organisation]/[module]/[type]s/[artifact]-[revision].[ext]" />
+	</filesystem>
+  </resolvers>
+</ivyconf>

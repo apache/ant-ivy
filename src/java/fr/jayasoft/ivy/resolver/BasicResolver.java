@@ -39,6 +39,7 @@ import fr.jayasoft.ivy.report.ArtifactDownloadReport;
 import fr.jayasoft.ivy.report.DownloadReport;
 import fr.jayasoft.ivy.report.DownloadStatus;
 import fr.jayasoft.ivy.repository.Resource;
+import fr.jayasoft.ivy.repository.ResourceHelper;
 import fr.jayasoft.ivy.util.IvyPatternHelper;
 import fr.jayasoft.ivy.util.Message;
 import fr.jayasoft.ivy.xml.XmlModuleDescriptorParser;
@@ -236,6 +237,13 @@ public abstract class BasicResolver extends AbstractResolver {
             
             // now download ivy file and parse it
             try {
+                // first check if source file is not cache file itself
+                if (ResourceHelper.equals(ivyRef.getResource(), 
+                        data.getIvy().getIvyFileInCache(data.getCache(), resolvedMrid))) {
+                    Message.error("invalid configuration for resolver '"+getName()+"': pointing ivy files to ivy cache is forbidden !");
+                    return null;
+                }
+                
                 // temp file is used to prevent downloading twice
                 File ivyTempFile = File.createTempFile("ivy", "xml"); 
                 ivyTempFile.deleteOnExit();
@@ -449,6 +457,11 @@ public abstract class BasicResolver extends AbstractResolver {
         	} else {
                 ResolvedResource artifactRef = findArtifactRef(artifacts[i], null);
         		if (artifactRef != null) {
+                    if (ResourceHelper.equals(artifactRef.getResource(), 
+                            archiveFile)) {
+                        Message.error("invalid configuration for resolver '"+getName()+"': pointing artifacts to ivy cache is forbidden !");
+                        return null;
+                    }
     			    long start = System.currentTimeMillis();
         			try {
         			    Message.info("downloading "+artifactRef.getResource()+" ...");

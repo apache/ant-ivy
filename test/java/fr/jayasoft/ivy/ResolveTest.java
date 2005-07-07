@@ -21,6 +21,7 @@ import fr.jayasoft.ivy.report.ConfigurationResolveReport;
 import fr.jayasoft.ivy.report.ResolveReport;
 import fr.jayasoft.ivy.report.XmlReportOutputter;
 import fr.jayasoft.ivy.resolver.DualResolver;
+import fr.jayasoft.ivy.util.FileUtil;
 
 /**
  * @author Xavier Hanin
@@ -784,5 +785,26 @@ public class ResolveTest extends TestCase {
 
         assertTrue(!_ivy.getIvyFileInCache(_cache, ModuleRevisionId.newInstance("org1", "mod1.2", "2.0")).exists());
         assertTrue(!_ivy.getArchiveFileInCache(_cache, "org1", "mod1.2", "2.0", "mod1.2", "jar", "jar").exists());
+    }
+    
+    public void testResolverDirectlyUsingCache() throws Exception {
+        Ivy ivy = new Ivy();
+        ivy.configure(ResolveTest.class.getResource("badcacheconf.xml"));
+        File depIvyFileInCache = ivy.getIvyFileInCache(_cache, ModuleRevisionId.newInstance("org1", "mod1.1", "1.0"));
+        FileUtil.copy(File.createTempFile("test", "xml"), depIvyFileInCache, null); // creates a fake dependency file in cache
+        ResolveReport report = ivy.resolve(new File("test/repositories/1/org2/mod2.4/ivys/ivy-0.3.xml").toURL(),
+                null, new String[] {"*"}, _cache, null, true);
+        
+        assertNotNull(report);
+        ModuleDescriptor md = report.getModuleDescriptor();
+        assertNotNull(md);
+        ModuleRevisionId mrid = ModuleRevisionId.newInstance("org2", "mod2.4", "0.3");
+        assertEquals(mrid, md.getModuleRevisionId());
+        
+        assertTrue(ivy.getIvyFileInCache(_cache, mrid).exists());
+        
+        // dependencies
+        assertTrue(depIvyFileInCache.exists());
+        assertTrue(!ivy.getArchiveFileInCache(_cache, "org1", "mod1.1", "1.0", "mod1.1", "jar", "jar").exists());
     }
 }
