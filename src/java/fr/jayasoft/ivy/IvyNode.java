@@ -18,6 +18,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 
+import fr.jayasoft.ivy.filter.Filter;
+import fr.jayasoft.ivy.filter.FilterHelper;
 import fr.jayasoft.ivy.util.Message;
 
 public class IvyNode {
@@ -766,16 +768,18 @@ public class IvyNode {
     /**
      * Returns all the artifacts of this dependency required in the
      * root module configurations in which the node is not evicted
+     * @param artifactFilter 
      * @return
      */
-    public Artifact[] getSelectedArtifacts() {
-        Set ret = new HashSet();
+    public Artifact[] getSelectedArtifacts(Filter artifactFilter) {
+        Collection ret = new HashSet();
         for (Iterator it = _rootModuleConfs.keySet().iterator(); it.hasNext();) {
             String rootModuleConf = (String)it.next();
             if (!isEvicted(rootModuleConf)) {
                 ret.addAll(Arrays.asList(getArtifacts(rootModuleConf)));
             }
         }
+        ret = FilterHelper.filter(ret, artifactFilter);
         return (Artifact[])ret.toArray(new Artifact[ret.size()]);
     }
 

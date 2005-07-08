@@ -18,6 +18,8 @@ import org.apache.tools.ant.types.PatternSet.NameEntry;
 import fr.jayasoft.ivy.Artifact;
 import fr.jayasoft.ivy.Ivy;
 import fr.jayasoft.ivy.ModuleId;
+import fr.jayasoft.ivy.filter.Filter;
+import fr.jayasoft.ivy.filter.FilterHelper;
 import fr.jayasoft.ivy.xml.XmlReportParser;
 
 //TODO: refactor this class and IvyCacheFileset to extract common behaviour
@@ -30,6 +32,8 @@ public class IvyCacheFileset extends IvyTask {
     private boolean _haltOnFailure = true;
     private File _cache;
     private String _type;
+    
+    private Filter _artifactFilter = null;
     
     public String getConf() {
         return _conf;
@@ -95,6 +99,7 @@ public class IvyCacheFileset extends IvyTask {
         if (_organisation == null || _module == null) {
             throw new BuildException("no module id provided for ivy path: either call resolve, give paramaters to ivy:retrieve, or provide ivy.module and ivy.organisation properties");
         }
+        _artifactFilter = FilterHelper.getArtifactTypeFilter(_type);
         try {
             XmlReportParser parser = new XmlReportParser();
             FileSet fileset = new FileSet();
@@ -110,7 +115,7 @@ public class IvyCacheFileset extends IvyTask {
             }
             for (Iterator iter = all.iterator(); iter.hasNext();) {
                 Artifact artifact = (Artifact)iter.next();
-                if (accept(artifact)) {
+                if (_artifactFilter.accept(artifact)) {
                     NameEntry ne = fileset.createInclude();
                     ne.setName(ivy.getArchivePathInCache(artifact));
                 }
@@ -119,10 +124,6 @@ public class IvyCacheFileset extends IvyTask {
             throw new BuildException("impossible to build ivy cache fileset: "+ex.getMessage(), ex);
         }
         
-    }
-
-    private boolean accept(Artifact artifact) {
-        return _type == null || _type.equals(artifact.getType());
     }
 
 }

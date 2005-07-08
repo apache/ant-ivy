@@ -14,6 +14,7 @@ import org.apache.tools.ant.Project;
 
 import fr.jayasoft.ivy.Ivy;
 import fr.jayasoft.ivy.ModuleDescriptor;
+import fr.jayasoft.ivy.filter.FilterHelper;
 import fr.jayasoft.ivy.report.ResolveReport;
 import fr.jayasoft.ivy.util.Message;
 
@@ -28,6 +29,8 @@ public class IvyResolve extends IvyTask {
     private String _revision = null;
     private String _pubdate = null;
     private boolean _haltOnFailure = true;
+    private boolean _useCacheOnly = false;
+    private String _type = null;
     
     public String getDate() {
         return _pubdate;
@@ -68,6 +71,18 @@ public class IvyResolve extends IvyTask {
     public void setShowprogress(boolean show) {
         Message.setShowProgress(show);
     }
+    public boolean isUseCacheOnly() {
+        return _useCacheOnly;
+    }
+    public void setUseCacheOnly(boolean useCacheOnly) {
+        _useCacheOnly = useCacheOnly;
+    }
+    public String getType() {
+        return _type;
+    }
+    public void setType(String type) {
+        _type = type;
+    }
     
     public void execute() throws BuildException {
         Ivy ivy = getIvyInstance();
@@ -77,11 +92,20 @@ public class IvyResolve extends IvyTask {
             }
             _conf = getProperty(_conf, ivy, "ivy.configurations");
             _revision = getProperty(_revision, ivy, "ivy.revision");
+            _type = getProperty(_type, ivy, "ivy.resolve.default.type.filter");
             if (_cache == null) {
                 _cache = ivy.getDefaultCache();
             }
             String[] confs = splitConfs(_conf);
-            ResolveReport report = ivy.resolve(_file.toURL(), _revision, confs, _cache, getPubDate(_pubdate, null), doValidate(ivy));
+            ResolveReport report = ivy.resolve(
+                    _file.toURL(), 
+                    _revision, 
+                    confs, 
+                    _cache, 
+                    getPubDate(_pubdate, null), 
+                    doValidate(ivy),
+                    _useCacheOnly,
+                    FilterHelper.getArtifactTypeFilter(_type));
             if (isHaltonfailure() && report.hasError()) {
                 throw new BuildException("resolve failed - see output for details");
             }

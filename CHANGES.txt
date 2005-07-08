@@ -1,3 +1,4 @@
+- added type filtering mechanism on resolve task (IVY-45)
 - detect and warn about resolver using ivy cache as repository (IVY-53)
 - new transitive attribute on dependency, which enable to disable transitive dependency
   management on a particular dependency (thanks to Ingo Adler) (IVY-20)

@@ -17,6 +17,8 @@ import org.apache.tools.ant.types.Path;
 import fr.jayasoft.ivy.Artifact;
 import fr.jayasoft.ivy.Ivy;
 import fr.jayasoft.ivy.ModuleId;
+import fr.jayasoft.ivy.filter.Filter;
+import fr.jayasoft.ivy.filter.FilterHelper;
 import fr.jayasoft.ivy.xml.XmlReportParser;
 
 // TODO: refactor this class and IvyCacheFileset to extract common behaviour
@@ -29,6 +31,8 @@ public class IvyCachePath extends IvyTask {
     private boolean _haltOnFailure = true;
     private File _cache;
     private String _type;
+    
+    private Filter _artifactFilter = null;
     
     public String getConf() {
         return _conf;
@@ -102,6 +106,8 @@ public class IvyCachePath extends IvyTask {
         if (_organisation == null || _module == null) {
             throw new BuildException("no module id provided for ivy path: either call resolve, give paramaters to ivy:retrieve, or provide ivy.module and ivy.organisation properties");
         }
+        _artifactFilter = FilterHelper.getArtifactTypeFilter(_type);
+        
         try {
             XmlReportParser parser = new XmlReportParser();
             Path path = new Path(getProject());
@@ -114,7 +120,7 @@ public class IvyCachePath extends IvyTask {
             }
             for (Iterator iter = all.iterator(); iter.hasNext();) {
                 Artifact artifact = (Artifact)iter.next();
-                if (accept(artifact)) {
+                if (_artifactFilter.accept(artifact)) {
                     path.createPathElement().setLocation(ivy.getArchiveFileInCache(_cache, artifact));
                 }
             }
@@ -122,11 +128,6 @@ public class IvyCachePath extends IvyTask {
             throw new BuildException("impossible to build ivy path: "+ex.getMessage(), ex);
         }
         
-    }
-
-
-    private boolean accept(Artifact artifact) {
-        return _type == null || _type.equals(artifact.getType());
     }
 
 }

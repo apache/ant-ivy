@@ -40,6 +40,8 @@ import org.xml.sax.SAXException;
 
 import fr.jayasoft.ivy.conflict.LatestConflictManager;
 import fr.jayasoft.ivy.conflict.NoConflictManager;
+import fr.jayasoft.ivy.filter.Filter;
+import fr.jayasoft.ivy.filter.FilterHelper;
 import fr.jayasoft.ivy.latest.LatestLexicographicStrategy;
 import fr.jayasoft.ivy.latest.LatestRevisionStrategy;
 import fr.jayasoft.ivy.latest.LatestTimeStrategy;
@@ -595,6 +597,9 @@ public class Ivy implements TransferListener {
         return resolve(ivySource, revision, confs, cache, date, validate, false);
     }
     public ResolveReport resolve(URL ivySource, String revision, String[] confs, File cache, Date date, boolean validate, boolean useCacheOnly) throws ParseException, IOException {
+        return resolve(ivySource, revision, confs, cache, date, validate, useCacheOnly, FilterHelper.NO_FILTER);
+    }
+    public ResolveReport resolve(URL ivySource, String revision, String[] confs, File cache, Date date, boolean validate, boolean useCacheOnly, Filter artifactFilter) throws ParseException, IOException {
         DependencyResolver oldDictator = getDictatorResolver();
         if (useCacheOnly) {
             setDictatorResolver(new CacheResolver(this));
@@ -629,7 +634,7 @@ public class Ivy implements TransferListener {
                 if (!dependencies[i].isCompletelyEvicted() && !dependencies[i].hasProblem()) {
                     DependencyResolver resolver = dependencies[i].getModuleRevision().getResolver();
                     DownloadReport dReport = resolver
-                    .download(dependencies[i].getSelectedArtifacts(), this, cache);
+                     .download(dependencies[i].getSelectedArtifacts(artifactFilter), this, cache);
                     ArtifactDownloadReport[] adrs = dReport.getArtifactsReports(DownloadStatus.FAILED);
                     for (int j = 0; j < adrs.length; j++) {
                         Message.warn("\t[NOT FOUND  ] "+adrs[j].getArtifact());
@@ -687,7 +692,31 @@ public class Ivy implements TransferListener {
         } finally {
             setDictatorResolver(oldDictator);
         }
-    }  
+    }
+    
+    /**
+     * Download an artifact to the cache.
+     * Not used internally, useful especially for IDE plugins
+     * needing to download artifact one by one (for source or javadoc artifact,
+     * for instance).
+     * 
+     * Downloaded artifact file can be accessed using getArchiveFileInCache method.
+     * 
+     * It is possible to track the progression of the download using classical ivy 
+     * progress monitoring feature (see addTransferListener).
+     * 
+     * @param artifact the artifact to download
+     * @param cache the cache to use. If null, will use default cache
+     * @return a report concerning the download
+     */
+    public ArtifactDownloadReport download(Artifact artifact, File cache) {
+        if (cache == null) {
+            cache = getDefaultCache();
+        }
+        DependencyResolver resolver = getResolver(artifact.getModuleRevisionId().getModuleId());
+        DownloadReport r = resolver.download(new Artifact[] {artifact}, this, cache);
+        return r.getArtifactReport(artifact);
+    }
     
     public ReportOutputter[] getReportOutputters() {
         return _reportOutputters;

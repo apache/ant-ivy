@@ -12,6 +12,10 @@ import java.util.Date;
  *
  */
 public class DefaultArtifact extends AbstractArtifact {
+    public static Artifact cloneWithAnotherType(Artifact artifact, String newType) {
+        return new DefaultArtifact(artifact.getModuleRevisionId(), artifact.getPublicationDate(), artifact.getName(), newType, artifact.getExt());
+    }
+    
     Date _publicationDate;
     ArtifactRevisionId _arid;
     
@@ -34,6 +38,7 @@ public class DefaultArtifact extends AbstractArtifact {
         _publicationDate = publicationDate;
         _arid = ArtifactRevisionId.newInstance(mrid, name, type, ext);
     }
+
     
     public ModuleRevisionId getModuleRevisionId() {
         return _arid.getModuleRevisionId();
