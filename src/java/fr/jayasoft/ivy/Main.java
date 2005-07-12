@@ -17,6 +17,8 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
+import fr.jayasoft.ivy.url.URLHandlerDispatcher;
+import fr.jayasoft.ivy.url.URLHandlerRegistry;
 import fr.jayasoft.ivy.util.DefaultMessageImpl;
 import fr.jayasoft.ivy.util.Message;
 
@@ -78,6 +80,22 @@ public class Main {
             .hasArg()
             .withDescription(  "use given pattern to find artifacts to publish" )
             .create( "publishpattern" );
+        Option realm = OptionBuilder.withArgName( "realm" )
+            .hasArg()
+            .withDescription(  "use given realm for HTTP AUTH" )
+            .create( "realm" );
+        Option host = OptionBuilder.withArgName( "host" )
+            .hasArg()
+            .withDescription(  "use given host for HTTP AUTH" )
+            .create( "host" );
+        Option username = OptionBuilder.withArgName( "username" )
+            .hasArg()
+            .withDescription(  "use given username for HTTP AUTH" )
+            .create( "username" );
+        Option passwd = OptionBuilder.withArgName( "passwd" )
+            .hasArg()
+            .withDescription(  "use given password for HTTP AUTH" )
+            .create( "passwd" );
         
         Options options = new Options();
 
@@ -97,6 +115,10 @@ public class Main {
         options.addOption(deliver);
         options.addOption(publishResolver);
         options.addOption(publishPattern);
+        options.addOption(realm);
+        options.addOption(host);
+        options.addOption(username);
+        options.addOption(passwd);
         
         return options;
     }
@@ -129,6 +151,12 @@ public class Main {
             
             Ivy ivy = new Ivy();
 
+            configureURLHandler(
+                    line.getOptionValue("realm", null), 
+                    line.getOptionValue("host", null), 
+                    line.getOptionValue("username", null), 
+                    line.getOptionValue("passwd", null));
+            
             String confPath = line.getOptionValue("conf", "");
             if ("".equals(confPath)) {
                 ivy.configure(Ivy.class.getResource("ivyconf.xml"));
@@ -212,6 +240,12 @@ public class Main {
         }        
     }
 
+    private static void configureURLHandler(String realm, String host, String username, String passwd) {
+        URLHandlerDispatcher dispatcher = new URLHandlerDispatcher();
+        dispatcher.setDownloader("http", URLHandlerRegistry.getHttp(realm, host, username, passwd));
+        URLHandlerRegistry.setDefault(dispatcher);
+    }
+    
     private static void error(Options options, String msg) {
         System.err.println(msg);
         usage(options);
