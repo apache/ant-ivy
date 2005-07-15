@@ -25,6 +25,7 @@ public class IvyPatternHelper {
     public static final String REVISION_KEY = "revision";
     public static final String MODULE_KEY = "module";
     public static final String ORGANISATION_KEY = "organisation";
+    public static final String ORGANISATION_KEY2 = "organization";
     
     private static final Pattern VAR_PATTERN = Pattern.compile("\\$\\{(.*?)\\}");
     private static final Pattern TOKEN_PATTERN = Pattern.compile("\\[(.*?)\\]");
@@ -67,6 +68,7 @@ public class IvyPatternHelper {
     public static String substitute(String pattern, String org, String module, String revision, String artifact, String type, String ext, String conf) {
         Map tokens = new HashMap();        
         tokens.put(ORGANISATION_KEY, org==null?"":org);
+        tokens.put(ORGANISATION_KEY2, org==null?"":org);
         tokens.put(MODULE_KEY, module==null?"":module);
         tokens.put(REVISION_KEY, revision==null?"":revision);
         tokens.put(ARTIFACT_KEY, artifact==null?module:artifact);
