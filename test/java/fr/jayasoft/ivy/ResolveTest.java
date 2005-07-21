@@ -682,6 +682,15 @@ public class ResolveTest extends TestCase {
         assertTrue(_ivy.getArchiveFileInCache(_cache, "org1", "mod1.2", "2.2", "mod1.2", "jar", "jar").exists());
     }
     
+    public void testIVY56() throws Exception {
+        Ivy ivy = new Ivy();
+        ivy.configure(new File("test/repositories/bugIVY-56/ivyconf.xml"));
+        
+        ResolveReport report = ivy.resolve(ResolveTest.class.getResource("ivy-56.xml"),
+                null, new String[] {"default"}, _cache, null, true);
+        assertNotNull(report);
+    }
+    
     public void testCircular() throws Exception {
         // mod6.3 depends on mod6.2, which itself depends on mod6.3 !
         ResolveReport report = _ivy.resolve(new File("test/repositories/2/mod6.3/ivy-1.0.xml").toURL(),

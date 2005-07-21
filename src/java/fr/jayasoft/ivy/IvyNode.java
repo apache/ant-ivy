@@ -447,7 +447,14 @@ public class IvyNode {
                     Message.debug("\tusing "+resolver+" to resolve "+getId());
                     _module = resolver.getDependency(_dd, _data);
                     if (_module != null) {
-                        if (!getId().isExactRevision()) { 
+                        if (!getId().isExactRevision()) {
+                            // IVY-56: check if revision has actually been resolved
+                            if (!_module.getId().isExactRevision()) {
+                                Message.error("impossible to resolve latest revision for "+getId()+": check your configuration and make sure revision is part of your pattern");
+                                _problem = new RuntimeException("impossible to resolve latest revision");
+                                _data.getReport().addDependency(this);
+                                return false;
+                            }
                             IvyNode resolved = _data.getNode(_module.getId());
                             if (resolved != null) {
                                 // exact revision has already been resolved
