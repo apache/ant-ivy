@@ -222,7 +222,7 @@ public abstract class BasicResolver extends AbstractResolver {
                 }
                 long repLastModified = ivyRef.getLastModified();
                 long cacheLastModified = rmr.getDescriptor().getLastModified(); 
-                if (repLastModified <= cacheLastModified) {
+                if (!rmr.getDescriptor().isDefault() && repLastModified <= cacheLastModified) {
                     Message.verbose("\t"+getName()+": revision in cache (not updated): "+resolvedMrid);
                     return searchedRmr(rmr);
                 } else {
