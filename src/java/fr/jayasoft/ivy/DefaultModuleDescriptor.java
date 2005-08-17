@@ -41,7 +41,7 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
     
 	private ModuleRevisionId _revId;
 	private ModuleRevisionId _resolvedRevId;
-	private String _status;
+	private String _status = Status.DEFAULT_STATUS;
 	private Date _publicationDate;
 	private Date _resolvedPublicationDate;
 	private List _dependencies = new ArrayList();
@@ -60,7 +60,10 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
     
     public DefaultModuleDescriptor(ModuleRevisionId id, String status, Date pubDate, boolean isDefault) {
         if (id == null) {
-            throw new NullPointerException("null module reivsion id not allowed");
+            throw new NullPointerException("null module revision id not allowed");
+        }
+        if (status == null) {
+            throw new NullPointerException("null status not allowed");
         }
         _revId = id;
         _resolvedRevId = id;
