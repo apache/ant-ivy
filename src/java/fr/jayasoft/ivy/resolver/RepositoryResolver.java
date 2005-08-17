@@ -78,6 +78,9 @@ public class RepositoryResolver extends AbstractResourceResolver {
                 ResolvedResource found = (ResolvedResource)strategy.findLatest(rress, date); 
                 if (found == null) {
                     Message.debug("\t"+name+": no resource found for "+mrid+": pattern="+pattern);                    
+                } else if (!found.getResource().exists()) {
+                    Message.debug("\t"+name+": resource not reachable for "+mrid+": res="+res);
+                    return null; 
                 }
                 return found;
             } else {
