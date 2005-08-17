@@ -79,7 +79,7 @@ public class IvyConfigure extends IvyTask {
         } catch (Exception ex) {
             throw new BuildException("impossible to load ivy default properties file: "+ex.getMessage(), ex);
         }
-        Message.init(new AntMessageImpl(getProject()));
+        ensureMessageInitialised();
         Ivy ivy = new Ivy();
         try {
             configureURLHandler();
@@ -111,6 +111,7 @@ public class IvyConfigure extends IvyTask {
             throw new BuildException("impossible to configure ivy with given file: "+ex.getMessage(), ex);
         }
     }
+
     private void loadDefaultProperties() {
         Property prop = new Property() {
             public void execute() throws BuildException {

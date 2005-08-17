@@ -11,6 +11,7 @@ import java.util.Date;
 
 import fr.jayasoft.ivy.Ivy;
 import fr.jayasoft.ivy.ModuleDescriptor;
+import fr.jayasoft.ivy.util.Message;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
@@ -36,8 +37,10 @@ public class IvyTask extends Task {
     }
     
     protected Ivy getIvyInstance() {
+        ensureMessageInitialised();
         Object reference = getProject().getReference("ivy.instance");
         if (reference == null) {
+            Message.verbose("no ivy instance found: auto configuring ivy");
             IvyConfigure configure = new IvyConfigure();
             configure.setProject(getProject());
             configure.execute();
@@ -52,6 +55,11 @@ public class IvyTask extends Task {
         return (Ivy)reference;
     }
 
+    protected void ensureMessageInitialised() {
+        if (!Message.isInitialised()) {
+            Message.init(new AntMessageImpl(getProject()));
+        }
+    }
     protected void setIvyInstance(Ivy ivy) {
         getProject().addReference("ivy.instance", ivy);
     }
@@ -61,8 +69,10 @@ public class IvyTask extends Task {
     }
     
     protected void ensureResolved(boolean haltOnFailure) {
+        ensureMessageInitialised();
         Object reference = getProject().getReference("ivy.resolved.descriptor");
         if (reference == null) {
+            Message.verbose("no resolved descriptor found: launching default resolve");
             IvyResolve resolve = new IvyResolve();
             resolve.setProject(getProject());
             resolve.setHaltonfailure(haltOnFailure);
@@ -113,14 +123,26 @@ public class IvyTask extends Task {
         if (value == null) {
             return getProperty(ivy, name);
         } else {
-            return ivy.substitute(value);
+            value = ivy.substitute(value);
+            Message.debug("parameter found as attribute value: "+name+"="+value);
+            return value;
         }
     }
     
     protected String getProperty(Ivy ivy, String name) {        
-        String val =  ivy.getVariable(name);
-        val = val == null ? getProject().getProperty(name) : val;
-        return val == null ? null : ivy.substitute(val);
+        String val =  ivy.getVariable(name);        
+        if (val == null) {
+            val = ivy.substitute(getProject().getProperty(name));
+            if (val != null) {
+                Message.debug("parameter found as ant project property: "+name+"="+val);
+            } else {
+                Message.debug("parameter not found: "+name);
+            }
+        } else {
+            val = ivy.substitute(val);
+            Message.debug("parameter found as ivy variable: "+name+"="+val);
+        }
+        return val;
     }
     
 }
