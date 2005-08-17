@@ -33,7 +33,7 @@ public abstract class XMLHelper {
     private static boolean _canUseSchemaValidation = true;
 
     static {
-        // _factory.setNamespaceAware(true);
+        _validatingFactory.setNamespaceAware(true);
         _validatingFactory.setValidating(true);
     }
 
