@@ -103,8 +103,11 @@ public class IvyCachePath extends IvyTask {
             _cache = ivy.getDefaultCache();
         }
         
-        if (_organisation == null || _module == null) {
-            throw new BuildException("no module id provided for ivy path: either call resolve, give paramaters to ivy:retrieve, or provide ivy.module and ivy.organisation properties");
+        if (_organisation == null) {
+            throw new BuildException("no organisation provided for ivy cachepath: It can either be set explicitely via the attribute 'organisation' or via 'ivy.organisation' property or a prior call to <resolve/>");
+        }
+        if (_module == null) {
+            throw new BuildException("no module name provided for ivy cachepath: It can either be set explicitely via the attribute 'module' or via 'ivy.module' property or a prior call to <resolve/>");
         }
         _artifactFilter = FilterHelper.getArtifactTypeFilter(_type);
         

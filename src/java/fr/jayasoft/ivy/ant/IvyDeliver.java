@@ -196,8 +196,14 @@ public class IvyDeliver extends IvyTask {
                 _deliveryList = getProject().resolveFile(ivy.substitute(deliveryListPath));
             }
         }
-        if (_module == null || _organisation == null || _revision == null) {
-            throw new BuildException("empty or incomplete module revision id provided for deliver: either call resolve, give paramaters to deliver, or provide ivy.module, ivy.organisation and ivy.revision properties");
+        if (_organisation == null) {
+            throw new BuildException("no organisation provided for ivy deliver task: It can either be set explicitely via the attribute 'organisation' or via 'ivy.organisation' property or a prior call to <resolve/>");
+        }
+        if (_module == null) {
+            throw new BuildException("no module name provided for ivy deliver task: It can either be set explicitely via the attribute 'module' or via 'ivy.module' property or a prior call to <resolve/>");
+        }
+        if (_revision == null) {
+            throw new BuildException("no module revision provided for ivy deliver task: It can either be set explicitely via the attribute 'revision' or via 'ivy.revision' property or a prior call to <resolve/>");
         }
         Date pubdate = getPubDate(_pubdate, new Date());
         if (_pubRevision == null) {

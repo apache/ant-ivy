@@ -111,8 +111,11 @@ public class IvyReport extends IvyTask {
         if (!_todir.isDirectory()) {
             throw new BuildException("destination directory should be a directory !");
         }
-        if (_organisation == null || _module == null) {
-            throw new BuildException("no module id provided for retrieve: either call resolve, give paramaters to ivy:retrieve, or provide ivy.module and ivy.organisation properties");
+        if (_organisation == null) {
+            throw new BuildException("no organisation provided for ivy report task: It can either be set explicitely via the attribute 'organisation' or via 'ivy.organisation' property or a prior call to <resolve/>");
+        }
+        if (_module == null) {
+            throw new BuildException("no module name provided for ivy report task: It can either be set explicitely via the attribute 'module' or via 'ivy.module' property or a prior call to <resolve/>");
         }
         try {
             String[] confs = splitConfs(_conf);

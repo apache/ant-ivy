@@ -136,8 +136,14 @@ public class IvyPublish extends IvyTask {
             _srcivypattern = _artifactspattern;
         }
         _status = getProperty(_status, ivy, "ivy.status");
-        if (_module == null || _organisation == null || _revision == null) {
-            throw new BuildException("empty or incomplete module revision id provided for publish: either call resolve, give paramaters to publish, or provide ivy.module, ivy.organisation and ivy.revision properties");
+        if (_organisation == null) {
+            throw new BuildException("no organisation provided for ivy publish task: It can either be set explicitely via the attribute 'organisation' or via 'ivy.organisation' property or a prior call to <resolve/>");
+        }
+        if (_module == null) {
+            throw new BuildException("no module name provided for ivy publish task: It can either be set explicitely via the attribute 'module' or via 'ivy.module' property or a prior call to <resolve/>");
+        }
+        if (_revision == null) {
+            throw new BuildException("no module revision provided for ivy publish task: It can either be set explicitely via the attribute 'revision' or via 'ivy.revision' property or a prior call to <resolve/>");
         }
         if (_artifactspattern == null) {
             throw new BuildException("no artifacts pattern: either provide it through parameter or through ivy.publish.src.artifacts.pattern property");
