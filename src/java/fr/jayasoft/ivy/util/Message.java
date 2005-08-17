@@ -36,6 +36,10 @@ public class Message {
         _impl = impl;
         showInfo();
     }
+    
+    public static boolean isInitialised() {
+        return _impl != null;
+    }
 
     private static void showInfo() {
         Properties props = new Properties();
