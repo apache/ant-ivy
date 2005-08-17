@@ -175,17 +175,17 @@
 <xsl:template name="confs">
     <xsl:param name="configurations"/>
     
-    <xsl:if test="contains($configurations, ', ')">
+    <xsl:if test="contains($configurations, ',')">
       <xsl:call-template name="conf">
-        <xsl:with-param name="conf" select="substring-before($configurations,', ')"/>
+        <xsl:with-param name="conf" select="normalize-space(substring-before($configurations,','))"/>
       </xsl:call-template>
       <xsl:call-template name="confs">
-        <xsl:with-param name="configurations" select="substring-after($configurations,', ')"/>
+        <xsl:with-param name="configurations" select="substring-after($configurations,',')"/>
       </xsl:call-template>
     </xsl:if>
-    <xsl:if test="not(contains($configurations, ', '))">
+    <xsl:if test="not(contains($configurations, ','))">
       <xsl:call-template name="conf">
-        <xsl:with-param name="conf" select="$configurations"/>
+        <xsl:with-param name="conf" select="normalize-space($configurations)"/>
       </xsl:call-template>
     </xsl:if>
 </xsl:template>
