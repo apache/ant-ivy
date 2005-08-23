@@ -12,4 +12,5 @@
 	<taskdef name="var" classname="fr.jayasoft.ivy.ant.IvyVar"/>
 	<taskdef name="check" classname="fr.jayasoft.ivy.ant.IvyCheck"/>
 	<taskdef name="artifactproperty" classname="fr.jayasoft.ivy.ant.IvyArtifactProperty"/>
+	<taskdef name="buildlist" classname="fr.jayasoft.ivy.ant.IvyBuildList"/>
 </antlib>
