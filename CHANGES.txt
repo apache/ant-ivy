@@ -1,3 +1,4 @@
+- new buildlist task: calculate order of dependencies of subprojects for easy multi-projects builds (IVY-69)
 - accept organization as token (IVY-55)
 - added type filtering mechanism on resolve task (IVY-45)
 - detect and warn about resolver using ivy cache as repository (IVY-53)
