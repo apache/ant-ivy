@@ -29,6 +29,7 @@ public class IvyBuildList extends IvyTask {
     private List _buildFiles = new ArrayList(); // List (FileSet)
     private String _reference;
     private boolean _haltOnError = true;
+    private boolean _skipBuildWithoutIvy = false;
     private String _ivyFilePath;
     
 
@@ -67,16 +68,27 @@ public class IvyBuildList extends IvyTask {
             for (int i = 0; i < builds.length; i++) {
                 File buildFile = new File(ds.getBasedir(), builds[i]);
                 File ivyFile = getIvyFileFor(buildFile);
-                try {
-                    ModuleDescriptor md = XmlModuleDescriptorParser.parseDescriptor(getIvyInstance(), ivyFile.toURL(), isValidate());
-                    buildFiles.put(md, buildFile);
-                    mds.add(md);
-                } catch (Exception ex) {
-                    if (_haltOnError) {
-                        throw new BuildException("impossible to parse ivy file for "+buildFile+": ivyfile="+ivyFile+" exception="+ex.getMessage(), ex);
+                if (!ivyFile.exists()) {
+                    if (_skipBuildWithoutIvy) {
+                        Message.debug("skipping "+buildFile+": ivy file "+ivyFile+" doesn't exist");
                     } else {
-                        Message.warn("impossible to parse ivy file for "+buildFile+": ivyfile="+ivyFile+" exception="+ex.getMessage());
+                        Message.verbose("no ivy file for "+buildFile+": ivyfile="+ivyFile+": adding it at the beginning of the path");
+                        Message.verbose("\t(set skipbuildwithoutivy to true if you don't want this file to be added to the path)");
                         independent.add(buildFile);
+                    }
+                } else {
+                    try {
+                        ModuleDescriptor md = XmlModuleDescriptorParser.parseDescriptor(getIvyInstance(), ivyFile.toURL(), isValidate());
+                        buildFiles.put(md, buildFile);
+                        mds.add(md);
+                    } catch (Exception ex) {
+                        if (_haltOnError) {
+                            throw new BuildException("impossible to parse ivy file for "+buildFile+": ivyfile="+ivyFile+" exception="+ex.getMessage(), ex);
+                        } else {
+                            Message.warn("impossible to parse ivy file for "+buildFile+": ivyfile="+ivyFile+" exception="+ex.getMessage());
+                            Message.info("\t=> adding it at the beginning of the path");
+                            independent.add(buildFile);
+                        }
                     }
                 }
             }
@@ -125,6 +137,14 @@ public class IvyBuildList extends IvyTask {
 
     public void setIvyfilepath(String ivyFilePath) {
         _ivyFilePath = ivyFilePath;
+    }
+
+    public boolean isSkipbuildwithoutivy() {
+        return _skipBuildWithoutIvy;
+    }
+
+    public void setSkipbuildwithoutivy(boolean skipBuildFilesWithoutIvy) {
+        _skipBuildWithoutIvy = skipBuildFilesWithoutIvy;
     }
 
 }
