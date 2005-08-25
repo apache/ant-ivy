@@ -41,8 +41,8 @@ public class IvyBuildListTest extends TestCase {
         assertEquals(3, files.length);
         
         assertEquals(new File("test/buildlist/B/build.xml").getAbsolutePath(), new File(files[0]).getAbsolutePath());
-        assertEquals(new File("test/buildlist/C/build.xml").getAbsolutePath(), new File(files[0]).getAbsolutePath());
-        assertEquals(new File("test/buildlist/A/build.xml").getAbsolutePath(), new File(files[0]).getAbsolutePath());
+        assertEquals(new File("test/buildlist/C/build.xml").getAbsolutePath(), new File(files[1]).getAbsolutePath());
+        assertEquals(new File("test/buildlist/A/build.xml").getAbsolutePath(), new File(files[2]).getAbsolutePath());
     }
 
 }
