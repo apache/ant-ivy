@@ -118,7 +118,7 @@ public class Ivy implements TransferListener {
 
     private boolean _repositoriesConfigured;
 
-    private boolean _useRemoteConfig = true;
+    private boolean _useRemoteConfig = false;
     
     public Ivy() {
     	String ivyTypeDefs = System.getProperty("ivy.typedef.files");
@@ -181,7 +181,7 @@ public class Ivy implements TransferListener {
             boolean configured = false;
             if (_useRemoteConfig && remote) {
                 try {
-                    URL url = new URL("http://ivy.jayasoft.org/repository.properties");
+                    URL url = new URL("http://www.jayasoft.org/ivy/repository.properties");
                     Message.verbose("configuring repositories with "+url);
                     props.load(URLHandlerRegistry.getDefault().openStream(url));
                     configured = true;
