@@ -1,0 +1,17 @@
+<ivy-module version="1.0">
+    <info 
+        organisation="jayasoft"
+        module="list"
+        status="integration"/>
+    <configurations>
+      <conf name="core"/>
+      <conf name="standalone" extends="core"/>
+    </configurations>
+    <publications>
+      <artifact name="list" type="jar" conf="core" />
+    </publications>
+    <dependencies>
+      <dependency name="version" rev="latest.integration" conf="core->default" />
+      <dependency org="apache" name="commons-cli" rev="1.0" conf="standalone->default" />
+    </dependencies>
+</ivy-module>

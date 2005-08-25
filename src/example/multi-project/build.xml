@@ -1,0 +1,29 @@
+<project name="all" 
+         xmlns:ivy="antlib:fr.jayasoft.ivy.ant">
+         
+         
+  <target name="buildlist"> 
+    <ivy:buildlist reference="build-path">
+      <fileset dir="projects" includes="**/build.xml"/>
+    </ivy:buildlist>
+  </target>
+  
+  <target name="init" depends="buildlist" description="init all projects">
+    <subant target="new-version" buildpathref="build-path" />
+  </target>
+
+  <target name="publish-all" depends="buildlist" description="compile, jar and publish all projects in the right order">
+    <subant target="publish" buildpathref="build-path" />
+  </target>
+
+  <target name="clean-all" depends="buildlist" description="clean all projects">
+    <subant target="clean" buildpathref="build-path" />
+  </target>
+  
+  <target name="clean" depends="clean-all" description="clean tutorial: delete repository, ivy cache, and all projects">
+    <delete dir="repository"/>
+    <delete dir="ivy-cache"/>
+  </target>
+  
+  
+</project>

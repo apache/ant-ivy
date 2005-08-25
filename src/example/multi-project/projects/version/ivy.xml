@@ -1,0 +1,6 @@
+<ivy-module version="1.0">
+    <info 
+        organisation="jayasoft"
+        module="version"
+        status="integration"/>
+</ivy-module>

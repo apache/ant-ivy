@@ -1,0 +1,12 @@
+<ivy-module version="1.0">
+    <info 
+        organisation="jayasoft"
+        module="console"
+        status="integration"/>
+    <dependencies>
+      <dependency name="version" rev="latest.integration" conf="default" />
+      <dependency name="list" rev="latest.integration" conf="default->standalone" />
+      <dependency name="find" rev="latest.integration" conf="default->standalone" />
+      <dependency name="sizewhere" rev="latest.integration" conf="default->standalone" />
+    </dependencies>
+</ivy-module>
