@@ -26,7 +26,7 @@ public class Message {
     /** Message priority of "debug". */
     public static final int MSG_DEBUG = 4;
 
-    private static MessageImpl _impl = new DefaultMessageImpl(2);
+    private static MessageImpl _impl = null;
 
     private static StringBuffer _problems = new StringBuffer();
     
@@ -104,7 +104,11 @@ public class Message {
 
     public static void progress() {
         if (_showProgress) {
-            _impl.progress();
+            if (_impl != null) {
+                _impl.progress();
+            } else {
+                System.out.println(".");
+            }
         }
     }
 
@@ -114,7 +118,9 @@ public class Message {
 
     public static void endProgress(String msg) {
         if (_showProgress) {
-            _impl.endProgress(msg);
+            if (_impl != null) {
+                _impl.endProgress(msg);
+            }
         }
     }
 
