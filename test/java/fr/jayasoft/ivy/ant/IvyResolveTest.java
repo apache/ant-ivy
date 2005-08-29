@@ -57,6 +57,17 @@ public class IvyResolveTest extends TestCase {
         assertTrue(getIvy().getArchiveFileInCache(_cache, "org1", "mod1.2", "2.0", "mod1.2", "jar", "jar").exists());
     }
 
+    public void testDepsChanged() throws Exception {
+        _resolve.setFile(new File("test/java/fr/jayasoft/ivy/ant/ivy-simple.xml"));
+        _resolve.execute();
+        
+		assertEquals("true", getIvy().getVariable("ivy.deps.changed"));
+
+		_resolve.execute();
+        
+		assertEquals("false", getIvy().getVariable("ivy.deps.changed"));
+    }
+
     public void testDouble() throws Exception {
         _resolve.setFile(new File("test/java/fr/jayasoft/ivy/ant/ivy-simple.xml"));
         _resolve.execute();

@@ -5,7 +5,9 @@
  */
 package fr.jayasoft.ivy.report;
 
+import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -15,6 +17,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import fr.jayasoft.ivy.Artifact;
 import fr.jayasoft.ivy.Ivy;
@@ -23,6 +26,7 @@ import fr.jayasoft.ivy.ModuleDescriptor;
 import fr.jayasoft.ivy.ModuleId;
 import fr.jayasoft.ivy.ModuleRevisionId;
 import fr.jayasoft.ivy.util.Message;
+import fr.jayasoft.ivy.xml.XmlReportParser;
 
 /**
  * @author x.hanin
@@ -38,15 +42,44 @@ public class ConfigurationResolveReport {
 	private Ivy _ivy;
 	private Map _modulesIdsMap = new LinkedHashMap();
 	private List _modulesIds;
+	private List _previousDeps;
 
-	public ConfigurationResolveReport(Ivy ivy, ModuleDescriptor md, String conf, Date date) {
+	public ConfigurationResolveReport(Ivy ivy, ModuleDescriptor md, String conf, Date date, File cache) {
 		_ivy = ivy;
     	_md = md;
     	_conf = conf;
     	_date = date;
-    }
 
-    public void addDependency(IvyNode node) {
+		// parse previous deps from previous report file if any
+        File previousReportFile = new File(cache, XmlReportOutputter.getReportFileName(md.getModuleRevisionId().getModuleId(), conf));
+		if (previousReportFile.exists()) {
+			try {
+				_previousDeps = Arrays.asList(new XmlReportParser().getDependencyRevisionIds(md.getModuleRevisionId().getModuleId(), conf, cache));
+			} catch (Exception e) {
+				_previousDeps = null;
+			}
+        } else {
+			_previousDeps = null;
+        }
+    }
+	
+	public boolean hasChanged() {
+		if (_previousDeps == null) {
+			return true;
+		}
+		return !new HashSet(_previousDeps).equals(getModuleRevisionIds());
+	}
+
+    private Set getModuleRevisionIds() {
+		Set mrids = new HashSet();
+		for (Iterator iter = _dependencies.values().iterator(); iter.hasNext();) {
+			IvyNode node = (IvyNode) iter.next();
+			mrids.add(node.getResolvedId());
+		}
+		return mrids;
+	}
+
+	public void addDependency(IvyNode node) {
         _dependencies.put(node.getId(), node);
         _dependencies.put(node.getResolvedId(), node);
         _dependencyReports.put(node, Collections.EMPTY_LIST);        

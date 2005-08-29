@@ -623,7 +623,7 @@ public class Ivy implements TransferListener {
             Message.info("\tconfs: "+Arrays.asList(confs));
             Message.verbose("\tvalidate = "+validate);
             ResolveReport report = new ResolveReport(md);
-            
+
             // resolve dependencies
             IvyNode[] dependencies = getDependencies(md, confs, cache, date, report, validate);
             
@@ -774,11 +774,12 @@ public class Ivy implements TransferListener {
                 if (report != null) {
                     confReport = report.getConfigurationReport(confs[i]);
                     if (confReport == null) {
-                        confReport = new ConfigurationResolveReport(this, md, confs[i], reportDate);
+                        confReport = new ConfigurationResolveReport(this, md, confs[i], reportDate, cache);
                         report.addReport(confs[i], confReport);
                     }
                 }
-                ResolveData data = new ResolveData(this, cache, date, confReport, validate, dependenciesMap);
+				
+				ResolveData data = new ResolveData(this, cache, date, confReport, validate, dependenciesMap);
                 IvyNode node = new IvyNode(data, md, confs[i]);
                 node.setRootModuleConf(confs[i]);
                 fetchDependencies(node, confs[i], false);

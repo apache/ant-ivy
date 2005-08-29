@@ -120,6 +120,8 @@ public class IvyResolve extends IvyTask {
             ivy.setVariable("ivy.module", md.getModuleRevisionId().getName());
             getProject().setProperty("ivy.revision", md.getResolvedModuleRevisionId().getRevision());
             ivy.setVariable("ivy.revision", md.getResolvedModuleRevisionId().getRevision());
+            getProject().setProperty("ivy.deps.changed", String.valueOf(report.hasChanged()));
+            ivy.setVariable("ivy.deps.changed", String.valueOf(report.hasChanged()));
             if (_conf.trim().equals("*")) {
                 getProject().setProperty("ivy.resolved.configurations", mergeConfs(md.getConfigurationsNames()));
                 ivy.setVariable("ivy.resolved.configurations", mergeConfs(md.getConfigurationsNames()));

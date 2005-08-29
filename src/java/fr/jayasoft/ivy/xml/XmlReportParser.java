@@ -27,20 +27,25 @@ import fr.jayasoft.ivy.ModuleRevisionId;
 import fr.jayasoft.ivy.report.XmlReportOutputter;
 
 public class XmlReportParser {
-    public Artifact[] getArtifacts(ModuleId moduleId, String conf, File cache) throws ParseException, IOException {
-        File report = new File(cache, XmlReportOutputter.getReportFileName(moduleId, conf));
-        if (!report.exists()) {
-            throw new IllegalStateException("no report file found for "+moduleId+" "+conf+" in "+cache+": ivy was looking for "+report);
-        }
-        final List artifacts = new ArrayList();
-        try {
+    private static class SaxXmlReportParser {
+		private List _mrids;
+		private List _artifacts;
+		private File _report;
+		SaxXmlReportParser(File report) {
+	        _artifacts = new ArrayList();
+	        _mrids = new ArrayList();
+			_report = report;
+		}
+		
+		public void parse() throws Exception {
             SAXParser saxParser = SAXParserFactory.newInstance().newSAXParser();
-            saxParser.parse(report, new DefaultHandler() {
+            saxParser.parse(_report, new DefaultHandler() {
                 private String _organisation;
                 private String _module;
                 private String _revision;
                 private Date _pubdate;
                 private boolean _skip;
+				private ModuleRevisionId _mrid;
                 public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
                     if ("module".equals(qName)) {
                         _organisation = attributes.getValue("organisation");
@@ -50,6 +55,8 @@ public class XmlReportParser {
                         if (attributes.getValue("error") != null || attributes.getValue("evicted") != null) {
                             _skip = true;
                         } else {
+	                        _mrid = ModuleRevisionId.newInstance(_organisation, _module, _revision);
+							_mrids.add(_mrid);
                             try {
                                 _pubdate = Ivy.DATE_FORMAT.parse(attributes.getValue("pubdate"));
                                 _skip = false;
@@ -68,18 +75,60 @@ public class XmlReportParser {
                         String artifactName = attributes.getValue("name");
                         String type = attributes.getValue("type");
                         String ext = attributes.getValue("ext");
-                        Artifact artifact = new DefaultArtifact(ModuleRevisionId.newInstance(_organisation, _module, _revision), _pubdate, artifactName, type, ext);
-                        artifacts.add(artifact);
+						Artifact artifact = new DefaultArtifact(_mrid, _pubdate, artifactName, type, ext);
+                        _artifacts.add(artifact);
                     }
                 }
-            });
-            return (Artifact[])artifacts.toArray(new Artifact[artifacts.size()]);
+            });			
+		}
+
+		public List getArtifacts() {
+			return _artifacts;
+		}
+		public List getModuleRevisionIds() {
+			return _mrids;
+		}
+    }
+
+	public Artifact[] getArtifacts(ModuleId moduleId, String conf, File cache) throws ParseException, IOException {
+        File report = new File(cache, XmlReportOutputter.getReportFileName(moduleId, conf));
+        if (!report.exists()) {
+            throw new IllegalStateException("no report file found for "+moduleId+" "+conf+" in "+cache+": ivy was looking for "+report);
+        }
+		return getArtifacts(report);
+    }
+
+	private Artifact[] getArtifacts(File report) throws ParseException {
+		try {
+			SaxXmlReportParser parser = new SaxXmlReportParser(report);
+			parser.parse();
+            return (Artifact[])parser.getArtifacts().toArray(new Artifact[parser.getArtifacts().size()]);
         } catch (Exception ex) {
-            ParseException pe = new ParseException("failed to parse report for "+moduleId+" "+conf+": "+ex.getMessage(), 0);
+            ParseException pe = new ParseException("failed to parse report: "+report+": "+ex.getMessage(), 0);
             pe.initCause(ex);
             throw pe;
         }
+	}
+        
+	public ModuleRevisionId[] getDependencyRevisionIds(ModuleId moduleId, String conf, File cache) throws ParseException, IOException {
+        File report = new File(cache, XmlReportOutputter.getReportFileName(moduleId, conf));
+        if (!report.exists()) {
+            throw new IllegalStateException("no report file found for "+moduleId+" "+conf+" in "+cache+": ivy was looking for "+report);
+        }
+		return getDependencyRevisionIds(report);
     }
+
+	private ModuleRevisionId[] getDependencyRevisionIds(File report) throws ParseException {
+		try {
+			SaxXmlReportParser parser = new SaxXmlReportParser(report);
+			parser.parse();
+            return (ModuleRevisionId[])parser.getModuleRevisionIds().toArray(new ModuleRevisionId[parser.getModuleRevisionIds().size()]);
+        } catch (Exception ex) {
+            ParseException pe = new ParseException("failed to parse report: "+report+": "+ex.getMessage(), 0);
+            pe.initCause(ex);
+            throw pe;
+        }
+	}
         
     
 }

@@ -77,4 +77,13 @@ public class ResolveReport {
         }
         return (ArtifactDownloadReport[])all.toArray(new ArtifactDownloadReport[all.size()]);
     }
+	public boolean hasChanged() {
+        for (Iterator iter = _confReports.values().iterator(); iter.hasNext();) {
+            ConfigurationResolveReport report = (ConfigurationResolveReport)iter.next();
+			if (report.hasChanged()) {
+				return true;
+			}
+        }
+		return false;
+	}
 }
