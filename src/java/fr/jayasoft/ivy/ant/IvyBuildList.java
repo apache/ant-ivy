@@ -9,6 +9,7 @@ package fr.jayasoft.ivy.ant;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.ListIterator;
@@ -30,6 +31,7 @@ public class IvyBuildList extends IvyTask {
     private String _reference;
     private boolean _haltOnError = true;
     private boolean _skipBuildWithoutIvy = false;
+    private boolean _reverse = false;
     private String _ivyFilePath;
     
 
@@ -100,7 +102,9 @@ public class IvyBuildList extends IvyTask {
             File buildFile = (File)iter.next();
             addBuildFile(path, buildFile);
         }
-        
+        if (isReverse()) {
+			Collections.reverse(sortedModules);
+        }
         for (ListIterator iter = sortedModules.listIterator(); iter.hasNext();) {
             ModuleDescriptor md = (ModuleDescriptor)iter.next();
             File buildFile = (File)buildFiles.get(md);
@@ -146,5 +150,15 @@ public class IvyBuildList extends IvyTask {
     public void setSkipbuildwithoutivy(boolean skipBuildFilesWithoutIvy) {
         _skipBuildWithoutIvy = skipBuildFilesWithoutIvy;
     }
+
+	public boolean isReverse() {
+		return _reverse;
+	}
+	
+
+	public void setReverse(boolean reverse) {
+		_reverse = reverse;
+	}
+	
 
 }
