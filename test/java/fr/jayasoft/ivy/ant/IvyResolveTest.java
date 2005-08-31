@@ -61,11 +61,22 @@ public class IvyResolveTest extends TestCase {
         _resolve.setFile(new File("test/java/fr/jayasoft/ivy/ant/ivy-simple.xml"));
         _resolve.execute();
         
-		assertEquals("true", getIvy().getVariable("ivy.deps.changed"));
+        assertEquals("true", getIvy().getVariable("ivy.deps.changed"));
 
-		_resolve.execute();
+        _resolve.execute();
         
-		assertEquals("false", getIvy().getVariable("ivy.deps.changed"));
+        assertEquals("false", getIvy().getVariable("ivy.deps.changed"));
+    }
+
+    public void testConflictingDepsChanged() throws Exception {
+        _resolve.setFile(new File("test/repositories/2/mod4.1/ivy-4.1.xml"));
+        _resolve.execute();
+        
+        assertEquals("true", getIvy().getVariable("ivy.deps.changed"));
+
+        _resolve.execute();
+        
+        assertEquals("false", getIvy().getVariable("ivy.deps.changed"));
     }
 
     public void testDouble() throws Exception {

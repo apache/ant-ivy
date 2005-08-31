@@ -70,11 +70,17 @@ public class ConfigurationResolveReport {
 		return !new HashSet(_previousDeps).equals(getModuleRevisionIds());
 	}
 
-    private Set getModuleRevisionIds() {
+    /**
+     * Returns all non evicted and non error dependency mrids
+     * @return all non evicted and non error dependency mrids
+     */
+    public Set getModuleRevisionIds() {
 		Set mrids = new HashSet();
 		for (Iterator iter = _dependencies.values().iterator(); iter.hasNext();) {
 			IvyNode node = (IvyNode) iter.next();
-			mrids.add(node.getResolvedId());
+            if (!node.isEvicted(getConfiguration()) && !node.hasProblem()) {
+                mrids.add(node.getResolvedId());
+            }
 		}
 		return mrids;
 	}
