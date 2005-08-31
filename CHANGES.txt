@@ -1,3 +1,4 @@
+- new ivy.deps.changed property set if there are changes since last resolve (IVY-71)
 - new buildlist task: calculate order of dependencies of subprojects for easy multi-projects builds (IVY-69)
 - accept organization as token (IVY-55)
 - added type filtering mechanism on resolve task (IVY-45)
