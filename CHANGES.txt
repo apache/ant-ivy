@@ -17,6 +17,7 @@
 - new cachefileset task: builds an ant fileset of artifacts in cache
 - publish task now uses srcivypattern for ivy files finding and for delivery
 - better debug and error messages (IVY-60 IVY-61)
+- FIX: module descriptors sort was failing in some case cases (fix by Karl Baum)
 - FIX: Ivy complains about schema directive (IVY-64)
 - FIX: 'null' status attribute in module descriptor (IVY-62)
 - FIX: report header contains incorrect link after resolve for multiple, comma-separated configurations (IVY-57)

@@ -26,7 +26,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
@@ -1292,37 +1291,9 @@ public class Ivy implements TransferListener {
     /////////////////////////////////////////////////////////////////////////
 
     public static List sortNodes(Collection nodes) {
-        /* here we want to use the sort algorithm which work on module descriptors :
-         * so we first put dependencies on a map from descriptors to dependency, then we 
-         * sort the keySet (i.e. a collection of descriptors), then we replace
-         * in the sorted list each descriptor by the corresponding dependency
-         */
-        
-        Map dependenciesMap = new LinkedHashMap();
-        List nulls = new ArrayList();
-        for (Iterator iter = nodes.iterator(); iter.hasNext();) {
-            IvyNode node = (IvyNode)iter.next();
-            if (node.getDescriptor() == null) {
-                nulls.add(node);
-            } else {
-                List n = (List)dependenciesMap.get(node.getDescriptor());
-                if (n == null) {
-                    n = new ArrayList();
-                    dependenciesMap.put(node.getDescriptor(), n);
-                }
-                n.add(node);
-            }
-        }
-        List list = sortModuleDescriptors(dependenciesMap.keySet());
-        List ret = new ArrayList((int)(list.size()*1.3+nulls.size())); //attempt to adjust the size to avoid too much list resizing
-        for (int i=0; i<list.size(); i++) {
-            ModuleDescriptor md = (ModuleDescriptor)list.get(i);
-            List n = (List)dependenciesMap.get(md);
-            ret.addAll(n);            
-        }
-        ret.addAll(0, nulls);
-        return ret;
+        return ModuleDescriptorSorter.sortNodes(nodes);
     }
+
 
     /**
      * Sorts the given ModuleDescriptors from the less dependent to the more dependent.
@@ -1332,49 +1303,9 @@ public class Ivy implements TransferListener {
      * @return a List of sorted ModuleDescriptors
      */
     public static List sortModuleDescriptors(Collection moduleDescriptors) {
-        // Note that classical Comparator do not work here, because
-        // one to one comparison is not suffisant since we only use
-        // direct dependencies and not transitive one
-        List sorted = new LinkedList();
-        
-        // we iterate over the original list reversely, so that last traversed are the first in order
-        // since we place md by default at the beginning of the result, this preserves the order
-        // if it doesn't need to be changed (no dependency relationship between mds).
-        
-        List from = new ArrayList(moduleDescriptors); // copy to be able to traverse reversely
-        
-        for (int i=from.size()-1; i>=0; i--) {
-            ModuleDescriptor md = (ModuleDescriptor)from.get(i);
-            // a list of sorted mds that should be after the current md
-            List after = new LinkedList();
-            // a list of sorted mds that should be after current md and which are not
-            List between = new LinkedList();  
-            
-            // find its place in current sorted list
-            
-            int place = 0;
-            // let's check dependency relation ship with others
-            for (ListIterator it2 = sorted.listIterator(); it2.hasNext();) {
-                ModuleDescriptor smd = (ModuleDescriptor)it2.next();
-                if (md.dependsOn(smd)) { // it depends on another, it has to be placed after
-                    place = it2.nextIndex();
-                    between.addAll(after);
-                    after = new LinkedList();
-                } else if (smd.dependsOn(md)) {
-                    after.add(smd);
-                }
-            }
-            sorted.add(place, md);
-            if (!between.isEmpty()) {
-                sorted.removeAll(between);
-                sorted.addAll(place+1-between.size(), between);
-            }
-        }
-        
-        return sorted;
+        return ModuleDescriptorSorter.sortModuleDescriptors(moduleDescriptors);   
     }
-
-
+    
     /////////////////////////////////////////////////////////////////////////
     //                         CACHE
     /////////////////////////////////////////////////////////////////////////
