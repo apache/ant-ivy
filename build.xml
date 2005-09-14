@@ -56,6 +56,14 @@
 				basedir="${classes.build.dir}"/>
 	</target>
 	
+
+	<target name="javadoc">
+		<javadoc destdir="${javadoc.build.dir}">
+			<fileset dir="${src.dir}"/>
+		</javadoc>
+	</target>
+
+		
 	<target name="test" depends="jar">
 		<path id="run.classpath">
 			<path refid="build.classpath"/>
