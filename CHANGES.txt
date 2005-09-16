@@ -1,5 +1,8 @@
-   version 1.2 - 2005-09-14
+   version 1.2a - 2005-09-14
 ===============================
+Note : version 1.2 previously published on ivy site was not the real 1.2 due to a bad release operation
+       version 1.2a should then be used instead
+       
 - new ivy.deps.changed property set if there are changes since last resolve (IVY-71)
 - new buildlist task: calculate order of dependencies of subprojects for easy multi-projects builds (IVY-69)
 - accept organization as token (IVY-55)
