@@ -14,16 +14,29 @@ import junit.framework.TestCase;
 
 /**
  * @author Xavier Hanin
- *
+ * @author baumkar
  */
 public class SortTest extends TestCase {
-
-    public void testSort() {
-        ModuleRevisionId mrid1 = ModuleRevisionId.newInstance("org", "md1", "rev1");
-        ModuleRevisionId mrid2 = ModuleRevisionId.newInstance("org", "md2", "rev2");
-        ModuleRevisionId mrid3 = ModuleRevisionId.newInstance("org", "md3", "rev3");
-        ModuleRevisionId mrid4 = ModuleRevisionId.newInstance("org", "md4", "rev4");
-        DefaultModuleDescriptor[] md = new DefaultModuleDescriptor[] {
+    
+    private ModuleRevisionId mrid1;
+    private ModuleRevisionId mrid2;
+    private ModuleRevisionId mrid3;
+    private ModuleRevisionId mrid4;
+    private DefaultModuleDescriptor[] md;
+    List toSort;
+    
+    
+    
+    /* (non-Javadoc)
+     * @see junit.framework.TestCase#setUp()
+     */
+    protected void setUp() throws Exception {
+        super.setUp();
+        mrid1 = ModuleRevisionId.newInstance("org", "md1", "rev1");
+        mrid2 = ModuleRevisionId.newInstance("org", "md2", "rev2");
+        mrid3 = ModuleRevisionId.newInstance("org", "md3", "rev3");
+        mrid4 = ModuleRevisionId.newInstance("org", "md4", "rev4");
+        md = new DefaultModuleDescriptor[] {
             new DefaultModuleDescriptor(mrid1, "integration", new Date()),
             new DefaultModuleDescriptor(mrid2, "integration", new Date()),
             new DefaultModuleDescriptor(mrid3, "integration", new Date()),
@@ -33,8 +46,9 @@ public class SortTest extends TestCase {
         md[2].addDependency(new DefaultDependencyDescriptor(mrid2, false));
         md[3].addDependency(new DefaultDependencyDescriptor(mrid3, false));
         
-        List toSort;
-        
+    }
+
+    public void testSort() {
         toSort = new ArrayList(Arrays.asList(new Object[] {md[0], md[2], md[1], md[3]}));
         assertSorted(md, Ivy.sortModuleDescriptors(toSort));
         toSort = new ArrayList(Arrays.asList(new Object[] {md[0], md[1], md[2], md[3]}));
@@ -56,5 +70,31 @@ public class SortTest extends TestCase {
         for (int i = 0; i < md.length; i++) {
             assertEquals(md[i], sorted.get(i));
         }
+    }
+    
+    public void testCircularDependency() {
+        md[0].addDependency(new DefaultDependencyDescriptor(mrid4, false));
+        toSort = new ArrayList(Arrays.asList(new Object[] {md[0], md[2], md[1], md[3]}));
+        try {
+            Ivy.sortModuleDescriptors(toSort);
+        } catch (CircularDependencyException e) {
+            //successfull
+            assertEquals("Wrong dependency graph message", "org/md1-rev1->org/md4-rev4->org/md3-rev3->org/md2-rev2->org/md1-rev1", e.getMessage());
+            return;
+        }
+        assertTrue("Should have thrown circular dependency exception", false);
+    }
+    
+    public void testCircularDependency2() {
+        md[1].addDependency(new DefaultDependencyDescriptor(mrid3, false));
+        toSort = new ArrayList(Arrays.asList(new Object[] {md[0], md[2], md[1], md[3]}));
+        try {
+            Ivy.sortModuleDescriptors(toSort);
+        } catch (CircularDependencyException e) {
+            //successfull
+            assertEquals("Wrong dependency graph message", "org/md3-rev3->org/md2-rev2->org/md3-rev3", e.getMessage());
+            return;
+        }
+        assertTrue("Should have thrown circular dependency exception", false);
     }
 }

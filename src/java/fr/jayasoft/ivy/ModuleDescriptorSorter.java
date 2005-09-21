@@ -56,8 +56,9 @@ class ModuleDescriptorSorter {
      * ModuleDescriptors depending directly on it.
      * @param moduleDescriptors a Collection of ModuleDescriptor to sort
      * @return a List of sorted ModuleDescriptors
+     * @throws CircularDependencyException if a circular dependency exists
      */
-    public static List sortModuleDescriptors(Collection moduleDescriptors) {
+    public static List sortModuleDescriptors(Collection moduleDescriptors) throws CircularDependencyException {
         return new ModuleDescriptorSorter(moduleDescriptors).sortModuleDescriptors();   
     }
     
@@ -74,8 +75,9 @@ class ModuleDescriptorSorter {
     /**
      * Iterates over all modules calling sortModuleDescriptorsHelp.
      * @return sorted module
+     * @throws CircularDependencyException
      */
-    public List sortModuleDescriptors() {
+    public List sortModuleDescriptors() throws CircularDependencyException {
         while (moduleDescriptorsIterator.hasNext()) {
             sortModuleDescriptorsHelp((ModuleDescriptor)moduleDescriptorsIterator.next(), new Stack());
         }
@@ -88,17 +90,23 @@ class ModuleDescriptorSorter {
      * contained within set of moduleDescriptors.  Then finally adds self
      * to list of sorted.
      * @param current Current module to add to sorted list.
+     * @throws CircularDependencyException
      */
-    private void sortModuleDescriptorsHelp(ModuleDescriptor current, Stack callStack) {
+    private void sortModuleDescriptorsHelp(ModuleDescriptor current, Stack callStack) throws CircularDependencyException {
         //if already sorted return
         if (sorted.contains(current)) {
             return;
+        }
+        if (callStack.contains(current)) {
+            callStack.add(current);
+            throw new CircularDependencyException((ModuleDescriptor[])callStack.toArray(new ModuleDescriptor[0]));
         }
         DependencyDescriptor [] descriptors = current.getDependencies();
         ModuleDescriptor moduleDescriptorDependency = null;
         for (int i = 0; descriptors!=null && i < descriptors.length; i++) {
             moduleDescriptorDependency = getModuleDescriptorDependency(descriptors[i]);
-            if (moduleDescriptorDependency != null && !callStack.contains(current)) {
+            
+            if (moduleDescriptorDependency != null) {
                 callStack.push(current);
                 sortModuleDescriptorsHelp(moduleDescriptorDependency, callStack);
                 callStack.pop();
