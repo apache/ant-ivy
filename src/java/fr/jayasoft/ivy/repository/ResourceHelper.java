@@ -29,6 +29,6 @@ public class ResourceHelper {
                 return false;
             }
         }
-        return true;
+        return false;
     }
 }
