@@ -692,10 +692,14 @@ public class ResolveTest extends TestCase {
     }
     
     public void testCircular() throws Exception {
-        // mod6.3 depends on mod6.2, which itself depends on mod6.3 !
-        ResolveReport report = _ivy.resolve(new File("test/repositories/2/mod6.3/ivy-1.0.xml").toURL(),
-                null, new String[] {"default"}, _cache, null, true);
-        assertNotNull(report);
+        try {
+            // mod6.3 depends on mod6.2, which itself depends on mod6.3 !
+            ResolveReport report = _ivy.resolve(new File("test/repositories/2/mod6.3/ivy-1.0.xml").toURL(),
+                    null, new String[] {"default"}, _cache, null, true);
+            fail("should have thrown a circular dependency exception");
+        } catch (CircularDependencyException e) {
+            //successfull
+        }
     }
     
     public void testResolveDualChain() throws Exception {
