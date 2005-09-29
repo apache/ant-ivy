@@ -1,3 +1,9 @@
+- FIX: changed the place where ivy stores master ivy files in cache to not overlap
+       with dependencies one (IVY-85)
+- FIX: bug in ResourceHelper didn't let override resource easily (IVY-80)
+- FIX: throws a circular dependency exception when a circular dependency is found 
+       instead of failing silently (IVY-79)
+
    version 1.2a - 2005-09-14
 ===============================
 Note : version 1.2 previously published on ivy site was not the real 1.2 due to a bad release operation

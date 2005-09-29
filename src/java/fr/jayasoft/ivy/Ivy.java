@@ -87,6 +87,7 @@ public class Ivy implements TransferListener {
 
     private static final String DEFAULT_CACHE_ARTIFACT_PATTERN = "[organisation]/[module]/[type]s/[artifact]-[revision].[ext]";
     private static final String DEFAULT_CACHE_IVY_PATTERN = "[organisation]/[module]/ivy-[revision].xml";
+    private static final String DEFAULT_CACHE_RESOLVED_IVY_PATTERN = "resolved-[organisation]-[module]-[revision].xml";
     
     private Map _typeDefs = new HashMap();
     private Map _resolversMap = new HashMap();
@@ -106,6 +107,7 @@ public class Ivy implements TransferListener {
     private ReportOutputter[] _reportOutputters = new ReportOutputter[] {new LogReportOutputter(), new XmlReportOutputter()};
     
     private String _cacheIvyPattern = DEFAULT_CACHE_IVY_PATTERN;
+    private String _cacheResolvedIvyPattern = DEFAULT_CACHE_RESOLVED_IVY_PATTERN;
     private String _cacheArtifactPattern = DEFAULT_CACHE_ARTIFACT_PATTERN;
 
     private boolean _validate = true;
@@ -663,8 +665,8 @@ public class Ivy implements TransferListener {
                 }
             }
             
-            // produce resolved ivy conf file in cache
-            File ivyFileInCache = getIvyFileInCache(cache, md.getResolvedModuleRevisionId());
+            // produce resolved ivy file in cache
+            File ivyFileInCache = getResolvedIvyFileInCache(cache, md.getResolvedModuleRevisionId());
             try {
                 XmlModuleDescriptorUpdater.update(
                         ivySource, 
@@ -1164,7 +1166,7 @@ public class Ivy implements TransferListener {
         destIvyPattern = substitute(destIvyPattern);
         
 	    // 1) find the resolved module descriptor in cache
-	    File ivyFile = getIvyFileInCache(cache, mrid);
+	    File ivyFile = getResolvedIvyFileInCache(cache, mrid);
 	    if (!ivyFile.exists()) {
 	        throw new IllegalStateException("ivy file not found in cache for "+mrid+": please resolve dependencies before publishing ("+ivyFile+")");
 	    }
@@ -1225,7 +1227,7 @@ public class Ivy implements TransferListener {
         srcArtifactPattern = substitute(srcArtifactPattern);
         srcIvyPattern = substitute(srcIvyPattern);
         // 1) find the resolved module descriptor in cache
-        File ivyFile = getIvyFileInCache(cache, mrid);
+        File ivyFile = getResolvedIvyFileInCache(cache, mrid);
         if (!ivyFile.exists()) {
             throw new IllegalStateException("ivy file not found in cache for "+mrid+": please resolve dependencies before publishing ("+ivyFile+")");
         }
@@ -1310,6 +1312,10 @@ public class Ivy implements TransferListener {
     //                         CACHE
     /////////////////////////////////////////////////////////////////////////
     
+    public File getResolvedIvyFileInCache(File cache, ModuleRevisionId mrid) {
+        return new File(cache, IvyPatternHelper.substitute(_cacheResolvedIvyPattern, mrid.getOrganisation(), mrid.getName(), mrid.getRevision(), "ivy", "ivy", "xml"));
+    }
+
     public File getIvyFileInCache(File cache, ModuleRevisionId mrid) {
         return new File(cache, IvyPatternHelper.substitute(_cacheIvyPattern, mrid.getOrganisation(), mrid.getName(), mrid.getRevision(), "ivy", "ivy", "xml"));
     }

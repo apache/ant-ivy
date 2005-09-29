@@ -50,7 +50,7 @@ public class IvyResolveTest extends TestCase {
         _resolve.setFile(new File("test/java/fr/jayasoft/ivy/ant/ivy-simple.xml"));
         _resolve.execute();
         
-        assertTrue(getIvy().getIvyFileInCache(_cache, ModuleRevisionId.newInstance("jayasoft", "resolve-simple", "1.0")).exists());
+        assertTrue(getIvy().getResolvedIvyFileInCache(_cache, ModuleRevisionId.newInstance("jayasoft", "resolve-simple", "1.0")).exists());
         
         // dependencies
         assertTrue(getIvy().getIvyFileInCache(_cache, ModuleRevisionId.newInstance("org1", "mod1.2", "2.0")).exists());
