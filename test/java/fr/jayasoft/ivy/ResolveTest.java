@@ -75,6 +75,26 @@ public class ResolveTest extends TestCase {
         assertTrue(_ivy.getArchiveFileInCache(_cache, "org1", "mod1.2", "2.0", "mod1.2", "jar", "jar").exists());
     }
 
+    public void testFromCacheOnly() throws Exception {
+        Ivy ivy = new Ivy();
+        ivy.configure(new File("test/repositories/bugIVY-56/ivyconf.xml"));
+        
+//        ResolveReport report = ivy.resolve(new File("test/repositories/1/org1/mod1.1/ivys/ivy-1.0.xml").toURL(),
+//                null, new String[] {"*"}, _cache, null, true);
+//        // should have an error, the conf is bad and the dependency should not be found
+//        assertTrue(report.hasError());
+
+        // put necessary stuff in cache, and it should now be ok
+        File ivyfile = ivy.getIvyFileInCache(_cache, ModuleRevisionId.newInstance("org1", "mod1.2", "2.0"));
+        File art = ivy.getArchiveFileInCache(_cache, "org1", "mod1.2", "2.0", "mod1.2", "jar", "jar");
+        FileUtil.copy(ResolveTest.class.getResource("ivy-mod1.2.xml"), ivyfile, null);
+        FileUtil.copy(new File("test/repositories/1/org1/mod1.2/jars/mod1.2-2.0.jar"), art, null);
+
+        ResolveReport report = ivy.resolve(new File("test/repositories/1/org1/mod1.1/ivys/ivy-1.0.xml").toURL(),
+                null, new String[] {"*"}, _cache, null, true);
+        assertFalse(report.hasError());
+    }
+
     public void testChangeCacheLayout() throws Exception {
         Ivy ivy = new Ivy();
         ivy.configure(new File("test/repositories/ivyconf.xml"));

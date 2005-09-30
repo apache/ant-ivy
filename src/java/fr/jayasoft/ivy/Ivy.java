@@ -966,6 +966,10 @@ public class Ivy implements TransferListener {
                 try {
                     ModuleDescriptor depMD = XmlModuleDescriptorParser.parseDescriptor(this, ivyFile.toURL(), validate);
                     DependencyResolver resolver = (DependencyResolver)_resolversMap.get(depMD.getResolverName());
+                    if (resolver == null) {
+                        Message.debug("\tresolver not found: "+depMD.getResolverName()+" => trying to use default one for "+mrid);                                    
+                        resolver = getDefaultResolver();
+                    }
                     if (resolver != null) {
                         Message.debug("\tfound ivy file in cache for "+mrid+": "+ivyFile);
                         return new DefaultModuleRevision(resolver, depMD, false, false);

@@ -1,3 +1,4 @@
+- FIX: ivy is now able to use simple ivy files in cache (doesn't need resolver info, use default one if no resolver is given) (IVY-86)
 - FIX: private conf not accessible from other modules (IVY-76)
 - FIX: root module configurations isolation bug fixed (IVY-84)
 - FIX: changed the place where ivy stores master ivy files in cache to not overlap
