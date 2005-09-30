@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml-stylesheet type="text/xsl" href="/ivy/ivy-doc.xsl"?>
+<ivy-module version="1.0">
+    <info organisation="test" module="b" revision="1.0.1" status="integration" publication="20050926033111"/>
+    <configurations>
+		<conf name="default"/>
+		<conf name="global" extends="default" visibility="private"/>
+		<conf name="buildtime" visibility="private"/>
+		<conf name="test" visibility="private"/>
+    </configurations>    
+    <publications>
+	<artifact name="b" type="txt" conf="default"/>
+	<artifact name="b-bt" type="txt" conf="buildtime"/>
+    </publications>
+    <dependencies defaultconf="default;buildtime">
+	<dependency org="test" name="a" rev="1.0.1"/>
+   </dependencies>
+</ivy-module>

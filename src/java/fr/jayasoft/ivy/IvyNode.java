@@ -969,6 +969,9 @@ public class IvyNode {
     
 
     public void setRootModuleConf(String rootModuleConf) {
+        if (_rootModuleConf != null) {
+            _confsToFetch.clear(); // we change of root module conf => we discard all confs to fetch
+        }
         if (rootModuleConf != null && rootModuleConf.equals(_rootModuleConf)) {
             _selected.put(new ModuleIdConf(_id.getModuleId(), rootModuleConf), Collections.singleton(this));
         }
@@ -1001,5 +1004,9 @@ public class IvyNode {
             }
         }
         return isCircular;
+    }
+
+    public boolean isFetched(String conf) {
+        return _fetchedConfigurations.contains(conf);
     }
 }

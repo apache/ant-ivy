@@ -839,6 +839,7 @@ public class Ivy implements TransferListener {
     
     private void fetchDependencies(IvyNode node, String conf, boolean shouldBePublic) {
         resolveConflict(node, node.getParent(), Collections.EMPTY_SET);
+        
         if (node.loadData(conf)) {
             node = node.getRealNode(); // if data loading discarded the node, get the real one
             resolveConflict(node, node.getParent(), Collections.EMPTY_SET);
@@ -905,7 +906,7 @@ public class Ivy implements TransferListener {
 
 
     private void resolveConflict(IvyNode node, IvyNode parent, Collection toevict) {
-        if (parent == null) {
+        if (parent == null || node == parent) {
             return;
         }
         if (node.getId().equals(node.getResolvedId()) && parent.getResolvedRevisions(node.getModuleId(), node.getRootModuleConf()).contains(node.getId())) {

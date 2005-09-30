@@ -6,6 +6,7 @@
 package fr.jayasoft.ivy;
 
 import java.io.File;
+import java.util.Date;
 
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
@@ -17,6 +18,7 @@ import org.apache.tools.ant.taskdefs.Delete;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
+import fr.jayasoft.ivy.report.ArtifactDownloadReport;
 import fr.jayasoft.ivy.report.ConfigurationResolveReport;
 import fr.jayasoft.ivy.report.ResolveReport;
 import fr.jayasoft.ivy.report.XmlReportOutputter;
@@ -819,4 +821,171 @@ public class ResolveTest extends TestCase {
         assertTrue(depIvyFileInCache.exists());
         assertTrue(!ivy.getArchiveFileInCache(_cache, "org1", "mod1.1", "1.0", "mod1.1", "jar", "jar").exists());
     }
+    
+    ///////////////////////////////////////////////////////////
+    // here comes a series of test provided by Chris Rudd
+    // about configuration mapping and eviction
+    ///////////////////////////////////////////////////////////
+    
+    public void testConfigurationMapping1() throws Exception {
+        Ivy ivy = new Ivy();
+        ivy.configure(new File("test/repositories/IVY-84/ivyconf.xml"));
+        ResolveReport report = ivy.resolve(new File("test/repositories/IVY-84/tests/1/ivy.xml").toURL(),
+                null, new String[] {"*"}, _cache, null, true);
+        
+        ModuleDescriptor md = report.getModuleDescriptor();
+        
+        ConfigurationResolveReport conf = report.getConfigurationReport("default");
+        
+        assertContainsArtifact("test", "a", "1.0.2", "a", "txt", "txt", conf);
+        assertDoesntContainArtifact("test", "a", "1.0.2", "a-bt", "txt", "txt", conf);        
+        assertContainsArtifact("test", "b", "1.0.2", "b", "txt", "txt", conf);
+        assertDoesntContainArtifact("test", "b", "1.0.2", "b-bt", "txt", "txt", conf);        
+        assertContainsArtifact("test", "c", "1.0.2", "c", "txt", "txt", conf);
+        assertDoesntContainArtifact("test", "c", "1.0.2", "c-bt", "txt", "txt", conf);        
+    }
+
+    public void testConfigurationMapping2() throws Exception {
+        Ivy ivy = new Ivy();
+        ivy.configure(new File("test/repositories/IVY-84/ivyconf.xml"));
+        ResolveReport report = ivy.resolve(new File("test/repositories/IVY-84/tests/2/ivy.xml").toURL(),
+                null, new String[] {"*"}, _cache, null, true);
+        
+        ModuleDescriptor md = report.getModuleDescriptor();
+        
+        ConfigurationResolveReport conf = report.getConfigurationReport("default");
+        
+        assertContainsArtifact("test", "a", "1.0.1", "a", "txt", "txt", conf);
+        assertDoesntContainArtifact("test", "a", "1.0.1", "a-bt", "txt", "txt", conf);        
+        assertContainsArtifact("test", "b", "1.0.1", "b", "txt", "txt", conf);
+        assertDoesntContainArtifact("test", "b", "1.0.1", "b-bt", "txt", "txt", conf);        
+        assertContainsArtifact("test", "c", "1.0.1", "c", "txt", "txt", conf);
+        assertDoesntContainArtifact("test", "c", "1.0.1", "c-bt", "txt", "txt", conf);        
+    }
+
+    public void testConfigurationMapping3() throws Exception {
+        Ivy ivy = new Ivy();
+        ivy.configure(new File("test/repositories/IVY-84/ivyconf.xml"));
+        ResolveReport report = ivy.resolve(new File("test/repositories/IVY-84/tests/3/ivy.xml").toURL(),
+                null, new String[] {"buildtime"}, _cache, null, true);
+        
+        ModuleDescriptor md = report.getModuleDescriptor();
+        
+        ConfigurationResolveReport conf = report.getConfigurationReport("buildtime");
+        
+        assertContainsArtifact("test", "a", "1.0.2", "a-bt", "txt", "txt", conf);
+        assertDoesntContainArtifact("test", "a", "1.0.2", "a", "txt", "txt", conf);        
+        assertContainsArtifact("test", "b", "1.0.1", "b-bt", "txt", "txt", conf);
+        assertDoesntContainArtifact("test", "b", "1.0.1", "b", "txt", "txt", conf);        
+        assertContainsArtifact("test", "c", "1.0.1", "c-bt", "txt", "txt", conf);
+        assertDoesntContainArtifact("test", "c", "1.0.1", "c", "txt", "txt", conf);        
+    }
+
+    public void testConfigurationMapping4() throws Exception {
+        Ivy ivy = new Ivy();
+        ivy.configure(new File("test/repositories/IVY-84/ivyconf.xml"));
+        ResolveReport report = ivy.resolve(new File("test/repositories/IVY-84/tests/4/ivy.xml").toURL(),
+                null, new String[] {"default"}, _cache, null, true);
+        
+        ModuleDescriptor md = report.getModuleDescriptor();
+        
+        ConfigurationResolveReport conf = report.getConfigurationReport("default");
+        
+        assertContainsArtifact("test", "a", "1.0.2", "a", "txt", "txt", conf);
+        assertDoesntContainArtifact("test", "a", "1.0.2", "a-bt", "txt", "txt", conf);        
+        assertContainsArtifact("test", "b", "1.0.1", "b", "txt", "txt", conf);
+        assertDoesntContainArtifact("test", "b", "1.0.1", "b-bt", "txt", "txt", conf);        
+        assertContainsArtifact("test", "c", "1.0.1", "c", "txt", "txt", conf);
+        assertDoesntContainArtifact("test", "c", "1.0.1", "c-bt", "txt", "txt", conf);        
+    }
+
+    public void testConfigurationMapping5() throws Exception {
+        Ivy ivy = new Ivy();
+        ivy.configure(new File("test/repositories/IVY-84/ivyconf.xml"));
+        ResolveReport report = ivy.resolve(new File("test/repositories/IVY-84/tests/5/ivy.xml").toURL(),
+                null, new String[] {"*"}, _cache, null, true);
+        
+        ModuleDescriptor md = report.getModuleDescriptor();
+        
+        ConfigurationResolveReport conf = report.getConfigurationReport("default");
+        
+        assertContainsArtifact("test", "a", "1.0.2", "a", "txt", "txt", conf);
+        assertDoesntContainArtifact("test", "a", "1.0.2", "a-bt", "txt", "txt", conf);        
+        assertContainsArtifact("test", "b", "1.0.1", "b", "txt", "txt", conf);
+        assertDoesntContainArtifact("test", "b", "1.0.1", "b-bt", "txt", "txt", conf);        
+        assertContainsArtifact("test", "c", "1.0.1", "c", "txt", "txt", conf);
+        assertDoesntContainArtifact("test", "c", "1.0.1", "c-bt", "txt", "txt", conf);        
+    }
+
+    public void testConfigurationMapping6() throws Exception {
+        Ivy ivy = new Ivy();
+        ivy.configure(new File("test/repositories/IVY-84/ivyconf.xml"));
+        ResolveReport report = ivy.resolve(new File("test/repositories/IVY-84/tests/6/ivy.xml").toURL(),
+                null, new String[] {"default", "buildtime"}, _cache, null, true);
+        
+        ModuleDescriptor md = report.getModuleDescriptor();
+        
+        ConfigurationResolveReport conf = report.getConfigurationReport("default");
+        
+        assertContainsArtifact("test", "a", "1.0.2", "a", "txt", "txt", conf);
+        assertDoesntContainArtifact("test", "a", "1.0.2", "a-bt", "txt", "txt", conf);        
+        assertContainsArtifact("test", "b", "1.0.1", "b", "txt", "txt", conf);
+        assertDoesntContainArtifact("test", "b", "1.0.1", "b-bt", "txt", "txt", conf);        
+        assertContainsArtifact("test", "c", "1.0.1", "c", "txt", "txt", conf);
+        assertDoesntContainArtifact("test", "c", "1.0.1", "c-bt", "txt", "txt", conf);        
+    }
+
+    public void testConfigurationMapping7() throws Exception {
+        Ivy ivy = new Ivy();
+        ivy.configure(new File("test/repositories/IVY-84/ivyconf.xml"));
+        ResolveReport report = ivy.resolve(new File("test/repositories/IVY-84/tests/7/ivy.xml").toURL(),
+                null, new String[] {"buildtime", "default"}, _cache, null, true);
+        
+        ModuleDescriptor md = report.getModuleDescriptor();
+        
+        ConfigurationResolveReport conf = report.getConfigurationReport("default");
+        
+        assertContainsArtifact("test", "a", "1.0.2", "a", "txt", "txt", conf);
+        assertDoesntContainArtifact("test", "a", "1.0.2", "a-bt", "txt", "txt", conf);        
+        assertContainsArtifact("test", "b", "1.0.1", "b", "txt", "txt", conf);
+        assertDoesntContainArtifact("test", "b", "1.0.1", "b-bt", "txt", "txt", conf);        
+        assertContainsArtifact("test", "c", "1.0.1", "c", "txt", "txt", conf);
+        assertDoesntContainArtifact("test", "c", "1.0.1", "c-bt", "txt", "txt", conf);        
+    }
+
+    ////////////////////////////////////////////////////////////
+    // helper methods to ease the tests
+    ////////////////////////////////////////////////////////////
+    
+    private void assertContainsArtifact(String org, String module, String rev, String artName, String type, String ext, ConfigurationResolveReport conf) {
+        Artifact art = getArtifact(org, module, rev, artName, type, ext);
+        if (!containsArtifact(art, conf.getDownloadedArtifactsReports())) {
+            fail("artifact "+art+" should be part of "+conf.getConfiguration()+" from "+conf.getModuleDescriptor().getModuleRevisionId());
+        }        
+    }
+    
+    private void assertDoesntContainArtifact(String org, String module, String rev, String artName, String type, String ext, ConfigurationResolveReport conf) {
+        Artifact art = getArtifact(org, module, rev, artName, type, ext);
+        if (containsArtifact(art, conf.getDownloadedArtifactsReports())) {
+            fail("artifact "+art+" should NOT be part of "+conf.getConfiguration()+" from "+conf.getModuleDescriptor().getModuleRevisionId());
+        }        
+    }
+
+    private Artifact getArtifact(String org, String module, String rev, String artName, String type, String ext) {
+         return new DefaultArtifact(ModuleRevisionId.newInstance(org, module, rev), new Date(), artName, type, ext);
+    }
+
+    private boolean containsArtifact(Artifact art, ArtifactDownloadReport[] adr) {
+        for (int i = 0; i < adr.length; i++) {
+            Artifact artifact = adr[i].getArtifact();
+            if (artifact.getModuleRevisionId().equals(art.getModuleRevisionId())
+                    && artifact.getName().equals(art.getName())
+                    && artifact.getType().equals(art.getType())
+                    && artifact.getExt().equals(art.getExt())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 }

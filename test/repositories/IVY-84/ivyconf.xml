@@ -1,0 +1,12 @@
+<ivyconf>
+	<conf defaultResolver="LOCAL"/>
+	<latest-strategies>latest-revision</latest-strategies>
+	<resolvers>
+	    <filesystem name="LOCAL">
+		<artifact pattern="${ivy.conf.dir}/repo/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]" />
+		<ivy pattern="${ivy.conf.dir}/repo/[organisation]/[module]/ivy-[revision].xml" />
+	    </filesystem>
+	</resolvers>
+	<modules>
+	</modules>
+</ivyconf>
