@@ -1,0 +1,14 @@
+<ivy-module version="1.0">
+	<info organisation="org8"
+	       module="mod8.4"
+	       revision="1.0"
+	       status="integration"
+	       publication="20050930110000"
+	/>
+    <configurations>
+		<conf name="default"/>
+    </configurations>    
+    <dependencies>
+		<dependency name="mod8.1" rev="1.0" conf="default->*"/>
+    </dependencies>
+</ivy-module>

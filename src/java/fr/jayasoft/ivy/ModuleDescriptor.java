@@ -64,6 +64,7 @@ public interface ModuleDescriptor {
      */
     Configuration[] getConfigurations();
     String[] getConfigurationsNames();
+    String[] getPublicConfigurationsNames();
     Artifact[] getArtifacts(String conf);
     DependencyDescriptor[] getDependencies();
     

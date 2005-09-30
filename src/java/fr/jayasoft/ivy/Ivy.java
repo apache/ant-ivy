@@ -781,9 +781,9 @@ public class Ivy implements TransferListener {
                 }
 				
 				ResolveData data = new ResolveData(this, cache, date, confReport, validate, dependenciesMap);
-                IvyNode node = new IvyNode(data, md, confs[i]);
+                IvyNode node = new IvyNode(data, md, confs[i], true);
                 node.setRootModuleConf(confs[i]);
-                fetchDependencies(node, confs[i], false);
+                fetchDependencies(node, confs[i]);
             }
 		}
         
@@ -837,7 +837,7 @@ public class Ivy implements TransferListener {
 
     
     
-    private void fetchDependencies(IvyNode node, String conf, boolean shouldBePublic) {
+    private void fetchDependencies(IvyNode node, String conf) {
         resolveConflict(node, node.getParent(), Collections.EMPTY_SET);
         
         if (node.loadData(conf)) {
@@ -847,10 +847,10 @@ public class Ivy implements TransferListener {
                 if ("*".equals(conf)) {
                     String[] confs = node.getDescriptor().getConfigurationsNames();
                     for (int i = 0; i < confs.length; i++) {
-                        doFetchDependencies(node, confs[i], shouldBePublic);
+                        doFetchDependencies(node, confs[i]);
                     }
                 } else {
-                    doFetchDependencies(node, conf, shouldBePublic);
+                    doFetchDependencies(node, conf);
                 }
             }
         }
@@ -859,49 +859,44 @@ public class Ivy implements TransferListener {
             IvyNode.EvictionData ed = node.getEvictedData(node.getRootModuleConf());
             for (Iterator iter = ed.getSelected().iterator(); iter.hasNext();) {
                 IvyNode selected = (IvyNode)iter.next();
-                fetchDependencies(selected, conf, shouldBePublic);
+                fetchDependencies(selected, conf);
             }
         }
     }
 
-    private void doFetchDependencies(IvyNode node, String conf, boolean shouldBePublic) {
+    private void doFetchDependencies(IvyNode node, String conf) {
         Configuration c = node.getConfiguration(conf);
-        if (c == null) {
-            Message.error("configuration not found in "+node+": "+conf+". It was required from "+node.getParent()+" "+node.getParentConf());
-        } else if (c.getVisibility() != Configuration.Visibility.PUBLIC && shouldBePublic) {
-            Message.error("configuration not public in "+node+": "+c+". It was required from "+node.getParent()+" "+node.getParentConf());
-        } else {
-            // we handle the case where the asked configuration extends others:
-            // we have to first fetch the extended configurations
-            String[] extendedConfs = c.getExtends();
-            if (extendedConfs.length > 0) {
-                node.updateConfsToFetch(Arrays.asList(extendedConfs));
-            }
-            for (int i = 0; i < extendedConfs.length; i++) {
-                fetchDependencies(node, extendedConfs[i], false);
-            }
-
-            if (node.getDependencyDescriptor() == null || node.getDependencyDescriptor().isTransitive()) {
-                Collection dependencies = node.getDependencies(conf, true);
-                for (Iterator iter = dependencies.iterator(); iter.hasNext();) {
-                    IvyNode dep = (IvyNode)iter.next();
-                    if (dep.isCircular()) {
-                        Message.warn("circular dependency found ! "+node.getId()+" depends on "+dep.getId()+" which is already on the same branch of dependency");
-                        continue;
-                    }
-                    String[] confs = dep.getRequiredConfigurations(node, conf);
-                    for (int i = 0; i < confs.length; i++) {
-                        fetchDependencies(dep, confs[i], shouldBePublic);
-                    }
-                    // if there are still confs to fetch (usually because they have
-                    // been updated when evicting another module), we fetch them now
-                    confs = dep.getConfsToFetch();
-                    for (int i = 0; i < confs.length; i++) {
-                        fetchDependencies(dep, confs[i], shouldBePublic);
-                    }
+        // we handle the case where the asked configuration extends others:
+        // we have to first fetch the extended configurations
+        String[] extendedConfs = c.getExtends();
+        if (extendedConfs.length > 0) {
+            node.updateConfsToFetch(Arrays.asList(extendedConfs));
+        }
+        for (int i = 0; i < extendedConfs.length; i++) {
+            fetchDependencies(node, extendedConfs[i]);
+        }
+        
+        if (node.getDependencyDescriptor() == null || node.getDependencyDescriptor().isTransitive()) {
+            Collection dependencies = node.getDependencies(conf, true);
+            for (Iterator iter = dependencies.iterator(); iter.hasNext();) {
+                IvyNode dep = (IvyNode)iter.next();
+                if (dep.isCircular()) {
+                    Message.warn("circular dependency found ! "+node.getId()+" depends on "+dep.getId()+" which is already on the same branch of dependency");
+                    continue;
+                }
+                String[] confs = dep.getRequiredConfigurations(node, conf);
+                for (int i = 0; i < confs.length; i++) {
+                    fetchDependencies(dep, confs[i]);
+                }
+                // if there are still confs to fetch (usually because they have
+                // been updated when evicting another module), we fetch them now
+                confs = dep.getConfsToFetch();
+                for (int i = 0; i < confs.length; i++) {
+                    fetchDependencies(dep, confs[i]);
                 }
             }
         }
+        
     }
 
 

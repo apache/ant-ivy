@@ -165,6 +165,17 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
         return (String[])_configurations.keySet().toArray(new String[_configurations.size()]);
     }
     
+    public String[] getPublicConfigurationsNames() {
+        List ret = new ArrayList();
+        for (Iterator iter = _configurations.values().iterator(); iter.hasNext();) {
+            Configuration conf = (Configuration)iter.next();
+            if (conf.getVisibility() == Configuration.Visibility.PUBLIC) {
+                ret.add(conf.getName());
+            }
+        }
+        return (String[])ret.toArray(new String[ret.size()]);
+    }
+    
     /**
      * Returns the configuration object with the given name in the current module descriptor, null
      * if not found.

@@ -224,6 +224,8 @@ public class IvyNode {
 
     private Map _requiredConfs = new HashMap(); // Map (NodeConf in -> Set(String conf))
 
+    private boolean _isRoot = false;
+
     
     public IvyNode(ResolveData data, DependencyDescriptor dd) {
         _id = dd.getDependencyRevisionId();
@@ -233,9 +235,14 @@ public class IvyNode {
     }
 
     public IvyNode(ResolveData data, ModuleDescriptor md, String conf) {
+        this(data, md, conf, false);
+    }
+
+    public IvyNode(ResolveData data, ModuleDescriptor md, String conf, boolean isRoot) {
         _id = md.getModuleRevisionId();
         _md = md;
         _confsToFetch.add(conf);
+        _isRoot = true;
         
         // we do not register nodes created from ModuleDescriptor, cause they are
         // the root of resolve
@@ -509,11 +516,23 @@ public class IvyNode {
         }
         if ("*".equals(conf)) {
             if (_md != null) {
-                _fetchedConfigurations.addAll(Arrays.asList(_md.getConfigurationsNames()));
+                _fetchedConfigurations.addAll(Arrays.asList(_md.getPublicConfigurationsNames()));
                 _confsToFetch.clear();
-                addRootModuleConfigurations(_rootModuleConf, _md.getConfigurationsNames());
+                addRootModuleConfigurations(_rootModuleConf, _md.getPublicConfigurationsNames());
             }
         } else {
+            if (_md != null) {        
+                Configuration c = _md.getConfiguration(conf);
+                if (c == null) {
+                    Message.error("configuration not found in "+this+": "+conf+". It was required from "+getParent()+" "+getParentConf());
+                    _confsToFetch.remove(conf);
+                    return false;
+                } else if (!isRoot() && c.getVisibility() != Configuration.Visibility.PUBLIC) {
+                    Message.error("configuration not public in "+this+": "+c+". It was required from "+getParent()+" "+getParentConf());
+                    _confsToFetch.remove(conf);
+                    return false;
+                }
+            }
             if (loaded) {
                 _fetchedConfigurations.add(conf);
                 _confsToFetch.remove(conf);
@@ -526,6 +545,10 @@ public class IvyNode {
         }
         return loaded;
         
+    }
+
+    private boolean isRoot() {
+        return _isRoot ;
     }
 
     public IvyNode getRealNode() {
@@ -723,6 +746,33 @@ public class IvyNode {
             return new String[0];
         }
         return (String[]) depConfs.toArray(new String[depConfs.size()]);
+    }
+
+    public void discardConf(String conf) {
+        discardConf(_rootModuleConf, conf);
+    }
+    
+    private void discardConf(String rootModuleConf, String conf) {
+        Set depConfs = (Set) _rootModuleConfs.get(rootModuleConf);
+        if (depConfs == null) {
+            depConfs = new HashSet();
+            _rootModuleConfs.put(rootModuleConf, depConfs);
+        }
+        if (_md != null) {
+            // remove all given dependency configurations to the set + extended ones 
+                Configuration c = _md.getConfiguration(conf);
+                if (conf != null) {
+                    String[] exts = c.getExtends();
+                    for (int i = 0; i < exts.length; i++) {
+                        discardConf(rootModuleConf, exts[i]); // recursive remove of extended configurations
+                    }
+                    depConfs.remove(c.getName());
+                } else {
+                    Message.warn("unknown configuration in "+getId()+": "+conf);
+                }
+        } else {
+            depConfs.remove(conf);
+        }
     }
 
     private void addRootModuleConfigurations(String rootModuleConf, String[] dependencyConfs) {
@@ -1009,4 +1059,5 @@ public class IvyNode {
     public boolean isFetched(String conf) {
         return _fetchedConfigurations.contains(conf);
     }
+
 }

@@ -5,7 +5,7 @@
     <configurations>
 		<conf name="default"/>
 		<conf name="global" extends="default" visibility="private"/>
-		<conf name="buildtime" visibility="private"/>
+		<conf name="buildtime"/>
 		<conf name="test" visibility="private"/>
     </configurations>    
     <publications>

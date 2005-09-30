@@ -822,6 +822,29 @@ public class ResolveTest extends TestCase {
         assertTrue(!ivy.getArchiveFileInCache(_cache, "org1", "mod1.1", "1.0", "mod1.1", "jar", "jar").exists());
     }
     
+    public void testVisibility1() throws Exception {
+        ResolveReport report = _ivy.resolve(new File("test/repositories/2/mod8.2/ivy-1.0.xml").toURL(),
+                null, new String[] {"*"}, _cache, null, true);
+        
+        assertFalse(_ivy.getArchiveFileInCache(_cache, "org8", "mod8.1", "1.0", "a-private", "txt", "txt").exists());
+    }
+    
+    public void testVisibility2() throws Exception {
+        ResolveReport report = _ivy.resolve(new File("test/repositories/2/mod8.3/ivy-1.0.xml").toURL(),
+                null, new String[] {"private"}, _cache, null, true);
+        
+        assertFalse(_ivy.getArchiveFileInCache(_cache, "org8", "mod8.1", "1.0", "a-private", "txt", "txt").exists());
+        assertTrue(_ivy.getArchiveFileInCache(_cache, "org8", "mod8.1", "1.0", "a", "txt", "txt").exists());
+    }
+    
+    public void testVisibility3() throws Exception {
+        ResolveReport report = _ivy.resolve(new File("test/repositories/2/mod8.4/ivy-1.0.xml").toURL(),
+                null, new String[] {"*"}, _cache, null, true);
+        
+        assertFalse(_ivy.getArchiveFileInCache(_cache, "org8", "mod8.1", "1.0", "a-private", "txt", "txt").exists());
+        assertTrue(_ivy.getArchiveFileInCache(_cache, "org8", "mod8.1", "1.0", "a", "txt", "txt").exists());
+    }
+    
     ///////////////////////////////////////////////////////////
     // here comes a series of test provided by Chris Rudd
     // about configuration mapping and eviction
