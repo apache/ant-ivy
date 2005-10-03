@@ -56,9 +56,7 @@ public class IvyTask extends Task {
     }
 
     protected void ensureMessageInitialised() {
-        if (!Message.isInitialised()) {
-            Message.init(new AntMessageImpl(getProject()));
-        }
+        Message.init(new AntMessageImpl(getProject()));
     }
     protected void setIvyInstance(Ivy ivy) {
         getProject().addReference("ivy.instance", ivy);
