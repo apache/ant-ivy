@@ -1,3 +1,4 @@
+- FIX: raise a clean error when a cyclic variable definition is found (IVY-75)
 - FIX: reinitiliase ant project instance at each new task to avoid using a bad ant project instance in some ide (like netbeans) (IVY-87)
 - FIX: ivy is now able to use simple ivy files in cache (doesn't need resolver info, use default one if no resolver is given) (IVY-86)
 - FIX: private conf not accessible from other modules (IVY-76)

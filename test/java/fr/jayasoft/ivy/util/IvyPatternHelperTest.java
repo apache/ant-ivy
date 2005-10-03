@@ -6,6 +6,9 @@
  */
 package fr.jayasoft.ivy.util;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import junit.framework.TestCase;
 
 public class IvyPatternHelperTest extends TestCase {
@@ -14,6 +17,21 @@ public class IvyPatternHelperTest extends TestCase {
         assertEquals(
                 "jayasoft/Test/build/archives/jars/test-1.0.jar", 
                 IvyPatternHelper.substitute(pattern, "jayasoft", "Test", "1.0", "test", "jar", "jar"));
+    }
+
+    public void testCyclicSubstitute() {
+        String pattern = "${var}";
+        Map variables = new HashMap();
+        variables.put("var", "${othervar}");
+        variables.put("othervar", "${var}");
+        try {
+            IvyPatternHelper.substituteVariables(pattern, variables);
+            fail("cyclic var should raise an exception");
+        } catch (Exception ex) {
+            // ok
+        } catch (Error er) {
+            fail("cyclic var shouldn't raise an error: "+er);
+        }
     }
 
     public void testOrganization() {

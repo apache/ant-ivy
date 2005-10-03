@@ -5,8 +5,11 @@
  */
 package fr.jayasoft.ivy.util;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Stack;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -83,11 +86,15 @@ public class IvyPatternHelper {
     }
     
     public static String substituteVariables(String pattern, Map variables) {
-    	// if you supply null, null is what you get
-    	if (pattern == null) {
-    		return null;
-    	}
-    	
+        return substituteVariables(pattern, variables, new Stack());
+    }
+    
+    private static String substituteVariables(String pattern, Map variables, Stack substituting) {
+        // if you supply null, null is what you get
+        if (pattern == null) {
+            return null;
+        }
+        
         Matcher m = VAR_PATTERN.matcher(pattern);
         
         StringBuffer sb = new StringBuffer();
@@ -95,7 +102,15 @@ public class IvyPatternHelper {
             String var = m.group(1);
             String val = (String)variables.get(var);
             if (val != null) {
-                val = substituteVariables(val, variables);
+                int index;
+                if ((index = substituting.indexOf(var)) != -1) {
+                    List cycle = new ArrayList(substituting.subList(index, substituting.size()));
+                    cycle.add(var);
+                    throw new IllegalArgumentException("cyclic variable definition: cycle = "+cycle);
+                }
+                substituting.push(var);
+                val = substituteVariables(val, variables, substituting);
+                substituting.pop();
             } else {
                 val = m.group();
             }
