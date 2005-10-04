@@ -43,6 +43,6 @@ public class ModuleId {
         return hash;
     }
     public String toString() {
-        return _organisation+"/"+_name;
+        return "[ "+_organisation+" | "+_name+" ]";
     }
 }

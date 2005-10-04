@@ -84,7 +84,7 @@ public class Message {
     }
     public static void warn(String msg) {
         if (_impl != null) {
-            _impl.log("WARN: "+msg, MSG_WARN);
+            _impl.log("WARN: "+msg, MSG_VERBOSE);
         } else {
             System.err.println(msg);
         }

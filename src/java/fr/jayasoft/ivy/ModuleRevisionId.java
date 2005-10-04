@@ -51,7 +51,7 @@ public class ModuleRevisionId {
     }
     
     public String toString() {
-        return _moduleId+"-"+_revision;
+        return "[ "+_moduleId.getOrganisation()+" | "+_moduleId.getName()+" | "+_revision+" ]";
     }
     /**
      * Returns true if the given revision can be considered as a revision of this module revision id.

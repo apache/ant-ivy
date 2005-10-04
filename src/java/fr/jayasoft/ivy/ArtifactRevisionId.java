@@ -43,7 +43,7 @@ public class ArtifactRevisionId {
     }
     
     public String toString() {
-        return getModuleRevisionId()+" "+getName()+"."+getType();
+        return "[ "+getModuleRevisionId().getOrganisation()+" | "+ getModuleRevisionId().getName()+" | "+getModuleRevisionId().getRevision()+" :: "+getName()+" . "+getExt()+" ( "+getType()+" ) ]";
     }
     
     /**
