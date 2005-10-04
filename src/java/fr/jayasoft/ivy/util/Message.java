@@ -32,6 +32,8 @@ public class Message {
     
     private static boolean _showProgress = true;
     
+    private static boolean _showedInfo = false;
+    
     public static void init(MessageImpl impl) {
         _impl = impl;
         showInfo();
@@ -42,17 +44,20 @@ public class Message {
     }
 
     private static void showInfo() {
-        Properties props = new Properties();
-        InputStream module = Message.class.getResourceAsStream("/module.properties");
-        if (module != null) {
-            try {
-                props.load(module);
-                info(":: Ivy "+props.getProperty("version")+" - "+props.getProperty("date")+" :: http://ivy.jayasoft.org/ ::");
-            } catch (IOException e) {
+        if (!_showedInfo ) {
+            Properties props = new Properties();
+            InputStream module = Message.class.getResourceAsStream("/module.properties");
+            if (module != null) {
+                try {
+                    props.load(module);
+                    info(":: Ivy "+props.getProperty("version")+" - "+props.getProperty("date")+" :: http://ivy.jayasoft.org/ ::");
+                } catch (IOException e) {
+                    info(":: Ivy non official version :: http://ivy.jayasoft.org/ ::");
+                }
+            } else {
                 info(":: Ivy non official version :: http://ivy.jayasoft.org/ ::");
             }
-        } else {
-            info(":: Ivy non official version :: http://ivy.jayasoft.org/ ::");
+            _showedInfo = true;
         }
     }
 
