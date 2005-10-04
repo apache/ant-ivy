@@ -40,6 +40,7 @@ public class IvyPublish extends IvyTask {
     private boolean _publishivy = true;
     private boolean _warnonmissing = true;
     private boolean _haltonmissing = true;
+    private boolean _overwrite = false;
     
     public File getCache() {
         return _cache;
@@ -183,7 +184,7 @@ public class IvyPublish extends IvyTask {
                 deliver.execute();
             }
             
-            Collection missing = ivy.publish(mrid, _pubRevision, _cache, _artifactspattern, _publishResolverName, _publishivy?_srcivypattern:null, doValidate(ivy));
+            Collection missing = ivy.publish(mrid, _pubRevision, _cache, _artifactspattern, _publishResolverName, _publishivy?_srcivypattern:null, doValidate(ivy), _overwrite);
             if (_warnonmissing) {
                 for (Iterator iter = missing.iterator(); iter.hasNext();) {
                     Artifact artifact = (Artifact)iter.next();
@@ -236,5 +237,11 @@ public class IvyPublish extends IvyTask {
     
     public void setHaltonmissing(boolean haltonmissing) {
         _haltonmissing = haltonmissing;
+    }
+    public boolean isOverwrite() {
+        return _overwrite;
+    }
+    public void setOverwrite(boolean overwrite) {
+        _overwrite = overwrite;
     }
 }

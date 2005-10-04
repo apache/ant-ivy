@@ -36,7 +36,7 @@ public interface DependencyResolver {
     ResolvedModuleRevision getDependency(DependencyDescriptor dd, ResolveData data) throws ParseException;
     DownloadReport download(Artifact[] artifacts, Ivy ivy, File cache);
     boolean exists(Artifact artifact);
-    void publish(Artifact artifact, File src) throws IOException;
+    void publish(Artifact artifact, File src, boolean overwrite) throws IOException;
     
     /**
      * Reports last resolve failure as Messages

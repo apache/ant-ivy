@@ -25,6 +25,16 @@ public class FileUtil {
     // 8 * 1024 is also the size used by ant in its FileUtils... maybe they've done more study about it ;-)
     private static final int BUFFER_SIZE = 8 * 1024; 
     public static void copy(File src, File dest, CopyProgressListener l) throws IOException {
+        copy(src, dest, l, false);
+    }
+    public static void copy(File src, File dest, CopyProgressListener l, boolean overwrite) throws IOException {
+        if (dest.exists() && !dest.canWrite()) {
+            if (overwrite && dest.isFile()) {
+                dest.delete();
+            } else {
+                throw new IOException("impossible to copy: destination is not writable: "+dest);
+            }
+        }
         copy(new FileInputStream(src), dest, l);
         dest.setLastModified(src.lastModified());
     }

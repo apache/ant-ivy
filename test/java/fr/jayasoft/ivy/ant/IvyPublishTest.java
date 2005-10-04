@@ -5,12 +5,15 @@
  */
 package fr.jayasoft.ivy.ant;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 
 import junit.framework.TestCase;
 
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.Delete;
+import org.apache.tools.ant.taskdefs.Echo;
 
 import fr.jayasoft.ivy.Ivy;
 import fr.jayasoft.ivy.ModuleDescriptor;
@@ -89,6 +92,84 @@ public class IvyPublishTest extends TestCase {
         // should have updated published ivy version
         ModuleDescriptor md = XmlModuleDescriptorParser.parseDescriptor(new Ivy(), new File("test/repositories/1/jayasoft/resolve-simple/ivys/ivy-1.2.xml").toURL(), false);
         assertEquals("1.2", md.getModuleRevisionId().getRevision());
+    }
+
+    public void testReadonly() throws Exception {
+        _project.setProperty("ivy.dep.file", "test/java/fr/jayasoft/ivy/ant/ivy-simple.xml");
+        IvyResolve res = new IvyResolve();
+        res.setProject(_project);
+        res.execute();
+        
+        _publish.setPubrevision("1.2");
+        _publish.setResolver("1");
+        File art = new File("build/test/publish/resolve-simple-1.2.jar");
+        FileUtil.copy(new File("test/repositories/1/org1/mod1.1/jars/mod1.1-1.0.jar"), art, null);
+        
+        Echo echo = new Echo();
+        echo.setProject(_project);
+        echo.setMessage("new version");
+        echo.setFile(art);
+        echo.execute();
+
+        File dest = new File("test/repositories/1/jayasoft/resolve-simple/jars/resolve-simple-1.2.jar");
+        FileUtil.copy(new File("test/repositories/1/org1/mod1.1/jars/mod1.1-1.0.jar"), 
+                dest, null);
+
+        echo = new Echo();
+        echo.setProject(_project);
+        echo.setMessage("old version");
+        echo.setFile(dest);
+        echo.execute();
+
+        dest.setReadOnly();
+        
+        try {
+            _publish.execute();
+            fail("by default, publish should fail when a readonly artifact already exist");
+        } catch (Exception ex) {
+            assertTrue(dest.exists());
+            BufferedReader reader = new BufferedReader(new FileReader(dest));
+            assertEquals("old version", reader.readLine());
+            reader.close();
+        }
+    }
+
+    public void testOverwrite() throws Exception {
+        _project.setProperty("ivy.dep.file", "test/java/fr/jayasoft/ivy/ant/ivy-simple.xml");
+        IvyResolve res = new IvyResolve();
+        res.setProject(_project);
+        res.execute();
+        
+        _publish.setPubrevision("1.2");
+        _publish.setResolver("1");
+        File art = new File("build/test/publish/resolve-simple-1.2.jar");
+        FileUtil.copy(new File("test/repositories/1/org1/mod1.1/jars/mod1.1-1.0.jar"), art, null);
+        
+        Echo echo = new Echo();
+        echo.setProject(_project);
+        echo.setMessage("new version");
+        echo.setFile(art);
+        echo.execute();
+
+        File dest = new File("test/repositories/1/jayasoft/resolve-simple/jars/resolve-simple-1.2.jar");
+        FileUtil.copy(new File("test/repositories/1/org1/mod1.1/jars/mod1.1-1.0.jar"), 
+                dest, null);
+
+        echo = new Echo();
+        echo.setProject(_project);
+        echo.setMessage("old version");
+        echo.setFile(dest);
+        echo.execute();
+
+        dest.setReadOnly();
+        
+
+        _publish.setOverwrite(true);
+        _publish.execute();
+        assertTrue(dest.exists());
+        BufferedReader reader = new BufferedReader(new FileReader(dest));
+        assertEquals("new version", reader.readLine());
+        reader.close();
     }
 
 }

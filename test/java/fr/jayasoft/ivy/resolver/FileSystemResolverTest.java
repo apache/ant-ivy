@@ -342,8 +342,8 @@ public class FileSystemResolverTest extends TestCase {
             Artifact ivyArtifact = new DefaultArtifact(mrid, new Date(), "ivy", "ivy", "xml");
             Artifact artifact = new DefaultArtifact(mrid, new Date(), "myartifact", "mytype", "myext");
             File src = new File("test/repositories/ivyconf.xml");
-            resolver.publish(ivyArtifact, src);
-            resolver.publish(artifact, src);
+            resolver.publish(ivyArtifact, src, false);
+            resolver.publish(artifact, src, false);
             
             assertTrue(new File("test/repositories/1/myorg/mymodule/myrevision/ivy.xml").exists());
             assertTrue(new File("test/repositories/1/myorg/mymodule/mytypes/myartifact-myrevision.myext").exists());

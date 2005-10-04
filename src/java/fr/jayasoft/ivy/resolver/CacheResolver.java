@@ -103,9 +103,9 @@ public class CacheResolver extends FileSystemResolver {
         ensureConfigured();
         return super.exists(artifact);
     }
-    public void publish(Artifact artifact, File src) throws IOException {
+    public void publish(Artifact artifact, File src, boolean overwrite) throws IOException {
         ensureConfigured();
-        super.publish(artifact, src);
+        super.publish(artifact, src, overwrite);
     }
     
     

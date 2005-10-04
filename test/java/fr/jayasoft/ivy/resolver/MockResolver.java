@@ -66,7 +66,7 @@ public class MockResolver extends AbstractResolver {
     public DownloadReport download(Artifact[] artifacts, Ivy ivy, File cache) {
         return null;
     }
-    public void publish(Artifact artifact, File src) throws IOException {
+    public void publish(Artifact artifact, File src, boolean overwrite) throws IOException {
     }
     
 }

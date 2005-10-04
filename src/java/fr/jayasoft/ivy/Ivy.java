@@ -1220,7 +1220,19 @@ public class Ivy implements TransferListener {
      * @return a collection of missing artifacts (those that are not published)
      * @throws ParseException
      */
-	public Collection publish(ModuleRevisionId mrid, String pubrevision, File cache, String srcArtifactPattern, String resolverName, String srcIvyPattern, boolean validate) throws IOException {
+    public Collection publish(ModuleRevisionId mrid, String pubrevision, File cache, String srcArtifactPattern, String resolverName, String srcIvyPattern, boolean validate) throws IOException {
+        return publish(mrid, pubrevision, cache, srcArtifactPattern, resolverName, srcIvyPattern, validate, false);
+    }
+    /**
+     * 
+     * @param pubrevision 
+     * @param resolverName the name of a resolver to use for publication
+     * @param srcArtifactPattern a pattern to find artifacts to publish with the given resolver
+     * @param srcIvyPattern a pattern to find ivy file to publish, null if ivy file should not be published
+     * @return a collection of missing artifacts (those that are not published)
+     * @throws ParseException
+     */
+    public Collection publish(ModuleRevisionId mrid, String pubrevision, File cache, String srcArtifactPattern, String resolverName, String srcIvyPattern, boolean validate, boolean overwrite) throws IOException {
         Message.info(":: publishing :: "+mrid);
         Message.verbose("\tvalidate = "+validate);
         long start = System.currentTimeMillis();
@@ -1261,13 +1273,13 @@ public class Ivy implements TransferListener {
 	    for (Iterator iter = artifactsSet.iterator(); iter.hasNext();) {
             Artifact artifact = (Artifact) iter.next();
     	    //   1) copy the artifact using src pattern and resolver
-            if (!publish(artifact, srcArtifactPattern, resolver)) {
+            if (!publish(artifact, srcArtifactPattern, resolver, overwrite)) {
                 missing.add(artifact);
             }
         }
         if (srcIvyPattern != null) {
             Artifact artifact = new MDArtifact(md, "ivy", "ivy", "xml");
-            if (!publish(artifact, srcIvyPattern, resolver)) {
+            if (!publish(artifact, srcIvyPattern, resolver, overwrite)) {
                 missing.add(artifact);
             }
         }
@@ -1275,17 +1287,14 @@ public class Ivy implements TransferListener {
         return missing;
     }
 
-    private boolean publish(Artifact artifact, String srcArtifactPattern, DependencyResolver resolver) {
+    private boolean publish(Artifact artifact, String srcArtifactPattern, DependencyResolver resolver, boolean overwrite) throws IOException {
         File src = new File(IvyPatternHelper.substitute(srcArtifactPattern, artifact));
         if (src.exists()) {
-            try {
-                resolver.publish(artifact, src);
-                return true;
-            } catch (Exception ex) {
-                Message.error("impossible to publish "+artifact+" with "+resolver.getName()+": "+ex.getMessage());
-            }
+            resolver.publish(artifact, src, overwrite);
+            return true;
+        } else {
+            return false;
         }
-        return false;
     }
 
     /////////////////////////////////////////////////////////////////////////

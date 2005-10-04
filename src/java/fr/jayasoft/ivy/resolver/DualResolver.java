@@ -117,11 +117,11 @@ public class DualResolver extends AbstractResolver {
     public void setIvyResolver(DependencyResolver ivyResolver) {
         _ivyResolver = ivyResolver;
     }
-    public void publish(Artifact artifact, File src) throws IOException {
+    public void publish(Artifact artifact, File src, boolean overwrite) throws IOException {
         if ("ivy".equals(artifact.getType())) {
-            _ivyResolver.publish(artifact, src);
+            _ivyResolver.publish(artifact, src, overwrite);
         } else {
-            _artifactResolver.publish(artifact, src);
+            _artifactResolver.publish(artifact, src, overwrite);
         }
     }
     

@@ -113,7 +113,7 @@ public class RepositoryResolver extends AbstractResourceResolver {
         return ivyTempFile.length();
     }
 
-    public void publish(Artifact artifact, File src) throws IOException {
+    public void publish(Artifact artifact, File src, boolean overwrite) throws IOException {
         String destPattern;
         if ("ivy".equals(artifact.getType()) && !getIvyPatterns().isEmpty()) {
             destPattern =  (String)getIvyPatterns().get(0);
@@ -121,7 +121,7 @@ public class RepositoryResolver extends AbstractResourceResolver {
             destPattern =  (String)getArtifactPatterns().get(0);
         }
         String dest = IvyPatternHelper.substitute(destPattern, artifact);
-        _repository.put(src, dest);
+        _repository.put(src, dest, overwrite);
         Message.info("\tpublished "+artifact.getName()+" to "+dest);
     }
     

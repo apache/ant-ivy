@@ -52,7 +52,7 @@ public class URLRepository extends AbstractRepository {
         }
     }
 
-    public void put(File source, String destination) throws IOException {
+    public void put(File source, String destination, boolean overwrite) throws IOException {
         throw new UnsupportedOperationException("URL repository is not able to put files for the moment");
     }
 

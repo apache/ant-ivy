@@ -99,11 +99,11 @@ public class ChainResolver extends AbstractResolver {
     public List getResolvers() {
         return _chain;
     }
-    public void publish(Artifact artifact, File src) throws IOException {
+    public void publish(Artifact artifact, File src, boolean overwrite) throws IOException {
         if (_chain.isEmpty()) {
             throw new IllegalStateException("invalid chain resolver with no sub resolver");
         }
-        ((DependencyResolver)_chain.get(0)).publish(artifact, src);
+        ((DependencyResolver)_chain.get(0)).publish(artifact, src, overwrite);
     }
     public boolean isReturnFirst() {
         return _returnFirst;

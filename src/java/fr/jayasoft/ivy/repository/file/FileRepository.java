@@ -46,17 +46,17 @@ public class FileRepository extends AbstractRepository {
 
     public void get(String source, File destination) throws IOException {
         fireTransferInitiated(getResource(source), TransferEvent.REQUEST_GET);
-        copy(getFile(source), destination);
+        copy(getFile(source), destination, true);
     }
 
-    public void put(File source, String destination) throws IOException {
+    public void put(File source, String destination, boolean overwrite) throws IOException {
         fireTransferInitiated(getResource(destination), TransferEvent.REQUEST_PUT);
-        copy(source, getFile(destination));
+        copy(source, getFile(destination), overwrite);
     }
 
-    private void copy(File src, File destination) throws IOException {
+    private void copy(File src, File destination, boolean overwrite) throws IOException {
         try {
-            FileUtil.copy(src, destination, _progress);
+            FileUtil.copy(src, destination, _progress, overwrite);
         } catch (IOException ex) {
             fireTransferError(ex);
             throw ex;

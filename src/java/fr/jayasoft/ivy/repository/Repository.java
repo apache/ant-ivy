@@ -13,7 +13,7 @@ import java.util.List;
 public interface Repository {
     Resource getResource(String source)  throws IOException;
     void get(String source, File destination) throws IOException;
-    void put(File source, String destination) throws IOException;
+    void put(File source, String destination, boolean overwrite) throws IOException;
     /**
      * Returns the list of all resources names that can be found in the given
      * parent.
