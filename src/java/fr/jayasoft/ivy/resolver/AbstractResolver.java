@@ -9,6 +9,7 @@ import fr.jayasoft.ivy.Artifact;
 import fr.jayasoft.ivy.DependencyResolver;
 import fr.jayasoft.ivy.Ivy;
 import fr.jayasoft.ivy.IvyAware;
+import fr.jayasoft.ivy.LatestStrategy;
 import fr.jayasoft.ivy.ResolveData;
 import fr.jayasoft.ivy.report.ArtifactDownloadReport;
 import fr.jayasoft.ivy.report.DownloadReport;
@@ -18,7 +19,7 @@ import fr.jayasoft.ivy.util.Message;
 /**
  * This abstract resolver only provides handling for resolver name
  */
-public abstract class AbstractResolver implements DependencyResolver, IvyAware {
+public abstract class AbstractResolver implements DependencyResolver, IvyAware, HasLatestStrategy {
 
     /**
      * True if parsed ivy files should be validated against xsd, false if they should not,
@@ -27,6 +28,13 @@ public abstract class AbstractResolver implements DependencyResolver, IvyAware {
     private Boolean _validate = null;
     private String _name;
     private Ivy _ivy;
+
+    /**
+     * The latest strategy to use to find latest among several artifacts
+     */
+    private LatestStrategy _latestStrategy;
+
+    private String _latestStrategyName;
 
     public Ivy getIvy() {
         return _ivy;
@@ -98,4 +106,41 @@ public abstract class AbstractResolver implements DependencyResolver, IvyAware {
         ArtifactDownloadReport adr = dr.getArtifactReport(artifact);
         return adr.getDownloadStatus() != DownloadStatus.FAILED;
     }
+
+    public LatestStrategy getLatestStrategy() {        
+        if (_latestStrategy == null) {
+            if (getIvy() != null) {
+                if (_latestStrategyName != null && !"default".equals(_latestStrategyName)) {
+                    _latestStrategy = getIvy().getLatestStrategy(_latestStrategyName);
+                    if (_latestStrategy == null) {
+                        Message.error("unknown latest strategy: "+_latestStrategyName);
+                        _latestStrategy = getIvy().getDefaultLatestStrategy();
+                    }
+                } else {
+                    _latestStrategy = getIvy().getDefaultLatestStrategy();
+                    Message.debug(getName()+": no latest strategy defined: using default");
+                }
+            } else {
+                throw new IllegalStateException("no ivy instance found: impossible to get a latest strategy without ivy instance");
+            }
+        }
+        return _latestStrategy;
+    }
+    
+
+    public void setLatestStrategy(LatestStrategy latestStrategy) {
+        _latestStrategy = latestStrategy;
+    }    
+
+    public void setLatest(String strategyName) {
+        _latestStrategyName = strategyName;
+    }    
+    
+    public String getLatest() {
+        if (_latestStrategyName == null) {
+            _latestStrategyName = "default";
+        }
+        return _latestStrategyName;
+    }
+
 }

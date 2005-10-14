@@ -25,6 +25,10 @@ import fr.jayasoft.ivy.report.DownloadReport;
 
 public class MockResolver extends AbstractResolver {
     static MockResolver buildMockResolver(String name, boolean findRevision, final Date publicationDate) {
+        return buildMockResolver(name, findRevision, null, publicationDate);
+    }
+
+    static MockResolver buildMockResolver(String name, boolean findRevision, final ModuleRevisionId mrid, final Date publicationDate) {
         final MockResolver r = new MockResolver();
         r.setName(name);
         if (findRevision) {
@@ -34,7 +38,7 @@ public class MockResolver extends AbstractResolver {
                 }
 
                 public ModuleRevisionId getId() {
-                    return null;
+                    return mrid;
                 }
 
                 public Date getPublicationDate() {

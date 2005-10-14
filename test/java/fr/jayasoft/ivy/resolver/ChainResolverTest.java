@@ -17,13 +17,16 @@ import fr.jayasoft.ivy.Ivy;
 import fr.jayasoft.ivy.ModuleRevisionId;
 import fr.jayasoft.ivy.ResolveData;
 import fr.jayasoft.ivy.ResolvedModuleRevision;
+import fr.jayasoft.ivy.latest.LatestRevisionStrategy;
+import fr.jayasoft.ivy.latest.LatestTimeStrategy;
 import fr.jayasoft.ivy.xml.XmlIvyConfigurationParser;
 
 /**
  * Tests ChainResolver
  */
 public class ChainResolverTest extends TestCase {
-    private ResolveData _data = new ResolveData(new Ivy(), null, null, null, true);
+    private Ivy _ivy = new Ivy();
+    private ResolveData _data = new ResolveData(_ivy, null, null, null, true);
     public void testOrderFromConf() throws Exception {
         new XmlIvyConfigurationParser(_data.getIvy()).parse(ChainResolverTest.class.getResource("chainresolverconf.xml"));
         DependencyResolver resolver = _data.getIvy().getResolver("chain");
@@ -44,12 +47,14 @@ public class ChainResolverTest extends TestCase {
     
     public void testName() throws Exception {
         ChainResolver chain = new ChainResolver();
+        chain.setIvy(_ivy);
         chain.setName("chain");
         assertEquals("chain", chain.getName());
     }
     
     public void testResolveOrder() throws Exception {
         ChainResolver chain = new ChainResolver();
+        chain.setIvy(_ivy);
         MockResolver[] resolvers = new MockResolver[] {
                 MockResolver.buildMockResolver("1", false, null), 
                 MockResolver.buildMockResolver("2", true, null), 
@@ -70,8 +75,10 @@ public class ChainResolverTest extends TestCase {
         assertTrue(resolvers[2].askedDeps.isEmpty());
     }
     
-    public void testLatestResolve() throws Exception {
+    public void testLatestTimeResolve() throws Exception {
         ChainResolver chain = new ChainResolver();
+        chain.setIvy(_ivy);
+        chain.setLatestStrategy(new LatestTimeStrategy());
         MockResolver[] resolvers = new MockResolver[] {
                 MockResolver.buildMockResolver("1", true, new GregorianCalendar(2005, 1, 20).getTime()), 
                 MockResolver.buildMockResolver("2", false, null), 
@@ -96,8 +103,37 @@ public class ChainResolverTest extends TestCase {
         }
     }
     
+    public void testLatestRevisionResolve() throws Exception {
+        ChainResolver chain = new ChainResolver();
+        chain.setIvy(_ivy);
+        chain.setLatestStrategy(new LatestRevisionStrategy());
+        MockResolver[] resolvers = new MockResolver[] {
+                MockResolver.buildMockResolver("1", true, ModuleRevisionId.newInstance("org", "mod", "1"), new GregorianCalendar(2005, 1, 20).getTime()), 
+                MockResolver.buildMockResolver("2", false, null), 
+                MockResolver.buildMockResolver("3", true, ModuleRevisionId.newInstance("org", "mod", "2"), new GregorianCalendar(2005, 1, 25).getTime()),
+                MockResolver.buildMockResolver("4", false, null), 
+                MockResolver.buildMockResolver("5", true, ModuleRevisionId.newInstance("org", "mod", "4"), new GregorianCalendar(2005, 1, 22).getTime()), // latest -> should the one kept 
+                MockResolver.buildMockResolver("6", true, ModuleRevisionId.newInstance("org", "mod", "3"), new GregorianCalendar(2005, 1, 18).getTime()),
+                MockResolver.buildMockResolver("7", false, null)
+            };
+        for (int i = 0; i < resolvers.length; i++) {
+            chain.add(resolvers[i]);
+        }
+        assertResolversSizeAndNames(chain, resolvers.length);
+        
+        DefaultDependencyDescriptor dd = new DefaultDependencyDescriptor(ModuleRevisionId.newInstance("org","mod", "latest.integration"), false);
+        ResolvedModuleRevision rmr = chain.getDependency(dd, _data);
+        assertNotNull(rmr);
+        assertEquals("5", rmr.getResolver().getName());
+        List ddAsList = Arrays.asList(new DependencyDescriptor[] {dd});
+        for (int i = 0; i < resolvers.length; i++) {
+            assertEquals(ddAsList, resolvers[i].askedDeps);
+        }
+    }
+    
     public void testReturnFirst() throws Exception {
         ChainResolver chain = new ChainResolver();
+        chain.setIvy(_ivy);
         chain.setReturnFirst(true);
         MockResolver[] resolvers = new MockResolver[] {
                 MockResolver.buildMockResolver("1", true, new GregorianCalendar(2005, 1, 20).getTime()), 

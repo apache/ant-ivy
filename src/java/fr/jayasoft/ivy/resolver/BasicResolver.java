@@ -29,7 +29,6 @@ import fr.jayasoft.ivy.DependencyDescriptor;
 import fr.jayasoft.ivy.DependencyResolver;
 import fr.jayasoft.ivy.Ivy;
 import fr.jayasoft.ivy.IvyNode;
-import fr.jayasoft.ivy.LatestStrategy;
 import fr.jayasoft.ivy.ModuleDescriptor;
 import fr.jayasoft.ivy.ModuleRevisionId;
 import fr.jayasoft.ivy.ResolveData;
@@ -58,13 +57,6 @@ public abstract class BasicResolver extends AbstractResolver {
      * True if the files resolved are dependent of the environment from which they have been resolved, false otherwise. In general, relative paths are dependent of the environment, and absolute paths including machine reference are not. 
      */
     private boolean _envDependent = true;
-
-    /**
-     * The latest strategy to use to find latest among several artifacts
-     */
-    private LatestStrategy _latestStrategy;
-
-    private String _latestStrategyName;
 
     private List _ivyattempts = new ArrayList();
     private Map _artattempts = new HashMap();
@@ -114,35 +106,6 @@ public abstract class BasicResolver extends AbstractResolver {
         _checkmodified = Boolean.valueOf(check);
     }
     
-    public LatestStrategy getLatestStrategy() {        
-        if (_latestStrategy == null) {
-            if (getIvy() != null) {
-                if (_latestStrategyName != null) {
-                    _latestStrategy = getIvy().getLatestStrategy(_latestStrategyName);
-                    if (_latestStrategy == null) {
-                        Message.error("unknown latest strategy: "+_latestStrategyName);
-                        _latestStrategy = getIvy().getDefaultLatestStrategy();
-                    }
-                } else {
-                    _latestStrategy = getIvy().getDefaultLatestStrategy();
-                    Message.debug(getName()+": no latest strategy defined: using default");
-                }
-            } else {
-                throw new IllegalStateException("no ivy instance found: impossible to get a latest strategy without ivy instance");
-            }
-        }
-        return _latestStrategy;
-    }
-    
-
-    public void setLatestStrategy(LatestStrategy latestStrategy) {
-        _latestStrategy = latestStrategy;
-    }    
-
-    public void setLatest(String strategyName) {
-        _latestStrategyName = strategyName;
-    }    
-
     public ResolvedModuleRevision getDependency(DependencyDescriptor dd, ResolveData data) throws ParseException {
         clearIvyAttempts();
         boolean downloaded = false;

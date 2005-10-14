@@ -10,13 +10,16 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
 import fr.jayasoft.ivy.Artifact;
+import fr.jayasoft.ivy.ArtifactInfo;
 import fr.jayasoft.ivy.DependencyDescriptor;
 import fr.jayasoft.ivy.DependencyResolver;
 import fr.jayasoft.ivy.Ivy;
+import fr.jayasoft.ivy.LatestStrategy;
 import fr.jayasoft.ivy.ResolveData;
 import fr.jayasoft.ivy.ResolvedModuleRevision;
 import fr.jayasoft.ivy.report.ArtifactDownloadReport;
@@ -29,6 +32,23 @@ import fr.jayasoft.ivy.util.Message;
  *
  */
 public class ChainResolver extends AbstractResolver {
+    public static class ResolvedModuleRevisionArtifactInfo implements ArtifactInfo {
+        private ResolvedModuleRevision _rmr;
+
+        public ResolvedModuleRevisionArtifactInfo(ResolvedModuleRevision rmr) {
+            _rmr = rmr;
+        }
+
+        public String getRevision() {
+            return _rmr.getId().getRevision();
+        }
+
+        public long getLastModified() {
+            return _rmr.getPublicationDate().getTime();
+        }
+
+    }
+
     private boolean _returnFirst = false;
     private List _chain = new ArrayList();
 
@@ -42,11 +62,19 @@ public class ChainResolver extends AbstractResolver {
         
         for (Iterator iter = _chain.iterator(); iter.hasNext();) {
             DependencyResolver resolver = (DependencyResolver) iter.next();
-            ResolvedModuleRevision mr = resolver.getDependency(dd, data);
+            LatestStrategy oldLatest = setLatestIfRequired(resolver, getLatestStrategy());
+            ResolvedModuleRevision mr = null;
+            try {
+                mr = resolver.getDependency(dd, data);
+            } finally {
+                if (oldLatest != null) {
+                    setLatest(resolver, oldLatest);
+                }
+            }
             if (mr != null) {
                 // check if latest is asked and compare to return the most recent
                 if (!_returnFirst && !dd.getDependencyRevisionId().isExactRevision()) {
-                    if (ret == null || mr.getPublicationDate().after(ret.getPublicationDate())) {
+                    if (ret == null || isAfter(mr, ret, data.getDate())) {
                         Message.debug("\tmodule revision kept as younger: "+mr.getId());
                         ret = mr;
                     } else {
@@ -60,6 +88,33 @@ public class ChainResolver extends AbstractResolver {
         return ret;
     }
     
+
+    private LatestStrategy setLatestIfRequired(DependencyResolver resolver, LatestStrategy latestStrategy) {
+        String latestName = getLatestStrategyName(resolver);
+        if (latestName != null && !"default".equals(latestName)) {
+            LatestStrategy oldLatest = getLatest(resolver);
+            setLatest(resolver, latestStrategy);
+            return oldLatest;
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Returns true if rmr1 is after rmr2, using the latest strategy to determine
+     * which is the latest
+     * @param rmr1
+     * @param rmr2
+     * @return
+     */
+    private boolean isAfter(ResolvedModuleRevision rmr1, ResolvedModuleRevision rmr2, Date date) {
+        ArtifactInfo[] ais = new ArtifactInfo[] {
+                new ResolvedModuleRevisionArtifactInfo(rmr1),
+                new ResolvedModuleRevisionArtifactInfo(rmr2)
+        };
+        return getLatestStrategy().findLatest(ais, date) == ais[0];
+    }
+
     public void reportFailure() {
         for (Iterator iter = _chain.iterator(); iter.hasNext();) {
             DependencyResolver resolver = (DependencyResolver) iter.next();
@@ -131,4 +186,29 @@ public class ChainResolver extends AbstractResolver {
         }
         return false;
     }
+
+
+    private static void setLatest(DependencyResolver resolver, LatestStrategy latest) {
+        if (resolver instanceof HasLatestStrategy) {
+            HasLatestStrategy r = (HasLatestStrategy)resolver;
+            r.setLatestStrategy(latest);
+        }
+    }
+
+    private static LatestStrategy getLatest(DependencyResolver resolver) {
+        if (resolver instanceof HasLatestStrategy) {
+            HasLatestStrategy r = (HasLatestStrategy)resolver;
+            return r.getLatestStrategy();
+        }
+        return null;
+    }
+
+    private static String getLatestStrategyName(DependencyResolver resolver) {
+        if (resolver instanceof HasLatestStrategy) {
+            HasLatestStrategy r = (HasLatestStrategy)resolver;
+            return r.getLatest();
+        }
+        return null;
+    }
+
 }

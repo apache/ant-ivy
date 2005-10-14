@@ -1,5 +1,6 @@
 - NEW: overwrite attribute in the publish task now let force overwrite of read only files (IVY-83) 
 - IMPROVE: better error message when publish fails due to readonly destination (IVY-83)
+- FIX: chain resolver now support latest strategy configuration (IVY-90)
 - FIX: raise a clean error when a cyclic variable definition is found (IVY-75)
 - FIX: reinitiliase ant project instance at each new task to avoid using a bad ant project instance in some ide (like netbeans) (IVY-87)
 - FIX: ivy is now able to use simple ivy files in cache (doesn't need resolver info, use default one if no resolver is given) (IVY-86)
