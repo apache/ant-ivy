@@ -79,7 +79,7 @@ public class SortTest extends TestCase {
             Ivy.sortModuleDescriptors(toSort);
         } catch (CircularDependencyException e) {
             //successfull
-            assertEquals("Wrong dependency graph message", "org/md1-rev1->org/md4-rev4->org/md3-rev3->org/md2-rev2->org/md1-rev1", e.getMessage());
+            assertEquals("Wrong dependency graph message", "[ org | md1 | rev1 ]->[ org | md4 | rev4 ]->[ org | md3 | rev3 ]->[ org | md2 | rev2 ]->[ org | md1 | rev1 ]", e.getMessage());
             return;
         }
         assertTrue("Should have thrown circular dependency exception", false);
@@ -92,7 +92,7 @@ public class SortTest extends TestCase {
             Ivy.sortModuleDescriptors(toSort);
         } catch (CircularDependencyException e) {
             //successfull
-            assertEquals("Wrong dependency graph message", "org/md3-rev3->org/md2-rev2->org/md3-rev3", e.getMessage());
+            assertEquals("Wrong dependency graph message", "[ org | md3 | rev3 ]->[ org | md2 | rev2 ]->[ org | md3 | rev3 ]", e.getMessage());
             return;
         }
         assertTrue("Should have thrown circular dependency exception", false);
