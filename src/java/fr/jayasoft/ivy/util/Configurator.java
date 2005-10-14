@@ -5,6 +5,7 @@
  */
 package fr.jayasoft.ivy.util;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -188,19 +189,7 @@ public class Configurator {
         Method addChild = null;
         try {
             if (childClass != null) {
-    	        addChild = parentOD.getAddMethod(childClass);
-    	        if (addChild != null) {
-    	            child = childClass.newInstance();
-    	            addChild.invoke(parent, new Object[] {child});
-    	            setCurrent(child, name);
-    	            return child;
-    	        }
-    	        addChild = parentOD.getAddConfiguredMethod(childClass);
-    	        if (addChild != null) {
-    	            child = childClass.newInstance();
-    	            setCurrent(child, name);
-    	            return child;
-    	        }
+    	        return addChild(parentOD, childClass, name, null);
             } else {
                 addChild = parentOD.getCreateMethod(name);
     	        if (addChild != null) {
@@ -230,6 +219,45 @@ public class Configurator {
             IllegalArgumentException iae = new IllegalArgumentException("bad method found for "+name+" on "+parent.getClass());
             iae.initCause(ex);
             throw iae;
+        }
+        throw new IllegalArgumentException("no appropriate method found for adding "+name+" on "+parent.getClass());
+    }
+    
+    public void addChild(String name, Object child) {
+        if (_objectStack.isEmpty()) {
+            throw new IllegalStateException("set root before creating child");
+        }
+        ObjectDescriptor parentOD = (ObjectDescriptor)_objectStack.peek();
+        try {
+            addChild(parentOD, child.getClass(), name, child);
+        } catch (InstantiationException ex) {
+            throw new IllegalArgumentException("no default constructor on "+child.getClass()+" for adding "+name+" on "+parentOD.getObject().getClass());
+        } catch (Exception ex) {
+            IllegalArgumentException iae = new IllegalArgumentException("bad method found for "+name+" on "+parentOD.getObject().getClass());
+            iae.initCause(ex);
+            throw iae;
+        }
+    }
+
+    private Object addChild(ObjectDescriptor parentOD, Class childClass, String name, Object child) throws InstantiationException, IllegalAccessException, InvocationTargetException {
+        Object parent = parentOD.getObject();
+        Method addChild;
+        addChild = parentOD.getAddMethod(childClass);
+        if (addChild != null) {
+            if (child == null) {
+                child = childClass.newInstance();
+            }
+            addChild.invoke(parent, new Object[] {child});
+            setCurrent(child, name);
+            return child;
+        }
+        addChild = parentOD.getAddConfiguredMethod(childClass);
+        if (addChild != null) {
+            if (child == null) {
+                child = childClass.newInstance();
+            }
+            setCurrent(child, name);
+            return child;
         }
         throw new IllegalArgumentException("no appropriate method found for adding "+name+" on "+parent.getClass());
     }

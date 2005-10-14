@@ -1,3 +1,4 @@
+- NEW: it is now possible to reference existing resolver in resolver containers (IVY-35)
 - NEW: overwrite attribute in the publish task now let force overwrite of read only files (IVY-83) 
 - IMPROVE: string identifying a module is now clearly different from a path
 - IMPROVE: better error message when publish fails due to readonly destination (IVY-83)

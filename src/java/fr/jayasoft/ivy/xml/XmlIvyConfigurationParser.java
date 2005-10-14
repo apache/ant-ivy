@@ -40,6 +40,7 @@ public class XmlIvyConfigurationParser extends DefaultHandler {
     private String _defaultResolver;
     private String _defaultCM;
     private String _defaultLatest;
+    private String _currentConfiguratorTag;
 
     public XmlIvyConfigurationParser(Ivy ivy) {
         _ivy = ivy;
@@ -78,9 +79,37 @@ public class XmlIvyConfigurationParser extends DefaultHandler {
     public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
         try {
             if (_configurator.getCurrent() != null) {
-                _configurator.startCreateChild(qName);
-                for (int i=0; i<attributes.getLength(); i++) {
-                    _configurator.setAttribute(attributes.getQName(i), _ivy.substitute(attributes.getValue(i)));
+                if (attributes.getValue("ref") != null) {
+                    if (attributes.getLength() != 1) {
+                        throw new IllegalArgumentException("ref attribute should be the only one ! found "+attributes.getLength()+" in "+qName);
+                    }
+                    String name = attributes.getValue("ref");
+                    Object child = null;
+                    if ("resolvers".equals(_currentConfiguratorTag)) {
+                        child = _ivy.getResolver(name);
+                        if (child == null) {
+                            throw new IllegalArgumentException("unknown resolver "+name+": resolver should be defined before being referenced");
+                        }
+                    } else if ("latest-strategies".equals(_currentConfiguratorTag)) {
+                        child = _ivy.getLatestStrategy(name);
+                        if (child == null) {
+                            throw new IllegalArgumentException("unknown latest strategy "+name+": latest strategy should be defined before being referenced");
+                        }
+                    } else if ("conflict-managers".equals(_currentConfiguratorTag)) {
+                        child = _ivy.getConflictManager(name);
+                        if (child == null) {
+                            throw new IllegalArgumentException("unknown conflict manager "+name+": conflict manager should be defined before being referenced");
+                        }
+                    }
+                    if (child == null) {
+                        throw new IllegalArgumentException("bad reference "+name);
+                    }
+                    _configurator.addChild(qName, child);
+                } else {
+                    _configurator.startCreateChild(qName);
+                    for (int i=0; i<attributes.getLength(); i++) {
+                        _configurator.setAttribute(attributes.getQName(i), _ivy.substitute(attributes.getValue(i)));
+                    }
                 }
             } else if ("typedef".equals(qName)) {
                 String name = _ivy.substitute(attributes.getValue("name"));
@@ -129,6 +158,7 @@ public class XmlIvyConfigurationParser extends DefaultHandler {
                 _defaultLatest = attributes.getValue("defaultLatestStrategy");
 
             } else if (_configuratorTags.contains(qName)) {
+                _currentConfiguratorTag = qName;
                 _configurator.setRoot(_ivy);
             } else if ("module".equals(qName)) {
                 String organisation = _ivy.substitute(attributes.getValue("organisation"));
@@ -145,6 +175,7 @@ public class XmlIvyConfigurationParser extends DefaultHandler {
         if (_configurator.getCurrent() != null) {
             if (_configuratorTags.contains(qName) && _configurator.getDepth() == 1) {
                 _configurator.clear();
+                _currentConfiguratorTag = null;
             } else {
                 _configurator.endCreateChild();
             }

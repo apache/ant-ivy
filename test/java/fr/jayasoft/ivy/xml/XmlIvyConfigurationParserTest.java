@@ -94,4 +94,25 @@ public class XmlIvyConfigurationParserTest extends TestCase {
         assertTrue(subresolvers.get(0) instanceof MockResolver);
         assertTrue(subresolvers.get(1) instanceof MockResolver);
     }
+    
+    public void testRef() throws Exception {
+        Ivy ivy = new Ivy();
+        XmlIvyConfigurationParser parser = new XmlIvyConfigurationParser(ivy);
+        parser.parse(XmlIvyConfigurationParserTest.class.getResource("ivyconf-ref.xml"));
+        
+        DependencyResolver internal = ivy.getResolver("internal");
+        assertNotNull(internal);
+        assertTrue(internal instanceof ChainResolver);
+        ChainResolver chain = (ChainResolver)internal;
+        List subresolvers = chain.getResolvers();
+        assertNotNull(subresolvers);
+        assertEquals(2, subresolvers.size());
+        FileSystemResolver fsInt1 = (FileSystemResolver)subresolvers.get(0);
+        assertEquals("fs", fsInt1.getName());
+
+        List ivyPatterns = fsInt1.getIvyPatterns();
+        assertNotNull(ivyPatterns);
+        assertEquals(1, ivyPatterns.size());
+        assertEquals("sharedrep/[organisation]/[module]/ivys/ivy-[revision].xml", ivyPatterns.get(0));
+}
 }
