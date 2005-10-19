@@ -6,13 +6,12 @@
  */
 package fr.jayasoft.ivy.ant;
 
-import java.io.File;
-
+import junit.framework.TestCase;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.types.FileSet;
 import org.apache.tools.ant.types.Path;
 
-import junit.framework.TestCase;
+import java.io.File;
 
 public class IvyBuildListTest extends TestCase {
 
@@ -50,7 +49,7 @@ public class IvyBuildListTest extends TestCase {
         
         IvyBuildList buildlist = new IvyBuildList();
         buildlist.setProject(p);
-		buildlist.setReverse(true);
+        buildlist.setReverse(true);
         
         FileSet fs = new FileSet();
         fs.setDir(new File("test/buildlist"));
@@ -73,6 +72,35 @@ public class IvyBuildListTest extends TestCase {
         assertEquals(new File("test/buildlist/A/build.xml").getAbsolutePath(), new File(files[0]).getAbsolutePath());
         assertEquals(new File("test/buildlist/C/build.xml").getAbsolutePath(), new File(files[1]).getAbsolutePath());
         assertEquals(new File("test/buildlist/B/build.xml").getAbsolutePath(), new File(files[2]).getAbsolutePath());
+    }
+
+    public void testFilteredBuildList() {
+        Project p = new Project();
+
+        IvyBuildList buildlist = new IvyBuildList();
+        buildlist.setProject(p);
+        buildlist.setRoot("C");
+
+        FileSet fs = new FileSet();
+        fs.setDir(new File("test/buildlist"));
+        fs.setIncludes("**/build.xml");
+        buildlist.addFileset(fs);
+
+        buildlist.setReference("ordered.build.files");
+
+        buildlist.execute();
+
+        Object o = p.getReference("ordered.build.files");
+        assertNotNull(o);
+        assertTrue(o instanceof Path);
+
+        Path path = (Path)o;
+        String[] files = path.list();
+        assertNotNull(files);
+        assertEquals(2, files.length); // A should be filtered out
+
+        assertEquals(new File("test/buildlist/B/build.xml").getAbsolutePath(), new File(files[0]).getAbsolutePath());
+        assertEquals(new File("test/buildlist/C/build.xml").getAbsolutePath(), new File(files[1]).getAbsolutePath());
     }
 
 }
