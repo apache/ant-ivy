@@ -150,6 +150,7 @@ public class Main {
             boolean validate = line.hasOption("novalidate")?false:true;
             
             Ivy ivy = new Ivy();
+            ivy.addAllVariables(System.getProperties());
 
             configureURLHandler(
                     line.getOptionValue("realm", null), 
