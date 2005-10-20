@@ -27,6 +27,8 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.Iterator;
+import java.util.HashSet;
+import java.util.Set;
 
 public class IvyBuildList extends IvyTask {
     private List _buildFiles = new ArrayList(); // List (FileSet)
@@ -156,7 +158,7 @@ public class IvyBuildList extends IvyTask {
         }
 
         // recursively process the nodes
-        Collection toKeep = new ArrayList();
+        Set toKeep = new HashSet();
         processFilterNode(rootmd, toKeep, moduleIdMap);
 
         // just for logging
@@ -173,10 +175,10 @@ public class IvyBuildList extends IvyTask {
      * of this node that appear in the moduleIdMap (indicating that the dependency is part of this BuildList)
      *
      * @param node the node to be processed
-     * @param toKeep the collection of ModuleDescriptors that should be kept
+     * @param toKeep the set of ModuleDescriptors that should be kept
      * @param moduleIdMap reference mapping of moduleId to ModuleDescriptor that are part of the BuildList
      */
-    private void processFilterNode(ModuleDescriptor node, Collection toKeep, Map moduleIdMap) {
+    private void processFilterNode(ModuleDescriptor node, Set toKeep, Map moduleIdMap) {
         toKeep.add(node);
 
         DependencyDescriptor[] deps = node.getDependencies();
