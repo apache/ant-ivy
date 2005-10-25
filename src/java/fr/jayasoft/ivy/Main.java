@@ -6,6 +6,8 @@
 package fr.jayasoft.ivy;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
@@ -67,8 +69,9 @@ public class Main {
             .hasArg()
             .withDescription(  "use given pattern as retrieve pattern" )
             .create( "retrieve" );
-        Option cachepath = OptionBuilder
-            .withDescription(  "outputs a classpath consisting of all dependencies in cache (including transitive ones) of the given ivy file" )
+        Option cachepath = OptionBuilder.withArgName( "cachepathfile" )
+            .hasArg()
+            .withDescription(  "outputs a classpath consisting of all dependencies in cache (including transitive ones) of the given ivy file to the given cachepathfile" )
             .create( "cachepath" );
         Option revision = OptionBuilder.withArgName( "revision" )
             .hasArg()
@@ -222,7 +225,7 @@ public class Main {
                 ivy.retrieve(md.getModuleRevisionId().getModuleId(), confs, cache, retrievePattern);
             }
             if (line.hasOption("cachepath")) {
-                outputCachePath(ivy, cache, md, confs);
+                outputCachePath(ivy, cache, md, confs, line.getOptionValue("cachepath", "ivycachepath.txt"));
             }
 
             if (line.hasOption("revision")) {
@@ -255,7 +258,7 @@ public class Main {
         }        
     }
 
-    private static void outputCachePath(Ivy ivy, File cache, ModuleDescriptor md, String[] confs) {
+    private static void outputCachePath(Ivy ivy, File cache, ModuleDescriptor md, String[] confs, String outFile) {
         try {
             String pathSeparator = System.getProperty("path.separator");
             StringBuffer buf = new StringBuffer(); 
@@ -272,7 +275,10 @@ public class Main {
                     buf.append(pathSeparator);
                 }
             }
-            System.out.println(buf.toString());
+            PrintWriter writer = new PrintWriter(new FileOutputStream(outFile));
+            writer.println(buf.toString());
+            writer.close();
+            System.out.println("cachepath output to "+outFile);
         } catch (Exception ex) {
             throw new RuntimeException("impossible to build ivy cache path: "+ex.getMessage(), ex);
         }

@@ -1,3 +1,4 @@
+- NEW: ability to output a path of dependencies in cache from the standalone mode (IVY-92)
 - NEW: it is now possible to reference existing resolver in resolver containers (IVY-35)
 - NEW: overwrite attribute in the publish task now let force overwrite of read only files (IVY-83) 
 - IMPROVE: ability to use no revision in pattern with latest.integration dependency, artifacts being updated according to revision change in ivy file (if checkmodified is set to true) (IVY-95)
