@@ -75,7 +75,13 @@ public class RepositoryResolver extends AbstractResourceResolver {
                         Message.debug("\t"+name+": found "+rress[i]);
                     }
                 }
-                ResolvedResource found = (ResolvedResource)strategy.findLatest(rress, date); 
+                ResolvedResource found;
+                if (rress.length == 1) {
+                    Message.debug("only one resource found: no need to use latest strategy");
+                     found = rress[0];
+                } else {
+                    found = (ResolvedResource)strategy.findLatest(rress, date);
+                }
                 if (found == null) {
                     Message.debug("\t"+name+": no resource found for "+mrid+": pattern="+pattern);                    
                 } else if (!found.getResource().exists()) {

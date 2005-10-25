@@ -18,6 +18,7 @@ import java.util.regex.Pattern;
 import fr.jayasoft.ivy.ModuleRevisionId;
 import fr.jayasoft.ivy.ResolvedURL;
 import fr.jayasoft.ivy.repository.Repository;
+import fr.jayasoft.ivy.repository.Resource;
 import fr.jayasoft.ivy.util.IvyPatternHelper;
 import fr.jayasoft.ivy.util.Message;
 
@@ -126,6 +127,16 @@ public class ResolverHelper {
             }
             return (ResolvedResource[])ret.toArray(new ResolvedResource[ret.size()]);
         } else {
+            // maybe the partially resolved pattern is completely resolved ?
+            try {
+                Resource res = rep.getResource(partiallyResolvedPattern);
+                if (res.exists()) {
+                    Message.debug("\tonly one resource found without real listing: using and defining it as working@"+rep.getName()+" revision: "+res.getName());
+                    return new ResolvedResource[] {new ResolvedResource(res, "working@"+rep.getName())};
+                }
+            } catch (IOException e) {
+                Message.debug("\timpossible to get resource from name listed by repository: "+partiallyResolvedPattern+": "+e.getMessage());
+            }
             Message.debug("\tno revision found");
         }
         return null;

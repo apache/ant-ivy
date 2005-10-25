@@ -111,6 +111,7 @@ public abstract class BasicResolver extends AbstractResolver {
         boolean downloaded = false;
         boolean searched = false;
         Date cachedPublicationDate = null;
+        String cachedRevision = null;
         ModuleRevisionId mrid = dd.getDependencyRevisionId();
     	// check revision
 		int index = mrid.getRevision().indexOf("@");
@@ -190,6 +191,7 @@ public abstract class BasicResolver extends AbstractResolver {
                     return searchedRmr(rmr);
                 } else {
                     Message.verbose("\t"+getName()+": revision in cache is not up to date: "+resolvedMrid);
+                    cachedRevision = rmr.getDescriptor().getResolvedModuleRevisionId().getRevision();
                     if (dd.isChanging()) {
                         // ivy file has been updated, we should see if it has a new publication date
                         // to see if a new download is required (in case the dependency is a changing one)
@@ -239,10 +241,23 @@ public abstract class BasicResolver extends AbstractResolver {
                     throw new IllegalStateException("bad revision found in "+ivyRef.getResource()+": expected="+ivyRef.getRevision()+" found="+md.getModuleRevisionId().getRevision());
                 }
                 
-                // check if publication date has changed
+                // check if we should delete old artifacts
+                boolean deleteOldArtifacts = false;
                 if (cachedPublicationDate != null && !cachedPublicationDate.equals(md.getResolvedPublicationDate())) {
                     // artifacts have changed, they should be downloaded again
                     Message.verbose("dependency "+dd+" has changed: deleting old artifacts");
+                    deleteOldArtifacts = true;
+                }
+                if (cachedRevision != null) {
+                    if (!cachedRevision.equals(md.getResolvedModuleRevisionId().getRevision())) {
+                        // revision has changed, artifacts should be downloaded again
+                        Message.verbose("revision "+dd+" has changed: deleting old artifacts");
+                        deleteOldArtifacts = true;
+                    } else {
+                        Message.debug("revision "+dd+" has not changed: keeping old artifacts");
+                    }
+                }
+                if (deleteOldArtifacts) {
                     String[] confs = rmr.getDescriptor().getConfigurationsNames();
                     for (int i = 0; i < confs.length; i++) {
                         Artifact[] arts = rmr.getDescriptor().getArtifacts(confs[i]);
@@ -256,7 +271,7 @@ public abstract class BasicResolver extends AbstractResolver {
                     }
                 } else if (dd.isChanging()){
                     Message.verbose("dependency "+dd+" is changing, but has not changed: will trust cached artifacts if any");
-                }
+                } 
             } catch (IOException ex) {
                 Message.warn("io problem while parsing ivy file: "+ivyRef.getResource()+": "+ex.getMessage());
                 return null;
