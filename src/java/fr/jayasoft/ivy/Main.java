@@ -6,7 +6,11 @@
 package fr.jayasoft.ivy;
 
 import java.io.File;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -16,11 +20,14 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
+import org.apache.tools.ant.BuildException;
+import org.apache.tools.ant.types.Path;
 
 import fr.jayasoft.ivy.url.URLHandlerDispatcher;
 import fr.jayasoft.ivy.url.URLHandlerRegistry;
 import fr.jayasoft.ivy.util.DefaultMessageImpl;
 import fr.jayasoft.ivy.util.Message;
+import fr.jayasoft.ivy.xml.XmlReportParser;
 
 /**
  * class used to launch ivy as a standalone tool
@@ -60,6 +67,9 @@ public class Main {
             .hasArg()
             .withDescription(  "use given pattern as retrieve pattern" )
             .create( "retrieve" );
+        Option cachepath = OptionBuilder
+            .withDescription(  "outputs a classpath consisting of all dependencies in cache (including transitive ones) of the given ivy file" )
+            .create( "cachepath" );
         Option revision = OptionBuilder.withArgName( "revision" )
             .hasArg()
             .withDescription(  "use given revision to publish the module" )
@@ -110,6 +120,7 @@ public class Main {
         options.addOption(cache);
         options.addOption(ivyfile);
         options.addOption(retrieve);
+        options.addOption(cachepath);
         options.addOption(revision);
         options.addOption(status);
         options.addOption(deliver);
@@ -171,7 +182,7 @@ public class Main {
                 ivy.configure(conffile);
             }
             
-            File cache = new File(ivy.substitute(line.getOptionValue("cache", "cache")));
+            File cache = new File(ivy.substitute(line.getOptionValue("cache", ivy.getDefaultCache().getAbsolutePath())));
             if (!cache.exists()) {
                 cache.mkdirs();
             } else if (!cache.isDirectory()) {
@@ -210,6 +221,9 @@ public class Main {
                 }
                 ivy.retrieve(md.getModuleRevisionId().getModuleId(), confs, cache, retrievePattern);
             }
+            if (line.hasOption("cachepath")) {
+                outputCachePath(ivy, cache, md, confs);
+            }
 
             if (line.hasOption("revision")) {
                 ivy.deliver(
@@ -241,6 +255,28 @@ public class Main {
         }        
     }
 
+    private static void outputCachePath(Ivy ivy, File cache, ModuleDescriptor md, String[] confs) {
+        try {
+            String pathSeparator = System.getProperty("path.separator");
+            StringBuffer buf = new StringBuffer(); 
+            XmlReportParser parser = new XmlReportParser();
+            Collection all = new LinkedHashSet();
+            for (int i = 0; i < confs.length; i++) {
+                Artifact[] artifacts = parser.getArtifacts(md.getModuleRevisionId().getModuleId(), confs[i], cache);
+                all.addAll(Arrays.asList(artifacts));
+            }
+            for (Iterator iter = all.iterator(); iter.hasNext();) {
+                Artifact artifact = (Artifact)iter.next();
+                buf.append(ivy.getArchiveFileInCache(cache, artifact).getPath());
+                if (iter.hasNext()) {
+                    buf.append(pathSeparator);
+                }
+            }
+            System.out.println(buf.toString());
+        } catch (Exception ex) {
+            throw new RuntimeException("impossible to build ivy cache path: "+ex.getMessage(), ex);
+        }
+    }
     private static void configureURLHandler(String realm, String host, String username, String passwd) {
         URLHandlerDispatcher dispatcher = new URLHandlerDispatcher();
         dispatcher.setDownloader("http", URLHandlerRegistry.getHttp(realm, host, username, passwd));
