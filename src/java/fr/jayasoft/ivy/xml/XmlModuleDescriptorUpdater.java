@@ -109,22 +109,22 @@ public class XmlModuleDescriptorUpdater {
                             out.print(" resolver=\""+attributes.getValue("resolver")+"\"");
                         }
                     } else if ("dependency".equals(qName)) {
-                        out.print("<dependency ");
-                        String org = _organisation;
-                        if (attributes.getValue("org") != null) {
-                            org = attributes.getValue("org");
-                            out.print("org=\""+org+"\" ");
-                        }
+                        out.print("<dependency");
+                        String org = attributes.getValue("org");
+                        org = org == null ? _organisation : org;
                         ModuleId mid = new ModuleId(org, attributes.getValue("name"));
-                        out.print("name=\""+mid.getName()+"\" ");
-                        String rev = (String)resolvedRevisions.get(mid);
-                        if (rev != null) {
-                            out.print("rev=\""+rev+"\"");
-                        } else {
-                            out.print("rev=\""+attributes.getValue("rev")+"\"");
-                        }
-                        if (attributes.getValue("conf") != null) {
-                            out.print(" conf=\""+attributes.getValue("conf")+"\"");
+                        for (int i=0; i<attributes.getLength(); i++) {
+                            String attName = attributes.getQName(i);
+                            if ("rev".equals(attName)) {
+                                String rev = (String)resolvedRevisions.get(mid);
+                                if (rev != null) {
+                                    out.print(" rev=\""+rev+"\"");
+                                } else {
+                                    out.print(" rev=\""+attributes.getValue("rev")+"\"");
+                                }
+                            } else {
+                                out.print(" "+attName+"=\""+attributes.getValue(attName)+"\"");
+                            }
                         }
                     } else {
                         // copy

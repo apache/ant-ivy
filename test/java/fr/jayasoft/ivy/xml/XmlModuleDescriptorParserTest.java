@@ -107,7 +107,7 @@ public class XmlModuleDescriptorParserTest extends TestCase {
         
         DependencyDescriptor[] dependencies = md.getDependencies();
         assertNotNull(dependencies);
-        assertEquals(12, dependencies.length);
+        assertEquals(13, dependencies.length);
         
         // no conf def => equivalent to *->*
         DependencyDescriptor dd = getDependency(dependencies, "mymodule2");
@@ -118,6 +118,14 @@ public class XmlModuleDescriptorParserTest extends TestCase {
         assertEquals(Arrays.asList(new String[] {"*"}), Arrays.asList(dd.getDependencyConfigurations("myconf1")));        
         assertEquals(Arrays.asList(new String[] {"*"}), Arrays.asList(dd.getDependencyConfigurations(new String[] {"myconf2", "myconf3", "myconf4"})));
         assertDependencyArtifactsIncludes(dd, new String[] {"myconf1", "myconf2", "myconf3", "myconf4"}, new String[0]);
+        assertFalse(dd.isChanging());
+        assertTrue(dd.isTransitive());
+        
+        // changing = true
+        dd = getDependency(dependencies, "mymodule3");
+        assertNotNull(dd);
+        assertTrue(dd.isChanging());
+        assertFalse(dd.isTransitive());
         
         // conf="myconf1" => equivalent to myconf1->myconf1
         dd = getDependency(dependencies, "yourmodule1");
