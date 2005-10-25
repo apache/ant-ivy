@@ -10,6 +10,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 
+import fr.jayasoft.ivy.DependencyDescriptor;
 import fr.jayasoft.ivy.Ivy;
 import fr.jayasoft.ivy.ModuleDescriptor;
 
@@ -34,7 +35,34 @@ public class XmlModuleDescriptorWriter {
             out.println("\t\tresolver=\""+md.getResolverName()+"\"");
             out.println("\t\tdefault=\""+(md.isDefault()?"true":"false")+"\"");
 	    	out.println("\t/>");
-	    	out.println("</ivy-module>");
+            DependencyDescriptor[] dds = md.getDependencies();
+            if (dds.length > 0) {
+                out.println("\t<dependencies>");
+                for (int i = 0; i < dds.length; i++) {
+                    out.print("\t\t<dependency");
+                    out.print(" org=\""+dds[i].getDependencyRevisionId().getOrganisation()+"\"");
+                    out.print(" name=\""+dds[i].getDependencyRevisionId().getName()+"\"");
+                    out.print(" rev=\""+dds[i].getDependencyRevisionId().getRevision()+"\"");
+                    out.print(" conf=\"");
+                    String[] modConfs = dds[i].getModuleConfigurations();
+                    for (int j = 0; j < modConfs.length; j++) {
+                        String[] depConfs = dds[i].getDependencyConfigurations(modConfs[j]);
+                        out.print(modConfs[j]+"->");
+                        for (int k = 0; k < depConfs.length; k++) {
+                            out.print(depConfs[k]);
+                            if (k+1 < depConfs.length) {
+                                out.print(",");
+                            }
+                        }
+                        if (j+1 < modConfs.length) {
+                            out.print(";");
+                        }
+                    }
+                    out.println("\"/>");
+                }
+                out.println("\t</dependencies>");
+            }
+            out.println("</ivy-module>");
         } finally {
             out.close();
         }

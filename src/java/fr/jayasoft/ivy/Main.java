@@ -29,6 +29,7 @@ import fr.jayasoft.ivy.url.URLHandlerDispatcher;
 import fr.jayasoft.ivy.url.URLHandlerRegistry;
 import fr.jayasoft.ivy.util.DefaultMessageImpl;
 import fr.jayasoft.ivy.util.Message;
+import fr.jayasoft.ivy.xml.XmlModuleDescriptorWriter;
 import fr.jayasoft.ivy.xml.XmlReportParser;
 
 /**
@@ -61,6 +62,10 @@ public class Main {
             .hasArg()
             .withDescription(  "use given file as ivy file" )
             .create( "ivy" );
+        Option dependency = OptionBuilder.withArgName( "organisation module revision" )
+            .hasArgs()
+            .withDescription(  "use this instead of ivy file to do the rest of the work with this as a dependency." )
+            .create( "dependency" );
         Option confs = OptionBuilder.withArgName( "configurations" )
             .hasArgs()
             .withDescription(  "resolve given configurations" )
@@ -122,6 +127,7 @@ public class Main {
         options.addOption(confs);
         options.addOption(cache);
         options.addOption(ivyfile);
+        options.addOption(dependency);
         options.addOption(retrieve);
         options.addOption(cachepath);
         options.addOption(revision);
@@ -191,17 +197,37 @@ public class Main {
             } else if (!cache.isDirectory()) {
                 error(options, cache+" is not a directory");
             }
-            File ivyfile = new File(ivy.substitute(line.getOptionValue("ivy", "ivy.xml")));
-            if (!ivyfile.exists()) {
-                error(options, "ivy file not found: "+ivyfile);
-            } else if (ivyfile.isDirectory()) {
-                error(options, "ivy file is not a file: "+ivyfile);
-            }
+            
             String[] confs;
             if (line.hasOption("confs")) {
                 confs = line.getOptionValues("confs");
             } else {
                 confs = new String[] {"*"};
+            }
+
+            File ivyfile;
+            if (line.hasOption("dependency")) {
+                String[] dep = line.getOptionValues("dependency");
+                if (dep.length != 3) {
+                    error(options, "dependency should be expressed with exactly 3 arguments: organisation module revision");
+                }
+                ivyfile = File.createTempFile("ivy", ".xml");
+                ivyfile.deleteOnExit();
+                DefaultModuleDescriptor md = DefaultModuleDescriptor.newDefaultInstance(ModuleRevisionId.newInstance(dep[0], "standalone", "working"));
+                DefaultDependencyDescriptor dd = new DefaultDependencyDescriptor(md, ModuleRevisionId.newInstance(dep[0], dep[1], dep[2]), false, false, true);
+                for (int i = 0; i < confs.length; i++) {
+                    dd.addDependencyConfiguration("default", confs[i]);
+                }
+                md.addDependency(dd);
+                XmlModuleDescriptorWriter.write(md, ivyfile);
+                confs = new String[] {"default"};
+            } else {
+                ivyfile = new File(ivy.substitute(line.getOptionValue("ivy", "ivy.xml")));
+                if (!ivyfile.exists()) {
+                    error(options, "ivy file not found: "+ivyfile);
+                } else if (ivyfile.isDirectory()) {
+                    error(options, "ivy file is not a file: "+ivyfile);
+                }
             }
 
             Date date = new Date();
