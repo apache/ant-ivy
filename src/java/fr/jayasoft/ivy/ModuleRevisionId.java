@@ -61,21 +61,33 @@ public class ModuleRevisionId {
      * @return true if the given revision can be considered as a revision of this module revision id.
      */
     public boolean acceptRevision(String revision) {
-        if (_revision.equals(revision)) {
-            return true;
-        }
-        if (_revision.startsWith("latest.")) {
-            return true;
-        }
-        if (_revision.endsWith("+") && revision.startsWith(_revision.substring(0, _revision.length() - 1))) {
-            return true;
-        }
-        return false;
+        return acceptRevision(_revision, revision);
     }
     /**
      * @return true if the revision is an exact one, i.e. not a 'latest.' nor a xx+ one.
      */
     public boolean isExactRevision() {
-        return !_revision.startsWith("latest.") && !_revision.endsWith("+");
+        return isExactRevision(_revision);
     }
+    
+    public static boolean acceptRevision(String askedRevision, String revision) {
+        if (askedRevision.equals(revision)) {
+            return true;
+        }
+        if (askedRevision.startsWith("latest.")) {
+            return true;
+        }
+        if (askedRevision.endsWith("+") && revision.startsWith(askedRevision.substring(0, askedRevision.length() - 1))) {
+            return true;
+        }
+        return false;        
+    }
+
+    /**
+     * @return true if the revision is an exact one, i.e. not a 'latest.' nor a xx+ one.
+     */
+    public static boolean isExactRevision(String revision) {
+        return !revision.startsWith("latest.") && !revision.endsWith("+");
+    }
+    
 }

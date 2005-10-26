@@ -111,7 +111,6 @@ public abstract class BasicResolver extends AbstractResolver {
         boolean downloaded = false;
         boolean searched = false;
         Date cachedPublicationDate = null;
-        String cachedRevision = null;
         ModuleRevisionId mrid = dd.getDependencyRevisionId();
     	// check revision
 		int index = mrid.getRevision().indexOf("@");
@@ -191,7 +190,6 @@ public abstract class BasicResolver extends AbstractResolver {
                     return searchedRmr(rmr);
                 } else {
                     Message.verbose("\t"+getName()+": revision in cache is not up to date: "+resolvedMrid);
-                    cachedRevision = rmr.getDescriptor().getResolvedModuleRevisionId().getRevision();
                     if (dd.isChanging()) {
                         // ivy file has been updated, we should see if it has a new publication date
                         // to see if a new download is required (in case the dependency is a changing one)
@@ -237,7 +235,7 @@ public abstract class BasicResolver extends AbstractResolver {
                     throw new IllegalStateException("bad module name found in "+ivyRef.getResource()+": expected="+mrid.getName()+" found="+md.getModuleRevisionId().getName());
                 }
                 if (ivyRef.getRevision() != null && md.getModuleRevisionId().getRevision() != null && 
-                        !ivyRef.getRevision().equals(md.getModuleRevisionId().getRevision())) {
+                        !ModuleRevisionId.acceptRevision(ivyRef.getRevision(), md.getModuleRevisionId().getRevision())) {
                     throw new IllegalStateException("bad revision found in "+ivyRef.getResource()+": expected="+ivyRef.getRevision()+" found="+md.getModuleRevisionId().getRevision());
                 }
                 
@@ -247,15 +245,6 @@ public abstract class BasicResolver extends AbstractResolver {
                     // artifacts have changed, they should be downloaded again
                     Message.verbose("dependency "+dd+" has changed: deleting old artifacts");
                     deleteOldArtifacts = true;
-                }
-                if (cachedRevision != null) {
-                    if (!cachedRevision.equals(md.getResolvedModuleRevisionId().getRevision())) {
-                        // revision has changed, artifacts should be downloaded again
-                        Message.verbose("revision "+dd+" has changed: deleting old artifacts");
-                        deleteOldArtifacts = true;
-                    } else {
-                        Message.debug("revision "+dd+" has not changed: keeping old artifacts");
-                    }
                 }
                 if (deleteOldArtifacts) {
                     String[] confs = rmr.getDescriptor().getConfigurationsNames();
