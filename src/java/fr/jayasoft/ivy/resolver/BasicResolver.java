@@ -166,7 +166,7 @@ public abstract class BasicResolver extends AbstractResolver {
 
             ModuleRevisionId resolvedMrid = mrid;
             // first check if this dependency has not yet been resolved
-            if (!mrid.isExactRevision()) {
+            if (!mrid.isExactRevision() && ModuleRevisionId.isExactRevision(ivyRef.getRevision())) {
                 resolvedMrid = new ModuleRevisionId(mrid.getModuleId(), ivyRef.getRevision());
                 IvyNode node = data.getNode(resolvedMrid);
                 if (node != null && node.getModuleRevision() != null) {
@@ -285,7 +285,7 @@ public abstract class BasicResolver extends AbstractResolver {
         if (!resolvedMrid.isExactRevision()) {
             resolvedMrid = md.getResolvedModuleRevisionId();
             if (resolvedMrid.getRevision() == null || resolvedMrid.getRevision().length() == 0) {
-                if (ivyRef.getRevision() == null || ivyRef.getRevision().length() == 0) {
+                if (ivyRef.getRevision() == null || ivyRef.getRevision().length() == 0 || !ModuleRevisionId.isExactRevision(ivyRef.getRevision())) {
                     resolvedMrid = new ModuleRevisionId(resolvedMrid.getModuleId(), (_envDependent?"##":"")+DATE_FORMAT.format(data.getDate())+"@"+_workspaceName);
                 } else {
                     resolvedMrid = new ModuleRevisionId(resolvedMrid.getModuleId(), ivyRef.getRevision());
