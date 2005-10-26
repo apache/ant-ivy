@@ -296,7 +296,7 @@ public class Main {
             }
             for (Iterator iter = all.iterator(); iter.hasNext();) {
                 Artifact artifact = (Artifact)iter.next();
-                buf.append(ivy.getArchiveFileInCache(cache, artifact).getPath());
+                buf.append(ivy.getArchiveFileInCache(cache, artifact).getCanonicalPath());
                 if (iter.hasNext()) {
                     buf.append(pathSeparator);
                 }
@@ -305,6 +305,7 @@ public class Main {
             writer.println(buf.toString());
             writer.close();
             System.out.println("cachepath output to "+outFile);
+
         } catch (Exception ex) {
             throw new RuntimeException("impossible to build ivy cache path: "+ex.getMessage(), ex);
         }
