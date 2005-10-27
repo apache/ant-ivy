@@ -37,7 +37,7 @@ public class IvyBuildList extends IvyTask {
     private boolean _skipBuildWithoutIvy = false;
     private boolean _reverse = false;
     private String _ivyFilePath;
-    private String _root;
+    private String _root = "*";
 
 
     public void addFileset(FileSet buildFiles) {
@@ -97,7 +97,7 @@ public class IvyBuildList extends IvyTask {
                         ModuleDescriptor md = XmlModuleDescriptorParser.parseDescriptor(getIvyInstance(), ivyFile.toURL(), isValidate());
                         buildFiles.put(md, buildFile);
                         mds.add(md);
-                        if (_root != null && _root.equals(md.getModuleRevisionId().getName())) {
+                        if (_root.equals(md.getModuleRevisionId().getName())) {
                             rootModuleDescriptor = md;
                         }
 
@@ -114,7 +114,7 @@ public class IvyBuildList extends IvyTask {
             }
         }
 
-        if (_root != null && rootModuleDescriptor == null) {
+        if (!"*".equals(_root) && rootModuleDescriptor == null) {
             throw new BuildException("unable to find root module " + _root + " in build fileset");
         }
 
