@@ -996,6 +996,27 @@ public class ResolveTest extends TestCase {
         assertDoesntContainArtifact("test", "c", "1.0.1", "c-bt", "txt", "txt", conf);        
     }
 
+    public void testIVY97() throws Exception {
+        // mod9.2 depends on mod9.1 and mod1.2
+        //     mod9.1 depends on mod1.2
+        ResolveReport report = _ivy.resolve(new File("test/repositories/1/org9/mod9.2/ivys/ivy-1.0.xml").toURL(),
+                null, new String[] {"*"}, _cache, null, true);
+        assertNotNull(report);
+        ModuleDescriptor md = report.getModuleDescriptor();
+        assertNotNull(md);
+        ModuleRevisionId mrid = ModuleRevisionId.newInstance("org9", "mod9.2", "1.0");
+        assertEquals(mrid, md.getModuleRevisionId());
+        
+        assertTrue(_ivy.getResolvedIvyFileInCache(_cache, mrid).exists());
+        
+        // dependencies
+        assertTrue(_ivy.getIvyFileInCache(_cache, ModuleRevisionId.newInstance("org9", "mod9.1", "1.0")).exists());
+        assertTrue(_ivy.getArchiveFileInCache(_cache, "org9", "mod9.1", "1.0", "mod9.1", "jar", "jar").exists());
+
+        assertTrue(_ivy.getIvyFileInCache(_cache, ModuleRevisionId.newInstance("org1", "mod1.2", "2.0")).exists());
+        assertTrue(_ivy.getArchiveFileInCache(_cache, "org1", "mod1.2", "2.0", "mod1.2", "jar", "jar").exists());
+    }
+    
     ////////////////////////////////////////////////////////////
     // helper methods to ease the tests
     ////////////////////////////////////////////////////////////

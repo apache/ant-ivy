@@ -1019,7 +1019,7 @@ public class IvyNode {
     
 
     public void setRootModuleConf(String rootModuleConf) {
-        if (_rootModuleConf != null) {
+        if (_rootModuleConf != null && !_rootModuleConf.equals(rootModuleConf)) {
             _confsToFetch.clear(); // we change of root module conf => we discard all confs to fetch
         }
         if (rootModuleConf != null && rootModuleConf.equals(_rootModuleConf)) {
