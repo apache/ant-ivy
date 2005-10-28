@@ -1,0 +1,6 @@
+<ivyconf>
+	<include file="test/java/fr/jayasoft/ivy/xml/ivyconf-macro.xml"/>
+	<resolvers>
+		<mymacro name="includeworks" mymainrep="included/myrep" mysecondrep="included/secondrep"/>
+	</resolvers>
+</ivyconf>

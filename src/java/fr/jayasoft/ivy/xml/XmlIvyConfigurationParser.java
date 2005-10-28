@@ -142,6 +142,16 @@ public class XmlIvyConfigurationParser extends DefaultHandler {
                     Message.verbose("failed to load properties as file: trying as url: "+propFilePath);
                     _ivy.loadProperties(new URL(propFilePath));
                 }
+            } else if ("include".equals(qName)) {
+                String propFilePath = _ivy.substitute((String)attributes.get("file"));
+                    File incFile = new File(propFilePath);
+                    if (incFile.exists()) {
+                        Message.verbose("including file: "+propFilePath);
+                        parse(incFile.toURL());
+                    } else {
+                        Message.verbose("including url: "+propFilePath);
+                        parse(new URL(propFilePath));
+                    }
             } else if ("conf".equals(qName)) {
                 String cache = (String)attributes.get("defaultCache");
                 if (cache != null) {

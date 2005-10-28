@@ -160,4 +160,41 @@ public class XmlIvyConfigurationParserTest extends TestCase {
         assertEquals(1, ivyPatterns.size());
         assertEquals("path/to/secondrep/[module]/[type]s/ivy-[revision].xml", ivyPatterns.get(0));
     }
+    
+    public void testInclude() throws Exception {
+        Ivy ivy = new Ivy();
+        XmlIvyConfigurationParser parser = new XmlIvyConfigurationParser(ivy);
+        parser.parse(XmlIvyConfigurationParserTest.class.getResource("ivyconf-include.xml"));
+        
+        DependencyResolver def = ivy.getResolver("default");
+        assertNotNull(def);
+        assertTrue(def instanceof ChainResolver);
+        ChainResolver chain = (ChainResolver)def;
+        List subresolvers = chain.getResolvers();
+        assertNotNull(subresolvers);
+        assertEquals(2, subresolvers.size());
+        FileSystemResolver fsInt1 = (FileSystemResolver)subresolvers.get(0);
+        assertEquals("default-fs1", fsInt1.getName());
+
+        List ivyPatterns = fsInt1.getIvyPatterns();
+        assertNotNull(ivyPatterns);
+        assertEquals(1, ivyPatterns.size());
+        assertEquals("path/to/myrep/[organisation]/[module]/[type]s/[artifact]-[revision].[ext]", ivyPatterns.get(0));
+        
+        DependencyResolver inc = ivy.getResolver("includeworks");
+        assertNotNull(inc);
+        assertTrue(inc instanceof ChainResolver);
+        chain = (ChainResolver)inc;
+        subresolvers = chain.getResolvers();
+        assertNotNull(subresolvers);
+        assertEquals(2, subresolvers.size());
+
+        fsInt1 = (FileSystemResolver)subresolvers.get(0);
+        assertEquals("includeworks-fs1", fsInt1.getName());
+
+        ivyPatterns = fsInt1.getIvyPatterns();
+        assertNotNull(ivyPatterns);
+        assertEquals(1, ivyPatterns.size());
+        assertEquals("included/myrep/[organisation]/[module]/[type]s/[artifact]-[revision].[ext]", ivyPatterns.get(0));
+    }
 }
