@@ -11,6 +11,7 @@ import java.io.InputStream;
 import java.net.URL;
 import java.text.ParseException;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -76,14 +77,28 @@ public class XmlIvyConfigurationParser extends DefaultHandler {
         }
     }
 
-    public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+    public void startElement(String uri, String localName, String qName, Attributes att) throws SAXException {
+        // we first copy attributes in a Map to be able to modify them
+        Map attributes = new HashMap();
+        for (int i=0; i<att.getLength(); i++) {
+            attributes.put(att.getQName(i), att.getValue(i));
+        }
+        
         try {
             if (_configurator.getCurrent() != null) {
-                if (attributes.getValue("ref") != null) {
-                    if (attributes.getLength() != 1) {
-                        throw new IllegalArgumentException("ref attribute should be the only one ! found "+attributes.getLength()+" in "+qName);
+                if ("macrodef".equals(_currentConfiguratorTag) && _configurator.getTypeDef(qName) != null) {
+                    String name = (String)attributes.get("name");
+                    if (name == null) {
+                        attributes.put("name", "@{name}");
+                    } else {
+                        attributes.put("name", "@{name}-"+name);
                     }
-                    String name = attributes.getValue("ref");
+                }
+                if (attributes.get("ref") != null) {
+                    if (attributes.size() != 1) {
+                        throw new IllegalArgumentException("ref attribute should be the only one ! found "+attributes.size()+" in "+qName);
+                    }
+                    String name = (String)attributes.get("ref");
                     Object child = null;
                     if ("resolvers".equals(_currentConfiguratorTag)) {
                         child = _ivy.getResolver(name);
@@ -107,18 +122,19 @@ public class XmlIvyConfigurationParser extends DefaultHandler {
                     _configurator.addChild(qName, child);
                 } else {
                     _configurator.startCreateChild(qName);
-                    for (int i=0; i<attributes.getLength(); i++) {
-                        _configurator.setAttribute(attributes.getQName(i), _ivy.substitute(attributes.getValue(i)));
+                    for (Iterator iter = attributes.keySet().iterator(); iter.hasNext();) {
+                        String attName = (String)iter.next();
+                        _configurator.setAttribute(attName, _ivy.substitute((String)attributes.get(attName)));
                     }
                 }
             } else if ("typedef".equals(qName)) {
-                String name = _ivy.substitute(attributes.getValue("name"));
-                String className = _ivy.substitute(attributes.getValue("classname"));
+                String name = _ivy.substitute((String)attributes.get("name"));
+                String className = _ivy.substitute((String)attributes.get("classname"));
                 Class clazz = Class.forName(className);
                 _ivy.typeDef(name, clazz);
                 _configurator.typeDef(name, clazz);
             } else if ("properties".equals(qName)) {
-                String propFilePath = _ivy.substitute(attributes.getValue("file"));
+                String propFilePath = _ivy.substitute((String)attributes.get("file"));
                 try {
                     Message.verbose("loading properties: "+propFilePath);
                     _ivy.loadProperties(new File(propFilePath));
@@ -127,43 +143,47 @@ public class XmlIvyConfigurationParser extends DefaultHandler {
                     _ivy.loadProperties(new URL(propFilePath));
                 }
             } else if ("conf".equals(qName)) {
-                String cache = attributes.getValue("defaultCache");
+                String cache = (String)attributes.get("defaultCache");
                 if (cache != null) {
                     _ivy.setDefaultCache(new File(_ivy.substitute(cache)));
                 }
-                String validate = attributes.getValue("validate");
+                String validate = (String)attributes.get("validate");
                 if (validate != null) {
                     _ivy.setValidate(Boolean.valueOf(_ivy.substitute(validate)).booleanValue());
                 }
-                String up2d = attributes.getValue("checkUpToDate");
+                String up2d = (String)attributes.get("checkUpToDate");
                 if (up2d != null) {
                     _ivy.setCheckUpToDate(Boolean.valueOf(_ivy.substitute(up2d)).booleanValue());
                 }
-                String cacheIvyPattern = attributes.getValue("cacheIvyPattern");
+                String cacheIvyPattern = (String)attributes.get("cacheIvyPattern");
                 if (cacheIvyPattern != null) {
                     _ivy.setCacheIvyPattern(_ivy.substitute(cacheIvyPattern));
                 }
-                String cacheArtPattern = attributes.getValue("cacheArtifactPattern");
+                String cacheArtPattern = (String)attributes.get("cacheArtifactPattern");
                 if (cacheArtPattern != null) {
                     _ivy.setCacheArtifactPattern(_ivy.substitute(cacheArtPattern));
                 }
-                String useRemoteConfig = attributes.getValue("useRemoteConfig");
+                String useRemoteConfig = (String)attributes.get("useRemoteConfig");
                 if (useRemoteConfig != null) {
                     _ivy.setUseRemoteConfig(Boolean.valueOf(_ivy.substitute(useRemoteConfig)).booleanValue());
                 }
 
                 // we do not set following defaults here since no instances has been registered yet
-                _defaultResolver = attributes.getValue("defaultResolver");
-                _defaultCM = attributes.getValue("defaultConflictManager");
-                _defaultLatest = attributes.getValue("defaultLatestStrategy");
+                _defaultResolver = (String)attributes.get("defaultResolver");
+                _defaultCM = (String)attributes.get("defaultConflictManager");
+                _defaultLatest = (String)attributes.get("defaultLatestStrategy");
 
             } else if (_configuratorTags.contains(qName)) {
                 _currentConfiguratorTag = qName;
                 _configurator.setRoot(_ivy);
+            } else if ("macrodef".equals(qName)) {
+                _currentConfiguratorTag = qName;
+                Configurator.MacroDef macrodef = _configurator.startMacroDef((String)attributes.get("name"));
+                macrodef.addAttribute("name", null);
             } else if ("module".equals(qName)) {
-                String organisation = _ivy.substitute(attributes.getValue("organisation"));
-                String module = _ivy.substitute(attributes.getValue("name"));
-                String resolver = _ivy.substitute(attributes.getValue("resolver"));
+                String organisation = _ivy.substitute((String)attributes.get("organisation"));
+                String module = _ivy.substitute((String)attributes.get("name"));
+                String resolver = _ivy.substitute((String)attributes.get("resolver"));
                 _ivy.addModuleConfiguration(new ModuleId(organisation, module), resolver);
             }
         } catch (Exception ex) {
@@ -175,6 +195,9 @@ public class XmlIvyConfigurationParser extends DefaultHandler {
         if (_configurator.getCurrent() != null) {
             if (_configuratorTags.contains(qName) && _configurator.getDepth() == 1) {
                 _configurator.clear();
+                _currentConfiguratorTag = null;
+            } else if ("macrodef".equals(qName) && _configurator.getDepth() == 1) {
+                _configurator.endMacroDef();
                 _currentConfiguratorTag = null;
             } else {
                 _configurator.endCreateChild();

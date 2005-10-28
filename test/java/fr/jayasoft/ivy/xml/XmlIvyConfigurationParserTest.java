@@ -114,5 +114,50 @@ public class XmlIvyConfigurationParserTest extends TestCase {
         assertNotNull(ivyPatterns);
         assertEquals(1, ivyPatterns.size());
         assertEquals("sharedrep/[organisation]/[module]/ivys/ivy-[revision].xml", ivyPatterns.get(0));
-}
+    }
+    
+    public void testMacro() throws Exception {
+        Ivy ivy = new Ivy();
+        XmlIvyConfigurationParser parser = new XmlIvyConfigurationParser(ivy);
+        parser.parse(XmlIvyConfigurationParserTest.class.getResource("ivyconf-macro.xml"));
+        
+        DependencyResolver def = ivy.getResolver("default");
+        assertNotNull(def);
+        assertTrue(def instanceof ChainResolver);
+        ChainResolver chain = (ChainResolver)def;
+        List subresolvers = chain.getResolvers();
+        assertNotNull(subresolvers);
+        assertEquals(2, subresolvers.size());
+        FileSystemResolver fsInt1 = (FileSystemResolver)subresolvers.get(0);
+        assertEquals("default-fs1", fsInt1.getName());
+
+        List ivyPatterns = fsInt1.getIvyPatterns();
+        assertNotNull(ivyPatterns);
+        assertEquals(1, ivyPatterns.size());
+        assertEquals("path/to/myrep/[organisation]/[module]/[type]s/[artifact]-[revision].[ext]", ivyPatterns.get(0));
+
+        FileSystemResolver fsInt2 = (FileSystemResolver)subresolvers.get(1);
+        assertEquals("default-fs2", fsInt2.getName());
+
+        ivyPatterns = fsInt2.getIvyPatterns();
+        assertNotNull(ivyPatterns);
+        assertEquals(1, ivyPatterns.size());
+        assertEquals("path/to/secondrep/[organisation]/[module]/[type]s/ivy-[revision].xml", ivyPatterns.get(0));
+        
+        DependencyResolver other = ivy.getResolver("other");
+        assertNotNull(other);
+        assertTrue(other instanceof ChainResolver);
+        chain = (ChainResolver)other;
+        subresolvers = chain.getResolvers();
+        assertNotNull(subresolvers);
+        assertEquals(2, subresolvers.size());
+
+        fsInt2 = (FileSystemResolver)subresolvers.get(1);
+        assertEquals("other-fs2", fsInt2.getName());
+
+        ivyPatterns = fsInt2.getIvyPatterns();
+        assertNotNull(ivyPatterns);
+        assertEquals(1, ivyPatterns.size());
+        assertEquals("path/to/secondrep/[module]/[type]s/ivy-[revision].xml", ivyPatterns.get(0));
+    }
 }

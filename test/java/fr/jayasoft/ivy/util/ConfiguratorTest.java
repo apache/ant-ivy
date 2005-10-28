@@ -226,22 +226,67 @@ public class ConfiguratorTest extends TestCase {
         assertEquals(city, _conf.getCurrent());
     }
     public void testNested() throws Exception {
-    	City city = new City();
-    	_conf.typeDef("house", House.class.getName());
-    	_conf.typeDef("flat", Flat.class.getName());
-    	_conf.typeDef("street", Street.class.getName());
-    	_conf.setRoot(city);
-    	_conf.startCreateChild("house");
-    	_conf.startCreateChild("room");
-    	_conf.setAttribute("surface", "20");
-    	_conf.endCreateChild();
-    	_conf.startCreateChild("room");
-    	_conf.setAttribute("surface", "25");
-    	_conf.endCreateChild();
-    	_conf.endCreateChild();
+        City city = new City();
+        _conf.typeDef("house", House.class.getName());
+        _conf.setRoot(city);
+        _conf.startCreateChild("house");
+        _conf.startCreateChild("room");
+        _conf.setAttribute("surface", "20");
+        _conf.endCreateChild();
+        _conf.startCreateChild("room");
+        _conf.setAttribute("surface", "25");
+        _conf.endCreateChild();
+        _conf.endCreateChild();
         assertEquals(city, _conf.getCurrent());
-    	assertEquals(2, ((Housing)city.getHousings().get(0)).getRooms().size());
-    	assertEquals(20, ((Room)((Housing)city.getHousings().get(0)).getRooms().get(0)).getSurface());
-    	assertEquals(25, ((Room)((Housing)city.getHousings().get(0)).getRooms().get(1)).getSurface());
+        assertEquals(2, ((Housing)city.getHousings().get(0)).getRooms().size());
+        assertEquals(20, ((Room)((Housing)city.getHousings().get(0)).getRooms().get(0)).getSurface());
+        assertEquals(25, ((Room)((Housing)city.getHousings().get(0)).getRooms().get(1)).getSurface());
+    }
+    
+    public void testMacro() throws Exception {
+        City city = new City();
+        _conf.typeDef("house", House.class.getName());
+        
+        _conf.startMacroDef("castle");
+        _conf.addMacroAttribute("surface", "40");
+        _conf.addMacroElement("addroom", true);
+        _conf.startCreateChild("house");
+        _conf.startCreateChild("room");
+        _conf.setAttribute("surface", "@{surface}");
+        _conf.endCreateChild();
+        _conf.startCreateChild("room");
+        _conf.setAttribute("surface", "@{surface}");
+        _conf.endCreateChild();
+        _conf.startCreateChild("addroom");
+        _conf.endCreateChild();
+        _conf.endCreateChild();
+        _conf.endMacroDef();
+        
+        _conf.setRoot(city);
+        _conf.startCreateChild("castle");
+        _conf.setAttribute("surface", "10");
+        _conf.endCreateChild();
+
+        _conf.startCreateChild("castle");
+        _conf.startCreateChild("addroom");
+        _conf.startCreateChild("room");
+        _conf.setAttribute("surface", "20");
+        _conf.endCreateChild();
+        _conf.endCreateChild();
+        _conf.endCreateChild();
+        
+        assertEquals(city, _conf.getCurrent());
+        assertEquals(2, city.getHousings().size());
+
+        // first castle : 2 default rooms of 10 of surface
+        assertEquals(2, ((Housing)city.getHousings().get(0)).getRooms().size());
+        assertEquals(10, ((Room)((Housing)city.getHousings().get(0)).getRooms().get(0)).getSurface());
+        assertEquals(10, ((Room)((Housing)city.getHousings().get(0)).getRooms().get(1)).getSurface());
+        
+        // second castle : 2 default rooms of default surface 40, + one addroom of surface 20
+        assertEquals(3, ((Housing)city.getHousings().get(1)).getRooms().size());
+        assertEquals(40, ((Room)((Housing)city.getHousings().get(1)).getRooms().get(0)).getSurface());
+        assertEquals(40, ((Room)((Housing)city.getHousings().get(1)).getRooms().get(1)).getSurface());
+        assertEquals(20, ((Room)((Housing)city.getHousings().get(1)).getRooms().get(2)).getSurface());
     }
 }

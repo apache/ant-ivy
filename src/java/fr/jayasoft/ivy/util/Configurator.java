@@ -7,9 +7,12 @@ package fr.jayasoft.ivy.util;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
@@ -39,6 +42,200 @@ import java.util.Stack;
  *
  */
 public class Configurator {
+    public static class Macro {
+        private MacroDef _macrodef;
+        private Map _attValues = new HashMap();
+        private Map _macroRecords = new HashMap();
+
+        public Macro(MacroDef def) {
+            _macrodef = def;
+        }
+
+        public void defineAttribute(String attributeName, String value) {
+            if (_macrodef.getAttribute(attributeName) == null) {
+                throw new IllegalArgumentException("undecalred attribute "+attributeName+" on macro "+_macrodef.getName());
+            }
+            _attValues.put(attributeName, value);
+        }
+
+        public MacroRecord recordCreateChild(String name) {
+             MacroRecord macroRecord = new MacroRecord(name);
+             List records = (List)_macroRecords.get(name);
+             if (records == null) {
+                 records = new ArrayList();
+                 _macroRecords.put(name, records);
+             }
+             records.add(macroRecord);
+            return macroRecord;
+        }
+
+        public Object play(Configurator conf) {
+            return _macrodef.play(conf, _attValues, _macroRecords);
+        }
+
+    }
+
+    public static class Attribute {
+        private String _name;
+        private String _default;
+        
+        public String getDefault() {
+            return _default;
+        }
+        public void setDefault(String default1) {
+            _default = default1;
+        }
+        public String getName() {
+            return _name;
+        }
+        public void setName(String name) {
+            _name = name;
+        }
+    }
+    
+    public static class Element {
+        private String _name;
+        private boolean _optional = false;
+        public String getName() {
+            return _name;
+        }
+        public void setName(String name) {
+            _name = name;
+        }
+        public boolean isOptional() {
+            return _optional;
+        }
+        public void setOptional(boolean optional) {
+            _optional = optional;
+        }
+    }
+
+    public static class MacroRecord {
+        private String _name;
+        private Map _attributes = new LinkedHashMap();
+        private List _children = new ArrayList();
+        public MacroRecord(String name) {
+            _name = name;
+        }
+        public String getName() {
+            return _name;
+        }
+        public void recordAttribute(String name, String value) {
+            _attributes.put(name, value);
+        }
+        public MacroRecord recordChild(String name) {
+            MacroRecord child = new MacroRecord(name);
+            _children.add(child);
+            return child;
+        }
+        public Map getAttributes() {
+            return _attributes;
+        }
+        public List getChildren() {
+            return _children;
+        }
+    }
+
+    public static class MacroDef {
+        private String _name;
+        private Map _attributes = new HashMap();
+        private Map _elements = new HashMap();
+        private MacroRecord _macroRecord;
+
+        public MacroDef(String macroName) {
+            _name = macroName;
+        }
+
+        public Attribute getAttribute(String attributeName) {
+            return (Attribute)_attributes.get(attributeName);
+        }
+
+        public Object play(Configurator conf, Map attValues, Map macroRecords) {
+            for (Iterator iter = _attributes.values().iterator(); iter.hasNext();) {
+                Attribute att = (Attribute)iter.next();
+                String val = (String)attValues.get(att.getName());
+                if (val == null) {
+                    if (att.getDefault() == null) {
+                        throw new IllegalArgumentException("attribute "+att.getName()+" is required in "+getName());
+                    } else {
+                        attValues.put(att.getName(), att.getDefault());
+                    }
+                }
+            }
+            return play(conf, _macroRecord, attValues, macroRecords);
+        }
+
+        private Object play(Configurator conf, MacroRecord macroRecord, Map attValues, Map childrenRecords) {
+            conf.startCreateChild(macroRecord.getName());
+            Map attributes = macroRecord.getAttributes();
+            for (Iterator iter = attributes.keySet().iterator(); iter.hasNext();) {
+                String attName = (String)iter.next();
+                String attValue = replaceParam((String)attributes.get(attName), attValues);
+                conf.setAttribute(attName, attValue);
+            }
+            for (Iterator iter = macroRecord.getChildren().iterator(); iter.hasNext();) {
+                MacroRecord child = (MacroRecord)iter.next();
+                Element elt = (Element)_elements.get(child.getName());
+                if (elt != null) {
+                    List elements = (List)childrenRecords.get(child.getName());
+                    if (elements != null) {
+                        for (Iterator iterator = elements.iterator(); iterator.hasNext();) {
+                            MacroRecord element = (MacroRecord)iterator.next();
+                            for (Iterator it2 = element.getChildren().iterator(); it2.hasNext();) {
+                                MacroRecord r = (MacroRecord)it2.next();
+                                play(conf, r, attValues, Collections.EMPTY_MAP);
+                            }
+                        }
+                    } else if (!elt.isOptional()) {
+                        throw new IllegalArgumentException("non optional element is not specified: "+elt.getName()+" in macro "+getName());
+                    }                    
+                    continue;
+                }
+                play(conf, child, attValues, childrenRecords);
+            }
+            return conf.endCreateChild();
+        }
+
+        private String replaceParam(String string, Map attValues) {
+            return IvyPatternHelper.substituteParams(string, attValues);
+        }
+
+        public String getName() {
+            return _name;
+        }
+        
+        public void addConfiguredAttribute(Attribute att) {
+            _attributes.put(att.getName(), att);
+        }
+        
+        public void addConfiguredElement(Element elt) {
+            _elements.put(elt.getName(), elt);
+        }
+        
+        public Macro createMacro() {
+            return new Macro(this);
+        }
+
+        public void addAttribute(String attName, String attDefaultValue) {
+            Attribute att = new Attribute();
+            att.setName(attName);
+            att.setDefault(attDefaultValue);
+            addConfiguredAttribute(att);
+        }
+
+        public void addElement(String elementName, boolean optional) {
+            Element elt = new Element();
+            elt.setName(elementName);
+            elt.setOptional(optional);
+            addConfiguredElement(elt);
+        }
+
+        public MacroRecord recordCreateChild(String name) {
+            _macroRecord = new MacroRecord(name);
+            return _macroRecord;
+        }
+    }
+
     private static class ObjectDescriptor {
         private Object _obj;
         private String _objName;
@@ -147,10 +344,13 @@ public class Configurator {
             return _objName;
         }
     }
+
     private Map _typedefs = new HashMap();
+    private Map _macrodefs = new HashMap();
     
     // stack in which the top is current configured object descriptor
     private Stack _objectStack = new Stack();
+
 
     private static final List TRUE_VALUES = Arrays.asList(new String[] {"true", "yes", "on"});
 
@@ -184,7 +384,30 @@ public class Configurator {
         }
         ObjectDescriptor parentOD = (ObjectDescriptor)_objectStack.peek();
         Object parent = parentOD.getObject();
+        if (parent instanceof MacroDef) {
+            if (!"attribute".equals(name) && !"element".equals(name)) {
+                MacroRecord record = ((MacroDef)parent).recordCreateChild(name);
+                setCurrent(record, name);
+                return record;
+            }
+        }
+        if (parent instanceof Macro) {
+            MacroRecord record = ((Macro)parent).recordCreateChild(name);
+            setCurrent(record, name);
+            return record;
+        }
+        if (parent instanceof MacroRecord) {
+            MacroRecord record = ((MacroRecord)parent).recordChild(name);
+            setCurrent(record, name);
+            return record;
+        }
         Object child = null;
+        MacroDef macrodef = (MacroDef)_macrodefs.get(name);
+        if (macrodef != null) {
+            Macro macro = macrodef.createMacro();
+            setCurrent(macro, name);
+            return macro;
+        }
         Class childClass = (Class)_typedefs.get(name);
         Method addChild = null;
         try {
@@ -267,6 +490,14 @@ public class Configurator {
             throw new IllegalStateException("set root before setting attribute");
         }
         ObjectDescriptor od = (ObjectDescriptor)_objectStack.peek();
+        if (od.getObject() instanceof Macro) {
+            ((Macro)od.getObject()).defineAttribute(attributeName, value);
+            return;
+        }
+        if (od.getObject() instanceof MacroRecord) {
+            ((MacroRecord)od.getObject()).recordAttribute(attributeName, value);
+            return;
+        }
         Method m = od.getSetMethod(attributeName);
         if (m == null) {
             throw new IllegalArgumentException("no set method found for "+attributeName+" on "+od.getObject().getClass());
@@ -332,6 +563,9 @@ public class Configurator {
             _objectStack.push(od); // back to previous state
             throw new IllegalStateException("cannot end root");
         }
+        if (od.getObject() instanceof Macro) {
+            return ((Macro)od.getObject()).play(this);
+        }
         ObjectDescriptor parentOD = (ObjectDescriptor)_objectStack.peek();
         String name = od.getObjectName();
         Class childClass = (Class)_typedefs.get(name);
@@ -359,5 +593,32 @@ public class Configurator {
 
     public int getDepth() {
         return _objectStack.size();
+    }
+
+    public MacroDef startMacroDef(String macroName) {
+        MacroDef macroDef = new MacroDef(macroName);
+        setCurrent(macroDef, macroName);
+        return macroDef;
+    }
+
+    public void addMacroAttribute(String attName, String attDefaultValue) {
+        ((MacroDef)getCurrent()).addAttribute(attName, attDefaultValue);
+    }
+
+    public void addMacroElement(String elementName, boolean optional) {
+        ((MacroDef)getCurrent()).addElement(elementName, optional);
+    }
+
+    public void endMacroDef() {
+        addConfiguredMacrodef(((MacroDef)getCurrent()));
+        _objectStack.pop();
+    }
+
+    public void addConfiguredMacrodef(MacroDef macrodef) {
+        _macrodefs.put(macrodef.getName(), macrodef);
+    }
+
+    public Class getTypeDef(String name) {
+        return (Class)_typedefs.get(name);
     }
 }

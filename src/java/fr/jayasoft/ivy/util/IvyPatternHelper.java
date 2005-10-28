@@ -30,6 +30,7 @@ public class IvyPatternHelper {
     public static final String ORGANISATION_KEY = "organisation";
     public static final String ORGANISATION_KEY2 = "organization";
     
+    private static final Pattern PARAM_PATTERN = Pattern.compile("\\@\\{(.*?)\\}");
     private static final Pattern VAR_PATTERN = Pattern.compile("\\$\\{(.*?)\\}");
     private static final Pattern TOKEN_PATTERN = Pattern.compile("\\[(.*?)\\]");
     
@@ -167,6 +168,43 @@ public class IvyPatternHelper {
     }
     public static String getTokenString(String token) {
         return "["+token+"]";
+    }
+    
+    public static String substituteParams(String pattern, Map params) {
+        return substituteParams(pattern, params, new Stack());
+    }
+    
+    private static String substituteParams(String pattern, Map params, Stack substituting) {
+        //TODO : refactor this with substituteVariables
+        // if you supply null, null is what you get
+        if (pattern == null) {
+            return null;
+        }
+        
+        Matcher m = PARAM_PATTERN.matcher(pattern);
+        
+        StringBuffer sb = new StringBuffer();
+        while (m.find()) {
+            String var = m.group(1);
+            String val = (String)params.get(var);
+            if (val != null) {
+                int index;
+                if ((index = substituting.indexOf(var)) != -1) {
+                    List cycle = new ArrayList(substituting.subList(index, substituting.size()));
+                    cycle.add(var);
+                    throw new IllegalArgumentException("cyclic param definition: cycle = "+cycle);
+                }
+                substituting.push(var);
+                val = substituteVariables(val, params, substituting);
+                substituting.pop();
+            } else {
+                val = m.group();
+            }
+            m.appendReplacement(sb, val.replaceAll("\\\\", "\\\\\\\\").replaceAll("\\@", "\\\\\\@"));
+        }
+        m.appendTail(sb);
+
+        return sb.toString();
     }
     
     public static void main(String[] args) {
