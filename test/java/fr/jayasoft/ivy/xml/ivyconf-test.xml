@@ -1,4 +1,5 @@
 <ivyconf>
+	<property name="shared" value="sharedrep"/>
 	<properties file="test/java/fr/jayasoft/ivy/xml/ivyconf.properties"/>
 	<conf   defaultCache="mycache" 
 	        defaultResolver="libraries" 
@@ -9,8 +10,8 @@
 	<resolvers>
 		<chain name="internal">
 			<filesystem name="int1" latest="latest-time">
-				<ivy pattern="sharedrep/[organisation]/[module]/ivys/ivy-[revision].xml"/>
-				<artifact pattern="sharedrep/[organisation]/[module]/[type]s/[artifact]-[revision].[type]"/>
+				<ivy pattern="${shared}/[organisation]/[module]/ivys/ivy-[revision].xml"/>
+				<artifact pattern="${shared}/[organisation]/[module]/[type]s/[artifact]-[revision].[type]"/>
 			</filesystem>
 			<ibiblio name="int2"/>
 		</chain>

@@ -61,6 +61,8 @@ public class XmlIvyConfigurationParserTest extends TestCase {
         assertEquals(2, subresolvers.size());
         FileSystemResolver fsInt1 = (FileSystemResolver)subresolvers.get(0);
         assertEquals("int1", fsInt1.getName());
+        assertEquals(1, fsInt1.getIvyPatterns().size());
+        assertEquals("sharedrep/[organisation]/[module]/ivys/ivy-[revision].xml", fsInt1.getIvyPatterns().get(0));
         assertEquals("int2", ((DependencyResolver)subresolvers.get(1)).getName());
         
         strategy = fsInt1.getLatestStrategy();

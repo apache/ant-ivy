@@ -133,6 +133,16 @@ public class XmlIvyConfigurationParser extends DefaultHandler {
                 Class clazz = Class.forName(className);
                 _ivy.typeDef(name, clazz);
                 _configurator.typeDef(name, clazz);
+            } else if ("property".equals(qName)) {
+                String name = _ivy.substitute((String)attributes.get("name"));
+                String value = _ivy.substitute((String)attributes.get("value"));
+                if (name == null) {
+                    throw new IllegalArgumentException("missing attribute name on property tag");
+                }
+                if (value == null) {
+                    throw new IllegalArgumentException("missing attribute value on property tag");
+                }
+                _ivy.setVariable(name, value);
             } else if ("properties".equals(qName)) {
                 String propFilePath = _ivy.substitute((String)attributes.get("file"));
                 try {
