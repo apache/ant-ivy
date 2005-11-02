@@ -18,7 +18,7 @@ import fr.jayasoft.ivy.ModuleRevisionId;
 
 /**
  * @author x.hanin
- *
+ * @author Maarten Coene (for the optional part management)
  */
 public class IvyPatternHelper {
     public static final String CONF_KEY = "conf";
@@ -123,20 +123,89 @@ public class IvyPatternHelper {
     }
     
     public static String substituteTokens(String pattern, Map tokens) {
-        Matcher m = TOKEN_PATTERN.matcher(pattern);
+        StringBuffer buffer = new StringBuffer();
         
-        StringBuffer sb = new StringBuffer();
-        while (m.find()) {
-            String var = m.group(1);
-            String val = (String)tokens.get(var);
-            if (val == null) {
-                val = m.group();
-            }
-            m.appendReplacement(sb, val.replaceAll("\\\\", "\\\\\\\\").replaceAll("\\$", "\\\\\\$"));
-        }
-        m.appendTail(sb);
+        char[] chars = pattern.toCharArray();
+        
+        StringBuffer optionalPart = null;
+        StringBuffer tokenBuffer = null;
+        boolean insideOptionalPart = false;
+        boolean insideToken = false;
+        boolean tokenHadValue = false;
+        
+        for (int i = 0; i < chars.length; i++) {
+            switch (chars[i]) {
+            case '(':
+                if (insideOptionalPart) {
+                    throw new IllegalArgumentException("invalid start of optional part at position " + i + " in pattern " + pattern);
+                }
 
-        return sb.toString();
+                optionalPart = new StringBuffer();
+                insideOptionalPart = true;
+                tokenHadValue = false;
+                break;
+
+            case ')':
+                if (!insideOptionalPart || insideToken) {
+                    throw new IllegalArgumentException("invalid end of optional part at position " + i + " in pattern " + pattern);
+                }
+
+                if (tokenHadValue) {
+                    buffer.append(optionalPart.toString());
+                }
+
+                insideOptionalPart = false;
+                break;
+                
+            case '[':
+                if (insideToken) {
+                    throw new IllegalArgumentException("invalid start of token at position " + i + " in pattern " + pattern);
+                }
+                
+                tokenBuffer = new StringBuffer();               
+                insideToken = true;
+                break;
+                
+            case ']':
+                if (!insideToken) {
+                    throw new IllegalArgumentException("invalid end of token at position " + i + " in pattern " + pattern);
+                }
+                
+                String token = tokenBuffer.toString();
+                String value = (String) tokens.get(token);
+                
+                if (insideOptionalPart) {
+                    tokenHadValue = (value != null) && (value.length() > 0);
+                    optionalPart.append(value);
+                } else {
+                    buffer.append(value);
+                }
+                
+                insideToken = false;
+                break;
+                
+            default:
+                if (insideToken) {
+                    tokenBuffer.append(chars[i]);
+                } else if (insideOptionalPart) {
+                    optionalPart.append(chars[i]);
+                } else {
+                    buffer.append(chars[i]);
+                }
+            
+                break;
+            }
+        }
+        
+        if (insideToken) {
+            throw new IllegalArgumentException("last token hasn't been closed in pattern " + pattern);
+        }
+        
+        if (insideOptionalPart) {
+            throw new IllegalArgumentException("optional part hasn't been closed in pattern " + pattern);
+        }
+        
+        return buffer.toString();
     }
     
     public static String substituteVariable(String pattern, String variable, String value) {

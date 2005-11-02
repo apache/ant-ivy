@@ -34,6 +34,15 @@ public class IvyPatternHelperTest extends TestCase {
         }
     }
 
+    public void testOptionalSubstitute() {
+        Map tokens = new HashMap();
+        tokens.put("token", "");
+        tokens.put("othertoken", "myval");
+        assertEquals("test-myval", IvyPatternHelper.substituteTokens("test(-[token])(-[othertoken])", tokens));
+        tokens.put("token", "val");
+        assertEquals("test-val-myval", IvyPatternHelper.substituteTokens("test(-[token])(-[othertoken])", tokens));
+    }
+
     public void testOrganization() {
         String pattern = "[organization]/[module]/build/archives/[type]s/[artifact]-[revision].[ext]";
         assertEquals(
