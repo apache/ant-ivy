@@ -178,6 +178,9 @@ public class IvyPatternHelper {
                     tokenHadValue = (value != null) && (value.length() > 0);
                     optionalPart.append(value);
                 } else {
+                    if (value == null) { // the token wasn't set, it's kept as is
+                        value = "["+token+"]";
+                    }
                     buffer.append(value);
                 }
                 
