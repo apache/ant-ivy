@@ -92,6 +92,8 @@ public class Message {
     }
     public static void error(String msg) {
         if (_impl != null) {
+            // log in verbose mode because message is appended as a problem, and will be 
+            // logged at the end at error level
             _impl.log("ERROR: "+msg, MSG_VERBOSE);
         } else {
             System.err.println(msg);
