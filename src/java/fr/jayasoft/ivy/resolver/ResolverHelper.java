@@ -85,17 +85,22 @@ public class ResolverHelper {
             String fileSep = rep.getFileSeparator();
             Message.debug("\tusing "+rep+" to list all in "+parent);
             List all = rep.list(parent);
-            Message.debug("\t\tfound "+all.size()+" resources");
-            List names = new ArrayList(all.size());
-            for (Iterator iter = all.iterator(); iter.hasNext();) {
-                String path = (String)iter.next();
-               if (path.endsWith(fileSep)) {
-                    path = path.substring(0, path.length() - 1);
+            if (all != null) {
+                Message.debug("\t\tfound "+all.size()+" resources");
+                List names = new ArrayList(all.size());
+                for (Iterator iter = all.iterator(); iter.hasNext();) {
+                    String path = (String)iter.next();
+                   if (path.endsWith(fileSep)) {
+                        path = path.substring(0, path.length() - 1);
+                    }
+                    int slashIndex = path.lastIndexOf(fileSep);
+                    names.add(path.substring(slashIndex +1));
                 }
-                int slashIndex = path.lastIndexOf(fileSep);
-                names.add(path.substring(slashIndex +1));
+                return (String[])names.toArray(new String[names.size()]);
+            } else {
+                Message.debug("\t\tno resources found");
+                return null;
             }
-            return (String[])names.toArray(new String[names.size()]);
         } catch (Exception e) {
             Message.warn("problem while listing resources in "+parent+" with "+rep+": "+e.getClass()+" "+e.getMessage());
             return null;

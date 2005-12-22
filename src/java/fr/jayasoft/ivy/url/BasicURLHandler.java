@@ -30,8 +30,9 @@ public class BasicURLHandler implements URLHandler {
         return isReachable(url, 0);
     }
     public boolean isReachable(URL url, int timeout) {
+        URLConnection con = null;
         try {
-            URLConnection con = url.openConnection();
+            con = url.openConnection();
             if (con instanceof HttpURLConnection) {
                 int status = ((HttpURLConnection)con).getResponseCode();
                 if (status == HttpStatus.SC_OK) {
@@ -54,6 +55,10 @@ public class BasicURLHandler implements URLHandler {
             Message.info("You probably access the destination server through a proxy server that is not well configured.");
         } catch (IOException e) {
             Message.error("Server access Error: "+e.getMessage()+" url="+url);
+        } finally {
+            if (con instanceof HttpURLConnection) {
+                ((HttpURLConnection)con).disconnect();
+            }
         }
         return false;
     }

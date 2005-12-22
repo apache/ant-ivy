@@ -6,6 +6,7 @@
 package fr.jayasoft.ivy;
 
 import java.io.IOException;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 
@@ -31,12 +32,17 @@ public class ResolvedURL implements ArtifactInfo {
 
     public long getLastModified() {
         if (_lastModified == null) {
+            URLConnection con = null;
             try {
-                URLConnection con = url.openConnection();
+                con = url.openConnection();
                 _lastModified = new Long(con.getLastModified());
             } catch (IOException e) {
                 Message.warn("impossible to open connection to "+url+": "+e.getMessage());
                 _lastModified = new Long(0);
+            } finally {
+                if (con instanceof HttpURLConnection) {
+                    ((HttpURLConnection)con).disconnect();
+                }
             }
         }
         return _lastModified.longValue();

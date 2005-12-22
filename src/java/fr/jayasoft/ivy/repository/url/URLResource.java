@@ -7,6 +7,7 @@
 package fr.jayasoft.ivy.repository.url;
 
 import java.io.IOException;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 
@@ -37,18 +38,23 @@ public class URLResource implements Resource {
     }
 
     private void init() {
+        URLConnection con = null;
         try {
             _lastModified = 0;
             _contentLength = 0;
             _exists = URLHandlerRegistry.getDefault().isReachable(_url);
             if (_exists) {
-                URLConnection con = _url.openConnection();
+                con = _url.openConnection();
                 _lastModified = con.getLastModified();
                 _contentLength = con.getContentLength();
             }
         } catch (IOException e) {
             Message.verbose("impossible to open connection to "+_url+":"+e.getMessage());
             _exists = false;
+        } finally {
+            if (con instanceof HttpURLConnection) {
+                ((HttpURLConnection)con).disconnect();
+            }
         }
         _init = true;
     }
