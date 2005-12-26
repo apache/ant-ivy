@@ -17,10 +17,12 @@ public class ModuleRevisionId {
     
     private ModuleId _moduleId;
     private String _revision;
+    private int _hash;
     
     public ModuleRevisionId(ModuleId moduleId, String revision) {
         _moduleId = moduleId;
         _revision = revision;
+        _hash = _hashCode(); //stored for performance reasons, has code is very used in many maps
     }
     public ModuleId getModuleId() {
         return _moduleId;
@@ -44,6 +46,9 @@ public class ModuleRevisionId {
         	&& other.getModuleId().equals(getModuleId());
     }
     public int hashCode() {
+        return _hash;
+    }
+    public int _hashCode() {
         int hash = 31;
         hash = hash * 13 + (getRevision() == null ? 0 : getRevision().hashCode());
         hash = hash * 13 + getModuleId().hashCode();

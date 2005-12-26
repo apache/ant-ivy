@@ -13,6 +13,7 @@ package fr.jayasoft.ivy;
 public class ModuleId {
     private String _organisation;
     private String _name;
+    private int _hash;
 
     public ModuleId(String organisation, String name) {
         if (name == null) {
@@ -20,6 +21,7 @@ public class ModuleId {
         }
         _organisation = organisation;
         _name = name;
+        _hash = _hashCode(); //stored for performance reasons, has code is very used in many maps
     }
 
     public String getName() {
@@ -37,6 +39,9 @@ public class ModuleId {
         return other._organisation.equals(_organisation) && other._name.equals(_name);
     }
     public int hashCode() {
+        return _hash;
+    }
+    public int _hashCode() {
         int hash = 31;
         hash = hash * 13 + _organisation.hashCode();
         hash = hash * 13 + _name.hashCode();

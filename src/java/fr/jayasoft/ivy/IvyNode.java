@@ -226,6 +226,10 @@ public class IvyNode {
 
     private boolean _isRoot = false;
 
+    private Collection _allCallers = new HashSet();
+
+    private boolean _isCircular = false;
+
     
     public IvyNode(ResolveData data, DependencyDescriptor dd) {
         _id = dd.getDependencyRevisionId();
@@ -703,6 +707,12 @@ public class IvyNode {
             callers.put(mrid, caller);
         }
         caller.addConfiguration(callerConf, dependencyConfs);
+        IvyNode parent = _data.getNode(mrid);
+        if (parent != null) {
+            _allCallers.addAll(parent._allCallers);
+            _allCallers.add(mrid.getModuleId());
+            _isCircular = _allCallers.contains(getId().getModuleId());
+        }
     }
     public Caller[] getCallers(String rootModuleConf) {
         Map callers = (Map)_callersByRootConf.get(rootModuleConf);
@@ -1040,31 +1050,9 @@ public class IvyNode {
      * @return
      */
     public boolean isCircular() {
-        return isCircular(this);
+        return _isCircular;
     }
     
-    private boolean isCircular(IvyNode node) {
-        boolean isCircular = false;
-        Map callers = (Map)node._callersByRootConf.get(getRootModuleConf());
-        if (callers == null) {
-            return false;
-        }
-        for (Iterator iter = callers.values().iterator(); iter.hasNext() && !isCircular;) {
-            Caller caller = (Caller)iter.next();
-            ModuleId mid = caller.getModuleRevisionId().getModuleId();
-            if (getId().getModuleId().equals(mid)) {
-                return true;
-            }
-            IvyNode parent = _data.getNode(caller.getModuleRevisionId());
-            if (parent == node) {
-                isCircular = true;
-            } else if (parent != null) {                
-                isCircular = isCircular(parent);
-            }
-        }
-        return isCircular;
-    }
-
     public boolean isFetched(String conf) {
         return _fetchedConfigurations.contains(conf);
     }

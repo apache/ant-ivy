@@ -112,7 +112,7 @@ public class TestPerformance {
     }
     
     public void testPerfs() throws Exception {
-        generateModules(40, 2, 5, 2, 15);
+        generateModules(70, 2, 5, 2, 15);
         
         long start = System.currentTimeMillis();
         ResolveReport report = _ivy.resolve(new File("build/test/perf/mod0/ivy-1.0.xml").toURL(), "1.0", new String[] {"*"}, _cache, null, true);        
