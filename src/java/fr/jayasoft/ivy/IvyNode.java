@@ -283,7 +283,7 @@ public class IvyNode {
             Collection ret = new HashSet();
             for (Iterator iter = resolved.iterator(); iter.hasNext();) {
                 IvyNode node = (IvyNode)iter.next();
-                ret.add(node.getRealNode().getId());
+                ret.add(node.getRealNode().getResolvedId());
             }
             return ret;
         }
@@ -689,6 +689,9 @@ public class IvyNode {
      * @param askedDependencyId the dependency revision id asked by the caller
      */
     public void addCaller(String rootModuleConf, ModuleRevisionId mrid, String callerConf, String[] dependencyConfs, ModuleRevisionId askedDependencyId) {
+        if (mrid.getModuleId().equals(getId().getModuleId())) {
+            throw new IllegalArgumentException("a module is not authorized to depend on itself: "+getId());
+        }
         Map callers = (Map)_callersByRootConf.get(rootModuleConf);
         if (callers == null) {
             callers = new HashMap();
@@ -1042,14 +1045,20 @@ public class IvyNode {
     
     private boolean isCircular(IvyNode node) {
         boolean isCircular = false;
-        IvyNode.Caller[] callers = node.getCallers(getRootModuleConf());
-        for (int i = 0; i < callers.length && !isCircular; i++) {
-            ModuleRevisionId mrid = callers[i].getModuleRevisionId();
-            if (getId().equals(mrid)) {
+        Map callers = (Map)node._callersByRootConf.get(getRootModuleConf());
+        if (callers == null) {
+            return false;
+        }
+        for (Iterator iter = callers.values().iterator(); iter.hasNext() && !isCircular;) {
+            Caller caller = (Caller)iter.next();
+            ModuleId mid = caller.getModuleRevisionId().getModuleId();
+            if (getId().getModuleId().equals(mid)) {
                 return true;
             }
-            IvyNode parent = _data.getNode(mrid);
-            if (parent != null) {
+            IvyNode parent = _data.getNode(caller.getModuleRevisionId());
+            if (parent == node) {
+                isCircular = true;
+            } else if (parent != null) {                
                 isCircular = isCircular(parent);
             }
         }

@@ -840,11 +840,11 @@ public class Ivy implements TransferListener {
     
     
     private void fetchDependencies(IvyNode node, String conf) {
-        resolveConflict(node, node.getParent(), Collections.EMPTY_SET);
+        resolveConflict(node, node.getParent());
         
         if (node.loadData(conf)) {
             node = node.getRealNode(); // if data loading discarded the node, get the real one
-            resolveConflict(node, node.getParent(), Collections.EMPTY_SET);
+            resolveConflict(node, node.getParent());
             if (!node.isEvicted(node.getRootModuleConf())) {
                 if ("*".equals(conf)) {
                     String[] confs = node.getDescriptor().getConfigurationsNames();
@@ -902,17 +902,21 @@ public class Ivy implements TransferListener {
     }
 
 
+    private void resolveConflict(IvyNode node, IvyNode parent) {
+        resolveConflict(node, parent, Collections.EMPTY_SET);
+    }
     private void resolveConflict(IvyNode node, IvyNode parent, Collection toevict) {
         if (parent == null || node == parent) {
             return;
         }
-        if (node.getId().equals(node.getResolvedId()) && parent.getResolvedRevisions(node.getModuleId(), node.getRootModuleConf()).contains(node.getId())) {
+        if (parent.getResolvedRevisions(node.getModuleId(), node.getRootModuleConf()).contains(node.getResolvedId())) {
             // resolve conflict has already be done with node with the same id
             // => job already done
             return;
         }
         Collection conflicts = new HashSet();
-        if (parent.getResolvedNodes(node.getModuleId(), node.getRootModuleConf()).removeAll(toevict)) {
+        Collection resolvedNodes = new HashSet(parent.getResolvedNodes(node.getModuleId(), node.getRootModuleConf()));
+        if (resolvedNodes.removeAll(toevict)) {
             // parent.resolved(node.mid) is not up to date:
             // recompute resolved from all sub nodes
             Collection deps = parent.getDependencies(parent.getRequiredConfigurations());
@@ -922,7 +926,7 @@ public class Ivy implements TransferListener {
             }
         } else {
             conflicts.add(node);
-            conflicts.addAll(parent.getResolvedNodes(node.getModuleId(), node.getRootModuleConf()));
+            conflicts.addAll(resolvedNodes);
         }
         Collection resolved = parent.getConflictManager(node.getModuleId()).resolveConflicts(parent, conflicts);
         if (resolved.contains(node)) {
@@ -932,7 +936,7 @@ public class Ivy implements TransferListener {
             Message.debug("selecting "+node+" in "+parent);
             
             // handle previously selected nodes that are now evicted by this new node
-            toevict = parent.getResolvedNodes(node.getModuleId(), node.getRootModuleConf());
+            toevict = resolvedNodes;
             toevict.removeAll(resolved);
             
             for (Iterator iter = toevict.iterator(); iter.hasNext();) {
