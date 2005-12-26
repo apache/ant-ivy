@@ -165,7 +165,7 @@ public class IvyPublish extends IvyTask {
         }
         ModuleRevisionId mrid = ModuleRevisionId.newInstance(_organisation, _module, _revision);
         try {
-            File ivyFile = new File(_cache, IvyPatternHelper.substitute(_srcivypattern, _organisation, _module, _pubRevision, "ivy", "ivy", "xml"));
+            File ivyFile = new File(IvyPatternHelper.substitute(_srcivypattern, _organisation, _module, _pubRevision, "ivy", "ivy", "xml"));
             if (_publishivy && !ivyFile.exists()) {
                 IvyDeliver deliver = new IvyDeliver();
                 deliver.setProject(getProject());

@@ -12,6 +12,7 @@
 - IMPROVE: import system properties as ivy variables in standalone mode
 - IMPROVE: string identifying a module is now clearly different from a path
 - IMPROVE: better error message when publish fails due to readonly destination (IVY-83)
+- FIX: publish now doesn't call deliver when not necessary (IVY-119)
 - FIX: cachefileset was returning all artifacts for empty configuration (IVY-108)
 - FIX: transitive and changing attribute were not copied in ivy files in cache (IVY-94)
 - FIX: chain resolver now support latest strategy configuration (IVY-90)

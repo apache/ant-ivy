@@ -94,6 +94,35 @@ public class IvyPublishTest extends TestCase {
         assertEquals("1.2", md.getModuleRevisionId().getRevision());
     }
 
+    public void testNoDeliver() throws Exception {
+        _project.setProperty("ivy.dep.file", "test/java/fr/jayasoft/ivy/ant/ivy-latest.xml");
+        IvyResolve res = new IvyResolve();
+        res.setProject(_project);
+        res.execute();
+        
+        
+        _publish.setPubrevision("1.3");
+        _publish.setResolver("1");
+        _publish.setSrcivypattern("build/test/publish/ivy-1.3.xml");
+
+        FileUtil.copy(new File("test/java/fr/jayasoft/ivy/ant/ivy-latest.xml"), new File("build/test/publish/ivy-1.3.xml"), null);
+
+        File art = new File("build/test/publish/resolve-latest-1.3.jar");
+        FileUtil.copy(new File("test/repositories/1/org1/mod1.1/jars/mod1.1-1.0.jar"), art, null);
+        _publish.execute();
+        
+        // should have published the files with "1" resolver
+        assertTrue(new File("test/repositories/1/jayasoft/resolve-latest/ivys/ivy-1.3.xml").exists()); 
+        assertTrue(new File("test/repositories/1/jayasoft/resolve-latest/jars/resolve-latest-1.3.jar").exists());
+        
+        // should not have updated published ivy version
+        ModuleDescriptor md = XmlModuleDescriptorParser.parseDescriptor(new Ivy(), new File("test/repositories/1/jayasoft/resolve-latest/ivys/ivy-1.3.xml").toURL(), false);
+        assertEquals("1.0", md.getModuleRevisionId().getRevision());
+        
+        // should not have done delivery (replace dynamic revisions with static ones)
+        assertEquals("latest.integration", md.getDependencies()[0].getDependencyRevisionId().getRevision());
+    }
+
     public void testReadonly() throws Exception {
         _project.setProperty("ivy.dep.file", "test/java/fr/jayasoft/ivy/ant/ivy-simple.xml");
         IvyResolve res = new IvyResolve();
