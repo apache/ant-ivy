@@ -1,0 +1,11 @@
+<ivy-module version="1.0"> 
+        <info organisation="jayasoft"
+               module="resolve-noconflict"
+               revision="1.0"
+               status="release"
+        />
+        <dependencies>
+            <dependency org="org1" name="mod1.2" rev="2.0"/>
+            <dependency org="org2" name="mod2.2" rev="0.5"/>
+        </dependencies>
+</ivy-module>

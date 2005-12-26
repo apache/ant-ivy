@@ -39,6 +39,7 @@ import org.xml.sax.SAXException;
 
 import fr.jayasoft.ivy.conflict.LatestConflictManager;
 import fr.jayasoft.ivy.conflict.NoConflictManager;
+import fr.jayasoft.ivy.conflict.StrictConflictManager;
 import fr.jayasoft.ivy.filter.Filter;
 import fr.jayasoft.ivy.filter.FilterHelper;
 import fr.jayasoft.ivy.latest.LatestLexicographicStrategy;
@@ -95,13 +96,13 @@ public class Ivy implements TransferListener {
     private DependencyResolver _dictatorResolver = null;
     
     private String _defaultResolverName;
-	private File _defaultCache;
+    private File _defaultCache;
     private boolean _checkUpToDate = true;
-	private Map _moduleConfigurations = new LinkedHashMap(); // Map (ModuleId -> String resolverName)
+    private Map _moduleConfigurations = new LinkedHashMap(); // Map (ModuleId -> String resolverName)
     
     private Map _conflictsManager = new HashMap(); // Map (String conflictManagerName -> ConflictManager)
     private Map _latestStrategies = new HashMap(); // Map (String latestStrategyName -> LatestStrategy)
-	
+    
     private Map _variables = new HashMap();
 
     private ReportOutputter[] _reportOutputters = new ReportOutputter[] {new LogReportOutputter(), new XmlReportOutputter()};
@@ -122,25 +123,25 @@ public class Ivy implements TransferListener {
     private boolean _useRemoteConfig = false;
     
     public Ivy() {
-    	String ivyTypeDefs = System.getProperty("ivy.typedef.files");
-    	if (ivyTypeDefs != null) {
-    		String[] files = ivyTypeDefs.split("\\,");
-    		for (int i = 0; i < files.length; i++) {
-    			try {
-					typeDefs(new FileInputStream(new File(files[i].trim())));
-				} catch (FileNotFoundException e) {
-					Message.warn("typedefs file not found: "+files[i].trim());
-				} catch (IOException e) {
-					Message.warn("problem with typedef file: "+files[i].trim()+": "+e.getMessage());
-				}
-			}
-    	} else {
-			try {
-				typeDefs(Ivy.class.getResourceAsStream("typedef.properties"));
-			} catch (IOException e) {
-				Message.warn("impossible to load default type defs");
-			}
-    	}
+        String ivyTypeDefs = System.getProperty("ivy.typedef.files");
+        if (ivyTypeDefs != null) {
+            String[] files = ivyTypeDefs.split("\\,");
+            for (int i = 0; i < files.length; i++) {
+                try {
+                    typeDefs(new FileInputStream(new File(files[i].trim())));
+                } catch (FileNotFoundException e) {
+                    Message.warn("typedefs file not found: "+files[i].trim());
+                } catch (IOException e) {
+                    Message.warn("problem with typedef file: "+files[i].trim()+": "+e.getMessage());
+                }
+            }
+        } else {
+            try {
+                typeDefs(Ivy.class.getResourceAsStream("typedef.properties"));
+            } catch (IOException e) {
+                Message.warn("impossible to load default type defs");
+            }
+        }
         LatestLexicographicStrategy latestLexicographicStrategy = new LatestLexicographicStrategy();
         LatestRevisionStrategy latestRevisionStrategy = new LatestRevisionStrategy();
         LatestTimeStrategy latestTimeStrategy = new LatestTimeStrategy();
@@ -152,6 +153,7 @@ public class Ivy implements TransferListener {
         addConflictManager("latest-revision", new LatestConflictManager("latest-revision", latestRevisionStrategy));
         addConflictManager("latest-time", new LatestConflictManager("latest-time", latestTimeStrategy));
         addConflictManager("all", new NoConflictManager());    
+        addConflictManager("strict", new StrictConflictManager());
         
         _listingIgnore.add(".cvsignore");
         _listingIgnore.add("CVS");
@@ -203,7 +205,7 @@ public class Ivy implements TransferListener {
         }
     }
 
-	public void typeDefs(InputStream stream) throws IOException {
+    public void typeDefs(InputStream stream) throws IOException {
         try {
             Properties p = new Properties();
             p.load(stream);
@@ -211,17 +213,17 @@ public class Ivy implements TransferListener {
         } finally {
             stream.close();
         }
-	}
+    }
 
     public void typeDefs(Properties p) {
         for (Iterator iter = p.keySet().iterator(); iter.hasNext();) {
-			String name = (String) iter.next();
-			try {
-			    typeDef(name, Class.forName(p.getProperty(name)));
-			} catch (ClassNotFoundException e) {
-				Message.warn("impossible to define resolver "+name+": class not found: "+p.getProperty(name));
-			}
-		}
+            String name = (String) iter.next();
+            try {
+                typeDef(name, Class.forName(p.getProperty(name)));
+            } catch (ClassNotFoundException e) {
+                Message.warn("impossible to define resolver "+name+": class not found: "+p.getProperty(name));
+            }
+        }
     }
     
     
@@ -406,7 +408,7 @@ public class Ivy implements TransferListener {
      */
     public void addModuleConfiguration(ModuleId moduleId, String resolverName) {
         checkResolverName(resolverName);
-    	_moduleConfigurations.put(moduleId, resolverName);
+        _moduleConfigurations.put(moduleId, resolverName);
     }
     
     public File getDefaultCache() {
@@ -779,13 +781,13 @@ public class Ivy implements TransferListener {
                         report.addReport(confs[i], confReport);
                     }
                 }
-				
-				ResolveData data = new ResolveData(this, cache, date, confReport, validate, dependenciesMap);
+                
+                ResolveData data = new ResolveData(this, cache, date, confReport, validate, dependenciesMap);
                 IvyNode node = new IvyNode(data, md, confs[i], true);
                 node.setRootModuleConf(confs[i]);
                 fetchDependencies(node, confs[i]);
             }
-		}
+        }
         
         
         // prune and reverse sort fectched dependencies 
@@ -1136,80 +1138,80 @@ public class Ivy implements TransferListener {
     /////////////////////////////////////////////////////////////////////////
     //                         PUBLISH
     /////////////////////////////////////////////////////////////////////////
-	/**
-	 * delivers a resolved ivy file based upon last resolve call status and
-	 * the given PublishingDependencyRevisionResolver.
-	 * If resolve report file cannot be found in cache, then it throws 
-	 * an IllegalStateException (maybe resolve has not been called before ?)
-	 * Moreover, the given PublishingDependencyRevisionResolver is used for each 
-	 * dependency to get its published information. This can particularly useful
-	 * when the publish is made for a delivery, and when we wish to deliver each
-	 * dependency which is still in integration. The PublishingDependencyRevisionResolver
-	 * can then do the delivering work for the dependency and return the new (delivered)
-	 * dependency info (with the delivered revision). Note that 
-	 * PublishingDependencyRevisionResolver is only called for each <b>direct</b> dependency.
-	 * 
+    /**
+     * delivers a resolved ivy file based upon last resolve call status and
+     * the given PublishingDependencyRevisionResolver.
+     * If resolve report file cannot be found in cache, then it throws 
+     * an IllegalStateException (maybe resolve has not been called before ?)
+     * Moreover, the given PublishingDependencyRevisionResolver is used for each 
+     * dependency to get its published information. This can particularly useful
+     * when the publish is made for a delivery, and when we wish to deliver each
+     * dependency which is still in integration. The PublishingDependencyRevisionResolver
+     * can then do the delivering work for the dependency and return the new (delivered)
+     * dependency info (with the delivered revision). Note that 
+     * PublishingDependencyRevisionResolver is only called for each <b>direct</b> dependency.
+     * 
      * @param status the new status, null to keep the old one
-	 * @throws ParseException
-	 */
-	public void deliver(ModuleRevisionId mrid,
-	        String revision,
-	        File cache, 
-	        String destIvyPattern, 
-	        String status,
-	        Date pubdate,
-	        PublishingDependencyRevisionResolver pdrResolver, 
+     * @throws ParseException
+     */
+    public void deliver(ModuleRevisionId mrid,
+            String revision,
+            File cache, 
+            String destIvyPattern, 
+            String status,
+            Date pubdate,
+            PublishingDependencyRevisionResolver pdrResolver, 
             boolean validate) throws IOException, ParseException {
-	    Message.info(":: delivering :: "+mrid+" :: "+revision+" :: "+status+" :: "+pubdate);
+        Message.info(":: delivering :: "+mrid+" :: "+revision+" :: "+status+" :: "+pubdate);
         Message.verbose("\tvalidate = "+validate);
-	    long start = System.currentTimeMillis();
+        long start = System.currentTimeMillis();
         destIvyPattern = substitute(destIvyPattern);
         
-	    // 1) find the resolved module descriptor in cache
-	    File ivyFile = getResolvedIvyFileInCache(cache, mrid);
-	    if (!ivyFile.exists()) {
-	        throw new IllegalStateException("ivy file not found in cache for "+mrid+": please resolve dependencies before publishing ("+ivyFile+")");
-	    }
-	    ModuleDescriptor md = null;
-	    URL ivyFileURL = null;
-	    try {
-	        ivyFileURL = ivyFile.toURL();
-	        md = XmlModuleDescriptorParser.parseDescriptor(this, ivyFileURL, validate);
-	        md.setResolvedModuleRevisionId(new ModuleRevisionId(mrid.getModuleId(), revision));
-	        md.setResolvedPublicationDate(pubdate);
-	    } catch (MalformedURLException e) {
-	        throw new RuntimeException("malformed url obtained for file "+ivyFile);
-	    } catch (ParseException e) {
-	        throw new IllegalStateException("bad ivy file in cache for "+mrid+": please clean and resolve again");
-	    }
-	    // 2) use pdrResolver to resolve dependencies info
-	    Map resolvedDependencies = new HashMap(); // Map (ModuleId -> String revision)
-	    DependencyDescriptor[] dependencies = md.getDependencies();
-	    for (int i = 0; i < dependencies.length; i++) {
+        // 1) find the resolved module descriptor in cache
+        File ivyFile = getResolvedIvyFileInCache(cache, mrid);
+        if (!ivyFile.exists()) {
+            throw new IllegalStateException("ivy file not found in cache for "+mrid+": please resolve dependencies before publishing ("+ivyFile+")");
+        }
+        ModuleDescriptor md = null;
+        URL ivyFileURL = null;
+        try {
+            ivyFileURL = ivyFile.toURL();
+            md = XmlModuleDescriptorParser.parseDescriptor(this, ivyFileURL, validate);
+            md.setResolvedModuleRevisionId(new ModuleRevisionId(mrid.getModuleId(), revision));
+            md.setResolvedPublicationDate(pubdate);
+        } catch (MalformedURLException e) {
+            throw new RuntimeException("malformed url obtained for file "+ivyFile);
+        } catch (ParseException e) {
+            throw new IllegalStateException("bad ivy file in cache for "+mrid+": please clean and resolve again");
+        }
+        // 2) use pdrResolver to resolve dependencies info
+        Map resolvedDependencies = new HashMap(); // Map (ModuleId -> String revision)
+        DependencyDescriptor[] dependencies = md.getDependencies();
+        for (int i = 0; i < dependencies.length; i++) {
             DependencyResolver resolver = getResolver(dependencies[i].getDependencyId());
             ResolvedModuleRevision dependency = resolver.getDependency(dependencies[i], new ResolveData(this, cache, pubdate, null, validate));            
             if (dependency == null) {
-            	Message.warn(resolver.getName()+": unresolved dependency while publishing: "+dependencies[i].getDependencyRevisionId());
+                Message.warn(resolver.getName()+": unresolved dependency while publishing: "+dependencies[i].getDependencyRevisionId());
             } else {
-            	resolvedDependencies.put(dependencies[i].getDependencyId(), pdrResolver.resolve(md, status, dependency.getDescriptor()));
+                resolvedDependencies.put(dependencies[i].getDependencyId(), pdrResolver.resolve(md, status, dependency.getDescriptor()));
             }
         }
-	    
-	    // 3) copy the source resolved ivy to the destination specified, 
-	    //    updating status, revision and dependency revisions obtained by
-	    //    PublishingDependencyRevisionResolver
-	    String publishedIvy = IvyPatternHelper.substitute(destIvyPattern, md.getResolvedModuleRevisionId());
-	    Message.info("\tdelivering ivy file to "+publishedIvy);
-	    try {
-		    XmlModuleDescriptorUpdater.update(ivyFileURL, 
-		            new File(publishedIvy),
-		            resolvedDependencies, status, revision, pubdate);
-	    } catch (SAXException ex) {
-	        throw new IllegalStateException("bad ivy file in cache for "+mrid+": please clean and resolve again");
-	    }
-	    
-	    Message.verbose("\tdeliver done ("+(System.currentTimeMillis()-start)+"ms)");
-	}
+        
+        // 3) copy the source resolved ivy to the destination specified, 
+        //    updating status, revision and dependency revisions obtained by
+        //    PublishingDependencyRevisionResolver
+        String publishedIvy = IvyPatternHelper.substitute(destIvyPattern, md.getResolvedModuleRevisionId());
+        Message.info("\tdelivering ivy file to "+publishedIvy);
+        try {
+            XmlModuleDescriptorUpdater.update(ivyFileURL, 
+                    new File(publishedIvy),
+                    resolvedDependencies, status, revision, pubdate);
+        } catch (SAXException ex) {
+            throw new IllegalStateException("bad ivy file in cache for "+mrid+": please clean and resolve again");
+        }
+        
+        Message.verbose("\tdeliver done ("+(System.currentTimeMillis()-start)+"ms)");
+    }
 
     /**
      * 
@@ -1262,17 +1264,17 @@ public class Ivy implements TransferListener {
         // collect all declared artifacts of this module
         Collection missing = new ArrayList();
         Set artifactsSet = new HashSet();
-	    String[] confs = md.getConfigurationsNames();
-	    for (int i = 0; i < confs.length; i++) {
+        String[] confs = md.getConfigurationsNames();
+        for (int i = 0; i < confs.length; i++) {
             Artifact[] artifacts = md.getArtifacts(confs[i]);
             for (int j = 0; j < artifacts.length; j++) {
                 artifactsSet.add(artifacts[j]);
             }
         }
         // for each declared published artifact in this descriptor, do:
-	    for (Iterator iter = artifactsSet.iterator(); iter.hasNext();) {
+        for (Iterator iter = artifactsSet.iterator(); iter.hasNext();) {
             Artifact artifact = (Artifact) iter.next();
-    	    //   1) copy the artifact using src pattern and resolver
+            //   1) copy the artifact using src pattern and resolver
             if (!publish(artifact, srcArtifactPattern, resolver, overwrite)) {
                 missing.add(artifact);
             }
@@ -1353,10 +1355,10 @@ public class Ivy implements TransferListener {
     
     public static String getLocalHostName() {
         try {
-			return InetAddress.getLocalHost().getHostName();
-		} catch (UnknownHostException e) {
-			return "localhost";
-		}
+            return InetAddress.getLocalHost().getHostName();
+        } catch (UnknownHostException e) {
+            return "localhost";
+        }
     }
     
     
