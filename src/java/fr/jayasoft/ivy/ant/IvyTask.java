@@ -13,7 +13,9 @@ import fr.jayasoft.ivy.Ivy;
 import fr.jayasoft.ivy.ModuleDescriptor;
 import fr.jayasoft.ivy.util.Message;
 
+import org.apache.tools.ant.BuildEvent;
 import org.apache.tools.ant.BuildException;
+import org.apache.tools.ant.BuildListener;
 import org.apache.tools.ant.Task;
 
 /**
@@ -56,7 +58,27 @@ public class IvyTask extends Task {
     }
 
     protected void ensureMessageInitialised() {
-        Message.init(new AntMessageImpl(getProject()));
+        if (!Message.isInitialised()) { 
+            Message.init(new AntMessageImpl(getProject()));
+            getProject().addBuildListener(new BuildListener() {
+                public void buildFinished(BuildEvent event) {
+                    Message.uninit();
+                }
+    
+                public void buildStarted(BuildEvent event) {
+                }
+                public void targetStarted(BuildEvent event) {
+                }
+                public void targetFinished(BuildEvent event) {
+                }
+                public void taskStarted(BuildEvent event) {
+                }
+                public void taskFinished(BuildEvent event) {
+                }
+                public void messageLogged(BuildEvent event) {
+                }
+            }); 
+        }
     }
     protected void setIvyInstance(Ivy ivy) {
         getProject().addReference("ivy.instance", ivy);

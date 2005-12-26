@@ -137,4 +137,8 @@ public class Message {
     public static void setShowProgress(boolean progress) {
         _showProgress = progress;
     }
+
+    public static void uninit() {
+        _impl = null;
+    }
 }
