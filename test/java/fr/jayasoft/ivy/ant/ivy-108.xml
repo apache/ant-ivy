@@ -1,0 +1,10 @@
+<ivy-module version="1.2">
+  <info organisation="jayasoft" module="108"/>
+  <configurations>
+    <conf name="default"/>
+    <conf name="empty"/>
+  </configurations>
+  <dependencies>
+    <dependency org="org1" name="mod1.2" rev="2.0" conf="default"/>
+  </dependencies>
+</ivy-module>
