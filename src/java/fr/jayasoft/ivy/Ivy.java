@@ -954,6 +954,15 @@ public class Ivy implements TransferListener {
         } else {
             // node has been evicted for the current parent
             
+            // first we mark the selected nodes as selected if it isn't already the case
+            for (Iterator iter = resolved.iterator(); iter.hasNext();) {
+                IvyNode selected = (IvyNode)iter.next();
+                if (selected.isEvicted(node.getRootModuleConf())) {
+                    selected.markSelected(node.getRootModuleConf());
+                    Message.debug("selecting "+selected+" in "+parent);
+                }
+            }
+            
             // it's time to update parent resolved with found resolved...
             // if they have not been recomputed, it does not change anything
             parent.setResolvedNodes(node.getModuleId(), node.getRootModuleConf(), resolved); 
