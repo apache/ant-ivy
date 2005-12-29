@@ -10,5 +10,8 @@
 			<filesystem ref="fs"/>
 			<ibiblio name="int2"/>
 		</chain>
+		<chain name="external">
+			<resolver ref="fs"/>
+		</chain>
 	</resolvers>
 </ivyconf>

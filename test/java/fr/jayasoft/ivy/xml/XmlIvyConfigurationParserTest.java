@@ -116,6 +116,21 @@ public class XmlIvyConfigurationParserTest extends TestCase {
         assertNotNull(ivyPatterns);
         assertEquals(1, ivyPatterns.size());
         assertEquals("sharedrep/[organisation]/[module]/ivys/ivy-[revision].xml", ivyPatterns.get(0));
+
+        DependencyResolver external = ivy.getResolver("external");
+        assertNotNull(external);
+        assertTrue(external instanceof ChainResolver);
+        chain = (ChainResolver)external;
+        subresolvers = chain.getResolvers();
+        assertNotNull(subresolvers);
+        assertEquals(1, subresolvers.size());
+        FileSystemResolver fsInt2 = (FileSystemResolver)subresolvers.get(0);
+        assertEquals("fs", fsInt2.getName());
+
+        ivyPatterns = fsInt2.getIvyPatterns();
+        assertNotNull(ivyPatterns);
+        assertEquals(1, ivyPatterns.size());
+        assertEquals("sharedrep/[organisation]/[module]/ivys/ivy-[revision].xml", ivyPatterns.get(0));
     }
     
     public void testMacro() throws Exception {
