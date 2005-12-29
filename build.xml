@@ -1,6 +1,16 @@
 <project name="ivy" default="test" xmlns:ivy="antlib:fr.jayasoft.ivy.ant">
 	<property file="build.properties"/>
-	
+
+	<!-- try to load ivy here from local lib dir, in case the user has not already dropped
+	      it into ant's lib dir (note that the latter copy will always take precedence).
+	      We will not fail as long as local lib dir exists (it may be empty) and
+	      ivy is in at least one of ant's lib dir or the local lib dir. -->
+	  <path id="ivy.lib.path">
+	    <fileset dir="${ivy.jar.dir}" includes="*.jar"/>
+	  </path>
+	  <taskdef resource="fr/jayasoft/ivy/ant/antlib.xml"
+	          uri="antlib:fr.jayasoft.ivy.ant" classpathref="ivy.lib.path"/>
+
 	<target name="prepare">
 	   <mkdir dir="${classes.build.dir}"/>
 	   <mkdir dir="${test.build.dir}"/>
