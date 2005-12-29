@@ -75,7 +75,7 @@ public abstract class IvyCacheTask extends IvyTask {
         _type = type;
     }
 
-    protected List getPaths() throws BuildException, ParseException, IOException {
+    protected void prepareAndCheck() {
         Ivy ivy = getIvyInstance();
         
         ensureResolved(isHaltonfailure());
@@ -96,6 +96,10 @@ public abstract class IvyCacheTask extends IvyTask {
             throw new BuildException("no module name provided for ivy cachefileset: It can either be set explicitely via the attribute 'module' or via 'ivy.module' property or a prior call to <resolve/>");
         }
         _artifactFilter = FilterHelper.getArtifactTypeFilter(_type);
+    }
+
+    protected List getPaths() throws BuildException, ParseException, IOException {
+        Ivy ivy = getIvyInstance();
 
         XmlReportParser parser = new XmlReportParser();
         

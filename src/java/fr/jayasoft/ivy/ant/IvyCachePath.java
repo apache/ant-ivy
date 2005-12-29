@@ -29,6 +29,7 @@ public class IvyCachePath extends IvyCacheTask {
     }
 
     public void execute() throws BuildException {
+        prepareAndCheck();
         if (_pathid == null) {
             throw new BuildException("pathid is required in ivy classpath");
         }
