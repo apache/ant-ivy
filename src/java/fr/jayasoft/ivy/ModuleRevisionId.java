@@ -94,5 +94,14 @@ public class ModuleRevisionId {
     public static boolean isExactRevision(String revision) {
         return !revision.startsWith("latest.") && !revision.endsWith("+");
     }
-    
+    public String encodeToString() {
+        return getOrganisation() + " "+getName()+ " "+getRevision();
+    }
+    public static ModuleRevisionId decode(String encoded) {
+        String[] parts = encoded.split(" ");
+        if (parts.length != 3) {
+            throw new IllegalArgumentException("badly encoded module revision id: '"+encoded+"'");
+        }
+        return newInstance(parts[0], parts[1], parts[2]);
+    }
 }

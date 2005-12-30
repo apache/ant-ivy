@@ -6,8 +6,8 @@
 package fr.jayasoft.ivy;
 
 
-public final class DefaultPublishingDRResolver implements PublishingDependencyRevisionResolver {
-    public String resolve(ModuleDescriptor published, String publishedStatus, ModuleDescriptor dependency) {
-        return dependency.getResolvedModuleRevisionId().getRevision();
+public class DefaultPublishingDRResolver implements PublishingDependencyRevisionResolver {
+    public String resolve(ModuleDescriptor published, String publishedStatus, ModuleRevisionId depMrid, String status) {
+        return depMrid.getRevision();
     }
 }

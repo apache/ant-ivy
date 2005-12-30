@@ -8,6 +8,7 @@ package fr.jayasoft.ivy;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.InetAddress;
@@ -89,6 +90,7 @@ public class Ivy implements TransferListener {
     private static final String DEFAULT_CACHE_ARTIFACT_PATTERN = "[organisation]/[module]/[type]s/[artifact]-[revision].[ext]";
     private static final String DEFAULT_CACHE_IVY_PATTERN = "[organisation]/[module]/ivy-[revision].xml";
     private static final String DEFAULT_CACHE_RESOLVED_IVY_PATTERN = "resolved-[organisation]-[module]-[revision].xml";
+    private static final String DEFAULT_CACHE_RESOLVED_IVY_PROPERTIES_PATTERN = "resolved-[organisation]-[module]-[revision].properties";
     
     private Map _typeDefs = new HashMap();
     private Map _resolversMap = new HashMap();
@@ -109,6 +111,7 @@ public class Ivy implements TransferListener {
     
     private String _cacheIvyPattern = DEFAULT_CACHE_IVY_PATTERN;
     private String _cacheResolvedIvyPattern = DEFAULT_CACHE_RESOLVED_IVY_PATTERN;
+    private String _cacheResolvedIvyPropertiesPattern = DEFAULT_CACHE_RESOLVED_IVY_PROPERTIES_PATTERN;
     private String _cacheArtifactPattern = DEFAULT_CACHE_ARTIFACT_PATTERN;
 
     private boolean _validate = true;
@@ -632,6 +635,7 @@ public class Ivy implements TransferListener {
             
             Message.verbose(":: downloading artifacts ::");
             Map resolvedRevisions = new HashMap(); // Map (ModuleId dependency -> String revision)
+            Map dependenciesStatus = new HashMap(); // Map (ModuleId dependency -> String status)
             for (int i = 0; i < dependencies.length; i++) {
                 //download artifacts required in all asked configurations
                 if (!dependencies[i].isCompletelyEvicted() && !dependencies[i].hasProblem()) {
@@ -658,6 +662,7 @@ public class Ivy implements TransferListener {
                     
                     // update resolved dependencies map for resolved ivy file producing
                     resolvedRevisions.put(dependencies[i].getModuleId(), dependencies[i].getResolvedId().getRevision());
+                    dependenciesStatus.put(dependencies[i].getModuleId(), dependencies[i].getDescriptor().getStatus());
                 } else if (dependencies[i].isCompletelyEvicted()) {
                     // dependencies has been evicted: it has not been added to the report yet
                     String[] dconfs = dependencies[i].getRootModuleConfigurations();
@@ -667,13 +672,13 @@ public class Ivy implements TransferListener {
                 }
             }
             
-            // produce resolved ivy file in cache
+            // produce resolved ivy file and ivy properties in cache
             File ivyFileInCache = getResolvedIvyFileInCache(cache, md.getResolvedModuleRevisionId());
             try {
                 XmlModuleDescriptorUpdater.update(
                         ivySource, 
                         ivyFileInCache, 
-                        resolvedRevisions, 
+                        Collections.EMPTY_MAP, 
                         null, 
                         md.getResolvedModuleRevisionId().getRevision(),
                         null);
@@ -682,6 +687,15 @@ public class Ivy implements TransferListener {
                 ex.initCause(e);
                 throw ex;
             }
+            File ivyPropertiesInCache = getResolvedIvyPropertiesInCache(cache, md.getResolvedModuleRevisionId());
+            Properties props = new Properties();
+            for (Iterator iter = resolvedRevisions.keySet().iterator(); iter.hasNext();) {
+                ModuleId mid = (ModuleId)iter.next();
+                String rev = (String)resolvedRevisions.get(mid);
+                String status = (String)dependenciesStatus.get(mid);
+                props.put(mid.encodeToString(), rev+" "+status);
+            }
+            props.store(new FileOutputStream(ivyPropertiesInCache), md.getResolvedModuleRevisionId()+ " resolved revisions");
             Message.verbose("\tresolved ivy file produced in "+ivyFileInCache);
             
             Message.info(":: resolution report ::");
@@ -1151,6 +1165,18 @@ public class Ivy implements TransferListener {
     /////////////////////////////////////////////////////////////////////////
     //                         PUBLISH
     /////////////////////////////////////////////////////////////////////////
+    public void deliver(ModuleRevisionId mrid,
+            String revision,
+            File cache, 
+            String destIvyPattern, 
+            String status,
+            Date pubdate,
+            PublishingDependencyRevisionResolver pdrResolver, 
+            boolean validate
+            ) throws IOException, ParseException {
+        deliver(mrid, revision, cache, destIvyPattern, status, pubdate, pdrResolver, validate, true);
+    }
+    
     /**
      * delivers a resolved ivy file based upon last resolve call status and
      * the given PublishingDependencyRevisionResolver.
@@ -1174,7 +1200,8 @@ public class Ivy implements TransferListener {
             String status,
             Date pubdate,
             PublishingDependencyRevisionResolver pdrResolver, 
-            boolean validate) throws IOException, ParseException {
+            boolean validate,
+            boolean resolveDynamicRevisions) throws IOException, ParseException {
         Message.info(":: delivering :: "+mrid+" :: "+revision+" :: "+status+" :: "+pubdate);
         Message.verbose("\tvalidate = "+validate);
         long start = System.currentTimeMillis();
@@ -1197,20 +1224,43 @@ public class Ivy implements TransferListener {
         } catch (ParseException e) {
             throw new IllegalStateException("bad ivy file in cache for "+mrid+": please clean and resolve again");
         }
-        // 2) use pdrResolver to resolve dependencies info
+        
+        // 2) parse resolvedRevisions From properties file
+        Map resolvedRevisions = new HashMap(); // Map (ModuleId -> String revision)
+        Map dependenciesStatus = new HashMap(); // Map (ModuleId -> String status)
+        File ivyProperties = getResolvedIvyPropertiesInCache(cache, mrid);
+        if (!ivyProperties.exists()) {
+            throw new IllegalStateException("ivy properties not found in cache for "+mrid+": please resolve dependencies before publishing ("+ivyFile+")");
+        }
+        Properties props = new Properties();
+        props.load(new FileInputStream(ivyProperties));
+        
+        for (Iterator iter = props.keySet().iterator(); iter.hasNext();) {
+            String mid = (String)iter.next();
+            String[] parts = props.getProperty(mid).split(" ");
+            if (resolveDynamicRevisions) {
+                resolvedRevisions.put(ModuleId.decode(mid), parts[0]);
+            }
+            String depStatus = props.getProperty(mid);
+            dependenciesStatus.put(ModuleId.decode(mid), parts[1]);
+        }
+        
+        // 3) use pdrResolver to resolve dependencies info
         Map resolvedDependencies = new HashMap(); // Map (ModuleId -> String revision)
         DependencyDescriptor[] dependencies = md.getDependencies();
         for (int i = 0; i < dependencies.length; i++) {
-            DependencyResolver resolver = getResolver(dependencies[i].getDependencyId());
-            ResolvedModuleRevision dependency = resolver.getDependency(dependencies[i], new ResolveData(this, cache, pubdate, null, validate));            
-            if (dependency == null) {
-                Message.warn(resolver.getName()+": unresolved dependency while publishing: "+dependencies[i].getDependencyRevisionId());
-            } else {
-                resolvedDependencies.put(dependencies[i].getDependencyId(), pdrResolver.resolve(md, status, dependency.getDescriptor()));
+            String rev = (String)resolvedRevisions.get(dependencies[i].getDependencyId());
+            if (rev == null) {
+                rev = dependencies[i].getDependencyRevisionId().getRevision();
             }
+            String depStatus = (String)dependenciesStatus.get(dependencies[i].getDependencyId());
+            resolvedDependencies.put(dependencies[i].getDependencyId(), 
+                    pdrResolver.resolve(md, status, 
+                            new ModuleRevisionId(dependencies[i].getDependencyId(), rev), 
+                            depStatus));
         }
         
-        // 3) copy the source resolved ivy to the destination specified, 
+        // 4) copy the source resolved ivy to the destination specified, 
         //    updating status, revision and dependency revisions obtained by
         //    PublishingDependencyRevisionResolver
         String publishedIvy = IvyPatternHelper.substitute(destIvyPattern, md.getResolvedModuleRevisionId());
@@ -1338,6 +1388,10 @@ public class Ivy implements TransferListener {
     
     public File getResolvedIvyFileInCache(File cache, ModuleRevisionId mrid) {
         return new File(cache, IvyPatternHelper.substitute(_cacheResolvedIvyPattern, mrid.getOrganisation(), mrid.getName(), mrid.getRevision(), "ivy", "ivy", "xml"));
+    }
+
+    public File getResolvedIvyPropertiesInCache(File cache, ModuleRevisionId mrid) {
+        return new File(cache, IvyPatternHelper.substitute(_cacheResolvedIvyPropertiesPattern, mrid.getOrganisation(), mrid.getName(), mrid.getRevision(), "ivy", "ivy", "xml"));
     }
 
     public File getIvyFileInCache(File cache, ModuleRevisionId mrid) {

@@ -41,6 +41,7 @@ public class IvyPublish extends IvyTask {
     private boolean _warnonmissing = true;
     private boolean _haltonmissing = true;
     private boolean _overwrite = false;
+    private boolean _replacedynamicrev = true;
     
     public File getCache() {
         return _cache;
@@ -122,6 +123,12 @@ public class IvyPublish extends IvyTask {
     public void setArtifactspattern(String artifactsPattern) {
         _artifactspattern = artifactsPattern;
     }
+    public boolean isReplacedynamicrev() {
+        return _replacedynamicrev;
+    }
+    public void setReplacedynamicrev(boolean replacedynamicrev) {
+        _replacedynamicrev = replacedynamicrev;
+    }
     
     public void execute() throws BuildException {
         Ivy ivy = getIvyInstance();
@@ -180,6 +187,7 @@ public class IvyPublish extends IvyTask {
                 deliver.setRevision(getRevision());
                 deliver.setStatus(getStatus());
                 deliver.setValidate(doValidate(ivy));
+                deliver.setReplacedynamicrev(isReplacedynamicrev());
                 
                 deliver.execute();
             }

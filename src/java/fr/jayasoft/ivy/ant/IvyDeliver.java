@@ -26,26 +26,26 @@ import fr.jayasoft.ivy.Status;
  *
  */
 public class IvyDeliver extends IvyTask {
-    private final class DeliverDRResolver implements PublishingDependencyRevisionResolver {
-        public String resolve(ModuleDescriptor published, String publishedStatus, ModuleDescriptor dependency) {
+    private final class DeliverDRResolver extends DefaultPublishingDRResolver {
+        public String resolve(ModuleDescriptor published, String publishedStatus, ModuleRevisionId depMrid, String depStatus) {
             if (Status.isIntegration(publishedStatus)) {
                 // published status is integration one, nothing to ask
-                return dependency.getResolvedModuleRevisionId().getRevision();
+                return super.resolve(published, publishedStatus, depMrid, depStatus);
             }
             
             // we are publishing a delivery (a non integration module)
             
-            if (!Status.isIntegration(dependency.getStatus())) {
+            if (!Status.isIntegration(depStatus)) {
                 // dependency is already a delivery, nothing to ask
-                return dependency.getResolvedModuleRevisionId().getRevision();
+                return super.resolve(published, publishedStatus, depMrid, depStatus);
             }
 
             // the dependency is not a delivery
             
             // we must ask the user what version and status he want to have
             // for the dependency
-            String statusProperty = dependency.getModuleRevisionId().getName()+"."+dependency.getModuleRevisionId().getRevision()+".status";
-            String versionProperty = dependency.getModuleRevisionId().getName()+"."+dependency.getModuleRevisionId().getRevision()+".version";
+            String statusProperty = depMrid.getName()+"."+depMrid.getRevision()+".status";
+            String versionProperty = depMrid.getName()+"."+depMrid.getRevision()+".version";
             String version = getProject().getProperty(versionProperty);
             String status = getProject().getProperty(statusProperty);
             log("found version = "+version+" status="+status);
@@ -60,31 +60,31 @@ public class IvyDeliver extends IvyTask {
             input.init();
             
             // ask status
-            input.setMessage(dependency.getModuleRevisionId().getName()+" "+dependency.getModuleRevisionId().getRevision()+": please enter a status: ");
+            input.setMessage(depMrid.getName()+" "+depMrid.getRevision()+": please enter a status: ");
             input.setValidargs(Status.getDeliveryStatusListString());
             input.setAddproperty(statusProperty);
             input.perform();
             appendDeliveryList(statusProperty + " = "+getProject().getProperty(statusProperty));
             
             // ask version
-            input.setMessage(dependency.getModuleRevisionId().getName()+" "+dependency.getModuleRevisionId().getRevision()+": please enter a version: ");
+            input.setMessage(depMrid.getName()+" "+depMrid.getRevision()+": please enter a version: ");
             input.setValidargs(null);
             input.setAddproperty(versionProperty);
             input.perform();
             appendDeliveryList(versionProperty + " = "+getProject().getProperty(versionProperty));
             
             version = getProject().getProperty(versionProperty);
-            deliverDependency(dependency, version);
+            deliverDependency(depMrid, version);
             
             loadDeliveryList();
 
             return version;
         }
         
-        public void deliverDependency(ModuleDescriptor dependency, String version) {
+        public void deliverDependency(ModuleRevisionId depMrid, String version) {
             // call deliver target if any
             if (_deliverTarget != null) {
-                String statusProperty = dependency.getModuleRevisionId().getName()+"."+dependency.getModuleRevisionId().getRevision()+".status";
+                String statusProperty = depMrid.getName()+"."+depMrid.getRevision()+".status";
                 String status = getProject().getProperty(statusProperty);
 
                 CallTarget ct = (CallTarget)getProject().createTask("antcall");
@@ -95,7 +95,7 @@ public class IvyDeliver extends IvyTask {
                 ct.setInheritRefs(true);
                 Property param = ct.createParam();
                 param.setName("dependency.name");
-                param.setValue(dependency.getModuleRevisionId().getName());
+                param.setValue(depMrid.getName());
                 param = ct.createParam();
                 param.setName("dependency.published.status");
                 param.setValue(status);
@@ -104,7 +104,7 @@ public class IvyDeliver extends IvyTask {
                 param.setValue(version);
                 param = ct.createParam();
                 param.setName("dependency.version");
-                param.setValue(dependency.getModuleRevisionId().getRevision());
+                param.setValue(depMrid.getRevision());
                 ct.perform();
             }        
         }
@@ -121,6 +121,7 @@ public class IvyDeliver extends IvyTask {
     private String 	_pubdate;
     private String  _deliverTarget;
     private File    _deliveryList;
+    private boolean _replacedynamicrev = true;
     
     public File getCache() {
         return _cache;
@@ -175,6 +176,12 @@ public class IvyDeliver extends IvyTask {
     }
     public void setDeliveryList(File deliveryList) {
         _deliveryList = deliveryList;
+    }
+    public boolean isReplacedynamicrev() {
+        return _replacedynamicrev;
+    }
+    public void setReplacedynamicrev(boolean replacedynamicrev) {
+        _replacedynamicrev = replacedynamicrev;
     }
     
     public void execute() throws BuildException {
@@ -235,7 +242,7 @@ public class IvyDeliver extends IvyTask {
                 drResolver = new DefaultPublishingDRResolver();
             }
             ivy.deliver(mrid, _pubRevision, _cache, _deliverpattern, _status, pubdate, 
-                    	drResolver, doValidate(ivy));
+                    	drResolver, doValidate(ivy), _replacedynamicrev);
             
         } catch (Exception e) {
             throw new BuildException("impossible to deliver "+mrid+": "+e.getMessage(), e);
@@ -264,8 +271,6 @@ public class IvyDeliver extends IvyTask {
         echo.setAppend(true);
         echo.perform();
     }
-    
-    
     
     
 }

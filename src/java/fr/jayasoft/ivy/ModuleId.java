@@ -50,4 +50,15 @@ public class ModuleId {
     public String toString() {
         return "[ "+_organisation+" | "+_name+" ]";
     }
+
+    public String encodeToString() {
+        return getOrganisation() + " "+getName();
+    }
+    public static ModuleId decode(String encoded) {
+        String[] parts = encoded.split(" ");
+        if (parts.length != 2) {
+            throw new IllegalArgumentException("badly encoded module revision id: '"+encoded+"'");
+        }
+        return new ModuleId(parts[0], parts[1]);
+    }
 }

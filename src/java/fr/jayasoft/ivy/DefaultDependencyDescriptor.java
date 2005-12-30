@@ -43,6 +43,20 @@ public class DefaultDependencyDescriptor implements DependencyDescriptor {
 
     private boolean _transitive = true;
 
+    public DefaultDependencyDescriptor(DependencyDescriptor dd, String revision) {
+        _parentId = dd.getParentRevisionId();
+        _revId = new ModuleRevisionId(dd.getDependencyId(), revision);
+        _force = dd.isForce();
+        _changing = dd.isChanging();
+        _transitive = dd.isTransitive();
+        String[] moduleConfs = dd.getModuleConfigurations();
+        for (int i = 0; i < moduleConfs.length; i++) {
+            _confs.put(moduleConfs[i], new ArrayList(Arrays.asList(dd.getDependencyConfigurations(moduleConfs[i]))));
+            _artifactsExcludes.put(moduleConfs[i], new ArrayList(Arrays.asList(dd.getDependencyArtifactsExcludes(moduleConfs[i]))));
+            _artifactsIncludes.put(moduleConfs[i], new ArrayList(Arrays.asList(dd.getDependencyArtifactsIncludes(moduleConfs[i]))));
+        }
+    }
+    
     public DefaultDependencyDescriptor(ModuleDescriptor md, ModuleRevisionId mrid, boolean force, boolean changing, boolean transitive) {
         _parentId = md.getModuleRevisionId();
         _revId = mrid;

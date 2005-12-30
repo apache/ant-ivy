@@ -5,6 +5,7 @@
 - NEW: it is now possible to reference existing resolver in resolver containers (IVY-35)
 - NEW: overwrite attribute in the publish task now let force overwrite of read only files (IVY-83) 
 - NEW: add a conflict manager ("strict") making build fail when a diamond conflict is found (thanks to Christer Jonsson) (IVY-118) 
+- IMPROVE: now dynamic revisions replacement by deliver task can be turned off (IVY-120)
 - IMPROVE: better performance with deep transitive dependencies
 - IMPROVE: allow optional parts in the patterns (IVY-102) (thanks to Maarten Coene)
 - IMPROVE: ability to define variable directly in ivyconf.xml (IVY-100)
