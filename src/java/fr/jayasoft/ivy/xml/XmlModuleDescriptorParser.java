@@ -51,7 +51,7 @@ import fr.jayasoft.ivy.util.XMLHelper;
  *
  */
 public class XmlModuleDescriptorParser extends DefaultHandler {
-    private static final Collection ALLOWED_VERSIONS = Arrays.asList(new String[] {"1.0", "1.1", "1.2"});
+    private static final Collection ALLOWED_VERSIONS = Arrays.asList(new String[] {"1.0", "1.1", "1.2", "1.3"});
     
     private DefaultModuleDescriptor _md;
     private DefaultDependencyDescriptor _dd;
@@ -426,7 +426,7 @@ public class XmlModuleDescriptorParser extends DefaultHandler {
     }
 
     public void error(SAXParseException ex) {
-        Message.error("xml parsing: " +
+        addError("xml parsing: " +
                 getLocationString(ex)+": "+
                 ex.getMessage());
     }

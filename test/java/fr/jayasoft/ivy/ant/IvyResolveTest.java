@@ -101,6 +101,16 @@ public class IvyResolveTest extends TestCase {
         }
     }
 
+    public void testFailureOnBadDependencyIvyFile() throws Exception {
+        try {
+            _resolve.setFile(new File("test/java/fr/jayasoft/ivy/ant/ivy-failure2.xml"));
+            _resolve.execute();
+            fail("failure didn't raised an exception with default haltonfailure setting");
+        } catch (BuildException ex) {
+            // ok => should raised an exception
+        }
+    }
+
     public void testHaltOnFailure() throws Exception {
         try {
             _resolve.setFile(new File("test/java/fr/jayasoft/ivy/ant/ivy-failure.xml"));

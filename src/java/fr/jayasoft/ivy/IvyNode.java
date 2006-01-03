@@ -527,12 +527,12 @@ public class IvyNode {
             if (_md != null) {        
                 Configuration c = _md.getConfiguration(conf);
                 if (c == null) {
-                    Message.error("configuration not found in "+this+": "+conf+". It was required from "+getParent()+" "+getParentConf());
                     _confsToFetch.remove(conf);
+                    _problem = new RuntimeException("configuration not found in "+this+": "+conf+". It was required from "+getParent()+" "+getParentConf());
                     return false;
                 } else if (!isRoot() && c.getVisibility() != Configuration.Visibility.PUBLIC) {
-                    Message.error("configuration not public in "+this+": "+c+". It was required from "+getParent()+" "+getParentConf());
                     _confsToFetch.remove(conf);
+                    _problem = new RuntimeException("configuration not public in "+this+": "+c+". It was required from "+getParent()+" "+getParentConf());
                     return false;
                 }
             }

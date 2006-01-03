@@ -25,6 +25,7 @@ import org.apache.commons.cli.ParseException;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.types.Path;
 
+import fr.jayasoft.ivy.report.ResolveReport;
 import fr.jayasoft.ivy.url.URLHandlerDispatcher;
 import fr.jayasoft.ivy.url.URLHandlerRegistry;
 import fr.jayasoft.ivy.util.DefaultMessageImpl;
@@ -232,13 +233,14 @@ public class Main {
 
             Date date = new Date();
             
-            ModuleDescriptor md = ivy.resolve(
+            ResolveReport report = ivy.resolve(
                     ivyfile.toURL(),
                     null,
                     confs, 
                     cache, 
                     date,
-                    validate).getModuleDescriptor();
+                    validate);
+            ModuleDescriptor md = report.getModuleDescriptor();
 
             if (confs.length == 1 && "*".equals(confs[0])) {
                 confs = md.getConfigurationsNames();
