@@ -40,6 +40,15 @@ public class DefaultDependencyArtifactDescriptor implements DependencyArtifactDe
         _includes = includes;
     }
     
+    public DefaultDependencyArtifactDescriptor(DefaultDependencyDescriptor dd, ArtifactId aid, boolean includes) {
+        if (dd == null) {
+            throw new NullPointerException("dependency descriptor must not be null");
+        }
+        _dd = dd;
+        _id = aid;
+        _includes = includes;
+    }
+    
     public boolean equals(Object obj) {
         if (!(obj instanceof DependencyArtifactDescriptor)) {
             return false;

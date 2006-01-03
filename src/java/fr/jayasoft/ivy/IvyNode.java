@@ -66,11 +66,13 @@ public class IvyNode {
     }
 
     public static class Caller {
+        private ModuleDescriptor _md;
         private ModuleRevisionId _mrid;
         private Map _confs = new HashMap(); // Map (String callerConf -> String[] dependencyConfs)
         private ModuleRevisionId _askedDependencyId;
         
-        public Caller(ModuleRevisionId mrid, ModuleRevisionId askedDependencyId) {
+        public Caller(ModuleDescriptor md, ModuleRevisionId mrid, ModuleRevisionId askedDependencyId) {
+            _md = md;
             _mrid = mrid;
             _askedDependencyId = askedDependencyId;
         }
@@ -109,6 +111,9 @@ public class IvyNode {
         }
         public ModuleRevisionId getAskedDependencyId() {
             return _askedDependencyId;
+        }
+        public ModuleDescriptor getModuleDescriptor() {
+            return _md;
         }
     }
     private static final class NodeConf {
@@ -198,8 +203,6 @@ public class IvyNode {
         
     // Map (String rootModuleConf -> Set(DependencyArtifactDescriptor))
     private Map _dependencyArtifactsIncludes = new HashMap();
-    // Map (String rootModuleConf -> Set(DependencyArtifactDescriptor))
-    private Map _dependencyArtifactsExcludes = new HashMap();
 
 
     // shared data
@@ -366,9 +369,6 @@ public class IvyNode {
         // update dependencyArtifactsIncludes
         updateMapOfSetForKey(node._dependencyArtifactsIncludes, _dependencyArtifactsIncludes, rootModuleConf);
         
-        // update dependencyArtifactsExcludes
-        updateMapOfSetForKey(node._dependencyArtifactsExcludes, _dependencyArtifactsExcludes, rootModuleConf);
-        
         // update confsToFetch
         updateConfsToFetch(node._fetchedConfigurations);
         updateConfsToFetch(node._confsToFetch);
@@ -477,7 +477,6 @@ public class IvyNode {
                                 resolved.loadData(conf);
                                 if (_dd != null) {
                                     resolved.addDependencyArtifactsIncludes(_rootModuleConf, _dd.getDependencyArtifactsIncludes(getParentConf()));
-                                    resolved.addDependencyArtifactsExcludes(_rootModuleConf, _dd.getDependencyArtifactsExcludes(getParentConf()));
                                 }
                                 _data.register(getId(), resolved); // this actually discards the node
                                 return true;
@@ -545,7 +544,6 @@ public class IvyNode {
         }
         if (_dd != null) {
             addDependencyArtifactsIncludes(_rootModuleConf, _dd.getDependencyArtifactsIncludes(getParentConf()));
-            addDependencyArtifactsExcludes(_rootModuleConf, _dd.getDependencyArtifactsExcludes(getParentConf()));
         }
         return loaded;
         
@@ -600,7 +598,7 @@ public class IvyNode {
             depNode.updateConfsToFetch(confs);
             depNode.setRequiredConfs(this, conf, confs);
             
-            depNode.addCaller(_rootModuleConf, _md.getModuleRevisionId(), conf, dependencyConfigurations, dd.getDependencyRevisionId());
+            depNode.addCaller(_rootModuleConf, _md, _md.getModuleRevisionId(), conf, dependencyConfigurations, dd.getDependencyRevisionId());
             dependencies.add(depNode);
 
             if (traverse) {
@@ -692,7 +690,7 @@ public class IvyNode {
      * @param dependencyConfs '*' must have been resolved
      * @param askedDependencyId the dependency revision id asked by the caller
      */
-    public void addCaller(String rootModuleConf, ModuleRevisionId mrid, String callerConf, String[] dependencyConfs, ModuleRevisionId askedDependencyId) {
+    public void addCaller(String rootModuleConf, ModuleDescriptor md, ModuleRevisionId mrid, String callerConf, String[] dependencyConfs, ModuleRevisionId askedDependencyId) {
         if (mrid.getModuleId().equals(getId().getModuleId())) {
             throw new IllegalArgumentException("a module is not authorized to depend on itself: "+getId());
         }
@@ -703,7 +701,7 @@ public class IvyNode {
         }
         Caller caller = (Caller)callers.get(mrid);
         if (caller == null) {
-            caller = new Caller(mrid, askedDependencyId);
+            caller = new Caller(md, mrid, askedDependencyId);
             callers.put(mrid, caller);
         }
         caller.addConfiguration(callerConf, dependencyConfs);
@@ -920,21 +918,69 @@ public class IvyNode {
             }
         }
         
-        // now excludes artifacts in the exclude list
-        Set excludes = (Set)_dependencyArtifactsExcludes.get(rootModuleConf);
-        if (excludes != null) {
-            for (Iterator it = excludes.iterator(); it.hasNext();) {
-                DependencyArtifactDescriptor dad = (DependencyArtifactDescriptor)it.next();
-                for (Iterator iter = artifacts.iterator(); iter.hasNext();) {
-                    Artifact artifact = (Artifact)iter.next();
-                    if (artifactIdMatch(dad.getId(), artifact.getId().getArtifactId())) {
-                        Message.debug(this+" in "+rootModuleConf+": excluding "+artifact);
-                        iter.remove();
-                    }
-                }
+        // now excludes artifacts that aren't accepted by any caller
+        for (Iterator iter = artifacts.iterator(); iter.hasNext();) {
+            Artifact artifact = (Artifact)iter.next();
+            boolean excluded = doesCallersExclude(rootModuleConf, artifact);
+            if (excluded) {
+                Message.debug(this+" in "+rootModuleConf+": excluding "+artifact);
+                iter.remove();
             }
         }
         return (Artifact[]) artifacts.toArray(new Artifact[artifacts.size()]);
+    }
+
+    /**
+     * Returns true if ALL callers exclude the given artifact in the given root module conf
+     * @param rootModuleConf
+     * @param artifact
+     * @return
+     */
+    private boolean doesCallersExclude(String rootModuleConf, Artifact artifact) {
+        Caller[] callers = getCallers(rootModuleConf);
+        if (callers.length == 0) {
+            return false;
+        }
+        Collection callersNodes = new ArrayList();
+        for (int i = 0; i < callers.length; i++) {
+            ModuleDescriptor md = callers[i].getModuleDescriptor();
+            if (!doesExclude(md, rootModuleConf, callers[i].getCallerConfigurations(), this, artifact)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private boolean doesExclude(ModuleDescriptor md, String rootModuleConf, String[] moduleConfs, IvyNode dependency, Artifact artifact) {
+        // artifact is excluded if it match any of the exclude pattern for this dependency...
+        DependencyDescriptor dd = getDependencyDescriptor(md, dependency);
+        if (dd != null) {
+            DependencyArtifactDescriptor[] dads = dd.getDependencyArtifactsExcludes(moduleConfs);
+            for (int i = 0; i < dads.length; i++) {
+                if (artifactIdMatch(dads[i].getId(), artifact.getId().getArtifactId())) {
+                    return true;
+                }
+            }
+        }
+        // ... or if it is excluded by all its callers
+        IvyNode c = _data.getNode(md.getModuleRevisionId());
+        if (c != null) {
+            return c.doesCallersExclude(rootModuleConf, artifact);
+        } else {
+            return false;
+        }
+    }
+
+    private static DependencyDescriptor getDependencyDescriptor(ModuleDescriptor md, IvyNode dependency) {
+        if (md != null) {
+            DependencyDescriptor[] dds = md.getDependencies();
+            for (int i = 0; i < dds.length; i++) {
+                if (dds[i].getDependencyId().equals(dependency.getModuleId())) {
+                    return dds[i];
+                }
+            }
+        }
+        return null;
     }
 
     private Collection findArtifactsMatching(ArtifactId id, Map allArtifacts) {
@@ -974,10 +1020,6 @@ public class IvyNode {
 
     private void addDependencyArtifactsIncludes(String rootModuleConf, DependencyArtifactDescriptor[] dependencyArtifacts) {
         addDependencyArtifacts(rootModuleConf, dependencyArtifacts, _dependencyArtifactsIncludes);
-    }
-
-    private void addDependencyArtifactsExcludes(String rootModuleConf, DependencyArtifactDescriptor[] dependencyArtifacts) {
-        addDependencyArtifacts(rootModuleConf, dependencyArtifacts, _dependencyArtifactsExcludes);
     }
 
     private void addDependencyArtifacts(String rootModuleConf, DependencyArtifactDescriptor[] dependencyArtifacts, Map artifactsMap) {

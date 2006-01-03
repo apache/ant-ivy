@@ -1,0 +1,12 @@
+<ivy-module version="1.0">
+	<info organisation="org2"
+	       module="mod2.5"
+	       revision="0.7"
+	       status="integration"
+	/>
+	<dependencies>
+		<dependency name="mod2.1" rev="0.3">
+			<exclude name="art21A"/>
+		</dependency>
+	</dependencies>
+</ivy-module>

@@ -1,6 +1,5 @@
-<?xml version="1.0"?>
-<xs:schema 	xmlns:xs="http://www.w3.org/2001/XMLSchema"
-			elementFormDefault="qualified">
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
 
   <xs:element name="ivy-module">
       <xs:complexType>
@@ -83,7 +82,7 @@
 							        </xs:sequence>
 						            <xs:attribute name="name" type="xs:string" use="required"/>
 						            <xs:attribute name="type" type="xs:string" use="required"/>
-						            <xs:attribute name="ext"  type="xs:string"/>
+						            <xs:attribute name="ext" type="xs:string"/>
 						            <xs:attribute name="conf" type="xs:string"/>
 				            	</xs:complexType>
 				      		</xs:element>
@@ -120,7 +119,7 @@
 										        </xs:sequence>
 									            <xs:attribute name="name" type="xs:string" use="required"/>
 									            <xs:attribute name="type" type="xs:string" use="required"/>
-									            <xs:attribute name="ext"  type="xs:string"/>
+									            <xs:attribute name="ext" type="xs:string"/>
 									            <xs:attribute name="conf" type="xs:string"/>
 							            	</xs:complexType>
 							      		</xs:element>
@@ -135,7 +134,7 @@
 										        </xs:sequence>
 									            <xs:attribute name="name" type="xs:string" use="required"/>
 									            <xs:attribute name="type" type="xs:string" use="required"/>
-									            <xs:attribute name="ext"  type="xs:string"/>
+									            <xs:attribute name="ext" type="xs:string"/>
 									            <xs:attribute name="conf" type="xs:string"/>
 							            	</xs:complexType>
 							      		</xs:element>
@@ -148,9 +147,11 @@
 										            	</xs:complexType>
 										      		</xs:element>
 										        </xs:sequence>
+									            <xs:attribute name="org" type="xs:string"/>
+									            <xs:attribute name="module" type="xs:string"/>
 									            <xs:attribute name="name" type="xs:string" use="required"/>
 									            <xs:attribute name="type" type="xs:string" use="required"/>
-									            <xs:attribute name="ext"  type="xs:string"/>
+									            <xs:attribute name="ext" type="xs:string"/>
 									            <xs:attribute name="conf" type="xs:string"/>
 							            	</xs:complexType>
 							      		</xs:element>
@@ -175,7 +176,7 @@
 				            	<xs:complexType>
 						            <xs:attribute name="org" type="xs:string"/>
 						            <xs:attribute name="module" type="xs:string"/>
-						            <xs:attribute name="name"  type="xs:string"/>
+						            <xs:attribute name="name" type="xs:string"/>
 						            <xs:attribute name="rev" type="xs:string"/>
 				            	</xs:complexType>
 				      		</xs:element>

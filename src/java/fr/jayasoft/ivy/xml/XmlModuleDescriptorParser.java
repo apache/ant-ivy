@@ -22,6 +22,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.helpers.DefaultHandler;
 
+import fr.jayasoft.ivy.ArtifactId;
 import fr.jayasoft.ivy.Configuration;
 import fr.jayasoft.ivy.ConflictManager;
 import fr.jayasoft.ivy.DefaultDependencyArtifactDescriptor;
@@ -363,7 +364,16 @@ public class XmlModuleDescriptorParser extends DefaultHandler {
         type = type == null ? ".*" : type;
         String ext = attributes.getValue("ext");
         ext = ext != null?ext:type;
-        _dad = new DefaultDependencyArtifactDescriptor(_dd, name, type, ext, includes);
+        if (includes) {
+            _dad = new DefaultDependencyArtifactDescriptor(_dd, name, type, ext, includes);
+        } else {
+            String org = attributes.getValue("org");
+            org = org == null ? ".*" : org;
+            String module = attributes.getValue("module");
+            module = module == null ? ".*" : module;
+            ArtifactId aid = new ArtifactId(new ModuleId(org, module), name, type, ext);
+            _dad = new DefaultDependencyArtifactDescriptor(_dd, aid, includes);
+        }
         String confs = attributes.getValue("conf");
         // only add confs if they are specified. if they aren't, endElement will handle this
         // only if there are no conf defined in sub elements
