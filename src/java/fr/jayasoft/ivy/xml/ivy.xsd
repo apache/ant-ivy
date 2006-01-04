@@ -118,7 +118,7 @@
 										      		</xs:element>
 										        </xs:sequence>
 									            <xs:attribute name="name" type="xs:string" use="required"/>
-									            <xs:attribute name="type" type="xs:string" use="required"/>
+									            <xs:attribute name="type" type="xs:string"/>
 									            <xs:attribute name="ext" type="xs:string"/>
 									            <xs:attribute name="conf" type="xs:string"/>
 							            	</xs:complexType>
@@ -132,8 +132,8 @@
 										            	</xs:complexType>
 										      		</xs:element>
 										        </xs:sequence>
-									            <xs:attribute name="name" type="xs:string" use="required"/>
-									            <xs:attribute name="type" type="xs:string" use="required"/>
+									            <xs:attribute name="name" type="xs:string"/>
+									            <xs:attribute name="type" type="xs:string"/>
 									            <xs:attribute name="ext" type="xs:string"/>
 									            <xs:attribute name="conf" type="xs:string"/>
 							            	</xs:complexType>
@@ -149,8 +149,8 @@
 										        </xs:sequence>
 									            <xs:attribute name="org" type="xs:string"/>
 									            <xs:attribute name="module" type="xs:string"/>
-									            <xs:attribute name="name" type="xs:string" use="required"/>
-									            <xs:attribute name="type" type="xs:string" use="required"/>
+									            <xs:attribute name="name" type="xs:string"/>
+									            <xs:attribute name="type" type="xs:string"/>
 									            <xs:attribute name="ext" type="xs:string"/>
 									            <xs:attribute name="conf" type="xs:string"/>
 							            	</xs:complexType>
