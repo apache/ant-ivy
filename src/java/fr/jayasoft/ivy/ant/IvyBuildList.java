@@ -38,6 +38,7 @@ public class IvyBuildList extends IvyTask {
     private boolean _reverse = false;
     private String _ivyFilePath;
     private String _root = "*";
+    private boolean _excludeRoot = false;
 
 
     public void addFileset(FileSet buildFiles) {
@@ -58,6 +59,14 @@ public class IvyBuildList extends IvyTask {
 
     public void setRoot(String root) {
         _root = root;
+    }
+
+    public boolean isExcludeRoot() {
+        return _excludeRoot;
+    }
+
+    public void setExcludeRoot(boolean root) {
+        _excludeRoot = root;
     }
 
     public void execute() throws BuildException {
@@ -161,6 +170,12 @@ public class IvyBuildList extends IvyTask {
         Set toKeep = new HashSet();
         processFilterNode(rootmd, toKeep, moduleIdMap);
 
+        // With the excluderoot attribute set to true, take the rootmd out of the toKeep set.
+        if (_excludeRoot) {
+            Message.verbose("Excluded module " + rootmd.getModuleRevisionId().getModuleId().getName());
+            toKeep.remove(rootmd);
+        }
+
         // just for logging
         for (Iterator iter = toKeep.iterator(); iter.hasNext();) {
             ModuleDescriptor md = ((ModuleDescriptor) iter.next());
@@ -235,6 +250,5 @@ public class IvyBuildList extends IvyTask {
     public void setReverse(boolean reverse) {
         _reverse = reverse;
     }
-
 
 }
