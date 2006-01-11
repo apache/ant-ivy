@@ -145,12 +145,13 @@ public class XmlIvyConfigurationParser extends DefaultHandler {
                 _ivy.setVariable(name, value);
             } else if ("properties".equals(qName)) {
                 String propFilePath = _ivy.substitute((String)attributes.get("file"));
+                String overwrite = _ivy.substitute((String)attributes.get("overwrite"));
                 try {
                     Message.verbose("loading properties: "+propFilePath);
-                    _ivy.loadProperties(new File(propFilePath));
+                    _ivy.loadProperties(new File(propFilePath), overwrite == null ? true : Boolean.valueOf(overwrite).booleanValue());
                 } catch (Exception ex) {
                     Message.verbose("failed to load properties as file: trying as url: "+propFilePath);
-                    _ivy.loadProperties(new URL(propFilePath));
+                    _ivy.loadProperties(new URL(propFilePath), overwrite == null ? true : Boolean.valueOf(overwrite).booleanValue());
                 }
             } else if ("include".equals(qName)) {
                 String propFilePath = _ivy.substitute((String)attributes.get("file"));

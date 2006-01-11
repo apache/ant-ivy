@@ -5,6 +5,7 @@
 - NEW: it is now possible to reference existing resolver in resolver containers (IVY-35)
 - NEW: overwrite attribute in the publish task now let force overwrite of read only files (IVY-83) 
 - NEW: add a conflict manager ("strict") making build fail when a diamond conflict is found (thanks to Christer Jonsson) (IVY-118) 
+- IMPROVE: add possibility to avoid overwrite of an ivy variable when setting them in ivyconf.xml (IVY-127)
 - IMPROVE: ability to exclude the root project from the buildlist (thanks to Constantine Vetoshev) (IVY-124)
 - IMPROVE: exclusion of artifacts now works on transitive artifacts, and exclusion can specify organisation and/or module (IVY-116)
 - IMPROVE: now dynamic revisions replacement by deliver task can be turned off (IVY-120)

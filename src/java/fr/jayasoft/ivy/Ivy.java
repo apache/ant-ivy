@@ -41,11 +41,9 @@ import org.xml.sax.SAXException;
 import fr.jayasoft.ivy.conflict.LatestConflictManager;
 import fr.jayasoft.ivy.conflict.NoConflictManager;
 import fr.jayasoft.ivy.conflict.StrictConflictManager;
-import fr.jayasoft.ivy.event.EndDownloadEvent;
 import fr.jayasoft.ivy.event.IvyEvent;
 import fr.jayasoft.ivy.event.IvyListener;
 import fr.jayasoft.ivy.event.PrepareDownloadEvent;
-import fr.jayasoft.ivy.event.StartDownloadEvent;
 import fr.jayasoft.ivy.filter.Filter;
 import fr.jayasoft.ivy.filter.FilterHelper;
 import fr.jayasoft.ivy.latest.LatestLexicographicStrategy;
@@ -299,19 +297,34 @@ public class Ivy implements TransferListener {
     }
 
     public void loadProperties(URL url) throws IOException {
+        loadProperties(url, true);
+    }
+    public void loadProperties(URL url, boolean overwrite) throws IOException {
         Properties properties = new Properties();
         properties.load(url.openStream());
-        addAllVariables(properties);
+        addAllVariables(properties, overwrite);
     }
     public void loadProperties(File file) throws IOException {
+        loadProperties(file, true);
+    }
+    
+    public void loadProperties(File file, boolean overwrite) throws IOException {
         Properties properties = new Properties();
         properties.load(new FileInputStream(file));
-        addAllVariables(properties);
+        addAllVariables(properties, overwrite);
     }
     
     public void setVariable(String varName, String value) {
-        Message.debug("setting '"+varName+"' to '"+value+"'");
-        _variables.put(varName, substitute(value));
+        setVariable(varName, value, true);
+    }
+    
+    public void setVariable(String varName, String value, boolean overwrite) {
+        if (overwrite || !_variables.containsKey(varName)) {
+            Message.debug("setting '"+varName+"' to '"+value+"'");
+            _variables.put(varName, substitute(value));
+        } else {
+            Message.debug("'"+varName+"' already set: discarding '"+value+"'");
+        }
     }
     
     public void addAllVariables(Map variables) {
@@ -321,10 +334,8 @@ public class Ivy implements TransferListener {
     public void addAllVariables(Map variables, boolean overwrite) {
         for (Iterator iter = variables.keySet().iterator(); iter.hasNext();) {
             String key = (String)iter.next();
-            if (overwrite || !_variables.containsKey(key)) {
-                String val = (String)variables.get(key);
-                setVariable(key, val);
-            }
+            String val = (String)variables.get(key);
+            setVariable(key, val, overwrite);
         }
     }
 
