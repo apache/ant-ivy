@@ -7,6 +7,8 @@ package fr.jayasoft.ivy.repository;
 
 import java.io.File;
 
+import fr.jayasoft.ivy.event.IvyEvent;
+
 /**
  * TransferEvent is used to notify TransferListeners about progress in transfer
  * of resources form/to the respository
@@ -35,7 +37,7 @@ import java.io.File;
  * Orginal class written by Michal Maczka.
  * 
  */
-public class TransferEvent {
+public class TransferEvent extends IvyEvent {
     /**
      * A transfer was attempted, but has not yet commenced.
      */
@@ -86,6 +88,7 @@ public class TransferEvent {
     private long _length;
 
     private long _totalLength;
+    private boolean _isTotalLengthSet = false;
 
     public TransferEvent(final Repository repository, final Resource resource, final int eventType, final int requestType) {
         _repository = repository;
@@ -242,6 +245,14 @@ public class TransferEvent {
 
     public void setException(Exception exception) {
         _exception = exception;
+    }
+
+    public boolean isTotalLengthSet() {
+        return _isTotalLengthSet;
+    }
+
+    public void setTotalLengthSet(boolean isTotalLengthSet) {
+        _isTotalLengthSet = isTotalLengthSet;
     }
     
     
