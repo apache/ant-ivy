@@ -34,6 +34,8 @@ import fr.jayasoft.ivy.ModuleRevisionId;
 import fr.jayasoft.ivy.ResolveData;
 import fr.jayasoft.ivy.ResolvedModuleRevision;
 import fr.jayasoft.ivy.Status;
+import fr.jayasoft.ivy.event.EndDownloadEvent;
+import fr.jayasoft.ivy.event.StartDownloadEvent;
 import fr.jayasoft.ivy.report.ArtifactDownloadReport;
 import fr.jayasoft.ivy.report.DownloadReport;
 import fr.jayasoft.ivy.report.DownloadStatus;
@@ -420,6 +422,7 @@ public abstract class BasicResolver extends AbstractResolver {
         for (int i = 0; i < artifacts.length; i++) {
         	final ArtifactDownloadReport adr = new ArtifactDownloadReport(artifacts[i]);
         	dr.addArtifactReport(adr);
+            ivy.fireIvyEvent(new StartDownloadEvent(this, artifacts[i]));
         	File archiveFile = ivy.getArchiveFileInCache(cache, artifacts[i]);
         	if (archiveFile.exists()) {
         		Message.verbose("\t[NOT REQUIRED] "+artifacts[i]);
@@ -456,6 +459,7 @@ public abstract class BasicResolver extends AbstractResolver {
         			adr.setDownloadStatus(DownloadStatus.FAILED);                
         		}
         	}
+            ivy.fireIvyEvent(new EndDownloadEvent(this, artifacts[i], adr));
         }
     	return dr;
     }

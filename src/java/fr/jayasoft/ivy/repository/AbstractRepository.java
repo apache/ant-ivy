@@ -10,6 +10,7 @@ import java.util.Arrays;
 
 import javax.swing.event.EventListenerList;
 
+
 public abstract class AbstractRepository implements Repository {
     private EventListenerList _listeners = new EventListenerList();
     private String _name;
@@ -37,11 +38,20 @@ public abstract class AbstractRepository implements Repository {
         fireTransferEvent(_evt);
     }
     
+    protected void fireTransferStarted(long totalLength) {
+        _evt.setEventType(TransferEvent.TRANSFER_STARTED);
+        _evt.setTotalLength(totalLength);
+        _evt.setTotalLengthSet(true);
+        fireTransferEvent(_evt);
+    }
+    
     protected void fireTransferProgress(byte[] buffer, long length) {
         _evt.setEventType(TransferEvent.TRANSFER_PROGRESS);
         _evt.setBuffer(buffer);
         _evt.setLength(length);
-        _evt.setTotalLength(_evt.getTotalLength() + length);
+        if (!_evt.isTotalLengthSet()) {
+            _evt.setTotalLength(_evt.getTotalLength() + length);
+        }
         fireTransferEvent(_evt);
     }
     
@@ -49,7 +59,10 @@ public abstract class AbstractRepository implements Repository {
         _evt.setEventType(TransferEvent.TRANSFER_COMPLETED);
         _evt.setBuffer(buffer);
         _evt.setLength(length);
-        _evt.setTotalLength(_evt.getTotalLength() + length);
+        if (!_evt.isTotalLengthSet()) {
+            _evt.setTotalLength(_evt.getTotalLength() + length);
+            _evt.setTotalLengthSet(true);
+        }
         fireTransferEvent(_evt);
         _evt = null;
     }
@@ -58,6 +71,7 @@ public abstract class AbstractRepository implements Repository {
         _evt.setEventType(TransferEvent.TRANSFER_COMPLETED);
         _evt.setBuffer(null);
         _evt.setTotalLength(totalLength);
+        _evt.setTotalLengthSet(true);
         fireTransferEvent(_evt);
         _evt = null;
     }

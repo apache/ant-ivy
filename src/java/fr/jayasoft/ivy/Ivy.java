@@ -41,6 +41,11 @@ import org.xml.sax.SAXException;
 import fr.jayasoft.ivy.conflict.LatestConflictManager;
 import fr.jayasoft.ivy.conflict.NoConflictManager;
 import fr.jayasoft.ivy.conflict.StrictConflictManager;
+import fr.jayasoft.ivy.event.EndDownloadEvent;
+import fr.jayasoft.ivy.event.IvyEvent;
+import fr.jayasoft.ivy.event.IvyListener;
+import fr.jayasoft.ivy.event.PrepareDownloadEvent;
+import fr.jayasoft.ivy.event.StartDownloadEvent;
 import fr.jayasoft.ivy.filter.Filter;
 import fr.jayasoft.ivy.filter.FilterHelper;
 import fr.jayasoft.ivy.latest.LatestLexicographicStrategy;
@@ -634,18 +639,30 @@ public class Ivy implements TransferListener {
             IvyNode[] dependencies = getDependencies(md, confs, cache, date, report, validate);
             
             Message.verbose(":: downloading artifacts ::");
+            // collect list of artifacts
+            Collection artifacts = new ArrayList();
+            for (int i = 0; i < dependencies.length; i++) {
+                //download artifacts required in all asked configurations
+                if (!dependencies[i].isCompletelyEvicted() && !dependencies[i].hasProblem()) {
+                     artifacts.addAll(Arrays.asList(dependencies[i].getSelectedArtifacts(artifactFilter)));
+                }
+            }
+            fireIvyEvent(new PrepareDownloadEvent((Artifact[])artifacts.toArray(new Artifact[artifacts.size()])));
+            
             Map resolvedRevisions = new HashMap(); // Map (ModuleId dependency -> String revision)
             Map dependenciesStatus = new HashMap(); // Map (ModuleId dependency -> String status)
             for (int i = 0; i < dependencies.length; i++) {
                 //download artifacts required in all asked configurations
                 if (!dependencies[i].isCompletelyEvicted() && !dependencies[i].hasProblem()) {
                     DependencyResolver resolver = dependencies[i].getModuleRevision().getResolver();
-                    DownloadReport dReport = resolver
-                     .download(dependencies[i].getSelectedArtifacts(artifactFilter), this, cache);
-                    ArtifactDownloadReport[] adrs = dReport.getArtifactsReports(DownloadStatus.FAILED);
+                    Artifact[] selectedArtifacts = dependencies[i].getSelectedArtifacts(artifactFilter);
+                    DownloadReport dReport = resolver.download(selectedArtifacts, this, cache);
+                    ArtifactDownloadReport[] adrs = dReport.getArtifactsReports();
                     for (int j = 0; j < adrs.length; j++) {
-                        Message.warn("\t[NOT FOUND  ] "+adrs[j].getArtifact());
-                        resolver.reportFailure(adrs[j].getArtifact());
+                        if (adrs[j].getDownloadStatus() == DownloadStatus.FAILED) {
+                            Message.warn("\t[NOT FOUND  ] "+adrs[j].getArtifact());
+                            resolver.reportFailure(adrs[j].getArtifact());
+                        }
                     }
                     // update concerned reports
                     String[] dconfs = dependencies[i].getRootModuleConfigurations();
@@ -1602,8 +1619,29 @@ public class Ivy implements TransferListener {
         }
     }
 
+    public void addIvyListener(IvyListener listener) {
+        _listeners.add(IvyListener.class, listener);
+    }
+
+    public void removeIvyListener(IvyListener listener) {
+        _listeners.remove(IvyListener.class, listener);
+    }
+
+    public boolean hasIvyListener(IvyListener listener) {
+        return Arrays.asList(_listeners.getListeners(IvyListener.class)).contains(listener);
+    }
+    public void fireIvyEvent(IvyEvent evt) {
+        Object[] listeners = _listeners.getListenerList();
+        for (int i = listeners.length-2; i>=0; i-=2) {
+            if (listeners[i]==IvyListener.class) {
+                ((IvyListener)listeners[i+1]).progress(evt);
+            }
+        }
+    }
+
     public void transferProgress(TransferEvent evt) {
         fireTransferEvent(evt);
+        fireIvyEvent(evt);
     }
 
     public boolean isUseRemoteConfig() {
