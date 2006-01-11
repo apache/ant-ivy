@@ -16,6 +16,7 @@
 - IMPROVE: import system properties as ivy variables in standalone mode
 - IMPROVE: string identifying a module is now clearly different from a path
 - IMPROVE: better error message when publish fails due to readonly destination (IVY-83)
+- FIX: mapping on conf * now only takes public configurations (IVY-126)
 - FIX: bad dependency ivy files now causes failure (IVY-112)
 - FIX: stack overflow error in contradictory conflict cases (IVY-117)
 - FIX: publish now doesn't call deliver when not necessary (IVY-119)

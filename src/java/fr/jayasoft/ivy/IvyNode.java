@@ -632,7 +632,7 @@ public class IvyNode {
                 && "*".equals(dependencyConfigurations[0])
                 && node != null
                 && node.isLoaded()) {
-            return node.getDescriptor().getConfigurationsNames();
+            return node.getDescriptor().getPublicConfigurationsNames();
         }
         return dependencyConfigurations;
     }
