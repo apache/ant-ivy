@@ -330,16 +330,21 @@ public class IvyNode {
     }
 
     public void markEvicted(String rootModuleConf, IvyNode node, ConflictManager conflictManager, Collection resolved) {
-        _evicted.put(rootModuleConf, new EvictionData(rootModuleConf, node, conflictManager, resolved));
-        if (!_rootModuleConfs.keySet().contains(rootModuleConf)) {
-            _rootModuleConfs.put(rootModuleConf, null);
+        EvictionData evictionData = new EvictionData(rootModuleConf, node, conflictManager, resolved);
+        markEvicted(evictionData);
+    }
+
+    public void markEvicted(EvictionData evictionData) {
+        _evicted.put(evictionData.getRootModuleConf(), evictionData);
+        if (!_rootModuleConfs.keySet().contains(evictionData.getRootModuleConf())) {
+            _rootModuleConfs.put(evictionData.getRootModuleConf(), null);
         }
         
         // bug 105: update selected data with evicted one
-        if (resolved != null) {
-            for (Iterator iter = resolved.iterator(); iter.hasNext();) {
+        if (evictionData.getSelected() != null) {
+            for (Iterator iter = evictionData.getSelected().iterator(); iter.hasNext();) {
                 IvyNode selected = (IvyNode)iter.next();
-                selected.updateDataFrom(this, rootModuleConf);
+                selected.updateDataFrom(this, evictionData.getRootModuleConf());
             }
         }
     }
@@ -1097,6 +1102,38 @@ public class IvyNode {
     
     public boolean isFetched(String conf) {
         return _fetchedConfigurations.contains(conf);
+    }
+
+    /**
+     * Returns the eviction data for this node if it has been previously evicted in the most far parent
+     * of the given node, null otherwise (if it hasn't been evicted in root) for the 
+     * given rootModuleConf.
+     * Note that this method only works if conflict resolution has already be done in all the ancestors.
+     * 
+     * @param rootModuleConf
+     * @param parent
+     * @return
+     */
+    public EvictionData getEvictionDataInRoot(String rootModuleConf, IvyNode parent) {
+        IvyNode root = getRoot(parent);
+        Collection selectedNodes = root.getResolvedNodes(getModuleId(), rootModuleConf);
+        for (Iterator iter = selectedNodes.iterator(); iter.hasNext();) {
+            IvyNode node = (IvyNode)iter.next();
+            if (node.getResolvedId().equals(getResolvedId())) {
+                // the node is part of the selected ones for the root: no eviction data to return
+                return null;
+            }
+        }
+        // we didn't find this mrid in the selected ones for the root: it has been previously evicted
+        return new EvictionData(rootModuleConf, this, root.getConflictManager(getModuleId()), selectedNodes);
+    }
+
+    public static IvyNode getRoot(IvyNode parent) {
+        IvyNode root = parent;
+        while (root.getParent() != null) {
+            root = root.getParent();
+        }
+        return root;
     }
 
 }

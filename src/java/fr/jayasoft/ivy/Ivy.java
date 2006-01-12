@@ -38,6 +38,7 @@ import javax.swing.event.EventListenerList;
 
 import org.xml.sax.SAXException;
 
+import fr.jayasoft.ivy.IvyNode.EvictionData;
 import fr.jayasoft.ivy.conflict.LatestConflictManager;
 import fr.jayasoft.ivy.conflict.NoConflictManager;
 import fr.jayasoft.ivy.conflict.StrictConflictManager;
@@ -953,7 +954,24 @@ public class Ivy implements TransferListener {
         }
         if (parent.getResolvedRevisions(node.getModuleId(), node.getRootModuleConf()).contains(node.getResolvedId())) {
             // resolve conflict has already be done with node with the same id
-            // => job already done
+            // => job already done, we just have to check if the node wasn't previously evicted in root ancestor
+            EvictionData evictionData = node.getEvictionDataInRoot(node.getRootModuleConf(), parent);
+            if (evictionData != null) {
+                // node has been previously evicted in an ancestor: we mark it as evicted and ensure selected are selected
+                if (evictionData.getSelected() != null) {
+                    for (Iterator iter = evictionData.getSelected().iterator(); iter.hasNext();) {
+                        IvyNode selected = (IvyNode)iter.next();
+                        if (selected.isEvicted(node.getRootModuleConf())) {
+                            selected.markSelected(node.getRootModuleConf());
+                            Message.debug("selecting "+selected+" in "+parent+" due to eviction of "+node);
+                        }
+                    }
+                }
+
+
+                node.markEvicted(evictionData);                
+                Message.debug("evicting "+node+" by "+evictionData);                
+            }
             return;
         }
         Collection conflicts = new HashSet();

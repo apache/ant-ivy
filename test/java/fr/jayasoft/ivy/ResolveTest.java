@@ -608,7 +608,7 @@ public class ResolveTest extends TestCase {
     }
     
     public void testResolveContradictoryConflictResolution() throws Exception {
-        // mod9.1 v 1.0 depends on 
+        // mod10.1 v 1.0 depends on 
         //   - mod1.2 v 2.0 and forces it 
         //   - mod4.1 v 4.1 (which selects mod1.2 v 2.1 and evicts mod1.2 v 2.0)
         // mod4.1 v 4.1 depends on 
@@ -623,6 +623,25 @@ public class ResolveTest extends TestCase {
         assertEquals(mrid, md.getModuleRevisionId());
         
         assertTrue(_ivy.getResolvedIvyFileInCache(_cache, mrid).exists());
+        
+        // conflicting dependencies
+        assertTrue(_ivy.getIvyFileInCache(_cache, ModuleRevisionId.newInstance("org1", "mod1.2", "2.0")).exists());
+        assertTrue(_ivy.getArchiveFileInCache(_cache, "org1", "mod1.2", "2.0", "mod1.2", "jar", "jar").exists());
+
+        assertFalse(_ivy.getIvyFileInCache(_cache, ModuleRevisionId.newInstance("org1", "mod1.2", "2.1")).exists());
+        assertFalse(_ivy.getArchiveFileInCache(_cache, "org1", "mod1.2", "2.1", "mod1.2", "jar", "jar").exists());
+    }
+    
+    public void testResolveContradictoryConflictResolution2() throws Exception {
+        // BUG IVY-130 : only mod1.2 v2.0 should resolved and not v2.1 (because of force)
+        // mod10.1 v 1.1 depends on 
+        //   - mod1.2 v 2.0 and forces it 
+        //   - mod4.1 v 4.3
+        // mod4.1 v 4.3 depends on 
+        //   - mod1.2 v 2.1
+        //   - mod3.1 v 1.1 which depends on mod1.2 v 2.1
+        ResolveReport report = _ivy.resolve(new File("test/repositories/2/mod10.1/ivy-1.1.xml").toURL(),
+                null, new String[] {"*"}, _cache, null, true);
         
         // conflicting dependencies
         assertTrue(_ivy.getIvyFileInCache(_cache, ModuleRevisionId.newInstance("org1", "mod1.2", "2.0")).exists());
