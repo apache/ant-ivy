@@ -1,0 +1,8 @@
+<ivyconf>
+	<resolvers>
+		<chain name="default" returnFirst="true">
+			<resolver ref="local"/>
+			<resolver ref="main"/>
+		</chain>
+	</resolvers>
+</ivyconf>

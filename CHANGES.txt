@@ -1,3 +1,5 @@
+- NEW: a new default resolver which let override ivy files and artifacts found on public repository
+       (ivyrep / ibiblio) and let publish modules in a local repository (IVY-132)
 - NEW: ivyconf file inclusion in ivyconf files (IVY-99)
 - NEW: macrodef feature in ivyconf for defining macro resolvers with parameters (IVY-98)
 - NEW: ability to use a dependency instead of an ivy file in standalone mode (IVY-96)

@@ -33,7 +33,7 @@ import fr.jayasoft.ivy.util.Message;
  *
  */
 public class XmlIvyConfigurationParser extends DefaultHandler {
-	private Configurator _configurator = new Configurator();
+	private Configurator _configurator;
     private List _configuratorTags = Arrays.asList(new String[] {"resolvers", "latest-strategies", "conflict-managers"});
 
     private Ivy _ivy;
@@ -48,6 +48,7 @@ public class XmlIvyConfigurationParser extends DefaultHandler {
 	}
 
     public void parse(URL configuration) throws ParseException, IOException {
+        _configurator = new Configurator();
         // put every type definition from ivy to configurator
         Map typeDefs = _ivy.getTypeDefs();
         for (Iterator iter = typeDefs.keySet().iterator(); iter.hasNext();) {
@@ -55,6 +56,10 @@ public class XmlIvyConfigurationParser extends DefaultHandler {
             _configurator.typeDef(name, (Class)typeDefs.get(name));
         }
         
+        doParse(configuration);
+    }
+
+    private void doParse(URL configuration) throws IOException, ParseException {
         InputStream stream = null;
         try {
             stream = URLHandlerRegistry.getDefault().openStream(configuration);
@@ -75,6 +80,11 @@ public class XmlIvyConfigurationParser extends DefaultHandler {
                 }
             }
         }
+    }
+
+    private void parse(Configurator configurator, URL configuration) throws IOException, ParseException {
+        _configurator = configurator;
+        doParse(configuration);        
     }
 
     public void startElement(String uri, String localName, String qName, Attributes att) throws SAXException {
@@ -136,13 +146,14 @@ public class XmlIvyConfigurationParser extends DefaultHandler {
             } else if ("property".equals(qName)) {
                 String name = _ivy.substitute((String)attributes.get("name"));
                 String value = _ivy.substitute((String)attributes.get("value"));
+                String overwrite = _ivy.substitute((String)attributes.get("overwrite"));
                 if (name == null) {
                     throw new IllegalArgumentException("missing attribute name on property tag");
                 }
                 if (value == null) {
                     throw new IllegalArgumentException("missing attribute value on property tag");
                 }
-                _ivy.setVariable(name, value);
+                _ivy.setVariable(name, value, overwrite == null ? true : Boolean.valueOf(overwrite).booleanValue());
             } else if ("properties".equals(qName)) {
                 String propFilePath = _ivy.substitute((String)attributes.get("file"));
                 String overwrite = _ivy.substitute((String)attributes.get("overwrite"));
@@ -155,14 +166,22 @@ public class XmlIvyConfigurationParser extends DefaultHandler {
                 }
             } else if ("include".equals(qName)) {
                 String propFilePath = _ivy.substitute((String)attributes.get("file"));
-                    File incFile = new File(propFilePath);
+                File incFile = new File(propFilePath);
+                Map variables = new HashMap(_ivy.getVariables());
+                try {
                     if (incFile.exists()) {
                         Message.verbose("including file: "+propFilePath);
-                        parse(incFile.toURL());
+                        _ivy.setConfigurationVariables(incFile);
+                        new XmlIvyConfigurationParser(_ivy).parse(_configurator, incFile.toURL());
                     } else {
                         Message.verbose("including url: "+propFilePath);
-                        parse(new URL(propFilePath));
+                        URL url = new URL(propFilePath);
+                        _ivy.setConfigurationVariables(url);
+                        new XmlIvyConfigurationParser(_ivy).parse(_configurator, url);
                     }
+                } finally {
+                    _ivy.setVariables(variables);
+                }
             } else if ("conf".equals(qName)) {
                 String cache = (String)attributes.get("defaultCache");
                 if (cache != null) {

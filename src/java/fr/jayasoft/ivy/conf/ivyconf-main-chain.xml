@@ -1,0 +1,8 @@
+<ivyconf>
+	<resolvers>
+		<chain name="main" dual="true">
+			<resolver ref="shared"/>
+			<resolver ref="public"/>
+		</chain>
+	</resolvers>
+</ivyconf>

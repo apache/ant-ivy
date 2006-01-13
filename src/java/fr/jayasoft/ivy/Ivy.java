@@ -128,6 +128,8 @@ public class Ivy implements TransferListener {
     private boolean _repositoriesConfigured;
 
     private boolean _useRemoteConfig = false;
+
+    private File _defaultUserDir;
     
     public Ivy() {
         String ivyTypeDefs = System.getProperty("ivy.typedef.files");
@@ -240,9 +242,7 @@ public class Ivy implements TransferListener {
     public void configure(File configurationFile) throws ParseException, IOException {
         Message.info(":: configuring :: file = "+configurationFile);
         long start = System.currentTimeMillis();
-        setVariable("ivy.conf.dir", new File(configurationFile.getAbsolutePath()).getParent());
-        setVariable("ivy.conf.file", configurationFile.getAbsolutePath());
-        setVariable("ivy.conf.url", configurationFile.toURL().toExternalForm());
+        setConfigurationVariables(configurationFile);
         
         try {
             new XmlIvyConfigurationParser(this).parse(configurationFile.toURL());
@@ -251,13 +251,39 @@ public class Ivy implements TransferListener {
             iae.initCause(e);
             throw iae;
         }
+        setVariable("ivy.default.ivy.user.dir", getDefaultIvyUserDir().getAbsolutePath(), false);
         Message.verbose("configuration done ("+(System.currentTimeMillis()-start)+"ms)");
         dumpConfig();
     }
-    
+
     public void configure(URL configurationURL) throws ParseException, IOException {
         Message.info(":: configuring :: url = "+configurationURL);
         long start = System.currentTimeMillis();
+        setConfigurationVariables(configurationURL);
+        
+        new XmlIvyConfigurationParser(this).parse(configurationURL);
+        setVariable("ivy.default.ivy.user.dir", getDefaultIvyUserDir().getAbsolutePath(), false);
+        Message.verbose("configuration done ("+(System.currentTimeMillis()-start)+"ms)");
+        dumpConfig();
+    }
+
+    public void configureDefault() throws ParseException, IOException {
+        configure(getDefaultConfigurationURL());
+    }
+
+    public void setConfigurationVariables(File configurationFile) {
+        try {
+            setVariable("ivy.conf.dir", new File(configurationFile.getAbsolutePath()).getParent());
+            setVariable("ivy.conf.file", configurationFile.getAbsolutePath());
+            setVariable("ivy.conf.url", configurationFile.toURL().toExternalForm());
+        } catch (MalformedURLException e) {
+            IllegalArgumentException iae = new IllegalArgumentException("given file cannot be transformed to url: "+configurationFile);
+            iae.initCause(e);
+            throw iae;
+        }
+    }
+    
+    public void setConfigurationVariables(URL configurationURL) {
         String confURL = configurationURL.toExternalForm();
         setVariable("ivy.conf.url", confURL);
         int slashIndex = confURL.lastIndexOf('/');
@@ -266,10 +292,6 @@ public class Ivy implements TransferListener {
         } else {
             Message.warn("configuration url does not contain any slash (/): ivy.conf.dir variable not set");
         }
-        
-        new XmlIvyConfigurationParser(this).parse(configurationURL);
-        Message.verbose("configuration done ("+(System.currentTimeMillis()-start)+"ms)");
-        dumpConfig();
     }
     
     private void dumpConfig() {
@@ -431,9 +453,17 @@ public class Ivy implements TransferListener {
         _moduleConfigurations.put(moduleId, resolverName);
     }
     
+    public File getDefaultIvyUserDir() {
+        if (_defaultUserDir==null) {
+            _defaultUserDir = new File(System.getProperty("user.home"), ".ivy");
+            Message.verbose("no default ivy user dir defined: set to "+_defaultUserDir);
+        }
+        return _defaultUserDir;
+    }
+
     public File getDefaultCache() {
         if (_defaultCache==null) {
-            _defaultCache = new File(System.getProperty("user.home"), ".ivy-cache");
+            _defaultCache = new File(getDefaultIvyUserDir(), "cache");
             Message.verbose("no default cache defined: set to "+_defaultCache);
         }
         return _defaultCache;
@@ -1687,6 +1717,24 @@ public class Ivy implements TransferListener {
 
     public void setDictatorResolver(DependencyResolver dictatorResolver) {
         _dictatorResolver = dictatorResolver;
+    }
+
+    /** 
+     * WARNING: Replace all current ivy variables by the given Map.
+     * Should be used only when restoring variables.
+     * 
+     *  Thr given Map is not copied, but stored by reference.
+     * @param variables
+     */
+    public void setVariables(Map variables) {
+        if (variables == null) {
+            throw new NullPointerException("variables shouldn't be null");
+        }
+        _variables = variables;
+    }
+
+    public static URL getDefaultConfigurationURL() {
+        return Ivy.class.getResource("conf/ivyconf.xml");
     }
 
 }

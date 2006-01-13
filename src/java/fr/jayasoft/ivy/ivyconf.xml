@@ -1,6 +1,0 @@
-<ivyconf>
-	<conf defaultResolver="ivyrep"/>
-	<resolvers>
-		<ivyrep name="ivyrep"/>
-	</resolvers>
-</ivyconf>

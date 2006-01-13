@@ -93,7 +93,7 @@ public class IvyConfigure extends IvyTask {
                     if (!_file.exists()) {
                         Message.info("no configuration file found, using default...");
                         _file = null;
-                        _url = Ivy.class.getResource("ivyconf.xml");
+                        _url = Ivy.getDefaultConfigurationURL();
                     }
                 }
             } 
