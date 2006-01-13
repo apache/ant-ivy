@@ -54,6 +54,7 @@ public class ChainResolverTest extends TestCase {
     
     public void testResolveOrder() throws Exception {
         ChainResolver chain = new ChainResolver();
+        chain.setName("chain");
         chain.setIvy(_ivy);
         MockResolver[] resolvers = new MockResolver[] {
                 MockResolver.buildMockResolver("1", false, null), 
@@ -77,6 +78,7 @@ public class ChainResolverTest extends TestCase {
     
     public void testLatestTimeResolve() throws Exception {
         ChainResolver chain = new ChainResolver();
+        chain.setName("chain");
         chain.setIvy(_ivy);
         chain.setLatestStrategy(new LatestTimeStrategy());
         MockResolver[] resolvers = new MockResolver[] {
@@ -105,6 +107,7 @@ public class ChainResolverTest extends TestCase {
     
     public void testLatestRevisionResolve() throws Exception {
         ChainResolver chain = new ChainResolver();
+        chain.setName("chain");
         chain.setIvy(_ivy);
         chain.setLatestStrategy(new LatestRevisionStrategy());
         MockResolver[] resolvers = new MockResolver[] {
@@ -133,6 +136,7 @@ public class ChainResolverTest extends TestCase {
     
     public void testReturnFirst() throws Exception {
         ChainResolver chain = new ChainResolver();
+        chain.setName("chain");
         chain.setIvy(_ivy);
         chain.setReturnFirst(true);
         MockResolver[] resolvers = new MockResolver[] {
@@ -159,4 +163,29 @@ public class ChainResolverTest extends TestCase {
         }
     }
     
+    public void testDual() throws Exception {
+        ChainResolver chain = new ChainResolver();
+        chain.setName("chain");
+        chain.setIvy(_ivy);
+        chain.setDual(true);
+        MockResolver[] resolvers = new MockResolver[] {
+                MockResolver.buildMockResolver("1", false, null), 
+                MockResolver.buildMockResolver("2", true, null), 
+                MockResolver.buildMockResolver("3", true, null)
+            };
+        for (int i = 0; i < resolvers.length; i++) {
+            chain.add(resolvers[i]);
+        }
+        assertResolversSizeAndNames(chain, resolvers.length);
+        
+        
+        DefaultDependencyDescriptor dd = new DefaultDependencyDescriptor(ModuleRevisionId.newInstance("org","mod", "rev"), false);
+        ResolvedModuleRevision rmr = chain.getDependency(dd, _data);
+        assertNotNull(rmr);
+        assertEquals("chain", rmr.getResolver().getName());
+        assertEquals(Arrays.asList(new DependencyDescriptor[] {dd}), resolvers[0].askedDeps);
+        assertEquals(Arrays.asList(new DependencyDescriptor[] {dd}), resolvers[1].askedDeps);
+        assertTrue(resolvers[2].askedDeps.isEmpty());
+    }
+        
 }

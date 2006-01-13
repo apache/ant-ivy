@@ -51,6 +51,7 @@ public class ChainResolver extends AbstractResolver {
 
     private boolean _returnFirst = false;
     private List _chain = new ArrayList();
+    private boolean _dual;
 
     public void add(DependencyResolver resolver) {
         _chain.add(resolver);
@@ -81,11 +82,19 @@ public class ChainResolver extends AbstractResolver {
                         Message.debug("\tmodule revision discarded as older: "+mr.getId());
                     }
                 } else {
-                    return mr;
+                    return resolvedRevision(mr);
                 }
             }
         }
-        return ret;
+        return resolvedRevision(ret);
+    }
+    
+    private ResolvedModuleRevision resolvedRevision(ResolvedModuleRevision mr) {
+        if (isDual()) {
+            return new ResolvedModuleRevisionProxy(mr, this);
+        } else {
+            return mr;
+        }
     }
     
 
@@ -171,6 +180,7 @@ public class ChainResolver extends AbstractResolver {
     public void dumpConfig() {
         Message.verbose("\t"+getName()+" [chain] "+_chain);
         Message.debug("\t\treturn first: "+isReturnFirst());
+        Message.debug("\t\tdual: "+isDual());
         for (Iterator iter = _chain.iterator(); iter.hasNext();) {
             DependencyResolver r = (DependencyResolver)iter.next();
             Message.debug("\t\t-> "+r.getName());
@@ -209,6 +219,14 @@ public class ChainResolver extends AbstractResolver {
             return r.getLatest();
         }
         return null;
+    }
+
+    public void setDual(boolean b) {
+        _dual = b;
+    }
+
+    public boolean isDual() {
+        return _dual;
     }
 
 }

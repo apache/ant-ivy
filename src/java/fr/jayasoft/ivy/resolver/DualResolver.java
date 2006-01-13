@@ -8,14 +8,11 @@ package fr.jayasoft.ivy.resolver;
 import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
-import java.util.Date;
 
 import fr.jayasoft.ivy.Artifact;
 import fr.jayasoft.ivy.DependencyDescriptor;
 import fr.jayasoft.ivy.DependencyResolver;
 import fr.jayasoft.ivy.Ivy;
-import fr.jayasoft.ivy.ModuleDescriptor;
-import fr.jayasoft.ivy.ModuleRevisionId;
 import fr.jayasoft.ivy.ResolveData;
 import fr.jayasoft.ivy.ResolvedModuleRevision;
 import fr.jayasoft.ivy.report.DownloadReport;
@@ -62,32 +59,7 @@ public class DualResolver extends AbstractResolver {
             Message.verbose("ivy resolver didn't find "+dd.getDependencyRevisionId()+": trying with artifact resolver");
             return _artifactResolver.getDependency(dd, data);
         } else {
-            // returns the same ResolvedModuleRevision except that we say that it is dual resolver
-            // which resolved the dependency, so that it's it that is used for artifact download
-            // ==> forward all except getResolver method
-            return new ResolvedModuleRevision() {
-                public DependencyResolver getResolver() {
-                    return DualResolver.this;
-                }
-
-                public ModuleRevisionId getId() {
-                    return mr.getId();
-                }
-
-                public Date getPublicationDate() {
-                    return mr.getPublicationDate();
-                }
-
-                public ModuleDescriptor getDescriptor() {
-                    return mr.getDescriptor();
-                }
-                public boolean isDownloaded() {
-                    return mr.isDownloaded();
-                }
-                public boolean isSearched() {
-                    return mr.isSearched();
-                }
-            };
+            return new ResolvedModuleRevisionProxy(mr, this);
         }
     }
     
