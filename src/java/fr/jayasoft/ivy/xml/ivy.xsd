@@ -1,6 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
 
+	<xs:complexType name="configurations-conf">
+        <xs:attribute name="name" type="xs:string" use="required"/>
+        <xs:attribute name="extends" type="xs:string"/>
+        <xs:attribute name="description" type="xs:string"/>
+        <xs:attribute name="deprecated" type="xs:string"/>
+        <xs:attribute name="visibility" default="public">
+			<xs:simpleType>
+				<xs:restriction base="xs:string">
+					<xs:enumeration value="private"/>
+					<xs:enumeration value="public"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+	</xs:complexType>
+
   <xs:element name="ivy-module">
       <xs:complexType>
         <xs:sequence>
@@ -49,23 +64,18 @@
       		<xs:element name="configurations" minOccurs="0">
 			      <xs:complexType>
 				        <xs:sequence>
-				      		<xs:element name="conf" maxOccurs="unbounded">
+				      		<xs:element name="conf" type="configurations-conf" minOccurs="0" maxOccurs="unbounded">
+				      		</xs:element>
+				      		<xs:element name="import" minOccurs="0" maxOccurs="unbounded">
 				            	<xs:complexType>
-						            <xs:attribute name="name" type="xs:string" use="required"/>
-						            <xs:attribute name="extends" type="xs:string"/>
-						            <xs:attribute name="description" type="xs:string"/>
-						            <xs:attribute name="deprecated" type="xs:string"/>
-						            <xs:attribute name="visibility" default="public">
-										<xs:simpleType>
-											<xs:restriction base="xs:string">
-												<xs:enumeration value="private"/>
-												<xs:enumeration value="public"/>
-											</xs:restriction>
-										</xs:simpleType>
-									</xs:attribute>
+						            <xs:attribute name="file" type="xs:string"/>
+						            <xs:attribute name="url"  type="xs:string"/>
 				            	</xs:complexType>
 				      		</xs:element>
+				      		<xs:element name="conf" type="configurations-conf" minOccurs="0" maxOccurs="unbounded">
+				      		</xs:element>
 				        </xs:sequence>
+						<xs:attribute name="defaultconfmapping" type="xs:string"/>				        
 			      </xs:complexType>
       		</xs:element>
       		<xs:element name="publications" minOccurs="0">

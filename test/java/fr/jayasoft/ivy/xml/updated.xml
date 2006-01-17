@@ -16,6 +16,8 @@
 		</description>
 	</info>
 	<configurations>
+		<conf name="conf1" visibility="public"/>
+		<conf name="conf2" visibility="private"/>
 		<conf name="myconf1" description="desc 1"/>
 		<conf name="myconf2" description="desc 2" visibility="public"/>
 		<conf name="myconf3" description="desc 3" visibility="private"/>
@@ -31,7 +33,7 @@
 			<conf name="myconf3"/>
 		</artifact>
 	</publications>
-	<dependencies>
+	<dependencies defaultconf="*->@">
 		<dependency name="mymodule2" rev="2.0"/>
 		<dependency name="mymodule3" rev="2.0" changing="true" transitive="false"/>
 		<dependency org="yourorg" name="yourmodule1" rev="1.1" conf="myconf1"/>

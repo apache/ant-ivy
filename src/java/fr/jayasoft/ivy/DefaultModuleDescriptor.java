@@ -45,7 +45,7 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
 	private Date _publicationDate;
 	private Date _resolvedPublicationDate;
 	private List _dependencies = new ArrayList();
-	private Map _configurations = new HashMap(); // Map(String conf -> Configuration)
+	private Map _configurations = new LinkedHashMap(); // Map(String conf -> Configuration)
     private Map _artifacts = new HashMap(); // Map (String conf -> Collection(Artifact))
     private String _resolverName;
     private boolean _isDefault = false;

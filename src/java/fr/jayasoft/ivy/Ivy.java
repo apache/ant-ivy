@@ -1344,9 +1344,9 @@ public class Ivy implements TransferListener {
         String publishedIvy = IvyPatternHelper.substitute(destIvyPattern, md.getResolvedModuleRevisionId());
         Message.info("\tdelivering ivy file to "+publishedIvy);
         try {
-            XmlModuleDescriptorUpdater.update(ivyFileURL, 
+            XmlModuleDescriptorUpdater.update(this, ivyFileURL, 
                     new File(publishedIvy),
-                    resolvedDependencies, status, revision, pubdate);
+                    resolvedDependencies, status, revision, pubdate, null, true);
         } catch (SAXException ex) {
             throw new IllegalStateException("bad ivy file in cache for "+mrid+": please clean and resolve again");
         }

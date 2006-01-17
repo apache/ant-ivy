@@ -1,0 +1,4 @@
+<configurations defaultconfmapping="*->@">
+	<conf name="conf1" visibility="public"/>
+	<conf name="conf2" visibility="private"/>
+</configurations>

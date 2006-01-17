@@ -28,6 +28,7 @@ import fr.jayasoft.ivy.ConflictManager;
 import fr.jayasoft.ivy.DefaultDependencyArtifactDescriptor;
 import fr.jayasoft.ivy.DefaultDependencyDescriptor;
 import fr.jayasoft.ivy.DefaultModuleDescriptor;
+import fr.jayasoft.ivy.DependencyDescriptor;
 import fr.jayasoft.ivy.Ivy;
 import fr.jayasoft.ivy.License;
 import fr.jayasoft.ivy.MDArtifact;
@@ -51,6 +52,8 @@ import fr.jayasoft.ivy.util.XMLHelper;
  *
  */
 public class XmlModuleDescriptorParser extends DefaultHandler {
+    private static final String DEFAULT_CONF_MAPPING = "*->*";
+
     private static final Collection ALLOWED_VERSIONS = Arrays.asList(new String[] {"1.0", "1.1", "1.2", "1.3"});
     
     private DefaultModuleDescriptor _md;
@@ -74,6 +77,8 @@ public class XmlModuleDescriptorParser extends DefaultHandler {
     private int _state = NONE;
     private Resource _res;
     private String _defaultConf;
+
+    private DefaultDependencyDescriptor _defaultConfMappingDescriptor;
 
     public XmlModuleDescriptorParser(Ivy ivy, boolean validate) {
         _ivy = ivy;
@@ -181,14 +186,17 @@ public class XmlModuleDescriptorParser extends DefaultHandler {
                 _md.setHomePage(attributes.getValue("homepage"));
             } else if ("configurations".equals(qName)) {
                 _state = CONF;
+                _defaultConf = _ivy.substitute(attributes.getValue("defaultconfmapping"));
             } else if ("publications".equals(qName)) {
                 _state = PUB;
                 _artifactsDeclared = true;
                 checkConfigurations();
             } else if ("dependencies".equals(qName)) {
                 _state = DEP;
-                _defaultConf = attributes.getValue("defaultconf");
-                _defaultConf = _defaultConf == null ? "*->*" : _defaultConf;
+                String defaultConf = _ivy.substitute(attributes.getValue("defaultconf"));
+                if (defaultConf != null) {
+                    _defaultConf = defaultConf;
+                }
                 checkConfigurations();
             } else if ("conflicts".equals(qName)) {
                 _state = CONFLICT;
@@ -241,7 +249,7 @@ public class XmlModuleDescriptorParser extends DefaultHandler {
                 _md.addDependency(_dd);
                 String confs = attributes.getValue("conf");
                 if (confs != null && confs.length() > 0) {
-                    parseDepsConfs(confs);
+                    parseDepsConfs(confs, _dd);
                 }
             } else if ("conf".equals(qName)) {
         	    String conf = attributes.getValue("name");
@@ -314,6 +322,31 @@ public class XmlModuleDescriptorParser extends DefaultHandler {
                     return;
                 }
                 _md.addConflictManager(new ModuleId(org, mod), cm);
+            } else if ("import".equals(qName)) {
+                URL url;
+                String fileName = _ivy.substitute(attributes.getValue("file"));
+                if (fileName == null) {
+                    String urlStr = _ivy.substitute(attributes.getValue("url"));
+                    url = new URL(urlStr);
+                } else {
+                    url = new File(fileName).toURL();
+                }                
+                
+                // create a new temporary parser to read the configurations from
+                // the specified file.
+                XmlModuleDescriptorParser parser = new XmlModuleDescriptorParser(_ivy, false);
+                parser._md = new DefaultModuleDescriptor();
+                XMLHelper.parse(url, null, parser);
+                
+                // add the configurations from this temporary parser to this module descriptor
+                Configuration[] configs = parser.getModuleDescriptor().getConfigurations();
+                for (int i = 0; i < configs.length; i++) {
+                    _md.addConfiguration(configs[i]);
+                }
+                if (parser._defaultConf != null) {
+                    Message.debug("setting default conf from imported configurations file: "+parser._defaultConf);
+                    _defaultConf = parser._defaultConf;
+                }
             } else if (_validate && _state != INFO) {
                 addError("unknwon tag "+qName);
             }
@@ -323,28 +356,47 @@ public class XmlModuleDescriptorParser extends DefaultHandler {
         }
     }
 
-    private void parseDepsConfs(String confs) {
+    private void parseDepsConfs(String confs, DefaultDependencyDescriptor dd) {
+        parseDepsConfs(confs, dd, _defaultConf != null);        
+    }
+    private void parseDepsConfs(String confs, DefaultDependencyDescriptor dd, boolean useDefaultMappingToGuessRightOperande) {
         String[] conf = confs.split(";");
         for (int i = 0; i < conf.length; i++) {
             String[] ops = conf[i].split("->");
             if (ops.length == 1) {
-                if (ops[0].indexOf(",") != -1) {
-                    addError("invalid conf "+conf[i]+" for "+_dd.getDependencyRevisionId()+": mapping required in a list of confs");                        
+                String[] modConfs = ops[0].split(",");
+                if (!useDefaultMappingToGuessRightOperande) {
+                    for (int j = 0; j < modConfs.length; j++) {
+                        dd.addDependencyConfiguration(modConfs[j].trim(), modConfs[j].trim());
+                    }
                 } else {
-                    _dd.addDependencyConfiguration(ops[0].trim(), ops[0].trim());
+                    for (int j = 0; j < modConfs.length; j++) {
+                        String[] depConfs = getDefaultConfMapping().getDependencyConfigurations(modConfs[j]);
+                        for (int k = 0; k < depConfs.length; k++) {
+                            dd.addDependencyConfiguration(modConfs[j].trim(), depConfs[k].trim());
+                        }
+                    }
                 }
             } else if (ops.length == 2) {
                 String[] modConfs = ops[0].split(",");
                 String[] depConfs = ops[1].split(",");
                 for (int j = 0; j < modConfs.length; j++) {
                     for (int k = 0; k < depConfs.length; k++) {
-                        _dd.addDependencyConfiguration(modConfs[j].trim(), depConfs[k].trim());
+                        dd.addDependencyConfiguration(modConfs[j].trim(), depConfs[k].trim());
                     }
                 }
             } else {
-                addError("invalid conf "+conf[i]+" for "+_dd.getDependencyRevisionId());                        
+                addError("invalid conf "+conf[i]+" for "+dd.getDependencyRevisionId());                        
             }
         }
+    }
+
+    private DependencyDescriptor getDefaultConfMapping() {
+        if (_defaultConfMappingDescriptor == null) {
+            _defaultConfMappingDescriptor = new DefaultDependencyDescriptor(ModuleRevisionId.newInstance("", "", ""), false);
+            parseDepsConfs(_defaultConf, _defaultConfMappingDescriptor, false);
+        }
+        return _defaultConfMappingDescriptor;
     }
 
     private void addDependencyArtifactsIncludes(Attributes attributes) {
@@ -409,7 +461,7 @@ public class XmlModuleDescriptorParser extends DefaultHandler {
                 }                
             }
         } else if ("dependency".equals(qName) && _dd.getModuleConfigurations().length == 0) {
-            parseDepsConfs(_defaultConf);
+            parseDepsConfs(_defaultConf == null ? DEFAULT_CONF_MAPPING : _defaultConf, _dd);
         }
     }
 

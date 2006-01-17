@@ -1,3 +1,4 @@
+- NEW: import configurations from external file (IVY-88)
 - NEW: a new default resolver which let override ivy files and artifacts found on public repository
        (ivyrep / ibiblio) and let publish modules in a local repository (IVY-132)
 - NEW: ivyconf file inclusion in ivyconf files (IVY-99)
@@ -7,6 +8,7 @@
 - NEW: it is now possible to reference existing resolver in resolver containers (IVY-35)
 - NEW: overwrite attribute in the publish task now let force overwrite of read only files (IVY-83) 
 - NEW: add a conflict manager ("strict") making build fail when a diamond conflict is found (thanks to Christer Jonsson) (IVY-118) 
+- IMPROVE: review default conf mapping management (IVY-134)
 - IMPROVE: add possibility for a chain to behave like a dual chain (IVY-131)
 - IMPROVE: add possibility to avoid overwrite of an ivy variable when setting them in ivyconf.xml (IVY-127)
 - IMPROVE: ability to exclude the root project from the buildlist (thanks to Constantine Vetoshev) (IVY-124)

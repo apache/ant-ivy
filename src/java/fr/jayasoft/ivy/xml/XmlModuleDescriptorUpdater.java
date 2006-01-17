@@ -25,6 +25,7 @@ import org.xml.sax.helpers.DefaultHandler;
 
 import fr.jayasoft.ivy.Ivy;
 import fr.jayasoft.ivy.ModuleId;
+import fr.jayasoft.ivy.util.Message;
 import fr.jayasoft.ivy.util.XMLHelper;
 
 /**
@@ -63,7 +64,13 @@ public class XmlModuleDescriptorUpdater {
      */
     public static void update(URL srcURL, File destFile, final Map resolvedRevisions, final String status, 
             final String revision, final Date pubdate, final String resolverName) 
-    							throws IOException, SAXException {
+                                throws IOException, SAXException {
+        update(null, srcURL, destFile, resolvedRevisions, status, revision, pubdate, resolverName, false);
+    }
+    
+    public static void update(final Ivy ivy, URL srcURL, File destFile, final Map resolvedRevisions, final String status, 
+            final String revision, final Date pubdate, final String resolverName, final boolean replaceImport) 
+                                throws IOException, SAXException {
         if (destFile.getParentFile() != null) {
             destFile.getParentFile().mkdirs();
         }
@@ -77,6 +84,7 @@ public class XmlModuleDescriptorUpdater {
                 // nor do we need do handle indentation, original one is maintained except for attributes
                 
                 private String _organisation = null;
+                private String _defaultConfMapping = null; // defaultConfMapping of imported configurations, if any
                 private String _justOpen = null; // used to know if the last open tag was empty, to adjust termination with /> instead of ></qName> 
                 public void startElement(String uri, String localName,
                         String qName, Attributes attributes)
@@ -108,6 +116,44 @@ public class XmlModuleDescriptorUpdater {
                         } else if (attributes.getValue("resolver") != null) {
                             out.print(" resolver=\""+attributes.getValue("resolver")+"\"");
                         }
+                    } else if (replaceImport && "import".equals(qName)) {
+                        try {
+                            URL url;
+                            String fileName = ivy.substitute(attributes.getValue("file"));
+                            if (fileName == null) {
+                                String urlStr = ivy.substitute(attributes.getValue("url"));
+                                url = new URL(urlStr);
+                            } else {
+                                url = new File(fileName).toURL();
+                            }     
+                            XMLHelper.parse(url, null, new DefaultHandler() {
+                                boolean _first = true;
+                                public void startElement(String uri, String localName,
+                                        String qName, Attributes attributes)
+                                        throws SAXException {
+                                    if ("configurations".equals(qName)) {
+                                        String defaultconf = attributes.getValue("defaultconfmapping");
+                                        if (defaultconf != null) {
+                                            _defaultConfMapping = defaultconf;
+                                        }
+                                    } else if ("conf".equals(qName)) {
+                                        // copy
+                                        if (!_first) {
+                                            out.print("/>\n\t\t");
+                                        } else {
+                                            _first = false;
+                                        }
+                                        out.print("<"+qName);
+                                        for (int i=0; i<attributes.getLength(); i++) {
+                                            out.print(" "+attributes.getQName(i)+"=\""+attributes.getValue(i)+"\"");
+                                        }
+                                    }
+                                }
+                            });
+                        } catch (Exception e) {
+                            Message.warn("exception occured while importing configurations: "+e.getMessage());
+                            throw new SAXException(e);
+                        }
                     } else if ("dependency".equals(qName)) {
                         out.print("<dependency");
                         String org = attributes.getValue("org");
@@ -125,6 +171,16 @@ public class XmlModuleDescriptorUpdater {
                             } else {
                                 out.print(" "+attName+"=\""+attributes.getValue(attName)+"\"");
                             }
+                        }
+                    } else if ("dependencies".equals(qName)) {
+                        // copy
+                        out.print("<"+qName);
+                        for (int i=0; i<attributes.getLength(); i++) {
+                            out.print(" "+attributes.getQName(i)+"=\""+attributes.getValue(i)+"\"");
+                        }
+                        // add defaultconf mapping if needed
+                        if (_defaultConfMapping != null && attributes.getValue("defaultconf") == null) {
+                            out.print(" defaultconf=\""+_defaultConfMapping+"\"");
                         }
                     } else {
                         // copy

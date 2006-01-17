@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import junit.framework.TestCase;
+import fr.jayasoft.ivy.Ivy;
 import fr.jayasoft.ivy.ModuleId;
 import fr.jayasoft.ivy.util.FileUtil;
 
@@ -37,9 +38,9 @@ public class XmlModuleUpdaterTest extends TestCase {
         GregorianCalendar cal = new GregorianCalendar();
         cal.set(2005, 2, 22, 14, 32, 54);
         
-        XmlModuleDescriptorUpdater.update(
-                XmlModuleUpdaterTest.class.getResource("test.xml"), 
-                dest, resolvedRevisions, "release", "mynewrev", cal.getTime(), "myresolver");
+        XmlModuleDescriptorUpdater.update(new Ivy(), 
+                XmlModuleUpdaterTest.class.getResource("test-update.xml"), 
+                dest, resolvedRevisions, "release", "mynewrev", cal.getTime(), "myresolver", true);
         
         assertTrue(dest.exists());
         String expected = FileUtil.readEntirely(new BufferedReader(new InputStreamReader(XmlModuleUpdaterTest.class.getResourceAsStream("updated.xml"))));

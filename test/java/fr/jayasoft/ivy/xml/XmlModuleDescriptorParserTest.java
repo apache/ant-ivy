@@ -346,6 +346,116 @@ public class XmlModuleDescriptorParserTest extends TestCase {
         assertEquals(Arrays.asList(new String[] {"*"}), Arrays.asList(dd.getDependencyConfigurations("default")));        
     }
     
+    public void testDefaultConf2() throws Exception {
+        ModuleDescriptor md = XmlModuleDescriptorParser.parseDescriptor(_ivy, getClass().getResource("test-defaultconf2.xml"), true);
+        assertNotNull(md);
+        
+        DependencyDescriptor[] dependencies = md.getDependencies();
+        assertNotNull(dependencies);
+        assertEquals(2, dependencies.length);
+        
+        // no conf def => defaults to defaultConf: *->default
+        DependencyDescriptor dd = getDependency(dependencies, "mymodule1");
+        assertNotNull(dd);
+        assertEquals("myorg", dd.getDependencyId().getOrganisation());
+        assertEquals("1.0", dd.getDependencyRevisionId().getRevision());
+        assertEquals(Arrays.asList(new String[] {"*"}), Arrays.asList(dd.getModuleConfigurations()));
+        assertEquals(Arrays.asList(new String[] {"default"}), Arrays.asList(dd.getDependencyConfigurations("default")));        
+        assertEquals(Arrays.asList(new String[] {"default"}), Arrays.asList(dd.getDependencyConfigurations("test")));        
+
+        // confs def: test: should use default conf mapping for the right side => test->default
+        dd = getDependency(dependencies, "mymodule2");
+        assertNotNull(dd);
+        assertEquals("myorg", dd.getDependencyId().getOrganisation());
+        assertEquals("2.0", dd.getDependencyRevisionId().getRevision());
+        assertEquals(Arrays.asList(new String[] {"test"}), Arrays.asList(dd.getModuleConfigurations()));
+        assertEquals(Arrays.asList(new String[] {"default"}), Arrays.asList(dd.getDependencyConfigurations("test")));        
+    }
+    
+    public void testImportConfigurations1() throws Exception {
+        // import configurations
+        ModuleDescriptor md = XmlModuleDescriptorParser.parseDescriptor(_ivy, getClass().getResource("test-configurations-import1.xml"), true);
+        assertNotNull(md);
+        
+        // should have imported configurations
+        assertNotNull(md.getConfigurations());
+        assertEquals(Arrays.asList(new Configuration[] {
+                new Configuration("conf1", Visibility.PUBLIC, "", new String[0]),
+                new Configuration("conf2", Visibility.PRIVATE, "", new String[0])
+                }), Arrays.asList(md.getConfigurations()));
+
+        DependencyDescriptor[] dependencies = md.getDependencies();
+        assertNotNull(dependencies);
+        assertEquals(2, dependencies.length);
+        
+        // no conf def => defaults to defaultConf: *->*
+        DependencyDescriptor dd = getDependency(dependencies, "mymodule1");
+        assertEquals(Arrays.asList(new String[] {"*"}), Arrays.asList(dd.getModuleConfigurations()));
+        assertEquals(Arrays.asList(new String[] {"*"}), Arrays.asList(dd.getDependencyConfigurations("conf1")));        
+
+        // confs def: conf1->*
+        dd = getDependency(dependencies, "mymodule2");
+        assertEquals(Arrays.asList(new String[] {"conf1"}), Arrays.asList(dd.getModuleConfigurations()));
+        assertEquals(Arrays.asList(new String[] {"*"}), Arrays.asList(dd.getDependencyConfigurations("conf1")));        
+    }
+    
+    public void testImportConfigurations2() throws Exception {
+        // import configurations and add another one
+        ModuleDescriptor md = XmlModuleDescriptorParser.parseDescriptor(_ivy, getClass().getResource("test-configurations-import2.xml"), true);
+        assertNotNull(md);
+        
+        // should have imported configurations and added the one defined in the file itself
+        assertNotNull(md.getConfigurations());
+        assertEquals(Arrays.asList(new Configuration[] {
+                new Configuration("conf1", Visibility.PUBLIC, "", new String[0]),
+                new Configuration("conf2", Visibility.PRIVATE, "", new String[0]),
+                new Configuration("conf3", Visibility.PUBLIC, "", new String[0])
+                }), Arrays.asList(md.getConfigurations()));
+
+        DependencyDescriptor[] dependencies = md.getDependencies();
+        assertNotNull(dependencies);
+        assertEquals(2, dependencies.length);
+        
+        // no conf def => defaults to defaultConf: *->*
+        DependencyDescriptor dd = getDependency(dependencies, "mymodule1");
+        assertEquals(Arrays.asList(new String[] {"*"}), Arrays.asList(dd.getModuleConfigurations()));
+        assertEquals(Arrays.asList(new String[] {"*"}), Arrays.asList(dd.getDependencyConfigurations("conf1")));        
+
+        // confs def: conf2,conf3->*
+        dd = getDependency(dependencies, "mymodule2");
+        assertEquals(new HashSet(Arrays.asList(new String[] {"conf2", "conf3"})), new HashSet(Arrays.asList(dd.getModuleConfigurations())));
+        assertEquals(Arrays.asList(new String[] {"*"}), Arrays.asList(dd.getDependencyConfigurations("conf2")));        
+        assertEquals(Arrays.asList(new String[] {"*"}), Arrays.asList(dd.getDependencyConfigurations("conf3")));        
+    }
+    
+    public void testImportConfigurations3() throws Exception {
+        // import configurations and default mapping
+        ModuleDescriptor md = XmlModuleDescriptorParser.parseDescriptor(_ivy, getClass().getResource("test-configurations-import3.xml"), true);
+        assertNotNull(md);
+        
+        // should have imported configurations
+        assertNotNull(md.getConfigurations());
+        assertEquals(Arrays.asList(new Configuration[] {
+                new Configuration("conf1", Visibility.PUBLIC, "", new String[0]),
+                new Configuration("conf2", Visibility.PRIVATE, "", new String[0])
+                }), Arrays.asList(md.getConfigurations()));
+
+        DependencyDescriptor[] dependencies = md.getDependencies();
+        assertNotNull(dependencies);
+        assertEquals(2, dependencies.length);
+        
+        // no conf def => defaults to defaultConf defined in imported file: *->@
+        DependencyDescriptor dd = getDependency(dependencies, "mymodule1");
+        assertEquals(Arrays.asList(new String[] {"*"}), Arrays.asList(dd.getModuleConfigurations()));
+        assertEquals(Arrays.asList(new String[] {"conf1"}), Arrays.asList(dd.getDependencyConfigurations("conf1")));        
+        assertEquals(Arrays.asList(new String[] {"conf2"}), Arrays.asList(dd.getDependencyConfigurations("conf2")));        
+
+        // confs def: conf1->*
+        dd = getDependency(dependencies, "mymodule2");
+        assertEquals(Arrays.asList(new String[] {"conf1"}), Arrays.asList(dd.getModuleConfigurations()));
+        assertEquals(Arrays.asList(new String[] {"*"}), Arrays.asList(dd.getDependencyConfigurations("conf1")));        
+    }
+    
     private DependencyDescriptor getDependency(DependencyDescriptor[] dependencies, String name) {
         for (int i = 0; i < dependencies.length; i++) {
             assertNotNull(dependencies[i]);
