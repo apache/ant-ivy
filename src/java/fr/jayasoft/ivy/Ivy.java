@@ -1436,6 +1436,7 @@ public class Ivy implements TransferListener {
             resolver.publish(artifact, src, overwrite);
             return true;
         } else {
+            Message.info("missing artifact "+artifact+": "+src+" file does not exist");
             return false;
         }
     }
