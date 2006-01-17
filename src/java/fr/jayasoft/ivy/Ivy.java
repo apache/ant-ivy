@@ -132,6 +132,8 @@ public class Ivy implements TransferListener {
     private File _defaultUserDir;
     
     public Ivy() {
+        setVariable("ivy.default.conf.dir", Ivy.class.getResource("conf").toExternalForm(), true);
+        
         String ivyTypeDefs = System.getProperty("ivy.typedef.files");
         if (ivyTypeDefs != null) {
             String[] files = ivyTypeDefs.split("\\,");
