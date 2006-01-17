@@ -21,7 +21,7 @@
 	</info>
 	<configurations>
 		<import file="test/java/fr/jayasoft/ivy/xml/imported-configurations-with-mapping.xml"/>
-		<conf name="myconf1" description="desc 1"/>
+		<conf name="${myvar}" description="desc 1"/>
 		<conf name="myconf2" description="desc 2" visibility="public"/>
 		<conf name="myconf3" description="desc 3" visibility="private"/>
 		<conf name="myconf4" description="desc 4" extends="myconf1, myconf2"/>		

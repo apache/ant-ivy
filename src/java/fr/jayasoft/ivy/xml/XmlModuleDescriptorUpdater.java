@@ -93,35 +93,35 @@ public class XmlModuleDescriptorUpdater {
                         out.print(">");
                     }
                     if ("info".equals(qName)) {
-                        _organisation = attributes.getValue("organisation");
+                        _organisation = substitute(ivy, attributes.getValue("organisation"));
                         out.print("<info organisation=\""+_organisation
-                                				+"\" module=\""+attributes.getValue("module")+"\"");
+                                				+"\" module=\""+substitute(ivy, attributes.getValue("module"))+"\"");
                         if (revision != null) {
                             out.print(" revision=\""+revision+"\"");
                         } else if (attributes.getValue("revision") != null) {
-                            out.print(" revision=\""+attributes.getValue("revision")+"\"");
+                            out.print(" revision=\""+substitute(ivy, attributes.getValue("revision"))+"\"");
                         }
                         if (status != null) {
                             out.print(" status=\""+status+"\"");
                         } else {
-                            out.print(" status=\""+attributes.getValue("status")+"\"");
+                            out.print(" status=\""+substitute(ivy, attributes.getValue("status"))+"\"");
                         }
                         if (pubdate != null) {
                             out.print(" publication=\""+Ivy.DATE_FORMAT.format(pubdate)+"\"");
                         } else if (attributes.getValue("publication") != null) {
-                            out.print(" publication=\""+attributes.getValue("publication")+"\"");
+                            out.print(" publication=\""+substitute(ivy, attributes.getValue("publication"))+"\"");
                         }
                         if (resolverName != null) {
                             out.print(" resolver=\""+resolverName+"\"");
                         } else if (attributes.getValue("resolver") != null) {
-                            out.print(" resolver=\""+attributes.getValue("resolver")+"\"");
+                            out.print(" resolver=\""+substitute(ivy, attributes.getValue("resolver"))+"\"");
                         }
                     } else if (replaceImport && "import".equals(qName)) {
                         try {
                             URL url;
-                            String fileName = ivy.substitute(attributes.getValue("file"));
+                            String fileName = substitute(ivy, attributes.getValue("file"));
                             if (fileName == null) {
-                                String urlStr = ivy.substitute(attributes.getValue("url"));
+                                String urlStr = substitute(ivy, attributes.getValue("url"));
                                 url = new URL(urlStr);
                             } else {
                                 url = new File(fileName).toURL();
@@ -132,7 +132,7 @@ public class XmlModuleDescriptorUpdater {
                                         String qName, Attributes attributes)
                                         throws SAXException {
                                     if ("configurations".equals(qName)) {
-                                        String defaultconf = attributes.getValue("defaultconfmapping");
+                                        String defaultconf = substitute(ivy, attributes.getValue("defaultconfmapping"));
                                         if (defaultconf != null) {
                                             _defaultConfMapping = defaultconf;
                                         }
@@ -145,7 +145,7 @@ public class XmlModuleDescriptorUpdater {
                                         }
                                         out.print("<"+qName);
                                         for (int i=0; i<attributes.getLength(); i++) {
-                                            out.print(" "+attributes.getQName(i)+"=\""+attributes.getValue(i)+"\"");
+                                            out.print(" "+attributes.getQName(i)+"=\""+substitute(ivy, attributes.getValue(i))+"\"");
                                         }
                                     }
                                 }
@@ -156,9 +156,9 @@ public class XmlModuleDescriptorUpdater {
                         }
                     } else if ("dependency".equals(qName)) {
                         out.print("<dependency");
-                        String org = attributes.getValue("org");
+                        String org = substitute(ivy, attributes.getValue("org"));
                         org = org == null ? _organisation : org;
-                        ModuleId mid = new ModuleId(org, attributes.getValue("name"));
+                        ModuleId mid = new ModuleId(org, substitute(ivy, attributes.getValue("name")));
                         for (int i=0; i<attributes.getLength(); i++) {
                             String attName = attributes.getQName(i);
                             if ("rev".equals(attName)) {
@@ -166,17 +166,17 @@ public class XmlModuleDescriptorUpdater {
                                 if (rev != null) {
                                     out.print(" rev=\""+rev+"\"");
                                 } else {
-                                    out.print(" rev=\""+attributes.getValue("rev")+"\"");
+                                    out.print(" rev=\""+substitute(ivy, attributes.getValue("rev"))+"\"");
                                 }
                             } else {
-                                out.print(" "+attName+"=\""+attributes.getValue(attName)+"\"");
+                                out.print(" "+attName+"=\""+substitute(ivy, attributes.getValue(attName))+"\"");
                             }
                         }
                     } else if ("dependencies".equals(qName)) {
                         // copy
                         out.print("<"+qName);
                         for (int i=0; i<attributes.getLength(); i++) {
-                            out.print(" "+attributes.getQName(i)+"=\""+attributes.getValue(i)+"\"");
+                            out.print(" "+attributes.getQName(i)+"=\""+substitute(ivy, attributes.getValue(i))+"\"");
                         }
                         // add defaultconf mapping if needed
                         if (_defaultConfMapping != null && attributes.getValue("defaultconf") == null) {
@@ -186,11 +186,15 @@ public class XmlModuleDescriptorUpdater {
                         // copy
                         out.print("<"+qName);
                         for (int i=0; i<attributes.getLength(); i++) {
-                            out.print(" "+attributes.getQName(i)+"=\""+attributes.getValue(i)+"\"");
+                            out.print(" "+attributes.getQName(i)+"=\""+substitute(ivy, attributes.getValue(i))+"\"");
                         }
                     }
                     _justOpen = qName;
 //                    indent.append("\t");
+                }
+
+                private String substitute(Ivy ivy, String value) {
+                    return ivy == null ? value : ivy.substitute(value);
                 }
 
                 public void characters(char[] ch, int start, int length)

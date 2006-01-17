@@ -38,7 +38,9 @@ public class XmlModuleUpdaterTest extends TestCase {
         GregorianCalendar cal = new GregorianCalendar();
         cal.set(2005, 2, 22, 14, 32, 54);
         
-        XmlModuleDescriptorUpdater.update(new Ivy(), 
+        Ivy ivy = new Ivy();
+        ivy.setVariable("myvar", "myconf1");
+        XmlModuleDescriptorUpdater.update(ivy, 
                 XmlModuleUpdaterTest.class.getResource("test-update.xml"), 
                 dest, resolvedRevisions, "release", "mynewrev", cal.getTime(), "myresolver", true);
         
