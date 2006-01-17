@@ -5,7 +5,9 @@
  */
 package fr.jayasoft.ivy.ant;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 
 import junit.framework.TestCase;
 
@@ -16,6 +18,7 @@ import fr.jayasoft.ivy.DependencyDescriptor;
 import fr.jayasoft.ivy.Ivy;
 import fr.jayasoft.ivy.ModuleDescriptor;
 import fr.jayasoft.ivy.ModuleRevisionId;
+import fr.jayasoft.ivy.util.FileUtil;
 import fr.jayasoft.ivy.xml.XmlModuleDescriptorParser;
 
 public class IvyDeliverTest extends TestCase {
@@ -86,6 +89,44 @@ public class IvyDeliverTest extends TestCase {
         DependencyDescriptor[] dds = md.getDependencies();
         assertEquals(1, dds.length);
         assertEquals(ModuleRevisionId.newInstance("org1", "mod1.2", "2.2"), dds[0].getDependencyRevisionId());
+    }
+
+    public void testReplaceImportedConfigurations() throws Exception {
+        _project.setProperty("ivy.dep.file", "test/java/fr/jayasoft/ivy/ant/ivy-import-confs.xml");
+        IvyResolve res = new IvyResolve();
+        res.setProject(_project);
+        res.execute();
+        
+        _deliver.setPubrevision("1.2");
+        _deliver.setDeliverpattern("build/test/deliver/ivy-[revision].xml");
+        _deliver.execute();
+        
+        // should have done the ivy delivering
+        File deliveredIvyFile = new File("build/test/deliver/ivy-1.2.xml");
+        assertTrue(deliveredIvyFile.exists()); 
+        String deliveredFileContent = FileUtil.readEntirely(new BufferedReader(new FileReader(deliveredIvyFile)));
+        assertTrue("import not replaced: import can still be found in file", deliveredFileContent.indexOf("import") == -1);
+        assertTrue("import not replaced: conf1 cannot be found in file", deliveredFileContent.indexOf("conf1") != -1);
+    }
+
+    public void testReplaceVariables() throws Exception {
+        _project.setProperty("ivy.dep.file", "test/java/fr/jayasoft/ivy/ant/ivy-with-variables.xml");
+        IvyResolve res = new IvyResolve();
+        res.setProject(_project);
+        res.execute();
+        
+        res.getIvyInstance().setVariable("myvar", "myvalue");
+        
+        _deliver.setPubrevision("1.2");
+        _deliver.setDeliverpattern("build/test/deliver/ivy-[revision].xml");
+        _deliver.execute();
+        
+        // should have done the ivy delivering
+        File deliveredIvyFile = new File("build/test/deliver/ivy-1.2.xml");
+        assertTrue(deliveredIvyFile.exists()); 
+        String deliveredFileContent = FileUtil.readEntirely(new BufferedReader(new FileReader(deliveredIvyFile)));
+        assertTrue("variable not replaced: myvar can still be found in file", deliveredFileContent.indexOf("myvar") == -1);
+        assertTrue("variable not replaced: myvalue cannot be found in file", deliveredFileContent.indexOf("myvalue") != -1);
     }
 
     public void testNoReplaceDynamicRev() throws Exception {
