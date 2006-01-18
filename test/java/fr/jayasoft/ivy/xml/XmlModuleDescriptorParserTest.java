@@ -12,11 +12,8 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashSet;
 
-import junit.framework.TestCase;
-import fr.jayasoft.ivy.Artifact;
 import fr.jayasoft.ivy.Configuration;
 import fr.jayasoft.ivy.ConflictManager;
-import fr.jayasoft.ivy.DependencyArtifactDescriptor;
 import fr.jayasoft.ivy.DependencyDescriptor;
 import fr.jayasoft.ivy.Ivy;
 import fr.jayasoft.ivy.License;
@@ -25,11 +22,14 @@ import fr.jayasoft.ivy.ModuleId;
 import fr.jayasoft.ivy.Configuration.Visibility;
 import fr.jayasoft.ivy.conflict.FixedConflictManager;
 import fr.jayasoft.ivy.conflict.NoConflictManager;
+import fr.jayasoft.ivy.parser.AbstractModuleDescriptorParserTester;
 
 /**
  * 
  */
-public class XmlModuleDescriptorParserTest extends TestCase {
+public class XmlModuleDescriptorParserTest extends AbstractModuleDescriptorParserTester {
+    // junit test -- DO NOT REMOVE used by ant to know it's a junit test
+    
     private Ivy _ivy = new Ivy();
     public void testSimple() throws Exception {
         ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(_ivy, getClass().getResource("test-simple.xml"), true);
@@ -456,73 +456,4 @@ public class XmlModuleDescriptorParserTest extends TestCase {
         assertEquals(Arrays.asList(new String[] {"*"}), Arrays.asList(dd.getDependencyConfigurations("conf1")));        
     }
     
-    private DependencyDescriptor getDependency(DependencyDescriptor[] dependencies, String name) {
-        for (int i = 0; i < dependencies.length; i++) {
-            assertNotNull(dependencies[i]);
-            assertNotNull(dependencies[i].getDependencyId());
-            if (name.equals(dependencies[i].getDependencyId().getName())) {
-                return dependencies[i];
-            }
-        }
-        return null;
-    }
-
-    private void assertArtifacts(Artifact[] artifacts, String[] artifactsNames) {
-        assertNotNull(artifacts);
-        assertEquals(artifactsNames.length, artifacts.length);
-        for (int i = 0; i < artifactsNames.length; i++) {
-            boolean found = false;
-            for (int j = 0; j < artifacts.length; j++) {
-                assertNotNull(artifacts[j]);
-                if (artifacts[j].getName().equals(artifactsNames[i])) {
-                    found = true;
-                    break;
-                }
-            }
-            assertTrue("artifact not found: "+artifactsNames[i], found);
-        }
-    }
-
-    private void assertDependencyArtifactsIncludes(DependencyDescriptor dd, String[] confs, String[] artifactsNames) {
-        DependencyArtifactDescriptor[] dads = dd.getDependencyArtifactsIncludes(confs);
-        assertNotNull(dads);
-        assertEquals(artifactsNames.length, dads.length);
-        for (int i = 0; i < artifactsNames.length; i++) {
-            boolean found = false;
-            for (int j = 0; j < dads.length; j++) {
-                assertNotNull(dads[j]);
-                if (dads[j].getName().equals(artifactsNames[i])) {
-                    found = true;
-                    break;
-                }
-            }
-            assertTrue("dependency artifact include not found: "+artifactsNames[i], found);
-        }
-    }
-
-    private void assertDependencyArtifactsExcludes(DependencyDescriptor dd, String[] confs, String[] artifactsNames) {
-        DependencyArtifactDescriptor[] dads = dd.getDependencyArtifactsExcludes(confs);
-        assertNotNull(dads);
-        assertEquals(artifactsNames.length, dads.length);
-        for (int i = 0; i < artifactsNames.length; i++) {
-            boolean found = false;
-            for (int j = 0; j < dads.length; j++) {
-                assertNotNull(dads[j]);
-                if (dads[j].getName().equals(artifactsNames[i])) {
-                    found = true;
-                    break;
-                }
-            }
-            assertTrue("dependency artifact exclude not found: "+artifactsNames[i], found);
-        }
-    }
-
-    private void assertConf(ModuleDescriptor md, String name, String desc, Visibility visibility, String[] exts) {
-        Configuration conf = md.getConfiguration(name);
-        assertNotNull("configuration not found: "+name, conf);
-        assertEquals(name, conf.getName());
-        assertEquals(desc, conf.getDescription());
-        assertEquals(visibility, conf.getVisibility());
-        assertEquals(Arrays.asList(exts), Arrays.asList(conf.getExtends()));
-    }
 }

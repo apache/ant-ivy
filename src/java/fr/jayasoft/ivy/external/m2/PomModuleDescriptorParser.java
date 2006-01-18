@@ -6,6 +6,173 @@
  */
 package fr.jayasoft.ivy.external.m2;
 
-public class PomModuleDescriptorParser {
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
+import java.text.ParseException;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Stack;
+
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
+
+import fr.jayasoft.ivy.Configuration;
+import fr.jayasoft.ivy.DefaultDependencyDescriptor;
+import fr.jayasoft.ivy.DefaultModuleDescriptor;
+import fr.jayasoft.ivy.Ivy;
+import fr.jayasoft.ivy.ModuleDescriptor;
+import fr.jayasoft.ivy.ModuleRevisionId;
+import fr.jayasoft.ivy.Configuration.Visibility;
+import fr.jayasoft.ivy.parser.AbstractModuleDescriptorParser;
+import fr.jayasoft.ivy.repository.Resource;
+import fr.jayasoft.ivy.util.Message;
+import fr.jayasoft.ivy.util.XMLHelper;
+import fr.jayasoft.ivy.xml.XmlModuleDescriptorWriter;
+
+public class PomModuleDescriptorParser extends AbstractModuleDescriptorParser {
+    public static final Configuration[] MAVEN2_CONFIGURATIONS = new Configuration[] {
+        new Configuration("master", Visibility.PUBLIC, "contains only the artifact published by this module itself, with no transitive dependencies", new String[0]),
+        new Configuration("compile", Visibility.PUBLIC, "this is the default scope, used if none is specified. Compile dependencies are available in all classpaths.", new String[0]),
+        new Configuration("provided", Visibility.PUBLIC, "this is much like compile, but indicates you expect the JDK or a container to provide it. It is only available on the compilation classpath, and is not transitive.", new String[0]),
+        new Configuration("runtime", Visibility.PUBLIC, "this scope indicates that the dependency is not required for compilation, but is for execution. It is in the runtime and test classpaths, but not the compile classpath.", new String[] {"compile"}),
+        new Configuration("test", Visibility.PRIVATE, "this scope indicates that the dependency is not required for normal use of the application, and is only available for the test compilation and execution phases.", new String[0]),
+        new Configuration("system", Visibility.PUBLIC, "this scope is similar to provided except that you have to provide the JAR which contains it explicitly. The artifact is always available and is not looked up in a repository.", new String[0]),
+    };
+    private static final Map MAVEN2_CONF_MAPPING = new HashMap();
+    
+    static {
+        MAVEN2_CONF_MAPPING.put("compile", "compile->@,master;runtime->@");
+        MAVEN2_CONF_MAPPING.put("provided", "provided->compile,provided,runtime,master");
+        MAVEN2_CONF_MAPPING.put("runtime", "runtime->compile,runtime,master");
+        MAVEN2_CONF_MAPPING.put("test", "test->compile,runtime,master");
+        MAVEN2_CONF_MAPPING.put("system", "system->master");
+    }
+    
+    private static final class Parser extends AbstractParser {
+        private Ivy _ivy;
+        private DefaultModuleDescriptor _md;
+        private Stack _contextStack = new Stack();
+        private String _organisation;
+        private String _module;
+        private String _revision;
+        private String _scope;
+        private DefaultDependencyDescriptor _dd;
+
+        public Parser(Ivy ivy, Resource res) {
+            _ivy = ivy;
+            setResource(res);
+            _md = new DefaultModuleDescriptor();
+            _md.setResolvedPublicationDate(new Date(res.getLastModified()));
+            for (int i = 0; i < MAVEN2_CONFIGURATIONS.length; i++) {
+                _md.addConfiguration(MAVEN2_CONFIGURATIONS[i]);
+            }            
+        }
+
+        public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+            _contextStack.push(qName);
+        }
+        
+        public void endElement(String uri, String localName, String qName) throws SAXException {
+            if (_organisation != null && _module != null && _revision != null) {
+                if (_md.getModuleRevisionId() == null) {
+                    _md.setModuleRevisionId(ModuleRevisionId.newInstance(_organisation, _module, _revision));
+                    _organisation = null;
+                    _module = null;
+                    _revision = null;
+                } else if ("project/dependencies/dependency".equals(getContext())) {
+                    _dd = new DefaultDependencyDescriptor(_md, ModuleRevisionId.newInstance(_organisation, _module, _revision), true, true, true);
+                    _scope = _scope == null ? "compile" : _scope;
+                    String mapping = (String)MAVEN2_CONF_MAPPING.get(_scope);
+                    if (mapping == null) {
+                        Message.verbose("unknown scope "+_scope+" in "+getResource());
+                        mapping = (String)MAVEN2_CONF_MAPPING.get("compile");
+                    }
+                    parseDepsConfs(mapping, _dd);
+                    _md.addDependency(_dd);
+                }
+            }
+            if ("dependency".equals(qName)) {
+                _organisation = null;
+                _module = null;
+                _revision = null;
+                _scope = null;
+            }
+            _contextStack.pop();
+        }
+        
+        public void characters(char[] ch, int start, int length) throws SAXException {
+            String txt = new String(ch, start, length).trim();
+            String context = getContext();
+            if (_organisation == null && context.endsWith("groupId")) {
+                _organisation = txt;
+            } else if (_module == null && context.endsWith("artifactId")) {
+                _module = txt;
+            } else if (_revision == null && context.endsWith("version")) {
+                _revision = txt;
+            } else if (_scope == null && context.endsWith("scope")) {
+                _scope = txt;
+            }
+        }
+        
+        
+
+        private String getContext() {
+            StringBuffer buf = new StringBuffer();
+            for (Iterator iter = _contextStack.iterator(); iter.hasNext();) {
+                String ctx = (String)iter.next();
+                buf.append(ctx).append("/");
+            }
+            if (buf.length() > 0) {
+                buf.setLength(buf.length() - 1);
+            }
+            return buf.toString();
+        }
+
+        public ModuleDescriptor getDescriptor() {
+            if (_md.getModuleRevisionId() == null) {
+                return null;
+            }
+            return _md;
+        }
+    }
+
+    private static PomModuleDescriptorParser INSTANCE = new PomModuleDescriptorParser();
+    
+    public static PomModuleDescriptorParser getInstance() {
+        return INSTANCE;
+    }
+    
+    private PomModuleDescriptorParser() {
+        
+    }
+
+    public ModuleDescriptor parseDescriptor(Ivy ivy, URL descriptorURL, Resource res, boolean validate) throws ParseException, IOException {
+        Parser parser = new Parser(ivy, res);
+        try {
+            XMLHelper.parse(descriptorURL, null, parser);
+        } catch (SAXException ex) {
+            ParseException pe = new ParseException(ex.getMessage()+" in "+descriptorURL, 0);
+            pe.initCause(ex);
+            throw pe;
+        } catch (ParserConfigurationException ex) {
+            IllegalStateException ise = new IllegalStateException(ex.getMessage()+" in "+descriptorURL);
+            ise.initCause(ex);
+            throw ise;
+        }
+        return parser.getDescriptor();
+    }
+
+    public void toIvyFile(URL srcURL, Resource res, File destFile, ModuleDescriptor md) throws ParseException, IOException {
+        XmlModuleDescriptorWriter.write(md, destFile);        
+    }
+
+    public boolean accept(Resource res) {
+        return res.getName().endsWith(".pom");
+    }
 
 }

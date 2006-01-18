@@ -1,0 +1,77 @@
+/*
+ * This file is subject to the licence found in LICENCE.TXT in the root directory of the project.
+ * Copyright Jayasoft 2005 - All rights reserved
+ * 
+ * #SNAPSHOT#
+ */
+package fr.jayasoft.ivy.external.m2;
+
+import java.util.Arrays;
+import java.util.HashSet;
+
+import fr.jayasoft.ivy.DependencyDescriptor;
+import fr.jayasoft.ivy.Ivy;
+import fr.jayasoft.ivy.ModuleDescriptor;
+import fr.jayasoft.ivy.ModuleRevisionId;
+import fr.jayasoft.ivy.parser.AbstractModuleDescriptorParserTester;
+import fr.jayasoft.ivy.repository.url.URLResource;
+import fr.jayasoft.ivy.xml.XmlModuleDescriptorParserTest;
+
+public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParserTester {
+    // junit test -- DO NOT REMOVE used by ant to know it's a junit test
+    
+
+    public void testAccept() throws Exception {
+        assertTrue(PomModuleDescriptorParser.getInstance().accept(
+                new URLResource(getClass().getResource("test-simple.pom"))));
+        assertFalse(PomModuleDescriptorParser.getInstance().accept(
+                new URLResource(XmlModuleDescriptorParserTest.class.getResource("test.xml"))));
+    }
+    
+    public void testSimple() throws Exception {
+        ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(new Ivy(), getClass().getResource("test-simple.pom"), false);
+        assertNotNull(md);
+        
+        assertEquals(ModuleRevisionId.newInstance("fr.jayasoft", "test", "1.0"), md.getModuleRevisionId());
+        
+        assertNotNull(md.getConfigurations());
+        assertEquals(Arrays.asList(PomModuleDescriptorParser.MAVEN2_CONFIGURATIONS), Arrays.asList(md.getConfigurations()));
+    }
+    
+    public void testDependencies() throws Exception {
+        ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(new Ivy(), getClass().getResource("test-dependencies.pom"), false);
+        assertNotNull(md);
+        
+        assertEquals(ModuleRevisionId.newInstance("fr.jayasoft", "test", "1.0"), md.getModuleRevisionId());
+        
+        DependencyDescriptor[] dds = md.getDependencies();
+        assertNotNull(dds);
+        assertEquals(1, dds.length);
+        assertEquals(ModuleRevisionId.newInstance("commons-logging", "commons-logging", "1.0.4"), dds[0].getDependencyRevisionId());
+    }
+    
+    public void testDependenciesWithScope() throws Exception {
+        ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(new Ivy(), getClass().getResource("test-dependencies-with-scope.pom"), false);
+        assertNotNull(md);
+        
+        assertEquals(ModuleRevisionId.newInstance("fr.jayasoft", "test", "1.0"), md.getModuleRevisionId());
+        
+        DependencyDescriptor[] dds = md.getDependencies();
+        assertNotNull(dds);
+        assertEquals(3, dds.length);
+        assertEquals(ModuleRevisionId.newInstance("commons-logging", "commons-logging", "1.0.4"), dds[0].getDependencyRevisionId());
+        assertEquals(new HashSet(Arrays.asList(new String[] {"compile", "runtime"})), new HashSet(Arrays.asList(dds[0].getModuleConfigurations())));
+        assertEquals(new HashSet(Arrays.asList(new String[] {"master", "compile"})), new HashSet(Arrays.asList(dds[0].getDependencyConfigurations("compile"))));
+        assertEquals(new HashSet(Arrays.asList(new String[] {"runtime"})), new HashSet(Arrays.asList(dds[0].getDependencyConfigurations("runtime"))));
+        
+        
+        assertEquals(ModuleRevisionId.newInstance("odmg", "odmg", "3.0"), dds[1].getDependencyRevisionId());
+        assertEquals(new HashSet(Arrays.asList(new String[] {"runtime"})), new HashSet(Arrays.asList(dds[1].getModuleConfigurations())));
+        assertEquals(new HashSet(Arrays.asList(new String[] {"compile", "runtime", "master"})), new HashSet(Arrays.asList(dds[1].getDependencyConfigurations("runtime"))));
+        
+        assertEquals(ModuleRevisionId.newInstance("cglib", "cglib", "2.0.2"), dds[2].getDependencyRevisionId());
+        assertEquals(new HashSet(Arrays.asList(new String[] {"compile", "runtime"})), new HashSet(Arrays.asList(dds[2].getModuleConfigurations())));
+        assertEquals(new HashSet(Arrays.asList(new String[] {"master", "compile"})), new HashSet(Arrays.asList(dds[2].getDependencyConfigurations("compile"))));
+        assertEquals(new HashSet(Arrays.asList(new String[] {"runtime"})), new HashSet(Arrays.asList(dds[2].getDependencyConfigurations("runtime"))));
+    }
+}
