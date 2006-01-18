@@ -35,6 +35,30 @@ public class URLHandlerDispatcher implements URLHandler {
         return getHandler(url.getProtocol()).isReachable(url, timeout);
     }
     
+    public long getContentLength(URL url) {
+        return getHandler(url.getProtocol()).getContentLength(url);
+    }
+    
+    public long getContentLength(URL url, int timeout) {
+        return getHandler(url.getProtocol()).getContentLength(url, timeout);
+    }
+    
+
+    public long getLastModified(URL url) {
+        return getHandler(url.getProtocol()).getLastModified(url);
+    }
+
+    public long getLastModified(URL url, int timeout) {
+        return getHandler(url.getProtocol()).getLastModified(url, timeout);
+    }
+
+    public URLInfo getURLInfo(URL url) {
+        return getHandler(url.getProtocol()).getURLInfo(url);
+    }
+
+    public URLInfo getURLInfo(URL url, int timeout) {
+        return getHandler(url.getProtocol()).getURLInfo(url, timeout);
+    }
     public InputStream openStream(URL url) throws IOException {
         return getHandler(url.getProtocol()).openStream(url);
     }

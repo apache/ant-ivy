@@ -25,18 +25,22 @@ import fr.jayasoft.ivy.util.Message;
  * @author Xavier Hanin
  *
  */
-public class BasicURLHandler implements URLHandler {
-    public boolean isReachable(URL url) {
-        return isReachable(url, 0);
+public class BasicURLHandler extends AbstractURLHandler {
+    public URLInfo getURLInfo(URL url) {
+        return getURLInfo(url, 0);
     }
-    public boolean isReachable(URL url, int timeout) {
+    public URLInfo getURLInfo(URL url, int timeout) {
         URLConnection con = null;
         try {
             con = url.openConnection();
             if (con instanceof HttpURLConnection) {
                 int status = ((HttpURLConnection)con).getResponseCode();
                 if (status == HttpStatus.SC_OK) {
-                    return true;
+                	return new URLInfo(
+                            true,
+                            ((HttpURLConnection)con).getContentLength(),
+                            con.getLastModified()
+                            );
                 }
                 if (status == HttpStatus.SC_PROXY_AUTHENTICATION_REQUIRED) {
                     Message.warn("Your proxy requires authentication.");
@@ -48,7 +52,15 @@ public class BasicURLHandler implements URLHandler {
                 Message.debug("HTTP response status: "+status+" url="+url);
             } else {
                 int contentLength = con.getContentLength();
-                return contentLength > 0;
+                if (contentLength <= 0) {
+                    return UNAVAILABLE;
+                } else {
+                    return new URLInfo(
+                        true,
+                        contentLength,
+                        con.getLastModified()
+                        );
+                }
             }
         } catch (UnknownHostException e) {
             Message.warn("Host " + e.getMessage() +" not found. url="+url);
@@ -60,7 +72,7 @@ public class BasicURLHandler implements URLHandler {
                 ((HttpURLConnection)con).disconnect();
             }
         }
-        return false;
+        return UNAVAILABLE;
     }
     
     public InputStream openStream(URL url) throws IOException {

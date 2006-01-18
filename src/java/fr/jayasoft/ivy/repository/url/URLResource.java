@@ -6,14 +6,11 @@
  */
 package fr.jayasoft.ivy.repository.url;
 
-import java.io.IOException;
-import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLConnection;
 
 import fr.jayasoft.ivy.repository.Resource;
 import fr.jayasoft.ivy.url.URLHandlerRegistry;
-import fr.jayasoft.ivy.util.Message;
+import fr.jayasoft.ivy.url.URLHandler.URLInfo;
 
 public class URLResource implements Resource {
     private URL _url;
@@ -38,24 +35,10 @@ public class URLResource implements Resource {
     }
 
     private void init() {
-        URLConnection con = null;
-        try {
-            _lastModified = 0;
-            _contentLength = 0;
-            _exists = URLHandlerRegistry.getDefault().isReachable(_url);
-            if (_exists) {
-                con = _url.openConnection();
-                _lastModified = con.getLastModified();
-                _contentLength = con.getContentLength();
-            }
-        } catch (IOException e) {
-            Message.verbose("impossible to open connection to "+_url+":"+e.getMessage());
-            _exists = false;
-        } finally {
-            if (con instanceof HttpURLConnection) {
-                ((HttpURLConnection)con).disconnect();
-            }
-        }
+        URLInfo info = URLHandlerRegistry.getDefault().getURLInfo(_url);
+        _contentLength = info.getContentLength();
+        _lastModified = info.getLastModified();
+        _exists = info.isReachable();
         _init = true;
     }
 
