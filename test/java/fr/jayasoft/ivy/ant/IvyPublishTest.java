@@ -90,7 +90,7 @@ public class IvyPublishTest extends TestCase {
         assertTrue(new File("test/repositories/1/jayasoft/resolve-simple/jars/resolve-simple-1.2.jar").exists());
         
         // should have updated published ivy version
-        ModuleDescriptor md = XmlModuleDescriptorParser.parseDescriptor(new Ivy(), new File("test/repositories/1/jayasoft/resolve-simple/ivys/ivy-1.2.xml").toURL(), false);
+        ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(new Ivy(), new File("test/repositories/1/jayasoft/resolve-simple/ivys/ivy-1.2.xml").toURL(), false);
         assertEquals("1.2", md.getModuleRevisionId().getRevision());
     }
 
@@ -116,7 +116,7 @@ public class IvyPublishTest extends TestCase {
         assertTrue(new File("test/repositories/1/jayasoft/resolve-latest/jars/resolve-latest-1.3.jar").exists());
         
         // should not have updated published ivy version
-        ModuleDescriptor md = XmlModuleDescriptorParser.parseDescriptor(new Ivy(), new File("test/repositories/1/jayasoft/resolve-latest/ivys/ivy-1.3.xml").toURL(), false);
+        ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(new Ivy(), new File("test/repositories/1/jayasoft/resolve-latest/ivys/ivy-1.3.xml").toURL(), false);
         assertEquals("1.0", md.getModuleRevisionId().getRevision());
         
         // should not have done delivery (replace dynamic revisions with static ones)

@@ -47,7 +47,6 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
 	private List _dependencies = new ArrayList();
 	private Map _configurations = new LinkedHashMap(); // Map(String conf -> Configuration)
     private Map _artifacts = new HashMap(); // Map (String conf -> Collection(Artifact))
-    private String _resolverName;
     private boolean _isDefault = false;
     private Map _conflictManagers = new LinkedHashMap(); // Map (ModuleId -> )
     private List _licenses = new ArrayList(); // List(License)
@@ -218,13 +217,6 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
         return false;
     }
 
-    public String getResolverName() {
-        return _resolverName;
-    }
-    public void setResolverName(String resolverName) {
-        _resolverName = resolverName;
-    }
-    
     public String toString() {
         return "module: "+_revId+" status="+_status+" publication="+_publicationDate+" configurations="+_configurations+" artifacts="+_artifacts+" dependencies="+_dependencies;
     }

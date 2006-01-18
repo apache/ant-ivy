@@ -50,6 +50,7 @@ import fr.jayasoft.ivy.filter.FilterHelper;
 import fr.jayasoft.ivy.latest.LatestLexicographicStrategy;
 import fr.jayasoft.ivy.latest.LatestRevisionStrategy;
 import fr.jayasoft.ivy.latest.LatestTimeStrategy;
+import fr.jayasoft.ivy.parser.ModuleDescriptorParserRegistry;
 import fr.jayasoft.ivy.report.ArtifactDownloadReport;
 import fr.jayasoft.ivy.report.ConfigurationResolveReport;
 import fr.jayasoft.ivy.report.DownloadReport;
@@ -70,6 +71,7 @@ import fr.jayasoft.ivy.url.URLHandlerRegistry;
 import fr.jayasoft.ivy.util.FileUtil;
 import fr.jayasoft.ivy.util.IvyPatternHelper;
 import fr.jayasoft.ivy.util.Message;
+import fr.jayasoft.ivy.util.PropertiesFile;
 import fr.jayasoft.ivy.xml.XmlIvyConfigurationParser;
 import fr.jayasoft.ivy.xml.XmlModuleDescriptorParser;
 import fr.jayasoft.ivy.xml.XmlModuleDescriptorUpdater;
@@ -92,6 +94,7 @@ public class Ivy implements TransferListener {
     public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyyMMddHHmmss");
 
     private static final String DEFAULT_CACHE_ARTIFACT_PATTERN = "[organisation]/[module]/[type]s/[artifact]-[revision].[ext]";
+    private static final String DEFAULT_CACHE_DATA_FILE_PATTERN = "[organisation]/[module]/ivydata-[revision].properties";
     private static final String DEFAULT_CACHE_IVY_PATTERN = "[organisation]/[module]/ivy-[revision].xml";
     private static final String DEFAULT_CACHE_RESOLVED_IVY_PATTERN = "resolved-[organisation]-[module]-[revision].xml";
     private static final String DEFAULT_CACHE_RESOLVED_IVY_PROPERTIES_PATTERN = "resolved-[organisation]-[module]-[revision].properties";
@@ -117,6 +120,7 @@ public class Ivy implements TransferListener {
     private String _cacheResolvedIvyPattern = DEFAULT_CACHE_RESOLVED_IVY_PATTERN;
     private String _cacheResolvedIvyPropertiesPattern = DEFAULT_CACHE_RESOLVED_IVY_PROPERTIES_PATTERN;
     private String _cacheArtifactPattern = DEFAULT_CACHE_ARTIFACT_PATTERN;
+    private String _cacheDataFilePattern = DEFAULT_CACHE_DATA_FILE_PATTERN;
 
     private boolean _validate = true;
 
@@ -563,7 +567,7 @@ public class Ivy implements TransferListener {
         try {
             boolean result = true;
             // parse ivy file
-            ModuleDescriptor md = XmlModuleDescriptorParser.parseDescriptor(this, ivyFile, doValidate());
+            ModuleDescriptor md = ModuleDescriptorParserRegistry.getInstance().parseDescriptor(this, ivyFile, doValidate());
             
             // check publications if possible
             if (resolvername != null) {
@@ -660,7 +664,7 @@ public class Ivy implements TransferListener {
             setDictatorResolver(new CacheResolver(this));
         }
         try {
-            ModuleDescriptor md = XmlModuleDescriptorParser.parseDescriptor(this, ivySource, validate);
+            ModuleDescriptor md = ModuleDescriptorParserRegistry.getInstance().parseDescriptor(this, ivySource, validate);
             if (cache==null) {  // ensure that a cache exists
                 cache = getDefaultCache();
             }
@@ -815,7 +819,7 @@ public class Ivy implements TransferListener {
      * @throws IOException if an IO problem was raised during ivy file parsing
      */
     public IvyNode[] getDependencies(URL ivySource, String[] confs, File cache, Date date, boolean validate) throws ParseException, IOException {
-        return getDependencies(XmlModuleDescriptorParser.parseDescriptor(this, ivySource, validate), confs, cache, date, null, validate);
+        return getDependencies(ModuleDescriptorParserRegistry.getInstance().parseDescriptor(this, ivySource, validate), confs, cache, date, null, validate);
     }
     
     /**
@@ -1071,17 +1075,22 @@ public class Ivy implements TransferListener {
             if (ivyFile.exists()) {
                 // found in cache !
                 try {
-                    ModuleDescriptor depMD = XmlModuleDescriptorParser.parseDescriptor(this, ivyFile.toURL(), validate);
-                    DependencyResolver resolver = (DependencyResolver)_resolversMap.get(depMD.getResolverName());
+                    ModuleDescriptor depMD = XmlModuleDescriptorParser.getInstance().parseDescriptor(this, ivyFile.toURL(), validate);
+                    String resolverName = getSavedResolverName(cache, depMD);
+                    DependencyResolver resolver = (DependencyResolver)_resolversMap.get(resolverName);
                     if (resolver == null) {
-                        Message.debug("\tresolver not found: "+depMD.getResolverName()+" => trying to use default one for "+mrid);                                    
-                        resolver = getDefaultResolver();
+                        Message.debug("\tresolver not found: "+resolverName+" => trying to use the one configured for "+mrid);                                    
+                        resolver = getResolver(depMD.getResolvedModuleRevisionId().getModuleId());
+                        if (resolver != null) {
+                            Message.debug("\tconfigured resolver found for "+depMD.getResolvedModuleRevisionId()+": "+resolver.getName()+": saving this data");                                    
+                            saveResolver(cache, depMD, resolver.getName());
+                        }
                     }
                     if (resolver != null) {
                         Message.debug("\tfound ivy file in cache for "+mrid+": "+ivyFile);
                         return new DefaultModuleRevision(resolver, depMD, false, false);
                     } else {
-                        Message.debug("\tresolver not found: "+depMD.getResolverName()+" => cannot use cached ivy file for "+mrid);                                    
+                        Message.debug("\tresolver not found: "+resolverName+" => cannot use cached ivy file for "+mrid);                                    
                     }
                 } catch (Exception e) {
                     // will try with resolver
@@ -1294,7 +1303,7 @@ public class Ivy implements TransferListener {
         URL ivyFileURL = null;
         try {
             ivyFileURL = ivyFile.toURL();
-            md = XmlModuleDescriptorParser.parseDescriptor(this, ivyFileURL, validate);
+            md = XmlModuleDescriptorParser.getInstance().parseDescriptor(this, ivyFileURL, validate);
             md.setResolvedModuleRevisionId(new ModuleRevisionId(mrid.getModuleId(), revision));
             md.setResolvedPublicationDate(pubdate);
         } catch (MalformedURLException e) {
@@ -1346,7 +1355,7 @@ public class Ivy implements TransferListener {
         try {
             XmlModuleDescriptorUpdater.update(this, ivyFileURL, 
                     new File(publishedIvy),
-                    resolvedDependencies, status, revision, pubdate, null, true);
+                    resolvedDependencies, status, revision, pubdate, true);
         } catch (SAXException ex) {
             throw new IllegalStateException("bad ivy file in cache for "+mrid+": please clean and resolve again");
         }
@@ -1394,7 +1403,7 @@ public class Ivy implements TransferListener {
         URL ivyFileURL = null;
         try {
             ivyFileURL = ivyFile.toURL();
-            md = XmlModuleDescriptorParser.parseDescriptor(this, ivyFileURL, false);
+            md = XmlModuleDescriptorParser.getInstance().parseDescriptor(this, ivyFileURL, false);
             md.setResolvedModuleRevisionId(new ModuleRevisionId(mrid.getModuleId(), pubrevision));
         } catch (MalformedURLException e) {
             throw new RuntimeException("malformed url obtained for file "+ivyFile);
@@ -1661,6 +1670,7 @@ public class Ivy implements TransferListener {
     }
 
     private EventListenerList _listeners = new EventListenerList();
+
     public void addTransferListener(TransferListener listener) {
         _listeners.add(TransferListener.class, listener);
     }
@@ -1738,6 +1748,32 @@ public class Ivy implements TransferListener {
 
     public static URL getDefaultConfigurationURL() {
         return Ivy.class.getResource("conf/ivyconf.xml");
+    }
+
+    /**
+     * Saves the information of which resolver was used to resolve a md,
+     * so that this info can be retrieve later (even after a jvm restart)
+     * by getSavedResolverName(ModuleDescriptor md)
+     * @param md the module descriptor resolved
+     * @param name resolver name
+     */
+    public void saveResolver(File cache, ModuleDescriptor md, String name) {
+        PropertiesFile cdf = getCachedDataFile(cache, md);
+        cdf.setProperty("resolver", name);
+        cdf.save();
+    }
+
+    private String getSavedResolverName(File cache, ModuleDescriptor md) {
+        PropertiesFile cdf = getCachedDataFile(cache, md);
+        return cdf.getProperty("resolver");
+    }
+
+    private PropertiesFile getCachedDataFile(File cache, ModuleDescriptor md) {
+        return new PropertiesFile(new File(cache, IvyPatternHelper.substitute(getCacheDataFilePattern(), md.getResolvedModuleRevisionId())), "ivy cached data file for "+md.getResolvedModuleRevisionId());
+    }
+
+    public String getCacheDataFilePattern() {
+        return _cacheDataFilePattern;
     }
 
 }

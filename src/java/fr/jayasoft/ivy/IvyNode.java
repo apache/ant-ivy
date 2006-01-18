@@ -463,6 +463,7 @@ public class IvyNode {
                     Message.debug("\tusing "+resolver+" to resolve "+getId());
                     _module = resolver.getDependency(_dd, _data);
                     if (_module != null) {
+                        _data.getIvy().saveResolver(_data.getCache(), _module.getDescriptor(), resolver.getName());
                         if (!getId().isExactRevision()) {
                             // IVY-56: check if revision has actually been resolved
                             if (!_module.getId().isExactRevision()) {

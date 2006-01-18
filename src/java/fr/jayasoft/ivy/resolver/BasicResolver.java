@@ -36,6 +36,8 @@ import fr.jayasoft.ivy.ResolvedModuleRevision;
 import fr.jayasoft.ivy.Status;
 import fr.jayasoft.ivy.event.EndDownloadEvent;
 import fr.jayasoft.ivy.event.StartDownloadEvent;
+import fr.jayasoft.ivy.parser.ModuleDescriptorParser;
+import fr.jayasoft.ivy.parser.ModuleDescriptorParserRegistry;
 import fr.jayasoft.ivy.report.ArtifactDownloadReport;
 import fr.jayasoft.ivy.report.DownloadReport;
 import fr.jayasoft.ivy.report.DownloadStatus;
@@ -44,7 +46,6 @@ import fr.jayasoft.ivy.repository.ResourceHelper;
 import fr.jayasoft.ivy.util.IvyPatternHelper;
 import fr.jayasoft.ivy.util.Message;
 import fr.jayasoft.ivy.xml.XmlModuleDescriptorParser;
-import fr.jayasoft.ivy.xml.XmlModuleDescriptorUpdater;
 import fr.jayasoft.ivy.xml.XmlModuleDescriptorWriter;
 
 /**
@@ -64,6 +65,8 @@ public abstract class BasicResolver extends AbstractResolver {
     private Map _artattempts = new HashMap();
 
     private Boolean _checkmodified = null;
+    
+    private boolean _m2compatible = false;
     
     
     public BasicResolver() {
@@ -140,8 +143,10 @@ public abstract class BasicResolver extends AbstractResolver {
         searched = true;
         
         // get module descriptor
+        ModuleDescriptorParser parser;
         ModuleDescriptor md;
         if (ivyRef == null) {
+            parser = XmlModuleDescriptorParser.getInstance();
             md = DefaultModuleDescriptor.newDefaultInstance(mrid, dd.getAllDependencyArtifactsIncludes());
             ResolvedResource artifactRef = findFirstArtifactRef(md, dd, data);
             if (artifactRef == null) {
@@ -163,8 +168,14 @@ public abstract class BasicResolver extends AbstractResolver {
     	        }
             }
         } else {
-            Message.verbose("\t"+getName()+": found ivy file for "+mrid);
+            parser = ModuleDescriptorParserRegistry.getInstance().getParser(ivyRef.getResource());
+            if (parser == null) {
+                Message.warn("no module descriptor parser available for "+ivyRef.getResource());
+                return null;
+            }
+            Message.verbose("\t"+getName()+": found md file for "+mrid);
             Message.verbose("\t\t=> "+ivyRef);
+            Message.debug("\tparser = "+parser);
 
             ModuleRevisionId resolvedMrid = mrid;
             // first check if this dependency has not yet been resolved
@@ -226,7 +237,7 @@ public abstract class BasicResolver extends AbstractResolver {
                 return null;
             }
             try {
-                md = XmlModuleDescriptorParser.parseDescriptor(data.getIvy(), cachedIvyURL, ivyRef.getResource(), doValidate(data));
+                md = parser.parseDescriptor(data.getIvy(), cachedIvyURL, ivyRef.getResource(), doValidate(data));
                 Message.debug("\t"+getName()+": parsed downloaded ivy file for "+mrid+" parsed="+md.getModuleRevisionId());
                 
                 // check descriptor data is in sync with resource revision and names
@@ -268,7 +279,6 @@ public abstract class BasicResolver extends AbstractResolver {
                 return null;
             }
         }
-        md.setResolverName(getName());
         
         // check module descriptor revision
         if (mrid.getRevision().startsWith("latest.")) {
@@ -317,13 +327,7 @@ public abstract class BasicResolver extends AbstractResolver {
 	            XmlModuleDescriptorWriter.write(md, ivyFile);
 	        } else {
 	            // copy and update ivy file from source to cache
-                XmlModuleDescriptorUpdater.update(
-                        cachedIvyURL, 
-                        ivyFile, 
-                        Collections.EMPTY_MAP, 
-                        md.getStatus(), 
-                        md.getResolvedModuleRevisionId().getRevision(), 
-                        md.getResolvedPublicationDate(), getName());
+                parser.toIvyFile(cachedIvyURL, ivyRef.getResource(), ivyFile, md);
                 long repLastModified = ivyRef.getLastModified();
                 if (repLastModified > 0) {
                     ivyFile.setLastModified(repLastModified);
@@ -333,6 +337,7 @@ public abstract class BasicResolver extends AbstractResolver {
             Message.warn("impossible to copy ivy file to cache : "+ivyRef.getResource());
         }
         
+        data.getIvy().saveResolver(data.getCache(), md, getName());
         return new DefaultModuleRevision(this, md, searched, downloaded);
     }
 
@@ -556,6 +561,14 @@ public abstract class BasicResolver extends AbstractResolver {
     protected abstract void logIvyNotFound(ModuleRevisionId mrid);    
 
     protected abstract void logArtifactNotFound(Artifact artifact);
+
+    public boolean isM2compatible() {
+        return _m2compatible;
+    }
+
+    public void setM2compatible(boolean m2compatible) {
+        _m2compatible = m2compatible;
+    }
 
 
 }

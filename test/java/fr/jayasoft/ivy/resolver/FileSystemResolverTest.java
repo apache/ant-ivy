@@ -8,7 +8,6 @@ package fr.jayasoft.ivy.resolver;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
-import java.io.Reader;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
@@ -116,6 +115,21 @@ public class FileSystemResolverTest extends TestCase {
         assertEquals(DownloadStatus.NO, ar.getDownloadStatus());
     }
 
+//    public void testMaven2() throws Exception {
+//        FileSystemResolver resolver = new FileSystemResolver();
+//        resolver.setName("test");
+//        resolver.setIvy(_ivy);
+//        resolver.setM2compatible(true);
+//        assertEquals("test", resolver.getName());
+//        
+//        resolver.addIvyPattern("test/repositories/m2/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]");
+//        resolver.addArtifactPattern("test/repositories/m2/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]");
+//        
+//        ModuleRevisionId mrid = ModuleRevisionId.newInstance("fr.jayasoft", "test", "1.0");
+//        ResolvedModuleRevision rmr = resolver.getDependency(new DefaultDependencyDescriptor(mrid, false), _data);
+//        assertNotNull(rmr);
+//    }
+//
     public void testCheckModified() throws Exception {
         FileSystemResolver resolver = new FileSystemResolver();
         resolver.setName("test");

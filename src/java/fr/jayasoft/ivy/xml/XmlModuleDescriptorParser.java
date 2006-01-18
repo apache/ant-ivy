@@ -12,6 +12,7 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -37,8 +38,8 @@ import fr.jayasoft.ivy.ModuleId;
 import fr.jayasoft.ivy.ModuleRevisionId;
 import fr.jayasoft.ivy.Status;
 import fr.jayasoft.ivy.conflict.FixedConflictManager;
+import fr.jayasoft.ivy.parser.AbstractModuleDescriptorParser;
 import fr.jayasoft.ivy.repository.Resource;
-import fr.jayasoft.ivy.repository.url.URLResource;
 import fr.jayasoft.ivy.util.Message;
 import fr.jayasoft.ivy.util.XMLHelper;
 
@@ -51,7 +52,54 @@ import fr.jayasoft.ivy.util.XMLHelper;
  * @author x.hanin
  *
  */
-public class XmlModuleDescriptorParser extends DefaultHandler {
+public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
+    private static XmlModuleDescriptorParser INSTANCE = new XmlModuleDescriptorParser();
+    
+    public static XmlModuleDescriptorParser getInstance() {
+        return INSTANCE;
+    }
+    
+    private XmlModuleDescriptorParser() {
+        
+    }
+    
+    /**
+     * 
+     * @param ivy
+     * @param xmlURL the url pointing to the file to parse
+     * @param res the real resource to parse, used for log only
+     * @param validate
+     * @return
+     * @throws ParseException
+     * @throws IOException
+     */
+    public ModuleDescriptor parseDescriptor(Ivy ivy, URL xmlURL, Resource res, boolean validate) throws ParseException, IOException {
+        Parser parser = new Parser(ivy, validate);
+        parser.parse(xmlURL, res, validate);
+        return parser.getModuleDescriptor();
+    }
+
+    public boolean accept(Resource res) {
+        return true; // this the default parser, it thus accepts all resources
+    }
+
+    public void toIvyFile(URL srcURL, Resource res, File destFile, ModuleDescriptor md) throws IOException, ParseException {
+        try {
+            XmlModuleDescriptorUpdater.update(
+                    srcURL, 
+                    destFile, 
+                    Collections.EMPTY_MAP, 
+                    md.getStatus(), 
+                    md.getResolvedModuleRevisionId().getRevision(), 
+                    md.getResolvedPublicationDate());
+        } catch (SAXException e) {
+            ParseException ex = new ParseException("exception occured while parsing "+srcURL, 0);
+            ex.initCause(e);
+            throw ex;
+        }
+    }
+
+    private static class Parser extends DefaultHandler {
     private static final String DEFAULT_CONF_MAPPING = "*->*";
 
     private static final Collection ALLOWED_VERSIONS = Arrays.asList(new String[] {"1.0", "1.1", "1.2", "1.3"});
@@ -80,29 +128,9 @@ public class XmlModuleDescriptorParser extends DefaultHandler {
 
     private DefaultDependencyDescriptor _defaultConfMappingDescriptor;
 
-    public XmlModuleDescriptorParser(Ivy ivy, boolean validate) {
+    public Parser(Ivy ivy, boolean validate) {
         _ivy = ivy;
         _validate = validate;
-    }
-
-    public static ModuleDescriptor parseDescriptor(Ivy ivy, URL xmlURL, boolean validate) throws ParseException, IOException {
-        return parseDescriptor(ivy, xmlURL, new URLResource(xmlURL), validate);
-    }
-
-    /**
-     * 
-     * @param ivy
-     * @param xmlURL the url pointing to the file to parse
-     * @param realURL the real url of the file to parse, used for log only
-     * @param validate
-     * @return
-     * @throws ParseException
-     * @throws IOException
-     */
-    public static ModuleDescriptor parseDescriptor(Ivy ivy, URL xmlURL, Resource res, boolean validate) throws ParseException, IOException {
-        XmlModuleDescriptorParser parser = new XmlModuleDescriptorParser(ivy, validate);
-        parser.parse(xmlURL, res, validate);
-        return parser.getModuleDescriptor();
     }
 
     private ModuleDescriptor getModuleDescriptor() throws ParseException {
@@ -167,7 +195,6 @@ public class XmlModuleDescriptorParser extends DefaultHandler {
                 _md.setModuleRevisionId(ModuleRevisionId.newInstance(org, module, revision));
                 String status = _ivy.substitute(attributes.getValue("status"));
                 _md.setStatus(status == null ? Status.DEFAULT_STATUS : status);
-                _md.setResolverName(_ivy.substitute(attributes.getValue("resolver")));
                 _md.setDefault(Boolean.valueOf(_ivy.substitute(attributes.getValue("default"))).booleanValue());
                 String pubDate = _ivy.substitute(attributes.getValue("publication"));
                 if (pubDate != null && pubDate.length() > 0) {
@@ -334,7 +361,7 @@ public class XmlModuleDescriptorParser extends DefaultHandler {
                 
                 // create a new temporary parser to read the configurations from
                 // the specified file.
-                XmlModuleDescriptorParser parser = new XmlModuleDescriptorParser(_ivy, false);
+                Parser parser = new Parser(_ivy, false);
                 parser._md = new DefaultModuleDescriptor();
                 XMLHelper.parse(url, null, parser);
                 
@@ -518,8 +545,9 @@ public class XmlModuleDescriptorParser extends DefaultHandler {
             _errors.add(msg+"\n");
         }
     }
+    }
 
     public static void main(String[] args) throws Exception {
-        System.out.println(parseDescriptor(new Ivy(), new File("test/xml/module1/module1.ivy.xml").toURL(), true));
+        System.out.println(getInstance().parseDescriptor(new Ivy(), new File("test/xml/module1/module1.ivy.xml").toURL(), true));
     }
 }

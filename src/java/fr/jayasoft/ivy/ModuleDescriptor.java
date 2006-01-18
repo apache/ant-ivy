@@ -40,9 +40,6 @@ public interface ModuleDescriptor {
      * @param publicationDate
      */
     void setResolvedPublicationDate(Date publicationDate);
-
-    String getResolverName();
-    void setResolverName(String resolverName);
     
     String getStatus();
     /**

@@ -32,7 +32,7 @@ import fr.jayasoft.ivy.conflict.NoConflictManager;
 public class XmlModuleDescriptorParserTest extends TestCase {
     private Ivy _ivy = new Ivy();
     public void testSimple() throws Exception {
-        ModuleDescriptor md = XmlModuleDescriptorParser.parseDescriptor(_ivy, getClass().getResource("test-simple.xml"), true);
+        ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(_ivy, getClass().getResource("test-simple.xml"), true);
         assertNotNull(md);
         assertEquals("myorg", md.getModuleRevisionId().getOrganisation());
         assertEquals("mymodule", md.getModuleRevisionId().getName());
@@ -53,7 +53,7 @@ public class XmlModuleDescriptorParserTest extends TestCase {
     
     public void testBad() throws IOException {
         try {
-            XmlModuleDescriptorParser.parseDescriptor(_ivy, getClass().getResource("test-bad.xml"), true);
+            XmlModuleDescriptorParser.getInstance().parseDescriptor(_ivy, getClass().getResource("test-bad.xml"), true);
             fail("bad ivy file raised no error");
         } catch (ParseException ex) {
             // ok
@@ -61,12 +61,12 @@ public class XmlModuleDescriptorParserTest extends TestCase {
     }
 
     public void testNoValidate() throws IOException, ParseException {
-        XmlModuleDescriptorParser.parseDescriptor(_ivy, getClass().getResource("test-novalidate.xml"), false);
+        XmlModuleDescriptorParser.getInstance().parseDescriptor(_ivy, getClass().getResource("test-novalidate.xml"), false);
     }
 
     public void testBadVersion() throws IOException {
         try {
-            XmlModuleDescriptorParser.parseDescriptor(_ivy, getClass().getResource("test-bad-version.xml"), true);
+            XmlModuleDescriptorParser.getInstance().parseDescriptor(_ivy, getClass().getResource("test-bad-version.xml"), true);
             fail("bad version ivy file raised no error");
         } catch (ParseException ex) {
             // ok
@@ -74,7 +74,7 @@ public class XmlModuleDescriptorParserTest extends TestCase {
     }
     
     public void testFull() throws Exception {
-        ModuleDescriptor md = XmlModuleDescriptorParser.parseDescriptor(_ivy, getClass().getResource("test.xml"), true);
+        ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(_ivy, getClass().getResource("test.xml"), true);
         assertNotNull(md);
         assertEquals("myorg", md.getModuleRevisionId().getOrganisation());
         assertEquals("mymodule", md.getModuleRevisionId().getName());
@@ -269,7 +269,7 @@ public class XmlModuleDescriptorParserTest extends TestCase {
     }
 
     public void testBug60() throws Exception {
-        ModuleDescriptor md = XmlModuleDescriptorParser.parseDescriptor(_ivy, getClass().getResource("test-bug60.xml"), true);
+        ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(_ivy, getClass().getResource("test-bug60.xml"), true);
         assertNotNull(md);
         assertEquals("myorg", md.getModuleRevisionId().getOrganisation());
         assertEquals("mymodule", md.getModuleRevisionId().getName());
@@ -284,7 +284,7 @@ public class XmlModuleDescriptorParserTest extends TestCase {
     }
 
     public void testNoArtifact() throws Exception {
-        ModuleDescriptor md = XmlModuleDescriptorParser.parseDescriptor(_ivy, getClass().getResource("test-noartifact.xml"), true);
+        ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(_ivy, getClass().getResource("test-noartifact.xml"), true);
         assertNotNull(md);
         assertEquals("myorg", md.getModuleRevisionId().getOrganisation());
         assertEquals("mymodule", md.getModuleRevisionId().getName());
@@ -302,7 +302,7 @@ public class XmlModuleDescriptorParserTest extends TestCase {
     }
     
     public void testNoPublication() throws Exception {
-        ModuleDescriptor md = XmlModuleDescriptorParser.parseDescriptor(_ivy, getClass().getResource("test-nopublication.xml"), true);
+        ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(_ivy, getClass().getResource("test-nopublication.xml"), true);
         assertNotNull(md);
         assertEquals("myorg", md.getModuleRevisionId().getOrganisation());
         assertEquals("mymodule", md.getModuleRevisionId().getName());
@@ -322,7 +322,7 @@ public class XmlModuleDescriptorParserTest extends TestCase {
     }
     
     public void testDefaultConf() throws Exception {
-        ModuleDescriptor md = XmlModuleDescriptorParser.parseDescriptor(_ivy, getClass().getResource("test-defaultconf.xml"), true);
+        ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(_ivy, getClass().getResource("test-defaultconf.xml"), true);
         assertNotNull(md);
         
         DependencyDescriptor[] dependencies = md.getDependencies();
@@ -347,7 +347,7 @@ public class XmlModuleDescriptorParserTest extends TestCase {
     }
     
     public void testDefaultConf2() throws Exception {
-        ModuleDescriptor md = XmlModuleDescriptorParser.parseDescriptor(_ivy, getClass().getResource("test-defaultconf2.xml"), true);
+        ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(_ivy, getClass().getResource("test-defaultconf2.xml"), true);
         assertNotNull(md);
         
         DependencyDescriptor[] dependencies = md.getDependencies();
@@ -374,7 +374,7 @@ public class XmlModuleDescriptorParserTest extends TestCase {
     
     public void testImportConfigurations1() throws Exception {
         // import configurations
-        ModuleDescriptor md = XmlModuleDescriptorParser.parseDescriptor(_ivy, getClass().getResource("test-configurations-import1.xml"), true);
+        ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(_ivy, getClass().getResource("test-configurations-import1.xml"), true);
         assertNotNull(md);
         
         // should have imported configurations
@@ -401,7 +401,7 @@ public class XmlModuleDescriptorParserTest extends TestCase {
     
     public void testImportConfigurations2() throws Exception {
         // import configurations and add another one
-        ModuleDescriptor md = XmlModuleDescriptorParser.parseDescriptor(_ivy, getClass().getResource("test-configurations-import2.xml"), true);
+        ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(_ivy, getClass().getResource("test-configurations-import2.xml"), true);
         assertNotNull(md);
         
         // should have imported configurations and added the one defined in the file itself
@@ -430,7 +430,7 @@ public class XmlModuleDescriptorParserTest extends TestCase {
     
     public void testImportConfigurations3() throws Exception {
         // import configurations and default mapping
-        ModuleDescriptor md = XmlModuleDescriptorParser.parseDescriptor(_ivy, getClass().getResource("test-configurations-import3.xml"), true);
+        ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(_ivy, getClass().getResource("test-configurations-import3.xml"), true);
         assertNotNull(md);
         
         // should have imported configurations

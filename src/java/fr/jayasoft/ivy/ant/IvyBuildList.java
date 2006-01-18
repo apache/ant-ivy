@@ -6,29 +6,30 @@
  */
 package fr.jayasoft.ivy.ant;
 
-import fr.jayasoft.ivy.Ivy;
-import fr.jayasoft.ivy.ModuleDescriptor;
-import fr.jayasoft.ivy.ModuleId;
-import fr.jayasoft.ivy.DependencyDescriptor;
-import fr.jayasoft.ivy.util.Message;
-import fr.jayasoft.ivy.xml.XmlModuleDescriptorParser;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.Map;
+import java.util.Set;
+
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.DirectoryScanner;
 import org.apache.tools.ant.types.FileList;
 import org.apache.tools.ant.types.FileSet;
 import org.apache.tools.ant.types.Path;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Map;
-import java.util.Iterator;
-import java.util.HashSet;
-import java.util.Set;
+import fr.jayasoft.ivy.DependencyDescriptor;
+import fr.jayasoft.ivy.Ivy;
+import fr.jayasoft.ivy.ModuleDescriptor;
+import fr.jayasoft.ivy.ModuleId;
+import fr.jayasoft.ivy.parser.ModuleDescriptorParserRegistry;
+import fr.jayasoft.ivy.util.Message;
 
 public class IvyBuildList extends IvyTask {
     private List _buildFiles = new ArrayList(); // List (FileSet)
@@ -103,7 +104,7 @@ public class IvyBuildList extends IvyTask {
                     }
                 } else {
                     try {
-                        ModuleDescriptor md = XmlModuleDescriptorParser.parseDescriptor(getIvyInstance(), ivyFile.toURL(), isValidate());
+                        ModuleDescriptor md = ModuleDescriptorParserRegistry.getInstance().parseDescriptor(getIvyInstance(), ivyFile.toURL(), isValidate());
                         buildFiles.put(md, buildFile);
                         mds.add(md);
                         if (_root.equals(md.getModuleRevisionId().getName())) {

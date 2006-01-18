@@ -32,7 +32,6 @@ public class XmlModuleDescriptorWriter {
 	    	out.println("\t\trevision=\""+md.getResolvedModuleRevisionId().getRevision()+"\"");
 	    	out.println("\t\tstatus=\""+md.getStatus()+"\"");
 	    	out.println("\t\tpublication=\""+Ivy.DATE_FORMAT.format(md.getResolvedPublicationDate())+"\"");
-            out.println("\t\tresolver=\""+md.getResolverName()+"\"");
             out.println("\t\tdefault=\""+(md.isDefault()?"true":"false")+"\"");
 	    	out.println("\t/>");
             DependencyDescriptor[] dds = md.getDependencies();

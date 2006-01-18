@@ -37,20 +37,6 @@ import fr.jayasoft.ivy.util.XMLHelper;
  */
 public class XmlModuleDescriptorUpdater {
     public static String LINE_SEPARATOR = System.getProperty("line.separator");
-    /**
-     * used to copy a module descriptor xml file (also known as ivy file)
-     * and update the revisions of its dependencies, its status and revision
-     * 
-     * @param srcURL the url of the source module descriptor file
-     * @param destFile The file to which the updated module descriptor should be output
-     * @param resolvedRevisions Map from ModuleId of dependencies to new revision (as String)
-     * @param status the new status, null to keep the old one
-     * @param revision the new revision, null to keep the old one
-     */
-    public static void update(URL srcURL, File destFile, final Map resolvedRevisions, final String status, final String revision, final Date pubdate) 
-    							throws IOException, SAXException {
-        update(srcURL, destFile, resolvedRevisions, status, revision, pubdate, null);
-    }
 
     /**
      * used to copy a module descriptor xml file (also known as ivy file)
@@ -63,13 +49,13 @@ public class XmlModuleDescriptorUpdater {
      * @param revision the new revision, null to keep the old one
      */
     public static void update(URL srcURL, File destFile, final Map resolvedRevisions, final String status, 
-            final String revision, final Date pubdate, final String resolverName) 
+            final String revision, final Date pubdate) 
                                 throws IOException, SAXException {
-        update(null, srcURL, destFile, resolvedRevisions, status, revision, pubdate, resolverName, false);
+        update(null, srcURL, destFile, resolvedRevisions, status, revision, pubdate, false);
     }
     
     public static void update(final Ivy ivy, URL srcURL, File destFile, final Map resolvedRevisions, final String status, 
-            final String revision, final Date pubdate, final String resolverName, final boolean replaceImport) 
+            final String revision, final Date pubdate, final boolean replaceImport) 
                                 throws IOException, SAXException {
         if (destFile.getParentFile() != null) {
             destFile.getParentFile().mkdirs();
@@ -110,11 +96,6 @@ public class XmlModuleDescriptorUpdater {
                             out.print(" publication=\""+Ivy.DATE_FORMAT.format(pubdate)+"\"");
                         } else if (attributes.getValue("publication") != null) {
                             out.print(" publication=\""+substitute(ivy, attributes.getValue("publication"))+"\"");
-                        }
-                        if (resolverName != null) {
-                            out.print(" resolver=\""+resolverName+"\"");
-                        } else if (attributes.getValue("resolver") != null) {
-                            out.print(" resolver=\""+substitute(ivy, attributes.getValue("resolver"))+"\"");
                         }
                     } else if (replaceImport && "import".equals(qName)) {
                         try {

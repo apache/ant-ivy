@@ -37,6 +37,7 @@ import fr.jayasoft.ivy.ResolveData;
 import fr.jayasoft.ivy.ResolvedModuleRevision;
 import fr.jayasoft.ivy.ResolvedURL;
 import fr.jayasoft.ivy.Status;
+import fr.jayasoft.ivy.parser.ModuleDescriptorParserRegistry;
 import fr.jayasoft.ivy.report.ArtifactDownloadReport;
 import fr.jayasoft.ivy.report.DownloadReport;
 import fr.jayasoft.ivy.report.DownloadStatus;
@@ -47,7 +48,6 @@ import fr.jayasoft.ivy.util.FileUtil;
 import fr.jayasoft.ivy.util.IvyPattern;
 import fr.jayasoft.ivy.util.IvyPatternHelper;
 import fr.jayasoft.ivy.util.Message;
-import fr.jayasoft.ivy.xml.XmlModuleDescriptorParser;
 import fr.jayasoft.ivy.xml.XmlModuleDescriptorUpdater;
 import fr.jayasoft.ivy.xml.XmlModuleDescriptorWriter;
 
@@ -198,14 +198,13 @@ public abstract class AbstractURLResolver extends AbstractResolver {
                 Message.warn("problem while downloading ivy file: "+ivyURL+": "+ex.getMessage());
             }
             try {
-                md = XmlModuleDescriptorParser.parseDescriptor(data.getIvy(), cachedIvyURL, new URLResource(ivyURL.getURL()), doValidate(data));
+                md = ModuleDescriptorParserRegistry.getInstance().parseDescriptor(data.getIvy(), cachedIvyURL, new URLResource(ivyURL.getURL()), doValidate(data));
                 Message.debug("\t"+getName()+": parsed downloaded ivy file for "+mrid+" parsed="+md.getModuleRevisionId());
             } catch (IOException ex) {
                 Message.warn("io problem while parsing ivy file: "+ivyURL+": "+ex.getMessage());
                 return null;
             }
         }
-        md.setResolverName(getName());
         
         // check module descriptor revision
         if (mrid.getRevision().startsWith("latest.")) {
@@ -259,7 +258,7 @@ public abstract class AbstractURLResolver extends AbstractResolver {
                         Collections.EMPTY_MAP, 
                         md.getStatus(), 
                         md.getResolvedModuleRevisionId().getRevision(), 
-                        md.getResolvedPublicationDate(), getName());
+                        md.getResolvedPublicationDate());
 	        }
         } catch (Exception e) {
             Message.warn("impossible to copy ivy file to cache : "+ivyURL.getURL());
