@@ -57,6 +57,9 @@ public class RepositoryResolver extends AbstractResourceResolver {
     protected ResolvedResource findResourceUsingPattern(ModuleRevisionId mrid, String pattern, String artifact, String type, String ext, Date date) {
         return findResourceUsingPattern(getName(), getRepository(), getLatestStrategy(), mrid, pattern, artifact, type, ext, date, isAlwaysCheckExactRevision());
     }
+    public static ResolvedResource findResourceUsingPattern(String name, Repository repository, LatestStrategy strategy, ModuleRevisionId mrid, String pattern, String artifact, String type, String ext, Date date) {
+        return findResourceUsingPattern(name, repository, strategy, mrid, pattern, artifact, type, ext, date, true);
+    }
     public static ResolvedResource findResourceUsingPattern(String name, Repository repository, LatestStrategy strategy, ModuleRevisionId mrid, String pattern, String artifact, String type, String ext, Date date, boolean alwaysCheckExactRevision) {
         try {
             if (mrid.isExactRevision() || alwaysCheckExactRevision) {
