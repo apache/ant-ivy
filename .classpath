@@ -8,8 +8,9 @@
 	<classpathentry kind="var" path="ANT_HOME/lib/ant-launcher.jar"/>
 	<classpathentry kind="var" path="ANT_HOME/lib/xercesImpl.jar"/>
 	<classpathentry kind="lib" path="lib/commons-cli-1.0.jar"/>
-	<classpathentry kind="lib" path="lib/commons-httpclient-2.0.2.jar"/>
 	<classpathentry kind="lib" path="lib/commons-lang-1.0.jar"/>
-	<classpathentry kind="lib" path="lib/commons-logging-1.0.jar"/>
+	<classpathentry kind="lib" path="lib/commons-httpclient-3.0.jar"/>
+	<classpathentry kind="lib" path="lib/commons-codec-1.2.jar"/>
+	<classpathentry kind="lib" path="lib/commons-logging-1.0.3.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
