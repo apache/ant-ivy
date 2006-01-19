@@ -16,5 +16,9 @@
 				</filesystem>
 			</dual>
 		</chain>
+		<filesystem name="install">
+			<ivy pattern="build/test/install/[organisation]/[module]/[artifact]-[revision].[ext]"/>
+			<artifact pattern="build/test/install/[organisation]/[module]/[artifact]-[revision].[ext]"/>
+		</filesystem>
 	</resolvers>
 </ivyconf>

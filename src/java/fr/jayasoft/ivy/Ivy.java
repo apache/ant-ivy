@@ -701,55 +701,10 @@ public class Ivy implements TransferListener {
             IvyNode[] dependencies = getDependencies(md, confs, cache, date, report, validate);
             
             Message.verbose(":: downloading artifacts ::");
-            // collect list of artifacts
-            Collection artifacts = new ArrayList();
-            for (int i = 0; i < dependencies.length; i++) {
-                //download artifacts required in all asked configurations
-                if (!dependencies[i].isCompletelyEvicted() && !dependencies[i].hasProblem()) {
-                     artifacts.addAll(Arrays.asList(dependencies[i].getSelectedArtifacts(artifactFilter)));
-                }
-            }
-            fireIvyEvent(new PrepareDownloadEvent((Artifact[])artifacts.toArray(new Artifact[artifacts.size()])));
-            
             Map resolvedRevisions = new HashMap(); // Map (ModuleId dependency -> String revision)
             Map dependenciesStatus = new HashMap(); // Map (ModuleId dependency -> String status)
-            for (int i = 0; i < dependencies.length; i++) {
-                //download artifacts required in all asked configurations
-                if (!dependencies[i].isCompletelyEvicted() && !dependencies[i].hasProblem()) {
-                    DependencyResolver resolver = dependencies[i].getModuleRevision().getResolver();
-                    Artifact[] selectedArtifacts = dependencies[i].getSelectedArtifacts(artifactFilter);
-                    DownloadReport dReport = resolver.download(selectedArtifacts, this, cache);
-                    ArtifactDownloadReport[] adrs = dReport.getArtifactsReports();
-                    for (int j = 0; j < adrs.length; j++) {
-                        if (adrs[j].getDownloadStatus() == DownloadStatus.FAILED) {
-                            Message.warn("\t[NOT FOUND  ] "+adrs[j].getArtifact());
-                            resolver.reportFailure(adrs[j].getArtifact());
-                        }
-                    }
-                    // update concerned reports
-                    String[] dconfs = dependencies[i].getRootModuleConfigurations();
-                    for (int j = 0; j < dconfs.length; j++) {
-                        // the report itself is responsible to take into account only
-                        // artifacts required in its corresponding configuration
-                        // (as described by the Dependency object)
-                        if (dependencies[i].isEvicted(dconfs[j])) {
-                            report.getConfigurationReport(dconfs[j]).addDependency(dependencies[i]);
-                        } else {
-                            report.getConfigurationReport(dconfs[j]).addDependency(dependencies[i], dReport);
-                        }
-                    }
-                    
-                    // update resolved dependencies map for resolved ivy file producing
-                    resolvedRevisions.put(dependencies[i].getModuleId(), dependencies[i].getResolvedId().getRevision());
-                    dependenciesStatus.put(dependencies[i].getModuleId(), dependencies[i].getDescriptor().getStatus());
-                } else if (dependencies[i].isCompletelyEvicted()) {
-                    // dependencies has been evicted: it has not been added to the report yet
-                    String[] dconfs = dependencies[i].getRootModuleConfigurations();
-                    for (int j = 0; j < dconfs.length; j++) {
-                        report.getConfigurationReport(dconfs[j]).addDependency(dependencies[i]);
-                    }
-                }
-            }
+
+            downloadArtifacts(dependencies, artifactFilter, report, resolvedRevisions, dependenciesStatus, cache);
             
             // produce resolved ivy file and ivy properties in cache
             File ivyFileInCache = getResolvedIvyFileInCache(cache, md.getResolvedModuleRevisionId());
@@ -776,6 +731,60 @@ public class Ivy implements TransferListener {
             return report;
         } finally {
             setDictatorResolver(oldDictator);
+        }
+    }
+
+    private void downloadArtifacts(IvyNode[] dependencies, Filter artifactFilter, ResolveReport report, File cache) {
+        downloadArtifacts(dependencies, artifactFilter, report, new HashMap(), new HashMap(), cache);
+    }
+    
+    private void downloadArtifacts(IvyNode[] dependencies, Filter artifactFilter, ResolveReport report, Map resolvedRevisions, Map dependenciesStatus, File cache) {
+        // collect list of artifacts
+        Collection artifacts = new ArrayList();
+        for (int i = 0; i < dependencies.length; i++) {
+            //download artifacts required in all asked configurations
+            if (!dependencies[i].isCompletelyEvicted() && !dependencies[i].hasProblem()) {
+                 artifacts.addAll(Arrays.asList(dependencies[i].getSelectedArtifacts(artifactFilter)));
+            }
+        }
+        fireIvyEvent(new PrepareDownloadEvent((Artifact[])artifacts.toArray(new Artifact[artifacts.size()])));
+        
+        for (int i = 0; i < dependencies.length; i++) {
+            //download artifacts required in all asked configurations
+            if (!dependencies[i].isCompletelyEvicted() && !dependencies[i].hasProblem()) {
+                DependencyResolver resolver = dependencies[i].getModuleRevision().getResolver();
+                Artifact[] selectedArtifacts = dependencies[i].getSelectedArtifacts(artifactFilter);
+                DownloadReport dReport = resolver.download(selectedArtifacts, this, cache);
+                ArtifactDownloadReport[] adrs = dReport.getArtifactsReports();
+                for (int j = 0; j < adrs.length; j++) {
+                    if (adrs[j].getDownloadStatus() == DownloadStatus.FAILED) {
+                        Message.warn("\t[NOT FOUND  ] "+adrs[j].getArtifact());
+                        resolver.reportFailure(adrs[j].getArtifact());
+                    }
+                }
+                // update concerned reports
+                String[] dconfs = dependencies[i].getRootModuleConfigurations();
+                for (int j = 0; j < dconfs.length; j++) {
+                    // the report itself is responsible to take into account only
+                    // artifacts required in its corresponding configuration
+                    // (as described by the Dependency object)
+                    if (dependencies[i].isEvicted(dconfs[j])) {
+                        report.getConfigurationReport(dconfs[j]).addDependency(dependencies[i]);
+                    } else {
+                        report.getConfigurationReport(dconfs[j]).addDependency(dependencies[i], dReport);
+                    }
+                }
+                
+                // update resolved dependencies map for resolved ivy file producing
+                resolvedRevisions.put(dependencies[i].getModuleId(), dependencies[i].getResolvedId().getRevision());
+                dependenciesStatus.put(dependencies[i].getModuleId(), dependencies[i].getDescriptor().getStatus());
+            } else if (dependencies[i].isCompletelyEvicted()) {
+                // dependencies has been evicted: it has not been added to the report yet
+                String[] dconfs = dependencies[i].getRootModuleConfigurations();
+                for (int j = 0; j < dconfs.length; j++) {
+                    report.getConfigurationReport(dconfs[j]).addDependency(dependencies[i]);
+                }
+            }
         }
     }
     
@@ -1115,6 +1124,70 @@ public class Ivy implements TransferListener {
 
 
     /////////////////////////////////////////////////////////////////////////
+    //                         INSTALL
+    /////////////////////////////////////////////////////////////////////////
+    
+    public ResolveReport install(ModuleRevisionId mrid, String from, String to, boolean transitive, boolean validate, boolean overwrite, Filter artifactFilter, File cache) throws IOException {
+        if (cache == null) {
+            cache = getDefaultCache();
+        }
+        if (artifactFilter == null) {
+            artifactFilter = FilterHelper.NO_FILTER;
+        }
+        DependencyResolver fromResolver = getResolver(from);
+        DependencyResolver toResolver = getResolver(to);
+        if (fromResolver == null) {
+            throw new IllegalArgumentException("unknow resolver "+from);
+        }
+        if (toResolver == null) {
+            throw new IllegalArgumentException("unknow resolver "+from);
+        }
+        
+        // build module file declaring the dependency
+        Message.info(":: installing "+mrid+" ::");
+        DefaultModuleDescriptor md = new DefaultModuleDescriptor(ModuleRevisionId.newInstance("jayasoft", "ivy-install", "1.0"), Status.DEFAULT_STATUS, new Date());
+        md.addConfiguration(new Configuration("default"));
+        DefaultDependencyDescriptor dd = new DefaultDependencyDescriptor(md, mrid, false, false, transitive);
+        dd.addDependencyConfiguration("default", "*");
+        md.addDependency(dd);
+
+        // resolve using appropriate resolver
+        ResolveReport report = new ResolveReport(md);
+        DependencyResolver oldDicator = getDictatorResolver();
+        try {
+            setDictatorResolver(fromResolver);
+            
+            Message.info(":: resolving dependencies ::");
+            IvyNode[] dependencies = getDependencies(md, new String[] {"default"}, cache, null, report, validate);
+            
+            Message.info(":: downloading artifacts to cache ::");
+            downloadArtifacts(dependencies, artifactFilter, report, cache);
+
+            if (report.hasError()) {
+                return report;
+            }
+            
+            // now that everything is in cache, we can publish all these modules
+            Message.info(":: installing in "+to+" ::");
+            for (int i = 0; i < dependencies.length; i++) {
+                ModuleDescriptor depmd = dependencies[i].getDescriptor();
+                if (depmd != null) {
+                    Message.verbose("installing "+depmd.getModuleRevisionId());
+                    publish(depmd, 
+                            toResolver, 
+                            cache.getAbsolutePath()+"/"+getCacheArtifactPattern(), 
+                            cache.getAbsolutePath()+"/"+getCacheIvyPattern(), 
+                            overwrite);
+                }
+            }
+            
+            return report;
+        } finally {
+            setDictatorResolver(oldDicator);
+        }
+    }
+
+    /////////////////////////////////////////////////////////////////////////
     //                         RETRIEVE
     /////////////////////////////////////////////////////////////////////////
 
@@ -1422,6 +1495,12 @@ public class Ivy implements TransferListener {
         }
         
         // collect all declared artifacts of this module
+        Collection missing = publish(md, resolver, srcArtifactPattern, srcIvyPattern, overwrite);
+        Message.verbose("\tpublish done ("+(System.currentTimeMillis()-start)+"ms)");
+        return missing;
+    }
+
+    private Collection publish(ModuleDescriptor md, DependencyResolver resolver, String srcArtifactPattern, String srcIvyPattern, boolean overwrite) throws IOException {
         Collection missing = new ArrayList();
         Set artifactsSet = new HashSet();
         String[] confs = md.getConfigurationsNames();
@@ -1445,7 +1524,6 @@ public class Ivy implements TransferListener {
                 missing.add(artifact);
             }
         }
-        Message.verbose("\tpublish done ("+(System.currentTimeMillis()-start)+"ms)");
         return missing;
     }
 

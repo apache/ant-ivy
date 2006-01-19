@@ -1,3 +1,4 @@
+- NEW: a new install task let add modules found in a repository in another one, even transitively (IVY-141)
 - NEW: maven2 pom compatibility: most resolvers are now able to handle m2 pom as project metadata
        and there is a new convertpom task able to convert a pom file to an ivy file (IVY-140)
 - NEW: import configurations from external file (IVY-88)
