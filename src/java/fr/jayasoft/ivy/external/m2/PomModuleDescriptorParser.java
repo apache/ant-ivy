@@ -87,7 +87,7 @@ public class PomModuleDescriptorParser extends AbstractModuleDescriptorParser {
             } else if ("exclusions".equals(qName)) {
                 if (_dd == null) {
                     // stores dd now cause exclusions will override org and module
-                    _dd = new DefaultDependencyDescriptor(_md, ModuleRevisionId.newInstance(_organisation, _module, _revision), true, true, true);
+                    _dd = new DefaultDependencyDescriptor(_md, ModuleRevisionId.newInstance(_organisation, _module, _revision), true, false, true);
                     _organisation = null;
                     _module = null;
                     _revision = null;
@@ -105,7 +105,7 @@ public class PomModuleDescriptorParser extends AbstractModuleDescriptorParser {
                 _revision = null;
             } else if (((_organisation != null && _module != null && _revision != null) || _dd != null) && "project/dependencies/dependency".equals(getContext())) {
                 if (_dd == null) {
-                    _dd = new DefaultDependencyDescriptor(_md, ModuleRevisionId.newInstance(_organisation, _module, _revision), true, true, true);
+                    _dd = new DefaultDependencyDescriptor(_md, ModuleRevisionId.newInstance(_organisation, _module, _revision), true, false, true);
                 }
                 _scope = _scope == null ? "compile" : _scope;
                 if (_optional && "compile".equals(_scope)) {

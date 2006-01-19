@@ -464,6 +464,9 @@ public class IvyNode {
                     _module = resolver.getDependency(_dd, _data);
                     if (_module != null) {
                         _data.getIvy().saveResolver(_data.getCache(), _module.getDescriptor(), resolver.getName());
+                        if (_data.getIvy().logModuleWhenFound()) {
+                            Message.info("\tfound "+_module.getId()+" in "+_module.getResolver().getName());
+                        }
                         if (!getId().isExactRevision()) {
                             // IVY-56: check if revision has actually been resolved
                             if (!_module.getId().isExactRevision()) {
@@ -521,8 +524,19 @@ public class IvyNode {
         }
         if (hasProblem()) {
             _data.getReport().addDependency(this);
-            return loaded;
+            return handleConfiguration(loaded, conf) && loaded;
         }
+        if (!handleConfiguration(loaded, conf)) {
+            return false;
+        }
+        if (_dd != null) {
+            addDependencyArtifactsIncludes(_rootModuleConf, _dd.getDependencyArtifactsIncludes(getParentConf()));
+        }
+        return loaded;
+        
+    }
+    
+    private boolean handleConfiguration(boolean loaded, String conf) {
         if ("*".equals(conf)) {
             if (_md != null) {
                 _fetchedConfigurations.addAll(Arrays.asList(_md.getPublicConfigurationsNames()));
@@ -548,11 +562,7 @@ public class IvyNode {
             }
             addRootModuleConfigurations(_rootModuleConf, new String[] {conf});
         }
-        if (_dd != null) {
-            addDependencyArtifactsIncludes(_rootModuleConf, _dd.getDependencyArtifactsIncludes(getParentConf()));
-        }
-        return loaded;
-        
+        return true;
     }
 
     private boolean isRoot() {

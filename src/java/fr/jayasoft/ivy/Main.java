@@ -123,6 +123,7 @@ public class Main {
         options.addOption("warn", false, "set message level to warn");
         options.addOption("error", false, "set message level to error");
         options.addOption("novalidate", false, "do not validate ivy files against xsd");
+        options.addOption("m2compatible", false, "use maven2 compatibility");
         options.addOption("?", false, "display this help");
         options.addOption(conf);
         options.addOption(confs);
@@ -172,6 +173,9 @@ public class Main {
             
             Ivy ivy = new Ivy();
             ivy.addAllVariables(System.getProperties());
+            if (line.hasOption("m2compatible")) {
+                ivy.setVariable("ivy.default.configuration.m2compatible", "true");
+            }
 
             configureURLHandler(
                     line.getOptionValue("realm", null), 
@@ -181,7 +185,7 @@ public class Main {
             
             String confPath = line.getOptionValue("conf", "");
             if ("".equals(confPath)) {
-                ivy.configure(Ivy.class.getResource("ivyconf.xml"));
+                ivy.configureDefault();
             } else {
                 File conffile = new File(confPath);
                 if (!conffile.exists()) {

@@ -951,9 +951,9 @@ public class Ivy implements TransferListener {
     private void doFetchDependencies(IvyNode node, String conf) {
         Configuration c = node.getConfiguration(conf);
         if (c == null) {
-            Message.warn("unknown configuration '"+conf+"' in "+node.getResolvedId()+": ignoring");
+            Message.warn("configuration not found '"+conf+"' in "+node.getResolvedId()+": ignoring");
             if (node.getParent() != null) {
-                Message.warn("it was asked from "+node.getParent().getResolvedId());
+                Message.warn("it was required from "+node.getParent().getResolvedId());
             }
             return;
         }
@@ -1784,6 +1784,11 @@ public class Ivy implements TransferListener {
 
     public String getCacheDataFilePattern() {
         return _cacheDataFilePattern;
+    }
+
+    public boolean logModuleWhenFound() {
+        String var = getVariable("ivy.log.module.when.found");
+        return var == null || Boolean.valueOf(var).booleanValue();
     }
 
 }
