@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<project>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>fr.jayasoft</groupId>
+  <artifactId>test3</artifactId>
+  <name>Test Module for Ivy M2 parsing</name>
+  <version>1.0</version>
+  <url>http://ivy.jayasoft.org/</url>
+  <organization>
+    <name>Jayasoft</name>
+    <url>http://www.jayasoft.org/</url>
+  </organization>
+  <dependencies>
+    <dependency>
+      <groupId>fr.jayasoft</groupId>
+      <artifactId>test2</artifactId>
+      <version>1.0</version>
+    </dependency>
+  </dependencies>
+</project>

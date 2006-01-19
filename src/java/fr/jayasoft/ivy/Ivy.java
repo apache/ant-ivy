@@ -50,6 +50,7 @@ import fr.jayasoft.ivy.filter.FilterHelper;
 import fr.jayasoft.ivy.latest.LatestLexicographicStrategy;
 import fr.jayasoft.ivy.latest.LatestRevisionStrategy;
 import fr.jayasoft.ivy.latest.LatestTimeStrategy;
+import fr.jayasoft.ivy.parser.ModuleDescriptorParser;
 import fr.jayasoft.ivy.parser.ModuleDescriptorParserRegistry;
 import fr.jayasoft.ivy.report.ArtifactDownloadReport;
 import fr.jayasoft.ivy.report.ConfigurationResolveReport;
@@ -61,6 +62,7 @@ import fr.jayasoft.ivy.report.ResolveReport;
 import fr.jayasoft.ivy.report.XmlReportOutputter;
 import fr.jayasoft.ivy.repository.TransferEvent;
 import fr.jayasoft.ivy.repository.TransferListener;
+import fr.jayasoft.ivy.repository.url.URLResource;
 import fr.jayasoft.ivy.resolver.CacheResolver;
 import fr.jayasoft.ivy.resolver.ChainResolver;
 import fr.jayasoft.ivy.resolver.DualResolver;
@@ -663,8 +665,11 @@ public class Ivy implements TransferListener {
         if (useCacheOnly) {
             setDictatorResolver(new CacheResolver(this));
         }
+        URLResource res = new URLResource(ivySource);
+        ModuleDescriptorParser parser = ModuleDescriptorParserRegistry.getInstance().getParser(res);
         try {
-            ModuleDescriptor md = ModuleDescriptorParserRegistry.getInstance().parseDescriptor(this, ivySource, validate);
+            
+            ModuleDescriptor md = parser.parseDescriptor(this, ivySource, validate);
             if (cache==null) {  // ensure that a cache exists
                 cache = getDefaultCache();
             }
@@ -739,19 +744,8 @@ public class Ivy implements TransferListener {
             
             // produce resolved ivy file and ivy properties in cache
             File ivyFileInCache = getResolvedIvyFileInCache(cache, md.getResolvedModuleRevisionId());
-            try {
-                XmlModuleDescriptorUpdater.update(
-                        ivySource, 
-                        ivyFileInCache, 
-                        Collections.EMPTY_MAP, 
-                        null, 
-                        md.getResolvedModuleRevisionId().getRevision(),
-                        null);
-            } catch (SAXException e) {
-                ParseException ex = new ParseException(e.getMessage(), 0);
-                ex.initCause(e);
-                throw ex;
-            }
+            parser.toIvyFile(ivySource, res, ivyFileInCache, md);
+
             File ivyPropertiesInCache = getResolvedIvyPropertiesInCache(cache, md.getResolvedModuleRevisionId());
             Properties props = new Properties();
             for (Iterator iter = resolvedRevisions.keySet().iterator(); iter.hasNext();) {

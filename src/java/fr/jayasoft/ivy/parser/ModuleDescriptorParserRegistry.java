@@ -16,6 +16,7 @@ import java.util.List;
 
 import fr.jayasoft.ivy.Ivy;
 import fr.jayasoft.ivy.ModuleDescriptor;
+import fr.jayasoft.ivy.external.m2.PomModuleDescriptorParser;
 import fr.jayasoft.ivy.repository.Resource;
 import fr.jayasoft.ivy.util.Message;
 import fr.jayasoft.ivy.xml.XmlModuleDescriptorParser;
@@ -29,6 +30,7 @@ public class ModuleDescriptorParserRegistry extends AbstractModuleDescriptorPars
 
     private List _parsers = new ArrayList();
     private ModuleDescriptorParserRegistry() {
+        _parsers.add(PomModuleDescriptorParser.getInstance());
         _parsers.add(XmlModuleDescriptorParser.getInstance());
     }
     

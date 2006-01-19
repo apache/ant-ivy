@@ -10,9 +10,11 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 
@@ -21,11 +23,14 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
+import fr.jayasoft.ivy.ArtifactId;
 import fr.jayasoft.ivy.Configuration;
+import fr.jayasoft.ivy.DefaultArtifact;
+import fr.jayasoft.ivy.DefaultDependencyArtifactDescriptor;
 import fr.jayasoft.ivy.DefaultDependencyDescriptor;
-import fr.jayasoft.ivy.DefaultModuleDescriptor;
 import fr.jayasoft.ivy.Ivy;
 import fr.jayasoft.ivy.ModuleDescriptor;
+import fr.jayasoft.ivy.ModuleId;
 import fr.jayasoft.ivy.ModuleRevisionId;
 import fr.jayasoft.ivy.Configuration.Visibility;
 import fr.jayasoft.ivy.parser.AbstractModuleDescriptorParser;
@@ -43,6 +48,7 @@ public class PomModuleDescriptorParser extends AbstractModuleDescriptorParser {
         new Configuration("test", Visibility.PRIVATE, "this scope indicates that the dependency is not required for normal use of the application, and is only available for the test compilation and execution phases.", new String[0]),
         new Configuration("system", Visibility.PUBLIC, "this scope is similar to provided except that you have to provide the JAR which contains it explicitly. The artifact is always available and is not looked up in a repository.", new String[0]),
     };
+    private static final Configuration OPTIONAL_CONFIGURATION = new Configuration("optional", Visibility.PUBLIC, "contains all optional dependencies", new String[0]);
     private static final Map MAVEN2_CONF_MAPPING = new HashMap();
     
     static {
@@ -55,18 +61,18 @@ public class PomModuleDescriptorParser extends AbstractModuleDescriptorParser {
     
     private static final class Parser extends AbstractParser {
         private Ivy _ivy;
-        private DefaultModuleDescriptor _md;
         private Stack _contextStack = new Stack();
         private String _organisation;
         private String _module;
         private String _revision;
         private String _scope;
+        private boolean _optional = false;
+        private List _exclusions = new ArrayList();
         private DefaultDependencyDescriptor _dd;
 
         public Parser(Ivy ivy, Resource res) {
             _ivy = ivy;
             setResource(res);
-            _md = new DefaultModuleDescriptor();
             _md.setResolvedPublicationDate(new Date(res.getLastModified()));
             for (int i = 0; i < MAVEN2_CONFIGURATIONS.length; i++) {
                 _md.addConfiguration(MAVEN2_CONFIGURATIONS[i]);
@@ -75,32 +81,69 @@ public class PomModuleDescriptorParser extends AbstractModuleDescriptorParser {
 
         public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
             _contextStack.push(qName);
-        }
-        
-        public void endElement(String uri, String localName, String qName) throws SAXException {
-            if (_organisation != null && _module != null && _revision != null) {
-                if (_md.getModuleRevisionId() == null) {
-                    _md.setModuleRevisionId(ModuleRevisionId.newInstance(_organisation, _module, _revision));
+            if ("optional".equals(qName)) {
+                _optional = true;
+            } else if ("exclusions".equals(qName)) {
+                if (_dd == null) {
+                    // stores dd now cause exclusions will override org and module
+                    _dd = new DefaultDependencyDescriptor(_md, ModuleRevisionId.newInstance(_organisation, _module, _revision), true, true, true);
                     _organisation = null;
                     _module = null;
                     _revision = null;
-                } else if ("project/dependencies/dependency".equals(getContext())) {
-                    _dd = new DefaultDependencyDescriptor(_md, ModuleRevisionId.newInstance(_organisation, _module, _revision), true, true, true);
-                    _scope = _scope == null ? "compile" : _scope;
-                    String mapping = (String)MAVEN2_CONF_MAPPING.get(_scope);
-                    if (mapping == null) {
-                        Message.verbose("unknown scope "+_scope+" in "+getResource());
-                        mapping = (String)MAVEN2_CONF_MAPPING.get("compile");
-                    }
-                    parseDepsConfs(mapping, _dd);
-                    _md.addDependency(_dd);
                 }
+            }
+        }
+        
+        public void endElement(String uri, String localName, String qName) throws SAXException {
+            if ((_organisation != null && _module != null && _revision != null) && _md.getModuleRevisionId() == null) {
+                ModuleRevisionId mrid = ModuleRevisionId.newInstance(_organisation, _module, _revision);
+                _md.setModuleRevisionId(mrid);
+                _md.addArtifact("master", new DefaultArtifact(mrid, getDefaultPubDate(),_module, "jar", "jar"));
+                _organisation = null;
+                _module = null;
+                _revision = null;
+            } else if (((_organisation != null && _module != null && _revision != null) || _dd != null) && "project/dependencies/dependency".equals(getContext())) {
+                if (_dd == null) {
+                    _dd = new DefaultDependencyDescriptor(_md, ModuleRevisionId.newInstance(_organisation, _module, _revision), true, true, true);
+                }
+                _scope = _scope == null ? "compile" : _scope;
+                if (_optional && "compile".equals(_scope)) {
+                    _scope = "runtime";
+                }
+                String mapping = (String)MAVEN2_CONF_MAPPING.get(_scope);
+                if (mapping == null) {
+                    Message.verbose("unknown scope "+_scope+" in "+getResource());
+                    mapping = (String)MAVEN2_CONF_MAPPING.get("compile");
+                }
+                if (_optional) {
+                    mapping = mapping.replaceAll(_scope+"\\-\\>", "optional->");
+                    if (_md.getConfiguration("optional") == null) {
+                        _md.addConfiguration(OPTIONAL_CONFIGURATION);
+                    }
+                }
+                parseDepsConfs(mapping, _dd);
+                
+                for (Iterator iter = _exclusions.iterator(); iter.hasNext();) {
+                    ModuleId mid = (ModuleId)iter.next();
+                    String[] confs = _dd.getModuleConfigurations();
+                    for (int i = 0; i < confs.length; i++) {
+                        _dd.addDependencyArtifactExcludes(confs[i], new DefaultDependencyArtifactDescriptor(_dd, new ArtifactId(mid, mid.getName(), ".*", ".*"), false));
+                    }
+                }
+                _md.addDependency(_dd);
+                _dd = null;
+            } else if ((_organisation != null && _module != null) && "project/dependencies/dependency/exclusions/exclusion".equals(getContext())) {
+                _exclusions.add(new ModuleId(_organisation, _module));
+                _organisation = null;
+                _module = null;
             }
             if ("dependency".equals(qName)) {
                 _organisation = null;
                 _module = null;
                 _revision = null;
                 _scope = null;
+                _optional = false;
+                _exclusions.clear();
             }
             _contextStack.pop();
         }
@@ -175,4 +218,7 @@ public class PomModuleDescriptorParser extends AbstractModuleDescriptorParser {
         return res.getName().endsWith(".pom");
     }
 
+    public String toString() {
+        return "pom parser";
+    }
 }

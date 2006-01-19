@@ -12,7 +12,6 @@ import java.text.ParseException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Date;
 
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -98,7 +97,6 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
 
     private static final Collection ALLOWED_VERSIONS = Arrays.asList(new String[] {"1.0", "1.1", "1.2", "1.3"});
     
-    private DefaultModuleDescriptor _md;
     private DefaultDependencyDescriptor _dd;
     private DefaultDependencyArtifactDescriptor _dad;
     private MDArtifact _artifact;
@@ -122,16 +120,9 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
         _validate = validate;
     }
 
-    private ModuleDescriptor getModuleDescriptor() throws ParseException {
-        checkErrors();
-        return _md;
-    }
-
     private void parse(URL xmlURL, Resource res, boolean validate) throws ParseException, IOException {
         try {
-            _md = new DefaultModuleDescriptor();
             setResource(res);
-            _md.setLastModified(getLastModified());
             URL schemaURL = validate?getClass().getResource("ivy.xsd"):null;
             XMLHelper.parse(xmlURL, schemaURL, this);
             checkConfigurations();
@@ -149,20 +140,6 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
             IllegalStateException ise = new IllegalStateException(ex.getMessage()+" in "+xmlURL);
             ise.initCause(ex);
             throw ise;
-        }
-    }
-
-    private Date getDefaultPubDate() {
-        return new Date(_md.getLastModified());
-    }
-
-    private long getLastModified() {
-        long last = getResource().getLastModified();
-        if (last > 0) {
-            return  last;
-        } else {
-            Message.debug("impossible to get date for "+getResource()+": using 'now'");
-            return System.currentTimeMillis();
         }
     }
 
@@ -447,6 +424,10 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
     }
     
 
+    }
+
+    public String toString() {
+        return "ivy parser";
     }
 
     public static void main(String[] args) throws Exception {

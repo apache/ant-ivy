@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.xml.sax.SAXException;
@@ -17,6 +18,7 @@ import org.xml.sax.SAXParseException;
 import org.xml.sax.helpers.DefaultHandler;
 
 import fr.jayasoft.ivy.DefaultDependencyDescriptor;
+import fr.jayasoft.ivy.DefaultModuleDescriptor;
 import fr.jayasoft.ivy.DependencyDescriptor;
 import fr.jayasoft.ivy.Ivy;
 import fr.jayasoft.ivy.ModuleDescriptor;
@@ -39,15 +41,20 @@ public abstract class AbstractModuleDescriptorParser implements ModuleDescriptor
         private DefaultDependencyDescriptor _defaultConfMappingDescriptor;
         private Resource _res;
         private List _errors = new ArrayList();
+        protected DefaultModuleDescriptor _md;
         
         protected void checkErrors() throws ParseException {
             if (!_errors.isEmpty()) {
                 throw new ParseException(_errors.toString(), 0);
             }
         }
+        
         protected void setResource(Resource res) {
+            _md = new DefaultModuleDescriptor();
             _res = res; // used for log and date only
+            _md.setLastModified(getLastModified());
         }
+        
         protected Resource getResource() {
             return _res;
         }
@@ -156,6 +163,22 @@ public abstract class AbstractModuleDescriptorParser implements ModuleDescriptor
         }
         protected void setDefaultConf(String defaultConf) {
             _defaultConf = defaultConf;
+        }
+        public ModuleDescriptor getModuleDescriptor() throws ParseException {
+            checkErrors();
+            return _md;
+        }
+        protected Date getDefaultPubDate() {
+            return new Date(_md.getLastModified());
+        }
+        protected long getLastModified() {
+            long last = getResource().getLastModified();
+            if (last > 0) {
+                return  last;
+            } else {
+                Message.debug("impossible to get date for "+getResource()+": using 'now'");
+                return System.currentTimeMillis();
+            }
         }
     }
 }

@@ -1129,6 +1129,28 @@ public class ResolveTest extends TestCase {
         assertFalse(_ivy.getArchiveFileInCache(_cache, "org2", "mod2.1", "0.3", "art21B", "jar", "jar").exists());
     }
     
+    public void testResolveMaven2() throws Exception {
+        // test3 depends on test2 which depends on test
+        Ivy ivy = new Ivy();
+        ivy.configure(new File("test/repositories/m2/ivyconf.xml"));
+        ResolveReport report = ivy.resolve(new File("test/repositories/m2/fr/jayasoft/test3/1.0/test3-1.0.pom").toURL(),
+                null, new String[] {"*"}, _cache, null, true);
+        assertNotNull(report);
+        ModuleDescriptor md = report.getModuleDescriptor();
+        assertNotNull(md);
+        ModuleRevisionId mrid = ModuleRevisionId.newInstance("fr.jayasoft", "test3", "1.0");
+        assertEquals(mrid, md.getModuleRevisionId());
+        
+        assertTrue(ivy.getResolvedIvyFileInCache(_cache, mrid).exists());
+        
+        // dependencies
+        assertTrue(ivy.getIvyFileInCache(_cache, ModuleRevisionId.newInstance("fr.jayasoft", "test2", "1.0")).exists());
+        assertTrue(ivy.getArchiveFileInCache(_cache, "fr.jayasoft", "test2", "1.0", "test2", "jar", "jar").exists());
+
+        assertTrue(ivy.getIvyFileInCache(_cache, ModuleRevisionId.newInstance("fr.jayasoft", "test", "1.0")).exists());
+        assertTrue(ivy.getArchiveFileInCache(_cache, "fr.jayasoft", "test", "1.0", "test", "jar", "jar").exists());
+    }
+    
     ////////////////////////////////////////////////////////////
     // helper methods to ease the tests
     ////////////////////////////////////////////////////////////

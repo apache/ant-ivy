@@ -1,0 +1,13 @@
+<ivy-module version="1.0">
+	<info organisation="myorg"
+		module="mymodule"
+		status="integration"
+		publication="20050501110000"
+	/>
+	<configurations>
+		<conf name="default" visibility="public"/>
+	</configurations>
+	<publications>
+		<artifact name="mymodule" type="jar" ext="jar" conf="default"/>
+	</publications>
+</ivy-module>

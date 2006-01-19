@@ -11,6 +11,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -84,19 +85,13 @@ public class DefaultDependencyDescriptor implements DependencyDescriptor {
 	}
 
 	public String[] getModuleConfigurations() {
-//        if (_confs.isEmpty()) { // if no conf has been defined then all confs are required in all confs
-//            return new String[] {"*"};
-//        }
 		return (String[]) _confs.keySet().toArray(new String[_confs.keySet().size()]);
 	}
 
 	public String[] getDependencyConfigurations(String moduleConfiguration) {
-//	    if (_confs.isEmpty()) { // if no conf has been defined then all confs are required in all confs
-//	        return new String[] {"*"};
-//	    }
 		List confs = (List)_confs.get(moduleConfiguration);
 		List defConfs = (List)_confs.get("*");
-		List ret = new ArrayList();
+		Collection ret = new LinkedHashSet();
 		if (confs != null) {
 		    ret.addAll(confs);
 		}
@@ -106,11 +101,14 @@ public class DefaultDependencyDescriptor implements DependencyDescriptor {
         if (ret.remove("@")) {
             ret.add(moduleConfiguration);
         }
+        if (ret.contains("*")) {
+            return new String[] {"*"};
+        }
 		return (String[])ret.toArray(new String[ret.size()]);
 	}
 
 	public String[] getDependencyConfigurations(String[] moduleConfigurations) {
-		Set confs = new HashSet();
+		Set confs = new LinkedHashSet();
 		for (int i = 0; i < moduleConfigurations.length; i++) {
 			confs.addAll(Arrays.asList(getDependencyConfigurations(moduleConfigurations[i])));
 		}
@@ -183,7 +181,9 @@ public class DefaultDependencyDescriptor implements DependencyDescriptor {
             confs = new ArrayList();
             _confs.put(masterConf, confs);
         }
-        confs.add(depConf);
+        if (!confs.contains(depConf)) {
+            confs.add(depConf);
+        }
     }
     
     public void addDependencyArtifactIncludes(String masterConf, DependencyArtifactDescriptor dad) {

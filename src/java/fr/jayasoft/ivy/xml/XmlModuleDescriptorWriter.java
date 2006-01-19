@@ -9,7 +9,13 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
 
+import fr.jayasoft.ivy.Artifact;
+import fr.jayasoft.ivy.Configuration;
+import fr.jayasoft.ivy.DependencyArtifactDescriptor;
 import fr.jayasoft.ivy.DependencyDescriptor;
 import fr.jayasoft.ivy.Ivy;
 import fr.jayasoft.ivy.ModuleDescriptor;
@@ -19,7 +25,6 @@ import fr.jayasoft.ivy.ModuleDescriptor;
  *
  */
 public class XmlModuleDescriptorWriter {
-    // only handle header and info for the moment
     public static void write(ModuleDescriptor md, File output) throws IOException {
         if (output.getParentFile() != null) {
             output.getParentFile().mkdirs();
@@ -29,11 +34,53 @@ public class XmlModuleDescriptorWriter {
 	        out.println("<ivy-module version=\"1.0\">"); 
 	    	out.println("\t<info organisation=\""+md.getModuleRevisionId().getOrganisation()+"\"");
 	    	out.println("\t\tmodule=\""+md.getModuleRevisionId().getName()+"\"");
-	    	out.println("\t\trevision=\""+md.getResolvedModuleRevisionId().getRevision()+"\"");
+	    	String revision = md.getResolvedModuleRevisionId().getRevision();
+            if (revision != null) {
+                out.println("\t\trevision=\""+revision+"\"");
+            }
 	    	out.println("\t\tstatus=\""+md.getStatus()+"\"");
 	    	out.println("\t\tpublication=\""+Ivy.DATE_FORMAT.format(md.getResolvedPublicationDate())+"\"");
-            out.println("\t\tdefault=\""+(md.isDefault()?"true":"false")+"\"");
+            if (md.isDefault()) {
+                out.println("\t\tdefault=\"true\"");
+            }
 	    	out.println("\t/>");
+            Configuration[] confs = md.getConfigurations();
+            if (confs.length > 0) {
+                out.println("\t<configurations>");
+                for (int i = 0; i < confs.length; i++) {
+                    out.print("\t\t<conf");
+                    out.print(" name=\""+confs[i].getName()+"\"");
+                    out.print(" visibility=\""+confs[i].getVisibility()+"\"");
+                    if (confs[i].getDescription() != null) {
+                        out.print(" description=\""+confs[i].getDescription()+"\"");
+                    }
+                    String[] exts = confs[i].getExtends();
+                    if (exts.length > 0) {
+                        out.print(" extends=\"");
+                        for (int j = 0; j < exts.length; j++) {
+                            out.print(exts[j]);
+                            if (j+1 < exts.length) {
+                                out.print(",");
+                            }
+                        }
+                        out.print("\"");
+                    }
+                    out.println("/>");
+                }
+                out.println("\t</configurations>");
+            }
+            out.println("\t<publications>");
+            Artifact[] artifacts = getAllArtifacts(md);
+            for (int i = 0; i < artifacts.length; i++) {
+                out.print("\t\t<artifact");
+                out.print(" name=\""+artifacts[i].getName()+"\"");
+                out.print(" type=\""+artifacts[i].getType()+"\"");
+                out.print(" ext=\""+artifacts[i].getExt()+"\"");
+                out.print(" conf=\""+getConfs(md, artifacts[i])+"\"");
+                out.println("/>");
+            }
+            out.println("\t</publications>");
+            
             DependencyDescriptor[] dds = md.getDependencies();
             if (dds.length > 0) {
                 out.println("\t<dependencies>");
@@ -42,6 +89,9 @@ public class XmlModuleDescriptorWriter {
                     out.print(" org=\""+dds[i].getDependencyRevisionId().getOrganisation()+"\"");
                     out.print(" name=\""+dds[i].getDependencyRevisionId().getName()+"\"");
                     out.print(" rev=\""+dds[i].getDependencyRevisionId().getRevision()+"\"");
+                    out.print(" force=\""+dds[i].isForce()+"\"");
+                    out.print(" changing=\""+dds[i].isChanging()+"\"");
+                    out.print(" transitive=\""+dds[i].isTransitive()+"\"");
                     out.print(" conf=\"");
                     String[] modConfs = dds[i].getModuleConfigurations();
                     for (int j = 0; j < modConfs.length; j++) {
@@ -57,7 +107,60 @@ public class XmlModuleDescriptorWriter {
                             out.print(";");
                         }
                     }
-                    out.println("\"/>");
+                    out.print("\"");
+                    DependencyArtifactDescriptor[] includes = dds[i].getAllDependencyArtifactsIncludes();
+                    if (includes.length > 0) {
+                        out.println(">");
+                        for (int j = 0; j < includes.length; j++) {
+                            out.print("\t\t\t<include");
+                            out.print(" name=\""+includes[j].getName()+"\"");
+                            out.print(" type=\""+includes[j].getType()+"\"");
+                            out.print(" ext=\""+includes[j].getExt()+"\"");
+                            String[] dadconfs = includes[j].getConfigurations();
+                            if (!Arrays.asList(dadconfs).equals(Arrays.asList(md.getConfigurationsNames()))) {
+                                out.print(" conf=\"");
+                                for (int k = 0; k < dadconfs.length; k++) {
+                                    out.print(dadconfs[k]);
+                                    if (k+1 < dadconfs.length) {
+                                        out.print(",");
+                                    }
+                                }
+                                out.print("\"");
+                            }
+                            out.println("/>");
+                        }
+                    }
+                    DependencyArtifactDescriptor[] excludes = dds[i].getAllDependencyArtifactsExcludes();
+                    if (excludes.length > 0) {
+                        if (includes.length == 0) {
+                            out.println(">");
+                        }
+                        for (int j = 0; j < excludes.length; j++) {
+                            out.print("\t\t\t<exclude");
+                            out.print(" org=\""+excludes[j].getId().getModuleId().getOrganisation()+"\"");
+                            out.print(" module=\""+excludes[j].getId().getModuleId().getName()+"\"");
+                            out.print(" name=\""+excludes[j].getName()+"\"");
+                            out.print(" type=\""+excludes[j].getType()+"\"");
+                            out.print(" ext=\""+excludes[j].getExt()+"\"");
+                            String[] dadconfs = excludes[j].getConfigurations();
+                            if (!Arrays.asList(dadconfs).equals(Arrays.asList(md.getConfigurationsNames()))) {
+                                out.print(" conf=\"");
+                                for (int k = 0; k < dadconfs.length; k++) {
+                                    out.print(dadconfs[k]);
+                                    if (k+1 < dadconfs.length) {
+                                        out.print(",");
+                                    }
+                                }
+                                out.print("\"");
+                            }
+                            out.println("/>");
+                        }
+                    }
+                    if (includes.length + excludes.length == 0) {
+                        out.println("/>");
+                    } else {
+                        out.println("\t\t</dependency>");
+                    }
                 }
                 out.println("\t</dependencies>");
             }
@@ -65,5 +168,29 @@ public class XmlModuleDescriptorWriter {
         } finally {
             out.close();
         }
+    }
+
+    private static Artifact[] getAllArtifacts(ModuleDescriptor md) {
+        Collection arts = new HashSet();
+        String[] confs = md.getConfigurationsNames();
+        for (int i = 0; i < confs.length; i++) {
+            arts.addAll(Arrays.asList(md.getArtifacts(confs[i])));
+        }
+        return (Artifact[])arts.toArray(new Artifact[arts.size()]);
+    }
+
+    private static String getConfs(ModuleDescriptor md, Artifact artifact) {
+        StringBuffer ret = new StringBuffer();
+    
+        String[] confs = md.getConfigurationsNames();
+        for (int i = 0; i < confs.length; i++) {
+            if (Arrays.asList(md.getArtifacts(confs[i])).contains(artifact)) {
+                ret.append(confs[i]).append(",");
+            }
+        }
+        if (ret.length() > 0) {
+            ret.setLength(ret.length() - 1);
+        }
+        return ret.toString();
     }
 }

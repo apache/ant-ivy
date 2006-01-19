@@ -1,0 +1,19 @@
+<ivy-module version="1.0">
+	<info organisation="myorg"
+		module="mymodule"
+		revision="1.0"
+		status="integration"
+		publication="20050913185628"
+	/>
+	<configurations>
+		<conf name="default" visibility="public"/>
+	</configurations>
+	<publications>
+		<artifact name="mymodule" type="jar" ext="jar" conf="default"/>
+	</publications>
+	<dependencies>
+		<dependency org="myorg" name="mod1" rev="1.0" force="false" changing="false" transitive="true" conf="*->*"/>
+		<dependency org="test" name="mod2" rev="2.0" force="false" changing="false" transitive="true" conf="default->default"/>
+		<dependency org="test" name="mod3" rev="2.0" force="false" changing="false" transitive="true" conf="default->*"/>
+	</dependencies>
+</ivy-module>

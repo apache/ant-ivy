@@ -36,17 +36,30 @@ public abstract class AbstractResourceResolver extends BasicResolver {
     
     private List _ivyPatterns = new ArrayList(); // List (String pattern)
     private List _artifactPatterns = new ArrayList();  // List (String pattern)
+    private boolean _m2compatible = false;
 
     
     public AbstractResourceResolver() {
     }
 
     protected ResolvedResource findIvyFileRef(DependencyDescriptor dd, ResolveData data) {
-        return findResourceUsingPatterns(dd.getDependencyRevisionId(), _ivyPatterns, "ivy", "ivy", "xml", data.getDate());
+        ModuleRevisionId mrid = dd.getDependencyRevisionId();
+        if (isM2compatible()) {
+            mrid = convertM2IdForResourceSearch(mrid);
+        }
+        ResolvedResource rres = findResourceUsingPatterns(mrid, _ivyPatterns, "ivy", "ivy", "xml", data.getDate());
+        if (rres == null && isM2compatible()) {
+            rres = findResourceUsingPatterns(mrid, _ivyPatterns, mrid.getName(), "pom", "pom", data.getDate());
+        }
+        return rres;
     }
 
     protected ResolvedResource findArtifactRef(Artifact artifact, Date date) {
-        return findResourceUsingPatterns(artifact.getModuleRevisionId(), _artifactPatterns, artifact.getName(), artifact.getType(), artifact.getExt(), date);
+        ModuleRevisionId mrid = artifact.getModuleRevisionId();
+        if (isM2compatible()) {
+            mrid = convertM2IdForResourceSearch(mrid);
+        }
+        return findResourceUsingPatterns(mrid, _artifactPatterns, artifact.getName(), artifact.getType(), artifact.getExt(), date);
     }
 
     protected ResolvedResource findResourceUsingPatterns(ModuleRevisionId moduleRevision, List patternList, String artifact, String type, String ext, Date date) {
@@ -186,4 +199,20 @@ public abstract class AbstractResourceResolver extends BasicResolver {
             Message.debug("\t\t\t"+p);
         }
     }
+
+    public boolean isM2compatible() {
+        return _m2compatible;
+    }
+
+    public void setM2compatible(boolean m2compatible) {
+        _m2compatible = m2compatible;
+    }
+
+    private ModuleRevisionId convertM2IdForResourceSearch(ModuleRevisionId mrid) {
+        if (mrid.getOrganisation().indexOf('.') == -1) {
+            return mrid;
+        }
+        return ModuleRevisionId.newInstance(mrid.getOrganisation().replace('.', '/'), mrid.getName(), mrid.getRevision());
+    }
+
 }

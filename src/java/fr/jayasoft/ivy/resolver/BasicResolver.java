@@ -66,9 +66,6 @@ public abstract class BasicResolver extends AbstractResolver {
 
     private Boolean _checkmodified = null;
     
-    private boolean _m2compatible = false;
-    
-    
     public BasicResolver() {
         _workspaceName = Ivy.getLocalHostName();
     }
@@ -561,14 +558,6 @@ public abstract class BasicResolver extends AbstractResolver {
     protected abstract void logIvyNotFound(ModuleRevisionId mrid);    
 
     protected abstract void logArtifactNotFound(Artifact artifact);
-
-    public boolean isM2compatible() {
-        return _m2compatible;
-    }
-
-    public void setM2compatible(boolean m2compatible) {
-        _m2compatible = m2compatible;
-    }
 
 
 }

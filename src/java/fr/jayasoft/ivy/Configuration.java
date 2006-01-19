@@ -26,6 +26,9 @@ public class Configuration {
         private Visibility(String name) {
             _name = name;
         }
+        public String toString() {
+            return _name;
+        }
     }
     
     private String _name;

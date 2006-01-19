@@ -1,0 +1,12 @@
+<ivy-module version="1.0">
+	<info organisation="myorg"
+	       module="mymodule"
+	       revision="1.0"
+	       publication="20050913185628"
+	/>
+	<dependencies>
+		<dependency name="mod1" rev="1.0"/>
+		<dependency org="test" name="mod2" rev="2.0" conf="default"/>
+		<dependency org="test" name="mod3" rev="2.0" conf="default->*"/>
+	</dependencies>
+</ivy-module>
