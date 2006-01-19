@@ -1,3 +1,5 @@
+- NEW: maven2 pom compatibility: most resolvers are now able to handle m2 pom as project metadata
+       and there is a new convertpom task able to convert a pom file to an ivy file
 - NEW: import configurations from external file (IVY-88)
 - NEW: a new default resolver which let override ivy files and artifacts found on public repository
        (ivyrep / ibiblio) and let publish modules in a local repository (IVY-132)

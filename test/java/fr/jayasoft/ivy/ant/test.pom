@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<project>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>fr.jayasoft</groupId>
+  <artifactId>test</artifactId>
+  <name>Test Module for Ivy M2 parsing</name>
+  <version>1.0</version>
+  <url>http://ivy.jayasoft.org/</url>
+  <organization>
+    <name>Jayasoft</name>
+    <url>http://www.jayasoft.org/</url>
+  </organization>
+  <dependencies>
+    <dependency>
+      <groupId>commons-logging</groupId>
+      <artifactId>commons-logging</artifactId>
+      <version>1.0.4</version>
+    </dependency>
+    <dependency>
+      <groupId>dom4j</groupId>
+      <artifactId>dom4j</artifactId>
+      <version>1.6</version>
+      <exclusions>
+        <exclusion>
+          <groupId>jaxme</groupId>
+          <artifactId>jaxme-api</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>jaxen</groupId>
+          <artifactId>jaxen</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>cglib</groupId>
+      <artifactId>cglib</artifactId>
+      <version>2.0.2</version>
+    </dependency>
+  </dependencies>
+</project>
