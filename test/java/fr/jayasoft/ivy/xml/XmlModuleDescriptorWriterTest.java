@@ -28,7 +28,7 @@ public class XmlModuleDescriptorWriterTest extends TestCase {
         
         assertTrue(_dest.exists());
         String wrote = FileUtil.readEntirely(new BufferedReader(new FileReader(_dest)));
-        String expected = readEntirely("test-write-simple.xml");
+        String expected = readEntirely("test-write-simple.xml").replaceAll("\r\n", "\n").replace('\r', '\n');
         assertEquals(expected, wrote);
     }
     
@@ -38,7 +38,7 @@ public class XmlModuleDescriptorWriterTest extends TestCase {
         
         assertTrue(_dest.exists());
         String wrote = FileUtil.readEntirely(new BufferedReader(new FileReader(_dest)));
-        String expected = readEntirely("test-write-dependencies.xml");
+        String expected = readEntirely("test-write-dependencies.xml").replaceAll("\r\n", "\n").replace('\r', '\n');
         assertEquals(expected, wrote);
     }
     
@@ -49,14 +49,14 @@ public class XmlModuleDescriptorWriterTest extends TestCase {
         
         assertTrue(_dest.exists());
         String wrote = FileUtil.readEntirely(new BufferedReader(new FileReader(_dest)));
-        String expected = readEntirely("test-write-full.xml");
+        String expected = readEntirely("test-write-full.xml").replaceAll("\r\n", "\n").replace('\r', '\n');
         assertEquals(expected, wrote);
     }
     
     
 
     private String readEntirely(String resource) throws IOException {
-        return FileUtil.readEntirely(new BufferedReader(new InputStreamReader(XmlModuleDescriptorWriterTest.class.getResource(resource).openStream()))).replaceAll("\r\n", System.getProperty("line.separator"));
+        return FileUtil.readEntirely(new BufferedReader(new InputStreamReader(XmlModuleDescriptorWriterTest.class.getResource(resource).openStream()))).replaceAll("\r\n", "\n").replace('\r', '\n');
     }
 
     public void setUp() {

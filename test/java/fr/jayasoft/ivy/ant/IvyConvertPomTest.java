@@ -29,11 +29,11 @@ public class IvyConvertPomTest extends TestCase {
         task.execute();
         
         String wrote = FileUtil.readEntirely(new BufferedReader(new FileReader(destFile)));
-        String expected = readEntirely("test-convertpom.xml");
+        String expected = readEntirely("test-convertpom.xml").replaceAll("\r\n", "\n").replace('\r', '\n');
         assertEquals(expected, wrote);
     }
 
     private String readEntirely(String resource) throws IOException {
-        return FileUtil.readEntirely(new BufferedReader(new InputStreamReader(IvyConvertPomTest.class.getResource(resource).openStream()))).replaceAll("\r\n", System.getProperty("line.separator"));
+        return FileUtil.readEntirely(new BufferedReader(new InputStreamReader(IvyConvertPomTest.class.getResource(resource).openStream()))).replaceAll("\r\n", "\n").replace('\r', '\n');
     }
 }
