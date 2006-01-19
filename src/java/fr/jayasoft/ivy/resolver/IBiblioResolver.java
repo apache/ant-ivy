@@ -32,6 +32,14 @@ public class IBiblioResolver extends URLResolver {
     public IBiblioResolver() {
     }
     
+    public void setM2compatible(boolean m2compatible) {
+        super.setM2compatible(m2compatible);
+        if (m2compatible) {
+            _root = "http://www.ibiblio.org/maven2/";
+            _pattern = "[organisation]/[module]/[revision]/[artifact]-[revision].[ext]";
+        }
+    }
+    
     public void ensureConfigured(Ivy ivy) {
         if (ivy != null && (_root == null || _pattern == null)) {
             if (_root == null) {
@@ -93,6 +101,9 @@ public class IBiblioResolver extends URLResolver {
     }
     
     private void updateWholePattern() {
+        if (isM2compatible()) {
+            setIvyPatterns(Collections.singletonList(getWholePattern()));
+        }
         setArtifactPatterns(Collections.singletonList(getWholePattern()));
     }
     public void publish(Artifact artifact, File src) {

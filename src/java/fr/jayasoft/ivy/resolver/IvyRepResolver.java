@@ -136,10 +136,31 @@ public class IvyRepResolver extends URLResolver {
         updateWholeIvyPattern();
     }
     
+    public void setM2compatible(boolean m2compatible) {
+        super.setM2compatible(m2compatible);
+        if (isM2compatible()) {
+            _artroot = "http://www.ibiblio.org/maven2/";
+            _artpattern = "[organisation]/[module]/[revision]/[artifact]-[revision].[ext]";
+            ensureIvyConfigured(getIvy());
+            updateWholeIvyPattern();
+        }
+    }
+    
     private void updateWholeIvyPattern() {
-        setIvyPatterns(Collections.singletonList(getWholeIvyPattern()));
+        if (isM2compatible()) {
+            List patterns = new ArrayList();
+            patterns.add(getWholeIvyPattern());
+            patterns.add(getWholeArtPattern());
+            setIvyPatterns(patterns);
+        } else {
+            setIvyPatterns(Collections.singletonList(getWholeIvyPattern()));
+        }
     }
     private void updateWholeArtPattern() {
+        if (isM2compatible()) {
+            ensureIvyConfigured(getIvy());
+            updateWholeIvyPattern();
+        }
         setArtifactPatterns(Collections.singletonList(getWholeArtPattern()));
     }
     public void publish(Artifact artifact, File src) {

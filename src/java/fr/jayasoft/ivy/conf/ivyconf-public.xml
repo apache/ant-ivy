@@ -1,5 +1,6 @@
 <ivyconf>
+	<property name="ivy.default.configuration.m2compatible" value="false" overwrite="false"/>
 	<resolvers>
-		<ivyrep name="public"/>
+		<ivyrep name="public" m2compatible="${ivy.default.configuration.m2compatible}"/>
 	</resolvers>
 </ivyconf>
