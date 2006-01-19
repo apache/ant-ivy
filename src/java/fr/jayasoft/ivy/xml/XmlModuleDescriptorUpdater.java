@@ -159,9 +159,9 @@ public class XmlModuleDescriptorUpdater {
                         for (int i=0; i<attributes.getLength(); i++) {
                             out.print(" "+attributes.getQName(i)+"=\""+substitute(ivy, attributes.getValue(i))+"\"");
                         }
-                        // add defaultconf mapping if needed
-                        if (_defaultConfMapping != null && attributes.getValue("defaultconf") == null) {
-                            out.print(" defaultconf=\""+_defaultConfMapping+"\"");
+                        // add default conf mapping if needed
+                        if (_defaultConfMapping != null && attributes.getValue("defaultconfmapping") == null) {
+                            out.print(" defaultconfmapping=\""+_defaultConfMapping+"\"");
                         }
                     } else {
                         // copy

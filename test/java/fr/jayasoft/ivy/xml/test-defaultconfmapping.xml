@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml-stylesheet type="text/xsl" href="http://www.jayasoft.fr/org/ivyrep/ivy-doc.xsl"?>
+<ivy-module version="1.0">
+	<info organisation="myorg"
+	       module="mymodule"
+	       revision="myrev"
+	       status="integration"
+	       publication="20041101110000"/>
+	<configurations>
+		<conf name="default"/>
+		<conf name="test"/>
+	</configurations>
+	<dependencies defaultconfmapping="*->default">
+		<dependency name="mymodule1" rev="1.0"/>
+		<dependency name="mymodule2" rev="2.0" conf="test"/>
+	</dependencies>
+</ivy-module>

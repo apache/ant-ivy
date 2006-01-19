@@ -363,6 +363,32 @@ public class XmlModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         assertEquals(Arrays.asList(new String[] {"default"}), Arrays.asList(dd.getDependencyConfigurations("default")));        
         assertEquals(Arrays.asList(new String[] {"default"}), Arrays.asList(dd.getDependencyConfigurations("test")));        
 
+        // confs def: test: should not use default conf for the right side (use of defaultconfmapping is required for that) => test->test
+        dd = getDependency(dependencies, "mymodule2");
+        assertNotNull(dd);
+        assertEquals("myorg", dd.getDependencyId().getOrganisation());
+        assertEquals("2.0", dd.getDependencyRevisionId().getRevision());
+        assertEquals(Arrays.asList(new String[] {"test"}), Arrays.asList(dd.getModuleConfigurations()));
+        assertEquals(Arrays.asList(new String[] {"test"}), Arrays.asList(dd.getDependencyConfigurations("test")));        
+    }
+    
+    public void testDefaultConfMapping() throws Exception {
+        ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(_ivy, getClass().getResource("test-defaultconfmapping.xml"), true);
+        assertNotNull(md);
+        
+        DependencyDescriptor[] dependencies = md.getDependencies();
+        assertNotNull(dependencies);
+        assertEquals(2, dependencies.length);
+        
+        // no conf def => defaults to defaultConf: *->default
+        DependencyDescriptor dd = getDependency(dependencies, "mymodule1");
+        assertNotNull(dd);
+        assertEquals("myorg", dd.getDependencyId().getOrganisation());
+        assertEquals("1.0", dd.getDependencyRevisionId().getRevision());
+        assertEquals(Arrays.asList(new String[] {"*"}), Arrays.asList(dd.getModuleConfigurations()));
+        assertEquals(Arrays.asList(new String[] {"default"}), Arrays.asList(dd.getDependencyConfigurations("default")));        
+        assertEquals(Arrays.asList(new String[] {"default"}), Arrays.asList(dd.getDependencyConfigurations("test")));        
+
         // confs def: test: should use default conf mapping for the right side => test->default
         dd = getDependency(dependencies, "mymodule2");
         assertNotNull(dd);

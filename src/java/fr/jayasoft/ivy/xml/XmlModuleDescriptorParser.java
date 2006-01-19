@@ -95,7 +95,6 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
     }
 
     private static class Parser extends AbstractParser {
-    private static final String DEFAULT_CONF_MAPPING = "*->*";
 
     private static final Collection ALLOWED_VERSIONS = Arrays.asList(new String[] {"1.0", "1.1", "1.2", "1.3"});
     
@@ -201,7 +200,7 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
                 _md.setHomePage(attributes.getValue("homepage"));
             } else if ("configurations".equals(qName)) {
                 _state = CONF;
-                setDefaultConf(_ivy.substitute(attributes.getValue("defaultconfmapping")));
+                setDefaultConfMapping(_ivy.substitute(attributes.getValue("defaultconfmapping")));
             } else if ("publications".equals(qName)) {
                 _state = PUB;
                 _artifactsDeclared = true;
@@ -211,6 +210,10 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
                 String defaultConf = _ivy.substitute(attributes.getValue("defaultconf"));
                 if (defaultConf != null) {
                     setDefaultConf(defaultConf);
+                }
+                defaultConf = _ivy.substitute(attributes.getValue("defaultconfmapping"));
+                if (defaultConf != null) {
+                    setDefaultConfMapping(defaultConf);
                 }
                 checkConfigurations();
             } else if ("conflicts".equals(qName)) {
@@ -358,9 +361,9 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
                 for (int i = 0; i < configs.length; i++) {
                     _md.addConfiguration(configs[i]);
                 }
-                if (parser.getDefaultConf() != null) {
-                    Message.debug("setting default conf from imported configurations file: "+parser.getDefaultConf());
-                    setDefaultConf(parser.getDefaultConf());
+                if (parser.getDefaultConfMapping() != null) {
+                    Message.debug("setting default conf from imported configurations file: "+parser.getDefaultConfMapping());
+                    setDefaultConfMapping(parser.getDefaultConfMapping());
                 }
             } else if (_validate && _state != INFO) {
                 addError("unknwon tag "+qName);
@@ -433,7 +436,7 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
                 }                
             }
         } else if ("dependency".equals(qName) && _dd.getModuleConfigurations().length == 0) {
-            parseDepsConfs(getDefaultConf() == null ? DEFAULT_CONF_MAPPING : getDefaultConf(), _dd);
+            parseDepsConfs(getDefaultConf(), _dd);
         }
     }
 
