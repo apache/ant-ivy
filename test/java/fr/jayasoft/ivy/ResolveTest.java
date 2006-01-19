@@ -633,7 +633,7 @@ public class ResolveTest extends TestCase {
     }
     
     public void testResolveContradictoryConflictResolution2() throws Exception {
-        // BUG IVY-130 : only mod1.2 v2.0 should resolved and not v2.1 (because of force)
+        // BUG IVY-130 : only mod1.2 v2.0 should be resolved and not v2.1 (because of force)
         // mod10.1 v 1.1 depends on 
         //   - mod1.2 v 2.0 and forces it 
         //   - mod4.1 v 4.3
@@ -649,6 +649,22 @@ public class ResolveTest extends TestCase {
 
         assertFalse(_ivy.getIvyFileInCache(_cache, ModuleRevisionId.newInstance("org1", "mod1.2", "2.1")).exists());
         assertFalse(_ivy.getArchiveFileInCache(_cache, "org1", "mod1.2", "2.1", "mod1.2", "jar", "jar").exists());
+    }
+    
+    public void testResolveContradictoryConflictResolution3() throws Exception {
+        // mod 1.2 v2.0 should be selected (despite conflict manager in 4.1, because of force in 10.1)
+        // mod10.1 v 1.3 depends on 
+        //   - mod1.2 v 2.0 and forces it
+        //   - mod4.1 v 4.4
+        // mod4.1 v 4.4 depends on 
+        //   - mod1.2 v 2.0 but selects mod1.2 v 2.1
+        //   - mod3.1 v 1.1 which depends on mod1.2 v 2.1
+        ResolveReport report = _ivy.resolve(new File("test/repositories/2/mod10.1/ivy-1.3.xml").toURL(),
+                null, new String[] {"*"}, _cache, null, true);
+        
+        IvyNode[] evicted = report.getConfigurationReport("default").getEvictedNodes();
+        assertEquals(1, evicted.length);
+        assertEquals(ModuleRevisionId.newInstance("org1", "mod1.2", "2.1"), evicted[0].getResolvedId());
     }
     
     public void testExtends() throws Exception {

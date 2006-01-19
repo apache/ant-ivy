@@ -1007,6 +1007,103 @@ public class Ivy implements TransferListener {
         if (parent == null || node == parent) {
             return;
         }
+        // check if job is not already done
+        if (checkConflictSolved(node, parent)) {
+            return;
+        }
+        
+        // compute conflicts
+        Collection resolvedNodes = new HashSet(parent.getResolvedNodes(node.getModuleId(), node.getRootModuleConf()));
+        Collection conflicts = computeConflicts(node, parent, toevict, resolvedNodes);
+        
+        Collection resolved = parent.getConflictManager(node.getModuleId()).resolveConflicts(parent, conflicts);
+        if (resolved.contains(node)) {
+            // node has been selected for the current parent
+            // we update its eviction... but it can still be evicted by parent !
+            node.markSelected(node.getRootModuleConf());
+            Message.debug("selecting "+node+" in "+parent);
+            
+            // handle previously selected nodes that are now evicted by this new node
+            toevict = resolvedNodes;
+            toevict.removeAll(resolved);
+            
+            for (Iterator iter = toevict.iterator(); iter.hasNext();) {
+                IvyNode te = (IvyNode)iter.next();
+                te.markEvicted(node.getRootModuleConf(), parent, parent.getConflictManager(node.getModuleId()), resolved);
+                
+                Message.debug("evicting "+te+" by "+te.getEvictedData(node.getRootModuleConf()));
+            }
+            
+            // it's very important to update resolved and evicted nodes BEFORE recompute parent call
+            // to allow it to recompute its resolved collection with correct data
+            // if necessary            
+            parent.setResolvedNodes(node.getModuleId(), node.getRootModuleConf(), resolved); 
+
+            Collection evicted = new HashSet(parent.getEvictedNodes(node.getModuleId(), node.getRootModuleConf()));
+            evicted.removeAll(resolved);
+            evicted.addAll(toevict);
+            parent.setEvictedNodes(node.getModuleId(), node.getRootModuleConf(), evicted);
+            
+            resolveConflict(node, parent.getParent(), toevict);
+        } else {
+            // node has been evicted for the current parent
+            
+            // first we mark the selected nodes as selected if it isn't already the case
+            for (Iterator iter = resolved.iterator(); iter.hasNext();) {
+                IvyNode selected = (IvyNode)iter.next();
+                if (selected.isEvicted(node.getRootModuleConf())) {
+                    selected.markSelected(node.getRootModuleConf());
+                    Message.debug("selecting "+selected+" in "+parent);
+                }
+            }
+            
+            // it's time to update parent resolved and evicted with what was found...
+            // if they have not been recomputed, it does not change anything
+            parent.setResolvedNodes(node.getModuleId(), node.getRootModuleConf(), resolved); 
+
+            Collection evicted = new HashSet(parent.getEvictedNodes(node.getModuleId(), node.getRootModuleConf()));
+            evicted.removeAll(resolved);
+            evicted.addAll(toevict);
+            evicted.add(node);
+            parent.setEvictedNodes(node.getModuleId(), node.getRootModuleConf(), evicted);
+
+            
+            node.markEvicted(node.getRootModuleConf(), parent, parent.getConflictManager(node.getModuleId()), resolved);
+            Message.debug("evicting "+node+" by "+node.getEvictedData(node.getRootModuleConf()));
+        }
+    }
+
+    private Collection computeConflicts(IvyNode node, IvyNode parent, Collection toevict, Collection resolvedNodes) {
+        Collection conflicts = new HashSet();
+        if (resolvedNodes.removeAll(toevict)) {
+            // parent.resolved(node.mid) is not up to date:
+            // recompute resolved from all sub nodes
+            conflicts.add(node);
+            Collection deps = parent.getDependencies(parent.getRequiredConfigurations());
+            for (Iterator iter = deps.iterator(); iter.hasNext();) {
+                IvyNode dep = (IvyNode)iter.next();
+                conflicts.addAll(dep.getResolvedNodes(node.getModuleId(), node.getRootModuleConf()));
+            }
+        } else if (resolvedNodes.isEmpty() && node.getParent() != parent) {
+            conflicts.add(node);
+            DependencyDescriptor[] dds = parent.getDescriptor().getDependencies();
+            for (int i = 0; i < dds.length; i++) {
+                if (dds[i].getDependencyId().equals(node.getModuleId())) {
+                    IvyNode n = node.findNode(dds[i].getDependencyRevisionId());
+                    if (n != null) {
+                        conflicts.add(n);
+                        break;
+                    }
+                }
+            }
+        } else {
+            conflicts.add(node);
+            conflicts.addAll(resolvedNodes);
+        }
+        return conflicts;
+    }
+
+    private boolean checkConflictSolved(IvyNode node, IvyNode parent) {
         if (parent.getResolvedRevisions(node.getModuleId(), node.getRootModuleConf()).contains(node.getResolvedId())) {
             // resolve conflict has already be done with node with the same id
             // => job already done, we just have to check if the node wasn't previously evicted in root ancestor
@@ -1027,64 +1124,20 @@ public class Ivy implements TransferListener {
                 node.markEvicted(evictionData);                
                 Message.debug("evicting "+node+" by "+evictionData);                
             }
-            return;
-        }
-        Collection conflicts = new HashSet();
-        Collection resolvedNodes = new HashSet(parent.getResolvedNodes(node.getModuleId(), node.getRootModuleConf()));
-        if (resolvedNodes.removeAll(toevict)) {
-            // parent.resolved(node.mid) is not up to date:
-            // recompute resolved from all sub nodes
-            Collection deps = parent.getDependencies(parent.getRequiredConfigurations());
-            for (Iterator iter = deps.iterator(); iter.hasNext();) {
-                IvyNode dep = (IvyNode)iter.next();
-                conflicts.addAll(dep.getResolvedNodes(node.getModuleId(), node.getRootModuleConf()));
+            return true;
+        } else if (parent.getEvictedRevisions(node.getModuleId(), node.getRootModuleConf()).contains(node.getResolvedId())) {
+            // resolve conflict has already be done with node with the same id
+            // => job already done, we just have to check if the node wasn't previously selected in root ancestor
+            EvictionData evictionData = node.getEvictionDataInRoot(node.getRootModuleConf(), parent);
+            if (evictionData == null) {
+                // node was selected in the root, we have to select it
+
+                node.markSelected(node.getRootModuleConf());            
+                Message.debug("selecting "+node+" in "+parent);
             }
-        } else {
-            conflicts.add(node);
-            conflicts.addAll(resolvedNodes);
+            return true;
         }
-        Collection resolved = parent.getConflictManager(node.getModuleId()).resolveConflicts(parent, conflicts);
-        if (resolved.contains(node)) {
-            // node has been selected for the current parent
-            // we update its eviction... but it can still be evicted by parent !
-            node.markSelected(node.getRootModuleConf());
-            Message.debug("selecting "+node+" in "+parent);
-            
-            // handle previously selected nodes that are now evicted by this new node
-            toevict = resolvedNodes;
-            toevict.removeAll(resolved);
-            
-            for (Iterator iter = toevict.iterator(); iter.hasNext();) {
-                IvyNode te = (IvyNode)iter.next();
-                te.markEvicted(node.getRootModuleConf(), parent, parent.getConflictManager(node.getModuleId()), resolved);
-                
-                Message.debug("evicting "+te+" by "+te.getEvictedData(node.getRootModuleConf()));
-            }
-            
-            // it's very important to update resolved BEFORE recompute parent call
-            // to allow it to recompute its resolved collection with correct data
-            // if necessary
-            parent.setResolvedNodes(node.getModuleId(), node.getRootModuleConf(), resolved); 
-            resolveConflict(node, parent.getParent(), toevict);
-        } else {
-            // node has been evicted for the current parent
-            
-            // first we mark the selected nodes as selected if it isn't already the case
-            for (Iterator iter = resolved.iterator(); iter.hasNext();) {
-                IvyNode selected = (IvyNode)iter.next();
-                if (selected.isEvicted(node.getRootModuleConf())) {
-                    selected.markSelected(node.getRootModuleConf());
-                    Message.debug("selecting "+selected+" in "+parent);
-                }
-            }
-            
-            // it's time to update parent resolved with found resolved...
-            // if they have not been recomputed, it does not change anything
-            parent.setResolvedNodes(node.getModuleId(), node.getRootModuleConf(), resolved); 
-            
-            node.markEvicted(node.getRootModuleConf(), parent, parent.getConflictManager(node.getModuleId()), resolved);
-            Message.debug("evicting "+node+" by "+node.getEvictedData(node.getRootModuleConf()));
-        }
+        return false;
     }
 
     public ResolvedModuleRevision findModuleInCache(ModuleRevisionId mrid, File cache, boolean validate) {

@@ -190,8 +190,10 @@ public class IvyNode {
     private String _parentConf = null;
     private String _rootModuleConf;
 
-    private Map _selected = new HashMap(); // Map (ModuleIdConf -> Set(Node))
-    private Map _evicted = new HashMap(); // Map (root module conf -> EvictionData)
+    private Map _selectedDeps = new HashMap(); // Map (ModuleIdConf -> Set(Node)) // map indicating for each dependency which revision has been selected
+    private Map _evictedDeps = new HashMap(); // Map (ModuleIdConf -> Set(Node)) // map indicating for each dependency which revision has been evicted
+    
+    private Map _evicted = new HashMap(); // Map (root module conf -> EvictionData) // indicates if the node is evicted in each root module conf
 
     // Map (String rootModuleConf -> Map (ModuleRevisionId -> Caller)): key in second map is used to easily get a caller by its mrid
     private Map _callersByRootConf = new HashMap(); 
@@ -272,7 +274,7 @@ public class IvyNode {
     }
     
     public Collection getResolvedNodes(ModuleId mid, String rootModuleConf) {
-        Collection resolved = (Collection)_selected.get(new ModuleIdConf(mid, rootModuleConf));
+        Collection resolved = (Collection)_selectedDeps.get(new ModuleIdConf(mid, rootModuleConf));
         Set ret = new HashSet();
         if (resolved != null) {
             for (Iterator iter = resolved.iterator(); iter.hasNext();) {
@@ -283,7 +285,7 @@ public class IvyNode {
         return ret;
     }
     public Collection getResolvedRevisions(ModuleId mid, String rootModuleConf) {
-        Collection resolved = (Collection)_selected.get(new ModuleIdConf(mid, rootModuleConf));
+        Collection resolved = (Collection)_selectedDeps.get(new ModuleIdConf(mid, rootModuleConf));
         if (resolved == null) {
             return new HashSet();
         } else {
@@ -297,7 +299,36 @@ public class IvyNode {
     }
 
     public void setResolvedNodes(ModuleId moduleId, String rootModuleConf, Collection resolved) {
-        _selected.put(new ModuleIdConf(moduleId, rootModuleConf), new HashSet(resolved));
+        _selectedDeps.put(new ModuleIdConf(moduleId, rootModuleConf), new HashSet(resolved));
+    }
+    
+    public Collection getEvictedNodes(ModuleId mid, String rootModuleConf) {
+        Collection resolved = (Collection)_evictedDeps.get(new ModuleIdConf(mid, rootModuleConf));
+        Set ret = new HashSet();
+        if (resolved != null) {
+            for (Iterator iter = resolved.iterator(); iter.hasNext();) {
+                IvyNode node = (IvyNode)iter.next();
+                ret.add(node.getRealNode());
+            }
+        }
+        return ret;
+    }
+    public Collection getEvictedRevisions(ModuleId mid, String rootModuleConf) {
+        Collection resolved = (Collection)_evictedDeps.get(new ModuleIdConf(mid, rootModuleConf));
+        if (resolved == null) {
+            return new HashSet();
+        } else {
+            Collection ret = new HashSet();
+            for (Iterator iter = resolved.iterator(); iter.hasNext();) {
+                IvyNode node = (IvyNode)iter.next();
+                ret.add(node.getRealNode().getResolvedId());
+            }
+            return ret;
+        }
+    }
+
+    public void setEvictedNodes(ModuleId moduleId, String rootModuleConf, Collection evicted) {
+        _evictedDeps.put(new ModuleIdConf(moduleId, rootModuleConf), new HashSet(evicted));
     }
     
 
@@ -1094,7 +1125,7 @@ public class IvyNode {
             _confsToFetch.clear(); // we change of root module conf => we discard all confs to fetch
         }
         if (rootModuleConf != null && rootModuleConf.equals(_rootModuleConf)) {
-            _selected.put(new ModuleIdConf(_id.getModuleId(), rootModuleConf), Collections.singleton(this));
+            _selectedDeps.put(new ModuleIdConf(_id.getModuleId(), rootModuleConf), Collections.singleton(this));
         }
         _rootModuleConf = rootModuleConf;
     }
@@ -1136,7 +1167,7 @@ public class IvyNode {
             }
         }
         // we didn't find this mrid in the selected ones for the root: it has been previously evicted
-        return new EvictionData(rootModuleConf, this, root.getConflictManager(getModuleId()), selectedNodes);
+        return new EvictionData(rootModuleConf, parent, root.getConflictManager(getModuleId()), selectedNodes);
     }
 
     public static IvyNode getRoot(IvyNode parent) {
@@ -1145,6 +1176,10 @@ public class IvyNode {
             root = root.getParent();
         }
         return root;
+    }
+
+    public IvyNode findNode(ModuleRevisionId mrid) {
+        return _data.getNode(mrid);
     }
 
 }
