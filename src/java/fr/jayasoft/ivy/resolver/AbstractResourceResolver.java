@@ -188,13 +188,14 @@ public abstract class AbstractResourceResolver extends BasicResolver {
     
     public void dumpConfig() {
         super.dumpConfig();
+        Message.debug("\t\tm2compatible: "+isM2compatible());
         Message.debug("\t\tivy patterns:");
-        for (ListIterator iter = _ivyPatterns.listIterator(); iter.hasNext();) {
+        for (ListIterator iter = getIvyPatterns().listIterator(); iter.hasNext();) {
             String p = (String)iter.next();
             Message.debug("\t\t\t"+p);
         }
         Message.debug("\t\tartifact patterns:");
-        for (ListIterator iter = _artifactPatterns.listIterator(); iter.hasNext();) {
+        for (ListIterator iter = getArtifactPatterns().listIterator(); iter.hasNext();) {
             String p = (String)iter.next();
             Message.debug("\t\t\t"+p);
         }

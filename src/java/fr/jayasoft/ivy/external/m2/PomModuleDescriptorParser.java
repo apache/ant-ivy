@@ -41,6 +41,7 @@ import fr.jayasoft.ivy.xml.XmlModuleDescriptorWriter;
 
 public class PomModuleDescriptorParser extends AbstractModuleDescriptorParser {
     public static final Configuration[] MAVEN2_CONFIGURATIONS = new Configuration[] {
+        new Configuration("default", Visibility.PUBLIC, "runtime dependencies and master artifact can be used with this conf", new String[] {"runtime", "master"}),
         new Configuration("master", Visibility.PUBLIC, "contains only the artifact published by this module itself, with no transitive dependencies", new String[0]),
         new Configuration("compile", Visibility.PUBLIC, "this is the default scope, used if none is specified. Compile dependencies are available in all classpaths.", new String[0]),
         new Configuration("provided", Visibility.PUBLIC, "this is much like compile, but indicates you expect the JDK or a container to provide it. It is only available on the compilation classpath, and is not transitive.", new String[0]),

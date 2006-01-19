@@ -90,7 +90,7 @@ public class ChainResolver extends AbstractResolver {
     }
     
     private ResolvedModuleRevision resolvedRevision(ResolvedModuleRevision mr) {
-        if (isDual()) {
+        if (isDual() && mr != null) {
             return new ResolvedModuleRevisionProxy(mr, this);
         } else {
             return mr;

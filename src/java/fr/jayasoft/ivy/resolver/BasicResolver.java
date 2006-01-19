@@ -253,7 +253,7 @@ public abstract class BasicResolver extends AbstractResolver {
                 boolean deleteOldArtifacts = false;
                 if (cachedPublicationDate != null && !cachedPublicationDate.equals(md.getResolvedPublicationDate())) {
                     // artifacts have changed, they should be downloaded again
-                    Message.verbose("dependency "+dd+" has changed: deleting old artifacts");
+                    Message.verbose(dd+" has changed: deleting old artifacts");
                     deleteOldArtifacts = true;
                 }
                 if (deleteOldArtifacts) {
@@ -269,7 +269,7 @@ public abstract class BasicResolver extends AbstractResolver {
                         }
                     }
                 } else if (dd.isChanging()){
-                    Message.verbose("dependency "+dd+" is changing, but has not changed: will trust cached artifacts if any");
+                    Message.verbose(dd+" is changing, but has not changed: will trust cached artifacts if any");
                 } 
             } catch (IOException ex) {
                 Message.warn("io problem while parsing ivy file: "+ivyRef.getResource()+": "+ex.getMessage());
@@ -340,6 +340,7 @@ public abstract class BasicResolver extends AbstractResolver {
 
     protected void clearIvyAttempts() {
         _ivyattempts.clear();
+        clearArtifactAttempts();
     }
 
     protected ResolvedModuleRevision searchedRmr(final ResolvedModuleRevision rmr) {

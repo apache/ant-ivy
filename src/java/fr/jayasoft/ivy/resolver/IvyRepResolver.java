@@ -98,6 +98,9 @@ public class IvyRepResolver extends URLResolver {
     }
 
     private String getWholeIvyPattern() {
+        if (_ivyroot == null || _ivypattern == null) {
+            return null;
+        }
         return _ivyroot + _ivypattern;
     }    
     private String getWholeArtPattern() {
@@ -142,15 +145,19 @@ public class IvyRepResolver extends URLResolver {
             _artroot = "http://www.ibiblio.org/maven2/";
             _artpattern = "[organisation]/[module]/[revision]/[artifact]-[revision].[ext]";
             ensureIvyConfigured(getIvy());
-            updateWholeIvyPattern();
+            updateWholeArtPattern();
         }
     }
     
     private void updateWholeIvyPattern() {
         if (isM2compatible()) {
             List patterns = new ArrayList();
-            patterns.add(getWholeIvyPattern());
-            patterns.add(getWholeArtPattern());
+            if (getWholeIvyPattern() != null) {
+                patterns.add(getWholeIvyPattern());
+            }
+            if (getWholeArtPattern() != null) {
+                patterns.add(getWholeArtPattern());
+            }
             setIvyPatterns(patterns);
         } else {
             setIvyPatterns(Collections.singletonList(getWholeIvyPattern()));

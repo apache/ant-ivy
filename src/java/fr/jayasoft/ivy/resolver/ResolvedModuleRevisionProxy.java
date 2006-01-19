@@ -17,6 +17,12 @@ public final class ResolvedModuleRevisionProxy implements ResolvedModuleRevision
     DependencyResolver _resolver;
 
     public ResolvedModuleRevisionProxy(ResolvedModuleRevision mr, DependencyResolver resolver) {
+        if (mr == null) {
+            throw new NullPointerException("null module revision not allowed");
+        }
+        if (resolver == null) {
+            throw new NullPointerException("null resolver not allowed");
+        }
         _mr = mr;
         _resolver = resolver;
     }

@@ -251,6 +251,8 @@ public class Ivy implements TransferListener {
         Message.info(":: configuring :: file = "+configurationFile);
         long start = System.currentTimeMillis();
         setConfigurationVariables(configurationFile);
+        getDefaultIvyUserDir();
+        getDefaultCache();
         
         try {
             new XmlIvyConfigurationParser(this).parse(configurationFile.toURL());
@@ -268,6 +270,8 @@ public class Ivy implements TransferListener {
         Message.info(":: configuring :: url = "+configurationURL);
         long start = System.currentTimeMillis();
         setConfigurationVariables(configurationURL);
+        getDefaultIvyUserDir();
+        getDefaultCache();
         
         new XmlIvyConfigurationParser(this).parse(configurationURL);
         setVariable("ivy.default.ivy.user.dir", getDefaultIvyUserDir().getAbsolutePath(), false);
@@ -463,11 +467,16 @@ public class Ivy implements TransferListener {
     
     public File getDefaultIvyUserDir() {
         if (_defaultUserDir==null) {
-            _defaultUserDir = new File(System.getProperty("user.home"), ".ivy");
+            setDefaultIvyUserDir(new File(System.getProperty("user.home"), ".ivy"));
             Message.verbose("no default ivy user dir defined: set to "+_defaultUserDir);
         }
         return _defaultUserDir;
     }
+    
+    public void setDefaultIvyUserDir(File defaultUserDir) {
+        _defaultUserDir = defaultUserDir;
+        setVariable("ivy.default.ivy.user.dir", _defaultUserDir.getAbsolutePath());
+    }    
 
     public File getDefaultCache() {
         if (_defaultCache==null) {
@@ -941,6 +950,13 @@ public class Ivy implements TransferListener {
 
     private void doFetchDependencies(IvyNode node, String conf) {
         Configuration c = node.getConfiguration(conf);
+        if (c == null) {
+            Message.warn("unknown configuration '"+conf+"' in "+node.getResolvedId()+": ignoring");
+            if (node.getParent() != null) {
+                Message.warn("it was asked from "+node.getParent().getResolvedId());
+            }
+            return;
+        }
         // we handle the case where the asked configuration extends others:
         // we have to first fetch the extended configurations
         String[] extendedConfs = c.getExtends();
