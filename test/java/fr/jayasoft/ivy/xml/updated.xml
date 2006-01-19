@@ -33,7 +33,7 @@
 			<conf name="myconf3"/>
 		</artifact>
 	</publications>
-	<dependencies defaultconf="*->@">
+	<dependencies defaultconfmapping="*->@">
 		<dependency name="mymodule2" rev="2.0"/>
 		<dependency name="mymodule3" rev="2.0" changing="true" transitive="false"/>
 		<dependency org="yourorg" name="yourmodule1" rev="1.1" conf="myconf1"/>
