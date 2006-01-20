@@ -506,7 +506,10 @@ public class IvyNode {
                         _data.getIvy().saveResolver(_data.getCache(), _module.getDescriptor(), resolver.getName());
                         if (_data.getIvy().logModuleWhenFound()) {
                             Message.info("\tfound "+_module.getId()+" in "+_module.getResolver().getName());
+                        } else {
+                            Message.verbose("\tfound "+_module.getId()+" in "+_module.getResolver().getName());
                         }
+                        
                         if (!getId().isExactRevision()) {
                             // IVY-56: check if revision has actually been resolved
                             if (!_module.getId().isExactRevision()) {
@@ -548,8 +551,12 @@ public class IvyNode {
                     return false;
                 } else {
                     loaded = true;
-                    if (!getId().isExactRevision() && _data.getIvy().logResolvedRevision()) {                
-                        Message.info("\t["+_module.getId().getRevision()+"] "+getId());
+                    if (!getId().isExactRevision()) {
+                        if (_data.getIvy().logResolvedRevision()) {
+                            Message.info("\t["+_module.getId().getRevision()+"] "+getId());
+                        } else {
+                            Message.verbose("\t["+_module.getId().getRevision()+"] "+getId());
+                        }
                     }
                     _md = _module.getDescriptor();
                     // if the revision was a latest one (which has now be resolved)
