@@ -12,6 +12,7 @@
 - NEW: overwrite attribute in the publish task now let force overwrite of read only files (IVY-83) 
 - NEW: add a conflict manager ("strict") making build fail when a diamond conflict is found (thanks to Christer Jonsson) (IVY-118) 
 
+- IMPROVE: generate xml report using ivy:report task (IVY-143)
 - IMPROVE: possibility to configure ivy so that special revisions are not queried as fixed one at all (IVY-139)
 - IMPROVE: better url querying management (IVY-138) (thanks to Bernard Niset)
 - IMPROVE: do not add resolver info in ivy files in cache so that they can be safely used as usual ivy files in a repository (IVY-137)

@@ -25,6 +25,8 @@ public class IvyReport extends IvyTask {
     private String _conf;
     private File _cache;
     private boolean _graph = true;
+    private boolean _xml = false;
+    private boolean _xsl = true;
     private String _xslFile;
     private String _outputpattern;
 
@@ -120,7 +122,12 @@ public class IvyReport extends IvyTask {
         try {
             String[] confs = splitConfs(_conf);
             for (int i = 0; i < confs.length; i++) {
-                genreport(ivy, _cache, _organisation, _module, confs[i]);
+                if (_xsl) {
+                    genreport(ivy, _cache, _organisation, _module, confs[i]);
+                }
+                if (_xml) {
+                    genxml(ivy, _cache, _organisation, _module, confs[i]);
+                }
                 if (_graph) {
                     gengraph(ivy, _cache, _organisation, _module, confs[i]);
                 }
@@ -130,6 +137,18 @@ public class IvyReport extends IvyTask {
         }
     }
     
+    private void genxml(Ivy ivy, File cache, String organisation, String module, String conf) throws IOException {
+        File xml = new File(cache, XmlReportOutputter.getReportFileName(new ModuleId(organisation, module), conf));
+
+        File out;
+        if (_todir != null) {
+            out = new File(_todir, xml.getName());
+        } else {
+            out = new File(xml.getName());
+        }
+        
+        FileUtil.copy(xml, out, null);
+    }
     private void genreport(Ivy ivy, File cache, String organisation, String module, String conf) throws IOException {        
         // first process the report with xslt
         XSLTProcess xslt = new XSLTProcess();
@@ -204,6 +223,18 @@ public class IvyReport extends IvyTask {
         File style = new File(cache, "ivy-report-graph.xsl");
         FileUtil.copy(XmlReportOutputter.class.getResourceAsStream("ivy-report-graph.xsl"), style, null);
         return style.getAbsolutePath();
+    }
+    protected boolean isXml() {
+        return _xml;
+    }
+    protected void setXml(boolean xml) {
+        _xml = xml;
+    }
+    protected boolean isXsl() {
+        return _xsl;
+    }
+    protected void setXsl(boolean xsl) {
+        _xsl = xsl;
     }
     
     
