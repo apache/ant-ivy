@@ -674,6 +674,7 @@ public class Ivy implements TransferListener {
         if (useCacheOnly) {
             setDictatorResolver(new CacheResolver(this));
         }
+        
         URLResource res = new URLResource(ivySource);
         ModuleDescriptorParser parser = ModuleDescriptorParserRegistry.getInstance().getParser(res);
         try {
@@ -1922,6 +1923,11 @@ public class Ivy implements TransferListener {
 
     public boolean logModuleWhenFound() {
         String var = getVariable("ivy.log.module.when.found");
+        return var == null || Boolean.valueOf(var).booleanValue();
+    }
+
+    public boolean logResolvedRevision() {
+        String var = getVariable("ivy.log.resolved.revision");
         return var == null || Boolean.valueOf(var).booleanValue();
     }
 

@@ -493,6 +493,12 @@ public class IvyNode {
             markRootModuleConfLoaded();
             if (_md == null) {
                 DependencyResolver resolver = _data.getIvy().getResolver(getModuleId());
+                if (resolver == null) {
+                    Message.error("no resolver found for "+getModuleId()+": check your configuration");
+                    _problem = new RuntimeException("no resolver found for "+getModuleId()+": check your configuration");
+                    _data.getReport().addDependency(this);
+                    return false;
+                }
                 try {
                     Message.debug("\tusing "+resolver+" to resolve "+getId());
                     _module = resolver.getDependency(_dd, _data);
@@ -542,7 +548,7 @@ public class IvyNode {
                     return false;
                 } else {
                     loaded = true;
-                    if (!getId().isExactRevision()) {                
+                    if (!getId().isExactRevision() && _data.getIvy().logResolvedRevision()) {                
                         Message.info("\t["+_module.getId().getRevision()+"] "+getId());
                     }
                     _md = _module.getDescriptor();
