@@ -1164,6 +1164,27 @@ public class ResolveTest extends TestCase {
         assertTrue(_ivy.getArchiveFileInCache(_cache, "org5", "mod5.1", "4.0", "art51B", "jar", "jar").exists());
     }
     
+    public void testResolveFallbackConfiguration3() throws Exception {
+        // mod10.2 depends on mod5.1 conf runtime(*),compile(*)
+        ResolveReport report = _ivy.resolve(new File("test/repositories/2/mod10.2/ivy-1.2.xml").toURL(),
+                null, new String[] {"*"}, _cache, null, true);
+        ModuleDescriptor md = report.getModuleDescriptor();
+        
+        assertTrue(_ivy.getArchiveFileInCache(_cache, "org5", "mod5.1", "4.0", "art51A", "jar", "jar").exists());
+        assertTrue(_ivy.getArchiveFileInCache(_cache, "org5", "mod5.1", "4.0", "art51B", "jar", "jar").exists());
+    }
+    
+    public void testResolveFallbackConfiguration4() throws Exception {
+        // mod10.2 depends on mod5.1 conf runtime()
+        ResolveReport report = _ivy.resolve(new File("test/repositories/2/mod10.2/ivy-1.3.xml").toURL(),
+                null, new String[] {"*"}, _cache, null, true);
+        assertFalse(report.hasError());
+        ModuleDescriptor md = report.getModuleDescriptor();
+        
+        assertFalse(_ivy.getArchiveFileInCache(_cache, "org5", "mod5.1", "4.0", "art51A", "jar", "jar").exists());
+        assertFalse(_ivy.getArchiveFileInCache(_cache, "org5", "mod5.1", "4.0", "art51B", "jar", "jar").exists());
+    }
+    
     public void testResolveMaven2() throws Exception {
         // test3 depends on test2 which depends on test
         Ivy ivy = new Ivy();

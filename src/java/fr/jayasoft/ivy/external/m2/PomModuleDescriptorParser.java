@@ -53,11 +53,11 @@ public class PomModuleDescriptorParser extends AbstractModuleDescriptorParser {
     private static final Map MAVEN2_CONF_MAPPING = new HashMap();
     
     static {
-        MAVEN2_CONF_MAPPING.put("compile", "compile->@,master;runtime->@");
-        MAVEN2_CONF_MAPPING.put("provided", "provided->compile,provided,runtime,master");
-        MAVEN2_CONF_MAPPING.put("runtime", "runtime->compile,runtime,master");
-        MAVEN2_CONF_MAPPING.put("test", "test->compile,runtime,master");
-        MAVEN2_CONF_MAPPING.put("system", "system->master");
+        MAVEN2_CONF_MAPPING.put("compile", "compile->@(*),master(*);runtime->@(*)");
+        MAVEN2_CONF_MAPPING.put("provided", "provided->compile(*),provided(*),runtime(*),master(*)");
+        MAVEN2_CONF_MAPPING.put("runtime", "runtime->compile(*),runtime(*),master(*)");
+        MAVEN2_CONF_MAPPING.put("test", "test->compile(*),runtime(*),master(*)");
+        MAVEN2_CONF_MAPPING.put("system", "system->master(*)");
     }
     
     private static final class Parser extends AbstractParser {

@@ -24,6 +24,8 @@ import fr.jayasoft.ivy.filter.FilterHelper;
 import fr.jayasoft.ivy.util.Message;
 
 public class IvyNode {
+    private static final Pattern FALLBACK_CONF_PATTERN = Pattern.compile("(.+)\\((.*)\\)");
+
     public static class EvictionData {
         private IvyNode _node; // can be null in case of transitive eviction
         private ConflictManager _conflictManager; // can be null in case of transitive eviction
@@ -622,8 +624,7 @@ public class IvyNode {
     }
 
     private String getDefaultConf(String conf) {
-        Pattern p = Pattern.compile("(.+)\\((.+)\\)");
-        Matcher m = p.matcher(conf);
+        Matcher m = FALLBACK_CONF_PATTERN.matcher(conf);
         if (m.matches()) {
             return m.group(2);
         } else {
@@ -632,8 +633,7 @@ public class IvyNode {
     }
 
     private String getMainConf(String conf) {
-        Pattern p = Pattern.compile("(.+)\\((.+)\\)");
-        Matcher m = p.matcher(conf);
+        Matcher m = FALLBACK_CONF_PATTERN.matcher(conf);
         if (m.matches()) {
             return m.group(1);
         } else {
@@ -1240,6 +1240,9 @@ public class IvyNode {
         String defaultConf = getDefaultConf(conf);
         conf = getMainConf(conf);
         if (_md.getConfiguration(conf) == null) {
+            if ("".equals(defaultConf)) {
+                return new String[0];
+            }
             conf = defaultConf;
         }
         if ("*".equals(conf)) {
