@@ -15,8 +15,6 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.net.UnknownHostException;
 
-import org.apache.commons.httpclient.HttpStatus;
-
 import fr.jayasoft.ivy.util.CopyProgressListener;
 import fr.jayasoft.ivy.util.FileUtil;
 import fr.jayasoft.ivy.util.Message;
@@ -26,6 +24,10 @@ import fr.jayasoft.ivy.util.Message;
  *
  */
 public class BasicURLHandler extends AbstractURLHandler {
+    private static interface HttpStatus {
+        static final int SC_OK = 200;
+        static final int SC_PROXY_AUTHENTICATION_REQUIRED = 407;
+    }
     public URLInfo getURLInfo(URL url) {
         return getURLInfo(url, 0);
     }

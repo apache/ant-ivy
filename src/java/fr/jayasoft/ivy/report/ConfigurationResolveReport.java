@@ -76,7 +76,7 @@ public class ConfigurationResolveReport {
      */
     public Set getModuleRevisionIds() {
 		Set mrids = new HashSet();
-		for (Iterator iter = _dependencies.values().iterator(); iter.hasNext();) {
+		for (Iterator iter = getDependencies().iterator(); iter.hasNext();) {
 			IvyNode node = (IvyNode) iter.next();
             if (!node.isEvicted(getConfiguration()) && !node.hasProblem()) {
                 mrids.add(node.getResolvedId());
@@ -119,7 +119,7 @@ public class ConfigurationResolveReport {
 	}
 	public IvyNode[] getUnresolvedDependencies() {
         List unresolved = new ArrayList();
-        for (Iterator iter = _dependencies.values().iterator(); iter.hasNext();) {
+        for (Iterator iter = getDependencies().iterator(); iter.hasNext();) {
             IvyNode node = (IvyNode)iter.next();
             if (node.hasProblem()) {
                 unresolved.add(node);
@@ -127,9 +127,13 @@ public class ConfigurationResolveReport {
         }
 		return (IvyNode[])unresolved.toArray(new IvyNode[unresolved.size()]);
 	}
+
+    private Collection getDependencies() {
+        return new HashSet(_dependencies.values());
+    }
     public IvyNode[] getEvictedNodes() {
         List evicted = new ArrayList();
-        for (Iterator iter = _dependencies.values().iterator(); iter.hasNext();) {
+        for (Iterator iter = getDependencies().iterator(); iter.hasNext();) {
             IvyNode node = (IvyNode)iter.next();
             if (node.isEvicted(_conf)) {
                 evicted.add(node);
@@ -139,9 +143,9 @@ public class ConfigurationResolveReport {
     }
     public IvyNode[] getDownloadedNodes() {
         List downloaded = new ArrayList();
-        for (Iterator iter = _dependencies.values().iterator(); iter.hasNext();) {
+        for (Iterator iter = getDependencies().iterator(); iter.hasNext();) {
             IvyNode node = (IvyNode)iter.next();
-            if (node.isDownloaded()) {
+            if (node.isDownloaded() && node.getRealNode() == node) {
                 downloaded.add(node);
             }
         }
@@ -149,9 +153,9 @@ public class ConfigurationResolveReport {
     }
     public IvyNode[] getSearchedNodes() {
         List downloaded = new ArrayList();
-        for (Iterator iter = _dependencies.values().iterator(); iter.hasNext();) {
+        for (Iterator iter = getDependencies().iterator(); iter.hasNext();) {
             IvyNode node = (IvyNode)iter.next();
-            if (node.isSearched()) {
+            if (node.isSearched() && node.getRealNode() == node) {
                 downloaded.add(node);
             }
         }
@@ -176,7 +180,7 @@ public class ConfigurationResolveReport {
 	 */
 	public List getModuleIds() {
 		if (_modulesIds == null) {
-			List sortedDependencies = Ivy.sortNodes(_dependencies.values());
+			List sortedDependencies = Ivy.sortNodes(getDependencies());
             Collections.reverse(sortedDependencies);
 			for (Iterator iter = sortedDependencies.iterator(); iter.hasNext();) {
                 IvyNode dependency = (IvyNode) iter.next();
@@ -243,7 +247,7 @@ public class ConfigurationResolveReport {
     }
 
     public int getNodesNumber() {
-        return new HashSet(_dependencies.values()).size();
+        return getDependencies().size();
     }
 
 

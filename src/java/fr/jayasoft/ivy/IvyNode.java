@@ -235,6 +235,8 @@ public class IvyNode {
 
     private boolean _isCircular = false;
 
+    private Collection _loadedRootModuleConfs = new HashSet();
+
     
     public IvyNode(ResolveData data, DependencyDescriptor dd) {
         _id = dd.getDependencyRevisionId();
@@ -486,8 +488,9 @@ public class IvyNode {
      * ...
      */
     public boolean loadData(String conf) {
-        boolean loaded = _md != null;
-        if (!isEvicted(_rootModuleConf) && hasConfigurationsToLoad() && !hasProblem()) {
+        boolean loaded = false;
+        if (!isEvicted(_rootModuleConf) && (hasConfigurationsToLoad() || !isRootModuleConfLoaded()) && !hasProblem()) {
+            markRootModuleConfLoaded();
             if (_md == null) {
                 DependencyResolver resolver = _data.getIvy().getResolver(getModuleId());
                 try {
@@ -551,6 +554,8 @@ public class IvyNode {
                     _confsToFetch.remove("*");
                     updateConfsToFetch(Arrays.asList(resolveSpecialConfigurations(getRequiredConfigurations(getParent(), getParentConf()), this)));
                 }  
+            } else {
+                loaded = true;
             }
         }
         if (hasProblem()) {
@@ -566,7 +571,15 @@ public class IvyNode {
         return loaded;
         
     }
+
+    private boolean markRootModuleConfLoaded() {
+        return _loadedRootModuleConfs.add(_rootModuleConf);
+    }
     
+    private boolean isRootModuleConfLoaded() {
+        return _loadedRootModuleConfs.contains(_rootModuleConf);
+    }
+
     private boolean handleConfiguration(boolean loaded, String conf) {
         if ("*".equals(conf)) {
             if (_md != null) {

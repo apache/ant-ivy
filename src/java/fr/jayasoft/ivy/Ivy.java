@@ -931,6 +931,8 @@ public class Ivy implements TransferListener {
     
     
     private void fetchDependencies(IvyNode node, String conf) {
+        long start = System.currentTimeMillis();
+        Message.debug(node.getId()+" => resolving dependencies in "+conf);
         resolveConflict(node, node.getParent());
         
         if (node.loadData(conf)) {
@@ -955,6 +957,7 @@ public class Ivy implements TransferListener {
                 fetchDependencies(selected, conf);
             }
         }
+        Message.debug(node.getId()+" => dependencies resolved in "+conf+" ("+(System.currentTimeMillis()-start)+"ms)");
     }
 
     private void doFetchDependencies(IvyNode node, String conf) {
