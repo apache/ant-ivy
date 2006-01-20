@@ -8,9 +8,9 @@ package fr.jayasoft.ivy.report;
 import java.io.File;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import fr.jayasoft.ivy.IvyNode;
@@ -21,7 +21,7 @@ import fr.jayasoft.ivy.ModuleDescriptor;
  */
 public class ResolveReport {
     private ModuleDescriptor _md;
-    private Map _confReports = new HashMap();
+    private Map _confReports = new LinkedHashMap();
     public ResolveReport(ModuleDescriptor md) {
         _md = md;
     }
