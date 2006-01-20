@@ -16,6 +16,7 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import fr.jayasoft.ivy.filter.Filter;
@@ -594,18 +595,13 @@ public class IvyNode {
     }
 
     private boolean handleConfiguration(boolean loaded, String conf) {
-        if ("*".equals(conf)) {
-            if (_md != null) {
-                _fetchedConfigurations.addAll(Arrays.asList(_md.getPublicConfigurationsNames()));
-                _confsToFetch.clear();
-                addRootModuleConfigurations(_rootModuleConf, _md.getPublicConfigurationsNames());
-            }
-        } else {
-            if (_md != null) {        
-                Configuration c = _md.getConfiguration(conf);
+        String[] confs = getRealConfs(conf);
+        if (_md != null) {
+            for (int i = 0; i < confs.length; i++) {
+                Configuration c = _md.getConfiguration(confs[i]);
                 if (c == null) {
                     _confsToFetch.remove(conf);
-                    _problem = new RuntimeException("configuration not found in "+this+": "+conf+". It was required from "+getParent()+" "+getParentConf());
+                    _problem = new RuntimeException("configuration(s) not found in "+this+": "+confs[i]+". It was required from "+getParent()+" "+getParentConf());
                     _data.getReport().addDependency(this);
                     return false;
                 } else if (!isRoot() && c.getVisibility() != Configuration.Visibility.PUBLIC) {
@@ -614,14 +610,35 @@ public class IvyNode {
                     _data.getReport().addDependency(this);
                     return false;
                 }
+                if (loaded) {
+                    _fetchedConfigurations.addAll(Arrays.asList(confs));
+                    _confsToFetch.removeAll(Arrays.asList(confs));
+                    _confsToFetch.remove(conf);
+                }
+                addRootModuleConfigurations(_rootModuleConf, confs);
             }
-            if (loaded) {
-                _fetchedConfigurations.add(conf);
-                _confsToFetch.remove(conf);
-            }
-            addRootModuleConfigurations(_rootModuleConf, new String[] {conf});
         }
         return true;
+    }
+
+    private String getDefaultConf(String conf) {
+        Pattern p = Pattern.compile("(.+)\\((.+)\\)");
+        Matcher m = p.matcher(conf);
+        if (m.matches()) {
+            return m.group(2);
+        } else {
+            return conf;
+        }
+    }
+
+    private String getMainConf(String conf) {
+        Pattern p = Pattern.compile("(.+)\\((.+)\\)");
+        Matcher m = p.matcher(conf);
+        if (m.matches()) {
+            return m.group(1);
+        } else {
+            return null;
+        }
     }
 
     private boolean isRoot() {
@@ -749,7 +766,13 @@ public class IvyNode {
         if (_md == null) {
             throw new IllegalStateException("impossible to get configuration when data has not been loaded");
         }
-        return _md.getConfiguration(conf);
+        String defaultConf = getDefaultConf(conf);
+        conf = getMainConf(conf);
+        Configuration configuration = _md.getConfiguration(conf);
+        if (configuration == null) {
+            configuration = _md.getConfiguration(defaultConf);
+        }
+        return configuration;
     }
 
     public ResolvedModuleRevision getModuleRevision() {
@@ -1208,6 +1231,27 @@ public class IvyNode {
 
     public IvyNode findNode(ModuleRevisionId mrid) {
         return _data.getNode(mrid);
+    }
+
+    public String[] getRealConfs(String conf) {
+        if (_md == null) {
+            return new String[] {conf};
+        }
+        String defaultConf = getDefaultConf(conf);
+        conf = getMainConf(conf);
+        if (_md.getConfiguration(conf) == null) {
+            conf = defaultConf;
+        }
+        if ("*".equals(conf)) {
+            return _md.getPublicConfigurationsNames();
+        } else if (conf.indexOf(',') != -1) {
+            String[] confs = conf.split(",");
+            for (int i = 0; i < confs.length; i++) {
+                confs[i] = confs[i].trim();
+            }
+        }
+        return new String[] {conf};
+        
     }
 
 }

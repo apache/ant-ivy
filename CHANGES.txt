@@ -6,6 +6,7 @@
        (ivyrep / ibiblio) and let publish modules in a local repository (IVY-132)
 - NEW: ivyconf file inclusion in ivyconf files (IVY-99)
 - NEW: macrodef feature in ivyconf for defining macro resolvers with parameters (IVY-98)
+- NEW: conf fallback mechanism (IVY-145)
 - NEW: ability to use a dependency instead of an ivy file in standalone mode (IVY-96)
 - NEW: ability to output a path of dependencies in cache from the standalone mode (IVY-92)
 - NEW: it is now possible to reference existing resolver in resolver containers (IVY-35)
