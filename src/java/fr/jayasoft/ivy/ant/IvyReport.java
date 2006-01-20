@@ -108,7 +108,7 @@ public class IvyReport extends IvyTask {
             _outputpattern = "[organisation]-[module]-[conf].html";
         }
         
-        if (!_todir.isDirectory()) {
+        if (_todir != null && !_todir.isDirectory()) {
             throw new BuildException("destination directory should be a directory !");
         }
         if (_organisation == null) {
@@ -180,10 +180,17 @@ public class IvyReport extends IvyTask {
     
     private void gengraph(Ivy ivy, File cache, String organisation, String module, String conf) throws IOException {        
         // process the report with xslt to generate graphml
+        File out;
+        if (_todir != null) {
+            out = _todir;
+        } else {
+            out = new File(".");
+        }
+
         XSLTProcess xslt = new XSLTProcess();
         xslt.setTaskName(getTaskName());
         xslt.setProject(getProject());
-        xslt.setDestdir(_todir);
+        xslt.setDestdir(out);
         xslt.setBasedir(cache);
         xslt.setExtension(".graphml");
         xslt.setIncludes(XmlReportOutputter.getReportFileName(new ModuleId(organisation, module), conf));
