@@ -606,10 +606,12 @@ public class IvyNode {
                 if (c == null) {
                     _confsToFetch.remove(conf);
                     _problem = new RuntimeException("configuration not found in "+this+": "+conf+". It was required from "+getParent()+" "+getParentConf());
+                    _data.getReport().addDependency(this);
                     return false;
                 } else if (!isRoot() && c.getVisibility() != Configuration.Visibility.PUBLIC) {
                     _confsToFetch.remove(conf);
                     _problem = new RuntimeException("configuration not public in "+this+": "+c+". It was required from "+getParent()+" "+getParentConf());
+                    _data.getReport().addDependency(this);
                     return false;
                 }
             }
