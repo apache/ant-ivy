@@ -32,7 +32,7 @@ import fr.jayasoft.ivy.util.Message;
 public class RepositoryResolver extends AbstractResourceResolver {
     
     private Repository _repository;
-    private boolean _alwaysCheckExactRevision = true;
+    private Boolean _alwaysCheckExactRevision = null;
 
     
     public RepositoryResolver() {
@@ -171,12 +171,21 @@ public class RepositoryResolver extends AbstractResourceResolver {
         super.dumpConfig();
         Message.debug("\t\trepository: "+getRepository());
     }
+    
+    public void setIvy(Ivy ivy) {
+        super.setIvy(ivy);
+        if (ivy != null) {
+            if (_alwaysCheckExactRevision == null) {
+                _alwaysCheckExactRevision = Boolean.valueOf(ivy.getVariable("ivy.default.always.check.exact.revision"));
+            }
+        }
+    }
 
     public boolean isAlwaysCheckExactRevision() {
-        return _alwaysCheckExactRevision;
+        return _alwaysCheckExactRevision == null ? true : _alwaysCheckExactRevision.booleanValue();
     }
 
     public void setAlwaysCheckExactRevision(boolean alwaysCheckExactRevision) {
-        _alwaysCheckExactRevision = alwaysCheckExactRevision;
+        _alwaysCheckExactRevision = Boolean.valueOf(alwaysCheckExactRevision);
     }
 }
