@@ -15,6 +15,8 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * This class can be used as the default implementation for DependencyDescriptor.
@@ -25,7 +27,8 @@ import java.util.Set;
  *
  */
 public class DefaultDependencyDescriptor implements DependencyDescriptor {
-	private ModuleRevisionId _revId;
+	private static final Pattern SELF_FALLBACK_PATTERN = Pattern.compile("@(\\(.*\\))?");
+    private ModuleRevisionId _revId;
     private Map _confs = new HashMap();
     private Map _artifactsIncludes = new HashMap(); // Map (String masterConf -> Collection(DependencyArtifactDescriptor))
     private Map _artifactsExcludes = new HashMap(); // Map (String masterConf -> Collection(DependencyArtifactDescriptor))
@@ -98,8 +101,14 @@ public class DefaultDependencyDescriptor implements DependencyDescriptor {
 		if (defConfs != null) {
 		    ret.addAll(defConfs);
 		}
-        if (ret.remove("@")) {
-            ret.add(moduleConfiguration);
+        for (Iterator iter = ret.iterator(); iter.hasNext();) {
+            String c = (String)iter.next();
+            Matcher matcher = SELF_FALLBACK_PATTERN.matcher(c);
+            if (matcher.matches()) {
+                iter.remove();
+                ret.add(moduleConfiguration+matcher.group(1));
+                break;
+            }
         }
         if (ret.contains("*")) {
             return new String[] {"*"};
