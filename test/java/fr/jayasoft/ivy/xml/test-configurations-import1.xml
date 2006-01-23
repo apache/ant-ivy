@@ -6,7 +6,7 @@
 	       publication="20041101110000"
 	/>
 	<configurations>
-		<import file="test/java/fr/jayasoft/ivy/xml/imported-configurations.xml"/>
+		<include file="test/java/fr/jayasoft/ivy/xml/imported-configurations.xml"/>
 	</configurations>
 	<dependencies>
 		<dependency name="mymodule1" rev="1.0"/>

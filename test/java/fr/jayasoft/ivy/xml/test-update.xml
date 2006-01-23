@@ -20,7 +20,7 @@
 		</description>
 	</info>
 	<configurations>
-		<import file="test/java/fr/jayasoft/ivy/xml/imported-configurations-with-mapping.xml"/>
+		<include file="test/java/fr/jayasoft/ivy/xml/imported-configurations-with-mapping.xml"/>
 		<conf name="${myvar}" description="desc 1"/>
 		<conf name="myconf2" description="desc 2" visibility="public"/>
 		<conf name="myconf3" description="desc 3" visibility="private"/>

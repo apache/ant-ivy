@@ -5,7 +5,7 @@
 	       status="release"
 	/>
 	<configurations>
-		<import file="test/java/fr/jayasoft/ivy/ant/imported-configurations.xml"/>
+		<include file="test/java/fr/jayasoft/ivy/ant/imported-configurations.xml"/>
 	</configurations>
 	<dependencies>
 		<dependency org="org1" name="mod1.2" rev="latest.integration" conf="*->default"/>

@@ -146,23 +146,23 @@ public class XmlIvyConfigurationParser extends DefaultHandler {
             } else if ("property".equals(qName)) {
                 String name = _ivy.substitute((String)attributes.get("name"));
                 String value = _ivy.substitute((String)attributes.get("value"));
-                String overwrite = _ivy.substitute((String)attributes.get("overwrite"));
+                String override = _ivy.substitute((String)attributes.get("override"));
                 if (name == null) {
                     throw new IllegalArgumentException("missing attribute name on property tag");
                 }
                 if (value == null) {
                     throw new IllegalArgumentException("missing attribute value on property tag");
                 }
-                _ivy.setVariable(name, value, overwrite == null ? true : Boolean.valueOf(overwrite).booleanValue());
+                _ivy.setVariable(name, value, override == null ? true : Boolean.valueOf(override).booleanValue());
             } else if ("properties".equals(qName)) {
                 String propFilePath = _ivy.substitute((String)attributes.get("file"));
-                String overwrite = _ivy.substitute((String)attributes.get("overwrite"));
+                String override = _ivy.substitute((String)attributes.get("override"));
                 try {
                     Message.verbose("loading properties: "+propFilePath);
-                    _ivy.loadProperties(new File(propFilePath), overwrite == null ? true : Boolean.valueOf(overwrite).booleanValue());
+                    _ivy.loadProperties(new File(propFilePath), override == null ? true : Boolean.valueOf(override).booleanValue());
                 } catch (Exception ex) {
                     Message.verbose("failed to load properties as file: trying as url: "+propFilePath);
-                    _ivy.loadProperties(new URL(propFilePath), overwrite == null ? true : Boolean.valueOf(overwrite).booleanValue());
+                    _ivy.loadProperties(new URL(propFilePath), override == null ? true : Boolean.valueOf(override).booleanValue());
                 }
             } else if ("include".equals(qName)) {
                 String propFilePath = _ivy.substitute((String)attributes.get("file"));

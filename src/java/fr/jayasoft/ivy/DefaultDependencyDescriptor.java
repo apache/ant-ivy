@@ -106,7 +106,11 @@ public class DefaultDependencyDescriptor implements DependencyDescriptor {
             Matcher matcher = SELF_FALLBACK_PATTERN.matcher(c);
             if (matcher.matches()) {
                 iter.remove();
-                ret.add(moduleConfiguration+matcher.group(1));
+                if (matcher.group(1) != null) {
+                    ret.add(moduleConfiguration+matcher.group(1));
+                } else {
+                    ret.add(moduleConfiguration);
+                }
                 break;
             }
         }

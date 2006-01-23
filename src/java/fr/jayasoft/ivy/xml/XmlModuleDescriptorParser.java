@@ -223,7 +223,7 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
                 } else if (_validate) {
                     addError("artifact tag found in invalid tag: "+_state);
                 }
-            } else if ("include".equals(qName)) {
+            } else if ("include".equals(qName) && _state == DEP) {
                 addDependencyArtifactsIncludes(attributes);
             } else if ("exclude".equals(qName)) {
                 addDependencyArtifactsExcludes(attributes);
@@ -317,7 +317,7 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
                     return;
                 }
                 _md.addConflictManager(new ModuleId(org, mod), cm);
-            } else if ("import".equals(qName)) {
+            } else if ("import".equals(qName) || ("include".equals(qName) && _state == CONF)) {
                 URL url;
                 String fileName = _ivy.substitute(attributes.getValue("file"));
                 if (fileName == null) {

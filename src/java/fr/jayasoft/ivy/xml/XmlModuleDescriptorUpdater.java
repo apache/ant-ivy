@@ -15,6 +15,7 @@ import java.net.URL;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Stack;
 
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -55,7 +56,7 @@ public class XmlModuleDescriptorUpdater {
     }
     
     public static void update(final Ivy ivy, URL srcURL, File destFile, final Map resolvedRevisions, final String status, 
-            final String revision, final Date pubdate, final boolean replaceImport) 
+            final String revision, final Date pubdate, final boolean replaceInclude) 
                                 throws IOException, SAXException {
         if (destFile.getParentFile() != null) {
             destFile.getParentFile().mkdirs();
@@ -71,13 +72,15 @@ public class XmlModuleDescriptorUpdater {
                 
                 private String _organisation = null;
                 private String _defaultConfMapping = null; // defaultConfMapping of imported configurations, if any
-                private String _justOpen = null; // used to know if the last open tag was empty, to adjust termination with /> instead of ></qName> 
+                private String _justOpen = null; // used to know if the last open tag was empty, to adjust termination with /> instead of ></qName>
+                private Stack _context = new Stack();
                 public void startElement(String uri, String localName,
                         String qName, Attributes attributes)
                         throws SAXException {
                     if (_justOpen != null) {
                         out.print(">");
                     }
+                    _context.push(qName);
                     if ("info".equals(qName)) {
                         _organisation = substitute(ivy, attributes.getValue("organisation"));
                         out.print("<info organisation=\""+_organisation
@@ -97,7 +100,7 @@ public class XmlModuleDescriptorUpdater {
                         } else if (attributes.getValue("publication") != null) {
                             out.print(" publication=\""+substitute(ivy, attributes.getValue("publication"))+"\"");
                         }
-                    } else if (replaceImport && "import".equals(qName)) {
+                    } else if (replaceInclude && "include".equals(qName) && _context.contains("configurations")) {
                         try {
                             URL url;
                             String fileName = substitute(ivy, attributes.getValue("file"));
@@ -197,6 +200,7 @@ public class XmlModuleDescriptorUpdater {
                         out.print("</"+qName+">");
                     }
                     _justOpen = null;
+                    _context.pop();
                 }
 
                 public void endDocument() throws SAXException {
