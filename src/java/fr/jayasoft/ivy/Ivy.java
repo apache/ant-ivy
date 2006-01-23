@@ -50,6 +50,7 @@ import fr.jayasoft.ivy.filter.FilterHelper;
 import fr.jayasoft.ivy.latest.LatestLexicographicStrategy;
 import fr.jayasoft.ivy.latest.LatestRevisionStrategy;
 import fr.jayasoft.ivy.latest.LatestTimeStrategy;
+import fr.jayasoft.ivy.namespace.Namespace;
 import fr.jayasoft.ivy.parser.ModuleDescriptorParser;
 import fr.jayasoft.ivy.parser.ModuleDescriptorParserRegistry;
 import fr.jayasoft.ivy.report.ArtifactDownloadReport;
@@ -113,6 +114,7 @@ public class Ivy implements TransferListener {
     
     private Map _conflictsManager = new HashMap(); // Map (String conflictManagerName -> ConflictManager)
     private Map _latestStrategies = new HashMap(); // Map (String latestStrategyName -> LatestStrategy)
+    private Map _namespaces = new HashMap(); // Map (String namespaceName -> Namespace)
     
     private Map _variables = new HashMap();
 
@@ -562,6 +564,28 @@ public class Ivy implements TransferListener {
             ((IvyAware)latest).setIvy(this);
         }
         _latestStrategies.put(name, latest);
+    }
+    
+    public void addConfigured(Namespace ns) {
+        addNamespace(ns.getName(), ns);
+    }
+    
+    public Namespace getNamespace(String name) {
+        if ("system".equals(name)) {
+            return getSystemNamespace();
+        }
+        return (Namespace)_namespaces.get(name);
+    }
+    
+    public Namespace getSystemNamespace() {
+        return Namespace.SYSTEM_NAMESPACE;
+    }
+
+    public void addNamespace(String name, Namespace ns) {
+        if (ns instanceof IvyAware) {
+            ((IvyAware)ns).setIvy(this);
+        }
+        _namespaces.put(name, ns);
     }
     
     /////////////////////////////////////////////////////////////////////////
@@ -1216,10 +1240,6 @@ public class Ivy implements TransferListener {
             Message.info(":: downloading artifacts to cache ::");
             downloadArtifacts(dependencies, artifactFilter, report, cache);
 
-            if (report.hasError()) {
-                return report;
-            }
-            
             // now that everything is in cache, we can publish all these modules
             Message.info(":: installing in "+to+" ::");
             for (int i = 0; i < dependencies.length; i++) {
