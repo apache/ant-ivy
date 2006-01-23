@@ -90,28 +90,28 @@ public class IvyInstall extends IvyTask {
     public void setOverwrite(boolean overwrite) {
         _overwrite = overwrite;
     }
-    protected String getFrom() {
+    public String getFrom() {
         return _from;
     }
-    protected void setFrom(String from) {
+    public void setFrom(String from) {
         _from = from;
     }
-    protected String getTo() {
+    public String getTo() {
         return _to;
     }
-    protected void setTo(String to) {
+    public void setTo(String to) {
         _to = to;
     }
-    protected boolean isTransitive() {
+    public boolean isTransitive() {
         return _transitive;
     }
-    protected void setTransitive(boolean transitive) {
+    public void setTransitive(boolean transitive) {
         _transitive = transitive;
     }
-    protected String getType() {
+    public String getType() {
         return _type;
     }
-    protected void setType(String type) {
+    public void setType(String type) {
         _type = type;
     }
 }

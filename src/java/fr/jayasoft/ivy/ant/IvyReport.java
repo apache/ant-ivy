@@ -224,16 +224,16 @@ public class IvyReport extends IvyTask {
         FileUtil.copy(XmlReportOutputter.class.getResourceAsStream("ivy-report-graph.xsl"), style, null);
         return style.getAbsolutePath();
     }
-    protected boolean isXml() {
+    public boolean isXml() {
         return _xml;
     }
-    protected void setXml(boolean xml) {
+    public void setXml(boolean xml) {
         _xml = xml;
     }
-    protected boolean isXsl() {
+    public boolean isXsl() {
         return _xsl;
     }
-    protected void setXsl(boolean xsl) {
+    public void setXsl(boolean xsl) {
         _xsl = xsl;
     }
     
