@@ -1207,6 +1207,24 @@ public class ResolveTest extends TestCase {
         assertTrue(ivy.getArchiveFileInCache(_cache, "fr.jayasoft", "test", "1.0", "test", "jar", "jar").exists());
     }
     
+    public void testNamespaceMapping() throws Exception {
+        Ivy ivy = new Ivy();
+        ivy.configure(new File("test/repositories/namespace/ivyconf.xml"));
+        ResolveReport report = ivy.resolve(ResolveTest.class.getResource("ivy-namespace.xml"),
+                null, new String[] {"*"}, _cache, null, true);
+        assertNotNull(report);
+        ModuleDescriptor md = report.getModuleDescriptor();
+        assertNotNull(md);
+        ModuleRevisionId mrid = ModuleRevisionId.newInstance("jayasoft", "namespace", "1.0");
+        assertEquals(mrid, md.getModuleRevisionId());
+        
+        assertTrue(ivy.getResolvedIvyFileInCache(_cache, mrid).exists());
+        
+        // dependencies
+        assertTrue(ivy.getIvyFileInCache(_cache, ModuleRevisionId.newInstance("systemorg", "systemmod", "1.0")).exists());
+        assertTrue(ivy.getArchiveFileInCache(_cache, "systemorg", "systemmod", "1.0", "A", "jar", "jar").exists());
+    }
+    
     ////////////////////////////////////////////////////////////
     // helper methods to ease the tests
     ////////////////////////////////////////////////////////////

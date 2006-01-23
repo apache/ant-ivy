@@ -28,6 +28,9 @@ public class Namespace {
             }
             return mrid;
         }
+        public boolean isIdentity() {
+            return _rules.isEmpty();
+        }
     };
     private NamespaceTransformer _toSystemTransformer = new NamespaceTransformer() {
         public ModuleRevisionId transform(ModuleRevisionId mrid) {
@@ -36,6 +39,9 @@ public class Namespace {
                 mrid = rule.getToSystem().transform(mrid);
             }
             return mrid;
+        }
+        public boolean isIdentity() {
+            return _rules.isEmpty();
         }
     };
     

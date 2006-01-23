@@ -10,6 +10,14 @@ public class MRIDRule {
     private String _org;
     private String _module;
     private String _rev;
+    public MRIDRule(String org, String mod, String rev) {
+        _org = org;
+        _module = mod;
+        _rev = rev;
+    }
+    public MRIDRule() {        
+    }
+    
     public String getModule() {
         return _module;
     }
@@ -29,6 +37,6 @@ public class MRIDRule {
         _rev = rev;
     }
     public String toString() {
-        return _org+" "+_module+" ";
+        return "[ "+_org+" "+_module+" "+_rev+" ]";
     }
 }

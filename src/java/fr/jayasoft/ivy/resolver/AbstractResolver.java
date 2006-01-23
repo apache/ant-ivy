@@ -6,11 +6,17 @@
 package fr.jayasoft.ivy.resolver;
 
 import fr.jayasoft.ivy.Artifact;
+import fr.jayasoft.ivy.DependencyDescriptor;
 import fr.jayasoft.ivy.DependencyResolver;
 import fr.jayasoft.ivy.Ivy;
 import fr.jayasoft.ivy.IvyAware;
+import fr.jayasoft.ivy.IvyNode;
 import fr.jayasoft.ivy.LatestStrategy;
+import fr.jayasoft.ivy.ModuleDescriptor;
+import fr.jayasoft.ivy.ModuleRevisionId;
 import fr.jayasoft.ivy.ResolveData;
+import fr.jayasoft.ivy.ResolvedModuleRevision;
+import fr.jayasoft.ivy.namespace.NameSpaceHelper;
 import fr.jayasoft.ivy.namespace.Namespace;
 import fr.jayasoft.ivy.report.ArtifactDownloadReport;
 import fr.jayasoft.ivy.report.DownloadReport;
@@ -175,5 +181,40 @@ public abstract class AbstractResolver implements DependencyResolver, IvyAware, 
     public void setNamespace(String namespaceName) {
         _namespaceName = namespaceName;
     }    
+
+    
+    // Namespace conversion methods
+    protected ModuleDescriptor toSystem(ModuleDescriptor md) {
+        return NameSpaceHelper.transform(md, getNamespace().getToSystemTransformer());
+    }
+
+    protected Artifact fromSystem(Artifact artifact) {
+        return NameSpaceHelper.transform(artifact, getNamespace().getFromSystemTransformer());
+    }
+
+    protected Artifact toSystem(Artifact artifact) {
+        return NameSpaceHelper.transform(artifact, getNamespace().getToSystemTransformer());
+    }
+
+    protected ResolvedModuleRevision toSystem(ResolvedModuleRevision rmr) {
+        return NameSpaceHelper.transform(rmr, getNamespace().getToSystemTransformer());
+    }
+
+    protected ModuleRevisionId toSystem(ModuleRevisionId resolvedMrid) {
+        return getNamespace().getToSystemTransformer().transform(resolvedMrid);
+    }
+
+    protected DependencyDescriptor fromSystem(DependencyDescriptor dd) {
+        return NameSpaceHelper.transform(dd, getNamespace().getFromSystemTransformer());
+    }
+
+    protected IvyNode getSystemNode(ResolveData data, ModuleRevisionId resolvedMrid) {
+        return data.getNode(toSystem(resolvedMrid));
+    }
+
+    protected ResolvedModuleRevision findModuleInCache(ResolveData data, ModuleRevisionId mrid) {
+        return data.getIvy().findModuleInCache(toSystem(mrid), data.getCache(), doValidate(data));
+    }
+
 
 }

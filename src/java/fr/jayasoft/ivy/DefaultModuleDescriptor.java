@@ -6,6 +6,7 @@
 package fr.jayasoft.ivy;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
@@ -14,6 +15,10 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
+
+import fr.jayasoft.ivy.namespace.NameSpaceHelper;
+import fr.jayasoft.ivy.namespace.NamespaceTransformer;
+import fr.jayasoft.ivy.util.Message;
 
 /**
  * @author X.Hanin
@@ -38,7 +43,43 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
         moduleDescriptor.setLastModified(System.currentTimeMillis());
         return moduleDescriptor;
     }
+
+    public static ModuleDescriptor transformInstance(ModuleDescriptor md, NamespaceTransformer t) {
+        if (t.isIdentity()) {
+            return md;
+        }
+        DefaultModuleDescriptor nmd = new DefaultModuleDescriptor();
+        nmd._revId = t.transform(md.getModuleRevisionId());
+        nmd._resolvedRevId = t.transform(md.getResolvedModuleRevisionId());
+        nmd._status = md.getStatus();
+        nmd._publicationDate = md.getPublicationDate();
+        nmd._resolvedPublicationDate = md.getResolvedPublicationDate();
+        DependencyDescriptor[] dd = md.getDependencies();
+        for (int i = 0; i < dd.length; i++) {
+            nmd._dependencies.add(NameSpaceHelper.transform(dd[i], t));
+        }
+        Configuration[] confs = md.getConfigurations();
+        for (int i = 0; i < confs.length; i++) {
+            nmd._configurations.put(confs[i].getName(), confs[i]);
+            Artifact[] arts = md.getArtifacts(confs[i].getName());
+            for (int j = 0; j < arts.length; j++) {
+                nmd.addArtifact(confs[i].getName(), NameSpaceHelper.transform(arts[j], t));
+            }
+        }
+        nmd.setDefault(md.isDefault());
+        if (md instanceof DefaultModuleDescriptor) {
+            DefaultModuleDescriptor dmd = (DefaultModuleDescriptor)md;
+            nmd._conflictManagers.putAll(dmd._conflictManagers);
+        } else {
+            Message.warn("transformed module descriptor is not a default module descriptor: impossible to copy conflict manager configuration: "+md);
+        }
+        nmd._licenses.addAll(Arrays.asList(md.getLicenses()));
+        nmd._homePage = md.getHomePage();
+        nmd._lastModified = md.getLastModified();
+        return nmd;
+    }
     
+
 	private ModuleRevisionId _revId;
 	private ModuleRevisionId _resolvedRevId;
 	private String _status = Status.DEFAULT_STATUS;
@@ -275,6 +316,6 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
     public void setLastModified(long lastModified) {
         _lastModified = lastModified;
     }
-    
+
     
 }

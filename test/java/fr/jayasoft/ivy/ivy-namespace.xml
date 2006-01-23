@@ -1,0 +1,7 @@
+<ivy-module version="1.0">
+    <info organisation="jayasoft" module="namespace" revision="1.0" />
+    
+    <dependencies>
+ 		   <dependency org="systemorg" name="systemmod" rev="1.0" />
+    </dependencies>
+</ivy-module>

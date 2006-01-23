@@ -18,6 +18,8 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import fr.jayasoft.ivy.namespace.NamespaceTransformer;
+
 /**
  * This class can be used as the default implementation for DependencyDescriptor.
  * It implements required methods and enables to fill dependency information
@@ -28,6 +30,31 @@ import java.util.regex.Pattern;
  */
 public class DefaultDependencyDescriptor implements DependencyDescriptor {
 	private static final Pattern SELF_FALLBACK_PATTERN = Pattern.compile("@(\\(.*\\))?");
+    
+    public static DependencyDescriptor transformInstance(DependencyDescriptor dd, NamespaceTransformer t) {
+        if (t.isIdentity()) {
+            return dd;
+        }
+        ModuleRevisionId transformParentId = t.transform(dd.getParentRevisionId());
+        ModuleRevisionId transformMrid = t.transform(dd.getDependencyRevisionId());
+        if (transformParentId.equals(dd.getParentRevisionId()) && transformMrid.equals(dd.getDependencyRevisionId())) {
+            return dd;
+        }
+        DefaultDependencyDescriptor newdd = new DefaultDependencyDescriptor();
+        newdd._parentId = transformParentId;
+        newdd._revId = transformMrid;
+        newdd._force = dd.isForce();
+        newdd._changing = dd.isChanging();
+        newdd._transitive = dd.isTransitive();
+        String[] moduleConfs = dd.getModuleConfigurations();
+        for (int i = 0; i < moduleConfs.length; i++) {
+            newdd._confs.put(moduleConfs[i], new ArrayList(Arrays.asList(dd.getDependencyConfigurations(moduleConfs[i]))));
+            newdd._artifactsExcludes.put(moduleConfs[i], new ArrayList(Arrays.asList(dd.getDependencyArtifactsExcludes(moduleConfs[i]))));
+            newdd._artifactsIncludes.put(moduleConfs[i], new ArrayList(Arrays.asList(dd.getDependencyArtifactsIncludes(moduleConfs[i]))));
+        }
+        return newdd;
+    }
+    
     private ModuleRevisionId _revId;
     private Map _confs = new HashMap();
     private Map _artifactsIncludes = new HashMap(); // Map (String masterConf -> Collection(DependencyArtifactDescriptor))
@@ -77,6 +104,9 @@ public class DefaultDependencyDescriptor implements DependencyDescriptor {
         _revId = mrid;
         _force = force;
         _changing = changing;
+    }
+    
+    private DefaultDependencyDescriptor() {        
     }
     
 	public ModuleId getDependencyId() {

@@ -17,8 +17,8 @@ import fr.jayasoft.ivy.util.Message;
 
 public class MRIDTransformationRule implements NamespaceTransformer {
     private static class MridRuleMatcher {
-        String[] types = new String[] {"o", "m", "r"};
-        Matcher[] _matchers = new Matcher[3];
+        private static final String[] TYPES = new String[] {"o", "m", "r"};
+        private Matcher[] _matchers = new Matcher[3];
         
         public boolean match(MRIDRule src, ModuleRevisionId mrid) {
             _matchers[0] = Pattern.compile(getPattern(src.getOrg())).matcher(mrid.getOrganisation());
@@ -37,34 +37,36 @@ public class MRIDTransformationRule implements NamespaceTransformer {
             return true;
         }
         public ModuleRevisionId apply(MRIDRule dest, ModuleRevisionId mrid) {
-            String org = applyRules(dest.getOrg());
-            String mod = applyRules(dest.getModule());
-            String rev = applyRules(dest.getRev());
+            String org = applyRules(dest.getOrg(), "o");
+            String mod = applyRules(dest.getModule(), "m");
+            String rev = applyRules(dest.getRev(), "r");
             
             return ModuleRevisionId.newInstance(org, mod, rev);
         }
-        private String applyRules(String str) {
-            for (int i = 0; i < types.length; i++) {
-                str = applyTypeRule(str, types[i], _matchers[i]);
+        private String applyRules(String str, String type) {
+            for (int i = 0; i < TYPES.length; i++) {
+                str = applyTypeRule(str, TYPES[i], type, _matchers[i]);
             }
             return str;
         }
         
-        private String applyTypeRule(String rule, String type, Matcher m) {
-            String res = rule == null ? "$"+type+"0" : rule;
-            for (int i = 0; i < types.length; i++) {
-                if (types[i].equals(type)) {
+        private String applyTypeRule(String rule, String type, String ruleType, Matcher m) {
+            String res = rule == null ? "$"+ruleType+"0" : rule;
+            for (int i = 0; i < TYPES.length; i++) {
+                if (TYPES[i].equals(type)) {
                     res = res.replaceAll("[^\\\\]\\$"+type, "\\$");
                     res = res.replaceAll("^\\$"+type, "\\$");
                 } else {
-                    res = res.replaceAll("[^\\\\]\\$"+types[i], "\\\\\\$"+types[i]);
-                    res = res.replaceAll("^\\$"+types[i], "\\\\\\$"+types[i]);
+                    res = res.replaceAll("[^\\\\]\\$"+TYPES[i], "\\\\\\$"+TYPES[i]);
+                    res = res.replaceAll("^\\$"+TYPES[i], "\\\\\\$"+TYPES[i]);
                 }
             }
             
             StringBuffer sb = new StringBuffer();
+            m.reset();
+            m.find();
             m.appendReplacement(sb, res);
-            return sb.toString();            
+            return sb.toString();
         }
         
         private String getPattern(String p) {
@@ -96,6 +98,10 @@ public class MRIDTransformationRule implements NamespaceTransformer {
             }
         }
         return mrid;
+    }
+
+    public boolean isIdentity() {
+        return false;
     }
 
 }

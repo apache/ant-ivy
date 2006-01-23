@@ -109,6 +109,8 @@ public abstract class BasicResolver extends AbstractResolver {
     }
     
     public ResolvedModuleRevision getDependency(DependencyDescriptor dd, ResolveData data) throws ParseException {
+        dd = fromSystem(dd);
+        
         clearIvyAttempts();
         boolean downloaded = false;
         boolean searched = false;
@@ -129,10 +131,10 @@ public abstract class BasicResolver extends AbstractResolver {
         // if we do not have to check modified and if the revision is exact and not changing,  
         // we first search for it in cache
         if (mrid.isExactRevision() && !isCheckmodified() && !dd.isChanging()) {
-            ResolvedModuleRevision rmr = data.getIvy().findModuleInCache(mrid, data.getCache(), doValidate(data));
+            ResolvedModuleRevision rmr = findModuleInCache(data, mrid);
             if (rmr != null) {
                 Message.verbose("\t"+getName()+": revision in cache: "+mrid);
-                return rmr;
+                return toSystem(rmr);
             }
         }
         URL cachedIvyURL = null;
@@ -178,26 +180,26 @@ public abstract class BasicResolver extends AbstractResolver {
             // first check if this dependency has not yet been resolved
             if (!mrid.isExactRevision() && ModuleRevisionId.isExactRevision(ivyRef.getRevision())) {
                 resolvedMrid = new ModuleRevisionId(mrid.getModuleId(), ivyRef.getRevision());
-                IvyNode node = data.getNode(resolvedMrid);
+                IvyNode node = getSystemNode(data, resolvedMrid);
                 if (node != null && node.getModuleRevision() != null) {
                     // this revision has already be resolved : return it
                     Message.verbose("\t"+getName()+": revision already resolved: "+resolvedMrid);
-                    return searchedRmr(node.getModuleRevision());
+                    return toSystem(searchedRmr(node.getModuleRevision()));
                 }
             }
             
             // now let's see if we can find it in cache and if it is up to date
-            ResolvedModuleRevision rmr = data.getIvy().findModuleInCache(resolvedMrid, data.getCache(), doValidate(data));
+            ResolvedModuleRevision rmr = findModuleInCache(data, resolvedMrid);
             if (rmr != null) {
                 if (!isCheckmodified() && !dd.isChanging()) {
                     Message.verbose("\t"+getName()+": revision in cache: "+resolvedMrid);
-                    return searchedRmr(rmr);
+                    return toSystem(searchedRmr(rmr));
                 }
                 long repLastModified = ivyRef.getLastModified();
                 long cacheLastModified = rmr.getDescriptor().getLastModified(); 
                 if (!rmr.getDescriptor().isDefault() && repLastModified <= cacheLastModified) {
                     Message.verbose("\t"+getName()+": revision in cache (not updated): "+resolvedMrid);
-                    return searchedRmr(rmr);
+                    return toSystem(searchedRmr(rmr));
                 } else {
                     Message.verbose("\t"+getName()+": revision in cache is not up to date: "+resolvedMrid);
                     if (dd.isChanging()) {
@@ -212,7 +214,7 @@ public abstract class BasicResolver extends AbstractResolver {
             try {
                 // first check if source file is not cache file itself
                 if (ResourceHelper.equals(ivyRef.getResource(), 
-                        data.getIvy().getIvyFileInCache(data.getCache(), resolvedMrid))) {
+                        data.getIvy().getIvyFileInCache(data.getCache(), toSystem(resolvedMrid)))) {
                     Message.error("invalid configuration for resolver '"+getName()+"': pointing ivy files to ivy cache is forbidden !");
                     return null;
                 }
@@ -261,7 +263,7 @@ public abstract class BasicResolver extends AbstractResolver {
                     for (int i = 0; i < confs.length; i++) {
                         Artifact[] arts = rmr.getDescriptor().getArtifacts(confs[i]);
                         for (int j = 0; j < arts.length; j++) {
-                            File artFile = data.getIvy().getArchiveFileInCache(data.getCache(), arts[j]);
+                            File artFile = data.getIvy().getArchiveFileInCache(data.getCache(), toSystem(arts[j]));
                             if (artFile.exists()) {
                                 Message.debug("deleting "+artFile);
                                 artFile.delete();
@@ -317,14 +319,15 @@ public abstract class BasicResolver extends AbstractResolver {
             md.setResolvedPublicationDate(new Date(pubDate));
         }
     
+        ModuleDescriptor systemMd = toSystem(md);
         try {
-            File ivyFile = data.getIvy().getIvyFileInCache(data.getCache(), md.getResolvedModuleRevisionId());
+            File ivyFile = data.getIvy().getIvyFileInCache(data.getCache(), systemMd.getResolvedModuleRevisionId());
 	        if (ivyRef == null) {
                 // a basic ivy file is written containing default data
-	            XmlModuleDescriptorWriter.write(md, ivyFile);
+	            XmlModuleDescriptorWriter.write(systemMd, ivyFile);
 	        } else {
 	            // copy and update ivy file from source to cache
-                parser.toIvyFile(cachedIvyURL, ivyRef.getResource(), ivyFile, md);
+                parser.toIvyFile(cachedIvyURL, ivyRef.getResource(), ivyFile, systemMd);
                 long repLastModified = ivyRef.getLastModified();
                 if (repLastModified > 0) {
                     ivyFile.setLastModified(repLastModified);
@@ -334,8 +337,8 @@ public abstract class BasicResolver extends AbstractResolver {
             Message.warn("impossible to copy ivy file to cache : "+ivyRef.getResource());
         }
         
-        data.getIvy().saveResolver(data.getCache(), md, getName());
-        return new DefaultModuleRevision(this, md, searched, downloaded);
+        data.getIvy().saveResolver(data.getCache(), systemMd, getName());
+        return new DefaultModuleRevision(this, systemMd, searched, downloaded);
     }
 
     protected void clearIvyAttempts() {
@@ -432,7 +435,11 @@ public abstract class BasicResolver extends AbstractResolver {
         		adr.setDownloadStatus(DownloadStatus.NO);  
                 adr.setSize(archiveFile.length());
         	} else {
-                ResolvedResource artifactRef = findArtifactRef(artifacts[i], null);
+                Artifact artifact = fromSystem(artifacts[i]);
+                if (!artifact.equals(artifacts[i])) {
+                    Message.verbose("\t"+getName()+"looking for artifact "+artifact+ " (is "+artifacts[i]+" in system namespace)");
+                }
+                ResolvedResource artifactRef = findArtifactRef(artifact, null);
         		if (artifactRef != null) {
                     if (ResourceHelper.equals(artifactRef.getResource(), 
                             archiveFile)) {
@@ -450,11 +457,15 @@ public abstract class BasicResolver extends AbstractResolver {
                                         artifacts[i].getType(), 
                                         artifacts[i].getExt()+".part"));
                         adr.setSize(get(artifactRef.getResource(), tmp));
-                        tmp.renameTo(archiveFile);
-                		Message.info("\t[SUCCESSFUL ] "+artifacts[i]+" ("+(System.currentTimeMillis()-start)+"ms)");
-        				adr.setDownloadStatus(DownloadStatus.SUCCESSFUL);
+                        if (!tmp.renameTo(archiveFile)) {
+                            Message.warn("\t[FAILED     ] "+artifacts[i]+" impossible to move temp file to definitive one ("+(System.currentTimeMillis()-start)+"ms)");
+                            adr.setDownloadStatus(DownloadStatus.FAILED);
+                        } else {
+                    		Message.info("\t[SUCCESSFUL ] "+artifacts[i]+" ("+(System.currentTimeMillis()-start)+"ms)");
+            				adr.setDownloadStatus(DownloadStatus.SUCCESSFUL);
+                        }
         			} catch (Exception ex) {
-                		Message.warn("\t[FAILED     ] "+artifacts[i]+" ("+(System.currentTimeMillis()-start)+"ms)");
+                		Message.warn("\t[FAILED     ] "+artifacts[i]+" : "+ex.getMessage()+" ("+(System.currentTimeMillis()-start)+"ms)");
         				adr.setDownloadStatus(DownloadStatus.FAILED);
         			}
         		} else {
