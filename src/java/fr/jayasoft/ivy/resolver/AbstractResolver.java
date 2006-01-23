@@ -11,6 +11,7 @@ import fr.jayasoft.ivy.Ivy;
 import fr.jayasoft.ivy.IvyAware;
 import fr.jayasoft.ivy.LatestStrategy;
 import fr.jayasoft.ivy.ResolveData;
+import fr.jayasoft.ivy.namespace.Namespace;
 import fr.jayasoft.ivy.report.ArtifactDownloadReport;
 import fr.jayasoft.ivy.report.DownloadReport;
 import fr.jayasoft.ivy.report.DownloadStatus;
@@ -35,6 +36,13 @@ public abstract class AbstractResolver implements DependencyResolver, IvyAware, 
     private LatestStrategy _latestStrategy;
 
     private String _latestStrategyName;
+
+    /**
+     * The namespace to which this resolver belongs
+     */
+    private Namespace _namespace;
+
+    private String _namespaceName;
 
     public Ivy getIvy() {
         return _ivy;
@@ -142,5 +150,30 @@ public abstract class AbstractResolver implements DependencyResolver, IvyAware, 
         }
         return _latestStrategyName;
     }
+
+    public Namespace getNamespace() {        
+        if (_namespace == null) {
+            if (getIvy() != null) {
+                if (_namespaceName != null) {
+                    _namespace = getIvy().getNamespace(_namespaceName);
+                    if (_namespace == null) {
+                        Message.error("unknown namespace: "+_namespaceName);
+                        _namespace = getIvy().getSystemNamespace();
+                    }
+                } else {
+                    _namespace = getIvy().getSystemNamespace();
+                    Message.debug(getName()+": no namespace defined: using system");
+                }
+            } else {
+                Message.verbose(getName()+": no namespace defined nor ivy instance: using system namespace");
+                _namespace = Namespace.SYSTEM_NAMESPACE;
+            }
+        }
+        return _namespace;
+    }
+    
+    public void setNamespace(String namespaceName) {
+        _namespaceName = namespaceName;
+    }    
 
 }
