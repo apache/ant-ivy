@@ -1,0 +1,8 @@
+<ivy-module version="1.0">
+	<info organisation="A"
+	       module="A"
+	       revision="1.0"
+	       status="integration"
+	       publication="20041101110000"
+	/>
+</ivy-module>

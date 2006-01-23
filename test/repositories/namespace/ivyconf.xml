@@ -1,0 +1,23 @@
+<ivyconf>
+	<conf defaultCache="build/cache" defaultResolver="ns"/>
+	<namespaces>
+		<namespace name="test">
+			<rule>
+				<fromsystem>
+					<src org="systemorg" module="systemmod"/>
+					<dest org="A" module="A"/>
+				</fromsystem>
+				<tosystem>
+					<src org="A" module="A"/>
+					<dest org="systemorg" module="systemmod"/>
+				</tosystem>
+			</rule>
+		</namespace>
+	</namespaces>
+	<resolvers>
+		<filesystem name="ns" namespace="test">
+			<ivy pattern="${ivy.conf.dir}/[organisation]/[module]/[revision]/[artifact].[ext]"/>
+			<artifact pattern="${ivy.conf.dir}/[organisation]/[module]/[revision]/[artifact].[ext]"/>
+		</filesystem>
+	</resolvers>
+</ivyconf>
