@@ -1253,7 +1253,12 @@ public class Ivy implements TransferListener {
                             overwrite);
                 }
             }
+
+            Message.info(":: install resolution report ::");
             
+            // output report
+            report.output(getReportOutputters(), cache);
+
             return report;
         } finally {
             setDictatorResolver(oldDicator);
