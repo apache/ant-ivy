@@ -244,7 +244,7 @@ public abstract class BasicResolver extends AbstractResolver {
                 if (!mrid.getName().equals(md.getModuleRevisionId().getName())) {
                     throw new IllegalStateException("bad module name found in "+ivyRef.getResource()+": expected="+mrid.getName()+" found="+md.getModuleRevisionId().getName());
                 }
-                if (ivyRef.getRevision() != null && md.getModuleRevisionId().getRevision() != null && 
+                if (ivyRef.getRevision() != null && !ivyRef.getRevision().startsWith("working@") && md.getModuleRevisionId().getRevision() != null && 
                         !ModuleRevisionId.acceptRevision(ivyRef.getRevision(), md.getModuleRevisionId().getRevision())) {
                     throw new IllegalStateException("bad revision found in "+ivyRef.getResource()+": expected="+ivyRef.getRevision()+" found="+md.getModuleRevisionId().getRevision());
                 }
