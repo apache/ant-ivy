@@ -1,0 +1,18 @@
+<ivy-module version="1.0">
+    <info organisation="jayasoft" module="filter-framework"/>
+    <configurations>
+    	<conf name="api"  description="only provide filter framework API"/>
+    	<conf name="homemade-impl" extends="api" description="provide a home made implementation of our api"/>
+    	<conf name="cc-impl" extends="api" description="provide an implementation that use apache common collection framework"/>
+    	<conf name="test" extends="cc-impl" visibility="private" description="for testing our framework"/>
+    </configurations>
+    <publications>
+    	<artifact name="filter-api" type="jar"  conf="api" ext="jar"/>
+    	<artifact name="filter-hmimpl" type="jar"  conf="homemade-impl" ext="jar"/>
+    	<artifact name="filter-ccimpl" type="jar"  conf="cc-impl" ext="jar"/>    	
+    </publications>
+    <dependencies>
+        <dependency org="apache" name="commons-collections" rev="3.1" conf="cc-impl->default"/>
+        <dependency org="junit" name="junit" rev="3.8" conf="test->default"/>
+    </dependencies>
+</ivy-module>

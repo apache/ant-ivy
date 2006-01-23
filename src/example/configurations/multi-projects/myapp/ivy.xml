@@ -1,0 +1,13 @@
+<ivy-module version="1.0">
+    <info organisation="jayasoft" module="myapp"/>
+    
+    <configurations>
+       	<conf name="build" visibility="private" description="compilation only need api jar" />
+    	<conf name="noexternaljar" description="use only company jar" />
+    	<conf name="withexternaljar" description="use company jar and third party jars" />    
+    </configurations>
+    
+    <dependencies>
+        <dependency org="jayasoft" name="filter-framework" rev="latest.integration" conf="build->api; noexternaljar->homemade-impl; withexternaljar->cc-impl"/>
+    </dependencies>
+</ivy-module>

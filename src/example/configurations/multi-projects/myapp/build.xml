@@ -1,0 +1,75 @@
+<project name="myapp" default="run-cc" xmlns:ivy="antlib:fr.jayasoft.ivy.ant">
+    <!-- some variables used -->
+    <property name="lib.dir" value="lib" />
+    <property name="build.dir" value="build" />
+    <property name="src.dir" value="src" />
+    
+    <!-- paths used for compilation and run  -->
+    <path id="lib.path.id">
+        <fileset dir="${lib.dir}/build" />
+	</path>
+    <path id="run.hm.path.id">
+        <path location="${build.dir}" />
+    	<fileset dir="${lib.dir}/noexternaljar" />
+    </path>
+    <path id="run.cc.path.id">
+        <path location="${build.dir}" />
+    	<fileset dir="${lib.dir}/withexternaljar" />
+    </path>
+    <!-- ================================= 
+          target: resolve              
+         ================================= -->
+    <target name="resolve" description="--> retreive dependencies with ivy">
+    	<ivy:retrieve pattern="${ivy.lib.dir}/[conf]/[artifact].[ext]"/>
+    </target>    
+    
+    <!-- ================================= 
+          target: report              
+         ================================= -->
+    <target name="report" depends="resolve" description="--> generates a report of dependencies">
+        <ivy:report todir="${build.dir}"/>
+    </target>
+	
+	<!-- ================================= 
+          target: build
+         ================================= -->
+    <target name="build" depends="resolve" description="--> compile the project">
+        <mkdir dir="${build.dir}" />
+        <javac srcdir="${src.dir}" destdir="${build.dir}" classpathref="lib.path.id" />
+    </target>
+	
+	<!-- ================================= 
+          target: run with ome made implementation
+         ================================= -->
+    <target name="run-hm" depends="build" description="--> run the project with ome made implementation">
+        <java classpathref="run.hm.path.id" classname="myapp.Main" fork="true"/>
+    </target>
+
+	<!-- ================================= 
+          target: run with ext lib implementation
+         ================================= -->
+    <target name="run-cc" depends="build" description="--> run the project with ext lib implementation">
+        <java classpathref="run.cc.path.id" classname="myapp.Main" fork="true"/>
+    </target>
+	
+    <!-- ================================= 
+          target: clean              
+         ================================= -->
+    <target name="clean" description="--> clean the project">
+        <delete includeemptydirs="true">
+            <fileset dir="${basedir}">
+            	<exclude name="src/**" />
+            	<exclude name="build.xml" />
+            	<exclude name="ivy.xml" />
+            	<exclude name=".*" />
+        	</fileset>
+    	</delete>
+    </target>
+	
+    <!-- ================================= 
+          target: clean-cache              
+         ================================= -->
+	<target name="clean-cache" description="--> clean the ivy cache">
+		<delete dir="${user.home}/.ivy/cache"/>
+	</target>
+</project>

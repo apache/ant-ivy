@@ -1,0 +1,26 @@
+<?xml-stylesheet type="text/xsl" href="http://www.ivyrep.org/ivy-doc.xsl"?>
+<ivy-module version="1.0">
+    <info organisation="jayasoft" module="configurations" >
+    	<description>
+    		This is an example project that aims to demonstrate the usage of the configuration in ivy.
+    		This project provide 4 configurations. Each configurations describe the requirement to build or run the project
+    	</description>
+    </info>
+    <configurations>
+    	<conf name="compile" description="This is this configuration that describes modules need to build our project"/>
+    	<conf name="test" extends="compile" description="This is this configuration that describes modules need to run test on our project"/>
+    	<conf name="rundev" extends="compile" description="This is this configuration that describes modules need to execute our project in a dev environement"/>
+    	<conf name="runprod"  extends="compile" description="This is this configuration that describes modules need to execute our project in a production environement"/>    	
+    </configurations>
+    
+    <dependencies>
+	    <!-- this dependency is needed for all configuration -->
+        <dependency org="apache" name="commons-cli" rev="1.0" />
+        <!-- when launching our app in dev mode we use mckoi db and mckoi jdbc client conf="run.dev->embedded, client"-->
+        <dependency org="mckoi" name="mckoi" rev="1.0.2"  conf="rundev->default"/> 
+        <!-- when launching our app in production environement we needs other jdbc driver -->
+        <dependency org="mm-mysql" name="mm-mysql" rev="2.0.7" conf="runprod->default"/> 
+        <!-- junit is only need in the test configuration-->        
+        <dependency org="junit" name="junit" rev="3.8" conf="test->default"/> 
+    </dependencies>
+</ivy-module>

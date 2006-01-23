@@ -1,0 +1,79 @@
+<project name="configurations" default="run.dev" xmlns:ivy="antlib:fr.jayasoft.ivy.ant">
+    <!-- some variables used -->
+    <property name="lib.dir" value="lib" />
+    <property name="build.dir" value="build" />
+    <property name="src.dir" value="src" />
+    
+    <!-- paths used for compilation and run  -->
+    <path id="compile.path.id">
+        <fileset dir="${lib.dir}/compile" />
+	</path>
+    <path id="lib.run.dev.id">
+        <path location="${build.dir}" />
+        <fileset dir="${lib.dir}/rundev" />
+	</path>
+	<path id="lib.run.prod.id">
+        <path location="${build.dir}" />
+		<fileset dir="${lib.dir}/runprod" />
+    </path>
+    
+    <!-- ================================= 
+          target: resolve              
+         ================================= -->
+    <target name="resolve" description="--> retreive dependencies with ivy">
+    	<!-- conf="*" will copie artifacts defined for each conf in a dir matching conf name -->
+		<ivy:retrieve pattern="${ivy.lib.dir}/[conf]/[artifact]-[revision].[ext]"/>
+    </target>    
+    
+    <!-- ================================= 
+          target: report              
+         ================================= -->
+    <target name="report" depends="resolve" description="--> generates a report of dependencies">
+        <ivy:report todir="${build.dir}"/>
+    </target>
+
+	<!-- ================================= 
+          target: run.dev
+         ================================= -->
+    <target name="run.dev" depends="resolve" description="--> compile and run the project">
+        <mkdir dir="${build.dir}" />
+        <javac srcdir="${src.dir}" destdir="${build.dir}" classpathref="lib.run.dev.id" />
+    	<copy todir="${build.dir}">
+    		<fileset dir="${src.dir}" includes="**/*.properties"></fileset>
+    	</copy>
+        <java classpathref="lib.run.dev.id" classname="example.ConfigurationsExample" fork="true">
+        	<arg value="--dev"/>
+        </java>
+    </target>
+	
+	<!-- ================================= 
+          target: run.prod
+         ================================= -->
+    <target name="run.prod" depends="resolve" description="--> compile and run the project">
+        <mkdir dir="${build.dir}" />
+        <javac srcdir="${src.dir}" destdir="${build.dir}" classpathref="lib.run.prod.id"/>
+    	<copy todir="${build.dir}">
+    		<fileset dir="${src.dir}" includes="**/*.properties"></fileset>
+    	</copy>    	
+        <java classpathref="lib.run.prod.id" classname="example.ConfigurationsExample" fork="true" />
+    </target>
+    <!-- ================================= 
+          target: clean              
+         ================================= -->
+    <target name="clean" description="--> clean the project">
+        <delete includeemptydirs="true">
+            <fileset dir="${basedir}">
+            	<exclude name="src/**" />
+            	<exclude name="build.xml" />
+                <exclude name="ivy.xml" />
+        	</fileset>
+    	</delete>
+    </target>
+	
+    <!-- ================================= 
+          target: clean-cache              
+         ================================= -->
+	<target name="clean-cache" description="--> clean the ivy cache">
+		<delete dir="${user.home}/.ivy-cache"/>
+	</target>
+</project>

@@ -1,0 +1,112 @@
+<project name="filter-framework" default="publish" xmlns:ivy="antlib:fr.jayasoft.ivy.ant">
+    <!-- some variables used -->
+    <property name="lib.dir" value="lib" />
+    <property name="build.dir" value="build" />
+    <property name="distrib.dir" value="distrib" />
+    <property name="src.dir" value="src" />
+	<property name="test.dir" value="test" />
+	<property name="build.test.dir" value="${build.dir}/test-classes" />
+	<property name="report.test.dir" value="${build.dir}/test-report" />
+	<property name="revision" value="1.3" />
+	
+    <!-- paths used for compilation and run  -->
+    <path id="compile.path.id">
+        <fileset dir="${lib.dir}/cc-Impl" />
+	</path>
+	
+    <path id="test.path.id">
+        <path location="${build.dir}" />
+    	 <path location="${build.test.dir}" />
+        <fileset dir="${lib.dir}/test" />
+	</path>
+    
+    <!-- ================================= 
+          target: resolve              
+         ================================= -->
+    <target name="resolve" description="--> retreive dependencies with ivy">
+    	<!-- conf="*" will copie artifacts defined for each conf in a dir matching conf name -->
+		<ivy:retrieve pattern="${ivy.lib.dir}/[conf]/[artifact]-[revision].[ext]"/>
+    </target>
+	
+	<!-- ================================= 
+          target: build
+         ================================= -->
+    <target name="build" depends="clean, resolve" description="--> compile and jar project">
+        <mkdir dir="${build.dir}" />
+		<mkdir dir="${distrib.dir}"/>
+        <javac srcdir="${src.dir}" destdir="${build.dir}" classpathref="compile.path.id"/>
+    	<jar destfile="${distrib.dir}/filter-api.jar" >
+    		<fileset dir="${build.dir}">
+    			<include name="filter/*.class"/>
+    		</fileset>
+    	</jar>
+    	<jar destfile="${distrib.dir}/filter-hmimpl.jar" >
+    		<fileset dir="${build.dir}">
+    			<include name="filter/hmimpl/*.class"/>
+    		</fileset>
+    	</jar>    
+    	<jar destfile="${distrib.dir}/filter-ccimpl.jar" >
+    		<fileset dir="${build.dir}">
+    			<include name="filter/ccimpl/*.class"/>
+    		</fileset>
+    	</jar>        	
+    </target>
+	
+    <!-- ================================= 
+          target: test              
+         ================================= -->	
+	<target name="test" depends="build" description="--> compile and test the project">	
+		<mkdir dir="${report.test.dir}"/>
+		<mkdir dir="${build.test.dir}"/>
+		
+		<javac srcdir="${test.dir}" destdir="${build.test.dir}" classpathref="test.path.id"/>
+		<junit printsummary="yes" fork="yes" haltonfailure="yes" >
+			<classpath refid="test.path.id"/>	
+			<formatter type="plain"/>
+			<batchtest todir="${report.test.dir}" >
+			    <fileset dir="${build.test.dir}">
+			    	<include name="**/**Test.*"/>
+			    </fileset>	
+			</batchtest>
+		</junit>
+	</target>
+    <!-- ================================= 
+          target: publish              
+         ================================= -->	
+    <target name="publish" depends="test" description="--> compile test and publish this project in the local ivy repository">
+        <property name="revision" value="${revision}"/>
+		<ivy:publish artifactspattern="${distrib.dir}/[artifact].[ext]" 
+			           resolver="local"
+			           pubrevision="${revision}" 
+			           status="release"/>
+        <echo message="project ${ant.project.name} released with version ${revision}" />
+    </target>	
+    <!-- ================================= 
+          target: clean              
+         ================================= -->
+    <target name="clean" description="--> clean the project">
+        <delete includeemptydirs="true">
+            <fileset dir="${basedir}">
+            	<exclude name="src/**" />
+            	<exclude name="test/**" />
+            	<exclude name="build.xml" />
+                <exclude name="ivy.xml" />
+            	<exclude name=".*" />
+        	</fileset>
+    	</delete>
+    </target>
+	
+    <!-- ================================= 
+          target: clean-cache              
+         ================================= -->
+	<target name="clean-cache" description="--> clean the ivy cache">
+		<delete dir="${user.home}/.ivy/cache"/>
+	</target>
+    
+    <!-- ================================= 
+          target: report              
+         ================================= -->
+    <target name="report" depends="resolve" description="--> generates a report of dependencies">
+        <ivy:report todir="${build.dir}"/>
+    </target>
+</project>
