@@ -15,6 +15,7 @@ import java.util.HashSet;
 
 import fr.jayasoft.ivy.Artifact;
 import fr.jayasoft.ivy.Configuration;
+import fr.jayasoft.ivy.DefaultModuleDescriptor;
 import fr.jayasoft.ivy.DependencyArtifactDescriptor;
 import fr.jayasoft.ivy.DependencyDescriptor;
 import fr.jayasoft.ivy.Ivy;
@@ -42,6 +43,12 @@ public class XmlModuleDescriptorWriter {
 	    	out.println("\t\tpublication=\""+Ivy.DATE_FORMAT.format(md.getResolvedPublicationDate())+"\"");
             if (md.isDefault()) {
                 out.println("\t\tdefault=\"true\"");
+            }
+            if (md instanceof DefaultModuleDescriptor) {
+                DefaultModuleDescriptor dmd = (DefaultModuleDescriptor)md;
+                if (dmd.getNamespace() != null && !dmd.getNamespace().getName().equals("system")) {
+                    out.println("\t\tnamespace=\""+dmd.getNamespace().getName()+"\"");
+                }
             }
 	    	out.println("\t/>");
             Configuration[] confs = md.getConfigurations();

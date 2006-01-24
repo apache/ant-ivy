@@ -17,6 +17,7 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 import fr.jayasoft.ivy.namespace.NameSpaceHelper;
+import fr.jayasoft.ivy.namespace.Namespace;
 import fr.jayasoft.ivy.namespace.NamespaceTransformer;
 import fr.jayasoft.ivy.util.Message;
 
@@ -44,7 +45,19 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
         return moduleDescriptor;
     }
 
-    public static ModuleDescriptor transformInstance(ModuleDescriptor md, NamespaceTransformer t) {
+    /**
+     * Transforms the given module descriptor of the given namespace and return
+     * a new module descriptor in the system namespace.
+     * 
+     * <i>Note that dependency exclude rules are not converted in system namespace, because they aren't 
+     * transformable (the name space hasn't the ability to convert regular expressions)</i>
+     * 
+     * @param md
+     * @param ns
+     * @return
+     */
+    public static ModuleDescriptor transformInstance(ModuleDescriptor md, Namespace ns) {
+        NamespaceTransformer t = ns.getToSystemTransformer();
         if (t.isIdentity()) {
             return md;
         }
@@ -56,7 +69,7 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
         nmd._resolvedPublicationDate = md.getResolvedPublicationDate();
         DependencyDescriptor[] dd = md.getDependencies();
         for (int i = 0; i < dd.length; i++) {
-            nmd._dependencies.add(NameSpaceHelper.transform(dd[i], t));
+            nmd._dependencies.add(NameSpaceHelper.toSystem(dd[i], ns));
         }
         Configuration[] confs = md.getConfigurations();
         for (int i = 0; i < confs.length; i++) {
@@ -76,6 +89,8 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
         nmd._licenses.addAll(Arrays.asList(md.getLicenses()));
         nmd._homePage = md.getHomePage();
         nmd._lastModified = md.getLastModified();
+        nmd._namespace = ns;
+        
         return nmd;
     }
     
@@ -93,6 +108,7 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
     private List _licenses = new ArrayList(); // List(License)
     private String _homePage;
     private long _lastModified = 0;
+    private Namespace _namespace;
 
     public DefaultModuleDescriptor(ModuleRevisionId id, String status, Date pubDate) {
         this(id, status, pubDate, false);
@@ -317,5 +333,25 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
         _lastModified = lastModified;
     }
 
-    
+    public Namespace getNamespace() {
+        if (_namespace == null || !isNamespaceUseful()) {
+            return null;
+        }
+        return _namespace;
+    }
+
+    private boolean isNamespaceUseful() {
+        for (Iterator iter = _dependencies.iterator(); iter.hasNext();) {
+            DependencyDescriptor dd = (DependencyDescriptor)iter.next();
+            if (dd.getAllDependencyArtifactsExcludes().length > 0) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void setNamespace(Namespace ns) {
+        _namespace = ns;
+    }
+
 }

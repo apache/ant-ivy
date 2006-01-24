@@ -100,6 +100,9 @@ public class XmlModuleDescriptorUpdater {
                         } else if (attributes.getValue("publication") != null) {
                             out.print(" publication=\""+substitute(ivy, attributes.getValue("publication"))+"\"");
                         }
+                        if (attributes.getValue("namespace") != null) {
+                            out.print(" namespace=\""+substitute(ivy, attributes.getValue("namespace"))+"\"");
+                        }
                     } else if (replaceInclude && "include".equals(qName) && _context.contains("configurations")) {
                         try {
                             URL url;

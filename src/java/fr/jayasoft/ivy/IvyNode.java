@@ -1074,11 +1074,8 @@ public class IvyNode {
         // artifact is excluded if it match any of the exclude pattern for this dependency...
         DependencyDescriptor dd = getDependencyDescriptor(md, dependency);
         if (dd != null) {
-            DependencyArtifactDescriptor[] dads = dd.getDependencyArtifactsExcludes(moduleConfs);
-            for (int i = 0; i < dads.length; i++) {
-                if (artifactIdMatch(dads[i].getId(), artifact.getId().getArtifactId())) {
-                    return true;
-                }
+            if (dd.doesExclude(moduleConfs, artifact.getId().getArtifactId())) {
+                return true;
             }
         }
         // ... or if it is excluded by all its callers
@@ -1102,7 +1099,7 @@ public class IvyNode {
         return null;
     }
 
-    private Collection findArtifactsMatching(ArtifactId id, Map allArtifacts) {
+    private static Collection findArtifactsMatching(ArtifactId id, Map allArtifacts) {
         Artifact art = (Artifact)allArtifacts.get(id);
         if (art != null) {
             return Collections.singleton(art);
@@ -1110,31 +1107,11 @@ public class IvyNode {
         Collection ret = new ArrayList();
         for (Iterator iter = allArtifacts.keySet().iterator(); iter.hasNext();) {
             ArtifactId aid = (ArtifactId)iter.next();
-            if (artifactIdMatch(id, aid)) {
+            if (DefaultDependencyDescriptor.artifactIdMatch(id, aid)) {
                 ret.add(allArtifacts.get(aid));
             }
         }
         return ret;
-    }
-
-
-    private boolean artifactIdMatch(ArtifactId id, ArtifactId aid) {
-        if (aid.equals(id)) {
-            return true;
-        }
-        return stringMatch(id.getModuleId().getOrganisation(), aid.getModuleId().getOrganisation())
-            && stringMatch(id.getModuleId().getName(), aid.getModuleId().getName())
-            && stringMatch(id.getName(), aid.getName())
-            && stringMatch(id.getExt(), aid.getExt())
-            && stringMatch(id.getType(), aid.getType())
-            ;
-    }
-
-    private boolean stringMatch(String pattern, String test) {
-        if (test.equals(pattern)) {
-            return true;
-        }
-        return Pattern.matches(pattern, test);
     }
 
     private void addDependencyArtifactsIncludes(String rootModuleConf, DependencyArtifactDescriptor[] dependencyArtifacts) {

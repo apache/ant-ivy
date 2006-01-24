@@ -185,7 +185,7 @@ public abstract class AbstractResolver implements DependencyResolver, IvyAware, 
     
     // Namespace conversion methods
     protected ModuleDescriptor toSystem(ModuleDescriptor md) {
-        return NameSpaceHelper.transform(md, getNamespace().getToSystemTransformer());
+        return NameSpaceHelper.toSystem(md, getNamespace());
     }
 
     protected Artifact fromSystem(Artifact artifact) {
@@ -197,7 +197,7 @@ public abstract class AbstractResolver implements DependencyResolver, IvyAware, 
     }
 
     protected ResolvedModuleRevision toSystem(ResolvedModuleRevision rmr) {
-        return NameSpaceHelper.transform(rmr, getNamespace().getToSystemTransformer());
+        return NameSpaceHelper.toSystem(rmr, getNamespace());
     }
 
     protected ModuleRevisionId toSystem(ModuleRevisionId resolvedMrid) {

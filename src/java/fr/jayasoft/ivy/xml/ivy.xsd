@@ -58,6 +58,7 @@
 		            <xs:attribute name="status" type="xs:string"/>
 		            <xs:attribute name="publication" type="xs:string"/>
 		            <xs:attribute name="resolver" type="xs:string"/>
+		            <xs:attribute name="namespace" type="xs:string"/>
 		            <xs:attribute name="default" type="xs:boolean"/>
 	            </xs:complexType>
       		</xs:element>

@@ -32,6 +32,7 @@ import fr.jayasoft.ivy.ModuleId;
 import fr.jayasoft.ivy.ModuleRevisionId;
 import fr.jayasoft.ivy.Status;
 import fr.jayasoft.ivy.conflict.FixedConflictManager;
+import fr.jayasoft.ivy.namespace.Namespace;
 import fr.jayasoft.ivy.parser.AbstractModuleDescriptorParser;
 import fr.jayasoft.ivy.repository.Resource;
 import fr.jayasoft.ivy.util.Message;
@@ -157,6 +158,17 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
                 String module = _ivy.substitute(attributes.getValue("module"));
                 String revision = _ivy.substitute(attributes.getValue("revision"));
                 _md.setModuleRevisionId(ModuleRevisionId.newInstance(org, module, revision));
+
+                String namespace = _ivy.substitute(attributes.getValue("namespace"));
+                if (namespace != null) {
+                    Namespace ns = _ivy.getNamespace(namespace);
+                    if (ns == null) {
+                        Message.warn("namespace not found for "+_md.getModuleRevisionId()+": "+namespace);
+                    } else {
+                        _md.setNamespace(ns);
+                    }
+                }
+                
                 String status = _ivy.substitute(attributes.getValue("status"));
                 _md.setStatus(status == null ? Status.DEFAULT_STATUS : status);
                 _md.setDefault(Boolean.valueOf(_ivy.substitute(attributes.getValue("default"))).booleanValue());

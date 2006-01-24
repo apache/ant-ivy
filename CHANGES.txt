@@ -1,3 +1,5 @@
+- NEW: namespace system: a resolver can be declared to belong to a namespace, which itself
+       specify the transformation to apply to convert it from and to system namespace (IVY-147)
 - NEW: pluggable module descriptor parsers let define new kind of module descriptor (IVY-146) (thanks to Maarten Coene)
 - NEW: a new install task let add modules found in a repository in another one, even transitively (IVY-141)
 - NEW: maven2 pom compatibility: most resolvers are now able to handle m2 pom as project metadata

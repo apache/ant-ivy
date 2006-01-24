@@ -18,6 +18,8 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import fr.jayasoft.ivy.namespace.NameSpaceHelper;
+import fr.jayasoft.ivy.namespace.Namespace;
 import fr.jayasoft.ivy.namespace.NamespaceTransformer;
 
 /**
@@ -30,16 +32,60 @@ import fr.jayasoft.ivy.namespace.NamespaceTransformer;
  */
 public class DefaultDependencyDescriptor implements DependencyDescriptor {
 	private static final Pattern SELF_FALLBACK_PATTERN = Pattern.compile("@(\\(.*\\))?");
+    public static boolean artifactIdMatch(ArtifactId id, ArtifactId aid) {
+        if (aid.equals(id)) {
+            return true;
+        }
+        return stringMatch(id.getModuleId().getOrganisation(), aid.getModuleId().getOrganisation())
+            && stringMatch(id.getModuleId().getName(), aid.getModuleId().getName())
+            && stringMatch(id.getName(), aid.getName())
+            && stringMatch(id.getExt(), aid.getExt())
+            && stringMatch(id.getType(), aid.getType())
+            ;
+    }
+
+    public static boolean stringMatch(String pattern, String test) {
+        if (test.equals(pattern)) {
+            return true;
+        }
+        return Pattern.matches(pattern, test);
+    }
+
     
-    public static DependencyDescriptor transformInstance(DependencyDescriptor dd, NamespaceTransformer t) {
+    /**
+     * Transforms the given dependency descriptor of the given namespace and return
+     * a new dependency descriptor in the system namespace.
+     * 
+     * <i>Note that exclude rules are not converted in system namespace, because they aren't 
+     * transformable (the name space hasn't the ability to convert regular expressions).
+     * However, method doesExclude will work with system artifacts.</i>
+     * 
+     * @param md
+     * @param ns
+     * @return
+     */
+    public static DependencyDescriptor transformInstance(DependencyDescriptor dd, Namespace ns) {
+        NamespaceTransformer t = ns.getToSystemTransformer();
         if (t.isIdentity()) {
             return dd;
         }
+        DefaultDependencyDescriptor newdd = transformInstance(dd, t);
+        newdd._namespace = ns;
+        return newdd;
+    }
+
+    /**
+     * Transforms a dependency descriptor using the given transformer.
+     * 
+     * Note that no namespace info will be attached to the transformed dependency descriptor, 
+     * so calling doesExclude is not recommended (doesExclude only works when namespace is properly set)
+     * @param dd
+     * @param t
+     * @return
+     */
+    public static DefaultDependencyDescriptor transformInstance(DependencyDescriptor dd, NamespaceTransformer t) {
         ModuleRevisionId transformParentId = t.transform(dd.getParentRevisionId());
         ModuleRevisionId transformMrid = t.transform(dd.getDependencyRevisionId());
-        if (transformParentId.equals(dd.getParentRevisionId()) && transformMrid.equals(dd.getDependencyRevisionId())) {
-            return dd;
-        }
         DefaultDependencyDescriptor newdd = new DefaultDependencyDescriptor();
         newdd._parentId = transformParentId;
         newdd._revId = transformMrid;
@@ -47,10 +93,21 @@ public class DefaultDependencyDescriptor implements DependencyDescriptor {
         newdd._changing = dd.isChanging();
         newdd._transitive = dd.isTransitive();
         String[] moduleConfs = dd.getModuleConfigurations();
-        for (int i = 0; i < moduleConfs.length; i++) {
-            newdd._confs.put(moduleConfs[i], new ArrayList(Arrays.asList(dd.getDependencyConfigurations(moduleConfs[i]))));
-            newdd._artifactsExcludes.put(moduleConfs[i], new ArrayList(Arrays.asList(dd.getDependencyArtifactsExcludes(moduleConfs[i]))));
-            newdd._artifactsIncludes.put(moduleConfs[i], new ArrayList(Arrays.asList(dd.getDependencyArtifactsIncludes(moduleConfs[i]))));
+        if (moduleConfs.length == 1 && "*".equals(moduleConfs[0])) {
+            if (dd instanceof DefaultDependencyDescriptor) {
+                DefaultDependencyDescriptor ddd = (DefaultDependencyDescriptor)dd;
+                newdd._confs = new HashMap(ddd._confs);
+                newdd._artifactsExcludes = new HashMap(ddd._artifactsExcludes);
+                newdd._artifactsIncludes = new HashMap(ddd._artifactsIncludes);
+            } else {
+                throw new IllegalArgumentException("dependency descriptor transformation does not support * module confs with descriptors which aren't DefaultDependencyDescriptor");
+            }
+        } else {
+            for (int i = 0; i < moduleConfs.length; i++) {
+                newdd._confs.put(moduleConfs[i], new ArrayList(Arrays.asList(dd.getDependencyConfigurations(moduleConfs[i]))));
+                newdd._artifactsExcludes.put(moduleConfs[i], new ArrayList(Arrays.asList(dd.getDependencyArtifactsExcludes(moduleConfs[i]))));
+                newdd._artifactsIncludes.put(moduleConfs[i], new ArrayList(Arrays.asList(dd.getDependencyArtifactsIncludes(moduleConfs[i]))));
+            }
         }
         return newdd;
     }
@@ -73,6 +130,11 @@ public class DefaultDependencyDescriptor implements DependencyDescriptor {
     private ModuleRevisionId _parentId;
 
     private boolean _transitive = true;
+    
+    /**
+     * This namespace should be used to check 
+     */
+    private Namespace _namespace = null; 
 
     public DefaultDependencyDescriptor(DependencyDescriptor dd, String revision) {
         _parentId = dd.getParentRevisionId();
@@ -246,6 +308,22 @@ public class DefaultDependencyDescriptor implements DependencyDescriptor {
         artifacts.add(dad);
     }
     
+    /**
+     * only works when namespace is properly set. The behaviour is not specified if namespace is not set
+     */
+    public boolean doesExclude(String[] moduleConfigurations, ArtifactId artifactId) {
+        if (_namespace != null) {
+            artifactId = NameSpaceHelper.transform(artifactId, _namespace.getFromSystemTransformer());
+        }
+        DependencyArtifactDescriptor[] dads = getDependencyArtifactsExcludes(moduleConfigurations);
+        for (int i = 0; i < dads.length; i++) {
+            if (artifactIdMatch(dads[i].getId(), artifactId)) {
+                return true;
+            }
+        }        
+        return false;
+    }
+    
     public void addExtends(String conf) {
         _extends.add(conf);
     }
@@ -268,6 +346,10 @@ public class DefaultDependencyDescriptor implements DependencyDescriptor {
 
     public boolean isTransitive() {
         return _transitive;
+    }
+
+    public Namespace getNamespace() {
+        return _namespace;
     }
 
 }

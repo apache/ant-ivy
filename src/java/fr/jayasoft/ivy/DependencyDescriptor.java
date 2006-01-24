@@ -5,6 +5,8 @@
  */
 package fr.jayasoft.ivy;
 
+import fr.jayasoft.ivy.namespace.Namespace;
+
 
 /**
  * @author x.hanin
@@ -34,10 +36,12 @@ public interface DependencyDescriptor {
     String[] getModuleConfigurations();
     String[] getDependencyConfigurations(String moduleConfiguration);
     String[] getDependencyConfigurations(String[] moduleConfigurations);
+    Namespace getNamespace();
     DependencyArtifactDescriptor[] getAllDependencyArtifactsIncludes();
     DependencyArtifactDescriptor[] getDependencyArtifactsIncludes(String moduleConfigurations);
     DependencyArtifactDescriptor[] getDependencyArtifactsIncludes(String[] moduleConfigurations);
     DependencyArtifactDescriptor[] getAllDependencyArtifactsExcludes();
     DependencyArtifactDescriptor[] getDependencyArtifactsExcludes(String moduleConfigurations);
     DependencyArtifactDescriptor[] getDependencyArtifactsExcludes(String[] moduleConfigurations);
+    boolean doesExclude(String[] moduleConfigurations, ArtifactId artifactId);
 }
