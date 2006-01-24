@@ -14,6 +14,7 @@ import java.util.List;
 import fr.jayasoft.ivy.Artifact;
 import fr.jayasoft.ivy.DependencyDescriptor;
 import fr.jayasoft.ivy.Ivy;
+import fr.jayasoft.ivy.ModuleRevisionId;
 import fr.jayasoft.ivy.ResolveData;
 import fr.jayasoft.ivy.ResolvedModuleRevision;
 import fr.jayasoft.ivy.report.DownloadReport;
@@ -32,6 +33,17 @@ public class IBiblioResolver extends URLResolver {
     public IBiblioResolver() {
     }
     
+    protected ResolvedResource findIvyFileRef(DependencyDescriptor dd, ResolveData data) {
+        if (isM2compatible()) {
+            ModuleRevisionId mrid = dd.getDependencyRevisionId();
+            mrid = convertM2IdForResourceSearch(mrid);
+            ResolvedResource rres = findResourceUsingPatterns(mrid, getIvyPatterns(), mrid.getName(), "pom", "pom", data.getDate());
+            return rres;
+        } else {
+            return null;
+        }
+    }
+
     public void setM2compatible(boolean m2compatible) {
         super.setM2compatible(m2compatible);
         if (m2compatible) {

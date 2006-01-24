@@ -48,9 +48,9 @@ public abstract class AbstractResourceResolver extends BasicResolver {
             mrid = convertM2IdForResourceSearch(mrid);
         }
         ResolvedResource rres = findResourceUsingPatterns(mrid, _ivyPatterns, "ivy", "ivy", "xml", data.getDate());
-        if (rres == null && isM2compatible()) {
-            rres = findResourceUsingPatterns(mrid, _ivyPatterns, mrid.getName(), "pom", "pom", data.getDate());
-        }
+//        if (rres == null && isM2compatible()) {
+//            rres = findResourceUsingPatterns(mrid, _ivyPatterns, mrid.getName(), "pom", "pom", data.getDate());
+//        }
         return rres;
     }
 
@@ -209,7 +209,7 @@ public abstract class AbstractResourceResolver extends BasicResolver {
         _m2compatible = m2compatible;
     }
 
-    private ModuleRevisionId convertM2IdForResourceSearch(ModuleRevisionId mrid) {
+    protected ModuleRevisionId convertM2IdForResourceSearch(ModuleRevisionId mrid) {
         if (mrid.getOrganisation().indexOf('.') == -1) {
             return mrid;
         }
