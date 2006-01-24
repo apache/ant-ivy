@@ -1,3 +1,8 @@
+compatiblity with previous version:
+- the default place for the cache has changed, it is now in {USER_HOME}/.ivy/cache, instead of {USER_HOME}/.ivy-cache
+  please move this directory if you want to avoid unnecessary downloads
+- modules are now logged as they are found, set ivy.log.module.when.found variable to false to avoid this
+
 - NEW: namespace system: a resolver can be declared to belong to a namespace, which itself
        specify the transformation to apply to convert it from and to system namespace (IVY-147)
 - NEW: pluggable module descriptor parsers let define new kind of module descriptor (IVY-146) (thanks to Maarten Coene)
