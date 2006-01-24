@@ -925,6 +925,14 @@ public class ResolveTest extends TestCase {
         assertTrue(_ivy.getArchiveFileInCache(_cache, "org8", "mod8.1", "1.0", "a", "txt", "txt").exists());
     }
     
+    public void testVisibility4() throws Exception {
+        ResolveReport report = _ivy.resolve(new File("test/repositories/2/mod8.4/ivy-1.1.xml").toURL(),
+                null, new String[] {"*"}, _cache, null, true);
+        
+        assertTrue(_ivy.getArchiveFileInCache(_cache, "org8", "mod8.1", "1.1", "a-private", "txt", "txt").exists());
+        assertTrue(_ivy.getArchiveFileInCache(_cache, "org8", "mod8.1", "1.1", "a", "txt", "txt").exists());
+    }
+    
     ///////////////////////////////////////////////////////////
     // here comes a series of test provided by Chris Rudd
     // about configuration mapping and eviction

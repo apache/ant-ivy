@@ -906,7 +906,7 @@ public class Ivy implements TransferListener {
                 ResolveData data = new ResolveData(this, cache, date, confReport, validate, dependenciesMap);
                 IvyNode node = new IvyNode(data, md, confs[i], true);
                 node.setRootModuleConf(confs[i]);
-                fetchDependencies(node, confs[i]);
+                fetchDependencies(node, confs[i], false);
             }
         }
         
@@ -960,12 +960,12 @@ public class Ivy implements TransferListener {
 
     
     
-    private void fetchDependencies(IvyNode node, String conf) {
+    private void fetchDependencies(IvyNode node, String conf, boolean shouldBePublic) {
         long start = System.currentTimeMillis();
         Message.debug(node.getId()+" => resolving dependencies in "+conf);
         resolveConflict(node, node.getParent());
         
-        if (node.loadData(conf)) {
+        if (node.loadData(conf, shouldBePublic)) {
             node = node.getRealNode(); // if data loading discarded the node, get the real one
             resolveConflict(node, node.getParent());
             if (!node.isEvicted(node.getRootModuleConf())) {
@@ -980,7 +980,7 @@ public class Ivy implements TransferListener {
             IvyNode.EvictionData ed = node.getEvictedData(node.getRootModuleConf());
             for (Iterator iter = ed.getSelected().iterator(); iter.hasNext();) {
                 IvyNode selected = (IvyNode)iter.next();
-                fetchDependencies(selected, conf);
+                fetchDependencies(selected, conf, true);
             }
         }
         Message.debug(node.getId()+" => dependencies resolved in "+conf+" ("+(System.currentTimeMillis()-start)+"ms)");
@@ -1002,7 +1002,7 @@ public class Ivy implements TransferListener {
             node.updateConfsToFetch(Arrays.asList(extendedConfs));
         }
         for (int i = 0; i < extendedConfs.length; i++) {
-            fetchDependencies(node, extendedConfs[i]);
+            fetchDependencies(node, extendedConfs[i], false);
         }
         
         if (node.getDependencyDescriptor() == null || node.getDependencyDescriptor().isTransitive()) {
@@ -1015,13 +1015,13 @@ public class Ivy implements TransferListener {
                 }
                 String[] confs = dep.getRequiredConfigurations(node, conf);
                 for (int i = 0; i < confs.length; i++) {
-                    fetchDependencies(dep, confs[i]);
+                    fetchDependencies(dep, confs[i], true);
                 }
                 // if there are still confs to fetch (usually because they have
                 // been updated when evicting another module), we fetch them now
                 confs = dep.getConfsToFetch();
                 for (int i = 0; i < confs.length; i++) {
-                    fetchDependencies(dep, confs[i]);
+                    fetchDependencies(dep, confs[i], true);
                 }
             }
         }

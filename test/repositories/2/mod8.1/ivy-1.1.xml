@@ -1,0 +1,17 @@
+<ivy-module version="1.0">
+	<info organisation="org8"
+	       module="mod8.1"
+	       revision="1.1"
+	       status="integration"
+	       publication="20050930110000"
+	/>
+    <configurations>
+		<conf name="default"/>
+		<conf name="private" extends="default" visibility="private"/>
+		<conf name="public" extends="private" visibility="public"/>
+    </configurations>    
+    <publications>
+		<artifact name="a" type="txt" conf="default"/>
+		<artifact name="a-private" type="txt" conf="private"/>
+    </publications>
+</ivy-module>

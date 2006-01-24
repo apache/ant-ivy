@@ -491,7 +491,7 @@ public class IvyNode {
      * node = node.getRealNode();
      * ...
      */
-    public boolean loadData(String conf) {
+    public boolean loadData(String conf, boolean shouldBePublic) {
         boolean loaded = false;
         if (!isEvicted(_rootModuleConf) && (hasConfigurationsToLoad() || !isRootModuleConfLoaded()) && !hasProblem()) {
             markRootModuleConfLoaded();
@@ -530,7 +530,7 @@ public class IvyNode {
                                 resolved._searched |= _module.isSearched();
                                 resolved.markSelected(_rootModuleConf);
                                 resolved.updateDataFrom(this, _rootModuleConf);
-                                resolved.loadData(conf);
+                                resolved.loadData(conf, shouldBePublic);
                                 if (_dd != null) {
                                     resolved.addDependencyArtifactsIncludes(_rootModuleConf, _dd.getDependencyArtifactsIncludes(getParentConf()));
                                 }
@@ -577,9 +577,9 @@ public class IvyNode {
         }
         if (hasProblem()) {
             _data.getReport().addDependency(this);
-            return handleConfiguration(loaded, conf) && loaded;
+            return handleConfiguration(loaded, conf, shouldBePublic) && loaded;
         }
-        if (!handleConfiguration(loaded, conf)) {
+        if (!handleConfiguration(loaded, conf, shouldBePublic)) {
             return false;
         }
         if (_dd != null) {
@@ -597,7 +597,7 @@ public class IvyNode {
         return _loadedRootModuleConfs.contains(_rootModuleConf);
     }
 
-    private boolean handleConfiguration(boolean loaded, String conf) {
+    private boolean handleConfiguration(boolean loaded, String conf, boolean shouldBePublic) {
         String[] confs = getRealConfs(conf);
         if (_md != null) {
             for (int i = 0; i < confs.length; i++) {
@@ -607,7 +607,7 @@ public class IvyNode {
                     _problem = new RuntimeException("configuration(s) not found in "+this+": "+confs[i]+". It was required from "+getParent()+" "+getParentConf());
                     _data.getReport().addDependency(this);
                     return false;
-                } else if (!isRoot() && c.getVisibility() != Configuration.Visibility.PUBLIC) {
+                } else if (shouldBePublic && !isRoot() && c.getVisibility() != Configuration.Visibility.PUBLIC) {
                     _confsToFetch.remove(conf);
                     _problem = new RuntimeException("configuration not public in "+this+": "+c+". It was required from "+getParent()+" "+getParentConf());
                     _data.getReport().addDependency(this);
