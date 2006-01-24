@@ -13,6 +13,7 @@ import java.util.Date;
 import java.util.List;
 
 import fr.jayasoft.ivy.Artifact;
+import fr.jayasoft.ivy.DefaultModuleDescriptor;
 import fr.jayasoft.ivy.DependencyDescriptor;
 import fr.jayasoft.ivy.DependencyResolver;
 import fr.jayasoft.ivy.Ivy;
@@ -25,7 +26,7 @@ import fr.jayasoft.ivy.report.DownloadReport;
 
 public class MockResolver extends AbstractResolver {
     static MockResolver buildMockResolver(String name, boolean findRevision, final Date publicationDate) {
-        return buildMockResolver(name, findRevision, null, publicationDate);
+        return buildMockResolver(name, findRevision, ModuleRevisionId.newInstance("test", "test", "test"), publicationDate);
     }
 
     static MockResolver buildMockResolver(String name, boolean findRevision, final ModuleRevisionId mrid, final Date publicationDate) {
@@ -46,7 +47,7 @@ public class MockResolver extends AbstractResolver {
                 }
 
                 public ModuleDescriptor getDescriptor() {
-                    return null;
+                    return new DefaultModuleDescriptor(mrid, "integration", new Date());
                 }
                 public boolean isDownloaded() {
                     return true;
