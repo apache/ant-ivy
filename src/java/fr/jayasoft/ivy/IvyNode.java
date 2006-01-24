@@ -10,12 +10,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.Stack;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -208,7 +210,6 @@ public class IvyNode {
         
     // Map (String rootModuleConf -> Set(DependencyArtifactDescriptor))
     private Map _dependencyArtifactsIncludes = new HashMap();
-
 
     // shared data
     private ResolveData _data;
@@ -678,6 +679,11 @@ public class IvyNode {
                 // it is exactly the same as if there was no dependency at all on it
                 continue;
             } 
+            if (isDependencyModuleExcluded(dd.getDependencyRevisionId(), conf)) {
+                // the whole module is excluded, it is considered as not being part of dependencies at all
+                Message.verbose("excluding "+dd.getDependencyRevisionId()+" in "+conf);
+                continue;
+            }
             IvyNode depNode = _data.getNode(dd.getDependencyRevisionId());
             if (depNode == null) {
                 depNode = new IvyNode(_data, dd);
@@ -701,6 +707,10 @@ public class IvyNode {
             }
         }
         return dependencies;
+    }
+
+    private boolean isDependencyModuleExcluded(ModuleRevisionId dependencyRevisionId, String conf) {
+        return doesCallersExclude(getRootModuleConf(), new DefaultArtifact(dependencyRevisionId, new Date(), "ivy", "ivy", "xml"));
     }
 
     public ModuleRevisionId getId() {
@@ -1035,21 +1045,32 @@ public class IvyNode {
      * @return
      */
     private boolean doesCallersExclude(String rootModuleConf, Artifact artifact) {
-        Caller[] callers = getCallers(rootModuleConf);
-        if (callers.length == 0) {
+        return doesCallersExclude(rootModuleConf, artifact, new Stack());
+    }
+    private boolean doesCallersExclude(String rootModuleConf, Artifact artifact, Stack callersStack) {
+        if (callersStack.contains(getId())) {
             return false;
         }
-        Collection callersNodes = new ArrayList();
-        for (int i = 0; i < callers.length; i++) {
-            ModuleDescriptor md = callers[i].getModuleDescriptor();
-            if (!doesExclude(md, rootModuleConf, callers[i].getCallerConfigurations(), this, artifact)) {
+        callersStack.push(getId());
+        try {
+            Caller[] callers = getCallers(rootModuleConf);
+            if (callers.length == 0) {
                 return false;
             }
+            Collection callersNodes = new ArrayList();
+            for (int i = 0; i < callers.length; i++) {
+                ModuleDescriptor md = callers[i].getModuleDescriptor();
+                if (!doesExclude(md, rootModuleConf, callers[i].getCallerConfigurations(), this, artifact, callersStack)) {
+                    return false;
+                }
+            }
+            return true;
+        } finally {
+            callersStack.pop();
         }
-        return true;
     }
 
-    private boolean doesExclude(ModuleDescriptor md, String rootModuleConf, String[] moduleConfs, IvyNode dependency, Artifact artifact) {
+    private boolean doesExclude(ModuleDescriptor md, String rootModuleConf, String[] moduleConfs, IvyNode dependency, Artifact artifact, Stack callersStack) {
         // artifact is excluded if it match any of the exclude pattern for this dependency...
         DependencyDescriptor dd = getDependencyDescriptor(md, dependency);
         if (dd != null) {
@@ -1063,7 +1084,7 @@ public class IvyNode {
         // ... or if it is excluded by all its callers
         IvyNode c = _data.getNode(md.getModuleRevisionId());
         if (c != null) {
-            return c.doesCallersExclude(rootModuleConf, artifact);
+            return c.doesCallersExclude(rootModuleConf, artifact, callersStack);
         } else {
             return false;
         }

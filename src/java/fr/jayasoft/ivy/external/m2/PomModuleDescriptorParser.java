@@ -128,7 +128,7 @@ public class PomModuleDescriptorParser extends AbstractModuleDescriptorParser {
                     ModuleId mid = (ModuleId)iter.next();
                     String[] confs = _dd.getModuleConfigurations();
                     for (int i = 0; i < confs.length; i++) {
-                        _dd.addDependencyArtifactExcludes(confs[i], new DefaultDependencyArtifactDescriptor(_dd, new ArtifactId(mid, mid.getName(), ".*", ".*"), false));
+                        _dd.addDependencyArtifactExcludes(confs[i], new DefaultDependencyArtifactDescriptor(_dd, new ArtifactId(mid, ".*", ".*", ".*"), false));
                     }
                 }
                 _md.addDependency(_dd);
