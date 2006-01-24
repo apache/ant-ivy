@@ -113,7 +113,7 @@ public class IvyReport extends IvyTask {
             _outputpattern = "[organisation]-[module]-[conf].html";
         }
         
-        if (_todir != null && !_todir.isDirectory()) {
+        if (_todir != null && _todir.exists() && !_todir.isDirectory()) {
             throw new BuildException("destination directory should be a directory !");
         }
         if (_organisation == null) {
