@@ -78,6 +78,23 @@ public abstract class AbstractModuleDescriptorParserTester extends TestCase {
         }
     }
 
+    protected void assertDependencyModulesExcludes(DependencyDescriptor dd, String[] confs, String[] moduleNames) {
+        DependencyArtifactDescriptor[] dads = dd.getDependencyArtifactsExcludes(confs);
+        assertNotNull(dads);
+        assertEquals(moduleNames.length, dads.length);
+        for (int i = 0; i < moduleNames.length; i++) {
+            boolean found = false;
+            for (int j = 0; j < dads.length; j++) {
+                assertNotNull(dads[j]);
+                if (dads[j].getId().getModuleId().getName().equals(moduleNames[i])) {
+                    found = true;
+                    break;
+                }
+            }
+            assertTrue("dependency module exclude not found: "+moduleNames[i], found);
+        }
+    }
+
     protected void assertConf(ModuleDescriptor md, String name, String desc, Visibility visibility, String[] exts) {
         Configuration conf = md.getConfiguration(name);
         assertNotNull("configuration not found: "+name, conf);

@@ -133,8 +133,8 @@ public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         assertEquals(new HashSet(Arrays.asList(new String[] {"compile", "runtime"})), new HashSet(Arrays.asList(dds[1].getModuleConfigurations())));
         assertEquals(new HashSet(Arrays.asList(new String[] {"master(*)", "compile(*)"})), new HashSet(Arrays.asList(dds[1].getDependencyConfigurations("compile"))));
         assertEquals(new HashSet(Arrays.asList(new String[] {"runtime(*)"})), new HashSet(Arrays.asList(dds[1].getDependencyConfigurations("runtime"))));
-        assertDependencyArtifactsExcludes(dds[1], new String[] {"compile"}, new String[] {"jaxme-api", "jaxen"});
-        assertDependencyArtifactsExcludes(dds[1], new String[] {"runtime"}, new String[] {"jaxme-api", "jaxen"});        
+        assertDependencyModulesExcludes(dds[1], new String[] {"compile"}, new String[] {"jaxme-api", "jaxen"});
+        assertDependencyModulesExcludes(dds[1], new String[] {"runtime"}, new String[] {"jaxme-api", "jaxen"});        
         
         assertEquals(ModuleRevisionId.newInstance("cglib", "cglib", "2.0.2"), dds[2].getDependencyRevisionId());
         assertEquals(new HashSet(Arrays.asList(new String[] {"compile", "runtime"})), new HashSet(Arrays.asList(dds[2].getModuleConfigurations())));
