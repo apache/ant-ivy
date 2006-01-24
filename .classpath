@@ -8,5 +8,6 @@
 	<classpathentry kind="var" path="ANT_HOME/lib/ant-launcher.jar"/>
 	<classpathentry kind="var" path="ANT_HOME/lib/xercesImpl.jar"/>
 	<classpathentry kind="con" path="org.jayasoft.ivyde.eclipse.cpcontainer.IVYDE_CONTAINER/ivy.xml/*"/>
+	<classpathentry kind="var" path="ANT_HOME/lib/ant-trax.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

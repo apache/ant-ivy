@@ -783,6 +783,22 @@ public class ResolveTest extends TestCase {
         }
     }
     
+    public void testRegularCircular() throws Exception {
+        // mod11.1 depends on mod11.2 but excludes itself
+        // mod11.2 depends on mod11.1
+        ResolveReport report = _ivy.resolve(new File("test/repositories/2/mod11.1/ivy-1.0.xml").toURL(),
+                null, new String[] {"test"}, _cache, null, true);
+        
+        assertNotNull(report);
+        assertFalse(report.hasError());
+            
+        assertTrue(_ivy.getIvyFileInCache(_cache, ModuleRevisionId.newInstance("org11", "mod11.2", "1.0")).exists());
+        assertTrue(_ivy.getArchiveFileInCache(_cache, "org11", "mod11.2", "1.0", "mod11.2", "jar", "jar").exists());
+
+        assertFalse(_ivy.getIvyFileInCache(_cache, ModuleRevisionId.newInstance("org11", "mod11.1", "1.0")).exists());
+        assertFalse(_ivy.getArchiveFileInCache(_cache, "org11", "mod11.1", "1.0", "mod11.1", "jar", "jar").exists());
+    }
+    
     public void testResolveDualChain() throws Exception {
         Ivy ivy = new Ivy();
         ivy.configure(ResolveTest.class.getResource("dualchainresolverconf.xml"));

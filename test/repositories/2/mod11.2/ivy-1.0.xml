@@ -1,0 +1,18 @@
+<ivy-module version="1.0">
+	<info organisation="org11"
+	       module="mod11.2"
+	       revision="1.0"
+	       status="integration"
+	       publication="20041101110000"
+	/>
+    <configurations defaultconfmapping="compile->@;test->compile">
+        <conf name="compile"/>
+        <conf name="test"/>
+    </configurations>
+	<publications>
+        <artifact name="mod11.2" type="jar" conf="compile"/>
+    </publications>
+	<dependencies>
+		<dependency name="mod11.1" rev="1.0" conf="compile"/>
+	</dependencies>
+</ivy-module>

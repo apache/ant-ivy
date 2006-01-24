@@ -96,6 +96,9 @@ public class IvyReport extends IvyTask {
         if (_conf.equals("*")) {
             _conf = getProperty(ivy, "ivy.resolved.configurations");
         }
+        if (_conf == null) {
+            throw new BuildException("no conf provided for ivy report task: It can either be set explicitely via the attribute 'conf' or via 'ivy.resolved.configurations' property or a prior call to <resolve/>");
+        }
         if (_todir == null) {
             String t = getProperty(ivy, "ivy.report.todir");
             if (t != null) {
@@ -144,7 +147,7 @@ public class IvyReport extends IvyTask {
         if (_todir != null) {
             out = new File(_todir, xml.getName());
         } else {
-            out = new File(xml.getName());
+            out = new File("./"+xml.getName());
         }
         
         FileUtil.copy(xml, out, null);
@@ -163,6 +166,8 @@ public class IvyReport extends IvyTask {
         }
         if (out.getParentFile() != null && !out.getParentFile().exists()) {
             out.getParentFile().mkdirs();
+        } else if(out.getParentFile() == null) {
+            out = new File("./"+out.getPath());
         }
         xslt.setOut(out);
         xslt.setStyle(getReportStylePath(cache));
