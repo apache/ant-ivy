@@ -74,10 +74,13 @@ public class ChainResolver extends AbstractResolver {
             }
             if (mr != null) {
                 // check if latest is asked and compare to return the most recent
-                if (!_returnFirst && !dd.getDependencyRevisionId().isExactRevision()) {
+                if (!_returnFirst && (!dd.getDependencyRevisionId().isExactRevision() || (ret != null && ret.getDescriptor().isDefault()))) {
                     if (ret == null || isAfter(mr, ret, data.getDate())) {
                         Message.debug("\tmodule revision kept as younger: "+mr.getId());
                         ret = mr;
+                    } else if (ret != null && !mr.getDescriptor().isDefault() && ret.getDescriptor().isDefault()) {
+                            Message.debug("\tmodule revision kept as better (not default): "+mr.getId());
+                            ret = mr;
                     } else {
                         Message.debug("\tmodule revision discarded as older: "+mr.getId());
                     }
