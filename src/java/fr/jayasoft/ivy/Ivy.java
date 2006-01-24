@@ -705,6 +705,7 @@ public class Ivy implements TransferListener {
         
         URLResource res = new URLResource(ivySource);
         ModuleDescriptorParser parser = ModuleDescriptorParserRegistry.getInstance().getParser(res);
+        Message.verbose("using "+parser+" to parse "+ivySource);
         try {
             
             ModuleDescriptor md = parser.parseDescriptor(this, ivySource, validate);
