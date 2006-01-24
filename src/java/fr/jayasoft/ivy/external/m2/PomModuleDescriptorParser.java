@@ -152,14 +152,16 @@ public class PomModuleDescriptorParser extends AbstractModuleDescriptorParser {
         public void characters(char[] ch, int start, int length) throws SAXException {
             String txt = new String(ch, start, length).trim();
             String context = getContext();
-            if (_organisation == null && context.endsWith("groupId")) {
-                _organisation = txt;
-            } else if (_module == null && context.endsWith("artifactId")) {
-                _module = txt;
-            } else if (_revision == null && context.endsWith("version")) {
-                _revision = txt;
-            } else if (_scope == null && context.endsWith("scope")) {
-                _scope = txt;
+            if (_md.getModuleRevisionId() == null || context.startsWith("project/dependencies/dependency")) {
+                if (_organisation == null && context.endsWith("groupId")) {
+                    _organisation = txt;
+                } else if (_module == null && context.endsWith("artifactId")) {
+                    _module = txt;
+                } else if (_revision == null && context.endsWith("version")) {
+                    _revision = txt;
+                } else if (_scope == null && context.endsWith("scope")) {
+                    _scope = txt;
+                }
             }
         }
         

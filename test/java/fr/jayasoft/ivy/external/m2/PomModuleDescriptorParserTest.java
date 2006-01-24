@@ -57,6 +57,18 @@ public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         assertEquals(ModuleRevisionId.newInstance("commons-logging", "commons-logging", "1.0.4"), dds[0].getDependencyRevisionId());
     }
     
+    public void testReal() throws Exception {
+        ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(new Ivy(), getClass().getResource("commons-lang-1.0.pom"), false);
+        assertNotNull(md);
+        
+        assertEquals(ModuleRevisionId.newInstance("commons-lang", "commons-lang", "1.0"), md.getModuleRevisionId());
+        
+        DependencyDescriptor[] dds = md.getDependencies();
+        assertNotNull(dds);
+        assertEquals(1, dds.length);
+        assertEquals(ModuleRevisionId.newInstance("junit", "junit", "3.7"), dds[0].getDependencyRevisionId());
+    }
+    
     public void testOptional() throws Exception {
         ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(new Ivy(), getClass().getResource("test-optional.pom"), false);
         assertNotNull(md);
