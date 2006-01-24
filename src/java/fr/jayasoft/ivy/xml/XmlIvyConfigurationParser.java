@@ -165,20 +165,32 @@ public class XmlIvyConfigurationParser extends DefaultHandler {
                     _ivy.loadProperties(new URL(propFilePath), override == null ? true : Boolean.valueOf(override).booleanValue());
                 }
             } else if ("include".equals(qName)) {
-                String propFilePath = _ivy.substitute((String)attributes.get("file"));
-                File incFile = new File(propFilePath);
                 Map variables = new HashMap(_ivy.getVariables());
                 try {
-                    if (incFile.exists()) {
-                        Message.verbose("including file: "+propFilePath);
-                        _ivy.setConfigurationVariables(incFile);
-                        new XmlIvyConfigurationParser(_ivy).parse(_configurator, incFile.toURL());
+                    String propFilePath = _ivy.substitute((String)attributes.get("file"));
+                    URL ivyconfURL = null; 
+                    if (propFilePath == null) {
+                        propFilePath = _ivy.substitute((String)attributes.get("url"));
+                        if (propFilePath == null) {
+                            Message.error("bad include tag: specify file or url to include");
+                            return;
+                        } else {
+                            Message.verbose("including url: "+propFilePath);
+                            ivyconfURL = new URL(propFilePath);
+                            _ivy.setConfigurationVariables(ivyconfURL);
+                        }
                     } else {
-                        Message.verbose("including url: "+propFilePath);
-                        URL url = new URL(propFilePath);
-                        _ivy.setConfigurationVariables(url);
-                        new XmlIvyConfigurationParser(_ivy).parse(_configurator, url);
+                        File incFile = new File(propFilePath);
+                        if (!incFile.exists()) {
+                            Message.error("impossible to include "+incFile+": file does not exist");
+                            return;
+                        } else {
+                            Message.verbose("including file: "+propFilePath);
+                            _ivy.setConfigurationVariables(incFile);
+                            ivyconfURL = incFile.toURL();
+                        }
                     }
+                    new XmlIvyConfigurationParser(_ivy).parse(_configurator, ivyconfURL);
                 } finally {
                     _ivy.setVariables(variables);
                 }
