@@ -1236,7 +1236,9 @@ public class Ivy implements TransferListener {
         // resolve using appropriate resolver
         ResolveReport report = new ResolveReport(md);
         DependencyResolver oldDicator = getDictatorResolver();
+        boolean log = logNotConvertedExclusionRule();
         try {
+            setLogNotConvertedExclusionRule(true);
             setDictatorResolver(fromResolver);
             
             Message.info(":: resolving dependencies ::");
@@ -1267,6 +1269,7 @@ public class Ivy implements TransferListener {
             return report;
         } finally {
             setDictatorResolver(oldDicator);
+            setLogNotConvertedExclusionRule(log);
         }
     }
 
@@ -1842,6 +1845,8 @@ public class Ivy implements TransferListener {
 
     private EventListenerList _listeners = new EventListenerList();
 
+    private boolean _logNotConvertedExclusionRule;
+
     public void addTransferListener(TransferListener listener) {
         _listeners.add(TransferListener.class, listener);
     }
@@ -1955,6 +1960,13 @@ public class Ivy implements TransferListener {
     public boolean logResolvedRevision() {
         String var = getVariable("ivy.log.resolved.revision");
         return var == null || Boolean.valueOf(var).booleanValue();
+    }
+
+    public boolean logNotConvertedExclusionRule() {
+        return _logNotConvertedExclusionRule;
+    }
+    public void setLogNotConvertedExclusionRule(boolean logNotConvertedExclusionRule) {
+        _logNotConvertedExclusionRule = logNotConvertedExclusionRule;
     }
 
 }

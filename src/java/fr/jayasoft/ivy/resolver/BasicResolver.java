@@ -326,7 +326,13 @@ public abstract class BasicResolver extends AbstractResolver {
                 // a basic ivy file is written containing default data
 	            XmlModuleDescriptorWriter.write(systemMd, ivyFile);
 	        } else {
-	            // copy and update ivy file from source to cache
+                if (md instanceof DefaultModuleDescriptor) {
+                    DefaultModuleDescriptor dmd = (DefaultModuleDescriptor)md;
+                    if (data.getIvy().logNotConvertedExclusionRule() && dmd.isNamespaceUseful()) {
+                        Message.warn("the module descriptor "+ivyRef.getResource()+" has information which can't be converted into the system namespace. It will require the availability of the namespace '"+getNamespace().getName()+"' to be fully usable.");
+                    }
+                }
+                // copy and update ivy file from source to cache
                 parser.toIvyFile(cachedIvyURL, ivyRef.getResource(), ivyFile, systemMd);
                 long repLastModified = ivyRef.getLastModified();
                 if (repLastModified > 0) {

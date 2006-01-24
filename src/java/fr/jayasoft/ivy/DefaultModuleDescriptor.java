@@ -340,7 +340,7 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
         return _namespace;
     }
 
-    private boolean isNamespaceUseful() {
+    public boolean isNamespaceUseful() {
         for (Iterator iter = _dependencies.iterator(); iter.hasNext();) {
             DependencyDescriptor dd = (DependencyDescriptor)iter.next();
             if (dd.getAllDependencyArtifactsExcludes().length > 0) {
