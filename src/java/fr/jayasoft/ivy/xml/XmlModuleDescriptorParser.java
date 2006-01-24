@@ -80,13 +80,21 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
 
     public void toIvyFile(URL srcURL, Resource res, File destFile, ModuleDescriptor md) throws IOException, ParseException {
         try {
+            Namespace ns = null;
+            if (md instanceof DefaultModuleDescriptor) {
+                DefaultModuleDescriptor dmd = (DefaultModuleDescriptor)md;
+                ns = dmd.getNamespace();
+            }
             XmlModuleDescriptorUpdater.update(
+                    null,
                     srcURL, 
                     destFile, 
                     Collections.EMPTY_MAP, 
                     md.getStatus(), 
                     md.getResolvedModuleRevisionId().getRevision(), 
-                    md.getResolvedPublicationDate());
+                    md.getResolvedPublicationDate(),
+                    ns,
+                    false);
         } catch (SAXException e) {
             ParseException ex = new ParseException("exception occured while parsing "+srcURL, 0);
             ex.initCause(e);

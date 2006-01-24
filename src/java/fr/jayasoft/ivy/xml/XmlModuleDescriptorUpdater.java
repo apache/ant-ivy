@@ -13,7 +13,6 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.URL;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Stack;
 
@@ -25,7 +24,8 @@ import org.xml.sax.SAXParseException;
 import org.xml.sax.helpers.DefaultHandler;
 
 import fr.jayasoft.ivy.Ivy;
-import fr.jayasoft.ivy.ModuleId;
+import fr.jayasoft.ivy.ModuleRevisionId;
+import fr.jayasoft.ivy.namespace.Namespace;
 import fr.jayasoft.ivy.util.Message;
 import fr.jayasoft.ivy.util.XMLHelper;
 
@@ -52,11 +52,11 @@ public class XmlModuleDescriptorUpdater {
     public static void update(URL srcURL, File destFile, final Map resolvedRevisions, final String status, 
             final String revision, final Date pubdate) 
                                 throws IOException, SAXException {
-        update(null, srcURL, destFile, resolvedRevisions, status, revision, pubdate, false);
+        update(null, srcURL, destFile, resolvedRevisions, status, revision, pubdate, null, false);
     }
     
     public static void update(final Ivy ivy, URL srcURL, File destFile, final Map resolvedRevisions, final String status, 
-            final String revision, final Date pubdate, final boolean replaceInclude) 
+            final String revision, final Date pubdate, final Namespace ns, final boolean replaceInclude) 
                                 throws IOException, SAXException {
         if (destFile.getParentFile() != null) {
             destFile.getParentFile().mkdirs();
@@ -145,16 +145,26 @@ public class XmlModuleDescriptorUpdater {
                         out.print("<dependency");
                         String org = substitute(ivy, attributes.getValue("org"));
                         org = org == null ? _organisation : org;
-                        ModuleId mid = new ModuleId(org, substitute(ivy, attributes.getValue("name")));
+                        String module = substitute(ivy, attributes.getValue("name"));
+                        String revision = substitute(ivy, attributes.getValue("rev"));
+                        ModuleRevisionId localMid = ModuleRevisionId.newInstance(org, module, revision);
+                        ModuleRevisionId systemMid = ns == null ? 
+                                localMid : 
+                                ns.getToSystemTransformer().transform(localMid);
+                        
                         for (int i=0; i<attributes.getLength(); i++) {
                             String attName = attributes.getQName(i);
                             if ("rev".equals(attName)) {
-                                String rev = (String)resolvedRevisions.get(mid);
+                                String rev = (String)resolvedRevisions.get(systemMid.getModuleId());
                                 if (rev != null) {
                                     out.print(" rev=\""+rev+"\"");
                                 } else {
-                                    out.print(" rev=\""+substitute(ivy, attributes.getValue("rev"))+"\"");
+                                    out.print(" rev=\""+systemMid.getRevision()+"\"");
                                 }
+                            } else if ("org".equals(attName)) {
+                                out.print(" org=\""+systemMid.getOrganisation()+"\"");
+                            } else if ("name".equals(attName)) {
+                                out.print(" name=\""+systemMid.getName()+"\"");
                             } else {
                                 out.print(" "+attName+"=\""+substitute(ivy, attributes.getValue(attName))+"\"");
                             }
@@ -260,14 +270,5 @@ public class XmlModuleDescriptorUpdater {
             }
         }
         r.close();
-    }
-
-    public static void main(String[] args) throws Exception {
-        URL test = new File("test/xml/module1/module1.ivy.xml").toURL();
-        Map resolvedRevisions = new HashMap();
-        resolvedRevisions.put(new ModuleId("jayasoft", "module3"), "3.3");
-        resolvedRevisions.put(new ModuleId("jayasoft", "module4"), "4.4");
-        update(test, new File("build/cache/ivy.xml"), resolvedRevisions, "release", "1.3", new Date());
-        System.out.println("job done");
     }
 }

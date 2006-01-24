@@ -42,7 +42,7 @@ public class XmlModuleUpdaterTest extends TestCase {
         ivy.setVariable("myvar", "myconf1");
         XmlModuleDescriptorUpdater.update(ivy, 
                 XmlModuleUpdaterTest.class.getResource("test-update.xml"), 
-                dest, resolvedRevisions, "release", "mynewrev", cal.getTime(), true);
+                dest, resolvedRevisions, "release", "mynewrev", cal.getTime(), null, true);
         
         assertTrue(dest.exists());
         String expected = FileUtil.readEntirely(new BufferedReader(new InputStreamReader(XmlModuleUpdaterTest.class.getResourceAsStream("updated.xml"))));

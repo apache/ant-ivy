@@ -58,10 +58,17 @@ public class NameSpaceHelper {
         if (t.isIdentity()) {
             return artifactId;
         }
-        ModuleId mid = t.transform(new ModuleRevisionId(artifactId.getModuleId(), "")).getModuleId();
+        ModuleId mid = transform(artifactId.getModuleId(), t);
         if (mid.equals(artifactId.getModuleId())) {
             return artifactId;
         }
         return new ArtifactId(mid, artifactId.getName(), artifactId.getType(), artifactId.getExt());
+    }
+
+    public static ModuleId transform(ModuleId mid, NamespaceTransformer t) {
+        if (t.isIdentity()) {
+            return mid;
+        }
+        return t.transform(new ModuleRevisionId(mid, "")).getModuleId();
     }
 }

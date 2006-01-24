@@ -1520,7 +1520,7 @@ public class Ivy implements TransferListener {
         try {
             XmlModuleDescriptorUpdater.update(this, ivyFileURL, 
                     new File(publishedIvy),
-                    resolvedDependencies, status, revision, pubdate, true);
+                    resolvedDependencies, status, revision, pubdate, null, true);
         } catch (SAXException ex) {
             throw new IllegalStateException("bad ivy file in cache for "+mrid+": please clean and resolve again");
         }
