@@ -218,7 +218,7 @@ public class PomModuleDescriptorParser extends AbstractModuleDescriptorParser {
     }
 
     public boolean accept(Resource res) {
-        return res.getName().endsWith(".pom") || "pom.xml".equals(res.getName()) || "project.xml".equals(res.getName());
+        return res.getName().endsWith(".pom") || res.getName().endsWith("pom.xml") || res.getName().endsWith("project.xml");
     }
 
     public String toString() {
