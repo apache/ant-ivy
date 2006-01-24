@@ -140,34 +140,15 @@ public class IvyRepResolver extends URLResolver {
     }
     
     public void setM2compatible(boolean m2compatible) {
-        super.setM2compatible(m2compatible);
-        if (isM2compatible()) {
-            _artroot = "http://www.ibiblio.org/maven2/";
-            _artpattern = "[organisation]/[module]/[revision]/[artifact]-[revision].[ext]";
-            ensureIvyConfigured(getIvy());
-            updateWholeArtPattern();
+        if (m2compatible) {
+            throw new IllegalArgumentException("ivyrep does not support maven2 compatibility. Please use ibiblio resolver instead, or even url or filesystem resolvers for more specific needs.");
         }
     }
     
     private void updateWholeIvyPattern() {
-        if (isM2compatible()) {
-            List patterns = new ArrayList();
-            if (getWholeIvyPattern() != null) {
-                patterns.add(getWholeIvyPattern());
-            }
-            if (getWholeArtPattern() != null) {
-                patterns.add(getWholeArtPattern());
-            }
-            setIvyPatterns(patterns);
-        } else {
-            setIvyPatterns(Collections.singletonList(getWholeIvyPattern()));
-        }
+        setIvyPatterns(Collections.singletonList(getWholeIvyPattern()));
     }
     private void updateWholeArtPattern() {
-        if (isM2compatible()) {
-            ensureIvyConfigured(getIvy());
-            updateWholeIvyPattern();
-        }
         setArtifactPatterns(Collections.singletonList(getWholeArtPattern()));
     }
     public void publish(Artifact artifact, File src) {
