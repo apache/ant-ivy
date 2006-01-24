@@ -10,8 +10,8 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.text.ParseException;
-import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 
 import fr.jayasoft.ivy.Ivy;
@@ -28,10 +28,23 @@ public class ModuleDescriptorParserRegistry extends AbstractModuleDescriptorPars
         return INSTANCE;
     }
 
-    private List _parsers = new ArrayList();
+    private List _parsers = new LinkedList();
     private ModuleDescriptorParserRegistry() {
         _parsers.add(PomModuleDescriptorParser.getInstance());
         _parsers.add(XmlModuleDescriptorParser.getInstance());
+    }
+    
+    /**
+     * Adds a the given parser to this registry.
+     * 
+     * @param parser the parser to add
+     */
+    public void addParser(ModuleDescriptorParser parser) {
+    	/*
+    	 * The parser is added in the front of the list of parsers. This is necessary because
+    	 * the XmlModuleDescriptorParser accepts all resources!
+    	 */
+    	_parsers.add(0, parser);
     }
     
     public ModuleDescriptorParser getParser(Resource res) {
