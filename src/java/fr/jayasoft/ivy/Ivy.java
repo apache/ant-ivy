@@ -253,7 +253,11 @@ public class Ivy implements TransferListener {
         Message.info(":: configuring :: file = "+configurationFile);
         long start = System.currentTimeMillis();
         setConfigurationVariables(configurationFile);
-        getDefaultIvyUserDir();
+        if (getVariable("ivy.default.ivy.user.dir") != null) {
+            setDefaultIvyUserDir(new File(getVariable("ivy.default.ivy.user.dir")));
+        } else {
+            getDefaultIvyUserDir();
+        }
         getDefaultCache();
         
         try {
@@ -272,7 +276,11 @@ public class Ivy implements TransferListener {
         Message.info(":: configuring :: url = "+configurationURL);
         long start = System.currentTimeMillis();
         setConfigurationVariables(configurationURL);
-        getDefaultIvyUserDir();
+        if (getVariable("ivy.default.ivy.user.dir") != null) {
+            setDefaultIvyUserDir(new File(getVariable("ivy.default.ivy.user.dir")));
+        } else {
+            getDefaultIvyUserDir();
+        }
         getDefaultCache();
         
         new XmlIvyConfigurationParser(this).parse(configurationURL);
