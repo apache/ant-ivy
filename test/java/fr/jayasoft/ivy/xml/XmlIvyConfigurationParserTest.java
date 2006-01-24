@@ -15,6 +15,7 @@ import fr.jayasoft.ivy.LatestStrategy;
 import fr.jayasoft.ivy.ModuleId;
 import fr.jayasoft.ivy.latest.LatestRevisionStrategy;
 import fr.jayasoft.ivy.latest.LatestTimeStrategy;
+import fr.jayasoft.ivy.parser.ModuleDescriptorParserRegistry;
 import fr.jayasoft.ivy.resolver.ChainResolver;
 import fr.jayasoft.ivy.resolver.FileSystemResolver;
 import fr.jayasoft.ivy.resolver.MockResolver;
@@ -213,5 +214,12 @@ public class XmlIvyConfigurationParserTest extends TestCase {
         assertNotNull(ivyPatterns);
         assertEquals(1, ivyPatterns.size());
         assertEquals("included/myrep/[organisation]/[module]/[type]s/[artifact]-[revision].[ext]", ivyPatterns.get(0));
+    }
+    
+    public void testParser() throws Exception {
+        Ivy ivy = new Ivy();
+        XmlIvyConfigurationParser parser = new XmlIvyConfigurationParser(ivy);
+        parser.parse(XmlIvyConfigurationParserTest.class.getResource("ivyconf-parser.xml"));
+        assertEquals("fr.jayasoft.ivy.parser.ModuleDescriptorParserRegistryTest$MyParser", ModuleDescriptorParserRegistry.getInstance().getParsers()[0].getClass().getName());
     }
 }

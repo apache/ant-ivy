@@ -1,0 +1,6 @@
+<ivyconf>
+	<typedef name="myparser" classname="fr.jayasoft.ivy.parser.ModuleDescriptorParserRegistryTest$MyParser"/>
+	<parsers>
+		<myparser />
+	</parsers>
+</ivyconf>

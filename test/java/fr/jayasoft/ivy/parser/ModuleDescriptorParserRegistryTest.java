@@ -32,9 +32,9 @@ public class ModuleDescriptorParserRegistryTest extends TestCase {
         }
 
     }
-    public void testTypeDef() throws Exception {
+    public void testAddConfigured() throws Exception {
         Ivy ivy = new Ivy();
-        ivy.typeDef("myparser", MyParser.class); // should register an instance of the parser in the ModuleDescriptorParserRegistry
+        ivy.addConfigured(new MyParser());
         ModuleDescriptor md = ModuleDescriptorParserRegistry.getInstance().parseDescriptor(ivy, ModuleDescriptorParserRegistryTest.class.getResource("nores"), false);
         assertNotNull(md);
         assertEquals(ModuleRevisionId.newInstance("test", "parser", "1.0"), md.getModuleRevisionId());

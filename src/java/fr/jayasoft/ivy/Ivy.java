@@ -398,16 +398,6 @@ public class Ivy implements TransferListener {
     }
 
     public void typeDef(String name, Class clazz) {
-    	if (ModuleDescriptorParser.class.isAssignableFrom(clazz)) {
-    		try {
-				ModuleDescriptorParser parser = (ModuleDescriptorParser) clazz.newInstance();
-				ModuleDescriptorParserRegistry.getInstance().addParser(parser);
-			} catch (Throwable t) {
-				Message.error("failed to instantiate parser "+name+": "+t.getClass()+": "+t.getMessage());
-                return;
-			}
-    		
-    	}
         _typeDefs.put(name, clazz);
     }
     
@@ -422,6 +412,10 @@ public class Ivy implements TransferListener {
     // methods which match ivy conf method signature specs
     public void addConfigured(DependencyResolver resolver) {
         addResolver(resolver);
+    }
+    
+    public void addConfigured(ModuleDescriptorParser parser) {
+        ModuleDescriptorParserRegistry.getInstance().addParser(parser);
     }
     
     public void addResolver(DependencyResolver resolver) {

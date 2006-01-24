@@ -47,6 +47,10 @@ public class ModuleDescriptorParserRegistry extends AbstractModuleDescriptorPars
     	_parsers.add(0, parser);
     }
     
+    public ModuleDescriptorParser[] getParsers() {
+        return (ModuleDescriptorParser[])_parsers.toArray(new ModuleDescriptorParser[_parsers.size()]);
+    }
+    
     public ModuleDescriptorParser getParser(Resource res) {
         for (Iterator iter = _parsers.iterator(); iter.hasNext();) {
             ModuleDescriptorParser parser = (ModuleDescriptorParser)iter.next();
