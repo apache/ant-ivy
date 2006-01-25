@@ -40,6 +40,7 @@
         <th>Revision</th>
         <th>Status</th>
         <th>Resolver</th>
+        <th>Default</th>
         <th>Licenses</th>
         <th>Size</th>
         <th></th>
@@ -65,6 +66,7 @@
     <xsl:param name="module" select="$revision/../@name"/>
     <xsl:param name="rev" select="$revision/@name"/>
     <xsl:param name="resolver" select="$revision/@resolver"/>
+    <xsl:param name="isdefault" select="$revision/@default"/>
     <xsl:param name="status" select="$revision/@status"/>
     <tr>
     <td>
@@ -87,6 +89,9 @@
     </td>
     <td align="center">
          <xsl:value-of select="$resolver"/>
+    </td>
+    <td align="center">
+         <xsl:value-of select="$isdefault"/>
     </td>
     <td align="center">
       <xsl:call-template name="licenses">

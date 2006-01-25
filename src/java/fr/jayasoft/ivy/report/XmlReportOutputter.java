@@ -86,6 +86,7 @@ public class XmlReportOutputter implements ReportOutputter {
 							 details +
                              " downloaded=\""+dep.isDownloaded()+"\""+
                              " searched=\""+dep.isSearched()+"\""+
+                             " default=\""+dep.getDescriptor().isDefault()+"\""+
 							 " conf=\""+toString(dep.getConfigurations(report.getConfiguration()))+"\">");
                     if (md != null) {
                         License[] licenses = md.getLicenses();
