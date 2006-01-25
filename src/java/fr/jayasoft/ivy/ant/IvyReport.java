@@ -29,6 +29,7 @@ public class IvyReport extends IvyTask {
     private boolean _xsl = true;
     private String _xslFile;
     private String _outputpattern;
+    private String _xslext = "html";
 
     public File getTodir() {
         return _todir;
@@ -110,7 +111,7 @@ public class IvyReport extends IvyTask {
             _todir.mkdirs();
         }
         if (_outputpattern == null) {
-            _outputpattern = "[organisation]-[module]-[conf].html";
+            _outputpattern = "[organisation]-[module]-[conf].[ext]";
         }
         
         if (_todir != null && _todir.exists() && !_todir.isDirectory()) {
@@ -145,9 +146,9 @@ public class IvyReport extends IvyTask {
 
         File out;
         if (_todir != null) {
-            out = new File(_todir, xml.getName());
+            out = new File(_todir, IvyPatternHelper.substitute(_outputpattern, organisation, module, "", "", "", "xml", conf));
         } else {
-            out = new File("./"+xml.getName());
+            out = new File(IvyPatternHelper.substitute(_outputpattern, organisation, module, "", "", "", "xml", conf));
         }
         
         FileUtil.copy(xml, out, null);
@@ -160,9 +161,9 @@ public class IvyReport extends IvyTask {
         xslt.setIn(new File(cache, XmlReportOutputter.getReportFileName(new ModuleId(organisation, module), conf)));
         File out;
         if (_todir != null) {
-            out = new File(_todir, IvyPatternHelper.substitute(_outputpattern, organisation, module, "", "", "", "", conf));
+            out = new File(_todir, IvyPatternHelper.substitute(_outputpattern, organisation, module, "", "", "", _xslext, conf));
         } else {
-            out = new File(IvyPatternHelper.substitute(_outputpattern, organisation, module, "", "", "", "", conf));
+            out = new File(IvyPatternHelper.substitute(_outputpattern, organisation, module, "", "", "", _xslext, conf));
         }
         if (out.getParentFile() != null && !out.getParentFile().exists()) {
             out.getParentFile().mkdirs();
@@ -176,7 +177,7 @@ public class IvyReport extends IvyTask {
         param.setExpression(_conf);
         param = xslt.createParam();
         param.setName("extension");
-        param.setExpression("html");
+        param.setExpression(_xslext);
         xslt.execute();
 
         // then copy the css if required
@@ -240,6 +241,12 @@ public class IvyReport extends IvyTask {
     }
     public void setXsl(boolean xsl) {
         _xsl = xsl;
+    }
+    public String getXslext() {
+        return _xslext;
+    }
+    public void setXslext(String xslext) {
+        _xslext = xslext;
     }
     
     
