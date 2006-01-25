@@ -1,0 +1,14 @@
+<ivy-module version="1.0">
+	<info organisation="TEST"
+	       module="moduleZ"
+	       revision="1.0"
+	       status="integration"
+	       publication="20050501110000"
+	/>
+  <configurations>
+    <conf name="compile" visibility="public"/>
+  </configurations>
+  <dependencies>
+    <dependency name="moduleX" rev="2.0" conf="compile->compile(default)"/>
+  </dependencies>
+</ivy-module>

@@ -604,7 +604,11 @@ public class IvyNode {
                 Configuration c = _md.getConfiguration(confs[i]);
                 if (c == null) {
                     _confsToFetch.remove(conf);
-                    _problem = new RuntimeException("configuration(s) not found in "+this+": "+confs[i]+". It was required from "+getParent()+" "+getParentConf());
+                    if (!conf.equals(confs[i])) {
+                        _problem = new RuntimeException("configuration(s) not found in "+this+": "+conf+". Missing configuration: "+confs[i]+". It was required from "+getParent()+" "+getParentConf());
+                    } else {
+                        _problem = new RuntimeException("configuration(s) not found in "+this+": "+confs[i]+". It was required from "+getParent()+" "+getParentConf());
+                    }
                     _data.getReport().addDependency(this);
                     return false;
                 } else if (shouldBePublic && !isRoot() && c.getVisibility() != Configuration.Visibility.PUBLIC) {
@@ -614,7 +618,7 @@ public class IvyNode {
                     return false;
                 }
                 if (loaded) {
-                    _fetchedConfigurations.addAll(Arrays.asList(confs));
+                    _fetchedConfigurations.add(conf);
                     _confsToFetch.removeAll(Arrays.asList(confs));
                     _confsToFetch.remove(conf);
                 }
@@ -1221,8 +1225,14 @@ public class IvyNode {
 
     public static IvyNode getRoot(IvyNode parent) {
         IvyNode root = parent;
-        while (root.getParent() != null) {
+        Collection path = new HashSet();
+        path.add(root);
+        while (root.getParent() != null && !root.isRoot()) {
+            if (path.contains(root.getParent())) {
+                return root;
+            }
             root = root.getParent();
+            path.add(root);
         }
         return root;
     }

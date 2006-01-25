@@ -1,0 +1,9 @@
+<ivyconf>
+    <conf defaultResolver="LOCAL" />
+    <resolvers>
+        <filesystem name="LOCAL">
+            <ivy pattern="${ivy.conf.dir}/ivy/[module]-[revision].xml" />
+            <artifact pattern="${ivy.conf.dir}/jars/[artifact]-[revision].[ext]" />
+        </filesystem>
+    </resolvers>
+</ivyconf>

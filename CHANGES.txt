@@ -42,6 +42,7 @@ compatiblity with previous version:
 - IMPROVE: better error message when publish fails due to readonly destination (IVY-83)
 - IMPROVE: some javadoc improvements (IVY-136 IVY-129) (thanks to Stephen Nesbitt)
 
+- FIX: problem resolving dependencies when 2 module versions have different configurations (IVY-151)
 - FIX: problem with inheritance between public and private conf (IVY-149)
 - FIX: no variable replacement during the deliver step (IVY-133)
 - FIX: conflict badly solved in some complex cases (IVY-130)

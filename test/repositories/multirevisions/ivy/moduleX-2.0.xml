@@ -1,0 +1,11 @@
+<ivy-module version="1.0">
+	<info organisation="TEST"
+	       module="moduleX"
+	       revision="2.0"
+	       status="integration"
+	       publication="20050501110000"
+	/>
+  <configurations>
+    <conf name="compile" visibility="public"/>
+  </configurations>
+</ivy-module>

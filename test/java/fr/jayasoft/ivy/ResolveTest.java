@@ -1325,6 +1325,16 @@ public class ResolveTest extends TestCase {
         assertTrue(report.hasError());
     }
     
+    public void testIVY151() throws Exception {
+        Ivy ivy = new Ivy();
+        ivy.configure(new File("test/repositories/multirevisions/ivyconf.xml"));
+        ResolveReport report = ivy.resolve(new File("test/repositories/multirevisions/ivy.xml").toURL(), null, new String[] {"compile", "test"}, _cache, null, true);
+
+        assertNotNull(report);
+        assertNotNull(report.getUnresolvedDependencies());
+        assertEquals("Number of unresolved dependencies not correct", 0, report.getUnresolvedDependencies().length);
+    }
+
     ////////////////////////////////////////////////////////////
     // helper methods to ease the tests
     ////////////////////////////////////////////////////////////
