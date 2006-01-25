@@ -1,4 +1,6 @@
-compatiblity with previous version:
+   version 1.3-RC1 - 2006-01-25
+===============================
+--> compatiblity with previous version:
 - the default place for the cache has changed, it is now in {USER_HOME}/.ivy/cache, instead of {USER_HOME}/.ivy-cache
   please move this directory if you want to avoid unnecessary downloads
 - modules are now logged as they are found, set ivy.log.module.when.found variable to false to avoid this
