@@ -130,7 +130,7 @@ public class ChainResolver extends AbstractResolver {
                 new ResolvedModuleRevisionArtifactInfo(rmr1),
                 new ResolvedModuleRevisionArtifactInfo(rmr2)
         };
-        return getLatestStrategy().findLatest(ais, date) == ais[0];
+        return getLatestStrategy().findLatest(ais, date) != ais[1];
     }
 
     public void reportFailure() {

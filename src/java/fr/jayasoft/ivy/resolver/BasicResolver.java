@@ -133,8 +133,12 @@ public abstract class BasicResolver extends AbstractResolver {
         if (mrid.isExactRevision() && !isCheckmodified() && !dd.isChanging()) {
             ResolvedModuleRevision rmr = findModuleInCache(data, mrid);
             if (rmr != null) {
-                Message.verbose("\t"+getName()+": revision in cache: "+mrid);
-                return toSystem(rmr);
+                if (rmr.getDescriptor().isDefault() && rmr.getResolver() != this) {
+                    Message.verbose("\t"+getName()+": found revision in cache: "+mrid+": but it's a default one, maybe we can find a better one");
+                } else {
+                    Message.verbose("\t"+getName()+": revision in cache: "+mrid);
+                    return toSystem(rmr);
+                }
             }
         }
         URL cachedIvyURL = null;

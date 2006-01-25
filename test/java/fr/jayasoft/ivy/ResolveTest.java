@@ -1247,6 +1247,7 @@ public class ResolveTest extends TestCase {
     }
     
     public void testNamespaceMapping() throws Exception {
+        // the dependency is in another namespace
         Ivy ivy = new Ivy();
         ivy.configure(new File("test/repositories/namespace/ivyconf.xml"));
         ResolveReport report = ivy.resolve(ResolveTest.class.getResource("ivy-namespace.xml"),
@@ -1263,6 +1264,28 @@ public class ResolveTest extends TestCase {
         assertTrue(ivy.getIvyFileInCache(_cache, ModuleRevisionId.newInstance("systemorg", "systemmod", "1.0")).exists());
         assertTrue(ivy.getArchiveFileInCache(_cache, "systemorg", "systemmod", "1.0", "A", "jar", "jar").exists());
     }
+    
+//    public void testNamespaceMapping2() throws Exception {
+//        // the dependency is in another namespace and has itself a dependency on a module available in the same namespace
+//        Ivy ivy = new Ivy();
+//        ivy.configure(new File("test/repositories/namespace/ivyconf.xml"));
+//        ResolveReport report = ivy.resolve(ResolveTest.class.getResource("ivy-namespace.xml"),
+//                null, new String[] {"*"}, _cache, null, true);
+//        assertNotNull(report);
+//        ModuleDescriptor md = report.getModuleDescriptor();
+//        assertNotNull(md);
+//        ModuleRevisionId mrid = ModuleRevisionId.newInstance("jayasoft", "namespace", "2.0");
+//        assertEquals(mrid, md.getModuleRevisionId());
+//        
+//        assertTrue(ivy.getResolvedIvyFileInCache(_cache, mrid).exists());
+//        
+//        // dependencies
+//        assertTrue(ivy.getIvyFileInCache(_cache, ModuleRevisionId.newInstance("systemorg", "systemmod2", "1.0")).exists());
+//        assertTrue(ivy.getArchiveFileInCache(_cache, "systemorg", "systemmod2", "1.0", "B", "jar", "jar").exists());
+//
+//        assertTrue(ivy.getIvyFileInCache(_cache, ModuleRevisionId.newInstance("systemorg", "systemmod", "1.0")).exists());
+//        assertTrue(ivy.getArchiveFileInCache(_cache, "systemorg", "systemmod", "1.0", "A", "jar", "jar").exists());
+//    }
     
     ////////////////////////////////////////////////////////////
     // helper methods to ease the tests
