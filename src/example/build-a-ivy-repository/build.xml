@@ -1,0 +1,115 @@
+<?xml version="1.0"?>
+<!-- ====================================================================== 
+     23 janv. 2006 13:36:06                                                        
+
+     ivy-repository
+     This is a sample project to build our own ivy repository from differents existing repositories.
+                   
+     mb                                                                
+     ====================================================================== -->
+<project name="ivy-repository" default="basic" xmlns:ivy="antlib:fr.jayasoft.ivy.ant">
+	<property name="configuration-dir" value="config"/>
+	<property name="from-resolver" value="libraries"/>
+	<property name="to-resolver" value="local-repository"/>
+	
+	<property name="ivy.cache.dir" value="${basedir}/cache" />
+	<property name="dest.repo.dir" value="${basedir}/ivy-local-repository" />
+
+    <!-- ================================= 
+          target: basic
+         ================================= -->
+    <target name="basic" depends="init-basic"
+    		description="--> retrieve files from well formatted ivy repositories">
+    	<ivy:install organisation="apache" module="commons-lang" revision="1.0" from="${from-resolver}" to="${to-resolver}" />
+    </target>
+
+    <!-- ================================= 
+          target: basic-deps
+         ================================= -->
+    <target name="basic-deps" depends="init-basic" 
+    		description="--> retrieve files from well formatted ivy repositories with dependencies">
+    	<ivy:install organisation="hibernate" module="hibernate" revision="2.1.8" from="${from-resolver}" to="${to-resolver}" transitive="true" />
+    </target>
+
+    <!-- ================================= 
+          target: commons-lang-1-0-ibiblio-no-namespace
+         ================================= -->
+    <target name="commons-lang-1-0-ibiblio-no-namespace" depends="init-advanced" 
+    		description="--> retrieve commons-lang 1.0 from ibiblio maven using no namespaces">
+    	<ivy:install organisation="commons-lang" module="commons-lang" revision="1.0" from="ibiblio-maven2-nonamespace" to="${to-resolver}" transitive="true" />
+    </target>
+
+    <!-- ================================= 
+          target: commons-lang-1-0-ibiblio-with-namespace
+         ================================= -->
+    <target name="commons-lang-1-0-ibiblio-with-namespace" depends="init-advanced" 
+    		description="--> retrieve commons-lang 1.0 from ibiblio maven using namespaces">
+    	<ivy:install organisation="apache" module="commons-lang" revision="1.0" from="ibiblio-maven2" to="${to-resolver}" transitive="true" />
+    </target>
+
+    <!-- ================================= 
+          target: advanced
+         ================================= -->
+    <target name="advanced" depends="init-advanced" 
+    		description="--> retrieve files from public repositories (ivyrep, ibiblio, ...) using namespaces">
+    	<ivy:install organisation="hibernate" module="hibernate" revision="3.0" from="${from-resolver}" to="${to-resolver}" transitive="true" />
+    </target>
+
+	<!-- ================================= 
+          target: maven1
+         ================================= -->
+    <target name="maven1" depends="init-maven1" 
+    		description="--> retrieve commons-lang 1.0 from maven1 repo using namespaces">
+    	<ivy:install organisation="apache" module="commons-lang" revision="1.0" from="ibiblio-maven" to="${to-resolver}" transitive="true" />
+    </target>
+
+    <!-- ================================= 
+          target: maven2
+         ================================= -->
+    <target name="maven2" depends="init-maven2" 
+    	description="--> retrieve files from maven2 repo using namespaces">
+    	<ivy:install organisation="hibernate" module="hibernate" revision="3.0" from="ibiblio-maven2" to="${to-resolver}" transitive="true" />
+    </target>
+
+   	<!-- - - - - - - - - - - - - - - - - - 
+          target: init-advanced
+         - - - - - - - - - - - - - - - - - -->
+    <target name="init-advanced">
+    	<ivy:configure file="${configuration-dir}/ivy-conf-advanced.xml"/>
+    </target>
+	
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: init-maven1
+         - - - - - - - - - - - - - - - - - -->
+    <target name="init-maven1">
+    	<ivy:configure file="${configuration-dir}/ivy-conf-maven1.xml"/>
+    </target>
+
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: init-maven2
+         - - - - - - - - - - - - - - - - - -->
+    <target name="init-maven2">
+    	<ivy:configure file="${configuration-dir}/ivy-conf-maven2.xml"/>
+    </target>
+
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: init-basic
+         - - - - - - - - - - - - - - - - - -->
+    <target name="init-basic">
+    	<ivy:configure file="${configuration-dir}/ivy-conf-basic.xml"/>
+    </target>
+
+	<!-- ================================= 
+          target: clean-cache
+         ================================= -->
+    <target name="clean-cache" description="--> clean the cache">
+    	<delete dir="${ivy.cache.dir}" failonerror="true"  />
+    </target>
+
+	<!-- ================================= 
+          target: clean-repo
+         ================================= -->
+    <target name="clean-repo" description="--> clean the destination repository">
+    	<delete dir="${dest.repo.dir}" failonerror="true"  />
+    </target>
+</project>

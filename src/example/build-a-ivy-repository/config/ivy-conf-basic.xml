@@ -1,0 +1,12 @@
+<ivyconf>
+	<conf	defaultCache="${ivy.cache.dir}"	
+			defaultResolver="libraries"
+			defaultConflictManager="all" />		<!-- in order to get all revisions without any eviction -->
+	<resolvers>
+		<ivyrep name="libraries" />
+  		<filesystem name="local-repository">
+  			<ivy pattern="${dest.repo.dir}/[organisation]/[module]/ivys/ivy-[revision].xml"/>
+  			<artifact pattern="${dest.repo.dir}/[organisation]/[module]/[type]s/[artifact]-[revision].[type]"/>
+  		</filesystem>
+	</resolvers>
+</ivyconf>

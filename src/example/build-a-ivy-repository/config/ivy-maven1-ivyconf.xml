@@ -1,0 +1,106 @@
+<ivyconf>
+	<!-- you can override this property to use mirrors 
+      http://mirrors.dotsrc.org/maven2
+      http://ftp.ggi-project.org/pub/packages/maven2
+      http://mirrors.sunsite.dk/maven2
+      http://public.planetmirror.com/pub/maven2
+      http://ibiblio.lsu.edu/main/pub/packages/maven2
+      http://www.ibiblio.net/pub/packages/maven2
+	-->
+	<property name="ibiblio-maven1-root" value="http://www.ibiblio.org/maven/" override="false" />
+
+	<namespaces>
+		<namespace name="ibiblio-maven">
+			<rule>	<!-- apache modules -->
+				<fromsystem>
+					<src org="apache" module=".+" />
+					<dest org="$m0" module="$m0" />
+				</fromsystem>
+				<tosystem>
+-					<src org="commons-.+" module="commons-.+" />
+					<src org="ant.*" module="ant.*" />
+					<src org="avalon-.+" module="avalon-.+" />
+					<src org="avalon" module="avalon" />
+					<src org="axis" module="axis" />
+					<src org="axis2" module="axis2" />
+					<src org="batik" module="batik" />
+					<src org="bcel" module="bcel" />
+					<src org="beehive" module="beehive" />
+					<src org="bsf" module="bsf" />
+					<src org="cactus" module="cactus" />
+					<src org="cocoon" module="cocoon" />
+					<src org="cornerstone-.+" module="cornerstone-.+" />
+					<src org="create-checksums" module="create-checksums" />
+					<src org="crimson" module="crimson" />
+					<src org="directory-.+" module="directory-.+" />
+					<src org="directory" module="directory" />
+					<src org="ecs" module="ecs" />
+					<src org="excalibur-.+" module="excalibur-.+" />
+					<src org="excalibur" module="excalibur" />
+					<src org="fop" module="fop" />
+					<src org="fulcrum" module="fulcrum" />
+					<src org="geronimo-.+" module="geronimo-.+" />
+					<src org="geronimo" module="geronimo" />
+					<src org="hivemind" module="hivemind" />
+					<src org="jakarta-regexp" module="jakarta-regexp" />
+					<src org="james" module="james" />
+					<src org="jaxme" module="jaxme" />
+					<src org="jcs-javagroups" module="jcs-javagroups" />
+					<src org="jcs" module="jcs" />
+					<src org="jspapi" module="jspapi" />
+					<src org="jstl" module="jstl" />
+					<src org="juddi" module="juddi" />
+					<src org="log4j" module="log4j" />
+					<src org="logkit" module="logkit" />
+					<src org="lucene" module="lucene" />
+					<src org="magicGball" module="magicGball" />
+					<src org="maven" module="maven" />
+					<src org="merlin-developer" module="merlin-developer" />
+					<src org="merlin" module="merlin" />
+					<src org="muse" module="muse" />
+					<src org="myfaces" module="myfaces" />
+					<src org="nekohtml" module="nekohtml" />
+					<src org="ojb" module="ojb" />
+					<src org="oro" module="oro" />
+					<src org="pluto-container" module="pluto-container" />
+					<src org="poi" module="poi" />
+					<src org="pubscribe" module="pubscribe" />
+					<src org="sandesha" module="sandesha" />
+					<src org="servletapi" module="servletapi" />
+					<src org="slide" module="slide" />
+					<src org="stratum" module="stratum" />
+					<src org="struts" module="struts" />
+					<src org="taglibs" module="taglibs" />
+					<src org="tapestry" module="tapestry" />
+					<src org="tomcat-util" module="tomcat-util" />
+					<src org="tomcat" module="tomcat" />
+					<src org="torque" module="torque" />
+					<src org="turbine" module="turbine" />
+					<src org="velocity-.+" module="velocity-.+" />
+					<src org="velocity" module="velocity" />
+					<src org="ws-commons.*" module="ws-commons.*" />
+					<src org="wsdl4j" module="wsdl4j" />
+					<src org="wsrf" module="wsrf" />
+					<src org="xalan" module="xalan" />
+					<src org="xerces" module="xerces" />
+					<src org="xercesjarv" module="xercesjarv" />
+					<src org="xml-apis" module="xml-apis" />
+					<src org="xml-resolver" module="xml-resolver" />
+					<src org="xml-security" module="xml-security" />
+					<src org="xmlbeans" module="xmlbeans" /> 
+					<src org="xmlrpc" module="xmlrpc" />
+					<dest org="apache" module="$m0"/>
+				</tosystem>
+			</rule>
+		</namespace>
+	</namespaces>
+	<resolvers>
+		<ibiblio	name="ibiblio-maven" 
+					root="${ibiblio-maven1-root}" 
+					pattern="[module]/[type]s/[artifact]-[revision].[ext]"
+					m2compatible="false"
+					namespace="ibiblio-maven"
+		/>
+	</resolvers>
+</ivyconf>
+	

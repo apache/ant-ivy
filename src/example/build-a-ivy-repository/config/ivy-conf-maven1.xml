@@ -1,0 +1,15 @@
+<ivyconf>
+	<conf	defaultCache="${ivy.cache.dir}"	
+			defaultResolver="local-repository"
+			defaultConflictManager="all" />		<!-- in order to get all revisions without any eviction -->
+			
+	<include file="${ivy.conf.dir}/ivy-maven1-ivyconf.xml" />
+	
+	<resolvers>
+		<resolver ref="ibiblio-maven"/>
+  		<filesystem name="local-repository">
+  			<ivy pattern="${dest.repo.dir}/[organisation]/[module]/ivys/ivy-[revision].xml"/>
+  			<artifact pattern="${dest.repo.dir}/[organisation]/[module]/[type]s/[artifact]-[revision].[type]"/>
+  		</filesystem>
+	</resolvers>
+</ivyconf>
