@@ -83,11 +83,12 @@ public class XmlReportOutputter implements ReportOutputter {
                     if (md != null && md.getHomePage() != null) {
                         details += " homepage=\""+md.getHomePage()+"\"";
                     }
-					out.println("\t\t\t<revision name=\""+dep.getResolvedId().getRevision()+"\"" +
+					String defaultValue = dep.getDescriptor() != null ? " default=\""+dep.getDescriptor().isDefault()+"\"" : "";
+                    out.println("\t\t\t<revision name=\""+dep.getResolvedId().getRevision()+"\"" +
 							 details +
                              " downloaded=\""+dep.isDownloaded()+"\""+
                              " searched=\""+dep.isSearched()+"\""+
-                             " default=\""+dep.getDescriptor().isDefault()+"\""+
+                             defaultValue+
 							 " conf=\""+toString(dep.getConfigurations(report.getConfiguration()))+"\">");
                     if (md != null) {
                         License[] licenses = md.getLicenses();
