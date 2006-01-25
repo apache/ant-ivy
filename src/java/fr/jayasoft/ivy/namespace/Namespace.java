@@ -20,11 +20,17 @@ public class Namespace {
     
     private List _rules = new ArrayList();
     private String _name;
+    private boolean _chainRules = false;
     private NamespaceTransformer _fromSystemTransformer = new NamespaceTransformer() {
         public ModuleRevisionId transform(ModuleRevisionId mrid) {
             for (Iterator iter = _rules.iterator(); iter.hasNext();) {
                 NamespaceRule rule = (NamespaceRule)iter.next();
-                mrid = rule.getFromSystem().transform(mrid);
+                ModuleRevisionId nmrid = rule.getFromSystem().transform(mrid);
+                if (_chainRules) {
+                    mrid = nmrid;
+                } else if (!nmrid.equals(mrid)) {
+                    return nmrid;
+                }
             }
             return mrid;
         }
@@ -36,7 +42,12 @@ public class Namespace {
         public ModuleRevisionId transform(ModuleRevisionId mrid) {
             for (Iterator iter = _rules.iterator(); iter.hasNext();) {
                 NamespaceRule rule = (NamespaceRule)iter.next();
-                mrid = rule.getToSystem().transform(mrid);
+                ModuleRevisionId nmrid = rule.getToSystem().transform(mrid);
+                if (_chainRules) {
+                    mrid = nmrid;
+                } else if (!nmrid.equals(mrid)) {
+                    return nmrid;
+                }
             }
             return mrid;
         }
@@ -62,5 +73,13 @@ public class Namespace {
     }
     public NamespaceTransformer getToSystemTransformer() {
         return _toSystemTransformer;
+    }
+
+    public boolean isChainrules() {
+        return _chainRules;
+    }
+
+    public void setChainrules(boolean chainRules) {
+        _chainRules = chainRules;
     }
 }
