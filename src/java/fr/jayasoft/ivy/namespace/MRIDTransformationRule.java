@@ -54,10 +54,10 @@ public class MRIDTransformationRule implements NamespaceTransformer {
             String res = rule == null ? "$"+ruleType+"0" : rule;
             for (int i = 0; i < TYPES.length; i++) {
                 if (TYPES[i].equals(type)) {
-                    res = res.replaceAll("[^\\\\]\\$"+type, "\\$");
+                    res = res.replaceAll("([^\\\\])\\$"+type, "$1\\$");
                     res = res.replaceAll("^\\$"+type, "\\$");
                 } else {
-                    res = res.replaceAll("[^\\\\]\\$"+TYPES[i], "\\\\\\$"+TYPES[i]);
+                    res = res.replaceAll("([^\\\\])\\$"+TYPES[i], "$1\\\\\\$"+TYPES[i]);
                     res = res.replaceAll("^\\$"+TYPES[i], "\\\\\\$"+TYPES[i]);
                 }
             }

@@ -29,5 +29,14 @@ public class MRIDTransformationRuleTest extends TestCase {
                 r.transform(ModuleRevisionId.newInstance("apache", "commons-client", "1.0")));
         assertEquals(ModuleRevisionId.newInstance("apache", "module", "1.0"),
                 r.transform(ModuleRevisionId.newInstance("apache", "module", "1.0")));
+
+        r = new MRIDTransformationRule();
+        r.addSrc(new MRIDRule("(.+)\\.(.+)", ".+", null));
+        r.addDest(new MRIDRule("$o1", "$o2-$m0", null));
+        
+        assertEquals(ModuleRevisionId.newInstance("apache", "commons-client", "1.0"),
+                r.transform(ModuleRevisionId.newInstance("apache.commons", "client", "1.0")));
+        assertEquals(ModuleRevisionId.newInstance("apache", "module", "1.0"),
+                r.transform(ModuleRevisionId.newInstance("apache", "module", "1.0")));
     }
 }
