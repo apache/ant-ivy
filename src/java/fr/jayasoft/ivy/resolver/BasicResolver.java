@@ -109,6 +109,7 @@ public abstract class BasicResolver extends AbstractResolver {
     }
     
     public ResolvedModuleRevision getDependency(DependencyDescriptor dd, ResolveData data) throws ParseException {
+        DependencyDescriptor systemDd = dd;
         dd = fromSystem(dd);
         
         clearIvyAttempts();
@@ -148,6 +149,7 @@ public abstract class BasicResolver extends AbstractResolver {
         // get module descriptor
         ModuleDescriptorParser parser;
         ModuleDescriptor md;
+        ModuleDescriptor systemMd = null;
         if (ivyRef == null) {
             parser = XmlModuleDescriptorParser.getInstance();
             md = DefaultModuleDescriptor.newDefaultInstance(mrid, dd.getAllDependencyArtifactsIncludes());
@@ -249,18 +251,15 @@ public abstract class BasicResolver extends AbstractResolver {
             }
             try {
                 md = parser.parseDescriptor(data.getIvy(), cachedIvyURL, ivyRef.getResource(), doValidate(data));
-                Message.debug("\t"+getName()+": parsed downloaded ivy file for "+mrid+" parsed="+md.getModuleRevisionId());
+                Message.debug("\t"+getName()+": parsed downloaded md file for "+mrid+" parsed="+md.getModuleRevisionId());
                 
                 // check descriptor data is in sync with resource revision and names
-                if (!mrid.getOrganisation().equals(md.getModuleRevisionId().getOrganisation())) {
-                    throw new IllegalStateException("bad organisation found in "+ivyRef.getResource()+": expected="+mrid.getOrganisation()+" found="+md.getModuleRevisionId().getOrganisation());
+                systemMd = toSystem(md);
+                if (!checkDescriptorConsistency(mrid, md, ivyRef)) {
+                    return null;
                 }
-                if (!mrid.getName().equals(md.getModuleRevisionId().getName())) {
-                    throw new IllegalStateException("bad module name found in "+ivyRef.getResource()+": expected="+mrid.getName()+" found="+md.getModuleRevisionId().getName());
-                }
-                if (ivyRef.getRevision() != null && !ivyRef.getRevision().startsWith("working@") && md.getModuleRevisionId().getRevision() != null && 
-                        !ModuleRevisionId.acceptRevision(ivyRef.getRevision(), md.getModuleRevisionId().getRevision())) {
-                    throw new IllegalStateException("bad revision found in "+ivyRef.getResource()+": expected="+ivyRef.getRevision()+" found="+md.getModuleRevisionId().getRevision());
+                if (!checkDescriptorConsistency(systemDd.getDependencyRevisionId(), systemMd, ivyRef)) {
+                    return null;
                 }
                 
                 // check if we should delete old artifacts
@@ -303,6 +302,10 @@ public abstract class BasicResolver extends AbstractResolver {
             return null;
         }
         
+        if (systemMd == null) {
+            systemMd = toSystem(md);
+        }
+        
         // resolve revision
         ModuleRevisionId resolvedMrid = mrid;
         if (!resolvedMrid.isExactRevision()) {
@@ -317,6 +320,7 @@ public abstract class BasicResolver extends AbstractResolver {
             Message.verbose("\t\t["+resolvedMrid.getRevision()+"] "+mrid.getModuleId());
         }
         md.setResolvedModuleRevisionId(resolvedMrid);
+        systemMd.setResolvedModuleRevisionId(toSystem(resolvedMrid)); // keep system md in sync with md
         
         // resolve and check publication date
         if (data.getDate() != null) {
@@ -329,9 +333,9 @@ public abstract class BasicResolver extends AbstractResolver {
                 return null;
             }
             md.setResolvedPublicationDate(new Date(pubDate));
+            systemMd.setResolvedPublicationDate(new Date(pubDate)); // keep system md in sync with md
         }
     
-        ModuleDescriptor systemMd = toSystem(md);
         try {
             File ivyFile = data.getIvy().getIvyFileInCache(data.getCache(), systemMd.getResolvedModuleRevisionId());
 	        if (ivyRef == null) {
@@ -357,6 +361,27 @@ public abstract class BasicResolver extends AbstractResolver {
         
         data.getIvy().saveResolver(data.getCache(), systemMd, getName());
         return new DefaultModuleRevision(this, systemMd, searched, downloaded);
+    }
+
+    private boolean checkDescriptorConsistency(ModuleRevisionId mrid, ModuleDescriptor md, ResolvedResource ivyRef) {
+        boolean ok = true;
+        if (!mrid.getOrganisation().equals(md.getModuleRevisionId().getOrganisation())) {
+            Message.error("\t"+getName()+": bad organisation found in "+ivyRef.getResource()+": expected="+mrid.getOrganisation()+" found="+md.getModuleRevisionId().getOrganisation());
+            ok = false;
+        }
+        if (!mrid.getName().equals(md.getModuleRevisionId().getName())) {
+            Message.error("\t"+getName()+": bad module name found in "+ivyRef.getResource()+": expected="+mrid.getName()+" found="+md.getModuleRevisionId().getName());
+            ok = false;
+        }
+        if (ivyRef.getRevision() != null && !ivyRef.getRevision().startsWith("working@") && md.getModuleRevisionId().getRevision() != null && 
+                !ModuleRevisionId.acceptRevision(ivyRef.getRevision(), md.getModuleRevisionId().getRevision())) {
+            Message.error("\t"+getName()+": bad revision found in "+ivyRef.getResource()+": expected="+ivyRef.getRevision()+" found="+md.getModuleRevisionId().getRevision());
+            ok = false;
+        }
+        if (!ok) {
+            Message.verbose("\t"+getName()+": inconsistent module descriptor file found for "+mrid+" rejecting");
+        }
+        return ok;
     }
 
     protected void clearIvyAttempts() {

@@ -1265,27 +1265,65 @@ public class ResolveTest extends TestCase {
         assertTrue(ivy.getArchiveFileInCache(_cache, "systemorg", "systemmod", "1.0", "A", "jar", "jar").exists());
     }
     
-//    public void testNamespaceMapping2() throws Exception {
-//        // the dependency is in another namespace and has itself a dependency on a module available in the same namespace
-//        Ivy ivy = new Ivy();
-//        ivy.configure(new File("test/repositories/namespace/ivyconf.xml"));
-//        ResolveReport report = ivy.resolve(ResolveTest.class.getResource("ivy-namespace.xml"),
-//                null, new String[] {"*"}, _cache, null, true);
-//        assertNotNull(report);
-//        ModuleDescriptor md = report.getModuleDescriptor();
-//        assertNotNull(md);
-//        ModuleRevisionId mrid = ModuleRevisionId.newInstance("jayasoft", "namespace", "2.0");
-//        assertEquals(mrid, md.getModuleRevisionId());
-//        
-//        assertTrue(ivy.getResolvedIvyFileInCache(_cache, mrid).exists());
-//        
-//        // dependencies
-//        assertTrue(ivy.getIvyFileInCache(_cache, ModuleRevisionId.newInstance("systemorg", "systemmod2", "1.0")).exists());
-//        assertTrue(ivy.getArchiveFileInCache(_cache, "systemorg", "systemmod2", "1.0", "B", "jar", "jar").exists());
-//
-//        assertTrue(ivy.getIvyFileInCache(_cache, ModuleRevisionId.newInstance("systemorg", "systemmod", "1.0")).exists());
-//        assertTrue(ivy.getArchiveFileInCache(_cache, "systemorg", "systemmod", "1.0", "A", "jar", "jar").exists());
-//    }
+    public void testNamespaceMapping2() throws Exception {
+        // the dependency is in another namespace and has itself a dependency on a module available in the same namespace
+        Ivy ivy = new Ivy();
+        ivy.configure(new File("test/repositories/namespace/ivyconf.xml"));
+        ResolveReport report = ivy.resolve(ResolveTest.class.getResource("ivy-namespace2.xml"),
+                null, new String[] {"*"}, _cache, null, true);
+        assertNotNull(report);
+        ModuleDescriptor md = report.getModuleDescriptor();
+        assertNotNull(md);
+        ModuleRevisionId mrid = ModuleRevisionId.newInstance("jayasoft", "namespace", "2.0");
+        assertEquals(mrid, md.getModuleRevisionId());
+        
+        assertTrue(ivy.getResolvedIvyFileInCache(_cache, mrid).exists());
+        
+        // dependencies
+        assertTrue(ivy.getIvyFileInCache(_cache, ModuleRevisionId.newInstance("systemorg", "systemmod2", "1.0")).exists());
+        assertTrue(ivy.getArchiveFileInCache(_cache, "systemorg", "systemmod2", "1.0", "B", "jar", "jar").exists());
+
+        assertTrue(ivy.getIvyFileInCache(_cache, ModuleRevisionId.newInstance("systemorg", "systemmod", "1.0")).exists());
+        assertTrue(ivy.getArchiveFileInCache(_cache, "systemorg", "systemmod", "1.0", "A", "jar", "jar").exists());
+    }
+    
+    public void testNamespaceMapping3() throws Exception {
+        // same as 2 but with poms
+        Ivy ivy = new Ivy();
+        ivy.configure(new File("test/repositories/namespace/ivyconf.xml"));
+        ResolveReport report = ivy.resolve(ResolveTest.class.getResource("ivy-namespace3.xml"),
+                null, new String[] {"*"}, _cache, null, true);
+        assertNotNull(report);
+        ModuleDescriptor md = report.getModuleDescriptor();
+        assertNotNull(md);
+        ModuleRevisionId mrid = ModuleRevisionId.newInstance("jayasoft", "namespace", "3.0");
+        assertEquals(mrid, md.getModuleRevisionId());
+        
+        assertTrue(ivy.getResolvedIvyFileInCache(_cache, mrid).exists());
+        
+        // dependencies
+        assertTrue(ivy.getIvyFileInCache(_cache, ModuleRevisionId.newInstance("systemorg2", "system-2", "1.0")).exists());
+        assertTrue(ivy.getArchiveFileInCache(_cache, "systemorg2", "system-2", "1.0", "2", "jar", "jar").exists());
+
+        assertTrue(ivy.getIvyFileInCache(_cache, ModuleRevisionId.newInstance("systemorg2", "system-1", "1.0")).exists());
+        assertTrue(ivy.getArchiveFileInCache(_cache, "systemorg2", "system-1", "1.0", "1", "jar", "jar").exists());
+    }
+    
+    public void testNamespaceMapping4() throws Exception {
+        // same as 2 but with incorrect dependency asked: the first ivy file asks for a dependency 
+        // in the resolver namespace and not the system one: this should fail
+        Ivy ivy = new Ivy();
+        ivy.configure(new File("test/repositories/namespace/ivyconf.xml"));
+        ResolveReport report = ivy.resolve(ResolveTest.class.getResource("ivy-namespace4.xml"),
+                null, new String[] {"*"}, _cache, null, true);
+        assertNotNull(report);
+        ModuleDescriptor md = report.getModuleDescriptor();
+        assertNotNull(md);
+        ModuleRevisionId mrid = ModuleRevisionId.newInstance("jayasoft", "namespace", "4.0");
+        assertEquals(mrid, md.getModuleRevisionId());
+        
+        assertTrue(report.hasError());
+    }
     
     ////////////////////////////////////////////////////////////
     // helper methods to ease the tests
