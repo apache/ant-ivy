@@ -133,7 +133,6 @@ public abstract class BasicResolver extends AbstractResolver {
         if (mrid.isExactRevision() && !isCheckmodified() && !dd.isChanging()) {
             ResolvedModuleRevision rmr = findModuleInCache(data, mrid);
             if (rmr != null) {
-                Message.verbose("trace found MD : " + rmr.getDescriptor().isDefault());
                 if (rmr.getDescriptor().isDefault() && rmr.getResolver() != this) {
                     Message.verbose("\t"+getName()+": found revision in cache: "+mrid+": but it's a default one, maybe we can find a better one");
                 } else {
@@ -188,8 +187,12 @@ public abstract class BasicResolver extends AbstractResolver {
                 IvyNode node = getSystemNode(data, resolvedMrid);
                 if (node != null && node.getModuleRevision() != null) {
                     // this revision has already be resolved : return it
-                    Message.verbose("\t"+getName()+": revision already resolved: "+resolvedMrid);
-                    return toSystem(searchedRmr(node.getModuleRevision()));
+                    if (node.getDescriptor() != null && node.getDescriptor().isDefault()) {
+                        Message.verbose("\t"+getName()+": found already resolved revision: "+resolvedMrid+": but it's a default one, maybe we can find a better one");
+                    } else {
+                        Message.verbose("\t"+getName()+": revision already resolved: "+resolvedMrid);
+                        return toSystem(searchedRmr(node.getModuleRevision()));
+                    }
                 }
             }
             
