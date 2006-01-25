@@ -19,6 +19,7 @@ import fr.jayasoft.ivy.License;
 import fr.jayasoft.ivy.ModuleDescriptor;
 import fr.jayasoft.ivy.ModuleId;
 import fr.jayasoft.ivy.ModuleRevisionId;
+import fr.jayasoft.ivy.util.FileUtil;
 import fr.jayasoft.ivy.util.Message;
 
 /**
@@ -134,6 +135,15 @@ public class XmlReportOutputter implements ReportOutputter {
     		
     		out.println("</ivy-report>");
     		Message.verbose("\treport for "+mrid+" "+report.getConfiguration()+" produced in "+reportFile);
+            
+            File reportXsl = new File(destDir, "ivy-report.xsl");
+            File reportCss = new File(destDir, "ivy-report.css");
+            if (!reportXsl.exists()) {
+                FileUtil.copy(XmlReportOutputter.class.getResource("ivy-report.xsl"), reportXsl, null);
+            }
+            if (!reportCss.exists()) {
+                FileUtil.copy(XmlReportOutputter.class.getResource("ivy-report.css"), reportCss, null);
+            }
     	} catch (IOException ex) {
     		Message.error("impossible to produce report for "+report.getModuleDescriptor()+": "+ex.getMessage());
     	} finally {
