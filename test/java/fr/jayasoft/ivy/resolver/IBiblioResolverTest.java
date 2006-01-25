@@ -66,19 +66,36 @@ public class IBiblioResolverTest extends TestCase {
         ivy.setVariable("my.ibiblio.root", "http://www.ibiblio.org/mymaven/");
         ivy.setVariable("my.ibiblio.pattern", "[module]/[artifact]-[revision].jar");
         ivy.configure(IBiblioResolverTest.class.getResource("ibiblioresolverconf.xml"));
-        IBiblioResolver resolver = (IBiblioResolver)ivy.getResolver("ibiblio");
+        IBiblioResolver resolver = (IBiblioResolver)ivy.getResolver("ibiblioA");
         assertNotNull(resolver);
         List l = resolver.getArtifactPatterns();
         assertNotNull(l);
         assertEquals(1, l.size());
         assertEquals("http://www.ibiblio.org/mymaven/[module]/[artifact]-[revision].jar", l.get(0));
-        resolver = (IBiblioResolver)ivy.getResolver("ibiblio2");
+        
+        resolver = (IBiblioResolver)ivy.getResolver("ibiblioB");
         assertNotNull(resolver);
         l = resolver.getArtifactPatterns();
         assertNotNull(l);
         assertEquals(1, l.size());
         assertEquals("http://www.ibiblio.org/mymaven/[organisation]/jars/[artifact]-[revision].jar", l.get(0));
-    }
+
+        resolver = (IBiblioResolver)ivy.getResolver("ibiblioC");
+        assertTrue(resolver.isM2compatible());
+        assertNotNull(resolver);
+        l = resolver.getArtifactPatterns();
+        assertNotNull(l);
+        assertEquals(1, l.size());
+        assertEquals("http://www.ibiblio.org/maven2/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]", l.get(0));
+
+        resolver = (IBiblioResolver)ivy.getResolver("ibiblioD");
+        assertFalse(resolver.isM2compatible());
+        assertNotNull(resolver);
+        l = resolver.getArtifactPatterns();
+        assertNotNull(l);
+        assertEquals(1, l.size());
+        assertEquals("http://www.ibiblio.org/maven/[module]/jars/[artifact]-[revision].jar", l.get(0));
+}
 
     public void testIBiblio() throws Exception {
         String ibiblioRoot = IBiblioHelper.getIBiblioMirror();

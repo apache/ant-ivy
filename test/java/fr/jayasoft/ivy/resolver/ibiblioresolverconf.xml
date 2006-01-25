@@ -1,7 +1,8 @@
 <ivyconf>
-  <conf defaultResolver="ibiblio"/>
   <resolvers>
-  	<ibiblio name="ibiblio" root="${my.ibiblio.root}" pattern="${my.ibiblio.pattern}" />
-  	<ibiblio name="ibiblio2" root="${my.ibiblio.root}" pattern="[organisation]/jars/[artifact]-[revision].jar" />
+  	<ibiblio name="ibiblioA" root="${my.ibiblio.root}" pattern="${my.ibiblio.pattern}" />
+  	<ibiblio name="ibiblioB" root="${my.ibiblio.root}" pattern="[organisation]/jars/[artifact]-[revision].jar" />
+  	<ibiblio name="ibiblioC" m2compatible="true"/>
+  	<ibiblio name="ibiblioD"/>
   </resolvers>
 </ivyconf>
