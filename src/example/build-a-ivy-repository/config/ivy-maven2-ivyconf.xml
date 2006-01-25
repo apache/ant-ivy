@@ -96,9 +96,7 @@
             	</tosystem>
         	</rule>
 
-<!--	
-			<rule>	
-    			< new apache projects >
+			<rule> <!-- new apache projects -->
 	    		<fromsystem>
 		        	<src org="apache" />
         			<dest org="org.apache"/>
@@ -108,7 +106,6 @@
 	    		    <dest org="apache" />
 		    	</tosystem>
 			</rule>
--->
     	</namespace>
 	</namespaces>
 	<resolvers>
