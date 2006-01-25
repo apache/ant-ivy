@@ -30,6 +30,9 @@ public class MockResolver extends AbstractResolver {
     }
 
     static MockResolver buildMockResolver(String name, boolean findRevision, final ModuleRevisionId mrid, final Date publicationDate) {
+        return buildMockResolver(name, findRevision, mrid, publicationDate, false);
+    }
+    static MockResolver buildMockResolver(String name, boolean findRevision, final ModuleRevisionId mrid, final Date publicationDate, final boolean isdefault) {
         final MockResolver r = new MockResolver();
         r.setName(name);
         if (findRevision) {
@@ -47,7 +50,7 @@ public class MockResolver extends AbstractResolver {
                 }
 
                 public ModuleDescriptor getDescriptor() {
-                    return new DefaultModuleDescriptor(mrid, "integration", new Date());
+                    return new DefaultModuleDescriptor(mrid, "integration", new Date(), isdefault);
                 }
                 public boolean isDownloaded() {
                     return true;
@@ -73,5 +76,5 @@ public class MockResolver extends AbstractResolver {
     }
     public void publish(Artifact artifact, File src, boolean overwrite) throws IOException {
     }
-    
+
 }

@@ -1,7 +1,19 @@
 <project name="common" 
          xmlns:ivy="antlib:fr.jayasoft.ivy.ant">
-
-	  <property file="${common.dir}/build.properties"/>
+	<!-- a sample common build.xml file, used for ivy multi-project tutorial
+	     feel free to copy and adapt it to your own needs
+	     Note that the only targets specific to ivy are:
+	        configure
+	     	resolve
+	     	report
+	     	publish
+	     All other targets are usual ant based targets, which could have been written
+	     in a build not depending at all on ivy: the configure simply sets some properties, resolve 
+	     constructs a lib directory based upon ivy dependencies, and then the lib dir is used
+	     as in any classical ant build
+	     -->
+	
+	<property file="${common.dir}/build.properties"/>
 
     <path id="lib.path.id">
         <fileset dir="${lib.dir}" />
@@ -12,7 +24,14 @@
     </path>
 
     <target name="configure">
+    	<property name="repository.dir" value="${common.dir}/../repository"/>
+    	<!-- setup ivy default configuration with some custom info -->
+    	<property name="ivy.local.default.root" value="${repository.dir}/local"/>
+    	<property name="ivy.local.default.root" value="${repository.dir}/shared"/>
+
+    	<!-- here is how we would have configured ivy if we had our own ivyconf file
         <ivy:configure file="${common.dir}/ivyconf.xml" />
+         -->
     </target>
 	
     <!-- ================================= 
@@ -20,6 +39,8 @@
          ================================= -->
     <target name="resolve" depends="configure, clean-lib" description="--> retrieve dependencies with ivy">
         <mkdir dir="${lib.dir}"/> <!-- not usually necessary, ivy creates the directory IF there are dependencies -->
+    	<!-- this target is named resolve even if we do a retrieve: 
+    	     in fact a resolve will be called, and then the retrieve will simply copy files in the lib directory -->
         <ivy:retrieve />
     </target>
     

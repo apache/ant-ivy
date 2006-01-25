@@ -134,6 +134,67 @@ public class ChainResolverTest extends TestCase {
         }
     }
     
+    public void testWithDefault() throws Exception {
+        ChainResolver chain = new ChainResolver();
+        chain.setName("chain");
+        chain.setIvy(_ivy);
+        chain.setLatestStrategy(new LatestRevisionStrategy());
+        MockResolver[] resolvers = new MockResolver[] {
+                MockResolver.buildMockResolver("1", false, null), 
+                MockResolver.buildMockResolver("2", true, ModuleRevisionId.newInstance("org", "mod", "4"), new GregorianCalendar(2005, 1, 22).getTime(), true), // latest -> but default 
+                MockResolver.buildMockResolver("3", false, null),
+                MockResolver.buildMockResolver("4", false, null), 
+                MockResolver.buildMockResolver("5", true, ModuleRevisionId.newInstance("org", "mod", "4"), new GregorianCalendar(2005, 1, 22).getTime()), // latest -> should the one kept 
+                MockResolver.buildMockResolver("6", false, null),
+                MockResolver.buildMockResolver("7", false, null)
+            };
+        for (int i = 0; i < resolvers.length; i++) {
+            chain.add(resolvers[i]);
+        }
+        assertResolversSizeAndNames(chain, resolvers.length);
+        
+        DefaultDependencyDescriptor dd = new DefaultDependencyDescriptor(ModuleRevisionId.newInstance("org","mod", "4"), false);
+        ResolvedModuleRevision rmr = chain.getDependency(dd, _data);
+        assertNotNull(rmr);
+        assertEquals("5", rmr.getResolver().getName());
+        List ddAsList = Arrays.asList(new DependencyDescriptor[] {dd});
+        for (int i = 0; i < 5; i++) {
+            assertEquals(ddAsList, resolvers[i].askedDeps);
+        }
+        for (int i = 5; i < resolvers.length; i++) {
+            assertTrue(resolvers[i].askedDeps.isEmpty());
+        }
+    }
+    
+    public void testLatestWithDefault() throws Exception {
+        ChainResolver chain = new ChainResolver();
+        chain.setName("chain");
+        chain.setIvy(_ivy);
+        chain.setLatestStrategy(new LatestRevisionStrategy());
+        MockResolver[] resolvers = new MockResolver[] {
+                MockResolver.buildMockResolver("1", true, ModuleRevisionId.newInstance("org", "mod", "1"), new GregorianCalendar(2005, 1, 20).getTime()), 
+                MockResolver.buildMockResolver("2", true, ModuleRevisionId.newInstance("org", "mod", "4"), new GregorianCalendar(2005, 1, 22).getTime(), true), // latest -> but default 
+                MockResolver.buildMockResolver("3", true, ModuleRevisionId.newInstance("org", "mod", "2"), new GregorianCalendar(2005, 1, 25).getTime()),
+                MockResolver.buildMockResolver("4", false, null), 
+                MockResolver.buildMockResolver("5", true, ModuleRevisionId.newInstance("org", "mod", "4"), new GregorianCalendar(2005, 1, 22).getTime()), // latest -> should the one kept 
+                MockResolver.buildMockResolver("6", true, ModuleRevisionId.newInstance("org", "mod", "3"), new GregorianCalendar(2005, 1, 18).getTime()),
+                MockResolver.buildMockResolver("7", false, null)
+            };
+        for (int i = 0; i < resolvers.length; i++) {
+            chain.add(resolvers[i]);
+        }
+        assertResolversSizeAndNames(chain, resolvers.length);
+        
+        DefaultDependencyDescriptor dd = new DefaultDependencyDescriptor(ModuleRevisionId.newInstance("org","mod", "latest.integration"), false);
+        ResolvedModuleRevision rmr = chain.getDependency(dd, _data);
+        assertNotNull(rmr);
+        assertEquals("5", rmr.getResolver().getName());
+        List ddAsList = Arrays.asList(new DependencyDescriptor[] {dd});
+        for (int i = 0; i < resolvers.length; i++) {
+            assertEquals(ddAsList, resolvers[i].askedDeps);
+        }
+    }
+    
     public void testReturnFirst() throws Exception {
         ChainResolver chain = new ChainResolver();
         chain.setName("chain");
@@ -183,9 +244,6 @@ public class ChainResolverTest extends TestCase {
         ResolvedModuleRevision rmr = chain.getDependency(dd, _data);
         assertNotNull(rmr);
         assertEquals("chain", rmr.getResolver().getName());
-        assertEquals(Arrays.asList(new DependencyDescriptor[] {dd}), resolvers[0].askedDeps);
-        assertEquals(Arrays.asList(new DependencyDescriptor[] {dd}), resolvers[1].askedDeps);
-        assertTrue(resolvers[2].askedDeps.isEmpty());
     }
         
 }

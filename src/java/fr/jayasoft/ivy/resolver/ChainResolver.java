@@ -73,8 +73,10 @@ public class ChainResolver extends AbstractResolver {
                 }
             }
             if (mr != null) {
-                // check if latest is asked and compare to return the most recent
-                if (!_returnFirst && (!dd.getDependencyRevisionId().isExactRevision() || (ret != null && ret.getDescriptor().isDefault()))) {
+                if (!_returnFirst && 
+                        (!dd.getDependencyRevisionId().isExactRevision() 
+                         || (ret == null || ret.getDescriptor().isDefault()))) {
+                    // check if latest is asked and compare to return the most recent
                     if (ret == null || isAfter(mr, ret, data.getDate())) {
                         Message.debug("\tmodule revision kept as younger: "+mr.getId());
                         ret = mr;
@@ -83,6 +85,10 @@ public class ChainResolver extends AbstractResolver {
                             ret = mr;
                     } else {
                         Message.debug("\tmodule revision discarded as older: "+mr.getId());
+                    }
+                    if (dd.getDependencyRevisionId().isExactRevision() && !ret.getDescriptor().isDefault()) {
+                        Message.debug("\tmodule revision found and is not default: returning "+mr.getId());
+                        return resolvedRevision(mr);
                     }
                 } else {
                     return resolvedRevision(mr);
