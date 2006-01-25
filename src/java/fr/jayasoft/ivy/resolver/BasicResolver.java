@@ -133,6 +133,7 @@ public abstract class BasicResolver extends AbstractResolver {
         if (mrid.isExactRevision() && !isCheckmodified() && !dd.isChanging()) {
             ResolvedModuleRevision rmr = findModuleInCache(data, mrid);
             if (rmr != null) {
+                Message.verbose("trace found MD : " + rmr.getDescriptor().isDefault());
                 if (rmr.getDescriptor().isDefault() && rmr.getResolver() != this) {
                     Message.verbose("\t"+getName()+": found revision in cache: "+mrid+": but it's a default one, maybe we can find a better one");
                 } else {
@@ -195,21 +196,25 @@ public abstract class BasicResolver extends AbstractResolver {
             // now let's see if we can find it in cache and if it is up to date
             ResolvedModuleRevision rmr = findModuleInCache(data, resolvedMrid);
             if (rmr != null) {
-                if (!isCheckmodified() && !dd.isChanging()) {
-                    Message.verbose("\t"+getName()+": revision in cache: "+resolvedMrid);
-                    return toSystem(searchedRmr(rmr));
-                }
-                long repLastModified = ivyRef.getLastModified();
-                long cacheLastModified = rmr.getDescriptor().getLastModified(); 
-                if (!rmr.getDescriptor().isDefault() && repLastModified <= cacheLastModified) {
-                    Message.verbose("\t"+getName()+": revision in cache (not updated): "+resolvedMrid);
-                    return toSystem(searchedRmr(rmr));
+                if (rmr.getDescriptor().isDefault() && rmr.getResolver() != this) {
+                    Message.verbose("\t"+getName()+": found revision in cache: "+mrid+": but it's a default one, maybe we can find a better one");
                 } else {
-                    Message.verbose("\t"+getName()+": revision in cache is not up to date: "+resolvedMrid);
-                    if (dd.isChanging()) {
-                        // ivy file has been updated, we should see if it has a new publication date
-                        // to see if a new download is required (in case the dependency is a changing one)
-                        cachedPublicationDate = rmr.getDescriptor().getResolvedPublicationDate();
+                    if (!isCheckmodified() && !dd.isChanging()) {
+                        Message.verbose("\t"+getName()+": revision in cache: "+mrid);
+                        return toSystem(searchedRmr(rmr));
+                    }
+                    long repLastModified = ivyRef.getLastModified();
+                    long cacheLastModified = rmr.getDescriptor().getLastModified(); 
+                    if (!rmr.getDescriptor().isDefault() && repLastModified <= cacheLastModified) {
+                        Message.verbose("\t"+getName()+": revision in cache (not updated): "+resolvedMrid);
+                        return toSystem(searchedRmr(rmr));
+                    } else {
+                        Message.verbose("\t"+getName()+": revision in cache is not up to date: "+resolvedMrid);
+                        if (dd.isChanging()) {
+                            // ivy file has been updated, we should see if it has a new publication date
+                            // to see if a new download is required (in case the dependency is a changing one)
+                            cachedPublicationDate = rmr.getDescriptor().getResolvedPublicationDate();
+                        }
                     }
                 }
             }
