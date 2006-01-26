@@ -71,4 +71,8 @@ public class NameSpaceHelper {
         }
         return t.transform(new ModuleRevisionId(mid, "")).getModuleId();
     }
+
+    public static String transformOrganisation(String org, NamespaceTransformer t) {
+        return transform(new ModuleId(org, ""), t).getOrganisation();
+    }
 }

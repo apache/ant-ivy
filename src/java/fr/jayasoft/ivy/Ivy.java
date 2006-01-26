@@ -50,6 +50,12 @@ import fr.jayasoft.ivy.filter.FilterHelper;
 import fr.jayasoft.ivy.latest.LatestLexicographicStrategy;
 import fr.jayasoft.ivy.latest.LatestRevisionStrategy;
 import fr.jayasoft.ivy.latest.LatestTimeStrategy;
+import fr.jayasoft.ivy.matcher.ExactMatcher;
+import fr.jayasoft.ivy.matcher.ExactOrRegexpMatcher;
+import fr.jayasoft.ivy.matcher.Matcher;
+import fr.jayasoft.ivy.matcher.MatcherHelper;
+import fr.jayasoft.ivy.matcher.RegexpMatcher;
+import fr.jayasoft.ivy.namespace.NameSpaceHelper;
 import fr.jayasoft.ivy.namespace.Namespace;
 import fr.jayasoft.ivy.parser.ModuleDescriptorParser;
 import fr.jayasoft.ivy.parser.ModuleDescriptorParserRegistry;
@@ -64,6 +70,7 @@ import fr.jayasoft.ivy.report.XmlReportOutputter;
 import fr.jayasoft.ivy.repository.TransferEvent;
 import fr.jayasoft.ivy.repository.TransferListener;
 import fr.jayasoft.ivy.repository.url.URLResource;
+import fr.jayasoft.ivy.resolver.AbstractResolver;
 import fr.jayasoft.ivy.resolver.CacheResolver;
 import fr.jayasoft.ivy.resolver.ChainResolver;
 import fr.jayasoft.ivy.resolver.DualResolver;
@@ -115,6 +122,7 @@ public class Ivy implements TransferListener {
     private Map _conflictsManager = new HashMap(); // Map (String conflictManagerName -> ConflictManager)
     private Map _latestStrategies = new HashMap(); // Map (String latestStrategyName -> LatestStrategy)
     private Map _namespaces = new HashMap(); // Map (String namespaceName -> Namespace)
+    private Map _matchers = new HashMap(); // Map (String matcherName -> Matcher)
     
     private Map _variables = new HashMap();
 
@@ -173,6 +181,10 @@ public class Ivy implements TransferListener {
         addConflictManager("latest-time", new LatestConflictManager("latest-time", latestTimeStrategy));
         addConflictManager("all", new NoConflictManager());    
         addConflictManager("strict", new StrictConflictManager());
+        
+        addMatcher(ExactMatcher.getInstance());
+        addMatcher(RegexpMatcher.getInstance());
+        addMatcher(ExactOrRegexpMatcher.getInstance());
         
         _listingIgnore.add(".cvsignore");
         _listingIgnore.add("CVS");
@@ -579,7 +591,7 @@ public class Ivy implements TransferListener {
     }
     
     public void addConfigured(Namespace ns) {
-        addNamespace(ns.getName(), ns);
+        addNamespace(ns);
     }
     
     public Namespace getNamespace(String name) {
@@ -593,11 +605,26 @@ public class Ivy implements TransferListener {
         return Namespace.SYSTEM_NAMESPACE;
     }
 
-    public void addNamespace(String name, Namespace ns) {
+    public void addNamespace(Namespace ns) {
         if (ns instanceof IvyAware) {
             ((IvyAware)ns).setIvy(this);
         }
-        _namespaces.put(name, ns);
+        _namespaces.put(ns.getName(), ns);
+    }
+    
+    public void addConfigured(Matcher m) {
+        addMatcher(m);
+    }
+    
+    public Matcher getMatcher(String name) {
+        return (Matcher)_matchers.get(name);
+    }
+    
+    public void addMatcher(Matcher m) {
+        if (m instanceof IvyAware) {
+            ((IvyAware)m).setIvy(this);
+        }
+        _matchers.put(m.getName(), m);
     }
     
     /////////////////////////////////////////////////////////////////////////
@@ -1217,7 +1244,7 @@ public class Ivy implements TransferListener {
     //                         INSTALL
     /////////////////////////////////////////////////////////////////////////
     
-    public ResolveReport install(ModuleRevisionId mrid, String from, String to, boolean transitive, boolean validate, boolean overwrite, Filter artifactFilter, File cache) throws IOException {
+    public ResolveReport install(ModuleRevisionId mrid, String from, String to, boolean transitive, boolean validate, boolean overwrite, Filter artifactFilter, File cache, String matcherName) throws IOException {
         if (cache == null) {
             cache = getDefaultCache();
         }
@@ -1227,27 +1254,46 @@ public class Ivy implements TransferListener {
         DependencyResolver fromResolver = getResolver(from);
         DependencyResolver toResolver = getResolver(to);
         if (fromResolver == null) {
-            throw new IllegalArgumentException("unknow resolver "+from);
+            throw new IllegalArgumentException("unknown resolver "+from+". Available resolvers are: "+_resolversMap.keySet());
         }
         if (toResolver == null) {
-            throw new IllegalArgumentException("unknow resolver "+from);
+            throw new IllegalArgumentException("unknown resolver "+to+". Available resolvers are: "+_resolversMap.keySet());
+        }
+        Matcher matcher = getMatcher(matcherName);
+        if (matcher == null) {
+            throw new IllegalArgumentException("unknown matcher "+matcherName+". Available matchers are: "+_matchers.keySet());
         }
         
         // build module file declaring the dependency
         Message.info(":: installing "+mrid+" ::");
-        DefaultModuleDescriptor md = new DefaultModuleDescriptor(ModuleRevisionId.newInstance("jayasoft", "ivy-install", "1.0"), Status.DEFAULT_STATUS, new Date());
-        md.addConfiguration(new Configuration("default"));
-        DefaultDependencyDescriptor dd = new DefaultDependencyDescriptor(md, mrid, false, false, transitive);
-        dd.addDependencyConfiguration("default", "*");
-        md.addDependency(dd);
-
-        // resolve using appropriate resolver
-        ResolveReport report = new ResolveReport(md);
         DependencyResolver oldDicator = getDictatorResolver();
         boolean log = logNotConvertedExclusionRule();
         try {
             setLogNotConvertedExclusionRule(true);
             setDictatorResolver(fromResolver);
+            
+            DefaultModuleDescriptor md = new DefaultModuleDescriptor(ModuleRevisionId.newInstance("jayasoft", "ivy-install", "1.0"), Status.DEFAULT_STATUS, new Date());
+            md.addConfiguration(new Configuration("default"));
+            md.addConflictManager(new ModuleId(".*", ".*"), new NoConflictManager());
+            
+            if (MatcherHelper.isExact(matcher)) {
+                DefaultDependencyDescriptor dd = new DefaultDependencyDescriptor(md, mrid, false, false, transitive);
+                dd.addDependencyConfiguration("default", "*");
+                md.addDependency(dd);
+            } else {
+                Collection mrids = findModuleRevisionIds(fromResolver, mrid, matcher); 
+                                
+                for (Iterator iter = mrids.iterator(); iter.hasNext();) {
+                    ModuleRevisionId foundMrid = (ModuleRevisionId)iter.next();
+                    Message.info("\tfound "+foundMrid+" to install: adding to the list");
+                    DefaultDependencyDescriptor dd = new DefaultDependencyDescriptor(md, foundMrid, false, false, transitive);
+                    dd.addDependencyConfiguration("default", "*");
+                    md.addDependency(dd);
+                }
+            }                       
+            
+            // resolve using appropriate resolver
+            ResolveReport report = new ResolveReport(md);
             
             Message.info(":: resolving dependencies ::");
             IvyNode[] dependencies = getDependencies(md, new String[] {"default"}, cache, null, report, validate);
@@ -1279,6 +1325,79 @@ public class Ivy implements TransferListener {
             setDictatorResolver(oldDicator);
             setLogNotConvertedExclusionRule(log);
         }
+    }
+
+    public Collection findModuleRevisionIds(DependencyResolver resolver, ModuleRevisionId pattern, Matcher matcher) {
+        Collection mrids = new ArrayList();
+        String resolverName = resolver.getName();
+        
+        Message.verbose("looking for modules matching "+pattern+" using "+matcher.getName());
+        Namespace fromNamespace = resolver instanceof AbstractResolver ? ((AbstractResolver)resolver).getNamespace() : null;
+        
+        Collection modules = new ArrayList();
+        
+        OrganisationEntry[] orgs = resolver.listOrganisations();
+        if (orgs == null || orgs.length == 0) {
+            // hack for resolvers which are not able to list organisation, we try to see if the asked organisation is not an exact one:
+            String org = pattern.getOrganisation();
+            if (fromNamespace != null) {
+                org = NameSpaceHelper.transform(pattern.getModuleId(), fromNamespace.getFromSystemTransformer()).getOrganisation();
+            }
+            modules.addAll(Arrays.asList(resolver.listModules(new OrganisationEntry(resolver, org))));                    
+        } else {
+            for (int i = 0; i < orgs.length; i++) {
+                String org = orgs[i].getOrganisation();
+                String systemOrg = org;;
+                if (fromNamespace != null) {
+                    systemOrg = NameSpaceHelper.transformOrganisation(org, fromNamespace.getToSystemTransformer());
+                }
+                if (matcher.match(systemOrg, pattern.getOrganisation())) {
+                    modules.addAll(Arrays.asList(resolver.listModules(new OrganisationEntry(resolver, org))));                    
+                }
+            }
+        }                
+        Message.debug("found " + modules.size() + " modules for "+pattern.getOrganisation()+" on " + resolverName);
+        boolean foundModule = false;
+        for (Iterator iter = modules.iterator(); iter.hasNext();) {
+            ModuleEntry mEntry = (ModuleEntry)iter.next();
+            
+            ModuleId foundMid = new ModuleId(mEntry.getOrganisation(), mEntry.getModule());
+            ModuleId systemMid = foundMid;
+            if (fromNamespace != null) {
+                systemMid = NameSpaceHelper.transform(foundMid, fromNamespace.getToSystemTransformer());
+            }
+            
+            if (MatcherHelper.match(matcher, systemMid, pattern.getModuleId())) {
+                // The module corresponds to the searched module pattern
+                foundModule = true;
+                RevisionEntry[] rEntries = resolver.listRevisions(mEntry);
+                Message.debug("found " + rEntries.length + " revisions for [" + mEntry.getOrganisation() + ", "+ mEntry.getModule() + "] on " + resolverName);
+
+                boolean foundRevision = false;
+                for (int j = 0; j < rEntries.length; j++) {
+                    RevisionEntry rEntry = rEntries[j];
+                    
+                    ModuleRevisionId foundMrid = ModuleRevisionId.newInstance(mEntry.getOrganisation(), mEntry.getModule(), rEntry.getRevision());
+                    ModuleRevisionId systemMrid = foundMrid;
+                    if (fromNamespace != null) {
+                        systemMrid = fromNamespace.getToSystemTransformer().transform(foundMrid);
+                    }
+                    
+                    if (MatcherHelper.match(matcher, systemMrid, pattern)) {
+                        // We have a matching module revision
+                        foundRevision = true;
+                        mrids.add(systemMrid);
+                    }
+                }
+                if (!foundRevision) {
+                    Message.debug("no revision found matching "+pattern+" in [" + mEntry.getOrganisation() + "," + mEntry.getModule()+ "] using " + resolverName);                            
+                }
+            }
+        }
+        if (!foundModule) {
+            Message.debug("no module found matching "+pattern+" using " + resolverName);                            
+        }
+        return mrids;
     }
 
     /////////////////////////////////////////////////////////////////////////

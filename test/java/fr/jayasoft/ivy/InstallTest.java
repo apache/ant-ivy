@@ -11,6 +11,8 @@ import java.io.File;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.Delete;
 
+import fr.jayasoft.ivy.matcher.Matcher;
+
 import junit.framework.TestCase;
 
 public class InstallTest extends TestCase {
@@ -21,7 +23,7 @@ public class InstallTest extends TestCase {
         
         ivy.install(ModuleRevisionId.newInstance("org1", "mod1.2", "2.0"), 
                 ivy.getDefaultResolver().getName(), 
-                "install", true, true, true, null, _cache);
+                "install", true, true, true, null, _cache, Matcher.EXACT);
         
         assertTrue(new File("build/test/install/org1/mod1.2/ivy-2.0.xml").exists());
         assertTrue(new File("build/test/install/org1/mod1.2/mod1.2-2.0.jar").exists());
@@ -33,7 +35,7 @@ public class InstallTest extends TestCase {
         
         ivy.install(ModuleRevisionId.newInstance("org1", "mod1.1", "1.0"), 
                 ivy.getDefaultResolver().getName(), 
-                "install", true, true, true, null, _cache);
+                "install", true, true, true, null, _cache, Matcher.EXACT);
         
         assertTrue(new File("build/test/install/org1/mod1.1/ivy-1.0.xml").exists());
         assertTrue(new File("build/test/install/org1/mod1.1/mod1.1-1.0.jar").exists());
@@ -48,13 +50,40 @@ public class InstallTest extends TestCase {
         
         ivy.install(ModuleRevisionId.newInstance("org1", "mod1.1", "1.0"), 
                 ivy.getDefaultResolver().getName(), 
-                "install", false, true, true, null, _cache);
+                "install", false, true, true, null, _cache, Matcher.EXACT);
         
         assertTrue(new File("build/test/install/org1/mod1.1/ivy-1.0.xml").exists());
         assertTrue(new File("build/test/install/org1/mod1.1/mod1.1-1.0.jar").exists());
         
         assertFalse(new File("build/test/install/org1/mod1.2/ivy-2.0.xml").exists());
         assertFalse(new File("build/test/install/org1/mod1.2/mod1.2-2.0.jar").exists());
+    }
+
+    public void testRegexpMatcher() throws Exception {
+        Ivy ivy = new Ivy();
+        ivy.configure(new File("test/repositories/ivyconf.xml"));
+        
+        ivy.install(ModuleRevisionId.newInstance("org1", ".*", ".*"), 
+                "1", 
+                "install", false, true, true, null, _cache, Matcher.REGEXP);
+        
+        assertTrue(new File("build/test/install/org1/mod1.1/ivy-1.0.xml").exists());
+        assertTrue(new File("build/test/install/org1/mod1.1/mod1.1-1.0.jar").exists());
+        
+        assertTrue(new File("build/test/install/org1/mod1.1/ivy-1.1.xml").exists());
+        assertTrue(new File("build/test/install/org1/mod1.1/mod1.1-1.1.jar").exists());
+        
+        assertTrue(new File("build/test/install/org1/mod1.2/ivy-2.0.xml").exists());
+        assertTrue(new File("build/test/install/org1/mod1.2/mod1.2-2.0.jar").exists());
+        
+        // mod1.3 is split because Ivy thinks there are two versions of the module:
+        // this is the normal behaviour in this case
+        assertTrue(new File("build/test/install/org1/mod1.3/ivy-B-3.0.xml").exists());
+        assertTrue(new File("build/test/install/org1/mod1.3/ivy-A-3.0.xml").exists());
+        assertTrue(new File("build/test/install/org1/mod1.3/mod1.3-A-3.0.jar").exists());
+        assertTrue(new File("build/test/install/org1/mod1.3/mod1.3-B-3.0.jar").exists());
+        
+        assertTrue(new File("build/test/install/org1/mod1.4/ivy-1.0.1.xml").exists());
     }
 
     
