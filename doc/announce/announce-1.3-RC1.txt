@@ -26,4 +26,12 @@ These features are fully configurable and have been currently tested with Eclips
 
 Many thanks to the users feedbacks and contributions who made this possible.
 
-Download and information at : <a href="http://ivy.jayasoft.org">http://ivy.jayasoft.org</a>
+Ivy:
+    homepage: <a href="http://www.jayasoft.org/ivy">http://www.jayasoft.org/ivy</a>
+    download: <a href="http://www.jayasoft.org/ivy/download">http://www.jayasoft.org/ivy/download</a>
+    documentation: <a href="http://www.jayasoft.org/ivy/doc">http://www.jayasoft.org/ivy/doc</a>
+    tutorials: <a href="http://www.jayasoft.org/ivy/doc/tutorial">http://www.jayasoft.org/ivy/doc/tutorial</a>
+
+IvyDE:
+    homepage: <a href="http://www.jayasoft.org/ivyde">http://www.jayasoft.org/ivyde</a>
+    download: <a href="http://www.jayasoft.org/ivyde/download">http://www.jayasoft.org/ivyde/download</a>
