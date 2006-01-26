@@ -124,10 +124,14 @@ public class IBiblioResolver extends URLResolver {
     }
     
     public OrganisationEntry[] listOrganisations() {
-        return null;
+        return new OrganisationEntry[0];
     }
     public ModuleEntry[] listModules(OrganisationEntry org) {
-        return null;
+    	if (isM2compatible()) {
+            ensureConfigured(getIvy());
+            return super.listModules(org);
+    	}
+        return new ModuleEntry[0];
     }    
     public RevisionEntry[] listRevisions(ModuleEntry mod) {
         ensureConfigured(getIvy());
