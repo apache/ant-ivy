@@ -11,6 +11,8 @@ package fr.jayasoft.ivy;
  *
  */
 public class ModuleRevisionId {
+    private static final String ENCODE_SEPARATOR = ModuleId.ENCODE_SEPARATOR;
+    
     public static ModuleRevisionId newInstance(String organisation, String name, String revision) {
         return new ModuleRevisionId(new ModuleId(organisation, name), revision);
     }
@@ -95,10 +97,10 @@ public class ModuleRevisionId {
         return !revision.startsWith("latest.") && !revision.endsWith("+");
     }
     public String encodeToString() {
-        return getOrganisation() + " "+getName()+ " "+getRevision();
+        return getOrganisation() + ENCODE_SEPARATOR+getName()+ ENCODE_SEPARATOR+getRevision();
     }
     public static ModuleRevisionId decode(String encoded) {
-        String[] parts = encoded.split(" ");
+        String[] parts = encoded.split(ENCODE_SEPARATOR);
         if (parts.length != 3) {
             throw new IllegalArgumentException("badly encoded module revision id: '"+encoded+"'");
         }

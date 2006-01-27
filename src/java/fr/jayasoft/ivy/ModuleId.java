@@ -11,6 +11,7 @@ package fr.jayasoft.ivy;
  *
  */
 public class ModuleId {
+    static final String ENCODE_SEPARATOR = ":#@#:";
     private String _organisation;
     private String _name;
     private int _hash;
@@ -52,12 +53,12 @@ public class ModuleId {
     }
 
     public String encodeToString() {
-        return getOrganisation() + " "+getName();
+        return getOrganisation() + ENCODE_SEPARATOR + getName();
     }
     public static ModuleId decode(String encoded) {
-        String[] parts = encoded.split(" ");
+        String[] parts = encoded.split(ENCODE_SEPARATOR);
         if (parts.length != 2) {
-            throw new IllegalArgumentException("badly encoded module revision id: '"+encoded+"'");
+            throw new IllegalArgumentException("badly encoded module id: '"+encoded+"'");
         }
         return new ModuleId(parts[0], parts[1]);
     }
