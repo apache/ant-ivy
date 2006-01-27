@@ -107,12 +107,14 @@
           </xsl:call-template>
     </td>
     </tr>
+    <xsl:if test="not($revision/@evicted)">
     <xsl:for-each select="$modules/revision/caller[@organisation=$organisation and @name=$module]">
           <xsl:call-template name="called">
             <xsl:with-param name="indent"        select="concat($indent, string('---'))"/>
             <xsl:with-param name="revision"      select=".."/>
           </xsl:call-template>
     </xsl:for-each>   
+    </xsl:if>
 </xsl:template>
 
 <xsl:template name="licenses">
