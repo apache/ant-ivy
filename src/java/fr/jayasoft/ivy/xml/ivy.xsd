@@ -65,16 +65,15 @@
       		<xs:element name="configurations" minOccurs="0">
 			      <xs:complexType>
 				        <xs:sequence>
-				      		<xs:element name="conf" type="configurations-conf" minOccurs="0" maxOccurs="unbounded">
-				      		</xs:element>
-				      		<xs:element name="include" minOccurs="0" maxOccurs="unbounded">
-				            	<xs:complexType>
-						            <xs:attribute name="file" type="xs:string"/>
-						            <xs:attribute name="url"  type="xs:string"/>
-				            	</xs:complexType>
-				      		</xs:element>
-				      		<xs:element name="conf" type="configurations-conf" minOccurs="0" maxOccurs="unbounded">
-				      		</xs:element>
+				        	<xs:choice minOccurs="0" maxOccurs="unbounded">
+					      		<xs:element name="conf" type="configurations-conf"/>
+					      		<xs:element name="include">
+					            	<xs:complexType>
+							            <xs:attribute name="file" type="xs:string"/>
+							            <xs:attribute name="url"  type="xs:string"/>
+					            	</xs:complexType>
+					      		</xs:element>
+					      	</xs:choice>
 				        </xs:sequence>
 						<xs:attribute name="defaultconfmapping" type="xs:string"/>				        
 			      </xs:complexType>
