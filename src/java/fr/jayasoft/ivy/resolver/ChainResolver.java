@@ -77,7 +77,10 @@ public class ChainResolver extends AbstractResolver {
                         (!dd.getDependencyRevisionId().isExactRevision() 
                          || (ret == null || ret.getDescriptor().isDefault()))) {
                     // check if latest is asked and compare to return the most recent
-                    if (ret == null || isAfter(mr, ret, data.getDate())) {
+                    if (ret == null) {
+                        Message.debug("\tmodule revision kept as first found: "+mr.getId());
+                        ret = mr;
+                    } else if (isAfter(mr, ret, data.getDate())) {
                         Message.debug("\tmodule revision kept as younger: "+mr.getId());
                         ret = mr;
                     } else if (ret != null && !mr.getDescriptor().isDefault() && ret.getDescriptor().isDefault()) {
@@ -127,10 +130,10 @@ public class ChainResolver extends AbstractResolver {
      */
     private boolean isAfter(ResolvedModuleRevision rmr1, ResolvedModuleRevision rmr2, Date date) {
         ArtifactInfo[] ais = new ArtifactInfo[] {
-                new ResolvedModuleRevisionArtifactInfo(rmr1),
-                new ResolvedModuleRevisionArtifactInfo(rmr2)
+                new ResolvedModuleRevisionArtifactInfo(rmr2),
+                new ResolvedModuleRevisionArtifactInfo(rmr1)
         };
-        return getLatestStrategy().findLatest(ais, date) != ais[1];
+        return getLatestStrategy().findLatest(ais, date) != ais[0];
     }
 
     public void reportFailure() {

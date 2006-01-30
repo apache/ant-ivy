@@ -134,8 +134,8 @@ public abstract class BasicResolver extends AbstractResolver {
         if (mrid.isExactRevision() && !isCheckmodified() && !dd.isChanging()) {
             ResolvedModuleRevision rmr = findModuleInCache(data, mrid);
             if (rmr != null) {
-                if (rmr.getDescriptor().isDefault() && rmr.getResolver() != this) {
-                    Message.verbose("\t"+getName()+": found revision in cache: "+mrid+": but it's a default one, maybe we can find a better one");
+                if (rmr.getDescriptor().isDefault() && rmr.getResolver() != this && isResolved(data, mrid)) {
+                    Message.verbose("\t"+getName()+": found revision in cache: "+mrid+" (resolved by "+rmr.getResolver().getName()+"): but it's a default one, maybe we can find a better one");
                 } else {
                     Message.verbose("\t"+getName()+": revision in cache: "+mrid);
                     return toSystem(rmr);
@@ -201,8 +201,8 @@ public abstract class BasicResolver extends AbstractResolver {
             // now let's see if we can find it in cache and if it is up to date
             ResolvedModuleRevision rmr = findModuleInCache(data, resolvedMrid);
             if (rmr != null) {
-                if (rmr.getDescriptor().isDefault() && rmr.getResolver() != this) {
-                    Message.verbose("\t"+getName()+": found revision in cache: "+mrid+": but it's a default one, maybe we can find a better one");
+                if (rmr.getDescriptor().isDefault() && rmr.getResolver() != this && isResolved(data, resolvedMrid)) {
+                    Message.verbose("\t"+getName()+": found revision in cache: "+mrid+" (resolved by "+rmr.getResolver().getName()+"): but it's a default one, maybe we can find a better one");
                 } else {
                     if (!isCheckmodified() && !dd.isChanging()) {
                         Message.verbose("\t"+getName()+": revision in cache: "+mrid);
@@ -361,6 +361,11 @@ public abstract class BasicResolver extends AbstractResolver {
         
         data.getIvy().saveResolver(data.getCache(), systemMd, getName());
         return new DefaultModuleRevision(this, systemMd, searched, downloaded);
+    }
+
+    private boolean isResolved(ResolveData data, ModuleRevisionId mrid) {
+        IvyNode node = getSystemNode(data, mrid);
+        return node != null && node.getModuleRevision() != null;
     }
 
     private boolean checkDescriptorConsistency(ModuleRevisionId mrid, ModuleDescriptor md, ResolvedResource ivyRef) {

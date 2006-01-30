@@ -1223,7 +1223,7 @@ public class Ivy implements TransferListener {
                         }
                     }
                     if (resolver != null) {
-                        Message.debug("\tfound ivy file in cache for "+mrid+": "+ivyFile);
+                        Message.debug("\tfound ivy file in cache for "+mrid+" (resolved by "+resolver.getName()+"): "+ivyFile);
                         return new DefaultModuleRevision(resolver, depMD, false, false);
                     } else {
                         Message.debug("\tresolver not found: "+resolverName+" => cannot use cached ivy file for "+mrid);                                    

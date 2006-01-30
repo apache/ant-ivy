@@ -23,6 +23,7 @@ import fr.jayasoft.ivy.report.ConfigurationResolveReport;
 import fr.jayasoft.ivy.report.ResolveReport;
 import fr.jayasoft.ivy.report.XmlReportOutputter;
 import fr.jayasoft.ivy.resolver.DualResolver;
+import fr.jayasoft.ivy.resolver.FileSystemResolver;
 import fr.jayasoft.ivy.util.FileUtil;
 
 /**
@@ -65,6 +66,83 @@ public class ResolveTest extends TestCase {
         assertNotNull(report);
         ModuleDescriptor md = report.getModuleDescriptor();
         assertNotNull(md);
+        ModuleRevisionId mrid = ModuleRevisionId.newInstance("org1", "mod1.1", "1.0");
+        assertEquals(mrid, md.getModuleRevisionId());
+        
+        assertTrue(_ivy.getResolvedIvyFileInCache(_cache, mrid).exists());
+        
+        // dependencies
+        assertTrue(_ivy.getIvyFileInCache(_cache, ModuleRevisionId.newInstance("org1", "mod1.2", "2.0")).exists());
+        assertTrue(_ivy.getArchiveFileInCache(_cache, "org1", "mod1.2", "2.0", "mod1.2", "jar", "jar").exists());
+    }
+
+    public void testFromCache() throws Exception {
+        // mod1.1 depends on mod1.2
+        
+        // we first do a simple resolve so that module is in cache
+        _ivy.resolve(new File("test/repositories/1/org1/mod1.1/ivys/ivy-1.0.xml").toURL(),
+                null, new String[] {"*"}, _cache, null, true);
+
+        // we now use a badly configured ivy, so that it can't find module in repository
+        Ivy ivy = new Ivy();
+        ivy.configure(new File("test/repositories/bugIVY-56/ivyconf.xml"));
+        
+        ResolveReport report = ivy.resolve(new File("test/repositories/1/org1/mod1.1/ivys/ivy-1.0.xml").toURL(),
+                null, new String[] {"*"}, _cache, null, true);
+        assertFalse(report.hasError());
+
+        ModuleDescriptor md = report.getModuleDescriptor();
+
+        ModuleRevisionId mrid = ModuleRevisionId.newInstance("org1", "mod1.1", "1.0");
+        assertEquals(mrid, md.getModuleRevisionId());
+        
+        assertTrue(_ivy.getResolvedIvyFileInCache(_cache, mrid).exists());
+        
+        // dependencies
+        assertTrue(_ivy.getIvyFileInCache(_cache, ModuleRevisionId.newInstance("org1", "mod1.2", "2.0")).exists());
+        assertTrue(_ivy.getArchiveFileInCache(_cache, "org1", "mod1.2", "2.0", "mod1.2", "jar", "jar").exists());
+    }
+
+    public void testFromCache2() throws Exception {
+        // mod1.1 depends on mod1.2
+
+        // configuration
+        Ivy ivy = new Ivy();
+        DualResolver resolver = new DualResolver();
+        resolver.setName("dual");
+        FileSystemResolver r = new FileSystemResolver();
+        r.setName("1");
+        r.addArtifactPattern("build/testCache2/[artifact]-[revision].[ext]");
+        resolver.add(r);
+        r = new FileSystemResolver();
+        r.setName("2");
+        r.addArtifactPattern("build/testCache2/[artifact]-[revision].[ext]");
+        resolver.add(r);
+        ivy.addResolver(resolver);
+        ivy.setDefaultResolver("dual");
+        
+        // set up repository
+        File art = new File("build/testCache2/mod1.2-2.0.jar");
+        FileUtil.copy(new File("test/repositories/1/org1/mod1.2/jars/mod1.2-2.0.jar"), art, null);
+
+        // we first do a simple resolve so that module is in cache
+        ResolveReport report = ivy.resolve(new File("test/repositories/1/org1/mod1.1/ivys/ivy-1.0.xml").toURL(),
+                null, new String[] {"*"}, _cache, null, true);
+        assertFalse(report.hasError());
+
+        // now we clean the repository to simulate repo not available (network pb for instance)
+        Delete del = new Delete();
+        del.setProject(new Project());
+        del.setDir(new File("build/testCache2"));
+        del.execute();
+        
+        // now do a new resolve: it should use cached data
+        report = ivy.resolve(new File("test/repositories/1/org1/mod1.1/ivys/ivy-1.0.xml").toURL(),
+                null, new String[] {"*"}, _cache, null, true);
+        assertFalse(report.hasError());
+
+        ModuleDescriptor md = report.getModuleDescriptor();
+
         ModuleRevisionId mrid = ModuleRevisionId.newInstance("org1", "mod1.1", "1.0");
         assertEquals(mrid, md.getModuleRevisionId());
         
