@@ -5,6 +5,8 @@
  */
 package fr.jayasoft.ivy;
 
+import fr.jayasoft.ivy.matcher.PatternMatcher;
+
 /**
  * This describes an artifact that is asked for a dependency.
  * 
@@ -43,4 +45,10 @@ public interface DependencyArtifactDescriptor {
      * @return an array of configuration names in which the artifact is asked
      */
     public String[] getConfigurations();
+    
+    /**
+     * Returns the matcher to use to know if an artifact match the current descriptor
+     * @return
+     */
+    public PatternMatcher getMatcher();
 }

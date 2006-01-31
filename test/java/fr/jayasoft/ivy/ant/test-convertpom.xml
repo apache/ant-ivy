@@ -20,8 +20,8 @@
 	<dependencies>
 		<dependency org="commons-logging" name="commons-logging" rev="1.0.4" force="true" changing="false" transitive="true" conf="runtime->runtime;compile->master,compile"/>
 		<dependency org="dom4j" name="dom4j" rev="1.6" force="true" changing="false" transitive="true" conf="runtime->runtime;compile->master,compile">
-			<exclude org="jaxme" module="jaxme-api" name="jaxme-api" type=".*" ext=".*" conf=""/>
-			<exclude org="jaxen" module="jaxen" name="jaxen" type=".*" ext=".*" conf=""/>
+			<exclude org="jaxme" module="jaxme-api" name="jaxme-api" type="*" ext="*" conf=""/>
+			<exclude org="jaxen" module="jaxen" name="jaxen" type="*" ext="*" conf=""/>
 		</dependency>
 		<dependency org="cglib" name="cglib" rev="2.0.2" force="true" changing="false" transitive="true" conf="runtime->runtime;compile->master,compile"/>
 	</dependencies>

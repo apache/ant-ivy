@@ -23,6 +23,7 @@ import java.util.regex.Pattern;
 
 import fr.jayasoft.ivy.filter.Filter;
 import fr.jayasoft.ivy.filter.FilterHelper;
+import fr.jayasoft.ivy.matcher.MatcherHelper;
 import fr.jayasoft.ivy.util.Message;
 
 public class IvyNode {
@@ -1017,7 +1018,7 @@ public class IvyNode {
                 // now we can keep only listed ones
                 for (Iterator it = includes.iterator(); it.hasNext();) {
                     DependencyArtifactDescriptor dad = (DependencyArtifactDescriptor)it.next();
-                    Collection arts = findArtifactsMatching(dad.getId(), allArtifacts);
+                    Collection arts = findArtifactsMatching(dad, allArtifacts);
                     if (arts.isEmpty()) {
                         Message.error("a required artifact is not listed by module descriptor: "+dad.getId());
                         // we remove it from required list to prevent message to be displayed more than once
@@ -1103,15 +1104,11 @@ public class IvyNode {
         return null;
     }
 
-    private static Collection findArtifactsMatching(ArtifactId id, Map allArtifacts) {
-        Artifact art = (Artifact)allArtifacts.get(id);
-        if (art != null) {
-            return Collections.singleton(art);
-        }
+    private static Collection findArtifactsMatching(DependencyArtifactDescriptor dad, Map allArtifacts) {
         Collection ret = new ArrayList();
         for (Iterator iter = allArtifacts.keySet().iterator(); iter.hasNext();) {
             ArtifactId aid = (ArtifactId)iter.next();
-            if (DefaultDependencyDescriptor.artifactIdMatch(id, aid)) {
+            if (MatcherHelper.matches(dad.getMatcher(), dad.getId(), aid)) {
                 ret.add(allArtifacts.get(aid));
             }
         }

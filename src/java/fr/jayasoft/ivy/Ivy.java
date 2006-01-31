@@ -50,11 +50,13 @@ import fr.jayasoft.ivy.filter.FilterHelper;
 import fr.jayasoft.ivy.latest.LatestLexicographicStrategy;
 import fr.jayasoft.ivy.latest.LatestRevisionStrategy;
 import fr.jayasoft.ivy.latest.LatestTimeStrategy;
-import fr.jayasoft.ivy.matcher.ExactMatcher;
-import fr.jayasoft.ivy.matcher.ExactOrRegexpMatcher;
+import fr.jayasoft.ivy.matcher.ExactOrRegexpPatternMatcher;
+import fr.jayasoft.ivy.matcher.ExactPatternMatcher;
+import fr.jayasoft.ivy.matcher.GlobPatternMatcher;
 import fr.jayasoft.ivy.matcher.Matcher;
 import fr.jayasoft.ivy.matcher.MatcherHelper;
-import fr.jayasoft.ivy.matcher.RegexpMatcher;
+import fr.jayasoft.ivy.matcher.PatternMatcher;
+import fr.jayasoft.ivy.matcher.RegexpPatternMatcher;
 import fr.jayasoft.ivy.namespace.NameSpaceHelper;
 import fr.jayasoft.ivy.namespace.Namespace;
 import fr.jayasoft.ivy.parser.ModuleDescriptorParser;
@@ -182,9 +184,10 @@ public class Ivy implements TransferListener {
         addConflictManager("all", new NoConflictManager());    
         addConflictManager("strict", new StrictConflictManager());
         
-        addMatcher(ExactMatcher.getInstance());
-        addMatcher(RegexpMatcher.getInstance());
-        addMatcher(ExactOrRegexpMatcher.getInstance());
+        addMatcher(ExactPatternMatcher.getInstance());
+        addMatcher(RegexpPatternMatcher.getInstance());
+        addMatcher(ExactOrRegexpPatternMatcher.getInstance());
+        addMatcher(GlobPatternMatcher.getInstance());
         
         _listingIgnore.add(".cvsignore");
         _listingIgnore.add("CVS");
@@ -612,15 +615,15 @@ public class Ivy implements TransferListener {
         _namespaces.put(ns.getName(), ns);
     }
     
-    public void addConfigured(Matcher m) {
+    public void addConfigured(PatternMatcher m) {
         addMatcher(m);
     }
     
-    public Matcher getMatcher(String name) {
-        return (Matcher)_matchers.get(name);
+    public PatternMatcher getMatcher(String name) {
+        return (PatternMatcher)_matchers.get(name);
     }
     
-    public void addMatcher(Matcher m) {
+    public void addMatcher(PatternMatcher m) {
         if (m instanceof IvyAware) {
             ((IvyAware)m).setIvy(this);
         }
@@ -1259,7 +1262,7 @@ public class Ivy implements TransferListener {
         if (toResolver == null) {
             throw new IllegalArgumentException("unknown resolver "+to+". Available resolvers are: "+_resolversMap.keySet());
         }
-        Matcher matcher = getMatcher(matcherName);
+        PatternMatcher matcher = getMatcher(matcherName);
         if (matcher == null) {
             throw new IllegalArgumentException("unknown matcher "+matcherName+". Available matchers are: "+_matchers.keySet());
         }
@@ -1274,9 +1277,9 @@ public class Ivy implements TransferListener {
             
             DefaultModuleDescriptor md = new DefaultModuleDescriptor(ModuleRevisionId.newInstance("jayasoft", "ivy-install", "1.0"), Status.DEFAULT_STATUS, new Date());
             md.addConfiguration(new Configuration("default"));
-            md.addConflictManager(new ModuleId(".*", ".*"), new NoConflictManager());
+            md.addConflictManager(new ModuleId(ExactPatternMatcher.ANY_EXPRESSION, ExactPatternMatcher.ANY_EXPRESSION), ExactPatternMatcher.getInstance(), new NoConflictManager());
             
-            if (MatcherHelper.isExact(matcher)) {
+            if (MatcherHelper.isExact(matcher, mrid)) {
                 DefaultDependencyDescriptor dd = new DefaultDependencyDescriptor(md, mrid, false, false, transitive);
                 dd.addDependencyConfiguration("default", "*");
                 md.addDependency(dd);
@@ -1327,7 +1330,7 @@ public class Ivy implements TransferListener {
         }
     }
 
-    public Collection findModuleRevisionIds(DependencyResolver resolver, ModuleRevisionId pattern, Matcher matcher) {
+    public Collection findModuleRevisionIds(DependencyResolver resolver, ModuleRevisionId pattern, PatternMatcher matcher) {
         Collection mrids = new ArrayList();
         String resolverName = resolver.getName();
         
@@ -1345,13 +1348,14 @@ public class Ivy implements TransferListener {
             }
             modules.addAll(Arrays.asList(resolver.listModules(new OrganisationEntry(resolver, org))));                    
         } else {
+            Matcher orgMatcher = matcher.getMatcher(pattern.getOrganisation());
             for (int i = 0; i < orgs.length; i++) {
                 String org = orgs[i].getOrganisation();
                 String systemOrg = org;;
                 if (fromNamespace != null) {
                     systemOrg = NameSpaceHelper.transformOrganisation(org, fromNamespace.getToSystemTransformer());
                 }
-                if (matcher.match(systemOrg, pattern.getOrganisation())) {
+                if (orgMatcher.matches(systemOrg)) {
                     modules.addAll(Arrays.asList(resolver.listModules(new OrganisationEntry(resolver, org))));                    
                 }
             }
@@ -1367,7 +1371,7 @@ public class Ivy implements TransferListener {
                 systemMid = NameSpaceHelper.transform(foundMid, fromNamespace.getToSystemTransformer());
             }
             
-            if (MatcherHelper.match(matcher, systemMid, pattern.getModuleId())) {
+            if (MatcherHelper.matches(matcher, pattern.getModuleId(), systemMid)) {
                 // The module corresponds to the searched module pattern
                 foundModule = true;
                 RevisionEntry[] rEntries = resolver.listRevisions(mEntry);
@@ -1383,7 +1387,7 @@ public class Ivy implements TransferListener {
                         systemMrid = fromNamespace.getToSystemTransformer().transform(foundMrid);
                     }
                     
-                    if (MatcherHelper.match(matcher, systemMrid, pattern)) {
+                    if (MatcherHelper.matches(matcher, pattern, systemMrid)) {
                         // We have a matching module revision
                         foundRevision = true;
                         mrids.add(systemMrid);

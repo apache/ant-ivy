@@ -14,8 +14,9 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Pattern;
 
+import fr.jayasoft.ivy.matcher.MatcherHelper;
+import fr.jayasoft.ivy.matcher.PatternMatcher;
 import fr.jayasoft.ivy.namespace.NameSpaceHelper;
 import fr.jayasoft.ivy.namespace.Namespace;
 import fr.jayasoft.ivy.namespace.NamespaceTransformer;
@@ -281,27 +282,35 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
     public void setDefault(boolean b) {
         _isDefault = b;
     }
+    
+    private static class ModuleIdMatcher {
+        private PatternMatcher _matcher;
+        private ModuleId _mid;
+        public ModuleIdMatcher(PatternMatcher matcher, ModuleId mid) {
+            _matcher = matcher;
+            _mid = mid;
+        }
+        public boolean matches(ModuleId mid) {
+            return MatcherHelper.matches(_matcher, _mid, mid);
+        }
+    }
 
     /**
      * regular expressions as explained in Pattern class may be used in ModuleId
      * organisation and name
      * 
      * @param moduleId
+     * @param matcher 
      * @param resolverName
      */
-    public void addConflictManager(ModuleId moduleId, ConflictManager manager) {
-        _conflictManagers.put(moduleId, manager);
+    public void addConflictManager(ModuleId moduleId, PatternMatcher matcher, ConflictManager manager) {
+        _conflictManagers.put(new ModuleIdMatcher(matcher, moduleId), manager);
     }
     public ConflictManager getConflictManager(ModuleId moduleId) {
-        ConflictManager cm = (ConflictManager)_conflictManagers.get(moduleId);
-        if (cm != null) {
-            return cm;
-        }
         for (Iterator iter = _conflictManagers.keySet().iterator(); iter.hasNext();) {
-            ModuleId mid = (ModuleId)iter.next();
-            if (Pattern.compile(mid.getOrganisation()).matcher(moduleId.getOrganisation()).matches()
-                    && Pattern.compile(mid.getName()).matcher(moduleId.getName()).matches()) {
-                return (ConflictManager)_conflictManagers.get(mid);
+            ModuleIdMatcher matcher = (ModuleIdMatcher)iter.next();
+            if (matcher.matches(moduleId)) {
+                return (ConflictManager)_conflictManagers.get(matcher);
             }
         }
         return null;

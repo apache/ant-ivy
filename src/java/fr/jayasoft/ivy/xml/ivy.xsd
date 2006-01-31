@@ -131,6 +131,7 @@
 									            <xs:attribute name="type" type="xs:string"/>
 									            <xs:attribute name="ext" type="xs:string"/>
 									            <xs:attribute name="conf" type="xs:string"/>
+									            <xs:attribute name="matcher" type="xs:string"/>
 							            	</xs:complexType>
 							      		</xs:element>
 							      		<xs:element name="include" minOccurs="0" maxOccurs="unbounded">
@@ -146,6 +147,7 @@
 									            <xs:attribute name="type" type="xs:string"/>
 									            <xs:attribute name="ext" type="xs:string"/>
 									            <xs:attribute name="conf" type="xs:string"/>
+									            <xs:attribute name="matcher" type="xs:string"/>
 							            	</xs:complexType>
 							      		</xs:element>
 							      		<xs:element name="exclude" minOccurs="0" maxOccurs="unbounded">
@@ -163,6 +165,7 @@
 									            <xs:attribute name="type" type="xs:string"/>
 									            <xs:attribute name="ext" type="xs:string"/>
 									            <xs:attribute name="conf" type="xs:string"/>
+									            <xs:attribute name="matcher" type="xs:string"/>
 							            	</xs:complexType>
 							      		</xs:element>
 							        </xs:sequence>
@@ -189,6 +192,7 @@
 						            <xs:attribute name="module" type="xs:string"/>
 						            <xs:attribute name="name" type="xs:string"/>
 						            <xs:attribute name="rev" type="xs:string"/>
+						            <xs:attribute name="matcher" type="xs:string"/>
 				            	</xs:complexType>
 				      		</xs:element>
 				        </xs:sequence>

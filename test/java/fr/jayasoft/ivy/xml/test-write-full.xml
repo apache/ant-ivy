@@ -37,9 +37,9 @@
 			<include name="yourartifact9-2" type="jar" ext="jar" conf="myconf2,myconf3"/>
 		</dependency>
 		<dependency org="yourorg" name="yourmodule10" rev="10.1" force="false" changing="false" transitive="true" conf="*->*">
-			<include name=".*" type=".*" ext="xml"/>
+			<include name="*" type="*" ext="xml"/>
 			<include name="your.*" type="jar" ext="jar"/>
-			<exclude org=".*" module=".*" name="toexclude" type=".*" ext=".*"/>
+			<exclude org="*" module="*" name="toexclude" type="*" ext="*"/>
 		</dependency>
 		<dependency org="yourorg" name="yourmodule11" rev="11.1" force="false" changing="false" transitive="true" conf="*->*"/>
 	</dependencies>

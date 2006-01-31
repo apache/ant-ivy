@@ -33,6 +33,8 @@ import fr.jayasoft.ivy.ModuleDescriptor;
 import fr.jayasoft.ivy.ModuleId;
 import fr.jayasoft.ivy.ModuleRevisionId;
 import fr.jayasoft.ivy.Configuration.Visibility;
+import fr.jayasoft.ivy.matcher.ExactPatternMatcher;
+import fr.jayasoft.ivy.matcher.PatternMatcher;
 import fr.jayasoft.ivy.parser.AbstractModuleDescriptorParser;
 import fr.jayasoft.ivy.repository.Resource;
 import fr.jayasoft.ivy.util.Message;
@@ -128,7 +130,7 @@ public class PomModuleDescriptorParser extends AbstractModuleDescriptorParser {
                     ModuleId mid = (ModuleId)iter.next();
                     String[] confs = _dd.getModuleConfigurations();
                     for (int i = 0; i < confs.length; i++) {
-                        _dd.addDependencyArtifactExcludes(confs[i], new DefaultDependencyArtifactDescriptor(_dd, new ArtifactId(mid, ".*", ".*", ".*"), false));
+                        _dd.addDependencyArtifactExcludes(confs[i], new DefaultDependencyArtifactDescriptor(_dd, new ArtifactId(mid, PatternMatcher.ANY_EXPRESSION, PatternMatcher.ANY_EXPRESSION, PatternMatcher.ANY_EXPRESSION), false, ExactPatternMatcher.getInstance()));
                     }
                 }
                 _md.addDependency(_dd);

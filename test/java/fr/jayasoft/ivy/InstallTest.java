@@ -11,7 +11,7 @@ import java.io.File;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.Delete;
 
-import fr.jayasoft.ivy.matcher.Matcher;
+import fr.jayasoft.ivy.matcher.PatternMatcher;
 
 import junit.framework.TestCase;
 
@@ -23,7 +23,7 @@ public class InstallTest extends TestCase {
         
         ivy.install(ModuleRevisionId.newInstance("org1", "mod1.2", "2.0"), 
                 ivy.getDefaultResolver().getName(), 
-                "install", true, true, true, null, _cache, Matcher.EXACT);
+                "install", true, true, true, null, _cache, PatternMatcher.EXACT);
         
         assertTrue(new File("build/test/install/org1/mod1.2/ivy-2.0.xml").exists());
         assertTrue(new File("build/test/install/org1/mod1.2/mod1.2-2.0.jar").exists());
@@ -35,7 +35,7 @@ public class InstallTest extends TestCase {
         
         ivy.install(ModuleRevisionId.newInstance("org1", "mod1.1", "1.0"), 
                 ivy.getDefaultResolver().getName(), 
-                "install", true, true, true, null, _cache, Matcher.EXACT);
+                "install", true, true, true, null, _cache, PatternMatcher.EXACT);
         
         assertTrue(new File("build/test/install/org1/mod1.1/ivy-1.0.xml").exists());
         assertTrue(new File("build/test/install/org1/mod1.1/mod1.1-1.0.jar").exists());
@@ -50,7 +50,7 @@ public class InstallTest extends TestCase {
         
         ivy.install(ModuleRevisionId.newInstance("org1", "mod1.1", "1.0"), 
                 ivy.getDefaultResolver().getName(), 
-                "install", false, true, true, null, _cache, Matcher.EXACT);
+                "install", false, true, true, null, _cache, PatternMatcher.EXACT);
         
         assertTrue(new File("build/test/install/org1/mod1.1/ivy-1.0.xml").exists());
         assertTrue(new File("build/test/install/org1/mod1.1/mod1.1-1.0.jar").exists());
@@ -65,7 +65,7 @@ public class InstallTest extends TestCase {
         
         ivy.install(ModuleRevisionId.newInstance("org1", ".*", ".*"), 
                 "1", 
-                "install", false, true, true, null, _cache, Matcher.REGEXP);
+                "install", false, true, true, null, _cache, PatternMatcher.REGEXP);
         
         assertTrue(new File("build/test/install/org1/mod1.1/ivy-1.0.xml").exists());
         assertTrue(new File("build/test/install/org1/mod1.1/mod1.1-1.0.jar").exists());

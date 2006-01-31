@@ -18,6 +18,7 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import fr.jayasoft.ivy.matcher.MatcherHelper;
 import fr.jayasoft.ivy.namespace.NameSpaceHelper;
 import fr.jayasoft.ivy.namespace.Namespace;
 import fr.jayasoft.ivy.namespace.NamespaceTransformer;
@@ -32,25 +33,6 @@ import fr.jayasoft.ivy.namespace.NamespaceTransformer;
  */
 public class DefaultDependencyDescriptor implements DependencyDescriptor {
 	private static final Pattern SELF_FALLBACK_PATTERN = Pattern.compile("@(\\(.*\\))?");
-    public static boolean artifactIdMatch(ArtifactId id, ArtifactId aid) {
-        if (aid.equals(id)) {
-            return true;
-        }
-        return stringMatch(id.getModuleId().getOrganisation(), aid.getModuleId().getOrganisation())
-            && stringMatch(id.getModuleId().getName(), aid.getModuleId().getName())
-            && stringMatch(id.getName(), aid.getName())
-            && stringMatch(id.getExt(), aid.getExt())
-            && stringMatch(id.getType(), aid.getType())
-            ;
-    }
-
-    public static boolean stringMatch(String pattern, String test) {
-        if (test.equals(pattern)) {
-            return true;
-        }
-        return Pattern.matches(pattern, test);
-    }
-
     
     /**
      * Transforms the given dependency descriptor of the given namespace and return
@@ -317,7 +299,7 @@ public class DefaultDependencyDescriptor implements DependencyDescriptor {
         }
         DependencyArtifactDescriptor[] dads = getDependencyArtifactsExcludes(moduleConfigurations);
         for (int i = 0; i < dads.length; i++) {
-            if (artifactIdMatch(dads[i].getId(), artifactId)) {
+            if (MatcherHelper.matches(dads[i].getMatcher(), dads[i].getId(), artifactId)) {
                 return true;
             }
         }        

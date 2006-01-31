@@ -362,6 +362,78 @@ public class ResolveTest extends TestCase {
         assertTrue(!_ivy.getArchiveFileInCache(_cache, "org2", "mod2.1", "0.3", "mod2.1", "jar", "jar").exists());
     }
     
+    public void testResolveWithExcludesArtifacts2() throws Exception {
+        // mod2.3 depends on mod2.1 and badly excludes artifacts with incorrect matcher
+        ResolveReport report = _ivy.resolve(new File("test/repositories/1/org2/mod2.3/ivys/ivy-0.6.2.xml").toURL(),
+                null, new String[] {"*"}, _cache, null, true);
+        assertNotNull(report);
+        ModuleDescriptor md = report.getModuleDescriptor();
+        assertNotNull(md);
+        ModuleRevisionId mrid = ModuleRevisionId.newInstance("org2", "mod2.3", "0.6.2");
+        assertEquals(mrid, md.getModuleRevisionId());
+        
+        assertTrue(_ivy.getResolvedIvyFileInCache(_cache, mrid).exists());
+        
+        assertTrue(_ivy.getIvyFileInCache(_cache, ModuleRevisionId.newInstance("org2", "mod2.1", "0.3")).exists());
+        assertTrue(_ivy.getArchiveFileInCache(_cache, "org2", "mod2.1", "0.3", "art21A", "jar", "jar").exists());
+        assertTrue(_ivy.getArchiveFileInCache(_cache, "org2", "mod2.1", "0.3", "art21B", "jar", "jar").exists());
+        assertTrue(!_ivy.getArchiveFileInCache(_cache, "org2", "mod2.1", "0.3", "mod2.1", "jar", "jar").exists());
+    }
+    
+    public void testResolveWithExcludesArtifacts3() throws Exception {
+        // mod2.3 depends on mod2.1 and excludes artifacts with exact matcher
+        ResolveReport report = _ivy.resolve(new File("test/repositories/1/org2/mod2.3/ivys/ivy-0.6.3.xml").toURL(),
+                null, new String[] {"*"}, _cache, null, true);
+        assertNotNull(report);
+        ModuleDescriptor md = report.getModuleDescriptor();
+        assertNotNull(md);
+        ModuleRevisionId mrid = ModuleRevisionId.newInstance("org2", "mod2.3", "0.6.3");
+        assertEquals(mrid, md.getModuleRevisionId());
+        
+        assertTrue(_ivy.getResolvedIvyFileInCache(_cache, mrid).exists());
+        
+        assertTrue(_ivy.getIvyFileInCache(_cache, ModuleRevisionId.newInstance("org2", "mod2.1", "0.3")).exists());
+        assertTrue(_ivy.getArchiveFileInCache(_cache, "org2", "mod2.1", "0.3", "art21A", "jar", "jar").exists());
+        assertTrue(!_ivy.getArchiveFileInCache(_cache, "org2", "mod2.1", "0.3", "art21B", "jar", "jar").exists());
+        assertTrue(!_ivy.getArchiveFileInCache(_cache, "org2", "mod2.1", "0.3", "mod2.1", "jar", "jar").exists());
+    }
+    
+    public void testResolveWithExcludesArtifacts4() throws Exception {
+        // mod2.3 depends on mod2.1 and excludes artifacts with regexp matcher
+        ResolveReport report = _ivy.resolve(new File("test/repositories/1/org2/mod2.3/ivys/ivy-0.6.4.xml").toURL(),
+                null, new String[] {"*"}, _cache, null, true);
+        assertNotNull(report);
+        ModuleDescriptor md = report.getModuleDescriptor();
+        assertNotNull(md);
+        ModuleRevisionId mrid = ModuleRevisionId.newInstance("org2", "mod2.3", "0.6.4");
+        assertEquals(mrid, md.getModuleRevisionId());
+        
+        assertTrue(_ivy.getResolvedIvyFileInCache(_cache, mrid).exists());
+        
+        assertTrue(_ivy.getIvyFileInCache(_cache, ModuleRevisionId.newInstance("org2", "mod2.1", "0.3")).exists());
+        assertTrue(_ivy.getArchiveFileInCache(_cache, "org2", "mod2.1", "0.3", "art21A", "jar", "jar").exists());
+        assertTrue(!_ivy.getArchiveFileInCache(_cache, "org2", "mod2.1", "0.3", "art21B", "jar", "jar").exists());
+        assertTrue(!_ivy.getArchiveFileInCache(_cache, "org2", "mod2.1", "0.3", "mod2.1", "jar", "jar").exists());
+    }
+    
+    public void testResolveWithExcludesArtifacts5() throws Exception {
+        // mod2.3 depends on mod2.1 and excludes artifacts with glob matcher
+        ResolveReport report = _ivy.resolve(new File("test/repositories/1/org2/mod2.3/ivys/ivy-0.6.5.xml").toURL(),
+                null, new String[] {"*"}, _cache, null, true);
+        assertNotNull(report);
+        ModuleDescriptor md = report.getModuleDescriptor();
+        assertNotNull(md);
+        ModuleRevisionId mrid = ModuleRevisionId.newInstance("org2", "mod2.3", "0.6.5");
+        assertEquals(mrid, md.getModuleRevisionId());
+        
+        assertTrue(_ivy.getResolvedIvyFileInCache(_cache, mrid).exists());
+        
+        assertTrue(_ivy.getIvyFileInCache(_cache, ModuleRevisionId.newInstance("org2", "mod2.1", "0.3")).exists());
+        assertTrue(_ivy.getArchiveFileInCache(_cache, "org2", "mod2.1", "0.3", "art21A", "jar", "jar").exists());
+        assertTrue(!_ivy.getArchiveFileInCache(_cache, "org2", "mod2.1", "0.3", "art21B", "jar", "jar").exists());
+        assertTrue(!_ivy.getArchiveFileInCache(_cache, "org2", "mod2.1", "0.3", "mod2.1", "jar", "jar").exists());
+    }
+    
     public void testResolveTransitiveDependencies() throws Exception {
         // mod2.1 depends on mod1.1 which depends on mod1.2
         ResolveReport report = _ivy.resolve(new File("test/repositories/1/org2/mod2.1/ivys/ivy-0.3.xml").toURL(),

@@ -10,8 +10,8 @@ import java.io.IOException;
 import java.net.URL;
 import java.text.ParseException;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -32,6 +32,7 @@ import fr.jayasoft.ivy.ModuleId;
 import fr.jayasoft.ivy.ModuleRevisionId;
 import fr.jayasoft.ivy.Status;
 import fr.jayasoft.ivy.conflict.FixedConflictManager;
+import fr.jayasoft.ivy.matcher.PatternMatcher;
 import fr.jayasoft.ivy.namespace.Namespace;
 import fr.jayasoft.ivy.parser.AbstractModuleDescriptorParser;
 import fr.jayasoft.ivy.repository.Resource;
@@ -104,7 +105,7 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
 
     private static class Parser extends AbstractParser {
 
-    private static final Collection ALLOWED_VERSIONS = Arrays.asList(new String[] {"1.0", "1.1", "1.2", "1.3"});
+    private static final List ALLOWED_VERSIONS = Arrays.asList(new String[] {"1.0", "1.1", "1.2", "1.3"});
     
     private DefaultDependencyDescriptor _dd;
     private DefaultDependencyArtifactDescriptor _dad;
@@ -113,6 +114,7 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
     private boolean _validate = true;
     private Ivy _ivy;
     private boolean _artifactsDeclared = false;
+    private PatternMatcher _defaultMatcher; 
 
     private static final int NONE = 0;
     private static final int INFO = 1;
@@ -156,9 +158,17 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
         try {
             if ("ivy-module".equals(qName)) {
                 String version = attributes.getValue("version");
-                if (!ALLOWED_VERSIONS.contains(version)) {
+                int versionIndex = ALLOWED_VERSIONS.indexOf(version);
+                if (versionIndex == -1) {
                     addError("invalid version "+version);
                     throw new SAXException("invalid version "+version);
+                }
+                if (versionIndex >= ALLOWED_VERSIONS.indexOf("1.3")) {
+                    Message.debug("post 1.3 ivy file: using "+PatternMatcher.EXACT+" as default matcher");
+                    _defaultMatcher = _ivy.getMatcher(PatternMatcher.EXACT);
+                } else {
+                    Message.debug("pre 1.3 ivy file: using "+PatternMatcher.EXACT_OR_REGEXP+" as default matcher");
+                    _defaultMatcher = _ivy.getMatcher(PatternMatcher.EXACT_OR_REGEXP);
                 }
             } else if ("info".equals(qName)) {
                 _state = INFO;
@@ -314,9 +324,9 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
                 _dd.addDependencyConfiguration(_conf, attributes.getValue("name"));
             } else if ("manager".equals(qName) && _state == CONFLICT) {
                 String org = _ivy.substitute(attributes.getValue("org"));
-                org = org == null ? ".*" : org;
+                org = org == null ? PatternMatcher.ANY_EXPRESSION : org;
                 String mod = _ivy.substitute(attributes.getValue("module"));
-                mod = mod == null ? ".*" : mod;
+                mod = mod == null ? PatternMatcher.ANY_EXPRESSION : mod;
                 ConflictManager cm;
                 String name = _ivy.substitute(attributes.getValue("name"));
                 String rev = _ivy.substitute(attributes.getValue("rev"));
@@ -336,7 +346,13 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
                     addError("bad conflict manager: no name nor rev");
                     return;
                 }
-                _md.addConflictManager(new ModuleId(org, mod), cm);
+                String matcherName = attributes.getValue("matcher");
+                PatternMatcher matcher = matcherName == null ? _defaultMatcher : _ivy.getMatcher(matcherName);
+                if (matcher == null) {
+                    addError("unknown matcher: "+matcherName);
+                    return;
+                }
+                _md.addConflictManager(new ModuleId(org, mod), matcher, cm);
             } else if ("import".equals(qName) || ("include".equals(qName) && _state == CONF)) {
                 URL url;
                 String fileName = _ivy.substitute(attributes.getValue("file"));
@@ -383,20 +399,26 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
     
     private void addDependencyArtifact(Attributes attributes, boolean includes) {
         String name = attributes.getValue("name");
-        name = name == null ? ".*" : name;
+        name = name == null ? PatternMatcher.ANY_EXPRESSION : name;
         String type = attributes.getValue("type");
-        type = type == null ? ".*" : type;
+        type = type == null ? PatternMatcher.ANY_EXPRESSION : type;
         String ext = attributes.getValue("ext");
         ext = ext != null?ext:type;
+        String matcherName = attributes.getValue("matcher");
+        PatternMatcher matcher = matcherName == null ? _defaultMatcher : _ivy.getMatcher(matcherName);
+        if (matcher == null) {
+            addError("unknown matcher "+matcherName);
+            return;
+        }
         if (includes) {
-            _dad = new DefaultDependencyArtifactDescriptor(_dd, name, type, ext, includes);
+            _dad = new DefaultDependencyArtifactDescriptor(_dd, name, type, ext, includes, matcher);
         } else {
             String org = attributes.getValue("org");
-            org = org == null ? ".*" : org;
+            org = org == null ? PatternMatcher.ANY_EXPRESSION : org;
             String module = attributes.getValue("module");
-            module = module == null ? ".*" : module;
+            module = module == null ? PatternMatcher.ANY_EXPRESSION : module;
             ArtifactId aid = new ArtifactId(new ModuleId(org, module), name, type, ext);
-            _dad = new DefaultDependencyArtifactDescriptor(_dd, aid, includes);
+            _dad = new DefaultDependencyArtifactDescriptor(_dd, aid, includes, matcher);
         }
         String confs = attributes.getValue("conf");
         // only add confs if they are specified. if they aren't, endElement will handle this

@@ -12,7 +12,7 @@ import org.apache.tools.ant.BuildException;
 import fr.jayasoft.ivy.Ivy;
 import fr.jayasoft.ivy.ModuleRevisionId;
 import fr.jayasoft.ivy.filter.FilterHelper;
-import fr.jayasoft.ivy.matcher.Matcher;
+import fr.jayasoft.ivy.matcher.PatternMatcher;
 
 /**
  * @author Hanin
@@ -28,9 +28,7 @@ public class IvyInstall extends IvyTask {
     private String _to;
     private boolean _transitive;
     private String _type;
-    private String _matcher = Matcher.EXACT;
-    
-    private boolean _regexpUsed = false;
+    private String _matcher = PatternMatcher.EXACT;
     
     public void execute() throws BuildException {
         Ivy ivy = getIvyInstance();
@@ -40,15 +38,15 @@ public class IvyInstall extends IvyTask {
         if (_organisation == null) {
             throw new BuildException("no organisation provided for ivy publish task: It can either be set explicitely via the attribute 'organisation' or via 'ivy.organisation' property or a prior call to <resolve/>");
         }
-        if (_module == null && !_regexpUsed) {
+        if (_module == null && PatternMatcher.EXACT.equals(_matcher)) {
             throw new BuildException("no module name provided for ivy publish task: It can either be set explicitely via the attribute 'module' or via 'ivy.module' property or a prior call to <resolve/>");
-        } else if (_module == null && _regexpUsed) {
-        	_module = ".*";
+        } else if (_module == null && !PatternMatcher.EXACT.equals(_matcher)) {
+        	_module = PatternMatcher.ANY_EXPRESSION;
         }
-        if (_revision == null && !_regexpUsed) {
+        if (_revision == null && PatternMatcher.EXACT.equals(_matcher)) {
             throw new BuildException("no module revision provided for ivy publish task: It can either be set explicitely via the attribute 'revision' or via 'ivy.revision' property or a prior call to <resolve/>");
-        } else if (_revision == null && _regexpUsed) {
-        	_revision = ".*";
+        } else if (_revision == null && !PatternMatcher.EXACT.equals(_matcher)) {
+        	_revision = PatternMatcher.ANY_EXPRESSION;
         }
         if (_from == null) {
             throw new BuildException("no from resolver name: please provide it through parameter 'from'");
@@ -120,11 +118,4 @@ public class IvyInstall extends IvyTask {
     public void setType(String type) {
         _type = type;
     }
-    public boolean isRegexpUsed() {
-        return _regexpUsed;
-    }
-    public void setRegexpUsed(boolean use) {
-        _regexpUsed = use;
-    }
-
 }

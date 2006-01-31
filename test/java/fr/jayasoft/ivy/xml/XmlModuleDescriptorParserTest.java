@@ -22,6 +22,7 @@ import fr.jayasoft.ivy.ModuleId;
 import fr.jayasoft.ivy.Configuration.Visibility;
 import fr.jayasoft.ivy.conflict.FixedConflictManager;
 import fr.jayasoft.ivy.conflict.NoConflictManager;
+import fr.jayasoft.ivy.matcher.PatternMatcher;
 import fr.jayasoft.ivy.parser.AbstractModuleDescriptorParserTester;
 
 /**
@@ -239,10 +240,10 @@ public class XmlModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         assertEquals("yourorg", dd.getDependencyId().getOrganisation());
         assertEquals("10.1", dd.getDependencyRevisionId().getRevision());
         assertEquals(new HashSet(Arrays.asList(new String[] {"*"})), new HashSet(Arrays.asList(dd.getModuleConfigurations())));
-        assertDependencyArtifactsIncludes(dd, new String[] {"myconf1"}, new String[] {"your.*", ".*"});
-        assertDependencyArtifactsIncludes(dd, new String[] {"myconf2"}, new String[] {"your.*", ".*"});
-        assertDependencyArtifactsIncludes(dd, new String[] {"myconf3"}, new String[] {"your.*", ".*"});
-        assertDependencyArtifactsIncludes(dd, new String[] {"myconf4"}, new String[] {"your.*", ".*"});
+        assertDependencyArtifactsIncludes(dd, new String[] {"myconf1"}, new String[] {"your.*", PatternMatcher.ANY_EXPRESSION});
+        assertDependencyArtifactsIncludes(dd, new String[] {"myconf2"}, new String[] {"your.*", PatternMatcher.ANY_EXPRESSION});
+        assertDependencyArtifactsIncludes(dd, new String[] {"myconf3"}, new String[] {"your.*", PatternMatcher.ANY_EXPRESSION});
+        assertDependencyArtifactsIncludes(dd, new String[] {"myconf4"}, new String[] {"your.*", PatternMatcher.ANY_EXPRESSION});
         assertDependencyArtifactsExcludes(dd, new String[] {"myconf1"}, new String[] {"toexclude"});
         assertDependencyArtifactsExcludes(dd, new String[] {"myconf2"}, new String[] {"toexclude"});
         assertDependencyArtifactsExcludes(dd, new String[] {"myconf3"}, new String[] {"toexclude"});

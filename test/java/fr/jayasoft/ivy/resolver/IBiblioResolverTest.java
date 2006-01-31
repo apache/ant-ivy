@@ -21,6 +21,7 @@ import fr.jayasoft.ivy.Ivy;
 import fr.jayasoft.ivy.ModuleRevisionId;
 import fr.jayasoft.ivy.ResolveData;
 import fr.jayasoft.ivy.ResolvedModuleRevision;
+import fr.jayasoft.ivy.matcher.ExactPatternMatcher;
 import fr.jayasoft.ivy.report.ArtifactDownloadReport;
 import fr.jayasoft.ivy.report.DownloadReport;
 import fr.jayasoft.ivy.report.DownloadStatus;
@@ -153,8 +154,8 @@ public class IBiblioResolverTest extends TestCase {
         
         ModuleRevisionId mrid = ModuleRevisionId.newInstance("apache", "nanning", "0.9");
         DefaultDependencyDescriptor dd = new DefaultDependencyDescriptor(mrid, false);
-        dd.addDependencyArtifactIncludes("default", new DefaultDependencyArtifactDescriptor(dd, "nanning-profiler", "jar", "jar", true));
-        dd.addDependencyArtifactIncludes("default", new DefaultDependencyArtifactDescriptor(dd, "nanning-trace", "jar", "jar", true));
+        dd.addDependencyArtifactIncludes("default", new DefaultDependencyArtifactDescriptor(dd, "nanning-profiler", "jar", "jar", true, ExactPatternMatcher.getInstance()));
+        dd.addDependencyArtifactIncludes("default", new DefaultDependencyArtifactDescriptor(dd, "nanning-trace", "jar", "jar", true, ExactPatternMatcher.getInstance()));
         ResolvedModuleRevision rmr = resolver.getDependency(dd, _data);
         assertNotNull(rmr);
         assertEquals(mrid, rmr.getId());
