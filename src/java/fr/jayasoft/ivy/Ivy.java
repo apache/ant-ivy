@@ -1012,6 +1012,15 @@ public class Ivy implements TransferListener {
                     doFetchDependencies(node, confs[i]);
                 }
             }
+        } else if (!node.hasProblem()) {
+            // the node has not been loaded but hasn't problem: it was already loaded 
+            // => we just have to update its dependencies data
+            if (!node.isEvicted(node.getRootModuleConf())) {
+                String[] confs = node.getRealConfs(conf);
+                for (int i = 0; i < confs.length; i++) {
+                    doFetchDependencies(node, confs[i]);
+                }
+            }
         }
         if (node.isEvicted(node.getRootModuleConf())) {
             // update selected nodes with confs asked in evicted one

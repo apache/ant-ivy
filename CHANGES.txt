@@ -1,7 +1,8 @@
 - IMPROVE: add possibility to choose matcher on include exclude and conflict manager rules (IVY-161)
 - IMPROVE: add regexp management in the install ant task (IVY-154)
 
-- attempt to fix IVY-159
+- FIX: resolve problem with configuration inheritance (IVY-164)
+- FIX: some files in cache detected by not used by Ivy for subsequent retrieves (IVY-159)
 - FIX: HTML report shouldn't display the dependencies of evicted modules (IVY-158) (thanks to Maarten Coene)
 - FIX: bug when an organisation or module or revision contains a space (IVY-157)
 - FIX: cos-nonambig warnings (IVY-156)

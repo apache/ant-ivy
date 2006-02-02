@@ -1,0 +1,18 @@
+<ivy-module version="1.0">
+	<info organisation="org6"
+	       module="mod6.2"
+	       revision="0.4"
+	       status="integration"
+	       publication="20050312110000"
+	/>
+	<configurations>
+    	<conf name="default"/>
+    	<conf name="extension" extends="default"/>
+	</configurations>
+	<publications>
+	</publications>
+	<dependencies>
+		<dependency org="org6" name="mod6.1" rev="0.4" conf="default->extension"/>
+		<dependency org="org1" name="mod1.2" rev="2.1" conf="extension->default"/>
+	</dependencies>
+</ivy-module>
