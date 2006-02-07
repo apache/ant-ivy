@@ -118,4 +118,12 @@ public class IvyInstall extends IvyTask {
     public void setType(String type) {
         _type = type;
     }
+
+    public String getMatcher() {
+        return _matcher;
+    }
+
+    public void setMatcher(String matcher) {
+        _matcher = matcher;
+    }
 }
