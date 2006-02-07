@@ -255,12 +255,8 @@ public abstract class BasicResolver extends AbstractResolver {
                 
                 // check descriptor data is in sync with resource revision and names
                 systemMd = toSystem(md);
-                if (!checkDescriptorConsistency(mrid, md, ivyRef)) {
-                    return null;
-                }
-                if (!checkDescriptorConsistency(systemDd.getDependencyRevisionId(), systemMd, ivyRef)) {
-                    return null;
-                }
+                checkDescriptorConsistency(mrid, md, ivyRef);
+                checkDescriptorConsistency(systemDd.getDependencyRevisionId(), systemMd, ivyRef);
                 
                 // check if we should delete old artifacts
                 boolean deleteOldArtifacts = false;
@@ -368,7 +364,7 @@ public abstract class BasicResolver extends AbstractResolver {
         return node != null && node.getModuleRevision() != null;
     }
 
-    private boolean checkDescriptorConsistency(ModuleRevisionId mrid, ModuleDescriptor md, ResolvedResource ivyRef) {
+    private void checkDescriptorConsistency(ModuleRevisionId mrid, ModuleDescriptor md, ResolvedResource ivyRef) throws ParseException {
         boolean ok = true;
         if (!mrid.getOrganisation().equals(md.getModuleRevisionId().getOrganisation())) {
             Message.error("\t"+getName()+": bad organisation found in "+ivyRef.getResource()+": expected="+mrid.getOrganisation()+" found="+md.getModuleRevisionId().getOrganisation());
@@ -378,15 +374,14 @@ public abstract class BasicResolver extends AbstractResolver {
             Message.error("\t"+getName()+": bad module name found in "+ivyRef.getResource()+": expected="+mrid.getName()+" found="+md.getModuleRevisionId().getName());
             ok = false;
         }
-        if (ivyRef.getRevision() != null && !ivyRef.getRevision().startsWith("working@") && md.getModuleRevisionId().getRevision() != null && 
+        if (ivyRef.getRevision() != null && !ivyRef.getRevision().startsWith("working@") && 
                 !ModuleRevisionId.acceptRevision(ivyRef.getRevision(), md.getModuleRevisionId().getRevision())) {
             Message.error("\t"+getName()+": bad revision found in "+ivyRef.getResource()+": expected="+ivyRef.getRevision()+" found="+md.getModuleRevisionId().getRevision());
             ok = false;
         }
         if (!ok) {
-            Message.verbose("\t"+getName()+": inconsistent module descriptor file found for "+mrid+" rejecting");
+            throw new ParseException("inconsistent module descriptor file found for "+mrid, 0);
         }
-        return ok;
     }
 
     protected void clearIvyAttempts() {
