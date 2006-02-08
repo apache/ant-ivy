@@ -22,6 +22,7 @@ import fr.jayasoft.ivy.report.ArtifactDownloadReport;
 import fr.jayasoft.ivy.report.ConfigurationResolveReport;
 import fr.jayasoft.ivy.report.ResolveReport;
 import fr.jayasoft.ivy.report.XmlReportOutputter;
+import fr.jayasoft.ivy.resolver.BasicResolver;
 import fr.jayasoft.ivy.resolver.DualResolver;
 import fr.jayasoft.ivy.resolver.FileSystemResolver;
 import fr.jayasoft.ivy.util.FileUtil;
@@ -1568,6 +1569,24 @@ public class ResolveTest extends TestCase {
         
         assertFalse(_ivy.getIvyFileInCache(_cache, ModuleRevisionId.newInstance("org1", "mod1.2", "2.0")).exists());
         assertFalse(_ivy.getArchiveFileInCache(_cache, "org1", "mod1.2", "2.0", "mod1.2", "jar", "jar").exists());        
+    }
+
+    public void testTrustRevision() throws Exception {
+        // mod12.2 depends on mod12.1 1.0 which depends on mod1.2
+        // mod12.1 doesn't have revision in its ivy file
+        
+        ((BasicResolver)_ivy.getResolver("2-ivy")).setCheckconsistency(false);
+        
+        ResolveReport report = _ivy.resolve(new File("test/repositories/2/mod12.2/ivy-1.0.xml").toURL(),
+                null, new String[] {"*"}, _cache, null, true);
+        
+        assertFalse(report.hasError());
+        
+        assertTrue(_ivy.getIvyFileInCache(_cache, ModuleRevisionId.newInstance("org12", "mod12.1", "1.0")).exists());
+        assertTrue(_ivy.getArchiveFileInCache(_cache, "org12", "mod12.1", "1.0", "mod12.1", "jar", "jar").exists());        
+        
+        assertTrue(_ivy.getIvyFileInCache(_cache, ModuleRevisionId.newInstance("org1", "mod1.2", "2.0")).exists());
+        assertTrue(_ivy.getArchiveFileInCache(_cache, "org1", "mod1.2", "2.0", "mod1.2", "jar", "jar").exists());        
     }
 
     ////////////////////////////////////////////////////////////

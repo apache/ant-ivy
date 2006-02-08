@@ -65,6 +65,8 @@ public abstract class BasicResolver extends AbstractResolver {
     private Map _artattempts = new HashMap();
 
     private Boolean _checkmodified = null;
+
+    private boolean _checkconsistency = true;
     
     public BasicResolver() {
         _workspaceName = Ivy.getLocalHostName();
@@ -255,8 +257,18 @@ public abstract class BasicResolver extends AbstractResolver {
                 
                 // check descriptor data is in sync with resource revision and names
                 systemMd = toSystem(md);
-                checkDescriptorConsistency(mrid, md, ivyRef);
-                checkDescriptorConsistency(systemDd.getDependencyRevisionId(), systemMd, ivyRef);
+                if (_checkconsistency) {
+                    checkDescriptorConsistency(mrid, md, ivyRef);
+                    checkDescriptorConsistency(systemDd.getDependencyRevisionId(), systemMd, ivyRef);
+                } else {
+                    if (md instanceof DefaultModuleDescriptor) {
+                        ((DefaultModuleDescriptor)md).setModuleRevisionId(ModuleRevisionId.newInstance(mrid.getOrganisation(), mrid.getName(), ivyRef.getRevision()));
+                    } else {
+                        Message.warn("consistency disabled with non default module descriptor... module info can't be updated, so consistency check will be done");
+                        checkDescriptorConsistency(mrid, md, ivyRef);
+                        checkDescriptorConsistency(systemDd.getDependencyRevisionId(), systemMd, ivyRef);
+                    }
+                }
                 
                 // check if we should delete old artifacts
                 boolean deleteOldArtifacts = false;
@@ -613,6 +625,14 @@ public abstract class BasicResolver extends AbstractResolver {
     protected abstract void logIvyNotFound(ModuleRevisionId mrid);    
 
     protected abstract void logArtifactNotFound(Artifact artifact);
+
+    public boolean isCheckconsistency() {
+        return _checkconsistency;
+    }
+
+    public void setCheckconsistency(boolean checkConsitency) {
+        _checkconsistency = checkConsitency;
+    }
 
 
 }
