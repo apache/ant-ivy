@@ -1,5 +1,5 @@
 - IMPROVE: adds the possibility to disable concistency check (IVY-163)
-- IMPROVE: add possibility to choose matcher on include exclude and conflict manager rules (IVY-161)
+- IMPROVE: add possibility to choose matcher on include exclude and conflict manager rules in ivy files, and on resolver per module in ivyconf (IVY-161)
 - IMPROVE: add regexp management in the install ant task (IVY-154)
 
 - FIX: resolve fails without appropriate message when cache is empty and a module in the repository has no revision (IVY-165)

@@ -21,6 +21,7 @@
 		</filesystem>
 	</resolvers>
 	<modules>
+		<module organisation="jayasoft" name="ivy*" matcher="glob" resolver="int1"/>
 		<module organisation="jayasoft" name=".*" resolver="internal"/>
 	</modules>
 </ivyconf>

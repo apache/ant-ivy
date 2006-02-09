@@ -32,7 +32,6 @@ import java.util.ListIterator;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
-import java.util.regex.Pattern;
 
 import javax.swing.event.EventListenerList;
 
@@ -55,6 +54,7 @@ import fr.jayasoft.ivy.matcher.ExactPatternMatcher;
 import fr.jayasoft.ivy.matcher.GlobPatternMatcher;
 import fr.jayasoft.ivy.matcher.Matcher;
 import fr.jayasoft.ivy.matcher.MatcherHelper;
+import fr.jayasoft.ivy.matcher.ModuleIdMatcher;
 import fr.jayasoft.ivy.matcher.PatternMatcher;
 import fr.jayasoft.ivy.matcher.RegexpPatternMatcher;
 import fr.jayasoft.ivy.namespace.NameSpaceHelper;
@@ -119,7 +119,7 @@ public class Ivy implements TransferListener {
     private String _defaultResolverName;
     private File _defaultCache;
     private boolean _checkUpToDate = true;
-    private Map _moduleConfigurations = new LinkedHashMap(); // Map (ModuleId -> String resolverName)
+    private Map _moduleConfigurations = new LinkedHashMap(); // Map (ModuleIdMatcher -> String resolverName)
     
     private Map _conflictsManager = new HashMap(); // Map (String conflictManagerName -> ConflictManager)
     private Map _latestStrategies = new HashMap(); // Map (String latestStrategyName -> LatestStrategy)
@@ -349,9 +349,9 @@ public class Ivy implements TransferListener {
         if (!_moduleConfigurations.isEmpty()) {
             Message.debug("\tmodule configurations:");
             for (Iterator iter = _moduleConfigurations.keySet().iterator(); iter.hasNext();) {
-                ModuleId mid = (ModuleId)iter.next();
-                String res = (String)_moduleConfigurations.get(mid);
-                Message.debug("\t\t"+mid+" -> "+res);
+                ModuleIdMatcher midm = (ModuleIdMatcher)iter.next();
+                String res = (String)_moduleConfigurations.get(midm);
+                Message.debug("\t\t"+midm+" -> "+res);
             }
         }
     }
@@ -489,9 +489,9 @@ public class Ivy implements TransferListener {
      * @param moduleId
      * @param resolverName
      */
-    public void addModuleConfiguration(ModuleId moduleId, String resolverName) {
+    public void addModuleConfiguration(ModuleId mid, PatternMatcher matcher, String resolverName) {
         checkResolverName(resolverName);
-        _moduleConfigurations.put(moduleId, resolverName);
+        _moduleConfigurations.put(new ModuleIdMatcher(mid, matcher), resolverName);
     }
     
     public File getDefaultIvyUserDir() {
@@ -545,15 +545,10 @@ public class Ivy implements TransferListener {
     }
 
     public String getResolverName(ModuleId moduleId) {
-        String name = (String)_moduleConfigurations.get(moduleId);
-        if (name != null) {
-            return name;
-        }
         for (Iterator iter = _moduleConfigurations.keySet().iterator(); iter.hasNext();) {
-            ModuleId mid = (ModuleId)iter.next();
-            if (Pattern.compile(mid.getOrganisation()).matcher(moduleId.getOrganisation()).matches()
-                    && Pattern.compile(mid.getName()).matcher(moduleId.getName()).matches()) {
-                return (String)_moduleConfigurations.get(mid);
+            ModuleIdMatcher midm = (ModuleIdMatcher)iter.next();
+            if (midm.matches(moduleId)) {
+                return (String)_moduleConfigurations.get(midm);
             }
         }
         return _defaultResolverName;

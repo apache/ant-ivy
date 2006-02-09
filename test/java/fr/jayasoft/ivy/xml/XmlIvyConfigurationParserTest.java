@@ -71,8 +71,9 @@ public class XmlIvyConfigurationParserTest extends TestCase {
         assertTrue(strategy instanceof LatestTimeStrategy);
 
         assertEquals("libraries", ivy.getResolver(new ModuleId("unknown", "lib")).getName());
-        assertEquals("internal", ivy.getResolver(new ModuleId("jayasoft", "ivy")).getName());
-        
+        assertEquals("internal", ivy.getResolver(new ModuleId("jayasoft", "swtbinding")).getName());
+        assertEquals("int1", ivy.getResolver(new ModuleId("jayasoft", "ivy")).getName());
+        assertEquals("int1", ivy.getResolver(new ModuleId("jayasoft", "ivycruise")).getName());        
     }
 
     public void testTypedef() throws Exception {
