@@ -974,7 +974,7 @@ public class Ivy implements TransferListener {
                         } else {
                             IvyNode callerNode = (IvyNode)dependenciesMap.get(callers[j].getModuleRevisionId());
                             if (callerNode == null) {
-                                Message.warn("ivy internal error: no node found for "+callers[j].getModuleRevisionId()+": looked in "+dependenciesMap.keySet());
+                                Message.warn("ivy internal error: no node found for "+callers[j].getModuleRevisionId()+": looked in "+dependenciesMap.keySet()+" and root module id was "+md.getModuleRevisionId());
                             } else if (!callerNode.isEvicted(confs[i])) {
                                 allEvicted = false;
                                 break;
