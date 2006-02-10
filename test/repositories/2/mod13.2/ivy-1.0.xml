@@ -1,0 +1,23 @@
+<ivy-module version="1.0">
+	<info organisation="org13"
+	       module="mod13.2"
+	       status="integration"
+	       revision="1.0"
+	/>
+  <configurations>
+    <conf name="j2ee" />
+    <conf name="compile" />
+    <conf name="runtime" extends="compile" />
+    <conf name="test" extends="runtime" />
+    <conf name="war" extends="runtime" />
+    <conf name="tgz" />
+    <conf name="provided" extends="compile" />
+    <conf name="default" extends="runtime" />
+  </configurations>
+  <publications>
+  	<artifact name="mod13.2" type="jar" conf="compile"/>
+  </publications>
+  <dependencies defaultconfmapping="*->@">
+  	<dependency name="mod13.1" rev="1.0"/>
+  </dependencies>
+</ivy-module>
