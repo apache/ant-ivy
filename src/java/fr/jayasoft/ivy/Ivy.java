@@ -972,8 +972,10 @@ public class Ivy implements TransferListener {
                             allEvicted = false;
                             break;                            
                         } else {
-                            IvyNode callerNode = (IvyNode)dependenciesMap.get(callers[j].getModuleRevisionId());                            
-                            if (callerNode != null && !callerNode.isEvicted(confs[i])) {
+                            IvyNode callerNode = (IvyNode)dependenciesMap.get(callers[j].getModuleRevisionId());
+                            if (callerNode == null) {
+                                Message.warn("ivy internal error: no node found for "+callers[j].getModuleRevisionId()+": looked in "+dependenciesMap.keySet());
+                            } else if (!callerNode.isEvicted(confs[i])) {
                                 allEvicted = false;
                                 break;
                             }
