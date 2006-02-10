@@ -965,6 +965,7 @@ public class Ivy implements TransferListener {
             if (!node.isCompletelyEvicted()) {
                 for (int i = 0; i < confs.length; i++) {
                     IvyNode.Caller[] callers = node.getCallers(confs[i]);
+                    Message.debug("checking if "+node.getId()+" is transitively evicted in "+confs[i]);
                     boolean allEvicted = callers.length > 0;
                     for (int j = 0; j < callers.length; j++) {
                         if (callers[j].getModuleRevisionId().equals(md.getModuleRevisionId())) {
@@ -978,12 +979,16 @@ public class Ivy implements TransferListener {
                             } else if (!callerNode.isEvicted(confs[i])) {
                                 allEvicted = false;
                                 break;
+                            } else {
+                                Message.debug("caller "+callerNode.getId()+" of "+node.getId()+" is evicted");
                             }
                         }
                     }
                     if (allEvicted) {
                         Message.verbose("all callers are evicted for "+node+": evicting too");
                         node.markEvicted(confs[i], null, null, null);
+                    } else {
+                        Message.debug(node.getId()+" isn't transitively evicted, at least one caller was not evicted");
                     }
                 }
             }
