@@ -2,6 +2,7 @@
 - IMPROVE: add possibility to choose matcher on include exclude and conflict manager rules in ivy files, and on resolver per module in ivyconf (IVY-161)
 - IMPROVE: add regexp management in the install ant task (IVY-154)
 
+- FIX: post resolve tasks like retrieve or cachepath should be able to run from cache information (IVY-169)
 - FIX: resolve fails without appropriate message when cache is empty and a module in the repository has no revision (IVY-165)
 - FIX: resolve problem with configuration inheritance (IVY-164)
 - FIX: some files in cache detected by not used by Ivy for subsequent retrieves (IVY-159)

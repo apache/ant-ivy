@@ -88,8 +88,11 @@ public class IvyTask extends Task {
         getProject().addReference("ivy.resolved.descriptor", md);
     }
     
-    protected void ensureResolved(boolean haltOnFailure) {
+    protected void ensureResolved(boolean haltOnFailure, String org, String module) {
         ensureMessageInitialised();
+        if (org != null  && module != null) {
+            return;
+        }
         Object reference = getProject().getReference("ivy.resolved.descriptor");
         if (reference == null) {
             Message.verbose("no resolved descriptor found: launching default resolve");

@@ -63,6 +63,38 @@ public class IvyRetrieveTest extends TestCase {
         assertTrue(new File(IvyPatternHelper.substitute(RETRIEVE_PATTERN, "org1", "mod1.2", "2.0", "mod1.2", "jar", "jar")).exists());
     }
 
+    public void testWithAPreviousResolve() throws Exception {
+        // first we do a resolve in another project
+        Project project = new Project();
+        project.setProperty("ivy.conf.file", "test/repositories/ivyconf.xml");
+        project.setProperty("ivy.dep.file", "test/java/fr/jayasoft/ivy/ant/ivy-simple.xml");
+        IvyResolve resolve = new IvyResolve();
+        resolve.setProject(project);
+        resolve.setCache(_cache);
+        resolve.execute();
+
+        // then we do a retrieve with the correct module information
+        _retrieve.setOrganisation("jayasoft");
+        _retrieve.setModule("resolve-simple");
+        _retrieve.setConf("default");
+        _retrieve.execute();
+        
+        assertTrue(new File(IvyPatternHelper.substitute(RETRIEVE_PATTERN, "org1", "mod1.2", "2.0", "mod1.2", "jar", "jar")).exists());
+    }
+
+    public void testFailureWithoutAPreviousResolve() throws Exception {
+        // we do a retrieve with the module information whereas no resolve has been previously done
+        try {
+            _retrieve.setOrganisation("jayasoft");
+            _retrieve.setModule("resolve-simple");
+            _retrieve.setConf("default");
+            _retrieve.execute();
+            fail("retrieve without previous resolve should have thrown an exception");
+        } catch (Exception ex) {
+            // OK
+        }
+    }
+
     public void testFailure() throws Exception {
         try {
             _project.setProperty("ivy.dep.file", "test/java/fr/jayasoft/ivy/ant/ivy-failure.xml");

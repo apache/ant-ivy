@@ -78,10 +78,17 @@ public abstract class IvyCacheTask extends IvyTask {
     protected void prepareAndCheck() {
         Ivy ivy = getIvyInstance();
         
-        ensureResolved(isHaltonfailure());
+        _organisation = getProperty(_organisation, ivy, "ivy.organisation");
+        _module = getProperty(_module, ivy, "ivy.module");
+
+        ensureResolved(isHaltonfailure(), getOrganisation(), getModule());
+        
         _conf = getProperty(_conf, ivy, "ivy.resolved.configurations");
-        if (_conf.equals("*")) {
+        if ("*".equals(_conf)) {
             _conf = getProperty(ivy, "ivy.resolved.configurations");
+            if (_conf == null) {
+                throw new BuildException("bad provided for ivy cache task: * can only be used with a prior call to <resolve/>");
+            }
         }
         _organisation = getProperty(_organisation, ivy, "ivy.organisation");
         _module = getProperty(_module, ivy, "ivy.module");
@@ -90,10 +97,13 @@ public abstract class IvyCacheTask extends IvyTask {
         }
         
         if (_organisation == null) {
-            throw new BuildException("no organisation provided for ivy cachefileset: It can either be set explicitely via the attribute 'organisation' or via 'ivy.organisation' property or a prior call to <resolve/>");
+            throw new BuildException("no organisation provided for ivy cache task: It can either be set explicitely via the attribute 'organisation' or via 'ivy.organisation' property or a prior call to <resolve/>");
         }
         if (_module == null) {
-            throw new BuildException("no module name provided for ivy cachefileset: It can either be set explicitely via the attribute 'module' or via 'ivy.module' property or a prior call to <resolve/>");
+            throw new BuildException("no module name provided for ivy cache task: It can either be set explicitely via the attribute 'module' or via 'ivy.module' property or a prior call to <resolve/>");
+        }
+        if (_conf == null) {
+            throw new BuildException("no conf provided for ivy cache task: It can either be set explicitely via the attribute 'conf' or via 'ivy.resolved.configurations' property or a prior call to <resolve/>");
         }
         _artifactFilter = FilterHelper.getArtifactTypeFilter(_type);
     }

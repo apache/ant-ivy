@@ -1589,6 +1589,24 @@ public class ResolveTest extends TestCase {
         assertTrue(_ivy.getArchiveFileInCache(_cache, "org1", "mod1.2", "2.0", "mod1.2", "jar", "jar").exists());        
     }
 
+    public void testTransitiveConfMapping() throws Exception {
+        // IVY-168
+        // mod13.3 depends on mod13.2 which depends on mod13.1
+        // each module has two confs: j2ee and compile
+        // each module only publishes one artifact in conf compile
+        // each module has the following conf mapping on its dependencies: *->@
+        // moreover, mod13.1 depends on mod1.2 in with the following conf mapping: compile->default
+        // thus conf j2ee should be empty for each modules
+        
+        ResolveReport report = _ivy.resolve(new File("test/repositories/2/mod13.3/ivy-1.0.xml").toURL(),
+                null, new String[] {"*"}, _cache, null, true);
+        
+        assertFalse(report.hasError());
+        
+        assertEquals(3, report.getConfigurationReport("compile").getArtifactsNumber());
+        assertEquals(0, report.getConfigurationReport("j2ee").getArtifactsNumber());
+    }
+
     ////////////////////////////////////////////////////////////
     // helper methods to ease the tests
     ////////////////////////////////////////////////////////////
