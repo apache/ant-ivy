@@ -26,6 +26,7 @@ import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.types.Path;
 
 import fr.jayasoft.ivy.report.ResolveReport;
+import fr.jayasoft.ivy.url.URLHandler;
 import fr.jayasoft.ivy.url.URLHandlerDispatcher;
 import fr.jayasoft.ivy.url.URLHandlerRegistry;
 import fr.jayasoft.ivy.util.DefaultMessageImpl;
@@ -318,7 +319,9 @@ public class Main {
     }
     private static void configureURLHandler(String realm, String host, String username, String passwd) {
         URLHandlerDispatcher dispatcher = new URLHandlerDispatcher();
-        dispatcher.setDownloader("http", URLHandlerRegistry.getHttp(realm, host, username, passwd));
+        URLHandler httpHandler = URLHandlerRegistry.getHttp(realm, host, username, passwd);
+        dispatcher.setDownloader("http", httpHandler);
+        dispatcher.setDownloader("https", httpHandler);
         URLHandlerRegistry.setDefault(dispatcher);
     }
     

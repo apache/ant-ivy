@@ -17,6 +17,7 @@ import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.Property;
 
 import fr.jayasoft.ivy.Ivy;
+import fr.jayasoft.ivy.url.URLHandler;
 import fr.jayasoft.ivy.url.URLHandlerDispatcher;
 import fr.jayasoft.ivy.url.URLHandlerRegistry;
 import fr.jayasoft.ivy.util.Message;
@@ -139,7 +140,9 @@ public class IvyConfigure extends IvyTask {
     }
     private void configureURLHandler() {
         URLHandlerDispatcher dispatcher = new URLHandlerDispatcher();
-        dispatcher.setDownloader("http", URLHandlerRegistry.getHttp(getRealm(), getHost(), getUsername(), getPasswd()));
+        URLHandler httpHandler = URLHandlerRegistry.getHttp(getRealm(), getHost(), getUsername(), getPasswd());
+        dispatcher.setDownloader("http", httpHandler);
+        dispatcher.setDownloader("https", httpHandler);
         URLHandlerRegistry.setDefault(dispatcher);
     }
 }
