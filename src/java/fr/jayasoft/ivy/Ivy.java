@@ -1093,8 +1093,10 @@ public class Ivy implements TransferListener {
         // compute conflicts
         Collection resolvedNodes = new HashSet(parent.getResolvedNodes(node.getModuleId(), node.getRootModuleConf()));
         Collection conflicts = computeConflicts(node, parent, toevict, resolvedNodes);
+        Message.debug("found conflicting revisions for "+node+" in "+parent+": "+conflicts);
         
         Collection resolved = parent.getConflictManager(node.getModuleId()).resolveConflicts(parent, conflicts);
+        Message.debug("selected revisions for "+node+" in "+parent+": "+resolved);
         if (resolved.contains(node)) {
             // node has been selected for the current parent
             // we update its eviction... but it can still be evicted by parent !
@@ -1125,6 +1127,9 @@ public class Ivy implements TransferListener {
             resolveConflict(node, parent.getParent(), toevict);
         } else {
             // node has been evicted for the current parent
+            if (resolved.isEmpty()) {
+                Message.verbose("conflict manager '"+parent.getConflictManager(node.getModuleId())+"' evicted all revisions among "+conflicts);
+            }
             
             // first we mark the selected nodes as selected if it isn't already the case
             for (Iterator iter = resolved.iterator(); iter.hasNext();) {
