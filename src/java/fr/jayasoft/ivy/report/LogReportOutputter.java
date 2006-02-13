@@ -24,8 +24,10 @@ public class LogReportOutputter implements ReportOutputter {
             Message.info("\t:: evicted modules:");
             for (int i = 0; i < evicted.length; i++) {
                 Collection allEvictingNodes = evicted[i].getAllEvictingNodes();
-                if (allEvictingNodes.isEmpty()) {
+                if (allEvictingNodes == null) {
                     Message.info("\t"+evicted[i]+" transitively in "+Arrays.asList(evicted[i].getEvictedConfs()));
+                } else if (allEvictingNodes.isEmpty()) {
+                    Message.info("\t"+evicted[i]+" by [] ("+evicted[i].getAllEvictingConflictManagers()+") in "+Arrays.asList(evicted[i].getEvictedConfs()));
                 } else {
                     Message.info("\t"+evicted[i]+" by "+allEvictingNodes+" in "+Arrays.asList(evicted[i].getEvictedConfs()));
                 }

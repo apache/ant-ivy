@@ -450,16 +450,33 @@ public class IvyNode {
         return _evicted.keySet().containsAll(_rootModuleConfs.keySet());
     }
 
+    /**
+     * Returns null if this node has only be evicted transitively, or the the colletion of selected nodes
+     * if it has been evicted by other selected nodes
+     * @return
+     */
     public Collection getAllEvictingNodes() {
-        Collection allEvictingNodes = new HashSet();
+        Collection allEvictingNodes = null;
         for (Iterator iter = _evicted.values().iterator(); iter.hasNext();) {
             EvictionData ed = (EvictionData)iter.next();
             Collection selected = ed.getSelected();
             if (selected != null) {
+                if (allEvictingNodes == null) {
+                    allEvictingNodes = new HashSet();
+                }
                 allEvictingNodes.addAll(selected);
             }
         }        
         return allEvictingNodes;
+    }    
+
+    public Collection getAllEvictingConflictManagers() {
+        Collection ret = new HashSet();
+        for (Iterator iter = _evicted.values().iterator(); iter.hasNext();) {
+            EvictionData ed = (EvictionData)iter.next();
+            ret.add(ed.getConflictManager());
+        }        
+        return ret;
     }    
 
 
