@@ -37,6 +37,7 @@ import fr.jayasoft.ivy.matcher.ExactPatternMatcher;
 import fr.jayasoft.ivy.matcher.PatternMatcher;
 import fr.jayasoft.ivy.parser.AbstractModuleDescriptorParser;
 import fr.jayasoft.ivy.repository.Resource;
+import fr.jayasoft.ivy.util.IvyPatternHelper;
 import fr.jayasoft.ivy.util.Message;
 import fr.jayasoft.ivy.util.XMLHelper;
 import fr.jayasoft.ivy.xml.XmlModuleDescriptorWriter;
@@ -72,6 +73,7 @@ public class PomModuleDescriptorParser extends AbstractModuleDescriptorParser {
         private boolean _optional = false;
         private List _exclusions = new ArrayList();
         private DefaultDependencyDescriptor _dd;
+        private Map _properties = new HashMap();
 
         public Parser(Ivy ivy, Resource res) {
             _ivy = ivy;
@@ -100,6 +102,7 @@ public class PomModuleDescriptorParser extends AbstractModuleDescriptorParser {
         public void endElement(String uri, String localName, String qName) throws SAXException {
             if ((_organisation != null && _module != null && _revision != null) && _md.getModuleRevisionId() == null) {
                 ModuleRevisionId mrid = ModuleRevisionId.newInstance(_organisation, _module, _revision);
+                _properties.put("pom.version", _revision);
                 _md.setModuleRevisionId(mrid);
                 _md.addArtifact("master", new DefaultArtifact(mrid, getDefaultPubDate(),_module, "jar", "jar"));
                 _organisation = null;
@@ -152,7 +155,7 @@ public class PomModuleDescriptorParser extends AbstractModuleDescriptorParser {
         }
         
         public void characters(char[] ch, int start, int length) throws SAXException {
-            String txt = new String(ch, start, length).trim();
+            String txt = IvyPatternHelper.substituteVariables(new String(ch, start, length).trim(), _properties);
             String context = getContext();
             if (_md.getModuleRevisionId() == null || context.startsWith("project/dependencies/dependency")) {
                 if (_organisation == null && context.endsWith("groupId")) {

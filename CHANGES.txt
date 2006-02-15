@@ -1,3 +1,4 @@
+- IMPROVE: ivy now supports ${pom.version} in poms (IVY-174)
 - IMPROVE: adds the possibility to disable concistency check (IVY-163)
 - IMPROVE: add possibility to choose matcher on include exclude and conflict manager rules in ivy files, and on resolver per module in ivyconf (IVY-161)
 - IMPROVE: add regexp management in the install ant task (IVY-154)

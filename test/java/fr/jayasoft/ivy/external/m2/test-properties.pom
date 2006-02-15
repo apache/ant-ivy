@@ -1,0 +1,14 @@
+<project>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>drools</groupId>
+  <artifactId>drools-smf</artifactId>
+  <name>Drools :: Semantics Module Framework</name>
+  <version>2.0-beta-18</version>
+  <dependencies>
+    <dependency>
+      <groupId>drools</groupId>
+      <artifactId>drools-core</artifactId>
+      <version>${pom.version}</version>
+    </dependency>
+  </dependencies>
+</project>
