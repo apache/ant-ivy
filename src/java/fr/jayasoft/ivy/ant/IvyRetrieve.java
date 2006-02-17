@@ -22,6 +22,7 @@ public class IvyRetrieve extends IvyTask {
     private String _conf;
     private File _cache;
     private String _pattern;
+    private String _ivypattern = null;
     private boolean _haltOnFailure = true;
 
     public File getCache() {
@@ -98,6 +99,12 @@ public class IvyRetrieve extends IvyTask {
         } catch (Exception ex) {
             throw new BuildException("impossible to ivy retrieve: "+ex.getMessage(), ex);
         }
+    }
+    public String getIvypattern() {
+        return _ivypattern;
+    }
+    public void setIvypattern(String ivypattern) {
+        _ivypattern = ivypattern;
     }
     
 }
