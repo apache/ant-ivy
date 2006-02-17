@@ -95,7 +95,7 @@ public class IvyRetrieve extends IvyTask {
             throw new BuildException("no conf provided for ivy retrieve task: It can either be set explicitely via the attribute 'conf' or via 'ivy.resolved.configurations' property or a prior call to <resolve/>");
         }
         try {
-            ivy.retrieve(new ModuleId(_organisation, _module), splitConfs(_conf), _cache, _pattern);
+            ivy.retrieve(new ModuleId(_organisation, _module), splitConfs(_conf), _cache, _pattern, _ivypattern);
         } catch (Exception ex) {
             throw new BuildException("impossible to ivy retrieve: "+ex.getMessage(), ex);
         }

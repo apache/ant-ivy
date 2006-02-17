@@ -1435,11 +1435,18 @@ public class Ivy implements TransferListener {
      * then an IllegalStateException is thrown and nothing is copied.
      */
     public void retrieve(ModuleId moduleId, String[] confs, final File cache, String destFilePattern) {
+        retrieve(moduleId, confs, cache, destFilePattern, null);
+    }
+    /**
+     * If destIvyPattern is null no ivy files will be copied.
+     */
+    public void retrieve(ModuleId moduleId, String[] confs, final File cache, String destFilePattern, String destIvyPattern) {
         Message.info(":: retrieving :: "+moduleId);
         Message.info("\tconfs: "+Arrays.asList(confs));
         long start = System.currentTimeMillis();
         
         destFilePattern = IvyPatternHelper.substituteVariables(destFilePattern, getVariables());
+        destIvyPattern = IvyPatternHelper.substituteVariables(destIvyPattern, getVariables());
         try {
             // find what we must retrieve where
             final Map artifactsToCopy = new HashMap(); // Artifact source -> Set (String copyDestAbsolutePath)
@@ -1448,10 +1455,20 @@ public class Ivy implements TransferListener {
             XmlReportParser parser = new XmlReportParser();
             for (int i = 0; i < confs.length; i++) {
                 final String conf = confs[i];
-                Artifact[] artifacts = parser.getArtifacts(moduleId, conf, cache);
-                for (int j = 0; j < artifacts.length; j++) {
-                    Artifact artifact = artifacts[j];
-                    String destFileName = IvyPatternHelper.substitute(destFilePattern, artifact.getModuleRevisionId().getOrganisation(), artifact.getModuleRevisionId().getName(), artifact.getModuleRevisionId().getRevision(), artifact.getName(), artifact.getType(), artifact.getExt(), conf);
+                Collection artifacts = new ArrayList(Arrays.asList(parser.getArtifacts(moduleId, conf, cache)));
+                if (destIvyPattern != null) {
+                    ModuleRevisionId[] mrids = parser.getDependencyRevisionIds(moduleId, conf, cache);
+                    for (int j = 0; j < mrids.length; j++) {
+                        ModuleRevisionId mrid = mrids[i];
+                        artifacts.add(new DefaultArtifact(mrid, new Date(), "ivy", "ivy", "xml"));
+                    }
+                }
+                for (Iterator iter = artifacts.iterator(); iter.hasNext();) {
+                    Artifact artifact = (Artifact)iter.next();
+                    String destPattern = "ivy".equals(artifact.getType()) ? destIvyPattern: destFilePattern;
+
+                    String destFileName = IvyPatternHelper.substitute(destPattern, artifact.getModuleRevisionId().getOrganisation(), artifact.getModuleRevisionId().getName(), artifact.getModuleRevisionId().getRevision(), artifact.getName(), artifact.getType(), artifact.getExt(), conf);
+                    
                     Set dest = (Set)artifactsToCopy.get(artifact);
                     if (dest == null) {
                         dest = new HashSet();
@@ -1508,7 +1525,7 @@ public class Ivy implements TransferListener {
             int targetsUpToDate = 0;
             for (Iterator iter = artifactsToCopy.keySet().iterator(); iter.hasNext();) {
                 Artifact artifact = (Artifact)iter.next();
-                File archive = getArchiveFileInCache(cache, artifact);
+                File archive = "ivy".equals(artifact.getType())? getArchiveFileInCache(cache, artifact) : getIvyFileInCache(cache, artifact.getModuleRevisionId());
                 Set dest = (Set)artifactsToCopy.get(artifact);
                 Message.verbose("\tretrieving "+archive);
                 for (Iterator it2 = dest.iterator(); it2.hasNext();) {
