@@ -1457,7 +1457,7 @@ public class Ivy implements TransferListener {
                 final String conf = confs[i];
                 Collection artifacts = new ArrayList(Arrays.asList(parser.getArtifacts(moduleId, conf, cache)));
                 if (destIvyPattern != null) {
-                    ModuleRevisionId[] mrids = parser.getDependencyRevisionIds(moduleId, conf, cache);
+                    ModuleRevisionId[] mrids = parser.getRealDependencyRevisionIds(moduleId, conf, cache);
                     for (int j = 0; j < mrids.length; j++) {
                         ModuleRevisionId mrid = mrids[i];
                         artifacts.add(new DefaultArtifact(mrid, new Date(), "ivy", "ivy", "xml"));
@@ -1525,7 +1525,7 @@ public class Ivy implements TransferListener {
             int targetsUpToDate = 0;
             for (Iterator iter = artifactsToCopy.keySet().iterator(); iter.hasNext();) {
                 Artifact artifact = (Artifact)iter.next();
-                File archive = "ivy".equals(artifact.getType())? getArchiveFileInCache(cache, artifact) : getIvyFileInCache(cache, artifact.getModuleRevisionId());
+                File archive = "ivy".equals(artifact.getType())? getIvyFileInCache(cache, artifact.getModuleRevisionId()):getArchiveFileInCache(cache, artifact);
                 Set dest = (Set)artifactsToCopy.get(artifact);
                 Message.verbose("\tretrieving "+archive);
                 for (Iterator it2 = dest.iterator(); it2.hasNext();) {

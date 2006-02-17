@@ -20,7 +20,7 @@ public class IvyRetrieveTest extends TestCase {
     private File _cache;
     private IvyRetrieve _retrieve;
     private Project _project;
-    
+
     protected void setUp() throws Exception {
         createCache();
         cleanTestLib();
@@ -37,7 +37,7 @@ public class IvyRetrieveTest extends TestCase {
         _cache = new File("build/cache");
         _cache.mkdirs();
     }
-    
+
     protected void tearDown() throws Exception {
         cleanCache();
         cleanTestLib();
@@ -60,7 +60,8 @@ public class IvyRetrieveTest extends TestCase {
     public void testSimple() throws Exception {
         _project.setProperty("ivy.dep.file", "test/java/fr/jayasoft/ivy/ant/ivy-simple.xml");
         _retrieve.execute();
-        assertTrue(new File(IvyPatternHelper.substitute(RETRIEVE_PATTERN, "org1", "mod1.2", "2.0", "mod1.2", "jar", "jar")).exists());
+        assertTrue(new File(IvyPatternHelper.substitute(RETRIEVE_PATTERN, "org1", "mod1.2", "2.0", "mod1.2",
+                "jar", "jar")).exists());
     }
 
     public void testWithAPreviousResolve() throws Exception {
@@ -78,8 +79,9 @@ public class IvyRetrieveTest extends TestCase {
         _retrieve.setModule("resolve-simple");
         _retrieve.setConf("default");
         _retrieve.execute();
-        
-        assertTrue(new File(IvyPatternHelper.substitute(RETRIEVE_PATTERN, "org1", "mod1.2", "2.0", "mod1.2", "jar", "jar")).exists());
+
+        assertTrue(new File(IvyPatternHelper.substitute(RETRIEVE_PATTERN, "org1", "mod1.2", "2.0", "mod1.2",
+                "jar", "jar")).exists());
     }
 
     public void testFailureWithoutAPreviousResolve() throws Exception {
@@ -110,8 +112,33 @@ public class IvyRetrieveTest extends TestCase {
             _project.setProperty("ivy.dep.file", "test/java/fr/jayasoft/ivy/ant/ivy-failure.xml");
             _retrieve.setHaltonfailure(false);
             _retrieve.execute();
+
         } catch (BuildException ex) {
             fail("failure raised an exception with haltonfailure set to false");
         }
     }
+
+    public void testDefaultIvyPattern() throws Exception {
+        _project.setProperty("ivy.dep.file", "test/java/fr/jayasoft/ivy/ant/ivy-simple.xml");
+        _project.setProperty("ivy.retrieve.ivy.pattern", "build/test/[organisation]/[module]/ivy-[revision].xml");
+        // for no ivy retrieve pattern use configured default ivy retrieve pattern
+        _retrieve.execute();
+
+        assertTrue(new File(IvyPatternHelper.substitute(
+                _project.getProperty("ivy.retrieve.ivy.pattern"), "org1", "mod1.2", "2.0", "ivy",
+                "ivy", "xml")).exists());
+    }
+
+    public void testCustomIvyPattern() throws Exception {
+        String ivyPattern = "build/test/[organisation]/ivy-[module]-[revision].xml";
+
+        _project.setProperty("ivy.dep.file", "test/java/fr/jayasoft/ivy/ant/ivy-simple.xml");
+        _retrieve.setIvypattern(ivyPattern);
+        _retrieve.execute();
+        
+
+        assertTrue(new File(IvyPatternHelper.substitute(ivyPattern, "org1", "mod1.2", "2.0", "ivy",
+                "ivy", "xml")).exists());
+    }
+
 }
