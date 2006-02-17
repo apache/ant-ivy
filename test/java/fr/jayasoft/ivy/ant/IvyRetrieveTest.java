@@ -16,6 +16,7 @@ import org.apache.tools.ant.taskdefs.Delete;
 import fr.jayasoft.ivy.util.IvyPatternHelper;
 
 public class IvyRetrieveTest extends TestCase {
+    private static final String IVY_RETRIEVE_PATTERN = "build/test/lib/[organisation]/[module]/ivy-[revision].xml";
     private static final String RETRIEVE_PATTERN = "build/test/lib/[artifact]-[revision].[type]";
     private File _cache;
     private IvyRetrieve _retrieve;
@@ -119,26 +120,35 @@ public class IvyRetrieveTest extends TestCase {
     }
 
     public void testDefaultIvyPattern() throws Exception {
-        _project.setProperty("ivy.dep.file", "test/java/fr/jayasoft/ivy/ant/ivy-simple.xml");
-        _project.setProperty("ivy.retrieve.ivy.pattern", "build/test/[organisation]/[module]/ivy-[revision].xml");
-        // for no ivy retrieve pattern use configured default ivy retrieve pattern
+        //       mod2.1 depends on mod1.1 which depends on mod1.2
+        _project.setProperty("ivy.dep.file", "test/repositories/1/org2/mod2.3/ivys/ivy-0.4.xml");
+        _project.setProperty("ivy.retrieve.ivy.pattern", IVY_RETRIEVE_PATTERN);
+
         _retrieve.execute();
 
-        assertTrue(new File(IvyPatternHelper.substitute(
-                _project.getProperty("ivy.retrieve.ivy.pattern"), "org1", "mod1.2", "2.0", "ivy",
-                "ivy", "xml")).exists());
+        String ivyPattern = _project.getProperty("ivy.retrieve.ivy.pattern");
+        assertTrue(new File(IvyPatternHelper.substitute(ivyPattern,
+                "org2", "mod2.1", "0.3", "ivy", "ivy", "xml")).exists());
+        assertTrue(new File(IvyPatternHelper.substitute(ivyPattern,
+                "org1", "mod1.1", "1.0", "ivy", "ivy", "xml")).exists());
+        assertFalse(new File(IvyPatternHelper.substitute(ivyPattern,
+                "org1", "mod1.2", "2.0", "ivy", "ivy", "xml")).exists());
     }
 
     public void testCustomIvyPattern() throws Exception {
-        String ivyPattern = "build/test/[organisation]/ivy-[module]-[revision].xml";
+        //       mod2.3 depends on mod2.1 which depends on mod1.1 which depends on mod1.2
+        _project.setProperty("ivy.dep.file", "test/repositories/1/org2/mod2.3/ivys/ivy-0.4.xml");
 
-        _project.setProperty("ivy.dep.file", "test/java/fr/jayasoft/ivy/ant/ivy-simple.xml");
+        String ivyPattern = IVY_RETRIEVE_PATTERN;
+
         _retrieve.setIvypattern(ivyPattern);
         _retrieve.execute();
-        
 
-        assertTrue(new File(IvyPatternHelper.substitute(ivyPattern, "org1", "mod1.2", "2.0", "ivy",
-                "ivy", "xml")).exists());
+        assertTrue(new File(IvyPatternHelper.substitute(ivyPattern,
+                "org2", "mod2.1", "0.3", "ivy", "ivy", "xml")).exists());
+        assertTrue(new File(IvyPatternHelper.substitute(ivyPattern,
+                "org1", "mod1.1", "1.0", "ivy", "ivy", "xml")).exists());
+        assertFalse(new File(IvyPatternHelper.substitute(ivyPattern,
+                "org1", "mod1.2", "2.0", "ivy", "ivy", "xml")).exists());
     }
-
 }

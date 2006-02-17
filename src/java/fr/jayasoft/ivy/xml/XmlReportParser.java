@@ -160,7 +160,7 @@ public class XmlReportParser {
         try {
             SaxXmlReportParser parser = new SaxXmlReportParser(report);
             parser.parse();
-            return (ModuleRevisionId[])parser.getModuleRevisionIds().toArray(new ModuleRevisionId[parser.getRealModuleRevisionIds().size()]);
+            return (ModuleRevisionId[])parser.getRealModuleRevisionIds().toArray(new ModuleRevisionId[parser.getRealModuleRevisionIds().size()]);
         } catch (Exception ex) {
             ParseException pe = new ParseException("failed to parse report: "+report+": "+ex.getMessage(), 0);
             pe.initCause(ex);
