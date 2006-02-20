@@ -1,0 +1,6 @@
+<ivy-module version="1.0">
+	<info organization="myorg"
+	       module="mymodule"
+	       status="integration"
+	/>
+</ivy-module>
