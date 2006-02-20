@@ -2,7 +2,7 @@
     <!-- some variables used -->
     <property name="lib.dir" value="lib" />
     <property name="build.dir" value="build" />
-    <property name="distrib.dir" value="distrib" />
+    <property name="distrib.dir" location="distrib" />
     <property name="src.dir" value="src" />
 	<property name="test.dir" value="test" />
 	<property name="build.test.dir" value="${build.dir}/test-classes" />
