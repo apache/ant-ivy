@@ -1190,9 +1190,11 @@ public class Ivy implements TransferListener {
         if (parent.getResolvedRevisions(node.getModuleId(), node.getRootModuleConf()).contains(node.getResolvedId())) {
             // resolve conflict has already be done with node with the same id
             // => job already done, we just have to check if the node wasn't previously evicted in root ancestor
+            Message.debug("conflict resolution already done for "+node+" in "+parent);
             EvictionData evictionData = node.getEvictionDataInRoot(node.getRootModuleConf(), parent);
             if (evictionData != null) {
                 // node has been previously evicted in an ancestor: we mark it as evicted and ensure selected are selected
+                Message.debug(node+" was previously evicted in root module conf "+node.getRootModuleConf());
                 if (evictionData.getSelected() != null) {
                     for (Iterator iter = evictionData.getSelected().iterator(); iter.hasNext();) {
                         IvyNode selected = (IvyNode)iter.next();
@@ -1211,10 +1213,11 @@ public class Ivy implements TransferListener {
         } else if (parent.getEvictedRevisions(node.getModuleId(), node.getRootModuleConf()).contains(node.getResolvedId())) {
             // resolve conflict has already be done with node with the same id
             // => job already done, we just have to check if the node wasn't previously selected in root ancestor
+            Message.debug("conflict resolution already done for "+node+" in "+parent);
             EvictionData evictionData = node.getEvictionDataInRoot(node.getRootModuleConf(), parent);
             if (evictionData == null) {
                 // node was selected in the root, we have to select it
-
+                Message.debug(node+" was previously selected in root module conf "+node.getRootModuleConf());
                 node.markSelected(node.getRootModuleConf());            
                 Message.debug("selecting "+node+" in "+parent);
             }
