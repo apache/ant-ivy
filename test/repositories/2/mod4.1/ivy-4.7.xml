@@ -1,7 +1,7 @@
 <ivy-module version="1.0">
 	<info organisation="org4"
 	       module="mod4.1"
-	       revision="4.6"
+	       revision="4.7"
 	       status="integration"
 	       publication="20050202110000"
 	/>
@@ -12,6 +12,6 @@
 	</configurations>
 	<dependencies>
 		<dependency org="org1" name="mod1.2" rev="1+" force="true" conf="compile->default"/>
-		<dependency org="org3" name="mod3.1" rev="1.2" conf="test->default"/>
+		<dependency org="org3" name="mod3.1" rev="1+" conf="test->runtime"/>
 	</dependencies>
 </ivy-module>

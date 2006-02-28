@@ -856,7 +856,7 @@ public class ResolveTest extends TestCase {
     public void testResolveForceWithDynamicRevisionsAndSeveralConfs() throws Exception {
         // mod4.1 v 4.6 (conf compile, test extends compile) depends on 
         //   - mod1.2 v 1+ and forces it in conf compile
-        //   - mod3.1 v 1+ in conf test which depends on mod1.2 v 2+
+        //   - mod3.1 v 1.2 in conf test which depends on mod1.2 v 2+
         ResolveReport report = _ivy.resolve(new File("test/repositories/2/mod4.1/ivy-4.6.xml").toURL(),
                 null, new String[] {"*"}, _cache, null, true);
         assertNotNull(report);
@@ -870,6 +870,33 @@ public class ResolveTest extends TestCase {
         // dependencies
         assertTrue(_ivy.getIvyFileInCache(_cache, ModuleRevisionId.newInstance("org3", "mod3.1", "1.2")).exists());
         assertTrue(_ivy.getArchiveFileInCache(_cache, "org3", "mod3.1", "1.2", "mod3.1", "jar", "jar").exists());
+
+        assertTrue(_ivy.getIvyFileInCache(_cache, ModuleRevisionId.newInstance("org1", "mod1.2", "1.1")).exists());
+        assertTrue(_ivy.getArchiveFileInCache(_cache, "org1", "mod1.2", "1.1", "mod1.2", "jar", "jar").exists());
+
+        assertFalse(_ivy.getIvyFileInCache(_cache, ModuleRevisionId.newInstance("org1", "mod1.2", "2.2")).exists());
+        assertFalse(_ivy.getArchiveFileInCache(_cache, "org1", "mod1.2", "2.2", "mod1.2", "jar", "jar").exists());
+    }
+    
+    public void testResolveForceWithDynamicRevisionsAndSeveralConfs2() throws Exception {
+        // mod4.1 v 4.7 (conf compile, test extends compile) depends on 
+        //   - mod1.2 v 1+ and forces it in conf compile
+        //   - mod3.1 v 1+ in conf test->runtime 
+        //           which defines confs compile, runtime extends compile
+        //           which depends on mod1.2 v 2+ in conf compile->default
+        ResolveReport report = _ivy.resolve(new File("test/repositories/2/mod4.1/ivy-4.7.xml").toURL(),
+                null, new String[] {"*"}, _cache, null, true);
+        assertNotNull(report);
+        ModuleDescriptor md = report.getModuleDescriptor();
+        assertNotNull(md);
+        ModuleRevisionId mrid = ModuleRevisionId.newInstance("org4", "mod4.1", "4.7");
+        assertEquals(mrid, md.getModuleRevisionId());
+        
+        assertTrue(_ivy.getResolvedIvyFileInCache(_cache, mrid).exists());
+        
+        // dependencies
+        assertTrue(_ivy.getIvyFileInCache(_cache, ModuleRevisionId.newInstance("org3", "mod3.1", "1.3")).exists());
+        assertTrue(_ivy.getArchiveFileInCache(_cache, "org3", "mod3.1", "1.3", "mod3.1", "jar", "jar").exists());
 
         assertTrue(_ivy.getIvyFileInCache(_cache, ModuleRevisionId.newInstance("org1", "mod1.2", "1.1")).exists());
         assertTrue(_ivy.getArchiveFileInCache(_cache, "org1", "mod1.2", "1.1", "mod1.2", "jar", "jar").exists());
