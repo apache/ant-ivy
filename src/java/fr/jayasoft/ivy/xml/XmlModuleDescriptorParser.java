@@ -149,6 +149,7 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
             ise.initCause(ex);
             throw ise;
         } catch (Exception ex) {
+            checkErrors();
             ParseException pe = new ParseException(ex.getMessage()+" in "+xmlURL, 0);
             pe.initCause(ex);
             throw pe;
@@ -383,8 +384,10 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
                 addError("unknwon tag "+qName);
             }
         } catch (Exception ex) {
-            addError("exception while parsing: "+ex.getMessage());
-            throw new SAXException("exception while parsing: "+ex.getMessage(), ex);
+            if (ex instanceof SAXException) {
+                throw (SAXException)ex;
+            }
+            throw new SAXException("problem occured while parsing ivy file. message: "+ex.getMessage(), ex);
         }
     }
 
