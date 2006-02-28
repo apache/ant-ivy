@@ -1,0 +1,15 @@
+<ivy-module version="1.0">
+	<info organisation="org3"
+	       module="mod3.1"
+	       revision="1.4"
+	       status="integration"
+	/>
+	<configurations>
+		<conf name="compile"/>
+		<conf name="runtime" extends="compile"/>
+	</configurations>
+	<dependencies>
+		<dependency org="org4" name="mod4.1" rev="4+" conf="compile->compile(default)"/>
+		<dependency org="org1" name="mod1.2" rev="2+" conf="compile->default"/>
+	</dependencies>
+</ivy-module>
