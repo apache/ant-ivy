@@ -6,7 +6,10 @@
 package fr.jayasoft.ivy;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
+import java.util.Iterator;
 
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
@@ -18,6 +21,8 @@ import org.apache.tools.ant.taskdefs.Delete;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
+import fr.jayasoft.ivy.conflict.LatestConflictManager;
+import fr.jayasoft.ivy.latest.LatestRevisionStrategy;
 import fr.jayasoft.ivy.report.ArtifactDownloadReport;
 import fr.jayasoft.ivy.report.ConfigurationResolveReport;
 import fr.jayasoft.ivy.report.ResolveReport;
@@ -1096,7 +1101,20 @@ public class ResolveTest extends TestCase {
     
     public void testLatest() throws Exception {
         // mod1.4 depends on latest mod1.2
-        ResolveReport report = _ivy.resolve(new File("test/repositories/1/org1/mod1.4/ivys/ivy-1.0.1.xml").toURL(),
+        final Collection asked = new ArrayList();
+        Ivy ivy = new Ivy();
+        ivy.configure(new File("test/repositories/ivyconf.xml"));
+        LatestConflictManager latestConflictManager = new LatestConflictManager("test", new LatestRevisionStrategy()) {
+            public Collection resolveConflicts(IvyNode parent, Collection conflicts) {
+                for (Iterator iter = conflicts.iterator(); iter.hasNext();) {
+                    IvyNode node = (IvyNode)iter.next();
+                    asked.add(node.getResolvedId());
+                }
+                return super.resolveConflicts(parent, conflicts);
+            }
+        };
+        ivy.setDefaultConflictManager(latestConflictManager);
+        ResolveReport report = ivy.resolve(new File("test/repositories/1/org1/mod1.4/ivys/ivy-1.0.1.xml").toURL(),
                 null, new String[] {"default"}, _cache, null, true);
         assertNotNull(report);
         ModuleDescriptor md = report.getModuleDescriptor();
@@ -1104,11 +1122,13 @@ public class ResolveTest extends TestCase {
         ModuleRevisionId mrid = ModuleRevisionId.newInstance("org1", "mod1.4", "1.0.1");
         assertEquals(mrid, md.getModuleRevisionId());
         
-        assertTrue(_ivy.getResolvedIvyFileInCache(_cache, mrid).exists());
+        assertTrue(ivy.getResolvedIvyFileInCache(_cache, mrid).exists());
         
         // dependencies
         ModuleRevisionId depId = ModuleRevisionId.newInstance("org1", "mod1.2", "2.2");
 
+        assertTrue(asked.contains(depId));
+        
         ConfigurationResolveReport crr = report.getConfigurationReport("default");
         assertNotNull(crr);
         assertEquals(1, crr.getDownloadReports(depId).length);
@@ -1126,8 +1146,8 @@ public class ResolveTest extends TestCase {
         });
         assertTrue(found[0]);
         
-        assertTrue(_ivy.getIvyFileInCache(_cache, depId).exists());
-        assertTrue(_ivy.getArchiveFileInCache(_cache, "org1", "mod1.2", "2.2", "mod1.2", "jar", "jar").exists());
+        assertTrue(ivy.getIvyFileInCache(_cache, depId).exists());
+        assertTrue(ivy.getArchiveFileInCache(_cache, "org1", "mod1.2", "2.2", "mod1.2", "jar", "jar").exists());
     }
     
     public void testIVY56() throws Exception {

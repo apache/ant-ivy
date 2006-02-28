@@ -294,7 +294,7 @@ public class IvyNode {
             Collection ret = new HashSet();
             for (Iterator iter = resolved.iterator(); iter.hasNext();) {
                 IvyNode node = (IvyNode)iter.next();
-                ret.add(node.getRealNode().getResolvedId());
+                ret.add(node.getId());
             }
             return ret;
         }
