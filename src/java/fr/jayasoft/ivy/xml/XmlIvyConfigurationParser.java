@@ -22,7 +22,9 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
+import fr.jayasoft.ivy.ConflictManager;
 import fr.jayasoft.ivy.Ivy;
+import fr.jayasoft.ivy.LatestStrategy;
 import fr.jayasoft.ivy.ModuleId;
 import fr.jayasoft.ivy.matcher.PatternMatcher;
 import fr.jayasoft.ivy.url.URLHandlerRegistry;
@@ -242,7 +244,7 @@ public class XmlIvyConfigurationParser extends DefaultHandler {
                 _ivy.addModuleConfiguration(new ModuleId(organisation, module), _ivy.getMatcher(matcher), resolver);
             }
         } catch (Exception ex) {
-            throw new SAXException("problem in config file", ex);
+            throw new SAXException("problem in config file: "+ex.getMessage(), ex);
         }
     }
 
@@ -265,10 +267,18 @@ public class XmlIvyConfigurationParser extends DefaultHandler {
             _ivy.setDefaultResolver(_ivy.substitute(_defaultResolver));
         }
         if (_defaultCM != null) {
-            _ivy.setDefaultConflictManager(_ivy.getConflictManager(_ivy.substitute(_defaultCM)));
+            ConflictManager conflictManager = _ivy.getConflictManager(_ivy.substitute(_defaultCM));
+            if (conflictManager == null) {
+                throw new IllegalArgumentException("unknown conflict manager "+_ivy.substitute(_defaultCM));
+            }
+            _ivy.setDefaultConflictManager(conflictManager);
         }
         if (_defaultLatest != null) {
-            _ivy.setDefaultLatestStrategy(_ivy.getLatestStrategy(_ivy.substitute(_defaultLatest)));
+            LatestStrategy latestStrategy = _ivy.getLatestStrategy(_ivy.substitute(_defaultLatest));
+            if (latestStrategy == null) {
+                throw new IllegalArgumentException("unknown latest strategy " + _ivy.substitute(_defaultLatest));
+            }
+            _ivy.setDefaultLatestStrategy(latestStrategy);
         }
     }
 }
