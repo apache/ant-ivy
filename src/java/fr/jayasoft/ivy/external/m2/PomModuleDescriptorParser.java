@@ -96,18 +96,33 @@ public class PomModuleDescriptorParser extends AbstractModuleDescriptorParser {
                     _module = null;
                     _revision = null;
                 }
+            } else if (_md.getModuleRevisionId() == null  && ("project/dependencies/dependency".equals(getContext()))) {
+                fillMrid();
             }
+        }
+
+        private void fillMrid() throws SAXException {
+            if (_organisation == null) {
+                throw new SAXException("no groupId found in pom");
+            }
+            if (_module == null) {
+                throw new SAXException("no artifactId found in pom");
+            }
+            if (_revision == null) {
+                _revision = "SNAPSHOT";
+            }
+            ModuleRevisionId mrid = ModuleRevisionId.newInstance(_organisation, _module, _revision);
+            _properties.put("pom.version", _revision);
+            _md.setModuleRevisionId(mrid);
+            _md.addArtifact("master", new DefaultArtifact(mrid, getDefaultPubDate(),_module, "jar", "jar"));
+            _organisation = null;
+            _module = null;
+            _revision = null;
         }
         
         public void endElement(String uri, String localName, String qName) throws SAXException {
-            if ((_organisation != null && _module != null && _revision != null) && _md.getModuleRevisionId() == null) {
-                ModuleRevisionId mrid = ModuleRevisionId.newInstance(_organisation, _module, _revision);
-                _properties.put("pom.version", _revision);
-                _md.setModuleRevisionId(mrid);
-                _md.addArtifact("master", new DefaultArtifact(mrid, getDefaultPubDate(),_module, "jar", "jar"));
-                _organisation = null;
-                _module = null;
-                _revision = null;
+            if (_md.getModuleRevisionId() == null  && ("project".equals(getContext()))) {
+                fillMrid();                
             } else if (((_organisation != null && _module != null && _revision != null) || _dd != null) && "project/dependencies/dependency".equals(getContext())) {
                 if (_dd == null) {
                     _dd = new DefaultDependencyDescriptor(_md, ModuleRevisionId.newInstance(_organisation, _module, _revision), true, false, true);

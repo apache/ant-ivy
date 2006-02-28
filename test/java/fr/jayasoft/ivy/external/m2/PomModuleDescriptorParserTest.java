@@ -13,6 +13,7 @@ import fr.jayasoft.ivy.Artifact;
 import fr.jayasoft.ivy.DependencyDescriptor;
 import fr.jayasoft.ivy.Ivy;
 import fr.jayasoft.ivy.ModuleDescriptor;
+import fr.jayasoft.ivy.ModuleId;
 import fr.jayasoft.ivy.ModuleRevisionId;
 import fr.jayasoft.ivy.parser.AbstractModuleDescriptorParserTester;
 import fr.jayasoft.ivy.repository.url.URLResource;
@@ -50,6 +51,18 @@ public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         assertNotNull(md);
         
         assertEquals(ModuleRevisionId.newInstance("fr.jayasoft", "test", "1.0"), md.getModuleRevisionId());
+        
+        DependencyDescriptor[] dds = md.getDependencies();
+        assertNotNull(dds);
+        assertEquals(1, dds.length);
+        assertEquals(ModuleRevisionId.newInstance("commons-logging", "commons-logging", "1.0.4"), dds[0].getDependencyRevisionId());
+    }
+    
+    public void testWithoutVersion() throws Exception {
+        ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(new Ivy(), getClass().getResource("test-without-version.pom"), false);
+        assertNotNull(md);
+        
+        assertEquals(new ModuleId("fr.jayasoft", "test"), md.getModuleRevisionId().getModuleId());
         
         DependencyDescriptor[] dds = md.getDependencies();
         assertNotNull(dds);

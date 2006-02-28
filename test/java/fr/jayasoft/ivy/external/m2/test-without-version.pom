@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<project>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>fr.jayasoft</groupId>
+  <artifactId>test</artifactId>
+  <name>Test Module for Ivy M2 parsing</name>
+  <url>http://ivy.jayasoft.org/</url>
+  <organization>
+    <name>Jayasoft</name>
+    <url>http://www.jayasoft.org/</url>
+  </organization>
+  <dependencies>
+    <dependency>
+      <groupId>commons-logging</groupId>
+      <artifactId>commons-logging</artifactId>
+      <version>1.0.4</version>
+    </dependency>
+  </dependencies>
+</project>
