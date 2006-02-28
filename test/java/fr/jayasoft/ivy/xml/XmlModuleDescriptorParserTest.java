@@ -70,6 +70,15 @@ public class XmlModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         }
     }
 
+    public void testBadConfs() throws IOException {
+        try {
+            XmlModuleDescriptorParser.getInstance().parseDescriptor(_ivy, getClass().getResource("test-bad-confs.xml"), true);
+            fail("bad ivy file raised no error");
+        } catch (ParseException ex) {
+            assertTrue(ex.getMessage().indexOf("invalidConf") != -1);
+        }
+    }
+
     public void testNoValidate() throws IOException, ParseException {
         XmlModuleDescriptorParser.getInstance().parseDescriptor(_ivy, getClass().getResource("test-novalidate.xml"), false);
     }

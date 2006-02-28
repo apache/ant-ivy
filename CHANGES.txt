@@ -1,5 +1,6 @@
 - IMPROVE: Retrieve task now also optionally do ivy file downloads (IVY-167) (with the contribution of Costin Leau)
 
+- FIX: incorrect configuration definition gives misleading NullPointerException (IVY-175)
 - FIX: throw an error when using a non-existing conflict manager as default (IVY-179) (thanks to Maarten Coene)
 - FIX: eviction problem with different conflicts in multiple confs (IVY-173)
 

@@ -363,4 +363,19 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
         _namespace = ns;
     }
 
+    /**
+     * Throws an exception if the module descriptor is inconsistent
+     * For the moment, only extended configurations existence is checked
+     */
+    public void check() {
+        for (Iterator iter = _configurations.values().iterator(); iter.hasNext();) {
+            Configuration conf = (Configuration)iter.next();
+            String[] ext = conf.getExtends();
+            for (int i = 0; i < ext.length; i++) {
+                if (!_configurations.containsKey(ext[i].trim())) {
+                    throw new IllegalStateException("unknown configuration '"+ext[i]+"'. It is extended by "+conf.getName());
+                }
+            }
+        }
+    }
 }

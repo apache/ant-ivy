@@ -143,14 +143,15 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
                     _md.addArtifact(confs[i], new MDArtifact(_md, _md.getModuleRevisionId().getName(), "jar", "jar"));
                 }
             }
-        } catch (SAXException ex) {
-            ParseException pe = new ParseException(ex.getMessage()+" in "+xmlURL, 0);
-            pe.initCause(ex);
-            throw pe;
+            _md.check();
         } catch (ParserConfigurationException ex) {
             IllegalStateException ise = new IllegalStateException(ex.getMessage()+" in "+xmlURL);
             ise.initCause(ex);
             throw ise;
+        } catch (Exception ex) {
+            ParseException pe = new ParseException(ex.getMessage()+" in "+xmlURL, 0);
+            pe.initCause(ex);
+            throw pe;
         }
     }
 
