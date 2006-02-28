@@ -285,6 +285,47 @@ public class ResolveTest extends TestCase {
         assertTrue(_ivy.getArchiveFileInCache(_cache, "org1", "mod1.2", "2.0", "mod1.2", "jar", "jar").exists());
     }
 
+    public void testResolveMultipleConfsWithConflicts() throws Exception {
+        // Test case for IVY-173
+        //
+        // mod6.2  has two confs compile and run
+        //    depends on mod1.2 2.1 in conf (compile->default)
+        //    depends on mod1.1 1.0 in conf (*->default)
+        //    depends on mod6.1     in conf (*->default)
+        // mod6.1 
+        //    depends on mod1.2 2.1
+        // mod1.1 
+        //    depends on mod1.2 2.0
+        ResolveReport report = _ivy.resolve(new File("test/repositories/1/org6/mod6.2/ivys/ivy-0.5.xml").toURL(),
+                null, new String[] {"compile", "run"}, _cache, null, true);
+        assertNotNull(report);
+        assertFalse(report.hasError());
+        ModuleDescriptor md = report.getModuleDescriptor();
+        assertNotNull(md);
+        ModuleRevisionId mrid = ModuleRevisionId.newInstance("org6", "mod6.2", "0.5");
+        assertEquals(mrid, md.getModuleRevisionId());
+        ConfigurationResolveReport crr = report.getConfigurationReport("compile");
+        assertNotNull(crr);
+        assertEquals(3, crr.getArtifactsNumber());
+        crr = report.getConfigurationReport("run");
+        assertNotNull(crr);
+        assertEquals(3, crr.getArtifactsNumber());
+        
+        assertTrue(_ivy.getResolvedIvyFileInCache(_cache, mrid).exists());
+        
+        assertTrue(_ivy.getIvyFileInCache(_cache, ModuleRevisionId.newInstance("org6", "mod6.1", "0.5")).exists());
+        assertTrue(_ivy.getArchiveFileInCache(_cache, "org6", "mod6.1", "0.5", "mod6.1", "jar", "jar").exists());
+
+        assertTrue(_ivy.getIvyFileInCache(_cache, ModuleRevisionId.newInstance("org1", "mod1.1", "1.0")).exists());
+        assertTrue(_ivy.getArchiveFileInCache(_cache, "org1", "mod1.1", "1.0", "mod1.1", "jar", "jar").exists());
+
+        assertTrue(_ivy.getIvyFileInCache(_cache, ModuleRevisionId.newInstance("org1", "mod1.2", "2.1")).exists());
+        assertTrue(_ivy.getArchiveFileInCache(_cache, "org1", "mod1.2", "2.1", "mod1.2", "jar", "jar").exists());
+
+        assertFalse(_ivy.getIvyFileInCache(_cache, ModuleRevisionId.newInstance("org1", "mod1.2", "2.0")).exists());
+        assertFalse(_ivy.getArchiveFileInCache(_cache, "org1", "mod1.2", "2.0", "mod1.2", "jar", "jar").exists());
+    }
+
     public void testResolveMultipleExtends2() throws Exception {
         // same as before, except that mod6.2 depends on mod1.2 2.1 extension->default
         // so mod1.2 2.0 should be evicted in conf extension

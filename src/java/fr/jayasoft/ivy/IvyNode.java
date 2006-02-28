@@ -250,14 +250,9 @@ public class IvyNode {
         init(data, true);
     }
 
-    public IvyNode(ResolveData data, ModuleDescriptor md, String conf) {
-        this(data, md, conf, false);
-    }
-
-    public IvyNode(ResolveData data, ModuleDescriptor md, String conf, boolean isRoot) {
+    public IvyNode(ResolveData data, ModuleDescriptor md) {
         _id = md.getModuleRevisionId();
         _md = md;
-        _confsToFetch.add(conf);
         _isRoot = true;
         
         // we do not register nodes created from ModuleDescriptor, cause they are

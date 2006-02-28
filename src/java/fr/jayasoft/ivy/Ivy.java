@@ -922,6 +922,9 @@ public class Ivy implements TransferListener {
         
         Map dependenciesMap = new HashMap();
         Date reportDate = new Date();
+        ResolveData data = new ResolveData(this, cache, date, null, validate, dependenciesMap);
+        IvyNode rootNode = new IvyNode(data, md);
+        
         for (int i = 0; i < confs.length; i++) {
             Configuration configuration = md.getConfiguration(confs[i]);
             if (configuration == null) {
@@ -935,11 +938,15 @@ public class Ivy implements TransferListener {
                         report.addReport(confs[i], confReport);
                     }
                 }
+                // we reuse the same resolve data with a new report for each conf
+                data.setReport(confReport); 
                 
-                ResolveData data = new ResolveData(this, cache, date, confReport, validate, dependenciesMap);
-                IvyNode node = new IvyNode(data, md, confs[i], true);
-                node.setRootModuleConf(confs[i]);
-                fetchDependencies(node, confs[i], false);
+                // update the root module conf we are about to fetch
+                rootNode.setRootModuleConf(confs[i]); 
+                rootNode.updateConfsToFetch(Collections.singleton(confs[i]));
+                
+                // go fetch !
+                fetchDependencies(rootNode, confs[i], false);
             }
         }
         

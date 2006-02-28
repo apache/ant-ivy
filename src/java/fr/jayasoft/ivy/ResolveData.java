@@ -77,6 +77,10 @@ public class ResolveData {
     public void register(ModuleRevisionId id, IvyNode node) {
         _nodes.put(id, node);
     }
+
+    public void setReport(ConfigurationResolveReport report) {
+        _report = report;
+    }
     
 
     
