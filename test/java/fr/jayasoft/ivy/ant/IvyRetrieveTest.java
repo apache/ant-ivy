@@ -119,31 +119,17 @@ public class IvyRetrieveTest extends TestCase {
         }
     }
 
-    public void testDefaultIvyPattern() throws Exception {
-        //       mod2.1 depends on mod1.1 which depends on mod1.2
-        _project.setProperty("ivy.dep.file", "test/repositories/1/org2/mod2.3/ivys/ivy-0.4.xml");
-        _project.setProperty("ivy.retrieve.ivy.pattern", IVY_RETRIEVE_PATTERN);
-
-        _retrieve.execute();
-
-        String ivyPattern = _project.getProperty("ivy.retrieve.ivy.pattern");
-        assertTrue(new File(IvyPatternHelper.substitute(ivyPattern,
-                "org2", "mod2.1", "0.3", "ivy", "ivy", "xml")).exists());
-        assertTrue(new File(IvyPatternHelper.substitute(ivyPattern,
-                "org1", "mod1.1", "1.0", "ivy", "ivy", "xml")).exists());
-        assertFalse(new File(IvyPatternHelper.substitute(ivyPattern,
-                "org1", "mod1.2", "2.0", "ivy", "ivy", "xml")).exists());
-    }
-
     public void testCustomIvyPattern() throws Exception {
-        //       mod2.3 depends on mod2.1 which depends on mod1.1 which depends on mod1.2
-        _project.setProperty("ivy.dep.file", "test/repositories/1/org2/mod2.3/ivys/ivy-0.4.xml");
+        //      mod2.5 depends on virtual mod2.3 which depends on mod2.1 which depends on mod1.1 which depends on mod1.2
+        _project.setProperty("ivy.dep.file", "test/repositories/1/org2/mod2.5/ivys/ivy-0.6.1.xml");
 
         String ivyPattern = IVY_RETRIEVE_PATTERN;
 
         _retrieve.setIvypattern(ivyPattern);
         _retrieve.execute();
 
+        assertTrue(new File(IvyPatternHelper.substitute(ivyPattern,
+                "org2", "mod2.3", "0.4.1", "ivy", "ivy", "xml")).exists());
         assertTrue(new File(IvyPatternHelper.substitute(ivyPattern,
                 "org2", "mod2.1", "0.3", "ivy", "ivy", "xml")).exists());
         assertTrue(new File(IvyPatternHelper.substitute(ivyPattern,

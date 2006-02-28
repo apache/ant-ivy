@@ -1462,8 +1462,7 @@ public class Ivy implements TransferListener {
                 if (destIvyPattern != null) {
                     ModuleRevisionId[] mrids = parser.getRealDependencyRevisionIds(moduleId, conf, cache);
                     for (int j = 0; j < mrids.length; j++) {
-                        ModuleRevisionId mrid = mrids[i];
-                        artifacts.add(new DefaultArtifact(mrid, new Date(), "ivy", "ivy", "xml"));
+                        artifacts.add(new DefaultArtifact(mrids[j], new Date(), "ivy", "ivy", "xml"));
                     }
                 }
                 for (Iterator iter = artifacts.iterator(); iter.hasNext();) {

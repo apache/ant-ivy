@@ -77,7 +77,6 @@ public class IvyRetrieve extends IvyTask {
             _cache = ivy.getDefaultCache();
         }
         _pattern = getProperty(_pattern, ivy, "ivy.retrieve.pattern");
-        _ivypattern = getProperty(_ivypattern, ivy, "ivy.retrieve.ivy.pattern");
         _conf = getProperty(_conf, ivy, "ivy.resolved.configurations");
         if ("*".equals(_conf)) {
             _conf = getProperty(ivy, "ivy.resolved.configurations");
