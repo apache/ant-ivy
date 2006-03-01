@@ -206,8 +206,11 @@ public class IvyNode {
     private String _parentConf = null;
     private String _rootModuleConf;
 
-    private Map _selectedDeps = new HashMap(); // Map (ModuleIdConf -> Set(Node)) // map indicating for each dependency which revision has been selected
-    private Map _evictedDeps = new HashMap(); // Map (ModuleIdConf -> Set(Node)) // map indicating for each dependency which revision has been evicted
+    private Map _selectedDeps = new HashMap(); // Map (ModuleIdConf -> Set(Node)) // map indicating for each dependency which node has been selected
+    private Map _selectedRevs = new HashMap(); // Map (ModuleIdConf -> Set(ModuleRevisionId)) // map indicating for each dependency which revision has been selected
+
+    private Map _evictedDeps = new HashMap(); // Map (ModuleIdConf -> Set(Node)) // map indicating for each dependency which node has been evicted
+    private Map _evictedRevs = new HashMap(); // Map (ModuleIdConf -> Set(ModuleRevisionId)) // map indicating for each dependency which revision has been evicted
     
     private Map _evicted = new HashMap(); // Map (root module conf -> EvictionData) // indicates if the node is evicted in each root module conf
 
@@ -299,22 +302,24 @@ public class IvyNode {
         return ret;
     }
     public Collection getResolvedRevisions(ModuleId mid, String rootModuleConf) {
-        Collection resolved = (Collection)_selectedDeps.get(new ModuleIdConf(mid, rootModuleConf));
+        Collection resolved = (Collection)_selectedRevs.get(new ModuleIdConf(mid, rootModuleConf));
         if (resolved == null) {
             return new HashSet();
         } else {
-            Collection ret = new HashSet();
-            for (Iterator iter = resolved.iterator(); iter.hasNext();) {
-                IvyNode node = (IvyNode)iter.next();
-                ret.add(node.getId());
-                ret.add(node.getResolvedId());
-            }
-            return ret;
+            return new HashSet(resolved);
         }
     }
 
     public void setResolvedNodes(ModuleId moduleId, String rootModuleConf, Collection resolved) {
-        _selectedDeps.put(new ModuleIdConf(moduleId, rootModuleConf), new HashSet(resolved));
+        ModuleIdConf moduleIdConf = new ModuleIdConf(moduleId, rootModuleConf);
+        _selectedDeps.put(moduleIdConf, new HashSet(resolved));
+        Collection resolvedRevs = new HashSet();
+        for (Iterator iter = resolved.iterator(); iter.hasNext();) {
+            IvyNode node = (IvyNode)iter.next();
+            resolvedRevs.add(node.getId());
+            resolvedRevs.add(node.getResolvedId());
+        }
+        _selectedRevs.put(moduleIdConf, resolvedRevs);
     }
     
     public Collection getEvictedNodes(ModuleId mid, String rootModuleConf) {
@@ -329,21 +334,24 @@ public class IvyNode {
         return ret;
     }
     public Collection getEvictedRevisions(ModuleId mid, String rootModuleConf) {
-        Collection resolved = (Collection)_evictedDeps.get(new ModuleIdConf(mid, rootModuleConf));
-        if (resolved == null) {
+        Collection evicted = (Collection)_evictedRevs.get(new ModuleIdConf(mid, rootModuleConf));
+        if (evicted == null) {
             return new HashSet();
         } else {
-            Collection ret = new HashSet();
-            for (Iterator iter = resolved.iterator(); iter.hasNext();) {
-                IvyNode node = (IvyNode)iter.next();
-                ret.add(node.getRealNode().getResolvedId());
-            }
-            return ret;
+            return new HashSet(evicted);
         }
     }
 
     public void setEvictedNodes(ModuleId moduleId, String rootModuleConf, Collection evicted) {
-        _evictedDeps.put(new ModuleIdConf(moduleId, rootModuleConf), new HashSet(evicted));
+        ModuleIdConf moduleIdConf = new ModuleIdConf(moduleId, rootModuleConf);
+        _evictedDeps.put(moduleIdConf, new HashSet(evicted));
+        Collection evictedRevs = new HashSet();
+        for (Iterator iter = evicted.iterator(); iter.hasNext();) {
+            IvyNode node = (IvyNode)iter.next();
+            evictedRevs.add(node.getId());
+            evictedRevs.add(node.getResolvedId());
+        }
+        _evictedRevs.put(moduleIdConf, evictedRevs);
     }
     
 
