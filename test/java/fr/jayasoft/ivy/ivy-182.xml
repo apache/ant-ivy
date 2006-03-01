@@ -1,0 +1,18 @@
+<ivy-module version="1.0">
+	<info organisation="test"
+	       module="IVY-182"
+	       status="integration"
+	       publication="20050202110000"
+	/>
+	<configurations defaultconfmapping="compile->compile(*);runtime,test->runtime(*)">
+		<conf name="compile"/>
+		<conf name="runtime" extends="compile"/>
+		<conf name="test" extends="runtime"/>
+	</configurations>
+	<dependencies>
+		<dependency org="org1" name="mod1.2" rev="1+" force="true" conf="compile"/>
+		<dependency org="org3" name="mod3.1" rev="1+" conf="test">
+			<exclude module="mod4.1"/>
+		</dependency>
+	</dependencies>
+</ivy-module>

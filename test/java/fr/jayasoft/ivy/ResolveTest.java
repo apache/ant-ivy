@@ -952,21 +952,22 @@ public class ResolveTest extends TestCase {
     }
     
     public void testResolveForceWithDynamicRevisionsAndCyclicDependencies() throws Exception {
-        // mod4.1 v 4.8 (conf compile, test extends compile) depends on 
-        //   - mod1.2 v 1+ and forces it in conf compile
-        //   - mod3.1 v 1+ in conf test->runtime excluding mod4.1 (to avoid cyclic dep failure)
+        // IVY-182
+        //   * has no revision 
+        //   * declares conf compile, test extends compile, 
+        //   * depends on 
+        //     - mod1.2 v 1+ and forces it in conf compile
+        //     - mod3.1 v 1+ in conf test->runtime excluding mod4.1 (to avoid cyclic dep failure)
         //           which defines confs compile, runtime extends compile
         //           which depends on mod1.2 v 2+ in conf compile->default
         //           which depends on mod4.1 v 4+ in conf compile->compile
-        ResolveReport report = _ivy.resolve(new File("test/repositories/2/mod4.1/ivy-4.8.xml").toURL(),
+        ResolveReport report = _ivy.resolve(ResolveTest.class.getResource("ivy-182.xml"),
                 null, new String[] {"*"}, _cache, null, true);
         assertNotNull(report);
         ModuleDescriptor md = report.getModuleDescriptor();
         assertNotNull(md);
-        ModuleRevisionId mrid = ModuleRevisionId.newInstance("org4", "mod4.1", "4.8");
-        assertEquals(mrid, md.getModuleRevisionId());
-        
-        assertTrue(_ivy.getResolvedIvyFileInCache(_cache, mrid).exists());
+        ModuleId mid = new ModuleId("test", "IVY-182");
+        assertEquals(mid, md.getModuleRevisionId().getModuleId());
         
         // dependencies
         assertTrue(_ivy.getIvyFileInCache(_cache, ModuleRevisionId.newInstance("org3", "mod3.1", "1.4")).exists());

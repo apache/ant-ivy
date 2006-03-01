@@ -116,7 +116,8 @@ public class DefaultDependencyDescriptor implements DependencyDescriptor {
     /**
      * This namespace should be used to check 
      */
-    private Namespace _namespace = null; 
+    private Namespace _namespace = null;
+    private ModuleDescriptor _md; 
 
     public DefaultDependencyDescriptor(DependencyDescriptor dd, String revision) {
         _parentId = dd.getParentRevisionId();
@@ -133,7 +134,7 @@ public class DefaultDependencyDescriptor implements DependencyDescriptor {
     }
     
     public DefaultDependencyDescriptor(ModuleDescriptor md, ModuleRevisionId mrid, boolean force, boolean changing, boolean transitive) {
-        _parentId = md.getModuleRevisionId();
+        _md = md;
         _revId = mrid;
         _force = force;
         _changing = changing;
@@ -327,7 +328,7 @@ public class DefaultDependencyDescriptor implements DependencyDescriptor {
     }
 
     public ModuleRevisionId getParentRevisionId() {
-        return _parentId;
+        return _md != null ? _md.getResolvedModuleRevisionId() : _parentId;
     }
 
     public boolean isChanging() {
