@@ -972,7 +972,9 @@ public class Ivy implements TransferListener {
             if (!node.isCompletelyEvicted()) {
                 for (int i = 0; i < confs.length; i++) {
                     IvyNode.Caller[] callers = node.getCallers(confs[i]);
-                    Message.debug("checking if "+node.getId()+" is transitively evicted in "+confs[i]);
+                    if (debugConflictResolution()) {
+                        Message.debug("checking if "+node.getId()+" is transitively evicted in "+confs[i]);
+                    }
                     boolean allEvicted = callers.length > 0;
                     for (int j = 0; j < callers.length; j++) {
                         if (callers[j].getModuleRevisionId().equals(md.getModuleRevisionId())) {
@@ -987,7 +989,9 @@ public class Ivy implements TransferListener {
                                 allEvicted = false;
                                 break;
                             } else {
-                                Message.debug("caller "+callerNode.getId()+" of "+node.getId()+" is evicted");
+                                if (debugConflictResolution()) {
+                                    Message.debug("caller "+callerNode.getId()+" of "+node.getId()+" is evicted");
+                                }
                             }
                         }
                     }
@@ -995,7 +999,9 @@ public class Ivy implements TransferListener {
                         Message.verbose("all callers are evicted for "+node+": evicting too");
                         node.markEvicted(confs[i], null, null, null);
                     } else {
-                        Message.debug(node.getId()+" isn't transitively evicted, at least one caller was not evicted");
+                        if (debugConflictResolution()) {
+                            Message.debug(node.getId()+" isn't transitively evicted, at least one caller was not evicted");
+                        }
                     }
                 }
             }
@@ -1009,7 +1015,9 @@ public class Ivy implements TransferListener {
     
     private void fetchDependencies(IvyNode node, String conf, boolean shouldBePublic) {
         long start = System.currentTimeMillis();
-        Message.debug(node.getId()+" => resolving dependencies in "+conf);
+        if (debugConflictResolution()) {
+            Message.debug(node.getId()+" => resolving dependencies in "+conf);
+        }
         resolveConflict(node, node.getParent());
         
         if (node.loadData(conf, shouldBePublic)) {
@@ -1039,7 +1047,9 @@ public class Ivy implements TransferListener {
                 fetchDependencies(selected, conf, true);
             }
         }
-        Message.debug(node.getId()+" => dependencies resolved in "+conf+" ("+(System.currentTimeMillis()-start)+"ms)");
+        if (debugConflictResolution()) {
+            Message.debug(node.getId()+" => dependencies resolved in "+conf+" ("+(System.currentTimeMillis()-start)+"ms)");
+        }
     }
 
     private void doFetchDependencies(IvyNode node, String conf) {
@@ -1100,15 +1110,21 @@ public class Ivy implements TransferListener {
         // compute conflicts
         Collection resolvedNodes = new HashSet(parent.getResolvedNodes(node.getModuleId(), node.getRootModuleConf()));
         Collection conflicts = computeConflicts(node, parent, toevict, resolvedNodes);
-        Message.debug("found conflicting revisions for "+node+" in "+parent+": "+conflicts);
+        if (debugConflictResolution()) {
+            Message.debug("found conflicting revisions for "+node+" in "+parent+": "+conflicts);
+        }
         
         Collection resolved = parent.getConflictManager(node.getModuleId()).resolveConflicts(parent, conflicts);
-        Message.debug("selected revisions for "+node+" in "+parent+": "+resolved);
+        if (debugConflictResolution()) {
+            Message.debug("selected revisions for "+node+" in "+parent+": "+resolved);
+        }
         if (resolved.contains(node)) {
             // node has been selected for the current parent
             // we update its eviction... but it can still be evicted by parent !
             node.markSelected(node.getRootModuleConf());
-            Message.debug("selecting "+node+" in "+parent);
+            if (debugConflictResolution()) {
+                Message.debug("selecting "+node+" in "+parent);
+            }
             
             // handle previously selected nodes that are now evicted by this new node
             toevict = resolvedNodes;
@@ -1118,7 +1134,9 @@ public class Ivy implements TransferListener {
                 IvyNode te = (IvyNode)iter.next();
                 te.markEvicted(node.getRootModuleConf(), parent, parent.getConflictManager(node.getModuleId()), resolved);
                 
-                Message.debug("evicting "+te+" by "+te.getEvictedData(node.getRootModuleConf()));
+                if (debugConflictResolution()) {
+                    Message.debug("evicting "+te+" by "+te.getEvictedData(node.getRootModuleConf()));
+                }
             }
             
             // it's very important to update resolved and evicted nodes BEFORE recompute parent call
@@ -1135,7 +1153,9 @@ public class Ivy implements TransferListener {
         } else {
             // node has been evicted for the current parent
             if (resolved.isEmpty()) {
-                Message.verbose("conflict manager '"+parent.getConflictManager(node.getModuleId())+"' evicted all revisions among "+conflicts);
+                if (debugConflictResolution()) {
+                    Message.verbose("conflict manager '"+parent.getConflictManager(node.getModuleId())+"' evicted all revisions among "+conflicts);
+                }
             }
             
             // first we mark the selected nodes as selected if it isn't already the case
@@ -1143,7 +1163,9 @@ public class Ivy implements TransferListener {
                 IvyNode selected = (IvyNode)iter.next();
                 if (selected.isEvicted(node.getRootModuleConf())) {
                     selected.markSelected(node.getRootModuleConf());
-                    Message.debug("selecting "+selected+" in "+parent);
+                    if (debugConflictResolution()) {
+                        Message.debug("selecting "+selected+" in "+parent);
+                    }
                 }
             }
             
@@ -1159,7 +1181,9 @@ public class Ivy implements TransferListener {
 
             
             node.markEvicted(node.getRootModuleConf(), parent, parent.getConflictManager(node.getModuleId()), resolved);
-            Message.debug("evicting "+node+" by "+node.getEvictedData(node.getRootModuleConf()));
+            if (debugConflictResolution()) {
+                Message.debug("evicting "+node+" by "+node.getEvictedData(node.getRootModuleConf()));
+            }
         }
     }
 
@@ -1197,36 +1221,50 @@ public class Ivy implements TransferListener {
         if (parent.getResolvedRevisions(node.getModuleId(), node.getRootModuleConf()).contains(node.getResolvedId())) {
             // resolve conflict has already be done with node with the same id
             // => job already done, we just have to check if the node wasn't previously evicted in root ancestor
-            Message.debug("conflict resolution already done for "+node+" in "+parent);
+            if (debugConflictResolution()) {
+                Message.debug("conflict resolution already done for "+node+" in "+parent);
+            }
             EvictionData evictionData = node.getEvictionDataInRoot(node.getRootModuleConf(), parent);
             if (evictionData != null) {
                 // node has been previously evicted in an ancestor: we mark it as evicted and ensure selected are selected
-                Message.debug(node+" was previously evicted in root module conf "+node.getRootModuleConf());
+                if (debugConflictResolution()) {
+                    Message.debug(node+" was previously evicted in root module conf "+node.getRootModuleConf());
+                }
                 if (evictionData.getSelected() != null) {
                     for (Iterator iter = evictionData.getSelected().iterator(); iter.hasNext();) {
                         IvyNode selected = (IvyNode)iter.next();
                         if (selected.isEvicted(node.getRootModuleConf())) {
                             selected.markSelected(node.getRootModuleConf());
-                            Message.debug("selecting "+selected+" in "+parent+" due to eviction of "+node);
+                            if (debugConflictResolution()) {
+                                Message.debug("selecting "+selected+" in "+parent+" due to eviction of "+node);
+                            }
                         }
                     }
                 }
 
 
                 node.markEvicted(evictionData);                
-                Message.debug("evicting "+node+" by "+evictionData);                
+                if (debugConflictResolution()) {
+                    Message.debug("evicting "+node+" by "+evictionData);
+                }
             }
             return true;
         } else if (parent.getEvictedRevisions(node.getModuleId(), node.getRootModuleConf()).contains(node.getResolvedId())) {
             // resolve conflict has already be done with node with the same id
             // => job already done, we just have to check if the node wasn't previously selected in root ancestor
-            Message.debug("conflict resolution already done for "+node+" in "+parent);
+            if (debugConflictResolution()) {
+                Message.debug("conflict resolution already done for "+node+" in "+parent);
+            }
             EvictionData evictionData = node.getEvictionDataInRoot(node.getRootModuleConf(), parent);
             if (evictionData == null) {
                 // node was selected in the root, we have to select it
-                Message.debug(node+" was previously selected in root module conf "+node.getRootModuleConf());
+                if (debugConflictResolution()) {
+                    Message.debug(node+" was previously selected in root module conf "+node.getRootModuleConf());
+                }
                 node.markSelected(node.getRootModuleConf());            
-                Message.debug("selecting "+node+" in "+parent);
+                if (debugConflictResolution()) {
+                    Message.debug("selecting "+node+" in "+parent);
+                }
             }
             return true;
         }
@@ -2020,6 +2058,8 @@ public class Ivy implements TransferListener {
 
     private boolean _logNotConvertedExclusionRule;
 
+    private Boolean _debugConflictResolution;
+
     public void addTransferListener(TransferListener listener) {
         _listeners.add(TransferListener.class, listener);
     }
@@ -2133,6 +2173,14 @@ public class Ivy implements TransferListener {
     public boolean logResolvedRevision() {
         String var = getVariable("ivy.log.resolved.revision");
         return var == null || Boolean.valueOf(var).booleanValue();
+    }
+
+    public boolean debugConflictResolution() {
+        if (_debugConflictResolution == null) {
+            String var = getVariable("ivy.log.conflict.resolution");
+            _debugConflictResolution =  Boolean.valueOf(var != null && Boolean.valueOf(var).booleanValue());
+        }
+        return _debugConflictResolution.booleanValue();
     }
 
     public boolean logNotConvertedExclusionRule() {

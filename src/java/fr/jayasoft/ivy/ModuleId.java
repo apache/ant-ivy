@@ -22,7 +22,7 @@ public class ModuleId {
         }
         _organisation = organisation;
         _name = name;
-        _hash = _hashCode(); //stored for performance reasons, has code is very used in many maps
+        _hash = _hashCode(); //stored for performance reasons, hashCode is very used in many maps
     }
 
     public String getName() {

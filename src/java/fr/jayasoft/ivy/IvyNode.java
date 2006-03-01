@@ -71,16 +71,18 @@ public class IvyNode {
         
     }
 
-    public static class Caller {
+    public class Caller {
         private ModuleDescriptor _md;
         private ModuleRevisionId _mrid;
         private Map _confs = new HashMap(); // Map (String callerConf -> String[] dependencyConfs)
-        private ModuleRevisionId _askedDependencyId;
+        private DependencyDescriptor _dd;
+        private boolean _callerCanExclude;
         
-        public Caller(ModuleDescriptor md, ModuleRevisionId mrid, ModuleRevisionId askedDependencyId) {
+        public Caller(ModuleDescriptor md, ModuleRevisionId mrid, DependencyDescriptor dd, boolean callerCanExclude) {
             _md = md;
             _mrid = mrid;
-            _askedDependencyId = askedDependencyId;
+            _dd = dd;
+            _callerCanExclude = callerCanExclude;
         }
         public void addConfiguration(String callerConf, String[] dependencyConfs) {
             String[] prevDepConfs = (String[])_confs.get(callerConf);
@@ -116,10 +118,16 @@ public class IvyNode {
             return _mrid.toString();
         }
         public ModuleRevisionId getAskedDependencyId() {
-            return _askedDependencyId;
+            return _dd.getDependencyRevisionId();
         }
         public ModuleDescriptor getModuleDescriptor() {
             return _md;
+        }
+        public boolean canExclude() {
+            return _callerCanExclude || _dd.canExclude();
+        }
+        public DependencyDescriptor getDependencyDescriptor() {
+            return _dd;
         }
     }
     private static final class NodeConf {
@@ -193,6 +201,8 @@ public class IvyNode {
      * of a dependency
      */
     private IvyNode _parent = null;
+    private IvyNode _root = null;
+    private Collection _path = null; // Collection(IvyNode): direct path from root to this node. Note that the colleciton is ordered but is not a list implementation
     private String _parentConf = null;
     private String _rootModuleConf;
 
@@ -246,6 +256,7 @@ public class IvyNode {
     public IvyNode(ResolveData data, DependencyDescriptor dd) {
         _id = dd.getDependencyRevisionId();
         _dd = dd;
+        _isRoot = false;
 
         init(data, true);
     }
@@ -254,6 +265,7 @@ public class IvyNode {
         _id = md.getModuleRevisionId();
         _md = md;
         _isRoot = true;
+        _root = this;
         
         // we do not register nodes created from ModuleDescriptor, cause they are
         // the root of resolve
@@ -295,6 +307,7 @@ public class IvyNode {
             for (Iterator iter = resolved.iterator(); iter.hasNext();) {
                 IvyNode node = (IvyNode)iter.next();
                 ret.add(node.getId());
+                ret.add(node.getResolvedId());
             }
             return ret;
         }
@@ -481,6 +494,53 @@ public class IvyNode {
 
     public void setParent(IvyNode parent) {
         _parent = parent;
+        _root = null;
+        _path = null;
+    }
+
+    public IvyNode getRoot() {
+        if (_root == null) {
+            _root = computeRoot();
+        }
+        return _root;
+    }
+
+    public Collection getPath() {
+        if (_path == null) {
+            _path = computePath();
+        }
+        return _path;
+    }
+
+    private Collection computePath() {
+        if (_parent != null) {
+            Collection p = new LinkedHashSet(_parent.getPath());
+            p.add(this);
+            return p;
+        } else {
+            return Collections.singletonList(this);
+        }
+    }
+
+    private IvyNode computeRoot() {
+        if (isRoot()) {
+            return this;
+        } else if (_parent != null) {
+            return _parent.getRoot();
+        } else {
+            return null;
+        }
+//        IvyNode root = this;
+//        Collection path = new HashSet();
+//        path.add(root);
+//        while (root.getParent() != null && !root.isRoot()) {
+//            if (path.contains(root.getParent())) {
+//                return root;
+//            }
+//            root = root.getParent();
+//            path.add(root);
+//        }
+//        return root;
     }
 
     public String getParentConf() {
@@ -713,11 +773,15 @@ public class IvyNode {
             depNode.updateConfsToFetch(confs);
             depNode.setRequiredConfs(this, conf, confs);
             
-            depNode.addCaller(_rootModuleConf, _md, _md.getModuleRevisionId(), conf, dependencyConfigurations, dd.getDependencyRevisionId());
+            depNode.addCaller(_rootModuleConf, this, conf, dependencyConfigurations, dd);
             dependencies.add(depNode);
 
             if (traverse) {
-                depNode.setParent(this);
+                if (getPath().contains(depNode)) {
+                    Message.verbose("circular dependency found: "+getPath()+" -> "+depNode);
+                } else {
+                    depNode.setParent(this);
+                }
                 depNode.setParentConf(conf);
                 depNode.setRootModuleConf(getRootModuleConf());
                 depNode._data = _data;
@@ -813,9 +877,11 @@ public class IvyNode {
      * @param mrid
      * @param callerConf
      * @param dependencyConfs '*' must have been resolved
-     * @param askedDependencyId the dependency revision id asked by the caller
+     * @param dd the dependency revision id asked by the caller
      */
-    public void addCaller(String rootModuleConf, ModuleDescriptor md, ModuleRevisionId mrid, String callerConf, String[] dependencyConfs, ModuleRevisionId askedDependencyId) {
+    public void addCaller(String rootModuleConf, IvyNode node, String callerConf, String[] dependencyConfs, DependencyDescriptor dd) {
+        ModuleDescriptor md = node.getDescriptor();
+        ModuleRevisionId mrid = md.getModuleRevisionId(); 
         if (mrid.getModuleId().equals(getId().getModuleId())) {
             throw new IllegalArgumentException("a module is not authorized to depend on itself: "+getId());
         }
@@ -826,7 +892,7 @@ public class IvyNode {
         }
         Caller caller = (Caller)callers.get(mrid);
         if (caller == null) {
-            caller = new Caller(md, mrid, askedDependencyId);
+            caller = new Caller(md, mrid, dd, node.canExclude(rootModuleConf));
             callers.put(mrid, caller);
         }
         caller.addConfiguration(callerConf, dependencyConfs);
@@ -837,6 +903,20 @@ public class IvyNode {
             _isCircular = _allCallers.contains(getId().getModuleId());
         }
     }
+    
+    private boolean canExclude(String rootModuleConf) {
+        if (_dd != null && _dd.canExclude()) {
+            return true;
+        }
+        Caller[] callers = getCallers(rootModuleConf);
+        for (int i = 0; i < callers.length; i++) {
+            if (callers[i].canExclude()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public Caller[] getCallers(String rootModuleConf) {
         Map callers = (Map)_callersByRootConf.get(rootModuleConf);
         if (callers == null) {
@@ -1076,8 +1156,11 @@ public class IvyNode {
             }
             Collection callersNodes = new ArrayList();
             for (int i = 0; i < callers.length; i++) {
+                if (!callers[i].canExclude()) {
+                    return false;
+                }
                 ModuleDescriptor md = callers[i].getModuleDescriptor();
-                if (!doesExclude(md, rootModuleConf, callers[i].getCallerConfigurations(), this, artifact, callersStack)) {
+                if (!doesExclude(md, rootModuleConf, callers[i].getCallerConfigurations(), this, callers[i].getDependencyDescriptor(), artifact, callersStack)) {
                     return false;
                 }
             }
@@ -1087,9 +1170,8 @@ public class IvyNode {
         }
     }
 
-    private boolean doesExclude(ModuleDescriptor md, String rootModuleConf, String[] moduleConfs, IvyNode dependency, Artifact artifact, Stack callersStack) {
+    private boolean doesExclude(ModuleDescriptor md, String rootModuleConf, String[] moduleConfs, IvyNode dependency, DependencyDescriptor dd, Artifact artifact, Stack callersStack) {
         // artifact is excluded if it match any of the exclude pattern for this dependency...
-        DependencyDescriptor dd = getDependencyDescriptor(md, dependency);
         if (dd != null) {
             if (dd.doesExclude(moduleConfs, artifact.getId().getArtifactId())) {
                 return true;
@@ -1219,7 +1301,7 @@ public class IvyNode {
      * @return
      */
     public EvictionData getEvictionDataInRoot(String rootModuleConf, IvyNode parent) {
-        IvyNode root = getRoot(parent);
+        IvyNode root = parent.getRoot();
         Collection selectedNodes = root.getResolvedNodes(getModuleId(), rootModuleConf);
         for (Iterator iter = selectedNodes.iterator(); iter.hasNext();) {
             IvyNode node = (IvyNode)iter.next();

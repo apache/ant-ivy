@@ -44,4 +44,5 @@ public interface DependencyDescriptor {
     DependencyArtifactDescriptor[] getDependencyArtifactsExcludes(String moduleConfigurations);
     DependencyArtifactDescriptor[] getDependencyArtifactsExcludes(String[] moduleConfigurations);
     boolean doesExclude(String[] moduleConfigurations, ArtifactId artifactId);
+    public boolean canExclude();
 }

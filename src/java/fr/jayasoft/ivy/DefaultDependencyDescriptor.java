@@ -306,6 +306,14 @@ public class DefaultDependencyDescriptor implements DependencyDescriptor {
         return false;
     }
     
+    /**
+     * Returns true if this descriptor contains any exclusion rule
+     * @return
+     */
+    public boolean canExclude() {
+        return !_artifactsExcludes.isEmpty();
+    }
+    
     public void addExtends(String conf) {
         _extends.add(conf);
     }

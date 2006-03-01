@@ -24,7 +24,7 @@ public class ModuleRevisionId {
     public ModuleRevisionId(ModuleId moduleId, String revision) {
         _moduleId = moduleId;
         _revision = revision;
-        _hash = _hashCode(); //stored for performance reasons, has code is very used in many maps
+        _hash = _hashCode(); //stored for performance reasons, hashCode is very used in many maps
     }
     public ModuleId getModuleId() {
         return _moduleId;

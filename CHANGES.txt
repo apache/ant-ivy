@@ -1,3 +1,4 @@
+- IMPROVE: performances with complex dependency graphs
 - IMPROVE: Retrieve task now also optionally do ivy file downloads (IVY-167) (with the contribution of Costin Leau)
 
 - FIX: problem reading 'invalid' POMs (IVY-153)
