@@ -56,6 +56,9 @@ public class LatestConflictManager extends AbstractConflictManager {
     }
 
     public Collection resolveConflicts(IvyNode parent, Collection conflicts) {
+        if (conflicts.size() < 2) {
+            return conflicts;
+        }
         for (Iterator iter = conflicts.iterator(); iter.hasNext();) {
             IvyNode node = (IvyNode)iter.next();
             DependencyDescriptor dd = node.getDependencyDescriptor();
