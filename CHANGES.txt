@@ -1,4 +1,4 @@
-- IMPROVE: performances with complex dependency graphs
+- IMPROVE: better performances with complex dependency graphs (thanks to Karl Baum)
 - IMPROVE: Retrieve task now also optionally do ivy file downloads (IVY-167) (with the contribution of Costin Leau)
 
 - FIX: force attribute is not treated as it should in some cases (IVY-182)

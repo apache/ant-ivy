@@ -149,6 +149,8 @@ public class Ivy implements TransferListener {
 
     private File _defaultUserDir;
     
+    private Set _fetchedSet = new HashSet();
+    
     public Ivy() {
         setVariable("ivy.default.conf.dir", Ivy.class.getResource("conf").toExternalForm(), true);
         
@@ -926,6 +928,9 @@ public class Ivy implements TransferListener {
         IvyNode rootNode = new IvyNode(data, md);
         
         for (int i = 0; i < confs.length; i++) {
+            //for each configuration we clear the cache of what's been fetched
+            _fetchedSet.clear();
+            
             Configuration configuration = md.getConfiguration(confs[i]);
             if (configuration == null) {
                 Message.error("asked configuration not found in "+md.getModuleRevisionId()+": "+confs[i]);
@@ -1071,7 +1076,7 @@ public class Ivy implements TransferListener {
             fetchDependencies(node, extendedConfs[i], false);
         }
         
-        if (node.getDependencyDescriptor() == null || node.getDependencyDescriptor().isTransitive()) {
+        if (!isDependenciesFetched(node, conf) && (node.getDependencyDescriptor() == null || node.getDependencyDescriptor().isTransitive())) {
             Collection dependencies = node.getDependencies(conf, true);
             for (Iterator iter = dependencies.iterator(); iter.hasNext();) {
                 IvyNode dep = (IvyNode)iter.next();
@@ -1094,6 +1099,22 @@ public class Ivy implements TransferListener {
         
     }
 
+
+  
+    /**
+     * Returns true if we've already fetched the dependencies for this node and configuration
+     * @param node node to check
+     * @param conf configuration to check 
+     * @return true if we've already fetched this dependency
+     */
+    private boolean isDependenciesFetched(IvyNode node, String conf) {
+        String key = node.getId().getModuleId() + "|" + conf;
+        if (_fetchedSet.contains(key)) {
+            return true;
+        }
+        _fetchedSet.add(key);
+        return false;
+    }
 
     private void resolveConflict(IvyNode node, IvyNode parent) {
         resolveConflict(node, parent, Collections.EMPTY_SET);
