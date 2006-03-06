@@ -1,4 +1,3 @@
-- IMPROVE: better performances with complex dependency graphs (thanks to Karl Baum)
 - IMPROVE: Retrieve task now also optionally do ivy file downloads (IVY-167) (with the contribution of Costin Leau)
 
 - FIX: ivy variable substitution in ivy files (IVY-186)
