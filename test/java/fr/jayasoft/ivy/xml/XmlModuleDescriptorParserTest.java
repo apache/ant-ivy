@@ -24,6 +24,7 @@ import fr.jayasoft.ivy.conflict.FixedConflictManager;
 import fr.jayasoft.ivy.conflict.NoConflictManager;
 import fr.jayasoft.ivy.matcher.PatternMatcher;
 import fr.jayasoft.ivy.parser.AbstractModuleDescriptorParserTester;
+import fr.jayasoft.ivy.util.XMLHelper;
 
 /**
  * 
@@ -66,7 +67,9 @@ public class XmlModuleDescriptorParserTest extends AbstractModuleDescriptorParse
             XmlModuleDescriptorParser.getInstance().parseDescriptor(_ivy, getClass().getResource("test-bad-org.xml"), true);
             fail("bad ivy file raised no error");
         } catch (ParseException ex) {
-            assertTrue("invalid exception: "+ex.getMessage(), ex.getMessage().indexOf("organization") != -1);
+            if (XMLHelper.canUseSchemaValidation()) {
+                assertTrue("invalid exception: "+ex.getMessage(), ex.getMessage().indexOf("organization") != -1);
+            }
         }
     }
 

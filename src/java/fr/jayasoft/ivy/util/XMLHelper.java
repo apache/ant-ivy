@@ -82,4 +82,8 @@ public abstract class XMLHelper {
         }
     }
 
+    public static boolean canUseSchemaValidation() {
+        return _canUseSchemaValidation;
+    }
+
 }
