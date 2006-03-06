@@ -204,9 +204,9 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
                     _md.setPublicationDate(getDefaultPubDate());                    
                 }
             } else if ("license".equals(qName)) {
-                _md.addLicense(new License(attributes.getValue("name"), attributes.getValue("url")));
+                _md.addLicense(new License(_ivy.substitute(attributes.getValue("name")), _ivy.substitute(attributes.getValue("url"))));
             } else if ("description".equals(qName)) {
-                _md.setHomePage(attributes.getValue("homepage"));
+                _md.setHomePage(_ivy.substitute(attributes.getValue("homepage")));
             } else if ("configurations".equals(qName)) {
                 _state = CONF;
                 setDefaultConfMapping(_ivy.substitute(attributes.getValue("defaultconfmapping")));
@@ -231,10 +231,10 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
             } else if ("artifact".equals(qName)) {
                 if (_state == PUB) {
                     // this is a published artifact
-                    String ext = attributes.getValue("ext");
-                    ext = ext != null?ext:attributes.getValue("type");
-                    _artifact = new MDArtifact(_md, attributes.getValue("name"), attributes.getValue("type"), ext);
-                    String confs = attributes.getValue("conf");
+                    String ext = _ivy.substitute(attributes.getValue("ext"));
+                    ext = ext != null?ext:_ivy.substitute(attributes.getValue("type"));
+                    _artifact = new MDArtifact(_md, _ivy.substitute(attributes.getValue("name")), _ivy.substitute(attributes.getValue("type")), ext);
+                    String confs = _ivy.substitute(attributes.getValue("conf"));
                     // only add confs if they are specified. if they aren't, endElement will handle this
                     // only if there are no conf defined in sub elements
                     if (confs != null && confs.length() > 0) {
@@ -264,30 +264,30 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
                 if (org == null) { 
                     org = _md.getModuleRevisionId().getOrganisation();
                 }
-                boolean force = Boolean.valueOf(attributes.getValue("force")).booleanValue();
-                boolean changing = Boolean.valueOf(attributes.getValue("changing")).booleanValue();
+                boolean force = Boolean.valueOf(_ivy.substitute(attributes.getValue("force"))).booleanValue();
+                boolean changing = Boolean.valueOf(_ivy.substitute(attributes.getValue("changing"))).booleanValue();
 
-                String transitiveValue = attributes.getValue("transitive");
+                String transitiveValue = _ivy.substitute(attributes.getValue("transitive"));
                 boolean transitive = (transitiveValue == null) ? true : Boolean.valueOf(attributes.getValue("transitive")).booleanValue();
                 
                 String name = _ivy.substitute(attributes.getValue("name"));
                 String rev = _ivy.substitute(attributes.getValue("rev"));
                 _dd = new DefaultDependencyDescriptor(_md, ModuleRevisionId.newInstance(org, name, rev), force, changing, transitive);
                 _md.addDependency(_dd);
-                String confs = attributes.getValue("conf");
+                String confs = _ivy.substitute(attributes.getValue("conf"));
                 if (confs != null && confs.length() > 0) {
                     parseDepsConfs(confs, _dd);
                 }
             } else if ("conf".equals(qName)) {
-        	    String conf = attributes.getValue("name");
+        	    String conf = _ivy.substitute(attributes.getValue("name"));
                 switch (_state) {
             	case CONF:
-                    String visibility = attributes.getValue("visibility");
-                    String ext = attributes.getValue("extends");
+                    String visibility = _ivy.substitute(attributes.getValue("visibility"));
+                    String ext = _ivy.substitute(attributes.getValue("extends"));
                 	_md.addConfiguration(new Configuration(
                             conf, 
                             Configuration.Visibility.getVisibility(visibility == null ? "public":visibility),
-                            attributes.getValue("description"),
+                            _ivy.substitute(attributes.getValue("description")),
                             ext==null?null:ext.split(",")));
                 	break;
             	case PUB:
@@ -304,7 +304,7 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
                 	break;
                 case DEP:
                     _conf = conf;
-                    String mappeds = attributes.getValue("mapped");
+                    String mappeds = _ivy.substitute(attributes.getValue("mapped"));
                     if (mappeds != null) {
                         String[] mapped = mappeds.split(",");
                         for (int i = 0; i < mapped.length; i++) {
@@ -323,7 +323,7 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
                 	break;
                 }
             } else if ("mapped".equals(qName)) {
-                _dd.addDependencyConfiguration(_conf, attributes.getValue("name"));
+                _dd.addDependencyConfiguration(_conf, _ivy.substitute(attributes.getValue("name")));
             } else if ("manager".equals(qName) && _state == CONFLICT) {
                 String org = _ivy.substitute(attributes.getValue("org"));
                 org = org == null ? PatternMatcher.ANY_EXPRESSION : org;
@@ -348,7 +348,7 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
                     addError("bad conflict manager: no name nor rev");
                     return;
                 }
-                String matcherName = attributes.getValue("matcher");
+                String matcherName = _ivy.substitute(attributes.getValue("matcher"));
                 PatternMatcher matcher = matcherName == null ? _defaultMatcher : _ivy.getMatcher(matcherName);
                 if (matcher == null) {
                     addError("unknown matcher: "+matcherName);
@@ -402,13 +402,13 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
     }   
     
     private void addDependencyArtifact(Attributes attributes, boolean includes) {
-        String name = attributes.getValue("name");
+        String name = _ivy.substitute(attributes.getValue("name"));
         name = name == null ? PatternMatcher.ANY_EXPRESSION : name;
-        String type = attributes.getValue("type");
+        String type = _ivy.substitute(attributes.getValue("type"));
         type = type == null ? PatternMatcher.ANY_EXPRESSION : type;
-        String ext = attributes.getValue("ext");
+        String ext = _ivy.substitute(attributes.getValue("ext"));
         ext = ext != null?ext:type;
-        String matcherName = attributes.getValue("matcher");
+        String matcherName = _ivy.substitute(attributes.getValue("matcher"));
         PatternMatcher matcher = matcherName == null ? _defaultMatcher : _ivy.getMatcher(matcherName);
         if (matcher == null) {
             addError("unknown matcher "+matcherName);
@@ -417,14 +417,14 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
         if (includes) {
             _dad = new DefaultDependencyArtifactDescriptor(_dd, name, type, ext, includes, matcher);
         } else {
-            String org = attributes.getValue("org");
+            String org = _ivy.substitute(attributes.getValue("org"));
             org = org == null ? PatternMatcher.ANY_EXPRESSION : org;
-            String module = attributes.getValue("module");
+            String module = _ivy.substitute(attributes.getValue("module"));
             module = module == null ? PatternMatcher.ANY_EXPRESSION : module;
             ArtifactId aid = new ArtifactId(new ModuleId(org, module), name, type, ext);
             _dad = new DefaultDependencyArtifactDescriptor(_dd, aid, includes, matcher);
         }
-        String confs = attributes.getValue("conf");
+        String confs = _ivy.substitute(attributes.getValue("conf"));
         // only add confs if they are specified. if they aren't, endElement will handle this
         // only if there are no conf defined in sub elements
         if (confs != null && confs.length() > 0) {
