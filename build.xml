@@ -64,6 +64,9 @@
   		</copy>
   		<jar 	destfile="${artifacts.build.dir}/ivy.jar"
 				basedir="${classes.build.dir}"/>
+  		<jar 	destfile="${artifacts.build.dir}/ivy-core.jar"
+				basedir="${classes.build.dir}"
+  				excludes="fr/jayasoft/ivy/ant/*"/>
 	</target>
 	
 
