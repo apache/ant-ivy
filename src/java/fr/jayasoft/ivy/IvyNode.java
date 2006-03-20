@@ -231,8 +231,8 @@ public class IvyNode {
     private Collection _confsToFetch = new HashSet();
     private Collection _fetchedConfigurations = new HashSet();
 
-    // set only when node has been built from DependencyDescriptor
-    private DependencyDescriptor _dd;
+    // set only when node has been built or updated from a DependencyDescriptor
+    private Map _dds = new HashMap(); // Map(IvyNode parent -> DependencyDescriptor)
 
     // Set when data has been loaded only
     private ModuleDescriptor _md;
@@ -256,9 +256,9 @@ public class IvyNode {
     private Collection _loadedRootModuleConfs = new HashSet();
 
     
-    public IvyNode(ResolveData data, DependencyDescriptor dd) {
+    public IvyNode(ResolveData data, IvyNode parent, DependencyDescriptor dd) {
         _id = dd.getDependencyRevisionId();
-        _dd = dd;
+        _dds.put(parent, dd);
         _isRoot = false;
 
         init(data, true);
@@ -586,7 +586,7 @@ public class IvyNode {
                 }
                 try {
                     Message.debug("\tusing "+resolver+" to resolve "+getId());
-                    _module = resolver.getDependency(_dd, _data);
+                    _module = resolver.getDependency(getDependencyDescriptor(getParent()), _data);
                     if (_module != null) {
                         _data.getIvy().saveResolver(_data.getCache(), _module.getDescriptor(), resolver.getName());
                         if (_data.getIvy().logModuleWhenFound()) {
@@ -612,8 +612,9 @@ public class IvyNode {
                                 resolved.markSelected(_rootModuleConf);
                                 resolved.updateDataFrom(this, _rootModuleConf);
                                 resolved.loadData(conf, shouldBePublic);
-                                if (_dd != null) {
-                                    resolved.addDependencyArtifactsIncludes(_rootModuleConf, _dd.getDependencyArtifactsIncludes(getParentConf()));
+                                DependencyDescriptor dd = getDependencyDescriptor(getParent());
+                                if (dd != null) {
+                                    resolved.addDependencyArtifactsIncludes(_rootModuleConf, dd.getDependencyArtifactsIncludes(getParentConf()));
                                 }
                                 _data.register(getId(), resolved); // this actually discards the node
                                 return true;
@@ -663,8 +664,9 @@ public class IvyNode {
         if (!handleConfiguration(loaded, conf, shouldBePublic)) {
             return false;
         }
-        if (_dd != null) {
-            addDependencyArtifactsIncludes(_rootModuleConf, _dd.getDependencyArtifactsIncludes(getParentConf()));
+        DependencyDescriptor dd = getDependencyDescriptor(getParent());
+        if (dd != null) {
+            addDependencyArtifactsIncludes(_rootModuleConf, dd.getDependencyArtifactsIncludes(getParentConf()));
         }
         return loaded;
         
@@ -771,10 +773,13 @@ public class IvyNode {
             }
             IvyNode depNode = _data.getNode(dd.getDependencyRevisionId());
             if (depNode == null) {
-                depNode = new IvyNode(_data, dd);
-            } else if (depNode.hasProblem()) {
-                // dependency already tried to be resolved, but unsuccessfully
-                // nothing special to do
+                depNode = new IvyNode(_data, this, dd);
+            } else {
+                depNode.addDependencyDescriptor(this, dd);
+                if (depNode.hasProblem()) {
+                    // dependency already tried to be resolved, but unsuccessfully
+                    // nothing special to do
+                }
                 
             }
             Collection confs = Arrays.asList(resolveSpecialConfigurations(dependencyConfigurations, depNode));
@@ -796,6 +801,10 @@ public class IvyNode {
             }
         }
         return dependencies;
+    }
+
+    private void addDependencyDescriptor(IvyNode parent, DependencyDescriptor dd) {
+        _dds.put(parent, dd);
     }
 
     private boolean isDependencyModuleExcluded(ModuleRevisionId dependencyRevisionId, String conf) {
@@ -913,7 +922,8 @@ public class IvyNode {
     }
     
     private boolean canExclude(String rootModuleConf) {
-        if (_dd != null && _dd.canExclude()) {
+        DependencyDescriptor dd = getDependencyDescriptor(getParent());
+        if (dd != null && dd.canExclude()) {
             return true;
         }
         Caller[] callers = getCallers(rootModuleConf);
@@ -1237,8 +1247,8 @@ public class IvyNode {
         return 0;
     }
 
-    public DependencyDescriptor getDependencyDescriptor() {
-        return _dd;
+    public DependencyDescriptor getDependencyDescriptor(IvyNode parent) {
+        return (DependencyDescriptor)_dds.get(parent);
     }
 
     public boolean hasProblem() {

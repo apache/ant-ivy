@@ -874,6 +874,88 @@ public class ResolveTest extends TestCase {
         assertFalse(_ivy.getArchiveFileInCache(_cache, "org1", "mod1.2", "2.1", "mod1.2", "jar", "jar").exists());
     }
     
+    public void testResolveForceAfterConflictSolved() throws Exception {
+        // IVY-193
+        // mod4.1 v 4.9 depends on 
+        //   - mod3.2 v 1.1 which depends on mod1.2 v 2.0
+        //   - mod3.1 v 1.1 which depends on mod1.2 v 2.1
+        //   - mod1.2 v 2.0 and forces it
+        ResolveReport report = _ivy.resolve(new File("test/repositories/2/mod4.1/ivy-4.9.xml").toURL(),
+                null, new String[] {"*"}, _cache, null, true);
+        assertNotNull(report);
+        ModuleDescriptor md = report.getModuleDescriptor();
+        assertNotNull(md);
+        ModuleRevisionId mrid = ModuleRevisionId.newInstance("org4", "mod4.1", "4.9");
+        assertEquals(mrid, md.getModuleRevisionId());
+        
+        assertTrue(_ivy.getResolvedIvyFileInCache(_cache, mrid).exists());
+        
+        // dependencies
+        assertTrue(_ivy.getIvyFileInCache(_cache, ModuleRevisionId.newInstance("org1", "mod1.2", "2.0")).exists());
+        assertTrue(_ivy.getArchiveFileInCache(_cache, "org1", "mod1.2", "2.0", "mod1.2", "jar", "jar").exists());
+
+        assertFalse(_ivy.getArchiveFileInCache(_cache, "org1", "mod1.2", "2.1", "mod1.2", "jar", "jar").exists());
+    }
+    
+    public void testResolveForceAfterDependencyExist() throws Exception {
+        // IVY-193
+        // mod4.1 v 4.10 depends on 
+        //   - mod3.1 v 1.0.1 which depends on mod1.2 v 2.0 and forces it
+        //   - mod3.2 v 1.2 which depends on mod1.2 v 2.1 and on mod3.1 v1.0.1
+        ResolveReport report = _ivy.resolve(new File("test/repositories/2/mod4.1/ivy-4.10.xml").toURL(),
+                null, new String[] {"*"}, _cache, null, true);
+        assertNotNull(report);
+        ModuleDescriptor md = report.getModuleDescriptor();
+        
+        // dependencies
+        assertFalse(_ivy.getArchiveFileInCache(_cache, "org1", "mod1.2", "2.0", "mod1.2", "jar", "jar").exists());
+
+        assertTrue(_ivy.getIvyFileInCache(_cache, ModuleRevisionId.newInstance("org1", "mod1.2", "2.1")).exists());
+        assertTrue(_ivy.getArchiveFileInCache(_cache, "org1", "mod1.2", "2.1", "mod1.2", "jar", "jar").exists());
+    }
+    
+    public void testResolveForceInDepOnly() throws Exception {
+        // IVY-193
+        // mod4.1 v 4.11 depends on 
+        //   - mod1.2 v 2.0
+        //   - mod3.2 v 1.3 which depends on 
+        //          - mod3.1 v1.1 which depends on
+        //                  - mod1.2 v 2.1
+        //          - mod1.2 v 1.0 and forces it 
+        ResolveReport report = _ivy.resolve(new File("test/repositories/2/mod4.1/ivy-4.11.xml").toURL(),
+                null, new String[] {"*"}, _cache, null, true);
+        assertNotNull(report);
+        ModuleDescriptor md = report.getModuleDescriptor();
+        
+        // dependencies
+        assertTrue(_ivy.getIvyFileInCache(_cache, ModuleRevisionId.newInstance("org1", "mod1.2", "2.0")).exists());
+        assertTrue(_ivy.getArchiveFileInCache(_cache, "org1", "mod1.2", "2.0", "mod1.2", "jar", "jar").exists());
+
+        assertFalse(_ivy.getArchiveFileInCache(_cache, "org1", "mod1.2", "2.1", "mod1.2", "jar", "jar").exists());
+        assertFalse(_ivy.getArchiveFileInCache(_cache, "org1", "mod1.2", "1.0", "mod1.2", "jar", "jar").exists());
+    }
+    
+    public void testResolveForceInDepOnly2() throws Exception {
+        // IVY-193
+        // mod4.1 v 4.12 depends on 
+        //   - mod3.1 v1.0 which depends on
+        //          - mod1.2 v 2.0
+        //   - mod3.2 v 1.4 which depends on 
+        //          - mod1.2 v 2.0 and forces it 
+        //          - mod3.1 v1.1 which depends on
+        //                  - mod1.2 v 2.1
+        ResolveReport report = _ivy.resolve(new File("test/repositories/2/mod4.1/ivy-4.12.xml").toURL(),
+                null, new String[] {"*"}, _cache, null, true);
+        assertNotNull(report);
+        ModuleDescriptor md = report.getModuleDescriptor();
+        
+        // dependencies
+        assertTrue(_ivy.getIvyFileInCache(_cache, ModuleRevisionId.newInstance("org1", "mod1.2", "2.0")).exists());
+        assertTrue(_ivy.getArchiveFileInCache(_cache, "org1", "mod1.2", "2.0", "mod1.2", "jar", "jar").exists());
+
+        assertFalse(_ivy.getArchiveFileInCache(_cache, "org1", "mod1.2", "2.1", "mod1.2", "jar", "jar").exists());
+    }
+    
     public void testResolveForceWithDynamicRevisions() throws Exception {
         // mod4.1 v 4.5 depends on 
         //   - mod1.2 v 1+ and forces it

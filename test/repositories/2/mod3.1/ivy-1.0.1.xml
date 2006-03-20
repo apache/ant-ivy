@@ -1,0 +1,11 @@
+<ivy-module version="1.0">
+	<info organisation="org3"
+	       module="mod3.1"
+	       revision="1.0.1"
+	       status="integration"
+	       publication="20041101110000"
+	/>
+	<dependencies>
+		<dependency org="org1" name="mod1.2" rev="2.0" force="true"/>
+	</dependencies>
+</ivy-module>

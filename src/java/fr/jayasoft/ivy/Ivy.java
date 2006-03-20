@@ -1071,7 +1071,8 @@ public class Ivy implements TransferListener {
             fetchDependencies(node, extendedConfs[i], false);
         }
         
-        if ((node.getDependencyDescriptor() == null || node.getDependencyDescriptor().isTransitive())) {
+        DependencyDescriptor dd = node.getDependencyDescriptor(node.getParent());
+        if ((dd == null || dd.isTransitive())) {
             Collection dependencies = node.getDependencies(conf, true);
             for (Iterator iter = dependencies.iterator(); iter.hasNext();) {
                 IvyNode dep = (IvyNode)iter.next();
