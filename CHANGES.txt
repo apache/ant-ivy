@@ -1,3 +1,5 @@
+- FIX: POM files that reference to the parent artifact download fails (IVY-195) (thanks to Tat Leung)
+
    version 1.3 - 2006-03-17
 ===============================
 This version is the same as 1.3-RC3 promoted to release status.

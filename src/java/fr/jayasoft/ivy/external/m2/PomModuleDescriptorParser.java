@@ -175,7 +175,7 @@ public class PomModuleDescriptorParser extends AbstractModuleDescriptorParser {
             if (_md.getModuleRevisionId() == null || context.startsWith("project/dependencies/dependency")) {
                 if (_organisation == null && context.endsWith("groupId")) {
                     _organisation = txt;
-                } else if (_module == null && context.endsWith("artifactId")) {
+                } else if (_module == null && context.endsWith("artifactId") && !context.equals("project/parent/artifactId")) {
                     _module = txt;
                 } else if (_revision == null && context.endsWith("version")) {
                     _revision = txt;
