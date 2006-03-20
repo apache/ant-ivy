@@ -109,7 +109,7 @@ public class IvyConfigure extends IvyTask {
             }
             setIvyInstance(ivy);
         } catch (Exception ex) {
-            throw new BuildException("impossible to configure ivy with given file: "+ex.getMessage(), ex);
+            throw new BuildException("impossible to configure ivy with given "+(_file != null ? "file: "+_file : "url :"+_url)+" :"+ex.getMessage(), ex);
         }
     }
 
