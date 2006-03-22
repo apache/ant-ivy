@@ -668,6 +668,24 @@ public class ResolveTest extends TestCase {
         assertTrue(!_ivy.getArchiveFileInCache(_cache, "org1", "mod1.2", "2.0", "mod1.2", "jar", "jar").exists());
     }
     
+    public void testTransitiveEviction2() throws Exception {
+        // IVY-199
+        // mod4.1 v 4.13 depends on 
+        //   - mod3.2 v 1.2.1 which depends on 
+        //         - mod3.1 v 1.0 which depends on mod1.2 v 2.0
+        //         - mod1.2 v 2.1
+        ResolveReport report = _ivy.resolve(new File("test/repositories/2/mod4.1/ivy-4.13.xml").toURL(),
+                null, new String[] {"*"}, _cache, null, true);
+        assertNotNull(report);
+        ModuleDescriptor md = report.getModuleDescriptor();
+        
+        // dependencies
+        assertTrue(_ivy.getIvyFileInCache(_cache, ModuleRevisionId.newInstance("org1", "mod1.2", "2.1")).exists());
+        assertTrue(_ivy.getArchiveFileInCache(_cache, "org1", "mod1.2", "2.1", "mod1.2", "jar", "jar").exists());
+
+        assertFalse(_ivy.getArchiveFileInCache(_cache, "org1", "mod1.2", "2.0", "mod1.2", "jar", "jar").exists());
+    }
+    
     public void testResolveConflictInConf() throws Exception {
         // conflicts in separate confs are not conflicts
         

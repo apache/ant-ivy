@@ -1170,10 +1170,8 @@ public class Ivy implements TransferListener {
                 }
             }
             
-            // it's time to update parent resolved and evicted with what was found...
-            // if they have not been recomputed, it does not change anything
-            parent.setResolvedNodes(node.getModuleId(), node.getRootModuleConf(), resolved); 
-
+            // it's time to update parent resolved and evicted with what was found 
+            
             Collection evicted = new HashSet(parent.getEvictedNodes(node.getModuleId(), node.getRootModuleConf()));
             evicted.removeAll(resolved);
             evicted.addAll(toevict);
@@ -1185,6 +1183,19 @@ public class Ivy implements TransferListener {
             if (debugConflictResolution()) {
                 Message.debug("evicting "+node+" by "+node.getEvictedData(node.getRootModuleConf()));
             }
+
+            // if resolved changed we have to go up in the graph
+            Collection prevResolved = parent.getResolvedNodes(node.getModuleId(), node.getRootModuleConf());
+            if (!prevResolved.equals(resolved)) {                
+                parent.setResolvedNodes(node.getModuleId(), node.getRootModuleConf(), resolved);
+                for (Iterator iter = resolved.iterator(); iter.hasNext();) {
+                    IvyNode sel = (IvyNode)iter.next();
+                    if (!prevResolved.contains(sel)) {
+                        resolveConflict(sel, parent.getParent(), toevict);
+                    }
+                }
+            }
+
         }
     }
 
