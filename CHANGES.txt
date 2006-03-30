@@ -1,3 +1,4 @@
+- FIX: configuration http url include doesn't work with commons http client (IVY-203)
 - FIX: problem with conflict resolution in transitive dependencies (IVY-199)
 - FIX: pb with force when it comes after a conflict has already been solved (IVY-193)
 - FIX: POM files that reference to the parent artifact download fails (IVY-195) (thanks to Tat Leung)

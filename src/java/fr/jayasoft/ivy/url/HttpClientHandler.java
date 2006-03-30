@@ -21,7 +21,6 @@ import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.HttpMethodBase;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.UsernamePasswordCredentials;
-import org.apache.commons.httpclient.cookie.CookiePolicy;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.HeadMethod;
 
@@ -48,7 +47,6 @@ public class HttpClientHandler extends AbstractURLHandler {
     private String _proxyUserName = null;
     private String _proxyPasswd = null;
     
-    private HttpClient _client;
     private HttpClientHelper _httpClientHelper;
     
     public HttpClientHandler() {
@@ -95,7 +93,6 @@ public class HttpClientHandler extends AbstractURLHandler {
     
     public InputStream openStream(URL url) throws IOException {
         GetMethod get = doGet(url);
-        final InputStream is = get.getResponseBodyAsStream();
         return new GETInputStream(get);
     }
     
@@ -204,24 +201,22 @@ public class HttpClientHandler extends AbstractURLHandler {
     }
 
     private HttpClient getClient() {
-        if(_client == null){
-        	_client = new HttpClient();
-	        if (useProxy()) {
-	            _client.getHostConfiguration().setProxy(_proxyHost, _proxyPort);
-	            if (useProxyAuthentication()) {
-	                _client.getState().setProxyCredentials(_proxyRealm, _proxyHost,
-	                    new UsernamePasswordCredentials(_proxyUserName, _proxyPasswd));
-	            }
-	        }
-	        if (useAuthentication()) {
-		        _client.getState().setCredentials(
-		            _realm,
-		            _host,
-		            new UsernamePasswordCredentials(_userName, _passwd)
-		        );
-	        }
+        HttpClient client = new HttpClient();
+        if (useProxy()) {
+            client.getHostConfiguration().setProxy(_proxyHost, _proxyPort);
+            if (useProxyAuthentication()) {
+                client.getState().setProxyCredentials(_proxyRealm, _proxyHost,
+                    new UsernamePasswordCredentials(_proxyUserName, _proxyPasswd));
+            }
         }
-        return _client;
+        if (useAuthentication()) {
+	        client.getState().setCredentials(
+	            _realm,
+	            _host,
+	            new UsernamePasswordCredentials(_userName, _passwd)
+	        );
+        }
+        return client;
     }
 
     private boolean useProxy() {

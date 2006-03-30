@@ -6,6 +6,7 @@
 package fr.jayasoft.ivy.xml;
 
 import java.io.File;
+import java.net.URL;
 import java.util.List;
 
 import junit.framework.TestCase;
@@ -18,7 +19,11 @@ import fr.jayasoft.ivy.latest.LatestTimeStrategy;
 import fr.jayasoft.ivy.parser.ModuleDescriptorParserRegistry;
 import fr.jayasoft.ivy.resolver.ChainResolver;
 import fr.jayasoft.ivy.resolver.FileSystemResolver;
+import fr.jayasoft.ivy.resolver.IvyRepResolver;
 import fr.jayasoft.ivy.resolver.MockResolver;
+import fr.jayasoft.ivy.url.URLHandler;
+import fr.jayasoft.ivy.url.URLHandlerDispatcher;
+import fr.jayasoft.ivy.url.URLHandlerRegistry;
 
 /**
  * TODO write javadoc
@@ -217,10 +222,29 @@ public class XmlIvyConfigurationParserTest extends TestCase {
         assertEquals("included/myrep/[organisation]/[module]/[type]s/[artifact]-[revision].[ext]", ivyPatterns.get(0));
     }
     
+    public void testIncludeHttpUrl() throws Exception {
+        configureURLHandler();
+        Ivy ivy = new Ivy();
+        XmlIvyConfigurationParser parser = new XmlIvyConfigurationParser(ivy);
+        parser.parse(new URL("http://www.jayasoft.org/misc/ivy/test/ivyconf-include-http-url.xml"));
+        
+        DependencyResolver resolver = ivy.getResolver("ivyrep");
+        assertNotNull(resolver);
+        assertTrue(resolver instanceof IvyRepResolver);
+    }
+    
     public void testParser() throws Exception {
         Ivy ivy = new Ivy();
         XmlIvyConfigurationParser parser = new XmlIvyConfigurationParser(ivy);
         parser.parse(XmlIvyConfigurationParserTest.class.getResource("ivyconf-parser.xml"));
         assertEquals("fr.jayasoft.ivy.parser.ModuleDescriptorParserRegistryTest$MyParser", ModuleDescriptorParserRegistry.getInstance().getParsers()[0].getClass().getName());
+    }
+    
+    private void configureURLHandler() {
+        URLHandlerDispatcher dispatcher = new URLHandlerDispatcher();
+        URLHandler httpHandler = URLHandlerRegistry.getHttp(null, null, null, null);
+        dispatcher.setDownloader("http", httpHandler);
+        dispatcher.setDownloader("https", httpHandler);
+        URLHandlerRegistry.setDefault(dispatcher);
     }
 }
