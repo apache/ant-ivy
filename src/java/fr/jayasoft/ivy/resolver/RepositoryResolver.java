@@ -137,7 +137,20 @@ public class RepositoryResolver extends AbstractResourceResolver {
         } else {
             destPattern =  (String)getArtifactPatterns().get(0);
         }
-        String dest = IvyPatternHelper.substitute(destPattern, artifact);
+        // Check for m2 compatibility
+        ModuleRevisionId mrid = artifact.getModuleRevisionId();
+        if (isM2compatible()) {
+            mrid = convertM2IdForResourceSearch(mrid);
+        }
+        
+        String dest = IvyPatternHelper.substitute(destPattern,
+                mrid.getOrganisation(),
+                mrid.getName(),
+                mrid.getRevision(),
+                artifact.getName(),
+                artifact.getType(),
+                artifact.getExt()); 
+        
         _repository.put(src, dest, overwrite);
         Message.info("\tpublished "+artifact.getName()+" to "+dest);
     }
