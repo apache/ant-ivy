@@ -607,6 +607,11 @@ public class IvyNode {
                             if (resolved != null) {
                                 // exact revision has already been resolved
                                 // => update it and discard this node
+                                _md = _module.getDescriptor(); // needed for handleConfiguration
+                                if (!handleConfiguration(loaded, conf, shouldBePublic)) {
+                                    return false;
+                                }
+                                
                                 resolved._downloaded |= _module.isDownloaded();
                                 resolved._searched |= _module.isSearched();
                                 resolved.markSelected(_rootModuleConf);
@@ -617,6 +622,13 @@ public class IvyNode {
                                     resolved.addDependencyArtifactsIncludes(_rootModuleConf, dd.getDependencyArtifactsIncludes(getParentConf()));
                                 }
                                 _data.register(getId(), resolved); // this actually discards the node
+
+                                if (_data.getIvy().logResolvedRevision()) {
+                                    Message.info("\t["+_module.getId().getRevision()+"] "+getId());
+                                } else {
+                                    Message.verbose("\t["+_module.getId().getRevision()+"] "+getId());
+                                }
+                                
                                 return true;
                             }
                         }
@@ -681,8 +693,8 @@ public class IvyNode {
     }
 
     private boolean handleConfiguration(boolean loaded, String conf, boolean shouldBePublic) {
-        String[] confs = getRealConfs(conf);
         if (_md != null) {
+            String[] confs = getRealConfs(conf);
             for (int i = 0; i < confs.length; i++) {
                 Configuration c = _md.getConfiguration(confs[i]);
                 if (c == null) {

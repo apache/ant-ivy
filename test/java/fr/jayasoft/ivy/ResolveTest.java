@@ -290,6 +290,30 @@ public class ResolveTest extends TestCase {
         assertTrue(_ivy.getArchiveFileInCache(_cache, "org1", "mod1.2", "2.0", "mod1.2", "jar", "jar").exists());
     }
 
+    public void testResolveMultipleConfsWithLatest() throws Exception {
+        // Test case for IVY-188
+        //
+        // mod6.2  has two confs compile and run
+        //    depends on mod6.1     in conf (compile->default)
+        //    depends on mod1.2 latest (which is 2.2) in conf (run->default)
+        // mod6.1 
+        //    depends on mod1.2 2.2
+        ResolveReport report = _ivy.resolve(new File("test/repositories/1/org6/mod6.2/ivys/ivy-0.6.xml").toURL(),
+                null, new String[] {"compile", "run"}, _cache, null, true);
+        assertNotNull(report);
+        assertFalse(report.hasError());
+
+        ConfigurationResolveReport crr = report.getConfigurationReport("compile");
+        assertNotNull(crr);
+        assertEquals(2, crr.getArtifactsNumber());
+        crr = report.getConfigurationReport("run");
+        assertNotNull(crr);
+        assertEquals(1, crr.getArtifactsNumber());
+
+        assertTrue(_ivy.getIvyFileInCache(_cache, ModuleRevisionId.newInstance("org1", "mod1.2", "2.2")).exists());
+        assertTrue(_ivy.getArchiveFileInCache(_cache, "org1", "mod1.2", "2.2", "mod1.2", "jar", "jar").exists());
+    }
+
     public void testResolveMultipleConfsWithConflicts() throws Exception {
         // Test case for IVY-173
         //
