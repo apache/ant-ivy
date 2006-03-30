@@ -57,6 +57,21 @@ public class IvyResolveTest extends TestCase {
         assertTrue(getIvy().getArchiveFileInCache(_cache, "org1", "mod1.2", "2.0", "mod1.2", "jar", "jar").exists());
     }
 
+    public void testWithSlashes() throws Exception {
+        _resolve.setFile(new File("test/java/fr/jayasoft/ivy/ivy-198.xml"));
+        _resolve.execute();
+        
+        File resolvedIvyFileInCache = getIvy().getResolvedIvyFileInCache(_cache, ModuleRevisionId.newInstance("myorg/mydep", "system/module", "1.0"));
+        assertTrue(resolvedIvyFileInCache.exists());
+        
+        // dependencies
+        assertTrue(getIvy().getIvyFileInCache(_cache, ModuleRevisionId.newInstance("org1", "mod1.2", "2.0")).exists());
+        assertTrue(getIvy().getArchiveFileInCache(_cache, "org1", "mod1.2", "2.0", "mod1.2", "jar", "jar").exists());
+
+        assertTrue(getIvy().getIvyFileInCache(_cache, ModuleRevisionId.newInstance("yourorg/yourdep", "yoursys/yourmod", "1.0")).exists());
+        assertTrue(getIvy().getArchiveFileInCache(_cache, "yourorg/yourdep", "yoursys/yourmod", "1.0", "yourmod", "jar", "jar").exists());
+    }
+
     public void testDepsChanged() throws Exception {
         _resolve.setFile(new File("test/java/fr/jayasoft/ivy/ant/ivy-simple.xml"));
         _resolve.execute();

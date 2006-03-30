@@ -1,0 +1,10 @@
+<ivy-module version="1.0">
+	<info organisation="yourorg/yourdep"
+	       module="yoursys/yourmod"
+	       revision="1.0"
+	       status="integration"
+	/>
+	<publications>
+		<artifact name="yourmod" type="jar" conf="default"/>
+	</publications>
+</ivy-module>

@@ -82,6 +82,27 @@ public class ResolveTest extends TestCase {
         assertTrue(_ivy.getArchiveFileInCache(_cache, "org1", "mod1.2", "2.0", "mod1.2", "jar", "jar").exists());
     }
 
+    public void testResolveWithSlashes() throws Exception {
+        // test case for IVY-198
+        // module depends on mod1.2
+        ResolveReport report = _ivy.resolve(ResolveTest.class.getResource("ivy-198.xml"),
+                null, new String[] {"*"}, _cache, null, true);
+        assertNotNull(report);
+        ModuleDescriptor md = report.getModuleDescriptor();
+        assertNotNull(md);
+        ModuleRevisionId mrid = ModuleRevisionId.newInstance("myorg/mydep", "system/module", "1.0");
+        assertEquals(mrid, md.getModuleRevisionId());
+        
+        assertTrue(_ivy.getResolvedIvyFileInCache(_cache, mrid).exists());
+        
+        // dependencies
+        assertTrue(_ivy.getIvyFileInCache(_cache, ModuleRevisionId.newInstance("org1", "mod1.2", "2.0")).exists());
+        assertTrue(_ivy.getArchiveFileInCache(_cache, "org1", "mod1.2", "2.0", "mod1.2", "jar", "jar").exists());
+
+        assertTrue(_ivy.getIvyFileInCache(_cache, ModuleRevisionId.newInstance("yourorg/yourdep", "yoursys/yourmod", "1.0")).exists());
+        assertTrue(_ivy.getArchiveFileInCache(_cache, "yourorg/yourdep", "yoursys/yourmod", "1.0", "yourmod", "jar", "jar").exists());
+    }
+
     public void testFromCache() throws Exception {
         // mod1.1 depends on mod1.2
         

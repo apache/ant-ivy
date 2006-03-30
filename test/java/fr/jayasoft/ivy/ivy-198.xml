@@ -1,0 +1,7 @@
+<ivy-module version="1.0">
+    <info organisation="myorg/mydep" module="system/module" revision="1.0"/>
+    <dependencies>
+		<dependency org="yourorg/yourdep" name="yoursys/yourmod" rev="1.0"/>
+		<dependency org="org1" name="mod1.2" rev="2.0"/>
+    </dependencies>
+</ivy-module>
