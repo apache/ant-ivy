@@ -3,6 +3,7 @@
 - FIX: problem with conflict resolution in transitive dependencies (IVY-199)
 - FIX: pb with force when it comes after a conflict has already been solved (IVY-193)
 - FIX: POM files that reference to the parent artifact download fails (IVY-195) (thanks to Tat Leung)
+- FIX: artifactproperty does not set the [conf] token in the pattern to the correct value. It is always set to 'default'. (IVY-123) (thanks to Peter Oxenham)
 
    version 1.3 - 2006-03-17
 ===============================

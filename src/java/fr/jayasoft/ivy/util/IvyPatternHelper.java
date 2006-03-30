@@ -55,6 +55,9 @@ public class IvyPatternHelper {
                 null);
     }
     public static String substitute(String pattern, Artifact artifact) {
+        return substitute(pattern, artifact, null);
+    }
+    public static String substitute(String pattern, Artifact artifact, String conf) {
         return substitute(pattern, 
                 artifact.getModuleRevisionId().getOrganisation(),
                 artifact.getModuleRevisionId().getName(),
@@ -62,7 +65,7 @@ public class IvyPatternHelper {
                 artifact.getName(),
                 artifact.getType(),
                 artifact.getExt(),
-                null);
+                conf);
     }
     
     public static String substitute(String pattern, String org, String module, String revision, String artifact, String type, String ext) {

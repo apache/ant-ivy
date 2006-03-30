@@ -7,10 +7,6 @@
 package fr.jayasoft.ivy.ant;
 
 import java.io.File;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Iterator;
 
 import org.apache.tools.ant.BuildException;
 
@@ -106,16 +102,14 @@ public class IvyArtifactProperty extends IvyTask {
         try {
             XmlReportParser parser = new XmlReportParser();
             String[] confs = splitConfs(_conf);
-            Collection all = new HashSet();
             for (int i = 0; i < confs.length; i++) {
                 Artifact[] artifacts = parser.getArtifacts(new ModuleId(_organisation, _module), confs[i], _cache);
-                all.addAll(Arrays.asList(artifacts));
-            }
-            for (Iterator iter = all.iterator(); iter.hasNext();) {
-                Artifact artifact = (Artifact)iter.next();
-                String name = IvyPatternHelper.substitute(ivy.substitute(getName()), artifact);
-                String value = IvyPatternHelper.substitute(ivy.substitute(getValue()), artifact);
-                getProject().setProperty(name, value);
+                for (int j = 0; j < artifacts.length; j++) {
+                    Artifact artifact = artifacts[j];
+                    String name = IvyPatternHelper.substitute(ivy.substitute(getName()), artifact, confs[i]);
+                    String value = IvyPatternHelper.substitute(ivy.substitute(getValue()), artifact, confs[i]);
+                    getProject().setProperty(name, value);
+                }
             }
         } catch (Exception ex) {
             throw new BuildException("impossible to add artifact properties: "+ex.getMessage(), ex);
