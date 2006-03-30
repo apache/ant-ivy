@@ -998,7 +998,7 @@ public class IvyNode {
         discardConf(_rootModuleConf, conf);
     }
     
-    private void discardConf(String rootModuleConf, String conf) {
+    public void discardConf(String rootModuleConf, String conf) {
         Set depConfs = (Set) _rootModuleConfs.get(rootModuleConf);
         if (depConfs == null) {
             depConfs = new HashSet();
