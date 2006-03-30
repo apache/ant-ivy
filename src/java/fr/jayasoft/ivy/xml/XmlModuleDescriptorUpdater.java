@@ -217,6 +217,7 @@ public class XmlModuleDescriptorUpdater {
                 }
 
                 public void endDocument() throws SAXException {
+                    out.print(LINE_SEPARATOR);
                     out.flush();
                     out.close();
                 }
