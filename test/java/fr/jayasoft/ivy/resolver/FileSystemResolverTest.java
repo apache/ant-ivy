@@ -441,7 +441,7 @@ public class FileSystemResolverTest extends TestCase {
         resolver.addArtifactPattern("test/repositories/1/[organisation]/[module]/[type]s/[artifact]-[revision].[ext]");
 
         OrganisationEntry[] orgs = resolver.listOrganisations();
-        ResolverTestHelper.assertOrganisationEntries(resolver, new String[] {"org1", "org2", "org6", "org9", "orgfailure"}, orgs);
+        ResolverTestHelper.assertOrganisationEntries(resolver, new String[] {"org1", "org2", "org6", "org9", "orgfailure", "yourorg"}, orgs);
         
         OrganisationEntry org = ResolverTestHelper.getEntry(orgs, "org1");
         ModuleEntry[] mods = resolver.listModules(org);
