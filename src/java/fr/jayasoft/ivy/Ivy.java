@@ -1516,13 +1516,13 @@ public class Ivy implements TransferListener {
      * If such a file does not exist for any conf (resolve has not been called before ?)
      * then an IllegalStateException is thrown and nothing is copied.
      */
-    public void retrieve(ModuleId moduleId, String[] confs, final File cache, String destFilePattern) {
-        retrieve(moduleId, confs, cache, destFilePattern, null);
+    public int retrieve(ModuleId moduleId, String[] confs, final File cache, String destFilePattern) {
+        return retrieve(moduleId, confs, cache, destFilePattern, null);
     }
     /**
      * If destIvyPattern is null no ivy files will be copied.
      */
-    public void retrieve(ModuleId moduleId, String[] confs, final File cache, String destFilePattern, String destIvyPattern) {
+    public int retrieve(ModuleId moduleId, String[] confs, final File cache, String destFilePattern, String destIvyPattern) {
         Message.info(":: retrieving :: "+moduleId);
         Message.info("\tconfs: "+Arrays.asList(confs));
         long start = System.currentTimeMillis();
@@ -1553,6 +1553,8 @@ public class Ivy implements TransferListener {
             }
             Message.info("\t"+targetsCopied+" artifacts copied, "+targetsUpToDate+" already retrieved");
             Message.verbose("\tretrieve done ("+(System.currentTimeMillis()-start)+"ms)");
+            
+            return targetsCopied;
         } catch (Exception ex) {
             IllegalStateException ise = new IllegalStateException("problem during retrieve of "+moduleId);
             ise.initCause(ex);

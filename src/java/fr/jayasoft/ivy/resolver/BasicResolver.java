@@ -133,9 +133,12 @@ public abstract class BasicResolver extends AbstractResolver {
             return null;
         }
     	
+        boolean isChangingRevision = getChangingMatcher().matches(mrid.getRevision());        
+        boolean isChangingDependency = isChangingRevision || dd.isChanging();
+
         // if we do not have to check modified and if the revision is exact and not changing,  
         // we first search for it in cache
-        if (mrid.isExactRevision() && !isCheckmodified() && !dd.isChanging()) {
+        if (mrid.isExactRevision() && !isCheckmodified() && !isChangingDependency) {
             ResolvedModuleRevision rmr = findModuleInCache(data, mrid);
             if (rmr != null) {
                 if (rmr.getDescriptor().isDefault() && rmr.getResolver() != this && isResolved(data, mrid)) {
@@ -208,7 +211,7 @@ public abstract class BasicResolver extends AbstractResolver {
                 if (rmr.getDescriptor().isDefault() && rmr.getResolver() != this && isResolved(data, resolvedMrid)) {
                     Message.verbose("\t"+getName()+": found revision in cache: "+mrid+" (resolved by "+rmr.getResolver().getName()+"): but it's a default one, maybe we can find a better one");
                 } else {
-                    if (!isCheckmodified() && !dd.isChanging()) {
+                    if (!isCheckmodified() && !isChangingDependency) {
                         Message.verbose("\t"+getName()+": revision in cache: "+mrid);
                         return toSystem(searchedRmr(rmr));
                     }
@@ -219,7 +222,7 @@ public abstract class BasicResolver extends AbstractResolver {
                         return toSystem(searchedRmr(rmr));
                     } else {
                         Message.verbose("\t"+getName()+": revision in cache is not up to date: "+resolvedMrid);
-                        if (dd.isChanging()) {
+                        if (isChangingDependency) {
                             // ivy file has been updated, we should see if it has a new publication date
                             // to see if a new download is required (in case the dependency is a changing one)
                             cachedPublicationDate = rmr.getDescriptor().getResolvedPublicationDate();
@@ -296,7 +299,7 @@ public abstract class BasicResolver extends AbstractResolver {
                             }
                         }
                     }
-                } else if (dd.isChanging()){
+                } else if (isChangingDependency){
                     Message.verbose(dd+" is changing, but has not changed: will trust cached artifacts if any");
                 } 
             } catch (IOException ex) {

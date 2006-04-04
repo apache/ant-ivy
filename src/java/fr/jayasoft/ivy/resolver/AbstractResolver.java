@@ -16,6 +16,9 @@ import fr.jayasoft.ivy.ModuleDescriptor;
 import fr.jayasoft.ivy.ModuleRevisionId;
 import fr.jayasoft.ivy.ResolveData;
 import fr.jayasoft.ivy.ResolvedModuleRevision;
+import fr.jayasoft.ivy.matcher.AnyMatcher;
+import fr.jayasoft.ivy.matcher.Matcher;
+import fr.jayasoft.ivy.matcher.PatternMatcher;
 import fr.jayasoft.ivy.namespace.NameSpaceHelper;
 import fr.jayasoft.ivy.namespace.Namespace;
 import fr.jayasoft.ivy.report.ArtifactDownloadReport;
@@ -34,6 +37,9 @@ public abstract class AbstractResolver implements DependencyResolver, IvyAware, 
      */
     private Boolean _validate = null;
     private String _name;
+    private String _changingPattern;
+    private String _changingMatcherName = PatternMatcher.EXACT_OR_REGEXP;
+    
     private Ivy _ivy;
 
     /**
@@ -106,6 +112,8 @@ public abstract class AbstractResolver implements DependencyResolver, IvyAware, 
     }
     public void dumpConfig() {
         Message.verbose("\t"+getName()+" ["+getTypeName()+"]");
+        Message.debug("\t\tchangingPattern: "+getChangingPattern());
+        Message.debug("\t\tchangingMatcher: "+getChangingMatcherName());
     }
 
     public String getTypeName() {
@@ -216,5 +224,31 @@ public abstract class AbstractResolver implements DependencyResolver, IvyAware, 
         return data.getIvy().findModuleInCache(toSystem(mrid), data.getCache(), doValidate(data));
     }
 
+    public String getChangingMatcherName() {
+        return _changingMatcherName;
+    }
+
+    public void setChangingMatcher(String changingMatcherName) {
+        _changingMatcherName = changingMatcherName;
+    }
+
+    public String getChangingPattern() {
+        return _changingPattern;
+    }
+
+    public void setChangingPattern(String changingPattern) {
+        _changingPattern = changingPattern;
+    }
+
+    public Matcher getChangingMatcher() {
+        if (_changingPattern == null) {
+            return AnyMatcher.getInstance();
+        }
+        PatternMatcher matcher = _ivy.getMatcher(_changingMatcherName);
+        if (matcher == null) {
+            throw new IllegalStateException("unknown matcher '"+_changingMatcherName+"'. It is set as changing matcher in "+this);
+        }
+        return matcher.getMatcher(_changingPattern);
+    }
 
 }

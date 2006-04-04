@@ -95,7 +95,10 @@ public class IvyRetrieve extends IvyTask {
             throw new BuildException("no conf provided for ivy retrieve task: It can either be set explicitely via the attribute 'conf' or via 'ivy.resolved.configurations' property or a prior call to <resolve/>");
         }
         try {
-            ivy.retrieve(new ModuleId(_organisation, _module), splitConfs(_conf), _cache, _pattern, _ivypattern);
+            int targetsCopied = ivy.retrieve(new ModuleId(_organisation, _module), splitConfs(_conf), _cache, _pattern, _ivypattern);
+            boolean haveTargetsBeenCopied = targetsCopied > 0;
+            getProject().setProperty("ivy.nb.targets.copied", String.valueOf(targetsCopied));
+            getProject().setProperty("ivy.targets.copied", String.valueOf(haveTargetsBeenCopied));
         } catch (Exception ex) {
             throw new BuildException("impossible to ivy retrieve: "+ex.getMessage(), ex);
         }
