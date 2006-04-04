@@ -1,3 +1,5 @@
+- NEW: Provide Ant task for generating report about artifacts depended upon (IVY-194) (thanks to Johan Stuyts)
+
 - IMPROVE: performances improved (IVY-187) (thanks to Karl Baum)
 - IMPROVE: Change default cache artifact pattern to handle missing extension (IVY-196) (thanks to Johan Stuyts)
 

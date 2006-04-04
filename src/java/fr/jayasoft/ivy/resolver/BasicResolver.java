@@ -6,6 +6,7 @@
 package fr.jayasoft.ivy.resolver;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -20,6 +21,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
+import java.util.Properties;
 
 import fr.jayasoft.ivy.Artifact;
 import fr.jayasoft.ivy.DefaultArtifact;
@@ -287,6 +289,11 @@ public abstract class BasicResolver extends AbstractResolver {
                                 Message.debug("deleting "+artFile);
                                 artFile.delete();
                             }
+                            File originFile = data.getIvy().getOriginFileInCache(data.getCache(), toSystem(arts[j]));
+                            if (originFile.exists()) {
+                                Message.debug("deleting " + originFile);
+                                originFile.delete();
+                            }
                         }
                     }
                 } else if (dd.isChanging()){
@@ -502,8 +509,12 @@ public abstract class BasicResolver extends AbstractResolver {
                         return null;
                     }
     			    long start = System.currentTimeMillis();
-        			try {
+                    File originFile = ivy.getOriginFileInCache(cache, artifact);
+                    try {
         			    Message.info("downloading "+artifactRef.getResource()+" ...");
+                        
+                        writeOriginFile(originFile, artifactRef);
+                        
                         File tmp = ivy.getArchiveFileInCache(cache, 
                                 new DefaultArtifact(
                                         artifacts[i].getModuleRevisionId(), 
@@ -513,6 +524,7 @@ public abstract class BasicResolver extends AbstractResolver {
                                         artifacts[i].getExt()+".part"));
                         adr.setSize(get(artifactRef.getResource(), tmp));
                         if (!tmp.renameTo(archiveFile)) {
+                            originFile.delete();
                             Message.warn("\t[FAILED     ] "+artifacts[i]+" impossible to move temp file to definitive one ("+(System.currentTimeMillis()-start)+"ms)");
                             adr.setDownloadStatus(DownloadStatus.FAILED);
                         } else {
@@ -520,6 +532,7 @@ public abstract class BasicResolver extends AbstractResolver {
             				adr.setDownloadStatus(DownloadStatus.SUCCESSFUL);
                         }
         			} catch (Exception ex) {
+                        originFile.delete();
                 		Message.warn("\t[FAILED     ] "+artifacts[i]+" : "+ex.getMessage()+" ("+(System.currentTimeMillis()-start)+"ms)");
         				adr.setDownloadStatus(DownloadStatus.FAILED);
         			}
@@ -531,6 +544,21 @@ public abstract class BasicResolver extends AbstractResolver {
             ivy.fireIvyEvent(new EndDownloadEvent(this, artifacts[i], adr));
         }
     	return dr;
+    }
+
+    private void writeOriginFile(File originFile, ResolvedResource artifactRef) throws IOException {
+        Properties originProperties = new Properties();
+        originProperties.setProperty("isLocal", artifactRef.getResource().isLocal() ? "true" : "false");
+        originProperties.setProperty("name", artifactRef.getResource().getName());
+        if (originFile.getParentFile() != null) {
+            originFile.getParentFile().mkdirs();
+        }
+        FileOutputStream originOutputStream = new FileOutputStream(originFile);
+        try {
+            originProperties.store(originOutputStream, null);
+        } finally {
+            originOutputStream.close();
+        }
     }
 
     protected void clearArtifactAttempts() {

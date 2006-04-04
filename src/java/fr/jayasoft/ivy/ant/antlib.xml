@@ -15,4 +15,5 @@
 	<taskdef name="buildlist" classname="fr.jayasoft.ivy.ant.IvyBuildList"/>
 	<taskdef name="install" classname="fr.jayasoft.ivy.ant.IvyInstall"/>
 	<taskdef name="convertpom" classname="fr.jayasoft.ivy.ant.IvyConvertPom"/>
+	<taskdef name="artifactreport" classname="fr.jayasoft.ivy.ant.IvyArtifactReport"/>
 </antlib>

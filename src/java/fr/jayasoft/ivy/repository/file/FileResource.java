@@ -40,4 +40,8 @@ public class FileResource implements Resource {
     public File getFile() {
         return _file;
     }
+    
+    public boolean isLocal() {
+        return true;
+    }
 }

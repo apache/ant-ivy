@@ -66,4 +66,11 @@ public interface Resource {
      * @return <code>boolean</code> value indicating if the resource is available.
      */
     public boolean exists();
+    
+    /**
+     * Is this resource local to this host, i.e. is it on the file system?
+     *
+     * @return <code>boolean</code> value indicating if the resource is local.
+     */
+    public boolean isLocal();
 }

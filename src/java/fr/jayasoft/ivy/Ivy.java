@@ -1530,77 +1530,7 @@ public class Ivy implements TransferListener {
         destFilePattern = IvyPatternHelper.substituteVariables(destFilePattern, getVariables());
         destIvyPattern = IvyPatternHelper.substituteVariables(destIvyPattern, getVariables());
         try {
-            // find what we must retrieve where
-            final Map artifactsToCopy = new HashMap(); // Artifact source -> Set (String copyDestAbsolutePath)
-            final Map conflictsMap = new HashMap(); // String copyDestAbsolutePath -> Set (Artifact source)
-            final Map conflictsConfMap = new HashMap(); // String copyDestAbsolutePath -> Set (String conf)
-            XmlReportParser parser = new XmlReportParser();
-            for (int i = 0; i < confs.length; i++) {
-                final String conf = confs[i];
-                Collection artifacts = new ArrayList(Arrays.asList(parser.getArtifacts(moduleId, conf, cache)));
-                if (destIvyPattern != null) {
-                    ModuleRevisionId[] mrids = parser.getRealDependencyRevisionIds(moduleId, conf, cache);
-                    for (int j = 0; j < mrids.length; j++) {
-                        artifacts.add(new DefaultArtifact(mrids[j], new Date(), "ivy", "ivy", "xml"));
-                    }
-                }
-                for (Iterator iter = artifacts.iterator(); iter.hasNext();) {
-                    Artifact artifact = (Artifact)iter.next();
-                    String destPattern = "ivy".equals(artifact.getType()) ? destIvyPattern: destFilePattern;
-
-                    String destFileName = IvyPatternHelper.substitute(destPattern, artifact.getModuleRevisionId().getOrganisation(), artifact.getModuleRevisionId().getName(), artifact.getModuleRevisionId().getRevision(), artifact.getName(), artifact.getType(), artifact.getExt(), conf);
-                    
-                    Set dest = (Set)artifactsToCopy.get(artifact);
-                    if (dest == null) {
-                        dest = new HashSet();
-                        artifactsToCopy.put(artifact, dest);
-                    }
-                    String copyDest = new File(destFileName).getAbsolutePath();
-                    dest.add(copyDest);
-                    
-                    Set conflicts = (Set)conflictsMap.get(copyDest);
-                    Set conflictsConf = (Set)conflictsConfMap.get(copyDest);
-                    if (conflicts == null) {
-                        conflicts = new HashSet();
-                        conflictsMap.put(copyDest, conflicts);
-                    }
-                    if (conflictsConf == null) {
-                        conflictsConf = new HashSet();
-                        conflictsConfMap.put(copyDest, conflictsConf);
-                    }
-                    conflicts.add(artifact);
-                    conflictsConf.add(conf);                    
-                }
-            }
-            
-            // resolve conflicts if any
-            for (Iterator iter = conflictsMap.keySet().iterator(); iter.hasNext();) {
-                String copyDest = (String)iter.next();
-                Set artifacts = (Set)conflictsMap.get(copyDest);
-                Set conflictsConfs = (Set)conflictsConfMap.get(copyDest);
-                if (artifacts.size() > 1) {
-                    List artifactsList = new ArrayList(artifacts);
-                    // conflicts battle is resolved by a sort using a conflict resolving policy comparator
-                    // which consider as greater a winning artifact
-                    Collections.sort(artifactsList, getConflictResolvingPolicy());
-                    // after the sort, the winning artifact is the greatest one, i.e. the last one
-                    Message.info("\tconflict on "+copyDest+" in "+conflictsConfs+": "+((Artifact)artifactsList.get(artifactsList.size() -1)).getModuleRevisionId().getRevision()+" won");
-                    
-                    // we now iterate over the list beginning with the artifact preceding the winner,
-                    // and going backward to the least artifact
-                    for (int i=artifactsList.size() - 2; i >=0; i--) {
-                        Artifact looser = (Artifact)artifactsList.get(i);
-                        Message.verbose("\t\tremoving conflict looser artifact: "+looser);
-                        // for each loser, we remove the pair (loser - copyDest) in the artifactsToCopy map
-                        Set dest = (Set)artifactsToCopy.get(looser);
-                        dest.remove(copyDest);
-                        if (dest.isEmpty()) {
-                            artifactsToCopy.remove(looser);
-                        }
-                    }
-                }
-            }
-            
+            final Map artifactsToCopy = determineArtifactsToCopy(moduleId, confs, cache, destFilePattern, destIvyPattern);            
             // do retrieve
             int targetsCopied = 0;
             int targetsUpToDate = 0;
@@ -1630,6 +1560,80 @@ public class Ivy implements TransferListener {
         }
     }
 
+    public Map determineArtifactsToCopy(ModuleId moduleId, String[] confs, final File cache, String destFilePattern, String destIvyPattern) throws ParseException, IOException {
+        // find what we must retrieve where
+        final Map artifactsToCopy = new HashMap(); // Artifact source -> Set (String copyDestAbsolutePath)
+        final Map conflictsMap = new HashMap(); // String copyDestAbsolutePath -> Set (Artifact source)
+        final Map conflictsConfMap = new HashMap(); // String copyDestAbsolutePath -> Set (String conf)
+        XmlReportParser parser = new XmlReportParser();
+        for (int i = 0; i < confs.length; i++) {
+            final String conf = confs[i];
+            Collection artifacts = new ArrayList(Arrays.asList(parser.getArtifacts(moduleId, conf, cache)));
+            if (destIvyPattern != null) {
+                ModuleRevisionId[] mrids = parser.getRealDependencyRevisionIds(moduleId, conf, cache);
+                for (int j = 0; j < mrids.length; j++) {
+                    artifacts.add(new DefaultArtifact(mrids[j], new Date(), "ivy", "ivy", "xml"));
+                }
+            }
+            for (Iterator iter = artifacts.iterator(); iter.hasNext();) {
+                Artifact artifact = (Artifact)iter.next();
+                String destPattern = "ivy".equals(artifact.getType()) ? destIvyPattern: destFilePattern;
+                
+                String destFileName = IvyPatternHelper.substitute(destPattern, artifact.getModuleRevisionId().getOrganisation(), artifact.getModuleRevisionId().getName(), artifact.getModuleRevisionId().getRevision(), artifact.getName(), artifact.getType(), artifact.getExt(), conf);
+                
+                Set dest = (Set)artifactsToCopy.get(artifact);
+                if (dest == null) {
+                    dest = new HashSet();
+                    artifactsToCopy.put(artifact, dest);
+                }
+                String copyDest = new File(destFileName).getAbsolutePath();
+                dest.add(copyDest);
+                
+                Set conflicts = (Set)conflictsMap.get(copyDest);
+                Set conflictsConf = (Set)conflictsConfMap.get(copyDest);
+                if (conflicts == null) {
+                    conflicts = new HashSet();
+                    conflictsMap.put(copyDest, conflicts);
+                }
+                if (conflictsConf == null) {
+                    conflictsConf = new HashSet();
+                    conflictsConfMap.put(copyDest, conflictsConf);
+                }
+                conflicts.add(artifact);
+                conflictsConf.add(conf);
+            }
+        }
+        
+        // resolve conflicts if any
+        for (Iterator iter = conflictsMap.keySet().iterator(); iter.hasNext();) {
+            String copyDest = (String)iter.next();
+            Set artifacts = (Set)conflictsMap.get(copyDest);
+            Set conflictsConfs = (Set)conflictsConfMap.get(copyDest);
+            if (artifacts.size() > 1) {
+                List artifactsList = new ArrayList(artifacts);
+                // conflicts battle is resolved by a sort using a conflict resolving policy comparator
+                // which consider as greater a winning artifact
+                Collections.sort(artifactsList, getConflictResolvingPolicy());
+                // after the sort, the winning artifact is the greatest one, i.e. the last one
+                Message.info("\tconflict on "+copyDest+" in "+conflictsConfs+": "+((Artifact)artifactsList.get(artifactsList.size() -1)).getModuleRevisionId().getRevision()+" won");
+                
+                // we now iterate over the list beginning with the artifact preceding the winner,
+                // and going backward to the least artifact
+                for (int i=artifactsList.size() - 2; i >=0; i--) {
+                    Artifact looser = (Artifact)artifactsList.get(i);
+                    Message.verbose("\t\tremoving conflict looser artifact: "+looser);
+                    // for each loser, we remove the pair (loser - copyDest) in the artifactsToCopy map
+                    Set dest = (Set)artifactsToCopy.get(looser);
+                    dest.remove(copyDest);
+                    if (dest.isEmpty()) {
+                        artifactsToCopy.remove(looser);
+                    }
+                }
+            }
+        }
+        return artifactsToCopy;
+    }
+    
     private boolean upToDate(File source, File target) {
         if (!target.exists()) {
             return false;
@@ -1927,7 +1931,15 @@ public class Ivy implements TransferListener {
         return IvyPatternHelper.substitute(_cacheArtifactPattern, organisation, module, revision, artifact, type, ext);
     }
     
-    public static String getLocalHostName() {
+    public File getOriginFileInCache(File cache, Artifact artifact) {
+        return new File(cache, getOriginPathInCache(artifact));
+    }
+    
+    public String getOriginPathInCache(Artifact artifact) {
+        return getArchivePathInCache(artifact) + ".origin";
+    }
+
+        public static String getLocalHostName() {
         try {
             return InetAddress.getLocalHost().getHostName();
         } catch (UnknownHostException e) {

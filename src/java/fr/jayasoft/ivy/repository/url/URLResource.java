@@ -62,4 +62,8 @@ public class URLResource implements Resource {
     public String toString() {
         return getName();
     }
+    
+    public boolean isLocal() {
+        return false;
+    }
 }
