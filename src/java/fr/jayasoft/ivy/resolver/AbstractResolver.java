@@ -16,8 +16,8 @@ import fr.jayasoft.ivy.ModuleDescriptor;
 import fr.jayasoft.ivy.ModuleRevisionId;
 import fr.jayasoft.ivy.ResolveData;
 import fr.jayasoft.ivy.ResolvedModuleRevision;
-import fr.jayasoft.ivy.matcher.AnyMatcher;
 import fr.jayasoft.ivy.matcher.Matcher;
+import fr.jayasoft.ivy.matcher.NoMatcher;
 import fr.jayasoft.ivy.matcher.PatternMatcher;
 import fr.jayasoft.ivy.namespace.NameSpaceHelper;
 import fr.jayasoft.ivy.namespace.Namespace;
@@ -242,7 +242,7 @@ public abstract class AbstractResolver implements DependencyResolver, IvyAware, 
 
     public Matcher getChangingMatcher() {
         if (_changingPattern == null) {
-            return AnyMatcher.getInstance();
+            return NoMatcher.getInstance();
         }
         PatternMatcher matcher = _ivy.getMatcher(_changingMatcherName);
         if (matcher == null) {
