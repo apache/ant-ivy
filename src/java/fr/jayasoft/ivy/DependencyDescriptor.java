@@ -34,6 +34,7 @@ public interface DependencyDescriptor {
     ModuleRevisionId getParentRevisionId();
     ModuleRevisionId getDependencyRevisionId();
     String[] getModuleConfigurations();
+ String[] getDependencyConfigurations(String moduleConfiguration, String requestedConfiguration);
     String[] getDependencyConfigurations(String moduleConfiguration);
     String[] getDependencyConfigurations(String[] moduleConfigurations);
     Namespace getNamespace();

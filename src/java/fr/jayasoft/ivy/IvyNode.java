@@ -255,6 +255,8 @@ public class IvyNode {
 
     private Collection _loadedRootModuleConfs = new HashSet();
 
+    private String _requestedConf;
+
     
     public IvyNode(ResolveData data, IvyNode parent, DependencyDescriptor dd) {
         _id = dd.getDependencyRevisionId();
@@ -772,7 +774,7 @@ public class IvyNode {
         Collection dependencies = new LinkedHashSet(); // it's important to respect dependencies order
         for (int i = 0; i < dds.length; i++) {
             DependencyDescriptor dd = dds[i];
-            String[] dependencyConfigurations = dd.getDependencyConfigurations(conf);
+ String[] dependencyConfigurations = dd.getDependencyConfigurations(conf, getRequestedConf());
             if (dependencyConfigurations.length == 0) {
                 // no configuration of the dependency is required for current confs : 
                 // it is exactly the same as if there was no dependency at all on it
@@ -813,6 +815,17 @@ public class IvyNode {
             }
         }
         return dependencies;
+    }
+
+    /**
+     * @return Returns the requestedConf.
+     */
+    public final String getRequestedConf() {
+        return _requestedConf;
+    }
+    
+    public final void setRequestedConf(String requestedConf) {
+        _requestedConf = requestedConf;
     }
 
     private void addDependencyDescriptor(IvyNode parent, DependencyDescriptor dd) {

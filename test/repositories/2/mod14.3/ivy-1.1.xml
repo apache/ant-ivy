@@ -1,0 +1,20 @@
+ <ivy-module version="1.0">
+	<info organisation="org14"
+	       module="mod14.3"
+	       revision="1.1"
+	       status="integration"
+	       publication="20050930110000"
+	/>
+    <configurations>
+		<conf name="default"/>
+        <conf name="compile" extends="default"/>
+        <conf name="runtime" extends="default"/>
+        <conf name="standalone" extends="runtime"/>
+        <conf name="container" extends="runtime"/>
+    </configurations>
+    <dependencies>
+		<dependency name="mod14.2" rev="1.1" conf="compile->default"/>
+        <dependency name="mod14.1" rev="1.1" conf="runtime->#(default)"/>
+        <dependency org="org8" name="mod8.4" rev="1.1" conf="standalone->default"/>
+    </dependencies>
+</ivy-module>

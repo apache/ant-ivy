@@ -33,6 +33,7 @@ import fr.jayasoft.ivy.namespace.NamespaceTransformer;
  */
 public class DefaultDependencyDescriptor implements DependencyDescriptor {
 	private static final Pattern SELF_FALLBACK_PATTERN = Pattern.compile("@(\\(.*\\))?");
+ private static final Pattern THIS_FALLBACK_PATTERN = Pattern.compile("#(\\(.*\\))?");
     
     /**
      * Transforms the given dependency descriptor of the given namespace and return
@@ -167,6 +168,10 @@ public class DefaultDependencyDescriptor implements DependencyDescriptor {
 	}
 
 	public String[] getDependencyConfigurations(String moduleConfiguration) {
+ return getDependencyConfigurations(moduleConfiguration, moduleConfiguration);
+ }
+
+ public String[] getDependencyConfigurations(String moduleConfiguration, String requestedConfiguration) {
 		List confs = (List)_confs.get(moduleConfiguration);
 		List defConfs = (List)_confs.get("*");
 		Collection ret = new LinkedHashSet();
@@ -176,24 +181,52 @@ public class DefaultDependencyDescriptor implements DependencyDescriptor {
 		if (defConfs != null) {
 		    ret.addAll(defConfs);
 		}
+
+ Collection replacedRet = new LinkedHashSet();
         for (Iterator iter = ret.iterator(); iter.hasNext();) {
-            String c = (String)iter.next();
-            Matcher matcher = SELF_FALLBACK_PATTERN.matcher(c);
-            if (matcher.matches()) {
-                iter.remove();
-                if (matcher.group(1) != null) {
-                    ret.add(moduleConfiguration+matcher.group(1));
-                } else {
-                    ret.add(moduleConfiguration);
-                }
-                break;
-            }
+ String c = (String)iter.next();
+ String replacedConf = replaceSelfFallbackPattern( c, moduleConfiguration);
+ if (replacedConf==null) {
+ replacedConf = replaceThisFallbackPattern( c, requestedConfiguration);
+ }
+ if (replacedConf!=null) {
+ c = replacedConf;
+ }
+ replacedRet.add(c);
         }
+ ret = replacedRet;
         if (ret.contains("*")) {
             return new String[] {"*"};
         }
 		return (String[])ret.toArray(new String[ret.size()]);
 	}
+
+ protected static String replaceSelfFallbackPattern(final String conf, final String moduleConfiguration) {
+ return replaceFallbackConfigurationPattern(SELF_FALLBACK_PATTERN, conf, moduleConfiguration);
+ }
+
+ protected static String replaceThisFallbackPattern(final String conf, final String requestedConfiguration) {
+ return replaceFallbackConfigurationPattern(THIS_FALLBACK_PATTERN, conf, requestedConfiguration);
+ }
+
+ /**
+ * Replaces fallback patterns with correct values if fallback pattern exists.
+ * @param pattern pattern to look for
+ * @param conf configuration mapping from dependency element
+ * @param moduleConfiguration module's configuration to use for replacement
+ * @return Replaced string if pattern matched. Otherwise null.
+ */
+ protected static String replaceFallbackConfigurationPattern(final Pattern pattern, final String conf, final String moduleConfiguration) {
+ Matcher matcher = pattern.matcher(conf);
+ if (matcher.matches()) {
+ if (matcher.group(1) != null) {
+ return moduleConfiguration+matcher.group(1);
+ } else {
+ return moduleConfiguration;
+ }
+ }
+ return null;
+ }
 
 	public String[] getDependencyConfigurations(String[] moduleConfigurations) {
 		Set confs = new LinkedHashSet();

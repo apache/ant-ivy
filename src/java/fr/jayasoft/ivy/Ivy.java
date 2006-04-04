@@ -948,6 +948,7 @@ public class Ivy implements TransferListener {
                 
                 // update the root module conf we are about to fetch
                 rootNode.setRootModuleConf(confs[i]); 
+ rootNode.setRequestedConf(confs[i]);
                 rootNode.updateConfsToFetch(Collections.singleton(confs[i]));
                 
                 // go fetch !
@@ -1031,6 +1032,9 @@ public class Ivy implements TransferListener {
             if (!node.isEvicted(node.getRootModuleConf())) {
                 String[] confs = node.getRealConfs(conf);
                 for (int i = 0; i < confs.length; i++) {
+ if (node.getRequestedConf()==null) {
+ node.setRequestedConf(confs[i]);
+ }
                     doFetchDependencies(node, confs[i]);
                 }
             }
@@ -1087,7 +1091,7 @@ public class Ivy implements TransferListener {
                 }
                 String[] confs = dep.getRequiredConfigurations(node, conf);
                 for (int i = 0; i < confs.length; i++) {
-                    fetchDependencies(dep, confs[i], true);
+ fetchDependencies(dep, confs[i], true);
                 }
                 // if there are still confs to fetch (usually because they have
                 // been updated when evicting another module), we fetch them now

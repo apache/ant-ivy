@@ -1245,6 +1245,42 @@ public class ResolveTest extends TestCase {
         assertTrue(_ivy.getArchiveFileInCache(_cache, "org5", "mod5.1", "4.1", "art51B", "jar", "jar").exists());
     }
     
+    public void testThisConfiguration() throws Exception {
+        ResolveReport report = _ivy.resolve(new File("test/repositories/2/mod14.4/ivy-1.1.xml").toURL(),
+                null, new String[] {"compile"}, _cache, null, true);
+        assertNotNull(report);
+        ModuleDescriptor md = report.getModuleDescriptor();
+        assertNotNull(md);
+        
+        ModuleRevisionId mrid = ModuleRevisionId.newInstance("org14", "mod14.4", "1.1");
+        assertEquals(mrid, md.getModuleRevisionId());
+        ConfigurationResolveReport crr = report.getConfigurationReport("compile");
+        assertNotNull(crr);
+        assertEquals(4, crr.getArtifactsNumber());
+        assertTrue(_ivy.getIvyFileInCache(_cache, ModuleRevisionId.newInstance("org14", "mod14.3", "1.1")).exists());
+        assertTrue(_ivy.getIvyFileInCache(_cache, ModuleRevisionId.newInstance("org14", "mod14.2", "1.1")).exists());
+        assertTrue(_ivy.getIvyFileInCache(_cache, ModuleRevisionId.newInstance("org14", "mod14.1", "1.1")).exists());
+        assertTrue(!_ivy.getIvyFileInCache(_cache, ModuleRevisionId.newInstance("org8", "mod8.3", "1.0")).exists());
+        assertTrue(_ivy.getIvyFileInCache(_cache, ModuleRevisionId.newInstance("org8", "mod8.1", "1.0")).exists());
+        
+        cleanCache();
+        createCache();
+        report = _ivy.resolve(new File("test/repositories/2/mod14.4/ivy-1.1.xml").toURL(),
+                null, new String[] {"standalone"}, _cache, null, true);
+        crr = report.getConfigurationReport("standalone");
+        assertNotNull(crr);
+        assertEquals(7, crr.getArtifactsNumber());
+        
+        assertTrue(_ivy.getIvyFileInCache(_cache, ModuleRevisionId.newInstance("org14", "mod14.3", "1.1")).exists());
+        assertTrue(_ivy.getIvyFileInCache(_cache, ModuleRevisionId.newInstance("org14", "mod14.1", "1.1")).exists());
+        assertTrue(!_ivy.getIvyFileInCache(_cache, ModuleRevisionId.newInstance("org14", "mod14.2", "1.1")).exists());
+        assertTrue(_ivy.getIvyFileInCache(_cache, ModuleRevisionId.newInstance("org14", "mod14.3", "1.1")).exists());
+        assertTrue(_ivy.getIvyFileInCache(_cache, ModuleRevisionId.newInstance("org8", "mod8.3", "1.0")).exists());
+        assertTrue(_ivy.getIvyFileInCache(_cache, ModuleRevisionId.newInstance("org8", "mod8.1", "1.0")).exists());
+        assertTrue(_ivy.getIvyFileInCache(_cache, ModuleRevisionId.newInstance("org8", "mod8.4", "1.1")).exists());
+        assertTrue(_ivy.getIvyFileInCache(_cache, ModuleRevisionId.newInstance("org8", "mod8.2", "1.1")).exists());
+    }
+    
     public void testLatest() throws Exception {
         // mod1.4 depends on latest mod1.2
         final Collection asked = new ArrayList();
