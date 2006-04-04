@@ -105,7 +105,7 @@ import fr.jayasoft.ivy.xml.XmlReportParser;
 public class Ivy implements TransferListener {
     public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyyMMddHHmmss");
 
-    private static final String DEFAULT_CACHE_ARTIFACT_PATTERN = "[organisation]/[module]/[type]s/[artifact]-[revision].[ext]";
+    private static final String DEFAULT_CACHE_ARTIFACT_PATTERN = "[organisation]/[module]/[type]s/[artifact]-[revision](.[ext])";
     private static final String DEFAULT_CACHE_DATA_FILE_PATTERN = "[organisation]/[module]/ivydata-[revision].properties";
     private static final String DEFAULT_CACHE_IVY_PATTERN = "[organisation]/[module]/ivy-[revision].xml";
     private static final String DEFAULT_CACHE_RESOLVED_IVY_PATTERN = "resolved-[organisation]-[module]-[revision].xml";
