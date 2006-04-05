@@ -445,7 +445,7 @@ public class FileSystemResolverTest extends TestCase {
         
         OrganisationEntry org = ResolverTestHelper.getEntry(orgs, "org1");
         ModuleEntry[] mods = resolver.listModules(org);
-        ResolverTestHelper.assertModuleEntries(resolver, org, new String[] {"mod1.1", "mod1.2", "mod1.3", "mod1.4"}, mods);
+        ResolverTestHelper.assertModuleEntries(resolver, org, new String[] {"mod1.1", "mod1.2", "mod1.3", "mod1.4", "mod1.5"}, mods);
 
         ModuleEntry mod = ResolverTestHelper.getEntry(mods, "mod1.1");
         RevisionEntry[] revs = resolver.listRevisions(mod);
