@@ -5,9 +5,13 @@
  */
 package fr.jayasoft.ivy.resolver;
 
+import java.io.File;
 import java.util.Arrays;
 import java.util.GregorianCalendar;
 import java.util.List;
+
+import org.apache.tools.ant.Project;
+import org.apache.tools.ant.taskdefs.Delete;
 
 import junit.framework.TestCase;
 import fr.jayasoft.ivy.DefaultDependencyDescriptor;
@@ -25,8 +29,25 @@ import fr.jayasoft.ivy.xml.XmlIvyConfigurationParser;
  * Tests ChainResolver
  */
 public class ChainResolverTest extends TestCase {
-    private Ivy _ivy = new Ivy();
-    private ResolveData _data = new ResolveData(_ivy, null, null, null, true);
+    private Ivy _ivy;
+    private ResolveData _data;
+    private File _cache;
+    
+    protected void setUp() throws Exception {
+        _ivy = new Ivy();
+        _cache = new File("build/cache");
+        _data = new ResolveData(_ivy, _cache, null, null, true);
+        _cache.mkdirs();
+        _ivy.setDefaultCache(_cache);
+    }
+    
+    protected void tearDown() throws Exception {
+        Delete del = new Delete();
+        del.setProject(new Project());
+        del.setDir(_cache);
+        del.execute();
+    }
+    
     public void testOrderFromConf() throws Exception {
         new XmlIvyConfigurationParser(_data.getIvy()).parse(ChainResolverTest.class.getResource("chainresolverconf.xml"));
         DependencyResolver resolver = _data.getIvy().getResolver("chain");
@@ -193,6 +214,67 @@ public class ChainResolverTest extends TestCase {
         for (int i = 0; i < resolvers.length; i++) {
             assertEquals(ddAsList, resolvers[i].askedDeps);
         }
+    }
+    
+    public void testFixedWithDefault() throws Exception {
+        ChainResolver chain = new ChainResolver();
+        chain.setName("chain");
+        chain.setIvy(_ivy);
+        chain.setLatestStrategy(new LatestRevisionStrategy());
+        MockResolver[] resolvers = new MockResolver[] {
+                MockResolver.buildMockResolver("1", false, null), 
+                MockResolver.buildMockResolver("2", true, ModuleRevisionId.newInstance("org", "mod", "4"), new GregorianCalendar(2005, 1, 22).getTime(), true), // default 
+                MockResolver.buildMockResolver("3", false, null), 
+                MockResolver.buildMockResolver("4", true, ModuleRevisionId.newInstance("org", "mod", "4"), new GregorianCalendar(2005, 1, 22).getTime()), // not default -> should the one kept 
+                MockResolver.buildMockResolver("5", false, null)
+            };
+        for (int i = 0; i < resolvers.length; i++) {
+            chain.add(resolvers[i]);
+        }
+        assertResolversSizeAndNames(chain, resolvers.length);
+        
+        DefaultDependencyDescriptor dd = new DefaultDependencyDescriptor(ModuleRevisionId.newInstance("org","mod", "4"), false);
+        ResolvedModuleRevision rmr = chain.getDependency(dd, _data);
+        assertNotNull(rmr);
+        assertEquals("4", rmr.getResolver().getName());
+        List ddAsList = Arrays.asList(new DependencyDescriptor[] {dd});
+        for (int i = 0; i < 4; i++) {
+            assertEquals("invalid asked dependencies for "+resolvers[i], ddAsList, resolvers[i].askedDeps);
+        }
+        for (int i = 4; i < resolvers.length; i++) {
+            assertTrue("invalid asked dependencies for "+resolvers[i], resolvers[i].askedDeps.isEmpty());
+        }
+    }
+    
+    public void testFixedWithDefaultAndRealResolver() throws Exception {
+        // test case for IVY-206
+        ChainResolver chain = new ChainResolver();
+        chain.setName("chain");
+        chain.setIvy(_ivy);
+        
+        // no ivy pattern for first resolver: will only find a 'default' module
+        FileSystemResolver resolver = new FileSystemResolver();
+        resolver.setName("1");
+        resolver.setIvy(_ivy);
+        
+        resolver.addArtifactPattern("test/repositories/1/[organisation]/[module]/[type]s/[artifact]-[revision].[type]");
+        chain.add(resolver);
+        
+        // second resolver has an ivy pattern and will thus find the real module, which should be kept
+        resolver = new FileSystemResolver();
+        resolver.setName("2");
+        resolver.setIvy(_ivy);
+        
+        resolver.addIvyPattern("test/repositories/1/[organisation]/[module]/ivys/ivy-[revision].xml");
+        resolver.addArtifactPattern("test/repositories/1/[organisation]/[module]/[type]s/[artifact]-[revision].[type]");
+        chain.add(resolver);
+        
+        _ivy.addResolver(chain);
+        
+        DefaultDependencyDescriptor dd = new DefaultDependencyDescriptor(ModuleRevisionId.newInstance("org1","mod1.1", "1.0"), false);
+        ResolvedModuleRevision rmr = chain.getDependency(dd, _data);
+        assertNotNull(rmr);
+        assertEquals("2", rmr.getResolver().getName());
     }
     
     public void testReturnFirst() throws Exception {

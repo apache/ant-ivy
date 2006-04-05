@@ -138,14 +138,17 @@ public abstract class BasicResolver extends AbstractResolver {
 
         // if we do not have to check modified and if the revision is exact and not changing,  
         // we first search for it in cache
+        ResolvedModuleRevision cachedRmr = null;
+        boolean checkedCache = false;
         if (mrid.isExactRevision() && !isCheckmodified() && !isChangingDependency) {
-            ResolvedModuleRevision rmr = findModuleInCache(data, mrid);
-            if (rmr != null) {
-                if (rmr.getDescriptor().isDefault() && rmr.getResolver() != this && isResolved(data, mrid)) {
-                    Message.verbose("\t"+getName()+": found revision in cache: "+mrid+" (resolved by "+rmr.getResolver().getName()+"): but it's a default one, maybe we can find a better one");
+            cachedRmr = findModuleInCache(data, mrid);
+            checkedCache = true;
+            if (cachedRmr != null) {
+                if (cachedRmr.getDescriptor().isDefault() && cachedRmr.getResolver() != this) {
+                    Message.verbose("\t"+getName()+": found revision in cache: "+mrid+" (resolved by "+cachedRmr.getResolver().getName()+"): but it's a default one, maybe we can find a better one");
                 } else {
                     Message.verbose("\t"+getName()+": revision in cache: "+mrid);
-                    return toSystem(rmr);
+                    return toSystem(cachedRmr);
                 }
             }
         }
@@ -170,6 +173,13 @@ public abstract class BasicResolver extends AbstractResolver {
                     for (int j = 0; j < artifacts.length; j++) {
                         logArtifactNotFound(artifacts[j]);
                     }
+                }
+                if (!checkedCache) {
+                    cachedRmr = findModuleInCache(data, mrid);
+                }
+                if (cachedRmr != null) {
+                    Message.verbose("\t"+getName()+": revision in cache: "+mrid);
+                    return toSystem(cachedRmr);                    
                 }
                 return null;
             } else {
@@ -208,7 +218,7 @@ public abstract class BasicResolver extends AbstractResolver {
             // now let's see if we can find it in cache and if it is up to date
             ResolvedModuleRevision rmr = findModuleInCache(data, resolvedMrid);
             if (rmr != null) {
-                if (rmr.getDescriptor().isDefault() && rmr.getResolver() != this && isResolved(data, resolvedMrid)) {
+                if (rmr.getDescriptor().isDefault() && rmr.getResolver() != this) {
                     Message.verbose("\t"+getName()+": found revision in cache: "+mrid+" (resolved by "+rmr.getResolver().getName()+"): but it's a default one, maybe we can find a better one");
                 } else {
                     if (!isCheckmodified() && !isChangingDependency) {
@@ -381,11 +391,11 @@ public abstract class BasicResolver extends AbstractResolver {
         return new DefaultModuleRevision(this, systemMd, searched, downloaded);
     }
 
-    private boolean isResolved(ResolveData data, ModuleRevisionId mrid) {
-        IvyNode node = getSystemNode(data, mrid);
-        return node != null && node.getModuleRevision() != null;
-    }
-
+//    private boolean isResolved(ResolveData data, ModuleRevisionId mrid) {
+//        IvyNode node = getSystemNode(data, mrid);
+//        return node != null && node.getModuleRevision() != null;
+//    }
+//
     private void checkDescriptorConsistency(ModuleRevisionId mrid, ModuleDescriptor md, ResolvedResource ivyRef) throws ParseException {
         boolean ok = true;
         if (!mrid.getOrganisation().equals(md.getModuleRevisionId().getOrganisation())) {

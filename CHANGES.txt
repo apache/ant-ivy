@@ -6,6 +6,7 @@
 - IMPROVE: performances improved (IVY-187) (thanks to Karl Baum)
 - IMPROVE: Change default cache artifact pattern to handle missing extension (IVY-196) (thanks to Johan Stuyts)
 
+- FIX: modules splitted across a chain are not handled correctly (IVY-206)
 - FIX: Delivered Ivy files with incomplete last line. (IVY-125) (thanks to Matthias Kilian)
 
    version 1.3.1 - 2006-03-30

@@ -77,20 +77,22 @@ public class ChainResolver extends AbstractResolver {
                         (!dd.getDependencyRevisionId().isExactRevision() 
                          || (ret == null || ret.getDescriptor().isDefault()))) {
                     // check if latest is asked and compare to return the most recent
+                    String mrDesc = mr.getId()+(mr.getDescriptor().isDefault()?"[default]":"")+" from "+mr.getResolver().getName();
+                    Message.debug("\tchecking "+mrDesc+" against "+ret);
                     if (ret == null) {
-                        Message.debug("\tmodule revision kept as first found: "+mr.getId());
+                        Message.debug("\tmodule revision kept as first found: "+mrDesc);
                         ret = mr;
                     } else if (isAfter(mr, ret, data.getDate())) {
-                        Message.debug("\tmodule revision kept as younger: "+mr.getId());
+                        Message.debug("\tmodule revision kept as younger: "+mrDesc);
                         ret = mr;
-                    } else if (ret != null && !mr.getDescriptor().isDefault() && ret.getDescriptor().isDefault()) {
-                            Message.debug("\tmodule revision kept as better (not default): "+mr.getId());
+                    } else if (!mr.getDescriptor().isDefault() && ret.getDescriptor().isDefault()) {
+                            Message.debug("\tmodule revision kept as better (not default): "+mrDesc);
                             ret = mr;
                     } else {
-                        Message.debug("\tmodule revision discarded as older: "+mr.getId());
+                        Message.debug("\tmodule revision discarded as older: "+mrDesc);
                     }
                     if (dd.getDependencyRevisionId().isExactRevision() && !ret.getDescriptor().isDefault()) {
-                        Message.debug("\tmodule revision found and is not default: returning "+mr.getId());
+                        Message.debug("\tmodule revision found and is not default: returning "+mrDesc);
                         return resolvedRevision(mr);
                     }
                 } else {
