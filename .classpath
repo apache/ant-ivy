@@ -9,5 +9,6 @@
 	<classpathentry kind="var" path="ANT_HOME/lib/ant-launcher.jar"/>
 	<classpathentry kind="var" path="ANT_HOME/lib/xercesImpl.jar"/>
 	<classpathentry kind="var" path="ANT_HOME/lib/ant-trax.jar"/>
+	<classpathentry kind="var" path="ANT_HOME/lib/xml-apis.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
