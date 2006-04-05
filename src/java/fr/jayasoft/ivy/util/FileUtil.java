@@ -95,5 +95,19 @@ public class FileUtil {
         in.close();
         return buf.toString();
     }
+    
+    public static String concat(String dir, String file) {
+        return dir+"/"+file;
+    }
+    
+    public static void forceDelete(File f) {
+        if (f.isDirectory()) {
+            File[] sub = f.listFiles();
+            for (int i = 0; i < sub.length; i++) {
+                forceDelete(sub[i]);
+            }
+        } 
+        f.delete();
+    }
 
 }

@@ -1,3 +1,4 @@
+- NEW: Addition of Vfs Resolver which uses Commons-Vfs to resolve files (IVY-128) (thanks to Glen Marchesani, Matt Inger and Stephen Nesbitt)
 - NEW: "this" symbol for configuration mappings (IVY-183) (thanks to Karl Baum)
 - NEW: Always update artifacts when revision matches a regex pattern (IVY-189) (thanks to Johan Stuyts)
 - NEW: Provide Ant task for generating report about artifacts depended upon (IVY-194) (thanks to Johan Stuyts)
