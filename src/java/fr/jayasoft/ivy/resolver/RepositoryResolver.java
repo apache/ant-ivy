@@ -134,8 +134,10 @@ public class RepositoryResolver extends AbstractResourceResolver {
         String destPattern;
         if ("ivy".equals(artifact.getType()) && !getIvyPatterns().isEmpty()) {
             destPattern =  (String)getIvyPatterns().get(0);
-        } else {
+        } else if (!getArtifactPatterns().isEmpty()) {
             destPattern =  (String)getArtifactPatterns().get(0);
+        } else {
+            throw new IllegalStateException("impossible to publish "+artifact+" using "+this+": no artifact pattern defined");
         }
         // Check for m2 compatibility
         ModuleRevisionId mrid = artifact.getModuleRevisionId();
