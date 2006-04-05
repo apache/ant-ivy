@@ -14,12 +14,14 @@ import java.util.Date;
  */
 public class DefaultModuleRevision implements ResolvedModuleRevision {
     private DependencyResolver _resolver;
+    private DependencyResolver _artifactResolver;
     private ModuleDescriptor _descriptor;
     private boolean _isDownloaded;
     private boolean _isSearched;
     
-    public DefaultModuleRevision(DependencyResolver resolver, ModuleDescriptor descriptor, boolean searched, boolean downloaded) {
+    public DefaultModuleRevision(DependencyResolver resolver, DependencyResolver artifactResolver, ModuleDescriptor descriptor, boolean searched, boolean downloaded) {
         _resolver = resolver;
+        _artifactResolver = artifactResolver;
         _descriptor = descriptor;
         _isSearched = searched;
         _isDownloaded = downloaded;
@@ -27,6 +29,10 @@ public class DefaultModuleRevision implements ResolvedModuleRevision {
 
     public DependencyResolver getResolver() {
         return _resolver;
+    }
+    
+    public DependencyResolver getArtifactResolver() {
+        return _artifactResolver;
     }
 
     public ModuleDescriptor getDescriptor() {

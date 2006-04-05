@@ -221,7 +221,19 @@ public abstract class AbstractResolver implements DependencyResolver, IvyAware, 
     }
 
     protected ResolvedModuleRevision findModuleInCache(ResolveData data, ModuleRevisionId mrid) {
-        return data.getIvy().findModuleInCache(toSystem(mrid), data.getCache(), doValidate(data));
+        ResolvedModuleRevision moduleFromCache = data.getIvy().findModuleInCache(toSystem(mrid), data.getCache(), doValidate(data));
+        if (moduleFromCache == null) {
+            return null;
+        }
+        if ((getName() == null ? 
+                moduleFromCache.getResolver().getName() == null : 
+                    moduleFromCache.getResolver() == null ? false : 
+                        getName().equals(moduleFromCache.getResolver().getName()))) {
+            return moduleFromCache;
+        } else {
+            Message.debug("found module in cache but with a different resolver: discarding: "+moduleFromCache);
+            return null;
+        }
     }
 
     public String getChangingMatcherName() {

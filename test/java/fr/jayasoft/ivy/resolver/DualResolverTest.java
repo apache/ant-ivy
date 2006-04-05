@@ -77,7 +77,7 @@ public class DualResolverTest extends TestCase {
         ResolvedModuleRevision rmr = dual.getDependency(dd, _data);
         
         assertNotNull(rmr);
-        assertEquals(dual, rmr.getResolver());
+        assertEquals(dual, rmr.getArtifactResolver());
         assertEquals(Arrays.asList(new DependencyDescriptor[] {dd}), ivyResolver.askedDeps);
         assertTrue(artifactResolver.askedDeps.isEmpty());
     }

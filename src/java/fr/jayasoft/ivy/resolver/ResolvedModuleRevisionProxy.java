@@ -9,25 +9,29 @@ import fr.jayasoft.ivy.ResolvedModuleRevision;
 
 /** 
  * the same ResolvedModuleRevision except that we say that it is another resolver
- * which resolved the dependency, so that it's it that is used for artifact download
- * ==> forward all except getResolver method
+ * the artifact resolver, so that it's it that is used for artifact download
+ * ==> forward all except getArtifactResolver method
  */
 public final class ResolvedModuleRevisionProxy implements ResolvedModuleRevision {
     private final ResolvedModuleRevision _mr;
     DependencyResolver _resolver;
 
-    public ResolvedModuleRevisionProxy(ResolvedModuleRevision mr, DependencyResolver resolver) {
+    public ResolvedModuleRevisionProxy(ResolvedModuleRevision mr, DependencyResolver artresolver) {
         if (mr == null) {
             throw new NullPointerException("null module revision not allowed");
         }
-        if (resolver == null) {
+        if (artresolver == null) {
             throw new NullPointerException("null resolver not allowed");
         }
         _mr = mr;
-        _resolver = resolver;
+        _resolver = artresolver;
+    }
+    
+    public DependencyResolver getResolver() {
+        return _mr.getResolver();
     }
 
-    public DependencyResolver getResolver() {
+    public DependencyResolver getArtifactResolver() {
         return _resolver;
     }
 

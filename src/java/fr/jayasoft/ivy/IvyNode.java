@@ -590,7 +590,8 @@ public class IvyNode {
                     Message.debug("\tusing "+resolver+" to resolve "+getId());
                     _module = resolver.getDependency(getDependencyDescriptor(getParent()), _data);
                     if (_module != null) {
-                        _data.getIvy().saveResolver(_data.getCache(), _module.getDescriptor(), resolver.getName());
+                        _data.getIvy().saveResolver(_data.getCache(), _module.getDescriptor(), _module.getResolver().getName());
+                        _data.getIvy().saveArtResolver(_data.getCache(), _module.getDescriptor(), _module.getArtifactResolver().getName());
                         if (_data.getIvy().logModuleWhenFound()) {
                             Message.info("\tfound "+_module.getId()+" in "+_module.getResolver().getName());
                         } else {

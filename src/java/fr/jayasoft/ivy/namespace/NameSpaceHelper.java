@@ -40,7 +40,7 @@ public class NameSpaceHelper {
         if (md.equals(rmr.getDescriptor())) {
             return rmr;
         }
-        return new DefaultModuleRevision(rmr.getResolver(), md, rmr.isSearched(), rmr.isDownloaded());
+        return new DefaultModuleRevision(rmr.getResolver(), rmr.getArtifactResolver(), md, rmr.isSearched(), rmr.isDownloaded());
     }
 
     public static Artifact transform(Artifact artifact, NamespaceTransformer t) {

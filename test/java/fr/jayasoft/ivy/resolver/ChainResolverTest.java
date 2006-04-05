@@ -306,6 +306,58 @@ public class ChainResolverTest extends TestCase {
         }
     }
     
+    public void testReturnFirstWithDefaultAndCacheAndRealResolver() throws Exception {
+        // test case for IVY-207
+        
+        // 1 ---- we first do a first resolve which puts a default file in cache
+        ChainResolver chain = new ChainResolver();
+        chain.setName("chain");
+        chain.setIvy(_ivy);
+        
+        // no ivy pattern for resolver: will only find a 'default' module
+        FileSystemResolver resolver = new FileSystemResolver();
+        resolver.setName("old");
+        resolver.setIvy(_ivy);
+        
+        resolver.addArtifactPattern("test/repositories/1/[organisation]/[module]/[type]s/[artifact]-[revision].[type]");
+        chain.add(resolver);
+                
+        _ivy.addResolver(chain);
+        
+        DefaultDependencyDescriptor dd = new DefaultDependencyDescriptor(ModuleRevisionId.newInstance("org1","mod1.1", "1.0"), false);
+        chain.getDependency(dd, _data);
+        
+        // 2 ---- now we ask to resolve dependencies with a chain in return first mode, in which the first resolver 
+        //        is not able to find the module, but the second is 
+        
+        chain = new ChainResolver();
+        chain.setName("chain");
+        chain.setIvy(_ivy);
+        chain.setReturnFirst(true);
+        
+        // no pattern for first resolver: will not find the module
+        resolver = new FileSystemResolver();
+        resolver.setName("1");
+        resolver.setIvy(_ivy);
+        
+        chain.add(resolver);
+        
+        // second resolver will find the real module, which should be kept
+        resolver = new FileSystemResolver();
+        resolver.setName("2");
+        resolver.setIvy(_ivy);
+        
+        resolver.addIvyPattern("test/repositories/1/[organisation]/[module]/ivys/ivy-[revision].xml");
+        resolver.addArtifactPattern("test/repositories/1/[organisation]/[module]/[type]s/[artifact]-[revision].[type]");
+        chain.add(resolver);
+        
+        _ivy.addResolver(chain);
+        
+        ResolvedModuleRevision rmr = chain.getDependency(dd, _data);
+        assertNotNull(rmr);
+        assertEquals("2", rmr.getResolver().getName());
+    }
+    
     public void testDual() throws Exception {
         ChainResolver chain = new ChainResolver();
         chain.setName("chain");
@@ -325,7 +377,8 @@ public class ChainResolverTest extends TestCase {
         DefaultDependencyDescriptor dd = new DefaultDependencyDescriptor(ModuleRevisionId.newInstance("org","mod", "rev"), false);
         ResolvedModuleRevision rmr = chain.getDependency(dd, _data);
         assertNotNull(rmr);
-        assertEquals("chain", rmr.getResolver().getName());
+        assertEquals("2", rmr.getResolver().getName());
+        assertEquals("chain", rmr.getArtifactResolver().getName());
     }
         
 }

@@ -5,7 +5,9 @@
 
 - IMPROVE: performances improved (IVY-187) (thanks to Karl Baum)
 - IMPROVE: Change default cache artifact pattern to handle missing extension (IVY-196) (thanks to Johan Stuyts)
+- IMPROVE: Log messages do not display most specfic resolver name (IVY-170)
 
+- FIX: problem with cache and returnFirst (IVY-207)
 - FIX: modules splitted across a chain are not handled correctly (IVY-206)
 - FIX: Delivered Ivy files with incomplete last line. (IVY-125) (thanks to Matthias Kilian)
 

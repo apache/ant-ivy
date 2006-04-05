@@ -73,9 +73,9 @@ public class ChainResolver extends AbstractResolver {
                 }
             }
             if (mr != null) {
-                if (!_returnFirst && 
-                        (!dd.getDependencyRevisionId().isExactRevision() 
-                         || (ret == null || ret.getDescriptor().isDefault()))) {
+                boolean shouldReturn = _returnFirst;
+                shouldReturn |= dd.getDependencyRevisionId().isExactRevision() && ret != null && !ret.getDescriptor().isDefault();
+                if (!shouldReturn) {
                     // check if latest is asked and compare to return the most recent
                     String mrDesc = mr.getId()+(mr.getDescriptor().isDefault()?"[default]":"")+" from "+mr.getResolver().getName();
                     Message.debug("\tchecking "+mrDesc+" against "+ret);

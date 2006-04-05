@@ -67,7 +67,8 @@ public class XmlReportOutputter implements ReportOutputter {
                     if  (dep.isLoaded()) {
                         details += " status=\""+dep.getDescriptor().getStatus()+"\"" +
                             " pubdate=\""+Ivy.DATE_FORMAT.format(new Date(dep.getPublication()))+"\"" +
-                            " resolver=\""+dep.getModuleRevision().getResolver().getName()+"\"";
+                            " resolver=\""+dep.getModuleRevision().getResolver().getName()+"\""+
+                            " artresolver=\""+dep.getModuleRevision().getArtifactResolver().getName()+"\"";
                     }
                     if (dep.isEvicted(report.getConfiguration())) {
                         IvyNode.EvictionData ed = dep.getEvictedData(report.getConfiguration());

@@ -12,7 +12,16 @@ import java.util.Date;
  *
  */
 public interface ResolvedModuleRevision {
+    /**
+     * The resolver which resolved this ResolvedModuleRevision
+     * @return The resolver which resolved this ResolvedModuleRevision
+     */
     DependencyResolver getResolver();
+    /**
+     * The resolver to use to download artifacts
+     * @return The resolver to use to download artifacts
+     */
+    DependencyResolver getArtifactResolver();
     ModuleRevisionId getId();
     Date getPublicationDate();
     ModuleDescriptor getDescriptor();

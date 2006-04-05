@@ -58,6 +58,10 @@ public class MockResolver extends AbstractResolver {
                 public boolean isSearched() {
                     return true;
                 }
+
+                public DependencyResolver getArtifactResolver() {
+                    return r;
+                }
             };
         }
         return r;

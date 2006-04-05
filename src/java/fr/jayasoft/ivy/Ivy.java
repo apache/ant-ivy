@@ -817,7 +817,7 @@ public class Ivy implements TransferListener {
         for (int i = 0; i < dependencies.length; i++) {
             //download artifacts required in all asked configurations
             if (!dependencies[i].isCompletelyEvicted() && !dependencies[i].hasProblem()) {
-                DependencyResolver resolver = dependencies[i].getModuleRevision().getResolver();
+                DependencyResolver resolver = dependencies[i].getModuleRevision().getArtifactResolver();
                 Artifact[] selectedArtifacts = dependencies[i].getSelectedArtifacts(artifactFilter);
                 DownloadReport dReport = resolver.download(selectedArtifacts, this, cache);
                 ArtifactDownloadReport[] adrs = dReport.getArtifactsReports();
@@ -1318,6 +1318,7 @@ public class Ivy implements TransferListener {
                 try {
                     ModuleDescriptor depMD = XmlModuleDescriptorParser.getInstance().parseDescriptor(this, ivyFile.toURL(), validate);
                     String resolverName = getSavedResolverName(cache, depMD);
+                    String artResolverName = getSavedArtResolverName(cache, depMD);
                     DependencyResolver resolver = (DependencyResolver)_resolversMap.get(resolverName);
                     if (resolver == null) {
                         Message.debug("\tresolver not found: "+resolverName+" => trying to use the one configured for "+mrid);                                    
@@ -1327,9 +1328,13 @@ public class Ivy implements TransferListener {
                             saveResolver(cache, depMD, resolver.getName());
                         }
                     }
+                    DependencyResolver artResolver = (DependencyResolver)_resolversMap.get(artResolverName);
+                    if (artResolver == null) {
+                        artResolver = resolver;
+                    }
                     if (resolver != null) {
                         Message.debug("\tfound ivy file in cache for "+mrid+" (resolved by "+resolver.getName()+"): "+ivyFile);
-                        return new DefaultModuleRevision(resolver, depMD, false, false);
+                        return new DefaultModuleRevision(resolver, artResolver, depMD, false, false);
                     } else {
                         Message.debug("\tresolver not found: "+resolverName+" => cannot use cached ivy file for "+mrid);                                    
                     }
@@ -2204,9 +2209,27 @@ public class Ivy implements TransferListener {
         cdf.save();
     }
 
+    /**
+     * Saves the information of which resolver was used to resolve a md,
+     * so that this info can be retrieve later (even after a jvm restart)
+     * by getSavedArtResolverName(ModuleDescriptor md)
+     * @param md the module descriptor resolved
+     * @param name artifact resolver name
+     */
+    public void saveArtResolver(File cache, ModuleDescriptor md, String name) {
+        PropertiesFile cdf = getCachedDataFile(cache, md);
+        cdf.setProperty("artifact.resolver", name);
+        cdf.save();
+    }
+
     private String getSavedResolverName(File cache, ModuleDescriptor md) {
         PropertiesFile cdf = getCachedDataFile(cache, md);
         return cdf.getProperty("resolver");
+    }
+
+    private String getSavedArtResolverName(File cache, ModuleDescriptor md) {
+        PropertiesFile cdf = getCachedDataFile(cache, md);
+        return cdf.getProperty("artifact.resolver");
     }
 
     private PropertiesFile getCachedDataFile(File cache, ModuleDescriptor md) {

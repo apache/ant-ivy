@@ -388,7 +388,8 @@ public abstract class BasicResolver extends AbstractResolver {
         }
         
         data.getIvy().saveResolver(data.getCache(), systemMd, getName());
-        return new DefaultModuleRevision(this, systemMd, searched, downloaded);
+        data.getIvy().saveArtResolver(data.getCache(), systemMd, getName());
+        return new DefaultModuleRevision(this, this, systemMd, searched, downloaded);
     }
 
 //    private boolean isResolved(ResolveData data, ModuleRevisionId mrid) {
@@ -446,6 +447,10 @@ public abstract class BasicResolver extends AbstractResolver {
         
             public DependencyResolver getResolver() {
                 return rmr.getResolver();
+            }
+
+            public DependencyResolver getArtifactResolver() {
+                return rmr.getArtifactResolver();
             }                    
         };
     }

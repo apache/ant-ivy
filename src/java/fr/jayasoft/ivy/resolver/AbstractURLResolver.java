@@ -264,7 +264,7 @@ public abstract class AbstractURLResolver extends AbstractResolver {
             Message.warn("impossible to copy ivy file to cache : "+ivyURL.getURL());
         }
         
-        return new DefaultModuleRevision(this, md, true, downloaded);
+        return new DefaultModuleRevision(this, this, md, true, downloaded);
     }
     
     public void reportFailure() {
