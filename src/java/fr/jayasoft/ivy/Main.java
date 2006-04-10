@@ -8,11 +8,17 @@ package fr.jayasoft.ivy;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.PrintWriter;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
+import java.util.List;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -116,6 +122,14 @@ public class Main {
             .hasArg()
             .withDescription(  "use given password for HTTP AUTH" )
             .create( "passwd" );
+        Option main = OptionBuilder.withArgName("main")
+	    	.hasArg()
+	    	.withDescription("the main class to runtime process")
+	    	.create("main");
+	    Option args = OptionBuilder.withArgName("args")
+	    	.hasArgs()
+	    	.withDescription("the arguments to runtime process")
+	    	.create("args");
         
         Options options = new Options();
 
@@ -142,6 +156,8 @@ public class Main {
         options.addOption(host);
         options.addOption(username);
         options.addOption(passwd);
+        options.addOption(main);
+        options.addOption(args);
         
         return options;
     }
@@ -283,6 +299,10 @@ public class Main {
                     
                 }
             }
+            if (line.hasOption("main")) {
+                invoke(ivy, cache, md, confs, line.getOptionValue("main"),
+                		line.getOptionValues("args"));
+            }
         } catch( ParseException exp ) {
             // oops, something went wrong
             System.err.println( "Parsing failed.  Reason: " + exp.getMessage() );
@@ -316,6 +336,49 @@ public class Main {
         } catch (Exception ex) {
             throw new RuntimeException("impossible to build ivy cache path: "+ex.getMessage(), ex);
         }
+    }
+
+    private static void invoke(Ivy ivy, File cache, ModuleDescriptor md, String[] confs, String mainclass, String[] args) {
+    	List urls = new ArrayList();
+    	
+        try {
+            XmlReportParser parser = new XmlReportParser();
+            Collection all = new LinkedHashSet();
+            for (int i = 0; i < confs.length; i++) {
+                Artifact[] artifacts = parser.getArtifacts(md.getModuleRevisionId().getModuleId(), confs[i], cache);
+                all.addAll(Arrays.asList(artifacts));
+            }
+            for (Iterator iter = all.iterator(); iter.hasNext();) {
+                Artifact artifact = (Artifact)iter.next();
+                
+                urls.add(ivy.getArchiveFileInCache(cache, artifact).toURL());
+            }
+        } catch (Exception ex) {
+            throw new RuntimeException("impossible to build ivy cache path: "+ex.getMessage(), ex);
+        }
+        
+        URLClassLoader classLoader = new URLClassLoader(
+        		(URL[]) urls.toArray(new URL[urls.size()]), 
+        		Main.class.getClassLoader());
+        
+        try {
+        	Class c = classLoader.loadClass(mainclass);
+        	
+        	Method mainMethod = c.getMethod("main", new Class[] { String[].class });
+        	
+        	// Split up arguments 
+        	mainMethod.invoke(null, new Object[] { args });
+        } catch (ClassNotFoundException cnfe) {
+        	throw new RuntimeException("Could not find class: " + mainclass, cnfe);
+        } catch (SecurityException e) {
+        	throw new RuntimeException("Could not find main method: " + mainclass, e);
+		} catch (NoSuchMethodException e) {
+        	throw new RuntimeException("Could not find main method: " + mainclass, e);
+		} catch (IllegalAccessException e) {
+			throw new RuntimeException("No permissions to invoke main method: " + mainclass, e);
+		} catch (InvocationTargetException e) {
+			throw new RuntimeException("Unexpected exception invoking main method: " + mainclass, e);
+		}
     }
     private static void configureURLHandler(String realm, String host, String username, String passwd) {
         URLHandlerDispatcher dispatcher = new URLHandlerDispatcher();
