@@ -204,8 +204,8 @@ public class VfsRepositoryTest extends TestCase {
 			if (scratchDir.exists()) {
 				FileUtil.forceDelete(scratchDir);
 			}
-			org.apache.tools.ant.util.FileUtils fUtils = org.apache.tools.ant.util.FileUtils.getFileUtils();
-			fUtils.createNewFile(testFile, true);
+            testFile.getParentFile().mkdirs();
+			testFile.createNewFile();
 			
 			
 			try {
