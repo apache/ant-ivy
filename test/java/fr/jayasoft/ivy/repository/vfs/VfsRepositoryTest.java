@@ -103,7 +103,6 @@ public class VfsRepositoryTest extends TestCase {
 		String destResource = VfsTestHelper.SCRATCH_DIR + "/" +  testResource;
 		File destFile = new File(
 				FileUtil.concat(VfsTestHelper.TEST_REPO_DIR, destResource));
-		org.apache.tools.ant.util.FileUtils fUtils = org.apache.tools.ant.util.FileUtils.getFileUtils();
 		
 		Iterator vfsURIs = helper.createVFSUriSet(destResource).iterator();
 		while (vfsURIs.hasNext()) {
@@ -115,7 +114,8 @@ public class VfsRepositoryTest extends TestCase {
 			if (scratchDir.exists()) {
 				FileUtil.forceDelete(scratchDir);
 			}
-			fUtils.createNewFile(destFile, true);
+            destFile.getParentFile().mkdirs();
+            destFile.createNewFile();
 
 			try {
 				repo.put(new File(srcFile), vfsURI.toString(), true);
@@ -143,8 +143,8 @@ public class VfsRepositoryTest extends TestCase {
 		String destResource = VfsTestHelper.SCRATCH_DIR + "/" +  testResource;
 		File destFile = new File(
 				FileUtil.concat(VfsTestHelper.TEST_REPO_DIR, destResource));
-		org.apache.tools.ant.util.FileUtils fUtils = org.apache.tools.ant.util.FileUtils.getFileUtils();
-		fUtils.createNewFile(destFile, true);
+		destFile.getParentFile().mkdirs();
+        destFile.createNewFile();
 		
 		Iterator vfsURIs = helper.createVFSUriSet(destResource).iterator();
 		while (vfsURIs.hasNext()) {
