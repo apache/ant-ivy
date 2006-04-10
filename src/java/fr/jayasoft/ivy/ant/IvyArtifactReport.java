@@ -31,7 +31,6 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
-import org.apache.tools.ant.util.FileUtils;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
 
@@ -224,7 +223,7 @@ public class IvyArtifactReport extends IvyTask {
                 if (isOriginLocal) {
                     originLocationAttrs.addAttribute(null, "is-local", "is-local", "CDATA", "true");
                     File originNameFile = new File(originName);
-                    originName = FileUtils.getFileUtils().removeLeadingPath(getProject().getBaseDir(), originNameFile);
+                    originName = removeLeadingPath(getProject().getBaseDir(), originNameFile);
                     StringBuffer originNameWithSlashes = new StringBuffer(1000);
                     replaceFileSeparatorWithSlash(originNameFile, originNameWithSlashes);
                     originLocation = originNameWithSlashes.toString();
@@ -254,7 +253,7 @@ public class IvyArtifactReport extends IvyTask {
     }
 
     private void writeRetrieveLocation(TransformerHandler saxHandler, String artifactDestPath) throws SAXException {
-        artifactDestPath = FileUtils.getFileUtils().removeLeadingPath(getProject().getBaseDir(), new File(artifactDestPath));
+        artifactDestPath = removeLeadingPath(getProject().getBaseDir(), new File(artifactDestPath));
         StringBuffer artifactDestPathWithSlashes = new StringBuffer(1000);
         replaceFileSeparatorWithSlash(new File(artifactDestPath), artifactDestPathWithSlashes);
 
@@ -281,4 +280,21 @@ public class IvyArtifactReport extends IvyTask {
             resultPath.append(file.getName());
         }
     }
+    
+    // method largely inspired by ant 1.6.5 FileUtils method
+    public String removeLeadingPath(File leading, File path) {
+        String l = leading.getAbsolutePath();
+        String p = path.getAbsolutePath();
+        if (l.equals(p)) {
+            return "";
+        }
+
+        // ensure that l ends with a /
+        // so we never think /foo was a parent directory of /foobar
+        if (!l.endsWith(File.separator)) {
+            l += File.separator;
+        }
+        return (p.startsWith(l)) ? p.substring(l.length()) : p;
+    }
+
 }
