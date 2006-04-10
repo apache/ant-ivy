@@ -13,6 +13,8 @@ import java.net.URL;
 import java.net.UnknownHostException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 import org.apache.commons.httpclient.Header;
@@ -21,6 +23,7 @@ import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.HttpMethodBase;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.UsernamePasswordCredentials;
+import org.apache.commons.httpclient.auth.AuthPolicy;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.HeadMethod;
 
@@ -202,6 +205,13 @@ public class HttpClientHandler extends AbstractURLHandler {
 
     private HttpClient getClient() {
         HttpClient client = new HttpClient();
+        
+        List authPrefs = new ArrayList(2);
+        authPrefs.add(AuthPolicy.DIGEST);
+        authPrefs.add(AuthPolicy.BASIC);
+        // Exclude the NTLM authentication scheme because it is not supported by this class
+        client.getParams().setParameter(AuthPolicy.AUTH_SCHEME_PRIORITY, authPrefs);
+
         if (useProxy()) {
             client.getHostConfiguration().setProxy(_proxyHost, _proxyPort);
             if (useProxyAuthentication()) {
