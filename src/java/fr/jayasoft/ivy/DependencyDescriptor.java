@@ -12,7 +12,7 @@ import fr.jayasoft.ivy.namespace.Namespace;
  * @author x.hanin
  *
  */
-public interface DependencyDescriptor {
+public interface DependencyDescriptor extends ExtendableItem {
     ModuleId getDependencyId();
     /**
      * Used to indicate that this revision must be used in case of conflicts, independently
@@ -34,7 +34,7 @@ public interface DependencyDescriptor {
     ModuleRevisionId getParentRevisionId();
     ModuleRevisionId getDependencyRevisionId();
     String[] getModuleConfigurations();
- String[] getDependencyConfigurations(String moduleConfiguration, String requestedConfiguration);
+    String[] getDependencyConfigurations(String moduleConfiguration, String requestedConfiguration);
     String[] getDependencyConfigurations(String moduleConfiguration);
     String[] getDependencyConfigurations(String[] moduleConfigurations);
     Namespace getNamespace();

@@ -24,6 +24,7 @@ import fr.jayasoft.ivy.ConflictManager;
 import fr.jayasoft.ivy.DefaultDependencyArtifactDescriptor;
 import fr.jayasoft.ivy.DefaultDependencyDescriptor;
 import fr.jayasoft.ivy.DefaultModuleDescriptor;
+import fr.jayasoft.ivy.DefaultExtendableItem;
 import fr.jayasoft.ivy.Ivy;
 import fr.jayasoft.ivy.License;
 import fr.jayasoft.ivy.MDArtifact;
@@ -234,6 +235,7 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
                     String ext = _ivy.substitute(attributes.getValue("ext"));
                     ext = ext != null?ext:_ivy.substitute(attributes.getValue("type"));
                     _artifact = new MDArtifact(_md, _ivy.substitute(attributes.getValue("name")), _ivy.substitute(attributes.getValue("type")), ext);
+                    fillAttributes(_artifact, attributes);
                     String confs = _ivy.substitute(attributes.getValue("conf"));
                     // only add confs if they are specified. if they aren't, endElement will handle this
                     // only if there are no conf defined in sub elements
@@ -273,6 +275,7 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
                 String name = _ivy.substitute(attributes.getValue("name"));
                 String rev = _ivy.substitute(attributes.getValue("rev"));
                 _dd = new DefaultDependencyDescriptor(_md, ModuleRevisionId.newInstance(org, name, rev), force, changing, transitive);
+                fillAttributes(_dd, attributes);
                 _md.addDependency(_dd);
                 String confs = _ivy.substitute(attributes.getValue("conf"));
                 if (confs != null && confs.length() > 0) {
@@ -284,11 +287,13 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
             	case CONF:
                     String visibility = _ivy.substitute(attributes.getValue("visibility"));
                     String ext = _ivy.substitute(attributes.getValue("extends"));
-                	_md.addConfiguration(new Configuration(
+                    Configuration configuration = new Configuration(
                             conf, 
                             Configuration.Visibility.getVisibility(visibility == null ? "public":visibility),
                             _ivy.substitute(attributes.getValue("description")),
-                            ext==null?null:ext.split(",")));
+                            ext==null?null:ext.split(","));
+                    fillAttributes(configuration, attributes);
+                	_md.addConfiguration(configuration);
                 	break;
             	case PUB:
             	    if ("*".equals(conf)) {
@@ -468,7 +473,14 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
             _md.addConfiguration(new Configuration("default"));
         }
     }
-    
+
+
+    public void fillAttributes(DefaultExtendableItem item, Attributes attributes) {
+        for (int i=0; i<attributes.getLength(); i++) {
+            item.setAttribute(attributes.getQName(i), attributes.getValue(i));
+        }
+    }
+
 
     }
 

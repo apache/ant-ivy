@@ -12,6 +12,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashSet;
 
+import fr.jayasoft.ivy.Artifact;
 import fr.jayasoft.ivy.Configuration;
 import fr.jayasoft.ivy.ConflictManager;
 import fr.jayasoft.ivy.DependencyDescriptor;
@@ -418,6 +419,30 @@ public class XmlModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         assertEquals("2.0", dd.getDependencyRevisionId().getRevision());
         assertEquals(Arrays.asList(new String[] {"test"}), Arrays.asList(dd.getModuleConfigurations()));
         assertEquals(Arrays.asList(new String[] {"default"}), Arrays.asList(dd.getDependencyConfigurations("test")));        
+    }
+    
+    public void testExtraAttributes() throws Exception {
+        ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(_ivy, getClass().getResource("test-extra-attributes.xml"), false);
+        assertNotNull(md);
+        
+        assertEquals("confextravalue", md.getConfiguration("default").getAttribute("confextra"));
+        
+        Artifact[] artifacts = md.getArtifacts("default");
+        assertEquals(1, artifacts.length);
+        Artifact art = artifacts[0];
+        assertEquals("art1", art.getName());
+        assertEquals("artextravalue", art.getAttribute("artextra"));
+        
+        
+        DependencyDescriptor[] dependencies = md.getDependencies();
+        assertNotNull(dependencies);
+        assertEquals(1, dependencies.length);
+        
+        DependencyDescriptor dd = getDependency(dependencies, "mymodule1");
+        assertNotNull(dd);
+        assertEquals("myorg", dd.getDependencyId().getOrganisation());
+        assertEquals("1.0", dd.getDependencyRevisionId().getRevision());
+        assertEquals("depextravalue", dd.getAttribute("depextra"));
     }
     
     public void testImportConfigurations1() throws Exception {

@@ -9,7 +9,7 @@ package fr.jayasoft.ivy;
 /**
  * Represents a module configuration
  */
-public class Configuration {
+public class Configuration extends DefaultExtendableItem {
     public static class Visibility {
         public static Visibility PUBLIC = new Visibility("public");
         public static Visibility PRIVATE = new Visibility("private");

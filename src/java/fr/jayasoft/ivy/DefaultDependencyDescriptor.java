@@ -31,9 +31,9 @@ import fr.jayasoft.ivy.namespace.NamespaceTransformer;
  * @author Xavier Hanin
  *
  */
-public class DefaultDependencyDescriptor implements DependencyDescriptor {
+public class DefaultDependencyDescriptor extends DefaultExtendableItem implements DependencyDescriptor {
 	private static final Pattern SELF_FALLBACK_PATTERN = Pattern.compile("@(\\(.*\\))?");
- private static final Pattern THIS_FALLBACK_PATTERN = Pattern.compile("#(\\(.*\\))?");
+	private static final Pattern THIS_FALLBACK_PATTERN = Pattern.compile("#(\\(.*\\))?");
     
     /**
      * Transforms the given dependency descriptor of the given namespace and return

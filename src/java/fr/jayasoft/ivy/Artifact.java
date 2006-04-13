@@ -12,7 +12,7 @@ import java.util.Date;
  * @author x.hanin
  *
  */
-public interface Artifact {
+public interface Artifact extends ExtendableItem {
     /**
      * Returns the resolved module revision id for this artifact
      * @return

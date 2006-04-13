@@ -9,7 +9,7 @@ package fr.jayasoft.ivy;
  * @author Hanin
  *
  */
-public abstract class AbstractArtifact implements Artifact {
+public abstract class AbstractArtifact extends DefaultExtendableItem implements Artifact {
     public boolean equals(Object obj) {
         if (!(obj instanceof Artifact)) {
             return false;
