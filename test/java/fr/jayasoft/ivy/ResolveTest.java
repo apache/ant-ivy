@@ -616,6 +616,30 @@ public class ResolveTest extends TestCase {
         assertTrue(_ivy.getArchiveFileInCache(_cache, "org1", "mod1.2", "2.0", "mod1.2", "jar", "jar").exists());
     }
     
+    public void testDisableTransitivityPerConfiguration() throws Exception {
+        // mod2.1 (compile, runtime) depends on mod1.1 which depends on mod1.2
+        // compile conf is not transitive
+        
+        // first we resolve compile conf only
+        _ivy.resolve(new File("test/repositories/1/org2/mod2.1/ivys/ivy-0.3.1.xml").toURL(),
+                null, new String[] {"compile"}, _cache, null, true);
+        
+        // dependencies
+        assertTrue(_ivy.getIvyFileInCache(_cache, ModuleRevisionId.newInstance("org1", "mod1.1", "1.0")).exists());
+        assertTrue(_ivy.getArchiveFileInCache(_cache, "org1", "mod1.1", "1.0", "mod1.1", "jar", "jar").exists());
+
+        assertFalse(_ivy.getIvyFileInCache(_cache, ModuleRevisionId.newInstance("org1", "mod1.2", "2.0")).exists());
+        assertFalse(_ivy.getArchiveFileInCache(_cache, "org1", "mod1.2", "2.0", "mod1.2", "jar", "jar").exists());
+
+        // then we resolve runtime conf
+        _ivy.resolve(new File("test/repositories/1/org2/mod2.1/ivys/ivy-0.3.1.xml").toURL(),
+                null, new String[] {"runtime"}, _cache, null, true);
+        
+        // dependencies
+        assertTrue(_ivy.getIvyFileInCache(_cache, ModuleRevisionId.newInstance("org1", "mod1.2", "2.0")).exists());
+        assertTrue(_ivy.getArchiveFileInCache(_cache, "org1", "mod1.2", "2.0", "mod1.2", "jar", "jar").exists());
+    }
+    
     public void testResolveDiamond() throws Exception {
         // mod4.1 depends on 
         //   - mod1.1 which depends on mod1.2

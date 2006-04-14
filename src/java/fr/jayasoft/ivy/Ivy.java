@@ -1032,9 +1032,9 @@ public class Ivy implements TransferListener {
             if (!node.isEvicted(node.getRootModuleConf())) {
                 String[] confs = node.getRealConfs(conf);
                 for (int i = 0; i < confs.length; i++) {
- if (node.getRequestedConf()==null) {
- node.setRequestedConf(confs[i]);
- }
+                    if (node.getRequestedConf()==null) {
+                        node.setRequestedConf(confs[i]);
+                    }
                     doFetchDependencies(node, confs[i]);
                 }
             }
@@ -1081,7 +1081,7 @@ public class Ivy implements TransferListener {
         }
         
         DependencyDescriptor dd = node.getDependencyDescriptor(node.getParent());
-        if (!isDependenciesFetched(node, conf) && (dd == null || dd.isTransitive())) {
+        if (!isDependenciesFetched(node, conf) && (dd == null || isTransitive(node))) {
             Collection dependencies = node.getDependencies(conf, true);
             for (Iterator iter = dependencies.iterator(); iter.hasNext();) {
                 IvyNode dep = (IvyNode)iter.next();
@@ -1091,7 +1091,7 @@ public class Ivy implements TransferListener {
                 }
                 String[] confs = dep.getRequiredConfigurations(node, conf);
                 for (int i = 0; i < confs.length; i++) {
- fetchDependencies(dep, confs[i], true);
+                    fetchDependencies(dep, confs[i], true);
                 }
                 // if there are still confs to fetch (usually because they have
                 // been updated when evicting another module), we fetch them now
@@ -1103,7 +1103,34 @@ public class Ivy implements TransferListener {
         }
         
     }
-    
+
+    /**
+     * Returns true if the current dependency descriptor is transitive
+     * and the parent configuration is transitive.  Otherwise returns false.
+     * @param node curent node
+     * @return true if current node is transitive and the parent configuration is
+     * transitive.
+     */
+    protected boolean isTransitive(IvyNode node) {
+        return (node.getDependencyDescriptor(node.getParent()).isTransitive() &&
+                isParentConfTransitive(node) );
+    }
+
+    /**
+     * Checks if the current node's parent configuration is transitive.
+     * @param node current node
+     * @return true if the node's parent configuration is transitive
+     */
+    protected boolean isParentConfTransitive(IvyNode node) {
+        String conf = node.getParentConf();
+        if (conf==null) {
+            return true;
+        }
+        Configuration parentConf = node.getParent().getConfiguration(conf);
+        return parentConf.isTransitive();
+
+    }
+
     /**
      * Returns true if we've already fetched the dependencies for this node and configuration
      * @param node node to check

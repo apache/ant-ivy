@@ -287,11 +287,14 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
             	case CONF:
                     String visibility = _ivy.substitute(attributes.getValue("visibility"));
                     String ext = _ivy.substitute(attributes.getValue("extends"));
+                    String transitiveValue = attributes.getValue("transitive");
+                    boolean transitive = (transitiveValue == null) ? true : Boolean.valueOf(attributes.getValue("transitive")).booleanValue();
                     Configuration configuration = new Configuration(
                             conf, 
                             Configuration.Visibility.getVisibility(visibility == null ? "public":visibility),
                             _ivy.substitute(attributes.getValue("description")),
-                            ext==null?null:ext.split(","));
+                            ext==null?null:ext.split(","),
+                            transitive);
                     fillAttributes(configuration, attributes);
                 	_md.addConfiguration(configuration);
                 	break;

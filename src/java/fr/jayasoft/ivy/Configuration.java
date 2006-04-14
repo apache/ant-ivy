@@ -35,6 +35,7 @@ public class Configuration extends DefaultExtendableItem {
     private String _description;
     private String[] _extends;
     private Visibility _visibility;
+    private boolean _transitive = true;
     
     /**
      * @param name
@@ -44,6 +45,18 @@ public class Configuration extends DefaultExtendableItem {
      */
     public Configuration(String name, Visibility visibility,
             String description, String[] ext) {
+        this(name, visibility, description, ext, true);
+    }
+    
+    /**
+     * @param name
+     * @param visibility
+     * @param description
+     * @param ext
+     * @param transitive
+     */
+    public Configuration(String name, Visibility visibility,
+            String description, String[] ext, boolean transitive) {
         if (name == null) {
             throw new NullPointerException("null configuration name not allowed");
         }
@@ -61,6 +74,7 @@ public class Configuration extends DefaultExtendableItem {
                 _extends[i] = ext[i].trim();
             }
         }
+        _transitive=transitive;
     }
     
     /**
@@ -95,6 +109,13 @@ public class Configuration extends DefaultExtendableItem {
         return _visibility;
     }
     
+    /**
+     * @return Returns the transitive.
+     */
+    public final boolean isTransitive() {
+        return _transitive;
+    }
+   
     public String toString() {
         return _name;
     }
