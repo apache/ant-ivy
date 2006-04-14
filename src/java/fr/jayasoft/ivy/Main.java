@@ -261,6 +261,9 @@ public class Main {
                     cache, 
                     date,
                     validate);
+            if (report.hasError()) {
+                System.exit(1);
+            }
             ModuleDescriptor md = report.getModuleDescriptor();
 
             if (confs.length == 1 && "*".equals(confs[0])) {
