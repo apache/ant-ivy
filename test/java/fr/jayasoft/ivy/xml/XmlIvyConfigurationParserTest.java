@@ -44,6 +44,13 @@ public class XmlIvyConfigurationParserTest extends TestCase {
         assertEquals("[module]/ivys/ivy-[revision].xml", ivy.getCacheIvyPattern());
         assertEquals("[module]/[type]s/[artifact]-[revision].[ext]", ivy.getCacheArtifactPattern());
         
+        LatestStrategy latest = ivy.getLatestStrategy("mylatest-revision");
+        assertNotNull(latest);
+        assertTrue(latest instanceof LatestRevisionStrategy);
+        LatestRevisionStrategy l = (LatestRevisionStrategy)latest;
+        assertEquals(new Integer(-2), l.getSpecialMeanings().get("pre"));
+        assertEquals(new Integer(4), l.getSpecialMeanings().get("qa"));
+        
         DependencyResolver defaultResolver = ivy.getDefaultResolver();
         assertNotNull(defaultResolver);
         assertEquals("libraries", defaultResolver.getName());

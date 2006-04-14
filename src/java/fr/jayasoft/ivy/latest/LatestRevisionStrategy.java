@@ -14,13 +14,39 @@ import fr.jayasoft.ivy.ArtifactInfo;
 
 
 public class LatestRevisionStrategy extends AbstractLatestStrategy {
-    private static final Map SPECIAL_MEANINGS;
-    static {
-        SPECIAL_MEANINGS = new HashMap();
-        SPECIAL_MEANINGS.put("dev", new Integer(-1));
-        SPECIAL_MEANINGS.put("rc", new Integer(1));
-        SPECIAL_MEANINGS.put("final", new Integer(2));
+    public static class SpecialMeaning {
+        private String _name;
+        private Integer _value;
+        public String getName() {
+            return _name;
+        }
+        public void setName(String name) {
+            _name = name;
+        }
+        public Integer getValue() {
+            return _value;
+        }
+        public void setValue(Integer value) {
+            _value = value;
+        }
+        public void validate() {
+            if (_name == null) {
+                throw new IllegalStateException("a special meaning should have a name");
+            }
+            if (_value == null) {
+                throw new IllegalStateException("a special meaning should have a value");
+            }            
+        }
     }
+
+    private static final Map DEFAULT_SPECIAL_MEANINGS;
+    static {
+        DEFAULT_SPECIAL_MEANINGS = new HashMap();
+        DEFAULT_SPECIAL_MEANINGS.put("dev", new Integer(-1));
+        DEFAULT_SPECIAL_MEANINGS.put("rc", new Integer(1));
+        DEFAULT_SPECIAL_MEANINGS.put("final", new Integer(2));
+    }
+
     
     /**
      * Compares two revisions.
@@ -31,7 +57,7 @@ public class LatestRevisionStrategy extends AbstractLatestStrategy {
      * If a partial latest is found, then it is assumed to be greater
      * than any matching fixed revision. 
      */ 
-    public static Comparator COMPARATOR = new Comparator() {
+    public Comparator COMPARATOR = new Comparator() {
 
         public int compare(Object o1, Object o2) {
             String rev1 = (String)o1;
@@ -74,8 +100,9 @@ public class LatestRevisionStrategy extends AbstractLatestStrategy {
                     return Long.valueOf(parts1[i]).compareTo(Long.valueOf(parts2[i]));
                 }
                 // both are strings, we compare them taking into account special meaning
-                Integer sm1 = (Integer)SPECIAL_MEANINGS.get(parts1[i].toLowerCase());
-                Integer sm2 = (Integer)SPECIAL_MEANINGS.get(parts2[i].toLowerCase());
+                Map specialMeanings = getSpecialMeanings();
+                Integer sm1 = (Integer)specialMeanings.get(parts1[i].toLowerCase());
+                Integer sm2 = (Integer)specialMeanings.get(parts2[i].toLowerCase());
                 if (sm1 != null) {
                     sm2 = sm2==null?new Integer(0):sm2;
                     return sm1.compareTo(sm2);
@@ -99,6 +126,10 @@ public class LatestRevisionStrategy extends AbstractLatestStrategy {
         }
     
     };
+    
+    private Map _specialMeanings = null;
+    private boolean _usedefaultspecialmeanings = true;
+    
     public LatestRevisionStrategy() {
         setName("latest-revision");
     }
@@ -121,5 +152,28 @@ public class LatestRevisionStrategy extends AbstractLatestStrategy {
             }
         } 
         return found;
+    }
+    
+    public void addConfiguredSpecialMeaning(SpecialMeaning meaning) {
+        meaning.validate();
+        getSpecialMeanings().put(meaning.getName().toLowerCase(), meaning.getValue());
+    }
+
+    public synchronized Map getSpecialMeanings() {
+        if (_specialMeanings == null) {
+            _specialMeanings = new HashMap();
+            if (isUsedefaultspecialmeanings()) {
+                _specialMeanings.putAll(DEFAULT_SPECIAL_MEANINGS);
+            }
+        }
+        return _specialMeanings;
+    }
+
+    public boolean isUsedefaultspecialmeanings() {
+        return _usedefaultspecialmeanings;
+    }
+
+    public void setUsedefaultspecialmeanings(boolean usedefaultspecialmeanings) {
+        _usedefaultspecialmeanings = usedefaultspecialmeanings;
     }
 }

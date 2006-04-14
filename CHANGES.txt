@@ -1,3 +1,4 @@
+- NEW: adding to SPECIAL_MEANINGS in LatestRevisionStrategy (IVY-121)
 - NEW: add possibility to define extra attributes in ivy files (IVY-217)
 - NEW: Enhance standalone mode to execute java program by creating classloader of dependant jars from cache (IVY-210) (thanks to Peter Hayes)
 - NEW: Addition of Vfs Resolver which uses Commons-Vfs to resolve files (IVY-128) (thanks to Glen Marchesani, Matt Inger and Stephen Nesbitt)

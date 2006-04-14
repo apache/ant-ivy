@@ -7,6 +7,12 @@
 			checkUpToDate="false"
 			cacheIvyPattern="[module]/ivys/ivy-[revision].xml" 
 			cacheArtifactPattern="[module]/[type]s/[artifact]-[revision].[ext]"/>
+	<latest-strategies>
+	    <latest-revision name="mylatest-revision">
+	    	<specialMeaning name="PRE" value="-2"/>
+	    	<specialMeaning name="QA" value="4"/>
+	    </latest-revision>
+	</latest-strategies>
 	<resolvers>
 		<chain name="internal">
 			<filesystem name="int1" latest="latest-time">
