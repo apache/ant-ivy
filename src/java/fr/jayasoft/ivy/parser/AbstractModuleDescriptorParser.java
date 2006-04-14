@@ -84,8 +84,13 @@ public abstract class AbstractModuleDescriptorParser implements ModuleDescriptor
                     } else {
                         for (int j = 0; j < modConfs.length; j++) {
                             String[] depConfs = getDefaultConfMappingDescriptor().getDependencyConfigurations(modConfs[j]);
-                            for (int k = 0; k < depConfs.length; k++) {
-                                dd.addDependencyConfiguration(modConfs[j].trim(), depConfs[k].trim());
+                            if (depConfs.length > 0) {
+                                for (int k = 0; k < depConfs.length; k++) {
+                                    dd.addDependencyConfiguration(modConfs[j].trim(), depConfs[k].trim());
+                                }
+                            } else {
+                                // no default mapping found for this configuration, map configuration to itself
+                                dd.addDependencyConfiguration(modConfs[j].trim(), modConfs[j].trim());
                             }
                         }
                     }

@@ -1340,6 +1340,15 @@ public class ResolveTest extends TestCase {
                 null, new String[] {"default"}, _cache, null, true);
         assertNotNull(report);
     }
+        
+    public void testIVY214() throws Exception {
+        ResolveReport report = _ivy.resolve(ResolveTest.class.getResource("ivy-214.xml"), null, new String[] {"compile"}, _cache, null, true);
+        
+        assertNotNull(report);
+        assertFalse(report.hasError());
+        
+        assertEquals("Number of artifacts not correct", 1, report.getConfigurationReport("compile").getArtifactsNumber());
+    }
     
     public void testCircular() throws Exception {
         try {
