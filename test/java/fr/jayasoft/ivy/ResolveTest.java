@@ -1366,14 +1366,23 @@ public class ResolveTest extends TestCase {
     }
         
     public void testIVY214() throws Exception {
-        ResolveReport report = _ivy.resolve(ResolveTest.class.getResource("ivy-214.xml"), null, new String[] {"compile"}, _cache, null, true);
-        
-        assertNotNull(report);
-        assertFalse(report.hasError());
-        
-        assertEquals("Number of artifacts not correct", 1, report.getConfigurationReport("compile").getArtifactsNumber());
+    	ResolveReport report = _ivy.resolve(ResolveTest.class.getResource("ivy-214.xml"), null, new String[] {"compile"}, _cache, null, true);
+    	
+    	assertNotNull(report);
+    	assertFalse(report.hasError());
+    	
+    	assertEquals("Number of artifacts not correct", 1, report.getConfigurationReport("compile").getArtifactsNumber());
     }
-    
+
+    public void testIVY218() throws Exception {
+    	ResolveReport report = _ivy.resolve(ResolveTest.class.getResource("ivy-218.xml"), null, new String[] {"test"}, _cache, null, true);
+    	
+    	assertNotNull(report);
+    	assertFalse(report.hasError());
+    	
+    	assertEquals("Number of artifacts not correct", 3, report.getConfigurationReport("test").getArtifactsNumber());
+    }
+
     public void testCircular() throws Exception {
         try {
             // mod6.3 depends on mod6.2, which itself depends on mod6.3 !

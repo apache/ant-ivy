@@ -110,6 +110,7 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
     private String _homePage;
     private long _lastModified = 0;
     private Namespace _namespace;
+	private boolean _mappingOverride;
 
     public DefaultModuleDescriptor(ModuleRevisionId id, String status, Date pubDate) {
         this(id, status, pubDate, false);
@@ -378,4 +379,12 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
             }
         }
     }
+
+	public void setMappingOverride(boolean override) {
+		_mappingOverride = override;
+	}
+	
+	public boolean isMappingOverride() {
+		return _mappingOverride;
+	}
 }

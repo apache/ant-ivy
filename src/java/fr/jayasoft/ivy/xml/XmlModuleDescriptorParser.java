@@ -211,6 +211,7 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
             } else if ("configurations".equals(qName)) {
                 _state = CONF;
                 setDefaultConfMapping(_ivy.substitute(attributes.getValue("defaultconfmapping")));
+                _md.setMappingOverride(Boolean.valueOf(_ivy.substitute(attributes.getValue("confmappingoverride"))).booleanValue());
             } else if ("publications".equals(qName)) {
                 _state = PUB;
                 _artifactsDeclared = true;

@@ -76,7 +76,8 @@
 					      		</xs:element>
 					      	</xs:choice>
 				        </xs:sequence>
-						<xs:attribute name="defaultconfmapping" type="xs:string"/>				        
+						<xs:attribute name="defaultconfmapping" type="xs:string"/>				  
+						<xs:attribute name="confmappingoverride" type="xs:boolean" />      
 			      </xs:complexType>
       		</xs:element>
       		<xs:element name="publications" minOccurs="0">

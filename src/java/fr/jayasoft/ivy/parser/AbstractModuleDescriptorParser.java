@@ -10,19 +10,24 @@ import java.io.IOException;
 import java.net.URL;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.helpers.DefaultHandler;
 
+import fr.jayasoft.ivy.Configuration;
 import fr.jayasoft.ivy.DefaultDependencyDescriptor;
 import fr.jayasoft.ivy.DefaultModuleDescriptor;
 import fr.jayasoft.ivy.DependencyDescriptor;
 import fr.jayasoft.ivy.Ivy;
 import fr.jayasoft.ivy.ModuleDescriptor;
 import fr.jayasoft.ivy.ModuleRevisionId;
+import fr.jayasoft.ivy.Configuration.Visibility;
 import fr.jayasoft.ivy.repository.Resource;
 import fr.jayasoft.ivy.repository.url.URLResource;
 import fr.jayasoft.ivy.util.Message;
@@ -73,6 +78,9 @@ public abstract class AbstractModuleDescriptorParser implements ModuleDescriptor
         }
         protected void parseDepsConfs(String confs, DefaultDependencyDescriptor dd, boolean useDefaultMappingToGuessRightOperande) {
             String[] conf = confs.split(";");
+            parseDepsConfs(conf, dd, useDefaultMappingToGuessRightOperande);
+        }
+        protected void parseDepsConfs(String[] conf, DefaultDependencyDescriptor dd, boolean useDefaultMappingToGuessRightOperande) {
             for (int i = 0; i < conf.length; i++) {
                 String[] ops = conf[i].split("->");
                 if (ops.length == 1) {
@@ -106,6 +114,35 @@ public abstract class AbstractModuleDescriptorParser implements ModuleDescriptor
                     addError("invalid conf "+conf[i]+" for "+dd.getDependencyRevisionId());                        
                 }
             }
+            
+            if (_md.isMappingOverride()) {
+            	addExtendingConfigurations(conf, dd, useDefaultMappingToGuessRightOperande);
+            }
+        }
+        private void addExtendingConfigurations(String[] confs, DefaultDependencyDescriptor dd, boolean useDefaultMappingToGuessRightOperande) {
+        	for (int i = 0; i < confs.length; i++) {
+        		addExtendingConfigurations(confs[i], dd, useDefaultMappingToGuessRightOperande);
+        	}
+        }        
+        private void addExtendingConfigurations(String conf, DefaultDependencyDescriptor dd, boolean useDefaultMappingToGuessRightOperande) {
+        	Set configsToAdd = new HashSet();
+        	Configuration[] configs = _md.getConfigurations();
+        	for (int i = 0; i < configs.length; i++) {
+        		String[] ext = configs[i].getExtends();
+        		for (int j = 0; j < ext.length; j++) {
+        			if (conf.equals(ext[j])) {
+        				String configName = configs[i].getName();
+                		if (getDefaultConfMappingDescriptor().getDependencyConfigurations(configName).length > 0) {
+            				configsToAdd.add(configName);
+                		} else {
+                			addExtendingConfigurations(configName, dd, useDefaultMappingToGuessRightOperande);
+                		}
+        			}
+        		}
+        	}
+        	
+        	String[] confs = (String[]) configsToAdd.toArray(new String[configsToAdd.size()]);
+        	parseDepsConfs(confs, dd, useDefaultMappingToGuessRightOperande);
         }
         
         protected DependencyDescriptor getDefaultConfMappingDescriptor() {
