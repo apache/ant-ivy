@@ -1,3 +1,4 @@
+- NEW: Add option to cachepath task to create a path with local artifact paths (IVY-221)  (thanks to Maarten Coene)
 - NEW: allow extending configurations to override the mapping of their super configurations (IVY-218) (thanks to Maarten Coene)
 - NEW: ability to turn off transitivity at configuration level (IVY-103) (thanks to Karl Baum)
 - NEW: adding to SPECIAL_MEANINGS in LatestRevisionStrategy (IVY-121)

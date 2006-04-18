@@ -6,6 +6,7 @@
 package fr.jayasoft.ivy.ant;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -14,6 +15,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Properties;
 
 import org.apache.tools.ant.BuildException;
 
@@ -123,11 +125,33 @@ public abstract class IvyCacheTask extends IvyTask {
         for (Iterator iter = all.iterator(); iter.hasNext();) {
             Artifact artifact = (Artifact)iter.next();
             if (_artifactFilter.accept(artifact)) {
-                paths.add(ivy.getArchivePathInCache(artifact));
+            	addPath(paths, artifact, ivy);
             }
         }
         
         return paths;
+    }
+    
+    protected void addPath(List paths, Artifact artifact, Ivy ivy) throws IOException {
+    	paths.add(new PathEntry(ivy.getArchivePathInCache(artifact), true));
+    }
+    
+    public static class PathEntry {
+    	private String location;
+    	private boolean relativeToCache;
+    	
+    	public PathEntry(String location, boolean relativeToCache) {
+    		this.location = location;
+    		this.relativeToCache = relativeToCache;
+    	}
+
+		public String getLocation() {
+			return location;
+		}
+
+		public boolean isRelativeToCache() {
+			return relativeToCache;
+		}
     }
 
 }

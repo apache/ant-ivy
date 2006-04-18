@@ -39,9 +39,9 @@ public class IvyCacheFileset extends IvyCacheTask {
                 ne.setName("**/*");
             } else {
                 for (Iterator iter = paths.iterator(); iter.hasNext();) {
-                    String p = (String)iter.next();
+                    PathEntry p = (PathEntry)iter.next();
                     NameEntry ne = fileset.createInclude();
-                    ne.setName(p);
+                    ne.setName(p.getLocation());
                 }
             }
         } catch (Exception ex) {
