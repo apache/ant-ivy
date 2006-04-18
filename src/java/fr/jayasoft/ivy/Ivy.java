@@ -1781,11 +1781,11 @@ public class Ivy implements TransferListener {
         for (Iterator iter = props.keySet().iterator(); iter.hasNext();) {
             String mid = (String)iter.next();
             String[] parts = props.getProperty(mid).split(" ");
+            ModuleId decodedMid = ModuleId.decode(mid);
             if (resolveDynamicRevisions) {
-                resolvedRevisions.put(ModuleId.decode(mid), parts[0]);
+                resolvedRevisions.put(decodedMid, parts[0]);
             }
-            String depStatus = props.getProperty(mid);
-            dependenciesStatus.put(ModuleId.decode(mid), parts[1]);
+            dependenciesStatus.put(decodedMid, parts[1]);
         }
         
         // 3) use pdrResolver to resolve dependencies info
