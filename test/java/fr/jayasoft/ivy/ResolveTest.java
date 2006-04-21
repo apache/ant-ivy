@@ -82,6 +82,15 @@ public class ResolveTest extends TestCase {
         assertTrue(_ivy.getArchiveFileInCache(_cache, "org1", "mod1.2", "2.0", "mod1.2", "jar", "jar").exists());
     }
 
+    public void testResolveOtherConfiguration() throws Exception {
+        ResolveReport report = _ivy.resolve(ResolveTest.class.getResource("ivy-other.xml"), null, new String[] {"test"}, _cache, null, true);
+        
+        assertNotNull(report);
+        assertFalse(report.hasError());
+        
+        assertEquals("Number of artifacts not correct", 1, report.getConfigurationReport("test").getArtifactsNumber());
+    }
+
     public void testResolveWithSlashes() throws Exception {
         // test case for IVY-198
         // module depends on mod1.2

@@ -9,6 +9,7 @@
 - NEW: Always update artifacts when revision matches a regex pattern (IVY-189) (thanks to Johan Stuyts)
 - NEW: Provide Ant task for generating report about artifacts depended upon (IVY-194) (thanks to Johan Stuyts)
 
+- IMPROVE: add sort of 'fallback'-mapping to the defaultconfmapping attribute (IVY-215) (thanks to Maarten Coene)
 - IMPROVE: Use global properties in the recursive delivery (IVY-222) (with the contribution of Roshan Punnoose)
 - IMPROVE: ivy standalone now return error status (IVY-152)
 - IMPROVE: performances improved (IVY-187) (thanks to Karl Baum)

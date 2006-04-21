@@ -32,8 +32,8 @@ import fr.jayasoft.ivy.namespace.NamespaceTransformer;
  *
  */
 public class DefaultDependencyDescriptor extends DefaultExtendableItem implements DependencyDescriptor {
-	private static final Pattern SELF_FALLBACK_PATTERN = Pattern.compile("@(\\(.*\\))?");
-	private static final Pattern THIS_FALLBACK_PATTERN = Pattern.compile("#(\\(.*\\))?");
+    private static final Pattern SELF_FALLBACK_PATTERN = Pattern.compile("@(\\(.*\\))?");
+    private static final Pattern THIS_FALLBACK_PATTERN = Pattern.compile("#(\\(.*\\))?");
     
     /**
      * Transforms the given dependency descriptor of the given namespace and return
@@ -56,7 +56,7 @@ public class DefaultDependencyDescriptor extends DefaultExtendableItem implement
         newdd._namespace = ns;
         return newdd;
     }
-
+    
     /**
      * Transforms a dependency descriptor using the given transformer.
      * 
@@ -111,7 +111,7 @@ public class DefaultDependencyDescriptor extends DefaultExtendableItem implement
      */
     private boolean _changing; 
     private ModuleRevisionId _parentId;
-
+    
     private boolean _transitive = true;
     
     /**
@@ -119,7 +119,7 @@ public class DefaultDependencyDescriptor extends DefaultExtendableItem implement
      */
     private Namespace _namespace = null;
     private ModuleDescriptor _md; 
-
+    
     public DefaultDependencyDescriptor(DependencyDescriptor dd, String revision) {
         _parentId = dd.getParentRevisionId();
         _revId = new ModuleRevisionId(dd.getDependencyId(), revision);
@@ -155,98 +155,102 @@ public class DefaultDependencyDescriptor extends DefaultExtendableItem implement
     private DefaultDependencyDescriptor() {        
     }
     
-	public ModuleId getDependencyId() {
-		return getDependencyRevisionId().getModuleId();
-	}
-
-	public ModuleRevisionId getDependencyRevisionId() {
-		return _revId;
-	}
-
-	public String[] getModuleConfigurations() {
-		return (String[]) _confs.keySet().toArray(new String[_confs.keySet().size()]);
-	}
-
-	public String[] getDependencyConfigurations(String moduleConfiguration) {
- return getDependencyConfigurations(moduleConfiguration, moduleConfiguration);
- }
-
- public String[] getDependencyConfigurations(String moduleConfiguration, String requestedConfiguration) {
-		List confs = (List)_confs.get(moduleConfiguration);
-		List defConfs = (List)_confs.get("*");
-		Collection ret = new LinkedHashSet();
-		if (confs != null) {
-		    ret.addAll(confs);
-		}
-		if (defConfs != null) {
-		    ret.addAll(defConfs);
-		}
-
- Collection replacedRet = new LinkedHashSet();
-        for (Iterator iter = ret.iterator(); iter.hasNext();) {
- String c = (String)iter.next();
- String replacedConf = replaceSelfFallbackPattern( c, moduleConfiguration);
- if (replacedConf==null) {
- replacedConf = replaceThisFallbackPattern( c, requestedConfiguration);
- }
- if (replacedConf!=null) {
- c = replacedConf;
- }
- replacedRet.add(c);
+    public ModuleId getDependencyId() {
+        return getDependencyRevisionId().getModuleId();
+    }
+    
+    public ModuleRevisionId getDependencyRevisionId() {
+        return _revId;
+    }
+    
+    public String[] getModuleConfigurations() {
+        return (String[]) _confs.keySet().toArray(new String[_confs.keySet().size()]);
+    }
+    
+    public String[] getDependencyConfigurations(String moduleConfiguration) {
+        return getDependencyConfigurations(moduleConfiguration, moduleConfiguration);
+    }
+    
+    public String[] getDependencyConfigurations(String moduleConfiguration, String requestedConfiguration) {
+        List confs = (List)_confs.get(moduleConfiguration);
+        if (confs == null) {
+            // there is no mapping defined for this configuration, add the 'other' mappings.
+            confs = (List)_confs.get("%");
         }
- ret = replacedRet;
+        List defConfs = (List)_confs.get("*");
+        Collection ret = new LinkedHashSet();
+        if (confs != null) {
+            ret.addAll(confs);
+        }
+        if (defConfs != null) {
+            ret.addAll(defConfs);
+        }
+        
+        Collection replacedRet = new LinkedHashSet();
+        for (Iterator iter = ret.iterator(); iter.hasNext();) {
+            String c = (String)iter.next();
+            String replacedConf = replaceSelfFallbackPattern( c, moduleConfiguration);
+            if (replacedConf==null) {
+                replacedConf = replaceThisFallbackPattern( c, requestedConfiguration);
+            }
+            if (replacedConf!=null) {
+                c = replacedConf;
+            }
+            replacedRet.add(c);
+        }
+        ret = replacedRet;
         if (ret.contains("*")) {
             return new String[] {"*"};
         }
-		return (String[])ret.toArray(new String[ret.size()]);
-	}
-
- protected static String replaceSelfFallbackPattern(final String conf, final String moduleConfiguration) {
- return replaceFallbackConfigurationPattern(SELF_FALLBACK_PATTERN, conf, moduleConfiguration);
- }
-
- protected static String replaceThisFallbackPattern(final String conf, final String requestedConfiguration) {
- return replaceFallbackConfigurationPattern(THIS_FALLBACK_PATTERN, conf, requestedConfiguration);
- }
-
- /**
- * Replaces fallback patterns with correct values if fallback pattern exists.
- * @param pattern pattern to look for
- * @param conf configuration mapping from dependency element
- * @param moduleConfiguration module's configuration to use for replacement
- * @return Replaced string if pattern matched. Otherwise null.
- */
- protected static String replaceFallbackConfigurationPattern(final Pattern pattern, final String conf, final String moduleConfiguration) {
- Matcher matcher = pattern.matcher(conf);
- if (matcher.matches()) {
- if (matcher.group(1) != null) {
- return moduleConfiguration+matcher.group(1);
- } else {
- return moduleConfiguration;
- }
- }
- return null;
- }
-
-	public String[] getDependencyConfigurations(String[] moduleConfigurations) {
-		Set confs = new LinkedHashSet();
-		for (int i = 0; i < moduleConfigurations.length; i++) {
-			confs.addAll(Arrays.asList(getDependencyConfigurations(moduleConfigurations[i])));
-		}
-		if (confs.contains("*")) {
-			return new String[] {"*"};
-		}
-		return (String[]) confs.toArray(new String[confs.size()]);
-	}
+        return (String[])ret.toArray(new String[ret.size()]);
+    }
+    
+    protected static String replaceSelfFallbackPattern(final String conf, final String moduleConfiguration) {
+        return replaceFallbackConfigurationPattern(SELF_FALLBACK_PATTERN, conf, moduleConfiguration);
+    }
+    
+    protected static String replaceThisFallbackPattern(final String conf, final String requestedConfiguration) {
+        return replaceFallbackConfigurationPattern(THIS_FALLBACK_PATTERN, conf, requestedConfiguration);
+    }
+    
+    /**
+     * Replaces fallback patterns with correct values if fallback pattern exists.
+     * @param pattern pattern to look for
+     * @param conf configuration mapping from dependency element
+     * @param moduleConfiguration module's configuration to use for replacement
+     * @return Replaced string if pattern matched. Otherwise null.
+     */
+    protected static String replaceFallbackConfigurationPattern(final Pattern pattern, final String conf, final String moduleConfiguration) {
+        Matcher matcher = pattern.matcher(conf);
+        if (matcher.matches()) {
+            if (matcher.group(1) != null) {
+                return moduleConfiguration+matcher.group(1);
+            } else {
+                return moduleConfiguration;
+            }
+        }
+        return null;
+    }
+    
+    public String[] getDependencyConfigurations(String[] moduleConfigurations) {
+        Set confs = new LinkedHashSet();
+        for (int i = 0; i < moduleConfigurations.length; i++) {
+            confs.addAll(Arrays.asList(getDependencyConfigurations(moduleConfigurations[i])));
+        }
+        if (confs.contains("*")) {
+            return new String[] {"*"};
+        }
+        return (String[]) confs.toArray(new String[confs.size()]);
+    }
     
     public DependencyArtifactDescriptor[] getDependencyArtifactsIncludes(String moduleConfiguration) {
         return getDependencyArtifacts(moduleConfiguration, _artifactsIncludes);
     }
-
+    
     public DependencyArtifactDescriptor[] getDependencyArtifactsExcludes(String moduleConfiguration) {
         return getDependencyArtifacts(moduleConfiguration, _artifactsExcludes);
     }
-
+    
     private DependencyArtifactDescriptor[] getDependencyArtifacts(String moduleConfiguration, Map artifactsMap) {
         if (artifactsMap.isEmpty()) { 
             return new DependencyArtifactDescriptor[0];
@@ -262,7 +266,7 @@ public class DefaultDependencyDescriptor extends DefaultExtendableItem implement
         }
         return (DependencyArtifactDescriptor[])ret.toArray(new DependencyArtifactDescriptor[ret.size()]);
     }
-
+    
     public DependencyArtifactDescriptor[] getDependencyArtifactsIncludes(String[] moduleConfigurations) {
         Set artifacts = new HashSet();
         for (int i = 0; i < moduleConfigurations.length; i++) {
@@ -282,11 +286,11 @@ public class DefaultDependencyDescriptor extends DefaultExtendableItem implement
     public DependencyArtifactDescriptor[] getAllDependencyArtifactsIncludes() {
         return getAllDependencyArtifacts(_artifactsIncludes);
     }
-
+    
     public DependencyArtifactDescriptor[] getAllDependencyArtifactsExcludes() {
         return getAllDependencyArtifacts(_artifactsExcludes);
     }
-
+    
     private DependencyArtifactDescriptor[] getAllDependencyArtifacts(Map artifactsMap) {
         Set ret = new HashSet();
         for (Iterator it = artifactsMap.values().iterator(); it.hasNext();) {
@@ -295,7 +299,7 @@ public class DefaultDependencyDescriptor extends DefaultExtendableItem implement
         }
         return (DependencyArtifactDescriptor[])ret.toArray(new DependencyArtifactDescriptor[ret.size()]);
     }
-
+    
     public void addDependencyConfiguration(String masterConf, String depConf) {
         List confs = (List)_confs.get(masterConf);
         if (confs == null) {
@@ -310,11 +314,11 @@ public class DefaultDependencyDescriptor extends DefaultExtendableItem implement
     public void addDependencyArtifactIncludes(String masterConf, DependencyArtifactDescriptor dad) {
         addDependencyArtifacts(masterConf, dad, _artifactsIncludes);
     }
-
+    
     public void addDependencyArtifactExcludes(String masterConf, DependencyArtifactDescriptor dad) {
         addDependencyArtifacts(masterConf, dad, _artifactsExcludes);
     }
-
+    
     private void addDependencyArtifacts(String masterConf, DependencyArtifactDescriptor dad, Map artifactsMap) {
         Collection artifacts = (Collection)artifactsMap.get(masterConf);
         if (artifacts == null) {
@@ -351,29 +355,29 @@ public class DefaultDependencyDescriptor extends DefaultExtendableItem implement
     public void addExtends(String conf) {
         _extends.add(conf);
     }
-
+    
     public String toString() {
         return "dependency: "+_revId+" "+_confs;
     }
-
+    
     public boolean isForce() {
         return _force;
     }
-
+    
     public ModuleRevisionId getParentRevisionId() {
         return _md != null ? _md.getResolvedModuleRevisionId() : _parentId;
     }
-
+    
     public boolean isChanging() {
         return _changing;
     }
-
+    
     public boolean isTransitive() {
         return _transitive;
     }
-
+    
     public Namespace getNamespace() {
         return _namespace;
     }
-
+    
 }

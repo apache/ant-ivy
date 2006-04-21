@@ -1,0 +1,15 @@
+<ivy-module version="1.0">
+	<info 	organisation="test"
+			module="IVY-other"
+			status="integration"
+			publication="20050202110000"
+	/>
+	<configurations defaultconfmapping="compile->A;%->B">
+		<conf name="compile"/>
+		<conf name="runtime" extends="compile"/>
+		<conf name="test" extends="runtime"/>
+	</configurations>
+	<dependencies>
+		<dependency org="org5" name="mod5.1" rev="4.2" force="true" conf="test" transitive="false" />
+	</dependencies>
+</ivy-module> 
