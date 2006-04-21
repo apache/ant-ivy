@@ -1,3 +1,4 @@
+- NEW: A conflict manager that is able to allow implementation changes but not api changes (1.2.x - OK), (1.x.x - Not OK) (IVY-223) (thanks to Anders Janmyr)
 - NEW: Add option to cachepath task to create a path with local artifact paths (IVY-221)  (thanks to Maarten Coene)
 - NEW: allow extending configurations to override the mapping of their super configurations (IVY-218) (thanks to Maarten Coene)
 - NEW: ability to turn off transitivity at configuration level (IVY-103) (thanks to Karl Baum)

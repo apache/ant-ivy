@@ -1,0 +1,18 @@
+<ivyconf>
+
+    <conf defaultResolver="test"
+          defaultConflictManager="regexp"
+            />
+
+    <resolvers>
+        <filesystem name="test">
+            <artifact
+                    pattern="test/repositories/1/[organisation]/[module]/[type]s/[artifact]-[revision].[type]"/>
+            <ivy pattern="test/repositories/1/[organisation]/[module]/ivys/ivy-[revision].xml"/>
+        </filesystem>
+    </resolvers>
+
+    <conflict-managers>
+        <regexp-cm name="regexp" regexp="(.*)\.\d"/>
+    </conflict-managers>
+</ivyconf>
