@@ -20,13 +20,10 @@ import fr.jayasoft.ivy.util.Message;
  * this:
  * 
  * <pre>
- *    &lt;typedef name=&quot;RegexpConflictManager&quot; classname=&quot;fr.jayasoft.ivy.conflict.RegexpConflictManager&quot; /&gt;
- *    .
- *    .
  *    &lt;!-- Match all revisions, but ignore the last dot(.) and the character after it.
  *        Used to match api changes in out milestones. --&gt;
  *    &lt;conflict-managers&gt;
- *        &lt;RegexpConflictManager name=&quot;regexp&quot; regexp=&quot;(.*)\..$&quot; ignoreNonMatching=&quot;true&quot;/&gt;
+ *        &lt;regexp-cm name=&quot;regexp&quot; regexp=&quot;(.*)\..$&quot; ignoreNonMatching=&quot;true&quot;/&gt;
  *    &lt;/conflict-managers&gt;
  * </pre>
  * 
