@@ -1,0 +1,11 @@
+<ivy-module version="1.0">
+	<info organisation="test" module="IVY-225" status="integration" publication="20050202110000"/>
+	<dependencies>
+		<dependency org="org1" name="mod1.2" rev="1.1" />
+		<dependency org="org3" name="mod3.2" rev="1.4" />
+		<dependency org="org5" name="mod5.1" rev="4.2" />
+	</dependencies>
+	<conflicts>
+		<manager name="all" />
+	</conflicts>
+</ivy-module>

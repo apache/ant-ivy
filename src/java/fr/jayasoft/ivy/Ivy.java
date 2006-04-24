@@ -27,6 +27,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
@@ -922,7 +923,7 @@ public class Ivy implements TransferListener {
             confs = md.getConfigurationsNames();
         }
         
-        Map dependenciesMap = new HashMap();
+        Map dependenciesMap = new LinkedHashMap();
         Date reportDate = new Date();
         ResolveData data = new ResolveData(this, cache, date, null, validate, dependenciesMap);
         IvyNode rootNode = new IvyNode(data, md);
@@ -948,7 +949,7 @@ public class Ivy implements TransferListener {
                 
                 // update the root module conf we are about to fetch
                 rootNode.setRootModuleConf(confs[i]); 
- rootNode.setRequestedConf(confs[i]);
+                rootNode.setRequestedConf(confs[i]);
                 rootNode.updateConfsToFetch(Collections.singleton(confs[i]));
                 
                 // go fetch !
@@ -956,9 +957,8 @@ public class Ivy implements TransferListener {
             }
         }
         
-        
         // prune and reverse sort fectched dependencies 
-        Collection dependencies = new HashSet(dependenciesMap.size()); // use a Set to avoids duplicates
+        Collection dependencies = new LinkedHashSet(dependenciesMap.size()); // use a Set to avoids duplicates
         for (Iterator iter = dependenciesMap.values().iterator(); iter.hasNext();) {
             IvyNode dep = (IvyNode) iter.next();
             if (dep != null) {
@@ -1013,7 +1013,7 @@ public class Ivy implements TransferListener {
             }
         }
         
-        return (IvyNode[])sortedDependencies.toArray(new IvyNode[sortedDependencies.size()]);
+        return (IvyNode[]) dependencies.toArray(new IvyNode[dependencies.size()]);
     }
 
 

@@ -6,7 +6,6 @@
 package fr.jayasoft.ivy.ant;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -15,15 +14,19 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Properties;
+import java.util.Set;
 
 import org.apache.tools.ant.BuildException;
 
 import fr.jayasoft.ivy.Artifact;
 import fr.jayasoft.ivy.Ivy;
 import fr.jayasoft.ivy.ModuleId;
+import fr.jayasoft.ivy.ModuleRevisionId;
 import fr.jayasoft.ivy.filter.Filter;
 import fr.jayasoft.ivy.filter.FilterHelper;
+import fr.jayasoft.ivy.report.ArtifactDownloadReport;
+import fr.jayasoft.ivy.report.ResolveReport;
+import fr.jayasoft.ivy.util.Message;
 import fr.jayasoft.ivy.xml.XmlReportParser;
 
 //TODO: refactor this class and IvyCachePath to extract common behaviour
@@ -113,16 +116,9 @@ public abstract class IvyCacheTask extends IvyTask {
     protected List getPaths() throws BuildException, ParseException, IOException {
         Ivy ivy = getIvyInstance();
 
-        XmlReportParser parser = new XmlReportParser();
-        
-        String[] confs = splitConfs(_conf);
-        Collection all = new LinkedHashSet();
-        for (int i = 0; i < confs.length; i++) {
-            Artifact[] artifacts = parser.getArtifacts(new ModuleId(_organisation, _module), confs[i], _cache);
-            all.addAll(Arrays.asList(artifacts));
-        }
+        Collection artifacts = getAllArtifacts();
         List paths = new ArrayList();
-        for (Iterator iter = all.iterator(); iter.hasNext();) {
+        for (Iterator iter = artifacts.iterator(); iter.hasNext();) {
             Artifact artifact = (Artifact)iter.next();
             if (_artifactFilter.accept(artifact)) {
             	addPath(paths, artifact, ivy);
@@ -130,6 +126,36 @@ public abstract class IvyCacheTask extends IvyTask {
         }
         
         return paths;
+    }
+
+    private Collection getAllArtifacts() throws ParseException, IOException {
+        String[] confs = splitConfs(_conf);
+        Collection all = new LinkedHashSet();
+
+        ResolveReport report = (ResolveReport) getProject().getReference("ivy.resolved.report");
+        
+        if (report != null) {
+            Message.debug("using internal report instance to get artifacts list");
+            for (int i = 0; i < confs.length; i++) {
+                Set revisions = report.getConfigurationReport(confs[i]).getModuleRevisionIds();
+                for (Iterator it = revisions.iterator(); it.hasNext(); ) {
+                	ModuleRevisionId revId = (ModuleRevisionId) it.next();
+                	ArtifactDownloadReport[] aReps = report.getConfigurationReport(confs[i]).getDownloadReports(revId);
+                	for (int j = 0; j < aReps.length; j++) {
+                		all.add(aReps[j].getArtifact());
+                	}
+                }
+            }
+        } else {
+            Message.debug("using stored report to get artifacts list");
+            XmlReportParser parser = new XmlReportParser();
+            
+            for (int i = 0; i < confs.length; i++) {
+                Artifact[] artifacts = parser.getArtifacts(new ModuleId(_organisation, _module), confs[i], _cache);
+                all.addAll(Arrays.asList(artifacts));
+            }
+        }
+        return all;
     }
     
     protected void addPath(List paths, Artifact artifact, Ivy ivy) throws IOException {

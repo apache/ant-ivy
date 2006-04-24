@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.Set;
 
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
@@ -623,6 +624,28 @@ public class ResolveTest extends TestCase {
 
         assertTrue(_ivy.getIvyFileInCache(_cache, ModuleRevisionId.newInstance("org1", "mod1.2", "2.0")).exists());
         assertTrue(_ivy.getArchiveFileInCache(_cache, "org1", "mod1.2", "2.0", "mod1.2", "jar", "jar").exists());
+    }
+    
+    public void testDependenciesOrder() throws Exception {
+        ResolveReport report = _ivy.resolve(ResolveTest.class.getResource("ivy-225.xml"),
+                null, new String[] {"default"}, _cache, null, true);
+        
+        Set revisions = report.getConfigurationReport("default").getModuleRevisionIds();
+        assertTrue("number of revisions is not correct", revisions.size() >= 3);
+        
+        // verify the first 3 modules against the ones in the ivy file
+        Iterator it = revisions.iterator();
+        ModuleRevisionId revId1 = (ModuleRevisionId) it.next();
+        assertEquals("mod1.2", revId1.getName());
+        assertEquals("1.1", revId1.getRevision());
+        
+        ModuleRevisionId revId2 = (ModuleRevisionId) it.next();
+        assertEquals("mod3.2", revId2.getName());
+        assertEquals("1.4", revId2.getRevision());
+        
+        ModuleRevisionId revId3 = (ModuleRevisionId) it.next();
+        assertEquals("mod5.1", revId3.getName());
+        assertEquals("4.2", revId3.getRevision());
     }
     
     public void testDisableTransitivityPerConfiguration() throws Exception {

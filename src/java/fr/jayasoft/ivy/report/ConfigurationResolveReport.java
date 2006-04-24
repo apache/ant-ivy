@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -75,7 +76,7 @@ public class ConfigurationResolveReport {
      * @return all non evicted and non error dependency mrids
      */
     public Set getModuleRevisionIds() {
-		Set mrids = new HashSet();
+		Set mrids = new LinkedHashSet();
 		for (Iterator iter = getDependencies().iterator(); iter.hasNext();) {
 			IvyNode node = (IvyNode) iter.next();
             if (!node.isEvicted(getConfiguration()) && !node.hasProblem()) {
@@ -129,7 +130,7 @@ public class ConfigurationResolveReport {
 	}
 
     private Collection getDependencies() {
-        return new HashSet(_dependencies.values());
+        return new LinkedHashSet(_dependencies.values());
     }
     public IvyNode[] getEvictedNodes() {
         List evicted = new ArrayList();

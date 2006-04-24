@@ -109,6 +109,9 @@ public class IvyResolve extends IvyTask {
             if (isHaltonfailure() && report.hasError()) {
                 throw new BuildException("resolve failed - see output for details");
             }
+            
+            getProject().addReference("ivy.resolved.report", report);
+            
             ModuleDescriptor md = report.getModuleDescriptor();
             setResolved(md);
             

@@ -17,6 +17,7 @@
 - IMPROVE: Change default cache artifact pattern to handle missing extension (IVY-196) (thanks to Johan Stuyts)
 - IMPROVE: Log messages do not display most specfic resolver name (IVY-170)
 
+- FIX: cachepath task should preserve the order of the dependencies (IVY-225) (thanks to Maarten Coene)
 - FIX: specifying a defaultconfmapping adds dependencies of each unlisted configuration (IVY-214) (thanks to Maarten Coene)
 - FIX: Ivy fails when downloading from a server that supports NTLM authentication (IVY-213) (thanks to Damon Rand)
 - FIX: problem with cache and returnFirst (IVY-207)
