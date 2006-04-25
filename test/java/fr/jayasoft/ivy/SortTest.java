@@ -72,29 +72,32 @@ public class SortTest extends TestCase {
         }
     }
     
-    public void testCircularDependency() {
-        md[0].addDependency(new DefaultDependencyDescriptor(mrid4, false));
-        toSort = new ArrayList(Arrays.asList(new Object[] {md[0], md[2], md[1], md[3]}));
-        try {
-            Ivy.sortModuleDescriptors(toSort);
-        } catch (CircularDependencyException e) {
-            //successfull
-            assertEquals("Wrong dependency graph message", "[ org | md1 | rev1 ]->[ org | md4 | rev4 ]->[ org | md3 | rev3 ]->[ org | md2 | rev2 ]->[ org | md1 | rev1 ]", e.getMessage());
-            return;
-        }
-        assertTrue("Should have thrown circular dependency exception", false);
-    }
-    
-    public void testCircularDependency2() {
-        md[1].addDependency(new DefaultDependencyDescriptor(mrid3, false));
-        toSort = new ArrayList(Arrays.asList(new Object[] {md[0], md[2], md[1], md[3]}));
-        try {
-            Ivy.sortModuleDescriptors(toSort);
-        } catch (CircularDependencyException e) {
-            //successfull
-            assertEquals("Wrong dependency graph message", "[ org | md3 | rev3 ]->[ org | md2 | rev2 ]->[ org | md3 | rev3 ]", e.getMessage());
-            return;
-        }
-        assertTrue("Should have thrown circular dependency exception", false);
-    }
+    // sorter does not throw circular dependency anymore for the moment,
+    // because circular dependencies are more complicated to evaluate than just a callstack comparison 
+    // (could be ok with appropriate configurations) - see http://jira.jayasoft.org/browse/IVY-230
+//    public void testCircularDependency() {
+//        md[0].addDependency(new DefaultDependencyDescriptor(mrid4, false));
+//        toSort = new ArrayList(Arrays.asList(new Object[] {md[0], md[2], md[1], md[3]}));
+//        try {
+//            Ivy.sortModuleDescriptors(toSort);
+//        } catch (CircularDependencyException e) {
+//            //successfull
+//            assertEquals("Wrong dependency graph message", "[ org | md1 | rev1 ]->[ org | md4 | rev4 ]->[ org | md3 | rev3 ]->[ org | md2 | rev2 ]->[ org | md1 | rev1 ]", e.getMessage());
+//            return;
+//        }
+//        assertTrue("Should have thrown circular dependency exception", false);
+//    }
+//    
+//    public void testCircularDependency2() {
+//        md[1].addDependency(new DefaultDependencyDescriptor(mrid3, false));
+//        toSort = new ArrayList(Arrays.asList(new Object[] {md[0], md[2], md[1], md[3]}));
+//        try {
+//            Ivy.sortModuleDescriptors(toSort);
+//        } catch (CircularDependencyException e) {
+//            //successfull
+//            assertEquals("Wrong dependency graph message", "[ org | md3 | rev3 ]->[ org | md2 | rev2 ]->[ org | md3 | rev3 ]", e.getMessage());
+//            return;
+//        }
+//        assertTrue("Should have thrown circular dependency exception", false);
+//    }
 }

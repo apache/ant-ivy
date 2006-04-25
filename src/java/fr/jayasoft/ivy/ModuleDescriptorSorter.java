@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 
+import fr.jayasoft.ivy.util.Message;
+
 /**
  * Inner helper class for sorting ModuleDescriptors.
  * @author baumkar (for most of the code)
@@ -99,7 +101,8 @@ class ModuleDescriptorSorter {
         }
         if (callStack.contains(current)) {
             callStack.add(current);
-            throw new CircularDependencyException((ModuleDescriptor[])callStack.toArray(new ModuleDescriptor[0]));
+            Message.warn("circular dependency found: "+new CircularDependencyException((ModuleDescriptor[])callStack.toArray(new ModuleDescriptor[0])));
+            return;
         }
         DependencyDescriptor [] descriptors = current.getDependencies();
         ModuleDescriptor moduleDescriptorDependency = null;
