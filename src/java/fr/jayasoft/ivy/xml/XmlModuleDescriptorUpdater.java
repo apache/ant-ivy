@@ -21,6 +21,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
+import org.xml.sax.ext.LexicalHandler;
 import org.xml.sax.helpers.DefaultHandler;
 
 import fr.jayasoft.ivy.Ivy;
@@ -66,6 +67,7 @@ public class XmlModuleDescriptorUpdater {
             fos = new FileOutputStream(destFile);
             final PrintWriter out = new PrintWriter(fos);
             copyHeader(srcURL, out);
+            
             XMLHelper.parse(srcURL, null, new DefaultHandler() {
                 // never print *ln* cause \n is found in copied characters stream
                 // nor do we need do handle indentation, original one is maintained except for attributes
@@ -231,6 +233,32 @@ public class XmlModuleDescriptorUpdater {
                 public void fatalError(SAXParseException e) throws SAXException {
                     throw e;
                 }
+            }, new LexicalHandler() {
+				public void endCDATA() throws SAXException {
+				}
+
+				public void endDTD() throws SAXException {
+				}
+
+				public void startCDATA() throws SAXException {
+				}
+
+				public void comment(char[] ch, int start, int length) throws SAXException {
+					StringBuffer comment = new StringBuffer();
+					comment.append(ch, start, length);
+					out.print("<!--");
+					out.print(comment.toString());
+					out.print("-->");
+				}
+
+				public void endEntity(String name) throws SAXException {
+				}
+
+				public void startEntity(String name) throws SAXException {
+				}
+
+				public void startDTD(String name, String publicId, String systemId) throws SAXException {
+				}
             });
         } catch (IOException ex) {
             throw ex;

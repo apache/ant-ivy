@@ -15,6 +15,7 @@ import javax.xml.parsers.SAXParserFactory;
 
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXNotRecognizedException;
+import org.xml.sax.ext.LexicalHandler;
 import org.xml.sax.helpers.DefaultHandler;
 
 import fr.jayasoft.ivy.url.URLHandlerRegistry;
@@ -58,6 +59,10 @@ public abstract class XMLHelper {
     // implement warning error and fatalError methods in handler to be informed
     // of validation errors
     public static void parse(URL xmlURL, URL schema, DefaultHandler handler) throws SAXException, IOException, ParserConfigurationException {
+    	parse(xmlURL, schema, handler, null);
+    }
+    
+    public static void parse(URL xmlURL, URL schema, DefaultHandler handler, LexicalHandler lHandler) throws SAXException, IOException, ParserConfigurationException {
         InputStream xmlStream = null;
         InputStream schemaStream = null;
         try {
@@ -65,7 +70,18 @@ public abstract class XMLHelper {
                 schemaStream = URLHandlerRegistry.getDefault().openStream(schema);
             }
             xmlStream = URLHandlerRegistry.getDefault().openStream(xmlURL);
-            XMLHelper.newSAXParser(schema, schemaStream).parse(xmlStream, handler);
+            SAXParser parser = XMLHelper.newSAXParser(schema, schemaStream);
+            
+            if (lHandler != null) {
+            	try {
+            		parser.setProperty("http://xml.org/sax/properties/lexical-handler", lHandler);
+            	} catch (SAXException ex) {
+                    System.err.println("WARNING: problem while setting the lexical handler property on SAXParser: " + ex.getMessage());
+                    // continue without the lexical handler
+            	}
+            }
+            
+            parser.parse(xmlStream, handler);
         } finally {
             if (xmlStream != null) {
                 try {
