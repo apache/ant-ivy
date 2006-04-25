@@ -1,3 +1,10 @@
+				Ivy 
+				- The popular open source dependency manager
+				- http://www.jayasoft.org/ivy
+				============================================
+				
+for detailed view of each issue, please consult http://jira.jayasoft.org/
+
    version 1.4 - not yet released
 =================================
 * thanks to Jayasoft:
