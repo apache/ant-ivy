@@ -7,6 +7,9 @@ package fr.jayasoft.ivy.ant;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.taskdefs.XSLTProcess;
@@ -30,6 +33,7 @@ public class IvyReport extends IvyTask {
     private String _xslFile;
     private String _outputpattern;
     private String _xslext = "html";
+    private List _params = new ArrayList();
 
     public File getTodir() {
         return _todir;
@@ -178,6 +182,15 @@ public class IvyReport extends IvyTask {
         param = xslt.createParam();
         param.setName("extension");
         param.setExpression(_xslext);
+
+        // add the provided XSLT parameters
+        for (Iterator it = _params.iterator(); it.hasNext(); ) {
+            param = (XSLTProcess.Param) it.next();
+            XSLTProcess.Param realParam = xslt.createParam();
+            realParam.setName(param.getName());
+            realParam.setExpression(param.getExpression());
+        }
+        
         xslt.execute();
 
         // then copy the css if required
@@ -249,7 +262,10 @@ public class IvyReport extends IvyTask {
         _xslext = xslext;
     }
     
-    
-    
+    public XSLTProcess.Param createParam() {
+        XSLTProcess.Param result = new XSLTProcess.Param();
+        _params.add(result);
+        return result;
+    }
     
 }
