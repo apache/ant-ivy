@@ -1,30 +1,47 @@
-- NEW: a conflict manager that is able to allow implementation changes but not api changes (1.2.x - OK), (1.x.x - Not OK) (IVY-223) (thanks to Anders Janmyr)
-- NEW: add option to cachepath task to create a path with local artifact paths (IVY-221)  (thanks to Maarten Coene)
-- NEW: allow extending configurations to override the mapping of their super configurations (IVY-218) (thanks to Maarten Coene)
-- NEW: ability to turn off transitivity at configuration level (IVY-103) (thanks to Karl Baum)
-- NEW: adding to SPECIAL_MEANINGS in LatestRevisionStrategy (IVY-121)
-- NEW: add possibility to define extra attributes in ivy files (IVY-217)
-- NEW: enhance standalone mode to execute java program by creating classloader of dependant jars from cache (IVY-210) (thanks to Peter Hayes)
-- NEW: addition of Vfs Resolver which uses Commons-Vfs to resolve files (IVY-128) (thanks to Glen Marchesani, Matt Inger and Stephen Nesbitt)
-- NEW: "this" symbol for configuration mappings (IVY-183) (thanks to Karl Baum)
-- NEW: always update artifacts when revision matches a regex pattern (IVY-189) (thanks to Johan Stuyts)
-- NEW: provide Ant task for generating report about artifacts depended upon (IVY-194) (thanks to Johan Stuyts)
+   version 1.4 - not yet released
+=================================
+* thanks to Jayasoft:
+  - NEW: adding to SPECIAL_MEANINGS in LatestRevisionStrategy (IVY-121)
+  - NEW: add possibility to define extra attributes in ivy files (IVY-217)
 
-- IMPROVE: add support for xslt parameters in the report task (IVY-227) (thanks to Maarten Coene)
-- IMPROVE: comments now aren't lost when delivering ivy files (IVY-226) (thanks to Maarten Coene)
-- IMPROVE: add sort of 'fallback'-mapping to the defaultconfmapping attribute (IVY-215) (thanks to Maarten Coene)
-- IMPROVE: use global properties in the recursive delivery (IVY-222) (with the contribution of Roshan Punnoose)
-- IMPROVE: ivy standalone now return error status (IVY-152)
-- IMPROVE: performances improved (IVY-187) (thanks to Karl Baum)
-- IMPROVE: change default cache artifact pattern to handle missing extension (IVY-196) (thanks to Johan Stuyts)
-- IMPROVE: log messages do not display most specfic resolver name (IVY-170)
+  - IMPROVE: ivy standalone now return error status (IVY-152)
+  - IMPROVE: log messages do not display most specfic resolver name (IVY-170)
 
-- FIX: cachepath task should preserve the order of the dependencies (IVY-225) (thanks to Maarten Coene)
-- FIX: specifying a defaultconfmapping adds dependencies of each unlisted configuration (IVY-214) (thanks to Maarten Coene)
-- FIX: Ivy fails when downloading from a server that supports NTLM authentication (IVY-213) (thanks to Damon Rand)
-- FIX: problem with cache and returnFirst (IVY-207)
-- FIX: modules splitted across a chain are not handled correctly (IVY-206)
-- FIX: Delivered Ivy files with incomplete last line. (IVY-125) (thanks to Matthias Kilian)
+  - FIX: problem with cache and returnFirst (IVY-207)
+  - FIX: modules splitted across a chain are not handled correctly (IVY-206)
+
+* thanks to Ivy Community:
+  - NEW: a conflict manager that is able to allow implementation changes but not api changes (1.2.x - OK), (1.x.x - Not OK) (IVY-223) (thanks to Anders Janmyr)
+  - NEW: enhance standalone mode to execute java program by creating classloader of dependant jars from cache (IVY-210) (thanks to Peter Hayes)
+  - NEW: addition of Vfs Resolver which uses Commons-Vfs to resolve files (IVY-128) (thanks to Glen Marchesani, Matt Inger and Stephen Nesbitt)
+
+  - IMPROVE: use global properties in the recursive delivery (IVY-222) (with the contribution of Roshan Punnoose)
+
+  - FIX: Ivy fails when downloading from a server that supports NTLM authentication (IVY-213) (thanks to Damon Rand)
+  - FIX: Delivered Ivy files with incomplete last line. (IVY-125) (thanks to Matthias Kilian)
+
+* thanks to Maarten Coene:
+  - NEW: add option to cachepath task to create a path with local artifact paths (IVY-221)
+  - NEW: allow extending configurations to override the mapping of their super configurations (IVY-218)
+
+  - IMPROVE: add support for xslt parameters in the report task (IVY-227)
+  - IMPROVE: comments now aren't lost when delivering ivy files (IVY-226)
+  - IMPROVE: add sort of 'fallback'-mapping to the defaultconfmapping attribute (IVY-215)
+
+  - FIX: cachepath task should preserve the order of the dependencies (IVY-225)
+  - FIX: specifying a defaultconfmapping adds dependencies of each unlisted configuration (IVY-214)
+
+* thanks to Johan Stuyts:
+  - NEW: always update artifacts when revision matches a regex pattern (IVY-189)
+  - NEW: provide Ant task for generating report about artifacts depended upon (IVY-194)
+
+  - IMPROVE: change default cache artifact pattern to handle missing extension (IVY-196)
+
+* thanks to Karl Baum:
+  - NEW: ability to turn off transitivity at configuration level (IVY-103)
+  - NEW: "this" symbol for configuration mappings (IVY-183)
+
+  - IMPROVE: performances improved (IVY-187)
 
    version 1.3.1 - 2006-03-30
 ===============================
