@@ -15,7 +15,7 @@ import java.util.Map;
 
 import junit.framework.TestCase;
 import fr.jayasoft.ivy.Ivy;
-import fr.jayasoft.ivy.ModuleId;
+import fr.jayasoft.ivy.ModuleRevisionId;
 import fr.jayasoft.ivy.util.FileUtil;
 
 public class XmlModuleUpdaterTest extends TestCase {
@@ -32,8 +32,8 @@ public class XmlModuleUpdaterTest extends TestCase {
         File dest = new File("build/updated-test.xml");
         dest.deleteOnExit();
         Map resolvedRevisions = new HashMap();
-        resolvedRevisions.put(new ModuleId("yourorg", "yourmodule2"), "2.5");
-        resolvedRevisions.put(new ModuleId("yourorg", "yourmodule6"), "6.3");
+        resolvedRevisions.put(ModuleRevisionId.newInstance("yourorg", "yourmodule2", "2+"), "2.5");
+        resolvedRevisions.put(ModuleRevisionId.newInstance("yourorg", "yourmodule6", "latest.integration"), "6.3");
         
         GregorianCalendar cal = new GregorianCalendar();
         cal.set(2005, 2, 22, 14, 32, 54);
