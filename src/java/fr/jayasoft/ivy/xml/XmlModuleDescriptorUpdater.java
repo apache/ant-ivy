@@ -157,7 +157,7 @@ public class XmlModuleDescriptorUpdater {
                         for (int i=0; i<attributes.getLength(); i++) {
                             String attName = attributes.getQName(i);
                             if ("rev".equals(attName)) {
-                                String rev = (String)resolvedRevisions.get(systemMid.getModuleId());
+                                String rev = (String)resolvedRevisions.get(systemMid);
                                 if (rev != null) {
                                     out.print(" rev=\""+rev+"\"");
                                 } else {

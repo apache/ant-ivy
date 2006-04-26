@@ -767,10 +767,8 @@ public class Ivy implements TransferListener {
             IvyNode[] dependencies = getDependencies(md, confs, cache, date, report, validate);
             
             Message.verbose(":: downloading artifacts ::");
-            Map resolvedRevisions = new HashMap(); // Map (ModuleId dependency -> String revision)
-            Map dependenciesStatus = new HashMap(); // Map (ModuleId dependency -> String status)
 
-            downloadArtifacts(dependencies, artifactFilter, report, resolvedRevisions, dependenciesStatus, cache);
+            downloadArtifacts(dependencies, artifactFilter, report, cache);
             
             // produce resolved ivy file and ivy properties in cache
             File ivyFileInCache = getResolvedIvyFileInCache(cache, md.getResolvedModuleRevisionId());
@@ -778,11 +776,12 @@ public class Ivy implements TransferListener {
 
             File ivyPropertiesInCache = getResolvedIvyPropertiesInCache(cache, md.getResolvedModuleRevisionId());
             Properties props = new Properties();
-            for (Iterator iter = resolvedRevisions.keySet().iterator(); iter.hasNext();) {
-                ModuleId mid = (ModuleId)iter.next();
-                String rev = (String)resolvedRevisions.get(mid);
-                String status = (String)dependenciesStatus.get(mid);
-                props.put(mid.encodeToString(), rev+" "+status);
+            for (int i = 0; i < dependencies.length; i++) {
+                if (!dependencies[i].isCompletelyEvicted() && !dependencies[i].hasProblem()) {
+                    String rev = dependencies[i].getResolvedId().getRevision();
+                    String status = dependencies[i].getDescriptor().getStatus();
+                    props.put(dependencies[i].getId().encodeToString(), rev+" "+status);
+                }
             }
             props.store(new FileOutputStream(ivyPropertiesInCache), md.getResolvedModuleRevisionId()+ " resolved revisions");
             Message.verbose("\tresolved ivy file produced in "+ivyFileInCache);
@@ -801,10 +800,6 @@ public class Ivy implements TransferListener {
     }
 
     private void downloadArtifacts(IvyNode[] dependencies, Filter artifactFilter, ResolveReport report, File cache) {
-        downloadArtifacts(dependencies, artifactFilter, report, new HashMap(), new HashMap(), cache);
-    }
-    
-    private void downloadArtifacts(IvyNode[] dependencies, Filter artifactFilter, ResolveReport report, Map resolvedRevisions, Map dependenciesStatus, File cache) {
         // collect list of artifacts
         Collection artifacts = new ArrayList();
         for (int i = 0; i < dependencies.length; i++) {
@@ -840,10 +835,6 @@ public class Ivy implements TransferListener {
                         report.getConfigurationReport(dconfs[j]).addDependency(dependencies[i], dReport);
                     }
                 }
-                
-                // update resolved dependencies map for resolved ivy file producing
-                resolvedRevisions.put(dependencies[i].getModuleId(), dependencies[i].getResolvedId().getRevision());
-                dependenciesStatus.put(dependencies[i].getModuleId(), dependencies[i].getDescriptor().getStatus());
             } else if (dependencies[i].isCompletelyEvicted()) {
                 // dependencies has been evicted: it has not been added to the report yet
                 String[] dconfs = dependencies[i].getRootModuleConfigurations();
@@ -1779,25 +1770,25 @@ public class Ivy implements TransferListener {
         props.load(new FileInputStream(ivyProperties));
         
         for (Iterator iter = props.keySet().iterator(); iter.hasNext();) {
-            String mid = (String)iter.next();
-            String[] parts = props.getProperty(mid).split(" ");
-            ModuleId decodedMid = ModuleId.decode(mid);
+            String depMridStr = (String)iter.next();
+            String[] parts = props.getProperty(depMridStr).split(" ");
+            ModuleRevisionId decodedMrid = ModuleRevisionId.decode(depMridStr);
             if (resolveDynamicRevisions) {
-                resolvedRevisions.put(decodedMid, parts[0]);
+                resolvedRevisions.put(decodedMrid, parts[0]);
             }
-            dependenciesStatus.put(decodedMid, parts[1]);
+            dependenciesStatus.put(decodedMrid, parts[1]);
         }
         
         // 3) use pdrResolver to resolve dependencies info
-        Map resolvedDependencies = new HashMap(); // Map (ModuleId -> String revision)
+        Map resolvedDependencies = new HashMap(); // Map (ModuleRevisionId -> String revision)
         DependencyDescriptor[] dependencies = md.getDependencies();
         for (int i = 0; i < dependencies.length; i++) {
-            String rev = (String)resolvedRevisions.get(dependencies[i].getDependencyId());
+            String rev = (String)resolvedRevisions.get(dependencies[i].getDependencyRevisionId());
             if (rev == null) {
                 rev = dependencies[i].getDependencyRevisionId().getRevision();
             }
-            String depStatus = (String)dependenciesStatus.get(dependencies[i].getDependencyId());
-            resolvedDependencies.put(dependencies[i].getDependencyId(), 
+            String depStatus = (String)dependenciesStatus.get(dependencies[i].getDependencyRevisionId());
+            resolvedDependencies.put(dependencies[i].getDependencyRevisionId(), 
                     pdrResolver.resolve(md, status, 
                             new ModuleRevisionId(dependencies[i].getDependencyId(), rev), 
                             depStatus));
