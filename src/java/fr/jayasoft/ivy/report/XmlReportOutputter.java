@@ -14,6 +14,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import fr.jayasoft.ivy.Ivy;
 import fr.jayasoft.ivy.IvyNode;
@@ -69,26 +70,31 @@ public class XmlReportOutputter implements ReportOutputter {
                     if (dep.getModuleRevision() != null) {
                         md = dep.getModuleRevision().getDescriptor();
                     }
-                    String details = "";
+                    StringBuffer details = new StringBuffer();
                     if  (dep.isLoaded()) {
-                        details += " status=\""+dep.getDescriptor().getStatus()+"\"" +
-                            " pubdate=\""+Ivy.DATE_FORMAT.format(new Date(dep.getPublication()))+"\"" +
-                            " resolver=\""+dep.getModuleRevision().getResolver().getName()+"\""+
-                            " artresolver=\""+dep.getModuleRevision().getArtifactResolver().getName()+"\"";
+                        details.append(" status=\"").append(dep.getDescriptor().getStatus()).append("\"").append(
+                            " pubdate=\"").append(Ivy.DATE_FORMAT.format(new Date(dep.getPublication()))).append("\"").append(
+                            " resolver=\"").append(dep.getModuleRevision().getResolver().getName()).append("\"").append(
+                            " artresolver=\"").append(dep.getModuleRevision().getArtifactResolver().getName()).append("\"");
                     }
                     if (dep.isEvicted(report.getConfiguration())) {
                         IvyNode.EvictionData ed = dep.getEvictedData(report.getConfiguration());
                         if (ed.getConflictManager() != null) {
-                            details += " evicted=\""+ed.getConflictManager()+"\"";
+                            details.append(" evicted=\"").append(ed.getConflictManager()).append("\"");
                         } else {
-                            details += " evicted=\"transitive\"";
+                            details.append(" evicted=\"transitive\"");
                         }
                     }
                     if (dep.hasProblem()) {
-                        details += " error=\""+dep.getProblem().getMessage()+"\"";
+                        details.append(" error=\"").append(dep.getProblem().getMessage()).append("\"");
                     }
                     if (md != null && md.getHomePage() != null) {
-                        details += " homepage=\""+md.getHomePage()+"\"";
+                        details.append(" homepage=\"").append(md.getHomePage()).append("\"");
+                    }
+                    Map extraAttributes = md.getExtraAttributes();
+                    for (Iterator iterator = extraAttributes.keySet().iterator(); iterator.hasNext();) {
+                        String attName = (String)iterator.next();
+                        details.append(" ").append(attName).append("=\"").append(extraAttributes.get(attName)).append("\"");
                     }
 					String defaultValue = dep.getDescriptor() != null ? " default=\""+dep.getDescriptor().isDefault()+"\"" : "";
                     int position = dependencies.indexOf(dep.getResolvedId());
