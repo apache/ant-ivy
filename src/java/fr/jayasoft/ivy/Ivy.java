@@ -1113,7 +1113,7 @@ public class Ivy implements TransferListener {
      * @return true if the node's parent configuration is transitive
      */
     protected boolean isParentConfTransitive(IvyNode node) {
-        String conf = node.getParentConf();
+        String conf = node.getParent().getRequestedConf();
         if (conf==null) {
             return true;
         }

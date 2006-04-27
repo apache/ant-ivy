@@ -18,6 +18,7 @@ for detailed view of each issue, please consult http://jira.jayasoft.org/
   - FIX: modules splitted across a chain are not handled correctly (IVY-206)
 
 * thanks to Ivy Community:
+  - NEW: ability to turn off transitivity at configuration level (IVY-103) (thanks to Karl Baum and Maarten Coene)
   - NEW: a conflict manager that is able to allow implementation changes but not api changes (1.2.x - OK), (1.x.x - Not OK) (IVY-223) (thanks to Anders Janmyr)
   - NEW: enhance standalone mode to execute java program by creating classloader of dependant jars from cache (IVY-210) (thanks to Peter Hayes)
   - NEW: addition of Vfs Resolver which uses Commons-Vfs to resolve files (IVY-128) (thanks to Glen Marchesani, Matt Inger and Stephen Nesbitt)
@@ -47,7 +48,6 @@ for detailed view of each issue, please consult http://jira.jayasoft.org/
   - IMPROVE: change default cache artifact pattern to handle missing extension (IVY-196)
 
 * thanks to Karl Baum:
-  - NEW: ability to turn off transitivity at configuration level (IVY-103)
   - NEW: "this" symbol for configuration mappings (IVY-183)
 
   - IMPROVE: performances improved (IVY-187)
