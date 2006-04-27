@@ -91,7 +91,7 @@ public class XmlReportOutputter implements ReportOutputter {
                     if (md != null && md.getHomePage() != null) {
                         details.append(" homepage=\"").append(md.getHomePage()).append("\"");
                     }
-                    Map extraAttributes = md.getExtraAttributes();
+                    Map extraAttributes = md!=null?md.getExtraAttributes():dep.getResolvedId().getExtraAttributes();
                     for (Iterator iterator = extraAttributes.keySet().iterator(); iterator.hasNext();) {
                         String attName = (String)iterator.next();
                         details.append(" ").append(attName).append("=\"").append(extraAttributes.get(attName)).append("\"");
