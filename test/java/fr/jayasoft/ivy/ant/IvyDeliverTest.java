@@ -150,4 +150,25 @@ public class IvyDeliverTest extends TestCase {
         assertEquals(ModuleRevisionId.newInstance("org1", "mod1.2", "latest.integration"), dds[0].getDependencyRevisionId());
     }
 
+    public void testDifferentRevisionsForSameModule() throws Exception {
+        _project.setProperty("ivy.dep.file", "test/java/fr/jayasoft/ivy/ant/ivy-different-revisions.xml");
+        IvyResolve res = new IvyResolve();
+        res.setProject(_project);
+        res.execute();
+        
+        _deliver.setPubrevision("1.2");
+        _deliver.setDeliverpattern("build/test/deliver/ivy-[revision].xml");
+        _deliver.execute();
+        
+        // should have done the ivy delivering
+        File deliveredIvyFile = new File("build/test/deliver/ivy-1.2.xml");
+        assertTrue(deliveredIvyFile.exists()); 
+        ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(new Ivy(), deliveredIvyFile.toURL(), true);
+        assertEquals(ModuleRevisionId.newInstance("jayasoft", "different-revs", "1.2"), md.getModuleRevisionId());
+        DependencyDescriptor[] dds = md.getDependencies();
+        assertEquals(3, dds.length);
+        assertEquals(ModuleRevisionId.newInstance("org1", "mod1.2", "2.0"), dds[0].getDependencyRevisionId());
+        assertEquals(ModuleRevisionId.newInstance("org1", "mod1.1", "1.0"), dds[1].getDependencyRevisionId());
+        assertEquals(ModuleRevisionId.newInstance("org1", "mod1.2", "1.1"), dds[2].getDependencyRevisionId());
+    }
 }

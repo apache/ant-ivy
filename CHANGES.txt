@@ -35,6 +35,7 @@ for detailed view of each issue, please consult http://jira.jayasoft.org/
   - IMPROVE: comments now aren't lost when delivering ivy files (IVY-226)
   - IMPROVE: add sort of 'fallback'-mapping to the defaultconfmapping attribute (IVY-215)
 
+  - FIX: Ivy file containing 2 different versions of the same module is not deliverd correctly (IVY-229)
   - FIX: ModuleRevisionId encode/decode doesn't work if revision is empty (IVY-233)
   - FIX: cachepath task should preserve the order of the dependencies (IVY-225)
   - FIX: specifying a defaultconfmapping adds dependencies of each unlisted configuration (IVY-214)

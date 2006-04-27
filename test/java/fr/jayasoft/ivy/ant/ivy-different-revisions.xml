@@ -1,0 +1,15 @@
+<ivy-module version="1.0"> 
+	<info organisation="jayasoft"
+	       module="different-revs"
+	       revision="1.0"
+	       status="release"
+	/>
+	<dependencies>
+		<dependency org="org1" name="mod1.2" rev="2.0"/>
+		<dependency org="org1" name="mod1.1" rev="1.0"/>
+		<dependency org="org1" name="mod1.2" rev="1.+"/>
+	</dependencies>
+	<conflicts>
+		<manager name="all" />
+	</conflicts>
+</ivy-module>
