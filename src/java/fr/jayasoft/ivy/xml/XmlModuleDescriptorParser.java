@@ -10,12 +10,8 @@ import java.io.IOException;
 import java.net.URL;
 import java.text.ParseException;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -36,7 +32,6 @@ import fr.jayasoft.ivy.ModuleId;
 import fr.jayasoft.ivy.ModuleRevisionId;
 import fr.jayasoft.ivy.Status;
 import fr.jayasoft.ivy.conflict.FixedConflictManager;
-import fr.jayasoft.ivy.extendable.DefaultExtendableItem;
 import fr.jayasoft.ivy.extendable.ExtendableItemHelper;
 import fr.jayasoft.ivy.matcher.PatternMatcher;
 import fr.jayasoft.ivy.namespace.Namespace;
@@ -368,7 +363,7 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
                     return;
                 }
                 _md.addConflictManager(new ModuleId(org, mod), matcher, cm);
-            } else if ("import".equals(qName) || ("include".equals(qName) && _state == CONF)) {
+            } else if ("include".equals(qName) && _state == CONF) {
                 URL url;
                 String fileName = _ivy.substitute(attributes.getValue("file"));
                 if (fileName == null) {
