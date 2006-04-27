@@ -132,11 +132,15 @@ public abstract class AbstractResourceResolver extends BasicResolver {
      * @param artifact the artifact which has not been found
      */
     protected void logIvyNotFound(ModuleRevisionId mrid) {
-        Artifact artifact = new DefaultArtifact(mrid, null, "ivy", "ivy", "xml");
+        Artifact artifact = DefaultArtifact.newIvyArtifact(mrid, null);
+        logMdNotFound(mrid, artifact);
+    }
+
+    protected void logMdNotFound(ModuleRevisionId mrid, Artifact artifact) {
         String revisionToken = mrid.getRevision().startsWith("latest.")?"[any "+mrid.getRevision().substring("latest.".length())+"]":"["+mrid.getRevision()+"]";
-        Artifact latestArtifact = new DefaultArtifact(new ModuleRevisionId(mrid.getModuleId(), revisionToken, mrid.getExtraAttributes()), new Date(), "ivy", "ivy", "xml");
+        Artifact latestArtifact = new DefaultArtifact(new ModuleRevisionId(mrid.getModuleId(), revisionToken, mrid.getExtraAttributes()), null, artifact.getName(), artifact.getType(), artifact.getExt(), artifact.getExtraAttributes());
         if (_ivyPatterns.isEmpty()) {
-            logIvyAttempt("no ivy pattern => no attempt to find ivy file for "+mrid);
+            logIvyAttempt("no ivy pattern => no attempt to find module descriptor file for "+mrid);
         } else {
             for (Iterator iter = _ivyPatterns.iterator(); iter.hasNext();) {
                 String pattern = (String)iter.next();
