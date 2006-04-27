@@ -76,7 +76,8 @@ public class XmlReportParser {
                             _skip = true;
                         } else {
                             _revisionsMap.put(new Integer(_position), _revisionArtifacts);
-	                        _mrid = ModuleRevisionId.newInstance(_organisation, _module, _revision, ExtendableItemHelper.getExtraAttributes(attributes, new String[] {"position", "name", "default", "evicted", "error", "pubdate"}));
+	                        _mrid = ModuleRevisionId.newInstance(_organisation, _module, _revision, 
+                                    ExtendableItemHelper.getExtraAttributes(attributes, new String[] {"position", "name", "default", "evicted", "error", "pubdate", "conf", "searched", "downloaded", "resolver", "artresolver", "status"}));
 							_mrids.add(_mrid);
                             if (_default) {
                                 _defaultMrids.add(_mrid);
