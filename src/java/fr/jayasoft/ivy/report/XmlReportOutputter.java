@@ -138,6 +138,11 @@ public class XmlReportOutputter implements ReportOutputter {
 					out.println("\t\t\t\t<artifacts>");
 					for (int i = 0; i < adr.length; i++) {
 						out.print("\t\t\t\t\t<artifact name=\""+adr[i].getName()+"\" type=\""+adr[i].getType()+"\" ext=\""+adr[i].getExt()+"\"");
+                        extraAttributes = adr[i].getArtifact().getExtraAttributes();
+                        for (Iterator iterator = extraAttributes.keySet().iterator(); iterator.hasNext();) {
+                            String attName = (String)iterator.next();
+                            out.print(" "+attName+"=\""+extraAttributes.get(attName)+"\"");
+                        }
                         out.print(" status=\""+adr[i].getDownloadStatus()+"\"");
                         out.print(" size=\""+adr[i].getSize()+"\"");
 						out.println("/>");

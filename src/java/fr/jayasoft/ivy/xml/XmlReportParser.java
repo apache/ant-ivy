@@ -102,7 +102,7 @@ public class XmlReportParser {
                         String artifactName = attributes.getValue("name");
                         String type = attributes.getValue("type");
                         String ext = attributes.getValue("ext");
-						Artifact artifact = new DefaultArtifact(_mrid, _pubdate, artifactName, type, ext);
+						Artifact artifact = new DefaultArtifact(_mrid, _pubdate, artifactName, type, ext, ExtendableItemHelper.getExtraAttributes(attributes, new String[] {"name", "type", "ext", "status"}));
                         _revisionArtifacts.add(artifact);
                     }
                 }
