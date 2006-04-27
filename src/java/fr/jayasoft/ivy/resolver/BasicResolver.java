@@ -384,7 +384,11 @@ public abstract class BasicResolver extends AbstractResolver {
                 }
 	        }
         } catch (Exception e) {
-            Message.warn("impossible to copy ivy file to cache : "+ivyRef.getResource());
+            if (ivyRef == null) {
+                Message.warn("impossible to create ivy file in cache for module : " + resolvedMrid);
+            } else {
+                Message.warn("impossible to copy ivy file to cache : "+ivyRef.getResource());
+            }
         }
         
         data.getIvy().saveResolver(data.getCache(), systemMd, getName());
