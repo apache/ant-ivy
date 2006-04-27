@@ -11,7 +11,7 @@ import java.util.Date;
  * @author x.hanin
  *
  */
-public interface ModuleDescriptor {
+public interface ModuleDescriptor extends ExtendableItem {
     public static final String DEFAULT_CONFIGURATION = "default";
     /**
      * Returns true if this descriptor is a default one, i.e.

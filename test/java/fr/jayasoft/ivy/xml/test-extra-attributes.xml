@@ -5,6 +5,7 @@
 	       module="mymodule"
 	       revision="myrev"
 	       status="integration"
+	       infoextra="infoextravalue"
 	       publication="20041101110000"/>
 	<configurations>
 		<conf name="default" confextra="confextravalue"/>

@@ -424,7 +424,9 @@ public class XmlModuleDescriptorParserTest extends AbstractModuleDescriptorParse
     public void testExtraAttributes() throws Exception {
         ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(_ivy, getClass().getResource("test-extra-attributes.xml"), false);
         assertNotNull(md);
-        
+
+        assertEquals("infoextravalue", md.getAttribute("infoextra"));
+
         assertEquals("confextravalue", md.getConfiguration("default").getAttribute("confextra"));
         
         Artifact[] artifacts = md.getArtifacts("default");

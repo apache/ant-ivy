@@ -26,7 +26,7 @@ import fr.jayasoft.ivy.util.Message;
  * @author X.Hanin
  *
  */
-public class DefaultModuleDescriptor implements ModuleDescriptor {
+public class DefaultModuleDescriptor extends DefaultExtendableItem implements ModuleDescriptor {
     
     public static DefaultModuleDescriptor newDefaultInstance(ModuleRevisionId mrid) {
         return newDefaultInstance(mrid, null);

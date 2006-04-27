@@ -204,6 +204,8 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
                 } else {
                     _md.setPublicationDate(getDefaultPubDate());                    
                 }
+                
+                fillAttributes(_md, attributes);
             } else if ("license".equals(qName)) {
                 _md.addLicense(new License(_ivy.substitute(attributes.getValue("name")), _ivy.substitute(attributes.getValue("url"))));
             } else if ("description".equals(qName)) {
