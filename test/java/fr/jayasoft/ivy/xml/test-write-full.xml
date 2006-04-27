@@ -14,9 +14,9 @@
 	</configurations>
 	<publications>
 		<artifact name="myartifact4" type="jar" ext="jar" conf="myconf1,myconf3"/>
-		<artifact name="myartifact3" type="jar" ext="jar" conf="myconf1,myconf2,myconf3"/>
-		<artifact name="myartifact1" type="jar" ext="jar" conf="myconf1,myconf2,myconf3,myconf4,myoldconf"/>
 		<artifact name="myartifact2" type="jar" ext="jar" conf="myconf1"/>
+		<artifact name="myartifact1" type="jar" ext="jar" conf="myconf1,myconf2,myconf3,myconf4,myoldconf"/>
+		<artifact name="myartifact3" type="jar" ext="jar" conf="myconf1,myconf2,myconf3"/>
 	</publications>
 	<dependencies>
 		<dependency org="myorg" name="mymodule2" rev="2.0" force="false" changing="false" transitive="true" conf="*->*"/>
