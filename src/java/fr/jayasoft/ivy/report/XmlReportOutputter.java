@@ -9,9 +9,11 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.List;
 
 import fr.jayasoft.ivy.Ivy;
 import fr.jayasoft.ivy.IvyNode;
@@ -52,6 +54,10 @@ public class XmlReportOutputter implements ReportOutputter {
     		out.println("\t\tdate=\""+Ivy.DATE_FORMAT.format(report.getDate())+"\"/>");
     		
     		out.println("\t<dependencies>");
+    		
+    		// create a list of ModuleRevisionIds indicating the position for each dependency
+    		List dependencies = new ArrayList(report.getModuleRevisionIds());
+    		
     		for (Iterator iter = report.getModuleIds().iterator(); iter.hasNext();) {
     			ModuleId mid = (ModuleId) iter.next();
 				out.println("\t\t<module organisation=\""+mid.getOrganisation()+"\"" +
@@ -85,12 +91,14 @@ public class XmlReportOutputter implements ReportOutputter {
                         details += " homepage=\""+md.getHomePage()+"\"";
                     }
 					String defaultValue = dep.getDescriptor() != null ? " default=\""+dep.getDescriptor().isDefault()+"\"" : "";
+                    int position = dependencies.indexOf(dep.getResolvedId());
                     out.println("\t\t\t<revision name=\""+dep.getResolvedId().getRevision()+"\"" +
 							 details +
                              " downloaded=\""+dep.isDownloaded()+"\""+
                              " searched=\""+dep.isSearched()+"\""+
                              defaultValue+
-							 " conf=\""+toString(dep.getConfigurations(report.getConfiguration()))+"\">");
+                             " conf=\""+toString(dep.getConfigurations(report.getConfiguration()))+"\""+
+                             " position=\""+position+"\">");
                     if (md != null) {
                         License[] licenses = md.getLicenses();
                         for (int i = 0; i < licenses.length; i++) {

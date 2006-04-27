@@ -10,7 +10,10 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
@@ -47,20 +50,31 @@ public class XmlReportParser {
                 private String _organisation;
                 private String _module;
                 private String _revision;
+                private int _position;
                 private Date _pubdate;
                 private boolean _skip;
 				private ModuleRevisionId _mrid;
                 private boolean _default;
+                private SortedMap _revisionsMap = new TreeMap(); // Use a TreeMap to order by position (position = key)
+                private List _revisionArtifacts = null;
+                private int _maxPos;
+                
                 public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
                     if ("module".equals(qName)) {
                         _organisation = attributes.getValue("organisation");
                         _module = attributes.getValue("name");
                     } else if ("revision".equals(qName)) {
+                        _revisionArtifacts = new ArrayList();
                         _revision = attributes.getValue("name");
                         _default = Boolean.valueOf(attributes.getValue("default")).booleanValue();
+                        // retrieve position from file. If no position is found, it may be an old report generated with a previous version,
+                        // in which case, we put it at the last position
+                        String pos = attributes.getValue("position");
+                        _position = pos == null ? getMaxPos()+1 : Integer.valueOf(pos).intValue();
                         if (attributes.getValue("error") != null || attributes.getValue("evicted") != null) {
                             _skip = true;
                         } else {
+                            _revisionsMap.put(new Integer(_position), _revisionArtifacts);
 	                        _mrid = ModuleRevisionId.newInstance(_organisation, _module, _revision);
 							_mrids.add(_mrid);
                             if (_default) {
@@ -87,8 +101,22 @@ public class XmlReportParser {
                         String type = attributes.getValue("type");
                         String ext = attributes.getValue("ext");
 						Artifact artifact = new DefaultArtifact(_mrid, _pubdate, artifactName, type, ext);
-                        _artifacts.add(artifact);
+                        _revisionArtifacts.add(artifact);
                     }
+                }
+
+                public void endElement(String uri, String localName, String qname) throws SAXException {
+                    if ("dependencies".equals(qname)) {
+                        // add the artifacts in the correct order
+                        for (Iterator it = _revisionsMap.values().iterator(); it.hasNext(); ) {
+                            List artifacts = (List) it.next();
+                            _artifacts.addAll(artifacts);
+                        }
+                    }
+                }
+                
+                private int getMaxPos() {
+                    return _revisionsMap.isEmpty() ? -1 : ((Integer)_revisionsMap.keySet().toArray()[_revisionsMap.size()-1]).intValue();
                 }
             });			
 		}
