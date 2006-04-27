@@ -426,6 +426,7 @@ public class XmlModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         assertNotNull(md);
 
         assertEquals("infoextravalue", md.getAttribute("infoextra"));
+        assertEquals("infoextravalue", md.getModuleRevisionId().getAttribute("infoextra"));
 
         assertEquals("confextravalue", md.getConfiguration("default").getAttribute("confextra"));
         
@@ -445,6 +446,7 @@ public class XmlModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         assertEquals("myorg", dd.getDependencyId().getOrganisation());
         assertEquals("1.0", dd.getDependencyRevisionId().getRevision());
         assertEquals("depextravalue", dd.getAttribute("depextra"));
+        assertEquals("depextravalue", dd.getDependencyRevisionId().getAttribute("depextra"));
     }
     
     public void testImportConfigurations1() throws Exception {

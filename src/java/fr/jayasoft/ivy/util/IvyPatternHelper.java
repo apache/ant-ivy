@@ -6,6 +6,8 @@
 package fr.jayasoft.ivy.util;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,6 +16,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import fr.jayasoft.ivy.Artifact;
+import fr.jayasoft.ivy.DefaultArtifact;
 import fr.jayasoft.ivy.ModuleRevisionId;
 
 /**
@@ -42,38 +45,50 @@ public class IvyPatternHelper {
                 "ivy",
                 "ivy",
                 "xml",
-                null);
+                null, 
+                moduleRevision.getAttributes());
     }
     public static String substitute(String pattern, ModuleRevisionId moduleRevision, String artifact, String type, String ext) {
         return substitute(pattern, 
-                moduleRevision.getOrganisation(),
-                moduleRevision.getName(),
-                moduleRevision.getRevision(),
-                artifact,
-                type,
-                ext,
+                moduleRevision,
+                new DefaultArtifact(moduleRevision, null, artifact, type, ext),
                 null);
     }
     public static String substitute(String pattern, Artifact artifact) {
         return substitute(pattern, artifact, null);
     }
     public static String substitute(String pattern, Artifact artifact, String conf) {
+        return substitute(pattern, artifact.getModuleRevisionId(), artifact, null);
+    }
+    public static String substitute(String pattern, ModuleRevisionId mrid, Artifact artifact) {
+        return substitute(pattern, mrid, artifact, null);
+    }
+    public static String substitute(String pattern, ModuleRevisionId mrid, Artifact artifact, String conf) {
+        Map attributes = new HashMap();
+        attributes.putAll(mrid.getAttributes());
+        attributes.putAll(artifact.getAttributes());
         return substitute(pattern, 
-                artifact.getModuleRevisionId().getOrganisation(),
-                artifact.getModuleRevisionId().getName(),
-                artifact.getModuleRevisionId().getRevision(),
+                mrid.getOrganisation(),
+                mrid.getName(),
+                mrid.getRevision(),
                 artifact.getName(),
                 artifact.getType(),
                 artifact.getExt(),
-                conf);
+                conf,
+                attributes);
     }
+
     
     public static String substitute(String pattern, String org, String module, String revision, String artifact, String type, String ext) {
         return substitute(pattern, org, module, revision, artifact, type, ext, null);
     }
     
     public static String substitute(String pattern, String org, String module, String revision, String artifact, String type, String ext, String conf) {
-        Map tokens = new HashMap();        
+        return substitute(pattern, org, module, revision, artifact, type, ext, conf, null);
+    }
+    
+    public static String substitute(String pattern, String org, String module, String revision, String artifact, String type, String ext, String conf, Map extraAttributes) {
+        Map tokens = new HashMap(extraAttributes == null ? Collections.EMPTY_MAP : extraAttributes);        
         tokens.put(ORGANISATION_KEY, org==null?"":org);
         tokens.put(ORGANISATION_KEY2, org==null?"":org);
         tokens.put(MODULE_KEY, module==null?"":module);
@@ -294,5 +309,4 @@ public class IvyPatternHelper {
         System.out.println("pattern= "+pattern);
         System.out.println("resolved= "+substituteVariables(pattern, variables));
     }
-
 }

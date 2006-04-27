@@ -31,7 +31,7 @@ import fr.jayasoft.ivy.namespace.NamespaceTransformer;
  * @author Xavier Hanin
  *
  */
-public class DefaultDependencyDescriptor extends DefaultExtendableItem implements DependencyDescriptor {
+public class DefaultDependencyDescriptor implements DependencyDescriptor {
     private static final Pattern SELF_FALLBACK_PATTERN = Pattern.compile("@(\\(.*\\))?");
     private static final Pattern THIS_FALLBACK_PATTERN = Pattern.compile("#(\\(.*\\))?");
     
@@ -122,7 +122,7 @@ public class DefaultDependencyDescriptor extends DefaultExtendableItem implement
     
     public DefaultDependencyDescriptor(DependencyDescriptor dd, String revision) {
         _parentId = dd.getParentRevisionId();
-        _revId = new ModuleRevisionId(dd.getDependencyId(), revision);
+        _revId = new ModuleRevisionId(dd.getDependencyId(), revision, dd.getExtraAttributes());
         _force = dd.isForce();
         _changing = dd.isChanging();
         _transitive = dd.isTransitive();
@@ -378,6 +378,30 @@ public class DefaultDependencyDescriptor extends DefaultExtendableItem implement
     
     public Namespace getNamespace() {
         return _namespace;
+    }
+
+    public String getAttribute(String attName) {
+        return _revId.getAttribute(attName);
+    }
+
+    public Map getAttributes() {
+        return _revId.getAttributes();
+    }
+
+    public String getExtraAttribute(String attName) {
+        return _revId.getExtraAttribute(attName);
+    }
+
+    public Map getExtraAttributes() {
+        return _revId.getExtraAttributes();
+    }
+
+    public String getStandardAttribute(String attName) {
+        return _revId.getStandardAttribute(attName);
+    }
+
+    public Map getStandardAttributes() {
+        return _revId.getStandardAttributes();
     }
     
 }

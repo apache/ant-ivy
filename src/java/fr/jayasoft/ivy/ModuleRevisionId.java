@@ -5,17 +5,26 @@
  */
 package fr.jayasoft.ivy;
 
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+
+import fr.jayasoft.ivy.extendable.UnmodifiableExtendableItem;
+import fr.jayasoft.ivy.util.IvyPatternHelper;
+
 
 /**
  * @author x.hanin
  *
  */
-public class ModuleRevisionId {
+public class ModuleRevisionId extends UnmodifiableExtendableItem {
     private static final String ENCODE_SEPARATOR = ModuleId.ENCODE_SEPARATOR;
-    private static final String NO_REVISION = "[[NONE]]";
     
     public static ModuleRevisionId newInstance(String organisation, String name, String revision) {
         return new ModuleRevisionId(new ModuleId(organisation, name), revision);
+    }
+    public static ModuleRevisionId newInstance(String organisation, String name, String revision, Map extraAttributes) {
+        return new ModuleRevisionId(new ModuleId(organisation, name), revision, extraAttributes);
     }
     
     private ModuleId _moduleId;
@@ -23,10 +32,18 @@ public class ModuleRevisionId {
     private int _hash;
     
     public ModuleRevisionId(ModuleId moduleId, String revision) {
+        this(moduleId, revision, null);
+    }
+    public ModuleRevisionId(ModuleId moduleId, String revision, Map extraAttributes) {
+        super(null, extraAttributes);
         _moduleId = moduleId;
         _revision = revision;
         _hash = _hashCode(); //stored for performance reasons, hashCode is very used in many maps
+        setStandardAttribute(IvyPatternHelper.ORGANISATION_KEY, _moduleId.getOrganisation());
+        setStandardAttribute(IvyPatternHelper.MODULE_KEY, _moduleId.getName());
+        setStandardAttribute(IvyPatternHelper.REVISION_KEY, _revision);
     }
+    
     public ModuleId getModuleId() {
         return _moduleId;
     }
@@ -46,7 +63,8 @@ public class ModuleRevisionId {
         }
         ModuleRevisionId other = (ModuleRevisionId)obj;
         return (other.getRevision() == null ? getRevision() == null : other.getRevision().equals(getRevision())) 
-        	&& other.getModuleId().equals(getModuleId());
+        	&& other.getModuleId().equals(getModuleId())
+            && other.getExtraAttributes().equals(getExtraAttributes());
     }
     public int hashCode() {
         return _hash;
@@ -55,6 +73,7 @@ public class ModuleRevisionId {
         int hash = 31;
         hash = hash * 13 + (getRevision() == null ? 0 : getRevision().hashCode());
         hash = hash * 13 + getModuleId().hashCode();
+        hash = hash * 13 + getAttributes().hashCode();
         return hash;
     }
     
@@ -98,21 +117,37 @@ public class ModuleRevisionId {
         return !revision.startsWith("latest.") && !revision.endsWith("+");
     }
     public String encodeToString() {
-        String revision = getRevision();
-        if ((revision == null) || (revision.length() == 0)) {
-            revision = NO_REVISION;
+        StringBuffer buf = new StringBuffer();
+        Map attributes = getAttributes();
+        for (Iterator iter = attributes.keySet().iterator(); iter.hasNext();) {
+            String attName = (String)iter.next();
+            buf.append(attName).append(ENCODE_SEPARATOR).append(attributes.get(attName)).append(ENCODE_SEPARATOR);
         }
-        return getOrganisation() + ENCODE_SEPARATOR + getName()+ ENCODE_SEPARATOR + revision;
+        return buf.toString();
     }
     public static ModuleRevisionId decode(String encoded) {
         String[] parts = encoded.split(ENCODE_SEPARATOR);
-        if (parts.length != 3) {
+        if (parts.length % 2 != 0) {
             throw new IllegalArgumentException("badly encoded module revision id: '"+encoded+"'");
         }
-        String revision = parts[2];
-        if (NO_REVISION.equals(revision)) {
-            revision = "";
+        Map attributes = new HashMap();
+        for (int i = 0; i < parts.length; i+=2) {
+            String attName = parts[i];
+            String attValue = parts[i+1];
+            attributes.put(attName, attValue);
         }
-        return newInstance(parts[0], parts[1], revision);
+        String org = (String)attributes.remove(IvyPatternHelper.ORGANISATION_KEY);
+        String mod = (String)attributes.remove(IvyPatternHelper.MODULE_KEY);
+        String rev = (String)attributes.remove(IvyPatternHelper.REVISION_KEY);
+        if (org == null) {
+            throw new IllegalArgumentException("badly encoded module revision id: '"+encoded+"': no organisation");
+        }
+        if (mod == null) {
+            throw new IllegalArgumentException("badly encoded module revision id: '"+encoded+"': no module name");
+        }
+        if (rev == null) {
+            throw new IllegalArgumentException("badly encoded module revision id: '"+encoded+"': no revision");
+        }
+        return newInstance(org, mod, rev, attributes);
     }
 }

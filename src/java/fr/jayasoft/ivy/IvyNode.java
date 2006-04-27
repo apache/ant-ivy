@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -834,7 +833,7 @@ public class IvyNode {
     }
 
     private boolean isDependencyModuleExcluded(ModuleRevisionId dependencyRevisionId, String conf) {
-        return doesCallersExclude(getRootModuleConf(), new DefaultArtifact(dependencyRevisionId, new Date(), "ivy", "ivy", "xml"));
+        return doesCallersExclude(getRootModuleConf(), DefaultArtifact.newIvyArtifact(dependencyRevisionId, null));
     }
 
     public ModuleRevisionId getId() {

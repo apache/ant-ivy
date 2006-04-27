@@ -27,6 +27,7 @@ import fr.jayasoft.ivy.DefaultArtifact;
 import fr.jayasoft.ivy.Ivy;
 import fr.jayasoft.ivy.ModuleId;
 import fr.jayasoft.ivy.ModuleRevisionId;
+import fr.jayasoft.ivy.extendable.ExtendableItemHelper;
 import fr.jayasoft.ivy.report.XmlReportOutputter;
 
 public class XmlReportParser {
@@ -75,7 +76,7 @@ public class XmlReportParser {
                             _skip = true;
                         } else {
                             _revisionsMap.put(new Integer(_position), _revisionArtifacts);
-	                        _mrid = ModuleRevisionId.newInstance(_organisation, _module, _revision);
+	                        _mrid = ModuleRevisionId.newInstance(_organisation, _module, _revision, ExtendableItemHelper.getExtraAttributes(attributes, new String[] {"position", "name", "default", "evicted", "error", "pubdate"}));
 							_mrids.add(_mrid);
                             if (_default) {
                                 _defaultMrids.add(_mrid);

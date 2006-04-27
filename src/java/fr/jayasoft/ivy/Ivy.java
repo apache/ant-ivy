@@ -752,7 +752,7 @@ public class Ivy implements TransferListener {
                 revision = "working@"+getLocalHostName();
             }
             if (revision != null) {
-                md.setResolvedModuleRevisionId(new ModuleRevisionId(md.getModuleRevisionId().getModuleId(), revision));
+                md.setResolvedModuleRevisionId(new ModuleRevisionId(md.getModuleRevisionId().getModuleId(), revision, md.getModuleRevisionId().getExtraAttributes()));
             }
             if (confs.length == 1 && confs[0].equals("*")) {
                 confs = md.getConfigurationsNames();
@@ -1601,14 +1601,14 @@ public class Ivy implements TransferListener {
             if (destIvyPattern != null) {
                 ModuleRevisionId[] mrids = parser.getRealDependencyRevisionIds(moduleId, conf, cache);
                 for (int j = 0; j < mrids.length; j++) {
-                    artifacts.add(new DefaultArtifact(mrids[j], new Date(), "ivy", "ivy", "xml"));
+                    artifacts.add(DefaultArtifact.newIvyArtifact(mrids[j], null));
                 }
             }
             for (Iterator iter = artifacts.iterator(); iter.hasNext();) {
                 Artifact artifact = (Artifact)iter.next();
                 String destPattern = "ivy".equals(artifact.getType()) ? destIvyPattern: destFilePattern;
                 
-                String destFileName = IvyPatternHelper.substitute(destPattern, artifact.getModuleRevisionId().getOrganisation(), artifact.getModuleRevisionId().getName(), artifact.getModuleRevisionId().getRevision(), artifact.getName(), artifact.getType(), artifact.getExt(), conf);
+                String destFileName = IvyPatternHelper.substitute(destPattern, artifact, conf);
                 
                 Set dest = (Set)artifactsToCopy.get(artifact);
                 if (dest == null) {
@@ -1751,7 +1751,7 @@ public class Ivy implements TransferListener {
         try {
             ivyFileURL = ivyFile.toURL();
             md = XmlModuleDescriptorParser.getInstance().parseDescriptor(this, ivyFileURL, validate);
-            md.setResolvedModuleRevisionId(new ModuleRevisionId(mrid.getModuleId(), revision));
+            md.setResolvedModuleRevisionId(new ModuleRevisionId(mrid.getModuleId(), revision, mrid.getExtraAttributes()));
             md.setResolvedPublicationDate(pubdate);
         } catch (MalformedURLException e) {
             throw new RuntimeException("malformed url obtained for file "+ivyFile);
@@ -1851,7 +1851,7 @@ public class Ivy implements TransferListener {
         try {
             ivyFileURL = ivyFile.toURL();
             md = XmlModuleDescriptorParser.getInstance().parseDescriptor(this, ivyFileURL, false);
-            md.setResolvedModuleRevisionId(new ModuleRevisionId(mrid.getModuleId(), pubrevision));
+            md.setResolvedModuleRevisionId(new ModuleRevisionId(mrid.getModuleId(), pubrevision, mrid.getExtraAttributes()));
         } catch (MalformedURLException e) {
             throw new RuntimeException("malformed url obtained for file "+ivyFile);
         } catch (ParseException e) {
@@ -1883,7 +1883,7 @@ public class Ivy implements TransferListener {
             }
         }
         if (srcIvyPattern != null) {
-            Artifact artifact = new MDArtifact(md, "ivy", "ivy", "xml");
+            Artifact artifact = MDArtifact.newIvyArtifact(md);
             if (!publish(artifact, srcIvyPattern, resolver, overwrite)) {
                 missing.add(artifact);
             }
@@ -1935,7 +1935,7 @@ public class Ivy implements TransferListener {
     }
 
     public File getIvyFileInCache(File cache, ModuleRevisionId mrid) {
-        return new File(cache, IvyPatternHelper.substitute(_cacheIvyPattern, mrid.getOrganisation(), mrid.getName(), mrid.getRevision(), "ivy", "ivy", "xml"));
+        return new File(cache, IvyPatternHelper.substitute(_cacheIvyPattern, DefaultArtifact.newIvyArtifact(mrid, null)));
     }
 
     public File getArchiveFileInCache(File cache, Artifact artifact) {
@@ -1947,17 +1947,14 @@ public class Ivy implements TransferListener {
     }
     
     public String getArchivePathInCache(Artifact artifact) {
-        return getArchivePathInCache( 
-                artifact.getModuleRevisionId().getOrganisation(),
-                artifact.getModuleRevisionId().getName(),
-                artifact.getModuleRevisionId().getRevision(),
-                artifact.getName(),
-                artifact.getType(),
-                artifact.getExt());
+        return IvyPatternHelper.substitute(_cacheArtifactPattern, artifact);
     }
     
+    /**
+     * @deprecated
+     */
     public String getArchivePathInCache(String organisation, String module, String revision, String artifact, String type, String ext) {
-        return IvyPatternHelper.substitute(_cacheArtifactPattern, organisation, module, revision, artifact, type, ext);
+        return getArchivePathInCache(new DefaultArtifact(ModuleRevisionId.newInstance(organisation, module, revision), new Date(), artifact, type, ext));
     }
     
     public File getOriginFileInCache(File cache, Artifact artifact) {

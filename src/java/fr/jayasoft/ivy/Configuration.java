@@ -5,6 +5,8 @@
  */
 package fr.jayasoft.ivy;
 
+import fr.jayasoft.ivy.extendable.DefaultExtendableItem;
+
 
 /**
  * Represents a module configuration

@@ -186,7 +186,7 @@ public abstract class BasicResolver extends AbstractResolver {
                 Message.verbose("\t"+getName()+": no ivy file found for "+mrid+": using default data");            
                 logIvyNotFound(mrid);
     	        if (!mrid.isExactRevision()) {
-    	            md.setResolvedModuleRevisionId(new ModuleRevisionId(mrid.getModuleId(), artifactRef.getRevision()));
+    	            md.setResolvedModuleRevisionId(new ModuleRevisionId(mrid.getModuleId(), artifactRef.getRevision(), mrid.getExtraAttributes()));
     	        }
             }
         } else {
@@ -277,7 +277,7 @@ public abstract class BasicResolver extends AbstractResolver {
                     checkDescriptorConsistency(systemDd.getDependencyRevisionId(), systemMd, ivyRef);
                 } else {
                     if (md instanceof DefaultModuleDescriptor) {
-                        ((DefaultModuleDescriptor)md).setModuleRevisionId(ModuleRevisionId.newInstance(mrid.getOrganisation(), mrid.getName(), ivyRef.getRevision()));
+                        ((DefaultModuleDescriptor)md).setModuleRevisionId(ModuleRevisionId.newInstance(mrid.getOrganisation(), mrid.getName(), ivyRef.getRevision(), mrid.getExtraAttributes()));
                     } else {
                         Message.warn("consistency disabled with non default module descriptor... module info can't be updated, so consistency check will be done");
                         checkDescriptorConsistency(mrid, md, ivyRef);
@@ -539,7 +539,8 @@ public abstract class BasicResolver extends AbstractResolver {
                                         artifacts[i].getPublicationDate(), 
                                         artifacts[i].getName(), 
                                         artifacts[i].getType(), 
-                                        artifacts[i].getExt()+".part"));
+                                        artifacts[i].getExt()+".part",
+                                        artifacts[i].getExtraAttributes()));
                         adr.setSize(get(artifactRef.getResource(), tmp));
                         if (!tmp.renameTo(archiveFile)) {
                             originFile.delete();

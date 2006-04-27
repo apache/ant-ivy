@@ -8,20 +8,30 @@ package fr.jayasoft.ivy;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author x.hanin
  *
  */
 public class MDArtifact extends AbstractArtifact {
+
+    public static Artifact newIvyArtifact(ModuleDescriptor md) {
+        return new MDArtifact(md, "ivy", "ivy", "xml");
+    }
+    
     private ModuleDescriptor _md;
     private String _name;
     private String _type;
     private String _ext;
     private List  _confs = new ArrayList();
     private ArtifactRevisionId _arid;
+    private Map _extraAttributes = null;
 
     public MDArtifact(ModuleDescriptor md, String name, String type, String ext) {
+        this(md, name, type, ext, null);
+    }
+    public MDArtifact(ModuleDescriptor md, String name, String type, String ext, Map extraAttributes) {
         if (md == null) {
             throw new NullPointerException("null module descriptor not allowed");
         }
@@ -38,6 +48,7 @@ public class MDArtifact extends AbstractArtifact {
         _name = name;
         _type = type;
         _ext = ext;
+        _extraAttributes = extraAttributes;
     }
     
     public ModuleRevisionId getModuleRevisionId() {
@@ -49,10 +60,10 @@ public class MDArtifact extends AbstractArtifact {
     }
     public ArtifactRevisionId getId() {
         if (_arid == null) {
-            _arid = ArtifactRevisionId.newInstance(_md.getResolvedModuleRevisionId(), _name, _type, _ext);
+            _arid = ArtifactRevisionId.newInstance(_md.getResolvedModuleRevisionId(), _name, _type, _ext, _extraAttributes);
         }
         return _arid;
-    }
+    }    
 
     public String getName() {
         return _name;

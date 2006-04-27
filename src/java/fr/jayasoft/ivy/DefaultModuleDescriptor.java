@@ -26,7 +26,7 @@ import fr.jayasoft.ivy.util.Message;
  * @author X.Hanin
  *
  */
-public class DefaultModuleDescriptor extends DefaultExtendableItem implements ModuleDescriptor {
+public class DefaultModuleDescriptor implements ModuleDescriptor {
     
     public static DefaultModuleDescriptor newDefaultInstance(ModuleRevisionId mrid) {
         return newDefaultInstance(mrid, null);
@@ -387,4 +387,29 @@ public class DefaultModuleDescriptor extends DefaultExtendableItem implements Mo
 	public boolean isMappingOverride() {
 		return _mappingOverride;
 	}
+
+    public String getAttribute(String attName) {
+        return _resolvedRevId.getAttribute(attName);
+    }
+
+    public Map getAttributes() {
+        return _resolvedRevId.getAttributes();
+    }
+
+    public String getExtraAttribute(String attName) {
+        return _resolvedRevId.getExtraAttribute(attName);
+    }
+
+    public Map getExtraAttributes() {
+        return _resolvedRevId.getExtraAttributes();
+    }
+
+    public String getStandardAttribute(String attName) {
+        return _resolvedRevId.getStandardAttribute(attName);
+    }
+
+    public Map getStandardAttributes() {
+        return _resolvedRevId.getStandardAttributes();
+    }
+
 }

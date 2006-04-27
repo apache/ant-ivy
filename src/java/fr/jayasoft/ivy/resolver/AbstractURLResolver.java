@@ -152,7 +152,7 @@ public abstract class AbstractURLResolver extends AbstractResolver {
                 Message.verbose("\t"+getName()+": no ivy file found for "+mrid+": using default data");            
                 logIvyNotFound(mrid);
     	        if (!mrid.isExactRevision()) {
-    	            md.setResolvedModuleRevisionId(new ModuleRevisionId(mrid.getModuleId(), artifactURL.getRevision()));
+    	            md.setResolvedModuleRevisionId(new ModuleRevisionId(mrid.getModuleId(), artifactURL.getRevision(), mrid.getExtraAttributes()));
     	        }
             }
         } else {
@@ -160,7 +160,7 @@ public abstract class AbstractURLResolver extends AbstractResolver {
             Message.verbose("\t\t=> "+ivyURL);
             // first check if this dependency has not yet been resolved
             if (!mrid.isExactRevision()) {
-                ModuleRevisionId resolvedMrid = new ModuleRevisionId(mrid.getModuleId(), ivyURL.getRevision());
+                ModuleRevisionId resolvedMrid = new ModuleRevisionId(mrid.getModuleId(), ivyURL.getRevision(), mrid.getExtraAttributes());
                 IvyNode node = data.getNode(resolvedMrid);
                 if (node != null) {
                     // this revision has already be resolved : return it
@@ -224,9 +224,9 @@ public abstract class AbstractURLResolver extends AbstractResolver {
             resolvedMrid = md.getResolvedModuleRevisionId();
             if (resolvedMrid.getRevision() == null || resolvedMrid.getRevision().length() == 0) {
                 if (ivyURL.getRevision() == null || ivyURL.getRevision().length() == 0) {
-                    resolvedMrid = new ModuleRevisionId(resolvedMrid.getModuleId(), (_envDependent?"##":"")+DATE_FORMAT.format(data.getDate())+"@"+_workspaceName);
+                    resolvedMrid = new ModuleRevisionId(resolvedMrid.getModuleId(), (_envDependent?"##":"")+DATE_FORMAT.format(data.getDate())+"@"+_workspaceName, mrid.getExtraAttributes());
                 } else {
-                    resolvedMrid = new ModuleRevisionId(resolvedMrid.getModuleId(), ivyURL.getRevision());
+                    resolvedMrid = new ModuleRevisionId(resolvedMrid.getModuleId(), ivyURL.getRevision(), mrid.getExtraAttributes());
                 }
             }
             Message.verbose("\t\t["+resolvedMrid.getRevision()+"] "+mrid.getModuleId());
@@ -419,9 +419,9 @@ public abstract class AbstractURLResolver extends AbstractResolver {
      * @param artifact the artifact which has not been found
      */
     protected void logIvyNotFound(ModuleRevisionId mrid) {
-        Artifact artifact = new DefaultArtifact(mrid, new Date(), "ivy", "ivy", "xml");
+        Artifact artifact = DefaultArtifact.newIvyArtifact(mrid, null);
         String revisionToken = mrid.getRevision().startsWith("latest.")?"[any "+mrid.getRevision().substring("latest.".length())+"]":"["+mrid.getRevision()+"]";
-        Artifact latestArtifact = new DefaultArtifact(new ModuleRevisionId(mrid.getModuleId(), revisionToken), new Date(), "ivy", "ivy", "xml");
+        Artifact latestArtifact = DefaultArtifact.newIvyArtifact(new ModuleRevisionId(mrid.getModuleId(), revisionToken, mrid.getExtraAttributes()), null);
         for (Iterator iter = _ivyPatterns.iterator(); iter.hasNext();) {
             String pattern = (String)iter.next();
             String resolvedFileName = IvyPatternHelper.substitute(pattern, artifact);

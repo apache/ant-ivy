@@ -41,7 +41,7 @@ public class MRIDTransformationRule implements NamespaceTransformer {
             String mod = applyRules(dest.getModule(), "m");
             String rev = applyRules(dest.getRev(), "r");
             
-            return ModuleRevisionId.newInstance(org, mod, rev);
+            return ModuleRevisionId.newInstance(org, mod, rev, mrid.getExtraAttributes());
         }
         private String applyRules(String str, String type) {
             for (int i = 0; i < TYPES.length; i++) {

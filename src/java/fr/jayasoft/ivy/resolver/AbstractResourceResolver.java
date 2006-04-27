@@ -34,6 +34,13 @@ import fr.jayasoft.ivy.util.Message;
  */
 public abstract class AbstractResourceResolver extends BasicResolver {
     
+    private static final Map IVY_ARTIFACT_ATTRIBUTES = new HashMap();
+    static {
+        IVY_ARTIFACT_ATTRIBUTES.put(IvyPatternHelper.ARTIFACT_KEY, "ivy");
+        IVY_ARTIFACT_ATTRIBUTES.put(IvyPatternHelper.TYPE_KEY, "ivy");
+        IVY_ARTIFACT_ATTRIBUTES.put(IvyPatternHelper.EXT_KEY, "xml");
+    }
+    
     private List _ivyPatterns = new ArrayList(); // List (String pattern)
     private List _artifactPatterns = new ArrayList();  // List (String pattern)
     private boolean _m2compatible = false;
@@ -47,11 +54,7 @@ public abstract class AbstractResourceResolver extends BasicResolver {
         if (isM2compatible()) {
             mrid = convertM2IdForResourceSearch(mrid);
         }
-        ResolvedResource rres = findResourceUsingPatterns(mrid, _ivyPatterns, "ivy", "ivy", "xml", data.getDate());
-//        if (rres == null && isM2compatible()) {
-//            rres = findResourceUsingPatterns(mrid, _ivyPatterns, mrid.getName(), "pom", "pom", data.getDate());
-//        }
-        return rres;
+        return findResourceUsingPatterns(mrid, _ivyPatterns, DefaultArtifact.newIvyArtifact(mrid, data.getDate()), data.getDate());
     }
 
     protected ResolvedResource findArtifactRef(Artifact artifact, Date date) {
@@ -59,9 +62,13 @@ public abstract class AbstractResourceResolver extends BasicResolver {
         if (isM2compatible()) {
             mrid = convertM2IdForResourceSearch(mrid);
         }
-        return findResourceUsingPatterns(mrid, _artifactPatterns, artifact.getName(), artifact.getType(), artifact.getExt(), date);
+        return findResourceUsingPatterns(mrid, _artifactPatterns, artifact, date);
     }
 
+    /**
+     * @deprecated 
+     * @return
+     */
     protected ResolvedResource findResourceUsingPatterns(ModuleRevisionId moduleRevision, List patternList, String artifact, String type, String ext, Date date) {
         ResolvedResource rres = null;
         for (Iterator iter = patternList.iterator(); iter.hasNext() && rres == null;) {
@@ -71,8 +78,51 @@ public abstract class AbstractResourceResolver extends BasicResolver {
         return rres;
     }
     
-    protected abstract ResolvedResource findResourceUsingPattern(ModuleRevisionId mrid, String pattern, String artifact, String type, String ext, Date date);
-    protected abstract ResolvedResource[] findAll(ModuleRevisionId mrid, String pattern, String artifact, String type, String ext);
+    protected ResolvedResource findResourceUsingPatterns(ModuleRevisionId moduleRevision, List patternList, Artifact artifact, Date date) {
+        ResolvedResource rres = null;
+        for (Iterator iter = patternList.iterator(); iter.hasNext() && rres == null;) {
+            String pattern = (String)iter.next();
+            rres = findResourceUsingPattern(moduleRevision, pattern, artifact, date);
+        }
+        return rres;
+    }
+    
+    /**
+     * No need to implement that in post 1.4 dependency resolvers.
+     * @deprecated 
+     * @return
+     */
+    protected ResolvedResource findResourceUsingPattern(ModuleRevisionId mrid, String pattern, String artifact, String type, String ext, Date date) {
+        // implemented for backward compatibility reason only.
+        // in post 1.4 dependency resolvers this has no utility except to let old code use this old method
+        // WARNING: if none of the two methods is overriden, this will result in a StackOverflow error !
+        return findResourceUsingPattern(mrid, pattern, new DefaultArtifact(mrid, date, artifact, type, ext), date);
+    }
+    
+    protected ResolvedResource findResourceUsingPattern(ModuleRevisionId mrid, String pattern, Artifact artifact, Date date) {
+        // implemented for backward compatibility reason only.
+        // MUST be overriden in post 1.4 dependency resolvers
+        return findResourceUsingPattern(mrid, pattern, artifact.getName(), artifact.getType(), artifact.getExt(), date);
+    }
+    
+    /**
+     * No need to implement that in post 1.4 dependency resolvers.
+     * @deprecated 
+     * @return
+     */
+    protected ResolvedResource[] findAll(ModuleRevisionId mrid, String pattern, String artifact, String type, String ext) {
+        // implemented for backward compatibility reason only.
+        // in post 1.4 dependency resolvers this has no utility except to let old code use this old method
+        // WARNING: if none of the two methods is overriden, this will result in a StackOverflow error !
+        return findAll(mrid, pattern, new DefaultArtifact(mrid, null, artifact, type, ext));
+    }
+
+    protected ResolvedResource[] findAll(ModuleRevisionId mrid, String pattern, Artifact artifact) {
+        // implemented for backward compatibility reason only.
+        // MUST be overriden in post 1.4 dependency resolvers
+        return findAll(mrid, pattern, artifact.getName(), artifact.getType(), artifact.getExt());
+    }
+    
     protected abstract long get(Resource resource, File dest) throws IOException;    
 
     /**
@@ -82,9 +132,9 @@ public abstract class AbstractResourceResolver extends BasicResolver {
      * @param artifact the artifact which has not been found
      */
     protected void logIvyNotFound(ModuleRevisionId mrid) {
-        Artifact artifact = new DefaultArtifact(mrid, new Date(), "ivy", "ivy", "xml");
+        Artifact artifact = new DefaultArtifact(mrid, null, "ivy", "ivy", "xml");
         String revisionToken = mrid.getRevision().startsWith("latest.")?"[any "+mrid.getRevision().substring("latest.".length())+"]":"["+mrid.getRevision()+"]";
-        Artifact latestArtifact = new DefaultArtifact(new ModuleRevisionId(mrid.getModuleId(), revisionToken), new Date(), "ivy", "ivy", "xml");
+        Artifact latestArtifact = new DefaultArtifact(new ModuleRevisionId(mrid.getModuleId(), revisionToken, mrid.getExtraAttributes()), new Date(), "ivy", "ivy", "xml");
         if (_ivyPatterns.isEmpty()) {
             logIvyAttempt("no ivy pattern => no attempt to find ivy file for "+mrid);
         } else {
@@ -213,7 +263,7 @@ public abstract class AbstractResourceResolver extends BasicResolver {
         if (mrid.getOrganisation().indexOf('.') == -1) {
             return mrid;
         }
-        return ModuleRevisionId.newInstance(mrid.getOrganisation().replace('.', '/'), mrid.getName(), mrid.getRevision());
+        return ModuleRevisionId.newInstance(mrid.getOrganisation().replace('.', '/'), mrid.getName(), mrid.getRevision(), mrid.getExtraAttributes());
     }
 
 }

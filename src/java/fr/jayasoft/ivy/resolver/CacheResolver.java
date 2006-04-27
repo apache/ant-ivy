@@ -59,7 +59,7 @@ public class CacheResolver extends FileSystemResolver {
                 Message.verbose("\t"+getName()+": found ivy file in cache for "+mrid);
                 Message.verbose("\t\t=> "+ivyRef);
 
-                ModuleRevisionId resolvedMrid = new ModuleRevisionId(mrid.getModuleId(), ivyRef.getRevision());
+                ModuleRevisionId resolvedMrid = new ModuleRevisionId(mrid.getModuleId(), ivyRef.getRevision(), mrid.getExtraAttributes());
                 IvyNode node = data.getNode(resolvedMrid);
                 if (node != null && node.getModuleRevision() != null) {
                     // this revision has already be resolved : return it

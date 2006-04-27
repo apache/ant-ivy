@@ -5,6 +5,7 @@
  */
 package fr.jayasoft.ivy;
 
+import fr.jayasoft.ivy.extendable.ExtendableItem;
 import fr.jayasoft.ivy.namespace.Namespace;
 
 

@@ -10,8 +10,12 @@ import java.io.IOException;
 import java.net.URL;
 import java.text.ParseException;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -24,7 +28,6 @@ import fr.jayasoft.ivy.ConflictManager;
 import fr.jayasoft.ivy.DefaultDependencyArtifactDescriptor;
 import fr.jayasoft.ivy.DefaultDependencyDescriptor;
 import fr.jayasoft.ivy.DefaultModuleDescriptor;
-import fr.jayasoft.ivy.DefaultExtendableItem;
 import fr.jayasoft.ivy.Ivy;
 import fr.jayasoft.ivy.License;
 import fr.jayasoft.ivy.MDArtifact;
@@ -33,6 +36,8 @@ import fr.jayasoft.ivy.ModuleId;
 import fr.jayasoft.ivy.ModuleRevisionId;
 import fr.jayasoft.ivy.Status;
 import fr.jayasoft.ivy.conflict.FixedConflictManager;
+import fr.jayasoft.ivy.extendable.DefaultExtendableItem;
+import fr.jayasoft.ivy.extendable.ExtendableItemHelper;
 import fr.jayasoft.ivy.matcher.PatternMatcher;
 import fr.jayasoft.ivy.namespace.Namespace;
 import fr.jayasoft.ivy.parser.AbstractModuleDescriptorParser;
@@ -178,7 +183,7 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
                 String org = _ivy.substitute(attributes.getValue("organisation"));
                 String module = _ivy.substitute(attributes.getValue("module"));
                 String revision = _ivy.substitute(attributes.getValue("revision"));
-                _md.setModuleRevisionId(ModuleRevisionId.newInstance(org, module, revision));
+                _md.setModuleRevisionId(ModuleRevisionId.newInstance(org, module, revision, ExtendableItemHelper.getExtraAttributes(attributes, new String[] {"organisation", "module", "revision", "status", "publication", "namespace", "default"})));
 
                 String namespace = _ivy.substitute(attributes.getValue("namespace"));
                 if (namespace != null) {
@@ -205,7 +210,6 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
                     _md.setPublicationDate(getDefaultPubDate());                    
                 }
                 
-                fillAttributes(_md, attributes);
             } else if ("license".equals(qName)) {
                 _md.addLicense(new License(_ivy.substitute(attributes.getValue("name")), _ivy.substitute(attributes.getValue("url"))));
             } else if ("description".equals(qName)) {
@@ -237,8 +241,7 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
                     // this is a published artifact
                     String ext = _ivy.substitute(attributes.getValue("ext"));
                     ext = ext != null?ext:_ivy.substitute(attributes.getValue("type"));
-                    _artifact = new MDArtifact(_md, _ivy.substitute(attributes.getValue("name")), _ivy.substitute(attributes.getValue("type")), ext);
-                    fillAttributes(_artifact, attributes);
+                    _artifact = new MDArtifact(_md, _ivy.substitute(attributes.getValue("name")), _ivy.substitute(attributes.getValue("type")), ext, ExtendableItemHelper.getExtraAttributes(attributes, new String[] {"ext", "type", "name", "conf"}));
                     String confs = _ivy.substitute(attributes.getValue("conf"));
                     // only add confs if they are specified. if they aren't, endElement will handle this
                     // only if there are no conf defined in sub elements
@@ -277,8 +280,7 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
                 
                 String name = _ivy.substitute(attributes.getValue("name"));
                 String rev = _ivy.substitute(attributes.getValue("rev"));
-                _dd = new DefaultDependencyDescriptor(_md, ModuleRevisionId.newInstance(org, name, rev), force, changing, transitive);
-                fillAttributes(_dd, attributes);
+                _dd = new DefaultDependencyDescriptor(_md, ModuleRevisionId.newInstance(org, name, rev, ExtendableItemHelper.getExtraAttributes(attributes, new String[] {"org", "name", "rev", "force", "transitive", "changing", "conf"})), force, changing, transitive);
                 _md.addDependency(_dd);
                 String confs = _ivy.substitute(attributes.getValue("conf"));
                 if (confs != null && confs.length() > 0) {
@@ -298,7 +300,7 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
                             _ivy.substitute(attributes.getValue("description")),
                             ext==null?null:ext.split(","),
                             transitive);
-                    fillAttributes(configuration, attributes);
+                    ExtendableItemHelper.fillExtraAttributes(configuration, attributes, new String[] {"name", "visibility", "extends", "transitive", "description"});
                 	_md.addConfiguration(configuration);
                 	break;
             	case PUB:
@@ -477,13 +479,6 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
     private void checkConfigurations() {
         if (_md.getConfigurations().length == 0) {
             _md.addConfiguration(new Configuration("default"));
-        }
-    }
-
-
-    public void fillAttributes(DefaultExtendableItem item, Attributes attributes) {
-        for (int i=0; i<attributes.getLength(); i++) {
-            item.setAttribute(attributes.getQName(i), attributes.getValue(i));
         }
     }
 

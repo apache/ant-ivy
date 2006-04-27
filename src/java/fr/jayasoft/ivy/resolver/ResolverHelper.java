@@ -10,11 +10,14 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import fr.jayasoft.ivy.Artifact;
+import fr.jayasoft.ivy.DefaultArtifact;
 import fr.jayasoft.ivy.ModuleRevisionId;
 import fr.jayasoft.ivy.ResolvedURL;
 import fr.jayasoft.ivy.repository.Repository;
@@ -107,9 +110,16 @@ public class ResolverHelper {
         }        
     }
     
+    /**
+     * @deprecated
+     */
     public static ResolvedResource[] findAll(Repository rep, ModuleRevisionId mrid, String pattern, String artifact, String type, String ext) {
+        return findAll(rep, mrid, pattern, new DefaultArtifact(mrid, new Date(), artifact, type, ext));
+    }
+    
+    public static ResolvedResource[] findAll(Repository rep, ModuleRevisionId mrid, String pattern, Artifact artifact) {
         // substitute all but revision
-        String partiallyResolvedPattern = IvyPatternHelper.substitute(pattern, new ModuleRevisionId(mrid.getModuleId(), IvyPatternHelper.getTokenString(IvyPatternHelper.REVISION_KEY)), artifact, type, ext);
+        String partiallyResolvedPattern = IvyPatternHelper.substitute(pattern, new ModuleRevisionId(mrid.getModuleId(), IvyPatternHelper.getTokenString(IvyPatternHelper.REVISION_KEY), mrid.getExtraAttributes()), artifact);
         Message.debug("\tlisting all in "+partiallyResolvedPattern);
         
         String[] revs = listTokenValues(rep, partiallyResolvedPattern, IvyPatternHelper.REVISION_KEY);
@@ -147,13 +157,6 @@ public class ResolverHelper {
         return null;
     }
 
-
-
-
-// TODO: remove this code
-
-
-    
     // lists all the values a token can take in a pattern, as listed by a given url lister
     public static String[] listTokenValues(URLLister lister, String pattern, String token) {
         pattern = standardize(pattern);
@@ -219,10 +222,39 @@ public class ResolverHelper {
         return path.replace('\\', '/');
     }
 
+    public static String[] listAll(URLLister lister, URL root) {
+        try {
+            if (lister.accept(root.toExternalForm())) {
+                Message.debug("\tusing "+lister+" to list all in "+root);
+                List all = lister.listAll(root);
+                Message.debug("\t\tfound "+all.size()+" urls");
+                List names = new ArrayList(all.size());
+                for (Iterator iter = all.iterator(); iter.hasNext();) {
+                    URL dir = (URL)iter.next();
+                    String path = dir.getPath();
+                    if (path.endsWith("/")) {
+                        path = path.substring(0, path.length() - 1);
+                    }
+                    int slashIndex = path.lastIndexOf('/');
+                    names.add(path.substring(slashIndex +1));
+                }
+                return (String[])names.toArray(new String[names.size()]);
+            }
+            return null;
+        } catch (Exception e) {
+            Message.warn("problem while listing directories in "+root+": "+e.getClass()+" "+e.getMessage());
+            return null;
+        }        
+    }
+    
+
+    /**
+     * @deprecated
+     */
     public static ResolvedURL[] findAll(URLLister lister, ModuleRevisionId mrid, String pattern, String artifact, String type, String ext) {
         if (lister.accept(pattern)) {
             // substitute all but revision
-            String partiallyResolvedPattern = IvyPatternHelper.substitute(pattern, new ModuleRevisionId(mrid.getModuleId(), IvyPatternHelper.getTokenString(IvyPatternHelper.REVISION_KEY)), artifact, type, ext);
+            String partiallyResolvedPattern = IvyPatternHelper.substitute(pattern, new ModuleRevisionId(mrid.getModuleId(), IvyPatternHelper.getTokenString(IvyPatternHelper.REVISION_KEY), mrid.getExtraAttributes()), artifact, type, ext);
             Message.debug("\tlisting all in "+partiallyResolvedPattern);
             
             String[] revs = listTokenValues(lister, partiallyResolvedPattern, IvyPatternHelper.REVISION_KEY);
@@ -252,30 +284,4 @@ public class ResolverHelper {
         }
         return null;
     }
-
-    public static String[] listAll(URLLister lister, URL root) {
-        try {
-            if (lister.accept(root.toExternalForm())) {
-                Message.debug("\tusing "+lister+" to list all in "+root);
-                List all = lister.listAll(root);
-                Message.debug("\t\tfound "+all.size()+" urls");
-                List names = new ArrayList(all.size());
-                for (Iterator iter = all.iterator(); iter.hasNext();) {
-                    URL dir = (URL)iter.next();
-                    String path = dir.getPath();
-                    if (path.endsWith("/")) {
-                        path = path.substring(0, path.length() - 1);
-                    }
-                    int slashIndex = path.lastIndexOf('/');
-                    names.add(path.substring(slashIndex +1));
-                }
-                return (String[])names.toArray(new String[names.size()]);
-            }
-            return null;
-        } catch (Exception e) {
-            Message.warn("problem while listing directories in "+root+": "+e.getClass()+" "+e.getMessage());
-            return null;
-        }        
-    }
-    
 }

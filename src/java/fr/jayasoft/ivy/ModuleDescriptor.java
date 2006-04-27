@@ -7,6 +7,8 @@ package fr.jayasoft.ivy;
 
 import java.util.Date;
 
+import fr.jayasoft.ivy.extendable.ExtendableItem;
+
 /**
  * @author x.hanin
  *

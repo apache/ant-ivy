@@ -51,7 +51,7 @@ public class NameSpaceHelper {
         if (artifact.getModuleRevisionId().equals(mrid)) {
             return artifact;
         }
-        return new DefaultArtifact(mrid, artifact.getPublicationDate(), artifact.getName(), artifact.getType(), artifact.getExt());
+        return new DefaultArtifact(mrid, artifact.getPublicationDate(), artifact.getName(), artifact.getType(), artifact.getExt(), artifact.getExtraAttributes());
     }
 
     public static ArtifactId transform(ArtifactId artifactId, NamespaceTransformer t) {

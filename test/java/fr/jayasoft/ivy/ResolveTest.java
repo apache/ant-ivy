@@ -2029,6 +2029,20 @@ public class ResolveTest extends TestCase {
         assertEquals(0, report.getConfigurationReport("j2ee").getArtifactsNumber());
     }
 
+    public void testExtraAttributes() throws Exception {
+        Ivy ivy = new Ivy();
+        ivy.configure(new File("test/repositories/extra-attributes/ivyconf.xml"));
+        
+        ResolveReport report = ivy.resolve(ResolveTest.class.getResource("ivy-extra-att.xml"),
+                null, new String[] {"*"}, _cache, null, false);
+        assertFalse(report.hasError());
+        
+        assertTrue(new File(_cache, "jayasoft/mymodule/task1/1854/ivy.xml").exists());
+        assertTrue(new File(_cache, "jayasoft/mymodule/task1/1854/mymodule-windows.jar").exists());
+        assertTrue(new File(_cache, "jayasoft/mymodule/task1/1854/mymodule-linux.jar").exists());
+    }
+
+
     ////////////////////////////////////////////////////////////
     // helper methods to ease the tests
     ////////////////////////////////////////////////////////////

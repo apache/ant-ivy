@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 
 import fr.jayasoft.ivy.Artifact;
+import fr.jayasoft.ivy.DefaultArtifact;
 import fr.jayasoft.ivy.Ivy;
 import fr.jayasoft.ivy.LatestStrategy;
 import fr.jayasoft.ivy.ModuleRevisionId;
@@ -54,16 +55,26 @@ public class RepositoryResolver extends AbstractResourceResolver {
     }
 
 
-    protected ResolvedResource findResourceUsingPattern(ModuleRevisionId mrid, String pattern, String artifact, String type, String ext, Date date) {
-        return findResourceUsingPattern(getName(), getRepository(), getLatestStrategy(), mrid, pattern, artifact, type, ext, date, isAlwaysCheckExactRevision());
+    protected ResolvedResource findResourceUsingPattern(ModuleRevisionId mrid, String pattern, Artifact artifact, Date date) {
+        return findResourceUsingPattern(getName(), getRepository(), getLatestStrategy(), mrid, pattern, artifact, date, isAlwaysCheckExactRevision());
     }
+    /**
+     * @deprecated
+     */
     public static ResolvedResource findResourceUsingPattern(String name, Repository repository, LatestStrategy strategy, ModuleRevisionId mrid, String pattern, String artifact, String type, String ext, Date date) {
         return findResourceUsingPattern(name, repository, strategy, mrid, pattern, artifact, type, ext, date, true);
     }
+    /**
+     * @deprecated
+     */
     public static ResolvedResource findResourceUsingPattern(String name, Repository repository, LatestStrategy strategy, ModuleRevisionId mrid, String pattern, String artifact, String type, String ext, Date date, boolean alwaysCheckExactRevision) {
+        return findResourceUsingPattern(name, repository, strategy, mrid, pattern, new DefaultArtifact(mrid, date, artifact, type, ext), date, alwaysCheckExactRevision);
+    }
+    
+    public static ResolvedResource findResourceUsingPattern(String name, Repository repository, LatestStrategy strategy, ModuleRevisionId mrid, String pattern, Artifact artifact, Date date, boolean alwaysCheckExactRevision) {
         try {
             if (mrid.isExactRevision() || alwaysCheckExactRevision) {
-                String resourceName = IvyPatternHelper.substitute(pattern, mrid, artifact, type, ext);
+                String resourceName = IvyPatternHelper.substitute(pattern, mrid, artifact);
                 Message.debug("\t trying "+resourceName);
                 Resource res = repository.getResource(resourceName);
                 long start = System.currentTimeMillis();
@@ -71,22 +82,29 @@ public class RepositoryResolver extends AbstractResourceResolver {
                 if (reachable) {
                     return new ResolvedResource(res, mrid.getRevision());
                 } else if (!mrid.isExactRevision()) {
-                    return findDynamicResourceUsingPattern(name, repository, strategy, mrid, pattern, artifact, type, ext, date);
+                    return findDynamicResourceUsingPattern(name, repository, strategy, mrid, pattern, artifact, date);
                 } else {
                     Message.debug("\t"+name+": resource not reachable for "+mrid+": res="+res);
                     return null;
                 }
             } else {
-                return findDynamicResourceUsingPattern(name, repository, strategy, mrid, pattern, artifact, type, ext, date);
+                return findDynamicResourceUsingPattern(name, repository, strategy, mrid, pattern, artifact, date);
             }
         } catch (Exception ex) {
-            Message.debug("\t"+name+": unable to get resource for "+mrid+": res="+IvyPatternHelper.substitute(pattern, mrid, artifact, type, ext)+": "+ex.getMessage());
+            Message.debug("\t"+name+": unable to get resource for "+mrid+": res="+IvyPatternHelper.substitute(pattern, mrid, artifact)+": "+ex.getMessage());
             return null;
         }
     }
     
+    /**
+     * @deprecated
+     */
     private static ResolvedResource findDynamicResourceUsingPattern(String name, Repository repository, LatestStrategy strategy, ModuleRevisionId mrid, String pattern, String artifact, String type, String ext, Date date) {
-        ResolvedResource[] rress = ResolverHelper.findAll(repository, mrid, pattern, artifact, type, ext);
+        return findDynamicResourceUsingPattern(name, repository, strategy, mrid, pattern, new DefaultArtifact(mrid, date, artifact, type, ext), date);
+    }
+    
+    private static ResolvedResource findDynamicResourceUsingPattern(String name, Repository repository, LatestStrategy strategy, ModuleRevisionId mrid, String pattern, Artifact artifact, Date date) {
+        ResolvedResource[] rress = ResolverHelper.findAll(repository, mrid, pattern, artifact);
         if (rress == null) {
             Message.debug("\t"+name+": unable to list resources for "+mrid+": pattern="+pattern);
             return null;
@@ -113,16 +131,9 @@ public class RepositoryResolver extends AbstractResourceResolver {
     /**
      * Returns all resolved res matching the given pattern and matching given mrid, 
      * or null if no lister is able to handle the given pattern
-     * 
-     * @param mrid
-     * @param pattern
-     * @param artifact
-     * @param type
-     * @param ext
-     * @return
      */
-    protected ResolvedResource[] findAll(ModuleRevisionId mrid, String pattern, String artifact, String type, String ext) {
-        return ResolverHelper.findAll(_repository, mrid, pattern, artifact, type, ext);
+    protected ResolvedResource[] findAll(ModuleRevisionId mrid, String pattern, Artifact artifact) {
+        return ResolverHelper.findAll(_repository, mrid, pattern, artifact);
     }
 
     protected long get(Resource resource, File ivyTempFile) throws IOException {
@@ -146,12 +157,8 @@ public class RepositoryResolver extends AbstractResourceResolver {
         }
         
         String dest = IvyPatternHelper.substitute(destPattern,
-                mrid.getOrganisation(),
-                mrid.getName(),
-                mrid.getRevision(),
-                artifact.getName(),
-                artifact.getType(),
-                artifact.getExt()); 
+                mrid,
+                artifact); 
         
         _repository.put(src, dest, overwrite);
         Message.info("\tpublished "+artifact.getName()+" to "+dest);

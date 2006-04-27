@@ -12,6 +12,7 @@ import java.util.Date;
 import java.util.List;
 
 import fr.jayasoft.ivy.Artifact;
+import fr.jayasoft.ivy.DefaultArtifact;
 import fr.jayasoft.ivy.DependencyDescriptor;
 import fr.jayasoft.ivy.Ivy;
 import fr.jayasoft.ivy.ModuleRevisionId;
@@ -37,7 +38,7 @@ public class IBiblioResolver extends URLResolver {
         if (isM2compatible()) {
             ModuleRevisionId mrid = dd.getDependencyRevisionId();
             mrid = convertM2IdForResourceSearch(mrid);
-            ResolvedResource rres = findResourceUsingPatterns(mrid, getIvyPatterns(), mrid.getName(), "pom", "pom", data.getDate());
+            ResolvedResource rres = findResourceUsingPatterns(mrid, getIvyPatterns(), DefaultArtifact.newPomArtifact(mrid, data.getDate()), data.getDate());
             return rres;
         } else {
             return null;
