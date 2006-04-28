@@ -32,6 +32,7 @@ for detailed view of each issue, please consult http://jira.jayasoft.org/
   - NEW: add option to cachepath task to create a path with local artifact paths (IVY-221)
   - NEW: allow extending configurations to override the mapping of their super configurations (IVY-218)
 
+  - IMPROVE: add wildcard support for extending configurations (IVY-235)
   - IMPROVE: add support for xslt parameters in the report task (IVY-227)
   - IMPROVE: comments now aren't lost when delivering ivy files (IVY-226)
   - IMPROVE: add sort of 'fallback'-mapping to the defaultconfmapping attribute (IVY-215)

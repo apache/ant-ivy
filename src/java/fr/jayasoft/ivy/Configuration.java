@@ -5,6 +5,9 @@
  */
 package fr.jayasoft.ivy;
 
+import java.util.LinkedHashSet;
+import java.util.Set;
+
 import fr.jayasoft.ivy.extendable.DefaultExtendableItem;
 
 
@@ -132,4 +135,39 @@ public class Configuration extends DefaultExtendableItem {
     public int hashCode() {
         return getName().hashCode();
     }
+    
+    public void replaceWildcards(ModuleDescriptor md) {
+        if (this != md.getConfiguration(_name)) {
+            throw new IllegalArgumentException(
+            "The given ModuleDescriptor doesn't own this configuration!");
+        }
+        
+        Configuration[] configs = md.getConfigurations();
+        
+        Set newExtends = new LinkedHashSet();
+        for (int j = 0; j < _extends.length; j++) {
+            if ("*".equals(_extends[j])) {
+                addOther(configs, null, newExtends);
+            } else if ("*(public)".equals(_extends[j])) {
+                addOther(configs, Visibility.PUBLIC, newExtends);
+            } else if ("*(private)".equals(_extends[j])) {
+                addOther(configs, Visibility.PRIVATE, newExtends);
+            } else {
+                newExtends.add(_extends[j]);
+            }
+        }
+        
+        this._extends = (String[]) newExtends.toArray(new String[newExtends.size()]);
+    }
+    
+    private void addOther(Configuration[] allConfigs, Visibility visibility, Set configs) {
+        for (int i = 0; i < allConfigs.length; i++) {
+            String currentName = allConfigs[i].getName();
+            if (!_name.equals(currentName)
+                    && ((visibility == null) || visibility.equals(allConfigs[i].getVisibility()))) {
+                configs.add(currentName);
+            }
+        }
+    }
+    
 }

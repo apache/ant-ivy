@@ -474,9 +474,18 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
     private void checkConfigurations() {
         if (_md.getConfigurations().length == 0) {
             _md.addConfiguration(new Configuration("default"));
+        } else {
+            replaceConfigurationWildcards();
         }
     }
-
+        
+    private void replaceConfigurationWildcards() {
+        Configuration[] configs = _md.getConfigurations();
+        for (int i = 0; i < configs.length; i++) {
+            configs[i].replaceWildcards(_md);
+        }
+    }
+    
 
     }
 
