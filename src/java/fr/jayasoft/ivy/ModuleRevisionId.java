@@ -19,6 +19,7 @@ import fr.jayasoft.ivy.util.IvyPatternHelper;
  */
 public class ModuleRevisionId extends UnmodifiableExtendableItem {
     private static final String ENCODE_SEPARATOR = ModuleId.ENCODE_SEPARATOR;
+    private static final String ENCODE_PREFIX = "+";
     
     public static ModuleRevisionId newInstance(String organisation, String name, String revision) {
         return new ModuleRevisionId(new ModuleId(organisation, name), revision);
@@ -121,7 +122,7 @@ public class ModuleRevisionId extends UnmodifiableExtendableItem {
         Map attributes = getAttributes();
         for (Iterator iter = attributes.keySet().iterator(); iter.hasNext();) {
             String attName = (String)iter.next();
-            buf.append(attName).append(ENCODE_SEPARATOR).append(attributes.get(attName)).append(ENCODE_SEPARATOR);
+            buf.append(ENCODE_PREFIX).append(attName).append(ENCODE_SEPARATOR).append(ENCODE_PREFIX).append(attributes.get(attName)).append(ENCODE_SEPARATOR);
         }
         return buf.toString();
     }
@@ -133,7 +134,17 @@ public class ModuleRevisionId extends UnmodifiableExtendableItem {
         Map attributes = new HashMap();
         for (int i = 0; i < parts.length; i+=2) {
             String attName = parts[i];
+            if (!attName.startsWith(ENCODE_PREFIX)) {
+                throw new IllegalArgumentException("badly encoded module revision id: '"+encoded+"': "+attName+" doesn't start with "+ENCODE_PREFIX);
+            } else {
+                attName = attName.substring(1);
+            }
             String attValue = parts[i+1];
+            if (!attValue.startsWith(ENCODE_PREFIX)) {
+                throw new IllegalArgumentException("badly encoded module revision id: '"+encoded+"': "+attValue+" doesn't start with "+ENCODE_PREFIX);
+            } else {
+                attValue = attValue.substring(1);
+            }
             attributes.put(attName, attValue);
         }
         String org = (String)attributes.remove(IvyPatternHelper.ORGANISATION_KEY);
