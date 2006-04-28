@@ -94,7 +94,7 @@ public class XmlReportOutputter implements ReportOutputter {
                     Map extraAttributes = md!=null?md.getExtraAttributes():dep.getResolvedId().getExtraAttributes();
                     for (Iterator iterator = extraAttributes.keySet().iterator(); iterator.hasNext();) {
                         String attName = (String)iterator.next();
-                        details.append(" ").append(attName).append("=\"").append(extraAttributes.get(attName)).append("\"");
+                        details.append(" extra-").append(attName).append("=\"").append(extraAttributes.get(attName)).append("\"");
                     }
 					String defaultValue = dep.getDescriptor() != null ? " default=\""+dep.getDescriptor().isDefault()+"\"" : "";
                     int position = dependencies.indexOf(dep.getResolvedId());
@@ -141,7 +141,7 @@ public class XmlReportOutputter implements ReportOutputter {
                         extraAttributes = adr[i].getArtifact().getExtraAttributes();
                         for (Iterator iterator = extraAttributes.keySet().iterator(); iterator.hasNext();) {
                             String attName = (String)iterator.next();
-                            out.print(" "+attName+"=\""+extraAttributes.get(attName)+"\"");
+                            out.print(" extra-"+attName+"=\""+extraAttributes.get(attName)+"\"");
                         }
                         out.print(" status=\""+adr[i].getDownloadStatus()+"\"");
                         out.print(" size=\""+adr[i].getSize()+"\"");

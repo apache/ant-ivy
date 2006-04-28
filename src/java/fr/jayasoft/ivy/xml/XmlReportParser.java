@@ -77,7 +77,7 @@ public class XmlReportParser {
                         } else {
                             _revisionsMap.put(new Integer(_position), _revisionArtifacts);
 	                        _mrid = ModuleRevisionId.newInstance(_organisation, _module, _revision, 
-                                    ExtendableItemHelper.getExtraAttributes(attributes, new String[] {"position", "name", "default", "evicted", "error", "pubdate", "conf", "searched", "downloaded", "resolver", "artresolver", "status", "homepage"}));
+                                    ExtendableItemHelper.getExtraAttributes(attributes, "extra-"));
 							_mrids.add(_mrid);
                             if (_default) {
                                 _defaultMrids.add(_mrid);
@@ -102,7 +102,7 @@ public class XmlReportParser {
                         String artifactName = attributes.getValue("name");
                         String type = attributes.getValue("type");
                         String ext = attributes.getValue("ext");
-						Artifact artifact = new DefaultArtifact(_mrid, _pubdate, artifactName, type, ext, ExtendableItemHelper.getExtraAttributes(attributes, new String[] {"name", "type", "ext", "status"}));
+						Artifact artifact = new DefaultArtifact(_mrid, _pubdate, artifactName, type, ext, ExtendableItemHelper.getExtraAttributes(attributes, "extra-"));
                         _revisionArtifacts.add(artifact);
                     }
                 }

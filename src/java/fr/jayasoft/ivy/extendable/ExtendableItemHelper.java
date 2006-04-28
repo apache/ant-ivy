@@ -17,6 +17,16 @@ import org.xml.sax.Attributes;
 
 public class ExtendableItemHelper {
 
+    public static Map getExtraAttributes(Attributes attributes, String prefix) {
+        Map ret = new HashMap();
+        for (int i=0; i<attributes.getLength(); i++) {
+            if (attributes.getQName(i).startsWith(prefix)) {
+                ret.put(attributes.getQName(i).substring(prefix.length()), attributes.getValue(i));
+            }
+        }
+        return ret;
+    }
+
     public static Map getExtraAttributes(Attributes attributes, String[] ignoredAttNames) {
         Map ret = new HashMap();
         Collection ignored = Arrays.asList(ignoredAttNames);
