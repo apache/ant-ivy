@@ -389,6 +389,10 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
                     Message.debug("setting default conf from imported configurations file: "+parser.getDefaultConfMapping());
                     setDefaultConfMapping(parser.getDefaultConfMapping());
                 }
+                if (parser._md.isMappingOverride()) {
+                    Message.debug("enabling mapping-override from imported configurations file");
+                    _md.setMappingOverride(true);
+                }
             } else if (_validate && _state != INFO) {
                 addError("unknwon tag "+qName);
             }

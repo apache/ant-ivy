@@ -37,6 +37,7 @@ for detailed view of each issue, please consult http://jira.jayasoft.org/
   - IMPROVE: comments now aren't lost when delivering ivy files (IVY-226)
   - IMPROVE: add sort of 'fallback'-mapping to the defaultconfmapping attribute (IVY-215)
 
+  - FIX: including configurations doesn't import the confmappingoverride setting (IVY-238)
   - FIX: NullPointerException when the creation of Ivy file in cache fails (IVY-234)
   - FIX: Ivy file containing 2 different versions of the same module is not deliverd correctly (IVY-229)
   - FIX: ModuleRevisionId encode/decode doesn't work if revision is empty (IVY-233)
