@@ -1,0 +1,5 @@
+<configurations>
+	<conf name="default"/>
+	<conf name="test"/>
+	<conf name="all-public" extends="*(public)" />
+</configurations>

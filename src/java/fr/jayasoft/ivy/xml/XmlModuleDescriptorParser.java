@@ -138,6 +138,7 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
             URL schemaURL = validate?getClass().getResource("ivy.xsd"):null;
             XMLHelper.parse(xmlURL, schemaURL, this);
             checkConfigurations();
+            replaceConfigurationWildcards();
             if (!_artifactsDeclared) {
                 String[] confs = _md.getConfigurationsNames();
                 for (int i = 0; i < confs.length; i++) {
@@ -474,11 +475,9 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
     private void checkConfigurations() {
         if (_md.getConfigurations().length == 0) {
             _md.addConfiguration(new Configuration("default"));
-        } else {
-            replaceConfigurationWildcards();
         }
     }
-        
+
     private void replaceConfigurationWildcards() {
         Configuration[] configs = _md.getConfigurations();
         for (int i = 0; i < configs.length; i++) {

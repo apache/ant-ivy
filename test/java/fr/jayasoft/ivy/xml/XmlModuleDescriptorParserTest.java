@@ -533,4 +533,32 @@ public class XmlModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         assertEquals(Arrays.asList(new String[] {"*"}), Arrays.asList(dd.getDependencyConfigurations("conf1")));        
     }
     
+    public void testExtendOtherConfigs() throws Exception {
+        // import configurations and default mapping
+        ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(_ivy, getClass().getResource("test-configextendsothers1.xml"), true);
+        assertNotNull(md);
+        
+        // has an 'all-public' configuration
+        Configuration allPublic = md.getConfiguration("all-public");
+        assertNotNull(allPublic);
+        
+        // 'all-public' extends all other public configurations
+        String[] allPublicExt = allPublic.getExtends();
+        assertEquals(Arrays.asList(new String[] {"default", "test"}), Arrays.asList(allPublicExt));
+    }
+    
+    public void testImportConfigurationsWithExtendOtherConfigs() throws Exception {
+        // import configurations and default mapping
+        ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(_ivy, getClass().getResource("test-configextendsothers2.xml"), true);
+        assertNotNull(md);
+        
+        // has an 'all-public' configuration
+        Configuration allPublic = md.getConfiguration("all-public");
+        assertNotNull(allPublic);
+        
+        // 'all-public' extends all other public configurations
+        String[] allPublicExt = allPublic.getExtends();
+        assertEquals(Arrays.asList(new String[] {"default", "test", "extra"}), Arrays.asList(allPublicExt));
+    }
+    
 }
