@@ -8,8 +8,9 @@ for detailed view of each issue, please consult http://jira.jayasoft.org/
    version 1.4 - not yet released
 =================================
 * thanks to Jayasoft:
-  - NEW: adding to SPECIAL_MEANINGS in LatestRevisionStrategy (IVY-121)
   - NEW: add possibility to define extra attributes in ivy files (IVY-217)
+  - NEW: use custom classloader for plugins (IVY-220)
+  - NEW: adding to SPECIAL_MEANINGS in LatestRevisionStrategy (IVY-121)
 
   - IMPROVE: ivy standalone now return error status (IVY-152)
   - IMPROVE: log messages do not display most specfic resolver name (IVY-170)

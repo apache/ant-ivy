@@ -14,6 +14,7 @@ import java.io.InputStream;
 import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLClassLoader;
 import java.net.UnknownHostException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -151,6 +152,10 @@ public class Ivy implements TransferListener {
     private File _defaultUserDir;
     
     private Set _fetchedSet = new HashSet();
+
+    private List _classpathURLs = new ArrayList();
+
+    private ClassLoader _classloader;
     
     public Ivy() {
         setVariable("ivy.default.conf.dir", Ivy.class.getResource("conf").toExternalForm(), true);
@@ -255,11 +260,7 @@ public class Ivy implements TransferListener {
     public void typeDefs(Properties p) {
         for (Iterator iter = p.keySet().iterator(); iter.hasNext();) {
             String name = (String) iter.next();
-            try {
-                typeDef(name, Class.forName(p.getProperty(name)));
-            } catch (ClassNotFoundException e) {
-                Message.warn("impossible to define resolver "+name+": class not found: "+p.getProperty(name));
-            }
+            typeDef(name, p.getProperty(name));
         }
     }
     
@@ -344,6 +345,12 @@ public class Ivy implements TransferListener {
         Message.debug("\tcache ivy pattern: "+getCacheIvyPattern());
         Message.debug("\tcache artifact pattern: "+getCacheArtifactPattern());
         
+        if (!_classpathURLs.isEmpty()) {
+            Message.verbose("\t-- "+_classpathURLs.size()+" custom classpath urls:");
+            for (Iterator iter = _classpathURLs.iterator(); iter.hasNext();) {
+                Message.debug("\t\t"+iter.next());
+            }
+        }
         Message.verbose("\t-- "+_resolversMap.size()+" resolvers:");
         for (Iterator iter = _resolversMap.values().iterator(); iter.hasNext();) {
             DependencyResolver resolver = (DependencyResolver)iter.next();
@@ -423,10 +430,39 @@ public class Ivy implements TransferListener {
         return _variables;
     }
 
-    public void typeDef(String name, Class clazz) {
+    public Class typeDef(String name, String className) {
+        Class clazz = classForName(className);
         _typeDefs.put(name, clazz);
+        return clazz;
     }
     
+    private Class classForName(String className) {
+        try {
+            return getClassLoader().loadClass(className);
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException("impossible to define new type: class not found: "+className+" in "+_classpathURLs+" nor Ivy classloader");
+        }
+    }
+
+    private ClassLoader getClassLoader() {
+        if (_classloader == null) {
+            if (_classpathURLs.isEmpty()) {
+                _classloader = Ivy.class.getClassLoader();   
+            } else {
+                _classloader = new URLClassLoader(
+                        (URL[])_classpathURLs.toArray(new URL[_classpathURLs.size()]), 
+                        Ivy.class.getClassLoader());
+            }
+        }
+        return _classloader;
+    }
+
+
+    public void addClasspathURL(URL url) {
+        _classpathURLs.add(url);
+        _classloader = null;
+    }
+
     public Map getTypeDefs() {
         return _typeDefs;
     }

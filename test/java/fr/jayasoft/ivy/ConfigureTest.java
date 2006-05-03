@@ -18,4 +18,14 @@ public class ConfigureTest extends TestCase {
         
         assertNotNull(ivy.getDefaultResolver());
     }
+    
+    public void testTypedefWithCustomClasspath() throws Exception {
+        Ivy ivy = new Ivy();
+        ivy.configure(ConfigureTest.class.getResource("ivyconf-custom-typedef.xml"));
+        
+        DependencyResolver custom = ivy.getResolver("custom");
+        assertNotNull(custom);
+        assertEquals("fr.jayasoft.ivy.resolver.CustomResolver", custom.getClass().getName());
+    }
+
 }

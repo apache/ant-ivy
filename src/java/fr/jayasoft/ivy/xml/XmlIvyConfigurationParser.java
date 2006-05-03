@@ -140,11 +140,13 @@ public class XmlIvyConfigurationParser extends DefaultHandler {
                         _configurator.setAttribute(attName, _ivy.substitute((String)attributes.get(attName)));
                     }
                 }
+            } else if ("classpath".equals(qName)) {
+                String url = _ivy.substitute((String)attributes.get("url"));
+                _ivy.addClasspathURL(new URL(url));
             } else if ("typedef".equals(qName)) {
                 String name = _ivy.substitute((String)attributes.get("name"));
                 String className = _ivy.substitute((String)attributes.get("classname"));
-                Class clazz = Class.forName(className);
-                _ivy.typeDef(name, clazz);
+                Class clazz = _ivy.typeDef(name, className);
                 _configurator.typeDef(name, clazz);
             } else if ("property".equals(qName)) {
                 String name = _ivy.substitute((String)attributes.get("name"));
