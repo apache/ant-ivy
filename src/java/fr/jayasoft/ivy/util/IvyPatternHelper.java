@@ -7,7 +7,6 @@ package fr.jayasoft.ivy.util;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -58,7 +57,7 @@ public class IvyPatternHelper {
         return substitute(pattern, artifact, null);
     }
     public static String substitute(String pattern, Artifact artifact, String conf) {
-        return substitute(pattern, artifact.getModuleRevisionId(), artifact, null);
+        return substitute(pattern, artifact.getModuleRevisionId(), artifact, conf);
     }
     public static String substitute(String pattern, ModuleRevisionId mrid, Artifact artifact) {
         return substitute(pattern, mrid, artifact, null);

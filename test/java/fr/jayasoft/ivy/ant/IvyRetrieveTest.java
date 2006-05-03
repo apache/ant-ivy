@@ -17,7 +17,7 @@ import fr.jayasoft.ivy.util.IvyPatternHelper;
 
 public class IvyRetrieveTest extends TestCase {
     private static final String IVY_RETRIEVE_PATTERN = "build/test/lib/[organisation]/[module]/ivy-[revision].xml";
-    private static final String RETRIEVE_PATTERN = "build/test/lib/[artifact]-[revision].[type]";
+    private static final String RETRIEVE_PATTERN = "build/test/lib/[conf]/[artifact]-[revision].[type]";
     private File _cache;
     private IvyRetrieve _retrieve;
     private Project _project;
@@ -63,6 +63,18 @@ public class IvyRetrieveTest extends TestCase {
         _retrieve.execute();
         assertTrue(new File(IvyPatternHelper.substitute(RETRIEVE_PATTERN, "org1", "mod1.2", "2.0", "mod1.2",
                 "jar", "jar")).exists());
+    }
+
+    public void testWithConf() throws Exception {
+        _project.setProperty("ivy.dep.file", "test/repositories/1/org6/mod6.2/ivys/ivy-0.4.xml");
+        _retrieve.execute();
+
+        assertTrue(new File(IvyPatternHelper.substitute(RETRIEVE_PATTERN,
+                "org6", "mod6.1", "0.4", "mod6.1", "jar", "jar", "default")).exists());
+        assertTrue(new File(IvyPatternHelper.substitute(RETRIEVE_PATTERN,
+                "org6", "mod6.1", "0.4", "mod6.1", "jar", "jar", "extension")).exists());
+        assertTrue(new File(IvyPatternHelper.substitute(RETRIEVE_PATTERN,
+                "org1", "mod1.2", "2.1", "mod1.2", "jar", "jar", "extension")).exists());
     }
 
     public void testWithAPreviousResolve() throws Exception {
@@ -136,5 +148,21 @@ public class IvyRetrieveTest extends TestCase {
                 "org1", "mod1.1", "1.0", "ivy", "ivy", "xml")).exists());
         assertFalse(new File(IvyPatternHelper.substitute(ivyPattern,
                 "org1", "mod1.2", "2.0", "ivy", "ivy", "xml")).exists());
+    }
+    
+    public void testCustomIvyPatternWithConf() throws Exception {
+        _project.setProperty("ivy.dep.file", "test/repositories/1/org6/mod6.2/ivys/ivy-0.4.xml");
+
+        String ivyPattern = "build/test/lib/[conf]/[organisation]/[module]/ivy-[revision].xml";
+
+        _retrieve.setIvypattern(ivyPattern);
+        _retrieve.execute();
+
+        assertTrue(new File(IvyPatternHelper.substitute(ivyPattern,
+                "org6", "mod6.1", "0.4", "ivy", "ivy", "xml", "default")).exists());
+        assertTrue(new File(IvyPatternHelper.substitute(ivyPattern,
+                "org6", "mod6.1", "0.4", "ivy", "ivy", "xml", "extension")).exists());
+        assertFalse(new File(IvyPatternHelper.substitute(ivyPattern,
+                "org1", "mod1.2", "2.1", "ivy", "ivy", "xml", "extension")).exists());
     }
 }
