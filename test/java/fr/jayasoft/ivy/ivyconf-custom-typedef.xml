@@ -1,5 +1,5 @@
 <ivyconf>
-	<classpath url="${ivy.conf.dir}/custom-resolver.jar"/>
+	<classpath url="${ivy.custom.test.dir}/custom-resolver.jar"/>
 	<typedef name="custom" classname="fr.jayasoft.ivy.resolver.CustomResolver"/>
 	<resolvers>
 		<custom name="custom"/>

@@ -6,6 +6,7 @@
  */
 package fr.jayasoft.ivy;
 
+import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
 
@@ -21,6 +22,7 @@ public class ConfigureTest extends TestCase {
     
     public void testTypedefWithCustomClasspath() throws Exception {
         Ivy ivy = new Ivy();
+        ivy.setVariable("ivy.custom.test.dir", new File("test/java/fr/jayasoft/ivy").toURL().toString());
         ivy.configure(ConfigureTest.class.getResource("ivyconf-custom-typedef.xml"));
         
         DependencyResolver custom = ivy.getResolver("custom");
