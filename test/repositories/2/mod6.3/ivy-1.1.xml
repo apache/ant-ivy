@@ -1,0 +1,18 @@
+<ivy-module version="1.0">
+	<info organisation="org6"
+	       module="mod6.3"
+	       revision="1.1"
+	       status="integration"
+	       publication="20050502110000"
+	/>
+	<configurations>
+		<conf name="libraries"/>
+		<conf name="run" extends="libraries"/>
+		<conf name="compile" extends="run"/>
+		<conf name="test" extends="libraries"/>
+	</configurations>
+	<dependencies>
+		<dependency name="mod6.2" rev="2.0" conf="run->default"/>
+		<dependency name="mod6.1" rev="2.+" conf="test->default"/>
+	</dependencies>
+</ivy-module>

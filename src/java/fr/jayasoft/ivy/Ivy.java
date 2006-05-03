@@ -1018,7 +1018,8 @@ public class Ivy implements TransferListener {
         resolveConflict(node, node.getParent());
         
         if (node.loadData(conf, shouldBePublic)) {
-            node = node.getRealNode(); // if data loading discarded the node, get the real one
+            node = node.getRealNode(true); // if data loading discarded the node, get the real one
+            
             resolveConflict(node, node.getParent());
             if (!node.isEvicted(node.getRootModuleConf())) {
                 String[] confs = node.getRealConfs(conf);

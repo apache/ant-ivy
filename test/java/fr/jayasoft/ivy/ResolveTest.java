@@ -321,6 +321,40 @@ public class ResolveTest extends TestCase {
         assertTrue(_ivy.getArchiveFileInCache(_cache, "org1", "mod1.2", "2.0", "mod1.2", "jar", "jar").exists());
     }
 
+    public void testResolveMultipleExtendsAndConfs() throws Exception {
+        // Test case for IVY-240
+        //
+        // mod6.3 1.1 has four confs libraries, run (extends libraries), compile (extends run) and test (extends libraries)
+        //    mod6.3 depends on mod6.2 2.0 in conf (run->default)
+        //    mod6.3 depends on mod6.1 2.+ in conf (test->default)
+        // mod6.2 2.0 depends on mod6.1 2.0 in conf (default->standalone)
+        // mod6.1 2.0 has two confs default and standalone
+        //   mod6.1 2.0 depends on mod1.2 2.2 in conf (default->default)
+        ResolveReport report = _ivy.resolve(new File("test/repositories/2/mod6.3/ivy-1.1.xml").toURL(),
+                null, new String[] {"*"}, _cache, null, true);
+        assertNotNull(report);
+        assertFalse(report.hasError());
+        ModuleDescriptor md = report.getModuleDescriptor();
+        assertNotNull(md);
+        ConfigurationResolveReport crr = report.getConfigurationReport("libraries");
+        assertEquals(0, crr.getArtifactsNumber());
+        
+        crr = report.getConfigurationReport("run");
+        assertEquals(2, crr.getArtifactsNumber());
+        assertContainsArtifact("org6", "mod6.2", "2.0", "mod6.2", "jar", "jar", crr);
+        assertContainsArtifact("org6", "mod6.1", "2.0", "mod6.1", "jar", "jar", crr);
+        
+        crr = report.getConfigurationReport("compile");
+        assertEquals(2, crr.getArtifactsNumber());
+        assertContainsArtifact("org6", "mod6.2", "2.0", "mod6.2", "jar", "jar", crr);
+        assertContainsArtifact("org6", "mod6.1", "2.0", "mod6.1", "jar", "jar", crr);
+        
+        crr = report.getConfigurationReport("test");
+        assertEquals(2, crr.getArtifactsNumber());
+        assertContainsArtifact("org6", "mod6.1", "2.0", "mod6.1", "jar", "jar", crr);
+        assertContainsArtifact("org1", "mod1.2", "2.2", "mod1.2", "jar", "jar", crr);
+    }
+
     public void testResolveMultipleConfsWithLatest() throws Exception {
         // Test case for IVY-188
         //

@@ -16,6 +16,7 @@ for detailed view of each issue, please consult http://jira.jayasoft.org/
 
   - FIX: problem with cache and returnFirst (IVY-207)
   - FIX: modules splitted across a chain are not handled correctly (IVY-206)
+  - FIX: problem with conf extension and latest revisions (IVY-240)
 
 * thanks to Ivy Community:
   - NEW: ability to turn off transitivity at configuration level (IVY-103) (thanks to Karl Baum and Maarten Coene)

@@ -748,10 +748,24 @@ public class IvyNode {
     }
 
     public IvyNode getRealNode() {
-        IvyNode node = _data.getNode(getId());
-        return node == null ? this : node;
+        return getRealNode(false);
     }
-    
+
+
+    public IvyNode getRealNode(boolean traverse) {
+        IvyNode node = _data.getNode(getId());
+        if (node != null) {
+            if (traverse) {
+                node.setParentConf(getParentConf());
+                node.setRootModuleConf(getRootModuleConf());
+                node._data = _data;                
+            }
+            return node;
+        } else {
+            return this;
+        }
+    }
+
     public Collection getDependencies(String[] confs) {
         if (_md == null) {
             throw new IllegalStateException("impossible to get dependencies when data has not been loaded");
@@ -774,7 +788,7 @@ public class IvyNode {
         Collection dependencies = new LinkedHashSet(); // it's important to respect dependencies order
         for (int i = 0; i < dds.length; i++) {
             DependencyDescriptor dd = dds[i];
- String[] dependencyConfigurations = dd.getDependencyConfigurations(conf, getRequestedConf());
+            String[] dependencyConfigurations = dd.getDependencyConfigurations(conf, getRequestedConf());
             if (dependencyConfigurations.length == 0) {
                 // no configuration of the dependency is required for current confs : 
                 // it is exactly the same as if there was no dependency at all on it
