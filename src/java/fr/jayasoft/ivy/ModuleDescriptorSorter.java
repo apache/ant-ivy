@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Stack;
 
 import fr.jayasoft.ivy.util.Message;
+import fr.jayasoft.ivy.version.VersionMatcher;
 
 /**
  * Inner helper class for sorting ModuleDescriptors.
@@ -18,7 +19,7 @@ import fr.jayasoft.ivy.util.Message;
  *
  */
 class ModuleDescriptorSorter {
-    public static List sortNodes(Collection nodes) {
+    public static List sortNodes(VersionMatcher matcher, Collection nodes) {
         /* here we want to use the sort algorithm which work on module descriptors :
          * so we first put dependencies on a map from descriptors to dependency, then we 
          * sort the keySet (i.e. a collection of descriptors), then we replace
@@ -40,7 +41,7 @@ class ModuleDescriptorSorter {
                 n.add(node);
             }
         }
-        List list = sortModuleDescriptors(dependenciesMap.keySet());
+        List list = sortModuleDescriptors(matcher, dependenciesMap.keySet());
         List ret = new ArrayList((int)(list.size()*1.3+nulls.size())); //attempt to adjust the size to avoid too much list resizing
         for (int i=0; i<list.size(); i++) {
             ModuleDescriptor md = (ModuleDescriptor)list.get(i);
@@ -60,8 +61,8 @@ class ModuleDescriptorSorter {
      * @return a List of sorted ModuleDescriptors
      * @throws CircularDependencyException if a circular dependency exists
      */
-    public static List sortModuleDescriptors(Collection moduleDescriptors) throws CircularDependencyException {
-        return new ModuleDescriptorSorter(moduleDescriptors).sortModuleDescriptors();   
+    public static List sortModuleDescriptors(VersionMatcher matcher, Collection moduleDescriptors) throws CircularDependencyException {
+        return new ModuleDescriptorSorter(moduleDescriptors).sortModuleDescriptors(matcher);   
     }
     
     
@@ -79,9 +80,9 @@ class ModuleDescriptorSorter {
      * @return sorted module
      * @throws CircularDependencyException
      */
-    public List sortModuleDescriptors() throws CircularDependencyException {
+    public List sortModuleDescriptors(VersionMatcher matcher) throws CircularDependencyException {
         while (moduleDescriptorsIterator.hasNext()) {
-            sortModuleDescriptorsHelp((ModuleDescriptor)moduleDescriptorsIterator.next(), new Stack());
+            sortModuleDescriptorsHelp(matcher, (ModuleDescriptor)moduleDescriptorsIterator.next(), new Stack());
         }
         return sorted;
     }
@@ -94,7 +95,7 @@ class ModuleDescriptorSorter {
      * @param current Current module to add to sorted list.
      * @throws CircularDependencyException
      */
-    private void sortModuleDescriptorsHelp(ModuleDescriptor current, Stack callStack) throws CircularDependencyException {
+    private void sortModuleDescriptorsHelp(VersionMatcher matcher, ModuleDescriptor current, Stack callStack) throws CircularDependencyException {
         //if already sorted return
         if (sorted.contains(current)) {
             return;
@@ -107,11 +108,11 @@ class ModuleDescriptorSorter {
         DependencyDescriptor [] descriptors = current.getDependencies();
         ModuleDescriptor moduleDescriptorDependency = null;
         for (int i = 0; descriptors!=null && i < descriptors.length; i++) {
-            moduleDescriptorDependency = getModuleDescriptorDependency(descriptors[i]);
+            moduleDescriptorDependency = getModuleDescriptorDependency(matcher, descriptors[i]);
             
             if (moduleDescriptorDependency != null) {
                 callStack.push(current);
-                sortModuleDescriptorsHelp(moduleDescriptorDependency, callStack);
+                sortModuleDescriptorsHelp(matcher, moduleDescriptorDependency, callStack);
                 callStack.pop();
             }
         }
@@ -123,7 +124,7 @@ class ModuleDescriptorSorter {
      * @return a ModuleDescriptor from the collection of module descriptors to sort.
      * If none exists returns null.
      */
-    private ModuleDescriptor getModuleDescriptorDependency(DependencyDescriptor descriptor) {
+    private ModuleDescriptor getModuleDescriptorDependency(VersionMatcher matcher, DependencyDescriptor descriptor) {
         Iterator i = moduleDescriptors.iterator();
         ModuleDescriptor md = null;
         while (i.hasNext()) {
@@ -131,7 +132,7 @@ class ModuleDescriptorSorter {
             if (descriptor.getDependencyId().equals(md.getModuleRevisionId().getModuleId())) {
                 if (md.getResolvedModuleRevisionId().getRevision() == null) {
                     return md;
-                } else if (descriptor.getDependencyRevisionId().acceptRevision(md.getResolvedModuleRevisionId().getRevision())) {
+                } else if (matcher.accept(descriptor.getDependencyRevisionId(), md)) {
                     return md;
                 }
             }

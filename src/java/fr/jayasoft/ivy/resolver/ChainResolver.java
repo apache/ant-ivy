@@ -74,7 +74,7 @@ public class ChainResolver extends AbstractResolver {
             }
             if (mr != null) {
                 boolean shouldReturn = _returnFirst;
-                shouldReturn |= dd.getDependencyRevisionId().isExactRevision() && ret != null && !ret.getDescriptor().isDefault();
+                shouldReturn |= !getIvy().getVersionMatcher().isDynamic(dd.getDependencyRevisionId()) && ret != null && !ret.getDescriptor().isDefault();
                 if (!shouldReturn) {
                     // check if latest is asked and compare to return the most recent
                     String mrDesc = mr.getId()+(mr.getDescriptor().isDefault()?"[default]":"")+" from "+mr.getResolver().getName();
@@ -91,7 +91,7 @@ public class ChainResolver extends AbstractResolver {
                     } else {
                         Message.debug("\tmodule revision discarded as older: "+mrDesc);
                     }
-                    if (dd.getDependencyRevisionId().isExactRevision() && !ret.getDescriptor().isDefault()) {
+                    if (!getIvy().getVersionMatcher().isDynamic(dd.getDependencyRevisionId()) && !ret.getDescriptor().isDefault()) {
                         Message.debug("\tmodule revision found and is not default: returning "+mrDesc);
                         return resolvedRevision(mr);
                     }

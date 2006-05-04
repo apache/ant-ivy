@@ -43,7 +43,7 @@ public class CacheResolver extends FileSystemResolver {
         
         // if we do not have to check modified and if the revision is exact and not changing,  
         // we first search for it in cache
-        if (mrid.isExactRevision()) {
+        if (!getIvy().getVersionMatcher().isDynamic(mrid)) {
             ResolvedModuleRevision rmr = data.getIvy().findModuleInCache(mrid, data.getCache(), doValidate(data));
             if (rmr != null) {
                 Message.verbose("\t"+getName()+": revision in cache: "+mrid);

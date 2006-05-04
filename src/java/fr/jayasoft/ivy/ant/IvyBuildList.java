@@ -25,7 +25,6 @@ import org.apache.tools.ant.types.FileSet;
 import org.apache.tools.ant.types.Path;
 
 import fr.jayasoft.ivy.DependencyDescriptor;
-import fr.jayasoft.ivy.Ivy;
 import fr.jayasoft.ivy.ModuleDescriptor;
 import fr.jayasoft.ivy.ModuleId;
 import fr.jayasoft.ivy.parser.ModuleDescriptorParserRegistry;
@@ -133,7 +132,7 @@ public class IvyBuildList extends IvyTask {
             mds = filterModules(mds, rootModuleDescriptor);
         }
 
-        List sortedModules = Ivy.sortModuleDescriptors(mds);
+        List sortedModules = getIvyInstance().sortModuleDescriptors(mds);
 
         for (ListIterator iter = independent.listIterator(); iter.hasNext();) {
             File buildFile = (File)iter.next();

@@ -146,7 +146,7 @@ public abstract class AbstractResourceResolver extends BasicResolver {
                 String pattern = (String)iter.next();
                 String resolvedFileName = IvyPatternHelper.substitute(pattern, artifact);
                 logIvyAttempt(resolvedFileName);
-                if (!mrid.isExactRevision()) {
+                if (getIvy().getVersionMatcher().isDynamic(mrid)) {
                     resolvedFileName = IvyPatternHelper.substitute(pattern, latestArtifact);
                     logIvyAttempt(resolvedFileName);
                 }

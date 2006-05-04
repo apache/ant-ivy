@@ -7,6 +7,16 @@ for detailed view of each issue, please consult http://jira.jayasoft.org/
 
    version 1.4 - not yet released
 =================================
+Incompatibility with previous versions:
+---------------------------------------
+* Major:
+  - No known major incompatiblity
+* Minor:
+  - Several API changes due to the introduction of VersionMatcher, which should only be a problem for some custom plugins
+  - build list task now requires a configured ivy instance (configure will automatically be called if you don't call it explicitly)
+
+Changes:
+--------
 * thanks to Jayasoft:
   - NEW: add possibility to define extra attributes in ivy files (IVY-217)
   - NEW: use custom classloader for plugins (IVY-220)

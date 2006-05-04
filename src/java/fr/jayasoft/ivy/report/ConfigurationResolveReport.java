@@ -181,7 +181,7 @@ public class ConfigurationResolveReport {
 	 */
 	public List getModuleIds() {
 		if (_modulesIds == null) {
-			List sortedDependencies = Ivy.sortNodes(getDependencies());
+			List sortedDependencies = _ivy.sortNodes(getDependencies());
             Collections.reverse(sortedDependencies);
 			for (Iterator iter = sortedDependencies.iterator(); iter.hasNext();) {
                 IvyNode dependency = (IvyNode) iter.next();

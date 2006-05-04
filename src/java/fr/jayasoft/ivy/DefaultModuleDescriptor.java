@@ -21,6 +21,7 @@ import fr.jayasoft.ivy.namespace.NameSpaceHelper;
 import fr.jayasoft.ivy.namespace.Namespace;
 import fr.jayasoft.ivy.namespace.NamespaceTransformer;
 import fr.jayasoft.ivy.util.Message;
+import fr.jayasoft.ivy.version.VersionMatcher;
 
 /**
  * @author X.Hanin
@@ -262,13 +263,13 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
 		return (DependencyDescriptor[])_dependencies.toArray(new DependencyDescriptor[_dependencies.size()]);
 	}
 	
-	public boolean dependsOn(ModuleDescriptor md) {
+	public boolean dependsOn(VersionMatcher matcher, ModuleDescriptor md) {
 	    for (Iterator iter = _dependencies.iterator(); iter.hasNext();) {
             DependencyDescriptor dd = (DependencyDescriptor)iter.next();
             if (dd.getDependencyId().equals(md.getModuleRevisionId().getModuleId())) {
                 if (md.getResolvedModuleRevisionId().getRevision() == null) {
                     return true;
-                } else if (dd.getDependencyRevisionId().acceptRevision(md.getResolvedModuleRevisionId().getRevision())) {
+                } else if (matcher.accept(dd.getDependencyRevisionId(), md)) {
                     return true;
                 }
             }

@@ -597,11 +597,11 @@ public class IvyNode {
                             Message.verbose("\tfound "+_module.getId()+" in "+_module.getResolver().getName());
                         }
                         
-                        if (!getId().isExactRevision()) {
+                        if (_data.getIvy().getVersionMatcher().isDynamic(getId())) {
                             // IVY-56: check if revision has actually been resolved
-                            if (!_module.getId().isExactRevision()) {
-                                Message.error("impossible to resolve latest revision for "+getId()+": check your configuration and make sure revision is part of your pattern");
-                                _problem = new RuntimeException("impossible to resolve latest revision");
+                            if (_data.getIvy().getVersionMatcher().isDynamic(_module.getId())) {
+                                Message.error("impossible to resolve dynamic revision for "+getId()+": check your configuration and make sure revision is part of your pattern");
+                                _problem = new RuntimeException("impossible to resolve dynamic revision");
                                 _data.getReport().addDependency(this);
                                 return false;
                             }
@@ -651,7 +651,7 @@ public class IvyNode {
                     return false;
                 } else {
                     loaded = true;
-                    if (!getId().isExactRevision()) {
+                    if (_data.getIvy().getVersionMatcher().isDynamic(getId())) {
                         if (_data.getIvy().logResolvedRevision()) {
                             Message.info("\t["+_module.getId().getRevision()+"] "+getId());
                         } else {
@@ -659,9 +659,9 @@ public class IvyNode {
                         }
                     }
                     _md = _module.getDescriptor();
-                    // if the revision was a latest one (which has now be resolved)
+                    // if the revision was a dynamic one (which has now be resolved)
                     // store also it to cache the result
-                    if (!getId().isExactRevision()) {
+                    if (_data.getIvy().getVersionMatcher().isDynamic(getId())) {
                         _data.register(_module.getId(), this);
                     }
                     _confsToFetch.remove("*");

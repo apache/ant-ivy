@@ -86,6 +86,11 @@ import fr.jayasoft.ivy.util.FileUtil;
 import fr.jayasoft.ivy.util.IvyPatternHelper;
 import fr.jayasoft.ivy.util.Message;
 import fr.jayasoft.ivy.util.PropertiesFile;
+import fr.jayasoft.ivy.version.ChainVersionMatcher;
+import fr.jayasoft.ivy.version.ExactVersionMatcher;
+import fr.jayasoft.ivy.version.LatestVersionMatcher;
+import fr.jayasoft.ivy.version.SubVersionMatcher;
+import fr.jayasoft.ivy.version.VersionMatcher;
 import fr.jayasoft.ivy.xml.XmlIvyConfigurationParser;
 import fr.jayasoft.ivy.xml.XmlModuleDescriptorParser;
 import fr.jayasoft.ivy.xml.XmlModuleDescriptorUpdater;
@@ -278,6 +283,7 @@ public class Ivy implements TransferListener {
             getDefaultIvyUserDir();
         }
         getDefaultCache();
+        configureDefaultVersionMatcher();
         
         try {
             new XmlIvyConfigurationParser(this).parse(configurationFile.toURL());
@@ -291,6 +297,15 @@ public class Ivy implements TransferListener {
         dumpConfig();
     }
 
+    private void configureDefaultVersionMatcher() {
+        ChainVersionMatcher versionMatcher = new ChainVersionMatcher();
+        versionMatcher.add(new ExactVersionMatcher());
+        versionMatcher.add(new LatestVersionMatcher());
+        versionMatcher.add(new SubVersionMatcher());
+        
+        _versionMatcher = versionMatcher;
+    }
+
     public void configure(URL configurationURL) throws ParseException, IOException {
         Message.info(":: configuring :: url = "+configurationURL);
         long start = System.currentTimeMillis();
@@ -301,6 +316,7 @@ public class Ivy implements TransferListener {
             getDefaultIvyUserDir();
         }
         getDefaultCache();
+        configureDefaultVersionMatcher();
         
         new XmlIvyConfigurationParser(this).parse(configurationURL);
         setVariable("ivy.default.ivy.user.dir", getDefaultIvyUserDir().getAbsolutePath(), false);
@@ -1366,7 +1382,7 @@ public class Ivy implements TransferListener {
 
     public ResolvedModuleRevision findModuleInCache(ModuleRevisionId mrid, File cache, boolean validate) {
         // first, check if it is in cache
-        if (mrid.isExactRevision()) {
+        if (!getVersionMatcher().isDynamic(mrid)) {
             File ivyFile = getIvyFileInCache(cache, mrid);
             if (ivyFile.exists()) {
                 // found in cache !
@@ -1943,8 +1959,8 @@ public class Ivy implements TransferListener {
     //                         SORT 
     /////////////////////////////////////////////////////////////////////////
 
-    public static List sortNodes(Collection nodes) {
-        return ModuleDescriptorSorter.sortNodes(nodes);
+    public List sortNodes(Collection nodes) {
+        return ModuleDescriptorSorter.sortNodes(getVersionMatcher(), nodes);
     }
 
 
@@ -1955,8 +1971,8 @@ public class Ivy implements TransferListener {
      * @param moduleDescriptors a Collection of ModuleDescriptor to sort
      * @return a List of sorted ModuleDescriptors
      */
-    public static List sortModuleDescriptors(Collection moduleDescriptors) {
-        return ModuleDescriptorSorter.sortModuleDescriptors(moduleDescriptors);   
+    public List sortModuleDescriptors(Collection moduleDescriptors) {
+        return ModuleDescriptorSorter.sortModuleDescriptors(getVersionMatcher(), moduleDescriptors);   
     }
     
     /////////////////////////////////////////////////////////////////////////
@@ -2169,6 +2185,8 @@ public class Ivy implements TransferListener {
 
     private Boolean _debugConflictResolution;
 
+    private VersionMatcher _versionMatcher;
+
     public void addTransferListener(TransferListener listener) {
         _listeners.add(TransferListener.class, listener);
     }
@@ -2317,4 +2335,15 @@ public class Ivy implements TransferListener {
         _logNotConvertedExclusionRule = logNotConvertedExclusionRule;
     }
 
+    public VersionMatcher getVersionMatcher() {
+        if (_versionMatcher == null) {
+            configureDefaultVersionMatcher();
+        }
+        return _versionMatcher;
+    }
+
+    public VersionMatcher getVersionMatcher(String versionMatcherName) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 }

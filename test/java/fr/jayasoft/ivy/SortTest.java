@@ -48,21 +48,23 @@ public class SortTest extends TestCase {
         
     }
 
-    public void testSort() {
+    public void testSort() throws Exception {
+        Ivy ivy = new Ivy();
+        ivy.configureDefault();
         toSort = new ArrayList(Arrays.asList(new Object[] {md[0], md[2], md[1], md[3]}));
-        assertSorted(md, Ivy.sortModuleDescriptors(toSort));
+        assertSorted(md, ivy.sortModuleDescriptors(toSort));
         toSort = new ArrayList(Arrays.asList(new Object[] {md[0], md[1], md[2], md[3]}));
-        assertSorted(md, Ivy.sortModuleDescriptors(toSort));
+        assertSorted(md, ivy.sortModuleDescriptors(toSort));
         toSort = new ArrayList(Arrays.asList(new Object[] {md[1], md[0], md[2], md[3]}));
-        assertSorted(md, Ivy.sortModuleDescriptors(toSort));
+        assertSorted(md, ivy.sortModuleDescriptors(toSort));
         toSort = new ArrayList(Arrays.asList(new Object[] {md[1], md[2], md[0], md[3]}));
-        assertSorted(md, Ivy.sortModuleDescriptors(toSort));
+        assertSorted(md, ivy.sortModuleDescriptors(toSort));
         toSort = new ArrayList(Arrays.asList(new Object[] {md[2], md[1], md[0], md[3]}));
-        assertSorted(md, Ivy.sortModuleDescriptors(toSort));
+        assertSorted(md, ivy.sortModuleDescriptors(toSort));
         toSort = new ArrayList(Arrays.asList(new Object[] {md[2], md[0], md[1], md[3]}));
-        assertSorted(md, Ivy.sortModuleDescriptors(toSort));
+        assertSorted(md, ivy.sortModuleDescriptors(toSort));
         toSort = new ArrayList(Arrays.asList(new Object[] {md[1], md[3], md[2], md[0]}));
-        assertSorted(md, Ivy.sortModuleDescriptors(toSort));
+        assertSorted(md, ivy.sortModuleDescriptors(toSort));
     }
 
     private void assertSorted(DefaultModuleDescriptor[] md, List sorted) {

@@ -8,6 +8,7 @@ package fr.jayasoft.ivy;
 import java.util.Date;
 
 import fr.jayasoft.ivy.extendable.ExtendableItem;
+import fr.jayasoft.ivy.version.VersionMatcher;
 
 /**
  * @author x.hanin
@@ -73,7 +74,7 @@ public interface ModuleDescriptor extends ExtendableItem {
      * @param md
      * @return
      */
-    boolean dependsOn(ModuleDescriptor md);
+    boolean dependsOn(VersionMatcher matcher, ModuleDescriptor md);
     /**
      * @param confName
      * @return

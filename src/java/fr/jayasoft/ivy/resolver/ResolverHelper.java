@@ -10,20 +10,18 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import fr.jayasoft.ivy.Artifact;
-import fr.jayasoft.ivy.DefaultArtifact;
 import fr.jayasoft.ivy.ModuleRevisionId;
-import fr.jayasoft.ivy.ResolvedURL;
 import fr.jayasoft.ivy.repository.Repository;
 import fr.jayasoft.ivy.repository.Resource;
 import fr.jayasoft.ivy.util.IvyPatternHelper;
 import fr.jayasoft.ivy.util.Message;
+import fr.jayasoft.ivy.version.VersionMatcher;
 
 public class ResolverHelper {
     // lists all the values a token can take in a pattern, as listed by a given url lister
@@ -110,14 +108,7 @@ public class ResolverHelper {
         }        
     }
     
-    /**
-     * @deprecated
-     */
-    public static ResolvedResource[] findAll(Repository rep, ModuleRevisionId mrid, String pattern, String artifact, String type, String ext) {
-        return findAll(rep, mrid, pattern, new DefaultArtifact(mrid, new Date(), artifact, type, ext));
-    }
-    
-    public static ResolvedResource[] findAll(Repository rep, ModuleRevisionId mrid, String pattern, Artifact artifact) {
+    public static ResolvedResource[] findAll(Repository rep, ModuleRevisionId mrid, String pattern, Artifact artifact, VersionMatcher versionMatcher) {
         // substitute all but revision
         String partiallyResolvedPattern = IvyPatternHelper.substitute(pattern, new ModuleRevisionId(mrid.getModuleId(), IvyPatternHelper.getTokenString(IvyPatternHelper.REVISION_KEY), mrid.getExtraAttributes()), artifact);
         Message.debug("\tlisting all in "+partiallyResolvedPattern);
@@ -128,7 +119,8 @@ public class ResolverHelper {
             List ret = new ArrayList(revs.length);
             String rres = null;
             for (int i = 0; i < revs.length; i++) {
-                if (mrid.acceptRevision(revs[i])) {
+                ModuleRevisionId foundMrid = new ModuleRevisionId(mrid.getModuleId(), revs[i], mrid.getExtraAttributes());
+                if (versionMatcher.accept(mrid, foundMrid)) {
                     rres = IvyPatternHelper.substituteToken(partiallyResolvedPattern, IvyPatternHelper.REVISION_KEY, revs[i]);
                     try {
                         ret.add(new ResolvedResource(rep.getResource(rres), revs[i]));
@@ -245,43 +237,5 @@ public class ResolverHelper {
             Message.warn("problem while listing directories in "+root+": "+e.getClass()+" "+e.getMessage());
             return null;
         }        
-    }
-    
-
-    /**
-     * @deprecated
-     */
-    public static ResolvedURL[] findAll(URLLister lister, ModuleRevisionId mrid, String pattern, String artifact, String type, String ext) {
-        if (lister.accept(pattern)) {
-            // substitute all but revision
-            String partiallyResolvedPattern = IvyPatternHelper.substitute(pattern, new ModuleRevisionId(mrid.getModuleId(), IvyPatternHelper.getTokenString(IvyPatternHelper.REVISION_KEY), mrid.getExtraAttributes()), artifact, type, ext);
-            Message.debug("\tlisting all in "+partiallyResolvedPattern);
-            
-            String[] revs = listTokenValues(lister, partiallyResolvedPattern, IvyPatternHelper.REVISION_KEY);
-            if (revs != null) {
-                Message.debug("\tfound revs: "+Arrays.asList(revs));
-                List ret = new ArrayList(revs.length);
-                String resolvedUrl = null;
-                try {
-                    for (int i = 0; i < revs.length; i++) {
-                        if (mrid.acceptRevision(revs[i])) {
-                            resolvedUrl = IvyPatternHelper.substituteToken(partiallyResolvedPattern, IvyPatternHelper.REVISION_KEY, revs[i]);
-                            ret.add(new ResolvedURL(new URL(resolvedUrl), revs[i]));
-                        }
-                    }
-                    if (revs.length != ret.size()) {
-                        Message.debug("\tfound resolvedURL: "+ret);
-                    }
-                    return (ResolvedURL[])ret.toArray(new ResolvedURL[ret.size()]);
-                } catch (MalformedURLException e) {
-                    Message.warn("unable to make URL from pattern: "+pattern+" url: "+resolvedUrl+" reason: "+e.getMessage());
-                }
-            } else {
-                Message.debug("\tno revision found");
-            }
-        } else {
-            Message.debug("\tno list all done: given lister does not accept pattern: lister="+lister+" pattern="+pattern);
-        }
-        return null;
     }
 }

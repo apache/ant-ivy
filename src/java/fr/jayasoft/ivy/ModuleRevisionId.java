@@ -81,42 +81,7 @@ public class ModuleRevisionId extends UnmodifiableExtendableItem {
     public String toString() {
         return "[ "+_moduleId.getOrganisation()+" | "+_moduleId.getName()+" | "+_revision+" ]";
     }
-    /**
-     * Returns true if the given revision can be considered as a revision of this module revision id.
-     * This is the case if the revision is equal to the current revision, or if the
-     * current revision is a 'latest.' one, or if it is a xx+ one matching the given one.
-     * @param revision
-     * @return true if the given revision can be considered as a revision of this module revision id.
-     */
-    public boolean acceptRevision(String revision) {
-        return acceptRevision(_revision, revision);
-    }
-    /**
-     * @return true if the revision is an exact one, i.e. not a 'latest.' nor a xx+ one.
-     */
-    public boolean isExactRevision() {
-        return isExactRevision(_revision);
-    }
     
-    public static boolean acceptRevision(String askedRevision, String revision) {
-        if (askedRevision.equals(revision)) {
-            return true;
-        }
-        if (askedRevision.startsWith("latest.")) {
-            return true;
-        }
-        if (askedRevision.endsWith("+") && revision.startsWith(askedRevision.substring(0, askedRevision.length() - 1))) {
-            return true;
-        }
-        return false;        
-    }
-
-    /**
-     * @return true if the revision is an exact one, i.e. not a 'latest.' nor a xx+ one.
-     */
-    public static boolean isExactRevision(String revision) {
-        return !revision.startsWith("latest.") && !revision.endsWith("+");
-    }
     public String encodeToString() {
         StringBuffer buf = new StringBuffer();
         Map attributes = getAttributes();
@@ -126,6 +91,7 @@ public class ModuleRevisionId extends UnmodifiableExtendableItem {
         }
         return buf.toString();
     }
+    
     public static ModuleRevisionId decode(String encoded) {
         String[] parts = encoded.split(ENCODE_SEPARATOR);
         if (parts.length % 2 != 0) {
