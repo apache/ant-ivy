@@ -2,8 +2,8 @@
 <project>
   <parent>
     <artifactId>test-parent</artifactId>
-    <groupId>fr.jayasoft</groupId>
-    <version>1.0</version>
+    <groupId>fr.jayasoft.parent</groupId>
+    <version>1.0.parent</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <groupId>fr.jayasoft</groupId>
