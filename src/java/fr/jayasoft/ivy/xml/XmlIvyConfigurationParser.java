@@ -141,8 +141,19 @@ public class XmlIvyConfigurationParser extends DefaultHandler {
                     }
                 }
             } else if ("classpath".equals(qName)) {
-                String url = _ivy.substitute((String)attributes.get("url"));
-                _ivy.addClasspathURL(new URL(url));
+                String urlStr = _ivy.substitute((String)attributes.get("url"));
+                URL url = null;
+                if (urlStr == null) {
+                    String file = _ivy.substitute((String)attributes.get("file"));
+                    if (file == null) {
+                        throw new IllegalArgumentException("either url or file should be given for classpath element");
+                    } else {
+                        url = new File(file).toURL();
+                    }
+                } else {
+                    url = new URL(urlStr);
+                }
+                _ivy.addClasspathURL(url);
             } else if ("typedef".equals(qName)) {
                 String name = _ivy.substitute((String)attributes.get("name"));
                 String className = _ivy.substitute((String)attributes.get("classname"));

@@ -30,4 +30,14 @@ public class ConfigureTest extends TestCase {
         assertEquals("fr.jayasoft.ivy.resolver.CustomResolver", custom.getClass().getName());
     }
 
+    public void testTypedefWithCustomClasspathWithFile() throws Exception {
+        Ivy ivy = new Ivy();
+        ivy.setVariable("ivy.custom.test.dir", new File("test/java/fr/jayasoft/ivy").toString());
+        ivy.configure(ConfigureTest.class.getResource("ivyconf-custom-typedef2.xml"));
+        
+        DependencyResolver custom = ivy.getResolver("custom");
+        assertNotNull(custom);
+        assertEquals("fr.jayasoft.ivy.resolver.CustomResolver", custom.getClass().getName());
+    }
+
 }
