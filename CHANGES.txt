@@ -25,6 +25,7 @@ Changes:
   - IMPROVE: ivy standalone now return error status (IVY-152)
   - IMPROVE: log messages do not display most specfic resolver name (IVY-170)
 
+  - FIX: Parent version is expected to be equal to the module version in POM (IVY-241)
   - FIX: problem with cache and returnFirst (IVY-207)
   - FIX: modules splitted across a chain are not handled correctly (IVY-206)
   - FIX: problem with conf extension and latest revisions (IVY-240)
