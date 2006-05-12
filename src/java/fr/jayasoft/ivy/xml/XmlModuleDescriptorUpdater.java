@@ -5,11 +5,14 @@
  */
 package fr.jayasoft.ivy.xml;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.URL;
 import java.util.Date;
@@ -62,18 +65,38 @@ public class XmlModuleDescriptorUpdater {
         if (destFile.getParentFile() != null) {
             destFile.getParentFile().mkdirs();
         }
-        FileOutputStream fos = null;
+        OutputStream fos = new FileOutputStream(destFile);
+        InputStream in = srcURL.openStream();
         try {
-            fos = new FileOutputStream(destFile);
-            final PrintWriter out = new PrintWriter(fos);
-            copyHeader(srcURL, out);
+           update(ivy, in, fos, resolvedRevisions, status, revision, pubdate, ns, replaceInclude);
+        } finally {
+           try {
+               in.close();
+           } catch (IOException e) {}
+           try {
+               fos.close();
+           } catch (IOException e) {}
+        }
+    }
+    
+    public static void update(final Ivy ivy, InputStream inStream, OutputStream outStream, final Map resolvedRevisions, final String status, 
+            final String revision, final Date pubdate, final Namespace ns, final boolean replaceInclude) 
+                                throws IOException, SAXException {
+        final PrintWriter out = new PrintWriter(outStream);
+        final BufferedInputStream in = new BufferedInputStream(inStream);
+        
+        in.mark(10000); // assume the header is never larger than 10000 bytes.
+        copyHeader(in, out);
+        in.reset(); // reposition the stream at the beginning
             
-            XMLHelper.parse(srcURL, null, new DefaultHandler() {
+        try {
+            XMLHelper.parse(in, null, new DefaultHandler() {
                 // never print *ln* cause \n is found in copied characters stream
                 // nor do we need do handle indentation, original one is maintained except for attributes
                 
                 private String _organisation = null;
                 private String _defaultConfMapping = null; // defaultConfMapping of imported configurations, if any
+                private Boolean _confMappingOverride = null; // confMappingOverride of imported configurations, if any
                 private String _justOpen = null; // used to know if the last open tag was empty, to adjust termination with /> instead of ></qName>
                 private Stack _context = new Stack();
                 public void startElement(String uri, String localName,
@@ -124,6 +147,10 @@ public class XmlModuleDescriptorUpdater {
                                         String defaultconf = substitute(ivy, attributes.getValue("defaultconfmapping"));
                                         if (defaultconf != null) {
                                             _defaultConfMapping = defaultconf;
+                                        }
+                                        String mappingOverride = substitute(ivy, attributes.getValue("confmappingoverride"));
+                                        if (mappingOverride != null) {
+                                           _confMappingOverride = Boolean.valueOf(mappingOverride);
                                         }
                                     } else if ("conf".equals(qName)) {
                                         // copy
@@ -180,6 +207,10 @@ public class XmlModuleDescriptorUpdater {
                         // add default conf mapping if needed
                         if (_defaultConfMapping != null && attributes.getValue("defaultconfmapping") == null) {
                             out.print(" defaultconfmapping=\""+_defaultConfMapping+"\"");
+                        }
+                        // add confmappingoverride if needed
+                        if (_confMappingOverride != null && attributes.getValue("confmappingoverride") == null) {
+                           out.print(" confmappingoverride=\""+_confMappingOverride.toString()+"\"");
                         }
                     } else {
                         // copy
@@ -260,19 +291,10 @@ public class XmlModuleDescriptorUpdater {
 				public void startDTD(String name, String publicId, String systemId) throws SAXException {
 				}
             });
-        } catch (IOException ex) {
-            throw ex;
         } catch (ParserConfigurationException e) {
-            IllegalStateException ise = new IllegalStateException("impossible to update "+srcURL+": parser problem");
+            IllegalStateException ise = new IllegalStateException("impossible to update Ivy files: parser problem");
             ise.initCause(e);
             throw ise;
-        } finally {
-            if (fos != null) {
-                try {
-                    fos.close();
-                } catch (IOException e) {
-                }
-            }
         }
     }
     
@@ -281,13 +303,13 @@ public class XmlModuleDescriptorUpdater {
      * In fact, copies everything before <ivy-module to out, except
      * if <ivy-module is not found, in which case nothing is copied.
      * 
-     * @param srcURL
+     * @param in
      * @param out
      * @throws IOException
      */
-    private static void copyHeader(URL srcURL, PrintWriter out) throws IOException {
+    private static void copyHeader(InputStream in, PrintWriter out) throws IOException {
         StringBuffer buf = new StringBuffer();
-        BufferedReader r = new BufferedReader(new InputStreamReader(srcURL.openStream()));
+        BufferedReader r = new BufferedReader(new InputStreamReader(in));
         for (String line = r.readLine(); line != null; line = r.readLine()) {
             int index = line.indexOf("<ivy-module");
             if (index == -1) {
@@ -298,6 +320,6 @@ public class XmlModuleDescriptorUpdater {
                 break;
             }
         }
-        r.close();
+        //r.close();
     }
 }

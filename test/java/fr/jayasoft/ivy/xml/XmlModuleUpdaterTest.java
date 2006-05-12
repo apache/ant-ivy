@@ -6,9 +6,11 @@
 package fr.jayasoft.ivy.xml;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileReader;
 import java.io.InputStreamReader;
+import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Map;
@@ -49,4 +51,17 @@ public class XmlModuleUpdaterTest extends TestCase {
         String updated = FileUtil.readEntirely(new BufferedReader(new FileReader(dest)));
         assertEquals(expected, updated);
     }
+    
+    public void testUpdateWithImportedMappingOverride() throws Exception {
+       ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+        XmlModuleDescriptorUpdater.update(new Ivy(), 
+                XmlModuleUpdaterTest.class.getResourceAsStream("test-configurations-import4.xml"), 
+                buffer, new HashMap(), "release", "mynewrev", new Date(), null, true);
+       
+        String updatedXml = buffer.toString();
+        
+        // just make sure that 'confmappingoverride="true"' is declared somewhere in the XML.
+        assertTrue("Updated XML doesn't define the confmappingoverride attribute", updatedXml.indexOf("confmappingoverride=\"true\"") != -1);
+    }
+    
 }

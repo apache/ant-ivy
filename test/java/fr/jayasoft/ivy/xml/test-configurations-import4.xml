@@ -1,0 +1,15 @@
+<ivy-module version="1.0">
+	<info organisation="myorg"
+	       module="mymodule"
+	       revision="myrev"
+	       status="integration"
+	       publication="20041101110000"
+	/>
+	<configurations>
+		<include file="test/java/fr/jayasoft/ivy/xml/imported-configurations-with-mappingoverride.xml"/>
+	</configurations>
+	<dependencies>
+		<dependency name="mymodule1" rev="1.0" conf="conf1"/>
+		<dependency name="mymodule2" rev="2.0" conf="conf2"/>
+	</dependencies>
+</ivy-module>

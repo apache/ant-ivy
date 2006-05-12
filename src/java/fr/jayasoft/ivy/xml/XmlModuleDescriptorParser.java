@@ -228,6 +228,10 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
                 if (defaultConf != null) {
                     setDefaultConfMapping(defaultConf);
                 }
+                String confMappingOverride = _ivy.substitute(attributes.getValue("confmappingoverride"));
+                if (confMappingOverride != null) {
+                   _md.setMappingOverride(Boolean.valueOf(confMappingOverride).booleanValue());
+                }
                 checkConfigurations();
             } else if ("conflicts".equals(qName)) {
                 _state = CONFLICT;

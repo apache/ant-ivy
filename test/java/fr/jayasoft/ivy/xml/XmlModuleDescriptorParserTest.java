@@ -15,6 +15,7 @@ import java.util.HashSet;
 import fr.jayasoft.ivy.Artifact;
 import fr.jayasoft.ivy.Configuration;
 import fr.jayasoft.ivy.ConflictManager;
+import fr.jayasoft.ivy.DefaultModuleDescriptor;
 import fr.jayasoft.ivy.DependencyDescriptor;
 import fr.jayasoft.ivy.Ivy;
 import fr.jayasoft.ivy.License;
@@ -559,6 +560,28 @@ public class XmlModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         // 'all-public' extends all other public configurations
         String[] allPublicExt = allPublic.getExtends();
         assertEquals(Arrays.asList(new String[] {"default", "test", "extra"}), Arrays.asList(allPublicExt));
+    }
+    
+    public void testImportConfigurationsWithMappingOverride() throws Exception {
+        // import configurations and default mapping
+        ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(_ivy, getClass().getResource("test-configurations-import4.xml"), true);
+        assertNotNull(md);
+        
+        // has 2 dependencies
+        DependencyDescriptor[] dependencies = md.getDependencies();
+        assertNotNull(dependencies);
+        assertEquals(2, dependencies.length);
+        
+        // confs dep1: conf1->A;conf2->B (mappingoverride = true)
+        DependencyDescriptor dd = getDependency(dependencies, "mymodule1");
+        assertEquals(Arrays.asList(new String[] {"conf2", "conf1"}), Arrays.asList(dd.getModuleConfigurations()));
+        assertEquals(Arrays.asList(new String[] {"A"}), Arrays.asList(dd.getDependencyConfigurations("conf1"))); 
+        assertEquals(Arrays.asList(new String[] {"B"}), Arrays.asList(dd.getDependencyConfigurations("conf2")));  
+        
+        // confs dep2: conf2->B
+        dd = getDependency(dependencies, "mymodule2");
+        assertEquals(Arrays.asList(new String[] {"conf2"}), Arrays.asList(dd.getModuleConfigurations()));
+        assertEquals(Arrays.asList(new String[] {"B"}), Arrays.asList(dd.getDependencyConfigurations("conf2")));  
     }
     
 }

@@ -1,0 +1,4 @@
+<configurations confmappingoverride="true" defaultconfmapping="conf1->A;conf2->B">
+	<conf name="conf1" visibility="public"/>
+	<conf name="conf2" extends="conf1"/>
+</configurations>

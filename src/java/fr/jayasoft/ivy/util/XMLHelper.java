@@ -63,13 +63,22 @@ public abstract class XMLHelper {
     }
     
     public static void parse(URL xmlURL, URL schema, DefaultHandler handler, LexicalHandler lHandler) throws SAXException, IOException, ParserConfigurationException {
-        InputStream xmlStream = null;
+       InputStream xmlStream = URLHandlerRegistry.getDefault().openStream(xmlURL);
+       try {
+           parse(xmlStream, schema, handler, lHandler);
+       } finally {
+           try {
+               xmlStream.close();
+           } catch (IOException e) {}
+       }
+    } 
+    
+    public static void parse(InputStream xmlStream, URL schema, DefaultHandler handler, LexicalHandler lHandler) throws SAXException, IOException, ParserConfigurationException {
         InputStream schemaStream = null;
         try {
             if (schema != null) {
                 schemaStream = URLHandlerRegistry.getDefault().openStream(schema);
             }
-            xmlStream = URLHandlerRegistry.getDefault().openStream(xmlURL);
             SAXParser parser = XMLHelper.newSAXParser(schema, schemaStream);
             
             if (lHandler != null) {
@@ -83,12 +92,6 @@ public abstract class XMLHelper {
             
             parser.parse(xmlStream, handler);
         } finally {
-            if (xmlStream != null) {
-                try {
-                    xmlStream.close();
-                } catch (IOException ex) {
-                }
-            }
             if (schemaStream != null) {
                 try {
                     schemaStream.close();
