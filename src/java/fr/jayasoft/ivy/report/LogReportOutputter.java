@@ -17,6 +17,10 @@ import fr.jayasoft.ivy.util.Message;
  *
  */
 public class LogReportOutputter implements ReportOutputter {
+   
+   public String getName() {
+       return CONSOLE;
+   }
 
     public void output(ResolveReport report, File destDir) {
         IvyNode[] evicted = report.getEvictedNodes();

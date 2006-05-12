@@ -132,11 +132,10 @@ public class Ivy implements TransferListener {
     private Map _latestStrategies = new HashMap(); // Map (String latestStrategyName -> LatestStrategy)
     private Map _namespaces = new HashMap(); // Map (String namespaceName -> Namespace)
     private Map _matchers = new HashMap(); // Map (String matcherName -> Matcher)
+    private Map _reportOutputters = new HashMap(); // Map (String outputterName -> ReportOutputter)
     
     private Map _variables = new HashMap();
 
-    private ReportOutputter[] _reportOutputters = new ReportOutputter[] {new LogReportOutputter(), new XmlReportOutputter()};
-    
     private String _cacheIvyPattern = DEFAULT_CACHE_IVY_PATTERN;
     private String _cacheResolvedIvyPattern = DEFAULT_CACHE_RESOLVED_IVY_PATTERN;
     private String _cacheResolvedIvyPropertiesPattern = DEFAULT_CACHE_RESOLVED_IVY_PROPERTIES_PATTERN;
@@ -201,6 +200,9 @@ public class Ivy implements TransferListener {
         addMatcher(RegexpPatternMatcher.getInstance());
         addMatcher(ExactOrRegexpPatternMatcher.getInstance());
         addMatcher(GlobPatternMatcher.getInstance());
+        
+        addReportOutputter(new XmlReportOutputter());
+        addReportOutputter(new LogReportOutputter());
         
         _listingIgnore.add(".cvsignore");
         _listingIgnore.add("CVS");
@@ -680,6 +682,25 @@ public class Ivy implements TransferListener {
         _matchers.put(m.getName(), m);
     }
     
+    public void addConfigured(ReportOutputter outputter) {
+       addReportOutputter(outputter);
+    }
+    
+    public ReportOutputter getReportOutputter(String name) {
+       return (ReportOutputter) _reportOutputters.get(name);
+    }
+    
+    public void addReportOutputter(ReportOutputter outputter) {
+       if (outputter instanceof IvyAware) {
+           ((IvyAware) outputter).setIvy(this);
+       }
+       _reportOutputters.put(outputter.getName(), outputter);
+    }
+    
+    public ReportOutputter[] getReportOutputters() {
+       return (ReportOutputter[]) _reportOutputters.values().toArray(new ReportOutputter[_reportOutputters.size()]);
+    }
+    
     /////////////////////////////////////////////////////////////////////////
     //                         CHECK
     /////////////////////////////////////////////////////////////////////////
@@ -921,11 +942,6 @@ public class Ivy implements TransferListener {
         return r.getArtifactReport(artifact);
     }
     
-    public ReportOutputter[] getReportOutputters() {
-        return _reportOutputters;
-    }
-    
-
     /**
      * Resolve the dependencies of a module without downloading corresponding artifacts.
      * The module to resolve is given by its ivy file URL. This method requires

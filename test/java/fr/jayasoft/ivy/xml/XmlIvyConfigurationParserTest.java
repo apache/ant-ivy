@@ -7,6 +7,7 @@ package fr.jayasoft.ivy.xml;
 
 import java.io.File;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.List;
 
 import junit.framework.TestCase;
@@ -17,6 +18,8 @@ import fr.jayasoft.ivy.ModuleId;
 import fr.jayasoft.ivy.latest.LatestRevisionStrategy;
 import fr.jayasoft.ivy.latest.LatestTimeStrategy;
 import fr.jayasoft.ivy.parser.ModuleDescriptorParserRegistry;
+import fr.jayasoft.ivy.report.ReportOutputter;
+import fr.jayasoft.ivy.report.ResolveReport;
 import fr.jayasoft.ivy.resolver.ChainResolver;
 import fr.jayasoft.ivy.resolver.FileSystemResolver;
 import fr.jayasoft.ivy.resolver.IvyRepResolver;
@@ -247,11 +250,34 @@ public class XmlIvyConfigurationParserTest extends TestCase {
         assertEquals("fr.jayasoft.ivy.parser.ModuleDescriptorParserRegistryTest$MyParser", ModuleDescriptorParserRegistry.getInstance().getParsers()[0].getClass().getName());
     }
     
+    public void testOutputter() throws Exception {
+        Ivy ivy = new Ivy();
+        XmlIvyConfigurationParser parser = new XmlIvyConfigurationParser(ivy);
+        parser.parse(XmlIvyConfigurationParserTest.class.getResource("ivyconf-outputter.xml"));
+        
+        //System.out.println(Arrays.asList(ivy.getReportOutputters()));
+        
+        ReportOutputter testOutputter = ivy.getReportOutputter("test");
+        assertNotNull(testOutputter);
+        assertTrue(testOutputter instanceof MyOutputter);
+    }
+    
     private void configureURLHandler() {
         URLHandlerDispatcher dispatcher = new URLHandlerDispatcher();
         URLHandler httpHandler = URLHandlerRegistry.getHttp(null, null, null, null);
         dispatcher.setDownloader("http", httpHandler);
         dispatcher.setDownloader("https", httpHandler);
         URLHandlerRegistry.setDefault(dispatcher);
+    }
+    
+    public static class MyOutputter implements ReportOutputter {
+
+       public void output(ResolveReport report, File destDir) {
+       }
+
+       public String getName() {
+           return "test";
+       }
+       
     }
 }

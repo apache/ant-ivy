@@ -31,6 +31,10 @@ import fr.jayasoft.ivy.util.Message;
  */
 public class XmlReportOutputter implements ReportOutputter {
 
+   public String getName() {
+       return XML;
+   }
+   
     public void output(ResolveReport report, File destDir) {
         String[] confs = report.getConfigurations();
         for (int i = 0; i < confs.length; i++) {

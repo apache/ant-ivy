@@ -45,6 +45,7 @@ Changes:
   - NEW: add option to cachepath task to create a path with local artifact paths (IVY-221)
   - NEW: allow extending configurations to override the mapping of their super configurations (IVY-218)
 
+  - IMPROVE: make ReportOutputter pluggable and customizable (IVY-205)
   - IMPROVE: add wildcard support for extending configurations (IVY-235)
   - IMPROVE: add support for xslt parameters in the report task (IVY-227)
   - IMPROVE: comments now aren't lost when delivering ivy files (IVY-226)
