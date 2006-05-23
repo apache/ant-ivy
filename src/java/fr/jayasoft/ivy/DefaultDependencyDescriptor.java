@@ -52,7 +52,7 @@ public class DefaultDependencyDescriptor implements DependencyDescriptor {
         if (t.isIdentity()) {
             return dd;
         }
-        DefaultDependencyDescriptor newdd = transformInstance(dd, t);
+        DefaultDependencyDescriptor newdd = transformInstance(dd, t, false);
         newdd._namespace = ns;
         return newdd;
     }
@@ -66,7 +66,7 @@ public class DefaultDependencyDescriptor implements DependencyDescriptor {
      * @param t
      * @return
      */
-    public static DefaultDependencyDescriptor transformInstance(DependencyDescriptor dd, NamespaceTransformer t) {
+    public static DefaultDependencyDescriptor transformInstance(DependencyDescriptor dd, NamespaceTransformer t, boolean fromSystem) {
         ModuleRevisionId transformParentId = t.transform(dd.getParentRevisionId());
         ModuleRevisionId transformMrid = t.transform(dd.getDependencyRevisionId());
         DefaultDependencyDescriptor newdd = new DefaultDependencyDescriptor();
@@ -91,6 +91,9 @@ public class DefaultDependencyDescriptor implements DependencyDescriptor {
                 newdd._artifactsExcludes.put(moduleConfs[i], new ArrayList(Arrays.asList(dd.getDependencyArtifactsExcludes(moduleConfs[i]))));
                 newdd._artifactsIncludes.put(moduleConfs[i], new ArrayList(Arrays.asList(dd.getDependencyArtifactsIncludes(moduleConfs[i]))));
             }
+        }
+        if (fromSystem) {
+        	newdd._asSystem = dd;
         }
         return newdd;
     }
@@ -118,7 +121,8 @@ public class DefaultDependencyDescriptor implements DependencyDescriptor {
      * This namespace should be used to check 
      */
     private Namespace _namespace = null;
-    private ModuleDescriptor _md; 
+    private ModuleDescriptor _md;
+	private DependencyDescriptor _asSystem = this; 
     
     public DefaultDependencyDescriptor(DependencyDescriptor dd, String revision) {
         _parentId = dd.getParentRevisionId();
@@ -403,5 +407,9 @@ public class DefaultDependencyDescriptor implements DependencyDescriptor {
     public Map getStandardAttributes() {
         return _revId.getStandardAttributes();
     }
+
+	public DependencyDescriptor asSystem() {
+		return _asSystem;
+	}
     
 }

@@ -5,6 +5,7 @@
  */
 package fr.jayasoft.ivy;
 
+import java.net.URL;
 import java.util.Date;
 
 /**
@@ -27,4 +28,5 @@ public interface ResolvedModuleRevision {
     ModuleDescriptor getDescriptor();
     boolean isDownloaded();
     boolean isSearched();
+    public URL getLocalMDUrl();
 }

@@ -213,7 +213,7 @@ public abstract class AbstractResolver implements DependencyResolver, IvyAware, 
     }
 
     protected DependencyDescriptor fromSystem(DependencyDescriptor dd) {
-        return NameSpaceHelper.transform(dd, getNamespace().getFromSystemTransformer());
+        return NameSpaceHelper.transform(dd, getNamespace().getFromSystemTransformer(), true);
     }
 
     protected IvyNode getSystemNode(ResolveData data, ModuleRevisionId resolvedMrid) {

@@ -61,4 +61,10 @@ public interface VersionMatcher {
      * @return
      */
     public boolean accept(ModuleRevisionId askedMrid, ModuleDescriptor foundMD);
+    
+    /**
+     * Returns the version matcher name identifying this version matcher
+     * @return the version matcher name identifying this version matcher
+     */
+    public String getName();
 }

@@ -91,6 +91,7 @@ import fr.jayasoft.ivy.version.ExactVersionMatcher;
 import fr.jayasoft.ivy.version.LatestVersionMatcher;
 import fr.jayasoft.ivy.version.SubVersionMatcher;
 import fr.jayasoft.ivy.version.VersionMatcher;
+import fr.jayasoft.ivy.version.VersionRangeMatcher;
 import fr.jayasoft.ivy.xml.XmlIvyConfigurationParser;
 import fr.jayasoft.ivy.xml.XmlModuleDescriptorParser;
 import fr.jayasoft.ivy.xml.XmlModuleDescriptorUpdater;
@@ -133,6 +134,7 @@ public class Ivy implements TransferListener {
     private Map _namespaces = new HashMap(); // Map (String namespaceName -> Namespace)
     private Map _matchers = new HashMap(); // Map (String matcherName -> Matcher)
     private Map _reportOutputters = new HashMap(); // Map (String outputterName -> ReportOutputter)
+    private Map _versionMatchers = new HashMap(); // Map (String matcherName -> VersionMatcher)
     
     private Map _variables = new HashMap();
 
@@ -285,7 +287,6 @@ public class Ivy implements TransferListener {
             getDefaultIvyUserDir();
         }
         getDefaultCache();
-        configureDefaultVersionMatcher();
         
         try {
             new XmlIvyConfigurationParser(this).parse(configurationFile.toURL());
@@ -299,15 +300,6 @@ public class Ivy implements TransferListener {
         dumpConfig();
     }
 
-    private void configureDefaultVersionMatcher() {
-        ChainVersionMatcher versionMatcher = new ChainVersionMatcher();
-        versionMatcher.add(new ExactVersionMatcher());
-        versionMatcher.add(new LatestVersionMatcher());
-        versionMatcher.add(new SubVersionMatcher());
-        
-        _versionMatcher = versionMatcher;
-    }
-
     public void configure(URL configurationURL) throws ParseException, IOException {
         Message.info(":: configuring :: url = "+configurationURL);
         long start = System.currentTimeMillis();
@@ -318,7 +310,6 @@ public class Ivy implements TransferListener {
             getDefaultIvyUserDir();
         }
         getDefaultCache();
-        configureDefaultVersionMatcher();
         
         new XmlIvyConfigurationParser(this).parse(configurationURL);
         setVariable("ivy.default.ivy.user.dir", getDefaultIvyUserDir().getAbsolutePath(), false);
@@ -683,24 +674,66 @@ public class Ivy implements TransferListener {
     }
     
     public void addConfigured(ReportOutputter outputter) {
-       addReportOutputter(outputter);
-    }
-    
-    public ReportOutputter getReportOutputter(String name) {
-       return (ReportOutputter) _reportOutputters.get(name);
-    }
-    
-    public void addReportOutputter(ReportOutputter outputter) {
-       if (outputter instanceof IvyAware) {
-           ((IvyAware) outputter).setIvy(this);
-       }
-       _reportOutputters.put(outputter.getName(), outputter);
-    }
-    
-    public ReportOutputter[] getReportOutputters() {
-       return (ReportOutputter[]) _reportOutputters.values().toArray(new ReportOutputter[_reportOutputters.size()]);
-    }
-    
+        addReportOutputter(outputter);
+     }
+     
+     public ReportOutputter getReportOutputter(String name) {
+        return (ReportOutputter) _reportOutputters.get(name);
+     }
+     
+     public void addReportOutputter(ReportOutputter outputter) {
+        if (outputter instanceof IvyAware) {
+            ((IvyAware) outputter).setIvy(this);
+        }
+        _reportOutputters.put(outputter.getName(), outputter);
+     }
+     
+     public ReportOutputter[] getReportOutputters() {
+        return (ReportOutputter[]) _reportOutputters.values().toArray(new ReportOutputter[_reportOutputters.size()]);
+     }
+     
+     public void addConfigured(VersionMatcher vmatcher) {
+         addVersionMatcher(vmatcher);
+      }
+      
+      public VersionMatcher getVersionMatcher(String name) {
+         return (VersionMatcher) _versionMatchers.get(name);
+      }
+      
+      public void addVersionMatcher(VersionMatcher vmatcher) {
+         if (vmatcher instanceof IvyAware) {
+             ((IvyAware) vmatcher).setIvy(this);
+         }
+         _versionMatchers.put(vmatcher.getName(), vmatcher);
+         
+         if (_versionMatcher == null) {
+        	 _versionMatcher = new ChainVersionMatcher();
+        	 addVersionMatcher(new ExactVersionMatcher());
+         }
+         if (_versionMatcher instanceof ChainVersionMatcher) {
+			ChainVersionMatcher chain = (ChainVersionMatcher) _versionMatcher;
+			chain.add(vmatcher);
+		}
+      }
+      
+      public VersionMatcher[] getVersionMatchers() {
+         return (VersionMatcher[]) _versionMatchers.values().toArray(new VersionMatcher[_versionMatchers.size()]);
+      }
+
+      public VersionMatcher getVersionMatcher() {
+          if (_versionMatcher == null) {
+              configureDefaultVersionMatcher();
+          }
+          return _versionMatcher;
+      }
+
+      public void configureDefaultVersionMatcher() {
+          addVersionMatcher(new LatestVersionMatcher());
+          addVersionMatcher(new SubVersionMatcher());
+          addVersionMatcher(new VersionRangeMatcher());
+      }
+
+
     /////////////////////////////////////////////////////////////////////////
     //                         CHECK
     /////////////////////////////////////////////////////////////////////////
@@ -1421,7 +1454,7 @@ public class Ivy implements TransferListener {
                     }
                     if (resolver != null) {
                         Message.debug("\tfound ivy file in cache for "+mrid+" (resolved by "+resolver.getName()+"): "+ivyFile);
-                        return new DefaultModuleRevision(resolver, artResolver, depMD, false, false);
+                        return new DefaultModuleRevision(resolver, artResolver, depMD, false, false, ivyFile.toURL());
                     } else {
                         Message.debug("\tresolver not found: "+resolverName+" => cannot use cached ivy file for "+mrid);                                    
                     }
@@ -2349,17 +2382,5 @@ public class Ivy implements TransferListener {
     }
     public void setLogNotConvertedExclusionRule(boolean logNotConvertedExclusionRule) {
         _logNotConvertedExclusionRule = logNotConvertedExclusionRule;
-    }
-
-    public VersionMatcher getVersionMatcher() {
-        if (_versionMatcher == null) {
-            configureDefaultVersionMatcher();
-        }
-        return _versionMatcher;
-    }
-
-    public VersionMatcher getVersionMatcher(String versionMatcherName) {
-        // TODO Auto-generated method stub
-        return null;
     }
 }

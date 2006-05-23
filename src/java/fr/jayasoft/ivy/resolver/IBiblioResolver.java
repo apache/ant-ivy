@@ -38,7 +38,7 @@ public class IBiblioResolver extends URLResolver {
         if (isM2compatible()) {
             ModuleRevisionId mrid = dd.getDependencyRevisionId();
             mrid = convertM2IdForResourceSearch(mrid);
-            ResolvedResource rres = findResourceUsingPatterns(mrid, getIvyPatterns(), DefaultArtifact.newPomArtifact(mrid, data.getDate()), data.getDate());
+            ResolvedResource rres = findResourceUsingPatterns(mrid, getIvyPatterns(), DefaultArtifact.newPomArtifact(mrid, data.getDate()), getRMDParser(dd, data), data.getDate());
             return rres;
         } else {
             return null;

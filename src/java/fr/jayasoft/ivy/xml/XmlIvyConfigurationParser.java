@@ -37,7 +37,7 @@ import fr.jayasoft.ivy.util.Message;
  */
 public class XmlIvyConfigurationParser extends DefaultHandler {
 	private Configurator _configurator;
-    private List _configuratorTags = Arrays.asList(new String[] {"resolvers", "namespaces", "parsers", "latest-strategies", "conflict-managers", "outputters"});
+    private List _configuratorTags = Arrays.asList(new String[] {"resolvers", "namespaces", "parsers", "latest-strategies", "conflict-managers", "outputters", "version-matchers"});
 
     private Ivy _ivy;
 
@@ -241,6 +241,12 @@ public class XmlIvyConfigurationParser extends DefaultHandler {
                 _defaultCM = (String)attributes.get("defaultConflictManager");
                 _defaultLatest = (String)attributes.get("defaultLatestStrategy");
 
+            } else if ("version-matchers".equals(qName)) {
+                _currentConfiguratorTag = qName;
+                _configurator.setRoot(_ivy);
+                if ("true".equals(attributes.get("usedefaults"))) {
+                	_ivy.configureDefaultVersionMatcher();
+                }
             } else if (_configuratorTags.contains(qName)) {
                 _currentConfiguratorTag = qName;
                 _configurator.setRoot(_ivy);

@@ -6,12 +6,11 @@
 package fr.jayasoft.ivy.latest;
 
 import java.util.Comparator;
-import java.util.Date;
 
 import fr.jayasoft.ivy.ArtifactInfo;
 
 
-public class LatestLexicographicStrategy extends AbstractLatestStrategy {
+public class LatestLexicographicStrategy extends ComparatorLatestStrategy {
     /**
      * Compares two revisions.
      * Revisions are compared lexicographically unless
@@ -22,8 +21,8 @@ public class LatestLexicographicStrategy extends AbstractLatestStrategy {
      */ 
     private static Comparator COMPARATOR = new Comparator() {
         public int compare(Object o1, Object o2) {
-            String rev1 = (String)o1;
-            String rev2 = (String)o2;
+            String rev1 = ((ArtifactInfo)o1).getRevision();
+            String rev2 = ((ArtifactInfo)o2).getRevision();
             if (rev1.startsWith("latest")) {
                 return 1;
             }
@@ -42,26 +41,8 @@ public class LatestLexicographicStrategy extends AbstractLatestStrategy {
     };
     
     public LatestLexicographicStrategy() {
+    	super(COMPARATOR);
         setName("latest-lexico");
     }
     
-    public ArtifactInfo findLatest(ArtifactInfo[] artifacts, Date date) {
-        if (artifacts == null) {
-            return null;
-        }
-        ArtifactInfo found = null;
-        for (int i = 0; i < artifacts.length; i++) {
-            ArtifactInfo art = artifacts[i];
-            if (found == null || COMPARATOR.compare(art.getRevision(), found.getRevision()) > 0) {
-                if (date != null) {
-                    long lastModified = art.getLastModified();
-                    if (lastModified > date.getTime()) {
-                        continue;
-                    }
-                }
-                found = art;
-            }
-        } 
-        return found;
-    }
 }

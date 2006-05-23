@@ -1,5 +1,6 @@
 package fr.jayasoft.ivy.resolver;
 
+import java.net.URL;
 import java.util.Date;
 
 import fr.jayasoft.ivy.DependencyResolver;
@@ -53,5 +54,8 @@ public final class ResolvedModuleRevisionProxy implements ResolvedModuleRevision
 
     public boolean isSearched() {
         return _mr.isSearched();
+    }
+    public URL getLocalMDUrl() {
+    	return _mr.getLocalMDUrl();
     }
 }

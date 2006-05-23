@@ -24,8 +24,8 @@ public class NameSpaceHelper {
         return DefaultDependencyDescriptor.transformInstance(dd, ns);
     }
 
-    public static DependencyDescriptor transform(DependencyDescriptor dd, NamespaceTransformer t) {
-        return DefaultDependencyDescriptor.transformInstance(dd, t);
+    public static DependencyDescriptor transform(DependencyDescriptor dd, NamespaceTransformer t, boolean fromSystem) {
+        return DefaultDependencyDescriptor.transformInstance(dd, t, fromSystem);
     }
 
     public static ModuleDescriptor toSystem(ModuleDescriptor md, Namespace ns) {
@@ -40,7 +40,7 @@ public class NameSpaceHelper {
         if (md.equals(rmr.getDescriptor())) {
             return rmr;
         }
-        return new DefaultModuleRevision(rmr.getResolver(), rmr.getArtifactResolver(), md, rmr.isSearched(), rmr.isDownloaded());
+        return new DefaultModuleRevision(rmr.getResolver(), rmr.getArtifactResolver(), md, rmr.isSearched(), rmr.isDownloaded(), rmr.getLocalMDUrl());
     }
 
     public static Artifact transform(Artifact artifact, NamespaceTransformer t) {

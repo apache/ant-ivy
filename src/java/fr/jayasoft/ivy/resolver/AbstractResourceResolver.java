@@ -54,75 +54,28 @@ public abstract class AbstractResourceResolver extends BasicResolver {
         if (isM2compatible()) {
             mrid = convertM2IdForResourceSearch(mrid);
         }
-        return findResourceUsingPatterns(mrid, _ivyPatterns, DefaultArtifact.newIvyArtifact(mrid, data.getDate()), data.getDate());
+        return findResourceUsingPatterns(mrid, _ivyPatterns, DefaultArtifact.newIvyArtifact(mrid, data.getDate()), getRMDParser(dd, data), data.getDate());
     }
 
-    protected ResolvedResource findArtifactRef(Artifact artifact, Date date) {
+	protected ResolvedResource findArtifactRef(Artifact artifact, Date date) {
         ModuleRevisionId mrid = artifact.getModuleRevisionId();
         if (isM2compatible()) {
             mrid = convertM2IdForResourceSearch(mrid);
         }
-        return findResourceUsingPatterns(mrid, _artifactPatterns, artifact, date);
+        return findResourceUsingPatterns(mrid, _artifactPatterns, artifact, getDefaultRMDParser(artifact.getModuleRevisionId().getModuleId()), date);
     }
 
-    /**
-     * @deprecated 
-     * @return
-     */
-    protected ResolvedResource findResourceUsingPatterns(ModuleRevisionId moduleRevision, List patternList, String artifact, String type, String ext, Date date) {
+	protected ResolvedResource findResourceUsingPatterns(ModuleRevisionId moduleRevision, List patternList, Artifact artifact, ResourceMDParser rmdparser, Date date) {
         ResolvedResource rres = null;
         for (Iterator iter = patternList.iterator(); iter.hasNext() && rres == null;) {
             String pattern = (String)iter.next();
-            rres = findResourceUsingPattern(moduleRevision, pattern, artifact, type, ext, date);
+            rres = findResourceUsingPattern(moduleRevision, pattern, artifact, rmdparser, date);
         }
         return rres;
     }
     
-    protected ResolvedResource findResourceUsingPatterns(ModuleRevisionId moduleRevision, List patternList, Artifact artifact, Date date) {
-        ResolvedResource rres = null;
-        for (Iterator iter = patternList.iterator(); iter.hasNext() && rres == null;) {
-            String pattern = (String)iter.next();
-            rres = findResourceUsingPattern(moduleRevision, pattern, artifact, date);
-        }
-        return rres;
-    }
-    
-    /**
-     * No need to implement that in post 1.4 dependency resolvers.
-     * @deprecated 
-     * @return
-     */
-    protected ResolvedResource findResourceUsingPattern(ModuleRevisionId mrid, String pattern, String artifact, String type, String ext, Date date) {
-        // implemented for backward compatibility reason only.
-        // in post 1.4 dependency resolvers this has no utility except to let old code use this old method
-        // WARNING: if none of the two methods is overriden, this will result in a StackOverflow error !
-        return findResourceUsingPattern(mrid, pattern, new DefaultArtifact(mrid, date, artifact, type, ext), date);
-    }
-    
-    protected ResolvedResource findResourceUsingPattern(ModuleRevisionId mrid, String pattern, Artifact artifact, Date date) {
-        // implemented for backward compatibility reason only.
-        // MUST be overriden in post 1.4 dependency resolvers
-        return findResourceUsingPattern(mrid, pattern, artifact.getName(), artifact.getType(), artifact.getExt(), date);
-    }
-    
-    /**
-     * No need to implement that in post 1.4 dependency resolvers.
-     * @deprecated 
-     * @return
-     */
-    protected ResolvedResource[] findAll(ModuleRevisionId mrid, String pattern, String artifact, String type, String ext) {
-        // implemented for backward compatibility reason only.
-        // in post 1.4 dependency resolvers this has no utility except to let old code use this old method
-        // WARNING: if none of the two methods is overriden, this will result in a StackOverflow error !
-        return findAll(mrid, pattern, new DefaultArtifact(mrid, null, artifact, type, ext));
-    }
+    protected abstract ResolvedResource findResourceUsingPattern(ModuleRevisionId mrid, String pattern, Artifact artifact, ResourceMDParser rmdparser, Date date);
 
-    protected ResolvedResource[] findAll(ModuleRevisionId mrid, String pattern, Artifact artifact) {
-        // implemented for backward compatibility reason only.
-        // MUST be overriden in post 1.4 dependency resolvers
-        return findAll(mrid, pattern, artifact.getName(), artifact.getType(), artifact.getExt());
-    }
-    
     protected abstract long get(Resource resource, File dest) throws IOException;    
 
     /**

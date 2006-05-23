@@ -12,12 +12,15 @@ Incompatibility with previous versions:
 * Major:
   - No known major incompatiblity
 * Minor:
-  - Several API changes due to the introduction of VersionMatcher, which should only be a problem for some custom plugins
+  - Numerous API changes especially in the BasicResolver class and subclasses due to the introduction of VersionMatcher, 
+  	this may break some custom dependency resolvers
   - build list task now requires a configured ivy instance (configure will automatically be called if you don't call it explicitly)
 
 Changes:
 --------
 * thanks to Jayasoft:
+  - NEW: pluggable version matcher (IVY-219)
+  - NEW: dependency based on dependency status (IVY-47)
   - NEW: add possibility to define extra attributes in ivy files (IVY-217)
   - NEW: use custom classloader for plugins (IVY-220)
   - NEW: adding to SPECIAL_MEANINGS in LatestRevisionStrategy (IVY-121)

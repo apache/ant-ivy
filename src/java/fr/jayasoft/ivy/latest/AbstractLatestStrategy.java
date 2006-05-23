@@ -5,6 +5,11 @@
  */
 package fr.jayasoft.ivy.latest;
 
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+
+import fr.jayasoft.ivy.ArtifactInfo;
 import fr.jayasoft.ivy.Ivy;
 import fr.jayasoft.ivy.IvyAware;
 import fr.jayasoft.ivy.LatestStrategy;
@@ -33,4 +38,14 @@ public abstract class AbstractLatestStrategy implements LatestStrategy, IvyAware
         return _name;
     }
     
+    public ArtifactInfo findLatest(ArtifactInfo[] infos, Date date) {
+    	List l = sort(infos);
+    	for (Iterator iter = l.iterator(); iter.hasNext();) {
+			ArtifactInfo info = (ArtifactInfo) iter.next();
+			if (date == null || info.getLastModified() < date.getTime()) {
+				return info;
+			}
+		}
+    	return null;
+    }
 }

@@ -10,8 +10,11 @@ import fr.jayasoft.ivy.ModuleDescriptor;
 import fr.jayasoft.ivy.ModuleRevisionId;
 import fr.jayasoft.ivy.Status;
 
-public class LatestVersionMatcher implements VersionMatcher {
-
+public class LatestVersionMatcher  extends AbstractVersionMatcher {
+	public LatestVersionMatcher() {
+		super("latest");
+	}
+	
     public boolean isDynamic(ModuleRevisionId askedMrid) {
         return askedMrid.getRevision().startsWith("latest.");
     }

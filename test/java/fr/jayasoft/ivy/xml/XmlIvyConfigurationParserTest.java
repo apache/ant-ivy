@@ -7,7 +7,6 @@ package fr.jayasoft.ivy.xml;
 
 import java.io.File;
 import java.net.URL;
-import java.util.Arrays;
 import java.util.List;
 
 import junit.framework.TestCase;
@@ -27,6 +26,9 @@ import fr.jayasoft.ivy.resolver.MockResolver;
 import fr.jayasoft.ivy.url.URLHandler;
 import fr.jayasoft.ivy.url.URLHandlerDispatcher;
 import fr.jayasoft.ivy.url.URLHandlerRegistry;
+import fr.jayasoft.ivy.version.ChainVersionMatcher;
+import fr.jayasoft.ivy.version.MockVersionMatcher;
+import fr.jayasoft.ivy.version.VersionMatcher;
 
 /**
  * TODO write javadoc
@@ -112,6 +114,40 @@ public class XmlIvyConfigurationParserTest extends TestCase {
         assertEquals("mock2", ((DependencyResolver)subresolvers.get(1)).getName());
         assertTrue(subresolvers.get(0) instanceof MockResolver);
         assertTrue(subresolvers.get(1) instanceof MockResolver);
+    }
+    
+    public void testVersionMatchers1() throws Exception {
+        Ivy ivy = new Ivy();
+        XmlIvyConfigurationParser parser = new XmlIvyConfigurationParser(ivy);
+        parser.parse(XmlIvyConfigurationParserTest.class.getResource("ivyconf-vmatcher1.xml"));
+        
+        VersionMatcher mock = ivy.getVersionMatcher("vmock");
+        assertNotNull(mock);
+        assertTrue(mock instanceof MockVersionMatcher);
+        
+        VersionMatcher v = ivy.getVersionMatcher();
+        assertTrue(v instanceof ChainVersionMatcher);
+        ChainVersionMatcher chain = (ChainVersionMatcher) v;
+        assertEquals(3, chain.getMatchers().size());
+        assertTrue(chain.getMatchers().contains(mock));
+        assertTrue(chain.getMatchers().contains(ivy.getVersionMatcher("exact")));
+        assertTrue(chain.getMatchers().contains(ivy.getVersionMatcher("latest")));
+    }
+    
+    public void testVersionMatchers2() throws Exception {
+        Ivy ivy = new Ivy();
+        XmlIvyConfigurationParser parser = new XmlIvyConfigurationParser(ivy);
+        parser.parse(XmlIvyConfigurationParserTest.class.getResource("ivyconf-vmatcher2.xml"));
+        
+        VersionMatcher mock = ivy.getVersionMatcher("vmock");
+        assertNotNull(mock);
+        assertTrue(mock instanceof MockVersionMatcher);
+        
+        VersionMatcher v = ivy.getVersionMatcher();
+        assertTrue(v instanceof ChainVersionMatcher);
+        ChainVersionMatcher chain = (ChainVersionMatcher) v;
+        assertEquals(5, chain.getMatchers().size());
+        assertTrue(chain.getMatchers().contains(mock));
     }
     
     public void testRef() throws Exception {

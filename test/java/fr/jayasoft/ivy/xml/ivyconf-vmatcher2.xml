@@ -1,0 +1,6 @@
+<ivyconf>
+	<typedef name="mock" classname="fr.jayasoft.ivy.version.MockVersionMatcher"/>
+	<version-matchers usedefaults="true">
+		<mock name="vmock"/>
+	</version-matchers>
+</ivyconf>

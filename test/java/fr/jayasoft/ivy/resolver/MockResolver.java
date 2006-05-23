@@ -7,6 +7,7 @@ package fr.jayasoft.ivy.resolver;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -61,6 +62,9 @@ public class MockResolver extends AbstractResolver {
 
                 public DependencyResolver getArtifactResolver() {
                     return r;
+                }
+                public URL getLocalMDUrl() {
+                	return null;
                 }
             };
         }

@@ -27,6 +27,9 @@ public class ModuleRevisionId extends UnmodifiableExtendableItem {
     public static ModuleRevisionId newInstance(String organisation, String name, String revision, Map extraAttributes) {
         return new ModuleRevisionId(new ModuleId(organisation, name), revision, extraAttributes);
     }
+	public static ModuleRevisionId newInstance(ModuleRevisionId mrid, String rev) {
+		return new ModuleRevisionId(mrid.getModuleId(), rev, mrid.getExtraAttributes());
+	}
     
     private ModuleId _moduleId;
     private String _revision;

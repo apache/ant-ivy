@@ -5,29 +5,22 @@
  */
 package fr.jayasoft.ivy.latest;
 
-import java.util.Date;
+import java.util.Comparator;
 
 import fr.jayasoft.ivy.ArtifactInfo;
 
 
-public class LatestTimeStrategy extends AbstractLatestStrategy {
-    public LatestTimeStrategy() {
-        setName("latest-time");
-    }
-    public ArtifactInfo findLatest(ArtifactInfo[] artifacts, Date date) {
-        if (artifacts == null) {
-            return null;
+public class LatestTimeStrategy extends ComparatorLatestStrategy {
+    private static Comparator COMPARATOR = new Comparator() {
+        public int compare(Object o1, Object o2) {
+            long d1 = ((ArtifactInfo)o1).getLastModified();
+            long d2 = ((ArtifactInfo)o1).getLastModified();
+            return new Long(d1).compareTo(new Long(d2));
         }
-        ArtifactInfo found = null;
-        long foundDate = 0;
-        for (int i = 0; i < artifacts.length; i++) {
-            ArtifactInfo art = artifacts[i];
-            long lastModified = art.getLastModified();
-            if (lastModified > foundDate && (date == null || lastModified <= date.getTime())) {
-                foundDate = lastModified;
-                found = art;
-            }
-        } 
-        return found;
+    
+    };
+    public LatestTimeStrategy() {
+    	super(COMPARATOR);
+        setName("latest-time");
     }
 }

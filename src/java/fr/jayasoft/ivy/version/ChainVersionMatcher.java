@@ -6,6 +6,7 @@
  */
 package fr.jayasoft.ivy.version;
 
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -13,10 +14,19 @@ import java.util.List;
 import fr.jayasoft.ivy.ModuleDescriptor;
 import fr.jayasoft.ivy.ModuleRevisionId;
 
-public class ChainVersionMatcher implements VersionMatcher {
+public class ChainVersionMatcher extends AbstractVersionMatcher {
     private List _matchers = new LinkedList();
+    
+    public ChainVersionMatcher() {
+    	super("chain");
+    }
+    
     public void add(VersionMatcher matcher) {
         _matchers.add(0, matcher);
+    }
+    
+    public List getMatchers() {
+    	return Collections.unmodifiableList(_matchers);
     }
     
 

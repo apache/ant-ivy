@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<ivy-module version="1.0">
+    <info 
+        organisation="org6"
+        module="mod6.4"
+        revision="5"
+        status="integration"
+        publication="20060516183009">
+	</info>
+</ivy-module>

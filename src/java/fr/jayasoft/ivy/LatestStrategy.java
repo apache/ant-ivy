@@ -6,6 +6,7 @@
 package fr.jayasoft.ivy;
 
 import java.util.Date;
+import java.util.List;
 
 
 public interface LatestStrategy {
@@ -20,5 +21,13 @@ public interface LatestStrategy {
      * @return the latest artifact among the given ones.
      */
     ArtifactInfo findLatest(ArtifactInfo[] infos, Date date);
+    /**
+     * Sorts the given artifacts info from the latest one to the oldest one.
+     * The definition of 'latest' depends on the strategy itself.
+     * Given artifacts info are all good candidate. 
+     * @param infos
+     * @return
+     */
+    List sort(ArtifactInfo[] infos);
     String getName();
 }

@@ -6,14 +6,13 @@
 package fr.jayasoft.ivy.latest;
 
 import java.util.Comparator;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 import fr.jayasoft.ivy.ArtifactInfo;
 
 
-public class LatestRevisionStrategy extends AbstractLatestStrategy {
+public class LatestRevisionStrategy extends ComparatorLatestStrategy {
     public static class SpecialMeaning {
         private String _name;
         private Integer _value;
@@ -60,8 +59,8 @@ public class LatestRevisionStrategy extends AbstractLatestStrategy {
     public Comparator COMPARATOR = new Comparator() {
 
         public int compare(Object o1, Object o2) {
-            String rev1 = (String)o1;
-            String rev2 = (String)o2;
+            String rev1 = ((ArtifactInfo)o1).getRevision();
+            String rev2 = ((ArtifactInfo)o2).getRevision();
             if (rev1.startsWith("latest")) {
                 return 1;
             }
@@ -131,27 +130,8 @@ public class LatestRevisionStrategy extends AbstractLatestStrategy {
     private boolean _usedefaultspecialmeanings = true;
     
     public LatestRevisionStrategy() {
+    	setComparator(COMPARATOR);
         setName("latest-revision");
-    }
-    
-    public ArtifactInfo findLatest(ArtifactInfo[] artifacts, Date date) {
-        if (artifacts == null) {
-            return null;
-        }
-        ArtifactInfo found = null;
-        for (int i = 0; i < artifacts.length; i++) {
-            ArtifactInfo art = artifacts[i];
-            if (found == null || COMPARATOR.compare(art.getRevision(), found.getRevision()) > 0) {
-                if (date != null) {
-                    long lastModified = art.getLastModified();
-                    if (lastModified > date.getTime()) {
-                        continue;
-                    }
-                }
-                found = art;
-            }
-        } 
-        return found;
     }
     
     public void addConfiguredSpecialMeaning(SpecialMeaning meaning) {

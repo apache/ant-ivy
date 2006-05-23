@@ -5,6 +5,7 @@
  */
 package fr.jayasoft.ivy;
 
+import java.net.URL;
 import java.util.Date;
 
 
@@ -18,13 +19,15 @@ public class DefaultModuleRevision implements ResolvedModuleRevision {
     private ModuleDescriptor _descriptor;
     private boolean _isDownloaded;
     private boolean _isSearched;
+    private URL _localMDUrl;
     
-    public DefaultModuleRevision(DependencyResolver resolver, DependencyResolver artifactResolver, ModuleDescriptor descriptor, boolean searched, boolean downloaded) {
+    public DefaultModuleRevision(DependencyResolver resolver, DependencyResolver artifactResolver, ModuleDescriptor descriptor, boolean searched, boolean downloaded, URL localMDUrl) {
         _resolver = resolver;
         _artifactResolver = artifactResolver;
         _descriptor = descriptor;
         _isSearched = searched;
         _isDownloaded = downloaded;
+        _localMDUrl = localMDUrl;
     }
 
     public DependencyResolver getResolver() {
@@ -69,5 +72,9 @@ public class DefaultModuleRevision implements ResolvedModuleRevision {
     public boolean isSearched() {
         return _isSearched;
     }
+
+	public URL getLocalMDUrl() {
+		return _localMDUrl;
+	}
     
 }

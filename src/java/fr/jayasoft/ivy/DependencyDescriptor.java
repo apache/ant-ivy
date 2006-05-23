@@ -47,4 +47,5 @@ public interface DependencyDescriptor extends ExtendableItem {
     DependencyArtifactDescriptor[] getDependencyArtifactsExcludes(String[] moduleConfigurations);
     boolean doesExclude(String[] moduleConfigurations, ArtifactId artifactId);
     public boolean canExclude();
+	DependencyDescriptor asSystem();
 }
