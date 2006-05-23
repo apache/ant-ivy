@@ -10,11 +10,13 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import fr.jayasoft.ivy.ArtifactInfo;
+
 import junit.framework.TestCase;
 
 public class LatestRevisionStrategyTest extends TestCase {
     public void testComparator() {
-        String[] revs = new String[] {
+        ArtifactInfo[] revs = toMockAI(new String[] {
                 "0.2a", 
                 "0.2_b", 
                 "0.2rc1", 
@@ -31,7 +33,7 @@ public class LatestRevisionStrategyTest extends TestCase {
                 "1.0", 
                 "1.0.1", 
                 "2.0" 
-                };
+                });
         
         List shuffled = new ArrayList(Arrays.asList(revs)); 
         Collections.shuffle(shuffled);
@@ -40,7 +42,7 @@ public class LatestRevisionStrategyTest extends TestCase {
     }
     
     public void testSpecialMeaningComparator() {
-        String[] revs = new String[] {
+        ArtifactInfo[] revs = toMockAI(new String[] {
                 "0.1", 
                 "0.2-pre", 
                 "0.2-dev", 
@@ -48,7 +50,7 @@ public class LatestRevisionStrategyTest extends TestCase {
                 "0.2-final", 
                 "0.2-QA", 
                 "1.0-dev1", 
-                };
+                });
         
         List shuffled = new ArrayList(Arrays.asList(revs)); 
         Collections.shuffle(shuffled);
@@ -64,4 +66,34 @@ public class LatestRevisionStrategyTest extends TestCase {
         Collections.sort(shuffled, latestRevisionStrategy.COMPARATOR);
         assertEquals(Arrays.asList(revs), shuffled);
     }
+
+    
+    
+    private static class MockArtifactInfo implements ArtifactInfo {
+
+        private long _lastModified;
+        private String _rev;
+
+        public MockArtifactInfo(String rev, long lastModified) {
+            _rev = rev;
+            _lastModified = lastModified;
+        }
+
+        public String getRevision() {
+            return _rev;
+        }
+
+        public long getLastModified() {
+            return _lastModified;
+        }
+        
+    }
+    private ArtifactInfo[] toMockAI(String[] revs) {
+        ArtifactInfo[] artifactInfos = new ArtifactInfo[revs.length];
+        for (int i = 0; i < artifactInfos.length; i++) {
+            artifactInfos[i] = new MockArtifactInfo(revs[i], 0);
+        }
+        return artifactInfos;
+    }
+
 }
