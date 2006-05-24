@@ -4,7 +4,7 @@
 				============================================
 				
 for detailed view of each issue, please consult http://jira.jayasoft.org/
-
+ 
    version 1.4 - not yet released
 =================================
 Incompatibility with previous versions:
