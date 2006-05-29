@@ -1578,7 +1578,7 @@ public class Ivy implements TransferListener {
             Matcher orgMatcher = matcher.getMatcher(pattern.getOrganisation());
             for (int i = 0; i < orgs.length; i++) {
                 String org = orgs[i].getOrganisation();
-                String systemOrg = org;;
+                String systemOrg = org;
                 if (fromNamespace != null) {
                     systemOrg = NameSpaceHelper.transformOrganisation(org, fromNamespace.getToSystemTransformer());
                 }
