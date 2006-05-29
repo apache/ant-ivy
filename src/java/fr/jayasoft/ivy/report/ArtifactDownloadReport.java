@@ -6,6 +6,7 @@
 package fr.jayasoft.ivy.report;
 
 import fr.jayasoft.ivy.Artifact;
+import fr.jayasoft.ivy.ArtifactOrigin;
 
 /**
  * @author x.hanin
@@ -13,6 +14,7 @@ import fr.jayasoft.ivy.Artifact;
  */
 public class ArtifactDownloadReport {
     private Artifact _artifact;
+    private ArtifactOrigin _origin;
     private DownloadStatus _downloadStatus;
     private long _size;
     
@@ -44,5 +46,10 @@ public class ArtifactDownloadReport {
     public void setSize(long size) {
         _size = size;
     }
-    
+	public void setArtifactOrigin(ArtifactOrigin origin) {
+		_origin = origin;
+	}
+	public ArtifactOrigin getArtifactOrigin() {
+		return _origin;
+	}
 }

@@ -16,6 +16,7 @@ import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.types.Path;
 
 import fr.jayasoft.ivy.Artifact;
+import fr.jayasoft.ivy.ArtifactOrigin;
 import fr.jayasoft.ivy.Ivy;
 import fr.jayasoft.ivy.ant.IvyCacheTask.PathEntry;
 import fr.jayasoft.ivy.filter.Filter;
@@ -72,21 +73,12 @@ public class IvyCachePath extends IvyCacheTask {
     	if (!useOrigin) {
     		paths.add(new PathEntry(ivy.getArchivePathInCache(artifact), true));
     	} else {
-    		File originFile = ivy.getOriginFileInCache(getCache(), artifact);
-    		if (!originFile.exists()) {
+    		ArtifactOrigin origin = ivy.getSavedArtifactOrigin(getCache(), artifact);
+    		if (origin == null) {
     			paths.add(new PathEntry(ivy.getArchivePathInCache(artifact), true));
     		} else {
-    			Properties originProperties = new Properties();
-                FileInputStream originInputStream = new FileInputStream(originFile);
-                try {
-                    originProperties.load(originInputStream);
-                } finally {
-                    originInputStream.close();
-                }
-                boolean isOriginLocal = Boolean.valueOf(originProperties.getProperty("isLocal")).booleanValue();
-                if (isOriginLocal) {
-                	String originName = originProperties.getProperty("name");
-                	paths.add(new PathEntry(originName, false));
+                if (origin.isLocal()) {
+                	paths.add(new PathEntry(origin.getLocation(), false));
                 } else {
                 	paths.add(new PathEntry(ivy.getArchivePathInCache(artifact), true));
                 }

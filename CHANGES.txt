@@ -53,6 +53,7 @@ Changes:
   - IMPROVE: add support for xslt parameters in the report task (IVY-227)
   - IMPROVE: comments now aren't lost when delivering ivy files (IVY-226)
   - IMPROVE: add sort of 'fallback'-mapping to the defaultconfmapping attribute (IVY-215)
+  - IMPROVE: artifact origin is not included in the default report (IVY-251)
 
   - FIX: value of confmappingoverride from imported configurations is lost when writing Ivy file (IVY-239)
   - FIX: including configurations doesn't import the confmappingoverride setting (IVY-238)

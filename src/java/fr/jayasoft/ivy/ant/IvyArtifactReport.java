@@ -4,14 +4,7 @@
  */
 package fr.jayasoft.ivy.ant;
 
-import fr.jayasoft.ivy.Artifact;
-import fr.jayasoft.ivy.Ivy;
-import fr.jayasoft.ivy.IvyNode;
-import fr.jayasoft.ivy.ModuleDescriptor;
-import fr.jayasoft.ivy.ModuleId;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.ParseException;
@@ -20,8 +13,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
+
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerFactoryConfigurationError;
@@ -33,6 +26,13 @@ import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
+
+import fr.jayasoft.ivy.Artifact;
+import fr.jayasoft.ivy.ArtifactOrigin;
+import fr.jayasoft.ivy.Ivy;
+import fr.jayasoft.ivy.IvyNode;
+import fr.jayasoft.ivy.ModuleDescriptor;
+import fr.jayasoft.ivy.ModuleId;
 
 public class IvyArtifactReport extends IvyTask {
     private File _tofile;
@@ -206,38 +206,27 @@ public class IvyArtifactReport extends IvyTask {
     }
 
     private void writeOriginLocationIfPresent(Ivy ivy, TransformerHandler saxHandler, Artifact artifact) throws IOException, SAXException {
-        try {
-            File originFile = ivy.getOriginFileInCache(_cache, artifact);
-            Properties originProperties = new Properties();
-            FileInputStream originInputStream = new FileInputStream(originFile);
-            try {
-                originProperties.load(originInputStream);
-            } finally {
-                originInputStream.close();
+    	ArtifactOrigin origin = ivy.getSavedArtifactOrigin(_cache, artifact);
+    	if (origin != null) {
+    		String originName = origin.getLocation();
+    		boolean isOriginLocal = origin.isLocal();
+
+    		String originLocation;
+            AttributesImpl originLocationAttrs = new AttributesImpl();
+            if (isOriginLocal) {
+                originLocationAttrs.addAttribute(null, "is-local", "is-local", "CDATA", "true");
+                File originNameFile = new File(originName);
+                StringBuffer originNameWithSlashes = new StringBuffer(1000);
+                replaceFileSeparatorWithSlash(originNameFile, originNameWithSlashes);
+                originLocation = originNameWithSlashes.toString();
+            } else {
+                originLocationAttrs.addAttribute(null, "is-local", "is-local", "CDATA", "false");
+                originLocation = originName;
             }
-            String originName = originProperties.getProperty("name");
-            if (originName != null) {
-                boolean isOriginLocal = Boolean.valueOf(originProperties.getProperty("isLocal")).booleanValue();
-                String originLocation;
-                AttributesImpl originLocationAttrs = new AttributesImpl();
-                if (isOriginLocal) {
-                    originLocationAttrs.addAttribute(null, "is-local", "is-local", "CDATA", "true");
-                    File originNameFile = new File(originName);
-                    originName = removeLeadingPath(getProject().getBaseDir(), originNameFile);
-                    StringBuffer originNameWithSlashes = new StringBuffer(1000);
-                    replaceFileSeparatorWithSlash(originNameFile, originNameWithSlashes);
-                    originLocation = originNameWithSlashes.toString();
-                } else {
-                    originLocationAttrs.addAttribute(null, "is-local", "is-local", "CDATA", "false");
-                    originLocation = originName;
-                }
-                saxHandler.startElement(null, "origin-location", "origin-location", originLocationAttrs);
-                char[] originLocationAsChars = originLocation.toCharArray();
-                saxHandler.characters(originLocationAsChars, 0, originLocationAsChars.length);
-                saxHandler.endElement(null, "origin-location", "origin-location");
-            }
-        } catch (FileNotFoundException e) {
-            // Ignore. No origin available.
+            saxHandler.startElement(null, "origin-location", "origin-location", originLocationAttrs);
+            char[] originLocationAsChars = originLocation.toCharArray();
+            saxHandler.characters(originLocationAsChars, 0, originLocationAsChars.length);
+            saxHandler.endElement(null, "origin-location", "origin-location");
         }
     }
 

@@ -6,7 +6,6 @@
 package fr.jayasoft.ivy.resolver;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -21,9 +20,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
-import java.util.Properties;
 
 import fr.jayasoft.ivy.Artifact;
+import fr.jayasoft.ivy.ArtifactOrigin;
 import fr.jayasoft.ivy.DefaultArtifact;
 import fr.jayasoft.ivy.DefaultModuleDescriptor;
 import fr.jayasoft.ivy.DefaultModuleRevision;
@@ -401,16 +400,13 @@ public abstract class BasicResolver extends AbstractResolver {
                 for (int i = 0; i < confs.length; i++) {
                     Artifact[] arts = rmr.getDescriptor().getArtifacts(confs[i]);
                     for (int j = 0; j < arts.length; j++) {
-                        File artFile = data.getIvy().getArchiveFileInCache(data.getCache(), toSystem(arts[j]));
+                        Artifact transformedArtifact = toSystem(arts[j]);
+						File artFile = data.getIvy().getArchiveFileInCache(data.getCache(), transformedArtifact);
                         if (artFile.exists()) {
                             Message.debug("deleting "+artFile);
                             artFile.delete();
                         }
-                        File originFile = data.getIvy().getOriginFileInCache(data.getCache(), toSystem(arts[j]));
-                        if (originFile.exists()) {
-                            Message.debug("deleting " + originFile);
-                            originFile.delete();
-                        }
+                        data.getIvy().removeSavedArtifactOrigin(data.getCache(), transformedArtifact);
                     }
                 }
             } else if (isChangingDependency){
@@ -582,6 +578,7 @@ public abstract class BasicResolver extends AbstractResolver {
         		Message.verbose("\t[NOT REQUIRED] "+artifacts[i]);
         		adr.setDownloadStatus(DownloadStatus.NO);  
                 adr.setSize(archiveFile.length());
+                adr.setArtifactOrigin(ivy.getSavedArtifactOrigin(cache, artifacts[i]));
         	} else {
                 Artifact artifact = fromSystem(artifacts[i]);
                 if (!artifact.equals(artifacts[i])) {
@@ -595,11 +592,8 @@ public abstract class BasicResolver extends AbstractResolver {
                         return null;
                     }
     			    long start = System.currentTimeMillis();
-                    File originFile = ivy.getOriginFileInCache(cache, artifact);
                     try {
         			    Message.info("downloading "+artifactRef.getResource()+" ...");
-                        
-                        writeOriginFile(originFile, artifactRef);
                         
                         File tmp = ivy.getArchiveFileInCache(cache, 
                                 new DefaultArtifact(
@@ -611,15 +605,16 @@ public abstract class BasicResolver extends AbstractResolver {
                                         artifacts[i].getExtraAttributes()));
                         adr.setSize(get(artifactRef.getResource(), tmp));
                         if (!tmp.renameTo(archiveFile)) {
-                            originFile.delete();
                             Message.warn("\t[FAILED     ] "+artifacts[i]+" impossible to move temp file to definitive one ("+(System.currentTimeMillis()-start)+"ms)");
                             adr.setDownloadStatus(DownloadStatus.FAILED);
                         } else {
+                        	ArtifactOrigin origin = new ArtifactOrigin(artifactRef.getResource().isLocal(), artifactRef.getResource().getName());
+                        	ivy.saveArtifactOrigin(cache, artifact, origin);
                     		Message.info("\t[SUCCESSFUL ] "+artifacts[i]+" ("+(System.currentTimeMillis()-start)+"ms)");
             				adr.setDownloadStatus(DownloadStatus.SUCCESSFUL);
+            				adr.setArtifactOrigin(origin);
                         }
         			} catch (Exception ex) {
-                        originFile.delete();
                 		Message.warn("\t[FAILED     ] "+artifacts[i]+" : "+ex.getMessage()+" ("+(System.currentTimeMillis()-start)+"ms)");
         				adr.setDownloadStatus(DownloadStatus.FAILED);
         			}
@@ -631,21 +626,6 @@ public abstract class BasicResolver extends AbstractResolver {
             ivy.fireIvyEvent(new EndDownloadEvent(this, artifacts[i], adr));
         }
     	return dr;
-    }
-
-    private void writeOriginFile(File originFile, ResolvedResource artifactRef) throws IOException {
-        Properties originProperties = new Properties();
-        originProperties.setProperty("isLocal", artifactRef.getResource().isLocal() ? "true" : "false");
-        originProperties.setProperty("name", artifactRef.getResource().getName());
-        if (originFile.getParentFile() != null) {
-            originFile.getParentFile().mkdirs();
-        }
-        FileOutputStream originOutputStream = new FileOutputStream(originFile);
-        try {
-            originProperties.store(originOutputStream, null);
-        } finally {
-            originOutputStream.close();
-        }
     }
 
     protected void clearArtifactAttempts() {

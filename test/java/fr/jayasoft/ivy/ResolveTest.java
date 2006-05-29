@@ -26,6 +26,7 @@ import fr.jayasoft.ivy.conflict.LatestConflictManager;
 import fr.jayasoft.ivy.latest.LatestRevisionStrategy;
 import fr.jayasoft.ivy.report.ArtifactDownloadReport;
 import fr.jayasoft.ivy.report.ConfigurationResolveReport;
+import fr.jayasoft.ivy.report.DownloadStatus;
 import fr.jayasoft.ivy.report.ResolveReport;
 import fr.jayasoft.ivy.report.XmlReportOutputter;
 import fr.jayasoft.ivy.resolver.BasicResolver;
@@ -64,6 +65,47 @@ public class ResolveTest extends TestCase {
         del.setProject(new Project());
         del.setDir(_cache);
         del.execute();
+    }
+    
+    public void testArtifactOrigin() throws Exception {
+        ResolveReport report = _ivy.resolve(new File("test/repositories/1/org1/mod1.1/ivys/ivy-1.0.xml").toURL(),
+                null, new String[] {"default"}, _cache, null, true);
+        assertNotNull(report);
+
+        ArtifactDownloadReport[] dReports = report.getConfigurationReport("default").getDownloadReports(ModuleRevisionId.newInstance("org1", "mod1.2", "2.0"));
+        assertNotNull(dReports);
+        assertEquals("number of downloaded artifacts not correct", 1, dReports.length);
+        
+        Artifact artifact = dReports[0].getArtifact();
+        assertNotNull(artifact);
+        
+        String expectedLocation = new File("test/repositories/1/org1/mod1.2/jars/mod1.2-2.0.jar").getAbsolutePath();
+
+        // verify the origin in the report
+        ArtifactOrigin reportOrigin = dReports[0].getArtifactOrigin();
+        assertNotNull(reportOrigin);
+        assertEquals("isLocal for artifact not correct", true, reportOrigin.isLocal());
+        assertEquals("location for artifact not correct", expectedLocation, reportOrigin.getLocation());
+        
+        // verify the saved origin on disk
+        ArtifactOrigin ivyOrigin = _ivy.getSavedArtifactOrigin(_cache, artifact);
+        assertNotNull(ivyOrigin);
+        assertEquals("isLocal for artifact not correct", true, ivyOrigin.isLocal());
+        assertEquals("location for artifact not correct", expectedLocation, ivyOrigin.getLocation());
+        
+        // now resolve the same artifact again and verify the origin of the (not-downloaded) artifact
+        report = _ivy.resolve(new File("test/repositories/1/org1/mod1.1/ivys/ivy-1.0.xml").toURL(),
+                null, new String[] {"default"}, _cache, null, true);
+        assertNotNull(report);
+
+        dReports = report.getConfigurationReport("default").getDownloadReports(ModuleRevisionId.newInstance("org1", "mod1.2", "2.0"));
+        assertNotNull(dReports);
+        assertEquals("number of downloaded artifacts not correct", 1, dReports.length);
+        assertEquals("download status not correct", DownloadStatus.NO, dReports[0].getDownloadStatus());
+        reportOrigin = dReports[0].getArtifactOrigin();
+        assertNotNull(reportOrigin);
+        assertEquals("isLocal for artifact not correct", true, reportOrigin.isLocal());
+        assertEquals("location for artifact not correct", expectedLocation, reportOrigin.getLocation());
     }
 
     public void testResolveSimple() throws Exception {

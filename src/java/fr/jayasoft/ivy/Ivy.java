@@ -2340,7 +2340,34 @@ public class Ivy implements TransferListener {
         cdf.setProperty("artifact.resolver", name);
         cdf.save();
     }
-
+    
+    public void saveArtifactOrigin(File cache, Artifact artifact, ArtifactOrigin origin) {
+       PropertiesFile cdf = getCachedDataFile(cache, artifact.getModuleRevisionId());
+       cdf.setProperty("artifact." + artifact.getName() + ".is-local", String.valueOf(origin.isLocal()));
+       cdf.setProperty("artifact." + artifact.getName() + ".location", origin.getLocation());
+       cdf.save();
+    }
+    
+    public ArtifactOrigin getSavedArtifactOrigin(File cache, Artifact artifact) {
+        PropertiesFile cdf = getCachedDataFile(cache, artifact.getModuleRevisionId());
+        String location = cdf.getProperty("artifact." + artifact.getName() + ".location");
+        boolean isLocal = Boolean.valueOf(cdf.getProperty("artifact." + artifact.getName() + ".is-local")).booleanValue();
+        
+        if (location == null) {
+           // origin has not been specified, return null
+           return null;
+        }
+        
+        return new ArtifactOrigin(isLocal, location);
+    }
+    
+    public void removeSavedArtifactOrigin(File cache, Artifact artifact) {
+        PropertiesFile cdf = getCachedDataFile(cache, artifact.getModuleRevisionId());
+        cdf.remove("artifact." + artifact.getName() + ".location");
+        cdf.remove("artifact." + artifact.getName() + ".is-local");
+        cdf.save();
+    }
+    
     private String getSavedResolverName(File cache, ModuleDescriptor md) {
         PropertiesFile cdf = getCachedDataFile(cache, md);
         return cdf.getProperty("resolver");
@@ -2352,7 +2379,11 @@ public class Ivy implements TransferListener {
     }
 
     private PropertiesFile getCachedDataFile(File cache, ModuleDescriptor md) {
-        return new PropertiesFile(new File(cache, IvyPatternHelper.substitute(getCacheDataFilePattern(), md.getResolvedModuleRevisionId())), "ivy cached data file for "+md.getResolvedModuleRevisionId());
+       return getCachedDataFile(cache, md.getResolvedModuleRevisionId());
+    }
+    
+    private PropertiesFile getCachedDataFile(File cache, ModuleRevisionId mRevId) {
+        return new PropertiesFile(new File(cache, IvyPatternHelper.substitute(getCacheDataFilePattern(),mRevId)), "ivy cached data file for "+mRevId);
     }
 
     public String getCacheDataFilePattern() {
