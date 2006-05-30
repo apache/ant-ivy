@@ -13,6 +13,9 @@ import java.util.List;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.taskdefs.XSLTProcess;
+import org.apache.tools.ant.types.Mapper;
+import org.apache.tools.ant.util.FileNameMapper;
+import org.apache.tools.ant.util.GlobPatternMapper;
 
 import fr.jayasoft.ivy.Ivy;
 import fr.jayasoft.ivy.ModuleId;
@@ -129,54 +132,61 @@ public class IvyReport extends IvyTask {
         }
         try {
             String[] confs = splitConfs(_conf);
-            for (int i = 0; i < confs.length; i++) {
-                if (_xsl) {
-                    genreport(ivy, _cache, _organisation, _module, confs[i]);
-                }
-                if (_xml) {
-                    genxml(ivy, _cache, _organisation, _module, confs[i]);
-                }
-                if (_graph) {
-                    gengraph(ivy, _cache, _organisation, _module, confs[i]);
-                }
+            if (_xsl) {
+                genreport(_cache, _organisation, _module, confs);
+            }
+            if (_xml) {
+                genxml(_cache, _organisation, _module, confs);
+            }
+            if (_graph) {
+                gengraph(_cache, _organisation, _module, confs);
             }
         } catch (IOException e) {
             throw new BuildException("impossible to generate report", e);
         }
     }
     
-    private void genxml(Ivy ivy, File cache, String organisation, String module, String conf) throws IOException {
-        File xml = new File(cache, XmlReportOutputter.getReportFileName(new ModuleId(organisation, module), conf));
+    private void genxml(File cache, String organisation, String module, String[] confs) throws IOException {
+    	for (int i = 0; i < confs.length; i++) {
+	        File xml = new File(cache, XmlReportOutputter.getReportFileName(new ModuleId(organisation, module), confs[i]));
 
-        File out;
-        if (_todir != null) {
-            out = new File(_todir, IvyPatternHelper.substitute(_outputpattern, organisation, module, "", "", "", "xml", conf));
-        } else {
-            out = new File(IvyPatternHelper.substitute(_outputpattern, organisation, module, "", "", "", "xml", conf));
-        }
+            File out;
+            if (_todir != null) {
+	            out = new File(_todir, IvyPatternHelper.substitute(_outputpattern, organisation, module, "", "", "", "xml", confs[i]));
+            } else {
+	            out = new File(IvyPatternHelper.substitute(_outputpattern, organisation, module, "", "", "", "xml", confs[i]));
+            }
         
-        FileUtil.copy(xml, out, null);
+            FileUtil.copy(xml, out, null);
+        }
     }
-    private void genreport(Ivy ivy, File cache, String organisation, String module, String conf) throws IOException {        
+    private void genreport(File cache, String organisation, String module, String[] confs) throws IOException {        
         // first process the report with xslt
         XSLTProcess xslt = new XSLTProcess();
         xslt.setTaskName(getTaskName());
         xslt.setProject(getProject());
         xslt.init();
         
-        xslt.setIn(new File(cache, XmlReportOutputter.getReportFileName(new ModuleId(organisation, module), conf)));
-        File out;
+    	Mapper mapper = new Mapper(getProject());
+    	xslt.addMapper(mapper);
+        
+        for (int i = 0; i < confs.length; i++) {
+        	String reportFileName = XmlReportOutputter.getReportFileName(new ModuleId(organisation, module), confs[i]);
+        	xslt.setIncludes(reportFileName);
+        	
+        	FileNameMapper reportMapper = new GlobPatternMapper();
+			reportMapper.setFrom(reportFileName);
+        	reportMapper.setTo(IvyPatternHelper.substitute(_outputpattern, organisation, module, "", "", "", _xslext, confs[i]));
+        	mapper.add(reportMapper);
+        }
+        
+    	xslt.setBasedir(cache);
         if (_todir != null) {
-            out = new File(_todir, IvyPatternHelper.substitute(_outputpattern, organisation, module, "", "", "", _xslext, conf));
+        	xslt.setDestdir(_todir);
         } else {
-            out = new File(IvyPatternHelper.substitute(_outputpattern, organisation, module, "", "", "", _xslext, conf));
+        	xslt.setDestdir(new File("."));
         }
-        if (out.getParentFile() != null && !out.getParentFile().exists()) {
-            out.getParentFile().mkdirs();
-        } else if(out.getParentFile() == null) {
-            out = new File("./"+out.getPath());
-        }
-        xslt.setOut(out);
+        
         xslt.setStyle(getReportStylePath(cache));
         XSLTProcess.Param param = xslt.createParam();
         param.setName("confs");
@@ -218,7 +228,7 @@ public class IvyReport extends IvyTask {
     }
     
     
-    private void gengraph(Ivy ivy, File cache, String organisation, String module, String conf) throws IOException {        
+    private void gengraph(File cache, String organisation, String module, String[] confs) throws IOException {        
         // process the report with xslt to generate graphml
         File out;
         if (_todir != null) {
@@ -234,8 +244,19 @@ public class IvyReport extends IvyTask {
         
         xslt.setDestdir(out);
         xslt.setBasedir(cache);
-        xslt.setExtension(".graphml");
-        xslt.setIncludes(XmlReportOutputter.getReportFileName(new ModuleId(organisation, module), conf));
+
+        Mapper mapper = new Mapper(getProject());
+    	xslt.addMapper(mapper);
+        
+        for (int i = 0; i < confs.length; i++) {
+        	String reportFileName = XmlReportOutputter.getReportFileName(new ModuleId(organisation, module), confs[i]);
+        	xslt.setIncludes(reportFileName);
+        	
+        	FileNameMapper reportMapper = new GlobPatternMapper();
+			reportMapper.setFrom(reportFileName);
+        	reportMapper.setTo(IvyPatternHelper.substitute(_outputpattern, organisation, module, "", "", "", "graphml", confs[i]));
+        	mapper.add(reportMapper);
+        }
         xslt.setStyle(getGraphStylePath(cache));
         xslt.execute();
     }
