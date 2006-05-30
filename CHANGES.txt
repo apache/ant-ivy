@@ -56,6 +56,7 @@ Changes:
   - IMPROVE: add sort of 'fallback'-mapping to the defaultconfmapping attribute (IVY-215)
   - IMPROVE: artifact origin is not included in the default report (IVY-251)
 
+  - FIX: report Ant-task doesn't call init() on the internal XSLTProcess (IVY-248)
   - FIX: value of confmappingoverride from imported configurations is lost when writing Ivy file (IVY-239)
   - FIX: including configurations doesn't import the confmappingoverride setting (IVY-238)
   - FIX: NullPointerException when the creation of Ivy file in cache fails (IVY-234)

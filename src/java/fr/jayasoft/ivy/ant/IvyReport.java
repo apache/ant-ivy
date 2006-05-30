@@ -162,6 +162,8 @@ public class IvyReport extends IvyTask {
         XSLTProcess xslt = new XSLTProcess();
         xslt.setTaskName(getTaskName());
         xslt.setProject(getProject());
+        xslt.init();
+        
         xslt.setIn(new File(cache, XmlReportOutputter.getReportFileName(new ModuleId(organisation, module), conf)));
         File out;
         if (_todir != null) {
@@ -228,6 +230,8 @@ public class IvyReport extends IvyTask {
         XSLTProcess xslt = new XSLTProcess();
         xslt.setTaskName(getTaskName());
         xslt.setProject(getProject());
+        xslt.init();
+        
         xslt.setDestdir(out);
         xslt.setBasedir(cache);
         xslt.setExtension(".graphml");
