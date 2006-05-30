@@ -1,7 +1,7 @@
 /*
  * This file is subject to the license found in LICENCE.TXT in the root directory of the project.
  * 
- * #SNAPSHOT#
+ * version 1.3.1
  */
 package fr.jayasoft.ivy.url;
 
@@ -40,8 +40,8 @@ public class URLHandlerRegistry {
             Message.verbose("jakarta commons httpclient detected: using it for http downloading");
             return new HttpClientHandler(realm, host, userName, passwd); 
         } catch (ClassNotFoundException e) {
-            Message.verbose("jakarta commons httpclient not found: no authentication will be done");
-            return new BasicURLHandler();
+             Message.verbose("jakarta commons httpclient not found: using jdk url handling");
+            return new BasicURLHandler(realm, host, userName, passwd);
         }
     }
 
