@@ -18,7 +18,7 @@ import fr.jayasoft.ivy.Configuration;
 import fr.jayasoft.ivy.Ivy;
 import fr.jayasoft.ivy.ModuleDescriptor;
 import fr.jayasoft.ivy.Configuration.Visibility;
-import fr.jayasoft.ivy.xml.XmlModuleDescriptorParser;
+import fr.jayasoft.ivy.parser.ModuleDescriptorParserRegistry;
 
 
 public class IvyInfo extends IvyTask {
@@ -38,7 +38,7 @@ public class IvyInfo extends IvyTask {
         }
         
         try {
-			ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(ivy, _file.toURL(), doValidate(ivy));
+			ModuleDescriptor md = ModuleDescriptorParserRegistry.getInstance().parseDescriptor(ivy, _file.toURL(), doValidate(ivy));
             getProject().setProperty("ivy.organisation", md.getModuleRevisionId().getOrganisation());
             getProject().setProperty("ivy.module", md.getModuleRevisionId().getName());
             if (md.getModuleRevisionId().getRevision() != null) {
