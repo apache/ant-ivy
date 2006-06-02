@@ -92,7 +92,10 @@ public abstract class AbstractModuleDescriptorParser implements ModuleDescriptor
                             String[] depConfs = getDefaultConfMappingDescriptor().getDependencyConfigurations(modConfs[j]);
                             if (depConfs.length > 0) {
                                 for (int k = 0; k < depConfs.length; k++) {
-                                    dd.addDependencyConfiguration(modConfs[j].trim(), depConfs[k].trim());
+                                	String mappedDependency = evaluateCondition(depConfs[k].trim(), dd);
+                                	if (mappedDependency != null) {
+                                        dd.addDependencyConfiguration(modConfs[j].trim(), mappedDependency);
+                                	}
                                 }
                             } else {
                                 // no default mapping found for this configuration, map configuration to itself
@@ -117,7 +120,66 @@ public abstract class AbstractModuleDescriptorParser implements ModuleDescriptor
             	addExtendingConfigurations(conf, dd, useDefaultMappingToGuessRightOperande);
             }
         }
-        private void addExtendingConfigurations(String[] confs, DefaultDependencyDescriptor dd, boolean useDefaultMappingToGuessRightOperande) {
+        /**
+         * Evaluate the optional condition in the given configuration, like "[org=MYORG]confX".
+         * If the condition evaluates to true, the configuration is returned, if the condition
+         * evaluatate to false, null is returned.
+         * If there are no conditions, the configuration itself is returned.
+         * 
+		 * @param conf the configuration to evaluate
+		 * @param dd the dependencydescriptor to which the configuration will be added
+		 * @return the evaluated condition
+		 */
+		private String evaluateCondition(String conf, DefaultDependencyDescriptor dd) {
+			if (conf.charAt(0) != '[') {
+				return conf;
+			}
+			
+			int endConditionIndex = conf.indexOf(']');
+			if (endConditionIndex == -1) {
+				addError("invalid conf " + conf + " for " + dd.getDependencyRevisionId());
+			}
+			
+			String condition = conf.substring(1, endConditionIndex);
+			
+			int notEqualIndex = condition.indexOf("!=");
+			if (notEqualIndex == -1) {
+				int equalIndex = condition.indexOf('=');
+				if (equalIndex == -1) { 
+					addError("invalid conf " + conf + " for " + dd.getDependencyRevisionId());
+				}
+				
+				String leftOp = condition.substring(0, equalIndex).trim();
+				String rightOp = condition.substring(equalIndex + 1).trim();
+				
+				// allow organisation synonyms, like 'org' or 'organization'
+				if (leftOp.equals("org") || leftOp.equals("organization")) {
+					leftOp = "organisation";
+				}
+				
+				String attrValue = dd.getAttribute(leftOp);
+				if (!rightOp.equals(attrValue)) {
+					return null;
+				}
+			} else {
+				String leftOp = condition.substring(0, notEqualIndex).trim();
+				String rightOp = condition.substring(notEqualIndex + 2).trim();
+				
+				// allow organisation synonyms, like 'org' or 'organization'
+				if (leftOp.equals("org") || leftOp.equals("organization")) {
+					leftOp = "organisation";
+				}
+				
+				String attrValue = dd.getAttribute(leftOp);
+				if (rightOp.equals(attrValue)) {
+					return null;
+				}
+			}
+			
+			return conf.substring(endConditionIndex + 1);
+		}
+
+		private void addExtendingConfigurations(String[] confs, DefaultDependencyDescriptor dd, boolean useDefaultMappingToGuessRightOperande) {
         	for (int i = 0; i < confs.length; i++) {
         		addExtendingConfigurations(confs[i], dd, useDefaultMappingToGuessRightOperande);
         	}
