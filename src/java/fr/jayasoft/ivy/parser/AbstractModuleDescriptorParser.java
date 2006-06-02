@@ -138,6 +138,7 @@ public abstract class AbstractModuleDescriptorParser implements ModuleDescriptor
 			int endConditionIndex = conf.indexOf(']');
 			if (endConditionIndex == -1) {
 				addError("invalid conf " + conf + " for " + dd.getDependencyRevisionId());
+                return null;
 			}
 			
 			String condition = conf.substring(1, endConditionIndex);
@@ -147,6 +148,7 @@ public abstract class AbstractModuleDescriptorParser implements ModuleDescriptor
 				int equalIndex = condition.indexOf('=');
 				if (equalIndex == -1) { 
 					addError("invalid conf " + conf + " for " + dd.getDependencyRevisionId());
+                    return null;
 				}
 				
 				String leftOp = condition.substring(0, equalIndex).trim();
