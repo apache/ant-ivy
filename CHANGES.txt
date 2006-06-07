@@ -27,6 +27,7 @@ Changes:
   - NEW: adding to SPECIAL_MEANINGS in LatestRevisionStrategy (IVY-121)
   - NEW: Allow use of system properties in ivyconf.xml (IVY-228)
 
+  - IMPROVE: make status list configurable (IVY-242)
   - IMPROVE: use only ivy patterns for listing revisions when module desciptor is required (allownomd = false) (IVY-166)
   - IMPROVE: implement strict haltonfailure if ivy.xml is not found (IVY-110)
   - IMPROVE: artifact's "name" attribute could be omitted (IVY-231)

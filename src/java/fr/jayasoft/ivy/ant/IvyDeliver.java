@@ -19,7 +19,7 @@ import fr.jayasoft.ivy.Ivy;
 import fr.jayasoft.ivy.ModuleDescriptor;
 import fr.jayasoft.ivy.ModuleRevisionId;
 import fr.jayasoft.ivy.PublishingDependencyRevisionResolver;
-import fr.jayasoft.ivy.Status;
+import fr.jayasoft.ivy.status.StatusManager;
 
 /**
  * @author Hanin
@@ -30,7 +30,7 @@ public class IvyDeliver extends IvyTask {
         public String resolve(ModuleDescriptor published,
                 String publishedStatus, ModuleRevisionId depMrid,
                 String depStatus) {
-            if (Status.isIntegration(publishedStatus)) {
+            if (StatusManager.getCurrent().isIntegration(publishedStatus)) {
                 // published status is integration one, nothing to ask
                 return super.resolve(published, publishedStatus, depMrid,
                         depStatus);
@@ -38,7 +38,7 @@ public class IvyDeliver extends IvyTask {
 
             // we are publishing a delivery (a non integration module)
 
-            if (!Status.isIntegration(depStatus)) {
+            if (!StatusManager.getCurrent().isIntegration(depStatus)) {
                 // dependency is already a delivery, nothing to ask
                 return super.resolve(published, publishedStatus, depMrid,
                         depStatus);
@@ -103,7 +103,7 @@ public class IvyDeliver extends IvyTask {
             // ask status
             input.setMessage(depMrid.getName() + " " + depMrid.getRevision()
                     + ": please enter a status: ");
-            input.setValidargs(Status.getDeliveryStatusListString());
+            input.setValidargs(StatusManager.getCurrent().getDeliveryStatusListString());
             input.setAddproperty(statusProperty);
             input.perform();
             appendDeliveryList(statusProperty + " = "

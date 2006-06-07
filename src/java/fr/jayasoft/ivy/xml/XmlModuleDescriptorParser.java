@@ -30,7 +30,6 @@ import fr.jayasoft.ivy.MDArtifact;
 import fr.jayasoft.ivy.ModuleDescriptor;
 import fr.jayasoft.ivy.ModuleId;
 import fr.jayasoft.ivy.ModuleRevisionId;
-import fr.jayasoft.ivy.Status;
 import fr.jayasoft.ivy.conflict.FixedConflictManager;
 import fr.jayasoft.ivy.extendable.ExtendableItemHelper;
 import fr.jayasoft.ivy.matcher.PatternMatcher;
@@ -192,7 +191,7 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
                 }
                 
                 String status = _ivy.substitute(attributes.getValue("status"));
-                _md.setStatus(status == null ? Status.DEFAULT_STATUS : status);
+                _md.setStatus(status == null ? _ivy.getStatusManager().getDefaultStatus() : status);
                 _md.setDefault(Boolean.valueOf(_ivy.substitute(attributes.getValue("default"))).booleanValue());
                 String pubDate = _ivy.substitute(attributes.getValue("publication"));
                 if (pubDate != null && pubDate.length() > 0) {

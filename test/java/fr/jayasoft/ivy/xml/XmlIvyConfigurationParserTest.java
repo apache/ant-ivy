@@ -116,6 +116,20 @@ public class XmlIvyConfigurationParserTest extends TestCase {
         assertTrue(subresolvers.get(1) instanceof MockResolver);
     }
     
+    public void testStatuses() throws Exception {
+        Ivy ivy = new Ivy();
+        XmlIvyConfigurationParser parser = new XmlIvyConfigurationParser(ivy);
+        parser.parse(XmlIvyConfigurationParserTest.class.getResource("ivyconf-status.xml"));
+        
+        assertEquals("bronze", ivy.getStatusManager().getDefaultStatus());
+        assertEquals(0, ivy.getStatusManager().getPriority("gold"));
+        assertEquals(1, ivy.getStatusManager().getPriority("silver"));
+        assertEquals(2, ivy.getStatusManager().getPriority("bronze"));
+        assertEquals(false, ivy.getStatusManager().isIntegration("gold"));
+        assertEquals(false, ivy.getStatusManager().isIntegration("silver"));
+        assertEquals(true, ivy.getStatusManager().isIntegration("bronze"));
+    }
+    
     public void testVersionMatchers1() throws Exception {
         Ivy ivy = new Ivy();
         XmlIvyConfigurationParser parser = new XmlIvyConfigurationParser(ivy);

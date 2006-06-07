@@ -8,7 +8,7 @@ package fr.jayasoft.ivy.version;
 
 import fr.jayasoft.ivy.ModuleDescriptor;
 import fr.jayasoft.ivy.ModuleRevisionId;
-import fr.jayasoft.ivy.Status;
+import fr.jayasoft.ivy.status.StatusManager;
 
 public class LatestVersionMatcher  extends AbstractVersionMatcher {
 	public LatestVersionMatcher() {
@@ -29,6 +29,6 @@ public class LatestVersionMatcher  extends AbstractVersionMatcher {
 
     public boolean accept(ModuleRevisionId askedMrid, ModuleDescriptor foundMD) {
         String askedStatus = askedMrid.getRevision().substring("latest.".length());
-        return Status.getPriority(askedStatus) >= Status.getPriority(foundMD.getStatus());
+        return StatusManager.getCurrent().getPriority(askedStatus) >= StatusManager.getCurrent().getPriority(foundMD.getStatus());
     }
 }

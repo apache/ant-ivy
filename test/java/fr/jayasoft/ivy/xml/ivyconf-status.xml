@@ -1,0 +1,7 @@
+<ivyconf>
+	<statuses default="bronze">
+		<status name="gold" integration="false"/>
+		<status name="silver" integration="false"/>
+		<status name="bronze" integration="true"/>
+	</statuses>
+</ivyconf>

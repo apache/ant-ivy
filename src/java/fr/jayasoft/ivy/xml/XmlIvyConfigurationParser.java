@@ -27,6 +27,7 @@ import fr.jayasoft.ivy.Ivy;
 import fr.jayasoft.ivy.LatestStrategy;
 import fr.jayasoft.ivy.ModuleId;
 import fr.jayasoft.ivy.matcher.PatternMatcher;
+import fr.jayasoft.ivy.status.StatusManager;
 import fr.jayasoft.ivy.url.URLHandlerRegistry;
 import fr.jayasoft.ivy.util.Configurator;
 import fr.jayasoft.ivy.util.Message;
@@ -37,7 +38,7 @@ import fr.jayasoft.ivy.util.Message;
  */
 public class XmlIvyConfigurationParser extends DefaultHandler {
 	private Configurator _configurator;
-    private List _configuratorTags = Arrays.asList(new String[] {"resolvers", "namespaces", "parsers", "latest-strategies", "conflict-managers", "outputters", "version-matchers"});
+    private List _configuratorTags = Arrays.asList(new String[] {"resolvers", "namespaces", "parsers", "latest-strategies", "conflict-managers", "outputters", "version-matchers", "statuses"});
 
     private Ivy _ivy;
 
@@ -244,9 +245,18 @@ public class XmlIvyConfigurationParser extends DefaultHandler {
             } else if ("version-matchers".equals(qName)) {
                 _currentConfiguratorTag = qName;
                 _configurator.setRoot(_ivy);
-                if ("true".equals(attributes.get("usedefaults"))) {
-                	_ivy.configureDefaultVersionMatcher();
+                if ("true".equals(_ivy.substitute((String)attributes.get("usedefaults")))) {
+                    _ivy.configureDefaultVersionMatcher();
                 }
+            } else if ("statuses".equals(qName)) {
+                _currentConfiguratorTag = qName;
+                StatusManager m = new StatusManager();
+                String defaultStatus = _ivy.substitute((String)attributes.get("default"));
+                if (defaultStatus != null) {
+                    m.setDefaultStatus(defaultStatus);
+                }
+                _ivy.setStatusManager(m);
+                _configurator.setRoot(m);
             } else if (_configuratorTags.contains(qName)) {
                 _currentConfiguratorTag = qName;
                 _configurator.setRoot(_ivy);

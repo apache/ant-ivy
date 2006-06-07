@@ -20,6 +20,7 @@ import fr.jayasoft.ivy.matcher.PatternMatcher;
 import fr.jayasoft.ivy.namespace.NameSpaceHelper;
 import fr.jayasoft.ivy.namespace.Namespace;
 import fr.jayasoft.ivy.namespace.NamespaceTransformer;
+import fr.jayasoft.ivy.status.StatusManager;
 import fr.jayasoft.ivy.util.Message;
 import fr.jayasoft.ivy.version.VersionMatcher;
 
@@ -99,7 +100,7 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
 
 	private ModuleRevisionId _revId;
 	private ModuleRevisionId _resolvedRevId;
-	private String _status = Status.DEFAULT_STATUS;
+	private String _status = StatusManager.getCurrent().getDefaultStatus();
 	private Date _publicationDate;
 	private Date _resolvedPublicationDate;
 	private List _dependencies = new ArrayList();
