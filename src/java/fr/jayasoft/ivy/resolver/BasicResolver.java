@@ -360,6 +360,7 @@ public abstract class BasicResolver extends AbstractResolver {
         
         // now download ivy file and parse it
         URL cachedIvyURL = null;
+        File ivyTempFile = null;
         try {
             // first check if source file is not cache file itself
             if (ResourceHelper.equals(ivyRef.getResource(), 
@@ -369,9 +370,9 @@ public abstract class BasicResolver extends AbstractResolver {
             }
             
             // temp file is used to prevent downloading twice
-            File ivyTempFile = File.createTempFile("ivy", "xml"); 
+            ivyTempFile = File.createTempFile("ivy", "xml"); 
             ivyTempFile.deleteOnExit();
-            Message.debug("\t"+getName()+": downloading "+ivyRef.getResource());
+            Message.debug("\t"+getName()+": downloading "+ivyRef.getResource()+" to "+ivyTempFile);
             get(ivyRef.getResource(), ivyTempFile);
             try {
                 cachedIvyURL = ivyTempFile.toURL();
@@ -380,7 +381,7 @@ public abstract class BasicResolver extends AbstractResolver {
                 return null;
             }
         } catch (IOException ex) {
-            Message.warn("problem while downloading ivy file: "+ivyRef.getResource()+": "+ex.getMessage());
+            Message.warn("problem while downloading ivy file: "+ivyRef.getResource()+" to "+ivyTempFile+": "+ex.getMessage());
             return null;
         }
         try {
