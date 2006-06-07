@@ -127,7 +127,9 @@ public abstract class AbstractResourceResolver extends BasicResolver {
     protected Collection findNames(Map tokenValues, String token) {
         Collection names = new HashSet();
         names.addAll(findIvyNames(tokenValues, token));
-        names.addAll(findArtifactNames(tokenValues, token));
+        if (isAllownomd()) {
+            names.addAll(findArtifactNames(tokenValues, token));
+        }
         return names;
     }
 
