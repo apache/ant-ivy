@@ -22,6 +22,7 @@ Changes:
   - NEW: pluggable version matcher (IVY-219)
   - NEW: dependency based on dependency status (IVY-47)
   - NEW: add possibility to define extra attributes in ivy files (IVY-217)
+  - NEW: option to omit specific confs and allow the rest (IVY-66)
   - NEW: use custom classloader for plugins (IVY-220)
   - NEW: adding to SPECIAL_MEANINGS in LatestRevisionStrategy (IVY-121)
   - NEW: Allow use of system properties in ivyconf.xml (IVY-228)

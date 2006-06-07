@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
@@ -867,11 +868,21 @@ public class IvyNode {
      * resolve the '*' special configurations if necessary and possible
      */
     private String[] resolveSpecialConfigurations(String[] dependencyConfigurations, IvyNode node) {
-        if (dependencyConfigurations.length == 1 
-                && "*".equals(dependencyConfigurations[0])
+        if (dependencyConfigurations.length == 1
+                && dependencyConfigurations[0].startsWith("*")
                 && node != null
                 && node.isLoaded()) {
-            return node.getDescriptor().getPublicConfigurationsNames();
+            String conf = dependencyConfigurations[0];
+            if ("*".equals(conf)) {
+                return node.getDescriptor().getPublicConfigurationsNames();
+            }
+            // there are exclusions in the configuration
+            List exclusions = Arrays.asList(conf.substring(2).split("\\!"));
+            
+            List ret = new ArrayList(Arrays.asList(node.getDescriptor().getPublicConfigurationsNames()));
+            ret.removeAll(exclusions);
+            
+            return (String[])ret.toArray(new String[ret.size()]);
         }
         return dependencyConfigurations;
     }
@@ -1401,8 +1412,8 @@ public class IvyNode {
             }
             conf = defaultConf;
         }
-        if ("*".equals(conf)) {
-            return _md.getPublicConfigurationsNames();
+        if (conf.startsWith("*")) {
+            return resolveSpecialConfigurations(new String[] {conf}, this);
         } else if (conf.indexOf(',') != -1) {
             String[] confs = conf.split(",");
             for (int i = 0; i < confs.length; i++) {

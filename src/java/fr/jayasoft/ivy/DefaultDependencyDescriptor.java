@@ -203,8 +203,16 @@ public class DefaultDependencyDescriptor implements DependencyDescriptor {
             replacedRet.add(c);
         }
         ret = replacedRet;
-        if (ret.contains("*")) {
-            return new String[] {"*"};
+        if (ret.remove("*")) {
+            StringBuffer r = new StringBuffer("*");
+            // merge excluded configurations as one conf like *!A!B
+            for (Iterator iter = ret.iterator(); iter.hasNext();) {
+                String c = (String)iter.next();
+                if (c.startsWith("!")) {
+                    r.append(c);
+                }
+            }
+            return new String[] {r.toString()};
         }
         return (String[])ret.toArray(new String[ret.size()]);
     }
