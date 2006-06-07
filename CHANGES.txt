@@ -26,6 +26,7 @@ Changes:
   - NEW: adding to SPECIAL_MEANINGS in LatestRevisionStrategy (IVY-121)
   - NEW: Allow use of system properties in ivyconf.xml (IVY-228)
 
+  - IMPROVE: artifact's "name" attribute could be omitted (IVY-231)
   - IMPROVE: ivy standalone now return error status (IVY-152)
   - IMPROVE: log messages do not display most specfic resolver name (IVY-170)
 

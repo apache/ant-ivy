@@ -239,9 +239,13 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
             } else if ("artifact".equals(qName)) {
                 if (_state == PUB) {
                     // this is a published artifact
+                    String artName = _ivy.substitute(attributes.getValue("name"));
+                    artName = artName == null ? _md.getModuleRevisionId().getName() : artName;
+                    String type = _ivy.substitute(attributes.getValue("type"));
+                    type = type == null ? "jar" : type;
                     String ext = _ivy.substitute(attributes.getValue("ext"));
-                    ext = ext != null?ext:_ivy.substitute(attributes.getValue("type"));
-                    _artifact = new MDArtifact(_md, _ivy.substitute(attributes.getValue("name")), _ivy.substitute(attributes.getValue("type")), ext, ExtendableItemHelper.getExtraAttributes(attributes, new String[] {"ext", "type", "name", "conf"}));
+                    ext = ext != null ? ext : type;
+                    _artifact = new MDArtifact(_md, artName, type, ext, ExtendableItemHelper.getExtraAttributes(attributes, new String[] {"ext", "type", "name", "conf"}));
                     String confs = _ivy.substitute(attributes.getValue("conf"));
                     // only add confs if they are specified. if they aren't, endElement will handle this
                     // only if there are no conf defined in sub elements

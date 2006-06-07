@@ -1,0 +1,10 @@
+<ivy-module version="1.0">
+	<info organisation="myorg"
+	       module="mymodule"
+	/>
+	<publications>
+		<artifact />
+		<artifact name="myartifact" />
+		<artifact type="dll" />
+	</publications>
+</ivy-module>

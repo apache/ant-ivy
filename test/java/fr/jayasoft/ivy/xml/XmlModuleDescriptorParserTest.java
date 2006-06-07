@@ -15,7 +15,6 @@ import java.util.HashSet;
 import fr.jayasoft.ivy.Artifact;
 import fr.jayasoft.ivy.Configuration;
 import fr.jayasoft.ivy.ConflictManager;
-import fr.jayasoft.ivy.DefaultModuleDescriptor;
 import fr.jayasoft.ivy.DependencyDescriptor;
 import fr.jayasoft.ivy.Ivy;
 import fr.jayasoft.ivy.License;
@@ -345,6 +344,22 @@ public class XmlModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         assertEquals(1, md.getDependencies().length);
     }
     
+    public void testArtifactsDefaults() throws Exception {
+        ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(_ivy, getClass().getResource("test-artifacts-defaults.xml"), true);
+        assertNotNull(md);
+        
+        Artifact[] artifacts = md.getArtifacts("default");
+        assertNotNull(artifacts);
+        assertEquals(3, artifacts.length);
+        assertArtifactEquals("mymodule", "jar", "jar", artifacts[0]);
+        assertArtifactEquals("myartifact", "jar", "jar", artifacts[1]);
+        assertArtifactEquals("mymodule", "dll", "dll", artifacts[2]);
+    }
+    
+    private void assertArtifactEquals(String name, String type, String ext, Artifact artifact) {
+        assertEquals(name+"/"+type+"/"+ext, artifact.getName()+"/"+artifact.getType()+"/"+artifact.getExt());        
+    }
+
     public void testDefaultConf() throws Exception {
         ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(_ivy, getClass().getResource("test-defaultconf.xml"), true);
         assertNotNull(md);
