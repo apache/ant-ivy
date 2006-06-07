@@ -37,6 +37,7 @@ import fr.jayasoft.ivy.util.Message;
 public class DualResolver extends AbstractResolver {
     private DependencyResolver _ivyResolver;
     private DependencyResolver _artifactResolver;
+    private boolean _allownomd = true;
 
     public void add(DependencyResolver resolver) {
         if (_ivyResolver == null) {
@@ -56,8 +57,12 @@ public class DualResolver extends AbstractResolver {
         data = new ResolveData(data, doValidate(data));
         final ResolvedModuleRevision mr = _ivyResolver.getDependency(dd, data);
         if (mr == null) {
-            Message.verbose("ivy resolver didn't find "+dd.getDependencyRevisionId()+": trying with artifact resolver");
-            return _artifactResolver.getDependency(dd, data);
+            if (isAllownomd()) {
+                Message.verbose("ivy resolver didn't find "+dd.getDependencyRevisionId()+": trying with artifact resolver");
+                return _artifactResolver.getDependency(dd, data);
+            } else {
+                return null;
+            }
         } else {
             return new ResolvedModuleRevisionProxy(mr, this);
         }
@@ -106,5 +111,15 @@ public class DualResolver extends AbstractResolver {
     
     public boolean exists(Artifact artifact) {
         return _artifactResolver.exists(artifact);
+    }
+
+
+    public boolean isAllownomd() {
+        return _allownomd;
+    }
+
+
+    public void setAllownomd(boolean allownomd) {
+        _allownomd = allownomd;
     }
 }
