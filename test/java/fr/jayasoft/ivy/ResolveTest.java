@@ -125,6 +125,17 @@ public class ResolveTest extends TestCase {
         assertTrue(_ivy.getArchiveFileInCache(_cache, "org1", "mod1.2", "2.0", "mod1.2", "jar", "jar").exists());
     }
 
+    public void testResolveRequiresIvyFile() throws Exception {
+        // mod1.1 depends on mod1.2, mod1.2 has no ivy file
+        Ivy ivy = new Ivy();
+        ivy.configure(new File("test/repositories/ivyconf.xml"));
+        ((FileSystemResolver)ivy.getResolver("1")).setAllownomd(false);
+        ResolveReport report = ivy.resolve(new File("test/repositories/1/org1/mod1.1/ivys/ivy-1.0.xml").toURL(),
+                null, new String[] {"*"}, _cache, null, true);
+        assertNotNull(report);
+        assertTrue(report.hasError());
+    }
+
     public void testResolveOtherConfiguration() throws Exception {
         ResolveReport report = _ivy.resolve(ResolveTest.class.getResource("ivy-other.xml"), null, new String[] {"test"}, _cache, null, true);
         

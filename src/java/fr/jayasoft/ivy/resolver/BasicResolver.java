@@ -68,6 +68,8 @@ public abstract class BasicResolver extends AbstractResolver {
     private Boolean _checkmodified = null;
 
     private boolean _checkconsistency = true;
+
+    private boolean _allownomd = true;
     
     public BasicResolver() {
         _workspaceName = Ivy.getLocalHostName();
@@ -159,6 +161,11 @@ public abstract class BasicResolver extends AbstractResolver {
         ModuleDescriptor md;
         ModuleDescriptor systemMd = null;
         if (ivyRef == null) {
+            if (!isAllownomd()) {
+                Message.verbose("\t"+getName()+": no ivy file found for "+mrid);
+                logIvyNotFound(mrid);
+                return null;
+            }
             parser = XmlModuleDescriptorParser.getInstance();
             md = DefaultModuleDescriptor.newDefaultInstance(mrid, dd.getAllDependencyArtifactsIncludes());
             ResolvedResource artifactRef = findFirstArtifactRef(md, dd, data);
@@ -728,6 +735,13 @@ public abstract class BasicResolver extends AbstractResolver {
 
     public void setCheckconsistency(boolean checkConsitency) {
         _checkconsistency = checkConsitency;
+    }
+
+    public boolean isAllownomd() {
+        return _allownomd;
+    }
+    public void setAllownomd(boolean b) {
+        _allownomd = b;
     }
 
 
