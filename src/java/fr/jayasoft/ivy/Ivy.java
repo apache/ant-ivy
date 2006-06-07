@@ -210,6 +210,8 @@ public class Ivy implements TransferListener {
         _listingIgnore.add("CVS");
         _listingIgnore.add(".svn");
         
+        addSystemProperties();
+        
         addTransferListener(new TransferListener() {
             public void transferProgress(TransferEvent evt) {
                 switch (evt.getEventType()) {
@@ -226,6 +228,10 @@ public class Ivy implements TransferListener {
         });
     }
     
+    private void addSystemProperties() {
+        addAllVariables(System.getProperties());
+    }
+
     /**
      * Call this method to ask ivy to configure some variables using either a remote or a local properties file
      */
