@@ -178,7 +178,7 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
                 String org = _ivy.substitute(attributes.getValue("organisation"));
                 String module = _ivy.substitute(attributes.getValue("module"));
                 String revision = _ivy.substitute(attributes.getValue("revision"));
-                _md.setModuleRevisionId(ModuleRevisionId.newInstance(org, module, revision, ExtendableItemHelper.getExtraAttributes(attributes, new String[] {"organisation", "module", "revision", "status", "publication", "namespace", "default"})));
+                _md.setModuleRevisionId(ModuleRevisionId.newInstance(org, module, revision, ExtendableItemHelper.getExtraAttributes(attributes, new String[] {"organisation", "module", "revision", "status", "publication", "namespace", "default", "resolver"})));
 
                 String namespace = _ivy.substitute(attributes.getValue("namespace"));
                 if (namespace != null) {
