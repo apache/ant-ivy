@@ -16,10 +16,10 @@ import fr.jayasoft.ivy.ModuleRevisionId;
  * [1.0,2.0[ matches all versions greater or equal to 1.0 and lower than 2.0
  * ]1.0,2.0] matches all versions greater than 1.0 and lower or equal to 2.0
  * ]1.0,2.0[ matches all versions greater than 1.0 and lower than 2.0
- * [1.0) matches all versions greater or equal to 1.0
- * ]1.0) matches all versions greater than 1.0
- * (2.0] matches all versions lower or equal to 2.0
- * (2.0[ matches all versions lower than 2.0
+ * [1.0,) matches all versions greater or equal to 1.0
+ * ]1.0,) matches all versions greater than 1.0
+ * (,2.0] matches all versions lower or equal to 2.0
+ * (,2.0[ matches all versions lower than 2.0
  * 
  * This class uses a latest strategy to compare revisions.
  * If none is set, it uses the default one of the ivy instance set through setIvy().
@@ -56,8 +56,8 @@ public class VersionRangeMatcher   extends AbstractVersionMatcher implements Ivy
 	private final static String ANY_NON_SPECIAL_PATTERN = "[^"+SEP_PATTERN+OPEN_INC_PATTERN+OPEN_EXC_PATTERN+CLOSE_INC_PATTERN+CLOSE_EXC_PATTERN+LI_PATTERN+UI_PATTERN+"]";
 	
 	private final static String FINITE_PATTERN = OPEN_PATTERN+"("+ANY_NON_SPECIAL_PATTERN+"+)"+SEP_PATTERN+"("+ANY_NON_SPECIAL_PATTERN+"+)"+CLOSE_PATTERN;
-	private final static String LOWER_INFINITE_PATTERN = LI_PATTERN+"("+ANY_NON_SPECIAL_PATTERN+"+)"+CLOSE_PATTERN;
-	private final static String UPPER_INFINITE_PATTERN = OPEN_PATTERN+"("+ANY_NON_SPECIAL_PATTERN+"+)"+UI_PATTERN;
+	private final static String LOWER_INFINITE_PATTERN = LI_PATTERN+"\\,("+ANY_NON_SPECIAL_PATTERN+"+)"+CLOSE_PATTERN;
+	private final static String UPPER_INFINITE_PATTERN = OPEN_PATTERN+"("+ANY_NON_SPECIAL_PATTERN+"+)\\,"+UI_PATTERN;
 	
 	private final static Pattern FINITE_RANGE = Pattern.compile(FINITE_PATTERN);
 	private final static Pattern LOWER_INFINITE_RANGE = Pattern.compile(LOWER_INFINITE_PATTERN);

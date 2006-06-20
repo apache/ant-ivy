@@ -21,8 +21,8 @@ public class VersionRangeMatcherTest extends TestCase {
 		assertDynamic("[1.0,2.0[", true);
 		assertDynamic("]1.0,2.0[", true);
 		assertDynamic("]1.0,2.0]", true);
-		assertDynamic("[1.0)", true);
-		assertDynamic("(1.0]", true);
+		assertDynamic("[1.0,)", true);
+		assertDynamic("(,1.0]", true);
 	}
 
 	public void testIncludingFinite() {
@@ -48,35 +48,35 @@ public class VersionRangeMatcherTest extends TestCase {
 	}
 	
 	public void testIncludingInfinite() {
-		assertAccept("[1.0)", "1.1", true);
-		assertAccept("[1.0)", "2.0", true);
-		assertAccept("[1.0)", "3.5.6", true);
-		assertAccept("[1.0)", "1.0", true);
+		assertAccept("[1.0,)", "1.1", true);
+		assertAccept("[1.0,)", "2.0", true);
+		assertAccept("[1.0,)", "3.5.6", true);
+		assertAccept("[1.0,)", "1.0", true);
 		
-		assertAccept("[1.0)", "0.9", false);
+		assertAccept("[1.0,)", "0.9", false);
 
-		assertAccept("(2.0]", "1.1", true);
-		assertAccept("(2.0]", "0.1", true);
-		assertAccept("(2.0]", "0.2.4", true);
-		assertAccept("(2.0]", "2.0", true);
+		assertAccept("(,2.0]", "1.1", true);
+		assertAccept("(,2.0]", "0.1", true);
+		assertAccept("(,2.0]", "0.2.4", true);
+		assertAccept("(,2.0]", "2.0", true);
 		
-		assertAccept("(2.0]", "2.3", false);
+		assertAccept("(,2.0]", "2.3", false);
 	}
 	
 	public void testExcludingInfinite() {
-		assertAccept("]1.0)", "1.1", true);
-		assertAccept("]1.0)", "2.0", true);
-		assertAccept("]1.0)", "3.5.6", true);
+		assertAccept("]1.0,)", "1.1", true);
+		assertAccept("]1.0,)", "2.0", true);
+		assertAccept("]1.0,)", "3.5.6", true);
 
-		assertAccept("]1.0)", "1.0", false);
-		assertAccept("]1.0)", "0.9", false);
+		assertAccept("]1.0,)", "1.0", false);
+		assertAccept("]1.0,)", "0.9", false);
 
-		assertAccept("(2.0[", "1.1", true);
-		assertAccept("(2.0[", "0.1", true);
-		assertAccept("(2.0[", "0.2.4", true);
+		assertAccept("(,2.0[", "1.1", true);
+		assertAccept("(,2.0[", "0.1", true);
+		assertAccept("(,2.0[", "0.2.4", true);
 		
-		assertAccept("(2.0[", "2.0", false);
-		assertAccept("(2.0[", "2.3", false);
+		assertAccept("(,2.0[", "2.0", false);
+		assertAccept("(,2.0[", "2.3", false);
 	}
 	
 	
