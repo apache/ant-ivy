@@ -1,3 +1,22 @@
+- messages
+    it is quite difficult to know exactly what messages should be output to the console or not, and it often
+    depends on the user profile: beginner, expert, build manager, simple user, ...
+    
+    Being able to define the messages output in a single and homogeneous way could be a good thing.
+    
+    To allow this, maybe a solution could be to output messages in the code only by using keys:
+    LOGGER.debug("unhandled.revision", mrid.getRevision());
+    
+    The LOGGER would be a constant initialised with the class name.
+    
+    a profile wold consist in a message.properties file, associating each key (prefixed by the FQCN) to a 
+    message for the given profile. A key with no mapping result in no message at all.
+    
+    it would be possible to disable all messages of a class or activate only a certain level per class 
+    (as in log4j for instance) to customize a profile at runtime
+    
+    shifting is costly, about 400 calls to messages
+
 - promote task to update an already published module with a new status
 	this task would also automatically update compatiblity data (see below)
 - tag task to add one or several tags to an already published module
