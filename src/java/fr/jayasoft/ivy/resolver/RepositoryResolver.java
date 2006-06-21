@@ -134,9 +134,11 @@ public class RepositoryResolver extends AbstractResourceResolver {
         }
     }
 
-    protected long get(Resource resource, File ivyTempFile) throws IOException {
-        _repository.get(resource.getName(), ivyTempFile);
-        return ivyTempFile.length();
+    protected long get(Resource resource, File dest) throws IOException {
+        Message.verbose("\t"+getName()+": downloading "+resource.getName());
+        Message.debug("\t\tto "+dest);
+        _repository.get(resource.getName(), dest);
+        return dest.length();
     }
 
     public void publish(Artifact artifact, File src, boolean overwrite) throws IOException {

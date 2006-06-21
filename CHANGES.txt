@@ -33,6 +33,7 @@ Changes:
   - IMPROVE: artifact's "name" attribute could be omitted (IVY-231)
   - IMPROVE: ivy standalone now return error status (IVY-152)
   - IMPROVE: log messages do not display most specfic resolver name (IVY-170)
+  - IMPROVE: prints URL before downloading in verbose mode (IVY-257)
 
   - FIX: Bad diagnostics message when no space left (IVY-250)
   - FIX: Parent version is expected to be equal to the module version in POM (IVY-241)
