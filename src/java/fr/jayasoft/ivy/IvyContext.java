@@ -6,6 +6,7 @@
 package fr.jayasoft.ivy;
 
 import java.io.File;
+import java.lang.ref.WeakReference;
 
 
 /**
@@ -13,14 +14,14 @@ import java.io.File;
  * It contains several getters to retrieve information, like the used Ivy instance, the
  * cache location... 
  * 
- * @author x.hanin
+ * @author Xavier Hanin
  * @author Maarten Coene
  */
 public class IvyContext {
 
     private static ThreadLocal _current = new ThreadLocal();
     
-    private Ivy _ivy;
+    private WeakReference _ivy;
     private File _cache;
     
     public static IvyContext getContext() {
@@ -33,10 +34,10 @@ public class IvyContext {
     }
     
     public Ivy getIvy() {
-    	return _ivy;
+    	return (Ivy)_ivy.get();
     }
     void setIvy(Ivy ivy) {
-    	_ivy = ivy;
+    	_ivy = new WeakReference(ivy);
     }
     public File getCache() {
     	return _cache;
