@@ -599,4 +599,29 @@ public class XmlModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         assertEquals(Arrays.asList(new String[] {"B"}), Arrays.asList(dd.getDependencyConfigurations("conf2")));  
     }
     
+    public void testDefaultConfMappingWithSelectors() throws Exception {
+        // import configurations and default mapping
+        ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(_ivy, getClass().getResource("test-defaultconfmapping-withselectors.xml"), true);
+        assertNotNull(md);
+        
+        // has 3 dependencies
+        DependencyDescriptor[] dependencies = md.getDependencies();
+        assertNotNull(dependencies);
+        assertEquals(3, dependencies.length);
+        
+        // confs dep1: *->default1,default3
+        DependencyDescriptor dd = getDependency(dependencies, "mymodule1");
+        assertEquals(Arrays.asList(new String[] {"*"}), Arrays.asList(dd.getModuleConfigurations()));
+        assertEquals(Arrays.asList(new String[] {"default1", "default3"}), Arrays.asList(dd.getDependencyConfigurations("default"))); 
+        
+        // confs dep2: test->default2,default3
+        dd = getDependency(dependencies, "mymodule2");
+        assertEquals(Arrays.asList(new String[] {"test"}), Arrays.asList(dd.getModuleConfigurations()));
+        assertEquals(Arrays.asList(new String[] {"default2", "default3"}), Arrays.asList(dd.getDependencyConfigurations("test")));  
+        
+        // confs dep3: *->default4
+        dd = getDependency(dependencies, "mymodule3");
+        assertEquals(Arrays.asList(new String[] {"*"}), Arrays.asList(dd.getModuleConfigurations()));
+        assertEquals(Arrays.asList(new String[] {"default4"}), Arrays.asList(dd.getDependencyConfigurations("bla")));  
+    }
 }

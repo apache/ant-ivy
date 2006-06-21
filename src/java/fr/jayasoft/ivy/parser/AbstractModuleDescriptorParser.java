@@ -75,10 +75,16 @@ public abstract class AbstractModuleDescriptorParser implements ModuleDescriptor
             parseDepsConfs(confs, dd, _defaultConfMapping != null);        
         }
         protected void parseDepsConfs(String confs, DefaultDependencyDescriptor dd, boolean useDefaultMappingToGuessRightOperande) {
+        	parseDepsConfs(confs, dd, useDefaultMappingToGuessRightOperande, true);
+        }
+        protected void parseDepsConfs(String confs, DefaultDependencyDescriptor dd, boolean useDefaultMappingToGuessRightOperande, boolean evaluateConditions) {
             String[] conf = confs.split(";");
-            parseDepsConfs(conf, dd, useDefaultMappingToGuessRightOperande);
+            parseDepsConfs(conf, dd, useDefaultMappingToGuessRightOperande, evaluateConditions);
         }
         protected void parseDepsConfs(String[] conf, DefaultDependencyDescriptor dd, boolean useDefaultMappingToGuessRightOperande) {
+        	parseDepsConfs(conf, dd, useDefaultMappingToGuessRightOperande, true);
+        }
+        protected void parseDepsConfs(String[] conf, DefaultDependencyDescriptor dd, boolean useDefaultMappingToGuessRightOperande, boolean evaluateConditions) {
             for (int i = 0; i < conf.length; i++) {
                 String[] ops = conf[i].split("->");
                 if (ops.length == 1) {
@@ -92,7 +98,7 @@ public abstract class AbstractModuleDescriptorParser implements ModuleDescriptor
                             String[] depConfs = getDefaultConfMappingDescriptor().getDependencyConfigurations(modConfs[j]);
                             if (depConfs.length > 0) {
                                 for (int k = 0; k < depConfs.length; k++) {
-                                	String mappedDependency = evaluateCondition(depConfs[k].trim(), dd);
+                                	String mappedDependency = evaluateConditions ? evaluateCondition(depConfs[k].trim(), dd): depConfs[k].trim();
                                 	if (mappedDependency != null) {
                                         dd.addDependencyConfiguration(modConfs[j].trim(), mappedDependency);
                                 	}
@@ -108,7 +114,10 @@ public abstract class AbstractModuleDescriptorParser implements ModuleDescriptor
                     String[] depConfs = ops[1].split(",");
                     for (int j = 0; j < modConfs.length; j++) {
                         for (int k = 0; k < depConfs.length; k++) {
-                            dd.addDependencyConfiguration(modConfs[j].trim(), depConfs[k].trim());
+                        	String mappedDependency = evaluateConditions ? evaluateCondition(depConfs[k].trim(), dd): depConfs[k].trim();
+                        	if (mappedDependency != null) {
+                                dd.addDependencyConfiguration(modConfs[j].trim(), mappedDependency);
+                        	}
                         }
                     }
                 } else {
@@ -210,7 +219,7 @@ public abstract class AbstractModuleDescriptorParser implements ModuleDescriptor
         protected DependencyDescriptor getDefaultConfMappingDescriptor() {
             if (_defaultConfMappingDescriptor == null) {
                 _defaultConfMappingDescriptor = new DefaultDependencyDescriptor(ModuleRevisionId.newInstance("", "", ""), false);
-                parseDepsConfs(_defaultConfMapping, _defaultConfMappingDescriptor, false);
+                parseDepsConfs(_defaultConfMapping, _defaultConfMappingDescriptor, false, false);
             }
             return _defaultConfMappingDescriptor;
         }
