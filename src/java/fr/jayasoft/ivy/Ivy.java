@@ -1692,6 +1692,14 @@ public class Ivy implements TransferListener {
      * If destIvyPattern is null no ivy files will be copied.
      */
     public int retrieve(ModuleId moduleId, String[] confs, final File cache, String destFilePattern, String destIvyPattern) {
+    	return retrieve(moduleId, confs, cache, destFilePattern, destIvyPattern, FilterHelper.NO_FILTER);
+    }
+    
+    public int retrieve(ModuleId moduleId, String[] confs, final File cache, String destFilePattern, String destIvyPattern, Filter artifactFilter) {
+    	if (artifactFilter == null) {
+    		artifactFilter = FilterHelper.NO_FILTER;
+    	}
+    	
         IvyContext.getContext().setIvy(this);
         IvyContext.getContext().setCache(cache);
         Message.info(":: retrieving :: "+moduleId);
@@ -1701,7 +1709,7 @@ public class Ivy implements TransferListener {
         destFilePattern = IvyPatternHelper.substituteVariables(destFilePattern, getVariables());
         destIvyPattern = IvyPatternHelper.substituteVariables(destIvyPattern, getVariables());
         try {
-            final Map artifactsToCopy = determineArtifactsToCopy(moduleId, confs, cache, destFilePattern, destIvyPattern);            
+            final Map artifactsToCopy = determineArtifactsToCopy(moduleId, confs, cache, destFilePattern, destIvyPattern, artifactFilter);            
             // do retrieve
             int targetsCopied = 0;
             int targetsUpToDate = 0;
@@ -1734,8 +1742,17 @@ public class Ivy implements TransferListener {
     }
 
     public Map determineArtifactsToCopy(ModuleId moduleId, String[] confs, final File cache, String destFilePattern, String destIvyPattern) throws ParseException, IOException {
+    	return determineArtifactsToCopy(moduleId, confs, cache, destFilePattern, destIvyPattern, FilterHelper.NO_FILTER);
+    }
+    
+    public Map determineArtifactsToCopy(ModuleId moduleId, String[] confs, final File cache, String destFilePattern, String destIvyPattern, Filter artifactFilter) throws ParseException, IOException {
         IvyContext.getContext().setIvy(this);
         IvyContext.getContext().setCache(cache);
+        
+        if (artifactFilter == null) {
+        	artifactFilter = FilterHelper.NO_FILTER;
+        }
+        
         // find what we must retrieve where
         final Map artifactsToCopy = new HashMap(); // Artifact source -> Set (String copyDestAbsolutePath)
         final Map conflictsMap = new HashMap(); // String copyDestAbsolutePath -> Set (Artifact source)
@@ -1753,6 +1770,10 @@ public class Ivy implements TransferListener {
             for (Iterator iter = artifacts.iterator(); iter.hasNext();) {
                 Artifact artifact = (Artifact)iter.next();
                 String destPattern = "ivy".equals(artifact.getType()) ? destIvyPattern: destFilePattern;
+                
+                if (!"ivy".equals(artifact.getType()) && !artifactFilter.accept(artifact)) {
+                	continue;	// skip this artifact, the filter didn't accept it!
+                }
                 
                 String destFileName = IvyPatternHelper.substitute(destPattern, artifact, conf);
                 

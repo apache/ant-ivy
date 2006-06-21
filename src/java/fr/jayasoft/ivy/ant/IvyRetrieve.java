@@ -7,6 +7,8 @@ package fr.jayasoft.ivy.ant;
 
 import fr.jayasoft.ivy.Ivy;
 import fr.jayasoft.ivy.ModuleId;
+import fr.jayasoft.ivy.filter.Filter;
+import fr.jayasoft.ivy.filter.FilterHelper;
 
 import java.io.File;
 
@@ -24,7 +26,8 @@ public class IvyRetrieve extends IvyTask {
     private String _pattern;
     private String _ivypattern = null;
     private boolean _haltOnFailure = true;
-
+    private String _type;
+    
     public File getCache() {
         return _cache;
     }
@@ -61,6 +64,12 @@ public class IvyRetrieve extends IvyTask {
     public void setHaltonfailure(boolean haltOnFailure) {
         _haltOnFailure = haltOnFailure;
     }
+    public String getType() {
+        return _type;
+    }
+    public void setType(String type) {
+        _type = type;
+    }
     
     public void execute() throws BuildException {
         Ivy ivy = getIvyInstance();
@@ -95,7 +104,8 @@ public class IvyRetrieve extends IvyTask {
             throw new BuildException("no conf provided for ivy retrieve task: It can either be set explicitely via the attribute 'conf' or via 'ivy.resolved.configurations' property or a prior call to <resolve/>");
         }
         try {
-            int targetsCopied = ivy.retrieve(new ModuleId(_organisation, _module), splitConfs(_conf), _cache, _pattern, _ivypattern);
+        	Filter artifactFilter = FilterHelper.getArtifactTypeFilter(getType());
+            int targetsCopied = ivy.retrieve(new ModuleId(_organisation, _module), splitConfs(_conf), _cache, _pattern, _ivypattern, artifactFilter);
             boolean haveTargetsBeenCopied = targetsCopied > 0;
             getProject().setProperty("ivy.nb.targets.copied", String.valueOf(targetsCopied));
             getProject().setProperty("ivy.targets.copied", String.valueOf(haveTargetsBeenCopied));

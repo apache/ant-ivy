@@ -55,6 +55,7 @@ Changes:
   - FIX: Delivered Ivy files with incomplete last line. (IVY-125) (thanks to Matthias Kilian)
 
 * thanks to Maarten Coene:
+  - NEW: Add type filtering to retrieve task (IVY-260)
   - NEW: Add selectors to the configuration mapping (IVY-253)
   - NEW: Add Ant task to retrieve information from an Ivy file without doing a resolve (IVY-255)
   - NEW: add option to cachepath task to create a path with local artifact paths (IVY-221)
