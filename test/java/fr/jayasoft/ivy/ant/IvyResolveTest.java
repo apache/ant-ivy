@@ -112,7 +112,7 @@ public class IvyResolveTest extends TestCase {
             _resolve.execute();
             fail("failure didn't raised an exception with default haltonfailure setting");
         } catch (BuildException ex) {
-            // ok => should raised an exception
+            // ok => should raise an exception
         }
     }
 
@@ -122,7 +122,17 @@ public class IvyResolveTest extends TestCase {
             _resolve.execute();
             fail("failure didn't raised an exception with default haltonfailure setting");
         } catch (BuildException ex) {
-            // ok => should raised an exception
+            // ok => should raise an exception
+        }
+    }
+
+    public void testFailureOnBadStatusInDependencyIvyFile() throws Exception {
+        try {
+            _resolve.setFile(new File("test/java/fr/jayasoft/ivy/ant/ivy-failure3.xml"));
+            _resolve.execute();
+            fail("failure didn't raised an exception with default haltonfailure setting");
+        } catch (BuildException ex) {
+            // ok => should raise an exception
         }
     }
 

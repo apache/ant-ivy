@@ -481,6 +481,11 @@ public abstract class BasicResolver extends AbstractResolver {
                 ok = false;
             }
         }
+        if (!getIvy().getStatusManager().isStatus(md.getStatus())) {
+            Message.error("\t"+getName()+": bad status found in "+ivyRef.getResource()+": '"+md.getStatus()+"'");
+            errors.append("bad status: '"+md.getStatus()+"'; ");
+            ok = false;
+        }
         if (!ok) {
             throw new ParseException("inconsistent module descriptor file found in '"+ivyRef.getResource()+"': "+errors, 0);
         }

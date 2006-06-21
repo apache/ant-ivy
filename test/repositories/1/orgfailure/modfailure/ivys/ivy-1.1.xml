@@ -1,0 +1,7 @@
+<ivy-module version="1.0"> 
+	<info organisation="orgfailure"
+	       module="modfailure"
+	       revision="1.1"
+	       status="badstatus"
+	/>
+</ivy-module>

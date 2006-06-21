@@ -1,0 +1,10 @@
+<ivy-module version="1.0"> 
+	<info organisation="jayasoft"
+	       module="resolve-failure3"
+	       revision="1.0"
+	       status="release"
+	/>
+	<dependencies>
+		<dependency org="orgfailure" name="modfailure" rev="1.1"/>
+	</dependencies>
+</ivy-module>

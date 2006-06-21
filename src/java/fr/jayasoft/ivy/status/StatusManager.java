@@ -14,6 +14,7 @@ import java.util.ListIterator;
 import java.util.Map;
 
 import fr.jayasoft.ivy.Ivy;
+import fr.jayasoft.ivy.util.Message;
 
 /**
  * Note: update methods (such as addStatus) should only be called BEFORE any call to accessor methods
@@ -61,7 +62,7 @@ public class StatusManager {
     public List getStatuses() {
         return _status;
     }
-
+    
     private void computeMaps() {
         if (_status.isEmpty()) {
             throw new IllegalStateException("badly configured statuses: no status found");
@@ -78,13 +79,21 @@ public class StatusManager {
         }
     }
     
+    public boolean isStatus(String status) {
+        if (_statusPriorityMap == null) {
+            computeMaps();
+        }
+        return _statusPriorityMap.containsKey(status);
+    }
+
     public int getPriority(String status) {
         if (_statusPriorityMap == null) {
             computeMaps();
         }
         Integer priority = (Integer)_statusPriorityMap.get(status);
         if (priority == null) {
-            throw new IllegalArgumentException("unknown status "+status);
+            Message.debug("unknown status "+status+": assuming lowest priority");
+            return Integer.MAX_VALUE;
         }
         return priority.intValue();
     }
@@ -95,7 +104,8 @@ public class StatusManager {
         }
         Boolean isIntegration = (Boolean)_statusIntegrationMap.get(status);
         if (isIntegration == null) {
-            throw new IllegalArgumentException("unknown status "+status);
+            Message.debug("unknown status "+status+": assuming integration");
+            return true;
         }
         return isIntegration.booleanValue();
     }
