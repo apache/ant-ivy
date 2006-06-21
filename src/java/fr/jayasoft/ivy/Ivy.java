@@ -112,18 +112,14 @@ import fr.jayasoft.ivy.xml.XmlReportParser;
  *
  */
 public class Ivy implements TransferListener {
-    private static ThreadLocal _current = new ThreadLocal();
-    
-    public static Ivy getCurrent() {
-        Ivy cur = (Ivy)_current.get();
+
+	public static Ivy getCurrent() {
+        Ivy cur = IvyContext.getContext().getIvy();
         if (cur == null) {
             cur = new Ivy();
-            _current.set(cur);
+            IvyContext.getContext().setIvy(cur);
         }
         return cur;
-    }
-    private static void setCurrent(Ivy ivy) {
-        _current.set(ivy);
     }
 
     
@@ -244,7 +240,7 @@ public class Ivy implements TransferListener {
                 }
             }
         });
-        setCurrent(this);
+        IvyContext.getContext().setIvy(this);
     }
     
     private void addSystemProperties() {
@@ -255,7 +251,7 @@ public class Ivy implements TransferListener {
      * Call this method to ask ivy to configure some variables using either a remote or a local properties file
      */
     public void configureRepositories(boolean remote) {
-        setCurrent(this);
+        IvyContext.getContext().setIvy(this);
         if (!_repositoriesConfigured) {
             Properties props = new Properties();
             boolean configured = false;
@@ -283,7 +279,7 @@ public class Ivy implements TransferListener {
     }
 
     public void typeDefs(InputStream stream) throws IOException {
-        setCurrent(this);
+        IvyContext.getContext().setIvy(this);
         try {
             Properties p = new Properties();
             p.load(stream);
@@ -294,7 +290,7 @@ public class Ivy implements TransferListener {
     }
 
     public void typeDefs(Properties p) {
-        setCurrent(this);
+        IvyContext.getContext().setIvy(this);
         for (Iterator iter = p.keySet().iterator(); iter.hasNext();) {
             String name = (String) iter.next();
             typeDef(name, p.getProperty(name));
@@ -306,7 +302,7 @@ public class Ivy implements TransferListener {
     //                         CONFIGURATION
     /////////////////////////////////////////////////////////////////////////
     public void configure(File configurationFile) throws ParseException, IOException {
-        setCurrent(this);
+        IvyContext.getContext().setIvy(this);
         Message.info(":: configuring :: file = "+configurationFile);
         long start = System.currentTimeMillis();
         setConfigurationVariables(configurationFile);
@@ -330,7 +326,7 @@ public class Ivy implements TransferListener {
     }
 
     public void configure(URL configurationURL) throws ParseException, IOException {
-        setCurrent(this);
+        IvyContext.getContext().setIvy(this);
         Message.info(":: configuring :: url = "+configurationURL);
         long start = System.currentTimeMillis();
         setConfigurationVariables(configurationURL);
@@ -352,7 +348,7 @@ public class Ivy implements TransferListener {
     }
 
     public void setConfigurationVariables(File configurationFile) {
-        setCurrent(this);
+        IvyContext.getContext().setIvy(this);
         try {
             setVariable("ivy.conf.dir", new File(configurationFile.getAbsolutePath()).getParent());
             setVariable("ivy.conf.file", configurationFile.getAbsolutePath());
@@ -365,7 +361,7 @@ public class Ivy implements TransferListener {
     }
     
     public void setConfigurationVariables(URL configurationURL) {
-        setCurrent(this);
+        IvyContext.getContext().setIvy(this);
         String confURL = configurationURL.toExternalForm();
         setVariable("ivy.conf.url", confURL);
         int slashIndex = confURL.lastIndexOf('/');
@@ -778,7 +774,7 @@ public class Ivy implements TransferListener {
      */
     public boolean check(URL ivyFile, String resolvername) {
         try {
-            setCurrent(this);
+            IvyContext.getContext().setIvy(this);
             boolean result = true;
             // parse ivy file
             ModuleDescriptor md = ModuleDescriptorParserRegistry.getInstance().parseDescriptor(this, ivyFile, doValidate());
@@ -873,7 +869,8 @@ public class Ivy implements TransferListener {
         return resolve(ivySource, revision, confs, cache, date, validate, useCacheOnly, FilterHelper.NO_FILTER);
     }
     public ResolveReport resolve(URL ivySource, String revision, String[] confs, File cache, Date date, boolean validate, boolean useCacheOnly, Filter artifactFilter) throws ParseException, IOException {
-        setCurrent(this);
+        IvyContext.getContext().setIvy(this);
+        IvyContext.getContext().setCache(cache);
         DependencyResolver oldDictator = getDictatorResolver();
         if (useCacheOnly) {
             setDictatorResolver(new CacheResolver(this));
@@ -1001,7 +998,8 @@ public class Ivy implements TransferListener {
      * @return a report concerning the download
      */
     public ArtifactDownloadReport download(Artifact artifact, File cache) {
-        setCurrent(this);
+        IvyContext.getContext().setIvy(this);
+        IvyContext.getContext().setCache(cache);
         if (cache == null) {
             cache = getDefaultCache();
         }
@@ -1040,7 +1038,8 @@ public class Ivy implements TransferListener {
      * @return an array of the resolved Dependencies
      */
     public IvyNode[] getDependencies(ModuleDescriptor md, String[] confs, File cache, Date date, ResolveReport report, boolean validate) {
-        setCurrent(this);
+        IvyContext.getContext().setIvy(this);
+        IvyContext.getContext().setCache(cache);
         if (md == null) {
             throw new NullPointerException("module descriptor must not be null");
         }
@@ -1466,7 +1465,8 @@ public class Ivy implements TransferListener {
     }
 
     public ResolvedModuleRevision findModuleInCache(ModuleRevisionId mrid, File cache, boolean validate) {
-        setCurrent(this);
+        IvyContext.getContext().setIvy(this);
+        IvyContext.getContext().setCache(cache);
         // first, check if it is in cache
         if (!getVersionMatcher().isDynamic(mrid)) {
             File ivyFile = getIvyFileInCache(cache, mrid);
@@ -1512,7 +1512,8 @@ public class Ivy implements TransferListener {
     /////////////////////////////////////////////////////////////////////////
     
     public ResolveReport install(ModuleRevisionId mrid, String from, String to, boolean transitive, boolean validate, boolean overwrite, Filter artifactFilter, File cache, String matcherName) throws IOException {
-        setCurrent(this);
+        IvyContext.getContext().setIvy(this);
+        IvyContext.getContext().setCache(cache);
         if (cache == null) {
             cache = getDefaultCache();
         }
@@ -1596,7 +1597,7 @@ public class Ivy implements TransferListener {
     }
 
     public Collection findModuleRevisionIds(DependencyResolver resolver, ModuleRevisionId pattern, PatternMatcher matcher) {
-        setCurrent(this);
+        IvyContext.getContext().setIvy(this);
         Collection mrids = new ArrayList();
         String resolverName = resolver.getName();
         
@@ -1691,7 +1692,8 @@ public class Ivy implements TransferListener {
      * If destIvyPattern is null no ivy files will be copied.
      */
     public int retrieve(ModuleId moduleId, String[] confs, final File cache, String destFilePattern, String destIvyPattern) {
-        setCurrent(this);
+        IvyContext.getContext().setIvy(this);
+        IvyContext.getContext().setCache(cache);
         Message.info(":: retrieving :: "+moduleId);
         Message.info("\tconfs: "+Arrays.asList(confs));
         long start = System.currentTimeMillis();
@@ -1732,7 +1734,8 @@ public class Ivy implements TransferListener {
     }
 
     public Map determineArtifactsToCopy(ModuleId moduleId, String[] confs, final File cache, String destFilePattern, String destIvyPattern) throws ParseException, IOException {
-        setCurrent(this);
+        IvyContext.getContext().setIvy(this);
+        IvyContext.getContext().setCache(cache);
         // find what we must retrieve where
         final Map artifactsToCopy = new HashMap(); // Artifact source -> Set (String copyDestAbsolutePath)
         final Map conflictsMap = new HashMap(); // String copyDestAbsolutePath -> Set (Artifact source)
@@ -1879,7 +1882,8 @@ public class Ivy implements TransferListener {
             PublishingDependencyRevisionResolver pdrResolver, 
             boolean validate,
             boolean resolveDynamicRevisions) throws IOException, ParseException {
-        setCurrent(this);
+        IvyContext.getContext().setIvy(this);
+        IvyContext.getContext().setCache(cache);
         Message.info(":: delivering :: "+mrid+" :: "+revision+" :: "+status+" :: "+pubdate);
         Message.verbose("\tvalidate = "+validate);
         long start = System.currentTimeMillis();
@@ -1976,7 +1980,8 @@ public class Ivy implements TransferListener {
      * @throws ParseException
      */
     public Collection publish(ModuleRevisionId mrid, String pubrevision, File cache, String srcArtifactPattern, String resolverName, String srcIvyPattern, boolean validate, boolean overwrite) throws IOException {
-        setCurrent(this);
+        IvyContext.getContext().setIvy(this);
+        IvyContext.getContext().setCache(cache);
         Message.info(":: publishing :: "+mrid);
         Message.verbose("\tvalidate = "+validate);
         long start = System.currentTimeMillis();
@@ -2052,7 +2057,7 @@ public class Ivy implements TransferListener {
     /////////////////////////////////////////////////////////////////////////
 
     public List sortNodes(Collection nodes) {
-        setCurrent(this);
+        IvyContext.getContext().setIvy(this);
         return ModuleDescriptorSorter.sortNodes(getVersionMatcher(), nodes);
     }
 
@@ -2065,7 +2070,7 @@ public class Ivy implements TransferListener {
      * @return a List of sorted ModuleDescriptors
      */
     public List sortModuleDescriptors(Collection moduleDescriptors) {
-        setCurrent(this);
+        IvyContext.getContext().setIvy(this);
         return ModuleDescriptorSorter.sortModuleDescriptors(getVersionMatcher(), moduleDescriptors);   
     }
     
@@ -2089,12 +2094,20 @@ public class Ivy implements TransferListener {
         return new File(cache, getArchivePathInCache(artifact));
     }
     
+    public File getArchiveFileInCache(File cache, Artifact artifact, ArtifactOrigin origin) {
+    	return new File(cache, getArchivePathInCache(artifact, origin));
+    }
+    
     public File getArchiveFileInCache(File cache, String organisation, String module, String revision, String artifact, String type, String ext) {
         return new File(cache, getArchivePathInCache(organisation, module, revision, artifact, type, ext));
     }
     
     public String getArchivePathInCache(Artifact artifact) {
         return IvyPatternHelper.substitute(_cacheArtifactPattern, artifact);
+    }
+    
+    public String getArchivePathInCache(Artifact artifact, ArtifactOrigin origin) {
+        return IvyPatternHelper.substitute(_cacheArtifactPattern, artifact, origin);
     }
     
     /**

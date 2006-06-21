@@ -5,6 +5,7 @@
  */
 package fr.jayasoft.ivy.util;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -15,7 +16,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import fr.jayasoft.ivy.Artifact;
+import fr.jayasoft.ivy.ArtifactOrigin;
 import fr.jayasoft.ivy.DefaultArtifact;
+import fr.jayasoft.ivy.Ivy;
+import fr.jayasoft.ivy.IvyContext;
 import fr.jayasoft.ivy.ModuleRevisionId;
 
 /**
@@ -31,10 +35,10 @@ public class IvyPatternHelper {
     public static final String MODULE_KEY = "module";
     public static final String ORGANISATION_KEY = "organisation";
     public static final String ORGANISATION_KEY2 = "organization";
+    public static final String ORIGINAL_ARTIFACTNAME_KEY = "originalname";
     
     private static final Pattern PARAM_PATTERN = Pattern.compile("\\@\\{(.*?)\\}");
     private static final Pattern VAR_PATTERN = Pattern.compile("\\$\\{(.*?)\\}");
-    private static final Pattern TOKEN_PATTERN = Pattern.compile("\\[(.*?)\\]");
     
     public static String substitute(String pattern, ModuleRevisionId moduleRevision) {
         return substitute(pattern, 
@@ -54,7 +58,10 @@ public class IvyPatternHelper {
                 null);
     }
     public static String substitute(String pattern, Artifact artifact) {
-        return substitute(pattern, artifact, null);
+        return substitute(pattern, artifact, (String) null);
+    }
+    public static String substitute(String pattern, Artifact artifact, ArtifactOrigin origin) {
+        return substitute(pattern, artifact.getModuleRevisionId(), artifact, null, origin);
     }
     public static String substitute(String pattern, Artifact artifact, String conf) {
         return substitute(pattern, artifact.getModuleRevisionId(), artifact, conf);
@@ -63,6 +70,10 @@ public class IvyPatternHelper {
         return substitute(pattern, mrid, artifact, null);
     }
     public static String substitute(String pattern, ModuleRevisionId mrid, Artifact artifact, String conf) {
+    	return substitute(pattern, mrid, artifact, conf, null);
+    }
+    
+    public static String substitute(String pattern, ModuleRevisionId mrid, Artifact artifact, String conf, ArtifactOrigin origin) {
         Map attributes = new HashMap();
         attributes.putAll(mrid.getAttributes());
         attributes.putAll(artifact.getAttributes());
@@ -74,6 +85,7 @@ public class IvyPatternHelper {
                 artifact.getType(),
                 artifact.getExt(),
                 conf,
+                origin,
                 attributes);
     }
 
@@ -87,6 +99,10 @@ public class IvyPatternHelper {
     }
     
     public static String substitute(String pattern, String org, String module, String revision, String artifact, String type, String ext, String conf, Map extraAttributes) {
+    	return substitute(pattern, org, module, revision, artifact, type, ext, conf, null, extraAttributes);
+    }
+    
+    public static String substitute(String pattern, String org, String module, String revision, String artifact, String type, String ext, String conf, ArtifactOrigin origin, Map extraAttributes) {
         Map tokens = new HashMap(extraAttributes == null ? Collections.EMPTY_MAP : extraAttributes);        
         tokens.put(ORGANISATION_KEY, org==null?"":org);
         tokens.put(ORGANISATION_KEY2, org==null?"":org);
@@ -96,6 +112,7 @@ public class IvyPatternHelper {
         tokens.put(TYPE_KEY, type==null?"jar":type);
         tokens.put(EXT_KEY, ext==null?"jar":ext);
         tokens.put(CONF_KEY, conf==null?"default":conf);
+        tokens.put(ORIGINAL_ARTIFACTNAME_KEY, origin==null?new OriginalArtifactNameValue(org, module, revision, artifact, type, ext):new OriginalArtifactNameValue(origin));
         return substituteTokens(pattern, tokens);
     }
     
@@ -189,7 +206,8 @@ public class IvyPatternHelper {
                 }
                 
                 String token = tokenBuffer.toString();
-                String value = (String) tokens.get(token);
+                Object tokenValue = tokens.get(token);
+                String value = (tokenValue == null) ? null : tokenValue.toString();
                 
                 if (insideOptionalPart) {
                     tokenHadValue = (value != null) && (value.length() > 0);
@@ -307,5 +325,68 @@ public class IvyPatternHelper {
         pattern = "${test} ${test2} ${nothing}";
         System.out.println("pattern= "+pattern);
         System.out.println("resolved= "+substituteVariables(pattern, variables));
+    }
+    
+    /**
+     * This class returns the original name of the artifact 'on demand'. This is done to avoid
+     * having to read the cached datafile containing the original location of the artifact if we
+     * don't need it.
+     */
+    private static class OriginalArtifactNameValue {
+    	// module properties
+    	private String org;
+    	private String moduleName;
+    	private String revision;
+    	
+    	// artifact properties
+    	private String artifactName;
+    	private String artifactType;
+    	private String artifactExt;
+    	
+    	// cached origin;
+    	private ArtifactOrigin origin;
+    	
+    	public OriginalArtifactNameValue(String org, String moduleName, String revision, String artifactName, String artifactType, String artifactExt) {
+			this.org = org;
+			this.moduleName = moduleName;
+			this.revision = revision;
+			this.artifactName = artifactName;
+			this.artifactType = artifactType;
+			this.artifactExt = artifactExt;
+		}
+
+
+		/**
+		 * @param origin
+		 */
+		public OriginalArtifactNameValue(ArtifactOrigin origin) {
+			this.origin = origin;
+		}
+
+		public String toString() {
+			if (origin == null) {
+	    		ModuleRevisionId revId = ModuleRevisionId.newInstance(org, moduleName, revision);
+	    		Artifact artifact = new DefaultArtifact(revId, null, artifactName, artifactType, artifactExt);
+	    		
+	    		Ivy ivy = IvyContext.getContext().getIvy();
+	    		File cache = IvyContext.getContext().getCache();
+	
+	    		origin = ivy.getSavedArtifactOrigin(cache, artifact);
+			}
+			
+    		if (origin == null) {
+    			return null;
+    		}
+    		
+    		// we assume that the original filename is the last part of the original file location
+    		String location = origin.getLocation();
+    		int lastPathIndex = location.lastIndexOf('/');
+    		if (lastPathIndex == -1) {
+    			lastPathIndex = location.lastIndexOf('\\');
+    		}
+    		int lastColonIndex = location.lastIndexOf('.');
+    		
+    		return location.substring(lastPathIndex + 1, lastColonIndex);
+    	}
     }
 }

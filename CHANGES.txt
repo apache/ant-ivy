@@ -59,6 +59,7 @@ Changes:
   - NEW: add option to cachepath task to create a path with local artifact paths (IVY-221)
   - NEW: allow extending configurations to override the mapping of their super configurations (IVY-218)
 
+  - IMPROVE: Retain artifact filenames along the publish/resolve/retrieve process (IVY-54)
   - IMPROVE: report Ant-task doesn't process the reports in batch (IVY-247)
   - IMPROVE: make ReportOutputter pluggable and customizable (IVY-205)
   - IMPROVE: add wildcard support for extending configurations (IVY-235)

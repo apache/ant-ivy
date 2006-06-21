@@ -581,12 +581,13 @@ public abstract class BasicResolver extends AbstractResolver {
         	final ArtifactDownloadReport adr = new ArtifactDownloadReport(artifacts[i]);
         	dr.addArtifactReport(adr);
             ivy.fireIvyEvent(new StartDownloadEvent(this, artifacts[i]));
-        	File archiveFile = ivy.getArchiveFileInCache(cache, artifacts[i]);
+            ArtifactOrigin origin = ivy.getSavedArtifactOrigin(cache, artifacts[i]);
+        	File archiveFile = ivy.getArchiveFileInCache(cache, artifacts[i], origin);
         	if (archiveFile.exists()) {
         		Message.verbose("\t[NOT REQUIRED] "+artifacts[i]);
         		adr.setDownloadStatus(DownloadStatus.NO);  
                 adr.setSize(archiveFile.length());
-                adr.setArtifactOrigin(ivy.getSavedArtifactOrigin(cache, artifacts[i]));
+                adr.setArtifactOrigin(origin);
         	} else {
                 Artifact artifact = fromSystem(artifacts[i]);
                 if (!artifact.equals(artifacts[i])) {
@@ -602,7 +603,8 @@ public abstract class BasicResolver extends AbstractResolver {
     			    long start = System.currentTimeMillis();
                     try {
         			    Message.info("downloading "+artifactRef.getResource()+" ...");
-                        
+        			    origin = new ArtifactOrigin(artifactRef.getResource().isLocal(), artifactRef.getResource().getName());
+        			    
                         File tmp = ivy.getArchiveFileInCache(cache, 
                                 new DefaultArtifact(
                                         artifacts[i].getModuleRevisionId(), 
@@ -610,13 +612,14 @@ public abstract class BasicResolver extends AbstractResolver {
                                         artifacts[i].getName(), 
                                         artifacts[i].getType(), 
                                         artifacts[i].getExt()+".part",
-                                        artifacts[i].getExtraAttributes()));
+                                        artifacts[i].getExtraAttributes()),
+                                origin);
+                        archiveFile = ivy.getArchiveFileInCache(cache, artifacts[i], origin);
                         adr.setSize(get(artifactRef.getResource(), tmp));
                         if (!tmp.renameTo(archiveFile)) {
                             Message.warn("\t[FAILED     ] "+artifacts[i]+" impossible to move temp file to definitive one ("+(System.currentTimeMillis()-start)+"ms)");
                             adr.setDownloadStatus(DownloadStatus.FAILED);
                         } else {
-                        	ArtifactOrigin origin = new ArtifactOrigin(artifactRef.getResource().isLocal(), artifactRef.getResource().getName());
                         	ivy.saveArtifactOrigin(cache, artifact, origin);
                     		Message.info("\t[SUCCESSFUL ] "+artifacts[i]+" ("+(System.currentTimeMillis()-start)+"ms)");
             				adr.setDownloadStatus(DownloadStatus.SUCCESSFUL);
