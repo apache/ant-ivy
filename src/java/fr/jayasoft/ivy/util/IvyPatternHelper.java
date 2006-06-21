@@ -363,6 +363,7 @@ public class IvyPatternHelper {
 			this.origin = origin;
 		}
 
+		// Called by substituteTokens only if the original artifact name is needed
 		public String toString() {
 			if (origin == null) {
 	    		ModuleRevisionId revId = ModuleRevisionId.newInstance(org, moduleName, revision);
@@ -372,12 +373,13 @@ public class IvyPatternHelper {
 	    		File cache = IvyContext.getContext().getCache();
 	
 	    		origin = ivy.getSavedArtifactOrigin(cache, artifact);
+
+                if (origin == null) {
+	    		    Message.debug("no artifact origin found for "+artifact+" in "+cache);
+	    		    return null;
+	    		}
 			}
 			
-    		if (origin == null) {
-    			return null;
-    		}
-    		
     		// we assume that the original filename is the last part of the original file location
     		String location = origin.getLocation();
     		int lastPathIndex = location.lastIndexOf('/');
