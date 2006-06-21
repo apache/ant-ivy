@@ -2422,15 +2422,15 @@ public class Ivy implements TransferListener {
     
     public void saveArtifactOrigin(File cache, Artifact artifact, ArtifactOrigin origin) {
        PropertiesFile cdf = getCachedDataFile(cache, artifact.getModuleRevisionId());
-       cdf.setProperty("artifact." + artifact.getName() + ".is-local", String.valueOf(origin.isLocal()));
-       cdf.setProperty("artifact." + artifact.getName() + ".location", origin.getLocation());
+       cdf.setProperty("artifact." + artifact.getName() + "#" + artifact.getExt() + ".is-local", String.valueOf(origin.isLocal()));
+       cdf.setProperty("artifact." + artifact.getName() + "#" + artifact.getExt() + ".location", origin.getLocation());
        cdf.save();
     }
     
     public ArtifactOrigin getSavedArtifactOrigin(File cache, Artifact artifact) {
         PropertiesFile cdf = getCachedDataFile(cache, artifact.getModuleRevisionId());
-        String location = cdf.getProperty("artifact." + artifact.getName() + ".location");
-        boolean isLocal = Boolean.valueOf(cdf.getProperty("artifact." + artifact.getName() + ".is-local")).booleanValue();
+        String location = cdf.getProperty("artifact." + artifact.getName() + "#" + artifact.getExt() + ".location");
+        boolean isLocal = Boolean.valueOf(cdf.getProperty("artifact." + artifact.getName() + "#" + artifact.getExt() + ".is-local")).booleanValue();
         
         if (location == null) {
            // origin has not been specified, return null
@@ -2442,8 +2442,8 @@ public class Ivy implements TransferListener {
     
     public void removeSavedArtifactOrigin(File cache, Artifact artifact) {
         PropertiesFile cdf = getCachedDataFile(cache, artifact.getModuleRevisionId());
-        cdf.remove("artifact." + artifact.getName() + ".location");
-        cdf.remove("artifact." + artifact.getName() + ".is-local");
+        cdf.remove("artifact." + artifact.getName() + "#" + artifact.getExt() + ".location");
+        cdf.remove("artifact." + artifact.getName() + "#" + artifact.getExt() + ".is-local");
         cdf.save();
     }
     
