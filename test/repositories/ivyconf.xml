@@ -13,6 +13,7 @@
 				</filesystem>
 				<filesystem name="2-artifact">
 					<artifact pattern="${ivy.conf.dir}/2/[module]/[artifact]-[revision].[ext]"/>
+					<artifact pattern="${ivy.conf.dir}/2/[module]/[artifact].[ext]"/>
 				</filesystem>
 			</dual>
 		</chain>

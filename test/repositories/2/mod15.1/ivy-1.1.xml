@@ -1,0 +1,11 @@
+<ivy-module version="1.0">
+	<info organisation="org15"
+	       module="mod15.1"
+	       revision="1.1"
+	       status="integration"
+	       publication="20050930110000"
+	/>
+    <publications>
+    	<artifact name="library" type="jar" conf="default" />
+    </publications>
+</ivy-module>

@@ -67,6 +67,33 @@ public class ResolveTest extends TestCase {
         del.execute();
     }
     
+    public void testResolveWithRetainingArtifactName() throws Exception {
+    	_ivy.setCacheArtifactPattern(_ivy.substitute("[module]/[originalname].[ext]"));    	
+        ResolveReport report = _ivy.resolve(new File("test/repositories/2/mod15.2/ivy-1.1.xml").toURL(),
+                null, new String[] {"default"}, _cache, null, true);
+        assertNotNull(report);
+        
+        ArtifactDownloadReport[] dReports = report.getConfigurationReport("default").getDownloadReports(ModuleRevisionId.newInstance("org15", "mod15.1", "1.1"));
+        assertNotNull(dReports);
+        assertEquals("number of downloaded artifacts not correct", 1, dReports.length);
+        
+        Artifact artifact = dReports[0].getArtifact();
+        assertNotNull(artifact);
+        
+        String cachePath = _ivy.getArchivePathInCache(artifact);
+        assertTrue("artifact name has not been retained: " + cachePath, cachePath.endsWith("library.jar"));
+        
+        dReports = report.getConfigurationReport("default").getDownloadReports(ModuleRevisionId.newInstance("org14", "mod14.1", "1.1"));
+        assertNotNull(dReports);
+        assertEquals("number of downloaded artifacts not correct", 1, dReports.length);
+        
+        artifact = dReports[0].getArtifact();
+        assertNotNull(artifact);
+        
+        cachePath = _ivy.getArchivePathInCache(artifact);
+        assertTrue("artifact name has not been retained: " + cachePath, cachePath.endsWith("mod14.1-1.1.jar"));
+    }
+    
     public void testArtifactOrigin() throws Exception {
         ResolveReport report = _ivy.resolve(new File("test/repositories/1/org1/mod1.1/ivys/ivy-1.0.xml").toURL(),
                 null, new String[] {"default"}, _cache, null, true);
