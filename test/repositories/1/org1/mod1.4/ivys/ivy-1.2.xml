@@ -5,6 +5,6 @@
 	       status="release"
 	/>
 	<dependencies>
-		<dependency name="mod1.1" rev="3.0"/>
+		<dependency name="mod1.1" rev="1.0.2"/>
 	</dependencies>
 </ivy-module>
