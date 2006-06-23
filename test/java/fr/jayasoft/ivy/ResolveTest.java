@@ -186,6 +186,11 @@ public class ResolveTest extends TestCase {
         ResolveReport report = ivy.resolve(new File("test/repositories/IVY-258/ivy.xml").toURL(),
                 null, new String[] {"*"}, _cache, null, true);
         assertFalse(report.hasError());
+        
+        ((BasicResolver)ivy.getResolver("myresolver")).setCheckconsistency(false);
+        report = ivy.resolve(new File("test/repositories/IVY-258/ivy.xml").toURL(),
+                null, new String[] {"*"}, _cache, null, true);
+        assertFalse(report.hasError());
     }
 
     public void testResolveRequiresIvyFile() throws Exception {
