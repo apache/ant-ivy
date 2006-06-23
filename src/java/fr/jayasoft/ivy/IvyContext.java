@@ -21,7 +21,8 @@ public class IvyContext {
 
     private static ThreadLocal _current = new ThreadLocal();
     
-    private WeakReference _ivy;
+    private Ivy _defaultIvy;
+    private WeakReference _ivy = new WeakReference(null); 
     private File _cache;
     
     public static IvyContext getContext() {
@@ -33,8 +34,29 @@ public class IvyContext {
         return cur;
     }
     
+    /**
+     * Returns the current ivy instance.
+     * When calling any public ivy method on an ivy instance, a reference to this instance is 
+     * put in this context, and thus accessible using this method, until no code reference
+     * this instance and the garbage collector collects it.
+     * Then, or if no ivy method has been called, a default ivy instance is returned
+     * by this method, so that it never returns null. 
+     * @return the current ivy instance
+     */
     public Ivy getIvy() {
-    	return (Ivy)_ivy.get();
+    	Ivy ivy = (Ivy)_ivy.get();
+        return ivy == null ? getDefaultIvy() : ivy;
+    }
+
+    private Ivy getDefaultIvy() {
+        if (_defaultIvy == null) {
+            _defaultIvy = new Ivy();
+            try {
+                getDefaultIvy().configureDefault();
+            } catch (Exception e) {
+            }            
+        }
+        return _defaultIvy;
     }
     void setIvy(Ivy ivy) {
     	_ivy = new WeakReference(ivy);
