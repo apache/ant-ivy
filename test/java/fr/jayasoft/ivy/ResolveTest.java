@@ -160,6 +160,34 @@ public class ResolveTest extends TestCase {
         assertTrue(report.hasError());
     }
 
+    public void testResolveNoRevisionInPattern() throws Exception {
+        // module1 depends on latest version of module2, for which there is no revision in the pattern
+        Ivy ivy = new Ivy();
+        ivy.configure(new File("test/repositories/norev/ivyconf.xml").toURL());
+        ResolveReport report = ivy.resolve(new File("test/repositories/norev/ivy.xml").toURL(),
+                null, new String[] {"*"}, _cache, null, true);
+        assertNotNull(report);
+        assertFalse(report.hasError());
+    }
+
+    public void testResolveNoRevisionInDep() throws Exception {
+        // mod1.4 depends on mod1.1, in which the ivy file has no revision
+        ResolveReport report = _ivy.resolve(new File("test/repositories/1/org1/mod1.4/ivys/ivy-1.2.xml").toURL(),
+                null, new String[] {"*"}, _cache, null, true);
+        assertNotNull(report);
+        assertTrue(report.hasError());
+    }
+
+    public void testResolveNoRevisionNowhere() throws Exception {
+        // test case for IVY-258
+        // module1 depends on latest version of module2, which contains no revision in its ivy file, nor in the pattern
+        Ivy ivy = new Ivy();
+        ivy.configure(new File("test/repositories/IVY-258/ivyconf.xml").toURL());
+        ResolveReport report = ivy.resolve(new File("test/repositories/IVY-258/ivy.xml").toURL(),
+                null, new String[] {"*"}, _cache, null, true);
+        assertFalse(report.hasError());
+    }
+
     public void testResolveRequiresIvyFile() throws Exception {
         // mod1.1 depends on mod1.2, mod1.2 has no ivy file
         Ivy ivy = new Ivy();

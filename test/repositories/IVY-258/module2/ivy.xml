@@ -1,0 +1,6 @@
+<ivy-module version="1.0">
+    <info organisation="myorg" module="module2"/>
+    <configurations>
+    	<conf name="myconf"/>
+    </configurations>
+</ivy-module>

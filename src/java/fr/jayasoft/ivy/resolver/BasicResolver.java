@@ -219,7 +219,8 @@ public abstract class BasicResolver extends AbstractResolver {
                     checkDescriptorConsistency(systemDd.getDependencyRevisionId(), systemMd, ivyRef);
                 } else {
                     if (md instanceof DefaultModuleDescriptor) {
-                        ((DefaultModuleDescriptor)md).setModuleRevisionId(ModuleRevisionId.newInstance(mrid.getOrganisation(), mrid.getName(), ivyRef.getRevision(), mrid.getExtraAttributes()));
+                        String revision = getRevision(ivyRef, mrid, md);
+                        ((DefaultModuleDescriptor)md).setModuleRevisionId(ModuleRevisionId.newInstance(mrid.getOrganisation(), mrid.getName(), revision, mrid.getExtraAttributes()));
                     } else {
                         Message.warn("consistency disabled with instance of non DefaultModuleDescriptor... module info can't be updated, so consistency check will be done");
                         checkDescriptorConsistency(mrid, md, ivyRef);
@@ -239,7 +240,7 @@ public abstract class BasicResolver extends AbstractResolver {
             resolvedMrid = md.getResolvedModuleRevisionId();
             if (resolvedMrid.getRevision() == null || resolvedMrid.getRevision().length() == 0) {
                 if (ivyRef.getRevision() == null || ivyRef.getRevision().length() == 0) {
-                    resolvedMrid = new ModuleRevisionId(resolvedMrid.getModuleId(), (_envDependent?"##":"")+DATE_FORMAT.format(data.getDate())+"@"+_workspaceName);
+                    resolvedMrid = new ModuleRevisionId(resolvedMrid.getModuleId(), "working@"+getName());
                 } else {
                     resolvedMrid = new ModuleRevisionId(resolvedMrid.getModuleId(), ivyRef.getRevision());
                 }
@@ -301,6 +302,25 @@ public abstract class BasicResolver extends AbstractResolver {
         data.getIvy().saveResolver(data.getCache(), systemMd, getName());
         data.getIvy().saveArtResolver(data.getCache(), systemMd, getName());
         return new DefaultModuleRevision(this, this, systemMd, searched, downloaded, cachedIvyURL);
+    }
+
+    private String getRevision(ResolvedResource ivyRef, ModuleRevisionId askedMrid, ModuleDescriptor md) throws ParseException {
+        String revision = ivyRef.getRevision();
+        if (revision == null) {
+            Message.debug("no revision found in reference for "+askedMrid);
+            if (getIvy().getVersionMatcher().isDynamic(askedMrid)) {
+                if (md.getModuleRevisionId().getRevision() == null) {
+                    return "working@"+getName();
+                } else {
+                    Message.debug("using  "+askedMrid);
+                    revision = md.getModuleRevisionId().getRevision();
+                }
+            } else {
+                Message.debug("using  "+askedMrid);
+                revision = askedMrid.getRevision();
+            }
+        }
+        return revision;
     }
     
     public ResolvedModuleRevision parse(

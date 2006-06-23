@@ -1,0 +1,9 @@
+<ivy-module version="1.0">
+    <info organisation="myorg" module="module1"/>
+    <configurations>
+    	<conf name="myconf"/>
+    </configurations>
+    <dependencies>
+        <dependency conf="myconf -> *" org="myorg" name="module2" rev="latest.integration" />
+	</dependencies>
+</ivy-module>
