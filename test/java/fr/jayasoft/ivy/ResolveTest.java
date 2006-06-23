@@ -171,7 +171,7 @@ public class ResolveTest extends TestCase {
     }
 
     public void testResolveNoRevisionInDep() throws Exception {
-        // mod1.4 depends on mod1.1, in which the ivy file has no revision
+        // mod1.4 depends on mod1.6, in which the ivy file has no revision
         ResolveReport report = _ivy.resolve(new File("test/repositories/1/org1/mod1.4/ivys/ivy-1.2.xml").toURL(),
                 null, new String[] {"*"}, _cache, null, true);
         assertNotNull(report);
