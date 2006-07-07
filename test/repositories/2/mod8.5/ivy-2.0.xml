@@ -1,0 +1,15 @@
+<ivy-module version="1.0">
+	<info organisation="org8"
+	       module="mod8.5"
+	       revision="2.0"
+	       status="integration"
+	       publication="20050502110000"
+	/>
+	<configurations>
+		<conf name="compile"/>
+		<conf name="runtime" extends="compile"/>
+		<conf name="test" extends="runtime" visibility="private" />
+	</configurations>	
+	<dependencies>
+	</dependencies>
+</ivy-module>
