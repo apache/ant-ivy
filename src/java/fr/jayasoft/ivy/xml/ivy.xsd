@@ -104,7 +104,7 @@
       		<xs:element name="dependencies" minOccurs="0">
 			      <xs:complexType>
 				        <xs:sequence>
-				      		<xs:element name="dependency" maxOccurs="unbounded">
+				      		<xs:element name="dependency" minOccurs="0" maxOccurs="unbounded">
 				            	<xs:complexType>
 							        <xs:sequence>
 							      		<xs:element name="conf" minOccurs="0" maxOccurs="unbounded">

@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 
+import fr.jayasoft.ivy.circular.CircularDependencyException;
+import fr.jayasoft.ivy.circular.CircularDependencyHelper;
 import fr.jayasoft.ivy.util.Message;
 import fr.jayasoft.ivy.version.VersionMatcher;
 
@@ -102,7 +104,7 @@ class ModuleDescriptorSorter {
         }
         if (callStack.contains(current)) {
             callStack.add(current);
-            Message.warn("circular dependency found: "+new CircularDependencyException((ModuleDescriptor[])callStack.toArray(new ModuleDescriptor[0])));
+            Message.verbose("circular dependency ignored during sort: "+CircularDependencyHelper.formatMessage((ModuleDescriptor[]) callStack.toArray(new ModuleDescriptor[callStack.size()])));
             return;
         }
         DependencyDescriptor [] descriptors = current.getDependencies();

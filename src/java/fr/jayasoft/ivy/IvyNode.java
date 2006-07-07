@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -249,7 +250,10 @@ public class IvyNode {
 
     private boolean _isRoot = false;
 
-    private Collection _allCallers = new HashSet();
+    // this map contains all the module ids calling this one as keys
+    // the mapped nodes correspond to a direct caller from which the transitive caller comes
+    
+    private Map _allCallers = new HashMap(); // Map (ModuleId -> IvyNode)
 
     private boolean _isCircular = false;
 
@@ -820,7 +824,7 @@ public class IvyNode {
 
             if (traverse) {
                 if (getPath().contains(depNode)) {
-                    Message.verbose("circular dependency found: "+getPath()+" -> "+depNode);
+                	IvyContext.getContext().getCircularDependencyStrategy().handleCircularDependency(toMrids(getPath(), depNode));
                 } else {
                     depNode.setParent(this);
                 }
@@ -832,7 +836,18 @@ public class IvyNode {
         return dependencies;
     }
 
-    /**
+    private ModuleRevisionId[] toMrids(Collection path, IvyNode depNode) {
+    	ModuleRevisionId[] ret = new ModuleRevisionId[path.size()+1];
+    	int i=0;
+    	for (Iterator iter = path.iterator(); iter.hasNext(); i++) {
+			IvyNode node = (IvyNode) iter.next();
+			ret[i] = node.getId();
+		}
+    	ret[ret.length-1] = depNode.getId();
+		return ret;
+	}
+
+	/**
      * @return Returns the requestedConf.
      */
     public final String getRequestedConf() {
@@ -963,15 +978,43 @@ public class IvyNode {
             callers.put(mrid, caller);
         }
         caller.addConfiguration(callerConf, dependencyConfs);
-        IvyNode parent = _data.getNode(mrid);
-        if (parent != null) {
-            _allCallers.addAll(parent._allCallers);
-            _allCallers.add(mrid.getModuleId());
-            _isCircular = _allCallers.contains(getId().getModuleId());
+
+        IvyNode parent = node.getRealNode();
+    	for (Iterator iter = parent._allCallers.keySet().iterator(); iter.hasNext();) {
+			ModuleId mid = (ModuleId) iter.next();
+			_allCallers.put(mid, parent);
+		}
+        _allCallers.put(mrid.getModuleId(), node);
+        _isCircular = _allCallers.keySet().contains(getId().getModuleId());
+        if (_isCircular) {
+        	IvyContext.getContext().getCircularDependencyStrategy().handleCircularDependency(
+        			toMrids(findPath(getId().getModuleId()), this));
         }
     }
     
-    private boolean canExclude(String rootModuleConf) {
+    /**
+     * Finds and returns a path in callers from the given module id to the current node
+     * @param from the module id to start the path from
+     * @return a collection representing the path, starting with the from node, followed by
+     * the list of nodes being one path to the current node, excluded
+     */
+    private Collection findPath(ModuleId from) {
+		return findPath(from, this, new LinkedList());
+	}
+    
+    private Collection findPath(ModuleId from, IvyNode node, List path) {
+    	IvyNode parent = (IvyNode) node._allCallers.get(from);
+    	if (parent == null) {
+    		throw new IllegalArgumentException("no path from "+from+" to "+getId()+" found");
+    	}
+    	path.add(0, parent);
+    	if (parent.getId().getModuleId().equals(from)) {
+    		return path;
+    	}
+		return findPath(from, parent, path);
+	}
+
+	private boolean canExclude(String rootModuleConf) {
         DependencyDescriptor dd = getDependencyDescriptor(getParent());
         if (dd != null && dd.canExclude()) {
             return true;

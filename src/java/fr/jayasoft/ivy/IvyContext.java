@@ -8,6 +8,8 @@ package fr.jayasoft.ivy;
 import java.io.File;
 import java.lang.ref.WeakReference;
 
+import fr.jayasoft.ivy.circular.CircularDependencyStrategy;
+
 
 /**
  * This class represents an execution context of an Ivy action.
@@ -67,4 +69,8 @@ public class IvyContext {
     void setCache(File cache) {
     	_cache = cache;
     }
+
+	public CircularDependencyStrategy getCircularDependencyStrategy() {
+		return getIvy().getCircularDependencyStrategy();
+	}
 }

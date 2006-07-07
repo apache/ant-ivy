@@ -22,6 +22,10 @@ import org.apache.tools.ant.taskdefs.Delete;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
+import fr.jayasoft.ivy.circular.CircularDependencyException;
+import fr.jayasoft.ivy.circular.ErrorCircularDependencyStrategy;
+import fr.jayasoft.ivy.circular.IgnoreCircularDependencyStrategy;
+import fr.jayasoft.ivy.circular.WarnCircularDependencyStrategy;
 import fr.jayasoft.ivy.conflict.LatestConflictManager;
 import fr.jayasoft.ivy.latest.LatestRevisionStrategy;
 import fr.jayasoft.ivy.report.ArtifactDownloadReport;
@@ -1613,19 +1617,54 @@ public class ResolveTest extends TestCase {
     }
 
     public void testCircular() throws Exception {
+        // mod6.3 depends on mod6.2, which itself depends on mod6.3
+    	
+        ResolveReport report = _ivy.resolve(new File("test/repositories/2/mod6.3/ivy-1.0.xml").toURL(),
+                null, new String[] {"default"}, _cache, null, true);
+        assertFalse(report.hasError());
+        
+        _ivy.setCircularDependencyStrategy(IgnoreCircularDependencyStrategy.getInstance());
+        report = _ivy.resolve(new File("test/repositories/2/mod6.3/ivy-1.0.xml").toURL(),
+                null, new String[] {"default"}, _cache, null, true);
+        assertFalse(report.hasError());
+        
+        _ivy.setCircularDependencyStrategy(WarnCircularDependencyStrategy.getInstance());
+        report = _ivy.resolve(new File("test/repositories/2/mod6.3/ivy-1.0.xml").toURL(),
+        		null, new String[] {"default"}, _cache, null, true);
+        assertFalse(report.hasError());
+        
+        _ivy.setCircularDependencyStrategy(ErrorCircularDependencyStrategy.getInstance());
         try {
-            // mod6.3 depends on mod6.2, which itself depends on mod6.3 !
-            ResolveReport report = _ivy.resolve(new File("test/repositories/2/mod6.3/ivy-1.0.xml").toURL(),
-                    null, new String[] {"default"}, _cache, null, true);
-            assertTrue(report.hasError());
-        } catch (CircularDependencyException ex) {
-            // ok
+	        _ivy.resolve(new File("test/repositories/2/mod6.3/ivy-1.0.xml").toURL(),
+	                null, new String[] {"default"}, _cache, null, true);
+	        fail("no exception with circular dependency strategy set to error");
+        } catch (CircularDependencyException ex)  {
+        	assertEquals("[ org6 | mod6.3 | 1.0 ]->[ org6 | mod6.2 | 1.0 ]->[ org6 | mod6.3 | latest.integration ]", ex.getMessage());
+        }
+    }
+    
+    public void testCircular2() throws Exception {
+        // mod 9.1 (no revision) depends on mod9.2, which depends on mod9.1 2.+
+    	
+        ResolveReport report = _ivy.resolve(new File("test/repositories/circular/ivy.xml").toURL(),
+                null, new String[] {"*"}, _cache, null, true);
+        assertFalse(report.hasError());
+        
+        _ivy.setCircularDependencyStrategy(ErrorCircularDependencyStrategy.getInstance());
+        try {
+	        _ivy.resolve(new File("test/repositories/circular/ivy.xml").toURL(),
+	                null, new String[] {"*"}, _cache, null, true);
+	        fail("no exception with circular dependency strategy set to error");
+        } catch (CircularDependencyException ex)  {
+        	// ok
+        	assertEquals("[ org9 | mod9.1 | NONE ]->[ org9 | mod9.2 | 2.+ ]->[ org9 | mod9.1 | 2.+ ]", ex.getMessage());
         }
     }
     
     public void testRegularCircular() throws Exception {
         // mod11.1 depends on mod11.2 but excludes itself
         // mod11.2 depends on mod11.1
+    	_ivy.setCircularDependencyStrategy(ErrorCircularDependencyStrategy.getInstance());
         ResolveReport report = _ivy.resolve(new File("test/repositories/2/mod11.1/ivy-1.0.xml").toURL(),
                 null, new String[] {"test"}, _cache, null, true);
         

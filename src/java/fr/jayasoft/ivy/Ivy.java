@@ -40,6 +40,10 @@ import javax.swing.event.EventListenerList;
 import org.xml.sax.SAXException;
 
 import fr.jayasoft.ivy.IvyNode.EvictionData;
+import fr.jayasoft.ivy.circular.CircularDependencyStrategy;
+import fr.jayasoft.ivy.circular.ErrorCircularDependencyStrategy;
+import fr.jayasoft.ivy.circular.IgnoreCircularDependencyStrategy;
+import fr.jayasoft.ivy.circular.WarnCircularDependencyStrategy;
 import fr.jayasoft.ivy.conflict.LatestConflictManager;
 import fr.jayasoft.ivy.conflict.NoConflictManager;
 import fr.jayasoft.ivy.conflict.StrictConflictManager;
@@ -147,6 +151,7 @@ public class Ivy implements TransferListener {
     private Map _matchers = new HashMap(); // Map (String matcherName -> Matcher)
     private Map _reportOutputters = new HashMap(); // Map (String outputterName -> ReportOutputter)
     private Map _versionMatchers = new HashMap(); // Map (String matcherName -> VersionMatcher)
+    private Map _circularDependencyStrategies = new HashMap(); // Map (String name -> CircularDependencyStrategy)
     
     private Map _variables = new HashMap();
 
@@ -160,6 +165,7 @@ public class Ivy implements TransferListener {
 
     private LatestStrategy _defaultLatestStrategy = null;
     private ConflictManager _defaultConflictManager = null;
+    private CircularDependencyStrategy _circularDependencyStrategy = null;
     
     private List _listingIgnore = new ArrayList();
 
@@ -219,6 +225,8 @@ public class Ivy implements TransferListener {
         
         addReportOutputter(new XmlReportOutputter());
         addReportOutputter(new LogReportOutputter());
+        
+        configureDefaultCircularDependencyStrategies();
         
         _listingIgnore.add(".cvsignore");
         _listingIgnore.add("CVS");
@@ -377,6 +385,7 @@ public class Ivy implements TransferListener {
         Message.verbose("\tdefault resolver: "+getDefaultResolver());
         Message.debug("\tdefault latest strategy: "+getDefaultLatestStrategy());
         Message.debug("\tdefault conflict manager: "+getDefaultConflictManager());
+        Message.debug("\tcircular dependency strategy: "+getCircularDependencyStrategy());
         Message.debug("\tvalidate: "+doValidate());
         Message.debug("\tcheck up2date: "+isCheckUpToDate());
         Message.debug("\tcache ivy pattern: "+getCacheIvyPattern());
@@ -762,7 +771,39 @@ public class Ivy implements TransferListener {
       }
 
 
-    /////////////////////////////////////////////////////////////////////////
+  	public CircularDependencyStrategy getCircularDependencyStrategy() {
+  		if (_circularDependencyStrategy == null) {
+  			_circularDependencyStrategy = getCircularDependencyStrategy("default");
+  		}
+  		return _circularDependencyStrategy;
+  	}
+
+  	public CircularDependencyStrategy getCircularDependencyStrategy(String name) {
+  		if ("default".equals(name)) {
+  			name = "warn";
+  		}
+		return (CircularDependencyStrategy)_circularDependencyStrategies.get(name);
+	}
+
+	public void setCircularDependencyStrategy(CircularDependencyStrategy strategy) {
+  		_circularDependencyStrategy = strategy;
+  	}
+	
+	public void addConfigured(CircularDependencyStrategy strategy) {
+		addCircularDependencyStrategy(strategy);
+	}
+
+    private void addCircularDependencyStrategy(CircularDependencyStrategy strategy) {
+		_circularDependencyStrategies.put(strategy.getName(), strategy);
+	}
+    
+    private void configureDefaultCircularDependencyStrategies() {
+    	addCircularDependencyStrategy(WarnCircularDependencyStrategy.getInstance());
+    	addCircularDependencyStrategy(ErrorCircularDependencyStrategy.getInstance());
+    	addCircularDependencyStrategy(IgnoreCircularDependencyStrategy.getInstance());
+    }
+
+	/////////////////////////////////////////////////////////////////////////
     //                         CHECK
     /////////////////////////////////////////////////////////////////////////
     /**
@@ -1214,7 +1255,6 @@ public class Ivy implements TransferListener {
             for (Iterator iter = dependencies.iterator(); iter.hasNext();) {
                 IvyNode dep = (IvyNode)iter.next();
                 if (dep.isCircular()) {
-                    Message.warn("circular dependency found ! "+node.getId()+" depends on "+dep.getId()+" which is already on the same branch of dependency");
                     continue;
                 }
                 String[] confs = dep.getRequiredConfigurations(node, conf);

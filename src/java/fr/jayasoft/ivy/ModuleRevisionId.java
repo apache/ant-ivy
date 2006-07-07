@@ -82,7 +82,7 @@ public class ModuleRevisionId extends UnmodifiableExtendableItem {
     }
     
     public String toString() {
-        return "[ "+_moduleId.getOrganisation()+" | "+_moduleId.getName()+" | "+_revision+" ]";
+        return "[ "+_moduleId.getOrganisation()+" | "+_moduleId.getName()+" | "+(_revision == null?"NONE":_revision)+" ]";
     }
     
     public String encodeToString() {

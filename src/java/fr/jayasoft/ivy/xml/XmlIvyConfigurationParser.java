@@ -26,6 +26,7 @@ import fr.jayasoft.ivy.ConflictManager;
 import fr.jayasoft.ivy.Ivy;
 import fr.jayasoft.ivy.LatestStrategy;
 import fr.jayasoft.ivy.ModuleId;
+import fr.jayasoft.ivy.circular.CircularDependencyStrategy;
 import fr.jayasoft.ivy.matcher.PatternMatcher;
 import fr.jayasoft.ivy.status.StatusManager;
 import fr.jayasoft.ivy.url.URLHandlerRegistry;
@@ -38,13 +39,14 @@ import fr.jayasoft.ivy.util.Message;
  */
 public class XmlIvyConfigurationParser extends DefaultHandler {
 	private Configurator _configurator;
-    private List _configuratorTags = Arrays.asList(new String[] {"resolvers", "namespaces", "parsers", "latest-strategies", "conflict-managers", "outputters", "version-matchers", "statuses"});
+    private List _configuratorTags = Arrays.asList(new String[] {"resolvers", "namespaces", "parsers", "latest-strategies", "conflict-managers", "outputters", "version-matchers", "statuses", "circular-dependency-strategies"});
 
     private Ivy _ivy;
 
     private String _defaultResolver;
     private String _defaultCM;
     private String _defaultLatest;
+    private String _defaultCircular;
     private String _currentConfiguratorTag;
 
     public XmlIvyConfigurationParser(Ivy ivy) {
@@ -241,6 +243,7 @@ public class XmlIvyConfigurationParser extends DefaultHandler {
                 _defaultResolver = (String)attributes.get("defaultResolver");
                 _defaultCM = (String)attributes.get("defaultConflictManager");
                 _defaultLatest = (String)attributes.get("defaultLatestStrategy");
+                _defaultCircular = (String)attributes.get("circularDependencyStrategy");
 
             } else if ("version-matchers".equals(qName)) {
                 _currentConfiguratorTag = qName;
@@ -308,6 +311,13 @@ public class XmlIvyConfigurationParser extends DefaultHandler {
                 throw new IllegalArgumentException("unknown latest strategy " + _ivy.substitute(_defaultLatest));
             }
             _ivy.setDefaultLatestStrategy(latestStrategy);
+        }
+        if (_defaultCircular != null) {
+            CircularDependencyStrategy strategy = _ivy.getCircularDependencyStrategy(_ivy.substitute(_defaultCircular));
+            if (strategy == null) {
+                throw new IllegalArgumentException("unknown circular dependency strategy " + _ivy.substitute(_defaultCircular));
+            }
+            _ivy.setCircularDependencyStrategy(strategy);
         }
     }
 }
