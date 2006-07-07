@@ -1657,7 +1657,7 @@ public class ResolveTest extends TestCase {
 	        fail("no exception with circular dependency strategy set to error");
         } catch (CircularDependencyException ex)  {
         	// ok
-        	assertEquals("[ org9 | mod9.1 | NONE ]->[ org9 | mod9.2 | 2.+ ]->[ org9 | mod9.1 | 2.+ ]", ex.getMessage());
+        	assertEquals("[ org8 | mod8.5 | NONE ]->[ org8 | mod8.6 | 2.+ ]->[ org8 | mod8.5 | 2.+ ]", ex.getMessage());
         }
     }
     
