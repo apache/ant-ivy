@@ -48,6 +48,13 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
         return moduleDescriptor;
     }
 
+    public static DefaultModuleDescriptor newBasicInstance(ModuleRevisionId mrid, Date publicationDate) {
+        DefaultModuleDescriptor moduleDescriptor = new DefaultModuleDescriptor(mrid, "release", publicationDate, false);
+        moduleDescriptor.addConfiguration(new Configuration(DEFAULT_CONFIGURATION));
+        moduleDescriptor.addArtifact(DEFAULT_CONFIGURATION, new MDArtifact(moduleDescriptor, mrid.getName(), "jar", "jar"));
+        return moduleDescriptor;
+    }
+
     /**
      * Transforms the given module descriptor of the given namespace and return
      * a new module descriptor in the system namespace.

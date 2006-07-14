@@ -31,11 +31,14 @@ public class IBiblioResolver extends URLResolver {
     private String _root = null;
     private String _pattern = null;
     
+    // use poms if m2 compatible is true
+    private boolean _usepoms = true;
+    
     public IBiblioResolver() {
     }
     
     protected ResolvedResource findIvyFileRef(DependencyDescriptor dd, ResolveData data) {
-        if (isM2compatible()) {
+        if (isM2compatible() && isUsepoms()) {
             ModuleRevisionId mrid = dd.getDependencyRevisionId();
             mrid = convertM2IdForResourceSearch(mrid);
             ResolvedResource rres = findResourceUsingPatterns(mrid, getIvyPatterns(), DefaultArtifact.newPomArtifact(mrid, data.getDate()), getRMDParser(dd, data), data.getDate());
@@ -46,7 +49,7 @@ public class IBiblioResolver extends URLResolver {
     }
     
     protected void logIvyNotFound(ModuleRevisionId mrid) {
-        if (isM2compatible()) {
+        if (isM2compatible() && isUsepoms()) {
             Artifact artifact = DefaultArtifact.newPomArtifact(mrid, null);
             logMdNotFound(mrid, artifact);
         }
@@ -122,7 +125,7 @@ public class IBiblioResolver extends URLResolver {
     }
     
     private void updateWholePattern() {
-        if (isM2compatible()) {
+        if (isM2compatible() && isUsepoms()) {
             setIvyPatterns(Collections.singletonList(getWholePattern()));
         }
         setArtifactPatterns(Collections.singletonList(getWholePattern()));
@@ -172,4 +175,13 @@ public class IBiblioResolver extends URLResolver {
         ensureConfigured(getIvy());
         return super.getArtifactPatterns();
     }
+
+	public boolean isUsepoms() {
+		return _usepoms;
+	}
+
+	public void setUsepoms(boolean usepoms) {
+		_usepoms = usepoms;
+		updateWholePattern();
+	}
 }
