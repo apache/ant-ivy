@@ -46,6 +46,7 @@ Changes:
   - FIX: problem with cache and returnFirst (IVY-207)
   - FIX: modules splitted across a chain are not handled correctly (IVY-206)
   - FIX: problem with conf extension and latest revisions (IVY-240)
+  - FIX: The clean-cache target in /src/example/hello-ivy/build.xml file refers to ${user.home}/.ivy-cache instead of ${user.home}/.ivy/cache/ (IVY-265)
 
 * thanks to Ivy Community:
   - NEW: ability to turn off transitivity at configuration level (IVY-103) (thanks to Karl Baum and Maarten Coene)
