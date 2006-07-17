@@ -1,0 +1,8 @@
+<ivy-module version="1.0">
+    <info organisation="myorg" module="a"/>
+    <dependencies>
+        <dependency name="x" rev="latest.integration" conf="default->default" />
+        <dependency name="y" rev="latest.integration" conf="default->default" />
+        <dependency name="z" rev="latest.integration" conf="default->default" />
+	</dependencies>
+</ivy-module>
