@@ -7,21 +7,16 @@ package fr.jayasoft.ivy.url;
 
 import java.net.Authenticator;
 import java.net.PasswordAuthentication;
-import java.util.HashMap;
-import java.util.Map;
 
 import fr.jayasoft.ivy.util.Message;
 
 /**
  * 
  * @author Christian Riege
+ * @author Xavier Hanin
  */
 public final class IvyAuthenticator extends Authenticator {
 
-    /**
-     * A Map of Credentials objects keyed by the 'key' of the Credentials.
-     */
-    private final static Map keyring = new HashMap();
 
     /**
      * The sole instance.
@@ -39,72 +34,13 @@ public final class IvyAuthenticator extends Authenticator {
 
     // API ******************************************************************
 
-    void addCredentials(String realm, String host, String userName, String passwd) {
-        Credentials c = new Credentials(realm, host, userName, passwd);
-        keyring.put(c.getKey(), c);
-    }
-
     // Overriding Authenticator *********************************************
 
     protected PasswordAuthentication getPasswordAuthentication() {
-        final String key = buildKey(getRequestingPrompt(), getRequestingHost());
-        Credentials c = (Credentials) keyring.get(key);
-        Message.debug("authentication: k: " + key + " c: '" + c + "'");
-        return c != null ? c.getAuthentication() : null;
+    	Credentials c = CredentialsStore.INSTANCE.getCredentials(getRequestingPrompt(), getRequestingHost());
+        Message.debug("authentication: k='"+Credentials.buildKey(getRequestingPrompt(), getRequestingHost())+"' c='" + c + "'");
+        return c != null ? new PasswordAuthentication(c.getUserName(), c.getPasswd().toCharArray()) : null;
     }
 
-    // Private helper code
-
-    private String buildKey(String realm, String host) {
-        final String credentialKey;
-        if (realm == null || "".equals(realm)) {
-            credentialKey = host;
-        } else {
-            credentialKey = realm + "@" + host;
-        }
-        return credentialKey;
-    }
-
-    // Private helper class storing credentials *****************************
-
-    private class Credentials {
-        private final String key;
-        private final PasswordAuthentication auth;
-
-        public Credentials(String realm, String host, String userName, String passwd) {
-            auth = new PasswordAuthentication(userName, passwd.toCharArray());
-            key = buildKey(realm, host);
-        }
-
-        public String getKey() {
-            return key;
-        }
-
-        public PasswordAuthentication getAuthentication() {
-            return auth;
-        }
-
-        public boolean equals(Object o) {
-            if(o == null) {
-                return false;
-            }
-
-            if(o instanceof Credentials) {
-                Credentials c = (Credentials) o;
-                return key.equals(c.key);
-            }
-
-            return false;
-        }
-        
-        public int hashCode() {
-            return key.hashCode();
-        }
-
-        public String toString() {
-            return key + " " + auth.getUserName() + "/" + auth.getPassword().toString();
-        }
-
-    }
 
 }

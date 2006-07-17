@@ -37,10 +37,6 @@ import fr.jayasoft.ivy.util.Message;
  */
 public class HttpClientHandler extends AbstractURLHandler {
     private static final SimpleDateFormat LAST_MODIFIED_FORMAT = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss z", Locale.US);
-    private String _realm = null;
-    private String _host = null;
-    private String _userName = null;
-    private String _passwd = null;
     
     // proxy configuration: obtain from system properties
     private int _proxyPort;
@@ -53,25 +49,6 @@ public class HttpClientHandler extends AbstractURLHandler {
     private HttpClientHelper _httpClientHelper;
     
     public HttpClientHandler() {
-        configureProxy();
-    }
-    
-    /**
-     * @param realm may be null
-     * @param host may be null
-     * @param userName may be null
-     * @param passwd may be null
-     */
-    public HttpClientHandler(String realm, String host, String userName, String passwd) {
-        _realm = realm;
-        _host = host;
-        _userName = userName;
-        _passwd = passwd;
-        if (useAuthentication()) {
-            Message.verbose("using authentication in realm "+_realm+" and host "+_host+" for user "+_userName);
-        } else {
-            Message.verbose("no http authentication will be used");
-        }
         configureProxy();
     }
 
@@ -185,25 +162,25 @@ public class HttpClientHandler extends AbstractURLHandler {
     }
 
     private GetMethod doGet(URL url) throws IOException, HttpException {
-        HttpClient client = getClient();
+        HttpClient client = getClient(url);
 
         GetMethod get = new GetMethod(url.toExternalForm());
-        get.setDoAuthentication(useAuthentication() || useProxyAuthentication());
+        get.setDoAuthentication(useAuthentication(url) || useProxyAuthentication());
         client.executeMethod(get);
         return get;
     }
 
     private HeadMethod doHead(URL url, int timeout) throws IOException, HttpException {
-        HttpClient client = getClient();
+        HttpClient client = getClient(url);
         client.setTimeout(timeout);
 
         HeadMethod head = new HeadMethod(url.toExternalForm());
-        head.setDoAuthentication(useAuthentication() || useProxyAuthentication());
+        head.setDoAuthentication(useAuthentication(url) || useProxyAuthentication());
         client.executeMethod(head);
         return head;
     }
 
-    private HttpClient getClient() {
+    private HttpClient getClient(URL url) {
         HttpClient client = new HttpClient();
         
         List authPrefs = new ArrayList(2);
@@ -219,11 +196,12 @@ public class HttpClientHandler extends AbstractURLHandler {
                     new UsernamePasswordCredentials(_proxyUserName, _proxyPasswd));
             }
         }
-        if (useAuthentication()) {
+        Credentials c = getCredentials(url);
+        if (c != null) {
 	        client.getState().setCredentials(
-	            _realm,
-	            _host,
-	            new UsernamePasswordCredentials(_userName, _passwd)
+	            c.getRealm(),
+	            c.getHost(),
+	            new UsernamePasswordCredentials(c.getUserName(), c.getPasswd())
 	        );
         }
         return client;
@@ -232,10 +210,15 @@ public class HttpClientHandler extends AbstractURLHandler {
     private boolean useProxy() {
         return _proxyHost != null && _proxyHost.trim().length() > 0;
     }
-    private boolean useAuthentication() {
-        return (_userName != null && _userName.trim().length() > 0);
+    private boolean useAuthentication(URL url) {
+        return getCredentials(url) != null;
     }
-    private boolean useProxyAuthentication() {
+    
+    private Credentials getCredentials(URL url) {
+		return CredentialsStore.INSTANCE.getCredentials(null, url.getHost());
+	}
+
+	private boolean useProxyAuthentication() {
         return (_proxyUserName != null && _proxyUserName.trim().length() > 0);
     }
     

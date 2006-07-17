@@ -26,21 +26,13 @@ import fr.jayasoft.ivy.util.Message;
  */
 public class BasicURLHandler extends AbstractURLHandler {
 
-    private final static IvyAuthenticator AUTH = IvyAuthenticator.INSTANCE;
-
     private static interface HttpStatus {
         static final int SC_OK = 200;
         static final int SC_PROXY_AUTHENTICATION_REQUIRED = 407;
     }
 
     public BasicURLHandler() {
-        this(null, null, null, null);
-    }
-
-    public BasicURLHandler(String realm, String host, String userName, String passwd) {
-        if(host != null) {
-            AUTH.addCredentials(realm, host, userName, passwd);
-        }
+    	Message.debug("installing "+IvyAuthenticator.INSTANCE.getClass()); // do not remove, ensure IvyAuthenticator class loading!
     }
 
     public URLInfo getURLInfo(URL url) {

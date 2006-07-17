@@ -1,0 +1,68 @@
+package fr.jayasoft.ivy.url;
+
+/**
+ * 
+ * @author Christian Riege
+ * @author Xavier Hanin
+ */
+public class Credentials {
+	private String _realm;
+	private String _host;
+	private String _userName;
+	private String _passwd;
+	
+	public Credentials(String realm, String host, String userName, String passwd) {
+		_realm = realm;
+		_host = host;
+		_userName = userName;
+		_passwd = passwd;
+	}
+	
+	public String getHost() {
+		return _host;
+	}
+	public String getPasswd() {
+		return _passwd;
+	}
+	public String getRealm() {
+		return _realm;
+	}
+	public String getUserName() {
+		return _userName;
+	}
+
+	static String buildKey(String realm, String host) {
+        final String credentialKey;
+        if (realm == null || "".equals(realm)) {
+            credentialKey = host;
+        } else {
+            credentialKey = realm + "@" + host;
+        }
+        return credentialKey;
+    }
+
+	public String toString() {
+		return getKey() + " " + getUserName() + "/" + getPasswd();
+	}
+
+	public boolean equals(Object o) {
+		if(o == null) {
+			return false;
+		}
+
+		if(o instanceof Credentials) {
+			Credentials c = (Credentials) o;
+			return getKey().equals(c.getKey());
+		}
+
+		return false;
+	}
+	
+	public int hashCode() {
+		return getKey().hashCode();
+	}
+	
+	String getKey() {
+		return buildKey(_realm, _host);
+	}
+}

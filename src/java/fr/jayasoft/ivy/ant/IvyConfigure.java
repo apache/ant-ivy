@@ -17,6 +17,7 @@ import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.Property;
 
 import fr.jayasoft.ivy.Ivy;
+import fr.jayasoft.ivy.url.CredentialsStore;
 import fr.jayasoft.ivy.url.URLHandler;
 import fr.jayasoft.ivy.url.URLHandlerDispatcher;
 import fr.jayasoft.ivy.url.URLHandlerRegistry;
@@ -27,7 +28,39 @@ import fr.jayasoft.ivy.util.Message;
  *
  */
 public class IvyConfigure extends IvyTask {
-    private File _file = null; 
+    public static class Credentials {
+    	private String _realm;
+    	private String _host;
+    	private String _username;
+    	private String _passwd;
+    	
+        public String getPasswd() {
+            return _passwd;
+        }
+        public void setPasswd(String passwd) {
+            _passwd = passwd;
+        }
+        public String getRealm() {
+            return _realm;
+        }
+        public void setRealm(String realm) {
+            _realm = format(realm);
+        }
+        public String getHost() {
+            return _host;
+        }
+        public void setHost(String host) {
+            _host = format(host);
+        }
+        public String getUsername() {
+            return _username;
+        }
+        public void setUsername(String userName) {
+            _username = format(userName);
+        }
+	}
+
+	private File _file = null; 
     private URL _url = null;
     private String _realm = null;
     private String _host = null;
@@ -70,8 +103,12 @@ public class IvyConfigure extends IvyTask {
     public void setUsername(String userName) {
         _userName = format(userName);
     }
-    private String format(String str) {
+    private static String format(String str) {
         return str == null ? str : (str.trim().length() == 0 ? null : str.trim());
+    }
+    
+    public void addConfiguredCredentials(Credentials  c) {
+    	CredentialsStore.INSTANCE.addCredentials(c.getRealm(), c.getHost(), c.getUsername(), c.getPasswd());
     }
 
     public void execute() throws BuildException {
@@ -138,9 +175,12 @@ public class IvyConfigure extends IvyTask {
         prop.setProject(getProject());
         prop.execute();
     }
+    
     private void configureURLHandler() {
-        URLHandlerDispatcher dispatcher = new URLHandlerDispatcher();
-        URLHandler httpHandler = URLHandlerRegistry.getHttp(getRealm(), getHost(), getUsername(), getPasswd());
+    	CredentialsStore.INSTANCE.addCredentials(getRealm(), getHost(), getUsername(), getPasswd());
+
+    	URLHandlerDispatcher dispatcher = new URLHandlerDispatcher();
+        URLHandler httpHandler = URLHandlerRegistry.getHttp();
         dispatcher.setDownloader("http", httpHandler);
         dispatcher.setDownloader("https", httpHandler);
         URLHandlerRegistry.setDefault(dispatcher);

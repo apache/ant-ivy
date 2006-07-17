@@ -314,7 +314,7 @@ public class XmlIvyConfigurationParserTest extends TestCase {
     
     private void configureURLHandler() {
         URLHandlerDispatcher dispatcher = new URLHandlerDispatcher();
-        URLHandler httpHandler = URLHandlerRegistry.getHttp(null, null, null, null);
+        URLHandler httpHandler = URLHandlerRegistry.getHttp();
         dispatcher.setDownloader("http", httpHandler);
         dispatcher.setDownloader("https", httpHandler);
         URLHandlerRegistry.setDefault(dispatcher);
