@@ -1,0 +1,6 @@
+<ivy-module version="1.0">
+    <info organisation="myorg" module="z" revision="1.0"/>
+    <dependencies>
+        <dependency name="commons-lang" rev="1.0.1" conf="default->default" />
+	</dependencies>
+</ivy-module>

@@ -38,6 +38,7 @@ Changes:
   - IMPROVE: prints URL before downloading in verbose mode (IVY-257)
   - IMPROVE: incorrect value in status attribute causes silent failure (IVY-259)
 
+  - FIX: Multiple versions of dependencies appearing in retrieve (IVY-264)
   - FIX: Too many false CircularDependencyException errors thrown (IVY-230)
   - FIX: CircularDependencyException not always thrown (IVY-184)
   - FIX: NullPointer in BasicResolver (IVY-258)

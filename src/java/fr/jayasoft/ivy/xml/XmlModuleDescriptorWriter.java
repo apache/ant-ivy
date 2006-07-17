@@ -96,9 +96,15 @@ public class XmlModuleDescriptorWriter {
                     out.print(" org=\""+dds[i].getDependencyRevisionId().getOrganisation()+"\"");
                     out.print(" name=\""+dds[i].getDependencyRevisionId().getName()+"\"");
                     out.print(" rev=\""+dds[i].getDependencyRevisionId().getRevision()+"\"");
-                    out.print(" force=\""+dds[i].isForce()+"\"");
-                    out.print(" changing=\""+dds[i].isChanging()+"\"");
-                    out.print(" transitive=\""+dds[i].isTransitive()+"\"");
+                    if (dds[i].isForce()) {
+                    	out.print(" force=\""+dds[i].isForce()+"\"");
+                    }
+                    if (dds[i].isChanging()) {
+                    	out.print(" changing=\""+dds[i].isChanging()+"\"");
+                    }
+                    if (!dds[i].isTransitive()) {
+                    	out.print(" transitive=\""+dds[i].isTransitive()+"\"");
+                    }
                     out.print(" conf=\"");
                     String[] modConfs = dds[i].getModuleConfigurations();
                     for (int j = 0; j < modConfs.length; j++) {

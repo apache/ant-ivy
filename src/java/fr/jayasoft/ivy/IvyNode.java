@@ -363,7 +363,21 @@ public class IvyNode {
 
     public boolean isEvicted(String rootModuleConf) {
         cleanEvicted();
-        return _evicted.containsKey(rootModuleConf);
+        return getRoot() != this && !getRoot().getResolvedRevisions(getId().getModuleId(), rootModuleConf).contains(getResolvedId());
+    }
+
+    public boolean isCompletelyEvicted() {
+        cleanEvicted();
+        if (getRoot() == this) {
+        	return false;
+        }
+        for (Iterator iter = _rootModuleConfs.keySet().iterator(); iter.hasNext();) {
+			String conf = (String) iter.next();
+			if (!isEvicted(conf)) {
+				return false;
+			}
+		}
+        return true;
     }
     
     private void cleanEvicted() {
@@ -385,10 +399,6 @@ public class IvyNode {
         }
     }
 
-    public void markSelected(String rootModuleConf) {
-        _evicted.remove(rootModuleConf);
-    }
-
     public void markEvicted(String rootModuleConf, IvyNode node, ConflictManager conflictManager, Collection resolved) {
         EvictionData evictionData = new EvictionData(rootModuleConf, node, conflictManager, resolved);
         markEvicted(evictionData);
@@ -408,6 +418,7 @@ public class IvyNode {
             }
         }
     }
+    
     private void updateDataFrom(IvyNode node, String rootModuleConf) {
         // update callers
         Map nodecallers = (Map)node._callersByRootConf.get(rootModuleConf);
@@ -465,11 +476,6 @@ public class IvyNode {
     public String[] getEvictedConfs() {
         cleanEvicted();
         return (String[])_evicted.keySet().toArray(new String[_evicted.keySet().size()]);
-    }
-
-    public boolean isCompletelyEvicted() {
-        cleanEvicted();
-        return _evicted.keySet().containsAll(_rootModuleConfs.keySet());
     }
 
     /**
@@ -619,9 +625,14 @@ public class IvyNode {
                                     return false;
                                 }
                                 
+                                if (resolved._md == null) {
+                                	resolved._md = _md;
+                                }
+                                if (resolved._module == null) {
+                                	resolved._module = _module;
+                                }
                                 resolved._downloaded |= _module.isDownloaded();
                                 resolved._searched |= _module.isSearched();
-                                resolved.markSelected(_rootModuleConf);
                                 resolved.updateDataFrom(this, _rootModuleConf);
                                 resolved.loadData(conf, shouldBePublic);
                                 DependencyDescriptor dd = getDependencyDescriptor(getParent());

@@ -73,4 +73,25 @@ public class IvyContext {
 	public CircularDependencyStrategy getCircularDependencyStrategy() {
 		return getIvy().getCircularDependencyStrategy();
 	}
+
+	// should be better to use context to store this kind of information, but not yet ready to do so...
+//    private WeakReference _root = new WeakReference(null); 
+//    private String _rootModuleConf = null;
+//	public IvyNode getRoot() {
+//		return (IvyNode) _root.get();
+//	}
+//	
+//	public void setRoot(IvyNode root) {
+//		_root = new WeakReference(root);
+//	}
+//
+//	public String getRootModuleConf() {
+//		return _rootModuleConf;
+//	}
+//
+//	public void setRootModuleConf(String rootModuleConf) {
+//		_rootModuleConf = rootModuleConf;
+//	}
+	
+	
 }

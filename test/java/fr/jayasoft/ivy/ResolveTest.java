@@ -901,6 +901,68 @@ public class ResolveTest extends TestCase {
         assertTrue(_ivy.getArchiveFileInCache(_cache, "org1", "mod1.2", "2.1", "mod1.2", "jar", "jar").exists());
     }
     
+    public void testResolveConflict2() throws Exception {
+        // mod4.1 v 4.14 depends on 
+        //   - mod1.1 v 1.0 which depends on mod1.2 v 2.0
+        //   - mod3.1 v 1.1 which depends on mod1.2 v 2.1
+        //   - mod6.1 v 0.3 which depends on mod1.2 v 2.0
+        ResolveReport report = _ivy.resolve(new File("test/repositories/2/mod4.1/ivy-4.14.xml").toURL(),
+                null, new String[] {"*"}, _cache, null, true);
+        
+        // dependencies
+        ConfigurationResolveReport crr = report.getConfigurationReport("default");
+        assertNotNull(crr);
+        assertEquals(0, crr.getDownloadReports(ModuleRevisionId.newInstance("org1", "mod1.2", "2.0")).length);
+        assertEquals(1, crr.getDownloadReports(ModuleRevisionId.newInstance("org1", "mod1.2", "2.1")).length);
+        
+        ModuleRevisionId mrid = ModuleRevisionId.newInstance("org4", "mod4.1", "4.14");
+        File r = new File(_cache, XmlReportOutputter.getReportFileName(mrid.getModuleId(), "default"));
+        assertTrue(r.exists());
+        final boolean[] found = new boolean[] {false};
+        SAXParser saxParser = SAXParserFactory.newInstance().newSAXParser();
+        saxParser.parse(r, new DefaultHandler() {
+            public void startElement(String uri,String localName,String qName,org.xml.sax.Attributes attributes) throws SAXException {
+                if ("revision".equals(qName) && "2.0".equals(attributes.getValue("name"))) {
+                    found[0] = true;
+                }
+            }
+        });
+        assertTrue(found[0]); // the report should contain the evicted revision
+
+        assertTrue(_ivy.getIvyFileInCache(_cache, ModuleRevisionId.newInstance("org1", "mod1.1", "1.0")).exists());
+        assertTrue(_ivy.getArchiveFileInCache(_cache, "org1", "mod1.1", "1.0", "mod1.1", "jar", "jar").exists());
+
+        assertTrue(_ivy.getIvyFileInCache(_cache, ModuleRevisionId.newInstance("org3", "mod3.1", "1.1")).exists());
+        assertTrue(_ivy.getArchiveFileInCache(_cache, "org3", "mod3.1", "1.1", "mod3.1", "jar", "jar").exists());
+
+        assertFalse(_ivy.getArchiveFileInCache(_cache, "org1", "mod1.2", "2.0", "mod1.2", "jar", "jar").exists());
+
+        assertTrue(_ivy.getIvyFileInCache(_cache, ModuleRevisionId.newInstance("org1", "mod1.2", "2.1")).exists());
+        assertTrue(_ivy.getArchiveFileInCache(_cache, "org1", "mod1.2", "2.1", "mod1.2", "jar", "jar").exists());
+    }
+    
+    public void testResolveConflict3() throws Exception {
+        // test case for IVY-264
+        // a depends on x latest, y latest, z latest
+    	// x and z depends on commons-lang 1.0.1
+    	// y depends on commons-lang 2.0
+        Ivy ivy = new Ivy();
+        ivy.configure(new File("test/repositories/IVY-264/ivyconf.xml"));
+        ResolveReport report = ivy.resolve(new File("test/repositories/IVY-264/ivy.xml").toURL(),
+                null, new String[] {"*"}, _cache, null, true);
+        assertFalse(report.hasError());
+        
+        // dependencies
+        ConfigurationResolveReport crr = report.getConfigurationReport("default");
+        assertNotNull(crr);
+        assertEquals(0, crr.getDownloadReports(ModuleRevisionId.newInstance("myorg", "commons-lang", "1.0.1")).length);
+        assertEquals(1, crr.getDownloadReports(ModuleRevisionId.newInstance("myorg", "commons-lang", "2.0")).length);
+
+        assertFalse(_ivy.getArchiveFileInCache(_cache, "myorg", "commons-lang", "1.0.1", "commons-lang", "jar", "jar").exists());
+
+        assertTrue(_ivy.getArchiveFileInCache(_cache, "myorg", "commons-lang", "2.0", "commons-lang", "jar", "jar").exists());
+    }
+
     public void testTransitiveEviction() throws Exception {
         // mod7.3 depends on mod7.2 v1.0 and on mod7.1 v2.0
         //      mod7.2 v1.0 depends on mod7.1 v1.0 (which then should be evicted)

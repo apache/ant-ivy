@@ -1220,9 +1220,11 @@ public class Ivy implements TransferListener {
         if (node.isEvicted(node.getRootModuleConf())) {
             // update selected nodes with confs asked in evicted one
             IvyNode.EvictionData ed = node.getEvictedData(node.getRootModuleConf());
-            for (Iterator iter = ed.getSelected().iterator(); iter.hasNext();) {
-                IvyNode selected = (IvyNode)iter.next();
-                fetchDependencies(selected, conf, true);
+            if (ed.getSelected() != null) {
+            	for (Iterator iter = ed.getSelected().iterator(); iter.hasNext();) {
+            		IvyNode selected = (IvyNode)iter.next();
+            		fetchDependencies(selected, conf, true);
+            	}
             }
         }
         if (debugConflictResolution()) {
@@ -1342,11 +1344,6 @@ public class Ivy implements TransferListener {
         }
         if (resolved.contains(node)) {
             // node has been selected for the current parent
-            // we update its eviction... but it can still be evicted by parent !
-            node.markSelected(node.getRootModuleConf());
-            if (debugConflictResolution()) {
-                Message.debug("selecting "+node+" in "+parent);
-            }
             
             // handle previously selected nodes that are now evicted by this new node
             toevict = resolvedNodes;
@@ -1380,20 +1377,11 @@ public class Ivy implements TransferListener {
                 }
             }
             
-            // first we mark the selected nodes as selected if it isn't already the case
-            for (Iterator iter = resolved.iterator(); iter.hasNext();) {
-                IvyNode selected = (IvyNode)iter.next();
-                if (selected.isEvicted(node.getRootModuleConf())) {
-                    selected.markSelected(node.getRootModuleConf());
-                    if (debugConflictResolution()) {
-                        Message.debug("selecting "+selected+" in "+parent);
-                    }
-                }
-            }
             
             // it's time to update parent resolved and evicted with what was found 
             
             Collection evicted = new HashSet(parent.getEvictedNodes(node.getModuleId(), node.getRootModuleConf()));
+            toevict.removeAll(resolved);
             evicted.removeAll(resolved);
             evicted.addAll(toevict);
             evicted.add(node);
@@ -1459,22 +1447,10 @@ public class Ivy implements TransferListener {
             }
             EvictionData evictionData = node.getEvictionDataInRoot(node.getRootModuleConf(), parent);
             if (evictionData != null) {
-                // node has been previously evicted in an ancestor: we mark it as evicted and ensure selected are selected
+                // node has been previously evicted in an ancestor: we mark it as evicted
                 if (debugConflictResolution()) {
                     Message.debug(node+" was previously evicted in root module conf "+node.getRootModuleConf());
                 }
-                if (evictionData.getSelected() != null) {
-                    for (Iterator iter = evictionData.getSelected().iterator(); iter.hasNext();) {
-                        IvyNode selected = (IvyNode)iter.next();
-                        if (selected.isEvicted(node.getRootModuleConf())) {
-                            selected.markSelected(node.getRootModuleConf());
-                            if (debugConflictResolution()) {
-                                Message.debug("selecting "+selected+" in "+parent+" due to eviction of "+node);
-                            }
-                        }
-                    }
-                }
-
 
                 node.markEvicted(evictionData);                
                 if (debugConflictResolution()) {
@@ -1487,17 +1463,6 @@ public class Ivy implements TransferListener {
             // => job already done, we just have to check if the node wasn't previously selected in root ancestor
             if (debugConflictResolution()) {
                 Message.debug("conflict resolution already done for "+node+" in "+parent);
-            }
-            EvictionData evictionData = node.getEvictionDataInRoot(node.getRootModuleConf(), parent);
-            if (evictionData == null) {
-                // node was selected in the root, we have to select it
-                if (debugConflictResolution()) {
-                    Message.debug(node+" was previously selected in root module conf "+node.getRootModuleConf());
-                }
-                node.markSelected(node.getRootModuleConf());            
-                if (debugConflictResolution()) {
-                    Message.debug("selecting "+node+" in "+parent);
-                }
             }
             return true;
         }
