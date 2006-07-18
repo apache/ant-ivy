@@ -321,6 +321,7 @@ public class Ivy implements TransferListener {
         }
         getDefaultCache();
         
+        loadDefaultProperties();
         try {
             new XmlIvyConfigurationParser(this).parse(configurationFile.toURL());
         } catch (MalformedURLException e) {
@@ -345,11 +346,16 @@ public class Ivy implements TransferListener {
         }
         getDefaultCache();
         
+        loadDefaultProperties();
         new XmlIvyConfigurationParser(this).parse(configurationURL);
         setVariable("ivy.default.ivy.user.dir", getDefaultIvyUserDir().getAbsolutePath(), false);
         Message.verbose("configuration done ("+(System.currentTimeMillis()-start)+"ms)");
         dumpConfig();
     }
+
+	private void loadDefaultProperties() throws IOException {
+		loadProperties(Ivy.class.getResource("ivy.properties"), false);
+	}
 
     public void configureDefault() throws ParseException, IOException {
         configure(getDefaultConfigurationURL());

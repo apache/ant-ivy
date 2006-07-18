@@ -62,7 +62,7 @@ public class ChecksumHelper {
 
 
 	// byte to hex string converter
-	private final static char[] CHARS = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
+	private final static char[] CHARS = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
 	/**
 	 * Convert a byte[] array to readable string format. This makes the "hex" readable!
 	 * @return result String buffer in String format 

@@ -169,11 +169,9 @@ public class RepositoryResolver extends AbstractResourceResolver {
 
 	private void put(File src, String dest, boolean overwrite) throws IOException {
 		_repository.put(src, dest, overwrite);
-		if (isCheckmd5()) {
-			putChecksum(src, dest, overwrite, "md5");
-		}
-		if (isChecksha1()) {
-			putChecksum(src, dest, overwrite, "sha1");
+		String[] checksums = getChecksumAlgorithms();
+		for (int i = 0; i < checksums.length; i++) {
+			putChecksum(src, dest, overwrite, checksums[i]);
 		}
 	}
 

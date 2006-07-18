@@ -153,7 +153,7 @@ public class IvyConfigure extends IvyTask {
     private void loadDefaultProperties() {
         Property prop = new Property() {
             public void execute() throws BuildException {
-                URL url = IvyConfigure.class.getResource("ivy.properties");
+                URL url = Ivy.class.getResource("ivy.properties");
                 // this is copy of loadURL code from ant Property task  (not available in 1.5.1)
                 Properties props = new Properties();
                 log("Loading " + url, Project.MSG_VERBOSE);

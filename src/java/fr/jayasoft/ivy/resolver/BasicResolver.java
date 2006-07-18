@@ -75,8 +75,7 @@ public abstract class BasicResolver extends AbstractResolver {
 
     private boolean _allownomd = true;
     
-    private Boolean _checkmd5 = null;
-    private Boolean _checksha1 = null;
+    private String _checksums = null;
     
     public BasicResolver() {
         _workspaceName = Ivy.getLocalHostName();
@@ -757,16 +756,15 @@ public abstract class BasicResolver extends AbstractResolver {
 
     protected long getAndCheck(Resource resource, File dest) throws IOException {
 		long size = get(resource, dest);
-		if (isCheckmd5()) {
-			check(resource, dest, "md5");
-		}
-		if (isChecksha1()) {
-			check(resource, dest, "sha1");
+		String[] checksums = getChecksumAlgorithms();
+		boolean checked = false;
+		for (int i = 0; i < checksums.length && !checked; i++) {
+			checked = check(resource, dest, checksums[i]);
 		}
 		return size;
 	}
 
-	private void check(Resource resource, File dest, String algorithm) throws IOException {
+	private boolean check(Resource resource, File dest, String algorithm) throws IOException {
 		Resource csRes = resource.clone(resource.getName()+"."+algorithm);
 		if (csRes.exists()) {
 			Message.debug(algorithm + " file found for "+resource+": checking...");
@@ -777,10 +775,13 @@ public abstract class BasicResolver extends AbstractResolver {
 					throw new IOException("invalid "+algorithm);
 				} else {
 					Message.verbose(algorithm + " OK for "+resource);
+					return true;
 				}
 			} finally {
 				csFile.delete();
 			}
+		} else {
+			return false;
 		}
 	}
 
@@ -808,21 +809,26 @@ public abstract class BasicResolver extends AbstractResolver {
         _allownomd = b;
     }
 
-	public boolean isCheckmd5() {
-		return _checkmd5 == null ? Boolean.valueOf(getIvy().getVariable("ivy.check.md5")) : _checkmd5.booleanValue();
+	public String[] getChecksumAlgorithms() {
+		String csDef = _checksums == null ? getIvy().getVariable("ivy.checksums") : _checksums;
+		if (csDef == null) {
+			return new String[0];
+		}
+		// csDef is a comma separated list of checksum algorithms to use with this resolver
+		// we parse and return it as a String[]
+		String[] checksums = csDef.split(",");
+		List algos = new ArrayList();
+		for (int i = 0; i < checksums.length; i++) {
+			String cs = checksums[i].trim();
+			if (!"".equals(cs) && !"none".equals(cs)) {
+				algos.add(cs);
+			}
+		}
+		return (String[]) algos.toArray(new String[algos.size()]);
 	}
 
-	public void setCheckmd5(boolean checkmd5) {
-		_checkmd5 = Boolean.valueOf(checkmd5);
+	public void setChecksums(String checksums) {
+		_checksums = checksums;
 	}
-
-	public boolean isChecksha1() {
-		return _checksha1 == null ? Boolean.valueOf(getIvy().getVariable("ivy.check.sha1")) : _checksha1.booleanValue();
-	}
-
-	public void setChecksha1(boolean checksha1) {
-		_checksha1 = Boolean.valueOf(checksha1);
-	}
-
 
 }

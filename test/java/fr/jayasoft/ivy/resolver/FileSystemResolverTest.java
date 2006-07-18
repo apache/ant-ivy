@@ -138,31 +138,31 @@ public class FileSystemResolverTest extends TestCase {
         resolver.addIvyPattern("test/repositories/checksums/[module]/[artifact]-[revision].[ext]");
         resolver.addArtifactPattern("test/repositories/checksums/[module]/[artifact]-[revision].[ext]");
         
-        resolver.setCheckmd5(true);
+        resolver.setChecksums("md5");
         ModuleRevisionId mrid = ModuleRevisionId.newInstance("test", "allright", "1.0");
         ResolvedModuleRevision rmr = resolver.getDependency(new DefaultDependencyDescriptor(mrid, false), _data);
         assertNotNull(rmr);
         DownloadReport dr = resolver.download(new Artifact[] {new DefaultArtifact(mrid, rmr.getPublicationDate(), mrid.getName(), "jar", "jar")}, _ivy, _cache);
         assertEquals(1, dr.getArtifactsReports(DownloadStatus.SUCCESSFUL).length);
 
-        resolver.setCheckmd5(true);
+        resolver.setChecksums("md5");
         mrid = ModuleRevisionId.newInstance("test", "badivycs", "1.0");
         rmr = resolver.getDependency(new DefaultDependencyDescriptor(mrid, false), _data);
         assertNull(rmr);
-        resolver.setCheckmd5(false);
+        resolver.setChecksums("");
         rmr = resolver.getDependency(new DefaultDependencyDescriptor(mrid, false), _data);
         assertNotNull(rmr);
         dr = resolver.download(new Artifact[] {new DefaultArtifact(mrid, rmr.getPublicationDate(), mrid.getName(), "jar", "jar")}, _ivy, _cache);
         assertEquals(1, dr.getArtifactsReports(DownloadStatus.SUCCESSFUL).length);
 
-        resolver.setCheckmd5(true);
+        resolver.setChecksums("md5");
         mrid = ModuleRevisionId.newInstance("test", "badartcs", "1.0");
         rmr = resolver.getDependency(new DefaultDependencyDescriptor(mrid, false), _data);
         assertNotNull(rmr);
         dr = resolver.download(new Artifact[] {new DefaultArtifact(mrid, rmr.getPublicationDate(), mrid.getName(), "jar", "jar")}, _ivy, _cache);
         assertEquals(1, dr.getArtifactsReports(DownloadStatus.FAILED).length);
         
-        resolver.setCheckmd5(false);
+        resolver.setChecksums("");
         rmr = resolver.getDependency(new DefaultDependencyDescriptor(mrid, false), _data);
         assertNotNull(rmr);
         dr = resolver.download(new Artifact[] {new DefaultArtifact(mrid, rmr.getPublicationDate(), mrid.getName(), "jar", "jar")}, _ivy, _cache);
