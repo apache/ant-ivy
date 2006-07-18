@@ -118,7 +118,7 @@ public class BasicURLHandler extends AbstractURLHandler {
             srcConn = src.openConnection();
             int contentLength = srcConn.getContentLength();
             FileUtil.copy(srcConn.getInputStream(), dest, l);
-            if (dest.length() != contentLength) {
+            if (dest.length() != contentLength && contentLength != -1) {
             	dest.delete();
             	throw new IOException("Downloaded file size doesn't match expected Content Length for "+src+". Please retry.");
             }
