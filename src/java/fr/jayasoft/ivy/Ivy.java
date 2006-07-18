@@ -2105,34 +2105,48 @@ public class Ivy implements TransferListener {
     /////////////////////////////////////////////////////////////////////////
     
     public File getResolvedIvyFileInCache(File cache, ModuleRevisionId mrid) {
+        IvyContext.getContext().setIvy(this);
+    	IvyContext.getContext().setCache(cache);
         return new File(cache, IvyPatternHelper.substitute(_cacheResolvedIvyPattern, mrid.getOrganisation(), mrid.getName(), mrid.getRevision(), "ivy", "ivy", "xml"));
     }
 
     public File getResolvedIvyPropertiesInCache(File cache, ModuleRevisionId mrid) {
+        IvyContext.getContext().setIvy(this);
+    	IvyContext.getContext().setCache(cache);
         return new File(cache, IvyPatternHelper.substitute(_cacheResolvedIvyPropertiesPattern, mrid.getOrganisation(), mrid.getName(), mrid.getRevision(), "ivy", "ivy", "xml"));
     }
 
     public File getIvyFileInCache(File cache, ModuleRevisionId mrid) {
+        IvyContext.getContext().setIvy(this);
+    	IvyContext.getContext().setCache(cache);
         return new File(cache, IvyPatternHelper.substitute(_cacheIvyPattern, DefaultArtifact.newIvyArtifact(mrid, null)));
     }
 
     public File getArchiveFileInCache(File cache, Artifact artifact) {
+        IvyContext.getContext().setIvy(this);
+    	IvyContext.getContext().setCache(cache);
         return new File(cache, getArchivePathInCache(artifact));
     }
     
     public File getArchiveFileInCache(File cache, Artifact artifact, ArtifactOrigin origin) {
+        IvyContext.getContext().setIvy(this);
+    	IvyContext.getContext().setCache(cache);
     	return new File(cache, getArchivePathInCache(artifact, origin));
     }
     
     public File getArchiveFileInCache(File cache, String organisation, String module, String revision, String artifact, String type, String ext) {
+        IvyContext.getContext().setIvy(this);
+    	IvyContext.getContext().setCache(cache);
         return new File(cache, getArchivePathInCache(organisation, module, revision, artifact, type, ext));
     }
     
     public String getArchivePathInCache(Artifact artifact) {
+        IvyContext.getContext().setIvy(this);
         return IvyPatternHelper.substitute(_cacheArtifactPattern, artifact);
     }
     
     public String getArchivePathInCache(Artifact artifact, ArtifactOrigin origin) {
+        IvyContext.getContext().setIvy(this);
         return IvyPatternHelper.substitute(_cacheArtifactPattern, artifact, origin);
     }
     
@@ -2140,18 +2154,19 @@ public class Ivy implements TransferListener {
      * @deprecated
      */
     public String getArchivePathInCache(String organisation, String module, String revision, String artifact, String type, String ext) {
+        IvyContext.getContext().setIvy(this);
         return getArchivePathInCache(new DefaultArtifact(ModuleRevisionId.newInstance(organisation, module, revision), new Date(), artifact, type, ext));
     }
     
-    public File getOriginFileInCache(File cache, Artifact artifact) {
-        return new File(cache, getOriginPathInCache(artifact));
-    }
-    
-    public String getOriginPathInCache(Artifact artifact) {
-        return getArchivePathInCache(artifact) + ".origin";
-    }
+//    public File getOriginFileInCache(File cache, Artifact artifact) {
+//        return new File(cache, getOriginPathInCache(artifact));
+//    }
+//    
+//    public String getOriginPathInCache(Artifact artifact) {
+//        return getArchivePathInCache(artifact) + ".origin";
+//    }
 
-        public static String getLocalHostName() {
+    public static String getLocalHostName() {
         try {
             return InetAddress.getLocalHost().getHostName();
         } catch (UnknownHostException e) {

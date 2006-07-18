@@ -64,7 +64,7 @@ public class IvyContext {
     	_ivy = new WeakReference(ivy);
     }
     public File getCache() {
-    	return _cache;
+    	return _cache == null ? getIvy().getDefaultCache() : _cache;
     }
     void setCache(File cache) {
     	_cache = cache;
