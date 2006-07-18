@@ -138,7 +138,7 @@ public class FileSystemResolverTest extends TestCase {
         resolver.addIvyPattern("test/repositories/checksums/[module]/[artifact]-[revision].[ext]");
         resolver.addArtifactPattern("test/repositories/checksums/[module]/[artifact]-[revision].[ext]");
         
-        resolver.setChecksums("md5");
+        resolver.setChecksums("sha1, md5");
         ModuleRevisionId mrid = ModuleRevisionId.newInstance("test", "allright", "1.0");
         ResolvedModuleRevision rmr = resolver.getDependency(new DefaultDependencyDescriptor(mrid, false), _data);
         assertNotNull(rmr);
@@ -149,7 +149,7 @@ public class FileSystemResolverTest extends TestCase {
         mrid = ModuleRevisionId.newInstance("test", "badivycs", "1.0");
         rmr = resolver.getDependency(new DefaultDependencyDescriptor(mrid, false), _data);
         assertNull(rmr);
-        resolver.setChecksums("");
+        resolver.setChecksums("none");
         rmr = resolver.getDependency(new DefaultDependencyDescriptor(mrid, false), _data);
         assertNotNull(rmr);
         dr = resolver.download(new Artifact[] {new DefaultArtifact(mrid, rmr.getPublicationDate(), mrid.getName(), "jar", "jar")}, _ivy, _cache);
