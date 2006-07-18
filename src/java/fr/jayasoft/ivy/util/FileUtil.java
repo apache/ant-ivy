@@ -36,6 +36,14 @@ public class FileUtil {
             }
         }
         copy(new FileInputStream(src), dest, l);
+        long srcLen = src.length();
+        long destLen = dest.length();
+        if (srcLen != destLen) {
+        	dest.delete();
+        	throw new IOException("size of source file " + src.toString() + "("
+        			+ srcLen + ") differs from size of dest file " + dest.toString()
+        			+ "(" + destLen + ") - please retry");
+        }
         dest.setLastModified(src.lastModified());
     }
 
