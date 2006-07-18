@@ -27,6 +27,7 @@ Changes:
   - NEW: adding to SPECIAL_MEANINGS in LatestRevisionStrategy (IVY-121)
   - NEW: Allow use of system properties in ivyconf.xml (IVY-228)
 
+  - IMPROVE: use of md5 and/or sha1 files to check downloads (IVY-27)
   - IMPROVE: possible to use m2compatible without automatically using POMs as well (IVY-263)
   - IMPROVE: support for circular dependencies (IVY-202)
   - IMPROVE: make status list configurable (IVY-242)

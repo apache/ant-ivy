@@ -5,7 +5,9 @@
  */
 package fr.jayasoft.ivy.resolver;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -44,6 +46,8 @@ import fr.jayasoft.ivy.report.DownloadReport;
 import fr.jayasoft.ivy.report.DownloadStatus;
 import fr.jayasoft.ivy.repository.Resource;
 import fr.jayasoft.ivy.repository.ResourceHelper;
+import fr.jayasoft.ivy.util.ChecksumHelper;
+import fr.jayasoft.ivy.util.FileUtil;
 import fr.jayasoft.ivy.util.IvyPatternHelper;
 import fr.jayasoft.ivy.util.Message;
 import fr.jayasoft.ivy.xml.XmlModuleDescriptorParser;
@@ -70,6 +74,9 @@ public abstract class BasicResolver extends AbstractResolver {
     private boolean _checkconsistency = true;
 
     private boolean _allownomd = true;
+    
+    private Boolean _checkmd5 = null;
+    private Boolean _checksha1 = null;
     
     public BasicResolver() {
         _workspaceName = Ivy.getLocalHostName();
@@ -400,7 +407,7 @@ public abstract class BasicResolver extends AbstractResolver {
             ivyTempFile = File.createTempFile("ivy", "xml"); 
             ivyTempFile.deleteOnExit();
             Message.debug("\t"+getName()+": downloading "+ivyRef.getResource()+" to "+ivyTempFile);
-            get(ivyRef.getResource(), ivyTempFile);
+            getAndCheck(ivyRef.getResource(), ivyTempFile);
             try {
                 cachedIvyURL = ivyTempFile.toURL();
             } catch (MalformedURLException ex) {
@@ -640,7 +647,7 @@ public abstract class BasicResolver extends AbstractResolver {
                                         artifacts[i].getExtraAttributes()),
                                 origin);
                         archiveFile = ivy.getArchiveFileInCache(cache, artifacts[i], origin);
-                        adr.setSize(get(artifactRef.getResource(), tmp));
+                        adr.setSize(getAndCheck(artifactRef.getResource(), tmp));
                         if (!tmp.renameTo(archiveFile)) {
                             Message.warn("\t[FAILED     ] "+artifacts[i]+" impossible to move temp file to definitive one ("+(System.currentTimeMillis()-start)+"ms)");
                             adr.setDownloadStatus(DownloadStatus.FAILED);
@@ -664,7 +671,7 @@ public abstract class BasicResolver extends AbstractResolver {
     	return dr;
     }
 
-    protected void clearArtifactAttempts() {
+	protected void clearArtifactAttempts() {
         _artattempts.clear();
     }
     
@@ -748,10 +755,39 @@ public abstract class BasicResolver extends AbstractResolver {
         return null;
     }
 
+    protected long getAndCheck(Resource resource, File dest) throws IOException {
+		long size = get(resource, dest);
+		if (isCheckmd5()) {
+			check(resource, dest, "md5");
+		}
+		if (isChecksha1()) {
+			check(resource, dest, "sha1");
+		}
+		return size;
+	}
+
+	private void check(Resource resource, File dest, String algorithm) throws IOException {
+		Resource csRes = resource.clone(resource.getName()+"."+algorithm);
+		if (csRes.exists()) {
+			Message.debug(algorithm + " file found for "+resource+": checking...");
+			File csFile = File.createTempFile("ivytmp", algorithm);
+			try {
+				get(csRes, csFile);
+				if (!ChecksumHelper.check(dest, csFile, algorithm)) {
+					throw new IOException("invalid "+algorithm);
+				} else {
+					Message.verbose(algorithm + " OK for "+resource);
+				}
+			} finally {
+				csFile.delete();
+			}
+		}
+	}
+
 
     protected abstract ResolvedResource findArtifactRef(Artifact artifact, Date date);
 
-    protected abstract long get(Resource resource, File ivyTempFile) throws IOException;
+    protected abstract long get(Resource resource, File dest) throws IOException;    
 
     protected abstract void logIvyNotFound(ModuleRevisionId mrid);    
 
@@ -771,6 +807,22 @@ public abstract class BasicResolver extends AbstractResolver {
     public void setAllownomd(boolean b) {
         _allownomd = b;
     }
+
+	public boolean isCheckmd5() {
+		return _checkmd5 == null ? Boolean.valueOf(getIvy().getVariable("ivy.check.md5")) : _checkmd5.booleanValue();
+	}
+
+	public void setCheckmd5(boolean checkmd5) {
+		_checkmd5 = Boolean.valueOf(checkmd5);
+	}
+
+	public boolean isChecksha1() {
+		return _checksha1 == null ? Boolean.valueOf(getIvy().getVariable("ivy.check.sha1")) : _checksha1.booleanValue();
+	}
+
+	public void setChecksha1(boolean checksha1) {
+		_checksha1 = Boolean.valueOf(checksha1);
+	}
 
 
 }

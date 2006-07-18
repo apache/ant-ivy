@@ -73,4 +73,11 @@ public interface Resource {
      * @return <code>boolean</code> value indicating if the resource is local.
      */
     public boolean isLocal();
+
+    /**
+     * Clones this resource with a new resource with a different name
+     * @param cloneName the name of the clone
+     * @return the cloned resource
+     */
+	public Resource clone(String cloneName);
 }

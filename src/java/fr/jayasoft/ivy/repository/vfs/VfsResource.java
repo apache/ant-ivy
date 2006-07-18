@@ -85,6 +85,10 @@ public class VfsResource implements Resource {
     	}
     }
     
+    public Resource clone(String cloneName) {
+    	return new VfsResource(cloneName, _resourceImpl.getFileSystem().getFileSystemManager());
+    }
+    
     /**
      * The VFS FileName getURI method seems to have a bug in it where
      * file: URIs will have 4 forward slashes instead of 3.

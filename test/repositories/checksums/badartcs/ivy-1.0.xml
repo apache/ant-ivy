@@ -1,0 +1,7 @@
+<ivy-module version="1.0">
+	<info organisation="test"
+	       module="badartcs"
+	       revision="1.0"
+	       status="integration"
+	/>
+</ivy-module>

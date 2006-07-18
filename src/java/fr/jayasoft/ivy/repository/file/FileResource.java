@@ -20,6 +20,10 @@ public class FileResource implements Resource {
     public String getName() {
         return _file.getPath();
     }
+    
+    public Resource clone(String cloneName) {
+    	return new FileResource(new File(cloneName));
+    }
 
     public long getLastModified() {
         return _file.lastModified();

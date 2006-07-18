@@ -5,6 +5,7 @@
  */
 package fr.jayasoft.ivy.resolver;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
@@ -22,6 +23,8 @@ import fr.jayasoft.ivy.report.DownloadReport;
 import fr.jayasoft.ivy.repository.AbstractRepository;
 import fr.jayasoft.ivy.repository.Repository;
 import fr.jayasoft.ivy.repository.Resource;
+import fr.jayasoft.ivy.util.ChecksumHelper;
+import fr.jayasoft.ivy.util.FileUtil;
 import fr.jayasoft.ivy.util.IvyPatternHelper;
 import fr.jayasoft.ivy.util.Message;
 import fr.jayasoft.ivy.version.VersionMatcher;
@@ -160,9 +163,29 @@ public class RepositoryResolver extends AbstractResourceResolver {
                 mrid,
                 artifact); 
         
-        _repository.put(src, dest, overwrite);
+        put(src, dest, overwrite);
         Message.info("\tpublished "+artifact.getName()+" to "+dest);
     }
+
+	private void put(File src, String dest, boolean overwrite) throws IOException {
+		_repository.put(src, dest, overwrite);
+		if (isCheckmd5()) {
+			putChecksum(src, dest, overwrite, "md5");
+		}
+		if (isChecksha1()) {
+			putChecksum(src, dest, overwrite, "sha1");
+		}
+	}
+
+	private void putChecksum(File src, String dest, boolean overwrite, String algorithm) throws IOException {
+		File csFile = File.createTempFile("ivytemp", algorithm);
+		try {
+			FileUtil.copy(new ByteArrayInputStream(ChecksumHelper.computeAsString(src, algorithm).getBytes()), csFile, null);
+			_repository.put(csFile, dest+"."+algorithm, overwrite);
+		} finally {
+			csFile.delete();
+		}
+	}
     
     public DownloadReport download(Artifact[] artifacts, Ivy ivy, File cache) {
         try {

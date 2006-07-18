@@ -6,6 +6,7 @@
  */
 package fr.jayasoft.ivy.repository.url;
 
+import java.net.MalformedURLException;
 import java.net.URL;
 
 import fr.jayasoft.ivy.repository.Resource;
@@ -25,6 +26,14 @@ public class URLResource implements Resource {
 
     public String getName() {
         return _url.toExternalForm();
+    }
+    
+    public Resource clone(String cloneName) {
+    	try {
+			return new URLResource(new URL(cloneName));
+		} catch (MalformedURLException e) {
+			throw new IllegalArgumentException("bad clone name provided: not suitable for an URLResource: "+cloneName);
+		}
     }
 
     public long getLastModified() {
