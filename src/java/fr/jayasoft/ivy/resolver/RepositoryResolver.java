@@ -17,6 +17,7 @@ import java.util.Map;
 
 import fr.jayasoft.ivy.Artifact;
 import fr.jayasoft.ivy.Ivy;
+import fr.jayasoft.ivy.IvyContext;
 import fr.jayasoft.ivy.LatestStrategy;
 import fr.jayasoft.ivy.ModuleRevisionId;
 import fr.jayasoft.ivy.report.DownloadReport;
@@ -70,7 +71,8 @@ public class RepositoryResolver extends AbstractResourceResolver {
                 Resource res = repository.getResource(resourceName);
                 boolean reachable = res.exists();
                 if (reachable) {
-                    return new ResolvedResource(res, mrid.getRevision());
+                	String revision = pattern.indexOf(IvyPatternHelper.REVISION_KEY) == -1? "working@"+name : mrid.getRevision(); 
+                    return new ResolvedResource(res, revision);
                 } else if (versionMatcher.isDynamic(mrid)) {
                     return findDynamicResourceUsingPattern(name, repository, strategy, versionMatcher, rmdparser, mrid, pattern, artifact, date);
                 } else {
