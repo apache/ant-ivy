@@ -66,6 +66,7 @@ public interface ModuleDescriptor extends ExtendableItem {
     String[] getConfigurationsNames();
     String[] getPublicConfigurationsNames();
     Artifact[] getArtifacts(String conf);
+	Artifact[] getAllArtifacts();
     DependencyDescriptor[] getDependencies();
     
     /**

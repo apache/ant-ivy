@@ -77,7 +77,7 @@ public class XmlModuleDescriptorWriter {
                 out.println("\t</configurations>");
             }
             out.println("\t<publications>");
-            Artifact[] artifacts = getAllArtifacts(md);
+            Artifact[] artifacts = md.getAllArtifacts();
             for (int i = 0; i < artifacts.length; i++) {
                 out.print("\t\t<artifact");
                 out.print(" name=\""+artifacts[i].getName()+"\"");
@@ -181,15 +181,6 @@ public class XmlModuleDescriptorWriter {
         } finally {
             out.close();
         }
-    }
-
-    private static Artifact[] getAllArtifacts(ModuleDescriptor md) {
-        Collection arts = new HashSet();
-        String[] confs = md.getConfigurationsNames();
-        for (int i = 0; i < confs.length; i++) {
-            arts.addAll(Arrays.asList(md.getArtifacts(confs[i])));
-        }
-        return (Artifact[])arts.toArray(new Artifact[arts.size()]);
     }
 
     private static String getConfs(ModuleDescriptor md, Artifact artifact) {

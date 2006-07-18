@@ -27,7 +27,7 @@ public class XmlModuleDescriptorWriterTest extends TestCase {
         XmlModuleDescriptorWriter.write(md, _dest);
         
         assertTrue(_dest.exists());
-        String wrote = FileUtil.readEntirely(new BufferedReader(new FileReader(_dest)));
+        String wrote = FileUtil.readEntirely(new BufferedReader(new FileReader(_dest))).replaceAll("\r\n", "\n").replace('\r', '\n');
         String expected = readEntirely("test-write-simple.xml").replaceAll("\r\n", "\n").replace('\r', '\n');
         assertEquals(expected, wrote);
     }
@@ -37,7 +37,7 @@ public class XmlModuleDescriptorWriterTest extends TestCase {
         XmlModuleDescriptorWriter.write(md, _dest);
         
         assertTrue(_dest.exists());
-        String wrote = FileUtil.readEntirely(new BufferedReader(new FileReader(_dest)));
+        String wrote = FileUtil.readEntirely(new BufferedReader(new FileReader(_dest))).replaceAll("\r\n", "\n").replace('\r', '\n');
         String expected = readEntirely("test-write-dependencies.xml").replaceAll("\r\n", "\n").replace('\r', '\n');
         assertEquals(expected, wrote);
     }
@@ -48,7 +48,7 @@ public class XmlModuleDescriptorWriterTest extends TestCase {
         XmlModuleDescriptorWriter.write(md, _dest);
         
         assertTrue(_dest.exists());
-        String wrote = FileUtil.readEntirely(new BufferedReader(new FileReader(_dest)));
+        String wrote = FileUtil.readEntirely(new BufferedReader(new FileReader(_dest))).replaceAll("\r\n", "\n").replace('\r', '\n');
         String expected = readEntirely("test-write-full.xml").replaceAll("\r\n", "\n").replace('\r', '\n');
         assertEquals(expected, wrote);
     }
@@ -56,7 +56,7 @@ public class XmlModuleDescriptorWriterTest extends TestCase {
     
 
     private String readEntirely(String resource) throws IOException {
-        return FileUtil.readEntirely(new BufferedReader(new InputStreamReader(XmlModuleDescriptorWriterTest.class.getResource(resource).openStream()))).replaceAll("\r\n", "\n").replace('\r', '\n');
+        return FileUtil.readEntirely(new BufferedReader(new InputStreamReader(XmlModuleDescriptorWriterTest.class.getResource(resource).openStream())));
     }
 
     public void setUp() {

@@ -12,6 +12,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -112,7 +113,8 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
 	private Date _resolvedPublicationDate;
 	private List _dependencies = new ArrayList();
 	private Map _configurations = new LinkedHashMap(); // Map(String conf -> Configuration)
-    private Map _artifacts = new HashMap(); // Map (String conf -> Collection(Artifact))
+    private Map _artifactsByConf = new HashMap(); // Map (String conf -> Collection(Artifact))
+    private Collection _artifacts = new LinkedHashSet(); // Collection(Artifact) // all artifacts could also be found in the artifactsByConf map, but here we can preserve the order
     private boolean _isDefault = false;
     private Map _conflictManagers = new LinkedHashMap(); // Map (ModuleId -> )
     private List _licenses = new ArrayList(); // List(License)
@@ -204,12 +206,13 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
      * @param artifact
      */
     public void addArtifact(String conf, Artifact artifact) {
-        Collection artifacts = (Collection)_artifacts.get(conf);
+        Collection artifacts = (Collection)_artifactsByConf.get(conf);
         if (artifacts == null) {
             artifacts = new ArrayList();
-            _artifacts.put(conf, artifacts);
+            _artifactsByConf.put(conf, artifacts);
         }
         artifacts.add(artifact);
+        _artifacts.add(artifact);
     }
 	
 	public ModuleRevisionId getModuleRevisionId() {
@@ -252,7 +255,7 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
     }
 
     public Artifact[] getArtifacts(String conf) {
-        Collection artifacts = (Collection)_artifacts.get(conf);
+        Collection artifacts = (Collection)_artifactsByConf.get(conf);
         if (artifacts == null) {
             return new Artifact[0];
         } else {
@@ -260,12 +263,7 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
         }
     }
     public Artifact[] getAllArtifacts() {
-        Collection ret = new ArrayList();
-        for (Iterator iter = _artifacts.keySet().iterator(); iter.hasNext();) {
-            String conf = (String)iter.next();
-            ret.addAll((Collection)_artifacts.get(conf));
-        }
-        return (Artifact[])ret.toArray(new Artifact[ret.size()]);
+        return (Artifact[])_artifacts.toArray(new Artifact[_artifacts.size()]);
     }
 	public DependencyDescriptor[] getDependencies() {
 		return (DependencyDescriptor[])_dependencies.toArray(new DependencyDescriptor[_dependencies.size()]);
@@ -286,7 +284,7 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
     }
 
     public String toString() {
-        return "module: "+_revId+" status="+_status+" publication="+_publicationDate+" configurations="+_configurations+" artifacts="+_artifacts+" dependencies="+_dependencies;
+        return "module: "+_revId+" status="+_status+" publication="+_publicationDate+" configurations="+_configurations+" artifacts="+_artifactsByConf+" dependencies="+_dependencies;
     }
 
     public void setDefault(boolean b) {
