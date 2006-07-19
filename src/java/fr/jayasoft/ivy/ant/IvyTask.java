@@ -12,6 +12,7 @@ import java.util.Date;
 import fr.jayasoft.ivy.Ivy;
 import fr.jayasoft.ivy.ModuleDescriptor;
 import fr.jayasoft.ivy.util.Message;
+import fr.jayasoft.ivy.util.StringUtils;
 
 import org.apache.tools.ant.BuildEvent;
 import org.apache.tools.ant.BuildException;
@@ -115,14 +116,7 @@ public class IvyTask extends Task {
     }
 
     protected String mergeConfs(String[] conf) {
-        StringBuffer buf = new StringBuffer();
-        for (int i = 0; i < conf.length; i++) {
-            buf.append(conf[i]).append(", ");
-        }
-        if (conf.length > 0) { 
-            buf.setLength(buf.length() - 2); // delete last comma
-        }
-        return buf.toString();
+        return StringUtils.join(conf, ", ");
     }
 
     private static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyyMMddHHmmss");

@@ -2,7 +2,7 @@
 <xsl:stylesheet version="1.0"
   xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 
-<xsl:param name="confs"    select="/ivy-report/info/@conf"/>
+<xsl:param name="confs"    select="/ivy-report/info/@confs"/>
 <xsl:param name="extension"    select="'xml'"/>
 
 <xsl:variable name="myorg"    select="/ivy-report/info/@organisation"/>

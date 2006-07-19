@@ -11,7 +11,9 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -26,6 +28,7 @@ import fr.jayasoft.ivy.ModuleId;
 import fr.jayasoft.ivy.ModuleRevisionId;
 import fr.jayasoft.ivy.util.FileUtil;
 import fr.jayasoft.ivy.util.Message;
+import fr.jayasoft.ivy.util.StringUtils;
 
 /**
  * @author Xavier Hanin
@@ -40,16 +43,20 @@ public class XmlReportOutputter implements ReportOutputter {
     public void output(ResolveReport report, File destDir) {
         String[] confs = report.getConfigurations();
         for (int i = 0; i < confs.length; i++) {
-            output(report.getConfigurationReport(confs[i]), destDir);
+            output(report.getConfigurationReport(confs[i]), confs, destDir);
         }
     }
     
     public void output(ConfigurationResolveReport report, File destDir) {
+    	output(report, new String[] {report.getConfiguration()}, destDir);
+    }
+    
+    public void output(ConfigurationResolveReport report, String[] confs, File destDir) {
     	try {
     	    destDir.mkdirs();
     		File reportFile = new File(destDir, getReportFileName(report));
     		OutputStream stream = new FileOutputStream(reportFile);
-    		output(report, stream);
+    		output(report, confs, stream);
     		stream.close();
     		
     		Message.verbose("\treport for "+report.getModuleDescriptor().getModuleRevisionId()+" "+report.getConfiguration()+" produced in "+reportFile);
@@ -68,6 +75,9 @@ public class XmlReportOutputter implements ReportOutputter {
     }
     
     public void output(ConfigurationResolveReport report, OutputStream stream) {
+    	output(report, new String[] {report.getConfiguration()}, stream);
+    }
+    public void output(ConfigurationResolveReport report, String[] confs, OutputStream stream) {
     	PrintWriter out = new PrintWriter(stream);
 		ModuleRevisionId mrid = report.getModuleDescriptor().getModuleRevisionId();
         out.println("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>");
@@ -77,6 +87,7 @@ public class XmlReportOutputter implements ReportOutputter {
 		out.println("\t\torganisation=\""+mrid.getOrganisation()+"\"");
 		out.println("\t\tmodule=\""+mrid.getName()+"\"");
 		out.println("\t\tconf=\""+report.getConfiguration()+"\"");
+		out.println("\t\tconfs=\""+StringUtils.join(confs, ", ")+"\"");
 		out.println("\t\tdate=\""+Ivy.DATE_FORMAT.format(report.getDate())+"\"/>");
 		
 		out.println("\t<dependencies>");

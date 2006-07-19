@@ -24,4 +24,22 @@ public class StringUtils {
         return string.substring(0,1).toLowerCase() + string.substring(1);
     }
 
+    /**
+     * Joins the given object array in one string, each separated by the given separator.
+     * Example: join(new String[] {"one", "two", "three"}, ", ") -> "one, two, three"
+     * 
+     * @param objs
+     * @param sep
+     * @return
+     */
+    public static String join(Object[] objs, String sep) {
+        StringBuffer buf = new StringBuffer();
+        for (int i = 0; i < objs.length; i++) {
+            buf.append(objs[i]).append(sep);
+        }
+        if (objs.length > 0) { 
+            buf.setLength(buf.length() - sep.length()); // delete sep
+        }
+        return buf.toString();
+    }
 }
