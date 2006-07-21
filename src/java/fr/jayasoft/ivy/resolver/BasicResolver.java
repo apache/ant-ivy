@@ -772,6 +772,7 @@ public abstract class BasicResolver extends AbstractResolver {
 			try {
 				get(csRes, csFile);
 				if (!ChecksumHelper.check(dest, csFile, algorithm)) {
+					dest.delete();
 					throw new IOException("invalid "+algorithm);
 				} else {
 					Message.verbose(algorithm + " OK for "+resource);
