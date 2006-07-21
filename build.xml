@@ -1,4 +1,5 @@
 <project name="ivy" default="test" xmlns:ivy="antlib:fr.jayasoft.ivy.ant">
+	<property environment="env"/>
 	<property file="build.properties"/>
 
 	<!-- try to load ivy here from local lib dir, in case the user has not already dropped
@@ -109,4 +110,9 @@
 			</batchtest>
         </junit>
 	</target>
+	
+	<target name="install" depends="jar" if="env.ANT_HOME">
+		<copy file="${artifacts.build.dir}/ivy.jar" todir="${env.ANT_HOME}/lib"/>
+	</target>
+
 </project>
