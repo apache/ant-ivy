@@ -198,6 +198,7 @@ public class HttpClientHandler extends AbstractURLHandler {
         }
         Credentials c = getCredentials(url);
         if (c != null) {
+        	Message.debug("found credentials for "+url+": "+c);
 	        client.getState().setCredentials(
 	            c.getRealm(),
 	            c.getHost(),

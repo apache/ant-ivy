@@ -32,13 +32,11 @@ public class Credentials {
 	}
 
 	static String buildKey(String realm, String host) {
-        final String credentialKey;
-        if (realm == null || "".equals(realm)) {
-            credentialKey = host;
+        if (realm == null || "".equals(realm.trim())) {
+            return host;
         } else {
-            credentialKey = realm + "@" + host;
+            return realm + "@" + host;
         }
-        return credentialKey;
     }
 
 	public String toString() {

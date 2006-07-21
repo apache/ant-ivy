@@ -3,6 +3,8 @@ package fr.jayasoft.ivy.url;
 import java.util.HashMap;
 import java.util.Map;
 
+import fr.jayasoft.ivy.util.Message;
+
 /**
  * 
  * @author Christian Riege
@@ -23,7 +25,11 @@ public class CredentialsStore {
     		return;
     	}
         Credentials c = new Credentials(realm, host, userName, passwd);
+        Message.debug("credentials added: "+c);
         keyring.put(c.getKey(), c);
+        // add also with host only, to be able to find credential with host only 
+        // (useful for httpclient especially)
+        keyring.put(c.getHost(), c); 
     }
 
 	public Credentials getCredentials(String realm, String host) {
