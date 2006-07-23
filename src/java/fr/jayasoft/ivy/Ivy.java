@@ -1845,7 +1845,7 @@ public class Ivy implements TransferListener {
         if (!target.exists()) {
             return false;
         }
-        return source.lastModified() == target.lastModified();
+        return source.lastModified() <= target.lastModified();
     }
 
     /**
