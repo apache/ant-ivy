@@ -8,7 +8,6 @@ package fr.jayasoft.ivy.url;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.UnknownHostException;
 import java.text.ParseException;
@@ -140,14 +139,9 @@ public class HttpClientHandler extends AbstractURLHandler {
         if (_httpClientHelper == null) {
             // use commons httpclient 3.0 if available
             try {
-                Method method = HttpMethodBase.class.getMethod("getResponseContentLength", new Class[0]);
-                if (method.isAccessible()) {
-                    _httpClientHelper = new HttpClientHelper3x();
-                    Message.verbose("using commons httpclient 3.x helper");
-                } else {
-                    _httpClientHelper = new HttpClientHelper2x();
-                    Message.verbose("using commons httpclient 2.x helper");                    
-                }
+                HttpMethodBase.class.getMethod("getResponseContentLength", new Class[0]);
+                _httpClientHelper = new HttpClientHelper3x();
+                Message.verbose("using commons httpclient 3.x helper");
             } catch (SecurityException e) {
                 Message.verbose("unable to get access to getResponseContentLength of commons-httpclient HeadMethod. Please use commons-httpclient 3.0 or use ivy with sufficient security permissions.");
                 Message.verbose("exception: "+e.getMessage());
@@ -159,6 +153,11 @@ public class HttpClientHandler extends AbstractURLHandler {
             }
         }
         return _httpClientHelper;
+    }
+    
+    public int getHttpClientMajorVersion() {
+    	HttpClientHelper helper = getHttpClientHelper();
+    	return helper.getHttpClientMajorVersion();
     }
 
     private GetMethod doGet(URL url) throws IOException, HttpException {
@@ -288,6 +287,13 @@ public class HttpClientHandler extends AbstractURLHandler {
         public long getResponseContentLength(HeadMethod head) {
             return head.getResponseContentLength();
         }
+
+		/**
+		 * {@inheritDoc}
+		 */
+		public int getHttpClientMajorVersion() {
+			return 3;
+		}
     }
     private static final class HttpClientHelper2x implements HttpClientHelper {
         private HttpClientHelper2x() {
@@ -304,8 +310,16 @@ public class HttpClientHandler extends AbstractURLHandler {
             }
             return 0;
         }
+
+		/**
+		 * {@inheritDoc}
+		 */
+		public int getHttpClientMajorVersion() {
+			return 2;
+		}
     }
     public interface HttpClientHelper {
         long getResponseContentLength(HeadMethod head);
+        int getHttpClientMajorVersion();
     }
 }

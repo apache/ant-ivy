@@ -21,14 +21,15 @@
         <if-available class-name="org.apache.commons.httpclient.HttpClient"/>
     </provider>
     -->
-    <!--
-    <provider class-name="org.apache.commons.vfs.provider.webdav.WebdavFileProvider">
+    <provider class-name="fr.jayasoft.ivy.repository.vfs.IvyWebdavFileProvider">
         <scheme name="webdav"/>
         <if-available class-name="org.apache.webdav.lib.WebdavResource"/>
         <if-available class-name="org.apache.commons.httpclient.HttpClient"/>
     </provider>
-    -->
- 
+    <provider class-name="org.apache.commons.vfs.provider.temp.TemporaryFileProvider">
+        <scheme name="tmp"/>
+    </provider>
+    
     <provider class-name="org.apache.commons.vfs.provider.sftp.SftpFileProvider">
         <scheme name="sftp"/>
         <if-available class-name="javax.crypto.Cipher"/>

@@ -31,16 +31,22 @@ public class VfsResource implements Resource {
     private boolean _isAvailable;
     
     // Constructor
-    public VfsResource(String vfsURI, FileSystemManager fsManager) {
+    public VfsResource(String vfsURI, FileSystemManager fsManager) throws IOException {
     	_isAvailable = false;
     	_resourceImpl = null;
     	
  		try {
 			_resourceImpl = fsManager.resolveFile(vfsURI);
-			_content = _resourceImpl.getContent();
+ 		} catch (FileSystemException e) {
+ 			Message.verbose(e.getLocalizedMessage());
+ 			throw new IOException(e.getLocalizedMessage());
+		}
+
+ 		try {
+ 			_content = _resourceImpl.getContent();
 			_isAvailable = _content != null;
  		} catch (FileSystemException e) {
-			Message.verbose(e.getLocalizedMessage());
+ 			Message.verbose(e.getLocalizedMessage());
 		}
     }
     
@@ -86,7 +92,11 @@ public class VfsResource implements Resource {
     }
     
     public Resource clone(String cloneName) {
-    	return new VfsResource(cloneName, _resourceImpl.getFileSystem().getFileSystemManager());
+    	try {
+    		return new VfsResource(cloneName, _resourceImpl.getFileSystem().getFileSystemManager());
+    	} catch (IOException e) {
+    		throw new RuntimeException(e);
+    	}
     }
     
     /**
@@ -98,9 +108,7 @@ public class VfsResource implements Resource {
      */
     private String normalize(String vfsURI) {
 		if (vfsURI.startsWith("file:////")) {
-			System.out.println("Normalizing: " + vfsURI);
 			vfsURI = vfsURI.replaceFirst("////", "///");
-			System.out.println("Normalized to: " + vfsURI);
 		}
 		return vfsURI;
     }
@@ -156,11 +164,12 @@ public class VfsResource implements Resource {
      *         otherwise.
      */
      public boolean physicallyExists() {
+    	
     	try {
 			return _resourceImpl.exists();
-		// originally I only checked for a FileSystemException. I expanded it to
-		// include all exceptions when I found it would throw a NPE exception when the query was 
-		// run on non-wellformed VFS URI.
+			// originally I only checked for a FileSystemException. I expanded it to
+			// include all exceptions when I found it would throw a NPE exception when the query was 
+			// run on non-wellformed VFS URI.
 		} catch (Exception e) {
 			Message.verbose(e.getLocalizedMessage());
 			return false;

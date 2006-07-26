@@ -20,6 +20,7 @@ import java.util.List;
 
 import org.apache.commons.vfs.FileContent;
 import org.apache.commons.vfs.FileSystemException;
+import org.apache.commons.vfs.FileSystemManager;
 import org.apache.commons.vfs.impl.StandardFileSystemManager;
 
 import fr.jayasoft.ivy.repository.AbstractRepository;
@@ -42,7 +43,20 @@ public class VfsRepository extends AbstractRepository {
 	 * Create a new Ivy VFS Repository Instance
 	 *
 	 */
-	public VfsRepository() {		
+	public VfsRepository() {
+	}
+	
+	private FileSystemManager getVFSManager() throws IOException {
+		synchronized (this) {
+			if (_manager == null) {
+				_manager = createVFSManager();
+			}
+		}
+		return _manager;
+	}
+
+	private StandardFileSystemManager createVFSManager() throws IOException {
+		StandardFileSystemManager result = null;
 		try {
 			/*
 			 * The DefaultFileSystemManager gets its configuration from the jakarta-vfs-common
@@ -50,13 +64,13 @@ public class VfsRepository extends AbstractRepository {
 			 * Using StandardFileSystemManager lets us specify which schemes to support as well as 
 			 * providing a mechanism to change this support without recompilation.
 			 */
-			_manager = new StandardFileSystemManager();
-			_manager.setConfiguration(getClass().getResource(IVY_VFS_CONFIG));
-			_manager.init();
+			result = new StandardFileSystemManager();
+			result.setConfiguration(getClass().getResource(IVY_VFS_CONFIG));
+			result.init();
 
 			// Generate and print a list of available schemes
 			Message.verbose("Available VFS schemes...");
-			String[] schemes = _manager.getSchemes();
+			String[] schemes = result.getSchemes();
 			Arrays.sort(schemes);
 			for (int i = 0; i < schemes.length; i++) {
 				Message.verbose("VFS Supported Scheme: " + schemes[i]);
@@ -70,8 +84,12 @@ public class VfsRepository extends AbstractRepository {
 			 */
 			Message.error("Unable to initialize VFS repository manager!");
 			Message.error(e.getLocalizedMessage());
-			e.printStackTrace();
+			IOException error = new IOException(e.getLocalizedMessage());
+			error.initCause(e);
+			throw error;
 		}
+		
+		return result;
 	}
 
 	private final CopyProgressListener _progress = new CopyProgressListener() {
@@ -90,18 +108,21 @@ public class VfsRepository extends AbstractRepository {
 	
 	
 	protected void finalize() {
-		_manager.close();
+		if (_manager != null) {
+			_manager.close();
+			_manager = null;
+		}
 	}
-
+	
 	/**
 	 * Get a VfsResource
 	 * 
 	 * @param source a <code>String</code> identifying a VFS Resource
-	 * @throws code>IOException</code> on failure
+	 * @throws <code>IOException</code> on failure
 	 * @see "Supported File Systems in the jakarta-commons-vfs documentation"
 	 */
 	public Resource getResource(String vfsURI) throws IOException {
-		return new VfsResource(vfsURI, _manager);
+		return new VfsResource(vfsURI, getVFSManager());
 	}
 	
 	/**
@@ -113,7 +134,7 @@ public class VfsRepository extends AbstractRepository {
 	 * @see "Supported File Systems in the jakarta-commons-vfs documentation"
 	 */
 	public void get(String srcVfsURI, File destination) throws IOException {
-		VfsResource src = new VfsResource(srcVfsURI, _manager);
+		VfsResource src = new VfsResource(srcVfsURI, getVFSManager());
 		fireTransferInitiated(src, TransferEvent.REQUEST_GET);
 		try {
 			FileContent content = src.getContent();
@@ -139,9 +160,9 @@ public class VfsRepository extends AbstractRepository {
 	 * @see "Supported File Systems in the jakarta-commons-vfs documentation"
 	 */
 	public List list(String vfsURI) throws IOException {
-		VfsResource res = new VfsResource(vfsURI, _manager);
+		VfsResource res = new VfsResource(vfsURI, getVFSManager());
 		return res.getChildren();
-	};
+	}
 	
 	
 	
@@ -156,7 +177,7 @@ public class VfsRepository extends AbstractRepository {
 	 * 
 	 */
 	public void put(File source, String vfsURI, boolean overwrite) throws IOException {
-		VfsResource dest = new VfsResource(vfsURI, _manager);
+		VfsResource dest = new VfsResource(vfsURI, getVFSManager());
 		fireTransferInitiated(dest, TransferEvent.REQUEST_PUT);
 		if (dest.physicallyExists() && ! overwrite) {
 			throw new IOException("Cannot copy. Destination file: " + dest.getName() + " exists and overwrite not set.");

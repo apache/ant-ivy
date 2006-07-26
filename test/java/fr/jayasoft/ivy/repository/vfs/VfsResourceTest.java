@@ -1,7 +1,6 @@
 package fr.jayasoft.ivy.repository.vfs;
 
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -113,7 +112,7 @@ public class VfsResourceTest extends TestCase {
 	 * Validate VFSResource creation when given a poorly formed VFS identifier
 	 *
 	 */
-	public void testBadURI() {
+	public void testBadURI() throws Exception {
 		String vfsURI = "smb1:/goobeldygook";
 		VfsResource res = new VfsResource(vfsURI, helper.fsManager);
 		
@@ -190,7 +189,7 @@ public class VfsResourceTest extends TestCase {
 	 * for its children
 	 *
 	 */
-	public void testListFileChildren() {
+	public void testListFileChildren() throws Exception {
 		Iterator testSet = helper.createVFSUriSet(VfsTestHelper.TEST_IVY_XML).iterator();
 		while (testSet.hasNext()) {
 			VfsURI vfsURI = (VfsURI) testSet.next();
@@ -207,7 +206,7 @@ public class VfsResourceTest extends TestCase {
 	 * nonexistent file - for a list of its children
 	 *
 	 */
-	public void testListImaginary() throws URISyntaxException {
+	public void testListImaginary() throws Exception {
 		Iterator testSet = helper.createVFSUriSet("idontexistzzxx").iterator();
 		while (testSet.hasNext()) {
 			VfsURI vfsURI = (VfsURI) testSet.next();
