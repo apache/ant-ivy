@@ -20,5 +20,8 @@
 		<dependency org="apache" name="commons-cli" rev="1.0" conf="default,standalone->default"/>
 		<dependency org="apache" name="oro" rev="2.0.8" conf="default,oro->default"/>
 		<dependency org="apache" name="commons-vfs" rev="20060405" conf="default,vfs->default" />
+		<dependency org="apache" name="slide" rev="2.1" conf="default,vfs->default">
+			<artifact name="slide-webdavlib" type="jar" />
+		</dependency>
 	</dependencies>
 </ivy-module>
