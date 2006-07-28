@@ -1,7 +1,7 @@
 /**
  * This file is subject to the licence found in LICENCE.TXT in the root directory of the project.
  * Copyright Jayasoft 2005 - All rights reserved
-
+ *
  * VFS implementation of the Resource interface
  * 
  * @author glen
@@ -43,8 +43,7 @@ public class VfsResource implements Resource {
 		}
 
  		try {
- 			_content = _resourceImpl.getContent();
-			_isAvailable = _content != null;
+			_isAvailable = _resourceImpl.exists();
  		} catch (FileSystemException e) {
  			Message.verbose(e.getLocalizedMessage());
 		}
@@ -74,7 +73,16 @@ public class VfsResource implements Resource {
     	return list;
     }
     
-    public FileContent getContent() {
+    public FileContent getContent() throws IOException {
+    	if ((_content == null) && _isAvailable) {
+ 			try {
+				_content = _resourceImpl.getContent();
+			} catch (FileSystemException e) {
+				IOException error = new IOException(e.getLocalizedMessage());
+				error.initCause(e);
+	 			throw error;
+			}
+    	}
     	return _content;
     }
     
