@@ -142,6 +142,9 @@ public class RepositoryResolver extends AbstractResourceResolver {
     protected long get(Resource resource, File dest) throws IOException {
         Message.verbose("\t"+getName()+": downloading "+resource.getName());
         Message.debug("\t\tto "+dest);
+        if (dest.getParentFile() != null) {
+        	dest.getParentFile().mkdirs();
+        }
         _repository.get(resource.getName(), dest);
         return dest.length();
     }

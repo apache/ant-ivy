@@ -8,6 +8,7 @@
 		<conf name="httpclient" extends="core" description="core + optional httpclient for better http handling"/>
 		<conf name="oro" extends="core" description="to use optional glob matcher"/>
 		<conf name="vfs" extends="core" description="core + optional VirtualFileSystem(VFS) support" />
+		<conf name="sftp" extends="core" description="core + optional SFTP support" />
 		<conf name="standalone" extends="core" description="to launch in standalone mode (from command line)"/>
 		<conf name="default" description="full ivy with all dependencies"/>
 	</configurations>
@@ -23,5 +24,6 @@
 		<dependency org="apache" name="slide" rev="2.1" conf="default,vfs->default">
 			<artifact name="slide-webdavlib" type="jar" />
 		</dependency>
+		<dependency org="jcraft" name="jsch" rev="0.1.25" conf="default,sftp->default" />
 	</dependencies>
 </ivy-module>
