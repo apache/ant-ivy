@@ -10,6 +10,8 @@ import java.util.Arrays;
 
 import javax.swing.event.EventListenerList;
 
+import fr.jayasoft.ivy.IvyContext;
+
 
 public abstract class AbstractRepository implements Repository {
     private EventListenerList _listeners = new EventListenerList();
@@ -29,7 +31,7 @@ public abstract class AbstractRepository implements Repository {
     }
     
     protected void fireTransferInitiated(Resource res, int requestType) {
-        _evt = new TransferEvent(this, res, TransferEvent.TRANSFER_INITIATED, requestType);
+        _evt = new TransferEvent(IvyContext.getContext().getIvy(), this, res, TransferEvent.TRANSFER_INITIATED, requestType);
         fireTransferEvent(_evt);
     }
     
@@ -67,7 +69,7 @@ public abstract class AbstractRepository implements Repository {
         _evt = null;
     }
     
-    protected void fireTransferCompleted(int totalLength) {
+    protected void fireTransferCompleted(long totalLength) {
         _evt.setEventType(TransferEvent.TRANSFER_COMPLETED);
         _evt.setBuffer(null);
         _evt.setTotalLength(totalLength);

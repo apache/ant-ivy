@@ -49,7 +49,9 @@ import fr.jayasoft.ivy.conflict.NoConflictManager;
 import fr.jayasoft.ivy.conflict.StrictConflictManager;
 import fr.jayasoft.ivy.event.IvyEvent;
 import fr.jayasoft.ivy.event.IvyListener;
-import fr.jayasoft.ivy.event.PrepareDownloadEvent;
+import fr.jayasoft.ivy.event.download.PrepareDownloadEvent;
+import fr.jayasoft.ivy.event.resolve.EndResolveEvent;
+import fr.jayasoft.ivy.event.resolve.StartResolveEvent;
 import fr.jayasoft.ivy.filter.Filter;
 import fr.jayasoft.ivy.filter.FilterHelper;
 import fr.jayasoft.ivy.latest.LatestLexicographicStrategy;
@@ -929,6 +931,7 @@ public class Ivy implements TransferListener {
         try {
             
             ModuleDescriptor md = parser.parseDescriptor(this, ivySource, validate);
+            
             if (cache==null) {  // ensure that a cache exists
                 cache = getDefaultCache();
             }
@@ -941,6 +944,8 @@ public class Ivy implements TransferListener {
             if (confs.length == 1 && confs[0].equals("*")) {
                 confs = md.getConfigurationsNames();
             }
+            fireIvyEvent(new StartResolveEvent(this, md, confs));
+            
             long start = System.currentTimeMillis();
             Message.info(":: resolving dependencies :: "+md.getResolvedModuleRevisionId());
             Message.info("\tconfs: "+Arrays.asList(confs));
@@ -977,6 +982,8 @@ public class Ivy implements TransferListener {
             
             Message.verbose("\tresolve done ("+(System.currentTimeMillis()-start)+"ms)");
             Message.sumupProblems();
+            
+            fireIvyEvent(new EndResolveEvent(this, md, confs, report));
             return report;
         } finally {
             setDictatorResolver(oldDictator);
@@ -992,7 +999,7 @@ public class Ivy implements TransferListener {
                  artifacts.addAll(Arrays.asList(dependencies[i].getSelectedArtifacts(artifactFilter)));
             }
         }
-        fireIvyEvent(new PrepareDownloadEvent((Artifact[])artifacts.toArray(new Artifact[artifacts.size()])));
+        fireIvyEvent(new PrepareDownloadEvent(this, (Artifact[])artifacts.toArray(new Artifact[artifacts.size()])));
         
         for (int i = 0; i < dependencies.length; i++) {
             //download artifacts required in all asked configurations

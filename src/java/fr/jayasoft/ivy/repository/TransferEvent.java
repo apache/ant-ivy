@@ -7,6 +7,7 @@ package fr.jayasoft.ivy.repository;
 
 import java.io.File;
 
+import fr.jayasoft.ivy.Ivy;
 import fr.jayasoft.ivy.event.IvyEvent;
 
 /**
@@ -90,7 +91,8 @@ public class TransferEvent extends IvyEvent {
     private long _totalLength;
     private boolean _isTotalLengthSet = false;
 
-    public TransferEvent(final Repository repository, final Resource resource, final int eventType, final int requestType) {
+    public TransferEvent(Ivy ivy, final Repository repository, final Resource resource, final int eventType, final int requestType) {
+    	super(ivy);
         _repository = repository;
         _resource = resource;
 
@@ -100,14 +102,14 @@ public class TransferEvent extends IvyEvent {
 
     }
 
-    public TransferEvent(final Repository repository, final Resource resource, final Exception exception, final int requestType) {
-        this(repository, resource, TRANSFER_ERROR, requestType);
+    public TransferEvent(Ivy ivy, final Repository repository, final Resource resource, final Exception exception, final int requestType) {
+        this(ivy, repository, resource, TRANSFER_ERROR, requestType);
 
         _exception = exception;
     }
 
-    public TransferEvent(final Repository repository, final Resource resource, byte[] buffer, long length, final int requestType) {
-        this(repository, resource, TRANSFER_PROGRESS, requestType);
+    public TransferEvent(Ivy ivy, final Repository repository, final Resource resource, byte[] buffer, long length, final int requestType) {
+        this(ivy, repository, resource, TRANSFER_PROGRESS, requestType);
 
         _buffer = buffer;
         _length = length;

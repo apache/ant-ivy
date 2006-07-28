@@ -37,8 +37,8 @@ import fr.jayasoft.ivy.ModuleId;
 import fr.jayasoft.ivy.ModuleRevisionId;
 import fr.jayasoft.ivy.ResolveData;
 import fr.jayasoft.ivy.ResolvedModuleRevision;
-import fr.jayasoft.ivy.event.EndDownloadEvent;
-import fr.jayasoft.ivy.event.StartDownloadEvent;
+import fr.jayasoft.ivy.event.download.EndDownloadEvent;
+import fr.jayasoft.ivy.event.download.StartDownloadEvent;
 import fr.jayasoft.ivy.parser.ModuleDescriptorParser;
 import fr.jayasoft.ivy.parser.ModuleDescriptorParserRegistry;
 import fr.jayasoft.ivy.report.ArtifactDownloadReport;
@@ -611,7 +611,7 @@ public abstract class BasicResolver extends AbstractResolver {
         for (int i = 0; i < artifacts.length; i++) {
         	final ArtifactDownloadReport adr = new ArtifactDownloadReport(artifacts[i]);
         	dr.addArtifactReport(adr);
-            ivy.fireIvyEvent(new StartDownloadEvent(this, artifacts[i]));
+            ivy.fireIvyEvent(new StartDownloadEvent(ivy, this, artifacts[i]));
             ArtifactOrigin origin = ivy.getSavedArtifactOrigin(cache, artifacts[i]);
         	File archiveFile = ivy.getArchiveFileInCache(cache, artifacts[i], origin);
         	if (archiveFile.exists()) {
@@ -665,7 +665,7 @@ public abstract class BasicResolver extends AbstractResolver {
         			adr.setDownloadStatus(DownloadStatus.FAILED);                
         		}
         	}
-            ivy.fireIvyEvent(new EndDownloadEvent(this, artifacts[i], adr));
+            ivy.fireIvyEvent(new EndDownloadEvent(ivy, this, artifacts[i], adr));
         }
     	return dr;
     }

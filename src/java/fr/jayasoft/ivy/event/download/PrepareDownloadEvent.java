@@ -4,14 +4,17 @@
  * 
  * #SNAPSHOT#
  */
-package fr.jayasoft.ivy.event;
+package fr.jayasoft.ivy.event.download;
 
 import fr.jayasoft.ivy.Artifact;
+import fr.jayasoft.ivy.Ivy;
+import fr.jayasoft.ivy.event.IvyEvent;
 
 public class PrepareDownloadEvent extends IvyEvent {
     private Artifact[] _artifacts;
     
-    public PrepareDownloadEvent(Artifact[] artifacts) {
+    public PrepareDownloadEvent(Ivy source, Artifact[] artifacts) {
+    	super(source);
         _artifacts = artifacts;
     }
     

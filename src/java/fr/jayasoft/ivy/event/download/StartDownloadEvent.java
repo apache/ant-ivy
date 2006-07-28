@@ -4,25 +4,19 @@
  * 
  * #SNAPSHOT#
  */
-package fr.jayasoft.ivy.event;
+package fr.jayasoft.ivy.event.download;
 
 import fr.jayasoft.ivy.Artifact;
 import fr.jayasoft.ivy.DependencyResolver;
-import fr.jayasoft.ivy.report.ArtifactDownloadReport;
+import fr.jayasoft.ivy.Ivy;
 
-public class EndDownloadEvent extends DownloadEvent {
+public class StartDownloadEvent extends DownloadEvent {
 
     private DependencyResolver _resolver;
-    private ArtifactDownloadReport _report;
 
-    public EndDownloadEvent(DependencyResolver resolver, Artifact artifact, ArtifactDownloadReport report) {
-        super(artifact);
+    public StartDownloadEvent(Ivy source, DependencyResolver resolver, Artifact artifact) {
+        super(source, artifact);
         _resolver = resolver;
-        _report = report;
-    }
-
-    public ArtifactDownloadReport getReport() {
-        return _report;
     }
 
     public DependencyResolver getResolver() {

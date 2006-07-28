@@ -6,7 +6,19 @@
  */
 package fr.jayasoft.ivy.event;
 
+import fr.jayasoft.ivy.Ivy;
+
 
 public class IvyEvent {
+    private Ivy _source;
+
+	public IvyEvent(Ivy source) {
+		_source = source;
+	}
+
+	public Ivy getSource() {
+		return _source;
+	}
+    
     
 }
