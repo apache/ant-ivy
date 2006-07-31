@@ -74,7 +74,7 @@ public class VfsResource implements Resource {
     }
     
     public FileContent getContent() throws IOException {
-    	if ((_content == null) && _isAvailable) {
+    	if (_content == null) {
  			try {
 				_content = _resourceImpl.getContent();
 			} catch (FileSystemException e) {
