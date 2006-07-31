@@ -5,11 +5,12 @@ import fr.jayasoft.ivy.ModuleDescriptor;
 import fr.jayasoft.ivy.report.ResolveReport;
 
 public class EndResolveEvent extends ResolveEvent {
+	public static final String NAME = "post-resolve";
 
 	private ResolveReport _report;
 
 	public EndResolveEvent(Ivy source, ModuleDescriptor md, String[] confs, ResolveReport report) {
-		super(source, md, confs);
+		super(source, NAME, md, confs);
 		_report = report;
 	}
 

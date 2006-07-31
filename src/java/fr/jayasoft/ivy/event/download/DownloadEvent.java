@@ -13,12 +13,18 @@ import fr.jayasoft.ivy.event.IvyEvent;
 public abstract class DownloadEvent extends IvyEvent {
     private Artifact _artifact;
 
-    public DownloadEvent(Ivy source, Artifact artifact) {
-    	super(source);
+    public DownloadEvent(Ivy source, String name, Artifact artifact) {
+    	super(source, name);
         _artifact = artifact;
+        addArtifactAttributes(_artifact);
     }
 
-    public Artifact getArtifact() {
+    protected void addArtifactAttributes(Artifact artifact) {
+		addMridAttributes(artifact.getModuleRevisionId());
+		addAttributes(artifact.getAttributes());
+	}
+
+	public Artifact getArtifact() {
         return _artifact;
     }
     

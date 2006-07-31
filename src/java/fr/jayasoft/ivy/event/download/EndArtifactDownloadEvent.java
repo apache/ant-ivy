@@ -11,15 +11,21 @@ import fr.jayasoft.ivy.DependencyResolver;
 import fr.jayasoft.ivy.Ivy;
 import fr.jayasoft.ivy.report.ArtifactDownloadReport;
 
-public class EndDownloadEvent extends DownloadEvent {
+public class EndArtifactDownloadEvent extends DownloadEvent {
+	public static final String NAME = "post-download-artifact";
 
     private DependencyResolver _resolver;
     private ArtifactDownloadReport _report;
 
-    public EndDownloadEvent(Ivy source, DependencyResolver resolver, Artifact artifact, ArtifactDownloadReport report) {
-        super(source, artifact);
+    public EndArtifactDownloadEvent(Ivy source, DependencyResolver resolver, Artifact artifact, ArtifactDownloadReport report) {
+        super(source, NAME, artifact);
         _resolver = resolver;
         _report = report;
+        addAttribute("resolver", _resolver.getName());
+        addAttribute("status", _report.getDownloadStatus().toString());
+        addAttribute("size", String.valueOf(_report.getSize()));
+        addAttribute("origin", _report.getArtifactOrigin().getLocation());
+        addAttribute("local", String.valueOf(_report.getArtifactOrigin().isLocal()));
     }
 
     public ArtifactDownloadReport getReport() {

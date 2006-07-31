@@ -11,10 +11,11 @@ import fr.jayasoft.ivy.Ivy;
 import fr.jayasoft.ivy.event.IvyEvent;
 
 public class PrepareDownloadEvent extends IvyEvent {
+	public static final String NAME = "prepare-download";
     private Artifact[] _artifacts;
     
     public PrepareDownloadEvent(Ivy source, Artifact[] artifacts) {
-    	super(source);
+    	super(source, NAME);
         _artifacts = artifacts;
     }
     

@@ -10,13 +10,15 @@ import fr.jayasoft.ivy.Artifact;
 import fr.jayasoft.ivy.DependencyResolver;
 import fr.jayasoft.ivy.Ivy;
 
-public class StartDownloadEvent extends DownloadEvent {
+public class NeedArtifactEvent extends DownloadEvent {
+    public static final String NAME = "need-artifact";
+    
+	private DependencyResolver _resolver;
 
-    private DependencyResolver _resolver;
-
-    public StartDownloadEvent(Ivy source, DependencyResolver resolver, Artifact artifact) {
-        super(source, artifact);
+    public NeedArtifactEvent(Ivy source, DependencyResolver resolver, Artifact artifact) {
+        super(source, NAME, artifact);
         _resolver = resolver;
+        addAttribute("resolver", _resolver.getName());
     }
 
     public DependencyResolver getResolver() {

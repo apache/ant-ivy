@@ -5,9 +5,7 @@
  */
 package fr.jayasoft.ivy.resolver;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -37,8 +35,9 @@ import fr.jayasoft.ivy.ModuleId;
 import fr.jayasoft.ivy.ModuleRevisionId;
 import fr.jayasoft.ivy.ResolveData;
 import fr.jayasoft.ivy.ResolvedModuleRevision;
-import fr.jayasoft.ivy.event.download.EndDownloadEvent;
-import fr.jayasoft.ivy.event.download.StartDownloadEvent;
+import fr.jayasoft.ivy.event.download.EndArtifactDownloadEvent;
+import fr.jayasoft.ivy.event.download.NeedArtifactEvent;
+import fr.jayasoft.ivy.event.download.StartArtifactDownloadEvent;
 import fr.jayasoft.ivy.parser.ModuleDescriptorParser;
 import fr.jayasoft.ivy.parser.ModuleDescriptorParserRegistry;
 import fr.jayasoft.ivy.report.ArtifactDownloadReport;
@@ -47,7 +46,6 @@ import fr.jayasoft.ivy.report.DownloadStatus;
 import fr.jayasoft.ivy.repository.Resource;
 import fr.jayasoft.ivy.repository.ResourceHelper;
 import fr.jayasoft.ivy.util.ChecksumHelper;
-import fr.jayasoft.ivy.util.FileUtil;
 import fr.jayasoft.ivy.util.IvyPatternHelper;
 import fr.jayasoft.ivy.util.Message;
 import fr.jayasoft.ivy.xml.XmlModuleDescriptorParser;
@@ -611,7 +609,7 @@ public abstract class BasicResolver extends AbstractResolver {
         for (int i = 0; i < artifacts.length; i++) {
         	final ArtifactDownloadReport adr = new ArtifactDownloadReport(artifacts[i]);
         	dr.addArtifactReport(adr);
-            ivy.fireIvyEvent(new StartDownloadEvent(ivy, this, artifacts[i]));
+            ivy.fireIvyEvent(new NeedArtifactEvent(ivy, this, artifacts[i]));
             ArtifactOrigin origin = ivy.getSavedArtifactOrigin(cache, artifacts[i]);
         	File archiveFile = ivy.getArchiveFileInCache(cache, artifacts[i], origin);
         	if (archiveFile.exists()) {
@@ -635,6 +633,7 @@ public abstract class BasicResolver extends AbstractResolver {
                     try {
         			    Message.info("downloading "+artifactRef.getResource()+" ...");
         			    origin = new ArtifactOrigin(artifactRef.getResource().isLocal(), artifactRef.getResource().getName());
+        	            ivy.fireIvyEvent(new StartArtifactDownloadEvent(ivy, this, artifacts[i], origin));
         			    
                         File tmp = ivy.getArchiveFileInCache(cache, 
                                 new DefaultArtifact(
@@ -646,6 +645,7 @@ public abstract class BasicResolver extends AbstractResolver {
                                         artifacts[i].getExtraAttributes()),
                                 origin);
                         archiveFile = ivy.getArchiveFileInCache(cache, artifacts[i], origin);
+                        
                         adr.setSize(getAndCheck(artifactRef.getResource(), tmp));
                         if (!tmp.renameTo(archiveFile)) {
                             Message.warn("\t[FAILED     ] "+artifacts[i]+" impossible to move temp file to definitive one ("+(System.currentTimeMillis()-start)+"ms)");
@@ -665,7 +665,7 @@ public abstract class BasicResolver extends AbstractResolver {
         			adr.setDownloadStatus(DownloadStatus.FAILED);                
         		}
         	}
-            ivy.fireIvyEvent(new EndDownloadEvent(ivy, this, artifacts[i], adr));
+            ivy.fireIvyEvent(new EndArtifactDownloadEvent(ivy, this, artifacts[i], adr));
         }
     	return dr;
     }

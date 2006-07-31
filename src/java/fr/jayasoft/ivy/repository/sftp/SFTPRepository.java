@@ -234,7 +234,7 @@ public class SFTPRepository extends AbstractRepository {
 				});
 				IvyContext.getContext().getIvy().addIvyListener(new IvyListener() {
 					public void progress(IvyEvent event) {
-						if (_channel != null && event instanceof EndResolveEvent) {
+						if (_channel != null) {
 							Message.verbose(":: SFTP :: disconnecting from "+getHost()+"...");
 							_channel.disconnect();
 							_channel = null;
@@ -244,7 +244,7 @@ public class SFTPRepository extends AbstractRepository {
 							Message.verbose(":: SFTP :: disconnected from "+getHost());
 						}
 					}
-				});
+				}, EndResolveEvent.NAME);
 				Message.verbose(":: SFTP :: connecting to "+getHost()+"...");
 				_session.connect();
 

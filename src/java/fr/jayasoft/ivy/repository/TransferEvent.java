@@ -74,6 +74,17 @@ public class TransferEvent extends IvyEvent {
      */
     public final static int REQUEST_PUT = 6;
 
+    
+	public static final String TRANSFER_INITIATED_NAME = "transfer-initiated";
+
+	public static final String TRANSFER_STARTED_NAME = "transfer-started";
+
+	public static final String TRANSFER_PROGRESS_NAME = "transfer-progress";
+
+	public static final String TRANSFER_COMPLETED_NAME = "transfer-completed";
+
+	public static final String TRANSFER_ERROR_NAME = "transfer-error";
+
     private Resource _resource;
 
     private int _eventType;
@@ -92,17 +103,20 @@ public class TransferEvent extends IvyEvent {
     private boolean _isTotalLengthSet = false;
 
     public TransferEvent(Ivy ivy, final Repository repository, final Resource resource, final int eventType, final int requestType) {
-    	super(ivy);
+    	super(ivy, getName(eventType));
+    	
         _repository = repository;
+        addAttribute("repository", _repository.getName());
         _resource = resource;
+        addAttribute("resource", _resource.getName());
 
         setEventType(eventType);
 
         setRequestType(requestType);
-
+        addAttribute("request-type", requestType == REQUEST_GET?"get":"put");
     }
 
-    public TransferEvent(Ivy ivy, final Repository repository, final Resource resource, final Exception exception, final int requestType) {
+	public TransferEvent(Ivy ivy, final Repository repository, final Resource resource, final Exception exception, final int requestType) {
         this(ivy, repository, resource, TRANSFER_ERROR, requestType);
 
         _exception = exception;
@@ -115,6 +129,23 @@ public class TransferEvent extends IvyEvent {
         _length = length;
         _totalLength = length;
     }
+
+    private static String getName(int eventType) {
+    	switch (eventType) {
+		case TRANSFER_INITIATED:
+			return TRANSFER_INITIATED_NAME;
+		case TRANSFER_STARTED:
+			return TRANSFER_STARTED_NAME;
+		case TRANSFER_PROGRESS:
+			return TRANSFER_PROGRESS_NAME;
+		case TRANSFER_COMPLETED:
+			return TRANSFER_COMPLETED_NAME;
+		case TRANSFER_ERROR:
+			return TRANSFER_ERROR_NAME;
+		}
+		return null;
+	}
+
 
     /**
      * @return Returns the resource.

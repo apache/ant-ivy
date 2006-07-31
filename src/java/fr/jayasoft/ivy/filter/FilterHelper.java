@@ -12,7 +12,7 @@ import java.util.Iterator;
 import java.util.List;
 
 public class FilterHelper {
-    public static Filter NO_FILTER = new NoFilter();
+    public static Filter NO_FILTER = NoFilter.INSTANCE;
     
     public static Filter getArtifactTypeFilter(String types) {
         if (types == null || types.trim().equals("*")) {

@@ -47,8 +47,11 @@ import fr.jayasoft.ivy.circular.WarnCircularDependencyStrategy;
 import fr.jayasoft.ivy.conflict.LatestConflictManager;
 import fr.jayasoft.ivy.conflict.NoConflictManager;
 import fr.jayasoft.ivy.conflict.StrictConflictManager;
+import fr.jayasoft.ivy.event.FilteredIvyListener;
 import fr.jayasoft.ivy.event.IvyEvent;
+import fr.jayasoft.ivy.event.IvyEventFilter;
 import fr.jayasoft.ivy.event.IvyListener;
+import fr.jayasoft.ivy.event.Trigger;
 import fr.jayasoft.ivy.event.download.PrepareDownloadEvent;
 import fr.jayasoft.ivy.event.resolve.EndResolveEvent;
 import fr.jayasoft.ivy.event.resolve.StartResolveEvent;
@@ -2367,13 +2370,37 @@ public class Ivy implements TransferListener {
             }
         }
     }
+    
+    public void addTrigger(Trigger trigger) {
+    	addIvyListener(trigger, trigger.getEventFilter());
+    }
+
+    public void addConfigured(Trigger trigger) {
+    	addTrigger(trigger);
+    }
 
     public void addIvyListener(IvyListener listener) {
         _listeners.add(IvyListener.class, listener);
     }
 
+    public void addIvyListener(IvyListener listener, String eventName) {
+        addIvyListener(listener, new IvyEventFilter(eventName, null, null));
+    }
+
+    public void addIvyListener(IvyListener listener, Filter filter) {
+        _listeners.add(IvyListener.class, new FilteredIvyListener(listener, filter));
+    }
+
     public void removeIvyListener(IvyListener listener) {
         _listeners.remove(IvyListener.class, listener);
+        IvyListener[] listeners = (IvyListener[])_listeners.getListeners(IvyListener.class);
+        for (int i = 0; i < listeners.length; i++) {
+			if (listeners[i] instanceof FilteredIvyListener) {
+				if (listener.equals(((FilteredIvyListener)listeners[i]).getIvyListener())) {
+					_listeners.remove(IvyListener.class, listeners[i]);
+				}
+			}
+		}
     }
 
     public boolean hasIvyListener(IvyListener listener) {
