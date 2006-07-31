@@ -7,6 +7,7 @@
 package fr.jayasoft.ivy.event.download;
 
 import fr.jayasoft.ivy.Artifact;
+import fr.jayasoft.ivy.ArtifactOrigin;
 import fr.jayasoft.ivy.DependencyResolver;
 import fr.jayasoft.ivy.Ivy;
 import fr.jayasoft.ivy.report.ArtifactDownloadReport;
@@ -24,8 +25,14 @@ public class EndArtifactDownloadEvent extends DownloadEvent {
         addAttribute("resolver", _resolver.getName());
         addAttribute("status", _report.getDownloadStatus().toString());
         addAttribute("size", String.valueOf(_report.getSize()));
-        addAttribute("origin", _report.getArtifactOrigin().getLocation());
-        addAttribute("local", String.valueOf(_report.getArtifactOrigin().isLocal()));
+        ArtifactOrigin origin = report.getArtifactOrigin();
+        if (origin != null) {
+        	addAttribute("origin", _report.getArtifactOrigin().getLocation());
+        	addAttribute("local", String.valueOf(_report.getArtifactOrigin().isLocal()));
+        } else {
+            addAttribute("origin", "");
+            addAttribute("local", "");
+        }
     }
 
     public ArtifactDownloadReport getReport() {
