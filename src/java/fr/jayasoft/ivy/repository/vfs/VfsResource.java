@@ -89,7 +89,7 @@ public class VfsResource implements Resource {
     	return list;
     }
     
-    public FileContent getContent() throws IOException {
+    public FileContent getContent() {
     	init();
     	return _content;
     }
