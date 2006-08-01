@@ -25,28 +25,43 @@ import fr.jayasoft.ivy.repository.Resource;
 import fr.jayasoft.ivy.util.Message;
 
 
-public class VfsResource implements Resource {
-	private FileContent _content = null;
-    private FileObject _resourceImpl;
-    private boolean _isAvailable;
+public class VfsResource implements Resource {	
+	private String _vfsURI;
+	private FileSystemManager _fsManager;
+	
+    private transient boolean _init = false;
+    private transient boolean _exists;
+    private transient long _lastModified;
+    private transient long _contentLength;
+
+	private transient FileContent _content = null;
+    private transient FileObject _resourceImpl;
     
     // Constructor
-    public VfsResource(String vfsURI, FileSystemManager fsManager) throws IOException {
-    	_isAvailable = false;
-    	_resourceImpl = null;
-    	
- 		try {
-			_resourceImpl = fsManager.resolveFile(vfsURI);
- 		} catch (FileSystemException e) {
- 			Message.verbose(e.getLocalizedMessage());
- 			throw new IOException(e.getLocalizedMessage());
-		}
-
- 		try {
-			_isAvailable = _resourceImpl.exists();
- 		} catch (FileSystemException e) {
- 			Message.verbose(e.getLocalizedMessage());
-		}
+    public VfsResource(String vfsURI, FileSystemManager fsManager) {
+    	this._vfsURI = vfsURI;
+    	this._fsManager = fsManager;
+    	this._init = false;
+    }
+    
+    private void init() {
+    	if (!_init) {
+	    	try {
+	    		_resourceImpl = _fsManager.resolveFile(_vfsURI);
+	    		_content = _resourceImpl.getContent();
+	    		
+	    		_exists = _resourceImpl.exists();
+	    		_lastModified = _content.getLastModifiedTime();
+	    		_contentLength = _content.getSize();
+	   		} catch (FileSystemException e) {
+	 			Message.verbose(e.getLocalizedMessage());
+	 			_exists = false;
+	 			_lastModified = 0;
+	 			_contentLength = 0;
+			}
+	   		
+	   		_init = true;
+    	}
     }
     
     /**
@@ -58,9 +73,10 @@ public class VfsResource implements Resource {
      *
      */
     public List getChildren() {
+    	init();
     	ArrayList list = new ArrayList();
-    	try {
-			if (_resourceImpl.exists() && _resourceImpl.getType() == FileType.FOLDER) {
+    	try {  		
+			if ((_resourceImpl != null) && _resourceImpl.exists() && (_resourceImpl.getType() == FileType.FOLDER)) {
 				FileObject[] children = _resourceImpl.getChildren();
 				for (int i = 0; i < children.length; i++) {
 					FileObject child = children[i];
@@ -74,15 +90,7 @@ public class VfsResource implements Resource {
     }
     
     public FileContent getContent() throws IOException {
-    	if (_content == null) {
- 			try {
-				_content = _resourceImpl.getContent();
-			} catch (FileSystemException e) {
-				IOException error = new IOException(e.getLocalizedMessage());
-				error.initCause(e);
-	 			throw error;
-			}
-    	}
+    	init();
     	return _content;
     }
     
@@ -92,19 +100,11 @@ public class VfsResource implements Resource {
      * @return a <code>String</code> representing the Resource URL.
      */
     public String getName() {
-    	if (exists()) {
-    		return normalize(_resourceImpl.getName().getURI());
-    	} else {
-    		return "";
-    	}
+   		return normalize(_vfsURI);
     }
     
     public Resource clone(String cloneName) {
-    	try {
-    		return new VfsResource(cloneName, _resourceImpl.getFileSystem().getFileSystemManager());
-    	} catch (IOException e) {
-    		throw new RuntimeException(e);
-    	}
+   		return new VfsResource(cloneName, _fsManager);
     }
     
     /**
@@ -115,6 +115,10 @@ public class VfsResource implements Resource {
      * @return a normalized <class>String</class> representing the VFS URI
      */
     private String normalize(String vfsURI) {
+    	if (vfsURI == null) {
+    		return "";
+    	}
+    	
 		if (vfsURI.startsWith("file:////")) {
 			vfsURI = vfsURI.replaceFirst("////", "///");
 		}
@@ -127,15 +131,8 @@ public class VfsResource implements Resource {
      * @return a <code>long</code> indicating last modified time.
      */
      public long getLastModified() {
-    	 long time = 0;
-    	 if (exists()) {
-    		try {
-				time = _resourceImpl.getContent().getLastModifiedTime();
-			} catch (FileSystemException e) {
-				Message.verbose(e.getLocalizedMessage());
-			}
-    	 }
-    	 return time;
+    	 init();
+    	 return _lastModified;
     }
 
      /**
@@ -144,15 +141,8 @@ public class VfsResource implements Resource {
       * @return a <code>long</code> representing the size of the resource (in bytes).
       */
     public long getContentLength() {
-    	long size = 0;
-    	if (exists()) {
-    		try {
-				size = _resourceImpl.getContent().getSize();
-			} catch (FileSystemException e) {
-				Message.verbose(e.getLocalizedMessage());
-			}
-    	}
-    	return size;   	
+    	init();
+    	return _contentLength;
     }
 
     /**
@@ -162,7 +152,8 @@ public class VfsResource implements Resource {
      *         <code>false</code> otherwise.
      */
     public boolean exists() {
-    	return _isAvailable;
+    	init();
+    	return _exists;
     }
     
     /**
@@ -172,6 +163,8 @@ public class VfsResource implements Resource {
      *         otherwise.
      */
      public boolean physicallyExists() {
+    	 // TODO: there is no need for this method anymore, replace it by calling exists();
+    	 init();
     	
     	try {
 			return _resourceImpl.exists();
@@ -189,6 +182,6 @@ public class VfsResource implements Resource {
     }
 
     public boolean isLocal() {
-        return false;
+        return getName().startsWith("file:");
     }
 }

@@ -82,9 +82,8 @@ public class VfsResourceTest extends TestCase {
 				fail("Unexpected null value on VFS URI: " + resId);
 			}
 
-			// resource should be marked as available.
-			if (! res.exists()) {
-				fail("Resource does not exist and it should: " + resId);
+			if (res.exists()) {
+				fail("Resource does not exist and it shouldn't: " + resId);
 			}
 			
 			// VFS apparently does some weird normalization so that resource id used to create
@@ -125,7 +124,7 @@ public class VfsResourceTest extends TestCase {
 			fail("Resource is marked as existing and it should not: " + vfsURI);
 		}
 		
-		if (! res.getName().equals("")) {
+		if (! res.getName().equals("smb1:/goobeldygook")) {
 			fail("Failed on getName. Expected: " + vfsURI + ". Actual: " + res.getName());
 		}
 		
