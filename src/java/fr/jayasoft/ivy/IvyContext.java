@@ -7,6 +7,8 @@ package fr.jayasoft.ivy;
 
 import java.io.File;
 import java.lang.ref.WeakReference;
+import java.util.HashMap;
+import java.util.Map;
 
 import fr.jayasoft.ivy.circular.CircularDependencyStrategy;
 
@@ -26,6 +28,8 @@ public class IvyContext {
     private Ivy _defaultIvy;
     private WeakReference _ivy = new WeakReference(null); 
     private File _cache;
+    
+    private Map _contextMap = new HashMap();
     
     public static IvyContext getContext() {
     	IvyContext cur = (IvyContext)_current.get();
@@ -72,6 +76,15 @@ public class IvyContext {
 
 	public CircularDependencyStrategy getCircularDependencyStrategy() {
 		return getIvy().getCircularDependencyStrategy();
+	}
+
+	public Object get(String key) {
+		WeakReference ref = (WeakReference) _contextMap.get(key);
+		return ref == null ? null : ref.get();
+	}
+
+	public void set(String key, Object value) {
+		_contextMap.put(key, new WeakReference(value));
 	}
 
 	// should be better to use context to store this kind of information, but not yet ready to do so...

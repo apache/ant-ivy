@@ -38,6 +38,18 @@ public class Message {
         _impl = impl;
         showInfo();
     }
+
+    /** 
+     * same as init, but without displaying info
+     * @param impl
+     */
+    public static void setImpl(MessageImpl impl) {
+        _impl = impl;
+    }
+    
+    public static MessageImpl getImpl() {
+    	return _impl;
+    }
     
     public static boolean isInitialised() {
         return _impl != null;

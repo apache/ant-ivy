@@ -97,5 +97,7 @@ public class IvyEvent {
 		return new HashMap(_attributes);
 	}
     
-    
+    public String toString() {
+    	return getName()+" "+getAttributes();
+    }
 }

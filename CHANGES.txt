@@ -19,6 +19,7 @@ Incompatibility with previous versions:
 Changes:
 --------
 * thanks to Jayasoft:
+  - NEW: ability to invoke any build scripts for dependencies (IVY-68)
   - NEW: support sftp repository (IVY-267)
   - NEW: pluggable version matcher (IVY-219)
   - NEW: dependency based on dependency status (IVY-47)

@@ -1,0 +1,15 @@
+<ivyconf>
+	<conf defaultCache="${ivy.conf.dir}/cache" defaultResolver="local"/>
+	<triggers>
+		<!--  triggers an ant build just before resolving a dependency 
+		      with a latest.integration revision -->
+		<ant-build 	antfile="${ivy.conf.dir}/[module]/build.xml" target="publish"
+					event="pre-resolve-dependency" filter="revision=latest.integration"/>
+	</triggers>
+	<resolvers>
+		<filesystem name="local">
+			<ivy pattern="${ivy.conf.dir}/local/[module]/[artifact].[ext]"/>
+			<artifact pattern="${ivy.conf.dir}/local/[module]/[artifact].[ext]"/>
+		</filesystem>
+	</resolvers>
+</ivyconf>

@@ -22,6 +22,8 @@ import java.util.Stack;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import fr.jayasoft.ivy.event.resolve.EndResolveDependencyEvent;
+import fr.jayasoft.ivy.event.resolve.StartResolveDependencyEvent;
 import fr.jayasoft.ivy.filter.Filter;
 import fr.jayasoft.ivy.filter.FilterHelper;
 import fr.jayasoft.ivy.matcher.MatcherHelper;
@@ -584,7 +586,7 @@ public class IvyNode {
      */
     public boolean loadData(String conf, boolean shouldBePublic) {
         boolean loaded = false;
-        if (!isEvicted(_rootModuleConf) && (hasConfigurationsToLoad() || !isRootModuleConfLoaded()) && !hasProblem()) {
+		if (!isEvicted(_rootModuleConf) && (hasConfigurationsToLoad() || !isRootModuleConfLoaded()) && !hasProblem()) {
             markRootModuleConfLoaded();
             if (_md == null) {
                 DependencyResolver resolver = _data.getIvy().getResolver(getModuleId());
@@ -596,7 +598,10 @@ public class IvyNode {
                 }
                 try {
                     Message.debug("\tusing "+resolver+" to resolve "+getId());
-                    _module = resolver.getDependency(getDependencyDescriptor(getParent()), _data);
+                    DependencyDescriptor dependencyDescriptor = getDependencyDescriptor(getParent());
+                    _data.getIvy().fireIvyEvent(new StartResolveDependencyEvent(_data.getIvy(), resolver, dependencyDescriptor));
+                    _module = resolver.getDependency(dependencyDescriptor, _data);
+                    _data.getIvy().fireIvyEvent(new EndResolveDependencyEvent(_data.getIvy(), resolver, dependencyDescriptor, _module));
                     if (_module != null) {
                         _data.getIvy().saveResolver(_data.getCache(), _module.getDescriptor(), _module.getResolver().getName());
                         _data.getIvy().saveArtResolver(_data.getCache(), _module.getDescriptor(), _module.getArtifactResolver().getName());
@@ -633,7 +638,7 @@ public class IvyNode {
                                 resolved._searched |= _module.isSearched();
                                 resolved.updateDataFrom(this, _rootModuleConf);
                                 resolved.loadData(conf, shouldBePublic);
-                                DependencyDescriptor dd = getDependencyDescriptor(getParent());
+                                DependencyDescriptor dd = dependencyDescriptor;
                                 if (dd != null) {
                                     resolved.addDependencyArtifactsIncludes(_rootModuleConf, dd.getDependencyArtifactsIncludes(getParentConf()));
                                 }

@@ -900,6 +900,12 @@ public class Ivy implements TransferListener {
     //                         RESOLVE
     /////////////////////////////////////////////////////////////////////////
 
+    public ResolveReport resolve(File ivySource) throws ParseException, IOException {
+    	return resolve(ivySource.toURL());
+    }
+    public ResolveReport resolve(URL ivySource) throws ParseException, IOException {
+    	return resolve(ivySource, null, new String[] {"*"}, null, null, true);
+    }
     /**
      * 
      * @param ivySource the url to the descriptor of the module for which dependencies should be resolved
@@ -937,6 +943,7 @@ public class Ivy implements TransferListener {
             
             if (cache==null) {  // ensure that a cache exists
                 cache = getDefaultCache();
+                IvyContext.getContext().setCache(cache);
             }
             if (revision == null && md.getResolvedModuleRevisionId().getRevision() == null) {
                 revision = "working@"+getLocalHostName();

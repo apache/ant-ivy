@@ -39,7 +39,7 @@ import fr.jayasoft.ivy.util.Message;
  */
 public class XmlIvyConfigurationParser extends DefaultHandler {
 	private Configurator _configurator;
-    private List _configuratorTags = Arrays.asList(new String[] {"resolvers", "namespaces", "parsers", "latest-strategies", "conflict-managers", "outputters", "version-matchers", "statuses", "circular-dependency-strategies"});
+    private List _configuratorTags = Arrays.asList(new String[] {"resolvers", "namespaces", "parsers", "latest-strategies", "conflict-managers", "outputters", "version-matchers", "statuses", "circular-dependency-strategies", "triggers"});
 
     private Ivy _ivy;
 

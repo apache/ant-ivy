@@ -4,13 +4,16 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.Ant;
 
+import fr.jayasoft.ivy.IvyContext;
 import fr.jayasoft.ivy.event.AbstractTrigger;
 import fr.jayasoft.ivy.event.IvyEvent;
 import fr.jayasoft.ivy.event.Trigger;
 import fr.jayasoft.ivy.util.IvyPatternHelper;
 import fr.jayasoft.ivy.util.Message;
+import fr.jayasoft.ivy.util.MessageImpl;
 
 /**
  * Triggers an ant build on an event occurence.
@@ -37,17 +40,35 @@ public class AntBuildTrigger extends AbstractTrigger implements Trigger {
 				Message.verbose("dependency already built, skipping: "+f);
 			} else {
 				Ant ant = new Ant();
+				Project project = (Project)IvyContext.getContext().get(IvyTask.ANT_PROJECT_CONTEXT_KEY);
+				if (project == null) {
+					project = new Project();
+					project.init();
+				}
+				
+				ant.setProject(project);
 				ant.setTaskName("ant");
+				
 				ant.setAntfile(f.getAbsolutePath());
+				ant.setInheritAll(false);
 				String target = getTarget();
 				if (target != null) {
 					ant.setTarget(target);
 				}
+				
+				Message.verbose("triggering build: "+f+" target="+target+" for "+event);
+				MessageImpl impl = Message.getImpl();
 				ant.execute();
 				markBuilt(f);
+				// we restore previous message impl, cause the triggered ant build 
+				// may have modified it (damned static use !)
+				Message.setImpl(impl); 
+
+				Message.debug("triggered build finished: "+f+" target="+target+" for "+event);
 			}
+		} else {
+			Message.verbose("no build file found for dependency, skipping: "+f);
 		}
-		Message.verbose("no build file found for dependency, skipping: "+f);
 	}
 
 	private void markBuilt(File f) {
@@ -62,11 +83,11 @@ public class AntBuildTrigger extends AbstractTrigger implements Trigger {
 		return new File(IvyPatternHelper.substituteTokens(getBuildFilePattern(), event.getAttributes()));
 	}
 
-	private String getBuildFilePattern() {
+	public String getBuildFilePattern() {
 		return _buildFilePattern;
 	}
 	
-	private void setAntfile(String pattern) {
+	public void setAntfile(String pattern) {
 		_buildFilePattern = pattern;
 	}
 

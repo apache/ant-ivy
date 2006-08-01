@@ -10,6 +10,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import fr.jayasoft.ivy.Ivy;
+import fr.jayasoft.ivy.IvyContext;
 import fr.jayasoft.ivy.ModuleDescriptor;
 import fr.jayasoft.ivy.util.Message;
 import fr.jayasoft.ivy.util.StringUtils;
@@ -17,14 +18,16 @@ import fr.jayasoft.ivy.util.StringUtils;
 import org.apache.tools.ant.BuildEvent;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.BuildListener;
+import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Task;
 
 /**
- * @author Hanin
+ * @author Xavier Hanin
  *
  */
 public class IvyTask extends Task {
-    private Boolean _validate = null; 
+    public static final String ANT_PROJECT_CONTEXT_KEY = "ant-project";
+	private Boolean _validate = null; 
 
     protected boolean doValidate(Ivy ivy) {
         if (_validate != null) {
@@ -160,6 +163,11 @@ public class IvyTask extends Task {
             Message.debug("parameter found as ivy variable: "+name+"="+val);
         }
         return val;
+    }
+    
+    public void setProject(Project project) {
+    	super.setProject(project);
+    	IvyContext.getContext().set(ANT_PROJECT_CONTEXT_KEY, project);
     }
     
 }

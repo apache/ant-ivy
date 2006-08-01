@@ -489,12 +489,12 @@ public abstract class BasicResolver extends AbstractResolver {
         StringBuffer errors = new StringBuffer();
         if (!mrid.getOrganisation().equals(md.getModuleRevisionId().getOrganisation())) {
             Message.error("\t"+getName()+": bad organisation found in "+ivyRef.getResource()+": expected='"+mrid.getOrganisation()+"' found='"+md.getModuleRevisionId().getOrganisation()+"'");
-            errors.append("bad organisation: expected='"+mrid.getOrganisation()+"' found="+md.getModuleRevisionId().getOrganisation()+"; ");
+            errors.append("bad organisation: expected='"+mrid.getOrganisation()+"' found='"+md.getModuleRevisionId().getOrganisation()+"'; ");
             ok = false;
         }
         if (!mrid.getName().equals(md.getModuleRevisionId().getName())) {
             Message.error("\t"+getName()+": bad module name found in "+ivyRef.getResource()+": expected='"+mrid.getName()+" found='"+md.getModuleRevisionId().getName()+"'");
-            errors.append("bad module name: expected='"+mrid.getName()+"' found="+md.getModuleRevisionId().getName()+"; ");
+            errors.append("bad module name: expected='"+mrid.getName()+"' found='"+md.getModuleRevisionId().getName()+"'; ");
             ok = false;
         }
         if (ivyRef.getRevision() != null && !ivyRef.getRevision().startsWith("working@")) {
