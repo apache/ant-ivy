@@ -1,4 +1,4 @@
-package fr.jayasoft.ivy.url;
+package fr.jayasoft.ivy.util;
 
 /**
  * 
@@ -31,7 +31,7 @@ public class Credentials {
 		return _userName;
 	}
 
-	static String buildKey(String realm, String host) {
+	public static String buildKey(String realm, String host) {
         if (realm == null || "".equals(realm.trim())) {
             return host;
         } else {
@@ -60,7 +60,7 @@ public class Credentials {
 		return getKey().hashCode();
 	}
 	
-	String getKey() {
+	public String getKey() {
 		return buildKey(_realm, _host);
 	}
 }

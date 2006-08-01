@@ -27,6 +27,7 @@ import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.HeadMethod;
 
 import fr.jayasoft.ivy.util.CopyProgressListener;
+import fr.jayasoft.ivy.util.Credentials;
 import fr.jayasoft.ivy.util.FileUtil;
 import fr.jayasoft.ivy.util.Message;
 

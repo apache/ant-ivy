@@ -3,6 +3,7 @@ package fr.jayasoft.ivy.url;
 import java.util.HashMap;
 import java.util.Map;
 
+import fr.jayasoft.ivy.util.Credentials;
 import fr.jayasoft.ivy.util.Message;
 
 /**

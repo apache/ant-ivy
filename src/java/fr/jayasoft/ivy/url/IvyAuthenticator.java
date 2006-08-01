@@ -8,6 +8,7 @@ package fr.jayasoft.ivy.url;
 import java.net.Authenticator;
 import java.net.PasswordAuthentication;
 
+import fr.jayasoft.ivy.util.Credentials;
 import fr.jayasoft.ivy.util.Message;
 
 /**

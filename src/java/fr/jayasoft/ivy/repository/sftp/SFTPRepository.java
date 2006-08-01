@@ -13,13 +13,6 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JPasswordField;
-import javax.swing.JTextField;
-
-import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
@@ -38,6 +31,8 @@ import fr.jayasoft.ivy.repository.AbstractRepository;
 import fr.jayasoft.ivy.repository.BasicResource;
 import fr.jayasoft.ivy.repository.Resource;
 import fr.jayasoft.ivy.repository.TransferEvent;
+import fr.jayasoft.ivy.util.Credentials;
+import fr.jayasoft.ivy.util.CredentialsUtil;
 import fr.jayasoft.ivy.util.Message;
 
 /**
@@ -79,6 +74,7 @@ public class SFTPRepository extends AbstractRepository {
     // optional attributes, asked using a dialog if not provided
     private String _username;
     private String _passwd;
+    private File _passfile;
 
 	private transient ChannelSftp _channel;
 	private transient Session _session;
@@ -252,6 +248,9 @@ public class SFTPRepository extends AbstractRepository {
 				_channel.connect();
 				Message.verbose(":: SFTP :: connected to "+getHost()+"!");
 			} catch (JSchException e) {
+				if (_passfile.exists()) {
+					_passfile.delete();
+				}
 				IOException ex = new IOException(e.getMessage());
 				ex.initCause(e);
 				throw ex;
@@ -259,6 +258,7 @@ public class SFTPRepository extends AbstractRepository {
     	}
     	return _channel;
 	}
+
 
 
 	public String getHost() {
@@ -280,7 +280,11 @@ public class SFTPRepository extends AbstractRepository {
 
 
 	public void setPasswd(String passwd) {
-		_passwd = passwd;
+		if (passwd == null || passwd.trim().length() == 0) {
+			_passwd = null;
+		} else  {
+			_passwd = passwd;
+		}
 	}
 
 
@@ -292,38 +296,23 @@ public class SFTPRepository extends AbstractRepository {
 	}
 
 
-    JTextField userNameField = new JTextField(20);
-    JTextField passwordField = new JPasswordField(20);
-
-	private void promptCredentials() {
-		List components = new ArrayList();
-		if (_username == null) {
-			JPanel pane = new JPanel();
-			pane.add(new JLabel("username: "));
-			pane.add(userNameField);
-			components.add(pane);
-		} else {
-			userNameField.setText(_username);
-		}
-		if (_passwd == null) {
-			JPanel pane = new JPanel();
-			pane.add(new JLabel("passwd:  "));
-			pane.add(passwordField);
-			components.add(pane);
-		} else {
-			passwordField.setText(_passwd);
-		}
-		if (components.size() > 0) {
-			JOptionPane.showConfirmDialog(null, components.toArray(), getHost()+" credentials", JOptionPane.OK_OPTION);
-			_username=userNameField.getText();
-			_passwd=passwordField.getText();
-		}
-	}
-
 
 	public void setUsername(String username) {
-		_username = username;
+		if (username == null || username.trim().length() == 0) {
+			_username = null;
+		} else  {
+			_username = username;
+		}
 	}
+
+	private void promptCredentials() {
+		Credentials c = CredentialsUtil.promptCredentials(new Credentials(null, getHost(), _username, _passwd), _passfile);
+		if (c != null) {
+			_username = c.getUserName();
+			_passwd = c.getPasswd();
+		}
+	}
+
 
 
 	public int getPort() {
@@ -335,4 +324,13 @@ public class SFTPRepository extends AbstractRepository {
 		_port = port;
 	}
 
+
+	public File getPassfile() {
+		return _passfile;
+	}
+
+
+	public void setPassfile(File passfile) {
+		_passfile = passfile;
+	}
 }

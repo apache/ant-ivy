@@ -5,6 +5,9 @@
  */
 package fr.jayasoft.ivy.resolver;
 
+import java.io.File;
+
+import fr.jayasoft.ivy.Ivy;
 import fr.jayasoft.ivy.repository.sftp.SFTPRepository;
 
 /**
@@ -21,7 +24,8 @@ import fr.jayasoft.ivy.repository.sftp.SFTPRepository;
  * an headless environment, provide username and password.
  */
 public class SFTPResolver extends RepositoryResolver {  
-    public SFTPResolver() {
+    private boolean _passfileSet;
+	public SFTPResolver() {
         setRepository(new SFTPRepository());
     }
     public String getTypeName() {
@@ -54,5 +58,25 @@ public class SFTPResolver extends RepositoryResolver {
 	public void setUsername(String username) {
 		getSFTPRepository().setUsername(username);
 	}
-    
+    /** 
+     * Optional password file. If set the repository will use it as an encypted property file, to load
+     * username and passwd entries, and to store them if the user choose to do so.
+     * 
+     * Defaults to user.dir/.ivy/[host].sftp.passwd, set it to null to disable this feature. 
+     */
+	public void setPassfile(String passfile) {
+		getSFTPRepository().setPassfile(passfile == null ? null : new File(passfile));
+		_passfileSet = true;
+	}
+	public String getPassfile() {
+		File p = getSFTPRepository().getPassfile();
+		return p == null ? null : p.getPath();
+	}
+	public void setIvy(Ivy ivy) {
+		super.setIvy(ivy);
+		if (!_passfileSet) {
+			getSFTPRepository().setPassfile(new File(ivy.getDefaultIvyUserDir(), getHost()+".sftp.passwd"));
+		}
+	}
+
 }
