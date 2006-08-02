@@ -196,7 +196,7 @@ public class Ivy implements TransferListener {
             String[] files = ivyTypeDefs.split("\\,");
             for (int i = 0; i < files.length; i++) {
                 try {
-                    typeDefs(new FileInputStream(new File(files[i].trim())));
+                    typeDefs(new FileInputStream(new File(files[i].trim())), true);
                 } catch (FileNotFoundException e) {
                     Message.warn("typedefs file not found: "+files[i].trim());
                 } catch (IOException e) {
@@ -205,7 +205,7 @@ public class Ivy implements TransferListener {
             }
         } else {
             try {
-                typeDefs(Ivy.class.getResourceAsStream("typedef.properties"));
+                typeDefs(Ivy.class.getResourceAsStream("typedef.properties"), true);
             } catch (IOException e) {
                 Message.warn("impossible to load default type defs");
             }
@@ -291,22 +291,29 @@ public class Ivy implements TransferListener {
         }
     }
 
+
     public void typeDefs(InputStream stream) throws IOException {
+    	typeDefs(stream, false);
+    }
+    public void typeDefs(InputStream stream, boolean silentFail) throws IOException {
         IvyContext.getContext().setIvy(this);
         try {
             Properties p = new Properties();
             p.load(stream);
-            typeDefs(p);
+            typeDefs(p, silentFail);
         } finally {
             stream.close();
         }
     }
 
     public void typeDefs(Properties p) {
+    	typeDefs(p, false);
+    }
+    public void typeDefs(Properties p, boolean silentFail) {
         IvyContext.getContext().setIvy(this);
         for (Iterator iter = p.keySet().iterator(); iter.hasNext();) {
             String name = (String) iter.next();
-            typeDef(name, p.getProperty(name));
+            typeDef(name, p.getProperty(name), silentFail);
         }
     }
     
@@ -488,16 +495,27 @@ public class Ivy implements TransferListener {
     }
 
     public Class typeDef(String name, String className) {
-        Class clazz = classForName(className);
-        _typeDefs.put(name, clazz);
+        return typeDef(name, className, false);
+    }
+    
+    public Class typeDef(String name, String className, boolean silentFail) {
+        Class clazz = classForName(className, silentFail);
+        if (clazz != null) {
+        	_typeDefs.put(name, clazz);
+        }
         return clazz;
     }
     
-    private Class classForName(String className) {
+    private Class classForName(String className, boolean silentFail) {
         try {
             return getClassLoader().loadClass(className);
         } catch (ClassNotFoundException e) {
-            throw new RuntimeException("impossible to define new type: class not found: "+className+" in "+_classpathURLs+" nor Ivy classloader");
+        	if (silentFail) {
+        		Message.warn("impossible to define new type: class not found: "+className+" in "+_classpathURLs+" nor Ivy classloader");
+        		return null;
+        	} else {
+        		throw new RuntimeException("impossible to define new type: class not found: "+className+" in "+_classpathURLs+" nor Ivy classloader");
+        	}
         }
     }
 
