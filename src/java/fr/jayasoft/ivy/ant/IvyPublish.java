@@ -159,6 +159,9 @@ public class IvyPublish extends IvyTask {
         if (_publishResolverName == null) {
             throw new BuildException("no publish deliver name: please provide it through parameter 'resolver'");
         }
+        if ("working".equals(_revision)) {
+        	_revision = "working@"+Ivy.getLocalHostName();
+        }
         Date pubdate = getPubDate(_pubdate, new Date());
         if (_pubRevision == null) {
             if (_revision.startsWith("working@")) {
