@@ -100,4 +100,23 @@ public class IvyEvent {
     public String toString() {
     	return getName()+" "+getAttributes();
     }
+    
+    public boolean equals(Object obj) {
+    	if (! (obj instanceof IvyEvent)) {
+    		return false;
+    	}
+    	IvyEvent e = (IvyEvent) obj;
+    	
+    	return getSource().equals(e.getSource()) 
+    		&& getName().equals(e.getName()) 
+    		&& _attributes.equals(e._attributes);
+    }
+    
+    public int hashCode() {
+    	int hash = 37;
+    	hash = 13 * hash + getSource().hashCode();
+    	hash = 13 * hash + getName().hashCode();
+    	hash = 13 * hash + _attributes.hashCode();
+    	return hash;
+    }
 }

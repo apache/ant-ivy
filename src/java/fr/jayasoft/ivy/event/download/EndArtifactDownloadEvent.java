@@ -6,6 +6,8 @@
  */
 package fr.jayasoft.ivy.event.download;
 
+import java.io.File;
+
 import fr.jayasoft.ivy.Artifact;
 import fr.jayasoft.ivy.ArtifactOrigin;
 import fr.jayasoft.ivy.DependencyResolver;
@@ -18,13 +20,14 @@ public class EndArtifactDownloadEvent extends DownloadEvent {
     private DependencyResolver _resolver;
     private ArtifactDownloadReport _report;
 
-    public EndArtifactDownloadEvent(Ivy source, DependencyResolver resolver, Artifact artifact, ArtifactDownloadReport report) {
+    public EndArtifactDownloadEvent(Ivy source, DependencyResolver resolver, Artifact artifact, ArtifactDownloadReport report, File dest) {
         super(source, NAME, artifact);
         _resolver = resolver;
         _report = report;
         addAttribute("resolver", _resolver.getName());
         addAttribute("status", _report.getDownloadStatus().toString());
         addAttribute("size", String.valueOf(_report.getSize()));
+        addAttribute("file", dest.getAbsolutePath());
         ArtifactOrigin origin = report.getArtifactOrigin();
         if (origin != null) {
         	addAttribute("origin", _report.getArtifactOrigin().getLocation());

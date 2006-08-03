@@ -10,6 +10,9 @@ import fr.jayasoft.ivy.matcher.Matcher;
 import fr.jayasoft.ivy.matcher.PatternMatcher;
 
 public class IvyEventFilter implements Filter {
+	private static final String NOT = "NOT ";
+	private static final String OR = " OR ";
+	private static final String AND = " AND ";
 	private PatternMatcher _matcher;
 	private Filter _nameFilter;
 	private Filter _attFilter;
@@ -41,12 +44,12 @@ public class IvyEventFilter implements Filter {
 		// SIMPLE_EXP := attname = comma, separated, list, of, accepted, values
 		// example: organisation = foo && module = bar, baz
 		filterExpression = filterExpression.trim();
-		int index = filterExpression.indexOf("&&");
+		int index = filterExpression.indexOf(AND);
 		if (index == -1) {
-			index = filterExpression.indexOf("||");
+			index = filterExpression.indexOf(OR);
 			if (index == -1) {
-				if (filterExpression.startsWith("!")) {
-					return new NotFilter(parseExpression(filterExpression.substring(1)));
+				if (filterExpression.startsWith(NOT)) {
+					return new NotFilter(parseExpression(filterExpression.substring(NOT.length())));
 				} else {
 					index = filterExpression.indexOf("=");
 					if (index == -1) {
@@ -75,10 +78,10 @@ public class IvyEventFilter implements Filter {
 					};
 				}
 			} else {
-				return new OrFilter(parseExpression(filterExpression.substring(0, index)), parseExpression(filterExpression.substring(index+2)));
+				return new OrFilter(parseExpression(filterExpression.substring(0, index)), parseExpression(filterExpression.substring(index+OR.length())));
 			}
 		} else {
-			return new AndFilter(parseExpression(filterExpression.substring(0, index)), parseExpression(filterExpression.substring(index+2)));
+			return new AndFilter(parseExpression(filterExpression.substring(0, index)), parseExpression(filterExpression.substring(index+AND.length())));
 		}
 	}
 

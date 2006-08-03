@@ -665,7 +665,7 @@ public abstract class BasicResolver extends AbstractResolver {
         			adr.setDownloadStatus(DownloadStatus.FAILED);                
         		}
         	}
-            ivy.fireIvyEvent(new EndArtifactDownloadEvent(ivy, this, artifacts[i], adr));
+            ivy.fireIvyEvent(new EndArtifactDownloadEvent(ivy, this, artifacts[i], adr, archiveFile));
         }
     	return dr;
     }

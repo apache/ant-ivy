@@ -48,13 +48,13 @@ public class IvyEventFilterTest extends TestCase {
 	}
 
 	public void testAndExpression() {
-		IvyEventFilter f = new IvyEventFilter("pre-resolve", "organisation = foo && module = bar", null);
+		IvyEventFilter f = new IvyEventFilter("pre-resolve", "organisation = foo AND module = bar", null);
 		
 		assertTrue(f.accept(new StartResolveEvent(ivy, md, new String[] {"default"})));
 		assertFalse(f.accept(new StartResolveEvent(ivy, md2, new String[] {"default"})));
 		assertFalse(f.accept(new StartResolveEvent(ivy, md4, new String[] {"default"})));
 
-		f = new IvyEventFilter("pre-resolve", "organisation = foo,foo2 && module = bar", null);
+		f = new IvyEventFilter("pre-resolve", "organisation = foo,foo2 AND module = bar", null);
 		
 		assertTrue(f.accept(new StartResolveEvent(ivy, md, new String[] {"default"})));
 		assertTrue(f.accept(new StartResolveEvent(ivy, md2, new String[] {"default"})));
@@ -63,7 +63,7 @@ public class IvyEventFilterTest extends TestCase {
 	}
 
 	public void testOrExpression() {
-		IvyEventFilter f = new IvyEventFilter("pre-resolve", "organisation = foo3 || module = bar", null);
+		IvyEventFilter f = new IvyEventFilter("pre-resolve", "organisation = foo3 OR module = bar", null);
 		
 		assertTrue(f.accept(new StartResolveEvent(ivy, md, new String[] {"default"})));
 		assertTrue(f.accept(new StartResolveEvent(ivy, md2, new String[] {"default"})));
@@ -72,7 +72,7 @@ public class IvyEventFilterTest extends TestCase {
 	}
 
 	public void testNotExpression() {
-		IvyEventFilter f = new IvyEventFilter("pre-resolve", "! organisation = foo", null);
+		IvyEventFilter f = new IvyEventFilter("pre-resolve", "NOT organisation = foo", null);
 		
 		assertFalse(f.accept(new StartResolveEvent(ivy, md, new String[] {"default"})));
 		assertTrue(f.accept(new StartResolveEvent(ivy, md2, new String[] {"default"})));
