@@ -1,0 +1,24 @@
+<project xmlns:ivy="antlib:fr.jayasoft.ivy.ant">
+	<target name="resolve">
+		<ivy:configure file="../ivyconf.xml"/>
+		<ivy:resolve file="${basedir}/ivy.xml" />
+	</target>
+	
+	<target name="unzip">
+		<echo>
+			unzipping artifact: 
+			organisation=${dep.organisation} 
+			module=${dep.module} 
+			revision=${dep.revision}
+			artifact=${dep.artifact}
+			type=${dep.type}
+			ext=${dep.ext}
+			origin=${dep.origin}
+			local=${dep.local}
+			size=${dep.size}
+			file=${dep.file}
+		</echo>
+		<mkdir dir="${basedir}/out"/>
+		<unzip src="${dep.file}" dest="${basedir}/out"/>
+	</target>
+</project>

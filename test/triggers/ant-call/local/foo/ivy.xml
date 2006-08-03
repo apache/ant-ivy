@@ -1,0 +1,8 @@
+<ivy-module version="1.2">
+	<info organisation="jayasoft" module="foo" revision="1.0"/>
+	
+	<publications>
+		<artifact />
+		<artifact type="zip"/>
+	</publications>
+</ivy-module>
