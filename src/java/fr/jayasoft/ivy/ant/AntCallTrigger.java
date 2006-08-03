@@ -1,13 +1,11 @@
 package fr.jayasoft.ivy.ant;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
 
 import org.apache.tools.ant.Project;
-import org.apache.tools.ant.taskdefs.Ant;
 import org.apache.tools.ant.taskdefs.CallTarget;
 import org.apache.tools.ant.taskdefs.Property;
 
@@ -17,7 +15,6 @@ import fr.jayasoft.ivy.event.IvyEvent;
 import fr.jayasoft.ivy.event.Trigger;
 import fr.jayasoft.ivy.util.IvyPatternHelper;
 import fr.jayasoft.ivy.util.Message;
-import fr.jayasoft.ivy.util.MessageImpl;
 
 /**
  * Triggers an call to an ant target on an event occurence.
