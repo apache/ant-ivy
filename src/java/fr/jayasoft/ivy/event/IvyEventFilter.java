@@ -9,6 +9,37 @@ import fr.jayasoft.ivy.matcher.ExactPatternMatcher;
 import fr.jayasoft.ivy.matcher.Matcher;
 import fr.jayasoft.ivy.matcher.PatternMatcher;
 
+/**
+ * A filter implementation filtering {@link IvyEvent} based upon
+ * an event name and a filter expression.
+ * 
+ * The name will be matched against the event name using the 
+ * {@link PatternMatcher} used to construct this object.
+ * 
+ * The filter expression is a string describing how the event
+ * should be filtered according to its attributes values.
+ * The matching between the filter values and the event attribute values
+ * is done using the {@link PatternMatcher} used to construct this object.
+ * 
+ * Here are some examples:
+ * <table>
+ * <tr><td>expression</td><td>effect</td></tr>
+ * <tr><td>type=zip</td><td>accepts event with a type attribute matching zip</td></tr>
+ * <tr><td>type=zip,jar</td><td>accepts event with a type attribute matching zip or jar</td></tr>
+ * <tr><td>type=src AND ext=zip</td><td>accepts event with a type attribute matching src AND an ext attribute matching zip</td></tr>
+ * <tr><td>type=src OR ext=zip</td><td>accepts event with a type attribute matching src OR an ext attribute matching zip</td></tr>
+ * <tr><td>NOT type=src</td><td>accepts event with a type attribute NOT matching src</td></tr>
+ * </table>
+ * 
+ * Combination of these can be used, but no parentheses are supported right now, so only the default priority can be used.
+ * The priority order is this one: AND OR NOT =
+ * 
+ * This means that artifact=foo AND ext=zip OR type=src will match event with artifact matching foo AND (ext matching zip OR type matching src)
+ * 
+ * @since 1.4
+ * @author Xavier Hanin
+ *
+ */
 public class IvyEventFilter implements Filter {
 	private static final String NOT = "NOT ";
 	private static final String OR = " OR ";

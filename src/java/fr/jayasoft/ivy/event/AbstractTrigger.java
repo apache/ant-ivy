@@ -4,6 +4,19 @@ import fr.jayasoft.ivy.IvyContext;
 import fr.jayasoft.ivy.filter.Filter;
 import fr.jayasoft.ivy.matcher.PatternMatcher;
 
+/**
+ * Base class for easy trigger implementation.
+ * 
+ * This base class takes of the event filtering part, the only method to implement in subclasses
+ * is {@link IvyListener#progress(IvyEvent)} which should do whatever the trigger needs to do when
+ * the event occurs. This method will only be called when an event matching the trigger filter occurs.
+ * 
+ * 
+ * 
+ * @since 1.4
+ * @author Xavier Hanin
+ *
+ */
 public abstract class AbstractTrigger implements Trigger {
 	private Filter _filter;
 	
