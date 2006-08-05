@@ -6,6 +6,9 @@
  */
 package fr.jayasoft.ivy.repository;
 
+import java.io.IOException;
+import java.io.InputStream;
+
 /**
  * Represents a resource in an Ivy {@link Repository}.
  * 
@@ -80,4 +83,10 @@ public interface Resource {
      * @return the cloned resource
      */
 	public Resource clone(String cloneName);
+	
+	/**
+	 * Opens a stream on this resource
+	 * @return the opened input stream
+	 */
+	public InputStream openStream() throws IOException;
 }

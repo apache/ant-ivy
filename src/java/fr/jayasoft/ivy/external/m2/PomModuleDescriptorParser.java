@@ -8,6 +8,7 @@ package fr.jayasoft.ivy.external.m2;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -36,6 +37,7 @@ import fr.jayasoft.ivy.Configuration.Visibility;
 import fr.jayasoft.ivy.matcher.ExactPatternMatcher;
 import fr.jayasoft.ivy.matcher.PatternMatcher;
 import fr.jayasoft.ivy.parser.AbstractModuleDescriptorParser;
+import fr.jayasoft.ivy.parser.ModuleDescriptorParser;
 import fr.jayasoft.ivy.repository.Resource;
 import fr.jayasoft.ivy.util.IvyPatternHelper;
 import fr.jayasoft.ivy.util.Message;
@@ -75,7 +77,8 @@ public class PomModuleDescriptorParser extends AbstractModuleDescriptorParser {
         private DefaultDependencyDescriptor _dd;
         private Map _properties = new HashMap();
 
-        public Parser(Ivy ivy, Resource res) {
+        public Parser(ModuleDescriptorParser parser, Ivy ivy, Resource res) {
+        	super(parser);
             _ivy = ivy;
             setResource(res);
             _md.setResolvedPublicationDate(new Date(res.getLastModified()));
@@ -221,7 +224,7 @@ public class PomModuleDescriptorParser extends AbstractModuleDescriptorParser {
     }
 
     public ModuleDescriptor parseDescriptor(Ivy ivy, URL descriptorURL, Resource res, boolean validate) throws ParseException, IOException {
-        Parser parser = new Parser(ivy, res);
+        Parser parser = new Parser(this, ivy, res);
         try {
             XMLHelper.parse(descriptorURL, null, parser);
         } catch (SAXException ex) {
@@ -236,7 +239,7 @@ public class PomModuleDescriptorParser extends AbstractModuleDescriptorParser {
         return parser.getDescriptor();
     }
 
-    public void toIvyFile(URL srcURL, Resource res, File destFile, ModuleDescriptor md) throws ParseException, IOException {
+    public void toIvyFile(InputStream is, Resource res, File destFile, ModuleDescriptor md) throws ParseException, IOException {
         XmlModuleDescriptorWriter.write(md, destFile);        
     }
 

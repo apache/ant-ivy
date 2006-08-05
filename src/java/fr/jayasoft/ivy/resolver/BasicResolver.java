@@ -288,7 +288,7 @@ public abstract class BasicResolver extends AbstractResolver {
                     }
                 }
                 // copy and update ivy file from source to cache
-                parser.toIvyFile(cachedIvyURL, ivyRef.getResource(), ivyFile, systemMd);
+                parser.toIvyFile(cachedIvyURL.openStream(), ivyRef.getResource(), ivyFile, systemMd);
                 long repLastModified = ivyRef.getLastModified();
                 if (repLastModified > 0) {
                     ivyFile.setLastModified(repLastModified);

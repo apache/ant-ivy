@@ -8,6 +8,7 @@ package fr.jayasoft.ivy.repository.sftp;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -113,6 +114,18 @@ public class SFTPRepository extends AbstractRepository {
 			//silent fail, return unexisting resource
 		}
 		return new BasicResource(path, false, 0, 0, false);
+	}
+
+	public InputStream openStream(SFTPResource resource) throws IOException {
+        ChannelSftp c = getSftpChannel();
+        try {
+			return c.get(resource.getName());
+		} catch (SftpException e) {
+			e.printStackTrace();
+			IOException ex = new IOException("impossible to open stream for "+resource+" on "+getHost()+(e.getMessage() != null?": " + e.getMessage():""));
+			ex.initCause(e);
+			throw ex;
+		}
 	}
 
     public void get(String source, File destination) throws IOException {
@@ -333,4 +346,5 @@ public class SFTPRepository extends AbstractRepository {
 	public void setPassfile(File passfile) {
 		_passfile = passfile;
 	}
+
 }

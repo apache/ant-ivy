@@ -5,107 +5,32 @@
  */
 package fr.jayasoft.ivy.ant;
 
-import fr.jayasoft.ivy.Ivy;
-import fr.jayasoft.ivy.ModuleId;
-import fr.jayasoft.ivy.filter.Filter;
-import fr.jayasoft.ivy.filter.FilterHelper;
-
-import java.io.File;
-
 import org.apache.tools.ant.BuildException;
 
+import fr.jayasoft.ivy.filter.Filter;
+
 /**
- * @author Hanin
+ * @author Xavier Hanin
  *
  */
-public class IvyRetrieve extends IvyTask {
-    private String _organisation;
-    private String _module;
-    private String _conf;
-    private File _cache;
+public class IvyRetrieve extends IvyPostResolveTask {
     private String _pattern;
     private String _ivypattern = null;
-    private boolean _haltOnFailure = true;
-    private String _type;
     
-    public File getCache() {
-        return _cache;
-    }
-    public void setCache(File cache) {
-        _cache = cache;
-    }
-    public String getConf() {
-        return _conf;
-    }
-    public void setConf(String conf) {
-        _conf = conf;
-    }
-    public String getModule() {
-        return _module;
-    }
-    public void setModule(String module) {
-        _module = module;
-    }
-    public String getOrganisation() {
-        return _organisation;
-    }
-    public void setOrganisation(String organisation) {
-        _organisation = organisation;
-    }
     public String getPattern() {
         return _pattern;
     }
     public void setPattern(String pattern) {
         _pattern = pattern;
     }
-    public boolean isHaltonfailure() {
-        return _haltOnFailure;
-    }
-    public void setHaltonfailure(boolean haltOnFailure) {
-        _haltOnFailure = haltOnFailure;
-    }
-    public String getType() {
-        return _type;
-    }
-    public void setType(String type) {
-        _type = type;
-    }
     
     public void execute() throws BuildException {
-        Ivy ivy = getIvyInstance();
-        
-        _organisation = getProperty(_organisation, ivy, "ivy.organisation");
-        _module = getProperty(_module, ivy, "ivy.module");
+    	prepareAndCheck();
 
-        ensureResolved(isHaltonfailure(), getOrganisation(), getModule());
-        
-        _organisation = getProperty(_organisation, ivy, "ivy.organisation");
-        _module = getProperty(_module, ivy, "ivy.module");
-        
-        if (_cache == null) {
-            _cache = ivy.getDefaultCache();
-        }
-        _pattern = getProperty(_pattern, ivy, "ivy.retrieve.pattern");
-        _conf = getProperty(_conf, ivy, "ivy.resolved.configurations");
-        if ("*".equals(_conf)) {
-            _conf = getProperty(ivy, "ivy.resolved.configurations");
-            if (_conf == null) {
-                throw new BuildException("bad provided for ivy retrieve task: * can only be used with a prior call to <resolve/>");
-            }
-        }
-        
-        if (_organisation == null) {
-            throw new BuildException("no organisation provided for ivy retrieve task: It can either be set explicitely via the attribute 'organisation' or via 'ivy.organisation' property or a prior call to <resolve/>");
-        }
-        if (_module == null) {
-            throw new BuildException("no module name provided for ivy retrieve task: It can either be set explicitely via the attribute 'module' or via 'ivy.module' property or a prior call to <resolve/>");
-        }
-        if (_conf == null) {
-            throw new BuildException("no conf provided for ivy retrieve task: It can either be set explicitely via the attribute 'conf' or via 'ivy.resolved.configurations' property or a prior call to <resolve/>");
-        }
+        _pattern = getProperty(_pattern, getIvyInstance(), "ivy.retrieve.pattern");
         try {
-        	Filter artifactFilter = FilterHelper.getArtifactTypeFilter(getType());
-            int targetsCopied = ivy.retrieve(new ModuleId(_organisation, _module), splitConfs(_conf), _cache, _pattern, _ivypattern, artifactFilter);
+        	Filter artifactFilter = getArtifactFilter();
+            int targetsCopied = getIvyInstance().retrieve(getResolvedModuleId(), splitConfs(getConf()), getCache(), _pattern, _ivypattern, artifactFilter);
             boolean haveTargetsBeenCopied = targetsCopied > 0;
             getProject().setProperty("ivy.nb.targets.copied", String.valueOf(targetsCopied));
             getProject().setProperty("ivy.targets.copied", String.valueOf(haveTargetsBeenCopied));

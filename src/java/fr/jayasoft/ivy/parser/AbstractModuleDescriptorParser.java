@@ -45,6 +45,15 @@ public abstract class AbstractModuleDescriptorParser implements ModuleDescriptor
         private Resource _res;
         private List _errors = new ArrayList();
         protected DefaultModuleDescriptor _md;
+		private ModuleDescriptorParser _parser;
+        
+        protected AbstractParser(ModuleDescriptorParser parser) {
+        	_parser = parser;
+        }
+        
+        public ModuleDescriptorParser getModuleDescriptorParser() {
+        	return _parser;
+        }
         
         protected void checkErrors() throws ParseException {
             if (!_errors.isEmpty()) {
@@ -53,7 +62,7 @@ public abstract class AbstractModuleDescriptorParser implements ModuleDescriptor
         }
         
         protected void setResource(Resource res) {
-            _md = new DefaultModuleDescriptor();
+            _md = new DefaultModuleDescriptor(_parser, _res);
             _res = res; // used for log and date only
             _md.setLastModified(getLastModified());
         }

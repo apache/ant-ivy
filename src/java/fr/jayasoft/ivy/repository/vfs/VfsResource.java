@@ -12,6 +12,7 @@
 package fr.jayasoft.ivy.repository.vfs;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -184,4 +185,8 @@ public class VfsResource implements Resource {
     public boolean isLocal() {
         return getName().startsWith("file:");
     }
+
+	public InputStream openStream() throws IOException {
+		return getContent().getInputStream();
+	}
 }

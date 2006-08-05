@@ -58,15 +58,20 @@ public class XmlModuleDescriptorUpdater {
                                 throws IOException, SAXException {
         update(null, srcURL, destFile, resolvedRevisions, status, revision, pubdate, null, false);
     }
-    
+
     public static void update(final Ivy ivy, URL srcURL, File destFile, final Map resolvedRevisions, final String status, 
+            final String revision, final Date pubdate, final Namespace ns, final boolean replaceInclude) 
+                                throws IOException, SAXException {
+    	update(ivy, srcURL.openStream(), destFile, resolvedRevisions, status, revision, pubdate, ns, replaceInclude);
+    }
+    
+    public static void update(final Ivy ivy, InputStream in, File destFile, final Map resolvedRevisions, final String status, 
             final String revision, final Date pubdate, final Namespace ns, final boolean replaceInclude) 
                                 throws IOException, SAXException {
         if (destFile.getParentFile() != null) {
             destFile.getParentFile().mkdirs();
         }
         OutputStream fos = new FileOutputStream(destFile);
-        InputStream in = srcURL.openStream();
         try {
            update(ivy, in, fos, resolvedRevisions, status, revision, pubdate, ns, replaceInclude);
         } finally {

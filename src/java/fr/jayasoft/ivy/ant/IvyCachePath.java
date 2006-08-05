@@ -6,11 +6,9 @@
 package fr.jayasoft.ivy.ant;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Properties;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.types.Path;
@@ -18,8 +16,6 @@ import org.apache.tools.ant.types.Path;
 import fr.jayasoft.ivy.Artifact;
 import fr.jayasoft.ivy.ArtifactOrigin;
 import fr.jayasoft.ivy.Ivy;
-import fr.jayasoft.ivy.ant.IvyCacheTask.PathEntry;
-import fr.jayasoft.ivy.filter.Filter;
 
 public class IvyCachePath extends IvyCacheTask {
     private String _pathid;
@@ -37,13 +33,6 @@ public class IvyCachePath extends IvyCacheTask {
         return _pathid;
     }
     public void setPathid(String id) {
-        _pathid = id;
-    }
-    /**
-     * @deprecated use setPathid instead
-     * @param id
-     */
-    public void setId(String id) {
         _pathid = id;
     }
 
@@ -64,7 +53,7 @@ public class IvyCachePath extends IvyCacheTask {
             	}
             }
         } catch (Exception ex) {
-            throw new BuildException("impossible to build ivy path: "+ex.getMessage(), ex);
+            throw new BuildException("impossible to build ivy path: "+ex, ex);
         }
         
     }

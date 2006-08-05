@@ -58,6 +58,54 @@ public class IvyCachePathTest extends TestCase {
                 new File(p.list()[0]).getAbsolutePath());
     }
 
+    public void testDependency1() throws Exception {
+    	// we first resolve another ivy file
+    	IvyResolve resolve = new IvyResolve();
+    	resolve.setProject(_project);
+    	resolve.setFile(new File("test/java/fr/jayasoft/ivy/ant/ivy-latest.xml"));
+    	resolve.execute();
+    	
+    	assertTrue(_path.getIvyInstance().getArchiveFileInCache(_cache, "org1", "mod1.2", "2.2", "mod1.2", "jar", "jar").exists());
+    	
+    	// then we resolve a dependency directly
+    	_path.setOrg("org1");
+    	_path.setName("mod1.2");
+    	_path.setRev("2.0");
+        _path.setPathid("simple-pathid");
+        _path.execute();
+        Object ref = _project.getReference("simple-pathid");
+        assertNotNull(ref);
+        assertTrue(ref instanceof Path);
+        Path p = (Path)ref;
+        assertEquals(1, p.size());
+        assertEquals(_path.getIvyInstance().getArchiveFileInCache(_cache, "org1", "mod1.2", "2.0", "mod1.2", "jar", "jar").getAbsolutePath(),
+                new File(p.list()[0]).getAbsolutePath());
+    }
+
+    public void testDependency2() throws Exception {
+    	// we first resolve a dependency directly
+    	_path.setOrg("org1");
+    	_path.setName("mod1.2");
+    	_path.setRev("2.0");
+        _path.setPathid("simple-pathid");
+        _path.execute();
+        Object ref = _project.getReference("simple-pathid");
+        assertNotNull(ref);
+        assertTrue(ref instanceof Path);
+        Path p = (Path)ref;
+        assertEquals(1, p.size());
+        assertEquals(_path.getIvyInstance().getArchiveFileInCache(_cache, "org1", "mod1.2", "2.0", "mod1.2", "jar", "jar").getAbsolutePath(),
+                new File(p.list()[0]).getAbsolutePath());
+
+        // we then resolve another ivy file
+    	IvyResolve resolve = new IvyResolve();
+    	resolve.setProject(_project);
+    	resolve.setFile(new File("test/java/fr/jayasoft/ivy/ant/ivy-latest.xml"));
+    	resolve.execute();
+    	
+    	assertTrue(_path.getIvyInstance().getArchiveFileInCache(_cache, "org1", "mod1.2", "2.2", "mod1.2", "jar", "jar").exists());
+    }
+
 
     public void testEmptyConf() throws Exception {
         _project.setProperty("ivy.dep.file", "test/java/fr/jayasoft/ivy/ant/ivy-108.xml");

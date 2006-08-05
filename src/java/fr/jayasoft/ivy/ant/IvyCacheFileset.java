@@ -45,7 +45,7 @@ public class IvyCacheFileset extends IvyCacheTask {
                 }
             }
         } catch (Exception ex) {
-            throw new BuildException("impossible to build ivy cache fileset: "+ex.getMessage(), ex);
+            throw new BuildException("impossible to build ivy cache fileset: "+ex, ex);
         }        
     }
 

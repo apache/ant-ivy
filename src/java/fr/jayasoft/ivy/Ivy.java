@@ -944,30 +944,49 @@ public class Ivy implements TransferListener {
     public ResolveReport resolve(URL ivySource, String revision, String[] confs, File cache, Date date, boolean validate, boolean useCacheOnly) throws ParseException, IOException {
         return resolve(ivySource, revision, confs, cache, date, validate, useCacheOnly, FilterHelper.NO_FILTER);
     }
+
+    /**
+     * Resolves the module identified by the given mrid with its dependencies if transitive is set to true. 
+     */
+	public ResolveReport resolve(ModuleRevisionId mrid, String[] confs, boolean transitive, boolean changing, File cache, Date date, boolean validate, boolean useCacheOnly, Filter artifactFilter) throws ParseException, IOException {
+        DefaultModuleDescriptor md = DefaultModuleDescriptor.newDefaultInstance(ModuleRevisionId.newInstance(mrid.getOrganisation(), mrid.getName()+"-caller", "working"));
+        DefaultDependencyDescriptor dd = new DefaultDependencyDescriptor(md, mrid, false, changing, transitive);
+        for (int i = 0; i < confs.length; i++) {
+            dd.addDependencyConfiguration("default", confs[i]);
+        }
+        md.addDependency(dd);
+		
+		return resolve(md, new String[] {"default"}, cache, date, validate, useCacheOnly, artifactFilter);
+	}
+	
     public ResolveReport resolve(URL ivySource, String revision, String[] confs, File cache, Date date, boolean validate, boolean useCacheOnly, Filter artifactFilter) throws ParseException, IOException {
         IvyContext.getContext().setIvy(this);
         IvyContext.getContext().setCache(cache);
-        DependencyResolver oldDictator = getDictatorResolver();
-        if (useCacheOnly) {
-            setDictatorResolver(new CacheResolver(this));
-        }
         
         URLResource res = new URLResource(ivySource);
         ModuleDescriptorParser parser = ModuleDescriptorParserRegistry.getInstance().getParser(res);
         Message.verbose("using "+parser+" to parse "+ivySource);
+        ModuleDescriptor md = parser.parseDescriptor(this, ivySource, validate);
+        if (revision == null && md.getResolvedModuleRevisionId().getRevision() == null) {
+            revision = "working@"+getLocalHostName();
+        }
+        if (revision != null) {
+            md.setResolvedModuleRevisionId(new ModuleRevisionId(md.getModuleRevisionId().getModuleId(), revision, md.getModuleRevisionId().getExtraAttributes()));
+        }
+
+        return resolve(md, confs, cache, date, validate, useCacheOnly, artifactFilter);
+    }
+
+	public ResolveReport resolve(ModuleDescriptor md, String[] confs, File cache, Date date, boolean validate, boolean useCacheOnly, Filter artifactFilter) throws ParseException, IOException, FileNotFoundException {
+		IvyContext.getContext().setIvy(this);
+        DependencyResolver oldDictator = getDictatorResolver();
+        if (useCacheOnly) {
+        	setDictatorResolver(new CacheResolver(this));
+        }
         try {
-            
-            ModuleDescriptor md = parser.parseDescriptor(this, ivySource, validate);
-            
             if (cache==null) {  // ensure that a cache exists
                 cache = getDefaultCache();
                 IvyContext.getContext().setCache(cache);
-            }
-            if (revision == null && md.getResolvedModuleRevisionId().getRevision() == null) {
-                revision = "working@"+getLocalHostName();
-            }
-            if (revision != null) {
-                md.setResolvedModuleRevisionId(new ModuleRevisionId(md.getModuleRevisionId().getModuleId(), revision, md.getModuleRevisionId().getExtraAttributes()));
             }
             if (confs.length == 1 && confs[0].equals("*")) {
                 confs = md.getConfigurationsNames();
@@ -989,7 +1008,7 @@ public class Ivy implements TransferListener {
             
             // produce resolved ivy file and ivy properties in cache
             File ivyFileInCache = getResolvedIvyFileInCache(cache, md.getResolvedModuleRevisionId());
-            parser.toIvyFile(ivySource, res, ivyFileInCache, md);
+            md.toIvyFile(ivyFileInCache);
 
             File ivyPropertiesInCache = getResolvedIvyPropertiesInCache(cache, md.getResolvedModuleRevisionId());
             Properties props = new Properties();
@@ -1016,7 +1035,7 @@ public class Ivy implements TransferListener {
         } finally {
             setDictatorResolver(oldDictator);
         }
-    }
+	}
 
     private void downloadArtifacts(IvyNode[] dependencies, Filter artifactFilter, ResolveReport report, File cache) {
         // collect list of artifacts

@@ -5,9 +5,14 @@
  */
 package fr.jayasoft.ivy;
 
+import java.io.File;
+import java.io.IOException;
+import java.text.ParseException;
 import java.util.Date;
 
 import fr.jayasoft.ivy.extendable.ExtendableItem;
+import fr.jayasoft.ivy.parser.ModuleDescriptorParser;
+import fr.jayasoft.ivy.repository.Resource;
 import fr.jayasoft.ivy.version.VersionMatcher;
 
 /**
@@ -98,4 +103,23 @@ public interface ModuleDescriptor extends ExtendableItem {
     
     String getHomePage();
     long getLastModified();
+    
+    /**
+     * Writes this module descriptor as an ivy file.
+     * 
+     * If this descriptor was obtained through the parsing of an ivy file, it should
+     * keep the layout of the file the most possible similar to the original one.
+     * @param ivyFile the destination ivy file
+     */
+	void toIvyFile(File ivyFile) throws ParseException, IOException;
+	/**
+	 * The ModuleDescriptorParser used to parse this module descriptor, null is no parser was used.
+	 * @return
+	 */
+	ModuleDescriptorParser getParser();
+	/**
+	 * The resource being the source of this module descriptor, null if no resource corresponds to this module descriptor
+	 * @return
+	 */
+	Resource getResource();
 }

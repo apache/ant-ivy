@@ -1,5 +1,7 @@
 package fr.jayasoft.ivy.repository;
 
+import java.io.InputStream;
+
 public class BasicResource implements Resource {
 	private boolean _local;
 	private String _name;
@@ -17,7 +19,7 @@ public class BasicResource implements Resource {
 	}
 
 	public Resource clone(String cloneName) {
-		throw new UnsupportedOperationException("bassic resource do not support the clone method");
+		throw new UnsupportedOperationException("basic resource do not support the clone method");
 	}
 
 	public boolean exists() {
@@ -38,6 +40,10 @@ public class BasicResource implements Resource {
 
 	public boolean isLocal() {
 		return _local;
+	}
+
+	public InputStream openStream() {
+		throw new UnsupportedOperationException("basic resource do not support the openStream method");
 	}
 
 }

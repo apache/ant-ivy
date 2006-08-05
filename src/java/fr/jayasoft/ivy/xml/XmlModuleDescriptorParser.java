@@ -7,6 +7,7 @@ package fr.jayasoft.ivy.xml;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.text.ParseException;
 import java.util.Arrays;
@@ -35,7 +36,9 @@ import fr.jayasoft.ivy.extendable.ExtendableItemHelper;
 import fr.jayasoft.ivy.matcher.PatternMatcher;
 import fr.jayasoft.ivy.namespace.Namespace;
 import fr.jayasoft.ivy.parser.AbstractModuleDescriptorParser;
+import fr.jayasoft.ivy.parser.ModuleDescriptorParser;
 import fr.jayasoft.ivy.repository.Resource;
+import fr.jayasoft.ivy.repository.url.URLResource;
 import fr.jayasoft.ivy.util.Message;
 import fr.jayasoft.ivy.util.XMLHelper;
 
@@ -70,7 +73,7 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
      * @throws IOException
      */
     public ModuleDescriptor parseDescriptor(Ivy ivy, URL xmlURL, Resource res, boolean validate) throws ParseException, IOException {
-        Parser parser = new Parser(ivy, validate);
+        Parser parser = new Parser(this, ivy, validate);
         parser.parse(xmlURL, res, validate);
         return parser.getModuleDescriptor();
     }
@@ -79,7 +82,7 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
         return true; // this the default parser, it thus accepts all resources
     }
 
-    public void toIvyFile(URL srcURL, Resource res, File destFile, ModuleDescriptor md) throws IOException, ParseException {
+    public void toIvyFile(InputStream is, Resource res, File destFile, ModuleDescriptor md) throws IOException, ParseException {
         try {
             Namespace ns = null;
             if (md instanceof DefaultModuleDescriptor) {
@@ -88,7 +91,7 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
             }
             XmlModuleDescriptorUpdater.update(
                     null,
-                    srcURL, 
+                    is, 
                     destFile, 
                     Collections.EMPTY_MAP, 
                     md.getStatus(), 
@@ -97,7 +100,7 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
                     ns,
                     false);
         } catch (SAXException e) {
-            ParseException ex = new ParseException("exception occured while parsing "+srcURL, 0);
+            ParseException ex = new ParseException("exception occured while parsing "+res, 0);
             ex.initCause(e);
             throw ex;
         }
@@ -126,7 +129,8 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
     private static final int CONFLICT = 7;
     private int _state = NONE;
 
-    public Parser(Ivy ivy, boolean validate) {
+    public Parser(ModuleDescriptorParser parser, Ivy ivy, boolean validate) {
+    	super(parser);
         _ivy = ivy;
         _validate = validate;
     }
@@ -383,8 +387,8 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
                 
                 // create a new temporary parser to read the configurations from
                 // the specified file.
-                Parser parser = new Parser(_ivy, false);
-                parser._md = new DefaultModuleDescriptor();
+                Parser parser = new Parser(getModuleDescriptorParser(), _ivy, false);
+                parser._md = new DefaultModuleDescriptor(getModuleDescriptorParser(), new URLResource(url));
                 XMLHelper.parse(url, null, parser);
                 
                 // add the configurations from this temporary parser to this module descriptor

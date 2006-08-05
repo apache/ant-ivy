@@ -47,10 +47,23 @@ public class IvyResolveTest extends TestCase {
     }
 
     public void testSimple() throws Exception {
+    	// depends on org="org1" name="mod1.2" rev="2.0"
         _resolve.setFile(new File("test/java/fr/jayasoft/ivy/ant/ivy-simple.xml"));
         _resolve.execute();
         
         assertTrue(getIvy().getResolvedIvyFileInCache(_cache, ModuleRevisionId.newInstance("jayasoft", "resolve-simple", "1.0")).exists());
+        
+        // dependencies
+        assertTrue(getIvy().getIvyFileInCache(_cache, ModuleRevisionId.newInstance("org1", "mod1.2", "2.0")).exists());
+        assertTrue(getIvy().getArchiveFileInCache(_cache, "org1", "mod1.2", "2.0", "mod1.2", "jar", "jar").exists());
+    }
+
+    public void testDependency() throws Exception {
+    	// same as before, but expressing dependency directly without ivy file
+        _resolve.setOrg("org1");
+        _resolve.setName("mod1.2");
+        _resolve.setRev("2.0");
+        _resolve.execute();
         
         // dependencies
         assertTrue(getIvy().getIvyFileInCache(_cache, ModuleRevisionId.newInstance("org1", "mod1.2", "2.0")).exists());

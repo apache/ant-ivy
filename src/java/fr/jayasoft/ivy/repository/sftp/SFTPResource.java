@@ -6,6 +6,9 @@
  */
 package fr.jayasoft.ivy.repository.sftp;
 
+import java.io.IOException;
+import java.io.InputStream;
+
 import fr.jayasoft.ivy.repository.Resource;
 
 public class SFTPResource implements Resource {
@@ -62,4 +65,8 @@ public class SFTPResource implements Resource {
     public boolean isLocal() {
         return false;
     }
+
+	public InputStream openStream() throws IOException {
+		return _repository.openStream(this);
+	}
 }

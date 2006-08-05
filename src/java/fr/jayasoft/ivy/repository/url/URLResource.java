@@ -6,6 +6,8 @@
  */
 package fr.jayasoft.ivy.repository.url;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -75,4 +77,8 @@ public class URLResource implements Resource {
     public boolean isLocal() {
         return false;
     }
+
+	public InputStream openStream() throws IOException {
+		return _url.openStream();
+	}
 }

@@ -12,6 +12,7 @@ import java.util.Date;
 import fr.jayasoft.ivy.Ivy;
 import fr.jayasoft.ivy.IvyContext;
 import fr.jayasoft.ivy.ModuleDescriptor;
+import fr.jayasoft.ivy.report.ResolveReport;
 import fr.jayasoft.ivy.util.Message;
 import fr.jayasoft.ivy.util.StringUtils;
 
@@ -88,8 +89,15 @@ public class IvyTask extends Task {
         getProject().addReference("ivy.instance", ivy);
     }
     
-    protected void setResolved(ModuleDescriptor md) {
-        getProject().addReference("ivy.resolved.descriptor", md);
+    protected void setResolved(ResolveReport report, boolean keep) {
+    	ModuleDescriptor md = report.getModuleDescriptor();
+    	if (keep) {
+	        getProject().addReference("ivy.resolved.report", report);
+	        getProject().addReference("ivy.resolved.descriptor", md);
+    	}
+    	String suffix = md.getModuleRevisionId().getModuleId().getOrganisation()+"."+md.getModuleRevisionId().getModuleId().getName();
+        getProject().addReference("ivy.resolved.report."+suffix, report);
+        getProject().addReference("ivy.resolved.descriptor."+suffix, md);
     }
     
     protected void ensureResolved(boolean haltOnFailure, String org, String module) {
@@ -97,17 +105,56 @@ public class IvyTask extends Task {
         if (org != null  && module != null) {
             return;
         }
-        Object reference = getProject().getReference("ivy.resolved.descriptor");
-        if (reference == null) {
-            Message.verbose("no resolved descriptor found: launching default resolve");
-            IvyResolve resolve = new IvyResolve();
-            resolve.setProject(getProject());
-            resolve.setHaltonfailure(haltOnFailure);
-            if (_validate != null) {
-                resolve.setValidate(_validate.booleanValue());
-            }
-            resolve.execute();
-        } 
+        Object reference = getResolvedDescriptor(org, module); 
+        
+        if (reference == null)  {
+        	createResolve(haltOnFailure).execute();
+        }
+    }
+    
+    protected Object getResolvedDescriptor(String org, String module) {
+		return getResolvedDescriptor(org, module, false);
+	}
+    
+	protected Object getResolvedDescriptor(String org, String module, boolean strict) {
+		return getReference("ivy.resolved.descriptor", org, module, strict);
+	}
+	private Object getReference(String prefix, String org, String module, boolean strict) {
+		Object reference = null;
+		if (org != null && module != null) {
+			reference = getProject().getReference(prefix+"."+org+"."+module);
+		}
+        if (!strict && reference == null) {
+        	reference = getProject().getReference(prefix);
+        }
+		return reference;
+	}
+    
+	protected ResolveReport getResolvedReport(String org, String module) {
+		return getResolvedReport(org, module, false);
+	}
+	protected ResolveReport getResolvedReport(String org, String module, boolean strict) {
+		return (ResolveReport) getReference("ivy.resolved.report", org, module, strict);
+	}
+    
+	protected IvyResolve createResolve(boolean haltOnFailure) {
+		Message.verbose("no resolved descriptor found: launching default resolve");
+		IvyResolve resolve = new IvyResolve();
+		resolve.setProject(getProject());
+		resolve.setHaltonfailure(haltOnFailure);
+		if (_validate != null) {
+		    resolve.setValidate(_validate.booleanValue());
+		}
+		return resolve;
+	}
+
+    protected boolean shouldResolve(String org, String module) {
+        ensureMessageInitialised();
+        if (org != null  && module != null) {
+            return false;
+        }
+        Object reference = getResolvedDescriptor(org, module); 
+        return (reference == null);
     }
 
     protected String[] splitConfs(String conf) {

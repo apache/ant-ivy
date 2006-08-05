@@ -8,6 +8,7 @@ package fr.jayasoft.ivy.parser;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.text.ParseException;
 import java.util.Iterator;
@@ -74,12 +75,12 @@ public class ModuleDescriptorParserRegistry extends AbstractModuleDescriptorPars
         return getParser(res) != null;
     }
 
-    public void toIvyFile(URL srcURL, Resource res, File destFile, ModuleDescriptor md) throws ParseException, IOException {
+    public void toIvyFile(InputStream is, Resource res, File destFile, ModuleDescriptor md) throws ParseException, IOException {
         ModuleDescriptorParser parser = getParser(res);
         if (parser == null) {
             Message.warn("no module descriptor parser found for "+res);
         } else {
-            parser.toIvyFile(srcURL, res, destFile, md);
+            parser.toIvyFile(is, res, destFile, md);
         }
     }
 

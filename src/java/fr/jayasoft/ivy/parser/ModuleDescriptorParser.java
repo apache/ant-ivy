@@ -8,6 +8,7 @@ package fr.jayasoft.ivy.parser;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.text.ParseException;
 
@@ -19,7 +20,7 @@ public interface ModuleDescriptorParser {
     public ModuleDescriptor parseDescriptor(Ivy ivy, URL descriptorURL, boolean validate) throws ParseException, IOException;
     public ModuleDescriptor parseDescriptor(Ivy ivy, URL descriptorURL, Resource res, boolean validate) throws ParseException, IOException;
     
-    public void toIvyFile(URL srcURL, Resource res, File destFile, ModuleDescriptor md) throws ParseException, IOException;
+    public void toIvyFile(InputStream is, Resource res, File destFile, ModuleDescriptor md) throws ParseException, IOException;
 
     public boolean accept(Resource res);
 }

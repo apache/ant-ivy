@@ -7,6 +7,9 @@
 package fr.jayasoft.ivy.repository.file;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
 import fr.jayasoft.ivy.repository.Resource;
 
@@ -48,4 +51,8 @@ public class FileResource implements Resource {
     public boolean isLocal() {
         return true;
     }
+
+	public InputStream openStream() throws IOException {
+		return new FileInputStream(_file);
+	}
 }

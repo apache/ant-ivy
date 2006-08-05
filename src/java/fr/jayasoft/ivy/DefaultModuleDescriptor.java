@@ -5,6 +5,9 @@
  */
 package fr.jayasoft.ivy;
 
+import java.io.File;
+import java.io.IOException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -21,9 +24,12 @@ import fr.jayasoft.ivy.matcher.PatternMatcher;
 import fr.jayasoft.ivy.namespace.NameSpaceHelper;
 import fr.jayasoft.ivy.namespace.Namespace;
 import fr.jayasoft.ivy.namespace.NamespaceTransformer;
+import fr.jayasoft.ivy.parser.ModuleDescriptorParser;
+import fr.jayasoft.ivy.repository.Resource;
 import fr.jayasoft.ivy.status.StatusManager;
 import fr.jayasoft.ivy.util.Message;
 import fr.jayasoft.ivy.version.VersionMatcher;
+import fr.jayasoft.ivy.xml.XmlModuleDescriptorWriter;
 
 /**
  * @author X.Hanin
@@ -72,7 +78,7 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
         if (t.isIdentity()) {
             return md;
         }
-        DefaultModuleDescriptor nmd = new DefaultModuleDescriptor();
+        DefaultModuleDescriptor nmd = new DefaultModuleDescriptor(md.getParser(), md.getResource());
         nmd._revId = t.transform(md.getModuleRevisionId());
         nmd._resolvedRevId = t.transform(md.getResolvedModuleRevisionId());
         nmd._status = md.getStatus();
@@ -122,6 +128,8 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
     private long _lastModified = 0;
     private Namespace _namespace;
 	private boolean _mappingOverride;
+	private ModuleDescriptorParser _parser;
+	private Resource _resource;
 
     public DefaultModuleDescriptor(ModuleRevisionId id, String status, Date pubDate) {
         this(id, status, pubDate, false);
@@ -147,10 +155,12 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
 	 * with instances created by this constructor !
 	 *
 	 */
-	public DefaultModuleDescriptor() {
-    }
-    
-    public boolean isDefault() {
+    public DefaultModuleDescriptor(ModuleDescriptorParser parser, Resource res) {
+		_parser = parser;
+		_resource = res;
+	}
+
+	public boolean isDefault() {
         return _isDefault;
     }
 	
@@ -282,6 +292,14 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
         }
         return false;
     }
+	
+	public void toIvyFile(File destFile) throws ParseException, IOException {
+		if (_parser != null && _resource != null) {
+			_parser.toIvyFile(_resource.openStream(), _resource, destFile, this);			
+		} else {
+			XmlModuleDescriptorWriter.write(this, destFile);
+		}
+	}
 
     public String toString() {
         return "module: "+_revId+" status="+_status+" publication="+_publicationDate+" configurations="+_configurations+" artifacts="+_artifactsByConf+" dependencies="+_dependencies;
@@ -418,5 +436,13 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
     public Map getStandardAttributes() {
         return _resolvedRevId.getStandardAttributes();
     }
+
+	public ModuleDescriptorParser getParser() {
+		return _parser;
+	}
+
+	public Resource getResource() {
+		return _resource;
+	}
 
 }

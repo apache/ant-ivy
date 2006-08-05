@@ -8,6 +8,7 @@ package fr.jayasoft.ivy.parser;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.text.ParseException;
 
@@ -24,7 +25,7 @@ public class ModuleDescriptorParserRegistryTest extends TestCase {
             return DefaultModuleDescriptor.newDefaultInstance(ModuleRevisionId.newInstance("test", "parser", "1.0"));
         }
 
-        public void toIvyFile(URL srcURL, Resource res, File destFile, ModuleDescriptor md) throws ParseException, IOException {
+        public void toIvyFile(InputStream is, Resource res, File destFile, ModuleDescriptor md) throws ParseException, IOException {
         }
 
         public boolean accept(Resource res) {
