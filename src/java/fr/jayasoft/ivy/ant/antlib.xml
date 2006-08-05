@@ -16,5 +16,6 @@
 	<taskdef name="install" classname="fr.jayasoft.ivy.ant.IvyInstall"/>
 	<taskdef name="convertpom" classname="fr.jayasoft.ivy.ant.IvyConvertPom"/>
 	<taskdef name="artifactreport" classname="fr.jayasoft.ivy.ant.IvyArtifactReport"/>
-  <taskdef name="info" classname="fr.jayasoft.ivy.ant.IvyInfo"/>
+	<taskdef name="info" classname="fr.jayasoft.ivy.ant.IvyInfo"/>
+	<taskdef name="addpath" classname="fr.jayasoft.ivy.ant.AddPathTask"/>
 </antlib>
