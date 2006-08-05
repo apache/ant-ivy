@@ -38,8 +38,12 @@
 	</target>
 	
 	<target name="clean-all" depends="clean, clean-lib, clean-examples"/>
+	
+	<target name="noresolve">
+		<property name="no.resolve" value="true"/>
+	</target>
 
-	<target name="resolve" depends="prepare">
+	<target name="resolve" depends="prepare" unless="no.resolve">
 		<ivy:retrieve/>
 	</target>
 
