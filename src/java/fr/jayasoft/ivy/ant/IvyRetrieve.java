@@ -16,6 +16,7 @@ import fr.jayasoft.ivy.filter.Filter;
 public class IvyRetrieve extends IvyPostResolveTask {
     private String _pattern;
     private String _ivypattern = null;
+    private boolean _sync = false;
     
     public String getPattern() {
         return _pattern;
@@ -30,7 +31,7 @@ public class IvyRetrieve extends IvyPostResolveTask {
         _pattern = getProperty(_pattern, getIvyInstance(), "ivy.retrieve.pattern");
         try {
         	Filter artifactFilter = getArtifactFilter();
-            int targetsCopied = getIvyInstance().retrieve(getResolvedModuleId(), splitConfs(getConf()), getCache(), _pattern, _ivypattern, artifactFilter);
+            int targetsCopied = getIvyInstance().retrieve(getResolvedModuleId(), splitConfs(getConf()), getCache(), _pattern, _ivypattern, artifactFilter, _sync);
             boolean haveTargetsBeenCopied = targetsCopied > 0;
             getProject().setProperty("ivy.nb.targets.copied", String.valueOf(targetsCopied));
             getProject().setProperty("ivy.targets.copied", String.valueOf(haveTargetsBeenCopied));
@@ -44,5 +45,11 @@ public class IvyRetrieve extends IvyPostResolveTask {
     public void setIvypattern(String ivypattern) {
         _ivypattern = ivypattern;
     }
+	public boolean isSync() {
+		return _sync;
+	}
+	public void setSync(boolean sync) {
+		_sync = sync;
+	}
     
 }

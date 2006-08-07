@@ -391,4 +391,13 @@ public class IvyPatternHelper {
     		return location.substring(lastPathIndex + 1, lastColonIndex);
     	}
     }
+
+	public static String getTokenRoot(String pattern) {
+		int index = pattern.indexOf('[');
+		if (index == -1) {
+			return pattern;
+		} else {
+			return pattern.substring(0, index);
+		}
+	}
 }

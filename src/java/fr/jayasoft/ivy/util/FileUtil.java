@@ -13,6 +13,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 import fr.jayasoft.ivy.url.URLHandlerRegistry;
 
@@ -117,5 +121,46 @@ public class FileUtil {
         } 
         f.delete();
     }
+    /**
+     * Returns a list of Files composed of all directories being
+     * parent of file and child of root + file itself.
+     * 
+     * Example:
+     * getPathFiles(new File("test"), new File("test/dir1/dir2/file.txt"))
+     * => {new File("test/dir1"), new File("test/dir1/dir2"), new File("test/dir1/dir2/file.txt") }
+     * 
+     * Note that if root is not an ancester of file, or if root is null, all directories from the
+     * file system root will be returned. 
+     */
+	public static List getPathFiles(File root, File file) {
+		List ret = new ArrayList();
+		while (file != null && !file.equals(root)) {
+			ret.add(file);
+			file = file.getParentFile();
+		}
+		Collections.reverse(ret);
+		return ret;
+	}
+	/**
+	 * Returns a collection of all Files being contained in the given directory,
+	 * recursively, including directories.
+	 * @param dir
+	 * @return
+	 */
+	public static Collection listAll(File dir) {
+		return listAll(dir, new ArrayList());
+	}
+	private static Collection listAll(File file, Collection list) {
+		if (file.exists()) {
+			list.add(file);
+		}
+		if (file.isDirectory()) {
+			File[] files = file.listFiles();
+			for (int i = 0; i < files.length; i++) {
+				listAll(files[i], list);
+			}
+		}
+		return list;
+	}
 
 }

@@ -1761,20 +1761,28 @@ public class Ivy implements TransferListener {
     }
     
     public int retrieve(ModuleId moduleId, String[] confs, final File cache, String destFilePattern, String destIvyPattern, Filter artifactFilter) {
+    	return retrieve(moduleId, confs, cache, destFilePattern, destIvyPattern, artifactFilter, false);
+    }
+    public int retrieve(ModuleId moduleId, String[] confs, final File cache, String destFilePattern, String destIvyPattern, Filter artifactFilter, boolean sync) {
     	if (artifactFilter == null) {
     		artifactFilter = FilterHelper.NO_FILTER;
     	}
     	
         IvyContext.getContext().setIvy(this);
         IvyContext.getContext().setCache(cache);
-        Message.info(":: retrieving :: "+moduleId);
+        Message.info(":: retrieving :: "+moduleId+(sync?" [sync]":""));
         Message.info("\tconfs: "+Arrays.asList(confs));
         long start = System.currentTimeMillis();
         
         destFilePattern = IvyPatternHelper.substituteVariables(destFilePattern, getVariables());
         destIvyPattern = IvyPatternHelper.substituteVariables(destIvyPattern, getVariables());
         try {
-            final Map artifactsToCopy = determineArtifactsToCopy(moduleId, confs, cache, destFilePattern, destIvyPattern, artifactFilter);            
+            Map artifactsToCopy = determineArtifactsToCopy(moduleId, confs, cache, destFilePattern, destIvyPattern, artifactFilter);
+            File fileRetrieveRoot = new File(IvyPatternHelper.getTokenRoot(destFilePattern));
+            File ivyRetrieveRoot = destIvyPattern == null ? null : new File(IvyPatternHelper.getTokenRoot(destIvyPattern));
+            Collection targetArtifactsStructure = new HashSet(); // Set(File) set of all paths which should be present at then end of retrieve (useful for sync) 
+            Collection targetIvysStructure = new HashSet(); // same for ivy files
+            
             // do retrieve
             int targetsCopied = 0;
             int targetsUpToDate = 0;
@@ -1793,6 +1801,30 @@ public class Ivy implements TransferListener {
                         Message.verbose("\t\tto "+destFile+" [NOT REQUIRED]");
                         targetsUpToDate++;
                     }
+                    if ("ivy".equals(artifact.getType())) {
+                    	targetIvysStructure.addAll(FileUtil.getPathFiles(ivyRetrieveRoot, destFile));
+                    } else {
+                    	targetArtifactsStructure.addAll(FileUtil.getPathFiles(fileRetrieveRoot, destFile));
+                    }
+                }
+            }
+            
+            if (sync) {
+				Message.verbose("\tsyncing...");
+                Collection existingArtifacts = FileUtil.listAll(fileRetrieveRoot);
+                Collection existingIvys = ivyRetrieveRoot == null ? null : FileUtil.listAll(ivyRetrieveRoot);
+
+                if (fileRetrieveRoot.equals(ivyRetrieveRoot)) {
+                	Collection target = targetArtifactsStructure;
+                	target.addAll(targetIvysStructure);
+                	Collection existing = existingArtifacts;
+                	existing.addAll(existingIvys);
+                	sync(target, existing);
+                } else {
+                	sync(targetArtifactsStructure, existingArtifacts);
+                	if (existingIvys != null) {
+                		sync(targetIvysStructure, existingIvys);
+                	}
                 }
             }
             Message.info("\t"+targetsCopied+" artifacts copied, "+targetsUpToDate+" already retrieved");
@@ -1806,7 +1838,26 @@ public class Ivy implements TransferListener {
         }
     }
 
-    public Map determineArtifactsToCopy(ModuleId moduleId, String[] confs, final File cache, String destFilePattern, String destIvyPattern) throws ParseException, IOException {
+    private void sync(Collection target, Collection existing) {
+		Collection toRemove = new HashSet();
+		for (Iterator iter = existing.iterator(); iter.hasNext();) {
+			File file = (File) iter.next();
+			toRemove.add(file.getAbsoluteFile());
+		}
+		for (Iterator iter = target.iterator(); iter.hasNext();) {
+			File file = (File) iter.next();
+			toRemove.remove(file.getAbsoluteFile());
+		}
+		for (Iterator iter = toRemove.iterator(); iter.hasNext();) {
+			File file = (File) iter.next();
+			if (file.exists()) {
+				Message.verbose("\t\tdeleting "+file);
+				FileUtil.forceDelete(file);
+			}
+		}
+	}
+
+	public Map determineArtifactsToCopy(ModuleId moduleId, String[] confs, final File cache, String destFilePattern, String destIvyPattern) throws ParseException, IOException {
     	return determineArtifactsToCopy(moduleId, confs, cache, destFilePattern, destIvyPattern, FilterHelper.NO_FILTER);
     }
     
