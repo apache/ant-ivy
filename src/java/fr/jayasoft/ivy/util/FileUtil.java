@@ -123,7 +123,7 @@ public class FileUtil {
     }
     /**
      * Returns a list of Files composed of all directories being
-     * parent of file and child of root + file itself.
+     * parent of file and child of root + file and root themselves.
      * 
      * Example:
      * getPathFiles(new File("test"), new File("test/dir1/dir2/file.txt"))
@@ -134,9 +134,12 @@ public class FileUtil {
      */
 	public static List getPathFiles(File root, File file) {
 		List ret = new ArrayList();
-		while (file != null && !file.equals(root)) {
+		while (file != null && !file.getAbsolutePath().equals(root.getAbsolutePath())) {
 			ret.add(file);
 			file = file.getParentFile();
+		}
+		if (root != null) {
+			ret.add(root);
 		}
 		Collections.reverse(ret);
 		return ret;
