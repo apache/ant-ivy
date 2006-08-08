@@ -20,6 +20,7 @@ import fr.jayasoft.ivy.report.ResolveReport;
 public abstract class IvyPostResolveTask extends IvyTask {
     private String _conf;
     private boolean _haltOnFailure = true;
+    private boolean _transitive = true;
     private File _cache;
 
     private String _organisation;
@@ -50,7 +51,7 @@ public abstract class IvyPostResolveTask extends IvyTask {
         	
     		_conf = "default"; // this will now be used as the configurations needed to be put in the path.
         } else {        
-        	ensureResolved(isHaltonfailure(), getOrganisation(), getModule());
+        	ensureResolved(isHaltonfailure(), isTransitive(), getOrganisation(), getModule());
         	
 	        _conf = getProperty(_conf, ivy, "ivy.resolved.configurations");
 	        if ("*".equals(_conf)) {
@@ -157,6 +158,14 @@ public abstract class IvyPostResolveTask extends IvyTask {
 
 	public Filter getArtifactFilter() {
 		return _artifactFilter;
+	}
+
+	public boolean isTransitive() {
+		return _transitive;
+	}
+
+	public void setTransitive(boolean transitive) {
+		_transitive = transitive;
 	}
 
 }

@@ -103,6 +103,9 @@ public class IvyTask extends Task {
     }
     
     protected void ensureResolved(boolean haltOnFailure, String org, String module) {
+    	ensureResolved(haltOnFailure, true, org, module);
+    }
+    protected void ensureResolved(boolean haltOnFailure, boolean transitive, String org, String module) {
         ensureMessageInitialised();
         if (org != null  && module != null) {
             return;
@@ -110,7 +113,9 @@ public class IvyTask extends Task {
         Object reference = getResolvedDescriptor(org, module); 
         
         if (reference == null)  {
-        	createResolve(haltOnFailure).execute();
+        	IvyResolve resolve = createResolve(haltOnFailure);
+        	resolve.setTransitive(transitive);
+        	resolve.execute();
         }
     }
     

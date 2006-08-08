@@ -785,6 +785,26 @@ public class ResolveTest extends TestCase {
         assertTrue(_ivy.getArchiveFileInCache(_cache, "org1", "mod1.2", "2.0", "mod1.2", "jar", "jar").exists());
     }
     
+    public void testResolveTransitiveDisabled() throws Exception {
+        // mod2.1 depends on mod1.1 which depends on mod1.2
+        ResolveReport report = _ivy.resolve(new File("test/repositories/1/org2/mod2.1/ivys/ivy-0.3.xml").toURL(),
+                null, new String[] {"*"}, _cache, null, true, false, false, null);
+        assertNotNull(report);
+        ModuleDescriptor md = report.getModuleDescriptor();
+        assertNotNull(md);
+        ModuleRevisionId mrid = ModuleRevisionId.newInstance("org2", "mod2.1", "0.3");
+        assertEquals(mrid, md.getModuleRevisionId());
+        
+        assertTrue(_ivy.getResolvedIvyFileInCache(_cache, mrid).exists());
+        
+        // dependencies
+        assertTrue(_ivy.getIvyFileInCache(_cache, ModuleRevisionId.newInstance("org1", "mod1.1", "1.0")).exists());
+        assertTrue(_ivy.getArchiveFileInCache(_cache, "org1", "mod1.1", "1.0", "mod1.1", "jar", "jar").exists());
+
+        assertFalse(_ivy.getIvyFileInCache(_cache, ModuleRevisionId.newInstance("org1", "mod1.2", "2.0")).exists());
+        assertFalse(_ivy.getArchiveFileInCache(_cache, "org1", "mod1.2", "2.0", "mod1.2", "jar", "jar").exists());
+    }
+    
     public void testDependenciesOrder() throws Exception {
         ResolveReport report = _ivy.resolve(ResolveTest.class.getResource("ivy-225.xml"),
                 null, new String[] {"default"}, _cache, null, true);

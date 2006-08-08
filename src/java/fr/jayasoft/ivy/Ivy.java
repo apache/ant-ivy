@@ -960,6 +960,9 @@ public class Ivy implements TransferListener {
 	}
 	
     public ResolveReport resolve(URL ivySource, String revision, String[] confs, File cache, Date date, boolean validate, boolean useCacheOnly, Filter artifactFilter) throws ParseException, IOException {
+    	return resolve(ivySource, revision, confs, cache, date, validate, useCacheOnly, true, artifactFilter);
+    }
+    public ResolveReport resolve(URL ivySource, String revision, String[] confs, File cache, Date date, boolean validate, boolean useCacheOnly, boolean transitive, Filter artifactFilter) throws ParseException, IOException {
         IvyContext.getContext().setIvy(this);
         IvyContext.getContext().setCache(cache);
         
@@ -974,10 +977,13 @@ public class Ivy implements TransferListener {
             md.setResolvedModuleRevisionId(new ModuleRevisionId(md.getModuleRevisionId().getModuleId(), revision, md.getModuleRevisionId().getExtraAttributes()));
         }
 
-        return resolve(md, confs, cache, date, validate, useCacheOnly, artifactFilter);
+        return resolve(md, confs, cache, date, validate, useCacheOnly, transitive, artifactFilter);
     }
 
 	public ResolveReport resolve(ModuleDescriptor md, String[] confs, File cache, Date date, boolean validate, boolean useCacheOnly, Filter artifactFilter) throws ParseException, IOException, FileNotFoundException {
+		return resolve(md, confs, cache, date, validate, useCacheOnly, true, artifactFilter);
+	}
+	public ResolveReport resolve(ModuleDescriptor md, String[] confs, File cache, Date date, boolean validate, boolean useCacheOnly, boolean transitive, Filter artifactFilter) throws ParseException, IOException, FileNotFoundException {
 		IvyContext.getContext().setIvy(this);
         DependencyResolver oldDictator = getDictatorResolver();
         if (useCacheOnly) {
@@ -994,13 +1000,13 @@ public class Ivy implements TransferListener {
             fireIvyEvent(new StartResolveEvent(this, md, confs));
             
             long start = System.currentTimeMillis();
-            Message.info(":: resolving dependencies :: "+md.getResolvedModuleRevisionId());
+            Message.info(":: resolving dependencies :: "+md.getResolvedModuleRevisionId()+(transitive?"":" [not transitive]"));
             Message.info("\tconfs: "+Arrays.asList(confs));
             Message.verbose("\tvalidate = "+validate);
             ResolveReport report = new ResolveReport(md);
 
             // resolve dependencies
-            IvyNode[] dependencies = getDependencies(md, confs, cache, date, report, validate);
+            IvyNode[] dependencies = getDependencies(md, confs, cache, date, report, validate, transitive);
             
             Message.verbose(":: downloading artifacts ::");
 
@@ -1139,6 +1145,9 @@ public class Ivy implements TransferListener {
      * @return an array of the resolved Dependencies
      */
     public IvyNode[] getDependencies(ModuleDescriptor md, String[] confs, File cache, Date date, ResolveReport report, boolean validate) {
+    	return getDependencies(md, confs, cache, date, report, validate, true);
+    }
+    public IvyNode[] getDependencies(ModuleDescriptor md, String[] confs, File cache, Date date, ResolveReport report, boolean validate, boolean transitive) {
         IvyContext.getContext().setIvy(this);
         IvyContext.getContext().setCache(cache);
         if (md == null) {
@@ -1153,7 +1162,7 @@ public class Ivy implements TransferListener {
         
         Map dependenciesMap = new LinkedHashMap();
         Date reportDate = new Date();
-        ResolveData data = new ResolveData(this, cache, date, null, validate, dependenciesMap);
+        ResolveData data = new ResolveData(this, cache, date, null, validate, transitive, dependenciesMap);
         IvyNode rootNode = new IvyNode(data, md);
         
         for (int i = 0; i < confs.length; i++) {
@@ -1312,7 +1321,7 @@ public class Ivy implements TransferListener {
         }
         
         DependencyDescriptor dd = node.getDependencyDescriptor(node.getParent());
-        if (!isDependenciesFetched(node, conf) && (dd == null || isTransitive(node))) {
+        if (!isDependenciesFetched(node, conf) && (dd == null || node.isTransitive())) {
             Collection dependencies = node.getDependencies(conf, true);
             for (Iterator iter = dependencies.iterator(); iter.hasNext();) {
                 IvyNode dep = (IvyNode)iter.next();
@@ -1334,32 +1343,6 @@ public class Ivy implements TransferListener {
         
     }
 
-    /**
-     * Returns true if the current dependency descriptor is transitive
-     * and the parent configuration is transitive.  Otherwise returns false.
-     * @param node curent node
-     * @return true if current node is transitive and the parent configuration is
-     * transitive.
-     */
-    protected boolean isTransitive(IvyNode node) {
-        return (node.getDependencyDescriptor(node.getParent()).isTransitive() &&
-                isParentConfTransitive(node) );
-    }
-
-    /**
-     * Checks if the current node's parent configuration is transitive.
-     * @param node current node
-     * @return true if the node's parent configuration is transitive
-     */
-    protected boolean isParentConfTransitive(IvyNode node) {
-        String conf = node.getParent().getRequestedConf();
-        if (conf==null) {
-            return true;
-        }
-        Configuration parentConf = node.getParent().getConfiguration(conf);
-        return parentConf.isTransitive();
-
-    }
 
     /**
      * Returns true if we've already fetched the dependencies for this node and configuration

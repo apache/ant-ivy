@@ -138,6 +138,7 @@ public class IvyResolve extends IvyTask {
 	                    getPubDate(_pubdate, null), 
 	                    doValidate(ivy),
 	                    _useCacheOnly,
+	                    _transitive,
 	                    FilterHelper.getArtifactTypeFilter(_type));
             }
             if (isHaltonfailure() && report.hasError()) {

@@ -18,6 +18,7 @@ public class ResolveData {
     private File _cache;
     private Date _date;
     private boolean _validate;
+    private boolean _transitive;
     private ConfigurationResolveReport _report;
 
     public ResolveData(ResolveData data, boolean validate) {
@@ -29,11 +30,15 @@ public class ResolveData {
     }
 
     public ResolveData(Ivy ivy, File cache, Date date, ConfigurationResolveReport report, boolean validate, Map nodes) {
+    	this(ivy, cache, date, report, validate, true, nodes);
+    }
+    public ResolveData(Ivy ivy, File cache, Date date, ConfigurationResolveReport report, boolean validate, boolean transitive, Map nodes) {
         _ivy = ivy;
         _cache = cache;
         _date = date;
         _report = report;
         _validate = validate;
+        _transitive = transitive;
         _nodes = nodes;
     }
 
@@ -81,6 +86,10 @@ public class ResolveData {
     public void setReport(ConfigurationResolveReport report) {
         _report = report;
     }
+
+	public boolean isTransitive() {
+		return _transitive;
+	}
     
 
     

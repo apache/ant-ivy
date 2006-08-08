@@ -1481,4 +1481,32 @@ public class IvyNode {
         
     }
 
+    /**
+     * Returns true if the current dependency descriptor is transitive
+     * and the parent configuration is transitive.  Otherwise returns false.
+     * @param node curent node
+     * @return true if current node is transitive and the parent configuration is
+     * transitive.
+     */
+    protected boolean isTransitive() {
+        return (_data.isTransitive() &&
+        		getDependencyDescriptor(getParent()).isTransitive() &&
+                isParentConfTransitive() );
+    }
+
+    /**
+     * Checks if the current node's parent configuration is transitive.
+     * @param node current node
+     * @return true if the node's parent configuration is transitive
+     */
+    protected boolean isParentConfTransitive() {
+        String conf = getParent().getRequestedConf();
+        if (conf==null) {
+            return true;
+        }
+        Configuration parentConf = getParent().getConfiguration(conf);
+        return parentConf.isTransitive();
+
+    }
+
 }
