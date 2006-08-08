@@ -61,12 +61,17 @@ public class ChainResolver extends AbstractResolver {
         data = new ResolveData(data, doValidate(data));
         ResolvedModuleRevision ret = null;
         
+        List errors = new ArrayList();
+        
         for (Iterator iter = _chain.iterator(); iter.hasNext();) {
             DependencyResolver resolver = (DependencyResolver) iter.next();
             LatestStrategy oldLatest = setLatestIfRequired(resolver, getLatestStrategy());
             ResolvedModuleRevision mr = null;
             try {
                 mr = resolver.getDependency(dd, data);
+            } catch (Exception ex) {
+            	Message.verbose("problem occured while resolving "+dd+" with "+resolver+": "+ex);
+            	errors.add(ex);
             } finally {
                 if (oldLatest != null) {
                     setLatest(resolver, oldLatest);
@@ -99,6 +104,26 @@ public class ChainResolver extends AbstractResolver {
                     return resolvedRevision(mr);
                 }
             }
+        }
+        if (ret == null && !errors.isEmpty()) {
+        	if (errors.size() == 1) {
+        		Exception ex = (Exception) errors.get(0);
+        		if (ex instanceof RuntimeException) {
+        			throw (RuntimeException)ex;
+        		} else if (ex instanceof ParseException) {
+        			throw (ParseException)ex;
+        		} else {
+        			throw new RuntimeException(ex.toString(), ex);
+        		}
+        	} else {
+        		StringBuffer err = new StringBuffer();
+        		for (Iterator iter = errors.iterator(); iter.hasNext();) {
+					Exception ex = (Exception) iter.next();
+					err.append(ex).append("\n");
+				}
+        		err.setLength(err.length() - 1);
+        		throw new RuntimeException("several problems occured while resolving "+dd+":\n"+err);
+        	}
         }
         return resolvedRevision(ret);
     }

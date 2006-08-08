@@ -42,9 +42,14 @@ public interface Repository {
 	/**
 	 * Return the resource associated with a specified identifier.
 	 * 
+	 * If the resource does not exist, it should return a Resource with exists() returning false.
+	 * 
+	 * An IOException should only be thrown when a real IO problem occurs, like the impossibility to
+	 * connect to a server.
+	 * 
 	 * @param source A string identifying the resource.
 	 * @return The resource associated with the resource identifier.
-	 * @throws IOException On failure to get resource.
+	 * @throws IOException On error whle trying to get resource.
 	 */
     Resource getResource(String source)  throws IOException;
     
@@ -69,10 +74,10 @@ public interface Repository {
     void put(File source, String destination, boolean overwrite) throws IOException;
     
     /**
-     * Return a listing of resources
+     * Return a listing of resources names
      * 
      * @param parent The parent directory from which to generate the listing.
-     * @return A listing of the parent directory's file content.
+     * @return A listing of the parent directory's file content, as a List of String.
      * @throws IOException On listing failure.
      */
     List list(String parent) throws IOException;

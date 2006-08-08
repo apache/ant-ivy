@@ -660,7 +660,7 @@ public class IvyNode {
                         resolver.reportFailure();
                         _problem = new RuntimeException("not found");
                     }
-                } catch (ParseException e) {
+                } catch (Exception e) {
                     _problem = e;
                 }
                 

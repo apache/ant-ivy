@@ -903,13 +903,13 @@ public class Ivy implements TransferListener {
             }
             return result;
         } catch (ParseException e) {
-            Message.info("parse problem on "+ivyFile+": "+e.getMessage());
+            Message.info("parse problem on "+ivyFile+": "+e);
             return false;
         } catch (IOException e) {
-            Message.info("io problem on "+ivyFile+": "+e.getMessage());
+            Message.info("io problem on "+ivyFile+": "+e);
             return false;
         } catch (Exception e) {
-            Message.info("problem on "+ivyFile+": "+e.getMessage());
+            Message.info("problem on "+ivyFile+": "+e);
             return false;
         }
     }

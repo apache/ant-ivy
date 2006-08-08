@@ -1,5 +1,6 @@
 package fr.jayasoft.ivy.repository;
 
+import java.io.IOException;
 import java.io.InputStream;
 
 public class BasicResource implements Resource {
@@ -42,8 +43,12 @@ public class BasicResource implements Resource {
 		return _local;
 	}
 
-	public InputStream openStream() {
+	public InputStream openStream() throws IOException {
 		throw new UnsupportedOperationException("basic resource do not support the openStream method");
+	}
+	
+	public String toString() {
+		return getName();
 	}
 
 }

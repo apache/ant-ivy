@@ -17,7 +17,6 @@ import java.util.Map;
 
 import fr.jayasoft.ivy.Artifact;
 import fr.jayasoft.ivy.Ivy;
-import fr.jayasoft.ivy.IvyContext;
 import fr.jayasoft.ivy.LatestStrategy;
 import fr.jayasoft.ivy.ModuleRevisionId;
 import fr.jayasoft.ivy.report.DownloadReport;
@@ -82,9 +81,8 @@ public class RepositoryResolver extends AbstractResourceResolver {
             } else {
                 return findDynamicResourceUsingPattern(name, repository, strategy, versionMatcher, rmdparser, mrid, pattern, artifact, date);
             }
-        } catch (Exception ex) {
-            Message.debug("\t"+name+": unable to get resource for "+mrid+": res="+IvyPatternHelper.substitute(pattern, mrid, artifact)+": "+ex.getMessage());
-            return null;
+        } catch (IOException ex) {
+        	throw new RuntimeException(name+": unable to get resource for "+mrid+": res="+IvyPatternHelper.substitute(pattern, mrid, artifact)+": "+ex, ex);
         }
     }
     
