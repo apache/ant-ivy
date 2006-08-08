@@ -35,6 +35,10 @@ public class XmlModuleDescriptorWriter {
 	        out.println("<ivy-module version=\"1.0\">"); 
 	    	out.println("\t<info organisation=\""+md.getModuleRevisionId().getOrganisation()+"\"");
 	    	out.println("\t\tmodule=\""+md.getModuleRevisionId().getName()+"\"");
+	    	String branch = md.getResolvedModuleRevisionId().getBranch();
+            if (branch != null) {
+                out.println("\t\tbranch=\""+branch+"\"");
+            }
 	    	String revision = md.getResolvedModuleRevisionId().getRevision();
             if (revision != null) {
                 out.println("\t\trevision=\""+revision+"\"");

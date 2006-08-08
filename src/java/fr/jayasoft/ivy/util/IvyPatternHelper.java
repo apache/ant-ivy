@@ -31,6 +31,7 @@ public class IvyPatternHelper {
     public static final String TYPE_KEY = "type";
     public static final String EXT_KEY = "ext";
     public static final String ARTIFACT_KEY = "artifact";
+    public static final String BRANCH_KEY = "branch";
     public static final String REVISION_KEY = "revision";
     public static final String MODULE_KEY = "module";
     public static final String ORGANISATION_KEY = "organisation";
@@ -80,6 +81,7 @@ public class IvyPatternHelper {
         return substitute(pattern, 
                 mrid.getOrganisation(),
                 mrid.getName(),
+                mrid.getBranch(),
                 mrid.getRevision(),
                 artifact.getName(),
                 artifact.getType(),
@@ -103,16 +105,20 @@ public class IvyPatternHelper {
     }
     
     public static String substitute(String pattern, String org, String module, String revision, String artifact, String type, String ext, String conf, ArtifactOrigin origin, Map extraAttributes) {
+    	return substitute(pattern, org, module, null, revision, artifact, type, ext, conf, origin, extraAttributes);
+    }
+    public static String substitute(String pattern, String org, String module, String branch, String revision, String artifact, String type, String ext, String conf, ArtifactOrigin origin, Map extraAttributes) {
         Map tokens = new HashMap(extraAttributes == null ? Collections.EMPTY_MAP : extraAttributes);        
         tokens.put(ORGANISATION_KEY, org==null?"":org);
         tokens.put(ORGANISATION_KEY2, org==null?"":org);
         tokens.put(MODULE_KEY, module==null?"":module);
+        tokens.put(BRANCH_KEY, branch==null?"":branch);
         tokens.put(REVISION_KEY, revision==null?"":revision);
         tokens.put(ARTIFACT_KEY, artifact==null?module:artifact);
         tokens.put(TYPE_KEY, type==null?"jar":type);
         tokens.put(EXT_KEY, ext==null?"jar":ext);
         tokens.put(CONF_KEY, conf==null?"default":conf);
-        tokens.put(ORIGINAL_ARTIFACTNAME_KEY, origin==null?new OriginalArtifactNameValue(org, module, revision, artifact, type, ext):new OriginalArtifactNameValue(origin));
+        tokens.put(ORIGINAL_ARTIFACTNAME_KEY, origin==null?new OriginalArtifactNameValue(org, module, branch, revision, artifact, type, ext):new OriginalArtifactNameValue(origin));
         return substituteTokens(pattern, tokens);
     }
     
@@ -336,6 +342,7 @@ public class IvyPatternHelper {
     	// module properties
     	private String org;
     	private String moduleName;
+    	private String branch;
     	private String revision;
     	
     	// artifact properties
@@ -346,9 +353,10 @@ public class IvyPatternHelper {
     	// cached origin;
     	private ArtifactOrigin origin;
     	
-    	public OriginalArtifactNameValue(String org, String moduleName, String revision, String artifactName, String artifactType, String artifactExt) {
+    	public OriginalArtifactNameValue(String org, String moduleName, String branch, String revision, String artifactName, String artifactType, String artifactExt) {
 			this.org = org;
 			this.moduleName = moduleName;
+			this.branch = branch;
 			this.revision = revision;
 			this.artifactName = artifactName;
 			this.artifactType = artifactType;
@@ -366,7 +374,7 @@ public class IvyPatternHelper {
 		// Called by substituteTokens only if the original artifact name is needed
 		public String toString() {
 			if (origin == null) {
-	    		ModuleRevisionId revId = ModuleRevisionId.newInstance(org, moduleName, revision);
+	    		ModuleRevisionId revId = ModuleRevisionId.newInstance(org, moduleName, branch, revision);
 	    		Artifact artifact = new DefaultArtifact(revId, null, artifactName, artifactType, artifactExt);
 	    		
 	    		Ivy ivy = IvyContext.getContext().getIvy();

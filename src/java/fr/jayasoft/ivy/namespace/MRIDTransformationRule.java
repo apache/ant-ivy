@@ -17,8 +17,8 @@ import fr.jayasoft.ivy.util.Message;
 
 public class MRIDTransformationRule implements NamespaceTransformer {
     private static class MridRuleMatcher {
-        private static final String[] TYPES = new String[] {"o", "m", "r"};
-        private Matcher[] _matchers = new Matcher[3];
+        private static final String[] TYPES = new String[] {"o", "m", "b", "r"};
+        private Matcher[] _matchers = new Matcher[4];
         
         public boolean match(MRIDRule src, ModuleRevisionId mrid) {
             _matchers[0] = Pattern.compile(getPattern(src.getOrg())).matcher(mrid.getOrganisation());
@@ -29,8 +29,16 @@ public class MRIDTransformationRule implements NamespaceTransformer {
             if (!_matchers[1].matches()) {
                 return false;
             }
-            _matchers[2] = Pattern.compile(getPattern(src.getRev())).matcher(mrid.getRevision());
-            if (!_matchers[2].matches()) {
+            if (mrid.getBranch() == null) {
+            	_matchers[2] = null;
+            } else {
+            	_matchers[2] =  Pattern.compile(getPattern(src.getBranch())).matcher(mrid.getBranch());
+            	if (!_matchers[2].matches()) {
+            		return false;
+            	}
+            }
+            _matchers[3] = Pattern.compile(getPattern(src.getRev())).matcher(mrid.getRevision());
+            if (!_matchers[3].matches()) {
                 return false;
             }
             
@@ -39,9 +47,10 @@ public class MRIDTransformationRule implements NamespaceTransformer {
         public ModuleRevisionId apply(MRIDRule dest, ModuleRevisionId mrid) {
             String org = applyRules(dest.getOrg(), "o");
             String mod = applyRules(dest.getModule(), "m");
+            String branch = applyRules(dest.getBranch(), "b");
             String rev = applyRules(dest.getRev(), "r");
             
-            return ModuleRevisionId.newInstance(org, mod, rev, mrid.getExtraAttributes());
+            return ModuleRevisionId.newInstance(org, mod, branch, rev, mrid.getExtraAttributes());
         }
         private String applyRules(String str, String type) {
             for (int i = 0; i < TYPES.length; i++) {
@@ -51,6 +60,9 @@ public class MRIDTransformationRule implements NamespaceTransformer {
         }
         
         private String applyTypeRule(String rule, String type, String ruleType, Matcher m) {
+        	if (m == null) {
+        		return rule;
+        	}
             String res = rule == null ? "$"+ruleType+"0" : rule;
             for (int i = 0; i < TYPES.length; i++) {
                 if (TYPES[i].equals(type)) {

@@ -108,7 +108,7 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
 
     private static class Parser extends AbstractParser {
 
-    private static final List ALLOWED_VERSIONS = Arrays.asList(new String[] {"1.0", "1.1", "1.2", "1.3"});
+    private static final List ALLOWED_VERSIONS = Arrays.asList(new String[] {"1.0", "1.1", "1.2", "1.3", "1.4"});
     
     private DefaultDependencyDescriptor _dd;
     private DefaultDependencyArtifactDescriptor _dad;
@@ -182,7 +182,8 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
                 String org = _ivy.substitute(attributes.getValue("organisation"));
                 String module = _ivy.substitute(attributes.getValue("module"));
                 String revision = _ivy.substitute(attributes.getValue("revision"));
-                _md.setModuleRevisionId(ModuleRevisionId.newInstance(org, module, revision, ExtendableItemHelper.getExtraAttributes(attributes, new String[] {"organisation", "module", "revision", "status", "publication", "namespace", "default", "resolver"})));
+                String branch = _ivy.substitute(attributes.getValue("branch"));
+                _md.setModuleRevisionId(ModuleRevisionId.newInstance(org, module, branch, revision, ExtendableItemHelper.getExtraAttributes(attributes, new String[] {"organisation", "module", "revision", "status", "publication", "namespace", "default", "resolver"})));
 
                 String namespace = _ivy.substitute(attributes.getValue("namespace"));
                 if (namespace != null) {
@@ -286,8 +287,9 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
                 boolean transitive = (transitiveValue == null) ? true : Boolean.valueOf(attributes.getValue("transitive")).booleanValue();
                 
                 String name = _ivy.substitute(attributes.getValue("name"));
+                String branch = _ivy.substitute(attributes.getValue("branch"));
                 String rev = _ivy.substitute(attributes.getValue("rev"));
-                _dd = new DefaultDependencyDescriptor(_md, ModuleRevisionId.newInstance(org, name, rev, ExtendableItemHelper.getExtraAttributes(attributes, new String[] {"org", "name", "rev", "force", "transitive", "changing", "conf"})), force, changing, transitive);
+                _dd = new DefaultDependencyDescriptor(_md, ModuleRevisionId.newInstance(org, name, branch, rev, ExtendableItemHelper.getExtraAttributes(attributes, new String[] {"org", "name", "rev", "force", "transitive", "changing", "conf"})), force, changing, transitive);
                 _md.addDependency(_dd);
                 String confs = _ivy.substitute(attributes.getValue("conf"));
                 if (confs != null && confs.length() > 0) {

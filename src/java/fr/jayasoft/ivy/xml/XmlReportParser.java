@@ -50,6 +50,7 @@ public class XmlReportParser {
             saxParser.parse(_report, new DefaultHandler() {
                 private String _organisation;
                 private String _module;
+                private String _branch;
                 private String _revision;
                 private int _position;
                 private Date _pubdate;
@@ -66,6 +67,7 @@ public class XmlReportParser {
                         _module = attributes.getValue("name");
                     } else if ("revision".equals(qName)) {
                         _revisionArtifacts = new ArrayList();
+                        _branch = attributes.getValue("branch");
                         _revision = attributes.getValue("name");
                         _default = Boolean.valueOf(attributes.getValue("default")).booleanValue();
                         // retrieve position from file. If no position is found, it may be an old report generated with a previous version,
@@ -76,7 +78,7 @@ public class XmlReportParser {
                             _skip = true;
                         } else {
                             _revisionsMap.put(new Integer(_position), _revisionArtifacts);
-	                        _mrid = ModuleRevisionId.newInstance(_organisation, _module, _revision, 
+	                        _mrid = ModuleRevisionId.newInstance(_organisation, _module, _branch, _revision, 
                                     ExtendableItemHelper.getExtraAttributes(attributes, "extra-"));
 							_mrids.add(_mrid);
                             if (_default) {

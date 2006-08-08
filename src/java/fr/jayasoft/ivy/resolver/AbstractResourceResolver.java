@@ -5,8 +5,6 @@
  */
 package fr.jayasoft.ivy.resolver;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -23,7 +21,6 @@ import fr.jayasoft.ivy.DefaultArtifact;
 import fr.jayasoft.ivy.DependencyDescriptor;
 import fr.jayasoft.ivy.ModuleRevisionId;
 import fr.jayasoft.ivy.ResolveData;
-import fr.jayasoft.ivy.repository.Resource;
 import fr.jayasoft.ivy.util.IvyPattern;
 import fr.jayasoft.ivy.util.IvyPatternHelper;
 import fr.jayasoft.ivy.util.Message;
@@ -89,7 +86,7 @@ public abstract class AbstractResourceResolver extends BasicResolver {
 
     protected void logMdNotFound(ModuleRevisionId mrid, Artifact artifact) {
         String revisionToken = mrid.getRevision().startsWith("latest.")?"[any "+mrid.getRevision().substring("latest.".length())+"]":"["+mrid.getRevision()+"]";
-        Artifact latestArtifact = new DefaultArtifact(new ModuleRevisionId(mrid.getModuleId(), revisionToken, mrid.getExtraAttributes()), null, artifact.getName(), artifact.getType(), artifact.getExt(), artifact.getExtraAttributes());
+        Artifact latestArtifact = new DefaultArtifact(ModuleRevisionId.newInstance(mrid, revisionToken), null, artifact.getName(), artifact.getType(), artifact.getExt(), artifact.getExtraAttributes());
         if (_ivyPatterns.isEmpty()) {
             logIvyAttempt("no ivy pattern => no attempt to find module descriptor file for "+mrid);
         } else {
@@ -220,7 +217,7 @@ public abstract class AbstractResourceResolver extends BasicResolver {
         if (mrid.getOrganisation().indexOf('.') == -1) {
             return mrid;
         }
-        return ModuleRevisionId.newInstance(mrid.getOrganisation().replace('.', '/'), mrid.getName(), mrid.getRevision(), mrid.getExtraAttributes());
+        return ModuleRevisionId.newInstance(mrid.getOrganisation().replace('.', '/'), mrid.getName(), mrid.getBranch(), mrid.getRevision(), mrid.getExtraAttributes());
     }
 
 }

@@ -57,11 +57,11 @@ public class IvyInstall extends IvyTask {
         if (_to == null) {
             throw new BuildException("no to resolver name: please provide it through parameter 'to'");
         }
+        ModuleRevisionId mrid = ModuleRevisionId.newInstance(_organisation, _module, _revision);
         try {
-        	ModuleRevisionId mrid = ModuleRevisionId.newInstance(_organisation, _module, _revision);
             ivy.install(mrid, _from, _to, _transitive, doValidate(ivy), _overwrite, FilterHelper.getArtifactTypeFilter(_type), _cache, _matcher);
         } catch (Exception e) {
-            throw new BuildException("impossible to install "+ ModuleRevisionId.newInstance(_organisation, _module, _revision) +": "+e, e);
+            throw new BuildException("impossible to install "+ mrid +": "+e, e);
         }
     }
 

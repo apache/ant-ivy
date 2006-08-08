@@ -195,7 +195,7 @@ public abstract class BasicResolver extends AbstractResolver {
                 Message.verbose("\t"+getName()+": no ivy file found for "+mrid+": using default data");            
                 logIvyNotFound(mrid);
     	        if (getIvy().getVersionMatcher().isDynamic(mrid)) {
-    	            md.setResolvedModuleRevisionId(new ModuleRevisionId(mrid.getModuleId(), artifactRef.getRevision(), mrid.getExtraAttributes()));
+    	            md.setResolvedModuleRevisionId(ModuleRevisionId.newInstance(mrid, artifactRef.getRevision()));
     	        }
             }
         } else {
@@ -224,7 +224,7 @@ public abstract class BasicResolver extends AbstractResolver {
                 } else {
                     if (md instanceof DefaultModuleDescriptor) {
                         String revision = getRevision(ivyRef, mrid, md);
-                        ((DefaultModuleDescriptor)md).setModuleRevisionId(ModuleRevisionId.newInstance(mrid.getOrganisation(), mrid.getName(), revision, mrid.getExtraAttributes()));
+                        ((DefaultModuleDescriptor)md).setModuleRevisionId(ModuleRevisionId.newInstance(mrid, revision));
                     } else {
                         Message.warn("consistency disabled with instance of non DefaultModuleDescriptor... module info can't be updated, so consistency check will be done");
                         checkDescriptorConsistency(mrid, md, ivyRef);
@@ -244,9 +244,9 @@ public abstract class BasicResolver extends AbstractResolver {
             resolvedMrid = md.getResolvedModuleRevisionId();
             if (resolvedMrid.getRevision() == null || resolvedMrid.getRevision().length() == 0) {
                 if (ivyRef.getRevision() == null || ivyRef.getRevision().length() == 0) {
-                    resolvedMrid = new ModuleRevisionId(resolvedMrid.getModuleId(), "working@"+getName());
+                    resolvedMrid = ModuleRevisionId.newInstance(resolvedMrid, "working@"+getName());
                 } else {
-                    resolvedMrid = new ModuleRevisionId(resolvedMrid.getModuleId(), ivyRef.getRevision());
+                    resolvedMrid = ModuleRevisionId.newInstance(resolvedMrid, ivyRef.getRevision());
                 }
             }
             Message.verbose("\t\t["+resolvedMrid.getRevision()+"] "+mrid.getModuleId());
@@ -350,7 +350,7 @@ public abstract class BasicResolver extends AbstractResolver {
         
         // first check if this dependency has not yet been resolved
         if (getIvy().getVersionMatcher().isDynamic(mrid)) {
-            resolvedMrid = new ModuleRevisionId(mrid.getModuleId(), ivyRef.getRevision());
+            resolvedMrid = ModuleRevisionId.newInstance(mrid, ivyRef.getRevision());
             IvyNode node = getSystemNode(data, resolvedMrid);
             if (node != null && node.getModuleRevision() != null) {
                 // this revision has already be resolved : return it
@@ -498,7 +498,7 @@ public abstract class BasicResolver extends AbstractResolver {
             ok = false;
         }
         if (ivyRef.getRevision() != null && !ivyRef.getRevision().startsWith("working@")) {
-            ModuleRevisionId expectedMrid = ModuleRevisionId.newInstance(mrid.getOrganisation(), mrid.getName(), ivyRef.getRevision(), mrid.getExtraAttributes());
+            ModuleRevisionId expectedMrid = ModuleRevisionId.newInstance(mrid, ivyRef.getRevision());
             if (!getIvy().getVersionMatcher().accept(expectedMrid, md)) {
                 Message.error("\t"+getName()+": bad revision found in "+ivyRef.getResource()+": expected='"+ivyRef.getRevision()+" found='"+md.getModuleRevisionId().getRevision()+"'");
                 errors.append("bad revision: expected='"+ivyRef.getRevision()+"' found='"+md.getModuleRevisionId().getRevision()+"'; ");

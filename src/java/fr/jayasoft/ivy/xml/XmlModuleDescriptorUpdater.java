@@ -180,8 +180,9 @@ public class XmlModuleDescriptorUpdater {
                         String org = substitute(ivy, attributes.getValue("org"));
                         org = org == null ? _organisation : org;
                         String module = substitute(ivy, attributes.getValue("name"));
+                        String branch = substitute(ivy, attributes.getValue("branch"));
                         String revision = substitute(ivy, attributes.getValue("rev"));
-                        ModuleRevisionId localMid = ModuleRevisionId.newInstance(org, module, revision);
+                        ModuleRevisionId localMid = ModuleRevisionId.newInstance(org, module, branch, revision);
                         ModuleRevisionId systemMid = ns == null ? 
                                 localMid : 
                                 ns.getToSystemTransformer().transform(localMid);
@@ -199,6 +200,8 @@ public class XmlModuleDescriptorUpdater {
                                 out.print(" org=\""+systemMid.getOrganisation()+"\"");
                             } else if ("name".equals(attName)) {
                                 out.print(" name=\""+systemMid.getName()+"\"");
+                            } else if ("branch".equals(attName)) {
+                                out.print(" branch=\""+systemMid.getBranch()+"\"");
                             } else {
                                 out.print(" "+attName+"=\""+substitute(ivy, attributes.getValue(attName))+"\"");
                             }

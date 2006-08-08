@@ -316,8 +316,8 @@ public class IvyDeliver extends IvyTask {
             throw new BuildException(
                     "no status provided: either provide it as parameter or through the ivy.status.default property");
         }
-        ModuleRevisionId mrid = ModuleRevisionId.newInstance(_organisation,
-                _module, _revision);
+        ModuleRevisionId mrid = ModuleRevisionId.newInstance(
+        		_organisation, _module, _revision);
         boolean isLeading = false;
         try {
             if (!_deliveryList.exists()) {

@@ -9,6 +9,7 @@ package fr.jayasoft.ivy.namespace;
 public class MRIDRule {
     private String _org;
     private String _module;
+    private String _branch;
     private String _rev;
     public MRIDRule(String org, String mod, String rev) {
         _org = org;
@@ -37,6 +38,12 @@ public class MRIDRule {
         _rev = rev;
     }
     public String toString() {
-        return "[ "+_org+" "+_module+" "+_rev+" ]";
+        return "[ "+_org+" "+_module+(_branch != null?" "+_branch:"")+" "+_rev+" ]";
     }
+	public String getBranch() {
+		return _branch;
+	}
+	public void setBranch(String branch) {
+		_branch = branch;
+	}
 }

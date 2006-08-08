@@ -109,7 +109,7 @@ public class ResolverHelper {
     
     public static ResolvedResource[] findAll(Repository rep, ModuleRevisionId mrid, String pattern, Artifact artifact) {
         // substitute all but revision
-        String partiallyResolvedPattern = IvyPatternHelper.substitute(pattern, new ModuleRevisionId(mrid.getModuleId(), IvyPatternHelper.getTokenString(IvyPatternHelper.REVISION_KEY), mrid.getExtraAttributes()), artifact);
+        String partiallyResolvedPattern = IvyPatternHelper.substitute(pattern, ModuleRevisionId.newInstance(mrid, IvyPatternHelper.getTokenString(IvyPatternHelper.REVISION_KEY)), artifact);
         Message.debug("\tlisting all in "+partiallyResolvedPattern);
         
         String[] revs = listTokenValues(rep, partiallyResolvedPattern, IvyPatternHelper.REVISION_KEY);

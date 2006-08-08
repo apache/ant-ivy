@@ -27,24 +27,39 @@ public class ModuleRevisionId extends UnmodifiableExtendableItem {
     public static ModuleRevisionId newInstance(String organisation, String name, String revision, Map extraAttributes) {
         return new ModuleRevisionId(new ModuleId(organisation, name), revision, extraAttributes);
     }
+    public static ModuleRevisionId newInstance(String organisation, String name, String branch, String revision) {
+        return new ModuleRevisionId(new ModuleId(organisation, name), branch, revision);
+    }
+    public static ModuleRevisionId newInstance(String organisation, String name, String branch, String revision, Map extraAttributes) {
+        return new ModuleRevisionId(new ModuleId(organisation, name), branch, revision, extraAttributes);
+    }
 	public static ModuleRevisionId newInstance(ModuleRevisionId mrid, String rev) {
-		return new ModuleRevisionId(mrid.getModuleId(), rev, mrid.getExtraAttributes());
+		return new ModuleRevisionId(mrid.getModuleId(), mrid.getBranch(), rev, mrid.getExtraAttributes());
 	}
     
     private ModuleId _moduleId;
+    private String _branch;
     private String _revision;
     private int _hash;
     
     public ModuleRevisionId(ModuleId moduleId, String revision) {
-        this(moduleId, revision, null);
+        this(moduleId, null, revision, null);
+    }
+    public ModuleRevisionId(ModuleId moduleId, String branch, String revision) {
+        this(moduleId, branch, revision, null);
     }
     public ModuleRevisionId(ModuleId moduleId, String revision, Map extraAttributes) {
+    	this(moduleId, null, revision, extraAttributes);
+    }
+    public ModuleRevisionId(ModuleId moduleId, String branch, String revision, Map extraAttributes) {
         super(null, extraAttributes);
         _moduleId = moduleId;
+        _branch = branch == null ? IvyContext.getContext().getIvy().getDefaultBranch(moduleId) : branch;
         _revision = revision;
         _hash = _hashCode(); //stored for performance reasons, hashCode is very used in many maps
         setStandardAttribute(IvyPatternHelper.ORGANISATION_KEY, _moduleId.getOrganisation());
         setStandardAttribute(IvyPatternHelper.MODULE_KEY, _moduleId.getName());
+        setStandardAttribute(IvyPatternHelper.BRANCH_KEY, _branch);
         setStandardAttribute(IvyPatternHelper.REVISION_KEY, _revision);
     }
     
@@ -66,7 +81,8 @@ public class ModuleRevisionId extends UnmodifiableExtendableItem {
             return false;
         }
         ModuleRevisionId other = (ModuleRevisionId)obj;
-        return (other.getRevision() == null ? getRevision() == null : other.getRevision().equals(getRevision())) 
+        return (other.getRevision() == null ? getRevision() == null : other.getRevision().equals(getRevision()))
+        	&& (other.getBranch() == null ? getBranch() == null : other.getBranch().equals(getBranch()))
         	&& other.getModuleId().equals(getModuleId())
             && other.getExtraAttributes().equals(getExtraAttributes());
     }
@@ -75,6 +91,7 @@ public class ModuleRevisionId extends UnmodifiableExtendableItem {
     }
     public int _hashCode() {
         int hash = 31;
+        hash = hash * 13 + (getBranch() == null ? 0 : getBranch().hashCode());
         hash = hash * 13 + (getRevision() == null ? 0 : getRevision().hashCode());
         hash = hash * 13 + getModuleId().hashCode();
         hash = hash * 13 + getAttributes().hashCode();
@@ -82,7 +99,7 @@ public class ModuleRevisionId extends UnmodifiableExtendableItem {
     }
     
     public String toString() {
-        return "[ "+_moduleId.getOrganisation()+" | "+_moduleId.getName()+" | "+(_revision == null?"NONE":_revision)+" ]";
+        return "[ "+_moduleId.getOrganisation()+" | "+_moduleId.getName()+(_branch == null || _branch.length() == 0 ?"":" | "+_branch)+" | "+(_revision == null?"NONE":_revision)+" ]";
     }
     
     public String encodeToString() {
@@ -119,6 +136,7 @@ public class ModuleRevisionId extends UnmodifiableExtendableItem {
         String org = (String)attributes.remove(IvyPatternHelper.ORGANISATION_KEY);
         String mod = (String)attributes.remove(IvyPatternHelper.MODULE_KEY);
         String rev = (String)attributes.remove(IvyPatternHelper.REVISION_KEY);
+        String branch = (String)attributes.remove(IvyPatternHelper.BRANCH_KEY);
         if (org == null) {
             throw new IllegalArgumentException("badly encoded module revision id: '"+encoded+"': no organisation");
         }
@@ -128,6 +146,9 @@ public class ModuleRevisionId extends UnmodifiableExtendableItem {
         if (rev == null) {
             throw new IllegalArgumentException("badly encoded module revision id: '"+encoded+"': no revision");
         }
-        return newInstance(org, mod, rev, attributes);
+        return newInstance(org, mod, branch, rev, attributes);
     }
+	public String getBranch() {
+		return _branch;
+	}
 }

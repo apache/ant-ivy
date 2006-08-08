@@ -218,6 +218,10 @@ public class XmlIvyConfigurationParser extends DefaultHandler {
                 if (cache != null) {
                     _ivy.setDefaultCache(new File(_ivy.substitute(cache)));
                 }
+                String defaultBranch = (String)attributes.get("defaultBranch");
+                if (defaultBranch != null) {
+                    _ivy.setDefaultBranch(_ivy.substitute(defaultBranch));
+                }
                 String validate = (String)attributes.get("validate");
                 if (validate != null) {
                     _ivy.setValidate(Boolean.valueOf(_ivy.substitute(validate)).booleanValue());
@@ -271,9 +275,10 @@ public class XmlIvyConfigurationParser extends DefaultHandler {
                 String organisation = _ivy.substitute((String)attributes.get("organisation"));
                 String module = _ivy.substitute((String)attributes.get("name"));
                 String resolver = _ivy.substitute((String)attributes.get("resolver"));
+                String branch = _ivy.substitute((String)attributes.get("branch"));
                 String matcher = _ivy.substitute((String)attributes.get("matcher"));
                 matcher = matcher == null ? PatternMatcher.EXACT_OR_REGEXP : matcher;
-                _ivy.addModuleConfiguration(new ModuleId(organisation, module), _ivy.getMatcher(matcher), resolver);
+                _ivy.addModuleConfiguration(new ModuleId(organisation, module), _ivy.getMatcher(matcher), resolver, branch);
             }
         } catch (Exception ex) {
             throw new SAXException("problem in config file: "+ex.getMessage(), ex);

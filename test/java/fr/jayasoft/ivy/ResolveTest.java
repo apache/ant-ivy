@@ -2349,6 +2349,63 @@ public class ResolveTest extends TestCase {
         assertTrue(new File(_cache, "jayasoft/mymodule/task1/1854/mymodule-linux.jar").exists());
     }
 
+    public void testBranches1() throws Exception {
+        Ivy ivy = new Ivy();
+        ivy.configure(new File("test/repositories/branches/ivyconf.xml"));
+        
+        ResolveReport report = ivy.resolve(new File("test/repositories/branches/bar/bar1/trunk/1/ivy.xml").toURL(),
+                null, new String[] {"*"}, _cache, null, false);
+        assertFalse(report.hasError());
+        
+        assertTrue(_ivy.getArchiveFileInCache(_cache, "foo", "foo1", "3", "foo1", "jar", "jar").exists());        
+    }
+
+    public void testBranches2() throws Exception {
+        Ivy ivy = new Ivy();
+        ivy.configure(new File("test/repositories/branches/ivyconf.xml"));
+        
+        ResolveReport report = ivy.resolve(new File("test/repositories/branches/bar/bar1/trunk/2/ivy.xml").toURL(),
+                null, new String[] {"*"}, _cache, null, false);
+        assertFalse(report.hasError());
+        
+        assertTrue(_ivy.getArchiveFileInCache(_cache, "foo", "foo1", "4", "foo1", "jar", "jar").exists());        
+    }
+
+    public void testBranches3() throws Exception {
+        Ivy ivy = new Ivy();
+        ivy.configure(new File("test/repositories/branches/ivyconf-defaultbranch1.xml"));
+        
+        ResolveReport report = ivy.resolve(new File("test/repositories/branches/bar/bar1/trunk/1/ivy.xml").toURL(),
+                null, new String[] {"*"}, _cache, null, false);
+        assertFalse(report.hasError());
+        
+        assertTrue(_ivy.getArchiveFileInCache(_cache, "foo", "foo1", "4", "foo1", "jar", "jar").exists());        
+    }
+
+    public void testBranches4() throws Exception {
+        Ivy ivy = new Ivy();
+        ivy.configure(new File("test/repositories/branches/ivyconf.xml"));
+        
+        ResolveReport report = ivy.resolve(new File("test/repositories/branches/bar/bar1/trunk/3/ivy.xml").toURL(),
+                null, new String[] {"*"}, _cache, null, false);
+        assertFalse(report.hasError());
+        
+        assertTrue(_ivy.getArchiveFileInCache(_cache, "foo", "foo1", "3", "foo1", "jar", "jar").exists());        
+        assertTrue(_ivy.getArchiveFileInCache(_cache, "bar", "bar2", "2", "bar2", "jar", "jar").exists());        
+    }
+
+    public void testBranches5() throws Exception {
+        Ivy ivy = new Ivy();
+        ivy.configure(new File("test/repositories/branches/ivyconf-fooonbranch1.xml"));
+        
+        ResolveReport report = ivy.resolve(new File("test/repositories/branches/bar/bar1/trunk/3/ivy.xml").toURL(),
+                null, new String[] {"*"}, _cache, null, false);
+        assertFalse(report.hasError());
+        
+        assertTrue(_ivy.getArchiveFileInCache(_cache, "foo", "foo1", "4", "foo1", "jar", "jar").exists());        
+        assertTrue(_ivy.getArchiveFileInCache(_cache, "bar", "bar2", "2", "bar2", "jar", "jar").exists());        
+    }
+
 
     ////////////////////////////////////////////////////////////
     // helper methods to ease the tests

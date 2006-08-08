@@ -126,7 +126,7 @@ public class DefaultDependencyDescriptor implements DependencyDescriptor {
     
     public DefaultDependencyDescriptor(DependencyDescriptor dd, String revision) {
         _parentId = dd.getParentRevisionId();
-        _revId = new ModuleRevisionId(dd.getDependencyId(), revision, dd.getExtraAttributes());
+        _revId = ModuleRevisionId.newInstance(dd.getDependencyRevisionId(), revision);
         _force = dd.isForce();
         _changing = dd.isChanging();
         _transitive = dd.isTransitive();

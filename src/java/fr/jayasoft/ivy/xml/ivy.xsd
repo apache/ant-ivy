@@ -55,6 +55,7 @@
 			        </xs:sequence>
 		            <xs:attribute name="organisation" type="xs:string" use="required"/>
 		            <xs:attribute name="module" type="xs:string" use="required"/>
+		            <xs:attribute name="branch" type="xs:string"/>
 		            <xs:attribute name="revision" type="xs:string"/>
 		            <xs:attribute name="status" type="xs:string"/>
 		            <xs:attribute name="publication" type="xs:string"/>

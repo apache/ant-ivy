@@ -237,7 +237,7 @@ public class Main {
                 }
                 ivyfile = File.createTempFile("ivy", ".xml");
                 ivyfile.deleteOnExit();
-                DefaultModuleDescriptor md = DefaultModuleDescriptor.newDefaultInstance(ModuleRevisionId.newInstance(dep[0], "standalone", "working"));
+                DefaultModuleDescriptor md = DefaultModuleDescriptor.newDefaultInstance(ModuleRevisionId.newInstance(dep[0], dep[1]+"-caller", "working"));
                 DefaultDependencyDescriptor dd = new DefaultDependencyDescriptor(md, ModuleRevisionId.newInstance(dep[0], dep[1], dep[2]), false, false, true);
                 for (int i = 0; i < confs.length; i++) {
                     dd.addDependencyConfiguration("default", confs[i]);

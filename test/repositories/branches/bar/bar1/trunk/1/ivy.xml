@@ -1,0 +1,6 @@
+<ivy-module version="1.4">
+	<info organisation="bar" module="bar1" revision="1"/>
+	<dependencies>
+		<dependency org="foo" name="foo1" rev="latest.integration" />
+	</dependencies>
+</ivy-module>

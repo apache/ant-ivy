@@ -147,8 +147,11 @@ public class Ivy implements TransferListener {
     
     private String _defaultResolverName;
     private File _defaultCache;
+
+	private String _defaultBranch = null;
+
     private boolean _checkUpToDate = true;
-    private Map _moduleConfigurations = new LinkedHashMap(); // Map (ModuleIdMatcher -> String resolverName)
+    private Map _moduleConfigurations = new LinkedHashMap(); // Map (ModuleIdMatcher -> ModuleSettings)
     
     private Map _conflictsManager = new HashMap(); // Map (String conflictManagerName -> ConflictManager)
     private Map _latestStrategies = new HashMap(); // Map (String latestStrategyName -> LatestStrategy)
@@ -424,8 +427,8 @@ public class Ivy implements TransferListener {
             Message.debug("\tmodule configurations:");
             for (Iterator iter = _moduleConfigurations.keySet().iterator(); iter.hasNext();) {
                 ModuleIdMatcher midm = (ModuleIdMatcher)iter.next();
-                String res = (String)_moduleConfigurations.get(midm);
-                Message.debug("\t\t"+midm+" -> "+res);
+                ModuleSettings s = (ModuleSettings)_moduleConfigurations.get(midm);
+                Message.debug("\t\t"+midm+" -> "+s);
             }
         }
     }
@@ -591,7 +594,7 @@ public class Ivy implements TransferListener {
     }
     
     private void checkResolverName(String resolverName) {
-        if (!_resolversMap.containsKey(resolverName)) {
+        if (resolverName != null && !_resolversMap.containsKey(resolverName)) {
             throw new IllegalArgumentException("no resolver found called "+resolverName+": check your configuration");
         }
     }
@@ -602,10 +605,11 @@ public class Ivy implements TransferListener {
      * 
      * @param moduleId
      * @param resolverName
+     * @param branch 
      */
-    public void addModuleConfiguration(ModuleId mid, PatternMatcher matcher, String resolverName) {
+    public void addModuleConfiguration(ModuleId mid, PatternMatcher matcher, String resolverName, String branch) {
         checkResolverName(resolverName);
-        _moduleConfigurations.put(new ModuleIdMatcher(mid, matcher), resolverName);
+        _moduleConfigurations.put(new ModuleIdMatcher(mid, matcher), new ModuleSettings(resolverName, branch));
     }
     
     public File getDefaultIvyUserDir() {
@@ -662,11 +666,34 @@ public class Ivy implements TransferListener {
         for (Iterator iter = _moduleConfigurations.keySet().iterator(); iter.hasNext();) {
             ModuleIdMatcher midm = (ModuleIdMatcher)iter.next();
             if (midm.matches(moduleId)) {
-                return (String)_moduleConfigurations.get(midm);
+            	ModuleSettings  ms = (ModuleSettings)_moduleConfigurations.get(midm);
+            	if (ms.getResolverName() != null) {
+            		return ms.getResolverName();
+            	}
             }
         }
         return _defaultResolverName;
     }
+    
+	public String getDefaultBranch(ModuleId moduleId) {
+        for (Iterator iter = _moduleConfigurations.keySet().iterator(); iter.hasNext();) {
+            ModuleIdMatcher midm = (ModuleIdMatcher)iter.next();
+            if (midm.matches(moduleId)) {
+            	ModuleSettings  ms = (ModuleSettings)_moduleConfigurations.get(midm);
+            	if (ms.getBranch() != null) {
+            		return ms.getBranch();
+            	}
+            }
+        }
+		return getDefaultBranch();
+	}
+
+	public String getDefaultBranch() {
+		return _defaultBranch;
+	}
+	public void setDefaultBranch(String defaultBranch) {
+		_defaultBranch = defaultBranch;
+	}
 
     public void addConfigured(ConflictManager cm) {
         addConflictManager(cm.getName(), cm);
@@ -974,7 +1001,7 @@ public class Ivy implements TransferListener {
             revision = "working@"+getLocalHostName();
         }
         if (revision != null) {
-            md.setResolvedModuleRevisionId(new ModuleRevisionId(md.getModuleRevisionId().getModuleId(), revision, md.getModuleRevisionId().getExtraAttributes()));
+            md.setResolvedModuleRevisionId(ModuleRevisionId.newInstance(md.getModuleRevisionId(), revision));
         }
 
         return resolve(md, confs, cache, date, validate, useCacheOnly, transitive, artifactFilter);
@@ -2019,7 +2046,7 @@ public class Ivy implements TransferListener {
         try {
             ivyFileURL = ivyFile.toURL();
             md = XmlModuleDescriptorParser.getInstance().parseDescriptor(this, ivyFileURL, validate);
-            md.setResolvedModuleRevisionId(new ModuleRevisionId(mrid.getModuleId(), revision, mrid.getExtraAttributes()));
+            md.setResolvedModuleRevisionId(ModuleRevisionId.newInstance(mrid, revision));
             md.setResolvedPublicationDate(pubdate);
         } catch (MalformedURLException e) {
             throw new RuntimeException("malformed url obtained for file "+ivyFile);
@@ -2058,7 +2085,7 @@ public class Ivy implements TransferListener {
             String depStatus = (String)dependenciesStatus.get(dependencies[i].getDependencyRevisionId());
             resolvedDependencies.put(dependencies[i].getDependencyRevisionId(), 
                     pdrResolver.resolve(md, status, 
-                            new ModuleRevisionId(dependencies[i].getDependencyId(), rev), 
+                            ModuleRevisionId.newInstance(dependencies[i].getDependencyRevisionId(), rev), 
                             depStatus));
         }
         
@@ -2121,7 +2148,7 @@ public class Ivy implements TransferListener {
         try {
             ivyFileURL = ivyFile.toURL();
             md = XmlModuleDescriptorParser.getInstance().parseDescriptor(this, ivyFileURL, false);
-            md.setResolvedModuleRevisionId(new ModuleRevisionId(mrid.getModuleId(), pubrevision, mrid.getExtraAttributes()));
+            md.setResolvedModuleRevisionId(ModuleRevisionId.newInstance(mrid, pubrevision));
         } catch (MalformedURLException e) {
             throw new RuntimeException("malformed url obtained for file "+ivyFile);
         } catch (ParseException e) {
@@ -2640,4 +2667,24 @@ public class Ivy implements TransferListener {
     public void setStatusManager(StatusManager statusManager) {
         _statusManager = statusManager;
     }
+
+	
+	private static class ModuleSettings {
+		private String _resolverName;
+		private String _branch;
+		public ModuleSettings(String resolverName, String branch) {
+			_resolverName = resolverName;
+			_branch = branch;
+		}
+		public String toString() {
+			return _resolverName != null ? "resolver: "+_resolverName:""
+					+_branch != null ? "branch: "+_branch:"";
+		}
+		public String getBranch() {
+			return _branch;
+		}
+		public String getResolverName() {
+			return _resolverName;
+		}
+	}
 }

@@ -1,0 +1,9 @@
+<ivyconf>
+    <conf defaultResolver="default" defaultBranch="trunk" />
+    <resolvers>
+		<filesystem name="default">
+			<ivy pattern="${ivy.conf.dir}/[organisation]/[module]/[branch]/[revision]/[artifact].[ext]" />
+			<artifact pattern="${ivy.conf.dir}/[organisation]/[module]/[branch]/[revision]/[artifact].[ext]" />
+		</filesystem>
+    </resolvers>
+</ivyconf>
