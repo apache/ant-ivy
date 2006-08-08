@@ -139,6 +139,7 @@ public class Main {
         options.addOption("warn", false, "set message level to warn");
         options.addOption("error", false, "set message level to error");
         options.addOption("novalidate", false, "do not validate ivy files against xsd");
+        options.addOption("sync", false, "in conjonction with -retrieve, does a synced retrieve");
         options.addOption("m2compatible", false, "use maven2 compatibility");
         options.addOption("?", false, "display this help");
         options.addOption(conf);
@@ -275,7 +276,7 @@ public class Main {
                 if (retrievePattern.indexOf("[") == -1) {
                     retrievePattern = retrievePattern + "/lib/[conf]/[artifact].[ext]";
                 }
-                ivy.retrieve(md.getModuleRevisionId().getModuleId(), confs, cache, retrievePattern);
+                ivy.retrieve(md.getModuleRevisionId().getModuleId(), confs, cache, retrievePattern, null, null, line.hasOption("sync"));
             }
             if (line.hasOption("cachepath")) {
                 outputCachePath(ivy, cache, md, confs, line.getOptionValue("cachepath", "ivycachepath.txt"));
