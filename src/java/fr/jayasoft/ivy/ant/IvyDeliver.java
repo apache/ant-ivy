@@ -22,7 +22,10 @@ import fr.jayasoft.ivy.PublishingDependencyRevisionResolver;
 import fr.jayasoft.ivy.status.StatusManager;
 
 /**
- * @author Hanin
+ * Trigger the delivery of a module, which may consist in a recursive delivery of dependencies
+ * and on the replacement in the ivy file of dynamic revisions (like latest.integration) by static ones.
+ * 
+ * @author Xavier Hanin
  * 
  */
 public class IvyDeliver extends IvyTask {
@@ -333,8 +336,7 @@ public class IvyDeliver extends IvyTask {
                     pubdate, drResolver, doValidate(ivy), _replacedynamicrev);
 
         } catch (Exception e) {
-            throw new BuildException("impossible to deliver " + mrid + ": "
-                    + e.getMessage(), e);
+            throw new BuildException("impossible to deliver " + mrid + ": " + e, e);
         } finally {
             if (isLeading) {
                 if (_deliveryList.exists()) {

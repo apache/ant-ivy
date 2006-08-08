@@ -15,7 +15,10 @@ import fr.jayasoft.ivy.filter.FilterHelper;
 import fr.jayasoft.ivy.matcher.PatternMatcher;
 
 /**
- * @author Hanin
+ * Allow to install a module or a set of module from repository to another one.
+ * 
+ * 
+ * @author Xavier Hanin
  *
  */
 public class IvyInstall extends IvyTask {
@@ -58,8 +61,7 @@ public class IvyInstall extends IvyTask {
         	ModuleRevisionId mrid = ModuleRevisionId.newInstance(_organisation, _module, _revision);
             ivy.install(mrid, _from, _to, _transitive, doValidate(ivy), _overwrite, FilterHelper.getArtifactTypeFilter(_type), _cache, _matcher);
         } catch (Exception e) {
-            e.printStackTrace();
-            throw new BuildException("impossible to install "+ ModuleRevisionId.newInstance(_organisation, _module, _revision) +": "+e.getMessage(), e);
+            throw new BuildException("impossible to install "+ ModuleRevisionId.newInstance(_organisation, _module, _revision) +": "+e, e);
         }
     }
 

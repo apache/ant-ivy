@@ -10,6 +10,11 @@ import org.apache.tools.ant.Project;
 
 import fr.jayasoft.ivy.util.MessageImpl;
 
+/**
+ * Implementation of the simple message facility for ant.
+ * 
+ * @author Xavier Hanin
+ */
 public class AntMessageImpl implements MessageImpl {
     private Project _project;
 

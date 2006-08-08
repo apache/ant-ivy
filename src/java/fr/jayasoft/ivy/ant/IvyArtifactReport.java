@@ -34,6 +34,9 @@ import fr.jayasoft.ivy.IvyNode;
 import fr.jayasoft.ivy.ModuleDescriptor;
 import fr.jayasoft.ivy.ModuleId;
 
+/**
+ * Generates a report of all artifacts involved during the last resolve. 
+ */
 public class IvyArtifactReport extends IvyTask {
     private File _tofile;
     private String _conf;
@@ -124,9 +127,9 @@ public class IvyArtifactReport extends IvyTask {
             generateXml(ivy, dependencies, moduleRevToArtifactsMap, artifactsToCopy);
         } catch (ParseException e) {
             log(e.getMessage(), Project.MSG_ERR);
-            throw new BuildException("syntax errors in ivy file", e);
+            throw new BuildException("syntax errors in ivy file: "+e, e);
         } catch (IOException e) {
-            throw new BuildException("impossible to generate report", e);
+            throw new BuildException("impossible to generate report: "+e, e);
         }
     }
 

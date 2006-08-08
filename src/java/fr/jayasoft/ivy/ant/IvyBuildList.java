@@ -30,6 +30,11 @@ import fr.jayasoft.ivy.ModuleId;
 import fr.jayasoft.ivy.parser.ModuleDescriptorParserRegistry;
 import fr.jayasoft.ivy.util.Message;
 
+/**
+ * Creates an ant filelist of files (usually build.xml) ordered according to the dependencies declared in ivy files.
+ * 
+ * @author Xavier Hanin
+ */
 public class IvyBuildList extends IvyTask {
     private List _buildFiles = new ArrayList(); // List (FileSet)
     private String _reference;
@@ -112,7 +117,7 @@ public class IvyBuildList extends IvyTask {
 
                     } catch (Exception ex) {
                         if (_haltOnError) {
-                            throw new BuildException("impossible to parse ivy file for "+buildFile+": ivyfile="+ivyFile+" exception="+ex.getMessage(), ex);
+                            throw new BuildException("impossible to parse ivy file for "+buildFile+": ivyfile="+ivyFile+" exception="+ex, ex);
                         } else {
                             Message.warn("impossible to parse ivy file for "+buildFile+": ivyfile="+ivyFile+" exception="+ex.getMessage());
                             Message.info("\t=> adding it at the beginning of the path");

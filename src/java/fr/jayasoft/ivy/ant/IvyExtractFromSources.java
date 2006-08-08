@@ -35,7 +35,7 @@ import fr.jayasoft.ivy.ModuleRevisionId;
  * Extracts imports from a set of java sources and generate corresponding
  * ivy file
  * 
- * @author Hanin
+ * @author Xavier Hanin
  *
  */
 public class IvyExtractFromSources extends IvyTask {
@@ -137,7 +137,7 @@ public class IvyExtractFromSources extends IvyTask {
             writer.close();
             log(dependencies.size()+" dependencies put in "+_to);
         } catch (FileNotFoundException e) {
-            throw new BuildException("impossible to create file "+_to); 
+            throw new BuildException("impossible to create file "+_to+": "+e, e); 
         }
     }
     

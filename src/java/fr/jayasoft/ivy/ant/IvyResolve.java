@@ -20,7 +20,9 @@ import fr.jayasoft.ivy.report.ResolveReport;
 import fr.jayasoft.ivy.util.Message;
 
 /**
- * @author Hanin
+ * This task allow to call the Ivy dependency resolution from ant.
+ * 
+ * @author Xavier Hanin
  *
  */
 public class IvyResolve extends IvyTask {
@@ -166,10 +168,10 @@ public class IvyResolve extends IvyTask {
 	            }
             }
         } catch (MalformedURLException e) {
-            throw new BuildException("unable to convert given ivy file to url: "+_file, e);
+            throw new BuildException("unable to convert given ivy file to url: "+_file+": "+e, e);
         } catch (ParseException e) {
             log(e.getMessage(), Project.MSG_ERR);
-            throw new BuildException("syntax errors in ivy file", e);
+            throw new BuildException("syntax errors in ivy file: "+e, e);
         } catch (Exception e) {
             throw new BuildException("impossible to resolve dependencies: "+e, e);
         }

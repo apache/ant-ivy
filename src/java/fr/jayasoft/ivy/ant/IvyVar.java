@@ -17,6 +17,11 @@ import org.apache.tools.ant.BuildException;
 
 import fr.jayasoft.ivy.Ivy;
 
+/**
+ * This task let user set ivy variables from ant.
+ * 
+ * @author Xavier Hanin
+ */
 public class IvyVar extends IvyTask {
     private String _name;
     private String _value;
@@ -92,7 +97,7 @@ public class IvyVar extends IvyTask {
                 }
                 props.load(is);
             } catch (Exception ex) {
-                throw new BuildException("impossible to load variables from file", ex);
+                throw new BuildException("impossible to load variables from file: "+ex, ex);
             } finally {
                 if (is != null) {
                     try {is.close();} catch (Exception e) {}

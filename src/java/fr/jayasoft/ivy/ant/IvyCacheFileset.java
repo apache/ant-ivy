@@ -12,6 +12,12 @@ import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.types.FileSet;
 import org.apache.tools.ant.types.PatternSet.NameEntry;
 
+
+/**
+ * Creates an ant fileset consisting in all artifacts found during a resolve.
+ * 
+ * @author Xavier Hanin 
+ */
 public class IvyCacheFileset extends IvyCacheTask {
     private String _setid;
 

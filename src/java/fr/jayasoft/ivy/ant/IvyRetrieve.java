@@ -10,6 +10,8 @@ import org.apache.tools.ant.BuildException;
 import fr.jayasoft.ivy.filter.Filter;
 
 /**
+ * This task allow to retrieve dependencies from the cache to a local directory like a lib dir.
+ * 
  * @author Xavier Hanin
  *
  */
@@ -36,7 +38,7 @@ public class IvyRetrieve extends IvyPostResolveTask {
             getProject().setProperty("ivy.nb.targets.copied", String.valueOf(targetsCopied));
             getProject().setProperty("ivy.targets.copied", String.valueOf(haveTargetsBeenCopied));
         } catch (Exception ex) {
-            throw new BuildException("impossible to ivy retrieve: "+ex.getMessage(), ex);
+            throw new BuildException("impossible to ivy retrieve: "+ex, ex);
         }
     }
     public String getIvypattern() {

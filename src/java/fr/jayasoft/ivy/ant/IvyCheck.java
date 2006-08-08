@@ -18,6 +18,15 @@ import org.apache.tools.ant.types.FileSet;
 import fr.jayasoft.ivy.Ivy;
 import fr.jayasoft.ivy.util.Message;
 
+/**
+ * Checks the given ivy file using current configuration to see if all dependencies
+ * are available, with good confs. If a resolver name is given, it also checks that the declared
+ * publications are available in the corresponding resolver.
+ * Note that the check is not performed recursively, i.e. if a dependency has itself dependencies
+ * badly described or not available, this check will not discover it.
+ *  
+ * @author Xavier Hanin
+ */
 public class IvyCheck extends IvyTask {
     private File _file = null;
     private List _filesets = new ArrayList();
@@ -67,7 +76,7 @@ public class IvyCheck extends IvyTask {
             }
         }
         } catch (MalformedURLException e) {
-            throw new BuildException("impossible to convert a file to an url!", e);
+            throw new BuildException("impossible to convert a file to an url! "+e, e);
         }
     }
     

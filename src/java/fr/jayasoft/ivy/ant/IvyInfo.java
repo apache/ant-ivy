@@ -20,7 +20,12 @@ import fr.jayasoft.ivy.ModuleDescriptor;
 import fr.jayasoft.ivy.Configuration.Visibility;
 import fr.jayasoft.ivy.parser.ModuleDescriptorParserRegistry;
 
-
+/**
+ * Parses information about an ivy file and make them available in ant.
+ * 
+ * @author Xavier Hanin
+ *
+ */
 public class IvyInfo extends IvyTask {
     private File _file = null;
     
@@ -59,12 +64,12 @@ public class IvyInfo extends IvyTask {
             String[] publicConfigs = (String[]) publicConfigsList.toArray(new String[publicConfigsList.size()]);
             getProject().setProperty("ivy.public.configurations", mergeConfs(publicConfigs));
         } catch (MalformedURLException e) {
-            throw new BuildException("unable to convert given ivy file to url: "+_file, e);
+            throw new BuildException("unable to convert given ivy file to url: "+_file+": "+e, e);
         } catch (ParseException e) {
             log(e.getMessage(), Project.MSG_ERR);
-            throw new BuildException("syntax errors in ivy file", e);
+            throw new BuildException("syntax errors in ivy file: "+e, e);
         } catch (Exception e) {
-            throw new BuildException("impossible to resolve dependencies: "+e.getMessage(), e);
+            throw new BuildException("impossible to resolve dependencies: "+e, e);
         }
     }
 }

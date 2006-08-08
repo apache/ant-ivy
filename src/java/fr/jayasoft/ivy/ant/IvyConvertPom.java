@@ -18,7 +18,9 @@ import fr.jayasoft.ivy.external.m2.PomModuleDescriptorParser;
 import fr.jayasoft.ivy.repository.url.URLResource;
 
 /**
- * @author Hanin
+ * Convert a pom to an ivy file
+ * 
+ * @author Xavier Hanin
  *
  */
 public class IvyConvertPom extends IvyTask {
@@ -50,12 +52,12 @@ public class IvyConvertPom extends IvyTask {
             ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(new Ivy(), _pomFile.toURL(), false);
             PomModuleDescriptorParser.getInstance().toIvyFile(_pomFile.toURL().openStream(), new URLResource(_pomFile.toURL()), getIvyFile(), md);
         } catch (MalformedURLException e) {
-            throw new BuildException("unable to convert given pom file to url: "+_pomFile, e);
+            throw new BuildException("unable to convert given pom file to url: "+_pomFile+": "+e, e);
         } catch (ParseException e) {
             log(e.getMessage(), Project.MSG_ERR);
-            throw new BuildException("syntax errors in pom file "+_pomFile, e);
+            throw new BuildException("syntax errors in pom file "+_pomFile+": "+e, e);
         } catch (Exception e) {
-            throw new BuildException("impossible convert given pom file to ivy file: "+e.getMessage()+" from="+_pomFile+" to="+_ivyFile, e);
+            throw new BuildException("impossible convert given pom file to ivy file: "+e+" from="+_pomFile+" to="+_ivyFile, e);
         }
     }
 }

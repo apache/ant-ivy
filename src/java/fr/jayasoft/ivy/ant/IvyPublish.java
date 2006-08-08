@@ -21,7 +21,9 @@ import fr.jayasoft.ivy.util.IvyPatternHelper;
 import fr.jayasoft.ivy.util.Message;
 
 /**
- * @author Hanin
+ * This task allow to publish a module revision to an Ivy repository.
+ * 
+ * @author Xavier Hanin
  *
  */
 public class IvyPublish extends IvyTask {
@@ -207,8 +209,7 @@ public class IvyPublish extends IvyTask {
             }
             
         } catch (Exception e) {
-            e.printStackTrace();
-            throw new BuildException("impossible to publish artifacts for "+mrid+": "+e.getMessage(), e);
+            throw new BuildException("impossible to publish artifacts for "+mrid+": "+e, e);
         }
     }
     

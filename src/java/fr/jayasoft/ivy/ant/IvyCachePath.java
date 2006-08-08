@@ -17,6 +17,11 @@ import fr.jayasoft.ivy.Artifact;
 import fr.jayasoft.ivy.ArtifactOrigin;
 import fr.jayasoft.ivy.Ivy;
 
+/**
+ * Creates an ant path consisting in all artifacts found during a resolve.
+ * 
+ * @author Xavier Hanin
+ */
 public class IvyCachePath extends IvyCacheTask {
     private String _pathid;
     private boolean useOrigin = false;

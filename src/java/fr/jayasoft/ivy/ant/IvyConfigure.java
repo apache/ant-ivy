@@ -24,7 +24,9 @@ import fr.jayasoft.ivy.url.URLHandlerRegistry;
 import fr.jayasoft.ivy.util.Message;
 
 /**
- * @author Hanin
+ * Configure Ivy with an ivyconf.xml file
+ * 
+ * @author Xavier Hanin
  *
  */
 public class IvyConfigure extends IvyTask {
@@ -115,7 +117,7 @@ public class IvyConfigure extends IvyTask {
         try {
 	        loadDefaultProperties();
         } catch (Exception ex) {
-            throw new BuildException("impossible to load ivy default properties file: "+ex.getMessage(), ex);
+            throw new BuildException("impossible to load ivy default properties file: "+ex, ex);
         }
         ensureMessageInitialised();
         Ivy ivy = new Ivy();
@@ -146,7 +148,7 @@ public class IvyConfigure extends IvyTask {
             }
             setIvyInstance(ivy);
         } catch (Exception ex) {
-            throw new BuildException("impossible to configure ivy with given "+(_file != null ? "file: "+_file : "url :"+_url)+" :"+ex.getMessage(), ex);
+            throw new BuildException("impossible to configure ivy with given "+(_file != null ? "file: "+_file : "url :"+_url)+" :"+ex, ex);
         }
     }
 

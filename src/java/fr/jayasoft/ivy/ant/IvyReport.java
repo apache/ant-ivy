@@ -24,6 +24,11 @@ import fr.jayasoft.ivy.util.FileUtil;
 import fr.jayasoft.ivy.util.IvyPatternHelper;
 import fr.jayasoft.ivy.util.Message;
 
+/**
+ * This ant task let users generates reports (html, xml, graphml, ...) from the last resolve done.
+ * 
+ * @author Xavier Hanin
+ */
 public class IvyReport extends IvyTask {
     private File _todir;
     private String _organisation;
@@ -142,7 +147,7 @@ public class IvyReport extends IvyTask {
                 gengraph(_cache, _organisation, _module, confs);
             }
         } catch (IOException e) {
-            throw new BuildException("impossible to generate report", e);
+            throw new BuildException("impossible to generate report: "+e, e);
         }
     }
     

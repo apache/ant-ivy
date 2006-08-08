@@ -26,6 +26,13 @@ import fr.jayasoft.ivy.report.ResolveReport;
 import fr.jayasoft.ivy.util.Message;
 import fr.jayasoft.ivy.xml.XmlReportParser;
 
+/**
+ * Base class for the cache path related classes: cachepath and cachefileset.
+ * 
+ * Most of the behviour is common to the two, since only the produced element differs.
+ * 
+ * @author Xavier Hanin
+ */
 public abstract class IvyCacheTask extends IvyPostResolveTask {
 
     protected List getPaths() throws BuildException, ParseException, IOException {

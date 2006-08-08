@@ -9,7 +9,9 @@ import fr.jayasoft.ivy.ModuleRevisionId;
 
 
 /**
- * @author Hanin
+ * Describes a mapping between a package name and an org name revision uple
+ * 
+ * @author Xavier Hanin
  *
  */
 public class PackageMapping {

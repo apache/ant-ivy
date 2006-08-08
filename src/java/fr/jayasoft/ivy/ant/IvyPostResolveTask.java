@@ -10,6 +10,13 @@ import fr.jayasoft.ivy.filter.Filter;
 import fr.jayasoft.ivy.filter.FilterHelper;
 import fr.jayasoft.ivy.report.ResolveReport;
 
+/**
+ * Base class for tasks needing to be performed after a resolve. 
+ * 
+ * 
+ * @author Xavier Hanin
+ *
+ */
 public abstract class IvyPostResolveTask extends IvyTask {
     private String _conf;
     private boolean _haltOnFailure = true;

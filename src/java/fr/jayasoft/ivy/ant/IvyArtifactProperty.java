@@ -16,6 +16,11 @@ import fr.jayasoft.ivy.ModuleId;
 import fr.jayasoft.ivy.util.IvyPatternHelper;
 import fr.jayasoft.ivy.xml.XmlReportParser;
 
+/**
+ * Set a set of ant properties according to the last artifact resolved 
+ * 
+ * @author Xavier Hanin
+ */
 public class IvyArtifactProperty extends IvyTask {
     private String _conf;
     private String _name;
@@ -112,7 +117,7 @@ public class IvyArtifactProperty extends IvyTask {
                 }
             }
         } catch (Exception ex) {
-            throw new BuildException("impossible to add artifact properties: "+ex.getMessage(), ex);
+            throw new BuildException("impossible to add artifact properties: "+ex, ex);
         }
     }
 }

@@ -23,6 +23,8 @@ import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Task;
 
 /**
+ * Base class for all ivy ant tasks, deaal particularly with ivy instance storage in ant project.
+ * 
  * @author Xavier Hanin
  *
  */
