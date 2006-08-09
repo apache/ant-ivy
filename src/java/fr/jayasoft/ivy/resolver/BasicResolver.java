@@ -696,6 +696,11 @@ public abstract class BasicResolver extends AbstractResolver {
     public String toString() {
         return getName();
     }
+    
+    public String[] listTokenValues(String token, Map otherTokenValues) {
+        Collection ret = findNames(otherTokenValues, token);
+    	return (String[]) ret.toArray(new String[ret.size()]);
+    }
 
     public OrganisationEntry[] listOrganisations() {
         Collection names = findNames(Collections.EMPTY_MAP, IvyPatternHelper.ORGANISATION_KEY);

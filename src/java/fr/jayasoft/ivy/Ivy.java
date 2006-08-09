@@ -2295,6 +2295,15 @@ public class Ivy implements TransferListener {
         }
     }
     
+
+	public String[] listTokenValues(String token, Map otherTokenValues) {
+        List r = new ArrayList();
+        for (Iterator iter = _resolversMap.values().iterator(); iter.hasNext();) {
+            DependencyResolver resolver = (DependencyResolver)iter.next();
+            r.addAll(Arrays.asList(resolver.listTokenValues(token, otherTokenValues)));
+        }
+        return (String[])r.toArray(new String[r.size()]);
+	}
     
     public OrganisationEntry[] listOrganisationEntries() {
         List entries = new ArrayList();
@@ -2687,4 +2696,5 @@ public class Ivy implements TransferListener {
 			return _resolverName;
 		}
 	}
+
 }

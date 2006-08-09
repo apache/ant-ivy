@@ -10,6 +10,7 @@ import java.text.ParseException;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import fr.jayasoft.ivy.Artifact;
 import fr.jayasoft.ivy.DefaultArtifact;
@@ -19,6 +20,7 @@ import fr.jayasoft.ivy.ModuleRevisionId;
 import fr.jayasoft.ivy.ResolveData;
 import fr.jayasoft.ivy.ResolvedModuleRevision;
 import fr.jayasoft.ivy.report.DownloadReport;
+import fr.jayasoft.ivy.util.IvyPatternHelper;
 
 /**
  * IBiblioResolver is a resolver which can be used to resolve dependencies found
@@ -133,7 +135,17 @@ public class IBiblioResolver extends URLResolver {
     public void publish(Artifact artifact, File src) {
         throw new UnsupportedOperationException("publish not supported by IBiblioResolver");
     }
-    
+    // we do not allow to list organisations on ibiblio, nor modules in ibiblio 1
+    public String[] listTokenValues(String token, Map otherTokenValues) {
+    	if (IvyPatternHelper.ORGANISATION_KEY.equals(token)) {
+    		return new String[0];
+    	}
+    	if (IvyPatternHelper.MODULE_KEY.equals(token) && !isM2compatible()) {
+    		return new String[0];
+    	}
+        ensureConfigured(getIvy());
+    	return super.listTokenValues(token, otherTokenValues);
+    }
     public OrganisationEntry[] listOrganisations() {
         return new OrganisationEntry[0];
     }

@@ -8,6 +8,7 @@ package fr.jayasoft.ivy;
 import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
+import java.util.Map;
 
 import fr.jayasoft.ivy.report.DownloadReport;
 import fr.jayasoft.ivy.resolver.ModuleEntry;
@@ -53,8 +54,21 @@ public interface DependencyResolver {
     // available from them, no recursion is needed as long as sub resolvers
     // are registered in ivy too.
     
+    /**
+     * List all the values the given token can take if other tokens are set
+     * as described in the otherTokenValues map.
+     * 
+     * For instance, if token = "revision" and the map contains
+     * "organisation"->"foo"
+     * "module"->"bar"
+     * 
+     * The results will be the list of revisions of the module bar from the org foo.
+     */
+    String[] listTokenValues(String token, Map otherTokenValues);
+    
     OrganisationEntry[] listOrganisations();
     ModuleEntry[] listModules(OrganisationEntry org);
     RevisionEntry[] listRevisions(ModuleEntry module);
+    
     void dumpConfig();
 }

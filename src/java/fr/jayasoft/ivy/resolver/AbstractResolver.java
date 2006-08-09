@@ -5,6 +5,8 @@
  */
 package fr.jayasoft.ivy.resolver;
 
+import java.util.Map;
+
 import fr.jayasoft.ivy.Artifact;
 import fr.jayasoft.ivy.DependencyDescriptor;
 import fr.jayasoft.ivy.DependencyResolver;
@@ -97,6 +99,9 @@ public abstract class AbstractResolver implements DependencyResolver, IvyAware, 
         Message.verbose("no failure report implemented by "+getName());
     }
 
+    public String[] listTokenValues(String token, Map otherTokenValues) {
+    	return new String[0];
+    }
     public OrganisationEntry[] listOrganisations() {
         return new OrganisationEntry[0];
     }
