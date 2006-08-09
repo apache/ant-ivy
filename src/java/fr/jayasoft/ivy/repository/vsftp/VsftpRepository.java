@@ -68,7 +68,7 @@ public class VsftpRepository extends AbstractRepository {
 		String srcName = index == -1?source:source.substring(index+1);
 		File to = destDir == null ? new File(srcName):new File(destDir, srcName);
 		
-		sendCommand("get "+source, getExpectedDownloadMessage(source, to));
+		sendCommand("get "+source, getExpectedDownloadMessage(source, to), 0);
 		
 		to.renameTo(destination);
 	}
@@ -110,7 +110,7 @@ public class VsftpRepository extends AbstractRepository {
 			sendCommand("cd "+destDir);
 		}
 		String to = destDir != null ? destDir+"/"+source.getName():source.getName();
-		sendCommand("put "+source.getAbsolutePath(), getExpectedUploadMessage(source, to));
+		sendCommand("put "+source.getAbsolutePath(), getExpectedUploadMessage(source, to), 0);
 		sendCommand("mv "+to+" "+destination);
 	}
 
@@ -134,8 +134,13 @@ public class VsftpRepository extends AbstractRepository {
 	}
 
 	protected String sendCommand(String command) throws IOException {
-		return sendCommand(command, false);
+		return sendCommand(command, false, _readTimeout);
 	}
+	
+	protected void sendCommand(String command, Pattern expectedResponse) throws IOException {
+		sendCommand(command, expectedResponse, _readTimeout);
+	}
+
 	/**
 	 * The behaviour of vsftp with some commands is to log the resulting message on the error stream,
 	 * even if everything is ok.
@@ -147,8 +152,8 @@ public class VsftpRepository extends AbstractRepository {
 	 * 
 	 * That's why expected messages are obtained using overridable protected methods.
 	 */ 
-	protected void sendCommand(String command, Pattern expectedResponse) throws IOException {
-		String response = sendCommand(command, true);
+	protected void sendCommand(String command, Pattern expectedResponse, long timeout) throws IOException {
+		String response = sendCommand(command, true, timeout);
 		if (!expectedResponse.matcher(response).matches()) {
 			Message.debug("invalid response from server:");
 			Message.debug("expected: '"+expectedResponse+"'");
@@ -157,15 +162,23 @@ public class VsftpRepository extends AbstractRepository {
 		}
 	}
 	protected String sendCommand(String command, boolean sendErrorAsResponse) throws IOException {
+		return sendCommand(command, sendErrorAsResponse, _readTimeout);
+	}
+
+	protected String sendCommand(String command, boolean sendErrorAsResponse, long timeout) throws IOException {
 		ensureConnectionOpened();
 		Message.debug("sending command '"+command+"' to "+getHost());
 		_out.println(command);
 		_out.flush();
 		
-		return readResponse(sendErrorAsResponse);
+		return readResponse(sendErrorAsResponse, timeout);
 	}
 
-	protected String readResponse(final boolean sendErrorAsResponse) throws IOException {
+	protected String readResponse(boolean sendErrorAsResponse) throws IOException {
+		return readResponse(sendErrorAsResponse, _readTimeout);
+	}
+
+	protected String readResponse(final boolean sendErrorAsResponse, long timeout) throws IOException {
 		final StringBuffer response = new StringBuffer();
 		final IOException[] exc = new IOException[1];
 		final boolean[] done = new boolean[1];
@@ -198,7 +211,7 @@ public class VsftpRepository extends AbstractRepository {
 		};
 		reader.start();
 		try {
-			reader.join(_readTimeout);
+			reader.join(timeout);
 		} catch (InterruptedException e) {
 		}
 		if (exc[0] != null) {
@@ -206,6 +219,11 @@ public class VsftpRepository extends AbstractRepository {
 		} else if (!done[0]) {
 			throw new IOException("connection timeout to "+getHost());
 		} else {
+			if ("Not connected.".equals(response)) {
+				Message.info("vsftp connection to "+getHost()+" reset");
+				closeConnection();
+				throw new IOException("not connected to "+getHost());
+			}
 			Message.debug("received response '"+response+"' from "+getHost());
 			return response.toString();
 		}

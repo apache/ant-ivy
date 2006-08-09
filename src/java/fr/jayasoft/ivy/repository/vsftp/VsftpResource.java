@@ -1,5 +1,7 @@
 package fr.jayasoft.ivy.repository.vsftp;
 
+import java.io.IOException;
+
 import fr.jayasoft.ivy.repository.BasicResource;
 import fr.jayasoft.ivy.repository.Resource;
 
@@ -12,7 +14,11 @@ public class VsftpResource extends BasicResource {
 	}
 
 	public Resource clone(String cloneName) {
-		return new VsftpResource(_repository, cloneName, exists(), getContentLength(), getLastModified());
+		try {
+			return _repository.getResource(cloneName);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 }
