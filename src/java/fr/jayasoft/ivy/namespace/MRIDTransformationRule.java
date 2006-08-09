@@ -78,7 +78,14 @@ public class MRIDTransformationRule implements NamespaceTransformer {
             m.reset();
             m.find();
             m.appendReplacement(sb, res);
-            return sb.toString();
+
+            String str = sb.toString();
+			// null rule not replaced, let it be null 
+            if (rule == null && ("$"+ruleType+"0").equals(str)) {
+            	return null;
+            }
+            
+            return str;
         }
         
         private String getPattern(String p) {
