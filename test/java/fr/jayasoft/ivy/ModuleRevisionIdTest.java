@@ -24,6 +24,8 @@ public class ModuleRevisionIdTest extends TestCase {
         extraAttributes.put("att.name", "att.value");
         extraAttributes.put("att<name", "att<value");
         testEncodeDecodeToString(ModuleRevisionId.newInstance("org/jayasoft", "pre/name", "1.0-dev8/2", extraAttributes));
+        extraAttributes.put("nullatt", null);
+        testEncodeDecodeToString(ModuleRevisionId.newInstance("org/jayasoft", "pre/name", "1.0-dev8/2", extraAttributes));
 
     }
 
