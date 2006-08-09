@@ -49,6 +49,8 @@ public class VsftpRepository extends AbstractRepository {
 	
 	private volatile StringBuffer _errors = new StringBuffer();
 
+	private long _readTimeout = 3000;
+
 	public Resource getResource(String source) throws IOException {
 		return lslToResource(source, sendCommand("ls -l "+source, true));
 	}
@@ -163,28 +165,50 @@ public class VsftpRepository extends AbstractRepository {
 		return readResponse(sendErrorAsResponse);
 	}
 
-	protected String readResponse(boolean sendErrorAsResponse) throws IOException {
-		StringBuffer response = new StringBuffer();
-		int c;
-		while ((c = _in.read()) != -1) {
-			response.append((char)c);
-			if (response.length() >= PROMPT.length() 
-					&& response.substring(response.length() - PROMPT.length(), response.length()).equals(PROMPT)) {
-				response.setLength(response.length() - PROMPT.length());
-				break;
+	protected String readResponse(final boolean sendErrorAsResponse) throws IOException {
+		final StringBuffer response = new StringBuffer();
+		final IOException[] exc = new IOException[1];
+		final boolean[] done = new boolean[1];
+		Thread reader = new Thread() {
+			public void run() {
+				try {
+					int c;
+					while ((c = _in.read()) != -1) {
+						response.append((char)c);
+						if (response.length() >= PROMPT.length() 
+								&& response.substring(response.length() - PROMPT.length(), response.length()).equals(PROMPT)) {
+							response.setLength(response.length() - PROMPT.length());
+							break;
+						}
+					}
+					if (_errors.length() > 0) {
+						if (sendErrorAsResponse) {
+							response.append(_errors);
+							_errors.setLength(0);
+						} else {
+							throw new IOException(chomp(_errors).toString());
+						}
+					}
+					chomp(response);
+					done[0] = true;
+				} catch (IOException e) {
+					exc[0]  = e;
+				}			
 			}
+		};
+		reader.start();
+		try {
+			reader.join(_readTimeout);
+		} catch (InterruptedException e) {
 		}
-		if (_errors.length() > 0) {
-			if (sendErrorAsResponse) {
-				response.append(_errors);
-				_errors.setLength(0);
-			} else {
-				throw new IOException(chomp(_errors).toString());
-			}
+		if (exc[0] != null) {
+			throw exc[0];
+		} else if (!done[0]) {
+			throw new IOException("connection timeout to "+getHost());
+		} else {
+			Message.debug("received response '"+response+"' from "+getHost());
+			return response.toString();
 		}
-		chomp(response);
-		Message.debug("received response '"+response+"' from "+getHost());
-		return response.toString();
 	}
 
 	protected synchronized void ensureConnectionOpened() throws IOException {
@@ -332,4 +356,7 @@ public class VsftpRepository extends AbstractRepository {
 		return str;
 	}
 
+	public String toString() {
+		return getName()+" "+getUsername()+"@"+getHost()+" ("+getAuthentication()+")";
+	}
 }
