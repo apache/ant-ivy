@@ -135,7 +135,7 @@ public class XmlReportOutputter implements ReportOutputter {
 				String defaultValue = dep.getDescriptor() != null ? " default=\""+dep.getDescriptor().isDefault()+"\"" : "";
                 int position = dependencies.indexOf(dep.getResolvedId());
                 out.println("\t\t\t<revision name=\""+dep.getResolvedId().getRevision()+"\"" +
-                         " branch=\""+dep.getResolvedId().getBranch()+"\""+
+                		 (dep.getResolvedId().getBranch() == null?"":" branch=\""+dep.getResolvedId().getBranch()+"\"")+
 						 details +
                          " downloaded=\""+dep.isDownloaded()+"\""+
                          " searched=\""+dep.isSearched()+"\""+
