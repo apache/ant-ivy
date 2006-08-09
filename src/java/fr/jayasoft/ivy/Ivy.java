@@ -108,16 +108,16 @@ import fr.jayasoft.ivy.xml.XmlModuleDescriptorUpdater;
 import fr.jayasoft.ivy.xml.XmlReportParser;
 
 /**
- * Ivy is a free java based dependency manager.
+ * <a href="http://www.jayasoft.org/ivy">Ivy</a> is a free java based dependency manager.
  * 
  * This class is the main class of Ivy, which offers mainly dependency resolution.
  * 
  * Here is one typical usage:
  * Ivy ivy = new Ivy();
  * ivy.configure(new URL("ivyconf.xml"));
- * ivy.resolve(new URL("ivy.xml"), null, new String[] {"*"}, null, null, true);
+ * ivy.resolve(new URL("ivy.xml"));
  *  
- * @author x.hanin
+ * @author Xavier Hanin
  *
  */
 public class Ivy implements TransferListener {
