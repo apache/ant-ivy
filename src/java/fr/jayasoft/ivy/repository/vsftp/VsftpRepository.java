@@ -219,6 +219,7 @@ public class VsftpRepository extends AbstractRepository {
 			try {
 				readResponse(false); // waits for first prompt
 			} catch (IOException ex) {
+				closeConnection();
 				throw new IOException("impossible to connect to "+getUsername()+"@"+getHost()+" using "+getAuthentication()+": "+ex.getMessage());
 			}
 			Message.verbose("connected to "+getHost());
@@ -232,21 +233,25 @@ public class VsftpRepository extends AbstractRepository {
 				sendCommand("exit");
 			} catch (IOException e) {
 			} finally {
-				try {
-					_in.close();
-				} catch (IOException e) {
-				}
-				try {
-					_err.close();
-				} catch (IOException e) {
-				}
-				_out.close();
-				_in = null;
-				_out = null;
-				_err = null;
+				closeConnection();
 				Message.verbose("disconnected of "+getHost());
 			}
 		}
+	}
+
+	private void closeConnection() {
+		try {
+			_in.close();
+		} catch (IOException e) {
+		}
+		try {
+			_err.close();
+		} catch (IOException e) {
+		}
+		_out.close();
+		_in = null;
+		_out = null;
+		_err = null;
 	}
 
 	/**
