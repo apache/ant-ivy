@@ -110,13 +110,18 @@ public abstract class AbstractResourceResolver extends BasicResolver {
      */
     protected void logArtifactNotFound(Artifact artifact) {
         if (_artifactPatterns.isEmpty()) {
-            logArtifactAttempt(artifact, "no artifact pattern => no attempt to find artifact "+artifact);
+        	if (artifact.getUrl() == null) {
+        		logArtifactAttempt(artifact, "no artifact pattern => no attempt to find artifact "+artifact);
+        	}
         }
         for (Iterator iter = _artifactPatterns.iterator(); iter.hasNext();) {
             String pattern = (String)iter.next();
             String resolvedFileName = IvyPatternHelper.substitute(pattern, artifact);
             logArtifactAttempt(artifact, resolvedFileName);
         }
+    	if (artifact.getUrl() != null) {
+    		logArtifactAttempt(artifact, artifact.getUrl().toString());
+    	}
     }
 
     protected Collection findNames(Map tokenValues, String token) {

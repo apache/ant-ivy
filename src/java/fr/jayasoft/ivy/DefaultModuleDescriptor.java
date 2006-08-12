@@ -46,7 +46,7 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
         moduleDescriptor.addConfiguration(new Configuration(DEFAULT_CONFIGURATION));
         if (artifacts != null && artifacts.length > 0) {
             for (int i = 0; i < artifacts.length; i++) {
-                moduleDescriptor.addArtifact(DEFAULT_CONFIGURATION, new MDArtifact(moduleDescriptor, artifacts[i].getName(), artifacts[i].getType(), artifacts[i].getExt()));
+                moduleDescriptor.addArtifact(DEFAULT_CONFIGURATION, new MDArtifact(moduleDescriptor, artifacts[i].getName(), artifacts[i].getType(), artifacts[i].getExt(), artifacts[i].getUrl(), null));
             }
         } else {
             moduleDescriptor.addArtifact(DEFAULT_CONFIGURATION, new MDArtifact(moduleDescriptor, mrid.getName(), "jar", "jar"));

@@ -5,6 +5,7 @@
  */
 package fr.jayasoft.ivy;
 
+import java.net.URL;
 import java.util.Date;
 import java.util.Map;
 
@@ -28,11 +29,16 @@ public class DefaultArtifact extends AbstractArtifact {
     
     Date _publicationDate;
     ArtifactRevisionId _arid;
+    URL _url;
     
     public DefaultArtifact(ModuleRevisionId mrid, Date publicationDate, String name, String type, String ext) {
-        this(mrid, publicationDate, name, type, ext, null);
+        this(mrid, publicationDate, name, type, ext, null, null);
     }
+    
     public DefaultArtifact(ModuleRevisionId mrid, Date publicationDate, String name, String type, String ext, Map extraAttributes) {
+    	this(mrid, publicationDate, name, type, ext, null, extraAttributes);
+    }
+    public DefaultArtifact(ModuleRevisionId mrid, Date publicationDate, String name, String type, String ext, URL url, Map extraAttributes) {
         if (mrid == null) {
             throw new NullPointerException("null mrid not allowed");
         }
@@ -50,10 +56,11 @@ public class DefaultArtifact extends AbstractArtifact {
         }
         _publicationDate = publicationDate;
         _arid = ArtifactRevisionId.newInstance(mrid, name, type, ext, extraAttributes);
+        _url = url;
     }
 
-    
-    public ModuleRevisionId getModuleRevisionId() {
+
+	public ModuleRevisionId getModuleRevisionId() {
         return _arid.getModuleRevisionId();
     }
     public String getName() {
@@ -75,5 +82,9 @@ public class DefaultArtifact extends AbstractArtifact {
     public String[] getConfigurations() {
         return new String[0];
     }
+
+	public URL getUrl() {
+		return _url;
+	}
 
 }

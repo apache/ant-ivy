@@ -5,7 +5,6 @@
  */
 package fr.jayasoft.ivy;
 
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -1209,7 +1208,7 @@ public class IvyNode {
             // at download time
             for (Iterator it = includes.iterator(); it.hasNext();) {
                 DependencyArtifactDescriptor dad = (DependencyArtifactDescriptor)it.next();
-                artifacts.add(new MDArtifact(_md, dad.getName(), dad.getType(), dad.getExt()));
+                artifacts.add(new MDArtifact(_md, dad.getName(), dad.getType(), dad.getExt(), dad.getUrl(), null));
             }
         } else {
             if (includes == null || includes.isEmpty()) {

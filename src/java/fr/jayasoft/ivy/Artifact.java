@@ -5,6 +5,7 @@
  */
 package fr.jayasoft.ivy;
 
+import java.net.URL;
 import java.util.Date;
 
 import fr.jayasoft.ivy.extendable.ExtendableItem;
@@ -28,6 +29,7 @@ public interface Artifact extends ExtendableItem {
     String getName();
     String getType();
     String getExt();
+    URL getUrl();
     String[] getConfigurations();
 
     /**

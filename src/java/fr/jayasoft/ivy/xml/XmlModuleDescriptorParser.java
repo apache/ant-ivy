@@ -8,6 +8,7 @@ package fr.jayasoft.ivy.xml;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.ParseException;
 import java.util.Arrays;
@@ -44,7 +45,7 @@ import fr.jayasoft.ivy.util.XMLHelper;
 
 /**
  * Parses an xml ivy file and output a ModuleDescriptor.
- * For dependency and performance reasons, it does uses
+ * For dependency and performance reasons, it uses
  * only the SAX API, which makes the parsing code harder
  * to understand.
  * 
@@ -249,7 +250,8 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
                     type = type == null ? "jar" : type;
                     String ext = _ivy.substitute(attributes.getValue("ext"));
                     ext = ext != null ? ext : type;
-                    _artifact = new MDArtifact(_md, artName, type, ext, ExtendableItemHelper.getExtraAttributes(attributes, new String[] {"ext", "type", "name", "conf"}));
+                    String url = _ivy.substitute(attributes.getValue("url"));
+                    _artifact = new MDArtifact(_md, artName, type, ext, url  == null ? null : new URL(url), ExtendableItemHelper.getExtraAttributes(attributes, new String[] {"ext", "type", "name", "conf"}));
                     String confs = _ivy.substitute(attributes.getValue("conf"));
                     // only add confs if they are specified. if they aren't, endElement will handle this
                     // only if there are no conf defined in sub elements
@@ -267,14 +269,14 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
                     }
                 } else if (_state == DEP) {
                     // this is an artifact asked for a particular dependency
-                    addDependencyArtifactsIncludes(attributes);
+                    addDependencyArtifacts(qName, attributes);
                 } else if (_validate) {
                     addError("artifact tag found in invalid tag: "+_state);
                 }
             } else if ("include".equals(qName) && _state == DEP) {
-                addDependencyArtifactsIncludes(attributes);
+                addDependencyArtifactsIncludes(qName, attributes);
             } else if ("exclude".equals(qName)) {
-                addDependencyArtifactsExcludes(attributes);
+                addDependencyArtifactsExcludes(qName, attributes);
             } else if ("dependency".equals(qName)) {
                 String org = _ivy.substitute(attributes.getValue("org"));
                 if (org == null) { 
@@ -417,21 +419,30 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
         }
     }
 
-    private void addDependencyArtifactsIncludes(Attributes attributes) {
+    private void addDependencyArtifacts(String tag, Attributes attributes) throws MalformedURLException {
         _state = ARTIFACT_INCLUDE;
-        addDependencyArtifact(attributes, true);
+        addDependencyArtifact(tag, attributes, true);
     }
 
-    private void addDependencyArtifactsExcludes(Attributes attributes) {
+    private void addDependencyArtifactsIncludes(String tag, Attributes attributes) throws MalformedURLException {
+        _state = ARTIFACT_INCLUDE;
+        addDependencyArtifact(tag, attributes, true);
+    }
+
+    private void addDependencyArtifactsExcludes(String tag, Attributes attributes) throws MalformedURLException {
         _state = ARTIFACT_EXCLUDE;
-        addDependencyArtifact(attributes, false);
+        addDependencyArtifact(tag, attributes, false);
     }   
     
-    private void addDependencyArtifact(Attributes attributes, boolean includes) {
+    private void addDependencyArtifact(String tag, Attributes attributes, boolean includes) throws MalformedURLException {
         String name = _ivy.substitute(attributes.getValue("name"));
-        name = name == null ? PatternMatcher.ANY_EXPRESSION : name;
+        if (name == null) {
+        	name = "artifact".equals(tag)?_dd.getDependencyId().getName() : PatternMatcher.ANY_EXPRESSION;
+        }
         String type = _ivy.substitute(attributes.getValue("type"));
-        type = type == null ? PatternMatcher.ANY_EXPRESSION : type;
+        if (type == null) {
+        	type = "artifact".equals(tag)?"jar" : PatternMatcher.ANY_EXPRESSION;
+        }
         String ext = _ivy.substitute(attributes.getValue("ext"));
         ext = ext != null?ext:type;
         String matcherName = _ivy.substitute(attributes.getValue("matcher"));
@@ -441,7 +452,8 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
             return;
         }
         if (includes) {
-            _dad = new DefaultDependencyArtifactDescriptor(_dd, name, type, ext, includes, matcher);
+            String url = _ivy.substitute(attributes.getValue("url"));
+            _dad = new DefaultDependencyArtifactDescriptor(_dd, name, type, ext, url==null?null:new URL(url), includes, matcher);
         } else {
             String org = _ivy.substitute(attributes.getValue("org"));
             org = org == null ? PatternMatcher.ANY_EXPRESSION : org;

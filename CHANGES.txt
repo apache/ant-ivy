@@ -19,6 +19,7 @@ Incompatibility with previous versions:
 Changes:
 --------
 * thanks to Jayasoft:
+  - NEW: explicitly specify artifact download URL (IVY-271)
   - NEW: introduce branch management (IVY-269)
   - NEW: resolve dependencies directly without using an ivy file (IVY-268)
   - NEW: ability to invoke any build scripts for dependencies (IVY-68)

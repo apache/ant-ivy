@@ -6,8 +6,6 @@
 package fr.jayasoft.ivy;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.Set;
@@ -26,8 +24,6 @@ import fr.jayasoft.ivy.circular.CircularDependencyException;
 import fr.jayasoft.ivy.circular.ErrorCircularDependencyStrategy;
 import fr.jayasoft.ivy.circular.IgnoreCircularDependencyStrategy;
 import fr.jayasoft.ivy.circular.WarnCircularDependencyStrategy;
-import fr.jayasoft.ivy.conflict.LatestConflictManager;
-import fr.jayasoft.ivy.latest.LatestRevisionStrategy;
 import fr.jayasoft.ivy.report.ArtifactDownloadReport;
 import fr.jayasoft.ivy.report.ConfigurationResolveReport;
 import fr.jayasoft.ivy.report.DownloadStatus;
@@ -2404,6 +2400,20 @@ public class ResolveTest extends TestCase {
         
         assertTrue(_ivy.getArchiveFileInCache(_cache, "foo", "foo1", "4", "foo1", "jar", "jar").exists());        
         assertTrue(_ivy.getArchiveFileInCache(_cache, "bar", "bar2", "2", "bar2", "jar", "jar").exists());        
+    }
+
+    public void testExternalArtifacts() throws Exception {
+        Ivy ivy = new Ivy();
+        ivy.setVariable("test.base.url", new File("test/repositories/external-artifacts").toURL().toString());
+        ivy.configure(new File("test/repositories/external-artifacts/ivyconf.xml"));
+        
+        ResolveReport report = ivy.resolve(new File("test/repositories/external-artifacts/ivy.xml").toURL(),
+                null, new String[] {"*"}, _cache, null, false);
+        assertFalse(report.hasError());
+        
+        assertTrue(_ivy.getArchiveFileInCache(_cache, "jayasoft", "A", "1.0", "a", "jar", "jar").exists());        
+        assertTrue(_ivy.getArchiveFileInCache(_cache, "jayasoft", "B", "2.0", "b", "jar", "jar").exists());        
+        assertTrue(_ivy.getArchiveFileInCache(_cache, "jayasoft", "C", "3.0", "C", "jar", "jar").exists());        
     }
 
 

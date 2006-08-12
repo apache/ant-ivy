@@ -5,6 +5,7 @@
  */
 package fr.jayasoft.ivy;
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -27,11 +28,12 @@ public class MDArtifact extends AbstractArtifact {
     private List  _confs = new ArrayList();
     private ArtifactRevisionId _arid;
     private Map _extraAttributes = null;
+	private URL _url;
 
     public MDArtifact(ModuleDescriptor md, String name, String type, String ext) {
-        this(md, name, type, ext, null);
+        this(md, name, type, ext, null, null);
     }
-    public MDArtifact(ModuleDescriptor md, String name, String type, String ext, Map extraAttributes) {
+    public MDArtifact(ModuleDescriptor md, String name, String type, String ext, URL url, Map extraAttributes) {
         if (md == null) {
             throw new NullPointerException("null module descriptor not allowed");
         }
@@ -48,6 +50,7 @@ public class MDArtifact extends AbstractArtifact {
         _name = name;
         _type = type;
         _ext = ext;
+        _url = url;
         _extraAttributes = extraAttributes;
     }
     
@@ -84,5 +87,9 @@ public class MDArtifact extends AbstractArtifact {
     public void addConfiguration(String conf) {
         _confs.add(conf);
     }
+    
+	public URL getUrl() {
+		return _url;
+	}
     
 }

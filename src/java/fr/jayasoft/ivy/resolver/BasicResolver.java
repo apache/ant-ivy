@@ -45,6 +45,8 @@ import fr.jayasoft.ivy.report.DownloadReport;
 import fr.jayasoft.ivy.report.DownloadStatus;
 import fr.jayasoft.ivy.repository.Resource;
 import fr.jayasoft.ivy.repository.ResourceHelper;
+import fr.jayasoft.ivy.repository.url.URLRepository;
+import fr.jayasoft.ivy.repository.url.URLResource;
 import fr.jayasoft.ivy.util.ChecksumHelper;
 import fr.jayasoft.ivy.util.IvyPatternHelper;
 import fr.jayasoft.ivy.util.Message;
@@ -74,6 +76,8 @@ public abstract class BasicResolver extends AbstractResolver {
     private boolean _allownomd = true;
     
     private String _checksums = null;
+
+	private URLRepository _extartifactrep = new URLRepository(); // used only to download external artifacts
     
     public BasicResolver() {
         _workspaceName = Ivy.getLocalHostName();
@@ -624,7 +628,7 @@ public abstract class BasicResolver extends AbstractResolver {
                 }
                 long start = System.currentTimeMillis();
                 try {
-                	ResolvedResource artifactRef = findArtifactRef(artifact, null);
+                	ResolvedResource artifactRef = getArtifactRef(artifact, null);
                 	if (artifactRef != null) {
                 		if (ResourceHelper.equals(artifactRef.getResource(), 
                 				archiveFile)) {
@@ -645,8 +649,19 @@ public abstract class BasicResolver extends AbstractResolver {
                 						artifacts[i].getExtraAttributes()),
                 						origin);
                 		archiveFile = ivy.getArchiveFileInCache(cache, artifacts[i], origin);
-
-                		adr.setSize(getAndCheck(artifactRef.getResource(), tmp));
+                		
+                		// deal with artifact with url special case
+                		if (artifactRef.getResource().getName().equals(String.valueOf(artifacts[i].getUrl()))) {
+                	        Message.verbose("\t"+getName()+": downloading "+artifactRef.getResource().getName());
+                	        Message.debug("\t\tto "+tmp);
+                	        if (tmp.getParentFile() != null) {
+                	        	tmp.getParentFile().mkdirs();
+                	        }
+                			_extartifactrep.get(artifactRef.getResource().getName(), tmp);
+                			adr.setSize(tmp.length());
+                		} else {
+                			adr.setSize(getAndCheck(artifactRef.getResource(), tmp));
+                		}
                 		if (!tmp.renameTo(archiveFile)) {
                 			Message.warn("\t[FAILED     ] "+artifacts[i]+" impossible to move temp file to definitive one ("+(System.currentTimeMillis()-start)+"ms)");
                 			adr.setDownloadStatus(DownloadStatus.FAILED);
@@ -675,7 +690,7 @@ public abstract class BasicResolver extends AbstractResolver {
     }
     
     public boolean exists(Artifact artifact) {
-        ResolvedResource artifactRef = findArtifactRef(artifact, null);
+        ResolvedResource artifactRef = getArtifactRef(artifact, null);
         if (artifactRef != null) {
             return artifactRef.getResource().exists();
         }
@@ -750,9 +765,9 @@ public abstract class BasicResolver extends AbstractResolver {
         for (int i = 0; i < conf.length; i++) {
             Artifact[] artifacts = md.getArtifacts(conf[i]);
             for (int j = 0; j < artifacts.length; j++) {
-                ret = findArtifactRef(artifacts[j], data.getDate());
+                ret = getArtifactRef(artifacts[j], data.getDate());
                 if (ret != null) {
-                    return ret;
+                	return ret;
                 }
             }
         }
@@ -792,9 +807,19 @@ public abstract class BasicResolver extends AbstractResolver {
 	}
 
 
+    protected ResolvedResource getArtifactRef(Artifact artifact, Date date) {
+    	ResolvedResource ret = findArtifactRef(artifact, date);
+        if (ret == null && artifact.getUrl() != null) {
+        	URL url = artifact.getUrl();
+        	Message.verbose("\tusing url for "+artifact+": "+url);
+        	ret =  new ResolvedResource(new URLResource(url), artifact.getModuleRevisionId().getRevision());
+        }
+        return ret;
+    }
+
     protected abstract ResolvedResource findArtifactRef(Artifact artifact, Date date);
 
-    protected abstract long get(Resource resource, File dest) throws IOException;    
+	protected abstract long get(Resource resource, File dest) throws IOException;    
 
     protected abstract void logIvyNotFound(ModuleRevisionId mrid);    
 

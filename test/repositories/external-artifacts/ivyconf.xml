@@ -1,0 +1,8 @@
+<ivyconf>
+	<conf defaultResolver="r"/>
+	<resolvers>
+		<filesystem name="r">
+			<ivy pattern="${ivy.conf.dir}/[module]/ivy-[revision].xml" />
+		</filesystem>
+	</resolvers>
+</ivyconf>

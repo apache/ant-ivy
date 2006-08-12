@@ -5,6 +5,8 @@
  */
 package fr.jayasoft.ivy;
 
+import java.net.URL;
+
 import fr.jayasoft.ivy.matcher.PatternMatcher;
 
 /**
@@ -40,6 +42,11 @@ public interface DependencyArtifactDescriptor {
      * @return
      */
     public String getExt();
+    /**
+     * Returns the url to look this artifact at
+     * @return
+     */
+    public URL getUrl();
     /**
      * Returns the configurations of the module in which the artifact is asked
      * @return an array of configuration names in which the artifact is asked

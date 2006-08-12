@@ -5,14 +5,12 @@
  */
 package fr.jayasoft.ivy;
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 
 import fr.jayasoft.ivy.matcher.PatternMatcher;
 
-/**
- * TODO write javadoc
- */
 public class DefaultDependencyArtifactDescriptor implements DependencyArtifactDescriptor {
 
     private DefaultDependencyDescriptor _dd;
@@ -20,15 +18,22 @@ public class DefaultDependencyArtifactDescriptor implements DependencyArtifactDe
     private Collection _confs = new ArrayList();
     private boolean _includes;
     private PatternMatcher _patternMatcher;
+	private URL _url;
     
 
+    
+    public DefaultDependencyArtifactDescriptor(DefaultDependencyDescriptor dd,
+            String name, String type, String ext, boolean includes, PatternMatcher matcher) {
+		this(dd, name, type, ext, null, includes, matcher);
+	}
     /**
      * @param dd
      * @param name
      * @param type
+     * @param url 
      */
     public DefaultDependencyArtifactDescriptor(DefaultDependencyDescriptor dd,
-            String name, String type, String ext, boolean includes, PatternMatcher matcher) {
+            String name, String type, String ext, URL url, boolean includes, PatternMatcher matcher) {
         if (dd == null) {
             throw new NullPointerException("dependency descriptor must not be null");
         }
@@ -41,6 +46,7 @@ public class DefaultDependencyArtifactDescriptor implements DependencyArtifactDe
         _dd = dd;
         _id = new ArtifactId(dd.getDependencyId(), name, type, ext);
         _includes = includes;
+        _url = url;
         _patternMatcher = matcher;
     }
     
@@ -53,8 +59,8 @@ public class DefaultDependencyArtifactDescriptor implements DependencyArtifactDe
         _includes = includes;
         _patternMatcher = matcher;
     }
-    
-    public boolean equals(Object obj) {
+
+	public boolean equals(Object obj) {
         if (!(obj instanceof DependencyArtifactDescriptor)) {
             return false;
         }
@@ -106,5 +112,9 @@ public class DefaultDependencyArtifactDescriptor implements DependencyArtifactDe
     public PatternMatcher getMatcher() {
         return _patternMatcher;
     }
+
+	public URL getUrl() {
+		return _url;
+	}
 
 }

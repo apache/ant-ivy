@@ -1,0 +1,12 @@
+<ivy-module version="1.4">
+	<info organisation="jayasoft" module="test" />
+	<dependencies>
+		<dependency name="A" rev="latest.integration" />
+		<dependency name="B" rev="2.0">
+			<artifact name="b" url="${test.base.url}/somewhere/myb-2.0-ext.jar"/> 
+		</dependency>
+		<dependency name="C" rev="3.0">
+			<artifact url="${test.base.url}/somewhere/afile.jar"/> 
+		</dependency>
+	</dependencies>
+</ivy-module>
