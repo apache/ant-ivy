@@ -7,6 +7,9 @@ package fr.jayasoft.ivy.util;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Properties;
 
 /**
@@ -28,7 +31,7 @@ public class Message {
 
     private static MessageImpl _impl = null;
 
-    private static StringBuffer _problems = new StringBuffer();
+    private static List _problems = new ArrayList();
     
     private static boolean _showProgress = true;
     
@@ -100,7 +103,7 @@ public class Message {
         } else {
             System.err.println(msg);
         }
-        _problems.append("\tWARN:  "+msg).append("\n");
+        _problems.add("WARN:  "+msg);
     }
     public static void error(String msg) {
         if (_impl != null) {
@@ -110,14 +113,22 @@ public class Message {
         } else {
             System.err.println(msg);
         }
-        _problems.append("\tERROR: "+msg).append("\n");
+        _problems.add("\tERROR: "+msg);
     }
+
+    public static List getProblems() {
+        return _problems;
+    }
+    
     public static void sumupProblems() {
-        if (_problems.length() > 0) {
+        if (_problems.size() > 0) {
             info("\n:: problems summary ::");
-            info(_problems.toString());
+            for (Iterator iter = _problems.iterator(); iter.hasNext();) {
+				String msg = (String) iter.next();
+				info("\t"+msg+"\n");
+			}
             info("\t--- USE VERBOSE OR DEBUG MESSAGE LEVEL FOR MORE DETAILS ---");
-            _problems = new StringBuffer();
+            _problems.clear();
         }
     }
 

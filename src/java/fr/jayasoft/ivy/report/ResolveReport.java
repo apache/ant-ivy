@@ -6,11 +6,13 @@
 package fr.jayasoft.ivy.report;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import fr.jayasoft.ivy.IvyNode;
@@ -22,6 +24,8 @@ import fr.jayasoft.ivy.ModuleDescriptor;
 public class ResolveReport {
     private ModuleDescriptor _md;
     private Map _confReports = new LinkedHashMap();
+	private List _problemMessages;
+	
     public ResolveReport(ModuleDescriptor md) {
         _md = md;
     }
@@ -85,5 +89,31 @@ public class ResolveReport {
 			}
         }
 		return false;
+	}
+	public void setProblemMessages(List problems) {
+		_problemMessages = problems;
+	}
+	public List getProblemMessages() {
+		return _problemMessages;
+	}
+	public List getAllProblemMessages() {
+		List ret = new ArrayList(_problemMessages);
+		for (Iterator iter = _confReports.values().iterator(); iter.hasNext();) {
+			ConfigurationResolveReport r = (ConfigurationResolveReport) iter.next();
+			IvyNode[] unresolved = r.getUnresolvedDependencies();
+			for (int i = 0; i < unresolved.length; i++) {
+				Exception e = unresolved[i].getProblem();
+				if (e != null) {
+					ret.add(e.toString());
+				} else {
+					ret.add("unresolved dependency: "+unresolved[i].getId());
+				}
+			}
+			ArtifactDownloadReport[] adrs = r.getFailedArtifactsReports();
+			for (int i = 0; i < adrs.length; i++) {
+				ret.add("download failed: "+adrs[i].getArtifact());
+			}
+		}
+		return ret;
 	}
 }

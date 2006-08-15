@@ -518,7 +518,7 @@ public class Ivy implements TransferListener {
             return getClassLoader().loadClass(className);
         } catch (ClassNotFoundException e) {
         	if (silentFail) {
-        		Message.warn("impossible to define new type: class not found: "+className+" in "+_classpathURLs+" nor Ivy classloader");
+        		Message.info("impossible to define new type: class not found: "+className+" in "+_classpathURLs+" nor Ivy classloader");
         		return null;
         	} else {
         		throw new RuntimeException("impossible to define new type: class not found: "+className+" in "+_classpathURLs+" nor Ivy classloader");
@@ -1060,7 +1060,7 @@ public class Ivy implements TransferListener {
             Message.verbose("\tresolved ivy file produced in "+ivyFileInCache);
             
             Message.info(":: resolution report ::");
-            
+            report.setProblemMessages(Message.getProblems());
             // output report
             report.output(getReportOutputters(), cache);
             
