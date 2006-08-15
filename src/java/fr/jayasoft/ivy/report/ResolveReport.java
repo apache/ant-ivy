@@ -104,7 +104,7 @@ public class ResolveReport {
 			for (int i = 0; i < unresolved.length; i++) {
 				Exception e = unresolved[i].getProblem();
 				if (e != null) {
-					ret.add(e.toString());
+					ret.add("unresolved dependency: "+unresolved[i].getId()+": "+(e instanceof RuntimeException?e.getMessage():e.toString()));
 				} else {
 					ret.add("unresolved dependency: "+unresolved[i].getId());
 				}
