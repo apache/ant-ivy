@@ -1086,9 +1086,7 @@ public class Ivy implements TransferListener {
         fireIvyEvent(new PrepareDownloadEvent(this, (Artifact[])artifacts.toArray(new Artifact[artifacts.size()])));
         
         for (int i = 0; i < dependencies.length; i++) {
-        	if (isInterrupted()) {
-        		throw new RuntimeException("download interrupted");
-        	}
+        	checkInterrupted();
             //download artifacts required in all asked configurations
             if (!dependencies[i].isCompletelyEvicted() && !dependencies[i].hasProblem()) {
                 DependencyResolver resolver = dependencies[i].getModuleRevision().getArtifactResolver();
@@ -1122,6 +1120,16 @@ public class Ivy implements TransferListener {
             }
         }
     }
+
+    /**
+     * Check if the current operation has been interrupted, and if it is the case, throw a runtime exception
+     */
+	public void checkInterrupted() {
+		if (isInterrupted()) {
+			Message.info("operation interrupted");
+			throw new RuntimeException("operation interrupted");
+		}
+	}
     
     /**
      * Download an artifact to the cache.
@@ -1291,9 +1299,7 @@ public class Ivy implements TransferListener {
     
     
     private void fetchDependencies(IvyNode node, String conf, boolean shouldBePublic) {
-    	if (isInterrupted()) {
-    		throw new RuntimeException("resolve interrupted");
-    	}
+    	checkInterrupted();
         long start = System.currentTimeMillis();
         if (debugConflictResolution()) {
             Message.debug(node.getId()+" => resolving dependencies in "+conf);
@@ -1812,9 +1818,7 @@ public class Ivy implements TransferListener {
                 Set dest = (Set)artifactsToCopy.get(artifact);
                 Message.verbose("\tretrieving "+archive);
                 for (Iterator it2 = dest.iterator(); it2.hasNext();) {
-                	if (isInterrupted()) {
-                		throw new InterruptedException();
-                	}
+                	checkInterrupted();
                     File destFile = new File((String)it2.next());
                     if (!_checkUpToDate || !upToDate(archive, destFile)) {
                         Message.verbose("\t\tto "+destFile);
@@ -2200,9 +2204,7 @@ public class Ivy implements TransferListener {
     }
 
     private boolean publish(Artifact artifact, String srcArtifactPattern, DependencyResolver resolver, boolean overwrite) throws IOException {
-    	if (isInterrupted()) {
-    		throw new IOException("publish interrupted");
-    	}
+    	checkInterrupted();
         File src = new File(IvyPatternHelper.substitute(srcArtifactPattern, artifact));
         if (src.exists()) {
             resolver.publish(artifact, src, overwrite);
@@ -2333,6 +2335,9 @@ public class Ivy implements TransferListener {
 				Message.warn("waited clean interruption for too long: stopping operating thread");
 				operatingThread.stop();
 			}
+    		synchronized (this) {
+    			_interrupted = false;
+    		}
     	}
 	}
     

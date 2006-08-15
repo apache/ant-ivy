@@ -90,7 +90,14 @@ public abstract class AbstractResolver implements DependencyResolver, IvyAware, 
     public void setValidate(boolean validate) {
         _validate = Boolean.valueOf(validate);
     }
-    
+
+
+    protected void checkInterrupted() {
+		if (_ivy != null) {
+			_ivy.checkInterrupted();
+		}
+	}
+
     public void reportFailure() {
         Message.verbose("no failure report implemented by "+getName());
     }

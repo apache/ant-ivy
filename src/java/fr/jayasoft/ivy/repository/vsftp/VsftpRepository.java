@@ -216,9 +216,7 @@ public class VsftpRepository extends AbstractRepository {
 	protected String sendCommand(String command, boolean sendErrorAsResponse, boolean single, long timeout) throws IOException {
 		single = false; // use of alone commands does not work properly due to a long delay between end of process and end of stream... 
 
-		if (IvyContext.getContext().getIvy().isInterrupted()) {
-			throw new IOException("interrupted");
-		}
+		IvyContext.getContext().getIvy().checkInterrupted();
 		_inCommand = true;
 		if (!single || _in != null) {
 			ensureConnectionOpened();

@@ -160,14 +160,10 @@ public abstract class BasicResolver extends AbstractResolver {
                 }
             }
         }
-        if (getIvy() != null && getIvy().isInterrupted()) {
-        	throw new RuntimeException("interrupted");
-        }
+        checkInterrupted();
         URL cachedIvyURL = null;
         ResolvedResource ivyRef = findIvyFileRef(dd, data);
-        if (getIvy() != null && getIvy().isInterrupted()) {
-        	throw new RuntimeException("interrupted");
-        }
+        checkInterrupted();
         searched = true;
         
         // get module descriptor
@@ -688,16 +684,14 @@ public abstract class BasicResolver extends AbstractResolver {
                 	Message.warn("\t[FAILED     ] "+artifacts[i]+" : "+ex.getMessage()+" ("+(System.currentTimeMillis()-start)+"ms)");
                 	adr.setDownloadStatus(DownloadStatus.FAILED);
                 }
-                if (getIvy() != null && getIvy().isInterrupted()) {
-                	throw new RuntimeException("interrupted");
-                }
+                checkInterrupted();
         	}
         	ivy.fireIvyEvent(new EndArtifactDownloadEvent(ivy, this, artifacts[i], adr, archiveFile));
         }
         return dr;
     }
 
-    protected void clearArtifactAttempts() {
+	protected void clearArtifactAttempts() {
     	_artattempts.clear();
     }
     
