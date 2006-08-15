@@ -190,6 +190,10 @@ public class Ivy implements TransferListener {
     private ClassLoader _classloader;
     
     private StatusManager _statusManager;
+
+	private long _interruptTimeout = 2000;
+
+	private boolean _interrupted;
     
     public Ivy() {
         setVariable("ivy.default.conf.dir", Ivy.class.getResource("conf").toExternalForm(), true);
@@ -1082,6 +1086,9 @@ public class Ivy implements TransferListener {
         fireIvyEvent(new PrepareDownloadEvent(this, (Artifact[])artifacts.toArray(new Artifact[artifacts.size()])));
         
         for (int i = 0; i < dependencies.length; i++) {
+        	if (isInterrupted()) {
+        		throw new RuntimeException("download interrupted");
+        	}
             //download artifacts required in all asked configurations
             if (!dependencies[i].isCompletelyEvicted() && !dependencies[i].hasProblem()) {
                 DependencyResolver resolver = dependencies[i].getModuleRevision().getArtifactResolver();
@@ -1284,6 +1291,9 @@ public class Ivy implements TransferListener {
     
     
     private void fetchDependencies(IvyNode node, String conf, boolean shouldBePublic) {
+    	if (isInterrupted()) {
+    		throw new RuntimeException("resolve interrupted");
+    	}
         long start = System.currentTimeMillis();
         if (debugConflictResolution()) {
             Message.debug(node.getId()+" => resolving dependencies in "+conf);
@@ -1802,6 +1812,9 @@ public class Ivy implements TransferListener {
                 Set dest = (Set)artifactsToCopy.get(artifact);
                 Message.verbose("\tretrieving "+archive);
                 for (Iterator it2 = dest.iterator(); it2.hasNext();) {
+                	if (isInterrupted()) {
+                		throw new InterruptedException();
+                	}
                     File destFile = new File((String)it2.next());
                     if (!_checkUpToDate || !upToDate(archive, destFile)) {
                         Message.verbose("\t\tto "+destFile);
@@ -1842,9 +1855,7 @@ public class Ivy implements TransferListener {
             
             return targetsCopied;
         } catch (Exception ex) {
-            IllegalStateException ise = new IllegalStateException("problem during retrieve of "+moduleId);
-            ise.initCause(ex);
-            throw ise;
+            throw new RuntimeException("problem during retrieve of "+moduleId+": "+ex, ex);
         }
     }
 
@@ -2189,6 +2200,9 @@ public class Ivy implements TransferListener {
     }
 
     private boolean publish(Artifact artifact, String srcArtifactPattern, DependencyResolver resolver, boolean overwrite) throws IOException {
+    	if (isInterrupted()) {
+    		throw new IOException("publish interrupted");
+    	}
         File src = new File(IvyPatternHelper.substitute(srcArtifactPattern, artifact));
         if (src.exists()) {
             resolver.publish(artifact, src, overwrite);
@@ -2287,6 +2301,41 @@ public class Ivy implements TransferListener {
 //        return getArchivePathInCache(artifact) + ".origin";
 //    }
 
+    /**
+     * Interrupts the current running operation, no later than
+     * interruptTimeout milliseconds after the call
+     */
+    public void interrupt() {
+    	Thread operatingThread = IvyContext.getContext().getOperatingThread();
+    	interrupt(operatingThread);
+    }
+
+    /**
+     * Interrupts the current running operation in the given operating thread, 
+     * no later than interruptTimeout milliseconds after the call
+     */
+	public void interrupt(Thread operatingThread) {
+		if (operatingThread != null && operatingThread.isAlive()) {
+    		if (operatingThread == Thread.currentThread()) {
+    			throw new IllegalStateException("cannot call interrupt from ivy operating thread");
+    		}
+			Message.verbose("interrupting operating thread...");
+    		operatingThread.interrupt();
+    		synchronized (this) {
+    			_interrupted = true;
+    		}
+    		try {
+				Message.verbose("waiting clean interruption of operating thread");
+    			operatingThread.join(_interruptTimeout);
+			} catch (InterruptedException e) {
+			}
+			if (operatingThread.isAlive()) {
+				Message.warn("waited clean interruption for too long: stopping operating thread");
+				operatingThread.stop();
+			}
+    	}
+	}
+    
     public static String getLocalHostName() {
         try {
             return InetAddress.getLocalHost().getHostName();
@@ -2695,6 +2744,11 @@ public class Ivy implements TransferListener {
 		public String getResolverName() {
 			return _resolverName;
 		}
+	}
+
+
+	public synchronized boolean isInterrupted() {
+		return _interrupted;
 	}
 
 }

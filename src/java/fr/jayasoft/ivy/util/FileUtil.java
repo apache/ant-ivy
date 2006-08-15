@@ -76,6 +76,9 @@ public class FileUtil {
                 l.start(evt);
             }
             while( (c = src.read(buffer)) != -1 ) {
+            	if (Thread.currentThread().isInterrupted()) {
+            		throw new IOException("transfer interrupted");
+            	}
                 dest.write(buffer, 0, c);
                 total += c;
                 if (l != null) {

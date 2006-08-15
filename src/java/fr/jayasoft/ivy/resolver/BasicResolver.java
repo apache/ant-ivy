@@ -160,8 +160,14 @@ public abstract class BasicResolver extends AbstractResolver {
                 }
             }
         }
+        if (getIvy().isInterrupted()) {
+        	throw new RuntimeException("interrupted");
+        }
         URL cachedIvyURL = null;
         ResolvedResource ivyRef = findIvyFileRef(dd, data);
+        if (getIvy().isInterrupted()) {
+        	throw new RuntimeException("interrupted");
+        }
         searched = true;
         
         // get module descriptor
@@ -177,6 +183,9 @@ public abstract class BasicResolver extends AbstractResolver {
             parser = XmlModuleDescriptorParser.getInstance();
             md = DefaultModuleDescriptor.newDefaultInstance(mrid, dd.getAllDependencyArtifactsIncludes());
             ResolvedResource artifactRef = findFirstArtifactRef(md, dd, data);
+            if (getIvy().isInterrupted()) {
+            	throw new RuntimeException("interrupted");
+            }
             if (artifactRef == null) {
                 Message.verbose("\t"+getName()+": no ivy file nor artifact found for "+mrid);
                 logIvyNotFound(mrid);
@@ -678,6 +687,9 @@ public abstract class BasicResolver extends AbstractResolver {
                 } catch (Exception ex) {
                 	Message.warn("\t[FAILED     ] "+artifacts[i]+" : "+ex.getMessage()+" ("+(System.currentTimeMillis()-start)+"ms)");
                 	adr.setDownloadStatus(DownloadStatus.FAILED);
+                }
+                if (getIvy().isInterrupted()) {
+                	throw new RuntimeException("interrupted");
                 }
         	}
         	ivy.fireIvyEvent(new EndArtifactDownloadEvent(ivy, this, artifacts[i], adr, archiveFile));

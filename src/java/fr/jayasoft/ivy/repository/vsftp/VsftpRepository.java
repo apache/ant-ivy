@@ -57,11 +57,17 @@ public class VsftpRepository extends AbstractRepository {
 
 	private volatile boolean _inCommand;
 
+	private Process _process;
+
+	private Thread _connectionCleaner;
+
+	private Thread _errorsReader;
+
 	public Resource getResource(String source) throws IOException {
 		try {
 			return lslToResource(source, sendCommand("ls -l "+source, true, true));
 		} catch (IOException ex) {
-			disconnect();
+			cleanup(ex);
 			throw ex;
 		} finally {
 			cleanup();
@@ -86,7 +92,7 @@ public class VsftpRepository extends AbstractRepository {
 
 			to.renameTo(destination);
 		} catch (IOException ex) {
-			disconnect();
+			cleanup(ex);
 			throw ex;
 		} finally {
 			cleanup();
@@ -114,7 +120,7 @@ public class VsftpRepository extends AbstractRepository {
 			}
 			return ret;
 		} catch (IOException ex) {
-			disconnect();
+			cleanup(ex);
 			throw ex;
 		} finally {
 			cleanup();
@@ -141,7 +147,7 @@ public class VsftpRepository extends AbstractRepository {
 			sendCommand("put "+source.getAbsolutePath(), getExpectedUploadMessage(source, to), 0);
 			sendCommand("mv "+to+" "+destination);
 		} catch (IOException ex) {
-			disconnect();
+			cleanup(ex);
 			throw ex;
 		} finally {
 			cleanup();
@@ -210,6 +216,9 @@ public class VsftpRepository extends AbstractRepository {
 	protected String sendCommand(String command, boolean sendErrorAsResponse, boolean single, long timeout) throws IOException {
 		single = false; // use of alone commands does not work properly due to a long delay between end of process and end of stream... 
 
+		if (IvyContext.getContext().getIvy().isInterrupted()) {
+			throw new IOException("interrupted");
+		}
 		_inCommand = true;
 		if (!single || _in != null) {
 			ensureConnectionOpened();
@@ -305,7 +314,7 @@ public class VsftpRepository extends AbstractRepository {
 				readResponse(false); // waits for first prompt
 
 				if (_reuseConnection > 0) {
-					new Thread() {
+					_connectionCleaner = new Thread() {
 						public void run() {
 							try {
 								long sleep = 10;
@@ -320,7 +329,8 @@ public class VsftpRepository extends AbstractRepository {
 							}
 							disconnect();
 						}
-					}.start();
+					};
+					_connectionCleaner.start();
 				}
 
 				Ivy ivy = IvyContext.getContext().getIvy();
@@ -346,24 +356,36 @@ public class VsftpRepository extends AbstractRepository {
 
 	private void exec(String command) throws IOException {
 		Message.debug("launching '"+command+"'");
-		Process p = Runtime.getRuntime().exec(command);
-		_in = new InputStreamReader(p.getInputStream());
-		_err = new InputStreamReader(p.getErrorStream());
-		_out = new PrintWriter(p.getOutputStream());
+		_process = Runtime.getRuntime().exec(command);
+		_in = new InputStreamReader(_process.getInputStream());
+		_err = new InputStreamReader(_process.getErrorStream());
+		_out = new PrintWriter(_process.getOutputStream());
 		
-		new Thread() {
-			public void run() {
-				int c;
-				try {
-					while (_err != null && (c = _err.read()) != -1) {
-						_errors.append((char)c);
-					}
-				} catch (IOException e) {
-				}
-			}
-		}.start();
+		_errorsReader = new Thread() {
+							public void run() {
+								int c;
+								try {
+									while (_err != null && (c = _err.read()) != -1) {
+										_errors.append((char)c);
+									}
+								} catch (IOException e) {
+								}
+							}
+						};
+		_errorsReader.start();
 	}
 
+
+	/**
+	 * Called whenever an api level method end
+	 */
+	private void cleanup(Exception ex) {
+		if (ex.getMessage().equals("connection timeout to "+getHost())) {
+			closeConnection();
+		} else {
+			disconnect();
+		}
+	}
 
 	/**
 	 * Called whenever an api level method end
@@ -387,16 +409,29 @@ public class VsftpRepository extends AbstractRepository {
 		}
 	}
 
-	private void closeConnection() {
+	private synchronized void closeConnection() {
+		if (_connectionCleaner != null) {
+			_connectionCleaner.interrupt();
+		}
+		if (_errorsReader != null) {
+			_errorsReader.interrupt();
+		}
+		try {
+			_process.destroy();
+		} catch (Exception ex) {}
 		try {
 			_in.close();
-		} catch (IOException e) {
-		}
+		} catch (Exception e) {}
 		try {
 			_err.close();
-		} catch (IOException e) {
-		}
-		_out.close();
+		} catch (Exception e) {}
+		try {
+			_out.close();
+		} catch (Exception e) {}
+		
+		_connectionCleaner = null;
+		_errorsReader = null;
+		_process = null;
 		_in = null;
 		_out = null;
 		_err = null;

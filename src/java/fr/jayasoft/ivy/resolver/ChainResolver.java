@@ -77,6 +77,9 @@ public class ChainResolver extends AbstractResolver {
                     setLatest(resolver, oldLatest);
                 }
             }
+            if (getIvy().isInterrupted()) {
+            	throw new RuntimeException("interrupted");
+            }
             if (mr != null) {
                 boolean shouldReturn = _returnFirst;
                 shouldReturn |= !getIvy().getVersionMatcher().isDynamic(dd.getDependencyRevisionId()) && ret != null && !ret.getDescriptor().isDefault();

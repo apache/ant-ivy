@@ -57,6 +57,9 @@ public class DualResolver extends AbstractResolver {
         data = new ResolveData(data, doValidate(data));
         final ResolvedModuleRevision mr = _ivyResolver.getDependency(dd, data);
         if (mr == null) {
+            if (getIvy().isInterrupted()) {
+            	throw new RuntimeException("interrupted");
+            }
             if (isAllownomd()) {
                 Message.verbose("ivy resolver didn't find "+dd.getDependencyRevisionId()+": trying with artifact resolver");
                 return _artifactResolver.getDependency(dd, data);

@@ -30,6 +30,8 @@ public class IvyContext {
     private File _cache;
     
     private Map _contextMap = new HashMap();
+
+	private Thread _operatingThread;
     
     public static IvyContext getContext() {
     	IvyContext cur = (IvyContext)_current.get();
@@ -66,6 +68,7 @@ public class IvyContext {
     }
     void setIvy(Ivy ivy) {
     	_ivy = new WeakReference(ivy);
+    	_operatingThread = Thread.currentThread();
     }
     public File getCache() {
     	return _cache == null ? getIvy().getDefaultCache() : _cache;
@@ -85,6 +88,10 @@ public class IvyContext {
 
 	public void set(String key, Object value) {
 		_contextMap.put(key, new WeakReference(value));
+	}
+
+	public Thread getOperatingThread() {
+		return _operatingThread;
 	}
 
 	// should be better to use context to store this kind of information, but not yet ready to do so...
