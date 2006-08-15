@@ -160,12 +160,12 @@ public abstract class BasicResolver extends AbstractResolver {
                 }
             }
         }
-        if (getIvy().isInterrupted()) {
+        if (getIvy() != null && getIvy().isInterrupted()) {
         	throw new RuntimeException("interrupted");
         }
         URL cachedIvyURL = null;
         ResolvedResource ivyRef = findIvyFileRef(dd, data);
-        if (getIvy().isInterrupted()) {
+        if (getIvy() != null && getIvy().isInterrupted()) {
         	throw new RuntimeException("interrupted");
         }
         searched = true;
@@ -183,7 +183,7 @@ public abstract class BasicResolver extends AbstractResolver {
             parser = XmlModuleDescriptorParser.getInstance();
             md = DefaultModuleDescriptor.newDefaultInstance(mrid, dd.getAllDependencyArtifactsIncludes());
             ResolvedResource artifactRef = findFirstArtifactRef(md, dd, data);
-            if (getIvy().isInterrupted()) {
+            if (getIvy() != null && getIvy().isInterrupted()) {
             	throw new RuntimeException("interrupted");
             }
             if (artifactRef == null) {
@@ -688,7 +688,7 @@ public abstract class BasicResolver extends AbstractResolver {
                 	Message.warn("\t[FAILED     ] "+artifacts[i]+" : "+ex.getMessage()+" ("+(System.currentTimeMillis()-start)+"ms)");
                 	adr.setDownloadStatus(DownloadStatus.FAILED);
                 }
-                if (getIvy().isInterrupted()) {
+                if (getIvy() != null && getIvy().isInterrupted()) {
                 	throw new RuntimeException("interrupted");
                 }
         	}

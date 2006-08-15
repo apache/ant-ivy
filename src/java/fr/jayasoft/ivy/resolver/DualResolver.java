@@ -57,7 +57,7 @@ public class DualResolver extends AbstractResolver {
         data = new ResolveData(data, doValidate(data));
         final ResolvedModuleRevision mr = _ivyResolver.getDependency(dd, data);
         if (mr == null) {
-            if (getIvy().isInterrupted()) {
+            if (getIvy() != null && getIvy().isInterrupted()) {
             	throw new RuntimeException("interrupted");
             }
             if (isAllownomd()) {

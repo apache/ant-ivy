@@ -77,7 +77,7 @@ public class ChainResolver extends AbstractResolver {
                     setLatest(resolver, oldLatest);
                 }
             }
-            if (getIvy().isInterrupted()) {
+            if (getIvy() != null && getIvy().isInterrupted()) {
             	throw new RuntimeException("interrupted");
             }
             if (mr != null) {
