@@ -269,7 +269,7 @@ public class VsftpRepository extends AbstractRepository {
 		};
 		reader.start();
 		try {
-			reader.join(0);
+			reader.join(timeout);
 		} catch (InterruptedException e) {
 		}
 		updateLastCommandTime();
