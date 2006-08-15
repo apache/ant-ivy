@@ -46,5 +46,10 @@ public class VsftpResolver extends RepositoryResolver {
 	public void setUsername(String username) {
 		getVsftpRepository().setUsername(username);
 	}
-
+	public void setReuseConnection(long time) {
+		getVsftpRepository().setReuseConnection(time);
+	}
+	public void setReadTimeout(long readTimeout) {
+		getVsftpRepository().setReadTimeout(readTimeout);
+	}
 }

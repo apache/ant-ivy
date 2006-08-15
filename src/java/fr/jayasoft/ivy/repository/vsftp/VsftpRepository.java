@@ -49,69 +49,103 @@ public class VsftpRepository extends AbstractRepository {
 	
 	private volatile StringBuffer _errors = new StringBuffer();
 
-	private long _readTimeout = 3000;
+	private long _readTimeout = 10000;
+	
+	private long _reuseConnection = 5 * 60 * 1000; // reuse connection during 5 minutes by default
+
+	private volatile long _lastCommand;
+
+	private volatile boolean _inCommand;
 
 	public Resource getResource(String source) throws IOException {
-		return lslToResource(source, sendCommand("ls -l "+source, true));
+		try {
+			return lslToResource(source, sendCommand("ls -l "+source, true, true));
+		} catch (IOException ex) {
+			disconnect();
+			throw ex;
+		} finally {
+			cleanup();
+		}
 	}
 
 	public void get(String source, File destination) throws IOException {
-		File destDir = destination.getParentFile();
-		if (destDir != null) {
-			sendCommand("lcd "+destDir.getAbsolutePath());
-		}
-		if (destination.exists()) {
-			destination.delete();
-		}
+		try {
+			File destDir = destination.getParentFile();
+			if (destDir != null) {
+				sendCommand("lcd "+destDir.getAbsolutePath());
+			}
+			if (destination.exists()) {
+				destination.delete();
+			}
 
-		int index = source.lastIndexOf('/');
-		String srcName = index == -1?source:source.substring(index+1);
-		File to = destDir == null ? new File(srcName):new File(destDir, srcName);
-		
-		sendCommand("get "+source, getExpectedDownloadMessage(source, to), 0);
-		
-		to.renameTo(destination);
+			int index = source.lastIndexOf('/');
+			String srcName = index == -1?source:source.substring(index+1);
+			File to = destDir == null ? new File(srcName):new File(destDir, srcName);
+
+			sendCommand("get "+source, getExpectedDownloadMessage(source, to), 0);
+
+			to.renameTo(destination);
+		} catch (IOException ex) {
+			disconnect();
+			throw ex;
+		} finally {
+			cleanup();
+		}
 	}
 
 	public List list(String parent) throws IOException {
-		if (!parent.endsWith("/")) {
-			parent = parent+"/";
-		}
-		String response = sendCommand("ls -l "+parent, true);
-		if (response.startsWith("ls")) {
-			return null;
-		}
-		String[] lines = response.split("\n");
-		List ret = new ArrayList(lines.length);
-		for (int i = 0; i < lines.length; i++) {
-			while (lines[i].endsWith("\r") || lines[i].endsWith("\n")) {
-				lines[i] = lines[i].substring(0, lines[i].length() -1);
+		try {
+			if (!parent.endsWith("/")) {
+				parent = parent+"/";
 			}
-			if (lines[i].trim().length() != 0) {
-				ret.add(parent+lines[i].substring(lines[i].lastIndexOf(' ')+1));
+			String response = sendCommand("ls -l "+parent, true, true);
+			if (response.startsWith("ls")) {
+				return null;
 			}
+			String[] lines = response.split("\n");
+			List ret = new ArrayList(lines.length);
+			for (int i = 0; i < lines.length; i++) {
+				while (lines[i].endsWith("\r") || lines[i].endsWith("\n")) {
+					lines[i] = lines[i].substring(0, lines[i].length() -1);
+				}
+				if (lines[i].trim().length() != 0) {
+					ret.add(parent+lines[i].substring(lines[i].lastIndexOf(' ')+1));
+				}
+			}
+			return ret;
+		} catch (IOException ex) {
+			disconnect();
+			throw ex;
+		} finally {
+			cleanup();
 		}
-		return ret;
 	}
 
 	public void put(File source, String destination, boolean overwrite) throws IOException {
-		if (getResource(destination).exists()) {
-			if (overwrite) {
-				sendCommand("rm "+destination, getExpectedRemoveMessage(destination));
-			} else {
-				return;
+		try {
+			if (getResource(destination).exists()) {
+				if (overwrite) {
+					sendCommand("rm "+destination, getExpectedRemoveMessage(destination));
+				} else {
+					return;
+				}
 			}
+			int index = destination.lastIndexOf('/');
+			String destDir = null; 
+			if (index != -1) {
+				destDir = destination.substring(0, index);
+				mkdirs(destDir);
+				sendCommand("cd "+destDir);
+			}
+			String to = destDir != null ? destDir+"/"+source.getName():source.getName();
+			sendCommand("put "+source.getAbsolutePath(), getExpectedUploadMessage(source, to), 0);
+			sendCommand("mv "+to+" "+destination);
+		} catch (IOException ex) {
+			disconnect();
+			throw ex;
+		} finally {
+			cleanup();
 		}
-		int index = destination.lastIndexOf('/');
-		String destDir = null; 
-		if (index != -1) {
-			destDir = destination.substring(0, index);
-			mkdirs(destDir);
-			sendCommand("cd "+destDir);
-		}
-		String to = destDir != null ? destDir+"/"+source.getName():source.getName();
-		sendCommand("put "+source.getAbsolutePath(), getExpectedUploadMessage(source, to), 0);
-		sendCommand("mv "+to+" "+destination);
 	}
 
 
@@ -165,13 +199,36 @@ public class VsftpRepository extends AbstractRepository {
 		return sendCommand(command, sendErrorAsResponse, _readTimeout);
 	}
 
+	protected String sendCommand(String command, boolean sendErrorAsResponse, boolean single) throws IOException {
+		return sendCommand(command, sendErrorAsResponse, single, _readTimeout);
+	}
+
 	protected String sendCommand(String command, boolean sendErrorAsResponse, long timeout) throws IOException {
-		ensureConnectionOpened();
-		Message.debug("sending command '"+command+"' to "+getHost());
-		_out.println(command);
-		_out.flush();
+		return sendCommand(command, sendErrorAsResponse, false, timeout);
+	}
+	
+	protected String sendCommand(String command, boolean sendErrorAsResponse, boolean single, long timeout) throws IOException {
+		single = false; // use of alone commands does not work properly due to a long delay between end of process and end of stream... 
+
+		_inCommand = true;
+		if (!single || _in != null) {
+			ensureConnectionOpened();
+			Message.debug("sending command '"+command+"' to "+getHost());
+			updateLastCommandTime();
+			_out.println(command);
+			_out.flush();
+		} else {
+			sendSingleCommand(command);
+		}
 		
-		return readResponse(sendErrorAsResponse, timeout);
+		try {
+			return readResponse(sendErrorAsResponse, timeout);
+		} finally {
+			_inCommand = false;
+			if (single) {
+				closeConnection();
+			}
+		}
 	}
 
 	protected String readResponse(boolean sendErrorAsResponse) throws IOException {
@@ -187,6 +244,7 @@ public class VsftpRepository extends AbstractRepository {
 				try {
 					int c;
 					while ((c = _in.read()) != -1) {
+						System.out.print((char)c);
 						response.append((char)c);
 						if (response.length() >= PROMPT.length() 
 								&& response.substring(response.length() - PROMPT.length(), response.length()).equals(PROMPT)) {
@@ -211,12 +269,16 @@ public class VsftpRepository extends AbstractRepository {
 		};
 		reader.start();
 		try {
-			reader.join(timeout);
+			reader.join(0);
 		} catch (InterruptedException e) {
 		}
+		updateLastCommandTime();
 		if (exc[0] != null) {
 			throw exc[0];
 		} else if (!done[0]) {
+			if (reader.isAlive())  {
+				reader.stop(); // no way to interrupt it non abruptly
+			}
 			throw new IOException("connection timeout to "+getHost());
 		} else {
 			if ("Not connected.".equals(response)) {
@@ -229,37 +291,47 @@ public class VsftpRepository extends AbstractRepository {
 		}
 	}
 
+	private synchronized void sendSingleCommand(String command) throws IOException {
+		exec(getSingleCommand(command));
+	}
+
 	protected synchronized void ensureConnectionOpened() throws IOException {
 		if (_in == null) {
 			Message.verbose("connecting to "+getUsername()+"@"+getHost()+"... ");
 			String connectionCommand = getConnectionCommand();
-			Message.debug("launching '"+connectionCommand+"'");
-			Process p = Runtime.getRuntime().exec(connectionCommand);
-			_in = new InputStreamReader(p.getInputStream());
-			_err = new InputStreamReader(p.getErrorStream());
-			_out = new PrintWriter(p.getOutputStream());
-			
-			Ivy ivy = IvyContext.getContext().getIvy();
-			ivy.addIvyListener(new IvyListener() {
-				public void progress(IvyEvent event) {
-					disconnect();
-					event.getSource().removeIvyListener(this);
-				}
-			}, EndResolveEvent.NAME);
-			
-			new Thread("err-stream-reader") {
-				public void run() {
-					int c;
-					try {
-						while ((c = _err.read()) != -1) {
-							_errors.append((char)c);
-						}
-					} catch (IOException e) {
-					}
-				}
-			}.start();
+			exec(connectionCommand);
+
 			try {
 				readResponse(false); // waits for first prompt
+
+				if (_reuseConnection > 0) {
+					new Thread() {
+						public void run() {
+							try {
+								long sleep = 10;
+								while (_in != null && sleep > 0) {
+									sleep(sleep);
+									sleep = _reuseConnection - (System.currentTimeMillis() - _lastCommand);
+									if (_inCommand) {
+										sleep = sleep <= 0 ? _reuseConnection : sleep;
+									}
+								}
+							} catch (InterruptedException e) {
+							}
+							disconnect();
+						}
+					}.start();
+				}
+
+				Ivy ivy = IvyContext.getContext().getIvy();
+				ivy.addIvyListener(new IvyListener() {
+					public void progress(IvyEvent event) {
+						disconnect();
+						event.getSource().removeIvyListener(this);
+					}
+				}, EndResolveEvent.NAME);
+				
+				
 			} catch (IOException ex) {
 				closeConnection();
 				throw new IOException("impossible to connect to "+getUsername()+"@"+getHost()+" using "+getAuthentication()+": "+ex.getMessage());
@@ -268,11 +340,45 @@ public class VsftpRepository extends AbstractRepository {
 		}
 	}
 
+	private void updateLastCommandTime() {
+		_lastCommand = System.currentTimeMillis();
+	}
+
+	private void exec(String command) throws IOException {
+		Message.debug("launching '"+command+"'");
+		Process p = Runtime.getRuntime().exec(command);
+		_in = new InputStreamReader(p.getInputStream());
+		_err = new InputStreamReader(p.getErrorStream());
+		_out = new PrintWriter(p.getOutputStream());
+		
+		new Thread() {
+			public void run() {
+				int c;
+				try {
+					while (_err != null && (c = _err.read()) != -1) {
+						_errors.append((char)c);
+					}
+				} catch (IOException e) {
+				}
+			}
+		}.start();
+	}
+
+
+	/**
+	 * Called whenever an api level method end
+	 */
+	private void cleanup() {
+		if (_reuseConnection == 0) {
+			disconnect();
+		}
+	}
+	
 	public synchronized void disconnect() {
 		if (_in != null) {
 			Message.verbose("disconnecting from "+getHost()+"... ");
 			try {
-				sendCommand("exit");
+				sendCommand("exit", false, 300);
 			} catch (IOException e) {
 			} finally {
 				closeConnection();
@@ -323,6 +429,10 @@ public class VsftpRepository extends AbstractRepository {
 		}
 	}
 
+	protected String getSingleCommand(String command) {
+		return "vsh -noprompt -auth "+_authentication+" "+_username+"@"+_host+" "+command;
+	}
+	
 	protected String getConnectionCommand() {
 		return "vsftp -noprompt -auth "+_authentication+" "+_username+"@"+_host;
 	}
@@ -376,5 +486,25 @@ public class VsftpRepository extends AbstractRepository {
 
 	public String toString() {
 		return getName()+" "+getUsername()+"@"+getHost()+" ("+getAuthentication()+")";
+	}
+
+	/**
+	 * Sets the reuse connection time.
+	 * The same connection will be reused if the time here does not last 
+	 * between two commands.
+	 * O indicates that the connection should never be reused
+	 * 
+	 * @param time
+	 */
+	public void setReuseConnection(long time) {
+		_reuseConnection = time;
+	}
+
+	public long getReadTimeout() {
+		return _readTimeout;
+	}
+
+	public void setReadTimeout(long readTimeout) {
+		_readTimeout = readTimeout;
 	}
 }
