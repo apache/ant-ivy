@@ -251,7 +251,6 @@ public class VsftpRepository extends AbstractRepository {
 				try {
 					int c;
 					while ((c = _in.read()) != -1) {
-						System.out.print((char)c);
 						response.append((char)c);
 						if (response.length() >= PROMPT.length() 
 								&& response.substring(response.length() - PROMPT.length(), response.length()).equals(PROMPT)) {
