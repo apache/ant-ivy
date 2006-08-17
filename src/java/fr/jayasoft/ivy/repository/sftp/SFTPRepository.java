@@ -60,7 +60,7 @@ public class SFTPRepository extends AbstractRepository {
 		}
 
 		public boolean count(long count) {
-			fireTransferProgress(null, count);
+			fireTransferProgress(count);
 			return true;
 		}
 	}

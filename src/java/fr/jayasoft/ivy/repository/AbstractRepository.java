@@ -47,9 +47,8 @@ public abstract class AbstractRepository implements Repository {
         fireTransferEvent(_evt);
     }
     
-    protected void fireTransferProgress(byte[] buffer, long length) {
+    protected void fireTransferProgress(long length) {
         _evt.setEventType(TransferEvent.TRANSFER_PROGRESS);
-        _evt.setBuffer(buffer);
         _evt.setLength(length);
         if (!_evt.isTotalLengthSet()) {
             _evt.setTotalLength(_evt.getTotalLength() + length);
@@ -57,13 +56,10 @@ public abstract class AbstractRepository implements Repository {
         fireTransferEvent(_evt);
     }
     
-    protected void fireTransferCompleted(byte[] buffer, long length) {
+    protected void fireTransferCompleted() {
         _evt.setEventType(TransferEvent.TRANSFER_COMPLETED);
-        _evt.setBuffer(buffer);
-        _evt.setLength(length);
-        if (!_evt.isTotalLengthSet()) {
-            _evt.setTotalLength(_evt.getTotalLength() + length);
-            _evt.setTotalLengthSet(true);
+        if (_evt.getTotalLength() > 0 && !_evt.isTotalLengthSet()) {
+        	_evt.setTotalLengthSet(true);
         }
         fireTransferEvent(_evt);
         _evt = null;
@@ -71,7 +67,6 @@ public abstract class AbstractRepository implements Repository {
     
     protected void fireTransferCompleted(long totalLength) {
         _evt.setEventType(TransferEvent.TRANSFER_COMPLETED);
-        _evt.setBuffer(null);
         _evt.setTotalLength(totalLength);
         _evt.setTotalLengthSet(true);
         fireTransferEvent(_evt);

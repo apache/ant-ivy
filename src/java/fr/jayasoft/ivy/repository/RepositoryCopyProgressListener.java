@@ -26,11 +26,12 @@ public class RepositoryCopyProgressListener implements CopyProgressListener {
     }
 
     public void progress(CopyProgressEvent evt) {
-        _repository.fireTransferProgress(evt.getBuffer(), evt.getReadBytes());
+        _repository.fireTransferProgress(evt.getReadBytes());
     }
 
     public void end(CopyProgressEvent evt) {
-        _repository.fireTransferCompleted(evt.getBuffer(), evt.getReadBytes());
+        _repository.fireTransferProgress(evt.getReadBytes());
+        _repository.fireTransferCompleted();
     }
 
     public Long getTotalLength() {

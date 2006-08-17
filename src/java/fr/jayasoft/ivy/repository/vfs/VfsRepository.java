@@ -24,9 +24,9 @@ import org.apache.commons.vfs.FileSystemManager;
 import org.apache.commons.vfs.impl.StandardFileSystemManager;
 
 import fr.jayasoft.ivy.repository.AbstractRepository;
+import fr.jayasoft.ivy.repository.RepositoryCopyProgressListener;
 import fr.jayasoft.ivy.repository.Resource;
 import fr.jayasoft.ivy.repository.TransferEvent;
-import fr.jayasoft.ivy.util.CopyProgressEvent;
 import fr.jayasoft.ivy.util.CopyProgressListener;
 import fr.jayasoft.ivy.util.FileUtil;
 import fr.jayasoft.ivy.util.Message;
@@ -38,6 +38,8 @@ public class VfsRepository extends AbstractRepository {
 	 */
 	private static final String IVY_VFS_CONFIG = "ivy_vfs.xml";
 	private StandardFileSystemManager _manager = null;
+	private final CopyProgressListener _progress = new RepositoryCopyProgressListener(this);
+	
 
 	/**
 	 * Create a new Ivy VFS Repository Instance
@@ -92,20 +94,6 @@ public class VfsRepository extends AbstractRepository {
 		return result;
 	}
 
-	private final CopyProgressListener _progress = new CopyProgressListener() {
-		public void start(CopyProgressEvent evt) {
-			fireTransferStarted();
-		}
-		
-		public void progress(CopyProgressEvent evt) {
-			fireTransferProgress(evt.getBuffer(), evt.getReadBytes());
-		}
-		
-		public void end(CopyProgressEvent evt) {
-			fireTransferCompleted(evt.getBuffer(), evt.getReadBytes());
-		}
-	};
-	
 	
 	protected void finalize() {
 		if (_manager != null) {

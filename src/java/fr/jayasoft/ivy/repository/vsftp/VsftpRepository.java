@@ -17,7 +17,9 @@ import fr.jayasoft.ivy.event.IvyEvent;
 import fr.jayasoft.ivy.event.IvyListener;
 import fr.jayasoft.ivy.event.resolve.EndResolveEvent;
 import fr.jayasoft.ivy.repository.AbstractRepository;
+import fr.jayasoft.ivy.repository.BasicResource;
 import fr.jayasoft.ivy.repository.Resource;
+import fr.jayasoft.ivy.repository.TransferEvent;
 import fr.jayasoft.ivy.util.Message;
 
 /**
@@ -64,6 +66,10 @@ public class VsftpRepository extends AbstractRepository {
 	private Thread _errorsReader;
 
 	public Resource getResource(String source) throws IOException {
+		return new VsftpResource(this, source);
+	}
+
+	protected Resource getInitResource(String source) throws IOException {
 		try {
 			return lslToResource(source, sendCommand("ls -l "+source, true, true));
 		} catch (IOException ex) {
@@ -74,8 +80,9 @@ public class VsftpRepository extends AbstractRepository {
 		}
 	}
 
-	public void get(String source, File destination) throws IOException {
+	public void get(final String source, File destination) throws IOException {
 		try {
+	        fireTransferInitiated(getResource(source), TransferEvent.REQUEST_GET);
 			File destDir = destination.getParentFile();
 			if (destDir != null) {
 				sendCommand("lcd "+destDir.getAbsolutePath());
@@ -86,12 +93,54 @@ public class VsftpRepository extends AbstractRepository {
 
 			int index = source.lastIndexOf('/');
 			String srcName = index == -1?source:source.substring(index+1);
-			File to = destDir == null ? new File(srcName):new File(destDir, srcName);
+			final File to = destDir == null ? new File(srcName):new File(destDir, srcName);
 
-			sendCommand("get "+source, getExpectedDownloadMessage(source, to), 0);
+			final IOException ex[] = new IOException[1];
+			Thread get = new Thread() {
+				public void run() {
+					try {
+						sendCommand("get "+source, getExpectedDownloadMessage(source, to), 0);
+					} catch (IOException e) {
+						ex[0] = e;
+					}
+				}
+			};
+			get.start();
+			
+			long prevLength = 0;
+			long lastUpdate = System.currentTimeMillis();
+			long timeout = _readTimeout;
+			while (get.isAlive()) {
+				IvyContext.getContext().getIvy().checkInterrupted();
+				long length = to.exists()?to.length():0;
+				if (length > prevLength) {
+					fireTransferProgress(length - prevLength);
+					lastUpdate = System.currentTimeMillis();
+					prevLength = length;
+				} else {
+					if (System.currentTimeMillis() - lastUpdate > timeout) {
+						Message.verbose("download hang for more than "+timeout+"ms. Interrupting.");
+						get.interrupt();
+						if (to.exists()) to.delete();
+						throw new IOException(source+" download timeout from "+getHost());
+					}
+				}
+				try {
+					get.join(100);
+				} catch (InterruptedException e) {
+					if (to.exists()) to.delete();
+					return;
+				}
+			}
+			if (ex[0] != null) {
+				if (to.exists()) to.delete();
+				throw ex[0];
+			}
 
 			to.renameTo(destination);
+			fireTransferCompleted(destination.length());
 		} catch (IOException ex) {
+			fireTransferError(ex);
 			cleanup(ex);
 			throw ex;
 		} finally {
@@ -246,7 +295,7 @@ public class VsftpRepository extends AbstractRepository {
 		final StringBuffer response = new StringBuffer();
 		final IOException[] exc = new IOException[1];
 		final boolean[] done = new boolean[1];
-		Thread reader = new Thread() {
+		Runnable r = new Runnable() {
 			public void run() {
 				try {
 					int c;
@@ -273,16 +322,22 @@ public class VsftpRepository extends AbstractRepository {
 				}			
 			}
 		};
-		reader.start();
-		try {
-			reader.join(timeout);
-		} catch (InterruptedException e) {
+		Thread reader = null;
+		if (timeout == 0) {
+			r.run();
+		} else {
+			reader = new Thread(r);
+			reader.start();
+			try {
+				reader.join(timeout);
+			} catch (InterruptedException e) {
+			}
 		}
 		updateLastCommandTime();
 		if (exc[0] != null) {
 			throw exc[0];
 		} else if (!done[0]) {
-			if (reader.isAlive())  {
+			if (reader != null && reader.isAlive())  {
 				reader.stop(); // no way to interrupt it non abruptly
 			}
 			throw new IOException("connection timeout to "+getHost());
@@ -442,20 +497,20 @@ public class VsftpRepository extends AbstractRepository {
 	 */
 	protected Resource lslToResource(String file, String responseLine) {
 		if (responseLine == null || responseLine.startsWith("ls")) {
-			return new VsftpResource(this, file, false, 0, 0);
+			return new BasicResource(file, false, 0, 0, false);
 		} else {
 			String[] parts = responseLine.split("\\s+");
 			if (parts.length != 9) {
 				Message.debug("unrecognized ls format: "+responseLine);
-				return new VsftpResource(this, file, false, 0, 0);
+				return new BasicResource(file, false, 0, 0, false);
 			} else {
 				try {
 					long contentLength = Long.parseLong(parts[3]);
 					String date = parts[4]+" "+parts[5]+" "+parts[6]+" "+parts[7];
-					return new VsftpResource(this, file, true, contentLength, FORMAT.parse(date).getTime());
+					return new BasicResource(file, true, contentLength, FORMAT.parse(date).getTime(), false);
 				} catch (Exception ex) {
 					Message.warn("impossible to parse server response: "+responseLine+": "+ex);
-					return new VsftpResource(this, file, false, 0, 0);
+					return new BasicResource(file, false, 0, 0, false);
 				}
 			}
 		}

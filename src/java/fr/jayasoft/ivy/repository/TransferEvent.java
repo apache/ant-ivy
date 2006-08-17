@@ -96,7 +96,6 @@ public class TransferEvent extends IvyEvent {
     private File _localFile;
 
     private Repository _repository;
-    private byte[] _buffer;
     private long _length;
 
     private long _totalLength;
@@ -122,10 +121,9 @@ public class TransferEvent extends IvyEvent {
         _exception = exception;
     }
 
-    public TransferEvent(Ivy ivy, final Repository repository, final Resource resource, byte[] buffer, long length, final int requestType) {
+    public TransferEvent(Ivy ivy, final Repository repository, final Resource resource, long length, final int requestType) {
         this(ivy, repository, resource, TRANSFER_PROGRESS, requestType);
 
-        _buffer = buffer;
         _length = length;
         _totalLength = length;
     }
@@ -249,15 +247,6 @@ public class TransferEvent extends IvyEvent {
         _localFile = localFile;
     }
 
-    public byte[] getBuffer() {
-        return _buffer;
-    }
-    
-
-    protected void setBuffer(byte[] buffer) {
-        _buffer = buffer;
-    }
-    
 
     public long getLength() {
         return _length;
