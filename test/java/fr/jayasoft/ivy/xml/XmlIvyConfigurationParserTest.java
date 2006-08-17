@@ -130,6 +130,15 @@ public class XmlIvyConfigurationParserTest extends TestCase {
         assertEquals(true, ivy.getStatusManager().isIntegration("bronze"));
     }
     
+    public void testConflictManager() throws Exception {
+        Ivy ivy = new Ivy();
+        XmlIvyConfigurationParser parser = new XmlIvyConfigurationParser(ivy);
+        parser.parse(XmlIvyConfigurationParserTest.class.getResource("ivyconf-conflict-manager.xml"));
+        
+        assertEquals("latest-time", ivy.getConflictManager(new ModuleId("jayasoft", "ivyde")).getName());
+        assertEquals("all", ivy.getConflictManager(new ModuleId("jayasoft", "uistate")).getName());
+    }
+    
     public void testVersionMatchers1() throws Exception {
         Ivy ivy = new Ivy();
         XmlIvyConfigurationParser parser = new XmlIvyConfigurationParser(ivy);

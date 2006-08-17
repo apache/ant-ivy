@@ -32,6 +32,7 @@ Changes:
   - NEW: adding to SPECIAL_MEANINGS in LatestRevisionStrategy (IVY-121)
   - NEW: Allow use of system properties in ivyconf.xml (IVY-228)
 
+  - IMPROVE: define conflict manager per organisation/module in ivyconf (IVY-270)
   - IMPROVE: transitive parameter in resolve (IVY-21)
   - IMPROVE: add syncing feature in retrieve (IVY-33)
   - IMPROVE: use of md5 and/or sha1 files to check downloads (IVY-27)

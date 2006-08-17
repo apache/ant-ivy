@@ -611,9 +611,9 @@ public class Ivy implements TransferListener {
      * @param resolverName
      * @param branch 
      */
-    public void addModuleConfiguration(ModuleId mid, PatternMatcher matcher, String resolverName, String branch) {
+    public void addModuleConfiguration(ModuleId mid, PatternMatcher matcher, String resolverName, String branch, String conflictManager) {
         checkResolverName(resolverName);
-        _moduleConfigurations.put(new ModuleIdMatcher(mid, matcher), new ModuleSettings(resolverName, branch));
+        _moduleConfigurations.put(new ModuleIdMatcher(mid, matcher), new ModuleSettings(resolverName, branch, conflictManager));
     }
     
     public File getDefaultIvyUserDir() {
@@ -697,6 +697,23 @@ public class Ivy implements TransferListener {
 	}
 	public void setDefaultBranch(String defaultBranch) {
 		_defaultBranch = defaultBranch;
+	}
+
+	public ConflictManager getConflictManager(ModuleId moduleId) {
+        for (Iterator iter = _moduleConfigurations.keySet().iterator(); iter.hasNext();) {
+            ModuleIdMatcher midm = (ModuleIdMatcher)iter.next();
+            if (midm.matches(moduleId)) {
+            	ModuleSettings  ms = (ModuleSettings)_moduleConfigurations.get(midm);
+            	if (ms.getConflictManager() != null) {
+            		ConflictManager cm = getConflictManager(ms.getConflictManager());
+            		if (cm == null) {
+            			throw new IllegalStateException("ivy badly configured: unknown conflict manager "+ms.getConflictManager());
+            		}
+					return cm;
+            	}
+            }
+        }
+		return getDefaultConflictManager();
 	}
 
     public void addConfigured(ConflictManager cm) {
@@ -2735,9 +2752,11 @@ public class Ivy implements TransferListener {
 	private static class ModuleSettings {
 		private String _resolverName;
 		private String _branch;
-		public ModuleSettings(String resolverName, String branch) {
+		private String _conflictManager;
+		public ModuleSettings(String resolverName, String branch, String conflictManager) {
 			_resolverName = resolverName;
 			_branch = branch;
+			_conflictManager = conflictManager;
 		}
 		public String toString() {
 			return _resolverName != null ? "resolver: "+_resolverName:""
@@ -2748,6 +2767,9 @@ public class Ivy implements TransferListener {
 		}
 		public String getResolverName() {
 			return _resolverName;
+		}
+		protected String getConflictManager() {
+			return _conflictManager;
 		}
 	}
 

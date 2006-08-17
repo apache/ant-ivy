@@ -276,9 +276,10 @@ public class XmlIvyConfigurationParser extends DefaultHandler {
                 String module = _ivy.substitute((String)attributes.get("name"));
                 String resolver = _ivy.substitute((String)attributes.get("resolver"));
                 String branch = _ivy.substitute((String)attributes.get("branch"));
+                String cm = _ivy.substitute((String)attributes.get("conflict"));
                 String matcher = _ivy.substitute((String)attributes.get("matcher"));
                 matcher = matcher == null ? PatternMatcher.EXACT_OR_REGEXP : matcher;
-                _ivy.addModuleConfiguration(new ModuleId(organisation, module), _ivy.getMatcher(matcher), resolver, branch);
+                _ivy.addModuleConfiguration(new ModuleId(organisation, module), _ivy.getMatcher(matcher), resolver, branch, cm);
             }
         } catch (Exception ex) {
             throw new SAXException("problem in config file: "+ex.getMessage(), ex);

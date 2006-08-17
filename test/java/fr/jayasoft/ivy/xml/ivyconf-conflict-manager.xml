@@ -1,0 +1,6 @@
+<ivyconf>
+	<modules>
+		<module organisation="jayasoft" name="ivy*" matcher="glob" conflict="latest-time"/>
+		<module organisation="jayasoft" name=".*" conflict="all"/>
+	</modules>
+</ivyconf>
