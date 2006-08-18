@@ -138,11 +138,7 @@ public class XmlReportParser {
     }
 
 	public Artifact[] getArtifacts(ModuleId moduleId, String conf, File cache) throws ParseException, IOException {
-        File report = new File(cache, XmlReportOutputter.getReportFileName(moduleId, conf));
-        if (!report.exists()) {
-            throw new IllegalStateException("no report file found for "+moduleId+" "+conf+" in "+cache+": ivy was looking for "+report);
-        }
-		return getArtifacts(report);
+		return getArtifacts(getReportFile(moduleId, conf, cache));
     }
 
 	private Artifact[] getArtifacts(File report) throws ParseException {
@@ -158,11 +154,7 @@ public class XmlReportParser {
 	}
         
     public ModuleRevisionId[] getDependencyRevisionIds(ModuleId moduleId, String conf, File cache) throws ParseException, IOException {
-        File report = new File(cache, XmlReportOutputter.getReportFileName(moduleId, conf));
-        if (!report.exists()) {
-            throw new IllegalStateException("no report file found for "+moduleId+" "+conf+" in "+cache+": ivy was looking for "+report);
-        }
-        return getDependencyRevisionIds(report);
+        return getDependencyRevisionIds(getReportFile(moduleId, conf, cache));
     }
 
     private ModuleRevisionId[] getDependencyRevisionIds(File report) throws ParseException {
@@ -181,11 +173,7 @@ public class XmlReportParser {
      * Returns all the mrids of the dependencies which have a real module descriptor, i.e. not a default one
      */
     public ModuleRevisionId[] getRealDependencyRevisionIds(ModuleId moduleId, String conf, File cache) throws ParseException, IOException {
-        File report = new File(cache, XmlReportOutputter.getReportFileName(moduleId, conf));
-        if (!report.exists()) {
-            throw new IllegalStateException("no report file found for "+moduleId+" "+conf+" in "+cache+": ivy was looking for "+report);
-        }
-        return getRealDependencyRevisionIds(report);
+        return getRealDependencyRevisionIds(getReportFile(moduleId, conf, cache));
     }
 
     private ModuleRevisionId[] getRealDependencyRevisionIds(File report) throws ParseException {
@@ -200,5 +188,13 @@ public class XmlReportParser {
         }
     }
         
+    private File getReportFile(ModuleId moduleId, String conf, File cache) {
+    	File report = new File(cache, XmlReportOutputter.getReportFileName(moduleId, conf));
+    	if (!report.exists()) {
+    		throw new IllegalStateException("no report file found for "+moduleId+" "+conf+" in "+cache+": ivy was looking for "+report);
+    	}
+    	return report;
+    }
     
 }
+
