@@ -59,6 +59,7 @@ Changes:
   - FIX: The clean-cache target in /src/example/hello-ivy/build.xml file refers to ${user.home}/.ivy-cache instead of ${user.home}/.ivy/cache/ (IVY-265)
 
 * thanks to Ivy Community:
+  - NEW: SSH Resolver added and aligned with SFTP resolver (IVY-273) (thanks to Andreas Sahlbach)
   - NEW: ability to turn off transitivity at configuration level (IVY-103) (thanks to Karl Baum and Maarten Coene)
   - NEW: a conflict manager that is able to allow implementation changes but not api changes (1.2.x - OK), (1.x.x - Not OK) (IVY-223) (thanks to Anders Janmyr)
   - NEW: enhance standalone mode to execute java program by creating classloader of dependant jars from cache (IVY-210) (thanks to Peter Hayes)
