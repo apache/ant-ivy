@@ -18,7 +18,7 @@ public abstract class AbstractSshBasedRepository extends AbstractRepository {
     private String keyFilePassword = null;
     private String user = "guest";
     private String host = null;
-    private int port = 22;
+    private int port = -1;
 
     public AbstractSshBasedRepository() {
         super();
