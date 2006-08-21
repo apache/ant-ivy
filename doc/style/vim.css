@@ -1,0 +1,19 @@
+
+div.codeblock {
+  padding: 5px;
+	margin-bottom:10px;
+  border: 1px solid #CCC;
+  background-color: #EEE;
+}
+
+.synComment    { color: #0000FF }
+.synConstant   { color: #0000FF }
+.synIdentifier { color: #008B8B }
+.synStatement  { color: #A52A2A ; font-weight: bold }
+.synPreProc    { color: #A020F0 }
+.synType       { color: #2E8B57 ; font-weight: bold }
+.synSpecial    { color: #6A5ACD }
+.synUnderlined { color: #000000 ; text-decoration: underline }
+.synError      { color: #FFFFFF ; background: #FF0000 none }
+.synTodo       { color: #0000FF ; background: #FFFF00 none }
+

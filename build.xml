@@ -147,6 +147,18 @@
 		</junitreport>
 	</target>
 	
+	<target name="get-dxml" description="download dxml doc file from web site">
+		<get src="http://www.jayasoft.org/ivy/doc/dxml" dest="${dxml.doc.file}" verbose="true" /> 
+	</target>
+	
+	<target name="main-doc" description="generates doc from dxml file -- WARNING: this operation is very slow and requires ruby 1.8.2 or greater">
+		<echo message="generating documentation"/>
+		<echo message="this operation is very slow... be patient"/>
+		<exec dir="${basedir}" executable="ruby">
+			<arg line="${doc.src.dir}/dxml_to_html.rb"/>
+		</exec>
+	</target>
+	
 	<target name="install" depends="jar" if="env.ANT_HOME">
 		<copy file="${artifacts.build.dir}/ivy.jar" todir="${env.ANT_HOME}/lib"/>
 	</target>
