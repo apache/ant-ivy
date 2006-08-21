@@ -14,6 +14,7 @@ import junit.framework.TestCase;
  * Test BasicURLHandler
  */
 public class BasicURLHandlerTest extends TestCase {
+	// remote.test
     public void testIsReachable() throws Exception {
         URLHandler handler = new BasicURLHandler();
         assertTrue(handler.isReachable(new URL("http://www.google.fr/")));

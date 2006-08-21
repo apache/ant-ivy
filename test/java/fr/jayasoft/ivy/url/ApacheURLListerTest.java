@@ -19,6 +19,7 @@ import java.util.List;
  * @author <a href="johnmshields@yahoo.com">John M. Shields</a>
  */
 public class ApacheURLListerTest extends TestCase {
+	// remote.test
     //~ Methods ----------------------------------------------------------------
 
     /**

@@ -30,7 +30,9 @@ import fr.jayasoft.ivy.report.DownloadStatus;
  * 
  */
 public class IBiblioResolverTest extends TestCase {
-    private File _cache;
+	// remote.test
+
+	private File _cache;
     private ResolveData _data;
     private Ivy _ivy;
     

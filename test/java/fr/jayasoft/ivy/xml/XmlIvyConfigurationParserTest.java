@@ -291,17 +291,6 @@ public class XmlIvyConfigurationParserTest extends TestCase {
         assertEquals("included/myrep/[organisation]/[module]/[type]s/[artifact]-[revision].[ext]", ivyPatterns.get(0));
     }
     
-    public void testIncludeHttpUrl() throws Exception {
-        configureURLHandler();
-        Ivy ivy = new Ivy();
-        XmlIvyConfigurationParser parser = new XmlIvyConfigurationParser(ivy);
-        parser.parse(new URL("http://www.jayasoft.org/misc/ivy/test/ivyconf-include-http-url.xml"));
-        
-        DependencyResolver resolver = ivy.getResolver("ivyrep");
-        assertNotNull(resolver);
-        assertTrue(resolver instanceof IvyRepResolver);
-    }
-    
     public void testParser() throws Exception {
         Ivy ivy = new Ivy();
         XmlIvyConfigurationParser parser = new XmlIvyConfigurationParser(ivy);

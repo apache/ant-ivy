@@ -24,6 +24,8 @@
 	   <delete dir="${test.build.dir}"/>
 	   <delete dir="${artifacts.build.dir}"/>
 	   <delete dir="${test.report.dir}"/>
+	   <delete dir="${javadoc.build.dir}"/>
+	   <delete dir="${doc.build.dir}"/>
 	   <delete dir="${build.dir}"/>
 	</target>
 	
@@ -39,9 +41,14 @@
 	
 	<target name="clean-all" depends="clean, clean-lib, clean-examples"/>
 	
-	<target name="noresolve">
+	<target name="noresolve" description="use to skip dependency resolution">
 		<property name="no.resolve" value="true"/>
 	</target>
+	
+	<target name="offline" depends="noresolve" description="use to indicate no internet connection is available">
+		<property name="offline" value="true" />
+	</target>
+	
 
 	<target name="resolve" depends="prepare" unless="no.resolve">
 		<ivy:retrieve/>
@@ -81,8 +88,27 @@
 		</javadoc>
 	</target>
 
+	<target name="init-tests-offline" if="offline">
+ 		    <fileset id="test.fileset" dir="${test.dir}">
+ 		    	<include name="**/*Test.java"/>
+ 		    	<contains text="junit"/>
+ 		    	<not><contains text="remote.test"/></not>
+ 		    </fileset>
+	</target>
 		
-	<target name="test" depends="jar">
+	<target name="init-tests-online" unless="offline">
+ 		    <fileset id="test.fileset" dir="${test.dir}">
+ 		    	<include name="**/*Test.java"/>
+ 		    	<contains text="junit"/>
+ 		    </fileset>
+	</target>
+	
+	<target name="init-tests" depends="init-tests-offline, init-tests-online" >
+		<property name="test.fileset.property" refid="test.fileset"/>
+		<echo message="${test.fileset.property}"/>
+	</target>
+		
+	<target name="test" depends="jar, init-tests">
 		<path id="run.classpath">
 			<path refid="build.classpath"/>
 			<pathelement location="${artifacts.build.dir}/ivy.jar"/>
@@ -107,12 +133,18 @@
             </classpath>
 			<formatter type="xml"/>
 			<batchtest todir="${test.report.dir}">
-    		    <fileset dir="${test.dir}">
-    		    	<include name="**/*Test.java"/>
-    		    	<contains text="junit"/>
-    		    </fileset>
+    		    <fileset refid="test.fileset" />
 			</batchtest>
         </junit>
+	</target>
+
+	<target name="test-report" depends="test">
+		<junitreport>
+			<fileset dir="${test.report.dir}">
+				<include name="TEST-*.xml" />
+			</fileset>
+			<report format="frames" todir="${test.report.dir}" />
+		</junitreport>
 	</target>
 	
 	<target name="install" depends="jar" if="env.ANT_HOME">

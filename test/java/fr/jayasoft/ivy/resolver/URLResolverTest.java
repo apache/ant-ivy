@@ -32,6 +32,7 @@ import fr.jayasoft.ivy.report.DownloadStatus;
  * 
  */
 public class URLResolverTest extends TestCase {
+	// remote.test
     private File _cache;
     private ResolveData _data;
     private Ivy _ivy = new Ivy();
