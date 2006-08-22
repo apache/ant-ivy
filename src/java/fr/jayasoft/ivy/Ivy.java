@@ -1330,9 +1330,6 @@ public class Ivy implements TransferListener {
             if (!node.isEvicted(node.getRootModuleConf())) {
                 String[] confs = node.getRealConfs(conf);
                 for (int i = 0; i < confs.length; i++) {
-                    if (node.getRequestedConf()==null) {
-                        node.setRequestedConf(confs[i]);
-                    }
                     doFetchDependencies(node, confs[i]);
                 }
             }
@@ -1372,6 +1369,14 @@ public class Ivy implements TransferListener {
         }
         // we handle the case where the asked configuration extends others:
         // we have to first fetch the extended configurations
+        
+        // first we check if this is the actual requested conf (not an extended one)
+        boolean requestedConfSet = false;
+        if (node.getRequestedConf()==null) {
+            node.setRequestedConf(conf);
+            requestedConfSet = true;
+        }
+        // now let's recurse in extended confs
         String[] extendedConfs = c.getExtends();
         if (extendedConfs.length > 0) {
             node.updateConfsToFetch(Arrays.asList(extendedConfs));
@@ -1380,6 +1385,7 @@ public class Ivy implements TransferListener {
             fetchDependencies(node, extendedConfs[i], false);
         }
         
+        // now we can actually resolve this configuration dependencies
         DependencyDescriptor dd = node.getDependencyDescriptor(node.getParent());
         if (!isDependenciesFetched(node, conf) && (dd == null || node.isTransitive())) {
             Collection dependencies = node.getDependencies(conf, true);
@@ -1399,6 +1405,11 @@ public class Ivy implements TransferListener {
                     fetchDependencies(dep, confs[i], true);
                 }
             }
+        }
+        // we have finiched with this configuration, if it was the original requested conf
+        // we can clean it now
+        if (requestedConfSet) {
+        	node.setRequestedConf(null);
         }
         
     }

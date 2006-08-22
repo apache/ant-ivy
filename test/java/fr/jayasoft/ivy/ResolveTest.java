@@ -6,7 +6,9 @@
 package fr.jayasoft.ivy;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -845,6 +847,102 @@ public class ResolveTest extends TestCase {
         // dependencies
         assertTrue(_ivy.getIvyFileInCache(_cache, ModuleRevisionId.newInstance("org1", "mod1.2", "2.0")).exists());
         assertTrue(_ivy.getArchiveFileInCache(_cache, "org1", "mod1.2", "2.0", "mod1.2", "jar", "jar").exists());
+
+        // same as before, but resolve both confs in one call         
+        ResolveReport r = _ivy.resolve(new File("test/repositories/1/org2/mod2.1/ivys/ivy-0.3.1.xml").toURL(),
+                null, new String[] {"runtime", "compile"}, _cache, null, true);
+        assertEquals(1, r.getConfigurationReport("compile").getArtifactsNumber());
+        assertEquals(2, r.getConfigurationReport("runtime").getArtifactsNumber());
+    }
+    
+    public void testDisableTransitivityPerConfiguration2() throws Exception {
+        // mod2.1 (compile, runtime) depends on mod1.1 which depends on mod1.2
+        // compile conf is not transitive
+    	// compile extends runtime 
+        
+        // first we resolve compile conf only
+        _ivy.resolve(new File("test/repositories/1/org2/mod2.1/ivys/ivy-0.3.2.xml").toURL(),
+                null, new String[] {"compile"}, _cache, null, true);
+        
+        // dependencies
+        assertTrue(_ivy.getIvyFileInCache(_cache, ModuleRevisionId.newInstance("org1", "mod1.1", "1.0")).exists());
+        assertTrue(_ivy.getArchiveFileInCache(_cache, "org1", "mod1.1", "1.0", "mod1.1", "jar", "jar").exists());
+
+        assertFalse(_ivy.getIvyFileInCache(_cache, ModuleRevisionId.newInstance("org1", "mod1.2", "2.0")).exists());
+        assertFalse(_ivy.getArchiveFileInCache(_cache, "org1", "mod1.2", "2.0", "mod1.2", "jar", "jar").exists());
+
+        // then we resolve runtime conf
+        _ivy.resolve(new File("test/repositories/1/org2/mod2.1/ivys/ivy-0.3.2.xml").toURL(),
+                null, new String[] {"runtime"}, _cache, null, true);
+        
+        // dependencies
+        assertTrue(_ivy.getIvyFileInCache(_cache, ModuleRevisionId.newInstance("org1", "mod1.2", "2.0")).exists());
+        assertTrue(_ivy.getArchiveFileInCache(_cache, "org1", "mod1.2", "2.0", "mod1.2", "jar", "jar").exists());
+
+        // same as before, but resolve both confs in one call         
+        ResolveReport r = _ivy.resolve(new File("test/repositories/1/org2/mod2.1/ivys/ivy-0.3.2.xml").toURL(),
+                null, new String[] {"runtime", "compile"}, _cache, null, true);
+        assertEquals(1, r.getConfigurationReport("compile").getArtifactsNumber());
+        assertEquals(2, r.getConfigurationReport("runtime").getArtifactsNumber());
+    }
+    
+    public void testDisableTransitivityPerConfiguration3() throws Exception {
+        // mod2.1 (compile, runtime) depends on mod1.1 which depends on mod1.2
+        // compile conf is not transitive
+    	// runtime extends compile 
+        
+        // first we resolve compile conf only
+        _ivy.resolve(new File("test/repositories/1/org2/mod2.1/ivys/ivy-0.3.3.xml").toURL(),
+                null, new String[] {"compile"}, _cache, null, true);
+        
+        // dependencies
+        assertTrue(_ivy.getIvyFileInCache(_cache, ModuleRevisionId.newInstance("org1", "mod1.1", "1.0")).exists());
+        assertTrue(_ivy.getArchiveFileInCache(_cache, "org1", "mod1.1", "1.0", "mod1.1", "jar", "jar").exists());
+
+        assertFalse(_ivy.getIvyFileInCache(_cache, ModuleRevisionId.newInstance("org1", "mod1.2", "2.0")).exists());
+        assertFalse(_ivy.getArchiveFileInCache(_cache, "org1", "mod1.2", "2.0", "mod1.2", "jar", "jar").exists());
+
+        // then we resolve runtime conf
+        _ivy.resolve(new File("test/repositories/1/org2/mod2.1/ivys/ivy-0.3.3.xml").toURL(),
+                null, new String[] {"runtime"}, _cache, null, true);
+        
+        // dependencies
+        assertTrue(_ivy.getIvyFileInCache(_cache, ModuleRevisionId.newInstance("org1", "mod1.2", "2.0")).exists());
+        assertTrue(_ivy.getArchiveFileInCache(_cache, "org1", "mod1.2", "2.0", "mod1.2", "jar", "jar").exists());
+
+        // same as before, but resolve both confs in one call         
+        ResolveReport r = _ivy.resolve(new File("test/repositories/1/org2/mod2.1/ivys/ivy-0.3.3.xml").toURL(),
+                null, new String[] {"compile", "runtime"}, _cache, null, true);
+        assertEquals(1, r.getConfigurationReport("compile").getArtifactsNumber());
+        assertEquals(2, r.getConfigurationReport("runtime").getArtifactsNumber());
+    }
+    
+    public void testDisableTransitivityPerConfiguration4() throws Exception {
+    	// mod2.2 (A,B,compile) depends on mod 2.1 (A->runtime;B->compile)
+    	// compile is not transitive and extends A and B
+    	//
+        // mod2.1 (compile, runtime) depends on mod1.1 which depends on mod1.2
+        // compile conf is not transitive and extends runtime 
+        
+    	ResolveReport r = _ivy.resolve(new File("test/repositories/1/org2/mod2.2/ivys/ivy-0.6.xml").toURL(),
+                null, new String[] {"*"}, _cache, null, true);
+    	// here we should get all three recursive dependencies
+        assertEquals(new HashSet(Arrays.asList(new ModuleRevisionId[] {
+        		ModuleRevisionId.newInstance("org2", "mod2.1", "0.3.2"),
+        		ModuleRevisionId.newInstance("org1", "mod1.1", "1.0"),
+        		ModuleRevisionId.newInstance("org1", "mod1.2", "2.0"),
+        })), r.getConfigurationReport("A").getModuleRevisionIds());
+
+        // here we should get only mod2.1 and mod1.1 cause compile is not transitive in mod2.1
+        assertEquals(new HashSet(Arrays.asList(new ModuleRevisionId[] {
+        		ModuleRevisionId.newInstance("org2", "mod2.1", "0.3.2"),
+        		ModuleRevisionId.newInstance("org1", "mod1.1", "1.0"),
+        })), r.getConfigurationReport("B").getModuleRevisionIds());
+        
+        // here we should get only mod2.1 cause compile is not transitive
+        assertEquals(new HashSet(Arrays.asList(new ModuleRevisionId[] {
+        		ModuleRevisionId.newInstance("org2", "mod2.1", "0.3.2"),
+        })), r.getConfigurationReport("compile").getModuleRevisionIds());
     }
     
     public void testResolveDiamond() throws Exception {

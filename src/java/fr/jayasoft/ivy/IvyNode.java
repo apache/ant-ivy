@@ -259,7 +259,9 @@ public class IvyNode {
 
     private Collection _loadedRootModuleConfs = new HashSet();
 
-    private String _requestedConf;
+    private Map _requestedConf = new HashMap(); // Maps of requested confs per root configuration
+                                                // this data is contextual to the current step of the 
+    											// resolve process
 
     
     public IvyNode(ResolveData data, IvyNode parent, DependencyDescriptor dd) {
@@ -861,14 +863,14 @@ public class IvyNode {
 	}
 
 	/**
-     * @return Returns the requestedConf.
+     * @return Returns the requestedConf in the current root module configuration
      */
     public final String getRequestedConf() {
-        return _requestedConf;
+        return (String) _requestedConf.get(getRootModuleConf());
     }
     
     public final void setRequestedConf(String requestedConf) {
-        _requestedConf = requestedConf;
+        _requestedConf.put(getRootModuleConf(), requestedConf);
     }
 
     private void addDependencyDescriptor(IvyNode parent, DependencyDescriptor dd) {
