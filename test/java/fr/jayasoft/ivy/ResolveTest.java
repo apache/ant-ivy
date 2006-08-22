@@ -851,6 +851,7 @@ public class ResolveTest extends TestCase {
         // same as before, but resolve both confs in one call         
         ResolveReport r = _ivy.resolve(new File("test/repositories/1/org2/mod2.1/ivys/ivy-0.3.1.xml").toURL(),
                 null, new String[] {"runtime", "compile"}, _cache, null, true);
+    	assertFalse(r.hasError());
         assertEquals(1, r.getConfigurationReport("compile").getArtifactsNumber());
         assertEquals(2, r.getConfigurationReport("runtime").getArtifactsNumber());
     }
@@ -882,6 +883,7 @@ public class ResolveTest extends TestCase {
         // same as before, but resolve both confs in one call         
         ResolveReport r = _ivy.resolve(new File("test/repositories/1/org2/mod2.1/ivys/ivy-0.3.2.xml").toURL(),
                 null, new String[] {"runtime", "compile"}, _cache, null, true);
+    	assertFalse(r.hasError());
         assertEquals(1, r.getConfigurationReport("compile").getArtifactsNumber());
         assertEquals(2, r.getConfigurationReport("runtime").getArtifactsNumber());
     }
@@ -913,6 +915,7 @@ public class ResolveTest extends TestCase {
         // same as before, but resolve both confs in one call         
         ResolveReport r = _ivy.resolve(new File("test/repositories/1/org2/mod2.1/ivys/ivy-0.3.3.xml").toURL(),
                 null, new String[] {"compile", "runtime"}, _cache, null, true);
+    	assertFalse(r.hasError());
         assertEquals(1, r.getConfigurationReport("compile").getArtifactsNumber());
         assertEquals(2, r.getConfigurationReport("runtime").getArtifactsNumber());
     }
@@ -926,6 +929,8 @@ public class ResolveTest extends TestCase {
         
     	ResolveReport r = _ivy.resolve(new File("test/repositories/1/org2/mod2.2/ivys/ivy-0.6.xml").toURL(),
                 null, new String[] {"*"}, _cache, null, true);
+    	assertFalse(r.hasError());
+
     	// here we should get all three recursive dependencies
         assertEquals(new HashSet(Arrays.asList(new ModuleRevisionId[] {
         		ModuleRevisionId.newInstance("org2", "mod2.1", "0.3.2"),
@@ -942,6 +947,39 @@ public class ResolveTest extends TestCase {
         // here we should get only mod2.1 cause compile is not transitive
         assertEquals(new HashSet(Arrays.asList(new ModuleRevisionId[] {
         		ModuleRevisionId.newInstance("org2", "mod2.1", "0.3.2"),
+        })), r.getConfigurationReport("compile").getModuleRevisionIds());
+    }
+    
+    public void testDisableTransitivityPerConfiguration5() throws Exception {
+    	// mod2.2 (A,B,compile) depends on 
+    	//		mod 2.1 (A->runtime;B->compile)
+    	//		mod1.1 (A->*) ]0.9.9,1.0] (which resolves to 1.0)
+    	// compile is not transitive and extends A and B
+    	//
+        // mod2.1 (compile, runtime) depends on mod1.1 1.0 which depends on mod1.2 2.0
+        // compile conf is not transitive and extends runtime 
+        
+    	ResolveReport r = _ivy.resolve(new File("test/repositories/1/org2/mod2.2/ivys/ivy-0.7.xml").toURL(),
+                null, new String[] {"A","B","compile"}, _cache, null, true);
+    	assertFalse(r.hasError());
+    	
+    	// here we should get all three recursive dependencies
+        assertEquals(new HashSet(Arrays.asList(new ModuleRevisionId[] {
+        		ModuleRevisionId.newInstance("org2", "mod2.1", "0.3.2"),
+        		ModuleRevisionId.newInstance("org1", "mod1.1", "1.0"),
+        		ModuleRevisionId.newInstance("org1", "mod1.2", "2.0"),
+        })), r.getConfigurationReport("A").getModuleRevisionIds());
+
+        // here we should get only mod2.1 and mod1.1 cause compile is not transitive in mod2.1
+        assertEquals(new HashSet(Arrays.asList(new ModuleRevisionId[] {
+        		ModuleRevisionId.newInstance("org2", "mod2.1", "0.3.2"),
+        		ModuleRevisionId.newInstance("org1", "mod1.1", "1.0"),
+        })), r.getConfigurationReport("B").getModuleRevisionIds());
+        
+        // here we should get only mod2.1 cause compile is not transitive
+        assertEquals(new HashSet(Arrays.asList(new ModuleRevisionId[] {
+        		ModuleRevisionId.newInstance("org2", "mod2.1", "0.3.2"),
+        		ModuleRevisionId.newInstance("org1", "mod1.1", "1.0"),
         })), r.getConfigurationReport("compile").getModuleRevisionIds());
     }
     

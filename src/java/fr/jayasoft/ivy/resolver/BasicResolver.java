@@ -136,7 +136,8 @@ public abstract class BasicResolver extends AbstractResolver {
             return null;
 		}
         
-        if (getIvy().getVersionMatcher().isDynamic(mrid) && !acceptLatest()) {
+        boolean isDynamic = getIvy().getVersionMatcher().isDynamic(mrid);
+		if (isDynamic && !acceptLatest()) {
             Message.error("dynamic revisions not handled by "+getClass().getName()+". impossible to resolve "+mrid);
             return null;
         }
@@ -148,7 +149,7 @@ public abstract class BasicResolver extends AbstractResolver {
         // we first search for it in cache
         ResolvedModuleRevision cachedRmr = null;
         boolean checkedCache = false;
-        if (!getIvy().getVersionMatcher().isDynamic(mrid) && !isCheckmodified() && !isChangingDependency) {
+        if (!isDynamic && !isCheckmodified() && !isChangingDependency) {
             cachedRmr = findModuleInCache(data, mrid);
             checkedCache = true;
             if (cachedRmr != null) {
@@ -203,7 +204,7 @@ public abstract class BasicResolver extends AbstractResolver {
             } else {
                 Message.verbose("\t"+getName()+": no ivy file found for "+mrid+": using default data");            
                 logIvyNotFound(mrid);
-    	        if (getIvy().getVersionMatcher().isDynamic(mrid)) {
+    	        if (isDynamic) {
     	            md.setResolvedModuleRevisionId(ModuleRevisionId.newInstance(mrid, artifactRef.getRevision()));
     	        }
             }
@@ -249,7 +250,7 @@ public abstract class BasicResolver extends AbstractResolver {
         
         // resolve revision
         ModuleRevisionId resolvedMrid = mrid;
-        if (getIvy().getVersionMatcher().isDynamic(resolvedMrid)) {
+        if (isDynamic) {
             resolvedMrid = md.getResolvedModuleRevisionId();
             if (resolvedMrid.getRevision() == null || resolvedMrid.getRevision().length() == 0) {
                 if (ivyRef.getRevision() == null || ivyRef.getRevision().length() == 0) {

@@ -636,7 +636,8 @@ public class IvyNode {
                                 	resolved._module = _module;
                                 }
                                 resolved._downloaded |= _module.isDownloaded();
-                                resolved._searched |= _module.isSearched();
+                                resolved._searched |= _module.isSearched();                                
+                                resolved._dds.putAll(_dds);
                                 resolved.updateDataFrom(this, _rootModuleConf);
                                 resolved.loadData(conf, shouldBePublic);
                                 DependencyDescriptor dd = dependencyDescriptor;
@@ -776,8 +777,10 @@ public class IvyNode {
         IvyNode node = _data.getNode(getId());
         if (node != null) {
             if (traverse) {
+            	node.setParent(getParent());
                 node.setParentConf(getParentConf());
                 node.setRootModuleConf(getRootModuleConf());
+                node.setRequestedConf(getRequestedConf());
                 node._data = _data;                
             }
             return node;
