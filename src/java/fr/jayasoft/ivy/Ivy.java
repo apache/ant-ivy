@@ -962,10 +962,25 @@ public class Ivy implements TransferListener {
         }
     }
     
-    /////////////////////////////////////////////////////////////////////////
+
+	public ResolvedModuleRevision findModule(ModuleRevisionId id) {
+		DependencyResolver r = getResolver(id.getModuleId());
+		if (r == null) {
+			throw new IllegalStateException("no resolver found for "+id.getModuleId());
+		}
+        DefaultModuleDescriptor md = genCallerMD(id, new String[] {"*"}, false, false);
+		try {
+			return r.getDependency(new DefaultDependencyDescriptor(id, true), new ResolveData(this, getDefaultCache(), null, new ConfigurationResolveReport(this, md, "default", null, getDefaultCache()), false));
+		} catch (ParseException e) {
+			throw new RuntimeException("problem whle parsing repository module descriptor for "+id+": "+e, e);
+		}
+	}
+
+	/////////////////////////////////////////////////////////////////////////
     //                         RESOLVE
     /////////////////////////////////////////////////////////////////////////
 
+    
     public ResolveReport resolve(File ivySource) throws ParseException, IOException {
     	return resolve(ivySource.toURL());
     }
@@ -997,14 +1012,19 @@ public class Ivy implements TransferListener {
      * Resolves the module identified by the given mrid with its dependencies if transitive is set to true. 
      */
 	public ResolveReport resolve(ModuleRevisionId mrid, String[] confs, boolean transitive, boolean changing, File cache, Date date, boolean validate, boolean useCacheOnly, Filter artifactFilter) throws ParseException, IOException {
-        DefaultModuleDescriptor md = DefaultModuleDescriptor.newDefaultInstance(ModuleRevisionId.newInstance(mrid.getOrganisation(), mrid.getName()+"-caller", "working"));
+        DefaultModuleDescriptor md = genCallerMD(mrid, confs, transitive, changing);
+		
+		return resolve(md, new String[] {"default"}, cache, date, validate, useCacheOnly, artifactFilter);
+	}
+
+	private DefaultModuleDescriptor genCallerMD(ModuleRevisionId mrid, String[] confs, boolean transitive, boolean changing) {
+		DefaultModuleDescriptor md = DefaultModuleDescriptor.newDefaultInstance(ModuleRevisionId.newInstance(mrid.getOrganisation(), mrid.getName()+"-caller", "working"));
         DefaultDependencyDescriptor dd = new DefaultDependencyDescriptor(md, mrid, false, changing, transitive);
         for (int i = 0; i < confs.length; i++) {
             dd.addDependencyConfiguration("default", confs[i]);
         }
         md.addDependency(dd);
-		
-		return resolve(md, new String[] {"default"}, cache, date, validate, useCacheOnly, artifactFilter);
+		return md;
 	}
 	
     public ResolveReport resolve(URL ivySource, String revision, String[] confs, File cache, Date date, boolean validate, boolean useCacheOnly, Filter artifactFilter) throws ParseException, IOException {
@@ -2378,6 +2398,13 @@ public class Ivy implements TransferListener {
     }
     
 
+    /**
+     * Returns an empty array when no token values are found.
+     *  
+     * @param token
+     * @param otherTokenValues
+     * @return
+     */
 	public String[] listTokenValues(String token, Map otherTokenValues) {
         List r = new ArrayList();
         for (Iterator iter = _resolversMap.values().iterator(); iter.hasNext();) {
@@ -2787,6 +2814,51 @@ public class Ivy implements TransferListener {
 
 	public synchronized boolean isInterrupted() {
 		return _interrupted;
+	}
+
+	/**
+	 * List module revision ids of the module accessible through the current resolvers
+	 * matching the given mrid criteria according to the given matcher.
+	 * 
+	 * @param criteria
+	 * @param matcher
+	 * @return
+	 */
+	public ModuleRevisionId[] listModules(ModuleRevisionId criteria, PatternMatcher matcher) {
+		List ret = new ArrayList();
+		Matcher orgMatcher = matcher.getMatcher(criteria.getOrganisation());
+		Matcher modMatcher = matcher.getMatcher(criteria.getName());
+		Matcher branchMatcher = matcher.getMatcher(criteria.getBranch());
+		Matcher revMatcher = matcher.getMatcher(criteria.getRevision());
+		Map tokenValues = new HashMap();
+		String[] orgs = listTokenValues(IvyPatternHelper.ORGANISATION_KEY, tokenValues);
+		for (int i = 0; i < orgs.length; i++) {
+			if (orgMatcher.matches(orgs[i])) {
+				tokenValues.put(IvyPatternHelper.ORGANISATION_KEY, orgs[i]);
+				String[] mods = listTokenValues(IvyPatternHelper.MODULE_KEY, tokenValues);
+				for (int j = 0; j < mods.length; j++) {
+					if (modMatcher.matches(mods[j])) {
+						tokenValues.put(IvyPatternHelper.MODULE_KEY, mods[j]);
+						String[] branches = listTokenValues(IvyPatternHelper.BRANCH_KEY, tokenValues);
+						if (branches == null || branches.length == 0) {
+							branches = new String[]  {getDefaultBranch(new ModuleId(orgs[i], mods[j]))};
+						}
+						for (int k = 0; k < branches.length; k++) {
+							if (branchMatcher.matches(branches[k])) {
+								tokenValues.put(IvyPatternHelper.BRANCH_KEY, tokenValues);
+								String[] revs = listTokenValues(IvyPatternHelper.REVISION_KEY, tokenValues);
+								for (int l = 0; l < revs.length; l++) {
+									if (revMatcher.matches(revs[l])) {
+										ret.add(ModuleRevisionId.newInstance(orgs[i], mods[j], branches[k], revs[l]));
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		return (ModuleRevisionId[]) ret.toArray(new ModuleRevisionId[ret.size()]);
 	}
 
 }

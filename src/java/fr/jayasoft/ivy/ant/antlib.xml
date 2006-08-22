@@ -18,4 +18,6 @@
 	<taskdef name="artifactreport" classname="fr.jayasoft.ivy.ant.IvyArtifactReport"/>
 	<taskdef name="info" classname="fr.jayasoft.ivy.ant.IvyInfo"/>
 	<taskdef name="addpath" classname="fr.jayasoft.ivy.ant.AddPathTask"/>
+	<taskdef name="listmodules" classname="fr.jayasoft.ivy.ant.IvyListModules"/>
+	<taskdef name="findmodule" classname="fr.jayasoft.ivy.ant.IvyFindModule"/>
 </antlib>
