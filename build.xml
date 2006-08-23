@@ -151,6 +151,10 @@
 		<get src="http://www.jayasoft.org/ivy/doc/dxml" dest="${dxml.doc.file}" verbose="true" /> 
 	</target>
 	
+	<target name="get-dxml-raw" description="download raw dxml doc file from web site">
+		<get src="http://www.jayasoft.org/ivy/doc/dxml/raw" dest="${raw.dxml.doc.file}" verbose="true" /> 
+	</target>
+	
 	<target name="main-doc" description="generates doc from dxml file -- WARNING: this operation is very slow and requires ruby 1.8.2 or greater">
 		<echo message="generating documentation"/>
 		<echo message="this operation is very slow... be patient"/>
