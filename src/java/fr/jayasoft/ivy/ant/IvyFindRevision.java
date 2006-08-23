@@ -1,8 +1,5 @@
 package fr.jayasoft.ivy.ant;
 
-import java.util.Iterator;
-import java.util.Map;
-
 import org.apache.tools.ant.BuildException;
 
 import fr.jayasoft.ivy.Ivy;
@@ -16,13 +13,13 @@ import fr.jayasoft.ivy.ResolvedModuleRevision;
  * 
  * @author Xavier Hanin
  */
-public class IvyFindModule extends IvyTask {
+public class IvyFindRevision extends IvyTask {
 	private String _organisation;
 	private String _module;
 	private String _branch;
 	private String _revision;
 	
-	private String _prefix = "ivy.";
+	private String _property = "ivy.revision";
 	
 	protected String getModule() {
 		return _module;
@@ -57,12 +54,12 @@ public class IvyFindModule extends IvyTask {
 		_branch = branch;
 	}
 
-	protected String getPrefix() {
-		return _prefix;
+	protected String getProperty() {
+		return _property;
 	}
 
-	protected void setPrefix(String prefix) {
-		_prefix = prefix;
+	protected void setProperty(String prefix) {
+		_property = prefix;
 	}
 
 
@@ -81,21 +78,9 @@ public class IvyFindModule extends IvyTask {
         if (_branch == null) {
             ivy.getDefaultBranch(new ModuleId(_organisation, _module));
         }
-        if (_prefix == null) {
-            _prefix = "";
-        } else if (!_prefix.endsWith(".") && _prefix.length() != 0) {
-        	_prefix = _prefix+".";
-        }
 		ResolvedModuleRevision rmr = ivy.findModule(ModuleRevisionId.newInstance(_organisation, _module, _branch, _revision));
 		if (rmr != null) {
-			Map attributes = rmr.getId().getAttributes();
-			for (Iterator iter = attributes.keySet().iterator(); iter.hasNext();) {
-				String token = (String) iter.next();
-				String value = (String) attributes.get(token);
-				if (value != null) {
-					getProject().setProperty(_prefix+token, value);
-				}
-			}
+			getProject().setProperty(_property, rmr.getId().getRevision());
 		}
 	}
 }
