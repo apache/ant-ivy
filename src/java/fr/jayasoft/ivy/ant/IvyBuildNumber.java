@@ -110,18 +110,22 @@ public class IvyBuildNumber extends IvyTask {
 	}
 
 	private NewRevision computeNewRevision(String revision) {
-		if (revision == null) {
-			Range r = findLastNumber(_default);
-			if (r == null) { // no number found
-				return new NewRevision(revision, _default, null, null);
-			} else {
-				long n = Long.parseLong(_default.substring(r.startIndex, r.endIndex));
-				return new NewRevision(revision, _default, null, String.valueOf(n));
-			}
-		}
 		String revPrefix = "latest.integration".equals(_revision)?"":_revision.substring(0, _revision.length() - 1);
-		if (!revision.startsWith(revPrefix)) {
+		if (revision != null && !revision.startsWith(revPrefix)) {
 			throw new BuildException("invalid exception found in repository: '"+revision+"' for '"+revPrefix+"'");
+		}
+		if (revision == null) {
+			if (revPrefix.length() > 0) {
+				return new NewRevision(revision, revPrefix+(revPrefix.endsWith(".")?"0":".0"), null, "0");
+			} else {
+				Range r = findLastNumber(_default);
+				if (r == null) { // no number found
+					return new NewRevision(revision, _default, null, null);
+				} else {
+					long n = Long.parseLong(_default.substring(r.startIndex, r.endIndex));
+					return new NewRevision(revision, _default, null, String.valueOf(n));
+				}
+			}
 		}
 		Range r;
 		if (revPrefix.length() == 0)  {

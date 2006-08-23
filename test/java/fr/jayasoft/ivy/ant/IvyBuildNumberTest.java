@@ -137,4 +137,15 @@ public class IvyBuildNumberTest extends TestCase {
     	assertEquals("1", _buildNumber.getProject().getProperty("ivy.new.build.number"));
     }
     
+    public void testBuildNumber4() throws Exception {
+    	_buildNumber.setOrganisation("org1");
+    	_buildNumber.setModule("mod1.1");
+    	_buildNumber.setRevision("3.");
+    	_buildNumber.execute();
+    	assertEquals(null, _buildNumber.getProject().getProperty("ivy.revision"));
+    	assertEquals("3.0", _buildNumber.getProject().getProperty("ivy.new.revision"));
+    	assertEquals(null, _buildNumber.getProject().getProperty("ivy.build.number"));
+    	assertEquals("0", _buildNumber.getProject().getProperty("ivy.new.build.number"));
+    }
+    
 }
