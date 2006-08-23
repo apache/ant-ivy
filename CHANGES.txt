@@ -19,6 +19,7 @@ Incompatibility with previous versions:
 Changes:
 --------
 * thanks to Jayasoft:
+  - NEW: support for build number calculation (IVY-276)
   - NEW: find modules in repository (IVY-275)
   - NEW: explicitly specify artifact download URL (IVY-271)
   - NEW: introduce branch management (IVY-269)

@@ -20,4 +20,5 @@
 	<taskdef name="addpath" classname="fr.jayasoft.ivy.ant.AddPathTask"/>
 	<taskdef name="listmodules" classname="fr.jayasoft.ivy.ant.IvyListModules"/>
 	<taskdef name="findrevision" classname="fr.jayasoft.ivy.ant.IvyFindRevision"/>
+	<taskdef name="buildnumber" classname="fr.jayasoft.ivy.ant.IvyBuildNumber"/>
 </antlib>

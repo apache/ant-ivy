@@ -1,0 +1,8 @@
+<ivy-module version="1.0">
+	<info organisation="orgbn"
+	       module="buildnumber"
+	       revision="test"
+	       status="integration"
+	       publication="20060830110000"
+	/>
+</ivy-module>
