@@ -30,6 +30,12 @@ require 'FileUtils'
 require 'rexml/document'
 include REXML
 
+def p o 
+  now = Time.now
+  $stdout.puts(now.strftime("%H:%M:%S") + ":" + ("%3d" % (now.usec / 1000)) + " | " + o)
+  $stdout.flush
+end
+
 class DxmlToHtml
 
   ##
@@ -53,36 +59,71 @@ private
     f.close
   end
   
-  def gen_navigation(node, path = nil, pathdepth = node.elements["nodeinfo"].attributes['path'].count('/'))
-    if (!path) 
-      path = Array.new
-      while node.parent
-        path.push node
-        node = node.parent
-      end
-    end
-    
-    content = '<ul class="menu">'
-    node = path.pop
-    node.each_element("./node") do |child| 
-      if child.elements["./node"]
-        if (child == path.last)
-          clss = 'expanded'
+  def gen_navigation(node)
+    content = ''
+    buf = content
+    prevnode = nil
+    pathdepth = node.elements["nodeinfo"].attributes['path'].count('/')
+    begin
+      buf << '<ul class="menu">'
+      node.each_element("./node") do |child| 
+        isprev = child == prevnode
+        if child.elements["./node"]
+          if (isprev)
+            clss = 'expanded'
+          else
+            clss = 'collapsed'
+          end
         else
-          clss = 'collapsed'
+          clss = 'leaf'
         end
-      else
-        clss = 'leaf'
+        buf << '<li class="' << clss << '"><a href="' << ("../" * pathdepth << child.elements["nodeinfo"].attributes['path']+"."+@ext)  << '">' << child.elements["title"].text << '</a>'
+        if (isprev)
+          content = buf << content # put pre buffer at the beginning of the previous content
+          buf = content # now append after the content
+        end
+        buf << "</li>"
       end
-      content += '<li class="'+clss+'"><a href="'+ ("../" * pathdepth + child.elements["nodeinfo"].attributes['path']+"."+@ext)  +'">'+child.elements["title"].text+'</a>'
-      if (child == path.last)
-        content += gen_navigation(node,path,pathdepth)
-      end
-      content += "</li>"
-    end
-    content += "</ul>"
+      buf << "</ul>"
+    
+      buf = '' # now fill a pre buffer
+      prevnode = node
+      node = node.parent
+    end while node.parent
+    
     return content
   end
+
+#  def gen_navigation(node, path = nil, pathdepth = node.elements["nodeinfo"].attributes['path'].count('/'),     content = '')
+#    if (!path) 
+#      path = Array.new
+#      while node.parent
+#        path.push node
+#        node = node.parent
+#      end
+#    end
+#    
+#    content << '<ul class="menu">'
+#    node = path.pop
+#    node.each_element("./node") do |child| 
+#      if child.elements["./node"]
+#        if (child == path.last)
+#          clss = 'expanded'
+#        else
+#          clss = 'collapsed'
+#        end
+#      else
+#        clss = 'leaf'
+#      end
+#      content << '<li class="' << clss << '"><a href="' << ("../" * pathdepth << child.elements["nodeinfo"].attributes['path']+"."+@ext)  << '">' << child.elements["title"].text << '</a>'
+#      if (child == path.last)
+#        gen_navigation(node,path,pathdepth,content)
+#      end
+#      content << "</li>"
+#    end
+#    content << "</ul>"
+#    return content
+#  end
 
 public  
   ##
@@ -102,19 +143,25 @@ public
   # with relative path, or full absolute path (like http://www.jayasoft.org/ivy).
   # 
   def gen(book, todir)    
-    puts "reading template..."
+    p "reading template..."
     tpl = IO.readlines(@template).join()
     
-    puts "parsing dxml (#{book})..."
+    p "parsing dxml (#{book})..."
     doc = Document.new(File.new(book))
     root = doc.root
     
-    puts "starting generation..."
+    p "building node index..."
+    nodes = Hash.new
+    root.each_element("//node") do |node|
+    nodes[node.elements["nodeinfo"].attributes['path']] = node
+    end
+    
+    p "starting generation..."
     root.each_element("//node") do |node|   
       path = node.elements["nodeinfo"].attributes['path']
       pathdepth = path.count("/")
       node_file_path = todir+"/"+path+"."+@ext
-      puts "generating #{node_file_path}"
+      p "generating #{node_file_path}"
     
       FileUtils.mkdir_p(File.dirname(node_file_path))
       
@@ -125,15 +172,17 @@ public
       
       content = node.elements["content"].cdatas.to_s
       content.gsub!(/href="\/([^"]+)"/) do |s|
-        if root.elements["//nodeinfo[@path='"+$1+"']"]
+        if nodes[$1]
           'href="'+base+$1 +'.'+@ext+'"' 
         else
           'href="'+@site + '/' +$1+'"'
         end
       end
       
+#      p "  generating navigation menu"
       navigation = gen_navigation(node)
       
+#      p "  processing template"
       process_template(tpl, {
         'path' => path, 
         'base' => base, 
@@ -141,11 +190,12 @@ public
         'navigation' => navigation, 
         'content' => content
         }, node_file_path) 
+#      p "  end"
     end
   end
 
 end
 
-puts "starting generator"
+p "starting generator"
 g = DxmlToHtml.new("http://www.jayasoft.org", "src/doc/template.html")
 g.gen("src/doc/ivy-book.xml", "doc")
