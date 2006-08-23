@@ -1009,6 +1009,13 @@ public class Ivy implements TransferListener {
     }
 
     /**
+     * Resolves the module identified by the given mrid with its dependencies. 
+     */
+	public ResolveReport resolve(ModuleRevisionId mrid, String[] confs) throws ParseException, IOException {
+        return resolve(mrid, confs, true, false, null, null, true, false, FilterHelper.NO_FILTER);
+	}
+
+    /**
      * Resolves the module identified by the given mrid with its dependencies if transitive is set to true. 
      */
 	public ResolveReport resolve(ModuleRevisionId mrid, String[] confs, boolean transitive, boolean changing, File cache, Date date, boolean validate, boolean useCacheOnly, Filter artifactFilter) throws ParseException, IOException {
@@ -1075,6 +1082,7 @@ public class Ivy implements TransferListener {
 
             // resolve dependencies
             IvyNode[] dependencies = getDependencies(md, confs, cache, date, report, validate, transitive);
+            report.setDependencies(Arrays.asList(dependencies));
             
             Message.verbose(":: downloading artifacts ::");
 
@@ -2267,6 +2275,9 @@ public class Ivy implements TransferListener {
     //                         SORT 
     /////////////////////////////////////////////////////////////////////////
 
+    /**
+     * Sorts the collection of IvyNode from the less dependent to the more dependent
+     */
     public List sortNodes(Collection nodes) {
         IvyContext.getContext().setIvy(this);
         return ModuleDescriptorSorter.sortNodes(getVersionMatcher(), nodes);

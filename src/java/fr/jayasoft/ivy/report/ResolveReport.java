@@ -17,6 +17,7 @@ import java.util.Map;
 
 import fr.jayasoft.ivy.IvyNode;
 import fr.jayasoft.ivy.ModuleDescriptor;
+import fr.jayasoft.ivy.ModuleId;
 
 /**
  * Represents a whole resolution report for a module
@@ -25,6 +26,7 @@ public class ResolveReport {
     private ModuleDescriptor _md;
     private Map _confReports = new LinkedHashMap();
 	private List _problemMessages;
+	private List _dependencies; // the list of all dependencies resolved, ordered from the more dependent to the less dependent
 	
     public ResolveReport(ModuleDescriptor md) {
         _md = md;
@@ -112,6 +114,33 @@ public class ResolveReport {
 			ArtifactDownloadReport[] adrs = r.getFailedArtifactsReports();
 			for (int i = 0; i < adrs.length; i++) {
 				ret.add("download failed: "+adrs[i].getArtifact());
+			}
+		}
+		return ret;
+	}
+	public void setDependencies(List dependencies) {
+		_dependencies = dependencies;
+	}
+	/**
+	 * Returns the list of all dependencies concerned by this report as a List of IvyNode
+	 * ordered from the more dependent to the least one
+	 * @return
+	 */
+	public List getDependencies() {
+		return _dependencies;
+	}
+	/**
+	 * gives all the modules ids concerned by this report, from the most dependent to the least one
+	 * @return a list of ModuleId
+	 */
+	public List getModuleIds() {
+		List ret = new ArrayList();
+		List sortedDependencies = new ArrayList(_dependencies);
+		for (Iterator iter = sortedDependencies.iterator(); iter.hasNext();) {
+			IvyNode dependency = (IvyNode) iter.next();
+			ModuleId mid = dependency.getResolvedId().getModuleId();
+			if (!ret.contains(mid)) {
+				ret.add(mid);
 			}
 		}
 		return ret;
