@@ -23,52 +23,60 @@ public class IvyListModules extends IvyTask {
 	private String _property;
 	private String _value;
 	
-	protected String getMatcher() {
+	public String getMatcher() {
 		return _matcher;
 	}
 
-	protected void setMatcher(String matcher) {
+	public void setMatcher(String matcher) {
 		_matcher = matcher;
 	}
 
-	protected String getModule() {
+	public String getModule() {
 		return _module;
 	}
 
-	protected void setModule(String module) {
+	public void setModule(String module) {
 		_module = module;
 	}
 
-	protected String getProperty() {
+	public String getProperty() {
 		return _property;
 	}
 
-	protected void setProperty(String name) {
+	public void setProperty(String name) {
 		_property = name;
 	}
 
-	protected String getOrganisation() {
+	public String getOrganisation() {
 		return _organisation;
 	}
 
-	protected void setOrganisation(String organisation) {
+	public void setOrganisation(String organisation) {
 		_organisation = organisation;
 	}
 
-	protected String getRevision() {
+	public String getRevision() {
 		return _revision;
 	}
 
-	protected void setRevision(String revision) {
+	public void setRevision(String revision) {
 		_revision = revision;
 	}
 
-	protected String getValue() {
+	public String getValue() {
 		return _value;
 	}
 
-	protected void setValue(String value) {
+	public void setValue(String value) {
 		_value = value;
+	}
+
+	public String getBranch() {
+		return _branch;
+	}
+
+	public void setBranch(String branch) {
+		_branch = branch;
 	}
 
 	public void execute() throws BuildException {
@@ -94,13 +102,5 @@ public class IvyListModules extends IvyTask {
             String value = IvyPatternHelper.substitute(ivy.substitute(_value), mrids[i]);
             getProject().setProperty(name, value);
 		}
-	}
-
-	protected String getBranch() {
-		return _branch;
-	}
-
-	protected void setBranch(String branch) {
-		_branch = branch;
 	}
 }

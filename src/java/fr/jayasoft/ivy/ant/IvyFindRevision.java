@@ -21,44 +21,44 @@ public class IvyFindRevision extends IvyTask {
 	
 	private String _property = "ivy.revision";
 	
-	protected String getModule() {
+	public String getModule() {
 		return _module;
 	}
 
-	protected void setModule(String module) {
+	public void setModule(String module) {
 		_module = module;
 	}
 
-	protected String getOrganisation() {
+	public String getOrganisation() {
 		return _organisation;
 	}
 
-	protected void setOrganisation(String organisation) {
+	public void setOrganisation(String organisation) {
 		_organisation = organisation;
 	}
 
-	protected String getRevision() {
+	public String getRevision() {
 		return _revision;
 	}
 
-	protected void setRevision(String revision) {
+	public void setRevision(String revision) {
 		_revision = revision;
 	}
 
 
-	protected String getBranch() {
+	public String getBranch() {
 		return _branch;
 	}
 
-	protected void setBranch(String branch) {
+	public void setBranch(String branch) {
 		_branch = branch;
 	}
 
-	protected String getProperty() {
+	public String getProperty() {
 		return _property;
 	}
 
-	protected void setProperty(String prefix) {
+	public void setProperty(String prefix) {
 		_property = prefix;
 	}
 
