@@ -13,6 +13,7 @@ import junit.framework.TestCase;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.Delete;
+import org.apache.tools.ant.types.Path;
 
 import fr.jayasoft.ivy.util.IvyPatternHelper;
 
@@ -62,9 +63,28 @@ public class IvyRetrieveTest extends TestCase {
     public void testSimple() throws Exception {
         _project.setProperty("ivy.dep.file", "test/java/fr/jayasoft/ivy/ant/ivy-simple.xml");
         _retrieve.execute();
-        assertTrue(new File(IvyPatternHelper.substitute(RETRIEVE_PATTERN, "org1", "mod1.2", "2.0", "mod1.2",
-                "jar", "jar")).exists());
+        assertTrue(new File(IvyPatternHelper.substitute(RETRIEVE_PATTERN, 
+        		"org1", "mod1.2", "2.0", "mod1.2", "jar", "jar")).exists());
     }
+    
+    public void testInline() throws Exception {
+    	// we first resolve another ivy file
+    	IvyResolve resolve = new IvyResolve();
+    	resolve.setProject(_project);
+    	resolve.setFile(new File("test/java/fr/jayasoft/ivy/ant/ivy-latest.xml"));
+    	resolve.execute();
+    	
+    	assertTrue(_retrieve.getIvyInstance().getArchiveFileInCache(_cache, "org1", "mod1.2", "2.2", "mod1.2", "jar", "jar").exists());
+    	
+    	// then we resolve a dependency directly
+    	_retrieve.setOrg("org1");
+    	_retrieve.setName("mod1.2");
+    	_retrieve.setRev("2.0");
+    	_retrieve.execute();
+        assertTrue(new File(IvyPatternHelper.substitute(RETRIEVE_PATTERN, 
+        		"org1", "mod1.2", "2.0", "mod1.2", "jar", "jar")).exists());
+    }
+
 
     public void testWithConf() throws Exception {
         _project.setProperty("ivy.dep.file", "test/repositories/1/org6/mod6.2/ivys/ivy-0.4.xml");

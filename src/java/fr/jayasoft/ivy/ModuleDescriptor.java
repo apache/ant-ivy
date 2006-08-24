@@ -21,6 +21,7 @@ import fr.jayasoft.ivy.version.VersionMatcher;
  */
 public interface ModuleDescriptor extends ExtendableItem {
     public static final String DEFAULT_CONFIGURATION = "default";
+    public static final String CALLER_ALL_CONFIGURATION = "all";
     /**
      * Returns true if this descriptor is a default one, i.e.
      * one generated for a module not actually having one. 

@@ -41,6 +41,21 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
         return newDefaultInstance(mrid, null);
     }
     
+    public static DefaultModuleDescriptor newCallerInstance(ModuleRevisionId mrid, String[] confs, boolean transitive, boolean changing) {
+        DefaultModuleDescriptor moduleDescriptor = new DefaultModuleDescriptor(ModuleRevisionId.newInstance(mrid.getOrganisation(), mrid.getName()+"-caller", "working"), "integration", null, true);
+        for (int i = 0; i < confs.length; i++) {
+        	moduleDescriptor.addConfiguration(new Configuration(confs[i]));
+		}
+        moduleDescriptor.setLastModified(System.currentTimeMillis());
+        DefaultDependencyDescriptor dd = new DefaultDependencyDescriptor(moduleDescriptor, mrid, false, changing, transitive);
+        for (int i = 0; i < confs.length; i++) {
+            dd.addDependencyConfiguration(confs[i], confs[i]);
+        }
+        moduleDescriptor.addDependency(dd);
+        
+        return moduleDescriptor;
+    }
+    
     public static DefaultModuleDescriptor newDefaultInstance(ModuleRevisionId mrid, DependencyArtifactDescriptor[] artifacts) {
         DefaultModuleDescriptor moduleDescriptor = new DefaultModuleDescriptor(mrid, "release", null, true);
         moduleDescriptor.addConfiguration(new Configuration(DEFAULT_CONFIGURATION));

@@ -11,9 +11,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -215,8 +213,9 @@ public class XmlReportOutputter implements ReportOutputter {
 	}
 
 	public static String getReportFileName(ConfigurationResolveReport report) {
-		return getReportFileName(report.getModuleDescriptor().getModuleRevisionId().getModuleId(), 
-		        report.getConfiguration());
+		return getReportFileName(
+				report.getModuleDescriptor().getModuleRevisionId().getModuleId(), 
+				report.getConfiguration());
 	}
 
 	public static String getReportFileName(ModuleId mid, String conf) {

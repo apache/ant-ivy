@@ -984,7 +984,7 @@ public class IvyNode {
      */
     public void addCaller(String rootModuleConf, IvyNode node, String callerConf, String[] dependencyConfs, DependencyDescriptor dd) {
         ModuleDescriptor md = node.getDescriptor();
-        ModuleRevisionId mrid = md.getModuleRevisionId(); 
+        ModuleRevisionId mrid = node.getId(); 
         if (mrid.getModuleId().equals(getId().getModuleId())) {
             throw new IllegalArgumentException("a module is not authorized to depend on itself: "+getId());
         }

@@ -7,7 +7,15 @@ package fr.jayasoft.ivy.ant;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.HashSet;
+
+import org.apache.tools.ant.BuildEvent;
+import org.apache.tools.ant.BuildException;
+import org.apache.tools.ant.BuildListener;
+import org.apache.tools.ant.Project;
+import org.apache.tools.ant.Task;
 
 import fr.jayasoft.ivy.Ivy;
 import fr.jayasoft.ivy.IvyContext;
@@ -15,12 +23,6 @@ import fr.jayasoft.ivy.ModuleDescriptor;
 import fr.jayasoft.ivy.report.ResolveReport;
 import fr.jayasoft.ivy.util.Message;
 import fr.jayasoft.ivy.util.StringUtils;
-
-import org.apache.tools.ant.BuildEvent;
-import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.BuildListener;
-import org.apache.tools.ant.Project;
-import org.apache.tools.ant.Task;
 
 /**
  * Base class for all ivy ant tasks, deaal particularly with ivy instance storage in ant project.
@@ -93,33 +95,74 @@ public class IvyTask extends Task {
     
     protected void setResolved(ResolveReport report, boolean keep) {
     	ModuleDescriptor md = report.getModuleDescriptor();
+    	String[] confs = report.getConfigurations();
     	if (keep) {
 	        getProject().addReference("ivy.resolved.report", report);
+	        getProject().addReference("ivy.resolved.configurations.ref", confs);
 	        getProject().addReference("ivy.resolved.descriptor", md);
     	}
     	String suffix = md.getModuleRevisionId().getModuleId().getOrganisation()+"."+md.getModuleRevisionId().getModuleId().getName();
         getProject().addReference("ivy.resolved.report."+suffix, report);
         getProject().addReference("ivy.resolved.descriptor."+suffix, md);
+        getProject().addReference("ivy.resolved.configurations.ref."+suffix, confs);
     }
     
-    protected void ensureResolved(boolean haltOnFailure, String org, String module) {
-    	ensureResolved(haltOnFailure, true, org, module);
+	protected void ensureResolved(boolean haltOnFailure, String org, String module) {
+    	ensureResolved(haltOnFailure, true, org, module, null);
     }
-    protected void ensureResolved(boolean haltOnFailure, boolean transitive, String org, String module) {
+    protected void ensureResolved(boolean haltOnFailure, boolean transitive, String org, String module, String conf) {
         ensureMessageInitialised();
         if (org != null  && module != null) {
             return;
         }
-        Object reference = getResolvedDescriptor(org, module); 
+        String[] confs = getConfsToResolve(org, module, conf, false);
         
-        if (reference == null)  {
+        if (confs.length > 0)  {
         	IvyResolve resolve = createResolve(haltOnFailure);
         	resolve.setTransitive(transitive);
+        	resolve.setConf(StringUtils.join(confs, ", "));
         	resolve.execute();
-        }
+        } 
     }
     
-    protected Object getResolvedDescriptor(String org, String module) {
+    protected String[] getConfsToResolve(String org, String module, String conf, boolean strict) {
+        ModuleDescriptor reference = (ModuleDescriptor) getResolvedDescriptor(org, module, strict); 
+		Message.debug("calculating configurations to resolve");
+        
+        if (reference == null)  {
+    		Message.debug("module not yet resolved, all confs still need to be resolved");
+        	if (conf == null) {
+        		return new String[] {"*"};
+        	} else {
+        		return splitConfs(conf);
+        	}
+        } else if (conf != null) {
+        	String[] rconfs = getResolvedConfigurations(org, module, strict);
+        	String[] confs;
+        	if ("*".equals(conf)) {
+        		confs = reference.getConfigurationsNames();
+        	} else {
+        		confs = splitConfs(conf);
+        	}
+    		HashSet rconfsSet = new HashSet(Arrays.asList(rconfs));
+			HashSet confsSet = new HashSet(Arrays.asList(confs));
+			Message.debug("resolved configurations:   "+rconfsSet);
+			Message.debug("asked configurations:      "+rconfsSet);
+			confsSet.removeAll(rconfsSet);
+			Message.debug("to resolve configurations: "+confsSet);
+			return (String[]) confsSet.toArray(new String[confsSet.size()]);
+        } else {
+    		Message.debug("module already resolved, no configuration to resolve");
+        	return new String[0];
+        }
+    	
+    }
+    
+    protected String[] getResolvedConfigurations(String org, String module, boolean strict) {
+		return (String[]) getReference("ivy.resolved.configurations.ref", org, module, strict);
+	}
+    
+	protected Object getResolvedDescriptor(String org, String module) {
 		return getResolvedDescriptor(org, module, false);
 	}
     

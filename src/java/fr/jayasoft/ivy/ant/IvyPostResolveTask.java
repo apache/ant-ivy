@@ -9,6 +9,8 @@ import fr.jayasoft.ivy.ModuleId;
 import fr.jayasoft.ivy.filter.Filter;
 import fr.jayasoft.ivy.filter.FilterHelper;
 import fr.jayasoft.ivy.report.ResolveReport;
+import fr.jayasoft.ivy.util.Message;
+import fr.jayasoft.ivy.util.StringUtils;
 
 /**
  * Base class for tasks needing to be performed after a resolve. 
@@ -40,18 +42,26 @@ public abstract class IvyPostResolveTask extends IvyTask {
         _organisation = getProperty(_organisation, ivy, "ivy.organisation");
         _module = getProperty(_module, ivy, "ivy.module");
 
-        if (_org != null && getResolvedDescriptor(_org, _name+"-caller", true) == null) {
-        	IvyResolve resolve = createResolve(isHaltonfailure());
-        	resolve.setOrg(_org);
-        	resolve.setName(_name);
-        	resolve.setRev(_rev);
-        	String conf = _conf == null ? "*" : _conf;
-        	resolve.setConf(conf);
-        	resolve.execute();
-        	
-    		_conf = "default"; // this will now be used as the configurations needed to be put in the path.
+        if (_org != null) {
+        	_conf = _conf == null ? "*" : _conf;
+        	String[] toResolve = getConfsToResolve(_org, _name+"-caller", _conf, true);
+        	if (toResolve.length > 0) {        		
+        		Message.verbose("using inline mode to resolve "+_org+" "+_name+" "+_rev+" ("+StringUtils.join(toResolve, ", ")+")");
+        		IvyResolve resolve = createResolve(isHaltonfailure());
+        		resolve.setOrg(_org);
+        		resolve.setName(_name);
+        		resolve.setRev(_rev);
+        		resolve.setConf(_conf);
+        		resolve.execute();
+        	} else {
+        		Message.verbose("inline resolve already done for "+_org+" "+_name+" "+_rev+" ("+_conf+")");
+        	}
+        	if ("*".equals(_conf)) {
+        		_conf = StringUtils.join(getResolvedConfigurations(_org, _name+"-caller", true), ", ");
+        	}
         } else {        
-        	ensureResolved(isHaltonfailure(), isTransitive(), getOrganisation(), getModule());
+        	Message.debug("using standard ensure resolved");
+        	ensureResolved(isHaltonfailure(), isTransitive(), getOrganisation(), getModule(), getProperty(_conf, ivy, "ivy.resolved.configurations"));
         	
 	        _conf = getProperty(_conf, ivy, "ivy.resolved.configurations");
 	        if ("*".equals(_conf)) {

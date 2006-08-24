@@ -968,7 +968,7 @@ public class Ivy implements TransferListener {
 		if (r == null) {
 			throw new IllegalStateException("no resolver found for "+id.getModuleId());
 		}
-        DefaultModuleDescriptor md = genCallerMD(id, new String[] {"*"}, false, false);
+        DefaultModuleDescriptor md = DefaultModuleDescriptor.newCallerInstance(id, new String[] {"*"}, false, false);
 		try {
 			return r.getDependency(new DefaultDependencyDescriptor(id, true), new ResolveData(this, getDefaultCache(), null, new ConfigurationResolveReport(this, md, "default", null, getDefaultCache()), false));
 		} catch (ParseException e) {
@@ -1018,20 +1018,29 @@ public class Ivy implements TransferListener {
     /**
      * Resolves the module identified by the given mrid with its dependencies if transitive is set to true. 
      */
-	public ResolveReport resolve(ModuleRevisionId mrid, String[] confs, boolean transitive, boolean changing, File cache, Date date, boolean validate, boolean useCacheOnly, Filter artifactFilter) throws ParseException, IOException {
-        DefaultModuleDescriptor md = genCallerMD(mrid, confs, transitive, changing);
+	public ResolveReport resolve(final ModuleRevisionId mrid, String[] confs, boolean transitive, boolean changing, File cache, Date date, boolean validate, boolean useCacheOnly, Filter artifactFilter) throws ParseException, IOException {
+		DefaultModuleDescriptor md;
+		if (confs.length == 1 && confs[0].equals("*")) {
+			ResolvedModuleRevision rmr = findModule(mrid);
+			if (rmr == null) {
+				md = DefaultModuleDescriptor.newCallerInstance(mrid, confs, transitive, changing);
+				return new ResolveReport(md){
+					public boolean hasError() {
+						return true;
+					}
+					public List getProblemMessages() {
+						return Arrays.asList(new String[] {"module not found: "+mrid});
+					}
+				};
+			} else {
+				confs = rmr.getDescriptor().getConfigurationsNames();
+				md = DefaultModuleDescriptor.newCallerInstance(ModuleRevisionId.newInstance(mrid, rmr.getId().getRevision()), confs, transitive, changing);
+			}
+		} else {
+			md = DefaultModuleDescriptor.newCallerInstance(mrid, confs, transitive, changing);
+		}
 		
-		return resolve(md, new String[] {"default"}, cache, date, validate, useCacheOnly, artifactFilter);
-	}
-
-	private DefaultModuleDescriptor genCallerMD(ModuleRevisionId mrid, String[] confs, boolean transitive, boolean changing) {
-		DefaultModuleDescriptor md = DefaultModuleDescriptor.newDefaultInstance(ModuleRevisionId.newInstance(mrid.getOrganisation(), mrid.getName()+"-caller", "working"));
-        DefaultDependencyDescriptor dd = new DefaultDependencyDescriptor(md, mrid, false, changing, transitive);
-        for (int i = 0; i < confs.length; i++) {
-            dd.addDependencyConfiguration("default", confs[i]);
-        }
-        md.addDependency(dd);
-		return md;
+		return resolve(md, new String[] {"*"}, cache, date, validate, useCacheOnly, artifactFilter);
 	}
 	
     public ResolveReport resolve(URL ivySource, String revision, String[] confs, File cache, Date date, boolean validate, boolean useCacheOnly, Filter artifactFilter) throws ParseException, IOException {
