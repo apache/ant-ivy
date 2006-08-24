@@ -582,6 +582,20 @@ public class ResolveTest extends TestCase {
         assertTrue(_ivy.getArchiveFileInCache(_cache, "org1", "mod1.2", "2.1", "mod1.2", "jar", "jar").exists());
     }
 
+    public void testResolveDefaultWithArtifacts() throws Exception {
+    	// mod1.6 depends on
+    	//   mod1.4, which depends on mod1.3 and selects one of its artifacts
+    	//   mod1.3 and selects two of its artifacts
+        ResolveReport report = _ivy.resolve(new File("test/repositories/1/org1/mod1.6/ivys/ivy-1.0.3.xml").toURL(),
+                null, new String[] {"*"}, _cache, null, true);
+        assertFalse(report.hasError());
+        
+        // dependencies
+        assertTrue(_ivy.getArchiveFileInCache(_cache, "org1", "mod1.3", "3.0", "mod1.3-A", "jar", "jar").exists());
+        assertTrue(_ivy.getArchiveFileInCache(_cache, "org1", "mod1.3", "3.0", "mod1.3-B", "jar", "jar").exists());
+    }
+    
+
     public void testResolveDefaultWithArtifactsConf1() throws Exception {
         // mod2.2 depends on mod1.3 and selects its artifacts
         ResolveReport report = _ivy.resolve(new File("test/repositories/1/org2/mod2.2/ivys/ivy-0.5.xml").toURL(),

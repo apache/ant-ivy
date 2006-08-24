@@ -1,0 +1,13 @@
+<ivy-module version="1.0"> 
+	<info organisation="org1"
+	       module="mod1.4"
+	       revision="1.3"
+	       status="release"
+	/>
+	<publications />
+	<dependencies>
+		<dependency name="mod1.3" rev="3.0">
+			<artifact name="mod1.3-A" type="jar" />
+		</dependency>
+	</dependencies>
+</ivy-module>

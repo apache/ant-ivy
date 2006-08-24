@@ -1419,6 +1419,7 @@ public class Ivy implements TransferListener {
             Collection dependencies = node.getDependencies(conf, true);
             for (Iterator iter = dependencies.iterator(); iter.hasNext();) {
                 IvyNode dep = (IvyNode)iter.next();
+                node.traverse(conf, dep); // dependency traversal data may have been changed while resolving other deps, we update it
                 if (dep.isCircular()) {
                     continue;
                 }

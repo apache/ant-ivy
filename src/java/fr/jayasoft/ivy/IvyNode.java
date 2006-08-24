@@ -839,20 +839,23 @@ public class IvyNode {
             
             depNode.addCaller(_rootModuleConf, this, conf, dependencyConfigurations, dd);
             dependencies.add(depNode);
-
             if (traverse) {
-                if (getPath().contains(depNode)) {
-                	IvyContext.getContext().getCircularDependencyStrategy().handleCircularDependency(toMrids(getPath(), depNode));
-                } else {
-                    depNode.setParent(this);
-                }
-                depNode.setParentConf(conf);
-                depNode.setRootModuleConf(getRootModuleConf());
-                depNode._data = _data;
+            	traverse(conf, depNode);
             }
         }
         return dependencies;
     }
+
+	public void traverse(String conf, IvyNode depNode) {
+		if (getPath().contains(depNode)) {
+			IvyContext.getContext().getCircularDependencyStrategy().handleCircularDependency(toMrids(getPath(), depNode));
+		} else {
+		    depNode.setParent(this);
+		}
+		depNode.setParentConf(conf);
+		depNode.setRootModuleConf(getRootModuleConf());
+		depNode._data = _data;
+	}
 
     private ModuleRevisionId[] toMrids(Collection path, IvyNode depNode) {
     	ModuleRevisionId[] ret = new ModuleRevisionId[path.size()+1];
