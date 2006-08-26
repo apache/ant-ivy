@@ -23,7 +23,7 @@ public abstract class IvyPostResolveTask extends IvyTask {
     private String _conf;
     private boolean _haltOnFailure = true;
     private boolean _transitive = true;
-    private boolean _inline = true;
+    private boolean _inline = false;
     private File _cache;
 
     private String _organisation;
