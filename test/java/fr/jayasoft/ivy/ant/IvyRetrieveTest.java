@@ -13,7 +13,6 @@ import junit.framework.TestCase;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.Delete;
-import org.apache.tools.ant.types.Path;
 
 import fr.jayasoft.ivy.util.IvyPatternHelper;
 
@@ -77,9 +76,10 @@ public class IvyRetrieveTest extends TestCase {
     	assertTrue(_retrieve.getIvyInstance().getArchiveFileInCache(_cache, "org1", "mod1.2", "2.2", "mod1.2", "jar", "jar").exists());
     	
     	// then we resolve a dependency directly
-    	_retrieve.setOrg("org1");
-    	_retrieve.setName("mod1.2");
-    	_retrieve.setRev("2.0");
+    	_retrieve.setOrganisation("org1");
+    	_retrieve.setModule("mod1.2");
+    	_retrieve.setRevision("2.0");
+    	_retrieve.setInline(true);
     	_retrieve.execute();
         assertTrue(new File(IvyPatternHelper.substitute(RETRIEVE_PATTERN, 
         		"org1", "mod1.2", "2.0", "mod1.2", "jar", "jar")).exists());

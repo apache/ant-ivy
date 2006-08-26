@@ -29,11 +29,11 @@ public class IvyResolve extends IvyTask {
     private File _file = null;
     private String _conf = null;
     private File _cache = null;
-    private String _org = null;
-    private String _name = null;
-    private String _rev = null;
-    private String _revision = null;
+    private String _organisation = null;
+    private String _module = null;
+    private String _revision = "latest.integration";
     private String _pubdate = null;
+    private boolean _inline = false;
     private boolean _haltOnFailure = true;
     private boolean _useCacheOnly = false;
     private String _type = null;
@@ -104,15 +104,18 @@ public class IvyResolve extends IvyTask {
             String[] confs = splitConfs(_conf);
             
             ResolveReport report;
-            if (_org  != null) {
-            	if (_name == null) {
-            		throw new BuildException("'name' is required when using 'org' attribute");
+            if (isInline()) {
+            	if (_organisation == null) {
+            		throw new BuildException("'organisation' is required when using inline mode");
             	}
-            	if (_rev == null) {
-            		_rev = "latest.integration";
+            	if (_module == null) {
+            		throw new BuildException("'module' is required when using inline mode");
+            	}
+            	if (_file != null) {
+            		throw new BuildException("'file' not allowed when using inline mode");
             	}
 	            report = ivy.resolve(
-	            		ModuleRevisionId.newInstance(_org, _name, _rev),
+	            		ModuleRevisionId.newInstance(_organisation, _module, _revision),
 	                    confs, 
 	                    _transitive,
 	                    _changing,
@@ -123,8 +126,11 @@ public class IvyResolve extends IvyTask {
 	                    FilterHelper.getArtifactTypeFilter(_type));
             	
             } else {
-            	if (_name != null) {
-            		throw new BuildException("'name' not allowed when not using 'org' attribute");
+            	if (_organisation != null) {
+            		throw new BuildException("'organisation' not allowed when not using 'org' attribute");
+            	}
+            	if (_module != null) {
+            		throw new BuildException("'module' not allowed when not using 'org' attribute");
             	}
 	            if (_file == null) {
 	                _file = new File(getProject().getBaseDir(), getProperty(ivy, "ivy.dep.file"));
@@ -177,17 +183,17 @@ public class IvyResolve extends IvyTask {
             throw new BuildException("impossible to resolve dependencies: "+e, e);
         }
     }
-	public String getName() {
-		return _name;
+	public String getModule() {
+		return _module;
 	}
-	public void setName(String module) {
-		_name = module;
+	public void setModule(String module) {
+		_module = module;
 	}
-	public String getOrg() {
-		return _org;
+	public String getOrganisation() {
+		return _organisation;
 	}
-	public void setOrg(String organisation) {
-		_org = organisation;
+	public void setOrganisation(String organisation) {
+		_organisation = organisation;
 	}
 	public boolean isTransitive() {
 		return _transitive;
@@ -201,16 +207,16 @@ public class IvyResolve extends IvyTask {
 	public void setChanging(boolean changing) {
 		_changing = changing;
 	}
-	public String getRev() {
-		return _rev;
-	}
-	public void setRev(String rev) {
-		_rev = rev;
-	}
 	public boolean isKeep() {
-		return _keep == null ? _org == null : _keep.booleanValue();
+		return _keep == null ? _organisation == null : _keep.booleanValue();
 	}
 	public void setKeep(boolean keep) {
 		_keep = Boolean.valueOf(keep);
+	}
+	public boolean isInline() {
+		return _inline;
+	}
+	public void setInline(boolean inline) {
+		_inline = inline;
 	}
 }

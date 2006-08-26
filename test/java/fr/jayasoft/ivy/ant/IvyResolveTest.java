@@ -58,11 +58,12 @@ public class IvyResolveTest extends TestCase {
         assertTrue(getIvy().getArchiveFileInCache(_cache, "org1", "mod1.2", "2.0", "mod1.2", "jar", "jar").exists());
     }
 
-    public void testDependency() throws Exception {
+    public void testInline() throws Exception {
     	// same as before, but expressing dependency directly without ivy file
-        _resolve.setOrg("org1");
-        _resolve.setName("mod1.2");
-        _resolve.setRev("2.0");
+        _resolve.setOrganisation("org1");
+        _resolve.setModule("mod1.2");
+        _resolve.setRevision("2.0");
+        _resolve.setInline(true);
         _resolve.execute();
         
         // dependencies

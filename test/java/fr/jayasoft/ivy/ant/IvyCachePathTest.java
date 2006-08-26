@@ -58,7 +58,7 @@ public class IvyCachePathTest extends TestCase {
                 new File(p.list()[0]).getAbsolutePath());
     }
 
-    public void testDependency1() throws Exception {
+    public void testInline1() throws Exception {
     	// we first resolve another ivy file
     	IvyResolve resolve = new IvyResolve();
     	resolve.setProject(_project);
@@ -68,9 +68,10 @@ public class IvyCachePathTest extends TestCase {
     	assertTrue(_path.getIvyInstance().getArchiveFileInCache(_cache, "org1", "mod1.2", "2.2", "mod1.2", "jar", "jar").exists());
     	
     	// then we resolve a dependency directly
-    	_path.setOrg("org1");
-    	_path.setName("mod1.2");
-    	_path.setRev("2.0");
+    	_path.setOrganisation("org1");
+    	_path.setModule("mod1.2");
+    	_path.setRevision("2.0");
+    	_path.setInline(true);
         _path.setPathid("simple-pathid");
         _path.execute();
         Object ref = _project.getReference("simple-pathid");
@@ -82,11 +83,12 @@ public class IvyCachePathTest extends TestCase {
                 new File(p.list()[0]).getAbsolutePath());
     }
 
-    public void testDependency2() throws Exception {
+    public void testInline2() throws Exception {
     	// we first resolve a dependency directly
-    	_path.setOrg("org1");
-    	_path.setName("mod1.2");
-    	_path.setRev("2.0");
+    	_path.setOrganisation("org1");
+    	_path.setModule("mod1.2");
+    	_path.setRevision("2.0");
+    	_path.setInline(true);
         _path.setPathid("simple-pathid");
         _path.execute();
         Object ref = _project.getReference("simple-pathid");
