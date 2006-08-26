@@ -31,7 +31,7 @@ public class IvyResolve extends IvyTask {
     private File _cache = null;
     private String _organisation = null;
     private String _module = null;
-    private String _revision = "latest.integration";
+    private String _revision = null;
     private String _pubdate = null;
     private boolean _inline = false;
     private boolean _haltOnFailure = true;
@@ -113,6 +113,9 @@ public class IvyResolve extends IvyTask {
             	}
             	if (_file != null) {
             		throw new BuildException("'file' not allowed when using inline mode");
+            	}
+            	if (_revision == null) {
+            		_revision = "latest.integration";
             	}
 	            report = ivy.resolve(
 	            		ModuleRevisionId.newInstance(_organisation, _module, _revision),
