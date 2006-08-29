@@ -51,7 +51,7 @@ public class VsftpRepository extends AbstractRepository {
 	
 	private volatile StringBuffer _errors = new StringBuffer();
 
-	private long _readTimeout = 10000;
+	private long _readTimeout = 30000;
 	
 	private long _reuseConnection = 5 * 60 * 1000; // reuse connection during 5 minutes by default
 
@@ -64,9 +64,16 @@ public class VsftpRepository extends AbstractRepository {
 	private Thread _connectionCleaner;
 
 	private Thread _errorsReader;
+	
+	private Ivy _ivy = null;
 
 	public Resource getResource(String source) throws IOException {
+		initIvy();
 		return new VsftpResource(this, source);
+	}
+
+	private void initIvy() {
+		_ivy = IvyContext.getContext().getIvy();
 	}
 
 	protected Resource getInitResource(String source) throws IOException {
@@ -81,6 +88,7 @@ public class VsftpRepository extends AbstractRepository {
 	}
 
 	public void get(final String source, File destination) throws IOException {
+		initIvy();
 		try {
 	        fireTransferInitiated(getResource(source), TransferEvent.REQUEST_GET);
 			File destDir = destination.getParentFile();
@@ -111,7 +119,7 @@ public class VsftpRepository extends AbstractRepository {
 			long lastUpdate = System.currentTimeMillis();
 			long timeout = _readTimeout;
 			while (get.isAlive()) {
-				IvyContext.getContext().getIvy().checkInterrupted();
+				checkInterrupted();
 				long length = to.exists()?to.length():0;
 				if (length > prevLength) {
 					fireTransferProgress(length - prevLength);
@@ -149,6 +157,7 @@ public class VsftpRepository extends AbstractRepository {
 	}
 
 	public List list(String parent) throws IOException {
+		initIvy();
 		try {
 			if (!parent.endsWith("/")) {
 				parent = parent+"/";
@@ -177,6 +186,7 @@ public class VsftpRepository extends AbstractRepository {
 	}
 
 	public void put(File source, String destination, boolean overwrite) throws IOException {
+		initIvy();
 		try {
 			if (getResource(destination).exists()) {
 				if (overwrite) {
@@ -265,7 +275,7 @@ public class VsftpRepository extends AbstractRepository {
 	protected String sendCommand(String command, boolean sendErrorAsResponse, boolean single, long timeout) throws IOException {
 		single = false; // use of alone commands does not work properly due to a long delay between end of process and end of stream... 
 
-		IvyContext.getContext().getIvy().checkInterrupted();
+		checkInterrupted();
 		_inCommand = true;
 		if (!single || _in != null) {
 			ensureConnectionOpened();
@@ -385,13 +395,14 @@ public class VsftpRepository extends AbstractRepository {
 					_connectionCleaner.start();
 				}
 
-				Ivy ivy = IvyContext.getContext().getIvy();
-				ivy.addIvyListener(new IvyListener() {
-					public void progress(IvyEvent event) {
-						disconnect();
-						event.getSource().removeIvyListener(this);
-					}
-				}, EndResolveEvent.NAME);
+				if (_ivy != null) {
+					_ivy.addIvyListener(new IvyListener() {
+						public void progress(IvyEvent event) {
+							disconnect();
+							event.getSource().removeIvyListener(this);
+						}
+					}, EndResolveEvent.NAME);
+				}
 				
 				
 			} catch (IOException ex) {
@@ -427,6 +438,12 @@ public class VsftpRepository extends AbstractRepository {
 		_errorsReader.start();
 	}
 
+
+	private void checkInterrupted() {
+		if (_ivy != null) {
+			_ivy.checkInterrupted();
+		}
+	}
 
 	/**
 	 * Called whenever an api level method end
