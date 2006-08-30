@@ -254,14 +254,13 @@ public class Main {
                 }
             }
 
-            Date date = new Date();
             
             ResolveReport report = ivy.resolve(
                     ivyfile.toURL(),
                     null,
                     confs, 
                     cache, 
-                    date,
+                    null,
                     validate);
             if (report.hasError()) {
                 System.exit(1);
@@ -289,7 +288,7 @@ public class Main {
                     cache, 
                     ivy.substitute(line.getOptionValue("deliverto", "ivy-[revision].xml")),
                     ivy.substitute(line.getOptionValue("status", "release")),
-                    date,
+                    null,
                     new DefaultPublishingDRResolver(),
                     validate);
                 if (line.hasOption("publish")) {
