@@ -128,8 +128,8 @@ public class ResolverHelper {
                 Message.debug("\tfound resolved res: "+ret);
             }
             return (ResolvedResource[])ret.toArray(new ResolvedResource[ret.size()]);
-        } else {
-            // maybe the partially resolved pattern is completely resolved ?
+        } else if (partiallyResolvedPattern.indexOf("["+IvyPatternHelper.REVISION_KEY+"]") == -1) {
+            // the partially resolved pattern is completely resolved, check the resource
             try {
                 Resource res = rep.getResource(partiallyResolvedPattern);
                 if (res.exists()) {
