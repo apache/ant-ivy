@@ -103,10 +103,7 @@
  		    </fileset>
 	</target>
 	
-	<target name="init-tests" depends="init-tests-offline, init-tests-online" >
-		<property name="test.fileset.property" refid="test.fileset"/>
-		<echo message="${test.fileset.property}"/>
-	</target>
+	<target name="init-tests" depends="init-tests-offline, init-tests-online" />
 		
 	<target name="test" depends="jar, init-tests">
 		<path id="run.classpath">
@@ -124,6 +121,7 @@
       			<exclude name="**/*.java"/>
     		</fileset>
   		</copy>
+  		<mkdir dir="${test.xml.dir}"  />
         <junit haltonfailure="on" 
         	   showoutput="no"
         	   printsummary="yes">
@@ -132,15 +130,15 @@
     			<pathelement path="${test.build.dir}"/>
             </classpath>
 			<formatter type="xml"/>
-			<batchtest todir="${test.report.dir}">
+			<batchtest todir="${test.xml.dir}">
     		    <fileset refid="test.fileset" />
 			</batchtest>
         </junit>
 	</target>
 
 	<target name="test-report" depends="test">
-		<junitreport>
-			<fileset dir="${test.report.dir}">
+		<junitreport todir="${test.xml.dir}">
+			<fileset dir="${test.xml.dir}">
 				<include name="TEST-*.xml" />
 			</fileset>
 			<report format="frames" todir="${test.report.dir}" />
