@@ -51,6 +51,7 @@ Changes:
   - IMPROVE: prints URL before downloading in verbose mode (IVY-257)
   - IMPROVE: incorrect value in status attribute causes silent failure (IVY-259)
 
+  - FIX: Incorrect ant log level (IVY-279)
   - FIX: Wrong resolution of dependencies if artifacts specified explicitly (IVY-261)
   - FIX: Multiple versions of dependencies appearing in retrieve (IVY-264)
   - FIX: Too many false CircularDependencyException errors thrown (IVY-230)

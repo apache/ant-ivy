@@ -32,6 +32,8 @@ public class Message {
     private static MessageImpl _impl = null;
 
     private static List _problems = new ArrayList();
+    private static List _warns = new ArrayList();
+    private static List _errors = new ArrayList();
     
     private static boolean _showProgress = true;
     
@@ -104,6 +106,7 @@ public class Message {
             System.err.println(msg);
         }
         _problems.add("WARN:  "+msg);
+        _warns.add(msg);
     }
     public static void error(String msg) {
         if (_impl != null) {
@@ -114,6 +117,7 @@ public class Message {
             System.err.println(msg);
         }
         _problems.add("\tERROR: "+msg);
+        _errors.add(msg);
     }
 
     public static List getProblems() {
@@ -123,12 +127,24 @@ public class Message {
     public static void sumupProblems() {
         if (_problems.size() > 0) {
             info("\n:: problems summary ::");
-            for (Iterator iter = _problems.iterator(); iter.hasNext();) {
-				String msg = (String) iter.next();
-				info("\t"+msg+"\n");
-			}
+            if (_warns.size() > 0) {
+            	info("---------------- WARNINGS");
+            	for (Iterator iter = _warns.iterator(); iter.hasNext();) {
+            		String msg = (String) iter.next();
+            		_impl.log("\t"+msg+"\n", MSG_WARN);
+            	}
+            }
+            if (_errors.size() > 0) {
+                info("---------------- ERRORS");
+            	for (Iterator iter = _errors.iterator(); iter.hasNext();) {
+            		String msg = (String) iter.next();
+            		_impl.log("\t"+msg+"\n", MSG_ERR);
+            	}
+            }
             info("\t--- USE VERBOSE OR DEBUG MESSAGE LEVEL FOR MORE DETAILS ---");
             _problems.clear();
+            _warns.clear();
+            _errors.clear();
         }
     }
 
