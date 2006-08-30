@@ -106,7 +106,11 @@ public class ResolveReport {
 			for (int i = 0; i < unresolved.length; i++) {
 				Exception e = unresolved[i].getProblem();
 				if (e != null) {
-					ret.add("unresolved dependency: "+unresolved[i].getId()+": "+(e instanceof RuntimeException?e.getMessage():e.toString()));
+					String errMsg = e instanceof RuntimeException?e.getMessage():e.toString();
+					if (errMsg == null || errMsg.length()==0 || "null".equals(errMsg)) {
+						errMsg = e.getClass().getName() + " at "+e.getStackTrace()[0].toString();
+					}
+					ret.add("unresolved dependency: "+unresolved[i].getId()+": "+errMsg);
 				} else {
 					ret.add("unresolved dependency: "+unresolved[i].getId());
 				}
