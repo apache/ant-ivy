@@ -128,20 +128,28 @@ public class Message {
         if (_problems.size() > 0) {
             info("\n:: problems summary ::");
             if (_warns.size() > 0) {
-            	info("---------------- WARNINGS");
+            	info(":::: WARNINGS");
             	for (Iterator iter = _warns.iterator(); iter.hasNext();) {
             		String msg = (String) iter.next();
-            		_impl.log("\t"+msg+"\n", MSG_WARN);
+                    if (_impl != null) {
+                    	_impl.log("\t"+msg+"\n", MSG_WARN);
+                    } else {
+                        System.err.println(msg);
+                    }
             	}
             }
             if (_errors.size() > 0) {
-                info("---------------- ERRORS");
+                info(":::: ERRORS");
             	for (Iterator iter = _errors.iterator(); iter.hasNext();) {
             		String msg = (String) iter.next();
-            		_impl.log("\t"+msg+"\n", MSG_ERR);
+                    if (_impl != null) {
+                    	_impl.log("\t"+msg+"\n", MSG_ERR);
+                    } else {
+                        System.err.println(msg);
+                    }
             	}
             }
-            info("\t--- USE VERBOSE OR DEBUG MESSAGE LEVEL FOR MORE DETAILS ---");
+            info("\n:: USE VERBOSE OR DEBUG MESSAGE LEVEL FOR MORE DETAILS");
             _problems.clear();
             _warns.clear();
             _errors.clear();
