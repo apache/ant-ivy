@@ -50,6 +50,7 @@ Changes:
   - IMPROVE: log messages do not display most specfic resolver name (IVY-170)
   - IMPROVE: prints URL before downloading in verbose mode (IVY-257)
   - IMPROVE: incorrect value in status attribute causes silent failure (IVY-259)
+  - IMPROVE: suport empty dependencies tag in an ivy file (IVY-281)
 
   - FIX: Incorrect ant log level (IVY-279)
   - FIX: Wrong resolution of dependencies if artifacts specified explicitly (IVY-261)

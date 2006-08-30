@@ -54,12 +54,32 @@ public class XmlModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         assertEquals(0, md.getDependencies().length);
     }
     
+    public void testEmptyDependencies() throws Exception {
+        ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(_ivy, getClass().getResource("test-empty-dependencies.xml"), true);
+        assertNotNull(md);
+        assertEquals("myorg", md.getModuleRevisionId().getOrganisation());
+        assertEquals("mymodule", md.getModuleRevisionId().getName());
+        assertEquals("myrev", md.getModuleRevisionId().getRevision());
+        assertEquals("integration", md.getStatus());
+        
+        assertNotNull(md.getConfigurations());
+        assertEquals(Arrays.asList(new Configuration[] {new Configuration("default")}), Arrays.asList(md.getConfigurations()));
+        
+        assertNotNull(md.getArtifacts("default"));
+        assertEquals(1, md.getArtifacts("default").length);
+        assertEquals("mymodule", md.getArtifacts("default")[0].getName());
+        assertEquals("jar", md.getArtifacts("default")[0].getType());
+        
+        assertNotNull(md.getDependencies());
+        assertEquals(0, md.getDependencies().length);
+    }
+    
     public void testBad() throws IOException {
         try {
             XmlModuleDescriptorParser.getInstance().parseDescriptor(_ivy, getClass().getResource("test-bad.xml"), true);
             fail("bad ivy file raised no error");
         } catch (ParseException ex) {
-            // ok
+        	assertTrue(ex.getMessage().indexOf("'modul'") != -1);
         }
     }
 
