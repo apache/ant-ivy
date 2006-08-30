@@ -64,6 +64,7 @@ public class VsftpRepository extends AbstractRepository {
 	private Thread _connectionCleaner;
 
 	private Thread _errorsReader;
+    private volatile long _errorsLastUpdateTime;
 	
 	private Ivy _ivy = null;
 
@@ -277,14 +278,17 @@ public class VsftpRepository extends AbstractRepository {
 
 		checkInterrupted();
 		_inCommand = true;
-		if (!single || _in != null) {
-			ensureConnectionOpened();
-			Message.debug("sending command '"+command+"' to "+getHost());
-			updateLastCommandTime();
-			_out.println(command);
-			_out.flush();
-		} else {
-			sendSingleCommand(command);
+        _errorsLastUpdateTime = 0;
+		synchronized (this) {
+		    if (!single || _in != null) {
+		        ensureConnectionOpened();
+		        Message.debug("sending command '"+command+"' to "+getHost());
+		        updateLastCommandTime();
+		        _out.println(command);
+		        _out.flush();
+		    } else {
+		        sendSingleCommand(command);
+		    }
 		}
 		
 		try {
@@ -301,35 +305,67 @@ public class VsftpRepository extends AbstractRepository {
 		return readResponse(sendErrorAsResponse, _readTimeout);
 	}
 
-	protected String readResponse(final boolean sendErrorAsResponse, long timeout) throws IOException {
+	protected synchronized String readResponse(final boolean sendErrorAsResponse, long timeout) throws IOException {
 		final StringBuffer response = new StringBuffer();
 		final IOException[] exc = new IOException[1];
 		final boolean[] done = new boolean[1];
 		Runnable r = new Runnable() {
-			public void run() {
-				try {
-					int c;
-					while ((c = _in.read()) != -1) {
-						response.append((char)c);
-						if (response.length() >= PROMPT.length() 
-								&& response.substring(response.length() - PROMPT.length(), response.length()).equals(PROMPT)) {
-							response.setLength(response.length() - PROMPT.length());
-							break;
-						}
-					}
-					if (_errors.length() > 0) {
-						if (sendErrorAsResponse) {
-							response.append(_errors);
-							_errors.setLength(0);
-						} else {
-							throw new IOException(chomp(_errors).toString());
-						}
-					}
-					chomp(response);
-					done[0] = true;
-				} catch (IOException e) {
-					exc[0]  = e;
-				}			
+		    public void run() {
+		        synchronized (VsftpRepository.this) {
+		            try {
+		                int c;
+		                boolean getPrompt = false;
+		                // the reading is done in a for loop making five attempts to read the stream if we do not reach the next prompt
+		                for (int attempts = 0; !getPrompt && attempts < 5; attempts++) {
+		                    while ((c = _in.read()) != -1) {
+		                        attempts = 0; // we manage to read something, reset numer of attempts
+		                        response.append((char)c);
+		                        if (response.length() >= PROMPT.length() 
+		                                && response.substring(response.length() - PROMPT.length(), response.length()).equals(PROMPT)) {
+		                            response.setLength(response.length() - PROMPT.length());
+		                            getPrompt = true;
+		                            break;
+		                        }
+		                    }
+		                    if (!getPrompt) {
+		                        try {
+		                            Thread.sleep(50);
+		                        } catch (InterruptedException e) {
+		                            break;
+		                        }
+		                    }
+		                }
+                        if (getPrompt) {
+                            // wait enough for error stream to be fully read
+                            if (_errorsLastUpdateTime == 0) {
+                                // no error written yet, but it may be pending...
+                                _errorsLastUpdateTime = _lastCommand;
+                            }
+                                
+                            while ((System.currentTimeMillis() - _errorsLastUpdateTime) < 50) {
+                                try {
+                                    Thread.sleep(30);
+                                } catch (InterruptedException e) {
+                                    break;
+                                }
+                            }
+                        }
+		                if (_errors.length() > 0) {
+		                    if (sendErrorAsResponse) {
+		                        response.append(_errors);
+		                        _errors.setLength(0);
+		                    } else {
+		                        throw new IOException(chomp(_errors).toString());
+		                    }
+		                }
+		                chomp(response);
+		                done[0] = true;
+		            } catch (IOException e) {
+		                exc[0]  = e;
+		            } finally {			
+		                VsftpRepository.this.notify();
+                    }
+		        }
 			}
 		};
 		Thread reader = null;
@@ -339,7 +375,7 @@ public class VsftpRepository extends AbstractRepository {
 			reader = new Thread(r);
 			reader.start();
 			try {
-				reader.join(timeout);
+				wait(timeout);
 			} catch (InterruptedException e) {
 			}
 		}
@@ -348,7 +384,17 @@ public class VsftpRepository extends AbstractRepository {
 			throw exc[0];
 		} else if (!done[0]) {
 			if (reader != null && reader.isAlive())  {
-				reader.stop(); // no way to interrupt it non abruptly
+                reader.interrupt();
+                for (int i = 0; i<5 && reader.isAlive(); i++) {
+                    try {
+                        Thread.sleep(100);
+                    } catch (InterruptedException e) {
+                        break;
+                    }
+                }
+                if (reader.isAlive()) {
+                    reader.stop(); // no way to interrupt it non abruptly
+                }
 			}
 			throw new IOException("connection timeout to "+getHost());
 		} else {
@@ -423,13 +469,15 @@ public class VsftpRepository extends AbstractRepository {
 		_in = new InputStreamReader(_process.getInputStream());
 		_err = new InputStreamReader(_process.getErrorStream());
 		_out = new PrintWriter(_process.getOutputStream());
-		
+
 		_errorsReader = new Thread() {
-							public void run() {
+
+                            public void run() {
 								int c;
 								try {
 									while (_err != null && (c = _err.read()) != -1) {
 										_errors.append((char)c);
+                                        _errorsLastUpdateTime = System.currentTimeMillis();
 									}
 								} catch (IOException e) {
 								}
@@ -504,6 +552,7 @@ public class VsftpRepository extends AbstractRepository {
 		_in = null;
 		_out = null;
 		_err = null;
+        Message.debug("connection to "+getHost()+" closed");
 	}
 
 	/**
