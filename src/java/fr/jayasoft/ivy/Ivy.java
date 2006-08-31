@@ -1068,6 +1068,9 @@ public class Ivy implements TransferListener {
 		return resolve(md, confs, cache, date, validate, useCacheOnly, true, artifactFilter);
 	}
 	public ResolveReport resolve(ModuleDescriptor md, String[] confs, File cache, Date date, boolean validate, boolean useCacheOnly, boolean transitive, Filter artifactFilter) throws ParseException, IOException, FileNotFoundException {
+		return resolve(md, confs, cache, date, validate, useCacheOnly, transitive, true, true, artifactFilter);
+	}
+	public ResolveReport resolve(ModuleDescriptor md, String[] confs, File cache, Date date, boolean validate, boolean useCacheOnly, boolean transitive, boolean download, boolean outputReport, Filter artifactFilter) throws ParseException, IOException, FileNotFoundException {
 		IvyContext.getContext().setIvy(this);
         DependencyResolver oldDictator = getDictatorResolver();
         if (useCacheOnly) {
@@ -1091,11 +1094,8 @@ public class Ivy implements TransferListener {
 
             // resolve dependencies
             IvyNode[] dependencies = getDependencies(md, confs, cache, date, report, validate, transitive);
-            report.setDependencies(Arrays.asList(dependencies));
-            
-            Message.verbose(":: downloading artifacts ::");
+            report.setDependencies(Arrays.asList(dependencies), artifactFilter);
 
-            downloadArtifacts(dependencies, artifactFilter, report, cache);
             
             // produce resolved ivy file and ivy properties in cache
             File ivyFileInCache = getResolvedIvyFileInCache(cache, md.getResolvedModuleRevisionId());
@@ -1113,13 +1113,18 @@ public class Ivy implements TransferListener {
             props.store(new FileOutputStream(ivyPropertiesInCache), md.getResolvedModuleRevisionId()+ " resolved revisions");
             Message.verbose("\tresolved ivy file produced in "+ivyFileInCache);
             
-            Message.info(":: resolution report ::");
-            report.setProblemMessages(Message.getProblems());
-            // output report
-            report.output(getReportOutputters(), cache);
+            report.setResolveTime(System.currentTimeMillis()-start);
+
+            if (download) {
+	            Message.verbose(":: downloading artifacts ::");
+	
+	            downloadArtifacts(report, cache, artifactFilter);
+            }
             
-            Message.verbose("\tresolve done ("+(System.currentTimeMillis()-start)+"ms)");
-            Message.sumupProblems();
+            
+            if (outputReport) {
+            	outputReport(report, cache);
+            }
             
             fireIvyEvent(new EndResolveEvent(this, md, confs, report));
             return report;
@@ -1128,16 +1133,21 @@ public class Ivy implements TransferListener {
         }
 	}
 
-    private void downloadArtifacts(IvyNode[] dependencies, Filter artifactFilter, ResolveReport report, File cache) {
-        // collect list of artifacts
-        Collection artifacts = new ArrayList();
-        for (int i = 0; i < dependencies.length; i++) {
-            //download artifacts required in all asked configurations
-            if (!dependencies[i].isCompletelyEvicted() && !dependencies[i].hasProblem()) {
-                 artifacts.addAll(Arrays.asList(dependencies[i].getSelectedArtifacts(artifactFilter)));
-            }
-        }
-        fireIvyEvent(new PrepareDownloadEvent(this, (Artifact[])artifacts.toArray(new Artifact[artifacts.size()])));
+	public void outputReport(ResolveReport report, File cache) {
+		Message.info(":: resolution report ::");
+		report.setProblemMessages(Message.getProblems());
+		// output report
+		report.output(getReportOutputters(), cache);
+		
+		Message.verbose("\tresolve done ("+report.getResolveTime()+"ms resolve - "+report.getDownloadTime()+"ms download)");
+		Message.sumupProblems();
+	}
+
+    public void downloadArtifacts(ResolveReport report, File cache, Filter artifactFilter) {
+    	long start = System.currentTimeMillis();
+    	IvyNode[] dependencies = (IvyNode[]) report.getDependencies().toArray(new IvyNode[report.getDependencies().size()]);
+        
+        fireIvyEvent(new PrepareDownloadEvent(this, (Artifact[])report.getArtifacts().toArray(new Artifact[report.getArtifacts().size()])));
         
         for (int i = 0; i < dependencies.length; i++) {
         	checkInterrupted();
@@ -1165,14 +1175,9 @@ public class Ivy implements TransferListener {
                         report.getConfigurationReport(dconfs[j]).addDependency(dependencies[i], dReport);
                     }
                 }
-            } else if (dependencies[i].isCompletelyEvicted()) {
-                // dependencies has been evicted: it has not been added to the report yet
-                String[] dconfs = dependencies[i].getRootModuleConfigurations();
-                for (int j = 0; j < dconfs.length; j++) {
-                    report.getConfigurationReport(dconfs[j]).addDependency(dependencies[i]);
-                }
             }
         }
+        report.setDownloadTime(System.currentTimeMillis() - start);
     }
 
     /**
@@ -1723,9 +1728,10 @@ public class Ivy implements TransferListener {
             
             Message.info(":: resolving dependencies ::");
             IvyNode[] dependencies = getDependencies(md, new String[] {"default"}, cache, null, report, validate);
+            report.setDependencies(Arrays.asList(dependencies), artifactFilter);
             
             Message.info(":: downloading artifacts to cache ::");
-            downloadArtifacts(dependencies, artifactFilter, report, cache);
+            downloadArtifacts(report, cache, artifactFilter);
 
             // now that everything is in cache, we can publish all these modules
             Message.info(":: installing in "+to+" ::");

@@ -18,6 +18,7 @@ import java.util.Map;
 import fr.jayasoft.ivy.IvyNode;
 import fr.jayasoft.ivy.ModuleDescriptor;
 import fr.jayasoft.ivy.ModuleId;
+import fr.jayasoft.ivy.filter.Filter;
 
 /**
  * Represents a whole resolution report for a module
@@ -27,6 +28,9 @@ public class ResolveReport {
     private Map _confReports = new LinkedHashMap();
 	private List _problemMessages;
 	private List _dependencies; // the list of all dependencies resolved, ordered from the more dependent to the less dependent
+	private List _artifacts;
+	private long _resolveTime;
+	private long _downloadTime;
 	
     public ResolveReport(ModuleDescriptor md) {
         _md = md;
@@ -122,8 +126,25 @@ public class ResolveReport {
 		}
 		return ret;
 	}
-	public void setDependencies(List dependencies) {
+	public void setDependencies(List dependencies, Filter artifactFilter) {
 		_dependencies = dependencies;
+        // collect list of artifacts
+        _artifacts = new ArrayList();
+        for (Iterator iter = dependencies.iterator(); iter.hasNext();) {
+			IvyNode dependency = (IvyNode) iter.next();
+			if (!dependency.isCompletelyEvicted() && !dependency.hasProblem()) {
+				_artifacts.addAll(Arrays.asList(dependency.getSelectedArtifacts(artifactFilter)));
+			} else {
+				// dependencies has been evicted: it has not been added to the report yet
+				String[] dconfs = dependency.getRootModuleConfigurations();
+				for (int j = 0; j < dconfs.length; j++) {
+					ConfigurationResolveReport configurationReport = getConfigurationReport(dconfs[j]);
+					if (configurationReport != null) {
+						configurationReport.addDependency(dependency);
+					}
+				}
+			}			
+		}
 	}
 	/**
 	 * Returns the list of all dependencies concerned by this report as a List of IvyNode
@@ -132,6 +153,15 @@ public class ResolveReport {
 	 */
 	public List getDependencies() {
 		return _dependencies;
+	}
+	/**
+	 * Returns the list of all artifacts which should be downloaded per this resolve
+	 * To know if the artifact have actually been downloaded use information found
+	 * in ConfigurationResolveReport.
+	 * @return
+	 */
+	public List getArtifacts() {
+		return _artifacts;
 	}
 	/**
 	 * gives all the modules ids concerned by this report, from the most dependent to the least one
@@ -148,5 +178,17 @@ public class ResolveReport {
 			}
 		}
 		return ret;
+	}
+	public void setResolveTime(long elapsedTime) {
+		_resolveTime = elapsedTime;
+	}
+	public long getResolveTime() {
+		return _resolveTime;
+	}
+	public void setDownloadTime(long elapsedTime) {
+		_downloadTime = elapsedTime;
+	}
+	public long getDownloadTime() {
+		return _downloadTime;
 	}
 }

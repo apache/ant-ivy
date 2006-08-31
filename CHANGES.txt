@@ -1,5 +1,5 @@
 				Ivy 
-				- The popular open source dependency manager
+				- The agile open source dependency manager
 				- http://www.jayasoft.org/ivy
 				============================================
 				
@@ -51,6 +51,7 @@ Changes:
   - IMPROVE: prints URL before downloading in verbose mode (IVY-257)
   - IMPROVE: incorrect value in status attribute causes silent failure (IVY-259)
   - IMPROVE: suport empty dependencies tag in an ivy file (IVY-281)
+  - IMPROVE: isolate dependency resolution from artifact downloading (IVY-254)
 
   - FIX: Incorrect ant log level (IVY-279)
   - FIX: Wrong resolution of dependencies if artifacts specified explicitly (IVY-261)
