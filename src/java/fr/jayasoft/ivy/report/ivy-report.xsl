@@ -49,6 +49,7 @@
       <tbody>
         <xsl:for-each select="$modules/revision/caller[@organisation=$org and @name=$mod]">
           <xsl:call-template name="called">
+            <xsl:with-param name="callstack"     select="concat($org, string('/'), $mod)"/>
             <xsl:with-param name="indent"        select="string('')"/>
             <xsl:with-param name="revision"      select=".."/>
           </xsl:call-template>
@@ -59,6 +60,7 @@
 </xsl:template>
 
 <xsl:template name="called">
+    <xsl:param name="callstack"/>
     <xsl:param name="indent"/>
     <xsl:param name="revision"/>
 
@@ -108,12 +110,15 @@
     </td>
     </tr>
     <xsl:if test="not($revision/@evicted)">
+    <xsl:if test="not(contains($callstack, concat($organisation, string('/'), $module)))">
     <xsl:for-each select="$modules/revision/caller[@organisation=$organisation and @name=$module]">
           <xsl:call-template name="called">
+            <xsl:with-param name="callstack"     select="concat($callstack, string('#'), $organisation, string('/'), $module)"/>
             <xsl:with-param name="indent"        select="concat($indent, string('---'))"/>
             <xsl:with-param name="revision"      select=".."/>
           </xsl:call-template>
     </xsl:for-each>   
+    </xsl:if>
     </xsl:if>
 </xsl:template>
 
