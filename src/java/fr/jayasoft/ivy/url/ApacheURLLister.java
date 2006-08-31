@@ -121,6 +121,8 @@ public class ApacheURLLister {
                 // the groups were not found (shouldn't happen, really)
                 continue;
             }
+            
+            text = text.trim(); 
 
             // absolute href: convert to relative one
             if (href.startsWith("/")) {

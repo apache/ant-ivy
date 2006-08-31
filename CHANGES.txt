@@ -53,6 +53,7 @@ Changes:
   - IMPROVE: suport empty dependencies tag in an ivy file (IVY-281)
   - IMPROVE: isolate dependency resolution from artifact downloading (IVY-254)
 
+  - FIX: http url lister doesn't work when link text has spaces (IVY-282)
   - FIX: Incorrect ant log level (IVY-279)
   - FIX: Wrong resolution of dependencies if artifacts specified explicitly (IVY-261)
   - FIX: Multiple versions of dependencies appearing in retrieve (IVY-264)

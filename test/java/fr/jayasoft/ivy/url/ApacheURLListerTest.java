@@ -19,8 +19,6 @@ import java.util.List;
  * @author <a href="johnmshields@yahoo.com">John M. Shields</a>
  */
 public class ApacheURLListerTest extends TestCase {
-	// remote.test
-    //~ Methods ----------------------------------------------------------------
 
     /**
      * Tests {@link ApacheURLLister#retrieveListing(URL, boolean, boolean)}.
@@ -28,48 +26,37 @@ public class ApacheURLListerTest extends TestCase {
      * @throws Exception
      */
     public void testRetrieveListing() throws Exception {
-        URL url = new URL("http://www.ibiblio.org/maven/ant/jars/");
-
         ApacheURLLister lister = new ApacheURLLister();
 
-        List files = lister.retrieveListing(url, true, false);
+        List files = lister.retrieveListing(ApacheURLListerTest.class.getResource("apache-file-listing.html"), true, false);
         assertNotNull(files);
         assertTrue(files.size() > 0);
+        for (Iterator iter = files.iterator(); iter.hasNext();) {
+			URL file = (URL) iter.next();
+			assertTrue("found a non matching file: "+file, file.getPath().matches(".*/[^/]+\\.(jar|md5|sha1)"));
+		}
 
-        Iterator iter = files.iterator();
-
-        while (iter.hasNext()) {
-            URL file = (URL) iter.next();
-            assertNotNull(file);
-            assertTrue("found non matching file: "+file.getPath(), file.getPath().matches(".*/ant/jars/[^/]*$"));
-        }
 
         // try a directory listing
-        url = new URL("http://www.ibiblio.org/maven/ant/");
-
-        List dirs = lister.retrieveListing(url, false, true);
+        List dirs = lister.retrieveListing(ApacheURLListerTest.class.getResource("apache-dir-listing.html"), false, true);
         assertNotNull(dirs);
-        assertTrue(dirs.size() > 0);
+        assertEquals(4, dirs.size());
 
-        iter = dirs.iterator();
 
-        while (iter.hasNext()) {
-            URL dir = (URL) iter.next();
-            assertNotNull(dir);
-            assertTrue("found non matching dir: "+dir.getPath(), dir.getPath().matches(".*/$"));
-        }
-
-        List empty = lister.retrieveListing(url, true, false);
+        List empty = lister.retrieveListing(ApacheURLListerTest.class.getResource("apache-dir-listing.html"), true, false);
         assertTrue(empty.isEmpty());
     }
     
-//    public void testRetrieveTomcatListing() throws Exception {
-//        URL url = new URL("http://localhost:8080/ivyrep/apache/commons-collections/");
-//
-//        ApacheURLLister lister = new ApacheURLLister();
-//
-//        List files = lister.retrieveListing(url, true, false);
-//        assertNotNull(files);
-//        assertTrue(files.size() > 0);
-//    }
+    /**
+     * Tests {@link ApacheURLLister#retrieveListing(URL, boolean, boolean)}.
+     *
+     * @throws Exception
+     */
+    public void testRetrieveListingWithSpaces() throws Exception {
+        ApacheURLLister lister = new ApacheURLLister();
+
+        List files = lister.retrieveListing(ApacheURLListerTest.class.getResource("listing-with-spaces.html"), true, false);
+        assertNotNull(files);
+        assertTrue(files.size() > 0);
+    }
 }
