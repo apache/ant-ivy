@@ -32,12 +32,17 @@ public class FileUtil {
         copy(src, dest, l, false);
     }
     public static void copy(File src, File dest, CopyProgressListener l, boolean overwrite) throws IOException {
-        if (dest.exists() && !dest.canWrite()) {
-            if (overwrite && dest.isFile()) {
-                dest.delete();
-            } else {
-                throw new IOException("impossible to copy: destination is not writable: "+dest);
-            }
+        if (dest.exists()) {
+        	if (!dest.isFile()) {
+        		throw new IOException("impossible to copy: destination is not a file: "+dest);
+        	}
+        	if (overwrite) {
+        		if (!dest.canWrite()) {
+        			dest.delete();
+        		} // if dest is writable, the copy will overwrite it without requiring a delete
+        	} else {
+        		Message.verbose(dest+" already exists, nothing done");
+        	}
         }
         copy(new FileInputStream(src), dest, l);
         long srcLen = src.length();
