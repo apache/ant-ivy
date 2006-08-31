@@ -99,7 +99,7 @@ public class ApacheURLLister {
         List urlList = new ArrayList();
 
         // add trailing slash for relative urls
-        if (!url.getPath().endsWith("/")) {
+        if (!url.getPath().endsWith("/") && !url.getPath().endsWith(".html")) {
             url = new URL(url.getProtocol(), url.getHost(), url.getPort(),
                     url.getPath() + "/");
         }
