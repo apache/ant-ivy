@@ -51,7 +51,7 @@
 	
 
 	<target name="resolve" depends="prepare" unless="no.resolve">
-		<ivy:retrieve/>
+		<ivy:retrieve conf="default" />
 	</target>
 
 	<target name="build" depends="resolve">
