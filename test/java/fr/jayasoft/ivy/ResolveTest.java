@@ -582,7 +582,8 @@ public class ResolveTest extends TestCase {
         assertTrue(_ivy.getArchiveFileInCache(_cache, "org1", "mod1.2", "2.1", "mod1.2", "jar", "jar").exists());
     }
 
-    public void testResolveDefaultWithArtifacts() throws Exception {
+    public void testResolveSeveralDefaultWithArtifacts() throws Exception {
+    	// test case for IVY-261
     	// mod1.6 depends on
     	//   mod1.4, which depends on mod1.3 and selects one of its artifacts
     	//   mod1.3 and selects two of its artifacts
@@ -594,7 +595,26 @@ public class ResolveTest extends TestCase {
         assertTrue(_ivy.getArchiveFileInCache(_cache, "org1", "mod1.3", "3.0", "mod1.3-A", "jar", "jar").exists());
         assertTrue(_ivy.getArchiveFileInCache(_cache, "org1", "mod1.3", "3.0", "mod1.3-B", "jar", "jar").exists());
     }
+
+    public void testResolveSeveralDefaultWithArtifactsAndConfs() throws Exception {
+    	// test case for IVY-283
+        Ivy ivy = new Ivy();
+        ivy.configure(new File("test/repositories/IVY-283/ivyconf.xml"));
+        ResolveReport report = ivy.resolve(new File("test/repositories/IVY-283/ivy.xml").toURL(),
+                null, new String[] {"*"}, _cache, null, true);
+        assertFalse(report.hasError());
+        
+        // dependencies
+        ConfigurationResolveReport crr = report.getConfigurationReport("build");
+        assertNotNull(crr);
+        assertEquals(3, crr.getDownloadReports(ModuleRevisionId.newInstance("medicel", "C", "1.0")).length);
+
+        assertTrue(_ivy.getArchiveFileInCache(_cache, "medicel", "C", "1.0", "lib_c_a", "jar", "jar").exists());
+        assertTrue(_ivy.getArchiveFileInCache(_cache, "medicel", "C", "1.0", "lib_c_b", "jar", "jar").exists());
+        assertTrue(_ivy.getArchiveFileInCache(_cache, "medicel", "C", "1.0", "lib_c_d", "jar", "jar").exists());
+    }
     
+
 
     public void testResolveDefaultWithArtifactsConf1() throws Exception {
         // mod2.2 depends on mod1.3 and selects its artifacts

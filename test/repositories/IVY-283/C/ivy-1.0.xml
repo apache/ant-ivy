@@ -1,0 +1,15 @@
+<ivy-module version="1.4">
+  <info organisation="medicel" module="C" revision="1.0"/>
+  <configurations defaultconfmapping="*->#;test->runtime">
+    <conf name="build" description="Buildtime dependency configuration" />
+    <conf name="runtime" extends="build" description="Runtime dependency configuration" />
+    <conf name="test" extends="runtime" description="Test dependency configuration" />
+  </configurations>
+  <publications>
+    <artifact name="lib_c_a" type="jar" />
+    <artifact name="lib_c_b" type="jar" />
+    <artifact name="lib_c_c" type="jar" />
+    <artifact name="lib_c_d" type="jar" />
+    <artifact name="lib_c_e" type="jar" />
+  </publications>
+</ivy-module> 
