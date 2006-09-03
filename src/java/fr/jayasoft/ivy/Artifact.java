@@ -29,6 +29,11 @@ public interface Artifact extends ExtendableItem {
     String getName();
     String getType();
     String getExt();
+    /**
+     * Returns the url at which this artifact can be found independently of ivy configuration.
+     * This can be null (and is usually for standard artifacts)
+     * @return url at which this artifact can be found independently of ivy configuration
+     */
     URL getUrl();
     String[] getConfigurations();
 

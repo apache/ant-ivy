@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 
 import fr.jayasoft.ivy.Artifact;
+import fr.jayasoft.ivy.DefaultArtifact;
 import fr.jayasoft.ivy.Ivy;
 import fr.jayasoft.ivy.LatestStrategy;
 import fr.jayasoft.ivy.ModuleRevisionId;
@@ -166,23 +167,23 @@ public class RepositoryResolver extends AbstractResourceResolver {
                 mrid,
                 artifact); 
         
-        put(src, dest, overwrite);
+        put(artifact, src, dest, overwrite);
         Message.info("\tpublished "+artifact.getName()+" to "+dest);
     }
 
-	private void put(File src, String dest, boolean overwrite) throws IOException {
-		_repository.put(src, dest, overwrite);
+	private void put(Artifact artifact, File src, String dest, boolean overwrite) throws IOException {
+		_repository.put(artifact, src, dest, overwrite);
 		String[] checksums = getChecksumAlgorithms();
 		for (int i = 0; i < checksums.length; i++) {
-			putChecksum(src, dest, overwrite, checksums[i]);
+			putChecksum(artifact, src, dest, overwrite, checksums[i]);
 		}
 	}
 
-	private void putChecksum(File src, String dest, boolean overwrite, String algorithm) throws IOException {
+	private void putChecksum(Artifact artifact, File src, String dest, boolean overwrite, String algorithm) throws IOException {
 		File csFile = File.createTempFile("ivytemp", algorithm);
 		try {
 			FileUtil.copy(new ByteArrayInputStream(ChecksumHelper.computeAsString(src, algorithm).getBytes()), csFile, null);
-			_repository.put(csFile, dest+"."+algorithm, overwrite);
+			_repository.put(DefaultArtifact.cloneWithAnotherTypeAndExt(artifact, algorithm, artifact.getExt()+"."+algorithm), csFile, dest+"."+algorithm, overwrite);
 		} finally {
 			csFile.delete();
 		}

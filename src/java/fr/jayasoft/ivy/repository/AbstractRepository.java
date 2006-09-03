@@ -6,10 +6,13 @@
  */
 package fr.jayasoft.ivy.repository;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
 
 import javax.swing.event.EventListenerList;
 
+import fr.jayasoft.ivy.Artifact;
 import fr.jayasoft.ivy.IvyContext;
 
 
@@ -115,4 +118,12 @@ public abstract class AbstractRepository implements Repository {
     public String toString() {
         return getName();
     }
+    
+    public void put(Artifact artifact, File source, String destination, boolean overwrite) throws IOException {
+    	put(source, destination, overwrite);
+    }
+
+	protected void put(File source, String destination, boolean overwrite) throws IOException {
+		throw new UnsupportedOperationException("put in not supported by "+getName());
+	}
 }

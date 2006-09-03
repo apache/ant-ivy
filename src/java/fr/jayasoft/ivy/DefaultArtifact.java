@@ -27,6 +27,10 @@ public class DefaultArtifact extends AbstractArtifact {
         return new DefaultArtifact(artifact.getModuleRevisionId(), artifact.getPublicationDate(), artifact.getName(), newType, artifact.getExt(), artifact.getExtraAttributes());
     }
     
+    public static Artifact cloneWithAnotherTypeAndExt(Artifact artifact, String newType, String newExt) {
+        return new DefaultArtifact(artifact.getModuleRevisionId(), artifact.getPublicationDate(), artifact.getName(), newType, newExt, artifact.getExtraAttributes());
+    }
+    
     Date _publicationDate;
     ArtifactRevisionId _arid;
     URL _url;

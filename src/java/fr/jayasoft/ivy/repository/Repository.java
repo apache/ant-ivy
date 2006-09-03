@@ -10,6 +10,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
+import fr.jayasoft.ivy.Artifact;
+
 /**
  * Represents a collection of resources available to Ivy. Ivy uses one or more
  * repositories as both a source of resources for Ivy enabled build systems and
@@ -65,13 +67,14 @@ public interface Repository {
     
     /**
      * Transfer a resource to the repository
-     * 
+     * @param artifact The artifact to be transferred.
      * @param source The local file to be transferred.
      * @param destination Where to transfer the resource.
      * @param overwrite Whether the transfer should overwrite an existing resource.
+     * 
      * @throws IOException On publication failure.
      */
-    void put(File source, String destination, boolean overwrite) throws IOException;
+    void put(Artifact artifact, File source, String destination, boolean overwrite) throws IOException;
     
     /**
      * Return a listing of resources names

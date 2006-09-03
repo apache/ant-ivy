@@ -52,6 +52,7 @@ Changes:
   - IMPROVE: incorrect value in status attribute causes silent failure (IVY-259)
   - IMPROVE: suport empty dependencies tag in an ivy file (IVY-281)
   - IMPROVE: isolate dependency resolution from artifact downloading (IVY-254)
+  - IMPROVE: Pass artifact to repository when calling "put" (IVY-192)
 
   - FIX: Endless recursion in report (IVY-284)
   - FIX: http url lister doesn't work when link text has spaces (IVY-282)
