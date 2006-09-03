@@ -62,6 +62,22 @@ public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         assertEquals("test", artifact[0].getName());
     }
     
+    public void testParent2() throws Exception {
+        ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(new Ivy(), getClass().getResource("test-parent2.pom"), false);
+        assertNotNull(md);
+        
+        ModuleRevisionId mrid = ModuleRevisionId.newInstance("fr.jayasoft", "test", "1.0");
+        assertEquals(mrid, md.getModuleRevisionId());
+        
+        assertNotNull(md.getConfigurations());
+        assertEquals(Arrays.asList(PomModuleDescriptorParser.MAVEN2_CONFIGURATIONS), Arrays.asList(md.getConfigurations()));
+        
+        Artifact[] artifact = md.getArtifacts("master");
+        assertEquals(1, artifact.length);
+        assertEquals(mrid, artifact[0].getModuleRevisionId());
+        assertEquals("test", artifact[0].getName());
+    }
+    
     public void testDependencies() throws Exception {
         ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(new Ivy(), getClass().getResource("test-dependencies.pom"), false);
         assertNotNull(md);

@@ -63,6 +63,7 @@ Changes:
   - FIX: CircularDependencyException not always thrown (IVY-184)
   - FIX: NullPointer in BasicResolver (IVY-258)
   - FIX: Bad diagnostics message when no space left (IVY-250)
+  - FIX: Maven2 POM support can find groupId from "parent" element (IVY-262)
   - FIX: Parent version is expected to be equal to the module version in POM (IVY-241)
   - FIX: problem with cache and returnFirst (IVY-207)
   - FIX: modules splitted across a chain are not handled correctly (IVY-206)

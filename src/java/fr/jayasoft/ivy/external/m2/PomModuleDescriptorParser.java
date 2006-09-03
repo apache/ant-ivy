@@ -174,13 +174,22 @@ public class PomModuleDescriptorParser extends AbstractModuleDescriptorParser {
         
         public void characters(char[] ch, int start, int length) throws SAXException {
             String txt = IvyPatternHelper.substituteVariables(new String(ch, start, length).trim(), _properties);
+            if (txt.trim().length() == 0) {
+            	return;
+            }
             String context = getContext();
+            if (context.equals("project/parent/groupId") && _organisation == null) {
+            	_organisation = txt;
+                return;
+            }
             if (context.startsWith("project/parent")) {
                 return;
             }
             if (_md.getModuleRevisionId() == null || context.startsWith("project/dependencies/dependency")) {
-                if (_organisation == null && context.endsWith("groupId")) {
+                if (context.equals("project/groupId")) {
                     _organisation = txt;
+                } else if (_organisation == null && context.endsWith("groupId")) {
+                	_organisation = txt;
                 } else if (_module == null && context.endsWith("artifactId")) {
                     _module = txt;
                 } else if (_revision == null && context.endsWith("version")) {
