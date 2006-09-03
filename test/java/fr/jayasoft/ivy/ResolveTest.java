@@ -1284,6 +1284,10 @@ public class ResolveTest extends TestCase {
 
         assertTrue(_ivy.getIvyFileInCache(_cache, ModuleRevisionId.newInstance("org1", "mod1.2", "2.0")).exists());
         assertTrue(_ivy.getArchiveFileInCache(_cache, "org1", "mod1.2", "2.0", "mod1.2", "jar", "jar").exists());
+
+        // even late eviction should avoid artifact downloading
+        assertFalse(_ivy.getArchiveFileInCache(_cache, "org5", "mod5.1", "4.0", "art51A", "jar", "jar").exists());
+        assertFalse(_ivy.getArchiveFileInCache(_cache, "org5", "mod5.1", "4.0", "art51B", "jar", "jar").exists());
     }
     
     public void testEvictWithConfInMultiConf() throws Exception {
@@ -1324,6 +1328,10 @@ public class ResolveTest extends TestCase {
         crr = report.getConfigurationReport("B");
         assertNotNull(crr);
         assertEquals(2, crr.getDownloadReports(ModuleRevisionId.newInstance("org5", "mod5.1", "4.2")).length);
+        
+        // even late eviction should avoid artifact downloading
+        assertFalse(_ivy.getArchiveFileInCache(_cache, "org5", "mod5.1", "4.0", "art51A", "jar", "jar").exists());
+        assertFalse(_ivy.getArchiveFileInCache(_cache, "org5", "mod5.1", "4.0", "art51B", "jar", "jar").exists());
     }
     
     public void testEvictWithConfInMultiConf2() throws Exception {
