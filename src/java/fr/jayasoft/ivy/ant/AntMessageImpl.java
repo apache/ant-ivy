@@ -6,7 +6,7 @@
  */
 package fr.jayasoft.ivy.ant;
 
-import org.apache.tools.ant.Project;
+import org.apache.tools.ant.Task;
 
 import fr.jayasoft.ivy.util.MessageImpl;
 
@@ -16,20 +16,20 @@ import fr.jayasoft.ivy.util.MessageImpl;
  * @author Xavier Hanin
  */
 public class AntMessageImpl implements MessageImpl {
-    private Project _project;
+    private Task _task;
 
     private static long _lastProgressFlush = 0;
     private static StringBuffer _buf = new StringBuffer();
 
     /**
-     * @param project
+     * @param task
      */
-    public AntMessageImpl(Project project) {
-        _project = project;
+    public AntMessageImpl(Task task) {
+        _task = task;
     }
 
     public void log(String msg, int level) {
-        _project.log(msg, level);
+    	_task.log(msg, level);
     }
 
     public void progress() {
@@ -37,10 +37,10 @@ public class AntMessageImpl implements MessageImpl {
         if (_lastProgressFlush == 0) {
             _lastProgressFlush = System.currentTimeMillis();
         }
-        if (_project != null) {
+        if (_task != null) {
             // log with ant causes a new line -> we do it only once in a while
             if (System.currentTimeMillis() - _lastProgressFlush > 1500) {
-                _project.log(_buf.toString());
+                _task.log(_buf.toString());
                 _buf.setLength(0);
                 _lastProgressFlush = System.currentTimeMillis();
             }
@@ -48,7 +48,7 @@ public class AntMessageImpl implements MessageImpl {
     }
     
     public void endProgress(String msg) {
-        _project.log(_buf + msg);
+        _task.log(_buf + msg);
         _buf.setLength(0);
         _lastProgressFlush = 0;
     }

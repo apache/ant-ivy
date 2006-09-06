@@ -25,7 +25,7 @@ import fr.jayasoft.ivy.util.Message;
 import fr.jayasoft.ivy.util.StringUtils;
 
 /**
- * Base class for all ivy ant tasks, deaal particularly with ivy instance storage in ant project.
+ * Base class for all ivy ant tasks, deal particularly with ivy instance storage in ant project.
  * 
  * @author Xavier Hanin
  *
@@ -66,14 +66,18 @@ public class IvyTask extends Task {
         return (Ivy)reference;
     }
 
+    /** 
+     * Every task MUST call ensureMessageInitialised when the execution method
+     * starts (at least before doing any log in order to set the correct task
+     * in the log.
+     */
     protected void ensureMessageInitialised() {
         if (!Message.isInitialised()) { 
-            Message.init(new AntMessageImpl(getProject()));
+            Message.init(new AntMessageImpl(this));
             getProject().addBuildListener(new BuildListener() {
+            	private int stackDepth = 0;
                 public void buildFinished(BuildEvent event) {
-                    Message.uninit();
                 }
-    
                 public void buildStarted(BuildEvent event) {
                 }
                 public void targetStarted(BuildEvent event) {
@@ -81,13 +85,24 @@ public class IvyTask extends Task {
                 public void targetFinished(BuildEvent event) {
                 }
                 public void taskStarted(BuildEvent event) {
+                	stackDepth++;
                 }
                 public void taskFinished(BuildEvent event) {
+                	//NB: There is somtimes task created by an other task
+                	//in that case, we should not uninit Message.  The log should stay associated
+                	//with the initial task
+                	//NB2 : Testing the identity of the task is not enought, event.getTask() return 
+                	//an instance of UnknownElement is wrapping the concrete instance
+                	if (stackDepth==0) {
+                		Message.uninit();
+                	}
+                	stackDepth--;
                 }
                 public void messageLogged(BuildEvent event) {
                 }
             }); 
         }
+
     }
     protected void setIvyInstance(Ivy ivy) {
         getProject().addReference("ivy.instance", ivy);

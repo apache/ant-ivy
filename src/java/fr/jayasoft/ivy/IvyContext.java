@@ -11,12 +11,16 @@ import java.util.HashMap;
 import java.util.Map;
 
 import fr.jayasoft.ivy.circular.CircularDependencyStrategy;
+import fr.jayasoft.ivy.util.IvyThread;
+import fr.jayasoft.ivy.util.MessageImpl;
 
 
 /**
  * This class represents an execution context of an Ivy action.
  * It contains several getters to retrieve information, like the used Ivy instance, the
  * cache location... 
+ * 
+ * @see IvyThread
  * 
  * @author Xavier Hanin
  * @author Maarten Coene
@@ -28,10 +32,12 @@ public class IvyContext {
     private Ivy _defaultIvy;
     private WeakReference _ivy = new WeakReference(null); 
     private File _cache;
+    private MessageImpl _messageImpl;
     
     private Map _contextMap = new HashMap();
 
 	private Thread _operatingThread;
+
     
     public static IvyContext getContext() {
     	IvyContext cur = (IvyContext)_current.get();
@@ -40,6 +46,16 @@ public class IvyContext {
             _current.set(cur);
         }
         return cur;
+    }
+    
+    /**
+     * Changes the context associated with this thread.
+     * This is especially useful when launching a new thread, to associate it with the same context as the initial one.
+     * 
+     * @param context the new context to use in this thread.
+     */
+    public static void setContext(IvyContext context) {
+    	_current.set(context);
     }
     
     /**
@@ -94,6 +110,19 @@ public class IvyContext {
 		return _operatingThread;
 	}
 
+	
+	/* NB : The messageImpl is only used by Message.  It should be better to place it there.
+	 * Alternatively, the Message itself could be placed here, bu this is has a major impact
+	 * because Message is used at a lot of place.
+	 */ 
+	public MessageImpl getMessageImpl() {
+		return _messageImpl;
+	}
+	
+	public void setMessageImpl(MessageImpl impl) {
+		_messageImpl = impl;
+	}
+	
 	// should be better to use context to store this kind of information, but not yet ready to do so...
 //    private WeakReference _root = new WeakReference(null); 
 //    private String _rootModuleConf = null;

@@ -80,6 +80,7 @@ Changes:
   - IMPROVE: use global properties in the recursive delivery (IVY-222) (with the contribution of Roshan Punnoose)
   - IMPROVE: better handling of authentication (thanks to Christian Riege)
 
+  - FIX: Ant log messsages not embedded in task log (IVY-280) (thanks to Gilles Scokart)
   - FIX: Ivy fails when downloading from a server that supports NTLM authentication (IVY-213) (thanks to Damon Rand)
   - FIX: Delivered Ivy files with incomplete last line. (IVY-125) (thanks to Matthias Kilian)
 

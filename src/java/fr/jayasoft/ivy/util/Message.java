@@ -12,9 +12,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 
+import fr.jayasoft.ivy.IvyContext;
+
 /**
- * @author x.hanin
- *
+ * 
+ * @author Xavier Hanin
+ * @author Gilles Scokart
  */
 public class Message {
     // messages level copied from ant project, to avoid dependency on ant
@@ -29,7 +32,6 @@ public class Message {
     /** Message priority of "debug". */
     public static final int MSG_DEBUG = 4;
 
-    private static MessageImpl _impl = null;
 
     private static List _problems = new ArrayList();
     private static List _warns = new ArrayList();
@@ -40,7 +42,7 @@ public class Message {
     private static boolean _showedInfo = false;
     
     public static void init(MessageImpl impl) {
-        _impl = impl;
+        IvyContext.getContext().setMessageImpl(impl);
         showInfo();
     }
 
@@ -49,15 +51,15 @@ public class Message {
      * @param impl
      */
     public static void setImpl(MessageImpl impl) {
-        _impl = impl;
+        IvyContext.getContext().setMessageImpl(impl);
     }
     
     public static MessageImpl getImpl() {
-    	return _impl;
+    	return IvyContext.getContext().getMessageImpl();
     }
     
     public static boolean isInitialised() {
-        return _impl != null;
+        return IvyContext.getContext().getMessageImpl() != null;
     }
 
     private static void showInfo() {
@@ -79,29 +81,33 @@ public class Message {
     }
 
     public static void debug(String msg) {
-        if (_impl != null) {
-            _impl.log(msg, MSG_DEBUG);
+        MessageImpl messageImpl = IvyContext.getContext().getMessageImpl();
+		if (messageImpl != null) {
+            messageImpl.log(msg, MSG_DEBUG);
         } else {
             System.err.println(msg);
         }
     }
     public static void verbose(String msg) {
-        if (_impl != null) {
-            _impl.log(msg, MSG_VERBOSE);
+        MessageImpl messageImpl = IvyContext.getContext().getMessageImpl();
+		if (messageImpl != null) {
+            messageImpl.log(msg, MSG_VERBOSE);
         } else {
             System.err.println(msg);
         }
     }
     public static void info(String msg) {
-        if (_impl != null) {
-            _impl.log(msg, MSG_INFO);
+        MessageImpl messageImpl = IvyContext.getContext().getMessageImpl();
+		if (messageImpl != null) {
+            messageImpl.log(msg, MSG_INFO);
         } else {
             System.err.println(msg);
         }
     }
     public static void warn(String msg) {
-        if (_impl != null) {
-            _impl.log("WARN: "+msg, MSG_VERBOSE);
+        MessageImpl messageImpl = IvyContext.getContext().getMessageImpl();
+		if (messageImpl != null) {
+            messageImpl.log("WARN: "+msg, MSG_VERBOSE);
         } else {
             System.err.println(msg);
         }
@@ -109,10 +115,11 @@ public class Message {
         _warns.add(msg);
     }
     public static void error(String msg) {
-        if (_impl != null) {
+        MessageImpl messageImpl = IvyContext.getContext().getMessageImpl();
+		if (messageImpl != null) {
             // log in verbose mode because message is appended as a problem, and will be 
             // logged at the end at error level
-            _impl.log("ERROR: "+msg, MSG_VERBOSE);
+            messageImpl.log("ERROR: "+msg, MSG_VERBOSE);
         } else {
             System.err.println(msg);
         }
@@ -127,12 +134,13 @@ public class Message {
     public static void sumupProblems() {
         if (_problems.size() > 0) {
             info("\n:: problems summary ::");
-            if (_warns.size() > 0) {
+            MessageImpl messageImpl = IvyContext.getContext().getMessageImpl();
+			if (_warns.size() > 0) {
             	info(":::: WARNINGS");
             	for (Iterator iter = _warns.iterator(); iter.hasNext();) {
             		String msg = (String) iter.next();
-                    if (_impl != null) {
-                    	_impl.log("\t"+msg+"\n", MSG_WARN);
+                    if (messageImpl != null) {
+                    	messageImpl.log("\t"+msg+"\n", MSG_WARN);
                     } else {
                         System.err.println(msg);
                     }
@@ -142,8 +150,8 @@ public class Message {
                 info(":::: ERRORS");
             	for (Iterator iter = _errors.iterator(); iter.hasNext();) {
             		String msg = (String) iter.next();
-                    if (_impl != null) {
-                    	_impl.log("\t"+msg+"\n", MSG_ERR);
+                    if (messageImpl != null) {
+                    	messageImpl.log("\t"+msg+"\n", MSG_ERR);
                     } else {
                         System.err.println(msg);
                     }
@@ -158,8 +166,9 @@ public class Message {
 
     public static void progress() {
         if (_showProgress) {
-            if (_impl != null) {
-                _impl.progress();
+            MessageImpl messageImpl = IvyContext.getContext().getMessageImpl();
+			if (messageImpl != null) {
+                messageImpl.progress();
             } else {
                 System.out.println(".");
             }
@@ -172,8 +181,9 @@ public class Message {
 
     public static void endProgress(String msg) {
         if (_showProgress) {
-            if (_impl != null) {
-                _impl.endProgress(msg);
+            MessageImpl messageImpl = IvyContext.getContext().getMessageImpl();
+			if (messageImpl != null) {
+                messageImpl.endProgress(msg);
             }
         }
     }
@@ -186,6 +196,6 @@ public class Message {
     }
 
     public static void uninit() {
-        _impl = null;
+        IvyContext.getContext().setMessageImpl(null);
     }
 }
