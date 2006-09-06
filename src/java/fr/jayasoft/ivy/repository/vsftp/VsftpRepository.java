@@ -20,6 +20,7 @@ import fr.jayasoft.ivy.repository.AbstractRepository;
 import fr.jayasoft.ivy.repository.BasicResource;
 import fr.jayasoft.ivy.repository.Resource;
 import fr.jayasoft.ivy.repository.TransferEvent;
+import fr.jayasoft.ivy.util.IvyThread;
 import fr.jayasoft.ivy.util.Message;
 
 /**
@@ -105,8 +106,9 @@ public class VsftpRepository extends AbstractRepository {
 			final File to = destDir == null ? new File(srcName):new File(destDir, srcName);
 
 			final IOException ex[] = new IOException[1];
-			Thread get = new Thread() {
+			Thread get = new IvyThread() {
 				public void run() {
+					initContext();
 					try {
 						sendCommand("get "+source, getExpectedDownloadMessage(source, to), 0);
 					} catch (IOException e) {
@@ -372,7 +374,7 @@ public class VsftpRepository extends AbstractRepository {
 		if (timeout == 0) {
 			r.run();
 		} else {
-			reader = new Thread(r);
+			reader = new IvyThread(r);
 			reader.start();
 			try {
 				wait(timeout);
@@ -422,8 +424,9 @@ public class VsftpRepository extends AbstractRepository {
 				readResponse(false); // waits for first prompt
 
 				if (_reuseConnection > 0) {
-					_connectionCleaner = new Thread() {
+					_connectionCleaner = new IvyThread() {
 						public void run() {
+							initContext();
 							try {
 								long sleep = 10;
 								while (_in != null && sleep > 0) {
@@ -470,9 +473,9 @@ public class VsftpRepository extends AbstractRepository {
 		_err = new InputStreamReader(_process.getErrorStream());
 		_out = new PrintWriter(_process.getOutputStream());
 
-		_errorsReader = new Thread() {
-
+		_errorsReader = new IvyThread() {
                             public void run() {
+                            	initContext();
 								int c;
 								try {
 									while (_err != null && (c = _err.read()) != -1) {
