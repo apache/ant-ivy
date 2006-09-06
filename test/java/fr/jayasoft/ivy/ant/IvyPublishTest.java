@@ -8,6 +8,7 @@ package fr.jayasoft.ivy.ant;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.io.InputStreamReader;
 
 import junit.framework.TestCase;
 
@@ -19,6 +20,7 @@ import fr.jayasoft.ivy.Ivy;
 import fr.jayasoft.ivy.ModuleDescriptor;
 import fr.jayasoft.ivy.util.FileUtil;
 import fr.jayasoft.ivy.xml.XmlModuleDescriptorParser;
+import fr.jayasoft.ivy.xml.XmlModuleUpdaterTest;
 
 public class IvyPublishTest extends TestCase {
     private File _cache;
@@ -92,6 +94,45 @@ public class IvyPublishTest extends TestCase {
         // should have updated published ivy version
         ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(new Ivy(), new File("test/repositories/1/jayasoft/resolve-simple/ivys/ivy-1.2.xml").toURL(), false);
         assertEquals("1.2", md.getModuleRevisionId().getRevision());
+    }
+
+    public void testCustom() throws Exception {
+        _project.setProperty("ivy.dep.file", "test/java/fr/jayasoft/ivy/ant/ivy-custom.xml");
+        IvyResolve res = new IvyResolve();
+        res.setValidate(false);
+        res.setProject(_project);
+        res.execute();
+        
+        _publish.setPubrevision("1.2");
+        _publish.setPubdate("20060906141243");
+        _publish.setResolver("1");
+        _publish.setValidate(false);
+        File art = new File("build/test/publish/resolve-custom-1.2.jar");
+        FileUtil.copy(new File("test/repositories/1/org1/mod1.1/jars/mod1.1-1.0.jar"), art, null);
+        _publish.execute();
+        
+        // should have do the ivy delivering
+        assertTrue(new File("build/test/publish/ivy-1.2.xml").exists()); 
+        
+        File dest = new File("test/repositories/1/jayasoft/resolve-custom/ivys/ivy-1.2.xml");
+		// should have published the files with "1" resolver
+        assertTrue(dest.exists()); 
+        assertTrue(new File("test/repositories/1/jayasoft/resolve-custom/jars/resolve-custom-1.2.jar").exists());
+        
+        // should have updated published ivy version
+        ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(new Ivy(), dest.toURL(), false);
+        assertEquals("1.2", md.getModuleRevisionId().getRevision());
+        
+        // should have kept custom attributes
+        assertEquals("cval1", md.getModuleRevisionId().getAttribute("custom-info"));
+        assertEquals("cval2", md.getConfiguration("default").getAttribute("custom-conf"));
+        assertEquals("cval3", md.getDependencies()[0].getAttribute("custom-dep"));
+        
+        // should respect the ivy file, with descriptions, ...
+        String expected = FileUtil.readEntirely(new BufferedReader(new InputStreamReader(IvyPublishTest.class.getResourceAsStream("published-ivy-custom.xml"))));
+        String updated = FileUtil.readEntirely(new BufferedReader(new FileReader(dest)));
+        assertEquals(expected, updated);
+        
     }
 
     public void testNoDeliver() throws Exception {

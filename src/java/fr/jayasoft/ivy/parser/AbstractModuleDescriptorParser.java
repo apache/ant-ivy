@@ -62,8 +62,8 @@ public abstract class AbstractModuleDescriptorParser implements ModuleDescriptor
         }
         
         protected void setResource(Resource res) {
-            _md = new DefaultModuleDescriptor(_parser, _res);
             _res = res; // used for log and date only
+            _md = new DefaultModuleDescriptor(_parser, res);
             _md.setLastModified(getLastModified());
         }
         

@@ -1,0 +1,16 @@
+<ivy-module version="1.0"> 
+	<info organisation="jayasoft"
+	       module="resolve-custom"
+	       revision="1.0"
+	       status="release"
+	       custom-info="cval1">
+	       <license name="BSD"/>
+	       <description>This is the <b>description</b> of this custom module</description>
+	</info>
+	<configurations>
+		<conf name="default" custom-conf="cval2"/>
+	</configurations>
+	<dependencies>
+		<dependency org="org1" name="mod1.2" rev="2.0" custom-dep="cval3"/>
+	</dependencies>
+</ivy-module>

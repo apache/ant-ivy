@@ -15,6 +15,8 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.URL;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
 import java.util.Map;
 import java.util.Stack;
@@ -130,8 +132,14 @@ public class XmlModuleDescriptorUpdater {
                         } else if (attributes.getValue("publication") != null) {
                             out.print(" publication=\""+substitute(ivy, attributes.getValue("publication"))+"\"");
                         }
+                        Collection stdAtts = Arrays.asList(new String[] {"organisation", "module", "revision", "status", "publication", "namespace"});
                         if (attributes.getValue("namespace") != null) {
                             out.print(" namespace=\""+substitute(ivy, attributes.getValue("namespace"))+"\"");
+                        }
+                        for (int i=0; i<attributes.getLength(); i++) {
+                        	if (!stdAtts.contains(attributes.getQName(i))) {
+                        		out.print(" "+attributes.getQName(i)+"=\""+substitute(ivy, attributes.getValue(i))+"\"");
+                        	}
                         }
                     } else if (replaceInclude && "include".equals(qName) && _context.contains("configurations")) {
                         try {
