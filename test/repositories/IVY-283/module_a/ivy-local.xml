@@ -1,0 +1,20 @@
+<ivy-module version="1.0">
+	<info organisation="medicel" module="module_a" revision="local" status="integration" publication="20060906104705"/>
+	<configurations>
+		<conf name="build" visibility="public" description="Buildtime dependency configuration"/>
+		<conf name="runtime" visibility="public" description="Runtime dependency configuration" extends="build"/>
+		<conf name="test" visibility="public" description="Test dependency configuration" extends="runtime"/>
+	</configurations>
+	<publications>
+		<artifact name="lib_a_a" type="jar" ext="jar" conf="build,runtime,test"/>
+		<artifact name="lib_a_b" type="jar" ext="jar" conf="build,runtime,test"/>
+		<artifact name="lib_a_c" type="jar" ext="jar" conf="build,runtime,test"/>
+		<artifact name="lib_a_d" type="jar" ext="jar" conf="build,runtime,test"/>
+		<artifact name="lib_a_e" type="jar" ext="jar" conf="build,runtime,test"/>
+		<artifact name="lib_a_f" type="jar" ext="jar" conf="build,runtime,test"/>
+		<artifact name="lib_a_g" type="jar" ext="jar" conf="build,runtime,test"/>
+		<artifact name="lib_a_h" type="jar" ext="jar" conf="build,runtime,test"/>
+		<artifact name="lib_a_i" type="jar" ext="jar" conf="build,runtime,test"/>
+		<artifact name="lib_a_j" type="jar" ext="jar" conf="build,runtime,test"/>
+	</publications>
+</ivy-module>

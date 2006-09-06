@@ -117,4 +117,7 @@ public class DefaultDependencyArtifactDescriptor implements DependencyArtifactDe
 		return _url;
 	}
 
+	public String toString() {
+		return (_includes?"I":"E")+":"+_id+"("+_confs+")"+(_url==null?"":_url.toString());
+	}
 }

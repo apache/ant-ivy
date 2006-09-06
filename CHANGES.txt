@@ -54,6 +54,7 @@ Changes:
   - IMPROVE: isolate dependency resolution from artifact downloading (IVY-254)
   - IMPROVE: Pass artifact to repository when calling "put" (IVY-192)
 
+  - FIX: Problem with multiple artifact includes in transitive dependencies (IVY-283)
   - FIX: Endless recursion in report (IVY-284)
   - FIX: http url lister doesn't work when link text has spaces (IVY-282)
   - FIX: Incorrect ant log level (IVY-279)

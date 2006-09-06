@@ -614,6 +614,30 @@ public class ResolveTest extends TestCase {
         assertTrue(_ivy.getArchiveFileInCache(_cache, "medicel", "C", "1.0", "lib_c_d", "jar", "jar").exists());
     }
     
+    public void testResolveSeveralDefaultWithArtifactsAndConfs2() throws Exception {
+    	// second test case for IVY-283
+        Ivy ivy = new Ivy();
+        ivy.configure(new File("test/repositories/IVY-283/ivyconf.xml"));
+        ResolveReport report = ivy.resolve(new File("test/repositories/IVY-283/ivy-d.xml").toURL(),
+                null, new String[] {"*"}, _cache, null, true);
+        assertFalse(report.hasError());
+        
+        // dependencies
+        ConfigurationResolveReport crr = report.getConfigurationReport("build");
+        assertNotNull(crr);
+        assertEquals(9, crr.getDownloadReports(ModuleRevisionId.newInstance("medicel", "module_a", "local")).length);
+
+        assertTrue(_ivy.getArchiveFileInCache(_cache, "medicel", "module_a", "local", "lib_a_a", "jar", "jar").exists());
+        assertTrue(_ivy.getArchiveFileInCache(_cache, "medicel", "module_a", "local", "lib_a_b", "jar", "jar").exists());
+        assertTrue(_ivy.getArchiveFileInCache(_cache, "medicel", "module_a", "local", "lib_a_c", "jar", "jar").exists());
+        assertTrue(_ivy.getArchiveFileInCache(_cache, "medicel", "module_a", "local", "lib_a_d", "jar", "jar").exists());
+        assertTrue(_ivy.getArchiveFileInCache(_cache, "medicel", "module_a", "local", "lib_a_e", "jar", "jar").exists());
+        assertTrue(_ivy.getArchiveFileInCache(_cache, "medicel", "module_a", "local", "lib_a_f", "jar", "jar").exists());
+        assertTrue(_ivy.getArchiveFileInCache(_cache, "medicel", "module_a", "local", "lib_a_g", "jar", "jar").exists());
+        assertTrue(_ivy.getArchiveFileInCache(_cache, "medicel", "module_a", "local", "lib_a_h", "jar", "jar").exists());
+        assertTrue(_ivy.getArchiveFileInCache(_cache, "medicel", "module_a", "local", "lib_a_i", "jar", "jar").exists());
+    }
+    
 
 
     public void testResolveDefaultWithArtifactsConf1() throws Exception {
