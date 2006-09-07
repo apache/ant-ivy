@@ -1028,6 +1028,11 @@ public class IvyNode {
     	if (parent == null) {
     		throw new IllegalArgumentException("no path from "+from+" to "+getId()+" found");
     	}
+    	if (path.contains(parent)) {
+        	path.add(0, parent);
+    		Message.verbose("circular dependency found while looking for the path for another one: was looking for "+from+" as a caller of "+path.get(path.size()-1));
+    		return path;
+    	}
     	path.add(0, parent);
     	if (parent.getId().getModuleId().equals(from)) {
     		return path;
