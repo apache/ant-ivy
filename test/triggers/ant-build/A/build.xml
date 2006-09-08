@@ -1,10 +1,11 @@
 <project xmlns:ivy="antlib:fr.jayasoft.ivy.ant">
 	<target name="publish">
 		<tstamp><format property="tstamp" pattern="yyyyMMDDHHmmss"/></tstamp>
-		<echo message="${tstamp}" file="A.jar"/>
+		<mkdir dir="${basedir}/build"/>
+		<echo message="${tstamp}" file="${basedir}/build/A.jar"/>
 		<ivy:configure file="../ivyconf.xml"/>
 		<ivy:resolve file="${basedir}/ivy.xml" />
-		<ivy:publish resolver="local" artifactspattern="${basedir}/[artifact].[ext]" pubrevision="${tstamp}" />
-		<delete file="A.jar" />
+		<ivy:publish resolver="local" artifactspattern="${basedir}/build/[artifact].[ext]" pubrevision="${tstamp}" />
+		<delete dir="build" />
 	</target>
 </project>
