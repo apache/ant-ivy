@@ -12,6 +12,8 @@ Incompatibility with previous versions:
 * usage:
   - no known major incompatiblity
   - build list task now requires a configured ivy instance (configure will automatically be called if you don't call it explicitly)
+  - publish now requires the published ivy file to have the published revision (automatic if you use deliver)
+  
 * API:
   - Numerous API changes especially in the BasicResolver class and subclasses due to the introduction of VersionMatcher, 
   	this may break some custom dependency resolvers or other tools or plugins depending directly on Ivy API
