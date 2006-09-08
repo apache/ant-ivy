@@ -12,6 +12,7 @@ import java.io.InputStreamReader;
 
 import junit.framework.TestCase;
 
+import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.Delete;
 import org.apache.tools.ant.taskdefs.Echo;
@@ -20,7 +21,6 @@ import fr.jayasoft.ivy.Ivy;
 import fr.jayasoft.ivy.ModuleDescriptor;
 import fr.jayasoft.ivy.util.FileUtil;
 import fr.jayasoft.ivy.xml.XmlModuleDescriptorParser;
-import fr.jayasoft.ivy.xml.XmlModuleUpdaterTest;
 
 public class IvyPublishTest extends TestCase {
     private File _cache;
@@ -146,6 +146,35 @@ public class IvyPublishTest extends TestCase {
         _publish.setResolver("1");
         _publish.setSrcivypattern("build/test/publish/ivy-1.3.xml");
 
+        FileUtil.copy(new File("test/java/fr/jayasoft/ivy/ant/ivy-publish.xml"), new File("build/test/publish/ivy-1.3.xml"), null);
+
+        File art = new File("build/test/publish/resolve-latest-1.3.jar");
+        FileUtil.copy(new File("test/repositories/1/org1/mod1.1/jars/mod1.1-1.0.jar"), art, null);
+        _publish.execute();
+        
+        // should have published the files with "1" resolver
+        assertTrue(new File("test/repositories/1/jayasoft/resolve-latest/ivys/ivy-1.3.xml").exists()); 
+        assertTrue(new File("test/repositories/1/jayasoft/resolve-latest/jars/resolve-latest-1.3.jar").exists());
+        
+        // the published ivy version should be ok (ok in ivy-publish file)
+        ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(new Ivy(), new File("test/repositories/1/jayasoft/resolve-latest/ivys/ivy-1.3.xml").toURL(), false);
+        assertEquals("1.3", md.getModuleRevisionId().getRevision());
+        
+        // should not have done delivery (replace dynamic revisions with static ones)
+        assertEquals("latest.integration", md.getDependencies()[0].getDependencyRevisionId().getRevision());
+    }
+
+    public void testForceDeliver() throws Exception {
+        _project.setProperty("ivy.dep.file", "test/java/fr/jayasoft/ivy/ant/ivy-latest.xml");
+        IvyResolve res = new IvyResolve();
+        res.setProject(_project);
+        res.execute();
+        
+        _publish.setPubrevision("1.3");
+        _publish.setResolver("1");
+        _publish.setSrcivypattern("build/test/publish/ivy-1.3.xml");
+        _publish.setForcedeliver(true);
+
         FileUtil.copy(new File("test/java/fr/jayasoft/ivy/ant/ivy-latest.xml"), new File("build/test/publish/ivy-1.3.xml"), null);
 
         File art = new File("build/test/publish/resolve-latest-1.3.jar");
@@ -156,12 +185,32 @@ public class IvyPublishTest extends TestCase {
         assertTrue(new File("test/repositories/1/jayasoft/resolve-latest/ivys/ivy-1.3.xml").exists()); 
         assertTrue(new File("test/repositories/1/jayasoft/resolve-latest/jars/resolve-latest-1.3.jar").exists());
         
-        // should not have updated published ivy version
+        // should have updated published ivy version
         ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(new Ivy(), new File("test/repositories/1/jayasoft/resolve-latest/ivys/ivy-1.3.xml").toURL(), false);
-        assertEquals("1.0", md.getModuleRevisionId().getRevision());
+        assertEquals("1.3", md.getModuleRevisionId().getRevision());
+    }
+
+    public void testBadNoDeliver() throws Exception {
+        _project.setProperty("ivy.dep.file", "test/java/fr/jayasoft/ivy/ant/ivy-latest.xml");
+        IvyResolve res = new IvyResolve();
+        res.setProject(_project);
+        res.execute();
         
-        // should not have done delivery (replace dynamic revisions with static ones)
-        assertEquals("latest.integration", md.getDependencies()[0].getDependencyRevisionId().getRevision());
+        
+        _publish.setPubrevision("1.3");
+        _publish.setResolver("1");
+        _publish.setSrcivypattern("build/test/publish/ivy-1.3.xml");
+
+        FileUtil.copy(new File("test/java/fr/jayasoft/ivy/ant/ivy-latest.xml"), new File("build/test/publish/ivy-1.3.xml"), null);
+
+        File art = new File("build/test/publish/resolve-latest-1.3.jar");
+        FileUtil.copy(new File("test/repositories/1/org1/mod1.1/jars/mod1.1-1.0.jar"), art, null);
+        try {
+        	_publish.execute();
+        	fail("shouldn't publish ivy file with bad revision");
+        } catch (BuildException ex) {
+        	
+        }
     }
 
     public void testReadonly() throws Exception {

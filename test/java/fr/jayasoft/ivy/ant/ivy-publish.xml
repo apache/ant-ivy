@@ -1,0 +1,10 @@
+<ivy-module version="1.0"> 
+	<info organisation="jayasoft"
+	       module="resolve-latest"
+	       revision="1.3"
+	       status="release"
+	/>
+	<dependencies>
+		<dependency org="org1" name="mod1.2" rev="latest.integration"/>
+	</dependencies>
+</ivy-module>

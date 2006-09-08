@@ -44,6 +44,7 @@ public class IvyPublish extends IvyTask {
     private boolean _haltonmissing = true;
     private boolean _overwrite = false;
     private boolean _replacedynamicrev = true;
+	private boolean _forcedeliver;
     
     public File getCache() {
         return _cache;
@@ -178,7 +179,7 @@ public class IvyPublish extends IvyTask {
         ModuleRevisionId mrid = ModuleRevisionId.newInstance(_organisation, _module, _revision);
         try {
             File ivyFile = new File(IvyPatternHelper.substitute(_srcivypattern, _organisation, _module, _pubRevision, "ivy", "ivy", "xml"));
-            if (_publishivy && !ivyFile.exists()) {
+            if (_publishivy && (!ivyFile.exists() || _forcedeliver)) {
                 IvyDeliver deliver = new IvyDeliver();
                 deliver.setProject(getProject());
                 deliver.setCache(getCache());
@@ -256,4 +257,10 @@ public class IvyPublish extends IvyTask {
     public void setOverwrite(boolean overwrite) {
         _overwrite = overwrite;
     }
+	public void setForcedeliver(boolean b) {
+		_forcedeliver = b;
+	}
+	public boolean isForcedeliver() {
+		return _forcedeliver;
+	}
 }

@@ -9,12 +9,12 @@ for detailed view of each issue, please consult http://jira.jayasoft.org/
 =================================
 Incompatibility with previous versions:
 ---------------------------------------
-* Major:
-  - No known major incompatiblity
-* Minor:
-  - Numerous API changes especially in the BasicResolver class and subclasses due to the introduction of VersionMatcher, 
-  	this may break some custom dependency resolvers
+* usage:
+  - no known major incompatiblity
   - build list task now requires a configured ivy instance (configure will automatically be called if you don't call it explicitly)
+* API:
+  - Numerous API changes especially in the BasicResolver class and subclasses due to the introduction of VersionMatcher, 
+  	this may break some custom dependency resolvers or other tools or plugins depending directly on Ivy API
 
 Changes:
 --------
@@ -53,6 +53,7 @@ Changes:
   - IMPROVE: suport empty dependencies tag in an ivy file (IVY-281)
   - IMPROVE: isolate dependency resolution from artifact downloading (IVY-254)
   - IMPROVE: Pass artifact to repository when calling "put" (IVY-192)
+  - IMPROVE: Do not publish ivy file with bad revision, and allow to force the deliver when calling publish task (IVY-245)
 
   - FIX: Problem with multiple artifact includes in transitive dependencies (IVY-283)
   - FIX: Endless recursion in report (IVY-284)

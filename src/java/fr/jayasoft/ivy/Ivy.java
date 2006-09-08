@@ -2222,25 +2222,42 @@ public class Ivy implements TransferListener {
         long start = System.currentTimeMillis();
         srcArtifactPattern = substitute(srcArtifactPattern);
         srcIvyPattern = substitute(srcIvyPattern);
-        // 1) find the resolved module descriptor in cache
-        File ivyFile = getResolvedIvyFileInCache(cache, mrid);
-        if (!ivyFile.exists()) {
-            throw new IllegalStateException("ivy file not found in cache for "+mrid+": please resolve dependencies before publishing ("+ivyFile+")");
+        // 1) find the resolved module descriptor
+        ModuleRevisionId pubmrid = ModuleRevisionId.newInstance(mrid, pubrevision);
+        File ivyFile;
+        if (srcIvyPattern != null) {
+        	ivyFile = new File(IvyPatternHelper.substitute(srcIvyPattern, DefaultArtifact.newIvyArtifact(pubmrid, new Date())));
+        	if (!ivyFile.exists()) {
+        		throw new IllegalArgumentException("ivy file to publish not found for "+mrid+": call deliver before ("+ivyFile+")");
+        	}
+        } else {
+        	ivyFile = getResolvedIvyFileInCache(cache, mrid);
+        	if (!ivyFile.exists()) {
+        		throw new IllegalStateException("ivy file not found in cache for "+mrid+": please resolve dependencies before publishing ("+ivyFile+")");
+        	}
         }
-        DependencyResolver resolver = getResolver(resolverName);
-        if (resolver == null) {
-            throw new IllegalArgumentException("unknown resolver "+resolverName);
-        }
+        
         ModuleDescriptor md = null;
         URL ivyFileURL = null;
         try {
-            ivyFileURL = ivyFile.toURL();
-            md = XmlModuleDescriptorParser.getInstance().parseDescriptor(this, ivyFileURL, false);
-            md.setResolvedModuleRevisionId(ModuleRevisionId.newInstance(mrid, pubrevision));
+        	ivyFileURL = ivyFile.toURL();
+        	md = XmlModuleDescriptorParser.getInstance().parseDescriptor(this, ivyFileURL, false);
+        	if (srcIvyPattern != null) {
+            	if (!pubrevision.equals(md.getModuleRevisionId().getRevision())) {
+            		throw new IllegalArgumentException("cannot publish "+ivyFile+" as "+pubrevision+": bad revision found in ivy file. Use deliver before.");
+            	}
+        	} else {
+				md.setResolvedModuleRevisionId(pubmrid);
+        	}
         } catch (MalformedURLException e) {
-            throw new RuntimeException("malformed url obtained for file "+ivyFile);
+        	throw new RuntimeException("malformed url obtained for file "+ivyFile);
         } catch (ParseException e) {
-            throw new IllegalStateException("bad ivy file in cache for "+mrid+": please clean cache and resolve again");
+        	throw new IllegalStateException("bad ivy file in cache for "+mrid+": please clean cache and resolve again");
+        }
+        
+        DependencyResolver resolver = getResolver(resolverName);
+        if (resolver == null) {
+            throw new IllegalArgumentException("unknown resolver "+resolverName);
         }
         
         // collect all declared artifacts of this module
