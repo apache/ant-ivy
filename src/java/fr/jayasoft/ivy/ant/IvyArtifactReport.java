@@ -144,6 +144,9 @@ public class IvyArtifactReport extends IvyTask {
 
                 for (int i = 0; i < dependencies.length; i++) {
                     IvyNode dependency = dependencies[i];
+                    if (dependency.getModuleRevision() == null || dependency.isCompletelyEvicted()) {
+                    	continue;
+                    }
 
                     startModule(saxHandler, dependency);
 
