@@ -179,9 +179,13 @@ public class XmlIvyConfigurationParser extends DefaultHandler {
                 try {
                     Message.verbose("loading properties: "+propFilePath);
                     _ivy.loadProperties(new File(propFilePath), override == null ? true : Boolean.valueOf(override).booleanValue());
-                } catch (Exception ex) {
+                } catch (Exception fileEx) {
                     Message.verbose("failed to load properties as file: trying as url: "+propFilePath);
-                    _ivy.loadProperties(new URL(propFilePath), override == null ? true : Boolean.valueOf(override).booleanValue());
+                    try {
+                    	_ivy.loadProperties(new URL(propFilePath), override == null ? true : Boolean.valueOf(override).booleanValue());
+                    } catch (Exception urlEx) {
+                    	throw new IllegalArgumentException("unable to load properties from "+propFilePath+". Tried both as an url and a file, with no success. File exception: "+fileEx+". URL exception: "+urlEx);
+                    }
                 }
             } else if ("include".equals(qName)) {
                 Map variables = new HashMap(_ivy.getVariables());
