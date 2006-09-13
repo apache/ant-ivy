@@ -17,10 +17,9 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.ArrayList;
 
-import org.apache.commons.vfs.FileContent;
-import org.apache.commons.vfs.FileSystemException;
-import org.apache.commons.vfs.FileSystemManager;
+import org.apache.commons.vfs.*;
 import org.apache.commons.vfs.impl.StandardFileSystemManager;
 
 import fr.jayasoft.ivy.repository.AbstractRepository;
@@ -143,14 +142,28 @@ public class VfsRepository extends AbstractRepository {
 	 * Return a listing of the contents of a parent directory. Listing is a set
 	 * of strings representing VFS URIs.
 	 * 
-	 * @param a <code>String</code> providing identifyiong a VFS provided resource
-	 * @throws <code>IOException</code> on failure.
+	 * @param vfsURI providing identifying a VFS provided resource
+	 * @throws IOException on failure.
 	 * @see "Supported File Systems in the jakarta-commons-vfs documentation"
 	 */
 	public List list(String vfsURI) throws IOException {
-		VfsResource res = new VfsResource(vfsURI, getVFSManager());
-		return res.getChildren();
-	}
+        ArrayList list = new ArrayList();
+        Message.debug("list called for URI" + vfsURI);
+        FileObject resourceImpl = getVFSManager().resolveFile(vfsURI);
+        Message.debug("resourceImpl=" + resourceImpl.toString());
+        Message.debug("resourceImpl.exists()" + resourceImpl.exists());
+        Message.debug("resourceImpl.getType()" + resourceImpl.getType());
+        Message.debug("FileType.FOLDER" + FileType.FOLDER);
+        if ((resourceImpl != null) && resourceImpl.exists() && (resourceImpl.getType() == FileType.FOLDER)) {
+            FileObject[] children = resourceImpl.getChildren();
+            for (int i = 0; i < children.length; i++) {
+                FileObject child = children[i];
+                Message.debug("child " + i + child.getName().getURI());
+                list.add(VfsResource.normalize(child.getName().getURI()));
+            }
+        }
+        return list;
+    }
 	
 	
 	

@@ -1,5 +1,5 @@
 <ivyconf>
-	<conf defaultResolver="public"/>
+	<conf defaultResolver="public" />
 	<resolvers>
 		<!--  
 			we use ivyrep for ivy and some artifacts, and ibiblio for other artifacts
@@ -7,7 +7,7 @@
 			version only available on ivyrep, but not on ivyrep
 			As soon as vfs will be available on ibiblio, the default configuration could be used again
 			-->
-		<url name="public">
+		<url name="public" checkmodified="true">
 			<ivy pattern="http://ivyrep.jayasoft.org/[organisation]/[module]/ivy-[revision].xml"/>
 			<artifact pattern="http://ivyrep.jayasoft.org/[organisation]/[module]/[revision]/[artifact].[ext]"/>
 			<artifact pattern="http://www.ibiblio.org/maven/[module]/[type]s/[artifact]-[revision].[ext]"/>

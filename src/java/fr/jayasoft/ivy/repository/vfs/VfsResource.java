@@ -115,7 +115,7 @@ public class VfsResource implements Resource {
      * @param vfsURI
      * @return a normalized <class>String</class> representing the VFS URI
      */
-    private String normalize(String vfsURI) {
+    public static String normalize(String vfsURI) {
     	if (vfsURI == null) {
     		return "";
     	}
