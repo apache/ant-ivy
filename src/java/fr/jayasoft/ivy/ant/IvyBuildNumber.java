@@ -19,8 +19,10 @@ public class IvyBuildNumber extends IvyTask {
 	private String _branch;
 	private String _revision;
 	
+	private String _revSep = ".";
 	private String _prefix = "ivy.";
 	private String _default = "0";
+	private String _defaultBuildNumber = "0";
 	
 	public String getModule() {
 		return _module;
@@ -116,7 +118,7 @@ public class IvyBuildNumber extends IvyTask {
 		}
 		if (revision == null) {
 			if (revPrefix.length() > 0) {
-				return new NewRevision(revision, revPrefix+(revPrefix.endsWith(".")?"0":".0"), null, "0");
+				return new NewRevision(revision, revPrefix+(revPrefix.endsWith(_revSep)?_defaultBuildNumber:_revSep+_defaultBuildNumber), null, _defaultBuildNumber);
 			} else {
 				Range r = findLastNumber(_default);
 				if (r == null) { // no number found
@@ -131,12 +133,12 @@ public class IvyBuildNumber extends IvyTask {
 		if (revPrefix.length() == 0)  {
 			r = findLastNumber(revision);
 			if (r == null) {
-				 return new NewRevision(revision, revision+(revision.endsWith(".")?"1":".1"), null, "1");
+				 return new NewRevision(revision, revision+(revision.endsWith(_revSep)?"1":_revSep+"1"), null, "1");
 			}
 		} else {
 			r = findFirstNumber(revision, revPrefix.length());
 			if (r == null) {
-				 return new NewRevision(revision, revPrefix+(revPrefix.endsWith(".")?"1":".1"), null, "1");
+				 return new NewRevision(revision, revPrefix+(revPrefix.endsWith(_revSep)?"1":_revSep+"1"), null, "1");
 			}
 		}
 		long n = Long.parseLong(revision.substring(r.startIndex, r.endIndex)) + 1;
@@ -202,5 +204,21 @@ public class IvyBuildNumber extends IvyTask {
 			this.buildNumber = buildNumber;
 			this.newBuildNumber = newBuildNumber;
 		}
+	}
+
+	public String getRevSep() {
+		return _revSep;
+	}
+
+	public void setRevSep(String revSep) {
+		_revSep = revSep;
+	}
+
+	public String getDefaultBuildNumber() {
+		return _defaultBuildNumber;
+	}
+
+	public void setDefaultBuildNumber(String defaultBuildNumber) {
+		_defaultBuildNumber = defaultBuildNumber;
 	}
 }
