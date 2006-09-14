@@ -15,6 +15,7 @@ import fr.jayasoft.ivy.event.IvyEvent;
 import fr.jayasoft.ivy.event.Trigger;
 import fr.jayasoft.ivy.util.IvyPatternHelper;
 import fr.jayasoft.ivy.util.Message;
+import fr.jayasoft.ivy.util.MessageImpl;
 
 /**
  * Triggers an call to an ant target on an event occurence.
@@ -65,8 +66,14 @@ public class AntCallTrigger extends AbstractTrigger implements Trigger {
 			}
 
 			Message.verbose("triggering ant call: target="+target+" for "+event);
-			call.execute();
-			markTriggered(event);
+            MessageImpl impl = IvyContext.getContext().getMessageImpl();
+            try {
+            	IvyContext.getContext().setMessageImpl(null);
+    			call.execute();
+    			markTriggered(event);
+            } finally {
+            	IvyContext.getContext().setMessageImpl(impl);
+            }
 
 			Message.debug("triggered ant call finished: target="+target+" for "+event);
 		}

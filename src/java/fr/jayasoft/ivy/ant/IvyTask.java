@@ -74,33 +74,6 @@ public class IvyTask extends Task {
     protected void ensureMessageInitialised() {
         if (!Message.isInitialised()) { 
             Message.init(new AntMessageImpl(this));
-            getProject().addBuildListener(new BuildListener() {
-            	private int stackDepth = 0;
-                public void buildFinished(BuildEvent event) {
-                }
-                public void buildStarted(BuildEvent event) {
-                }
-                public void targetStarted(BuildEvent event) {
-                }
-                public void targetFinished(BuildEvent event) {
-                }
-                public void taskStarted(BuildEvent event) {
-                	stackDepth++;
-                }
-                public void taskFinished(BuildEvent event) {
-                	//NB: There is somtimes task created by an other task
-                	//in that case, we should not uninit Message.  The log should stay associated
-                	//with the initial task
-                	//NB2 : Testing the identity of the task is not enought, event.getTask() return 
-                	//an instance of UnknownElement is wrapping the concrete instance
-                	if (stackDepth==0) {
-                		Message.uninit();
-                	}
-                	stackDepth--;
-                }
-                public void messageLogged(BuildEvent event) {
-                }
-            }); 
         }
 
     }

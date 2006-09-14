@@ -71,12 +71,14 @@ public class AntBuildTrigger extends AbstractTrigger implements Trigger {
 				}
 				
 				Message.verbose("triggering build: "+f+" target="+target+" for "+event);
-				MessageImpl impl = Message.getImpl();
-				ant.execute();
-				markBuilt(f);
-				// we restore previous message impl, cause the triggered ant build 
-				// may have modified it (damned static use !)
-				Message.setImpl(impl); 
+                MessageImpl impl = IvyContext.getContext().getMessageImpl();
+                try {
+                	IvyContext.getContext().setMessageImpl(null);
+                	ant.execute();
+                	markBuilt(f);
+                } finally {
+                	IvyContext.getContext().setMessageImpl(impl);
+                }
 
 				Message.debug("triggered build finished: "+f+" target="+target+" for "+event);
 			}
