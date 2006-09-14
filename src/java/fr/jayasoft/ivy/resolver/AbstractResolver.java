@@ -74,6 +74,16 @@ public abstract class AbstractResolver implements DependencyResolver, IvyAware, 
         _name = name;
     }
 
+
+    /**
+     * this method should remove sensitive information from a location to be displayed in a log
+     * @param name location
+     * @return location with sensitive data replaced by stars
+     */
+    public String hidePassword(String name) {
+        return name;
+    }
+
     protected boolean doValidate(ResolveData data) {
         if (_validate != null) {
             return _validate.booleanValue();

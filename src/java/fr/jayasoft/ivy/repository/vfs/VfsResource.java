@@ -24,7 +24,7 @@ import org.apache.commons.vfs.FileType;
 
 import fr.jayasoft.ivy.repository.Resource;
 import fr.jayasoft.ivy.util.Message;
-
+import fr.jayasoft.ivy.resolver.VfsResolver;
 
 public class VfsResource implements Resource {	
 	private String _vfsURI;
@@ -179,7 +179,7 @@ public class VfsResource implements Resource {
     }
 
     public String toString() {
-        return getName();
+        return VfsResolver.prepareForDisplay(getName());
     }
 
     public boolean isLocal() {

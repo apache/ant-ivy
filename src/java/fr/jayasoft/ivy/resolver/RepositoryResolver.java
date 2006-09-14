@@ -168,7 +168,7 @@ public class RepositoryResolver extends AbstractResourceResolver {
                 artifact); 
         
         put(artifact, src, dest, overwrite);
-        Message.info("\tpublished "+artifact.getName()+" to "+dest);
+        Message.info("\tpublished "+artifact.getName()+" to "+hidePassword(dest));
     }
 
 	private void put(Artifact artifact, File src, String dest, boolean overwrite) throws IOException {
