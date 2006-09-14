@@ -91,6 +91,7 @@ Changes:
   - FIX: the vfs resolver should not log passwords (IVY-292) (thanks to Antoine Levy-Lambert)
 
 * thanks to Maarten Coene:
+  - NEW: add failureproperty parameter to the resolve task (IVY-285)
   - NEW: Add type filtering to retrieve task (IVY-260)
   - NEW: Add selectors to the configuration mapping (IVY-253)
   - NEW: Add Ant task to retrieve information from an Ivy file without doing a resolve (IVY-255)

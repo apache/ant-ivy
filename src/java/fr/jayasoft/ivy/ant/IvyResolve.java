@@ -40,6 +40,7 @@ public class IvyResolve extends IvyTask {
 	private boolean _transitive = true;
 	private boolean _changing = false;
 	private Boolean _keep = null;
+	private String _failureProperty = null;
     
     public String getDate() {
         return _pubdate;
@@ -91,6 +92,12 @@ public class IvyResolve extends IvyTask {
     }
     public void setType(String type) {
         _type = type;
+    }
+    public void setFailurePropery(String failureProperty) {
+    	_failureProperty = failureProperty;
+    }
+    public String getFailureProperty() {
+    	return _failureProperty;
     }
     
     public void execute() throws BuildException {
@@ -150,10 +157,14 @@ public class IvyResolve extends IvyTask {
 	                    _transitive,
 	                    FilterHelper.getArtifactTypeFilter(_type));
             }
-            if (isHaltonfailure() && report.hasError()) {
-                throw new BuildException("resolve failed - see output for details");
-            }
-            
+            if (report.hasError()) {
+	            if (_failureProperty != null) {
+	            	getProject().setProperty(_failureProperty, "true");
+	            }
+	            if (isHaltonfailure()) {
+	                throw new BuildException("resolve failed - see output for details");
+	            }
+            }            
             setResolved(report, isKeep());
             
             if (isKeep()) {
