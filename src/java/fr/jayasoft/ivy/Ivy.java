@@ -1101,14 +1101,23 @@ public class Ivy implements TransferListener {
             File ivyFileInCache = getResolvedIvyFileInCache(cache, md.getResolvedModuleRevisionId());
             md.toIvyFile(ivyFileInCache);
 
+            // we store the resolved dependencies revisions and statuses per asked dependency revision id,
+            // for direct dependencies only.
+            // this is used by the deliver task to resolve dynamic revisions to static ones
             File ivyPropertiesInCache = getResolvedIvyPropertiesInCache(cache, md.getResolvedModuleRevisionId());
             Properties props = new Properties();
-            for (int i = 0; i < dependencies.length; i++) {
-                if (!dependencies[i].isCompletelyEvicted() && !dependencies[i].hasProblem()) {
-                    String rev = dependencies[i].getResolvedId().getRevision();
-                    String status = dependencies[i].getDescriptor().getStatus();
-                    props.put(dependencies[i].getId().encodeToString(), rev+" "+status);
-                }
+            if (dependencies.length > 0) {
+            	IvyNode root = dependencies[0].getRoot();
+            	for (int i = 0; i < dependencies.length; i++) {
+            		if (!dependencies[i].isCompletelyEvicted() && !dependencies[i].hasProblem()) {
+            			DependencyDescriptor dd = dependencies[i].getDependencyDescriptor(root);
+            			if (dd != null) {
+            				String rev = dependencies[i].getResolvedId().getRevision();
+            				String status = dependencies[i].getDescriptor().getStatus();
+            				props.put(dd.getDependencyRevisionId().encodeToString(), rev+" "+status);
+            			}
+            		}
+            	}
             }
             props.store(new FileOutputStream(ivyPropertiesInCache), md.getResolvedModuleRevisionId()+ " resolved revisions");
             Message.verbose("\tresolved ivy file produced in "+ivyFileInCache);
@@ -1744,6 +1753,7 @@ public class Ivy implements TransferListener {
                             toResolver, 
                             cache.getAbsolutePath()+"/"+getCacheArtifactPattern(), 
                             cache.getAbsolutePath()+"/"+getCacheIvyPattern(), 
+                            null,
                             overwrite);
                 }
             }
@@ -2215,9 +2225,40 @@ public class Ivy implements TransferListener {
      * @throws ParseException
      */
     public Collection publish(ModuleRevisionId mrid, String pubrevision, File cache, String srcArtifactPattern, String resolverName, String srcIvyPattern, boolean validate, boolean overwrite) throws IOException {
+    	return publish(mrid, pubrevision, cache, srcArtifactPattern, resolverName, srcIvyPattern, null, null, null, validate, overwrite, false);
+    }
+    /**
+     * Publishes a module to the repository.
+     * 
+     * The publish can update the ivy file to publish if update is set to true. In this case it will use
+     * the given pubrevision, pubdate and status. If pudate is null it will default to the current date.
+     * If status is null it will default to the current ivy file status (which itself defaults to integration if none is found).
+     * If update is false, then if the revision is not the same in the ivy file than the one expected (given as parameter),
+     * this method will fail with an  IllegalArgumentException.
+     * pubdate and status are not used if update is false.
+     * extra artifacts can be used to publish more artifacts than actually declared in the ivy file.
+     * This can be useful to publish additional metadata or reports.
+     * The extra artifacts array can be null (= no extra artifacts), and if non null only the name, type, ext url 
+     * and extra attributes of the artifacts are really used. Other methods can return null safely. 
+     * 
+     * @param mrid
+     * @param pubrevision
+     * @param cache
+     * @param srcArtifactPattern
+     * @param resolverName
+     * @param srcIvyPattern
+     * @param status
+     * @param pubdate
+     * @param validate
+     * @param overwrite
+     * @param update
+     * @return
+     * @throws IOException
+     */
+    public Collection publish(ModuleRevisionId mrid, String pubrevision, File cache, String srcArtifactPattern, String resolverName, String srcIvyPattern, String status, Date pubdate, Artifact[] extraArtifacts, boolean validate, boolean overwrite, boolean update) throws IOException {
         IvyContext.getContext().setIvy(this);
         IvyContext.getContext().setCache(cache);
-        Message.info(":: publishing :: "+mrid);
+        Message.info(":: publishing :: "+mrid.getModuleId());
         Message.verbose("\tvalidate = "+validate);
         long start = System.currentTimeMillis();
         srcArtifactPattern = substitute(srcArtifactPattern);
@@ -2244,7 +2285,21 @@ public class Ivy implements TransferListener {
         	md = XmlModuleDescriptorParser.getInstance().parseDescriptor(this, ivyFileURL, false);
         	if (srcIvyPattern != null) {
             	if (!pubrevision.equals(md.getModuleRevisionId().getRevision())) {
-            		throw new IllegalArgumentException("cannot publish "+ivyFile+" as "+pubrevision+": bad revision found in ivy file. Use deliver before.");
+            		if (update) {
+            			File tmp = File.createTempFile("ivy", ".xml");
+            			tmp.deleteOnExit();
+            			try {
+							XmlModuleDescriptorUpdater.update(this, ivyFileURL, tmp, new HashMap(), status==null?md.getStatus():status, pubrevision, pubdate==null?new Date():pubdate, null, true);
+							ivyFile = tmp;
+							// we parse the new file to get updated module descriptor
+							md = XmlModuleDescriptorParser.getInstance().parseDescriptor(this, ivyFile.toURL(), false);
+							srcIvyPattern = ivyFile.getAbsolutePath();
+						} catch (SAXException e) {
+				        	throw new IllegalStateException("bad ivy file for "+mrid+": "+ivyFile+": "+e);
+						}
+            		} else {
+            			throw new IllegalArgumentException("cannot publish "+ivyFile+" as "+pubrevision+": bad revision found in ivy file. Use deliver before.");
+            		}
             	}
         	} else {
 				md.setResolvedModuleRevisionId(pubmrid);
@@ -2252,7 +2307,7 @@ public class Ivy implements TransferListener {
         } catch (MalformedURLException e) {
         	throw new RuntimeException("malformed url obtained for file "+ivyFile);
         } catch (ParseException e) {
-        	throw new IllegalStateException("bad ivy file in cache for "+mrid+": please clean cache and resolve again");
+        	throw new IllegalStateException("bad ivy file for "+mrid+": "+ivyFile+": "+e);
         }
         
         DependencyResolver resolver = getResolver(resolverName);
@@ -2261,12 +2316,12 @@ public class Ivy implements TransferListener {
         }
         
         // collect all declared artifacts of this module
-        Collection missing = publish(md, resolver, srcArtifactPattern, srcIvyPattern, overwrite);
+        Collection missing = publish(md, resolver, srcArtifactPattern, srcIvyPattern, extraArtifacts, overwrite);
         Message.verbose("\tpublish done ("+(System.currentTimeMillis()-start)+"ms)");
         return missing;
     }
 
-    private Collection publish(ModuleDescriptor md, DependencyResolver resolver, String srcArtifactPattern, String srcIvyPattern, boolean overwrite) throws IOException {
+    private Collection publish(ModuleDescriptor md, DependencyResolver resolver, String srcArtifactPattern, String srcIvyPattern, Artifact[] extraArtifacts, boolean overwrite) throws IOException {
         Collection missing = new ArrayList();
         Set artifactsSet = new HashSet();
         String[] confs = md.getConfigurationsNames();
@@ -2275,6 +2330,11 @@ public class Ivy implements TransferListener {
             for (int j = 0; j < artifacts.length; j++) {
                 artifactsSet.add(artifacts[j]);
             }
+        }
+        if (extraArtifacts != null) {
+        	for (int i = 0; i < extraArtifacts.length; i++) {
+				artifactsSet.add(new MDArtifact(md, extraArtifacts[i].getName(), extraArtifacts[i].getType(), extraArtifacts[i].getExt(), extraArtifacts[i].getUrl(), extraArtifacts[i].getExtraAttributes()));
+			}
         }
         // for each declared published artifact in this descriptor, do:
         for (Iterator iter = artifactsSet.iterator(); iter.hasNext();) {

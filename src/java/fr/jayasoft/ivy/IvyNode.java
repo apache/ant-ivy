@@ -1521,4 +1521,8 @@ public class IvyNode {
 
     }
 
+	public ResolveData getResolveData() {
+		return _data;
+	}
+
 }

@@ -6,15 +6,21 @@
 package fr.jayasoft.ivy.ant;
 
 import java.io.File;
+import java.net.URL;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.taskdefs.Echo;
 import org.apache.tools.ant.taskdefs.Property;
 
+import fr.jayasoft.ivy.AbstractArtifact;
 import fr.jayasoft.ivy.Artifact;
+import fr.jayasoft.ivy.ArtifactRevisionId;
 import fr.jayasoft.ivy.Ivy;
 import fr.jayasoft.ivy.ModuleRevisionId;
 import fr.jayasoft.ivy.util.IvyPatternHelper;
@@ -43,8 +49,10 @@ public class IvyPublish extends IvyTask {
     private boolean _warnonmissing = true;
     private boolean _haltonmissing = true;
     private boolean _overwrite = false;
+    private boolean _update = false;
     private boolean _replacedynamicrev = true;
 	private boolean _forcedeliver;
+	private Collection _artifacts = new ArrayList();
     
     public File getCache() {
         return _cache;
@@ -198,7 +206,18 @@ public class IvyPublish extends IvyTask {
                 deliver.execute();
             }
             
-            Collection missing = ivy.publish(mrid, _pubRevision, _cache, _artifactspattern, _publishResolverName, _publishivy?_srcivypattern:null, doValidate(ivy), _overwrite);
+            Collection missing = ivy.publish(
+            		mrid, 
+            		_pubRevision, 
+            		_cache, 
+            		_artifactspattern, 
+            		_publishResolverName, 
+            		_publishivy?_srcivypattern:null, 
+            		getStatus(), 
+            		pubdate, 
+            		(Artifact[]) _artifacts.toArray(new Artifact[_artifacts.size()]), doValidate(ivy), 
+            		_overwrite, 
+            		_update);
             if (_warnonmissing) {
                 for (Iterator iter = missing.iterator(); iter.hasNext();) {
                     Artifact artifact = (Artifact)iter.next();
@@ -229,6 +248,11 @@ public class IvyPublish extends IvyTask {
         echo.setMessage(msg+"\n");
         echo.setAppend(true);
         echo.perform();
+    }
+    public PublishArtifact createArtifact() {
+    	PublishArtifact art = new PublishArtifact();
+    	_artifacts .add(art);
+		return art;
     }
     public boolean isPublishivy() {
         return _publishivy;
@@ -262,5 +286,84 @@ public class IvyPublish extends IvyTask {
 	}
 	public boolean isForcedeliver() {
 		return _forcedeliver;
+	}
+	public boolean isUpdate() {
+		return _update;
+	}
+	public void setUpdate(boolean update) {
+		_update = update;
+	}
+	public class PublishArtifact implements Artifact {
+		private String _ext;
+		private String _name;
+		private String _type;
+
+		public String[] getConfigurations() {
+			return null;
+		}
+
+		public String getExt() {
+			return _ext==null?_type:_ext;
+		}
+
+		public ArtifactRevisionId getId() {
+			return null;
+		}
+
+		public ModuleRevisionId getModuleRevisionId() {
+			return null;
+		}
+
+		public String getName() {
+			return _name;
+		}
+
+		public Date getPublicationDate() {
+			return null;
+		}
+
+		public String getType() {
+			return _type;
+		}
+
+		public URL getUrl() {
+			return null;
+		}
+
+		public void setExt(String ext) {
+			_ext = ext;
+		}
+
+		public void setName(String name) {
+			_name = name;
+		}
+
+		public void setType(String type) {
+			_type = type;
+		}
+
+		public String getAttribute(String attName) {
+			return null;
+		}
+
+		public Map getAttributes() {
+			return new HashMap();
+		}
+
+		public String getExtraAttribute(String attName) {
+			return null;
+		}
+
+		public Map getExtraAttributes() {
+			return new HashMap();
+		}
+
+		public String getStandardAttribute(String attName) {
+			return null;
+		}
+
+		public Map getStandardAttributes() {
+			return new HashMap();
+		}
 	}
 }

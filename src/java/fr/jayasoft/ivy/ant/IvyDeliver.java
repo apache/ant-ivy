@@ -16,10 +16,13 @@ import org.apache.tools.ant.taskdefs.Property;
 
 import fr.jayasoft.ivy.DefaultPublishingDRResolver;
 import fr.jayasoft.ivy.Ivy;
+import fr.jayasoft.ivy.IvyContext;
 import fr.jayasoft.ivy.ModuleDescriptor;
 import fr.jayasoft.ivy.ModuleRevisionId;
 import fr.jayasoft.ivy.PublishingDependencyRevisionResolver;
 import fr.jayasoft.ivy.status.StatusManager;
+import fr.jayasoft.ivy.util.Message;
+import fr.jayasoft.ivy.util.MessageImpl;
 
 /**
  * Trigger the delivery of a module, which may consist in a recursive delivery of dependencies
@@ -46,11 +49,9 @@ public class IvyDeliver extends IvyTask {
                 return super.resolve(published, publishedStatus, depMrid,
                         depStatus);
             }
-
+            
             // the dependency is not a delivery
 
-            // we must ask the user what version and status he want to have
-            // for the dependency
             String statusProperty = depMrid.getName() + "."  + depMrid.getRevision() + ".status";
             String versionProperty = depMrid.getName() + "."  + depMrid.getRevision() + ".version";
             String deliveredProperty = depMrid.getName() + "." + depMrid.getRevision() + ".delivered";
@@ -58,13 +59,13 @@ public class IvyDeliver extends IvyTask {
             String version = getProject().getProperty(versionProperty);
             String status = getProject().getProperty(statusProperty);
             String delivered = getProject().getProperty(deliveredProperty);
-            log("found version = " + version + " status=" + status+" delivered="+delivered);
+            Message.debug("found version = " + version + " status=" + status+" delivered="+delivered);
             if (version != null && status != null) {
                 if ("true".equals(delivered)) {
                     // delivery has already been done : just return the value
                     return version;
                 } else {
-                    deliverDependency(depMrid, version);
+                    deliverDependency(depMrid, version, status, depStatus);
                     loadDeliveryList();
                     return version;
                 }
@@ -87,18 +88,21 @@ public class IvyDeliver extends IvyTask {
             status = getProject().getProperty(globalStatusProperty);
             if (version != null && status != null) {
                 // found global delivery properties
-                log("found global version = " + version + " and global status=" + status);
+                delivered = getProject().getProperty("recursive."+depMrid.getName()+ ".delivered");
+                Message.debug("found global version = " + version + " and global status=" + status+" - delivered = "+delivered);
                 if ("true".equals(delivered)) {
                     // delivery has already been done : just return the value
                     return version;
                 } else {
                     getProject().setProperty(statusProperty, status); 
-                    deliverDependency(depMrid, version);
+                    deliverDependency(depMrid, version, status, depStatus);
                     loadDeliveryList();
                     return version;
                 }
             }
 
+            // we must ask the user what version and status he want to have
+            // for the dependency
             Input input = (Input) getProject().createTask("input");
             input.setOwningTarget(getOwningTarget());
             input.init();
@@ -109,8 +113,8 @@ public class IvyDeliver extends IvyTask {
             input.setValidargs(StatusManager.getCurrent().getDeliveryStatusListString());
             input.setAddproperty(statusProperty);
             input.perform();
-            appendDeliveryList(statusProperty + " = "
-                    + getProject().getProperty(statusProperty));
+            status = getProject().getProperty(statusProperty);
+            appendDeliveryList(statusProperty + " = " + status);
 
             // ask version
             input.setMessage(depMrid.getName() + " " + depMrid.getRevision()
@@ -118,23 +122,19 @@ public class IvyDeliver extends IvyTask {
             input.setValidargs(null);
             input.setAddproperty(versionProperty);
             input.perform();
-            appendDeliveryList(versionProperty + " = "
-                    + getProject().getProperty(versionProperty));
 
             version = getProject().getProperty(versionProperty);
-            deliverDependency(depMrid, version);
+            appendDeliveryList(versionProperty + " = " + version);
+            deliverDependency(depMrid, version, status, depStatus);
 
             loadDeliveryList();
 
             return version;
         }
 
-        public void deliverDependency(ModuleRevisionId depMrid, String version) {
+        public void deliverDependency(ModuleRevisionId depMrid, String version, String status, String depStatus) {
             // call deliver target if any
-            if (_deliverTarget != null) {
-                String statusProperty = depMrid.getName() + "."
-                        + depMrid.getRevision() + ".status";
-                String status = getProject().getProperty(statusProperty);
+            if (_deliverTarget != null && _deliverTarget.trim().length() > 0) {
 
                 CallTarget ct = (CallTarget) getProject().createTask("antcall");
                 ct.setOwningTarget(getOwningTarget());
@@ -154,11 +154,24 @@ public class IvyDeliver extends IvyTask {
                 param = ct.createParam();
                 param.setName("dependency.version");
                 param.setValue(depMrid.getRevision());
-                ct.perform();
+                param = ct.createParam();
+                param.setName("dependency.status");
+                param.setValue(depStatus==null?"null":depStatus);
+
+                MessageImpl impl = IvyContext.getContext().getMessageImpl();
+                try {
+                	IvyContext.getContext().setMessageImpl(null);
+                	ct.perform();
+                } finally {
+                	IvyContext.getContext().setMessageImpl(impl);
+                }
                 
                 String deliveredProperty = depMrid.getName() + "." + depMrid.getRevision() + ".delivered";
                 getProject().setProperty(deliveredProperty, "true");
                 appendDeliveryList(deliveredProperty + " = true");
+
+                getProject().setProperty("recursive."+depMrid.getName() + ".delivered", "true");
+                appendDeliveryList("recursive."+depMrid.getName() + ".delivered" + " = true");
             }
         }
 
@@ -326,7 +339,7 @@ public class IvyDeliver extends IvyTask {
             loadDeliveryList();
 
             PublishingDependencyRevisionResolver drResolver;
-            if (_deliverTarget != null) {
+            if (_deliverTarget != null && _deliverTarget.trim().length() > 0) {
                 drResolver = new DeliverDRResolver();
             } else {
                 drResolver = new DefaultPublishingDRResolver();
@@ -358,7 +371,7 @@ public class IvyDeliver extends IvyTask {
         echo.setOwningTarget(getOwningTarget());
         echo.init();
         echo.setFile(_deliveryList);
-        echo.setMessage(msg + "${line.separator}");
+        echo.setMessage(msg + "\n");
         echo.setAppend(true);
         echo.perform();
     }
