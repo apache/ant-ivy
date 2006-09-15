@@ -20,7 +20,15 @@ public class ChecksumHelper {
 	}
 	
 	public static boolean check(File dest, File checksumFile, String algorithm) throws IOException {
-		String expected = FileUtil.readEntirely(new BufferedReader(new FileReader(checksumFile))).trim().toLowerCase();
+		String csFileContent = FileUtil.readEntirely(new BufferedReader(new FileReader(checksumFile))).trim().toLowerCase();
+		String expected;
+		int spaceIndex = csFileContent.indexOf(' ');
+		if (spaceIndex != -1) {
+			expected = csFileContent.substring(0, spaceIndex);
+		} else {
+			expected = csFileContent;
+		}
+		
 		String computed = computeAsString(dest, algorithm).trim().toLowerCase();
 		return expected.equals(computed);
 	}    

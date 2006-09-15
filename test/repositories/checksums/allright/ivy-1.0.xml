@@ -4,4 +4,8 @@
 	       revision="1.0"
 	       status="integration"
 	/>
+	<publications>
+		<artifact />
+		<artifact name="allright-with-path" />
+	</publications>
 </ivy-module>

@@ -142,8 +142,8 @@ public class FileSystemResolverTest extends TestCase {
         ModuleRevisionId mrid = ModuleRevisionId.newInstance("test", "allright", "1.0");
         ResolvedModuleRevision rmr = resolver.getDependency(new DefaultDependencyDescriptor(mrid, false), _data);
         assertNotNull(rmr);
-        DownloadReport dr = resolver.download(new Artifact[] {new DefaultArtifact(mrid, rmr.getPublicationDate(), mrid.getName(), "jar", "jar")}, _ivy, _cache);
-        assertEquals(1, dr.getArtifactsReports(DownloadStatus.SUCCESSFUL).length);
+        DownloadReport dr = resolver.download(rmr.getDescriptor().getAllArtifacts(), _ivy, _cache);
+        assertEquals(2, dr.getArtifactsReports(DownloadStatus.SUCCESSFUL).length);
 
         resolver.setChecksums("md5");
         mrid = ModuleRevisionId.newInstance("test", "badivycs", "1.0");
