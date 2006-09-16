@@ -1,15 +1,11 @@
 package fr.jayasoft.ivy.ant;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
+
+import junit.framework.TestCase;
 
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.Delete;
-
-import fr.jayasoft.ivy.util.FileUtil;
-
-import junit.framework.TestCase;
 
 public class IvyRepositoryReportTest extends TestCase {
     private File _cache;
@@ -40,6 +36,8 @@ public class IvyRepositoryReportTest extends TestCase {
         del.setDir(_cache);
         del.execute();
     }
+    
+    public void test() {}
 
 // no xslt transformation is possible in the junit test on our continuous integration server for the moment...
 //    public void testGraph() throws Exception {
