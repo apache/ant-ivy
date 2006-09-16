@@ -2921,6 +2921,36 @@ public class Ivy implements TransferListener {
 		return _interrupted;
 	}
 
+
+	/**
+	 * List module ids of the module accessible through the current resolvers
+	 * matching the given mid criteria according to the given matcher.
+	 * 
+	 * @param criteria
+	 * @param matcher
+	 * @return
+	 */
+	public ModuleId[] listModules(ModuleId criteria, PatternMatcher matcher) {
+		List ret = new ArrayList();
+		Matcher orgMatcher = matcher.getMatcher(criteria.getOrganisation());
+		Matcher modMatcher = matcher.getMatcher(criteria.getName());
+		Map tokenValues = new HashMap();
+		String[] orgs = listTokenValues(IvyPatternHelper.ORGANISATION_KEY, tokenValues);
+		for (int i = 0; i < orgs.length; i++) {
+			if (orgMatcher.matches(orgs[i])) {
+				tokenValues.put(IvyPatternHelper.ORGANISATION_KEY, orgs[i]);
+				String[] mods = listTokenValues(IvyPatternHelper.MODULE_KEY, tokenValues);
+				for (int j = 0; j < mods.length; j++) {
+					if (modMatcher.matches(mods[j])) {
+						ret.add(new ModuleId(orgs[i], mods[j]));
+					}
+				}
+			}
+		}
+		return (ModuleId[]) ret.toArray(new ModuleId[ret.size()]);
+	}
+	
+	
 	/**
 	 * List module revision ids of the module accessible through the current resolvers
 	 * matching the given mrid criteria according to the given matcher.

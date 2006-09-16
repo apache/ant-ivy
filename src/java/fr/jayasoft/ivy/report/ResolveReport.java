@@ -134,16 +134,16 @@ public class ResolveReport {
 			IvyNode dependency = (IvyNode) iter.next();
 			if (!dependency.isCompletelyEvicted() && !dependency.hasProblem()) {
 				_artifacts.addAll(Arrays.asList(dependency.getSelectedArtifacts(artifactFilter)));
-			} else {
-				// dependencies has been evicted: it has not been added to the report yet
-				String[] dconfs = dependency.getRootModuleConfigurations();
-				for (int j = 0; j < dconfs.length; j++) {
-					ConfigurationResolveReport configurationReport = getConfigurationReport(dconfs[j]);
-					if (configurationReport != null) {
-						configurationReport.addDependency(dependency);
-					}
+			} 
+			// update the configurations reports with the dependencies
+			// these reports will be completed later with download information, if any
+			String[] dconfs = dependency.getRootModuleConfigurations();
+			for (int j = 0; j < dconfs.length; j++) {
+				ConfigurationResolveReport configurationReport = getConfigurationReport(dconfs[j]);
+				if (configurationReport != null) {
+					configurationReport.addDependency(dependency);
 				}
-			}			
+			}
 		}
 	}
 	/**

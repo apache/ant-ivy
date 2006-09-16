@@ -47,11 +47,24 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
         	moduleDescriptor.addConfiguration(new Configuration(confs[i]));
 		}
         moduleDescriptor.setLastModified(System.currentTimeMillis());
-        DefaultDependencyDescriptor dd = new DefaultDependencyDescriptor(moduleDescriptor, mrid, false, changing, transitive);
-        for (int i = 0; i < confs.length; i++) {
-            dd.addDependencyConfiguration(confs[i], confs[i]);
-        }
-        moduleDescriptor.addDependency(dd);
+        	DefaultDependencyDescriptor dd = new DefaultDependencyDescriptor(moduleDescriptor, mrid, true, changing, transitive);
+        	for (int j = 0; j < confs.length; j++) {
+        		dd.addDependencyConfiguration(confs[j], confs[j]);
+        	}
+        	moduleDescriptor.addDependency(dd);
+        
+        return moduleDescriptor;
+    }
+    
+    public static DefaultModuleDescriptor newCallerInstance(ModuleRevisionId[] mrid, boolean transitive, boolean changing) {
+        DefaultModuleDescriptor moduleDescriptor = new DefaultModuleDescriptor(ModuleRevisionId.newInstance("caller", "all-caller", "working"), "integration", null, true);
+        moduleDescriptor.addConfiguration(new Configuration(DEFAULT_CONFIGURATION));
+        moduleDescriptor.setLastModified(System.currentTimeMillis());
+        for (int i = 0; i < mrid.length; i++) {
+        	DefaultDependencyDescriptor dd = new DefaultDependencyDescriptor(moduleDescriptor, mrid[i], true, changing, transitive);
+        	dd.addDependencyConfiguration(DEFAULT_CONFIGURATION, "*");
+        	moduleDescriptor.addDependency(dd);
+		}
         
         return moduleDescriptor;
     }

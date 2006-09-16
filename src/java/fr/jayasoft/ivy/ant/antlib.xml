@@ -9,6 +9,7 @@
 	<taskdef name="cachepath" classname="fr.jayasoft.ivy.ant.IvyCachePath"/>
 	<taskdef name="cachefileset" classname="fr.jayasoft.ivy.ant.IvyCacheFileset"/>
 	<taskdef name="report" classname="fr.jayasoft.ivy.ant.IvyReport"/>
+	<taskdef name="repreport" classname="fr.jayasoft.ivy.ant.IvyRepositoryReport"/>
 	<taskdef name="var" classname="fr.jayasoft.ivy.ant.IvyVar"/>
 	<taskdef name="check" classname="fr.jayasoft.ivy.ant.IvyCheck"/>
 	<taskdef name="artifactproperty" classname="fr.jayasoft.ivy.ant.IvyArtifactProperty"/>

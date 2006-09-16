@@ -36,6 +36,7 @@ public class IvyReport extends IvyTask {
     private String _conf;
     private File _cache;
     private boolean _graph = true;
+    private boolean _dot = false;
     private boolean _xml = false;
     private boolean _xsl = true;
     private String _xslFile;
@@ -144,7 +145,10 @@ public class IvyReport extends IvyTask {
                 genxml(_cache, _organisation, _module, confs);
             }
             if (_graph) {
-                gengraph(_cache, _organisation, _module, confs);
+            	genStyled(_cache, _organisation, _module, confs, getStylePath(_cache, "ivy-report-graph.xsl"), "graphml");
+            }
+            if (_dot) {
+            	genStyled(_cache, _organisation, _module, confs, getStylePath(_cache, "ivy-report-dot.xsl"), "dot");
             }
         } catch (IOException e) {
             throw new BuildException("impossible to generate report: "+e, e);
@@ -166,51 +170,9 @@ public class IvyReport extends IvyTask {
         }
     }
     private void genreport(File cache, String organisation, String module, String[] confs) throws IOException {        
-        // first process the report with xslt
-        XSLTProcess xslt = new XSLTProcess();
-        xslt.setTaskName(getTaskName());
-        xslt.setProject(getProject());
-        xslt.init();
-        
-    	Mapper mapper = new Mapper(getProject());
-    	xslt.addMapper(mapper);
-        
-        for (int i = 0; i < confs.length; i++) {
-        	String reportFileName = XmlReportOutputter.getReportFileName(new ModuleId(organisation, module), confs[i]);
-        	xslt.setIncludes(reportFileName);
-        	
-        	FileNameMapper reportMapper = new GlobPatternMapper();
-			reportMapper.setFrom(reportFileName);
-        	reportMapper.setTo(IvyPatternHelper.substitute(_outputpattern, organisation, module, "", "", "", _xslext, confs[i]));
-        	mapper.add(reportMapper);
-        }
-        
-    	xslt.setBasedir(cache);
-        if (_todir != null) {
-        	xslt.setDestdir(_todir);
-        } else {
-        	xslt.setDestdir(new File("."));
-        }
-        
-        xslt.setStyle(getReportStylePath(cache));
-        XSLTProcess.Param param = xslt.createParam();
-        param.setName("confs");
-        param.setExpression(_conf);
-        param = xslt.createParam();
-        param.setName("extension");
-        param.setExpression(_xslext);
+        genStyled(cache, organisation, module, confs, getReportStylePath(cache), _xslext);
 
-        // add the provided XSLT parameters
-        for (Iterator it = _params.iterator(); it.hasNext(); ) {
-            param = (XSLTProcess.Param) it.next();
-            XSLTProcess.Param realParam = xslt.createParam();
-            realParam.setName(param.getName());
-            realParam.setExpression(param.getExpression());
-        }
-        
-        xslt.execute();
-
-        // then copy the css if required
+        // copy the css if required
         if (_todir != null && _xslFile == null) {
             File css = new File(_todir, "ivy-report.css");
             if (!css.exists()) {
@@ -232,9 +194,8 @@ public class IvyReport extends IvyTask {
         return style.getAbsolutePath();
     }
     
-    
-    private void gengraph(File cache, String organisation, String module, String[] confs) throws IOException {        
-        // process the report with xslt to generate graphml
+    private void genStyled(File cache, String organisation, String module, String[] confs, String style, String ext) throws IOException {        
+        // process the report with xslt to generate dot file
         File out;
         if (_todir != null) {
             out = _todir;
@@ -259,20 +220,37 @@ public class IvyReport extends IvyTask {
         	
         	FileNameMapper reportMapper = new GlobPatternMapper();
 			reportMapper.setFrom(reportFileName);
-        	reportMapper.setTo(IvyPatternHelper.substitute(_outputpattern, organisation, module, "", "", "", "graphml", confs[i]));
+        	reportMapper.setTo(IvyPatternHelper.substitute(_outputpattern, organisation, module, "", "", "", ext, confs[i]));
         	mapper.add(reportMapper);
         }
-        xslt.setStyle(getGraphStylePath(cache));
+        xslt.setStyle(style);
+        
+        XSLTProcess.Param param = xslt.createParam();
+        param.setName("confs");
+        param.setExpression(_conf);
+        param = xslt.createParam();
+        param.setName("extension");
+        param.setExpression(_xslext);
+
+        // add the provided XSLT parameters
+        for (Iterator it = _params.iterator(); it.hasNext(); ) {
+            param = (XSLTProcess.Param) it.next();
+            XSLTProcess.Param realParam = xslt.createParam();
+            realParam.setName(param.getName());
+            realParam.setExpression(param.getExpression());
+        }
+        
         xslt.execute();
     }
     
-    private String getGraphStylePath(File cache) throws IOException {
+    private String getStylePath(File cache, String styleResourceName) throws IOException {
         // style should be a file (and not an url)
         // so we have to copy it from classpath to cache
-        File style = new File(cache, "ivy-report-graph.xsl");
-        FileUtil.copy(XmlReportOutputter.class.getResourceAsStream("ivy-report-graph.xsl"), style, null);
+        File style = new File(cache, styleResourceName);
+        FileUtil.copy(XmlReportOutputter.class.getResourceAsStream(styleResourceName), style, null);
         return style.getAbsolutePath();
     }
+    
     public boolean isXml() {
         return _xml;
     }
@@ -297,5 +275,11 @@ public class IvyReport extends IvyTask {
         _params.add(result);
         return result;
     }
+	public boolean isDot() {
+		return _dot;
+	}
+	public void setDot(boolean dot) {
+		_dot = dot;
+	}
     
 }

@@ -21,6 +21,7 @@ Incompatibility with previous versions:
 Changes:
 --------
 * thanks to Jayasoft:
+  - NEW: ivy report generate full graph from automated build (IVY-155)
   - NEW: support for build number calculation (IVY-276)
   - NEW: find modules in repository (IVY-275)
   - NEW: explicitly specify artifact download URL (IVY-271)
