@@ -25,6 +25,7 @@ import org.apache.tools.ant.types.FileSet;
 import org.apache.tools.ant.types.Path;
 
 import fr.jayasoft.ivy.DependencyDescriptor;
+import fr.jayasoft.ivy.Ivy;
 import fr.jayasoft.ivy.ModuleDescriptor;
 import fr.jayasoft.ivy.ModuleId;
 import fr.jayasoft.ivy.parser.ModuleDescriptorParserRegistry;
@@ -82,7 +83,8 @@ public class IvyBuildList extends IvyTask {
             throw new BuildException("at least one nested fileset should be provided in ivy build list");
         }
 
-        _ivyFilePath = getProperty(_ivyFilePath, getIvyInstance(), "ivy.buildlist.ivyfilepath");
+        Ivy ivy = getIvyInstance();
+		_ivyFilePath = getProperty(_ivyFilePath, ivy, "ivy.buildlist.ivyfilepath");
 
         Path path = new Path(getProject());
 
@@ -108,7 +110,7 @@ public class IvyBuildList extends IvyTask {
                     }
                 } else {
                     try {
-                        ModuleDescriptor md = ModuleDescriptorParserRegistry.getInstance().parseDescriptor(getIvyInstance(), ivyFile.toURL(), isValidate());
+                        ModuleDescriptor md = ModuleDescriptorParserRegistry.getInstance().parseDescriptor(ivy, ivyFile.toURL(), doValidate(ivy));
                         buildFiles.put(md, buildFile);
                         mds.add(md);
                         if (_root.equals(md.getModuleRevisionId().getName())) {
@@ -137,7 +139,7 @@ public class IvyBuildList extends IvyTask {
             mds = filterModules(mds, rootModuleDescriptor);
         }
 
-        List sortedModules = getIvyInstance().sortModuleDescriptors(mds);
+        List sortedModules = ivy.sortModuleDescriptors(mds);
 
         for (ListIterator iter = independent.listIterator(); iter.hasNext();) {
             File buildFile = (File)iter.next();

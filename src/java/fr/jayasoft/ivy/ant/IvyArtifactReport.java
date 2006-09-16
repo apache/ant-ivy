@@ -110,7 +110,7 @@ public class IvyArtifactReport extends IvyTask {
         }
         try {
             String[] confs = splitConfs(_conf);
-            IvyNode[] dependencies = ivy.getDependencies((ModuleDescriptor) getProject().getReference("ivy.resolved.descriptor"), confs, _cache, new Date(), null, isValidate());
+            IvyNode[] dependencies = ivy.getDependencies((ModuleDescriptor) getProject().getReference("ivy.resolved.descriptor"), confs, _cache, new Date(), null, doValidate(ivy));
 
             Map artifactsToCopy = ivy.determineArtifactsToCopy(new ModuleId(_organisation, _module), confs, _cache, _pattern, null);
             Map moduleRevToArtifactsMap = new HashMap();
