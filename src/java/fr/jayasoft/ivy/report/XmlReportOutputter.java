@@ -164,10 +164,19 @@ public class XmlReportOutputter implements ReportOutputter {
                 }
                 IvyNode.Caller[] callers = dep.getCallers(report.getConfiguration());
 				for (int i = 0; i < callers.length; i++) {
+					StringBuffer callerDetails = new StringBuffer();
+					Map callerExtraAttributes = callers[i].getDependencyDescriptor().getExtraAttributes();
+	                for (Iterator iterator = callerExtraAttributes.keySet().iterator(); iterator.hasNext();) {
+	                    String attName = (String)iterator.next();
+	                    callerDetails.append(" extra-").append(attName).append("=\"").append(callerExtraAttributes.get(attName)).append("\"");
+	                }
+
 					out.println("\t\t\t\t<caller organisation=\""+callers[i].getModuleRevisionId().getOrganisation()+"\"" +
 							" name=\""+callers[i].getModuleRevisionId().getName()+"\"" +
                             " conf=\""+toString(callers[i].getCallerConfigurations())+"\""+
-                            " rev=\""+callers[i].getAskedDependencyId().getRevision()+"\"/>");
+                            " rev=\""+callers[i].getAskedDependencyId().getRevision()+"\""+
+                            callerDetails+
+                            "/>");
 				}
 				ArtifactDownloadReport[] adr = report.getDownloadReports(dep.getResolvedId());
 				out.println("\t\t\t\t<artifacts>");
