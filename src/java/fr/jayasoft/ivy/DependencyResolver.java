@@ -35,7 +35,7 @@ public interface DependencyResolver {
      * @throws ParseException
      */
     ResolvedModuleRevision getDependency(DependencyDescriptor dd, ResolveData data) throws ParseException;
-    DownloadReport download(Artifact[] artifacts, Ivy ivy, File cache);
+    DownloadReport download(Artifact[] artifacts, Ivy ivy, File cache, boolean useOrigin);
     boolean exists(Artifact artifact);
     void publish(Artifact artifact, File src, boolean overwrite) throws IOException;
     

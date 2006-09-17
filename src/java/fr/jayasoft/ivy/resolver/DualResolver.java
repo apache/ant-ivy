@@ -81,8 +81,8 @@ public class DualResolver extends AbstractResolver {
         _artifactResolver.reportFailure(art);        
     }
 
-    public DownloadReport download(Artifact[] artifacts, Ivy ivy, File cache) {
-        return _artifactResolver.download(artifacts, ivy, cache);
+    public DownloadReport download(Artifact[] artifacts, Ivy ivy, File cache, boolean useOrigin) {
+        return _artifactResolver.download(artifacts, ivy, cache, useOrigin);
     }
 
     public DependencyResolver getArtifactResolver() {

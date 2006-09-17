@@ -5,16 +5,12 @@
  */
 package fr.jayasoft.ivy.ant;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.Iterator;
-import java.util.List;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.types.Path;
 
 import fr.jayasoft.ivy.Artifact;
-import fr.jayasoft.ivy.ArtifactOrigin;
 import fr.jayasoft.ivy.Ivy;
 
 /**
@@ -24,15 +20,6 @@ import fr.jayasoft.ivy.Ivy;
  */
 public class IvyCachePath extends IvyCacheTask {
     private String _pathid;
-    private boolean useOrigin = false;
-    
-    public boolean isUseOrigin() {
-    	return useOrigin;
-    }
-    
-    public void setUseOrigin(boolean useOrigin) {
-    	this.useOrigin = useOrigin;
-    }
 
     public String getPathid() {
         return _pathid;
@@ -49,35 +36,15 @@ public class IvyCachePath extends IvyCacheTask {
         try {
             Path path = new Path(getProject());
             getProject().addReference(_pathid, path);
-            for (Iterator iter = getPaths().iterator(); iter.hasNext();) {
-            	PathEntry p = (PathEntry) iter.next();
-            	if (p.isRelativeToCache()) {
-            		path.createPathElement().setLocation(new File(getCache(), p.getLocation()));
-            	} else {
-            		path.createPathElement().setLocation(new File(p.getLocation()));
-            	}
+            Ivy ivy = getIvyInstance();
+            for (Iterator iter = getArtifacts().iterator(); iter.hasNext();) {
+            	Artifact a = (Artifact) iter.next();
+            	path.createPathElement().setLocation(ivy.getArchiveFileInCache(getCache(), a, ivy.getSavedArtifactOrigin(getCache(), a), isUseOrigin()));
             }
         } catch (Exception ex) {
             throw new BuildException("impossible to build ivy path: "+ex, ex);
         }
         
-    }
-    
-    protected void addPath(List paths, Artifact artifact, Ivy ivy) throws IOException {
-    	if (!useOrigin) {
-    		paths.add(new PathEntry(ivy.getArchivePathInCache(artifact), true));
-    	} else {
-    		ArtifactOrigin origin = ivy.getSavedArtifactOrigin(getCache(), artifact);
-    		if (origin == null) {
-    			paths.add(new PathEntry(ivy.getArchivePathInCache(artifact), true));
-    		} else {
-                if (origin.isLocal()) {
-                	paths.add(new PathEntry(origin.getLocation(), false));
-                } else {
-                	paths.add(new PathEntry(ivy.getArchivePathInCache(artifact), true));
-                }
-    		}
-    	}
     }
 
 }

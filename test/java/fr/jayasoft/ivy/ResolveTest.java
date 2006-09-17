@@ -137,6 +137,27 @@ public class ResolveTest extends TestCase {
         assertEquals("location for artifact not correct", expectedLocation, reportOrigin.getLocation());
     }
 
+    public void testUseOrigin() throws Exception {
+        ResolveReport report = _ivy.resolve(new File("test/repositories/1/org1/mod1.1/ivys/ivy-1.0.xml").toURL(),
+                null, new String[] {"default"}, _cache, null, true, false, true, true, null);
+        assertNotNull(report);
+
+        ArtifactDownloadReport[] dReports = report.getConfigurationReport("default").getDownloadReports(ModuleRevisionId.newInstance("org1", "mod1.2", "2.0"));
+        assertNotNull(dReports);
+        assertEquals("number of downloaded artifacts not correct.", 1, dReports.length);
+        assertEquals("download status not correct: should not download the artifact in useOrigin mode.", DownloadStatus.NO, dReports[0].getDownloadStatus());
+        
+        Artifact artifact = dReports[0].getArtifact();
+        assertNotNull(artifact);
+        
+        String expectedLocation = new File("test/repositories/1/org1/mod1.2/jars/mod1.2-2.0.jar").getAbsolutePath();
+
+        ArtifactOrigin origin = _ivy.getSavedArtifactOrigin(_cache, artifact);
+        File artInCache = new File(_cache, _ivy.getArchivePathInCache(artifact, origin));
+        assertFalse("should not download artifact in useOrigin mode.", artInCache.exists());
+        assertEquals("location for artifact not correct.", expectedLocation, _ivy.getArchiveFileInCache(_cache, artifact).getAbsolutePath());
+    }
+
     public void testResolveSimple() throws Exception {
         // mod1.1 depends on mod1.2
         ResolveReport report = _ivy.resolve(new File("test/repositories/1/org1/mod1.1/ivys/ivy-1.0.xml").toURL(),

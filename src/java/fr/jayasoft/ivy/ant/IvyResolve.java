@@ -41,6 +41,15 @@ public class IvyResolve extends IvyTask {
 	private boolean _changing = false;
 	private Boolean _keep = null;
 	private String _failureProperty = null;
+    private boolean _useOrigin = false;
+    
+    public boolean isUseOrigin() {
+    	return _useOrigin;
+    }
+    
+    public void setUseOrigin(boolean useOrigin) {
+    	_useOrigin = useOrigin;
+    }
     
     public String getDate() {
         return _pubdate;
@@ -133,6 +142,7 @@ public class IvyResolve extends IvyTask {
 	                    getPubDate(_pubdate, null), 
 	                    doValidate(ivy),
 	                    _useCacheOnly,
+	                    _useOrigin,
 	                    FilterHelper.getArtifactTypeFilter(_type));
             	
             } else {
@@ -155,6 +165,7 @@ public class IvyResolve extends IvyTask {
 	                    doValidate(ivy),
 	                    _useCacheOnly,
 	                    _transitive,
+	                    _useOrigin,
 	                    FilterHelper.getArtifactTypeFilter(_type));
             }
             if (report.hasError()) {

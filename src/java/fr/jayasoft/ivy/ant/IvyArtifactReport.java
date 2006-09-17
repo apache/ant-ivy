@@ -82,7 +82,7 @@ public class IvyArtifactReport extends IvyTask {
 
         Ivy ivy = getIvyInstance();
 
-        ensureResolved(isHaltonfailure(), null, null);
+        ensureResolved(isHaltonfailure(), false, null, null);
 
         String _organisation = getProperty(null, ivy, "ivy.organisation");
         String _module = getProperty(null, ivy, "ivy.module");
@@ -237,7 +237,8 @@ public class IvyArtifactReport extends IvyTask {
     }
 
     private void writeCacheLocation(Ivy ivy, TransformerHandler saxHandler, Artifact artifact) throws SAXException {
-        File archiveInCacheFile = ivy.getArchiveFileInCache(_cache, artifact);
+    	ArtifactOrigin origin = ivy.getSavedArtifactOrigin(_cache, artifact);
+        File archiveInCacheFile = ivy.getArchiveFileInCache(_cache, artifact, origin, false);
         StringBuffer archiveInCachePathWithSlashes = new StringBuffer(1000);
         replaceFileSeparatorWithSlash(archiveInCacheFile, archiveInCachePathWithSlashes);
 

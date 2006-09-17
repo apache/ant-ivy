@@ -80,7 +80,7 @@ public class IvyArtifactProperty extends IvyTask {
         _organisation = getProperty(_organisation, ivy, "ivy.organisation");
         _module = getProperty(_module, ivy, "ivy.module");
 
-        ensureResolved(isHaltonfailure(), getOrganisation(), getModule());
+        ensureResolved(isHaltonfailure(), false, getOrganisation(), getModule());
         
         _conf = getProperty(_conf, ivy, "ivy.resolved.configurations");
         if ("*".equals(_conf)) {

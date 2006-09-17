@@ -12,9 +12,13 @@ import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.types.FileSet;
 import org.apache.tools.ant.types.PatternSet.NameEntry;
 
+import fr.jayasoft.ivy.Artifact;
+import fr.jayasoft.ivy.Ivy;
+
 
 /**
  * Creates an ant fileset consisting in all artifacts found during a resolve.
+ * Note that this task is not compatible with the useOrigin mode.
  * 
  * @author Xavier Hanin 
  */
@@ -26,6 +30,11 @@ public class IvyCacheFileset extends IvyCacheTask {
     }
     public void setSetid(String id) {
         _setid = id;
+    }
+    public void setUseOrigin(boolean useOrigin) {
+    	if (useOrigin) {
+    		throw new UnsupportedOperationException("the cachefileset task does not support the useOrigin mode, since filesets require to have only one root directory. Please use the the cachepath task instead");
+    	}
     }
 
     public void execute() throws BuildException {
@@ -39,15 +48,16 @@ public class IvyCacheFileset extends IvyCacheTask {
             getProject().addReference(_setid, fileset);
             fileset.setDir(getCache());
             
-            List paths = getPaths();
+            List paths = getArtifacts();
             if (paths.isEmpty()) {
                 NameEntry ne = fileset.createExclude();
                 ne.setName("**/*");
             } else {
+            	Ivy ivy = getIvyInstance();
                 for (Iterator iter = paths.iterator(); iter.hasNext();) {
-                    PathEntry p = (PathEntry)iter.next();
+                	Artifact a = (Artifact)iter.next();
                     NameEntry ne = fileset.createInclude();
-                    ne.setName(p.getLocation());
+                    ne.setName(ivy.getArchivePathInCache(a, ivy.getSavedArtifactOrigin(getCache(), a)));
                 }
             }
         } catch (Exception ex) {

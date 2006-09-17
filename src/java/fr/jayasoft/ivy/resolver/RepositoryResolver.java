@@ -189,10 +189,10 @@ public class RepositoryResolver extends AbstractResourceResolver {
 		}
 	}
     
-    public DownloadReport download(Artifact[] artifacts, Ivy ivy, File cache) {
+    public DownloadReport download(Artifact[] artifacts, Ivy ivy, File cache, boolean useOrigin) {
         try {
             _repository.addTransferListener(ivy);
-            return super.download(artifacts, ivy, cache);
+            return super.download(artifacts, ivy, cache, useOrigin);
         } finally {
             if (ivy != null) {
                 _repository.removeTransferListener(ivy);

@@ -1015,10 +1015,14 @@ public class Ivy implements TransferListener {
         return resolve(mrid, confs, true, false, null, null, true, false, FilterHelper.NO_FILTER);
 	}
 
+	public ResolveReport resolve(final ModuleRevisionId mrid, String[] confs, boolean transitive, boolean changing, File cache, Date date, boolean validate, boolean useCacheOnly, Filter artifactFilter) throws ParseException, IOException {
+		return resolve(mrid, confs, transitive, changing, cache, date, validate, useCacheOnly, false, artifactFilter);
+	}
+
     /**
      * Resolves the module identified by the given mrid with its dependencies if transitive is set to true. 
      */
-	public ResolveReport resolve(final ModuleRevisionId mrid, String[] confs, boolean transitive, boolean changing, File cache, Date date, boolean validate, boolean useCacheOnly, Filter artifactFilter) throws ParseException, IOException {
+	public ResolveReport resolve(final ModuleRevisionId mrid, String[] confs, boolean transitive, boolean changing, File cache, Date date, boolean validate, boolean useCacheOnly, boolean useOrigin, Filter artifactFilter) throws ParseException, IOException {
 		DefaultModuleDescriptor md;
 		if (confs.length == 1 && confs[0].equals("*")) {
 			ResolvedModuleRevision rmr = findModule(mrid);
@@ -1040,13 +1044,21 @@ public class Ivy implements TransferListener {
 			md = DefaultModuleDescriptor.newCallerInstance(mrid, confs, transitive, changing);
 		}
 		
-		return resolve(md, new String[] {"*"}, cache, date, validate, useCacheOnly, artifactFilter);
+		return resolve(md, new String[] {"*"}, cache, date, validate, useCacheOnly, true, useOrigin, true, true, artifactFilter);
 	}
 	
     public ResolveReport resolve(URL ivySource, String revision, String[] confs, File cache, Date date, boolean validate, boolean useCacheOnly, Filter artifactFilter) throws ParseException, IOException {
     	return resolve(ivySource, revision, confs, cache, date, validate, useCacheOnly, true, artifactFilter);
     }
     public ResolveReport resolve(URL ivySource, String revision, String[] confs, File cache, Date date, boolean validate, boolean useCacheOnly, boolean transitive, Filter artifactFilter) throws ParseException, IOException {
+    	return resolve(ivySource, revision, confs, cache, date, validate, useCacheOnly, transitive, false, artifactFilter);
+    }
+    /**
+     * Resolve dependencies of a module described by an ivy file.
+     * 
+     * Note: the method signature is way too long, we should use a class to store the settings of the resolve.
+     */
+    public ResolveReport resolve(URL ivySource, String revision, String[] confs, File cache, Date date, boolean validate, boolean useCacheOnly, boolean transitive, boolean useOrigin, Filter artifactFilter) throws ParseException, IOException {
         IvyContext.getContext().setIvy(this);
         IvyContext.getContext().setCache(cache);
         
@@ -1061,7 +1073,7 @@ public class Ivy implements TransferListener {
             md.setResolvedModuleRevisionId(ModuleRevisionId.newInstance(md.getModuleRevisionId(), revision));
         }
 
-        return resolve(md, confs, cache, date, validate, useCacheOnly, transitive, artifactFilter);
+        return resolve(md, confs, cache, date, validate, useCacheOnly, transitive, useOrigin, true, true, artifactFilter);
     }
 
 	public ResolveReport resolve(ModuleDescriptor md, String[] confs, File cache, Date date, boolean validate, boolean useCacheOnly, Filter artifactFilter) throws ParseException, IOException, FileNotFoundException {
@@ -1071,6 +1083,14 @@ public class Ivy implements TransferListener {
 		return resolve(md, confs, cache, date, validate, useCacheOnly, transitive, true, true, artifactFilter);
 	}
 	public ResolveReport resolve(ModuleDescriptor md, String[] confs, File cache, Date date, boolean validate, boolean useCacheOnly, boolean transitive, boolean download, boolean outputReport, Filter artifactFilter) throws ParseException, IOException, FileNotFoundException {
+		return resolve(md, confs, cache, date, validate, useCacheOnly, transitive, false, download, outputReport, artifactFilter);
+	}
+    /**
+     * Resolve dependencies of a module described by a module descriptor
+     * 
+     * Note: the method signature is way too long, we should use a class to store the settings of the resolve.
+     */
+	public ResolveReport resolve(ModuleDescriptor md, String[] confs, File cache, Date date, boolean validate, boolean useCacheOnly, boolean transitive, boolean useOrigin, boolean download, boolean outputReport, Filter artifactFilter) throws ParseException, IOException, FileNotFoundException {
 		IvyContext.getContext().setIvy(this);
         DependencyResolver oldDictator = getDictatorResolver();
         if (useCacheOnly) {
@@ -1127,7 +1147,7 @@ public class Ivy implements TransferListener {
             if (download) {
 	            Message.verbose(":: downloading artifacts ::");
 	
-	            downloadArtifacts(report, cache, artifactFilter);
+	            downloadArtifacts(report, cache, useOrigin, artifactFilter);
             }
             
             
@@ -1152,7 +1172,7 @@ public class Ivy implements TransferListener {
 		Message.sumupProblems();
 	}
 
-    public void downloadArtifacts(ResolveReport report, File cache, Filter artifactFilter) {
+    public void downloadArtifacts(ResolveReport report, File cache, boolean useOrigin, Filter artifactFilter) {
     	long start = System.currentTimeMillis();
     	IvyNode[] dependencies = (IvyNode[]) report.getDependencies().toArray(new IvyNode[report.getDependencies().size()]);
         
@@ -1164,7 +1184,7 @@ public class Ivy implements TransferListener {
             if (!dependencies[i].isCompletelyEvicted() && !dependencies[i].hasProblem()) {
                 DependencyResolver resolver = dependencies[i].getModuleRevision().getArtifactResolver();
                 Artifact[] selectedArtifacts = dependencies[i].getSelectedArtifacts(artifactFilter);
-                DownloadReport dReport = resolver.download(selectedArtifacts, this, cache);
+                DownloadReport dReport = resolver.download(selectedArtifacts, this, cache, useOrigin);
                 ArtifactDownloadReport[] adrs = dReport.getArtifactsReports();
                 for (int j = 0; j < adrs.length; j++) {
                     if (adrs[j].getDownloadStatus() == DownloadStatus.FAILED) {
@@ -1221,7 +1241,7 @@ public class Ivy implements TransferListener {
             cache = getDefaultCache();
         }
         DependencyResolver resolver = getResolver(artifact.getModuleRevisionId().getModuleId());
-        DownloadReport r = resolver.download(new Artifact[] {artifact}, this, cache);
+        DownloadReport r = resolver.download(new Artifact[] {artifact}, this, cache, false);
         return r.getArtifactReport(artifact);
     }
     
@@ -1741,7 +1761,7 @@ public class Ivy implements TransferListener {
             report.setDependencies(Arrays.asList(dependencies), artifactFilter);
             
             Message.info(":: downloading artifacts to cache ::");
-            downloadArtifacts(report, cache, artifactFilter);
+            downloadArtifacts(report, cache, false, artifactFilter);
 
             // now that everything is in cache, we can publish all these modules
             Message.info(":: installing in "+to+" ::");
@@ -2412,24 +2432,68 @@ public class Ivy implements TransferListener {
         return new File(cache, IvyPatternHelper.substitute(_cacheIvyPattern, DefaultArtifact.newIvyArtifact(mrid, null)));
     }
 
+    /**
+     * Returns a File object pointing to where the artifact can be found on the local file system.
+     * This is usually in the cache, but it can be directly in the repository if it is local
+     * and if the resolve has been done with useOrigin = true
+     * 
+     */
     public File getArchiveFileInCache(File cache, Artifact artifact) {
         IvyContext.getContext().setIvy(this);
     	IvyContext.getContext().setCache(cache);
-        return new File(cache, getArchivePathInCache(artifact));
+    	ArtifactOrigin origin = getSavedArtifactOrigin(cache, artifact);
+		return getArchiveFileInCache(cache, artifact, origin);
     }
     
+    /**
+     * Returns a File object pointing to where the artifact can be found on the local file system.
+     * This is usually in the cache, but it can be directly in the repository if it is local
+     * and if the resolve has been done with useOrigin = true
+     * 
+     */
     public File getArchiveFileInCache(File cache, Artifact artifact, ArtifactOrigin origin) {
         IvyContext.getContext().setIvy(this);
     	IvyContext.getContext().setCache(cache);
-    	return new File(cache, getArchivePathInCache(artifact, origin));
+    	File archive = new File(cache, getArchivePathInCache(artifact, origin));
+    	if (!archive.exists() && origin != null && origin.isLocal()) {
+    		File original = new File(origin.getLocation());
+    		if (original.exists()) {
+    			return original;
+    		}
+    	}
+    	return archive;
+    }
+    /**
+     * Returns a File object pointing to where the artifact can be found on the local file system,
+     * using or not the original location depending on its availability and the setting of useOrigin.
+     * 
+     * If useOrigin is false, this method will always return the file in the cache.
+     * 
+     */
+    public File getArchiveFileInCache(File cache, Artifact artifact, ArtifactOrigin origin, boolean useOrigin) {
+        IvyContext.getContext().setIvy(this);
+    	IvyContext.getContext().setCache(cache);
+    	if (useOrigin && origin != null && origin.isLocal()) {
+    		return new File(origin.getLocation());
+    	} else {
+    		return new File(cache, getArchivePathInCache(artifact, origin));
+    	}
     }
     
+    /**
+     * deprecated: use getArchiveFileInCache(File cache, Artifact artifact) instead
+     */
     public File getArchiveFileInCache(File cache, String organisation, String module, String revision, String artifact, String type, String ext) {
         IvyContext.getContext().setIvy(this);
     	IvyContext.getContext().setCache(cache);
         return new File(cache, getArchivePathInCache(organisation, module, revision, artifact, type, ext));
     }
     
+    /**
+     * @deprecated use getArchivePathInCache(Artifact artifact, ArtifactOrigin origin) instead.
+     * @param artifact
+     * @return
+     */
     public String getArchivePathInCache(Artifact artifact) {
         IvyContext.getContext().setIvy(this);
         return IvyPatternHelper.substitute(_cacheArtifactPattern, artifact);

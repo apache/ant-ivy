@@ -38,6 +38,7 @@ Changes:
   - NEW: adding to SPECIAL_MEANINGS in LatestRevisionStrategy (IVY-121)
   - NEW: Allow use of system properties in ivyconf.xml (IVY-228)
 
+  - IMPROVE: allow to use file-system repository directly without cache (IVY-211)
   - IMPROVE: deliver task use a default value for revision (IVY-252)
   - IMPROVE: better documentation distribution (IVY-274) - in progress
   - IMPROVE: define conflict manager per organisation/module in ivyconf (IVY-270)

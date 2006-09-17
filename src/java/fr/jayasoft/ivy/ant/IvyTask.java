@@ -95,10 +95,10 @@ public class IvyTask extends Task {
         getProject().addReference("ivy.resolved.configurations.ref."+suffix, confs);
     }
     
-	protected void ensureResolved(boolean haltOnFailure, String org, String module) {
-    	ensureResolved(haltOnFailure, true, org, module, null);
+	protected void ensureResolved(boolean haltOnFailure, boolean useOrigin, String org, String module) {
+    	ensureResolved(haltOnFailure, useOrigin, true, org, module, null);
     }
-    protected void ensureResolved(boolean haltOnFailure, boolean transitive, String org, String module, String conf) {
+    protected void ensureResolved(boolean haltOnFailure, boolean useOrigin, boolean transitive, String org, String module, String conf) {
         ensureMessageInitialised();
         if (org != null  && module != null) {
             return;
@@ -106,7 +106,7 @@ public class IvyTask extends Task {
         String[] confs = getConfsToResolve(org, module, conf, false);
         
         if (confs.length > 0)  {
-        	IvyResolve resolve = createResolve(haltOnFailure);
+        	IvyResolve resolve = createResolve(haltOnFailure, useOrigin);
         	resolve.setTransitive(transitive);
         	resolve.setConf(StringUtils.join(confs, ", "));
         	resolve.execute();
@@ -175,11 +175,12 @@ public class IvyTask extends Task {
 		return (ResolveReport) getReference("ivy.resolved.report", org, module, strict);
 	}
     
-	protected IvyResolve createResolve(boolean haltOnFailure) {
+	protected IvyResolve createResolve(boolean haltOnFailure, boolean useOrigin) {
 		Message.verbose("no resolved descriptor found: launching default resolve");
 		IvyResolve resolve = new IvyResolve();
 		resolve.setProject(getProject());
 		resolve.setHaltonfailure(haltOnFailure);
+		resolve.setUseOrigin(useOrigin);
 		if (_validate != null) {
 		    resolve.setValidate(_validate.booleanValue());
 		}

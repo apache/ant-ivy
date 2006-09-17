@@ -91,7 +91,7 @@ public class FileSystemResolverTest extends TestCase {
         
         // test to ask to download
         DefaultArtifact artifact = new DefaultArtifact(mrid, pubdate, "mod1.1", "jar", "jar");
-        DownloadReport report = resolver.download(new Artifact[] {artifact}, _data.getIvy(), _cache);
+        DownloadReport report = resolver.download(new Artifact[] {artifact}, _data.getIvy(), _cache, false);
         assertNotNull(report);
         
         assertEquals(1, report.getArtifactsReports().length);
@@ -103,7 +103,7 @@ public class FileSystemResolverTest extends TestCase {
         assertEquals(DownloadStatus.SUCCESSFUL, ar.getDownloadStatus());
 
         // test to ask to download again, should use cache
-        report = resolver.download(new Artifact[] {artifact}, _data.getIvy(), _cache);
+        report = resolver.download(new Artifact[] {artifact}, _data.getIvy(), _cache, false);
         assertNotNull(report);
         
         assertEquals(1, report.getArtifactsReports().length);
@@ -142,7 +142,7 @@ public class FileSystemResolverTest extends TestCase {
         ModuleRevisionId mrid = ModuleRevisionId.newInstance("test", "allright", "1.0");
         ResolvedModuleRevision rmr = resolver.getDependency(new DefaultDependencyDescriptor(mrid, false), _data);
         assertNotNull(rmr);
-        DownloadReport dr = resolver.download(rmr.getDescriptor().getAllArtifacts(), _ivy, _cache);
+        DownloadReport dr = resolver.download(rmr.getDescriptor().getAllArtifacts(), _ivy, _cache, false);
         assertEquals(2, dr.getArtifactsReports(DownloadStatus.SUCCESSFUL).length);
 
         resolver.setChecksums("md5");
@@ -152,20 +152,20 @@ public class FileSystemResolverTest extends TestCase {
         resolver.setChecksums("none");
         rmr = resolver.getDependency(new DefaultDependencyDescriptor(mrid, false), _data);
         assertNotNull(rmr);
-        dr = resolver.download(new Artifact[] {new DefaultArtifact(mrid, rmr.getPublicationDate(), mrid.getName(), "jar", "jar")}, _ivy, _cache);
+        dr = resolver.download(new Artifact[] {new DefaultArtifact(mrid, rmr.getPublicationDate(), mrid.getName(), "jar", "jar")}, _ivy, _cache, false);
         assertEquals(1, dr.getArtifactsReports(DownloadStatus.SUCCESSFUL).length);
 
         resolver.setChecksums("md5");
         mrid = ModuleRevisionId.newInstance("test", "badartcs", "1.0");
         rmr = resolver.getDependency(new DefaultDependencyDescriptor(mrid, false), _data);
         assertNotNull(rmr);
-        dr = resolver.download(new Artifact[] {new DefaultArtifact(mrid, rmr.getPublicationDate(), mrid.getName(), "jar", "jar")}, _ivy, _cache);
+        dr = resolver.download(new Artifact[] {new DefaultArtifact(mrid, rmr.getPublicationDate(), mrid.getName(), "jar", "jar")}, _ivy, _cache, false);
         assertEquals(1, dr.getArtifactsReports(DownloadStatus.FAILED).length);
         
         resolver.setChecksums("");
         rmr = resolver.getDependency(new DefaultDependencyDescriptor(mrid, false), _data);
         assertNotNull(rmr);
-        dr = resolver.download(new Artifact[] {new DefaultArtifact(mrid, rmr.getPublicationDate(), mrid.getName(), "jar", "jar")}, _ivy, _cache);
+        dr = resolver.download(new Artifact[] {new DefaultArtifact(mrid, rmr.getPublicationDate(), mrid.getName(), "jar", "jar")}, _ivy, _cache, false);
         assertEquals(1, dr.getArtifactsReports(DownloadStatus.SUCCESSFUL).length);
     }
 
@@ -238,7 +238,7 @@ public class FileSystemResolverTest extends TestCase {
         
         Artifact[] artifacts = rmr.getDescriptor().getArtifacts("default");
         File archiveFileInCache = _ivy.getArchiveFileInCache(_cache, artifacts[0]);
-        resolver.download(artifacts, _ivy, _cache);
+        resolver.download(artifacts, _ivy, _cache, false);
         assertTrue(archiveFileInCache.exists());
         BufferedReader r = new BufferedReader(new FileReader(archiveFileInCache));
         assertEquals("before", r.readLine());
@@ -266,7 +266,7 @@ public class FileSystemResolverTest extends TestCase {
 
         // should download the new artifact
         artifacts = rmr.getDescriptor().getArtifacts("default");
-        resolver.download(artifacts, _ivy, _cache);
+        resolver.download(artifacts, _ivy, _cache, false);
         assertTrue(archiveFileInCache.exists());
         r = new BufferedReader(new FileReader(archiveFileInCache));
         assertEquals("after", r.readLine());
@@ -299,7 +299,7 @@ public class FileSystemResolverTest extends TestCase {
         assertEquals(pubdate, rmr.getPublicationDate());
         
         Artifact[] artifacts = rmr.getDescriptor().getArtifacts("default");
-        resolver.download(artifacts, _ivy, _cache);
+        resolver.download(artifacts, _ivy, _cache, false);
         File archiveFileInCache = _ivy.getArchiveFileInCache(_cache, artifacts[0]);
         assertTrue(archiveFileInCache.exists());
         BufferedReader r = new BufferedReader(new FileReader(archiveFileInCache));
@@ -336,7 +336,7 @@ public class FileSystemResolverTest extends TestCase {
         assertFalse(archiveFileInCache.exists());
 
         artifacts = rmr.getDescriptor().getArtifacts("default");
-        resolver.download(artifacts, _ivy, _cache);
+        resolver.download(artifacts, _ivy, _cache, false);
         assertTrue(archiveFileInCache.exists());
         r = new BufferedReader(new FileReader(archiveFileInCache));
         assertEquals("after", r.readLine());

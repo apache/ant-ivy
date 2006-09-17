@@ -5,6 +5,7 @@
  */
 package fr.jayasoft.ivy.resolver;
 
+import java.io.File;
 import java.util.Map;
 
 import fr.jayasoft.ivy.Artifact;
@@ -146,9 +147,13 @@ public abstract class AbstractResolver implements DependencyResolver, IvyAware, 
      * Subclasses should overwrite this to avoid the download
      */
     public boolean exists(Artifact artifact) {
-        DownloadReport dr = download(new Artifact[] {artifact}, getIvy(), getIvy().getDefaultCache());
+        DownloadReport dr = download(new Artifact[] {artifact}, getIvy(), getIvy().getDefaultCache(), true);
         ArtifactDownloadReport adr = dr.getArtifactReport(artifact);
         return adr.getDownloadStatus() != DownloadStatus.FAILED;
+    }
+    
+    public DownloadReport download(Artifact[] artifacts, Ivy ivy, File cache) {
+    	return download(artifacts, ivy, cache, false);
     }
 
     public LatestStrategy getLatestStrategy() {        

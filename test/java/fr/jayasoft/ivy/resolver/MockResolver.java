@@ -79,7 +79,7 @@ public class MockResolver extends AbstractResolver {
         return rmr;
     }
 
-    public DownloadReport download(Artifact[] artifacts, Ivy ivy, File cache) {
+    public DownloadReport download(Artifact[] artifacts, Ivy ivy, File cache, boolean useOrigin) {
         return null;
     }
     public void publish(Artifact artifact, File src, boolean overwrite) throws IOException {

@@ -18,7 +18,6 @@ import java.util.Set;
 import org.apache.tools.ant.BuildException;
 
 import fr.jayasoft.ivy.Artifact;
-import fr.jayasoft.ivy.Ivy;
 import fr.jayasoft.ivy.ModuleRevisionId;
 import fr.jayasoft.ivy.report.ArtifactDownloadReport;
 import fr.jayasoft.ivy.report.ConfigurationResolveReport;
@@ -35,19 +34,17 @@ import fr.jayasoft.ivy.xml.XmlReportParser;
  */
 public abstract class IvyCacheTask extends IvyPostResolveTask {
 
-    protected List getPaths() throws BuildException, ParseException, IOException {
-        Ivy ivy = getIvyInstance();
-
+    protected List getArtifacts() throws BuildException, ParseException, IOException {
         Collection artifacts = getAllArtifacts();
-        List paths = new ArrayList();
+        List ret = new ArrayList();
         for (Iterator iter = artifacts.iterator(); iter.hasNext();) {
             Artifact artifact = (Artifact)iter.next();
             if (getArtifactFilter().accept(artifact)) {
-            	addPath(paths, artifact, ivy);
+            	ret.add(artifact);
             }
         }
         
-        return paths;
+        return ret;
     }
 
     private Collection getAllArtifacts() throws ParseException, IOException {
@@ -82,28 +79,4 @@ public abstract class IvyCacheTask extends IvyPostResolveTask {
         }
         return all;
     }
-    
-    protected void addPath(List paths, Artifact artifact, Ivy ivy) throws IOException {
-    	paths.add(new PathEntry(ivy.getArchivePathInCache(artifact), true));
-    }
-    
-    public static class PathEntry {
-    	private String location;
-    	private boolean relativeToCache;
-    	
-    	public PathEntry(String location, boolean relativeToCache) {
-    		this.location = location;
-    		this.relativeToCache = relativeToCache;
-    	}
-
-		public String getLocation() {
-			return location;
-		}
-
-		public boolean isRelativeToCache() {
-			return relativeToCache;
-		}
-    }
-
-
 }

@@ -178,12 +178,12 @@ public class ChainResolver extends AbstractResolver {
         }
     }
 
-    public DownloadReport download(Artifact[] artifacts, Ivy ivy, File cache) {
+    public DownloadReport download(Artifact[] artifacts, Ivy ivy, File cache, boolean useOrigin) {
         List artifactsToDownload = new ArrayList(Arrays.asList(artifacts));
         DownloadReport report = new DownloadReport();
         for (Iterator iter = _chain.iterator(); iter.hasNext() && !artifactsToDownload.isEmpty();) {
             DependencyResolver resolver = (DependencyResolver) iter.next();
-            DownloadReport r = resolver.download((Artifact[])artifactsToDownload.toArray(new Artifact[artifactsToDownload.size()]), ivy, cache);
+            DownloadReport r = resolver.download((Artifact[])artifactsToDownload.toArray(new Artifact[artifactsToDownload.size()]), ivy, cache, useOrigin);
             ArtifactDownloadReport[] adr = r.getArtifactsReports();
             for (int i = 0; i < adr.length; i++) {
                 if (adr[i].getDownloadStatus() != DownloadStatus.FAILED) {

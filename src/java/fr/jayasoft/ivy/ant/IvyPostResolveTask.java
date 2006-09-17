@@ -34,6 +34,15 @@ public abstract class IvyPostResolveTask extends IvyTask {
     
     
     private Filter _artifactFilter = null;
+    private boolean useOrigin = false;
+    
+    public boolean isUseOrigin() {
+    	return useOrigin;
+    }
+    
+    public void setUseOrigin(boolean useOrigin) {
+    	this.useOrigin = useOrigin;
+    }
     
     protected void prepareAndCheck() {
         Ivy ivy = getIvyInstance();
@@ -52,7 +61,7 @@ public abstract class IvyPostResolveTask extends IvyTask {
         	String[] toResolve = getConfsToResolve(getOrganisation(), getModule()+"-caller", _conf, true);
         	if (toResolve.length > 0) {        		
         		Message.verbose("using inline mode to resolve "+getOrganisation()+" "+getModule()+" "+getRevision()+" ("+StringUtils.join(toResolve, ", ")+")");
-        		IvyResolve resolve = createResolve(isHaltonfailure());
+        		IvyResolve resolve = createResolve(isHaltonfailure(), isUseOrigin());
         		resolve.setOrganisation(getOrganisation());
         		resolve.setModule(getModule());
         		resolve.setRevision(getRevision());
@@ -67,7 +76,7 @@ public abstract class IvyPostResolveTask extends IvyTask {
         	}
         } else {        
         	Message.debug("using standard ensure resolved");
-        	ensureResolved(isHaltonfailure(), isTransitive(), getOrganisation(), getModule(), getProperty(_conf, ivy, "ivy.resolved.configurations"));
+        	ensureResolved(isHaltonfailure(), isUseOrigin(), isTransitive(), getOrganisation(), getModule(), getProperty(_conf, ivy, "ivy.resolved.configurations"));
         	
 	        _conf = getProperty(_conf, ivy, "ivy.resolved.configurations");
 	        if ("*".equals(_conf)) {

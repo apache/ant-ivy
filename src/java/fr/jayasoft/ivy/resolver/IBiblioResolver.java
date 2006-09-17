@@ -175,9 +175,9 @@ public class IBiblioResolver extends URLResolver {
         return super.findArtifactRef(artifact, date);
     }
     
-    public DownloadReport download(Artifact[] artifacts, Ivy ivy, File cache) {
+    public DownloadReport download(Artifact[] artifacts, Ivy ivy, File cache, boolean useOrigin) {
         ensureConfigured(ivy);
-        return super.download(artifacts, ivy, cache);
+        return super.download(artifacts, ivy, cache, useOrigin);
     }
     public boolean exists(Artifact artifact) {
         ensureConfigured(getIvy());
