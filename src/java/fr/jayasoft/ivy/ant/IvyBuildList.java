@@ -148,13 +148,19 @@ public class IvyBuildList extends IvyTask {
         if (isReverse()) {
             Collections.reverse(sortedModules);
         }
+        StringBuffer order = new StringBuffer();
         for (ListIterator iter = sortedModules.listIterator(); iter.hasNext();) {
             ModuleDescriptor md = (ModuleDescriptor)iter.next();
+            order.append(md.getModuleRevisionId().getModuleId());
+            if (iter.hasNext()) {
+            	order.append(", ");
+            }
             File buildFile = (File)buildFiles.get(md);
             addBuildFile(path, buildFile);
         }
 
         getProject().addReference(getReference(), path);
+        getProject().setProperty("ivy.sorted.modules", order.toString());
     }
 
     /**
