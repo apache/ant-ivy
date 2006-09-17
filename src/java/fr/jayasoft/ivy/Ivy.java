@@ -1101,6 +1101,9 @@ public class Ivy implements TransferListener {
                 cache = getDefaultCache();
                 IvyContext.getContext().setCache(cache);
             }
+            if (artifactFilter == null) {
+            	artifactFilter = FilterHelper.NO_FILTER;
+            }
             if (confs.length == 1 && confs[0].equals("*")) {
                 confs = md.getConfigurationsNames();
             }
@@ -1890,9 +1893,9 @@ public class Ivy implements TransferListener {
     }
     
     public int retrieve(ModuleId moduleId, String[] confs, final File cache, String destFilePattern, String destIvyPattern, Filter artifactFilter) {
-    	return retrieve(moduleId, confs, cache, destFilePattern, destIvyPattern, artifactFilter, false);
+    	return retrieve(moduleId, confs, cache, destFilePattern, destIvyPattern, artifactFilter, false, false);
     }
-    public int retrieve(ModuleId moduleId, String[] confs, final File cache, String destFilePattern, String destIvyPattern, Filter artifactFilter, boolean sync) {
+    public int retrieve(ModuleId moduleId, String[] confs, final File cache, String destFilePattern, String destIvyPattern, Filter artifactFilter, boolean sync, boolean useOrigin) {
     	if (artifactFilter == null) {
     		artifactFilter = FilterHelper.NO_FILTER;
     	}
@@ -1917,7 +1920,7 @@ public class Ivy implements TransferListener {
             int targetsUpToDate = 0;
             for (Iterator iter = artifactsToCopy.keySet().iterator(); iter.hasNext();) {
                 Artifact artifact = (Artifact)iter.next();
-                File archive = "ivy".equals(artifact.getType())? getIvyFileInCache(cache, artifact.getModuleRevisionId()):getArchiveFileInCache(cache, artifact);
+                File archive = "ivy".equals(artifact.getType())? getIvyFileInCache(cache, artifact.getModuleRevisionId()):getArchiveFileInCache(cache, artifact, getSavedArtifactOrigin(cache, artifact), useOrigin);
                 Set dest = (Set)artifactsToCopy.get(artifact);
                 Message.verbose("\tretrieving "+archive);
                 for (Iterator it2 = dest.iterator(); it2.hasNext();) {

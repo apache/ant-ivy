@@ -139,6 +139,7 @@ public class Main {
         options.addOption("warn", false, "set message level to warn");
         options.addOption("error", false, "set message level to error");
         options.addOption("novalidate", false, "do not validate ivy files against xsd");
+        options.addOption("useOrigin", false, "use original artifact location with local resolvers instead of copying to the cache");
         options.addOption("sync", false, "in conjonction with -retrieve, does a synced retrieve");
         options.addOption("m2compatible", false, "use maven2 compatibility");
         options.addOption("?", false, "display this help");
@@ -261,7 +262,12 @@ public class Main {
                     confs, 
                     cache, 
                     null,
-                    validate);
+                    validate,
+                    false,
+                    true,
+                    line.hasOption("useOrigin"),
+                    null
+                    );
             if (report.hasError()) {
                 System.exit(1);
             }
@@ -275,7 +281,7 @@ public class Main {
                 if (retrievePattern.indexOf("[") == -1) {
                     retrievePattern = retrievePattern + "/lib/[conf]/[artifact].[ext]";
                 }
-                ivy.retrieve(md.getModuleRevisionId().getModuleId(), confs, cache, retrievePattern, null, null, line.hasOption("sync"));
+                ivy.retrieve(md.getModuleRevisionId().getModuleId(), confs, cache, retrievePattern, null, null, line.hasOption("sync"), line.hasOption("useOrigin"));
             }
             if (line.hasOption("cachepath")) {
                 outputCachePath(ivy, cache, md, confs, line.getOptionValue("cachepath", "ivycachepath.txt"));

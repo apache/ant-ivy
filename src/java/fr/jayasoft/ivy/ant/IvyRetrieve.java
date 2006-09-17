@@ -33,7 +33,7 @@ public class IvyRetrieve extends IvyPostResolveTask {
         _pattern = getProperty(_pattern, getIvyInstance(), "ivy.retrieve.pattern");
         try {
         	Filter artifactFilter = getArtifactFilter();
-            int targetsCopied = getIvyInstance().retrieve(getResolvedModuleId(), splitConfs(getConf()), getCache(), _pattern, _ivypattern, artifactFilter, _sync);
+            int targetsCopied = getIvyInstance().retrieve(getResolvedModuleId(), splitConfs(getConf()), getCache(), _pattern, _ivypattern, artifactFilter, _sync, isUseOrigin());
             boolean haveTargetsBeenCopied = targetsCopied > 0;
             getProject().setProperty("ivy.nb.targets.copied", String.valueOf(targetsCopied));
             getProject().setProperty("ivy.targets.copied", String.valueOf(haveTargetsBeenCopied));
