@@ -20,6 +20,7 @@ import fr.jayasoft.ivy.util.FileUtil;
 public class FileRepository extends AbstractRepository {
     private RepositoryCopyProgressListener _progress = new RepositoryCopyProgressListener(this);
     private File _baseDir;
+    private boolean _local = true;
 
     public FileRepository() {
         _baseDir = null;
@@ -30,7 +31,7 @@ public class FileRepository extends AbstractRepository {
     }
 
     public Resource getResource(String source) throws IOException {
-        return new FileResource(getFile(source));
+        return new FileResource(this, getFile(source));
     }
 
     public void get(String source, File destination) throws IOException {
@@ -80,5 +81,13 @@ public class FileRepository extends AbstractRepository {
             return new File(source);
         }
     }
+
+	public boolean isLocal() {
+		return _local;
+	}
+
+	public void setLocal(boolean local) {
+		_local = local;
+	}
 
 }

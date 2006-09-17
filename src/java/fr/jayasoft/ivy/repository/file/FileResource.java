@@ -15,8 +15,10 @@ import fr.jayasoft.ivy.repository.Resource;
 
 public class FileResource implements Resource {
     private File _file;
+    private FileRepository _repository;
 
-    public FileResource(File f) {
+    public FileResource(FileRepository repository, File f) {
+    	_repository = repository;
         _file = f;
     }
 
@@ -25,7 +27,7 @@ public class FileResource implements Resource {
     }
     
     public Resource clone(String cloneName) {
-    	return new FileResource(new File(cloneName));
+    	return new FileResource(_repository, new File(cloneName));
     }
 
     public long getLastModified() {
@@ -49,7 +51,7 @@ public class FileResource implements Resource {
     }
     
     public boolean isLocal() {
-        return true;
+        return _repository.isLocal();
     }
 
 	public InputStream openStream() throws IOException {
