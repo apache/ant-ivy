@@ -5,7 +5,7 @@
 				
 for detailed view of each issue, please consult http://jira.jayasoft.org/
 
-   version 1.4 - not yet released
+   version 1.4-RC1 - 2006-09-17
 =================================
 Incompatibility with previous versions:
 ---------------------------------------
