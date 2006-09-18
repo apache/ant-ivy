@@ -50,6 +50,10 @@ public class FileResource implements Resource {
         return _file;
     }
     
+    public FileRepository getRepository() {
+    	return _repository;
+    }
+    
     public boolean isLocal() {
         return _repository.isLocal();
     }
