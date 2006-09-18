@@ -161,6 +161,10 @@
 		</exec>
 	</target>
 	
+	<target name="zip-doc" description="zip the documentation">
+		<zip basedir="${basedir}/doc" destfile="${build.dir}/ivy-doc.zip"/>
+	</target>
+	
 	<target name="install" depends="jar" if="env.ANT_HOME">
 		<copy file="${artifacts.build.dir}/ivy.jar" todir="${env.ANT_HOME}/lib"/>
 	</target>
