@@ -5,6 +5,11 @@
 				
 for detailed view of each issue, please consult http://jira.jayasoft.org/
 
+   version 1.4-RC2 - not yet released
+=====================================
+- FIX: m2compatible flag is ignored for display of failed artifact searches (IVY-303)
+
+
    version 1.4-RC1 - 2006-09-17
 =================================
 Incompatibility with previous versions:

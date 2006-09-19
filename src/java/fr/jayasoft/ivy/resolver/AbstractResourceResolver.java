@@ -80,6 +80,9 @@ public abstract class AbstractResourceResolver extends BasicResolver {
      * @param artifact the artifact which has not been found
      */
     protected void logIvyNotFound(ModuleRevisionId mrid) {
+        if (isM2compatible()) {
+            mrid = convertM2IdForResourceSearch(mrid);
+        }
         Artifact artifact = DefaultArtifact.newIvyArtifact(mrid, null);
         logMdNotFound(mrid, artifact);
     }
@@ -114,13 +117,18 @@ public abstract class AbstractResourceResolver extends BasicResolver {
         		logArtifactAttempt(artifact, "no artifact pattern => no attempt to find artifact "+artifact);
         	}
         }
+        Artifact used = artifact;
+        if (isM2compatible()) {
+        	used = DefaultArtifact.cloneWithAnotherMrid(artifact, convertM2IdForResourceSearch(artifact.getModuleRevisionId()));
+        }
+
         for (Iterator iter = _artifactPatterns.iterator(); iter.hasNext();) {
             String pattern = (String)iter.next();
-            String resolvedFileName = IvyPatternHelper.substitute(pattern, artifact);
+            String resolvedFileName = IvyPatternHelper.substitute(pattern, used);
             logArtifactAttempt(artifact, resolvedFileName);
         }
-    	if (artifact.getUrl() != null) {
-    		logArtifactAttempt(artifact, artifact.getUrl().toString());
+    	if (used.getUrl() != null) {
+    		logArtifactAttempt(artifact, used.getUrl().toString());
     	}
     }
 

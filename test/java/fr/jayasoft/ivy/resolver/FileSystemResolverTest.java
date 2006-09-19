@@ -128,6 +128,11 @@ public class FileSystemResolverTest extends TestCase {
         ModuleRevisionId mrid = ModuleRevisionId.newInstance("fr.jayasoft", "test", "1.0");
         ResolvedModuleRevision rmr = resolver.getDependency(new DefaultDependencyDescriptor(mrid, false), _data);
         assertNotNull(rmr);
+
+        mrid = ModuleRevisionId.newInstance("fr.jayasoft.unknown", "test", "1.0");
+        rmr = resolver.getDependency(new DefaultDependencyDescriptor(mrid, false), _data);
+        assertNull(rmr);
+        resolver.reportFailure();
     }
 
     public void testChecksum() throws Exception {

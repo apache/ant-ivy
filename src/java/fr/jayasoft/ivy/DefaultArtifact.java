@@ -24,12 +24,16 @@ public class DefaultArtifact extends AbstractArtifact {
     }
     
     public static Artifact cloneWithAnotherType(Artifact artifact, String newType) {
-        return new DefaultArtifact(artifact.getModuleRevisionId(), artifact.getPublicationDate(), artifact.getName(), newType, artifact.getExt(), artifact.getExtraAttributes());
+        return new DefaultArtifact(artifact.getModuleRevisionId(), artifact.getPublicationDate(), artifact.getName(), newType, artifact.getExt(), artifact.getUrl(), artifact.getExtraAttributes());
     }
     
     public static Artifact cloneWithAnotherTypeAndExt(Artifact artifact, String newType, String newExt) {
-        return new DefaultArtifact(artifact.getModuleRevisionId(), artifact.getPublicationDate(), artifact.getName(), newType, newExt, artifact.getExtraAttributes());
+        return new DefaultArtifact(artifact.getModuleRevisionId(), artifact.getPublicationDate(), artifact.getName(), newType, newExt, artifact.getUrl(), artifact.getExtraAttributes());
     }
+
+	public static Artifact cloneWithAnotherMrid(Artifact artifact, ModuleRevisionId mrid) {
+        return new DefaultArtifact(mrid, artifact.getPublicationDate(), artifact.getName(), artifact.getType(), artifact.getExt(), artifact.getUrl(), artifact.getExtraAttributes());
+	}
     
     Date _publicationDate;
     ArtifactRevisionId _arid;
