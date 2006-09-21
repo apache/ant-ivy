@@ -122,9 +122,12 @@
     		</fileset>
   		</copy>
   		<mkdir dir="${test.xml.dir}"  />
-        <junit haltonfailure="on" 
-        	   showoutput="no"
-        	   printsummary="yes">
+        <junit haltonfailure="off"
+	       haltonerror="off"
+	       errorproperty="test.failed"
+	       failureproperty="test.failed"
+	       showoutput="no"
+	       printsummary="yes">
             <classpath>
                 <path refid="run.classpath"/>
     			<pathelement path="${test.build.dir}"/>
@@ -143,6 +146,8 @@
 			</fileset>
 			<report format="frames" todir="${test.report.dir}" />
 		</junitreport>
+		<fail if="test.failed"
+		      message="At least one test has failed. See logs or report"/>
 	</target>
 	
 	<target name="get-dxml" description="download dxml doc file from web site">
