@@ -618,8 +618,13 @@ public class Ivy implements TransferListener {
     
     public File getDefaultIvyUserDir() {
         if (_defaultUserDir==null) {
-            setDefaultIvyUserDir(new File(System.getProperty("user.home"), ".ivy"));
-            Message.verbose("no default ivy user dir defined: set to "+_defaultUserDir);
+        	if (getVariable("ivy.home") != null) {
+        		setDefaultIvyUserDir(new File(getVariable("ivy.home")));
+        		Message.verbose("using ivy.default.ivy.user.dir variable for default ivy user dir: "+_defaultUserDir);
+        	} else {
+        		setDefaultIvyUserDir(new File(System.getProperty("user.home"), ".ivy"));
+        		Message.verbose("no default ivy user dir defined: set to "+_defaultUserDir);
+        	}
         }
         return _defaultUserDir;
     }
@@ -627,6 +632,7 @@ public class Ivy implements TransferListener {
     public void setDefaultIvyUserDir(File defaultUserDir) {
         _defaultUserDir = defaultUserDir;
         setVariable("ivy.default.ivy.user.dir", _defaultUserDir.getAbsolutePath());
+        setVariable("ivy.home", _defaultUserDir.getAbsolutePath());
     }    
 
     public File getDefaultCache() {

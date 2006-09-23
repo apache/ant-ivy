@@ -2,16 +2,46 @@
 	<property environment="env"/>
 	<property file="build.properties"/>
 
-	<!-- try to load ivy here from local lib dir, in case the user has not already dropped
-	      it into ant's lib dir (note that the latter copy will always take precedence).
-	      We will not fail as long as local lib dir exists (it may be empty) and
-	      ivy is in at least one of ant's lib dir or the local lib dir. -->
-	  <path id="ivy.lib.path">
-	    <fileset dir="${ivy.jar.dir}" includes="*.jar"/>
-	  </path>
-	  <taskdef resource="fr/jayasoft/ivy/ant/antlib.xml"
-	          uri="antlib:fr.jayasoft.ivy.ant" classpathref="ivy.lib.path"/>
+    <!-- =================================================================
+               IVY AUTO INSTALL
+               Ivy eats its own dog food, and thus require Ivy jar to
+               be built. This section will download Ivy from
+               internet and use it for ivy tasks of this build.
+         ================================================================= -->
+	<condition property="ivy.home" value="${env.IVY_HOME}">
+		<isset property="env.IVY_HOME" />
+	</condition>
+	<property name="ivy.home" value="${user.home}/.ivy" />
+	<property name="ivy.jar.dir" value="${ivy.home}/jars" />
+	<property name="ivy.jar.file" value="${ivy.jar.dir}/ivy.jar" />
+	
+	<target name="download-ivy" unless="offline">
+    	<mkdir dir="${ivy.jar.dir}"/>
+		<!-- download Ivy from web site so that it can be used even without any special installation -->
+    	<get src="http://www.jayasoft.org/downloads/ivy/${ivy.install.version}/ivy-${ivy.install.version}.jar"
+    		 dest="${ivy.jar.file}" usetimestamp="true"/>
+	</target>
+	
+	<target name="init-ivy" depends="download-ivy">
+    	<!-- try to load ivy here from local ivy dir, in case the user has not already dropped
+    	      it into ant's lib dir (note that the latter copy will always take precedence).
+    	      We will not fail as long as local lib dir exists (it may be empty) and
+    	      ivy is in at least one of ant's lib dir or the local lib dir. -->
+    	<path id="ivy.lib.path">
+    	    <fileset dir="${ivy.jar.dir}" includes="*.jar"/>
+    	</path>
+    	<taskdef resource="fr/jayasoft/ivy/ant/antlib.xml"
+    	          uri="antlib:fr.jayasoft.ivy.ant" classpathref="ivy.lib.path"/>
+    </target>
 
+	
+	<target name="install" depends="jar" description="build Ivy and install it in Ivy home for consecutive builds">
+		<copy file="${artifacts.build.dir}/ivy.jar" todir="${ivy.jar.file}"/>
+	</target>
+
+    <!-- =================================================================
+               PREPARATION, CLEANING AND FLAGS TASKS
+         ================================================================= -->
 	<target name="prepare">
 	   <mkdir dir="${classes.build.dir}"/>
 	   <mkdir dir="${test.build.dir}"/>
@@ -30,7 +60,7 @@
 	</target>
 	
 	<target name="clean-lib">
-    <delete dir="${lib.dir}"/>
+    	<delete dir="${lib.dir}"/>
 	</target>
 	
 	<target name="clean-examples" description="clean all examples">
@@ -50,7 +80,10 @@
 	</target>
 	
 
-	<target name="resolve" depends="prepare" unless="no.resolve">
+    <!-- =================================================================
+               DEPENDENCY MNGT, COMPILATION AND JAR
+         ================================================================= -->
+	<target name="resolve" depends="init-ivy, prepare" unless="no.resolve">
 		<ivy:retrieve conf="default" />
 	</target>
 
@@ -82,12 +115,9 @@
 	</target>
 	
 
-	<target name="javadoc">
-		<javadoc destdir="${javadoc.build.dir}">
-			<fileset dir="${src.dir}"/>
-		</javadoc>
-	</target>
-
+    <!-- =================================================================
+               TESTS
+         ================================================================= -->
 	<target name="init-tests-offline" if="offline">
  		    <fileset id="test.fileset" dir="${test.dir}">
  		    	<include name="**/*Test.java"/>
@@ -139,6 +169,9 @@
         </junit>
 	</target>
 
+    <!-- =================================================================
+               REPORTS AND DOCUMENTATION
+         ================================================================= -->
 	<target name="test-report" depends="test">
 		<junitreport todir="${test.xml.dir}">
 			<fileset dir="${test.xml.dir}">
@@ -150,6 +183,12 @@
 		      message="At least one test has failed. See logs or report"/>
 	</target>
 	
+	<target name="javadoc">
+		<javadoc destdir="${javadoc.build.dir}">
+			<fileset dir="${src.dir}"/>
+		</javadoc>
+	</target>
+
 	<target name="get-dxml" description="download dxml doc file from web site">
 		<get src="http://www.jayasoft.org/ivy/doc/dxml" dest="${dxml.doc.file}" verbose="true" /> 
 	</target>
@@ -168,10 +207,6 @@
 	
 	<target name="zip-doc" description="zip the documentation">
 		<zip basedir="${basedir}/doc" destfile="${build.dir}/ivy-doc.zip"/>
-	</target>
-	
-	<target name="install" depends="jar" if="env.ANT_HOME">
-		<copy file="${artifacts.build.dir}/ivy.jar" todir="${env.ANT_HOME}/lib"/>
 	</target>
 
 </project>
