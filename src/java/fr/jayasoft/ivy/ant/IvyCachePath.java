@@ -8,6 +8,7 @@ package fr.jayasoft.ivy.ant;
 import java.util.Iterator;
 
 import org.apache.tools.ant.BuildException;
+import org.apache.tools.ant.Project;
 import org.apache.tools.ant.types.Path;
 
 import fr.jayasoft.ivy.Artifact;
@@ -20,6 +21,7 @@ import fr.jayasoft.ivy.Ivy;
  */
 public class IvyCachePath extends IvyCacheTask {
     private String _pathid;
+	private String _id;
 
     public String getPathid() {
         return _pathid;
@@ -27,11 +29,24 @@ public class IvyCachePath extends IvyCacheTask {
     public void setPathid(String id) {
         _pathid = id;
     }
+    
+    /**
+     * @deprecated use setPathid instead
+     * @param id
+     */
+    public void setId(String id) {
+        _id = id;
+    }
 
     public void execute() throws BuildException {
         prepareAndCheck();
         if (_pathid == null) {
-            throw new BuildException("pathid is required in ivy classpath");
+        	if (_id != null) {
+        		_pathid = _id;
+        		log("ID IS DEPRECATED, PLEASE USE PATHID INSTEAD", Project.MSG_WARN);
+        	} else {
+        		throw new BuildException("pathid is required in ivy classpath");
+        	}
         }
         try {
             Path path = new Path(getProject());
