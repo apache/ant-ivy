@@ -36,7 +36,7 @@
 
 	
 	<target name="install" depends="jar" description="build Ivy and install it in Ivy home for consecutive builds">
-		<copy file="${artifacts.build.dir}/ivy.jar" todir="${ivy.jar.file}"/>
+		<copy file="${artifacts.build.dir}/ivy.jar" tofile="${ivy.jar.file}"/>
 	</target>
 
     <!-- =================================================================
