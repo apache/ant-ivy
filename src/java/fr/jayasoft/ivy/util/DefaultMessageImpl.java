@@ -21,6 +21,10 @@ public class DefaultMessageImpl implements MessageImpl {
             System.out.println(msg);
         }        
     }
+    
+    public void rawlog(String msg, int level) {
+    	log(msg, level);
+    }
 
     public void progress() {
         System.out.print(".");

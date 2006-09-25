@@ -10,6 +10,8 @@ import org.apache.tools.ant.BuildEvent;
 import org.apache.tools.ant.BuildListener;
 import org.apache.tools.ant.Task;
 
+import sun.security.action.GetPropertyAction;
+
 import fr.jayasoft.ivy.util.Message;
 import fr.jayasoft.ivy.util.MessageImpl;
 
@@ -61,6 +63,10 @@ public class AntMessageImpl implements MessageImpl {
 
     public void log(String msg, int level) {
     	_task.log(msg, level);
+    }
+    
+    public void rawlog(String msg, int level) {
+    	_task.getProject().log(msg, level);
     }
 
     public void progress() {

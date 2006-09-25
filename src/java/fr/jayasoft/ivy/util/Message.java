@@ -104,6 +104,14 @@ public class Message {
             System.err.println(msg);
         }
     }
+    public static void rawinfo(String msg) {
+        MessageImpl messageImpl = IvyContext.getContext().getMessageImpl();
+		if (messageImpl != null) {
+            messageImpl.rawlog(msg, MSG_INFO);
+        } else {
+            System.err.println(msg);
+        }
+    }
     public static void warn(String msg) {
         MessageImpl messageImpl = IvyContext.getContext().getMessageImpl();
 		if (messageImpl != null) {

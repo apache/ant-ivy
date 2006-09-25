@@ -45,14 +45,14 @@ public class LogReportOutputter implements ReportOutputter {
 
         char[] sep = new char[69];
         Arrays.fill(sep, '-');
-        Message.info("\t"+new String(sep));
+        Message.rawinfo("\t"+new String(sep));
         StringBuffer line = new StringBuffer("\t");
         append(line, "", 18);
         append(line, "modules", 31);
         line.append("|");
         append(line, "artifacts", 15);
         line.append("|");
-        Message.info(line.toString());
+        Message.rawinfo(line.toString());
 
         line = new StringBuffer("\t");
         append(line, "conf", 18);
@@ -64,14 +64,14 @@ public class LogReportOutputter implements ReportOutputter {
         append(line, "number", 7);
         append(line, "dwnlded", 7);
         line.append("|");
-        Message.info(line.toString());
-        Message.info("\t"+new String(sep));
+        Message.rawinfo(line.toString());
+        Message.rawinfo("\t"+new String(sep));
         
         String[] confs = report.getConfigurations();
         for (int i = 0; i < confs.length; i++) {
             output(report.getConfigurationReport(confs[i]));
         }
-        Message.info("\t"+new String(sep));
+        Message.rawinfo("\t"+new String(sep));
 
         IvyNode[] unresolved = report.getUnresolvedDependencies();
         if (unresolved.length > 0) {
@@ -113,7 +113,7 @@ public class LogReportOutputter implements ReportOutputter {
         append(line, String.valueOf(report.getDownloadedArtifactsReports().length), 7);
         line.append("|");
 
-        Message.info(line.toString());        
+        Message.rawinfo(line.toString());        
     }
 
     private void append(StringBuffer line, Object o, int limit) {
