@@ -9,11 +9,11 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 
-import org.apache.tools.ant.BuildEvent;
 import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.BuildListener;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Task;
 
@@ -49,21 +49,22 @@ public class IvyTask extends Task {
     
     protected Ivy getIvyInstance() {
         ensureMessageInitialised();
-        Object reference = getProject().getReference("ivy.instance");
-        if (reference == null) {
+        Object ref = getProject().getReference("ivy.instances");
+        if (ref != null && !(ref instanceof Map)) {
+            throw new BuildException("ivy problem with ant: ivy.instances reference is not a Map. Please do not sett ivy.instances reference in your ant project. current reference: "+ref+" class="+ref.getClass()+" classloader="+ref.getClass().getClassLoader());
+        }
+        Map instances = (Map) ref;
+        if (instances == null || !instances.containsKey(Ivy.class)) {
             Message.verbose("no ivy instance found: auto configuring ivy");
             IvyConfigure configure = new IvyConfigure();
             configure.setProject(getProject());
             configure.execute();
-            reference = getProject().getReference("ivy.instance");
-            if (reference == null) {
-                throw new BuildException("ivy internal problem: impossible to get ivy instance !");
+            instances = (Map) getProject().getReference("ivy.instances");
+            if (instances == null || !instances.containsKey(Ivy.class)) {
+                throw new BuildException("ivy internal problem: impossible to get ivy instance after configure... maybe a classloader problem");
             }
         } 
-        if (! (reference instanceof Ivy)) {
-            throw new BuildException("ivy internal problem: bad ivy instance class: "+reference.getClass());
-        }
-        return (Ivy)reference;
+        return (Ivy)instances.get(Ivy.class);
     }
 
     /** 
@@ -78,7 +79,19 @@ public class IvyTask extends Task {
 
     }
     protected void setIvyInstance(Ivy ivy) {
+    	// this reference is not used anymore, what is used is the instances map below
         getProject().addReference("ivy.instance", ivy);
+        
+        if (ivy != null) {
+        	Message.debug("setting ivy.instance on "+getProject()+": "+ivy+" class="+ivy.getClass().getName()+" classloader="+ivy.getClass().getClassLoader());
+        	// we keep a map of ivy instances per Ivy class, in case of multiple classloaders
+        	Map instances = (Map) getProject().getReference("ivy.instances");
+        	if (instances == null) {
+        		instances = new HashMap();
+        		getProject().addReference("ivy.instances", instances);
+        	}
+        	instances.put(ivy.getClass(), ivy);
+        }
     }
     
     protected void setResolved(ResolveReport report, boolean keep) {

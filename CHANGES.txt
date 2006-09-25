@@ -9,6 +9,7 @@ for detailed view of each issue, please consult http://jira.jayasoft.org/
 =====================================
 - FIX: m2compatible flag is ignored for display of failed artifact searches (IVY-303)
 - FIX: AntCallTriggerTest and AntBuildTriggerTest fail when run from ivy build.xml (IVY-310)
+- FIX: Classloader problem with ant (IVY-311)
 
    version 1.4-RC1 - 2006-09-17
 =================================
