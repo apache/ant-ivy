@@ -10,8 +10,6 @@ import org.apache.tools.ant.BuildEvent;
 import org.apache.tools.ant.BuildListener;
 import org.apache.tools.ant.Task;
 
-import sun.security.action.GetPropertyAction;
-
 import fr.jayasoft.ivy.util.Message;
 import fr.jayasoft.ivy.util.MessageImpl;
 
