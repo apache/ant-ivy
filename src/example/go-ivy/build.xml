@@ -20,7 +20,7 @@
 	
 	<!-- here is the version of ivy we will use. change this property to try a newer 
          version if you want -->
-	<property name="ivy.install.version" value="1.4-RC1" />
+	<property name="ivy.install.version" value="1.4-RC2" />
 	<property name="ivy.jar.dir" value="${basedir}/ivy" />
 	<property name="ivy.jar.file" value="${ivy.jar.dir}/ivy.jar" />
 
