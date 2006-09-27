@@ -7,6 +7,7 @@ package fr.jayasoft.ivy.util;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -65,11 +66,14 @@ public class Message {
     private static void showInfo() {
         if (!_showedInfo ) {
             Properties props = new Properties();
-            InputStream module = Message.class.getResourceAsStream("/module.properties");
-            if (module != null) {
+            URL moduleURL = Message.class.getResource("/module.properties");
+            if (moduleURL != null) {
                 try {
+                	InputStream module = moduleURL.openStream();
                     props.load(module);
+                    debug("version information loaded from "+moduleURL);
                     info(":: Ivy "+props.getProperty("version")+" - "+props.getProperty("date")+" :: http://ivy.jayasoft.org/ ::");
+                    module.close();
                 } catch (IOException e) {
                     info(":: Ivy non official version :: http://ivy.jayasoft.org/ ::");
                 }
