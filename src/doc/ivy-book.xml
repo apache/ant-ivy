@@ -1850,7 +1850,7 @@ and you can see the resolvers that have resolved the modules. In our example, yo
 </node>
 </node>
 <node id="node-797">
-<nodeinfo  path='ivy/doc/bestpractices' md5_body='566077c60739361eeeeeaff49163a76a' weight='0' depth='2' type='book' author='xavier' uid='6' created='1158506150' status='1' format='4' sticky='0' promote='0'/>
+<nodeinfo  path='ivy/doc/bestpractices' md5_body='eb6dd850935ea2fa23bfdbeec3708047' weight='0' depth='2' type='book' author='xavier' uid='6' created='1158506150' status='1' format='4' sticky='0' promote='0'/>
 <title>Best practices</title>
 <teaser>
 <![CDATA[]]>
@@ -1874,6 +1874,10 @@ Even more problematic is the possible updates of the repository. We know that ve
 <p> a public repository usually contains much more than what you actually need (except maybe ivyrep which certainly features much less than what you need :-)). Is it a problem? We think so. We think that in an enterprise environment the libraries you use should step through some kind of validation process before being used in every projects of your company. And what better way to do so? Setup an enterprise repository with only the libraries you actually want to use. This will not only ensure a better quality of your application dependencies, but help to have the same versions everywhere, and even help when declaring your module dependencies, if you use a tool like IvyDE, the code completion will only show relevant information about your repository, with only the libraries you actually want to see.
 </ul>
 <p>Note that it's not because you use an enterprise repository that you have to build it entirely by hand. Ivy features an <a href="/ivy/doc/use/install">install</a> task which can be used to install modules from a repository to another one, so it can be used to selectively install modules from a public repository to your enterprise repository, where you will then be able to ensure control, reliability and accuracy.</p>
+<h1>Always use patterns with at least organisation and module</h1>
+<p>Ivy is very flexible and can accomodate a lot of existing repositories, using the concept of <a href="/ivy/doc/concept#pattern">patterns</a>. But if your repository doesn't exist yet, we strongly recommend to always use the organisation and the module name in your pattern, even for private repository where you put only your own modules (which all the same organisation). Why? Because Ivy listing feature rely on the token it can find in the pattern. If you have no organisation token in your pattern, Ivy won't be able to list the (only?) organisation in your repository. And this can be a problem for code completion in IvyDE, for example, but also for repository wide tasks like <a href="/ivy/doc/use/install">install</a> or <a href="/ivy/doc/use/rereport">rereport</a>.</p>
+<h1>Public ivyconf.xml with public repositories</h1>
+<p>If you create a public repository, provide an url to corresponding <a href="/ivy/doc/configuration">ivyconf.xml</a>. It's pretty easy to do, and if someone want to leverage your repository, he will just have to call <a href="/ivy/doc/use/configure">configure</a> with the url of your ivyconf.xml, or <a href="/ivy/doc/configuration/include">include</a> it in its own configuration file, which makes it really easy to combine several public repositories.</p>
 <h1>Dealing with integration versions</h1>
 <p>Very often especially when working in a team or with several modules, you will need to rely on intermediate, non finalized versions of your modules. These versions are what we call integration versions, because their main objective is to be integrated with other modules to make and test an application or a framework. </p>
 <p>If you follow the continuous integration paradigm across modules, these integration versions can be produced by a continuous integration server, very frequently.</p>
@@ -1949,7 +1953,7 @@ Even more problematic is the possible updates of the repository. We know that ve
 ]]>
 </content>
 <node id="node-106">
-<nodeinfo  path='ivy/doc/terminology' md5_body='6d0c98732551b6b25d97bd1a785a0d23' weight='-15' depth='3' type='book' author='admin' uid='1' created='1118037725' status='1' format='3' sticky='0' promote='1'/>
+<nodeinfo  path='ivy/doc/terminology' md5_body='53e53b0edb705b35939c45f98da06881' weight='-15' depth='3' type='book' author='admin' uid='1' created='1118037725' status='1' format='3' sticky='0' promote='1'/>
 <title>Terminology</title>
 <teaser>
 <![CDATA[]]>
@@ -1979,7 +1983,7 @@ publish many artifacts dependending on the use of the module (like ant, for inst
 A revision corresponds to one delivery of a module. It can either be a delivery
 of a release, a milestone, a beta version, a nightly build, or even a continuous
 build. All of them are considered revisions in ivy.
-<h2>Branch</h2>
+<h2><a name="branch">Branch</a></h2>
 A branch corresponds to the standard meaning of a branch (or sometimes stream) in source control management tools.
 The head, or trunk, or main stream, is also considered as a branch in Ivy.
 <h2>Configuration</h2>
@@ -2007,7 +2011,7 @@ Three statuses are defined by default in ivy:
 </content>
 </node>
 <node id="node-107">
-<nodeinfo  path='ivy/doc/concept' md5_body='4938d95bf49d1d945618202ae0aaff8e' weight='-13' depth='3' type='book' author='admin' uid='1' created='1118037893' status='1' format='4' sticky='0' promote='1'/>
+<nodeinfo  path='ivy/doc/concept' md5_body='dcf973e9759591226fa12d694dc5ef17' weight='-13' depth='3' type='book' author='admin' uid='1' created='1118037893' status='1' format='4' sticky='0' promote='1'/>
 <title>Main Concepts</title>
 <teaser>
 <![CDATA[]]>
@@ -2107,7 +2111,7 @@ This algorithm takes into account special meaning of some text. For instance, wi
 <p>: it compares the revisions as string, using lexicographic order (the one used by java string comparison).
 </ul>
 <p>See also how to configure new latest strategies <a href="/ivy/doc/configuration/latest-strategies">here</a>.</p>
-<h1>Conflict Manager</h1>
+<h1><a name="conflict">Conflict Manager</a></h1>
 <p>A conflict manager is able to select, among a list of module revisions in conflict, a list of revisions to keep.<br />
 Yes, it can selects a list of revision, even if most conflicts manager select only one revision.<br />
 But in some cases you will need to keep several revisions, and load in separate class loaders, for example.</p>
@@ -2170,14 +2174,16 @@ When Ivy performs the dependency resolution and some other tasks, it fires event
 </content>
 </node>
 <node id="node-109">
-<nodeinfo  path='ivy/doc/principle' md5_body='c038a2c64d87a66e7d808ff8c6ef53fa' weight='-12' depth='3' type='book' author='admin' uid='1' created='1118136132' status='1' format='4' sticky='0' promote='0'/>
+<nodeinfo  path='ivy/doc/principle' md5_body='f6aeb29d616ab61cc518d034aeca8924' weight='-12' depth='3' type='book' author='admin' uid='1' created='1118136132' status='1' format='4' sticky='0' promote='0'/>
 <title>How does it work ?</title>
 <teaser>
 <![CDATA[]]>
 </teaser>
 <content>
 <![CDATA[<p>Now that you have been introduced to main ivy terminology and concepts, it is time to give some explanations about how ivy works.</p>
-<p>Here are the steps followed by ivy to resolve your dependencies:</p>
+<h1>Usual cycle of modules between different locations</h1>
+<p><center><img src="/misc/ivy/images/main-tasks.png" /></center><br />
+More details on ant tasks <a href="/ivy/doc/use/ant">here</a>.</p>
 <h1>Configure</h1>
 <p>Ivy needs to be configured to be able to resolve your dependencies. This configuration is usually done with a configuration file, which defines a set of dependency resolvers. Each resolver is able to find ivy files and / or artifacts, given simple information such as organition, module, revision, artifact name, artifact type and artifact extension. </p>
 <p>The configuration is also responsible for indicating which resolver should be used to resolve which module. This configuration is dependent only on your environment, i.e. where the modules and artifacts can be found. </p>
@@ -2199,39 +2205,39 @@ When Ivy performs the dependency resolution and some other tasks, it fires event
 <p>In some cases, it is preferable to use artifacts directly from the cache. Ivy is able to use the xml report generated at resolve time to build a path of all artifacts required.</p>
 <p>This can be particularly useful especially when building plug-ins for IDE.</p>
 <h1>Reports</h1>
-<p>Finally, ivy is able to generate readable reports describing the dependencies resolution.</p>
+<p>Ivy is also able to generate readable reports describing the dependencies resolution.</p>
 <p>This is done with a simple xsl transformation of the xml report generated at resolve time.</p>
+<h1>Publish</h1>
+<p>Finally, Ivy can be used to publish a particular version of a module in your repository, so that it becomes available for futher resolve. This task is usually called either manually or from a continuous integration server for example.</p>
 ]]>
 </content>
 </node>
 <node id="node-41">
-<nodeinfo  path='ivy/doc/install' md5_body='1672ad4a018a2d848fd23e1a26cb79aa' weight='-11' depth='3' type='book' author='admin' uid='1' created='1117213219' status='1' format='3' sticky='0' promote='1'/>
+<nodeinfo  path='ivy/doc/install' md5_body='754557a9c11a27eb25892bc44da65f5e' weight='-11' depth='3' type='book' author='admin' uid='1' created='1117213219' status='1' format='4' sticky='0' promote='1'/>
 <title>Installation</title>
 <teaser>
 <![CDATA[]]>
 </teaser>
 <content>
-<![CDATA[Download the latest version <a href="/ivy/download"/>here</a>, unpack the downloaded zip
-file wherever you want, and copy the ivy jar file in your ant lib directory
-(ANT_HOME/lib).<br/>
-<br/>
-If you use ant 1.6.0 or superior, you can then simply go to the src/example/hello-ivy dir and run ant: if the build
-is successful, you have successfully installed Ivy !<br />
-<br />
-If you use ant 1.5.1 or superior, you have to modify the build files in the examples:
-- remove the namespace section at their head: xmlns:ivy="antlib:fr.jayasoft.ivy.ant" <br/>
-- add taskdefs for ivy tasks:<br />
+<![CDATA[<p>There are basically two way to install Ivy. Either manually or automatically.</p>
+<h1>Manually</h1>
+<p>Download the version you want <a href="/ivy/download"/>here</a>, unpack the downloaded zip file wherever you want, and copy the ivy jar file in your ant lib directory (ANT_HOME/lib).</p>
+<p>If you use ant 1.6.0 or superior, you can then simply go to the src/example/hello-ivy dir and run ant: if the build is successful, you have successfully installed Ivy !</p>
+<p>If you use ant 1.5.1 or superior, you have to modify the build files in the examples:<br />
+- remove the namespace section at their head: xmlns:ivy="antlib:fr.jayasoft.ivy.ant"<br />
+- add taskdefs for ivy tasks:</p>
 <pre>
   &lt;taskdef name="ivy-configure" classname="fr.jayasoft.ivy.ant.IvyConfigure"/&gt;
   &lt;taskdef name="ivy-resolve" classname="fr.jayasoft.ivy.ant.IvyResolve"/&gt;
   &lt;taskdef name="ivy-retrieve" classname="fr.jayasoft.ivy.ant.IvyRetrieve"/&gt;
   &lt;taskdef name="ivy-publish" classname="fr.jayasoft.ivy.ant.IvyPublish"/&gt; 
-</pre>
-- replace ivy:xxx tasks by ivy-xxx<br />
-You can now run the build, if it is successful, you have successfully installed Ivy !
-<br />
-If the build is not successful, check the <a href="/ivy/faq">FAQ</a> to see what can be the problem
-with the ivyrep resolver.
+</pre><p>- replace ivy:xxx tasks by ivy-xxx<br />
+You can now run the build, if it is successful, you have successfully installed Ivy !</p>
+<p>If the build is not successful, check the <a href="/ivy/faq">FAQ</a> to see what can be the problem with the ivyrep resolver.</p>
+<h1>Automatically</h1>
+<p>If you want to use Ivy only in your ant build scripts, and have an internet connection when you build, you can download Ivy from this site and use the downloaded version automatically, using this simple build snippet:<br />
+<div class="codeblock"><code>&nbsp; &nbsp; <span class="synIdentifier">&lt;property </span><span class="synType">name</span>=<span class="synConstant">&quot;ivy.install.version&quot;</span><span class="synIdentifier"> </span><span class="synType">value</span>=<span class="synConstant">&quot;1.4-RC1&quot;</span><span class="synIdentifier"> /&gt;</span><br />&nbsp; &nbsp; <span class="synIdentifier">&lt;condition </span><span class="synType">property</span>=<span class="synConstant">&quot;ivy.home&quot;</span><span class="synIdentifier"> </span><span class="synType">value</span>=<span class="synConstant">&quot;${env.IVY_HOME}&quot;</span><span class="synIdentifier">&gt;</span><br />&nbsp; &nbsp; &nbsp; &nbsp; <span class="synIdentifier">&lt;isset </span><span class="synType">property</span>=<span class="synConstant">&quot;env.IVY_HOME&quot;</span><span class="synIdentifier"> /&gt;</span><br />&nbsp; &nbsp; <span class="synIdentifier">&lt;/condition&gt;</span><br />&nbsp; &nbsp; <span class="synIdentifier">&lt;property </span><span class="synType">name</span>=<span class="synConstant">&quot;ivy.home&quot;</span><span class="synIdentifier"> </span><span class="synType">value</span>=<span class="synConstant">&quot;${user.home}/.ivy&quot;</span><span class="synIdentifier"> /&gt;</span><br />&nbsp; &nbsp; <span class="synIdentifier">&lt;property </span><span class="synType">name</span>=<span class="synConstant">&quot;ivy.jar.dir&quot;</span><span class="synIdentifier"> </span><span class="synType">value</span>=<span class="synConstant">&quot;${ivy.home}/jars&quot;</span><span class="synIdentifier"> /&gt;</span><br />&nbsp; &nbsp; <span class="synIdentifier">&lt;property </span><span class="synType">name</span>=<span class="synConstant">&quot;ivy.jar.file&quot;</span><span class="synIdentifier"> </span><span class="synType">value</span>=<span class="synConstant">&quot;${ivy.jar.dir}/ivy.jar&quot;</span><span class="synIdentifier"> /&gt;</span><br />&nbsp; &nbsp; <span class="synIdentifier">&lt;target </span><span class="synType">name</span>=<span class="synConstant">&quot;download-ivy&quot;</span><span class="synIdentifier"> </span><span class="synType">unless</span>=<span class="synConstant">&quot;offline&quot;</span><span class="synIdentifier">&gt;</span><br />&nbsp; &nbsp; &nbsp; &nbsp; <span class="synIdentifier">&lt;mkdir </span><span class="synType">dir</span>=<span class="synConstant">&quot;${ivy.jar.dir}&quot;</span><span class="synIdentifier">/&gt;</span><br />&nbsp; &nbsp; &nbsp; &nbsp; <span class="synComment">&lt;!-- download Ivy from web site so that it can be used even without any special installation --&gt;</span><br />&nbsp; &nbsp; &nbsp; &nbsp; <span class="synIdentifier">&lt;get </span><span class="synType">src</span>=<span class="synConstant">&quot;http://www.jayasoft.org/downloads/ivy/${ivy.install.version}/ivy-${ivy.install.version}.jar&quot;</span><br /><span class="synIdentifier">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="synType">dest</span>=<span class="synConstant">&quot;${ivy.jar.file}&quot;</span><span class="synIdentifier"> </span><span class="synType">usetimestamp</span>=<span class="synConstant">&quot;true&quot;</span><span class="synIdentifier">/&gt;</span><br />&nbsp; &nbsp; <span class="synIdentifier">&lt;/target&gt;</span><br />&nbsp; &nbsp; <span class="synIdentifier">&lt;target </span><span class="synType">name</span>=<span class="synConstant">&quot;init-ivy&quot;</span><span class="synIdentifier"> </span><span class="synType">depends</span>=<span class="synConstant">&quot;download-ivy&quot;</span><span class="synIdentifier">&gt;</span><br />&nbsp; &nbsp; 	<span class="synComment">&lt;!-- try to load ivy here from ivy home, in case the user has not already dropped</span><br /><span class="synComment">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; it into ant's lib dir (note that the latter copy will always take precedence).</span><br /><span class="synComment">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; We will not fail as long as local lib dir exists (it may be empty) and</span><br /><span class="synComment">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ivy is in at least one of ant's lib dir or the local lib dir. --&gt;</span><br />&nbsp; &nbsp; &nbsp; &nbsp; <span class="synIdentifier">&lt;path </span><span class="synType">id</span>=<span class="synConstant">&quot;ivy.lib.path&quot;</span><span class="synIdentifier">&gt;</span><br />&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; <span class="synIdentifier">&lt;fileset </span><span class="synType">dir</span>=<span class="synConstant">&quot;${ivy.jar.dir}&quot;</span><span class="synIdentifier"> </span><span class="synType">includes</span>=<span class="synConstant">&quot;*.jar&quot;</span><span class="synIdentifier">/&gt;</span><br />&nbsp; &nbsp; &nbsp; &nbsp; <span class="synIdentifier">&lt;/path&gt;</span><br />&nbsp; &nbsp; &nbsp; &nbsp; <span class="synIdentifier">&lt;taskdef </span><span class="synType">resource</span>=<span class="synConstant">&quot;fr/jayasoft/ivy/ant/antlib.xml&quot;</span><br /><span class="synIdentifier">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;  </span><span class="synType">uri</span>=<span class="synConstant">&quot;antlib:fr.jayasoft.ivy.ant&quot;</span><span class="synIdentifier"> </span><span class="synType">classpathref</span>=<span class="synConstant">&quot;ivy.lib.path&quot;</span><span class="synIdentifier">/&gt;</span><br />&nbsp; &nbsp; <span class="synIdentifier">&lt;/target&gt;</span><br /></code></div></p>
+<p>Then the only thing to do is to add the init-ivy target in the depends attribute of your targets using Ivy, and add ivy namespace to your build script. See the self contained <a href="http://svn.jayasoft.org/projects/tools/ivy/src/example/go-ivy/build.xml">go-ivy</a> example for details about this.</p>
 ]]>
 </content>
 </node>
@@ -3327,7 +3333,7 @@ Looks for ivy files on and ivyrep like web site located at <a href="http://ivyre
 </content>
 </node>
 <node id="node-88">
-<nodeinfo  path='ivy/doc/resolver/ibiblio' md5_body='e5f9ed2417f882778e4a955a2fce4eb0' weight='-12' depth='5' type='book' author='admin' uid='1' created='1117639651' status='1' format='4' sticky='0' promote='1'/>
+<nodeinfo  path='ivy/doc/resolver/ibiblio' md5_body='90ab016fb3d6cbc2b195d3aac3f947e8' weight='-12' depth='5' type='book' author='admin' uid='1' created='1117639651' status='1' format='4' sticky='0' promote='1'/>
 <title>IBiblio Resolver</title>
 <teaser>
 <![CDATA[]]>
@@ -3350,6 +3356,8 @@ Looks for ivy files on and ivyrep like web site located at <a href="http://ivyre
 <p>This resolver usually uses ibiblio to find artifacts. </p>
 <p>Prefer the use of ivyrep resolver which adds ivy file handling to this resolver.</p>
 <p><span class="since">since 1.3</span> Using the m2compatible attribute, you can benefit from maven 2 repository compatibility (convert dots in organisation in slashes, search for poms, use transitive dependencies of poms). This setting also affects the default place where the resolver look for its artifacts to point to the maven2 repository. So setting this attribute to true is sufficient to use maven 2 ibiblio repository.</p>
+<p><span class="since">since 1.4</span> When using the m2compatible flag, you can disable the use of poms by setting the usepoms flag to false. It is then roughly equivalent to an url resolver configured like this:<br />
+<div class="codeblock"><code><span class="synIdentifier">&lt;url </span><span class="synType">name</span>=<span class="synConstant">&quot;test&quot;</span><span class="synIdentifier"> </span><span class="synType">m2compatible</span>=<span class="synConstant">&quot;true&quot;</span><span class="synIdentifier">&gt;</span><br />&nbsp; <span class="synIdentifier">&lt;artifact </span><span class="synType">pattern</span>=<span class="synConstant">&quot;http://www.ibiblio.org/maven2/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]&quot;</span><span class="synIdentifier">/&gt;</span><br /><span class="synIdentifier">&lt;/url&gt;</span><br /></code></div></p>
 <h1>Attributes</h1>
 <p>This resolver shares the <a href="/ivy/doc/configuration/resolvers#common">common attributes</a> of standard resolvers.</p>
 <table class="ivy-attributes">
@@ -3387,7 +3395,7 @@ Looks for ivy files on and ivyrep like web site located at <a href="http://ivyre
 </content>
 </node>
 <node id="node-89">
-<nodeinfo  path='ivy/doc/resolver/filesystem' md5_body='edb2fd2a9c2098014f2b9dafbc095620' weight='-9' depth='5' type='book' author='admin' uid='1' created='1117639683' status='1' format='4' sticky='0' promote='1'/>
+<nodeinfo  path='ivy/doc/resolver/filesystem' md5_body='eacd6e60ba78e369f5ae0de0337ea95a' weight='-9' depth='5' type='book' author='admin' uid='1' created='1117639683' status='1' format='4' sticky='0' promote='1'/>
 <title>File System resolver</title>
 <teaser>
 <![CDATA[]]>
@@ -3410,6 +3418,7 @@ Looks for ivy files on and ivyrep like web site located at <a href="http://ivyre
 <p><br/></p>
 <p>This resolver uses the file system to resolve ivy files and artifacts. It presents the advantage to usually have very good performances. Moreover, it is easy to setup using basic OS file sharing mechanism.</p>
 <p>The configuration of such a resolver is mainly done through ivy and artifact patterns, indicating where ivy files and artifacts can be found in the file system. You can indicate a list of pattern which will be checked one after the other.</p>
+<p><span class="since">since 1.3</span> Using the m2compatible attribute, this resolver will convert dots found in organisation in slashes like maven2 does for groupId. For instance, it will transform the organisation from 'com.company' into 'com/company' when replacing the token [organisation] in your pattern.</p>
 <h1>Attributes</h1>
 <p>This resolver shares the <a href="/ivy/doc/configuration/resolvers#common">common attributes</a> of standard resolvers.</p>
 <table class="ivy-attributes">
@@ -3905,27 +3914,25 @@ Access ivy and artifacts files using sftp.</p>
 </node>
 </node>
 <node id="node-56">
-<nodeinfo  path='ivy/doc/configuration/conflict-managers' md5_body='8a1477a92022ec3b4ddd8f47bf26047a' weight='-3' depth='4' type='book' author='admin' uid='1' created='1117629970' status='1' format='3' sticky='0' promote='1'/>
+<nodeinfo  path='ivy/doc/configuration/conflict-managers' md5_body='f1b5646888557417f6b27b6fa660eec0' weight='-3' depth='4' type='book' author='admin' uid='1' created='1117629970' status='1' format='3' sticky='0' promote='1'/>
 <title>conflict-managers</title>
 <teaser>
 <![CDATA[]]>
 </teaser>
 <content>
-<![CDATA[<b>Tag:</b> conflict-managers<br/>
-<br/>
-Defines a list of conflicts managers usable in ivy. Each conflict manager is identified by its name, given as an attribute.
-The child tag used for the conflict manager must be equal to a name of a conflict manager type (either built-in
-or added with the typedef tag). <br/><br/>
+<![CDATA[<b>Tag:</b> conflict-managers
 
-Here is a list of predefined conflicts managers (which do not require anything in the configuration file):<br/>
-- all: this conflicts manager resolve conflicts by selecting all revisions. Also 
-called NoConflictManager, it does evict any module.<br/>
-- fixed: this conflict manager always select the same revision<br/>
-- latest-time: this conflict manager selects only the 'latest' revision, 
-latest being defined as the latest in time. Note that latest in time
-is costly to compute, so prefer latest-revision if you can.<br/>
-- latest-revision: this conflict manager selects only the 'latest' revision, 
-latest being defined by a string comparison of revisions.<br/><br/>
+Defines a list of <a href="/ivy/doc/concept#conflict">conflicts managers</a> usable in ivy. Each conflict manager is identified by its name, given as an attribute.
+The child tag used for the conflict manager must be equal to a name of a conflict manager type (either built-in
+or added with the typedef tag).
+
+Here is a list of predefined conflicts managers (which do not require anything in the configuration file):
+<ul>
+<li>all</li> this conflicts manager resolve conflicts by selecting all revisions. Also called NoConflictManager, it does evict any module.
+<li>fixed<li>this conflict manager always select the same revision
+<li>latest-time</li> this conflict manager selects only the 'latest' revision, latest being defined as the latest in time. Note that latest in time is costly to compute, so prefer latest-revision if you can.
+<li>latest-revision</li> this conflict manager selects only the 'latest' revision, latest being defined by a string comparison of revisions.
+</ul>
 
 <h3>Child elements</h3>
 <table class="ivy-children">
@@ -3972,7 +3979,7 @@ latest being defined by a string comparison of revisions.<br/><br/>
 ]]>
 </content>
 <node id="node-58">
-<nodeinfo  path='ivy/doc/configuration/module' md5_body='33fa501ac5bad8b6f37350fa72040c7d' weight='-14' depth='5' type='book' author='admin' uid='1' created='1117630097' status='1' format='4' sticky='0' promote='1'/>
+<nodeinfo  path='ivy/doc/configuration/module' md5_body='8cf198953410544bdeda5578bd26bc7b' weight='-14' depth='5' type='book' author='admin' uid='1' created='1117630097' status='1' format='4' sticky='0' promote='1'/>
 <title>module</title>
 <teaser>
 <![CDATA[]]>
@@ -3983,9 +3990,9 @@ latest being defined by a string comparison of revisions.<br/><br/>
 <p>It also gives the specific setting to use for this module set.</p>
 <p>Foe each module set, you can configure:</p>
 <ul>
-<li>the resolver to use</li>
-<li>the conflict manager to use</li>
-<li>the default branch to use</li>
+<li>the <a href="/ivy/doc/configuration/resolvers">resolver</a> to use</li>
+<li>the <a href="/ivy/doc/configuration/conflict-managers">conflict manager</a> to use</li>
+<li>the default <a href="/ivy/doc/terminology#branch">branch</a> to use</li>
 </ul>
 <h1>Attributes</h1>
 <table class="ivy-attributes">
@@ -4049,7 +4056,7 @@ Uses 'fix-103' as default branch for all modules from jayasoft which name begins
 </node>
 </node>
 <node id="node-772">
-<nodeinfo  path='ivy/doc/configuration/outputters' md5_body='91eec8ef877d172fcb7d69fcb51cdcec' weight='0' depth='4' type='book' author='xavier' uid='6' created='1156799931' status='1' format='4' sticky='0' promote='0'/>
+<nodeinfo  path='ivy/doc/configuration/outputters' md5_body='e698b76afff4f34ba4d137653d5239cb' weight='0' depth='4' type='book' author='xavier' uid='6' created='1156799931' status='1' format='4' sticky='0' promote='0'/>
 <title>outputters</title>
 <teaser>
 <![CDATA[]]>
@@ -4057,7 +4064,17 @@ Uses 'fix-103' as default branch for all modules from jayasoft which name begins
 <content>
 <![CDATA[<p><b>Tag:</b> outputters</p>
 <p>Defines a list of report outputters usable in ivy. </p>
+<p>A report outputter is used at the end of the resolve process to generate a report of how the resolve has been performed.</p>
+<p>Two report outputters are registered by default:</p>
+<ul>
+<li>a log report outputter (<a href="http://svn.jayasoft.org/projects/tools/ivy/src/java/fr/jayasoft/ivy/report/LogReportOutputter.java">LogReportOutputter</a>)</li>
+<p>which produces the output on the console at the end of the resolve, which looks like this:<br />
+<div class="codeblock"><code>&nbsp; &nbsp; &nbsp; &nbsp; ---------------------------------------------------------------------<br />&nbsp; &nbsp; &nbsp; &nbsp; |&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; |&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; modules&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ||&nbsp;  artifacts&nbsp;  |<br />&nbsp; &nbsp; &nbsp; &nbsp; |&nbsp; &nbsp; &nbsp;  conf&nbsp; &nbsp; &nbsp;  | number| search|dwnlded|evicted|| number|dwnlded|<br />&nbsp; &nbsp; &nbsp; &nbsp; ---------------------------------------------------------------------<br />&nbsp; &nbsp; &nbsp; &nbsp; |&nbsp; &nbsp; &nbsp; default&nbsp; &nbsp;  |&nbsp;  1&nbsp;  |&nbsp;  1&nbsp;  |&nbsp;  0&nbsp;  |&nbsp;  0&nbsp;  ||&nbsp;  1&nbsp;  |&nbsp;  1&nbsp;  |<br />&nbsp; &nbsp; &nbsp; &nbsp; ---------------------------------------------------------------------<br /></code></div></p>
+<li>an xml report outputter (<a href="http://svn.jayasoft.org/projects/tools/ivy/src/java/fr/jayasoft/ivy/report/XmlReportOutputter.java">XmlReportOutputter</a>)</li>
+<p>which produces an xml report in the cache, which is mandatory for correct Ivy behaviour, since it's that report which is used when you do a post resolve step in a separate buid from the resolve itself. It's also this xml report which is processed to generate all the different reports available in the <a href="/ivy/doc/use/report">report</a> task.
+</ul>
 <p>The child tag used for the parser must be equal to a name of a report outputter type (added with the typedef tag).</p>
+<p>To see how to define your own report outputter see <a href="/ivy/doc/extend">Extending Ivy documentation</a></p>
 <h1>Child elements</h1>
 <table class="ivy-children">
 <thead>
@@ -5823,7 +5840,7 @@ See <a href="/ivy/doc/ivyfile/conflicts">Conflicts Manager</a> for details on co
 ]]>
 </content>
 <node id="node-44">
-<nodeinfo  path='ivy/doc/ant' md5_body='89589824431f48846ea4618f84b9b33d' weight='-5' depth='4' type='book' author='admin' uid='1' created='1117213924' status='1' format='4' sticky='0' promote='1'/>
+<nodeinfo  path='ivy/doc/ant' md5_body='858709b272b6dd162275ba9ad09dae21' weight='-5' depth='4' type='book' author='admin' uid='1' created='1117213924' status='1' format='4' sticky='0' promote='1'/>
 <title>From Ant</title>
 <teaser>
 <![CDATA[]]>
@@ -5861,10 +5878,12 @@ This calls ivy with default values, which might be ok in several projects. In fa
 <p>The places are queried in this order, so anything set in task attribute will overwrite what would have been found in ivy instance, for example.</p>
 <p>The ivy instance considered here is an instance of the class Ivy, which is setup by a call to the configure task, and then reused for other tasks. Because most of the tasks need an ivy instance, they first check if one is available (i.e. configure has been called), and if none is available, then a default configure is called and the resulting ivy instance is used in the remaining tasks (unless another configure is called).</p>
 <p>It isn't generally necessary to understand this, but it can lead to some issues if you forget to call configure before another task and if the configure step was required in your environment.</p>
+<h1>Usual cycle of main tasks</h1>
+<p><center><img src="/misc/ivy/images/main-tasks.png" /></center></p>
 <h1>Example</h1>
 <p>Here is a more complete example of build file using ivy:</p>
-<p><div class="codeblock"><code><span class="synIdentifier">&lt;project </span><span class="synType">xmlns</span><span class="synComment">:</span><span class="synType">ivy</span>=<span class="synConstant">&quot;antlib:fr.jayasoft.ivy.ant&quot;</span><span class="synIdentifier"> </span><span class="synType">name</span>=<span class="synConstant">&quot;sample&quot;</span><span class="synIdentifier"> </span><span class="synType">default</span>=<span class="synConstant">&quot;resolve&quot;</span><span class="synIdentifier">&gt;</span><br />&nbsp; &nbsp; <span class="synIdentifier">&lt;target </span><span class="synType">name</span>=<span class="synConstant">&quot;resolve&quot;</span><span class="synIdentifier">&gt;</span><br />&nbsp; &nbsp; &nbsp; &nbsp; <span class="synIdentifier">&lt;</span><span class="synSpecial">ivy</span><span class="synComment">:</span><span class="synIdentifier">configure </span><span class="synType">file</span>=<span class="synConstant">&quot;../ivyconf.xml&quot;</span><span class="synIdentifier"> /&gt;</span><br />&nbsp; &nbsp; &nbsp; &nbsp; <span class="synIdentifier">&lt;</span><span class="synSpecial">ivy</span><span class="synComment">:</span><span class="synIdentifier">resolve </span><span class="synType">file</span>=<span class="synConstant">&quot;my-ivy.xml&quot;</span><span class="synIdentifier"> </span><span class="synType">conf</span>=<span class="synConstant">&quot;default, myconf&quot;</span><span class="synIdentifier"> /&gt;</span><br />&nbsp; &nbsp; <span class="synIdentifier">&lt;/target&gt;</span><br />&nbsp; &nbsp; <span class="synIdentifier">&lt;target </span><span class="synType">name</span>=<span class="synConstant">&quot;retrieve-default&quot;</span><span class="synIdentifier"> </span><span class="synType">depends</span>=<span class="synConstant">&quot;resolve&quot;</span><span class="synIdentifier">&gt;</span><br />&nbsp; &nbsp; &nbsp; &nbsp; <span class="synIdentifier">&lt;</span><span class="synSpecial">ivy</span><span class="synComment">:</span><span class="synIdentifier">retrieve </span><span class="synType">pattern</span>=<span class="synConstant">&quot;lib/default/[artifact]-[revision].[ext]&quot;</span><span class="synIdentifier"> </span><span class="synType">conf</span>=<span class="synConstant">&quot;default&quot;</span><span class="synIdentifier"> /&gt;</span><br />&nbsp; &nbsp; <span class="synIdentifier">&lt;/target&gt;</span><br />&nbsp; &nbsp; <span class="synIdentifier">&lt;target </span><span class="synType">name</span>=<span class="synConstant">&quot;retrieve-myconf&quot;</span><span class="synIdentifier"> </span><span class="synType">depends</span>=<span class="synConstant">&quot;resolve&quot;</span><span class="synIdentifier">&gt;</span><br />&nbsp; &nbsp; &nbsp; &nbsp; <span class="synIdentifier">&lt;</span><span class="synSpecial">ivy</span><span class="synComment">:</span><span class="synIdentifier">retrieve </span><span class="synType">pattern</span>=<span class="synConstant">&quot;lib/myconf/[artifact]-[revision].[ext]&quot;</span><span class="synIdentifier"> </span><span class="synType">conf</span>=<span class="synConstant">&quot;myconf&quot;</span><span class="synIdentifier"> /&gt;</span><br />&nbsp; &nbsp; <span class="synIdentifier">&lt;/target&gt;</span><br />&nbsp; &nbsp; <span class="synIdentifier">&lt;target </span><span class="synType">name</span>=<span class="synConstant">&quot;retrieve-all&quot;</span><span class="synIdentifier"> </span><span class="synType">depends</span>=<span class="synConstant">&quot;resolve&quot;</span><span class="synIdentifier">&gt;</span><br />&nbsp; &nbsp; &nbsp; &nbsp; <span class="synIdentifier">&lt;</span><span class="synSpecial">ivy</span><span class="synComment">:</span><span class="synIdentifier">retrieve </span><span class="synType">pattern</span>=<span class="synConstant">&quot;lib/[conf]/[artifact]-[revision].[ext]&quot;</span><span class="synIdentifier"> </span><span class="synType">conf</span>=<span class="synConstant">&quot;*&quot;</span><span class="synIdentifier"> /&gt;</span><br />&nbsp; &nbsp; <span class="synIdentifier">&lt;/target&gt;</span><br />&nbsp; &nbsp; <span class="synIdentifier">&lt;target </span><span class="synType">name</span>=<span class="synConstant">&quot;deliver&quot;</span><span class="synIdentifier"> </span><span class="synType">depends</span>=<span class="synConstant">&quot;retrieve-all&quot;</span><span class="synIdentifier">&gt;</span><br />&nbsp; &nbsp; &nbsp; &nbsp; <span class="synIdentifier">&lt;</span><span class="synSpecial">ivy</span><span class="synComment">:</span><span class="synIdentifier">deliver </span><span class="synType">deliverpattern</span>=<span class="synConstant">&quot;distrib/[artifact]-[revision].[ext]&quot;</span><span class="synIdentifier"> </span><span class="synType">pubrevision</span>=<span class="synConstant">&quot;1.1b4&quot;</span><span class="synIdentifier"> </span><span class="synType">pubdate</span>=<span class="synConstant">&quot;20050115123254&quot;</span><span class="synIdentifier"> </span><span class="synType">status</span>=<span class="synConstant">&quot;milestone&quot;</span><span class="synIdentifier"> /&gt;</span><br />&nbsp; &nbsp; <span class="synIdentifier">&lt;/target&gt;</span><br />&nbsp; &nbsp; <span class="synIdentifier">&lt;target </span><span class="synType">name</span>=<span class="synConstant">&quot;publish&quot;</span><span class="synIdentifier"> </span><span class="synType">depends</span>=<span class="synConstant">&quot;deliver&quot;</span><span class="synIdentifier">&gt;</span><br />&nbsp; &nbsp; &nbsp; &nbsp; <span class="synIdentifier">&lt;</span><span class="synSpecial">ivy</span><span class="synComment">:</span><span class="synIdentifier">publish </span><span class="synType">resolver</span>=<span class="synConstant">&quot;internal&quot;</span><span class="synIdentifier"> </span><span class="synType">artifactspattern</span>=<span class="synConstant">&quot;distrib/[artifact]-[revision].[ext]&quot;</span><span class="synIdentifier"> </span><span class="synType">pubrevision</span>=<span class="synConstant">&quot;1.1b4&quot;</span><span class="synIdentifier"> /&gt;</span><br />&nbsp; &nbsp; <span class="synIdentifier">&lt;/target&gt;</span><br /><span class="synIdentifier">&lt;/project&gt;</span><br /></code></div><br />
-All ivy tasks are documented in the following pages.</p>
+<p><div class="codeblock"><code><span class="synIdentifier">&lt;project </span><span class="synType">xmlns</span><span class="synComment">:</span><span class="synType">ivy</span>=<span class="synConstant">&quot;antlib:fr.jayasoft.ivy.ant&quot;</span><span class="synIdentifier"> </span><span class="synType">name</span>=<span class="synConstant">&quot;sample&quot;</span><span class="synIdentifier"> </span><span class="synType">default</span>=<span class="synConstant">&quot;resolve&quot;</span><span class="synIdentifier">&gt;</span><br />&nbsp; &nbsp; <span class="synIdentifier">&lt;target </span><span class="synType">name</span>=<span class="synConstant">&quot;resolve&quot;</span><span class="synIdentifier">&gt;</span><br />&nbsp; &nbsp; &nbsp; &nbsp; <span class="synIdentifier">&lt;</span><span class="synSpecial">ivy</span><span class="synComment">:</span><span class="synIdentifier">configure </span><span class="synType">file</span>=<span class="synConstant">&quot;../ivyconf.xml&quot;</span><span class="synIdentifier"> /&gt;</span><br />&nbsp; &nbsp; &nbsp; &nbsp; <span class="synIdentifier">&lt;</span><span class="synSpecial">ivy</span><span class="synComment">:</span><span class="synIdentifier">resolve </span><span class="synType">file</span>=<span class="synConstant">&quot;my-ivy.xml&quot;</span><span class="synIdentifier"> </span><span class="synType">conf</span>=<span class="synConstant">&quot;default, myconf&quot;</span><span class="synIdentifier"> /&gt;</span><br />&nbsp; &nbsp; <span class="synIdentifier">&lt;/target&gt;</span><br />&nbsp; &nbsp; <span class="synIdentifier">&lt;target </span><span class="synType">name</span>=<span class="synConstant">&quot;retrieve-default&quot;</span><span class="synIdentifier"> </span><span class="synType">depends</span>=<span class="synConstant">&quot;resolve&quot;</span><span class="synIdentifier">&gt;</span><br />&nbsp; &nbsp; &nbsp; &nbsp; <span class="synIdentifier">&lt;</span><span class="synSpecial">ivy</span><span class="synComment">:</span><span class="synIdentifier">retrieve </span><span class="synType">pattern</span>=<span class="synConstant">&quot;lib/default/[artifact]-[revision].[ext]&quot;</span><span class="synIdentifier"> </span><span class="synType">conf</span>=<span class="synConstant">&quot;default&quot;</span><span class="synIdentifier"> /&gt;</span><br />&nbsp; &nbsp; <span class="synIdentifier">&lt;/target&gt;</span><br />&nbsp; &nbsp; <span class="synIdentifier">&lt;target </span><span class="synType">name</span>=<span class="synConstant">&quot;retrieve-myconf&quot;</span><span class="synIdentifier"> </span><span class="synType">depends</span>=<span class="synConstant">&quot;resolve&quot;</span><span class="synIdentifier">&gt;</span><br />&nbsp; &nbsp; &nbsp; &nbsp; <span class="synIdentifier">&lt;</span><span class="synSpecial">ivy</span><span class="synComment">:</span><span class="synIdentifier">retrieve </span><span class="synType">pattern</span>=<span class="synConstant">&quot;lib/myconf/[artifact]-[revision].[ext]&quot;</span><span class="synIdentifier"> </span><span class="synType">conf</span>=<span class="synConstant">&quot;myconf&quot;</span><span class="synIdentifier"> /&gt;</span><br />&nbsp; &nbsp; <span class="synIdentifier">&lt;/target&gt;</span><br />&nbsp; &nbsp; <span class="synIdentifier">&lt;target </span><span class="synType">name</span>=<span class="synConstant">&quot;retrieve-all&quot;</span><span class="synIdentifier"> </span><span class="synType">depends</span>=<span class="synConstant">&quot;resolve&quot;</span><span class="synIdentifier">&gt;</span><br />&nbsp; &nbsp; &nbsp; &nbsp; <span class="synIdentifier">&lt;</span><span class="synSpecial">ivy</span><span class="synComment">:</span><span class="synIdentifier">retrieve </span><span class="synType">pattern</span>=<span class="synConstant">&quot;lib/[conf]/[artifact]-[revision].[ext]&quot;</span><span class="synIdentifier"> </span><span class="synType">conf</span>=<span class="synConstant">&quot;*&quot;</span><span class="synIdentifier"> /&gt;</span><br />&nbsp; &nbsp; <span class="synIdentifier">&lt;/target&gt;</span><br />&nbsp; &nbsp; <span class="synIdentifier">&lt;target </span><span class="synType">name</span>=<span class="synConstant">&quot;deliver&quot;</span><span class="synIdentifier"> </span><span class="synType">depends</span>=<span class="synConstant">&quot;retrieve-all&quot;</span><span class="synIdentifier">&gt;</span><br />&nbsp; &nbsp; &nbsp; &nbsp; <span class="synIdentifier">&lt;</span><span class="synSpecial">ivy</span><span class="synComment">:</span><span class="synIdentifier">deliver </span><span class="synType">deliverpattern</span>=<span class="synConstant">&quot;distrib/[artifact]-[revision].[ext]&quot;</span><span class="synIdentifier"> </span><span class="synType">pubrevision</span>=<span class="synConstant">&quot;1.1b4&quot;</span><span class="synIdentifier"> </span><span class="synType">pubdate</span>=<span class="synConstant">&quot;20050115123254&quot;</span><span class="synIdentifier"> </span><span class="synType">status</span>=<span class="synConstant">&quot;milestone&quot;</span><span class="synIdentifier"> /&gt;</span><br />&nbsp; &nbsp; <span class="synIdentifier">&lt;/target&gt;</span><br />&nbsp; &nbsp; <span class="synIdentifier">&lt;target </span><span class="synType">name</span>=<span class="synConstant">&quot;publish&quot;</span><span class="synIdentifier"> </span><span class="synType">depends</span>=<span class="synConstant">&quot;deliver&quot;</span><span class="synIdentifier">&gt;</span><br />&nbsp; &nbsp; &nbsp; &nbsp; <span class="synIdentifier">&lt;</span><span class="synSpecial">ivy</span><span class="synComment">:</span><span class="synIdentifier">publish </span><span class="synType">resolver</span>=<span class="synConstant">&quot;internal&quot;</span><span class="synIdentifier"> </span><span class="synType">artifactspattern</span>=<span class="synConstant">&quot;distrib/[artifact]-[revision].[ext]&quot;</span><span class="synIdentifier"> </span><span class="synType">pubrevision</span>=<span class="synConstant">&quot;1.1b4&quot;</span><span class="synIdentifier"> /&gt;</span><br />&nbsp; &nbsp; <span class="synIdentifier">&lt;/target&gt;</span><br /><span class="synIdentifier">&lt;/project&gt;</span><br /></code></div></p>
+<p>All ivy tasks are documented in the following pages.</p>
 ]]>
 </content>
 <node id="node-131">
@@ -6052,7 +6071,7 @@ Builds a list of build.xml files sorted according to the ivy.xml files found in 
 </content>
 </node>
 <node id="node-764">
-<nodeinfo  path='ivy/doc/use/buildnumber' md5_body='89542cdb8f6795504cb878570e544897' weight='0' depth='5' type='book' author='xavier' uid='6' created='1156536060' status='1' format='4' sticky='0' promote='0'/>
+<nodeinfo  path='ivy/doc/use/buildnumber' md5_body='b7ee3950aff3224cf070bacf93f31996' weight='0' depth='5' type='book' author='xavier' uid='6' created='1156536060' status='1' format='4' sticky='0' promote='0'/>
 <title>buildnumber</title>
 <teaser>
 <![CDATA[]]>
@@ -6152,6 +6171,16 @@ ivy.new.build.number can be not set if the default new revision to use when no r
 <td>No, defaults to 0</td>
 </tr>
 <tr>
+<td>defaultBuildNumber</td>
+<td>the default build number to use for the first revision</td>
+<td>No, defaults to 0</td>
+</tr>
+<tr>
+<td>revSep</td>
+<td>the revision separator to use when no matching revision is found, to separate the revision prefix from the build number</td>
+<td>No, defaults to '.'</td>
+</tr>
+<tr>
 <td>prefix</td>
 <td>the prefix to use for the property names set (will be <i>prefix</i>.revision, <i>prefix</i>.new.revision, ...)</td>
 <td>No, defaults to ivy</td>
@@ -6162,14 +6191,21 @@ ivy.new.build.number can be not set if the default new revision to use when no r
 <p>Here is how it can be used (suppose 1.3.1 is the latest version of ivy in the repository):<br />
 <div class="codeblock"><code><span class="synIdentifier">&lt;</span><span class="synSpecial">ivy</span><span class="synComment">:</span><span class="synIdentifier">buildnumber </span><span class="synType">organisation</span>=<span class="synConstant">&quot;jayasoft&quot;</span><span class="synIdentifier"> </span><span class="synType">module</span>=<span class="synConstant">&quot;ivy&quot;</span><span class="synIdentifier"> /&gt;</span><br /></code></div><br />
 will set 1.3.1 as revision, 1.3.2 as new revision, 1 as build number and 2 as new build number</p>
-<p><div class="codeblock"><code><span class="synIdentifier">&lt;</span><span class="synSpecial">ivy</span><span class="synComment">:</span><span class="synIdentifier">buildnumber </span><span class="synType">organisation</span>=<span class="synConstant">&quot;jayasoft&quot;</span><span class="synIdentifier"> </span><span class="synType">module</span>=<span class="synConstant">&quot;ivy&quot;</span><span class="synIdentifier"> </span><span class="synType">revision</span>=<span class="synConstant">&quot;1.3&quot;</span><span class="synIdentifier"> /&gt;</span><br /></code></div><br />
+<p><hr/><br />
+<div class="codeblock"><code><span class="synIdentifier">&lt;</span><span class="synSpecial">ivy</span><span class="synComment">:</span><span class="synIdentifier">buildnumber </span><span class="synType">organisation</span>=<span class="synConstant">&quot;jayasoft&quot;</span><span class="synIdentifier"> </span><span class="synType">module</span>=<span class="synConstant">&quot;ivy&quot;</span><span class="synIdentifier"> </span><span class="synType">revision</span>=<span class="synConstant">&quot;1.3&quot;</span><span class="synIdentifier"> /&gt;</span><br /></code></div><br />
 will set 1.3.1 as revision, 1.3.2 as new revision, 1 as build number and 2 as new build number</p>
-<p><div class="codeblock"><code><span class="synIdentifier">&lt;</span><span class="synSpecial">ivy</span><span class="synComment">:</span><span class="synIdentifier">buildnumber </span><span class="synType">organisation</span>=<span class="synConstant">&quot;jayasoft&quot;</span><span class="synIdentifier"> </span><span class="synType">module</span>=<span class="synConstant">&quot;ivy&quot;</span><span class="synIdentifier"> </span><span class="synType">revision</span>=<span class="synConstant">&quot;1.2&quot;</span><span class="synIdentifier"> /&gt;</span><br /></code></div><br />
+<p><hr/><br />
+<div class="codeblock"><code><span class="synIdentifier">&lt;</span><span class="synSpecial">ivy</span><span class="synComment">:</span><span class="synIdentifier">buildnumber </span><span class="synType">organisation</span>=<span class="synConstant">&quot;jayasoft&quot;</span><span class="synIdentifier"> </span><span class="synType">module</span>=<span class="synConstant">&quot;ivy&quot;</span><span class="synIdentifier"> </span><span class="synType">revision</span>=<span class="synConstant">&quot;1.2&quot;</span><span class="synIdentifier"> /&gt;</span><br /></code></div><br />
 will set 1.2 as revision, 1.2.1 as new revision, no build number and 1 as new build number</p>
-<p><div class="codeblock"><code><span class="synIdentifier">&lt;</span><span class="synSpecial">ivy</span><span class="synComment">:</span><span class="synIdentifier">buildnumber </span><span class="synType">organisation</span>=<span class="synConstant">&quot;jayasoft&quot;</span><span class="synIdentifier"> </span><span class="synType">module</span>=<span class="synConstant">&quot;ivy&quot;</span><span class="synIdentifier"> </span><span class="synType">revision</span>=<span class="synConstant">&quot;1.&quot;</span><span class="synIdentifier"> /&gt;</span><br /></code></div><br />
+<p><hr/><br />
+<div class="codeblock"><code><span class="synIdentifier">&lt;</span><span class="synSpecial">ivy</span><span class="synComment">:</span><span class="synIdentifier">buildnumber </span><span class="synType">organisation</span>=<span class="synConstant">&quot;jayasoft&quot;</span><span class="synIdentifier"> </span><span class="synType">module</span>=<span class="synConstant">&quot;ivy&quot;</span><span class="synIdentifier"> </span><span class="synType">revision</span>=<span class="synConstant">&quot;1.&quot;</span><span class="synIdentifier"> /&gt;</span><br /></code></div><br />
 will set 1.3.1 as revision, 1.4 as new revision, 3 as build number and 4 as new build number</p>
-<p><div class="codeblock"><code><span class="synIdentifier">&lt;</span><span class="synSpecial">ivy</span><span class="synComment">:</span><span class="synIdentifier">buildnumber </span><span class="synType">organisation</span>=<span class="synConstant">&quot;jayasoft&quot;</span><span class="synIdentifier"> </span><span class="synType">module</span>=<span class="synConstant">&quot;ivy&quot;</span><span class="synIdentifier"> </span><span class="synType">revision</span>=<span class="synConstant">&quot;3.&quot;</span><span class="synIdentifier"> /&gt;</span><br /></code></div><br />
+<p><hr/><br />
+<div class="codeblock"><code><span class="synIdentifier">&lt;</span><span class="synSpecial">ivy</span><span class="synComment">:</span><span class="synIdentifier">buildnumber </span><span class="synType">organisation</span>=<span class="synConstant">&quot;jayasoft&quot;</span><span class="synIdentifier"> </span><span class="synType">module</span>=<span class="synConstant">&quot;ivy&quot;</span><span class="synIdentifier"> </span><span class="synType">revision</span>=<span class="synConstant">&quot;3.&quot;</span><span class="synIdentifier"> /&gt;</span><br /></code></div><br />
 will set no revision, 3.0 as new revision, no build number and 0 as new build number</p>
+<p><hr/><br />
+<div class="codeblock"><code><span class="synIdentifier">&lt;</span><span class="synSpecial">ivy</span><span class="synComment">:</span><span class="synIdentifier">buildnumber </span><span class="synType">organisation</span>=<span class="synConstant">&quot;jayasoft&quot;</span><span class="synIdentifier"> </span><span class="synType">module</span>=<span class="synConstant">&quot;ivy&quot;</span><span class="synIdentifier"> </span><span class="synType">revision</span>=<span class="synConstant">&quot;1.4-RC&quot;</span><span class="synIdentifier"> </span><span class="synType">defaultBuildNumber</span>=<span class="synConstant">&quot;1&quot;</span><span class="synIdentifier"> </span><span class="synType">revSep</span>=<span class="synConstant">&quot;&quot;</span><span class="synIdentifier">/&gt;</span><br /></code></div><br />
+If called while no release candidate is in the repository, will set ivy.revision to 1.4-RC1. Then it will increment each time, 1.4-RC2, 1.4-RC3, and so on.</p>
 ]]>
 </content>
 </node>
@@ -6217,7 +6253,7 @@ refid.</p>
 </content>
 </node>
 <node id="node-84">
-<nodeinfo  path='ivy/doc/use/cachepath' md5_body='b1bf1cf361d7ff81afa983767f0b8cd6' weight='0' depth='5' type='book' author='admin' uid='1' created='1117635023' status='1' format='4' sticky='0' promote='1'/>
+<nodeinfo  path='ivy/doc/use/cachepath' md5_body='31294d25962a108724d90e55537744bf' weight='0' depth='5' type='book' author='admin' uid='1' created='1117635023' status='1' format='4' sticky='0' promote='1'/>
 <title>cachepath</title>
 <teaser>
 <![CDATA[]]>
@@ -6232,7 +6268,7 @@ refid.</p>
 <li>if the artifact is not local, the location from within the cache is used</li>
 <li>if the artifact is a local artifact, it's original location is used</li>
 </ul>
-<p>Note that if resolve has been called separately, the copy to the cache may have occur normally if useOrigin was not set when calling <a href="/ivy/doc/use/resolve">resolve</a>. If resolve has not been called, it will be called automatically with useOrigin set to the value specified on this task</p>
+<p>Note that if resolve has been called separately, the copy to the cache may have occur normally if useOrigin was not set when calling <a href="/ivy/doc/use/resolve">resolve</a>. If resolve has not been called, it will be called automatically with useOrigin set to the value specified on this task.</p>
 <table class="ant">
 <thead>
 <tr>
@@ -6260,7 +6296,7 @@ refid.</p>
 <tr>
 <td>useOrigin</td>
 <td>true to use original location of local artifacts, false to use only cache locations <span class="since">since 1.4</span></td>
-<td>No. Defaults true</td>
+<td>No. Defaults false</td>
 </tr>
 </tbody>
 </table>
@@ -6791,8 +6827,121 @@ deliver call or if forcedeliver is set to true. That's why this task takes some 
 ]]>
 </content>
 </node>
+<node id="node-805">
+<nodeinfo  path='ivy/doc/use/repreport' md5_body='da8e6f704687c4eedb7d2639481a6a16' weight='0' depth='5' type='book' author='xavier' uid='6' created='1158710005' status='1' format='4' sticky='0' promote='0'/>
+<title>repreport</title>
+<teaser>
+<![CDATA[]]>
+</teaser>
+<content>
+<![CDATA[<p>Generates reports about dependencies among several modules in the repository (repreport stands for repository report).<span class="since">since 1.4</span></p>
+<p>This task is similar to the <a href="/ivy/doc/use/report">report</a> task, except that instead of working on a single module you just resolved, it works with a set of modules in your repository.</p>
+<p>Note that the set of modules for which you generate the report is determined by setting organisation module and revision and using a matcher, but also by the dependencies of these modules. No dependency is excluded.</p>
+<p>Usually the most useful report is a graph, you can generate either a graphml file that you can then easily <a href="/ivy/doc/yed">layout using yEd</a>, or a dot file which is the format recognized by graphviz, which is a free tool which does automatic graph layout, and can thus be used to generate automatically a GIF or PNG of the dependencies between all your modules.</p>
+<table class="ant">
+<thead>
+<tr>
+<th class="ant-att">Attribute</th>
+<th class="ant-desc">Description</th>
+<th class="ant-req">Required</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>organisation</td>
+<td>A pattern matching the organisation of the modules for which the report should be generated</td>
+<td>No, defaults to '*'</td>
+</tr>
+<tr>
+<td>module</td>
+<td>A pattern matching the name of the modules for which the report should be generated</td>
+<td>No, defaults to '*'</td>
+</tr>
+<tr>
+<td>branch</td>
+<td>The name of the branch of the modules for which the report should be generated</td>
+<td>No, defaults to no branch specified</td>
+</tr>
+<tr>
+<td>revision</td>
+<td>The revision of the modules for which the report should be generated. Only one revision per module will be used, so most of the time keeping the default (latest.integration) is the best thing to do, because it's not very easy to specify only one revision for several modules.</td>
+<td>No, defaults to 'latest.integration'</td>
+</tr>
+<tr>
+<td>todir</td>
+<td>the directory to which reports should be generated</td>
+<td>No, defaults to execution directory</td>
+</tr>
+<tr>
+<td>outputname</td>
+<td>the name to use for the generate file (without extension)</td>
+<td>No, defaults to ivy-repository-report</td>
+</tr>
+<tr>
+<td>xml</td>
+<td>true to generate a xml report, false otherwise</td>
+<td>No, defaults to true</td>
+</tr>
+<tr>
+<td>xsl</td>
+<td>true to generate a report using xslt, false otherwise</td>
+<td>No, defaults to false</td>
+</tr>
+<tr>
+<td>xslfile</td>
+<td>indicates which xsl file should be used to generate the report</td>
+<td>Yes if you want to use xsl transformation</td>
+</tr>
+<tr>
+<td>xslext</td>
+<td>indicates the extension to use when generating report using xsl</td>
+<td>No defaults to 'html'</td>
+</tr>
+<tr>
+<td>graph</td>
+<td>true to generate graphml file, false otherwise</td>
+<td>No, defaults to false</td>
+</tr>
+<tr>
+<td>dot</td>
+<td>true to generate graphviz dot format file, false otherwise</td>
+<td>No, defaults to false</td>
+</tr>
+<tr>
+<td>matcher</td>
+<td>the name of the matcher to use for matching modules names and organisations in your repository</td>
+<td>No. Defaults to exactOrRegexp</td>
+</tr>
+<tr>
+<td>validate</td>
+<td>true to force ivy files validation against ivy.xsd, false to force no validation</td>
+<td>No. Defaults to default ivy value (as configured in configuration file)</td>
+</tr>
+</tbody>
+</table>
+<h1>Examples</h1>
+<p>To generate a xml report for all the latest versions of all the modules in your repository:<br />
+<div class="codeblock"><code><span class="synIdentifier">&lt;</span><span class="synSpecial">ivy</span><span class="synComment">:</span><span class="synIdentifier">repreport /&gt;</span><br /></code></div></p>
+<p><hr/><br />
+To generate a graphml report for all the latest versions of all the modules in your repository:<br />
+<div class="codeblock"><code><span class="synIdentifier">&lt;</span><span class="synSpecial">ivy</span><span class="synComment">:</span><span class="synIdentifier">repreport </span><span class="synType">xml</span>=<span class="synConstant">&quot;false&quot;</span><span class="synIdentifier"> </span><span class="synType">graph</span>=<span class="synConstant">&quot;true&quot;</span><span class="synIdentifier"> /&gt;</span><br /></code></div></p>
+<p><hr/><br />
+To generate a xml report for all the latest versions of the modules from the organisation foo in your repository:<br />
+<div class="codeblock"><code><span class="synIdentifier">&lt;</span><span class="synSpecial">ivy</span><span class="synComment">:</span><span class="synIdentifier">repreport </span><span class="synType">organisation</span>=<span class="synConstant">&quot;foo&quot;</span><span class="synIdentifier"> /&gt;</span><br /></code></div></p>
+<p><hr/><br />
+To generate a xml report for all the versions on the 1.x stream of the modules named bar* from the organisation foo in your repository:<br />
+<div class="codeblock"><code><span class="synIdentifier">&lt;</span><span class="synSpecial">ivy</span><span class="synComment">:</span><span class="synIdentifier">repreport </span><span class="synType">organisation</span>=<span class="synConstant">&quot;foo&quot;</span><span class="synIdentifier"> </span><span class="synType">module</span>=<span class="synConstant">&quot;bar*&quot;</span><span class="synIdentifier"> </span><span class="synType">revision</span>=<span class="synConstant">&quot;1.+&quot;</span><span class="synIdentifier"> </span><span class="synType">matcher</span>=<span class="synConstant">&quot;glob&quot;</span><span class="synIdentifier"> /&gt;</span><br /></code></div></p>
+<p><hr/><br />
+To generate an XML report using a custom stylesheet:<br />
+<div class="codeblock"><code><span class="synIdentifier">&lt;</span><span class="synSpecial">ivy</span><span class="synComment">:</span><span class="synIdentifier">repreport </span><span class="synType">xsl</span>=<span class="synConstant">&quot;true&quot;</span><span class="synIdentifier"> </span><span class="synType">xslfile</span>=<span class="synConstant">&quot;my-custom-stylesheet.xsl&quot;</span><span class="synIdentifier"> </span><span class="synType">xslext</span>=<span class="synConstant">&quot;xml&quot;</span><span class="synIdentifier"> /&gt;</span><br /></code></div></p>
+<p><hr/><br />
+To generate an XML report using a custom stylesheet which needs some parameters:<br />
+<div class="codeblock"><code><span class="synIdentifier">&lt;</span><span class="synSpecial">ivy</span><span class="synComment">:</span><span class="synIdentifier">repreport </span><span class="synType">xsl</span>=<span class="synConstant">&quot;true&quot;</span><span class="synIdentifier"> </span><span class="synType">xslfile</span>=<span class="synConstant">&quot;my-custom-stylesheet.xsl&quot;</span><span class="synIdentifier"> </span><span class="synType">xslext</span>=<span class="synConstant">&quot;xml&quot;</span><span class="synIdentifier">&gt;</span><br />&nbsp; &nbsp; <span class="synIdentifier">&lt;param </span><span class="synType">name</span>=<span class="synConstant">&quot;param1&quot;</span><span class="synIdentifier"> </span><span class="synType">expression</span>=<span class="synConstant">&quot;value1&quot;</span><span class="synIdentifier"> /&gt;</span><br />&nbsp; &nbsp; <span class="synIdentifier">&lt;param </span><span class="synType">name</span>=<span class="synConstant">&quot;param2&quot;</span><span class="synIdentifier"> </span><span class="synType">expression</span>=<span class="synConstant">&quot;value2&quot;</span><span class="synIdentifier"> /&gt;</span><br /><span class="synIdentifier">&lt;/report&gt;</span><br /></code></div></p>
+]]>
+</content>
+</node>
 <node id="node-80">
-<nodeinfo  path='ivy/doc/use/resolve' md5_body='ca9e78d07b1c2df6c425d43b1d845ed3' weight='0' depth='5' type='book' author='admin' uid='1' created='1117634772' status='1' format='4' sticky='0' promote='1'/>
+<nodeinfo  path='ivy/doc/use/resolve' md5_body='b6a9f602f076755696ad4bd9c247289d' weight='0' depth='5' type='book' author='admin' uid='1' created='1117634772' status='1' format='4' sticky='0' promote='1'/>
 <title>resolve</title>
 <teaser>
 <![CDATA[]]>
@@ -6866,7 +7015,7 @@ After the call to this task, a reference to the module descriptor resolved is pu
 <tr>
 <td>useOrigin</td>
 <td>true to avoid the copy of local artifacts to the cache and use directly their original location, false otherwise <span class="since">since 1.4</span>.<br />
-To know if an artifact is local ivy asks to the resolver. Only filesystem resolver is considered local by default, but this can be disabled if you want to force the copy on one filesystem resolver and use the original location on another. Note that it is safe to use useOrigin even if you some no local resolvers, Ivy will behave as usual in this case</td>
+To know if an artifact is local ivy asks to the resolver. Only filesystem resolver is considered local by default, but this can be disabled if you want to force the copy on one filesystem resolver and use the original location on another. Note that it is safe to use useOrigin even if you some no local resolvers, Ivy will behave as usual in this case. Note also that this only applies to artifacts, not to ivy files, which are still copied in the cache.</td>
 <td>No. defaults to false</td>
 </tr>
 <tr>
@@ -6940,7 +7089,7 @@ Resolve the commons-lang module revision 2+ from the repository, with its depend
 </content>
 </node>
 <node id="node-81">
-<nodeinfo  path='ivy/doc/use/retrieve' md5_body='1f0ec90e2d11c7870b0fb9755d777005' weight='0' depth='5' type='book' author='admin' uid='1' created='1117634832' status='1' format='4' sticky='0' promote='1'/>
+<nodeinfo  path='ivy/doc/use/retrieve' md5_body='e06f690fafa6d3577187bd04fc6953aa' weight='0' depth='5' type='book' author='admin' uid='1' created='1117634832' status='1' format='4' sticky='0' promote='1'/>
 <title>retrieve</title>
 <teaser>
 <![CDATA[]]>
@@ -6959,7 +7108,7 @@ root: lib</p>
 <li>if the artifact is not local, the location from within the cache is used</li>
 <li>if the artifact is a local artifact, it's original location is used</li>
 </ul>
-<p>Note that if resolve has been called separately, the copy to the cache may have occur normally if useOrigin was not set when calling <a href="/ivy/doc/use/resolve">resolve</a>. If resolve has not been called, it will be called automatically with useOrigin set to the value specified on this task</p>
+<p>Note that if resolve has been called separately, the copy to the cache may have occur normally if useOrigin was not set when calling <a href="/ivy/doc/use/resolve">resolve</a>. If resolve has not been called, it will be called automatically with useOrigin set to the value specified on this task.</p>
 <table class="ant">
 <thead>
 <tr>
@@ -6997,7 +7146,7 @@ root: lib</p>
 <tr>
 <td>useOrigin</td>
 <td>true to copy artifacts from their original location for local artifacts, false to use only cache locations <span class="since">since 1.4</span></td>
-<td>No. Defaults true</td>
+<td>No. Defaults to false</td>
 </tr>
 </tbody>
 </table>
@@ -7029,7 +7178,7 @@ Resolves and retrieve the latest version of the module bar and its dependencies 
 </content>
 </node>
 <node id="node-85">
-<nodeinfo  path='ivy/doc/use/report' md5_body='11e60d96388f435c3de7c08da29f20f2' weight='3' depth='5' type='book' author='admin' uid='1' created='1117635064' status='1' format='4' sticky='0' promote='1'/>
+<nodeinfo  path='ivy/doc/use/report' md5_body='8359740b974f03000e85dd3e714bbd29' weight='3' depth='5' type='book' author='admin' uid='1' created='1117635064' status='1' format='4' sticky='0' promote='1'/>
 <title>report</title>
 <teaser>
 <![CDATA[]]>
@@ -7112,9 +7261,9 @@ To generate a HTML report only:<br />
 <div class="codeblock"><code><span class="synIdentifier">&lt;report </span><span class="synType">conf</span>=<span class="synConstant">&quot;compile&quot;</span><span class="synIdentifier"> </span><span class="synType">graph</span>=<span class="synConstant">&quot;false&quot;</span><span class="synIdentifier"> /&gt;</span><br /></code></div></p>
 <p><hr/><br />
 To generate an XML report using a custom stylesheet:<br />
-<div class="codeblock"><code><span class="synIdentifier">&lt;report </span><span class="synType">conf</span>=<span class="synConstant">&quot;compile&quot;</span><span class="synIdentifier"> </span><span class="synType">xsl</span>=<span class="synConstant">&quot;my-custom-stylesheet.xsl&quot;</span><span class="synIdentifier"> </span><span class="synType">xslext</span>=<span class="synConstant">&quot;xml&quot;</span><span class="synIdentifier"> /&gt;</span><br /></code></div></p>
+<div class="codeblock"><code><span class="synIdentifier">&lt;report </span><span class="synType">conf</span>=<span class="synConstant">&quot;compile&quot;</span><span class="synIdentifier"> </span><span class="synType">xslfile</span>=<span class="synConstant">&quot;my-custom-stylesheet.xsl&quot;</span><span class="synIdentifier"> </span><span class="synType">xslext</span>=<span class="synConstant">&quot;xml&quot;</span><span class="synIdentifier"> /&gt;</span><br /></code></div></p>
 <p>To generate an XML report using a custom stylesheet which needs some parameters:<br />
-<div class="codeblock"><code><span class="synIdentifier">&lt;report </span><span class="synType">conf</span>=<span class="synConstant">&quot;compile&quot;</span><span class="synIdentifier"> </span><span class="synType">xsl</span>=<span class="synConstant">&quot;my-custom-stylesheet.xsl&quot;</span><span class="synIdentifier"> </span><span class="synType">xslext</span>=<span class="synConstant">&quot;xml&quot;</span><span class="synIdentifier">&gt;</span><br />&nbsp; &nbsp; <span class="synIdentifier">&lt;param </span><span class="synType">name</span>=<span class="synConstant">&quot;param1&quot;</span><span class="synIdentifier"> </span><span class="synType">expression</span>=<span class="synConstant">&quot;value1&quot;</span><span class="synIdentifier"> /&gt;</span><br />&nbsp; &nbsp; <span class="synIdentifier">&lt;param </span><span class="synType">name</span>=<span class="synConstant">&quot;param2&quot;</span><span class="synIdentifier"> </span><span class="synType">expression</span>=<span class="synConstant">&quot;value2&quot;</span><span class="synIdentifier"> /&gt;</span><br /><span class="synIdentifier">&lt;/report&gt;</span><br /></code></div></p>
+<div class="codeblock"><code><span class="synIdentifier">&lt;report </span><span class="synType">conf</span>=<span class="synConstant">&quot;compile&quot;</span><span class="synIdentifier"> </span><span class="synType">xslfile</span>=<span class="synConstant">&quot;my-custom-stylesheet.xsl&quot;</span><span class="synIdentifier"> </span><span class="synType">xslext</span>=<span class="synConstant">&quot;xml&quot;</span><span class="synIdentifier">&gt;</span><br />&nbsp; &nbsp; <span class="synIdentifier">&lt;param </span><span class="synType">name</span>=<span class="synConstant">&quot;param1&quot;</span><span class="synIdentifier"> </span><span class="synType">expression</span>=<span class="synConstant">&quot;value1&quot;</span><span class="synIdentifier"> /&gt;</span><br />&nbsp; &nbsp; <span class="synIdentifier">&lt;param </span><span class="synType">name</span>=<span class="synConstant">&quot;param2&quot;</span><span class="synIdentifier"> </span><span class="synType">expression</span>=<span class="synConstant">&quot;value2&quot;</span><span class="synIdentifier"> /&gt;</span><br /><span class="synIdentifier">&lt;/report&gt;</span><br /></code></div></p>
 ]]>
 </content>
 <node id="node-45">
@@ -7290,7 +7439,7 @@ to existing implementations, it's the best advice we can give you !
 </node>
 </node>
 <node id="node-743">
-<nodeinfo  path='ivy/doc/releasenotes' md5_body='ea1c9c098ca25ef87dec3b3cb86430c1' weight='3' depth='2' type='book' author='xavier' uid='6' created='1156478849' status='1' format='4' sticky='0' promote='0'/>
+<nodeinfo  path='ivy/doc/releasenotes' md5_body='58e7f66cdb638d794ecc2e0147dae99d' weight='3' depth='2' type='book' author='xavier' uid='6' created='1156478849' status='1' format='4' sticky='0' promote='0'/>
 <title>Release Notes</title>
 <teaser>
 <![CDATA[]]>
@@ -7301,8 +7450,7 @@ For each revision you will be able to see the complete list of changes (bug fixe
 <p>The most recent version also feature a new and noteworthy section.</p>
 <p>Refer to these pages if you want to know the benefits of upgrading to a newer version of Ivy.<br />
 <hr/><br />
-The latest stable version is <a href="/ivy/doc/releasenotes/1.3.1">1.3.1</a></p>
-<p>The next upcoming version is <a href="/ivy/doc/releasenotes/1.4">1.4</a></p>
+The latest stable version is <a href="/ivy/doc/releasenotes/1.4-RC1">1.4-RC1</a></p>
 ]]>
 </content>
 <node id="node-745">
@@ -7818,18 +7966,18 @@ If no bug is discovered, 1.0-rc3 should be promoted to 1.0 on <b>2005-04-26</b><
 </content>
 </node>
 <node id="node-744">
-<nodeinfo  path='ivy/doc/releasenotes/1.4' md5_body='813f3f3342d063a671396cb2fc563a18' weight='0' depth='3' type='book' author='xavier' uid='6' created='1156479101' status='1' format='4' sticky='0' promote='0'/>
+<nodeinfo  path='ivy/doc/releasenotes/1.4' md5_body='b23130af006d765ad8d4709da2c4fd79' weight='0' depth='3' type='book' author='xavier' uid='6' created='1156479101' status='1' format='4' sticky='0' promote='0'/>
 <title>1.4</title>
 <teaser>
 <![CDATA[]]>
 </teaser>
 <content>
-<![CDATA[<p><strong>The 1.4 version of Ivy is not yet released. This page is a work in progress.</strong></p>
-<p>The child pages list all the changes (bug fix, improvements and new feature) introduced for each release candidate before one of them is promoted to 1.4.</p>
-<p>The expected schedule for 1.4 is a first release candidate early september, and then one new release candidate per week until no major bug is found. Therefore 1.4 final shouldn't be released after end of september. Stay tuned!</p>
+<![CDATA[<p>The child pages list all the changes (bug fix, improvements and new feature) introduced for each release candidate before one of them is promoted to 1.4.</p>
+<p>The 1.4-RC1 has been released on Sept. 17th. 2006. 1.4 final will come in a few days. Stay tuned!</p>
 <div class="newandnoteworthy">
 <h1><center><big>New and noteworthy</big></center></h1>
-<h1>A new 1-2-3 tutorial</h1>
+<h1>Documentation</h1>
+<h2>A new introduction tutorial as simple as 1-2-3</h2>
 <p>It has never been so easy to try Ivy! You don't even it to install it yourself! Follow this simple steps and you're done:</p>
 <ol>
 <li>make sure you have <a href="http://ant.apache.org/">ant</a> 1.6.2 or greater and a <a href="http://java.sun.com">jdk</a> properly installed</li>
@@ -7838,6 +7986,11 @@ If no bug is discovered, 1.0-rc3 should be promoted to 1.0 on <b>2005-04-26</b><
 </ol>
 <p>If you have any trouble, check the <a href="/ivy/faq">FAQ</a>, it may be related to your internet connection (proxy anyone?).<br />
 Want to try more tutorials? Check the <a href="/ivy/doc/tutorial">tutorials</a> page in the documentation.</p>
+<h2>Offline documentation greatly improved</h2>
+<p>The offline documentation has been greatly improved, and is now a real copy of the online documentation, with all the navigation between pages as on the online version. Continue to use the online version when you can to have the latest updated version with user comments.</p>
+<h2>Documentation update</h2>
+<p>As usual, the documentation has been extensively updated with to reflect the new features. Some are still missing, but we will finish the update before the 1.4 release.</p>
+<p>Moreover, more examples have been added, more links between the pages, and some very useful pages have been added like the <a href="/ivy/doc/bestpractices">best practices</a> one.</p>
 <h1>Core features</h1>
 <h2><a href="/ivy/doc/concept#extra">Extra attributes</a></h2>
 <p>Several tags in ivy xml files are now extensible with extra attributes. </p>
@@ -7933,6 +8086,10 @@ will consider all modules with a revision ending by SNAPSHOT to be changing revi
 <p>Example:<br />
 <div class="codeblock"><code><span class="synIdentifier">&lt;ivyconf&gt;</span><br />&nbsp; <span class="synIdentifier">&lt;classpath </span><span class="synType">file</span>=<span class="synConstant">&quot;${ivy.conf.dir}/custom-resolver.jar&quot;</span><span class="synIdentifier">/&gt;</span><br />&nbsp; <span class="synIdentifier">&lt;typedef </span><span class="synType">name</span>=<span class="synConstant">&quot;custom&quot;</span><span class="synIdentifier"> </span><span class="synType">classname</span>=<span class="synConstant">&quot;fr.jayasoft.ivy.resolver.CustomResolver&quot;</span><span class="synIdentifier">/&gt;</span><br />&nbsp; <span class="synIdentifier">&lt;resolvers&gt;</span><br />&nbsp; &nbsp; <span class="synIdentifier">&lt;custom </span><span class="synType">name</span>=<span class="synConstant">&quot;custom&quot;</span><span class="synIdentifier">/&gt;</span><br />&nbsp; <span class="synIdentifier">&lt;/resolvers&gt;</span><br /><span class="synIdentifier">&lt;/ivyconf&gt;</span><br /></code></div></p>
 <h1>Ant tasks</h1>
+<h2><a href="/ivy/doc/use/repreport">repreport</a></h2>
+<p>A new repreport task allows to generate reports directly from your repository. The graph generation is the most interesting one, it can gives you a good overview of the dependencies between of all your modules available in your repository, or restrict this graph to just the modules from this organisation, and so on.</p>
+<p>Example:<br />
+<div class="codeblock"><code><span class="synIdentifier">&lt;</span><span class="synSpecial">ivy</span><span class="synComment">:</span><span class="synIdentifier">repreport </span><span class="synType">organisation</span>=<span class="synConstant">&quot;myorg&quot;</span><span class="synIdentifier"> </span><span class="synType">xml</span>=<span class="synConstant">&quot;false&quot;</span><span class="synIdentifier"> </span><span class="synType">graph</span>=<span class="synConstant">&quot;true&quot;</span><span class="synIdentifier"> /&gt;</span><br />will generate a graphml of dependencies with all modules in the organisation &quot;myorg&quot;<br /></code></div></p>
 <h2><a href="/ivy/doc/use/artifactreport">artifactreport</a></h2>
 <p>A new artifactreport task has been introduced to easily generate an xml report with artifacts resolved, with useful information such as their original location. This report is particularly well suited for generating IDE classpaths (see also the <a href="/ivy/links">links</a> page for higher IDE integration via plugins).</p>
 <p>The generated report looks like this:<br />
@@ -7967,17 +8124,36 @@ calls ivy with given ivyconf file and resolve bar foo 2.0, and then run org.foo.
 </div>
 ]]>
 </content>
+<node id="node-800">
+<nodeinfo  path='ivy/doc/releasenotes/1.4-RC1' md5_body='6b2fc6eea89090eea3000843c7014519' weight='0' depth='4' type='book' author='xavier' uid='6' created='1158542974' status='1' format='1' sticky='0' promote='0'/>
+<title>1.4-RC1 - 2006-09-17</title>
+<teaser>
+<![CDATA[]]>
+</teaser>
+<content>
+<![CDATA[<p>Here are the release notes of version 1.4-RC1.<br />
+A new and noteworthy section is available on <a href="/ivy/doc/releasenotes/1.4">version 1.4 page</a>.</p>
+<p>You can download it here:</p>
+<ul>
+<li><a href="/visit.php?url=./downloads/ivy/1.4-RC1/ivy-1.4-RC1-bin.zip">binaries</a></li>
+<li><a href="/visit.php?url=./downloads/ivy/1.4-RC1/ivy-1.4-RC1-src.zip">sources</a></li>
+<li><a href="http://www.jayasoft.org/visit.php?url=./downloads/ivy/1.4-RC1/ivy-1.4-RC1-doc.zip">documentation</a></li>
+</ul>
+<p>It includes 30 new features, 33 improvements and even more bug fixes since Ivy 1.3.1.<br />
+<div class="codeblock"><code>&nbsp;  version 1.4-RC1 - 2006-09-17<br />=================================<br />Incompatibility with previous versions:<br />---------------------------------------<br />* usage:<br />&nbsp; - no known major incompatiblity<br />&nbsp; - build list task now requires a configured ivy instance (configure will automatically be called if you don't call it explicitly)<br />&nbsp; - publish now requires the published ivy file to have the published revision (automatic if you use deliver)<br />* API:<br />&nbsp; - Numerous API changes especially in the BasicResolver class and subclasses due to the introduction of VersionMatcher,<br />&nbsp; 	this may break some custom dependency resolvers or other tools or plugins depending directly on Ivy API<br />Changes:<br />--------<br />* thanks to Jayasoft:<br />&nbsp; - NEW: ivy report generate full graph from automated build (<a href="http://jira.jayasoft.org/browse/IVY-155">IVY-155</a>)<br />&nbsp; - NEW: support for build number calculation (<a href="http://jira.jayasoft.org/browse/IVY-276">IVY-276</a>)<br />&nbsp; - NEW: find modules in repository (<a href="http://jira.jayasoft.org/browse/IVY-275">IVY-275</a>)<br />&nbsp; - NEW: explicitly specify artifact download URL (<a href="http://jira.jayasoft.org/browse/IVY-271">IVY-271</a>)<br />&nbsp; - NEW: introduce branch management (<a href="http://jira.jayasoft.org/browse/IVY-269">IVY-269</a>)<br />&nbsp; - NEW: resolve dependencies directly without using an ivy file (<a href="http://jira.jayasoft.org/browse/IVY-268">IVY-268</a>)<br />&nbsp; - NEW: ability to invoke any build scripts for dependencies (<a href="http://jira.jayasoft.org/browse/IVY-68">IVY-68</a>)<br />&nbsp; - NEW: support sftp repository (<a href="http://jira.jayasoft.org/browse/IVY-267">IVY-267</a>)<br />&nbsp; - NEW: pluggable version matcher (<a href="http://jira.jayasoft.org/browse/IVY-219">IVY-219</a>)<br />&nbsp; - NEW: support for version ranges (<a href="http://jira.jayasoft.org/browse/IVY-295">IVY-295</a>)<br />&nbsp; - NEW: dependency based on dependency status (<a href="http://jira.jayasoft.org/browse/IVY-47">IVY-47</a>)<br />&nbsp; - NEW: add possibility to define extra attributes in ivy files (<a href="http://jira.jayasoft.org/browse/IVY-217">IVY-217</a>)<br />&nbsp; - NEW: option to omit specific confs and allow the rest (<a href="http://jira.jayasoft.org/browse/IVY-66">IVY-66</a>)<br />&nbsp; - NEW: use custom classloader for plugins (<a href="http://jira.jayasoft.org/browse/IVY-220">IVY-220</a>)<br />&nbsp; - NEW: adding to SPECIAL_MEANINGS in LatestRevisionStrategy (<a href="http://jira.jayasoft.org/browse/IVY-121">IVY-121</a>)<br />&nbsp; - NEW: Allow use of system properties in ivyconf.xml (<a href="http://jira.jayasoft.org/browse/IVY-228">IVY-228</a>)<br />&nbsp; - IMPROVE: allow to use file-system repository directly without cache (<a href="http://jira.jayasoft.org/browse/IVY-211">IVY-211</a>)<br />&nbsp; - IMPROVE: deliver task use a default value for revision (<a href="http://jira.jayasoft.org/browse/IVY-252">IVY-252</a>)<br />&nbsp; - IMPROVE: better documentation distribution (<a href="http://jira.jayasoft.org/browse/IVY-274">IVY-274</a>) - in progress<br />&nbsp; - IMPROVE: define conflict manager per organisation/module in ivyconf (<a href="http://jira.jayasoft.org/browse/IVY-270">IVY-270</a>)<br />&nbsp; - IMPROVE: transitive parameter in resolve (<a href="http://jira.jayasoft.org/browse/IVY-21">IVY-21</a>)<br />&nbsp; - IMPROVE: add syncing feature in retrieve (<a href="http://jira.jayasoft.org/browse/IVY-33">IVY-33</a>)<br />&nbsp; - IMPROVE: use of md5 and/or sha1 files to check downloads (<a href="http://jira.jayasoft.org/browse/IVY-27">IVY-27</a>)<br />&nbsp; - IMPROVE: possible to use m2compatible without automatically using POMs as well (<a href="http://jira.jayasoft.org/browse/IVY-263">IVY-263</a>)<br />&nbsp; - IMPROVE: support for circular dependencies (<a href="http://jira.jayasoft.org/browse/IVY-202">IVY-202</a>)<br />&nbsp; - IMPROVE: make status list configurable (<a href="http://jira.jayasoft.org/browse/IVY-242">IVY-242</a>)<br />&nbsp; - IMPROVE: use only ivy patterns for listing revisions when module desciptor is required (allownomd = false) (<a href="http://jira.jayasoft.org/browse/IVY-166">IVY-166</a>)<br />&nbsp; - IMPROVE: implement strict haltonfailure if ivy.xml is not found (<a href="http://jira.jayasoft.org/browse/IVY-110">IVY-110</a>)<br />&nbsp; - IMPROVE: artifact's &quot;name&quot; attribute could be omitted (<a href="http://jira.jayasoft.org/browse/IVY-231">IVY-231</a>)<br />&nbsp; - IMPROVE: ivy standalone now return error status (<a href="http://jira.jayasoft.org/browse/IVY-152">IVY-152</a>)<br />&nbsp; - IMPROVE: log messages do not display most specfic resolver name (<a href="http://jira.jayasoft.org/browse/IVY-170">IVY-170</a>)<br />&nbsp; - IMPROVE: prints URL before downloading in verbose mode (<a href="http://jira.jayasoft.org/browse/IVY-257">IVY-257</a>)<br />&nbsp; - IMPROVE: incorrect value in status attribute causes silent failure (<a href="http://jira.jayasoft.org/browse/IVY-259">IVY-259</a>)<br />&nbsp; - IMPROVE: suport empty dependencies tag in an ivy file (<a href="http://jira.jayasoft.org/browse/IVY-281">IVY-281</a>)<br />&nbsp; - IMPROVE: isolate dependency resolution from artifact downloading (<a href="http://jira.jayasoft.org/browse/IVY-254">IVY-254</a>)<br />&nbsp; - IMPROVE: Pass artifact to repository when calling &quot;put&quot; (<a href="http://jira.jayasoft.org/browse/IVY-192">IVY-192</a>)<br />&nbsp; - IMPROVE: Do not publish ivy file with bad revision, and allow to force the deliver when calling publish task (<a href="http://jira.jayasoft.org/browse/IVY-245">IVY-245</a>)<br />&nbsp; - FIX: Problem with multiple artifact includes in transitive dependencies (<a href="http://jira.jayasoft.org/browse/IVY-283">IVY-283</a>)<br />&nbsp; - FIX: Endless recursion in report (<a href="http://jira.jayasoft.org/browse/IVY-284">IVY-284</a>)<br />&nbsp; - FIX: http url lister doesn't work when link text has spaces (<a href="http://jira.jayasoft.org/browse/IVY-282">IVY-282</a>)<br />&nbsp; - FIX: Incorrect ant log level (<a href="http://jira.jayasoft.org/browse/IVY-279">IVY-279</a>)<br />&nbsp; - FIX: Wrong resolution of dependencies if artifacts specified explicitly (<a href="http://jira.jayasoft.org/browse/IVY-261">IVY-261</a>)<br />&nbsp; - FIX: Multiple versions of dependencies appearing in retrieve (<a href="http://jira.jayasoft.org/browse/IVY-264">IVY-264</a>)<br />&nbsp; - FIX: Too many false CircularDependencyException errors thrown (<a href="http://jira.jayasoft.org/browse/IVY-230">IVY-230</a>)<br />&nbsp; - FIX: CircularDependencyException not always thrown (<a href="http://jira.jayasoft.org/browse/IVY-184">IVY-184</a>)<br />&nbsp; - FIX: NullPointer in BasicResolver (<a href="http://jira.jayasoft.org/browse/IVY-258">IVY-258</a>)<br />&nbsp; - FIX: Bad diagnostics message when no space left (<a href="http://jira.jayasoft.org/browse/IVY-250">IVY-250</a>)<br />&nbsp; - FIX: Maven2 POM support can find groupId from &quot;parent&quot; element (<a href="http://jira.jayasoft.org/browse/IVY-262">IVY-262</a>)<br />&nbsp; - FIX: Parent version is expected to be equal to the module version in POM (<a href="http://jira.jayasoft.org/browse/IVY-241">IVY-241</a>)<br />&nbsp; - FIX: problem with cache and returnFirst (<a href="http://jira.jayasoft.org/browse/IVY-207">IVY-207</a>)<br />&nbsp; - FIX: modules splitted across a chain are not handled correctly (<a href="http://jira.jayasoft.org/browse/IVY-206">IVY-206</a>)<br />&nbsp; - FIX: problem with conf extension and latest revisions (<a href="http://jira.jayasoft.org/browse/IVY-240">IVY-240</a>)<br />&nbsp; - FIX: The clean-cache target in /src/example/hello-ivy/build.xml file refers to ${user.home}/.ivy-cache instead of ${user.home}/.ivy/cache/ (<a href="http://jira.jayasoft.org/browse/IVY-265">IVY-265</a>)<br />* thanks to Ivy Community:<br />&nbsp; - NEW: SSH Resolver added and aligned with SFTP resolver (<a href="http://jira.jayasoft.org/browse/IVY-273">IVY-273</a>) (thanks to Andreas Sahlbach)<br />&nbsp; - NEW: ability to turn off transitivity at configuration level (<a href="http://jira.jayasoft.org/browse/IVY-103">IVY-103</a>) (thanks to Karl Baum and Maarten Coene)<br />&nbsp; - NEW: a conflict manager that is able to allow implementation changes but not api changes (1.2.x - OK), (1.x.x - Not OK) (<a href="http://jira.jayasoft.org/browse/IVY-223">IVY-223</a>) (thanks to Anders Janmyr)<br />&nbsp; - NEW: enhance standalone mode to execute java program by creating classloader of dependant jars from cache (<a href="http://jira.jayasoft.org/browse/IVY-210">IVY-210</a>) (thanks to Peter Hayes)<br />&nbsp; - NEW: addition of Vfs Resolver which uses Commons-Vfs to resolve files (<a href="http://jira.jayasoft.org/browse/IVY-128">IVY-128</a>) (thanks to Glen Marchesani, Matt Inger and Stephen Nesbitt)<br />&nbsp; - IMPROVE: use global properties in the recursive delivery (<a href="http://jira.jayasoft.org/browse/IVY-222">IVY-222</a>) (with the contribution of Roshan Punnoose)<br />&nbsp; - IMPROVE: better handling of authentication (thanks to Christian Riege)<br />&nbsp; - FIX: Ant log messsages not embedded in task log (<a href="http://jira.jayasoft.org/browse/IVY-280">IVY-280</a>) (thanks to Gilles Scokart)<br />&nbsp; - FIX: Ivy fails when downloading from a server that supports NTLM authentication (<a href="http://jira.jayasoft.org/browse/IVY-213">IVY-213</a>) (thanks to Damon Rand)<br />&nbsp; - FIX: Delivered Ivy files with incomplete last line. (<a href="http://jira.jayasoft.org/browse/IVY-125">IVY-125</a>) (thanks to Matthias Kilian)<br />&nbsp; - FIX: the vfs resolver should not log passwords (<a href="http://jira.jayasoft.org/browse/IVY-292">IVY-292</a>) (thanks to Antoine Levy-Lambert)<br />* thanks to Maarten Coene:<br />&nbsp; - NEW: add failureproperty parameter to the resolve task (<a href="http://jira.jayasoft.org/browse/IVY-285">IVY-285</a>)<br />&nbsp; - NEW: Add type filtering to retrieve task (<a href="http://jira.jayasoft.org/browse/IVY-260">IVY-260</a>)<br />&nbsp; - NEW: Add selectors to the configuration mapping (<a href="http://jira.jayasoft.org/browse/IVY-253">IVY-253</a>)<br />&nbsp; - NEW: Add Ant task to retrieve information from an Ivy file without doing a resolve (<a href="http://jira.jayasoft.org/browse/IVY-255">IVY-255</a>)<br />&nbsp; - NEW: add option to cachepath task to create a path with local artifact paths (<a href="http://jira.jayasoft.org/browse/IVY-221">IVY-221</a>)<br />&nbsp; - NEW: allow extending configurations to override the mapping of their super configurations (<a href="http://jira.jayasoft.org/browse/IVY-218">IVY-218</a>)<br />&nbsp; - IMPROVE: Retain artifact filenames along the publish/resolve/retrieve process (<a href="http://jira.jayasoft.org/browse/IVY-54">IVY-54</a>)<br />&nbsp; - IMPROVE: report Ant-task doesn't process the reports in batch (<a href="http://jira.jayasoft.org/browse/IVY-247">IVY-247</a>)<br />&nbsp; - IMPROVE: make ReportOutputter pluggable and customizable (<a href="http://jira.jayasoft.org/browse/IVY-205">IVY-205</a>)<br />&nbsp; - IMPROVE: add wildcard support for extending configurations (<a href="http://jira.jayasoft.org/browse/IVY-235">IVY-235</a>)<br />&nbsp; - IMPROVE: add support for xslt parameters in the report task (<a href="http://jira.jayasoft.org/browse/IVY-227">IVY-227</a>)<br />&nbsp; - IMPROVE: comments now aren't lost when delivering ivy files (<a href="http://jira.jayasoft.org/browse/IVY-226">IVY-226</a>)<br />&nbsp; - IMPROVE: add sort of 'fallback'-mapping to the defaultconfmapping attribute (<a href="http://jira.jayasoft.org/browse/IVY-215">IVY-215</a>)<br />&nbsp; - IMPROVE: artifact origin is not included in the default report (<a href="http://jira.jayasoft.org/browse/IVY-251">IVY-251</a>)<br />&nbsp; - FIX: VFS Resolve fails when trying to resolve a + version (<a href="http://jira.jayasoft.org/browse/IVY-237">IVY-237</a>)<br />&nbsp; - FIX: report Ant-task doesn't use outputpattern for generating graphml reports (<a href="http://jira.jayasoft.org/browse/IVY-246">IVY-246</a>)<br />&nbsp; - FIX: report Ant-task doesn't call init() on the internal XSLTProcess (<a href="http://jira.jayasoft.org/browse/IVY-248">IVY-248</a>)<br />&nbsp; - FIX: value of confmappingoverride from imported configurations is lost when writing Ivy file (<a href="http://jira.jayasoft.org/browse/IVY-239">IVY-239</a>)<br />&nbsp; - FIX: including configurations doesn't import the confmappingoverride setting (<a href="http://jira.jayasoft.org/browse/IVY-238">IVY-238</a>)<br />&nbsp; - FIX: NullPointerException when the creation of Ivy file in cache fails (<a href="http://jira.jayasoft.org/browse/IVY-234">IVY-234</a>)<br />&nbsp; - FIX: Ivy file containing 2 different versions of the same module is not deliverd correctly (<a href="http://jira.jayasoft.org/browse/IVY-229">IVY-229</a>)<br />&nbsp; - FIX: ModuleRevisionId encode/decode doesn't work if revision is empty (<a href="http://jira.jayasoft.org/browse/IVY-233">IVY-233</a>)<br />&nbsp; - FIX: cachepath task should preserve the order of the dependencies (<a href="http://jira.jayasoft.org/browse/IVY-225">IVY-225</a>)<br />&nbsp; - FIX: specifying a defaultconfmapping adds dependencies of each unlisted configuration (<a href="http://jira.jayasoft.org/browse/IVY-214">IVY-214</a>)<br />* thanks to Johan Stuyts:<br />&nbsp; - NEW: always update artifacts when revision matches a regex pattern (<a href="http://jira.jayasoft.org/browse/IVY-189">IVY-189</a>)<br />&nbsp; - NEW: provide Ant task for generating report about artifacts depended upon (<a href="http://jira.jayasoft.org/browse/IVY-194">IVY-194</a>)<br />&nbsp; - IMPROVE: change default cache artifact pattern to handle missing extension (<a href="http://jira.jayasoft.org/browse/IVY-196">IVY-196</a>)<br />* thanks to Karl Baum:<br />&nbsp; - NEW: &quot;this&quot; symbol for configuration mappings (<a href="http://jira.jayasoft.org/browse/IVY-183">IVY-183</a>)<br />&nbsp; - IMPROVE: performances improved (<a href="http://jira.jayasoft.org/browse/IVY-187">IVY-187</a>)<br /></code></div></p>
+]]>
+</content>
+</node>
 </node>
 </node>
 <node id="node-105">
-<nodeinfo  path='ivy/doc/appendix' md5_body='060e565c9581ea600113daf69f2ec748' weight='4' depth='2' type='book' author='admin' uid='1' created='1118037482' status='1' format='1' sticky='0' promote='1'/>
+<nodeinfo  path='ivy/doc/appendix' md5_body='702fb90ba2b0bd19053f2e472c166bc2' weight='4' depth='2' type='book' author='admin' uid='1' created='1118037482' status='1' format='1' sticky='0' promote='1'/>
 <title>Appendix</title>
 <teaser>
 <![CDATA[]]>
 </teaser>
 <content>
 <![CDATA[<p>This section is the home of a bunch of appendixes to ivy main documentation.</p>
-<p>For the moment, you will find here a product comparison giving a rapid overview of several dependency management tools and how they compare to ivy.</p>
 ]]>
 </content>
 <node id="node-142">
@@ -7994,14 +8170,15 @@ calls ivy with given ivyconf file and resolve bar foo 2.0, and then run org.foo.
 </content>
 </node>
 <node id="node-562">
-<nodeinfo  path='ivy/doc/m2comparison' md5_body='0e8b673381c08d31b5a3b111bf05897d' weight='0' depth='3' type='book' author='xavier' uid='6' created='1143214768' status='1' format='4' sticky='0' promote='0'/>
+<nodeinfo  path='ivy/doc/m2comparison' md5_body='3369165733449c96e97948c9a09bad31' weight='0' depth='3' type='book' author='xavier' uid='6' created='1143214768' status='1' format='4' sticky='0' promote='0'/>
 <title>Ivy / Maven2 Comparison</title>
 <teaser>
 <![CDATA[]]>
 </teaser>
 <content>
-<![CDATA[<p>We are frequently asked how ivy compares to maven2, and since the <a href="/ivy/doc/comparison">products comparison</a> page is really outdated, we have decided that this comparison deserves its own page.</p>
+<![CDATA[<p>We are frequently asked how ivy compares to maven2, so we have decided togives some insight about our opinion on the subject.</p>
 <p>Obviously this comparison is biased (hey, you are on official Ivy site :-)), but we'll try to keep it as fair as possible. Do not hesitate to add comment if you feel something is missing or false on this page. You can also have a look at <a href="http://docs.codehaus.org/display/MAVEN/Feature+Comparisons">Maven2 feature comparison page on codehaus</a>, which itself offers another point of view.</p>
+<p>There have been also severa discussions on the subject, among which the one triggered by <a href="http://www.jayasoft.org/node/806">spring contemplating about switching to maven</a> is may be the more interesting.</p>
 <p>But here is the points we think mainly differentiate maven2 and Ivy.</p>
 <h1>Comparing plants and apples</h1>
 <p>First, the most important difference between maven2 and ivy is that they aren't at all the same kind of tools. Maven2 is a software project management and comprehension tool, whereas Ivy is only a dependency management tool, highly integrated with ant, the popular build management tool. Maven2 offers dependency management facility, and that's why many ask how ivy compares to maven2. That's why we'll focus only on dependency management features of maven2 in this comparison.<br />
@@ -8020,200 +8197,16 @@ to get hibernate with its proxool and oscache implemetations, and like that:<br 
 to get hibernate with dbcp and swarmcache.</p>
 <h1>Documentation</h1>
 <p>An important thing to be able to use a tool is its amount of documentation. With Ivy, even if they are written in broken english (would you have prefered well written french :-)), the printer friendly version of the documentation is now about 120 pages.<br />
-With maven2, it's a bit difficult to clearly know what can be considered as dependency management documentation, but we didn't managed to find much: some small introductory guides, short entries in the pom reference guide, and not really much more.</p>
+With maven2, it's a bit difficult to clearly know what can be considered as dependency management documentation, but we didn't managed to find much: some small introductory guides, short entries in the pom reference guide, and not really much more. Even in the maven book you can get for free on <a href="http://www.mergere.com/">mergere website</a>, the insight about dependency management is still light in our point of view. </p>
 <h1>Conflict management</h1>
 <p>Conflict management are an important part of dependency management, cause when dealing with transitive dependencies you often have to face conflicts. In this area, Ivy let you do whatever you want: use one conflict manager in one module, another one elsewhere, decide which revision you will get, ... You can even plug your own conflict manager if you need to.</p>
 <p>With maven2, conflict management is quite simple: the principle is to get the nearest definition. So if your module depends on foo 1.0, none of your dependencies will ever manage to get foo 1.1 without a change in your own dependency declaration. It may be ok in some cases, it may not in others...</p>
 <h1>Flexibility</h1>
-<p>In ivy many things can be configured, and many others can be plugged in: dependency resolvers, conflict manager, module descriptor parser, latest revision strategy, ... Maven2 also offers repository pluggability, but not much more as far as we know. Moreover, repository configuration seems to be less flexible than with ivy.</p>
+<p>In ivy many things can be <a href="/ivy/doc/configuration">configured</a>, and many others can be <a href="/ivy/doc/extend">plugged in</a>: dependency resolvers, conflict manager, module descriptor parser, latest revision strategy, ... Maven2 also offers repository pluggability, but not much more as far as we know. Moreover, repository configuration seems to be less flexible than with ivy.</p>
 <h1>Public Repositories</h1>
 <p>Maven2 comes out of the box configured to use ibiblio maven2 repository, which contains <strong>a lot</strong> of modules (both artifacts and module descriptors). The only problem some may face is that module descriptors are not always checked, so some are not really well written.<br />
-Ivy, on its side, is used out of the box with ivyrep, ivy official repository, which contains only a few modules, and is not updated frequently. But it is also compatible with maven1 ibiblio repository (for artifacts only, no module descriptors), can also be used with maven2 repository (with pom compatibility, you will here only face some naming problems that can be addressed using the namespace feature, and you won't benefit from ivy configurations with the module descriptors found there), and also has an ivyrep sandbox in which much more module descriptors can be found (not checked, as with ibiblio repository).</p>
+Ivy, on its side, is used out of the box with ivyrep, ivy official repository, which contains only a few modules, and is not updated frequently. But it is also compatible with maven1 ibiblio repository (for artifacts only, no module descriptors), can also be used with maven2 repository (with pom compatibility, but you will here face some naming problems - that can be addressed using the namespace feature-, you won't benefit from ivy configurations with the module descriptors found there, and, let's face it, the maven2 compatibility of Ivy is far from maven's one :-)), and also has an ivyrep sandbox in which much more module descriptors can be found (not checked, as with ibiblio repository).</p>
 ]]>
-</content>
-</node>
-<node id="node-49">
-<nodeinfo  path='ivy/doc/comparison' md5_body='3a9546e8793da15edb167389045e1062' weight='3' depth='3' type='book' author='admin' uid='1' created='1117614564' status='1' format='3' sticky='0' promote='1'/>
-<title>Products Comparison</title>
-<teaser>
-<![CDATA[]]>
-</teaser>
-<content>
-<![CDATA[You can find an updated and detailed Ivy / Maven2 comparison <a href="/ivy/doc/m2comparison">here</a>.<br/><br/>
-
-<i>Last updated: 2005-06-01</i><br/><br/>
-We are frequently asked how Ivy can be compared to other dependency management tools. Here is a
-short matrix summing up a comparison of the products handling dependency management that
-we have heard about.<br/>
-<br/>
-Obviously, this comparison can not be objective and may be inacurrate for some
-products, but we have tried to do it with as little subjective judgement as possible.<br/>
-<br/>
-<table class="comparison">
-	<thead>
-		<tr>
-			<th>Product</th>
-			<th>Maven ibiblio <br/>compatibility</th>
-			<th>Ant <br/>integration</th>
-			<th>Continuous <br/>integration</th>
-			<th>Transitive <br/>dependencies</th>
-			<th>Flexibility</th>
-			<th>Maturity</th>
-			<th>License</th>
-		</tr>
-	</thead>
-	<tbody>
-		<tr>
-			<td><a href="http://ivy.jayasoft.org/">Ivy</a></td>
-			<td>++</td>
-			<td>++</td>
-			<td>++</td>
-			<td>+++</td>
-			<td>++</td>
-			<td>++</td>
-			<td>BSD</td>
-		</tr>
-		<tr>
-			<td><a href="http://maven.apache.org/">Maven</a></td>
-			<td>+++</td>
-			<td>--</td>
-			<td>+</td>
-			<td>--</td>
-			<td>+</td>
-			<td>+++</td>
-			<td>Apache Software License</td>
-		</tr>
-		<tr>
-			<td><a href="http://maven.apache.org/maven2/">Maven2</a></td>
-			<td>++ *</td>
-			<td>-</td>
-			<td>++</td>
-			<td>+</td>
-			<td>+</td>
-			<td>---</td>
-			<td>Apache Software License</td>
-		</tr>
-		<tr>
-			<td><a href="http://www.httpunit.org/doc/dependencies.html">HttpUnit Dependencies</a></td>
-			<td>++</td>
-			<td>++</td>
-			<td>+</td>
-			<td>--</td>
-			<td>+</td>
-			<td>-</td>
-			<td>MIT License</td>
-		</tr>
-		<tr>
-			<td><a href="http://www.inversoft.com/online/savant/savant.html">Savant</a></td>
-			<td>--</td>
-			<td>++</td>
-			<td>--</td>
-			<td>+</td>
-			<td>++</td>
-			<td>++</td>
-			<td>Other</td>
-		</tr>
-	</tbody>
-</table>
-<h1>Some Explanations</h1>
-<h2>Maven ibiblio compatiblity</h2>
-The use of the maven ibiblio repository is interesting because it is already filled with many projects. 
-Benefiting from this repository is thus a plus.<br/><br/>
-On this feature, the best is obviously <b>maven</b> itself, since this repository has been built at the initiative
-of the project. <b>Maven2</b> is a bit special, because it changes the layout of the repository compared to
-maven1, and thus a new repository is available. But everything in the first repository seems to be synced in the second, and how could we say that maven is not 100% compatible with maven repository ;-).<br/>
-The <b>dependencies task of http-unit</b> is also very good, one of the main aim of the project
-being to bring this repository to ant users. <b>Savant</b> does not provide such a compatibility.<br/>
-<b>Ivy</b>, since its version 0.6, can be considered almost as good as the dependencies task. It 
-provides a built-in ibiblio repository compatibility, and the limitation of not being able to say that you depend on a 
-particular jar of a module has been deleted by the 0.6+ feature of <a href="/ivyfile.@EXT@#dependency-artifact">artifacts restriction</a>. 
-For sure, the use of ivy files for dependencies is still heavily recommended, the advantage of this technique being 
-that once an ivy file has been written, you can reuse the module easier, and it's the aim of Ivy. 
-
-<h2>Ant integration</h2>
-Ant is the most used build tool in the java community. Being well integrated with it is a real plus.<br/><br/>
-On this feature, <b>maven</b>, which is also a build tool by its own and not only a dependency management tool,
-is the only one to distinguish itself (even if you can call ant tasks from maven, the opposite is not easily
-the case). <b>Maven2</b> will propose ant tasks for its dependency management feature, so a good step is taken in this direction. But for the moment it's not publicly available.
-For the others, integration is at the same level. The <b>dependencies task and Savant</b> could be claimed 
-to be more integrated, since the dependencies are declared in the build file itself and they produce paths or
-filesets of the dependencies. <br/>
-<b>Ivy</b>, for its part, has taken the party to be less intrusive in the build file:<br/>
-- The dependencies are described in a separate file. The advantage of being separated is that
-this dependency file can be reused for dependency of dependency management, and that
-it can have its own life in your source control management, in particular.<br/>
-- It lets you build your filesets and paths by your own. The advantage is that if you already have a build file,
-you can simply ask Ivy to put your dependencies at the place they used to be, and that's all, you have migrated to 
-Ivy. Moreover, you can still benefit of all the power of ant filesets and paths declaration.<br/> 
-- Since 0.8, it is able to build a path for you with the cachepath task.<br/>
-
-<h2>Continuous integration</h2>
-A dependency management tool is the most util when your dependencies change often, and this is especially 
-the case in a continuous integration environment, where your dependencies can change of version very often.<br/><br/>
-On this point, as far as I know, <b>Savant</b> do not allow to automatically change the version you
-use when a new is released. <br/>
-<b>Maven</b> provides a SNAPSHOT feature, which enables continuous integration
-only if the component you depend on publishes SNAPSHOT versions. And you can by no way know which
-was really that version, in order to get that particular version on a later time.<br/>
-I have for the moment very few information on <b>Maven2</b> on this subject, but it will at least
-do what maven did.<br/>
-The <b>dependencies task</b> say you can tell that you depend on the latest version,
-and that it is then the responsibility of the Repository to get it... but I haven't found more information
-on their web site. Maybe it uses the same principle as Maven...<br/>
-<b>Ivy</b> uses pluggable latest strategies to find the latest version, so that the component you depend on
-has nothing special to do.
-Moreover, it produces a report in which it tells which version has been retrieved, so that you can 
-easily know the environment of the component you are building. Finally, it can even produce an ivy file
-with all latest revisions resolved to a fixed one, so that you can use it to reproduce the same environment even later, when new versions of the 
-dependencies will have been built.<br/>
-
-<h2>Transitive dependencies</h2>
-Transitive dependencies management, also known as dependencies of dependencies management,
-let you reuse more easily complex components which have themselves 
-dependencies, and help you manage conflicts between dependencies.<br/>
-<b>Maven</b> and the <b>dependencies task</b> does not provide this feature at all.<br/>
-<b>Maven2</b> will provide this feature, but few doc is avaialble for the moment. It seems that it will
-be handled by declaring a dependency on the pom of another project. I have no information on how
-filter will be applied to the transitive dependencies.<br/> 
-<b>Savant</b> actually manage transitive dependencies, but you automatically
-get all dependencies of your dependencies, not being able to filter them easily.<br/>
-<b>Ivy</b> provides this feature, and, with its concept of configurations, let you choose the set of artifacts
-of your dependencies you really need. You can even use fine graine filters (include/exclude) to adjust what
-you want. Finally, its unique configurable conflict manager let you manage conflicts the way you want,
-even if the default strategy works in most cases so that no special configuration is required.
-
-<h2>Flexibility</h2>
-Is the dependency management tool able to adapt to your environment, or have you to follow
-its rules ? It's a matter of flexibility, and it's hard to evaluate.<br/>
-As far as I know, <b>Maven</b> dependency management is based on a rigid structure of repository
-you have to follow, unless you specify for each jar where it can be found, which does 
-not really let you have a repository structure of your choice. <b>Maven2</b> will certainly follow the same philosophy. 
-The <b>dependencies task</b> has the same
-limitation, unless you create your own implementation of Repository. <b>Savant</b> seems to provide a lot of 
-flexibility, but it also seems quite hard to configure.<br/>
-<b>Ivy</b> is extremely flexible:<br/>
-- comes out of the box with two main ways to find dependencies (filesystem based 
-and url based)<br/>
-- let you configure your repository layout with very simple
-to define patterns<br/>
-- let you use multiple repositories, chaining them or defining which repository to use
-for which modules or group of modules<br/>
-- let you choose where you artifacts are copied in your file system, with or without
-version in the name, and structured the way you want, all with the same simple pattern
-principle<br/>
-- let you define reusable configurations of your component, since a same component
-does not have the dependencies at build time or runtime, or when deployed in a server or as 
-a standalone application, etc.<br/>
-
-<h2>Maturity</h2>
-On this point, two products are now quite old and can be considered mature: <b>Maven</b> and <b>Savant</b>.
-On the other hand, the <b>dependencies task</b> has published its first version (0.1) on september 2004, and, at the time of this writing, no version has been published since their 0.4 in december 2004.<br/>
-<b>Maven2</b> is still in alpha, with no public download and very few documentation.<br/>
-Finally, <b>Ivy</b> as published its first public version (0.5) on january 2005 after several months of use in our company. After several months of user driven development and testing, and after several weeks
-of release candidates cycles, it has reached its first stable release on april 2005: 1.0. 
-<br/><br/><br/>
-Feel free to comment the comparison on this page if you think that we have forgotten some points or missed 
-features of the other products.]]>
 </content>
 </node>
 </node>
