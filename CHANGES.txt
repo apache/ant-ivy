@@ -5,7 +5,7 @@
 				
 for detailed view of each issue, please consult http://jira.jayasoft.org/
 
-   version 1.4-RC2 - not yet released
+   version 1.4-RC2 - 2006-09-27
 =====================================
 - FIX: m2compatible flag is ignored for display of failed artifact searches (IVY-303)
 - FIX: AntCallTriggerTest and AntBuildTriggerTest fail when run from ivy build.xml (IVY-310)

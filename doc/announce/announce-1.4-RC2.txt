@@ -1,0 +1,31 @@
+<a href="http://www.jayasoft.org">Jayasoft</a> is pleased to announce the availability of Ivy version 1.4-RC2.
+
+<a href="http://www.jayasoft.org/ivy">Ivy</a> is an agile java based dependency manager, with powerful features such as transitive dependencies, an outstanding flexibility, ant integration, maven repository compatibility, continuous integration, html reports and many more.
+
+Besides its strong dependency management engine, Ivy also benefits from an always growing user community, a <a href="http://ivyrep.jayasoft.org/">public repository</a> of common ivy files, and from the source <a href="http://www.jayasoft.org/services">professional quality services</a>.
+
+This second release candidate contains several bug fixes since the first release candidate.
+
+The 1.4 version of Ivy will be a major version with more than 90 new features, improvements and bug fixes since 1.3.1.
+
+A <a href="http://www.jayasoft.org/ivy/doc/releasenotes/1.4">new and noteworthy page</a> is available on the site giving a good overview of the most notable changes since 1.3.1.
+
+For a small taste of what is waiting for you:
+* better flexibility, with extra attributes, pluggable version matchers, events, triggers, changing patterns, ...
+* improved ease of use, with a tutorial not even requiring to install Ivy manually, inline dependencies, url setting directly on the artifact for emergency cases, ...
+* a set of new repositories supported, ssh, sftp, webdav, ...
+* improved stability and QA, with more than 30 bug fixes, checksum verification of downloaded files, a setting to ensure you always have an ivy file for all your modules, ...
+* several module configurations enhancement, like the possibility to disable transitivity for a whole configuration
+* more repository management tools, including a new repository report able to generate of graph of dependencies between all or part of all your modules in your repository
+* and much more !
+
+As usual, documentation has been updated to help use all those new features.
+
+Many thanks to our customers and to the users feedbacks and contributions who made this possible, and especially to Maarten Coene who has joined the team of official commiters.
+
+Ivy:
+    homepage: <a href="http://www.jayasoft.org/ivy">http://www.jayasoft.org/ivy</a>
+    new and noteworthy: <a href="http://www.jayasoft.org/ivy/doc/releasenotes/1.4">http://www.jayasoft.org/ivy/doc/releasenotes/1.4</a>
+    download: <a href="http://www.jayasoft.org/ivy/download">http://www.jayasoft.org/ivy/download</a>
+    documentation: <a href="http://www.jayasoft.org/ivy/doc">http://www.jayasoft.org/ivy/doc</a>
+    tutorials: <a href="http://www.jayasoft.org/ivy/doc/tutorial">http://www.jayasoft.org/ivy/doc/tutorial</a>
