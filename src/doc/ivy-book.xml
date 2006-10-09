@@ -1953,7 +1953,7 @@ Even more problematic is the possible updates of the repository. We know that ve
 ]]>
 </content>
 <node id="node-106">
-<nodeinfo  path='ivy/doc/terminology' md5_body='53e53b0edb705b35939c45f98da06881' weight='-15' depth='3' type='book' author='admin' uid='1' created='1118037725' status='1' format='3' sticky='0' promote='1'/>
+<nodeinfo  path='ivy/doc/terminology' md5_body='718f93a8c7604d411e366111bc0e6631' weight='-15' depth='3' type='book' author='admin' uid='1' created='1118037725' status='1' format='3' sticky='0' promote='1'/>
 <title>Terminology</title>
 <teaser>
 <![CDATA[]]>
@@ -2007,11 +2007,13 @@ Three statuses are defined by default in ivy:
 <li>release: revision fully tested and labelled fall in this category</li>
 </ul>
 <span class="since">since 1.4</span> This list is <a href="/ivy/doc/configuration/statuses">configurable</a> in your configuration file.
-]]>
+<h2>Repository</h2>
+What is called a repository in Ivy is a location where Ivy is able to find your modules artifacts and metadata (i.e. ivy files in most cases).
+Ivy can be used with complex repositories configured very finely. You can use <a href="/ivy/doc/concept">Dependency Resolvers</a> to do so.]]>
 </content>
 </node>
 <node id="node-107">
-<nodeinfo  path='ivy/doc/concept' md5_body='dcf973e9759591226fa12d694dc5ef17' weight='-13' depth='3' type='book' author='admin' uid='1' created='1118037893' status='1' format='4' sticky='0' promote='1'/>
+<nodeinfo  path='ivy/doc/concept' md5_body='52ac29932cf9b6150466d998630c75e0' weight='-13' depth='3' type='book' author='admin' uid='1' created='1118037893' status='1' format='4' sticky='0' promote='1'/>
 <title>Main Concepts</title>
 <teaser>
 <![CDATA[]]>
@@ -2116,18 +2118,8 @@ This algorithm takes into account special meaning of some text. For instance, wi
 Yes, it can selects a list of revision, even if most conflicts manager select only one revision.<br />
 But in some cases you will need to keep several revisions, and load in separate class loaders, for example.</p>
 <p>A list of revisions is said to be in conflict if they correspond to the same module, i.e. the same organisation/module name couple.</p>
-<p>Ivy comes with 4 built-in conflicts manager, but you can also plug your own:</p>
-<ul>
-<li>all</li>
-<p> this conflicts manager resolve conflicts by selecting all revisions. Also called NoConflictManager, it does evict any module.</p>
-<li>fixed</li>
-<p> this conflict manager always select the same revision</p>
-<li>latest-time</li>
-<p> this conflict manager selects only the 'latest' revision, latest being defined as the latest in time. Note that latest in time is costly to compute, so prefer latest-revision if you can.<br/></p>
-<li>latest-revision</li>
-<p> this conflict manager selects only the 'latest' revision, latest being defined by a string comparison of revisions as defined by the latest-revision strategy.
-</ul>
-<p>To have more details on how to setup your conflict managers and on how they work, see <a href="/ivy/doc/ivyfile">ivy file</a> reference.</p>
+<p>The list of available conflict managers is available on the <a href="/ivy/doc/configuration/conflict-managers">conflict manager configuration page</a>.</p>
+<p>To have more details on how to setup your conflict managers by module, see <a href="/ivy/doc/ivyfile/conflicts">conflicts</a> section in ivy file reference.</p>
 <h1><a name="matcher">Pattern matcher</a></h1>
 <p><span class="since">since 1.3</span><br />
 At several places Ivy let uses pattern to match a set of objects. For instance, you can exclude several modules at once when declaring a dependency by using a pattern matching all the modules to exclude.</p>
@@ -2170,6 +2162,20 @@ During publish, all listed checksum algorithms are computed and uploaded.</p>
 When Ivy performs the dependency resolution and some other tasks, it fires events before and after the most important steps. You can listen to these events using Ivy API, or you can even register a trigger to perform a particular action when a particular event occur.</p>
 <p>This is a particularly powerful and flexible feature which allow for example to perform a build of a dependency just before it is resolved, or follow what's happening during the dependency resolution process accuratly, and so on.</p>
 <p>For more details about event and triggers, see the <a href="/ivy/doc/conf/triggers">triggers</a> documentation page in the configuration section of this documentation.</p>
+<h1><a name="circular">Circular Dependencies</a></h1>
+<p><span class="since">since 1.4</span><br />
+Circular dependencies can be either direct or indirect. For instance, if A depends on A it's a circular dependency, and if A depends on B which itself depends on A, this is also a circular dependency.</p>
+<p>Prior to Ivy 1.4 circular dependencies where causing a failure in Ivy. As of Ivy 1.4, the behaviour of Ivy when it finds a circular dependency is configurable through a circular dependency strategy.</p>
+<p>3 built-in strategies are available:</p>
+<ul>
+<li>ignore</li>
+<p> circular dependencies are only signaled in verbose messages</p>
+<li>warn</li>
+<p> same as ignore, except that they are signaled as warning (default)</p>
+<li>error</li>
+<p> halt the dependency resolution when a circular dependency is found.
+</ul>
+<p>See the <a href="/ivy/doc/configuration/conf">configuration page</a> to see how to configure the circular dependency strategy you want to use.</p>
 ]]>
 </content>
 </node>
@@ -2477,61 +2483,90 @@ Loads a properties file into ivy variables. See variables chapter above for deta
 </content>
 </node>
 <node id="node-52">
-<nodeinfo  path='ivy/doc/configuration/conf' md5_body='e6893506b1531b60781d75b168d6ea6a' weight='-12' depth='4' type='book' author='admin' uid='1' created='1117629672' status='1' format='3' sticky='0' promote='1'/>
+<nodeinfo  path='ivy/doc/configuration/conf' md5_body='6a3fa51d69f4f2052cd56bd4aa371670' weight='-12' depth='4' type='book' author='admin' uid='1' created='1117629672' status='1' format='4' sticky='0' promote='1'/>
 <title>conf</title>
 <teaser>
 <![CDATA[]]>
 </teaser>
 <content>
-<![CDATA[<b>Tag:</b> conf<br/>
-<br/>
-Configures some important ivy info: default cache, default resolver, ...<br/><br/>
-<i>Note that this is not related at all with conf found in ivy files. This tag is only used to setup ivy.</i><br/><br/>
-Default cache is used whenever a cache is not provided. It usually points to a directory in your filesystem. <strong>This should not point to a directory used as a repository !</strong><br/><br/>
-
-Default resolver is used whenever nothing elese is configured in the modules section of the configuration file. It should
-give the name of a dependency resolver defined in the resolvers section of the configuration file.<br/><br/>
-
-Default latest strategy and conflict manager can also be configured here.<br/><br/>
-
-validate indicates if ivy files should generally be validate against xsd or not. This setting is only a default value,
-and can be overriden :<br/>
-1) in ant tasks<br/>
-2) in resolvers<br/>
-So if there is a setting in the resolver, it always win against all other settings.<br/><br/>
-
-checkUpToDate indicates to ivy if it must check date of artifacts before retrieving them (i.e. copying them from
-cache to another place in your filesystem). Usually it is a good thing to check date to avoid unnecessary copy, even if it's 
-most of the time a local copy.<br/><br/>
-cacheIvyPattern and cacheArtifactPattern are used to configure the way ivy stores ivy files and artifacts
-in the cache. Usually you do not have to change this, unless you want to use the cache directly from another tool,
-which is not recommended.
+<![CDATA[<p><b>Tag:</b> conf</p>
+<p>Configures some important ivy info: default cache, default resolver, ...</p>
+<p><i>Note that this is not related at all with conf found in ivy files. This tag is only used to setup ivy.</i></p>
+<p>Default cache is used whenever a cache is not provided. It usually points to a directory in your filesystem. <strong>This should not point to a directory used as a repository!</strong></p>
+<p>Default resolver is used whenever nothing elese is configured in the modules section of the configuration file. It should give the name of a dependency resolver defined in the resolvers section of the configuration file.</p>
+<p>Default latest strategy and conflict manager can also be configured here.</p>
+<p>validate indicates if ivy files should generally be validate against xsd or not. This setting is only a default value, and can be overriden :<br />
+1) in ant tasks<br />
+2) in resolvers<br />
+So if there is a setting in the resolver, it always win against all other settings.</p>
+<p>checkUpToDate indicates to ivy if it must check date of artifacts before retrieving them (i.e. copying them from<br />
+cache to another place in your filesystem). Usually it is a good thing to check date to avoid unnecessary copy, even if it's most of the time a local copy.</p>
+<p>cacheIvyPattern and cacheArtifactPattern are used to configure the way ivy stores ivy files and artifacts in the cache. Usually you do not have to change this, unless you want to use the cache directly from another tool, which is not recommended.</p>
 <h1>Attributes</h1>
 <table class="ivy-attributes">
 <thead>
-    <tr><th class="ivy-att">Attribute</th><th class="ivy-att-desc">Description</th><th class="ivy-att-req">Required</th></tr>
+<tr>
+<th class="ivy-att">Attribute</th>
+<th class="ivy-att-desc">Description</th>
+<th class="ivy-att-req">Required</th>
+</tr>
 </thead>
 <tbody>
-    <tr><td>defaultCache</td><td>a path to a directory to use as default cache</td>
-        <td>No, defaults to .ivy/cache in user home</td></tr>
-    <tr><td>defaultResolver</td><td>the name of the default resolver to use</td>
-        <td>No, but all modules should be configured in the modules section if not provided</td></tr>
-    <tr><td>defaultLatestStrategy</td><td>the name of the default latest strategy to use</td>
-        <td>No, defaults to latest-revision</td></tr>
-    <tr><td>defaultConflictManager</td><td>the name of the default conflict manager to use</td>
-        <td>No, defaults to latest-revision</td></tr>
-    <tr><td>defaultBranch</td><td>the default branch to use for all modules, except if they have a <a href="/ivy/doc/configuration/module"> module specific branch setting</a>. <span class="since">since 1.4</span></td>
-        <td>No, defaults to no default branch</td></tr>
-    <tr><td>validate</td><td>Indicates if ivy files should be validated against ivy.xsd or not.</td>
-        <td>No, defaults to true</td></tr>
-    <tr><td>checkUpToDate</td><td>Indicates if date should be checked before retrieving artifacts from cache</td>
-        <td>No, defaults to true</td></tr>
-    <tr><td>cacheIvyPattern</td><td>a pattern to indicate where ivy files should be put in cache</td>
-        <td>No, defaults to [organisation]/[module]/ivy-[revision].xml</td></tr>
-    <tr><td>cacheArtifactPattern</td><td>a pattern to indicate where artifact files should be put in cache</td>
-        <td>No, defaults to [organisation]/[module]/[type]s/[artifact]-[revision].[ext]</td></tr>
-    <tr><td>useRemoteConfig</td><td>true to configure ivyrep and ibiblio resolver from a remote configuration file (updated with changes in those repository structure if any) (<span class="since">since 1.2</span>)</td>
-        <td>No, defaults to false</td></tr>
+<tr>
+<td>defaultCache</td>
+<td>a path to a directory to use as default cache</td>
+<td>No, defaults to .ivy/cache in user home</td>
+</tr>
+<tr>
+<td>defaultResolver</td>
+<td>the name of the default resolver to use</td>
+<td>No, but all modules should be configured in the modules section if not provided</td>
+</tr>
+<tr>
+<td>defaultLatestStrategy</td>
+<td>the name of the default latest strategy to use</td>
+<td>No, defaults to latest-revision</td>
+</tr>
+<tr>
+<td>defaultConflictManager</td>
+<td>the name of the default conflict manager to use</td>
+<td>No, defaults to latest-revision</td>
+</tr>
+<tr>
+<td>defaultBranch</td>
+<td>the default branch to use for all modules, except if they have a <a href="/ivy/doc/configuration/module"> module specific branch setting</a>. <span class="since">since 1.4</span></td>
+<td>No, defaults to no default branch</td>
+</tr>
+<tr>
+<td>circularDependencyStrategy</td>
+<td>the name of the <a href="/ivy/doc/concept#circular">circular dependency strategy</a> to use <span class="since">since 1.4</span></td>
+<td>No, defaults to warn</td>
+</tr>
+<tr>
+<td>validate</td>
+<td>Indicates if ivy files should be validated against ivy.xsd or not.</td>
+<td>No, defaults to true</td>
+</tr>
+<tr>
+<td>checkUpToDate</td>
+<td>Indicates if date should be checked before retrieving artifacts from cache</td>
+<td>No, defaults to true</td>
+</tr>
+<tr>
+<td>cacheIvyPattern</td>
+<td>a pattern to indicate where ivy files should be put in cache</td>
+<td>No, defaults to [organisation]/[module]/ivy-[revision].xml</td>
+</tr>
+<tr>
+<td>cacheArtifactPattern</td>
+<td>a pattern to indicate where artifact files should be put in cache</td>
+<td>No, defaults to [organisation]/[module]/[type]s/[artifact]-[revision].[ext]</td>
+</tr>
+<tr>
+<td>useRemoteConfig</td>
+<td>true to configure ivyrep and ibiblio resolver from a remote configuration file (updated with changes in those repository structure if any) (<span class="since">since 1.2</span>)</td>
+<td>No, defaults to false</td>
+</tr>
 </tbody>
 </table>
 ]]>
@@ -3914,34 +3949,52 @@ Access ivy and artifacts files using sftp.</p>
 </node>
 </node>
 <node id="node-56">
-<nodeinfo  path='ivy/doc/configuration/conflict-managers' md5_body='f1b5646888557417f6b27b6fa660eec0' weight='-3' depth='4' type='book' author='admin' uid='1' created='1117629970' status='1' format='3' sticky='0' promote='1'/>
+<nodeinfo  path='ivy/doc/configuration/conflict-managers' md5_body='650e44cee234a48b2baa44de6ee0bf0f' weight='-3' depth='4' type='book' author='admin' uid='1' created='1117629970' status='1' format='4' sticky='0' promote='1'/>
 <title>conflict-managers</title>
 <teaser>
 <![CDATA[]]>
 </teaser>
 <content>
-<![CDATA[<b>Tag:</b> conflict-managers
-
-Defines a list of <a href="/ivy/doc/concept#conflict">conflicts managers</a> usable in ivy. Each conflict manager is identified by its name, given as an attribute.
-The child tag used for the conflict manager must be equal to a name of a conflict manager type (either built-in
-or added with the typedef tag).
-
-Here is a list of predefined conflicts managers (which do not require anything in the configuration file):
+<![CDATA[<p><b>Tag:</b> conflict-managers</p>
+<p>Defines a list of <a href="/ivy/doc/concept#conflict">conflicts managers</a> usable in ivy. Each conflict manager is identified by its name, given as an attribute.<br />
+The child tag used for the conflict manager must be equal to a name of a conflict manager type (either built-in<br />
+or added with the typedef tag).</p>
+<p>Here is a list of predefined conflicts managers (which do not require anything in the configuration file):</p>
 <ul>
-<li>all</li> this conflicts manager resolve conflicts by selecting all revisions. Also called NoConflictManager, it does evict any module.
-<li>fixed<li>this conflict manager always select the same revision
-<li>latest-time</li> this conflict manager selects only the 'latest' revision, latest being defined as the latest in time. Note that latest in time is costly to compute, so prefer latest-revision if you can.
-<li>latest-revision</li> this conflict manager selects only the 'latest' revision, latest being defined by a string comparison of revisions.
+<li>all</li>
+<p> this conflicts manager resolve conflicts by selecting all revisions. Also called NoConflictManager, it does evict any module.</p>
+<li>latest-time</li>
+<p> this conflict manager selects only the 'latest' revision, latest being defined as the latest in time. Note that latest in time is costly to compute, so prefer latest-revision if you can.</p>
+<li>latest-revision</li>
+<p> this conflict manager selects only the 'latest' revision, latest being defined by a string comparison of revisions.</p>
+<li>strict</li>
+<p> this conflict manager throws an exception (i.e. causes a build failure) whenever a conflict is found.
 </ul>
-
+<p>The two "latest" conflict managers also take into account the force attribute of the dependencies.<br />
+Indeed direct dependencies can declare a force attribute (see <a href="/ivy/doc/ivyfile/dependency">dependency</a>), which indicates the the revision given in the direct dependency should be prefered over indirect dependencies.</p>
+<p>Here is a list of conflict manager types available, which can be used to define your own custom conflict managers:</p>
+<ul>
+<li>latest-cm</li>
+<p>The latest conflict manager uses a latest strategy to select the latest revision among several ones. Both latest-time and latest-revision conflict managers are based on this conflict manager type. It takes 'latest' as attribute to define which latest strategy should be used. Example:<br />
+<code>&lt;latest-cm name=&quot;mylatest-conflict-manager&quot; latest=&quot;my-latest-strategy&quot;/&gt;</code></p>
+<li>regexp-cm</li>
+<p>This conflict manager is based on a regular expression and throw an exception (i.e. causes a build failure) when a conflict is found with versions with different matching group. For instance if a conflict is found between 1.2.x and 1.3.y it will throw an exception if the regular exception is (.*)\.\d, because the matching group will match different string (1.2 and 1.3). 1.2.1 and 1.2.2 won't throw an exception with the same regular expression. The regular expression is set using the 'regexp' attribute. A 'ignoreNonMatching' attribute can also be set to simply warrn when a version is found which does not match the regular expression, instead of throwing an exception.
+</ul>
 <h3>Child elements</h3>
 <table class="ivy-children">
 <thead>
-    <tr><th class="ivy-chld">Element</th><th class="ivy-chld-desc">Description</th><th class="ivy-chld-card">Cardinality</th></tr>
+<tr>
+<th class="ivy-chld">Element</th>
+<th class="ivy-chld-desc">Description</th>
+<th class="ivy-chld-card">Cardinality</th>
+</tr>
 </thead>
 <tbody>
-    <tr><td>any conflict manager</td><td>adds a conflict manager to the list of available conflict managers</td>
-        <td>0..n</td></tr>
+<tr>
+<td>any conflict manager</td>
+<td>adds a conflict manager to the list of available conflict managers</td>
+<td>0..n</td>
+</tr>
 </tbody>
 </table>
 ]]>
@@ -4747,7 +4800,7 @@ public configurations, how and when to use them.
 </node>
 </node>
 <node id="node-64">
-<nodeinfo  path='ivy/doc/ivyfile/configurations' md5_body='90a2a9dd2a7d3839e30c462447b9b967' weight='-12' depth='4' type='book' author='admin' uid='1' created='1117630958' status='1' format='4' sticky='0' promote='1'/>
+<nodeinfo  path='ivy/doc/ivyfile/configurations' md5_body='ea14e9f4c4bb4fb6a93307880f110506' weight='-12' depth='4' type='book' author='admin' uid='1' created='1117630958' status='1' format='4' sticky='0' promote='1'/>
 <title>configurations</title>
 <teaser>
 <![CDATA[]]>
@@ -4759,6 +4812,9 @@ public configurations, how and when to use them.
 <p>A default conf mapping is very similar to the defaultconf which can be set on the dependencies tag, but it has a slightly different behaviour.<br />
 The default conf mapping not only defines the conf mapping to use when no conf mapping is specified for a dependency in this ivy file, but it also modify the way ivy interprets conf mapping with no mapped conf. In this case, Ivy will look in the default conf mapping and use the conf mapping defined in the default conf mapping for the conf for which there is no mapped conf.</p>
 <p>See <a href="/ivy/doc/ivyfile/dependency#defaultconfmapping">examples on the dependency</a> page.</p>
+<p><span class="since">since 1.4</span> You can activate a confmappingoverride mode for all configurations, in which case as soon as a dependency is needed in one configuration without explicit mapping (i.e. without right side operande in the mapping), it will use the default configuration mapping of the configuration being resolved instead of the configuration mapping of the configuration declared.<br />
+This is an advanced feature which should be used only if you understand its implication.<br />
+For a discussion about the origin of this feature see <a href="/node/592">this thread</a>.</p>
 <h1>Attributes</h1>
 <table class="ivy-attributes">
 <thead>
@@ -4773,6 +4829,11 @@ The default conf mapping not only defines the conf mapping to use when no conf m
 <td>defaultconfmapping</td>
 <td>the default conf mapping to use in this ivy file <span class="since">since 1.3</span></td>
 <td>No, defaults to no default conf mapping</td>
+</tr>
+<tr>
+<td>confmappingoverride</td>
+<td>true to activate configuration mapping override, false otherwise <span class="since">since 1.4</span></td>
+<td>No, defaults to false</td>
 </tr>
 </tbody>
 </table>
@@ -5711,7 +5772,7 @@ It enables to restrict the artifacts required by including only the artifacts gi
 </node>
 </node>
 <node id="node-77">
-<nodeinfo  path='ivy/doc/ivyfile/conflicts' md5_body='f0e91c4fc3700455b9f8ae5b54ffd4cf' weight='3' depth='4' type='book' author='admin' uid='1' created='1117634115' status='1' format='3' sticky='0' promote='1'/>
+<nodeinfo  path='ivy/doc/ivyfile/conflicts' md5_body='6433626834cd168992942d173d451c0c' weight='3' depth='4' type='book' author='admin' uid='1' created='1117634115' status='1' format='3' sticky='0' promote='1'/>
 <title>conflicts</title>
 <teaser>
 <![CDATA[]]>
@@ -5722,43 +5783,7 @@ It enables to restrict the artifacts required by including only the artifacts gi
 Container for conflict manager elements, used to indicate how conflicts should be resolved
 for this module. <br/><br/>
 
-A conflict occurs when two revisions of the same module are required. This can happen in several cases,
-but the more often it is due to transitive dependencies: a module depends on A rev 1.0 and on B rev 2.0, and
-B depends on A rev 1.1. Then we say there is a conflict on A.<br/><br/>
-
-To resolve the conflict, ivy uses conflicts managers. A conflict manager is able
-to select, among a list of module revisions in conflict, a list of revisions to keep.
-Yes, it can selects a list of revision, even if most conflicts manager select only one revision.
-But in some cases you will need to keep several revisions, and load in separate class loaders,
-for example.<br/><br/>
-
-Conflicts manager can be defined in each ivy file.
-Conflicts are thus resolved recursively, each module being responsible to resolve
-conflicts of its dependencies.<br/><br/>
-
-Conflicts manager are declared by module, this means that you can declare a different
-conflict manager for each dependency. Moreover, conflicts manager being in a separate section
-in the ivy file (and not in the dependencies section), you can declare them for a set of modules
-(using regular expression, see <a href="/ivy/doc/ivyfile/manager">manager</a>), and you can declare them
-for non direct dependencies. Imagine a module depends on A and B, A depends on C rev 1.0 and B 
-depends on C rev 2.0. Then there is conflict on C which must be solved by the module, even if
-the module has no direct dependency on C. This is possible with the conflict manager handling of ivy.<br/><br/>
-
-Ivy comes with 4 built-in conflicts manager, but you can also plug your own:<br/>
-- all: this conflicts manager resolve conflicts by selecting all revisions. Also 
-called NoConflictManager, it does evict any module.<br/>
-- fixed: this conflict manager always select the same revision<br/>
-- latest-time: this conflict manager selects only the 'latest' revision, 
-latest being defined as the latest in time. Note that latest in time
-is costly to compute, so prefer latest-revision if you can.<br/>
-- latest-revision: this conflict manager selects only the 'latest' revision, 
-latest being defined by a string comparison of revisions as defined by the latest-revision strategy
-(see <a href="/ivy/doc/reference">Latest Strategies</a> for details).<br/><br/>
-
-The two "latest" conflicts manager also take into account the force attribute of the dependencies.
-Indeed direct dependencies can declare a force attribute (see <a href="/ivy/doc/ivyfile/dependency">dependency</a>), 
-which indicates the the revision given in the direct dependency should be prefered over
-indirect dependencies.<br/><br/>
+The list of built-in conflict managers available is listed on the <a href="/ivy/doc/configuration/conflict-managers">conflict manager configuration page</a>.<br/><br/>
 
 Conflicts manager are used during the resolve operation, i.e. when ivy analyse the graph of dependencies
 and download corresponding ivy files and artifacts. The fact to manage conflict at resolve time
@@ -6359,7 +6384,7 @@ Use either ${ivy.conf.file} if it exists, or the <a href="/misc/ivy/samples/ivyc
 </content>
 </node>
 <node id="node-82">
-<nodeinfo  path='ivy/doc/use/deliver' md5_body='337a5da5f3aacb6bcad150b95a2160e2' weight='0' depth='5' type='book' author='admin' uid='1' created='1117634901' status='1' format='4' sticky='0' promote='1'/>
+<nodeinfo  path='ivy/doc/use/deliver' md5_body='4046fc1a7e40c784ad684c747c0b83dc' weight='0' depth='5' type='book' author='admin' uid='1' created='1117634901' status='1' format='4' sticky='0' promote='1'/>
 <title>deliver</title>
 <teaser>
 <![CDATA[]]>
@@ -6367,16 +6392,15 @@ Use either ${ivy.conf.file} if it exists, or the <a href="/misc/ivy/samples/ivyc
 <content>
 <![CDATA[<p>Delivers a resolved ivy file of the current module, and possibly do recursive delivery of dependencies.<br />
 This task does two main things:</p>
-<h2>Deliver a resolved ivy file</h2>
-<p>This task delivers a resolved ivy file of the current module, based upon the last resolve done. The resolved ivy file contains updated information about the delivered module, such as revision and status.</p>
+<h2>Generate a resolved ivy file</h2>
+<p>This task generates a resolved ivy file of the current module, based upon the last resolve done. The resolved ivy file contains updated information about the delivered module, such as revision and status.</p>
 <p>Moreover, all included configurations files are included in the ivy file, and variables are replaced by their values.</p>
 <p>Finally, in the resolved ivy file, dynamic revisions are replaced by the static ones that have been found during the resolve step, so the ivy file can be used later safely to obtain the same dependencies (providing that a revision uniquely identifies a module, which should be the case for proper ivy use).</p>
 <p><span class="since">since 1.3</span> The replacement of dynamic revisions by static ones can be turned off, so that dynamic revisions are kept in the ivy file.</p>
 <h2>do recursive delivery</h2>
 <p>This is done only if a deliver target is given to the deliver task.</p>
-<p>If a deliver target is set, then it is called for each dependency which has not a suffisant status compared to the deliver status set for this task. This means that if you deliver an integration revision, no recursive delivery will be done.</p>
-<p>If you deliver a milestone revision, deliver target will be called with each integration dependency. </p>
-<p>Finally, if you deliver a release revision, then deliver target will be called with each integration and milestone dependency.</p>
+<p>If a deliver target is set, then it is called (via an antcall) for each dependency which has not a suffisant status compared to the deliver status set for this task. This means that if you deliver an integration revision, no recursive delivery will be done.</p>
+<p>If you deliver a milestone or a release revision, deliver target will be called with each integration dependency. </p>
 <p>The deliver target is called with the following properties available:</p>
 <ul>
 <li>dependency.name</li>
@@ -6388,7 +6412,25 @@ This task does two main things:</p>
 <li>dependency.version</li>
 <p>the revision of the dependency that should be delivered (the one that was retrieved during last resolve)
 </ul>
-<p>Note that both <code>dependency.published.status</code> and <code>dependency.published.version</code> are in fact asked to the user via standard ant input. The delivered ivy file will update its dependency revisions with those given here.  </p>
+<p>Both <code>dependency.published.status</code> and <code>dependency.published.version</code> can be either asked to the user through ant input tasks (default behaviour), or be always the same for the whole recursive delivery process if the following properties are set:</p>
+<ul>
+<li>recursive.delivery.status</li>
+<p>set to the status to which all dependencies requiring to be delivered will be</p>
+<li>recursive.delivery.version</li>
+<p>set to the version to which all dependencies requiring to be delivered will be
+</ul>
+<p>Usually the deliver target itself triggers an another ant build (using ant task) even if this is up to you to decide.</p>
+<p>The delivered ivy file will update its dependency revisions with those given here.  </p>
+<h2>deliver and publish</h2>
+<p>The deliver task is most of the time not called explicitly, but rather called automatically by the <a href="/ivy/doc/use/publish">publish</a> task. So, when shall the deliver task be called explictly? When you actually need to separate what is performed by the deliver task (see above), from what is performed by the publish task, i.e. upload a module to a repository.</p>
+<p>And this can be particularly useful if you want to process the generated ivy file before uploading it (if you want to add automatically more information like an SCM tag used, the user who performed the release, ...).</p>
+<p>It can also be useful if you want to trigger a recursive delivery and then ensure that you get the recursively delivered modules as dependencies. In this case your build order may look like this:<br />
+- ivy:configure<br />
+- ivy:resolve<br />
+- ivy:deliver with recursive delivery<br />
+- ivy:resolve again with the ivy file generated by the recursive delivery<br />
+- do your build stuff (compile, jar, whatever)<br />
+- ivy:publish </p>
 <table class="ant">
 <thead>
 <tr>
@@ -6941,7 +6983,7 @@ To generate an XML report using a custom stylesheet which needs some parameters:
 </content>
 </node>
 <node id="node-80">
-<nodeinfo  path='ivy/doc/use/resolve' md5_body='b6a9f602f076755696ad4bd9c247289d' weight='0' depth='5' type='book' author='admin' uid='1' created='1117634772' status='1' format='4' sticky='0' promote='1'/>
+<nodeinfo  path='ivy/doc/use/resolve' md5_body='9ec29d733a885bf43aa4cb035417295e' weight='0' depth='5' type='book' author='admin' uid='1' created='1117634772' status='1' format='4' sticky='0' promote='1'/>
 <title>resolve</title>
 <teaser>
 <![CDATA[]]>
@@ -6960,7 +7002,7 @@ If configure has not been called before resolve is called, a default configurati
 <li>ivy.resolved.configurations</li>
 <p>set to the comma separated list of configurations resolved
 </ul>
-<p>An additional property is set only if there are changes since the last resolve: <code>ivy.deps.changed</code> (<span class="since">since 1.2</span>)</p>
+<p>An additional property is set to true if there are changes since the last resolve, and to false otherwise: <code>ivy.deps.changed</code> (<span class="since">since 1.2</span>)</p>
 <p>When ivy has finished the resolve task, it outputs a summary of what has been resolved. This summary looks like this:</p>
 <pre>
 ---------------------------------------------------------------------
@@ -7439,7 +7481,7 @@ to existing implementations, it's the best advice we can give you !
 </node>
 </node>
 <node id="node-743">
-<nodeinfo  path='ivy/doc/releasenotes' md5_body='58e7f66cdb638d794ecc2e0147dae99d' weight='3' depth='2' type='book' author='xavier' uid='6' created='1156478849' status='1' format='4' sticky='0' promote='0'/>
+<nodeinfo  path='ivy/doc/releasenotes' md5_body='82de7e031dd38856aaa9febe9ab5895d' weight='3' depth='2' type='book' author='xavier' uid='6' created='1156478849' status='1' format='4' sticky='0' promote='0'/>
 <title>Release Notes</title>
 <teaser>
 <![CDATA[]]>
@@ -7450,7 +7492,7 @@ For each revision you will be able to see the complete list of changes (bug fixe
 <p>The most recent version also feature a new and noteworthy section.</p>
 <p>Refer to these pages if you want to know the benefits of upgrading to a newer version of Ivy.<br />
 <hr/><br />
-The latest stable version is <a href="/ivy/doc/releasenotes/1.4-RC1">1.4-RC1</a></p>
+The latest stable version is <a href="/ivy/doc/releasenotes/1.4-RC2">1.4-RC2</a></p>
 ]]>
 </content>
 <node id="node-745">
@@ -7966,7 +8008,7 @@ If no bug is discovered, 1.0-rc3 should be promoted to 1.0 on <b>2005-04-26</b><
 </content>
 </node>
 <node id="node-744">
-<nodeinfo  path='ivy/doc/releasenotes/1.4' md5_body='b23130af006d765ad8d4709da2c4fd79' weight='0' depth='3' type='book' author='xavier' uid='6' created='1156479101' status='1' format='4' sticky='0' promote='0'/>
+<nodeinfo  path='ivy/doc/releasenotes/1.4' md5_body='902a0924ded5e15be9f22aa2da325740' weight='0' depth='3' type='book' author='xavier' uid='6' created='1156479101' status='1' format='4' sticky='0' promote='0'/>
 <title>1.4</title>
 <teaser>
 <![CDATA[]]>
@@ -7978,7 +8020,7 @@ If no bug is discovered, 1.0-rc3 should be promoted to 1.0 on <b>2005-04-26</b><
 <h1><center><big>New and noteworthy</big></center></h1>
 <h1>Documentation</h1>
 <h2>A new introduction tutorial as simple as 1-2-3</h2>
-<p>It has never been so easy to try Ivy! You don't even it to install it yourself! Follow this simple steps and you're done:</p>
+<p>It has never been so easy to try Ivy! You don't even need to install it yourself! Follow this simple steps and you're done:</p>
 <ol>
 <li>make sure you have <a href="http://ant.apache.org/">ant</a> 1.6.2 or greater and a <a href="http://java.sun.com">jdk</a> properly installed</li>
 <li>copy <a href="http://svn.jayasoft.org/projects/tools/ivy/src/example/go-ivy/build.xml">this build file</a> in an empty directory on your local filesystem (and make sure you name it build.xml)</li>
@@ -8141,6 +8183,26 @@ A new and noteworthy section is available on <a href="/ivy/doc/releasenotes/1.4"
 </ul>
 <p>It includes 30 new features, 33 improvements and even more bug fixes since Ivy 1.3.1.<br />
 <div class="codeblock"><code>&nbsp;  version 1.4-RC1 - 2006-09-17<br />=================================<br />Incompatibility with previous versions:<br />---------------------------------------<br />* usage:<br />&nbsp; - no known major incompatiblity<br />&nbsp; - build list task now requires a configured ivy instance (configure will automatically be called if you don't call it explicitly)<br />&nbsp; - publish now requires the published ivy file to have the published revision (automatic if you use deliver)<br />* API:<br />&nbsp; - Numerous API changes especially in the BasicResolver class and subclasses due to the introduction of VersionMatcher,<br />&nbsp; 	this may break some custom dependency resolvers or other tools or plugins depending directly on Ivy API<br />Changes:<br />--------<br />* thanks to Jayasoft:<br />&nbsp; - NEW: ivy report generate full graph from automated build (<a href="http://jira.jayasoft.org/browse/IVY-155">IVY-155</a>)<br />&nbsp; - NEW: support for build number calculation (<a href="http://jira.jayasoft.org/browse/IVY-276">IVY-276</a>)<br />&nbsp; - NEW: find modules in repository (<a href="http://jira.jayasoft.org/browse/IVY-275">IVY-275</a>)<br />&nbsp; - NEW: explicitly specify artifact download URL (<a href="http://jira.jayasoft.org/browse/IVY-271">IVY-271</a>)<br />&nbsp; - NEW: introduce branch management (<a href="http://jira.jayasoft.org/browse/IVY-269">IVY-269</a>)<br />&nbsp; - NEW: resolve dependencies directly without using an ivy file (<a href="http://jira.jayasoft.org/browse/IVY-268">IVY-268</a>)<br />&nbsp; - NEW: ability to invoke any build scripts for dependencies (<a href="http://jira.jayasoft.org/browse/IVY-68">IVY-68</a>)<br />&nbsp; - NEW: support sftp repository (<a href="http://jira.jayasoft.org/browse/IVY-267">IVY-267</a>)<br />&nbsp; - NEW: pluggable version matcher (<a href="http://jira.jayasoft.org/browse/IVY-219">IVY-219</a>)<br />&nbsp; - NEW: support for version ranges (<a href="http://jira.jayasoft.org/browse/IVY-295">IVY-295</a>)<br />&nbsp; - NEW: dependency based on dependency status (<a href="http://jira.jayasoft.org/browse/IVY-47">IVY-47</a>)<br />&nbsp; - NEW: add possibility to define extra attributes in ivy files (<a href="http://jira.jayasoft.org/browse/IVY-217">IVY-217</a>)<br />&nbsp; - NEW: option to omit specific confs and allow the rest (<a href="http://jira.jayasoft.org/browse/IVY-66">IVY-66</a>)<br />&nbsp; - NEW: use custom classloader for plugins (<a href="http://jira.jayasoft.org/browse/IVY-220">IVY-220</a>)<br />&nbsp; - NEW: adding to SPECIAL_MEANINGS in LatestRevisionStrategy (<a href="http://jira.jayasoft.org/browse/IVY-121">IVY-121</a>)<br />&nbsp; - NEW: Allow use of system properties in ivyconf.xml (<a href="http://jira.jayasoft.org/browse/IVY-228">IVY-228</a>)<br />&nbsp; - IMPROVE: allow to use file-system repository directly without cache (<a href="http://jira.jayasoft.org/browse/IVY-211">IVY-211</a>)<br />&nbsp; - IMPROVE: deliver task use a default value for revision (<a href="http://jira.jayasoft.org/browse/IVY-252">IVY-252</a>)<br />&nbsp; - IMPROVE: better documentation distribution (<a href="http://jira.jayasoft.org/browse/IVY-274">IVY-274</a>) - in progress<br />&nbsp; - IMPROVE: define conflict manager per organisation/module in ivyconf (<a href="http://jira.jayasoft.org/browse/IVY-270">IVY-270</a>)<br />&nbsp; - IMPROVE: transitive parameter in resolve (<a href="http://jira.jayasoft.org/browse/IVY-21">IVY-21</a>)<br />&nbsp; - IMPROVE: add syncing feature in retrieve (<a href="http://jira.jayasoft.org/browse/IVY-33">IVY-33</a>)<br />&nbsp; - IMPROVE: use of md5 and/or sha1 files to check downloads (<a href="http://jira.jayasoft.org/browse/IVY-27">IVY-27</a>)<br />&nbsp; - IMPROVE: possible to use m2compatible without automatically using POMs as well (<a href="http://jira.jayasoft.org/browse/IVY-263">IVY-263</a>)<br />&nbsp; - IMPROVE: support for circular dependencies (<a href="http://jira.jayasoft.org/browse/IVY-202">IVY-202</a>)<br />&nbsp; - IMPROVE: make status list configurable (<a href="http://jira.jayasoft.org/browse/IVY-242">IVY-242</a>)<br />&nbsp; - IMPROVE: use only ivy patterns for listing revisions when module desciptor is required (allownomd = false) (<a href="http://jira.jayasoft.org/browse/IVY-166">IVY-166</a>)<br />&nbsp; - IMPROVE: implement strict haltonfailure if ivy.xml is not found (<a href="http://jira.jayasoft.org/browse/IVY-110">IVY-110</a>)<br />&nbsp; - IMPROVE: artifact's &quot;name&quot; attribute could be omitted (<a href="http://jira.jayasoft.org/browse/IVY-231">IVY-231</a>)<br />&nbsp; - IMPROVE: ivy standalone now return error status (<a href="http://jira.jayasoft.org/browse/IVY-152">IVY-152</a>)<br />&nbsp; - IMPROVE: log messages do not display most specfic resolver name (<a href="http://jira.jayasoft.org/browse/IVY-170">IVY-170</a>)<br />&nbsp; - IMPROVE: prints URL before downloading in verbose mode (<a href="http://jira.jayasoft.org/browse/IVY-257">IVY-257</a>)<br />&nbsp; - IMPROVE: incorrect value in status attribute causes silent failure (<a href="http://jira.jayasoft.org/browse/IVY-259">IVY-259</a>)<br />&nbsp; - IMPROVE: suport empty dependencies tag in an ivy file (<a href="http://jira.jayasoft.org/browse/IVY-281">IVY-281</a>)<br />&nbsp; - IMPROVE: isolate dependency resolution from artifact downloading (<a href="http://jira.jayasoft.org/browse/IVY-254">IVY-254</a>)<br />&nbsp; - IMPROVE: Pass artifact to repository when calling &quot;put&quot; (<a href="http://jira.jayasoft.org/browse/IVY-192">IVY-192</a>)<br />&nbsp; - IMPROVE: Do not publish ivy file with bad revision, and allow to force the deliver when calling publish task (<a href="http://jira.jayasoft.org/browse/IVY-245">IVY-245</a>)<br />&nbsp; - FIX: Problem with multiple artifact includes in transitive dependencies (<a href="http://jira.jayasoft.org/browse/IVY-283">IVY-283</a>)<br />&nbsp; - FIX: Endless recursion in report (<a href="http://jira.jayasoft.org/browse/IVY-284">IVY-284</a>)<br />&nbsp; - FIX: http url lister doesn't work when link text has spaces (<a href="http://jira.jayasoft.org/browse/IVY-282">IVY-282</a>)<br />&nbsp; - FIX: Incorrect ant log level (<a href="http://jira.jayasoft.org/browse/IVY-279">IVY-279</a>)<br />&nbsp; - FIX: Wrong resolution of dependencies if artifacts specified explicitly (<a href="http://jira.jayasoft.org/browse/IVY-261">IVY-261</a>)<br />&nbsp; - FIX: Multiple versions of dependencies appearing in retrieve (<a href="http://jira.jayasoft.org/browse/IVY-264">IVY-264</a>)<br />&nbsp; - FIX: Too many false CircularDependencyException errors thrown (<a href="http://jira.jayasoft.org/browse/IVY-230">IVY-230</a>)<br />&nbsp; - FIX: CircularDependencyException not always thrown (<a href="http://jira.jayasoft.org/browse/IVY-184">IVY-184</a>)<br />&nbsp; - FIX: NullPointer in BasicResolver (<a href="http://jira.jayasoft.org/browse/IVY-258">IVY-258</a>)<br />&nbsp; - FIX: Bad diagnostics message when no space left (<a href="http://jira.jayasoft.org/browse/IVY-250">IVY-250</a>)<br />&nbsp; - FIX: Maven2 POM support can find groupId from &quot;parent&quot; element (<a href="http://jira.jayasoft.org/browse/IVY-262">IVY-262</a>)<br />&nbsp; - FIX: Parent version is expected to be equal to the module version in POM (<a href="http://jira.jayasoft.org/browse/IVY-241">IVY-241</a>)<br />&nbsp; - FIX: problem with cache and returnFirst (<a href="http://jira.jayasoft.org/browse/IVY-207">IVY-207</a>)<br />&nbsp; - FIX: modules splitted across a chain are not handled correctly (<a href="http://jira.jayasoft.org/browse/IVY-206">IVY-206</a>)<br />&nbsp; - FIX: problem with conf extension and latest revisions (<a href="http://jira.jayasoft.org/browse/IVY-240">IVY-240</a>)<br />&nbsp; - FIX: The clean-cache target in /src/example/hello-ivy/build.xml file refers to ${user.home}/.ivy-cache instead of ${user.home}/.ivy/cache/ (<a href="http://jira.jayasoft.org/browse/IVY-265">IVY-265</a>)<br />* thanks to Ivy Community:<br />&nbsp; - NEW: SSH Resolver added and aligned with SFTP resolver (<a href="http://jira.jayasoft.org/browse/IVY-273">IVY-273</a>) (thanks to Andreas Sahlbach)<br />&nbsp; - NEW: ability to turn off transitivity at configuration level (<a href="http://jira.jayasoft.org/browse/IVY-103">IVY-103</a>) (thanks to Karl Baum and Maarten Coene)<br />&nbsp; - NEW: a conflict manager that is able to allow implementation changes but not api changes (1.2.x - OK), (1.x.x - Not OK) (<a href="http://jira.jayasoft.org/browse/IVY-223">IVY-223</a>) (thanks to Anders Janmyr)<br />&nbsp; - NEW: enhance standalone mode to execute java program by creating classloader of dependant jars from cache (<a href="http://jira.jayasoft.org/browse/IVY-210">IVY-210</a>) (thanks to Peter Hayes)<br />&nbsp; - NEW: addition of Vfs Resolver which uses Commons-Vfs to resolve files (<a href="http://jira.jayasoft.org/browse/IVY-128">IVY-128</a>) (thanks to Glen Marchesani, Matt Inger and Stephen Nesbitt)<br />&nbsp; - IMPROVE: use global properties in the recursive delivery (<a href="http://jira.jayasoft.org/browse/IVY-222">IVY-222</a>) (with the contribution of Roshan Punnoose)<br />&nbsp; - IMPROVE: better handling of authentication (thanks to Christian Riege)<br />&nbsp; - FIX: Ant log messsages not embedded in task log (<a href="http://jira.jayasoft.org/browse/IVY-280">IVY-280</a>) (thanks to Gilles Scokart)<br />&nbsp; - FIX: Ivy fails when downloading from a server that supports NTLM authentication (<a href="http://jira.jayasoft.org/browse/IVY-213">IVY-213</a>) (thanks to Damon Rand)<br />&nbsp; - FIX: Delivered Ivy files with incomplete last line. (<a href="http://jira.jayasoft.org/browse/IVY-125">IVY-125</a>) (thanks to Matthias Kilian)<br />&nbsp; - FIX: the vfs resolver should not log passwords (<a href="http://jira.jayasoft.org/browse/IVY-292">IVY-292</a>) (thanks to Antoine Levy-Lambert)<br />* thanks to Maarten Coene:<br />&nbsp; - NEW: add failureproperty parameter to the resolve task (<a href="http://jira.jayasoft.org/browse/IVY-285">IVY-285</a>)<br />&nbsp; - NEW: Add type filtering to retrieve task (<a href="http://jira.jayasoft.org/browse/IVY-260">IVY-260</a>)<br />&nbsp; - NEW: Add selectors to the configuration mapping (<a href="http://jira.jayasoft.org/browse/IVY-253">IVY-253</a>)<br />&nbsp; - NEW: Add Ant task to retrieve information from an Ivy file without doing a resolve (<a href="http://jira.jayasoft.org/browse/IVY-255">IVY-255</a>)<br />&nbsp; - NEW: add option to cachepath task to create a path with local artifact paths (<a href="http://jira.jayasoft.org/browse/IVY-221">IVY-221</a>)<br />&nbsp; - NEW: allow extending configurations to override the mapping of their super configurations (<a href="http://jira.jayasoft.org/browse/IVY-218">IVY-218</a>)<br />&nbsp; - IMPROVE: Retain artifact filenames along the publish/resolve/retrieve process (<a href="http://jira.jayasoft.org/browse/IVY-54">IVY-54</a>)<br />&nbsp; - IMPROVE: report Ant-task doesn't process the reports in batch (<a href="http://jira.jayasoft.org/browse/IVY-247">IVY-247</a>)<br />&nbsp; - IMPROVE: make ReportOutputter pluggable and customizable (<a href="http://jira.jayasoft.org/browse/IVY-205">IVY-205</a>)<br />&nbsp; - IMPROVE: add wildcard support for extending configurations (<a href="http://jira.jayasoft.org/browse/IVY-235">IVY-235</a>)<br />&nbsp; - IMPROVE: add support for xslt parameters in the report task (<a href="http://jira.jayasoft.org/browse/IVY-227">IVY-227</a>)<br />&nbsp; - IMPROVE: comments now aren't lost when delivering ivy files (<a href="http://jira.jayasoft.org/browse/IVY-226">IVY-226</a>)<br />&nbsp; - IMPROVE: add sort of 'fallback'-mapping to the defaultconfmapping attribute (<a href="http://jira.jayasoft.org/browse/IVY-215">IVY-215</a>)<br />&nbsp; - IMPROVE: artifact origin is not included in the default report (<a href="http://jira.jayasoft.org/browse/IVY-251">IVY-251</a>)<br />&nbsp; - FIX: VFS Resolve fails when trying to resolve a + version (<a href="http://jira.jayasoft.org/browse/IVY-237">IVY-237</a>)<br />&nbsp; - FIX: report Ant-task doesn't use outputpattern for generating graphml reports (<a href="http://jira.jayasoft.org/browse/IVY-246">IVY-246</a>)<br />&nbsp; - FIX: report Ant-task doesn't call init() on the internal XSLTProcess (<a href="http://jira.jayasoft.org/browse/IVY-248">IVY-248</a>)<br />&nbsp; - FIX: value of confmappingoverride from imported configurations is lost when writing Ivy file (<a href="http://jira.jayasoft.org/browse/IVY-239">IVY-239</a>)<br />&nbsp; - FIX: including configurations doesn't import the confmappingoverride setting (<a href="http://jira.jayasoft.org/browse/IVY-238">IVY-238</a>)<br />&nbsp; - FIX: NullPointerException when the creation of Ivy file in cache fails (<a href="http://jira.jayasoft.org/browse/IVY-234">IVY-234</a>)<br />&nbsp; - FIX: Ivy file containing 2 different versions of the same module is not deliverd correctly (<a href="http://jira.jayasoft.org/browse/IVY-229">IVY-229</a>)<br />&nbsp; - FIX: ModuleRevisionId encode/decode doesn't work if revision is empty (<a href="http://jira.jayasoft.org/browse/IVY-233">IVY-233</a>)<br />&nbsp; - FIX: cachepath task should preserve the order of the dependencies (<a href="http://jira.jayasoft.org/browse/IVY-225">IVY-225</a>)<br />&nbsp; - FIX: specifying a defaultconfmapping adds dependencies of each unlisted configuration (<a href="http://jira.jayasoft.org/browse/IVY-214">IVY-214</a>)<br />* thanks to Johan Stuyts:<br />&nbsp; - NEW: always update artifacts when revision matches a regex pattern (<a href="http://jira.jayasoft.org/browse/IVY-189">IVY-189</a>)<br />&nbsp; - NEW: provide Ant task for generating report about artifacts depended upon (<a href="http://jira.jayasoft.org/browse/IVY-194">IVY-194</a>)<br />&nbsp; - IMPROVE: change default cache artifact pattern to handle missing extension (<a href="http://jira.jayasoft.org/browse/IVY-196">IVY-196</a>)<br />* thanks to Karl Baum:<br />&nbsp; - NEW: &quot;this&quot; symbol for configuration mappings (<a href="http://jira.jayasoft.org/browse/IVY-183">IVY-183</a>)<br />&nbsp; - IMPROVE: performances improved (<a href="http://jira.jayasoft.org/browse/IVY-187">IVY-187</a>)<br /></code></div></p>
+]]>
+</content>
+</node>
+<node id="node-818">
+<nodeinfo  path='ivy/doc/releasenotes/1.4-RC2' md5_body='e7e13065a307bdefa87132e242f6c820' weight='0' depth='4' type='book' author='xavier' uid='6' created='1159369039' status='1' format='1' sticky='0' promote='0'/>
+<title>1.4-RC2 - 2006-09-27</title>
+<teaser>
+<![CDATA[]]>
+</teaser>
+<content>
+<![CDATA[<p>Here are the release notes of version 1.4-RC2.<br />
+A new and noteworthy section is available on <a href="/ivy/doc/releasenotes/1.4">version 1.4 page</a>.</p>
+<p>You can download it here:</p>
+<ul>
+<li><a href="/visit.php?url=./downloads/ivy/1.4-RC2/ivy-1.4-RC2-bin.zip">binaries</a></li>
+<li><a href="/visit.php?url=./downloads/ivy/1.4-RC2/ivy-1.4-RC2-src.zip">sources</a></li>
+<li><a href="/visit.php?url=./downloads/ivy/1.4-RC2/ivy-1.4-RC2-doc.zip">documentation</a></li>
+</ul>
+<p>It includes only bug fixes since 1.4-RC1.<br />
+<div class="codeblock"><code>&nbsp;  version 1.4-RC2 - 2006-09-27<br />=====================================<br />- FIX: m2compatible flag is ignored for display of failed artifact searches (<a href="http://jira.jayasoft.org/browse/IVY-303">IVY-303</a>)<br />- FIX: AntCallTriggerTest and AntBuildTriggerTest fail when run from ivy build.xml (<a href="http://jira.jayasoft.org/browse/IVY-310">IVY-310</a>)<br />- FIX: Classloader problem with ant (<a href="http://jira.jayasoft.org/browse/IVY-311">IVY-311</a>)<br />- FIX: Make resolve overview more compact (<a href="http://jira.jayasoft.org/browse/IVY-299">IVY-299</a>)<br />- FIX: Could not write to &quot;tmp:///webdav_tmp.c1&quot; because it is read-only (<a href="http://jira.jayasoft.org/browse/IVY-312">IVY-312</a>)<br /></code></div></p>
 ]]>
 </content>
 </node>
