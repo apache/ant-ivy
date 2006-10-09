@@ -5,6 +5,17 @@
 				
 for detailed view of each issue, please consult http://jira.jayasoft.org/
 
+   version 1.4 - 2006-10-09
+=====================================
+Version 1.4-RC2 has been promoted to 1.4 on 2006-10-09, with documentation update.
+
+Known bugs and limitations:
+- references in resolvers are not resolved 'in-time' with macrodef (IVY-319)
+- latest.<status> does not work properly when no matching revision exist (IVY-318)
+- IVY complains about non-existent reports in the cache directory (IVY-315)
+- retrieve fails when resolve is done with useOrigin set to true (IVY-304)
+
+
    version 1.4-RC2 - 2006-09-27
 =====================================
 - FIX: m2compatible flag is ignored for display of failed artifact searches (IVY-303)
