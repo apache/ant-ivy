@@ -36,8 +36,8 @@ Ivy already has a growing user community, with more than 10,000 downloads since 
 
 Ivy has only two core developers for the moment, but we hope joining the ASF will help increase this number.
 
-Xavier Hanin is the creator of the project, is an independant consultant and co founder of Jayasoft.
-Maarten Coene has joined the committer team in may 2006.
+Xavier Hanin is the creator of the project, is an independant consultant and co founder of Jayasoft. He has an experience of 9 years in Java software development, uses open source projects intensively, and started his real participation in open source development with Ivy.
+Maarten Coene has joined the committer team in may 2006. He has an experience of 9 years in java development, is co-administrator of dom4j, ex-committer for scarab, has contributed patches to several open-source projects and is a user of a lot of open-source projects.
 
 === Alignment ===
 
@@ -50,6 +50,7 @@ Due to its small number of committers, there is a risk of being orphaned. The ma
 
 === Inexperience with Open Source ===
 While distributed under an open source license, access to Ivy was initially limited with no public access to the issue tracking system or svn repository. While things have changed since then - the svn repository is publicly accessible, a JIRA instance has been setup since june 2005, many new features are first discussed on the forum or JIRA - experience with a true open source development model is currently limited.
+However, Maarten has already a good experience with true open development process, and bring his experience to the project.
 
 === Homogenous Developers ===
 With only two core developers, at least they are not homogenous! Xavier and Maarten knew each other only due to their common interest in Ivy.
