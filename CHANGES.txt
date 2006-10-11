@@ -8,6 +8,7 @@ for detailed view of each issue, please consult http://jira.jayasoft.org/
    version 1.4.1 - not yet released
 =====================================
 - IMPROVE: Measure code coverage (IVY-323)
+- IMPROVE: Add a 'conf' parameter to the ivy 'publish' ant task (IVY-322) (thanks to Emmanuel Pellereau)
 
    version 1.4 - 2006-10-09
 =====================================

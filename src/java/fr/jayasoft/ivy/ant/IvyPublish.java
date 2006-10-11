@@ -40,6 +40,7 @@ public class IvyPublish extends IvyTask {
     private File 	_cache; 
     private String 	_srcivypattern;
     private String 	_status;
+    private String 	_conf=null;
     private String 	_pubdate;
     private String  _deliverTarget;
     private String  _publishResolverName = null;
@@ -116,6 +117,9 @@ public class IvyPublish extends IvyTask {
     public void setStatus(String status) {
         _status = status;
     }
+    public void setConf(String conf) {
+        _conf = conf;
+    }
     public void setDelivertarget(String deliverTarget) {
         _deliverTarget = deliverTarget;
     }
@@ -187,6 +191,13 @@ public class IvyPublish extends IvyTask {
         ModuleRevisionId mrid = ModuleRevisionId.newInstance(_organisation, _module, _revision);
         try {
             File ivyFile = new File(IvyPatternHelper.substitute(_srcivypattern, _organisation, _module, _pubRevision, "ivy", "ivy", "xml"));
+            if (null!=_conf && isPublishivy()) {
+            	if (isPublishivy()) {
+            		Message.warn("Impossible to publish ivy file when conf is specified");
+            		Message.warn("Please, set publishivy to false");
+            		setPublishivy(false);
+            	}
+            }
             if (_publishivy && (!ivyFile.exists() || _forcedeliver)) {
                 IvyDeliver deliver = new IvyDeliver();
                 deliver.setProject(getProject());
@@ -217,7 +228,8 @@ public class IvyPublish extends IvyTask {
             		pubdate, 
             		(Artifact[]) _artifacts.toArray(new Artifact[_artifacts.size()]), doValidate(ivy), 
             		_overwrite, 
-            		_update);
+            		_update,
+            		_conf);
             if (_warnonmissing) {
                 for (Iterator iter = missing.iterator(); iter.hasNext();) {
                     Artifact artifact = (Artifact)iter.next();

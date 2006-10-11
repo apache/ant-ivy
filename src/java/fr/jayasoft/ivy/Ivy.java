@@ -34,6 +34,7 @@ import java.util.ListIterator;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.StringTokenizer;
 
 import javax.swing.event.EventListenerList;
 
@@ -1783,7 +1784,8 @@ public class Ivy implements TransferListener {
                             cache.getAbsolutePath()+"/"+getCacheArtifactPattern(), 
                             cache.getAbsolutePath()+"/"+getCacheIvyPattern(), 
                             null,
-                            overwrite);
+                            overwrite,
+                            null);
                 }
             }
 
@@ -2254,7 +2256,7 @@ public class Ivy implements TransferListener {
      * @throws ParseException
      */
     public Collection publish(ModuleRevisionId mrid, String pubrevision, File cache, String srcArtifactPattern, String resolverName, String srcIvyPattern, boolean validate, boolean overwrite) throws IOException {
-    	return publish(mrid, pubrevision, cache, srcArtifactPattern, resolverName, srcIvyPattern, null, null, null, validate, overwrite, false);
+    	return publish(mrid, pubrevision, cache, srcArtifactPattern, resolverName, srcIvyPattern, null, null, null, validate, overwrite, false, null);
     }
     /**
      * Publishes a module to the repository.
@@ -2284,7 +2286,7 @@ public class Ivy implements TransferListener {
      * @return
      * @throws IOException
      */
-    public Collection publish(ModuleRevisionId mrid, String pubrevision, File cache, String srcArtifactPattern, String resolverName, String srcIvyPattern, String status, Date pubdate, Artifact[] extraArtifacts, boolean validate, boolean overwrite, boolean update) throws IOException {
+    public Collection publish(ModuleRevisionId mrid, String pubrevision, File cache, String srcArtifactPattern, String resolverName, String srcIvyPattern, String status, Date pubdate, Artifact[] extraArtifacts, boolean validate, boolean overwrite, boolean update, String conf) throws IOException {
         IvyContext.getContext().setIvy(this);
         IvyContext.getContext().setCache(cache);
         Message.info(":: publishing :: "+mrid.getModuleId());
@@ -2345,16 +2347,28 @@ public class Ivy implements TransferListener {
         }
         
         // collect all declared artifacts of this module
-        Collection missing = publish(md, resolver, srcArtifactPattern, srcIvyPattern, extraArtifacts, overwrite);
+        Collection missing = publish(md, resolver, srcArtifactPattern, srcIvyPattern, extraArtifacts, overwrite, conf);
         Message.verbose("\tpublish done ("+(System.currentTimeMillis()-start)+"ms)");
         return missing;
     }
 
-    private Collection publish(ModuleDescriptor md, DependencyResolver resolver, String srcArtifactPattern, String srcIvyPattern, Artifact[] extraArtifacts, boolean overwrite) throws IOException {
+    private Collection publish(ModuleDescriptor md, DependencyResolver resolver, String srcArtifactPattern, String srcIvyPattern, Artifact[] extraArtifacts, boolean overwrite, String conf) throws IOException {
         Collection missing = new ArrayList();
         Set artifactsSet = new HashSet();
-        String[] confs = md.getConfigurationsNames();
-        for (int i = 0; i < confs.length; i++) {
+		String[] confs;
+		if (null == conf || "".equals(conf)) {
+			confs = md.getConfigurationsNames();
+		} else {
+			StringTokenizer st = new StringTokenizer(conf, ",");
+			confs = new String[st.countTokens()];
+			int counter = 0;
+			while (st.hasMoreTokens()) {
+				confs[counter] = st.nextToken().trim();
+				counter++;
+			}
+		}
+
+		for (int i = 0; i < confs.length; i++) {
             Artifact[] artifacts = md.getArtifacts(confs[i]);
             for (int j = 0; j < artifacts.length; j++) {
                 artifactsSet.add(artifacts[j]);
