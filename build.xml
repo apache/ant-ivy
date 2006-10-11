@@ -1,4 +1,4 @@
-<project name="ivy" default="test" xmlns:ivy="antlib:fr.jayasoft.ivy.ant">
+<project name="ivy" default="coverage-report" xmlns:ivy="antlib:fr.jayasoft.ivy.ant">
 	<property environment="env"/>
 	<property file="build.properties"/>
 
@@ -42,7 +42,23 @@
     <!-- =================================================================
                PREPARATION, CLEANING AND FLAGS TASKS
          ================================================================= -->
-	<target name="prepare">
+	<target name="init">
+		<path id="build.classpath">
+			<fileset dir="${lib.dir}">
+				<include name="*.jar"/>
+			</fileset>
+		</path>
+		<path id="run.classpath">
+			<path refid="build.classpath"/>
+			<pathelement location="${classes.build.dir}"/>
+		</path>
+        <path id="test.classpath">
+            <path refid="run.classpath"/>
+			<pathelement path="${test.build.dir}"/>
+        </path>
+	</target>
+	
+	<target name="prepare" depends="init">
 	   <mkdir dir="${classes.build.dir}"/>
 	   <mkdir dir="${test.build.dir}"/>
 	   <mkdir dir="${artifacts.build.dir}"/>
@@ -88,11 +104,6 @@
 	</target>
 
 	<target name="build" depends="resolve">
-		<path id="build.classpath">
-			<fileset dir="${lib.dir}">
-				<include name="*.jar"/>
-			</fileset>
-		</path>
 		<javac 	srcdir="${src.dir}"
 		        destdir="${classes.build.dir}"
 		        classpathref="build.classpath"
@@ -134,12 +145,29 @@
 	</target>
 	
 	<target name="init-tests" depends="init-tests-offline, init-tests-online" />
-		
+	
+	<target name="emma" depends="jar">
+		<ivy:cachepath organisation="emma" module="emma" revision="2.0.5312" 
+			           inline="true" conf="ant" pathid="emma.classpath"/> 
+		<taskdef resource="emma_ant.properties" classpathref="emma.classpath" />
+		<property name="emma.enabled" value="true" />
+		<property name="coverage.dir" value="${build.dir}/coverage" />
+		<mkdir dir="${coverage.dir}" />
+	    <emma enabled="${emma.enabled}" >
+	      <instr instrpath="${classes.build.dir}"
+	             mode="overwrite"
+ 	      	     metadatafile="${coverage.dir}/metadata.emma"
+	      />
+	    </emma>
+		<delete file="${coverage.dir}/coverage.emma" />
+		<!-- add emma path to test path, because emma jars need to be available when running 
+		     instrumented classes -->
+		<ivy:addpath topath="test.classpath">
+		  <path refid="emma.classpath"/>
+		</ivy:addpath>
+	</target>
+	
 	<target name="test" depends="jar, init-tests">
-		<path id="run.classpath">
-			<path refid="build.classpath"/>
-			<pathelement location="${artifacts.build.dir}/ivy.jar"/>
-		</path>
 		<javac 	srcdir="${test.dir}"
 		        destdir="${test.build.dir}"
 		        classpathref="run.classpath"
@@ -152,16 +180,19 @@
     		</fileset>
   		</copy>
   		<mkdir dir="${test.xml.dir}"  />
-        <junit haltonfailure="off"
+        <junit 
+           haltonfailure="off"
 	       haltonerror="off"
 	       errorproperty="test.failed"
 	       failureproperty="test.failed"
 	       showoutput="no"
-	       printsummary="yes">
-            <classpath>
-                <path refid="run.classpath"/>
-    			<pathelement path="${test.build.dir}"/>
-            </classpath>
+	       printsummary="yes"
+           fork="true">
+        	<classpath>
+        		<path refid="test.classpath"/>
+        	</classpath>
+            <jvmarg value="-Demma.coverage.out.file=${coverage.dir}/coverage.emma" />
+            <jvmarg value="-Demma.coverage.out.merge=true" />
 			<formatter type="xml"/>
 			<batchtest todir="${test.xml.dir}">
     		    <fileset refid="test.fileset" />
@@ -181,6 +212,20 @@
 		</junitreport>
 		<fail if="test.failed"
 		      message="At least one test has failed. See logs or report"/>
+	</target>
+	
+	<target name="coverage-report" depends="emma, test-report" description="run tests with instrumentation and generate coverage report">
+		<mkdir dir="${doc.build.dir}/coverage" />
+		<emma>
+		    <report sourcepath="${src.dir}" >
+		        <fileset dir="${coverage.dir}" >
+		          <include name="*.emma" />
+		        </fileset>
+
+		        <txt outfile="${doc.build.dir}/coverage/coverage.txt" />
+		        <html outfile="${doc.build.dir}/coverage/coverage.html" />
+		     </report>
+		 </emma>
 	</target>
 	
 	<target name="javadoc">

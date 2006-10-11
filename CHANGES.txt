@@ -5,6 +5,10 @@
 				
 for detailed view of each issue, please consult http://jira.jayasoft.org/
 
+   version 1.4.1 - not yet released
+=====================================
+- IMPROVE: Measure code coverage (IVY-323)
+
    version 1.4 - 2006-10-09
 =====================================
 Version 1.4-RC2 has been promoted to 1.4 on 2006-10-09, with documentation update.
