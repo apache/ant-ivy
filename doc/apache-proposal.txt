@@ -1,20 +1,21 @@
 = Ivy Proposal =
 
-This proposal outlines the creation of a new Ivy project within the Apache Software Foundation.
+The following presents the proposal for creating a new Ivy project within the Apache Software Foundation.
 
 == Status ==
 This is only a draft proposal and is not intended to be submitted as is to the ASF
 
 == Abstract ==
-Ivy is a flexible dependency manager.
+Ivy is a java based tool for tracking, resolving and managing project dependencies.
 
 == Proposal ==
-Ivy is a very flexible dependency manager with a tight integration with Apache Ant. It allows to resolve project dependencies, including transitive dependencies, with a strong focus on flexibility and control over what's happening. Even if Ivy can be used as a standalone program, it is generally used as a set of ant tasks, ranging from dependency resolution to reports about dependencies or module publishing.
+Ivy is a tool for managing (recording, tracking, resolving and reporting)  project dependencies. It is characterized by the following:
+ 1) flexibility and configurability - Ivy is essentially process agnostic and is not tied to any methodology or structure. Instead it provides the necessary flexibility and configurability to be adapted to a broad range of dependency management and build processes.
+ 2) tight integration with Apache Ant - while available as a standalone tool, Ivy works particularly well with Apache Ant providing a number of powerful Ant tasks ranging from dependency resolution to dependency reporting and publication.
 
 == Rationale ==
 
-There is strong need for tools helping software reuse in the java development community. Ivy tackles this problematic in a very flexible way, very suitable to Ant users.
-It is often compared to maven ant tasks, but has some strong differences like the ability to define several artifacts in one module, or more flexibility in the repository configuration or conflict management. 
+Software development is increasingly characterized by leveraging externally provided components/capabilities and by a rapid release cycle. As a result it is not unusual for a project to depend on numerous third-party components which themselves may be dependent on a multitude of third-party of different or identical third-party components. Managing these dependencies - determining what the dependencies are, how they are used, the impact of a change, conflicts among dependencies, etc. - is extremely difficult and absolutely necessary. Ivy is one of a handful of tools addressing this need. While often compared to Maven - which has similar Ant tasks - Ivy differs from Maven in both its focus and philosophy. Ivy is solely focused on dependency management and is designed from the ground up to adapt to a wide range of requirements and scenarios. Examples include multiple aritfacts per module, plugin resolvers, configurable repository configurations and conflict managers.
 
 The maintainers of Ivy are interested in joining the Apache Software Foundation for several reasons:
     * Ivy has been hosted since its beginning in 2004 by a private company, which make people feel like it's a corporate product, thus slowing the contribution by the community. We strongly believe in the open source movement, and would like to make Ivy independent from Jayasoft.
@@ -48,7 +49,7 @@ Ivy has no mandatory dependencies except java 1.4. However, it is strongly recom
 Due to its small number of committers, there is a risk of being orphaned. The main knowledge of the codebase is still mainly owned by Xavier Hanin. Even if Xavier has no plan to leave Ivy development, this is a problem we are aware of and know that need to be worked on so that the project become less dependent on an individual.
 
 === Inexperience with Open Source ===
-The main participation in open source projects has been on Ivy itself. Even if Ivy now has more than two years, it started as a not so open project, with no public access to the issue tracking system nor the svn repository. Things have changed since then, the svn repository is publicly accessible and a JIRA instance has been setup since june 2005. Many new features are first discussed on the forum or JIRA, but the education with true open source development is also something that need to improved during the incubation.
+While distributed under an open source license, access to Ivy was initially limited with no public access to the issue tracking system or svn repository. While things have changed since then - the svn repository is publicly accessible, a JIRA instance has been setup since june 2005, many new features are first discussed on the forum or JIRA - experience with a true open source development model is currently limited.
 
 === Homogenous Developers ===
 With only two core developers, at least they are not homogenous! Xavier and Maarten knew each other only due to their common interest in Ivy.
