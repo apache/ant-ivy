@@ -79,7 +79,9 @@ public class XmlModuleDescriptorParserTest extends AbstractModuleDescriptorParse
             XmlModuleDescriptorParser.getInstance().parseDescriptor(_ivy, getClass().getResource("test-bad.xml"), true);
             fail("bad ivy file raised no error");
         } catch (ParseException ex) {
-        	assertTrue(ex.getMessage().indexOf("'modul'") != -1);
+            if (XMLHelper.canUseSchemaValidation()) {
+                assertTrue("exception message not explicit. It should contain 'modul', but it's:"+ex.getMessage(), ex.getMessage().indexOf("'modul'") != -1);
+            }
         }
     }
 
