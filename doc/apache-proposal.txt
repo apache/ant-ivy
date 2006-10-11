@@ -17,7 +17,7 @@ There is strong need for tools helping software reuse in the java development co
 It is often compared to maven ant tasks, but has some strong differences like the ability to define several artifacts in one module, or more flexibility in the repository configuration or conflict management. 
 
 The maintainers of Ivy are interested in joining the Apache Software Foundation for several reasons:
-    * Ivy has been hosted since its beginning in 2004 by a corporate company, which make people feel like it's a corporate product, thus slowing the contribution by the community. We strongly believe in the open source movement, and would like to make Ivy independent from Jayasoft.
+    * Ivy has been hosted since its beginning in 2004 by a private company, which make people feel like it's a corporate product, thus slowing the contribution by the community. We strongly believe in the open source movement, and would like to make Ivy independent from Jayasoft.
     * We'd like to enjoy the benefits of utilizing Apache's infrastructure and legal protection.
     * It might open the door for cooperation with other projects, such as Ant or Maven.
     * We strongly believe in Apache philosophy, especially Meritocracy.
@@ -25,7 +25,7 @@ The maintainers of Ivy are interested in joining the Apache Software Foundation 
 == Current status ==
 === Meritocracy ===
 
-Ivy was originally created by Xavier Hanin in September 2004. Since then more than 20 users have contributed patches, and one of them has been promoted to the status of commiter based on his merit through patch contribution.
+Ivy was originally created by Xavier Hanin in September 2004. Since then more than 20 users have contributed patches, and one of them has been promoted to the status of committer based on his merit through patch contribution.
 
 === Community ===
 
@@ -40,7 +40,7 @@ Maarten Coene has joined the committer team in may 2006.
 
 === Alignment ===
 
-Ivy has no mandatory dependencies except java 1.4. However, it is strongly recommended to be used with Ant, and alse leverages other Apache projects especially from Jakarta Commons.
+Ivy has no mandatory dependencies except java 1.4. However, it is strongly recommended to be used with Ant. Ivy uses also other Apache projects, especially from Jakarta Commons.
 
 == Known risks ==
 
@@ -55,13 +55,13 @@ With only two core developers, at least they are not homogenous! Xavier and Maar
 
 === Reliance on Salaried Developers ===
 Maarten is not paid to work on Ivy.
-Xavier's case is more complex, as a co founder of Jayasoft, part of his time in Jayasoft was dedicated to Ivy and other open source developments. He now works mainly as an independant consultant, and thus is not a salaried developer.
+Xavier's case is more complex, as a co founder of Jayasoft, part of his time in Jayasoft was dedicated to Ivy and other open source developments. He now works mainly as an independent consultant, and thus is not a salaried developer.
 
 === Relationships with Other Apache Products ===
 Ivy has a strong relationship with Apache Ant, and is often seen as a good companion of Ant. Being part of Apache could help for a closer collaboration between the two projects.
 
 === A Excessive Fascination with the Apache Brand ===
-Even if we recognize the strong value of Apache Brand, the purpose of joining Apache is not focused on improving the visibility of the project. The main focus of this proposition is to make Ivy a more open project, with a closer integration with Apache Ant. Even if Ivy do not join the ASF, Ivy will move out of Jayasoft umbrella and try to attract more developers. 
+Even if we recognize the strong value of the Apache Brand, the purpose of joining Apache is not focused on improving the visibility of the project. The main focus of this proposition is to make Ivy a more open project, with a closer integration with Apache Ant. Even if Ivy does not join the ASF, Ivy will move out of Jayasoft umbrella and try to attract more developers. 
 
 == Documentation ==
 Further reading on Ivy can be found at:
@@ -80,7 +80,7 @@ apache commons-httpclient
 apache commons-cli
 apache oro
 apache commons-vfs
-jcraft jsch  (BSD, already used by commons-vfs)
+jcraft jsch  (BSD, already used by commons-vfs and by ant)
 
 == Required Resources ==
 
