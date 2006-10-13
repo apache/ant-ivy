@@ -1,0 +1,12 @@
+<ivy-module version="1.0"> 
+	<info organisation="jayasoft"
+	       module="retrieve-double"
+	       revision="1.0"
+	       status="release"
+	/>
+	<configurations>
+	    <conf name="default"/>
+	    <conf name="compile" extends="default"/>
+	    <conf name="unittest" extends="default"/>
+	</configurations>
+</ivy-module>

@@ -256,6 +256,21 @@ public class IvyRetrieveTest extends TestCase {
         assertFalse(new File("build/test/lib/unk").exists()); 
         assertFalse(new File("build/test/lib/default/unknown").exists()); 
     }
+    
+    public void testDoubleRetrieveWithDifferentConfigurations() {
+    	// IVY-315
+        _project.setProperty("ivy.dep.file", "test/java/fr/jayasoft/ivy/ant/ivy-doubleretrieve.xml");
+        
+        _retrieve.setConf("compile");
+        _retrieve.execute();
+    	
+        _retrieve = new IvyRetrieve();
+        _retrieve.setProject(_project);
+        _retrieve.setCache(_cache);
+        _retrieve.setPattern(RETRIEVE_PATTERN);
+        _retrieve.setConf("compile,unittest");
+        _retrieve.execute();
+    }
 
     // creates an empty file, creating parent directories if necessary
     private void touch(File file) throws IOException {

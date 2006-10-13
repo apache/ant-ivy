@@ -113,9 +113,9 @@ public class IvyTask extends Task {
     }
     protected void ensureResolved(boolean haltOnFailure, boolean useOrigin, boolean transitive, String org, String module, String conf) {
         ensureMessageInitialised();
-        if (org != null  && module != null) {
-            return;
-        }
+//        if (org != null  && module != null) {
+//            return;
+//        }
         String[] confs = getConfsToResolve(org, module, conf, false);
         
         if (confs.length > 0)  {

@@ -47,6 +47,8 @@ public abstract class IvyPostResolveTask extends IvyTask {
     protected void prepareAndCheck() {
         Ivy ivy = getIvyInstance();
         
+        boolean orgAndModSetManually = (_organisation != null) && (_module != null);
+        
         _organisation = getProperty(_organisation, ivy, "ivy.organisation");
         _module = getProperty(_module, ivy, "ivy.module");
 
@@ -76,7 +78,14 @@ public abstract class IvyPostResolveTask extends IvyTask {
         	}
         } else {        
         	Message.debug("using standard ensure resolved");
-        	ensureResolved(isHaltonfailure(), isUseOrigin(), isTransitive(), getOrganisation(), getModule(), getProperty(_conf, ivy, "ivy.resolved.configurations"));
+        	
+        	// if the organization and module has been manually specified, we'll reuse the resolved
+        	// data from another build (there is no way to know which configurations were resolved
+        	// there (TODO: maybe we can check which reports exist and extract the configurations
+        	// from these report names?)
+        	if (!orgAndModSetManually) {
+        		ensureResolved(isHaltonfailure(), isUseOrigin(), isTransitive(), getOrganisation(), getModule(), getProperty(_conf, ivy, "ivy.resolved.configurations"));
+        	}
         	
 	        _conf = getProperty(_conf, ivy, "ivy.resolved.configurations");
 	        if ("*".equals(_conf)) {
