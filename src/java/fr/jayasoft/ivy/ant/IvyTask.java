@@ -148,7 +148,7 @@ public class IvyTask extends Task {
     		HashSet rconfsSet = new HashSet(Arrays.asList(rconfs));
 			HashSet confsSet = new HashSet(Arrays.asList(confs));
 			Message.debug("resolved configurations:   "+rconfsSet);
-			Message.debug("asked configurations:      "+rconfsSet);
+			Message.debug("asked configurations:      "+confsSet);
 			confsSet.removeAll(rconfsSet);
 			Message.debug("to resolve configurations: "+confsSet);
 			return (String[]) confsSet.toArray(new String[confsSet.size()]);
