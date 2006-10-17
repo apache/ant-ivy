@@ -11,6 +11,7 @@ for detailed view of each issue, please consult http://jira.jayasoft.org/
 - IMPROVE: Add a 'conf' parameter to the ivy 'publish' ant task (IVY-322) (thanks to Emmanuel Pellereau)
 
 - FIX: IVY complains about non-existent reports in the cache directory (IVY-315)
+- FIX: Typo in failureproperty attribute of Ant resolve task (IVY-327) (thanks to Jean-Baptiste Quenot)
 
    version 1.4 - 2006-10-09
 =====================================

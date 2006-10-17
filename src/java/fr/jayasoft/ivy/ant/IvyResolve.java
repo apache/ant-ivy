@@ -102,7 +102,15 @@ public class IvyResolve extends IvyTask {
     public void setType(String type) {
         _type = type;
     }
-    public void setFailurePropery(String failureProperty) {
+    /**
+	 * @deprecated Use {@link #setFailureProperty(String)} instead
+	 */
+	public void setFailurePropery(String failureProperty) {
+		log("The 'failurepropery' attribute is deprecated. " + 
+				"Please use the 'failureproperty' attribute instead", Project.MSG_WARN);
+		setFailureProperty(failureProperty);
+	}
+	public void setFailureProperty(String failureProperty) {
     	_failureProperty = failureProperty;
     }
     public String getFailureProperty() {
