@@ -114,4 +114,8 @@ If you are willing to be our champion please let us know
 If you are willing to be our mentor please let us know
 
 === Sponsoring Entity ===
-Incubator PMC or Ant PMC?
+The Ant PMC has voted the following resolution:
+The Ant PMC sponsors Ivy moving to the Apache Incubator.
+If the Ivy community wishes to move Ivy to become an Ant subproject
+after successful incubation, and if the ASF board agrees to it, Ant
+will welcome Ivy as a subproject after the incubation period.
