@@ -108,10 +108,12 @@ As stated in the Reliance on salaried developers section, Xavier is a co founder
 == Sponsors ==
 
 === Champion ===
-If you are willing to be our champion please let us know
+Antoine Levy-Lambert
 
 === Nominated Mentors ===
-If you are willing to be our mentor please let us know
+Antoine Levy-Lambert
+Stephane Baillez
+Steve Loughran
 
 === Sponsoring Entity ===
 The Ant PMC has voted the following resolution:
