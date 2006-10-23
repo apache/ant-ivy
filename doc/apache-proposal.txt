@@ -2,11 +2,8 @@
 
 The following presents the proposal for creating a new Ivy project within the Apache Software Foundation.
 
-== Status ==
-This is only a draft proposal and is not intended to be submitted as is to the ASF
-
 == Abstract ==
-Ivy is a java based tool for tracking, resolving and managing project dependencies.
+Ivy (http://www.jayasoft.org/ivy) is a java based tool for tracking, resolving and managing project dependencies.
 
 == Proposal ==
 Ivy is a tool for managing (recording, tracking, resolving and reporting)  project dependencies. It is characterized by the following:
