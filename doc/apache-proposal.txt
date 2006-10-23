@@ -109,6 +109,7 @@ As stated in the Reliance on salaried developers section, Xavier is a co founder
 
 === Champion ===
 Antoine Levy-Lambert
+Sylvain Wallez
 
 === Nominated Mentors ===
 Antoine Levy-Lambert
