@@ -642,7 +642,7 @@ public abstract class BasicResolver extends AbstractResolver {
                 	ResolvedResource artifactRef = getArtifactRef(artifact, null);
                 	if (artifactRef != null) {
                 		origin = new ArtifactOrigin(artifactRef.getResource().isLocal(), artifactRef.getResource().getName());
-                		if (useOrigin) {
+                		if (useOrigin && artifactRef.getResource().isLocal()) {
                     		Message.verbose("\t[NOT REQUIRED] "+artifacts[i]);
             				ivy.saveArtifactOrigin(cache, artifacts[i], origin);
                     		archiveFile = ivy.getArchiveFileInCache(cache, artifacts[i], origin);

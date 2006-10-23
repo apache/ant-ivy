@@ -500,4 +500,35 @@ public class FileSystemResolverTest extends TestCase {
         ResolverTestHelper.assertRevisionEntries(resolver, mod, new String[] {"1.0", "1.1", "2.0", "2.1", "2.2"}, revs);
     }
 
+    public void testDownloadWithUseOriginIsTrue() throws Exception {
+        FileSystemResolver resolver = new FileSystemResolver();
+        resolver.setName("test");
+        resolver.setIvy(_ivy);
+        assertEquals("test", resolver.getName());
+        
+        resolver.addIvyPattern(IVY_PATTERN);
+        resolver.addArtifactPattern("test/repositories/1/[organisation]/[module]/[type]s/[artifact]-[revision].[type]");
+        
+        ModuleRevisionId mrid = ModuleRevisionId.newInstance("org1", "mod1.1", "1.0");
+        ResolvedModuleRevision rmr = resolver.getDependency(new DefaultDependencyDescriptor(mrid, false), _data);
+        assertNotNull(rmr);
+        
+        assertEquals(mrid, rmr.getId());
+        Date pubdate = new GregorianCalendar(2004, 10, 1, 11, 0, 0).getTime();
+        assertEquals(pubdate, rmr.getPublicationDate());
+        
+        
+        // test to ask to download
+        DefaultArtifact artifact = new DefaultArtifact(mrid, pubdate, "mod1.1", "jar", "jar");
+        DownloadReport report = resolver.download(new Artifact[] {artifact}, _data.getIvy(), _cache, true);
+        assertNotNull(report);
+        
+        assertEquals(1, report.getArtifactsReports().length);
+        
+        ArtifactDownloadReport ar = report.getArtifactReport(artifact);
+        assertNotNull(ar);
+        
+        assertEquals(artifact, ar.getArtifact());
+        assertEquals(DownloadStatus.NO, ar.getDownloadStatus());
+    }
 }
