@@ -15,10 +15,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.taskdefs.Echo;
-import org.apache.tools.ant.taskdefs.Property;
 
-import fr.jayasoft.ivy.AbstractArtifact;
 import fr.jayasoft.ivy.Artifact;
 import fr.jayasoft.ivy.ArtifactRevisionId;
 import fr.jayasoft.ivy.Ivy;
@@ -243,23 +240,6 @@ public class IvyPublish extends IvyTask {
         } catch (Exception e) {
             throw new BuildException("impossible to publish artifacts for "+mrid+": "+e, e);
         }
-    }
-    
-    private void loadDeliveryList() {
-        Property property = (Property)getProject().createTask("property");
-        property.setOwningTarget(getOwningTarget());
-        property.init();
-        property.setFile(_deliveryList);
-        property.perform();
-    }
-    private void appendDeliveryList(String msg) {
-        Echo echo = (Echo)getProject().createTask("echo");
-        echo.setOwningTarget(getOwningTarget());
-        echo.init();
-        echo.setFile(_deliveryList);
-        echo.setMessage(msg+"\n");
-        echo.setAppend(true);
-        echo.perform();
     }
     public PublishArtifact createArtifact() {
     	PublishArtifact art = new PublishArtifact();
