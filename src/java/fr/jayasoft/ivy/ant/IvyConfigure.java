@@ -158,7 +158,7 @@ public class IvyConfigure extends IvyTask {
                 URL url = Ivy.class.getResource("ivy.properties");
                 // this is copy of loadURL code from ant Property task  (not available in 1.5.1)
                 Properties props = new Properties();
-                log("Loading " + url, Project.MSG_VERBOSE);
+                Message.verbose("Loading " + url);
                 try {
                     InputStream is = url.openStream();
                     try {
