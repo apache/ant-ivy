@@ -11,6 +11,8 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import fr.jayasoft.ivy.Ivy;
+import fr.jayasoft.ivy.IvyAware;
 import fr.jayasoft.ivy.ModuleDescriptor;
 import fr.jayasoft.ivy.ModuleRevisionId;
 
@@ -23,6 +25,19 @@ public class ChainVersionMatcher extends AbstractVersionMatcher {
     
     public void add(VersionMatcher matcher) {
         _matchers.add(0, matcher);
+		if (getIvy() != null && matcher instanceof IvyAware) {
+			((IvyAware) matcher).setIvy(getIvy());
+		}
+    }
+    
+    public void setIvy(Ivy ivy) {
+    	super.setIvy(ivy);
+    	for (Iterator iter = _matchers.iterator(); iter.hasNext();) {
+			VersionMatcher matcher = (VersionMatcher) iter.next();
+			if (matcher instanceof IvyAware) {
+				((IvyAware) matcher).setIvy(ivy);
+			}
+		}
     }
     
     public List getMatchers() {
