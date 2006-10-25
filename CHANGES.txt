@@ -12,7 +12,7 @@ for detailed view of each issue, please consult http://jira.jayasoft.org/
 
 - FIX: IVY complains about non-existent reports in the cache directory (IVY-315)
 - FIX: Typo in failureproperty attribute of Ant resolve task (IVY-327) (thanks to Jean-Baptiste Quenot)
-- FIX: ivy:resolve useOrigin fails to behave correctly (IVY-???)
+- FIX: ivy:resolve useOrigin fails to behave correctly (IVY-332)
 - FIX: ChainVersionMatcher doesn't handle IvyAware children version matchers (IVY-331)
 
 
