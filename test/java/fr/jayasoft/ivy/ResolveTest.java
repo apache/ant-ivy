@@ -1892,6 +1892,22 @@ public class ResolveTest extends TestCase {
         assertTrue(ivy.getIvyFileInCache(_cache, depId).exists());
     }
     
+    public void testLatestMilestone2() throws Exception {
+    	// mod9.2 depends on latest.milestone of mod6.2, but there is no milestone
+    	// test case for IVY-318
+        Ivy ivy = new Ivy();
+        ivy.configure(new File("test/repositories/ivyconf.xml"));
+        ResolveReport report = ivy.resolve(new File("test/repositories/1/org9/mod9.2/ivys/ivy-1.2.xml").toURL(),
+                null, new String[] {"default"}, _cache, null, true);
+        // we should have an error since there is no milestone version, it should be considered as a non resolved dependency
+        assertTrue(report.hasError());
+        
+        // dependencies
+        ConfigurationResolveReport crr = report.getConfigurationReport("default");
+        assertNotNull(crr);
+        assertEquals(0, crr.getArtifactsNumber());
+    }
+    
     public void testIVY56() throws Exception {
         Ivy ivy = new Ivy();
         ivy.configure(new File("test/repositories/bugIVY-56/ivyconf.xml"));

@@ -19,6 +19,7 @@ import fr.jayasoft.ivy.Artifact;
 import fr.jayasoft.ivy.DefaultArtifact;
 import fr.jayasoft.ivy.Ivy;
 import fr.jayasoft.ivy.LatestStrategy;
+import fr.jayasoft.ivy.ModuleDescriptor;
 import fr.jayasoft.ivy.ModuleRevisionId;
 import fr.jayasoft.ivy.report.DownloadReport;
 import fr.jayasoft.ivy.repository.AbstractRepository;
@@ -117,7 +118,11 @@ public class RepositoryResolver extends AbstractResourceResolver {
 				}
 				if (versionMatcher.needModuleDescriptor(mrid, foundMrid)) {
             		ResolvedResource r = rmdparser.parse(rres.getResource(), rres.getRevision());
-            		if (!versionMatcher.accept(mrid, ((MDResolvedResource)r).getResolvedModuleRevision().getDescriptor())) {
+            		ModuleDescriptor md = ((MDResolvedResource)r).getResolvedModuleRevision().getDescriptor();
+            		if (md.isDefault()) {
+    	                Message.debug("\t"+name+": default md rejected by version matcher requiring module descriptor: "+rres);
+            			continue;
+            		} else if (!versionMatcher.accept(mrid, md)) {
     	                Message.debug("\t"+name+": md rejected by version matcher: "+rres);
             			continue;
             		} else {

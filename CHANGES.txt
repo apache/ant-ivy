@@ -14,6 +14,7 @@ for detailed view of each issue, please consult http://jira.jayasoft.org/
 - FIX: Typo in failureproperty attribute of Ant resolve task (IVY-327) (thanks to Jean-Baptiste Quenot)
 - FIX: ivy:resolve useOrigin fails to behave correctly (IVY-332)
 - FIX: ChainVersionMatcher doesn't handle IvyAware children version matchers (IVY-331)
+- FIX: latest.<status> does not work properly when no matching revision exist (IVY-318)
 
 
    version 1.4 - 2006-10-09
