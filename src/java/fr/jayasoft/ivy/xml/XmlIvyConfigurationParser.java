@@ -106,8 +106,10 @@ public class XmlIvyConfigurationParser extends DefaultHandler {
                     String name = (String)attributes.get("name");
                     if (name == null) {
                         attributes.put("name", "@{name}");
+                    } else if (_configurator.isTopLevelMacroRecord() && name.indexOf("@{name}") != -1) {
+                    	attributes.put("name", name);
                     } else {
-                        attributes.put("name", "@{name}-"+name);
+                    	attributes.put("name", "@{name}-"+name);
                     }
                 }
                 if (attributes.get("ref") != null) {

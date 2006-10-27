@@ -254,6 +254,28 @@ public class XmlIvyConfigurationParserTest extends TestCase {
         assertEquals("path/to/secondrep/[module]/[type]s/ivy-[revision].xml", ivyPatterns.get(0));
     }
     
+    public void testMacroAndRef() throws Exception {
+    	// test case for IVY-319
+        Ivy ivy = new Ivy();
+        XmlIvyConfigurationParser parser = new XmlIvyConfigurationParser(ivy);
+        parser.parse(XmlIvyConfigurationParserTest.class.getResource("ivyconf-macro+ref.xml"));
+        
+        DependencyResolver shared = ivy.getResolver("shared");
+        assertNotNull(shared);
+        assertTrue(shared instanceof FileSystemResolver);
+        
+        DependencyResolver mychain = ivy.getResolver("mychain");
+        assertNotNull(mychain);
+        assertTrue(mychain instanceof ChainResolver);
+        ChainResolver chain = (ChainResolver)mychain;
+        List subresolvers = chain.getResolvers();
+        assertNotNull(subresolvers);
+        assertEquals(1, subresolvers.size());
+        shared = (DependencyResolver) subresolvers.get(0);
+        assertEquals("shared", shared.getName());
+        assertTrue(shared instanceof FileSystemResolver);
+    }
+    
     public void testInclude() throws Exception {
         Ivy ivy = new Ivy();
         XmlIvyConfigurationParser parser = new XmlIvyConfigurationParser(ivy);

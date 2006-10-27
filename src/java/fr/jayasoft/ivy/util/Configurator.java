@@ -53,7 +53,7 @@ public class Configurator {
 
         public void defineAttribute(String attributeName, String value) {
             if (_macrodef.getAttribute(attributeName) == null) {
-                throw new IllegalArgumentException("undecalred attribute "+attributeName+" on macro "+_macrodef.getName());
+                throw new IllegalArgumentException("undeclared attribute "+attributeName+" on macro "+_macrodef.getName());
             }
             _attValues.put(attributeName, value);
         }
@@ -483,6 +483,14 @@ public class Configurator {
             return child;
         }
         throw new IllegalArgumentException("no appropriate method found for adding "+name+" on "+parent.getClass());
+    }
+    
+    public boolean isTopLevelMacroRecord() {
+        if (_objectStack.isEmpty()) {
+            return false;
+        }
+        ObjectDescriptor od = (ObjectDescriptor)_objectStack.peek();
+        return (od.getObject() instanceof MacroDef);
     }
     
     public void setAttribute(String attributeName, String value) {

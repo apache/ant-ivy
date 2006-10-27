@@ -1,0 +1,16 @@
+<ivyconf>
+    <macrodef name="myresolver">
+        <attribute name="name"/>
+        <filesystem name="@{name}" m2compatible="true" checkconsistency="true" checkmodified="true" allownomd="false">
+            <artifact pattern="${some.dir}/[organisation]/[module]/[revision]/[type]s/[artifact]-[revision].[ext]" />
+            <ivy pattern="${some.dir}/[organisation]/[module]/[revision]/ivy.xml"/>
+        </filesystem>
+    </macrodef>
+
+	<resolvers>
+	   <myresolver name="shared"/>
+	   <chain name="mychain">
+	      <resolver ref="shared"/>
+	   </chain>
+	</resolvers> 
+</ivyconf>
