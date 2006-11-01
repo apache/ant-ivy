@@ -12,6 +12,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.tools.ant.BuildException;
@@ -41,7 +42,7 @@ public class IvyPublish extends IvyTask {
     private String 	_pubdate;
     private String  _deliverTarget;
     private String  _publishResolverName = null;
-    private String  _artifactspattern = null;
+    private List _artifactspattern = new ArrayList();
     private File    _deliveryList;
     private boolean _publishivy = true;
     private boolean _warnonmissing = true;
@@ -130,11 +131,18 @@ public class IvyPublish extends IvyTask {
         _publishResolverName = publishResolverName;
     }
     public String getArtifactspattern() {
-        return _artifactspattern;
+        return (String) (_artifactspattern.isEmpty()?null:_artifactspattern.get(0));
     }    
     public void setArtifactspattern(String artifactsPattern) {
-        _artifactspattern = artifactsPattern;
+        _artifactspattern.clear();
+        _artifactspattern.add(artifactsPattern);
     }
+	public void addArtifactspattern(String artifactsPattern) {
+		_artifactspattern.add(artifactsPattern);
+	}
+	public void addConfiguredArtifacts(ArtifactsPattern p) {
+		_artifactspattern.add(p.getPattern());
+	}
     public boolean isReplacedynamicrev() {
         return _replacedynamicrev;
     }
@@ -151,9 +159,14 @@ public class IvyPublish extends IvyTask {
         if (_cache == null) {
             _cache = ivy.getDefaultCache();
         }
-        _artifactspattern = getProperty(_artifactspattern, ivy, "ivy.publish.src.artifacts.pattern");
+        if (_artifactspattern.isEmpty()) {
+        	String p = getProperty(null, ivy, "ivy.publish.src.artifacts.pattern");
+        	if (p != null) {
+        		_artifactspattern.add(p);
+        	}
+        }
         if (_srcivypattern == null) {
-            _srcivypattern = _artifactspattern;
+            _srcivypattern = getArtifactspattern();
         }
         _status = getProperty(_status, ivy, "ivy.status");
         if (_organisation == null) {
@@ -165,7 +178,7 @@ public class IvyPublish extends IvyTask {
         if (_revision == null) {
             throw new BuildException("no module revision provided for ivy publish task: It can either be set explicitely via the attribute 'revision' or via 'ivy.revision' property or a prior call to <resolve/>");
         }
-        if (_artifactspattern == null) {
+        if (_artifactspattern.isEmpty()) {
             throw new BuildException("no artifacts pattern: either provide it through parameter or through ivy.publish.src.artifacts.pattern property");
         }
         if (_publishResolverName == null) {
@@ -356,6 +369,17 @@ public class IvyPublish extends IvyTask {
 
 		public Map getStandardAttributes() {
 			return new HashMap();
+		}
+	}
+	public static class ArtifactsPattern {
+		private String _pattern;
+
+		public String getPattern() {
+			return _pattern;
+		}
+
+		public void setPattern(String pattern) {
+			_pattern = pattern;
 		}
 	}
 }

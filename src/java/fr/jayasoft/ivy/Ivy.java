@@ -1781,7 +1781,7 @@ public class Ivy implements TransferListener {
                     Message.verbose("installing "+depmd.getModuleRevisionId());
                     publish(depmd, 
                             toResolver, 
-                            cache.getAbsolutePath()+"/"+getCacheArtifactPattern(), 
+                            Collections.singleton(cache.getAbsolutePath()+"/"+getCacheArtifactPattern()), 
                             cache.getAbsolutePath()+"/"+getCacheIvyPattern(), 
                             null,
                             overwrite,
@@ -2258,6 +2258,9 @@ public class Ivy implements TransferListener {
     public Collection publish(ModuleRevisionId mrid, String pubrevision, File cache, String srcArtifactPattern, String resolverName, String srcIvyPattern, boolean validate, boolean overwrite) throws IOException {
     	return publish(mrid, pubrevision, cache, srcArtifactPattern, resolverName, srcIvyPattern, null, null, null, validate, overwrite, false, null);
     }
+    public Collection publish(ModuleRevisionId mrid, String pubrevision, File cache, String srcArtifactPattern, String resolverName, String srcIvyPattern, String status, Date pubdate, Artifact[] extraArtifacts, boolean validate, boolean overwrite, boolean update, String conf) throws IOException {
+    	return publish(mrid, pubrevision, cache, Collections.singleton(srcArtifactPattern), resolverName, srcIvyPattern, status, pubdate, extraArtifacts, validate, overwrite, update, conf);
+    }
     /**
      * Publishes a module to the repository.
      * 
@@ -2286,13 +2289,12 @@ public class Ivy implements TransferListener {
      * @return
      * @throws IOException
      */
-    public Collection publish(ModuleRevisionId mrid, String pubrevision, File cache, String srcArtifactPattern, String resolverName, String srcIvyPattern, String status, Date pubdate, Artifact[] extraArtifacts, boolean validate, boolean overwrite, boolean update, String conf) throws IOException {
+    public Collection publish(ModuleRevisionId mrid, String pubrevision, File cache, Collection srcArtifactPattern, String resolverName, String srcIvyPattern, String status, Date pubdate, Artifact[] extraArtifacts, boolean validate, boolean overwrite, boolean update, String conf) throws IOException {
         IvyContext.getContext().setIvy(this);
         IvyContext.getContext().setCache(cache);
         Message.info(":: publishing :: "+mrid.getModuleId());
         Message.verbose("\tvalidate = "+validate);
         long start = System.currentTimeMillis();
-        srcArtifactPattern = substitute(srcArtifactPattern);
         srcIvyPattern = substitute(srcIvyPattern);
         // 1) find the resolved module descriptor
         ModuleRevisionId pubmrid = ModuleRevisionId.newInstance(mrid, pubrevision);
@@ -2352,7 +2354,7 @@ public class Ivy implements TransferListener {
         return missing;
     }
 
-    private Collection publish(ModuleDescriptor md, DependencyResolver resolver, String srcArtifactPattern, String srcIvyPattern, Artifact[] extraArtifacts, boolean overwrite, String conf) throws IOException {
+    private Collection publish(ModuleDescriptor md, DependencyResolver resolver, Collection srcArtifactPattern, String srcIvyPattern, Artifact[] extraArtifacts, boolean overwrite, String conf) throws IOException {
         Collection missing = new ArrayList();
         Set artifactsSet = new HashSet();
 		String[] confs;
@@ -2382,14 +2384,25 @@ public class Ivy implements TransferListener {
         // for each declared published artifact in this descriptor, do:
         for (Iterator iter = artifactsSet.iterator(); iter.hasNext();) {
             Artifact artifact = (Artifact) iter.next();
-            //   1) copy the artifact using src pattern and resolver
-            if (!publish(artifact, srcArtifactPattern, resolver, overwrite)) {
+            //   1) copy the artifact using src patterns and resolver
+            boolean published = false;
+            for (Iterator iterator = srcArtifactPattern.iterator(); iterator.hasNext() && !published;) {
+				String pattern = (String) iterator.next();
+				published = publish(artifact, substitute(pattern), resolver, overwrite);
+			}
+            if (!published) {
+            	Message.info("missing artifact "+artifact+":");
+                for (Iterator iterator = srcArtifactPattern.iterator(); iterator.hasNext();) {
+    				String pattern = (String) iterator.next();
+                	Message.info("\t"+new File(IvyPatternHelper.substitute(pattern, artifact))+" file does not exist");
+                }
                 missing.add(artifact);
             }
         }
         if (srcIvyPattern != null) {
             Artifact artifact = MDArtifact.newIvyArtifact(md);
             if (!publish(artifact, srcIvyPattern, resolver, overwrite)) {
+                Message.info("missing ivy file for "+md.getModuleRevisionId()+": "+new File(IvyPatternHelper.substitute(srcIvyPattern, artifact))+" file does not exist");
                 missing.add(artifact);
             }
         }
@@ -2403,7 +2416,6 @@ public class Ivy implements TransferListener {
             resolver.publish(artifact, src, overwrite);
             return true;
         } else {
-            Message.info("missing artifact "+artifact+": "+src+" file does not exist");
             return false;
         }
     }

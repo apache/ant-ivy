@@ -1,0 +1,11 @@
+<ivy-module version="1.0"> 
+	<info organisation="jayasoft"
+	       module="multi"
+	       revision="1.0"
+	       status="release"
+	/>
+	<publications>
+		<artifact name="multi1" />
+		<artifact name="multi2" />
+	</publications>
+</ivy-module>

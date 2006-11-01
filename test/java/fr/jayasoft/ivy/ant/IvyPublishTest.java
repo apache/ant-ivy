@@ -96,6 +96,31 @@ public class IvyPublishTest extends TestCase {
         assertEquals("1.2", md.getModuleRevisionId().getRevision());
     }
 
+    public void testMultiPatterns() throws Exception {
+        _project.setProperty("ivy.dep.file", "test/java/fr/jayasoft/ivy/ant/ivy-publish-multi.xml");
+        IvyResolve res = new IvyResolve();
+        res.setProject(_project);
+        res.execute();
+        
+        _publish.setPubrevision("1.2");
+        _publish.setResolver("1");
+        File art = new File("build/test/publish/1/multi1-1.2.jar");
+        FileUtil.copy(new File("test/repositories/1/org1/mod1.1/jars/mod1.1-1.0.jar"), art, null);
+        art = new File("build/test/publish/2/multi2-1.2.jar");
+        FileUtil.copy(new File("test/repositories/1/org1/mod1.1/jars/mod1.1-1.0.jar"), art, null);
+        _publish.addArtifactspattern("build/test/publish/1/[artifact]-[revision].[ext]");
+        _publish.addArtifactspattern("build/test/publish/2/[artifact]-[revision].[ext]");
+        _publish.execute();
+        
+        // should have do the ivy delivering
+        assertTrue(new File("build/test/publish/1/ivy-1.2.xml").exists()); 
+        
+        // should have published the files with "1" resolver
+        assertTrue(new File("test/repositories/1/jayasoft/multi/ivys/ivy-1.2.xml").exists()); 
+        assertTrue(new File("test/repositories/1/jayasoft/multi/jars/multi1-1.2.jar").exists());
+        assertTrue(new File("test/repositories/1/jayasoft/multi/jars/multi2-1.2.jar").exists());
+    }
+
     public void testCustom() throws Exception {
         _project.setProperty("ivy.dep.file", "test/java/fr/jayasoft/ivy/ant/ivy-custom.xml");
         IvyResolve res = new IvyResolve();
