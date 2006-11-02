@@ -45,6 +45,8 @@ public class IvyBuildList extends IvyTask {
     private String _ivyFilePath;
     private String _root = "*";
     private boolean _excludeRoot = false;
+    private String _leaf = "*";
+    private boolean _excludeLeaf = false;
 
 
     public void addFileset(FileSet buildFiles) {
@@ -75,6 +77,22 @@ public class IvyBuildList extends IvyTask {
         _excludeRoot = root;
     }
 
+	public String getLeaf() {
+		return _leaf;
+	}
+
+	public void setLeaf(String leaf) {
+		_leaf = leaf;
+	}
+
+	public boolean isExcludeLeaf() {
+		return _excludeLeaf;
+	}
+
+	public void setExcludeLeaf(boolean excludeLeaf) {
+		_excludeLeaf = excludeLeaf;
+	}
+
     public void execute() throws BuildException {
         if (_reference == null) {
             throw new BuildException("reference should be provided in ivy build list");
@@ -92,6 +110,7 @@ public class IvyBuildList extends IvyTask {
         Collection mds = new ArrayList();
         List independent = new ArrayList();
         ModuleDescriptor rootModuleDescriptor = null;
+        ModuleDescriptor leafModuleDescriptor = null;
 
         for (ListIterator iter = _buildFiles.listIterator(); iter.hasNext();) {
             FileSet fs = (FileSet)iter.next();
@@ -116,6 +135,9 @@ public class IvyBuildList extends IvyTask {
                         if (_root.equals(md.getModuleRevisionId().getName())) {
                             rootModuleDescriptor = md;
                         }
+                        if (_leaf.equals(md.getModuleRevisionId().getName())) {
+                            leafModuleDescriptor = md;
+                        }
 
                     } catch (Exception ex) {
                         if (_haltOnError) {
@@ -133,10 +155,17 @@ public class IvyBuildList extends IvyTask {
         if (!"*".equals(_root) && rootModuleDescriptor == null) {
             throw new BuildException("unable to find root module " + _root + " in build fileset");
         }
+        if (!"*".equals(_leaf) && leafModuleDescriptor == null) {
+            throw new BuildException("unable to find leaf module " + _leaf + " in build fileset");
+        }
 
         if (rootModuleDescriptor != null) {
             Message.info("Filtering modules based on root " + rootModuleDescriptor.getModuleRevisionId().getName());
-            mds = filterModules(mds, rootModuleDescriptor);
+            mds = filterModulesFromRoot(mds, rootModuleDescriptor);
+        }
+        if (leafModuleDescriptor != null) {
+            Message.info("Filtering modules based on leaf " + leafModuleDescriptor.getModuleRevisionId().getName());
+            mds = filterModulesFromLeaf(mds, leafModuleDescriptor);
         }
 
         List sortedModules = ivy.sortModuleDescriptors(mds);
@@ -171,7 +200,7 @@ public class IvyBuildList extends IvyTask {
      * @param rootmd root module
      * @return filtered list of modules
      */
-    private Collection filterModules(Collection mds, ModuleDescriptor rootmd) {
+    private Collection filterModulesFromRoot(Collection mds, ModuleDescriptor rootmd) {
         // Make a map of ModuleId objects -> ModuleDescriptors
         Map moduleIdMap = new HashMap();
         for (Iterator iter = mds.iterator(); iter.hasNext();) {
@@ -181,7 +210,7 @@ public class IvyBuildList extends IvyTask {
 
         // recursively process the nodes
         Set toKeep = new HashSet();
-        processFilterNode(rootmd, toKeep, moduleIdMap);
+        processFilterNodeFromRoot(rootmd, toKeep, moduleIdMap);
 
         // With the excluderoot attribute set to true, take the rootmd out of the toKeep set.
         if (_excludeRoot) {
@@ -206,16 +235,74 @@ public class IvyBuildList extends IvyTask {
      * @param toKeep the set of ModuleDescriptors that should be kept
      * @param moduleIdMap reference mapping of moduleId to ModuleDescriptor that are part of the BuildList
      */
-    private void processFilterNode(ModuleDescriptor node, Set toKeep, Map moduleIdMap) {
+    private void processFilterNodeFromRoot(ModuleDescriptor node, Set toKeep, Map moduleIdMap) {
         toKeep.add(node);
 
         DependencyDescriptor[] deps = node.getDependencies();
         for (int i=0; i<deps.length; i++) {
             ModuleId id = deps[i].getDependencyId();
             if (moduleIdMap.get(id) != null) {
-                processFilterNode((ModuleDescriptor) moduleIdMap.get(id), toKeep, moduleIdMap);
+                processFilterNodeFromRoot((ModuleDescriptor) moduleIdMap.get(id), toKeep, moduleIdMap);
             }
         }
+    }
+
+    /**
+     * Returns a collection of ModuleDescriptors that are conatined in the input
+     * collection of ModuleDescriptors which depends on the leaf module
+     *
+     * @param mds input collection of ModuleDescriptors
+     * @param leafmd leaf module
+     * @return filtered list of modules
+     */
+    private Collection filterModulesFromLeaf(Collection mds, ModuleDescriptor leafmd) {
+        // Make a map of ModuleId objects -> ModuleDescriptors
+        Map moduleIdMap = new HashMap();
+        for (Iterator iter = mds.iterator(); iter.hasNext();) {
+            ModuleDescriptor md = ((ModuleDescriptor) iter.next());
+            moduleIdMap.put(md.getModuleRevisionId().getModuleId(), md);
+        }
+
+        // recursively process the nodes
+        Set toKeep = new HashSet();
+        // With the excludeleaf attribute set to true, take the rootmd out of the toKeep set.
+        if (_excludeLeaf) {
+        	Message.verbose("Excluded module " + leafmd.getModuleRevisionId().getModuleId().getName());
+        } else {
+        	toKeep.add(leafmd);
+        }
+        processFilterNodeFromLeaf(leafmd, toKeep, moduleIdMap);
+
+
+        // just for logging
+        for (Iterator iter = toKeep.iterator(); iter.hasNext();) {
+            ModuleDescriptor md = ((ModuleDescriptor) iter.next());
+            Message.verbose("Kept module " + md.getModuleRevisionId().getModuleId().getName());
+        }
+
+        return toKeep;
+    }
+
+    /**
+     * Search in the moduleIdMap modules depending on node, add them to the toKeep set and process them 
+     * recursively.
+     *
+     * @param node the node to be processed
+     * @param toKeep the set of ModuleDescriptors that should be kept
+     * @param moduleIdMap reference mapping of moduleId to ModuleDescriptor that are part of the BuildList
+     */
+    private void processFilterNodeFromLeaf(ModuleDescriptor node, Set toKeep, Map moduleIdMap) {
+    	for (Iterator iter = moduleIdMap.values().iterator(); iter.hasNext();) {
+			ModuleDescriptor md = (ModuleDescriptor) iter.next();
+			DependencyDescriptor[] deps = md.getDependencies();
+	        for (int i=0; i<deps.length; i++) {
+	            ModuleId id = deps[i].getDependencyId();
+	            if (node.getModuleRevisionId().getModuleId().equals(id) && !toKeep.contains(md)) {
+	            	toKeep.add(md);
+	            	processFilterNodeFromLeaf(md, toKeep, moduleIdMap);
+	            }
+	        }
+		}
     }
 
     private void addBuildFile(Path path, File buildFile) {

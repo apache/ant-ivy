@@ -1,0 +1,7 @@
+<ivy-module version="1.2">
+	<info organisation="jayasoft" module="D"/>
+	<dependencies>
+		<dependency name="A" rev="latest.integration"/>
+		<dependency name="B" rev="latest.integration"/>
+	</dependencies>
+</ivy-module>
