@@ -1928,7 +1928,17 @@ public class Ivy implements TransferListener {
             int targetsUpToDate = 0;
             for (Iterator iter = artifactsToCopy.keySet().iterator(); iter.hasNext();) {
                 Artifact artifact = (Artifact)iter.next();
-                File archive = "ivy".equals(artifact.getType())? getIvyFileInCache(cache, artifact.getModuleRevisionId()):getArchiveFileInCache(cache, artifact, getSavedArtifactOrigin(cache, artifact), useOrigin);
+                File archive;
+				if ("ivy".equals(artifact.getType())) {
+					archive = getIvyFileInCache(cache, artifact.getModuleRevisionId());
+				} else {
+					archive = getArchiveFileInCache(cache, artifact, getSavedArtifactOrigin(cache, artifact), useOrigin);
+					if (!useOrigin && !archive.exists()) {
+						// file is not available in cache, maybe the last resolve was performed with useOrigin=true.
+						// we try to use the best we can
+						archive = getArchiveFileInCache(cache, artifact, getSavedArtifactOrigin(cache, artifact));
+					}
+				}
                 Set dest = (Set)artifactsToCopy.get(artifact);
                 Message.verbose("\tretrieving "+archive);
                 for (Iterator it2 = dest.iterator(); it2.hasNext();) {
@@ -2500,7 +2510,8 @@ public class Ivy implements TransferListener {
     }
     /**
      * Returns a File object pointing to where the artifact can be found on the local file system,
-     * using or not the original location depending on its availability and the setting of useOrigin.
+     * using or not the original location depending on the availability of origin information provided
+     * as parameter and the setting of useOrigin.
      * 
      * If useOrigin is false, this method will always return the file in the cache.
      * 
