@@ -19,6 +19,7 @@ for detailed view of each issue, please consult http://jira.jayasoft.org/
 - FIX: ChainVersionMatcher doesn't handle IvyAware children version matchers (IVY-331)
 - FIX: latest.<status> does not work properly when no matching revision exist (IVY-318)
 - FIX: attribute name in macrodef is not handled as expected (IVY-319)
+- FIX: confmappingoverride doesn't work for configurations extending from "*(public)" (IVY-326)
 
 
    version 1.4 - 2006-10-09

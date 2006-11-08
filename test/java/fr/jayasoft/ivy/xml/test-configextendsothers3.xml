@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml-stylesheet type="text/xsl" href="http://www.jayasoft.fr/org/ivyrep/ivy-doc.xsl"?>
+<ivy-module version="1.0">
+	<info organisation="myorg"
+	       module="mymodule"
+	       revision="myrev"
+	       status="integration"
+	       publication="20041101110000"/>
+	<configurations>
+		<include file="test/java/fr/jayasoft/ivy/xml/imported-configurations-with-wildcard.xml"/>
+		<conf name="priv" visibility="private" />
+		<conf name="extra" />
+	</configurations>
+	<dependencies confmappingoverride="true">
+		<dependency name="mymodule1" rev="1.0" conf="all-public"/>
+		<dependency name="mymodule2" rev="2.0" conf="extra"/>
+	</dependencies>
+</ivy-module>

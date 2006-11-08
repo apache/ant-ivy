@@ -87,6 +87,10 @@ public abstract class AbstractModuleDescriptorParser implements ModuleDescriptor
         	parseDepsConfs(confs, dd, useDefaultMappingToGuessRightOperande, true);
         }
         protected void parseDepsConfs(String confs, DefaultDependencyDescriptor dd, boolean useDefaultMappingToGuessRightOperande, boolean evaluateConditions) {
+        	if (confs == null) {
+        		return;
+        	}
+        	
             String[] conf = confs.split(";");
             parseDepsConfs(conf, dd, useDefaultMappingToGuessRightOperande, evaluateConditions);
         }
@@ -94,6 +98,7 @@ public abstract class AbstractModuleDescriptorParser implements ModuleDescriptor
         	parseDepsConfs(conf, dd, useDefaultMappingToGuessRightOperande, true);
         }
         protected void parseDepsConfs(String[] conf, DefaultDependencyDescriptor dd, boolean useDefaultMappingToGuessRightOperande, boolean evaluateConditions) {
+        	replaceConfigurationWildcards(_md);
             for (int i = 0; i < conf.length; i++) {
                 String[] ops = conf[i].split("->");
                 if (ops.length == 1) {
@@ -212,11 +217,11 @@ public abstract class AbstractModuleDescriptorParser implements ModuleDescriptor
         		for (int j = 0; j < ext.length; j++) {
         			if (conf.equals(ext[j])) {
         				String configName = configs[i].getName();
-                		if (getDefaultConfMappingDescriptor().getDependencyConfigurations(configName).length > 0) {
+//                		if (getDefaultConfMappingDescriptor().getDependencyConfigurations(configName).length > 0) {
             				configsToAdd.add(configName);
-                		} else {
+//                		} else {
                 			addExtendingConfigurations(configName, dd, useDefaultMappingToGuessRightOperande);
-                		}
+//                		}
         			}
         		}
         	}
@@ -302,5 +307,13 @@ public abstract class AbstractModuleDescriptorParser implements ModuleDescriptor
                 return System.currentTimeMillis();
             }
         }
-    }
+        
+        private void replaceConfigurationWildcards(ModuleDescriptor md) {
+            Configuration[] configs = md.getConfigurations();
+            for (int i = 0; i < configs.length; i++) {
+                configs[i].replaceWildcards(md);
+            }
+        }
+
+    }    
 }

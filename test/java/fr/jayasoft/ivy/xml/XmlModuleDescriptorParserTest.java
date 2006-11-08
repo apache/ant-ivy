@@ -621,6 +621,28 @@ public class XmlModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         assertEquals(Arrays.asList(new String[] {"B"}), Arrays.asList(dd.getDependencyConfigurations("conf2")));  
     }
     
+    public void testImportConfigurationsWithWildcardAndMappingOverride() throws Exception {
+        // import configurations and default mapping
+        ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(_ivy, getClass().getResource("test-configextendsothers3.xml"), true);
+        assertNotNull(md);
+        
+        // has 2 dependencies
+        DependencyDescriptor[] dependencies = md.getDependencies();
+        assertNotNull(dependencies);
+        assertEquals(2, dependencies.length);
+        
+        // confs dep1: all-public->all-public (mappingoverride = true)
+        DependencyDescriptor dd = getDependency(dependencies, "mymodule1");
+        assertEquals(Arrays.asList(new String[] {"all-public"}), Arrays.asList(dd.getModuleConfigurations()));
+        assertEquals(Arrays.asList(new String[] {"all-public"}), Arrays.asList(dd.getDependencyConfigurations("all-public"))); 
+        
+        // confs dep2: extra->extra;all-public->all-public (mappingoverride = true)
+        dd = getDependency(dependencies, "mymodule2");
+        assertEquals(Arrays.asList(new String[] {"all-public", "extra"}), Arrays.asList(dd.getModuleConfigurations()));
+        assertEquals(Arrays.asList(new String[] {"extra"}), Arrays.asList(dd.getDependencyConfigurations("extra")));  
+        assertEquals(Arrays.asList(new String[] {"all-public"}), Arrays.asList(dd.getDependencyConfigurations("all-public")));  
+    }
+
     public void testDefaultConfMappingWithSelectors() throws Exception {
         // import configurations and default mapping
         ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(_ivy, getClass().getResource("test-defaultconfmapping-withselectors.xml"), true);
