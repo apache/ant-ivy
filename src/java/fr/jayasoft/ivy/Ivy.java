@@ -442,18 +442,28 @@ public class Ivy implements TransferListener {
         loadProperties(url, true);
     }
     public void loadProperties(URL url, boolean overwrite) throws IOException {
-        Properties properties = new Properties();
-        properties.load(url.openStream());
-        addAllVariables(properties, overwrite);
+        loadProperties(url.openStream(), overwrite);
     }
     public void loadProperties(File file) throws IOException {
         loadProperties(file, true);
     }
     
     public void loadProperties(File file, boolean overwrite) throws IOException {
-        Properties properties = new Properties();
-        properties.load(new FileInputStream(file));
-        addAllVariables(properties, overwrite);
+        loadProperties(new FileInputStream(file), overwrite);
+    }
+    
+    private void loadProperties(InputStream stream, boolean overwrite) throws IOException {
+    	try {
+	        Properties properties = new Properties();
+	        properties.load(stream);
+	        addAllVariables(properties, overwrite);
+    	} finally {
+    		if (stream != null) {
+    			try {
+    				stream.close();
+    			} catch (IOException e) {}
+    		}
+    	}
     }
     
     public void setVariable(String varName, String value) {
