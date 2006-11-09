@@ -4456,7 +4456,7 @@ This resolver shares the <a href="./ivy/doc/configuration/resolvers#common">comm
 </content>
 </node>
 <node id="node-787">
-<nodeinfo  path='ivy/doc/resolver/sftp' md5_body='12b7a208afcd34f5c064b98062b05f9f' weight='0' depth='5' type='book' author='xavier' uid='6' created='1157906374' status='1' format='4' sticky='0' promote='0'/>
+<nodeinfo  path='ivy/doc/resolver/sftp' md5_body='adbd23adb5b67f0bf2909851b5cf614b' weight='0' depth='5' type='book' author='xavier' uid='6' created='1157906374' status='1' format='4' sticky='0' promote='0'/>
 <title>sftp resolver</title>
 <teaser>
 <![CDATA[<table class="resolver">
@@ -4547,12 +4547,20 @@ Will connect to myhost.com using myuser and prompt for the password.
 Will connect to myhost.com using user and password provided with ivy variables.
 <hr/>
 <code type="xml">
-<sftp keyFile="path/to/key/file" keyFilePassword="${password}">
+<sftp>
   <ivy pattern="sftp://user:geheim@yourserver.com:8022/path/to/repos/[module]/[revision]/ivy.xml"/>
-  <artifact pattern="sftp://user:geheim@myserver.com:8022/path/to/my/repos/[artifact].[ext]"/>
+  <artifact pattern="sftp://user:secret@myserver.com:8022/path/to/my/repos/[artifact].[ext]"/>
 </sftp>
 </code>
-Will connect to yourserver.com on port 8022 with user geheim and use keyFile path/to/key/file for keyFile and the value of password variable for keyFilePassword authentication for ivy files, and to myserver.com on port 8022 using user geheim with the same keyFile/keyFilePassword pair for the artifacts.
+Will connect to yourserver.com on port 8022 with user 'user' and password 'geheim' for authentication for ivy files, and to myserver.com on port 8022 using user 'user' and password 'secret' for the artifacts.
+<hr/>
+<code type="xml">
+<sftp keyFile="path/to/key/file" keyFilePassword="${password}">
+  <ivy pattern="sftp://user@yourserver.com:8022/path/to/repos/[module]/[revision]/ivy.xml"/>
+  <artifact pattern="sftp://user@myserver.com:8022/path/to/my/repos/[artifact].[ext]"/>
+</sftp>
+</code>
+Will connect to yourserver.com on port 8022 with user 'user' and use keyFile path/to/key/file for keyFile and the value of password variable for keyFilePassword authentication for ivy files, and to myserver.com on port 8022 using user 'user' with the same keyFile/keyFilePassword pair for the artifacts.
 ]]>
 </content>
 </node>
@@ -4776,7 +4784,7 @@ Even if not required, because the use of a default big resolver (chain, for inst
 ]]>
 </content>
 <node id="node-58">
-<nodeinfo  path='ivy/doc/configuration/module' md5_body='2d25849d1062feb79fd9c9bdbdc18988' weight='-14' depth='5' type='book' author='admin' uid='1' created='1117630097' status='1' format='4' sticky='0' promote='1'/>
+<nodeinfo  path='ivy/doc/configuration/module' md5_body='5a88331559622a4c50616210cb1d94fe' weight='-14' depth='5' type='book' author='admin' uid='1' created='1117630097' status='1' format='4' sticky='0' promote='1'/>
 <title>module</title>
 <teaser>
 <![CDATA[<b>Tag:</b> module
@@ -4785,7 +4793,7 @@ Define a module set rule. The tag defines a module set, by giving an expression 
 
 It also gives the specific setting to use for this module set.
 
-Foe each module set, you can configure:
+For each module set, you can configure:
 <ul>
 <li>the <a href="./ivy/doc/configuration/resolvers">resolver</a> to use</li>
 <li>the <a href="./ivy/doc/configuration/conflict-managers">conflict manager</a> to use</li>
@@ -4802,7 +4810,7 @@ Define a module set rule. The tag defines a module set, by giving an expression 
 
 It also gives the specific setting to use for this module set.
 
-Foe each module set, you can configure:
+For each module set, you can configure:
 <ul>
 <li>the <a href="./ivy/doc/configuration/resolvers">resolver</a> to use</li>
 <li>the <a href="./ivy/doc/configuration/conflict-managers">conflict manager</a> to use</li>
@@ -5615,7 +5623,7 @@ public configurations, how and when to use them.
 </node>
 </node>
 <node id="node-64">
-<nodeinfo  path='ivy/doc/ivyfile/configurations' md5_body='eaff83ae5856fea3e8e377e6ecbfbaf9' weight='-12' depth='4' type='book' author='admin' uid='1' created='1117630958' status='1' format='4' sticky='0' promote='1'/>
+<nodeinfo  path='ivy/doc/ivyfile/configurations' md5_body='52a2321b87bb7f4c1d98c6ae20473d24' weight='-12' depth='4' type='book' author='admin' uid='1' created='1117630958' status='1' format='4' sticky='0' promote='1'/>
 <title>configurations</title>
 <teaser>
 <![CDATA[<b>Tag:</b> configurations <b>Parent:</b> <a href="./ivy/doc/ivyfile">ivy-module</a>
@@ -5639,8 +5647,7 @@ The default conf mapping not only defines the conf mapping to use when no conf m
 
 See <a href="./ivy/doc/ivyfile/dependency#defaultconfmapping">examples on the dependency</a> page.
 
-<span class="since">since 1.4</span> You can activate a confmappingoverride mode for all configurations, in which case as soon as a dependency is needed in one configuration without explicit mapping (i.e. without right side operande in the mapping), it will use the default configuration mapping of the configuration being resolved instead of the configuration mapping of the configuration declared.
-This is an advanced feature which should be used only if you understand its implication.
+<span class="since">since 1.4</span> You can activate a confmappingoverride mode for all configurations, in which case the extending configurations will override the mappings of the configurations they extend from. This is an advanced feature which should be used only if you understand its implication.
 For a discussion about the origin of this feature see <a href="./node/592">this thread</a>.
 
 <h1>Attributes</h1>
@@ -6976,7 +6983,7 @@ Generates the artifact report for only the default configuration resolved during
 </content>
 </node>
 <node id="node-254">
-<nodeinfo  path='ivy/doc/use/buildlist' md5_body='3258a9aca0a48addc10dfe3c6f365a48' weight='0' depth='5' type='book' author='xavier' uid='6' created='1126718139' status='1' format='4' sticky='0' promote='0'/>
+<nodeinfo  path='ivy/doc/use/buildlist' md5_body='a8613ad4d1cb9276fdc2e903fa2530fc' weight='0' depth='5' type='book' author='xavier' uid='6' created='1126718139' status='1' format='4' sticky='0' promote='0'/>
 <title>buildlist</title>
 <teaser>
 <![CDATA[The buildlist task enable to obtain a filelist of files (usually build.xml files) ordered according to ivy dependency information from the least dependent to the most one, or the inverse. (<span class="since">since 1.2</span>)
@@ -6992,6 +6999,8 @@ This is particularly useful combined with subant, to build a set of interelated 
 
 <span class="since">since 1.3</span> A root attribute can also be used to include, among all the modules found, only the one that are dependencies (either direct or transitive) of a root module. This can also be used with the excluderoot attribute, which when set to true will exclude the root itself from the list.
 
+<span class="since">since 1.4.1</span> A leaf attribute can also be used to include, among all the modules found, only the one that have dependencies (either direct or transitive) on a leaf module. This can also be used with the excludeleaf attribute, which when set to true will exclude the leaf itself from the list.
+
 <span class="since">since 1.4</span> The ivy.sorted.modules property is set in the ant at the end of the task with a comma separated list of ordered modules. This can be useful for debug or information purpose.
 <table class="ant">
 <thead>
@@ -7003,6 +7012,8 @@ This is particularly useful combined with subant, to build a set of interelated 
     <tr><td>ivyfilepath</td><td>the relative path from files to order to corresponding ivy files</td><td>No. Defaults to ${ivy.buildlist.ivyfilepath}</td></tr>
     <tr><td>root</td><td><span class="since">since 1.3</span> the name of the module which should be considered as the root of the buildlist</td><td>No. Defaults to no root (all modules are used in the build list)</td></tr>
     <tr><td>excluderoot</td><td><span class="since">since 1.3</span> true if the root defined should be excluded from the list</td><td>No. Defaults to false</td></tr>
+    <tr><td>leaf</td><td><span class="since">since 1.4.1</span> the name of the module which should be considered as the leaf of the buildlist</td><td>No. Defaults to no leaf (all modules are used in the build list)</td></tr>
+    <tr><td>excludeleaf</td><td><span class="since">since 1.4.1</span> true if the leaf defined should be excluded from the list</td><td>No. Defaults to false</td></tr>
     <tr><td>haltonerror</td><td>true to halt the build when an invalid ivy file is encountered, false to continue</td><td>No. Defaults to true</td></tr>
     <tr><td>skipbuildwithoutivy</td><td>true to skip files of the fileset with no corresponding ivy file, false otherwise. If false the file with no corresponding ivy file will be considered as independent of the other and put at the beginning of the built filelist.</td><td>No. Defaults to false</td></tr>
     <tr><td>reverse</td><td>true to obtain the list in the reverse order, i.e. from the most dependent to the least one</td><td>No. Defaults to default false</td></tr>
@@ -7039,6 +7050,14 @@ Builds a list of build.xml files sorted according to the ivy.xml files found in 
     </ivy:buildlist>
 </code>
 Builds a list of build.xml files sorted according to the ivy.xml files found in an ivy directory relative to those build files. Only build.xml files of modules which are dependencies of myapp (either direct or transitive) are put in the result list.
+<hr/>
+<code type="xml">
+    <ivy:buildlist reference="build-path" ivyfilepath="ivy/ivy.xml" leaf="mymodule">
+      <fileset dir="projects" includes="**/build.xml"/>
+    </ivy:buildlist>
+</code>
+Builds a list of build.xml files sorted according to the ivy.xml files found in an ivy directory relative to those build files. Only build.xml files of modules which have dependencies (direct or transitive) on mymodule are put in the result list.
+
 
 
 ]]>
@@ -7257,7 +7276,7 @@ Resolves the emma module in version 2.0.4217, constructs an ant path with the co
 </content>
 </node>
 <node id="node-79">
-<nodeinfo  path='ivy/doc/use/configure' md5_body='49f379fea2e158cf83f8f986bce456a6' weight='0' depth='5' type='book' author='admin' uid='1' created='1117634671' status='1' format='3' sticky='0' promote='1'/>
+<nodeinfo  path='ivy/doc/use/configure' md5_body='7b6070daf27a8e4cb22c6bda584d45c3' weight='0' depth='5' type='book' author='admin' uid='1' created='1117634671' status='1' format='3' sticky='0' promote='1'/>
 <title>configure</title>
 <teaser>
 <![CDATA[The configure task is used to configure ivy with an xml configuration file.<br/><br/>
@@ -7301,7 +7320,11 @@ under the id "ivy.instance".</i>
 If any of the url you use in ivy (especially in dependency resolvers) need http
 authentication, then you have to provide the host, realm, username and passwd
 attributes of the configure task. These settings will then be used in any
-further call to ivy tasks.
+further call to ivy tasks.<br/><br/>
+
+<b>Since 1.4:</b>
+It's also possible to configure authentication settings for multiple urls. This can be done with the &lt;credentials> subelements. See the examples for more details.
+
 <h2>Examples</h2>
 <h3>Simplest configuration</h3>
 <pre>&lt;ivy:configure /&gt;</pre>
@@ -7310,11 +7333,17 @@ Use either ${ivy.conf.file} if it exists, or the <a href="./misc/ivy/samples/ivy
 <pre>&lt;ivy:configure file="myconffile.xml" /&gt;</pre>
 <h3>Configure with an url</h3>
 <pre>&lt;ivy:configure url="http://mysite.com/myconffile.xml" /&gt;</pre>
-]]>
+<h3>Configure multiple URLs which require autentication</h3>
+<pre>
+&lt;ivy:configure file="path/to/my/ivyconf.xml">
+  &lt;credentials host="myhost.com" realm="My Realm" username="myuser" passwd="mypasswd" />
+  &lt;credentials host="yourhost.com" realm="Your Realm" username="myuser" passwd="myotherpasswd" />
+&lt;/ivy:configure> 
+</pre>]]>
 </content>
 </node>
 <node id="node-82">
-<nodeinfo  path='ivy/doc/use/deliver' md5_body='c8369be69ac005a658812a39c276c2e3' weight='0' depth='5' type='book' author='admin' uid='1' created='1117634901' status='1' format='4' sticky='0' promote='1'/>
+<nodeinfo  path='ivy/doc/use/deliver' md5_body='44b6686ab9f19c0d4fc2a9e1297c33ef' weight='0' depth='5' type='book' author='admin' uid='1' created='1117634901' status='1' format='4' sticky='0' promote='1'/>
 <title>deliver</title>
 <teaser>
 <![CDATA[Delivers a resolved ivy file of the current module, and possibly do recursive delivery of dependencies. 
@@ -7386,7 +7415,7 @@ It can also be useful if you want to trigger a recursive delivery and then ensur
     <tr><td>deliverpattern</td><td>the pattern to use for ivy file delivery</td>
         <td>No. Defaults to ${ivy.deliver.ivy.pattern}</td></tr>
     <tr><td>pubrevision</td><td>the revision to use for the publication</td>
-        <td>No. Defaults to the ${ivy.deliver.revision}</td></tr>
+        <td>No. Defaults to ${ivy.deliver.revision} if set, or the revision resolved if set, or a timestamp</td></tr>
     <tr><td>pubdate</td><td>the publication date to use for the publication. This date should be either 'now', or a date given with the following pattern: yyyyMMddHHmmss</td>
         <td>No. Defaults to 'now'</td></tr>
     <tr><td>status</td><td>the status to use for the publication</td>
@@ -7698,23 +7727,26 @@ Resolves the emma module in version 2.0.4217, constructs an ant path with the co
 </content>
 </node>
 <node id="node-83">
-<nodeinfo  path='ivy/doc/use/publish' md5_body='e78b526bf2e0831805a65ffd1ac7bf48' weight='0' depth='5' type='book' author='admin' uid='1' created='1117634984' status='1' format='3' sticky='0' promote='1'/>
+<nodeinfo  path='ivy/doc/use/publish' md5_body='1f150af2bdad288b81c6842ab0d39ab2' weight='0' depth='5' type='book' author='admin' uid='1' created='1117634984' status='1' format='4' sticky='0' promote='1'/>
 <title>publish</title>
 <teaser>
-<![CDATA[Publishes the current modules artifacts.<br/><br/>
-This task is meant to publish the declared published artifacts of the current module to a repository.<br/>
-The repository is given through the name of a resolver declared in current ivy configuration. See <a href="./ivy/doc/configuration">configuration</a>
-for details about resolver supporting artifact publishing.<br/>
-It also publishes the delivered ivy file (except if you don't want), and even deliver it if it has not been done with a previous
-deliver call or if forcedeliver is set to true. That's why this task takes some parameters useful only for delivery.]]>
+<![CDATA[Publishes the current modules artifacts.
+
+This task is meant to publish the declared published artifacts of the current module to a repository.
+
+The repository is given through the name of a resolver declared in current ivy configuration. See <a href="./ivy/doc/configuration">configuration</a> for details about resolver supporting artifact publishing.
+It also publishes the delivered ivy file (except if you don't want), and even deliver it if it has not been done with a previous deliver call or if forcedeliver is set to true. That's why this task takes some parameters useful only for delivery.]]>
 </teaser>
 <content>
-<![CDATA[Publishes the current modules artifacts.<br/><br/>
-This task is meant to publish the declared published artifacts of the current module to a repository.<br/>
-The repository is given through the name of a resolver declared in current ivy configuration. See <a href="./ivy/doc/configuration">configuration</a>
-for details about resolver supporting artifact publishing.<br/>
-It also publishes the delivered ivy file (except if you don't want), and even deliver it if it has not been done with a previous
-deliver call or if forcedeliver is set to true. That's why this task takes some parameters useful only for delivery.
+<![CDATA[Publishes the current modules artifacts.
+
+This task is meant to publish the declared published artifacts of the current module to a repository.
+
+The repository is given through the name of a resolver declared in current ivy configuration. See <a href="./ivy/doc/configuration">configuration</a> for details about resolver supporting artifact publishing.
+It also publishes the delivered ivy file (except if you don't want), and even deliver it if it has not been done with a previous deliver call or if forcedeliver is set to true. That's why this task takes some parameters useful only for delivery.
+
+<span class="since">since 1.4.1</span>
+The source artifact pattern can be specified either as an attribute on the task (artifactspattern) or using a list of nested artifacts element (see examples below).
   
 <table class="ant">
 <thead>
@@ -7735,6 +7767,8 @@ deliver call or if forcedeliver is set to true. That's why this task takes some 
         <td>No. Defaults to true</td></tr>
     <tr><td>publishivy</td><td>True to publish delivered ivy file, false otherwise</td>
         <td>No. Defaults to true</td></tr>
+    <tr><td>conf</td><td>A comma separated list of configurations to publish. Note that the ivy file won't be published in this case, publishivy must be set to false. <span class="since">since 1.4.1</span></td>
+        <td>No. Defaults to all configurations published</td></tr>
     <tr><td>overwrite</td><td>True to overwrite files in repository if the revision already exist, false to let it as is</td>
         <td>No. Defaults to false</td></tr>
     <tr><td>warnonmissing</td><td>True to warn when artifacts to be published are missing</td>
@@ -7751,7 +7785,14 @@ deliver call or if forcedeliver is set to true. That's why this task takes some 
         <td>No. No recursive delivery is done by default</td></tr>
 </tbody>
 </table>
-]]>
+<h1>Examples</h1>
+<code type="xml">
+<ivy:publish resolver="local" pubrevision="1.0">
+   <artifacts pattern="1/[artifact].[ext]" />
+   <artifacts pattern="2/[artifact].[ext]" />
+</ivy:publish>
+</code>
+Publishes the last resolved module in the local resolver with revision 1.0, looking for artifacts in directories 1 and 2.]]>
 </content>
 </node>
 <node id="node-805">
@@ -9154,25 +9195,38 @@ This version is bugfix release, upgrade from 1.3 is strongly recommended.
 </content>
 </node>
 <node id="node-744">
-<nodeinfo  path='ivy/doc/releasenotes/1.4' md5_body='8653a4b6d04c4607171911595946d1ff' weight='0' depth='3' type='book' author='xavier' uid='6' created='1156479101' status='1' format='4' sticky='0' promote='0'/>
-<title>1.4</title>
+<nodeinfo  path='ivy/doc/releasenotes/1.4' md5_body='870a7130d71d1a459cdd938685e75165' weight='0' depth='3' type='book' author='xavier' uid='6' created='1156479101' status='1' format='4' sticky='0' promote='0'/>
+<title>1.4 - 2006-10-09</title>
 <teaser>
-<![CDATA[The child pages list all the changes (bug fix, improvements and new feature) introduced for each release candidate before one of them is promoted to 1.4.
+<![CDATA[<h1>Changes log</h1>
+Ivy 1.4-RC2 has been promoted to 1.4 on 2006-10-09
 
-The 1.4-RC1 has been released on Sept. 17th. 2006. 1.4 final will come in a few days. Stay tuned!
+Known bugs and limitations:
+- references in resolvers are not resolved 'in-time' with macrodef (IVY-319)
+- latest.<status> does not work properly when no matching revision exist (IVY-318)
+- IVY complains about non-existent reports in the cache directory (IVY-315)
+- retrieve fails when resolve is done with useOrigin set to true (IVY-304)
 
-<div class="newandnoteworthy">
-<h1><center><big>New and noteworthy</big></center></h1>
-<h1>Documentation</h1>
-<h2>A new introduction tutorial as simple as 1-2-3</h2>
-It has never been so easy to try Ivy! You don't even need to install it yourself! Follow this simple steps and you're done:
-<ol>
-<li>make sure you have <a href="http://ant.apache.org/">ant</a> 1.6.2 or greater and a <a href="http://java.sun.com">jdk</a> properly installed</li>]]>
+For detailed list of changes since 1.3.1, please see changes of the two release candidates detailed in child pages.
+For an overview of what's new and noteworthy in this release since 1.3 see the new and noteworthy section below.]]>
 </teaser>
 <content>
-<![CDATA[The child pages list all the changes (bug fix, improvements and new feature) introduced for each release candidate before one of them is promoted to 1.4.
+<![CDATA[<h1>Changes log</h1>
+Ivy 1.4-RC2 has been promoted to 1.4 on 2006-10-09
 
-The 1.4-RC1 has been released on Sept. 17th. 2006. 1.4 final will come in a few days. Stay tuned!
+Known bugs and limitations:
+- references in resolvers are not resolved 'in-time' with macrodef (IVY-319)
+- latest.<status> does not work properly when no matching revision exist (IVY-318)
+- IVY complains about non-existent reports in the cache directory (IVY-315)
+- retrieve fails when resolve is done with useOrigin set to true (IVY-304)
+
+For detailed list of changes since 1.3.1, please see changes of the two release candidates detailed in child pages.
+For an overview of what's new and noteworthy in this release since 1.3 see the new and noteworthy section below.
+
+<h1>Downloads</h1>
+<a href="./visit.php?url=./downloads/ivy/1.4/ivy-1.4-bin.zip">ivy-1.4-bin.zip</a>
+<a href="./visit.php?url=./downloads/ivy/1.4/ivy-1.4-src.zip">ivy-1.4-src.zip</a>
+<a href="./visit.php?url=./downloads/ivy/1.4/ivy-1.4-doc.zip">ivy-1.4-doc.zip</a>
 
 <div class="newandnoteworthy">
 <h1><center><big>New and noteworthy</big></center></h1>

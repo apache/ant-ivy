@@ -5,7 +5,7 @@
 				
 for detailed view of each issue, please consult http://jira.jayasoft.org/
 
-   version 1.4.1 - not yet released
+   version 1.4.1 - 2006-11-09
 =====================================
 - IMPROVE: ability to rebuild all dependent projects from a leaf (IVY-101)
 - IMPROVE: Artifact pattern list attribute for the ivy:publish (IVY-113)
