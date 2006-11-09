@@ -104,6 +104,10 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
             ParseException ex = new ParseException("exception occured while parsing "+res, 0);
             ex.initCause(e);
             throw ex;
+        } finally {
+        	if (is != null) {
+        		is.close();
+        	}
         }
     }
 

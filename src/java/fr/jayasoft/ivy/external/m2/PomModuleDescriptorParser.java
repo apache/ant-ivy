@@ -249,7 +249,13 @@ public class PomModuleDescriptorParser extends AbstractModuleDescriptorParser {
     }
 
     public void toIvyFile(InputStream is, Resource res, File destFile, ModuleDescriptor md) throws ParseException, IOException {
-        XmlModuleDescriptorWriter.write(md, destFile);        
+    	try {
+    		XmlModuleDescriptorWriter.write(md, destFile);
+    	} finally {
+    		if (is != null) {
+    			is.close();
+    		}
+    	}
     }
 
     public boolean accept(Resource res) {
