@@ -112,17 +112,33 @@
 		        debug="${debug.mode}"/>
 	</target>
 
-	<target name="jar" depends="build">
+	<target name="jar" depends="build, default-version">
+		<!--  copy resources -->
 		<copy todir="${classes.build.dir}">
     		<fileset dir="${src.dir}">
       			<exclude name="**/*.java"/>
     		</fileset>
   		</copy>
+  		<!-- identify compiled ivy version -->
+		<echo message="version=${build.version}${line.separator}" file="${classes.build.dir}/module.properties" append="true"/>
+		<echo message="date=${pubdate}${line.separator}" file="${classes.build.dir}/module.properties" append="true"/>
+		
+		<!-- package the two ivy jars -->
   		<jar 	destfile="${artifacts.build.dir}/ivy.jar"
-				basedir="${classes.build.dir}"/>
+				basedir="${classes.build.dir}">
+			<manifest>
+				<attribute name="Build-Version" value="${build.version}"/>
+			</manifest>
+		</jar>
   		<jar 	destfile="${artifacts.build.dir}/ivy-core.jar"
 				basedir="${classes.build.dir}"
-  				excludes="fr/jayasoft/ivy/ant/*"/>
+  				excludes="fr/jayasoft/ivy/ant/*">
+			<manifest>
+				<attribute name="Build-Version" value="${build.version}"/>
+			</manifest>
+		</jar>
+		<!-- clean generated module properties file -->
+		<delete file="${classes.build.dir}/module.properties"/>
 	</target>
 	
 
@@ -250,8 +266,66 @@
 		</exec>
 	</target>
 	
-	<target name="zip-doc" description="zip the documentation">
-		<zip basedir="${basedir}/doc" destfile="${build.dir}/ivy-doc.zip"/>
+    <!-- =================================================================
+               DISTRIBUTION
+         ================================================================= -->
+	<target name="zip-doc" depends="default-version" description="zip the documentation">
+		<zip basedir="${basedir}/doc" destfile="${distrib.dir}/ivy-${build.version}-doc.zip"/>
 	</target>
+
+	<target name="snapshot-src" depends="default-version">
+		<mkdir dir="${distrib.dir}"/>
+		<zip destfile="${distrib.dir}/ivy-${build.version}-src.zip">
+			<zipfileset dir="${src.dir}" prefix="ivy-${build.version}/src/java"/>
+			<zipfileset dir="${basedir}/src/example" prefix="ivy-${build.version}/src/example"/>
+			<zipfileset dir="${test.dir}" prefix="ivy-${build.version}/test/java"/>
+			<zipfileset dir="${basedir}/test/repositories" prefix="ivy-${build.version}/test/repositories"/>
+			<zipfileset dir="${basedir}/test/buildlist" prefix="ivy-${build.version}/test/buildlist"/>
+			<zipfileset dir="${basedir}/test/triggers" prefix="ivy-${build.version}/test/triggers"/>
+			<zipfileset dir="${basedir}/test/xsl" prefix="ivy-${build.version}/test/xsl"/>
+			<zipfileset dir="${src.dir}/fr/jayasoft/ivy/xml" includes="ivy.xsd" fullpath="ivy-${build.version}/ivy.xsd"/>
+			<zipfileset dir="${basedir}" includes="LICENSE.txt" fullpath="ivy-${build.version}/LICENSE.txt"/>
+			<zipfileset dir="${basedir}" includes="CHANGES.txt" fullpath="ivy-${build.version}/CHANGES.txt"/>
+			<zipfileset dir="${basedir}" includes="ivyconf.xml" fullpath="ivy-${build.version}/ivyconf.xml"/>
+			<zipfileset dir="${basedir}" includes="build.properties" fullpath="ivy-${build.version}/build.properties"/>
+			<zipfileset dir="${basedir}" includes="ivy.xml" fullpath="ivy-${build.version}/ivy.xml"/>
+
+			<zipfileset dir="${basedir}" includes="build.xml" fullpath="ivy-${build.version}/build.xml"/>
+		</zip>
+	</target>
+
+	<target name="snapshot-bin" depends="default-version, jar">
+		<mkdir dir="${distrib.dir}"/>
+		<zip destfile="${distrib.dir}/ivy-${build.version}-bin.zip">
+			<zipfileset dir="${basedir}/src/example" prefix="ivy-${build.version}/src/example"/>
+			<zipfileset dir="${basedir}" includes="LICENSE.txt" fullpath="ivy-${build.version}/LICENSE.txt"/>
+			<zipfileset dir="${basedir}" includes="CHANGES.txt" fullpath="ivy-${build.version}/CHANGES.txt"/>
+			<zipfileset dir="${src.dir}/fr/jayasoft/ivy/xml" includes="ivy.xsd" fullpath="ivy-${build.version}/ivy.xsd"/>
+			<zipfileset dir="${basedir}" includes="ivy.xml" fullpath="ivy-${build.version}/ivy.xml"/>
+
+			<zipfileset dir="${lib.dir}" prefix="ivy-${build.version}/lib"/>
+			<zipfileset dir="${artifacts.build.dir}" includes="ivy.jar" fullpath="ivy-${build.version}/ivy-${build.version}.jar"/>
+			<zipfileset dir="${artifacts.build.dir}" includes="ivy-core.jar" fullpath="ivy-${build.version}/ivy-core-${build.version}.jar"/>
+		</zip>
+	</target>
+	
+	<target name="default-version">
+		<tstamp> 
+			<format property="pubdate" pattern="yyyyMMddHHmmss"/>  
+		</tstamp>
+		<property name="version.prefix" value="local-"/>
+		<property name="build.version" value="${version.prefix}${pubdate}"/>
+	</target>
+	
+	<target name="snapshot-version">
+		<property name="version.prefix" value=""/>
+	</target>
+	
+	<target name="release-version">
+		<input message="please enter version: " addproperty="build.version"/>
+	</target>
+	
+	<target name="snapshot" depends="snapshot-version, coverage-report" description="used for nightly and integration builds"/>
+	<target name="release" depends="release-version, coverage-report, snapshot-src, snapshot-bin, main-doc, javadoc, zip-doc" description="make a new release of Ivy"/>
 
 </project>

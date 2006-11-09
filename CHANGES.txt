@@ -10,6 +10,7 @@ for detailed view of each issue, please consult http://jira.jayasoft.org/
 - IMPROVE: ability to rebuild all dependent projects from a leaf (IVY-101)
 - IMPROVE: Artifact pattern list attribute for the ivy:publish (IVY-113)
 - IMPROVE: Measure code coverage (IVY-323)
+- IMPROVE: add release target to build file (IVY-339)
 - IMPROVE: Add a 'conf' parameter to the ivy 'publish' ant task (IVY-322) (thanks to Emmanuel Pellereau)
 
 - FIX: retrieve fails when resolve is done with useOrigin set to true (IVY-304)
