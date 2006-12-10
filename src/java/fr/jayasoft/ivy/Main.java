@@ -15,7 +15,6 @@ import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -28,8 +27,6 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
-import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.types.Path;
 
 import fr.jayasoft.ivy.report.ResolveReport;
 import fr.jayasoft.ivy.url.CredentialsStore;
