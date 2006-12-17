@@ -77,13 +77,11 @@ public class BasicURLHandler extends AbstractURLHandler {
         } catch (IOException e) {
             Message.error("Server access Error: "+e.getMessage()+" url="+url);
         } finally {
-            if (con instanceof HttpURLConnection) {
-                ((HttpURLConnection)con).disconnect();
-            }
+            disconnect(con);
         }
         return UNAVAILABLE;
     }
-    
+
     public InputStream openStream(URL url) throws IOException {
         URLConnection conn = null;
         InputStream inStream = null;
@@ -104,12 +102,7 @@ public class BasicURLHandler extends AbstractURLHandler {
                 inStream.close();
             }
             
-            if (conn != null) {
-                if (conn instanceof HttpURLConnection) {
-                    //System.out.println("Closing HttpURLConnection");
-                    ((HttpURLConnection) conn).disconnect();
-                }
-            }
+            disconnect(conn);
         }
     }
     public void download(URL src, File dest, CopyProgressListener l) throws IOException {
@@ -124,12 +117,21 @@ public class BasicURLHandler extends AbstractURLHandler {
             }
         }
         finally {
-            if (srcConn != null) {
-                if (srcConn instanceof HttpURLConnection) {
-                    //System.out.println("Closing HttpURLConnection");
-                    ((HttpURLConnection) srcConn).disconnect();
-                }
-            }
+            disconnect(srcConn);
         }
     }
+
+    private void disconnect(URLConnection con) {
+		if (con instanceof HttpURLConnection) {
+		    ((HttpURLConnection)con).disconnect();
+		} else if (con != null && "sun.net.www.protocol.file.FileURLConnection".equals(con.getClass().getName())) {
+			// ugly fix for a sun jre bug:
+			// http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4257700
+			//
+			// getting header info on the fileurlconnection opens the connection, 
+			// which opens a file input stream without closing it.
+			try {con.getInputStream().close();} catch (IOException e) {}
+		}
+	}
+    
 }
