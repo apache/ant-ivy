@@ -80,16 +80,10 @@ public
     doc = Document.new(File.new(book))
     root = doc.root
     
-    p "building node index..."
-    nodes = Hash.new
-    root.each_element("//node") do |node|
-      nodes[get_path(node)] = node
-    end
-    
     p "generating toc..."
     FileUtils.mkdir_p(todir)
     f = File.new(todir+"/toc.json", 'w')
-    f.puts gen_toc(root)
+    f.puts '{children:['+gen_toc(root)+']}'
     f.close    
     
     p "starting generation..."
@@ -107,13 +101,9 @@ public
       base = "../" * pathdepth
       
       content = node.elements["content"].cdatas.to_s
-      content.gsub!(/href="\.?\/([^"]+)"/) do |s|
-        npath = $1.gsub(/^ivy\//, '')
-        if nodes[npath]
-          'href="'+base+npath +'.'+@ext+'"' 
-        else
-          'href="'+@site + '/' +npath+'.'+@ext+'"'
-        end
+      content.gsub!(/href="\.?\/ivy\/([^"]+)"/) do |s|
+        npath = $1
+        'href="'+base+npath +'.'+@ext+'"' 
       end
             
 #      p "  processing template"
