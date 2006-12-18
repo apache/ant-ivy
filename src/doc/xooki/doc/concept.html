@@ -1,0 +1,217 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+	<script type="text/javascript">var xookiConfig = {level: 1};</script>	
+	<script type="text/javascript" src="../xooki/xooki.js"></script>
+</head>
+<body>
+	<textarea id="xooki-source">
+<h1>Dependency Resolver</h1>
+A dependency resolver is a pluggable class in ivy which is used to:
+<ul>
+<li>find dependencies ivy files</li>
+<li>download dependencies artifacts</li>
+</ul>
+The notion of artifact "downloading" is large: artifact can be on a web site, or on the local file system of your machine. The download is thus the fact to bring a file from a repository to ivy cache.
+
+Moreover, the fact that it is the responsibility of the resolver to find ivy files and download artifacts help to implement various resolving strategies.
+
+As you see, a dependency resolver can be thought as a class responsible of describing a repository.
+
+If you want to see which resolvers are available in ivy, you can go to the corresponding <a href="../doc/configuration/resolvers.html">configuration section</a>
+
+<h1><a name="configurations">Module configurations explained</a></h1>
+Module configurations are described in the terminology page as <em>a way to use or construct a module</em>. Configurations being a central part of Ivy, they need more explanations as a concept.
+<br/>
+When you define a way to use or construct a module, you are able to define which artifacts are published by this module in this configuration, and you are also able to define which dependencies are needed in this configuration.
+
+Moreover, because dependencies in ivy are expressed on modules and not on artifacts, it is important to be able to define which configurations of the dependency are required in the configuration you define of your module. That's what is called <strong>configuration mapping</strong>.
+
+If you use only simple modules and do not want to worry about configurations, you don't have to worry about them. They're still there under the hood, cause ivy can't work without configuration. But most of the time if you declare nothing, ivy assumes that the artifacts of your module are published in all configurations, and that all the dependencies configurations are required in all configurations. And it works in simple cases. But whenever you want to separate things within a module, or get more control over things published and got through dependencies resolution, configuration may answer most of your needs.
+
+For details on how to declare your module configurations, how declare in which configuration your artifacts are published, and how to declare configuration mapping, please refer to <a href="../doc/ivyfile.html">ivy file documentation</a>. The <a href="../doc/tutorial/conf.html">configurations tutorial</a> is also a good place to go to learn more about this concept.
+
+<h1>Variables</h1>
+During configuration, ivy allows to define what are called ivy variables. Ivy variables can be seen as ant properties, and are used in a very similar way. In particular, you use a properties tag in the configuration file to load a properties file containing ivy variables and their values.
+
+But the main differences between ant properties and ivy variables are that ivy variables can be overriden, whereas ant 
+properties can't, and that they are defined in separate environment.
+
+Actually all ant properties are imported into ivy variables when the configuration is done (if you call ivy from ant). 
+This means that if you define an ant property after the call to configure, it will not be available as an ivy variable.
+On the other hand, ivy variables are NOT exported to ant, thus if you define ivy variables in ivy, do not try to use them as ant properties.
+
+To use ivy variables, you just have to follow that same syntax as for ant properties:
+${<i>variablename</i>}
+where <i>variablename</i> is the name of the variable.
+
+Finally, it's also important to be aware of the time of substitution of variables. This substitution is done as soon as possible. This means that when ivy encounter a reference to a variable, it tries to substitute it if such a variable is defined. Consequently, <strong>any later modification of the variable will not alter the value already substituted</strong>.
+
+Moreover, in an ant environment, a bunch of variables are going to be set by default via the ant property file loading mechanism (in fact they are first loaded as ant properties and then imported as ivy variables, see <a href="../doc/use.html"></a>), and even in the ant properties themselves there is going to be eager substitution on loading, effectively making it impossible to override some variable purely via the ivyconf.properties file. Some variables will really only be able to be overriden via ant properties because of this.
+
+Moreover, it's also important to understand the difference between ivy variables and ivy pattern tokens. 
+See Patterns chapter below to see what pattern tokens are.
+<h1>Patterns</h1>
+
+Ivy patterns are used in many dependency resolvers and ivy tasks, and are a simple way to structure the way ivy works.
+
+First let's give an example. You can for instance configure the file system dependency resolver by giving it
+a pattern to find artifacts. This pattern can be like this:
+myrepository/[organisation]/[module]/[type]s/[artifact]-[revision].[ext]
+
+This pattern indicates that the repository we use is in a directory called myrepository. 
+
+In this directory we have directories having for name the name of the organisation of the module we look for. 
+Then we have a directory per module, each having for name the name of the module.
+Then in module directories we find a directory per artifact type (jars, wars, ivys, ...), in which we find artifacts named by the artifact id, followed by an hyphen, then the revision, a dot, and the artifact extension.
+Not too difficult to understand, isn't it ? That's it, you have understood the pattern concept !
+
+To give a bit more explanation, a pattern is composed of tokens, which are replaced by actual values when evaluated for a particular artifact or module. Those tokens are different from variables because they are replaced differently for each artifact, whereas variables are usually given the same value.
+
+You can mix variables and tokens in a pattern:
+${repository.dir}/[organisation]/[module]/[type]s/[artifact]-[revision].[ext]<br/><br/>
+
+The tokens available depends on where the pattern is used (will it be evaluated with artifacts or modules, for instance).
+But here are all the tokens currently available:
+<ul>
+<li>[organisation]</li> the organisation name
+<li>[module]</li> the module name
+<li>[branch]</li> the branch name
+<li>[revision]</li> the revision name
+<li>[artifact]</li> the artifact name (or id)
+<li>[type]</li> the artifact type
+<li>[ext]</li> the artifact file extension
+<li>[conf]</li> the configuration name
+<li>[originalname] <span class="since">(since 1.4)</span></li> the original artifact name (including the extension)
+</ul>
+
+Difference between type and extension are explained in ivy file documentation.
+
+<span class="since">since 1.2</span> [organization] can be used instead of [organisation].
+
+<span class="since">since 1.3</span> Optinal parts can be used in patterns.
+This let the possibility to avoid some input when a token is not defined, instead of having only the token as blank. Parenthesis are used to delimit the optional part, and only one token can be found inside the parenthesis.
+So if you surround a token with '(' and ')', any other text which is between the parenthesis will be ignored if the token has no value.
+
+For instance, suppose the pattern: "abc(def[type]ghi)"
+type = "jar" -> the substituted pattern: abcdefjarghi
+type = null or "" -> the substitued pattern: abc
+
+A more real life example:
+The pattern <code>[artifact](-[revision]).[ext]</code> let you accept both myartifact-1.0.jar when a revision is set, and myartifact.jar (instead of myartifact-.jar) when no revision is set
+This is particularly useful when you need to keep control on artifact names.
+
+<span class="since">since 1.4</span> Extra attributes can be used as any other token in the patterns.
+
+<h1><a name="latest">Latest Strategy</a></h1>
+Ivy often needs to know which revision between two has to be considered the "latest". For knowing that, it uses the concept of latest strategy. Indeed, there are several way to consider a revision to be the latest.
+You can choose an existing one or plug your own.
+
+But before knowing which revision is the latest, ivy needs to be able to consider several revision of a module. Thus ivy has to get a list of files in a directory, and it uses the dependency resolver for that. So check if the dependency resolver you use is compatible with latest revisions before wondering why ivy do not manage to get your latest revision.
+
+Finally, In order to get several revisions of a module, most of the time you need to use the [revision] token in your pattern, so that ivy gets all the files which match the pattern whatever the revision is. It's only then that the latest strategy is used to determine which of this revisions is the latest one.
+
+Ivy has three built-in latest strategies:
+<ul>
+<li>latest-time</li> it compares the revisions date to know which is the latest. While this is often a good strategy in terms of pertinence, it has the drawback to be costful to compute with distant repositories. If you use ivyrep, for example, ivy has to ask the http server what is the date of each ivy file before knowing which is the latest.
+<li>latest-revision</li> it compares the revisions as string, using an algorithm close to the one used in the php version_compare function.
+This algorithm takes into account special meaning of some text. For instance, with this strategy, 1.0-dev1 is considered before 1.0-alpha1, which in turn is before 1.0-rc1, which is before 1.0, which is before 1.0.1.
+<li>latest-lexico</li>: it compares the revisions as string, using lexicographic order (the one used by java string comparison).
+</ul>
+
+See also how to configure new latest strategies <a href="../doc/configuration/latest-strategies.html">here</a>.
+
+<h1><a name="conflict">Conflict Manager</a></h1>
+A conflict manager is able to select, among a list of module revisions in conflict, a list of revisions to keep.
+Yes, it can selects a list of revision, even if most conflicts manager select only one revision.
+But in some cases you will need to keep several revisions, and load in separate class loaders, for example.
+
+A list of revisions is said to be in conflict if they correspond to the same module, i.e. the same organisation/module name couple.
+
+The list of available conflict managers is available on the <a href="../doc/configuration/conflict-managers.html">conflict manager configuration page</a>.
+
+To have more details on how to setup your conflict managers by module, see <a href="../doc/ivyfile/conflicts.html">conflicts</a> section in ivy file reference.
+
+<h1><a name="matcher">Pattern matcher</a></h1>
+<span class="since">since 1.3</span>
+At several places Ivy let uses pattern to match a set of objects. For instance, you can exclude several modules at once when declaring a dependency by using a pattern matching all the modules to exclude.
+
+Ivy uses pluggable pattern matcher to match those object names. 3 are defined by default:
+<ul>
+<li>exact</li>This matcher matches only string when they are equal to the pattern one
+<li>regexp</li>This matcher let you use regular expression as supported by the Pattern class of java 1.4 or greater
+<li>glob</li>This matcher let you use unix like glob matcher, i.e. where the only meta characters are * which matches any sequence of characters and ? which matches exactly one character. Note that this matcher is available only with jakarta oro 2.0.8 in your classpath.
+</ul>
+Note also that with any matcher the character '*' has the special meaning of matching anything. This is particularly useful with default values which do not depend on the matcher.
+
+<h1><a name="extra">Extra attributes</a></h1>
+<span class="since">since 1.4</span>
+Several tags in ivy xml files are extensible with what is called extra attributes. 
+The idea is very simple: if you need some more information to define your modules, you can add the attribute you want and you will then be able to access it as any other attribute in your patterns for example.
+
+Example:
+Here is an ivy file with the attribute 'color' set to blue:
+<code type="xml">
+<ivy-module version="1.4">
+	<info organisation="jayasoft"
+	       module="foo"
+	       color="blue"
+	       status="integration"
+	       revision="1.59"
+	/>
+</ivy-module>
+</code>
+Then you can use the extra attribute when you declare a dependency on foo:
+<code>
+<dependency org="jayasoft" name="foo" color="blue" rev="1.5+" />
+</code>
+And you can define your repository pattern as:
+<code>
+${repository.dir}/[organisation]/[module]/[color]/[revision]/[artifact].[ext]
+</code>
+
+Note that in order to use extra attributes, you will need to disable ivy file validation, since your files won't fulffill anymore the official ivy xsd. See the <a href="../doc/configuration/conf.html">configuration doc page</a> to see how to disable validation.
+<h1><a name="checksum">Checksums</a></h1>
+<span class="since">since 1.4</span>
+Ivy allow to use checksums, also known as digester, to verify the correctness of a downloaded file.
+
+For the moment Ivy supports md5 and sha1 algorithm.
+
+The configuration of using md5 and/or sha1 can be done globally or by dependency resolver.
+Globally, use the ivy.checksums variable to list the check to be done (only md5 and sha1 are supported).
+On each resolver you can use the checksums attribute to override the global setting.
+
+The setting is a comma separated list of checksum algorithm to use.
+During checking (at download time), the first checksum found is checked, and that's all. This means that if you have a "sha1, md5" setting, then if ivy finds a sha1 file, it will compare the downloaded file sha1 against this sha1, and if the comparison is ok, it will assume the file is ok. If no sha1 file is found, it will look for a md5 file. If none is found no checking is done.
+During publish, all listed checksum algorithms are computed and uploaded.
+
+By default checksum algorithms are "sha1, md5".
+
+If you want to change this default, you can set the variable ivy.checksums. Hence to disable checksum validation you just have to set ivy.checksums to "".
+
+<h1><a name="event">Events and Triggers</a></h1>
+<span class="since">since 1.4</span>
+When Ivy performs the dependency resolution and some other tasks, it fires events before and after the most important steps. You can listen to these events using Ivy API, or you can even register a trigger to perform a particular action when a particular event occur.
+
+This is a particularly powerful and flexible feature which allow for example to perform a build of a dependency just before it is resolved, or follow what's happening during the dependency resolution process accuratly, and so on.
+
+For more details about event and triggers, see the <a href="../doc/conf/triggers.html">triggers</a> documentation page in the configuration section of this documentation.
+
+<h1><a name="circular">Circular Dependencies</a></h1>
+<span class="since">since 1.4</span>
+Circular dependencies can be either direct or indirect. For instance, if A depends on A it's a circular dependency, and if A depends on B which itself depends on A, this is also a circular dependency.
+
+Prior to Ivy 1.4 circular dependencies where causing a failure in Ivy. As of Ivy 1.4, the behaviour of Ivy when it finds a circular dependency is configurable through a circular dependency strategy.
+
+3 built-in strategies are available:
+<ul>
+<li>ignore</li> circular dependencies are only signaled in verbose messages
+<li>warn</li> same as ignore, except that they are signaled as warning (default)
+<li>error</li> halt the dependency resolution when a circular dependency is found. 
+</ul>
+
+See the <a href="../doc/configuration/conf.html">configuration page</a> to see how to configure the circular dependency strategy you want to use.
+	</textarea>
+<script type="text/javascript">xooki.postProcess();</script>
+</body>
+</html>

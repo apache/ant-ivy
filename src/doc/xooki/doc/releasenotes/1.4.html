@@ -1,0 +1,320 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+	<script type="text/javascript">var xookiConfig = {level: 2};</script>	
+	<script type="text/javascript" src="../../xooki/xooki.js"></script>
+</head>
+<body>
+	<textarea id="xooki-source">
+<h1>Changes log</h1>
+Ivy 1.4-RC2 has been promoted to 1.4 on 2006-10-09
+
+Known bugs and limitations:
+- references in resolvers are not resolved 'in-time' with macrodef (IVY-319)
+- latest.<status> does not work properly when no matching revision exist (IVY-318)
+- IVY complains about non-existent reports in the cache directory (IVY-315)
+- retrieve fails when resolve is done with useOrigin set to true (IVY-304)
+
+For detailed list of changes since 1.3.1, please see changes of the two release candidates detailed in child pages.
+For an overview of what's new and noteworthy in this release since 1.3 see the new and noteworthy section below.
+
+<h1>Downloads</h1>
+<a href="./visit.php?url=./downloads/ivy/1.4/ivy-1.4-bin.zip">ivy-1.4-bin.zip</a>
+<a href="./visit.php?url=./downloads/ivy/1.4/ivy-1.4-src.zip">ivy-1.4-src.zip</a>
+<a href="./visit.php?url=./downloads/ivy/1.4/ivy-1.4-doc.zip">ivy-1.4-doc.zip</a>
+
+<div class="newandnoteworthy">
+<h1><center><big>New and noteworthy</big></center></h1>
+<h1>Documentation</h1>
+<h2>A new introduction tutorial as simple as 1-2-3</h2>
+It has never been so easy to try Ivy! You don't even need to install it yourself! Follow this simple steps and you're done:
+<ol>
+<li>make sure you have <a href="http://ant.apache.org/">ant</a> 1.6.2 or greater and a <a href="http://java.sun.com">jdk</a> properly installed</li>
+<li>copy <a href="http://svn.jayasoft.org/projects/tools/ivy/src/example/go-ivy/build.xml">this build file</a> in an empty directory on your local filesystem (and make sure you name it build.xml)</li>
+<li>open a console in this directory and run "ant". That's it!</li>
+</ol>
+If you have any trouble, check the <a href="../../faq.html">FAQ</a>, it may be related to your internet connection (proxy anyone?).
+Want to try more tutorials? Check the <a href="../../doc/tutorial.html">tutorials</a> page in the documentation.
+<h2>Offline documentation greatly improved</h2>
+The offline documentation has been greatly improved, and is now a real copy of the online documentation, with all the navigation between pages as on the online version. Continue to use the online version when you can to have the latest updated version with user comments.
+<h2>Documentation update</h2>
+As usual, the documentation has been extensively updated with to reflect the new features. Some are still missing, but we will finish the update before the 1.4 release.
+
+Moreover, more examples have been added, more links between the pages, and some very useful pages have been added like the <a href="../../doc/bestpractices.html">best practices</a> one.
+<h1>Core features</h1>
+<h2><a href="../../doc/concept#extra.html">Extra attributes</a></h2>
+Several tags in ivy xml files are now extensible with extra attributes. 
+
+The idea is very simple: if you need some more information to define your modules, you can add the attribute you want and you will then be able to access it as any other attribute in your patterns for example.
+
+Example:
+Here is an ivy file with the attribute 'color' set to blue:
+<code type="xml">
+<ivy-module version="1.4">
+	<info organisation="jayasoft"
+	       module="foo"
+	       color="blue"
+	       status="integration"
+	       revision="1.59"
+	/>
+</ivy-module>
+</code>
+Then you can use the extra attribute when you declare a dependency on foo:
+<code>
+<dependency org="jayasoft" name="foo" color="blue" rev="1.5+" />
+</code>
+And you can define your repository pattern as:
+<code>
+${repository.dir}/[organisation]/[module]/[color]/[revision]/[artifact].[ext]
+</code>
+
+Note that in order to use extra attributes, you will need to disable ivy file validation, since your files won't fulffill anymore the official ivy xsd. See the <a href="../../doc/configuration/conf.html">configuration doc page</a> to see how to disable validation.
+
+<h2><a href="../../doc/ivyfile/dependency.html">Version matchers</a></h2>
+Ivy now rely on a new concept to specify which version of a dependency should be used: pluggable version matchers.
+This means that you can define your own way to match a dependency version.
+
+Both latest.integration and latest sub version (1.3+ for instance) have been ported to this mechanism.
+
+With this new feature Ivy also comes with two new built-in version matchers:
+<ul>
+<li>latest.[any status]</li>selects the latest revision of the dependency module with at least the specified status.
+<li>version ranges</li>You can now express your version contraint as a mathematical range.
+</ul>
+
+Examples:
+<code type="xml">
+<dependency org="foo" name="bar" rev="latest.milestone" />
+</code>
+Will find the latest version of bar which is in milestone or release status.
+<code type="xml">
+<dependency org="foo" name="bar" rev="[1.0,2.0]" />
+</code>
+Matches any revision greater than 1.0 and lower than 2.0, inclusive.
+
+<h2><a href="../../doc/ivyfile/dependency-artifact.html">URL attribute on artifact to improve ease of use</a></h2>
+The artifact tag used when declaring a dependency now supports an url attribute. Even if this should be used only in very special cases (because it derrogates to the standard repository management), it can be useful, well, in very special cases :-)
+
+Example:
+<code type="xml">
+<dependency org="foo" name="bar" rev="1.0">
+  <artifact name="baz" type="jar" url="http://www.acme.com/repository/bar/baz-1.0-acme.jar"/>
+</dependency>
+</code>
+
+<h2><a href="../../doc/ivyfile/conf.html">Module configurations enhancements</a></h2>
+Several improvements have been made on the module configurations:
+<ul><li>It is now possible to disable transitivity for a whole configuration.
+
+Example:
+<code type="xml">
+<conf name="compile" extends="core" transitive="false" visibility="private" />
+</code></li>
+<li>You can use <code>*</code>, <code>*(public)</code> or <code>*(private)</code> as wildcards to extend a set of configurations.
+
+Example:
+<code type="xml">
+<conf name="all" extends="*" />
+</code></li>
+<li>You can use <code>*, !A, !B</code> in configurations mapping to mean all configurations but A and B.
+
+Example:
+<code type="xml">
+<dependency name="commons-lang" rev="1.0" conf="*, !deploy->default" />
+</code></li>
+</ul>
+
+<h2><a href="../../doc/concept#event.html">Events and triggers</a></h2>
+Ivy now fires events all along the dependency resolution process, which can be listened and which can trigger events.
+
+Example:
+<code type="xml">
+<triggers>
+    <ant-build antfile="${ivy.conf.dir}/[module]/build.xml" target="publish"
+          event="pre-resolve-dependency" filter="revision=latest.integration"/>
+</triggers>
+</code>
+Triggers an ant build just before resolving a dependency with a latest.integration revision.
+
+<h1>New Resolvers</h1>
+<h2><a href="../../doc/resolver/vfs.html">vfs</a></h2>
+The new vfs resolver leverages the work from <a href="http://jakarta.apache.org/commons/vfs/">apache commons vfs</a> to give a uniform access to a set of different file systems including ftp, sftp, webdav, zip, ...
+
+Example:
+<code type="xml">
+<vfs name="remote">
+  <ivy pattern="webdav://username:password@host:8080/[organisation]/[module]/[revision]/ivy.xml" />
+  <artifact pattern="webdav://username:password@host:8080/[organisation]/[module]/[revision]/[artifact].[ext]" />
+</vfs>
+</code>
+
+<h2><a href="../../doc/resolver/ssh.html">ssh</a> and <a href="../../doc/resolver/sftp.html">sftp</a></h2>
+The new ssh and sftp resolvers allow, as their name suggest, to access a repository using ssh or sftp. The secured nature of ssh and its wide spread implementation on most *nix servers makes these resolvers very good candidate in an enterprise environment.
+
+Example:
+<code type="xml">
+<sftp name="secured" keyFile="path/to/key/file" keyFilePassword="${password}">
+  <ivy pattern="sftp://user:xavier@yourserver.com:8022/path/to/repos/[module]/[revision]/ivy.xml"/>
+  <artifact pattern="sftp://user:xavier@myserver.com:8022/path/to/my/repos/[artifact].[ext]"/>
+</sftp>
+</code>
+
+<h1>Configuration files</h1>
+<h2><a href="../../doc/configuration/statuses.html">Configurable statuses</a></h2>
+The list of statuses available in module files is now configurable.
+
+Example:
+<code type="xml">
+<statuses default="bronze">
+  <status name="gold" integration="false"/>
+  <status name="silver" integration="false"/>
+  <status name="bronze" integration="true"/>
+</statuses>
+</code>
+<h2><a href="../../doc/configuration/module.html">Per module settings</a></h2>
+It is now possible possible to configure conflict-manager per module set.
+
+Example:
+<code type="xml">
+<modules>
+  <module organisation="jayasoft" name="ivy*" matcher="glob" conflict-manager="latest-time"/>
+</modules>
+</code>
+<h2><a href="../../doc/concept#checksum.html">Checksums</a></h2>
+Ivy now allow to use checksums to verify the correctness of a downloaded file.
+
+For the moment Ivy supports md5 and sha1 algorithm.
+
+The configuration of using md5 and/or sha1 can be done globally or by dependency resolver.
+Globally, use the ivy.checksums variable to list the check to be done (only md5 and sha1 are supported).
+On each resolver you can use the checksums attribute to override the global setting.
+
+The setting is a comma separated list of checksum algorithm to use.
+During checking (at download time), the first checksum found is checked, and that's all. This means that if you have a "sha1, md5" setting, then if ivy finds a sha1 file, it will compare the downloaded file sha1 against this sha1, and if the comparison is ok, it will assume the file is ok. If no sha1 file is found, it will look for a md5 file. If none is found no checking is done.
+During publish, all listed checksum algorithms are computed and uploaded.
+
+By default checksum algorithms are "sha1, md5".
+<h2><a href="../../doc/configuration/resolvers#common.html">Fail when no module descriptor is found</a></h2>
+By default when ivy doesn't find a module descriptor for a module, it lloks for an artifact, and if it finds one it assumes a default module descriptor. 
+It is now possible to configure this behaviour per resolver, by setting the allownomd attribute to false you can force the use of a module descriptor, and fail if none is found. This is also useful to improve performances on a resolver for which you know you will always have module descriptors.
+<h2>System properties</h2>
+All java system properties are now available as ivy variables in your configuration files.
+Thus you can now easily define the default cache relative to user home (using ${user.home}), or access any specific property set via the standard java system property mechanism.
+
+<h2><a href="../../doc/configuration/resolvers#common.html">Changing pattern</a></h2>
+You can now define a changingPattern and a changingMatcher to configure a set of revisions which should always be considered as changing one (artifacts are checked to see if they are up to date).
+
+The pattern and the matcher name are attributes available on all built-in resolvers.
+
+Example:
+<code type="xml">
+<filesystem name="local" changingPattern="*-SNAPSHOT" changingMatcher="glob">
+</code>
+will consider all modules with a revision ending by SNAPSHOT to be changing revisions.
+
+<h2><a href="../../doc/configuration/classpath.html">Customisable classpath</a></h2>
+You can now add jars to use to load plugins directly in ivy configuration, so that you can easily use your plugins in several execution environment (ant, standalone, IDE plugin, ...).
+
+Example:
+<code type="xml">
+<ivyconf>
+  <classpath file="${ivy.conf.dir}/custom-resolver.jar"/>
+  <typedef name="custom" classname="fr.jayasoft.ivy.resolver.CustomResolver"/>
+  <resolvers>
+    <custom name="custom"/>
+  </resolvers>
+</ivyconf>
+</code>
+
+<h1>Ant tasks</h1>
+<h2><a href="../../doc/use/repreport.html">repreport</a></h2>
+A new repreport task allows to generate reports directly from your repository. The graph generation is the most interesting one, it can gives you a good overview of the dependencies between of all your modules available in your repository, or restrict this graph to just the modules from this organisation, and so on.
+
+Example:
+<code type="xml">
+<ivy:repreport organisation="myorg" xml="false" graph="true" />
+will generate a graphml of dependencies with all modules in the organisation "myorg"
+</code>
+
+<h2><a href="../../doc/use/artifactreport.html">artifactreport</a></h2>
+A new artifactreport task has been introduced to easily generate an xml report with artifacts resolved, with useful information such as their original location. This report is particularly well suited for generating IDE classpaths (see also the <a href="../../links.html">links</a> page for higher IDE integration via plugins).
+
+The generated report looks like this:
+<code type="xml">
+<?xml version="1.0" encoding="UTF-8"?>
+<modules>
+  <module organisation="hippo" name="sant-classes" rev="1.01.00b04-dev" status="integration">
+    <artifact name="sant-classes-src" ext="zip" type="zip">
+      <origin-location is-local="true">
+        C:/home/jstuyts/data/ivy/local/hippo/sant-classes/1.01.00b04-dev/sant-classes-src-1.01.00b04-dev.zip</origin-location>
+      <cache-location>
+        C:/home/jstuyts/data/ivy/cache/hippo/sant-classes/zips/sant-classes-src-1.01.00b04-dev.zip</cache-location>
+      <retrieve-location>lib/test/sant-classes-src-1.01.00b04-dev.zip</retrieve-location>
+    </artifact>
+  </module>
+  <module organisation="testng" name="testng" rev="4.6.1-jdk15" status="release">
+    <artifact name="testng" ext="jar" type="jar">
+      <origin-location is-local="false">
+        http://repository.hippocms.org/maven/testng/jars/testng-4.6.1-jdk15.jar</origin-location>
+      <cache-location>C:/home/jstuyts/data/ivy/cache/testng/testng/jars/testng-4.6.1-jdk15.jar</cache-location>
+      <retrieve-location>lib/test/testng-4.6.1-jdk15.jar</retrieve-location>
+    </artifact>
+  </module>
+</code>
+
+<h2><a href="../../doc/use/info.html">info</a></h2>
+The new info task eases the access to some essential data contained in an ivy file without performing a dependency resolution.
+
+Example:
+<code type="xml">
+<ivy:info file="${basedir}/path/to/ivy.xml" />
+</code>
+
+<h2><a href="../../doc/use/listmodules.html">listmodules</a></h2>
+The new listmodules task let you list modules available in the repository and set ant properties accordingly.
+
+Example:
+<code type="xml">
+<ivy:listmodules organisation="jayasoft" module="ivy" revision="*" property="ivy.[revision]" value=="found"/>
+</code>
+
+<h2><a href="../../doc/use/findrevision.html">findrevision</a></h2>
+This new task sets an ant property with the latest revision found for a given module matching a given revision constraint.
+
+<code type="xml">
+<ivy:findrevision organisation="jayasoft" module="ivy" revision="1.0+"/>
+</code>
+
+<h2><a href="../../doc/use/resolve.html">useOrigin</a></h2>
+The resolve, cachepath, and retrieve tasks now supports a new useOrigin attribute, which allow to use the original location of local artifacts instead of their location in ivy cache. Used directly on a resolve or when no resolve has been done, it will avoid the copy of the artifact to the cache, and use directly the artifact from its original location.
+
+<code type="xml">
+<cachepath pathid="default.classpath" conf="default" useOrigin="true" />
+</code>
+<h2><a href="../../doc/use/resolve.html">Disable transitive dependencies on resolve</a></h2>
+You can now disable transitive dependencies on resolve.
+
+Example:
+<code type="xml">
+<ivy:resolve file="path/to/ivy.xml" transitive="false" />
+</code>
+<h2><a href="../../doc/use/retrieve.html">Synchronization feature in retrieve</a></h2>
+The retrieve task can now performs a real synchronization of the destination directory, instead of a simple copy.
+
+Example:
+<code type="xml">
+<ivy:retrieve pattern="${lib.dir}/[conf]/[artifact].[ext]" sync="true" />
+</code>
+
+<h1>Standalone mode</h1>
+<h2>Application launcher</h2>
+Ivy can now be used as an application launcher:
+<code>
+java fr.jayasoft.ivy.Main -conf path/to/myivyconf.xml -dependency bar foo 2.0 -main org.bar.foo.FooMain
+</code>
+calls ivy with given ivyconf file and resolve bar foo 2.0, and then run org.foo.FooMain class with the resolved artifacts (foo 2.0 and its dependencies) as classpath
+</div>
+	</textarea>
+<script type="text/javascript">xooki.postProcess();</script>
+</body>
+</html>

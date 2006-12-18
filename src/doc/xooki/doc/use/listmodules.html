@@ -1,0 +1,57 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+	<script type="text/javascript">var xookiConfig = {level: 2};</script>	
+	<script type="text/javascript" src="../../xooki/xooki.js"></script>
+</head>
+<body>
+	<textarea id="xooki-source">
+<span class="since">since 1.4</span>
+Finds the list of modules in the repository matching some criteria and set a corresponding list of properties in ant.
+
+The criteria is set by given patterns matching the organisation, name branch and revision of the modules to find.
+
+To know if a module matches the criteria ivy will use the configured <a href="../../doc/concept#matcher.html">pattern matcher</a>.
+
+<h1>Attributes</h1>
+<table class="ant">
+<thead>
+    <tr><th class="ant-att">Attribute</th><th class="ant-desc">Description</th><th class="ant-req">Required</th></tr>
+</thead>
+<tbody>
+    <tr><td>organisation</td><td>the pattern matching the organisation of the modules to list</td>
+        <td>Yes</td></tr>
+    <tr><td>module</td><td>the pattern matching the name of the modules to list</td>
+        <td>Yes</td></tr>
+    <tr><td>branch</td><td>the pattern matching the branch of the modules to list</td>
+        <td>No, defaults to '*'</td></tr>
+    <tr><td>revision</td><td>the pattern matching the revision of the modules to list</td>
+        <td>Yes</td></tr>
+    <tr><td>matcher</td><td>the name of the pattern matcher to use for matching the modules fields</td>
+        <td>No. Defaults to exactOrRegexp.</td></tr>
+    <tr><td>property</td><td>the pattern of the property to set when a module is found</td>
+        <td>Yes</td></tr>
+    <tr><td>value</td><td>The pattern of the value to set when a module is found</td><td>Yes</td></tr>
+</tbody>
+</table>
+<h1>Examples</h1>
+<code type="xml">
+<ivy:listmodules organisation="jayasoft" module="ivy" revision="*" property="ivy.[revision]" value="found"/>
+</code>
+will find all revisions of the module ivy in the org jayasoft, and create one property for each revision found, the name of the property depending on the revision, the value being always 'found'
+
+<hr/>
+
+<code type="xml">
+<ivy:listmodules organisation="*" module="ivy*" revision="1.0" matcher="glob" property="modules.[module]" value="[organisation]"/>
+</code>
+use the glob matcher to find all modules which name starts with ivy with revision 1.0, and sets for each a property with module name found  and organisation for value.
+Example:
+modules.ivy=jayasoft
+modules.ivyde=jayasoft
+modules.ivytools=ivytools
+
+	</textarea>
+<script type="text/javascript">xooki.postProcess();</script>
+</body>
+</html>

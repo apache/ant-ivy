@@ -1,0 +1,49 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+	<script type="text/javascript">var xookiConfig = {level: 2};</script>	
+	<script type="text/javascript" src="../../xooki/xooki.js"></script>
+</head>
+<body>
+	<textarea id="xooki-source">
+<h1>Changes log</h1>
+<i>Note: due to a bad delivery operation, version 1.2 found on this site from 2005-09-14 to 2005-09-16 was not the intended 1.2 version. Please use 1.2a instead</i>
+
+- new ivy.deps.changed property set if there are changes since last resolve (IVY-71)
+- new buildlist task: calculate order of dependencies of subprojects for easy multi-projects builds (IVY-69)
+- accept organization as token (IVY-55)
+- added type filtering mechanism on resolve task (IVY-45)
+- detect and warn about resolver using ivy cache as repository (IVY-53)
+- new transitive attribute on dependency, which enable to disable transitive dependency  management on a particular dependency (thanks to Ingo Adler) (IVY-20)
+- new '@' in dependency configuration mapping declaration, used to indicate that a configuration maps to itself  useful with *, '*->@' meaning that all configurations of the module maps to their equivalent (same name)  in the dependency (IVY-52)
+- new changing attribute on dependencies indicate that the dependency artifacts  may change even without revision change, but with only a new ivy file with new   publication date
+- new useRemoteConfig on conf tag in ivyconf.xml, tells to use remote configuration file  for repository config
+- new type filtering in cachepath task
+- new cachefileset task: builds an ant fileset of artifacts in cache
+- publish task now uses srcivypattern for ivy files finding and for delivery
+- better debug and error messages (IVY-60 IVY-61)
+- added a javadoc target in ant build (thanks to joshua nichols)
+
+- FIX: module descriptors sort was failing in some case cases (fix by Karl Baum)
+- FIX: Ivy complains about schema directive (IVY-64)
+- FIX: 'null' status attribute in module descriptor (IVY-62)
+- FIX: report header contains incorrect link after resolve for multiple, comma-separated configurations (IVY-57)
+- FIX: error retrieving dependencies with a '+' in their revision if the ivy file doesn't exist - fixed by maarten coene (IVY-59)
+- FIX: trying to resolve latest with no revision in pattern caused a StackOverflowError (IVY-56)
+- FIX: now handle transitive eviction (IVY-51)
+- FIX: resolve now store resolved file id in ivy variables, so that multiple resolve calls  can be followed by multiple retrieve, each retrieve will use the last resolve info (IVY-49)
+- FIX: IllegalStateException on retrieve done from command line
+- FIX: checks ivy files data consistency with asked info (org, module name and revision)
+- FIX: use AUTH configuration for configuration file
+- IMPROVE: added publish handling from command line (IVY-48) 
+
+<h1>Downloads</h1>
+<a href="./visit.php?url=./downloads/ivy/ivy-1.2a-bin.zip">ivy-1.2a-bin.zip</a> (1028 kB)
+<a href="./visit.php?url=./downloads/ivy/ivy-1.2a-src.zip">ivy-1.2a-src.zip</a> (776 kB)
+<a href="./visit.php?url=./downloads/ivy/ivy-1.2a-src-withdep.zip">ivy-1.2a-src-withdep.zip</a> (1040 kB)
+
+
+	</textarea>
+<script type="text/javascript">xooki.postProcess();</script>
+</body>
+</html>

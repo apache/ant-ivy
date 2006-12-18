@@ -1,0 +1,33 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+	<script type="text/javascript">var xookiConfig = {level: 2};</script>	
+	<script type="text/javascript" src="../../xooki/xooki.js"></script>
+</head>
+<body>
+	<textarea id="xooki-source">
+Constructs an ant fileset consisting of artifacts in ivy cache for a configuration (<span class="since">since 1.2</span>).<br/><br/>
+This is a <a href="../../doc/use/postresolvetask.html">post resolve task</a>, with all the behaviour and attributes common to all post resolve tasks. Note that this task
+does not rely on retrieve, because built fileset is made of artifacts direcly in ivy cache.<br/><br/>
+Please prefer the use of retrieve + standard ant path creation, which make your build
+more independent from ivy (once artifacts are properly retrieved, ivy is not required any more).<br/><br/>
+Built fileset is registered in ant with a given id, and can thus be used like any other ant fileset using
+refid.
+  
+<table class="ant">
+<thead>
+    <tr><th class="ant-att">Attribute</th><th class="ant-desc">Description</th><th class="ant-req">Required</th></tr>
+</thead>
+<tbody>
+    <tr><td>setid</td><td>the id to reference the built fileset</td>
+        <td>Yes</td></tr>
+    <tr><td>conf</td><td>a comma separated list of the configurations to put in the created path</td>
+        <td>No. Defaults to the configurations resolved by the last resolve call, or * if no resolve was explicitly called</td></tr>
+    <tr><td>type</td><td>comma separated list of artifact types to accept in the path, * for all</td><td>No. Defaults to *</td></tr>
+</tbody>
+</table>
+
+	</textarea>
+<script type="text/javascript">xooki.postProcess();</script>
+</body>
+</html>

@@ -1,0 +1,50 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+	<script type="text/javascript">var xookiConfig = {level: 2};</script>	
+	<script type="text/javascript" src="../../xooki/xooki.js"></script>
+</head>
+<body>
+	<textarea id="xooki-source">
+<div class="since">since 1.1</div>
+Sets an ant property for each dependency artifacts previously resolved.
+
+Please prefer the use of retrieve + standard ant path creation, which make your build more independent from ivy (once artifacts are properly retrieved, ivy is not required any more).
+
+The property name and value are generated using the classical pattern concept, all artifact tokens and ivy variables being available.
+  
+<table class="ant">
+<thead>
+    <tr><th class="ant-att">Attribute</th><th class="ant-desc">Description</th><th class="ant-req">Required</th></tr>
+</thead>
+<tbody>
+    <tr><td>name</td><td>a pattern used to generate the name of the properties to set</td>
+        <td>Yes</td></tr>
+    <tr><td>value</td><td>a pattern used to generate the value of the properties to set</td>
+        <td>Yes</td></tr>
+    <tr><td>conf</td><td>a comma separated list of the configurations for which properties should be set</td>
+        <td>No. Defaults to the configurations resolved by the last resolve call, or * if no resolve was explicitly called</td></tr>
+    <tr><td>haltonfailure</td><td>true to halt the build on ivy failure, false to continue</td><td>No. Defaults to true</td></tr>
+    <tr><td>validate</td><td>true to force ivy files validation against ivy.xsd, false to force no validation</td>
+        <td>No. Defaults to default ivy value (as configured in configuration file)</td></tr>
+</tbody>
+</table>
+
+<h1>Example</h1>
+Suppose we have one dependency called <i>mydep</i> in revision 1.0 publishing two artifacts: <i>foo.jar</i> and <i>bar.jar</i>.
+Then:
+<code type="xml">
+<artifactproperty conf="build" 
+       name="[module].[artifact]-[revision]" 
+       value="${cache.dir}/[module]/[artifact]-[revision].[ext]"/>
+</code>
+will set two properties:
+<code>
+mydep.foo-1.0 = my/cache/dir/mydep/foo-1.0.jar
+mydep.bar-1.0 = my/cache/dir/mydep/bar-1.0.jar
+</code>
+
+	</textarea>
+<script type="text/javascript">xooki.postProcess();</script>
+</body>
+</html>

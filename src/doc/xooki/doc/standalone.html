@@ -1,0 +1,75 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+	<script type="text/javascript">var xookiConfig = {level: 1};</script>	
+	<script type="text/javascript" src="../xooki/xooki.js"></script>
+</head>
+<body>
+	<textarea id="xooki-source">
+In the case you want to call ivy as a standalone program (outside from ant), you have to put commons-cli 1.0 and its dependencies in your classpath.
+
+Then here is how to call it:
+<code>
+java fr.jayasoft.ivy.Main -?
+</code>
+It will indicate you what can be given as argument. 
+
+
+<span class="since">since 1.3</span> System properties are included as ivy variables, so you can easily define an ivy variable like this:
+<code>
+java -Dmyivyvar=myvalue fr.jayasoft.ivy.Main [parameters]
+</code>
+
+
+<h1>Examples</h1>
+<code>
+java fr.jayasoft.ivy.Main
+</code>
+calls ivy with default configuration using ivy.xml in the current dir
+<hr/>
+<code>
+java fr.jayasoft.ivy.Main -conf path/to/myivyconf.xml -ivy path/to/myivy.xml
+</code>
+calls ivy with given ivyconf file using given ivy file
+<hr/>
+<span class="since">since 1.3</span>
+<code>
+java fr.jayasoft.ivy.Main -conf path/to/myivyconf.xml -dependency apache commons-lang 2.0
+</code>
+calls ivy with given ivyconf file and resolve apache commons-lang 2.0. 
+
+This is equivalent to:
+<code>
+java fr.jayasoft.ivy.Main -conf path/to/myivyconf.xml -ivy ivy.xml
+</code>
+with ivy.xml like this:
+<code type="xml">
+<ivy-module version="1.0">
+  <info organisation="org"
+       module="standalone"
+       revision="working"
+   />
+  <dependencies>
+    <dependency org="apache" name="commons-lang" rev="2.0" conf="default->*"/>
+  </dependencies>
+</ivy-module>
+</code>
+<hr/>
+<span class="since">since 1.3</span>
+<code>
+java fr.jayasoft.ivy.Main -conf path/to/myivyconf.xml -ivy path/to/myivy.xml -cachepath mycachefile.txt
+</code>
+calls ivy with given ivyconf file and resolve the dependencies found in the given ivy file, and then output the classpath of resolved artifacts in cache in a file. This file can then be used to define a classpath corresponding to all the resolved dependencies for any java program. 
+
+<hr/>
+<span class="since">since 1.4</span>
+<code>
+java fr.jayasoft.ivy.Main -conf path/to/myivyconf.xml -dependency bar foo 2.0 -main org.bar.foo.FooMain
+</code>
+calls ivy with given ivyconf file and resolve bar foo 2.0, and then run org.foo.FooMain class with the resolved artifacts as classpath
+
+
+	</textarea>
+<script type="text/javascript">xooki.postProcess();</script>
+</body>
+</html>

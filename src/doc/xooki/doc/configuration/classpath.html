@@ -1,0 +1,53 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+	<script type="text/javascript">var xookiConfig = {level: 2};</script>	
+	<script type="text/javascript" src="../../xooki/xooki.js"></script>
+</head>
+<body>
+	<textarea id="xooki-source">
+<b>Tag:</b> classpath
+
+Includes a jar in the classpath used to load plugins. <span class="since">since 1.4</span>
+
+This let you add ivy plugins without relying on ant classpath for instance, easing therefore the use of ivy in multiple execution environment (ant, standalone, IDE plugins, ...).
+
+<h1>Attributes</h1>
+<table class="ivy-attributes">
+<thead>
+    <tr><th class="ivy-att">Attribute</th><th class="ivy-att-desc">Description</th><th class="ivy-att-req">Required</th></tr>
+</thead>
+<tbody>
+    <tr><td>url</td><td>the url of a jar to add to the classpath</td>
+        <td>Yes, unless file is specified</td></tr>
+    <tr><td>file</td><td>a jar to add to the classpath</td>
+        <td>Yes, unless url is specified</td></tr>
+</tbody>
+</table>
+<h1>Examples</h1>
+<code type="xml">
+<ivyconf>
+  <classpath file="${ivy.conf.dir}/custom-resolver.jar"/>
+  <typedef name="custom" classname="fr.jayasoft.ivy.resolver.CustomResolver"/>
+  <resolvers>
+    <custom name="custom"/>
+  </resolvers>
+</ivyconf>
+</code>
+Adds custom-resolver.jar found in the same directory as the ivyconf.xml file itself to the classpath, then define a custom resolver and use it.
+
+<hr/>
+<code type="xml">
+<ivyconf>
+  <classpath url="http://www.myserver.com/ivy/custom-resolver.jar"/>
+  <typedef name="custom" classname="fr.jayasoft.ivy.resolver.CustomResolver"/>
+  <resolvers>
+    <custom name="custom"/>
+  </resolvers>
+</ivyconf>
+</code>
+Same as above, but find the jar on a web server.
+	</textarea>
+<script type="text/javascript">xooki.postProcess();</script>
+</body>
+</html>

@@ -1,0 +1,119 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+	<script type="text/javascript">var xookiConfig = {level: 2};</script>	
+	<script type="text/javascript" src="../../xooki/xooki.js"></script>
+</head>
+<body>
+	<textarea id="xooki-source">
+The resolve task actually resolve dependencies described in an <a href="../../doc/ivyfile.html">ivy file</a>, and put the resolved dependencies in the ivy cache.
+If configure has not been called before resolve is called, a default configuration will be used (equivalent to call configure with no attributes).
+
+After the call to this task, four properties are set in ant:
+<ul>
+<li>ivy.organisation</li>
+set to the organisation name found in the ivyfile which was used for resolve
+<li>ivy.module</li>
+set to the module name found in the ivyfile which was used for resolve
+<li>ivy.revision</li>
+set to the revision name found in the ivyfile which was used for resolve, or a generated revision name if no revision was specified in the file
+<li>ivy.resolved.configurations</li>
+set to the comma separated list of configurations resolved
+</ul>
+An additional property is set to true if there are changes since the last resolve, and to false otherwise: <code>ivy.deps.changed</code> (<span class="since">since 1.2</span>)
+
+When ivy has finished the resolve task, it outputs a summary of what has been resolved. This summary looks like this:
+<pre>
+---------------------------------------------------------------------
+|                  |            modules            ||   artifacts   |
+|       conf       | number| search|dwnlded|evicted|| number|dwnlded|
+---------------------------------------------------------------------
+|      default     |   4   |   0   |   0   |   0   ||   4   |   0   |
+---------------------------------------------------------------------
+</pre>
+This table gives some statistics about the dependency resolution. Each line correspond to a configuration resolved. Then the table is divided in two parts:
+<ul>
+<li>modules</li>
+<ul>
+<li>number</li>
+This is the total number of dependency modules resolved in this configuration, including transitive ones
+<li>search</li>
+This is the number of dependency modules that required a repository access. The repository access is needed if the module is not yet in cache, or if a latest version is required, or in some other cases (depending on checkModified, for instance)
+<li>downlded</li>
+This is the number of dependency ivy files downloaded from the repository. This number can be less than the total number of modules even with a clean cache, if no ivy file is provided for some dependencies.
+<li>evicted</li>
+This is the number of dependency module evicted by conflict managers.
+</ul>
+<li>artifacts</li>
+<ul>
+<li>number</li>
+This is the total number of artifacts resolved in the given configuration.
+<li>dwnlded</li>
+This is the number of artifacts actually downloaded from the repository.
+</ul>
+</ul>
+
+<span class="since">since 1.4</span> A new inline mode allow to call a resolve without an ivy file, by setting directly the module which should be resolved from the repository. It is particularly useful to install released software, like a ant task for example. When inline is set to true, the organisation module and revision attributes are used to specify which module should be resolved from the repository.
+
+<i>Note for developers:
+After the call to this task, a reference to the module descriptor resolved is put in the ant project under the id <code>"ivy.resolved.descriptor"</code>.</i>
+
+<table class="ant">
+<thead>
+    <tr><th class="ant-att">Attribute</th><th class="ant-desc">Description</th><th class="ant-req">Required</th></tr>
+</thead>
+<tbody>
+    <tr><td>file</td><td>path to the ivy file to use for resolution</td>
+        <td>No. Defaults to ${ivy.dep.file} or nothing in inline mode</td></tr>
+    <tr><td>conf</td><td>a comma separated list of the configurations to resolve</td><td>No. Defaults to ${ivy.configurations}</td></tr>
+    <tr><td>useOrigin</td><td>true to avoid the copy of local artifacts to the cache and use directly their original location, false otherwise <span class="since">since 1.4</span>. 
+To know if an artifact is local ivy asks to the resolver. Only filesystem resolver is considered local by default, but this can be disabled if you want to force the copy on one filesystem resolver and use the original location on another. Note that it is safe to use useOrigin even if you some no local resolvers, Ivy will behave as usual in this case. Note also that this only applies to artifacts, not to ivy files, which are still copied in the cache.</td><td>No. defaults to false</td></tr>
+    <tr><td>inline</td><td>true to use inline mode, false to resolve an ivy file <span class="since">since 1.4</span></td><td>No. defaults to false</td></tr>
+    <tr><td>organisation</td><td>the organisation of the module to resolve in inline mode <span class="since">since 1.4</span></td><td>Yes in inline mode, no otherwise.</td></tr>
+    <tr><td>module</td><td>the name of the module to resolve in inline mode <span class="since">since 1.4</span></td><td>Yes in inline mode, no otherwise.</td></tr>
+    <tr><td>revision</td><td>the revision constraint to apply to the module to resolve in inline mode <span class="since">since 1.4</span></td><td>No. Defaults to "latest.integration" in inline mode, nothing in standard mode.</td></tr>
+    <tr><td>type</td><td>comma separated list of accepted artifact types (<span class="since">since 1.2</span>)</td><td>No. defaults to ${ivy.resolve.default.type.filter}</td></tr>
+    <tr><td>haltonfailure</td><td>true to halt the build on ivy failure, false to continue</td><td>No. Defaults to true</td></tr>
+    <tr><td>failureproperty</td><td>the name of the property to set if the resolve failed <span class="since">since 1.4</span></td><td>No. No property is set by default.</td></tr>
+    <tr><td>transitive</td><td>true to resolve dependencies transitively, false otherwise <span class="since">since 1.4</span></td><td>No. Defaults to true</td></tr>
+    <tr><td>showprogress</td><td>true to show dots while downloading, false otherwise</td><td>No. Defaults to true</td></tr>
+    <tr><td>validate</td><td>true to force ivy files validation against ivy.xsd, false to force no validation</td><td>No. Defaults to default ivy value (as configured in configuration file)</td></tr>
+</tbody>
+</table>
+<h1>Examples</h1>
+<code type="xml">
+<ivy:resolve file="path/to/ivy.xml"/>
+</code>
+Resolve all dependencies declared in path/to/ivy.xml file.
+
+<hr/>
+
+<code type="xml">
+<ivy:resolve file="path/to/ivy.xml" transitive="false" />
+</code>
+Same as above, but with transitive dependencies disabled.
+
+<hr/>
+
+<code type="xml">
+<ivy:resolve file="path/to/ivy.xml" conf="default, test"/>
+</code>
+Resolve the dependencies declared in the configuration default and test of the path/to/ivy.xml file.
+
+<hr/>
+
+<code type="xml">
+<ivy:resolve file="path/to/ivy.xml" type="jar"/>
+</code>
+Resolve all dependencies declared in path/to/ivy.xml file, but download only jar artifacts.
+
+<hr/>
+<code type="xml">
+<ivy:resolve organisation="apache" module="commons-lang" revision="2+" inline="true" />
+</code>
+Resolve the commons-lang module revision 2+ from the repository, with its dependencies.
+
+	</textarea>
+<script type="text/javascript">xooki.postProcess();</script>
+</body>
+</html>

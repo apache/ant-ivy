@@ -1,0 +1,46 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+	<script type="text/javascript">var xookiConfig = {level: 2};</script>	
+	<script type="text/javascript" src="../../xooki/xooki.js"></script>
+</head>
+<body>
+	<textarea id="xooki-source">
+<table class="resolver">
+<tr><td class="title">Tag</td><td class="value">vfs</td></tr>
+<tr><td class="title">Handle latest</td><td class="value">depend on vfs capacity, usually yes</td></tr>
+<tr><td class="title">Handle publish</td><td class="value">depend on vfs capacity, usually yes</td></tr>
+</table>
+<br/>
+This resolver is certainly the most capable, since it relies on <a href="http://jakarta.apache.org/commons/vfs/">Apache commons VFS</a>, which gives an uniform access to <a href="http://jakarta.apache.org/commons/vfs/filesystems.html">a good number of file systems</a>, including ftp, webdav, zip, ... <span class="since">since 1.4</span>
+
+<i>Note: commons vfs has not released a stable version yet, hence Ivy relies on a nightly build. Stability should thus be considered carefully before using this resolver in a production environment</i>
+
+<h1>Attributes</h1>
+This resolver shares the <a href="../../doc/configuration/resolvers#common.html">common attributes</a> of standard resolvers.
+<h1>Child elements</h1>
+<table class="ivy-children">
+<thead>
+    <tr><th class="ivy-chld">Element</th><th class="ivy-chld-desc">Description</th><th class="ivy-chld-card">Cardinality</th></tr>
+</thead>
+<tbody>
+    <tr><td>ivy</td><td>defines a pattern for ivy files, using the pattern attribute</td>
+        <td>0..n</td></tr>
+    <tr><td>artifact</td><td>defines a pattern for artifacts, using the pattern attribute</td>
+        <td>1..n</td></tr>
+</tbody>
+</table>
+
+<h1>Example</h1>
+<code type="xml">
+<vfs name="vfs-resolver">
+  <ivy pattern="sftp://username:password@host/[organisation]/[module]/[revision]/ivy.xml" />
+  <artifact pattern="sftp://username:password@host/[organisation]/[module]/[revision]/[artifact].[ext]" />
+</vfs> 
+</code>
+Access ivy and artifacts files using sftp.
+
+	</textarea>
+<script type="text/javascript">xooki.postProcess();</script>
+</body>
+</html>

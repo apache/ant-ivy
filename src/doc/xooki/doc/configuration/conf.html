@@ -1,0 +1,64 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+	<script type="text/javascript">var xookiConfig = {level: 2};</script>	
+	<script type="text/javascript" src="../../xooki/xooki.js"></script>
+</head>
+<body>
+	<textarea id="xooki-source">
+<b>Tag:</b> conf
+
+Configures some important ivy info: default cache, default resolver, ...
+
+<i>Note that this is not related at all with conf found in ivy files. This tag is only used to setup ivy.</i>
+
+Default cache is used whenever a cache is not provided. It usually points to a directory in your filesystem. <strong>This should not point to a directory used as a repository!</strong>
+
+Default resolver is used whenever nothing elese is configured in the modules section of the configuration file. It should give the name of a dependency resolver defined in the resolvers section of the configuration file.
+
+Default latest strategy and conflict manager can also be configured here.
+
+validate indicates if ivy files should generally be validate against xsd or not. This setting is only a default value, and can be overriden :
+1) in ant tasks
+2) in resolvers
+So if there is a setting in the resolver, it always win against all other settings.
+
+checkUpToDate indicates to ivy if it must check date of artifacts before retrieving them (i.e. copying them from
+cache to another place in your filesystem). Usually it is a good thing to check date to avoid unnecessary copy, even if it's most of the time a local copy.
+
+cacheIvyPattern and cacheArtifactPattern are used to configure the way ivy stores ivy files and artifacts in the cache. Usually you do not have to change this, unless you want to use the cache directly from another tool, which is not recommended.
+<h1>Attributes</h1>
+<table class="ivy-attributes">
+<thead>
+    <tr><th class="ivy-att">Attribute</th><th class="ivy-att-desc">Description</th><th class="ivy-att-req">Required</th></tr>
+</thead>
+<tbody>
+    <tr><td>defaultCache</td><td>a path to a directory to use as default cache</td>
+        <td>No, defaults to .ivy/cache in user home</td></tr>
+    <tr><td>defaultResolver</td><td>the name of the default resolver to use</td>
+        <td>No, but all modules should be configured in the modules section if not provided</td></tr>
+    <tr><td>defaultLatestStrategy</td><td>the name of the default latest strategy to use</td>
+        <td>No, defaults to latest-revision</td></tr>
+    <tr><td>defaultConflictManager</td><td>the name of the default conflict manager to use</td>
+        <td>No, defaults to latest-revision</td></tr>
+    <tr><td>defaultBranch</td><td>the default branch to use for all modules, except if they have a <a href="../../doc/configuration/module.html"> module specific branch setting</a>. <span class="since">since 1.4</span></td>
+        <td>No, defaults to no default branch</td></tr>
+    <tr><td>circularDependencyStrategy</td><td>the name of the <a href="../../doc/concept#circular.html">circular dependency strategy</a> to use <span class="since">since 1.4</span></td>
+        <td>No, defaults to warn</td></tr>
+    <tr><td>validate</td><td>Indicates if ivy files should be validated against ivy.xsd or not.</td>
+        <td>No, defaults to true</td></tr>
+    <tr><td>checkUpToDate</td><td>Indicates if date should be checked before retrieving artifacts from cache</td>
+        <td>No, defaults to true</td></tr>
+    <tr><td>cacheIvyPattern</td><td>a pattern to indicate where ivy files should be put in cache</td>
+        <td>No, defaults to [organisation]/[module]/ivy-[revision].xml</td></tr>
+    <tr><td>cacheArtifactPattern</td><td>a pattern to indicate where artifact files should be put in cache</td>
+        <td>No, defaults to [organisation]/[module]/[type]s/[artifact]-[revision].[ext]</td></tr>
+    <tr><td>useRemoteConfig</td><td>true to configure ivyrep and ibiblio resolver from a remote configuration file (updated with changes in those repository structure if any) (<span class="since">since 1.2</span>)</td>
+        <td>No, defaults to false</td></tr>
+</tbody>
+</table>
+
+	</textarea>
+<script type="text/javascript">xooki.postProcess();</script>
+</body>
+</html>

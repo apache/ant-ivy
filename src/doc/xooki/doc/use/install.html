@@ -1,0 +1,51 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+	<script type="text/javascript">var xookiConfig = {level: 2};</script>	
+	<script type="text/javascript" src="../../xooki/xooki.js"></script>
+</head>
+<body>
+	<textarea id="xooki-source">
+Installs a module and all its dependencies in a resolver. <span class="since">since 1.3</span>
+
+The module to install should be available in a resolver, and will be installed in another resolver which should support publish.
+
+This is particularly useful for users who only have a private repository, and want to benefit from public repositories from time to time. In this case, when a module is missing in the private repository, a call to install let download the module from a public repository not usually used for dependency resolution, and install it and its dependencies in the private repository.
+
+For more details about this task and its usage see the <a href="../../doc/tutorial/build-repository.html">build repository tutorial</a>
+  
+<table class="ant">
+<thead>
+    <tr><th class="ant-att">Attribute</th><th class="ant-desc">Description</th><th class="ant-req">Required</th></tr>
+</thead>
+<tbody>
+    <tr><td>from</td><td>the name of the resolver in which the module must be found</td>
+        <td>Yes</td></tr>
+    <tr><td>to</td><td>the name of the resolver in which the module must be installed</td>
+        <td>Yes</td></tr>
+    <tr><td>organisation</td><td>the name of the organisation of the module to install</td>
+        <td>Yes</td></tr>
+    <tr><td>module</td><td>the name of the module to install</td>
+        <td>Yes</td></tr>
+    <tr><td>revision</td><td>the revision of the module to install</td>
+        <td>Yes</td></tr>
+    <tr><td>validate</td><td>true to force ivy files validation against ivy.xsd, false to force no validation</td>
+        <td>No. Defaults to default ivy value (as configured in configuration file)</td></tr>
+    <tr><td>overwrite</td><td>true to override modules already present in the destination resolver, false otherwise</td>
+        <td>No, defaults to false</td></tr>
+    <tr><td>transitive</td><td>true to install the module and all its transitive dependencies, false to install only the module</td>
+        <td>No, defaults to false</td></tr>
+    <tr><td>matcher</td><td>the name of the matcher to use to find the modules to install</td>
+        <td>No, defaults to exact</td></tr>
+</tbody>
+</table>
+<h1>Examples</h1>
+<code type="xml">
+<ivy:install organisation="apache" module="commons-lang" revision="2.0" from="ivyrep" to="myfsresolver"/>
+</code>
+Installs the module commons-lang from apache in revision 2.0 in the resolver myfsresolver. The module is found in the resolver named 'ivyrep'.
+
+	</textarea>
+<script type="text/javascript">xooki.postProcess();</script>
+</body>
+</html>

@@ -1,0 +1,1 @@
+{debug:true, jira: {ids: ['IVY'], url: 'http://issues.apache.org/jira'}}

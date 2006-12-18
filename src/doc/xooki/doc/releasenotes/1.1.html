@@ -1,0 +1,50 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+	<script type="text/javascript">var xookiConfig = {level: 2};</script>	
+	<script type="text/javascript" src="../../xooki/xooki.js"></script>
+</head>
+<body>
+	<textarea id="xooki-source">
+<h1>Changes log</h1>
+- remote configuration (if available) of ivyrep and ibiblio patterns and roots
+- new detailed messages when ivy fails to reach an url (thanks to Nicolas)
+- new artifactproperty task, which enables to set a property for each dependency artifacts resolved by ivy
+- new defaultconf attribute in ivy file dependencies, to change the default conf to use in the file when no conf is specified for a dependency
+- add the ability to change the xsl file and report name pattern used by report task
+- http listing now compatible with tomcat listing (tested with 5.0.28)
+- pub revision in deliver task now defaults to timestamp if not provided by any other way
+- debug messages improvements, with configuration dump among others
+- new var task, enables to set ivy variables from ant
+- now defaults for ivyrep and ibiblio resolver are configurable by variables
+- refactoring: introduce the notion of BasicResolver, Repository, Resource, RepositoryResolver, making much easier the task of writing basic resolvers
+- added checkmodified attribute on all basic resolvers, which defaults to ${ivy.resolver.default.check.modified}
+  This makes ivy check last modified date of ivy files to see it its cache is up to date
+- artifacts download are now first made to a temp file, which is renamed only at the end of the download. 
+  This prevent interrupted downloads to be considered as finished
+- FIX: handle proxy configuration with http-client (thanks to Nicolas)
+- FIX: remove dependency on ant outside of ant integration classes
+- FIX: resolve problem when conflicts on latest revisions 
+- FIX: allow use of any kind of URL in IvyRepResolver (both ivyroot and artroot) and IBibiblioResolver
+- FIX: chain resolver can now be used for artifacts part of dual resolver
+- FIX: now detects and warn about circular dependencies
+- FIX: cachepath task now takes pathid as parameter instead of id, to prevent
+  special handling from ant
+- FIX: ivy.xsd: set artifact minOccurs to 0 in publications
+
+Thanks to John Shields from Robert Half International, Inc.:
+- FIX: no more infinite loop when a conflict occurs between a latest subversion and a fully resolved revision
+- FIX: BasicURLHandler now closes its connections
+- FIX: ApacheURLLister now works with capital letter in revisions and truncated names
+- now use of ivy variables is allowed in ivy files
+- added a null check in pattern helper substitute
+<h1>Downloads</h1>
+<a href="./visit.php?url=./downloads/ivy/ivy-1.1-bin.zip">ivy-1.1-bin.zip</a> (999 kB)
+<a href="./visit.php?url=./downloads/ivy/ivy-1.1-src.zip">ivy-1.1-src.zip</a> (738 kB)
+<a href="./visit.php?url=./downloads/ivy/ivy-1.1-src-withdep.zip">ivy-1.1-src-withdep.zip</a> (1001 kB)
+
+
+	</textarea>
+<script type="text/javascript">xooki.postProcess();</script>
+</body>
+</html>

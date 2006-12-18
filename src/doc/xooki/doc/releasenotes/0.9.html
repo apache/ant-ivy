@@ -1,0 +1,40 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+	<script type="text/javascript">var xookiConfig = {level: 2};</script>	
+	<script type="text/javascript" src="../../xooki/xooki.js"></script>
+</head>
+<body>
+	<textarea id="xooki-source">
+<h1>Changes log</h1>
+<i>Note: this version is not compatible with preceding ones. 
+The way to indicate patterns (in configuration as well as in some tasks) has changed: brackets are used for tokens instead of ant notation, which is kept for variables.
+Thus a pattern previously noted:
+${repository.dir}/${organisation}/${module}/${artifact}-${revision}.${ext}
+will now be:
+${repository.dir}/[organisation]/[module]/[artifact]-[revision].[ext]
+
+This has been done to prevent collision and make a better separation between variables and tokens. 
+Moreover migration costs should not be too high, ivy files not being concerned by the change.
+</i>
+- ChainResolver are now able to publish (delegating the call to the first resolver in the chain)
+- DualResolver sub resolvers are now registered in Ivy
+- more precise message on eviction
+- add validate attribute on most resolvers
+- ivy files validation handling review
+- use ivy variables in ant tasks to get default values for attributes
+- documentation update for configuring ivy
+- FIX: dependencies order not taken into account during resolve
+- FIX: evicting modules also evict confs
+- FIX: NPE during resolve when a dependency ivy file has no publication date
+- FIX: check nullity of artifact download reports
+
+<h1>Downloads</h1>
+<a href="./visit.php?url=./downloads/ivy/ivy-0.9-bin.zip">ivy-0.9-bin.zip</a> (958 kB)
+<a href="./visit.php?url=./downloads/ivy/ivy-0.9-src.zip">ivy-0.9-src.zip</a> (776 kB)
+<a href="./visit.php?url=./downloads/ivy/ivy-0.9-src-withdep.zip">ivy-0.9-src-withdep.zip</a> (1039 kB)
+
+	</textarea>
+<script type="text/javascript">xooki.postProcess();</script>
+</body>
+</html>

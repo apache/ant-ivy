@@ -1,0 +1,37 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+	<script type="text/javascript">var xookiConfig = {level: 2};</script>	
+	<script type="text/javascript" src="../../xooki/xooki.js"></script>
+</head>
+<body>
+	<textarea id="xooki-source">
+Sets a variable (by name and value), or set of variables (from file or url) in ivy. <br/>
+Variables are case sensitive.<br/><br/>
+Contrary to ant properties, ivy variables are mutable. But a problem with this is that you do not control when 
+variables are substituted, and usually it is done as soon as possible. So changing the value of a variable will
+have no effect if it has already been substituted. Consequently, <b>using this task is NOT recommended</b>.
+See <a href="../../doc/reference.html">reference</a> page for details about ivy variables.
+<br/><br/>
+  
+<table class="ant">
+<thead>
+    <tr><th class="ant-att">Attribute</th><th class="ant-desc">Description</th><th class="ant-req">Required</th></tr>
+</thead>
+<tbody>
+    <tr><td>name</td><td>the name of the variable to set</td>
+        <td>No</td></tr>
+    <tr><td>value</td><td>the value of the variable to set</td>
+        <td>Yes when using the name attribute</td></tr>
+    <tr><td>file</td><td>the filename of the property file to load as ivy variables</td>
+        <td rowspan="2">One of these, when <b>not</b> using the name attribute</td></tr>
+    <tr><td>url</td><td>the url from which to read ivy variables</td></tr>
+    <tr><td>prefix</td><td>Prefix to apply to variables. A "." is appended to the prefix if not specified.</td>
+        <td>No</td></tr>
+</tbody>
+</table>
+
+	</textarea>
+<script type="text/javascript">xooki.postProcess();</script>
+</body>
+</html>

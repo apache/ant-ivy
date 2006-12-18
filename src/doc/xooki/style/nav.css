@@ -1,0 +1,96 @@
+#navcontainer {
+	width: inherit;
+	margin: 0 0 0 50px;
+	padding-left: 0;
+	height: 1.20em;
+	z-index: 100;
+}
+
+#nav {
+	font: bold 0.75em/100% Trebuchet MS, Arial, Helvetica, sans-serif;
+	float: left;
+	width: inherit;
+	list-style: none;
+	line-height: 1;
+	padding: 0;
+	margin: 0;
+	z-index: 100;
+}
+
+#nav ul {
+	font: normal 100%/140% Trebuchet MS, Arial, Helvetica, sans-serif;
+	position: absolute;
+	left: -999em;
+	height: auto;
+	width: 11.4em;
+	w\idth: 12.0em;
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	z-index: 100;
+}
+
+#nav li {
+	float: left;
+	padding: 0;
+	width: auto;
+	z-index: 100;
+}
+
+#nav ul li {
+	float: left;
+	padding: 0;
+	width: 10em;
+	z-index: 100;
+}
+
+#nav li a {
+	display: block;
+	width: auto;
+	padding: 0.25em 1.0em;
+	text-decoration: none;
+}
+
+#nav .title {
+  text-align: center;
+  font-weight: 700;
+	width: 11em;
+	w\idth: 10em;
+	margin: 0;
+	padding: 0.15em 1.0em;
+}
+
+#nav li li a {
+	width: 11em;
+	w\idth: 10em;
+	margin: 0;
+	padding: 0.25em 1.0em;
+}
+
+#nav li ul ul {
+	margin: -1.75em 0 0 11em;
+	z-index: 100;
+}
+
+#nav li:hover ul ul,
+#nav li:hover ul ul ul,
+#nav li.sfhover ul ul,
+#nav li.sfhover ul ul ul {
+	left: -999em;
+	z-index: 100;
+}
+
+#nav li:hover ul,
+#nav li li:hover ul,
+#nav li li li:hover ul,
+#nav li.sfhover ul,
+#nav li li.sfhover ul,
+#nav li li li.sfhover ul {
+	left: auto;
+	z-index: 100;
+}
+
+#nav li:hover,
+#nav li.sfhover {
+	z-index: 100;
+}

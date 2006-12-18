@@ -1,0 +1,199 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+	<script type="text/javascript">var xookiConfig = {level: 2};</script>	
+	<script type="text/javascript" src="../../xooki/xooki.js"></script>
+</head>
+<body>
+	<textarea id="xooki-source">
+Until Ivy 1.2a, the default resolver was a simple ivyrep resolver, with only a small number of possibilities of configuration. Whenever you wanted to do something slightly more complicated than looking for ivy files on ivyrep and artifacts on ibiblio, you had to write your own ivyconf file (see other tutorials and <a href="../../doc/configuration.html">configuration</a> reference for details about this).
+
+Ivy 1.3 introduces a new default configuration, fully compatible pre 1.3 one, but a lot more configurable.
+
+<h1>Concept</h1>
+This default configuration mainly consists of 3 kind of repositories:
+<ul>
+<li>local</li> a repository which is private to the user. 
+<li>shared</li> a repository which is shared between all the member of a team
+<li>public</li> a public repository on which most modules can be found
+</ul>
+
+Note that if you work alone, the distinction between local and shared repository is not very important, but there are some things to know to distinguish them.
+
+Now let's describe each of these repositories concept in more details. We will describe how they are setup physically later.
+<h2>Local</h2>
+The local repository is particularly useful when you want to do something without being disturb by anything else happening in the environment. This means that whenever ivy is able to locate a module in this repository it will be used, no matter of what is available in others.
+
+For instance, if you have a module declaring a dependency on the module foo in revision latest.integration, then if a revision of foo is found in the local repository, it will be used, <em>even if a more recent revision is available in other repositories</em>. 
+
+This may be disturbing for some of you, but imagine you have to implement a new feature on a project, and in order to achieve that you need to modify two modules: you add a new method in module foo and exploit this new method in module bar. Then if you publish the module foo to your local repository, you will be sure to get it in your bar module, even if someone else publish a new revision of foo in the shared repository (this revision not having the new method you are currently adding). 
+
+But be careful, when you have finished your development and publish it on the shared you will have to clean your local repository to benefit from new versions published in the shared repository.
+
+Note also that modules found in the local repository must be complete, i.e. they must provide both a module descriptor and the published artifacts. 
+<h2>Shared</h2>
+As its name suggest, the shared repository is aimed to be shared among a whole development team. It is a place where you can publish your team private modules for instance, and it's also a place where you can put modules not available in the public repository (sun jars, for instance), or simply not accurate (bad or incomplete module descriptors for instance).
+
+Note that modules can be split across the shared repository and the public one: you can have the module descritor in the shared repository and the artifacts in the public one, for instance.
+<h2>Public</h2>
+The public repository is the place where most modules can be found, but which sometimes lack the information you need. It's usually a repository available through an internet connection only, even if this is not mandatory.
+<h1>Setting up the repositories</h1>
+Now that we have seen the objective of each of the three repositories, let's see how they are setup and how to configure them to fit your needs.
+
+First, several repositories uses the same root in your filesystem. Referenced as ${ivy.default.ivy.user.dir}, this is by default the directory .ivy in your user home.
+
+Note that several things can be done by setting ivy variable. To set them without defining your own ivyconf.xml file, you can:<ul>
+<li>set an ant property before any call to ivy in your build file if you use ivy from ant</li>
+<li>set an environment variable if you use ivy from the command line</li>
+</ul>
+For instance:
+<code type="xml">
+<target name="resolve">
+  <property name="ivy.default.ivy.user.dir" value="/path/to/ivy/user/dir"/>
+  <ivy:resolve />
+</target>
+</code>
+
+Now we will show how to override default values for the different kind of repositories, note that you can find what are these default values below in the detail of the default configuration.
+<h2>Local</h2>
+By default, the local repository lies in ${ivy.default.ivy.user.dir}/local. This is usually a good place, but you may want to modify it however. No problem, you just have to set the following ivy variable to the directory you want to use: <code>ivy.local.default.root</code>. For instance:
+<code>ivy.local.default.root=/opt/ivy/repository/local</code>.
+
+If you already have something you would like to use as your local repository, you may also want to modify the layout of this repository. Once again, two variables are available for that:
+<code>ivy.local.default.ivy.pattern</code> gives the pattern to find ivy files
+<code>ivy.local.default.artifact.pattern</code> gives the pattern to find artifacts
+For example:
+<code>
+ivy.local.default.root=/opt/ivy/repository/local
+ivy.local.default.ivy.pattern=[module]/[revision]/ivy.xml
+ivy.local.default.artifact.pattern=[module]/[revision]/[artifact].[ext]
+</code>
+<h2>Shared</h2>
+By default, the shared repository lies in ${ivy.default.ivy.user.dir}/shared. This is fine if you work alone, but the shared repository is supposed to be, mmm, shared ! So changing this directory is often required, and it is usually modified to point to a shared directory. You can use <code>ivy.shared.default.root</code> variable to specify in a new directory. Moreover, you can also configure the layout with variables similar to the one for the local repository:
+<code>ivy.shared.default.ivy.pattern</code> gives the pattern to find ivy files
+<code>ivy.shared.default.artifact.pattern</code> gives the pattern to find artifacts
+For example:
+<code>
+ivy.shared.default.root=/opt/ivy/repository/shared
+ivy.shared.default.ivy.pattern=[organisation]/[module]/[revision]/ivy.xml
+ivy.shared.default.artifact.pattern=[organisation]/[module]/[revision]/[artifact].[ext]
+</code>
+
+<h2>Public</h2>
+By default, the public repository is ivyrep. To change the setting of this resolver, you can use the standard way to configure ivyrep:
+<code>ivy.ivyrep.default.ivy.root</code> specify the root for ivy files
+<code>ivy.ivyrep.default.ivy.pattern</code> specify the layout for ivy files
+<code>ivy.ivyrep.default.artifact.root</code> specify the root for artifacts
+<code>ivy.ivyrep.default.artifact.pattern</code> specify the layout for artifacts
+For instance:
+<code>
+ivy.ivyrep.default.ivy.root=http://myserver/ivy/
+ivy.ivyrep.default.artifact.root=http://myserver/ivy/
+</code>
+
+<h1>Going further</h1>
+OK, so we have seen how to easily change the settings of the three main repositories. But what if I want my shared repository is on a web server ? What if the public repository is not compatible with ivyrep ? What if ... 
+
+Everything can be changed in the default configuration, for sure, you can even do your own configuration. But you can also benefit from a part of the default configuration without writing a complete one.
+
+But before explaining how, you will need to have a quick overview of how ivy is configured by default.
+
+By default, ivy is configured using an ivyconf.xml which is packaged in the ivy jar. Here is this ivyconf file:
+<code type="xml">
+<ivyconf>
+  <conf defaultResolver="default"/>
+  <include url="${ivy.default.conf.dir}/ivyconf-public.xml"/>
+  <include url="${ivy.default.conf.dir}/ivyconf-shared.xml"/>
+  <include url="${ivy.default.conf.dir}/ivyconf-local.xml"/>
+  <include url="${ivy.default.conf.dir}/ivyconf-main-chain.xml"/>
+  <include url="${ivy.default.conf.dir}/ivyconf-default-chain.xml"/>
+</ivyconf>
+</code>
+OK, so not much info here, except a lot of inclusions. These inclusions have been done on purpose so that you can easily change only one part of the ivyconf and benefit of the rest easily. For example, if you want to define your own public resolver, you will just have to configure ivy with an ivyconf like that:
+<code type="xml">
+<ivyconf>
+  <conf defaultResolver="default"/>
+  <include url="http://myserver/ivy/myivyconf-public.xml"/>
+  <include url="${ivy.default.conf.dir}/ivyconf-shared.xml"/>
+  <include url="${ivy.default.conf.dir}/ivyconf-local.xml"/>
+  <include url="${ivy.default.conf.dir}/ivyconf-main-chain.xml"/>
+  <include url="${ivy.default.conf.dir}/ivyconf-default-chain.xml"/>
+</ivyconf>
+</code>
+Note that only the ivyconf-public inclusion has changed to include a home made public resolver. Note also that this can be used like that thanks to the fact that ${ivy.default.conf.dir} is a variable which is always set to the place where ivy default configuration files are (i.e. packaged in the jar).
+To finish this example, you for sure have to write your own ivyconf file for defining your own public resolver. For instance:
+<code type="xml">
+<ivyconf>
+  <resolvers>
+    <filesystem name="public">
+      <ivy pattern="/path/to/my/public/rep/[organisation]/[module]/ivy-[revision].xml" />
+      <artifact pattern="/path/to/my/public/rep/[organisation]/[module]/[artifact]-[revision].[ext]" />
+    </filesystem>
+  </resolvers>
+</ivyconf>
+</code>
+No the last thing you will need in order to properly take advantage of the default configuration is the content of each included ivyconf file:
+<strong>ivyconf-public.xml</strong>
+<code type="xml">
+<ivyconf>
+  <resolvers>
+    <ivyrep name="public"/>
+  </resolvers>
+</ivyconf>
+</code>
+<strong>ivyconf-shared.xml</strong>
+<code type="xml">
+<ivyconf>
+  <property name="ivy.shared.default.root"             value="${ivy.default.ivy.user.dir}/shared" override="false"/>
+  <property name="ivy.shared.default.ivy.pattern"      value="[organisation]/[module]/[revision]/[type]s/[artifact].[ext]" override="false"/>
+  <property name="ivy.shared.default.artifact.pattern" value="[organisation]/[module]/[revision]/[type]s/[artifact].[ext]" override="false"/>
+  <resolvers>
+    <filesystem name="shared">
+      <ivy pattern="${ivy.shared.default.root}/${ivy.shared.default.ivy.pattern}" />
+      <artifact pattern="${ivy.shared.default.root}/${ivy.shared.default.artifact.pattern}" />
+    </filesystem>
+  </resolvers>
+</ivyconf>
+</code>
+<strong>ivyconf-local.xml</strong>
+<code type="xml">
+<ivyconf>
+  <property name="ivy.local.default.root"             value="${ivy.default.ivy.user.dir}/local" override="false"/>
+  <property name="ivy.local.default.ivy.pattern"      value="[organisation]/[module]/[revision]/[type]s/[artifact].[ext]" override="false"/>
+  <property name="ivy.local.default.artifact.pattern" value="[organisation]/[module]/[revision]/[type]s/[artifact].[ext]" override="false"/>
+  <resolvers>
+    <filesystem name="local">
+      <ivy pattern="${ivy.local.default.root}/${ivy.local.default.ivy.pattern}" />
+      <artifact pattern="${ivy.local.default.root}/${ivy.local.default.artifact.pattern}" />
+    </filesystem>
+  </resolvers>
+</ivyconf>
+</code>
+<strong>ivyconf-main-chain.xml</strong>
+<code type="xml">
+<ivyconf>
+  <resolvers>
+    <chain name="main" dual="true">
+      <resolver ref="shared"/>
+      <resolver ref="public"/>
+    </chain>
+  </resolvers>
+</ivyconf>
+</code>
+<strong>ivyconf-default-chain.xml</strong>
+<code type="xml">
+<ivyconf>
+  <resolvers>
+    <chain name="default" returnFirst="true">
+      <resolver ref="local"/>
+      <resolver ref="main"/>
+    </chain>
+  </resolvers>
+</ivyconf>
+</code>
+
+Here you are, you have enough clues to configure that the way you want... check the <a href="../../doc/configuration.html">configuration documentation</a> to see if what you want to do is possible, and go ahead !
+	</textarea>
+<script type="text/javascript">xooki.postProcess();</script>
+</body>
+</html>

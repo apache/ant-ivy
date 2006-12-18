@@ -1,0 +1,149 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+	<script type="text/javascript">var xookiConfig = {level: 2};</script>	
+	<script type="text/javascript" src="../../xooki/xooki.js"></script>
+</head>
+<body>
+	<textarea id="xooki-source">
+Here are the release notes of version 1.4-RC1.
+A new and noteworthy section is available on <a href="../../doc/releasenotes/1.4.html">version 1.4 page</a>.
+
+You can download it here:
+<ul><li><a href="./visit.php?url=./downloads/ivy/1.4-RC1/ivy-1.4-RC1-bin.zip">binaries</a></li>
+<li><a href="./visit.php?url=./downloads/ivy/1.4-RC1/ivy-1.4-RC1-src.zip">sources</a></li>
+<li><a href="http://www.jayasoft.org/visit.php?url=./downloads/ivy/1.4-RC1/ivy-1.4-RC1-doc.zip">documentation</a></li>
+</ul>
+
+It includes 30 new features, 33 improvements and even more bug fixes since Ivy 1.3.1.
+<code>
+   version 1.4-RC1 - 2006-09-17
+=================================
+Incompatibility with previous versions:
+---------------------------------------
+* usage:
+  - no known major incompatiblity
+  - build list task now requires a configured ivy instance (configure will automatically be called if you don't call it explicitly)
+  - publish now requires the published ivy file to have the published revision (automatic if you use deliver)
+  
+* API:
+  - Numerous API changes especially in the BasicResolver class and subclasses due to the introduction of VersionMatcher, 
+  	this may break some custom dependency resolvers or other tools or plugins depending directly on Ivy API
+
+Changes:
+--------
+* thanks to Jayasoft:
+  - NEW: ivy report generate full graph from automated build (IVY-155)
+  - NEW: support for build number calculation (IVY-276)
+  - NEW: find modules in repository (IVY-275)
+  - NEW: explicitly specify artifact download URL (IVY-271)
+  - NEW: introduce branch management (IVY-269)
+  - NEW: resolve dependencies directly without using an ivy file (IVY-268)
+  - NEW: ability to invoke any build scripts for dependencies (IVY-68)
+  - NEW: support sftp repository (IVY-267)
+  - NEW: pluggable version matcher (IVY-219)
+  - NEW: support for version ranges (IVY-295)
+  - NEW: dependency based on dependency status (IVY-47)
+  - NEW: add possibility to define extra attributes in ivy files (IVY-217)
+  - NEW: option to omit specific confs and allow the rest (IVY-66)
+  - NEW: use custom classloader for plugins (IVY-220)
+  - NEW: adding to SPECIAL_MEANINGS in LatestRevisionStrategy (IVY-121)
+  - NEW: Allow use of system properties in ivyconf.xml (IVY-228)
+
+  - IMPROVE: allow to use file-system repository directly without cache (IVY-211)
+  - IMPROVE: deliver task use a default value for revision (IVY-252)
+  - IMPROVE: better documentation distribution (IVY-274) - in progress
+  - IMPROVE: define conflict manager per organisation/module in ivyconf (IVY-270)
+  - IMPROVE: transitive parameter in resolve (IVY-21)
+  - IMPROVE: add syncing feature in retrieve (IVY-33)
+  - IMPROVE: use of md5 and/or sha1 files to check downloads (IVY-27)
+  - IMPROVE: possible to use m2compatible without automatically using POMs as well (IVY-263)
+  - IMPROVE: support for circular dependencies (IVY-202)
+  - IMPROVE: make status list configurable (IVY-242)
+  - IMPROVE: use only ivy patterns for listing revisions when module desciptor is required (allownomd = false) (IVY-166)
+  - IMPROVE: implement strict haltonfailure if ivy.xml is not found (IVY-110)
+  - IMPROVE: artifact's "name" attribute could be omitted (IVY-231)
+  - IMPROVE: ivy standalone now return error status (IVY-152)
+  - IMPROVE: log messages do not display most specfic resolver name (IVY-170)
+  - IMPROVE: prints URL before downloading in verbose mode (IVY-257)
+  - IMPROVE: incorrect value in status attribute causes silent failure (IVY-259)
+  - IMPROVE: suport empty dependencies tag in an ivy file (IVY-281)
+  - IMPROVE: isolate dependency resolution from artifact downloading (IVY-254)
+  - IMPROVE: Pass artifact to repository when calling "put" (IVY-192)
+  - IMPROVE: Do not publish ivy file with bad revision, and allow to force the deliver when calling publish task (IVY-245)
+
+  - FIX: Problem with multiple artifact includes in transitive dependencies (IVY-283)
+  - FIX: Endless recursion in report (IVY-284)
+  - FIX: http url lister doesn't work when link text has spaces (IVY-282)
+  - FIX: Incorrect ant log level (IVY-279)
+  - FIX: Wrong resolution of dependencies if artifacts specified explicitly (IVY-261)
+  - FIX: Multiple versions of dependencies appearing in retrieve (IVY-264)
+  - FIX: Too many false CircularDependencyException errors thrown (IVY-230)
+  - FIX: CircularDependencyException not always thrown (IVY-184)
+  - FIX: NullPointer in BasicResolver (IVY-258)
+  - FIX: Bad diagnostics message when no space left (IVY-250)
+  - FIX: Maven2 POM support can find groupId from "parent" element (IVY-262)
+  - FIX: Parent version is expected to be equal to the module version in POM (IVY-241)
+  - FIX: problem with cache and returnFirst (IVY-207)
+  - FIX: modules splitted across a chain are not handled correctly (IVY-206)
+  - FIX: problem with conf extension and latest revisions (IVY-240)
+  - FIX: The clean-cache target in /src/example/hello-ivy/build.xml file refers to ${user.home}/.ivy-cache instead of ${user.home}/.ivy/cache/ (IVY-265)
+
+* thanks to Ivy Community:
+  - NEW: SSH Resolver added and aligned with SFTP resolver (IVY-273) (thanks to Andreas Sahlbach)
+  - NEW: ability to turn off transitivity at configuration level (IVY-103) (thanks to Karl Baum and Maarten Coene)
+  - NEW: a conflict manager that is able to allow implementation changes but not api changes (1.2.x - OK), (1.x.x - Not OK) (IVY-223) (thanks to Anders Janmyr)
+  - NEW: enhance standalone mode to execute java program by creating classloader of dependant jars from cache (IVY-210) (thanks to Peter Hayes)
+  - NEW: addition of Vfs Resolver which uses Commons-Vfs to resolve files (IVY-128) (thanks to Glen Marchesani, Matt Inger and Stephen Nesbitt)
+
+  - IMPROVE: use global properties in the recursive delivery (IVY-222) (with the contribution of Roshan Punnoose)
+  - IMPROVE: better handling of authentication (thanks to Christian Riege)
+
+  - FIX: Ant log messsages not embedded in task log (IVY-280) (thanks to Gilles Scokart)
+  - FIX: Ivy fails when downloading from a server that supports NTLM authentication (IVY-213) (thanks to Damon Rand)
+  - FIX: Delivered Ivy files with incomplete last line. (IVY-125) (thanks to Matthias Kilian)
+  - FIX: the vfs resolver should not log passwords (IVY-292) (thanks to Antoine Levy-Lambert)
+
+* thanks to Maarten Coene:
+  - NEW: add failureproperty parameter to the resolve task (IVY-285)
+  - NEW: Add type filtering to retrieve task (IVY-260)
+  - NEW: Add selectors to the configuration mapping (IVY-253)
+  - NEW: Add Ant task to retrieve information from an Ivy file without doing a resolve (IVY-255)
+  - NEW: add option to cachepath task to create a path with local artifact paths (IVY-221)
+  - NEW: allow extending configurations to override the mapping of their super configurations (IVY-218)
+
+  - IMPROVE: Retain artifact filenames along the publish/resolve/retrieve process (IVY-54)
+  - IMPROVE: report Ant-task doesn't process the reports in batch (IVY-247)
+  - IMPROVE: make ReportOutputter pluggable and customizable (IVY-205)
+  - IMPROVE: add wildcard support for extending configurations (IVY-235)
+  - IMPROVE: add support for xslt parameters in the report task (IVY-227)
+  - IMPROVE: comments now aren't lost when delivering ivy files (IVY-226)
+  - IMPROVE: add sort of 'fallback'-mapping to the defaultconfmapping attribute (IVY-215)
+  - IMPROVE: artifact origin is not included in the default report (IVY-251)
+
+  - FIX: VFS Resolve fails when trying to resolve a + version (IVY-237)
+  - FIX: report Ant-task doesn't use outputpattern for generating graphml reports (IVY-246)
+  - FIX: report Ant-task doesn't call init() on the internal XSLTProcess (IVY-248)
+  - FIX: value of confmappingoverride from imported configurations is lost when writing Ivy file (IVY-239)
+  - FIX: including configurations doesn't import the confmappingoverride setting (IVY-238)
+  - FIX: NullPointerException when the creation of Ivy file in cache fails (IVY-234)
+  - FIX: Ivy file containing 2 different versions of the same module is not deliverd correctly (IVY-229)
+  - FIX: ModuleRevisionId encode/decode doesn't work if revision is empty (IVY-233)
+  - FIX: cachepath task should preserve the order of the dependencies (IVY-225)
+  - FIX: specifying a defaultconfmapping adds dependencies of each unlisted configuration (IVY-214)
+
+* thanks to Johan Stuyts:
+  - NEW: always update artifacts when revision matches a regex pattern (IVY-189)
+  - NEW: provide Ant task for generating report about artifacts depended upon (IVY-194)
+
+  - IMPROVE: change default cache artifact pattern to handle missing extension (IVY-196)
+
+* thanks to Karl Baum:
+  - NEW: "this" symbol for configuration mappings (IVY-183)
+
+  - IMPROVE: performances improved (IVY-187)
+</code>
+	</textarea>
+<script type="text/javascript">xooki.postProcess();</script>
+</body>
+</html>

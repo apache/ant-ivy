@@ -1,0 +1,63 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+	<script type="text/javascript">var xookiConfig = {level: 1};</script>	
+	<script type="text/javascript" src="../xooki/xooki.js"></script>
+</head>
+<body>
+	<textarea id="xooki-source">
+Here are some terms used in Ivy, with their definitions in Ivy:<br/>
+<h2>Ivy file</h2>
+An ivy file is an xml file which is used to describe dependencies of a module (see below). It is usually named ivy.xml.
+<h2>Configuration file</h2>
+Ivy configuration files are xml files used to configure ivy to indicate where the dependencies can be found. This should not be confused with a module configuration (see below).
+<h2>Organisation</h2>
+An organisation is either a company or a simple group of person
+which produce software. Ivy handle only one level of organisation, so you cannot
+describe a company hierarchy with this concept. But it is used to group sofware
+produced by a same team, just to help find and classify them.<br/>
+<i>Examples: apache, ibm, jayasoft</i>
+<h2>Module</h2>
+A module in ivy is a piece of software that is reusable, and that 
+follow a unique cycle of revision. <br/>
+<i>Examples: hibernate, ant, ...</i>
+<h2>Artifact</h2>
+An artifact is a single file produced by a company when releasing a module. In 
+the java world, common artifacts are jars. In many cases, each revision of a 
+module publish only one artifact (like log4j, for instance), but some of them
+publish many artifacts dependending on the use of the module (like ant, for instance).
+<h2>Revision</h2>
+A revision corresponds to one delivery of a module. It can either be a delivery
+of a release, a milestone, a beta version, a nightly build, or even a continuous
+build. All of them are considered revisions in ivy.
+<h2><a name="branch">Branch</a></h2>
+A branch corresponds to the standard meaning of a branch (or sometimes stream) in source control management tools.
+The head, or trunk, or main stream, is also considered as a branch in Ivy.
+<h2>Configuration</h2>
+A module configuration is a way to use or construct a module. Some modules may be 
+used in different ways (think about hibernate which can be used inside or outside
+an application server), and this way may alter the artifacts you need (in the case
+of hibernate, jta.jar is needed only if it is used outside an application server).
+Moreover, a module may need some other modules and artifacts only at build time,
+and some others at runtime. All those differents ways to use or build a module
+are called in ivy configurations. <br/><br/>
+
+For more details on configurations and how they are used in ivy, please refer to the <a href="../doc/concept.html">main concepts page</a>.
+<h2>Status</h2>
+A module status indicates how stable a module revision can be considered. It can 
+be used to consolidate the status of all the dependencies of a module, to prevent
+the use of an integration revision of a dependency in the release of your module.
+Three statuses are defined by default in ivy:
+<ul>
+<li>integration: revisions builded by a continuous build, a nightly build, and so on, fall in this category</li>
+<li>milestone: revisions delivered to the public but not actually finished fall in this category</li>
+<li>release: revision fully tested and labelled fall in this category</li>
+</ul>
+<span class="since">since 1.4</span> This list is <a href="../doc/configuration/statuses.html">configurable</a> in your configuration file.
+<h2>Repository</h2>
+What is called a repository in Ivy is a location where Ivy is able to find your modules artifacts and metadata (i.e. ivy files in most cases).
+Ivy can be used with complex repositories configured very finely. You can use <a href="../doc/concept.html">Dependency Resolvers</a> to do so.
+	</textarea>
+<script type="text/javascript">xooki.postProcess();</script>
+</body>
+</html>
