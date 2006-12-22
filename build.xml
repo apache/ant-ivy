@@ -18,7 +18,8 @@
 	<target name="download-ivy" unless="offline">
     	<mkdir dir="${ivy.jar.dir}"/>
 		<!-- download Ivy from web site so that it can be used even without any special installation -->
-    	<get src="http://www.jayasoft.org/downloads/ivy/${ivy.install.version}/ivy-${ivy.install.version}.jar"
+		<!-- use a non standard location during migration to apache -->
+    	<get src="http://people.apache.org/~antoine/ivy/ivy-${ivy.install.version}.jar"
     		 dest="${ivy.jar.file}" usetimestamp="true"/>
 	</target>
 	
