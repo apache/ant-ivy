@@ -1914,6 +1914,9 @@ public class Ivy implements TransferListener {
     	return retrieve(moduleId, confs, cache, destFilePattern, destIvyPattern, artifactFilter, false, false);
     }
     public int retrieve(ModuleId moduleId, String[] confs, final File cache, String destFilePattern, String destIvyPattern, Filter artifactFilter, boolean sync, boolean useOrigin) {
+    	return retrieve(moduleId, confs, cache, destFilePattern, destIvyPattern, artifactFilter, sync, useOrigin, false);
+    }
+    public int retrieve(ModuleId moduleId, String[] confs, final File cache, String destFilePattern, String destIvyPattern, Filter artifactFilter, boolean sync, boolean useOrigin, boolean makeSymlinks) {
     	if (artifactFilter == null) {
     		artifactFilter = FilterHelper.NO_FILTER;
     	}
@@ -1956,7 +1959,11 @@ public class Ivy implements TransferListener {
                     File destFile = new File((String)it2.next());
                     if (!_checkUpToDate || !upToDate(archive, destFile)) {
                         Message.verbose("\t\tto "+destFile);
-                        FileUtil.copy(archive, destFile, null);
+                        if (makeSymlinks) {
+                            FileUtil.symlink(archive, destFile, null, false);
+                        } else {
+                            FileUtil.copy(archive, destFile, null);
+                        }
                         targetsCopied++;
                     } else {
                         Message.verbose("\t\tto "+destFile+" [NOT REQUIRED]");

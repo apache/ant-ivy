@@ -11,6 +11,9 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.io.OutputStream;
 import java.net.URL;
 import java.util.ArrayList;
@@ -20,6 +23,7 @@ import java.util.List;
 
 import fr.jayasoft.ivy.url.URLHandlerRegistry;
 
+
 /**
  * @author x.hanin
  *
@@ -27,7 +31,53 @@ import fr.jayasoft.ivy.url.URLHandlerRegistry;
 public class FileUtil {
     // tried some other values with empty files... seems to be the best one (512 * 1024 is very bad)
     // 8 * 1024 is also the size used by ant in its FileUtils... maybe they've done more study about it ;-)
-    private static final int BUFFER_SIZE = 8 * 1024; 
+    private static final int BUFFER_SIZE = 8 * 1024;
+
+    public static void symlink(File src, File dest, CopyProgressListener l, boolean overwrite) throws IOException {
+        try {
+            if (dest.exists()) {
+        	if (!dest.isFile()) {
+                    throw new IOException("impossible to copy: destination is not a file: "+dest);
+        	}
+        	if (!overwrite) {
+                    Message.verbose(dest+" already exists, nothing done");
+                    return;
+        	}
+            }
+            if (dest.getParentFile() != null) {
+                dest.getParentFile().mkdirs();
+            }
+            
+            Runtime runtime = Runtime.getRuntime();
+            Process process = runtime.exec("ln", new String[] {"-s", "-f", src.getAbsolutePath(), dest.getPath()});
+            
+            if (process.waitFor() != 0) {
+                InputStream errorStream = process.getErrorStream();
+                InputStreamReader isr = new InputStreamReader(errorStream);
+                BufferedReader br = new BufferedReader(isr);
+
+                StringBuffer error = new StringBuffer();
+                String line;
+                while ((line = br.readLine()) != null) {
+                  error.append(line);
+                  error.append('\n');
+                }
+                
+                throw new IOException("error symlinking " + src + " to " + dest + ":\n" + error);
+            }
+        }
+        catch (IOException x) {
+            Message.verbose("symlink failed; falling back to copy");
+            StringWriter buffer = new StringWriter();
+            x.printStackTrace(new PrintWriter(buffer));
+            Message.debug(buffer.toString());
+            copy(src, dest, l, overwrite);
+        }
+        catch (InterruptedException x) {
+            Thread.currentThread().interrupt();
+        }
+    }
+  
     public static void copy(File src, File dest, CopyProgressListener l) throws IOException {
         copy(src, dest, l, false);
     }

@@ -19,6 +19,7 @@ public class IvyRetrieve extends IvyPostResolveTask {
     private String _pattern;
     private String _ivypattern = null;
     private boolean _sync = false;
+    private boolean _symlink = false;
     
     public String getPattern() {
         return _pattern;
@@ -33,7 +34,7 @@ public class IvyRetrieve extends IvyPostResolveTask {
         _pattern = getProperty(_pattern, getIvyInstance(), "ivy.retrieve.pattern");
         try {
         	Filter artifactFilter = getArtifactFilter();
-            int targetsCopied = getIvyInstance().retrieve(getResolvedModuleId(), splitConfs(getConf()), getCache(), _pattern, _ivypattern, artifactFilter, _sync, isUseOrigin());
+            int targetsCopied = getIvyInstance().retrieve(getResolvedModuleId(), splitConfs(getConf()), getCache(), _pattern, _ivypattern, artifactFilter, _sync, isUseOrigin(), _symlink);
             boolean haveTargetsBeenCopied = targetsCopied > 0;
             getProject().setProperty("ivy.nb.targets.copied", String.valueOf(targetsCopied));
             getProject().setProperty("ivy.targets.copied", String.valueOf(haveTargetsBeenCopied));
@@ -53,5 +54,11 @@ public class IvyRetrieve extends IvyPostResolveTask {
 	public void setSync(boolean sync) {
 		_sync = sync;
 	}
-    
+
+    /**
+     * Option to create symlinks instead of copying.
+     */
+    public void setSymlink(boolean symlink) {
+        _symlink = symlink;
+    }
 }
