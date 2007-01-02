@@ -21,15 +21,11 @@ Several things are pluggable in ivy:
 </ul>
 
 Before trying to implement your own, we encourage you to check if the solution to your problem cannot be 
-addressed by existing features, or by <a href="../links.html">contributed ones</a>. Do not hesitate to ask for help on the forum.<br/><br/>
+addressed by existing features, or by <a href="../links.html">contributed ones</a>. Do not hesitate to ask for help on the [[mailing-lists]].<br/><br/>
 
-If you still don't find what you need, there are two solutions:<br/>
-- prepare yourself to enter in ivy internals<br/>
-- <a href="mailto:commercial@jayasoft.org">contact us</a> to ask for specific development or advice. As ivy creators,
-we will always spend less time to implement your features or help you make good developement environment a reality.
-So do not hesitate to contact us and ask for a pricing.<br/><br/>
+If you still don't find what you need, then you'll have to develop your own plugin or find someone who could do that for you.<br/><br/>
 
-And what if you still want to develop your own plugins ? Here are the main things to know...<br/><br/>
+Here are the main things to know if you want to develop your own plugins...<br/><br/>
 
 All ivy plug-ins use the same code patterns as ant specific tasks for parameters. This means that
 if you want to have a "myattribute" of type String, you just have to declare a method called
@@ -43,8 +39,7 @@ Knowing that, you then have to implement the appropriate interface:
 <li>fr.jayasoft.ivy.parser.ModuleDescriptorParser for module descriptor parsers</li>
 </ul>
 
-To help you understand what is required in each implementation, and what you can use to do it, have a look
-to existing implementations, it's the best advice we can give you !
+To help you understand what is required in each implementation, and what you can use to do it, have a look to existing implementations, it's the best advice we can give you!
 
 	</textarea>
 <script type="text/javascript">xooki.postProcess();</script>

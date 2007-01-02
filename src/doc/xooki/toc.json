@@ -1,8 +1,57 @@
 {
   "children": [
       {
+        "id":"index",
+        "title":"Home",
+        "children": [
+
+          ]
+      },
+      {
+        "id":"features",
+        "title":"Features",
+        "children": [
+
+          ]
+      },
+      {
+        "id":"testimonials",
+        "title":"Testimonials",
+        "children": [
+
+          ]
+      },
+      {
+        "id":"demo",
+        "title":"Demo",
+        "children": [
+
+          ]
+      },
+      {
+        "id":"download",
+        "title":"Download",
+        "children": [
+            {
+              "id":"choose-distrib",
+              "title":"Choose distribution",
+              "children": [
+
+                ]
+,
+              "level":0            }
+          ]
+      },
+      {
+        "id":"license",
+        "title":"License",
+        "children": [
+
+          ]
+      },
+      {
         "id":"doc",
-        "title":"Ivy Documentation",
+        "title":"Documentation",
         "children": [
             {
               "id":"doc/tutorial",
@@ -856,6 +905,20 @@
                 ]
             },
             {
+              "id":"faq",
+              "title":"FAQ",
+              "children": [
+
+                ]
+            },
+            {
+              "id":"links",
+              "title":"Links",
+              "children": [
+
+                ]
+            },
+            {
               "id":"doc/appendix",
               "title":"Appendix",
               "children": [
@@ -875,6 +938,27 @@
                   }
                 ]
             }
+          ]
+      },
+      {
+        "id":"mailing-lists",
+        "title":"Mailing lists",
+        "children": [
+
+          ]
+      },
+      {
+        "id":"issues",
+        "title":"Issue Tracking",
+        "children": [
+
+          ]
+      },
+      {
+        "id":"get-involved",
+        "title":"Get Involved",
+        "children": [
+
           ]
       }
     ]

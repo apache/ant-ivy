@@ -1,0 +1,126 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+	<script type="text/javascript">var xookiConfig = {level: 0};</script>	
+	<script type="text/javascript" src="xooki/xooki.js"></script>
+</head>
+<body>
+	<textarea id="xooki-source">
+<h1>What and Why</h1>
+<h2>What is Ivy ?</h2>
+<p>Ivy is a powerful dependencies manager with transitive dependencies support and much more <a href="features.html">features</a>.</p>
+<p>With Ivy you define the dependencies of your module in an xml file, called an ivy file. Then you usually ask ivy to retrieve your dependencies to a local lib dir, and it does it for you by locating the artifacts of your dependencies in repositories, such as ibiblio.</p>
+<h2>Why should I use a dependencies manager ?</h2>
+<p>Without a dependencies manager, two solutions are often used to store the dependencies of a project: a project lib dir or direct access to a shared repository.<br />
+The major drawback of the project lib dir is that the same dependencies are stored in multiple location if you have several projects using the same dependencies. Moreover, we often see project where dependencies revisions are not documented, which can cause problems for maintenance.<br />
+With the shared repository the problem is often to maintain the list of dependencies of the project. This list is often lost within the build file, which does not help maintenance. Moreover, this solution often requires a download of the whole repository, unless home made dependencies management solution has been used.</p>
+<p>Finally, the major drawback of these solutions is that they do not use transitive dependencies. Transitive dependencies are the dependencies of your dependencies. Managing transitive dependencies  let you declare dependencies only on what you really need, and not what the module you use themselves need. This not only eases your dependencies declaration, but it also improves a lot the maintenability of your project, especially in multi-project environment. Imagine you develop a component used in several other projects. Then each time your component needs a new dependency, without transitive dependencies, you have to update all the projects using your component ! And this could really take a lot of time !</p>
+<h2>Why should I use Ivy ?</h2>
+<p>If you are convinced of using a dependencies manager, you may wonder why using Ivy and not another tool. We are not able to answer this question without being biased, but have a look at Ivy <a href="features.html">features</a> and the <a href="../search/node/ivy+doc+comparison.html">product comparison</a> we provide, and you will certainly see that Ivy is one of the best dependencies manager currently available ;-)</p>
+<h2>How does Ivy differ from Maven2 ?</h2>
+<p>The answer to this question is too long, so it deserves its own page <a href="doc/m2comparison.html">here</a>.</p>
+<h1>Ivy in use</h1>
+<h2>I don't understand what's happening...</h2>
+<p>The first thing to do when you don't understand what's going wrong is to try to change the message level. If you use ant, you can use the -debug or -verbose options to get more detailed messages and better understand what's happening.</p>
+<h2>Ivy seems to fail connecting to ibiblio...</h2>
+<p>First, check if the ibiblio site is ok with your favorite browser. If the site is ok, maybe it's a problem of proxy configuration. Set your ANT_OPTS environment variable<br />
+to configure your proxy if you have one.<br />
+For instance:<br />
+<code>set ANT_OPTS=-Dhttp.proxyHost=myproxy -Dhttp.proxyPort=3128</code></p>
+<p>If it still doesn't work, maybe it's your dependency file which is not ok. Check<br />
+if the module name you depend on is actually a name of directory under<br />
+<a href="http://www.ibiblio.org/maven/" title="www.ibiblio.org/maven/">www.ibiblio.org/maven/</a>. If this is the case, check if the jar with a name like<br />
+[module]-[revision].jar is present under the jars directory of this module on ibiblio.<br />
+For instance: <a href="http://www.ibiblio.org/maven/commons-httpclient/jars/commons-httpclient-2.0.jar" title="www.ibiblio.org/maven/commons-httpclient/jars/commons-httpclient-2.0.jar">www.ibiblio.org/maven/commons-httpclient/jars/commons-httpclient-2.0.jar</a></p>
+<p>If this is the case, check your ivy configuration to see if you actually use the ibiblio<br />
+or ivyrep resolver.</p>
+<p>Finally, you can check if the files were not downloaded but corrupted<br />
+(Ivy has no md5 checking for the moment) by checking your lib directory and opening<br />
+the jars if any with an unzip program.</p>
+<p>If you still have problems post on the <a href="forum/core.html">forum</a><br />
+mentioning your OS, your version of ant, your version of ivy, your configuration file<br />
+and your ivy file.</p>
+<h2>Ivy fails to get an artifact / ivy file on my http server. What's wrong?</h2>
+<p>The first thing to do is to ensure the setting is correct. Ivy should log the url it tried, copy this url and paste it in your favorite browser, and verify you get no error.</p>
+<p>If this is ok, check if you don't need any proxy setting nor authentication. For proxy setting, you can use for instance this:<br />
+<code>set ANT_OPTS=-Dhttp.proxyHost=myproxy -Dhttp.proxyPort=3128</code><br />
+For authentication, fill in the appropriate data at <a href="doc/use/configure.html">configuration</a> time.</p>
+<p>If you still have no idea of what is wrong, then I suggest to use commons-httpclient if it isn't already the case (you should just put commons-httpclient in you classpath), and then <a href="http://jakarta.apache.org/commons/httpclient/logging.html">turn on the debug logging</a>.</p>
+<p>You will then have very detailed information on how your url is handled. If you still have problem, ask for help on the <a href="forum/core.html">forum</a>.</p>
+<h2>What if I do not want to put my library files in the lib directory ? </h2>
+<p>No problem, you just have to set an ant property:</p>
+<code><property name="ivy.lib.dir" value="pathtomylibdir"/></code>
+<h2>What if I do not want the revision of the files I retrieve to appear in the<br />
+file name ?</h2>
+<p>A typical question for people using an IDE like eclipse and often changing<br />
+dependency revision: it's a bit boring to change your IDE project just to tell<br />
+him to use comp-build2596.jar instead of comp-build2595.jar, when you have<br />
+already changed your ivy file (and even if you haven't changed it, if you use<br />
+the continuous integration feature !). No problem, you have a total control on<br />
+the files retrieved using the pattern attribute in the retrieve task:</p>
+<p>Here is the default pattern:</p>
+<code><ivy:retrieve pattern="${ivy.lib.dir}/[artifact]-[revision].[ext]"/></code>
+<p>And here is one which do not suffix file name with dependency revision:</p>
+<code><ivy:retrieve pattern="${ivy.lib.dir}/[artifact].[ext]"/></code>
+<p>And one which makes your lib directory have the same layout as the ibiblio repository:</p>
+<code><ivy:retrieve pattern="${ivy.lib.dir}/[module]/[type]s/[artifact]-[revision].[ext]"/></code>
+<p>Not too difficult, and really flexible, isn't it ? And check the retrieve task<br />
+reference documentation to learn more about it...</p>
+<h2>Why two xml files ?</h2>
+<p>Ivy uses two types of xml files: configuration files and ivy files.</p>
+<p>In fact, Ivy distinguishes two different steps to describe and get your<br />
+dependencies:<br />
+You write ivy files to describe the dependencies of your module, independently of how you retrieve them.<br />
+Then you configure ivy to indicate where it can find your dependencies. Thus you can easily share your ivy files, even if you have internal dependencies which are not resolved the same way in your environment as in the target development environment. You just need to write two configuration files, one in your default development environment, and one in the target development environment with the <b>same ivy files</b>. </p>
+<h2>How do I separate the dependencies I need at xxx time and the one I need at yyy time ?</h2>
+<p>Ivy uses a concept called <i>configurations</i> to handle this, and many more. As explained in the <a href="doc/terminology.html">terminology page</a>, a <i>configuration</i> of your module can be thought as a way to use your module (<i>note: this has nothing to do with the configuration of ivy itself, through the use of configuration file</i>). You can describe what dependencies are needed in each configuration. </p>
+<p>Moreover, because the dependencies are modules too, they can also have configurations. What is extremely powerful with ivy is that you can define configurations mapping, i.e. which conf of the dependency is needed in which conf of your module. Thus what is needed at 'runtime' of a dependency can be needed for 'test' of your module.</p>
+<p>Finally, the configurations are unlimited, defined in each module, and can extend each other. This contributes a lot to ivy flexibility.</p>
+<h2>How do I configure Ivy to find ivy files in both a local repository and ivyrep ?</h2>
+<p>A frequent configuration of Ivy is to use a local repository + ivyrep + ibiblio to store ivy files and artifacts.<br />
+Here is a sample configuration to do this:</p>
+<code>
+<ivyconf>
+  <properties file="${ivy.conf.dir}/ivyconf.properties"/>
+  <conf defaultCache="cache" defaultResolver="libraries"/>
+  <resolvers>
+    <dual name="libraries" >
+      <chain name="ivy-chain" returnFirst="true">
+        <filesystem name="local-ivy"> 
+          <ivy pattern="${locallibrep}/[organisation]/[module]/[revision]/ivy.xml" /> 
+        </filesystem>
+        <ivyrep name="ivyrep"/>
+      </chain>
+      <chain name="artifact-chain" returnFirst="true">
+        <filesystem name="local-artifact"> 
+          <artifact pattern="${locallibrep}/[organisation]/[module]/[revision]/[type]s/[artifact].[ext]" /> 
+        </filesystem>
+        <ibiblio name="ibiblio"/>
+      </chain>
+    </dual>
+  </resolvers> 
+</ivyconf>
+</code>
+<h2>Can I write an ivy file for a module with no artifact at all ?</h2>
+<p>Yes, this is what is called a 'virtual' module.</p>
+<p>Having a module which has no publication and only dependencies can be useful in many cases. </p>
+<p>In particular, you can in this way define a set of dependencies used in several projects. Once defined, you can simply add a dependency on this virtual module to get all its dependencies, thanks to transitive dependencies management.</p>
+<p>It can also be useful if you want to define a flexible framework. In your framework, you will certainly have several modules, each having its own dependencies. But for the users of your framework, it can be interesting to provide a virtual module, representing the framework as a whole, and using configurations to let the user choose what he really wants to use in your framework, in a very flexible and effective way.</p>
+<p>But the problem is that ivy considers by default that a module publishes one artifact, with the same name as the module itself. So the way to define a virtual module is to add to its ivy file a publications section with no publication inside:</p>
+<code><publications/></code>
+<h2>I do not manage to get xxx module on ibiblio. What's wrong ?</h2>
+<p>The problem can come from several places... usually it comes from the fact that some modules on ibiblio do not respect a clean structure.</p>
+<p>For instance, opensymphony projects are all in an opensymphony directory, which does not respect the [module]/[artifact]-[revision].[ext] pattern. In this case the only way to go with this is to configure another resolver with the appropriate pattern, and configure ivy to use this resolver for opensymphony only.</p>
+<p>Another similar problem is to have several modules in one directory, such xerces and xmlapis in the xerces directory. The problem is that if you consider the two as one module, you will be tempted to declare a dependency on two revisions of this module. This is not the right approach, because this does not match ivy definition of a module. A better approach is similar to the preceding one with a special configuration for this only.</p>
+<p>Another solution is to setup a local repository for those modules that are not cleanly deployed on ibiblio. Using this local repository first and the ibiblio repository after is a good way to turn around the problems of ibiblio and still benefit from the huge number of artifacts that can be found.</p>
+<h2>When I update an ivy file in my repository ivy do not take the change into account. Is this normal ?</h2>
+<p>This the default behaviour of ivy, which relies on the revision and on its cache to avoid too many downloads. However, this can be changed on each resolver using the <em>checkmodified</em> attribute, or globally by setting <em>ivy.resolver.default.check.modified</em> variable to true.</p>
+<h1>Misc</h1>
+<h2>Where are the release notes ?</h2>
+<p>Release notes can be found in the <a href="doc/releasenotes.html">documentation</a>.</p>
+<h2>Where can I get more information?</h2>
+<p>If you need more information about Ivy than the one found in the documentation, you can see the <a href="links.html">links</a> page, use the <a href="forum/core.html">forum</a> to ask your question to the community, or use your favorite search engine.<br />
+For search engine search, we advise to use ivy + ant or java as base keywords, since ivy alone is a very common word.</p></textarea>
+<script type="text/javascript">xooki.postProcess();</script>
+</body>
+</html>
