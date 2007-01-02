@@ -710,7 +710,13 @@ xooki.postProcess = function() {
         }
     })(xooki.toc, null, 0);
 	
-	var curPageId = new RegExp(".*\\/((?:.*\\/){"+xooki.config.level+"}[^\\/]*)(?:\\.\\w+)", "g").exec(window.location.toString())[1];
+	var match = new RegExp(".*\\/((?:.*\\/){"+xooki.config.level+"}[^\\/]*)(?:\\.\\w+)", "g").exec(window.location.toString());
+	var curPageId;
+	if (match == null || match[1] == '') {
+		curPageId = "index";
+	} else {
+		curPageId = match[1];
+	}
 	xooki.page = xooki.toc.pages[curPageId];
 
 	if (xooki.page == null) {
