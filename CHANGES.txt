@@ -10,6 +10,8 @@ for detailed view of each issue, please consult http://jira.jayasoft.org/
 - IMPROVE: Please typedef CacheResolver as "cache" for us (IVY-359)
 - IMPROVE: ivy:retrieve should be able to create symlinks (IVY-353) (thanks to John Williams)
 
+- FIX: IOException during publish causes NullPointerException (IVY-371)
+
    version 1.4.1 - 2006-11-09
 =====================================
 - IMPROVE: ability to rebuild all dependent projects from a leaf (IVY-101)

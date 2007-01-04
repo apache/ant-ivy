@@ -65,7 +65,6 @@ public abstract class AbstractRepository implements Repository {
         	_evt.setTotalLengthSet(true);
         }
         fireTransferEvent(_evt);
-        _evt = null;
     }
     
     protected void fireTransferCompleted(long totalLength) {
@@ -73,20 +72,17 @@ public abstract class AbstractRepository implements Repository {
         _evt.setTotalLength(totalLength);
         _evt.setTotalLengthSet(true);
         fireTransferEvent(_evt);
-        _evt = null;
     }
     
     protected void fireTransferError() {
         _evt.setEventType(TransferEvent.TRANSFER_ERROR);
         fireTransferEvent(_evt);
-        _evt = null;
     }
     
     protected void fireTransferError(Exception ex) {
         _evt.setEventType(TransferEvent.TRANSFER_ERROR);
         _evt.setException(ex);
         fireTransferEvent(_evt);
-        _evt = null;
     }
     
     protected void fireTransferEvent(TransferEvent evt) {
