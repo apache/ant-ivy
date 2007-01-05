@@ -665,7 +665,7 @@ xooki.postProcess = function() {
     xooki.c.initProperty("xookiInputFormat", ["xooki"]);
     xooki.c.initProperty("allowEdit", document.location.toString().substr(0,5) == "file:");
     
-    xooki.input.format.define("xooki", ["url", "xookiLinks", "jira", "code", "lineBreak"]);
+    xooki.input.format.define("xooki", ["code", "url", "xookiLinks", "jira", "lineBreak"]);
     
     xooki.c.path = (typeof xooki.c.path != "undefined")?xooki.c.path:{};
     xooki.c.path.initProperty = initConfigProperty;

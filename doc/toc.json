@@ -4,28 +4,27 @@
         "id":"index",
         "title":"Home",
         "children": [
+            {
+              "id":"features",
+              "title":"Features",
+              "children": [
 
-          ]
-      },
-      {
-        "id":"features",
-        "title":"Features",
-        "children": [
+                ]
+            },
+            {
+              "id":"testimonials",
+              "title":"Testimonials",
+              "children": [
 
-          ]
-      },
-      {
-        "id":"testimonials",
-        "title":"Testimonials",
-        "children": [
+                ]
+            },
+            {
+              "id":"demo",
+              "title":"Demo",
+              "children": [
 
-          ]
-      },
-      {
-        "id":"demo",
-        "title":"Demo",
-        "children": [
-
+                ]
+            }
           ]
       },
       {
@@ -941,6 +940,13 @@
           ]
       },
       {
+        "id":"get-involved",
+        "title":"Get Involved",
+        "children": [
+
+          ]
+      },
+      {
         "id":"mailing-lists",
         "title":"Mailing lists",
         "children": [
@@ -955,8 +961,8 @@
           ]
       },
       {
-        "id":"get-involved",
-        "title":"Get Involved",
+        "id":"wiki",
+        "title":"Wiki",
         "children": [
 
           ]
