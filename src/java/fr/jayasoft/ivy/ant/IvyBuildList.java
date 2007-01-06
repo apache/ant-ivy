@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.StringTokenizer;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.DirectoryScanner;
@@ -46,6 +47,7 @@ public class IvyBuildList extends IvyTask {
     private String _root = "*";
     private boolean _excludeRoot = false;
     private String _leaf = "*";
+    private String _delimiter = ",";
     private boolean _excludeLeaf = false;
 
 
@@ -93,6 +95,14 @@ public class IvyBuildList extends IvyTask {
 		_excludeLeaf = excludeLeaf;
 	}
 
+	public String getDelimiter() {
+		return _delimiter;
+	}
+	
+	public void setDelimiter(String delimiter) {
+		_delimiter = delimiter;
+	}
+	
     public void execute() throws BuildException {
         if (_reference == null) {
             throw new BuildException("reference should be provided in ivy build list");
@@ -109,9 +119,27 @@ public class IvyBuildList extends IvyTask {
         Map buildFiles = new HashMap(); // Map (ModuleDescriptor -> File buildFile)
         Collection mds = new ArrayList();
         List independent = new ArrayList();
-        ModuleDescriptor rootModuleDescriptor = null;
-        ModuleDescriptor leafModuleDescriptor = null;
 
+        Set rootModuleNames = new HashSet();
+        if (!"*".equals(_root)) {
+        	StringTokenizer st = new StringTokenizer(_root, _delimiter);
+        	while (st.hasMoreTokens()) {
+        		rootModuleNames.add(st.nextToken());
+        	}
+        }
+        
+        Set leafModuleNames = new HashSet();
+        if (! "*".equals(_leaf)) {
+        	StringTokenizer st = new StringTokenizer(_leaf, _delimiter);
+        	while (st.hasMoreTokens()) {
+        		leafModuleNames.add(st.nextToken());
+        	}
+        }
+        
+        List leafModuleDescriptors = new ArrayList();
+        List rootModuleDescriptors = new ArrayList();
+
+        
         for (ListIterator iter = _buildFiles.listIterator(); iter.hasNext();) {
             FileSet fs = (FileSet)iter.next();
             DirectoryScanner ds = fs.getDirectoryScanner(getProject());
@@ -132,11 +160,13 @@ public class IvyBuildList extends IvyTask {
                         ModuleDescriptor md = ModuleDescriptorParserRegistry.getInstance().parseDescriptor(ivy, ivyFile.toURL(), doValidate(ivy));
                         buildFiles.put(md, buildFile);
                         mds.add(md);
-                        if (_root.equals(md.getModuleRevisionId().getName())) {
-                            rootModuleDescriptor = md;
+
+                        if (rootModuleNames.contains(md.getModuleRevisionId().getModuleId().getName())) {
+                        	rootModuleDescriptors.add(md);
                         }
-                        if (_leaf.equals(md.getModuleRevisionId().getName())) {
-                            leafModuleDescriptor = md;
+
+                        if (leafModuleNames.contains(md.getModuleRevisionId().getModuleId().getName())) {
+                        	leafModuleDescriptors.add(md);
                         }
 
                     } catch (Exception ex) {
@@ -151,21 +181,22 @@ public class IvyBuildList extends IvyTask {
                 }
             }
         }
+        
+        if (!"*".equals(_root) && rootModuleDescriptors.size() != rootModuleNames.size()) {
+            throw new BuildException("unable to find one or more root modules " +  rootModuleNames + " in build fileset");
+        }
+        
+        if (!"*".equals(_leaf) && leafModuleDescriptors.size() != leafModuleNames.size()) {
+            throw new BuildException("unable to find one or more leaf modules " + leafModuleNames + " in build fileset");
+        }
 
-        if (!"*".equals(_root) && rootModuleDescriptor == null) {
-            throw new BuildException("unable to find root module " + _root + " in build fileset");
+        if (! rootModuleDescriptors.isEmpty()) {
+            Message.info("Filtering modules based on roots " + rootModuleNames);
+            mds = filterModulesFromRoot(mds, rootModuleDescriptors);
         }
-        if (!"*".equals(_leaf) && leafModuleDescriptor == null) {
-            throw new BuildException("unable to find leaf module " + _leaf + " in build fileset");
-        }
-
-        if (rootModuleDescriptor != null) {
-            Message.info("Filtering modules based on root " + rootModuleDescriptor.getModuleRevisionId().getName());
-            mds = filterModulesFromRoot(mds, rootModuleDescriptor);
-        }
-        if (leafModuleDescriptor != null) {
-            Message.info("Filtering modules based on leaf " + leafModuleDescriptor.getModuleRevisionId().getName());
-            mds = filterModulesFromLeaf(mds, leafModuleDescriptor);
+        if (! leafModuleDescriptors.isEmpty()) {
+            Message.info("Filtering modules based on leafs " + leafModuleNames);
+            mds = filterModulesFromLeaf(mds, leafModuleDescriptors);
         }
 
         List sortedModules = ivy.sortModuleDescriptors(mds);
@@ -200,7 +231,7 @@ public class IvyBuildList extends IvyTask {
      * @param rootmd root module
      * @return filtered list of modules
      */
-    private Collection filterModulesFromRoot(Collection mds, ModuleDescriptor rootmd) {
+    private Collection filterModulesFromRoot(Collection mds, List rootmds) {
         // Make a map of ModuleId objects -> ModuleDescriptors
         Map moduleIdMap = new HashMap();
         for (Iterator iter = mds.iterator(); iter.hasNext();) {
@@ -210,13 +241,18 @@ public class IvyBuildList extends IvyTask {
 
         // recursively process the nodes
         Set toKeep = new HashSet();
-        processFilterNodeFromRoot(rootmd, toKeep, moduleIdMap);
-
-        // With the excluderoot attribute set to true, take the rootmd out of the toKeep set.
-        if (_excludeRoot) {
-            Message.verbose("Excluded module " + rootmd.getModuleRevisionId().getModuleId().getName());
-            toKeep.remove(rootmd);
+        
+        Iterator it = rootmds.iterator();
+        while (it.hasNext()) {
+        	ModuleDescriptor rootmd = (ModuleDescriptor) it.next();
+            processFilterNodeFromRoot(rootmd, toKeep, moduleIdMap);
+            // With the excluderoot attribute set to true, take the rootmd out of the toKeep set.
+            if (_excludeRoot) {
+                Message.verbose("Excluded module " + rootmd.getModuleRevisionId().getModuleId().getName());
+                toKeep.remove(rootmd);
+            }
         }
+        
 
         // just for logging
         for (Iterator iter = toKeep.iterator(); iter.hasNext();) {
@@ -255,7 +291,7 @@ public class IvyBuildList extends IvyTask {
      * @param leafmd leaf module
      * @return filtered list of modules
      */
-    private Collection filterModulesFromLeaf(Collection mds, ModuleDescriptor leafmd) {
+    private Collection filterModulesFromLeaf(Collection mds, List leafmds) {
         // Make a map of ModuleId objects -> ModuleDescriptors
         Map moduleIdMap = new HashMap();
         for (Iterator iter = mds.iterator(); iter.hasNext();) {
@@ -265,13 +301,17 @@ public class IvyBuildList extends IvyTask {
 
         // recursively process the nodes
         Set toKeep = new HashSet();
-        // With the excludeleaf attribute set to true, take the rootmd out of the toKeep set.
-        if (_excludeLeaf) {
-        	Message.verbose("Excluded module " + leafmd.getModuleRevisionId().getModuleId().getName());
-        } else {
-        	toKeep.add(leafmd);
+        Iterator it = leafmds.iterator();
+        while (it.hasNext()) {
+        	ModuleDescriptor leafmd = (ModuleDescriptor) it.next();
+            // With the excludeleaf attribute set to true, take the rootmd out of the toKeep set.
+            if (_excludeLeaf) {
+            	Message.verbose("Excluded module " + leafmd.getModuleRevisionId().getModuleId().getName());
+            } else {
+            	toKeep.add(leafmd);
+            }
+            processFilterNodeFromLeaf(leafmd, toKeep, moduleIdMap);
         }
-        processFilterNodeFromLeaf(leafmd, toKeep, moduleIdMap);
 
 
         // just for logging

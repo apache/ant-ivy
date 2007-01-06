@@ -37,12 +37,13 @@ public class IvyBuildListTest extends TestCase {
         Path path = (Path)o;
         String[] files = path.list();
         assertNotNull(files);
-        assertEquals(4, files.length);
+        assertEquals(5, files.length);
         
         assertEquals(new File("test/buildlist/B/build.xml").getAbsolutePath(), new File(files[0]).getAbsolutePath());
         assertEquals(new File("test/buildlist/C/build.xml").getAbsolutePath(), new File(files[1]).getAbsolutePath());
         assertEquals(new File("test/buildlist/A/build.xml").getAbsolutePath(), new File(files[2]).getAbsolutePath());
         assertEquals(new File("test/buildlist/D/build.xml").getAbsolutePath(), new File(files[3]).getAbsolutePath());
+        assertEquals(new File("test/buildlist/E/build.xml").getAbsolutePath(), new File(files[4]).getAbsolutePath());
     }
 
     public void testReverse() {
@@ -68,12 +69,13 @@ public class IvyBuildListTest extends TestCase {
         Path path = (Path)o;
         String[] files = path.list();
         assertNotNull(files);
-        assertEquals(4, files.length);
+        assertEquals(5, files.length);
         
-        assertEquals(new File("test/buildlist/D/build.xml").getAbsolutePath(), new File(files[0]).getAbsolutePath());
-        assertEquals(new File("test/buildlist/A/build.xml").getAbsolutePath(), new File(files[1]).getAbsolutePath());
-        assertEquals(new File("test/buildlist/C/build.xml").getAbsolutePath(), new File(files[2]).getAbsolutePath());
-        assertEquals(new File("test/buildlist/B/build.xml").getAbsolutePath(), new File(files[3]).getAbsolutePath());
+        assertEquals(new File("test/buildlist/E/build.xml").getAbsolutePath(), new File(files[0]).getAbsolutePath());
+        assertEquals(new File("test/buildlist/D/build.xml").getAbsolutePath(), new File(files[1]).getAbsolutePath());
+        assertEquals(new File("test/buildlist/A/build.xml").getAbsolutePath(), new File(files[2]).getAbsolutePath());
+        assertEquals(new File("test/buildlist/C/build.xml").getAbsolutePath(), new File(files[3]).getAbsolutePath());
+        assertEquals(new File("test/buildlist/B/build.xml").getAbsolutePath(), new File(files[4]).getAbsolutePath());
     }
 
     public void testWithRoot() {
@@ -103,6 +105,36 @@ public class IvyBuildListTest extends TestCase {
 
         assertEquals(new File("test/buildlist/B/build.xml").getAbsolutePath(), new File(files[0]).getAbsolutePath());
         assertEquals(new File("test/buildlist/C/build.xml").getAbsolutePath(), new File(files[1]).getAbsolutePath());
+    }
+
+    public void testWithTwoRoots() {
+        Project p = new Project();
+
+        IvyBuildList buildlist = new IvyBuildList();
+        buildlist.setProject(p);
+        buildlist.setRoot("C,E");
+
+        FileSet fs = new FileSet();
+        fs.setDir(new File("test/buildlist"));
+        fs.setIncludes("**/build.xml");
+        buildlist.addFileset(fs);
+
+        buildlist.setReference("ordered.build.files");
+
+        buildlist.execute();
+
+        Object o = p.getReference("ordered.build.files");
+        assertNotNull(o);
+        assertTrue(o instanceof Path);
+
+        Path path = (Path)o;
+        String[] files = path.list();
+        assertNotNull(files);
+        assertEquals(3, files.length); // A and D should be filtered out
+
+        assertEquals(new File("test/buildlist/B/build.xml").getAbsolutePath(), new File(files[0]).getAbsolutePath());
+        assertEquals(new File("test/buildlist/C/build.xml").getAbsolutePath(), new File(files[1]).getAbsolutePath());
+        assertEquals(new File("test/buildlist/E/build.xml").getAbsolutePath(), new File(files[2]).getAbsolutePath());
     }
 
     public void testWithRootExclude() {
@@ -162,6 +194,37 @@ public class IvyBuildListTest extends TestCase {
         assertEquals(new File("test/buildlist/C/build.xml").getAbsolutePath(), new File(files[0]).getAbsolutePath());
         assertEquals(new File("test/buildlist/A/build.xml").getAbsolutePath(), new File(files[1]).getAbsolutePath());
         assertEquals(new File("test/buildlist/D/build.xml").getAbsolutePath(), new File(files[2]).getAbsolutePath());
+    }
+
+    public void testWithTwoLeafs() {
+        Project p = new Project();
+
+        IvyBuildList buildlist = new IvyBuildList();
+        buildlist.setProject(p);
+        buildlist.setLeaf("C,E");
+
+        FileSet fs = new FileSet();
+        fs.setDir(new File("test/buildlist"));
+        fs.setIncludes("**/build.xml");
+        buildlist.addFileset(fs);
+
+        buildlist.setReference("ordered.build.files");
+
+        buildlist.execute();
+
+        Object o = p.getReference("ordered.build.files");
+        assertNotNull(o);
+        assertTrue(o instanceof Path);
+
+        Path path = (Path)o;
+        String[] files = path.list();
+        assertNotNull(files);
+        assertEquals(4, files.length); // B should be filtered out
+
+        assertEquals(new File("test/buildlist/C/build.xml").getAbsolutePath(), new File(files[0]).getAbsolutePath());
+        assertEquals(new File("test/buildlist/A/build.xml").getAbsolutePath(), new File(files[1]).getAbsolutePath());
+        assertEquals(new File("test/buildlist/D/build.xml").getAbsolutePath(), new File(files[2]).getAbsolutePath());
+        assertEquals(new File("test/buildlist/E/build.xml").getAbsolutePath(), new File(files[3]).getAbsolutePath());
     }
 
     public void testWithLeafExclude() {
