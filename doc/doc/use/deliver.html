@@ -45,7 +45,7 @@ Usually the deliver target itself triggers an another ant build (using ant task)
 The delivered ivy file will update its dependency revisions with those given here.  
 
 <h2>deliver and publish</h2>
-The deliver task is most of the time not called explicitly, but rather called automatically by the [ivy:ant:publish] task. So, when shall the deliver task be called explictly? When you actually need to separate what is performed by the deliver task (see above), from what is performed by the publish task, i.e. upload a module to a repository.
+The deliver task is most of the time not called explicitly, but rather called automatically by the [[ant:publish]] task. So, when shall the deliver task be called explictly? When you actually need to separate what is performed by the deliver task (see above), from what is performed by the publish task, i.e. upload a module to a repository.
 
 And this can be particularly useful if you want to process the generated ivy file before uploading it (if you want to add automatically more information like an SCM tag used, the user who performed the release, ...).
 

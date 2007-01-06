@@ -23,7 +23,7 @@ Two report outputters are registered by default:
         |      default     |   1   |   1   |   0   |   0   ||   1   |   1   |
         ---------------------------------------------------------------------
 </code>
-<li>an xml report outputter (<a href="http://svn.jayasoft.org/projects/tools/ivy/src/java/fr/jayasoft/ivy/report/XmlReportOutputter.java">XmlReportOutputter</a>)</li>which produces an xml report in the cache, which is mandatory for correct Ivy behaviour, since it's that report which is used when you do a post resolve step in a separate buid from the resolve itself. It's also this xml report which is processed to generate all the different reports available in the [ivy:ant:report] task.
+<li>an xml report outputter (<a href="http://svn.jayasoft.org/projects/tools/ivy/src/java/fr/jayasoft/ivy/report/XmlReportOutputter.java">XmlReportOutputter</a>)</li>which produces an xml report in the cache, which is mandatory for correct Ivy behaviour, since it's that report which is used when you do a post resolve step in a separate buid from the resolve itself. It's also this xml report which is processed to generate all the different reports available in the [[ant:report]] task.
 </ul>
 
 The child tag used for the parser must be equal to a name of a report outputter type (added with the typedef tag).

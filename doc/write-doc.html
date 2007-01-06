@@ -1,0 +1,31 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+	<script type="text/javascript">var xookiConfig = {level: 0};</script>	
+	<script type="text/javascript" src="xooki/xooki.js"></script>
+</head>
+<body>
+	<textarea id="xooki-source">
+Writing documentation for Ivy is pretty simple.
+
+The documentation engine used is called <a href="http://xooki.sourceforge.net">xooki</a>, and allows to edit pages while you browse them as soon as you browse them offline (and thus can actually save your modifications).
+
+When you browse the doc offline (by checking out the [[svn:doc]] directory for instance), you will see a small toolbar at the uper right, allowing to edit the page, save it, move the page in the TOC, create a child, and so on. When you choose edit you will see a pretty familiar textbox where you can edit the page source.
+
+The source uses a format very familiar to those who sometimes write html. Indeed any html is allowed. But you also have some shortcuts and neat syntax.
+
+First, line breaks are automatically recognized, so you don't have to put br everywhere.
+Another interesting thing is the code fragment:
+<code>
+<code>
+any text including <tags/>
+</code>
+</code>
+Very helpful to avoid escaping all xml with lt and gt.
+
+Finally, URLs are automatically recognized and convert to links, jira issues like IVY-202 are recognized too, and you can use a neat format to reference any ant ivy ant task like [[ant:import]], or also reference svn page easily like [[svn:build.xml this link to build.xml]]. And you can easily link to another page by providing its id (i.e. its url without the base and the .html) like the [[index]] or the [[doc/reference]]. 
+
+And do not forget to save your changes before the page! Then you can use your favorite IDE and compute a patch for what you changed, and submit this patch by attaching it to a jira issue, or simply sending it to the ivy-dev [[mailing-lists mailing list]].</textarea>
+<script type="text/javascript">xooki.postProcess();</script>
+</body>
+</html>

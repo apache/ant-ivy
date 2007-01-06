@@ -10,9 +10,9 @@ Several tasks in Ivy are considered as post resolve task and share a common beha
 
 These tasks are:
 <ul>
-<li>[ivy:ant:retrieve]</li>
-<li>[ivy:ant:cachefileset]</li>
-<li>[ivy:ant:cachepath]</li>
+<li>[[ant:retrieve]]</li>
+<li>[[ant:cachefileset]]</li>
+<li>[[ant:cachepath]]</li>
 </ul>
 
 All these tasks will trigger automatically a resolve if:
@@ -21,7 +21,7 @@ All these tasks will trigger automatically a resolve if:
 <li>organisation and module are not set</li>
 </ul>
 
-Since Ivy 1.4, there are two ways to run a [ivy:ant:resolve]: with an ivy file, or with the inline mode.
+Since Ivy 1.4, there are two ways to run a [[ant:resolve]]: with an ivy file, or with the inline mode.
 When you call resolve with an ivy file, the default for it is to keep the resolved data for use by the subsequent post resolve tasks. When you run an inline resolve, the default is not to keep the data. Youo can override this behaviour by setting the keep attribute as you like.
 
 If you want to to reuse the resolved data obtained through a call to resolve in another build (i.e. not the current one), then you have to set the organisation and module attributes. This work only if the cache was not cleaned since your last resolve call. This does not work with inline calls, which must be performed in the same build.

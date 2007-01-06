@@ -8,7 +8,7 @@
 	<textarea id="xooki-source">
 The retrieve task copies resolved dependencies anywhere you want in your file system.
 
-This is a <a href="../../doc/use/postresolvetask.html">post resolve task</a>, with all the behaviour and attributes common to all post resolve tasks.
+This is a [[ant:postresolvetask post resolve task]], with all the behaviour and attributes common to all post resolve tasks.
 
 <span class="since">since 1.4</span> This task can even be used to synchronize the destination directory with what should actually be in according to the dependency resolution. This means that by setting sync="true", Ivy will not only copy the necessary files, but it will also remove the files which do not need to be there.
 
@@ -24,7 +24,7 @@ root: lib
 <li>if the artifact is not local, the location from within the cache is used</li>
 <li>if the artifact is a local artifact, it's original location is used</li>
 </ul>
-Note that if resolve has been called separately, the copy to the cache may have occur normally if useOrigin was not set when calling [ivy:ant:resolve]. If resolve has not been called, it will be called automatically with useOrigin set to the value specified on this task.
+Note that if resolve has been called separately, the copy to the cache may have occur normally if useOrigin was not set when calling [[ant:resolve]]. If resolve has not been called, it will be called automatically with useOrigin set to the value specified on this task.
 
 <table class="ant">
 <thead>
