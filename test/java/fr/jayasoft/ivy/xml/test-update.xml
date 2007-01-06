@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <?xml-stylesheet type="text/xsl" href="http://www.jayasoft.fr/org/ivyrep/ivy-doc.xsl"?>
+<!-- A comment before the first tag -->
 <ivy-module version="1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://jayasoft.org/ivy/ivy.xsd">
+	<!-- A comment with accent é & special characters -->
 	<info organisation="myorg"
 	       module="mymodule"
 	       revision="myrev"

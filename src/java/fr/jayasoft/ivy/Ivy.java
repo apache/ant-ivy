@@ -2205,9 +2205,9 @@ public class Ivy implements TransferListener {
             md.setResolvedModuleRevisionId(ModuleRevisionId.newInstance(mrid, revision));
             md.setResolvedPublicationDate(pubdate);
         } catch (MalformedURLException e) {
-            throw new RuntimeException("malformed url obtained for file "+ivyFile);
+            throw new RuntimeException("malformed url obtained for file "+ivyFile , e);
         } catch (ParseException e) {
-            throw new IllegalStateException("bad ivy file in cache for "+mrid+": please clean and resolve again");
+            throw new RuntimeException("bad ivy file in cache for "+mrid+": please clean and resolve again" , e);
         }
         
         // 2) parse resolvedRevisions From properties file
@@ -2255,7 +2255,7 @@ public class Ivy implements TransferListener {
                     new File(publishedIvy),
                     resolvedDependencies, status, revision, pubdate, null, true);
         } catch (SAXException ex) {
-            throw new IllegalStateException("bad ivy file in cache for "+mrid+": please clean and resolve again");
+            throw new RuntimeException("bad ivy file in cache for "+mrid+": please clean and resolve again" , ex);
         }
         
         Message.verbose("\tdeliver done ("+(System.currentTimeMillis()-start)+"ms)");

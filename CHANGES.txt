@@ -11,6 +11,8 @@ for detailed view of each issue, please consult http://jira.jayasoft.org/
 - IMPROVE: ivy:retrieve should be able to create symlinks (IVY-353) (thanks to John Williams)
 
 - FIX: IOException during publish causes NullPointerException (IVY-371)
+- FIX: Comments in ivy.xml duplicated (IVY-336) (thanks to Gilles Scokart)
+- FIX: Ivy failure when the ivy.xml file contains non US-ASCII characters (IVY-346) (thanks to Gilles Scokart)
 
    version 1.4.1 - 2006-11-09
 =====================================

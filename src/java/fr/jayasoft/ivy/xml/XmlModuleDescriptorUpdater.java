@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.URL;
 import java.util.Arrays;
@@ -86,10 +87,250 @@ public class XmlModuleDescriptorUpdater {
         }
     }
     
+    private static class UpdaterHandler extends DefaultHandler implements LexicalHandler {
+    	
+    	private final Ivy ivy;
+		private final PrintWriter out;
+		private final Map resolvedRevisions;
+		private final String status;
+		private final String revision;
+		private final Date pubdate;
+		private final Namespace ns;
+		private final boolean replaceInclude;
+		private boolean inHeader = true;
+		
+		public UpdaterHandler(final Ivy ivy, final PrintWriter out, final Map resolvedRevisions, final String status, 
+            final String revision, final Date pubdate, final Namespace ns, final boolean replaceInclude) {
+				this.ivy = ivy;
+				this.out = out;
+				this.resolvedRevisions = resolvedRevisions;
+				this.status = status;
+				this.revision = revision;
+				this.pubdate = pubdate;
+				this.ns = ns;
+				this.replaceInclude = replaceInclude;
+    		
+    	}
+    	
+        // never print *ln* cause \n is found in copied characters stream
+        // nor do we need do handle indentation, original one is maintained except for attributes
+        
+        private String _organisation = null;
+        private String _defaultConfMapping = null; // defaultConfMapping of imported configurations, if any
+        private Boolean _confMappingOverride = null; // confMappingOverride of imported configurations, if any
+        private String _justOpen = null; // used to know if the last open tag was empty, to adjust termination with /> instead of ></qName>
+        private Stack _context = new Stack();
+        public void startElement(String uri, String localName,
+                String qName, Attributes attributes)
+                throws SAXException {
+        	inHeader = false;
+            if (_justOpen != null) {
+                out.print(">");
+            }
+            _context.push(qName);
+            if ("info".equals(qName)) {
+                _organisation = substitute(ivy, attributes.getValue("organisation"));
+                out.print("<info organisation=\""+_organisation
+                        				+"\" module=\""+substitute(ivy, attributes.getValue("module"))+"\"");
+                if (revision != null) {
+                    out.print(" revision=\""+revision+"\"");
+                } else if (attributes.getValue("revision") != null) {
+                    out.print(" revision=\""+substitute(ivy, attributes.getValue("revision"))+"\"");
+                }
+                if (status != null) {
+                    out.print(" status=\""+status+"\"");
+                } else {
+                    out.print(" status=\""+substitute(ivy, attributes.getValue("status"))+"\"");
+                }
+                if (pubdate != null) {
+                    out.print(" publication=\""+Ivy.DATE_FORMAT.format(pubdate)+"\"");
+                } else if (attributes.getValue("publication") != null) {
+                    out.print(" publication=\""+substitute(ivy, attributes.getValue("publication"))+"\"");
+                }
+                Collection stdAtts = Arrays.asList(new String[] {"organisation", "module", "revision", "status", "publication", "namespace"});
+                if (attributes.getValue("namespace") != null) {
+                    out.print(" namespace=\""+substitute(ivy, attributes.getValue("namespace"))+"\"");
+                }
+                for (int i=0; i<attributes.getLength(); i++) {
+                	if (!stdAtts.contains(attributes.getQName(i))) {
+                		out.print(" "+attributes.getQName(i)+"=\""+substitute(ivy, attributes.getValue(i))+"\"");
+                	}
+                }
+            } else if (replaceInclude && "include".equals(qName) && _context.contains("configurations")) {
+                try {
+                    URL url;
+                    String fileName = substitute(ivy, attributes.getValue("file"));
+                    if (fileName == null) {
+                        String urlStr = substitute(ivy, attributes.getValue("url"));
+                        url = new URL(urlStr);
+                    } else {
+                        url = new File(fileName).toURL();
+                    }     
+                    XMLHelper.parse(url, null, new DefaultHandler() {
+                        boolean _first = true;
+                        public void startElement(String uri, String localName,
+                                String qName, Attributes attributes)
+                                throws SAXException {
+                            if ("configurations".equals(qName)) {
+                                String defaultconf = substitute(ivy, attributes.getValue("defaultconfmapping"));
+                                if (defaultconf != null) {
+                                    _defaultConfMapping = defaultconf;
+                                }
+                                String mappingOverride = substitute(ivy, attributes.getValue("confmappingoverride"));
+                                if (mappingOverride != null) {
+                                   _confMappingOverride = Boolean.valueOf(mappingOverride);
+                                }
+                            } else if ("conf".equals(qName)) {
+                                // copy
+                                if (!_first) {
+                                    out.print("/>\n\t\t");
+                                } else {
+                                    _first = false;
+                                }
+                                out.print("<"+qName);
+                                for (int i=0; i<attributes.getLength(); i++) {
+                                    out.print(" "+attributes.getQName(i)+"=\""+substitute(ivy, attributes.getValue(i))+"\"");
+                                }
+                            }
+                        }
+                    });
+                } catch (Exception e) {
+                    Message.warn("exception occured while importing configurations: "+e.getMessage());
+                    throw new SAXException(e);
+                }
+            } else if ("dependency".equals(qName)) {
+                out.print("<dependency");
+                String org = substitute(ivy, attributes.getValue("org"));
+                org = org == null ? _organisation : org;
+                String module = substitute(ivy, attributes.getValue("name"));
+                String branch = substitute(ivy, attributes.getValue("branch"));
+                String revision = substitute(ivy, attributes.getValue("rev"));
+                ModuleRevisionId localMid = ModuleRevisionId.newInstance(org, module, branch, revision);
+                ModuleRevisionId systemMid = ns == null ? 
+                        localMid : 
+                        ns.getToSystemTransformer().transform(localMid);
+                
+                for (int i=0; i<attributes.getLength(); i++) {
+                    String attName = attributes.getQName(i);
+                    if ("rev".equals(attName)) {
+                        String rev = (String)resolvedRevisions.get(systemMid);
+                        if (rev != null) {
+                            out.print(" rev=\""+rev+"\"");
+                        } else {
+                            out.print(" rev=\""+systemMid.getRevision()+"\"");
+                        }
+                    } else if ("org".equals(attName)) {
+                        out.print(" org=\""+systemMid.getOrganisation()+"\"");
+                    } else if ("name".equals(attName)) {
+                        out.print(" name=\""+systemMid.getName()+"\"");
+                    } else if ("branch".equals(attName)) {
+                        out.print(" branch=\""+systemMid.getBranch()+"\"");
+                    } else {
+                        out.print(" "+attName+"=\""+substitute(ivy, attributes.getValue(attName))+"\"");
+                    }
+                }
+            } else if ("dependencies".equals(qName)) {
+                // copy
+                out.print("<"+qName);
+                for (int i=0; i<attributes.getLength(); i++) {
+                    out.print(" "+attributes.getQName(i)+"=\""+substitute(ivy, attributes.getValue(i))+"\"");
+                }
+                // add default conf mapping if needed
+                if (_defaultConfMapping != null && attributes.getValue("defaultconfmapping") == null) {
+                    out.print(" defaultconfmapping=\""+_defaultConfMapping+"\"");
+                }
+                // add confmappingoverride if needed
+                if (_confMappingOverride != null && attributes.getValue("confmappingoverride") == null) {
+                   out.print(" confmappingoverride=\""+_confMappingOverride.toString()+"\"");
+                }
+            } else {
+                // copy
+                out.print("<"+qName);
+                for (int i=0; i<attributes.getLength(); i++) {
+                    out.print(" "+attributes.getQName(i)+"=\""+substitute(ivy, attributes.getValue(i))+"\"");
+                }
+            }
+            _justOpen = qName;
+//            indent.append("\t");
+        }
+
+        private String substitute(Ivy ivy, String value) {
+            return ivy == null ? value : ivy.substitute(value);
+        }
+
+        public void characters(char[] ch, int start, int length)
+                throws SAXException {
+            if (_justOpen != null) {
+                out.print(">"); 
+                _justOpen = null;
+            }
+            for (int i = start; i < start + length; i++) {
+                out.print(ch[i]);
+            }
+        }
+
+        public void endElement(String uri, String localName,
+                String qName) throws SAXException {
+            if (qName.equals(_justOpen)) {
+                out.print("/>");
+            } else {
+                out.print("</"+qName+">");
+            }
+            _justOpen = null;
+            _context.pop();
+        }
+
+        public void endDocument() throws SAXException {
+            out.print(LINE_SEPARATOR);
+            out.flush();
+            out.close();
+        }
+        
+        public void warning(SAXParseException e) throws SAXException {
+            throw e;
+        }
+        public void error(SAXParseException e) throws SAXException {
+            throw e;
+        }
+        public void fatalError(SAXParseException e) throws SAXException {
+            throw e;
+        }
+        
+        
+		public void endCDATA() throws SAXException {
+		}
+
+		public void endDTD() throws SAXException {
+		}
+
+		public void startCDATA() throws SAXException {
+		}
+
+		public void comment(char[] ch, int start, int length) throws SAXException {
+			if (!inHeader) {
+				StringBuffer comment = new StringBuffer();
+				comment.append(ch, start, length);
+				out.print("<!--");
+				out.print(comment.toString());
+				out.print("-->");
+			}
+		}
+
+		public void endEntity(String name) throws SAXException {
+		}
+
+		public void startEntity(String name) throws SAXException {
+		}
+
+		public void startDTD(String name, String publicId, String systemId) throws SAXException {
+		}
+
+    }
+    
     public static void update(final Ivy ivy, InputStream inStream, OutputStream outStream, final Map resolvedRevisions, final String status, 
             final String revision, final Date pubdate, final Namespace ns, final boolean replaceInclude) 
                                 throws IOException, SAXException {
-        final PrintWriter out = new PrintWriter(outStream);
+        final PrintWriter out = new PrintWriter(new OutputStreamWriter(outStream , "UTF-8"));
         final BufferedInputStream in = new BufferedInputStream(inStream);
         
         in.mark(10000); // assume the header is never larger than 10000 bytes.
@@ -97,216 +338,8 @@ public class XmlModuleDescriptorUpdater {
         in.reset(); // reposition the stream at the beginning
             
         try {
-            XMLHelper.parse(in, null, new DefaultHandler() {
-                // never print *ln* cause \n is found in copied characters stream
-                // nor do we need do handle indentation, original one is maintained except for attributes
-                
-                private String _organisation = null;
-                private String _defaultConfMapping = null; // defaultConfMapping of imported configurations, if any
-                private Boolean _confMappingOverride = null; // confMappingOverride of imported configurations, if any
-                private String _justOpen = null; // used to know if the last open tag was empty, to adjust termination with /> instead of ></qName>
-                private Stack _context = new Stack();
-                public void startElement(String uri, String localName,
-                        String qName, Attributes attributes)
-                        throws SAXException {
-                    if (_justOpen != null) {
-                        out.print(">");
-                    }
-                    _context.push(qName);
-                    if ("info".equals(qName)) {
-                        _organisation = substitute(ivy, attributes.getValue("organisation"));
-                        out.print("<info organisation=\""+_organisation
-                                				+"\" module=\""+substitute(ivy, attributes.getValue("module"))+"\"");
-                        if (revision != null) {
-                            out.print(" revision=\""+revision+"\"");
-                        } else if (attributes.getValue("revision") != null) {
-                            out.print(" revision=\""+substitute(ivy, attributes.getValue("revision"))+"\"");
-                        }
-                        if (status != null) {
-                            out.print(" status=\""+status+"\"");
-                        } else {
-                            out.print(" status=\""+substitute(ivy, attributes.getValue("status"))+"\"");
-                        }
-                        if (pubdate != null) {
-                            out.print(" publication=\""+Ivy.DATE_FORMAT.format(pubdate)+"\"");
-                        } else if (attributes.getValue("publication") != null) {
-                            out.print(" publication=\""+substitute(ivy, attributes.getValue("publication"))+"\"");
-                        }
-                        Collection stdAtts = Arrays.asList(new String[] {"organisation", "module", "revision", "status", "publication", "namespace"});
-                        if (attributes.getValue("namespace") != null) {
-                            out.print(" namespace=\""+substitute(ivy, attributes.getValue("namespace"))+"\"");
-                        }
-                        for (int i=0; i<attributes.getLength(); i++) {
-                        	if (!stdAtts.contains(attributes.getQName(i))) {
-                        		out.print(" "+attributes.getQName(i)+"=\""+substitute(ivy, attributes.getValue(i))+"\"");
-                        	}
-                        }
-                    } else if (replaceInclude && "include".equals(qName) && _context.contains("configurations")) {
-                        try {
-                            URL url;
-                            String fileName = substitute(ivy, attributes.getValue("file"));
-                            if (fileName == null) {
-                                String urlStr = substitute(ivy, attributes.getValue("url"));
-                                url = new URL(urlStr);
-                            } else {
-                                url = new File(fileName).toURL();
-                            }     
-                            XMLHelper.parse(url, null, new DefaultHandler() {
-                                boolean _first = true;
-                                public void startElement(String uri, String localName,
-                                        String qName, Attributes attributes)
-                                        throws SAXException {
-                                    if ("configurations".equals(qName)) {
-                                        String defaultconf = substitute(ivy, attributes.getValue("defaultconfmapping"));
-                                        if (defaultconf != null) {
-                                            _defaultConfMapping = defaultconf;
-                                        }
-                                        String mappingOverride = substitute(ivy, attributes.getValue("confmappingoverride"));
-                                        if (mappingOverride != null) {
-                                           _confMappingOverride = Boolean.valueOf(mappingOverride);
-                                        }
-                                    } else if ("conf".equals(qName)) {
-                                        // copy
-                                        if (!_first) {
-                                            out.print("/>\n\t\t");
-                                        } else {
-                                            _first = false;
-                                        }
-                                        out.print("<"+qName);
-                                        for (int i=0; i<attributes.getLength(); i++) {
-                                            out.print(" "+attributes.getQName(i)+"=\""+substitute(ivy, attributes.getValue(i))+"\"");
-                                        }
-                                    }
-                                }
-                            });
-                        } catch (Exception e) {
-                            Message.warn("exception occured while importing configurations: "+e.getMessage());
-                            throw new SAXException(e);
-                        }
-                    } else if ("dependency".equals(qName)) {
-                        out.print("<dependency");
-                        String org = substitute(ivy, attributes.getValue("org"));
-                        org = org == null ? _organisation : org;
-                        String module = substitute(ivy, attributes.getValue("name"));
-                        String branch = substitute(ivy, attributes.getValue("branch"));
-                        String revision = substitute(ivy, attributes.getValue("rev"));
-                        ModuleRevisionId localMid = ModuleRevisionId.newInstance(org, module, branch, revision);
-                        ModuleRevisionId systemMid = ns == null ? 
-                                localMid : 
-                                ns.getToSystemTransformer().transform(localMid);
-                        
-                        for (int i=0; i<attributes.getLength(); i++) {
-                            String attName = attributes.getQName(i);
-                            if ("rev".equals(attName)) {
-                                String rev = (String)resolvedRevisions.get(systemMid);
-                                if (rev != null) {
-                                    out.print(" rev=\""+rev+"\"");
-                                } else {
-                                    out.print(" rev=\""+systemMid.getRevision()+"\"");
-                                }
-                            } else if ("org".equals(attName)) {
-                                out.print(" org=\""+systemMid.getOrganisation()+"\"");
-                            } else if ("name".equals(attName)) {
-                                out.print(" name=\""+systemMid.getName()+"\"");
-                            } else if ("branch".equals(attName)) {
-                                out.print(" branch=\""+systemMid.getBranch()+"\"");
-                            } else {
-                                out.print(" "+attName+"=\""+substitute(ivy, attributes.getValue(attName))+"\"");
-                            }
-                        }
-                    } else if ("dependencies".equals(qName)) {
-                        // copy
-                        out.print("<"+qName);
-                        for (int i=0; i<attributes.getLength(); i++) {
-                            out.print(" "+attributes.getQName(i)+"=\""+substitute(ivy, attributes.getValue(i))+"\"");
-                        }
-                        // add default conf mapping if needed
-                        if (_defaultConfMapping != null && attributes.getValue("defaultconfmapping") == null) {
-                            out.print(" defaultconfmapping=\""+_defaultConfMapping+"\"");
-                        }
-                        // add confmappingoverride if needed
-                        if (_confMappingOverride != null && attributes.getValue("confmappingoverride") == null) {
-                           out.print(" confmappingoverride=\""+_confMappingOverride.toString()+"\"");
-                        }
-                    } else {
-                        // copy
-                        out.print("<"+qName);
-                        for (int i=0; i<attributes.getLength(); i++) {
-                            out.print(" "+attributes.getQName(i)+"=\""+substitute(ivy, attributes.getValue(i))+"\"");
-                        }
-                    }
-                    _justOpen = qName;
-//                    indent.append("\t");
-                }
-
-                private String substitute(Ivy ivy, String value) {
-                    return ivy == null ? value : ivy.substitute(value);
-                }
-
-                public void characters(char[] ch, int start, int length)
-                        throws SAXException {
-                    if (_justOpen != null) {
-                        out.print(">"); 
-                        _justOpen = null;
-                    }
-                    for (int i = start; i < start + length; i++) {
-                        out.print(ch[i]);
-                    }
-                }
-
-                public void endElement(String uri, String localName,
-                        String qName) throws SAXException {
-                    if (qName.equals(_justOpen)) {
-                        out.print("/>");
-                    } else {
-                        out.print("</"+qName+">");
-                    }
-                    _justOpen = null;
-                    _context.pop();
-                }
-
-                public void endDocument() throws SAXException {
-                    out.print(LINE_SEPARATOR);
-                    out.flush();
-                    out.close();
-                }
-                
-                public void warning(SAXParseException e) throws SAXException {
-                    throw e;
-                }
-                public void error(SAXParseException e) throws SAXException {
-                    throw e;
-                }
-                public void fatalError(SAXParseException e) throws SAXException {
-                    throw e;
-                }
-            }, new LexicalHandler() {
-				public void endCDATA() throws SAXException {
-				}
-
-				public void endDTD() throws SAXException {
-				}
-
-				public void startCDATA() throws SAXException {
-				}
-
-				public void comment(char[] ch, int start, int length) throws SAXException {
-					StringBuffer comment = new StringBuffer();
-					comment.append(ch, start, length);
-					out.print("<!--");
-					out.print(comment.toString());
-					out.print("-->");
-				}
-
-				public void endEntity(String name) throws SAXException {
-				}
-
-				public void startEntity(String name) throws SAXException {
-				}
-
-				public void startDTD(String name, String publicId, String systemId) throws SAXException {
-				}
-            });
+        	UpdaterHandler updaterHandler = new UpdaterHandler(ivy,out,resolvedRevisions,status,revision,pubdate,ns,replaceInclude);
+			XMLHelper.parse(in, null, updaterHandler, updaterHandler);
         } catch (ParserConfigurationException e) {
             IllegalStateException ise = new IllegalStateException("impossible to update Ivy files: parser problem");
             ise.initCause(e);
@@ -319,20 +352,27 @@ public class XmlModuleDescriptorUpdater {
      * In fact, copies everything before <ivy-module to out, except
      * if <ivy-module is not found, in which case nothing is copied.
      * 
+     * The prolog <?xml version="..." encoding="...."?> is also replaced by
+     * <?xml version="1.0" encoding="UTF-8"?> if it was present.
+     * 
      * @param in
      * @param out
      * @throws IOException
      */
     private static void copyHeader(InputStream in, PrintWriter out) throws IOException {
-        StringBuffer buf = new StringBuffer();
         BufferedReader r = new BufferedReader(new InputStreamReader(in));
-        for (String line = r.readLine(); line != null; line = r.readLine()) {
+        String line = r.readLine();
+        if (line!=null && line.startsWith("<?xml ")) {
+        	out.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+        	line = line.substring(line.indexOf(">")+1 , line.length());
+        }
+        for (; line != null; line = r.readLine()) {        	
             int index = line.indexOf("<ivy-module");
             if (index == -1) {
-                buf.append(line).append(LINE_SEPARATOR);
+                out.write(line);
+                out.write(LINE_SEPARATOR);
             } else {
-                buf.append(line.substring(0, index));
-                out.print(buf.toString());
+            	out.write(line.substring(0, index));
                 break;
             }
         }

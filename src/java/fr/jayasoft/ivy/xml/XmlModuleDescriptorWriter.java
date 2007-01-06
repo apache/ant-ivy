@@ -8,6 +8,7 @@ package fr.jayasoft.ivy.xml;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.Collection;
@@ -30,8 +31,9 @@ public class XmlModuleDescriptorWriter {
         if (output.getParentFile() != null) {
             output.getParentFile().mkdirs();
         }
-        PrintWriter out = new PrintWriter(new FileOutputStream(output));
+        PrintWriter out = new PrintWriter(new OutputStreamWriter(new FileOutputStream(output) , "UTF-8"));
         try {
+        	out.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
 	        out.println("<ivy-module version=\"1.0\">"); 
 	    	out.println("\t<info organisation=\""+md.getModuleRevisionId().getOrganisation()+"\"");
 	    	out.println("\t\tmodule=\""+md.getModuleRevisionId().getName()+"\"");

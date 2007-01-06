@@ -6,7 +6,6 @@
 package fr.jayasoft.ivy.xml;
 
 import java.io.File;
-import java.net.URL;
 import java.util.List;
 
 import junit.framework.TestCase;
@@ -21,11 +20,7 @@ import fr.jayasoft.ivy.report.ReportOutputter;
 import fr.jayasoft.ivy.report.ResolveReport;
 import fr.jayasoft.ivy.resolver.ChainResolver;
 import fr.jayasoft.ivy.resolver.FileSystemResolver;
-import fr.jayasoft.ivy.resolver.IvyRepResolver;
 import fr.jayasoft.ivy.resolver.MockResolver;
-import fr.jayasoft.ivy.url.URLHandler;
-import fr.jayasoft.ivy.url.URLHandlerDispatcher;
-import fr.jayasoft.ivy.url.URLHandlerRegistry;
 import fr.jayasoft.ivy.version.ChainVersionMatcher;
 import fr.jayasoft.ivy.version.MockVersionMatcher;
 import fr.jayasoft.ivy.version.VersionMatcher;
@@ -332,13 +327,6 @@ public class XmlIvyConfigurationParserTest extends TestCase {
         assertTrue(testOutputter instanceof MyOutputter);
     }
     
-    private void configureURLHandler() {
-        URLHandlerDispatcher dispatcher = new URLHandlerDispatcher();
-        URLHandler httpHandler = URLHandlerRegistry.getHttp();
-        dispatcher.setDownloader("http", httpHandler);
-        dispatcher.setDownloader("https", httpHandler);
-        URLHandlerRegistry.setDefault(dispatcher);
-    }
     
     public static class MyOutputter implements ReportOutputter {
 
