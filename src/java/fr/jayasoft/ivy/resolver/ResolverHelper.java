@@ -56,13 +56,11 @@ public class ResolverHelper {
                     } else {
                         namePattern = pattern.substring(slashIndex + 1);
                     }
-                    String acceptNamePattern = IvyPatternHelper.substituteToken(namePattern, token, "(.+)");
-                    Pattern p = Pattern.compile(acceptNamePattern);
+                    String acceptNamePattern = ".*"+IvyPatternHelper.substituteToken(namePattern, token, "([^"+fileSep+"]+)")+".*";
+                    Pattern p = Pattern.compile(acceptNamePattern.toString());
                     for (Iterator iter = all.iterator(); iter.hasNext();) {
                         String path = (String)iter.next();
-                        int pathSlashIndex = path.lastIndexOf(fileSep);
-                        String name = pathSlashIndex == -1 ? path : path.substring(pathSlashIndex+1);
-                        Matcher m = p.matcher(name);
+                        Matcher m = p.matcher(path);
                         if (m.matches()) {
                             String value = m.group(1);
                             ret.add(value);
@@ -231,14 +229,12 @@ public class ResolverHelper {
                     } else {
                         namePattern = pattern.substring(slashIndex + 1);
                     }
-                    String acceptNamePattern = IvyPatternHelper.substituteToken(namePattern, token, "(.+)");
-                    Pattern p = Pattern.compile(acceptNamePattern);
+                    String acceptNamePattern = ".*"+IvyPatternHelper.substituteToken(namePattern, token, "([^/]+)")+".*";
+                    Pattern p = Pattern.compile(acceptNamePattern.toString());
                     for (Iterator iter = all.iterator(); iter.hasNext();) {
                         URL url = (URL)iter.next();
                         String path = standardize(url.getPath());
-                        int pathSlashIndex = path.lastIndexOf('/');
-                        String name = pathSlashIndex == -1 ? path : path.substring(pathSlashIndex+1);
-                        Matcher m = p.matcher(name);
+                        Matcher m = p.matcher(path);
                         if (m.matches()) {
                             String value = m.group(1);
                             ret.add(value);
