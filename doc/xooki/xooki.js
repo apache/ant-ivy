@@ -1,5 +1,6 @@
 /*
 	Copyright (c) 2006-2007, The Xooki project
+	http://xooki.sourceforge.net/
 	All Rights Reserved.
 
 	Licensed under the Apache License version 2.0. 
@@ -129,6 +130,25 @@ xooki.url = {
                 }		
         	}
         	return null;
+        },
+        
+        asyncLoadURL: function( url, callback, obj ) {
+        	var req = this.newXmlHttpRequest();
+        	if(req) {
+        		try {
+        			req.open("GET", url, true);
+				    req.onreadystatechange=function() {
+				        if (req.readyState == 4) {
+				           if (req.status == 200) {
+				              callback(req.responseText, obj);
+				           }
+				        }
+				     };  			
+				     req.send("");
+        		} catch (e) {
+        			xooki.error(e, t("problem while loading URL ${0}", url));
+                }		
+        	}
         },
 
         include: function(script_filename) {
@@ -422,33 +442,45 @@ xooki.component = {
 };
 
 xooki.render = {};
+xooki.render.printerFriendlyAsyncLoader = function(source, arr) {
+	var root = arr[0];
+	var page = arr[1];
+    if (source == null) {
+        return;
+    }
+	var level = page.meta.level - root.meta.level + 1;
+	
+    // compute printer friendly block
+    var beginIndex = source.indexOf('<textarea id="xooki-source">');
+    beginIndex += '<textarea id="xooki-source">'.length;
+    var endIndex = source.lastIndexOf('</textarea>');
+    source = source.substring(beginIndex, endIndex);
+    
+    var printerFriendly = "<h"+level+">"+page.title+"</h"+level+">";
+    printerFriendly += xooki.input.format.main(source) + "<hr/>";
+    // inject block in page
+    var pf = document.getElementById('xooki-printerFriendly');
+    pf.innerHTML += printerFriendly;    
+    
+    // continue recursive loading
+   	var nextPage = xooki.toc.getNextPage(page, root);
+   	if (nextPage != null) {
+    	xooki.url.asyncLoadURL(pu(nextPage.id), xooki.render.printerFriendlyAsyncLoader, [root, nextPage]);
+   	}
+};
 xooki.render.printerFriendly = function() {
     for (var k in xooki.component) {
         xooki.c[k] = xooki.component[k]();
     }
     
 	xooki.c.body = xooki.c.messages
-    + (function (page, level) {
-        var source = xooki.url.loadURL(pu(page.id));
-        if (source == null) {
-            return "";
-        }
-        var beginIndex = source.indexOf('<textarea id="xooki-source">');
-        beginIndex += '<textarea id="xooki-source">'.length;
-        var endIndex = source.lastIndexOf('</textarea>');
-        source = source.substring(beginIndex, endIndex);
-        
-        var printerFriendly = "<h"+level+">"+page.title+"</h"+level+">";
-        printerFriendly += xooki.input.format.main(source);
-        for (var i=0; i <page.children.length; i++) {
-            printerFriendly += "<hr/>";
-            printerFriendly += arguments.callee(page.children[i], level+1);
-        }
-        return printerFriendly;
-    })(xooki.page, 1)
+	+ "<div id='xooki-printerFriendly'></div>" // div where printer friendly content will be put
     + xooki.c.debugPanel;
     
     document.body.innerHTML = xooki.string.processTemplate(xooki.template.body, xooki.c);
+    
+    // start async loading of content
+    xooki.url.asyncLoadURL(pu(xooki.page.id), xooki.render.printerFriendlyAsyncLoader, [xooki.page, xooki.page]);
 };
 
 xooki.render.page = function() {
@@ -694,21 +726,52 @@ xooki.postProcess = function() {
     xooki.toc = xooki.json.loadURL(cu("toc"));
     xooki.toc.pages = {}; // to store a by id map of pages objects
 
-	(function(page, parent, index) {
+	// populate meta data
+	(function(page, parent, index, level) {
         xooki.toc.pages[page.id] = page;
         
         page.meta = {
             parent: parent,
-            index: index
+            index: index,
+            level: level
         };
         if (typeof page.children == 'undefined') {
             page.children = [];
         } else {
             for (var i=0; i<page.children.length; i++) {
-                arguments.callee(page.children[i], page, i); // recurse
+                arguments.callee(page.children[i], page, i, level+1); // recurse
             }
         }
-    })(xooki.toc, null, 0);
+    })(xooki.toc, null, 0, -1);
+    
+    xooki.toc.getNextPage = function(page, root) {
+        if (page.children.length > 0) {
+        	return page.children[0];
+        } else if (page.meta.parent != null) {
+        	var cur = page;
+        	var next = xooki.toc.getNextSibling(cur);
+        	while (next == null) {
+        		cur = cur.meta.parent;
+        		if (cur == null || cur == root) {
+        			return null;
+        		}
+        		next = xooki.toc.getNextSibling(cur);
+        	}
+       		return next;
+        } else {
+        	return null;
+        }
+    };
+    xooki.toc.getNextSibling = function(page) {
+    	if (page.meta.parent == null) {
+    		return null;
+    	}
+       	if (page.meta.parent.children.length > page.meta.index) {
+       		return page.meta.parent.children[page.meta.index+1];
+       	} else {
+       		return null;
+       	}
+    };
 	
 	var match = new RegExp("^.*\\/((?:.*\\/){"+xooki.config.level+"}[^\\/]*)(?:\\.\\w+)(?:\\?.+)?$", "g").exec(window.location.toString());
 	var curPageId;
