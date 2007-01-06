@@ -579,6 +579,27 @@ xooki.input = {
             });
         },
         
+        shortcuts: function (input) {
+            // handle shortcut links like this:
+            //    [[svn:build.xml]] => <a href="https://xooki.svn.sourceforge.net/svnroot/xooki/trunk/build.xml">build.xml</a>
+            //    [[svn:test/example.js a good example]] => <a href="https://xooki.svn.sourceforge.net/svnroot/xooki/trunk/test/example.js">a good example</a>
+            // needs to be configured in xooki config like this
+            //      xooki.c.shortcuts.<any shortcut>.url = base url of the shortcut. 
+            //      ex: xooki.c.shortcuts.svn.url = https://xooki.svn.sourceforge.net/svnroot/xooki/trunk/
+            return input.replace(new RegExp("\\[\\[([^:]+):([^\\]]+)\\]\\]", "g"), function (str, prefix, code, offset, s) {
+            	if (typeof xooki.c.shortcuts[prefix] == "undefined") {
+            		return str;
+            	}
+                var index = code.indexOf(' ');
+                var path = index>0?code.substring(0,index):code;
+                
+                var title = index>0?code.substring(index):path;
+                var pre = typeof xooki.c.shortcuts[prefix].pre == "undefined"?'':xooki.c.shortcuts[prefix].pre;
+                var post = typeof xooki.c.shortcuts[prefix].post == "undefined"?'':xooki.c.shortcuts[prefix].post;
+                return '<a href="'+pre+path+post+'">'+title+'</a>';
+            });
+        },
+        
         xookiLinks: function (input) {
             // handle xooki links like this:
             //    [[page/id]]
@@ -697,7 +718,7 @@ xooki.postProcess = function() {
     xooki.c.initProperty("xookiInputFormat", ["xooki"]);
     xooki.c.initProperty("allowEdit", document.location.toString().substr(0,5) == "file:");
     
-    xooki.input.format.define("xooki", ["code", "url", "xookiLinks", "jira", "lineBreak"]);
+    xooki.input.format.define("xooki", ["code", "shortcuts", "url", "xookiLinks", "jira", "lineBreak"]);
     
     xooki.c.path = (typeof xooki.c.path != "undefined")?xooki.c.path:{};
     xooki.c.path.initProperty = initConfigProperty;
