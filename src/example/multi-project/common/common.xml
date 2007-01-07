@@ -1,5 +1,5 @@
 <project name="common" 
-         xmlns:ivy="antlib:fr.jayasoft.ivy.ant">
+         xmlns:ivy="antlib:org.apache.ivy.ant">
 	<!-- a sample common build.xml file, used for ivy multi-project tutorial
 	     feel free to copy and adapt it to your own needs
 	     Note that the only targets specific to ivy are:

@@ -1,0 +1,3 @@
+<ivyconf>
+	<include url="http://incubator.apache.org/ivy/test/ivyconf.xml"/>
+</ivyconf>

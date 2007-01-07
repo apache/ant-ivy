@@ -120,6 +120,10 @@
       			<exclude name="**/*.java"/>
     		</fileset>
   		</copy>
+		<!-- copy antlib for backward compatibility with fr.jayasoft.ivy package -->
+		<copy file="${src.dir}/org/apache/ivy/ant/antlib.xml" 
+			  todir="${classes.build.dir}/fr/jayasoft/ivy/ant"/>
+		
   		<!-- identify compiled ivy version -->
 		<echo message="version=${build.version}${line.separator}" file="${classes.build.dir}/module.properties" append="true"/>
 		<echo message="date=${pubdate}${line.separator}" file="${classes.build.dir}/module.properties" append="true"/>
@@ -133,7 +137,7 @@
 		</jar>
   		<jar 	destfile="${artifacts.build.dir}/ivy-core.jar"
 				basedir="${classes.build.dir}"
-  				excludes="fr/jayasoft/ivy/ant/*">
+  				excludes="org/apache/ivy/ant/*">
 			<manifest>
 				<attribute name="Build-Version" value="${build.version}"/>
 			</manifest>
@@ -250,22 +254,6 @@
 			<fileset dir="${src.dir}"/>
 		</javadoc>
 	</target>
-
-	<target name="get-dxml" description="download dxml doc file from web site">
-		<get src="http://www.jayasoft.org/ivy/doc/dxml" dest="${dxml.doc.file}" verbose="true" /> 
-	</target>
-	
-	<target name="get-dxml-raw" description="download raw dxml doc file from web site">
-		<get src="http://www.jayasoft.org/ivy/doc/dxml/raw" dest="${raw.dxml.doc.file}" verbose="true" /> 
-	</target>
-	
-	<target name="main-doc" description="generates doc from dxml file -- WARNING: this operation is very slow and requires ruby 1.8.2 or greater">
-		<echo message="generating documentation"/>
-		<echo message="this operation is very slow... be patient"/>
-		<exec dir="${basedir}" executable="ruby">
-			<arg line="${doc.src.dir}/dxml_to_html.rb"/>
-		</exec>
-	</target>
 	
     <!-- =================================================================
                DISTRIBUTION
@@ -301,7 +289,7 @@
 			<zipfileset dir="${basedir}/src/example" prefix="ivy-${build.version}/src/example"/>
 			<zipfileset dir="${basedir}" includes="LICENSE.txt" fullpath="ivy-${build.version}/LICENSE.txt"/>
 			<zipfileset dir="${basedir}" includes="CHANGES.txt" fullpath="ivy-${build.version}/CHANGES.txt"/>
-			<zipfileset dir="${src.dir}/fr/jayasoft/ivy/xml" includes="ivy.xsd" fullpath="ivy-${build.version}/ivy.xsd"/>
+			<zipfileset dir="${src.dir}/org/apache/ivy/xml" includes="ivy.xsd" fullpath="ivy-${build.version}/ivy.xsd"/>
 			<zipfileset dir="${basedir}" includes="ivy.xml" fullpath="ivy-${build.version}/ivy.xml"/>
 
 			<zipfileset dir="${lib.dir}" prefix="ivy-${build.version}/lib"/>
@@ -327,6 +315,6 @@
 	</target>
 	
 	<target name="snapshot" depends="snapshot-version, coverage-report" description="used for nightly and integration builds"/>
-	<target name="release" depends="release-version, coverage-report, snapshot-src, snapshot-bin, main-doc, javadoc, zip-doc" description="make a new release of Ivy"/>
+	<target name="release" depends="release-version, coverage-report, snapshot-src, snapshot-bin, javadoc, zip-doc" description="make a new release of Ivy"/>
 
 </project>

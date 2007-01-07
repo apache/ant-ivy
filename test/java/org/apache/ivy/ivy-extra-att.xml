@@ -1,0 +1,6 @@
+<ivy-module version="1.0">
+    <info organisation="apache" module="extra-att" revision="1.0"/>
+    <dependencies>
+		<dependency name="mymodule" eatt="task1" rev="1854" />
+    </dependencies>
+</ivy-module>

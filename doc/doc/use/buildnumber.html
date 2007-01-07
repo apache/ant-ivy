@@ -63,37 +63,37 @@ Note that when asking for revision 1, you can get a revision 10.0. To avoid that
 <h1>Examples</h1>
 Here is how it can be used (suppose 1.3.1 is the latest version of ivy in the repository):
 <code type="xml">
-<ivy:buildnumber organisation="jayasoft" module="ivy" />
+<ivy:buildnumber organisation="apache" module="ivy" />
 </code>
 will set 1.3.1 as revision, 1.3.2 as new revision, 1 as build number and 2 as new build number
 
 <hr/>
 <code type="xml">
-<ivy:buildnumber organisation="jayasoft" module="ivy" revision="1.3" />
+<ivy:buildnumber organisation="apache" module="ivy" revision="1.3" />
 </code>
 will set 1.3.1 as revision, 1.3.2 as new revision, 1 as build number and 2 as new build number
 
 <hr/>
 <code type="xml">
-<ivy:buildnumber organisation="jayasoft" module="ivy" revision="1.2" />
+<ivy:buildnumber organisation="apache" module="ivy" revision="1.2" />
 </code>
 will set 1.2 as revision, 1.2.1 as new revision, no build number and 1 as new build number
 
 <hr/>
 <code type="xml">
-<ivy:buildnumber organisation="jayasoft" module="ivy" revision="1." />
+<ivy:buildnumber organisation="apache" module="ivy" revision="1." />
 </code>
 will set 1.3.1 as revision, 1.4 as new revision, 3 as build number and 4 as new build number
 
 <hr/>
 <code type="xml">
-<ivy:buildnumber organisation="jayasoft" module="ivy" revision="3." />
+<ivy:buildnumber organisation="apache" module="ivy" revision="3." />
 </code>
 will set no revision, 3.0 as new revision, no build number and 0 as new build number
 
 <hr/>
 <code type="xml">
-<ivy:buildnumber organisation="jayasoft" module="ivy" revision="1.4-RC" defaultBuildNumber="1" revSep=""/>
+<ivy:buildnumber organisation="apache" module="ivy" revision="1.4-RC" defaultBuildNumber="1" revSep=""/>
 </code>
 If called while no release candidate is in the repository, will set ivy.revision to 1.4-RC1. Then it will increment each time, 1.4-RC2, 1.4-RC3, and so on.
 

@@ -1,0 +1,6 @@
+<ivyconf>
+	<typedef name="myoutputter" classname="org.apache.ivy.xml.XmlIvyConfigurationParserTest$MyOutputter"/>
+	<outputters>
+		<myoutputter />
+	</outputters>
+</ivyconf>

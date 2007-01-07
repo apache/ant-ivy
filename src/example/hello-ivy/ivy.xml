@@ -1,5 +1,5 @@
 <ivy-module version="1.0">
-    <info organisation="jayasoft" module="hello-ivy"/>
+    <info organisation="apache" module="hello-ivy"/>
     <dependencies>
         <dependency org="apache" name="commons-lang" rev="2.1"/>
     </dependencies>

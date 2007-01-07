@@ -1,5 +1,5 @@
 <ivy-module version="1.0"> 
-	<info organisation="jayasoft"
+	<info organisation="apache"
 	       module="ivy"
 	       status="integration"
 	/>

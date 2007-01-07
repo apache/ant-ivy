@@ -16,7 +16,7 @@ The revision can be given as a fixed one (1.5.2, for instance) or as a latest (o
 <li>latest.integration</li> selects the latest revision of the dependency module.
 <li>latest.[any status]</li> selects the latest revision of the dependency module with at least the specified status. <span class="since">since 1.4</span>
 For instance latest.milestone will select the latest version being either a milestone or a release, and latest.release will only selects the latest release. Note that in order to find the latest revision with the appropriate status Ivy has to parse all the ivy files in your repository from the last one until it finds such a revision. Hence don't be surprised if the resolution slow down.
-See also <a href="http://www.jayasoft.org/ivy/doc/configuration/statuses">statuses</a> to see how to configure module statuses.
+See also [[doc/configuration/statuses]] to see how to configure module statuses.
 <li>end the revision with a +</li> selects the latest sub-revision of the dependency module. For instance, 
 if the dependency module exists in revision 1.0.3, 1.0.7 and 1.1.2, "1.0.+" will select 1.0.7.
 <li>version ranges</li> mathematical notation for ranges can be used to match a range of version. <span class="since">since 1.4</span>  

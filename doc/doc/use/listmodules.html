@@ -36,9 +36,9 @@ To know if a module matches the criteria ivy will use the configured <a href="..
 </table>
 <h1>Examples</h1>
 <code type="xml">
-<ivy:listmodules organisation="jayasoft" module="ivy" revision="*" property="ivy.[revision]" value="found"/>
+<ivy:listmodules organisation="apache" module="ivy" revision="*" property="ivy.[revision]" value="found"/>
 </code>
-will find all revisions of the module ivy in the org jayasoft, and create one property for each revision found, the name of the property depending on the revision, the value being always 'found'
+will find all revisions of the module ivy in the org apache, and create one property for each revision found, the name of the property depending on the revision, the value being always 'found'
 
 <hr/>
 
@@ -47,8 +47,8 @@ will find all revisions of the module ivy in the org jayasoft, and create one pr
 </code>
 use the glob matcher to find all modules which name starts with ivy with revision 1.0, and sets for each a property with module name found  and organisation for value.
 Example:
-modules.ivy=jayasoft
-modules.ivyde=jayasoft
+modules.ivy=apache
+modules.ivyde=apache
 modules.ivytools=ivytools
 
 	</textarea>

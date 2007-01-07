@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <ivy-module version="1.0">
     <info 
-        organisation="jayasoft"
+        organisation="apache"
         module="mymodule"
         eatt="task1"
         revision="1854"

@@ -1,4 +1,4 @@
-<project name="filter-framework" default="publish" xmlns:ivy="antlib:fr.jayasoft.ivy.ant">
+<project name="filter-framework" default="publish" xmlns:ivy="antlib:org.apache.ivy.ant">
     <!-- some variables used -->
     <property name="lib.dir" value="lib" />
     <property name="build.dir" value="build" />

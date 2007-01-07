@@ -1,0 +1,87 @@
+/*
+ *  Licensed to the Apache Software Foundation (ASF) under one or more
+ *  contributor license agreements.  See the NOTICE file distributed with
+ *  this work for additional information regarding copyright ownership.
+ *  The ASF licenses this file to You under the Apache License, Version 2.0
+ *  (the "License"); you may not use this file except in compliance with
+ *  the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *
+ */
+package org.apache.ivy.ant;
+
+import java.io.File;
+import java.net.MalformedURLException;
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.ivy.Configuration;
+import org.apache.ivy.Ivy;
+import org.apache.ivy.ModuleDescriptor;
+import org.apache.ivy.Configuration.Visibility;
+import org.apache.ivy.parser.ModuleDescriptorParserRegistry;
+import org.apache.tools.ant.BuildException;
+import org.apache.tools.ant.Project;
+
+
+/**
+ * Parses information about an ivy file and make them available in ant.
+ * 
+ * @author Xavier Hanin
+ *
+ */
+public class IvyInfo extends IvyTask {
+    private File _file = null;
+    
+    public File getFile() {
+        return _file;
+    }
+    public void setFile(File file) {
+        _file = file;
+    }
+
+    public void execute() throws BuildException {
+        Ivy ivy = getIvyInstance();
+        if (_file == null) {
+            _file = new File(getProject().getBaseDir(), getProperty(ivy, "ivy.dep.file"));
+        }
+        
+        try {
+			ModuleDescriptor md = ModuleDescriptorParserRegistry.getInstance().parseDescriptor(ivy, _file.toURL(), doValidate(ivy));
+            getProject().setProperty("ivy.organisation", md.getModuleRevisionId().getOrganisation());
+            getProject().setProperty("ivy.module", md.getModuleRevisionId().getName());
+            if (md.getModuleRevisionId().getRevision() != null) {
+            	getProject().setProperty("ivy.revision", md.getModuleRevisionId().getRevision());
+            } else {
+            	getProject().setProperty("ivy.revision", "working@"+Ivy.getLocalHostName());
+            }
+            getProject().setProperty("ivy.configurations", mergeConfs(md.getConfigurationsNames()));
+            
+            // store the public configurations in a separate property
+            Configuration[] configs = md.getConfigurations();
+            List publicConfigsList = new ArrayList();
+            for (int i = 0; i < configs.length; i++) {
+            	if (Visibility.PUBLIC.equals(configs[i].getVisibility())) {
+            		publicConfigsList.add(configs[i].getName());
+            	}
+            }
+            String[] publicConfigs = (String[]) publicConfigsList.toArray(new String[publicConfigsList.size()]);
+            getProject().setProperty("ivy.public.configurations", mergeConfs(publicConfigs));
+        } catch (MalformedURLException e) {
+            throw new BuildException("unable to convert given ivy file to url: "+_file+": "+e, e);
+        } catch (ParseException e) {
+            log(e.getMessage(), Project.MSG_ERR);
+            throw new BuildException("syntax errors in ivy file: "+e, e);
+        } catch (Exception e) {
+            throw new BuildException("impossible to resolve dependencies: "+e, e);
+        }
+    }
+}

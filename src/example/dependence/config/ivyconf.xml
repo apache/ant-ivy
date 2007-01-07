@@ -9,6 +9,6 @@
 		<ivyrep name="libraries" />
 	</resolvers>
 	<modules>
-		<module organisation="jayasoft" name=".*" resolver="projects"/>
+		<module organisation="apache" name=".*" resolver="projects"/>
 	</modules>
 </ivyconf>

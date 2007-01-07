@@ -1,0 +1,13 @@
+<ivy-module version="1.0"> 
+	<info organisation="apache"
+	       module="resolve-latest"
+	       revision="1.0"
+	       status="release"
+	/>
+	<configurations>
+		<include file="test/java/org/apache/ivy/ant/imported-configurations.xml"/>
+	</configurations>
+	<dependencies>
+		<dependency org="org1" name="mod1.2" rev="latest.integration" conf="*->default"/>
+	</dependencies>
+</ivy-module>

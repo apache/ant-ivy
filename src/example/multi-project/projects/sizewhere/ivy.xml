@@ -1,6 +1,6 @@
 <ivy-module version="1.0">
     <info 
-        organisation="jayasoft"
+        organisation="apache"
         module="sizewhere"
         status="integration"/>
     <configurations>

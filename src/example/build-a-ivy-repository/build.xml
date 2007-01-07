@@ -7,7 +7,7 @@
                    
      mb                                                                
      ====================================================================== -->
-<project name="ivy-repository" default="basic" xmlns:ivy="antlib:fr.jayasoft.ivy.ant">
+<project name="ivy-repository" default="basic" xmlns:ivy="antlib:org.apache.ivy.ant">
 	<property name="configuration-dir" value="config"/>
 	<property name="from-resolver" value="libraries"/>
 	<property name="to-resolver" value="local-repository"/>

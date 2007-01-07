@@ -1,5 +1,5 @@
 <ivy-module version="1.0">
-    <info organisation="jayasoft" module="filter-framework"/>
+    <info organisation="apache" module="filter-framework"/>
     <configurations>
     	<conf name="api"  description="only provide filter framework API"/>
     	<conf name="homemade-impl" extends="api" description="provide a home made implementation of our api"/>

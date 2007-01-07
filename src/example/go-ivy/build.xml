@@ -1,4 +1,4 @@
-<project name="go-ivy" default="go" xmlns:ivy="antlib:fr.jayasoft.ivy.ant">
+<project name="go-ivy" default="go" xmlns:ivy="antlib:org.apache.ivy.ant">
     <!-- 
         this build file is a self contained project: it doesn't require anything else 
         that ant 1.6.2 or greater and java 1.4 or greater properly installed.
@@ -15,7 +15,7 @@
         After a successful build run "ant" again and you will see the build will be
         much faster.
         
-        More information can be found at http://www.jayasoft.org/ivy
+        More information can be found at http://incubator.apache.org/ivy/
         -->
 	
 	<!-- here is the version of ivy we will use. change this property to try a newer 
@@ -49,7 +49,7 @@
     	    <fileset dir="${ivy.jar.dir}" includes="*.jar"/>
     	</path>
     	<taskdef resource="fr/jayasoft/ivy/ant/antlib.xml"
-    	          uri="antlib:fr.jayasoft.ivy.ant" classpathref="ivy.lib.path"/>
+    	          uri="antlib:org.apache.ivy.ant" classpathref="ivy.lib.path"/>
     </target>    
 	
 	<!-- ================================= 

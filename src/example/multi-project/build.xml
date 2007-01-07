@@ -1,5 +1,5 @@
 <project name="all" 
-         xmlns:ivy="antlib:fr.jayasoft.ivy.ant">
+         xmlns:ivy="antlib:org.apache.ivy.ant">
          
          
   <target name="buildlist"> 

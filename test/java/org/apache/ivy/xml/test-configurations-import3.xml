@@ -1,0 +1,15 @@
+<ivy-module version="1.0">
+	<info organisation="myorg"
+	       module="mymodule"
+	       revision="myrev"
+	       status="integration"
+	       publication="20041101110000"
+	/>
+	<configurations>
+		<include file="test/java/org/apache/ivy/xml/imported-configurations-with-mapping.xml"/>
+	</configurations>
+	<dependencies>
+		<dependency name="mymodule1" rev="1.0"/>
+		<dependency name="mymodule2" rev="2.0" conf="conf1->*"/>
+	</dependencies>
+</ivy-module>

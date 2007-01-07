@@ -13,13 +13,13 @@ Download the version you want <a href="../download.html"/>here</a>, unpack the d
 If you use ant 1.6.0 or superior, you can then simply go to the src/example/hello-ivy dir and run ant: if the build is successful, you have successfully installed Ivy !
 
 If you use ant 1.5.1 or superior, you have to modify the build files in the examples:
-- remove the namespace section at their head: xmlns:ivy="antlib:fr.jayasoft.ivy.ant" 
+- remove the namespace section at their head: xmlns:ivy="antlib:org.apache.ivy.ant" 
 - add taskdefs for ivy tasks:
 <code>
-  <taskdef name="ivy-configure" classname="fr.jayasoft.ivy.ant.IvyConfigure"/>
-  <taskdef name="ivy-resolve" classname="fr.jayasoft.ivy.ant.IvyResolve"/>
-  <taskdef name="ivy-retrieve" classname="fr.jayasoft.ivy.ant.IvyRetrieve"/>
-  <taskdef name="ivy-publish" classname="fr.jayasoft.ivy.ant.IvyPublish"/> 
+  <taskdef name="ivy-configure" classname="org.apache.ivy.ant.IvyConfigure"/>
+  <taskdef name="ivy-resolve" classname="org.apache.ivy.ant.IvyResolve"/>
+  <taskdef name="ivy-retrieve" classname="org.apache.ivy.ant.IvyRetrieve"/>
+  <taskdef name="ivy-publish" classname="org.apache.ivy.ant.IvyPublish"/> 
 </code>
 - replace ivy:xxx tasks by ivy-xxx
 You can now run the build, if it is successful, you have successfully installed Ivy !
@@ -52,12 +52,12 @@ If you want to use Ivy only in your ant build scripts, and have an internet conn
         <path id="ivy.lib.path">
             <fileset dir="${ivy.jar.dir}" includes="*.jar"/>
         </path>
-        <taskdef resource="fr/jayasoft/ivy/ant/antlib.xml"
-                 uri="antlib:fr.jayasoft.ivy.ant" classpathref="ivy.lib.path"/>
+        <taskdef resource="org/apache/ivy/ant/antlib.xml"
+                 uri="antlib:org.apache.ivy.ant" classpathref="ivy.lib.path"/>
     </target>
 </code>
 
-Then the only thing to do is to add the init-ivy target in the depends attribute of your targets using Ivy, and add ivy namespace to your build script. See the self contained <a href="http://svn.jayasoft.org/projects/tools/ivy/src/example/go-ivy/build.xml">go-ivy</a> example for details about this.
+Then the only thing to do is to add the init-ivy target in the depends attribute of your targets using Ivy, and add ivy namespace to your build script. See the self contained [[svn:src/example/go-ivy/build.xml go-ivy]] example for details about this.
 	</textarea>
 <script type="text/javascript">xooki.postProcess();</script>
 </body>
