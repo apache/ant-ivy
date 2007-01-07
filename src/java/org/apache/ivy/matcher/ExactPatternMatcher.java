@@ -17,40 +17,40 @@
  */
 package org.apache.ivy.matcher;
 
-public final class ExactPatternMatcher implements PatternMatcher {
+/**
+ * Implementation of an exact matcher.
+ * <p/>
+ * The matching will be performed against an expression being a string. It will only
+ * matches if both strings are equal (per equals()) rule or if both strings are null.
+ */
+public /*@Immutable*/ final class ExactPatternMatcher extends AbstractPatternMatcher {
 
-    public static class ExactMatcher implements Matcher {
-        protected String _exp;
+    public static final ExactPatternMatcher INSTANCE = new ExactPatternMatcher();
 
-        public ExactMatcher(String exp) {
-            _exp = exp;
+    public ExactPatternMatcher() {
+        super(EXACT);
+    }
+
+    protected Matcher newMatcher(String expression) {
+        return new ExactMatcher(expression);
+    }
+
+    private static /*@Immutable*/ class ExactMatcher implements Matcher {
+        protected String _expression;
+
+        public ExactMatcher(String expression) {
+            _expression = expression;
         }
 
-        public boolean matches(String str) {
-            return str == null ? _exp == null : str.equals(_exp);
+        public boolean matches(String input) {
+            if (input == null) {
+                throw new NullPointerException();
+            }
+            return input.equals(_expression);
         }
 
         public boolean isExact() {
             return true;
         }
-    }
-
-    private static final ExactPatternMatcher INSTANCE = new ExactPatternMatcher();
-    public static PatternMatcher getInstance() {
-        return INSTANCE;
-    }
-    
-    private ExactPatternMatcher() {        
-    }
-    
-    public String getName() {
-        return EXACT;
-    }
-
-    public Matcher getMatcher(String exp) {
-        if (ANY_EXPRESSION.equals(exp)) {
-            return AnyMatcher.getInstance();
-        }
-        return new ExactMatcher(exp);
     }
 }

@@ -243,10 +243,10 @@ public class Ivy implements TransferListener {
         addConflictManager("all", new NoConflictManager());    
         addConflictManager("strict", new StrictConflictManager());
         
-        addMatcher(ExactPatternMatcher.getInstance());
-        addMatcher(RegexpPatternMatcher.getInstance());
-        addMatcher(ExactOrRegexpPatternMatcher.getInstance());
-        addMatcher(GlobPatternMatcher.getInstance());
+        addMatcher(ExactPatternMatcher.INSTANCE);
+        addMatcher(RegexpPatternMatcher.INSTANCE);
+        addMatcher(ExactOrRegexpPatternMatcher.INSTANCE);
+        addMatcher(GlobPatternMatcher.INSTANCE);
         
         addReportOutputter(new XmlReportOutputter());
         addReportOutputter(new LogReportOutputter());
@@ -1767,7 +1767,7 @@ public class Ivy implements TransferListener {
             
             DefaultModuleDescriptor md = new DefaultModuleDescriptor(ModuleRevisionId.newInstance("apache", "ivy-install", "1.0"), getStatusManager().getDefaultStatus(), new Date());
             md.addConfiguration(new Configuration("default"));
-            md.addConflictManager(new ModuleId(ExactPatternMatcher.ANY_EXPRESSION, ExactPatternMatcher.ANY_EXPRESSION), ExactPatternMatcher.getInstance(), new NoConflictManager());
+            md.addConflictManager(new ModuleId(ExactPatternMatcher.ANY_EXPRESSION, ExactPatternMatcher.ANY_EXPRESSION), ExactPatternMatcher.INSTANCE, new NoConflictManager());
             
             if (MatcherHelper.isExact(matcher, mrid)) {
                 DefaultDependencyDescriptor dd = new DefaultDependencyDescriptor(md, mrid, false, false, transitive);
@@ -3118,7 +3118,7 @@ public class Ivy implements TransferListener {
 							branches = new String[]  {getDefaultBranch(new ModuleId(orgs[i], mods[j]))};
 						}
 						for (int k = 0; k < branches.length; k++) {
-							if (branchMatcher.matches(branches[k])) {
+							if (branches[k] == null || branchMatcher.matches(branches[k])) {
 								tokenValues.put(IvyPatternHelper.BRANCH_KEY, tokenValues);
 								String[] revs = listTokenValues(IvyPatternHelper.REVISION_KEY, tokenValues);
 								for (int l = 0; l < revs.length; l++) {

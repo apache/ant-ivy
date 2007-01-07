@@ -17,18 +17,19 @@
  */
 package org.apache.ivy.matcher;
 
-public class AnyMatcher implements Matcher {
-    private final static Matcher INSTANCE = new AnyMatcher();
-    
-    public static Matcher getInstance() {
-        return INSTANCE;
-    }
-    
-    private AnyMatcher() {
-        
+/**
+ * A matcher that will match everything.
+ */
+public /*@Immutable*/ class AnyMatcher implements Matcher {
+    public final static Matcher INSTANCE = new AnyMatcher();
+
+    public AnyMatcher() {
     }
 
-    public boolean matches(String str) {
+    public boolean matches(String input) {
+        if (input == null) {
+            throw new NullPointerException();
+        }
         return true;
     }
 

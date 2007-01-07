@@ -21,38 +21,47 @@ import org.apache.ivy.ArtifactId;
 import org.apache.ivy.ModuleId;
 import org.apache.ivy.ModuleRevisionId;
 
+/**
+ * Set of helper methods to match ModuleId, ModuleRevisionId, ArtifactId
+ */
 public class MatcherHelper {
-    public static boolean matches(PatternMatcher m, String exp, String str) {
-        return m.getMatcher(exp).matches(str);
+    // TODO this class might be better off as MatcherUtils in util package
+
+    public static boolean matches(PatternMatcher m, String expression, String input) {
+        return m.getMatcher(expression).matches(input);
     }
+
     public static boolean matches(PatternMatcher m, ModuleId exp, ModuleId mid) {
         return matches(m, exp.getOrganisation(), mid.getOrganisation())
-        && matches(m, exp.getName(), mid.getName());
+                && matches(m, exp.getName(), mid.getName());
     }
-    
+
     public static boolean matches(PatternMatcher m, ModuleRevisionId exp, ModuleRevisionId mrid) {
         return matches(m, exp.getOrganisation(), mrid.getOrganisation())
-            && matches(m, exp.getName(), mrid.getName())
-            && matches(m, exp.getRevision(), mrid.getRevision());
+                && matches(m, exp.getName(), mrid.getName())
+                && matches(m, exp.getRevision(), mrid.getRevision());
     }
+
     public static boolean matches(PatternMatcher m, ArtifactId exp, ArtifactId aid) {
-        return matches(m, exp.getModuleId().getOrganisation(), aid.getModuleId().getOrganisation())
-            && matches(m, exp.getModuleId().getName(), aid.getModuleId().getName())
-            && matches(m, exp.getName(), aid.getName())
-            && matches(m, exp.getExt(), aid.getExt())
-            && matches(m, exp.getType(), aid.getType())
-            ;
+        return matches(m, exp.getModuleId(), aid.getModuleId())
+                && matches(m, exp.getName(), aid.getName())
+                && matches(m, exp.getExt(), aid.getExt())
+                && matches(m, exp.getType(), aid.getType())
+                ;
     }
-    
+
     public static boolean isExact(PatternMatcher m, ModuleRevisionId exp) {
         return isExact(m, exp.getOrganisation())
-            && isExact(m, exp.getName())
-            && isExact(m, exp.getRevision());
+                && isExact(m, exp.getName())
+                && isExact(m, exp.getRevision());
     }
+
+    // unused
     public static boolean isExact(PatternMatcher m, ModuleId exp) {
         return isExact(m, exp.getOrganisation())
-            && isExact(m, exp.getName());
+                && isExact(m, exp.getName());
     }
+
     public static boolean isExact(PatternMatcher m, String exp) {
         return m.getMatcher(exp).isExact();
     }

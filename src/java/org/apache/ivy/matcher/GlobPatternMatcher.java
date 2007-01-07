@@ -17,6 +17,8 @@
  */
 package org.apache.ivy.matcher;
 
+import java.util.regex.PatternSyntaxException;
+
 import org.apache.ivy.util.Message;
 import org.apache.oro.text.GlobCompiler;
 import org.apache.oro.text.regex.MalformedPatternException;
@@ -25,42 +27,57 @@ import org.apache.oro.text.regex.Perl5Matcher;
 
 
 
-public final class GlobPatternMatcher implements PatternMatcher {
-    public static class GlobMatcher implements Matcher {
-        private Pattern _p;
+/**
+ * A pattern matcher matching input using unix-like glob matcher expressions. Meta characters are:
+ * <ul>
+ * <li> * -  Matches zero or more characters</li>
+ * <li> ? - Matches exactly one character.</li>
+ * </ul>
+ * <p/>
+ * <b> Note that this matcher is available only with <a href="http://jakarta.apache.org/oro"Apache Jakarta Oro 2.0.8</a>
+ * in your classpath.</b>
+ *
+ * @see <a href="http://jakarta.apache.org/oro/api/org/apache/oro/text/GlobCompiler.html">GlobCompiler</a>
+ */
+public /*@Immutable*/ final class GlobPatternMatcher extends AbstractPatternMatcher {
 
-        public GlobMatcher(String exp) {
+    public static final GlobPatternMatcher INSTANCE = new GlobPatternMatcher();
+
+    /*
+    NOTE: GlobCompiler does ~100K compilation/s
+    - If necessary look into using ThreadLocal for GlobCompiler/Perl5Matcher to cut on useless object creation
+    - If expression are reused over and over a LRU cache could make sense
+     */
+
+    public GlobPatternMatcher() {
+        super(GLOB);
+    }
+
+    protected Matcher newMatcher(String expression) {
+        return new GlobMatcher(expression);
+    }
+
+    private static class GlobMatcher implements Matcher {
+        private Pattern _pattern;
+
+        public GlobMatcher(String expression) throws PatternSyntaxException {
             try {
-                _p = new GlobCompiler().compile(exp);
+                _pattern = new GlobCompiler().compile(expression);
             } catch (MalformedPatternException e) {
-                Message.error("impossible to compile glob pattern: "+exp);
+                throw new PatternSyntaxException(e.getMessage(), expression, 0);
             }
         }
 
-        public boolean matches(String str) {
-            return _p != null && new Perl5Matcher().matches(str, _p);
+        public boolean matches(String input) {
+            if (input == null) {
+                throw new NullPointerException();
+            }
+            return new Perl5Matcher().matches(input, _pattern);
         }
 
         public boolean isExact() {
             return false;
         }
     }
-    private static final GlobPatternMatcher INSTANCE = new GlobPatternMatcher();
-    public static PatternMatcher getInstance() {
-        return INSTANCE;
-    }
-    
-    private GlobPatternMatcher() {        
-    }
 
-    public String getName() {
-        return GLOB;
-    }
-
-    public Matcher getMatcher(String exp) {
-        if (ANY_EXPRESSION.equals(exp)) {
-            return AnyMatcher.getInstance();
-        }
-        return new GlobMatcher(exp);
-    }
 }

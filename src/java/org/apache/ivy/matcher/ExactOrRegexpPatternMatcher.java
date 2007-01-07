@@ -18,40 +18,45 @@
 package org.apache.ivy.matcher;
 
 
-public final class ExactOrRegexpPatternMatcher implements PatternMatcher {
-    public static class ExactOrRegexpMatcher implements Matcher {
+/**
+ * A pattern matcher that tries to match exactly the input with the expression, or match it as a pattern.
+ * <p/>
+ * The evaluation for matching is perform first by checking if expression and input are equals (via equals method)
+ * else it attempts to do it by trying to match the input using the expression as a regexp.
+ *
+ * @see ExactPatternMatcher
+ * @see RegexpPatternMatcher
+ */
+public /*@Immutable*/ final class ExactOrRegexpPatternMatcher extends AbstractPatternMatcher {
+
+    public static final ExactOrRegexpPatternMatcher INSTANCE = new ExactOrRegexpPatternMatcher();
+
+    public ExactOrRegexpPatternMatcher() {
+        super(EXACT_OR_REGEXP);
+    }
+
+    protected Matcher newMatcher(String expression) {
+        return new ExactOrRegexpMatcher(expression);
+    }
+
+    private static final class ExactOrRegexpMatcher implements Matcher {
         private Matcher _exact;
         private Matcher _regexp;
 
-        public ExactOrRegexpMatcher(String exp) {
-            _exact = ExactPatternMatcher.getInstance().getMatcher(exp);
-            _regexp = RegexpPatternMatcher.getInstance().getMatcher(exp);
+        public ExactOrRegexpMatcher(String expression) {
+            _exact = ExactPatternMatcher.INSTANCE.getMatcher(expression);
+            _regexp = RegexpPatternMatcher.INSTANCE.getMatcher(expression);
         }
 
-        public boolean matches(String str) {
-            return _exact.matches(str) || _regexp.matches(str);
+        public boolean matches(String input) {
+            if (input == null) {
+                throw new NullPointerException();
+            }
+            return _exact.matches(input) || _regexp.matches(input);
         }
 
         public boolean isExact() {
             return false;
         }
-    }
-    private static final ExactOrRegexpPatternMatcher INSTANCE = new ExactOrRegexpPatternMatcher();
-    public static PatternMatcher getInstance() {
-        return INSTANCE;
-    }
-    
-    private ExactOrRegexpPatternMatcher() {        
-    }
-    
-    public String getName() {
-        return EXACT_OR_REGEXP;
-    }
-
-    public Matcher getMatcher(String exp) {
-        if (ANY_EXPRESSION.equals(exp)) {
-            return AnyMatcher.getInstance();
-        }
-        return new ExactOrRegexpMatcher(exp);
     }
 }

@@ -181,8 +181,8 @@ public class URLResolverTest extends TestCase {
         
         ModuleRevisionId mrid = ModuleRevisionId.newInstance("apache", "nanning", "0.9");
         DefaultDependencyDescriptor dd = new DefaultDependencyDescriptor(mrid, false);
-        dd.addDependencyArtifactIncludes("default", new DefaultDependencyArtifactDescriptor(dd, "nanning-profiler", "jar", "jar", true, ExactPatternMatcher.getInstance()));
-        dd.addDependencyArtifactIncludes("default", new DefaultDependencyArtifactDescriptor(dd, "nanning-trace", "jar", "jar", true, ExactPatternMatcher.getInstance()));
+        dd.addDependencyArtifactIncludes("default", new DefaultDependencyArtifactDescriptor(dd, "nanning-profiler", "jar", "jar", true, ExactPatternMatcher.INSTANCE));
+        dd.addDependencyArtifactIncludes("default", new DefaultDependencyArtifactDescriptor(dd, "nanning-trace", "jar", "jar", true, ExactPatternMatcher.INSTANCE));
         ResolvedModuleRevision rmr = resolver.getDependency(dd, _data);
         assertNotNull(rmr);
         assertEquals(mrid, rmr.getId());

@@ -17,17 +17,20 @@
  */
 package org.apache.ivy.matcher;
 
-public class NoMatcher implements Matcher {
-    private final static Matcher INSTANCE = new NoMatcher();
-    
-    public static Matcher getInstance() {
-        return INSTANCE;
-    }
-    
-    private NoMatcher() {
+/**
+ * A matcher that matches nothing.
+ */
+public final /*@Immutable*/ class NoMatcher implements Matcher {
+
+    public final static Matcher INSTANCE = new NoMatcher();
+
+    public NoMatcher() {
     }
 
-    public boolean matches(String str) {
+    public boolean matches(String input) {
+        if (input == null) {
+            throw new NullPointerException();
+        }
         return false;
     }
 

@@ -294,7 +294,7 @@ public abstract class AbstractResolver implements DependencyResolver, IvyAware, 
 
     public Matcher getChangingMatcher() {
         if (_changingPattern == null) {
-            return NoMatcher.getInstance();
+            return NoMatcher.INSTANCE;
         }
         PatternMatcher matcher = _ivy.getMatcher(_changingMatcherName);
         if (matcher == null) {

@@ -66,7 +66,7 @@ public class IvyEventFilter implements Filter {
 	private Filter _attFilter;
 
 	public IvyEventFilter(String event, String filterExpression, PatternMatcher matcher) {
-		_matcher = matcher == null ? ExactPatternMatcher.getInstance() : matcher;
+		_matcher = matcher == null ? ExactPatternMatcher.INSTANCE : matcher;
 		if (event == null) {
 			_nameFilter = NoFilter.INSTANCE;
 		} else {

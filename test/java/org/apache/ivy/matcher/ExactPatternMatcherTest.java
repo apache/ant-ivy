@@ -6,7 +6,7 @@
  *  (the "License"); you may not use this file except in compliance with
  *  the License.  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,27 +17,21 @@
  */
 package org.apache.ivy.matcher;
 
-import org.apache.ivy.ModuleId;
+/**
+* @see ExactPatternMatcher
+ */
+public class ExactPatternMatcherTest extends AbstractPatternMatcherTest {
 
-public class ModuleIdMatcher {
-// TODO this class should be moved out of this package
-    private Matcher _orgMatcher;
-    private Matcher _moduleMatcher;
-    private ModuleId _mid;
-    private PatternMatcher _pm;
-    
-    public ModuleIdMatcher(ModuleId mid, PatternMatcher pm) {
-        _mid = mid;
-        _pm = pm;
-        _orgMatcher = pm.getMatcher(mid.getOrganisation());
-        _moduleMatcher = pm.getMatcher(mid.getName());
+
+    protected void setUp() throws Exception {
+        setUp(new ExactPatternMatcher(), true);
     }
-    
-    public boolean matches(ModuleId mid) {
-        return _orgMatcher.matches(mid.getOrganisation()) && _moduleMatcher.matches(mid.getName());
-    }
-    
-    public String toString() {
-        return _mid+" ("+_pm.getName()+")";
+
+    public void testImplementation() {
+        Matcher matcher = patternMatcher.getMatcher(".");
+        assertFalse(matcher.matches(""));
+        assertTrue(matcher.matches("."));
+        assertFalse(matcher.matches("a"));
+        assertFalse(matcher.matches("aa"));
     }
 }
