@@ -42,9 +42,10 @@ import org.apache.ivy.url.URLHandlerRegistry;
  *
  */
 public class FileUtil {
-    // tried some other values with empty files... seems to be the best one (512 * 1024 is very bad)
+	// tried some other values with empty files... seems to be the best one (512 * 1024 is very bad)
     // 8 * 1024 is also the size used by ant in its FileUtils... maybe they've done more study about it ;-)
     private static final int BUFFER_SIZE = 8 * 1024;
+    private static final byte[] EMPTY_BUFFER = new byte[0];
 
     public static void symlink(File src, File dest, CopyProgressListener l, boolean overwrite) throws IOException {
         try {
@@ -131,11 +132,11 @@ public class FileUtil {
     }
 
     public static void copy(InputStream src, OutputStream dest, CopyProgressListener l) throws IOException {
+        CopyProgressEvent evt = null;
+        if (l != null) {
+            evt = new CopyProgressEvent();
+        }
         try {
-            CopyProgressEvent evt = null;
-            if (l != null) {
-                evt = new CopyProgressEvent();
-            }
             byte buffer[]=new byte[BUFFER_SIZE];
             int c;
             long total = 0;
@@ -153,17 +154,26 @@ public class FileUtil {
                     l.progress(evt.update(buffer, c, total));
                 }
             } 
-            if (l != null) {
-                l.end(evt.update(buffer, 0, total));
-            }
+            evt.update(EMPTY_BUFFER, 0, total);
+            
+            // close the streams
+            src.close();
+            dest.close();
         } finally {
             try {
                 src.close();
             } catch (IOException ex) {
-                dest.close();
-                throw ex;
+            	// ignore
             }
-            dest.close();
+            try {
+            	dest.close();
+            } catch (IOException ex) {
+            	// ignore
+            }
+        }
+        
+        if (l != null) {
+            l.end(evt);
         }
     }
 
