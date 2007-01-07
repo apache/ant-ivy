@@ -153,6 +153,7 @@
 	<target name="init-tests-offline" if="offline">
  		    <fileset id="test.fileset" dir="${test.dir}">
  		    	<include name="**/*Test.java"/>
+ 		    	<exclude name="**/Abstract*Test.java"/>
  		    	<contains text="junit"/>
  		    	<not><contains text="remote.test"/></not>
  		    </fileset>
@@ -161,6 +162,7 @@
 	<target name="init-tests-online" unless="offline">
  		    <fileset id="test.fileset" dir="${test.dir}">
  		    	<include name="**/*Test.java"/>
+ 		    	<exclude name="**/Abstract*Test.java"/>
  		    	<contains text="junit"/>
  		    </fileset>
 	</target>
