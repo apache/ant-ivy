@@ -69,7 +69,7 @@ Putting ivy dependencies in a separate file has the following advantages:
 </ul>
 On the other hand, using inline dependencies is very useful when:
 <ul>
-<li>you want to use a custom task in your ant build</a> Without ivy you usually either copy the custom task jar in ant lib, which requires maintenance of your workstation installation, or use a manual copy or download and a taskdef with the appropriate classpath, which is better. But if you have several custom tasks, or if they have themselves dependencies, it can become cumbersome. Using Ivy with an inline dependency is an elegant way to solve this problem.
+<li>you want to use a custom task in your ant build</li> Without ivy you usually either copy the custom task jar in ant lib, which requires maintenance of your workstation installation, or use a manual copy or download and a taskdef with the appropriate classpath, which is better. But if you have several custom tasks, or if they have themselves dependencies, it can become cumbersome. Using Ivy with an inline dependency is an elegant way to solve this problem.
 <li>you want to easily deploy an application</li> If you already build your application and its modules using Ivy, it is really easy to leverage your ivy repository to download your application and all its dependencies on the local filesystem, ready to be executed. If you also put your configuration files as artifacts in your repository (maybee packaged as a zip), the whole installation process can rely on ivy, easing the automatic installation of <b>any</b> version of your application available in your repository!
 </ul>
 <h1>Hire an expert</h1>
