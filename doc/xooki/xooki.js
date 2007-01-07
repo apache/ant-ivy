@@ -1,12 +1,18 @@
 /*
 	Copyright (c) 2006-2007, The Xooki project
 	http://xooki.sourceforge.net/
-	All Rights Reserved.
 
-	Licensed under the Apache License version 2.0. 
-    For more information see:
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
 
-		http://www.apache.org/licenses/LICENSE-2.0.txt
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
 	
 	Some code is largely inspired by code found in the dojo toolkit, 
 	see http://dojotoolkit.org/ for more information.
@@ -557,7 +563,11 @@ xooki.input = {
             for (var i in filters) {
                 f = xooki.input.filters[filters[i]];
                 if (typeof f == "function") {
-                    source = f(source); // process filter
+                	try {
+                    	source = f(source); // process filter
+                    } catch (e) {
+	                    xooki.error(e, t("error occured while processing filter ${0}", filters[i]));
+                    }
                 } else {
                     xooki.error(t("unknown filter ${0} used in input format ${1}", filters[i], format));
                 }
@@ -593,7 +603,7 @@ xooki.input = {
                 var index = code.indexOf(' ');
                 var path = index>0?code.substring(0,index):code;
                 
-                var title = index>0?code.substring(index):path;
+                var title = index>0?code.substring(index+1):path;
                 var pre = typeof xooki.c.shortcuts[prefix].pre == "undefined"?'':xooki.c.shortcuts[prefix].pre;
                 var post = typeof xooki.c.shortcuts[prefix].post == "undefined"?'':xooki.c.shortcuts[prefix].post;
                 return '<a href="'+pre+path+post+'">'+title+'</a>';
@@ -608,9 +618,17 @@ xooki.input = {
                 var index = code.indexOf(' ');
                 var id = index>0?code.substring(0,index):code;
                 
-                // TODO: check page existence
-                var title = index>0?code.substring(index):xooki.toc.pages[id].title;
-                return '<a href="'+pu(id)+'">'+title+'</a>';
+                var title;
+                var url = pu(id);
+                if (index>0) {
+                	title = code.substring(index+1);
+               	} else if (typeof xooki.toc.pages[id] != "undefined") {
+               	    title = xooki.toc.pages[id].title;
+               	} else {
+               		title = code;
+               		url = u(code);
+               	}
+                return '<a href="'+url+'">'+title+'</a>';
             });
         },
         
