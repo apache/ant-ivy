@@ -153,8 +153,11 @@ public class FileUtil {
                 if (l != null) {
                     l.progress(evt.update(buffer, c, total));
                 }
-            } 
-            evt.update(EMPTY_BUFFER, 0, total);
+            }
+            
+            if (l != null) {
+            	evt.update(EMPTY_BUFFER, 0, total);
+            }
             
             // close the streams
             src.close();
