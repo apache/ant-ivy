@@ -22,8 +22,11 @@ import java.io.IOException;
 
 import junit.framework.TestCase;
 
+import org.apache.ivy.ModuleDescriptor;
+import org.apache.ivy.RetrieveTest;
 import org.apache.ivy.ant.IvyResolve;
 import org.apache.ivy.ant.IvyRetrieve;
+import org.apache.ivy.report.ResolveReport;
 import org.apache.ivy.util.IvyPatternHelper;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
@@ -80,6 +83,16 @@ public class IvyRetrieveTest extends TestCase {
         		"org1", "mod1.2", "2.0", "mod1.2", "jar", "jar")).exists());
     }
     
+    public void testRetrievePrivateWithWildcard() throws Exception {
+        _project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-381.xml");
+        _retrieve.setConf("*");
+        _retrieve.execute();
+        assertTrue(new File(IvyPatternHelper.substitute(RETRIEVE_PATTERN, 
+        		"org1", "mod1.2", "1.1", "mod1.2", "jar", "jar", "public")).exists());
+        assertTrue(new File(IvyPatternHelper.substitute(RETRIEVE_PATTERN, 
+        		"org3", "mod3.2", "1.4", "mod3.2", "jar", "jar", "private")).exists());
+    }
+
     public void testInline() throws Exception {
     	// we first resolve another ivy file
     	IvyResolve resolve = new IvyResolve();

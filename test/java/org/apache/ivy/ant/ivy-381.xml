@@ -1,0 +1,11 @@
+<ivy-module version="1.0">
+    <info organisation="apache" module="381"/>
+    <configurations>
+        <conf name="public" />
+        <conf name="private" visibility="private" />
+    </configurations>
+    <dependencies>
+		<dependency org="org1" name="mod1.2" rev="1.1" conf="public->default"/>
+		<dependency org="org3" name="mod3.2" rev="1.4" conf="private->default"/>
+    </dependencies>
+</ivy-module>
