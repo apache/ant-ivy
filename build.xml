@@ -276,7 +276,7 @@
 			<zipfileset dir="${basedir}/test/buildlist" prefix="ivy-${build.version}/test/buildlist"/>
 			<zipfileset dir="${basedir}/test/triggers" prefix="ivy-${build.version}/test/triggers"/>
 			<zipfileset dir="${basedir}/test/xsl" prefix="ivy-${build.version}/test/xsl"/>
-			<zipfileset dir="${src.dir}/fr/jayasoft/ivy/xml" includes="ivy.xsd" fullpath="ivy-${build.version}/ivy.xsd"/>
+			<zipfileset dir="${src.dir}/org/apache/ivy/xml" includes="ivy.xsd" fullpath="ivy-${build.version}/ivy.xsd"/>
 			<zipfileset dir="${basedir}" includes="LICENSE.txt" fullpath="ivy-${build.version}/LICENSE.txt"/>
 			<zipfileset dir="${basedir}" includes="CHANGES.txt" fullpath="ivy-${build.version}/CHANGES.txt"/>
 			<zipfileset dir="${basedir}" includes="ivyconf.xml" fullpath="ivy-${build.version}/ivyconf.xml"/>
