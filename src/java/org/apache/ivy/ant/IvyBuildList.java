@@ -24,6 +24,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
@@ -128,10 +130,10 @@ public class IvyBuildList extends IvyTask {
         Path path = new Path(getProject());
 
         Map buildFiles = new HashMap(); // Map (ModuleDescriptor -> File buildFile)
-        Collection mds = new ArrayList();
+        Map mdsMap = new LinkedHashMap(); // Map (String moduleName -> ModuleDescriptor)
         List independent = new ArrayList();
 
-        Set rootModuleNames = new HashSet();
+        Set rootModuleNames = new LinkedHashSet();
         if (!"*".equals(_root)) {
         	StringTokenizer st = new StringTokenizer(_root, _delimiter);
         	while (st.hasMoreTokens()) {
@@ -139,17 +141,13 @@ public class IvyBuildList extends IvyTask {
         	}
         }
         
-        Set leafModuleNames = new HashSet();
+        Set leafModuleNames = new LinkedHashSet();
         if (! "*".equals(_leaf)) {
         	StringTokenizer st = new StringTokenizer(_leaf, _delimiter);
         	while (st.hasMoreTokens()) {
         		leafModuleNames.add(st.nextToken());
         	}
         }
-        
-        List leafModuleDescriptors = new ArrayList();
-        List rootModuleDescriptors = new ArrayList();
-
         
         for (ListIterator iter = _buildFiles.listIterator(); iter.hasNext();) {
             FileSet fs = (FileSet)iter.next();
@@ -170,16 +168,7 @@ public class IvyBuildList extends IvyTask {
                     try {
                         ModuleDescriptor md = ModuleDescriptorParserRegistry.getInstance().parseDescriptor(ivy, ivyFile.toURL(), doValidate(ivy));
                         buildFiles.put(md, buildFile);
-                        mds.add(md);
-
-                        if (rootModuleNames.contains(md.getModuleRevisionId().getModuleId().getName())) {
-                        	rootModuleDescriptors.add(md);
-                        }
-
-                        if (leafModuleNames.contains(md.getModuleRevisionId().getModuleId().getName())) {
-                        	leafModuleDescriptors.add(md);
-                        }
-
+                        mdsMap.put(md.getModuleRevisionId().getModuleId().getName(), md);
                     } catch (Exception ex) {
                         if (_haltOnError) {
                             throw new BuildException("impossible to parse ivy file for "+buildFile+": ivyfile="+ivyFile+" exception="+ex, ex);
@@ -193,14 +182,10 @@ public class IvyBuildList extends IvyTask {
             }
         }
         
-        if (!"*".equals(_root) && rootModuleDescriptors.size() != rootModuleNames.size()) {
-            throw new BuildException("unable to find one or more root modules " +  rootModuleNames + " in build fileset");
-        }
+        List leafModuleDescriptors = convertModuleNamesToModuleDescriptors(mdsMap, leafModuleNames, "leaf");
+        List rootModuleDescriptors = convertModuleNamesToModuleDescriptors(mdsMap, rootModuleNames, "root");
         
-        if (!"*".equals(_leaf) && leafModuleDescriptors.size() != leafModuleNames.size()) {
-            throw new BuildException("unable to find one or more leaf modules " + leafModuleNames + " in build fileset");
-        }
-
+        Collection mds = new ArrayList(mdsMap.values());
         if (! rootModuleDescriptors.isEmpty()) {
             Message.info("Filtering modules based on roots " + rootModuleNames);
             mds = filterModulesFromRoot(mds, rootModuleDescriptors);
@@ -234,6 +219,19 @@ public class IvyBuildList extends IvyTask {
         getProject().setProperty("ivy.sorted.modules", order.toString());
     }
 
+	private List convertModuleNamesToModuleDescriptors(Map mdsMap, Set moduleNames, String kind) {
+		List mds = new ArrayList();
+		for (Iterator iter = moduleNames.iterator(); iter.hasNext();) {
+			String name = (String) iter.next();
+            ModuleDescriptor md = (ModuleDescriptor) mdsMap.get(name);
+            if (md == null) {
+            	throw new BuildException("unable to find "+kind+" module " +  name + " in build fileset");
+            }
+			mds.add(md);
+		}
+		return mds;
+	}
+
     /**
      * Returns a collection of ModuleDescriptors that are conatined in the input
      * collection of ModuleDescriptors and upon which the root module depends
@@ -251,7 +249,7 @@ public class IvyBuildList extends IvyTask {
         }
 
         // recursively process the nodes
-        Set toKeep = new HashSet();
+        Set toKeep = new LinkedHashSet();
         
         Iterator it = rootmds.iterator();
         while (it.hasNext()) {
@@ -311,7 +309,7 @@ public class IvyBuildList extends IvyTask {
         }
 
         // recursively process the nodes
-        Set toKeep = new HashSet();
+        Set toKeep = new LinkedHashSet();
         Iterator it = leafmds.iterator();
         while (it.hasNext()) {
         	ModuleDescriptor leafmd = (ModuleDescriptor) it.next();
