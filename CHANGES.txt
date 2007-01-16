@@ -16,6 +16,8 @@ for detailed view of each issue, please consult http://jira.jayasoft.org/
 - FIX: Comments in ivy.xml duplicated (IVY-336) (thanks to Gilles Scokart)
 - FIX: Ivy failure when the ivy.xml file contains non US-ASCII characters (IVY-346) (thanks to Gilles Scokart)
 - FIX: Urlresolver is not possible to use dynamic revisions on nonstandard repository structure (IVY-350) (thanks to Pierre Hägnestrand)
+- FIX: PomModuleDescriptorParser fails with nested profile dependency (IVY-392) (thanks to William Lyvers)
+
 
    version 1.4.1 - 2006-11-09
 =====================================

@@ -172,7 +172,7 @@ public class PomModuleDescriptorParser extends AbstractModuleDescriptorParser {
                 _organisation = null;
                 _module = null;
             }
-            if ("dependency".equals(qName)) {
+            if ("project/dependencies/dependency".equals(getContext())) {
                 _organisation = null;
                 _module = null;
                 _revision = null;
