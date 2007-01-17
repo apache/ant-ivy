@@ -1,0 +1,8 @@
+<ivy-module version="1.0">
+    <info organisation="apache" module="latestreleased" revision="1.0" />
+    <!-- Used by the test ResolveTest.testLatestWhenReleased -->
+    
+    <dependencies>
+ 		   <dependency org="org1" name="mod_released" rev="latest.integration" />
+    </dependencies>
+</ivy-module>

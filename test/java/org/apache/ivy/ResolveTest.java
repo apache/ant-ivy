@@ -1867,6 +1867,18 @@ public class ResolveTest extends TestCase {
         assertTrue(_ivy.getArchiveFileInCache(_cache, "org1", "mod1.2", "2.2", "mod1.2", "jar", "jar").exists());
     }
     
+
+    
+    public void testLatestWhenReleased() throws Exception {
+        //The test verify that latest.integration dependencies can be resolved with released version also.
+        ResolveReport report = _ivy.resolve(ResolveTest.class.getResource("ivy-latestreleased.xml"),
+                null, new String[] {"default"}, _cache, null, true);
+        assertFalse(report.hasError());
+                
+        // dependencies
+        assertTrue(_ivy.getIvyFileInCache(_cache, ModuleRevisionId.newInstance("org1", "mod_released", "1.1")).exists());
+    }
+
     
     public void testVersionRange1() throws Exception {
     	// mod 1.4 depends on mod1.2 [1.0,2.0[ 
