@@ -15,6 +15,9 @@
 	<property name="ivy.jar.dir" value="${ivy.home}/jars" />
 	<property name="ivy.jar.file" value="${ivy.jar.dir}/ivy.jar" />
 	
+	<property name="final.name" value="ivy.jar" />
+	<property name="final.core.name" value="ivy-core.jar" />
+	
 	<target name="download-ivy" unless="offline">
     	<mkdir dir="${ivy.jar.dir}"/>
 		<!-- download Ivy from web site so that it can be used even without any special installation -->
@@ -37,7 +40,7 @@
 
 	
 	<target name="install" depends="jar" description="build Ivy and install it in Ivy home for consecutive builds">
-		<copy file="${artifacts.build.dir}/ivy.jar" tofile="${ivy.jar.file}"/>
+		<copy file="${artifacts.build.dir}/${final.name}" tofile="${ivy.jar.file}"/>
 	</target>
 
     <!-- =================================================================
@@ -130,13 +133,13 @@
 		<echo message="date=${pubdate}${line.separator}" file="${classes.build.dir}/module.properties" append="true"/>
 		
 		<!-- package the two ivy jars -->
-  		<jar 	destfile="${artifacts.build.dir}/ivy.jar"
+  		<jar 	destfile="${artifacts.build.dir}/${final.name}"
 				basedir="${classes.build.dir}">
 			<manifest>
 				<attribute name="Build-Version" value="${build.version}"/>
 			</manifest>
 		</jar>
-  		<jar 	destfile="${artifacts.build.dir}/ivy-core.jar"
+  		<jar 	destfile="${artifacts.build.dir}/${final.core.name}"
 				basedir="${classes.build.dir}"
   				excludes="org/apache/ivy/ant/*">
 			<manifest>
@@ -297,8 +300,8 @@
 			<zipfileset dir="${basedir}" includes="ivy.xml" fullpath="ivy-${build.version}/ivy.xml"/>
 
 			<zipfileset dir="${lib.dir}" prefix="ivy-${build.version}/lib" excludes="junit*.jar,ant*.jar" />
-			<zipfileset dir="${artifacts.build.dir}" includes="ivy.jar" fullpath="ivy-${build.version}/ivy-${build.version}.jar"/>
-			<zipfileset dir="${artifacts.build.dir}" includes="ivy-core.jar" fullpath="ivy-${build.version}/ivy-core-${build.version}.jar"/>
+			<zipfileset dir="${artifacts.build.dir}" includes="${final.name}" fullpath="ivy-${build.version}/ivy-${build.version}.jar"/>
+			<zipfileset dir="${artifacts.build.dir}" includes="${final.core.name}" fullpath="ivy-${build.version}/ivy-core-${build.version}.jar"/>
 		</zip>
 	</target>
 	
