@@ -194,7 +194,7 @@
 		</ivy:addpath>
 	</target>
 	
-	<target name="test" depends="jar, init-tests">
+	<target name="test-internal" depends="jar, init-tests">
 		<javac 	srcdir="${test.dir}"
 		        destdir="${test.build.dir}"
 		        classpathref="run.classpath"
@@ -228,10 +228,15 @@
         </junit>
 	</target>
 
+	<target name="test" depends="test-internal">
+		<fail if="test.failed"
+		      message="At least one test has failed. See logs for details"/>
+	</target>
+	
     <!-- =================================================================
                REPORTS AND DOCUMENTATION
          ================================================================= -->
-	<target name="test-report" depends="test">
+	<target name="test-report" depends="test-internal">
 		<junitreport todir="${test.xml.dir}">
 			<fileset dir="${test.xml.dir}">
 				<include name="TEST-*.xml" />
