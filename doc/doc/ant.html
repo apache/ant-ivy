@@ -89,7 +89,7 @@ The ivy instance considered here is an instance of the class Ivy, which is setup
 It isn't generally necessary to understand this, but it can lead to some issues if you forget to call configure before another task and if the configure step was required in your environment.
 
 <h1>Usual cycle of main tasks</h1>
-<center><img src="/misc/ivy/images/main-tasks.png" /></center>
+<center><img src="../images/main-tasks.png" /></center>
 <h1>Example</h1>
 Here is a more complete example of build file using ivy:
 
@@ -116,11 +116,14 @@ Here is a more complete example of build file using ivy:
     </target>
 
     <target name="deliver" depends="retrieve-all">
-        <ivy:deliver deliverpattern="distrib/[artifact]-[revision].[ext]" pubrevision="1.1b4" pubdate="20050115123254" status="milestone" />
+        <ivy:deliver deliverpattern="distrib/[artifact]-[revision].[ext]"
+                     pubrevision="1.1b4" pubdate="20050115123254" status="milestone" />
     </target>
 
     <target name="publish" depends="deliver">
-        <ivy:publish resolver="internal" artifactspattern="distrib/[artifact]-[revision].[ext]" pubrevision="1.1b4" />
+        <ivy:publish resolver="internal" 
+                     artifactspattern="distrib/[artifact]-[revision].[ext]" 
+                     pubrevision="1.1b4" />
     </target>
 </project>
 </code>
