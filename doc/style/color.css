@@ -1,8 +1,8 @@
 /*
- ivy eclipse ui color theme
+ ivy color theme
 */
 body  {
-  background-color: #147;
+  background-color: #5a7418;
 }
 
 #body  {
@@ -11,25 +11,25 @@ body  {
 }
 
 h1, h2, h3, h4, h5, h6 {
-  color: #369;
+  color: #7a9438;
 }
 h1 {
   color: #fff;
-  background-color: #369;
+  background-color: #7a9438;
 }
-#main > h1 {
-  color: #369;
+.title {
+  color: #7a9438;
   background-color: #fff;
   background: none;
 }
 a:link {
-  color: #369;
+  color: #7a9438;
 }
 a:visited {
-  color: #369;
+  color: #7a9438;
 }
 a:hover, a:active {
-  color: #369;
+  color: #7a9438;
 }
 blockquote {
   color: #696969;
@@ -39,10 +39,10 @@ pre {
   border: 1px solid #ddd;
 }
 .form-item label {
-  color: #369;
+  color: #7a9438;
 }
 .item-list .title {
-  color: #369;
+  color: #7a9438;
 }
 
 /*
@@ -50,20 +50,20 @@ pre {
 */
 #header  {
   background-color: #ffffff;
-  /* border: 3px solid #69c; */
+  /* border: 3px solid #9ebf47; */
 }
 
 #top-menu {
-  background-color:#369;
-  border-top: 3px solid #69c;
-  border-bottom: 3px solid #69c;
+  background-color:#7a9438;
+  border-top: 3px solid #9ebf47;
+  border-bottom: 3px solid #9ebf47;
 }
 
 #search .form-text, #search .form-submit {
-  border: 1px solid #369;
+  border: 1px solid #7a9438;
 }
 #search .form-submit {
-  background-color: #69c;
+  background-color: #9ebf47;
 }
 
 .block h2 {
@@ -82,19 +82,19 @@ pre {
 */
 
 #navcontainer {
-	background-color:#369;
+	background-color:#7a9438;
 }
 
 #nav {
-	background-color:#369;
+	background-color:#7a9438;
 }
 
 #nav ul {
-	background-color:#369;
-	border-top: 1px solid #369;
-	border-right: 1px solid #369;
-	border-bottom: 1px solid #369;
-	border-left: 0.75em solid #369;
+	background-color:#7a9438;
+	border-top: 1px solid #7a9438;
+	border-right: 1px solid #7a9438;
+	border-bottom: 1px solid #7a9438;
+	border-left: 0.75em solid #7a9438;
 }
 
 #nav li a {
@@ -106,31 +106,37 @@ pre {
   /*
   background: #61752c;
   */
-  background: #369;
+  background: #7a9438;
 	border-top: 0;
 	border-right: 0;
-	border-bottom: 1px solid #369;
+	border-bottom: 1px solid #7a9438;
 	border-left: 0;
 }
 
 #nav li li a {
 	background: #fff;
-	color: #369;
+	color: #7a9438;
   border-top: 0;
 	border-right: 0;
-	border-bottom: 1px solid #369;
+	border-bottom: 1px solid #7a9438;
 	border-left: 0;
 }
 
 #nav a:hover,
 #nav a:active {
-	background: #69c;
+	background: #9ebf47;
 }
 
 #content {
-  border-top: 3px solid #69c;
+  border-top: 3px solid #9ebf47;
 }
 
 #forum tr.dark {
-  background: #e0edfb;
+  background: #daeddc;
+}
+
+.postit {
+  background-color: #FFDBA1;
+  border: 1px solid #FFB643;
+  color: #4E3000;
 }
