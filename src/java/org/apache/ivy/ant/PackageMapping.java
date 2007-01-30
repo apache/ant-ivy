@@ -17,7 +17,7 @@
  */
 package org.apache.ivy.ant;
 
-import org.apache.ivy.ModuleRevisionId;
+import org.apache.ivy.core.module.id.ModuleRevisionId;
 
 
 /**

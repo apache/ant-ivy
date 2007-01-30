@@ -19,7 +19,7 @@ package org.apache.ivy.tools.analyser;
 
 import java.io.File;
 
-import org.apache.ivy.ModuleRevisionId;
+import org.apache.ivy.core.module.id.ModuleRevisionId;
 
 
 public class JarModule {

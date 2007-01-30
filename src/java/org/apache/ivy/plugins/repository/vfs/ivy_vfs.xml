@@ -1,0 +1,38 @@
+<!-- For all intents and purposes this is the providers.xml file included
+     in the jakarta-vfs-common distribution with the res and tmp schemas removed.
+ -->
+ <providers>
+    <default-provider class-name="org.apache.commons.vfs.provider.url.UrlFileProvider">
+    </default-provider>
+    <provider class-name="org.apache.commons.vfs.provider.local.DefaultLocalFileProvider">
+        <scheme name="file"/>
+    </provider>
+    <provider class-name="org.apache.commons.vfs.provider.ftp.FtpFileProvider">
+        <scheme name="ftp"/>
+        <if-available class-name="org.apache.commons.net.ftp.FTPFile"/>
+    </provider>
+    <provider class-name="org.apache.commons.vfs.provider.smb.SmbFileProvider">
+        <scheme name="smb"/>
+        <if-available class-name="jcifs.smb.SmbFile"/>
+    </provider>
+    <!--
+    <provider class-name="org.apache.commons.vfs.provider.http.HttpFileProvider">
+        <scheme name="http"/>
+        <if-available class-name="org.apache.commons.httpclient.HttpClient"/>
+    </provider>
+    -->
+    <provider class-name="org.apache.ivy.plugins.repository.vfs.IvyWebdavFileProvider">
+        <scheme name="webdav"/>
+        <if-available class-name="org.apache.webdav.lib.WebdavResource"/>
+        <if-available class-name="org.apache.commons.httpclient.HttpClient"/>
+    </provider>
+    <provider class-name="org.apache.commons.vfs.provider.temp.TemporaryFileProvider">
+        <scheme name="tmp"/>
+    </provider>
+    
+    <provider class-name="org.apache.commons.vfs.provider.sftp.SftpFileProvider">
+        <scheme name="sftp"/>
+        <if-available class-name="javax.crypto.Cipher"/>
+        <if-available class-name="com.jcraft.jsch.JSch"/>
+    </provider>
+</providers>

@@ -22,9 +22,9 @@ import java.net.MalformedURLException;
 import java.text.ParseException;
 
 import org.apache.ivy.Ivy;
-import org.apache.ivy.ModuleDescriptor;
-import org.apache.ivy.external.m2.PomModuleDescriptorParser;
-import org.apache.ivy.repository.url.URLResource;
+import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
+import org.apache.ivy.plugins.parser.m2.PomModuleDescriptorParser;
+import org.apache.ivy.plugins.repository.url.URLResource;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 

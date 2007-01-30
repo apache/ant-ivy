@@ -35,12 +35,12 @@ import javax.xml.transform.sax.SAXTransformerFactory;
 import javax.xml.transform.sax.TransformerHandler;
 import javax.xml.transform.stream.StreamResult;
 
-import org.apache.ivy.Artifact;
-import org.apache.ivy.ArtifactOrigin;
 import org.apache.ivy.Ivy;
-import org.apache.ivy.IvyNode;
-import org.apache.ivy.ModuleDescriptor;
-import org.apache.ivy.ModuleId;
+import org.apache.ivy.core.cache.ArtifactOrigin;
+import org.apache.ivy.core.module.descriptor.Artifact;
+import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
+import org.apache.ivy.core.module.id.ModuleId;
+import org.apache.ivy.core.resolve.IvyNode;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.xml.sax.SAXException;

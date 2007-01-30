@@ -22,8 +22,8 @@ import java.io.File;
 import junit.framework.TestCase;
 
 import org.apache.ivy.Ivy;
-import org.apache.ivy.ModuleRevisionId;
 import org.apache.ivy.ant.IvyResolve;
+import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.Delete;
@@ -85,7 +85,7 @@ public class IvyResolveTest extends TestCase {
     }
 
     public void testWithSlashes() throws Exception {
-        _resolve.setFile(new File("test/java/org/apache/ivy/ivy-198.xml"));
+        _resolve.setFile(new File("test/java/org/apache/ivy/core/resolve/ivy-198.xml"));
         _resolve.execute();
         
         File resolvedIvyFileInCache = getIvy().getResolvedIvyFileInCache(_cache, ModuleRevisionId.newInstance("myorg/mydep", "system/module", "1.0"));

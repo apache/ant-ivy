@@ -17,7 +17,7 @@
  */
 package org.apache.ivy.ant;
 
-import org.apache.ivy.filter.Filter;
+import org.apache.ivy.util.filter.Filter;
 import org.apache.tools.ant.BuildException;
 
 

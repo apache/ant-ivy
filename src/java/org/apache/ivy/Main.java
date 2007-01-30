@@ -39,15 +39,21 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
-import org.apache.ivy.report.ResolveReport;
-import org.apache.ivy.url.CredentialsStore;
-import org.apache.ivy.url.URLHandler;
-import org.apache.ivy.url.URLHandlerDispatcher;
-import org.apache.ivy.url.URLHandlerRegistry;
+import org.apache.ivy.core.deliver.DefaultPublishingDRResolver;
+import org.apache.ivy.core.module.descriptor.Artifact;
+import org.apache.ivy.core.module.descriptor.DefaultDependencyDescriptor;
+import org.apache.ivy.core.module.descriptor.DefaultModuleDescriptor;
+import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
+import org.apache.ivy.core.module.id.ModuleRevisionId;
+import org.apache.ivy.core.report.ResolveReport;
+import org.apache.ivy.plugins.parser.xml.XmlModuleDescriptorWriter;
+import org.apache.ivy.plugins.report.XmlReportParser;
 import org.apache.ivy.util.DefaultMessageImpl;
 import org.apache.ivy.util.Message;
-import org.apache.ivy.xml.XmlModuleDescriptorWriter;
-import org.apache.ivy.xml.XmlReportParser;
+import org.apache.ivy.util.url.CredentialsStore;
+import org.apache.ivy.util.url.URLHandler;
+import org.apache.ivy.util.url.URLHandlerDispatcher;
+import org.apache.ivy.util.url.URLHandlerRegistry;
 
 
 /**

@@ -18,9 +18,9 @@
 package org.apache.ivy.ant;
 
 import org.apache.ivy.Ivy;
-import org.apache.ivy.ModuleRevisionId;
-import org.apache.ivy.matcher.PatternMatcher;
-import org.apache.ivy.util.IvyPatternHelper;
+import org.apache.ivy.core.IvyPatternHelper;
+import org.apache.ivy.core.module.id.ModuleRevisionId;
+import org.apache.ivy.plugins.matcher.PatternMatcher;
 import org.apache.tools.ant.BuildException;
 
 

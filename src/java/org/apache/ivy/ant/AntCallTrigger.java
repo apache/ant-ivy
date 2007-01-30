@@ -22,11 +22,11 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.apache.ivy.IvyContext;
-import org.apache.ivy.event.AbstractTrigger;
-import org.apache.ivy.event.IvyEvent;
-import org.apache.ivy.event.Trigger;
-import org.apache.ivy.util.IvyPatternHelper;
+import org.apache.ivy.core.IvyContext;
+import org.apache.ivy.core.IvyPatternHelper;
+import org.apache.ivy.core.event.IvyEvent;
+import org.apache.ivy.plugins.trigger.AbstractTrigger;
+import org.apache.ivy.plugins.trigger.Trigger;
 import org.apache.ivy.util.Message;
 import org.apache.ivy.util.MessageImpl;
 import org.apache.tools.ant.Project;

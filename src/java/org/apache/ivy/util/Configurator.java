@@ -29,6 +29,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 
+import org.apache.ivy.core.IvyPatternHelper;
+
 /**
  * Ant 1.6.1 like Configurator
  * 

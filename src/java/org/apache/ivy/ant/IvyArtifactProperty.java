@@ -19,11 +19,11 @@ package org.apache.ivy.ant;
 
 import java.io.File;
 
-import org.apache.ivy.Artifact;
 import org.apache.ivy.Ivy;
-import org.apache.ivy.ModuleId;
-import org.apache.ivy.util.IvyPatternHelper;
-import org.apache.ivy.xml.XmlReportParser;
+import org.apache.ivy.core.IvyPatternHelper;
+import org.apache.ivy.core.module.descriptor.Artifact;
+import org.apache.ivy.core.module.id.ModuleId;
+import org.apache.ivy.plugins.report.XmlReportParser;
 import org.apache.tools.ant.BuildException;
 
 

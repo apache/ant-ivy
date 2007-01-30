@@ -20,8 +20,8 @@ package org.apache.ivy.ant;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.ivy.Artifact;
 import org.apache.ivy.Ivy;
+import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.types.FileSet;
 import org.apache.tools.ant.types.PatternSet.NameEntry;

@@ -20,9 +20,9 @@ package org.apache.ivy.ant;
 import java.io.File;
 
 import org.apache.ivy.Ivy;
-import org.apache.ivy.ModuleRevisionId;
-import org.apache.ivy.filter.FilterHelper;
-import org.apache.ivy.matcher.PatternMatcher;
+import org.apache.ivy.core.module.id.ModuleRevisionId;
+import org.apache.ivy.plugins.matcher.PatternMatcher;
+import org.apache.ivy.util.filter.FilterHelper;
 import org.apache.tools.ant.BuildException;
 
 

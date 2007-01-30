@@ -19,8 +19,8 @@ package org.apache.ivy.ant;
 
 import java.util.Iterator;
 
-import org.apache.ivy.Artifact;
 import org.apache.ivy.Ivy;
+import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.types.Path;

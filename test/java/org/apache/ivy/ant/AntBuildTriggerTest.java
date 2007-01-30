@@ -20,7 +20,7 @@ package org.apache.ivy.ant;
 import java.io.File;
 
 import org.apache.ivy.Ivy;
-import org.apache.ivy.report.ResolveReport;
+import org.apache.ivy.core.report.ResolveReport;
 import org.apache.ivy.util.FileUtil;
 
 import junit.framework.TestCase;

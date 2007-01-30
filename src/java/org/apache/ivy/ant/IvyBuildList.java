@@ -32,11 +32,11 @@ import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
 
-import org.apache.ivy.DependencyDescriptor;
 import org.apache.ivy.Ivy;
-import org.apache.ivy.ModuleDescriptor;
-import org.apache.ivy.ModuleId;
-import org.apache.ivy.parser.ModuleDescriptorParserRegistry;
+import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
+import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
+import org.apache.ivy.core.module.id.ModuleId;
+import org.apache.ivy.plugins.parser.ModuleDescriptorParserRegistry;
 import org.apache.ivy.util.Message;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.DirectoryScanner;

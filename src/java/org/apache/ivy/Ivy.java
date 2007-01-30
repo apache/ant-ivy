@@ -50,73 +50,95 @@ import java.util.StringTokenizer;
 
 import javax.swing.event.EventListenerList;
 
-import org.apache.ivy.IvyNode.EvictionData;
-import org.apache.ivy.circular.CircularDependencyStrategy;
-import org.apache.ivy.circular.ErrorCircularDependencyStrategy;
-import org.apache.ivy.circular.IgnoreCircularDependencyStrategy;
-import org.apache.ivy.circular.WarnCircularDependencyStrategy;
-import org.apache.ivy.conflict.LatestConflictManager;
-import org.apache.ivy.conflict.NoConflictManager;
-import org.apache.ivy.conflict.StrictConflictManager;
-import org.apache.ivy.event.FilteredIvyListener;
-import org.apache.ivy.event.IvyEvent;
-import org.apache.ivy.event.IvyEventFilter;
-import org.apache.ivy.event.IvyListener;
-import org.apache.ivy.event.Trigger;
-import org.apache.ivy.event.download.PrepareDownloadEvent;
-import org.apache.ivy.event.resolve.EndResolveEvent;
-import org.apache.ivy.event.resolve.StartResolveEvent;
-import org.apache.ivy.filter.Filter;
-import org.apache.ivy.filter.FilterHelper;
-import org.apache.ivy.latest.LatestLexicographicStrategy;
-import org.apache.ivy.latest.LatestRevisionStrategy;
-import org.apache.ivy.latest.LatestTimeStrategy;
-import org.apache.ivy.matcher.ExactOrRegexpPatternMatcher;
-import org.apache.ivy.matcher.ExactPatternMatcher;
-import org.apache.ivy.matcher.GlobPatternMatcher;
-import org.apache.ivy.matcher.Matcher;
-import org.apache.ivy.matcher.MatcherHelper;
-import org.apache.ivy.matcher.ModuleIdMatcher;
-import org.apache.ivy.matcher.PatternMatcher;
-import org.apache.ivy.matcher.RegexpPatternMatcher;
-import org.apache.ivy.namespace.NameSpaceHelper;
-import org.apache.ivy.namespace.Namespace;
-import org.apache.ivy.parser.ModuleDescriptorParser;
-import org.apache.ivy.parser.ModuleDescriptorParserRegistry;
-import org.apache.ivy.report.ArtifactDownloadReport;
-import org.apache.ivy.report.ConfigurationResolveReport;
-import org.apache.ivy.report.DownloadReport;
-import org.apache.ivy.report.DownloadStatus;
-import org.apache.ivy.report.LogReportOutputter;
-import org.apache.ivy.report.ReportOutputter;
-import org.apache.ivy.report.ResolveReport;
-import org.apache.ivy.report.XmlReportOutputter;
-import org.apache.ivy.repository.TransferEvent;
-import org.apache.ivy.repository.TransferListener;
-import org.apache.ivy.repository.url.URLResource;
-import org.apache.ivy.resolver.AbstractResolver;
-import org.apache.ivy.resolver.CacheResolver;
-import org.apache.ivy.resolver.ChainResolver;
-import org.apache.ivy.resolver.DualResolver;
-import org.apache.ivy.resolver.ModuleEntry;
-import org.apache.ivy.resolver.OrganisationEntry;
-import org.apache.ivy.resolver.RevisionEntry;
-import org.apache.ivy.status.StatusManager;
-import org.apache.ivy.url.URLHandlerRegistry;
+import org.apache.ivy.core.IvyContext;
+import org.apache.ivy.core.IvyPatternHelper;
+import org.apache.ivy.core.cache.ArtifactOrigin;
+import org.apache.ivy.core.deliver.PublishingDependencyRevisionResolver;
+import org.apache.ivy.core.event.FilteredIvyListener;
+import org.apache.ivy.core.event.IvyEvent;
+import org.apache.ivy.core.event.IvyEventFilter;
+import org.apache.ivy.core.event.IvyListener;
+import org.apache.ivy.core.event.download.PrepareDownloadEvent;
+import org.apache.ivy.core.event.resolve.EndResolveEvent;
+import org.apache.ivy.core.event.resolve.StartResolveEvent;
+import org.apache.ivy.core.module.descriptor.Artifact;
+import org.apache.ivy.core.module.descriptor.Configuration;
+import org.apache.ivy.core.module.descriptor.DefaultArtifact;
+import org.apache.ivy.core.module.descriptor.DefaultDependencyDescriptor;
+import org.apache.ivy.core.module.descriptor.DefaultModuleDescriptor;
+import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
+import org.apache.ivy.core.module.descriptor.MDArtifact;
+import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
+import org.apache.ivy.core.module.id.ModuleId;
+import org.apache.ivy.core.module.id.ModuleRevisionId;
+import org.apache.ivy.core.module.status.StatusManager;
+import org.apache.ivy.core.report.ArtifactDownloadReport;
+import org.apache.ivy.core.report.ConfigurationResolveReport;
+import org.apache.ivy.core.report.DownloadReport;
+import org.apache.ivy.core.report.DownloadStatus;
+import org.apache.ivy.core.report.ResolveReport;
+import org.apache.ivy.core.resolve.DefaultModuleRevision;
+import org.apache.ivy.core.resolve.IvyNode;
+import org.apache.ivy.core.resolve.ResolveData;
+import org.apache.ivy.core.resolve.ResolvedModuleRevision;
+import org.apache.ivy.core.resolve.IvyNode.EvictionData;
+import org.apache.ivy.core.search.ModuleEntry;
+import org.apache.ivy.core.search.OrganisationEntry;
+import org.apache.ivy.core.search.RevisionEntry;
+import org.apache.ivy.core.settings.XmlSettingsParser;
+import org.apache.ivy.core.sort.ModuleDescriptorSorter;
+import org.apache.ivy.plugins.IvyAware;
+import org.apache.ivy.plugins.circular.CircularDependencyStrategy;
+import org.apache.ivy.plugins.circular.ErrorCircularDependencyStrategy;
+import org.apache.ivy.plugins.circular.IgnoreCircularDependencyStrategy;
+import org.apache.ivy.plugins.circular.WarnCircularDependencyStrategy;
+import org.apache.ivy.plugins.conflict.ConflictManager;
+import org.apache.ivy.plugins.conflict.LatestConflictManager;
+import org.apache.ivy.plugins.conflict.NoConflictManager;
+import org.apache.ivy.plugins.conflict.StrictConflictManager;
+import org.apache.ivy.plugins.latest.LatestLexicographicStrategy;
+import org.apache.ivy.plugins.latest.LatestRevisionStrategy;
+import org.apache.ivy.plugins.latest.LatestStrategy;
+import org.apache.ivy.plugins.latest.LatestTimeStrategy;
+import org.apache.ivy.plugins.matcher.ExactOrRegexpPatternMatcher;
+import org.apache.ivy.plugins.matcher.ExactPatternMatcher;
+import org.apache.ivy.plugins.matcher.GlobPatternMatcher;
+import org.apache.ivy.plugins.matcher.Matcher;
+import org.apache.ivy.plugins.matcher.MatcherHelper;
+import org.apache.ivy.plugins.matcher.ModuleIdMatcher;
+import org.apache.ivy.plugins.matcher.PatternMatcher;
+import org.apache.ivy.plugins.matcher.RegexpPatternMatcher;
+import org.apache.ivy.plugins.namespace.NameSpaceHelper;
+import org.apache.ivy.plugins.namespace.Namespace;
+import org.apache.ivy.plugins.parser.ModuleDescriptorParser;
+import org.apache.ivy.plugins.parser.ModuleDescriptorParserRegistry;
+import org.apache.ivy.plugins.parser.xml.XmlModuleDescriptorParser;
+import org.apache.ivy.plugins.parser.xml.XmlModuleDescriptorUpdater;
+import org.apache.ivy.plugins.report.LogReportOutputter;
+import org.apache.ivy.plugins.report.ReportOutputter;
+import org.apache.ivy.plugins.report.XmlReportOutputter;
+import org.apache.ivy.plugins.report.XmlReportParser;
+import org.apache.ivy.plugins.repository.TransferEvent;
+import org.apache.ivy.plugins.repository.TransferListener;
+import org.apache.ivy.plugins.repository.url.URLResource;
+import org.apache.ivy.plugins.resolver.AbstractResolver;
+import org.apache.ivy.plugins.resolver.CacheResolver;
+import org.apache.ivy.plugins.resolver.ChainResolver;
+import org.apache.ivy.plugins.resolver.DependencyResolver;
+import org.apache.ivy.plugins.resolver.DualResolver;
+import org.apache.ivy.plugins.trigger.Trigger;
+import org.apache.ivy.plugins.version.ChainVersionMatcher;
+import org.apache.ivy.plugins.version.ExactVersionMatcher;
+import org.apache.ivy.plugins.version.LatestVersionMatcher;
+import org.apache.ivy.plugins.version.SubVersionMatcher;
+import org.apache.ivy.plugins.version.VersionMatcher;
+import org.apache.ivy.plugins.version.VersionRangeMatcher;
 import org.apache.ivy.util.FileUtil;
-import org.apache.ivy.util.IvyPatternHelper;
 import org.apache.ivy.util.Message;
 import org.apache.ivy.util.PropertiesFile;
-import org.apache.ivy.version.ChainVersionMatcher;
-import org.apache.ivy.version.ExactVersionMatcher;
-import org.apache.ivy.version.LatestVersionMatcher;
-import org.apache.ivy.version.SubVersionMatcher;
-import org.apache.ivy.version.VersionMatcher;
-import org.apache.ivy.version.VersionRangeMatcher;
-import org.apache.ivy.xml.XmlIvyConfigurationParser;
-import org.apache.ivy.xml.XmlModuleDescriptorParser;
-import org.apache.ivy.xml.XmlModuleDescriptorUpdater;
-import org.apache.ivy.xml.XmlReportParser;
+import org.apache.ivy.util.filter.Filter;
+import org.apache.ivy.util.filter.FilterHelper;
+import org.apache.ivy.util.url.URLHandlerRegistry;
 import org.xml.sax.SAXException;
 
 
@@ -209,7 +231,7 @@ public class Ivy implements TransferListener {
 	private boolean _interrupted;
     
     public Ivy() {
-        setVariable("ivy.default.conf.dir", Ivy.class.getResource("conf").toExternalForm(), true);
+        setVariable("ivy.default.conf.dir", getSettingsURL().toExternalForm(), true);
         
         String ivyTypeDefs = System.getProperty("ivy.typedef.files");
         if (ivyTypeDefs != null) {
@@ -225,7 +247,7 @@ public class Ivy implements TransferListener {
             }
         } else {
             try {
-                typeDefs(Ivy.class.getResourceAsStream("typedef.properties"), true);
+                typeDefs(getSettingsURL("typedef.properties").openStream(), true);
             } catch (IOException e) {
                 Message.warn("impossible to load default type defs");
             }
@@ -300,10 +322,15 @@ public class Ivy implements TransferListener {
                 }
             }
             if (!configured) {
+            	InputStream repositoryPropsStream = null;
                 try {
-                    props.load(Ivy.class.getResourceAsStream("repository.properties"));
+                    repositoryPropsStream = getSettingsURL("repository.properties").openStream();
+					props.load(repositoryPropsStream);
                 } catch (IOException e) {
                     Message.error("unable to use internal repository configuration: "+e.getMessage());
+                    if (repositoryPropsStream != null) {
+                    	try {repositoryPropsStream.close();} catch(Exception ex) {};
+                    }
                 }
             }
             addAllVariables(props, false);
@@ -355,7 +382,7 @@ public class Ivy implements TransferListener {
         
         loadDefaultProperties();
         try {
-            new XmlIvyConfigurationParser(this).parse(configurationFile.toURL());
+            new XmlSettingsParser(this).parse(configurationFile.toURL());
         } catch (MalformedURLException e) {
             IllegalArgumentException iae = new IllegalArgumentException("given file cannot be transformed to url: "+configurationFile);
             iae.initCause(e);
@@ -379,14 +406,26 @@ public class Ivy implements TransferListener {
         getDefaultCache();
         
         loadDefaultProperties();
-        new XmlIvyConfigurationParser(this).parse(configurationURL);
+        new XmlSettingsParser(this).parse(configurationURL);
         setVariable("ivy.default.ivy.user.dir", getDefaultIvyUserDir().getAbsolutePath(), false);
         Message.verbose("configuration done ("+(System.currentTimeMillis()-start)+"ms)");
         dumpConfig();
     }
 
 	private void loadDefaultProperties() throws IOException {
-		loadProperties(Ivy.class.getResource("ivy.properties"), false);
+		loadProperties(getDefaultPropertiesURL(), false);
+	}
+
+	public static URL getDefaultPropertiesURL() {
+		return getSettingsURL("ivy.properties");
+	}
+
+	private static URL getSettingsURL() {
+		return XmlSettingsParser.class.getResource("");
+	}
+
+	private static URL getSettingsURL(String file) {
+		return XmlSettingsParser.class.getResource(file);
 	}
 
     public void configureDefault() throws ParseException, IOException {
@@ -2918,7 +2957,7 @@ public class Ivy implements TransferListener {
     }
 
     public static URL getDefaultConfigurationURL() {
-        return Ivy.class.getResource("conf/ivyconf.xml");
+        return getSettingsURL("ivyconf.xml");
     }
 
     /**

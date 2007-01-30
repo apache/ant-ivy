@@ -23,15 +23,15 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.ivy.DefaultModuleDescriptor;
 import org.apache.ivy.Ivy;
-import org.apache.ivy.ModuleId;
-import org.apache.ivy.ModuleRevisionId;
-import org.apache.ivy.filter.FilterHelper;
-import org.apache.ivy.matcher.PatternMatcher;
-import org.apache.ivy.report.ResolveReport;
-import org.apache.ivy.report.XmlReportOutputter;
+import org.apache.ivy.core.module.descriptor.DefaultModuleDescriptor;
+import org.apache.ivy.core.module.id.ModuleId;
+import org.apache.ivy.core.module.id.ModuleRevisionId;
+import org.apache.ivy.core.report.ResolveReport;
+import org.apache.ivy.plugins.matcher.PatternMatcher;
+import org.apache.ivy.plugins.report.XmlReportOutputter;
 import org.apache.ivy.util.FileUtil;
+import org.apache.ivy.util.filter.FilterHelper;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.taskdefs.XSLTProcess;
 

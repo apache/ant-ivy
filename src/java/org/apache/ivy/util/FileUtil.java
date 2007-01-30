@@ -33,7 +33,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.ivy.url.URLHandlerRegistry;
+import org.apache.ivy.util.url.URLHandlerRegistry;
 
 
 

@@ -24,10 +24,10 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.ivy.Ivy;
-import org.apache.ivy.ModuleId;
-import org.apache.ivy.report.XmlReportOutputter;
+import org.apache.ivy.core.IvyPatternHelper;
+import org.apache.ivy.core.module.id.ModuleId;
+import org.apache.ivy.plugins.report.XmlReportOutputter;
 import org.apache.ivy.util.FileUtil;
-import org.apache.ivy.util.IvyPatternHelper;
 import org.apache.ivy.util.Message;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.taskdefs.XSLTProcess;

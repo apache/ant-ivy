@@ -23,11 +23,11 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.ivy.Configuration;
 import org.apache.ivy.Ivy;
-import org.apache.ivy.ModuleDescriptor;
-import org.apache.ivy.Configuration.Visibility;
-import org.apache.ivy.parser.ModuleDescriptorParserRegistry;
+import org.apache.ivy.core.module.descriptor.Configuration;
+import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
+import org.apache.ivy.core.module.descriptor.Configuration.Visibility;
+import org.apache.ivy.plugins.parser.ModuleDescriptorParserRegistry;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 

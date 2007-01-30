@@ -25,11 +25,11 @@ import java.net.URL;
 import java.util.Properties;
 
 import org.apache.ivy.Ivy;
-import org.apache.ivy.url.CredentialsStore;
-import org.apache.ivy.url.URLHandler;
-import org.apache.ivy.url.URLHandlerDispatcher;
-import org.apache.ivy.url.URLHandlerRegistry;
 import org.apache.ivy.util.Message;
+import org.apache.ivy.util.url.CredentialsStore;
+import org.apache.ivy.util.url.URLHandler;
+import org.apache.ivy.util.url.URLHandlerDispatcher;
+import org.apache.ivy.util.url.URLHandlerRegistry;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.Property;
@@ -167,7 +167,7 @@ public class IvyConfigure extends IvyTask {
     private void loadDefaultProperties() {
         Property prop = new Property() {
             public void execute() throws BuildException {
-                URL url = Ivy.class.getResource("ivy.properties");
+                URL url = Ivy.getDefaultPropertiesURL();
                 // this is copy of loadURL code from ant Property task  (not available in 1.5.1)
                 Properties props = new Properties();
                 Message.verbose("Loading " + url);

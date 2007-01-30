@@ -22,12 +22,12 @@ import java.io.IOException;
 
 import junit.framework.TestCase;
 
-import org.apache.ivy.ModuleDescriptor;
-import org.apache.ivy.RetrieveTest;
 import org.apache.ivy.ant.IvyResolve;
 import org.apache.ivy.ant.IvyRetrieve;
-import org.apache.ivy.report.ResolveReport;
-import org.apache.ivy.util.IvyPatternHelper;
+import org.apache.ivy.core.IvyPatternHelper;
+import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
+import org.apache.ivy.core.report.ResolveReport;
+import org.apache.ivy.core.retrieve.RetrieveTest;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.Delete;

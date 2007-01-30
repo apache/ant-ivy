@@ -27,11 +27,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.ivy.Artifact;
-import org.apache.ivy.ArtifactRevisionId;
 import org.apache.ivy.Ivy;
-import org.apache.ivy.ModuleRevisionId;
-import org.apache.ivy.util.IvyPatternHelper;
+import org.apache.ivy.core.IvyPatternHelper;
+import org.apache.ivy.core.module.descriptor.Artifact;
+import org.apache.ivy.core.module.id.ArtifactRevisionId;
+import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.util.Message;
 import org.apache.tools.ant.BuildException;
 

@@ -23,14 +23,14 @@ import java.io.FileReader;
 
 import junit.framework.TestCase;
 
-import org.apache.ivy.DependencyDescriptor;
 import org.apache.ivy.Ivy;
-import org.apache.ivy.ModuleDescriptor;
-import org.apache.ivy.ModuleRevisionId;
 import org.apache.ivy.ant.IvyDeliver;
 import org.apache.ivy.ant.IvyResolve;
+import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
+import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
+import org.apache.ivy.core.module.id.ModuleRevisionId;
+import org.apache.ivy.plugins.parser.xml.XmlModuleDescriptorParser;
 import org.apache.ivy.util.FileUtil;
-import org.apache.ivy.xml.XmlModuleDescriptorParser;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.Delete;
 

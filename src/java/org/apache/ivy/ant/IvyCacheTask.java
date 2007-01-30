@@ -27,13 +27,13 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.ivy.Artifact;
-import org.apache.ivy.ModuleRevisionId;
-import org.apache.ivy.report.ArtifactDownloadReport;
-import org.apache.ivy.report.ConfigurationResolveReport;
-import org.apache.ivy.report.ResolveReport;
+import org.apache.ivy.core.module.descriptor.Artifact;
+import org.apache.ivy.core.module.id.ModuleRevisionId;
+import org.apache.ivy.core.report.ArtifactDownloadReport;
+import org.apache.ivy.core.report.ConfigurationResolveReport;
+import org.apache.ivy.core.report.ResolveReport;
+import org.apache.ivy.plugins.report.XmlReportParser;
 import org.apache.ivy.util.Message;
-import org.apache.ivy.xml.XmlReportParser;
 import org.apache.tools.ant.BuildException;
 
 

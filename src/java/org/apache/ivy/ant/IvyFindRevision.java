@@ -18,9 +18,9 @@
 package org.apache.ivy.ant;
 
 import org.apache.ivy.Ivy;
-import org.apache.ivy.ModuleId;
-import org.apache.ivy.ModuleRevisionId;
-import org.apache.ivy.ResolvedModuleRevision;
+import org.apache.ivy.core.module.id.ModuleId;
+import org.apache.ivy.core.module.id.ModuleRevisionId;
+import org.apache.ivy.core.resolve.ResolvedModuleRevision;
 import org.apache.tools.ant.BuildException;
 
 

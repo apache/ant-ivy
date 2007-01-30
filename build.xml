@@ -154,6 +154,19 @@
     <!-- =================================================================
                TESTS
          ================================================================= -->
+	<target name="build-custom-resolver-jar" depends="jar">
+		<mkdir dir="${build.dir}/custom-classpath" />
+		<javac 	srcdir="${basedir}/test/custom-classpath"
+		        destdir="${build.dir}/custom-classpath"
+		        classpathref="run.classpath"
+				source="${ivy.minimum.javaversion}"
+				target="${ivy.minimum.javaversion}"
+		        debug="${debug.mode}"
+				includeantruntime="no"/>
+  		<jar 	destfile="${test.dir}/org/apache/ivy/core/settings/custom-resolver.jar"
+				basedir="${build.dir}/custom-classpath"/>
+	</target>
+
 	<target name="init-tests-offline" if="offline">
  		    <fileset id="test.fileset" dir="${test.dir}">
  		    	<include name="**/*Test.java"/>

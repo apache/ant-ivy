@@ -20,11 +20,11 @@ package org.apache.ivy.tools.analyser;
 import java.io.File;
 import java.io.IOException;
 
-import org.apache.ivy.DefaultArtifact;
-import org.apache.ivy.ModuleDescriptor;
-import org.apache.ivy.util.IvyPatternHelper;
+import org.apache.ivy.core.IvyPatternHelper;
+import org.apache.ivy.core.module.descriptor.DefaultArtifact;
+import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
+import org.apache.ivy.plugins.parser.xml.XmlModuleDescriptorWriter;
 import org.apache.ivy.util.Message;
-import org.apache.ivy.xml.XmlModuleDescriptorWriter;
 
 
 public class RepositoryAnalyser {

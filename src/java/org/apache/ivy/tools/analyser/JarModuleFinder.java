@@ -21,11 +21,11 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.ivy.ModuleRevisionId;
-import org.apache.ivy.resolver.FileURLLister;
-import org.apache.ivy.resolver.ResolverHelper;
-import org.apache.ivy.resolver.URLLister;
-import org.apache.ivy.util.IvyPatternHelper;
+import org.apache.ivy.core.IvyPatternHelper;
+import org.apache.ivy.core.module.id.ModuleRevisionId;
+import org.apache.ivy.plugins.resolver.util.FileURLLister;
+import org.apache.ivy.plugins.resolver.util.ResolverHelper;
+import org.apache.ivy.plugins.resolver.util.URLLister;
 
 
 public class JarModuleFinder {

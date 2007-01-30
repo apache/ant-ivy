@@ -20,12 +20,12 @@ package org.apache.ivy.ant;
 import java.io.File;
 
 import org.apache.ivy.Ivy;
-import org.apache.ivy.ModuleId;
-import org.apache.ivy.filter.Filter;
-import org.apache.ivy.filter.FilterHelper;
-import org.apache.ivy.report.ResolveReport;
+import org.apache.ivy.core.module.id.ModuleId;
+import org.apache.ivy.core.report.ResolveReport;
 import org.apache.ivy.util.Message;
 import org.apache.ivy.util.StringUtils;
+import org.apache.ivy.util.filter.Filter;
+import org.apache.ivy.util.filter.FilterHelper;
 import org.apache.tools.ant.BuildException;
 
 

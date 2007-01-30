@@ -25,9 +25,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.ivy.DefaultDependencyDescriptor;
-import org.apache.ivy.DefaultModuleDescriptor;
-import org.apache.ivy.ModuleDescriptor;
+import org.apache.ivy.core.module.descriptor.DefaultDependencyDescriptor;
+import org.apache.ivy.core.module.descriptor.DefaultModuleDescriptor;
+import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.util.Message;
 
 
