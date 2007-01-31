@@ -21,10 +21,10 @@ import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
 
-import org.apache.ivy.Ivy;
 import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
 import org.apache.ivy.core.report.DownloadReport;
+import org.apache.ivy.core.resolve.DownloadOptions;
 import org.apache.ivy.core.resolve.ResolveData;
 import org.apache.ivy.core.resolve.ResolvedModuleRevision;
 import org.apache.ivy.plugins.resolver.util.ResolvedModuleRevisionProxy;
@@ -70,9 +70,7 @@ public class DualResolver extends AbstractResolver {
         data = new ResolveData(data, doValidate(data));
         final ResolvedModuleRevision mr = _ivyResolver.getDependency(dd, data);
         if (mr == null) {
-            if (getIvy() != null && getIvy().isInterrupted()) {
-            	throw new RuntimeException("interrupted");
-            }
+            checkInterrupted();
             if (isAllownomd()) {
                 Message.verbose("ivy resolver didn't find "+dd.getDependencyRevisionId()+": trying with artifact resolver");
                 return _artifactResolver.getDependency(dd, data);
@@ -94,8 +92,8 @@ public class DualResolver extends AbstractResolver {
         _artifactResolver.reportFailure(art);        
     }
 
-    public DownloadReport download(Artifact[] artifacts, Ivy ivy, File cache, boolean useOrigin) {
-        return _artifactResolver.download(artifacts, ivy, cache, useOrigin);
+    public DownloadReport download(Artifact[] artifacts, DownloadOptions options) {
+        return _artifactResolver.download(artifacts, options);
     }
 
     public DependencyResolver getArtifactResolver() {

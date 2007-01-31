@@ -17,15 +17,14 @@
  */
 package org.apache.ivy.core.event.download;
 
-import org.apache.ivy.Ivy;
 import org.apache.ivy.core.event.IvyEvent;
 import org.apache.ivy.core.module.descriptor.Artifact;
 
 public abstract class DownloadEvent extends IvyEvent {
     private Artifact _artifact;
 
-    public DownloadEvent(Ivy source, String name, Artifact artifact) {
-    	super(source, name);
+    public DownloadEvent(String name, Artifact artifact) {
+    	super(name);
         _artifact = artifact;
         addArtifactAttributes(_artifact);
     }

@@ -26,12 +26,12 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.ivy.Ivy;
 import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
 import org.apache.ivy.core.report.ArtifactDownloadReport;
 import org.apache.ivy.core.report.DownloadReport;
 import org.apache.ivy.core.report.DownloadStatus;
+import org.apache.ivy.core.resolve.DownloadOptions;
 import org.apache.ivy.core.resolve.ResolveData;
 import org.apache.ivy.core.resolve.ResolvedModuleRevision;
 import org.apache.ivy.plugins.latest.ArtifactInfo;
@@ -94,7 +94,7 @@ public class ChainResolver extends AbstractResolver {
             checkInterrupted();
             if (mr != null) {
                 boolean shouldReturn = _returnFirst;
-                shouldReturn |= !getIvy().getVersionMatcher().isDynamic(dd.getDependencyRevisionId()) && ret != null && !ret.getDescriptor().isDefault();
+                shouldReturn |= !getSettings().getVersionMatcher().isDynamic(dd.getDependencyRevisionId()) && ret != null && !ret.getDescriptor().isDefault();
                 if (!shouldReturn) {
                     // check if latest is asked and compare to return the most recent
                     String mrDesc = mr.getId()+(mr.getDescriptor().isDefault()?"[default]":"")+" from "+mr.getResolver().getName();
@@ -111,7 +111,7 @@ public class ChainResolver extends AbstractResolver {
                     } else {
                         Message.debug("\tmodule revision discarded as older: "+mrDesc);
                     }
-                    if (!getIvy().getVersionMatcher().isDynamic(dd.getDependencyRevisionId()) && !ret.getDescriptor().isDefault()) {
+                    if (!getSettings().getVersionMatcher().isDynamic(dd.getDependencyRevisionId()) && !ret.getDescriptor().isDefault()) {
                         Message.debug("\tmodule revision found and is not default: returning "+mrDesc);
                         return resolvedRevision(mr);
                     }
@@ -192,12 +192,12 @@ public class ChainResolver extends AbstractResolver {
         }
     }
 
-    public DownloadReport download(Artifact[] artifacts, Ivy ivy, File cache, boolean useOrigin) {
+    public DownloadReport download(Artifact[] artifacts, DownloadOptions options) {
         List artifactsToDownload = new ArrayList(Arrays.asList(artifacts));
         DownloadReport report = new DownloadReport();
         for (Iterator iter = _chain.iterator(); iter.hasNext() && !artifactsToDownload.isEmpty();) {
             DependencyResolver resolver = (DependencyResolver) iter.next();
-            DownloadReport r = resolver.download((Artifact[])artifactsToDownload.toArray(new Artifact[artifactsToDownload.size()]), ivy, cache, useOrigin);
+            DownloadReport r = resolver.download((Artifact[])artifactsToDownload.toArray(new Artifact[artifactsToDownload.size()]), options);
             ArtifactDownloadReport[] adr = r.getArtifactsReports();
             for (int i = 0; i < adr.length; i++) {
                 if (adr[i].getDownloadStatus() != DownloadStatus.FAILED) {

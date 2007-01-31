@@ -38,6 +38,7 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.ivy.Ivy;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
+import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.plugins.namespace.Namespace;
 import org.apache.ivy.util.Message;
 import org.apache.ivy.util.XMLHelper;
@@ -74,13 +75,13 @@ public class XmlModuleDescriptorUpdater {
         update(null, srcURL, destFile, resolvedRevisions, status, revision, pubdate, null, false);
     }
 
-    public static void update(final Ivy ivy, URL srcURL, File destFile, final Map resolvedRevisions, final String status, 
+    public static void update(final IvySettings settings, URL srcURL, File destFile, final Map resolvedRevisions, final String status, 
             final String revision, final Date pubdate, final Namespace ns, final boolean replaceInclude) 
                                 throws IOException, SAXException {
-    	update(ivy, srcURL.openStream(), destFile, resolvedRevisions, status, revision, pubdate, ns, replaceInclude);
+    	update(settings, srcURL.openStream(), destFile, resolvedRevisions, status, revision, pubdate, ns, replaceInclude);
     }
     
-    public static void update(final Ivy ivy, InputStream in, File destFile, final Map resolvedRevisions, final String status, 
+    public static void update(final IvySettings settings, InputStream in, File destFile, final Map resolvedRevisions, final String status, 
             final String revision, final Date pubdate, final Namespace ns, final boolean replaceInclude) 
                                 throws IOException, SAXException {
         if (destFile.getParentFile() != null) {
@@ -88,7 +89,7 @@ public class XmlModuleDescriptorUpdater {
         }
         OutputStream fos = new FileOutputStream(destFile);
         try {
-           update(ivy, in, fos, resolvedRevisions, status, revision, pubdate, ns, replaceInclude);
+           update(settings, in, fos, resolvedRevisions, status, revision, pubdate, ns, replaceInclude);
         } finally {
            try {
                in.close();
@@ -101,7 +102,7 @@ public class XmlModuleDescriptorUpdater {
     
     private static class UpdaterHandler extends DefaultHandler implements LexicalHandler {
     	
-    	private final Ivy ivy;
+    	private final IvySettings settings;
 		private final PrintWriter out;
 		private final Map resolvedRevisions;
 		private final String status;
@@ -111,9 +112,9 @@ public class XmlModuleDescriptorUpdater {
 		private final boolean replaceInclude;
 		private boolean inHeader = true;
 		
-		public UpdaterHandler(final Ivy ivy, final PrintWriter out, final Map resolvedRevisions, final String status, 
+		public UpdaterHandler(final IvySettings settings, final PrintWriter out, final Map resolvedRevisions, final String status, 
             final String revision, final Date pubdate, final Namespace ns, final boolean replaceInclude) {
-				this.ivy = ivy;
+				this.settings = settings;
 				this.out = out;
 				this.resolvedRevisions = resolvedRevisions;
 				this.status = status;
@@ -141,39 +142,39 @@ public class XmlModuleDescriptorUpdater {
             }
             _context.push(qName);
             if ("info".equals(qName)) {
-                _organisation = substitute(ivy, attributes.getValue("organisation"));
+                _organisation = substitute(settings, attributes.getValue("organisation"));
                 out.print("<info organisation=\""+_organisation
-                        				+"\" module=\""+substitute(ivy, attributes.getValue("module"))+"\"");
+                        				+"\" module=\""+substitute(settings, attributes.getValue("module"))+"\"");
                 if (revision != null) {
                     out.print(" revision=\""+revision+"\"");
                 } else if (attributes.getValue("revision") != null) {
-                    out.print(" revision=\""+substitute(ivy, attributes.getValue("revision"))+"\"");
+                    out.print(" revision=\""+substitute(settings, attributes.getValue("revision"))+"\"");
                 }
                 if (status != null) {
                     out.print(" status=\""+status+"\"");
                 } else {
-                    out.print(" status=\""+substitute(ivy, attributes.getValue("status"))+"\"");
+                    out.print(" status=\""+substitute(settings, attributes.getValue("status"))+"\"");
                 }
                 if (pubdate != null) {
                     out.print(" publication=\""+Ivy.DATE_FORMAT.format(pubdate)+"\"");
                 } else if (attributes.getValue("publication") != null) {
-                    out.print(" publication=\""+substitute(ivy, attributes.getValue("publication"))+"\"");
+                    out.print(" publication=\""+substitute(settings, attributes.getValue("publication"))+"\"");
                 }
                 Collection stdAtts = Arrays.asList(new String[] {"organisation", "module", "revision", "status", "publication", "namespace"});
                 if (attributes.getValue("namespace") != null) {
-                    out.print(" namespace=\""+substitute(ivy, attributes.getValue("namespace"))+"\"");
+                    out.print(" namespace=\""+substitute(settings, attributes.getValue("namespace"))+"\"");
                 }
                 for (int i=0; i<attributes.getLength(); i++) {
                 	if (!stdAtts.contains(attributes.getQName(i))) {
-                		out.print(" "+attributes.getQName(i)+"=\""+substitute(ivy, attributes.getValue(i))+"\"");
+                		out.print(" "+attributes.getQName(i)+"=\""+substitute(settings, attributes.getValue(i))+"\"");
                 	}
                 }
             } else if (replaceInclude && "include".equals(qName) && _context.contains("configurations")) {
                 try {
                     URL url;
-                    String fileName = substitute(ivy, attributes.getValue("file"));
+                    String fileName = substitute(settings, attributes.getValue("file"));
                     if (fileName == null) {
-                        String urlStr = substitute(ivy, attributes.getValue("url"));
+                        String urlStr = substitute(settings, attributes.getValue("url"));
                         url = new URL(urlStr);
                     } else {
                         url = new File(fileName).toURL();
@@ -184,11 +185,11 @@ public class XmlModuleDescriptorUpdater {
                                 String qName, Attributes attributes)
                                 throws SAXException {
                             if ("configurations".equals(qName)) {
-                                String defaultconf = substitute(ivy, attributes.getValue("defaultconfmapping"));
+                                String defaultconf = substitute(settings, attributes.getValue("defaultconfmapping"));
                                 if (defaultconf != null) {
                                     _defaultConfMapping = defaultconf;
                                 }
-                                String mappingOverride = substitute(ivy, attributes.getValue("confmappingoverride"));
+                                String mappingOverride = substitute(settings, attributes.getValue("confmappingoverride"));
                                 if (mappingOverride != null) {
                                    _confMappingOverride = Boolean.valueOf(mappingOverride);
                                 }
@@ -201,7 +202,7 @@ public class XmlModuleDescriptorUpdater {
                                 }
                                 out.print("<"+qName);
                                 for (int i=0; i<attributes.getLength(); i++) {
-                                    out.print(" "+attributes.getQName(i)+"=\""+substitute(ivy, attributes.getValue(i))+"\"");
+                                    out.print(" "+attributes.getQName(i)+"=\""+substitute(settings, attributes.getValue(i))+"\"");
                                 }
                             }
                         }
@@ -212,11 +213,11 @@ public class XmlModuleDescriptorUpdater {
                 }
             } else if ("dependency".equals(qName)) {
                 out.print("<dependency");
-                String org = substitute(ivy, attributes.getValue("org"));
+                String org = substitute(settings, attributes.getValue("org"));
                 org = org == null ? _organisation : org;
-                String module = substitute(ivy, attributes.getValue("name"));
-                String branch = substitute(ivy, attributes.getValue("branch"));
-                String revision = substitute(ivy, attributes.getValue("rev"));
+                String module = substitute(settings, attributes.getValue("name"));
+                String branch = substitute(settings, attributes.getValue("branch"));
+                String revision = substitute(settings, attributes.getValue("rev"));
                 ModuleRevisionId localMid = ModuleRevisionId.newInstance(org, module, branch, revision);
                 ModuleRevisionId systemMid = ns == null ? 
                         localMid : 
@@ -238,14 +239,14 @@ public class XmlModuleDescriptorUpdater {
                     } else if ("branch".equals(attName)) {
                         out.print(" branch=\""+systemMid.getBranch()+"\"");
                     } else {
-                        out.print(" "+attName+"=\""+substitute(ivy, attributes.getValue(attName))+"\"");
+                        out.print(" "+attName+"=\""+substitute(settings, attributes.getValue(attName))+"\"");
                     }
                 }
             } else if ("dependencies".equals(qName)) {
                 // copy
                 out.print("<"+qName);
                 for (int i=0; i<attributes.getLength(); i++) {
-                    out.print(" "+attributes.getQName(i)+"=\""+substitute(ivy, attributes.getValue(i))+"\"");
+                    out.print(" "+attributes.getQName(i)+"=\""+substitute(settings, attributes.getValue(i))+"\"");
                 }
                 // add default conf mapping if needed
                 if (_defaultConfMapping != null && attributes.getValue("defaultconfmapping") == null) {
@@ -259,14 +260,14 @@ public class XmlModuleDescriptorUpdater {
                 // copy
                 out.print("<"+qName);
                 for (int i=0; i<attributes.getLength(); i++) {
-                    out.print(" "+attributes.getQName(i)+"=\""+substitute(ivy, attributes.getValue(i))+"\"");
+                    out.print(" "+attributes.getQName(i)+"=\""+substitute(settings, attributes.getValue(i))+"\"");
                 }
             }
             _justOpen = qName;
 //            indent.append("\t");
         }
 
-        private String substitute(Ivy ivy, String value) {
+        private String substitute(IvySettings ivy, String value) {
             return ivy == null ? value : ivy.substitute(value);
         }
 
@@ -339,7 +340,7 @@ public class XmlModuleDescriptorUpdater {
 
     }
     
-    public static void update(final Ivy ivy, InputStream inStream, OutputStream outStream, final Map resolvedRevisions, final String status, 
+    public static void update(final IvySettings settings, InputStream inStream, OutputStream outStream, final Map resolvedRevisions, final String status, 
             final String revision, final Date pubdate, final Namespace ns, final boolean replaceInclude) 
                                 throws IOException, SAXException {
         final PrintWriter out = new PrintWriter(new OutputStreamWriter(outStream , "UTF-8"));
@@ -350,7 +351,7 @@ public class XmlModuleDescriptorUpdater {
         in.reset(); // reposition the stream at the beginning
             
         try {
-        	UpdaterHandler updaterHandler = new UpdaterHandler(ivy,out,resolvedRevisions,status,revision,pubdate,ns,replaceInclude);
+        	UpdaterHandler updaterHandler = new UpdaterHandler(settings,out,resolvedRevisions,status,revision,pubdate,ns,replaceInclude);
 			XMLHelper.parse(in, null, updaterHandler, updaterHandler);
         } catch (ParserConfigurationException e) {
             IllegalStateException ise = new IllegalStateException("impossible to update Ivy files: parser problem");

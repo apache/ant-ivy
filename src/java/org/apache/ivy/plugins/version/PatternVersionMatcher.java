@@ -25,7 +25,6 @@ import java.util.Map;
 
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.plugins.matcher.Matcher;
-import org.apache.ivy.plugins.version.AbstractVersionMatcher;
 
 
 /**

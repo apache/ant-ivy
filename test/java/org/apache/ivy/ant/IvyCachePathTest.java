@@ -21,8 +21,7 @@ import java.io.File;
 
 import junit.framework.TestCase;
 
-import org.apache.ivy.ant.IvyCachePath;
-import org.apache.ivy.ant.IvyResolve;
+import org.apache.ivy.TestHelper;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.Delete;
@@ -68,18 +67,18 @@ public class IvyCachePathTest extends TestCase {
         assertTrue(ref instanceof Path);
         Path p = (Path)ref;
         assertEquals(1, p.size());
-        assertEquals(_path.getIvyInstance().getArchiveFileInCache(_cache, "org1", "mod1.2", "2.0", "mod1.2", "jar", "jar").getAbsolutePath(),
+        assertEquals(getArchiveFileInCache("org1", "mod1.2", "2.0", "mod1.2", "jar", "jar").getAbsolutePath(),
                 new File(p.list()[0]).getAbsolutePath());
     }
 
-    public void testInline1() throws Exception {
+	public void testInline1() throws Exception {
     	// we first resolve another ivy file
     	IvyResolve resolve = new IvyResolve();
     	resolve.setProject(_project);
     	resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-latest.xml"));
     	resolve.execute();
     	
-    	assertTrue(_path.getIvyInstance().getArchiveFileInCache(_cache, "org1", "mod1.2", "2.2", "mod1.2", "jar", "jar").exists());
+    	assertTrue(getArchiveFileInCache("org1", "mod1.2", "2.2", "mod1.2", "jar", "jar").exists());
     	
     	// then we resolve a dependency directly
     	_path.setOrganisation("org1");
@@ -93,7 +92,7 @@ public class IvyCachePathTest extends TestCase {
         assertTrue(ref instanceof Path);
         Path p = (Path)ref;
         assertEquals(1, p.size());
-        assertEquals(_path.getIvyInstance().getArchiveFileInCache(_cache, "org1", "mod1.2", "2.0", "mod1.2", "jar", "jar").getAbsolutePath(),
+        assertEquals(getArchiveFileInCache("org1", "mod1.2", "2.0", "mod1.2", "jar", "jar").getAbsolutePath(),
                 new File(p.list()[0]).getAbsolutePath());
     }
 
@@ -110,7 +109,7 @@ public class IvyCachePathTest extends TestCase {
         assertTrue(ref instanceof Path);
         Path p = (Path)ref;
         assertEquals(1, p.size());
-        assertEquals(_path.getIvyInstance().getArchiveFileInCache(_cache, "org1", "mod1.2", "2.0", "mod1.2", "jar", "jar").getAbsolutePath(),
+        assertEquals(getArchiveFileInCache("org1", "mod1.2", "2.0", "mod1.2", "jar", "jar").getAbsolutePath(),
                 new File(p.list()[0]).getAbsolutePath());
 
         // we then resolve another ivy file
@@ -119,7 +118,7 @@ public class IvyCachePathTest extends TestCase {
     	resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-latest.xml"));
     	resolve.execute();
     	
-    	assertTrue(_path.getIvyInstance().getArchiveFileInCache(_cache, "org1", "mod1.2", "2.2", "mod1.2", "jar", "jar").exists());
+    	assertTrue(getArchiveFileInCache("org1", "mod1.2", "2.2", "mod1.2", "jar", "jar").exists());
     }
 
 
@@ -156,4 +155,9 @@ public class IvyCachePathTest extends TestCase {
             fail("failure raised an exception with haltonfailure set to false");
         }
     }
+
+    private File getArchiveFileInCache(String organisation, String module, String revision, String artifact, String type, String ext) {
+		return TestHelper.getArchiveFileInCache(_path.getIvyInstance(), _cache, 
+				organisation, module, revision, artifact, type, ext);
+	}
 }

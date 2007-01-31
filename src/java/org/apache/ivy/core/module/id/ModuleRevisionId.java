@@ -69,7 +69,7 @@ public class ModuleRevisionId extends UnmodifiableExtendableItem {
     public ModuleRevisionId(ModuleId moduleId, String branch, String revision, Map extraAttributes) {
         super(null, extraAttributes);
         _moduleId = moduleId;
-        _branch = branch == null ? IvyContext.getContext().getIvy().getDefaultBranch(moduleId) : branch;
+        _branch = branch == null ? IvyContext.getContext().getSettings().getDefaultBranch(moduleId) : branch;
         _revision = revision;
         _hash = _hashCode(); //stored for performance reasons, hashCode is very used in many maps
         setStandardAttribute(IvyPatternHelper.ORGANISATION_KEY, _moduleId.getOrganisation());

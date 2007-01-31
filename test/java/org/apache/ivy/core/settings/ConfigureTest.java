@@ -21,17 +21,17 @@ import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
 
+import junit.framework.TestCase;
+
 import org.apache.ivy.Ivy;
 import org.apache.ivy.plugins.resolver.DependencyResolver;
-
-import junit.framework.TestCase;
 
 public class ConfigureTest extends TestCase {
     public void testDefault() throws ParseException, IOException {
         Ivy ivy = new Ivy();
         ivy.configureDefault();
         
-        assertNotNull(ivy.getDefaultResolver());
+        assertNotNull(ivy.getSettings().getDefaultResolver());
     }
     
     public void testTypedefWithCustomClasspath() throws Exception {
@@ -39,7 +39,7 @@ public class ConfigureTest extends TestCase {
         ivy.setVariable("ivy.custom.test.dir", new File("test/java/org/apache/ivy/core/settings").toURL().toString());
         ivy.configure(ConfigureTest.class.getResource("ivyconf-custom-typedef.xml"));
         
-        DependencyResolver custom = ivy.getResolver("custom");
+        DependencyResolver custom = ivy.getSettings().getResolver("custom");
         assertNotNull(custom);
         assertEquals("org.apache.ivy.plugins.resolver.CustomResolver", custom.getClass().getName());
     }
@@ -49,7 +49,7 @@ public class ConfigureTest extends TestCase {
         ivy.setVariable("ivy.custom.test.dir", new File("test/java/org/apache/ivy/core/settings").toString());
         ivy.configure(ConfigureTest.class.getResource("ivyconf-custom-typedef2.xml"));
         
-        DependencyResolver custom = ivy.getResolver("custom");
+        DependencyResolver custom = ivy.getSettings().getResolver("custom");
         assertNotNull(custom);
         assertEquals("org.apache.ivy.plugins.resolver.CustomResolver", custom.getClass().getName());
     }

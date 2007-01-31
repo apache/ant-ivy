@@ -32,7 +32,6 @@ import java.util.Stack;
 
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.apache.ivy.Ivy;
 import org.apache.ivy.core.IvyPatternHelper;
 import org.apache.ivy.core.module.descriptor.Configuration;
 import org.apache.ivy.core.module.descriptor.DefaultArtifact;
@@ -43,6 +42,7 @@ import org.apache.ivy.core.module.descriptor.Configuration.Visibility;
 import org.apache.ivy.core.module.id.ArtifactId;
 import org.apache.ivy.core.module.id.ModuleId;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
+import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.plugins.matcher.ExactPatternMatcher;
 import org.apache.ivy.plugins.matcher.PatternMatcher;
 import org.apache.ivy.plugins.parser.AbstractModuleDescriptorParser;
@@ -77,7 +77,7 @@ public class PomModuleDescriptorParser extends AbstractModuleDescriptorParser {
     }
     
     private static final class Parser extends AbstractParser {
-        private Ivy _ivy;
+        private IvySettings _settings;
         private Stack _contextStack = new Stack();
         private String _organisation;
         private String _module;
@@ -88,9 +88,9 @@ public class PomModuleDescriptorParser extends AbstractModuleDescriptorParser {
         private DefaultDependencyDescriptor _dd;
         private Map _properties = new HashMap();
 
-        public Parser(ModuleDescriptorParser parser, Ivy ivy, Resource res) {
+        public Parser(ModuleDescriptorParser parser, IvySettings settings, Resource res) {
         	super(parser);
-            _ivy = ivy;
+            _settings = settings;
             setResource(res);
             _md.setResolvedPublicationDate(new Date(res.getLastModified()));
             for (int i = 0; i < MAVEN2_CONFIGURATIONS.length; i++) {
@@ -243,8 +243,8 @@ public class PomModuleDescriptorParser extends AbstractModuleDescriptorParser {
         
     }
 
-    public ModuleDescriptor parseDescriptor(Ivy ivy, URL descriptorURL, Resource res, boolean validate) throws ParseException, IOException {
-        Parser parser = new Parser(this, ivy, res);
+    public ModuleDescriptor parseDescriptor(IvySettings settings, URL descriptorURL, Resource res, boolean validate) throws ParseException, IOException {
+        Parser parser = new Parser(this, settings, res);
         try {
             XMLHelper.parse(descriptorURL, null, parser);
         } catch (SAXException ex) {

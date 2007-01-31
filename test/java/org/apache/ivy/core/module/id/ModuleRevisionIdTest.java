@@ -20,8 +20,6 @@ package org.apache.ivy.core.module.id;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.ivy.core.module.id.ModuleRevisionId;
-
 import junit.framework.TestCase;
 
 public class ModuleRevisionIdTest extends TestCase {

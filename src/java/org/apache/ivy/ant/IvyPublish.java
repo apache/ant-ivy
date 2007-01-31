@@ -32,6 +32,7 @@ import org.apache.ivy.core.IvyPatternHelper;
 import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.id.ArtifactRevisionId;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
+import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.util.Message;
 import org.apache.tools.ant.BuildException;
 
@@ -164,15 +165,17 @@ public class IvyPublish extends IvyTask {
     
     public void execute() throws BuildException {
         Ivy ivy = getIvyInstance();
-        _organisation = getProperty(_organisation, ivy, "ivy.organisation");
-        _module = getProperty(_module, ivy, "ivy.module");
-        _revision = getProperty(_revision, ivy, "ivy.revision");
-        _pubRevision = getProperty(_pubRevision, ivy, "ivy.deliver.revision");
+        IvySettings settings = ivy.getSettings();
+
+        _organisation = getProperty(_organisation, settings, "ivy.organisation");
+        _module = getProperty(_module, settings, "ivy.module");
+        _revision = getProperty(_revision, settings, "ivy.revision");
+        _pubRevision = getProperty(_pubRevision, settings, "ivy.deliver.revision");
         if (_cache == null) {
-            _cache = ivy.getDefaultCache();
+            _cache = settings.getDefaultCache();
         }
         if (_artifactspattern.isEmpty()) {
-        	String p = getProperty(null, ivy, "ivy.publish.src.artifacts.pattern");
+        	String p = getProperty(null, settings, "ivy.publish.src.artifacts.pattern");
         	if (p != null) {
         		_artifactspattern.add(p);
         	}
@@ -180,7 +183,7 @@ public class IvyPublish extends IvyTask {
         if (_srcivypattern == null) {
             _srcivypattern = getArtifactspattern();
         }
-        _status = getProperty(_status, ivy, "ivy.status");
+        _status = getProperty(_status, settings, "ivy.status");
         if (_organisation == null) {
             throw new BuildException("no organisation provided for ivy publish task: It can either be set explicitely via the attribute 'organisation' or via 'ivy.organisation' property or a prior call to <resolve/>");
         }
@@ -197,7 +200,7 @@ public class IvyPublish extends IvyTask {
             throw new BuildException("no publish deliver name: please provide it through parameter 'resolver'");
         }
         if ("working".equals(_revision)) {
-        	_revision = "working@"+Ivy.getLocalHostName();
+        	_revision = Ivy.getWorkingRevision();
         }
         Date pubdate = getPubDate(_pubdate, new Date());
         if (_pubRevision == null) {
@@ -233,7 +236,7 @@ public class IvyPublish extends IvyTask {
                 deliver.setPubrevision(getPubrevision());
                 deliver.setRevision(getRevision());
                 deliver.setStatus(getStatus());
-                deliver.setValidate(doValidate(ivy));
+                deliver.setValidate(doValidate(settings));
                 deliver.setReplacedynamicrev(isReplacedynamicrev());
                 
                 deliver.execute();
@@ -248,7 +251,7 @@ public class IvyPublish extends IvyTask {
             		_publishivy?_srcivypattern:null, 
             		getStatus(), 
             		pubdate, 
-            		(Artifact[]) _artifacts.toArray(new Artifact[_artifacts.size()]), doValidate(ivy), 
+            		(Artifact[]) _artifacts.toArray(new Artifact[_artifacts.size()]), doValidate(settings), 
             		_overwrite, 
             		_update,
             		_conf);

@@ -30,7 +30,6 @@ import java.util.Map;
 
 import javax.xml.parsers.SAXParserFactory;
 
-import org.apache.ivy.Ivy;
 import org.apache.ivy.core.module.id.ModuleId;
 import org.apache.ivy.core.module.status.StatusManager;
 import org.apache.ivy.plugins.circular.CircularDependencyStrategy;
@@ -53,7 +52,7 @@ public class XmlSettingsParser extends DefaultHandler {
 	private Configurator _configurator;
     private List _configuratorTags = Arrays.asList(new String[] {"resolvers", "namespaces", "parsers", "latest-strategies", "conflict-managers", "outputters", "version-matchers", "statuses", "circular-dependency-strategies", "triggers"});
 
-    private Ivy _ivy;
+    private IvySettings _ivy;
 
     private String _defaultResolver;
     private String _defaultCM;
@@ -61,7 +60,7 @@ public class XmlSettingsParser extends DefaultHandler {
     private String _defaultCircular;
     private String _currentConfiguratorTag;
 
-    public XmlSettingsParser(Ivy ivy) {
+    public XmlSettingsParser(IvySettings ivy) {
         _ivy = ivy;
 	}
 

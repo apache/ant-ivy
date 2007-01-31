@@ -25,6 +25,7 @@ import org.apache.ivy.Ivy;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.report.ResolveReport;
+import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.util.Message;
 import org.apache.ivy.util.filter.FilterHelper;
 import org.apache.tools.ant.BuildException;
@@ -131,11 +132,12 @@ public class IvyResolve extends IvyTask {
     
     public void execute() throws BuildException {
         Ivy ivy = getIvyInstance();
+        IvySettings settings = ivy.getSettings();
         try {
-            _conf = getProperty(_conf, ivy, "ivy.configurations");
-            _type = getProperty(_type, ivy, "ivy.resolve.default.type.filter");
+            _conf = getProperty(_conf, settings, "ivy.configurations");
+            _type = getProperty(_type, settings, "ivy.resolve.default.type.filter");
             if (_cache == null) {
-                _cache = ivy.getDefaultCache();
+                _cache = settings.getDefaultCache();
             }
             String[] confs = splitConfs(_conf);
             
@@ -160,7 +162,7 @@ public class IvyResolve extends IvyTask {
 	                    _changing,
 	                    _cache, 
 	                    getPubDate(_pubdate, null), 
-	                    doValidate(ivy),
+	                    doValidate(settings),
 	                    _useCacheOnly,
 	                    _useOrigin,
 	                    FilterHelper.getArtifactTypeFilter(_type));
@@ -173,16 +175,16 @@ public class IvyResolve extends IvyTask {
             		throw new BuildException("'module' not allowed when not using 'org' attribute");
             	}
 	            if (_file == null) {
-	                _file = new File(getProject().getBaseDir(), getProperty(ivy, "ivy.dep.file"));
+	                _file = new File(getProject().getBaseDir(), getProperty(settings, "ivy.dep.file"));
 	            }
-	            _revision = getProperty(_revision, ivy, "ivy.revision");
+	            _revision = getProperty(_revision, settings, "ivy.revision");
 	            report = ivy.resolve(
 	                    _file.toURL(), 
 	                    _revision, 
 	                    confs, 
 	                    _cache, 
 	                    getPubDate(_pubdate, null), 
-	                    doValidate(ivy),
+	                    doValidate(settings),
 	                    _useCacheOnly,
 	                    _transitive,
 	                    _useOrigin,
@@ -203,20 +205,20 @@ public class IvyResolve extends IvyTask {
 	            // put resolved infos in ant properties and ivy variables
 	            // putting them in ivy variables is important to be able to change from one resolve call to the other
 	            getProject().setProperty("ivy.organisation", md.getModuleRevisionId().getOrganisation());
-	            ivy.setVariable("ivy.organisation", md.getModuleRevisionId().getOrganisation());
+	            settings.setVariable("ivy.organisation", md.getModuleRevisionId().getOrganisation());
 	            getProject().setProperty("ivy.module", md.getModuleRevisionId().getName());
-	            ivy.setVariable("ivy.module", md.getModuleRevisionId().getName());
+	            settings.setVariable("ivy.module", md.getModuleRevisionId().getName());
 	            getProject().setProperty("ivy.revision", md.getResolvedModuleRevisionId().getRevision());
-	            ivy.setVariable("ivy.revision", md.getResolvedModuleRevisionId().getRevision());
+	            settings.setVariable("ivy.revision", md.getResolvedModuleRevisionId().getRevision());
 	            boolean hasChanged = report.hasChanged();
 	            getProject().setProperty("ivy.deps.changed", String.valueOf(hasChanged));
-	            ivy.setVariable("ivy.deps.changed", String.valueOf(hasChanged));
+	            settings.setVariable("ivy.deps.changed", String.valueOf(hasChanged));
 	            if (_conf.trim().equals("*")) {
 	                getProject().setProperty("ivy.resolved.configurations", mergeConfs(md.getConfigurationsNames()));
-	                ivy.setVariable("ivy.resolved.configurations", mergeConfs(md.getConfigurationsNames()));
+	                settings.setVariable("ivy.resolved.configurations", mergeConfs(md.getConfigurationsNames()));
 	            } else {
 	                getProject().setProperty("ivy.resolved.configurations", _conf);
-	                ivy.setVariable("ivy.resolved.configurations", _conf);
+	                settings.setVariable("ivy.resolved.configurations", _conf);
 	            }
             }
         } catch (MalformedURLException e) {

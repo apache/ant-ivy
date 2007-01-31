@@ -22,7 +22,7 @@ import java.io.File;
 import junit.framework.TestCase;
 
 import org.apache.ivy.Ivy;
-import org.apache.ivy.ant.IvyResolve;
+import org.apache.ivy.TestHelper;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
@@ -64,14 +64,26 @@ public class IvyResolveTest extends TestCase {
         _resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-simple.xml"));
         _resolve.execute();
         
-        assertTrue(getIvy().getResolvedIvyFileInCache(_cache, ModuleRevisionId.newInstance("apache", "resolve-simple", "1.0")).exists());
+        assertTrue(getResolvedIvyFileInCache(ModuleRevisionId.newInstance("apache", "resolve-simple", "1.0")).exists());
         
         // dependencies
-        assertTrue(getIvy().getIvyFileInCache(_cache, ModuleRevisionId.newInstance("org1", "mod1.2", "2.0")).exists());
-        assertTrue(getIvy().getArchiveFileInCache(_cache, "org1", "mod1.2", "2.0", "mod1.2", "jar", "jar").exists());
+        assertTrue(getIvyFileInCache(ModuleRevisionId.newInstance("org1", "mod1.2", "2.0")).exists());
+        assertTrue(getArchiveFileInCache("org1", "mod1.2", "2.0", "mod1.2", "jar", "jar").exists());
     }
 
-    public void testInline() throws Exception {
+    private File getArchiveFileInCache(String organisation, String module, String revision, String artifact, String type, String ext) {
+		return TestHelper.getArchiveFileInCache(getIvy(), _cache, 
+				organisation, module, revision, artifact, type, ext);
+	}
+    private File getIvyFileInCache(ModuleRevisionId id) {
+		return getIvy().getCacheManager(_cache).getIvyFileInCache(id);
+	}
+
+	private File getResolvedIvyFileInCache(ModuleRevisionId id) {
+		return getIvy().getCacheManager(_cache).getResolvedIvyFileInCache(id);
+	}
+
+	public void testInline() throws Exception {
     	// same as before, but expressing dependency directly without ivy file
         _resolve.setOrganisation("org1");
         _resolve.setModule("mod1.2");
@@ -80,23 +92,23 @@ public class IvyResolveTest extends TestCase {
         _resolve.execute();
         
         // dependencies
-        assertTrue(getIvy().getIvyFileInCache(_cache, ModuleRevisionId.newInstance("org1", "mod1.2", "2.0")).exists());
-        assertTrue(getIvy().getArchiveFileInCache(_cache, "org1", "mod1.2", "2.0", "mod1.2", "jar", "jar").exists());
+        assertTrue(getIvyFileInCache(ModuleRevisionId.newInstance("org1", "mod1.2", "2.0")).exists());
+        assertTrue(getArchiveFileInCache("org1", "mod1.2", "2.0", "mod1.2", "jar", "jar").exists());
     }
 
     public void testWithSlashes() throws Exception {
         _resolve.setFile(new File("test/java/org/apache/ivy/core/resolve/ivy-198.xml"));
         _resolve.execute();
         
-        File resolvedIvyFileInCache = getIvy().getResolvedIvyFileInCache(_cache, ModuleRevisionId.newInstance("myorg/mydep", "system/module", "1.0"));
+        File resolvedIvyFileInCache = getResolvedIvyFileInCache(ModuleRevisionId.newInstance("myorg/mydep", "system/module", "1.0"));
         assertTrue(resolvedIvyFileInCache.exists());
         
         // dependencies
-        assertTrue(getIvy().getIvyFileInCache(_cache, ModuleRevisionId.newInstance("org1", "mod1.2", "2.0")).exists());
-        assertTrue(getIvy().getArchiveFileInCache(_cache, "org1", "mod1.2", "2.0", "mod1.2", "jar", "jar").exists());
+        assertTrue(getIvyFileInCache(ModuleRevisionId.newInstance("org1", "mod1.2", "2.0")).exists());
+        assertTrue(getArchiveFileInCache("org1", "mod1.2", "2.0", "mod1.2", "jar", "jar").exists());
 
-        assertTrue(getIvy().getIvyFileInCache(_cache, ModuleRevisionId.newInstance("yourorg/yourdep", "yoursys/yourmod", "1.0")).exists());
-        assertTrue(getIvy().getArchiveFileInCache(_cache, "yourorg/yourdep", "yoursys/yourmod", "1.0", "yourmod", "jar", "jar").exists());
+        assertTrue(getIvyFileInCache(ModuleRevisionId.newInstance("yourorg/yourdep", "yoursys/yourmod", "1.0")).exists());
+        assertTrue(getArchiveFileInCache("yourorg/yourdep", "yoursys/yourmod", "1.0", "yourmod", "jar", "jar").exists());
     }
 
     public void testDepsChanged() throws Exception {

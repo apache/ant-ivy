@@ -21,8 +21,8 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.text.ParseException;
 
-import org.apache.ivy.Ivy;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
+import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.plugins.parser.m2.PomModuleDescriptorParser;
 import org.apache.ivy.plugins.repository.url.URLResource;
 import org.apache.tools.ant.BuildException;
@@ -61,7 +61,7 @@ public class IvyConvertPom extends IvyTask {
             if (_ivyFile == null) {
                 throw new BuildException("destination ivy file is required for convertpom task");
             }
-            ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(new Ivy(), _pomFile.toURL(), false);
+            ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(new IvySettings(), _pomFile.toURL(), false);
             PomModuleDescriptorParser.getInstance().toIvyFile(_pomFile.toURL().openStream(), new URLResource(_pomFile.toURL()), getIvyFile(), md);
         } catch (MalformedURLException e) {
             throw new BuildException("unable to convert given pom file to url: "+_pomFile+": "+e, e);

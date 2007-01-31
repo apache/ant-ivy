@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
 
-import org.apache.ivy.Ivy;
+import org.apache.ivy.core.IvyContext;
 import org.apache.ivy.core.IvyPatternHelper;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.plugins.matcher.Matcher;
@@ -91,7 +91,7 @@ public class Match {
 		String pattern = getPattern();
 		pattern = IvyPatternHelper.substituteVariables(pattern, variables);
 		
-		PatternMatcher pMatcher = Ivy.getCurrent().getMatcher(_matcher);
+		PatternMatcher pMatcher = IvyContext.getContext().getSettings().getMatcher(_matcher);
 		return pMatcher.getMatcher(pattern);
 	}
 	

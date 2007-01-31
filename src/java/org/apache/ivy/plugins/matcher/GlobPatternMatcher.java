@@ -19,7 +19,6 @@ package org.apache.ivy.plugins.matcher;
 
 import java.util.regex.PatternSyntaxException;
 
-import org.apache.ivy.util.Message;
 import org.apache.oro.text.GlobCompiler;
 import org.apache.oro.text.regex.MalformedPatternException;
 import org.apache.oro.text.regex.Pattern;

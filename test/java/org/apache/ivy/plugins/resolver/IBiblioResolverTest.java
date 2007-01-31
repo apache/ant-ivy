@@ -22,7 +22,8 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
-import org.apache.ivy.Ivy;
+import org.apache.ivy.core.cache.CacheManager;
+import org.apache.ivy.core.event.EventManager;
 import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.DefaultArtifact;
 import org.apache.ivy.core.module.descriptor.DefaultDependencyArtifactDescriptor;
@@ -31,10 +32,13 @@ import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.report.ArtifactDownloadReport;
 import org.apache.ivy.core.report.DownloadReport;
 import org.apache.ivy.core.report.DownloadStatus;
+import org.apache.ivy.core.resolve.DownloadOptions;
 import org.apache.ivy.core.resolve.ResolveData;
+import org.apache.ivy.core.resolve.ResolveEngine;
 import org.apache.ivy.core.resolve.ResolvedModuleRevision;
+import org.apache.ivy.core.settings.IvySettings;
+import org.apache.ivy.core.sort.SortEngine;
 import org.apache.ivy.plugins.matcher.ExactPatternMatcher;
-import org.apache.ivy.plugins.resolver.IBiblioResolver;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.Delete;
 
@@ -45,15 +49,21 @@ import org.apache.tools.ant.taskdefs.Delete;
 public class IBiblioResolverTest extends TestCase {
 	// remote.test
 
-	private File _cache;
+    private IvySettings _settings;
+    private ResolveEngine _engine;
     private ResolveData _data;
-    private Ivy _ivy;
+    private File _cache;
+	private CacheManager _cacheManager;
+    
     
     protected void setUp() throws Exception {
+    	_settings = new IvySettings();
+        _engine = new ResolveEngine(_settings, new EventManager(), new SortEngine(_settings));
         _cache = new File("build/cache");
-        _ivy = new Ivy();
-        _data = new ResolveData(_ivy, _cache, null, null, true);
+        _data = new ResolveData(_engine, _cache, null, null, true);
         _cache.mkdirs();
+        _cacheManager = new CacheManager(_settings, _cache);
+        _settings.setDefaultCache(_cache);
     }
     
     protected void tearDown() throws Exception {
@@ -65,10 +75,9 @@ public class IBiblioResolverTest extends TestCase {
     
     public void testDefaults() {
         IBiblioResolver resolver = new IBiblioResolver();
-        Ivy ivy = new Ivy();
-        ivy.setVariable("ivy.ibiblio.default.artifact.root", "http://www.ibiblio.org/mymaven/");
-        ivy.setVariable("ivy.ibiblio.default.artifact.pattern", "[module]/jars/[artifact]-[revision].jar");
-        resolver.setIvy(ivy);
+        _settings.setVariable("ivy.ibiblio.default.artifact.root", "http://www.ibiblio.org/mymaven/");
+        _settings.setVariable("ivy.ibiblio.default.artifact.pattern", "[module]/jars/[artifact]-[revision].jar");
+        resolver.setSettings(_settings);
         List l = resolver.getArtifactPatterns();
         assertNotNull(l);
         assertEquals(1, l.size());
@@ -76,27 +85,26 @@ public class IBiblioResolverTest extends TestCase {
     }
 
     public void testInitFromConf() throws Exception {
-        Ivy ivy = new Ivy();
-        ivy.setVariable("ivy.ibiblio.default.artifact.root", "http://www.ibiblio.org/maven/");
-        ivy.setVariable("ivy.ibiblio.default.artifact.pattern", "[module]/jars/[artifact]-[revision].jar");
-        ivy.setVariable("my.ibiblio.root", "http://www.ibiblio.org/mymaven/");
-        ivy.setVariable("my.ibiblio.pattern", "[module]/[artifact]-[revision].jar");
-        ivy.configure(IBiblioResolverTest.class.getResource("ibiblioresolverconf.xml"));
-        IBiblioResolver resolver = (IBiblioResolver)ivy.getResolver("ibiblioA");
+        _settings.setVariable("ivy.ibiblio.default.artifact.root", "http://www.ibiblio.org/maven/");
+        _settings.setVariable("ivy.ibiblio.default.artifact.pattern", "[module]/jars/[artifact]-[revision].jar");
+        _settings.setVariable("my.ibiblio.root", "http://www.ibiblio.org/mymaven/");
+        _settings.setVariable("my.ibiblio.pattern", "[module]/[artifact]-[revision].jar");
+        _settings.load(IBiblioResolverTest.class.getResource("ibiblioresolverconf.xml"));
+        IBiblioResolver resolver = (IBiblioResolver)_settings.getResolver("ibiblioA");
         assertNotNull(resolver);
         List l = resolver.getArtifactPatterns();
         assertNotNull(l);
         assertEquals(1, l.size());
         assertEquals("http://www.ibiblio.org/mymaven/[module]/[artifact]-[revision].jar", l.get(0));
         
-        resolver = (IBiblioResolver)ivy.getResolver("ibiblioB");
+        resolver = (IBiblioResolver)_settings.getResolver("ibiblioB");
         assertNotNull(resolver);
         l = resolver.getArtifactPatterns();
         assertNotNull(l);
         assertEquals(1, l.size());
         assertEquals("http://www.ibiblio.org/mymaven/[organisation]/jars/[artifact]-[revision].jar", l.get(0));
 
-        resolver = (IBiblioResolver)ivy.getResolver("ibiblioC");
+        resolver = (IBiblioResolver)_settings.getResolver("ibiblioC");
         assertTrue(resolver.isM2compatible());
         assertNotNull(resolver);
         l = resolver.getArtifactPatterns();
@@ -104,7 +112,7 @@ public class IBiblioResolverTest extends TestCase {
         assertEquals(1, l.size());
         assertEquals("http://www.ibiblio.org/maven2/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]", l.get(0));
 
-        resolver = (IBiblioResolver)ivy.getResolver("ibiblioD");
+        resolver = (IBiblioResolver)_settings.getResolver("ibiblioD");
         assertFalse(resolver.isM2compatible());
         assertNotNull(resolver);
         l = resolver.getArtifactPatterns();
@@ -122,7 +130,7 @@ public class IBiblioResolverTest extends TestCase {
         IBiblioResolver resolver = new IBiblioResolver();
         resolver.setRoot(ibiblioRoot);
         resolver.setName("test");
-        resolver.setIvy(_ivy);
+        resolver.setSettings(_settings);
         assertEquals("test", resolver.getName());
         
         ModuleRevisionId mrid = ModuleRevisionId.newInstance("apache", "commons-fileupload", "1.0");
@@ -131,7 +139,7 @@ public class IBiblioResolverTest extends TestCase {
         assertEquals(mrid, rmr.getId());
 
         DefaultArtifact artifact = new DefaultArtifact(mrid, rmr.getPublicationDate(), "commons-fileupload", "jar", "jar");
-        DownloadReport report = resolver.download(new Artifact[] {artifact}, _data.getIvy(), _cache);
+        DownloadReport report = resolver.download(new Artifact[] {artifact}, new DownloadOptions(_settings, _cache));
         assertNotNull(report);
         
         assertEquals(1, report.getArtifactsReports().length);
@@ -143,7 +151,7 @@ public class IBiblioResolverTest extends TestCase {
         assertEquals(DownloadStatus.SUCCESSFUL, ar.getDownloadStatus());
 
         // test to ask to download again, should use cache
-        report = resolver.download(new Artifact[] {artifact}, _data.getIvy(), _cache);
+        report = resolver.download(new Artifact[] {artifact}, new DownloadOptions(_settings, _cache));
         assertNotNull(report);
         
         assertEquals(1, report.getArtifactsReports().length);
@@ -164,7 +172,7 @@ public class IBiblioResolverTest extends TestCase {
         IBiblioResolver resolver = new IBiblioResolver();
         resolver.setRoot(ibiblioRoot);
         resolver.setName("test");
-        resolver.setIvy(_ivy);
+        resolver.setSettings(_settings);
         assertEquals("test", resolver.getName());
         
         ModuleRevisionId mrid = ModuleRevisionId.newInstance("apache", "nanning", "0.9");
@@ -177,7 +185,7 @@ public class IBiblioResolverTest extends TestCase {
 
         DefaultArtifact profiler = new DefaultArtifact(mrid, rmr.getPublicationDate(), "nanning-profiler", "jar", "jar");
         DefaultArtifact trace = new DefaultArtifact(mrid, rmr.getPublicationDate(), "nanning-trace", "jar", "jar");
-        DownloadReport report = resolver.download(new Artifact[] {profiler, trace}, _data.getIvy(), _cache);
+        DownloadReport report = resolver.download(new Artifact[] {profiler, trace}, new DownloadOptions(_settings, _cache));
         assertNotNull(report);
         
         assertEquals(2, report.getArtifactsReports().length);
@@ -195,7 +203,7 @@ public class IBiblioResolverTest extends TestCase {
         assertEquals(DownloadStatus.SUCCESSFUL, ar.getDownloadStatus());
 
         // test to ask to download again, should use cache
-        report = resolver.download(new Artifact[] {profiler, trace}, _data.getIvy(), _cache);
+        report = resolver.download(new Artifact[] {profiler, trace}, new DownloadOptions(_settings, _cache));
         assertNotNull(report);
         
         assertEquals(2, report.getArtifactsReports().length);
@@ -222,7 +230,7 @@ public class IBiblioResolverTest extends TestCase {
         IBiblioResolver resolver = new IBiblioResolver();
         resolver.setRoot(ibiblioRoot);
         resolver.setName("test");
-        resolver.setIvy(_ivy);
+        resolver.setSettings(_settings);
 
         assertNull(resolver.getDependency(new DefaultDependencyDescriptor(ModuleRevisionId.newInstance("unknown", "unknown", "1.0"), false), _data));
     }

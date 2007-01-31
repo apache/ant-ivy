@@ -22,7 +22,7 @@ import java.io.File;
 import junit.framework.TestCase;
 
 import org.apache.ivy.Ivy;
-import org.apache.ivy.ant.IvyConfigure;
+import org.apache.ivy.core.settings.IvySettings;
 import org.apache.tools.ant.Project;
 
 
@@ -45,12 +45,14 @@ public class IvyConfigureTest extends TestCase {
         
         Ivy ivy = getIvyInstance();
         assertNotNull(ivy);
+		IvySettings settings = ivy.getSettings();
+        assertNotNull(settings);
         
-        assertEquals(new File("build/cache"), ivy.getDefaultCache());
-        assertEquals(new File("test/repositories/ivyconf.xml").getAbsolutePath(), ivy.getVariables().get("ivy.conf.file"));
-        assertEquals(new File("test/repositories/ivyconf.xml").toURL().toExternalForm(), ivy.getVariables().get("ivy.conf.url"));
-        assertEquals(new File("test/repositories").getAbsolutePath(), ivy.getVariables().get("ivy.conf.dir"));
-        assertEquals("myvalue", ivy.getVariables().get("myproperty"));
+        assertEquals(new File("build/cache"), settings.getDefaultCache());
+        assertEquals(new File("test/repositories/ivyconf.xml").getAbsolutePath(), settings.getVariables().get("ivy.conf.file"));
+        assertEquals(new File("test/repositories/ivyconf.xml").toURL().toExternalForm(), settings.getVariables().get("ivy.conf.url"));
+        assertEquals(new File("test/repositories").getAbsolutePath(), settings.getVariables().get("ivy.conf.dir"));
+        assertEquals("myvalue", settings.getVariables().get("myproperty"));
     }
 
     public void testURL() throws Exception {
@@ -63,13 +65,12 @@ public class IvyConfigureTest extends TestCase {
         
         _configure.execute();
         
-        Ivy ivy = getIvyInstance();
-        assertNotNull(ivy);
+        IvySettings settings = getIvyInstance().getSettings();
         
-        assertEquals(new File("build/cache"), ivy.getDefaultCache());
-        assertEquals(confUrl, ivy.getVariables().get("ivy.conf.url"));
-        assertEquals(confDirUrl, ivy.getVariables().get("ivy.conf.dir"));
-        assertEquals("myvalue", ivy.getVariables().get("myproperty"));
+        assertEquals(new File("build/cache"), settings.getDefaultCache());
+        assertEquals(confUrl, settings.getVariables().get("ivy.conf.url"));
+        assertEquals(confDirUrl, settings.getVariables().get("ivy.conf.dir"));
+        assertEquals("myvalue", settings.getVariables().get("myproperty"));
     }
 
     public void testAntProperties() throws Exception {
@@ -78,11 +79,11 @@ public class IvyConfigureTest extends TestCase {
         
         _configure.execute();
         
-        Ivy ivy = getIvyInstance();
-        assertNotNull(ivy);
+        IvySettings settings = getIvyInstance().getSettings();
+        assertNotNull(settings);
         
-        assertEquals("myvalue", ivy.getVariables().get("myproperty"));
-        assertEquals("myvalue", ivy.getDefaultCache().getName());
+        assertEquals("myvalue", settings.getVariables().get("myproperty"));
+        assertEquals("myvalue", settings.getDefaultCache().getName());
     }
 
     public void testOverrideVariables() throws Exception {
@@ -91,10 +92,10 @@ public class IvyConfigureTest extends TestCase {
         
         _configure.execute();
         
-        Ivy ivy = getIvyInstance();
-        assertNotNull(ivy);
+        IvySettings settings = getIvyInstance().getSettings();
+        assertNotNull(settings);
         
-        assertEquals("lib/test/[artifact]-[revision].[ext]", ivy.getVariables().get("ivy.retrieve.pattern"));
+        assertEquals("lib/test/[artifact]-[revision].[ext]", settings.getVariables().get("ivy.retrieve.pattern"));
     }
 
     private Ivy getIvyInstance() {

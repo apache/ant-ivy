@@ -17,7 +17,6 @@
  */
 package org.apache.ivy.core.event.resolve;
 
-import org.apache.ivy.Ivy;
 import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
 import org.apache.ivy.core.resolve.ResolvedModuleRevision;
 import org.apache.ivy.plugins.resolver.DependencyResolver;
@@ -26,8 +25,8 @@ public class EndResolveDependencyEvent extends ResolveDependencyEvent {
 	public static final String NAME = "post-resolve-dependency";
 	private ResolvedModuleRevision _module;
 
-	public EndResolveDependencyEvent(Ivy source, DependencyResolver resolver, DependencyDescriptor dd, ResolvedModuleRevision module) {
-		super(source, NAME, resolver, dd);
+	public EndResolveDependencyEvent(DependencyResolver resolver, DependencyDescriptor dd, ResolvedModuleRevision module) {
+		super(NAME, resolver, dd);
 		_module = module;
 		if (_module != null) {
 			// override revision from the dependency descriptor

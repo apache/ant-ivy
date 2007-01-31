@@ -43,7 +43,6 @@ import org.apache.ivy.core.module.descriptor.DependencyArtifactDescriptor;
 import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
 import org.apache.ivy.core.module.descriptor.MDArtifact;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
-import org.apache.ivy.core.module.descriptor.Configuration.Visibility;
 import org.apache.ivy.core.module.id.ArtifactId;
 import org.apache.ivy.core.module.id.ModuleId;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
@@ -322,7 +321,7 @@ public class IvyNode {
             throw new IllegalStateException("impossible to get conflict manager when data has not been loaded");
         }
         ConflictManager cm = _md.getConflictManager(mid);
-        return cm == null ? _data.getIvy().getDefaultConflictManager() : cm;
+        return cm == null ? _data.getSettings().getDefaultConflictManager() : cm;
     }
     
     public Collection getResolvedNodes(ModuleId mid, String rootModuleConf) {
@@ -617,7 +616,7 @@ public class IvyNode {
 		if (!isEvicted(_rootModuleConf) && (hasConfigurationsToLoad() || !isRootModuleConfLoaded()) && !hasProblem()) {
             markRootModuleConfLoaded();
             if (_md == null) {
-                DependencyResolver resolver = _data.getIvy().getResolver(getModuleId());
+                DependencyResolver resolver = _data.getSettings().getResolver(getModuleId());
                 if (resolver == null) {
                     Message.error("no resolver found for "+getModuleId()+": check your configuration");
                     _problem = new RuntimeException("no resolver found for "+getModuleId()+": check your configuration");
@@ -627,21 +626,21 @@ public class IvyNode {
                 try {
                     Message.debug("\tusing "+resolver+" to resolve "+getId());
                     DependencyDescriptor dependencyDescriptor = getDependencyDescriptor(getParent());
-                    _data.getIvy().fireIvyEvent(new StartResolveDependencyEvent(_data.getIvy(), resolver, dependencyDescriptor));
+                    _data.getEventManager().fireIvyEvent(new StartResolveDependencyEvent(resolver, dependencyDescriptor));
                     _module = resolver.getDependency(dependencyDescriptor, _data);
-                    _data.getIvy().fireIvyEvent(new EndResolveDependencyEvent(_data.getIvy(), resolver, dependencyDescriptor, _module));
+                    _data.getEventManager().fireIvyEvent(new EndResolveDependencyEvent(resolver, dependencyDescriptor, _module));
                     if (_module != null) {
-                        _data.getIvy().saveResolver(_data.getCache(), _module.getDescriptor(), _module.getResolver().getName());
-                        _data.getIvy().saveArtResolver(_data.getCache(), _module.getDescriptor(), _module.getArtifactResolver().getName());
-                        if (_data.getIvy().logModuleWhenFound()) {
+                        _data.getCacheManager().saveResolver(_module.getDescriptor(), _module.getResolver().getName());
+                        _data.getCacheManager().saveArtResolver(_module.getDescriptor(), _module.getArtifactResolver().getName());
+                        if (_data.getSettings().logModuleWhenFound()) {
                             Message.info("\tfound "+_module.getId()+" in "+_module.getResolver().getName());
                         } else {
                             Message.verbose("\tfound "+_module.getId()+" in "+_module.getResolver().getName());
                         }
                         
-                        if (_data.getIvy().getVersionMatcher().isDynamic(getId())) {
+                        if (_data.getSettings().getVersionMatcher().isDynamic(getId())) {
                             // IVY-56: check if revision has actually been resolved
-                            if (_data.getIvy().getVersionMatcher().isDynamic(_module.getId())) {
+                            if (_data.getSettings().getVersionMatcher().isDynamic(_module.getId())) {
                                 Message.error("impossible to resolve dynamic revision for "+getId()+": check your configuration and make sure revision is part of your pattern");
                                 _problem = new RuntimeException("impossible to resolve dynamic revision");
                                 _data.getReport().addDependency(this);
@@ -673,7 +672,7 @@ public class IvyNode {
                                 }
                                 _data.register(getId(), resolved); // this actually discards the node
 
-                                if (_data.getIvy().logResolvedRevision()) {
+                                if (_data.getSettings().logResolvedRevision()) {
                                     Message.info("\t["+_module.getId().getRevision()+"] "+getId());
                                 } else {
                                     Message.verbose("\t["+_module.getId().getRevision()+"] "+getId());
@@ -699,8 +698,8 @@ public class IvyNode {
                     return false;
                 } else {
                     loaded = true;
-                    if (_data.getIvy().getVersionMatcher().isDynamic(getId())) {
-                        if (_data.getIvy().logResolvedRevision()) {
+                    if (_data.getSettings().getVersionMatcher().isDynamic(getId())) {
+                        if (_data.getSettings().logResolvedRevision()) {
                             Message.info("\t["+_module.getId().getRevision()+"] "+getId());
                         } else {
                             Message.verbose("\t["+_module.getId().getRevision()+"] "+getId());
@@ -709,7 +708,7 @@ public class IvyNode {
                     _md = _module.getDescriptor();
                     // if the revision was a dynamic one (which has now be resolved)
                     // store also it to cache the result
-                    if (_data.getIvy().getVersionMatcher().isDynamic(getId())) {
+                    if (_data.getSettings().getVersionMatcher().isDynamic(getId())) {
                         _data.register(_module.getId(), this);
                     }
                     _confsToFetch.remove("*");

@@ -21,7 +21,6 @@ import java.io.File;
 
 import junit.framework.TestCase;
 
-import org.apache.ivy.ant.IvyRepositoryReport;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.Delete;
 

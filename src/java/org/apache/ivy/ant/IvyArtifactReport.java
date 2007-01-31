@@ -37,10 +37,12 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.apache.ivy.Ivy;
 import org.apache.ivy.core.cache.ArtifactOrigin;
+import org.apache.ivy.core.cache.CacheManager;
 import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleId;
 import org.apache.ivy.core.resolve.IvyNode;
+import org.apache.ivy.core.settings.IvySettings;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.xml.sax.SAXException;
@@ -94,19 +96,20 @@ public class IvyArtifactReport extends IvyTask {
         }
 
         Ivy ivy = getIvyInstance();
+        IvySettings settings = ivy.getSettings();
 
         ensureResolved(isHaltonfailure(), false, null, null);
 
-        String _organisation = getProperty(null, ivy, "ivy.organisation");
-        String _module = getProperty(null, ivy, "ivy.module");
+        String _organisation = getProperty(null, settings, "ivy.organisation");
+        String _module = getProperty(null, settings, "ivy.module");
 
         if (_cache == null) {
-            _cache = ivy.getDefaultCache();
+            _cache = settings.getDefaultCache();
         }
-        _pattern = getProperty(_pattern, ivy, "ivy.retrieve.pattern");
-        _conf = getProperty(_conf, ivy, "ivy.resolved.configurations");
+        _pattern = getProperty(_pattern, settings, "ivy.retrieve.pattern");
+        _conf = getProperty(_conf, settings, "ivy.resolved.configurations");
         if ("*".equals(_conf)) {
-            _conf = getProperty(ivy, "ivy.resolved.configurations");
+            _conf = getProperty(settings, "ivy.resolved.configurations");
             if (_conf == null) {
                 throw new BuildException("bad provided for ivy artifact report task: * can only be used with a prior call to <resolve/>");
             }
@@ -123,7 +126,7 @@ public class IvyArtifactReport extends IvyTask {
         }
         try {
             String[] confs = splitConfs(_conf);
-            IvyNode[] dependencies = ivy.getDependencies((ModuleDescriptor) getProject().getReference("ivy.resolved.descriptor"), confs, _cache, new Date(), null, doValidate(ivy));
+            IvyNode[] dependencies = ivy.getDependencies((ModuleDescriptor) getProject().getReference("ivy.resolved.descriptor"), confs, _cache, new Date(), null, doValidate(settings));
 
             Map artifactsToCopy = ivy.determineArtifactsToCopy(new ModuleId(_organisation, _module), confs, _cache, _pattern, null);
             Map moduleRevToArtifactsMap = new HashMap();
@@ -137,7 +140,8 @@ public class IvyArtifactReport extends IvyTask {
                 moduleRevArtifacts.add(artifact);
             }
 
-            generateXml(ivy, dependencies, moduleRevToArtifactsMap, artifactsToCopy);
+            CacheManager cache = getCacheManager();
+            generateXml(cache, dependencies, moduleRevToArtifactsMap, artifactsToCopy);
         } catch (ParseException e) {
             log(e.getMessage(), Project.MSG_ERR);
             throw new BuildException("syntax errors in ivy file: "+e, e);
@@ -145,8 +149,7 @@ public class IvyArtifactReport extends IvyTask {
             throw new BuildException("impossible to generate report: "+e, e);
         }
     }
-
-    private void generateXml(Ivy ivy, IvyNode[] dependencies, Map moduleRevToArtifactsMap, Map artifactsToCopy) {
+    private void generateXml(CacheManager cache, IvyNode[] dependencies, Map moduleRevToArtifactsMap, Map artifactsToCopy) {
         try {
             FileOutputStream fileOuputStream = new FileOutputStream(_tofile);
             try {
@@ -170,9 +173,9 @@ public class IvyArtifactReport extends IvyTask {
 
                             startArtifact(saxHandler, artifact);
 
-                            writeOriginLocationIfPresent(ivy, saxHandler, artifact);
+                            writeOriginLocationIfPresent(cache, saxHandler, artifact);
 
-                            writeCacheLocation(ivy, saxHandler, artifact);
+                            writeCacheLocation(cache, saxHandler, artifact);
 
                             Set artifactDestPaths = (Set) artifactsToCopy.get(artifact);
                             for (Iterator iterator = artifactDestPaths.iterator(); iterator.hasNext();) {
@@ -224,8 +227,8 @@ public class IvyArtifactReport extends IvyTask {
         saxHandler.startElement(null, "artifact", "artifact", artifactAttrs);
     }
 
-    private void writeOriginLocationIfPresent(Ivy ivy, TransformerHandler saxHandler, Artifact artifact) throws IOException, SAXException {
-    	ArtifactOrigin origin = ivy.getSavedArtifactOrigin(_cache, artifact);
+    private void writeOriginLocationIfPresent(CacheManager cache, TransformerHandler saxHandler, Artifact artifact) throws IOException, SAXException {
+    	ArtifactOrigin origin = cache.getSavedArtifactOrigin(artifact);
     	if (origin != null) {
     		String originName = origin.getLocation();
     		boolean isOriginLocal = origin.isLocal();
@@ -249,9 +252,9 @@ public class IvyArtifactReport extends IvyTask {
         }
     }
 
-    private void writeCacheLocation(Ivy ivy, TransformerHandler saxHandler, Artifact artifact) throws SAXException {
-    	ArtifactOrigin origin = ivy.getSavedArtifactOrigin(_cache, artifact);
-        File archiveInCacheFile = ivy.getArchiveFileInCache(_cache, artifact, origin, false);
+    private void writeCacheLocation(CacheManager cache, TransformerHandler saxHandler, Artifact artifact) throws SAXException {
+    	ArtifactOrigin origin = cache.getSavedArtifactOrigin(artifact);
+        File archiveInCacheFile = cache.getArchiveFileInCache(artifact, origin, false);
         StringBuffer archiveInCachePathWithSlashes = new StringBuffer(1000);
         replaceFileSeparatorWithSlash(archiveInCacheFile, archiveInCachePathWithSlashes);
 
@@ -305,5 +308,10 @@ public class IvyArtifactReport extends IvyTask {
         }
         return (p.startsWith(l)) ? p.substring(l.length()) : p;
     }
+
+	protected CacheManager getCacheManager() {
+		CacheManager cache = new CacheManager(getSettings(), _cache);
+		return cache;
+	}
 
 }

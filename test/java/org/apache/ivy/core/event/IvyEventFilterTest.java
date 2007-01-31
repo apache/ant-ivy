@@ -19,16 +19,15 @@ package org.apache.ivy.core.event;
 
 import java.util.Date;
 
+import junit.framework.TestCase;
+
 import org.apache.ivy.Ivy;
-import org.apache.ivy.core.event.IvyEventFilter;
 import org.apache.ivy.core.event.resolve.EndResolveEvent;
 import org.apache.ivy.core.event.resolve.StartResolveEvent;
 import org.apache.ivy.core.module.descriptor.DefaultModuleDescriptor;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.report.ResolveReport;
-
-import junit.framework.TestCase;
 
 public class IvyEventFilterTest extends TestCase {
 	Ivy ivy = new Ivy();
@@ -40,62 +39,62 @@ public class IvyEventFilterTest extends TestCase {
 	public void testSimple() {
 		IvyEventFilter f = new IvyEventFilter("pre-resolve", null, null);
 		
-		assertTrue(f.accept(new StartResolveEvent(ivy, md, new String[] {"default"})));
-		assertFalse(f.accept(new EndResolveEvent(ivy, md, new String[] {"default"}, new ResolveReport(md))));
+		assertTrue(f.accept(new StartResolveEvent(md, new String[] {"default"})));
+		assertFalse(f.accept(new EndResolveEvent(md, new String[] {"default"}, new ResolveReport(md))));
 	}
 	
 	public void testSimpleExpression() {
 		IvyEventFilter f = new IvyEventFilter("pre-resolve", "organisation = foo", null);
 		
-		assertTrue(f.accept(new StartResolveEvent(ivy, md, new String[] {"default"})));
-		assertFalse(f.accept(new StartResolveEvent(ivy, md2, new String[] {"default"})));
-		assertTrue(f.accept(new StartResolveEvent(ivy, md4, new String[] {"default"})));
+		assertTrue(f.accept(new StartResolveEvent(md, new String[] {"default"})));
+		assertFalse(f.accept(new StartResolveEvent(md2, new String[] {"default"})));
+		assertTrue(f.accept(new StartResolveEvent(md4, new String[] {"default"})));
 
 		f = new IvyEventFilter("pre-resolve", "module = bar", null);
 		
-		assertTrue(f.accept(new StartResolveEvent(ivy, md, new String[] {"default"})));
-		assertTrue(f.accept(new StartResolveEvent(ivy, md2, new String[] {"default"})));
-		assertFalse(f.accept(new StartResolveEvent(ivy, md3, new String[] {"default"})));
-		assertFalse(f.accept(new StartResolveEvent(ivy, md4, new String[] {"default"})));
+		assertTrue(f.accept(new StartResolveEvent(md, new String[] {"default"})));
+		assertTrue(f.accept(new StartResolveEvent(md2, new String[] {"default"})));
+		assertFalse(f.accept(new StartResolveEvent(md3, new String[] {"default"})));
+		assertFalse(f.accept(new StartResolveEvent(md4, new String[] {"default"})));
 
 		f = new IvyEventFilter("pre-resolve", "organisation = foo, foo2", null);
 		
-		assertTrue(f.accept(new StartResolveEvent(ivy, md, new String[] {"default"})));
-		assertTrue(f.accept(new StartResolveEvent(ivy, md2, new String[] {"default"})));
-		assertFalse(f.accept(new StartResolveEvent(ivy, md3, new String[] {"default"})));
-		assertTrue(f.accept(new StartResolveEvent(ivy, md4, new String[] {"default"})));
+		assertTrue(f.accept(new StartResolveEvent(md, new String[] {"default"})));
+		assertTrue(f.accept(new StartResolveEvent(md2, new String[] {"default"})));
+		assertFalse(f.accept(new StartResolveEvent(md3, new String[] {"default"})));
+		assertTrue(f.accept(new StartResolveEvent(md4, new String[] {"default"})));
 	}
 
 	public void testAndExpression() {
 		IvyEventFilter f = new IvyEventFilter("pre-resolve", "organisation = foo AND module = bar", null);
 		
-		assertTrue(f.accept(new StartResolveEvent(ivy, md, new String[] {"default"})));
-		assertFalse(f.accept(new StartResolveEvent(ivy, md2, new String[] {"default"})));
-		assertFalse(f.accept(new StartResolveEvent(ivy, md4, new String[] {"default"})));
+		assertTrue(f.accept(new StartResolveEvent(md, new String[] {"default"})));
+		assertFalse(f.accept(new StartResolveEvent(md2, new String[] {"default"})));
+		assertFalse(f.accept(new StartResolveEvent(md4, new String[] {"default"})));
 
 		f = new IvyEventFilter("pre-resolve", "organisation = foo,foo2 AND module = bar", null);
 		
-		assertTrue(f.accept(new StartResolveEvent(ivy, md, new String[] {"default"})));
-		assertTrue(f.accept(new StartResolveEvent(ivy, md2, new String[] {"default"})));
-		assertFalse(f.accept(new StartResolveEvent(ivy, md3, new String[] {"default"})));
-		assertFalse(f.accept(new StartResolveEvent(ivy, md4, new String[] {"default"})));
+		assertTrue(f.accept(new StartResolveEvent(md, new String[] {"default"})));
+		assertTrue(f.accept(new StartResolveEvent(md2, new String[] {"default"})));
+		assertFalse(f.accept(new StartResolveEvent(md3, new String[] {"default"})));
+		assertFalse(f.accept(new StartResolveEvent(md4, new String[] {"default"})));
 	}
 
 	public void testOrExpression() {
 		IvyEventFilter f = new IvyEventFilter("pre-resolve", "organisation = foo3 OR module = bar", null);
 		
-		assertTrue(f.accept(new StartResolveEvent(ivy, md, new String[] {"default"})));
-		assertTrue(f.accept(new StartResolveEvent(ivy, md2, new String[] {"default"})));
-		assertTrue(f.accept(new StartResolveEvent(ivy, md3, new String[] {"default"})));
-		assertFalse(f.accept(new StartResolveEvent(ivy, md4, new String[] {"default"})));
+		assertTrue(f.accept(new StartResolveEvent(md, new String[] {"default"})));
+		assertTrue(f.accept(new StartResolveEvent(md2, new String[] {"default"})));
+		assertTrue(f.accept(new StartResolveEvent(md3, new String[] {"default"})));
+		assertFalse(f.accept(new StartResolveEvent(md4, new String[] {"default"})));
 	}
 
 	public void testNotExpression() {
 		IvyEventFilter f = new IvyEventFilter("pre-resolve", "NOT organisation = foo", null);
 		
-		assertFalse(f.accept(new StartResolveEvent(ivy, md, new String[] {"default"})));
-		assertTrue(f.accept(new StartResolveEvent(ivy, md2, new String[] {"default"})));
-		assertTrue(f.accept(new StartResolveEvent(ivy, md3, new String[] {"default"})));
-		assertFalse(f.accept(new StartResolveEvent(ivy, md4, new String[] {"default"})));
+		assertFalse(f.accept(new StartResolveEvent(md, new String[] {"default"})));
+		assertTrue(f.accept(new StartResolveEvent(md2, new String[] {"default"})));
+		assertTrue(f.accept(new StartResolveEvent(md3, new String[] {"default"})));
+		assertFalse(f.accept(new StartResolveEvent(md4, new String[] {"default"})));
 	}
 }

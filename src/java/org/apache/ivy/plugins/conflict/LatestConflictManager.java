@@ -99,13 +99,13 @@ public class LatestConflictManager extends AbstractConflictManager {
     public LatestStrategy getStrategy() {
         if (_strategy == null) {
             if (_strategyName != null) {
-                _strategy = getIvy().getLatestStrategy(_strategyName);
+                _strategy = getSettings().getLatestStrategy(_strategyName);
                 if (_strategy == null) {
                     Message.error("unknown latest strategy: "+_strategyName);
-                    _strategy = getIvy().getDefaultLatestStrategy();
+                    _strategy = getSettings().getDefaultLatestStrategy();
                 }
             } else {
-                _strategy = getIvy().getDefaultLatestStrategy();
+                _strategy = getSettings().getDefaultLatestStrategy();
             }
         }
         return _strategy;

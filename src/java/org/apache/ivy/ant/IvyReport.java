@@ -26,6 +26,7 @@ import java.util.List;
 import org.apache.ivy.Ivy;
 import org.apache.ivy.core.IvyPatternHelper;
 import org.apache.ivy.core.module.id.ModuleId;
+import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.plugins.report.XmlReportOutputter;
 import org.apache.ivy.util.FileUtil;
 import org.apache.ivy.util.Message;
@@ -112,26 +113,27 @@ public class IvyReport extends IvyTask {
 
     public void execute() throws BuildException {
         Ivy ivy = getIvyInstance();
+        IvySettings settings = ivy.getSettings();
         
-        _organisation = getProperty(_organisation, ivy, "ivy.organisation");
-        _module = getProperty(_module, ivy, "ivy.module");
+        _organisation = getProperty(_organisation, settings, "ivy.organisation");
+        _module = getProperty(_module, settings, "ivy.module");
         if (_cache == null) {
-            _cache = ivy.getDefaultCache();
+            _cache = settings.getDefaultCache();
         }
-        _conf = getProperty(_conf, ivy, "ivy.resolved.configurations");
+        _conf = getProperty(_conf, settings, "ivy.resolved.configurations");
         if (_conf.equals("*")) {
-            _conf = getProperty(ivy, "ivy.resolved.configurations");
+            _conf = getProperty(settings, "ivy.resolved.configurations");
         }
         if (_conf == null) {
             throw new BuildException("no conf provided for ivy report task: It can either be set explicitely via the attribute 'conf' or via 'ivy.resolved.configurations' property or a prior call to <resolve/>");
         }
         if (_todir == null) {
-            String t = getProperty(ivy, "ivy.report.todir");
+            String t = getProperty(settings, "ivy.report.todir");
             if (t != null) {
                 _todir = new File(t);
             }
         }
-        _outputpattern = getProperty(_outputpattern, ivy, "ivy.report.output.pattern");
+        _outputpattern = getProperty(_outputpattern, settings, "ivy.report.output.pattern");
         if (_todir != null && _todir.exists()) {
             _todir.mkdirs();
         }

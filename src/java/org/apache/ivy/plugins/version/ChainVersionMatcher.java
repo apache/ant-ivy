@@ -22,10 +22,10 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.apache.ivy.Ivy;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
-import org.apache.ivy.plugins.IvyAware;
+import org.apache.ivy.core.settings.IvySettings;
+import org.apache.ivy.plugins.IvySettingsAware;
 
 
 public class ChainVersionMatcher extends AbstractVersionMatcher {
@@ -37,17 +37,17 @@ public class ChainVersionMatcher extends AbstractVersionMatcher {
     
     public void add(VersionMatcher matcher) {
         _matchers.add(0, matcher);
-		if (getIvy() != null && matcher instanceof IvyAware) {
-			((IvyAware) matcher).setIvy(getIvy());
+		if (getSettings() != null && matcher instanceof IvySettingsAware) {
+			((IvySettingsAware) matcher).setSettings(getSettings());
 		}
     }
     
-    public void setIvy(Ivy ivy) {
-    	super.setIvy(ivy);
+    public void setSettings(IvySettings settings) {
+    	super.setSettings(settings);
     	for (Iterator iter = _matchers.iterator(); iter.hasNext();) {
 			VersionMatcher matcher = (VersionMatcher) iter.next();
-			if (matcher instanceof IvyAware) {
-				((IvyAware) matcher).setIvy(ivy);
+			if (matcher instanceof IvySettingsAware) {
+				((IvySettingsAware) matcher).setSettings(settings);
 			}
 		}
     }

@@ -18,8 +18,6 @@
 
 package org.apache.ivy.core.module.descriptor;
 
-import org.apache.ivy.core.module.descriptor.DefaultDependencyDescriptor;
-
 import junit.framework.TestCase;
 
 public class DefaultDependencyDescriptorTest extends TestCase {

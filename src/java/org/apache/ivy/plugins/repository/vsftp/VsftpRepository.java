@@ -463,7 +463,7 @@ public class VsftpRepository extends AbstractRepository {
 				}
 
 				if (_ivy != null) {
-					_ivy.addIvyListener(new IvyListener() {
+					_ivy.getEventManager().addIvyListener(new IvyListener() {
 						public void progress(IvyEvent event) {
 							disconnect();
 							event.getSource().removeIvyListener(this);

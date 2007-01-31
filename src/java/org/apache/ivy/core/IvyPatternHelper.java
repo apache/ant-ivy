@@ -17,7 +17,6 @@
  */
 package org.apache.ivy.core;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -27,8 +26,8 @@ import java.util.Stack;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.ivy.Ivy;
 import org.apache.ivy.core.cache.ArtifactOrigin;
+import org.apache.ivy.core.cache.CacheManager;
 import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.DefaultArtifact;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
@@ -390,13 +389,12 @@ public class IvyPatternHelper {
 	    		ModuleRevisionId revId = ModuleRevisionId.newInstance(org, moduleName, branch, revision);
 	    		Artifact artifact = new DefaultArtifact(revId, null, artifactName, artifactType, artifactExt);
 	    		
-	    		Ivy ivy = IvyContext.getContext().getIvy();
-	    		File cache = IvyContext.getContext().getCache();
+	    		CacheManager cacheManager = IvyContext.getContext().getCacheManager();
 	
-	    		origin = ivy.getSavedArtifactOrigin(cache, artifact);
+	    		origin = cacheManager.getSavedArtifactOrigin(artifact);
 
                 if (origin == null) {
-	    		    Message.debug("no artifact origin found for "+artifact+" in "+cache);
+	    		    Message.debug("no artifact origin found for "+artifact+" in "+cacheManager);
 	    		    return null;
 	    		}
 			}

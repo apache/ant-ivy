@@ -22,10 +22,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.ivy.plugins.latest.ArtifactInfo;
-import org.apache.ivy.plugins.latest.LatestRevisionStrategy;
-
-
 import junit.framework.TestCase;
 
 public class LatestRevisionStrategyTest extends TestCase {

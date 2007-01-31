@@ -19,19 +19,16 @@ package org.apache.ivy.plugins.conflict;
 
 import java.util.Date;
 
-import org.apache.ivy.Ivy;
-import org.apache.ivy.plugins.conflict.ConflictManager;
-import org.apache.ivy.plugins.conflict.StrictConflictException;
-import org.apache.ivy.plugins.conflict.StrictConflictManager;
-
 import junit.framework.TestCase;
+
+import org.apache.ivy.Ivy;
 
 public class StrictConflictManagerTest extends TestCase {
 
     public void testInitFromConf() throws Exception {
         Ivy ivy = new Ivy();
         ivy.configure(StrictConflictManagerTest.class.getResource("ivyconf-strict-test.xml"));
-        ConflictManager cm = ivy.getDefaultConflictManager();
+        ConflictManager cm = ivy.getSettings().getDefaultConflictManager();
         assertTrue(cm instanceof StrictConflictManager);
     }
 

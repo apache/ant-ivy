@@ -47,13 +47,13 @@ public class TestPerformance {
         _ivy = new Ivy();
         FileSystemResolver resolver = new FileSystemResolver();
         resolver.setName("def");
-        resolver.setIvy(_ivy);
+        resolver.setSettings(_ivy.getSettings());
         
         resolver.addIvyPattern(PATTERN);
         resolver.addArtifactPattern(PATTERN);
         
-        _ivy.addResolver(resolver);
-        _ivy.setDefaultResolver("def");
+        _ivy.getSettings().addResolver(resolver);
+        _ivy.getSettings().setDefaultResolver("def");
     }
 
     protected void setUp() throws Exception {

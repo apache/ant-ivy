@@ -24,20 +24,18 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.GregorianCalendar;
 
-import org.apache.ivy.Ivy;
+import junit.framework.TestCase;
+
 import org.apache.ivy.core.module.descriptor.DefaultModuleDescriptor;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
-import org.apache.ivy.plugins.parser.xml.XmlModuleDescriptorParser;
-import org.apache.ivy.plugins.parser.xml.XmlModuleDescriptorWriter;
+import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.util.FileUtil;
-
-import junit.framework.TestCase;
 
 public class XmlModuleDescriptorWriterTest extends TestCase {
     private File _dest = new File("build/test/test-write.xml");
 
     public void testSimple() throws Exception {
-        DefaultModuleDescriptor md = (DefaultModuleDescriptor)XmlModuleDescriptorParser.getInstance().parseDescriptor(new Ivy(), XmlModuleDescriptorWriterTest.class.getResource("test-simple.xml"), true);
+        DefaultModuleDescriptor md = (DefaultModuleDescriptor)XmlModuleDescriptorParser.getInstance().parseDescriptor(new IvySettings(), XmlModuleDescriptorWriterTest.class.getResource("test-simple.xml"), true);
         md.setResolvedPublicationDate(new GregorianCalendar(2005, 4, 1, 11, 0, 0).getTime());
         XmlModuleDescriptorWriter.write(md, _dest);
         
@@ -48,7 +46,7 @@ public class XmlModuleDescriptorWriterTest extends TestCase {
     }
     
     public void testDependencies() throws Exception {
-        ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(new Ivy(), XmlModuleDescriptorWriterTest.class.getResource("test-dependencies.xml"), true);
+        ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(new IvySettings(), XmlModuleDescriptorWriterTest.class.getResource("test-dependencies.xml"), true);
         XmlModuleDescriptorWriter.write(md, _dest);
         
         assertTrue(_dest.exists());
@@ -59,7 +57,7 @@ public class XmlModuleDescriptorWriterTest extends TestCase {
     
     
     public void testFull() throws Exception {
-        ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(new Ivy(), XmlModuleDescriptorWriterTest.class.getResource("test.xml"), true);
+        ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(new IvySettings(), XmlModuleDescriptorWriterTest.class.getResource("test.xml"), true);
         XmlModuleDescriptorWriter.write(md, _dest);
         
         assertTrue(_dest.exists());

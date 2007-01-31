@@ -21,6 +21,7 @@ import org.apache.ivy.Ivy;
 import org.apache.ivy.core.module.id.ModuleId;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.resolve.ResolvedModuleRevision;
+import org.apache.ivy.core.settings.IvySettings;
 import org.apache.tools.ant.BuildException;
 
 
@@ -92,8 +93,9 @@ public class IvyFindRevision extends IvyTask {
         }
         
         Ivy ivy = getIvyInstance();
+        IvySettings settings = ivy.getSettings();
         if (_branch == null) {
-            ivy.getDefaultBranch(new ModuleId(_organisation, _module));
+            settings.getDefaultBranch(new ModuleId(_organisation, _module));
         }
 		ResolvedModuleRevision rmr = ivy.findModule(ModuleRevisionId.newInstance(_organisation, _module, _branch, _revision));
 		if (rmr != null) {

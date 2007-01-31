@@ -112,7 +112,7 @@ public abstract class AbstractResourceResolver extends BasicResolver {
                 String pattern = (String)iter.next();
                 String resolvedFileName = IvyPatternHelper.substitute(pattern, artifact);
                 logIvyAttempt(resolvedFileName);
-                if (getIvy().getVersionMatcher().isDynamic(mrid)) {
+                if (getSettings().getVersionMatcher().isDynamic(mrid)) {
                     resolvedFileName = IvyPatternHelper.substitute(pattern, latestArtifact);
                     logIvyAttempt(resolvedFileName);
                 }
@@ -163,7 +163,7 @@ public abstract class AbstractResourceResolver extends BasicResolver {
         tokenValues.put(IvyPatternHelper.TYPE_KEY, "ivy");
         tokenValues.put(IvyPatternHelper.EXT_KEY, "xml");
         findTokenValues(names, getIvyPatterns(), tokenValues, token);
-        getIvy().filterIgnore(names);
+        getSettings().filterIgnore(names);
         return names;
     }
     
@@ -174,7 +174,7 @@ public abstract class AbstractResourceResolver extends BasicResolver {
         tokenValues.put(IvyPatternHelper.TYPE_KEY, "jar");
         tokenValues.put(IvyPatternHelper.EXT_KEY, "jar");
         findTokenValues(names, getArtifactPatterns(), tokenValues, token);
-        getIvy().filterIgnore(names);
+        getSettings().filterIgnore(names);
         return names;
     }
 

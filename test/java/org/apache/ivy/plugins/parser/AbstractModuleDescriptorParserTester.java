@@ -19,14 +19,14 @@ package org.apache.ivy.plugins.parser;
 
 import java.util.Arrays;
 
+import junit.framework.TestCase;
+
 import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.Configuration;
 import org.apache.ivy.core.module.descriptor.DependencyArtifactDescriptor;
 import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.descriptor.Configuration.Visibility;
-
-import junit.framework.TestCase;
 
 public abstract class AbstractModuleDescriptorParserTester extends TestCase {
     protected DependencyDescriptor getDependency(DependencyDescriptor[] dependencies, String name) {

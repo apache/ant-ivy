@@ -19,7 +19,7 @@ package org.apache.ivy.ant;
 
 import java.util.Iterator;
 
-import org.apache.ivy.Ivy;
+import org.apache.ivy.core.cache.CacheManager;
 import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
@@ -63,10 +63,10 @@ public class IvyCachePath extends IvyCacheTask {
         try {
             Path path = new Path(getProject());
             getProject().addReference(_pathid, path);
-            Ivy ivy = getIvyInstance();
+        	CacheManager cache = getCacheManager();
             for (Iterator iter = getArtifacts().iterator(); iter.hasNext();) {
             	Artifact a = (Artifact) iter.next();
-            	path.createPathElement().setLocation(ivy.getArchiveFileInCache(getCache(), a, ivy.getSavedArtifactOrigin(getCache(), a), isUseOrigin()));
+            	path.createPathElement().setLocation(cache.getArchiveFileInCache(a, cache.getSavedArtifactOrigin(a), isUseOrigin()));
             }
         } catch (Exception ex) {
             throw new BuildException("impossible to build ivy path: "+ex, ex);

@@ -21,6 +21,7 @@ import java.io.File;
 
 import org.apache.ivy.Ivy;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
+import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.plugins.matcher.PatternMatcher;
 import org.apache.ivy.util.filter.FilterHelper;
 import org.apache.tools.ant.BuildException;
@@ -47,8 +48,9 @@ public class IvyInstall extends IvyTask {
     
     public void execute() throws BuildException {
         Ivy ivy = getIvyInstance();
+        IvySettings settings = ivy.getSettings();
         if (_cache == null) {
-            _cache = ivy.getDefaultCache();
+            _cache = settings.getDefaultCache();
         }
         if (_organisation == null) {
             throw new BuildException("no organisation provided for ivy publish task: It can either be set explicitely via the attribute 'organisation' or via 'ivy.organisation' property or a prior call to <resolve/>");
@@ -71,7 +73,7 @@ public class IvyInstall extends IvyTask {
         }
         ModuleRevisionId mrid = ModuleRevisionId.newInstance(_organisation, _module, _revision);
         try {
-            ivy.install(mrid, _from, _to, _transitive, doValidate(ivy), _overwrite, FilterHelper.getArtifactTypeFilter(_type), _cache, _matcher);
+            ivy.install(mrid, _from, _to, _transitive, doValidate(settings), _overwrite, FilterHelper.getArtifactTypeFilter(_type), _cache, _matcher);
         } catch (Exception e) {
             throw new BuildException("impossible to install "+ mrid +": "+e, e);
         }

@@ -20,14 +20,13 @@ package org.apache.ivy.plugins.parser.m2;
 import java.util.Arrays;
 import java.util.HashSet;
 
-import org.apache.ivy.Ivy;
 import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleId;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
+import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.plugins.parser.AbstractModuleDescriptorParserTester;
-import org.apache.ivy.plugins.parser.m2.PomModuleDescriptorParser;
 import org.apache.ivy.plugins.parser.xml.XmlModuleDescriptorParserTest;
 import org.apache.ivy.plugins.repository.url.URLResource;
 
@@ -44,7 +43,7 @@ public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParse
     }
     
     public void testSimple() throws Exception {
-        ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(new Ivy(), getClass().getResource("test-simple.pom"), false);
+        ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(new IvySettings(), getClass().getResource("test-simple.pom"), false);
         assertNotNull(md);
         
         ModuleRevisionId mrid = ModuleRevisionId.newInstance("org.apache", "test", "1.0");
@@ -60,7 +59,7 @@ public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParse
     }
     
     public void testParent() throws Exception {
-        ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(new Ivy(), getClass().getResource("test-parent.pom"), false);
+        ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(new IvySettings(), getClass().getResource("test-parent.pom"), false);
         assertNotNull(md);
         
         ModuleRevisionId mrid = ModuleRevisionId.newInstance("org.apache", "test", "1.0");
@@ -76,7 +75,7 @@ public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParse
     }
     
     public void testParent2() throws Exception {
-        ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(new Ivy(), getClass().getResource("test-parent2.pom"), false);
+        ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(new IvySettings(), getClass().getResource("test-parent2.pom"), false);
         assertNotNull(md);
         
         ModuleRevisionId mrid = ModuleRevisionId.newInstance("org.apache", "test", "1.0");
@@ -92,7 +91,7 @@ public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParse
     }
     
     public void testDependencies() throws Exception {
-        ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(new Ivy(), getClass().getResource("test-dependencies.pom"), false);
+        ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(new IvySettings(), getClass().getResource("test-dependencies.pom"), false);
         assertNotNull(md);
         
         assertEquals(ModuleRevisionId.newInstance("org.apache", "test", "1.0"), md.getModuleRevisionId());
@@ -105,7 +104,7 @@ public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParse
     
     // IVY-392
     public void testDependenciesWithProfile() throws Exception {
-        ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(new Ivy(), getClass().getResource("test-dependencies-with-profile.pom"), false);
+        ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(new IvySettings(), getClass().getResource("test-dependencies-with-profile.pom"), false);
         assertNotNull(md);
         
         assertEquals(ModuleRevisionId.newInstance("org.apache", "test", "1.0"), md.getModuleRevisionId());
@@ -117,7 +116,7 @@ public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParse
     }
     
     public void testWithoutVersion() throws Exception {
-        ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(new Ivy(), getClass().getResource("test-without-version.pom"), false);
+        ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(new IvySettings(), getClass().getResource("test-without-version.pom"), false);
         assertNotNull(md);
         
         assertEquals(new ModuleId("org.apache", "test"), md.getModuleRevisionId().getModuleId());
@@ -129,7 +128,7 @@ public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParse
     }
     
     public void testProperties() throws Exception {
-        ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(new Ivy(), getClass().getResource("test-properties.pom"), false);
+        ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(new IvySettings(), getClass().getResource("test-properties.pom"), false);
         assertNotNull(md);
         
         assertEquals(ModuleRevisionId.newInstance("drools", "drools-smf", "2.0-beta-18"), md.getModuleRevisionId());
@@ -141,7 +140,7 @@ public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParse
     }
     
     public void testReal() throws Exception {
-        ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(new Ivy(), getClass().getResource("commons-lang-1.0.pom"), false);
+        ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(new IvySettings(), getClass().getResource("commons-lang-1.0.pom"), false);
         assertNotNull(md);
         
         assertEquals(ModuleRevisionId.newInstance("commons-lang", "commons-lang", "1.0"), md.getModuleRevisionId());
@@ -153,7 +152,7 @@ public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParse
     }
     
     public void testOptional() throws Exception {
-        ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(new Ivy(), getClass().getResource("test-optional.pom"), false);
+        ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(new IvySettings(), getClass().getResource("test-optional.pom"), false);
         assertNotNull(md);
         
         assertEquals(ModuleRevisionId.newInstance("org.apache", "test", "1.0"), md.getModuleRevisionId());
@@ -173,7 +172,7 @@ public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParse
     }
     
     public void testDependenciesWithScope() throws Exception {
-        ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(new Ivy(), getClass().getResource("test-dependencies-with-scope.pom"), false);
+        ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(new IvySettings(), getClass().getResource("test-dependencies-with-scope.pom"), false);
         assertNotNull(md);
         
         assertEquals(ModuleRevisionId.newInstance("org.apache", "test", "1.0"), md.getModuleRevisionId());
@@ -198,7 +197,7 @@ public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParse
     }
     
     public void testExclusion() throws Exception {
-        ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(new Ivy(), getClass().getResource("test-exclusion.pom"), false);
+        ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(new IvySettings(), getClass().getResource("test-exclusion.pom"), false);
         assertNotNull(md);
         
         assertEquals(ModuleRevisionId.newInstance("org.apache", "test", "1.0"), md.getModuleRevisionId());

@@ -21,10 +21,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Iterator;
 
-import org.apache.ivy.plugins.repository.vfs.VfsRepository;
-import org.apache.ivy.util.FileUtil;
-
 import junit.framework.TestCase;
+
+import org.apache.ivy.util.FileUtil;
 
 /**
  * Testing

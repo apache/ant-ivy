@@ -87,7 +87,7 @@ public class SshCache {
             host = newHost;
             user = newUser;
             port = newPort;
-            IvyContext.getContext().getIvy().addIvyListener(new IvyListener() {
+            IvyContext.getContext().getEventManager().addIvyListener(new IvyListener() {
                 public void progress(IvyEvent event) {
                     event.getSource().removeIvyListener(this);
                     clearSession(session);

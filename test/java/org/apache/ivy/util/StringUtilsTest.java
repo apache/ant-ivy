@@ -17,8 +17,6 @@
  */
 package org.apache.ivy.util;
 
-import org.apache.ivy.util.StringUtils;
-
 import junit.framework.TestCase;
 
 public class StringUtilsTest extends TestCase {

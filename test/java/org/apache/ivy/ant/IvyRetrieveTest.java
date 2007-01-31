@@ -22,12 +22,8 @@ import java.io.IOException;
 
 import junit.framework.TestCase;
 
-import org.apache.ivy.ant.IvyResolve;
-import org.apache.ivy.ant.IvyRetrieve;
+import org.apache.ivy.TestHelper;
 import org.apache.ivy.core.IvyPatternHelper;
-import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
-import org.apache.ivy.core.report.ResolveReport;
-import org.apache.ivy.core.retrieve.RetrieveTest;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.Delete;
@@ -100,7 +96,7 @@ public class IvyRetrieveTest extends TestCase {
     	resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-latest.xml"));
     	resolve.execute();
     	
-    	assertTrue(_retrieve.getIvyInstance().getArchiveFileInCache(_cache, "org1", "mod1.2", "2.2", "mod1.2", "jar", "jar").exists());
+    	assertTrue(getArchiveFileInCache("org1", "mod1.2", "2.2", "mod1.2", "jar", "jar").exists());
     	
     	// then we resolve a dependency directly
     	_retrieve.setOrganisation("org1");
@@ -328,6 +324,10 @@ public class IvyRetrieveTest extends TestCase {
     		file.getParentFile().mkdirs();
     	}
     	file.createNewFile();
+	}
+    private File getArchiveFileInCache(String organisation, String module, String revision, String artifact, String type, String ext) {
+		return TestHelper.getArchiveFileInCache(_retrieve.getIvyInstance(), _cache, 
+				organisation, module, revision, artifact, type, ext);
 	}
 
 }

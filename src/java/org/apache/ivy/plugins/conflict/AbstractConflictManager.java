@@ -17,19 +17,19 @@
  */
 package org.apache.ivy.plugins.conflict;
 
-import org.apache.ivy.Ivy;
-import org.apache.ivy.plugins.IvyAware;
+import org.apache.ivy.core.settings.IvySettings;
+import org.apache.ivy.plugins.IvySettingsAware;
 
-public abstract class AbstractConflictManager implements ConflictManager, IvyAware {
+public abstract class AbstractConflictManager implements ConflictManager, IvySettingsAware {
     private String _name;
-    private Ivy _ivy;
+    private IvySettings _settings;
 
-    public Ivy getIvy() {
-        return _ivy;
+    public IvySettings getSettings() {
+        return _settings;
     }    
 
-    public void setIvy(Ivy ivy) {
-        _ivy = ivy;
+    public void setSettings(IvySettings ivy) {
+        _settings = ivy;
     }
 
     public String getName() {

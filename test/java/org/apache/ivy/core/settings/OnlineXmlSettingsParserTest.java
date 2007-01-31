@@ -19,15 +19,13 @@ package org.apache.ivy.core.settings;
 
 import java.net.URL;
 
-import org.apache.ivy.Ivy;
-import org.apache.ivy.core.settings.XmlSettingsParser;
+import junit.framework.TestCase;
+
 import org.apache.ivy.plugins.resolver.DependencyResolver;
 import org.apache.ivy.plugins.resolver.IvyRepResolver;
 import org.apache.ivy.util.url.URLHandler;
 import org.apache.ivy.util.url.URLHandlerDispatcher;
 import org.apache.ivy.util.url.URLHandlerRegistry;
-
-import junit.framework.TestCase;
 
 /**
  * split from XmlIvyConfigurationParserTest due to dependency on network resource
@@ -37,11 +35,11 @@ public class OnlineXmlSettingsParserTest extends TestCase {
     
     public void testIncludeHttpUrl() throws Exception {
         configureURLHandler();
-        Ivy ivy = new Ivy();
-        XmlSettingsParser parser = new XmlSettingsParser(ivy);
+        IvySettings settings = new IvySettings();
+        XmlSettingsParser parser = new XmlSettingsParser(settings);
         parser.parse(new URL("http://incubator.apache.org/ivy/test/ivyconf-include-http-url.xml"));
         
-        DependencyResolver resolver = ivy.getResolver("ivyrep");
+        DependencyResolver resolver = settings.getResolver("ivyrep");
         assertNotNull(resolver);
         assertTrue(resolver instanceof IvyRepResolver);
     }

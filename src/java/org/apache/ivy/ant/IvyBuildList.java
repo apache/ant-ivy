@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -36,6 +35,7 @@ import org.apache.ivy.Ivy;
 import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleId;
+import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.plugins.parser.ModuleDescriptorParserRegistry;
 import org.apache.ivy.util.Message;
 import org.apache.tools.ant.BuildException;
@@ -125,7 +125,9 @@ public class IvyBuildList extends IvyTask {
         }
 
         Ivy ivy = getIvyInstance();
-		_ivyFilePath = getProperty(_ivyFilePath, ivy, "ivy.buildlist.ivyfilepath");
+        IvySettings settings = ivy.getSettings();
+        
+		_ivyFilePath = getProperty(_ivyFilePath, settings, "ivy.buildlist.ivyfilepath");
 
         Path path = new Path(getProject());
 
@@ -166,7 +168,7 @@ public class IvyBuildList extends IvyTask {
                     }
                 } else {
                     try {
-                        ModuleDescriptor md = ModuleDescriptorParserRegistry.getInstance().parseDescriptor(ivy, ivyFile.toURL(), doValidate(ivy));
+                        ModuleDescriptor md = ModuleDescriptorParserRegistry.getInstance().parseDescriptor(settings, ivyFile.toURL(), doValidate(settings));
                         buildFiles.put(md, buildFile);
                         mdsMap.put(md.getModuleRevisionId().getModuleId().getName(), md);
                     } catch (Exception ex) {
@@ -195,7 +197,7 @@ public class IvyBuildList extends IvyTask {
             mds = filterModulesFromLeaf(mds, leafModuleDescriptors);
         }
 
-        List sortedModules = ivy.sortModuleDescriptors(mds);
+		List sortedModules = ivy.sortModuleDescriptors(mds);
 
         for (ListIterator iter = independent.listIterator(); iter.hasNext();) {
             File buildFile = (File)iter.next();

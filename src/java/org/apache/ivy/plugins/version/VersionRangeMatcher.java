@@ -21,9 +21,7 @@ import java.util.Comparator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.ivy.Ivy;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
-import org.apache.ivy.plugins.IvyAware;
 import org.apache.ivy.plugins.latest.ArtifactInfo;
 import org.apache.ivy.plugins.latest.LatestStrategy;
 
@@ -50,7 +48,7 @@ import org.apache.ivy.plugins.latest.LatestStrategy;
  * @author xavier hanin
  *
  */
-public class VersionRangeMatcher   extends AbstractVersionMatcher implements IvyAware {
+public class VersionRangeMatcher   extends AbstractVersionMatcher {
 	// todo: check these constants
 	private final static String OPEN_INC = "[";
 	private final static String OPEN_EXC = "]";
@@ -128,11 +126,6 @@ public class VersionRangeMatcher   extends AbstractVersionMatcher implements Ivy
 		_latestStrategy = strategy;
 	}
 
-	public VersionRangeMatcher(String name, Ivy ivy) {
-		super(name);
-		setIvy(ivy);
-	}
-
 	public boolean isDynamic(ModuleRevisionId askedMrid) {
 		return ALL_RANGE.matcher(askedMrid.getRevision()).matches();
 	}
@@ -170,13 +163,13 @@ public class VersionRangeMatcher   extends AbstractVersionMatcher implements Ivy
 
 	public LatestStrategy getLatestStrategy() {
 		if (_latestStrategy == null) {
-			if (getIvy() == null) {
+			if (getSettings() == null) {
 				throw new IllegalStateException("no ivy instance nor latest strategy configured in version range matcher "+this);
 			}
 			if (_latestStrategyName == null) {
 				throw new IllegalStateException("null latest strategy defined in version range matcher "+this);
 			}
-			_latestStrategy = getIvy().getLatestStrategy(_latestStrategyName);
+			_latestStrategy = getSettings().getLatestStrategy(_latestStrategyName);
 			if (_latestStrategy == null) {
 				throw new IllegalStateException("unknown latest strategy '"+_latestStrategyName+"' configured in version range matcher "+this);
 			}

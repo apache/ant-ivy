@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 
-import org.apache.ivy.Ivy;
+import org.apache.ivy.core.IvyContext;
 import org.apache.ivy.util.Message;
 
 
@@ -43,7 +43,7 @@ public class StatusManager {
     }
     
     public static StatusManager getCurrent() {
-        return Ivy.getCurrent().getStatusManager();
+        return IvyContext.getContext().getSettings().getStatusManager();
     }
     
     private List _status = new ArrayList();

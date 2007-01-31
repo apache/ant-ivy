@@ -24,7 +24,6 @@ import junit.framework.TestCase;
 
 import org.apache.ivy.Ivy;
 import org.apache.ivy.core.report.ResolveReport;
-import org.apache.ivy.plugins.report.XmlReportOutputter;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.Delete;
 

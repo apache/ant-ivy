@@ -21,7 +21,7 @@ import java.io.File;
 
 import junit.framework.TestCase;
 
-import org.apache.ivy.ant.IvyCacheFileset;
+import org.apache.ivy.TestHelper;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.DirectoryScanner;
 import org.apache.tools.ant.Project;
@@ -69,11 +69,16 @@ public class IvyCacheFilesetTest extends TestCase {
         FileSet fs = (FileSet)ref;
         DirectoryScanner directoryScanner = fs.getDirectoryScanner(_project);
         assertEquals(1, directoryScanner.getIncludedFiles().length);
-        assertEquals(_fileset.getIvyInstance().getArchiveFileInCache(_cache, "org1", "mod1.2", "2.0", "mod1.2", "jar", "jar").getAbsolutePath(),
+        assertEquals(getArchiveFileInCache("org1", "mod1.2", "2.0", "mod1.2", "jar", "jar").getAbsolutePath(),
                 new File("build/cache/"+directoryScanner.getIncludedFiles()[0]).getAbsolutePath());
     }
+    
+    private File getArchiveFileInCache(String organisation, String module, String revision, String artifact, String type, String ext) {
+		return TestHelper.getArchiveFileInCache(_fileset.getIvyInstance(), _cache, 
+				organisation, module, revision, artifact, type, ext);
+	}
 
-    public void testEmptyConf() throws Exception {
+	public void testEmptyConf() throws Exception {
         _project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-108.xml");
         _fileset.setSetid("emptyconf-setid");
         _fileset.setConf("empty");

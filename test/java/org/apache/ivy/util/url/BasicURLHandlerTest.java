@@ -20,9 +20,6 @@ package org.apache.ivy.util.url;
 import java.io.File;
 import java.net.URL;
 
-import org.apache.ivy.util.url.BasicURLHandler;
-import org.apache.ivy.util.url.URLHandler;
-
 import junit.framework.TestCase;
 
 /**

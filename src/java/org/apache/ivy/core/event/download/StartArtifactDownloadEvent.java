@@ -17,7 +17,6 @@
  */
 package org.apache.ivy.core.event.download;
 
-import org.apache.ivy.Ivy;
 import org.apache.ivy.core.cache.ArtifactOrigin;
 import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.plugins.resolver.DependencyResolver;
@@ -28,8 +27,8 @@ public class StartArtifactDownloadEvent extends DownloadEvent {
 	private DependencyResolver _resolver;
 	private ArtifactOrigin _origin;
 
-    public StartArtifactDownloadEvent(Ivy source, DependencyResolver resolver, Artifact artifact, ArtifactOrigin origin) {
-        super(source, NAME, artifact);
+    public StartArtifactDownloadEvent(DependencyResolver resolver, Artifact artifact, ArtifactOrigin origin) {
+        super(NAME, artifact);
         _resolver = resolver;
         _origin = origin;
         addAttribute("resolver", _resolver.getName());

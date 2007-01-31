@@ -25,7 +25,8 @@ import java.util.GregorianCalendar;
 
 import junit.framework.TestCase;
 
-import org.apache.ivy.Ivy;
+import org.apache.ivy.core.cache.CacheManager;
+import org.apache.ivy.core.event.EventManager;
 import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.DefaultArtifact;
 import org.apache.ivy.core.module.descriptor.DefaultDependencyDescriptor;
@@ -33,14 +34,17 @@ import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.report.ArtifactDownloadReport;
 import org.apache.ivy.core.report.DownloadReport;
 import org.apache.ivy.core.report.DownloadStatus;
+import org.apache.ivy.core.resolve.DownloadOptions;
 import org.apache.ivy.core.resolve.ResolveData;
+import org.apache.ivy.core.resolve.ResolveEngine;
 import org.apache.ivy.core.resolve.ResolvedModuleRevision;
 import org.apache.ivy.core.search.ModuleEntry;
 import org.apache.ivy.core.search.OrganisationEntry;
 import org.apache.ivy.core.search.RevisionEntry;
+import org.apache.ivy.core.settings.IvySettings;
+import org.apache.ivy.core.sort.SortEngine;
 import org.apache.ivy.plugins.latest.LatestRevisionStrategy;
 import org.apache.ivy.plugins.latest.LatestTimeStrategy;
-import org.apache.ivy.plugins.resolver.FileSystemResolver;
 import org.apache.ivy.util.FileUtil;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.Delete;
@@ -53,18 +57,25 @@ public class FileSystemResolverTest extends TestCase {
 
     private static final String FS = System.getProperty("file.separator");
     private static final String IVY_PATTERN = "test"+FS+"repositories"+FS+"1"+FS+"[organisation]"+FS+"[module]"+FS+"ivys"+FS+"ivy-[revision].xml";
-    private File _cache;
+    private IvySettings _settings;
+    private ResolveEngine _engine;
     private ResolveData _data;
-    private Ivy _ivy = new Ivy();
+    private File _cache;
+	private CacheManager _cacheManager;
+    
     
     public FileSystemResolverTest() {
         setupLastModified();
     }
     
     protected void setUp() throws Exception {
+    	_settings = new IvySettings();
+        _engine = new ResolveEngine(_settings, new EventManager(), new SortEngine(_settings));
         _cache = new File("build/cache");
-        _data = new ResolveData(_ivy, _cache, null, null, true);
+        _data = new ResolveData(_engine, _cache, null, null, true);
         _cache.mkdirs();
+        _cacheManager = new CacheManager(_settings, _cache);
+        _settings.setDefaultCache(_cache);
     }
     
     private void setupLastModified() {
@@ -90,7 +101,7 @@ public class FileSystemResolverTest extends TestCase {
     public void testFixedRevision() throws Exception {
         FileSystemResolver resolver = new FileSystemResolver();
         resolver.setName("test");
-        resolver.setIvy(_ivy);
+        resolver.setSettings(_settings);
         assertEquals("test", resolver.getName());
         
         resolver.addIvyPattern(IVY_PATTERN);
@@ -107,7 +118,7 @@ public class FileSystemResolverTest extends TestCase {
         
         // test to ask to download
         DefaultArtifact artifact = new DefaultArtifact(mrid, pubdate, "mod1.1", "jar", "jar");
-        DownloadReport report = resolver.download(new Artifact[] {artifact}, _data.getIvy(), _cache, false);
+        DownloadReport report = resolver.download(new Artifact[] {artifact}, getDownloadOptions(false));
         assertNotNull(report);
         
         assertEquals(1, report.getArtifactsReports().length);
@@ -119,7 +130,7 @@ public class FileSystemResolverTest extends TestCase {
         assertEquals(DownloadStatus.SUCCESSFUL, ar.getDownloadStatus());
 
         // test to ask to download again, should use cache
-        report = resolver.download(new Artifact[] {artifact}, _data.getIvy(), _cache, false);
+        report = resolver.download(new Artifact[] {artifact}, getDownloadOptions(false));
         assertNotNull(report);
         
         assertEquals(1, report.getArtifactsReports().length);
@@ -131,10 +142,14 @@ public class FileSystemResolverTest extends TestCase {
         assertEquals(DownloadStatus.NO, ar.getDownloadStatus());
     }
 
-    public void testMaven2() throws Exception {
+    private DownloadOptions getDownloadOptions(boolean useOrigin) {
+		return new DownloadOptions(_settings, _cacheManager, null, useOrigin);
+	}
+
+	public void testMaven2() throws Exception {
         FileSystemResolver resolver = new FileSystemResolver();
         resolver.setName("test");
-        resolver.setIvy(_ivy);
+        resolver.setSettings(_settings);
         resolver.setM2compatible(true);
         assertEquals("test", resolver.getName());
         
@@ -154,7 +169,7 @@ public class FileSystemResolverTest extends TestCase {
     public void testChecksum() throws Exception {
         FileSystemResolver resolver = new FileSystemResolver();
         resolver.setName("test");
-        resolver.setIvy(_ivy);
+        resolver.setSettings(_settings);
         
         resolver.addIvyPattern("test/repositories/checksums/[module]/[artifact]-[revision].[ext]");
         resolver.addArtifactPattern("test/repositories/checksums/[module]/[artifact]-[revision].[ext]");
@@ -163,7 +178,7 @@ public class FileSystemResolverTest extends TestCase {
         ModuleRevisionId mrid = ModuleRevisionId.newInstance("test", "allright", "1.0");
         ResolvedModuleRevision rmr = resolver.getDependency(new DefaultDependencyDescriptor(mrid, false), _data);
         assertNotNull(rmr);
-        DownloadReport dr = resolver.download(rmr.getDescriptor().getAllArtifacts(), _ivy, _cache, false);
+        DownloadReport dr = resolver.download(rmr.getDescriptor().getAllArtifacts(), getDownloadOptions(false));
         assertEquals(2, dr.getArtifactsReports(DownloadStatus.SUCCESSFUL).length);
 
         resolver.setChecksums("md5");
@@ -173,28 +188,28 @@ public class FileSystemResolverTest extends TestCase {
         resolver.setChecksums("none");
         rmr = resolver.getDependency(new DefaultDependencyDescriptor(mrid, false), _data);
         assertNotNull(rmr);
-        dr = resolver.download(new Artifact[] {new DefaultArtifact(mrid, rmr.getPublicationDate(), mrid.getName(), "jar", "jar")}, _ivy, _cache, false);
+        dr = resolver.download(new Artifact[] {new DefaultArtifact(mrid, rmr.getPublicationDate(), mrid.getName(), "jar", "jar")}, getDownloadOptions(false));
         assertEquals(1, dr.getArtifactsReports(DownloadStatus.SUCCESSFUL).length);
 
         resolver.setChecksums("md5");
         mrid = ModuleRevisionId.newInstance("test", "badartcs", "1.0");
         rmr = resolver.getDependency(new DefaultDependencyDescriptor(mrid, false), _data);
         assertNotNull(rmr);
-        dr = resolver.download(new Artifact[] {new DefaultArtifact(mrid, rmr.getPublicationDate(), mrid.getName(), "jar", "jar")}, _ivy, _cache, false);
+        dr = resolver.download(new Artifact[] {new DefaultArtifact(mrid, rmr.getPublicationDate(), mrid.getName(), "jar", "jar")}, getDownloadOptions(false));
         assertEquals(1, dr.getArtifactsReports(DownloadStatus.FAILED).length);
         
         resolver.setChecksums("");
         rmr = resolver.getDependency(new DefaultDependencyDescriptor(mrid, false), _data);
         assertNotNull(rmr);
-        dr = resolver.download(new Artifact[] {new DefaultArtifact(mrid, rmr.getPublicationDate(), mrid.getName(), "jar", "jar")}, _ivy, _cache, false);
+        dr = resolver.download(new Artifact[] {new DefaultArtifact(mrid, rmr.getPublicationDate(), mrid.getName(), "jar", "jar")}, getDownloadOptions(false));
         assertEquals(1, dr.getArtifactsReports(DownloadStatus.SUCCESSFUL).length);
     }
 
     public void testCheckModified() throws Exception {
         FileSystemResolver resolver = new FileSystemResolver();
         resolver.setName("test");
-        resolver.setIvy(_ivy);
-        _ivy.addResolver(resolver);
+        resolver.setSettings(_settings);
+        _settings.addResolver(resolver);
         assertEquals("test", resolver.getName());
         
         resolver.addIvyPattern("test"+FS+"repositories"+FS+"checkmodified"+FS+"ivy-[revision].xml");
@@ -235,8 +250,8 @@ public class FileSystemResolverTest extends TestCase {
     public void testNoRevision() throws Exception {
         FileSystemResolver resolver = new FileSystemResolver();
         resolver.setName("test");
-        resolver.setIvy(_ivy);
-        _ivy.addResolver(resolver);
+        resolver.setSettings(_settings);
+        _settings.addResolver(resolver);
         assertEquals("test", resolver.getName());
         
         resolver.addIvyPattern("test"+FS+"repositories"+FS+"norevision"+FS+"ivy-[module].xml");
@@ -258,8 +273,8 @@ public class FileSystemResolverTest extends TestCase {
         assertEquals(pubdate, rmr.getPublicationDate());
         
         Artifact[] artifacts = rmr.getDescriptor().getArtifacts("default");
-        File archiveFileInCache = _ivy.getArchiveFileInCache(_cache, artifacts[0]);
-        resolver.download(artifacts, _ivy, _cache, false);
+        File archiveFileInCache = _cacheManager.getArchiveFileInCache(artifacts[0]);
+        resolver.download(artifacts, getDownloadOptions(false));
         assertTrue(archiveFileInCache.exists());
         BufferedReader r = new BufferedReader(new FileReader(archiveFileInCache));
         assertEquals("before", r.readLine());
@@ -281,13 +296,13 @@ public class FileSystemResolverTest extends TestCase {
         assertEquals(pubdate, rmr.getPublicationDate());
 
         artifacts = rmr.getDescriptor().getArtifacts("default");
-        archiveFileInCache = _ivy.getArchiveFileInCache(_cache, artifacts[0]);
+        archiveFileInCache = _cacheManager.getArchiveFileInCache(artifacts[0]);
         
         assertFalse(archiveFileInCache.exists());
 
         // should download the new artifact
         artifacts = rmr.getDescriptor().getArtifacts("default");
-        resolver.download(artifacts, _ivy, _cache, false);
+        resolver.download(artifacts, getDownloadOptions(false));
         assertTrue(archiveFileInCache.exists());
         r = new BufferedReader(new FileReader(archiveFileInCache));
         assertEquals("after", r.readLine());
@@ -297,8 +312,8 @@ public class FileSystemResolverTest extends TestCase {
     public void testChanging() throws Exception {
         FileSystemResolver resolver = new FileSystemResolver();
         resolver.setName("test");
-        resolver.setIvy(_ivy);
-        _ivy.addResolver(resolver);
+        resolver.setSettings(_settings);
+        _settings.addResolver(resolver);
         assertEquals("test", resolver.getName());
         
         resolver.addIvyPattern("test"+FS+"repositories"+FS+"checkmodified"+FS+"ivy-[revision].xml");
@@ -320,8 +335,8 @@ public class FileSystemResolverTest extends TestCase {
         assertEquals(pubdate, rmr.getPublicationDate());
         
         Artifact[] artifacts = rmr.getDescriptor().getArtifacts("default");
-        resolver.download(artifacts, _ivy, _cache, false);
-        File archiveFileInCache = _ivy.getArchiveFileInCache(_cache, artifacts[0]);
+        resolver.download(artifacts, getDownloadOptions(false));
+        File archiveFileInCache = _cacheManager.getArchiveFileInCache(artifacts[0]);
         assertTrue(archiveFileInCache.exists());
         BufferedReader r = new BufferedReader(new FileReader(archiveFileInCache));
         assertEquals("before", r.readLine());
@@ -357,7 +372,7 @@ public class FileSystemResolverTest extends TestCase {
         assertFalse(archiveFileInCache.exists());
 
         artifacts = rmr.getDescriptor().getArtifacts("default");
-        resolver.download(artifacts, _ivy, _cache, false);
+        resolver.download(artifacts, getDownloadOptions(false));
         assertTrue(archiveFileInCache.exists());
         r = new BufferedReader(new FileReader(archiveFileInCache));
         assertEquals("after", r.readLine());
@@ -367,7 +382,7 @@ public class FileSystemResolverTest extends TestCase {
     public void testLatestTime() throws Exception {
         FileSystemResolver resolver = new FileSystemResolver();
         resolver.setName("test");
-        resolver.setIvy(_ivy);
+        resolver.setSettings(_settings);
         assertEquals("test", resolver.getName());
         
         resolver.addIvyPattern(IVY_PATTERN);
@@ -387,7 +402,7 @@ public class FileSystemResolverTest extends TestCase {
     public void testLatestRevision() throws Exception {
         FileSystemResolver resolver = new FileSystemResolver();
         resolver.setName("test");
-        resolver.setIvy(_ivy);
+        resolver.setSettings(_settings);
         assertEquals("test", resolver.getName());
         
         resolver.addIvyPattern(IVY_PATTERN);
@@ -407,7 +422,7 @@ public class FileSystemResolverTest extends TestCase {
     public void testRelativePath() throws Exception {
         FileSystemResolver resolver = new FileSystemResolver();
         resolver.setName("test");
-        resolver.setIvy(_ivy);
+        resolver.setSettings(_settings);
         assertEquals("test", resolver.getName());
         
         resolver.addIvyPattern(new File("src/java").getAbsolutePath()+"/../../"+IVY_PATTERN);
@@ -427,7 +442,7 @@ public class FileSystemResolverTest extends TestCase {
     public void testFormattedLatestTime() throws Exception {
         FileSystemResolver resolver = new FileSystemResolver();
         resolver.setName("test");
-        resolver.setIvy(_ivy);
+        resolver.setSettings(_settings);
         assertEquals("test", resolver.getName());
         
         resolver.addIvyPattern(IVY_PATTERN);
@@ -447,7 +462,7 @@ public class FileSystemResolverTest extends TestCase {
     public void testFormattedLatestRevision() throws Exception {
         FileSystemResolver resolver = new FileSystemResolver();
         resolver.setName("test");
-        resolver.setIvy(_ivy);
+        resolver.setSettings(_settings);
         assertEquals("test", resolver.getName());
         
         resolver.addIvyPattern(IVY_PATTERN);
@@ -468,7 +483,7 @@ public class FileSystemResolverTest extends TestCase {
         try {
             FileSystemResolver resolver = new FileSystemResolver();
             resolver.setName("test");
-            resolver.setIvy(_ivy);
+            resolver.setSettings(_settings);
             assertEquals("test", resolver.getName());
             
             resolver.addIvyPattern("test"+FS+"repositories"+FS+"1"+FS+"[organisation]"+FS+"[module]"+FS+"[revision]"+FS+"[artifact].[ext]");
@@ -494,7 +509,7 @@ public class FileSystemResolverTest extends TestCase {
     public void testListing() throws Exception {
         FileSystemResolver resolver = new FileSystemResolver();
         resolver.setName("test");
-        resolver.setIvy(_ivy);
+        resolver.setSettings(_settings);
         assertEquals("test", resolver.getName());
         
         resolver.addIvyPattern(IVY_PATTERN);
@@ -519,7 +534,7 @@ public class FileSystemResolverTest extends TestCase {
     public void testDownloadWithUseOriginIsTrue() throws Exception {
         FileSystemResolver resolver = new FileSystemResolver();
         resolver.setName("test");
-        resolver.setIvy(_ivy);
+        resolver.setSettings(_settings);
         assertEquals("test", resolver.getName());
         
         resolver.addIvyPattern(IVY_PATTERN);
@@ -536,7 +551,7 @@ public class FileSystemResolverTest extends TestCase {
         
         // test to ask to download
         DefaultArtifact artifact = new DefaultArtifact(mrid, pubdate, "mod1.1", "jar", "jar");
-        DownloadReport report = resolver.download(new Artifact[] {artifact}, _data.getIvy(), _cache, true);
+        DownloadReport report = resolver.download(new Artifact[] {artifact}, getDownloadOptions(true));
         assertNotNull(report);
         
         assertEquals(1, report.getArtifactsReports().length);

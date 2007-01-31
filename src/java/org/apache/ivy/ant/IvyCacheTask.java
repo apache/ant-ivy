@@ -27,6 +27,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.ivy.core.cache.CacheManager;
 import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.report.ArtifactDownloadReport;
@@ -91,4 +92,9 @@ public abstract class IvyCacheTask extends IvyPostResolveTask {
         }
         return all;
     }
+
+	protected CacheManager getCacheManager() {
+		CacheManager cache = new CacheManager(getSettings(), getCache());
+		return cache;
+	}
 }

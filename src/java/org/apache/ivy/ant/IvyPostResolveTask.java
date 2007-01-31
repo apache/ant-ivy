@@ -22,6 +22,7 @@ import java.io.File;
 import org.apache.ivy.Ivy;
 import org.apache.ivy.core.module.id.ModuleId;
 import org.apache.ivy.core.report.ResolveReport;
+import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.util.Message;
 import org.apache.ivy.util.StringUtils;
 import org.apache.ivy.util.filter.Filter;
@@ -63,11 +64,12 @@ public abstract class IvyPostResolveTask extends IvyTask {
     
     protected void prepareAndCheck() {
         Ivy ivy = getIvyInstance();
+        IvySettings settings = ivy.getSettings();
         
         boolean orgAndModSetManually = (_organisation != null) && (_module != null);
         
-        _organisation = getProperty(_organisation, ivy, "ivy.organisation");
-        _module = getProperty(_module, ivy, "ivy.module");
+        _organisation = getProperty(_organisation, settings, "ivy.organisation");
+        _module = getProperty(_module, settings, "ivy.module");
 
         if (isInline()) {
         	_conf = _conf == null ? "*" : _conf;
@@ -101,19 +103,19 @@ public abstract class IvyPostResolveTask extends IvyTask {
         	// there (TODO: maybe we can check which reports exist and extract the configurations
         	// from these report names?)
         	if (!orgAndModSetManually) {
-        		ensureResolved(isHaltonfailure(), isUseOrigin(), isTransitive(), getOrganisation(), getModule(), getProperty(_conf, ivy, "ivy.resolved.configurations"));
+        		ensureResolved(isHaltonfailure(), isUseOrigin(), isTransitive(), getOrganisation(), getModule(), getProperty(_conf, settings, "ivy.resolved.configurations"));
         	}
         	
-	        _conf = getProperty(_conf, ivy, "ivy.resolved.configurations");
+	        _conf = getProperty(_conf, settings, "ivy.resolved.configurations");
 	        if ("*".equals(_conf)) {
-	            _conf = getProperty(ivy, "ivy.resolved.configurations");
+	            _conf = getProperty(settings, "ivy.resolved.configurations");
 	            if (_conf == null) {
 	                throw new BuildException("bad conf provided for ivy cache task: * can only be used with a prior call to <resolve/>");
 	            }
 	        }
         }
-        _organisation = getProperty(_organisation, ivy, "ivy.organisation");
-        _module = getProperty(_module, ivy, "ivy.module");
+        _organisation = getProperty(_organisation, settings, "ivy.organisation");
+        _module = getProperty(_module, settings, "ivy.module");
         if (_organisation == null) {
             throw new BuildException("no organisation provided for ivy cache task: It can either be set explicitely via the attribute 'organisation' or via 'ivy.organisation' property or a prior call to <resolve/>");
         }
@@ -124,7 +126,7 @@ public abstract class IvyPostResolveTask extends IvyTask {
             throw new BuildException("no conf provided for ivy cache task: It can either be set explicitely via the attribute 'conf' or via 'ivy.resolved.configurations' property or a prior call to <resolve/>");
         }
         if (_cache == null) {
-            _cache = ivy.getDefaultCache();
+            _cache = settings.getDefaultCache();
         }
         
         _artifactFilter = FilterHelper.getArtifactTypeFilter(_type);

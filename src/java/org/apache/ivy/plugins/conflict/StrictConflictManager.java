@@ -22,7 +22,6 @@ import java.util.Collections;
 import java.util.Iterator;
 
 import org.apache.ivy.core.resolve.IvyNode;
-import org.apache.ivy.plugins.conflict.AbstractConflictManager;
 import org.apache.ivy.util.Message;
 
 

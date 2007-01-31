@@ -25,6 +25,7 @@ import java.util.Iterator;
 import java.util.Properties;
 
 import org.apache.ivy.Ivy;
+import org.apache.ivy.core.settings.IvySettings;
 import org.apache.tools.ant.BuildException;
 
 
@@ -93,8 +94,9 @@ public class IvyVar extends IvyTask {
     
     public void execute() throws BuildException {
         Ivy ivy = getIvyInstance();
+        IvySettings settings = ivy.getSettings();
         if (getName() != null) {
-            ivy.setVariable(getVarName(getName()), getValue());
+            settings.setVariable(getVarName(getName()), getValue());
         } else {
             Properties props = new Properties();
             InputStream is = null;
@@ -117,7 +119,7 @@ public class IvyVar extends IvyTask {
             for (Iterator iter = props.keySet().iterator(); iter.hasNext();) {
                 String name = (String)iter.next();
                 String value = (String)props.get(name);
-                ivy.setVariable(getVarName(name), value);
+                settings.setVariable(getVarName(name), value);
             }
         }
     }

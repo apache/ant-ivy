@@ -23,10 +23,9 @@ package org.apache.ivy.plugins.conflict;
 
 import java.util.Date;
 
-import org.apache.ivy.Ivy;
-import org.apache.ivy.plugins.conflict.StrictConflictException;
+import junit.framework.TestCase;
 
-import junit.framework.*;
+import org.apache.ivy.Ivy;
 
 
 public class RegexpConflictManagerTest extends TestCase

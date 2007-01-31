@@ -17,8 +17,6 @@
  */
 package org.apache.ivy.plugins.matcher;
 
-import org.apache.ivy.plugins.matcher.ExactPatternMatcher;
-import org.apache.ivy.plugins.matcher.Matcher;
 
 /**
 * @see ExactPatternMatcher

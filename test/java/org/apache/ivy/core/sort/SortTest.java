@@ -22,12 +22,12 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import junit.framework.TestCase;
+
 import org.apache.ivy.Ivy;
 import org.apache.ivy.core.module.descriptor.DefaultDependencyDescriptor;
 import org.apache.ivy.core.module.descriptor.DefaultModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
-
-import junit.framework.TestCase;
 
 /**
  * @author Xavier Hanin

@@ -26,13 +26,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.ivy.Ivy;
 import org.apache.ivy.core.module.descriptor.Configuration;
 import org.apache.ivy.core.module.descriptor.DefaultDependencyDescriptor;
 import org.apache.ivy.core.module.descriptor.DefaultModuleDescriptor;
 import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
+import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.plugins.repository.Resource;
 import org.apache.ivy.plugins.repository.url.URLResource;
 import org.apache.ivy.util.Message;
@@ -42,8 +42,8 @@ import org.xml.sax.helpers.DefaultHandler;
 
 
 public abstract class AbstractModuleDescriptorParser implements ModuleDescriptorParser {
-    public ModuleDescriptor parseDescriptor(Ivy ivy, URL descriptorURL, boolean validate) throws ParseException, IOException {
-        return parseDescriptor(ivy, descriptorURL, new URLResource(descriptorURL), validate);
+    public ModuleDescriptor parseDescriptor(IvySettings ivySettings, URL descriptorURL, boolean validate) throws ParseException, IOException {
+        return parseDescriptor(ivySettings, descriptorURL, new URLResource(descriptorURL), validate);
     }
     
     protected abstract static class AbstractParser extends DefaultHandler {

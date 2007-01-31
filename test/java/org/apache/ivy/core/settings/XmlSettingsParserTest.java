@@ -20,10 +20,10 @@ package org.apache.ivy.core.settings;
 import java.io.File;
 import java.util.List;
 
-import org.apache.ivy.Ivy;
+import junit.framework.TestCase;
+
 import org.apache.ivy.core.module.id.ModuleId;
 import org.apache.ivy.core.report.ResolveReport;
-import org.apache.ivy.core.settings.XmlSettingsParser;
 import org.apache.ivy.plugins.latest.LatestRevisionStrategy;
 import org.apache.ivy.plugins.latest.LatestStrategy;
 import org.apache.ivy.plugins.latest.LatestTimeStrategy;
@@ -38,35 +38,33 @@ import org.apache.ivy.plugins.version.ChainVersionMatcher;
 import org.apache.ivy.plugins.version.MockVersionMatcher;
 import org.apache.ivy.plugins.version.VersionMatcher;
 
-import junit.framework.TestCase;
-
 /**
  * TODO write javadoc
  */
 public class XmlSettingsParserTest extends TestCase {
     public void test() throws Exception {
-        Ivy ivy = new Ivy();
-        XmlSettingsParser parser = new XmlSettingsParser(ivy);
+        IvySettings settings = new IvySettings();
+        XmlSettingsParser parser = new XmlSettingsParser(settings);
         parser.parse(XmlSettingsParserTest.class.getResource("ivyconf-test.xml"));
         
-        File defaultCache = ivy.getDefaultCache();
+        File defaultCache = settings.getDefaultCache();
         assertNotNull(defaultCache);
         assertEquals("mycache", defaultCache.getName());
         
-        assertFalse(ivy.isCheckUpToDate());
-        assertFalse(ivy.doValidate());
+        assertFalse(settings.isCheckUpToDate());
+        assertFalse(settings.doValidate());
         
-        assertEquals("[module]/ivys/ivy-[revision].xml", ivy.getCacheIvyPattern());
-        assertEquals("[module]/[type]s/[artifact]-[revision].[ext]", ivy.getCacheArtifactPattern());
+        assertEquals("[module]/ivys/ivy-[revision].xml", settings.getCacheIvyPattern());
+        assertEquals("[module]/[type]s/[artifact]-[revision].[ext]", settings.getCacheArtifactPattern());
         
-        LatestStrategy latest = ivy.getLatestStrategy("mylatest-revision");
+        LatestStrategy latest = settings.getLatestStrategy("mylatest-revision");
         assertNotNull(latest);
         assertTrue(latest instanceof LatestRevisionStrategy);
         LatestRevisionStrategy l = (LatestRevisionStrategy)latest;
         assertEquals(new Integer(-2), l.getSpecialMeanings().get("pre"));
         assertEquals(new Integer(4), l.getSpecialMeanings().get("qa"));
         
-        DependencyResolver defaultResolver = ivy.getDefaultResolver();
+        DependencyResolver defaultResolver = settings.getDefaultResolver();
         assertNotNull(defaultResolver);
         assertEquals("libraries", defaultResolver.getName());
         assertTrue(defaultResolver instanceof FileSystemResolver);
@@ -80,7 +78,7 @@ public class XmlSettingsParserTest extends TestCase {
         assertNotNull(strategy);
         assertTrue(strategy instanceof LatestRevisionStrategy);
         
-        DependencyResolver internal = ivy.getResolver("internal");
+        DependencyResolver internal = settings.getResolver("internal");
         assertNotNull(internal);
         assertTrue(internal instanceof ChainResolver);
         ChainResolver chain = (ChainResolver)internal;
@@ -97,22 +95,22 @@ public class XmlSettingsParserTest extends TestCase {
         assertNotNull(strategy);
         assertTrue(strategy instanceof LatestTimeStrategy);
 
-        assertEquals("libraries", ivy.getResolver(new ModuleId("unknown", "lib")).getName());
-        assertEquals("internal", ivy.getResolver(new ModuleId("apache", "ant")).getName());
-        assertEquals("int1", ivy.getResolver(new ModuleId("apache", "ivy")).getName());
-        assertEquals("int1", ivy.getResolver(new ModuleId("apache", "ivyde")).getName());        
+        assertEquals("libraries", settings.getResolver(new ModuleId("unknown", "lib")).getName());
+        assertEquals("internal", settings.getResolver(new ModuleId("apache", "ant")).getName());
+        assertEquals("int1", settings.getResolver(new ModuleId("apache", "ivy")).getName());
+        assertEquals("int1", settings.getResolver(new ModuleId("apache", "ivyde")).getName());        
     }
 
     public void testTypedef() throws Exception {
-        Ivy ivy = new Ivy();
-        XmlSettingsParser parser = new XmlSettingsParser(ivy);
+    	IvySettings settings = new IvySettings();
+        XmlSettingsParser parser = new XmlSettingsParser(settings);
         parser.parse(XmlSettingsParserTest.class.getResource("ivyconf-typedef.xml"));
         
-        DependencyResolver mock = ivy.getResolver("mock3");
+        DependencyResolver mock = settings.getResolver("mock3");
         assertNotNull(mock);
         assertTrue(mock instanceof MockResolver);
         
-        DependencyResolver internal = ivy.getResolver("internal");
+        DependencyResolver internal = settings.getResolver("internal");
         assertNotNull(internal);
         assertTrue(internal instanceof ChainResolver);
         ChainResolver chain = (ChainResolver)internal;
@@ -127,56 +125,56 @@ public class XmlSettingsParserTest extends TestCase {
     }
     
     public void testStatuses() throws Exception {
-        Ivy ivy = new Ivy();
-        XmlSettingsParser parser = new XmlSettingsParser(ivy);
+    	IvySettings settings = new IvySettings();
+        XmlSettingsParser parser = new XmlSettingsParser(settings);
         parser.parse(XmlSettingsParserTest.class.getResource("ivyconf-status.xml"));
         
-        assertEquals("bronze", ivy.getStatusManager().getDefaultStatus());
-        assertEquals(0, ivy.getStatusManager().getPriority("gold"));
-        assertEquals(1, ivy.getStatusManager().getPriority("silver"));
-        assertEquals(2, ivy.getStatusManager().getPriority("bronze"));
-        assertEquals(false, ivy.getStatusManager().isIntegration("gold"));
-        assertEquals(false, ivy.getStatusManager().isIntegration("silver"));
-        assertEquals(true, ivy.getStatusManager().isIntegration("bronze"));
+        assertEquals("bronze", settings.getStatusManager().getDefaultStatus());
+        assertEquals(0, settings.getStatusManager().getPriority("gold"));
+        assertEquals(1, settings.getStatusManager().getPriority("silver"));
+        assertEquals(2, settings.getStatusManager().getPriority("bronze"));
+        assertEquals(false, settings.getStatusManager().isIntegration("gold"));
+        assertEquals(false, settings.getStatusManager().isIntegration("silver"));
+        assertEquals(true, settings.getStatusManager().isIntegration("bronze"));
     }
     
     public void testConflictManager() throws Exception {
-        Ivy ivy = new Ivy();
-        XmlSettingsParser parser = new XmlSettingsParser(ivy);
+    	IvySettings settings = new IvySettings();
+        XmlSettingsParser parser = new XmlSettingsParser(settings);
         parser.parse(XmlSettingsParserTest.class.getResource("ivyconf-conflict-manager.xml"));
         
-        assertEquals("latest-time", ivy.getConflictManager(new ModuleId("apache", "ivyde")).getName());
-        assertEquals("all", ivy.getConflictManager(new ModuleId("apache", "ant")).getName());
+        assertEquals("latest-time", settings.getConflictManager(new ModuleId("apache", "ivyde")).getName());
+        assertEquals("all", settings.getConflictManager(new ModuleId("apache", "ant")).getName());
     }
     
     public void testVersionMatchers1() throws Exception {
-        Ivy ivy = new Ivy();
-        XmlSettingsParser parser = new XmlSettingsParser(ivy);
+    	IvySettings settings = new IvySettings();
+        XmlSettingsParser parser = new XmlSettingsParser(settings);
         parser.parse(XmlSettingsParserTest.class.getResource("ivyconf-vmatcher1.xml"));
         
-        VersionMatcher mock = ivy.getVersionMatcher("vmock");
+        VersionMatcher mock = settings.getVersionMatcher("vmock");
         assertNotNull(mock);
         assertTrue(mock instanceof MockVersionMatcher);
         
-        VersionMatcher v = ivy.getVersionMatcher();
+        VersionMatcher v = settings.getVersionMatcher();
         assertTrue(v instanceof ChainVersionMatcher);
         ChainVersionMatcher chain = (ChainVersionMatcher) v;
         assertEquals(3, chain.getMatchers().size());
         assertTrue(chain.getMatchers().contains(mock));
-        assertTrue(chain.getMatchers().contains(ivy.getVersionMatcher("exact")));
-        assertTrue(chain.getMatchers().contains(ivy.getVersionMatcher("latest")));
+        assertTrue(chain.getMatchers().contains(settings.getVersionMatcher("exact")));
+        assertTrue(chain.getMatchers().contains(settings.getVersionMatcher("latest")));
     }
     
     public void testVersionMatchers2() throws Exception {
-        Ivy ivy = new Ivy();
-        XmlSettingsParser parser = new XmlSettingsParser(ivy);
+    	IvySettings settings = new IvySettings();
+        XmlSettingsParser parser = new XmlSettingsParser(settings);
         parser.parse(XmlSettingsParserTest.class.getResource("ivyconf-vmatcher2.xml"));
         
-        VersionMatcher mock = ivy.getVersionMatcher("vmock");
+        VersionMatcher mock = settings.getVersionMatcher("vmock");
         assertNotNull(mock);
         assertTrue(mock instanceof MockVersionMatcher);
         
-        VersionMatcher v = ivy.getVersionMatcher();
+        VersionMatcher v = settings.getVersionMatcher();
         assertTrue(v instanceof ChainVersionMatcher);
         ChainVersionMatcher chain = (ChainVersionMatcher) v;
         assertEquals(5, chain.getMatchers().size());
@@ -184,11 +182,11 @@ public class XmlSettingsParserTest extends TestCase {
     }
     
     public void testRef() throws Exception {
-        Ivy ivy = new Ivy();
-        XmlSettingsParser parser = new XmlSettingsParser(ivy);
+    	IvySettings settings = new IvySettings();
+        XmlSettingsParser parser = new XmlSettingsParser(settings);
         parser.parse(XmlSettingsParserTest.class.getResource("ivyconf-ref.xml"));
         
-        DependencyResolver internal = ivy.getResolver("internal");
+        DependencyResolver internal = settings.getResolver("internal");
         assertNotNull(internal);
         assertTrue(internal instanceof ChainResolver);
         ChainResolver chain = (ChainResolver)internal;
@@ -203,7 +201,7 @@ public class XmlSettingsParserTest extends TestCase {
         assertEquals(1, ivyPatterns.size());
         assertEquals("sharedrep/[organisation]/[module]/ivys/ivy-[revision].xml", ivyPatterns.get(0));
 
-        DependencyResolver external = ivy.getResolver("external");
+        DependencyResolver external = settings.getResolver("external");
         assertNotNull(external);
         assertTrue(external instanceof ChainResolver);
         chain = (ChainResolver)external;
@@ -220,11 +218,11 @@ public class XmlSettingsParserTest extends TestCase {
     }
     
     public void testMacro() throws Exception {
-        Ivy ivy = new Ivy();
-        XmlSettingsParser parser = new XmlSettingsParser(ivy);
+    	IvySettings settings = new IvySettings();
+        XmlSettingsParser parser = new XmlSettingsParser(settings);
         parser.parse(XmlSettingsParserTest.class.getResource("ivyconf-macro.xml"));
         
-        DependencyResolver def = ivy.getResolver("default");
+        DependencyResolver def = settings.getResolver("default");
         assertNotNull(def);
         assertTrue(def instanceof ChainResolver);
         ChainResolver chain = (ChainResolver)def;
@@ -247,7 +245,7 @@ public class XmlSettingsParserTest extends TestCase {
         assertEquals(1, ivyPatterns.size());
         assertEquals("path/to/secondrep/[organisation]/[module]/[type]s/ivy-[revision].xml", ivyPatterns.get(0));
         
-        DependencyResolver other = ivy.getResolver("other");
+        DependencyResolver other = settings.getResolver("other");
         assertNotNull(other);
         assertTrue(other instanceof ChainResolver);
         chain = (ChainResolver)other;
@@ -266,15 +264,15 @@ public class XmlSettingsParserTest extends TestCase {
     
     public void testMacroAndRef() throws Exception {
     	// test case for IVY-319
-        Ivy ivy = new Ivy();
-        XmlSettingsParser parser = new XmlSettingsParser(ivy);
+    	IvySettings settings = new IvySettings();
+        XmlSettingsParser parser = new XmlSettingsParser(settings);
         parser.parse(XmlSettingsParserTest.class.getResource("ivyconf-macro+ref.xml"));
         
-        DependencyResolver shared = ivy.getResolver("shared");
+        DependencyResolver shared = settings.getResolver("shared");
         assertNotNull(shared);
         assertTrue(shared instanceof FileSystemResolver);
         
-        DependencyResolver mychain = ivy.getResolver("mychain");
+        DependencyResolver mychain = settings.getResolver("mychain");
         assertNotNull(mychain);
         assertTrue(mychain instanceof ChainResolver);
         ChainResolver chain = (ChainResolver)mychain;
@@ -287,11 +285,11 @@ public class XmlSettingsParserTest extends TestCase {
     }
     
     public void testInclude() throws Exception {
-        Ivy ivy = new Ivy();
-        XmlSettingsParser parser = new XmlSettingsParser(ivy);
+    	IvySettings settings = new IvySettings();
+        XmlSettingsParser parser = new XmlSettingsParser(settings);
         parser.parse(XmlSettingsParserTest.class.getResource("ivyconf-include.xml"));
         
-        DependencyResolver def = ivy.getResolver("default");
+        DependencyResolver def = settings.getResolver("default");
         assertNotNull(def);
         assertTrue(def instanceof ChainResolver);
         ChainResolver chain = (ChainResolver)def;
@@ -306,7 +304,7 @@ public class XmlSettingsParserTest extends TestCase {
         assertEquals(1, ivyPatterns.size());
         assertEquals("path/to/myrep/[organisation]/[module]/[type]s/[artifact]-[revision].[ext]", ivyPatterns.get(0));
         
-        DependencyResolver inc = ivy.getResolver("includeworks");
+        DependencyResolver inc = settings.getResolver("includeworks");
         assertNotNull(inc);
         assertTrue(inc instanceof ChainResolver);
         chain = (ChainResolver)inc;
@@ -324,20 +322,20 @@ public class XmlSettingsParserTest extends TestCase {
     }
     
     public void testParser() throws Exception {
-        Ivy ivy = new Ivy();
-        XmlSettingsParser parser = new XmlSettingsParser(ivy);
+    	IvySettings settings = new IvySettings();
+        XmlSettingsParser parser = new XmlSettingsParser(settings);
         parser.parse(XmlSettingsParserTest.class.getResource("ivyconf-parser.xml"));
         assertEquals(ModuleDescriptorParserRegistryTest.MyParser.class.getName(), ModuleDescriptorParserRegistry.getInstance().getParsers()[0].getClass().getName());
     }
     
     public void testOutputter() throws Exception {
-        Ivy ivy = new Ivy();
-        XmlSettingsParser parser = new XmlSettingsParser(ivy);
+    	IvySettings settings = new IvySettings();
+        XmlSettingsParser parser = new XmlSettingsParser(settings);
         parser.parse(XmlSettingsParserTest.class.getResource("ivyconf-outputter.xml"));
         
         //System.out.println(Arrays.asList(ivy.getReportOutputters()));
         
-        ReportOutputter testOutputter = ivy.getReportOutputter("test");
+        ReportOutputter testOutputter = settings.getReportOutputter("test");
         assertNotNull(testOutputter);
         assertTrue(testOutputter instanceof MyOutputter);
     }

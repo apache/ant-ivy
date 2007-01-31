@@ -23,7 +23,6 @@ import java.util.Arrays;
 
 import javax.swing.event.EventListenerList;
 
-import org.apache.ivy.core.IvyContext;
 import org.apache.ivy.core.module.descriptor.Artifact;
 
 
@@ -46,7 +45,7 @@ public abstract class AbstractRepository implements Repository {
     }
     
     protected void fireTransferInitiated(Resource res, int requestType) {
-        _evt = new TransferEvent(IvyContext.getContext().getIvy(), this, res, TransferEvent.TRANSFER_INITIATED, requestType);
+        _evt = new TransferEvent(this, res, TransferEvent.TRANSFER_INITIATED, requestType);
         fireTransferEvent(_evt);
     }
     

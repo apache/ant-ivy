@@ -40,6 +40,7 @@ import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ArtifactId;
 import org.apache.ivy.core.module.id.ModuleId;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
+import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.plugins.conflict.ConflictManager;
 import org.apache.ivy.plugins.conflict.FixedConflictManager;
 import org.apache.ivy.plugins.matcher.PatternMatcher;
@@ -85,8 +86,8 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
      * @throws ParseException
      * @throws IOException
      */
-    public ModuleDescriptor parseDescriptor(Ivy ivy, URL xmlURL, Resource res, boolean validate) throws ParseException, IOException {
-        Parser parser = new Parser(this, ivy, validate);
+    public ModuleDescriptor parseDescriptor(IvySettings ivySettings, URL xmlURL, Resource res, boolean validate) throws ParseException, IOException {
+        Parser parser = new Parser(this, ivySettings, validate);
         parser.parse(xmlURL, res, validate);
         return parser.getModuleDescriptor();
     }
@@ -132,7 +133,7 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
     private MDArtifact _artifact;
     private String _conf;
     private boolean _validate = true;
-    private Ivy _ivy;
+    private IvySettings _ivy;
     private boolean _artifactsDeclared = false;
     private PatternMatcher _defaultMatcher; 
 
@@ -146,9 +147,9 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
     private static final int CONFLICT = 7;
     private int _state = NONE;
 
-    public Parser(ModuleDescriptorParser parser, Ivy ivy, boolean validate) {
+    public Parser(ModuleDescriptorParser parser, IvySettings ivySettings, boolean validate) {
     	super(parser);
-        _ivy = ivy;
+        _ivy = ivySettings;
         _validate = validate;
     }
 
@@ -535,9 +536,5 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
 
     public String toString() {
         return "ivy parser";
-    }
-
-    public static void main(String[] args) throws Exception {
-        System.out.println(getInstance().parseDescriptor(new Ivy(), new File("test/xml/module1/module1.ivy.xml").toURL(), true));
     }
 }

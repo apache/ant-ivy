@@ -17,10 +17,10 @@
  */
 package org.apache.ivy.plugins.resolver;
 
-import java.io.File;
 import java.util.Map;
 
-import org.apache.ivy.Ivy;
+import org.apache.ivy.core.IvyContext;
+import org.apache.ivy.core.cache.CacheManager;
 import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
@@ -28,13 +28,15 @@ import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.report.ArtifactDownloadReport;
 import org.apache.ivy.core.report.DownloadReport;
 import org.apache.ivy.core.report.DownloadStatus;
+import org.apache.ivy.core.resolve.DownloadOptions;
 import org.apache.ivy.core.resolve.IvyNode;
 import org.apache.ivy.core.resolve.ResolveData;
 import org.apache.ivy.core.resolve.ResolvedModuleRevision;
 import org.apache.ivy.core.search.ModuleEntry;
 import org.apache.ivy.core.search.OrganisationEntry;
 import org.apache.ivy.core.search.RevisionEntry;
-import org.apache.ivy.plugins.IvyAware;
+import org.apache.ivy.core.settings.IvySettings;
+import org.apache.ivy.plugins.IvySettingsAware;
 import org.apache.ivy.plugins.latest.LatestStrategy;
 import org.apache.ivy.plugins.matcher.Matcher;
 import org.apache.ivy.plugins.matcher.NoMatcher;
@@ -48,7 +50,7 @@ import org.apache.ivy.util.Message;
 /**
  * This abstract resolver only provides handling for resolver name
  */
-public abstract class AbstractResolver implements DependencyResolver, IvyAware, HasLatestStrategy {
+public abstract class AbstractResolver implements DependencyResolver, IvySettingsAware, HasLatestStrategy {
 
     /**
      * True if parsed ivy files should be validated against xsd, false if they should not,
@@ -59,7 +61,7 @@ public abstract class AbstractResolver implements DependencyResolver, IvyAware, 
     private String _changingPattern;
     private String _changingMatcherName = PatternMatcher.EXACT_OR_REGEXP;
     
-    private Ivy _ivy;
+    private IvySettings _settings;
 
     /**
      * The latest strategy to use to find latest among several artifacts
@@ -75,12 +77,12 @@ public abstract class AbstractResolver implements DependencyResolver, IvyAware, 
 
     private String _namespaceName;
 
-    public Ivy getIvy() {
-        return _ivy;
+    public IvySettings getSettings() {
+        return _settings;
     }    
 
-    public void setIvy(Ivy ivy) {
-        _ivy = ivy;
+    public void setSettings(IvySettings ivy) {
+        _settings = ivy;
     }
     
     public String getName() {
@@ -120,9 +122,7 @@ public abstract class AbstractResolver implements DependencyResolver, IvyAware, 
 
 
     protected void checkInterrupted() {
-		if (_ivy != null) {
-			_ivy.checkInterrupted();
-		}
+		IvyContext.getContext().getIvy().checkInterrupted();
 	}
 
     public void reportFailure() {
@@ -163,26 +163,22 @@ public abstract class AbstractResolver implements DependencyResolver, IvyAware, 
      * Subclasses should overwrite this to avoid the download
      */
     public boolean exists(Artifact artifact) {
-        DownloadReport dr = download(new Artifact[] {artifact}, getIvy(), getIvy().getDefaultCache(), true);
+        DownloadReport dr = download(new Artifact[] {artifact}, new DownloadOptions(getSettings(), new CacheManager(getSettings(), getSettings().getDefaultCache()), null, true));
         ArtifactDownloadReport adr = dr.getArtifactReport(artifact);
         return adr.getDownloadStatus() != DownloadStatus.FAILED;
     }
     
-    public DownloadReport download(Artifact[] artifacts, Ivy ivy, File cache) {
-    	return download(artifacts, ivy, cache, false);
-    }
-
     public LatestStrategy getLatestStrategy() {        
         if (_latestStrategy == null) {
-            if (getIvy() != null) {
+            if (getSettings() != null) {
                 if (_latestStrategyName != null && !"default".equals(_latestStrategyName)) {
-                    _latestStrategy = getIvy().getLatestStrategy(_latestStrategyName);
+                    _latestStrategy = getSettings().getLatestStrategy(_latestStrategyName);
                     if (_latestStrategy == null) {
                         Message.error("unknown latest strategy: "+_latestStrategyName);
-                        _latestStrategy = getIvy().getDefaultLatestStrategy();
+                        _latestStrategy = getSettings().getDefaultLatestStrategy();
                     }
                 } else {
-                    _latestStrategy = getIvy().getDefaultLatestStrategy();
+                    _latestStrategy = getSettings().getDefaultLatestStrategy();
                     Message.debug(getName()+": no latest strategy defined: using default");
                 }
             } else {
@@ -210,15 +206,15 @@ public abstract class AbstractResolver implements DependencyResolver, IvyAware, 
 
     public Namespace getNamespace() {        
         if (_namespace == null) {
-            if (getIvy() != null) {
+            if (getSettings() != null) {
                 if (_namespaceName != null) {
-                    _namespace = getIvy().getNamespace(_namespaceName);
+                    _namespace = getSettings().getNamespace(_namespaceName);
                     if (_namespace == null) {
                         Message.error("unknown namespace: "+_namespaceName);
-                        _namespace = getIvy().getSystemNamespace();
+                        _namespace = getSettings().getSystemNamespace();
                     }
                 } else {
-                    _namespace = getIvy().getSystemNamespace();
+                    _namespace = getSettings().getSystemNamespace();
                     Message.debug(getName()+": no namespace defined: using system");
                 }
             } else {
@@ -264,7 +260,7 @@ public abstract class AbstractResolver implements DependencyResolver, IvyAware, 
     }
 
     protected ResolvedModuleRevision findModuleInCache(ResolveData data, ModuleRevisionId mrid) {
-        ResolvedModuleRevision moduleFromCache = data.getIvy().findModuleInCache(toSystem(mrid), data.getCache(), doValidate(data));
+        ResolvedModuleRevision moduleFromCache = data.getCacheManager().findModuleInCache(toSystem(mrid), doValidate(data));
         if (moduleFromCache == null) {
             return null;
         }
@@ -299,7 +295,7 @@ public abstract class AbstractResolver implements DependencyResolver, IvyAware, 
         if (_changingPattern == null) {
             return NoMatcher.INSTANCE;
         }
-        PatternMatcher matcher = _ivy.getMatcher(_changingMatcherName);
+        PatternMatcher matcher = _settings.getMatcher(_changingMatcherName);
         if (matcher == null) {
             throw new IllegalStateException("unknown matcher '"+_changingMatcherName+"'. It is set as changing matcher in "+this);
         }

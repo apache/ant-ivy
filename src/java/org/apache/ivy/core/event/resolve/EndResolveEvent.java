@@ -17,7 +17,6 @@
  */
 package org.apache.ivy.core.event.resolve;
 
-import org.apache.ivy.Ivy;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.report.ResolveReport;
 
@@ -26,8 +25,8 @@ public class EndResolveEvent extends ResolveEvent {
 
 	private ResolveReport _report;
 
-	public EndResolveEvent(Ivy source, ModuleDescriptor md, String[] confs, ResolveReport report) {
-		super(source, NAME, md, confs);
+	public EndResolveEvent(ModuleDescriptor md, String[] confs, ResolveReport report) {
+		super(NAME, md, confs);
 		_report = report;
 	}
 

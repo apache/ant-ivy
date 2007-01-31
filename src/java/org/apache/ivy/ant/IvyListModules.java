@@ -20,6 +20,7 @@ package org.apache.ivy.ant;
 import org.apache.ivy.Ivy;
 import org.apache.ivy.core.IvyPatternHelper;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
+import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.plugins.matcher.PatternMatcher;
 import org.apache.tools.ant.BuildException;
 
@@ -113,10 +114,11 @@ public class IvyListModules extends IvyTask {
             throw new BuildException("no value provided for ivy findmodules");
         }
 		Ivy ivy = getIvyInstance();
-		ModuleRevisionId[] mrids = ivy.listModules(ModuleRevisionId.newInstance(_organisation, _module, _branch, _revision), ivy.getMatcher(_matcher));
+        IvySettings settings = ivy.getSettings();
+		ModuleRevisionId[] mrids = ivy.listModules(ModuleRevisionId.newInstance(_organisation, _module, _branch, _revision), settings.getMatcher(_matcher));
 		for (int i = 0; i < mrids.length; i++) {
-            String name = IvyPatternHelper.substitute(ivy.substitute(_property), mrids[i]);
-            String value = IvyPatternHelper.substitute(ivy.substitute(_value), mrids[i]);
+            String name = IvyPatternHelper.substitute(settings.substitute(_property), mrids[i]);
+            String value = IvyPatternHelper.substitute(settings.substitute(_value), mrids[i]);
             getProject().setProperty(name, value);
 		}
 	}

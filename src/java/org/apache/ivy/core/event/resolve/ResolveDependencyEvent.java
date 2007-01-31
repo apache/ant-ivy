@@ -17,7 +17,6 @@
  */
 package org.apache.ivy.core.event.resolve;
 
-import org.apache.ivy.Ivy;
 import org.apache.ivy.core.event.IvyEvent;
 import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
 import org.apache.ivy.plugins.resolver.DependencyResolver;
@@ -26,8 +25,8 @@ public class ResolveDependencyEvent extends IvyEvent {
 	private DependencyResolver _resolver;
 	private DependencyDescriptor _dd;
 
-	protected ResolveDependencyEvent(Ivy source, String name, DependencyResolver resolver, DependencyDescriptor dd) {
-		super(source, name);
+	protected ResolveDependencyEvent(String name, DependencyResolver resolver, DependencyDescriptor dd) {
+		super(name);
 		_resolver = resolver;
 		_dd = dd;
 		addAttribute("resolver", _resolver.getName());

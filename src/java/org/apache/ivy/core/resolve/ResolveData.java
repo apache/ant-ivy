@@ -22,53 +22,50 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.ivy.Ivy;
+import org.apache.ivy.core.cache.CacheManager;
+import org.apache.ivy.core.event.EventManager;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.report.ConfigurationResolveReport;
+import org.apache.ivy.core.settings.IvySettings;
 
 
 public class ResolveData {
     private Map _nodes; // shared map of all nodes: Map (ModuleRevisionId -> IvyNode)
-    private Ivy _ivy;
-    private File _cache;
     private Date _date;
     private boolean _validate;
     private boolean _transitive;
     private ConfigurationResolveReport _report;
+	private CacheManager _cacheManager;
+	private ResolveEngine _engine;
 
     public ResolveData(ResolveData data, boolean validate) {
-        this(data._ivy, data._cache, data._date, data._report, validate, data._nodes);
+        this(data._engine, data._cacheManager, data._date, data._report, validate, data._transitive, data._nodes);
     }
 
-    public ResolveData(Ivy ivy, File cache, Date date, ConfigurationResolveReport report, boolean validate) {
-        this(ivy, cache, date, report, validate, new HashMap());
+    public ResolveData(ResolveEngine engine, File cache, Date date, ConfigurationResolveReport report, boolean validate) {
+        this(engine, cache, date, report, validate, new HashMap());
     }
 
-    public ResolveData(Ivy ivy, File cache, Date date, ConfigurationResolveReport report, boolean validate, Map nodes) {
-    	this(ivy, cache, date, report, validate, true, nodes);
+    public ResolveData(ResolveEngine engine, File cache, Date date, ConfigurationResolveReport report, boolean validate, Map nodes) {
+    	this(engine, cache, date, report, validate, true, nodes);
     }
-    public ResolveData(Ivy ivy, File cache, Date date, ConfigurationResolveReport report, boolean validate, boolean transitive, Map nodes) {
-        _ivy = ivy;
-        _cache = cache;
+    public ResolveData(ResolveEngine engine, File cache, Date date, ConfigurationResolveReport report, boolean validate, boolean transitive, Map nodes) {
+    	this(engine, new CacheManager(engine.getSettings(), cache), date, report, validate, transitive, nodes);
+    }
+    public ResolveData(ResolveEngine engine, CacheManager cacheManager, Date date, ConfigurationResolveReport report, boolean validate, boolean transitive, Map nodes) {
+    	_engine = engine;
         _date = date;
         _report = report;
         _validate = validate;
         _transitive = transitive;
         _nodes = nodes;
+        _cacheManager = cacheManager;
     }
 
-    public File getCache() {
-        return _cache;
-    }
     
 
     public Date getDate() {
         return _date;
-    }
-    
-
-    public Ivy getIvy() {
-        return _ivy;
     }
     
 
@@ -104,6 +101,22 @@ public class ResolveData {
 
 	public boolean isTransitive() {
 		return _transitive;
+	}
+
+	public IvySettings getSettings() {
+		return _engine.getSettings();
+	}
+
+	public CacheManager getCacheManager() {
+		return _cacheManager;
+	}
+
+	public EventManager getEventManager() {
+		return _engine.getEventManager();
+	}
+
+	public ResolveEngine getEngine() {
+		return _engine;
 	}
     
 

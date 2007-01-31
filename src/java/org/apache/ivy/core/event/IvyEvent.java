@@ -20,7 +20,7 @@ package org.apache.ivy.core.event;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.ivy.Ivy;
+import org.apache.ivy.core.IvyContext;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleId;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
@@ -51,12 +51,12 @@ import org.apache.ivy.util.StringUtils;
  *
  */
 public class IvyEvent {
-    private Ivy _source;
+    private EventManager _source;
     private String _name;
     private Map _attributes = new HashMap(); 
 
-	protected IvyEvent(Ivy source, String name) {
-		_source = source;
+	protected IvyEvent(String name) {
+		_source = IvyContext.getContext().getEventManager();
 		_name = name;
 	}
 	
@@ -92,7 +92,7 @@ public class IvyEvent {
 	}
 	
 
-	public Ivy getSource() {
+	public EventManager getSource() {
 		return _source;
 	}
 

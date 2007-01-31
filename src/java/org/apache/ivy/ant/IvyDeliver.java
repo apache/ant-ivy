@@ -27,6 +27,7 @@ import org.apache.ivy.core.deliver.PublishingDependencyRevisionResolver;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.module.status.StatusManager;
+import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.util.Message;
 import org.apache.ivy.util.MessageImpl;
 import org.apache.tools.ant.BuildException;
@@ -292,25 +293,27 @@ public class IvyDeliver extends IvyTask {
     }
 
     public void execute() throws BuildException {
-        Ivy ivy = getIvyInstance();
-        _organisation = getProperty(_organisation, ivy, "ivy.organisation");
-        _module = getProperty(_module, ivy, "ivy.module");
-        _revision = getProperty(_revision, ivy, "ivy.revision");
-        _pubRevision = getProperty(_pubRevision, ivy, "ivy.deliver.revision");
+    	Ivy ivy = getIvyInstance();
+        IvySettings settings = ivy.getSettings();
+        
+        _organisation = getProperty(_organisation, settings, "ivy.organisation");
+        _module = getProperty(_module, settings, "ivy.module");
+        _revision = getProperty(_revision, settings, "ivy.revision");
+        _pubRevision = getProperty(_pubRevision, settings, "ivy.deliver.revision");
         if (_cache == null) {
-            _cache = ivy.getDefaultCache();
+            _cache = settings.getDefaultCache();
         }
-        _deliverpattern = getProperty(_deliverpattern, ivy,
+        _deliverpattern = getProperty(_deliverpattern, settings,
                 "ivy.deliver.ivy.pattern");
-        _status = getProperty(_status, ivy, "ivy.status");
+        _status = getProperty(_status, settings, "ivy.status");
         if (_deliveryList == null) {
-            String deliveryListPath = getProperty(ivy, "ivy.delivery.list.file");
+            String deliveryListPath = getProperty(settings, "ivy.delivery.list.file");
             if (deliveryListPath == null) {
                 _deliveryList = new File(System.getProperty("java.io.tmpdir")
                         + "/delivery.properties");
             } else {
                 _deliveryList = getProject().resolveFile(
-                        ivy.substitute(deliveryListPath));
+                        settings.substitute(deliveryListPath));
             }
         }
         if (_organisation == null) {
@@ -322,7 +325,7 @@ public class IvyDeliver extends IvyTask {
                     "no module name provided for ivy deliver task: It can either be set explicitely via the attribute 'module' or via 'ivy.module' property or a prior call to <resolve/>");
         }
         if (_revision == null) {
-            _revision = "working@"+Ivy.getLocalHostName();
+            _revision = Ivy.getWorkingRevision();
         }
         Date pubdate = getPubDate(_pubdate, new Date());
         if (_pubRevision == null) {
@@ -357,7 +360,7 @@ public class IvyDeliver extends IvyTask {
                 drResolver = new DefaultPublishingDRResolver();
             }
             ivy.deliver(mrid, _pubRevision, _cache, _deliverpattern, _status,
-                    pubdate, drResolver, doValidate(ivy), _replacedynamicrev);
+                    pubdate, drResolver, doValidate(settings), _replacedynamicrev);
 
         } catch (Exception e) {
             throw new BuildException("impossible to deliver " + mrid + ": " + e, e);

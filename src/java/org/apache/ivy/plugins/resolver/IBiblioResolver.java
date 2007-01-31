@@ -24,18 +24,19 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.ivy.Ivy;
 import org.apache.ivy.core.IvyPatternHelper;
 import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.DefaultArtifact;
 import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.report.DownloadReport;
+import org.apache.ivy.core.resolve.DownloadOptions;
 import org.apache.ivy.core.resolve.ResolveData;
 import org.apache.ivy.core.resolve.ResolvedModuleRevision;
 import org.apache.ivy.core.search.ModuleEntry;
 import org.apache.ivy.core.search.OrganisationEntry;
 import org.apache.ivy.core.search.RevisionEntry;
+import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.plugins.resolver.util.ResolvedResource;
 
 
@@ -83,24 +84,24 @@ public class IBiblioResolver extends URLResolver {
         }
     }
     
-    public void ensureConfigured(Ivy ivy) {
-        if (ivy != null && (_root == null || _pattern == null)) {
+    public void ensureConfigured(IvySettings settings) {
+        if (settings != null && (_root == null || _pattern == null)) {
             if (_root == null) {
-                String root = ivy.getVariable("ivy.ibiblio.default.artifact.root");
+                String root = settings.getVariable("ivy.ibiblio.default.artifact.root");
                 if (root != null) {
                     _root = root;
                 } else {
-                    ivy.configureRepositories(true);
-                    _root = ivy.getVariable("ivy.ibiblio.default.artifact.root");
+                    settings.configureRepositories(true);
+                    _root = settings.getVariable("ivy.ibiblio.default.artifact.root");
                 }
             }
             if (_pattern == null) {
-                String pattern = ivy.getVariable("ivy.ibiblio.default.artifact.pattern");
+                String pattern = settings.getVariable("ivy.ibiblio.default.artifact.pattern");
                 if (pattern != null) {
                     _pattern = pattern;
                 } else {
-                    ivy.configureRepositories(false);
-                    _pattern = ivy.getVariable("ivy.ibiblio.default.artifact.pattern");
+                    settings.configureRepositories(false);
+                    _pattern = settings.getVariable("ivy.ibiblio.default.artifact.pattern");
                 }
             }
             updateWholePattern();
@@ -118,7 +119,7 @@ public class IBiblioResolver extends URLResolver {
             throw new NullPointerException("pattern must not be null");
         }
         _pattern = pattern;
-        ensureConfigured(getIvy());
+        ensureConfigured(getSettings());
         updateWholePattern();
     }
     public String getRoot() {
@@ -139,7 +140,7 @@ public class IBiblioResolver extends URLResolver {
         } else {
             _root = root;
         }
-        ensureConfigured(getIvy());
+        ensureConfigured(getSettings());
         updateWholePattern();
     }
     
@@ -160,7 +161,7 @@ public class IBiblioResolver extends URLResolver {
     	if (IvyPatternHelper.MODULE_KEY.equals(token) && !isM2compatible()) {
     		return new String[0];
     	}
-        ensureConfigured(getIvy());
+        ensureConfigured(getSettings());
     	return super.listTokenValues(token, otherTokenValues);
     }
     public OrganisationEntry[] listOrganisations() {
@@ -168,13 +169,13 @@ public class IBiblioResolver extends URLResolver {
     }
     public ModuleEntry[] listModules(OrganisationEntry org) {
     	if (isM2compatible()) {
-            ensureConfigured(getIvy());
+            ensureConfigured(getSettings());
             return super.listModules(org);
     	}
         return new ModuleEntry[0];
     }    
     public RevisionEntry[] listRevisions(ModuleEntry mod) {
-        ensureConfigured(getIvy());
+        ensureConfigured(getSettings());
         return super.listRevisions(mod);
     }
     public String getTypeName() {
@@ -183,25 +184,25 @@ public class IBiblioResolver extends URLResolver {
 
     // override some methods to ensure configuration    
     public ResolvedModuleRevision getDependency(DependencyDescriptor dd, ResolveData data) throws ParseException {
-        ensureConfigured(data.getIvy());
+        ensureConfigured(data.getSettings());
         return super.getDependency(dd, data);
     }
     
     protected ResolvedResource findArtifactRef(Artifact artifact, Date date) {
-        ensureConfigured(getIvy());
+        ensureConfigured(getSettings());
         return super.findArtifactRef(artifact, date);
     }
     
-    public DownloadReport download(Artifact[] artifacts, Ivy ivy, File cache, boolean useOrigin) {
-        ensureConfigured(ivy);
-        return super.download(artifacts, ivy, cache, useOrigin);
+    public DownloadReport download(Artifact[] artifacts, DownloadOptions options) {
+        ensureConfigured(options.getSettings());
+        return super.download(artifacts, options);
     }
     public boolean exists(Artifact artifact) {
-        ensureConfigured(getIvy());
+        ensureConfigured(getSettings());
         return super.exists(artifact);
     }
     public List getArtifactPatterns() {
-        ensureConfigured(getIvy());
+        ensureConfigured(getSettings());
         return super.getArtifactPatterns();
     }
 

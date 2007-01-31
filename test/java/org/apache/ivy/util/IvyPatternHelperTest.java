@@ -20,9 +20,9 @@ package org.apache.ivy.util;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.ivy.core.IvyPatternHelper;
-
 import junit.framework.TestCase;
+
+import org.apache.ivy.core.IvyPatternHelper;
 
 public class IvyPatternHelperTest extends TestCase {
     public void testSubstitute() {

@@ -17,9 +17,6 @@
  */
 package org.apache.ivy.util;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
 
 /**
  * Convenient class used only for uncapitalization

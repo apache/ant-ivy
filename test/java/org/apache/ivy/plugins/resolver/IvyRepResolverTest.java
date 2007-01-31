@@ -22,7 +22,8 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
-import org.apache.ivy.Ivy;
+import org.apache.ivy.core.cache.CacheManager;
+import org.apache.ivy.core.event.EventManager;
 import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.DefaultArtifact;
 import org.apache.ivy.core.module.descriptor.DefaultDependencyDescriptor;
@@ -30,12 +31,15 @@ import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.report.ArtifactDownloadReport;
 import org.apache.ivy.core.report.DownloadReport;
 import org.apache.ivy.core.report.DownloadStatus;
+import org.apache.ivy.core.resolve.DownloadOptions;
 import org.apache.ivy.core.resolve.ResolveData;
+import org.apache.ivy.core.resolve.ResolveEngine;
 import org.apache.ivy.core.resolve.ResolvedModuleRevision;
 import org.apache.ivy.core.search.ModuleEntry;
 import org.apache.ivy.core.search.OrganisationEntry;
 import org.apache.ivy.core.search.RevisionEntry;
-import org.apache.ivy.plugins.resolver.IvyRepResolver;
+import org.apache.ivy.core.settings.IvySettings;
+import org.apache.ivy.core.sort.SortEngine;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.Delete;
 
@@ -46,15 +50,21 @@ import org.apache.tools.ant.taskdefs.Delete;
 public class IvyRepResolverTest extends TestCase {
 	// remote.test
 	
-    private File _cache;
+    private IvySettings _settings;
+    private ResolveEngine _engine;
     private ResolveData _data;
-    private Ivy _ivy;
+    private File _cache;
+	private CacheManager _cacheManager;
+    
     
     protected void setUp() throws Exception {
+    	_settings = new IvySettings();
+        _engine = new ResolveEngine(_settings, new EventManager(), new SortEngine(_settings));
         _cache = new File("build/cache");
-        _ivy = new Ivy();
-        _data = new ResolveData(_ivy, _cache, null, null, false);
+        _data = new ResolveData(_engine, _cache, null, null, true);
         _cache.mkdirs();
+        _cacheManager = new CacheManager(_settings, _cache);
+        _settings.setDefaultCache(_cache);
     }
     
     protected void tearDown() throws Exception {
@@ -66,12 +76,11 @@ public class IvyRepResolverTest extends TestCase {
 
     public void testDefaults() {
         IvyRepResolver resolver = new IvyRepResolver();
-        Ivy ivy = new Ivy();
-        ivy.setVariable("ivy.ivyrep.default.ivy.root", "http://www.jayasoft.fr/myivyrep/");
-        ivy.setVariable("ivy.ivyrep.default.ivy.pattern", "[organisation]/[module]/ivy-[revision].[ext]");
-        ivy.setVariable("ivy.ivyrep.default.artifact.root", "http://www.ibiblio.org/mymaven/");
-        ivy.setVariable("ivy.ivyrep.default.artifact.pattern", "[module]/jars/[artifact]-[revision].jar");
-        resolver.setIvy(ivy);
+        _settings.setVariable("ivy.ivyrep.default.ivy.root", "http://www.jayasoft.fr/myivyrep/");
+        _settings.setVariable("ivy.ivyrep.default.ivy.pattern", "[organisation]/[module]/ivy-[revision].[ext]");
+        _settings.setVariable("ivy.ivyrep.default.artifact.root", "http://www.ibiblio.org/mymaven/");
+        _settings.setVariable("ivy.ivyrep.default.artifact.pattern", "[module]/jars/[artifact]-[revision].jar");
+        resolver.setSettings(_settings);
         List l = resolver.getIvyPatterns();
         assertNotNull(l);
         assertEquals(1, l.size());
@@ -85,7 +94,7 @@ public class IvyRepResolverTest extends TestCase {
     public void testIvyRep() throws Exception {        
         IvyRepResolver resolver = new IvyRepResolver();
         resolver.setName("test");
-        resolver.setIvy(_ivy);
+        resolver.setSettings(_settings);
         assertEquals("test", resolver.getName());
         
         ModuleRevisionId mrid = ModuleRevisionId.newInstance("apache", "commons-cli", "1.0");
@@ -95,7 +104,7 @@ public class IvyRepResolverTest extends TestCase {
         assertEquals(2, rmr.getDescriptor().getDependencies().length);
 
         DefaultArtifact artifact = new DefaultArtifact(mrid, rmr.getPublicationDate(), "commons-cli", "jar", "jar");
-        DownloadReport report = resolver.download(new Artifact[] {artifact}, _data.getIvy(), _cache);
+        DownloadReport report = resolver.download(new Artifact[] {artifact}, new DownloadOptions(_settings, _cache));
         assertNotNull(report);
         
         assertEquals(1, report.getArtifactsReports().length);
@@ -107,7 +116,7 @@ public class IvyRepResolverTest extends TestCase {
         assertEquals(DownloadStatus.SUCCESSFUL, ar.getDownloadStatus());
 
         // test to ask to download again, should use cache
-        report = resolver.download(new Artifact[] {artifact}, _data.getIvy(), _cache);
+        report = resolver.download(new Artifact[] {artifact}, new DownloadOptions(_settings, _cache));
         assertNotNull(report);
         
         assertEquals(1, report.getArtifactsReports().length);
@@ -129,7 +138,7 @@ public class IvyRepResolverTest extends TestCase {
         resolver.setName("testLocal");
         resolver.setIvyroot("file:" + rootpath);
         resolver.setIvypattern("[organisation]/[module]/ivys/ivy-[revision].xml");
-        resolver.setIvy(_ivy);
+        resolver.setSettings(_settings);
         
         ModuleRevisionId mrid = ModuleRevisionId.newInstance("org1", "mod1.1", "1.0");
         ResolvedModuleRevision rmr = resolver.getDependency(new DefaultDependencyDescriptor(mrid, false), _data);
@@ -139,7 +148,7 @@ public class IvyRepResolverTest extends TestCase {
     public void testListing() {
         IvyRepResolver resolver = new IvyRepResolver();
         resolver.setName("test");
-        resolver.setIvy(_ivy);
+        resolver.setSettings(_settings);
         
         OrganisationEntry[] orgs = resolver.listOrganisations();
         ResolverTestHelper.assertOrganisationEntriesContains(resolver, new String[] {"hibernate", "apache"}, orgs);

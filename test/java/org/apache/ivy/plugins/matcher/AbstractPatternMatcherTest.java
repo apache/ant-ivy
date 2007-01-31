@@ -17,9 +17,6 @@
  */
 package org.apache.ivy.plugins.matcher;
 
-import org.apache.ivy.plugins.matcher.Matcher;
-import org.apache.ivy.plugins.matcher.PatternMatcher;
-
 import junit.framework.TestCase;
 
 

@@ -19,23 +19,22 @@ package org.apache.ivy.core.install;
 
 import java.io.File;
 
+import junit.framework.TestCase;
+
 import org.apache.ivy.Ivy;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.plugins.matcher.PatternMatcher;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.Delete;
 
-
-import junit.framework.TestCase;
-
 public class InstallTest extends TestCase {
 
     public void testSimple() throws Exception {
-        Ivy ivy = new Ivy();
+        Ivy ivy = Ivy.newInstance();
         ivy.configure(new File("test/repositories/ivyconf.xml"));
         
         ivy.install(ModuleRevisionId.newInstance("org1", "mod1.2", "2.0"), 
-                ivy.getDefaultResolver().getName(), 
+                ivy.getSettings().getDefaultResolver().getName(), 
                 "install", true, true, true, null, _cache, PatternMatcher.EXACT);
         
         assertTrue(new File("build/test/install/org1/mod1.2/ivy-2.0.xml").exists());
@@ -43,11 +42,11 @@ public class InstallTest extends TestCase {
     }
 
     public void testDependencies() throws Exception {
-        Ivy ivy = new Ivy();
+        Ivy ivy = Ivy.newInstance();
         ivy.configure(new File("test/repositories/ivyconf.xml"));
         
         ivy.install(ModuleRevisionId.newInstance("org1", "mod1.1", "1.0"), 
-                ivy.getDefaultResolver().getName(), 
+                ivy.getSettings().getDefaultResolver().getName(), 
                 "install", true, true, true, null, _cache, PatternMatcher.EXACT);
         
         assertTrue(new File("build/test/install/org1/mod1.1/ivy-1.0.xml").exists());
@@ -58,11 +57,11 @@ public class InstallTest extends TestCase {
     }
 
     public void testNotTransitive() throws Exception {
-        Ivy ivy = new Ivy();
+        Ivy ivy = Ivy.newInstance();
         ivy.configure(new File("test/repositories/ivyconf.xml"));
         
         ivy.install(ModuleRevisionId.newInstance("org1", "mod1.1", "1.0"), 
-                ivy.getDefaultResolver().getName(), 
+                ivy.getSettings().getDefaultResolver().getName(), 
                 "install", false, true, true, null, _cache, PatternMatcher.EXACT);
         
         assertTrue(new File("build/test/install/org1/mod1.1/ivy-1.0.xml").exists());
@@ -73,7 +72,7 @@ public class InstallTest extends TestCase {
     }
 
     public void testRegexpMatcher() throws Exception {
-        Ivy ivy = new Ivy();
+        Ivy ivy = Ivy.newInstance();
         ivy.configure(new File("test/repositories/ivyconf.xml"));
         
         ivy.install(ModuleRevisionId.newInstance("org1", ".*", ".*"), 

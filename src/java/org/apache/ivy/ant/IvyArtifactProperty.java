@@ -19,10 +19,10 @@ package org.apache.ivy.ant;
 
 import java.io.File;
 
-import org.apache.ivy.Ivy;
 import org.apache.ivy.core.IvyPatternHelper;
 import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.id.ModuleId;
+import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.plugins.report.XmlReportParser;
 import org.apache.tools.ant.BuildException;
 
@@ -86,24 +86,24 @@ public class IvyArtifactProperty extends IvyTask {
     }
 
     public void execute() throws BuildException {
-        Ivy ivy = getIvyInstance();
+        IvySettings settings = getSettings(); 
         
-        _organisation = getProperty(_organisation, ivy, "ivy.organisation");
-        _module = getProperty(_module, ivy, "ivy.module");
+        _organisation = getProperty(_organisation, settings, "ivy.organisation");
+        _module = getProperty(_module, settings, "ivy.module");
 
         ensureResolved(isHaltonfailure(), false, getOrganisation(), getModule());
         
-        _conf = getProperty(_conf, ivy, "ivy.resolved.configurations");
+        _conf = getProperty(_conf, settings, "ivy.resolved.configurations");
         if ("*".equals(_conf)) {
-            _conf = getProperty(ivy, "ivy.resolved.configurations");
+            _conf = getProperty(settings, "ivy.resolved.configurations");
             if (_conf == null) {
                 throw new BuildException("bad provided for ivy artifactproperty: * can only be used with a prior call to <resolve/>");
             }
         }
-        _organisation = getProperty(_organisation, ivy, "ivy.organisation");
-        _module = getProperty(_module, ivy, "ivy.module");
+        _organisation = getProperty(_organisation, settings, "ivy.organisation");
+        _module = getProperty(_module, settings, "ivy.module");
         if (_cache == null) {
-            _cache = ivy.getDefaultCache();
+            _cache = settings.getDefaultCache();
         }
         
         if (_organisation == null) {
@@ -122,8 +122,8 @@ public class IvyArtifactProperty extends IvyTask {
                 Artifact[] artifacts = parser.getArtifacts(new ModuleId(_organisation, _module), confs[i], _cache);
                 for (int j = 0; j < artifacts.length; j++) {
                     Artifact artifact = artifacts[j];
-                    String name = IvyPatternHelper.substitute(ivy.substitute(getName()), artifact, confs[i]);
-                    String value = IvyPatternHelper.substitute(ivy.substitute(getValue()), artifact, confs[i]);
+                    String name = IvyPatternHelper.substitute(settings.substitute(getName()), artifact, confs[i]);
+                    String value = IvyPatternHelper.substitute(settings.substitute(getValue()), artifact, confs[i]);
                     getProject().setProperty(name, value);
                 }
             }

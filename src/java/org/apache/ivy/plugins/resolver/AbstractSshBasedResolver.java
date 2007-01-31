@@ -19,7 +19,7 @@ package org.apache.ivy.plugins.resolver;
 
 import java.io.File;
 
-import org.apache.ivy.Ivy;
+import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.plugins.repository.ssh.AbstractSshBasedRepository;
 
 
@@ -68,10 +68,10 @@ public abstract class AbstractSshBasedResolver extends RepositoryResolver {
         passfileSet = true;
     }
 
-    public void setIvy(Ivy ivy) {
-        super.setIvy(ivy);
+    public void setSettings(IvySettings settings) {
+        super.setSettings(settings);
         if (!passfileSet) {
-            getSshBasedRepository().setPassFile(new File(ivy.getDefaultIvyUserDir(), getSshBasedRepository().getHost()+".ssh.passwd"));
+            getSshBasedRepository().setPassFile(new File(settings.getDefaultIvyUserDir(), getSshBasedRepository().getHost()+".ssh.passwd"));
         }
     }
 

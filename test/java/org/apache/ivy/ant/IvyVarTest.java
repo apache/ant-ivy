@@ -17,12 +17,10 @@
  */
 package org.apache.ivy.ant;
 
-import org.apache.ivy.Ivy;
-import org.apache.ivy.ant.IvyVar;
-import org.apache.tools.ant.Project;
-
-
 import junit.framework.TestCase;
+
+import org.apache.ivy.Ivy;
+import org.apache.tools.ant.Project;
 
 public class IvyVarTest extends TestCase {
     public void testSimple() {

@@ -24,8 +24,6 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.ivy.plugins.repository.vfs.VfsResource;
-
 import junit.framework.TestCase;
 
 

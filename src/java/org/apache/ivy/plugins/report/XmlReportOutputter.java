@@ -113,7 +113,7 @@ public class XmlReportOutputter implements ReportOutputter {
 			ModuleId mid = (ModuleId) iter.next();
 			out.println("\t\t<module organisation=\""+mid.getOrganisation()+"\"" +
 					" name=\""+mid.getName()+"\"" +
-					" resolver=\""+report.getIvy().getResolverName(mid)+"\">");
+					" resolver=\""+report.getResolveEngine().getSettings().getResolverName(mid)+"\">");
 			for (Iterator it2 = report.getNodes(mid).iterator(); it2.hasNext();) {
                 IvyNode dep = (IvyNode)it2.next();
                 ModuleDescriptor md = null;

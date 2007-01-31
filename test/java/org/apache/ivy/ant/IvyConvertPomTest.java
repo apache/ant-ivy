@@ -25,7 +25,6 @@ import java.io.InputStreamReader;
 
 import junit.framework.TestCase;
 
-import org.apache.ivy.ant.IvyConvertPom;
 import org.apache.ivy.util.FileUtil;
 import org.apache.tools.ant.Project;
 

@@ -19,9 +19,6 @@ package org.apache.ivy.plugins.matcher;
 
 import java.util.regex.PatternSyntaxException;
 
-import org.apache.ivy.plugins.matcher.GlobPatternMatcher;
-import org.apache.ivy.plugins.matcher.Matcher;
-
 /**
 * @see GlobPatternMatcher
  */

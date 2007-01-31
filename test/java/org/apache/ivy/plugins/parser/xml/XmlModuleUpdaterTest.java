@@ -27,12 +27,12 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Map;
 
+import junit.framework.TestCase;
+
 import org.apache.ivy.Ivy;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
-import org.apache.ivy.plugins.parser.xml.XmlModuleDescriptorUpdater;
+import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.util.FileUtil;
-
-import junit.framework.TestCase;
 
 public class XmlModuleUpdaterTest extends TestCase {
     
@@ -54,9 +54,9 @@ public class XmlModuleUpdaterTest extends TestCase {
         GregorianCalendar cal = new GregorianCalendar();
         cal.set(2005, 2, 22, 14, 32, 54);
         
-        Ivy ivy = new Ivy();
+        Ivy ivy = Ivy.newInstance();
         ivy.setVariable("myvar", "myconf1");
-        XmlModuleDescriptorUpdater.update(ivy, 
+        XmlModuleDescriptorUpdater.update(ivy.getSettings(), 
                 XmlModuleUpdaterTest.class.getResource("test-update.xml"), 
                 dest, resolvedRevisions, "release", "mynewrev", cal.getTime(), null, true);
         
@@ -68,7 +68,7 @@ public class XmlModuleUpdaterTest extends TestCase {
     
     public void testUpdateWithImportedMappingOverride() throws Exception {
        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-        XmlModuleDescriptorUpdater.update(new Ivy(), 
+        XmlModuleDescriptorUpdater.update(new IvySettings(), 
                 XmlModuleUpdaterTest.class.getResourceAsStream("test-configurations-import4.xml"), 
                 buffer, new HashMap(), "release", "mynewrev", new Date(), null, true);
        

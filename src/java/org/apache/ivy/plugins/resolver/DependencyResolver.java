@@ -22,10 +22,10 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.util.Map;
 
-import org.apache.ivy.Ivy;
 import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
 import org.apache.ivy.core.report.DownloadReport;
+import org.apache.ivy.core.resolve.DownloadOptions;
 import org.apache.ivy.core.resolve.ResolveData;
 import org.apache.ivy.core.resolve.ResolvedModuleRevision;
 import org.apache.ivy.core.search.ModuleEntry;
@@ -53,7 +53,7 @@ public interface DependencyResolver {
      * @throws ParseException
      */
     ResolvedModuleRevision getDependency(DependencyDescriptor dd, ResolveData data) throws ParseException;
-    DownloadReport download(Artifact[] artifacts, Ivy ivy, File cache, boolean useOrigin);
+    DownloadReport download(Artifact[] artifacts, DownloadOptions options);
     boolean exists(Artifact artifact);
     void publish(Artifact artifact, File src, boolean overwrite) throws IOException;
     

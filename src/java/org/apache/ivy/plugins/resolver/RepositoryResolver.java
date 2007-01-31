@@ -27,13 +27,15 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.ivy.Ivy;
 import org.apache.ivy.core.IvyPatternHelper;
+import org.apache.ivy.core.event.EventManager;
 import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.DefaultArtifact;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.report.DownloadReport;
+import org.apache.ivy.core.resolve.DownloadOptions;
+import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.plugins.latest.LatestStrategy;
 import org.apache.ivy.plugins.repository.AbstractRepository;
 import org.apache.ivy.plugins.repository.Repository;
@@ -78,7 +80,7 @@ public class RepositoryResolver extends AbstractResourceResolver {
 
 
     protected ResolvedResource findResourceUsingPattern(ModuleRevisionId mrid, String pattern, Artifact artifact, ResourceMDParser rmdparser, Date date) {
-        return findResourceUsingPattern(getName(), getRepository(), getLatestStrategy(), getIvy().getVersionMatcher(), rmdparser, mrid, pattern, artifact, date, isAlwaysCheckExactRevision());
+        return findResourceUsingPattern(getName(), getRepository(), getLatestStrategy(), getSettings().getVersionMatcher(), rmdparser, mrid, pattern, artifact, date, isAlwaysCheckExactRevision());
     }
     
     public static ResolvedResource findResourceUsingPattern(String name, Repository repository, LatestStrategy strategy, VersionMatcher versionMatcher, ResourceMDParser rmdparser, ModuleRevisionId mrid, String pattern, Artifact artifact, Date date, boolean alwaysCheckExactRevision) {
@@ -211,15 +213,18 @@ public class RepositoryResolver extends AbstractResourceResolver {
 		}
 	}
     
-    public DownloadReport download(Artifact[] artifacts, Ivy ivy, File cache, boolean useOrigin) {
-        try {
-            _repository.addTransferListener(ivy);
-            return super.download(artifacts, ivy, cache, useOrigin);
-        } finally {
-            if (ivy != null) {
-                _repository.removeTransferListener(ivy);
-            }
-        }
+    public DownloadReport download(Artifact[] artifacts, DownloadOptions options) {
+    	EventManager eventManager = options.getEventManager();
+    	try {
+    		if (eventManager != null) {
+    			_repository.addTransferListener(eventManager);
+    		}
+    		return super.download(artifacts, options);
+    	} finally {
+    		if (eventManager != null) {
+    			_repository.removeTransferListener(eventManager);
+    		}
+    	}
     }    
 
     protected void findTokenValues(Collection names, List patterns, Map tokenValues, String token) {
@@ -241,11 +246,11 @@ public class RepositoryResolver extends AbstractResourceResolver {
         Message.debug("\t\trepository: "+getRepository());
     }
     
-    public void setIvy(Ivy ivy) {
-        super.setIvy(ivy);
-        if (ivy != null) {
+    public void setSettings(IvySettings settings) {
+        super.setSettings(settings);
+        if (settings != null) {
             if (_alwaysCheckExactRevision == null) {
-                _alwaysCheckExactRevision = Boolean.valueOf(ivy.getVariable("ivy.default.always.check.exact.revision"));
+                _alwaysCheckExactRevision = Boolean.valueOf(settings.getVariable("ivy.default.always.check.exact.revision"));
             }
         }
     }

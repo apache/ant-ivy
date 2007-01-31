@@ -20,9 +20,6 @@ package org.apache.ivy.util;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.ivy.util.Configurator;
-
-
 import junit.framework.TestCase;
 
 /**

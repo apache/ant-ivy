@@ -29,6 +29,7 @@ import org.apache.ivy.Ivy;
 import org.apache.ivy.core.IvyContext;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.report.ResolveReport;
+import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.util.Message;
 import org.apache.ivy.util.StringUtils;
 import org.apache.tools.ant.BuildException;
@@ -46,7 +47,7 @@ public class IvyTask extends Task {
     public static final String ANT_PROJECT_CONTEXT_KEY = "ant-project";
 	private Boolean _validate = null; 
 
-    protected boolean doValidate(Ivy ivy) {
+    protected boolean doValidate(IvySettings ivy) {
         if (_validate != null) {
             return _validate.booleanValue();
         }
@@ -57,6 +58,10 @@ public class IvyTask extends Task {
     }
     public void setValidate(boolean validate) {
         _validate = Boolean.valueOf(validate);
+    }
+    
+    protected IvySettings getSettings() {
+    	return getIvyInstance().getSettings();
     }
     
     protected Ivy getIvyInstance() {
@@ -250,7 +255,7 @@ public class IvyTask extends Task {
         }
     }
 
-    protected String getProperty(String value, Ivy ivy, String name) {
+    protected String getProperty(String value, IvySettings ivy, String name) {
         if (value == null) {
             return getProperty(ivy, name);
         } else {
@@ -260,7 +265,7 @@ public class IvyTask extends Task {
         }
     }
     
-    protected String getProperty(Ivy ivy, String name) {        
+    protected String getProperty(IvySettings ivy, String name) {        
         String val =  ivy.getVariable(name);        
         if (val == null) {
             val = ivy.substitute(getProject().getProperty(name));

@@ -17,11 +17,9 @@
  */
 package org.apache.ivy.plugins.namespace;
 
-import org.apache.ivy.core.module.id.ModuleRevisionId;
-import org.apache.ivy.plugins.namespace.MRIDRule;
-import org.apache.ivy.plugins.namespace.MRIDTransformationRule;
-
 import junit.framework.TestCase;
+
+import org.apache.ivy.core.module.id.ModuleRevisionId;
 
 public class MRIDTransformationRuleTest extends TestCase {
     

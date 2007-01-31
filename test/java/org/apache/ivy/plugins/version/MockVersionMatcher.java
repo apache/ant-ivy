@@ -18,7 +18,6 @@
 package org.apache.ivy.plugins.version;
 
 import org.apache.ivy.core.module.id.ModuleRevisionId;
-import org.apache.ivy.plugins.version.AbstractVersionMatcher;
 
 public class MockVersionMatcher extends AbstractVersionMatcher {
 

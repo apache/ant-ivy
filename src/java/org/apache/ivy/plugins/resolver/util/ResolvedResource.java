@@ -17,7 +17,6 @@
  */
 package org.apache.ivy.plugins.resolver.util;
 
-import org.apache.ivy.core.resolve.ResolvedModuleRevision;
 import org.apache.ivy.plugins.latest.ArtifactInfo;
 import org.apache.ivy.plugins.repository.Resource;
 

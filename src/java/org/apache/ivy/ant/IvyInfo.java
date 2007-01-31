@@ -27,6 +27,7 @@ import org.apache.ivy.Ivy;
 import org.apache.ivy.core.module.descriptor.Configuration;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.descriptor.Configuration.Visibility;
+import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.plugins.parser.ModuleDescriptorParserRegistry;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
@@ -50,18 +51,19 @@ public class IvyInfo extends IvyTask {
 
     public void execute() throws BuildException {
         Ivy ivy = getIvyInstance();
+        IvySettings settings = ivy.getSettings();
         if (_file == null) {
-            _file = new File(getProject().getBaseDir(), getProperty(ivy, "ivy.dep.file"));
+            _file = new File(getProject().getBaseDir(), getProperty(settings, "ivy.dep.file"));
         }
         
         try {
-			ModuleDescriptor md = ModuleDescriptorParserRegistry.getInstance().parseDescriptor(ivy, _file.toURL(), doValidate(ivy));
+			ModuleDescriptor md = ModuleDescriptorParserRegistry.getInstance().parseDescriptor(settings, _file.toURL(), doValidate(settings));
             getProject().setProperty("ivy.organisation", md.getModuleRevisionId().getOrganisation());
             getProject().setProperty("ivy.module", md.getModuleRevisionId().getName());
             if (md.getModuleRevisionId().getRevision() != null) {
             	getProject().setProperty("ivy.revision", md.getModuleRevisionId().getRevision());
             } else {
-            	getProject().setProperty("ivy.revision", "working@"+Ivy.getLocalHostName());
+            	getProject().setProperty("ivy.revision", Ivy.getWorkingRevision());
             }
             getProject().setProperty("ivy.configurations", mergeConfs(md.getConfigurationsNames()));
             

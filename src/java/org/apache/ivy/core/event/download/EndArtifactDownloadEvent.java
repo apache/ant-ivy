@@ -19,7 +19,6 @@ package org.apache.ivy.core.event.download;
 
 import java.io.File;
 
-import org.apache.ivy.Ivy;
 import org.apache.ivy.core.cache.ArtifactOrigin;
 import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.report.ArtifactDownloadReport;
@@ -32,8 +31,8 @@ public class EndArtifactDownloadEvent extends DownloadEvent {
     private DependencyResolver _resolver;
     private ArtifactDownloadReport _report;
 
-    public EndArtifactDownloadEvent(Ivy source, DependencyResolver resolver, Artifact artifact, ArtifactDownloadReport report, File dest) {
-        super(source, NAME, artifact);
+    public EndArtifactDownloadEvent(DependencyResolver resolver, Artifact artifact, ArtifactDownloadReport report, File dest) {
+        super(NAME, artifact);
         _resolver = resolver;
         _report = report;
         addAttribute("resolver", _resolver.getName());

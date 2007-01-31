@@ -20,7 +20,7 @@ package org.apache.ivy.ant;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.ivy.Ivy;
+import org.apache.ivy.core.cache.CacheManager;
 import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.types.FileSet;
@@ -65,11 +65,11 @@ public class IvyCacheFileset extends IvyCacheTask {
                 NameEntry ne = fileset.createExclude();
                 ne.setName("**/*");
             } else {
-            	Ivy ivy = getIvyInstance();
+            	CacheManager cache = getCacheManager();
                 for (Iterator iter = paths.iterator(); iter.hasNext();) {
                 	Artifact a = (Artifact)iter.next();
                     NameEntry ne = fileset.createInclude();
-                    ne.setName(ivy.getArchivePathInCache(a, ivy.getSavedArtifactOrigin(getCache(), a)));
+                    ne.setName(cache.getArchivePathInCache(a, cache.getSavedArtifactOrigin(a)));
                 }
             }
         } catch (Exception ex) {

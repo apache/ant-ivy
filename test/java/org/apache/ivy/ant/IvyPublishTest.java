@@ -24,10 +24,8 @@ import java.io.InputStreamReader;
 
 import junit.framework.TestCase;
 
-import org.apache.ivy.Ivy;
-import org.apache.ivy.ant.IvyPublish;
-import org.apache.ivy.ant.IvyResolve;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
+import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.plugins.parser.xml.XmlModuleDescriptorParser;
 import org.apache.ivy.util.FileUtil;
 import org.apache.tools.ant.BuildException;
@@ -106,7 +104,7 @@ public class IvyPublishTest extends TestCase {
         assertTrue(new File("test/repositories/1/apache/resolve-simple/jars/resolve-simple-1.2.jar").exists());
         
         // should have updated published ivy version
-        ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(new Ivy(), new File("test/repositories/1/apache/resolve-simple/ivys/ivy-1.2.xml").toURL(), false);
+        ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(new IvySettings(), new File("test/repositories/1/apache/resolve-simple/ivys/ivy-1.2.xml").toURL(), false);
         assertEquals("1.2", md.getModuleRevisionId().getRevision());
     }
 
@@ -159,7 +157,7 @@ public class IvyPublishTest extends TestCase {
         assertTrue(new File("test/repositories/1/apache/resolve-custom/jars/resolve-custom-1.2.jar").exists());
         
         // should have updated published ivy version
-        ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(new Ivy(), dest.toURL(), false);
+        ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(new IvySettings(), dest.toURL(), false);
         assertEquals("1.2", md.getModuleRevisionId().getRevision());
         
         // should have kept custom attributes
@@ -196,7 +194,7 @@ public class IvyPublishTest extends TestCase {
         assertTrue(new File("test/repositories/1/apache/resolve-latest/jars/resolve-latest-1.3.jar").exists());
         
         // the published ivy version should be ok (ok in ivy-publish file)
-        ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(new Ivy(), new File("test/repositories/1/apache/resolve-latest/ivys/ivy-1.3.xml").toURL(), false);
+        ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(new IvySettings(), new File("test/repositories/1/apache/resolve-latest/ivys/ivy-1.3.xml").toURL(), false);
         assertEquals("1.3", md.getModuleRevisionId().getRevision());
         
         // should not have done delivery (replace dynamic revisions with static ones)
@@ -225,7 +223,7 @@ public class IvyPublishTest extends TestCase {
         assertTrue(new File("test/repositories/1/apache/resolve-latest/jars/resolve-latest-1.3.jar").exists());
         
         // should have updated published ivy version
-        ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(new Ivy(), new File("test/repositories/1/apache/resolve-latest/ivys/ivy-1.3.xml").toURL(), false);
+        ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(new IvySettings(), new File("test/repositories/1/apache/resolve-latest/ivys/ivy-1.3.xml").toURL(), false);
         assertEquals("1.3", md.getModuleRevisionId().getRevision());
     }
 

@@ -19,11 +19,11 @@ package org.apache.ivy.ant;
 
 import java.io.File;
 
+import junit.framework.TestCase;
+
 import org.apache.ivy.Ivy;
 import org.apache.ivy.core.report.ResolveReport;
 import org.apache.ivy.util.FileUtil;
-
-import junit.framework.TestCase;
 
 public class AntBuildTriggerTest extends TestCase {
 	public void test() throws Exception {

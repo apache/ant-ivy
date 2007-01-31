@@ -17,8 +17,6 @@
  */
 package org.apache.ivy.plugins.resolver;
 
-import org.apache.ivy.plugins.resolver.VfsResolver;
-
 import junit.framework.TestCase;
 
 public class VfsResolverTest extends TestCase {

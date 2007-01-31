@@ -17,13 +17,11 @@
  */
 package org.apache.ivy.util.url;
 
-import junit.framework.TestCase;
-
 import java.net.URL;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.ivy.util.url.ApacheURLLister;
+import junit.framework.TestCase;
 
 
 /**

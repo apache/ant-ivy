@@ -19,7 +19,6 @@ package org.apache.ivy.plugins.repository;
 
 import java.io.File;
 
-import org.apache.ivy.Ivy;
 import org.apache.ivy.core.event.IvyEvent;
 
 
@@ -114,8 +113,8 @@ public class TransferEvent extends IvyEvent {
     private long _totalLength;
     private boolean _isTotalLengthSet = false;
 
-    public TransferEvent(Ivy ivy, final Repository repository, final Resource resource, final int eventType, final int requestType) {
-    	super(ivy, getName(eventType));
+    public TransferEvent(final Repository repository, final Resource resource, final int eventType, final int requestType) {
+    	super(getName(eventType));
     	
         _repository = repository;
         addAttribute("repository", _repository.getName());
@@ -128,14 +127,14 @@ public class TransferEvent extends IvyEvent {
         addAttribute("request-type", requestType == REQUEST_GET?"get":"put");
     }
 
-	public TransferEvent(Ivy ivy, final Repository repository, final Resource resource, final Exception exception, final int requestType) {
-        this(ivy, repository, resource, TRANSFER_ERROR, requestType);
+	public TransferEvent(final Repository repository, final Resource resource, final Exception exception, final int requestType) {
+        this(repository, resource, TRANSFER_ERROR, requestType);
 
         _exception = exception;
     }
 
-    public TransferEvent(Ivy ivy, final Repository repository, final Resource resource, long length, final int requestType) {
-        this(ivy, repository, resource, TRANSFER_PROGRESS, requestType);
+    public TransferEvent(final Repository repository, final Resource resource, long length, final int requestType) {
+        this(repository, resource, TRANSFER_PROGRESS, requestType);
 
         _length = length;
         _totalLength = length;

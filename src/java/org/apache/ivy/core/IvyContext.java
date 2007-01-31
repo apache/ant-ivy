@@ -23,6 +23,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.ivy.Ivy;
+import org.apache.ivy.core.cache.CacheManager;
+import org.apache.ivy.core.event.EventManager;
+import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.plugins.circular.CircularDependencyStrategy;
 import org.apache.ivy.util.MessageImpl;
 
@@ -87,9 +90,9 @@ public class IvyContext {
 
     private Ivy getDefaultIvy() {
         if (_defaultIvy == null) {
-            _defaultIvy = new Ivy();
+            _defaultIvy = Ivy.newInstance();
             try {
-                getDefaultIvy().configureDefault();
+            	_defaultIvy.configureDefault();
             } catch (Exception e) {
             }            
         }
@@ -100,14 +103,18 @@ public class IvyContext {
     	_operatingThread = Thread.currentThread();
     }
     public File getCache() {
-    	return _cache == null ? getIvy().getDefaultCache() : _cache;
+    	return _cache == null ? getSettings().getDefaultCache() : _cache;
     }
     public void setCache(File cache) {
     	_cache = cache;
     }
+    
+    public IvySettings getSettings() {
+    	return getIvy().getSettings();
+    }
 
 	public CircularDependencyStrategy getCircularDependencyStrategy() {
-		return getIvy().getCircularDependencyStrategy();
+		return getSettings().getCircularDependencyStrategy();
 	}
 
 	public Object get(String key) {
@@ -134,6 +141,15 @@ public class IvyContext {
 	
 	public void setMessageImpl(MessageImpl impl) {
 		_messageImpl = impl;
+	}
+
+	public EventManager getEventManager() {
+		return getIvy().getEventManager();
+	}
+
+	public CacheManager getCacheManager() {
+		// TODO : reuse one instance
+		return new CacheManager(getSettings(), getCache());
 	}
 	
 	// should be better to use context to store this kind of information, but not yet ready to do so...

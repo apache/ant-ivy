@@ -23,7 +23,8 @@ import java.util.GregorianCalendar;
 
 import junit.framework.TestCase;
 
-import org.apache.ivy.Ivy;
+import org.apache.ivy.core.cache.CacheManager;
+import org.apache.ivy.core.event.EventManager;
 import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.DefaultArtifact;
 import org.apache.ivy.core.module.descriptor.DefaultDependencyArtifactDescriptor;
@@ -32,10 +33,13 @@ import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.report.ArtifactDownloadReport;
 import org.apache.ivy.core.report.DownloadReport;
 import org.apache.ivy.core.report.DownloadStatus;
+import org.apache.ivy.core.resolve.DownloadOptions;
 import org.apache.ivy.core.resolve.ResolveData;
+import org.apache.ivy.core.resolve.ResolveEngine;
 import org.apache.ivy.core.resolve.ResolvedModuleRevision;
+import org.apache.ivy.core.settings.IvySettings;
+import org.apache.ivy.core.sort.SortEngine;
 import org.apache.ivy.plugins.matcher.ExactPatternMatcher;
-import org.apache.ivy.plugins.resolver.URLResolver;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.Delete;
 
@@ -46,14 +50,21 @@ import org.apache.tools.ant.taskdefs.Delete;
  */
 public class URLResolverTest extends TestCase {
 	// remote.test
-    private File _cache;
+    private IvySettings _ivy;
+    private ResolveEngine _engine;
     private ResolveData _data;
-    private Ivy _ivy = new Ivy();
+    private File _cache;
+	private CacheManager _cacheManager;
+    
     
     protected void setUp() throws Exception {
+    	_ivy = new IvySettings();
+        _engine = new ResolveEngine(_ivy, new EventManager(), new SortEngine(_ivy));
         _cache = new File("build/cache");
-        _data = new ResolveData(_ivy, _cache, null, null, true);
+        _data = new ResolveData(_engine, _cache, null, null, true);
         _cache.mkdirs();
+        _cacheManager = new CacheManager(_ivy, _cache);
+        _ivy.setDefaultCache(_cache);
     }
     
     protected void tearDown() throws Exception {
@@ -65,7 +76,7 @@ public class URLResolverTest extends TestCase {
     
     public void testFile() throws Exception {
         URLResolver resolver = new URLResolver();
-        resolver.setIvy(_ivy);
+        resolver.setSettings(_ivy);
         String rootpath = new File("test/repositories/1").getAbsolutePath();
         resolver.addIvyPattern("file:"+rootpath + "/[organisation]/[module]/ivys/ivy-[revision].xml");
         resolver.addArtifactPattern("file:"+rootpath + "/[organisation]/[module]/[type]s/[artifact]-[revision].[type]");
@@ -83,7 +94,7 @@ public class URLResolverTest extends TestCase {
         
         // test to ask to download
         DefaultArtifact artifact = new DefaultArtifact(mrid, pubdate, "mod1.1", "jar", "jar");
-        DownloadReport report = resolver.download(new Artifact[] {artifact}, _data.getIvy(), _cache);
+        DownloadReport report = resolver.download(new Artifact[] {artifact}, new DownloadOptions(_ivy, _cache));
         assertNotNull(report);
         
         assertEquals(1, report.getArtifactsReports().length);
@@ -95,7 +106,7 @@ public class URLResolverTest extends TestCase {
         assertEquals(DownloadStatus.SUCCESSFUL, ar.getDownloadStatus());
 
         // test to ask to download again, should use cache
-        report = resolver.download(new Artifact[] {artifact}, _data.getIvy(), _cache);
+        report = resolver.download(new Artifact[] {artifact}, new DownloadOptions(_ivy, _cache));
         assertNotNull(report);
         
         assertEquals(1, report.getArtifactsReports().length);
@@ -109,7 +120,7 @@ public class URLResolverTest extends TestCase {
 
     public void testLatestFile() throws Exception {
         URLResolver resolver = new URLResolver();
-        resolver.setIvy(_ivy);
+        resolver.setSettings(_ivy);
         String rootpath = new File("test/repositories/1").getAbsolutePath().replaceAll("\\\\", "/");
         resolver.addIvyPattern("file:"+rootpath + "/[organisation]/[module]/ivys/ivy-[revision].xml");
         resolver.addArtifactPattern("file:"+rootpath + "/[organisation]/[module]/[type]s/[artifact]-[revision].[type]");
@@ -132,7 +143,7 @@ public class URLResolverTest extends TestCase {
         }
         
         URLResolver resolver = new URLResolver();
-        resolver.setIvy(_ivy);
+        resolver.setSettings(_ivy);
         resolver.addArtifactPattern(ibiblioRoot+"/[module]/[type]s/[artifact]-[revision].[type]");
         resolver.setName("test");
         assertEquals("test", resolver.getName());
@@ -143,7 +154,7 @@ public class URLResolverTest extends TestCase {
         assertEquals(mrid, rmr.getId());
 
         DefaultArtifact artifact = new DefaultArtifact(mrid, rmr.getPublicationDate(), "commons-fileupload", "jar", "jar");
-        DownloadReport report = resolver.download(new Artifact[] {artifact}, _data.getIvy(), _cache);
+        DownloadReport report = resolver.download(new Artifact[] {artifact}, new DownloadOptions(_ivy, _cache));
         assertNotNull(report);
         
         assertEquals(1, report.getArtifactsReports().length);
@@ -155,7 +166,7 @@ public class URLResolverTest extends TestCase {
         assertEquals(DownloadStatus.SUCCESSFUL, ar.getDownloadStatus());
 
         // test to ask to download again, should use cache
-        report = resolver.download(new Artifact[] {artifact}, _data.getIvy(), _cache);
+        report = resolver.download(new Artifact[] {artifact}, new DownloadOptions(_ivy, _cache));
         assertNotNull(report);
         
         assertEquals(1, report.getArtifactsReports().length);
@@ -174,7 +185,7 @@ public class URLResolverTest extends TestCase {
         }
         
         URLResolver resolver = new URLResolver();
-        resolver.setIvy(_ivy);
+        resolver.setSettings(_ivy);
         resolver.addArtifactPattern(ibiblioRoot+"/[module]/[type]s/[artifact]-[revision].[type]");
         resolver.setName("test");
         assertEquals("test", resolver.getName());
@@ -189,7 +200,7 @@ public class URLResolverTest extends TestCase {
 
         DefaultArtifact profiler = new DefaultArtifact(mrid, rmr.getPublicationDate(), "nanning-profiler", "jar", "jar");
         DefaultArtifact trace = new DefaultArtifact(mrid, rmr.getPublicationDate(), "nanning-trace", "jar", "jar");
-        DownloadReport report = resolver.download(new Artifact[] {profiler, trace}, _data.getIvy(), _cache);
+        DownloadReport report = resolver.download(new Artifact[] {profiler, trace}, new DownloadOptions(_ivy, _cache));
         assertNotNull(report);
         
         assertEquals(2, report.getArtifactsReports().length);
@@ -207,7 +218,7 @@ public class URLResolverTest extends TestCase {
         assertEquals(DownloadStatus.SUCCESSFUL, ar.getDownloadStatus());
 
         // test to ask to download again, should use cache
-        report = resolver.download(new Artifact[] {profiler, trace}, _data.getIvy(), _cache);
+        report = resolver.download(new Artifact[] {profiler, trace}, new DownloadOptions(_ivy, _cache));
         assertNotNull(report);
         
         assertEquals(2, report.getArtifactsReports().length);
@@ -232,7 +243,7 @@ public class URLResolverTest extends TestCase {
         }
         
         URLResolver resolver = new URLResolver();
-        resolver.setIvy(_ivy);
+        resolver.setSettings(_ivy);
         resolver.addArtifactPattern(ibiblioRoot+"/[module]/[type]s/[artifact]-[revision].[type]");
         resolver.setName("test");
         assertEquals("test", resolver.getName());
@@ -250,7 +261,7 @@ public class URLResolverTest extends TestCase {
         }
         
         URLResolver resolver = new URLResolver();
-        resolver.setIvy(_ivy);
+        resolver.setSettings(_ivy);
         resolver.addIvyPattern(ibiblioRoot+"/[module]/ivys/ivy-[revision].xml");
         resolver.addArtifactPattern(ibiblioRoot+"/maven/[module]/[type]s/[artifact]-[revision].[type]");
         resolver.setName("test");
@@ -260,7 +271,7 @@ public class URLResolverTest extends TestCase {
 
     public void testDownloadWithUseOriginIsTrue() throws Exception {
         URLResolver resolver = new URLResolver();
-        resolver.setIvy(_ivy);
+        resolver.setSettings(_ivy);
         String rootpath = new File("test/repositories/1").getAbsolutePath();
         resolver.addIvyPattern("file:"+rootpath + "/[organisation]/[module]/ivys/ivy-[revision].xml");
         resolver.addArtifactPattern("file:"+rootpath + "/[organisation]/[module]/[type]s/[artifact]-[revision].[type]");
@@ -278,7 +289,7 @@ public class URLResolverTest extends TestCase {
         
         // test to ask to download
         DefaultArtifact artifact = new DefaultArtifact(mrid, pubdate, "mod1.1", "jar", "jar");
-        DownloadReport report = resolver.download(new Artifact[] {artifact}, _data.getIvy(), _cache, true);
+        DownloadReport report = resolver.download(new Artifact[] {artifact}, new DownloadOptions(_ivy, new CacheManager(_ivy, _cache), null, true));
         assertNotNull(report);
         
         assertEquals(1, report.getArtifactsReports().length);

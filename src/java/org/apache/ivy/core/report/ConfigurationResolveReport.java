@@ -32,12 +32,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.ivy.Ivy;
 import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleId;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.resolve.IvyNode;
+import org.apache.ivy.core.resolve.ResolveEngine;
 import org.apache.ivy.plugins.report.XmlReportOutputter;
 import org.apache.ivy.plugins.report.XmlReportParser;
 import org.apache.ivy.util.Message;
@@ -54,13 +54,13 @@ public class ConfigurationResolveReport {
 	private Date _date;
 	private Map _dependencyReports = new HashMap();
 	private Map _dependencies = new LinkedHashMap();
-	private Ivy _ivy;
+	private ResolveEngine _resolveEngine;
 	private Map _modulesIdsMap = new LinkedHashMap();
 	private List _modulesIds;
 	private List _previousDeps;
 
-	public ConfigurationResolveReport(Ivy ivy, ModuleDescriptor md, String conf, Date date, File cache) {
-		_ivy = ivy;
+	public ConfigurationResolveReport(ResolveEngine resolveEngine, ModuleDescriptor md, String conf, Date date, File cache) {
+		_resolveEngine = resolveEngine;
     	_md = md;
     	_conf = conf;
     	_date = date;
@@ -197,7 +197,7 @@ public class ConfigurationResolveReport {
 	 */
 	public List getModuleIds() {
 		if (_modulesIds == null) {
-			List sortedDependencies = _ivy.sortNodes(getDependencies());
+			List sortedDependencies = _resolveEngine.getSortEngine().sortNodes(getDependencies());
             Collections.reverse(sortedDependencies);
 			for (Iterator iter = sortedDependencies.iterator(); iter.hasNext();) {
                 IvyNode dependency = (IvyNode) iter.next();
@@ -221,8 +221,8 @@ public class ConfigurationResolveReport {
 		return (Collection)_modulesIdsMap.get(mid);
 	}
 
-	public Ivy getIvy() {
-		return _ivy;
+	public ResolveEngine getResolveEngine() {
+		return _resolveEngine;
 	}
 
     public int getArtifactsNumber() {

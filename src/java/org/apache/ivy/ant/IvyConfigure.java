@@ -25,13 +25,13 @@ import java.net.URL;
 import java.util.Properties;
 
 import org.apache.ivy.Ivy;
+import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.util.Message;
 import org.apache.ivy.util.url.CredentialsStore;
 import org.apache.ivy.util.url.URLHandler;
 import org.apache.ivy.util.url.URLHandlerDispatcher;
 import org.apache.ivy.util.url.URLHandlerRegistry;
 import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.Property;
 
 
@@ -132,10 +132,11 @@ public class IvyConfigure extends IvyTask {
             throw new BuildException("impossible to load ivy default properties file: "+ex, ex);
         }
         ensureMessageInitialised();
-        Ivy ivy = new Ivy();
+        Ivy ivy = Ivy.newInstance();
         try {
             configureURLHandler();
-            ivy.addAllVariables(getProject().getProperties());
+            IvySettings settings = ivy.getSettings();
+			settings.addAllVariables(getProject().getProperties());
             if (_file == null && _url == null) {
                 _file = new File(getProject().getBaseDir(), getProject().getProperty("ivy.conf.file"));
                 Message.verbose("searching ivyconf file: trying "+_file);
@@ -145,7 +146,7 @@ public class IvyConfigure extends IvyTask {
                     if (!_file.exists()) {
                         Message.info("no configuration file found, using default...");
                         _file = null;
-                        _url = Ivy.getDefaultConfigurationURL();
+                        _url = IvySettings.getDefaultConfigurationURL();
                     }
                 }
             } 
@@ -167,7 +168,7 @@ public class IvyConfigure extends IvyTask {
     private void loadDefaultProperties() {
         Property prop = new Property() {
             public void execute() throws BuildException {
-                URL url = Ivy.getDefaultPropertiesURL();
+                URL url = IvySettings.getDefaultPropertiesURL();
                 // this is copy of loadURL code from ant Property task  (not available in 1.5.1)
                 Properties props = new Properties();
                 Message.verbose("Loading " + url);

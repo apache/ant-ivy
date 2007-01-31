@@ -17,33 +17,45 @@
  */
 package org.apache.ivy.plugins.resolver;
 
+import java.io.File;
 import java.util.Arrays;
 import java.util.GregorianCalendar;
 
-import org.apache.ivy.Ivy;
+import junit.framework.TestCase;
+
+import org.apache.ivy.core.event.EventManager;
 import org.apache.ivy.core.module.descriptor.DefaultDependencyDescriptor;
 import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.resolve.ResolveData;
+import org.apache.ivy.core.resolve.ResolveEngine;
 import org.apache.ivy.core.resolve.ResolvedModuleRevision;
+import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.core.settings.XmlSettingsParser;
-import org.apache.ivy.plugins.resolver.DependencyResolver;
-import org.apache.ivy.plugins.resolver.DualResolver;
-import org.apache.ivy.plugins.resolver.IBiblioResolver;
-
-import junit.framework.TestCase;
+import org.apache.ivy.core.sort.SortEngine;
 
 /**
  * Test for DualResolver
  */
 public class DualResolverTest extends TestCase {
-    private ResolveData _data = new ResolveData(new Ivy(), null, null, null, true);
+    private IvySettings _settings;
+    private ResolveEngine _engine;
+    private ResolveData _data;
+    private File _cache;
+    
+    protected void setUp() throws Exception {
+        _settings = new IvySettings();
+        _engine = new ResolveEngine(_settings, new EventManager(), new SortEngine(_settings));
+        _cache = new File("build/cache");
+        _data = new ResolveData(_engine, _cache, null, null, true);
+        _cache.mkdirs();
+        _settings.setDefaultCache(_cache);
+    }
 
     public void testFromConf() throws Exception {
-        Ivy ivy = new Ivy();
-        new XmlSettingsParser(ivy).parse(DualResolverTest.class.getResource("dualresolverconf.xml"));
+        new XmlSettingsParser(_settings).parse(DualResolverTest.class.getResource("dualresolverconf.xml"));
         
-        DependencyResolver resolver = ivy.getResolver("dualok");
+        DependencyResolver resolver = _settings.getResolver("dualok");
         assertNotNull(resolver);
         assertTrue(resolver instanceof DualResolver);
         DualResolver dual = (DualResolver)resolver;
@@ -52,7 +64,7 @@ public class DualResolverTest extends TestCase {
         assertNotNull(dual.getArtifactResolver());
         assertEquals("artifact", dual.getArtifactResolver().getName());
 
-        resolver = ivy.getResolver("dualnotenough");
+        resolver = _settings.getResolver("dualnotenough");
         assertNotNull(resolver);
         assertTrue(resolver instanceof DualResolver);
         dual = (DualResolver)resolver;
@@ -61,9 +73,8 @@ public class DualResolverTest extends TestCase {
     }
 
     public void testFromBadConf() throws Exception {
-        Ivy ivy = new Ivy();
         try {
-            new XmlSettingsParser(ivy).parse(DualResolverTest.class.getResource("dualresolverconf-bad.xml"));
+            new XmlSettingsParser(_settings).parse(DualResolverTest.class.getResource("dualresolverconf-bad.xml"));
             fail("bad dual resolver configuration should raise exception");
         } catch (Exception ex) {
             // ok -> bad conf has raised an exception

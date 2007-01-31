@@ -20,14 +20,9 @@ package org.apache.ivy;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLClassLoader;
-import java.net.UnknownHostException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -39,28 +34,17 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.StringTokenizer;
 
-import javax.swing.event.EventListenerList;
-
 import org.apache.ivy.core.IvyContext;
 import org.apache.ivy.core.IvyPatternHelper;
-import org.apache.ivy.core.cache.ArtifactOrigin;
+import org.apache.ivy.core.cache.CacheManager;
 import org.apache.ivy.core.deliver.PublishingDependencyRevisionResolver;
-import org.apache.ivy.core.event.FilteredIvyListener;
-import org.apache.ivy.core.event.IvyEvent;
-import org.apache.ivy.core.event.IvyEventFilter;
-import org.apache.ivy.core.event.IvyListener;
-import org.apache.ivy.core.event.download.PrepareDownloadEvent;
-import org.apache.ivy.core.event.resolve.EndResolveEvent;
-import org.apache.ivy.core.event.resolve.StartResolveEvent;
+import org.apache.ivy.core.event.EventManager;
 import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.Configuration;
 import org.apache.ivy.core.module.descriptor.DefaultArtifact;
@@ -71,74 +55,38 @@ import org.apache.ivy.core.module.descriptor.MDArtifact;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleId;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
-import org.apache.ivy.core.module.status.StatusManager;
 import org.apache.ivy.core.report.ArtifactDownloadReport;
-import org.apache.ivy.core.report.ConfigurationResolveReport;
-import org.apache.ivy.core.report.DownloadReport;
-import org.apache.ivy.core.report.DownloadStatus;
 import org.apache.ivy.core.report.ResolveReport;
-import org.apache.ivy.core.resolve.DefaultModuleRevision;
 import org.apache.ivy.core.resolve.IvyNode;
 import org.apache.ivy.core.resolve.ResolveData;
+import org.apache.ivy.core.resolve.ResolveEngine;
 import org.apache.ivy.core.resolve.ResolvedModuleRevision;
-import org.apache.ivy.core.resolve.IvyNode.EvictionData;
 import org.apache.ivy.core.search.ModuleEntry;
 import org.apache.ivy.core.search.OrganisationEntry;
 import org.apache.ivy.core.search.RevisionEntry;
-import org.apache.ivy.core.settings.XmlSettingsParser;
-import org.apache.ivy.core.sort.ModuleDescriptorSorter;
-import org.apache.ivy.plugins.IvyAware;
-import org.apache.ivy.plugins.circular.CircularDependencyStrategy;
-import org.apache.ivy.plugins.circular.ErrorCircularDependencyStrategy;
-import org.apache.ivy.plugins.circular.IgnoreCircularDependencyStrategy;
-import org.apache.ivy.plugins.circular.WarnCircularDependencyStrategy;
-import org.apache.ivy.plugins.conflict.ConflictManager;
-import org.apache.ivy.plugins.conflict.LatestConflictManager;
+import org.apache.ivy.core.settings.IvySettings;
+import org.apache.ivy.core.sort.SortEngine;
 import org.apache.ivy.plugins.conflict.NoConflictManager;
-import org.apache.ivy.plugins.conflict.StrictConflictManager;
-import org.apache.ivy.plugins.latest.LatestLexicographicStrategy;
-import org.apache.ivy.plugins.latest.LatestRevisionStrategy;
-import org.apache.ivy.plugins.latest.LatestStrategy;
-import org.apache.ivy.plugins.latest.LatestTimeStrategy;
-import org.apache.ivy.plugins.matcher.ExactOrRegexpPatternMatcher;
 import org.apache.ivy.plugins.matcher.ExactPatternMatcher;
-import org.apache.ivy.plugins.matcher.GlobPatternMatcher;
 import org.apache.ivy.plugins.matcher.Matcher;
 import org.apache.ivy.plugins.matcher.MatcherHelper;
-import org.apache.ivy.plugins.matcher.ModuleIdMatcher;
 import org.apache.ivy.plugins.matcher.PatternMatcher;
-import org.apache.ivy.plugins.matcher.RegexpPatternMatcher;
 import org.apache.ivy.plugins.namespace.NameSpaceHelper;
 import org.apache.ivy.plugins.namespace.Namespace;
-import org.apache.ivy.plugins.parser.ModuleDescriptorParser;
 import org.apache.ivy.plugins.parser.ModuleDescriptorParserRegistry;
 import org.apache.ivy.plugins.parser.xml.XmlModuleDescriptorParser;
 import org.apache.ivy.plugins.parser.xml.XmlModuleDescriptorUpdater;
-import org.apache.ivy.plugins.report.LogReportOutputter;
-import org.apache.ivy.plugins.report.ReportOutputter;
-import org.apache.ivy.plugins.report.XmlReportOutputter;
 import org.apache.ivy.plugins.report.XmlReportParser;
 import org.apache.ivy.plugins.repository.TransferEvent;
 import org.apache.ivy.plugins.repository.TransferListener;
-import org.apache.ivy.plugins.repository.url.URLResource;
 import org.apache.ivy.plugins.resolver.AbstractResolver;
-import org.apache.ivy.plugins.resolver.CacheResolver;
-import org.apache.ivy.plugins.resolver.ChainResolver;
 import org.apache.ivy.plugins.resolver.DependencyResolver;
-import org.apache.ivy.plugins.resolver.DualResolver;
 import org.apache.ivy.plugins.trigger.Trigger;
-import org.apache.ivy.plugins.version.ChainVersionMatcher;
-import org.apache.ivy.plugins.version.ExactVersionMatcher;
-import org.apache.ivy.plugins.version.LatestVersionMatcher;
-import org.apache.ivy.plugins.version.SubVersionMatcher;
-import org.apache.ivy.plugins.version.VersionMatcher;
-import org.apache.ivy.plugins.version.VersionRangeMatcher;
 import org.apache.ivy.util.FileUtil;
+import org.apache.ivy.util.HostUtil;
 import org.apache.ivy.util.Message;
-import org.apache.ivy.util.PropertiesFile;
 import org.apache.ivy.util.filter.Filter;
 import org.apache.ivy.util.filter.FilterHelper;
-import org.apache.ivy.util.url.URLHandlerRegistry;
 import org.xml.sax.SAXException;
 
 
@@ -155,799 +103,21 @@ import org.xml.sax.SAXException;
  * @author Xavier Hanin
  *
  */
-public class Ivy implements TransferListener {
-
-	public static Ivy getCurrent() {
-        Ivy cur = IvyContext.getContext().getIvy();
-        if (cur == null) {
-            cur = new Ivy();
-            IvyContext.getContext().setIvy(cur);
-        }
-        return cur;
-    }
-
+public class Ivy {
     
     public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyyMMddHHmmss");
 
-    private static final String DEFAULT_CACHE_ARTIFACT_PATTERN = "[organisation]/[module]/[type]s/[artifact]-[revision](.[ext])";
-    private static final String DEFAULT_CACHE_DATA_FILE_PATTERN = "[organisation]/[module]/ivydata-[revision].properties";
-    private static final String DEFAULT_CACHE_IVY_PATTERN = "[organisation]/[module]/ivy-[revision].xml";
-    private static final String DEFAULT_CACHE_RESOLVED_IVY_PATTERN = "resolved-[organisation]-[module]-[revision].xml";
-    private static final String DEFAULT_CACHE_RESOLVED_IVY_PROPERTIES_PATTERN = "resolved-[organisation]-[module]-[revision].properties";
-    
-    private Map _typeDefs = new HashMap();
-    private Map _resolversMap = new HashMap();
-    private DependencyResolver _defaultResolver;
-    private DependencyResolver _dictatorResolver = null;
-    
-    private String _defaultResolverName;
-    private File _defaultCache;
-
-	private String _defaultBranch = null;
-
-    private boolean _checkUpToDate = true;
-    private Map _moduleConfigurations = new LinkedHashMap(); // Map (ModuleIdMatcher -> ModuleSettings)
-    
-    private Map _conflictsManager = new HashMap(); // Map (String conflictManagerName -> ConflictManager)
-    private Map _latestStrategies = new HashMap(); // Map (String latestStrategyName -> LatestStrategy)
-    private Map _namespaces = new HashMap(); // Map (String namespaceName -> Namespace)
-    private Map _matchers = new HashMap(); // Map (String matcherName -> Matcher)
-    private Map _reportOutputters = new HashMap(); // Map (String outputterName -> ReportOutputter)
-    private Map _versionMatchers = new HashMap(); // Map (String matcherName -> VersionMatcher)
-    private Map _circularDependencyStrategies = new HashMap(); // Map (String name -> CircularDependencyStrategy)
-    
-    private Map _variables = new HashMap();
-
-    private String _cacheIvyPattern = DEFAULT_CACHE_IVY_PATTERN;
-    private String _cacheResolvedIvyPattern = DEFAULT_CACHE_RESOLVED_IVY_PATTERN;
-    private String _cacheResolvedIvyPropertiesPattern = DEFAULT_CACHE_RESOLVED_IVY_PROPERTIES_PATTERN;
-    private String _cacheArtifactPattern = DEFAULT_CACHE_ARTIFACT_PATTERN;
-    private String _cacheDataFilePattern = DEFAULT_CACHE_DATA_FILE_PATTERN;
-
-    private boolean _validate = true;
-
-    private LatestStrategy _defaultLatestStrategy = null;
-    private ConflictManager _defaultConflictManager = null;
-    private CircularDependencyStrategy _circularDependencyStrategy = null;
-    
-    private List _listingIgnore = new ArrayList();
-
-    private boolean _repositoriesConfigured;
-
-    private boolean _useRemoteConfig = false;
-
-    private File _defaultUserDir;
-    
-    private Set _fetchedSet = new HashSet();
-
-    private List _classpathURLs = new ArrayList();
-
-    private ClassLoader _classloader;
-    
-    private StatusManager _statusManager;
-
-	private long _interruptTimeout = 2000;
+	private IvySettings _settings;
 
 	private boolean _interrupted;
+
+	private EventManager _eventManager;
+	private SortEngine _sortEngine;
+	private ResolveEngine _resolveEngine;
     
     public Ivy() {
-        setVariable("ivy.default.conf.dir", getSettingsURL().toExternalForm(), true);
-        
-        String ivyTypeDefs = System.getProperty("ivy.typedef.files");
-        if (ivyTypeDefs != null) {
-            String[] files = ivyTypeDefs.split("\\,");
-            for (int i = 0; i < files.length; i++) {
-                try {
-                    typeDefs(new FileInputStream(new File(files[i].trim())), true);
-                } catch (FileNotFoundException e) {
-                    Message.warn("typedefs file not found: "+files[i].trim());
-                } catch (IOException e) {
-                    Message.warn("problem with typedef file: "+files[i].trim()+": "+e.getMessage());
-                }
-            }
-        } else {
-            try {
-                typeDefs(getSettingsURL("typedef.properties").openStream(), true);
-            } catch (IOException e) {
-                Message.warn("impossible to load default type defs");
-            }
-        }
-        LatestLexicographicStrategy latestLexicographicStrategy = new LatestLexicographicStrategy();
-        LatestRevisionStrategy latestRevisionStrategy = new LatestRevisionStrategy();
-        LatestTimeStrategy latestTimeStrategy = new LatestTimeStrategy();
-
-        addLatestStrategy("latest-revision", latestRevisionStrategy);
-        addLatestStrategy("latest-lexico", latestLexicographicStrategy);
-        addLatestStrategy("latest-time", latestTimeStrategy);
-
-        addConflictManager("latest-revision", new LatestConflictManager("latest-revision", latestRevisionStrategy));
-        addConflictManager("latest-time", new LatestConflictManager("latest-time", latestTimeStrategy));
-        addConflictManager("all", new NoConflictManager());    
-        addConflictManager("strict", new StrictConflictManager());
-        
-        addMatcher(ExactPatternMatcher.INSTANCE);
-        addMatcher(RegexpPatternMatcher.INSTANCE);
-        addMatcher(ExactOrRegexpPatternMatcher.INSTANCE);
-        addMatcher(GlobPatternMatcher.INSTANCE);
-        
-        addReportOutputter(new XmlReportOutputter());
-        addReportOutputter(new LogReportOutputter());
-        
-        configureDefaultCircularDependencyStrategies();
-        
-        _listingIgnore.add(".cvsignore");
-        _listingIgnore.add("CVS");
-        _listingIgnore.add(".svn");
-        
-        addSystemProperties();
-        
-        addTransferListener(new TransferListener() {
-            public void transferProgress(TransferEvent evt) {
-                switch (evt.getEventType()) {
-                case TransferEvent.TRANSFER_PROGRESS:
-                    Message.progress();
-                    break;
-                case TransferEvent.TRANSFER_COMPLETED:
-                    Message.endProgress(" ("+(evt.getTotalLength() / 1024)+"kB)");
-                    break;
-                default:
-                    break;
-                }
-            }
-        });
-        IvyContext.getContext().setIvy(this);
     }
     
-    private void addSystemProperties() {
-        addAllVariables(System.getProperties());
-    }
-
-    /**
-     * Call this method to ask ivy to configure some variables using either a remote or a local properties file
-     */
-    public void configureRepositories(boolean remote) {
-        IvyContext.getContext().setIvy(this);
-        if (!_repositoriesConfigured) {
-            Properties props = new Properties();
-            boolean configured = false;
-            if (_useRemoteConfig && remote) {
-                try {
-                    URL url = new URL("http://incubator.apache.org/ivy/repository.properties");
-                    Message.verbose("configuring repositories with "+url);
-                    props.load(URLHandlerRegistry.getDefault().openStream(url));
-                    configured = true;
-                } catch (Exception ex) {
-                    Message.verbose("unable to use remote repository configuration: "+ex.getMessage());
-                    props = new Properties();
-                }
-            }
-            if (!configured) {
-            	InputStream repositoryPropsStream = null;
-                try {
-                    repositoryPropsStream = getSettingsURL("repository.properties").openStream();
-					props.load(repositoryPropsStream);
-                } catch (IOException e) {
-                    Message.error("unable to use internal repository configuration: "+e.getMessage());
-                    if (repositoryPropsStream != null) {
-                    	try {repositoryPropsStream.close();} catch(Exception ex) {};
-                    }
-                }
-            }
-            addAllVariables(props, false);
-            _repositoriesConfigured = true;
-        }
-    }
-
-
-    public void typeDefs(InputStream stream) throws IOException {
-    	typeDefs(stream, false);
-    }
-    public void typeDefs(InputStream stream, boolean silentFail) throws IOException {
-        IvyContext.getContext().setIvy(this);
-        try {
-            Properties p = new Properties();
-            p.load(stream);
-            typeDefs(p, silentFail);
-        } finally {
-            stream.close();
-        }
-    }
-
-    public void typeDefs(Properties p) {
-    	typeDefs(p, false);
-    }
-    public void typeDefs(Properties p, boolean silentFail) {
-        IvyContext.getContext().setIvy(this);
-        for (Iterator iter = p.keySet().iterator(); iter.hasNext();) {
-            String name = (String) iter.next();
-            typeDef(name, p.getProperty(name), silentFail);
-        }
-    }
-    
-    
-    /////////////////////////////////////////////////////////////////////////
-    //                         CONFIGURATION
-    /////////////////////////////////////////////////////////////////////////
-    public void configure(File configurationFile) throws ParseException, IOException {
-        IvyContext.getContext().setIvy(this);
-        Message.info(":: configuring :: file = "+configurationFile);
-        long start = System.currentTimeMillis();
-        setConfigurationVariables(configurationFile);
-        if (getVariable("ivy.default.ivy.user.dir") != null) {
-            setDefaultIvyUserDir(new File(getVariable("ivy.default.ivy.user.dir")));
-        } else {
-            getDefaultIvyUserDir();
-        }
-        getDefaultCache();
-        
-        loadDefaultProperties();
-        try {
-            new XmlSettingsParser(this).parse(configurationFile.toURL());
-        } catch (MalformedURLException e) {
-            IllegalArgumentException iae = new IllegalArgumentException("given file cannot be transformed to url: "+configurationFile);
-            iae.initCause(e);
-            throw iae;
-        }
-        setVariable("ivy.default.ivy.user.dir", getDefaultIvyUserDir().getAbsolutePath(), false);
-        Message.verbose("configuration done ("+(System.currentTimeMillis()-start)+"ms)");
-        dumpConfig();
-    }
-
-    public void configure(URL configurationURL) throws ParseException, IOException {
-        IvyContext.getContext().setIvy(this);
-        Message.info(":: configuring :: url = "+configurationURL);
-        long start = System.currentTimeMillis();
-        setConfigurationVariables(configurationURL);
-        if (getVariable("ivy.default.ivy.user.dir") != null) {
-            setDefaultIvyUserDir(new File(getVariable("ivy.default.ivy.user.dir")));
-        } else {
-            getDefaultIvyUserDir();
-        }
-        getDefaultCache();
-        
-        loadDefaultProperties();
-        new XmlSettingsParser(this).parse(configurationURL);
-        setVariable("ivy.default.ivy.user.dir", getDefaultIvyUserDir().getAbsolutePath(), false);
-        Message.verbose("configuration done ("+(System.currentTimeMillis()-start)+"ms)");
-        dumpConfig();
-    }
-
-	private void loadDefaultProperties() throws IOException {
-		loadProperties(getDefaultPropertiesURL(), false);
-	}
-
-	public static URL getDefaultPropertiesURL() {
-		return getSettingsURL("ivy.properties");
-	}
-
-	private static URL getSettingsURL() {
-		return XmlSettingsParser.class.getResource("");
-	}
-
-	private static URL getSettingsURL(String file) {
-		return XmlSettingsParser.class.getResource(file);
-	}
-
-    public void configureDefault() throws ParseException, IOException {
-        configure(getDefaultConfigurationURL());
-    }
-
-    public void setConfigurationVariables(File configurationFile) {
-        IvyContext.getContext().setIvy(this);
-        try {
-            setVariable("ivy.conf.dir", new File(configurationFile.getAbsolutePath()).getParent());
-            setVariable("ivy.conf.file", configurationFile.getAbsolutePath());
-            setVariable("ivy.conf.url", configurationFile.toURL().toExternalForm());
-        } catch (MalformedURLException e) {
-            IllegalArgumentException iae = new IllegalArgumentException("given file cannot be transformed to url: "+configurationFile);
-            iae.initCause(e);
-            throw iae;
-        }
-    }
-    
-    public void setConfigurationVariables(URL configurationURL) {
-        IvyContext.getContext().setIvy(this);
-        String confURL = configurationURL.toExternalForm();
-        setVariable("ivy.conf.url", confURL);
-        int slashIndex = confURL.lastIndexOf('/');
-        if (slashIndex != -1) {
-            setVariable("ivy.conf.dir", confURL.substring(0, slashIndex));
-        } else {
-            Message.warn("configuration url does not contain any slash (/): ivy.conf.dir variable not set");
-        }
-    }
-    
-    private void dumpConfig() {
-        Message.verbose("\tdefault cache: "+getDefaultCache());
-        Message.verbose("\tdefault resolver: "+getDefaultResolver());
-        Message.debug("\tdefault latest strategy: "+getDefaultLatestStrategy());
-        Message.debug("\tdefault conflict manager: "+getDefaultConflictManager());
-        Message.debug("\tcircular dependency strategy: "+getCircularDependencyStrategy());
-        Message.debug("\tvalidate: "+doValidate());
-        Message.debug("\tcheck up2date: "+isCheckUpToDate());
-        Message.debug("\tcache ivy pattern: "+getCacheIvyPattern());
-        Message.debug("\tcache artifact pattern: "+getCacheArtifactPattern());
-        
-        if (!_classpathURLs.isEmpty()) {
-            Message.verbose("\t-- "+_classpathURLs.size()+" custom classpath urls:");
-            for (Iterator iter = _classpathURLs.iterator(); iter.hasNext();) {
-                Message.debug("\t\t"+iter.next());
-            }
-        }
-        Message.verbose("\t-- "+_resolversMap.size()+" resolvers:");
-        for (Iterator iter = _resolversMap.values().iterator(); iter.hasNext();) {
-            DependencyResolver resolver = (DependencyResolver)iter.next();
-            resolver.dumpConfig();
-        }
-        if (!_moduleConfigurations.isEmpty()) {
-            Message.debug("\tmodule configurations:");
-            for (Iterator iter = _moduleConfigurations.keySet().iterator(); iter.hasNext();) {
-                ModuleIdMatcher midm = (ModuleIdMatcher)iter.next();
-                ModuleSettings s = (ModuleSettings)_moduleConfigurations.get(midm);
-                Message.debug("\t\t"+midm+" -> "+s);
-            }
-        }
-    }
-
-    public void loadProperties(URL url) throws IOException {
-        loadProperties(url, true);
-    }
-    public void loadProperties(URL url, boolean overwrite) throws IOException {
-        loadProperties(url.openStream(), overwrite);
-    }
-    public void loadProperties(File file) throws IOException {
-        loadProperties(file, true);
-    }
-    
-    public void loadProperties(File file, boolean overwrite) throws IOException {
-        loadProperties(new FileInputStream(file), overwrite);
-    }
-    
-    private void loadProperties(InputStream stream, boolean overwrite) throws IOException {
-    	try {
-	        Properties properties = new Properties();
-	        properties.load(stream);
-	        addAllVariables(properties, overwrite);
-    	} finally {
-    		if (stream != null) {
-    			try {
-    				stream.close();
-    			} catch (IOException e) {}
-    		}
-    	}
-    }
-    
-    public void setVariable(String varName, String value) {
-        setVariable(varName, value, true);
-    }
-    
-    public void setVariable(String varName, String value, boolean overwrite) {
-        if (overwrite || !_variables.containsKey(varName)) {
-            Message.debug("setting '"+varName+"' to '"+value+"'");
-            _variables.put(varName, substitute(value));
-        } else {
-            Message.debug("'"+varName+"' already set: discarding '"+value+"'");
-        }
-    }
-    
-    public void addAllVariables(Map variables) {
-        addAllVariables(variables, true);
-    }
-
-    public void addAllVariables(Map variables, boolean overwrite) {
-        for (Iterator iter = variables.keySet().iterator(); iter.hasNext();) {
-            String key = (String)iter.next();
-            String val = (String)variables.get(key);
-            setVariable(key, val, overwrite);
-        }
-    }
-
-    /**
-     * Substitute variables in the given string by their value found in the current 
-     * set of variables
-     * 
-     * @param str the string in which substitution should be made
-     * @return the string where all current ivy variables have been substituted by their value
-     */
-    public String substitute(String str) {
-        return IvyPatternHelper.substituteVariables(str, getVariables());
-    }
-
-    /**
-     * Returns the variables loaded in configuration file. Those variables
-     * may better be seen as ant properties 
-     * 
-     * @return
-     */
-    public Map getVariables() {
-        return _variables;
-    }
-
-    public Class typeDef(String name, String className) {
-        return typeDef(name, className, false);
-    }
-    
-    public Class typeDef(String name, String className, boolean silentFail) {
-        Class clazz = classForName(className, silentFail);
-        if (clazz != null) {
-        	_typeDefs.put(name, clazz);
-        }
-        return clazz;
-    }
-    
-    private Class classForName(String className, boolean silentFail) {
-        try {
-            return getClassLoader().loadClass(className);
-        } catch (ClassNotFoundException e) {
-        	if (silentFail) {
-        		Message.info("impossible to define new type: class not found: "+className+" in "+_classpathURLs+" nor Ivy classloader");
-        		return null;
-        	} else {
-        		throw new RuntimeException("impossible to define new type: class not found: "+className+" in "+_classpathURLs+" nor Ivy classloader");
-        	}
-        }
-    }
-
-    private ClassLoader getClassLoader() {
-        if (_classloader == null) {
-            if (_classpathURLs.isEmpty()) {
-                _classloader = Ivy.class.getClassLoader();   
-            } else {
-                _classloader = new URLClassLoader(
-                        (URL[])_classpathURLs.toArray(new URL[_classpathURLs.size()]), 
-                        Ivy.class.getClassLoader());
-            }
-        }
-        return _classloader;
-    }
-
-
-    public void addClasspathURL(URL url) {
-        _classpathURLs.add(url);
-        _classloader = null;
-    }
-
-    public Map getTypeDefs() {
-        return _typeDefs;
-    }
-
-    public Class getTypeDef(String name) {
-        return (Class)_typeDefs.get(name);
-    }
-
-    // methods which match ivy conf method signature specs
-    public void addConfigured(DependencyResolver resolver) {
-        addResolver(resolver);
-    }
-    
-    public void addConfigured(ModuleDescriptorParser parser) {
-        ModuleDescriptorParserRegistry.getInstance().addParser(parser);
-    }
-    
-    public void addResolver(DependencyResolver resolver) {
-        if (resolver == null) {
-            throw new NullPointerException("null resolver");
-        }
-        if (resolver instanceof IvyAware) {
-            ((IvyAware)resolver).setIvy(this);
-        }
-        _resolversMap.put(resolver.getName(), resolver);
-        if (resolver instanceof ChainResolver) {
-            List subresolvers = ((ChainResolver)resolver).getResolvers();
-            for (Iterator iter = subresolvers.iterator(); iter.hasNext();) {
-                DependencyResolver dr = (DependencyResolver)iter.next();
-                addResolver(dr);
-            }
-        } else if (resolver instanceof DualResolver) {
-            DependencyResolver ivyResolver = ((DualResolver)resolver).getIvyResolver();
-            if (ivyResolver != null) {
-                addResolver(ivyResolver);
-            }
-            DependencyResolver artifactResolver = ((DualResolver)resolver).getArtifactResolver();
-            if (artifactResolver != null) {
-                addResolver(artifactResolver);
-            }
-        }
-    }
-    
-    public void setDefaultCache(File cacheDirectory) {
-        _defaultCache = cacheDirectory;
-    }
-    
-    public void setDefaultResolver(String resolverName) {
-        checkResolverName(resolverName);
-        _defaultResolverName = resolverName;
-    }
-    
-    private void checkResolverName(String resolverName) {
-        if (resolverName != null && !_resolversMap.containsKey(resolverName)) {
-            throw new IllegalArgumentException("no resolver found called "+resolverName+": check your configuration");
-        }
-    }
-
-    /**
-     * regular expressions as explained in Pattern class may be used in ModuleId
-     * organisation and name
-     * 
-     * @param moduleId
-     * @param resolverName
-     * @param branch 
-     */
-    public void addModuleConfiguration(ModuleId mid, PatternMatcher matcher, String resolverName, String branch, String conflictManager) {
-        checkResolverName(resolverName);
-        _moduleConfigurations.put(new ModuleIdMatcher(mid, matcher), new ModuleSettings(resolverName, branch, conflictManager));
-    }
-    
-    public File getDefaultIvyUserDir() {
-        if (_defaultUserDir==null) {
-        	if (getVariable("ivy.home") != null) {
-        		setDefaultIvyUserDir(new File(getVariable("ivy.home")));
-        		Message.verbose("using ivy.default.ivy.user.dir variable for default ivy user dir: "+_defaultUserDir);
-        	} else {
-        		setDefaultIvyUserDir(new File(System.getProperty("user.home"), ".ivy"));
-        		Message.verbose("no default ivy user dir defined: set to "+_defaultUserDir);
-        	}
-        }
-        return _defaultUserDir;
-    }
-    
-    public void setDefaultIvyUserDir(File defaultUserDir) {
-        _defaultUserDir = defaultUserDir;
-        setVariable("ivy.default.ivy.user.dir", _defaultUserDir.getAbsolutePath());
-        setVariable("ivy.home", _defaultUserDir.getAbsolutePath());
-    }    
-
-    public File getDefaultCache() {
-        if (_defaultCache==null) {
-            _defaultCache = new File(getDefaultIvyUserDir(), "cache");
-            Message.verbose("no default cache defined: set to "+_defaultCache);
-        }
-        return _defaultCache;
-    }
-
-    public DependencyResolver getResolver(ModuleId moduleId) {
-        if (_dictatorResolver != null) {
-            return _dictatorResolver;
-        }
-        String resolverName = getResolverName(moduleId);
-        return getResolver(resolverName);
-    }
-
-    public DependencyResolver getResolver(String resolverName) {
-        if (_dictatorResolver != null) {
-            return _dictatorResolver;
-        }
-        DependencyResolver resolver = (DependencyResolver)_resolversMap.get(resolverName);
-        if (resolver == null) {
-            Message.error("unknown resolver "+resolverName);
-        }
-        return resolver;
-    }
-
-    public DependencyResolver getDefaultResolver() {
-        if (_dictatorResolver != null) {
-            return _dictatorResolver;
-        }
-        if (_defaultResolver == null) {
-            _defaultResolver = (DependencyResolver)_resolversMap.get(_defaultResolverName);
-        }
-        return _defaultResolver;
-    }
-
-    public String getResolverName(ModuleId moduleId) {
-        for (Iterator iter = _moduleConfigurations.keySet().iterator(); iter.hasNext();) {
-            ModuleIdMatcher midm = (ModuleIdMatcher)iter.next();
-            if (midm.matches(moduleId)) {
-            	ModuleSettings  ms = (ModuleSettings)_moduleConfigurations.get(midm);
-            	if (ms.getResolverName() != null) {
-            		return ms.getResolverName();
-            	}
-            }
-        }
-        return _defaultResolverName;
-    }
-    
-	public String getDefaultBranch(ModuleId moduleId) {
-        for (Iterator iter = _moduleConfigurations.keySet().iterator(); iter.hasNext();) {
-            ModuleIdMatcher midm = (ModuleIdMatcher)iter.next();
-            if (midm.matches(moduleId)) {
-            	ModuleSettings  ms = (ModuleSettings)_moduleConfigurations.get(midm);
-            	if (ms.getBranch() != null) {
-            		return ms.getBranch();
-            	}
-            }
-        }
-		return getDefaultBranch();
-	}
-
-	public String getDefaultBranch() {
-		return _defaultBranch;
-	}
-	public void setDefaultBranch(String defaultBranch) {
-		_defaultBranch = defaultBranch;
-	}
-
-	public ConflictManager getConflictManager(ModuleId moduleId) {
-        for (Iterator iter = _moduleConfigurations.keySet().iterator(); iter.hasNext();) {
-            ModuleIdMatcher midm = (ModuleIdMatcher)iter.next();
-            if (midm.matches(moduleId)) {
-            	ModuleSettings  ms = (ModuleSettings)_moduleConfigurations.get(midm);
-            	if (ms.getConflictManager() != null) {
-            		ConflictManager cm = getConflictManager(ms.getConflictManager());
-            		if (cm == null) {
-            			throw new IllegalStateException("ivy badly configured: unknown conflict manager "+ms.getConflictManager());
-            		}
-					return cm;
-            	}
-            }
-        }
-		return getDefaultConflictManager();
-	}
-
-    public void addConfigured(ConflictManager cm) {
-        addConflictManager(cm.getName(), cm);
-    }
-    
-    public ConflictManager getConflictManager(String name) {
-        if ("default".equals(name)) {
-            return getDefaultConflictManager();
-        }
-        return (ConflictManager)_conflictsManager.get(name);
-    }
-    public void addConflictManager(String name, ConflictManager cm) {
-        if (cm instanceof IvyAware) {
-            ((IvyAware)cm).setIvy(this);
-        }
-        _conflictsManager.put(name, cm);
-    }
-    
-    public void addConfigured(LatestStrategy latest) {
-        addLatestStrategy(latest.getName(), latest);
-    }
-    
-    public LatestStrategy getLatestStrategy(String name) {
-        if ("default".equals(name)) {
-            return getDefaultLatestStrategy();
-        }
-        return (LatestStrategy)_latestStrategies.get(name);
-    }
-    public void addLatestStrategy(String name, LatestStrategy latest) {
-        if (latest instanceof IvyAware) {
-            ((IvyAware)latest).setIvy(this);
-        }
-        _latestStrategies.put(name, latest);
-    }
-    
-    public void addConfigured(Namespace ns) {
-        addNamespace(ns);
-    }
-    
-    public Namespace getNamespace(String name) {
-        if ("system".equals(name)) {
-            return getSystemNamespace();
-        }
-        return (Namespace)_namespaces.get(name);
-    }
-    
-    public Namespace getSystemNamespace() {
-        return Namespace.SYSTEM_NAMESPACE;
-    }
-
-    public void addNamespace(Namespace ns) {
-        if (ns instanceof IvyAware) {
-            ((IvyAware)ns).setIvy(this);
-        }
-        _namespaces.put(ns.getName(), ns);
-    }
-    
-    public void addConfigured(PatternMatcher m) {
-        addMatcher(m);
-    }
-    
-    public PatternMatcher getMatcher(String name) {
-        return (PatternMatcher)_matchers.get(name);
-    }
-    
-    public void addMatcher(PatternMatcher m) {
-        if (m instanceof IvyAware) {
-            ((IvyAware)m).setIvy(this);
-        }
-        _matchers.put(m.getName(), m);
-    }
-    
-    public void addConfigured(ReportOutputter outputter) {
-        addReportOutputter(outputter);
-     }
-     
-     public ReportOutputter getReportOutputter(String name) {
-        return (ReportOutputter) _reportOutputters.get(name);
-     }
-     
-     public void addReportOutputter(ReportOutputter outputter) {
-        if (outputter instanceof IvyAware) {
-            ((IvyAware) outputter).setIvy(this);
-        }
-        _reportOutputters.put(outputter.getName(), outputter);
-     }
-     
-     public ReportOutputter[] getReportOutputters() {
-        return (ReportOutputter[]) _reportOutputters.values().toArray(new ReportOutputter[_reportOutputters.size()]);
-     }
-     
-     public void addConfigured(VersionMatcher vmatcher) {
-         addVersionMatcher(vmatcher);
-      }
-      
-      public VersionMatcher getVersionMatcher(String name) {
-         return (VersionMatcher) _versionMatchers.get(name);
-      }
-      
-      public void addVersionMatcher(VersionMatcher vmatcher) {
-         if (vmatcher instanceof IvyAware) {
-             ((IvyAware) vmatcher).setIvy(this);
-         }
-         _versionMatchers.put(vmatcher.getName(), vmatcher);
-         
-         if (_versionMatcher == null) {
-        	 _versionMatcher = new ChainVersionMatcher();
-        	 addVersionMatcher(new ExactVersionMatcher());
-         }
-         if (_versionMatcher instanceof ChainVersionMatcher) {
-			ChainVersionMatcher chain = (ChainVersionMatcher) _versionMatcher;
-			chain.add(vmatcher);
-		}
-      }
-      
-      public VersionMatcher[] getVersionMatchers() {
-         return (VersionMatcher[]) _versionMatchers.values().toArray(new VersionMatcher[_versionMatchers.size()]);
-      }
-
-      public VersionMatcher getVersionMatcher() {
-          if (_versionMatcher == null) {
-              configureDefaultVersionMatcher();
-          }
-          return _versionMatcher;
-      }
-
-      public void configureDefaultVersionMatcher() {
-          addVersionMatcher(new LatestVersionMatcher());
-          addVersionMatcher(new SubVersionMatcher());
-          addVersionMatcher(new VersionRangeMatcher());
-      }
-
-
-  	public CircularDependencyStrategy getCircularDependencyStrategy() {
-  		if (_circularDependencyStrategy == null) {
-  			_circularDependencyStrategy = getCircularDependencyStrategy("default");
-  		}
-  		return _circularDependencyStrategy;
-  	}
-
-  	public CircularDependencyStrategy getCircularDependencyStrategy(String name) {
-  		if ("default".equals(name)) {
-  			name = "warn";
-  		}
-		return (CircularDependencyStrategy)_circularDependencyStrategies.get(name);
-	}
-
-	public void setCircularDependencyStrategy(CircularDependencyStrategy strategy) {
-  		_circularDependencyStrategy = strategy;
-  	}
-	
-	public void addConfigured(CircularDependencyStrategy strategy) {
-		addCircularDependencyStrategy(strategy);
-	}
-
-    private void addCircularDependencyStrategy(CircularDependencyStrategy strategy) {
-		_circularDependencyStrategies.put(strategy.getName(), strategy);
-	}
-    
-    private void configureDefaultCircularDependencyStrategies() {
-    	addCircularDependencyStrategy(WarnCircularDependencyStrategy.getInstance());
-    	addCircularDependencyStrategy(ErrorCircularDependencyStrategy.getInstance());
-    	addCircularDependencyStrategy(IgnoreCircularDependencyStrategy.getInstance());
-    }
-
 	/////////////////////////////////////////////////////////////////////////
     //                         CHECK
     /////////////////////////////////////////////////////////////////////////
@@ -963,11 +133,11 @@ public class Ivy implements TransferListener {
             IvyContext.getContext().setIvy(this);
             boolean result = true;
             // parse ivy file
-            ModuleDescriptor md = ModuleDescriptorParserRegistry.getInstance().parseDescriptor(this, ivyFile, doValidate());
+            ModuleDescriptor md = ModuleDescriptorParserRegistry.getInstance().parseDescriptor(_settings, ivyFile, _settings.doValidate());
             
             // check publications if possible
             if (resolvername != null) {
-                DependencyResolver resolver = getResolver(resolvername);
+                DependencyResolver resolver = _settings.getResolver(resolvername);
                 String[] confs = md.getConfigurationsNames();
                 Set artifacts = new HashSet();
                 for (int i = 0; i < confs.length; i++) {
@@ -984,7 +154,7 @@ public class Ivy implements TransferListener {
             
             // check dependencies
             DependencyDescriptor[] dds = md.getDependencies();
-            ResolveData data = new ResolveData(this, getDefaultCache(), new Date(), null, true);
+            ResolveData data = new ResolveData(_resolveEngine, _settings.getDefaultCache(), new Date(), null, true);
             for (int i = 0; i < dds.length; i++) {
                 // check master confs
                 String[] masterConfs = dds[i].getModuleConfigurations();
@@ -995,7 +165,7 @@ public class Ivy implements TransferListener {
                     }
                 }
                 // resolve
-                DependencyResolver resolver = getResolver(dds[i].getDependencyId());
+                DependencyResolver resolver = _settings.getResolver(dds[i].getDependencyId());
                 ResolvedModuleRevision rmr = resolver.getDependency(dds[i], data);
                 if (rmr == null) {
                     Message.info("dependency not found in "+ivyFile+":\n\t"+dds[i]);
@@ -1031,780 +201,128 @@ public class Ivy implements TransferListener {
     }
     
 
-	public ResolvedModuleRevision findModule(ModuleRevisionId id) {
-		DependencyResolver r = getResolver(id.getModuleId());
-		if (r == null) {
-			throw new IllegalStateException("no resolver found for "+id.getModuleId());
-		}
-        DefaultModuleDescriptor md = DefaultModuleDescriptor.newCallerInstance(id, new String[] {"*"}, false, false);
-		try {
-			return r.getDependency(new DefaultDependencyDescriptor(id, true), new ResolveData(this, getDefaultCache(), null, new ConfigurationResolveReport(this, md, "default", null, getDefaultCache()), false));
-		} catch (ParseException e) {
-			throw new RuntimeException("problem whle parsing repository module descriptor for "+id+": "+e, e);
-		}
-	}
-
 	/////////////////////////////////////////////////////////////////////////
     //                         RESOLVE
     /////////////////////////////////////////////////////////////////////////
 
     
-    public ResolveReport resolve(File ivySource) throws ParseException, IOException {
-    	return resolve(ivySource.toURL());
-    }
-    public ResolveReport resolve(URL ivySource) throws ParseException, IOException {
-    	return resolve(ivySource, null, new String[] {"*"}, null, null, true);
-    }
-    /**
-     * 
-     * @param ivySource the url to the descriptor of the module for which dependencies should be resolved
-     * @param revision the revision of the module for which dependencies should be resolved.
-     * This revision is considered as the resolved revision of the module, unless it is null.
-     * If it is null, then a default revision is given if necessary (no revision found in ivy file)
-     * @param confs the configurations for which dependencies should be resolved
-     * @param cache the directory where to place resolved dependencies
-     * @param date the date for which the dependencies should be resolved. All obtained artifacts 
-     * should have a publication date which is before or equal to the given date
-     * @throws ParseException
-     * @throws IOException
-     * @throws NullPointerException if any parameter is null except cache or date
-     */
-    public ResolveReport resolve(URL ivySource, String revision, String[] confs, File cache, Date date, boolean validate) throws ParseException, IOException {
-        return resolve(ivySource, revision, confs, cache, date, validate, false);
-    }
-    public ResolveReport resolve(URL ivySource, String revision, String[] confs, File cache, Date date, boolean validate, boolean useCacheOnly) throws ParseException, IOException {
-        return resolve(ivySource, revision, confs, cache, date, validate, useCacheOnly, FilterHelper.NO_FILTER);
-    }
 
-    /**
-     * Resolves the module identified by the given mrid with its dependencies. 
-     */
-	public ResolveReport resolve(ModuleRevisionId mrid, String[] confs) throws ParseException, IOException {
-        return resolve(mrid, confs, true, false, null, null, true, false, FilterHelper.NO_FILTER);
+
+    public ArtifactDownloadReport download(Artifact artifact, File cache, boolean useOrigin) {
+		return _resolveEngine.download(artifact, cache, useOrigin);
 	}
 
-	public ResolveReport resolve(final ModuleRevisionId mrid, String[] confs, boolean transitive, boolean changing, File cache, Date date, boolean validate, boolean useCacheOnly, Filter artifactFilter) throws ParseException, IOException {
-		return resolve(mrid, confs, transitive, changing, cache, date, validate, useCacheOnly, false, artifactFilter);
+	public void downloadArtifacts(ResolveReport report, CacheManager cacheManager, boolean useOrigin, Filter artifactFilter) {
+		_resolveEngine.downloadArtifacts(report, cacheManager, useOrigin, artifactFilter);
 	}
 
-    /**
-     * Resolves the module identified by the given mrid with its dependencies if transitive is set to true. 
-     */
-	public ResolveReport resolve(final ModuleRevisionId mrid, String[] confs, boolean transitive, boolean changing, File cache, Date date, boolean validate, boolean useCacheOnly, boolean useOrigin, Filter artifactFilter) throws ParseException, IOException {
-		DefaultModuleDescriptor md;
-		if (confs.length == 1 && confs[0].equals("*")) {
-			ResolvedModuleRevision rmr = findModule(mrid);
-			if (rmr == null) {
-				md = DefaultModuleDescriptor.newCallerInstance(mrid, confs, transitive, changing);
-				return new ResolveReport(md){
-					public boolean hasError() {
-						return true;
-					}
-					public List getProblemMessages() {
-						return Arrays.asList(new String[] {"module not found: "+mrid});
-					}
-				};
-			} else {
-				confs = rmr.getDescriptor().getConfigurationsNames();
-				md = DefaultModuleDescriptor.newCallerInstance(ModuleRevisionId.newInstance(mrid, rmr.getId().getRevision()), confs, transitive, changing);
-			}
-		} else {
-			md = DefaultModuleDescriptor.newCallerInstance(mrid, confs, transitive, changing);
-		}
-		
-		return resolve(md, new String[] {"*"}, cache, date, validate, useCacheOnly, true, useOrigin, true, true, artifactFilter);
+	public ResolvedModuleRevision findModule(ModuleRevisionId id) {
+		return _resolveEngine.findModule(id);
 	}
-	
-    public ResolveReport resolve(URL ivySource, String revision, String[] confs, File cache, Date date, boolean validate, boolean useCacheOnly, Filter artifactFilter) throws ParseException, IOException {
-    	return resolve(ivySource, revision, confs, cache, date, validate, useCacheOnly, true, artifactFilter);
-    }
-    public ResolveReport resolve(URL ivySource, String revision, String[] confs, File cache, Date date, boolean validate, boolean useCacheOnly, boolean transitive, Filter artifactFilter) throws ParseException, IOException {
-    	return resolve(ivySource, revision, confs, cache, date, validate, useCacheOnly, transitive, false, artifactFilter);
-    }
-    /**
-     * Resolve dependencies of a module described by an ivy file.
-     * 
-     * Note: the method signature is way too long, we should use a class to store the settings of the resolve.
-     */
-    public ResolveReport resolve(URL ivySource, String revision, String[] confs, File cache, Date date, boolean validate, boolean useCacheOnly, boolean transitive, boolean useOrigin, Filter artifactFilter) throws ParseException, IOException {
-        IvyContext.getContext().setIvy(this);
-        IvyContext.getContext().setCache(cache);
-        
-        URLResource res = new URLResource(ivySource);
-        ModuleDescriptorParser parser = ModuleDescriptorParserRegistry.getInstance().getParser(res);
-        Message.verbose("using "+parser+" to parse "+ivySource);
-        ModuleDescriptor md = parser.parseDescriptor(this, ivySource, validate);
-        if (revision == null && md.getResolvedModuleRevisionId().getRevision() == null) {
-            revision = "working@"+getLocalHostName();
-        }
-        if (revision != null) {
-            md.setResolvedModuleRevisionId(ModuleRevisionId.newInstance(md.getModuleRevisionId(), revision));
-        }
 
-        return resolve(md, confs, cache, date, validate, useCacheOnly, transitive, useOrigin, true, true, artifactFilter);
-    }
+	public IvyNode[] getDependencies(ModuleDescriptor md, String[] confs, File cache, Date date, ResolveReport report, boolean validate, boolean transitive) {
+		return _resolveEngine.getDependencies(md, confs, cache, date, report, validate, transitive);
+	}
+
+	public IvyNode[] getDependencies(ModuleDescriptor md, String[] confs, File cache, Date date, ResolveReport report, boolean validate) {
+		return _resolveEngine.getDependencies(md, confs, cache, date, report, validate);
+	}
+
+	public IvyNode[] getDependencies(URL ivySource, String[] confs, File cache, Date date, boolean validate) throws ParseException, IOException {
+		return _resolveEngine.getDependencies(ivySource, confs, cache, date, validate);
+	}
+
+	public ResolveReport resolve(ModuleDescriptor md, String[] confs, File cache, Date date, boolean validate, boolean useCacheOnly, boolean transitive, boolean useOrigin, boolean download, boolean outputReport, Filter artifactFilter) throws ParseException, IOException, FileNotFoundException {
+		return _resolveEngine.resolve(md, confs, cache, date, validate, useCacheOnly, transitive, useOrigin, download, outputReport, artifactFilter);
+	}
+
+	public ResolveReport resolve(ModuleDescriptor md, String[] confs, File cache, Date date, boolean validate, boolean useCacheOnly, boolean transitive, boolean download, boolean outputReport, Filter artifactFilter) throws ParseException, IOException, FileNotFoundException {
+		return _resolveEngine.resolve(md, confs, cache, date, validate, useCacheOnly, transitive, download, outputReport, artifactFilter);
+	}
+
+	public ResolveReport resolve(ModuleDescriptor md, String[] confs, File cache, Date date, boolean validate, boolean useCacheOnly, boolean transitive, Filter artifactFilter) throws ParseException, IOException, FileNotFoundException {
+		return _resolveEngine.resolve(md, confs, cache, date, validate, useCacheOnly, transitive, artifactFilter);
+	}
 
 	public ResolveReport resolve(ModuleDescriptor md, String[] confs, File cache, Date date, boolean validate, boolean useCacheOnly, Filter artifactFilter) throws ParseException, IOException, FileNotFoundException {
-		return resolve(md, confs, cache, date, validate, useCacheOnly, true, artifactFilter);
-	}
-	public ResolveReport resolve(ModuleDescriptor md, String[] confs, File cache, Date date, boolean validate, boolean useCacheOnly, boolean transitive, Filter artifactFilter) throws ParseException, IOException, FileNotFoundException {
-		return resolve(md, confs, cache, date, validate, useCacheOnly, transitive, true, true, artifactFilter);
-	}
-	public ResolveReport resolve(ModuleDescriptor md, String[] confs, File cache, Date date, boolean validate, boolean useCacheOnly, boolean transitive, boolean download, boolean outputReport, Filter artifactFilter) throws ParseException, IOException, FileNotFoundException {
-		return resolve(md, confs, cache, date, validate, useCacheOnly, transitive, false, download, outputReport, artifactFilter);
-	}
-    /**
-     * Resolve dependencies of a module described by a module descriptor
-     * 
-     * Note: the method signature is way too long, we should use a class to store the settings of the resolve.
-     */
-	public ResolveReport resolve(ModuleDescriptor md, String[] confs, File cache, Date date, boolean validate, boolean useCacheOnly, boolean transitive, boolean useOrigin, boolean download, boolean outputReport, Filter artifactFilter) throws ParseException, IOException, FileNotFoundException {
-		IvyContext.getContext().setIvy(this);
-        DependencyResolver oldDictator = getDictatorResolver();
-        if (useCacheOnly) {
-        	setDictatorResolver(new CacheResolver(this));
-        }
-        try {
-            if (cache==null) {  // ensure that a cache exists
-                cache = getDefaultCache();
-                IvyContext.getContext().setCache(cache);
-            }
-            if (artifactFilter == null) {
-            	artifactFilter = FilterHelper.NO_FILTER;
-            }
-            if (confs.length == 1 && confs[0].equals("*")) {
-                confs = md.getConfigurationsNames();
-            }
-            fireIvyEvent(new StartResolveEvent(this, md, confs));
-            
-            long start = System.currentTimeMillis();
-            Message.info(":: resolving dependencies :: "+md.getResolvedModuleRevisionId()+(transitive?"":" [not transitive]"));
-            Message.info("\tconfs: "+Arrays.asList(confs));
-            Message.verbose("\tvalidate = "+validate);
-            ResolveReport report = new ResolveReport(md);
-
-            // resolve dependencies
-            IvyNode[] dependencies = getDependencies(md, confs, cache, date, report, validate, transitive);
-            report.setDependencies(Arrays.asList(dependencies), artifactFilter);
-
-            
-            // produce resolved ivy file and ivy properties in cache
-            File ivyFileInCache = getResolvedIvyFileInCache(cache, md.getResolvedModuleRevisionId());
-            md.toIvyFile(ivyFileInCache);
-
-            // we store the resolved dependencies revisions and statuses per asked dependency revision id,
-            // for direct dependencies only.
-            // this is used by the deliver task to resolve dynamic revisions to static ones
-            File ivyPropertiesInCache = getResolvedIvyPropertiesInCache(cache, md.getResolvedModuleRevisionId());
-            Properties props = new Properties();
-            if (dependencies.length > 0) {
-            	IvyNode root = dependencies[0].getRoot();
-            	for (int i = 0; i < dependencies.length; i++) {
-            		if (!dependencies[i].isCompletelyEvicted() && !dependencies[i].hasProblem()) {
-            			DependencyDescriptor dd = dependencies[i].getDependencyDescriptor(root);
-            			if (dd != null) {
-            				String rev = dependencies[i].getResolvedId().getRevision();
-            				String status = dependencies[i].getDescriptor().getStatus();
-            				props.put(dd.getDependencyRevisionId().encodeToString(), rev+" "+status);
-            			}
-            		}
-            	}
-            }
-            props.store(new FileOutputStream(ivyPropertiesInCache), md.getResolvedModuleRevisionId()+ " resolved revisions");
-            Message.verbose("\tresolved ivy file produced in "+ivyFileInCache);
-            
-            report.setResolveTime(System.currentTimeMillis()-start);
-
-            if (download) {
-	            Message.verbose(":: downloading artifacts ::");
-	
-	            downloadArtifacts(report, cache, useOrigin, artifactFilter);
-            }
-            
-            
-            if (outputReport) {
-            	outputReport(report, cache);
-            }
-            
-            fireIvyEvent(new EndResolveEvent(this, md, confs, report));
-            return report;
-        } finally {
-            setDictatorResolver(oldDictator);
-        }
+		return _resolveEngine.resolve(md, confs, cache, date, validate, useCacheOnly, artifactFilter);
 	}
 
-	public void outputReport(ResolveReport report, File cache) {
-		Message.info(":: resolution report ::");
-		report.setProblemMessages(Message.getProblems());
-		// output report
-		report.output(getReportOutputters(), cache);
-		
-		Message.verbose("\tresolve done ("+report.getResolveTime()+"ms resolve - "+report.getDownloadTime()+"ms download)");
-		Message.sumupProblems();
+	public ResolveReport resolve(ModuleRevisionId mrid, String[] confs, boolean transitive, boolean changing, File cache, Date date, boolean validate, boolean useCacheOnly, boolean useOrigin, Filter artifactFilter) throws ParseException, IOException {
+		return _resolveEngine.resolve(mrid, confs, transitive, changing, cache, date, validate, useCacheOnly, useOrigin, artifactFilter);
 	}
 
-    public void downloadArtifacts(ResolveReport report, File cache, boolean useOrigin, Filter artifactFilter) {
-    	long start = System.currentTimeMillis();
-    	IvyNode[] dependencies = (IvyNode[]) report.getDependencies().toArray(new IvyNode[report.getDependencies().size()]);
-        
-        fireIvyEvent(new PrepareDownloadEvent(this, (Artifact[])report.getArtifacts().toArray(new Artifact[report.getArtifacts().size()])));
-        
-        for (int i = 0; i < dependencies.length; i++) {
-        	checkInterrupted();
-            //download artifacts required in all asked configurations
-            if (!dependencies[i].isCompletelyEvicted() && !dependencies[i].hasProblem()) {
-                DependencyResolver resolver = dependencies[i].getModuleRevision().getArtifactResolver();
-                Artifact[] selectedArtifacts = dependencies[i].getSelectedArtifacts(artifactFilter);
-                DownloadReport dReport = resolver.download(selectedArtifacts, this, cache, useOrigin);
-                ArtifactDownloadReport[] adrs = dReport.getArtifactsReports();
-                for (int j = 0; j < adrs.length; j++) {
-                    if (adrs[j].getDownloadStatus() == DownloadStatus.FAILED) {
-                        Message.warn("\t[NOT FOUND  ] "+adrs[j].getArtifact());
-                        resolver.reportFailure(adrs[j].getArtifact());
-                    }
-                }
-                // update concerned reports
-                String[] dconfs = dependencies[i].getRootModuleConfigurations();
-                for (int j = 0; j < dconfs.length; j++) {
-                    // the report itself is responsible to take into account only
-                    // artifacts required in its corresponding configuration
-                    // (as described by the Dependency object)
-                    if (dependencies[i].isEvicted(dconfs[j])) {
-                        report.getConfigurationReport(dconfs[j]).addDependency(dependencies[i]);
-                    } else {
-                        report.getConfigurationReport(dconfs[j]).addDependency(dependencies[i], dReport);
-                    }
-                }
-            }
-        }
-        report.setDownloadTime(System.currentTimeMillis() - start);
-    }
-
-    /**
-     * Check if the current operation has been interrupted, and if it is the case, throw a runtime exception
-     */
-	public void checkInterrupted() {
-		if (isInterrupted()) {
-			Message.info("operation interrupted");
-			throw new RuntimeException("operation interrupted");
-		}
+	public ResolveReport resolve(ModuleRevisionId mrid, String[] confs, boolean transitive, boolean changing, File cache, Date date, boolean validate, boolean useCacheOnly, Filter artifactFilter) throws ParseException, IOException {
+		return _resolveEngine.resolve(mrid, confs, transitive, changing, cache, date, validate, useCacheOnly, artifactFilter);
 	}
-    
-    /**
-     * Download an artifact to the cache.
-     * Not used internally, useful especially for IDE plugins
-     * needing to download artifact one by one (for source or javadoc artifact,
-     * for instance).
-     * 
-     * Downloaded artifact file can be accessed using getArchiveFileInCache method.
-     * 
-     * It is possible to track the progression of the download using classical ivy 
-     * progress monitoring feature (see addTransferListener).
-     * 
-     * @param artifact the artifact to download
-     * @param cache the cache to use. If null, will use default cache
-     * @return a report concerning the download
-     */
-    public ArtifactDownloadReport download(Artifact artifact, File cache) {
-        IvyContext.getContext().setIvy(this);
-        IvyContext.getContext().setCache(cache);
-        if (cache == null) {
-            cache = getDefaultCache();
-        }
-        DependencyResolver resolver = getResolver(artifact.getModuleRevisionId().getModuleId());
-        DownloadReport r = resolver.download(new Artifact[] {artifact}, this, cache, false);
-        return r.getArtifactReport(artifact);
-    }
-    
-    /**
-     * Resolve the dependencies of a module without downloading corresponding artifacts.
-     * The module to resolve is given by its ivy file URL. This method requires
-     * appropriate configuration of the ivy instance, especially resolvers.
-     * 
-     * @param ivySource url of the ivy file to use for dependency resolving
-     * @param confs an array of configuration names to resolve - must not be null nor empty
-     * @param cache the cache to use - default cache is used if null
-     * @param date the date to which resolution must be done - may be null
-     * @return an array of the resolved dependencies
-     * @throws ParseException if a parsing problem occured in the ivy file
-     * @throws IOException if an IO problem was raised during ivy file parsing
-     */
-    public IvyNode[] getDependencies(URL ivySource, String[] confs, File cache, Date date, boolean validate) throws ParseException, IOException {
-        return getDependencies(ModuleDescriptorParserRegistry.getInstance().parseDescriptor(this, ivySource, validate), confs, cache, date, null, validate);
-    }
-    
-    /**
-     * Resolve the dependencies of a module without downloading corresponding artifacts.
-     * The module to resolve is given by its module descriptor.This method requires
-     * appropriate configuration of the ivy instance, especially resolvers.
-     * 
-     * @param md the descriptor of the module for which we want to get dependencies - must not be null
-     * @param confs an array of configuration names to resolve - must not be null nor empty
-     * @param cache the cache to use - default cache is used if null
-     * @param date the date to which resolution must be done - may be null
-     * @param report a resolve report to fill during resolution - may be null
-     * @return an array of the resolved Dependencies
-     */
-    public IvyNode[] getDependencies(ModuleDescriptor md, String[] confs, File cache, Date date, ResolveReport report, boolean validate) {
-    	return getDependencies(md, confs, cache, date, report, validate, true);
-    }
-    public IvyNode[] getDependencies(ModuleDescriptor md, String[] confs, File cache, Date date, ResolveReport report, boolean validate, boolean transitive) {
-        IvyContext.getContext().setIvy(this);
-        IvyContext.getContext().setCache(cache);
-        if (md == null) {
-            throw new NullPointerException("module descriptor must not be null");
-        }
-        if (cache==null) {  // ensure that a cache exists
-            cache = getDefaultCache();
-        }
-        if (confs.length == 1 && confs[0].equals("*")) {
-            confs = md.getConfigurationsNames();
-        }
-        
-        Map dependenciesMap = new LinkedHashMap();
-        Date reportDate = new Date();
-        ResolveData data = new ResolveData(this, cache, date, null, validate, transitive, dependenciesMap);
-        IvyNode rootNode = new IvyNode(data, md);
-        
-        for (int i = 0; i < confs.length; i++) {
-            // for each configuration we clear the cache of what's been fetched
-            _fetchedSet.clear();     
-            
-            Configuration configuration = md.getConfiguration(confs[i]);
-            if (configuration == null) {
-                Message.error("asked configuration not found in "+md.getModuleRevisionId()+": "+confs[i]);
-            } else {
-                ConfigurationResolveReport confReport = null;
-                if (report != null) {
-                    confReport = report.getConfigurationReport(confs[i]);
-                    if (confReport == null) {
-                        confReport = new ConfigurationResolveReport(this, md, confs[i], reportDate, cache);
-                        report.addReport(confs[i], confReport);
-                    }
-                }
-                // we reuse the same resolve data with a new report for each conf
-                data.setReport(confReport); 
-                
-                // update the root module conf we are about to fetch
-                rootNode.setRootModuleConf(confs[i]); 
-                rootNode.setRequestedConf(confs[i]);
-                rootNode.updateConfsToFetch(Collections.singleton(confs[i]));
-                
-                // go fetch !
-                fetchDependencies(rootNode, confs[i], false);
-            }
-        }
-        
-        // prune and reverse sort fectched dependencies 
-        Collection dependencies = new LinkedHashSet(dependenciesMap.size()); // use a Set to avoids duplicates
-        for (Iterator iter = dependenciesMap.values().iterator(); iter.hasNext();) {
-            IvyNode dep = (IvyNode) iter.next();
-            if (dep != null) {
-                dependencies.add(dep);
-            }
-        }
-        List sortedDependencies = sortNodes(dependencies);
-        Collections.reverse(sortedDependencies);
 
-        // handle transitive eviction now:
-        // if a module has been evicted then all its dependencies required 
-        // only by it should be evicted too. Since nodes are now sorted from the more dependent to 
-        // the less one, we can traverse the list and check only the direct parent and not all
-        // the ancestors
-        for (ListIterator iter = sortedDependencies.listIterator(); iter.hasNext();) {
-            IvyNode node = (IvyNode)iter.next();
-            if (!node.isCompletelyEvicted()) {
-                for (int i = 0; i < confs.length; i++) {
-                    IvyNode.Caller[] callers = node.getCallers(confs[i]);
-                    if (debugConflictResolution()) {
-                        Message.debug("checking if "+node.getId()+" is transitively evicted in "+confs[i]);
-                    }
-                    boolean allEvicted = callers.length > 0;
-                    for (int j = 0; j < callers.length; j++) {
-                        if (callers[j].getModuleRevisionId().equals(md.getModuleRevisionId())) {
-                            // the caller is the root module itself, it can't be evicted
-                            allEvicted = false;
-                            break;                            
-                        } else {
-                            IvyNode callerNode = (IvyNode)dependenciesMap.get(callers[j].getModuleRevisionId());
-                            if (callerNode == null) {
-                                Message.warn("ivy internal error: no node found for "+callers[j].getModuleRevisionId()+": looked in "+dependenciesMap.keySet()+" and root module id was "+md.getModuleRevisionId());
-                            } else if (!callerNode.isEvicted(confs[i])) {
-                                allEvicted = false;
-                                break;
-                            } else {
-                                if (debugConflictResolution()) {
-                                    Message.debug("caller "+callerNode.getId()+" of "+node.getId()+" is evicted");
-                                }
-                            }
-                        }
-                    }
-                    if (allEvicted) {
-                        Message.verbose("all callers are evicted for "+node+": evicting too");
-                        node.markEvicted(confs[i], null, null, null);
-                    } else {
-                        if (debugConflictResolution()) {
-                            Message.debug(node.getId()+" isn't transitively evicted, at least one caller was not evicted");
-                        }
-                    }
-                }
-            }
-        }
-        
-        return (IvyNode[]) dependencies.toArray(new IvyNode[dependencies.size()]);
-    }
+	public ResolveReport resolve(ModuleRevisionId mrid, String[] confs) throws ParseException, IOException {
+		return _resolveEngine.resolve(mrid, confs);
+	}
 
+	public ResolveReport resolve(URL ivySource, String revision, String[] confs, File cache, Date date, boolean validate, boolean useCacheOnly, boolean transitive, boolean useOrigin, Filter artifactFilter) throws ParseException, IOException {
+		return _resolveEngine.resolve(ivySource, revision, confs, cache, date, validate, useCacheOnly, transitive, useOrigin, artifactFilter);
+	}
 
-    
-    
-    private void fetchDependencies(IvyNode node, String conf, boolean shouldBePublic) {
-    	checkInterrupted();
-        long start = System.currentTimeMillis();
-        if (debugConflictResolution()) {
-            Message.debug(node.getId()+" => resolving dependencies in "+conf);
-        }
-        resolveConflict(node, node.getParent());
-        
-        if (node.loadData(conf, shouldBePublic)) {
-            node = node.getRealNode(true); // if data loading discarded the node, get the real one
-            
-            resolveConflict(node, node.getParent());
-            if (!node.isEvicted(node.getRootModuleConf())) {
-                String[] confs = node.getRealConfs(conf);
-                for (int i = 0; i < confs.length; i++) {
-                    doFetchDependencies(node, confs[i]);
-                }
-            }
-        } else if (!node.hasProblem()) {
-            // the node has not been loaded but hasn't problem: it was already loaded 
-            // => we just have to update its dependencies data
-            if (!node.isEvicted(node.getRootModuleConf())) {
-                String[] confs = node.getRealConfs(conf);
-                for (int i = 0; i < confs.length; i++) {
-                    doFetchDependencies(node, confs[i]);
-                }
-            }
-        }
-        if (node.isEvicted(node.getRootModuleConf())) {
-            // update selected nodes with confs asked in evicted one
-            IvyNode.EvictionData ed = node.getEvictedData(node.getRootModuleConf());
-            if (ed.getSelected() != null) {
-            	for (Iterator iter = ed.getSelected().iterator(); iter.hasNext();) {
-            		IvyNode selected = (IvyNode)iter.next();
-            		fetchDependencies(selected, conf, true);
-            	}
-            }
-        }
-        if (debugConflictResolution()) {
-            Message.debug(node.getId()+" => dependencies resolved in "+conf+" ("+(System.currentTimeMillis()-start)+"ms)");
-        }
-    }
+	public ResolveReport resolve(URL ivySource, String revision, String[] confs, File cache, Date date, boolean validate, boolean useCacheOnly, boolean transitive, Filter artifactFilter) throws ParseException, IOException {
+		return _resolveEngine.resolve(ivySource, revision, confs, cache, date, validate, useCacheOnly, transitive, artifactFilter);
+	}
 
-    private void doFetchDependencies(IvyNode node, String conf) {
-        Configuration c = node.getConfiguration(conf);
-        if (c == null) {
-            Message.warn("configuration not found '"+conf+"' in "+node.getResolvedId()+": ignoring");
-            if (node.getParent() != null) {
-                Message.warn("it was required from "+node.getParent().getResolvedId());
-            }
-            return;
-        }
-        // we handle the case where the asked configuration extends others:
-        // we have to first fetch the extended configurations
-        
-        // first we check if this is the actual requested conf (not an extended one)
-        boolean requestedConfSet = false;
-        if (node.getRequestedConf()==null) {
-            node.setRequestedConf(conf);
-            requestedConfSet = true;
-        }
-        // now let's recurse in extended confs
-        String[] extendedConfs = c.getExtends();
-        if (extendedConfs.length > 0) {
-            node.updateConfsToFetch(Arrays.asList(extendedConfs));
-        }
-        for (int i = 0; i < extendedConfs.length; i++) {
-            fetchDependencies(node, extendedConfs[i], false);
-        }
-        
-        // now we can actually resolve this configuration dependencies
-        DependencyDescriptor dd = node.getDependencyDescriptor(node.getParent());
-        if (!isDependenciesFetched(node, conf) && (dd == null || node.isTransitive())) {
-            Collection dependencies = node.getDependencies(conf, true);
-            for (Iterator iter = dependencies.iterator(); iter.hasNext();) {
-                IvyNode dep = (IvyNode)iter.next();
-                dep = dep.getRealNode(); // the node may have been resolved to another real one while resolving other deps
-                node.traverse(conf, dep); // dependency traversal data may have been changed while resolving other deps, we update it
-                if (dep.isCircular()) {
-                    continue;
-                }
-                String[] confs = dep.getRequiredConfigurations(node, conf);
-                for (int i = 0; i < confs.length; i++) {
-                    fetchDependencies(dep, confs[i], true);
-                }
-                // if there are still confs to fetch (usually because they have
-                // been updated when evicting another module), we fetch them now
-                confs = dep.getConfsToFetch();
-                for (int i = 0; i < confs.length; i++) {
-                    fetchDependencies(dep, confs[i], true);
-                }
-            }
-        }
-        // we have finiched with this configuration, if it was the original requested conf
-        // we can clean it now
-        if (requestedConfSet) {
-        	node.setRequestedConf(null);
-        }
-        
-    }
+	public ResolveReport resolve(URL ivySource, String revision, String[] confs, File cache, Date date, boolean validate, boolean useCacheOnly, Filter artifactFilter) throws ParseException, IOException {
+		return _resolveEngine.resolve(ivySource, revision, confs, cache, date, validate, useCacheOnly, artifactFilter);
+	}
 
+	public ResolveReport resolve(URL ivySource, String revision, String[] confs, File cache, Date date, boolean validate, boolean useCacheOnly) throws ParseException, IOException {
+		return _resolveEngine.resolve(ivySource, revision, confs, cache, date, validate, useCacheOnly);
+	}
 
-    /**
-     * Returns true if we've already fetched the dependencies for this node and configuration
-     * @param node node to check
-     * @param conf configuration to check
-     * @return true if we've already fetched this dependency
-     */
-    private boolean isDependenciesFetched(IvyNode node, String conf) {
-        ModuleId moduleId = node.getModuleId();
-        ModuleRevisionId moduleRevisionId = node.getResolvedId();
-        String key = moduleId.getOrganisation()+"|"+moduleId.getName()+"|"+moduleRevisionId.getRevision() +
-            "|" + conf;
-        if (_fetchedSet.contains(key)) {
-            return true;
-        }
-        _fetchedSet.add(key);
-        return false;
-    }    
+	public ResolveReport resolve(URL ivySource, String revision, String[] confs, File cache, Date date, boolean validate) throws ParseException, IOException {
+		return _resolveEngine.resolve(ivySource, revision, confs, cache, date, validate);
+	}
 
-    private void resolveConflict(IvyNode node, IvyNode parent) {
-        resolveConflict(node, parent, Collections.EMPTY_SET);
-    }
-    private void resolveConflict(IvyNode node, IvyNode parent, Collection toevict) {
-        if (parent == null || node == parent) {
-            return;
-        }
-        // check if job is not already done
-        if (checkConflictSolved(node, parent)) {
-            return;
-        }
-        
-        // compute conflicts
-        Collection resolvedNodes = new HashSet(parent.getResolvedNodes(node.getModuleId(), node.getRootModuleConf()));
-        Collection conflicts = computeConflicts(node, parent, toevict, resolvedNodes);
-        if (debugConflictResolution()) {
-            Message.debug("found conflicting revisions for "+node+" in "+parent+": "+conflicts);
-        }
-        
-        Collection resolved = parent.getConflictManager(node.getModuleId()).resolveConflicts(parent, conflicts);
-        if (debugConflictResolution()) {
-            Message.debug("selected revisions for "+node+" in "+parent+": "+resolved);
-        }
-        if (resolved.contains(node)) {
-            // node has been selected for the current parent
-            
-            // handle previously selected nodes that are now evicted by this new node
-            toevict = resolvedNodes;
-            toevict.removeAll(resolved);
-            
-            for (Iterator iter = toevict.iterator(); iter.hasNext();) {
-                IvyNode te = (IvyNode)iter.next();
-                te.markEvicted(node.getRootModuleConf(), parent, parent.getConflictManager(node.getModuleId()), resolved);
-                
-                if (debugConflictResolution()) {
-                    Message.debug("evicting "+te+" by "+te.getEvictedData(node.getRootModuleConf()));
-                }
-            }
-            
-            // it's very important to update resolved and evicted nodes BEFORE recompute parent call
-            // to allow it to recompute its resolved collection with correct data
-            // if necessary            
-            parent.setResolvedNodes(node.getModuleId(), node.getRootModuleConf(), resolved); 
+	public ResolveReport resolve(URL ivySource) throws ParseException, IOException {
+		return _resolveEngine.resolve(ivySource);
+	}
 
-            Collection evicted = new HashSet(parent.getEvictedNodes(node.getModuleId(), node.getRootModuleConf()));
-            evicted.removeAll(resolved);
-            evicted.addAll(toevict);
-            parent.setEvictedNodes(node.getModuleId(), node.getRootModuleConf(), evicted);
-            
-            resolveConflict(node, parent.getParent(), toevict);
-        } else {
-            // node has been evicted for the current parent
-            if (resolved.isEmpty()) {
-                if (debugConflictResolution()) {
-                    Message.verbose("conflict manager '"+parent.getConflictManager(node.getModuleId())+"' evicted all revisions among "+conflicts);
-                }
-            }
-            
-            
-            // it's time to update parent resolved and evicted with what was found 
-            
-            Collection evicted = new HashSet(parent.getEvictedNodes(node.getModuleId(), node.getRootModuleConf()));
-            toevict.removeAll(resolved);
-            evicted.removeAll(resolved);
-            evicted.addAll(toevict);
-            evicted.add(node);
-            parent.setEvictedNodes(node.getModuleId(), node.getRootModuleConf(), evicted);
-
-            
-            node.markEvicted(node.getRootModuleConf(), parent, parent.getConflictManager(node.getModuleId()), resolved);
-            if (debugConflictResolution()) {
-                Message.debug("evicting "+node+" by "+node.getEvictedData(node.getRootModuleConf()));
-            }
-
-            // if resolved changed we have to go up in the graph
-            Collection prevResolved = parent.getResolvedNodes(node.getModuleId(), node.getRootModuleConf());
-            if (!prevResolved.equals(resolved)) {                
-                parent.setResolvedNodes(node.getModuleId(), node.getRootModuleConf(), resolved);
-                for (Iterator iter = resolved.iterator(); iter.hasNext();) {
-                    IvyNode sel = (IvyNode)iter.next();
-                    if (!prevResolved.contains(sel)) {
-                        resolveConflict(sel, parent.getParent(), toevict);
-                    }
-                }
-            }
-
-        }
-    }
-
-    private Collection computeConflicts(IvyNode node, IvyNode parent, Collection toevict, Collection resolvedNodes) {
-        Collection conflicts = new HashSet();
-        if (resolvedNodes.removeAll(toevict)) {
-            // parent.resolved(node.mid) is not up to date:
-            // recompute resolved from all sub nodes
-            conflicts.add(node);
-            Collection deps = parent.getDependencies(parent.getRequiredConfigurations());
-            for (Iterator iter = deps.iterator(); iter.hasNext();) {
-                IvyNode dep = (IvyNode)iter.next();
-                conflicts.addAll(dep.getResolvedNodes(node.getModuleId(), node.getRootModuleConf()));
-            }
-        } else if (resolvedNodes.isEmpty() && node.getParent() != parent) {
-            conflicts.add(node);
-            DependencyDescriptor[] dds = parent.getDescriptor().getDependencies();
-            for (int i = 0; i < dds.length; i++) {
-                if (dds[i].getDependencyId().equals(node.getModuleId())) {
-                    IvyNode n = node.findNode(dds[i].getDependencyRevisionId());
-                    if (n != null) {
-                        conflicts.add(n);
-                        break;
-                    }
-                }
-            }
-        } else {
-            conflicts.add(node);
-            conflicts.addAll(resolvedNodes);
-        }
-        return conflicts;
-    }
-
-    private boolean checkConflictSolved(IvyNode node, IvyNode parent) {
-        if (parent.getResolvedRevisions(node.getModuleId(), node.getRootModuleConf()).contains(node.getResolvedId())) {
-            // resolve conflict has already be done with node with the same id
-            // => job already done, we just have to check if the node wasn't previously evicted in root ancestor
-            if (debugConflictResolution()) {
-                Message.debug("conflict resolution already done for "+node+" in "+parent);
-            }
-            EvictionData evictionData = node.getEvictionDataInRoot(node.getRootModuleConf(), parent);
-            if (evictionData != null) {
-                // node has been previously evicted in an ancestor: we mark it as evicted
-                if (debugConflictResolution()) {
-                    Message.debug(node+" was previously evicted in root module conf "+node.getRootModuleConf());
-                }
-
-                node.markEvicted(evictionData);                
-                if (debugConflictResolution()) {
-                    Message.debug("evicting "+node+" by "+evictionData);
-                }
-            }
-            return true;
-        } else if (parent.getEvictedRevisions(node.getModuleId(), node.getRootModuleConf()).contains(node.getResolvedId())) {
-            // resolve conflict has already be done with node with the same id
-            // => job already done, we just have to check if the node wasn't previously selected in root ancestor
-            if (debugConflictResolution()) {
-                Message.debug("conflict resolution already done for "+node+" in "+parent);
-            }
-            return true;
-        }
-        return false;
-    }
-
-    public ResolvedModuleRevision findModuleInCache(ModuleRevisionId mrid, File cache, boolean validate) {
-        IvyContext.getContext().setIvy(this);
-        IvyContext.getContext().setCache(cache);
-        // first, check if it is in cache
-        if (!getVersionMatcher().isDynamic(mrid)) {
-            File ivyFile = getIvyFileInCache(cache, mrid);
-            if (ivyFile.exists()) {
-                // found in cache !
-                try {
-                    ModuleDescriptor depMD = XmlModuleDescriptorParser.getInstance().parseDescriptor(this, ivyFile.toURL(), validate);
-                    String resolverName = getSavedResolverName(cache, depMD);
-                    String artResolverName = getSavedArtResolverName(cache, depMD);
-                    DependencyResolver resolver = (DependencyResolver)_resolversMap.get(resolverName);
-                    if (resolver == null) {
-                        Message.debug("\tresolver not found: "+resolverName+" => trying to use the one configured for "+mrid);                                    
-                        resolver = getResolver(depMD.getResolvedModuleRevisionId().getModuleId());
-                        if (resolver != null) {
-                            Message.debug("\tconfigured resolver found for "+depMD.getResolvedModuleRevisionId()+": "+resolver.getName()+": saving this data");                                    
-                            saveResolver(cache, depMD, resolver.getName());
-                        }
-                    }
-                    DependencyResolver artResolver = (DependencyResolver)_resolversMap.get(artResolverName);
-                    if (artResolver == null) {
-                        artResolver = resolver;
-                    }
-                    if (resolver != null) {
-                        Message.debug("\tfound ivy file in cache for "+mrid+" (resolved by "+resolver.getName()+"): "+ivyFile);
-                        return new DefaultModuleRevision(resolver, artResolver, depMD, false, false, ivyFile.toURL());
-                    } else {
-                        Message.debug("\tresolver not found: "+resolverName+" => cannot use cached ivy file for "+mrid);                                    
-                    }
-                } catch (Exception e) {
-                    // will try with resolver
-                    Message.debug("\tproblem while parsing cached ivy file for: "+mrid+": "+e.getMessage());                                    
-                }
-            } else {
-                Message.debug("\tno ivy file in cache for "+mrid+": tried "+ivyFile);
-            }
-        }
-        return null;
-    }
-
+	public ResolveReport resolve(File ivySource) throws ParseException, IOException {
+		return _resolveEngine.resolve(ivySource);
+	}
 
     /////////////////////////////////////////////////////////////////////////
     //                         INSTALL
     /////////////////////////////////////////////////////////////////////////
     
-    public ResolveReport install(ModuleRevisionId mrid, String from, String to, boolean transitive, boolean validate, boolean overwrite, Filter artifactFilter, File cache, String matcherName) throws IOException {
+	public ResolveReport install(ModuleRevisionId mrid, String from, String to, boolean transitive, boolean validate, boolean overwrite, Filter artifactFilter, File cache, String matcherName) throws IOException {
         IvyContext.getContext().setIvy(this);
         IvyContext.getContext().setCache(cache);
         if (cache == null) {
-            cache = getDefaultCache();
+            cache = _settings.getDefaultCache();
         }
         if (artifactFilter == null) {
             artifactFilter = FilterHelper.NO_FILTER;
         }
-        DependencyResolver fromResolver = getResolver(from);
-        DependencyResolver toResolver = getResolver(to);
+        DependencyResolver fromResolver = _settings.getResolver(from);
+        DependencyResolver toResolver = _settings.getResolver(to);
         if (fromResolver == null) {
-            throw new IllegalArgumentException("unknown resolver "+from+". Available resolvers are: "+_resolversMap.keySet());
+            throw new IllegalArgumentException("unknown resolver "+from+". Available resolvers are: "+_settings.getResolverNames());
         }
         if (toResolver == null) {
-            throw new IllegalArgumentException("unknown resolver "+to+". Available resolvers are: "+_resolversMap.keySet());
+            throw new IllegalArgumentException("unknown resolver "+to+". Available resolvers are: "+_settings.getResolverNames());
         }
-        PatternMatcher matcher = getMatcher(matcherName);
+        PatternMatcher matcher = _settings.getMatcher(matcherName);
         if (matcher == null) {
-            throw new IllegalArgumentException("unknown matcher "+matcherName+". Available matchers are: "+_matchers.keySet());
+            throw new IllegalArgumentException("unknown matcher "+matcherName+". Available matchers are: "+_settings.getMatcherNames());
         }
         
         // build module file declaring the dependency
         Message.info(":: installing "+mrid+" ::");
         DependencyResolver oldDicator = getDictatorResolver();
-        boolean log = logNotConvertedExclusionRule();
+        boolean log = _settings.logNotConvertedExclusionRule();
         try {
-            setLogNotConvertedExclusionRule(true);
+        	_settings.setLogNotConvertedExclusionRule(true);
             setDictatorResolver(fromResolver);
             
-            DefaultModuleDescriptor md = new DefaultModuleDescriptor(ModuleRevisionId.newInstance("apache", "ivy-install", "1.0"), getStatusManager().getDefaultStatus(), new Date());
+            DefaultModuleDescriptor md = new DefaultModuleDescriptor(ModuleRevisionId.newInstance("apache", "ivy-install", "1.0"), _settings.getStatusManager().getDefaultStatus(), new Date());
             md.addConfiguration(new Configuration("default"));
             md.addConflictManager(new ModuleId(ExactPatternMatcher.ANY_EXPRESSION, ExactPatternMatcher.ANY_EXPRESSION), ExactPatternMatcher.INSTANCE, new NoConflictManager());
             
@@ -1832,7 +350,7 @@ public class Ivy implements TransferListener {
             report.setDependencies(Arrays.asList(dependencies), artifactFilter);
             
             Message.info(":: downloading artifacts to cache ::");
-            downloadArtifacts(report, cache, false, artifactFilter);
+            downloadArtifacts(report, getCacheManager(cache), false, artifactFilter);
 
             // now that everything is in cache, we can publish all these modules
             Message.info(":: installing in "+to+" ::");
@@ -1842,8 +360,8 @@ public class Ivy implements TransferListener {
                     Message.verbose("installing "+depmd.getModuleRevisionId());
                     publish(depmd, 
                             toResolver, 
-                            Collections.singleton(cache.getAbsolutePath()+"/"+getCacheArtifactPattern()), 
-                            cache.getAbsolutePath()+"/"+getCacheIvyPattern(), 
+                            Collections.singleton(cache.getAbsolutePath()+"/"+_settings.getCacheArtifactPattern()), 
+                            cache.getAbsolutePath()+"/"+_settings.getCacheIvyPattern(), 
                             null,
                             overwrite,
                             null);
@@ -1853,13 +371,22 @@ public class Ivy implements TransferListener {
             Message.info(":: install resolution report ::");
             
             // output report
-            report.output(getReportOutputters(), cache);
+            report.output(_settings.getReportOutputters(), cache);
 
             return report;
         } finally {
             setDictatorResolver(oldDicator);
-            setLogNotConvertedExclusionRule(log);
+            _settings.setLogNotConvertedExclusionRule(log);
         }
+    }
+    
+	private DependencyResolver _dictatorResolver;
+    public DependencyResolver getDictatorResolver() {
+        return _dictatorResolver;
+    }
+
+    public void setDictatorResolver(DependencyResolver dictatorResolver) {
+        _dictatorResolver = dictatorResolver;
     }
 
     public Collection findModuleRevisionIds(DependencyResolver resolver, ModuleRevisionId pattern, PatternMatcher matcher) {
@@ -1978,8 +505,9 @@ public class Ivy implements TransferListener {
         Message.info("\tconfs: "+Arrays.asList(confs));
         long start = System.currentTimeMillis();
         
-        destFilePattern = IvyPatternHelper.substituteVariables(destFilePattern, getVariables());
-        destIvyPattern = IvyPatternHelper.substituteVariables(destIvyPattern, getVariables());
+        destFilePattern = IvyPatternHelper.substituteVariables(destFilePattern, _settings.getVariables());
+        destIvyPattern = IvyPatternHelper.substituteVariables(destIvyPattern, _settings.getVariables());
+        CacheManager cacheManager = getCacheManager(cache);
         try {
             Map artifactsToCopy = determineArtifactsToCopy(moduleId, confs, cache, destFilePattern, destIvyPattern, artifactFilter);
             File fileRetrieveRoot = new File(IvyPatternHelper.getTokenRoot(destFilePattern));
@@ -1994,13 +522,13 @@ public class Ivy implements TransferListener {
                 Artifact artifact = (Artifact)iter.next();
                 File archive;
 				if ("ivy".equals(artifact.getType())) {
-					archive = getIvyFileInCache(cache, artifact.getModuleRevisionId());
+					archive = cacheManager.getIvyFileInCache(artifact.getModuleRevisionId());
 				} else {
-					archive = getArchiveFileInCache(cache, artifact, getSavedArtifactOrigin(cache, artifact), useOrigin);
+					archive = cacheManager.getArchiveFileInCache(artifact, cacheManager.getSavedArtifactOrigin(artifact), useOrigin);
 					if (!useOrigin && !archive.exists()) {
 						// file is not available in cache, maybe the last resolve was performed with useOrigin=true.
 						// we try to use the best we can
-						archive = getArchiveFileInCache(cache, artifact, getSavedArtifactOrigin(cache, artifact));
+						archive = cacheManager.getArchiveFileInCache(artifact, cacheManager.getSavedArtifactOrigin(artifact));
 					}
 				}
                 Set dest = (Set)artifactsToCopy.get(artifact);
@@ -2008,7 +536,7 @@ public class Ivy implements TransferListener {
                 for (Iterator it2 = dest.iterator(); it2.hasNext();) {
                 	checkInterrupted();
                     File destFile = new File((String)it2.next());
-                    if (!_checkUpToDate || !upToDate(archive, destFile)) {
+                    if (!_settings.isCheckUpToDate() || !upToDate(archive, destFile)) {
                         Message.verbose("\t\tto "+destFile);
                         if (makeSymlinks) {
                             FileUtil.symlink(archive, destFile, null, false);
@@ -2055,7 +583,12 @@ public class Ivy implements TransferListener {
         }
     }
 
-    private void sync(Collection target, Collection existing) {
+    public CacheManager getCacheManager(File cache) {
+    	// TODO reuse instance
+		return new CacheManager(_settings, cache);
+	}
+
+	private void sync(Collection target, Collection existing) {
 		Collection toRemove = new HashSet();
 		for (Iterator iter = existing.iterator(); iter.hasNext();) {
 			File file = (File) iter.next();
@@ -2241,10 +774,11 @@ public class Ivy implements TransferListener {
         Message.info(":: delivering :: "+mrid+" :: "+revision+" :: "+status+" :: "+pubdate);
         Message.verbose("\tvalidate = "+validate);
         long start = System.currentTimeMillis();
-        destIvyPattern = substitute(destIvyPattern);
+        destIvyPattern = _settings.substitute(destIvyPattern);
+        CacheManager cacheManager = getCacheManager(cache);
         
         // 1) find the resolved module descriptor in cache
-        File ivyFile = getResolvedIvyFileInCache(cache, mrid);
+        File ivyFile = cacheManager.getResolvedIvyFileInCache(mrid);
         if (!ivyFile.exists()) {
             throw new IllegalStateException("ivy file not found in cache for "+mrid+": please resolve dependencies before publishing ("+ivyFile+")");
         }
@@ -2252,7 +786,7 @@ public class Ivy implements TransferListener {
         URL ivyFileURL = null;
         try {
             ivyFileURL = ivyFile.toURL();
-            md = XmlModuleDescriptorParser.getInstance().parseDescriptor(this, ivyFileURL, validate);
+            md = XmlModuleDescriptorParser.getInstance().parseDescriptor(_settings, ivyFileURL, validate);
             md.setResolvedModuleRevisionId(ModuleRevisionId.newInstance(mrid, revision));
             md.setResolvedPublicationDate(pubdate);
         } catch (MalformedURLException e) {
@@ -2264,7 +798,7 @@ public class Ivy implements TransferListener {
         // 2) parse resolvedRevisions From properties file
         Map resolvedRevisions = new HashMap(); // Map (ModuleId -> String revision)
         Map dependenciesStatus = new HashMap(); // Map (ModuleId -> String status)
-        File ivyProperties = getResolvedIvyPropertiesInCache(cache, mrid);
+        File ivyProperties = cacheManager.getResolvedIvyPropertiesInCache(mrid);
         if (!ivyProperties.exists()) {
             throw new IllegalStateException("ivy properties not found in cache for "+mrid+": please resolve dependencies before publishing ("+ivyFile+")");
         }
@@ -2302,7 +836,7 @@ public class Ivy implements TransferListener {
         String publishedIvy = IvyPatternHelper.substitute(destIvyPattern, md.getResolvedModuleRevisionId());
         Message.info("\tdelivering ivy file to "+publishedIvy);
         try {
-            XmlModuleDescriptorUpdater.update(this, ivyFileURL, 
+            XmlModuleDescriptorUpdater.update(_settings, ivyFileURL, 
                     new File(publishedIvy),
                     resolvedDependencies, status, revision, pubdate, null, true);
         } catch (SAXException ex) {
@@ -2373,7 +907,8 @@ public class Ivy implements TransferListener {
         Message.info(":: publishing :: "+mrid.getModuleId());
         Message.verbose("\tvalidate = "+validate);
         long start = System.currentTimeMillis();
-        srcIvyPattern = substitute(srcIvyPattern);
+        srcIvyPattern = _settings.substitute(srcIvyPattern);
+        CacheManager cacheManager = getCacheManager(cache);
         // 1) find the resolved module descriptor
         ModuleRevisionId pubmrid = ModuleRevisionId.newInstance(mrid, pubrevision);
         File ivyFile;
@@ -2383,7 +918,7 @@ public class Ivy implements TransferListener {
         		throw new IllegalArgumentException("ivy file to publish not found for "+mrid+": call deliver before ("+ivyFile+")");
         	}
         } else {
-        	ivyFile = getResolvedIvyFileInCache(cache, mrid);
+        	ivyFile = cacheManager.getResolvedIvyFileInCache(mrid);
         	if (!ivyFile.exists()) {
         		throw new IllegalStateException("ivy file not found in cache for "+mrid+": please resolve dependencies before publishing ("+ivyFile+")");
         	}
@@ -2393,17 +928,17 @@ public class Ivy implements TransferListener {
         URL ivyFileURL = null;
         try {
         	ivyFileURL = ivyFile.toURL();
-        	md = XmlModuleDescriptorParser.getInstance().parseDescriptor(this, ivyFileURL, false);
+        	md = XmlModuleDescriptorParser.getInstance().parseDescriptor(_settings, ivyFileURL, false);
         	if (srcIvyPattern != null) {
             	if (!pubrevision.equals(md.getModuleRevisionId().getRevision())) {
             		if (update) {
             			File tmp = File.createTempFile("ivy", ".xml");
             			tmp.deleteOnExit();
             			try {
-							XmlModuleDescriptorUpdater.update(this, ivyFileURL, tmp, new HashMap(), status==null?md.getStatus():status, pubrevision, pubdate==null?new Date():pubdate, null, true);
+							XmlModuleDescriptorUpdater.update(_settings, ivyFileURL, tmp, new HashMap(), status==null?md.getStatus():status, pubrevision, pubdate==null?new Date():pubdate, null, true);
 							ivyFile = tmp;
 							// we parse the new file to get updated module descriptor
-							md = XmlModuleDescriptorParser.getInstance().parseDescriptor(this, ivyFile.toURL(), false);
+							md = XmlModuleDescriptorParser.getInstance().parseDescriptor(_settings, ivyFile.toURL(), false);
 							srcIvyPattern = ivyFile.getAbsolutePath();
 						} catch (SAXException e) {
 				        	throw new IllegalStateException("bad ivy file for "+mrid+": "+ivyFile+": "+e);
@@ -2421,7 +956,7 @@ public class Ivy implements TransferListener {
         	throw new IllegalStateException("bad ivy file for "+mrid+": "+ivyFile+": "+e);
         }
         
-        DependencyResolver resolver = getResolver(resolverName);
+        DependencyResolver resolver = _settings.getResolver(resolverName);
         if (resolver == null) {
             throw new IllegalArgumentException("unknown resolver "+resolverName);
         }
@@ -2466,7 +1001,7 @@ public class Ivy implements TransferListener {
             boolean published = false;
             for (Iterator iterator = srcArtifactPattern.iterator(); iterator.hasNext() && !published;) {
 				String pattern = (String) iterator.next();
-				published = publish(artifact, substitute(pattern), resolver, overwrite);
+				published = publish(artifact, _settings.substitute(pattern), resolver, overwrite);
 			}
             if (!published) {
             	Message.info("missing artifact "+artifact+":");
@@ -2507,7 +1042,7 @@ public class Ivy implements TransferListener {
      */
     public List sortNodes(Collection nodes) {
         IvyContext.getContext().setIvy(this);
-        return ModuleDescriptorSorter.sortNodes(getVersionMatcher(), nodes);
+        return _sortEngine.sortNodes(nodes);
     }
 
 
@@ -2520,111 +1055,13 @@ public class Ivy implements TransferListener {
      */
     public List sortModuleDescriptors(Collection moduleDescriptors) {
         IvyContext.getContext().setIvy(this);
-        return ModuleDescriptorSorter.sortModuleDescriptors(getVersionMatcher(), moduleDescriptors);   
+        return _sortEngine.sortModuleDescriptors(moduleDescriptors);   
     }
     
     /////////////////////////////////////////////////////////////////////////
     //                         CACHE
     /////////////////////////////////////////////////////////////////////////
     
-    public File getResolvedIvyFileInCache(File cache, ModuleRevisionId mrid) {
-        IvyContext.getContext().setIvy(this);
-    	IvyContext.getContext().setCache(cache);
-        return new File(cache, IvyPatternHelper.substitute(_cacheResolvedIvyPattern, mrid.getOrganisation(), mrid.getName(), mrid.getRevision(), "ivy", "ivy", "xml"));
-    }
-
-    public File getResolvedIvyPropertiesInCache(File cache, ModuleRevisionId mrid) {
-        IvyContext.getContext().setIvy(this);
-    	IvyContext.getContext().setCache(cache);
-        return new File(cache, IvyPatternHelper.substitute(_cacheResolvedIvyPropertiesPattern, mrid.getOrganisation(), mrid.getName(), mrid.getRevision(), "ivy", "ivy", "xml"));
-    }
-
-    public File getIvyFileInCache(File cache, ModuleRevisionId mrid) {
-        IvyContext.getContext().setIvy(this);
-    	IvyContext.getContext().setCache(cache);
-        return new File(cache, IvyPatternHelper.substitute(_cacheIvyPattern, DefaultArtifact.newIvyArtifact(mrid, null)));
-    }
-
-    /**
-     * Returns a File object pointing to where the artifact can be found on the local file system.
-     * This is usually in the cache, but it can be directly in the repository if it is local
-     * and if the resolve has been done with useOrigin = true
-     * 
-     */
-    public File getArchiveFileInCache(File cache, Artifact artifact) {
-        IvyContext.getContext().setIvy(this);
-    	IvyContext.getContext().setCache(cache);
-    	ArtifactOrigin origin = getSavedArtifactOrigin(cache, artifact);
-		return getArchiveFileInCache(cache, artifact, origin);
-    }
-    
-    /**
-     * Returns a File object pointing to where the artifact can be found on the local file system.
-     * This is usually in the cache, but it can be directly in the repository if it is local
-     * and if the resolve has been done with useOrigin = true
-     * 
-     */
-    public File getArchiveFileInCache(File cache, Artifact artifact, ArtifactOrigin origin) {
-        IvyContext.getContext().setIvy(this);
-    	IvyContext.getContext().setCache(cache);
-    	File archive = new File(cache, getArchivePathInCache(artifact, origin));
-    	if (!archive.exists() && origin != null && origin.isLocal()) {
-    		File original = new File(origin.getLocation());
-    		if (original.exists()) {
-    			return original;
-    		}
-    	}
-    	return archive;
-    }
-    /**
-     * Returns a File object pointing to where the artifact can be found on the local file system,
-     * using or not the original location depending on the availability of origin information provided
-     * as parameter and the setting of useOrigin.
-     * 
-     * If useOrigin is false, this method will always return the file in the cache.
-     * 
-     */
-    public File getArchiveFileInCache(File cache, Artifact artifact, ArtifactOrigin origin, boolean useOrigin) {
-        IvyContext.getContext().setIvy(this);
-    	IvyContext.getContext().setCache(cache);
-    	if (useOrigin && origin != null && origin.isLocal()) {
-    		return new File(origin.getLocation());
-    	} else {
-    		return new File(cache, getArchivePathInCache(artifact, origin));
-    	}
-    }
-    
-    /**
-     * deprecated: use getArchiveFileInCache(File cache, Artifact artifact) instead
-     */
-    public File getArchiveFileInCache(File cache, String organisation, String module, String revision, String artifact, String type, String ext) {
-        IvyContext.getContext().setIvy(this);
-    	IvyContext.getContext().setCache(cache);
-        return new File(cache, getArchivePathInCache(organisation, module, revision, artifact, type, ext));
-    }
-    
-    /**
-     * @deprecated use getArchivePathInCache(Artifact artifact, ArtifactOrigin origin) instead.
-     * @param artifact
-     * @return
-     */
-    public String getArchivePathInCache(Artifact artifact) {
-        IvyContext.getContext().setIvy(this);
-        return IvyPatternHelper.substitute(_cacheArtifactPattern, artifact);
-    }
-    
-    public String getArchivePathInCache(Artifact artifact, ArtifactOrigin origin) {
-        IvyContext.getContext().setIvy(this);
-        return IvyPatternHelper.substitute(_cacheArtifactPattern, artifact, origin);
-    }
-    
-    /**
-     * @deprecated
-     */
-    public String getArchivePathInCache(String organisation, String module, String revision, String artifact, String type, String ext) {
-        IvyContext.getContext().setIvy(this);
-        return getArchivePathInCache(new DefaultArtifact(ModuleRevisionId.newInstance(organisation, module, revision), new Date(), artifact, type, ext));
-    }
     
 //    public File getOriginFileInCache(File cache, Artifact artifact) {
 //        return new File(cache, getOriginPathInCache(artifact));
@@ -2659,7 +1096,7 @@ public class Ivy implements TransferListener {
     		}
     		try {
 				Message.verbose("waiting clean interruption of operating thread");
-    			operatingThread.join(_interruptTimeout);
+    			operatingThread.join(_settings.getInterruptTimeout());
 			} catch (InterruptedException e) {
 			}
 			if (operatingThread.isAlive()) {
@@ -2671,15 +1108,7 @@ public class Ivy implements TransferListener {
     		}
     	}
 	}
-    
-    public static String getLocalHostName() {
-        try {
-            return InetAddress.getLocalHost().getHostName();
-        } catch (UnknownHostException e) {
-            return "localhost";
-        }
-    }
-    
+        
 
     /**
      * Returns an empty array when no token values are found.
@@ -2690,7 +1119,7 @@ public class Ivy implements TransferListener {
      */
 	public String[] listTokenValues(String token, Map otherTokenValues) {
         List r = new ArrayList();
-        for (Iterator iter = _resolversMap.values().iterator(); iter.hasNext();) {
+        for (Iterator iter = _settings.getResolvers().iterator(); iter.hasNext();) {
             DependencyResolver resolver = (DependencyResolver)iter.next();
             r.addAll(Arrays.asList(resolver.listTokenValues(token, otherTokenValues)));
         }
@@ -2699,7 +1128,7 @@ public class Ivy implements TransferListener {
     
     public OrganisationEntry[] listOrganisationEntries() {
         List entries = new ArrayList();
-        for (Iterator iter = _resolversMap.values().iterator(); iter.hasNext();) {
+        for (Iterator iter = _settings.getResolvers().iterator(); iter.hasNext();) {
             DependencyResolver resolver = (DependencyResolver)iter.next();
             entries.addAll(Arrays.asList(resolver.listOrganisations()));
         }
@@ -2707,7 +1136,7 @@ public class Ivy implements TransferListener {
     }
     public String[] listOrganisations() {
         Collection orgs = new HashSet();
-        for (Iterator iter = _resolversMap.values().iterator(); iter.hasNext();) {
+        for (Iterator iter = _settings.getResolvers().iterator(); iter.hasNext();) {
             DependencyResolver resolver = (DependencyResolver)iter.next();
             OrganisationEntry[] entries = resolver.listOrganisations();
             if (entries != null) {
@@ -2722,7 +1151,7 @@ public class Ivy implements TransferListener {
     }
     public ModuleEntry[] listModuleEntries(OrganisationEntry org) {
         List entries = new ArrayList();
-        for (Iterator iter = _resolversMap.values().iterator(); iter.hasNext();) {
+        for (Iterator iter = _settings.getResolvers().iterator(); iter.hasNext();) {
             DependencyResolver resolver = (DependencyResolver)iter.next();
             entries.addAll(Arrays.asList(resolver.listModules(org)));
         }
@@ -2730,7 +1159,7 @@ public class Ivy implements TransferListener {
     }
     public String[] listModules(String org) {
         List mods = new ArrayList();
-        for (Iterator iter = _resolversMap.values().iterator(); iter.hasNext();) {
+        for (Iterator iter = _settings.getResolvers().iterator(); iter.hasNext();) {
             DependencyResolver resolver = (DependencyResolver)iter.next();
             ModuleEntry[] entries = resolver.listModules(new OrganisationEntry(resolver, org));
             if (entries != null) {
@@ -2745,7 +1174,7 @@ public class Ivy implements TransferListener {
     }
     public RevisionEntry[] listRevisionEntries(ModuleEntry module) {
         List entries = new ArrayList();
-        for (Iterator iter = _resolversMap.values().iterator(); iter.hasNext();) {
+        for (Iterator iter = _settings.getResolvers().iterator(); iter.hasNext();) {
             DependencyResolver resolver = (DependencyResolver)iter.next();
             entries.addAll(Arrays.asList(resolver.listRevisions(module)));
         }
@@ -2753,7 +1182,7 @@ public class Ivy implements TransferListener {
     }
     public String[] listRevisions(String org, String module) {
         List revs = new ArrayList();
-        for (Iterator iter = _resolversMap.values().iterator(); iter.hasNext();) {
+        for (Iterator iter = _settings.getResolvers().iterator(); iter.hasNext();) {
             DependencyResolver resolver = (DependencyResolver)iter.next();
             RevisionEntry[] entries = resolver.listRevisions(new ModuleEntry(new OrganisationEntry(resolver, org), module));
             if (entries != null) {
@@ -2767,332 +1196,8 @@ public class Ivy implements TransferListener {
         return (String[])revs.toArray(new String[revs.size()]);
     }
     
-    /**
-     * Returns true if the name should be ignored in listing
-     * @param name
-     * @return
-     */
-    public boolean listingIgnore(String name) {
-        return _listingIgnore.contains(name);
-    }
-    
-    /**
-     * Filters the names list by removing all names that should be ignored
-     * as defined by the listing ignore list
-     * @param names
-     */
-    public void filterIgnore(Collection names) {
-        names.removeAll(_listingIgnore);
-    }
-    
-    public boolean isCheckUpToDate() {
-        return _checkUpToDate;
-    }
-    public void setCheckUpToDate(boolean checkUpToDate) {
-        _checkUpToDate = checkUpToDate;
-    }
 
-    public String getCacheArtifactPattern() {
-        return _cacheArtifactPattern;
-    }
-    
 
-    public void setCacheArtifactPattern(String cacheArtifactPattern) {
-        _cacheArtifactPattern = cacheArtifactPattern;
-    }
-    
-
-    public String getCacheIvyPattern() {
-        return _cacheIvyPattern;
-    }
-    
-
-    public void setCacheIvyPattern(String cacheIvyPattern) {
-        _cacheIvyPattern = cacheIvyPattern;
-    }
-
-    public boolean doValidate() {
-        return _validate;
-    }
-
-    public void setValidate(boolean validate) {
-        _validate = validate;
-    }
-
-    public String getVariable(String name) {
-        String val = (String)_variables.get(name);
-        return val==null?val:substitute(val);
-    }
-
-    public ConflictManager getDefaultConflictManager() {
-        if (_defaultConflictManager == null) {
-            _defaultConflictManager = new LatestConflictManager(getDefaultLatestStrategy());
-        }
-        return _defaultConflictManager;
-    }
-    
-
-    public void setDefaultConflictManager(ConflictManager defaultConflictManager) {
-        _defaultConflictManager = defaultConflictManager;
-    }
-    
-
-    public LatestStrategy getDefaultLatestStrategy() {
-        if (_defaultLatestStrategy == null) {
-            _defaultLatestStrategy = new LatestRevisionStrategy();
-        }
-        return _defaultLatestStrategy;
-    }
-    
-
-    public void setDefaultLatestStrategy(LatestStrategy defaultLatestStrategy) {
-        _defaultLatestStrategy = defaultLatestStrategy;
-    }
-
-    private EventListenerList _listeners = new EventListenerList();
-
-    private boolean _logNotConvertedExclusionRule;
-
-    private Boolean _debugConflictResolution;
-
-    private VersionMatcher _versionMatcher;
-
-    public void addTransferListener(TransferListener listener) {
-        _listeners.add(TransferListener.class, listener);
-    }
-
-    public void removeTransferListener(TransferListener listener) {
-        _listeners.remove(TransferListener.class, listener);
-    }
-
-    public boolean hasTransferListener(TransferListener listener) {
-        return Arrays.asList(_listeners.getListeners(TransferListener.class)).contains(listener);
-    }
-    protected void fireTransferEvent(TransferEvent evt) {
-        Object[] listeners = _listeners.getListenerList();
-        for (int i = listeners.length-2; i>=0; i-=2) {
-            if (listeners[i]==TransferListener.class) {
-                ((TransferListener)listeners[i+1]).transferProgress(evt);
-            }
-        }
-    }
-    
-    public void addTrigger(Trigger trigger) {
-    	addIvyListener(trigger, trigger.getEventFilter());
-    }
-
-    public void addConfigured(Trigger trigger) {
-    	addTrigger(trigger);
-    }
-
-    public void addIvyListener(IvyListener listener) {
-        _listeners.add(IvyListener.class, listener);
-    }
-
-    public void addIvyListener(IvyListener listener, String eventName) {
-        addIvyListener(listener, new IvyEventFilter(eventName, null, null));
-    }
-
-    public void addIvyListener(IvyListener listener, Filter filter) {
-        _listeners.add(IvyListener.class, new FilteredIvyListener(listener, filter));
-    }
-
-    public void removeIvyListener(IvyListener listener) {
-        _listeners.remove(IvyListener.class, listener);
-        IvyListener[] listeners = (IvyListener[])_listeners.getListeners(IvyListener.class);
-        for (int i = 0; i < listeners.length; i++) {
-			if (listeners[i] instanceof FilteredIvyListener) {
-				if (listener.equals(((FilteredIvyListener)listeners[i]).getIvyListener())) {
-					_listeners.remove(IvyListener.class, listeners[i]);
-				}
-			}
-		}
-    }
-
-    public boolean hasIvyListener(IvyListener listener) {
-        return Arrays.asList(_listeners.getListeners(IvyListener.class)).contains(listener);
-    }
-    public void fireIvyEvent(IvyEvent evt) {
-        Object[] listeners = _listeners.getListenerList();
-        for (int i = listeners.length-2; i>=0; i-=2) {
-            if (listeners[i]==IvyListener.class) {
-                ((IvyListener)listeners[i+1]).progress(evt);
-            }
-        }
-    }
-
-    public void transferProgress(TransferEvent evt) {
-        fireTransferEvent(evt);
-        fireIvyEvent(evt);
-    }
-
-    public boolean isUseRemoteConfig() {
-        return _useRemoteConfig;
-    }
-
-    public void setUseRemoteConfig(boolean useRemoteConfig) {
-        _useRemoteConfig = useRemoteConfig;
-    }
-
-    public DependencyResolver getDictatorResolver() {
-        return _dictatorResolver;
-    }
-
-    public void setDictatorResolver(DependencyResolver dictatorResolver) {
-        _dictatorResolver = dictatorResolver;
-    }
-
-    /** 
-     * WARNING: Replace all current ivy variables by the given Map.
-     * Should be used only when restoring variables.
-     * 
-     *  Thr given Map is not copied, but stored by reference.
-     * @param variables
-     */
-    public void setVariables(Map variables) {
-        if (variables == null) {
-            throw new NullPointerException("variables shouldn't be null");
-        }
-        _variables = variables;
-    }
-
-    public static URL getDefaultConfigurationURL() {
-        return getSettingsURL("ivyconf.xml");
-    }
-
-    /**
-     * Saves the information of which resolver was used to resolve a md,
-     * so that this info can be retrieve later (even after a jvm restart)
-     * by getSavedResolverName(ModuleDescriptor md)
-     * @param md the module descriptor resolved
-     * @param name resolver name
-     */
-    public void saveResolver(File cache, ModuleDescriptor md, String name) {
-        PropertiesFile cdf = getCachedDataFile(cache, md);
-        cdf.setProperty("resolver", name);
-        cdf.save();
-    }
-
-    /**
-     * Saves the information of which resolver was used to resolve a md,
-     * so that this info can be retrieve later (even after a jvm restart)
-     * by getSavedArtResolverName(ModuleDescriptor md)
-     * @param md the module descriptor resolved
-     * @param name artifact resolver name
-     */
-    public void saveArtResolver(File cache, ModuleDescriptor md, String name) {
-        PropertiesFile cdf = getCachedDataFile(cache, md);
-        cdf.setProperty("artifact.resolver", name);
-        cdf.save();
-    }
-    
-    public void saveArtifactOrigin(File cache, Artifact artifact, ArtifactOrigin origin) {
-       PropertiesFile cdf = getCachedDataFile(cache, artifact.getModuleRevisionId());
-       cdf.setProperty("artifact." + artifact.getName() + "#" + artifact.getExt() + ".is-local", String.valueOf(origin.isLocal()));
-       cdf.setProperty("artifact." + artifact.getName() + "#" + artifact.getExt() + ".location", origin.getLocation());
-       cdf.save();
-    }
-    
-    public ArtifactOrigin getSavedArtifactOrigin(File cache, Artifact artifact) {
-        PropertiesFile cdf = getCachedDataFile(cache, artifact.getModuleRevisionId());
-        String location = cdf.getProperty("artifact." + artifact.getName() + "#" + artifact.getExt() + ".location");
-        boolean isLocal = Boolean.valueOf(cdf.getProperty("artifact." + artifact.getName() + "#" + artifact.getExt() + ".is-local")).booleanValue();
-        
-        if (location == null) {
-           // origin has not been specified, return null
-           return null;
-        }
-        
-        return new ArtifactOrigin(isLocal, location);
-    }
-    
-    public void removeSavedArtifactOrigin(File cache, Artifact artifact) {
-        PropertiesFile cdf = getCachedDataFile(cache, artifact.getModuleRevisionId());
-        cdf.remove("artifact." + artifact.getName() + "#" + artifact.getExt() + ".location");
-        cdf.remove("artifact." + artifact.getName() + "#" + artifact.getExt() + ".is-local");
-        cdf.save();
-    }
-    
-    private String getSavedResolverName(File cache, ModuleDescriptor md) {
-        PropertiesFile cdf = getCachedDataFile(cache, md);
-        return cdf.getProperty("resolver");
-    }
-
-    private String getSavedArtResolverName(File cache, ModuleDescriptor md) {
-        PropertiesFile cdf = getCachedDataFile(cache, md);
-        return cdf.getProperty("artifact.resolver");
-    }
-
-    private PropertiesFile getCachedDataFile(File cache, ModuleDescriptor md) {
-       return getCachedDataFile(cache, md.getResolvedModuleRevisionId());
-    }
-    
-    private PropertiesFile getCachedDataFile(File cache, ModuleRevisionId mRevId) {
-        return new PropertiesFile(new File(cache, IvyPatternHelper.substitute(getCacheDataFilePattern(),mRevId)), "ivy cached data file for "+mRevId);
-    }
-
-    public String getCacheDataFilePattern() {
-        return _cacheDataFilePattern;
-    }
-
-    public boolean logModuleWhenFound() {
-        String var = getVariable("ivy.log.module.when.found");
-        return var == null || Boolean.valueOf(var).booleanValue();
-    }
-
-    public boolean logResolvedRevision() {
-        String var = getVariable("ivy.log.resolved.revision");
-        return var == null || Boolean.valueOf(var).booleanValue();
-    }
-
-    public boolean debugConflictResolution() {
-        if (_debugConflictResolution == null) {
-            String var = getVariable("ivy.log.conflict.resolution");
-            _debugConflictResolution =  Boolean.valueOf(var != null && Boolean.valueOf(var).booleanValue());
-        }
-        return _debugConflictResolution.booleanValue();
-    }
-
-    public boolean logNotConvertedExclusionRule() {
-        return _logNotConvertedExclusionRule;
-    }
-    public void setLogNotConvertedExclusionRule(boolean logNotConvertedExclusionRule) {
-        _logNotConvertedExclusionRule = logNotConvertedExclusionRule;
-    }
-    public StatusManager getStatusManager() {
-        if (_statusManager == null) {
-            _statusManager = StatusManager.newDefaultInstance();
-        }
-        return _statusManager;
-    }
-    public void setStatusManager(StatusManager statusManager) {
-        _statusManager = statusManager;
-    }
-
-	
-	private static class ModuleSettings {
-		private String _resolverName;
-		private String _branch;
-		private String _conflictManager;
-		public ModuleSettings(String resolverName, String branch, String conflictManager) {
-			_resolverName = resolverName;
-			_branch = branch;
-			_conflictManager = conflictManager;
-		}
-		public String toString() {
-			return _resolverName != null ? "resolver: "+_resolverName:""
-					+_branch != null ? "branch: "+_branch:"";
-		}
-		public String getBranch() {
-			return _branch;
-		}
-		public String getResolverName() {
-			return _resolverName;
-		}
-		protected String getConflictManager() {
-			return _conflictManager;
-		}
-	}
 
 
 	public synchronized boolean isInterrupted() {
@@ -3154,7 +1259,7 @@ public class Ivy implements TransferListener {
 						tokenValues.put(IvyPatternHelper.MODULE_KEY, mods[j]);
 						String[] branches = listTokenValues(IvyPatternHelper.BRANCH_KEY, tokenValues);
 						if (branches == null || branches.length == 0) {
-							branches = new String[]  {getDefaultBranch(new ModuleId(orgs[i], mods[j]))};
+							branches = new String[]  {_settings.getDefaultBranch(new ModuleId(orgs[i], mods[j]))};
 						}
 						for (int k = 0; k < branches.length; k++) {
 							if (branches[k] == null || branchMatcher.matches(branches[k])) {
@@ -3172,6 +1277,111 @@ public class Ivy implements TransferListener {
 			}
 		}
 		return (ModuleRevisionId[]) ret.toArray(new ModuleRevisionId[ret.size()]);
+	}
+
+    /**
+     * Check if the current operation has been interrupted, and if it is the case, throw a runtime exception
+     */
+	public void checkInterrupted() {
+		if (isInterrupted()) {
+			Message.info("operation interrupted");
+			throw new RuntimeException("operation interrupted");
+		}
+	}
+
+	public static String getWorkingRevision() {
+		return "working@" + HostUtil.getLocalHostName();
+	}
+
+	public IvySettings getSettings() {
+		return _settings;
+	}
+
+	public static Ivy newInstance() {
+		Ivy ivy = new Ivy();
+		ivy.bind();
+		return ivy;
+	}
+
+	/**
+	 * This method is used to bind this Ivy instance to 
+	 * required dependencies, i.e. instance of settings, engines, and so on.
+	 * After thes call Ivy is still not configured, which means that the settings
+	 * object is still empty.
+	 */
+	private void bind() {
+        IvyContext.getContext().setIvy(this);
+		_settings = new IvySettings();
+		_sortEngine = new SortEngine(_settings);
+		_eventManager = new EventManager();
+		_resolveEngine = new ResolveEngine(_settings, _eventManager, _sortEngine);
+		
+		_eventManager.addTransferListener(new TransferListener() {
+            public void transferProgress(TransferEvent evt) {
+                switch (evt.getEventType()) {
+                case TransferEvent.TRANSFER_PROGRESS:
+                    Message.progress();
+                    break;
+                case TransferEvent.TRANSFER_COMPLETED:
+                    Message.endProgress(" ("+(evt.getTotalLength() / 1024)+"kB)");
+                    break;
+                default:
+                    break;
+                }
+            }
+        });
+	}
+
+	public void configure(File settingsFile) throws ParseException, IOException {
+		assertBound();
+		_settings.load(settingsFile);
+		postConfigure();
+	}
+
+	public void configure(URL settingsURL) throws ParseException, IOException {
+		assertBound();
+		_settings.load(settingsURL);
+		postConfigure();
+	}
+
+	public void configureDefault() throws ParseException, IOException {
+		assertBound();
+		_settings.loadDefault();
+		postConfigure();
+	}
+
+	private void assertBound() {
+		if (_settings == null) {
+			bind();
+		}
+	}
+
+	private void postConfigure() {
+		Collection triggers = _settings.getTriggers();
+		for (Iterator iter = triggers.iterator(); iter.hasNext();) {
+			Trigger trigger = (Trigger) iter.next();
+			_eventManager.addIvyListener(trigger, trigger.getEventFilter());
+		}
+	}
+
+	public EventManager getEventManager() {
+		assertBound();
+		return _eventManager;
+	}
+
+	public String getVariable(String name) {
+		assertBound();
+		return _settings.getVariable(name);
+	}
+
+	public String substitute(String str) {
+		assertBound();
+		return _settings.substitute(str);
+	}
+
+	public void setVariable(String varName, String value) {
+		assertBound();
+		_settings.setVariable(varName, value);
 	}
 
 }

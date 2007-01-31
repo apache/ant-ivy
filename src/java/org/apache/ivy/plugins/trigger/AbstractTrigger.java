@@ -56,7 +56,7 @@ public abstract class AbstractTrigger implements Trigger {
 	}
 
 	private PatternMatcher getPatternMatcher() {
-		return IvyContext.getContext().getIvy().getMatcher(_matcher);
+		return IvyContext.getContext().getSettings().getMatcher(_matcher);
 	}
 
 	public String getEvent() {

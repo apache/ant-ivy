@@ -17,12 +17,10 @@
  */
 package org.apache.ivy.plugins.version;
 
+import junit.framework.TestCase;
+
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.plugins.latest.LatestRevisionStrategy;
-import org.apache.ivy.plugins.version.VersionMatcher;
-import org.apache.ivy.plugins.version.VersionRangeMatcher;
-
-import junit.framework.TestCase;
 
 public class VersionRangeMatcherTest extends TestCase {
 	VersionMatcher _vm = new VersionRangeMatcher("range", new LatestRevisionStrategy());

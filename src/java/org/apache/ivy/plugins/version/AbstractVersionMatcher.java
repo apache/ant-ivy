@@ -17,14 +17,14 @@
  */
 package org.apache.ivy.plugins.version;
 
-import org.apache.ivy.Ivy;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
-import org.apache.ivy.plugins.IvyAware;
+import org.apache.ivy.core.settings.IvySettings;
+import org.apache.ivy.plugins.IvySettingsAware;
 
-public abstract class AbstractVersionMatcher implements VersionMatcher, IvyAware {
+public abstract class AbstractVersionMatcher implements VersionMatcher, IvySettingsAware {
 	private String _name;
-	private Ivy _ivy;
+	private IvySettings _settings;
 	
 	public AbstractVersionMatcher() {
 	}
@@ -54,12 +54,12 @@ public abstract class AbstractVersionMatcher implements VersionMatcher, IvyAware
     	return getName();
     }
 
-	public Ivy getIvy() {
-		return _ivy;
+	public IvySettings getSettings() {
+		return _settings;
 	}
 
-	public void setIvy(Ivy ivy) {
-		_ivy = ivy;
+	public void setSettings(IvySettings ivy) {
+		_settings = ivy;
 	}
 
 }

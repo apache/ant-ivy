@@ -28,6 +28,7 @@ import org.apache.ivy.core.module.descriptor.DefaultModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleId;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.report.ResolveReport;
+import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.plugins.matcher.PatternMatcher;
 import org.apache.ivy.plugins.report.XmlReportOutputter;
 import org.apache.ivy.util.FileUtil;
@@ -64,8 +65,9 @@ public class IvyRepositoryReport extends IvyTask {
     
     public void execute() throws BuildException {
         Ivy ivy = getIvyInstance();
+        IvySettings settings = ivy.getSettings();
         if (_cache == null) {
-            _cache = ivy.getDefaultCache();
+            _cache = settings.getDefaultCache();
         }
         if (_xsl && _xslFile == null) {
             throw new BuildException("xsl file is mandatory when using xsl generation");
@@ -77,7 +79,7 @@ public class IvyRepositoryReport extends IvyTask {
         }
         ModuleRevisionId mrid = ModuleRevisionId.newInstance(_organisation, _module, _revision);
         try {
-    		ModuleId[] mids = ivy.listModules(new ModuleId(_organisation, _module), ivy.getMatcher(_matcher));
+    		ModuleId[] mids = ivy.listModules(new ModuleId(_organisation, _module), settings.getMatcher(_matcher));
     		ModuleRevisionId[] mrids = new ModuleRevisionId[mids.length];
     		for (int i = 0; i < mrids.length; i++) {
     			if (_branch != null) {
@@ -87,7 +89,7 @@ public class IvyRepositoryReport extends IvyTask {
     			}
 			}
     		DefaultModuleDescriptor md = DefaultModuleDescriptor.newCallerInstance(mrids, true, false);
-    		ResolveReport report = ivy.resolve(md, new String[] {"*"}, _cache, null, doValidate(ivy), false, true, false, false, FilterHelper.NO_FILTER);
+    		ResolveReport report = ivy.resolve(md, new String[] {"*"}, _cache, null, doValidate(settings), false, true, false, false, FilterHelper.NO_FILTER);
     		new XmlReportOutputter().output(report, _cache);
     		if (_graph) {
     			gengraph(_cache, md.getModuleRevisionId().getOrganisation(), md.getModuleRevisionId().getName());

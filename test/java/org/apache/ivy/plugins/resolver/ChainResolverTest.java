@@ -22,37 +22,39 @@ import java.util.Arrays;
 import java.util.GregorianCalendar;
 import java.util.List;
 
-import org.apache.ivy.Ivy;
+import junit.framework.TestCase;
+
+import org.apache.ivy.core.event.EventManager;
 import org.apache.ivy.core.module.descriptor.DefaultDependencyDescriptor;
 import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.resolve.ResolveData;
+import org.apache.ivy.core.resolve.ResolveEngine;
 import org.apache.ivy.core.resolve.ResolvedModuleRevision;
+import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.core.settings.XmlSettingsParser;
+import org.apache.ivy.core.sort.SortEngine;
 import org.apache.ivy.plugins.latest.LatestRevisionStrategy;
 import org.apache.ivy.plugins.latest.LatestTimeStrategy;
-import org.apache.ivy.plugins.resolver.ChainResolver;
-import org.apache.ivy.plugins.resolver.DependencyResolver;
-import org.apache.ivy.plugins.resolver.FileSystemResolver;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.Delete;
-
-import junit.framework.TestCase;
 
 /**
  * Tests ChainResolver
  */
 public class ChainResolverTest extends TestCase {
-    private Ivy _ivy;
+    private IvySettings _settings;
+    private ResolveEngine _engine;
     private ResolveData _data;
     private File _cache;
     
     protected void setUp() throws Exception {
-        _ivy = new Ivy();
+        _settings = new IvySettings();
+        _engine = new ResolveEngine(_settings, new EventManager(), new SortEngine(_settings));
         _cache = new File("build/cache");
-        _data = new ResolveData(_ivy, _cache, null, null, true);
+        _data = new ResolveData(_engine, _cache, null, null, true);
         _cache.mkdirs();
-        _ivy.setDefaultCache(_cache);
+        _settings.setDefaultCache(_cache);
     }
     
     protected void tearDown() throws Exception {
@@ -63,8 +65,8 @@ public class ChainResolverTest extends TestCase {
     }
     
     public void testOrderFromConf() throws Exception {
-        new XmlSettingsParser(_data.getIvy()).parse(ChainResolverTest.class.getResource("chainresolverconf.xml"));
-        DependencyResolver resolver = _data.getIvy().getResolver("chain");
+        new XmlSettingsParser(_settings).parse(ChainResolverTest.class.getResource("chainresolverconf.xml"));
+        DependencyResolver resolver = _settings.getResolver("chain");
         assertNotNull(resolver);
         assertTrue(resolver instanceof ChainResolver);
         ChainResolver chain = (ChainResolver)resolver;
@@ -82,7 +84,7 @@ public class ChainResolverTest extends TestCase {
     
     public void testName() throws Exception {
         ChainResolver chain = new ChainResolver();
-        chain.setIvy(_ivy);
+        chain.setSettings(_settings);
         chain.setName("chain");
         assertEquals("chain", chain.getName());
     }
@@ -90,7 +92,7 @@ public class ChainResolverTest extends TestCase {
     public void testResolveOrder() throws Exception {
         ChainResolver chain = new ChainResolver();
         chain.setName("chain");
-        chain.setIvy(_ivy);
+        chain.setSettings(_settings);
         MockResolver[] resolvers = new MockResolver[] {
                 MockResolver.buildMockResolver("1", false, null), 
                 MockResolver.buildMockResolver("2", true, null), 
@@ -114,7 +116,7 @@ public class ChainResolverTest extends TestCase {
     public void testLatestTimeResolve() throws Exception {
         ChainResolver chain = new ChainResolver();
         chain.setName("chain");
-        chain.setIvy(_ivy);
+        chain.setSettings(_settings);
         chain.setLatestStrategy(new LatestTimeStrategy());
         MockResolver[] resolvers = new MockResolver[] {
                 MockResolver.buildMockResolver("1", true, new GregorianCalendar(2005, 1, 20).getTime()), 
@@ -143,7 +145,7 @@ public class ChainResolverTest extends TestCase {
     public void testLatestRevisionResolve() throws Exception {
         ChainResolver chain = new ChainResolver();
         chain.setName("chain");
-        chain.setIvy(_ivy);
+        chain.setSettings(_settings);
         chain.setLatestStrategy(new LatestRevisionStrategy());
         MockResolver[] resolvers = new MockResolver[] {
                 MockResolver.buildMockResolver("1", true, ModuleRevisionId.newInstance("org", "mod", "1"), new GregorianCalendar(2005, 1, 20).getTime()), 
@@ -172,7 +174,7 @@ public class ChainResolverTest extends TestCase {
     public void testWithDefault() throws Exception {
         ChainResolver chain = new ChainResolver();
         chain.setName("chain");
-        chain.setIvy(_ivy);
+        chain.setSettings(_settings);
         chain.setLatestStrategy(new LatestRevisionStrategy());
         MockResolver[] resolvers = new MockResolver[] {
                 MockResolver.buildMockResolver("1", false, null), 
@@ -204,7 +206,7 @@ public class ChainResolverTest extends TestCase {
     public void testLatestWithDefault() throws Exception {
         ChainResolver chain = new ChainResolver();
         chain.setName("chain");
-        chain.setIvy(_ivy);
+        chain.setSettings(_settings);
         chain.setLatestStrategy(new LatestRevisionStrategy());
         MockResolver[] resolvers = new MockResolver[] {
                 MockResolver.buildMockResolver("1", true, ModuleRevisionId.newInstance("org", "mod", "1"), new GregorianCalendar(2005, 1, 20).getTime()), 
@@ -233,7 +235,7 @@ public class ChainResolverTest extends TestCase {
     public void testFixedWithDefault() throws Exception {
         ChainResolver chain = new ChainResolver();
         chain.setName("chain");
-        chain.setIvy(_ivy);
+        chain.setSettings(_settings);
         chain.setLatestStrategy(new LatestRevisionStrategy());
         MockResolver[] resolvers = new MockResolver[] {
                 MockResolver.buildMockResolver("1", false, null), 
@@ -264,12 +266,12 @@ public class ChainResolverTest extends TestCase {
         // test case for IVY-206
         ChainResolver chain = new ChainResolver();
         chain.setName("chain");
-        chain.setIvy(_ivy);
+        chain.setSettings(_settings);
         
         // no ivy pattern for first resolver: will only find a 'default' module
         FileSystemResolver resolver = new FileSystemResolver();
         resolver.setName("1");
-        resolver.setIvy(_ivy);
+        resolver.setSettings(_settings);
         
         resolver.addArtifactPattern("test/repositories/1/[organisation]/[module]/[type]s/[artifact]-[revision].[type]");
         chain.add(resolver);
@@ -277,13 +279,13 @@ public class ChainResolverTest extends TestCase {
         // second resolver has an ivy pattern and will thus find the real module, which should be kept
         resolver = new FileSystemResolver();
         resolver.setName("2");
-        resolver.setIvy(_ivy);
+        resolver.setSettings(_settings);
         
         resolver.addIvyPattern("test/repositories/1/[organisation]/[module]/ivys/ivy-[revision].xml");
         resolver.addArtifactPattern("test/repositories/1/[organisation]/[module]/[type]s/[artifact]-[revision].[type]");
         chain.add(resolver);
         
-        _ivy.addResolver(chain);
+        _settings.addResolver(chain);
         
         DefaultDependencyDescriptor dd = new DefaultDependencyDescriptor(ModuleRevisionId.newInstance("org1","mod1.1", "1.0"), false);
         ResolvedModuleRevision rmr = chain.getDependency(dd, _data);
@@ -294,7 +296,7 @@ public class ChainResolverTest extends TestCase {
     public void testReturnFirst() throws Exception {
         ChainResolver chain = new ChainResolver();
         chain.setName("chain");
-        chain.setIvy(_ivy);
+        chain.setSettings(_settings);
         chain.setReturnFirst(true);
         MockResolver[] resolvers = new MockResolver[] {
                 MockResolver.buildMockResolver("1", true, new GregorianCalendar(2005, 1, 20).getTime()), 
@@ -326,17 +328,17 @@ public class ChainResolverTest extends TestCase {
         // 1 ---- we first do a first resolve which puts a default file in cache
         ChainResolver chain = new ChainResolver();
         chain.setName("chain");
-        chain.setIvy(_ivy);
+        chain.setSettings(_settings);
         
         // no ivy pattern for resolver: will only find a 'default' module
         FileSystemResolver resolver = new FileSystemResolver();
         resolver.setName("old");
-        resolver.setIvy(_ivy);
+        resolver.setSettings(_settings);
         
         resolver.addArtifactPattern("test/repositories/1/[organisation]/[module]/[type]s/[artifact]-[revision].[type]");
         chain.add(resolver);
                 
-        _ivy.addResolver(chain);
+        _settings.addResolver(chain);
         
         DefaultDependencyDescriptor dd = new DefaultDependencyDescriptor(ModuleRevisionId.newInstance("org1","mod1.1", "1.0"), false);
         chain.getDependency(dd, _data);
@@ -346,26 +348,26 @@ public class ChainResolverTest extends TestCase {
         
         chain = new ChainResolver();
         chain.setName("chain");
-        chain.setIvy(_ivy);
+        chain.setSettings(_settings);
         chain.setReturnFirst(true);
         
         // no pattern for first resolver: will not find the module
         resolver = new FileSystemResolver();
         resolver.setName("1");
-        resolver.setIvy(_ivy);
+        resolver.setSettings(_settings);
         
         chain.add(resolver);
         
         // second resolver will find the real module, which should be kept
         resolver = new FileSystemResolver();
         resolver.setName("2");
-        resolver.setIvy(_ivy);
+        resolver.setSettings(_settings);
         
         resolver.addIvyPattern("test/repositories/1/[organisation]/[module]/ivys/ivy-[revision].xml");
         resolver.addArtifactPattern("test/repositories/1/[organisation]/[module]/[type]s/[artifact]-[revision].[type]");
         chain.add(resolver);
         
-        _ivy.addResolver(chain);
+        _settings.addResolver(chain);
         
         ResolvedModuleRevision rmr = chain.getDependency(dd, _data);
         assertNotNull(rmr);
@@ -375,7 +377,7 @@ public class ChainResolverTest extends TestCase {
     public void testDual() throws Exception {
         ChainResolver chain = new ChainResolver();
         chain.setName("chain");
-        chain.setIvy(_ivy);
+        chain.setSettings(_settings);
         chain.setDual(true);
         MockResolver[] resolvers = new MockResolver[] {
                 MockResolver.buildMockResolver("1", false, null), 

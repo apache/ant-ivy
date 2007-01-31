@@ -19,9 +19,6 @@ package org.apache.ivy.util.url;
 
 import java.net.URL;
 
-import org.apache.ivy.util.url.HttpClientHandler;
-import org.apache.ivy.util.url.URLHandler;
-
 import junit.framework.TestCase;
 
 /**
