@@ -151,6 +151,10 @@ public class IvyContext {
 		// TODO : reuse one instance
 		return new CacheManager(getSettings(), getCache());
 	}
+
+	public void checkInterrupted() {
+		getIvy().checkInterrupted();
+	}
 	
 	// should be better to use context to store this kind of information, but not yet ready to do so...
 //    private WeakReference _root = new WeakReference(null); 
