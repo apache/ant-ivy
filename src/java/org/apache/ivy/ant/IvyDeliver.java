@@ -22,7 +22,9 @@ import java.util.Date;
 
 import org.apache.ivy.Ivy;
 import org.apache.ivy.core.IvyContext;
+import org.apache.ivy.core.cache.CacheManager;
 import org.apache.ivy.core.deliver.DefaultPublishingDRResolver;
+import org.apache.ivy.core.deliver.DeliverOptions;
 import org.apache.ivy.core.deliver.PublishingDependencyRevisionResolver;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
@@ -359,8 +361,10 @@ public class IvyDeliver extends IvyTask {
             } else {
                 drResolver = new DefaultPublishingDRResolver();
             }
-            ivy.deliver(mrid, _pubRevision, _cache, _deliverpattern, _status,
-                    pubdate, drResolver, doValidate(settings), _replacedynamicrev);
+            ivy.deliver(mrid, _pubRevision, _deliverpattern, 
+            		new DeliverOptions(_status, pubdate, 
+            				CacheManager.getInstance(settings, _cache), 
+            				drResolver, doValidate(settings), _replacedynamicrev));
 
         } catch (Exception e) {
             throw new BuildException("impossible to deliver " + mrid + ": " + e, e);

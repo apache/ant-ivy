@@ -39,7 +39,8 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
-import org.apache.ivy.core.deliver.DefaultPublishingDRResolver;
+import org.apache.ivy.core.cache.CacheManager;
+import org.apache.ivy.core.deliver.DeliverOptions;
 import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.DefaultDependencyDescriptor;
 import org.apache.ivy.core.module.descriptor.DefaultModuleDescriptor;
@@ -220,7 +221,7 @@ public class Main {
             
             String confPath = line.getOptionValue("conf", "");
             if ("".equals(confPath)) {
-                ivy.getSettings().loadDefault();
+                ivy.configureDefault();
             } else {
                 File conffile = new File(confPath);
                 if (!conffile.exists()) {
@@ -237,6 +238,7 @@ public class Main {
             } else if (!cache.isDirectory()) {
                 error(options, cache+" is not a directory");
             }
+            CacheManager cacheManager = CacheManager.getInstance(ivy.getSettings(), cache);
             
             String[] confs;
             if (line.hasOption("confs")) {
@@ -303,15 +305,15 @@ public class Main {
             }
 
             if (line.hasOption("revision")) {
-                ivy.deliver(
+				ivy.deliver(
                     md.getResolvedModuleRevisionId(),
                     ivy.getSettings().substitute(line.getOptionValue("revision")),
-                    cache, 
                     ivy.getSettings().substitute(line.getOptionValue("deliverto", "ivy-[revision].xml")),
-                    ivy.getSettings().substitute(line.getOptionValue("status", "release")),
-                    null,
-                    new DefaultPublishingDRResolver(),
-                    validate);
+                    DeliverOptions.newInstance(ivy.getSettings())
+                    	.setStatus(ivy.getSettings().substitute(line.getOptionValue("status", "release")))
+                    	.setValidate(validate)
+                    	.setCache(cacheManager)
+                    );
                 if (line.hasOption("publish")) {
                     ivy.publish(
                             md.getResolvedModuleRevisionId(), 

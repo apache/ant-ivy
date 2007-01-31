@@ -148,8 +148,7 @@ public class IvyContext {
 	}
 
 	public CacheManager getCacheManager() {
-		// TODO : reuse one instance
-		return new CacheManager(getSettings(), getCache());
+		return CacheManager.getInstance(getSettings(), getCache());
 	}
 
 	public void checkInterrupted() {

@@ -33,7 +33,7 @@ import org.apache.ivy.core.IvyContext;
 import org.apache.ivy.core.cache.CacheManager;
 import org.apache.ivy.core.check.CheckEngine;
 import org.apache.ivy.core.deliver.DeliverEngine;
-import org.apache.ivy.core.deliver.PublishingDependencyRevisionResolver;
+import org.apache.ivy.core.deliver.DeliverOptions;
 import org.apache.ivy.core.event.EventManager;
 import org.apache.ivy.core.install.InstallEngine;
 import org.apache.ivy.core.module.descriptor.Artifact;
@@ -347,13 +347,26 @@ public class Ivy {
     //                         DELIVER
     /////////////////////////////////////////////////////////////////////////
 
-	public void deliver(ModuleRevisionId mrid, String revision, File cache, String destIvyPattern, String status, Date pubdate, PublishingDependencyRevisionResolver pdrResolver, boolean validate, boolean resolveDynamicRevisions) throws IOException, ParseException {
-		_deliverEngine.deliver(mrid, revision, cache, destIvyPattern, status, pubdate, pdrResolver, validate, resolveDynamicRevisions);
+	public void deliver(ModuleRevisionId mrid, String revision,	String destIvyPattern) throws IOException, ParseException {
+		_deliverEngine.deliver(mrid, revision, destIvyPattern, DeliverOptions.newInstance(_settings));
 	}
 
-	public void deliver(ModuleRevisionId mrid, String revision, File cache, String destIvyPattern, String status, Date pubdate, PublishingDependencyRevisionResolver pdrResolver, boolean validate) throws IOException, ParseException {
-		_deliverEngine.deliver(mrid, revision, cache, destIvyPattern, status, pubdate, pdrResolver, validate);
+	/**
+	 * Example of use:
+	 * deliver(mrid, "1.5", "target/ivy/ivy-[revision].xml", 
+	 *         DeliverOptions.newInstance(settings).setStatus("release").setValidate(false));
+	 *         
+	 * @param mrid
+	 * @param revision
+	 * @param destIvyPattern
+	 * @param options
+	 * @throws IOException
+	 * @throws ParseException
+	 */
+	public void deliver(ModuleRevisionId mrid, String revision,	String destIvyPattern, DeliverOptions options) throws IOException, ParseException {
+		_deliverEngine.deliver(mrid, revision, destIvyPattern, options);
 	}
+
 
     /////////////////////////////////////////////////////////////////////////
     //                         PUBLISH

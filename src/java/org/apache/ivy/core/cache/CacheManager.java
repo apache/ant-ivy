@@ -33,6 +33,13 @@ import org.apache.ivy.util.Message;
 import org.apache.ivy.util.PropertiesFile;
 
 public class CacheManager {
+	public static CacheManager getInstance(IvySettings settings, File cache) {
+		return new CacheManager(settings, cache);
+	}
+
+	public static CacheManager getInstance(IvySettings settings) {
+		return getInstance(settings, settings.getDefaultCache());
+	}
 	
 	private IvySettings _settings;
 	private File _cache;

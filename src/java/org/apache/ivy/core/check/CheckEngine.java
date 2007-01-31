@@ -50,7 +50,7 @@ public class CheckEngine {
 
 
 	/**
-     * Checks the given ivy file using current configuration to see if all dependencies
+     * Checks the given ivy file using current settings to see if all dependencies
      * are available, with good confs. If a resolver name is given, it also checks that the declared
      * publications are available in the corresponding resolver.
      * Note that the check is not performed recursively, i.e. if a dependency has itself dependencies
