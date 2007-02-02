@@ -122,12 +122,8 @@ public class ResolveReport {
 			ConfigurationResolveReport r = (ConfigurationResolveReport) iter.next();
 			IvyNode[] unresolved = r.getUnresolvedDependencies();
 			for (int i = 0; i < unresolved.length; i++) {
-				Exception e = unresolved[i].getProblem();
-				if (e != null) {
-					String errMsg = e instanceof RuntimeException?e.getMessage():e.toString();
-					if (errMsg == null || errMsg.length()==0 || "null".equals(errMsg)) {
-						errMsg = e.getClass().getName() + " at "+e.getStackTrace()[0].toString();
-					}
+				String errMsg = unresolved[i].getProblemMessage();
+				if (errMsg.length() > 0) {
 					ret.add("unresolved dependency: "+unresolved[i].getId()+": "+errMsg);
 				} else {
 					ret.add("unresolved dependency: "+unresolved[i].getId());

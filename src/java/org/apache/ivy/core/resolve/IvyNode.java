@@ -20,7 +20,6 @@ package org.apache.ivy.core.resolve;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -46,6 +45,9 @@ import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ArtifactId;
 import org.apache.ivy.core.module.id.ModuleId;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
+import org.apache.ivy.core.resolve.IvyNodeCallers.Caller;
+import org.apache.ivy.core.resolve.IvyNodeEviction.EvictionData;
+import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.plugins.conflict.ConflictManager;
 import org.apache.ivy.plugins.matcher.MatcherHelper;
 import org.apache.ivy.plugins.resolver.DependencyResolver;
@@ -57,107 +59,6 @@ import org.apache.ivy.util.filter.FilterHelper;
 public class IvyNode {
     private static final Pattern FALLBACK_CONF_PATTERN = Pattern.compile("(.+)\\((.*)\\)");
 
-    public static class EvictionData {
-        private IvyNode _node; // can be null in case of transitive eviction
-        private ConflictManager _conflictManager; // can be null in case of transitive eviction
-        private Collection _selected; // can be null in case of transitive eviction
-        private String _rootModuleConf;
-
-        public EvictionData(String rootModuleConf, IvyNode node, ConflictManager conflictManager, Collection selected) {
-            _rootModuleConf = rootModuleConf;
-            _node = node;
-            _conflictManager = conflictManager;
-            _selected = selected;
-        }
-        
-        public String toString() {
-            if (_selected != null) {
-                return _selected + " in "+ _node+" ("+_conflictManager+") ["+_rootModuleConf+"]";
-            } else {
-                return "transitively ["+_rootModuleConf+"]";
-            }
-        }
-
-        public ConflictManager getConflictManager() {
-            return _conflictManager;
-        }
-        
-
-        public IvyNode getNode() {
-            return _node;
-        }
-
-        public Collection getSelected() {
-            return _selected;
-        }
-        
-
-        public String getRootModuleConf() {
-            return _rootModuleConf;
-        }
-        
-        
-    }
-
-    public class Caller {
-        private ModuleDescriptor _md;
-        private ModuleRevisionId _mrid;
-        private Map _confs = new HashMap(); // Map (String callerConf -> String[] dependencyConfs)
-        private DependencyDescriptor _dd;
-        private boolean _callerCanExclude;
-        
-        public Caller(ModuleDescriptor md, ModuleRevisionId mrid, DependencyDescriptor dd, boolean callerCanExclude) {
-            _md = md;
-            _mrid = mrid;
-            _dd = dd;
-            _callerCanExclude = callerCanExclude;
-        }
-        public void addConfiguration(String callerConf, String[] dependencyConfs) {
-            String[] prevDepConfs = (String[])_confs.get(callerConf);
-            if (prevDepConfs != null) {
-                Set newDepConfs = new HashSet(Arrays.asList(prevDepConfs));
-                newDepConfs.addAll(Arrays.asList(dependencyConfs));
-                _confs.put(callerConf, (String[])newDepConfs.toArray(new String[newDepConfs.size()]));
-            } else {
-                _confs.put(callerConf, dependencyConfs);
-            }
-        }
-        public String[] getCallerConfigurations() {
-            return (String[])_confs.keySet().toArray(new String[_confs.keySet().size()]);
-        }
-        public ModuleRevisionId getModuleRevisionId() {
-            return _mrid;
-        }
-        public boolean equals(Object obj) {
-            if (! (obj instanceof Caller)) {
-                return false;
-            }
-            Caller other = (Caller)obj;
-            return other._confs.equals(_confs) 
-                && _mrid.equals(other._mrid);
-        }
-        public int hashCode() {
-            int hash = 31;
-            hash = hash * 13 + _confs.hashCode();
-            hash = hash * 13 + _mrid.hashCode();
-            return hash;
-        }
-        public String toString() {
-            return _mrid.toString();
-        }
-        public ModuleRevisionId getAskedDependencyId() {
-            return _dd.getDependencyRevisionId();
-        }
-        public ModuleDescriptor getModuleDescriptor() {
-            return _md;
-        }
-        public boolean canExclude() {
-            return _callerCanExclude || _dd.canExclude();
-        }
-        public DependencyDescriptor getDependencyDescriptor() {
-            return _dd;
-        }
-    }
     private static final class NodeConf {
         private IvyNode _node;
         private String _conf;
@@ -189,419 +90,83 @@ public class IvyNode {
         }
     }
 
-    private static final class ModuleIdConf {
-        private ModuleId _moduleId;
-        private String _conf;
-
-        public ModuleIdConf(ModuleId mid, String conf) {
-            _moduleId = mid;
-            _conf = conf;
-        }
-
-        public final String getConf() {
-            return _conf;
-        }
-        
-        public final ModuleId getModuleId() {
-            return _moduleId;
-        }
-        public boolean equals(Object obj) {
-            if (!(obj instanceof ModuleIdConf)) {
-                return false;
-            }
-            return getModuleId().equals(((ModuleIdConf)obj).getModuleId()) 
-                && getConf().equals(((ModuleIdConf)obj).getConf());
-        }
-        public int hashCode() {
-            int hash = 33;
-            hash += getModuleId().hashCode() * 17;
-            hash += getConf().hashCode() * 17;
-            return hash;
-        }
-    }
-
-    private ModuleRevisionId _id; // id as requested, i.e. may be with latest rev
-    
-    /** 
-     * Represents the current parent of the node during ivy visit
-     * of dependency graph.
-     * Use callers on Dependency to know all the callers
-     * of a dependency
-     */
-    private IvyNode _parent = null;
-    private IvyNode _root = null;
-    private Collection _path = null; // Collection(IvyNode): direct path from root to this node. Note that the colleciton is ordered but is not a list implementation
-    private String _parentConf = null;
-    private String _rootModuleConf;
-
-    private Map _selectedDeps = new HashMap(); // Map (ModuleIdConf -> Set(Node)) // map indicating for each dependency which node has been selected
-
-    private Map _evictedDeps = new HashMap(); // Map (ModuleIdConf -> Set(Node)) // map indicating for each dependency which node has been evicted
-    private Map _evictedRevs = new HashMap(); // Map (ModuleIdConf -> Set(ModuleRevisionId)) // map indicating for each dependency which revision has been evicted
-    
-    private Map _evicted = new HashMap(); // Map (root module conf -> EvictionData) // indicates if the node is evicted in each root module conf
-
-    // Map (String rootModuleConf -> Map (ModuleRevisionId -> Caller)): key in second map is used to easily get a caller by its mrid
-    private Map _callersByRootConf = new HashMap(); 
-    
-    // Map (String rootConfName -> Set(String confName))
-    // used to know which configurations of the dependency are required by root
-    // module configuration
-    private Map _rootModuleConfs = new HashMap(); 
-        
-    // Map (String rootModuleConf -> Set(DependencyArtifactDescriptor))
-    private Map _dependencyArtifactsIncludes = new HashMap();
-
-    // shared data
+    ////////// CONTEXT
     private ResolveData _data;
+    private IvySettings _settings;
+    
+    
+    ////////// DELEGATES
+    private IvyNodeCallers _callers;
+    private IvyNodeEviction _eviction;
+    
+    
 
-    private Collection _confsToFetch = new HashSet();
-    private Collection _fetchedConfigurations = new HashSet();
+    ////////// MAIN DATA
+    
+    private IvyNode _root;
+    
+    // id as requested, i.e. may be with latest rev
+    private ModuleRevisionId _id; 
 
     // set only when node has been built or updated from a DependencyDescriptor
-    private Map _dds = new HashMap(); // Map(IvyNode parent -> DependencyDescriptor)
-
-    // Set when data has been loaded only
+    // Map(IvyNode parent -> DependencyDescriptor)
+    private Map _dds = new HashMap(); 
+    
+    
+    // Set when data has been loaded only, or when constructed from a module descriptor
     private ModuleDescriptor _md;
-
     private ResolvedModuleRevision _module;
-
+    
+    
+    
+    ////////// LOADING METADATA
     private Exception _problem = null;
     
     private boolean _downloaded = false;
     private boolean _searched = false;
-
-
-    private Map _requiredConfs = new HashMap(); // Map (NodeConf in -> Set(String conf))
-
-    private boolean _isRoot = false;
-
-    // this map contains all the module ids calling this one as keys
-    // the mapped nodes correspond to a direct caller from which the transitive caller comes
-    
-    private Map _allCallers = new HashMap(); // Map (ModuleId -> IvyNode)
-
     private boolean _isCircular = false;
 
+    private Collection _confsToFetch = new HashSet();
+    private Collection _fetchedConfigurations = new HashSet();
     private Collection _loadedRootModuleConfs = new HashSet();
 
-    private Map _requestedConf = new HashMap(); // Maps of requested confs per root configuration
-                                                // this data is contextual to the current step of the 
-    											// resolve process
+    
+    ////////// USAGE DATA
+    
+    // Map (String rootConfName -> Set(String confName))
+    // used to know which configurations of the dependency are required 
+    // for each root module configuration
+    private Map _rootModuleConfs = new HashMap();
+    
+    // Map (NodeConf in -> Set(String conf))
+    private Map _requiredConfs = new HashMap(); 
+    
+    // Map (String rootModuleConf -> Set(DependencyArtifactDescriptor))
+    private Map _dependencyArtifactsIncludes = new HashMap();
+
 
     
     public IvyNode(ResolveData data, IvyNode parent, DependencyDescriptor dd) {
         _id = dd.getDependencyRevisionId();
         _dds.put(parent, dd);
-        _isRoot = false;
-
-        init(data, true);
+        _root = parent.getRoot();
+        init(data);
     }
 
     public IvyNode(ResolveData data, ModuleDescriptor md) {
         _id = md.getModuleRevisionId();
         _md = md;
-        _isRoot = true;
         _root = this;
-        
-        // we do not register nodes created from ModuleDescriptor, cause they are
-        // the root of resolve
-        init(data, false);
+        init(data);
     }
 
-    private void init(ResolveData data, boolean register) {
-        _data = data;
-        if (register) {
-            _data.register(this);
-        }
-    }
+	private void init(ResolveData data) {
+		_data = data;
+        _settings = data.getSettings();
+        _eviction = new IvyNodeEviction(this);
+        _callers = new IvyNodeCallers(this);
+	}
 
-    public ConflictManager getConflictManager(ModuleId mid) {
-        if (_md == null) {
-            throw new IllegalStateException("impossible to get conflict manager when data has not been loaded");
-        }
-        ConflictManager cm = _md.getConflictManager(mid);
-        return cm == null ? _data.getSettings().getDefaultConflictManager() : cm;
-    }
-    
-    public Collection getResolvedNodes(ModuleId mid, String rootModuleConf) {
-        Collection resolved = (Collection)_selectedDeps.get(new ModuleIdConf(mid, rootModuleConf));
-        Set ret = new HashSet();
-        if (resolved != null) {
-            for (Iterator iter = resolved.iterator(); iter.hasNext();) {
-                IvyNode node = (IvyNode)iter.next();
-                ret.add(node.getRealNode());
-            }
-        }
-        return ret;
-    }
-    public Collection getResolvedRevisions(ModuleId mid, String rootModuleConf) {
-    	Collection resolved = (Collection)_selectedDeps.get(new ModuleIdConf(mid, rootModuleConf));
-    	if (resolved == null) {
-    		return new HashSet();
-    	} else {
-    		Collection resolvedRevs = new HashSet();
-    		for (Iterator iter = resolved.iterator(); iter.hasNext();) {
-    			IvyNode node = (IvyNode)iter.next();
-    			resolvedRevs.add(node.getId());
-    			resolvedRevs.add(node.getResolvedId());
-    		}
-    		return resolvedRevs;
-    	}
-    }
-
-    public void setResolvedNodes(ModuleId moduleId, String rootModuleConf, Collection resolved) {
-        ModuleIdConf moduleIdConf = new ModuleIdConf(moduleId, rootModuleConf);
-        _selectedDeps.put(moduleIdConf, new HashSet(resolved));
-    }
-    
-    public Collection getEvictedNodes(ModuleId mid, String rootModuleConf) {
-        Collection resolved = (Collection)_evictedDeps.get(new ModuleIdConf(mid, rootModuleConf));
-        Set ret = new HashSet();
-        if (resolved != null) {
-            for (Iterator iter = resolved.iterator(); iter.hasNext();) {
-                IvyNode node = (IvyNode)iter.next();
-                ret.add(node.getRealNode());
-            }
-        }
-        return ret;
-    }
-    public Collection getEvictedRevisions(ModuleId mid, String rootModuleConf) {
-        Collection evicted = (Collection)_evictedRevs.get(new ModuleIdConf(mid, rootModuleConf));
-        if (evicted == null) {
-            return new HashSet();
-        } else {
-            return new HashSet(evicted);
-        }
-    }
-
-    public void setEvictedNodes(ModuleId moduleId, String rootModuleConf, Collection evicted) {
-        ModuleIdConf moduleIdConf = new ModuleIdConf(moduleId, rootModuleConf);
-        _evictedDeps.put(moduleIdConf, new HashSet(evicted));
-        Collection evictedRevs = new HashSet();
-        for (Iterator iter = evicted.iterator(); iter.hasNext();) {
-            IvyNode node = (IvyNode)iter.next();
-            evictedRevs.add(node.getId());
-            evictedRevs.add(node.getResolvedId());
-        }
-        _evictedRevs.put(moduleIdConf, evictedRevs);
-    }
-    
-
-    public boolean isEvicted(String rootModuleConf) {
-        cleanEvicted();
-        return getRoot() != this && !getRoot().getResolvedRevisions(getId().getModuleId(), rootModuleConf).contains(getResolvedId());
-    }
-
-    public boolean isCompletelyEvicted() {
-        cleanEvicted();
-        if (getRoot() == this) {
-        	return false;
-        }
-        for (Iterator iter = _rootModuleConfs.keySet().iterator(); iter.hasNext();) {
-			String conf = (String) iter.next();
-			if (!isEvicted(conf)) {
-				return false;
-			}
-		}
-        return true;
-    }
-    
-    private void cleanEvicted() {
-        // check if it was evicted by a node that we are now the real node for
-        for (Iterator iter = _evicted.keySet().iterator(); iter.hasNext();) {
-            String rootModuleConf = (String)iter.next();
-            EvictionData ed = (EvictionData)_evicted.get(rootModuleConf);
-            Collection sel = ed.getSelected();
-            if (sel != null) {
-                for (Iterator iterator = sel.iterator(); iterator.hasNext();) {
-                    IvyNode n = (IvyNode)iterator.next();
-                    if (n.getRealNode().equals(this)) {
-                        // yes, we are the real node for a selected one !
-                        // we are no more evicted in this conf !
-                        iter.remove();                    
-                    }
-                }
-            }
-        }
-    }
-
-    public void markEvicted(String rootModuleConf, IvyNode node, ConflictManager conflictManager, Collection resolved) {
-        EvictionData evictionData = new EvictionData(rootModuleConf, node, conflictManager, resolved);
-        markEvicted(evictionData);
-    }
-
-    public void markEvicted(EvictionData evictionData) {
-        _evicted.put(evictionData.getRootModuleConf(), evictionData);
-        if (!_rootModuleConfs.keySet().contains(evictionData.getRootModuleConf())) {
-            _rootModuleConfs.put(evictionData.getRootModuleConf(), null);
-        }
-        
-        // bug 105: update selected data with evicted one
-        if (evictionData.getSelected() != null) {
-            for (Iterator iter = evictionData.getSelected().iterator(); iter.hasNext();) {
-                IvyNode selected = (IvyNode)iter.next();
-                selected.updateDataFrom(this, evictionData.getRootModuleConf());
-            }
-        }
-    }
-    
-    private void updateDataFrom(IvyNode node, String rootModuleConf) {
-        // update callers
-        Map nodecallers = (Map)node._callersByRootConf.get(rootModuleConf);
-        if (nodecallers != null) {
-            Map thiscallers = (Map)_callersByRootConf.get(rootModuleConf);
-            if (thiscallers == null) {
-                thiscallers = new HashMap();
-                _callersByRootConf.put(rootModuleConf, thiscallers);
-            }
-            for (Iterator iter = nodecallers.values().iterator(); iter.hasNext();) {
-                Caller caller = (Caller)iter.next();
-                if (!thiscallers.containsKey(caller.getModuleRevisionId())) {
-                    thiscallers.put(caller.getModuleRevisionId(), caller);
-                }
-            }
-        }
-        
-        // update requiredConfs
-        updateMapOfSet(node._requiredConfs, _requiredConfs);
-        
-        // update rootModuleConfs
-        updateMapOfSetForKey(node._rootModuleConfs, _rootModuleConfs, rootModuleConf);
-        
-        // update dependencyArtifactsIncludes
-        updateMapOfSetForKey(node._dependencyArtifactsIncludes, _dependencyArtifactsIncludes, rootModuleConf);
-        
-        // update confsToFetch
-        updateConfsToFetch(node._fetchedConfigurations);
-        updateConfsToFetch(node._confsToFetch);
-    }
-    
-    private void updateMapOfSet(Map from, Map to) {
-        for (Iterator iter = from.keySet().iterator(); iter.hasNext();) {
-            Object key = iter.next();
-            updateMapOfSetForKey(from, to, key);
-        }        
-    }
-
-    private void updateMapOfSetForKey(Map from, Map to, Object key) {
-        Set set = (Set)from.get(key);
-        if (set != null) {
-            Set toupdate = (Set)to.get(key);
-            if (toupdate != null) {
-                toupdate.addAll(set);
-            } else {
-                to.put(key, new HashSet(set));
-            }
-        }
-    }
-
-    public EvictionData getEvictedData(String rootModuleConf) {
-        cleanEvicted();
-        return (EvictionData)_evicted.get(rootModuleConf);
-    }
-    public String[] getEvictedConfs() {
-        cleanEvicted();
-        return (String[])_evicted.keySet().toArray(new String[_evicted.keySet().size()]);
-    }
-
-    /**
-     * Returns null if this node has only be evicted transitively, or the the colletion of selected nodes
-     * if it has been evicted by other selected nodes
-     * @return
-     */
-    public Collection getAllEvictingNodes() {
-        Collection allEvictingNodes = null;
-        for (Iterator iter = _evicted.values().iterator(); iter.hasNext();) {
-            EvictionData ed = (EvictionData)iter.next();
-            Collection selected = ed.getSelected();
-            if (selected != null) {
-                if (allEvictingNodes == null) {
-                    allEvictingNodes = new HashSet();
-                }
-                allEvictingNodes.addAll(selected);
-            }
-        }        
-        return allEvictingNodes;
-    }    
-
-    public Collection getAllEvictingConflictManagers() {
-        Collection ret = new HashSet();
-        for (Iterator iter = _evicted.values().iterator(); iter.hasNext();) {
-            EvictionData ed = (EvictionData)iter.next();
-            ret.add(ed.getConflictManager());
-        }        
-        return ret;
-    }    
-
-
-    public IvyNode getParent() {
-        return _parent;
-    }    
-
-    public void setParent(IvyNode parent) {
-        _parent = parent;
-        _root = null;
-        _path = null;
-    }
-
-    public IvyNode getRoot() {
-        if (_root == null) {
-            _root = computeRoot();
-        }
-        return _root;
-    }
-
-    public Collection getPath() {
-        if (_path == null) {
-            _path = computePath();
-        }
-        return _path;
-    }
-
-    private Collection computePath() {
-        if (_parent != null) {
-            Collection p = new LinkedHashSet(_parent.getPath());
-            p.add(this);
-            return p;
-        } else {
-            return Collections.singletonList(this);
-        }
-    }
-
-    private IvyNode computeRoot() {
-        if (isRoot()) {
-            return this;
-        } else if (_parent != null) {
-            return _parent.getRoot();
-        } else {
-            return null;
-        }
-//        IvyNode root = this;
-//        Collection path = new HashSet();
-//        path.add(root);
-//        while (root.getParent() != null && !root.isRoot()) {
-//            if (path.contains(root.getParent())) {
-//                return root;
-//            }
-//            root = root.getParent();
-//            path.add(root);
-//        }
-//        return root;
-    }
-
-    public String getParentConf() {
-        return _parentConf;
-    }
-
-    public void setParentConf(String parentConf) {
-        _parentConf = parentConf;
-    }
-
-
-    public boolean hasConfigurationsToLoad() {
-        return !_confsToFetch.isEmpty();
-    }
 
     /**
      * After the call node may be discarded. To avoid using discarded node, make sure
@@ -611,10 +176,10 @@ public class IvyNode {
      * node = node.getRealNode();
      * ...
      */
-    public boolean loadData(String conf, boolean shouldBePublic) {
+    public boolean loadData(String rootModuleConf, IvyNode parent, String parentConf, String conf, boolean shouldBePublic) {
         boolean loaded = false;
-		if (!isEvicted(_rootModuleConf) && (hasConfigurationsToLoad() || !isRootModuleConfLoaded()) && !hasProblem()) {
-            markRootModuleConfLoaded();
+		if (!isEvicted(rootModuleConf) && (hasConfigurationsToLoad() || !isRootModuleConfLoaded(rootModuleConf)) && !hasProblem()) {
+            markRootModuleConfLoaded(rootModuleConf);
             if (_md == null) {
                 DependencyResolver resolver = _data.getSettings().getResolver(getModuleId());
                 if (resolver == null) {
@@ -625,14 +190,14 @@ public class IvyNode {
                 }
                 try {
                     Message.debug("\tusing "+resolver+" to resolve "+getId());
-                    DependencyDescriptor dependencyDescriptor = getDependencyDescriptor(getParent());
+                    DependencyDescriptor dependencyDescriptor = getDependencyDescriptor(parent);
                     _data.getEventManager().fireIvyEvent(new StartResolveDependencyEvent(resolver, dependencyDescriptor));
                     _module = resolver.getDependency(dependencyDescriptor, _data);
                     _data.getEventManager().fireIvyEvent(new EndResolveDependencyEvent(resolver, dependencyDescriptor, _module));
                     if (_module != null) {
                         _data.getCacheManager().saveResolver(_module.getDescriptor(), _module.getResolver().getName());
                         _data.getCacheManager().saveArtResolver(_module.getDescriptor(), _module.getArtifactResolver().getName());
-                        if (_data.getSettings().logModuleWhenFound()) {
+                        if (_settings.logModuleWhenFound()) {
                             Message.info("\tfound "+_module.getId()+" in "+_module.getResolver().getName());
                         } else {
                             Message.verbose("\tfound "+_module.getId()+" in "+_module.getResolver().getName());
@@ -651,7 +216,7 @@ public class IvyNode {
                                 // exact revision has already been resolved
                                 // => update it and discard this node
                                 _md = _module.getDescriptor(); // needed for handleConfiguration
-                                if (!handleConfiguration(loaded, conf, shouldBePublic)) {
+                                if (!handleConfiguration(loaded, rootModuleConf, parent, parentConf, conf, shouldBePublic)) {
                                     return false;
                                 }
                                 
@@ -662,17 +227,17 @@ public class IvyNode {
                                 	resolved._module = _module;
                                 }
                                 resolved._downloaded |= _module.isDownloaded();
-                                resolved._searched |= _module.isSearched();                                
+                                resolved._searched |= _module.isSearched();  
                                 resolved._dds.putAll(_dds);
-                                resolved.updateDataFrom(this, _rootModuleConf);
-                                resolved.loadData(conf, shouldBePublic);
+                                resolved.updateDataFrom(this, rootModuleConf);
+                                resolved.loadData(rootModuleConf, parent, parentConf, conf, shouldBePublic);
                                 DependencyDescriptor dd = dependencyDescriptor;
                                 if (dd != null) {
-                                    resolved.addDependencyArtifactsIncludes(_rootModuleConf, dd.getDependencyArtifactsIncludes(getParentConf()));
+                                    resolved.addDependencyArtifactsIncludes(rootModuleConf, dd.getDependencyArtifactsIncludes(parentConf));
                                 }
-                                _data.register(getId(), resolved); // this actually discards the node
+                                _data.replaceNode(getId(), resolved, rootModuleConf); // this actually discards the node
 
-                                if (_data.getSettings().logResolvedRevision()) {
+                                if (_settings.logResolvedRevision()) {
                                     Message.info("\t["+_module.getId().getRevision()+"] "+getId());
                                 } else {
                                     Message.verbose("\t["+_module.getId().getRevision()+"] "+getId());
@@ -698,21 +263,19 @@ public class IvyNode {
                     return false;
                 } else {
                     loaded = true;
-                    if (_data.getSettings().getVersionMatcher().isDynamic(getId())) {
-                        if (_data.getSettings().logResolvedRevision()) {
+                    if (_settings.getVersionMatcher().isDynamic(getId())) {
+                        if (_settings.logResolvedRevision()) {
                             Message.info("\t["+_module.getId().getRevision()+"] "+getId());
                         } else {
                             Message.verbose("\t["+_module.getId().getRevision()+"] "+getId());
                         }
                     }
                     _md = _module.getDescriptor();
-                    // if the revision was a dynamic one (which has now be resolved)
-                    // store also it to cache the result
-                    if (_data.getSettings().getVersionMatcher().isDynamic(getId())) {
-                        _data.register(_module.getId(), this);
-                    }
                     _confsToFetch.remove("*");
-                    updateConfsToFetch(Arrays.asList(resolveSpecialConfigurations(getRequiredConfigurations(getParent(), getParentConf()), this)));
+                    updateConfsToFetch(
+                    		Arrays.asList(
+                    				resolveSpecialConfigurations(
+                    						getRequiredConfigurations(parent, parentConf), this)));
                 }  
             } else {
                 loaded = true;
@@ -720,28 +283,105 @@ public class IvyNode {
         }
         if (hasProblem()) {
             _data.getReport().addDependency(this);
-            return handleConfiguration(loaded, conf, shouldBePublic) && loaded;
+            return handleConfiguration(loaded, rootModuleConf, parent, parentConf, conf, shouldBePublic) && loaded;
         }
-        if (!handleConfiguration(loaded, conf, shouldBePublic)) {
+        if (!handleConfiguration(loaded, rootModuleConf, parent, parentConf, conf, shouldBePublic)) {
             return false;
         }
-        DependencyDescriptor dd = getDependencyDescriptor(getParent());
+        DependencyDescriptor dd = getDependencyDescriptor(parent);
         if (dd != null) {
-            addDependencyArtifactsIncludes(_rootModuleConf, dd.getDependencyArtifactsIncludes(getParentConf()));
+            addDependencyArtifactsIncludes(rootModuleConf, dd.getDependencyArtifactsIncludes(parentConf));
         }
         return loaded;
         
     }
 
-    private boolean markRootModuleConfLoaded() {
-        return _loadedRootModuleConfs.add(_rootModuleConf);
+    
+    
+
+    public Collection getDependencies(String rootModuleConf, String[] confs) {
+        if (_md == null) {
+            throw new IllegalStateException("impossible to get dependencies when data has not been loaded");
+        }
+        if (Arrays.asList(confs).contains("*")) {
+            confs = _md.getConfigurationsNames();
+        }
+        Collection deps = new HashSet();
+        for (int i = 0; i < confs.length; i++) {
+            deps.addAll(getDependencies(rootModuleConf, confs[i], confs[i]));
+        }
+        return deps;
     }
     
-    private boolean isRootModuleConfLoaded() {
-        return _loadedRootModuleConfs.contains(_rootModuleConf);
+    public Collection getDependencies(String rootModuleConf, String conf, String requestedConf) {
+        if (_md == null) {
+            throw new IllegalStateException("impossible to get dependencies when data has not been loaded");
+        }
+        DependencyDescriptor[] dds = _md.getDependencies();
+        Collection dependencies = new LinkedHashSet(); // it's important to respect dependencies order
+        for (int i = 0; i < dds.length; i++) {
+            DependencyDescriptor dd = dds[i];
+            String[] dependencyConfigurations = dd.getDependencyConfigurations(conf, requestedConf);
+            if (dependencyConfigurations.length == 0) {
+                // no configuration of the dependency is required for current confs : 
+                // it is exactly the same as if there was no dependency at all on it
+                continue;
+            } 
+            if (isDependencyModuleExcluded(rootModuleConf, dd.getDependencyRevisionId(), conf)) {
+                // the whole module is excluded, it is considered as not being part of dependencies at all
+                Message.verbose("excluding "+dd.getDependencyRevisionId()+" in "+conf);
+                continue;
+            }
+            IvyNode depNode = _data.getNode(dd.getDependencyRevisionId());
+            if (depNode == null) {
+                depNode = new IvyNode(_data, this, dd);
+            } else {
+                depNode.addDependencyDescriptor(this, dd);
+                if (depNode.hasProblem()) {
+                    // dependency already tried to be resolved, but unsuccessfully
+                    // nothing special to do
+                }
+                
+            }
+            Collection confs = Arrays.asList(resolveSpecialConfigurations(dependencyConfigurations, depNode));
+            depNode.updateConfsToFetch(confs);
+            depNode.setRequiredConfs(this, conf, confs);
+            
+            depNode.addCaller(rootModuleConf, this, conf, dependencyConfigurations, dd);
+            dependencies.add(depNode);
+        }
+        return dependencies;
     }
 
-    private boolean handleConfiguration(boolean loaded, String conf, boolean shouldBePublic) {
+    private void addDependencyDescriptor(IvyNode parent, DependencyDescriptor dd) {
+        _dds.put(parent, dd);
+    }
+
+    public DependencyDescriptor getDependencyDescriptor(IvyNode parent) {
+        return (DependencyDescriptor)_dds.get(parent);
+    }
+    
+    private boolean isDependencyModuleExcluded(String rootModuleConf, ModuleRevisionId dependencyRevisionId, String conf) {
+        return _callers.doesCallersExclude(rootModuleConf, DefaultArtifact.newIvyArtifact(dependencyRevisionId, null));
+    }
+
+    
+
+    
+    
+    public boolean hasConfigurationsToLoad() {
+        return !_confsToFetch.isEmpty();
+    }
+
+    private boolean markRootModuleConfLoaded(String rootModuleConf) {
+        return _loadedRootModuleConfs.add(rootModuleConf);
+    }
+    
+    private boolean isRootModuleConfLoaded(String rootModuleConf) {
+        return _loadedRootModuleConfs.contains(rootModuleConf);
+    }
+
+    private boolean handleConfiguration(boolean loaded, String rootModuleConf, IvyNode parent, String parentConf, String conf, boolean shouldBePublic) {
         if (_md != null) {
             String[] confs = getRealConfs(conf);
             for (int i = 0; i < confs.length; i++) {
@@ -749,15 +389,15 @@ public class IvyNode {
                 if (c == null) {
                     _confsToFetch.remove(conf);
                     if (!conf.equals(confs[i])) {
-                        _problem = new RuntimeException("configuration(s) not found in "+this+": "+conf+". Missing configuration: "+confs[i]+". It was required from "+getParent()+" "+getParentConf());
+                        _problem = new RuntimeException("configuration(s) not found in "+this+": "+conf+". Missing configuration: "+confs[i]+". It was required from "+parent+" "+parentConf);
                     } else {
-                        _problem = new RuntimeException("configuration(s) not found in "+this+": "+confs[i]+". It was required from "+getParent()+" "+getParentConf());
+                        _problem = new RuntimeException("configuration(s) not found in "+this+": "+confs[i]+". It was required from "+parent+" "+parentConf);
                     }
                     _data.getReport().addDependency(this);
                     return false;
                 } else if (shouldBePublic && !isRoot() && c.getVisibility() != Configuration.Visibility.PUBLIC) {
                     _confsToFetch.remove(conf);
-                    _problem = new RuntimeException("configuration not public in "+this+": "+c+". It was required from "+getParent()+" "+getParentConf());
+                    _problem = new RuntimeException("configuration not public in "+this+": "+c+". It was required from "+parent+" "+parentConf);
                     _data.getReport().addDependency(this);
                     return false;
                 }
@@ -766,7 +406,7 @@ public class IvyNode {
                     _confsToFetch.removeAll(Arrays.asList(confs));
                     _confsToFetch.remove(conf);
                 }
-                addRootModuleConfigurations(_rootModuleConf, confs);
+                addRootModuleConfigurations(rootModuleConf, confs);
             }
         }
         return true;
@@ -790,142 +430,11 @@ public class IvyNode {
         }
     }
 
-    private boolean isRoot() {
-        return _isRoot ;
-    }
-
-    public IvyNode getRealNode() {
-        return getRealNode(false);
-    }
-
-
-    public IvyNode getRealNode(boolean traverse) {
-        IvyNode node = _data.getNode(getId());
-        if (node != null) {
-            if (traverse) {
-            	node.setParent(getParent());
-                node.setParentConf(getParentConf());
-                node.setRootModuleConf(getRootModuleConf());
-                node.setRequestedConf(getRequestedConf());
-                node._data = _data;                
-            }
-            return node;
-        } else {
-            return this;
-        }
-    }
-
-    public Collection getDependencies(String[] confs) {
-        if (_md == null) {
-            throw new IllegalStateException("impossible to get dependencies when data has not been loaded");
-        }
-        if (Arrays.asList(confs).contains("*")) {
-            confs = _md.getConfigurationsNames();
-        }
-        Collection deps = new HashSet();
-        for (int i = 0; i < confs.length; i++) {
-            deps.addAll(getDependencies(confs[i], false));
-        }
-        return deps;
-    }
-    
-    public Collection getDependencies(String conf, boolean traverse) {
-        if (_md == null) {
-            throw new IllegalStateException("impossible to get dependencies when data has not been loaded");
-        }
-        DependencyDescriptor[] dds = _md.getDependencies();
-        Collection dependencies = new LinkedHashSet(); // it's important to respect dependencies order
-        for (int i = 0; i < dds.length; i++) {
-            DependencyDescriptor dd = dds[i];
-            String[] dependencyConfigurations = dd.getDependencyConfigurations(conf, getRequestedConf());
-            if (dependencyConfigurations.length == 0) {
-                // no configuration of the dependency is required for current confs : 
-                // it is exactly the same as if there was no dependency at all on it
-                continue;
-            } 
-            if (isDependencyModuleExcluded(dd.getDependencyRevisionId(), conf)) {
-                // the whole module is excluded, it is considered as not being part of dependencies at all
-                Message.verbose("excluding "+dd.getDependencyRevisionId()+" in "+conf);
-                continue;
-            }
-            IvyNode depNode = _data.getNode(dd.getDependencyRevisionId());
-            if (depNode == null) {
-                depNode = new IvyNode(_data, this, dd);
-            } else {
-                depNode.addDependencyDescriptor(this, dd);
-                if (depNode.hasProblem()) {
-                    // dependency already tried to be resolved, but unsuccessfully
-                    // nothing special to do
-                }
-                
-            }
-            Collection confs = Arrays.asList(resolveSpecialConfigurations(dependencyConfigurations, depNode));
-            depNode.updateConfsToFetch(confs);
-            depNode.setRequiredConfs(this, conf, confs);
-            
-            depNode.addCaller(_rootModuleConf, this, conf, dependencyConfigurations, dd);
-            dependencies.add(depNode);
-            if (traverse) {
-            	traverse(conf, depNode);
-            }
-        }
-        return dependencies;
-    }
-
-	public void traverse(String conf, IvyNode depNode) {
-		if (getPath().contains(depNode)) {
-			IvyContext.getContext().getCircularDependencyStrategy().handleCircularDependency(toMrids(getPath(), depNode));
-		} else {
-		    depNode.setParent(this);
-		}
-		depNode.setParentConf(conf);
-		depNode.setRootModuleConf(getRootModuleConf());
-		depNode._data = _data;
-	}
-
-    private ModuleRevisionId[] toMrids(Collection path, IvyNode depNode) {
-    	ModuleRevisionId[] ret = new ModuleRevisionId[path.size()+1];
-    	int i=0;
-    	for (Iterator iter = path.iterator(); iter.hasNext(); i++) {
-			IvyNode node = (IvyNode) iter.next();
-			ret[i] = node.getId();
-		}
-    	ret[ret.length-1] = depNode.getId();
-		return ret;
-	}
-
-	/**
-     * @return Returns the requestedConf in the current root module configuration
-     */
-    public final String getRequestedConf() {
-        return (String) _requestedConf.get(getRootModuleConf());
-    }
-    
-    public final void setRequestedConf(String requestedConf) {
-        _requestedConf.put(getRootModuleConf(), requestedConf);
-    }
-
-    private void addDependencyDescriptor(IvyNode parent, DependencyDescriptor dd) {
-        _dds.put(parent, dd);
-    }
-
-    private boolean isDependencyModuleExcluded(ModuleRevisionId dependencyRevisionId, String conf) {
-        return doesCallersExclude(getRootModuleConf(), DefaultArtifact.newIvyArtifact(dependencyRevisionId, null));
-    }
-
-    public ModuleRevisionId getId() {
-        return _id;
-    }
-
     public void updateConfsToFetch(Collection confs) {
         _confsToFetch.addAll(confs);
         _confsToFetch.removeAll(_fetchedConfigurations);
     }
-
-    public ModuleId getModuleId() {
-        return _id.getModuleId();
-    }
-
+    
     /**
      * resolve the '*' special configurations if necessary and possible
      */
@@ -947,14 +456,6 @@ public class IvyNode {
             return (String[])ret.toArray(new String[ret.size()]);
         }
         return dependencyConfigurations;
-    }
-
-    public boolean isLoaded() {
-        return _md != null;
-    }
-
-    public ModuleDescriptor getDescriptor() {
-        return _md;
     }
 
     /**
@@ -995,124 +496,6 @@ public class IvyNode {
         return configuration;
     }
 
-    public ResolvedModuleRevision getModuleRevision() {
-        return _module;
-    }
-
-
-    /**
-     * 
-     * @param rootModuleConf
-     * @param mrid
-     * @param callerConf
-     * @param dependencyConfs '*' must have been resolved
-     * @param dd the dependency revision id asked by the caller
-     */
-    public void addCaller(String rootModuleConf, IvyNode node, String callerConf, String[] dependencyConfs, DependencyDescriptor dd) {
-        ModuleDescriptor md = node.getDescriptor();
-        ModuleRevisionId mrid = node.getId(); 
-        if (mrid.getModuleId().equals(getId().getModuleId())) {
-            throw new IllegalArgumentException("a module is not authorized to depend on itself: "+getId());
-        }
-        Map callers = (Map)_callersByRootConf.get(rootModuleConf);
-        if (callers == null) {
-            callers = new HashMap();
-            _callersByRootConf.put(rootModuleConf, callers);
-        }
-        Caller caller = (Caller)callers.get(mrid);
-        if (caller == null) {
-            caller = new Caller(md, mrid, dd, node.canExclude(rootModuleConf));
-            callers.put(mrid, caller);
-        }
-        caller.addConfiguration(callerConf, dependencyConfs);
-
-        IvyNode parent = node.getRealNode();
-    	for (Iterator iter = parent._allCallers.keySet().iterator(); iter.hasNext();) {
-			ModuleId mid = (ModuleId) iter.next();
-			_allCallers.put(mid, parent);
-		}
-        _allCallers.put(mrid.getModuleId(), node);
-        _isCircular = _allCallers.keySet().contains(getId().getModuleId());
-        if (_isCircular) {
-        	IvyContext.getContext().getCircularDependencyStrategy().handleCircularDependency(
-        			toMrids(findPath(getId().getModuleId()), this));
-        }
-    }
-    
-    /**
-     * Finds and returns a path in callers from the given module id to the current node
-     * @param from the module id to start the path from
-     * @return a collection representing the path, starting with the from node, followed by
-     * the list of nodes being one path to the current node, excluded
-     */
-    private Collection findPath(ModuleId from) {
-		return findPath(from, this, new LinkedList());
-	}
-    
-    private Collection findPath(ModuleId from, IvyNode node, List path) {
-    	IvyNode parent = (IvyNode) node._allCallers.get(from);
-    	if (parent == null) {
-    		throw new IllegalArgumentException("no path from "+from+" to "+getId()+" found");
-    	}
-    	if (path.contains(parent)) {
-        	path.add(0, parent);
-    		Message.verbose("circular dependency found while looking for the path for another one: was looking for "+from+" as a caller of "+path.get(path.size()-1));
-    		return path;
-    	}
-    	path.add(0, parent);
-    	if (parent.getId().getModuleId().equals(from)) {
-    		return path;
-    	}
-		return findPath(from, parent, path);
-	}
-
-	private boolean canExclude(String rootModuleConf) {
-        DependencyDescriptor dd = getDependencyDescriptor(getParent());
-        if (dd != null && dd.canExclude()) {
-            return true;
-        }
-        Caller[] callers = getCallers(rootModuleConf);
-        for (int i = 0; i < callers.length; i++) {
-            if (callers[i].canExclude()) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public Caller[] getCallers(String rootModuleConf) {
-        Map callers = (Map)_callersByRootConf.get(rootModuleConf);
-        if (callers == null) {
-            return new Caller[0];
-        }
-        return (Caller[])callers.values().toArray(new Caller[callers.values().size()]);
-    }
-
-    public Caller[] getAllCallers() {
-        Set all = new HashSet();
-        for (Iterator iter = _callersByRootConf.values().iterator(); iter.hasNext();) {
-            Map callers = (Map)iter.next();
-            all.addAll(callers.values());
-        }
-        return (Caller[])all.toArray(new Caller[all.size()]);
-    }
-
-    public String toString() {
-        return getResolvedId().toString();
-    }
-    
-    public boolean equals(Object obj) {
-        if (! (obj instanceof IvyNode)) {
-            return false;
-        }
-        IvyNode node = (IvyNode)obj;
-        return node.getId().equals(getId());
-    }
-    
-    public int hashCode() {
-        return getId().hashCode();
-    }
-    
     /**
      * Returns the configurations of the dependency required in a given 
      * root module configuration.
@@ -1125,10 +508,6 @@ public class IvyNode {
             return new String[0];
         }
         return (String[]) depConfs.toArray(new String[depConfs.size()]);
-    }
-
-    public void discardConf(String conf) {
-        discardConf(_rootModuleConf, conf);
     }
     
     public void discardConf(String rootModuleConf, String conf) {
@@ -1187,6 +566,109 @@ public class IvyNode {
         return (String[])_rootModuleConfs.keySet().toArray(new String[_rootModuleConfs.size()]);
     }
 
+
+    public String[] getConfsToFetch() {
+        return (String[])_confsToFetch.toArray(new String[_confsToFetch.size()]);
+    }
+
+    public String[] getRealConfs(String conf) {
+        if (_md == null) {
+            return new String[] {conf};
+        }
+        String defaultConf = getDefaultConf(conf);
+        conf = getMainConf(conf);
+        if (_md.getConfiguration(conf) == null) {
+            if ("".equals(defaultConf)) {
+                return new String[0];
+            }
+            conf = defaultConf;
+        }
+        if (conf.startsWith("*")) {
+            return resolveSpecialConfigurations(new String[] {conf}, this);
+        } else if (conf.indexOf(',') != -1) {
+            String[] confs = conf.split(",");
+            for (int i = 0; i < confs.length; i++) {
+                confs[i] = confs[i].trim();
+            }
+        }
+        return new String[] {conf};
+        
+    }
+
+    
+    
+    
+    /**
+     * Finds and returns a path in callers from the given module id to the current node
+     * @param from the module id to start the path from
+     * @return a collection representing the path, starting with the from node, followed by
+     * the list of nodes being one path to the current node, excluded
+     */
+    private Collection findPath(ModuleId from) {
+		return findPath(from, this, new LinkedList());
+	}
+    
+    private Collection findPath(ModuleId from, IvyNode node, List path) {
+    	IvyNode parent = (IvyNode) node.getDirectCallerFor(from);
+    	if (parent == null) {
+    		throw new IllegalArgumentException("no path from "+from+" to "+getId()+" found");
+    	}
+    	if (path.contains(parent)) {
+        	path.add(0, parent);
+    		Message.verbose("circular dependency found while looking for the path for another one: was looking for "+from+" as a caller of "+path.get(path.size()-1));
+    		return path;
+    	}
+    	path.add(0, parent);
+    	if (parent.getId().getModuleId().equals(from)) {
+    		return path;
+    	}
+		return findPath(from, parent, path);
+	}
+
+    
+    
+    
+    
+    private void updateDataFrom(IvyNode node, String rootModuleConf) {
+        // update callers
+    	_callers.updateFrom(node._callers, rootModuleConf);
+        
+        // update requiredConfs
+        updateMapOfSet(node._requiredConfs, _requiredConfs);
+        
+        // update rootModuleConfs
+        updateMapOfSetForKey(node._rootModuleConfs, _rootModuleConfs, rootModuleConf);
+        
+        // update dependencyArtifactsIncludes
+        updateMapOfSetForKey(node._dependencyArtifactsIncludes, _dependencyArtifactsIncludes, rootModuleConf);
+        
+        // update confsToFetch
+        updateConfsToFetch(node._fetchedConfigurations);
+        updateConfsToFetch(node._confsToFetch);
+    }
+    
+    private void updateMapOfSet(Map from, Map to) {
+        for (Iterator iter = from.keySet().iterator(); iter.hasNext();) {
+            Object key = iter.next();
+            updateMapOfSetForKey(from, to, key);
+        }        
+    }
+
+    private void updateMapOfSetForKey(Map from, Map to, Object key) {
+        Set set = (Set)from.get(key);
+        if (set != null) {
+            Set toupdate = (Set)to.get(key);
+            if (toupdate != null) {
+                toupdate.addAll(set);
+            } else {
+                to.put(key, new HashSet(set));
+            }
+        }
+    }
+    
+    
+    
+    
     /**
      * Returns all the artifacts of this dependency required in all the
      * root module configurations
@@ -1289,76 +771,13 @@ public class IvyNode {
         // now excludes artifacts that aren't accepted by any caller
         for (Iterator iter = artifacts.iterator(); iter.hasNext();) {
             Artifact artifact = (Artifact)iter.next();
-            boolean excluded = doesCallersExclude(rootModuleConf, artifact);
+            boolean excluded = _callers.doesCallersExclude(rootModuleConf, artifact);
             if (excluded) {
                 Message.debug(this+" in "+rootModuleConf+": excluding "+artifact);
                 iter.remove();
             }
         }
         return (Artifact[]) artifacts.toArray(new Artifact[artifacts.size()]);
-    }
-
-    /**
-     * Returns true if ALL callers exclude the given artifact in the given root module conf
-     * @param rootModuleConf
-     * @param artifact
-     * @return
-     */
-    private boolean doesCallersExclude(String rootModuleConf, Artifact artifact) {
-        return doesCallersExclude(rootModuleConf, artifact, new Stack());
-    }
-    private boolean doesCallersExclude(String rootModuleConf, Artifact artifact, Stack callersStack) {
-        if (callersStack.contains(getId())) {
-            return false;
-        }
-        callersStack.push(getId());
-        try {
-            Caller[] callers = getCallers(rootModuleConf);
-            if (callers.length == 0) {
-                return false;
-            }
-            Collection callersNodes = new ArrayList();
-            for (int i = 0; i < callers.length; i++) {
-                if (!callers[i].canExclude()) {
-                    return false;
-                }
-                ModuleDescriptor md = callers[i].getModuleDescriptor();
-                if (!doesExclude(md, rootModuleConf, callers[i].getCallerConfigurations(), this, callers[i].getDependencyDescriptor(), artifact, callersStack)) {
-                    return false;
-                }
-            }
-            return true;
-        } finally {
-            callersStack.pop();
-        }
-    }
-
-    private boolean doesExclude(ModuleDescriptor md, String rootModuleConf, String[] moduleConfs, IvyNode dependency, DependencyDescriptor dd, Artifact artifact, Stack callersStack) {
-        // artifact is excluded if it match any of the exclude pattern for this dependency...
-        if (dd != null) {
-            if (dd.doesExclude(moduleConfs, artifact.getId().getArtifactId())) {
-                return true;
-            }
-        }
-        // ... or if it is excluded by all its callers
-        IvyNode c = _data.getNode(md.getModuleRevisionId());
-        if (c != null) {
-            return c.doesCallersExclude(rootModuleConf, artifact, callersStack);
-        } else {
-            return false;
-        }
-    }
-
-    private static DependencyDescriptor getDependencyDescriptor(ModuleDescriptor md, IvyNode dependency) {
-        if (md != null) {
-            DependencyDescriptor[] dds = md.getDependencies();
-            for (int i = 0; i < dds.length; i++) {
-                if (dds[i].getDependencyId().equals(dependency.getModuleId())) {
-                    return dds[i];
-                }
-            }
-        }
-        return null;
     }
 
     private static Collection findArtifactsMatching(DependencyArtifactDescriptor dad, Map allArtifacts) {
@@ -1384,34 +803,28 @@ public class IvyNode {
         }
         depArtifacts.addAll(Arrays.asList(dependencyArtifacts));
     }
-
-    public long getPublication() {
-        if (_module != null) {
-            return _module.getPublicationDate().getTime();
-        }
-        return 0;
-    }
-
-    public DependencyDescriptor getDependencyDescriptor(IvyNode parent) {
-        return (DependencyDescriptor)_dds.get(parent);
-    }
+    
+    
+    
 
     public boolean hasProblem() {
         return _problem != null;
     }
     
-    public ModuleRevisionId getResolvedId() {
-        if (_md != null && _md.getResolvedModuleRevisionId().getRevision() != null) {
-            return _md.getResolvedModuleRevisionId();
-        } else if (_module != null) {
-            return _module.getId();
-        } else {
-            return getId();
-        }
-    }
-    
     public Exception getProblem() {
         return _problem;
+    }
+    
+    public String getProblemMessage() {
+    	Exception e = _problem;
+    	if (e == null) {
+    		return "";
+    	}
+		String errMsg = e instanceof RuntimeException?e.getMessage():e.toString();
+		if (errMsg == null || errMsg.length()==0 || "null".equals(errMsg)) {
+			errMsg = e.getClass().getName() + " at "+e.getStackTrace()[0].toString();
+		}
+		return errMsg;
     }
 
     public boolean isDownloaded() {
@@ -1422,23 +835,8 @@ public class IvyNode {
         return _searched;
     }
 
-    public String getRootModuleConf() {
-        return _rootModuleConf;
-    }
-    
-
-    public void setRootModuleConf(String rootModuleConf) {
-        if (_rootModuleConf != null && !_rootModuleConf.equals(rootModuleConf)) {
-            _confsToFetch.clear(); // we change of root module conf => we discard all confs to fetch
-        }
-        if (rootModuleConf != null && rootModuleConf.equals(_rootModuleConf)) {
-            _selectedDeps.put(new ModuleIdConf(_id.getModuleId(), rootModuleConf), Collections.singleton(this));
-        }
-        _rootModuleConf = rootModuleConf;
-    }
-
-    public String[] getConfsToFetch() {
-        return (String[])_confsToFetch.toArray(new String[_confsToFetch.size()]);
+    public boolean isLoaded() {
+        return _md != null;
     }
 
     /**
@@ -1453,102 +851,221 @@ public class IvyNode {
         return _fetchedConfigurations.contains(conf);
     }
 
-    /**
-     * Returns the eviction data for this node if it has been previously evicted in the most far parent
-     * of the given node, null otherwise (if it hasn't been evicted in root) for the 
-     * given rootModuleConf.
-     * Note that this method only works if conflict resolution has already be done in all the ancestors.
-     * 
-     * @param rootModuleConf
-     * @param parent
-     * @return
-     */
-    public EvictionData getEvictionDataInRoot(String rootModuleConf, IvyNode parent) {
-        IvyNode root = parent.getRoot();
-        Collection selectedNodes = root.getResolvedNodes(getModuleId(), rootModuleConf);
-        for (Iterator iter = selectedNodes.iterator(); iter.hasNext();) {
-            IvyNode node = (IvyNode)iter.next();
-            if (node.getResolvedId().equals(getResolvedId())) {
-                // the node is part of the selected ones for the root: no eviction data to return
-                return null;
-            }
-        }
-        // we didn't find this mrid in the selected ones for the root: it has been previously evicted
-        return new EvictionData(rootModuleConf, parent, root.getConflictManager(getModuleId()), selectedNodes);
-    }
-
-    public static IvyNode getRoot(IvyNode parent) {
-        IvyNode root = parent;
-        Collection path = new HashSet();
-        path.add(root);
-        while (root.getParent() != null && !root.isRoot()) {
-            if (path.contains(root.getParent())) {
-                return root;
-            }
-            root = root.getParent();
-            path.add(root);
-        }
-        return root;
-    }
-
     public IvyNode findNode(ModuleRevisionId mrid) {
         return _data.getNode(mrid);
     }
 
-    public String[] getRealConfs(String conf) {
+    boolean isRoot() {
+        return _root == this;
+    }
+
+    public IvyNode getRoot() {
+		return _root;
+	}
+
+    public ConflictManager getConflictManager(ModuleId mid) {
         if (_md == null) {
-            return new String[] {conf};
+            throw new IllegalStateException("impossible to get conflict manager when data has not been loaded");
         }
-        String defaultConf = getDefaultConf(conf);
-        conf = getMainConf(conf);
-        if (_md.getConfiguration(conf) == null) {
-            if ("".equals(defaultConf)) {
-                return new String[0];
-            }
-            conf = defaultConf;
-        }
-        if (conf.startsWith("*")) {
-            return resolveSpecialConfigurations(new String[] {conf}, this);
-        } else if (conf.indexOf(',') != -1) {
-            String[] confs = conf.split(",");
-            for (int i = 0; i < confs.length; i++) {
-                confs[i] = confs[i].trim();
-            }
-        }
-        return new String[] {conf};
-        
+        ConflictManager cm = _md.getConflictManager(mid);
+        return cm == null ? _settings.getDefaultConflictManager() : cm;
+    }
+    
+    public IvyNode getRealNode() {
+    	IvyNode real = _data.getNode(getId());
+        return real != null?real:this;
     }
 
-    /**
-     * Returns true if the current dependency descriptor is transitive
-     * and the parent configuration is transitive.  Otherwise returns false.
-     * @param node curent node
-     * @return true if current node is transitive and the parent configuration is
-     * transitive.
-     */
-    public boolean isTransitive() {
-        return (_data.isTransitive() &&
-        		getDependencyDescriptor(getParent()).isTransitive() &&
-                isParentConfTransitive() );
+    public ModuleRevisionId getId() {
+    	return _id;
     }
 
-    /**
-     * Checks if the current node's parent configuration is transitive.
-     * @param node current node
-     * @return true if the node's parent configuration is transitive
-     */
-    protected boolean isParentConfTransitive() {
-        String conf = getParent().getRequestedConf();
-        if (conf==null) {
-            return true;
-        }
-        Configuration parentConf = getParent().getConfiguration(conf);
-        return parentConf.isTransitive();
-
+    public ModuleId getModuleId() {
+        return _id.getModuleId();
     }
 
-	public ResolveData getResolveData() {
+    public ModuleDescriptor getDescriptor() {
+        return _md;
+    }
+
+	public ResolveData getData() {
 		return _data;
 	}
 
+    public ResolvedModuleRevision getModuleRevision() {
+        return _module;
+    }
+
+    public long getPublication() {
+        if (_module != null) {
+            return _module.getPublicationDate().getTime();
+        }
+        return 0;
+    }
+
+    public ModuleRevisionId getResolvedId() {
+        if (_md != null && _md.getResolvedModuleRevisionId().getRevision() != null) {
+            return _md.getResolvedModuleRevisionId();
+        } else if (_module != null) {
+            return _module.getId();
+        } else {
+            return getId();
+        }
+    }
+    
+	/**
+	 * Clean data related to one root module configuration only
+	 */
+	public void clean() {
+		_confsToFetch.clear();
+	}
+
+	///////////////////////////////////////////////////////////////////////////////
+	//          CALLERS MANAGEMENT
+	/////////////////////////////////////////////////////////////////////////////// 
+
+	boolean canExclude(String rootModuleConf) {
+        Caller[] callers = getCallers(rootModuleConf);
+        for (int i = 0; i < callers.length; i++) {
+            if (callers[i].canExclude()) {
+                return true;
+            }
+        }
+        return false;
+    }
+	
+	private IvyNode getDirectCallerFor(ModuleId from) {
+		return _callers.getDirectCallerFor(from);
+	}
+
+    public Caller[] getCallers(String rootModuleConf) {
+		return _callers.getCallers(rootModuleConf);
+	}
+    
+	public Collection getAllCallersModuleIds() {
+		return _callers.getAllCallersModuleIds();
+	}
+
+	public Caller[] getAllCallers() {
+		return _callers.getAllCallers();
+	}
+	
+
+    public void addCaller(String rootModuleConf, IvyNode callerNode, String callerConf, String[] dependencyConfs, DependencyDescriptor dd) {
+    	_callers.addCaller(rootModuleConf, callerNode, callerConf, dependencyConfs, dd);
+        _isCircular = _callers.getAllCallersModuleIds().contains(getId().getModuleId());
+        if (_isCircular) {
+        	IvyContext.getContext().getCircularDependencyStrategy().handleCircularDependency(
+        			toMrids(findPath(getId().getModuleId()), this));
+        }
+    }
+
+    
+	public boolean doesCallersExclude(String rootModuleConf, Artifact artifact, Stack callersStack) {
+		return _callers.doesCallersExclude(rootModuleConf, artifact, callersStack);
+	}
+	
+
+	private ModuleRevisionId[] toMrids(Collection path, IvyNode depNode) {
+    	ModuleRevisionId[] ret = new ModuleRevisionId[path.size()+1];
+    	int i=0;
+    	for (Iterator iter = path.iterator(); iter.hasNext(); i++) {
+			IvyNode node = (IvyNode) iter.next();
+			ret[i] = node.getId();
+		}
+    	ret[ret.length-1] = depNode.getId();
+		return ret;
+	}
+	
+	///////////////////////////////////////////////////////////////////////////////
+	//          EVICTION MANAGEMENT
+	/////////////////////////////////////////////////////////////////////////////// 
+
+	public Collection getResolvedNodes(ModuleId moduleId, String rootModuleConf) {
+		return _eviction.getResolvedNodes(moduleId, rootModuleConf);
+	}
+
+	public Collection getResolvedRevisions(ModuleId moduleId, String rootModuleConf) {
+		return _eviction.getResolvedRevisions(moduleId, rootModuleConf);
+	}
+	
+    public void markEvicted(EvictionData evictionData) {
+        _eviction.markEvicted(evictionData);
+        if (!_rootModuleConfs.keySet().contains(evictionData.getRootModuleConf())) {
+            _rootModuleConfs.put(evictionData.getRootModuleConf(), null);
+        }
+        
+        // bug 105: update selected data with evicted one
+        if (evictionData.getSelected() != null) {
+            for (Iterator iter = evictionData.getSelected().iterator(); iter.hasNext();) {
+                IvyNode selected = (IvyNode)iter.next();
+                selected.updateDataFrom(this, evictionData.getRootModuleConf());
+            }
+        }
+    }
+
+	public Collection getAllEvictingConflictManagers() {
+		return _eviction.getAllEvictingConflictManagers();
+	}
+
+	public Collection getAllEvictingNodes() {
+		return _eviction.getAllEvictingNodes();
+	}
+
+	public String[] getEvictedConfs() {
+		return _eviction.getEvictedConfs();
+	}
+
+	public EvictionData getEvictedData(String rootModuleConf) {
+		return _eviction.getEvictedData(rootModuleConf);
+	}
+
+	public Collection getEvictedNodes(ModuleId mid, String rootModuleConf) {
+		return _eviction.getEvictedNodes(mid, rootModuleConf);
+	}
+
+	public Collection getEvictedRevisions(ModuleId mid, String rootModuleConf) {
+		return _eviction.getEvictedRevisions(mid, rootModuleConf);
+	}
+
+	public EvictionData getEvictionDataInRoot(String rootModuleConf, IvyNode ancestor) {
+		return _eviction.getEvictionDataInRoot(rootModuleConf, ancestor);
+	}
+
+	public boolean isCompletelyEvicted() {
+		return _eviction.isCompletelyEvicted();
+	}
+
+	public boolean isEvicted(String rootModuleConf) {
+		return _eviction.isEvicted(rootModuleConf);
+	}
+
+	public void markEvicted(String rootModuleConf, IvyNode node, ConflictManager conflictManager, Collection resolved) {
+		_eviction.markEvicted(rootModuleConf, node, conflictManager, resolved);
+	}
+
+	public void setEvictedNodes(ModuleId moduleId, String rootModuleConf, Collection evicted) {
+		_eviction.setEvictedNodes(moduleId, rootModuleConf, evicted);
+	}
+
+	public void setResolvedNodes(ModuleId moduleId, String rootModuleConf, Collection resolved) {
+		_eviction.setResolvedNodes(moduleId, rootModuleConf, resolved);
+	}
+
+
+	public String toString() {
+        return getResolvedId().toString();
+    }
+    
+    public boolean equals(Object obj) {
+        if (! (obj instanceof IvyNode)) {
+            return false;
+        }
+        IvyNode node = (IvyNode)obj;
+        return node.getId().equals(getId());
+    }
+    
+    public int hashCode() {
+        return getId().hashCode();
+    }
 }

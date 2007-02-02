@@ -60,11 +60,7 @@ public class IvyInfo extends IvyTask {
 			ModuleDescriptor md = ModuleDescriptorParserRegistry.getInstance().parseDescriptor(settings, _file.toURL(), doValidate(settings));
             getProject().setProperty("ivy.organisation", md.getModuleRevisionId().getOrganisation());
             getProject().setProperty("ivy.module", md.getModuleRevisionId().getName());
-            if (md.getModuleRevisionId().getRevision() != null) {
-            	getProject().setProperty("ivy.revision", md.getModuleRevisionId().getRevision());
-            } else {
-            	getProject().setProperty("ivy.revision", Ivy.getWorkingRevision());
-            }
+            getProject().setProperty("ivy.revision", md.getModuleRevisionId().getRevision());
             getProject().setProperty("ivy.configurations", mergeConfs(md.getConfigurationsNames()));
             
             // store the public configurations in a separate property

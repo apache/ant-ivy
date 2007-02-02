@@ -17,6 +17,7 @@
  */
 package org.apache.ivy.plugins.conflict;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
@@ -78,9 +79,9 @@ public class RegexpConflictManager extends AbstractConflictManager {
 
 			if (lastNode != null && !matchEquals(node, lastNode)) {
 				String msg = lastNode + ":" + getMatch(lastNode)
-						+ " (needed by " + lastNode.getParent()
+						+ " (needed by " + Arrays.asList(lastNode.getAllCallers())
 						+ ") conflicts with " + node + ":" + getMatch(node)
-						+ " (needed by " + node.getParent() + ")";
+						+ " (needed by " + Arrays.asList(node.getAllCallers()) + ")";
 				Message.error(msg);
 				Message.sumupProblems();
 				throw new StrictConflictException(msg);

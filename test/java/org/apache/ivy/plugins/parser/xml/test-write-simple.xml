@@ -2,6 +2,7 @@
 <ivy-module version="1.0">
 	<info organisation="myorg"
 		module="mymodule"
+		revision="NONE"
 		status="integration"
 		publication="20050501110000"
 	/>

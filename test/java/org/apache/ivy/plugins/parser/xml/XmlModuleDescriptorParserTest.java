@@ -24,6 +24,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashSet;
 
+import org.apache.ivy.Ivy;
 import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.Configuration;
 import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
@@ -52,7 +53,7 @@ public class XmlModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         assertNotNull(md);
         assertEquals("myorg", md.getModuleRevisionId().getOrganisation());
         assertEquals("mymodule", md.getModuleRevisionId().getName());
-        assertEquals(null, md.getModuleRevisionId().getRevision());
+        assertEquals(Ivy.getWorkingRevision(), md.getModuleRevisionId().getRevision());
         assertEquals("integration", md.getStatus());
         
         assertNotNull(md.getConfigurations());
@@ -346,7 +347,7 @@ public class XmlModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         assertNotNull(md);
         assertEquals("myorg", md.getModuleRevisionId().getOrganisation());
         assertEquals("mymodule", md.getModuleRevisionId().getName());
-        assertEquals(null, md.getModuleRevisionId().getRevision());
+        assertEquals(Ivy.getWorkingRevision(), md.getModuleRevisionId().getRevision());
         assertEquals("integration", md.getStatus());
         
         assertNotNull(md.getConfigurations());

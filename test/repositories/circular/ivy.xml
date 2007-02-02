@@ -1,6 +1,7 @@
 <ivy-module version="1.0">
 	<info organisation="org8"
 	       module="mod8.5"
+	       revision="NONE"
 	/>
 	<configurations>
 		<conf name="compile"/>

@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.apache.ivy.Ivy;
 import org.apache.ivy.core.IvyContext;
 import org.apache.ivy.core.IvyPatternHelper;
 import org.apache.ivy.util.extendable.UnmodifiableExtendableItem;
@@ -70,7 +71,7 @@ public class ModuleRevisionId extends UnmodifiableExtendableItem {
         super(null, extraAttributes);
         _moduleId = moduleId;
         _branch = branch == null ? IvyContext.getContext().getSettings().getDefaultBranch(moduleId) : branch;
-        _revision = revision;
+        _revision = revision == null ? Ivy.getWorkingRevision() : revision;
         _hash = _hashCode(); //stored for performance reasons, hashCode is very used in many maps
         setStandardAttribute(IvyPatternHelper.ORGANISATION_KEY, _moduleId.getOrganisation());
         setStandardAttribute(IvyPatternHelper.MODULE_KEY, _moduleId.getName());
@@ -96,7 +97,7 @@ public class ModuleRevisionId extends UnmodifiableExtendableItem {
             return false;
         }
         ModuleRevisionId other = (ModuleRevisionId)obj;
-        return (other.getRevision() == null ? getRevision() == null : other.getRevision().equals(getRevision()))
+        return other.getRevision().equals(getRevision())
         	&& (other.getBranch() == null ? getBranch() == null : other.getBranch().equals(getBranch()))
         	&& other.getModuleId().equals(getModuleId())
             && other.getExtraAttributes().equals(getExtraAttributes());
@@ -107,7 +108,7 @@ public class ModuleRevisionId extends UnmodifiableExtendableItem {
     public int _hashCode() {
         int hash = 31;
         hash = hash * 13 + (getBranch() == null ? 0 : getBranch().hashCode());
-        hash = hash * 13 + (getRevision() == null ? 0 : getRevision().hashCode());
+        hash = hash * 13 + getRevision().hashCode();
         hash = hash * 13 + getModuleId().hashCode();
         hash = hash * 13 + getAttributes().hashCode();
         return hash;

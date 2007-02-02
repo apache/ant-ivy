@@ -39,6 +39,8 @@ import org.apache.ivy.core.report.ArtifactDownloadReport;
 import org.apache.ivy.core.report.ConfigurationResolveReport;
 import org.apache.ivy.core.report.ResolveReport;
 import org.apache.ivy.core.resolve.IvyNode;
+import org.apache.ivy.core.resolve.IvyNodeCallers.Caller;
+import org.apache.ivy.core.resolve.IvyNodeEviction.EvictionData;
 import org.apache.ivy.util.FileUtil;
 import org.apache.ivy.util.Message;
 import org.apache.ivy.util.StringUtils;
@@ -128,7 +130,7 @@ public class XmlReportOutputter implements ReportOutputter {
                         " artresolver=\"").append(dep.getModuleRevision().getArtifactResolver().getName()).append("\"");
                 }
                 if (dep.isEvicted(report.getConfiguration())) {
-                    IvyNode.EvictionData ed = dep.getEvictedData(report.getConfiguration());
+                    EvictionData ed = dep.getEvictedData(report.getConfiguration());
                     if (ed.getConflictManager() != null) {
                         details.append(" evicted=\"").append(ed.getConflictManager()).append("\"");
                     } else {
@@ -169,7 +171,7 @@ public class XmlReportOutputter implements ReportOutputter {
                     }
                 }
                 if (dep.isEvicted(report.getConfiguration())) {
-                    IvyNode.EvictionData ed = dep.getEvictedData(report.getConfiguration());
+                    EvictionData ed = dep.getEvictedData(report.getConfiguration());
                     Collection selected = ed.getSelected();
                     if (selected != null) {
                         for (Iterator it3 = selected.iterator(); it3.hasNext();) {
@@ -178,7 +180,7 @@ public class XmlReportOutputter implements ReportOutputter {
                         }
                     }
                 }
-                IvyNode.Caller[] callers = dep.getCallers(report.getConfiguration());
+                Caller[] callers = dep.getCallers(report.getConfiguration());
 				for (int i = 0; i < callers.length; i++) {
 					StringBuffer callerDetails = new StringBuffer();
 					Map callerExtraAttributes = callers[i].getDependencyDescriptor().getExtraAttributes();

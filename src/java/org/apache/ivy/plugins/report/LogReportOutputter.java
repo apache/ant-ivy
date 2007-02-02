@@ -25,6 +25,7 @@ import org.apache.ivy.core.report.ArtifactDownloadReport;
 import org.apache.ivy.core.report.ConfigurationResolveReport;
 import org.apache.ivy.core.report.ResolveReport;
 import org.apache.ivy.core.resolve.IvyNode;
+import org.apache.ivy.core.resolve.IvyNodeEviction.EvictionData;
 import org.apache.ivy.util.Message;
 
 
@@ -53,8 +54,8 @@ public class LogReportOutputter implements ReportOutputter {
                 }
                 String[] confs = evicted[i].getEvictedConfs();
                 for (int j = 0; j < confs.length; j++) {
-                    IvyNode.EvictionData evictedData = evicted[i].getEvictedData(confs[j]);
-                    Message.verbose("\t  in "+evictedData.getNode()+" with "+evictedData.getConflictManager());
+                    EvictionData evictedData = evicted[i].getEvictedData(confs[j]);
+                    Message.verbose("\t  in "+evictedData.getParent()+" with "+evictedData.getConflictManager());
                 }
             }
         }
@@ -96,7 +97,7 @@ public class LogReportOutputter implements ReportOutputter {
             Message.warn("\t::::::::::::::::::::::::::::::::::::::::::::::");
         }
         for (int i = 0; i < unresolved.length; i++) {
-            Message.warn("\t:: "+unresolved[i]+": "+unresolved[i].getProblem().getMessage());
+            Message.warn("\t:: "+unresolved[i]+": "+unresolved[i].getProblemMessage());
         }
         if (unresolved.length > 0) {
             Message.warn("\t::::::::::::::::::::::::::::::::::::::::::::::\n");

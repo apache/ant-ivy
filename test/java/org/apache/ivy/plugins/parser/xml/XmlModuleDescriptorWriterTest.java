@@ -28,6 +28,7 @@ import junit.framework.TestCase;
 
 import org.apache.ivy.core.module.descriptor.DefaultModuleDescriptor;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
+import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.util.FileUtil;
 
@@ -37,6 +38,7 @@ public class XmlModuleDescriptorWriterTest extends TestCase {
     public void testSimple() throws Exception {
         DefaultModuleDescriptor md = (DefaultModuleDescriptor)XmlModuleDescriptorParser.getInstance().parseDescriptor(new IvySettings(), XmlModuleDescriptorWriterTest.class.getResource("test-simple.xml"), true);
         md.setResolvedPublicationDate(new GregorianCalendar(2005, 4, 1, 11, 0, 0).getTime());
+        md.setResolvedModuleRevisionId(new ModuleRevisionId(md.getModuleRevisionId().getModuleId(), "NONE"));
         XmlModuleDescriptorWriter.write(md, _dest);
         
         assertTrue(_dest.exists());

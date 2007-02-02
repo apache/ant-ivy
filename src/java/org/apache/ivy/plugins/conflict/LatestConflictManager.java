@@ -75,7 +75,8 @@ public class LatestConflictManager extends AbstractConflictManager {
         for (Iterator iter = conflicts.iterator(); iter.hasNext();) {
             IvyNode node = (IvyNode)iter.next();
             DependencyDescriptor dd = node.getDependencyDescriptor(parent);
-            if (dd != null && dd.isForce() && parent.getResolvedId().equals(dd.getParentRevisionId())) {
+            if (dd != null && dd.isForce() 
+            		&& parent.getResolvedId().equals(dd.getParentRevisionId())) {
                 return Collections.singleton(node);
             }
         }

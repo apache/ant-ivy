@@ -61,6 +61,10 @@ public interface DependencyDescriptor extends ExtendableItem {
     DependencyArtifactDescriptor[] getDependencyArtifactsExcludes(String moduleConfigurations);
     DependencyArtifactDescriptor[] getDependencyArtifactsExcludes(String[] moduleConfigurations);
     boolean doesExclude(String[] moduleConfigurations, ArtifactId artifactId);
+    /**
+     * Returns true if this descriptor contains any exclusion rule
+     * @return true if this descriptor contains any exclusion rule
+     */
     public boolean canExclude();
 	DependencyDescriptor asSystem();
 }

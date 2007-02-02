@@ -127,7 +127,8 @@ public class VersionRangeMatcher   extends AbstractVersionMatcher {
 	}
 
 	public boolean isDynamic(ModuleRevisionId askedMrid) {
-		return ALL_RANGE.matcher(askedMrid.getRevision()).matches();
+		String revision = askedMrid.getRevision();
+		return ALL_RANGE.matcher(revision).matches();
 	}
 
 	public boolean accept(ModuleRevisionId askedMrid, ModuleRevisionId foundMrid) {

@@ -18,8 +18,11 @@
 package org.apache.ivy.core.resolve;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
-import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.apache.ivy.core.cache.CacheManager;
@@ -30,7 +33,7 @@ import org.apache.ivy.core.settings.IvySettings;
 
 
 public class ResolveData {
-    private Map _nodes; // shared map of all nodes: Map (ModuleRevisionId -> IvyNode)
+    private Map _visitData; // shared map of all visit data: Map (ModuleRevisionId -> VisitData)
     private Date _date;
     private boolean _validate;
     private boolean _transitive;
@@ -39,11 +42,11 @@ public class ResolveData {
 	private ResolveEngine _engine;
 
     public ResolveData(ResolveData data, boolean validate) {
-        this(data._engine, data._cacheManager, data._date, data._report, validate, data._transitive, data._nodes);
+        this(data._engine, data._cacheManager, data._date, data._report, validate, data._transitive, data._visitData);
     }
 
     public ResolveData(ResolveEngine engine, File cache, Date date, ConfigurationResolveReport report, boolean validate) {
-        this(engine, cache, date, report, validate, new HashMap());
+        this(engine, cache, date, report, validate, true, new LinkedHashMap());
     }
 
     public ResolveData(ResolveEngine engine, File cache, Date date, ConfigurationResolveReport report, boolean validate, Map nodes) {
@@ -52,25 +55,34 @@ public class ResolveData {
     public ResolveData(ResolveEngine engine, File cache, Date date, ConfigurationResolveReport report, boolean validate, boolean transitive, Map nodes) {
     	this(engine, new CacheManager(engine.getSettings(), cache), date, report, validate, transitive, nodes);
     }
-    public ResolveData(ResolveEngine engine, CacheManager cacheManager, Date date, ConfigurationResolveReport report, boolean validate, boolean transitive, Map nodes) {
+
+    public ResolveData(ResolveEngine engine, File cache, Date date, ConfigurationResolveReport report, boolean validate, boolean transitive) {
+		this(engine, cache, date, report, validate, transitive, new LinkedHashMap());
+	}
+    public ResolveData(ResolveEngine engine, CacheManager cacheManager, Date date, ConfigurationResolveReport report, boolean validate, boolean transitive, Map visitData) {
     	_engine = engine;
         _date = date;
         _report = report;
         _validate = validate;
         _transitive = transitive;
-        _nodes = nodes;
+        _visitData = visitData;
         _cacheManager = cacheManager;
     }
 
     
 
-    public Date getDate() {
+	public Date getDate() {
         return _date;
     }
     
 
-    public Map getNodes() {
-        return _nodes;
+    /**
+     * Returns the Map of visit data.
+     * Map (ModuleRevisionId -> VisitData)
+     * @return
+     */
+    public Map getVisitDataMap() {
+        return _visitData;
     }
     
 
@@ -84,17 +96,66 @@ public class ResolveData {
     }
 
     public IvyNode getNode(ModuleRevisionId mrid) {
-        return (IvyNode)_nodes.get(mrid);
+        VisitData visitData = getVisitData(mrid);
+		return visitData == null ? null : visitData.getNode();
+    }
+    
+    public Collection getNodes() {
+    	Collection nodes = new ArrayList();
+    	for (Iterator iter = _visitData.values().iterator(); iter.hasNext();) {
+			VisitData vdata = (VisitData) iter.next();
+			nodes.add(vdata.getNode());
+		}
+    	return nodes;
+    }
+    
+    public Collection getNodeIds() {
+    	return _visitData.keySet();
+    }
+    
+    public VisitData getVisitData(ModuleRevisionId mrid) {
+    	return (VisitData) _visitData.get(mrid);
     }
 
-    public void register(IvyNode node) {
-        _nodes.put(node.getId(), node);
+    public void register(VisitNode node) {
+    	register(node.getId(), node);
     }
 
-    public void register(ModuleRevisionId id, IvyNode node) {
-        _nodes.put(id, node);
+    public void register(ModuleRevisionId mrid, VisitNode node) {
+		VisitData visitData = getVisitData(mrid);
+    	if (visitData == null) {
+    		visitData = new VisitData(node.getNode());
+    		visitData.addVisitNode(node);
+    		_visitData.put(mrid, visitData);
+    	} else {
+    		visitData.setNode(node.getNode());
+    		visitData.addVisitNode(node);
+    	}
     }
 
+    /**
+     * Updates the visit data currently associated with the given mrid
+     * with the given node and the visit nodes of the old visitData
+     * for the given rootModuleConf
+     * @param mrid the module revision id for which the update should be done
+     * @param node the IvyNode to associate with the visit data to update
+     * @param rootModuleConf the root module configuration in which the update is made
+     */
+    void replaceNode(ModuleRevisionId mrid, IvyNode node, String rootModuleConf) {
+		VisitData visitData = getVisitData(mrid);
+    	if (visitData == null) {
+    		throw new IllegalArgumentException("impossible to replace node for id "+mrid+". No registered node found.");
+    	}
+    	VisitData keptVisitData = getVisitData(node.getId());
+    	if (keptVisitData == null) {
+    		throw new IllegalArgumentException("impossible to replace node with "+node+". No registered node found for "+node.getId()+".");
+    	}
+    	// replace visit data in Map (discards old one)
+    	_visitData.put(mrid, keptVisitData);
+    	// update visit data with discarde visit nodes
+    	keptVisitData.addVisitNodes(rootModuleConf, visitData.getVisitNodes(rootModuleConf));
+    }
+    
     public void setReport(ConfigurationResolveReport report) {
         _report = report;
     }
