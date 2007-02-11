@@ -124,7 +124,7 @@ public class IvySettings {
 	private StatusManager _statusManager;
 	
 	public IvySettings() {
-        setVariable("ivy.default.conf.dir", getSettingsURL().toExternalForm(), true);
+        setVariable("ivy.default.conf.dir", getDefaultConfigurationDir(), true);
         
         String ivyTypeDefs = System.getProperty("ivy.typedef.files");
         if (ivyTypeDefs != null) {
@@ -297,9 +297,9 @@ public class IvySettings {
         return getSettingsURL("ivyconf.xml");
     }
 
-
-	private static URL getSettingsURL() {
-		return XmlSettingsParser.class.getResource("");
+	private String getDefaultConfigurationDir() {
+		String ivyconfLocation = getDefaultConfigurationURL().toExternalForm();
+		return ivyconfLocation.substring(0, ivyconfLocation.length() - "ivyconf.xml".length());
 	}
 
 	private static URL getSettingsURL(String file) {
