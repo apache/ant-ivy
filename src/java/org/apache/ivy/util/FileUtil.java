@@ -64,7 +64,7 @@ public class FileUtil {
             
             Runtime runtime = Runtime.getRuntime();
             Message.verbose("executing 'ln -s -f " + src.getAbsolutePath() + " " + dest.getPath() + "'");
-            Process process = runtime.exec("ln", new String[] {"-s", "-f", src.getAbsolutePath(), dest.getPath()});
+            Process process = runtime.exec(new String[] {"ln", "-s", "-f", src.getAbsolutePath(), dest.getPath()});
             
             if (process.waitFor() != 0) {
                 InputStream errorStream = process.getErrorStream();
