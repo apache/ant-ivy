@@ -299,7 +299,7 @@ public class IvySettings {
 
 	private String getDefaultConfigurationDir() {
 		String ivyconfLocation = getDefaultConfigurationURL().toExternalForm();
-		return ivyconfLocation.substring(0, ivyconfLocation.length() - "ivyconf.xml".length());
+		return ivyconfLocation.substring(0, ivyconfLocation.length() - "ivyconf.xml".length() - 1);
 	}
 
 	private static URL getSettingsURL(String file) {
