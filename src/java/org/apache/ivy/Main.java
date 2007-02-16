@@ -47,6 +47,7 @@ import org.apache.ivy.core.module.descriptor.DefaultModuleDescriptor;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.report.ResolveReport;
+import org.apache.ivy.core.resolve.ResolveOptions;
 import org.apache.ivy.plugins.parser.xml.XmlModuleDescriptorWriter;
 import org.apache.ivy.plugins.report.XmlReportParser;
 import org.apache.ivy.util.DefaultMessageImpl;
@@ -272,18 +273,14 @@ public class Main {
                 }
             }
 
-            
+            ResolveOptions resolveOptions = new ResolveOptions()
+	            .setConfs(confs)
+	            .setCache(CacheManager.getInstance(ivy.getSettings(), cache))
+	            .setValidate(validate)
+	            .setUseOrigin(line.hasOption("useOrigin"));
             ResolveReport report = ivy.resolve(
                     ivyfile.toURL(),
-                    null,
-                    confs, 
-                    cache, 
-                    null,
-                    validate,
-                    false,
-                    true,
-                    line.hasOption("useOrigin"),
-                    null
+                    resolveOptions
                     );
             if (report.hasError()) {
                 System.exit(1);

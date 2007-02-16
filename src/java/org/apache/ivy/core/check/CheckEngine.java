@@ -21,16 +21,17 @@ import java.io.IOException;
 import java.net.URL;
 import java.text.ParseException;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.apache.ivy.core.cache.CacheManager;
 import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.resolve.ResolveData;
 import org.apache.ivy.core.resolve.ResolveEngine;
+import org.apache.ivy.core.resolve.ResolveOptions;
 import org.apache.ivy.core.resolve.ResolvedModuleRevision;
 import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.plugins.parser.ModuleDescriptorParserRegistry;
@@ -81,7 +82,7 @@ public class CheckEngine {
             
             // check dependencies
             DependencyDescriptor[] dds = md.getDependencies();
-            ResolveData data = new ResolveData(_resolveEngine, _settings.getDefaultCache(), new Date(), null, true);
+            ResolveData data = new ResolveData(_resolveEngine, new ResolveOptions().setCache(CacheManager.getInstance(_settings)));
             for (int i = 0; i < dds.length; i++) {
                 // check master confs
                 String[] masterConfs = dds[i].getModuleConfigurations();

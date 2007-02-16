@@ -24,15 +24,16 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.ivy.Ivy;
+import org.apache.ivy.core.cache.CacheManager;
 import org.apache.ivy.core.module.descriptor.DefaultModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleId;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.report.ResolveReport;
+import org.apache.ivy.core.resolve.ResolveOptions;
 import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.plugins.matcher.PatternMatcher;
 import org.apache.ivy.plugins.report.XmlReportOutputter;
 import org.apache.ivy.util.FileUtil;
-import org.apache.ivy.util.filter.FilterHelper;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.taskdefs.XSLTProcess;
 
@@ -89,7 +90,12 @@ public class IvyRepositoryReport extends IvyTask {
     			}
 			}
     		DefaultModuleDescriptor md = DefaultModuleDescriptor.newCallerInstance(mrids, true, false);
-    		ResolveReport report = ivy.resolve(md, new String[] {"*"}, _cache, null, doValidate(settings), false, true, false, false, FilterHelper.NO_FILTER);
+    		ResolveReport report = ivy.resolve(
+    				md, 
+    				new ResolveOptions()
+			    		.setCache(CacheManager.getInstance(settings, _cache))
+			    		.setValidate(doValidate(settings)));
+    		
     		new XmlReportOutputter().output(report, _cache);
     		if (_graph) {
     			gengraph(_cache, md.getModuleRevisionId().getOrganisation(), md.getModuleRevisionId().getName());

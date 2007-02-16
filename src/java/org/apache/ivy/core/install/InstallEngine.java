@@ -36,6 +36,7 @@ import org.apache.ivy.core.publish.PublishEngine;
 import org.apache.ivy.core.report.ResolveReport;
 import org.apache.ivy.core.resolve.IvyNode;
 import org.apache.ivy.core.resolve.ResolveEngine;
+import org.apache.ivy.core.resolve.ResolveOptions;
 import org.apache.ivy.core.search.SearchEngine;
 import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.plugins.conflict.NoConflictManager;
@@ -112,7 +113,12 @@ public class InstallEngine {
             ResolveReport report = new ResolveReport(md);
             
             Message.info(":: resolving dependencies ::");
-            IvyNode[] dependencies = _resolveEngine.getDependencies(md, new String[] {"default"}, cache, null, report, validate);
+            IvyNode[] dependencies = _resolveEngine.getDependencies(
+            		md, 
+            		new ResolveOptions()
+            			.setConfs(new String[] {"default"})
+            			.setCache(CacheManager.getInstance(_settings, cache)), 
+            		report);
             report.setDependencies(Arrays.asList(dependencies), artifactFilter);
             
             Message.info(":: downloading artifacts to cache ::");

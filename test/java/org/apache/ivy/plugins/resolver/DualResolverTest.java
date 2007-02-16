@@ -23,12 +23,14 @@ import java.util.GregorianCalendar;
 
 import junit.framework.TestCase;
 
+import org.apache.ivy.core.cache.CacheManager;
 import org.apache.ivy.core.event.EventManager;
 import org.apache.ivy.core.module.descriptor.DefaultDependencyDescriptor;
 import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.resolve.ResolveData;
 import org.apache.ivy.core.resolve.ResolveEngine;
+import org.apache.ivy.core.resolve.ResolveOptions;
 import org.apache.ivy.core.resolve.ResolvedModuleRevision;
 import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.core.settings.XmlSettingsParser;
@@ -47,7 +49,7 @@ public class DualResolverTest extends TestCase {
         _settings = new IvySettings();
         _engine = new ResolveEngine(_settings, new EventManager(), new SortEngine(_settings));
         _cache = new File("build/cache");
-        _data = new ResolveData(_engine, _cache, null, null, true);
+        _data = new ResolveData(_engine, new ResolveOptions().setCache(CacheManager.getInstance(_settings, _cache)));
         _cache.mkdirs();
         _settings.setDefaultCache(_cache);
     }

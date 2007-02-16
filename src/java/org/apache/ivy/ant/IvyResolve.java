@@ -22,9 +22,11 @@ import java.net.MalformedURLException;
 import java.text.ParseException;
 
 import org.apache.ivy.Ivy;
+import org.apache.ivy.core.cache.CacheManager;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.report.ResolveReport;
+import org.apache.ivy.core.resolve.ResolveOptions;
 import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.util.Message;
 import org.apache.ivy.util.filter.FilterHelper;
@@ -157,15 +159,8 @@ public class IvyResolve extends IvyTask {
             	}
 	            report = ivy.resolve(
 	            		ModuleRevisionId.newInstance(_organisation, _module, _revision),
-	                    confs, 
-	                    _transitive,
-	                    _changing,
-	                    _cache, 
-	                    getPubDate(_pubdate, null), 
-	                    doValidate(settings),
-	                    _useCacheOnly,
-	                    _useOrigin,
-	                    FilterHelper.getArtifactTypeFilter(_type));
+	            		getResolveOptions(confs, settings),
+	            		_changing);
             	
             } else {
             	if (_organisation != null) {
@@ -180,15 +175,7 @@ public class IvyResolve extends IvyTask {
 	            _revision = getProperty(_revision, settings, "ivy.revision");
 	            report = ivy.resolve(
 	                    _file.toURL(), 
-	                    _revision, 
-	                    confs, 
-	                    _cache, 
-	                    getPubDate(_pubdate, null), 
-	                    doValidate(settings),
-	                    _useCacheOnly,
-	                    _transitive,
-	                    _useOrigin,
-	                    FilterHelper.getArtifactTypeFilter(_type));
+	                    getResolveOptions(confs, settings));
             }
             if (report.hasError()) {
 	            if (_failureProperty != null) {
@@ -230,6 +217,19 @@ public class IvyResolve extends IvyTask {
             throw new BuildException("impossible to resolve dependencies: "+e, e);
         }
     }
+	private ResolveOptions getResolveOptions(String[] confs, IvySettings settings) {
+		return new ResolveOptions()
+			.setConfs(confs)
+			.setValidate(doValidate(settings))
+			.setArtifactFilter(FilterHelper.getArtifactTypeFilter(_type))
+			.setRevision(_revision)
+			.setCache(CacheManager.getInstance(settings, _cache))
+			.setDate(getPubDate(_pubdate, null))
+			.setUseCacheOnly(_useCacheOnly)
+			.setUseOrigin(_useOrigin)
+			.setTransitive(_transitive);
+	}
+
 	public String getModule() {
 		return _module;
 	}

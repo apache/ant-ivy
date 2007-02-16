@@ -17,15 +17,16 @@
  */
 package org.apache.ivy.plugins.conflict;
 
-import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
 import junit.framework.TestCase;
 
 import org.apache.ivy.Ivy;
+import org.apache.ivy.core.cache.CacheManager;
 import org.apache.ivy.core.report.ResolveReport;
 import org.apache.ivy.core.resolve.IvyNode;
+import org.apache.ivy.core.resolve.ResolveOptions;
 
 public class LatestConflictManagerTest extends TestCase {
 
@@ -40,8 +41,8 @@ public class LatestConflictManagerTest extends TestCase {
 	// Test case for issue IVY-388
 	public void testIvy388() throws Exception {
 		ResolveReport report = ivy.resolve(LatestConflictManagerTest.class
-				.getResource("ivy-388.xml"), null, new String[] { "*" }, null,
-				new Date(), false);
+				.getResource("ivy-388.xml"), 
+				getResolveOptions());
 
 		List deps = report.getDependencies();
 		Iterator dependencies = deps.iterator();
@@ -59,5 +60,9 @@ public class LatestConflictManagerTest extends TestCase {
 				}
 			}
 		}
+	}
+    
+    private ResolveOptions getResolveOptions() {
+		return new ResolveOptions().setCache(CacheManager.getInstance(ivy.getSettings())).setValidate(false);
 	}
 }

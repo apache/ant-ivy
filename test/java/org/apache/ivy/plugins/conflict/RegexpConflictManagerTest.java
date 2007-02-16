@@ -21,11 +21,11 @@ package org.apache.ivy.plugins.conflict;
  * @author Anders janmyr
  */
 
-import java.util.Date;
-
 import junit.framework.TestCase;
 
 import org.apache.ivy.Ivy;
+import org.apache.ivy.core.cache.CacheManager;
+import org.apache.ivy.core.resolve.ResolveOptions;
 
 
 public class RegexpConflictManagerTest extends TestCase
@@ -44,8 +44,8 @@ public class RegexpConflictManagerTest extends TestCase
         try
         {
             ivy.resolve( RegexpConflictManagerTest.class
-                    .getResource( "ivy-no-regexp-conflict.xml" ), null,
-                    new String[] { "*" }, null, new Date(), false );
+                    .getResource( "ivy-no-regexp-conflict.xml" ), 
+                    getResolveOptions() );
         }
         catch ( StrictConflictException e )
         {
@@ -58,8 +58,8 @@ public class RegexpConflictManagerTest extends TestCase
         try
         {
             ivy.resolve( RegexpConflictManagerTest.class
-                    .getResource( "ivy-conflict.xml" ), null,
-                    new String[] { "*" }, null, new Date(), false );
+                    .getResource( "ivy-conflict.xml" ), 
+                    getResolveOptions() );
 
             fail( "Resolve should have failed with a conflict" );
         }
@@ -74,4 +74,8 @@ public class RegexpConflictManagerTest extends TestCase
             		e.getMessage().indexOf("[ org1 | mod1.2 | 2.1.0 ]:2.1 (needed by [[ apache | resolve-noconflict | 1.0 ]])")!=-1);
         }
     }
+    
+    private ResolveOptions getResolveOptions() {
+		return new ResolveOptions().setCache(CacheManager.getInstance(ivy.getSettings())).setValidate(false);
+	}
 }

@@ -21,7 +21,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.ParseException;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -42,6 +41,7 @@ import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleId;
 import org.apache.ivy.core.resolve.IvyNode;
+import org.apache.ivy.core.resolve.ResolveOptions;
 import org.apache.ivy.core.settings.IvySettings;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
@@ -126,7 +126,13 @@ public class IvyArtifactReport extends IvyTask {
         }
         try {
             String[] confs = splitConfs(_conf);
-            IvyNode[] dependencies = ivy.getDependencies((ModuleDescriptor) getProject().getReference("ivy.resolved.descriptor"), confs, _cache, new Date(), null, doValidate(settings));
+            IvyNode[] dependencies = ivy.getResolveEngine()
+            	.getDependencies((ModuleDescriptor) getProject().getReference("ivy.resolved.descriptor"), 
+            			new ResolveOptions()
+            				.setConfs(confs)
+            				.setCache(CacheManager.getInstance(settings, _cache))
+            				.setValidate(doValidate(settings)),
+            			null);
 
             Map artifactsToCopy = ivy.determineArtifactsToCopy(new ModuleId(_organisation, _module), confs, _cache, _pattern, null);
             Map moduleRevToArtifactsMap = new HashMap();

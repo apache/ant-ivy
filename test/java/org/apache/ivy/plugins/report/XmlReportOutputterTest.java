@@ -23,7 +23,9 @@ import java.io.File;
 import junit.framework.TestCase;
 
 import org.apache.ivy.Ivy;
+import org.apache.ivy.core.cache.CacheManager;
 import org.apache.ivy.core.report.ResolveReport;
+import org.apache.ivy.core.resolve.ResolveOptions;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.Delete;
 
@@ -59,7 +61,7 @@ public class XmlReportOutputterTest extends TestCase {
     
 	public void testWriteOrigin() throws Exception {
         ResolveReport report = _ivy.resolve(new File("test/repositories/1/org1/mod1.1/ivys/ivy-1.0.xml").toURL(),
-                null, new String[] {"default"}, _cache, null, true);
+        		getResolveOptions(new String[] {"default"}));
         assertNotNull(report);
 		
 		ByteArrayOutputStream buffer = new ByteArrayOutputStream();
@@ -73,5 +75,9 @@ public class XmlReportOutputterTest extends TestCase {
 
         assertTrue("XML doesn't contain artifact location attribute", xml.indexOf(expectedLocation) != -1);
         assertTrue("XML doesn't contain artifact is-local attribute", xml.indexOf(expectedIsLocal) != -1);
+	}
+    
+    private ResolveOptions getResolveOptions(String[] confs) {
+		return new ResolveOptions().setConfs(confs).setCache(CacheManager.getInstance(_ivy.getSettings(), _cache));
 	}
 }

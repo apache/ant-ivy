@@ -34,6 +34,7 @@ import org.apache.ivy.core.report.DownloadStatus;
 import org.apache.ivy.core.resolve.DownloadOptions;
 import org.apache.ivy.core.resolve.ResolveData;
 import org.apache.ivy.core.resolve.ResolveEngine;
+import org.apache.ivy.core.resolve.ResolveOptions;
 import org.apache.ivy.core.resolve.ResolvedModuleRevision;
 import org.apache.ivy.core.search.ModuleEntry;
 import org.apache.ivy.core.search.OrganisationEntry;
@@ -54,16 +55,14 @@ public class IvyRepResolverTest extends TestCase {
     private ResolveEngine _engine;
     private ResolveData _data;
     private File _cache;
-	private CacheManager _cacheManager;
     
     
     protected void setUp() throws Exception {
     	_settings = new IvySettings();
         _engine = new ResolveEngine(_settings, new EventManager(), new SortEngine(_settings));
         _cache = new File("build/cache");
-        _data = new ResolveData(_engine, _cache, null, null, true);
+        _data = new ResolveData(_engine, new ResolveOptions().setCache(CacheManager.getInstance(_settings, _cache)));
         _cache.mkdirs();
-        _cacheManager = new CacheManager(_settings, _cache);
         _settings.setDefaultCache(_cache);
     }
     

@@ -45,6 +45,7 @@ import org.apache.ivy.core.report.ArtifactDownloadReport;
 import org.apache.ivy.core.report.ResolveReport;
 import org.apache.ivy.core.resolve.IvyNode;
 import org.apache.ivy.core.resolve.ResolveEngine;
+import org.apache.ivy.core.resolve.ResolveOptions;
 import org.apache.ivy.core.resolve.ResolvedModuleRevision;
 import org.apache.ivy.core.retrieve.RetrieveEngine;
 import org.apache.ivy.core.search.ModuleEntry;
@@ -222,85 +223,24 @@ public class Ivy {
     //                         RESOLVE
     /////////////////////////////////////////////////////////////////////////
 
-
-    public ArtifactDownloadReport download(Artifact artifact, File cache, boolean useOrigin) {
-		return _resolveEngine.download(artifact, cache, useOrigin);
-	}
-
-	public void downloadArtifacts(ResolveReport report, CacheManager cacheManager, boolean useOrigin, Filter artifactFilter) {
-		_resolveEngine.downloadArtifacts(report, cacheManager, useOrigin, artifactFilter);
-	}
-
-	public ResolvedModuleRevision findModule(ModuleRevisionId id) {
-		return _resolveEngine.findModule(id);
-	}
-
-	public IvyNode[] getDependencies(ModuleDescriptor md, String[] confs, File cache, Date date, ResolveReport report, boolean validate, boolean transitive) {
-		return _resolveEngine.getDependencies(md, confs, cache, date, report, validate, transitive);
-	}
-
-	public IvyNode[] getDependencies(ModuleDescriptor md, String[] confs, File cache, Date date, ResolveReport report, boolean validate) {
-		return _resolveEngine.getDependencies(md, confs, cache, date, report, validate);
-	}
-
-	public IvyNode[] getDependencies(URL ivySource, String[] confs, File cache, Date date, boolean validate) throws ParseException, IOException {
-		return _resolveEngine.getDependencies(ivySource, confs, cache, date, validate);
-	}
-
-	public ResolveReport resolve(ModuleDescriptor md, String[] confs, File cache, Date date, boolean validate, boolean useCacheOnly, boolean transitive, boolean useOrigin, boolean download, boolean outputReport, Filter artifactFilter) throws ParseException, IOException, FileNotFoundException {
-		return _resolveEngine.resolve(md, confs, cache, date, validate, useCacheOnly, transitive, useOrigin, download, outputReport, artifactFilter);
-	}
-
-	public ResolveReport resolve(ModuleDescriptor md, String[] confs, File cache, Date date, boolean validate, boolean useCacheOnly, boolean transitive, boolean download, boolean outputReport, Filter artifactFilter) throws ParseException, IOException, FileNotFoundException {
-		return _resolveEngine.resolve(md, confs, cache, date, validate, useCacheOnly, transitive, download, outputReport, artifactFilter);
-	}
-
-	public ResolveReport resolve(ModuleDescriptor md, String[] confs, File cache, Date date, boolean validate, boolean useCacheOnly, boolean transitive, Filter artifactFilter) throws ParseException, IOException, FileNotFoundException {
-		return _resolveEngine.resolve(md, confs, cache, date, validate, useCacheOnly, transitive, artifactFilter);
-	}
-
-	public ResolveReport resolve(ModuleDescriptor md, String[] confs, File cache, Date date, boolean validate, boolean useCacheOnly, Filter artifactFilter) throws ParseException, IOException, FileNotFoundException {
-		return _resolveEngine.resolve(md, confs, cache, date, validate, useCacheOnly, artifactFilter);
-	}
-
-	public ResolveReport resolve(ModuleRevisionId mrid, String[] confs, boolean transitive, boolean changing, File cache, Date date, boolean validate, boolean useCacheOnly, boolean useOrigin, Filter artifactFilter) throws ParseException, IOException {
-		return _resolveEngine.resolve(mrid, confs, transitive, changing, cache, date, validate, useCacheOnly, useOrigin, artifactFilter);
-	}
-
-	public ResolveReport resolve(ModuleRevisionId mrid, String[] confs, boolean transitive, boolean changing, File cache, Date date, boolean validate, boolean useCacheOnly, Filter artifactFilter) throws ParseException, IOException {
-		return _resolveEngine.resolve(mrid, confs, transitive, changing, cache, date, validate, useCacheOnly, artifactFilter);
-	}
-
-	public ResolveReport resolve(ModuleRevisionId mrid, String[] confs) throws ParseException, IOException {
-		return _resolveEngine.resolve(mrid, confs);
-	}
-
-	public ResolveReport resolve(URL ivySource, String revision, String[] confs, File cache, Date date, boolean validate, boolean useCacheOnly, boolean transitive, boolean useOrigin, Filter artifactFilter) throws ParseException, IOException {
-		return _resolveEngine.resolve(ivySource, revision, confs, cache, date, validate, useCacheOnly, transitive, useOrigin, artifactFilter);
-	}
-
-	public ResolveReport resolve(URL ivySource, String revision, String[] confs, File cache, Date date, boolean validate, boolean useCacheOnly, boolean transitive, Filter artifactFilter) throws ParseException, IOException {
-		return _resolveEngine.resolve(ivySource, revision, confs, cache, date, validate, useCacheOnly, transitive, artifactFilter);
-	}
-
-	public ResolveReport resolve(URL ivySource, String revision, String[] confs, File cache, Date date, boolean validate, boolean useCacheOnly, Filter artifactFilter) throws ParseException, IOException {
-		return _resolveEngine.resolve(ivySource, revision, confs, cache, date, validate, useCacheOnly, artifactFilter);
-	}
-
-	public ResolveReport resolve(URL ivySource, String revision, String[] confs, File cache, Date date, boolean validate, boolean useCacheOnly) throws ParseException, IOException {
-		return _resolveEngine.resolve(ivySource, revision, confs, cache, date, validate, useCacheOnly);
-	}
-
-	public ResolveReport resolve(URL ivySource, String revision, String[] confs, File cache, Date date, boolean validate) throws ParseException, IOException {
-		return _resolveEngine.resolve(ivySource, revision, confs, cache, date, validate);
+	public ResolveReport resolve(File ivySource) throws ParseException, IOException {
+		return _resolveEngine.resolve(ivySource);
 	}
 
 	public ResolveReport resolve(URL ivySource) throws ParseException, IOException {
 		return _resolveEngine.resolve(ivySource);
 	}
 
-	public ResolveReport resolve(File ivySource) throws ParseException, IOException {
-		return _resolveEngine.resolve(ivySource);
+	public ResolveReport resolve(ModuleRevisionId mrid, ResolveOptions options, boolean changing) throws ParseException, IOException {
+		return _resolveEngine.resolve(mrid, options, changing);
+	}
+
+	public ResolveReport resolve(URL ivySource, ResolveOptions options) throws ParseException, IOException {
+		return _resolveEngine.resolve(ivySource, options);
+	}
+
+	public ResolveReport resolve(ModuleDescriptor md, ResolveOptions options) throws ParseException, IOException, FileNotFoundException {
+		return _resolveEngine.resolve(md, options);
 	}
 
     /////////////////////////////////////////////////////////////////////////
@@ -419,6 +359,10 @@ public class Ivy {
     /////////////////////////////////////////////////////////////////////////
     //                         SEARCH
     /////////////////////////////////////////////////////////////////////////
+    
+    public ResolvedModuleRevision findModule(ModuleRevisionId mrid) {
+    	return _resolveEngine.findModule(mrid);
+    }
     
 	public ModuleEntry[] listModuleEntries(OrganisationEntry org) {
 		return _searchEngine.listModuleEntries(org);

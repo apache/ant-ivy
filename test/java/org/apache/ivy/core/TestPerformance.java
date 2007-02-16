@@ -23,10 +23,12 @@ import java.util.Date;
 import java.util.Random;
 
 import org.apache.ivy.Ivy;
+import org.apache.ivy.core.cache.CacheManager;
 import org.apache.ivy.core.module.descriptor.DefaultDependencyDescriptor;
 import org.apache.ivy.core.module.descriptor.DefaultModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.report.ResolveReport;
+import org.apache.ivy.core.resolve.ResolveOptions;
 import org.apache.ivy.plugins.parser.xml.XmlModuleDescriptorWriter;
 import org.apache.ivy.plugins.resolver.FileSystemResolver;
 import org.apache.ivy.util.FileUtil;
@@ -130,12 +132,16 @@ public class TestPerformance {
         generateModules(70, 2, 5, 2, 15);
         
         long start = System.currentTimeMillis();
-        ResolveReport report = _ivy.resolve(new File("build/test/perf/mod0/ivy-1.0.xml").toURL(), "1.0", new String[] {"*"}, _cache, null, true);        
+        ResolveReport report = _ivy.resolve(new File("build/test/perf/mod0/ivy-1.0.xml").toURL(), getResolveOptions(new String[] {"*"}).setRevision("1.0"));        
         long end = System.currentTimeMillis();
         System.out.println("resolve "+report.getConfigurationReport("default").getNodesNumber()+" modules took "+(end - start)+" ms");
 
         cleanRepo();
     }
+    
+    private ResolveOptions getResolveOptions(String[] confs) {
+		return new ResolveOptions().setConfs(confs).setCache(CacheManager.getInstance(_ivy.getSettings(), _cache));
+	}
     
     public static void main(String[] args) throws Exception {
         TestPerformance t = new TestPerformance();

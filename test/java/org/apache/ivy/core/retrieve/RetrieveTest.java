@@ -24,8 +24,10 @@ import junit.framework.TestCase;
 
 import org.apache.ivy.Ivy;
 import org.apache.ivy.core.IvyPatternHelper;
+import org.apache.ivy.core.cache.CacheManager;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.report.ResolveReport;
+import org.apache.ivy.core.resolve.ResolveOptions;
 import org.apache.ivy.util.filter.FilterHelper;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.Delete;
@@ -66,7 +68,7 @@ public class RetrieveTest extends TestCase {
     public void testRetrieveSimple() throws Exception {
         // mod1.1 depends on mod1.2
         ResolveReport report = _ivy.resolve(new File("test/repositories/1/org1/mod1.1/ivys/ivy-1.0.xml").toURL(),
-                null, new String[] {"*"}, _cache, null, true);
+        		getResolveOptions(new String[] {"*"}));
         assertNotNull(report);
         ModuleDescriptor md = report.getModuleDescriptor();
         assertNotNull(md);
@@ -83,7 +85,7 @@ public class RetrieveTest extends TestCase {
     public void testRetrieveWithSymlinks() throws Exception {
         // mod1.1 depends on mod1.2
         ResolveReport report = _ivy.resolve(new File("test/repositories/1/org1/mod1.1/ivys/ivy-1.0.xml").toURL(),
-                null, new String[] {"*"}, _cache, null, true);
+        		getResolveOptions(new String[] {"*"}));
         assertNotNull(report);
         ModuleDescriptor md = report.getModuleDescriptor();
         assertNotNull(md);
@@ -121,7 +123,7 @@ public class RetrieveTest extends TestCase {
         // mod1.1 depends on mod1.2
         _ivy.setVariable("retrieve.dir", "retrieve");
         ResolveReport report = _ivy.resolve(new File("test/repositories/1/org1/mod1.1/ivys/ivy-1.0.xml").toURL(),
-                null, new String[] {"*"}, _cache, null, true);
+        		getResolveOptions(new String[] {"*"}));
         assertNotNull(report);
         ModuleDescriptor md = report.getModuleDescriptor();
         assertNotNull(md);
@@ -137,5 +139,9 @@ public class RetrieveTest extends TestCase {
         assertTrue(new File(IvyPatternHelper.substitute(pattern, "org1", "mod1.2", "2.0", "mod1.2", "jar", "jar", "default")).exists());
     }
 
+    
+    private ResolveOptions getResolveOptions(String[] confs) {
+		return new ResolveOptions().setConfs(confs).setCache(CacheManager.getInstance(_ivy.getSettings(), _cache));
+	}
 
 }

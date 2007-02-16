@@ -17,34 +17,31 @@
  */
 package org.apache.ivy.plugins.conflict;
 
-import java.util.Date;
-
 import junit.framework.TestCase;
 
 import org.apache.ivy.Ivy;
+import org.apache.ivy.core.cache.CacheManager;
+import org.apache.ivy.core.resolve.ResolveOptions;
 
 public class StrictConflictManagerTest extends TestCase {
+	private Ivy ivy;
+    protected void setUp() throws Exception {
+        ivy = new Ivy();
+        ivy.configure(StrictConflictManagerTest.class.getResource("ivyconf-strict-test.xml"));
+    }
 
     public void testInitFromConf() throws Exception {
-        Ivy ivy = new Ivy();
-        ivy.configure(StrictConflictManagerTest.class.getResource("ivyconf-strict-test.xml"));
         ConflictManager cm = ivy.getSettings().getDefaultConflictManager();
         assertTrue(cm instanceof StrictConflictManager);
     }
 
     public void testNoConflictResolve() throws Exception {
-        Ivy ivy = new Ivy();
-        ivy.configure(StrictConflictManagerTest.class.getResource("ivyconf-strict-test.xml"));
-
-        ivy.resolve(StrictConflictManagerTest.class.getResource("ivy-noconflict.xml"), null, new String[] { "*" }, null, new Date(), false);
+        ivy.resolve(StrictConflictManagerTest.class.getResource("ivy-noconflict.xml"), getResolveOptions());
     }
 
     public void testConflictResolve() throws Exception {
-        Ivy ivy = new Ivy();
-        ivy.configure(StrictConflictManagerTest.class.getResource("ivyconf-strict-test.xml"));
-
         try {
-            ivy.resolve(StrictConflictManagerTest.class.getResource("ivy-conflict.xml"), null, new String[] { "*" }, null, new Date(), false);
+            ivy.resolve(StrictConflictManagerTest.class.getResource("ivy-conflict.xml"), getResolveOptions());
 
             fail("Resolve should have failed with a conflict");
         } catch (StrictConflictException e) {
@@ -52,4 +49,8 @@ public class StrictConflictManagerTest extends TestCase {
         }
     }
 
+    
+    private ResolveOptions getResolveOptions() {
+		return new ResolveOptions().setCache(CacheManager.getInstance(ivy.getSettings())).setValidate(false);
+	}
 }

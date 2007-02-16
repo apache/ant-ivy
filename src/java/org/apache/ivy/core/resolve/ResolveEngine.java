@@ -66,7 +66,6 @@ import org.apache.ivy.plugins.resolver.DependencyResolver;
 import org.apache.ivy.util.HostUtil;
 import org.apache.ivy.util.Message;
 import org.apache.ivy.util.filter.Filter;
-import org.apache.ivy.util.filter.FilterHelper;
 
 public class ResolveEngine {
 	private IvySettings _settings;
@@ -96,49 +95,19 @@ public class ResolveEngine {
     	return resolve(ivySource.toURL());
     }
     public ResolveReport resolve(URL ivySource) throws ParseException, IOException {
-    	return resolve(ivySource, null, new String[] {"*"}, null, null, true);
+    	return resolve(ivySource, new ResolveOptions());
     }
-    /**
-     * 
-     * @param ivySource the url to the descriptor of the module for which dependencies should be resolved
-     * @param revision the revision of the module for which dependencies should be resolved.
-     * This revision is considered as the resolved revision of the module, unless it is null.
-     * If it is null, then a default revision is given if necessary (no revision found in ivy file)
-     * @param confs the configurations for which dependencies should be resolved
-     * @param cache the directory where to place resolved dependencies
-     * @param date the date for which the dependencies should be resolved. All obtained artifacts 
-     * should have a publication date which is before or equal to the given date
-     * @throws ParseException
-     * @throws IOException
-     * @throws NullPointerException if any parameter is null except cache or date
-     */
-    public ResolveReport resolve(URL ivySource, String revision, String[] confs, File cache, Date date, boolean validate) throws ParseException, IOException {
-        return resolve(ivySource, revision, confs, cache, date, validate, false);
-    }
-    public ResolveReport resolve(URL ivySource, String revision, String[] confs, File cache, Date date, boolean validate, boolean useCacheOnly) throws ParseException, IOException {
-        return resolve(ivySource, revision, confs, cache, date, validate, useCacheOnly, FilterHelper.NO_FILTER);
-    }
-
-    /**
-     * Resolves the module identified by the given mrid with its dependencies. 
-     */
-	public ResolveReport resolve(ModuleRevisionId mrid, String[] confs) throws ParseException, IOException {
-        return resolve(mrid, confs, true, false, null, null, true, false, FilterHelper.NO_FILTER);
-	}
-
-	public ResolveReport resolve(final ModuleRevisionId mrid, String[] confs, boolean transitive, boolean changing, File cache, Date date, boolean validate, boolean useCacheOnly, Filter artifactFilter) throws ParseException, IOException {
-		return resolve(mrid, confs, transitive, changing, cache, date, validate, useCacheOnly, false, artifactFilter);
-	}
 
     /**
      * Resolves the module identified by the given mrid with its dependencies if transitive is set to true. 
      */
-	public ResolveReport resolve(final ModuleRevisionId mrid, String[] confs, boolean transitive, boolean changing, File cache, Date date, boolean validate, boolean useCacheOnly, boolean useOrigin, Filter artifactFilter) throws ParseException, IOException {
+	public ResolveReport resolve(final ModuleRevisionId mrid, ResolveOptions options, boolean changing) throws ParseException, IOException {
 		DefaultModuleDescriptor md;
+		String[] confs = options.getConfs();
 		if (confs.length == 1 && confs[0].equals("*")) {
 			ResolvedModuleRevision rmr = findModule(mrid);
 			if (rmr == null) {
-				md = DefaultModuleDescriptor.newCallerInstance(mrid, confs, transitive, changing);
+				md = DefaultModuleDescriptor.newCallerInstance(mrid, confs, options.isTransitive(), changing);
 				return new ResolveReport(md){
 					public boolean hasError() {
 						return true;
@@ -149,31 +118,26 @@ public class ResolveEngine {
 				};
 			} else {
 				confs = rmr.getDescriptor().getConfigurationsNames();
-				md = DefaultModuleDescriptor.newCallerInstance(ModuleRevisionId.newInstance(mrid, rmr.getId().getRevision()), confs, transitive, changing);
+				md = DefaultModuleDescriptor.newCallerInstance(ModuleRevisionId.newInstance(mrid, rmr.getId().getRevision()), confs, options.isTransitive(), changing);
 			}
 		} else {
-			md = DefaultModuleDescriptor.newCallerInstance(mrid, confs, transitive, changing);
+			md = DefaultModuleDescriptor.newCallerInstance(mrid, confs, options.isTransitive(), changing);
 		}
 		
-		return resolve(md, new String[] {"*"}, cache, date, validate, useCacheOnly, true, useOrigin, true, true, artifactFilter);
+		return resolve(md, options);
 	}
 	
-    public ResolveReport resolve(URL ivySource, String revision, String[] confs, File cache, Date date, boolean validate, boolean useCacheOnly, Filter artifactFilter) throws ParseException, IOException {
-    	return resolve(ivySource, revision, confs, cache, date, validate, useCacheOnly, true, artifactFilter);
-    }
-    public ResolveReport resolve(URL ivySource, String revision, String[] confs, File cache, Date date, boolean validate, boolean useCacheOnly, boolean transitive, Filter artifactFilter) throws ParseException, IOException {
-    	return resolve(ivySource, revision, confs, cache, date, validate, useCacheOnly, transitive, false, artifactFilter);
-    }
     /**
      * Resolve dependencies of a module described by an ivy file.
      * 
      * Note: the method signature is way too long, we should use a class to store the settings of the resolve.
      */
-    public ResolveReport resolve(URL ivySource, String revision, String[] confs, File cache, Date date, boolean validate, boolean useCacheOnly, boolean transitive, boolean useOrigin, Filter artifactFilter) throws ParseException, IOException {
+    public ResolveReport resolve(URL ivySource, ResolveOptions options) throws ParseException, IOException {
         URLResource res = new URLResource(ivySource);
         ModuleDescriptorParser parser = ModuleDescriptorParserRegistry.getInstance().getParser(res);
         Message.verbose("using "+parser+" to parse "+ivySource);
-        ModuleDescriptor md = parser.parseDescriptor(_settings, ivySource, validate);
+        ModuleDescriptor md = parser.parseDescriptor(_settings, ivySource, options.isValidate());
+        String revision = options.getRevision();
         if (revision == null && md.getResolvedModuleRevisionId().getRevision() == null) {
             revision = "working@"+HostUtil.getLocalHostName();
         }
@@ -181,51 +145,45 @@ public class ResolveEngine {
             md.setResolvedModuleRevisionId(ModuleRevisionId.newInstance(md.getModuleRevisionId(), revision));
         }
 
-        return resolve(md, confs, cache, date, validate, useCacheOnly, transitive, useOrigin, true, true, artifactFilter);
+        return resolve(md, options);
     }
 
-	public ResolveReport resolve(ModuleDescriptor md, String[] confs, File cache, Date date, boolean validate, boolean useCacheOnly, Filter artifactFilter) throws ParseException, IOException, FileNotFoundException {
-		return resolve(md, confs, cache, date, validate, useCacheOnly, true, artifactFilter);
-	}
-	public ResolveReport resolve(ModuleDescriptor md, String[] confs, File cache, Date date, boolean validate, boolean useCacheOnly, boolean transitive, Filter artifactFilter) throws ParseException, IOException, FileNotFoundException {
-		return resolve(md, confs, cache, date, validate, useCacheOnly, transitive, true, true, artifactFilter);
-	}
-	public ResolveReport resolve(ModuleDescriptor md, String[] confs, File cache, Date date, boolean validate, boolean useCacheOnly, boolean transitive, boolean download, boolean outputReport, Filter artifactFilter) throws ParseException, IOException, FileNotFoundException {
-		return resolve(md, confs, cache, date, validate, useCacheOnly, transitive, false, download, outputReport, artifactFilter);
-	}
     /**
      * Resolve dependencies of a module described by a module descriptor
      * 
      * Note: the method signature is way too long, we should use a class to store the settings of the resolve.
      */
-	public ResolveReport resolve(ModuleDescriptor md, String[] confs, File cache, Date date, boolean validate, boolean useCacheOnly, boolean transitive, boolean useOrigin, boolean download, boolean outputReport, Filter artifactFilter) throws ParseException, IOException, FileNotFoundException {
+	public ResolveReport resolve(ModuleDescriptor md, ResolveOptions options) throws ParseException, IOException, FileNotFoundException {
         DependencyResolver oldDictator = getDictatorResolver();
-        if (useCacheOnly) {
+        if (options.isUseCacheOnly()) {
         	setDictatorResolver(new CacheResolver(_settings));
         }
         try {
-            if (cache==null) {  // ensure that a cache exists
-                cache = _settings.getDefaultCache();
-                IvyContext.getContext().setCache(cache);
+            CacheManager cacheManager = options.getCache();
+            if (cacheManager == null) {  // ensure that a cache is configured
+            	cacheManager = IvyContext.getContext().getCacheManager();
+            	options.setCache(cacheManager);
+            } else {
+            	IvyContext.getContext().setCache(cacheManager.getCache());
             }
-            CacheManager cacheManager = getCacheManager(cache);
-            if (artifactFilter == null) {
-            	artifactFilter = FilterHelper.NO_FILTER;
-            }
+            
+            String[] confs = options.getConfs();
             if (confs.length == 1 && confs[0].equals("*")) {
                 confs = md.getConfigurationsNames();
             }
+            options.setConfs(confs);
+            
             _eventManager.fireIvyEvent(new StartResolveEvent(md, confs));
             
             long start = System.currentTimeMillis();
-            Message.info(":: resolving dependencies :: "+md.getResolvedModuleRevisionId()+(transitive?"":" [not transitive]"));
+            Message.info(":: resolving dependencies :: "+md.getResolvedModuleRevisionId()+(options.isTransitive()?"":" [not transitive]"));
             Message.info("\tconfs: "+Arrays.asList(confs));
-            Message.verbose("\tvalidate = "+validate);
+            Message.verbose("\tvalidate = "+options.isValidate());
             ResolveReport report = new ResolveReport(md);
 
             // resolve dependencies
-            IvyNode[] dependencies = getDependencies(md, confs, cache, date, report, validate, transitive);
-            report.setDependencies(Arrays.asList(dependencies), artifactFilter);
+            IvyNode[] dependencies = getDependencies(md, options, report);
+            report.setDependencies(Arrays.asList(dependencies), options.getArtifactFilter());
 
             
             // produce resolved ivy file and ivy properties in cache
@@ -255,15 +213,15 @@ public class ResolveEngine {
             
             report.setResolveTime(System.currentTimeMillis()-start);
 
-            if (download) {
+            if (options.isDownload()) {
 	            Message.verbose(":: downloading artifacts ::");
 	
-	            downloadArtifacts(report, cacheManager, useOrigin, artifactFilter);
+	            downloadArtifacts(report, cacheManager, options.isUseOrigin(), options.getArtifactFilter());
             }
             
             
-            if (outputReport) {
-            	outputReport(report, cache);
+            if (options.isOutputReport()) {
+            	outputReport(report, cacheManager.getCache());
             }
             
             _eventManager.fireIvyEvent(new EndResolveEvent(md, confs, report));
@@ -271,12 +229,6 @@ public class ResolveEngine {
         } finally {
             setDictatorResolver(oldDictator);
         }
-	}
-
-	private CacheManager getCacheManager(File cache) {
-		//TODO : reuse instance
-		CacheManager cacheManager = new CacheManager(_settings, cache);
-		return cacheManager;
 	}
 
 	public void outputReport(ResolveReport report, File cache) {
@@ -327,10 +279,6 @@ public class ResolveEngine {
         report.setDownloadTime(System.currentTimeMillis() - start);
     }
 
-	private void checkInterrupted() {
-		IvyContext.getContext().getIvy().checkInterrupted();
-	}
-
     /**
      * Download an artifact to the cache.
      * Not used internally, useful especially for IDE plugins
@@ -343,15 +291,11 @@ public class ResolveEngine {
      * progress monitoring feature (see addTransferListener).
      * 
      * @param artifact the artifact to download
-     * @param cache the cache to use. If null, will use default cache
+     * @param cacheManager the cacheManager to use.
      * @return a report concerning the download
      */
-    public ArtifactDownloadReport download(Artifact artifact, File cache, boolean useOrigin) {
-        if (cache == null) {
-            cache = _settings.getDefaultCache();
-        }
+    public ArtifactDownloadReport download(Artifact artifact, CacheManager cacheManager, boolean useOrigin) {
         DependencyResolver resolver = _settings.getResolver(artifact.getModuleRevisionId().getModuleId());
-        CacheManager cacheManager = getCacheManager(cache);
         DownloadReport r = resolver.download(new Artifact[] {artifact}, new DownloadOptions(_settings, cacheManager, _eventManager, useOrigin));
         return r.getArtifactReport(artifact);
     }
@@ -369,8 +313,10 @@ public class ResolveEngine {
      * @throws ParseException if a parsing problem occured in the ivy file
      * @throws IOException if an IO problem was raised during ivy file parsing
      */
-    public IvyNode[] getDependencies(URL ivySource, String[] confs, File cache, Date date, boolean validate) throws ParseException, IOException {
-        return getDependencies(ModuleDescriptorParserRegistry.getInstance().parseDescriptor(_settings, ivySource, validate), confs, cache, date, null, validate);
+    public IvyNode[] getDependencies(URL ivySource, ResolveOptions options) throws ParseException, IOException {
+        return getDependencies(ModuleDescriptorParserRegistry.getInstance()
+        		.parseDescriptor(_settings, ivySource, options.isValidate()), 
+        		options, null);
     }
     
     /**
@@ -379,28 +325,30 @@ public class ResolveEngine {
      * appropriate configuration of the ivy instance, especially resolvers.
      * 
      * @param md the descriptor of the module for which we want to get dependencies - must not be null
-     * @param confs an array of configuration names to resolve - must not be null nor empty
-     * @param cache the cache to use - default cache is used if null
-     * @param date the date to which resolution must be done - may be null
+     * @param options the resolve options to use to resolve the dependencies
      * @param report a resolve report to fill during resolution - may be null
      * @return an array of the resolved Dependencies
      */
-    public IvyNode[] getDependencies(ModuleDescriptor md, String[] confs, File cache, Date date, ResolveReport report, boolean validate) {
-    	return getDependencies(md, confs, cache, date, report, validate, true);
-    }
-    public IvyNode[] getDependencies(ModuleDescriptor md, String[] confs, File cache, Date date, ResolveReport report, boolean validate, boolean transitive) {
+    public IvyNode[] getDependencies(ModuleDescriptor md, ResolveOptions options, ResolveReport report) {
         if (md == null) {
             throw new NullPointerException("module descriptor must not be null");
         }
-        if (cache==null) {  // ensure that a cache exists
-            cache = _settings.getDefaultCache();
+        CacheManager cacheManager = options.getCache();
+        if (cacheManager == null) {  // ensure that a cache is configured
+        	cacheManager = IvyContext.getContext().getCacheManager();
+        	options.setCache(cacheManager);
+        } else {
+        	IvyContext.getContext().setCache(cacheManager.getCache());
         }
+        
+        String[] confs = options.getConfs();
         if (confs.length == 1 && confs[0].equals("*")) {
             confs = md.getConfigurationsNames();
         }
+        options.setConfs(confs);
         
         Date reportDate = new Date();
-        ResolveData data = new ResolveData(this, cache, date, null, validate, transitive);
+        ResolveData data = new ResolveData(this, options);
         IvyNode rootNode = new IvyNode(data, md);
         
         for (int i = 0; i < confs.length; i++) {
@@ -415,7 +363,7 @@ public class ResolveEngine {
                 if (report != null) {
                     confReport = report.getConfigurationReport(confs[i]);
                     if (confReport == null) {
-                        confReport = new ConfigurationResolveReport(this, md, confs[i], reportDate, cache);
+                        confReport = new ConfigurationResolveReport(this, md, confs[i], reportDate, cacheManager.getCache());
                         report.addReport(confs[i], confReport);
                     }
                 }
@@ -782,9 +730,16 @@ public class ResolveEngine {
 		}
         DefaultModuleDescriptor md = DefaultModuleDescriptor.newCallerInstance(id, new String[] {"*"}, false, false);
 		try {
-			return r.getDependency(new DefaultDependencyDescriptor(id, true), new ResolveData(this, _settings.getDefaultCache(), null, new ConfigurationResolveReport(this, md, "default", null, _settings.getDefaultCache()), false));
+			return r.getDependency(
+					new DefaultDependencyDescriptor(id, true), 
+					new ResolveData(
+							this, 
+							new ResolveOptions()
+								.setValidate(false)
+								.setCache(CacheManager.getInstance(_settings)), 
+							new ConfigurationResolveReport(this, md, "default", null, _settings.getDefaultCache())));
 		} catch (ParseException e) {
-			throw new RuntimeException("problem whle parsing repository module descriptor for "+id+": "+e, e);
+			throw new RuntimeException("problem while parsing repository module descriptor for "+id+": "+e, e);
 		}
 	}
 
@@ -798,6 +753,10 @@ public class ResolveEngine {
 
 	public SortEngine getSortEngine() {
 		return _sortEngine;
+	}
+
+	private void checkInterrupted() {
+		IvyContext.getContext().getIvy().checkInterrupted();
 	}
 
     
