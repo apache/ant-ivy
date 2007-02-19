@@ -27,6 +27,7 @@ import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -46,9 +47,11 @@ import org.apache.ivy.core.module.descriptor.DefaultDependencyDescriptor;
 import org.apache.ivy.core.module.descriptor.DefaultModuleDescriptor;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
+import org.apache.ivy.core.publish.PublishOptions;
 import org.apache.ivy.core.report.ResolveReport;
 import org.apache.ivy.core.resolve.ResolveOptions;
 import org.apache.ivy.core.retrieve.RetrieveOptions;
+import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.plugins.parser.xml.XmlModuleDescriptorWriter;
 import org.apache.ivy.plugins.report.XmlReportParser;
 import org.apache.ivy.util.DefaultMessageImpl;
@@ -210,9 +213,10 @@ public class Main {
             boolean validate = line.hasOption("novalidate")?false:true;
             
             Ivy ivy = Ivy.newInstance();
-            ivy.getSettings().addAllVariables(System.getProperties());
+            IvySettings settings = ivy.getSettings();
+			settings.addAllVariables(System.getProperties());
             if (line.hasOption("m2compatible")) {
-                ivy.getSettings().setVariable("ivy.default.configuration.m2compatible", "true");
+                settings.setVariable("ivy.default.configuration.m2compatible", "true");
             }
 
             configureURLHandler(
@@ -234,13 +238,13 @@ public class Main {
                 ivy.configure(conffile);
             }
             
-            File cache = new File(ivy.getSettings().substitute(line.getOptionValue("cache", ivy.getSettings().getDefaultCache().getAbsolutePath())));
+            File cache = new File(settings.substitute(line.getOptionValue("cache", settings.getDefaultCache().getAbsolutePath())));
             if (!cache.exists()) {
                 cache.mkdirs();
             } else if (!cache.isDirectory()) {
                 error(options, cache+" is not a directory");
             }
-            CacheManager cacheManager = CacheManager.getInstance(ivy.getSettings(), cache);
+            CacheManager cacheManager = CacheManager.getInstance(settings, cache);
             
             String[] confs;
             if (line.hasOption("confs")) {
@@ -266,7 +270,7 @@ public class Main {
                 XmlModuleDescriptorWriter.write(md, ivyfile);
                 confs = new String[] {"default"};
             } else {
-                ivyfile = new File(ivy.getSettings().substitute(line.getOptionValue("ivy", "ivy.xml")));
+                ivyfile = new File(settings.substitute(line.getOptionValue("ivy", "ivy.xml")));
                 if (!ivyfile.exists()) {
                     error(options, "ivy file not found: "+ivyfile);
                 } else if (ivyfile.isDirectory()) {
@@ -292,7 +296,7 @@ public class Main {
                 confs = md.getConfigurationsNames();
             }
             if (line.hasOption("retrieve")) {
-                String retrievePattern = ivy.getSettings().substitute(line.getOptionValue("retrieve"));
+                String retrievePattern = settings.substitute(line.getOptionValue("retrieve"));
                 if (retrievePattern.indexOf("[") == -1) {
                     retrievePattern = retrievePattern + "/lib/[conf]/[artifact].[ext]";
                 }
@@ -312,23 +316,23 @@ public class Main {
             if (line.hasOption("revision")) {
 				ivy.deliver(
                     md.getResolvedModuleRevisionId(),
-                    ivy.getSettings().substitute(line.getOptionValue("revision")),
-                    ivy.getSettings().substitute(line.getOptionValue("deliverto", "ivy-[revision].xml")),
-                    DeliverOptions.newInstance(ivy.getSettings())
-                    	.setStatus(ivy.getSettings().substitute(line.getOptionValue("status", "release")))
+                    settings.substitute(line.getOptionValue("revision")),
+                    settings.substitute(line.getOptionValue("deliverto", "ivy-[revision].xml")),
+                    DeliverOptions.newInstance(settings)
+                    	.setStatus(settings.substitute(line.getOptionValue("status", "release")))
                     	.setValidate(validate)
                     	.setCache(cacheManager)
                     );
                 if (line.hasOption("publish")) {
                     ivy.publish(
                             md.getResolvedModuleRevisionId(), 
-                            ivy.getSettings().substitute(line.getOptionValue("revision")), 
-                            cache, 
-                            ivy.getSettings().substitute(line.getOptionValue("publishpattern", "distrib/[type]s/[artifact]-[revision].[ext]")), 
+                            Collections.singleton(settings.substitute(line.getOptionValue("publishpattern", "distrib/[type]s/[artifact]-[revision].[ext]"))), 
                             line.getOptionValue("publish"), 
-                            ivy.getSettings().substitute(line.getOptionValue("deliverto", "ivy-[revision].xml")), 
-                            validate);
-                    
+                            new PublishOptions()
+                            	.setCache(cacheManager)
+                            	.setPubrevision(settings.substitute(line.getOptionValue("revision")))
+                            	.setValidate(validate)
+                            	.setSrcIvyPattern(settings.substitute(line.getOptionValue("deliverto", "ivy-[revision].xml"))));
                 }
             }
             if (line.hasOption("main")) {

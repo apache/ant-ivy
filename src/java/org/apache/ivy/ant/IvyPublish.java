@@ -29,9 +29,11 @@ import java.util.Map;
 
 import org.apache.ivy.Ivy;
 import org.apache.ivy.core.IvyPatternHelper;
+import org.apache.ivy.core.cache.CacheManager;
 import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.id.ArtifactRevisionId;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
+import org.apache.ivy.core.publish.PublishOptions;
 import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.util.Message;
 import org.apache.tools.ant.BuildException;
@@ -244,17 +246,19 @@ public class IvyPublish extends IvyTask {
             
             Collection missing = ivy.publish(
             		mrid, 
-            		_pubRevision, 
-            		_cache, 
             		_artifactspattern, 
-            		_publishResolverName, 
-            		_publishivy?_srcivypattern:null, 
-            		getStatus(), 
-            		pubdate, 
-            		(Artifact[]) _artifacts.toArray(new Artifact[_artifacts.size()]), doValidate(settings), 
-            		_overwrite, 
-            		_update,
-            		_conf);
+            		_publishResolverName,
+            		new PublishOptions()
+            			.setPubrevision(getPubrevision())
+            			.setCache(CacheManager.getInstance(settings, _cache))
+            			.setSrcIvyPattern(_publishivy?_srcivypattern:null)
+            			.setStatus(getStatus())
+            			.setPubdate(pubdate)
+            			.setExtraArtifacts((Artifact[]) _artifacts.toArray(new Artifact[_artifacts.size()]))
+            			.setValidate(doValidate(settings))
+            			.setOverwrite(_overwrite)
+            			.setUpdate(_update)
+            			.setConfs(splitConfs(_conf)));
             if (_warnonmissing) {
                 for (Iterator iter = missing.iterator(); iter.hasNext();) {
                     Artifact artifact = (Artifact)iter.next();

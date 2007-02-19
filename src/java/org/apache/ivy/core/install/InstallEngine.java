@@ -33,6 +33,7 @@ import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleId;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.publish.PublishEngine;
+import org.apache.ivy.core.publish.PublishOptions;
 import org.apache.ivy.core.report.ResolveReport;
 import org.apache.ivy.core.resolve.IvyNode;
 import org.apache.ivy.core.resolve.ResolveEngine;
@@ -130,13 +131,13 @@ public class InstallEngine {
                 ModuleDescriptor depmd = dependencies[i].getDescriptor();
                 if (depmd != null) {
                     Message.verbose("installing "+depmd.getModuleRevisionId());
-                    _publishEngine.publish(depmd, 
+                    _publishEngine.publish(
+                    		depmd, 
+                            Collections.singleton(cache.getAbsolutePath()+"/"+_settings.getCacheArtifactPattern()),
                             toResolver, 
-                            Collections.singleton(cache.getAbsolutePath()+"/"+_settings.getCacheArtifactPattern()), 
-                            cache.getAbsolutePath()+"/"+_settings.getCacheIvyPattern(), 
-                            null,
-                            overwrite,
-                            null);
+                            new PublishOptions()
+	                    		.setSrcIvyPattern(cache.getAbsolutePath()+"/"+_settings.getCacheIvyPattern())
+	                    		.setOverwrite(overwrite));
                 }
             }
 

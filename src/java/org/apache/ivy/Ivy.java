@@ -24,7 +24,6 @@ import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -36,11 +35,11 @@ import org.apache.ivy.core.deliver.DeliverEngine;
 import org.apache.ivy.core.deliver.DeliverOptions;
 import org.apache.ivy.core.event.EventManager;
 import org.apache.ivy.core.install.InstallEngine;
-import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleId;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.publish.PublishEngine;
+import org.apache.ivy.core.publish.PublishOptions;
 import org.apache.ivy.core.report.ResolveReport;
 import org.apache.ivy.core.resolve.ResolveEngine;
 import org.apache.ivy.core.resolve.ResolveOptions;
@@ -56,7 +55,6 @@ import org.apache.ivy.core.sort.SortEngine;
 import org.apache.ivy.plugins.matcher.PatternMatcher;
 import org.apache.ivy.plugins.repository.TransferEvent;
 import org.apache.ivy.plugins.repository.TransferListener;
-import org.apache.ivy.plugins.resolver.DependencyResolver;
 import org.apache.ivy.plugins.trigger.Trigger;
 import org.apache.ivy.util.HostUtil;
 import org.apache.ivy.util.Message;
@@ -287,26 +285,9 @@ public class Ivy {
     /////////////////////////////////////////////////////////////////////////
     //                         PUBLISH
     /////////////////////////////////////////////////////////////////////////
-    
 
-    public Collection publish(ModuleDescriptor md, DependencyResolver resolver, Collection srcArtifactPattern, String srcIvyPattern, Artifact[] extraArtifacts, boolean overwrite, String conf) throws IOException {
-		return _publishEngine.publish(md, resolver, srcArtifactPattern, srcIvyPattern, extraArtifacts, overwrite, conf);
-	}
-
-	public Collection publish(ModuleRevisionId mrid, String pubrevision, File cache, Collection srcArtifactPattern, String resolverName, String srcIvyPattern, String status, Date pubdate, Artifact[] extraArtifacts, boolean validate, boolean overwrite, boolean update, String conf) throws IOException {
-		return _publishEngine.publish(mrid, pubrevision, cache, srcArtifactPattern, resolverName, srcIvyPattern, status, pubdate, extraArtifacts, validate, overwrite, update, conf);
-	}
-
-	public Collection publish(ModuleRevisionId mrid, String pubrevision, File cache, String srcArtifactPattern, String resolverName, String srcIvyPattern, boolean validate, boolean overwrite) throws IOException {
-		return _publishEngine.publish(mrid, pubrevision, cache, srcArtifactPattern, resolverName, srcIvyPattern, validate, overwrite);
-	}
-
-	public Collection publish(ModuleRevisionId mrid, String pubrevision, File cache, String srcArtifactPattern, String resolverName, String srcIvyPattern, boolean validate) throws IOException {
-		return _publishEngine.publish(mrid, pubrevision, cache, srcArtifactPattern, resolverName, srcIvyPattern, validate);
-	}
-
-	public Collection publish(ModuleRevisionId mrid, String pubrevision, File cache, String srcArtifactPattern, String resolverName, String srcIvyPattern, String status, Date pubdate, Artifact[] extraArtifacts, boolean validate, boolean overwrite, boolean update, String conf) throws IOException {
-		return _publishEngine.publish(mrid, pubrevision, cache, srcArtifactPattern, resolverName, srcIvyPattern, status, pubdate, extraArtifacts, validate, overwrite, update, conf);
+	public Collection publish(ModuleRevisionId mrid, Collection srcArtifactPattern, String resolverName, PublishOptions options) throws IOException {
+		return _publishEngine.publish(mrid, srcArtifactPattern, resolverName, options);
 	}
 
     /////////////////////////////////////////////////////////////////////////

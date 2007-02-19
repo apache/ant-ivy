@@ -227,6 +227,9 @@ public class IvyTask extends Task {
     }
 
     protected String[] splitConfs(String conf) {
+    	if (conf == null) {
+    		return null;
+    	}
         String[] confs = conf.split(",");
         for (int i = 0; i < confs.length; i++) {
             confs[i] = confs[i].trim();

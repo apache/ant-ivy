@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.text.ParseException;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -34,6 +35,7 @@ import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleId;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
+import org.apache.ivy.core.publish.PublishOptions;
 import org.apache.ivy.core.report.ArtifactDownloadReport;
 import org.apache.ivy.core.report.ResolveReport;
 import org.apache.ivy.core.resolve.IvyNode;
@@ -204,23 +206,65 @@ public class Ivy14 {
 	}
 
 	public Collection publish(ModuleDescriptor md, DependencyResolver resolver, Collection srcArtifactPattern, String srcIvyPattern, Artifact[] extraArtifacts, boolean overwrite, String conf) throws IOException {
-		return _ivy.publish(md, resolver, srcArtifactPattern, srcIvyPattern, extraArtifacts, overwrite, conf);
+		return _ivy.getPublishEngine().publish(md, srcArtifactPattern, resolver, 
+				new PublishOptions()
+					.setSrcIvyPattern(srcIvyPattern)
+					.setExtraArtifacts(extraArtifacts)
+					.setOverwrite(overwrite)
+					.setConfs(splitConfs(conf)));
 	}
 
 	public Collection publish(ModuleRevisionId mrid, String pubrevision, File cache, Collection srcArtifactPattern, String resolverName, String srcIvyPattern, String status, Date pubdate, Artifact[] extraArtifacts, boolean validate, boolean overwrite, boolean update, String conf) throws IOException {
-		return _ivy.publish(mrid, pubrevision, cache, srcArtifactPattern, resolverName, srcIvyPattern, status, pubdate, extraArtifacts, validate, overwrite, update, conf);
+		return _ivy.publish(mrid, srcArtifactPattern, resolverName, 
+				new PublishOptions()
+					.setCache(_ivy.getCacheManager(cache == null?_ivy.getSettings().getDefaultCache():cache))
+					.setStatus(status)
+					.setPubdate(pubdate)
+					.setPubrevision(pubrevision)
+					.setSrcIvyPattern(srcIvyPattern)
+					.setExtraArtifacts(extraArtifacts)
+					.setUpdate(update)
+					.setValidate(validate)
+					.setOverwrite(overwrite)
+					.setConfs(splitConfs(conf))
+				);
 	}
 
 	public Collection publish(ModuleRevisionId mrid, String pubrevision, File cache, String srcArtifactPattern, String resolverName, String srcIvyPattern, boolean validate, boolean overwrite) throws IOException {
-		return _ivy.publish(mrid, pubrevision, cache, srcArtifactPattern, resolverName, srcIvyPattern, validate, overwrite);
+		return _ivy.publish(mrid, Collections.singleton(srcArtifactPattern), resolverName, 
+				new PublishOptions()
+					.setCache(_ivy.getCacheManager(cache == null?_ivy.getSettings().getDefaultCache():cache))
+					.setPubrevision(pubrevision)
+					.setSrcIvyPattern(srcIvyPattern)
+					.setValidate(validate)
+					.setOverwrite(overwrite)
+				);
 	}
 
 	public Collection publish(ModuleRevisionId mrid, String pubrevision, File cache, String srcArtifactPattern, String resolverName, String srcIvyPattern, boolean validate) throws IOException {
-		return _ivy.publish(mrid, pubrevision, cache, srcArtifactPattern, resolverName, srcIvyPattern, validate);
+		return _ivy.publish(mrid, Collections.singleton(srcArtifactPattern), resolverName, 
+				new PublishOptions()
+					.setCache(_ivy.getCacheManager(cache == null?_ivy.getSettings().getDefaultCache():cache))
+					.setPubrevision(pubrevision)
+					.setSrcIvyPattern(srcIvyPattern)
+					.setValidate(validate)
+				);
 	}
 
 	public Collection publish(ModuleRevisionId mrid, String pubrevision, File cache, String srcArtifactPattern, String resolverName, String srcIvyPattern, String status, Date pubdate, Artifact[] extraArtifacts, boolean validate, boolean overwrite, boolean update, String conf) throws IOException {
-		return _ivy.publish(mrid, pubrevision, cache, srcArtifactPattern, resolverName, srcIvyPattern, status, pubdate, extraArtifacts, validate, overwrite, update, conf);
+		return _ivy.publish(mrid, Collections.singleton(srcArtifactPattern), resolverName, 
+				new PublishOptions()
+					.setCache(_ivy.getCacheManager(cache == null?_ivy.getSettings().getDefaultCache():cache))
+					.setStatus(status)
+					.setPubdate(pubdate)
+					.setPubrevision(pubrevision)
+					.setSrcIvyPattern(srcIvyPattern)
+					.setExtraArtifacts(extraArtifacts)
+					.setUpdate(update)
+					.setValidate(validate)
+					.setOverwrite(overwrite)
+					.setConfs(splitConfs(conf))
+				);
 	}
 
 	public ResolveReport resolve(File ivySource) throws ParseException, IOException {
@@ -387,5 +431,16 @@ public class Ivy14 {
 		return _ivy.substitute(str);
 	}
     
+
+	private String[] splitConfs(String conf) {
+		if (conf == null || "".equals(conf)) {
+			return null;
+		}
+        String[] confs = conf.split(",");
+        for (int i = 0; i < confs.length; i++) {
+            confs[i] = confs[i].trim();
+        }
+        return confs;
+	}
 	
 }
