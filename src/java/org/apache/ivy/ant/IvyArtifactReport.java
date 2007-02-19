@@ -39,9 +39,10 @@ import org.apache.ivy.core.cache.ArtifactOrigin;
 import org.apache.ivy.core.cache.CacheManager;
 import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
-import org.apache.ivy.core.module.id.ModuleId;
+import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.resolve.IvyNode;
 import org.apache.ivy.core.resolve.ResolveOptions;
+import org.apache.ivy.core.retrieve.RetrieveOptions;
 import org.apache.ivy.core.settings.IvySettings;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
@@ -100,8 +101,9 @@ public class IvyArtifactReport extends IvyTask {
 
         ensureResolved(isHaltonfailure(), false, null, null);
 
-        String _organisation = getProperty(null, settings, "ivy.organisation");
-        String _module = getProperty(null, settings, "ivy.module");
+        String organisation = getProperty(null, settings, "ivy.organisation");
+        String module = getProperty(null, settings, "ivy.module");
+        String revision = getProperty(Ivy.getWorkingRevision(), settings, "ivy.revision");
 
         if (_cache == null) {
             _cache = settings.getDefaultCache();
@@ -115,10 +117,10 @@ public class IvyArtifactReport extends IvyTask {
             }
         }
 
-        if (_organisation == null) {
+        if (organisation == null) {
             throw new BuildException("no organisation provided for ivy artifact report task: It can be set via a prior call to <resolve/>");
         }
-        if (_module == null) {
+        if (module == null) {
             throw new BuildException("no module name provided for ivy artifact report task: It can be set via a prior call to <resolve/>");
         }
         if (_conf == null) {
@@ -126,15 +128,22 @@ public class IvyArtifactReport extends IvyTask {
         }
         try {
             String[] confs = splitConfs(_conf);
-            IvyNode[] dependencies = ivy.getResolveEngine()
+            CacheManager cacheManager = CacheManager.getInstance(settings, _cache);
+			IvyNode[] dependencies = ivy.getResolveEngine()
             	.getDependencies((ModuleDescriptor) getProject().getReference("ivy.resolved.descriptor"), 
             			new ResolveOptions()
             				.setConfs(confs)
-            				.setCache(CacheManager.getInstance(settings, _cache))
+            				.setCache(cacheManager)
             				.setValidate(doValidate(settings)),
             			null);
 
-            Map artifactsToCopy = ivy.determineArtifactsToCopy(new ModuleId(_organisation, _module), confs, _cache, _pattern, null);
+            Map artifactsToCopy = ivy.getRetrieveEngine().determineArtifactsToCopy(
+            		ModuleRevisionId.newInstance(organisation, module, revision), 
+            		_pattern, 
+            		new RetrieveOptions()
+            			.setConfs(confs)
+            			.setCache(cacheManager));
+            
             Map moduleRevToArtifactsMap = new HashMap();
             for (Iterator iter = artifactsToCopy.keySet().iterator(); iter.hasNext();) {
                 Artifact artifact = (Artifact) iter.next();

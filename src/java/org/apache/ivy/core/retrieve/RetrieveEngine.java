@@ -19,6 +19,7 @@ package org.apache.ivy.core.retrieve;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -37,14 +38,16 @@ import org.apache.ivy.core.IvyPatternHelper;
 import org.apache.ivy.core.cache.CacheManager;
 import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.DefaultArtifact;
+import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleId;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.settings.IvySettings;
+import org.apache.ivy.plugins.parser.ModuleDescriptorParser;
+import org.apache.ivy.plugins.parser.ModuleDescriptorParserRegistry;
 import org.apache.ivy.plugins.report.XmlReportParser;
+import org.apache.ivy.plugins.repository.url.URLResource;
 import org.apache.ivy.util.FileUtil;
 import org.apache.ivy.util.Message;
-import org.apache.ivy.util.filter.Filter;
-import org.apache.ivy.util.filter.FilterHelper;
 
 public class RetrieveEngine {
 	private IvySettings _settings;
@@ -61,37 +64,22 @@ public class RetrieveEngine {
      * an ivy report file, used as input for the copy
      * If such a file does not exist for any conf (resolve has not been called before ?)
      * then an IllegalStateException is thrown and nothing is copied.
+     * 
      */
-    public int retrieve(ModuleId moduleId, String[] confs, final File cache, String destFilePattern) {
-        return retrieve(moduleId, confs, cache, destFilePattern, null);
-    }
-    /**
-     * If destIvyPattern is null no ivy files will be copied.
-     */
-    public int retrieve(ModuleId moduleId, String[] confs, final File cache, String destFilePattern, String destIvyPattern) {
-    	return retrieve(moduleId, confs, cache, destFilePattern, destIvyPattern, FilterHelper.NO_FILTER);
-    }
-    
-    public int retrieve(ModuleId moduleId, String[] confs, final File cache, String destFilePattern, String destIvyPattern, Filter artifactFilter) {
-    	return retrieve(moduleId, confs, cache, destFilePattern, destIvyPattern, artifactFilter, false, false);
-    }
-    public int retrieve(ModuleId moduleId, String[] confs, final File cache, String destFilePattern, String destIvyPattern, Filter artifactFilter, boolean sync, boolean useOrigin) {
-    	return retrieve(moduleId, confs, cache, destFilePattern, destIvyPattern, artifactFilter, sync, useOrigin, false);
-    }
-    public int retrieve(ModuleId moduleId, String[] confs, final File cache, String destFilePattern, String destIvyPattern, Filter artifactFilter, boolean sync, boolean useOrigin, boolean makeSymlinks) {
-    	if (artifactFilter == null) {
-    		artifactFilter = FilterHelper.NO_FILTER;
-    	}
-    	
-        Message.info(":: retrieving :: "+moduleId+(sync?" [sync]":""));
-        Message.info("\tconfs: "+Arrays.asList(confs));
+    public int retrieve(ModuleRevisionId mrid, String destFilePattern, RetrieveOptions options) throws IOException {
+    	ModuleId moduleId = mrid.getModuleId();
+        Message.info(":: retrieving :: "+moduleId+(options.isSync()?" [sync]":""));
         long start = System.currentTimeMillis();
         
         destFilePattern = IvyPatternHelper.substituteVariables(destFilePattern, _settings.getVariables());
-        destIvyPattern = IvyPatternHelper.substituteVariables(destIvyPattern, _settings.getVariables());
-        CacheManager cacheManager = getCacheManager(cache);
+        String destIvyPattern = IvyPatternHelper.substituteVariables(options.getDestIvyPattern(), _settings.getVariables());
+        
+        CacheManager cacheManager = getCacheManager(options);
+        String[] confs = getConfs(mrid, options);
+        Message.info("\tconfs: "+Arrays.asList(confs));
+
         try {
-            Map artifactsToCopy = determineArtifactsToCopy(moduleId, confs, cache, destFilePattern, destIvyPattern, artifactFilter);
+            Map artifactsToCopy = determineArtifactsToCopy(mrid, destFilePattern, options);
             File fileRetrieveRoot = new File(IvyPatternHelper.getTokenRoot(destFilePattern));
             File ivyRetrieveRoot = destIvyPattern == null ? null : new File(IvyPatternHelper.getTokenRoot(destIvyPattern));
             Collection targetArtifactsStructure = new HashSet(); // Set(File) set of all paths which should be present at then end of retrieve (useful for sync) 
@@ -106,8 +94,9 @@ public class RetrieveEngine {
 				if ("ivy".equals(artifact.getType())) {
 					archive = cacheManager.getIvyFileInCache(artifact.getModuleRevisionId());
 				} else {
-					archive = cacheManager.getArchiveFileInCache(artifact, cacheManager.getSavedArtifactOrigin(artifact), useOrigin);
-					if (!useOrigin && !archive.exists()) {
+					archive = cacheManager.getArchiveFileInCache(artifact, 
+							cacheManager.getSavedArtifactOrigin(artifact), options.isUseOrigin());
+					if (!options.isUseOrigin() && !archive.exists()) {
 						// file is not available in cache, maybe the last resolve was performed with useOrigin=true.
 						// we try to use the best we can
 						archive = cacheManager.getArchiveFileInCache(artifact, cacheManager.getSavedArtifactOrigin(artifact));
@@ -120,7 +109,7 @@ public class RetrieveEngine {
                     File destFile = new File((String)it2.next());
                     if (!_settings.isCheckUpToDate() || !upToDate(archive, destFile)) {
                         Message.verbose("\t\tto "+destFile);
-                        if (makeSymlinks) {
+                        if (options.isMakeSymlinks()) {
                             FileUtil.symlink(archive, destFile, null, false);
                         } else {
                             FileUtil.copy(archive, destFile, null);
@@ -138,7 +127,7 @@ public class RetrieveEngine {
                 }
             }
             
-            if (sync) {
+            if (options.isSync()) {
 				Message.verbose("\tsyncing...");
                 Collection existingArtifacts = FileUtil.listAll(fileRetrieveRoot);
                 Collection existingIvys = ivyRetrieveRoot == null ? null : FileUtil.listAll(ivyRetrieveRoot);
@@ -165,9 +154,39 @@ public class RetrieveEngine {
         }
     }
 
-    public CacheManager getCacheManager(File cache) {
-    	// TODO reuse instance
-		return new CacheManager(_settings, cache);
+	private String[] getConfs(ModuleRevisionId mrid, RetrieveOptions options) throws IOException {
+		String[] confs = options.getConfs();
+        if (confs == null || (confs.length == 1 && "*".equals(confs[0]))) {
+        	try {
+        		File ivyFile = options.getCache().getResolvedIvyFileInCache(mrid);
+        		Message.verbose("no explicit confs given for retrieve, using ivy file: "+ivyFile);
+        		URL ivySource = ivyFile.toURL();
+        		URLResource res = new URLResource(ivySource);
+        		ModuleDescriptorParser parser = ModuleDescriptorParserRegistry.getInstance().getParser(res);
+        		Message.debug("using "+parser+" to parse "+ivyFile);
+        		ModuleDescriptor md = parser.parseDescriptor(_settings, ivySource, false);
+        		confs = md.getConfigurationsNames();
+        		options.setConfs(confs);
+        	} catch (IOException e) {
+        		throw e;
+        	} catch (Exception e) {
+        		IOException ioex = new IOException(e.getMessage());
+        		ioex.initCause(e);
+				throw ioex;
+        	}        
+        }
+		return confs;
+	}
+
+	private CacheManager getCacheManager(RetrieveOptions options) {
+		CacheManager cacheManager = options.getCache();
+        if (cacheManager == null) {  // ensure that a cache is configured
+        	cacheManager = IvyContext.getContext().getCacheManager();
+        	options.setCache(cacheManager);
+        } else {
+        	IvyContext.getContext().setCache(cacheManager.getCache());
+        }
+		return cacheManager;
 	}
 
 	private void sync(Collection target, Collection existing) {
@@ -189,14 +208,12 @@ public class RetrieveEngine {
 		}
 	}
 
-	public Map determineArtifactsToCopy(ModuleId moduleId, String[] confs, final File cache, String destFilePattern, String destIvyPattern) throws ParseException, IOException {
-    	return determineArtifactsToCopy(moduleId, confs, cache, destFilePattern, destIvyPattern, FilterHelper.NO_FILTER);
-    }
-    
-    public Map determineArtifactsToCopy(ModuleId moduleId, String[] confs, final File cache, String destFilePattern, String destIvyPattern, Filter artifactFilter) throws ParseException, IOException {
-        if (artifactFilter == null) {
-        	artifactFilter = FilterHelper.NO_FILTER;
-        }
+	public Map determineArtifactsToCopy(ModuleRevisionId mrid, String destFilePattern, RetrieveOptions options) throws ParseException, IOException {
+		ModuleId moduleId = mrid.getModuleId();
+		
+        CacheManager cacheManager = getCacheManager(options);
+        String[] confs = getConfs(mrid, options);
+        String destIvyPattern = IvyPatternHelper.substituteVariables(options.getDestIvyPattern(), _settings.getVariables());
         
         // find what we must retrieve where
         final Map artifactsToCopy = new HashMap(); // Artifact source -> Set (String copyDestAbsolutePath)
@@ -205,9 +222,9 @@ public class RetrieveEngine {
         XmlReportParser parser = new XmlReportParser();
         for (int i = 0; i < confs.length; i++) {
             final String conf = confs[i];
-            Collection artifacts = new ArrayList(Arrays.asList(parser.getArtifacts(moduleId, conf, cache)));
+            Collection artifacts = new ArrayList(Arrays.asList(parser.getArtifacts(moduleId, conf, cacheManager.getCache())));
             if (destIvyPattern != null) {
-                ModuleRevisionId[] mrids = parser.getRealDependencyRevisionIds(moduleId, conf, cache);
+                ModuleRevisionId[] mrids = parser.getRealDependencyRevisionIds(moduleId, conf, cacheManager.getCache());
                 for (int j = 0; j < mrids.length; j++) {
                     artifacts.add(DefaultArtifact.newIvyArtifact(mrids[j], null));
                 }
@@ -216,7 +233,7 @@ public class RetrieveEngine {
                 Artifact artifact = (Artifact)iter.next();
                 String destPattern = "ivy".equals(artifact.getType()) ? destIvyPattern: destFilePattern;
                 
-                if (!"ivy".equals(artifact.getType()) && !artifactFilter.accept(artifact)) {
+                if (!"ivy".equals(artifact.getType()) && !options.getArtifactFilter().accept(artifact)) {
                 	continue;	// skip this artifact, the filter didn't accept it!
                 }
                 

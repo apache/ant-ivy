@@ -41,13 +41,12 @@ import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleId;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.publish.PublishEngine;
-import org.apache.ivy.core.report.ArtifactDownloadReport;
 import org.apache.ivy.core.report.ResolveReport;
-import org.apache.ivy.core.resolve.IvyNode;
 import org.apache.ivy.core.resolve.ResolveEngine;
 import org.apache.ivy.core.resolve.ResolveOptions;
 import org.apache.ivy.core.resolve.ResolvedModuleRevision;
 import org.apache.ivy.core.retrieve.RetrieveEngine;
+import org.apache.ivy.core.retrieve.RetrieveOptions;
 import org.apache.ivy.core.search.ModuleEntry;
 import org.apache.ivy.core.search.OrganisationEntry;
 import org.apache.ivy.core.search.RevisionEntry;
@@ -256,33 +255,10 @@ public class Ivy {
     //                         RETRIEVE
     /////////////////////////////////////////////////////////////////////////
 
-	public Map determineArtifactsToCopy(ModuleId moduleId, String[] confs, File cache, String destFilePattern, String destIvyPattern, Filter artifactFilter) throws ParseException, IOException {
-		return _retrieveEngine.determineArtifactsToCopy(moduleId, confs, cache, destFilePattern, destIvyPattern, artifactFilter);
+	public int retrieve(ModuleRevisionId mrid, String destFilePattern, RetrieveOptions options) throws IOException {
+		return _retrieveEngine.retrieve(mrid, destFilePattern, options);
 	}
 
-	public Map determineArtifactsToCopy(ModuleId moduleId, String[] confs, File cache, String destFilePattern, String destIvyPattern) throws ParseException, IOException {
-		return _retrieveEngine.determineArtifactsToCopy(moduleId, confs, cache, destFilePattern, destIvyPattern);
-	}
-
-	public int retrieve(ModuleId moduleId, String[] confs, File cache, String destFilePattern, String destIvyPattern, Filter artifactFilter, boolean sync, boolean useOrigin, boolean makeSymlinks) {
-		return _retrieveEngine.retrieve(moduleId, confs, cache, destFilePattern, destIvyPattern, artifactFilter, sync, useOrigin, makeSymlinks);
-	}
-
-	public int retrieve(ModuleId moduleId, String[] confs, File cache, String destFilePattern, String destIvyPattern, Filter artifactFilter, boolean sync, boolean useOrigin) {
-		return _retrieveEngine.retrieve(moduleId, confs, cache, destFilePattern, destIvyPattern, artifactFilter, sync, useOrigin);
-	}
-
-	public int retrieve(ModuleId moduleId, String[] confs, File cache, String destFilePattern, String destIvyPattern, Filter artifactFilter) {
-		return _retrieveEngine.retrieve(moduleId, confs, cache, destFilePattern, destIvyPattern, artifactFilter);
-	}
-
-	public int retrieve(ModuleId moduleId, String[] confs, File cache, String destFilePattern, String destIvyPattern) {
-		return _retrieveEngine.retrieve(moduleId, confs, cache, destFilePattern, destIvyPattern);
-	}
-
-	public int retrieve(ModuleId moduleId, String[] confs, File cache, String destFilePattern) {
-		return _retrieveEngine.retrieve(moduleId, confs, cache, destFilePattern);
-	}
     /////////////////////////////////////////////////////////////////////////
     //                         DELIVER
     /////////////////////////////////////////////////////////////////////////

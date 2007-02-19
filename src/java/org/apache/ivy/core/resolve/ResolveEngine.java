@@ -35,6 +35,7 @@ import java.util.ListIterator;
 import java.util.Properties;
 import java.util.Set;
 
+import org.apache.ivy.Ivy;
 import org.apache.ivy.core.IvyContext;
 import org.apache.ivy.core.cache.CacheManager;
 import org.apache.ivy.core.event.EventManager;
@@ -63,7 +64,6 @@ import org.apache.ivy.plugins.parser.ModuleDescriptorParserRegistry;
 import org.apache.ivy.plugins.repository.url.URLResource;
 import org.apache.ivy.plugins.resolver.CacheResolver;
 import org.apache.ivy.plugins.resolver.DependencyResolver;
-import org.apache.ivy.util.HostUtil;
 import org.apache.ivy.util.Message;
 import org.apache.ivy.util.filter.Filter;
 
@@ -139,7 +139,7 @@ public class ResolveEngine {
         ModuleDescriptor md = parser.parseDescriptor(_settings, ivySource, options.isValidate());
         String revision = options.getRevision();
         if (revision == null && md.getResolvedModuleRevisionId().getRevision() == null) {
-            revision = "working@"+HostUtil.getLocalHostName();
+            revision = Ivy.getWorkingRevision();
         }
         if (revision != null) {
             md.setResolvedModuleRevisionId(ModuleRevisionId.newInstance(md.getModuleRevisionId(), revision));

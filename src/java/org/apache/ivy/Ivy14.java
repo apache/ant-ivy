@@ -39,6 +39,7 @@ import org.apache.ivy.core.report.ResolveReport;
 import org.apache.ivy.core.resolve.IvyNode;
 import org.apache.ivy.core.resolve.ResolveOptions;
 import org.apache.ivy.core.resolve.ResolvedModuleRevision;
+import org.apache.ivy.core.retrieve.RetrieveOptions;
 import org.apache.ivy.core.search.ModuleEntry;
 import org.apache.ivy.core.search.OrganisationEntry;
 import org.apache.ivy.core.search.RevisionEntry;
@@ -102,11 +103,24 @@ public class Ivy14 {
 	}
 
 	public Map determineArtifactsToCopy(ModuleId moduleId, String[] confs, File cache, String destFilePattern, String destIvyPattern, Filter artifactFilter) throws ParseException, IOException {
-		return _ivy.determineArtifactsToCopy(moduleId, confs, cache, destFilePattern, destIvyPattern, artifactFilter);
+		return _ivy.getRetrieveEngine().determineArtifactsToCopy(
+				new ModuleRevisionId(moduleId, Ivy.getWorkingRevision()), 
+				destFilePattern, 
+				new RetrieveOptions()
+					.setConfs(confs)
+					.setCache(CacheManager.getInstance(_ivy.getSettings(), cache))
+					.setDestIvyPattern(destIvyPattern)
+					.setArtifactFilter(artifactFilter));
 	}
 
 	public Map determineArtifactsToCopy(ModuleId moduleId, String[] confs, File cache, String destFilePattern, String destIvyPattern) throws ParseException, IOException {
-		return _ivy.determineArtifactsToCopy(moduleId, confs, cache, destFilePattern, destIvyPattern);
+		return _ivy.getRetrieveEngine().determineArtifactsToCopy(
+				new ModuleRevisionId(moduleId, Ivy.getWorkingRevision()), 
+				destFilePattern, 
+				new RetrieveOptions()
+					.setConfs(confs)
+					.setCache(CacheManager.getInstance(_ivy.getSettings(), cache))
+					.setDestIvyPattern(destIvyPattern));
 	}
 
 	public ArtifactDownloadReport download(Artifact artifact, File cache, boolean useOrigin) {
@@ -281,23 +295,80 @@ public class Ivy14 {
 	}
 
 	public int retrieve(ModuleId moduleId, String[] confs, File cache, String destFilePattern, String destIvyPattern, Filter artifactFilter, boolean sync, boolean useOrigin, boolean makeSymlinks) {
-		return _ivy.retrieve(moduleId, confs, cache, destFilePattern, destIvyPattern, artifactFilter, sync, useOrigin, makeSymlinks);
+		try {
+			return _ivy.retrieve(
+					new ModuleRevisionId(moduleId, Ivy.getWorkingRevision()), 
+					destFilePattern, 
+					new RetrieveOptions()
+						.setConfs(confs)
+						.setCache(CacheManager.getInstance(_ivy.getSettings(), cache))
+						.setDestIvyPattern(destIvyPattern)
+						.setArtifactFilter(artifactFilter)
+						.setSync(sync)
+						.setUseOrigin(useOrigin)
+						.setMakeSymlinks(makeSymlinks));
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	public int retrieve(ModuleId moduleId, String[] confs, File cache, String destFilePattern, String destIvyPattern, Filter artifactFilter, boolean sync, boolean useOrigin) {
-		return _ivy.retrieve(moduleId, confs, cache, destFilePattern, destIvyPattern, artifactFilter, sync, useOrigin);
+		try {
+			return _ivy.retrieve(
+					new ModuleRevisionId(moduleId, Ivy.getWorkingRevision()), 
+					destFilePattern, 
+					new RetrieveOptions()
+						.setConfs(confs)
+						.setCache(CacheManager.getInstance(_ivy.getSettings(), cache))
+						.setDestIvyPattern(destIvyPattern)
+						.setArtifactFilter(artifactFilter)
+						.setSync(sync)
+						.setUseOrigin(useOrigin));
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	public int retrieve(ModuleId moduleId, String[] confs, File cache, String destFilePattern, String destIvyPattern, Filter artifactFilter) {
-		return _ivy.retrieve(moduleId, confs, cache, destFilePattern, destIvyPattern, artifactFilter);
+		try {
+			return _ivy.retrieve(
+					new ModuleRevisionId(moduleId, Ivy.getWorkingRevision()), 
+					destFilePattern, 
+					new RetrieveOptions()
+						.setConfs(confs)
+						.setCache(CacheManager.getInstance(_ivy.getSettings(), cache))
+						.setDestIvyPattern(destIvyPattern)
+						.setArtifactFilter(artifactFilter));
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	public int retrieve(ModuleId moduleId, String[] confs, File cache, String destFilePattern, String destIvyPattern) {
-		return _ivy.retrieve(moduleId, confs, cache, destFilePattern, destIvyPattern);
+		try {
+			return _ivy.retrieve(
+					new ModuleRevisionId(moduleId, Ivy.getWorkingRevision()), 
+					destFilePattern, 
+					new RetrieveOptions()
+						.setConfs(confs)
+						.setCache(CacheManager.getInstance(_ivy.getSettings(), cache))
+						.setDestIvyPattern(destIvyPattern));
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	public int retrieve(ModuleId moduleId, String[] confs, File cache, String destFilePattern) {
-		return _ivy.retrieve(moduleId, confs, cache, destFilePattern);
+		try {
+			return _ivy.retrieve(
+					new ModuleRevisionId(moduleId, Ivy.getWorkingRevision()), 
+					destFilePattern, 
+					new RetrieveOptions()
+						.setConfs(confs)
+						.setCache(CacheManager.getInstance(_ivy.getSettings(), cache)));
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	public void setVariable(String varName, String value) {

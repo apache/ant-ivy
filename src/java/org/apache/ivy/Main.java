@@ -48,6 +48,7 @@ import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.report.ResolveReport;
 import org.apache.ivy.core.resolve.ResolveOptions;
+import org.apache.ivy.core.retrieve.RetrieveOptions;
 import org.apache.ivy.plugins.parser.xml.XmlModuleDescriptorWriter;
 import org.apache.ivy.plugins.report.XmlReportParser;
 import org.apache.ivy.util.DefaultMessageImpl;
@@ -275,7 +276,7 @@ public class Main {
 
             ResolveOptions resolveOptions = new ResolveOptions()
 	            .setConfs(confs)
-	            .setCache(CacheManager.getInstance(ivy.getSettings(), cache))
+	            .setCache(cacheManager)
 	            .setValidate(validate)
 	            .setUseOrigin(line.hasOption("useOrigin"));
             ResolveReport report = ivy.resolve(
@@ -295,7 +296,14 @@ public class Main {
                 if (retrievePattern.indexOf("[") == -1) {
                     retrievePattern = retrievePattern + "/lib/[conf]/[artifact].[ext]";
                 }
-                ivy.retrieve(md.getModuleRevisionId().getModuleId(), confs, cache, retrievePattern, null, null, line.hasOption("sync"), line.hasOption("useOrigin"));
+                ivy.retrieve(
+                		md.getModuleRevisionId(), 
+                		retrievePattern, 
+                		new RetrieveOptions()
+                			.setConfs(confs)
+                			.setCache(cacheManager)
+							.setSync(line.hasOption("sync"))
+							.setUseOrigin(line.hasOption("useOrigin")));
             }
             if (line.hasOption("cachepath")) {
                 outputCachePath(ivy, cache, md, confs, line.getOptionValue("cachepath", "ivycachepath.txt"));

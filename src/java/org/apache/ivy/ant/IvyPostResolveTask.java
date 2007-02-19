@@ -21,6 +21,7 @@ import java.io.File;
 
 import org.apache.ivy.Ivy;
 import org.apache.ivy.core.module.id.ModuleId;
+import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.report.ResolveReport;
 import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.util.Message;
@@ -130,6 +131,10 @@ public abstract class IvyPostResolveTask extends IvyTask {
         }
         
         _artifactFilter = FilterHelper.getArtifactTypeFilter(_type);
+    }
+
+    protected ModuleRevisionId getResolvedMrid() {
+    	return new ModuleRevisionId(getResolvedModuleId(), getRevision() == null ?Ivy.getWorkingRevision():getRevision());
     }
 
     protected ModuleId getResolvedModuleId() {
