@@ -83,7 +83,11 @@ public class VfsRepository extends AbstractRepository {
 			 * Using StandardFileSystemManager lets us specify which schemes to support as well as 
 			 * providing a mechanism to change this support without recompilation.
 			 */
-			result = new StandardFileSystemManager();
+			result = new StandardFileSystemManager() {
+				protected void configurePlugins() throws FileSystemException {
+					// disable automatic loading potential unsupported extensions 
+				}
+			};
 			result.setConfiguration(getClass().getResource(IVY_VFS_CONFIG));
 			result.init();
 

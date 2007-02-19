@@ -21,6 +21,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.vfs.FileSystemException;
 import org.apache.commons.vfs.impl.StandardFileSystemManager;
 import org.apache.ivy.Ivy;
 import org.apache.ivy.util.FileUtil;
@@ -48,7 +49,11 @@ public class VfsTestHelper {
 	
 	public VfsTestHelper() throws Exception {
 		// setup and initialize VFS
-		fsManager = new StandardFileSystemManager();
+		fsManager = new StandardFileSystemManager() {
+			protected void configurePlugins() throws FileSystemException {
+				// disable automatic loading potential unsupported extensions 
+			}
+		};
 		fsManager.setConfiguration(getClass().getResource(VFS_CONF).toString());
 		fsManager.init();
 		
