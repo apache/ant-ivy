@@ -39,7 +39,7 @@ public class IBiblioHelper {
                     "http://www.ibiblio.org/maven"
             };
             String[] mirrorsRoot = new String[] {
-                    "http://repo1.maven.org/maven/",
+                    "http://repo1.maven.org/maven",
                     "http://mirrors.sunsite.dk/maven",
                     "http://public.planetmirror.com/pub/maven",
                     "http://www.ibiblio.org/maven"
