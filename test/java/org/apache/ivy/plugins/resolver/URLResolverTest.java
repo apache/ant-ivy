@@ -41,6 +41,7 @@ import org.apache.ivy.core.resolve.ResolvedModuleRevision;
 import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.core.sort.SortEngine;
 import org.apache.ivy.plugins.matcher.ExactPatternMatcher;
+import org.apache.ivy.plugins.version.LatestVersionMatcher;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.Delete;
 
@@ -251,6 +252,26 @@ public class URLResolverTest extends TestCase {
         ResolvedModuleRevision rmr = resolver.getDependency(new DefaultDependencyDescriptor(mrid, false), _data);
         assertNotNull(rmr);
         assertEquals("1.4.3", rmr.getId().getRevision());
+    }
+
+    public void testVersionRangeIBiblio() throws Exception {
+        String ibiblioRoot = IBiblioHelper.getIBiblioMirror();
+        if (ibiblioRoot == null) {
+            return;
+        }
+        
+        URLResolver resolver = new URLResolver();
+        resolver.setSettings(_settings);
+        resolver.setAlwaysCheckExactRevision(true);
+        resolver.addIvyPattern(ibiblioRoot+"/[module]/poms/[module]-[revision].pom");
+        resolver.addArtifactPattern(ibiblioRoot+"/[module]/[type]s/[artifact]-[revision].[type]");
+        resolver.setName("test");
+        assertEquals("test", resolver.getName());
+        
+        ModuleRevisionId mrid = ModuleRevisionId.newInstance("asm", "asm", "[1.4,1.5]");
+        ResolvedModuleRevision rmr = resolver.getDependency(new DefaultDependencyDescriptor(mrid, false), _data);
+        assertNotNull(rmr);
+        assertEquals("1.4.4", rmr.getId().getRevision());
     }
 
     public void testUnknown() throws Exception {
