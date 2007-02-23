@@ -21,6 +21,10 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.ivy.core.IvyContext;
+import org.apache.ivy.core.module.id.ModuleRevisionId;
+import org.apache.ivy.plugins.version.VersionMatcher;
+
 
 
 
@@ -58,33 +62,15 @@ public class LatestRevisionStrategy extends ComparatorLatestStrategy {
         DEFAULT_SPECIAL_MEANINGS.put("final", new Integer(2));
     }
 
-    
     /**
-     * Compares two revisions.
+     * Compares two ModuleRevisionId by their revision.
      * Revisions are compared using an algorithm inspired by PHP
-     * version_compare one, unless
-     * a 'latest' revision is found. If the latest revision found
-     * is an absolute latest (latest. like), then it is assumed to be the greater.
-     * If a partial latest is found, then it is assumed to be greater
-     * than any matching fixed revision. 
+     * version_compare one. 
      */ 
-    public Comparator COMPARATOR = new Comparator() {
-
-        public int compare(Object o1, Object o2) {
-            String rev1 = ((ArtifactInfo)o1).getRevision();
-            String rev2 = ((ArtifactInfo)o2).getRevision();
-            if (rev1.startsWith("latest")) {
-                return 1;
-            }
-            if (rev1.endsWith("+") && rev2.startsWith(rev1.substring(0, rev1.length() - 1))) {
-                return 1;
-            }
-            if (rev2.startsWith("latest")) {
-                return -1;
-            }
-            if (rev2.endsWith("+") && rev1.startsWith(rev2.substring(0, rev2.length() - 1))) {
-                return -1;
-            }
+    public final Comparator STATIC_COMPARATOR = new Comparator() {
+    	public int compare(Object o1, Object o2) {
+            String rev1 = ((ModuleRevisionId)o1).getRevision();
+            String rev2 = ((ModuleRevisionId)o2).getRevision();
             
             rev1 = rev1.replaceAll("([a-zA-Z])(\\d)", "$1.$2");
             rev1 = rev1.replaceAll("(\\d)([a-zA-Z])", "$1.$2");
@@ -130,10 +116,47 @@ public class LatestRevisionStrategy extends ComparatorLatestStrategy {
                 return isNumber(parts2[i])?-1:1;
             }
             return 0;
-        }
+    	}
 
         private boolean isNumber(String str) {
             return str.matches("\\d+");
+        }
+    };
+
+    
+    /**
+     * Compares two ArtifactInfo by their revision.
+     * Revisions are compared using an algorithm inspired by PHP
+     * version_compare one, unless a dynamic revision is given,
+     * in which case the version matcher is used to perform the comparison. 
+     */ 
+    public Comparator COMPARATOR = new Comparator() {
+
+        public int compare(Object o1, Object o2) {
+            String rev1 = ((ArtifactInfo)o1).getRevision();
+            String rev2 = ((ArtifactInfo)o2).getRevision();
+
+            /* The revisions can still be not resolved, so we use the current 
+             * version matcher to know if one revision is dynamic, and in this 
+             * case if it should be considered greater or lower than the other one.
+             * 
+             * Note that if the version matcher compare method returns 0, it's because
+             * it's not possible to know which revision is greater. In this case we 
+             * consider the dynamic one to be greater, because most of the time
+             * it will then be actually resolved and a real comparison will occur.
+             */  
+            VersionMatcher vmatcher = IvyContext.getContext().getSettings().getVersionMatcher();
+            ModuleRevisionId mrid1 = ModuleRevisionId.newInstance("", "", rev1);
+            ModuleRevisionId mrid2 = ModuleRevisionId.newInstance("", "", rev2);
+            if (vmatcher.isDynamic(mrid1)) {
+            	int c = vmatcher.compare(mrid1, mrid2, STATIC_COMPARATOR);
+				return c >= 0? 1 : -1;
+            } else if (vmatcher.isDynamic(mrid2)) {
+            	int c = vmatcher.compare(mrid2, mrid1, STATIC_COMPARATOR);
+				return c >= 0? -1 : 1;
+            }
+            
+            return STATIC_COMPARATOR.compare(mrid1, mrid2);
         }
     
     };

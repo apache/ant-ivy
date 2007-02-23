@@ -24,6 +24,8 @@ import junit.framework.TestCase;
 
 import org.apache.ivy.Ivy;
 import org.apache.ivy.core.cache.CacheManager;
+import org.apache.ivy.core.module.id.ModuleRevisionId;
+import org.apache.ivy.core.report.ConfigurationResolveReport;
 import org.apache.ivy.core.report.ResolveReport;
 import org.apache.ivy.core.resolve.IvyNode;
 import org.apache.ivy.core.resolve.ResolveOptions;
@@ -61,6 +63,25 @@ public class LatestConflictManagerTest extends TestCase {
 			}
 		}
 	}
+	
+    // Test case for issue IVY-383
+    public void testIvy383() throws Exception {
+        ResolveReport report =
+            ivy.resolve( LatestConflictManagerTest.class.getResource( "ivy-383.xml" ), 
+            		getResolveOptions() );
+        ConfigurationResolveReport defaultReport =
+            report.getConfigurationReport("default");
+        Iterator iter = defaultReport.getModuleRevisionIds().iterator();
+        while (iter.hasNext()) {
+            ModuleRevisionId mrid = (ModuleRevisionId)iter.next();
+            if (mrid.getName().equals("mod1.1")) {
+                assertEquals("1.0", mrid.getRevision());
+            }
+            else if (mrid.getName().equals("mod1.2")) {
+                assertEquals("2.2", mrid.getRevision());
+            }
+        }
+    }
     
     private ResolveOptions getResolveOptions() {
 		return new ResolveOptions().setCache(CacheManager.getInstance(ivy.getSettings())).setValidate(false);

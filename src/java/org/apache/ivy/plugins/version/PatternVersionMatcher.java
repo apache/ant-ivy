@@ -34,7 +34,7 @@ import org.apache.ivy.plugins.matcher.Matcher;
 public class PatternVersionMatcher extends AbstractVersionMatcher {
 
 	private List _matches = new ArrayList(); 
-	private Map _RevisionMatches = new HashMap();  // revision -> list of Match instances
+	private Map _revisionMatches = new HashMap();  // revision -> list of Match instances
 	private boolean _init = false;
 
 	public void addMatch(Match match) {
@@ -45,10 +45,10 @@ public class PatternVersionMatcher extends AbstractVersionMatcher {
 		if (!_init) {
 			for (Iterator it = _matches.iterator(); it.hasNext(); ) {
 				Match match = (Match) it.next();
-				List matches = (List) _RevisionMatches.get(match.getRevision());
+				List matches = (List) _revisionMatches.get(match.getRevision());
 				if (matches == null) {
 					matches = new ArrayList();
-					_RevisionMatches.put(match.getRevision(), matches);
+					_revisionMatches.put(match.getRevision(), matches);
 				}
 				matches.add(match);
 			}
@@ -69,7 +69,7 @@ public class PatternVersionMatcher extends AbstractVersionMatcher {
 			revision = revision.substring(0, bracketIndex);
 		}
 		
-		List matches = (List) _RevisionMatches.get(revision);
+		List matches = (List) _revisionMatches.get(revision);
 		
 		if (matches != null) {
 			Iterator it = matches.iterator();
@@ -93,7 +93,7 @@ public class PatternVersionMatcher extends AbstractVersionMatcher {
 		if (bracketIndex > 0) {
 			revision = revision.substring(0, bracketIndex);
 		}
-		return _RevisionMatches.containsKey(revision);
+		return _revisionMatches.containsKey(revision);
 	}
 
 }

@@ -18,6 +18,7 @@
 package org.apache.ivy.plugins.version;
 
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -65,6 +66,16 @@ public class ChainVersionMatcher extends AbstractVersionMatcher {
             }
         }
         return false;
+    }
+
+    public int compare(ModuleRevisionId askedMrid, ModuleRevisionId foundMrid, Comparator staticComparator) {
+    	for (Iterator iter = _matchers.iterator(); iter.hasNext();) {
+    		VersionMatcher matcher = (VersionMatcher)iter.next();
+    		if (matcher.isDynamic(askedMrid)) {
+    			return matcher.compare(askedMrid, foundMrid, staticComparator);
+    		}
+    	}
+    	throw new IllegalArgumentException("impossible to compare revisions: askedMrid is not dynamic: "+askedMrid);
     }
 
     public boolean accept(ModuleRevisionId askedMrid, ModuleRevisionId foundMrid) {

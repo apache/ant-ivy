@@ -17,6 +17,8 @@
  */
 package org.apache.ivy.plugins.version;
 
+import java.util.Comparator;
+
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.settings.IvySettings;
@@ -48,6 +50,14 @@ public abstract class AbstractVersionMatcher implements VersionMatcher, IvySetti
 
     public boolean accept(ModuleRevisionId askedMrid, ModuleDescriptor foundMD) {
         return accept(askedMrid, foundMD.getResolvedModuleRevisionId());
+    }
+    
+    /**
+     * This method should be overriden in most cases, because it uses the default contract
+     * to return 1 when it's not possible to know which revision is greater.
+     */
+    public int compare(ModuleRevisionId askedMrid, ModuleRevisionId foundMrid, Comparator staticComparator) {
+    	return 0;
     }
     
     public String toString() {

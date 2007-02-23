@@ -43,7 +43,7 @@ public class LatestConflictManager extends AbstractConflictManager {
         }
 
         public String getRevision() {
-            return _node.getId().getRevision();
+            return _node.getResolvedId().getRevision();
         }
         
         public IvyNode getNode() {

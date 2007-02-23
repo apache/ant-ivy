@@ -161,6 +161,32 @@ public class VersionRangeMatcher   extends AbstractVersionMatcher {
 	private boolean isUpper(ModuleRevisionId askedMrid, String revision, ModuleRevisionId foundMrid, boolean inclusive) {
 		return COMPARATOR.compare(ModuleRevisionId.newInstance(askedMrid, revision), foundMrid) >= (inclusive ? 0 : 1);
 	}
+	
+	public int compare(ModuleRevisionId askedMrid, ModuleRevisionId foundMrid, Comparator staticComparator) {
+		String revision = askedMrid.getRevision();
+		Matcher m;
+		m = UPPER_INFINITE_RANGE.matcher(revision);
+		if (m.matches()) {
+			// no upper limit, the dynamic revision can always be considered greater
+			return 1;
+		}
+		String upper;
+		m = FINITE_RANGE.matcher(revision);
+		if (m.matches()) {
+			upper = m.group(2);
+		} else {
+			m = LOWER_INFINITE_RANGE.matcher(revision);
+			if (m.matches()) {
+				upper = m.group(1);
+			} else {
+				throw new IllegalArgumentException("impossible to compare: askedMrid is not a dynamic revision: "+askedMrid);
+			}
+		}
+		int c = staticComparator.compare(ModuleRevisionId.newInstance(askedMrid, upper), foundMrid);
+		// if the comparison consider them equal, we must return -1, because we can't consider the 
+		// dynamic revision to be greater. Otherwise we can safeely return the result of the static comparison
+		return c == 0?-1:c;
+	}
 
 	public LatestStrategy getLatestStrategy() {
 		if (_latestStrategy == null) {
