@@ -909,6 +909,18 @@ public class IvyNode {
         return 0;
     }
 
+    /**
+     * Returns the last modified timestamp of the module represented by this Node,
+     * or 0 if the last modified timestamp is currently unkwown (module not loaded)
+     * @return the last modified timestamp of the module represented by this Node
+     */
+	public long getLastModified() {
+		if (_md != null) {
+			return _md.getLastModified();
+		}
+		return 0;
+	}
+
     public ModuleRevisionId getResolvedId() {
         if (_md != null && _md.getResolvedModuleRevisionId().getRevision() != null) {
             return _md.getResolvedModuleRevisionId();

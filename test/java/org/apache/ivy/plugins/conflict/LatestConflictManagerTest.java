@@ -83,6 +83,49 @@ public class LatestConflictManagerTest extends TestCase {
         }
     }
     
+    // Test case for issue IVY-407
+    public void testLatestTime1() throws Exception {
+		ivy = new Ivy();
+		ivy.configure(LatestConflictManagerTest.class
+				.getResource("ivyconf-latest-time.xml"));
+        ResolveReport report =
+            ivy.resolve( LatestConflictManagerTest.class.getResource( "ivy-latest-time-1.xml" ), 
+            		getResolveOptions() );
+        ConfigurationResolveReport defaultReport =
+            report.getConfigurationReport("default");
+        Iterator iter = defaultReport.getModuleRevisionIds().iterator();
+        while (iter.hasNext()) {
+            ModuleRevisionId mrid = (ModuleRevisionId)iter.next();
+            if (mrid.getName().equals("mod1.1")) {
+                assertEquals("1.0", mrid.getRevision());
+            }
+            else if (mrid.getName().equals("mod1.2")) {
+                assertEquals("2.2", mrid.getRevision());
+            }
+        }
+    }
+    
+    public void testLatestTime2() throws Exception {
+		ivy = new Ivy();
+		ivy.configure(LatestConflictManagerTest.class
+				.getResource("ivyconf-latest-time.xml"));
+        ResolveReport report =
+            ivy.resolve( LatestConflictManagerTest.class.getResource( "ivy-latest-time-2.xml" ), 
+            		getResolveOptions() );
+        ConfigurationResolveReport defaultReport =
+            report.getConfigurationReport("default");
+        Iterator iter = defaultReport.getModuleRevisionIds().iterator();
+        while (iter.hasNext()) {
+            ModuleRevisionId mrid = (ModuleRevisionId)iter.next();
+            if (mrid.getName().equals("mod1.1")) {
+                assertEquals("1.0", mrid.getRevision());
+            }
+            else if (mrid.getName().equals("mod1.2")) {
+                assertEquals("2.2", mrid.getRevision());
+            }
+        }
+    }
+    
     private ResolveOptions getResolveOptions() {
 		return new ResolveOptions().setCache(CacheManager.getInstance(ivy.getSettings())).setValidate(false);
 	}

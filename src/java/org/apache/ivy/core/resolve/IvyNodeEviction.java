@@ -192,13 +192,14 @@ public class IvyNodeEviction {
     
 
     public boolean isEvicted(String rootModuleConf) {
-        cleanEvicted();
+    	cleanEvicted();
         IvyNode root = _node.getRoot();
-        return  root != _node 
+        return root != _node 
         	&& !root.getResolvedRevisions(
         			_node.getId().getModuleId(), 
         			rootModuleConf)
-        				.contains(_node.getResolvedId());
+        				.contains(_node.getResolvedId())
+        	&& getEvictedData(rootModuleConf) != null;
     }
 
     public boolean isCompletelyEvicted() {
@@ -242,7 +243,7 @@ public class IvyNodeEviction {
     public void markEvicted(EvictionData evictionData) {
         _evicted.put(evictionData.getRootModuleConf(), evictionData);
     }
-    
+
     public EvictionData getEvictedData(String rootModuleConf) {
         cleanEvicted();
         return (EvictionData)_evicted.get(rootModuleConf);

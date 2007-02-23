@@ -590,12 +590,21 @@ public class ResolveEngine {
         // compute conflicts
         Collection resolvedNodes = new HashSet(ancestor.getNode().getResolvedNodes(node.getModuleId(), node.getRootModuleConf()));
         Collection conflicts = computeConflicts(node, ancestor, toevict, resolvedNodes);
+        
         if (_settings.debugConflictResolution()) {
             Message.debug("found conflicting revisions for "+node+" in "+ancestor+": "+conflicts);
         }
         
         ConflictManager conflictManager = ancestor.getNode().getConflictManager(node.getModuleId());
 		Collection resolved = conflictManager.resolveConflicts(ancestor.getNode(), conflicts);
+
+		if (resolved == null) {
+            if (_settings.debugConflictResolution()) {
+                Message.debug("impossible to resolve conflicts for "+node+" in "+ancestor+" yet");
+            }
+            return;
+        }
+        
         if (_settings.debugConflictResolution()) {
             Message.debug("selected revisions for "+node+" in "+ancestor+": "+resolved);
         }

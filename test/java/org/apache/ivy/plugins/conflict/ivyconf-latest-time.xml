@@ -1,0 +1,12 @@
+<ivyconf>
+
+    <conf defaultResolver="test" defaultConflictManager="latest-time" />
+
+    <resolvers>
+        <filesystem name="test">
+            <artifact
+                    pattern="test/repositories/1/[organisation]/[module]/[type]s/[artifact]-[revision].[type]"/>
+            <ivy pattern="test/repositories/1/[organisation]/[module]/ivys/ivy-[revision].xml"/>
+        </filesystem>
+    </resolvers>
+</ivyconf>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ivy-module version="1.0"> 
+        <info organisation="apache" module="resolve-latest-conflict" revision="1.0" status="release"/>
+        <dependencies>
+            <!-- mod1.1 1.0 depends on mod1.2 2.0 -->
+            <dependency org="org1" name="mod1.1" rev="1.0"/>
+
+            <dependency org="org1" name="mod1.2" rev="2.2"/>
+        </dependencies>
+</ivy-module>
