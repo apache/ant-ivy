@@ -1,4 +1,4 @@
-<project name="go-ivy" default="go" xmlns:ivy="antlib:org.apache.ivy.ant">
+<project name="go-ivy" default="go" xmlns:ivy="antlib:fr.jayasoft.ivy.ant">
     <!-- 
         this build file is a self contained project: it doesn't require anything else 
         that ant 1.6.2 or greater and java 1.4 or greater properly installed.
@@ -20,12 +20,12 @@
 	
 	<!-- here is the version of ivy we will use. change this property to try a newer 
          version if you want -->
-	<property name="ivy.install.version" value="1.4" />
-	<property name="ivy.jar.dir" value="${basedir}/ivy" />
-	<property name="ivy.jar.file" value="${ivy.jar.dir}/ivy.jar" />
+	<property name="ivy.install.version" value="1.4.1"/>
+	<property name="ivy.jar.dir" value="${basedir}/ivy"/>
+	<property name="ivy.jar.file" value="${ivy.jar.dir}/ivy.jar"/>
 
-    <property name="build.dir" value="build" />
-    <property name="src.dir" value="src" />
+    <property name="build.dir" value="build"/>
+    <property name="src.dir" value="src"/>
     
     
     <!-- ================================= 
@@ -34,12 +34,11 @@
             if you already have ivy 1.4 in your ant lib, you can simply remove this
             target and the dependency the 'go' target has on it
          ================================= -->
-    <target name="install-ivy" description="--> install ivy">
+    <target name="install-ivy" description="--&gt; install ivy">
     	<mkdir dir="${ivy.jar.dir}"/>
 		<!-- download Ivy from web site so that it can be used even without any special installation -->
 		<echo message="installing ivy..."/>
-    	<get src="http://www.jayasoft.org/downloads/ivy/${ivy.install.version}/ivy-${ivy.install.version}.jar"
-    		 dest="${ivy.jar.file}" usetimestamp="true"/>
+    	<get src="http://www.jayasoft.org/downloads/ivy/${ivy.install.version}/ivy-${ivy.install.version}.jar" dest="${ivy.jar.file}" usetimestamp="true"/>
     		 
     	<!-- try to load ivy here from local ivy dir, in case the user has not already dropped
     	      it into ant's lib dir (note that the latter copy will always take precedence).
@@ -48,25 +47,22 @@
     	<path id="ivy.lib.path">
     	    <fileset dir="${ivy.jar.dir}" includes="*.jar"/>
     	</path>
-    	<taskdef resource="org/apache/ivy/ant/antlib.xml"
-    	          uri="antlib:org.apache.ivy.ant" classpathref="ivy.lib.path"/>
+    	<taskdef resource="fr/jayasoft/ivy/ant/antlib.xml" uri="antlib:fr.jayasoft.ivy.ant" classpathref="ivy.lib.path"/>
     </target>    
 	
 	<!-- ================================= 
           target: go
                     Go ivy, go!
          ================================= -->
-    <target name="go" depends="install-ivy, generate-src" 
-            description="--> resolve dependencies, compile and run the project">
+    <target name="go" depends="install-ivy, generate-src" description="--&gt; resolve dependencies, compile and run the project">
 		<echo message="using ivy to resolve commons-lang 2.1..."/>
         <!-- here comes the magic line: asks ivy to resolve a dependency on 
              commons-lang 2.1 and to build an ant path with it from its cache  -->
-        <ivy:cachepath organisation="apache" module="commons-lang" revision="2.1" 
-                       pathid="lib.path.id" inline="true"/>
+        <ivy:cachepath organisation="apache" module="commons-lang" revision="2.1" pathid="lib.path.id" inline="true"/>
         
 		<echo message="compiling..."/>
-        <mkdir dir="${build.dir}" />
-        <javac srcdir="${src.dir}" destdir="${build.dir}" classpathref="lib.path.id" />
+        <mkdir dir="${build.dir}"/>
+        <javac srcdir="${src.dir}" destdir="${build.dir}" classpathref="lib.path.id"/>
         
 		<echo>
 We are now ready to execute our simple program with its dependency on commons-lang.
@@ -74,8 +70,8 @@ Let's go!
 		</echo>
         <java classname="example.Hello">
             <classpath>
-                <path refid="lib.path.id" />
-                <path location="${build.dir}" />
+                <path refid="lib.path.id"/>
+                <path location="${build.dir}"/>
             </classpath>
         </java>
     </target>
@@ -87,7 +83,7 @@ Let's go!
             present on your file system, and this target wouldn't be necessary.
          ================================= -->
     <target name="generate-src">
-        <mkdir dir="${src.dir}/example" />
+        <mkdir dir="${src.dir}/example"/>
         <echo file="${src.dir}/example/Hello.java">
 package example;
 
@@ -107,24 +103,24 @@ public class Hello {
     <!-- ================================= 
           target: clean              
          ================================= -->
-    <target name="clean" description="--> clean the project">
+    <target name="clean" description="--&gt; clean the project">
         <delete includeemptydirs="true">
-            <fileset dir="${src.dir}" />
-            <fileset dir="${build.dir}" />
+            <fileset dir="${src.dir}"/>
+            <fileset dir="${build.dir}"/>
     	</delete>
     </target>
 	
     <!-- ================================= 
           target: clean-ivy              
          ================================= -->
-	<target name="clean-ivy" description="--> clean the ivy installation">
+	<target name="clean-ivy" description="--&gt; clean the ivy installation">
 		<delete dir="${ivy.jar.dir}"/>
 	</target>
 	
     <!-- ================================= 
           target: clean-cache              
          ================================= -->
-	<target name="clean-cache" description="--> clean the ivy cache">
+	<target name="clean-cache" description="--&gt; clean the ivy cache">
 		<delete dir="${user.home}/.ivy/cache"/>
 	</target>
 </project>
