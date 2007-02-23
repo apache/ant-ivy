@@ -9,7 +9,7 @@
 		<resolver ref="ibiblio-maven"/>
   		<filesystem name="local-repository">
   			<ivy pattern="${dest.repo.dir}/[organisation]/[module]/ivys/ivy-[revision].xml"/>
-  			<artifact pattern="${dest.repo.dir}/[organisation]/[module]/[type]s/[artifact]-[revision].[type]"/>
+  			<artifact pattern="${dest.repo.dir}/[organisation]/[module]/[type]s/[artifact]-[revision].[ext]"/>
   		</filesystem>
 	</resolvers>
 </ivyconf>
