@@ -121,6 +121,9 @@ public class IvyNodeEviction {
     private Map _evicted = new HashMap(); // Map (root module conf -> EvictionData) // indicates if the node is evicted in each root module conf
     
     public IvyNodeEviction(IvyNode node) {
+    	if (node == null) {
+    		throw new NullPointerException("node must not be null");
+    	}
 		_node = node;
 	}
     
@@ -191,7 +194,11 @@ public class IvyNodeEviction {
     public boolean isEvicted(String rootModuleConf) {
         cleanEvicted();
         IvyNode root = _node.getRoot();
-        return root != _node && !root.getResolvedRevisions(_node.getId().getModuleId(), rootModuleConf).contains(_node.getResolvedId());
+        return  root != _node 
+        	&& !root.getResolvedRevisions(
+        			_node.getId().getModuleId(), 
+        			rootModuleConf)
+        				.contains(_node.getResolvedId());
     }
 
     public boolean isCompletelyEvicted() {
