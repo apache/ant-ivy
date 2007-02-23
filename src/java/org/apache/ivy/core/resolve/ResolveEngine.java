@@ -352,6 +352,10 @@ public class ResolveEngine {
         IvyNode rootNode = new IvyNode(data, md);
         
         for (int i = 0; i < confs.length; i++) {
+        	if (confs[i] == null) {
+        		throw new NullPointerException("null conf not allowed: confs where: "+Arrays.asList(confs));
+        	}
+        	
             // for each configuration we clear the cache of what's been fetched
             _fetchedSet.clear();     
             

@@ -79,6 +79,12 @@ public class IvyNodeEviction {
         private String _conf;
 
         public ModuleIdConf(ModuleId mid, String conf) {
+        	if (mid == null) {
+        		throw new NullPointerException("mid cannot be null");
+        	}
+        	if (conf == null) {
+        		throw new NullPointerException("conf cannot be null");
+        	}
             _moduleId = mid;
             _conf = conf;
         }

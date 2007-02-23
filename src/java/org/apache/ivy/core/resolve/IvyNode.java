@@ -64,6 +64,12 @@ public class IvyNode {
         private String _conf;
 
         public NodeConf(IvyNode node, String conf) {
+        	if (node == null) {
+        		throw new NullPointerException("node must not null");
+        	}
+        	if (conf == null) {
+        		throw new NullPointerException("conf must not null");
+        	}
             _node = node;
             _conf = conf;
         }

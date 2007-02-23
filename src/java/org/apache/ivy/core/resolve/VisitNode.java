@@ -100,6 +100,15 @@ public class VisitNode {
 
     
     public VisitNode(ResolveData data, IvyNode node, VisitNode parent, String rootModuleConf, String parentConf) {
+    	if (data == null) {
+    		throw new NullPointerException("data must not be null");
+    	}
+    	if (node == null) {
+    		throw new NullPointerException("node must not be null");
+    	}
+    	if (rootModuleConf == null) {
+    		throw new NullPointerException("rootModuleConf must not be null");
+    	}
     	_data = data;
     	_node = node;
     	_parent = parent;
