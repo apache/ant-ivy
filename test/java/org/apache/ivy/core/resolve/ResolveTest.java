@@ -2688,6 +2688,38 @@ public class ResolveTest extends TestCase {
         assertTrue(getArchiveFileInCache("apache", "C", "3.0", "C", "jar", "jar").exists());        
     }
 
+    public void testResolveWithSpecifiedCache() throws Exception {
+    	File cache2 = new File("build/cache2");
+    	try {
+	    	_ivy.getSettings().setDefaultCache(_cache);
+	    	
+	    	// the module to resolve
+	    	ModuleRevisionId module = ModuleRevisionId.newInstance("org1", "mod1.1", "1.0");
+	    	
+	    	// use a non-default cache
+	    	ResolveOptions options = getResolveOptions(new String[] {"*"});
+	    	options.setTransitive(false);
+	    	options.setUseOrigin(true);
+	    	options.setCache(CacheManager.getInstance(_ivy.getSettings(), cache2));
+	    	ResolveReport report = _ivy.getResolveEngine().resolve(module, options, false);
+	    	
+	    	// the resolved module
+	    	ModuleRevisionId resolvedModule = report.getModuleDescriptor().getResolvedModuleRevisionId();
+	    	
+	    	// verify that the module in the default cache doesn't exist
+	    	assertEquals("Default cache is not empty", _cache.list().length, 0);
+	    	
+	    	// verify the artifact does exist in the non-default cache.
+	    	CacheManager nonDefaultManager = _ivy.getCacheManager(cache2);
+	        assertTrue(TestHelper.getArchiveFileInCache(nonDefaultManager, "org1", "mod1.1", "1.0", "mod1.1", "jar", "jar").exists());
+	        assertTrue(nonDefaultManager.getResolvedIvyFileInCache(resolvedModule).exists());
+	        assertTrue(nonDefaultManager.getResolvedIvyPropertiesInCache(resolvedModule).exists());
+	        assertNotNull(nonDefaultManager.getSavedArtifactOrigin((Artifact) report.getArtifacts().get(0)));
+    	} finally {
+    		// delete the non-default cache
+   			cache2.delete();
+    	}
+    }
 
     ////////////////////////////////////////////////////////////
     // helper methods to ease the tests

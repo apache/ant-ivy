@@ -105,7 +105,7 @@ public class ResolveEngine {
 		DefaultModuleDescriptor md;
 		String[] confs = options.getConfs();
 		if (confs.length == 1 && confs[0].equals("*")) {
-			ResolvedModuleRevision rmr = findModule(mrid);
+			ResolvedModuleRevision rmr = findModule(mrid, options.getCache());
 			if (rmr == null) {
 				md = DefaultModuleDescriptor.newCallerInstance(mrid, confs, options.isTransitive(), changing);
 				return new ResolveReport(md){
@@ -736,7 +736,7 @@ public class ResolveEngine {
         return false;
     }
 
-	public ResolvedModuleRevision findModule(ModuleRevisionId id) {
+	public ResolvedModuleRevision findModule(ModuleRevisionId id, CacheManager cache) {
 		DependencyResolver r = _settings.getResolver(id.getModuleId());
 		if (r == null) {
 			throw new IllegalStateException("no resolver found for "+id.getModuleId());
@@ -749,8 +749,8 @@ public class ResolveEngine {
 							this, 
 							new ResolveOptions()
 								.setValidate(false)
-								.setCache(CacheManager.getInstance(_settings)), 
-							new ConfigurationResolveReport(this, md, "default", null, _settings.getDefaultCache())));
+								.setCache(cache), 
+							new ConfigurationResolveReport(this, md, "default", null, cache.getCache())));
 		} catch (ParseException e) {
 			throw new RuntimeException("problem while parsing repository module descriptor for "+id+": "+e, e);
 		}
