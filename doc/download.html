@@ -8,13 +8,22 @@
 	<textarea id="xooki-source">
 Ivy has not yet released a version under the Apache Incubator. Previous releases can be considered production quality, but are not endorsed by the Apache Software Foundation.
 
+<h2>Building from source</h2>
 What you can get here at the ASF is the latest sources from the Subversion repository:
 <code>
 svn co https://svn.apache.org/repos/asf/incubator/ivy/core/trunk ivy
 </code>
+Then to build Ivy from source, assuming you have ant 1.6.2+ and a jdk 1.4+ installed, then you only need to run the following command:
+<code>
+ant jar
+</code>
+Then you will find ivy.jar in <b>build/artifact</b>.
+
+<h2>Snapshot build</h2>
 There is also a snapshot build available here at the ASF, with the new package names (for those who use the Ivy API). It should not be considered production quality, is not a release, and is not fully endorsed by the ASF. If after all these warnings you're still interested, here is the link:
 http://incubator.apache.org/ivy/downloads/latest/
 
+<h2>Latest stable version (not Apache)</h2>
 The latest stable version of Ivy is <a href="doc/releasenotes/1.4.1.html">1.4.1</a>, and is not an Apache incubating release, but a release done while Ivy was still hosted by jayasoft:
 <ul>
 <li><a href="http://www.jaya.free.fr/downloads/ivy/1.4.1/ivy-1.4.1-bin.zip">binaries</a></li>
