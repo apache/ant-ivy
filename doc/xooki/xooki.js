@@ -145,7 +145,7 @@ xooki.url = {
         			req.open("GET", url, true);
 				    req.onreadystatechange=function() {
 				        if (req.readyState == 4) {
-				           if (req.status == 200) {
+				           if (req.status == 200 || req.status == 0) {
 				              callback(req.responseText, obj);
 				           }
 				        }
@@ -444,6 +444,19 @@ xooki.component = {
 
     printerFriendlyLink: function () {
         return '<a href="'+this.printerFriendlyLocation()+'">'+t('Printer Friendly')+'</a>';
+    },
+
+    breadCrumb: function () {
+        var breadCrumb = '<span class="breadCrumb">';
+		breadCrumb += (function (page) {
+        	var breadCrumb = '<a href="'+pu(page.id)+'">'+page.title+'</a>';
+			if (page.meta.level >= 1) {
+				breadCrumb = arguments.callee(page.meta.parent) + " &gt; " + breadCrumb;
+			}
+        	return breadCrumb;
+        })(xooki.page);
+		breadCrumb += '</span>';
+		return breadCrumb;
     }
 };
 
@@ -823,11 +836,11 @@ xooki.postProcess = function() {
 
 	if (xooki.page == null) {
 		xooki.warn(t('page id not found in TOC: ${0}',curPageId));
-	} else {
-		if (typeof xooki.config.title == 'undefined') {
-			xooki.config.title = xooki.page.title;
-		}		
-	}
+		xooki.page = xooki.toc.children[0];
+	} 
+	if (typeof xooki.config.title == 'undefined') {
+		xooki.config.title = xooki.page.title;
+	}		
 	xooki.config.page = xooki.page;
 	
     ////////////////////////////////////////////////////////////////////////////
