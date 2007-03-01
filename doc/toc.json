@@ -581,7 +581,7 @@
                       ]
                   },
                   {
-                    "id":"doc/conf/triggers",
+                    "id":"doc/configuration/triggers",
                     "title":"triggers",
                     "children": [
 
