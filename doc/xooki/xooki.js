@@ -388,7 +388,15 @@ xooki.html = {
 
     show: function (divid) {
 	   document.getElementById(divid).style.display = '';
-    } 
+    },
+    
+    pageLink: function(page) {
+    	if (page.abstract) {
+    		return page.title;
+    	} else {
+    		return '<a href="'+pu(page.id)+'" '+(page.id == xooki.page.id?'class="current"':'')+'>'+page.title+'</a>';
+    	}
+    }
 };
 
 xooki.component = {
@@ -396,7 +404,7 @@ xooki.component = {
     	if (xooki.page.children.length > 0) {
     		childrenList = '<ul class="'+css('childrenList')+'">';
     		for (var i in xooki.page.children) {
-    			childrenList+='<li><a href="'+pu(xooki.page.children[i].id)+'">'+xooki.page.children[i].title+'</a></li>';
+    			childrenList+='<li>'+xooki.html.pageLink(xooki.page.children[i])+'</li>';
     		}
     		childrenList += "</ul>";
     		return childrenList;
@@ -410,7 +418,7 @@ xooki.component = {
     	menu += (function (page) {
         	var menu = '';
         	for (var i  in page.children) {
-        		menu += '<li id="xooki-'+page.children[i].id+'"><a href="'+pu(page.children[i].id)+'" '+(page.children[i].id == xooki.page.id?'class="current"':'')+'>'+page.children[i].title+'</a>';
+        		menu += '<li id="xooki-'+page.children[i].id+'">'+xooki.html.pageLink(page.children[i]);
         		smenu = arguments.callee(page.children[i]);
         		if (smenu != '') {
         			menu += '<ul ';
@@ -449,7 +457,7 @@ xooki.component = {
     breadCrumb: function () {
         var breadCrumb = '<span class="breadCrumb">';
 		breadCrumb += (function (page) {
-        	var breadCrumb = '<a href="'+pu(page.id)+'">'+page.title+'</a>';
+        	var breadCrumb = xooki.html.pageLink(page);
 			if (page.meta.level >= 1) {
 				breadCrumb = arguments.callee(page.meta.parent) + " &gt; " + breadCrumb;
 			}
