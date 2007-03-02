@@ -1,10 +1,10 @@
-#navcontainer .breadCrumb {
+#navcontainer  {
     color: white;
 	margin-left: 20px;
 }
 
 
-#navcontainer .breadCrumb a {
+#navcontainer  a {
     color: white;
 	text-decoration: none;
 }
