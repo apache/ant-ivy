@@ -56,7 +56,7 @@ import org.apache.ivy.util.filter.Filter;
 import org.apache.ivy.util.filter.FilterHelper;
 
 
-public class IvyNode {
+public class IvyNode implements Comparable {
     private static final Pattern FALLBACK_CONF_PATTERN = Pattern.compile("(.+)\\((.*)\\)");
 
     private static final class NodeConf {
@@ -1081,6 +1081,11 @@ public class IvyNode {
         }
         IvyNode node = (IvyNode)obj;
         return node.getId().equals(getId());
+    }
+
+    public int compareTo(Object obj) {
+        IvyNode that = (IvyNode)obj;
+        return this.getModuleId().compareTo(that.getModuleId());
     }
     
     public int hashCode() {

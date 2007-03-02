@@ -18,14 +18,19 @@
 package org.apache.ivy.plugins.report;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
+import org.apache.ivy.core.IvyContext;
 import org.apache.ivy.core.report.ArtifactDownloadReport;
 import org.apache.ivy.core.report.ConfigurationResolveReport;
 import org.apache.ivy.core.report.ResolveReport;
 import org.apache.ivy.core.resolve.IvyNode;
 import org.apache.ivy.core.resolve.IvyNodeEviction.EvictionData;
+import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.util.Message;
 
 
@@ -40,7 +45,32 @@ public class LogReportOutputter implements ReportOutputter {
    }
 
     public void output(ResolveReport report, File destDir) {
+    	IvySettings settings = IvyContext.getContext().getSettings();
+    	if (settings.logModulesInUse()) {
+    		Message.info("\t:: modules in use:");
+    		List dependencies = new ArrayList(report.getDependencies());
+    		Collections.sort(dependencies);
+    		if (dependencies.size() > 0) {
+    			String[] confs = report.getConfigurations();
+    			for (int i = 0; i < dependencies.size(); i++) {
+    				IvyNode node = (IvyNode)dependencies.get(i);
+    				if (node.isCompletelyEvicted()) {
+    					continue;
+    				}
+    				List nodeConfs = new ArrayList(confs.length);
+    				for (int j = 0; j < confs.length; j++) {
+    					String conf = confs[j];
+    					if (report.getConfigurationReport(conf).getModuleRevisionIds().contains(node.getResolvedId())) {
+    						nodeConfs.add(conf);
+    					}
+    				}
+    				Message.info("\t"+node+" from "+node.getModuleRevision().getResolver().getName()+" in "+nodeConfs);
+    			}
+    		}
+    	}
+
         IvyNode[] evicted = report.getEvictedNodes();
+
         if (evicted.length > 0) {
             Message.info("\t:: evicted modules:");
             for (int i = 0; i < evicted.length; i++) {

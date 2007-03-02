@@ -22,7 +22,7 @@ package org.apache.ivy.core.module.id;
  * @author x.hanin
  *
  */
-public class ModuleId {
+public class ModuleId implements Comparable {
     static final String ENCODE_SEPARATOR = ":#@#:";
     private String _organisation;
     private String _name;
@@ -62,6 +62,15 @@ public class ModuleId {
     }
     public String toString() {
         return "[ "+_organisation+" | "+_name+" ]";
+    }
+
+    public int compareTo(Object obj) {
+        ModuleId that = (ModuleId)obj;
+        int result = _organisation.compareTo(that._organisation);
+        if (result == 0) {
+            result = _name.compareTo(that._name);
+        }
+        return result;
     }
 
     public String encodeToString() {

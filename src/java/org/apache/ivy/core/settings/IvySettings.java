@@ -939,6 +939,11 @@ public class IvySettings {
         }
         _variables = variables;
     }
+    public boolean logModulesInUse() {
+        String var = getVariable("ivy.log.modules.in.use");
+        return var == null || Boolean.valueOf(var).booleanValue();
+    }
+
     public boolean logModuleWhenFound() {
         String var = getVariable("ivy.log.module.when.found");
         return var == null || Boolean.valueOf(var).booleanValue();

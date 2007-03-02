@@ -12,6 +12,7 @@ for detailed view of each issue, please consult http://jira.jayasoft.org/
 - IMPROVE: Ability to have multiple roots in the <ivy:buildfilelist> task (IVY-340) (thanks to Matt Inger)
 - IMPROVE: Refactoring / documentation / test of matcher package (IVY-375) (thanks to Stephane Baillez)
 - IMPROVE: Add a unit test to verify that latest.integration accepts released modules (IVY-394) (thanks to Gilles Scokart)
+- IMPROVE: New "modules in use" section in console report at the end of resolve (IVY-373) (thanks to John Wiliams)
 
 - FIX: latest-time conflict manager not working properly (IVY-407)
 - FIX: LatestRevisionStrategy do not consider all dynamic revisions properly (IVY-383) (thanks to John Williams for the unit test)
