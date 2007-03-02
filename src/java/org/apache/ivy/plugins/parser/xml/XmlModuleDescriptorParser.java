@@ -308,7 +308,13 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
                 String name = _ivy.substitute(attributes.getValue("name"));
                 String branch = _ivy.substitute(attributes.getValue("branch"));
                 String rev = _ivy.substitute(attributes.getValue("rev"));
-                _dd = new DefaultDependencyDescriptor(_md, ModuleRevisionId.newInstance(org, name, branch, rev, ExtendableItemHelper.getExtraAttributes(attributes, new String[] {"org", "name", "rev", "force", "transitive", "changing", "conf"})), force, changing, transitive);
+                _dd = new DefaultDependencyDescriptor(
+                		_md, 
+                		ModuleRevisionId.newInstance(org, name, branch, rev, 
+                				ExtendableItemHelper.getExtraAttributes(
+                						attributes, 
+                						new String[] {"org", "name", "branch", "rev", "force", "transitive", "changing", "conf"})), 
+                		force, changing, transitive);
                 _md.addDependency(_dd);
                 String confs = _ivy.substitute(attributes.getValue("conf"));
                 if (confs != null && confs.length() > 0) {

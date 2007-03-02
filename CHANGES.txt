@@ -14,6 +14,7 @@ for detailed view of each issue, please consult http://jira.jayasoft.org/
 - IMPROVE: Add a unit test to verify that latest.integration accepts released modules (IVY-394) (thanks to Gilles Scokart)
 - IMPROVE: New "modules in use" section in console report at the end of resolve (IVY-373) (thanks to John Wiliams)
 
+- FIX: Static revision replacement is not working when delivering an artifact with a dependency on a branch (IVY-404)
 - FIX: latest-time conflict manager not working properly (IVY-407)
 - FIX: LatestRevisionStrategy do not consider all dynamic revisions properly (IVY-383) (thanks to John Williams for the unit test)
 - FIX: IOException during publish causes NullPointerException (IVY-371)
