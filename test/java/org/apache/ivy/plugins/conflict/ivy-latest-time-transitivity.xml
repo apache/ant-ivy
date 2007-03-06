@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ivy-module version="1.0">
+  <info organisation="MyCompany" module="E" revision="1.0.0" status="release" />
+  <dependencies>
+    <dependency org="MyCompany" name="D" rev="1.0.0" changing="true" />
+    <dependency org="MyCompany" name="A" rev="1.0.0" changing="true" />
+  </dependencies>
+</ivy-module>

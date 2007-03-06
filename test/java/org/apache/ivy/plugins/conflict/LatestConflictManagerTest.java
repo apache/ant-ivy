@@ -126,7 +126,50 @@ public class LatestConflictManagerTest extends TestCase {
         }
     }
     
+    /*
+    Test case for issue IVY-407 (with transitivity)
+
+    There are 5 modules A, B, C, D and E.
+		1) publish C-1.0.0, C-1.0.1 and C-1.0.2
+		2) B needs C-1.0.0 : retrieve ok and publish B-1.0.0
+		3) A needs B-1.0.0 and C-1.0.2 : retrieve ok and publish A-1.0.0
+		4) D needs C-1.0.1 : retrieve ok and publish D-1.0.0
+		5) E needs D-1.0.0 and A-1.0.0 (D before A in ivy file) retrieve failed to get C-1.0.2 from A
+		(get apparently C-1.0.1 from D)
+     */
+    public void testLatestTimeTransitivity() throws Exception {
+    	ivy = new Ivy();
+    	ivy.configure(LatestConflictManagerTest.class
+    			.getResource("ivyconf-latest-time-transitivity.xml"));
+    	ivy.getSettings().setVariable("ivy.log.conflict.resolution", "true", true);
+    	ResolveReport report =
+    		ivy.resolve( LatestConflictManagerTest.class.getResource( "ivy-latest-time-transitivity.xml" ), 
+    				getResolveOptions() );
+    	ConfigurationResolveReport defaultReport =
+    		report.getConfigurationReport("default");
+    	Iterator iter = defaultReport.getModuleRevisionIds().iterator();
+    	while (iter.hasNext()) {
+    		ModuleRevisionId mrid = (ModuleRevisionId)iter.next();
+
+    		if (mrid.getName().equals("A")) {
+    			assertEquals("A revision should be 1.0.0", "1.0.0", mrid.getRevision());
+    		}
+    		else if (mrid.getName().equals("D")) {
+    			assertEquals("D revision should be 1.0.0", "1.0.0", mrid.getRevision());
+    		}
+    		// by transitivity
+    		else if (mrid.getName().equals("B")) {
+    			assertEquals("B revision should be 1.0.0", "1.0.0", mrid.getRevision());
+    		}
+    		else if (mrid.getName().equals("C")) {
+    			assertEquals("C revision should be 1.0.2", "1.0.2", mrid.getRevision());
+    		}
+    	}
+    }
+
     private ResolveOptions getResolveOptions() {
-		return new ResolveOptions().setCache(CacheManager.getInstance(ivy.getSettings())).setValidate(false);
+		return new ResolveOptions()
+			.setCache(CacheManager.getInstance(ivy.getSettings()))
+			.setValidate(false);
 	}
 }

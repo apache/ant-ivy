@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ivy-module version="1.0">
+  <info organisation="MyCompany" module="C" revision="1.0.0" status="integration" publication="20070226112211"/>
+  <configurations>
+   <conf name="all"/>
+  </configurations>
+  <publications>
+    <artifact name="C" ext="tar.gz" type="thirdparty" conf="all"/>
+    <artifact name="C" ext="jar" type="lib" conf="all"/>
+  </publications>
+  <dependencies>
+  </dependencies>
+</ivy-module>

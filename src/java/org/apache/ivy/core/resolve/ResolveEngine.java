@@ -578,17 +578,52 @@ public class ResolveEngine {
     private void resolveConflict(VisitNode node) {
         resolveConflict(node, node.getParent(), Collections.EMPTY_SET);
     }
-    private void resolveConflict(VisitNode node, VisitNode ancestor, Collection toevict) {
+    /**
+     * Resolves conflict for the given node in the given ancestor.
+     * This method do conflict resolution in ancestor parents recursively,
+     * unless not necessary.
+     * @param node the node for which conflict resolution should be done
+     * @param ancestor the ancestor in which the conflict resolution should be done
+     * @param toevict a collection of IvyNode to evict (as computed by conflict resolution in descendants of ancestor)
+     * @return true if conflict resolution has been done, false it can't be done yet
+     */
+    private boolean resolveConflict(VisitNode node, VisitNode ancestor, Collection toevict) {
         if (ancestor == null || node == ancestor) {
-            return;
+            return true;
         }
         // check if job is not already done
-        if (checkConflictSolved(node, ancestor)) {
-            return;
+        if (checkConflictSolvedEvicted(node, ancestor)) {
+        	// job is done and node is evicted, nothing to do
+            return true;
+        }
+        if (checkConflictSolvedSelected(node, ancestor)) {
+        	// job is done and node is selected, nothing to do for this ancestor, but we still have 
+        	// to check higher levels, for which conflict resolution might have been impossible
+        	// before
+        	if (resolveConflict(node, ancestor.getParent(), toevict)) {
+        		// now that conflict resolution is ok in ancestors
+        		// we just have to check if the node wasn't previously evicted in root ancestor
+        		EvictionData evictionData = node.getEvictionDataInRoot(node.getRootModuleConf(), ancestor);
+        		if (evictionData != null) {
+        			// node has been previously evicted in an ancestor: we mark it as evicted
+        			if (_settings.debugConflictResolution()) {
+        				Message.debug(node+" was previously evicted in root module conf "+node.getRootModuleConf());
+        			}
+
+        			node.markEvicted(evictionData);                
+        			if (_settings.debugConflictResolution()) {
+        				Message.debug("evicting "+node+" by "+evictionData);
+        			}
+        		}
+        		return true;
+        	} else {
+        		return false;
+        	}
         }
         
         // compute conflicts
         Collection resolvedNodes = new HashSet(ancestor.getNode().getResolvedNodes(node.getModuleId(), node.getRootModuleConf()));
+        resolvedNodes.addAll(ancestor.getNode().getPendingConflicts(node.getRootModuleConf(), node.getModuleId()));
         Collection conflicts = computeConflicts(node, ancestor, toevict, resolvedNodes);
         
         if (_settings.debugConflictResolution()) {
@@ -601,8 +636,10 @@ public class ResolveEngine {
 		if (resolved == null) {
             if (_settings.debugConflictResolution()) {
                 Message.debug("impossible to resolve conflicts for "+node+" in "+ancestor+" yet");
+                Message.debug("setting all nodes as pending conflicts for later conflict resolution: "+conflicts);
             }
-            return;
+            ancestor.getNode().setPendingConflicts(node.getModuleId(), node.getRootModuleConf(), conflicts);
+            return false;
         }
         
         if (_settings.debugConflictResolution()) {
@@ -633,8 +670,9 @@ public class ResolveEngine {
             evicted.removeAll(resolved);
             evicted.addAll(toevict);
             ancestor.getNode().setEvictedNodes(node.getModuleId(), node.getRootModuleConf(), evicted);
+            ancestor.getNode().setPendingConflicts(node.getModuleId(), node.getRootModuleConf(), Collections.EMPTY_SET);
             
-            resolveConflict(node, ancestor.getParent(), toevict);
+            return resolveConflict(node, ancestor.getParent(), toevict);
         } else {
             // node has been evicted for the current parent
             if (resolved.isEmpty()) {
@@ -652,6 +690,7 @@ public class ResolveEngine {
             evicted.addAll(toevict);
             evicted.add(node.getNode());
             ancestor.getNode().setEvictedNodes(node.getModuleId(), node.getRootModuleConf(), evicted);
+            ancestor.getNode().setPendingConflicts(node.getModuleId(), node.getRootModuleConf(), Collections.EMPTY_SET);
 
             
             node.markEvicted(ancestor, conflictManager, resolved);
@@ -661,16 +700,17 @@ public class ResolveEngine {
 
             // if resolved changed we have to go up in the graph
             Collection prevResolved = ancestor.getNode().getResolvedNodes(node.getModuleId(), node.getRootModuleConf());
+            boolean solved = true;
             if (!prevResolved.equals(resolved)) {                
                 ancestor.getNode().setResolvedNodes(node.getModuleId(), node.getRootModuleConf(), resolved);
                 for (Iterator iter = resolved.iterator(); iter.hasNext();) {
                     IvyNode sel = (IvyNode)iter.next();
                     if (!prevResolved.contains(sel)) {
-                        resolveConflict(node.gotoNode(sel), ancestor.getParent(), toevict);
+                        solved &= resolveConflict(node.gotoNode(sel), ancestor.getParent(), toevict);
                     }
                 }
             }
-
+            return solved;
         }
     }
 
@@ -705,29 +745,20 @@ public class ResolveEngine {
         return conflicts;
     }
 
-    private boolean checkConflictSolved(VisitNode node, VisitNode ancestor) {
+    private boolean checkConflictSolvedSelected(VisitNode node, VisitNode ancestor) {
         if (ancestor.getResolvedRevisions(node.getModuleId()).contains(node.getResolvedId())) {
             // resolve conflict has already be done with node with the same id
-            // => job already done, we just have to check if the node wasn't previously evicted in root ancestor
             if (_settings.debugConflictResolution()) {
                 Message.debug("conflict resolution already done for "+node+" in "+ancestor);
             }
-            EvictionData evictionData = node.getEvictionDataInRoot(node.getRootModuleConf(), ancestor);
-            if (evictionData != null) {
-                // node has been previously evicted in an ancestor: we mark it as evicted
-                if (_settings.debugConflictResolution()) {
-                    Message.debug(node+" was previously evicted in root module conf "+node.getRootModuleConf());
-                }
-
-                node.markEvicted(evictionData);                
-                if (_settings.debugConflictResolution()) {
-                    Message.debug("evicting "+node+" by "+evictionData);
-                }
-            }
             return true;
-        } else if (ancestor.getEvictedRevisions(node.getModuleId()).contains(node.getResolvedId())) {
+        } 
+        return false;
+    }
+
+    private boolean checkConflictSolvedEvicted(VisitNode node, VisitNode ancestor) {
+        if (ancestor.getEvictedRevisions(node.getModuleId()).contains(node.getResolvedId())) {
             // resolve conflict has already be done with node with the same id
-            // => job already done, we just have to check if the node wasn't previously selected in root ancestor
             if (_settings.debugConflictResolution()) {
                 Message.debug("conflict resolution already done for "+node+" in "+ancestor);
             }

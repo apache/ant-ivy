@@ -114,6 +114,7 @@ public class IvyNodeEviction {
     private IvyNode _node;
 
     private Map _selectedDeps = new HashMap(); // Map (ModuleIdConf -> Set(Node)) // map indicating for each dependency which node has been selected
+    private Map _pendingConflicts = new HashMap(); // Map (ModuleIdConf -> Set(Node)) // map indicating for each dependency which nodes are in pending conflict (conflict detected but not yet resolved)
 
     private Map _evictedDeps = new HashMap(); // Map (ModuleIdConf -> Set(Node)) // map indicating for each dependency which node has been evicted
     private Map _evictedRevs = new HashMap(); // Map (ModuleIdConf -> Set(ModuleRevisionId)) // map indicating for each dependency which revision has been evicted
@@ -305,5 +306,22 @@ public class IvyNodeEviction {
         // we didn't find this mrid in the selected ones for the root: it has been previously evicted
         return new EvictionData(rootModuleConf, ancestor, _node.getRoot().getConflictManager(_node.getModuleId()), selectedNodes);
     }
+
+	public Collection getPendingConflicts(String rootModuleConf, ModuleId mid) {
+        Collection resolved = (Collection)_pendingConflicts.get(new ModuleIdConf(mid, rootModuleConf));
+        Set ret = new HashSet();
+        if (resolved != null) {
+            for (Iterator iter = resolved.iterator(); iter.hasNext();) {
+                IvyNode node = (IvyNode)iter.next();
+                ret.add(node.getRealNode());
+            }
+        }
+        return ret;
+	}
+
+	public void setPendingConflicts(ModuleId moduleId, String rootModuleConf, Collection conflicts) {
+        ModuleIdConf moduleIdConf = new ModuleIdConf(moduleId, rootModuleConf);
+        _pendingConflicts.put(moduleIdConf, new HashSet(conflicts));
+	}
 
 }

@@ -1091,4 +1091,19 @@ public class IvyNode implements Comparable {
     public int hashCode() {
         return getId().hashCode();
     }
+
+    /**
+     * Returns a collection of Nodes in conflict for which conflict has been detected
+     * but conflict resolution hasn't been done yet
+     * @param rootModuleConf
+     * @param mid the module id for which pending conflicts should be found
+     * @return a Collection of IvyNode in pending conflict
+     */
+	public Collection getPendingConflicts(String rootModuleConf, ModuleId mid) {
+		return _eviction.getPendingConflicts(rootModuleConf, mid);
+	}
+
+	public void setPendingConflicts(ModuleId moduleId, String rootModuleConf, Collection conflicts) {
+		_eviction.setPendingConflicts(moduleId, rootModuleConf, conflicts);
+	}
 }
