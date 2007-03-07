@@ -17,6 +17,7 @@
  */
 package org.apache.ivy.plugins.conflict;
 
+import java.io.File;
 import java.util.Iterator;
 import java.util.List;
 
@@ -142,6 +143,14 @@ public class LatestConflictManagerTest extends TestCase {
     	ivy.configure(LatestConflictManagerTest.class
     			.getResource("ivyconf-latest-time-transitivity.xml"));
     	ivy.getSettings().setVariable("ivy.log.conflict.resolution", "true", true);
+    	
+    	// set timestamps, because svn is not preserving this information, 
+    	// and the latest time strategy is relying on it
+    	long time = System.currentTimeMillis() - 10000;
+    	new File("test/repositories/IVY-407/MyCompany/C/ivy-1.0.0.xml").setLastModified(time);
+    	new File("test/repositories/IVY-407/MyCompany/C/ivy-1.0.1.xml").setLastModified(time+2000);
+    	new File("test/repositories/IVY-407/MyCompany/C/ivy-1.0.2.xml").setLastModified(time+4000);
+    	
     	ResolveReport report =
     		ivy.resolve( LatestConflictManagerTest.class.getResource( "ivy-latest-time-transitivity.xml" ), 
     				getResolveOptions() );
