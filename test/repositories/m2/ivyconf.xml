@@ -3,7 +3,7 @@
 	<resolvers>
 		<filesystem name="m2" m2compatible="true">
 			<ivy pattern="${ivy.conf.dir}/[organisation]/[module]/[revision]/[module]-[revision].pom"/>
-			<artifact pattern="${ivy.conf.dir}/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]"/>
+			<artifact pattern="${ivy.conf.dir}/[organisation]/[module]/[revision]/[artifact]-[revision](-[classifier]).[ext]"/>
 		</filesystem>
 	</resolvers>
 </ivyconf>

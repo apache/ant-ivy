@@ -26,6 +26,7 @@ import java.text.ParseException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -479,14 +480,18 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
         }
         if (includes) {
             String url = _ivy.substitute(attributes.getValue("url"));
-            _dad = new DefaultDependencyArtifactDescriptor(_dd, name, type, ext, url==null?null:new URL(url), includes, matcher);
+            Map extraAtt = ExtendableItemHelper.getExtraAttributes(attributes, new String[] {"name", "type", "ext", "matcher", "assumePublished", "url"});
+            String assumePublishedStr = _ivy.substitute(attributes.getValue("assumePublished"));
+            boolean assumePublished = assumePublishedStr != null && Boolean.valueOf(assumePublishedStr).booleanValue();
+            _dad = new DefaultDependencyArtifactDescriptor(_dd, name, type, ext, url==null?null:new URL(url), includes, assumePublished, matcher, extraAtt);
         } else {
             String org = _ivy.substitute(attributes.getValue("org"));
             org = org == null ? PatternMatcher.ANY_EXPRESSION : org;
             String module = _ivy.substitute(attributes.getValue("module"));
             module = module == null ? PatternMatcher.ANY_EXPRESSION : module;
             ArtifactId aid = new ArtifactId(new ModuleId(org, module), name, type, ext);
-            _dad = new DefaultDependencyArtifactDescriptor(_dd, aid, includes, matcher);
+            Map extraAtt = ExtendableItemHelper.getExtraAttributes(attributes, new String[] {"org", "module", "name", "type", "ext", "matcher", "assumePublished"});
+            _dad = new DefaultDependencyArtifactDescriptor(_dd, aid, includes, false, matcher, extraAtt);
         }
         String confs = _ivy.substitute(attributes.getValue("conf"));
         // only add confs if they are specified. if they aren't, endElement will handle this

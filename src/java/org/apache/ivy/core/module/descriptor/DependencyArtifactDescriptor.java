@@ -21,6 +21,7 @@ import java.net.URL;
 
 import org.apache.ivy.core.module.id.ArtifactId;
 import org.apache.ivy.plugins.matcher.PatternMatcher;
+import org.apache.ivy.util.extendable.ExtendableItem;
 
 
 /**
@@ -29,7 +30,7 @@ import org.apache.ivy.plugins.matcher.PatternMatcher;
  * It is used to resctrict the artifacts asked for a dependency, or describe them
  * when there is no ivy file.
  */
-public interface DependencyArtifactDescriptor {
+public interface DependencyArtifactDescriptor extends ExtendableItem {
     /**
      * Returns the dependency descriptor in which this artifact is asked
      * @return
@@ -72,4 +73,14 @@ public interface DependencyArtifactDescriptor {
      * @return
      */
     public PatternMatcher getMatcher();
+    
+    /**
+     * Indicates if this artifact should be assumed to be published in the dependency.
+     * This is useful only for dependency artifact include, and is used
+     * to know if the artifact should be consider to be published in the dependency
+     * even if it isn't declared in the dependency module descriptor.
+     * @return true if the artifact should be assumed to be published in the dependency,
+     * false otherwise
+     */
+    public boolean isAssumePublished();
 }

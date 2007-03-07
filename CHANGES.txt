@@ -7,6 +7,8 @@ for detailed view of each issue, please consult http://jira.jayasoft.org/
 
    version in SVN
 =====================================
+- NEW: define artifacts not declared by the dependency module descriptor (IVY-419)
+
 - IMPROVE: Please typedef CacheResolver as "cache" for us (IVY-359)
 - IMPROVE: ivy:retrieve should be able to create symlinks (IVY-353) (thanks to John Williams)
 - IMPROVE: Ability to have multiple roots in the <ivy:buildfilelist> task (IVY-340) (thanks to Matt Inger)
@@ -14,6 +16,7 @@ for detailed view of each issue, please consult http://jira.jayasoft.org/
 - IMPROVE: Add a unit test to verify that latest.integration accepts released modules (IVY-394) (thanks to Gilles Scokart)
 - IMPROVE: New "modules in use" section in console report at the end of resolve (IVY-373) (thanks to John Wiliams)
 
+- FIX: Ivy doesn't recognize maven2 classifiers (IVY-418)
 - FIX: Static revision replacement is not working when delivering an artifact with a dependency having extra attributes (IVY-415)
 - FIX: Static revision replacement is not working when delivering an artifact with a dependency on a branch (IVY-404)
 - FIX: latest-time conflict manager not working properly (IVY-407)

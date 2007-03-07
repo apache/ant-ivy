@@ -735,7 +735,7 @@ public class IvyNode implements Comparable {
             // at download time
             for (Iterator it = includes.iterator(); it.hasNext();) {
                 DependencyArtifactDescriptor dad = (DependencyArtifactDescriptor)it.next();
-                artifacts.add(new MDArtifact(_md, dad.getName(), dad.getType(), dad.getExt(), dad.getUrl(), null));
+                artifacts.add(new MDArtifact(_md, dad.getName(), dad.getType(), dad.getExt(), dad.getUrl(), dad.getExtraAttributes()));
             }
         } else {
             if (includes == null || includes.isEmpty()) {
@@ -761,14 +761,18 @@ public class IvyNode implements Comparable {
                 // now we can keep only listed ones
                 for (Iterator it = includes.iterator(); it.hasNext();) {
                     DependencyArtifactDescriptor dad = (DependencyArtifactDescriptor)it.next();
-                    Collection arts = findArtifactsMatching(dad, allArtifacts);
-                    if (arts.isEmpty()) {
-                        Message.error("a required artifact is not listed by module descriptor: "+dad.getId());
-                        // we remove it from required list to prevent message to be displayed more than once
-                        it.remove(); 
+                    if (dad.isAssumePublished()) {
+                        artifacts.add(new MDArtifact(_md, dad.getName(), dad.getType(), dad.getExt(), dad.getUrl(), dad.getExtraAttributes()));
                     } else {
-                        Message.debug(this+" in "+rootModuleConf+": including "+arts);
-                        artifacts.addAll(arts);
+                    	Collection arts = findArtifactsMatching(dad, allArtifacts);
+                    	if (arts.isEmpty()) {
+                    		Message.error("a required artifact is not listed by module descriptor: "+dad.getId());
+                    		// we remove it from required list to prevent message to be displayed more than once
+                    		it.remove(); 
+                    	} else {
+                    		Message.debug(this+" in "+rootModuleConf+": including "+arts);
+                    		artifacts.addAll(arts);
+                    	}
                     }
                 }
             }

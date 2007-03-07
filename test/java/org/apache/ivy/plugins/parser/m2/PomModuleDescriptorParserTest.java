@@ -18,7 +18,9 @@
 package org.apache.ivy.plugins.parser.m2;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 
 import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
@@ -100,6 +102,22 @@ public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         assertNotNull(dds);
         assertEquals(1, dds.length);
         assertEquals(ModuleRevisionId.newInstance("commons-logging", "commons-logging", "1.0.4"), dds[0].getDependencyRevisionId());
+    }
+    
+    public void testDependenciesWithClassifier() throws Exception {
+        ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(new IvySettings(), getClass().getResource("test-dependencies-with-classifier.pom"), false);
+        assertNotNull(md);
+        
+        assertEquals(ModuleRevisionId.newInstance("org.apache", "test", "1.0"), md.getModuleRevisionId());
+        
+        DependencyDescriptor[] dds = md.getDependencies();
+        assertNotNull(dds);
+        assertEquals(1, dds.length);
+        assertEquals(ModuleRevisionId.newInstance("commons-logging", "commons-logging", "1.0.4"), dds[0].getDependencyRevisionId());
+        Map extraAtt = new HashMap();
+        extraAtt.put("classifier", "asl");
+        assertEquals(1, dds[0].getAllDependencyArtifactsIncludes().length);
+        assertEquals(extraAtt, dds[0].getAllDependencyArtifactsIncludes()[0].getExtraAttributes());
     }
     
     // IVY-392

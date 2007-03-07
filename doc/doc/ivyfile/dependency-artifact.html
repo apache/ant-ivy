@@ -25,7 +25,9 @@ Example:
 </dependency>	
 </code>
 
-<span class="since">since 1.4</span> It's possible to indicate the url at which the artifact can be found. This is not mandatory, and even not recommended with an enterprise repository. Note that Ivy will always look at the location where the artifact should be and only use th url if it cannot be found at the standard location in the repository.
+<span class="since">since 1.4</span> It's possible to indicate the url at which the artifact can be found. This is not mandatory, and even not recommended with an enterprise repository. Note that Ivy will always look at the location where the artifact should be and only use the url if it cannot be found at the standard location in the repository.
+
+<span class="since">since 1.5</span> This feature can also be used for modules having their own module descriptor, but which doesn't declare an artifact you know that is published. To use this behavior, set the <i>assumePublished</i> attribute to true. Note that in this case artifacts declared to be published by the dependency will be ignored, so do not forget to include all artifacts you want.
 
 <h1>Attributes</h1>
 <table class="ivy-attributes">
@@ -42,6 +44,8 @@ Example:
     <tr><td>conf</td><td>comma separated list of the master configurations in which this artifact should be included.
     '*' wildcard can be used to designate all configurations of this module</td>
         <td>No, defaults to '*', unless nested conf are specified</td></tr>
+    <tr><td>assumePublished</td><td>true if this artifact should be assumed to be published by the dependency even if it has its own module descriptor <span class="since">since 1.5</span></td>
+        <td>No, defaults to false</td></tr>
     <tr><td>url</td><td>an url where this artifact can be found if it isn't present at the standard location in the repository <span class="since">since 1.4</span></td>
         <td>No, defaults to no url</td></tr>
 </tbody>
@@ -72,7 +76,15 @@ Declares a dependency on module bar which only publish one artifact: baz.jar.
 </code>
 Same as above, except that if the artifact is not found at its standard location, Ivy will use http://www.acme.com/repository/bar/baz-1.0-acme.jar to download it.
 
-	</textarea>
+<hr/>
+<code type="xml">
+<dependency org="foo" name="bar" rev="1.0">
+  <include name="*"/>
+  <artifact name="baz" type="source" ext="jar" assumePublished="true"/>
+</dependency>
+</code>
+Declares a dependency on module bar for which all artifacts declared will be used (thanks to the include tag) plus an artifact baz of type source and ext jar (which is not declared in module bar module descriptor).
+</textarea>
 <script type="text/javascript">xooki.postProcess();</script>
 </body>
 </html>

@@ -79,7 +79,7 @@ public class IBiblioResolver extends URLResolver {
         super.setM2compatible(m2compatible);
         if (m2compatible) {
             _root = "http://www.ibiblio.org/maven2/";
-            _pattern = "[organisation]/[module]/[revision]/[artifact]-[revision].[ext]";
+            _pattern = "[organisation]/[module]/[revision]/[artifact]-[revision](-[classifier]).[ext]";
             updateWholePattern();
         }
     }
