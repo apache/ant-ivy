@@ -5,6 +5,8 @@
  */
 package fr.jayasoft.ivy.ant;
 
+import java.util.Map;
+import java.util.HashMap;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -89,6 +91,52 @@ public class IvyDeliverTest extends TestCase {
         DependencyDescriptor[] dds = md.getDependencies();
         assertEquals(1, dds.length);
         assertEquals(ModuleRevisionId.newInstance("org1", "mod1.2", "2.2"), dds[0].getDependencyRevisionId());
+    }
+
+    public void testWithBranch() throws Exception {
+    	// test case for IVY-404
+        _project.setProperty("ivy.dep.file", "test/java/fr/jayasoft/ivy/ant/ivy-latest-branch.xml");
+        IvyResolve res = new IvyResolve();
+        res.setProject(_project);
+        res.execute();
+        
+        _deliver.setPubrevision("1.2");
+        _deliver.setDeliverpattern("build/test/deliver/ivy-[revision].xml");
+        _deliver.execute();
+        
+        // should have done the ivy delivering
+        File deliveredIvyFile = new File("build/test/deliver/ivy-1.2.xml");
+        assertTrue(deliveredIvyFile.exists()); 
+        ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(new Ivy(), deliveredIvyFile.toURL(), true);
+        assertEquals(ModuleRevisionId.newInstance("apache", "resolve-latest", "1.2"), md.getModuleRevisionId());
+        DependencyDescriptor[] dds = md.getDependencies();
+        assertEquals(1, dds.length);
+        assertEquals(ModuleRevisionId.newInstance("org1", "mod1.2", "TRUNK", "2.2"), dds[0].getDependencyRevisionId());
+    }
+
+    public void testWithExtraAttributes() throws Exception {
+    	// test case for IVY-415
+        _project.setProperty("ivy.dep.file", "test/java/fr/jayasoft/ivy/ant/ivy-latest-extra.xml");
+        IvyResolve res = new IvyResolve();
+        res.setValidate(false);
+        res.setProject(_project);
+        res.execute();
+        
+        _deliver.setPubrevision("1.2");
+        _deliver.setDeliverpattern("build/test/deliver/ivy-[revision].xml");
+        _deliver.setValidate(false);
+        _deliver.execute();
+        
+        // should have done the ivy delivering
+        File deliveredIvyFile = new File("build/test/deliver/ivy-1.2.xml");
+        assertTrue(deliveredIvyFile.exists()); 
+        ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(new Ivy(), deliveredIvyFile.toURL(), false);
+        assertEquals(ModuleRevisionId.newInstance("apache", "resolve-latest", "1.2"), md.getModuleRevisionId());
+        DependencyDescriptor[] dds = md.getDependencies();
+        assertEquals(1, dds.length);
+        Map extraAtt = new HashMap();
+        extraAtt.put("myExtraAtt", "myValue");
+        assertEquals(ModuleRevisionId.newInstance("org1", "mod1.2", "2.2", extraAtt), dds[0].getDependencyRevisionId());
     }
 
     public void testReplaceImportedConfigurations() throws Exception {

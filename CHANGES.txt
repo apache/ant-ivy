@@ -5,6 +5,11 @@
 				
 for detailed view of each issue, please consult http://jira.jayasoft.org/
 
+   version 1.4.2 - not yet released
+=====================================
+- FIX: Static revision replacement is not working when delivering an artifact with a dependency having extra attributes (IVY-415)
+- FIX: Static revision replacement is not working when delivering an artifact with a dependency on a branch (IVY-404)
+
    version 1.4.1 - 2006-11-09
 =====================================
 - IMPROVE: ability to rebuild all dependent projects from a leaf (IVY-101)

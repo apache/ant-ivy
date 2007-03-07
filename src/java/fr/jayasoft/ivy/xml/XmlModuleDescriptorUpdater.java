@@ -34,6 +34,7 @@ import fr.jayasoft.ivy.ModuleRevisionId;
 import fr.jayasoft.ivy.namespace.Namespace;
 import fr.jayasoft.ivy.util.Message;
 import fr.jayasoft.ivy.util.XMLHelper;
+import fr.jayasoft.ivy.extendable.ExtendableItemHelper;
 
 /**
  * Used to update ivy files. Uses ivy file as source and not ModuleDescriptor to preserve
@@ -190,7 +191,7 @@ public class XmlModuleDescriptorUpdater {
                         String module = substitute(ivy, attributes.getValue("name"));
                         String branch = substitute(ivy, attributes.getValue("branch"));
                         String revision = substitute(ivy, attributes.getValue("rev"));
-                        ModuleRevisionId localMid = ModuleRevisionId.newInstance(org, module, branch, revision);
+                        ModuleRevisionId localMid = ModuleRevisionId.newInstance(org, module, branch, revision, ExtendableItemHelper.getExtraAttributes(attributes, XmlModuleDescriptorParser.DEPENDENCY_REGULAR_ATTRIBUTES));
                         ModuleRevisionId systemMid = ns == null ? 
                                 localMid : 
                                 ns.getToSystemTransformer().transform(localMid);
