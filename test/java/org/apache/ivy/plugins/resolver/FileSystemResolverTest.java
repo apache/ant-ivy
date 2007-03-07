@@ -215,7 +215,7 @@ public class FileSystemResolverTest extends TestCase {
         
         resolver.addIvyPattern("test"+FS+"repositories"+FS+"checkmodified"+FS+"ivy-[revision].xml");
         File modify = new File("test/repositories/checkmodified/ivy-1.0.xml");
-        FileUtil.copy(new File("test/repositories/checkmodified/ivy-1.0-before.xml"), modify, null);
+        FileUtil.copy(new File("test/repositories/checkmodified/ivy-1.0-before.xml"), modify, null, true);
         Date pubdate = new GregorianCalendar(2004, 10, 1, 11, 0, 0).getTime();
         modify.setLastModified(pubdate.getTime());
         
@@ -227,7 +227,7 @@ public class FileSystemResolverTest extends TestCase {
         assertEquals(pubdate, rmr.getPublicationDate());
                 
         // updates ivy file in repository
-        FileUtil.copy(new File("test/repositories/checkmodified/ivy-1.0-after.xml"), modify, null);
+        FileUtil.copy(new File("test/repositories/checkmodified/ivy-1.0-after.xml"), modify, null, true);
         pubdate = new GregorianCalendar(2005, 4, 1, 11, 0, 0).getTime();
         modify.setLastModified(pubdate.getTime());
         
@@ -261,8 +261,8 @@ public class FileSystemResolverTest extends TestCase {
         File artifact = new File("test/repositories/norevision/mod1.1.jar");
         
         // 'publish' 'before' version
-        FileUtil.copy(new File("test/repositories/norevision/ivy-mod1.1-before.xml"), modify, null);
-        FileUtil.copy(new File("test/repositories/norevision/mod1.1-before.jar"), artifact, null);
+        FileUtil.copy(new File("test/repositories/norevision/ivy-mod1.1-before.xml"), modify, null, true);
+        FileUtil.copy(new File("test/repositories/norevision/mod1.1-before.jar"), artifact, null, true);
         Date pubdate = new GregorianCalendar(2004, 10, 1, 11, 0, 0).getTime();
         modify.setLastModified(pubdate.getTime());
         
@@ -282,8 +282,8 @@ public class FileSystemResolverTest extends TestCase {
         r.close();
                 
         // updates ivy file and artifact in repository 
-        FileUtil.copy(new File("test/repositories/norevision/ivy-mod1.1-after.xml"), modify, null);
-        FileUtil.copy(new File("test/repositories/norevision/mod1.1-after.jar"), artifact, null);
+        FileUtil.copy(new File("test/repositories/norevision/ivy-mod1.1-after.xml"), modify, null, true);
+        FileUtil.copy(new File("test/repositories/norevision/mod1.1-after.jar"), artifact, null, true);
         pubdate = new GregorianCalendar(2005, 4, 1, 11, 0, 0).getTime();
         modify.setLastModified(pubdate.getTime());
         // no need to update new artifact timestamp cause it isn't used
@@ -323,8 +323,8 @@ public class FileSystemResolverTest extends TestCase {
         File artifact = new File("test/repositories/checkmodified/mod1.1-1.0.jar");
         
         // 'publish' 'before' version
-        FileUtil.copy(new File("test/repositories/checkmodified/ivy-1.0-before.xml"), modify, null);
-        FileUtil.copy(new File("test/repositories/checkmodified/mod1.1-1.0-before.jar"), artifact, null);
+        FileUtil.copy(new File("test/repositories/checkmodified/ivy-1.0-before.xml"), modify, null, true);
+        FileUtil.copy(new File("test/repositories/checkmodified/mod1.1-1.0-before.jar"), artifact, null, true);
         Date pubdate = new GregorianCalendar(2004, 10, 1, 11, 0, 0).getTime();
         modify.setLastModified(pubdate.getTime());
         
@@ -344,8 +344,8 @@ public class FileSystemResolverTest extends TestCase {
         r.close();
                 
         // updates ivy file and artifact in repository 
-        FileUtil.copy(new File("test/repositories/checkmodified/ivy-1.0-after.xml"), modify, null);
-        FileUtil.copy(new File("test/repositories/checkmodified/mod1.1-1.0-after.jar"), artifact, null);
+        FileUtil.copy(new File("test/repositories/checkmodified/ivy-1.0-after.xml"), modify, null, true);
+        FileUtil.copy(new File("test/repositories/checkmodified/mod1.1-1.0-after.jar"), artifact, null, true);
         pubdate = new GregorianCalendar(2005, 4, 1, 11, 0, 0).getTime();
         modify.setLastModified(pubdate.getTime());
         // no need to update new artifact timestamp cause it isn't used
