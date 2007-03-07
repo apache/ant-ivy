@@ -59,7 +59,13 @@ public class FileRepository extends AbstractRepository {
     private void copy(File src, File destination, boolean overwrite) throws IOException {
         try {
             _progress.setTotalLength(new Long(src.length()));
-            FileUtil.copy(src, destination, _progress, overwrite);
+            if (!FileUtil.copy(src, destination, _progress, overwrite)) {
+            	if (!overwrite) {
+            		throw new IOException("file copy not done from "+src+" to "+destination+": destination probably already exists and overwrite is false");
+            	} else {
+            		throw new IOException("file copy not done from "+src+" to "+destination);
+            	}
+            }
         } catch (IOException ex) {
             fireTransferError(ex);
             throw ex;

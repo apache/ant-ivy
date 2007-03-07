@@ -93,10 +93,10 @@ public class FileUtil {
         }
     }
   
-    public static void copy(File src, File dest, CopyProgressListener l) throws IOException {
-        copy(src, dest, l, false);
+    public static boolean copy(File src, File dest, CopyProgressListener l) throws IOException {
+        return copy(src, dest, l, false);
     }
-    public static void copy(File src, File dest, CopyProgressListener l, boolean overwrite) throws IOException {
+    public static boolean copy(File src, File dest, CopyProgressListener l, boolean overwrite) throws IOException {
         if (dest.exists()) {
         	if (!dest.isFile()) {
         		throw new IOException("impossible to copy: destination is not a file: "+dest);
@@ -107,7 +107,7 @@ public class FileUtil {
         		} // if dest is writable, the copy will overwrite it without requiring a delete
         	} else {
         		Message.verbose(dest+" already exists, nothing done");
-        		return;
+        		return false;
         	}
         }
         copy(new FileInputStream(src), dest, l);
@@ -120,6 +120,7 @@ public class FileUtil {
         			+ "(" + destLen + ") - please retry");
         }
         dest.setLastModified(src.lastModified());
+        return true;
     }
 
     public static void copy(URL src, File dest, CopyProgressListener l) throws IOException {
