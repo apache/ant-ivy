@@ -40,7 +40,6 @@ import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.resolve.IvyNode;
 import org.apache.ivy.core.resolve.ResolveEngine;
 import org.apache.ivy.core.resolve.ResolveOptions;
-import org.apache.ivy.plugins.report.XmlReportOutputter;
 import org.apache.ivy.plugins.report.XmlReportParser;
 import org.apache.ivy.util.Message;
 
