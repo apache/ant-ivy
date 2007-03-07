@@ -107,6 +107,7 @@ public class FileUtil {
         		} // if dest is writable, the copy will overwrite it without requiring a delete
         	} else {
         		Message.verbose(dest+" already exists, nothing done");
+        		return;
         	}
         }
         copy(new FileInputStream(src), dest, l);

@@ -69,6 +69,7 @@ public class RetrieveEngine {
     public int retrieve(ModuleRevisionId mrid, String destFilePattern, RetrieveOptions options) throws IOException {
     	ModuleId moduleId = mrid.getModuleId();
         Message.info(":: retrieving :: "+moduleId+(options.isSync()?" [sync]":""));
+        Message.verbose("\tcheckUpToDate="+_settings.isCheckUpToDate());
         long start = System.currentTimeMillis();
         
         destFilePattern = IvyPatternHelper.substituteVariables(destFilePattern, _settings.getVariables());
@@ -110,9 +111,9 @@ public class RetrieveEngine {
                     if (!_settings.isCheckUpToDate() || !upToDate(archive, destFile)) {
                         Message.verbose("\t\tto "+destFile);
                         if (options.isMakeSymlinks()) {
-                            FileUtil.symlink(archive, destFile, null, false);
+                            FileUtil.symlink(archive, destFile, null, true);
                         } else {
-                            FileUtil.copy(archive, destFile, null);
+                            FileUtil.copy(archive, destFile, null, true);
                         }
                         targetsCopied++;
                     } else {
@@ -145,7 +146,7 @@ public class RetrieveEngine {
                 	}
                 }
             }
-            Message.info("\t"+targetsCopied+" artifacts copied, "+targetsUpToDate+" already retrieved");
+            Message.info("\t"+targetsCopied+" artifacts copied"+(_settings.isCheckUpToDate()?(", "+targetsUpToDate+" already retrieved"):""));
             Message.verbose("\tretrieve done ("+(System.currentTimeMillis()-start)+"ms)");
             
             return targetsCopied;

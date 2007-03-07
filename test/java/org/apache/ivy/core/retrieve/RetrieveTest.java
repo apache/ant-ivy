@@ -81,6 +81,25 @@ public class RetrieveTest extends TestCase {
         assertTrue(new File(IvyPatternHelper.substitute(pattern, "org1", "mod1.2", "2.0", "mod1.2", "jar", "jar", "default")).exists());
     }
 
+    public void testRetrieveOverwrite() throws Exception {
+        // mod1.1 depends on mod1.2
+        ResolveReport report = _ivy.resolve(new File("test/repositories/1/org1/mod1.1/ivys/ivy-1.0.xml").toURL(),
+        		getResolveOptions(new String[] {"*"}));
+        assertNotNull(report);
+        ModuleDescriptor md = report.getModuleDescriptor();
+        assertNotNull(md);
+        
+        String pattern = "build/test/retrieve/[module]/[conf]/[artifact]-[revision].[ext]";
+        
+        // we create a fake old file to see if it is overwritten
+        File file = new File(IvyPatternHelper.substitute(pattern, "org1", "mod1.2", "2.0", "mod1.2", "jar", "jar", "default"));
+        file.getParentFile().mkdirs();
+        file.createNewFile();
+        file.setLastModified(10000);
+        _ivy.retrieve(md.getModuleRevisionId(), pattern, getRetrieveOptions());
+        assertEquals(new File("test/repositories/1/org1/mod1.2/jars/mod1.2-2.0.jar").lastModified(), file.lastModified());
+    }
+
     public void testRetrieveWithSymlinks() throws Exception {
         // mod1.1 depends on mod1.2
         ResolveReport report = _ivy.resolve(new File("test/repositories/1/org1/mod1.1/ivys/ivy-1.0.xml").toURL(),
