@@ -89,6 +89,14 @@ public class LatestConflictManagerTest extends TestCase {
 		ivy = new Ivy();
 		ivy.configure(LatestConflictManagerTest.class
 				.getResource("ivyconf-latest-time.xml"));
+    	ivy.getSettings().setVariable("ivy.log.conflict.resolution", "true", true);
+
+    	// set timestamps, because svn is not preserving this information, 
+    	// and the latest time strategy is relying on it
+    	long time = System.currentTimeMillis() - 10000;
+    	new File("test/repositories/1/org1/mod1.2/jars/mod1.2-2.0.jar").setLastModified(time);
+    	new File("test/repositories/1/org1/mod1.2/jars/mod1.2-2.2.jar").setLastModified(time+2000);
+
         ResolveReport report =
             ivy.resolve( LatestConflictManagerTest.class.getResource( "ivy-latest-time-1.xml" ), 
             		getResolveOptions() );
@@ -110,6 +118,14 @@ public class LatestConflictManagerTest extends TestCase {
 		ivy = new Ivy();
 		ivy.configure(LatestConflictManagerTest.class
 				.getResource("ivyconf-latest-time.xml"));
+    	ivy.getSettings().setVariable("ivy.log.conflict.resolution", "true", true);
+
+    	// set timestamps, because svn is not preserving this information, 
+    	// and the latest time strategy is relying on it
+    	long time = System.currentTimeMillis() - 10000;
+    	new File("test/repositories/1/org1/mod1.2/jars/mod1.2-2.0.jar").setLastModified(time);
+    	new File("test/repositories/1/org1/mod1.2/jars/mod1.2-2.2.jar").setLastModified(time+2000);
+
         ResolveReport report =
             ivy.resolve( LatestConflictManagerTest.class.getResource( "ivy-latest-time-2.xml" ), 
             		getResolveOptions() );
