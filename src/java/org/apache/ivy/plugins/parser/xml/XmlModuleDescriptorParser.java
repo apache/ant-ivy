@@ -66,6 +66,8 @@ import org.xml.sax.SAXException;
  *
  */
 public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
+    static final String[] DEPENDENCY_REGULAR_ATTRIBUTES = new String[] {"org", "name", "branch", "rev", "force", "transitive", "changing", "conf"};
+
     private static XmlModuleDescriptorParser INSTANCE = new XmlModuleDescriptorParser();
     
     public static XmlModuleDescriptorParser getInstance() {
@@ -126,7 +128,8 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
 
     private static class Parser extends AbstractParser {
 
-    private static final List ALLOWED_VERSIONS = Arrays.asList(new String[] {"1.0", "1.1", "1.2", "1.3", "1.4"});
+
+	private static final List ALLOWED_VERSIONS = Arrays.asList(new String[] {"1.0", "1.1", "1.2", "1.3", "1.4"});
     
     private DefaultDependencyDescriptor _dd;
     private DefaultDependencyArtifactDescriptor _dad;
@@ -313,7 +316,7 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
                 		ModuleRevisionId.newInstance(org, name, branch, rev, 
                 				ExtendableItemHelper.getExtraAttributes(
                 						attributes, 
-                						new String[] {"org", "name", "branch", "rev", "force", "transitive", "changing", "conf"})), 
+                						DEPENDENCY_REGULAR_ATTRIBUTES)), 
                 		force, changing, transitive);
                 _md.addDependency(_dd);
                 String confs = _ivy.substitute(attributes.getValue("conf"));

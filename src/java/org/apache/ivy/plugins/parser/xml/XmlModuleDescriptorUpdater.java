@@ -42,6 +42,7 @@ import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.plugins.namespace.Namespace;
 import org.apache.ivy.util.Message;
 import org.apache.ivy.util.XMLHelper;
+import org.apache.ivy.util.extendable.ExtendableItemHelper;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
@@ -218,7 +219,10 @@ public class XmlModuleDescriptorUpdater {
                 String module = substitute(settings, attributes.getValue("name"));
                 String branch = substitute(settings, attributes.getValue("branch"));
                 String revision = substitute(settings, attributes.getValue("rev"));
-                ModuleRevisionId localMid = ModuleRevisionId.newInstance(org, module, branch, revision);
+                ModuleRevisionId localMid = ModuleRevisionId.newInstance(org, module, branch, revision, 
+                		ExtendableItemHelper.getExtraAttributes(
+							attributes, 
+							XmlModuleDescriptorParser.DEPENDENCY_REGULAR_ATTRIBUTES));
                 ModuleRevisionId systemMid = ns == null ? 
                         localMid : 
                         ns.getToSystemTransformer().transform(localMid);
