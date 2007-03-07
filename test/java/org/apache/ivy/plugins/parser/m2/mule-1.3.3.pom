@@ -1,0 +1,543 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <!-- Version -->
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>org.mule</groupId>
+    <artifactId>mule</artifactId>
+    <packaging>pom</packaging>
+    <version>1.3.3</version>
+
+    <!-- Organization -->
+    <organization>
+        <name>MuleSource, Inc.</name>
+        <url>http://www.mulesource.com</url>
+    </organization>
+
+    <!-- Project -->
+    <name>Mule</name>
+
+    <description>Mule is a simple yet robust and highly scalable Integration and ESB services framework. It is designed
+        as a light-weight, event-driven component technology that handles communication with disparate systems
+        transparently providing a simple component interface.
+    </description>
+    <url>http://mule.mulesource.org</url>
+    <inceptionYear>2003</inceptionYear>
+    <mailingLists>
+        <!-- Refer to http://mule.mulesource.org/Mailing+Lists -->
+    </mailingLists>
+    <developers>
+        <!-- Refer to http://mule.mulesource.org/Team -->
+    </developers>
+    <contributors>
+        <!-- Refer to http://mule.mulesource.org/Team -->
+    </contributors>
+    <issueManagement>
+        <system>jira</system>
+        <url>http://dev.mulesource.org/jira/browse/MULE</url>
+    </issueManagement>
+
+    <!-- Build -->
+    <scm>
+        <connection>scm:svn:http://svn.codehaus.org/mule/trunk/mule</connection>
+        <developerConnection>scm:svn:https://svn.codehaus.org/mule/trunk/mule</developerConnection>
+        <url>http://svn.mule.codehaus.org/</url>
+    </scm>
+    
+    <ciManagement>
+        <system>continuum</system>
+        <url>http://localhost:8080/continuum</url>
+        <notifiers>
+            <notifier>
+                <type>mail</type>
+                <configuration>
+                    <address>tcarlson@impsat.com</address>
+                </configuration>
+            </notifier>
+        </notifiers>
+    </ciManagement>
+    
+    <distributionManagement>
+        <downloadUrl>http://mule.mulesource.org/Download</downloadUrl>
+        <repository>
+            <id>mule-releases</id>
+            <name>Mule Release Repository</name>
+            <url>dav:https://dav.codehaus.org/repository/mule/</url>
+        </repository>
+        <snapshotRepository>
+            <id>mule-snapshots</id>
+            <name>Mule Snapshot Repository</name>
+            <url>dav:https://dav.codehaus.org/snapshots.repository/mule/</url>
+            <uniqueVersion>false</uniqueVersion>
+        </snapshotRepository>
+        <site>
+            <id>mule-site</id>
+            <name>Mule Website</name>
+            <url>dav:https://dav.codehaus.org/mule/docs/</url>
+        </site>
+    </distributionManagement>
+    
+    <repositories>
+        <repository>
+            <id>codehaus</id>
+            <name>Codehaus Maven 2.x Release Repository</name>
+            <url>http://repository.codehaus.org</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>codehaus-snapshots</id>
+            <name>Codehaus Maven 2.x Snapshots Repository</name>
+            <url>http://snapshots.repository.codehaus.org</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+        </repository>
+        <repository>
+            <id>mule</id>
+            <name>Mule Dependencies</name>
+            <url>http://dist.codehaus.org/mule/dependencies/maven2</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>apache-snapshots</id>
+            <name>Snapshot repository</name>
+            <url>http://people.apache.org/maven-snapshot-repository</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+        </repository>
+        <!-- Local module repository -->
+        <repository>
+            <id>local (Maven 1)</id>
+            <name>Local module repository (lib)</name>
+            <url>file://lib</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <layout>legacy</layout>
+        </repository>
+
+    </repositories>
+
+    <pluginRepositories>
+        <pluginRepository>
+            <!--
+                This is the same as apache-snapshots, but for plugins now.
+                Technically it could've been a different repo, but they
+                put all snapshots in one location at Apache.
+             -->
+            <id>apache-plugin-snapshots</id>
+            <name>Apache Maven Plugins Snapshot Repository</name>
+            <url>http://people.apache.org/maven-snapshot-repository</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+        </pluginRepository>
+        <!--
+        <pluginRepository>
+            <id>Maven Snapshots</id>
+            <url>http://snapshots.maven.codehaus.org/maven2</url>
+        </pluginRepository>
+        -->
+    </pluginRepositories>
+    
+    <build>
+        <defaultGoal>install</defaultGoal>
+
+        <!-- WebDAV for remote deployment -->
+        <extensions>
+            <extension>
+                <groupId>org.apache.maven.wagon</groupId>
+                <artifactId>wagon-webdav</artifactId>
+                <version>1.0-beta-2-20060812.020341-4</version>
+            </extension>
+        </extensions>
+
+        <!-- Project version filters -->
+        <!-- Fails if the project doesn't have this file, need to push it down?  Use settings.xml instead.
+        <filters>
+            <filter>project.properties</filter>
+        </filters
+        -->
+
+        <plugins>
+            <!-- Compile to JDK 1.4 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.4</source>
+                    <target>1.4</target>
+                    <encoding>ISO-8859-1</encoding>
+                </configuration>
+            </plugin>
+
+            <!-- Add index to generated JARs -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+
+                    <archive>
+
+                        <!--
+                            Disabled for http://mule.mulesource.org/jira/browse/MULE-1153
+                            and http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4408526
+                         -->
+                        <index>false</index>
+                        <!-- List dependencies in the MANIFEST.MF -->
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+
+                        </manifest>
+                        <!-- Custom Entries -->
+                        <manifestEntries>
+                            <More-Info>For more information go to ${pom.url}</More-Info>
+                            <Support>Get commercial support: ${pom.organization.url}</Support>
+                            <Description>Mule ESB and Integration Platform</Description>
+                            <License>MulesSource MPL http://www.mulesource.com/MSPL/</License>
+                            <Vendor-Url>${pom.organization.url}</Vendor-Url>
+                            <Product-Url>${pom.url}</Product-Url>
+                            <Dtd-Public-Id>-//${pom.organisation.name} //DTD mule-configuration XML V1.0//EN</Dtd-Public-Id>
+                            <Dtd-System-Id>${pom.url}/dtds</Dtd-System-Id>
+                            <!-- This would work if this issue gets closed: http://jira.codehaus.org/browse/MNG-1832 -->
+                            <Build-Date>${mvn.timestamp.yyyy-MM-dd-HH:mm:ss}</Build-Date>
+                        </manifestEntries>
+
+                    </archive>
+
+                </configuration>
+            </plugin>
+
+            <!-- Global test exclusions -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <!--
+                    Fix surefire-report:report goal, which failed to
+                    complete if there were test errors (no report was
+                    generated).
+                -->
+                <!--version>2.3-20060907.150425-7</version-->
+                <version>2.3-20060831.124149-5</version>
+                <configuration>
+                    <argLine>-Xms64m -Xmx256m</argLine>
+                    <excludes>
+                        <exclude implementation="java.lang.String">**/Abstract*.*</exclude>
+                        <!-- The org.mule.tck classes are in the test directory but are not runnable tests. -->
+                        <exclude implementation="java.lang.String">org/mule/tck/**</exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
+
+            <!-- Checkstyle plug-in -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.mule</groupId>
+                        <artifactId>mule-buildtools</artifactId>
+                        <version>${version}</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+
+
+            <!-- Delete code coverage database when 'mvn clean' is executed -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>cobertura-maven-plugin</artifactId>
+                <!--<configuration>-->
+                <!--<instrumentation>-->
+                <!--<ignore>com.example.boringcode.*</ignore>-->
+                <!--<excludes>-->
+                <!--<exclude implementation="java.lang.String">**/*TestCase.class</exclude>-->
+                <!--</excludes>-->
+                <!--</instrumentation>-->
+                <!--</configuration>-->
+                <executions>
+                    <execution>
+                        <id>clean</id>
+                        <goals>
+                            <goal>clean</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Bind Clover Coverage instrumentation to the site generation -->
+            <!-- Blocked by http://jira.codehaus.org/browse/MCLOVER-50 -->
+            <!--<plugin>-->
+            <!--<groupId>org.apache.maven.plugins</groupId>-->
+            <!--<artifactId>maven-clover-plugin</artifactId>-->
+            <!--<executions>-->
+            <!--<execution>-->
+            <!--<phase>pre-site</phase>-->
+            <!--<goals>-->
+            <!--<goal>instrument</goal>-->
+            <!--</goals>-->
+            <!--</execution>-->
+            <!--</executions>-->
+            <!--</plugin>-->
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-site-plugin</artifactId>
+                <version>2.0-20060528.195659-9</version>
+            </plugin>
+
+        </plugins>
+    </build>
+
+    <!-- Reports -->
+    <reporting>
+        <plugins>
+            <!-- Module dependencies -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-project-info-reports-plugin</artifactId>
+                <reportSets>
+                    <reportSet>
+                        <reports>
+                            <report>dependencies</report>
+                            <report>index</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
+            </plugin>
+
+            <!-- Test results
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>surefire-report-maven-plugin</artifactId>
+                <version>2.0-beta-1</version>
+            </plugin>
+            -->
+
+            <!-- Developer activity (last 6 months)
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>changelog-maven-plugin</artifactId>
+                <reportSets>
+                    <reportSet>
+                        <id>dev-only</id>
+                        <configuration>
+                            <type>range</type>
+                            <range>180</range>
+                        </configuration>
+                        <reports>
+                            <report>dev-activity</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
+            </plugin>
+            -->
+
+            <!-- Javadoc settings -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <configuration>
+                    <minmemory>128m</minmemory>
+                    <maxmemory>512</maxmemory>
+                    <charset>ISO-8859-1</charset>
+                    <encoding>ISO-8859-1</encoding>
+                    <!-- aggregate all when built from the top-level directory -->
+                    <!--
+                        TODO why does this cause dependency errors??
+                        <aggregate>true</aggregate>
+                    -->
+                    <!-- Link to the external online JavaDoc -->
+                    <!-- TODO add more refs -->
+                    <links>
+                        <link>http://java.sun.com/j2se/1.4.2/docs/api/</link>
+                        <link>http://java.sun.com/j2ee/sdk_1.3/techdocs/api/</link>
+                        <link>http://jakarta.apache.org/commons/beanutils/commons-beanutils-1.7.0/docs/api/</link>
+                        <link>http://jakarta.apache.org/commons/collections/api-3.2/</link>
+                        <link>http://jakarta.apache.org/commons/io/api-1.2/</link>
+                        <link>http://jakarta.apache.org/commons/lang/api-2.1/</link>
+                        <link>http://jakarta.apache.org/commons/logging/commons-logging-1.0.4/docs/apidocs/</link>
+                        <link>http://jakarta.apache.org/commons/pool/apidocs/</link>
+                        <link>http://logging.apache.org/log4j/docs/api/</link>
+                        <link>http://dcl.mathcs.emory.edu/util/backport-util-concurrent/doc/api/</link>
+                        <link>http://www.junit.org/junit/javadoc/3.8.1/</link>
+                    </links>
+                    <groups>
+                        <group>
+                            <title>Mule Core</title>
+                            <packages>org.mule*</packages>
+                        </group>
+                        <group>
+                            <title>Modules (not part of the Mule core)</title>
+                            <packages>org.mule.extras.*</packages>
+                        </group>
+                        <group>
+                            <title>Transports (a.k.a. Providers)</title>
+                            <packages>org.mule.providers.*</packages>
+                        </group>
+                        <group>
+                            <title>Testing Framework</title>
+                            <packages>org.mule.tck*</packages>
+                        </group>
+                        <group>
+                            <title>Examples</title>
+                            <packages>org.mule.samples.*</packages>
+                        </group>
+                    </groups>
+                </configuration>
+            </plugin>
+
+
+            <!-- Source code cross-reference -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jxr-plugin</artifactId>
+                <configuration>
+                </configuration>
+            </plugin>
+
+            <!--
+                When there is JXR cross-refernce output available,
+                it will be linked to in case of test failures
+             -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-report-plugin</artifactId>
+                <configuration>
+                    <!-- Display failed tests only -->
+                    <showSuccess>false</showSuccess>
+                </configuration>
+            </plugin>
+
+            <!-- Checkstyle reports -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <configuration>
+                    <configLocation>codecheck/checkstyle.xml</configLocation>
+                    <headerLocation>codecheck/LICENSE.txt</headerLocation>
+                </configuration>
+            </plugin>
+
+
+            <!-- Code Coverage by Cobertura -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>cobertura-maven-plugin</artifactId>
+            </plugin>
+
+            <!-- Code Coverage by Clover -->
+            <!-- Blocked by http://jira.codehaus.org/browse/MCLOVER-50 -->
+            <!--<plugin>-->
+            <!--<groupId>org.apache.maven.plugins</groupId>-->
+            <!--<artifactId>maven-clover-plugin</artifactId>-->
+            <!--<configuration>-->
+            <!--<jdk>1.4</jdk>-->
+            <!--</configuration>-->
+            <!--</plugin>-->
+        </plugins>
+    </reporting>
+
+    <modules>
+        <module>buildtools</module>
+        <module>core</module>
+        <module>modules</module>
+        <module>transports</module>
+        <module>tests</module>
+        <module>examples</module>
+        <!-- see:
+            http://mule.mulesource.org/jira/browse/MULETOOLS-2
+            http://mule.mulesource.org/jira/browse/MULETOOLS-21
+            http://mule.mulesource.org/jira/browse/MULETOOLS-22
+        -->
+        <!-- <module>tools</module> -->
+    </modules>
+
+    <!--
+    The default profiles for the build are configured in the file settings.xml.
+    You can override the default profiles from the command line as follows:
+        "mvn -Ddistributions=true -Dtests=false -Doracle=true"
+
+    (For other ways to work with profiles, see
+        http://maven.apache.org/guides/introduction/introduction-to-profiles.html)
+    -->
+    <profiles>
+
+        <profile>
+            <id>java14</id>
+            <activation>
+                <jdk>1.4</jdk>
+            </activation>
+        </profile>
+
+        <profile>
+            <id>java5</id>
+            <activation>
+                <jdk>1.5</jdk>
+            </activation>
+        </profile>
+
+        <profile>
+            <!-- Integration tests -->
+            <id>tests</id>
+            <activation>
+                <property>
+                    <name>tests</name>
+                    <value>true</value>
+                </property>
+            </activation>
+        </profile>
+
+        <profile>
+            <id>distributions</id>
+            <activation>
+                <property>
+                    <name>distributions</name>
+                    <value>true</value>
+                </property>
+            </activation>
+            <modules>
+                <module>distributions</module>
+            </modules>
+        </profile>
+
+        <profile>
+            <id>windows</id>
+            <activation>
+                <os>
+                    <family>windows</family>
+                </os>
+            </activation>
+        </profile>
+
+        <profile>
+            <id>ci-server</id>
+            <distributionManagement>
+                <site>
+                    <url>file:///home/luntbuild/publish/mule/docs</url>
+                </site>
+            </distributionManagement>
+        </profile>
+
+    </profiles>
+
+</project>
+

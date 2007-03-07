@@ -224,4 +224,18 @@ public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         assertEquals(new HashSet(Arrays.asList(new String[] {"runtime(*)"})), new HashSet(Arrays.asList(dds[2].getDependencyConfigurations("runtime"))));
         assertEquals(0, dds[2].getAllDependencyArtifactsExcludes().length);
     }
+
+    public void testWithPlugins() throws Exception {
+    	// test case for IVY-417
+        ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(new IvySettings(), getClass().getResource("mule-1.3.3.pom"), false);
+        assertNotNull(md);
+        
+        assertEquals(ModuleRevisionId.newInstance("org.mule", "mule", "1.3.3"), md.getModuleRevisionId());
+        
+        DependencyDescriptor[] dds = md.getDependencies();
+        assertNotNull(dds);
+        assertEquals(0, dds.length);
+    }
+    
+
 }
