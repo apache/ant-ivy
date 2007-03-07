@@ -17,6 +17,7 @@
  */
 package org.apache.ivy.ant;
 
+import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -83,10 +84,14 @@ public abstract class IvyCacheTask extends IvyPostResolveTask {
             }
         } else {
             Message.debug("using stored report to get artifacts list");
-            XmlReportParser parser = new XmlReportParser();
             
+            XmlReportParser parser = new XmlReportParser();
+            CacheManager cacheMgr = getIvyInstance().getCacheManager(getCache());
             for (int i = 0; i < confs.length; i++) {
-                Artifact[] artifacts = parser.getArtifacts(getResolvedModuleId(), confs[i], getCache());
+            	File reportFile = cacheMgr.getConfigurationResolveReportInCache(getResolveId(), confs[i]);
+            	parser.parse(reportFile);
+            	
+                Artifact[] artifacts = parser.getArtifacts();
                 all.addAll(Arrays.asList(artifacts));
             }
         }

@@ -134,7 +134,10 @@ public class Ivy14 {
 	}
 
 	public ResolvedModuleRevision findModule(ModuleRevisionId id) {
-		return _ivy.getResolveEngine().findModule(id, CacheManager.getInstance(_ivy.getSettings()));
+    	ResolveOptions options = new ResolveOptions();
+    	options.setValidate(false);
+    	options.setCache(CacheManager.getInstance(_ivy.getSettings()));
+		return _ivy.getResolveEngine().findModule(id, options);
 	}
 
 	public IvyNode[] getDependencies(ModuleDescriptor md, String[] confs, File cache, Date date, ResolveReport report, boolean validate, boolean transitive) {

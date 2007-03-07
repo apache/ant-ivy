@@ -318,7 +318,10 @@ public class Ivy {
     /////////////////////////////////////////////////////////////////////////
     
     public ResolvedModuleRevision findModule(ModuleRevisionId mrid) {
-    	return _resolveEngine.findModule(mrid, CacheManager.getInstance(_settings));
+    	ResolveOptions options = new ResolveOptions();
+    	options.setValidate(false);
+    	options.setCache(CacheManager.getInstance(_settings));
+    	return _resolveEngine.findModule(mrid, options);
     }
     
 	public ModuleEntry[] listModuleEntries(OrganisationEntry org) {

@@ -31,6 +31,7 @@ import java.util.Map;
 
 import org.apache.ivy.Ivy;
 import org.apache.ivy.core.cache.ArtifactOrigin;
+import org.apache.ivy.core.cache.CacheManager;
 import org.apache.ivy.core.module.descriptor.License;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleId;
@@ -59,18 +60,15 @@ public class XmlReportOutputter implements ReportOutputter {
     public void output(ResolveReport report, File destDir) {
         String[] confs = report.getConfigurations();
         for (int i = 0; i < confs.length; i++) {
-            output(report.getConfigurationReport(confs[i]), confs, destDir);
+            output(report.getConfigurationReport(confs[i]), report.getResolveId(), confs, destDir);
         }
     }
     
-    public void output(ConfigurationResolveReport report, File destDir) {
-    	output(report, new String[] {report.getConfiguration()}, destDir);
-    }
-    
-    public void output(ConfigurationResolveReport report, String[] confs, File destDir) {
+    public void output(ConfigurationResolveReport report, String resolveId, String[] confs, File destDir) {
     	try {
     	    destDir.mkdirs();
-    		File reportFile = new File(destDir, getReportFileName(report));
+    	    CacheManager cacheMgr = new CacheManager(null, destDir);
+    		File reportFile = cacheMgr.getConfigurationResolveReportInCache(resolveId, report.getConfiguration());
     		OutputStream stream = new FileOutputStream(reportFile);
     		output(report, confs, stream);
     		stream.close();
@@ -238,18 +236,4 @@ public class XmlReportOutputter implements ReportOutputter {
 		}
 		return buf.toString();
 	}
-
-	public static String getReportFileName(ConfigurationResolveReport report) {
-		return getReportFileName(
-				report.getModuleDescriptor().getModuleRevisionId().getModuleId(), 
-				report.getConfiguration());
-	}
-
-	public static String getReportFileName(ModuleId mid, String conf) {
-		return 
-			mid.getOrganisation()
-			+ "-" + mid.getName()
-			+ "-" + conf+".xml";
-	}
-
 }

@@ -57,6 +57,7 @@ public class IvyResolve extends IvyTask {
 	private Boolean _keep = null;
 	private String _failureProperty = null;
     private boolean _useOrigin = false;
+    private String _resolveId = null;
     
     public boolean isUseOrigin() {
     	return _useOrigin;
@@ -185,7 +186,7 @@ public class IvyResolve extends IvyTask {
 	                throw new BuildException("resolve failed - see output for details");
 	            }
             }            
-            setResolved(report, isKeep());
+            setResolved(report, _resolveId, isKeep());
             
             if (isKeep()) {
             	ModuleDescriptor md = report.getModuleDescriptor();
@@ -207,6 +208,23 @@ public class IvyResolve extends IvyTask {
 	                getProject().setProperty("ivy.resolved.configurations", _conf);
 	                settings.setVariable("ivy.resolved.configurations", _conf);
 	            }
+	            if (_resolveId != null) {
+		            getProject().setProperty("ivy.organisation." + _resolveId, md.getModuleRevisionId().getOrganisation());
+		            settings.setVariable("ivy.organisation." + _resolveId, md.getModuleRevisionId().getOrganisation());
+		            getProject().setProperty("ivy.module." + _resolveId, md.getModuleRevisionId().getName());
+		            settings.setVariable("ivy.module." + _resolveId, md.getModuleRevisionId().getName());
+		            getProject().setProperty("ivy.revision." + _resolveId, md.getResolvedModuleRevisionId().getRevision());
+		            settings.setVariable("ivy.revision." + _resolveId, md.getResolvedModuleRevisionId().getRevision());
+		            getProject().setProperty("ivy.deps.changed." + _resolveId, String.valueOf(hasChanged));
+		            settings.setVariable("ivy.deps.changed." + _resolveId, String.valueOf(hasChanged));
+		            if (_conf.trim().equals("*")) {
+		                getProject().setProperty("ivy.resolved.configurations." + _resolveId, mergeConfs(md.getConfigurationsNames()));
+		                settings.setVariable("ivy.resolved.configurations." + _resolveId, mergeConfs(md.getConfigurationsNames()));
+		            } else {
+		                getProject().setProperty("ivy.resolved.configurations." + _resolveId, _conf);
+		                settings.setVariable("ivy.resolved.configurations." + _resolveId, _conf);
+		            }
+	            }
             }
         } catch (MalformedURLException e) {
             throw new BuildException("unable to convert given ivy file to url: "+_file+": "+e, e);
@@ -227,7 +245,8 @@ public class IvyResolve extends IvyTask {
 			.setDate(getPubDate(_pubdate, null))
 			.setUseCacheOnly(_useCacheOnly)
 			.setUseOrigin(_useOrigin)
-			.setTransitive(_transitive);
+			.setTransitive(_transitive)
+			.setResolveId(_resolveId);
 	}
 
 	public String getModule() {
@@ -265,5 +284,11 @@ public class IvyResolve extends IvyTask {
 	}
 	public void setInline(boolean inline) {
 		_inline = inline;
+	}
+	public String getResolveId() {
+		return _resolveId;
+	}
+	public void setResolveId(String resolveId) {
+		_resolveId = resolveId;
 	}
 }

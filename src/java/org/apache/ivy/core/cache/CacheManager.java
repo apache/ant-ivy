@@ -60,6 +60,10 @@ public class CacheManager {
     public File getIvyFileInCache(ModuleRevisionId mrid) {
         return new File(_cache, IvyPatternHelper.substitute(_settings.getCacheIvyPattern(), DefaultArtifact.newIvyArtifact(mrid, null)));
     }
+    
+    public File getConfigurationResolveReportInCache(String resolveId, String conf) {
+    	return new File(_cache, resolveId + "-" + conf + ".xml");
+    }
 
     /**
      * Returns a File object pointing to where the artifact can be found on the local file system.

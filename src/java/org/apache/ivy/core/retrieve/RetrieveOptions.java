@@ -71,6 +71,12 @@ public class RetrieveOptions {
 	 */
 	private boolean makeSymlinks = false;
 	
+	/**
+	 * The id used to store the resolve information.
+	 */
+	private String resolveId;
+
+	
 	public Filter getArtifactFilter() {
 		return artifactFilter;
 	}
@@ -120,6 +126,12 @@ public class RetrieveOptions {
 		this.useOrigin = useOrigin;
 		return this;
 	}
-	
+	public String getResolveId() {
+		return resolveId;
+	}
+	public RetrieveOptions setResolveId(String resolveId) {
+		this.resolveId = resolveId;
+		return this;
+	}
 	
 }

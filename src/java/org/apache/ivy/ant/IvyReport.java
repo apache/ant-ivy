@@ -25,7 +25,9 @@ import java.util.List;
 
 import org.apache.ivy.Ivy;
 import org.apache.ivy.core.IvyPatternHelper;
+import org.apache.ivy.core.cache.CacheManager;
 import org.apache.ivy.core.module.id.ModuleId;
+import org.apache.ivy.core.resolve.ResolveOptions;
 import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.plugins.report.XmlReportOutputter;
 import org.apache.ivy.util.FileUtil;
@@ -56,6 +58,7 @@ public class IvyReport extends IvyTask {
     private String _outputpattern;
     private String _xslext = "html";
     private List _params = new ArrayList();
+    private String _resolveId;
 
     public File getTodir() {
         return _todir;
@@ -109,20 +112,25 @@ public class IvyReport extends IvyTask {
     public void setOutputpattern(String outputpattern) {
         _outputpattern = outputpattern;
     }
-
+    public String getResolveId() {
+    	return _resolveId;
+    }
+    public void setResolveId(String resolveId) {
+    	_resolveId = resolveId;
+    }
 
     public void execute() throws BuildException {
         Ivy ivy = getIvyInstance();
         IvySettings settings = ivy.getSettings();
         
-        _organisation = getProperty(_organisation, settings, "ivy.organisation");
-        _module = getProperty(_module, settings, "ivy.module");
+        _organisation = getProperty(_organisation, settings, "ivy.organisation", _resolveId);
+        _module = getProperty(_module, settings, "ivy.module", _resolveId);
         if (_cache == null) {
             _cache = settings.getDefaultCache();
         }
-        _conf = getProperty(_conf, settings, "ivy.resolved.configurations");
+        _conf = getProperty(_conf, settings, "ivy.resolved.configurations", _resolveId);
         if (_conf.equals("*")) {
-            _conf = getProperty(settings, "ivy.resolved.configurations");
+            _conf = getProperty(settings, "ivy.resolved.configurations", _resolveId);
         }
         if (_conf == null) {
             throw new BuildException("no conf provided for ivy report task: It can either be set explicitely via the attribute 'conf' or via 'ivy.resolved.configurations' property or a prior call to <resolve/>");
@@ -150,6 +158,10 @@ public class IvyReport extends IvyTask {
         if (_module == null) {
             throw new BuildException("no module name provided for ivy report task: It can either be set explicitely via the attribute 'module' or via 'ivy.module' property or a prior call to <resolve/>");
         }
+        if (_resolveId == null) {
+        	_resolveId = ResolveOptions.getDefaultResolveId(new ModuleId(_organisation, _module));
+        }
+        
         try {
             String[] confs = splitConfs(_conf);
             if (_xsl) {
@@ -170,8 +182,9 @@ public class IvyReport extends IvyTask {
     }
     
     private void genxml(File cache, String organisation, String module, String[] confs) throws IOException {
+    	CacheManager cacheMgr = getIvyInstance().getCacheManager(_cache);
     	for (int i = 0; i < confs.length; i++) {
-	        File xml = new File(cache, XmlReportOutputter.getReportFileName(new ModuleId(organisation, module), confs[i]));
+	        File xml = cacheMgr.getConfigurationResolveReportInCache(_resolveId, confs[i]);
 
             File out;
             if (_todir != null) {
@@ -228,12 +241,13 @@ public class IvyReport extends IvyTask {
         Mapper mapper = new Mapper(getProject());
     	xslt.addMapper(mapper);
         
+    	CacheManager cacheMgr = getIvyInstance().getCacheManager(cache);
         for (int i = 0; i < confs.length; i++) {
-        	String reportFileName = XmlReportOutputter.getReportFileName(new ModuleId(organisation, module), confs[i]);
-        	xslt.setIncludes(reportFileName);
+        	File reportFile = cacheMgr.getConfigurationResolveReportInCache(_resolveId, confs[i]);
+        	xslt.setIncludes(reportFile.getName());
         	
         	FileNameMapper reportMapper = new GlobPatternMapper();
-			reportMapper.setFrom(reportFileName);
+			reportMapper.setFrom(reportFile.getName());
         	reportMapper.setTo(IvyPatternHelper.substitute(_outputpattern, organisation, module, "", "", "", ext, confs[i]));
         	mapper.add(reportMapper);
         }

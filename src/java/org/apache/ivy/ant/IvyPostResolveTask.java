@@ -23,6 +23,7 @@ import org.apache.ivy.Ivy;
 import org.apache.ivy.core.module.id.ModuleId;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.report.ResolveReport;
+import org.apache.ivy.core.resolve.ResolveOptions;
 import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.util.Message;
 import org.apache.ivy.util.StringUtils;
@@ -48,6 +49,7 @@ public abstract class IvyPostResolveTask extends IvyTask {
     private String _organisation;
     private String _module;
     private String _revision = "latest.integration";
+    private String _resolveId;
 
     private String _type;
     
@@ -71,7 +73,7 @@ public abstract class IvyPostResolveTask extends IvyTask {
         
         _organisation = getProperty(_organisation, settings, "ivy.organisation");
         _module = getProperty(_module, settings, "ivy.module");
-
+        
         if (isInline()) {
         	_conf = _conf == null ? "*" : _conf;
             if (_organisation == null) {
@@ -79,6 +81,9 @@ public abstract class IvyPostResolveTask extends IvyTask {
             }
             if (_module == null) {
                 throw new BuildException("no module name provided for ivy cache task in inline mode: It can either be set explicitely via the attribute 'module' or via 'ivy.module' property");
+            }
+            if (_resolveId == null) {
+            	_resolveId = ResolveOptions.getDefaultResolveId(getResolvedModuleId());
             }
         	String[] toResolve = getConfsToResolve(getOrganisation(), getModule()+"-caller", _conf, true);
         	if (toResolve.length > 0) {        		
@@ -89,6 +94,7 @@ public abstract class IvyPostResolveTask extends IvyTask {
         		resolve.setRevision(getRevision());
         		resolve.setInline(true);
         		resolve.setConf(_conf);
+//        		resolve.setResolveId(_resolveId);  TODO
         		resolve.execute();
         	} else {
         		Message.verbose("inline resolve already done for "+getOrganisation()+" "+getModule()+" "+getRevision()+" ("+_conf+")");
@@ -128,6 +134,9 @@ public abstract class IvyPostResolveTask extends IvyTask {
         }
         if (_cache == null) {
             _cache = settings.getDefaultCache();
+        }
+        if (_resolveId == null) {
+        	_resolveId = ResolveOptions.getDefaultResolveId(getResolvedModuleId());
         }
         
         _artifactFilter = FilterHelper.getArtifactTypeFilter(_type);
@@ -213,6 +222,14 @@ public abstract class IvyPostResolveTask extends IvyTask {
 
 	public void setInline(boolean inline) {
 		_inline = inline;
+	}
+	
+	public void setResolveId(String resolveId) {
+		_resolveId = resolveId;
+	}
+	
+	public String getResolveId() {
+		return _resolveId;
 	}
 
 }

@@ -351,10 +351,15 @@ public class Main {
         try {
             String pathSeparator = System.getProperty("path.separator");
             StringBuffer buf = new StringBuffer(); 
-            XmlReportParser parser = new XmlReportParser();
             Collection all = new LinkedHashSet();
+            CacheManager cacheMgr = ivy.getCacheManager(cache);
+            XmlReportParser parser = new XmlReportParser();
             for (int i = 0; i < confs.length; i++) {
-                Artifact[] artifacts = parser.getArtifacts(md.getModuleRevisionId().getModuleId(), confs[i], cache);
+            	String resolveId = ResolveOptions.getDefaultResolveId(md);
+            	File report = cacheMgr.getConfigurationResolveReportInCache(resolveId, confs[i]);
+            	parser.parse(report);
+
+            	Artifact[] artifacts = parser.getArtifacts();
                 all.addAll(Arrays.asList(artifacts));
             }
             for (Iterator iter = all.iterator(); iter.hasNext();) {
@@ -378,16 +383,21 @@ public class Main {
     	List urls = new ArrayList();
     	
         try {
-            XmlReportParser parser = new XmlReportParser();
             Collection all = new LinkedHashSet();
+            CacheManager cacheMgr = ivy.getCacheManager(cache);
+            XmlReportParser parser = new XmlReportParser();
             for (int i = 0; i < confs.length; i++) {
-                Artifact[] artifacts = parser.getArtifacts(md.getModuleRevisionId().getModuleId(), confs[i], cache);
+            	String resolveId = ResolveOptions.getDefaultResolveId(md);
+            	File report = cacheMgr.getConfigurationResolveReportInCache(resolveId, confs[i]);
+            	parser.parse(report);
+            	
+                Artifact[] artifacts = parser.getArtifacts();
                 all.addAll(Arrays.asList(artifacts));
             }
             for (Iterator iter = all.iterator(); iter.hasNext();) {
                 Artifact artifact = (Artifact)iter.next();
                 
-                urls.add(ivy.getCacheManager(cache).getArchiveFileInCache(artifact).toURL());
+                urls.add(cacheMgr.getArchiveFileInCache(artifact).toURL());
             }
         } catch (Exception ex) {
             throw new RuntimeException("impossible to build ivy cache path: "+ex.getMessage(), ex);

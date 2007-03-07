@@ -103,12 +103,15 @@ public class ResolveEngine {
      */
 	public ResolveReport resolve(final ModuleRevisionId mrid, ResolveOptions options, boolean changing) throws ParseException, IOException {
 		DefaultModuleDescriptor md;
+		
 		String[] confs = options.getConfs();
 		if (confs.length == 1 && confs[0].equals("*")) {
-			ResolvedModuleRevision rmr = findModule(mrid, options.getCache());
+			// create new resolve options because this is a different resolve than the real resolve
+			// (which will be a resolve of a newCallerInstance module)
+			ResolvedModuleRevision rmr = findModule(mrid, new ResolveOptions(options));
 			if (rmr == null) {
 				md = DefaultModuleDescriptor.newCallerInstance(mrid, confs, options.isTransitive(), changing);
-				return new ResolveReport(md){
+				return new ResolveReport(md, options.getResolveId()) {
 					public boolean hasError() {
 						return true;
 					}
@@ -147,7 +150,7 @@ public class ResolveEngine {
 
         return resolve(md, options);
     }
-
+    
     /**
      * Resolve dependencies of a module described by a module descriptor
      * 
@@ -173,13 +176,17 @@ public class ResolveEngine {
             }
             options.setConfs(confs);
             
+            if (options.getResolveId() == null) {
+            	options.setResolveId(ResolveOptions.getDefaultResolveId(md));
+            }
+            
             _eventManager.fireIvyEvent(new StartResolveEvent(md, confs));
             
             long start = System.currentTimeMillis();
             Message.info(":: resolving dependencies :: "+md.getResolvedModuleRevisionId()+(options.isTransitive()?"":" [not transitive]"));
             Message.info("\tconfs: "+Arrays.asList(confs));
             Message.verbose("\tvalidate = "+options.isValidate());
-            ResolveReport report = new ResolveReport(md);
+            ResolveReport report = new ResolveReport(md, options.getResolveId());
 
             // resolve dependencies
             IvyNode[] dependencies = getDependencies(md, options, report);
@@ -367,7 +374,7 @@ public class ResolveEngine {
                 if (report != null) {
                     confReport = report.getConfigurationReport(confs[i]);
                     if (confReport == null) {
-                        confReport = new ConfigurationResolveReport(this, md, confs[i], reportDate, cacheManager.getCache());
+                        confReport = new ConfigurationResolveReport(this, md, confs[i], reportDate, options);
                         report.addReport(confs[i], confReport);
                     }
                 }
@@ -767,21 +774,24 @@ public class ResolveEngine {
         return false;
     }
 
-	public ResolvedModuleRevision findModule(ModuleRevisionId id, CacheManager cache) {
+	public ResolvedModuleRevision findModule(ModuleRevisionId id, ResolveOptions options) {
 		DependencyResolver r = _settings.getResolver(id.getModuleId());
 		if (r == null) {
 			throw new IllegalStateException("no resolver found for "+id.getModuleId());
 		}
         DefaultModuleDescriptor md = DefaultModuleDescriptor.newCallerInstance(id, new String[] {"*"}, false, false);
+        
+        if (options.getResolveId() == null) {
+        	options.setResolveId(ResolveOptions.getDefaultResolveId(md));
+        }
+        
 		try {
 			return r.getDependency(
 					new DefaultDependencyDescriptor(id, true), 
 					new ResolveData(
 							this, 
-							new ResolveOptions()
-								.setValidate(false)
-								.setCache(cache), 
-							new ConfigurationResolveReport(this, md, "default", null, cache.getCache())));
+							options, 
+							new ConfigurationResolveReport(this, md, "default", null, options)));
 		} catch (ParseException e) {
 			throw new RuntimeException("problem while parsing repository module descriptor for "+id+": "+e, e);
 		}

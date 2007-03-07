@@ -32,12 +32,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.ivy.core.cache.CacheManager;
 import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleId;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.resolve.IvyNode;
 import org.apache.ivy.core.resolve.ResolveEngine;
+import org.apache.ivy.core.resolve.ResolveOptions;
 import org.apache.ivy.plugins.report.XmlReportOutputter;
 import org.apache.ivy.plugins.report.XmlReportParser;
 import org.apache.ivy.util.Message;
@@ -59,17 +61,21 @@ public class ConfigurationResolveReport {
 	private List _modulesIds;
 	private List _previousDeps;
 
-	public ConfigurationResolveReport(ResolveEngine resolveEngine, ModuleDescriptor md, String conf, Date date, File cache) {
+	public ConfigurationResolveReport(ResolveEngine resolveEngine, ModuleDescriptor md, String conf, Date date, ResolveOptions options) {
 		_resolveEngine = resolveEngine;
     	_md = md;
     	_conf = conf;
     	_date = date;
 
 		// parse previous deps from previous report file if any
-        File previousReportFile = new File(cache, XmlReportOutputter.getReportFileName(md.getModuleRevisionId().getModuleId(), conf));
+    	CacheManager cache = options.getCache();
+    	String resolveId = options.getResolveId();
+        File previousReportFile = cache.getConfigurationResolveReportInCache(resolveId, conf);
 		if (previousReportFile.exists()) {
 			try {
-				_previousDeps = Arrays.asList(new XmlReportParser().getDependencyRevisionIds(md.getModuleRevisionId().getModuleId(), conf, cache));
+				XmlReportParser parser = new XmlReportParser();
+				parser.parse(previousReportFile);
+				_previousDeps = Arrays.asList(parser.getDependencyRevisionIds());
 			} catch (Exception e) {
 				_previousDeps = null;
 			}

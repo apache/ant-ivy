@@ -79,6 +79,7 @@ public class IvyRepositoryReport extends IvyTask {
         	_module = PatternMatcher.ANY_EXPRESSION;
         }
         ModuleRevisionId mrid = ModuleRevisionId.newInstance(_organisation, _module, _revision);
+        
         try {
     		ModuleId[] mids = ivy.listModules(new ModuleId(_organisation, _module), settings.getMatcher(_matcher));
     		ModuleRevisionId[] mrids = new ModuleRevisionId[mids.length];
@@ -90,38 +91,43 @@ public class IvyRepositoryReport extends IvyTask {
     			}
 			}
     		DefaultModuleDescriptor md = DefaultModuleDescriptor.newCallerInstance(mrids, true, false);
+    		String resolveId = ResolveOptions.getDefaultResolveId(md);
     		ResolveReport report = ivy.resolve(
     				md, 
     				new ResolveOptions()
+    					.setResolveId(resolveId)
 			    		.setCache(CacheManager.getInstance(settings, _cache))
 			    		.setValidate(doValidate(settings)));
     		
+    		CacheManager cacheMgr = getIvyInstance().getCacheManager(_cache);
     		new XmlReportOutputter().output(report, _cache);
     		if (_graph) {
-    			gengraph(_cache, md.getModuleRevisionId().getOrganisation(), md.getModuleRevisionId().getName());
+    			gengraph(cacheMgr, md.getModuleRevisionId().getOrganisation(), md.getModuleRevisionId().getName());
     		}
     		if (_dot) {
-    			gendot(_cache, md.getModuleRevisionId().getOrganisation(), md.getModuleRevisionId().getName());
+    			gendot(cacheMgr, md.getModuleRevisionId().getOrganisation(), md.getModuleRevisionId().getName());
     		}
     		if (_xml) {
-    			FileUtil.copy(new File(_cache, XmlReportOutputter.getReportFileName(md.getModuleRevisionId().getModuleId(), "default")), new File(_todir, _outputname+".xml"), null);
+    			
+    			FileUtil.copy(cacheMgr.getConfigurationResolveReportInCache(resolveId, "default"), new File(_todir, _outputname+".xml"), null);
     		}
     		if (_xsl) {
-    			genreport(_cache, md.getModuleRevisionId().getOrganisation(), md.getModuleRevisionId().getName());
+    			genreport(cacheMgr, md.getModuleRevisionId().getOrganisation(), md.getModuleRevisionId().getName());
     		}
         } catch (Exception e) {
             throw new BuildException("impossible to generate graph for "+ mrid +": "+e, e);
         }
     }
     
-    private void genreport(File cache, String organisation, String module) throws IOException {        
+    private void genreport(CacheManager cache, String organisation, String module) throws IOException {  
         // first process the report with xslt
         XSLTProcess xslt = new XSLTProcess();
         xslt.setTaskName(getTaskName());
         xslt.setProject(getProject());
         xslt.init();
         
-        xslt.setIn(new File(cache, XmlReportOutputter.getReportFileName(new ModuleId(organisation, module), "default")));
+        String resolveId = ResolveOptions.getDefaultResolveId(new ModuleId(organisation, module));
+        xslt.setIn(cache.getConfigurationResolveReportInCache(resolveId, "default"));
         xslt.setOut(new File(_todir, _outputname+"."+_xslext));
         
         xslt.setStyle(_xslFile);
@@ -141,8 +147,8 @@ public class IvyRepositoryReport extends IvyTask {
         xslt.execute();
     }
 
-    private void gengraph(File cache, String organisation, String module) throws IOException {        
-        gen(cache, organisation, module, getGraphStylePath(cache), "graphml");
+    private void gengraph(CacheManager cache, String organisation, String module) throws IOException {        
+        gen(cache, organisation, module, getGraphStylePath(cache.getCache()), "graphml");
     }
     
     private String getGraphStylePath(File cache) throws IOException {
@@ -153,8 +159,8 @@ public class IvyRepositoryReport extends IvyTask {
         return style.getAbsolutePath();
     }
     
-    private void gendot(File cache, String organisation, String module) throws IOException {        
-        gen(cache, organisation, module, getDotStylePath(cache), "dot");
+    private void gendot(CacheManager cache, String organisation, String module) throws IOException {        
+        gen(cache, organisation, module, getDotStylePath(cache.getCache()), "dot");
     }
     
     private String getDotStylePath(File cache) throws IOException {
@@ -165,15 +171,16 @@ public class IvyRepositoryReport extends IvyTask {
         return style.getAbsolutePath();
     }
     
-    private void gen(File cache, String organisation, String module, String style, String ext) throws IOException {        
+    private void gen(CacheManager cache, String organisation, String module, String style, String ext) throws IOException {        
         XSLTProcess xslt = new XSLTProcess();
         xslt.setTaskName(getTaskName());
         xslt.setProject(getProject());
         xslt.init();
         
-        xslt.setIn(new File(cache, XmlReportOutputter.getReportFileName(new ModuleId(organisation, module), "default")));
+        String resolveId = ResolveOptions.getDefaultResolveId(new ModuleId(organisation, module));
+        xslt.setIn(cache.getConfigurationResolveReportInCache(resolveId, "default"));
         xslt.setOut(new File(_todir, _outputname+"."+ext));
-        xslt.setBasedir(cache);
+        xslt.setBasedir(cache.getCache());
         xslt.setStyle(style);
         xslt.execute();
     }
@@ -279,6 +286,4 @@ public class IvyRepositoryReport extends IvyTask {
 	public void setDot(boolean dot) {
 		_dot = dot;
 	}
-    
-
 }

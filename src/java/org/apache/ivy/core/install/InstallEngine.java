@@ -91,6 +91,7 @@ public class InstallEngine {
         	_resolveEngine.setDictatorResolver(fromResolver);
             
             DefaultModuleDescriptor md = new DefaultModuleDescriptor(ModuleRevisionId.newInstance("apache", "ivy-install", "1.0"), _settings.getStatusManager().getDefaultStatus(), new Date());
+            String resolveId = ResolveOptions.getDefaultResolveId(md);
             md.addConfiguration(new Configuration("default"));
             md.addConflictManager(new ModuleId(ExactPatternMatcher.ANY_EXPRESSION, ExactPatternMatcher.ANY_EXPRESSION), ExactPatternMatcher.INSTANCE, new NoConflictManager());
             
@@ -111,12 +112,13 @@ public class InstallEngine {
             }                       
             
             // resolve using appropriate resolver
-            ResolveReport report = new ResolveReport(md);
+            ResolveReport report = new ResolveReport(md, resolveId);
             
             Message.info(":: resolving dependencies ::");
             IvyNode[] dependencies = _resolveEngine.getDependencies(
             		md, 
             		new ResolveOptions()
+            			.setResolveId(resolveId)
             			.setConfs(new String[] {"default"})
             			.setCache(CacheManager.getInstance(_settings, cache)), 
             		report);

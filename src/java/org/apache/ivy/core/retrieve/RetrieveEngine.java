@@ -41,6 +41,7 @@ import org.apache.ivy.core.module.descriptor.DefaultArtifact;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleId;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
+import org.apache.ivy.core.resolve.ResolveOptions;
 import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.plugins.parser.ModuleDescriptorParser;
 import org.apache.ivy.plugins.parser.ModuleDescriptorParserRegistry;
@@ -212,6 +213,10 @@ public class RetrieveEngine {
 	public Map determineArtifactsToCopy(ModuleRevisionId mrid, String destFilePattern, RetrieveOptions options) throws ParseException, IOException {
 		ModuleId moduleId = mrid.getModuleId();
 		
+		if (options.getResolveId() == null) {
+			options.setResolveId(ResolveOptions.getDefaultResolveId(moduleId));
+		}
+		
         CacheManager cacheManager = getCacheManager(options);
         String[] confs = getConfs(mrid, options);
         String destIvyPattern = IvyPatternHelper.substituteVariables(options.getDestIvyPattern(), _settings.getVariables());
@@ -223,9 +228,13 @@ public class RetrieveEngine {
         XmlReportParser parser = new XmlReportParser();
         for (int i = 0; i < confs.length; i++) {
             final String conf = confs[i];
-            Collection artifacts = new ArrayList(Arrays.asList(parser.getArtifacts(moduleId, conf, cacheManager.getCache())));
+
+            File report = cacheManager.getConfigurationResolveReportInCache(options.getResolveId(), conf);
+            parser.parse(report);
+        	
+            Collection artifacts = new ArrayList(Arrays.asList(parser.getArtifacts()));
             if (destIvyPattern != null) {
-                ModuleRevisionId[] mrids = parser.getRealDependencyRevisionIds(moduleId, conf, cacheManager.getCache());
+                ModuleRevisionId[] mrids = parser.getRealDependencyRevisionIds();
                 for (int j = 0; j < mrids.length; j++) {
                     artifacts.add(DefaultArtifact.newIvyArtifact(mrids[j], null));
                 }

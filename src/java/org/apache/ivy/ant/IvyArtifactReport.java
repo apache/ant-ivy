@@ -59,6 +59,7 @@ public class IvyArtifactReport extends IvyTask {
     private String _pattern;
     private boolean _haltOnFailure = true;
     private File _cache;
+    private String _resolveId;
 
     public File getTofile() {
         return _tofile;
@@ -90,6 +91,12 @@ public class IvyArtifactReport extends IvyTask {
     public void setCache(File cache) {
         _cache = cache;
     }
+    public String getResolveId() {
+    	return _resolveId;
+    }
+    public void setResolveId(String resolveId) {
+    	_resolveId = resolveId;
+    }
 
     public void execute() throws BuildException {
         if (_tofile == null) {
@@ -99,19 +106,19 @@ public class IvyArtifactReport extends IvyTask {
         Ivy ivy = getIvyInstance();
         IvySettings settings = ivy.getSettings();
 
-        ensureResolved(isHaltonfailure(), false, null, null);
+        ensureResolved(isHaltonfailure(), false, null, null, _resolveId);
 
-        String organisation = getProperty(null, settings, "ivy.organisation");
-        String module = getProperty(null, settings, "ivy.module");
-        String revision = getProperty(Ivy.getWorkingRevision(), settings, "ivy.revision");
+        String organisation = getProperty(null, settings, "ivy.organisation", _resolveId);
+        String module = getProperty(null, settings, "ivy.module", _resolveId);
+        String revision = getProperty(Ivy.getWorkingRevision(), settings, "ivy.revision", _resolveId);
 
         if (_cache == null) {
             _cache = settings.getDefaultCache();
         }
         _pattern = getProperty(_pattern, settings, "ivy.retrieve.pattern");
-        _conf = getProperty(_conf, settings, "ivy.resolved.configurations");
+        _conf = getProperty(_conf, settings, "ivy.resolved.configurations", _resolveId);
         if ("*".equals(_conf)) {
-            _conf = getProperty(settings, "ivy.resolved.configurations");
+            _conf = getProperty(settings, "ivy.resolved.configurations", _resolveId);
             if (_conf == null) {
                 throw new BuildException("bad provided for ivy artifact report task: * can only be used with a prior call to <resolve/>");
             }
@@ -129,11 +136,18 @@ public class IvyArtifactReport extends IvyTask {
         try {
             String[] confs = splitConfs(_conf);
             CacheManager cacheManager = CacheManager.getInstance(settings, _cache);
+            ModuleDescriptor md = null;
+            if (_resolveId != null) {
+            	md = (ModuleDescriptor) getResolvedDescriptor(_resolveId);
+            } else {
+            	md = (ModuleDescriptor) getResolvedDescriptor(organisation, module, false);
+            }
 			IvyNode[] dependencies = ivy.getResolveEngine()
-            	.getDependencies((ModuleDescriptor) getProject().getReference("ivy.resolved.descriptor"), 
+            	.getDependencies(md, 
             			new ResolveOptions()
             				.setConfs(confs)
             				.setCache(cacheManager)
+            				.setResolveId(_resolveId)
             				.setValidate(doValidate(settings)),
             			null);
 
@@ -142,6 +156,7 @@ public class IvyArtifactReport extends IvyTask {
             		_pattern, 
             		new RetrieveOptions()
             			.setConfs(confs)
+            			.setResolveId(_resolveId)
             			.setCache(cacheManager));
             
             Map moduleRevToArtifactsMap = new HashMap();

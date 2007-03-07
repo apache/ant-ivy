@@ -30,6 +30,7 @@ import org.apache.ivy.core.IvyContext;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.report.ResolveReport;
 import org.apache.ivy.core.settings.IvySettings;
+import org.apache.ivy.util.DefaultMessageImpl;
 import org.apache.ivy.util.Message;
 import org.apache.ivy.util.StringUtils;
 import org.apache.tools.ant.BuildException;
@@ -91,7 +92,8 @@ public class IvyTask extends Task {
      */
     protected void ensureMessageInitialised() {
         if (!Message.isInitialised()) { 
-            Message.init(new AntMessageImpl(this));
+            //Message.init(new AntMessageImpl(this));
+        	Message.init(new DefaultMessageImpl(100));
         }
 
     }
@@ -124,27 +126,58 @@ public class IvyTask extends Task {
         getProject().addReference("ivy.resolved.descriptor."+suffix, md);
         getProject().addReference("ivy.resolved.configurations.ref."+suffix, confs);
     }
+    protected void setResolved(ResolveReport report, String resolveId, boolean keep) {
+    	setResolved(report, keep);
+    	if (resolveId != null) {
+	    	ModuleDescriptor md = report.getModuleDescriptor();
+	    	String[] confs = report.getConfigurations();
+	        getProject().addReference("ivy.resolved.report."+resolveId, report);
+	        getProject().addReference("ivy.resolved.descriptor."+resolveId, md);
+	        getProject().addReference("ivy.resolved.configurations.ref."+resolveId, confs);
+    	}
+    }
     
 	protected void ensureResolved(boolean haltOnFailure, boolean useOrigin, String org, String module) {
-    	ensureResolved(haltOnFailure, useOrigin, true, org, module, null);
+		ensureResolved(haltOnFailure, useOrigin, org, module, null);
+	}
+	protected void ensureResolved(boolean haltOnFailure, boolean useOrigin, String org, String module, String resolveId) {
+    	ensureResolved(haltOnFailure, useOrigin, true, org, module, null, resolveId);
     }
     protected void ensureResolved(boolean haltOnFailure, boolean useOrigin, boolean transitive, String org, String module, String conf) {
+    	ensureResolved(haltOnFailure, useOrigin, true, org, module, null, null);
+    }
+    protected void ensureResolved(boolean haltOnFailure, boolean useOrigin, boolean transitive, String org, String module, String conf, String resolveId) {
         ensureMessageInitialised();
-//        if (org != null  && module != null) {
-//            return;
-//        }
-        String[] confs = getConfsToResolve(org, module, conf, false);
+        
+        String[] confs = null;
+        if (resolveId != null) {
+        	confs = getConfsToResolve(resolveId, conf);
+        } else {
+        	confs = getConfsToResolve(org, module, conf, false);
+        }
         
         if (confs.length > 0)  {
         	IvyResolve resolve = createResolve(haltOnFailure, useOrigin);
         	resolve.setTransitive(transitive);
         	resolve.setConf(StringUtils.join(confs, ", "));
+        	resolve.setResolveId(resolveId);
         	resolve.execute();
         } 
     }
     
     protected String[] getConfsToResolve(String org, String module, String conf, boolean strict) {
-        ModuleDescriptor reference = (ModuleDescriptor) getResolvedDescriptor(org, module, strict); 
+        ModuleDescriptor reference = (ModuleDescriptor) getResolvedDescriptor(org, module, strict);
+        String[] rconfs = (String[]) getReference("ivy.resolved.configurations.ref", org, module, strict);
+        return getConfsToResolve(reference, conf, rconfs);
+    }
+    
+    protected String[] getConfsToResolve(String resolveId, String conf) {
+        ModuleDescriptor reference = (ModuleDescriptor) getResolvedDescriptor(resolveId);
+        String[] rconfs = (String[]) getProject().getReference("ivy.resolved.configurations.ref." + resolveId);
+        return getConfsToResolve(reference, conf, rconfs);
+    }
+
+    private String[] getConfsToResolve(ModuleDescriptor reference, String conf, String[] rconfs) {
 		Message.debug("calculating configurations to resolve");
         
         if (reference == null)  {
@@ -155,7 +188,6 @@ public class IvyTask extends Task {
         		return splitConfs(conf);
         	}
         } else if (conf != null) {
-        	String[] rconfs = getResolvedConfigurations(org, module, strict);
         	String[] confs;
         	if ("*".equals(conf)) {
         		confs = reference.getConfigurationsNames();
@@ -180,6 +212,13 @@ public class IvyTask extends Task {
 		return (String[]) getReference("ivy.resolved.configurations.ref", org, module, strict);
 	}
     
+    protected Object getResolvedDescriptor(String resolveId) {
+    	Object result = getProject().getReference("ivy.resolved.descriptor." + resolveId);
+        if (result == null) {
+        	throw new BuildException("ModuleDescriptor for resolve with id '" + resolveId + "' not found.");
+        }
+        return result;
+    }
 	protected Object getResolvedDescriptor(String org, String module) {
 		return getResolvedDescriptor(org, module, false);
 	}
@@ -268,6 +307,22 @@ public class IvyTask extends Task {
         }
     }
     
+    protected String getProperty(String value, IvySettings ivy, String name, String resolveId) {
+    	if (resolveId == null) {
+    		return getProperty(value, ivy, name);
+    	} else {
+    		return getProperty(value, ivy, name + "." + resolveId);
+    	}
+    }
+    
+    protected String getProperty(IvySettings ivy, String name, String resolveId) {
+    	if (resolveId == null) {
+    		return getProperty(ivy, name);
+    	} else {
+    		return getProperty(ivy, name + "." + resolveId);
+    	}
+    }
+
     protected String getProperty(IvySettings ivy, String name) {        
         String val =  ivy.getVariable(name);        
         if (val == null) {

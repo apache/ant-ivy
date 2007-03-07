@@ -21,6 +21,7 @@ import java.io.File;
 
 import junit.framework.TestCase;
 
+import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.Delete;
 
@@ -64,4 +65,34 @@ public class IvyArtifactPropertyTest extends TestCase {
         assertNotNull(val);
         assertEquals("build/cache/mod1.2/mod1.2-2.0.jar", val);
     }
+    
+    public void testWithResolveId() throws Exception {
+    	IvyResolve resolve = new IvyResolve();
+    	resolve.setProject(_project);
+    	resolve.setCache(_cache);
+    	resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-simple.xml"));
+    	resolve.setResolveId("abc");
+    	resolve.execute();
+    	
+        _prop.setName("[module].[artifact]-[revision]");
+        _prop.setValue("${cache.dir}/[module]/[artifact]-[revision].[type]");
+        _prop.setResolveId("abc");
+        _prop.execute();
+
+        String val = _project.getProperty("mod1.2.mod1.2-2.0");
+        assertNotNull(val);
+        assertEquals("build/cache/mod1.2/mod1.2-2.0.jar", val);
+    }
+
+    public void testWithResolveIdWithoutResolve() throws Exception {
+    	try {
+	        _prop.setName("[module].[artifact]-[revision]");
+	        _prop.setValue("${cache.dir}/[module]/[artifact]-[revision].[type]");
+	        _prop.setResolveId("abc");
+	        _prop.execute();
+	        fail("Task should have failed because no resolve was performed!");
+    	} catch (BuildException e) {
+    		// this is expected!
+    	}
+   }
 }

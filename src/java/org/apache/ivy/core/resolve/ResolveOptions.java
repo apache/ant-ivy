@@ -20,6 +20,8 @@ package org.apache.ivy.core.resolve;
 import java.util.Date;
 
 import org.apache.ivy.core.cache.CacheManager;
+import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
+import org.apache.ivy.core.module.id.ModuleId;
 import org.apache.ivy.util.filter.Filter;
 import org.apache.ivy.util.filter.FilterHelper;
 
@@ -86,6 +88,10 @@ public class ResolveOptions {
 	 * A filter to use to avoid downloading all artifacts.
 	 */
 	private Filter artifactFilter = FilterHelper.NO_FILTER;
+	/**
+	 * The id used to store the resolve information.
+	 */
+	private String resolveId;
 	
 	public ResolveOptions() {
 	}
@@ -102,6 +108,7 @@ public class ResolveOptions {
 		outputReport = options.outputReport;
 		useOrigin = options.useOrigin;
 		artifactFilter = options.artifactFilter;
+		resolveId = options.resolveId;
 	}
 	
 	public Filter getArtifactFilter() {
@@ -180,5 +187,19 @@ public class ResolveOptions {
 	public ResolveOptions setUseOrigin(boolean useOrigin) {
 		this.useOrigin = useOrigin;
 		return this;
+	}
+	public String getResolveId() {
+		return resolveId;
+	}
+	public ResolveOptions setResolveId(String resolveId) {
+		this.resolveId = resolveId;
+		return this;
+	}
+	public static String getDefaultResolveId(ModuleDescriptor md) {
+    	ModuleId module = md.getModuleRevisionId().getModuleId();
+    	return module.getOrganisation() + "-" + module.getName();
+	}
+	public static String getDefaultResolveId(ModuleId moduleId) {
+    	return moduleId.getOrganisation() + "-" + moduleId.getName();
 	}
 }

@@ -30,6 +30,7 @@ import java.util.Map;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleId;
 import org.apache.ivy.core.resolve.IvyNode;
+import org.apache.ivy.core.resolve.ResolveOptions;
 import org.apache.ivy.plugins.report.ReportOutputter;
 import org.apache.ivy.util.filter.Filter;
 
@@ -45,9 +46,15 @@ public class ResolveReport {
 	private List _artifacts;
 	private long _resolveTime;
 	private long _downloadTime;
+	private String _resolveId;
 	
     public ResolveReport(ModuleDescriptor md) {
         _md = md;
+        _resolveId = ResolveOptions.getDefaultResolveId(md);
+    }
+    public ResolveReport(ModuleDescriptor md, String resolveId) {
+    	_md = md;
+    	_resolveId = resolveId;
     }
     public void addReport(String conf, ConfigurationResolveReport report) {
         _confReports.put(conf, report);
@@ -200,5 +207,8 @@ public class ResolveReport {
 	}
 	public long getDownloadTime() {
 		return _downloadTime;
+	}
+	public String getResolveId() {
+		return _resolveId;
 	}
 }
