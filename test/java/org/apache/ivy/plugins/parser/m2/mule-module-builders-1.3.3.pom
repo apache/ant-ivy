@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?><project>
+  <parent>
+    <artifactId>mule-modules</artifactId>
+    <groupId>org.mule.modules</groupId>
+    <version>1.3.3</version>
+  </parent>
+  <modelVersion>4.0.0</modelVersion>
+
+  <artifactId>mule-module-builders</artifactId>
+  <name>Mule Configuration Builders</name>
+  <version>1.3.3</version>
+  <description>Standard configuration builders for Mule</description>
+  <profiles>
+    <profile>
+      <id>java14</id>
+
+      <activation>
+        <jdk>1.4</jdk>
+      </activation>
+      <dependencies>
+        <dependency>
+          <groupId>xml-apis</groupId>
+          <artifactId>xml-apis</artifactId>
+
+          <version>1.3.03</version>
+        </dependency>
+        <dependency>
+          <groupId>xerces</groupId>
+          <artifactId>xercesImpl</artifactId>
+          <version>2.8.1</version>
+        </dependency>
+
+        <dependency>
+          <groupId>commons-digester</groupId>
+          <artifactId>commons-digester</artifactId>
+          <version>1.7</version>
+        </dependency>
+      </dependencies>
+    </profile>
+
+    <profile>
+      <id>java5</id>
+      <activation>
+        <jdk>1.5</jdk>
+      </activation>
+      <dependencies>
+        <dependency>
+          <groupId>commons-digester</groupId>
+
+          <artifactId>commons-digester</artifactId>
+          <version>1.7</version>
+          <exclusions>
+            <exclusion>
+              <artifactId>xml-apis</artifactId>
+              <groupId>xml-apis</groupId>
+            </exclusion>
+
+          </exclusions>
+        </dependency>
+      </dependencies>
+    </profile>
+  </profiles>
+  <dependencies>
+    <dependency>
+      <groupId>org.apache.geronimo.specs</groupId>
+
+      <artifactId>geronimo-servlet_2.4_spec</artifactId>
+      <version>1.0.1</version>
+    </dependency>
+  </dependencies>
+  <distributionManagement>
+    <status>deployed</status>
+  </distributionManagement>
+
+</project>

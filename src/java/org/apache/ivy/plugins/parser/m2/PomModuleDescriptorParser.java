@@ -101,9 +101,10 @@ public class PomModuleDescriptorParser extends AbstractModuleDescriptorParser {
 
         public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
             _contextStack.push(qName);
+            String context = getContext();
             if ("optional".equals(qName)) {
                 _optional = true;
-            } else if ("exclusions".equals(qName)) {
+            } else if ("project/dependencies/dependency/exclusions".equals(context)) {
                 if (_dd == null) {
                     // stores dd now cause exclusions will override org and module
                     _dd = new DefaultDependencyDescriptor(_md, ModuleRevisionId.newInstance(_organisation, _module, _revision), true, false, true);
@@ -111,8 +112,11 @@ public class PomModuleDescriptorParser extends AbstractModuleDescriptorParser {
                     _module = null;
                     _revision = null;
                 }
-            } else if (_md.getModuleRevisionId() == null  && ("project/dependencies/dependency".equals(getContext()))) {
-                fillMrid();
+            } else if (_md.getModuleRevisionId() == null) {
+            	if ("project/dependencies".equals(context)
+            			|| "project/profiles".equals(context)) {
+            		fillMrid();
+            	}
             }
         }
 
@@ -230,7 +234,8 @@ public class PomModuleDescriptorParser extends AbstractModuleDescriptorParser {
             if (context.startsWith("project/parent")) {
                 return;
             }
-            if (_md.getModuleRevisionId() == null || context.startsWith("project/dependencies/dependency")) {
+            if (_md.getModuleRevisionId() == null
+            		 || context.startsWith("project/dependencies/dependency")) {
                 if (context.equals("project/groupId")) {
                     _organisation = txt;
                 } else if (_organisation == null && context.endsWith("groupId")) {
