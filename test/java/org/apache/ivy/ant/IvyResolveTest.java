@@ -138,11 +138,13 @@ public class IvyResolveTest extends TestCase {
         _resolve.execute();
         
         assertEquals("resolve-simple", getIvy().getVariable("ivy.module"));
+        assertEquals("1.0", getIvy().getVariable("ivy.revision"));
 
         _resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-double.xml"));
         _resolve.execute();
         
         assertEquals("resolve-double", getIvy().getVariable("ivy.module"));
+        assertEquals("1.1", getIvy().getVariable("ivy.revision"));
     }
 
     public void testFailure() throws Exception {

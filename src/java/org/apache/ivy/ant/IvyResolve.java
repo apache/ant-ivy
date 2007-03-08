@@ -173,7 +173,6 @@ public class IvyResolve extends IvyTask {
 	            if (_file == null) {
 	                _file = new File(getProject().getBaseDir(), getProperty(settings, "ivy.dep.file"));
 	            }
-	            _revision = getProperty(_revision, settings, "ivy.revision");
 	            report = ivy.resolve(
 	                    _file.toURL(), 
 	                    getResolveOptions(confs, settings));

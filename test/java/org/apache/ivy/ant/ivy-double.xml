@@ -1,7 +1,7 @@
 <ivy-module version="1.0"> 
 	<info organisation="apache"
 	       module="resolve-double"
-	       revision="1.0"
+	       revision="1.1"
 	       status="release"
 	/>
 	<dependencies>
