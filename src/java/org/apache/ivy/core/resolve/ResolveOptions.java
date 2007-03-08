@@ -43,9 +43,10 @@ public class ResolveOptions {
 	 */
 	private String revision = null;
 	/**
-	 * The cache manager to use during resolve
+	 * The cache manager to use during resolve.
+	 * If it is null, default cache manager will be used. 
 	 */
-	private CacheManager cache;
+	private CacheManager cache = null;
 	/**
 	 * the date for which the dependencies should be resolved. 
 	 * All obtained artifacts should have a publication date which is before 
