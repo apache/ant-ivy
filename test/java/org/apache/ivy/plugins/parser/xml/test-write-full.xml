@@ -30,12 +30,12 @@
 		<dependency org="yourorg" name="yourmodule6" rev="latest.integration" conf="myconf2->yourconf1,yourconf2;myconf1->yourconf1"/>
 		<dependency org="yourorg" name="yourmodule7" rev="7.1" conf="myconf2->yourconf1,yourconf2;myconf1->yourconf1"/>
 		<dependency org="yourorg" name="yourmodule8" rev="8.1" conf="*->*">
-			<include name="yourartifact8-2" type="jar" ext="jar"/>
-			<include name="yourartifact8-1" type="jar" ext="jar"/>
+			<artifact name="yourartifact8-2" type="jar" ext="jar"/>
+			<artifact name="yourartifact8-1" type="jar" ext="jar"/>
 		</dependency>
 		<dependency org="yourorg" name="yourmodule9" rev="9.1" conf="myconf2->default;myconf3->default;myconf1->default">
-			<include name="yourartifact9-1" type="jar" ext="jar" conf="myconf1,myconf2"/>
-			<include name="yourartifact9-2" type="jar" ext="jar" conf="myconf2,myconf3"/>
+			<artifact name="yourartifact9-1" type="jar" ext="jar" conf="myconf1,myconf2"/>
+			<artifact name="yourartifact9-2" type="jar" ext="jar" conf="myconf2,myconf3"/>
 		</dependency>
 		<dependency org="yourorg" name="yourmodule10" rev="10.1" conf="*->*">
 			<include name="*" type="*" ext="xml"/>

@@ -57,6 +57,9 @@ public abstract class AbstractModuleDescriptorParserTester extends TestCase {
     }
 
     protected void assertDependencyArtifactsIncludes(DependencyDescriptor dd, String[] confs, String[] artifactsNames) {
+    	assertDependencyArtifactsIncludes(dd, confs, artifactsNames, false);
+    }
+    protected void assertDependencyArtifactsIncludes(DependencyDescriptor dd, String[] confs, String[] artifactsNames, boolean assumePublished) {
         DependencyArtifactDescriptor[] dads = dd.getDependencyArtifactsIncludes(confs);
         assertNotNull(dads);
         assertEquals(artifactsNames.length, dads.length);
@@ -65,6 +68,7 @@ public abstract class AbstractModuleDescriptorParserTester extends TestCase {
             for (int j = 0; j < dads.length; j++) {
                 assertNotNull(dads[j]);
                 if (dads[j].getName().equals(artifactsNames[i])) {
+                	assertEquals("unexpected value for assumePublished on "+artifactsNames[i], assumePublished, dads[j].isAssumePublished());
                     found = true;
                     break;
                 }

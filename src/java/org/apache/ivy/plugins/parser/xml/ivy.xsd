@@ -135,7 +135,6 @@
 									            <xs:attribute name="type" type="xs:string"/>
 									            <xs:attribute name="ext" type="xs:string"/>
 									            <xs:attribute name="conf" type="xs:string"/>
-									            <xs:attribute name="matcher" type="xs:string"/>
 									            <xs:attribute name="url" type="xs:string"/>
 							            	</xs:complexType>
 							      		</xs:element>

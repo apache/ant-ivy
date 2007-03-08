@@ -102,7 +102,9 @@ public class XmlModuleDescriptorParserTest extends AbstractModuleDescriptorParse
     public void testBadOrg() throws IOException {
         try {
             XmlModuleDescriptorParser.getInstance().parseDescriptor(_settings, getClass().getResource("test-bad-org.xml"), true);
-            fail("bad ivy file raised no error");
+            if (XMLHelper.canUseSchemaValidation()) {
+            	fail("bad ivy file raised no error");
+            }
         } catch (ParseException ex) {
             if (XMLHelper.canUseSchemaValidation()) {
                 assertTrue("invalid exception: "+ex.getMessage(), ex.getMessage().indexOf("organization") != -1);
@@ -267,27 +269,27 @@ public class XmlModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         assertEquals(Arrays.asList(new String[] {"yourconf1"}), Arrays.asList(dd.getDependencyConfigurations("myconf1")));        
         assertEquals(Arrays.asList(new String[] {"yourconf1", "yourconf2"}), Arrays.asList(dd.getDependencyConfigurations("myconf2")));        
         assertEquals(Arrays.asList(new String[] {}), Arrays.asList(dd.getDependencyConfigurations(new String[] {"myconf3", "myconf4"})));
-        assertDependencyArtifactsIncludes(dd, new String[] {"myconf1", "myconf2", "myconf3", "myconf4"}, new String[0]);
+        assertDependencyArtifactsIncludes(dd, new String[] {"myconf1", "myconf2", "myconf3", "myconf4"}, new String[0], false);
         
         dd = getDependency(dependencies, "yourmodule8");
         assertNotNull(dd);
         assertEquals("yourorg", dd.getDependencyId().getOrganisation());
         assertEquals("8.1", dd.getDependencyRevisionId().getRevision());
         assertEquals(new HashSet(Arrays.asList(new String[] {"*"})), new HashSet(Arrays.asList(dd.getModuleConfigurations())));
-        assertDependencyArtifactsIncludes(dd, new String[] {"myconf1"}, new String[] {"yourartifact8-1", "yourartifact8-2"});
-        assertDependencyArtifactsIncludes(dd, new String[] {"myconf2"}, new String[] {"yourartifact8-1", "yourartifact8-2"});
-        assertDependencyArtifactsIncludes(dd, new String[] {"myconf3"}, new String[] {"yourartifact8-1", "yourartifact8-2"});
-        assertDependencyArtifactsIncludes(dd, new String[] {"myconf4"}, new String[] {"yourartifact8-1", "yourartifact8-2"});
+        assertDependencyArtifactsIncludes(dd, new String[] {"myconf1"}, new String[] {"yourartifact8-1", "yourartifact8-2"}, true);
+        assertDependencyArtifactsIncludes(dd, new String[] {"myconf2"}, new String[] {"yourartifact8-1", "yourartifact8-2"}, true);
+        assertDependencyArtifactsIncludes(dd, new String[] {"myconf3"}, new String[] {"yourartifact8-1", "yourartifact8-2"}, true);
+        assertDependencyArtifactsIncludes(dd, new String[] {"myconf4"}, new String[] {"yourartifact8-1", "yourartifact8-2"}, true);
         
         dd = getDependency(dependencies, "yourmodule9");
         assertNotNull(dd);
         assertEquals("yourorg", dd.getDependencyId().getOrganisation());
         assertEquals("9.1", dd.getDependencyRevisionId().getRevision());
         assertEquals(new HashSet(Arrays.asList(new String[] {"myconf1", "myconf2", "myconf3"})), new HashSet(Arrays.asList(dd.getModuleConfigurations())));
-        assertDependencyArtifactsIncludes(dd, new String[] {"myconf1"}, new String[] {"yourartifact9-1"});
-        assertDependencyArtifactsIncludes(dd, new String[] {"myconf2"}, new String[] {"yourartifact9-1", "yourartifact9-2"});
-        assertDependencyArtifactsIncludes(dd, new String[] {"myconf3"}, new String[] {"yourartifact9-2"});
-        assertDependencyArtifactsIncludes(dd, new String[] {"myconf4"}, new String[] {});
+        assertDependencyArtifactsIncludes(dd, new String[] {"myconf1"}, new String[] {"yourartifact9-1"}, true);
+        assertDependencyArtifactsIncludes(dd, new String[] {"myconf2"}, new String[] {"yourartifact9-1", "yourartifact9-2"}, true);
+        assertDependencyArtifactsIncludes(dd, new String[] {"myconf3"}, new String[] {"yourartifact9-2"}, true);
+        assertDependencyArtifactsIncludes(dd, new String[] {"myconf4"}, new String[] {}, true);
         assertDependencyArtifactsExcludes(dd, new String[] {"myconf1"}, new String[] {});
         assertDependencyArtifactsExcludes(dd, new String[] {"myconf2"}, new String[] {});
         assertDependencyArtifactsExcludes(dd, new String[] {"myconf3"}, new String[] {});
@@ -298,10 +300,10 @@ public class XmlModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         assertEquals("yourorg", dd.getDependencyId().getOrganisation());
         assertEquals("10.1", dd.getDependencyRevisionId().getRevision());
         assertEquals(new HashSet(Arrays.asList(new String[] {"*"})), new HashSet(Arrays.asList(dd.getModuleConfigurations())));
-        assertDependencyArtifactsIncludes(dd, new String[] {"myconf1"}, new String[] {"your.*", PatternMatcher.ANY_EXPRESSION});
-        assertDependencyArtifactsIncludes(dd, new String[] {"myconf2"}, new String[] {"your.*", PatternMatcher.ANY_EXPRESSION});
-        assertDependencyArtifactsIncludes(dd, new String[] {"myconf3"}, new String[] {"your.*", PatternMatcher.ANY_EXPRESSION});
-        assertDependencyArtifactsIncludes(dd, new String[] {"myconf4"}, new String[] {"your.*", PatternMatcher.ANY_EXPRESSION});
+        assertDependencyArtifactsIncludes(dd, new String[] {"myconf1"}, new String[] {"your.*", PatternMatcher.ANY_EXPRESSION}, false);
+        assertDependencyArtifactsIncludes(dd, new String[] {"myconf2"}, new String[] {"your.*", PatternMatcher.ANY_EXPRESSION}, false);
+        assertDependencyArtifactsIncludes(dd, new String[] {"myconf3"}, new String[] {"your.*", PatternMatcher.ANY_EXPRESSION}, false);
+        assertDependencyArtifactsIncludes(dd, new String[] {"myconf4"}, new String[] {"your.*", PatternMatcher.ANY_EXPRESSION}, false);
         assertDependencyArtifactsExcludes(dd, new String[] {"myconf1"}, new String[] {"toexclude"});
         assertDependencyArtifactsExcludes(dd, new String[] {"myconf2"}, new String[] {"toexclude"});
         assertDependencyArtifactsExcludes(dd, new String[] {"myconf3"}, new String[] {"toexclude"});

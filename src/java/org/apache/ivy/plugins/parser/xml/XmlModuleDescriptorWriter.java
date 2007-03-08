@@ -23,6 +23,8 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.util.Arrays;
+import java.util.Iterator;
+import java.util.Map;
 
 import org.apache.ivy.Ivy;
 import org.apache.ivy.core.module.descriptor.Artifact;
@@ -142,7 +144,11 @@ public class XmlModuleDescriptorWriter {
                     if (includes.length > 0) {
                         out.println(">");
                         for (int j = 0; j < includes.length; j++) {
-                            out.print("\t\t\t<include");
+                        	if (includes[j].isAssumePublished()) {
+                        		out.print("\t\t\t<artifact");
+                        	} else {
+                        		out.print("\t\t\t<include");
+                        	}
                             out.print(" name=\""+includes[j].getName()+"\"");
                             out.print(" type=\""+includes[j].getType()+"\"");
                             out.print(" ext=\""+includes[j].getExt()+"\"");
@@ -157,6 +163,11 @@ public class XmlModuleDescriptorWriter {
                                 }
                                 out.print("\"");
                             }
+                            Map extra = includes[j].getExtraAttributes();
+                            for (Iterator iter = extra.entrySet().iterator(); iter.hasNext();) {
+								Map.Entry entry = (Map.Entry) iter.next();
+	                            out.print(" "+entry.getKey()+"=\""+entry.getValue()+"\"");
+							}
                             out.println("/>");
                         }
                     }
