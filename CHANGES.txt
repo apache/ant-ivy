@@ -1,9 +1,9 @@
 				Ivy 
 				- The agile open source dependency manager
-				- http://www.jayasoft.org/ivy
+				- http://incubator.apache.org/ivy
 				============================================
 				
-for detailed view of each issue, please consult http://jira.jayasoft.org/
+for detailed view of each issue, please consult http://issues.apache.org/jira/browse/IVY
 
    version in SVN
 =====================================
