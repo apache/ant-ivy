@@ -29,7 +29,10 @@ public class ModuleIdMatcher {
     public ModuleIdMatcher(ModuleId mid, PatternMatcher pm) {
         _mid = mid;
         _pm = pm;
-        _orgMatcher = pm.getMatcher(mid.getOrganisation());
+        _orgMatcher = pm.getMatcher(
+        		mid.getOrganisation()==null?
+        				PatternMatcher.ANY_EXPRESSION
+        				:mid.getOrganisation());
         _moduleMatcher = pm.getMatcher(mid.getName());
     }
     

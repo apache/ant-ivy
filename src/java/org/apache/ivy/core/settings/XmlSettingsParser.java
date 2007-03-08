@@ -296,10 +296,18 @@ public class XmlSettingsParser extends DefaultHandler {
                 String cm = _ivy.substitute((String)attributes.get("conflict-manager"));
                 String matcher = _ivy.substitute((String)attributes.get("matcher"));
                 matcher = matcher == null ? PatternMatcher.EXACT_OR_REGEXP : matcher;
+                if (organisation == null) {
+                    throw new IllegalArgumentException("'organisation' is mandatory in module element: check your configuration");
+                }
+                if (module == null) {
+                    throw new IllegalArgumentException("'name' is mandatory in module element: check your configuration");
+                }
                 _ivy.addModuleConfiguration(new ModuleId(organisation, module), _ivy.getMatcher(matcher), resolver, branch, cm);
             }
-        } catch (Exception ex) {
+        } catch (ParseException ex) {
             throw new SAXException("problem in config file: "+ex.getMessage(), ex);
+        } catch (IOException ex) {
+            throw new SAXException("io problem while parsing config file: "+ex.getMessage(), ex);
         }
     }
 

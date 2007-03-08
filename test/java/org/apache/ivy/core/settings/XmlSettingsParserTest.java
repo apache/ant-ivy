@@ -18,6 +18,8 @@
 package org.apache.ivy.core.settings;
 
 import java.io.File;
+import java.io.IOException;
+import java.text.ParseException;
 import java.util.List;
 
 import junit.framework.TestCase;
@@ -99,6 +101,28 @@ public class XmlSettingsParserTest extends TestCase {
         assertEquals("internal", settings.getResolver(new ModuleId("apache", "ant")).getName());
         assertEquals("int1", settings.getResolver(new ModuleId("apache", "ivy")).getName());
         assertEquals("int1", settings.getResolver(new ModuleId("apache", "ivyde")).getName());        
+    }
+    
+    public void testNoOrgInModule() throws Exception {
+        IvySettings settings = new IvySettings();
+        XmlSettingsParser parser = new XmlSettingsParser(settings);
+        try {
+			parser.parse(XmlSettingsParserTest.class.getResource("ivyconf-no-org-in-module.xml"));
+			fail("no organisation in module is supposed to raise an exception");
+		} catch (ParseException e) {
+			assertTrue("bad exception message: "+e.getMessage(), e.getMessage().indexOf("'organisation'") != -1);
+		}
+    }
+
+    public void testNoNameInModule() throws Exception {
+        IvySettings settings = new IvySettings();
+        XmlSettingsParser parser = new XmlSettingsParser(settings);
+        try {
+			parser.parse(XmlSettingsParserTest.class.getResource("ivyconf-no-name-in-module.xml"));
+			fail("no name in module is supposed to raise an exception");
+		} catch (ParseException e) {
+			assertTrue("bad exception message: "+e.getMessage(), e.getMessage().indexOf("'name'") != -1);
+		}
     }
 
     public void testTypedef() throws Exception {

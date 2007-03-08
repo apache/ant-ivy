@@ -49,14 +49,18 @@ public class ModuleId implements Comparable {
             return false;
         }
         ModuleId other = (ModuleId)obj;
-        return other._organisation.equals(_organisation) && other._name.equals(_name);
+        if (other._organisation == null) {
+        	return _organisation == null && other._name.equals(_name);
+        } else {
+        	return other._organisation.equals(_organisation) && other._name.equals(_name);
+        }
     }
     public int hashCode() {
         return _hash;
     }
     public int _hashCode() {
         int hash = 31;
-        hash = hash * 13 + _organisation.hashCode();
+        hash = hash * 13 + (_organisation == null ? 0 : _organisation.hashCode());
         hash = hash * 13 + _name.hashCode();
         return hash;
     }
