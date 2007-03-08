@@ -131,6 +131,9 @@ public class PomModuleDescriptorParser extends AbstractModuleDescriptorParser {
                 _revision = "SNAPSHOT";
             }
             ModuleRevisionId mrid = ModuleRevisionId.newInstance(_organisation, _module, _revision);
+            _properties.put("project.groupId", _organisation);
+            _properties.put("project.artifactId", _module);
+            _properties.put("project.version", _revision);
             _properties.put("pom.version", _revision);
             _md.setModuleRevisionId(mrid);
             _md.addArtifact("master", new DefaultArtifact(mrid, getDefaultPubDate(),_module, "jar", "jar"));
@@ -252,8 +255,6 @@ public class PomModuleDescriptorParser extends AbstractModuleDescriptorParser {
             }
         }
         
-        
-
         private String getContext() {
             StringBuffer buf = new StringBuffer();
             for (Iterator iter = _contextStack.iterator(); iter.hasNext();) {

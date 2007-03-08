@@ -169,6 +169,19 @@ public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         assertEquals(ModuleRevisionId.newInstance("junit", "junit", "3.7"), dds[0].getDependencyRevisionId());
     }
     
+    public void testVariables() throws Exception {
+    	// test case for IVY-425
+        ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(new IvySettings(), getClass().getResource("spring-hibernate3-2.0.2.pom"), false);
+        assertNotNull(md);
+        
+        assertEquals(ModuleRevisionId.newInstance("org.springframework", "spring-hibernate3", "2.0.2"), md.getModuleRevisionId());
+        
+        DependencyDescriptor[] dds = md.getDependencies();
+        assertNotNull(dds);
+        assertEquals(11, dds.length);
+        assertEquals(ModuleRevisionId.newInstance("org.springframework", "spring-web", "2.0.2"), dds[10].getDependencyRevisionId());
+    }
+    
     public void testDependenciesInProfile() throws Exception {
     	// test case for IVY-423
         ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(new IvySettings(), getClass().getResource("mule-module-builders-1.3.3.pom"), false);

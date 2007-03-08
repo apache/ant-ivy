@@ -18,8 +18,10 @@ for detailed view of each issue, please consult http://jira.jayasoft.org/
 
 - FIX: NPE when no organisation or no name is provided in module element of ivyconf (IVY-422)
 - FIX: FileUtil#copy(File src, File dest, CopyProgressListener l, boolean overwrite) (IVY-420)
+- FIX: ${project.groupId} and ${project.version} not processed correctly in poms (IVY-425)
 - FIX: Incorrect pom parsing with profile (IVY-423)
 - FIX: Ivy doesn't recognize maven2 classifiers (IVY-418)
+- FIX: PomModuleDescriptorParser fails with nested profile dependency (IVY-392) (thanks to William Lyvers)
 - FIX: Static revision replacement is not working when delivering an artifact with a dependency having extra attributes (IVY-415)
 - FIX: Static revision replacement is not working when delivering an artifact with a dependency on a branch (IVY-404)
 - FIX: latest-time conflict manager not working properly (IVY-407)
@@ -28,7 +30,6 @@ for detailed view of each issue, please consult http://jira.jayasoft.org/
 - FIX: Comments in ivy.xml duplicated (IVY-336) (thanks to Gilles Scokart)
 - FIX: Ivy failure when the ivy.xml file contains non US-ASCII characters (IVY-346) (thanks to Gilles Scokart)
 - FIX: Urlresolver is not possible to use dynamic revisions on nonstandard repository structure (IVY-350) (thanks to Pierre Hägnestrand)
-- FIX: PomModuleDescriptorParser fails with nested profile dependency (IVY-392) (thanks to William Lyvers)
 
 
    version 1.4.1 - 2006-11-09
