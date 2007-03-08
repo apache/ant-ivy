@@ -92,8 +92,7 @@ public class IvyTask extends Task {
      */
     protected void ensureMessageInitialised() {
         if (!Message.isInitialised()) { 
-            //Message.init(new AntMessageImpl(this));
-        	Message.init(new DefaultMessageImpl(100));
+            Message.init(new AntMessageImpl(this));
         }
 
     }
@@ -144,7 +143,7 @@ public class IvyTask extends Task {
     	ensureResolved(haltOnFailure, useOrigin, true, org, module, null, resolveId);
     }
     protected void ensureResolved(boolean haltOnFailure, boolean useOrigin, boolean transitive, String org, String module, String conf) {
-    	ensureResolved(haltOnFailure, useOrigin, true, org, module, null, null);
+    	ensureResolved(haltOnFailure, useOrigin, true, org, module, conf, null);
     }
     protected void ensureResolved(boolean haltOnFailure, boolean useOrigin, boolean transitive, String org, String module, String conf, String resolveId) {
         ensureMessageInitialised();
