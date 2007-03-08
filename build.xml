@@ -1,5 +1,6 @@
 <project name="ivy" default="coverage-report" xmlns:ivy="antlib:fr.jayasoft.ivy.ant">
 	<property environment="env"/>
+	<property file="version.properties"/>
 	<property file="build.properties"/>
 
     <!-- =================================================================
@@ -95,6 +96,10 @@
 		<property name="no.resolve" value="true"/>
 	</target>
 	
+	<target name="notest" description="use to skip tests">
+		<property name="skip.test" value="true"/>
+	</target>
+	
 	<target name="offline" depends="noresolve" description="use to indicate no internet connection is available">
 		<property name="offline" value="true" />
 	</target>
@@ -186,7 +191,7 @@
 	
 	<target name="init-tests" depends="init-tests-offline, init-tests-online" />
 	
-	<target name="emma" depends="jar">
+	<target name="emma" depends="jar" unless="skip.test">
 		<ivy:cachepath organisation="emma" module="emma" revision="2.0.5312" 
 			           inline="true" conf="ant" pathid="emma.classpath"/> 
 		<taskdef resource="emma_ant.properties" classpathref="emma.classpath" />
@@ -207,7 +212,7 @@
 		</ivy:addpath>
 	</target>
 	
-	<target name="test-internal" depends="jar, init-tests">
+	<target name="build-test" depends="jar">
 		<javac 	srcdir="${test.dir}"
 		        destdir="${test.build.dir}"
 		        classpathref="run.classpath"
@@ -220,6 +225,9 @@
       			<exclude name="**/*.java"/>
     		</fileset>
   		</copy>
+	</target>
+	
+	<target name="test-internal" depends="build-test, init-tests" unless="skip.test">
   		<mkdir dir="${test.xml.dir}"  />
         <junit 
            haltonfailure="off"
@@ -249,7 +257,7 @@
     <!-- =================================================================
                REPORTS AND DOCUMENTATION
          ================================================================= -->
-	<target name="test-report" depends="test-internal">
+	<target name="test-report" depends="test-internal" unless="skip.test">
 		<junitreport todir="${test.xml.dir}">
 			<fileset dir="${test.xml.dir}">
 				<include name="TEST-*.xml" />
@@ -260,7 +268,8 @@
 		      message="At least one test has failed. See logs or report"/>
 	</target>
 	
-	<target name="coverage-report" depends="emma, test-report" description="run tests with instrumentation and generate coverage report">
+	<target name="coverage-report" depends="emma, test-report"  unless="skip.test"
+			description="run tests with instrumentation and generate coverage report">
 		<mkdir dir="${doc.build.dir}/coverage" />
 		<emma>
 		    <report sourcepath="${src.dir}" >
@@ -297,7 +306,8 @@
 			<zipfileset dir="${basedir}/test/buildlist" prefix="ivy-${build.version}/test/buildlist"/>
 			<zipfileset dir="${basedir}/test/triggers" prefix="ivy-${build.version}/test/triggers"/>
 			<zipfileset dir="${basedir}/test/xsl" prefix="ivy-${build.version}/test/xsl"/>
-			<zipfileset dir="${src.dir}/org/apache/ivy/xml" includes="ivy.xsd" fullpath="ivy-${build.version}/ivy.xsd"/>
+			<zipfileset dir="${src.dir}/org/apache/ivy/plugins/parser/xml" includes="ivy.xsd" fullpath="ivy-${build.version}/ivy.xsd"/>
+			<zipfileset dir="${basedir}" includes="DISCLAIMER" fullpath="ivy-${build.version}/DISCLAIMER"/>
 			<zipfileset dir="${basedir}" includes="LICENSE.txt" fullpath="ivy-${build.version}/LICENSE.txt"/>
 			<zipfileset dir="${basedir}" includes="CHANGES.txt" fullpath="ivy-${build.version}/CHANGES.txt"/>
 			<zipfileset dir="${basedir}" includes="ivyconf.xml" fullpath="ivy-${build.version}/ivyconf.xml"/>
@@ -310,36 +320,49 @@
 
 	<target name="snapshot-bin" depends="default-version, jar">
 		<mkdir dir="${distrib.dir}"/>
+		<ivy:deliver 
+			deliverpattern="${distrib.dir}/ivy.xml" 
+			pubrevision="${build.version}" 
+			pubdate="${pubdate}"
+		    status="${status}"/>
 		<zip destfile="${distrib.dir}/ivy-${build.version}-bin.zip">
 			<zipfileset dir="${basedir}/src/example" prefix="ivy-${build.version}/src/example"/>
+			<zipfileset dir="${basedir}" includes="DISCLAIMER" fullpath="ivy-${build.version}/DISCLAIMER"/>
 			<zipfileset dir="${basedir}" includes="LICENSE.txt" fullpath="ivy-${build.version}/LICENSE.txt"/>
 			<zipfileset dir="${basedir}" includes="CHANGES.txt" fullpath="ivy-${build.version}/CHANGES.txt"/>
-			<zipfileset dir="${src.dir}/org/apache/ivy/xml" includes="ivy.xsd" fullpath="ivy-${build.version}/ivy.xsd"/>
-			<zipfileset dir="${basedir}" includes="ivy.xml" fullpath="ivy-${build.version}/ivy.xml"/>
+			<zipfileset dir="${src.dir}/org/apache/ivy/plugins/parser/xml" includes="ivy.xsd" fullpath="ivy-${build.version}/ivy.xsd"/>
+			<zipfileset dir="${distrib.dir}" includes="ivy.xml" fullpath="ivy-${build.version}/ivy.xml"/>
 
 			<zipfileset dir="${lib.dir}" prefix="ivy-${build.version}/lib" excludes="junit*.jar,ant*.jar" />
 			<zipfileset dir="${artifacts.build.dir}" includes="${final.name}" fullpath="ivy-${build.version}/ivy-${build.version}.jar"/>
 			<zipfileset dir="${artifacts.build.dir}" includes="${final.core.name}" fullpath="ivy-${build.version}/ivy-core-${build.version}.jar"/>
 		</zip>
+		<copy file="${basedir}/DISCLAIMER" todir="${distrib.dir}" />
+		<copy file="${basedir}/LICENSE.txt" todir="${distrib.dir}" />
+		<copy file="${basedir}/CHANGES.txt" todir="${distrib.dir}" />
+		<copy file="${artifacts.build.dir}/${final.name}" todir="${distrib.dir}" />
+		<copy file="${artifacts.build.dir}/${final.core.name}" todir="${distrib.dir}" />
+		<copy file="${src.dir}/org/apache/ivy/plugins/parser/xml/ivy.xsd" todir="${distrib.dir}" />
 	</target>
 	
 	<target name="default-version">
 		<tstamp> 
 			<format property="pubdate" pattern="yyyyMMddHHmmss"/>  
 		</tstamp>
-		<property name="version.prefix" value="local-"/>
+		<property name="version.prefix" value="${target.ivy.version}-local-"/>
 		<property name="build.version" value="${version.prefix}${pubdate}"/>
 	</target>
 	
 	<target name="snapshot-version">
-		<property name="version.prefix" value=""/>
+		<property name="version.prefix" value="${target.ivy.version}-dev-"/>
 	</target>
 	
 	<target name="release-version">
 		<input message="please enter version: " addproperty="build.version"/>
+		<input message="please enter status: (integration,milestone,release)" addproperty="status"/>
 	</target>
 	
-	<target name="snapshot" depends="snapshot-version, coverage-report" description="used for nightly and integration builds"/>
-	<target name="release" depends="release-version, coverage-report, snapshot-src, snapshot-bin, javadoc, zip-doc" description="make a new release of Ivy"/>
+	<target name="snapshot" depends="clean, snapshot-version, coverage-report, snapshot-src, snapshot-bin, javadoc, zip-doc" description="used for nightly and integration builds"/>
+	<target name="release" depends="release-version, snapshot" description="make a new release of Ivy"/>
 
 </project>
