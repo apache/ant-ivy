@@ -1,0 +1,10 @@
+<ivy-module version="1.0"> 
+	<info organisation="apache2"
+	       module="resolve-simple2"
+	       revision="1.1"
+	       status="release"
+	/>
+	<dependencies>
+		<dependency org="org1" name="mod1.2" rev="2.0"/>
+	</dependencies>
+</ivy-module>

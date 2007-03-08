@@ -188,6 +188,72 @@ public class IvyResolveTest extends TestCase {
         }
     }
     
+    public void testWithResolveId() throws Exception {
+    	_resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-simple.xml"));
+    	_resolve.setResolveId("testWithResolveId");
+    	_resolve.execute();
+    	
+        assertTrue(getResolvedIvyFileInCache(ModuleRevisionId.newInstance("apache", "resolve-simple", "1.0")).exists());
+        assertTrue(getIvy().getCacheManager(_cache).getConfigurationResolveReportInCache("testWithResolveId", "default").exists());
+        
+        // dependencies
+        assertTrue(getIvyFileInCache(ModuleRevisionId.newInstance("org1", "mod1.2", "2.0")).exists());
+        assertTrue(getArchiveFileInCache("org1", "mod1.2", "2.0", "mod1.2", "jar", "jar").exists());
+        
+        // test the properties
+        Project project = _resolve.getProject();
+        assertEquals("apache", project.getProperty("ivy.organisation"));
+        assertEquals("apache", project.getProperty("ivy.organisation.testWithResolveId"));
+        assertEquals("resolve-simple", project.getProperty("ivy.module"));
+        assertEquals("resolve-simple", project.getProperty("ivy.module.testWithResolveId"));
+        assertEquals("1.0", project.getProperty("ivy.revision"));
+        assertEquals("1.0", project.getProperty("ivy.revision.testWithResolveId"));
+        assertEquals("true", project.getProperty("ivy.deps.changed"));
+        assertEquals("true", project.getProperty("ivy.deps.changed.testWithResolveId"));
+        assertEquals("default", project.getProperty("ivy.resolved.configurations"));
+        assertEquals("default", project.getProperty("ivy.resolved.configurations.testWithResolveId"));
+        
+        // test the references
+        assertNotNull(project.getReference("ivy.resolved.report"));
+        assertNotNull(project.getReference("ivy.resolved.report.testWithResolveId"));
+        assertNotNull(project.getReference("ivy.resolved.descriptor"));
+        assertNotNull(project.getReference("ivy.resolved.descriptor.testWithResolveId"));
+        assertNotNull(project.getReference("ivy.resolved.configurations.ref"));
+        assertNotNull(project.getReference("ivy.resolved.configurations.ref.testWithResolveId"));
+    }
+    
+    public void testDoubleResolveWithResolveId() throws Exception {
+    	_resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-simple.xml"));
+    	_resolve.setResolveId("testWithResolveId");
+    	_resolve.execute();
+    	
+    	IvyResolve newResolve = new IvyResolve();
+    	newResolve.setProject(_resolve.getProject());
+    	newResolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-simple2.xml"));
+    	newResolve.execute();    	
+    	
+        // test the properties
+        Project project = _resolve.getProject();
+        assertEquals("apache2", project.getProperty("ivy.organisation"));
+        assertEquals("apache", project.getProperty("ivy.organisation.testWithResolveId"));
+        assertEquals("resolve-simple2", project.getProperty("ivy.module"));
+        assertEquals("resolve-simple", project.getProperty("ivy.module.testWithResolveId"));
+        assertEquals("1.1", project.getProperty("ivy.revision"));
+        assertEquals("1.0", project.getProperty("ivy.revision.testWithResolveId"));
+        assertEquals("true", project.getProperty("ivy.deps.changed"));
+        assertEquals("true", project.getProperty("ivy.deps.changed.testWithResolveId"));
+        assertEquals("default", project.getProperty("ivy.resolved.configurations"));
+        assertEquals("default", project.getProperty("ivy.resolved.configurations.testWithResolveId"));
+        
+        // test the references
+        assertNotNull(project.getReference("ivy.resolved.report"));
+        assertNotNull(project.getReference("ivy.resolved.report.testWithResolveId"));
+        assertNotNull(project.getReference("ivy.resolved.descriptor"));
+        assertNotNull(project.getReference("ivy.resolved.descriptor.testWithResolveId"));
+        assertNotNull(project.getReference("ivy.resolved.configurations.ref"));
+        assertNotNull(project.getReference("ivy.resolved.configurations.ref.testWithResolveId"));
+    }
+    
     private Ivy getIvy() {
         return _resolve.getIvyInstance();
     }
