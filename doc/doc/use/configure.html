@@ -36,23 +36,23 @@ attributes of the configure task. These settings will then be used in any
 further call to ivy tasks.<br/><br/>
 
 <b>Since 1.4:</b>
-It's also possible to configure authentication settings for multiple urls. This can be done with the &lt;credentials> subelements. See the examples for more details.
+It's also possible to configure authentication settings for multiple urls. This can be done with the <credentials> subelements. See the examples for more details.
 
 <h2>Examples</h2>
 <h3>Simplest configuration</h3>
-<pre>&lt;ivy:configure /&gt;</pre>
+<code><ivy:configure /></code>
 Use either ${ivy.conf.file} if it exists, or the <a href="./misc/ivy/samples/ivyconf-default.xml">default configuration file</a>
 <h3>Configure with a file</h3>
-<pre>&lt;ivy:configure file="myconffile.xml" /&gt;</pre>
+<code><ivy:configure file="myconffile.xml" /></code>
 <h3>Configure with an url</h3>
-<pre>&lt;ivy:configure url="http://mysite.com/myconffile.xml" /&gt;</pre>
+<code><ivy:configure url="http://mysite.com/myconffile.xml" /></code>
 <h3>Configure multiple URLs which require autentication</h3>
-<pre>
-&lt;ivy:configure file="path/to/my/ivyconf.xml">
-  &lt;credentials host="myhost.com" realm="My Realm" username="myuser" passwd="mypasswd" />
-  &lt;credentials host="yourhost.com" realm="Your Realm" username="myuser" passwd="myotherpasswd" />
-&lt;/ivy:configure> 
-</pre>
+<code>
+<ivy:configure file="path/to/my/ivyconf.xml">
+  <credentials host="myhost.com" realm="My Realm" username="myuser" passwd="mypasswd" />
+  <credentials host="yourhost.com" realm="Your Realm" username="myuser" passwd="myotherpasswd" />
+</ivy:configure> 
+</code>
 	</textarea>
 <script type="text/javascript">xooki.postProcess();</script>
 </body>
