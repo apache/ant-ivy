@@ -1,0 +1,207 @@
+<?xml version="1.0"?><project>
+  <parent>
+    <artifactId>shale-parent</artifactId>
+    <groupId>org.apache.shale</groupId>
+    <version>1.1.0-SNAPSHOT</version>
+  </parent>
+  <modelVersion>4.0.0</modelVersion>
+
+  <artifactId>shale-tiger</artifactId>
+  <name>Shale Tiger Extensions</name>
+  <version>1.1.0-SNAPSHOT</version>
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-surefire-plugin</artifactId>
+
+        <configuration>
+          <systemProperties>
+            <property>
+              <name>basedir</name>
+              <value>${basedir}</value>
+            </property>
+            <property>
+              <name>org.apache.commons.logging.LogFactory</name>
+
+              <value>org.apache.commons.logging.impl.LogFactoryImpl</value>
+            </property>
+            <property>
+              <name>org.apache.commons.logging.Log</name>
+              <value>org.apache.commons.logging.impl.SimpleLog</value>
+            </property>
+            <property>
+
+              <name>org.apache.commons.logging.simplelog.log.org.apache.shale.tiger</name>
+              <value>trace</value>
+            </property>
+          </systemProperties>
+        </configuration>
+      </plugin>
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+
+        <configuration>
+          <source>1.5</source>
+          <target>1.5</target>
+        </configuration>
+      </plugin>
+      <plugin>
+        <artifactId>maven-antrun-plugin</artifactId>
+
+        <executions>
+          <execution>
+            <id>construct-webapp</id>
+            <phase>test-compile</phase>
+            <goals>
+              <goal>run</goal>
+            </goals>
+
+            <configuration>
+              <tasks>
+                <mkdir dir="${basedir}/target/test-webapp/WEB-INF"></mkdir>
+                <copy file="${basedir}/target/test-classes/org/apache/shale/tiger/config/test-web.xml" tofile="${basedir}/target/test-webapp/WEB-INF/web.xml"></copy>
+                <copy todir="${basedir}/target/test-webapp/WEB-INF">
+                  <fileset includes="test-config-*.xml" dir="${basedir}/target/test-classes/org/apache/shale/tiger/config"></fileset>
+                </copy>
+                <mkdir dir="${basedir}/target/test-webapp/WEB-INF/classes/org/apache/shale/tiger/config"></mkdir>
+                <copy file="${basedir}/target/test-classes/org/apache/shale/tiger/config/TestBean.class" todir="${basedir}/target/test-webapp/WEB-INF/classes/org/apache/shale/tiger/config"></copy>
+
+                <copy file="${basedir}/target/test-classes/org/apache/shale/tiger/config/TestBean2.class" todir="${basedir}/target/test-webapp/WEB-INF/classes/org/apache/shale/tiger/config"></copy>
+                <mkdir dir="${basedir}/target/test-webapp/WEB-INF/classes/org/apache/shale/tiger/faces"></mkdir>
+                <copy todir="${basedir}/target/test-webapp/WEB-INF/classes/org/apache/shale/tiger/faces">
+                  <fileset includes="My*.class" dir="${basedir}/target/test-classes/org/apache/shale/tiger/faces"></fileset>
+                </copy>
+                <mkdir dir="${basedir}/target/test-webapp/WEB-INF/lib"></mkdir>
+                <jar includes="org/apache/shale/tiger/config/TestBean3.class META-INF/faces-config.xml" destfile="${basedir}/target/test-webapp/WEB-INF/lib/test.jar" basedir="${basedir}/target/test-classes"></jar>
+              </tasks>
+            </configuration>
+
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+  <profiles>
+    <profile>
+      <id>j4</id>
+
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>retrotranslator-maven-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>retrotranslate</id>
+
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <artifactId>maven-jar-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>create-j4-jar</id>
+
+                <goals>
+                  <goal>jar</goal>
+                </goals>
+                <configuration>
+                  <classesDirectory>${project.build.directory}/classes-retro</classesDirectory>
+                  <classifier>j4</classifier>
+                  <archive>
+
+                    <manifestEntries>
+                      <Extension-Name>${project.artifactId}-j4</Extension-Name>
+                      <Specification-Vendor>${project.organization.name}</Specification-Vendor>
+                      <Implementation-Vendor>${project.organization.name}</Implementation-Vendor>
+                      <Implementation-Title>${project.description}</Implementation-Title>
+                      <Implementation-Version>1.1.0-SNAPSHOT</Implementation-Version>
+
+                      <Revision>${scm.revision}</Revision>
+                    </manifestEntries>
+                  </archive>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+
+      </build>
+      <dependencies>
+        <dependency>
+          <groupId>sun.jdk</groupId>
+          <artifactId>rt</artifactId>
+          <version>1.4.0</version>
+          <scope>system</scope>
+
+          <systemPath>${java14.jar}</systemPath>
+        </dependency>
+        <dependency>
+          <groupId>net.sf.retrotranslator</groupId>
+          <artifactId>retrotranslator-runtime</artifactId>
+          <version>1.0.8</version>
+        </dependency>
+
+      </dependencies>
+    </profile>
+  </profiles>
+  <dependencies>
+    <dependency>
+      <groupId>commons-digester</groupId>
+      <artifactId>commons-digester</artifactId>
+      <scope>compile</scope>
+
+    </dependency>
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>servlet-api</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.myfaces.core</groupId>
+      <artifactId>myfaces-api</artifactId>
+
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.shale</groupId>
+      <artifactId>shale-core</artifactId>
+      <version>1.1.0-SNAPSHOT</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.shale</groupId>
+      <artifactId>shale-test</artifactId>
+      <version>1.1.0-SNAPSHOT</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+
+      <groupId>org.apache.shale</groupId>
+      <artifactId>shale-view</artifactId>
+      <version>1.1.0-SNAPSHOT</version>
+    </dependency>
+  </dependencies>
+  <reporting>
+    <plugins>
+
+      <plugin>
+        <artifactId>maven-pmd-plugin</artifactId>
+        <configuration>
+          <targetJdk>1.5</targetJdk>
+        </configuration>
+      </plugin>
+    </plugins>
+  </reporting>
+
+  <distributionManagement>
+    <status>deployed</status>
+  </distributionManagement>
+</project>

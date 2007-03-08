@@ -177,6 +177,14 @@ public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         assertEquals(ModuleRevisionId.newInstance("org.mule.modules", "mule-module-builders", "1.3.3"), md.getModuleRevisionId());
     }
     
+    public void testIVY424() throws Exception {
+    	// test case for IVY-424
+        ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(new IvySettings(), getClass().getResource("shale-tiger-1.1.0-SNAPSHOT.pom"), false);
+        assertNotNull(md);
+        
+        assertEquals(ModuleRevisionId.newInstance("org.apache.shale", "shale-tiger", "1.1.0-SNAPSHOT"), md.getModuleRevisionId());
+    }
+    
     public void testOptional() throws Exception {
         ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(new IvySettings(), getClass().getResource("test-optional.pom"), false);
         assertNotNull(md);
