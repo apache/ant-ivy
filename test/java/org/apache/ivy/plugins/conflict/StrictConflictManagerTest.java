@@ -17,18 +17,29 @@
  */
 package org.apache.ivy.plugins.conflict;
 
+import java.io.File;
+
 import junit.framework.TestCase;
 
 import org.apache.ivy.Ivy;
 import org.apache.ivy.core.cache.CacheManager;
 import org.apache.ivy.core.resolve.ResolveOptions;
+import org.apache.ivy.util.FileUtil;
 
 public class StrictConflictManagerTest extends TestCase {
 	private Ivy ivy;
+    private File _cache;
+
     protected void setUp() throws Exception {
         ivy = new Ivy();
         ivy.configure(StrictConflictManagerTest.class.getResource("ivyconf-strict-test.xml"));
+        _cache = new File("build/cache");
+        _cache.mkdirs();
     }
+	
+	protected void tearDown() throws Exception {
+		FileUtil.forceDelete(_cache);
+	}
 
     public void testInitFromConf() throws Exception {
         ConflictManager cm = ivy.getSettings().getDefaultConflictManager();

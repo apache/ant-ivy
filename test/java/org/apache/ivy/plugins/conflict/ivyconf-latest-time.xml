@@ -1,6 +1,6 @@
 <ivyconf>
 
-    <conf defaultResolver="test" defaultConflictManager="latest-time" />
+    <conf defaultCache="build/cache" defaultResolver="test" defaultConflictManager="latest-time" />
 
     <resolvers>
         <filesystem name="test">

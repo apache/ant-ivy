@@ -21,23 +21,33 @@ package org.apache.ivy.plugins.conflict;
  * @author Anders janmyr
  */
 
+import java.io.File;
+
 import junit.framework.TestCase;
 
 import org.apache.ivy.Ivy;
 import org.apache.ivy.core.cache.CacheManager;
 import org.apache.ivy.core.resolve.ResolveOptions;
+import org.apache.ivy.util.FileUtil;
 
 
 public class RegexpConflictManagerTest extends TestCase
 {
     private Ivy ivy;
+    private File _cache;
 
     protected void setUp() throws Exception
     {
         ivy = new Ivy();
         ivy.configure( RegexpConflictManagerTest.class
                 .getResource( "ivyconf-regexp-test.xml" ) );
+        _cache = new File("build/cache");
+        _cache.mkdirs();
     }
+	
+	protected void tearDown() throws Exception {
+		FileUtil.forceDelete(_cache);
+	}
 
     public void testNoApiConflictResolve() throws Exception
     {

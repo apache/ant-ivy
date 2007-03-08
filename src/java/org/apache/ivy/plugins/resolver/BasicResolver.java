@@ -221,6 +221,10 @@ public abstract class BasicResolver extends AbstractResolver {
                 }
                 return null;
             } else {
+            	long lastModified = artifactRef.getLastModified();
+            	if (lastModified != 0 && md instanceof DefaultModuleDescriptor) {
+            		((DefaultModuleDescriptor) md).setLastModified(lastModified);
+            	}
                 Message.verbose("\t"+getName()+": no ivy file found for "+mrid+": using default data");            
                 logIvyNotFound(mrid);
     	        if (isDynamic) {

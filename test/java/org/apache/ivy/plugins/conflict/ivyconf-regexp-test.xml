@@ -1,6 +1,7 @@
 <ivyconf>
 
-    <conf defaultResolver="test"
+    <conf defaultCache="build/cache"
+          defaultResolver="test"
           defaultConflictManager="regexp"
             />
 

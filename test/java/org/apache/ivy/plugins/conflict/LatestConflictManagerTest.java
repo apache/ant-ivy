@@ -30,15 +30,23 @@ import org.apache.ivy.core.report.ConfigurationResolveReport;
 import org.apache.ivy.core.report.ResolveReport;
 import org.apache.ivy.core.resolve.IvyNode;
 import org.apache.ivy.core.resolve.ResolveOptions;
+import org.apache.ivy.util.FileUtil;
 
 public class LatestConflictManagerTest extends TestCase {
 
 	private Ivy ivy;
+    private File _cache;
 
 	protected void setUp() throws Exception {
 		ivy = new Ivy();
 		ivy.configure(LatestConflictManagerTest.class
 				.getResource("ivyconf-latest.xml"));
+        _cache = new File("build/cache");
+        _cache.mkdirs();
+	}
+	
+	protected void tearDown() throws Exception {
+		FileUtil.forceDelete(_cache);
 	}
 
 	// Test case for issue IVY-388
