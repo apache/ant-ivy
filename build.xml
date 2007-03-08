@@ -365,4 +365,20 @@
 	<target name="snapshot" depends="clean, snapshot-version, coverage-report, snapshot-src, snapshot-bin, javadoc, zip-doc" description="used for nightly and integration builds"/>
 	<target name="release" depends="release-version, snapshot" description="make a new release of Ivy"/>
 
+	<!-- 
+		publication on ivy web site
+		requires to be logged in on people.apache.org 
+	-->
+	<available property="loggedin" file="/www/incubator.apache.org/ivy/index.html"/>
+	<target name="publish-latest" if="loggedin" description="publishes the last snapshot done to ivy web site">
+	   <property name="html.dir" value="/www/incubator.apache.org/ivy/downloads/latest/"/>
+	   <delete>
+	       <fileset dir="${html.dir}"/>
+	   </delete>
+	   <copy todir="${html.dir}">
+	       <fileset dir="${distrib.dir}"/>
+	   </copy>
+	</target>
+
+
 </project>
