@@ -1135,7 +1135,7 @@ public class ResolveTest extends TestCase {
         assertEquals(0, crr.getDownloadReports(ModuleRevisionId.newInstance("org1", "mod1.2", "2.0")).length);
         assertEquals(1, crr.getDownloadReports(ModuleRevisionId.newInstance("org1", "mod1.2", "2.1")).length);
         
-        File r = new File(_cache, ResolveOptions.getDefaultResolveId(mrid.getModuleId()) + "-default.xml");
+        File r = _cacheManager.getConfigurationResolveReportInCache(ResolveOptions.getDefaultResolveId(md), "default");
         assertTrue(r.exists());
         final boolean[] found = new boolean[] {false};
         SAXParser saxParser = SAXParserFactory.newInstance().newSAXParser();
@@ -1175,7 +1175,7 @@ public class ResolveTest extends TestCase {
         assertEquals(1, crr.getDownloadReports(ModuleRevisionId.newInstance("org1", "mod1.2", "2.1")).length);
         
         ModuleRevisionId mrid = ModuleRevisionId.newInstance("org4", "mod4.1", "4.14");
-        File r = new File(_cache, ResolveOptions.getDefaultResolveId(mrid.getModuleId()) + "-default.xml");
+        File r = _cacheManager.getConfigurationResolveReportInCache(ResolveOptions.getDefaultResolveId(mrid.getModuleId()), "default");
         assertTrue(r.exists());
         final boolean[] found = new boolean[] {false};
         SAXParser saxParser = SAXParserFactory.newInstance().newSAXParser();
@@ -1840,7 +1840,7 @@ public class ResolveTest extends TestCase {
         assertNotNull(crr);
         assertEquals(1, crr.getDownloadReports(depId).length);
         
-        File r = new File(_cache, ResolveOptions.getDefaultResolveId(mrid.getModuleId()) + "-default.xml");
+        File r = _cacheManager.getConfigurationResolveReportInCache(ResolveOptions.getDefaultResolveId(mrid.getModuleId()), "default");
         assertTrue(r.exists());
         final boolean[] found = new boolean[] {false};
         SAXParser saxParser = SAXParserFactory.newInstance().newSAXParser();
