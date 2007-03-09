@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ivy-module version="1.4">
+    <info organisation="org.apache.ivy"
+          module="ivy-demo-2">
+	</info>
+	<configurations>
+		<conf name="runtime"/>
+		<conf name="test"/>
+	</configurations>
+	<dependencies>
+		<dependency org="org.apache.struts" 
+		            name="struts2-core" 
+		            rev="2.0.5" 
+		            conf="runtime->default"/>
+		<dependency org="junit" 
+		            name="junit" 
+		            rev="3.8.1" 
+		            conf="test->default"/>
+	</dependencies>
+</ivy-module>
