@@ -129,7 +129,7 @@ public class IvyReport extends IvyTask {
             _cache = settings.getDefaultCache();
         }
         _conf = getProperty(_conf, settings, "ivy.resolved.configurations", _resolveId);
-        if (_conf.equals("*")) {
+        if ("*".equals(_conf)) {
             _conf = getProperty(settings, "ivy.resolved.configurations", _resolveId);
         }
         if (_conf == null) {
