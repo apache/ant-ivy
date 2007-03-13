@@ -20,7 +20,8 @@ set to the revision name found in the ivyfile which was used for resolve, or a g
 <li>ivy.resolved.configurations</li>
 set to the comma separated list of configurations resolved
 </ul>
-An additional property is set to true if there are changes since the last resolve, and to false otherwise: <code>ivy.deps.changed</code> (<span class="since">since 1.2</span>)
+<b>Since 1.2:</b>
+An additional property is set to true if the resolved dependencies are changes since the last resolve, and to false otherwise: <code>ivy.deps.changed</code>
 
 When ivy has finished the resolve task, it outputs a summary of what has been resolved. This summary looks like this:
 <pre>
