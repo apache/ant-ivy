@@ -21,8 +21,10 @@ import java.io.File;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -45,6 +47,7 @@ public class XmlReportParser {
         private List _defaultMrids;
         private List _realMrids;
 		private List _artifacts;
+		private ModuleRevisionId _mRevisionId;
 		private File _report;
 		SaxXmlReportParser(File report) {
 	        _artifacts = new ArrayList();
@@ -114,6 +117,21 @@ public class XmlReportParser {
                         String ext = attributes.getValue("ext");
 						Artifact artifact = new DefaultArtifact(_mrid, _pubdate, artifactName, type, ext, ExtendableItemHelper.getExtraAttributes(attributes, "extra-"));
                         _revisionArtifacts.add(artifact);
+                    } else if ("info".equals(qName)) {
+                    	String organisation = attributes.getValue("organisation");
+                    	String name = attributes.getValue("module");
+                    	String branch = attributes.getValue("branch");
+                    	String revision = attributes.getValue("revision");
+                    	Map extraAttributes = new HashMap();
+                    	for (int i = 0; i < attributes.getLength(); i++) {
+                    		String attName = attributes.getQName(i);
+                    		if (attName.startsWith("extra-")) {
+                    			String extraAttrName = attName.substring(6);
+                    			String extraAttrValue = attributes.getValue(i);
+                    			extraAttributes.put(extraAttrName, extraAttrValue);
+                    		}
+                    	}
+                    	_mRevisionId = ModuleRevisionId.newInstance(organisation, name, branch, revision, extraAttributes);
                     }
                 }
 
@@ -139,9 +157,11 @@ public class XmlReportParser {
 		public List getModuleRevisionIds() {
 			return _mrids;
 		}
-
         public List getRealModuleRevisionIds() {
             return _realMrids;
+        }
+        public ModuleRevisionId getResolvedModule() {
+        	return _mRevisionId;
         }
     }
     
@@ -172,6 +192,12 @@ public class XmlReportParser {
     
     public ModuleRevisionId[] getRealDependencyRevisionIds() {
     	return (ModuleRevisionId[])parser.getRealModuleRevisionIds().toArray(new ModuleRevisionId[parser.getRealModuleRevisionIds().size()]);
+    }
+    /**
+     * Returns the <tt>ModuleRevisionId</tt> of the resolved module.
+     */
+    public ModuleRevisionId getResolvedModule() {
+    	return parser.getResolvedModule();
     }
 }
 

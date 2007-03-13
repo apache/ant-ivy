@@ -76,6 +76,30 @@ public class XmlReportOutputterTest extends TestCase {
         assertTrue("XML doesn't contain artifact location attribute", xml.indexOf(expectedLocation) != -1);
         assertTrue("XML doesn't contain artifact is-local attribute", xml.indexOf(expectedIsLocal) != -1);
 	}
+	
+	public void testWriteModuleInfo() throws Exception {
+        ResolveReport report = _ivy.resolve(new File("test/java/org/apache/ivy/plugins/report/ivy-with-info.xml").toURL(),
+        		getResolveOptions(new String[] {"default"}).setValidate(false));
+        assertNotNull(report);
+        
+		ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+		XmlReportOutputter outputter = new XmlReportOutputter();
+		outputter.output(report.getConfigurationReport("default"), buffer);
+		buffer.flush();
+		String xml = buffer.toString();
+		
+		String orgAttribute = "organisation=\"org1\"";
+		String modAttribute = "module=\"mod1\"";
+		String revAttribute = "revision=\"1.0\"";
+		String extra1Attribute = "extra-blabla=\"abc\"";
+		String extra2Attribute = "extra-blabla2=\"123\"";
+		
+        assertTrue("XML doesn't contain organisation attribute", xml.indexOf(orgAttribute) != -1);
+        assertTrue("XML doesn't contain module attribute", xml.indexOf(modAttribute) != -1);
+        assertTrue("XML doesn't contain revision attribute", xml.indexOf(revAttribute) != -1);
+        assertTrue("XML doesn't contain extra attribute 1", xml.indexOf(extra1Attribute) != -1);
+        assertTrue("XML doesn't contain extra attribute 2", xml.indexOf(extra2Attribute) != -1);
+	}
     
     private ResolveOptions getResolveOptions(String[] confs) {
 		return new ResolveOptions().setConfs(confs).setCache(CacheManager.getInstance(_ivy.getSettings(), _cache));

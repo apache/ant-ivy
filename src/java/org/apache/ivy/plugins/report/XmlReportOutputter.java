@@ -28,6 +28,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.ivy.Ivy;
 import org.apache.ivy.core.cache.ArtifactOrigin;
@@ -100,6 +101,15 @@ public class XmlReportOutputter implements ReportOutputter {
 		out.println("\t<info");
 		out.println("\t\torganisation=\""+mrid.getOrganisation()+"\"");
 		out.println("\t\tmodule=\""+mrid.getName()+"\"");
+		out.println("\t\trevision=\""+mrid.getRevision()+"\"");
+		if (mrid.getBranch() != null) {
+			out.println("\t\tbranch=\""+mrid.getBranch()+"\"");
+		}
+		Map extraAttributes = mrid.getExtraAttributes();
+		for (Iterator it = extraAttributes.entrySet().iterator(); it.hasNext(); ) {
+			Map.Entry entry = (Entry) it.next();
+			out.println("\t\textra-" + entry.getKey() + "=\"" + entry.getValue() + "\"");
+		}
 		out.println("\t\tconf=\""+report.getConfiguration()+"\"");
 		out.println("\t\tconfs=\""+StringUtils.join(confs, ", ")+"\"");
 		out.println("\t\tdate=\""+Ivy.DATE_FORMAT.format(report.getDate())+"\"/>");
@@ -141,7 +151,7 @@ public class XmlReportOutputter implements ReportOutputter {
                 if (md != null && md.getHomePage() != null) {
                     details.append(" homepage=\"").append(md.getHomePage()).append("\"");
                 }
-                Map extraAttributes = md!=null?md.getExtraAttributes():dep.getResolvedId().getExtraAttributes();
+                extraAttributes = md!=null?md.getExtraAttributes():dep.getResolvedId().getExtraAttributes();
                 for (Iterator iterator = extraAttributes.keySet().iterator(); iterator.hasNext();) {
                     String attName = (String)iterator.next();
                     details.append(" extra-").append(attName).append("=\"").append(extraAttributes.get(attName)).append("\"");
