@@ -76,6 +76,8 @@ public class ConfigurationResolveReport {
 				parser.parse(previousReportFile);
 				_previousDeps = Arrays.asList(parser.getDependencyRevisionIds());
 			} catch (Exception e) {
+				Message.warn("Error while parsing configuration resolve report " + previousReportFile.getAbsolutePath());
+				e.printStackTrace();
 				_previousDeps = null;
 			}
         } else {
