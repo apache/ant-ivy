@@ -79,7 +79,7 @@ public class IvySettings {
 	private String _defaultBranch = null;
 
     private boolean _checkUpToDate = true;
-    private Map _moduleConfigurations = new LinkedHashMap(); // Map (ModuleIdMatcher -> ModuleSettings)
+    private Map _moduleSettings = new LinkedHashMap(); // Map (ModuleIdMatcher -> ModuleSettings)
     
     private Map _conflictsManager = new HashMap(); // Map (String conflictManagerName -> ConflictManager)
     private Map _latestStrategies = new HashMap(); // Map (String latestStrategyName -> LatestStrategy)
@@ -124,7 +124,8 @@ public class IvySettings {
 	private StatusManager _statusManager;
 	
 	public IvySettings() {
-        setVariable("ivy.default.conf.dir", getDefaultConfigurationDir(), true);
+        setVariable("ivy.default.settings.dir", getDefaultSettingsDir(), true);
+        setDeprecatedVariable("ivy.default.conf.dir", "ivy.default.settings.dir");
         
         String ivyTypeDefs = System.getProperty("ivy.typedef.files");
         if (ivyTypeDefs != null) {
@@ -239,10 +240,10 @@ public class IvySettings {
     }
     
     
-    public void load(File configurationFile) throws ParseException, IOException {
-        Message.info(":: configuring :: file = "+configurationFile);
+    public void load(File settingsFile) throws ParseException, IOException {
+        Message.info(":: loading settings :: file = "+settingsFile);
         long start = System.currentTimeMillis();
-        setConfigurationVariables(configurationFile);
+        setSettingsVariables(settingsFile);
         if (getVariable("ivy.default.ivy.user.dir") != null) {
             setDefaultIvyUserDir(new File(getVariable("ivy.default.ivy.user.dir")));
         } else {
@@ -252,21 +253,21 @@ public class IvySettings {
         
         loadDefaultProperties();
         try {
-            new XmlSettingsParser(this).parse(configurationFile.toURL());
+            new XmlSettingsParser(this).parse(settingsFile.toURL());
         } catch (MalformedURLException e) {
-            IllegalArgumentException iae = new IllegalArgumentException("given file cannot be transformed to url: "+configurationFile);
+            IllegalArgumentException iae = new IllegalArgumentException("given file cannot be transformed to url: "+settingsFile);
             iae.initCause(e);
             throw iae;
         }
         setVariable("ivy.default.ivy.user.dir", getDefaultIvyUserDir().getAbsolutePath(), false);
-        Message.verbose("configuration done ("+(System.currentTimeMillis()-start)+"ms)");
-        dumpConfig();
+        Message.verbose("settings loaded ("+(System.currentTimeMillis()-start)+"ms)");
+        dumpSettings();
     }
 
-    public void load(URL configurationURL) throws ParseException, IOException {
-        Message.info(":: configuring :: url = "+configurationURL);
+    public void load(URL settingsURL) throws ParseException, IOException {
+        Message.info(":: loading settings :: url = "+settingsURL);
         long start = System.currentTimeMillis();
-        setConfigurationVariables(configurationURL);
+        setSettingsVariables(settingsURL);
         if (getVariable("ivy.default.ivy.user.dir") != null) {
             setDefaultIvyUserDir(new File(getVariable("ivy.default.ivy.user.dir")));
         } else {
@@ -275,14 +276,14 @@ public class IvySettings {
         getDefaultCache();
         
         loadDefaultProperties();
-        new XmlSettingsParser(this).parse(configurationURL);
+        new XmlSettingsParser(this).parse(settingsURL);
         setVariable("ivy.default.ivy.user.dir", getDefaultIvyUserDir().getAbsolutePath(), false);
-        Message.verbose("configuration done ("+(System.currentTimeMillis()-start)+"ms)");
-        dumpConfig();
+        Message.verbose("settings loaded ("+(System.currentTimeMillis()-start)+"ms)");
+        dumpSettings();
     }
 
     public void loadDefault() throws ParseException, IOException {
-        load(getDefaultConfigurationURL());
+        load(getDefaultSettingsURL());
     }
 
 	private void loadDefaultProperties() throws IOException {
@@ -293,43 +294,57 @@ public class IvySettings {
 		return getSettingsURL("ivy.properties");
 	}
 	
-    public static URL getDefaultConfigurationURL() {
-        return getSettingsURL("ivyconf.xml");
+    public static URL getDefaultSettingsURL() {
+        return getSettingsURL("ivysettings.xml");
     }
 
-	private String getDefaultConfigurationDir() {
-		String ivyconfLocation = getDefaultConfigurationURL().toExternalForm();
-		return ivyconfLocation.substring(0, ivyconfLocation.length() - "ivyconf.xml".length() - 1);
+	private String getDefaultSettingsDir() {
+		String ivyconfLocation = getDefaultSettingsURL().toExternalForm();
+		return ivyconfLocation.substring(0, ivyconfLocation.length() - "ivysettings.xml".length() - 1);
 	}
 
 	private static URL getSettingsURL(String file) {
 		return XmlSettingsParser.class.getResource(file);
 	}
 
-    public void setConfigurationVariables(File configurationFile) {
+    public void setSettingsVariables(File settingsFile) {
         try {
-            setVariable("ivy.conf.dir", new File(configurationFile.getAbsolutePath()).getParent());
-            setVariable("ivy.conf.file", configurationFile.getAbsolutePath());
-            setVariable("ivy.conf.url", configurationFile.toURL().toExternalForm());
+            setVariable("ivy.settings.dir", new File(settingsFile.getAbsolutePath()).getParent());
+            setDeprecatedVariable("ivy.conf.dir", "ivy.settings.dir");
+            setVariable("ivy.settings.file", settingsFile.getAbsolutePath());
+            setDeprecatedVariable("ivy.conf.file", "ivy.settings.file");
+            setVariable("ivy.settings.url", settingsFile.toURL().toExternalForm());
+            setDeprecatedVariable("ivy.conf.url", "ivy.settings.url");
         } catch (MalformedURLException e) {
-            IllegalArgumentException iae = new IllegalArgumentException("given file cannot be transformed to url: "+configurationFile);
+            IllegalArgumentException iae = new IllegalArgumentException("given file cannot be transformed to url: "+settingsFile);
             iae.initCause(e);
             throw iae;
         }
     }
     
-    public void setConfigurationVariables(URL configurationURL) {
-        String confURL = configurationURL.toExternalForm();
-        setVariable("ivy.conf.url", confURL);
-        int slashIndex = confURL.lastIndexOf('/');
+    /**
+     * Sets a deprecated variable with the value of the new variable
+     * @param deprecatedKey the deprecated variable name
+     * @param newKey the new variable name
+     */
+    private void setDeprecatedVariable(String deprecatedKey, String newKey) {
+		setVariable(deprecatedKey, getVariable(newKey));
+	}
+
+	public void setSettingsVariables(URL settingsURL) {
+        String settingsURLStr = settingsURL.toExternalForm();
+        setVariable("ivy.settings.url", settingsURLStr);
+        setDeprecatedVariable("ivy.conf.url", "ivy.settings.url");
+        int slashIndex = settingsURLStr.lastIndexOf('/');
         if (slashIndex != -1) {
-            setVariable("ivy.conf.dir", confURL.substring(0, slashIndex));
+            setVariable("ivy.settings.dir", settingsURLStr.substring(0, slashIndex));
+            setDeprecatedVariable("ivy.conf.dir", "ivy.settings.dir");
         } else {
-            Message.warn("configuration url does not contain any slash (/): ivy.conf.dir variable not set");
+            Message.warn("settings url does not contain any slash (/): ivy.settings.dir variable not set");
         }
     }
     
-    private void dumpConfig() {
+    private void dumpSettings() {
         Message.verbose("\tdefault cache: "+getDefaultCache());
         Message.verbose("\tdefault resolver: "+getDefaultResolver());
         Message.debug("\tdefault latest strategy: "+getDefaultLatestStrategy());
@@ -349,13 +364,13 @@ public class IvySettings {
         Message.verbose("\t-- "+_resolversMap.size()+" resolvers:");
         for (Iterator iter = _resolversMap.values().iterator(); iter.hasNext();) {
             DependencyResolver resolver = (DependencyResolver)iter.next();
-            resolver.dumpConfig();
+            resolver.dumpSettings();
         }
-        if (!_moduleConfigurations.isEmpty()) {
-            Message.debug("\tmodule configurations:");
-            for (Iterator iter = _moduleConfigurations.keySet().iterator(); iter.hasNext();) {
+        if (!_moduleSettings.isEmpty()) {
+            Message.debug("\tmodule settings:");
+            for (Iterator iter = _moduleSettings.keySet().iterator(); iter.hasNext();) {
                 ModuleIdMatcher midm = (ModuleIdMatcher)iter.next();
-                ModuleSettings s = (ModuleSettings)_moduleConfigurations.get(midm);
+                ModuleSettings s = (ModuleSettings)_moduleSettings.get(midm);
                 Message.debug("\t\t"+midm+" -> "+s);
             }
         }
@@ -531,7 +546,7 @@ public class IvySettings {
     
     private void checkResolverName(String resolverName) {
         if (resolverName != null && !_resolversMap.containsKey(resolverName)) {
-            throw new IllegalArgumentException("no resolver found called "+resolverName+": check your configuration");
+            throw new IllegalArgumentException("no resolver found called "+resolverName+": check your settings");
         }
     }
 
@@ -545,7 +560,7 @@ public class IvySettings {
      */
     public void addModuleConfiguration(ModuleId mid, PatternMatcher matcher, String resolverName, String branch, String conflictManager) {
         checkResolverName(resolverName);
-        _moduleConfigurations.put(new ModuleIdMatcher(mid, matcher), new ModuleSettings(resolverName, branch, conflictManager));
+        _moduleSettings.put(new ModuleIdMatcher(mid, matcher), new ModuleSettings(resolverName, branch, conflictManager));
     }
     
     public File getDefaultIvyUserDir() {
@@ -605,10 +620,10 @@ public class IvySettings {
     }
 
     public String getResolverName(ModuleId moduleId) {
-        for (Iterator iter = _moduleConfigurations.keySet().iterator(); iter.hasNext();) {
+        for (Iterator iter = _moduleSettings.keySet().iterator(); iter.hasNext();) {
             ModuleIdMatcher midm = (ModuleIdMatcher)iter.next();
             if (midm.matches(moduleId)) {
-            	ModuleSettings  ms = (ModuleSettings)_moduleConfigurations.get(midm);
+            	ModuleSettings  ms = (ModuleSettings)_moduleSettings.get(midm);
             	if (ms.getResolverName() != null) {
             		return ms.getResolverName();
             	}
@@ -618,10 +633,10 @@ public class IvySettings {
     }
     
 	public String getDefaultBranch(ModuleId moduleId) {
-        for (Iterator iter = _moduleConfigurations.keySet().iterator(); iter.hasNext();) {
+        for (Iterator iter = _moduleSettings.keySet().iterator(); iter.hasNext();) {
             ModuleIdMatcher midm = (ModuleIdMatcher)iter.next();
             if (midm.matches(moduleId)) {
-            	ModuleSettings  ms = (ModuleSettings)_moduleConfigurations.get(midm);
+            	ModuleSettings  ms = (ModuleSettings)_moduleSettings.get(midm);
             	if (ms.getBranch() != null) {
             		return ms.getBranch();
             	}
@@ -638,10 +653,10 @@ public class IvySettings {
 	}
 
 	public ConflictManager getConflictManager(ModuleId moduleId) {
-        for (Iterator iter = _moduleConfigurations.keySet().iterator(); iter.hasNext();) {
+        for (Iterator iter = _moduleSettings.keySet().iterator(); iter.hasNext();) {
             ModuleIdMatcher midm = (ModuleIdMatcher)iter.next();
             if (midm.matches(moduleId)) {
-            	ModuleSettings  ms = (ModuleSettings)_moduleConfigurations.get(midm);
+            	ModuleSettings  ms = (ModuleSettings)_moduleSettings.get(midm);
             	if (ms.getConflictManager() != null) {
             		ConflictManager cm = getConflictManager(ms.getConflictManager());
             		if (cm == null) {

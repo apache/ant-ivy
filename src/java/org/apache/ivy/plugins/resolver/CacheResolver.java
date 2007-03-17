@@ -138,7 +138,7 @@ public class CacheResolver extends FileSystemResolver {
         ensureConfigured();
         return super.listRevisions(module);        
     }
-    public void dumpConfig() {
+    public void dumpSettings() {
         Message.verbose("\t"+getName()+" [cache]");
     }
 

@@ -241,8 +241,8 @@ public class RepositoryResolver extends AbstractResourceResolver {
     public String getTypeName() {
         return "repository";
     }
-    public void dumpConfig() {
-        super.dumpConfig();
+    public void dumpSettings() {
+        super.dumpSettings();
         Message.debug("\t\trepository: "+getRepository());
     }
     

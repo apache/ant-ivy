@@ -149,7 +149,7 @@ public abstract class AbstractResolver implements DependencyResolver, IvySetting
     public String toString() {
         return getName();
     }
-    public void dumpConfig() {
+    public void dumpSettings() {
         Message.verbose("\t"+getName()+" ["+getTypeName()+"]");
         Message.debug("\t\tchangingPattern: "+getChangingPattern());
         Message.debug("\t\tchangingMatcher: "+getChangingMatcherName());

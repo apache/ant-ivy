@@ -231,7 +231,7 @@ public class ChainResolver extends AbstractResolver {
         _returnFirst = returnFirst;
     }
     
-    public void dumpConfig() {
+    public void dumpSettings() {
         Message.verbose("\t"+getName()+" [chain] "+_chain);
         Message.debug("\t\treturn first: "+isReturnFirst());
         Message.debug("\t\tdual: "+isDual());

@@ -45,8 +45,7 @@ import org.xml.sax.helpers.DefaultHandler;
 
 
 /**
- * @author Hanin
- *
+ * @author Xavier Hanin
  */
 public class XmlSettingsParser extends DefaultHandler {
 	private Configurator _configurator;
@@ -59,12 +58,13 @@ public class XmlSettingsParser extends DefaultHandler {
     private String _defaultLatest;
     private String _defaultCircular;
     private String _currentConfiguratorTag;
+	private URL _settings;
 
     public XmlSettingsParser(IvySettings ivy) {
         _ivy = ivy;
 	}
 
-    public void parse(URL configuration) throws ParseException, IOException {
+    public void parse(URL settings) throws ParseException, IOException {
         _configurator = new Configurator();
         // put every type definition from ivy to configurator
         Map typeDefs = _ivy.getTypeDefs();
@@ -73,20 +73,21 @@ public class XmlSettingsParser extends DefaultHandler {
             _configurator.typeDef(name, (Class)typeDefs.get(name));
         }
         
-        doParse(configuration);
+        doParse(settings);
     }
 
-    private void doParse(URL configuration) throws IOException, ParseException {
+    private void doParse(URL settings) throws IOException, ParseException {
+    	_settings = settings;
         InputStream stream = null;
         try {
-            stream = URLHandlerRegistry.getDefault().openStream(configuration);
+            stream = URLHandlerRegistry.getDefault().openStream(settings);
             SAXParserFactory.newInstance().newSAXParser().parse(
                 stream,
                 this);
         } catch (IOException e) {
             throw e;
         } catch (Exception e) {
-            ParseException pe = new ParseException("failed to configure with "+configuration+": "+e.getMessage(), 0);
+            ParseException pe = new ParseException("failed to load settings from "+settings+": "+e.getMessage(), 0);
             pe.initCause(e);
             throw pe;
         } finally {
@@ -112,6 +113,9 @@ public class XmlSettingsParser extends DefaultHandler {
         }
         
         try {
+        	if ("ivyconf".equals(qName)) {
+        		Message.deprecated("'ivyconf' element is deprecated, use 'ivysettings' instead ("+_settings+")");
+        	}
             if (_configurator.getCurrent() != null) {
                 if ("macrodef".equals(_currentConfiguratorTag) && _configurator.getTypeDef(qName) != null) {
                     String name = (String)attributes.get("name");
@@ -204,7 +208,7 @@ public class XmlSettingsParser extends DefaultHandler {
                 Map variables = new HashMap(_ivy.getVariables());
                 try {
                     String propFilePath = _ivy.substitute((String)attributes.get("file"));
-                    URL ivyconfURL = null; 
+                    URL settingsURL = null; 
                     if (propFilePath == null) {
                         propFilePath = _ivy.substitute((String)attributes.get("url"));
                         if (propFilePath == null) {
@@ -212,8 +216,8 @@ public class XmlSettingsParser extends DefaultHandler {
                             return;
                         } else {
                             Message.verbose("including url: "+propFilePath);
-                            ivyconfURL = new URL(propFilePath);
-                            _ivy.setConfigurationVariables(ivyconfURL);
+                            settingsURL = new URL(propFilePath);
+                            _ivy.setSettingsVariables(settingsURL);
                         }
                     } else {
                         File incFile = new File(propFilePath);
@@ -222,15 +226,18 @@ public class XmlSettingsParser extends DefaultHandler {
                             return;
                         } else {
                             Message.verbose("including file: "+propFilePath);
-                            _ivy.setConfigurationVariables(incFile);
-                            ivyconfURL = incFile.toURL();
+                            _ivy.setSettingsVariables(incFile);
+                            settingsURL = incFile.toURL();
                         }
                     }
-                    new XmlSettingsParser(_ivy).parse(_configurator, ivyconfURL);
+                    new XmlSettingsParser(_ivy).parse(_configurator, settingsURL);
                 } finally {
                     _ivy.setVariables(variables);
                 }
-            } else if ("conf".equals(qName)) {
+            } else if ("settings".equals(qName) || "conf".equals(qName)) {
+            	if ("conf".equals(qName)) {
+            		Message.deprecated("'conf' is deprecated, use 'settings' instead ("+_settings+")");
+            	}
                 String cache = (String)attributes.get("defaultCache");
                 if (cache != null) {
                     _ivy.setDefaultCache(new File(_ivy.substitute(cache)));

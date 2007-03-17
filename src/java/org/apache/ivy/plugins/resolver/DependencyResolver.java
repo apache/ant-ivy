@@ -88,5 +88,5 @@ public interface DependencyResolver {
     ModuleEntry[] listModules(OrganisationEntry org);
     RevisionEntry[] listRevisions(ModuleEntry module);
     
-    void dumpConfig();
+    void dumpSettings();
 }

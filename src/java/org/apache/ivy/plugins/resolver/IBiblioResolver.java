@@ -220,9 +220,9 @@ public class IBiblioResolver extends URLResolver {
 		updateWholePattern();
 	}
 	
-	public void dumpConfig() {
+	public void dumpSettings() {
 		ensureConfigured(getSettings());
-		super.dumpConfig();
+		super.dumpSettings();
 		Message.debug("\t\troot: "+getRoot());
 		Message.debug("\t\tpattern: "+getPattern());
 		Message.debug("\t\tusepoms: "+_usepoms);

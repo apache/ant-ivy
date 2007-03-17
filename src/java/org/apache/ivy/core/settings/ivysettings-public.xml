@@ -1,5 +1,5 @@
-<ivyconf>
+<ivysettings>
 	<resolvers>
 		<ivyrep name="public"/>
 	</resolvers>
-</ivyconf>
+</ivysettings>

@@ -129,6 +129,15 @@ public class Message {
             System.err.println(msg);
         }
     }
+
+	public static void deprecated(String msg) {
+        MessageImpl messageImpl = IvyContext.getContext().getMessageImpl();
+		if (messageImpl != null) {
+            messageImpl.log("DEPRECATED: "+msg, MSG_WARN);
+        } else {
+            System.err.println(msg);
+        }
+	}
     public static void warn(String msg) {
         MessageImpl messageImpl = IvyContext.getContext().getMessageImpl();
 		if (messageImpl != null) {

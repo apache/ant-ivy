@@ -116,7 +116,7 @@ public class DualResolver extends AbstractResolver {
         }
     }
     
-    public void dumpConfig() {
+    public void dumpSettings() {
         if (_ivyResolver == null || _artifactResolver == null) {
             throw new IllegalStateException("exactly two resolvers must be added: ivy(1) and artifact(2) one");
         }

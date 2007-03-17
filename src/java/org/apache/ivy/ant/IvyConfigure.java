@@ -138,21 +138,34 @@ public class IvyConfigure extends IvyTask {
             IvySettings settings = ivy.getSettings();
 			settings.addAllVariables(getProject().getProperties());
             if (_file == null && _url == null) {
-                _file = new File(getProject().getBaseDir(), getProject().getProperty("ivy.conf.file"));
-                Message.verbose("searching ivyconf file: trying "+_file);
+            	String settingsFileName = getProject().getProperty("ivy.conf.file");
+            	if (settingsFileName != null) {
+            		Message.deprecated("'ivy.conf.file' is deprecated, use 'ivy.settings.file' instead");
+            	} else {
+            		settingsFileName = getProject().getProperty("ivy.settings.file");
+            	}
+            	File[] settingsLocations = new File[] {
+            			new File(getProject().getBaseDir(), settingsFileName),
+            			new File(getProject().getBaseDir(), "ivyconf.xml"),
+            			new File(settingsFileName),
+            			new File("ivyconf.xml"),
+            	};
+            	for (int i = 0; i < settingsLocations.length; i++) {
+					_file = settingsLocations[i];
+					Message.verbose("searching settings file: trying "+_file);
+	                if (_file.exists()) {
+	                	break;
+	                }
+				}
                 if (!_file.exists()) {
-                    _file = new File(getProject().getProperty("ivy.conf.file"));
-                    Message.verbose("searching ivyconf file: trying "+_file);
-                    if (!_file.exists()) {
-                        Message.info("no configuration file found, using default...");
-                        _file = null;
-                        _url = IvySettings.getDefaultConfigurationURL();
-                    }
+                    Message.info("no settings file found, using default...");
+                    _file = null;
+                    _url = IvySettings.getDefaultSettingsURL();
                 }
             } 
             if (_file != null) {
                 if (!_file.exists()) {
-                    throw new BuildException("configuration file does not exist: "+_file);
+                    throw new BuildException("settings file does not exist: "+_file);
                 } else {
                     ivy.configure(_file);
                 }

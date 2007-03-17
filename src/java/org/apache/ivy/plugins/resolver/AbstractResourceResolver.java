@@ -218,8 +218,8 @@ public abstract class AbstractResourceResolver extends BasicResolver {
         _artifactPatterns.add(p.getPattern());
     }
     
-    public void dumpConfig() {
-        super.dumpConfig();
+    public void dumpSettings() {
+        super.dumpSettings();
         Message.debug("\t\tm2compatible: "+isM2compatible());
         Message.debug("\t\tivy patterns:");
         for (ListIterator iter = getIvyPatterns().listIterator(); iter.hasNext();) {
