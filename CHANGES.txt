@@ -16,6 +16,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - IMPROVE: Add a unit test to verify that latest.integration accepts released modules (IVY-394) (thanks to Gilles Scokart)
 - IMPROVE: New "modules in use" section in console report at the end of resolve (IVY-373) (thanks to John Wiliams)
 
+- FIX: setting m2compatible on ibiblio resolver overwrite root and pattern settings (IVY-437)
 - FIX: ivy.revision property not set correctly for second resolve (IVY-429)
 - FIX: NPE when no organisation or no name is provided in module element of ivyconf (IVY-422)
 - FIX: FileUtil#copy(File src, File dest, CopyProgressListener l, boolean overwrite) (IVY-420)

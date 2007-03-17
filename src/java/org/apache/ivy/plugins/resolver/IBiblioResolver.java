@@ -38,6 +38,7 @@ import org.apache.ivy.core.search.OrganisationEntry;
 import org.apache.ivy.core.search.RevisionEntry;
 import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.plugins.resolver.util.ResolvedResource;
+import org.apache.ivy.util.Message;
 
 
 /**
@@ -78,8 +79,12 @@ public class IBiblioResolver extends URLResolver {
     public void setM2compatible(boolean m2compatible) {
         super.setM2compatible(m2compatible);
         if (m2compatible) {
-            _root = "http://www.ibiblio.org/maven2/";
-            _pattern = "[organisation]/[module]/[revision]/[artifact]-[revision](-[classifier]).[ext]";
+        	if (_root == null) {
+        		_root = "http://www.ibiblio.org/maven2/";
+        	}
+        	if (_pattern == null) {
+        		_pattern = "[organisation]/[module]/[revision]/[artifact]-[revision](-[classifier]).[ext]";
+        	}
             updateWholePattern();
         }
     }
@@ -213,5 +218,13 @@ public class IBiblioResolver extends URLResolver {
 	public void setUsepoms(boolean usepoms) {
 		_usepoms = usepoms;
 		updateWholePattern();
+	}
+	
+	public void dumpConfig() {
+		ensureConfigured(getSettings());
+		super.dumpConfig();
+		Message.debug("\t\troot: "+getRoot());
+		Message.debug("\t\tpattern: "+getPattern());
+		Message.debug("\t\tusepoms: "+_usepoms);
 	}
 }

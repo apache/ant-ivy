@@ -118,7 +118,23 @@ public class IBiblioResolverTest extends TestCase {
         assertNotNull(l);
         assertEquals(1, l.size());
         assertEquals("http://www.ibiblio.org/maven/[module]/jars/[artifact]-[revision].jar", l.get(0));
-}
+
+        resolver = (IBiblioResolver)_settings.getResolver("ibiblioE");
+        assertTrue(resolver.isM2compatible());
+        assertNotNull(resolver);
+        l = resolver.getArtifactPatterns();
+        assertNotNull(l);
+        assertEquals(1, l.size());
+        assertEquals("http://www.ibiblio.org/mymaven/[organisation]/[module]/[revision]/[artifact]-[revision](-[classifier]).[ext]", l.get(0));
+
+        resolver = (IBiblioResolver)_settings.getResolver("ibiblioF");
+        assertTrue(resolver.isM2compatible());
+        assertNotNull(resolver);
+        l = resolver.getArtifactPatterns();
+        assertNotNull(l);
+        assertEquals(1, l.size());
+        assertEquals("http://www.ibiblio.org/mymaven/[organisation]/[module]/[revision]/[artifact]-[revision](-[classifier]).[ext]", l.get(0));
+    }
 
     public void testIBiblio() throws Exception {
         String ibiblioRoot = IBiblioHelper.getIBiblioMirror();
