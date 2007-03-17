@@ -114,7 +114,8 @@ public class PomModuleDescriptorParser extends AbstractModuleDescriptorParser {
                 }
             } else if (_md.getModuleRevisionId() == null) {
             	if ("project/dependencies".equals(context)
-            			|| "project/profiles".equals(context)) {
+            			|| "project/profiles".equals(context)
+            			|| "project/build".equals(context)) {
             		fillMrid();
             	}
             }
@@ -234,6 +235,10 @@ public class PomModuleDescriptorParser extends AbstractModuleDescriptorParser {
             	_organisation = txt;
                 return;
             }
+            if (context.equals("project/parent/version") && _revision == null) {
+            	_revision = txt;
+                return;
+            }
             if (context.startsWith("project/parent")) {
                 return;
             }
@@ -245,6 +250,8 @@ public class PomModuleDescriptorParser extends AbstractModuleDescriptorParser {
                 	_organisation = txt;
                 } else if (_module == null && context.endsWith("artifactId")) {
                     _module = txt;
+                } else if (context.equals("project/version") || (_revision == null && context.endsWith("version"))) {
+                    _revision = txt;
                 } else if (_revision == null && context.endsWith("version")) {
                     _revision = txt;
                 } else if (_scope == null && context.endsWith("scope")) {

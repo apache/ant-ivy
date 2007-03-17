@@ -19,6 +19,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - FIX: ivy.revision property not set correctly for second resolve (IVY-429)
 - FIX: NPE when no organisation or no name is provided in module element of ivyconf (IVY-422)
 - FIX: FileUtil#copy(File src, File dest, CopyProgressListener l, boolean overwrite) (IVY-420)
+- FIX: Invalid pom parsing when version is only declared in parent (IVY-436)
 - FIX: ${project.groupId} and ${project.version} not processed correctly in poms (IVY-425)
 - FIX: Incorrect pom parsing with profile (IVY-423)
 - FIX: Ivy doesn't recognize maven2 classifiers (IVY-418)
