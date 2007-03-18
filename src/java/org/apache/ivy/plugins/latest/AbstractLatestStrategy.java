@@ -18,8 +18,8 @@
 package org.apache.ivy.plugins.latest;
 
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 
 import org.apache.ivy.Ivy;
 import org.apache.ivy.plugins.IvyAware;
@@ -51,8 +51,11 @@ public abstract class AbstractLatestStrategy implements LatestStrategy, IvyAware
     
     public ArtifactInfo findLatest(ArtifactInfo[] infos, Date date) {
     	List l = sort(infos);
-    	for (Iterator iter = l.iterator(); iter.hasNext();) {
-			ArtifactInfo info = (ArtifactInfo) iter.next();
+    	
+    	// the latest revision comes last, use a ListIterator to iterate the
+    	// sorted list in the reverse direction.
+    	for (ListIterator iter = l.listIterator(l.size()); iter.hasPrevious();) {
+			ArtifactInfo info = (ArtifactInfo) iter.previous();
 			if (date == null || info.getLastModified() < date.getTime()) {
 				return info;
 			}

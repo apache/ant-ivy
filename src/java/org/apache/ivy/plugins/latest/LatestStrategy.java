@@ -35,7 +35,7 @@ public interface LatestStrategy {
      */
     ArtifactInfo findLatest(ArtifactInfo[] infos, Date date);
     /**
-     * Sorts the given artifacts info from the latest one to the oldest one.
+     * Sorts the given artifacts info from the oldest one to the latest one.
      * The definition of 'latest' depends on the strategy itself.
      * Given artifacts info are all good candidate. 
      * @param infos
