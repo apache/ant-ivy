@@ -32,11 +32,15 @@ import org.apache.ivy.core.IvyPatternHelper;
 import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.DefaultArtifact;
 import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
+import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.resolve.ResolveData;
 import org.apache.ivy.core.settings.IvyPattern;
+import org.apache.ivy.plugins.latest.LatestStrategy;
+import org.apache.ivy.plugins.resolver.util.MDResolvedResource;
 import org.apache.ivy.plugins.resolver.util.ResolvedResource;
 import org.apache.ivy.plugins.resolver.util.ResourceMDParser;
+import org.apache.ivy.plugins.version.VersionMatcher;
 import org.apache.ivy.util.Message;
 
 
@@ -79,14 +83,77 @@ public abstract class AbstractResourceResolver extends BasicResolver {
 
 	protected ResolvedResource findResourceUsingPatterns(ModuleRevisionId moduleRevision, List patternList, Artifact artifact, ResourceMDParser rmdparser, Date date) {
         ResolvedResource rres = null;
-        for (Iterator iter = patternList.iterator(); iter.hasNext() && rres == null;) {
+        
+        List resolvedResources = new ArrayList();
+        boolean dynamic = getSettings().getVersionMatcher().isDynamic(moduleRevision);
+        boolean stop = false;
+        for (Iterator iter = patternList.iterator(); iter.hasNext() && !stop;) {
             String pattern = (String)iter.next();
             rres = findResourceUsingPattern(moduleRevision, pattern, artifact, rmdparser, date);
+            if (rres != null) {
+            	resolvedResources.add(rres);
+            	stop = !dynamic; // stop iterating if we are not searching a dynamic revision
+            }
         }
+        
+        if (resolvedResources.size() > 1) {
+        	ResolvedResource[] rress = (ResolvedResource[]) resolvedResources.toArray(new ResolvedResource[resolvedResources.size()]);
+        	rres = findResource(rress, getName(), getLatestStrategy(), getSettings().getVersionMatcher(), rmdparser, moduleRevision, date);
+        }
+        
         return rres;
     }
     
     protected abstract ResolvedResource findResourceUsingPattern(ModuleRevisionId mrid, String pattern, Artifact artifact, ResourceMDParser rmdparser, Date date);
+
+    public static ResolvedResource findResource(
+    		ResolvedResource[] rress, 
+    		String name,
+    		LatestStrategy strategy, 
+    		VersionMatcher versionMatcher, 
+    		ResourceMDParser rmdparser,
+    		ModuleRevisionId mrid, 
+    		Date date) {
+    	ResolvedResource found = null;
+    	List sorted = strategy.sort(rress);
+    	for (ListIterator iter = sorted.listIterator(sorted.size()); iter.hasPrevious();) {
+			ResolvedResource rres = (ResolvedResource) iter.previous();
+			if ((date != null && rres.getLastModified() > date.getTime())) {
+                Message.debug("\t"+name+": too young: "+rres);
+				continue;
+			}
+			ModuleRevisionId foundMrid = ModuleRevisionId.newInstance(mrid, rres.getRevision());
+			if (!versionMatcher.accept(mrid, foundMrid)) {
+                Message.debug("\t"+name+": rejected by version matcher: "+rres);
+				continue;
+			}
+			if (versionMatcher.needModuleDescriptor(mrid, foundMrid)) {
+        		ResolvedResource r = rmdparser.parse(rres.getResource(), rres.getRevision());
+        		ModuleDescriptor md = ((MDResolvedResource)r).getResolvedModuleRevision().getDescriptor();
+        		if (md.isDefault()) {
+	                Message.debug("\t"+name+": default md rejected by version matcher requiring module descriptor: "+rres);
+        			continue;
+        		} else if (!versionMatcher.accept(mrid, md)) {
+	                Message.debug("\t"+name+": md rejected by version matcher: "+rres);
+        			continue;
+        		} else {
+        			found = r;
+        		}
+			} else {
+				found = rres;
+			}
+	    	
+	    	if (found != null) {
+	    		if (!found.getResource().exists()) {
+		    		Message.debug("\t"+name+": resource not reachable for "+mrid+": res="+found.getResource());
+		    		continue; 
+		    	}
+	    		break;
+	    	}
+		}
+    	
+    	return found;
+    }
 
     /**
      * Output message to log indicating what have been done to look for an artifact which

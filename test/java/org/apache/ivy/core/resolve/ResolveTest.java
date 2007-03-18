@@ -22,6 +22,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 import javax.xml.parsers.SAXParser;
@@ -47,7 +48,6 @@ import org.apache.ivy.plugins.circular.CircularDependencyException;
 import org.apache.ivy.plugins.circular.ErrorCircularDependencyStrategy;
 import org.apache.ivy.plugins.circular.IgnoreCircularDependencyStrategy;
 import org.apache.ivy.plugins.circular.WarnCircularDependencyStrategy;
-import org.apache.ivy.plugins.report.XmlReportOutputter;
 import org.apache.ivy.plugins.resolver.BasicResolver;
 import org.apache.ivy.plugins.resolver.DependencyResolver;
 import org.apache.ivy.plugins.resolver.DualResolver;
@@ -2739,6 +2739,26 @@ public class ResolveTest extends TestCase {
     		// delete the non-default cache
    			cache2.delete();
     	}
+    }
+    
+    public void testResolveWithMultipleIvyPatterns() throws Exception {
+        Ivy ivy = new Ivy();
+        ivy.configure(new File("test/repositories/multi-ivypattern/ivyconf.xml"));
+        
+    	ModuleRevisionId module = ModuleRevisionId.newInstance("org1", "mod1.1", "1.+");
+    	
+    	// use a non-default cache
+    	ResolveOptions options = getResolveOptions(ivy.getSettings(), new String[] {"*"});
+    	options.setTransitive(false);
+    	options.setUseOrigin(true);
+    	options.setDownload(false);
+    	ResolveReport report = ivy.getResolveEngine().resolve(module, options, false);
+    	
+    	List dependencies = report.getDependencies();
+    	assertNotNull(dependencies);
+    	assertEquals(1, dependencies.size());
+    	IvyNode dependency = (IvyNode) dependencies.get(0);
+    	assertEquals("1.1", dependency.getResolvedId().getRevision());
     }
 
     ////////////////////////////////////////////////////////////

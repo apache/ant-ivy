@@ -122,46 +122,14 @@ public class RepositoryResolver extends AbstractResourceResolver {
             Message.debug("\t"+name+": unable to list resources for "+mrid+": pattern="+pattern);
             return null;
         } else {
-        	ResolvedResource found = null;
-        	List sorted = strategy.sort(rress);
-        	for (Iterator iter = sorted.iterator(); iter.hasNext();) {
-				ResolvedResource rres = (ResolvedResource) iter.next();
-				if ((date != null && rres.getLastModified() > date.getTime())) {
-	                Message.debug("\t"+name+": too young: "+rres);
-					continue;
-				}
-				ModuleRevisionId foundMrid = ModuleRevisionId.newInstance(mrid, rres.getRevision());
-				if (!versionMatcher.accept(mrid, foundMrid)) {
-	                Message.debug("\t"+name+": rejected by version matcher: "+rres);
-					continue;
-				}
-				if (versionMatcher.needModuleDescriptor(mrid, foundMrid)) {
-            		ResolvedResource r = rmdparser.parse(rres.getResource(), rres.getRevision());
-            		ModuleDescriptor md = ((MDResolvedResource)r).getResolvedModuleRevision().getDescriptor();
-            		if (md.isDefault()) {
-    	                Message.debug("\t"+name+": default md rejected by version matcher requiring module descriptor: "+rres);
-            			continue;
-            		} else if (!versionMatcher.accept(mrid, md)) {
-    	                Message.debug("\t"+name+": md rejected by version matcher: "+rres);
-            			continue;
-            		} else {
-            			found = r;
-            		}
-					
-				} else {
-					found = rres;
-				}
-			}
+        	ResolvedResource found = findResource(rress, name, strategy, versionMatcher, rmdparser, mrid, date);
         	if (found == null) {
         		Message.debug("\t"+name+": no resource found for "+mrid+": pattern="+pattern);                    
-        	} else if (!found.getResource().exists()) {
-        		Message.debug("\t"+name+": resource not reachable for "+mrid+": res="+found.getResource());
-        		return null; 
         	}
         	return found;
         }
     }
-
+    
     protected long get(Resource resource, File dest) throws IOException {
         Message.verbose("\t"+getName()+": downloading "+resource.getName());
         Message.debug("\t\tto "+dest);
