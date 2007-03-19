@@ -47,7 +47,7 @@ public class XmlSettingsParserTest extends TestCase {
     public void test() throws Exception {
         IvySettings settings = new IvySettings();
         XmlSettingsParser parser = new XmlSettingsParser(settings);
-        parser.parse(XmlSettingsParserTest.class.getResource("ivyconf-test.xml"));
+        parser.parse(XmlSettingsParserTest.class.getResource("ivysettings-test.xml"));
         
         File defaultCache = settings.getDefaultCache();
         assertNotNull(defaultCache);
@@ -107,7 +107,7 @@ public class XmlSettingsParserTest extends TestCase {
         IvySettings settings = new IvySettings();
         XmlSettingsParser parser = new XmlSettingsParser(settings);
         try {
-			parser.parse(XmlSettingsParserTest.class.getResource("ivyconf-no-org-in-module.xml"));
+			parser.parse(XmlSettingsParserTest.class.getResource("ivysettings-no-org-in-module.xml"));
 			fail("no organisation in module is supposed to raise an exception");
 		} catch (ParseException e) {
 			assertTrue("bad exception message: "+e.getMessage(), e.getMessage().indexOf("'organisation'") != -1);
@@ -118,7 +118,7 @@ public class XmlSettingsParserTest extends TestCase {
         IvySettings settings = new IvySettings();
         XmlSettingsParser parser = new XmlSettingsParser(settings);
         try {
-			parser.parse(XmlSettingsParserTest.class.getResource("ivyconf-no-name-in-module.xml"));
+			parser.parse(XmlSettingsParserTest.class.getResource("ivysettings-no-name-in-module.xml"));
 			fail("no name in module is supposed to raise an exception");
 		} catch (ParseException e) {
 			assertTrue("bad exception message: "+e.getMessage(), e.getMessage().indexOf("'name'") != -1);
@@ -128,7 +128,7 @@ public class XmlSettingsParserTest extends TestCase {
     public void testTypedef() throws Exception {
     	IvySettings settings = new IvySettings();
         XmlSettingsParser parser = new XmlSettingsParser(settings);
-        parser.parse(XmlSettingsParserTest.class.getResource("ivyconf-typedef.xml"));
+        parser.parse(XmlSettingsParserTest.class.getResource("ivysettings-typedef.xml"));
         
         DependencyResolver mock = settings.getResolver("mock3");
         assertNotNull(mock);
@@ -151,7 +151,7 @@ public class XmlSettingsParserTest extends TestCase {
     public void testStatuses() throws Exception {
     	IvySettings settings = new IvySettings();
         XmlSettingsParser parser = new XmlSettingsParser(settings);
-        parser.parse(XmlSettingsParserTest.class.getResource("ivyconf-status.xml"));
+        parser.parse(XmlSettingsParserTest.class.getResource("ivysettings-status.xml"));
         
         assertEquals("bronze", settings.getStatusManager().getDefaultStatus());
         assertEquals(0, settings.getStatusManager().getPriority("gold"));
@@ -165,7 +165,7 @@ public class XmlSettingsParserTest extends TestCase {
     public void testConflictManager() throws Exception {
     	IvySettings settings = new IvySettings();
         XmlSettingsParser parser = new XmlSettingsParser(settings);
-        parser.parse(XmlSettingsParserTest.class.getResource("ivyconf-conflict-manager.xml"));
+        parser.parse(XmlSettingsParserTest.class.getResource("ivysettings-conflict-manager.xml"));
         
         assertEquals("latest-time", settings.getConflictManager(new ModuleId("apache", "ivyde")).getName());
         assertEquals("all", settings.getConflictManager(new ModuleId("apache", "ant")).getName());
@@ -174,7 +174,7 @@ public class XmlSettingsParserTest extends TestCase {
     public void testVersionMatchers1() throws Exception {
     	IvySettings settings = new IvySettings();
         XmlSettingsParser parser = new XmlSettingsParser(settings);
-        parser.parse(XmlSettingsParserTest.class.getResource("ivyconf-vmatcher1.xml"));
+        parser.parse(XmlSettingsParserTest.class.getResource("ivysettings-vmatcher1.xml"));
         
         VersionMatcher mock = settings.getVersionMatcher("vmock");
         assertNotNull(mock);
@@ -192,7 +192,7 @@ public class XmlSettingsParserTest extends TestCase {
     public void testVersionMatchers2() throws Exception {
     	IvySettings settings = new IvySettings();
         XmlSettingsParser parser = new XmlSettingsParser(settings);
-        parser.parse(XmlSettingsParserTest.class.getResource("ivyconf-vmatcher2.xml"));
+        parser.parse(XmlSettingsParserTest.class.getResource("ivysettings-vmatcher2.xml"));
         
         VersionMatcher mock = settings.getVersionMatcher("vmock");
         assertNotNull(mock);
@@ -208,7 +208,7 @@ public class XmlSettingsParserTest extends TestCase {
     public void testRef() throws Exception {
     	IvySettings settings = new IvySettings();
         XmlSettingsParser parser = new XmlSettingsParser(settings);
-        parser.parse(XmlSettingsParserTest.class.getResource("ivyconf-ref.xml"));
+        parser.parse(XmlSettingsParserTest.class.getResource("ivysettings-ref.xml"));
         
         DependencyResolver internal = settings.getResolver("internal");
         assertNotNull(internal);
@@ -244,7 +244,7 @@ public class XmlSettingsParserTest extends TestCase {
     public void testMacro() throws Exception {
     	IvySettings settings = new IvySettings();
         XmlSettingsParser parser = new XmlSettingsParser(settings);
-        parser.parse(XmlSettingsParserTest.class.getResource("ivyconf-macro.xml"));
+        parser.parse(XmlSettingsParserTest.class.getResource("ivysettings-macro.xml"));
         
         DependencyResolver def = settings.getResolver("default");
         assertNotNull(def);
@@ -290,7 +290,7 @@ public class XmlSettingsParserTest extends TestCase {
     	// test case for IVY-319
     	IvySettings settings = new IvySettings();
         XmlSettingsParser parser = new XmlSettingsParser(settings);
-        parser.parse(XmlSettingsParserTest.class.getResource("ivyconf-macro+ref.xml"));
+        parser.parse(XmlSettingsParserTest.class.getResource("ivysettings-macro+ref.xml"));
         
         DependencyResolver shared = settings.getResolver("shared");
         assertNotNull(shared);
@@ -311,7 +311,7 @@ public class XmlSettingsParserTest extends TestCase {
     public void testInclude() throws Exception {
     	IvySettings settings = new IvySettings();
         XmlSettingsParser parser = new XmlSettingsParser(settings);
-        parser.parse(XmlSettingsParserTest.class.getResource("ivyconf-include.xml"));
+        parser.parse(XmlSettingsParserTest.class.getResource("ivysettings-include.xml"));
         
         DependencyResolver def = settings.getResolver("default");
         assertNotNull(def);
@@ -348,14 +348,14 @@ public class XmlSettingsParserTest extends TestCase {
     public void testParser() throws Exception {
     	IvySettings settings = new IvySettings();
         XmlSettingsParser parser = new XmlSettingsParser(settings);
-        parser.parse(XmlSettingsParserTest.class.getResource("ivyconf-parser.xml"));
+        parser.parse(XmlSettingsParserTest.class.getResource("ivysettings-parser.xml"));
         assertEquals(ModuleDescriptorParserRegistryTest.MyParser.class.getName(), ModuleDescriptorParserRegistry.getInstance().getParsers()[0].getClass().getName());
     }
     
     public void testOutputter() throws Exception {
     	IvySettings settings = new IvySettings();
         XmlSettingsParser parser = new XmlSettingsParser(settings);
-        parser.parse(XmlSettingsParserTest.class.getResource("ivyconf-outputter.xml"));
+        parser.parse(XmlSettingsParserTest.class.getResource("ivysettings-outputter.xml"));
         
         //System.out.println(Arrays.asList(ivy.getReportOutputters()));
         

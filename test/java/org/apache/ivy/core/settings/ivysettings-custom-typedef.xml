@@ -1,0 +1,7 @@
+<ivysettings>
+	<classpath url="${ivy.custom.test.dir}/custom-resolver.jar"/>
+	<typedef name="custom" classname="org.apache.ivy.plugins.resolver.CustomResolver"/>
+	<resolvers>
+		<custom name="custom"/>
+	</resolvers>
+</ivysettings>

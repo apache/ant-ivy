@@ -40,7 +40,7 @@ public class IvyRetrieveTest extends TestCase {
         createCache();
         cleanTestLib();
         _project = new Project();
-        _project.setProperty("ivy.conf.file", "test/repositories/ivyconf.xml");
+        _project.setProperty("ivy.settings.file", "test/repositories/ivysettings.xml");
 
         _retrieve = new IvyRetrieve();
         _retrieve.setProject(_project);
@@ -155,7 +155,7 @@ public class IvyRetrieveTest extends TestCase {
 	public void testWithAPreviousResolve() throws Exception {
         // first we do a resolve in another project
         Project project = new Project();
-        project.setProperty("ivy.conf.file", "test/repositories/ivyconf.xml");
+        project.setProperty("ivy.settings.file", "test/repositories/ivysettings.xml");
         project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-simple.xml");
         IvyResolve resolve = new IvyResolve();
         resolve.setProject(project);
@@ -176,7 +176,7 @@ public class IvyRetrieveTest extends TestCase {
         // test case for IVY-304
 		// first we do a resolve with useOrigin=true in another project
         Project project = new Project();
-        project.setProperty("ivy.conf.file", "test/repositories/ivyconf.xml");
+        project.setProperty("ivy.settings.file", "test/repositories/ivysettings.xml");
         project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-simple.xml");
         IvyResolve resolve = new IvyResolve();
         resolve.setProject(project);

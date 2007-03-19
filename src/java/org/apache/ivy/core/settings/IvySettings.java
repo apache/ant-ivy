@@ -299,8 +299,8 @@ public class IvySettings {
     }
 
 	private String getDefaultSettingsDir() {
-		String ivyconfLocation = getDefaultSettingsURL().toExternalForm();
-		return ivyconfLocation.substring(0, ivyconfLocation.length() - "ivysettings.xml".length() - 1);
+		String ivysettingsLocation = getDefaultSettingsURL().toExternalForm();
+		return ivysettingsLocation.substring(0, ivysettingsLocation.length() - "ivysettings.xml".length() - 1);
 	}
 
 	private static URL getSettingsURL(String file) {

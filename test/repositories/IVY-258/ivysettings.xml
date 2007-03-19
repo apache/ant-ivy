@@ -1,0 +1,12 @@
+<ivysettings>
+    <settings defaultResolver="myresolver"/>
+    <resolvers>
+			<url name="myresolver">
+				<ivy pattern="${ivy.settings.dir}/[module]/ivy.xml" />
+				<artifact pattern="${ivy.settings.dir}/[module]/[artifact].[ext]" />
+			</url>
+    </resolvers>
+    <modules>
+        <module organisation="myorg" name=".*" resolver="myresolver" />
+    </modules>
+</ivysettings>

@@ -160,11 +160,11 @@ you cannot use parenthesis to change the precedence
 <h1>Examples</h1>
 <code type="xml">
 <triggers>
-    <ant-build antfile="${ivy.conf.dir}/[module]/build.xml" target="publish"
+    <ant-build antfile="${ivy.settings.dir}/[module]/build.xml" target="publish"
            event="pre-resolve-dependency" filter="revision=latest.integration"/>
 </triggers>
 </code>
-Triggers an ant build of the ant file ${ivy.conf.dir}/[module]/build.xml (where [module] is replaced by the name of the dependency resolved) with the target "publish", just before resolving a dependency with a latest.integration revision.
+Triggers an ant build of the ant file ${ivy.settings.dir}/[module]/build.xml (where [module] is replaced by the name of the dependency resolved) with the target "publish", just before resolving a dependency with a latest.integration revision.
 <hr/>
 <code type="xml">
 <triggers>

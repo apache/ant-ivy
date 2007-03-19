@@ -1,7 +1,0 @@
-<ivyconf>
-	<typedef name="mock" classname="org.apache.ivy.plugins.version.MockVersionMatcher"/>
-	<version-matchers>
-		<latest-vm name="latest"/>
-		<mock name="vmock"/>
-	</version-matchers>
-</ivyconf>

@@ -40,8 +40,8 @@ This resolver shares the <a href="../../doc/configuration/resolvers#common.html"
 <code type="xml">
 <chain name="test">
   <filesystem name="1">
-    <ivy pattern="${ivy.conf.dir}/1/[organisation]/[module]/ivys/ivy-[revision].xml"/>
-    <artifact pattern="${ivy.conf.dir}/1/[organisation]/[module]/[type]s/[artifact]-[revision].[ext]"/>
+    <ivy pattern="${ivy.settings.dir}/1/[organisation]/[module]/ivys/ivy-[revision].xml"/>
+    <artifact pattern="${ivy.settings.dir}/1/[organisation]/[module]/[type]s/[artifact]-[revision].[ext]"/>
   </filesystem>
   <ivyrep name="2"/>
 </chain>
@@ -51,8 +51,8 @@ Both a filesystem and ivyrep will be used to look for ivy files. If a dynamic re
 <code type="xml">
 <chain name="test" returnFirst="true">
   <filesystem name="1">
-    <ivy pattern="${ivy.conf.dir}/1/[organisation]/[module]/ivys/ivy-[revision].xml"/>
-    <artifact pattern="${ivy.conf.dir}/1/[organisation]/[module]/[type]s/[artifact]-[revision].[ext]"/>
+    <ivy pattern="${ivy.settings.dir}/1/[organisation]/[module]/ivys/ivy-[revision].xml"/>
+    <artifact pattern="${ivy.settings.dir}/1/[organisation]/[module]/[type]s/[artifact]-[revision].[ext]"/>
   </filesystem>
   <ivyrep name="2"/>
 </chain>
@@ -62,8 +62,8 @@ Same as before, except that if a revision is found in the filesystem then ivyrep
 <code type="xml">
 <chain name="test" dual="true">
   <filesystem name="1">
-    <ivy pattern="${ivy.conf.dir}/1/[organisation]/[module]/ivys/ivy-[revision].xml"/>
-    <artifact pattern="${ivy.conf.dir}/1/[organisation]/[module]/[type]s/[artifact]-[revision].[ext]"/>
+    <ivy pattern="${ivy.settings.dir}/1/[organisation]/[module]/ivys/ivy-[revision].xml"/>
+    <artifact pattern="${ivy.settings.dir}/1/[organisation]/[module]/[type]s/[artifact]-[revision].[ext]"/>
   </filesystem>
   <ivyrep name="2"/>
 </chain>

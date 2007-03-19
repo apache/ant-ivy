@@ -75,28 +75,28 @@
           target: init-advanced
          - - - - - - - - - - - - - - - - - -->
     <target name="init-advanced">
-    	<ivy:configure file="${configuration-dir}/ivy-conf-advanced.xml"/>
+    	<ivy:configure file="${configuration-dir}/ivysettings-advanced.xml"/>
     </target>
 	
 	<!-- - - - - - - - - - - - - - - - - - 
           target: init-maven1
          - - - - - - - - - - - - - - - - - -->
     <target name="init-maven1">
-    	<ivy:configure file="${configuration-dir}/ivy-conf-maven1.xml"/>
+    	<ivy:configure file="${configuration-dir}/ivysettings-maven1.xml"/>
     </target>
 
 	<!-- - - - - - - - - - - - - - - - - - 
           target: init-maven2
          - - - - - - - - - - - - - - - - - -->
     <target name="init-maven2">
-    	<ivy:configure file="${configuration-dir}/ivy-conf-maven2.xml"/>
+    	<ivy:configure file="${configuration-dir}/ivysettings-maven2.xml"/>
     </target>
 
 	<!-- - - - - - - - - - - - - - - - - - 
           target: init-basic
          - - - - - - - - - - - - - - - - - -->
     <target name="init-basic">
-    	<ivy:configure file="${configuration-dir}/ivy-conf-basic.xml"/>
+    	<ivy:configure file="${configuration-dir}/ivysettings-basic.xml"/>
     </target>
 
 	<!-- ================================= 

@@ -30,7 +30,7 @@ public class AntBuildTriggerTest extends TestCase {
 		assertFalse(new File("test/triggers/ant-build/A/A.jar").exists());
 
 		Ivy ivy = new Ivy();
-		ivy.configure(new File("test/triggers/ant-build/ivyconf.xml"));
+		ivy.configure(new File("test/triggers/ant-build/ivysettings.xml"));
 
 		ResolveReport r = ivy.resolve(new File("test/triggers/ant-build/B/ivy.xml"));
 		assertFalse(r.hasError());

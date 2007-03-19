@@ -39,7 +39,7 @@ public class IvyConfigureTest extends TestCase {
     }
 
     public void testFile() throws Exception {
-        _configure.setFile(new File("test/repositories/ivyconf.xml"));
+        _configure.setFile(new File("test/repositories/ivysettings.xml"));
         
         _configure.execute();
         
@@ -49,14 +49,14 @@ public class IvyConfigureTest extends TestCase {
         assertNotNull(settings);
         
         assertEquals(new File("build/cache"), settings.getDefaultCache());
-        assertEquals(new File("test/repositories/ivyconf.xml").getAbsolutePath(), settings.getVariables().get("ivy.conf.file"));
-        assertEquals(new File("test/repositories/ivyconf.xml").toURL().toExternalForm(), settings.getVariables().get("ivy.conf.url"));
-        assertEquals(new File("test/repositories").getAbsolutePath(), settings.getVariables().get("ivy.conf.dir"));
+        assertEquals(new File("test/repositories/ivysettings.xml").getAbsolutePath(), settings.getVariables().get("ivy.settings.file"));
+        assertEquals(new File("test/repositories/ivysettings.xml").toURL().toExternalForm(), settings.getVariables().get("ivy.settings.url"));
+        assertEquals(new File("test/repositories").getAbsolutePath(), settings.getVariables().get("ivy.settings.dir"));
         assertEquals("myvalue", settings.getVariables().get("myproperty"));
     }
 
     public void testURL() throws Exception {
-        String confUrl = new File("test/repositories/ivyconf.xml").toURL().toExternalForm();
+        String confUrl = new File("test/repositories/ivysettings.xml").toURL().toExternalForm();
         String confDirUrl = new File("test/repositories").toURL().toExternalForm();
         if (confDirUrl.endsWith("/")) {
             confDirUrl = confDirUrl.substring(0, confDirUrl.length() - 1);
@@ -68,13 +68,13 @@ public class IvyConfigureTest extends TestCase {
         IvySettings settings = getIvyInstance().getSettings();
         
         assertEquals(new File("build/cache"), settings.getDefaultCache());
-        assertEquals(confUrl, settings.getVariables().get("ivy.conf.url"));
-        assertEquals(confDirUrl, settings.getVariables().get("ivy.conf.dir"));
+        assertEquals(confUrl, settings.getVariables().get("ivy.settings.url"));
+        assertEquals(confDirUrl, settings.getVariables().get("ivy.settings.dir"));
         assertEquals("myvalue", settings.getVariables().get("myproperty"));
     }
 
     public void testAntProperties() throws Exception {
-        String confUrl = IvyConfigureTest.class.getResource("ivyconf-test.xml").toExternalForm();
+        String confUrl = IvyConfigureTest.class.getResource("ivysettings-test.xml").toExternalForm();
         _configure.setUrl(confUrl);
         
         _configure.execute();
@@ -87,7 +87,7 @@ public class IvyConfigureTest extends TestCase {
     }
 
     public void testOverrideVariables() throws Exception {
-        String confUrl = IvyConfigureTest.class.getResource("ivyconf-props.xml").toExternalForm();
+        String confUrl = IvyConfigureTest.class.getResource("ivysettings-props.xml").toExternalForm();
         _configure.setUrl(confUrl);
         
         _configure.execute();

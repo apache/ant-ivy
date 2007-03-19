@@ -1,4 +1,4 @@
-<ivyconf>
+<ivysettings>
   <conf defaultCache="build/cache" defaultResolver="default"/>
   <resolvers>
     <dual name="default">
@@ -20,4 +20,4 @@
 		</chain>
     </dual>
   </resolvers>
-</ivyconf>
+</ivysettings>

@@ -1,0 +1,3 @@
+<ivysettings>
+	<properties file="${ivy.settings.dir}/ivysettings-props.properties"/>
+</ivysettings>

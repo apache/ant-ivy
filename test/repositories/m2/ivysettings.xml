@@ -1,0 +1,9 @@
+<ivysettings>
+	<settings defaultCache="build/cache" defaultResolver="m2"/>
+	<resolvers>
+		<filesystem name="m2" m2compatible="true">
+			<ivy pattern="${ivy.settings.dir}/[organisation]/[module]/[revision]/[module]-[revision].pom"/>
+			<artifact pattern="${ivy.settings.dir}/[organisation]/[module]/[revision]/[artifact]-[revision](-[classifier]).[ext]"/>
+		</filesystem>
+	</resolvers>
+</ivysettings>

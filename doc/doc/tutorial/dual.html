@@ -45,21 +45,21 @@ Take a look at it's <b>ivy.xml</b> file:
 As you can see, nothing special here... Indeed, it's the philosophy of ivy to keep ivy files independent of the way dependencies are retrieved.
 
 <h2>the <b>ivy</b> configuration</h2>
-The ivy configuration is made in the config directory it contains only one file: ivyconf.xml.
+The ivy configuration is made in the config directory it contains only one file: ivysettings.xml.
 
 Let's analyse it.
 <code>
-<ivyconf>
+<ivysettings>
   <conf defaultResolver="dual-example" />
   <resolvers>
     <dual name="dual-example">
       <filesystem name="ivys">
-        <ivy pattern="${ivy.conf.dir}/../repository/[module]-ivy-[revision].xml" />
+        <ivy pattern="${ivy.settings.dir}/../repository/[module]-ivy-[revision].xml" />
       </filesystem>
       <ibiblio name="ibiblio" />
     </dual>
   </resolvers>
-</ivyconf>
+</ivysettings>
 </code>
 
 Here we configure one resolver, the default one, which is a dual resolver. This dual resolver has two sub resolvers : the first is what is called the "ivy" resolver of the dual resolver, and the second one is what is called the "artifact" resolver. It is important that the dual resolver exactly has two sub resolvers in this given order.

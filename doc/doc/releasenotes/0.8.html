@@ -16,13 +16,13 @@
 - use ivyrep instead of ibiblio as default resolver
 - added more info in ivy files (description, homepage, ivy authors, license, public repository, ...)
 - added validate attribute on resolve, retrieve and publish, which allows to disable ivy file validation against ivy.xsd (useful to parse future compatible ivy files)
-- ant properties are now available in ivyconf file
-- unified default properties in ivyconf, with better independance from url or file
+- ant properties are now available in ivysettings file
+- unified default properties in ivysettings, with better independance from url or file
 - added ext on artifacts: this enable to distinguish artifact extension from artifact type, util in cases where it differs (example: 'src' type with 'zip' extension, 'ivy' type with 'xml' extension, ...)
 - added latest strategy concept: the way to determine which artifact is the latest is now configurable on resolvers handling latest. 
 - added parameter on chain resolver to say if it should return first found or try to find the latest among all if asked
 - a module can now publish no artifact, useful for virtual modules consisting only of integration of other modules
-- now cache layout is configurable, using cacheIvyPattern and cacheArtifactPattern attributes on conf element in ivyconf.xml
+- now cache layout is configurable, using cacheIvyPattern and cacheArtifactPattern attributes on conf element in ivysettings.xml
 - changed default cache layout: artifacts are separated by type
 - added cachepath task, which enables to build an ant path of artifacts in cache required for a conf
 

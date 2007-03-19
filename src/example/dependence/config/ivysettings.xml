@@ -1,0 +1,14 @@
+<ivysettings>
+	<properties file="${ivy.settings.dir}/ivysettings.properties"/>
+	<settings defaultCache="${ivy.settings.dir}/ivy-cache" defaultResolver="libraries"/>
+	<resolvers>
+		<filesystem name="projects">
+			<artifact pattern="${repository.dir}/[artifact]-[revision].[ext]" />
+			<ivy pattern="${repository.dir}/[module]-[revision].xml" />
+		</filesystem>
+		<ivyrep name="libraries" />
+	</resolvers>
+	<modules>
+		<module organisation="apache" name=".*" resolver="projects"/>
+	</modules>
+</ivysettings>

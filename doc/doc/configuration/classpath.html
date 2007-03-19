@@ -26,25 +26,25 @@ This let you add ivy plugins without relying on ant classpath for instance, easi
 </table>
 <h1>Examples</h1>
 <code type="xml">
-<ivyconf>
-  <classpath file="${ivy.conf.dir}/custom-resolver.jar"/>
+<ivysettings>
+  <classpath file="${ivy.settings.dir}/custom-resolver.jar"/>
   <typedef name="custom" classname="fr.jayasoft.ivy.resolver.CustomResolver"/>
   <resolvers>
     <custom name="custom"/>
   </resolvers>
-</ivyconf>
+</ivysettings>
 </code>
-Adds custom-resolver.jar found in the same directory as the ivyconf.xml file itself to the classpath, then define a custom resolver and use it.
+Adds custom-resolver.jar found in the same directory as the ivysettings.xml file itself to the classpath, then define a custom resolver and use it.
 
 <hr/>
 <code type="xml">
-<ivyconf>
+<ivysettings>
   <classpath url="http://www.myserver.com/ivy/custom-resolver.jar"/>
   <typedef name="custom" classname="fr.jayasoft.ivy.resolver.CustomResolver"/>
   <resolvers>
     <custom name="custom"/>
   </resolvers>
-</ivyconf>
+</ivysettings>
 </code>
 Same as above, but find the jar on a web server.
 	</textarea>

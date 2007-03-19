@@ -32,21 +32,21 @@ Take a look at it's <b>ivy.xml</b> file :
 As we expect, the ivy file declares to be dependent on the two libraries that the project use : apache commons-lang.jar and test.jar.
 
 <h2>the <b>ivy</b> configuration</h2>
-The ivy configuration is made in the config directory it contains only one file: ivyconf.xml.
+The ivy configuration is made in the config directory it contains only one file: ivysettings.xml.
 
 Let's analyse it.
 <code>
-<ivyconf>
+<ivysettings>
   <conf defaultResolver="chain-example" />
   <resolvers>
     <chain name="chain-example">
       <filesystem name="libraries">
-        <artifact pattern="${ivy.conf.dir}/repository/[artifact]-[revision].[type]" />
+        <artifact pattern="${ivy.settings.dir}/repository/[artifact]-[revision].[type]" />
       </filesystem>
       <ibiblio name="ibiblio" />
     </chain>
   </resolvers>
-</ivyconf>
+</ivysettings>
 </code>
 <h2>the <b>conf</b> tag</h2>
 This tag initializes ivy with some parameters. Here only one is used, the name of the resolver to use by default.
@@ -55,7 +55,7 @@ This tag initializes ivy with some parameters. Here only one is used, the name o
 Under this tag, we can find the description of the resolvers that ivy will use. In our example, we have only one resolver, called "chain-example", which is quite special as it defines a list (a chain) of resolvers.
 The resolvers put in the chain are : 
 <ul>
-  <li>libraries : it is a file resolver. This one is configured to look for artefacts in the "repository" sub directory of the directory that contains the ivyconf.xml file.</li>
+  <li>libraries : it is a file resolver. This one is configured to look for artefacts in the "repository" sub directory of the directory that contains the ivysettings.xml file.</li>
   <li>ibiblio : this resolver is a special one. It looks in the ibiblio maven repository to retreive the libraries.</li>
 </ul>
 

@@ -8,9 +8,9 @@
 	<textarea id="xooki-source">
 <b>Tag:</b> include
 
-Includes another ivyconf file as if it were part of this one. <span class="since">since 1.3</span>
+Includes another ivysettings file as if it were part of this one. <span class="since">since 1.3</span>
 
-The included ivyconf file has to be a complete well formed ivyconf file, i.e. it does have to include the <code><ivyconf></code> tag.
+The included ivysettings file has to be a complete well formed ivysettings file, i.e. it does have to include the <code><ivysettings></code> tag.
 
 <h1>Attributes</h1>
 <table class="ivy-attributes">
@@ -18,39 +18,39 @@ The included ivyconf file has to be a complete well formed ivyconf file, i.e. it
     <tr><th class="ivy-att">Attribute</th><th class="ivy-att-desc">Description</th><th class="ivy-att-req">Required</th></tr>
 </thead>
 <tbody>
-    <tr><td>file</td><td>a path to the ivyconf file to include</td>
+    <tr><td>file</td><td>a path to the ivysettings file to include</td>
         <td>Yes</td></tr>
 </tbody>
 </table>
 <h1>Examples</h1>
 <code type="xml">
-<ivyconf>
+<ivysettings>
   <property name="myrepository" value="path/to/my/real/rep"/>
   <conf defaultResolver="default"/>
-  <include file="path/to/ivyconf-default.xml"/>
-</ivyconf>
+  <include file="path/to/ivysettings-default.xml"/>
+</ivysettings>
 </code>
-with ivyconf-default.xml:
+with ivysettings-default.xml:
 <code type="xml">
-<ivyconf>
+<ivysettings>
   <property name="myrepository" value="path/to/rep" overwrite="false"/>
   <resolvers>
     <ivyrep name="default" ivyroot="${myrepository}"/>
   </resolvers>
-</ivyconf>
+</ivysettings>
 </code>
 
-The included ivyconf defines a resolver named default, which is an ivyrep resolver, with its root configured as being the value of myrepository variable. This variable is given the value path/to/rep in the included file, but because the attribute overwrite is set to false, it will not overide the value given in the main ivyconf including this one, so the value used for myrepository will be path/to/my/real/rep.
+The included ivysettings defines a resolver named default, which is an ivyrep resolver, with its root configured as being the value of myrepository variable. This variable is given the value path/to/rep in the included file, but because the attribute overwrite is set to false, it will not overide the value given in the main ivysettings including this one, so the value used for myrepository will be path/to/my/real/rep.
 <hr/>
 <code type="xml">
-<ivyconf>
-  <include file="ivyconf-macro.xml"/>
+<ivysettings>
+  <include file="ivysettings-macro.xml"/>
   <resolvers>
     <mymacro name="includeworks" mymainrep="included/myrep" mysecondrep="included/secondrep"/>
   </resolvers>
-</ivyconf> 
+</ivysettings> 
 </code>
-with ivyconf-macro.xml being the ivyconf example given on the <a href="../../doc/configuration/macrodef.html">macrodef documentation page</a>.
+with ivysettings-macro.xml being the ivysettings example given on the <a href="../../doc/configuration/macrodef.html">macrodef documentation page</a>.
 This let reusing macro resolver easy.
 	</textarea>
 <script type="text/javascript">xooki.postProcess();</script>

@@ -36,7 +36,7 @@ public class XmlReportOutputterTest extends TestCase {
 
     public XmlReportOutputterTest() throws Exception {
         _ivy = new Ivy();
-        _ivy.configure(new File("test/repositories/ivyconf.xml"));
+        _ivy.configure(new File("test/repositories/ivysettings.xml"));
     }
 
     protected void setUp() throws Exception {

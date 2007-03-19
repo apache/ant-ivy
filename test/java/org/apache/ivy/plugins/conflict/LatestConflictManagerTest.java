@@ -40,7 +40,7 @@ public class LatestConflictManagerTest extends TestCase {
 	protected void setUp() throws Exception {
 		ivy = new Ivy();
 		ivy.configure(LatestConflictManagerTest.class
-				.getResource("ivyconf-latest.xml"));
+				.getResource("ivysettings-latest.xml"));
         _cache = new File("build/cache");
         _cache.mkdirs();
 	}
@@ -96,7 +96,7 @@ public class LatestConflictManagerTest extends TestCase {
     public void testLatestTime1() throws Exception {
 		ivy = new Ivy();
 		ivy.configure(LatestConflictManagerTest.class
-				.getResource("ivyconf-latest-time.xml"));
+				.getResource("ivysettings-latest-time.xml"));
     	ivy.getSettings().setVariable("ivy.log.conflict.resolution", "true", true);
 
     	// set timestamps, because svn is not preserving this information, 
@@ -125,7 +125,7 @@ public class LatestConflictManagerTest extends TestCase {
     public void testLatestTime2() throws Exception {
 		ivy = new Ivy();
 		ivy.configure(LatestConflictManagerTest.class
-				.getResource("ivyconf-latest-time.xml"));
+				.getResource("ivysettings-latest-time.xml"));
     	ivy.getSettings().setVariable("ivy.log.conflict.resolution", "true", true);
 
     	// set timestamps, because svn is not preserving this information, 
@@ -165,7 +165,7 @@ public class LatestConflictManagerTest extends TestCase {
     public void testLatestTimeTransitivity() throws Exception {
     	ivy = new Ivy();
     	ivy.configure(LatestConflictManagerTest.class
-    			.getResource("ivyconf-latest-time-transitivity.xml"));
+    			.getResource("ivysettings-latest-time-transitivity.xml"));
     	ivy.getSettings().setVariable("ivy.log.conflict.resolution", "true", true);
     	
     	// set timestamps, because svn is not preserving this information, 

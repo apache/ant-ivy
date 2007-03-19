@@ -6,7 +6,7 @@
         <tstamp><format property="tstamp" pattern="yyyyMMDDHHmmss"/></tstamp>
         <mkdir dir="${basedir}/build"/>
         <echo message="${tstamp}" file="${basedir}/build/A.jar"/>
-        <ivy:configure file="${basedir}/../ivyconf.xml"/>
+        <ivy:configure file="${basedir}/../ivysettings.xml"/>
         <ivy:resolve file="${basedir}/ivy.xml" />
         <ivy:publish resolver="local" artifactspattern="${basedir}/build/[artifact].[ext]" pubrevision="${tstamp}" />
         <delete dir="build" />

@@ -31,7 +31,7 @@ public class IvyListModulesTest extends TestCase {
     protected void setUp() throws Exception {
         createCache();
         Project project = new Project();
-        project.setProperty("ivy.conf.file", "test/repositories/ivyconf.xml");
+        project.setProperty("ivy.settings.file", "test/repositories/ivysettings.xml");
 
         _findModules = new IvyListModules();
         _findModules.setProject(project);

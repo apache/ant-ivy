@@ -36,7 +36,7 @@ import org.apache.tools.ant.taskdefs.Property;
 
 
 /**
- * Configure Ivy with an ivyconf.xml file
+ * Configure Ivy with an ivysettings.xml file
  * 
  * @author Xavier Hanin
  *

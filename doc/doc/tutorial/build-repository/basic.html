@@ -12,7 +12,7 @@
 
 We will study here two cases, corresponding to the two basics targets found in the previous build.xml project file.
 
-<h1>Basic : ivyconf.xml file used</h1>
+<h1>Basic : ivysettings.xml file used</h1>
 The ivy conf file that we will use is very simple here. It defines two resolvers, libraries and local-repository. The first one is used to retrieve the files that we want, the second is used to copy them. The second one will become our own repository.
 <ul>
 <li>ivyrep : nothing special on it, ivy files will be looked for on ivyrep and artifacts will be downloaded from 
@@ -22,7 +22,7 @@ ibilio</li>
 
 <div class="ivy-file">
 <code type="xml">
-<ivyconf>
+<ivysettings>
     <conf   defaultCache="${ivy.cache.dir}"	
             defaultResolver="local-repository" 
             defaultConflictManager="all" />    <!-- in order to get all revisions without any eviction -->
@@ -33,7 +33,7 @@ ibilio</li>
             <artifact pattern="${dest.repo.dir}/[organisation]/[module]/[type]s/[artifact]-[revision].[type]"/>
         </filesystem>
     </resolvers>
-</ivyconf>
+</ivysettings>
 </code>
 </div>
 
@@ -44,7 +44,7 @@ Let's have a look at the <em>basic</em> target.
         <ivy:install organisation="apache" module="commons-lang" revision="1.0" from="${from-resolver}" to="${to-resolver}" />
     </target>
 </code>
-After a call to init-basic, that make the ivy initialization with the right ivyconf file, we only call the task <a href="../../../doc/use/install.html">install</a> to retrieve apache commons-lang in it's 1.0 version.
+After a call to init-basic, that make the ivy initialization with the right ivysettings file, we only call the task <a href="../../../doc/use/install.html">install</a> to retrieve apache commons-lang in it's 1.0 version.
 Here is the ant call output :
 <div class="shell"><pre>Z:\ivy-repository>ant basic
 Buildfile: build.xml
@@ -144,10 +144,10 @@ Z:\ivy-repository></pre>
 
 We can see here that <a href="/ivy">ivy</a> has resolved hibernate 2.1.8 and 24 depending modules. If we look at the ivy file for <a href="http://ivyrep.jayasoft.org/hibernate/hibernate/ivy-2.1.8.xml">hibernate 2.1.8</a>, we can see that it defines 17 dependencies. The 7 others that ivy retrieved, were transitive ones used in direct dependent modules of hibernate.
 
-We can notice that we have retrieve 3 differents revisions of apache commons-logging (1.0.2, 1.0.3, 1.0.4) and 2 revisions of commons-collections (1.2, 1.2.1). This is due to the fact that we use the "no conflict" <a href="../../../doc/configuration/conflict-managers.html">conflic manager</a> in the ivyconf file.
+We can notice that we have retrieve 3 differents revisions of apache commons-logging (1.0.2, 1.0.3, 1.0.4) and 2 revisions of commons-collections (1.2, 1.2.1). This is due to the fact that we use the "no conflict" <a href="../../../doc/configuration/conflict-managers.html">conflic manager</a> in the ivysettings file.
 We do not want to evict any modules because we are building our own repository !
 
-8 modules artifacts have not been downloaded cause they have not been found on ibiblio with the ivyconf as it is.
+8 modules artifacts have not been downloaded cause they have not been found on ibiblio with the ivysettings as it is.
 We will see how to handle this problem in the advanced tutorial.
 
 If we look at our repository now, it starts to look to something good :

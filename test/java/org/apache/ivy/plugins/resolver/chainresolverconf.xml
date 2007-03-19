@@ -1,4 +1,4 @@
-<ivyconf>
+<ivysettings>
   <conf defaultResolver="chain"/>
   <resolvers>
     <chain name="chain">
@@ -7,4 +7,4 @@
       <ibiblio name="3" />
     </chain>
   </resolvers>
-</ivyconf>
+</ivysettings>

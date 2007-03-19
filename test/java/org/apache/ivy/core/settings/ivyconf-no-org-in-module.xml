@@ -1,5 +1,0 @@
-<ivyconf>
-	<modules>
-		<module name=".*" branch="internal"/>
-	</modules>
-</ivyconf>

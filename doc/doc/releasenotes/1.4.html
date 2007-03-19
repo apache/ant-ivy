@@ -130,7 +130,7 @@ Ivy now fires events all along the dependency resolution process, which can be l
 Example:
 <code type="xml">
 <triggers>
-    <ant-build antfile="${ivy.conf.dir}/[module]/build.xml" target="publish"
+    <ant-build antfile="${ivy.settings.dir}/[module]/build.xml" target="publish"
           event="pre-resolve-dependency" filter="revision=latest.integration"/>
 </triggers>
 </code>
@@ -218,7 +218,7 @@ You can now add jars to use to load plugins directly in ivy configuration, so th
 Example:
 <code type="xml">
 <ivyconf>
-  <classpath file="${ivy.conf.dir}/custom-resolver.jar"/>
+  <classpath file="${ivy.settings.dir}/custom-resolver.jar"/>
   <typedef name="custom" classname="fr.jayasoft.ivy.resolver.CustomResolver"/>
   <resolvers>
     <custom name="custom"/>

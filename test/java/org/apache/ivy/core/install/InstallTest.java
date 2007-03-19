@@ -31,7 +31,7 @@ public class InstallTest extends TestCase {
 
     public void testSimple() throws Exception {
         Ivy ivy = Ivy.newInstance();
-        ivy.configure(new File("test/repositories/ivyconf.xml"));
+        ivy.configure(new File("test/repositories/ivysettings.xml"));
         
         ivy.install(ModuleRevisionId.newInstance("org1", "mod1.2", "2.0"), 
                 ivy.getSettings().getDefaultResolver().getName(), 
@@ -43,7 +43,7 @@ public class InstallTest extends TestCase {
 
     public void testDependencies() throws Exception {
         Ivy ivy = Ivy.newInstance();
-        ivy.configure(new File("test/repositories/ivyconf.xml"));
+        ivy.configure(new File("test/repositories/ivysettings.xml"));
         
         ivy.install(ModuleRevisionId.newInstance("org1", "mod1.1", "1.0"), 
                 ivy.getSettings().getDefaultResolver().getName(), 
@@ -58,7 +58,7 @@ public class InstallTest extends TestCase {
 
     public void testNotTransitive() throws Exception {
         Ivy ivy = Ivy.newInstance();
-        ivy.configure(new File("test/repositories/ivyconf.xml"));
+        ivy.configure(new File("test/repositories/ivysettings.xml"));
         
         ivy.install(ModuleRevisionId.newInstance("org1", "mod1.1", "1.0"), 
                 ivy.getSettings().getDefaultResolver().getName(), 
@@ -73,7 +73,7 @@ public class InstallTest extends TestCase {
 
     public void testRegexpMatcher() throws Exception {
         Ivy ivy = Ivy.newInstance();
-        ivy.configure(new File("test/repositories/ivyconf.xml"));
+        ivy.configure(new File("test/repositories/ivysettings.xml"));
         
         ivy.install(ModuleRevisionId.newInstance("org1", ".*", ".*"), 
                 "1", 

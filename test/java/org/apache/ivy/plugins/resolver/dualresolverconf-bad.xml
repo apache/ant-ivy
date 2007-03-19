@@ -1,4 +1,4 @@
-<ivyconf>
+<ivysettings>
   <resolvers>
     <dual name="dualtoomany">
       <ibiblio name="1" />
@@ -6,4 +6,4 @@
       <ibiblio name="3" />
     </dual>
   </resolvers>
-</ivyconf>
+</ivysettings>

@@ -1,4 +1,4 @@
-<ivyconf>
+<ivysettings>
   <resolvers>
   	<ibiblio name="ibiblioA" root="${my.ibiblio.root}" pattern="${my.ibiblio.pattern}" />
   	<ibiblio name="ibiblioB" root="${my.ibiblio.root}" pattern="[organisation]/jars/[artifact]-[revision].jar" />
@@ -7,4 +7,4 @@
   	<ibiblio name="ibiblioE" m2compatible="true" root="${my.ibiblio.root}"/>
   	<ibiblio name="ibiblioF" root="${my.ibiblio.root}" m2compatible="true"/>
   </resolvers>
-</ivyconf>
+</ivysettings>

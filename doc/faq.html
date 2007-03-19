@@ -80,8 +80,8 @@ Then you configure ivy to indicate where it can find your dependencies. Thus you
 <p>A frequent configuration of Ivy is to use a local repository + ivyrep + ibiblio to store ivy files and artifacts.<br />
 Here is a sample configuration to do this:</p>
 <code>
-<ivyconf>
-  <properties file="${ivy.conf.dir}/ivyconf.properties"/>
+<ivysettings>
+  <properties file="${ivy.settings.dir}/ivysettings.properties"/>
   <conf defaultCache="cache" defaultResolver="libraries"/>
   <resolvers>
     <dual name="libraries" >
@@ -99,7 +99,7 @@ Here is a sample configuration to do this:</p>
       </chain>
     </dual>
   </resolvers> 
-</ivyconf>
+</ivysettings>
 </code>
 <h2>Can I write an ivy file for a module with no artifact at all ?</h2>
 <p>Yes, this is what is called a 'virtual' module.</p>

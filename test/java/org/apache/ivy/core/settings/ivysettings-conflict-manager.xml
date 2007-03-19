@@ -1,0 +1,6 @@
+<ivysettings>
+	<modules>
+		<module organisation="apache" name="ivy*" matcher="glob" conflict-manager="latest-time"/>
+		<module organisation="apache" name=".*" conflict-manager="all"/>
+	</modules>
+</ivysettings>

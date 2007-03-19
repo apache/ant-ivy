@@ -1,4 +1,4 @@
-<ivyconf>
+<ivysettings>
   <conf defaultCache="build/cache" defaultResolver="default"/>
   <resolvers>
 	<filesystem name="default">
@@ -6,4 +6,4 @@
 		<artifact pattern="[organisation]/[module]/[type]s/[artifact]-[revision].[ext]" />
 	</filesystem>
   </resolvers>
-</ivyconf>
+</ivysettings>

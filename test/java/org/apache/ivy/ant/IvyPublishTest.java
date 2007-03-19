@@ -44,7 +44,7 @@ public class IvyPublishTest extends TestCase {
         cleanRep();
         createCache();
         _project = new Project();
-        _project.setProperty("ivy.conf.file", "test/repositories/ivyconf.xml");
+        _project.setProperty("ivy.settings.file", "test/repositories/ivysettings.xml");
         _project.setProperty("build", "build/test/publish");
 
         _publish = new IvyPublish();

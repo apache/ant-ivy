@@ -5,7 +5,7 @@
     <property name="src.dir" value="${basedir}/src" />
     
     <!-- ivy properties used -->
-    <property name="ivy.conf.dir" value="../config" />
+    <property name="ivy.settings.dir" value="../config" />
 
 	<!-- paths used for compilation and run  -->
     <path id="lib.path.id">
@@ -18,10 +18,10 @@
     
     <!-- - - - - - - - - - - - - - - - - - 
           target: configure 
-          configures ivy with the appropriate ivyconf.xml file                     
+          configures ivy with the appropriate ivysettings.xml file                     
          - - - - - - - - - - - - - - - - - -->
     <target name="configure">
-        <ivy:configure file="${ivy.conf.dir}/ivyconf.xml" />
+        <ivy:configure file="${ivy.settings.dir}/ivysettings.xml" />
     </target>
     
     <!-- ================================= 

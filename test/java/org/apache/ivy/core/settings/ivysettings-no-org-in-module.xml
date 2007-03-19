@@ -1,0 +1,5 @@
+<ivysettings>
+	<modules>
+		<module name=".*" branch="internal"/>
+	</modules>
+</ivysettings>

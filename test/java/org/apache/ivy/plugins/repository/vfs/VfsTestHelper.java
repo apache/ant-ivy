@@ -42,7 +42,7 @@ public class VfsTestHelper {
 	static final public String CWD = System.getProperty("user.dir");
 	static final public String TEST_REPO_DIR = "test/repositories";
 	static final private String IVY_CONFIG_FILE = 
-		FileUtil.concat(TEST_REPO_DIR, "ivyconf.xml");
+		FileUtil.concat(TEST_REPO_DIR, "ivysettings.xml");
 	static final public String TEST_IVY_XML = "2/mod5.1/ivy-4.2.xml";
 	static final public String SCRATCH_DIR = "_vfsScratchArea";
 

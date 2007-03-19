@@ -37,6 +37,7 @@
     	</path>
     	<taskdef resource="fr/jayasoft/ivy/ant/antlib.xml"
     	          uri="antlib:fr.jayasoft.ivy.ant" classpathref="ivy.lib.path"/>
+		<ivy:configure file="${basedir}/ivysettings.xml" /> <!-- not necessary with Ivy 1.5+ -->
     </target>
 
 	
@@ -310,7 +311,7 @@
 			<zipfileset dir="${basedir}" includes="DISCLAIMER" fullpath="ivy-${build.version}/DISCLAIMER"/>
 			<zipfileset dir="${basedir}" includes="LICENSE.txt" fullpath="ivy-${build.version}/LICENSE.txt"/>
 			<zipfileset dir="${basedir}" includes="CHANGES.txt" fullpath="ivy-${build.version}/CHANGES.txt"/>
-			<zipfileset dir="${basedir}" includes="ivyconf.xml" fullpath="ivy-${build.version}/ivyconf.xml"/>
+			<zipfileset dir="${basedir}" includes="ivysettings.xml" fullpath="ivy-${build.version}/ivysettings.xml"/>
 			<zipfileset dir="${basedir}" includes="build.properties" fullpath="ivy-${build.version}/build.properties"/>
 			<zipfileset dir="${basedir}" includes="ivy.xml" fullpath="ivy-${build.version}/ivy.xml"/>
 

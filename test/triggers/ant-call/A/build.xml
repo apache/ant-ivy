@@ -3,7 +3,7 @@
    	          uri="antlib:org.apache.ivy.ant" />
 
 	<target name="resolve">
-		<ivy:configure file="../ivyconf.xml"/>
+		<ivy:configure file="../ivysettings.xml"/>
 		<ivy:resolve file="${basedir}/ivy.xml" />
 	</target>
 	

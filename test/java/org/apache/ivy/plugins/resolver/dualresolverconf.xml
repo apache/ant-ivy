@@ -1,4 +1,4 @@
-<ivyconf>
+<ivysettings>
   <resolvers>
     <dual name="dualok">
       <ibiblio name="ivy" />
@@ -8,4 +8,4 @@
       <ibiblio name="1" />
     </dual>
   </resolvers>
-</ivyconf>
+</ivysettings>

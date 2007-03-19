@@ -1,0 +1,11 @@
+<ivysettings>
+  <settings defaultResolver="chain-example"/>
+  <resolvers>
+    <chain name="chain-example">
+      <filesystem name="libraries">
+        <artifact pattern="${ivy.settings.dir}/repository/[artifact]-[revision].[ext]" />
+      </filesystem>
+      <ibiblio name="ibiblio" />
+    </chain>
+  </resolvers>
+</ivysettings>

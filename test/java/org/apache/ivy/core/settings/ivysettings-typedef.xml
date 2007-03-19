@@ -1,0 +1,10 @@
+<ivysettings>
+	<typedef name="mock" classname="org.apache.ivy.plugins.resolver.MockResolver"/>
+	<resolvers>
+		<chain name="internal">
+			<mock name="mock1"/>
+			<mock name="mock2"/>
+		</chain>
+		<mock name="mock3"/>
+	</resolvers>
+</ivysettings>

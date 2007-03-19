@@ -74,7 +74,7 @@ import org.apache.ivy.util.filter.Filter;
  * 
  * Here is one typical usage:
  * Ivy ivy = Ivy.newInstance();
- * ivy.configure(new URL("ivyconf.xml"));
+ * ivy.configure(new URL("ivysettings.xml"));
  * ivy.resolve(new URL("ivy.xml"));
  *  
  * @author Xavier Hanin

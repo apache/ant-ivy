@@ -56,15 +56,15 @@ Take a look at it's <b>ivy.xml</b> file:
 <h2>the <b>ivy</b> configuration</h2>
 The ivy configuration is made in the config directory wich contains 2 files :
 <ul>
-  <li>ivyconf.properties : a property file</li>
-  <li>ivyconf.xml : the file containing the ivy configuration</li>
+  <li>ivysettings.properties : a property file</li>
+  <li>ivysettings.xml : the file containing the ivy configuration</li>
 </ul>
 
-Let's analyse the ivyconf.xml file.
+Let's analyse the ivysettings.xml file.
 <code>
-<ivyconf>
-        <properties file="${ivy.conf.dir}/ivyconf.properties" />
-        <conf defaultCache="${ivy.conf.dir}/ivy-cache" defaultResolver="libraries" />
+<ivysettings>
+        <properties file="${ivy.settings.dir}/ivysettings.properties" />
+        <conf defaultCache="${ivy.settings.dir}/ivy-cache" defaultResolver="libraries" />
         <resolvers>
                 <filesystem name="projects">
                         <artifact pattern="${repository.dir}/[artifact]-[revision].[ext]" />
@@ -75,13 +75,13 @@ Let's analyse the ivyconf.xml file.
         <modules>
                 <module organisation="jayasoft" name=".*" resolver="projects" />
         </modules>
-</ivyconf>
+</ivysettings>
 </code>
 The file contains four main tags : properties, conf, resolvers and modules.
 <h2>the <b>properties</b> tag</h2>
 This tag only load some properties for the ivy process in the same manner as ant will do it.
 <h2>the <b>conf</b> tag</h2>
-This tag is in charge to initialize some parameters for ivy process. The directory that ivy will use to cache (to store) artifacts found will be in a sub directory called ivy-cache of the directory containing the ivyconf.xml file itself. 
+This tag is in charge to initialize some parameters for ivy process. The directory that ivy will use to cache (to store) artifacts found will be in a sub directory called ivy-cache of the directory containing the ivysettings.xml file itself. 
 The second parameter, tells ivy to use a resolver called "libraries" as its default resolver. As a recall, a resolver is in charge to resolve an artifact from some information like : the organisation that provides the artifact, the name of the library and the version of the library. More information can be found in the <a href="../../doc/configuration.html">configuration documentation</a>.
 <h2>the <b>resolvers</b> tag</h2>
 This tag defines the resolvers to use. Here we have two resolvers defined: "projects" and "libraries".

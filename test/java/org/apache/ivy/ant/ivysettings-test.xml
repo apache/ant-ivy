@@ -1,0 +1,11 @@
+<ivysettings>
+	<settings defaultCache="${myproperty}" defaultResolver="test"/>
+	<resolvers>
+		<filesystem name="test">
+			<ivy pattern="${ivy.settings.dir}/1/[organisation]/[module]/ivys/ivy-[revision].xml"/>
+			<artifact pattern="${ivy.settings.dir}/1/[organisation]/[module]/[type]s/[artifact]-[revision].[type]"/>
+			<ivy pattern="${ivy.settings.dir}/2/[module]/ivy-[revision].xml"/>
+			<artifact pattern="${ivy.settings.dir}/2/[module]/[artifact]-[revision].[type]"/>
+		</filesystem>
+	</resolvers>
+</ivysettings>

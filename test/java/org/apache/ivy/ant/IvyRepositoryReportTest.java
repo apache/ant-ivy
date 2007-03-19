@@ -31,7 +31,7 @@ public class IvyRepositoryReportTest extends TestCase {
     protected void setUp() throws Exception {
         createCache();
         Project project = new Project();
-        project.setProperty("ivy.conf.file", "test/repositories/ivyconf-1.xml");
+        project.setProperty("ivy.settings.file", "test/repositories/ivysettings-1.xml");
 
         _report = new IvyRepositoryReport();
         _report.setProject(project);

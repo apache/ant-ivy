@@ -493,7 +493,7 @@ public class FileSystemResolverTest extends TestCase {
             ModuleRevisionId mrid = ModuleRevisionId.newInstance("myorg", "mymodule", "myrevision");
             Artifact ivyArtifact = new DefaultArtifact(mrid, new Date(), "ivy", "ivy", "xml");
             Artifact artifact = new DefaultArtifact(mrid, new Date(), "myartifact", "mytype", "myext");
-            File src = new File("test/repositories/ivyconf.xml");
+            File src = new File("test/repositories/ivysettings.xml");
             resolver.publish(ivyArtifact, src, false);
             resolver.publish(artifact, src, false);
             

@@ -6,7 +6,7 @@
 </head>
 <body>
 	<textarea id="xooki-source">
-Until Ivy 1.2a, the default resolver was a simple ivyrep resolver, with only a small number of possibilities of configuration. Whenever you wanted to do something slightly more complicated than looking for ivy files on ivyrep and artifacts on ibiblio, you had to write your own ivyconf file (see other tutorials and <a href="../../doc/configuration.html">configuration</a> reference for details about this).
+Until Ivy 1.2a, the default resolver was a simple ivyrep resolver, with only a small number of possibilities of configuration. Whenever you wanted to do something slightly more complicated than looking for ivy files on ivyrep and artifacts on ibiblio, you had to write your own ivysettings file (see other tutorials and <a href="../../doc/configuration.html">configuration</a> reference for details about this).
 
 Ivy 1.3 introduces a new default configuration, fully compatible pre 1.3 one, but a lot more configurable.
 
@@ -42,7 +42,7 @@ Now that we have seen the objective of each of the three repositories, let's see
 
 First, several repositories uses the same root in your filesystem. Referenced as ${ivy.default.ivy.user.dir}, this is by default the directory .ivy in your user home.
 
-Note that several things can be done by setting ivy variable. To set them without defining your own ivyconf.xml file, you can:<ul>
+Note that several things can be done by setting ivy variable. To set them without defining your own ivysettings.xml file, you can:<ul>
 <li>set an ant property before any call to ivy in your build file if you use ivy from ant</li>
 <li>set an environment variable if you use ivy from the command line</li>
 </ul>
@@ -98,52 +98,52 @@ Everything can be changed in the default configuration, for sure, you can even d
 
 But before explaining how, you will need to have a quick overview of how ivy is configured by default.
 
-By default, ivy is configured using an ivyconf.xml which is packaged in the ivy jar. Here is this ivyconf file:
+By default, ivy is configured using an ivysettings.xml which is packaged in the ivy jar. Here is this ivysettings file:
 <code type="xml">
-<ivyconf>
+<ivysettings>
   <conf defaultResolver="default"/>
-  <include url="${ivy.default.conf.dir}/ivyconf-public.xml"/>
-  <include url="${ivy.default.conf.dir}/ivyconf-shared.xml"/>
-  <include url="${ivy.default.conf.dir}/ivyconf-local.xml"/>
-  <include url="${ivy.default.conf.dir}/ivyconf-main-chain.xml"/>
-  <include url="${ivy.default.conf.dir}/ivyconf-default-chain.xml"/>
-</ivyconf>
+  <include url="${ivy.default.conf.dir}/ivysettings-public.xml"/>
+  <include url="${ivy.default.conf.dir}/ivysettings-shared.xml"/>
+  <include url="${ivy.default.conf.dir}/ivysettings-local.xml"/>
+  <include url="${ivy.default.conf.dir}/ivysettings-main-chain.xml"/>
+  <include url="${ivy.default.conf.dir}/ivysettings-default-chain.xml"/>
+</ivysettings>
 </code>
-OK, so not much info here, except a lot of inclusions. These inclusions have been done on purpose so that you can easily change only one part of the ivyconf and benefit of the rest easily. For example, if you want to define your own public resolver, you will just have to configure ivy with an ivyconf like that:
+OK, so not much info here, except a lot of inclusions. These inclusions have been done on purpose so that you can easily change only one part of the ivysettings and benefit of the rest easily. For example, if you want to define your own public resolver, you will just have to configure ivy with an ivysettings like that:
 <code type="xml">
-<ivyconf>
+<ivysettings>
   <conf defaultResolver="default"/>
-  <include url="http://myserver/ivy/myivyconf-public.xml"/>
-  <include url="${ivy.default.conf.dir}/ivyconf-shared.xml"/>
-  <include url="${ivy.default.conf.dir}/ivyconf-local.xml"/>
-  <include url="${ivy.default.conf.dir}/ivyconf-main-chain.xml"/>
-  <include url="${ivy.default.conf.dir}/ivyconf-default-chain.xml"/>
-</ivyconf>
+  <include url="http://myserver/ivy/myivysettings-public.xml"/>
+  <include url="${ivy.default.conf.dir}/ivysettings-shared.xml"/>
+  <include url="${ivy.default.conf.dir}/ivysettings-local.xml"/>
+  <include url="${ivy.default.conf.dir}/ivysettings-main-chain.xml"/>
+  <include url="${ivy.default.conf.dir}/ivysettings-default-chain.xml"/>
+</ivysettings>
 </code>
-Note that only the ivyconf-public inclusion has changed to include a home made public resolver. Note also that this can be used like that thanks to the fact that ${ivy.default.conf.dir} is a variable which is always set to the place where ivy default configuration files are (i.e. packaged in the jar).
-To finish this example, you for sure have to write your own ivyconf file for defining your own public resolver. For instance:
+Note that only the ivysettings-public inclusion has changed to include a home made public resolver. Note also that this can be used like that thanks to the fact that ${ivy.default.conf.dir} is a variable which is always set to the place where ivy default configuration files are (i.e. packaged in the jar).
+To finish this example, you for sure have to write your own ivysettings file for defining your own public resolver. For instance:
 <code type="xml">
-<ivyconf>
+<ivysettings>
   <resolvers>
     <filesystem name="public">
       <ivy pattern="/path/to/my/public/rep/[organisation]/[module]/ivy-[revision].xml" />
       <artifact pattern="/path/to/my/public/rep/[organisation]/[module]/[artifact]-[revision].[ext]" />
     </filesystem>
   </resolvers>
-</ivyconf>
+</ivysettings>
 </code>
-No the last thing you will need in order to properly take advantage of the default configuration is the content of each included ivyconf file:
-<strong>ivyconf-public.xml</strong>
+No the last thing you will need in order to properly take advantage of the default configuration is the content of each included ivysettings file:
+<strong>ivysettings-public.xml</strong>
 <code type="xml">
-<ivyconf>
+<ivysettings>
   <resolvers>
     <ivyrep name="public"/>
   </resolvers>
-</ivyconf>
+</ivysettings>
 </code>
-<strong>ivyconf-shared.xml</strong>
+<strong>ivysettings-shared.xml</strong>
 <code type="xml">
-<ivyconf>
+<ivysettings>
   <property name="ivy.shared.default.root"             value="${ivy.default.ivy.user.dir}/shared" override="false"/>
   <property name="ivy.shared.default.ivy.pattern"      value="[organisation]/[module]/[revision]/[type]s/[artifact].[ext]" override="false"/>
   <property name="ivy.shared.default.artifact.pattern" value="[organisation]/[module]/[revision]/[type]s/[artifact].[ext]" override="false"/>
@@ -153,11 +153,11 @@ No the last thing you will need in order to properly take advantage of the defau
       <artifact pattern="${ivy.shared.default.root}/${ivy.shared.default.artifact.pattern}" />
     </filesystem>
   </resolvers>
-</ivyconf>
+</ivysettings>
 </code>
-<strong>ivyconf-local.xml</strong>
+<strong>ivysettings-local.xml</strong>
 <code type="xml">
-<ivyconf>
+<ivysettings>
   <property name="ivy.local.default.root"             value="${ivy.default.ivy.user.dir}/local" override="false"/>
   <property name="ivy.local.default.ivy.pattern"      value="[organisation]/[module]/[revision]/[type]s/[artifact].[ext]" override="false"/>
   <property name="ivy.local.default.artifact.pattern" value="[organisation]/[module]/[revision]/[type]s/[artifact].[ext]" override="false"/>
@@ -167,29 +167,29 @@ No the last thing you will need in order to properly take advantage of the defau
       <artifact pattern="${ivy.local.default.root}/${ivy.local.default.artifact.pattern}" />
     </filesystem>
   </resolvers>
-</ivyconf>
+</ivysettings>
 </code>
-<strong>ivyconf-main-chain.xml</strong>
+<strong>ivysettings-main-chain.xml</strong>
 <code type="xml">
-<ivyconf>
+<ivysettings>
   <resolvers>
     <chain name="main" dual="true">
       <resolver ref="shared"/>
       <resolver ref="public"/>
     </chain>
   </resolvers>
-</ivyconf>
+</ivysettings>
 </code>
-<strong>ivyconf-default-chain.xml</strong>
+<strong>ivysettings-default-chain.xml</strong>
 <code type="xml">
-<ivyconf>
+<ivysettings>
   <resolvers>
     <chain name="default" returnFirst="true">
       <resolver ref="local"/>
       <resolver ref="main"/>
     </chain>
   </resolvers>
-</ivyconf>
+</ivysettings>
 </code>
 
 Here you are, you have enough clues to configure that the way you want... check the <a href="../../doc/configuration.html">configuration documentation</a> to see if what you want to do is possible, and go ahead !

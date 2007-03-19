@@ -40,7 +40,7 @@ public class RegexpConflictManagerTest extends TestCase
     {
         ivy = new Ivy();
         ivy.configure( RegexpConflictManagerTest.class
-                .getResource( "ivyconf-regexp-test.xml" ) );
+                .getResource( "ivysettings-regexp-test.xml" ) );
         _cache = new File("build/cache");
         _cache.mkdirs();
     }

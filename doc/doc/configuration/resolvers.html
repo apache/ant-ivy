@@ -16,7 +16,7 @@ The child tag used for the dependency resolver must be equal to a name of a depe
 <code type="xml">
 <resolver ref="alreadydefinedresolver"/>
 </code>
-Note that this works only if the resolver has been already defined, and not if it is defined later in the ivyconf file.
+Note that this works only if the resolver has been already defined, and not if it is defined later in the ivysettings file.
 <h1>Child elements</h1>
 <table class="ivy-children">
 <thead>
@@ -123,8 +123,8 @@ All resolvers of the same type share some common attributes detailed here:
 <code type="xml">
 <resolvers>
   <filesystem name="1">
-    <ivy pattern="${ivy.conf.dir}/1/[organisation]/[module]/ivys/ivy-[revision].xml"/>
-    <artifact pattern="${ivy.conf.dir}/1/[organisation]/[module]/[type]s/[artifact]-[revision].[ext]"/>
+    <ivy pattern="${ivy.settings.dir}/1/[organisation]/[module]/ivys/ivy-[revision].xml"/>
+    <artifact pattern="${ivy.settings.dir}/1/[organisation]/[module]/[type]s/[artifact]-[revision].[ext]"/>
   </filesystem>
   <chain name="chain1">
     <resolver ref="1"/>

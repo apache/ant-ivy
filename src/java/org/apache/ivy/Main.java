@@ -66,7 +66,7 @@ import org.apache.ivy.util.url.URLHandlerRegistry;
  * class used to launch ivy as a standalone tool
  * arguments are :
  * -conf <conffile> : indicates the path to the ivy configuration file
- *                  ivyconf.xml is assumed if not given
+ *                  ivysettings.xml is assumed if not given
  * -cache <cachedir> : indicates the path to the cache directory
  *                   cache is assumed if not given
  * -ivy <ivyfile> : indicates the path to the ivy file to use

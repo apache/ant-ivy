@@ -5,7 +5,7 @@
          ================================= -->
     <target name="clean" description="--> clean directories">
         <delete includeemptydirs="true"> 
-            <fileset dir="config" excludes="ivyconf.*" />
+            <fileset dir="config" excludes="ivysettings.*" />
 		</delete>
         <ant dir="standalone" antfile="build.xml" target="clean" inheritall="false" inheritrefs="false" />
         <ant dir="depending" antfile="build.xml" target="clean" inheritall="false" inheritrefs="false" />

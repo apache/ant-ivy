@@ -19,8 +19,8 @@ under the id "ivy.instance".</i>
 <tbody>
     <tr><td>file</td><td>path to the configuration file to use</td>
         <td rowspan="2">No. If a file is provided, url is ignored. If none are 
-        provided, then it attempts to find a file at ${ivy.conf.file}, and if
-        this file does not exist, it uses a <a href="./misc/ivy/samples/ivyconf-default.xml">default configuration file</a></td></tr>
+        provided, then it attempts to find a file at ${ivy.settings.file}, and if
+        this file does not exist, it uses a <a href="./misc/ivy/samples/ivysettings-default.xml">default configuration file</a></td></tr>
     <tr><td>url</td><td>url of the configuration file to use</td></tr>
     <tr><td>host</td><td>http authentication host</td><td rowspan="4">No, unless authentication is required</td></tr>
     <tr><td>realm</td><td>http authentication realm</td></tr>
@@ -41,14 +41,14 @@ It's also possible to configure authentication settings for multiple urls. This 
 <h2>Examples</h2>
 <h3>Simplest configuration</h3>
 <code><ivy:configure /></code>
-Use either ${ivy.conf.file} if it exists, or the <a href="./misc/ivy/samples/ivyconf-default.xml">default configuration file</a>
+Use either ${ivy.settings.file} if it exists, or the <a href="./misc/ivy/samples/ivysettings-default.xml">default configuration file</a>
 <h3>Configure with a file</h3>
 <code><ivy:configure file="myconffile.xml" /></code>
 <h3>Configure with an url</h3>
 <code><ivy:configure url="http://mysite.com/myconffile.xml" /></code>
 <h3>Configure multiple URLs which require autentication</h3>
 <code>
-<ivy:configure file="path/to/my/ivyconf.xml">
+<ivy:configure file="path/to/my/ivysettings.xml">
   <credentials host="myhost.com" realm="My Realm" username="myuser" passwd="mypasswd" />
   <credentials host="yourhost.com" realm="Your Realm" username="myuser" passwd="myotherpasswd" />
 </ivy:configure> 
