@@ -6,7 +6,7 @@
 </head>
 <body>
 	<textarea id="xooki-source">
-This example is an illustration of how artefacts can be retreived by multiple resolvers. Using multiple resolvers is very important when using continous integration. Indeed, in such environements, you can use multiple repositories and so multiple resolvers to retreive both released versions of projects than continous integrated versions produced for example with cruise-control. In our example, we will just show how to use two resolvers, one on a local repository and one using ibiblio repository.
+This example is an illustration of how artifacts can be retrieved by multiple resolvers. Using multiple resolvers is very important when using continous integration. Indeed, in such environments, you can use multiple repositories and so multiple resolvers to retrieve both released versions of projects than continous integrated versions produced for example with cruise-control. In our example, we will just show how to use two resolvers, one on a local repository and one using ibiblio repository.
 
 <h1>project description</h1>
 <h2>the project : chained-resolvers</h2>
@@ -31,13 +31,13 @@ Take a look at it's <b>ivy.xml</b> file :
 </code>
 As we expect, the ivy file declares to be dependent on the two libraries that the project use : apache commons-lang.jar and test.jar.
 
-<h2>the <b>ivy</b> configuration</h2>
-The ivy configuration is made in the config directory it contains only one file: ivysettings.xml.
+<h2>the <b>ivy</b> settings</h2>
+The ivy settings is made in the config directory it contains only one file: ivysettings.xml.
 
 Let's analyse it.
 <code>
 <ivysettings>
-  <conf defaultResolver="chain-example" />
+  <settings defaultResolver="chain-example" />
   <resolvers>
     <chain name="chain-example">
       <filesystem name="libraries">
@@ -48,15 +48,15 @@ Let's analyse it.
   </resolvers>
 </ivysettings>
 </code>
-<h2>the <b>conf</b> tag</h2>
+<h2>the <b>settings</b> tag</h2>
 This tag initializes ivy with some parameters. Here only one is used, the name of the resolver to use by default.
 
 <h2>the <b>resolvers</b> tag</h2>
 Under this tag, we can find the description of the resolvers that ivy will use. In our example, we have only one resolver, called "chain-example", which is quite special as it defines a list (a chain) of resolvers.
 The resolvers put in the chain are : 
 <ul>
-  <li>libraries : it is a file resolver. This one is configured to look for artefacts in the "repository" sub directory of the directory that contains the ivysettings.xml file.</li>
-  <li>ibiblio : this resolver is a special one. It looks in the ibiblio maven repository to retreive the libraries.</li>
+  <li>libraries : it is a file resolver. This one is configured to look for artifacts in the "repository" sub directory of the directory that contains the ivysettings.xml file.</li>
+  <li>ibiblio : this resolver is a special one. It looks in the ibiblio maven repository to retrieve the libraries.</li>
 </ul>
 
 <h1>walkthrough</h1>
@@ -107,7 +107,7 @@ run:
 
 BUILD SUCCESSFUL
 Total time: 9 seconds</pre></div></div>
-We can see in the log of the resolve task, that the two dependencies have been retrieved (2 artifacts) and copied to the ivy cache directory (2 downloaded). The run target succeed in using both commons-lang.jar comming from ibiblio repository and test.jar comming from the local repository.
+We can see in the log of the resolve task, that the two dependencies have been retrieved (2 artifacts) and copied to the ivy cache directory (2 downloaded). The run target succeed in using both commons-lang.jar comming from ibiblio repository and test.jar coming from the local repository.
 
 	</textarea>
 <script type="text/javascript">xooki.postProcess();</script>

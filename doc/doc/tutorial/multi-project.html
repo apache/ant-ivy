@@ -53,18 +53,18 @@ Take a look at it's <b>ivy.xml</b> file:
 </ivy-module>
 </code>
 
-<h2>the <b>ivy</b> configuration</h2>
-The ivy configuration is made in the config directory wich contains 2 files :
+<h2>the <b>ivy</b> settings</h2>
+The ivy settings is made in the config directory wich contains 2 files :
 <ul>
   <li>ivysettings.properties : a property file</li>
-  <li>ivysettings.xml : the file containing the ivy configuration</li>
+  <li>ivysettings.xml : the file containing the ivy settings</li>
 </ul>
 
 Let's analyse the ivysettings.xml file.
 <code>
 <ivysettings>
         <properties file="${ivy.settings.dir}/ivysettings.properties" />
-        <conf defaultCache="${ivy.settings.dir}/ivy-cache" defaultResolver="libraries" />
+        <settings defaultCache="${ivy.settings.dir}/ivy-cache" defaultResolver="libraries" />
         <resolvers>
                 <filesystem name="projects">
                         <artifact pattern="${repository.dir}/[artifact]-[revision].[ext]" />
@@ -77,31 +77,31 @@ Let's analyse the ivysettings.xml file.
         </modules>
 </ivysettings>
 </code>
-The file contains four main tags : properties, conf, resolvers and modules.
+The file contains four main tags: properties, settings, resolvers and modules.
 <h2>the <b>properties</b> tag</h2>
 This tag only load some properties for the ivy process in the same manner as ant will do it.
-<h2>the <b>conf</b> tag</h2>
+<h2>the <b>settings</b> tag</h2>
 This tag is in charge to initialize some parameters for ivy process. The directory that ivy will use to cache (to store) artifacts found will be in a sub directory called ivy-cache of the directory containing the ivysettings.xml file itself. 
-The second parameter, tells ivy to use a resolver called "libraries" as its default resolver. As a recall, a resolver is in charge to resolve an artifact from some information like : the organisation that provides the artifact, the name of the library and the version of the library. More information can be found in the <a href="../../doc/configuration.html">configuration documentation</a>.
+The second parameter, tells ivy to use a resolver called "libraries" as its default resolver. As a recall, a resolver is in charge to resolve an artifact from some information like: the organisation that provides the artifact, the name of the library and the version of the library. More information can be found in the <a href="../../doc/configuration.html">settings documentation</a>.
 <h2>the <b>resolvers</b> tag</h2>
 This tag defines the resolvers to use. Here we have two resolvers defined: "projects" and "libraries".
 The filesystem resolver called "projects" is able to resolve the internal dependencies wanted. 
 The ivyrep resolver called "libraries" is able to find dependencies on <a href="../../ivyrep.html">ivyrep</a>.
 <h2>the <b>modules</b> tag</h2>
-The modules tag allows to configure which resolver should be use for which module. Here the configuration only tells to use the "projects" resolver for all modules having for organisation "jayasoft" and any module name (.* regexp matches any module name).
-For other modules (i.e. all modules not from jayasoft), since there is no special configuration, the default resolver will be used: "libraries".
+The modules tag allows to configure which resolver should be use for which module. Here the settings only tells to use the "projects" resolver for all modules having for organisation "jayasoft" and any module name (.* regexp matches any module name).
+For other modules (i.e. all modules not from jayasoft), since there is no special settings, the default resolver will be used: "libraries".
 <h1>walkthrough</h1>
 <div class="step">
-<h2>step 1 : preparation</h2>
+<h2>step 1: preparation</h2>
 Open a DOS or shell window, and go to the "dependance" directory.
 </div>
 <div class="step">
-<h2>step 2 : clean directory tree</h2>
+<h2>step 2: clean directory tree</h2>
 On the prompt type : ant
 This will clean up the entire project directory tree. You can do it each time you want to clean up this example.
 </div>
 <div class="step">
-<h2>step 3 : publication of standalone project</h2>
+<h2>step 3: publication of standalone project</h2>
 Goto standalone directory  and publish the project
 <div class="shell"><pre>I:\standalone>ant publish
 Buildfile: build.xml
@@ -147,17 +147,17 @@ Total time: 10 seconds</pre></div>
 What we see here:
 <ul>
   <li>the project depends on 1 library (1 artifact)</li>
-  <li>the library was not in the ivy cahe and so was downloaded (1 downloaded)</li>
+  <li>the library was not in the ivy cache and so was downloaded (1 downloaded)</li>
   <li>the project has been released under version number 1</li>
 </ul>
 </div>
 To give more details on the publish, as you can see the call to the publish task has resulted in two main things:
 - the delivery of a resolved ivy file to build/ivy.xml. This has been done because by default the publish task not only publishes artifacts but also ivy file. So it has looked to the path where the ivy file to publish should be, using the artifactspattern: ${build.dir}/[artifact].[ext].
 For an ivy file, this resolves to build/ivy.xml. Because this file does not exist, it automatically make a call to the deliver task which delivers a resolved ivy file to this destination.
-- the publication of artifact standalone and resolved ivy file to the repository. Both are mere copy of files found in the current project, more precisely in the build dir. This is because the artifactspattern has been set to ${build.dir}/[artifact].[ext], so standalone artifact is found in build/standalone.jar and ivy file in build/ivy.xml. And because we have asked the publish task to publish them using the "projects" resolver, these files are copied to repository\standalone-1.jar and to repository\standalone-1.xml, respecting the artifact and ivy patterns of our configuration (see above).
+- the publication of artifact standalone and resolved ivy file to the repository. Both are mere copy of files found in the current project, more precisely in the build dir. This is because the artifactspattern has been set to ${build.dir}/[artifact].[ext], so standalone artifact is found in build/standalone.jar and ivy file in build/ivy.xml. And because we have asked the publish task to publish them using the "projects" resolver, these files are copied to repository\standalone-1.jar and to repository\standalone-1.xml, respecting the artifact and ivy patterns of our settings (see above).
 
 <div class="step">
-<h2>step 4 : running the depending project</h2>
+<h2>step 4: running the depending project</h2>
 Goto to directory depending and run ant
 <div class="shell"><pre>I:\depending>ant
 Buildfile: build.xml
@@ -202,8 +202,8 @@ What we see here :
 <ul>
   <li>the project depends on 2 libraries (2 artifacts)</li>
   <li>one of the libraries was in the cache because there was only 1 download (1 downloaded)</li>
-  <li>ivy retreived the version 1 of the project standalone. The call to standalone.Main.getVersion() has returned 1. If you look in the depending/lib directory, you should see standalone-1.jar which is the artifact version 1 of the project standalone</li>
-  <li>the call to standalone.Main.capitalizeWords(str) succeed, what significate that the required library were in the classpath. If you look at the lib directory, you will see that the library commons-lang-2.0.jar was retreived. This library was declared to be used by the project "standalone", so ivy get it too for the dependant project.</li>
+  <li>ivy retrieved the version 1 of the project standalone. The call to standalone.Main.getVersion() has returned 1. If you look in the depending/lib directory, you should see standalone-1.jar which is the artifact version 1 of the project standalone</li>
+  <li>the call to standalone.Main.capitalizeWords(str) succeed, which means that the required library were in the classpath. If you look at the lib directory, you will see that the library commons-lang-2.0.jar was retrieved. This library was declared to be used by the project "standalone", so ivy get it too for the dependant project.</li>
 </ul>
 </div>
 <div class="step">

@@ -239,7 +239,7 @@
             },
             {
               "id":"doc/tutorial/defaultconf",
-              "title":"Configuring default resolver",
+              "title":"Adjusting default settings",
               "children": [
 
                 ]
@@ -362,7 +362,7 @@
             },
             {
               "id":"doc/configuration",
-              "title":"Configuration",
+              "title":"Settings",
               "children": [
                   {
                     "id":"doc/configuration/property",
@@ -380,7 +380,7 @@
                   },
                   {
                     "id":"doc/configuration/conf",
-                    "title":"conf",
+                    "title":"settings",
                     "children": [
 
                       ]

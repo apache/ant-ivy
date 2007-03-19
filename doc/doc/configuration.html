@@ -6,16 +6,16 @@
 </head>
 <body>
 	<textarea id="xooki-source">
-In order to work as you want, ivy need some configuration. Actually, ivy can work with no configuration at all, see the <a href="../doc/tutorial/defaultconf.html">default configuration documentation</a> for details about that. But ivy is able 
+In order to work as you want, ivy sometimes need some settings. Actually, ivy can work with no specific settings at all, see the <a href="../doc/tutorial/defaultconf.html">default settings documentation</a> for details about that. But ivy is able 
 to work in very different contexts. You just have to configure it properly.
 
-Configuration is done through an xml file, usually called ivysettings.xml. To configure ivy from ant, you just have to call the configure task and pass it the path to your configuration file (see <a href="../doc/use/configure.html">configure</a> task documentation for details).
+Settings are specified through an xml file, usually called ivysettings.xml. To configure ivy from ant, you just have to call the configure task and pass it the path to your settings file (see <a href="../doc/use/configure.html">configure</a> task documentation for details).
 
-Here is an example of configuration file :
+Here is an example of settings file :
 <code type="xml">
 <ivysettings>
         <properties file="${ivy.settings.dir}/ivysettings-file.properties" />
-        <conf defaultCache="${cache.dir}" defaultResolver="ibiblio" checkUpToDate="false" />
+        <settings defaultCache="${cache.dir}" defaultResolver="ibiblio" checkUpToDate="false" />
         <resolvers>
                 <ibiblio name="ibiblio" />
                 <filesystem name="internal">
@@ -30,28 +30,27 @@ Here is an example of configuration file :
 </code>
 
 <br/>
-Mainly, the configuration enables to configure the default cache directory used by ivy and the dependency resolvers that it will use to resolve dependencies.
-<i>Note: To work, this configuration file needs a property file named ivysettings-file.properties in the same directory as the configuration file, with ivy variables you want in it.</i>
+Mainly, the settings enable to configure the default cache directory used by ivy and the dependency resolvers that it will use to resolve dependencies.
+<i>Note: To work, this settings file needs a property file named ivysettings-file.properties in the same directory as the settings file, with ivy variables you want in it.</i>
 
-Some useful variables are available in ivysettings files:
+Some useful variables are available in settings files:
 <ul>
-<li>ivy.settings.dir</li> this variable references the directory in which the ivysettings itself is. This is available if the ivysettings has been loaded as a file. In case of an url, it takes the part before the last slash of the url, if any. If the url has no slash, then this variable is not set.
-<li>ivy.settings.file</li>the path of the ivysettings file itself, it has been loaded as a file only. If it has been loaded as an url, this variable is not set
-<li>ivy.settings.url</li>the url pointing to the ivysettings file. This is set both when it has been loaded as a file or an url
+<li>ivy.settings.dir</li> this variable references the directory in which the ivysettings itself is. This is available if the settings has been loaded as a file. In case of an url, it takes the part before the last slash of the url, if any. If the url has no slash, then this variable is not set.
+<li>ivy.settings.file</li>the path of the settings file itself, it has been loaded as a file only. If it has been loaded as an url, this variable is not set
+<li>ivy.settings.url</li>the url pointing to the settings file. This is set both when it has been loaded as a file or an url
 </ul>
 
-<span class="since">since 1.4</span> Note that all <a href="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/System.html#getProperties()">java system properties</a> are available as ivy variables in your configuration file.
+<span class="since">since 1.4</span> Note that all <a href="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/System.html#getProperties()">java system properties</a> are available as ivy variables in your settings file.
 
-<h1>Configuration file structure</h1>
+<h1>Settings file structure</h1>
 
-The configuration file is structured in some parts and left other open. Indeed each resolver has its own 
-structure, thus it's not the configuration file itself which define the structure for the resolvers.
+The settings file is structured in some parts and left other open. Indeed each resolver has its own structure, thus it's not the settings file itself which define the structure for the resolvers.
 
 <pre>
 ivysettings
     <a href="../doc/configuration/property.html">property</a>
     <a href="../doc/configuration/properties.html">properties</a>
-    <a href="../doc/configuration/conf.html">conf</a>
+    <a href="../doc/configuration/conf.html">settings</a>
     <a href="../doc/configuration/include.html">include</a>
     <a href="../doc/configuration/classpath.html">classpath</a>
     <a href="../doc/configuration/typedef.html">typedef</a>
@@ -95,9 +94,9 @@ Root tag of any ivysettings file.
         <td>0..n</td></tr>
     <tr><td><a href="../doc/configuration/properties.html">properties</a></td><td>loads a properties file as ivy variables</td>
         <td>0..n</td></tr>
-    <tr><td><a href="../doc/configuration/conf.html">conf</a></td><td>configures ivy with some defaults</td>
+    <tr><td><a href="../doc/configuration/conf.html">settings</a></td><td>configures ivy with some defaults</td>
         <td>0..1</td></tr>
-    <tr><td><a href="../doc/configuration/include.html">include</a></td><td>includes another ivysettings file</td>
+    <tr><td><a href="../doc/configuration/include.html">include</a></td><td>includes another settings file</td>
         <td>0..n</td></tr>
     <tr><td><a href="../doc/configuration/classpath.html">classpath</a></td><td>add a location in the classpath used to load plugins</td>
         <td>0..n</td></tr>

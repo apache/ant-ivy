@@ -29,7 +29,7 @@ The building process is then an iterative process.
 After each import of new projects into our repository, we check and modify the generated ivy files (or you do not as you want). The generated ivy files are those that were translated from a POM or those for which an artifact has been found without a module descriptor (ivy or pom).
 
 <h2>Let's go</h2>
-What about to test our configuration with a big project : hibernate 3.0
+What about to test our settings with a big project : hibernate 3.0
 Just run : ant advanced
 
 Here we go !!!!!!!!
@@ -155,7 +155,7 @@ BUILD SUCCESSFUL
 Total time: 2 minutes 10 seconds
 Z:\build-a-ivy-repository></pre></div>
 
-<h2>Analysing the results</h2>
+<h2>Analyzing the results</h2>
 OK, it seems that we have a good start point for our repository.
 As you can see in the resolving part of the process :
 <div class="shell"><pre>:: resolving dependencies ::
@@ -163,7 +163,7 @@ As you can see in the resolving part of the process :
         found [ apache | commons-logging | 1.0.4 ] in official-ivy-rep
         ...
         found [ odmg | odmg | 3.0 ] in official-ivy-rep</pre></div>
-some ivy files were retrieved from the <a href="http://ivyrep.jayasoft.org">ivyrep</a> the official ivy repository. That significates that for these modules, you have in your home made repository good ivy files (with meaningfull configurations, ...).
+some ivy files were retrieved from the <a href="http://ivyrep.jayasoft.org">ivyrep</a> the official ivy repository. That means that for these modules, you have in your home made repository good ivy files (with meaningful configurations, ...).
 
 <h2>And now</h2>
 Now what you need to do is to download missing artifacts, those not on ibiblio (from sun, ...) and correct the generated ivy files. 

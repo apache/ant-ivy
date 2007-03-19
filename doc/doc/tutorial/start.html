@@ -6,7 +6,7 @@
 </head>
 <body>
 	<textarea id="xooki-source">
-In this example, we will see one of the easiest way to use ivy. No configuration or other complicated files to write, only the list of libraries the project will use. 
+In this example, we will see one of the easiest way to use ivy. No settings or other complicated files to write, only the list of libraries the project will use. 
 
 If you have already followed the go-ivy tutorial on the <a href="../../doc/tutorial.html">tutorials home page</a>, this tutorial will be already familiar. It is actually pretty much the same, except that it requires ivy to be installed in your ant lib, and the java source and the ivy dependencies are available in separate files. For the java source, it's definitely recommended to put it in a separate file. For ivy dependencies, it depends on your usage and is discussed on the <a href="../../doc/bestpractices.html">best practices page</a>. 
 
@@ -76,7 +76,7 @@ run:
 BUILD SUCCESSFUL
 Total time: 8 seconds</pre></div>
 <h1>What happened ?</h1>
-Without any configuration, other than it's default configuration, ivy retrieve files from the maven ibiblio libraries repository. That's what happened here. 
+Without any settings, other than it's default settings, ivy retrieve files from the maven ibiblio libraries repository. That's what happened here. 
 The resolve task has downloaded the commons-lang.jar file from ibiblio, then copied it to the ivy cache and then dispatch it in the default library directory of the project : the lib dir.
 Some will say that the task was long to achieve. Yeah, it's true it was, but it has downloaded from the web the needed file. Let's try to run it again:
 <div class="shell"><pre>I:\hello-ivy>ant

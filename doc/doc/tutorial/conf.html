@@ -10,7 +10,7 @@ This tutorial introduces the use of configuration in ivy files. Ivy configuratio
 
 More seriously, configurations in ivy can be better understood as views on your module, and you will see how they can be used efficiently here.
 
-Reference documentation on configurations can be find <a href="../../doc/terminology.html">here</a> and <a href="../../doc/ivyfile/configurations.html">here</a>.
+Reference documentation on configurations can be found <a href="../../doc/terminology.html">here</a> and <a href="../../doc/ivyfile/configurations.html">here</a>.
 <h1>Introduction</h1>
 Source code available in src/example/configurations/multi-projects.
 We have two projects :
@@ -171,25 +171,25 @@ In the ant buld.xml file we defined a resolve target as follow:
 
 When we call this target, Ivy will do a resolve using our ivy.xml file in the root folder and will after do retrieve putting all the artifacts in folder for each configuration. Here is how your lib directory should look like after a call to this target:
 <div class="shell"><pre>
- Répertoire de D:\ivy\src\example\configurations\multi-projects\myapp\lib
+ Repertoire de D:\ivy\src\example\configurations\multi-projects\myapp\lib
 
 01/24/2006  11:19 AM    <REP>          build
 01/24/2006  11:19 AM    <REP>          noexternaljar
 01/24/2006  11:19 AM    <REP>          withexternaljar
                0 fichier(s)                0 octets
 
- Répertoire de D:\ivy\src\example\configurations\multi-projects\myapp\lib\build
+ Repertoire de D:\ivy\src\example\configurations\multi-projects\myapp\lib\build
 
 01/24/2006  10:53 AM             1,174 filter-api.jar
                1 fichier(s)            1,174 octets
 
- Répertoire de D:\ivy\src\example\configurations\multi-projects\myapp\lib\noexternaljar
+ Repertoire de D:\ivy\src\example\configurations\multi-projects\myapp\lib\noexternaljar
 
 01/24/2006  10:53 AM             1,174 filter-api.jar
 01/24/2006  10:53 AM             1,030 filter-hmimpl.jar
                2 fichier(s)            2,204 octets
 
- Répertoire de D:\ivy\src\example\configurations\multi-projects\myapp\lib\withexternaljar
+ Repertoire de D:\ivy\src\example\configurations\multi-projects\myapp\lib\withexternaljar
 01/24/2006  10:53 AM           559,366 commons-collections.jar
 01/24/2006  10:53 AM             1,174 filter-api.jar
 01/24/2006  10:53 AM             1,626 filter-ccimpl.jar

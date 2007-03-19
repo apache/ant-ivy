@@ -7,7 +7,7 @@
 <body>
 	<textarea id="xooki-source">
 In this example, we will see the easiest way to use ivy and benefit from its transitive dependencies feature. 
-No configuration or other complicated files to write, only the list of libraries the project will use.
+No settings or other complicated files to write, only the list of libraries the project will use.
 
 <h1>The ivy.xml file</h1>
 This file is used to describe, the dependencies of the project on other libraries.
@@ -78,7 +78,7 @@ run:
 BUILD SUCCESSFUL
 Total time: 16 seconds</pre></div>
 <h1>What happened ?</h1>
-Without any configuration, other than it's default configuration, ivy uses the ivyrep resolver. This resolver looks for ivy files on <a href="../../ivyrep.html">ivyrep</a>, and for artifacts on ibiblio. That's what happened here. 
+Without any settings, other than it's default settings, ivy uses the ivyrep resolver. This resolver looks for ivy files on <a href="../../ivyrep.html">ivyrep</a>, and for artifacts on ibiblio. That's what happened here. 
 
 The resolve task has found an <a href="http://ivyrep.jayasoft.org/apache/commons-cli/ivy-1.0.xml">ivy file on ivyrep for commons-cli 1.0</a>.
 This ivy file indicates that commons-cli 1.0 depends on commons-lang 1.0 and commons-logging 1.0.

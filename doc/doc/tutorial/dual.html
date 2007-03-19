@@ -16,7 +16,7 @@ The solution to this problem is to store your own repository only for ivy files,
 Let's have a look at the src/example/dual directory in your ivy distribution.
 It contains a build file and 3 directories:
 <ul>
-<li>config: contains the ivy configuration file</li>
+<li>config: contains the ivy settings file</li>
 <li>repository: a sample repository of ivy files</li>
 <li>project: the project making use of ivy with dual resolver</li>
 </ul>
@@ -44,13 +44,13 @@ Take a look at it's <b>ivy.xml</b> file:
 
 As you can see, nothing special here... Indeed, it's the philosophy of ivy to keep ivy files independent of the way dependencies are retrieved.
 
-<h2>the <b>ivy</b> configuration</h2>
-The ivy configuration is made in the config directory it contains only one file: ivysettings.xml.
+<h2>the <b>ivy</b> settings</h2>
+The ivy settings is made in the config directory it contains only one file: ivysettings.xml.
 
 Let's analyse it.
 <code>
 <ivysettings>
-  <conf defaultResolver="dual-example" />
+  <settings defaultResolver="dual-example" />
   <resolvers>
     <dual name="dual-example">
       <filesystem name="ivys">
@@ -62,9 +62,8 @@ Let's analyse it.
 </ivysettings>
 </code>
 
-Here we configure one resolver, the default one, which is a dual resolver. This dual resolver has two sub resolvers : the first is what is called the "ivy" resolver of the dual resolver, and the second one is what is called the "artifact" resolver. It is important that the dual resolver exactly has two sub resolvers in this given order.
-The ivy resolver, here a filesystem one, is used only to find ivy files. The configuration given in this resolver
-says that all ivy files are in the same directory, named like that: [module]-ivy-[revision].xml. If we check the repository directory, we can confirm that it contains a file named commons-httpclient-ivy-2.0.2.xml. It fulfills the given pattern and will thus be find by this resolver.
+Here we configure one resolver, the default one, which is a dual resolver. This dual resolver has two sub resolvers: the first is what is called the "ivy" resolver of the dual resolver, and the second one is what is called the "artifact" resolver. It is important that the dual resolver exactly has two sub resolvers in this given order.
+The ivy resolver, here a filesystem one, is used only to find ivy files. The settings given in this resolver says that all ivy files are in the same directory, named like that: [module]-ivy-[revision].xml. If we check the repository directory, we can confirm that it contains a file named commons-httpclient-ivy-2.0.2.xml. It fulfills the given pattern and will thus be find by this resolver.
 The artifact resolver is simply an ibiblio one, and will thus try to find required artifacts in the maven ibiblio repository.
 
 <h1>walkthrough</h1>
@@ -143,7 +142,7 @@ As you can see, ivy not only downloaded commons-lang and commons-httpclient, but
 </ivy-module>
 </code>
 <br/>
-So everything worked well, ivy file has been found in the repository directory and artifacts have been downloaded from ibiblio. You now just have to write ivy files for the module you often use, and they will be much easier to use... And imagine a world in which each module delivers also an ivy file. Since it is independent of the way to retrieve dependencies, it would made all dependencies handling much easier, wouldn't it ?
+So everything worked well, ivy file has been found in the repository directory and artifacts have been downloaded from ibiblio. You now just have to write ivy files for the module you often use, and they will be much easier to use... And imagine a world in which each module delivers also an ivy file. Since it is independent of the way to retrieve dependencies, it would made all dependencies handling much easier, wouldn't it?
 
 
 	</textarea>
