@@ -133,6 +133,19 @@
 		<!-- copy antlib for backward compatibility with fr.jayasoft.ivy package -->
 		<copy file="${src.dir}/org/apache/ivy/ant/antlib.xml" 
 			  todir="${classes.build.dir}/fr/jayasoft/ivy/ant"/>
+		<!-- copy settings files for backward compatibility with ivyconf naming -->
+		<copy file="${classes.build.dir}/org/apache/ivy/core/settings/ivysettings-local.xml"
+			tofile="${classes.build.dir}/org/apache/ivy/core/settings/ivyconf-local.xml" />
+		<copy file="${classes.build.dir}/org/apache/ivy/core/settings/ivysettings-default-chain.xml"
+			tofile="${classes.build.dir}/org/apache/ivy/core/settings/ivyconf-default-chain.xml" />
+		<copy file="${classes.build.dir}/org/apache/ivy/core/settings/ivysettings-main-chain.xml"
+			tofile="${classes.build.dir}/org/apache/ivy/core/settings/ivyconf-main-chain.xml" />
+		<copy file="${classes.build.dir}/org/apache/ivy/core/settings/ivysettings-public.xml"
+			tofile="${classes.build.dir}/org/apache/ivy/core/settings/ivyconf-public.xml" />
+		<copy file="${classes.build.dir}/org/apache/ivy/core/settings/ivysettings-shared.xml"
+			tofile="${classes.build.dir}/org/apache/ivy/core/settings/ivyconf-shared.xml" />
+		<copy file="${classes.build.dir}/org/apache/ivy/core/settings/ivysettings.xml"
+			tofile="${classes.build.dir}/org/apache/ivy/core/settings/ivyconf.xml" />
 		
   		<!-- identify compiled ivy version -->
 		<echo message="version=${build.version}${line.separator}" file="${classes.build.dir}/module.properties" append="true"/>
