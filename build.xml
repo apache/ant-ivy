@@ -27,14 +27,19 @@
     		 dest="${ivy.jar.file}" usetimestamp="true"/>
 	</target>
 	
-	<target name="init-ivy" depends="download-ivy">
+	<target name="check-ivy-available">
+    	<path id="ivy.lib.path">
+    	    <fileset dir="${ivy.jar.dir}" includes="*.jar"/>
+    	</path>
+		<available property="ivy.available" resource="fr/jayasoft/ivy/ant/antlib.xml"
+					classpathref="ivy.lib.path" />
+	</target>
+	
+	<target name="init-ivy" depends="download-ivy,check-ivy-available" if="ivy.available">
     	<!-- try to load ivy here from local ivy dir, in case the user has not already dropped
     	      it into ant's lib dir (note that the latter copy will always take precedence).
     	      We will not fail as long as local lib dir exists (it may be empty) and
     	      ivy is in at least one of ant's lib dir or the local lib dir. -->
-    	<path id="ivy.lib.path">
-    	    <fileset dir="${ivy.jar.dir}" includes="*.jar"/>
-    	</path>
     	<taskdef resource="fr/jayasoft/ivy/ant/antlib.xml"
     	          uri="antlib:fr.jayasoft.ivy.ant" classpathref="ivy.lib.path"/>
 		<ivy:configure file="${basedir}/ivysettings.xml" /> <!-- not necessary with Ivy 1.5+ -->
@@ -109,7 +114,7 @@
     <!-- =================================================================
                DEPENDENCY MNGT, COMPILATION AND JAR
          ================================================================= -->
-	<target name="resolve" depends="init-ivy, prepare" unless="no.resolve">
+	<target name="resolve" depends="init-ivy, prepare" unless="no.resolve" if="ivy.available">
 		<ivy:retrieve conf="default,test" />
 	</target>
 
@@ -205,7 +210,7 @@
 	
 	<target name="init-tests" depends="init-tests-offline, init-tests-online" />
 	
-	<target name="emma" depends="jar" unless="skip.test">
+	<target name="emma" depends="jar" unless="skip.test" if="ivy.available">
 		<ivy:cachepath organisation="emma" module="emma" revision="2.0.5312" 
 			           inline="true" conf="ant" pathid="emma.classpath"/> 
 		<taskdef resource="emma_ant.properties" classpathref="emma.classpath" />
