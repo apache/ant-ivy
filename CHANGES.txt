@@ -16,7 +16,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - IMPROVE: Refactoring / documentation / test of matcher package (IVY-375) (thanks to Stephane Baillez)
 - IMPROVE: Add a unit test to verify that latest.integration accepts released modules (IVY-394) (thanks to Gilles Scokart)
 - IMPROVE: New "modules in use" section in console report at the end of resolve (IVY-373) (thanks to John Wiliams)
-- IMPROVE: Generated XML reports now contains more information about the resolved module (IVY-408)
+- IMPROVE: Generated XML reports now contains more information about the resolved module (IVY-446)
 
 - FIX: Ivy should fail where dependency uses undefined configuration (IVY-442)
 - FIX: Dynamic revision not calculated properly when using multiple directories (IVY-427)
