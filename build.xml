@@ -327,7 +327,7 @@
 			<zipfileset dir="${basedir}/test/xsl" prefix="ivy-${build.version}/test/xsl"/>
 			<zipfileset dir="${src.dir}/org/apache/ivy/plugins/parser/xml" includes="ivy.xsd" fullpath="ivy-${build.version}/ivy.xsd"/>
 			<zipfileset dir="${basedir}" includes="DISCLAIMER" fullpath="ivy-${build.version}/DISCLAIMER"/>
-			<zipfileset dir="${basedir}" includes="LICENSE.txt" fullpath="ivy-${build.version}/LICENSE.txt"/>
+			<zipfileset dir="${basedir}" includes="LICENSE" fullpath="ivy-${build.version}/LICENSE"/>
 			<zipfileset dir="${basedir}" includes="CHANGES.txt" fullpath="ivy-${build.version}/CHANGES.txt"/>
 			<zipfileset dir="${basedir}" includes="ivysettings.xml" fullpath="ivy-${build.version}/ivysettings.xml"/>
 			<zipfileset dir="${basedir}" includes="build.properties" fullpath="ivy-${build.version}/build.properties"/>
@@ -347,7 +347,7 @@
 		<zip destfile="${distrib.dir}/ivy-${build.version}-bin.zip">
 			<zipfileset dir="${basedir}/src/example" prefix="ivy-${build.version}/src/example"/>
 			<zipfileset dir="${basedir}" includes="DISCLAIMER" fullpath="ivy-${build.version}/DISCLAIMER"/>
-			<zipfileset dir="${basedir}" includes="LICENSE.txt" fullpath="ivy-${build.version}/LICENSE.txt"/>
+			<zipfileset dir="${basedir}" includes="LICENSE" fullpath="ivy-${build.version}/LICENSE"/>
 			<zipfileset dir="${basedir}" includes="CHANGES.txt" fullpath="ivy-${build.version}/CHANGES.txt"/>
 			<zipfileset dir="${src.dir}/org/apache/ivy/plugins/parser/xml" includes="ivy.xsd" fullpath="ivy-${build.version}/ivy.xsd"/>
 			<zipfileset dir="${distrib.dir}" includes="ivy.xml" fullpath="ivy-${build.version}/ivy.xml"/>
@@ -357,7 +357,7 @@
 			<zipfileset dir="${artifacts.build.dir}" includes="${final.core.name}" fullpath="ivy-${build.version}/ivy-core-${build.version}.jar"/>
 		</zip>
 		<copy file="${basedir}/DISCLAIMER" todir="${distrib.dir}" />
-		<copy file="${basedir}/LICENSE.txt" todir="${distrib.dir}" />
+		<copy file="${basedir}/LICENSE" todir="${distrib.dir}" />
 		<copy file="${basedir}/CHANGES.txt" todir="${distrib.dir}" />
 		<copy file="${artifacts.build.dir}/${final.name}" todir="${distrib.dir}" />
 		<copy file="${artifacts.build.dir}/${final.core.name}" todir="${distrib.dir}" />
