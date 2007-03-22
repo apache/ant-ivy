@@ -18,6 +18,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - IMPROVE: New "modules in use" section in console report at the end of resolve (IVY-373) (thanks to John Wiliams)
 - IMPROVE: Generated XML reports now contains more information about the resolved module (IVY-408)
 
+- FIX: Ivy should fail where dependency uses undefined configuration (IVY-442)
 - FIX: Dynamic revision not calculated properly when using multiple directories (IVY-427)
 - FIX: LatestRevisionStrategy.sort() doesn't sort as specified (IVY-435)
 - FIX: setting m2compatible on ibiblio resolver overwrite root and pattern settings (IVY-437)

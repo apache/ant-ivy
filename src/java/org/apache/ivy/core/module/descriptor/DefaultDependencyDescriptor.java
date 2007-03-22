@@ -342,6 +342,14 @@ public class DefaultDependencyDescriptor implements DependencyDescriptor {
     }
     
     public void addDependencyConfiguration(String masterConf, String depConf) {
+    	if ((_md != null) && !"*".equals(masterConf) && !"%".equals(masterConf)) {
+    		Configuration config = _md.getConfiguration(masterConf);
+    		if (config == null) {
+    			throw new IllegalArgumentException("Configuration '" + masterConf 
+    					+ "' does not exist in module " + _md);
+    		}
+    	}
+    	
         List confs = (List)_confs.get(masterConf);
         if (confs == null) {
             confs = new ArrayList();

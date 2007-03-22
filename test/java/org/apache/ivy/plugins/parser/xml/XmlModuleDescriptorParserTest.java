@@ -684,4 +684,14 @@ public class XmlModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         assertEquals(Arrays.asList(new String[] {"*"}), Arrays.asList(dd.getModuleConfigurations()));
         assertEquals(Arrays.asList(new String[] {"default4"}), Arrays.asList(dd.getDependencyConfigurations("bla")));  
     }
+    
+    public void testWithNonExistingConfigInDependency() throws Exception {
+    	// IVY-442
+    	try {
+    		XmlModuleDescriptorParser.getInstance().parseDescriptor(_settings, getClass().getResource("test-incorrectconf1.xml"), true);
+    		fail("ParseException hasn't been thrown");
+    	} catch (ParseException e) {
+    		// expected
+    	}
+    }
 }
