@@ -6,7 +6,7 @@
 	       publication="20041101110000"
 	/>
 	<publications>
-        <artifact name="mod_released" type="jar" conf="compile"/>
+        <artifact name="mod_released" type="jar" conf="default"/>
     </publications>
 	<dependencies>
 	</dependencies>
