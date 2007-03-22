@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ivy-module version="1.0">
+	<info organisation="ivy-bug" module="test_proj" revision="1.0"/>
+	<configurations>
+		<conf name="compile" transitive="false"/>
+		<conf name="runtime"/>
+	</configurations>
+	<publications>
+		<artifact name="test_proj" type="jar" conf="compile;runtime"/>
+	</publications>
+</ivy-module>

@@ -694,4 +694,23 @@ public class XmlModuleDescriptorParserTest extends AbstractModuleDescriptorParse
     		// expected
     	}
     }
+    
+    public void testWithNonExistingConfigInPublications() throws Exception {
+    	try {
+    		XmlModuleDescriptorParser.getInstance().parseDescriptor(_settings, getClass().getResource("test-incorrectconf2.xml"), true);
+    		fail("ParseException hasn't been thrown");
+    	} catch (ParseException e) {
+    		// expected
+    	}
+    }
+    
+    public void testWithExistingConfigsInPublicationsSeparatedBySemiColon() throws Exception {
+    	// IVY-441
+    	try {
+    		XmlModuleDescriptorParser.getInstance().parseDescriptor(_settings, getClass().getResource("test-incorrectconf3.xml"), true);
+    		fail("ParseException hasn't been thrown");
+    	} catch (ParseException e) {
+    		// expected
+    	}
+    }
 }
