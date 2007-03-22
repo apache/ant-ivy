@@ -1,5 +1,5 @@
-<ivysettings>
-	<settings defaultResolver="public" />
+<ivyconf>
+	<conf defaultResolver="public" />
 	<resolvers>
 		<!--  
 			we use ivyrep for ivy and some artifacts, and ibiblio for other artifacts
@@ -13,4 +13,4 @@
 			<artifact pattern="http://repo1.maven.org/maven/[module]/[type]s/[artifact]-[revision].[ext]"/>
 		</url>
 	</resolvers>
-</ivysettings>
+</ivyconf>
