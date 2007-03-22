@@ -1,0 +1,9 @@
+<ivysettings>
+        <properties file="${ivy.settings.file}/ivysettings.properties" />
+        <settings defaultResolver="public" />
+        <include file="path/to/another-ivysettings.xml"/>
+        <resolvers>
+             <ibiblio name="public" m2compatible="true" 
+                        root="http://repo1.maven.org/maven2" />
+        </resolvers>
+</ivysettings>

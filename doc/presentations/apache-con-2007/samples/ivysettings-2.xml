@@ -1,0 +1,22 @@
+<ivysettings>
+        <settings defaultCache="${ivy.home}/cache" 
+                  defaultResolver="public" />
+        <resolvers>
+        	<chain name="main" returnFirst="true">
+				<filesystem name="local">
+					<ivy pattern="${ivy.settings.dir}/local/[module]/ivy.xml"/>
+					<artifact pattern="${ivy.settings.dir}/local/[module]/[artifact].[ext]"/>
+				</filesystem>
+				<ssh user="${user}" keyFile="path/to/key/file" keyFilePassword="${password}">
+				  <ivy pattern="ssh://yourserver.com/path/to/repos/[module]/[revision]/ivy.xml"/>
+				  <artifact pattern="ssh://myserver.com/path/to/my/repos/[artifact].[ext]"/>
+				</ssh>
+            </chain>
+            <ibiblio name="public" m2compatible="true" 
+            		 root="http://repo1.maven.org/maven2" />
+        </resolvers>
+        <modules>
+        	<module org="mycompany" resolver="main" />
+        </modules>
+</ivysettings>
+
