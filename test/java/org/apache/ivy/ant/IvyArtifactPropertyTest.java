@@ -74,6 +74,13 @@ public class IvyArtifactPropertyTest extends TestCase {
     	resolve.setResolveId("abc");
     	resolve.execute();
     	
+    	// resolve another ivy file
+    	resolve = new IvyResolve();
+    	resolve.setProject(_project);
+    	resolve.setCache(_cache);
+    	resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-latest.xml"));
+    	resolve.execute();
+    	
         _prop.setName("[module].[artifact]-[revision]");
         _prop.setValue("${cache.dir}/[module]/[artifact]-[revision].[type]");
         _prop.setResolveId("abc");
