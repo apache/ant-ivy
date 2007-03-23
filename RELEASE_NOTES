@@ -1,0 +1,125 @@
+	               Apache Ivy v1.5.0-alpha1-incubating
+                               Release Notes
+   -----------------------------------------------------------------------
+
+CONTENTS
+1. What is Apache Ivy?
+2. Major Changes in this Release
+3. Migrating from Jayasoft Ivy to Apache Ivy
+4. How to Get Involved
+5. How to Report Issues
+6. List of JIRA Issues Fixed in this Release   
+   
+   
+1. What is Apache Ivy?
+
+Ivy is a tool for managing (recording, tracking, resolving and reporting) 
+project dependencies. 
+It is characterized by the following:
+
+   1. flexibility and configurability 
+   		Ivy is essentially process agnostic and is not tied to any 
+   		methodology or structure. 
+   		Instead it provides the necessary flexibility and configurability 
+   		to be adapted to a broad range of dependency management and build 
+   		processes.
+   2. tight integration with Apache Ant
+   		while available as a standalone tool, Ivy works particularly well 
+   		with Apache Ant providing a number of powerful Ant tasks ranging 
+   		from dependency resolution to dependency reporting and publication.
+
+
+
+2. Major Changes in this Release
+This section describes what has changed between version 1.4.1 and version 1.5 of 
+Ivy.
+This new version of Ivy is fully compatible with previous versions as long as you do 
+not use custom plugins: Ivy API has changed, but not its behavior.
+
+2.1. Java Package Name Changes
+
+All of the Ivy Java package names have changed in Apache Ivy. They now start 
+with org.apache rather than fr.jayasoft. There have been other changes as well. 
+Important refactorings have done on the source code to ease the understanding
+of Ivy internal architecture by new developers.
+
+A class named org.apache.ivy.Ivy14 is provided with an API compatible with the
+fr.ajaysoft.Ivy class of Ivy 1.4.1, to ease migration to this new version.
+
+2.2. Configuration replaced by Settings
+
+Configuration used to have two meaning in prior Ivy versions, causing some confusion
+with new users.
+To avoid this confusion, Apache Ivy calls settings instead of configuration the files
+used to customize Ivy. Configuration is still used for module configurations.
+
+Besides the changes in the documentation, this renaming also imply a modification
+in settings files, which now use ivysettings as root element instead of ivyconf,
+and settings instead of conf element to define top level defaults (such as 
+defaultCache, ...).
+Previous names have been deprecated, so previous settings files can still be used, but 
+you will see a deprecation warning.
+
+
+3. Migrating from Jayasoft Ivy to Apache Ivy
+
+Apache Ivy is fully compatible with Jayasoft Ivy as long as you do not use 
+custom plugins.
+This means that you can use Apache Ivy as a drop in replacement of Jayasoft Ivy.
+
+However due to the the renaming of configuration files to settings files, we
+strongly suggest to update your configuration files:
+- rename the files called ivyconf*.xml in ivysettings*.xml
+- rename 'ivyconf' element in 'ivysettings'
+- rename 'conf' element of those settings file in 'settings'
+
+Migrating custom plugins can be done by using the org.apache.ivy.Ivy14 class
+instead of fr.jayasoft.ivy.Ivy, and reorganizing your imports to reflect the 
+changes in the package names.
+
+4. How to Get Involved
+
+The Apache Ivy project really needs and appreciates any contributions, 
+including documentation help, source code and feedback.  If you are interested
+in contributing, please visit http://incubator.apache.org/ivy/get-involved.html.
+
+5. How to Report Issues
+
+The Apache Ivy project uses JIRA for issue tracking.  Please report any 
+issues you find at http://issues.apache.org/jira/browse/ivy.
+
+6. List of Changes in this Release
+
+- NEW: define artifacts not declared by the dependency module descriptor (IVY-419)
+
+- IMPROVE: Rename ivy configuration in settings to remove ambiguity on configuration meaning (IVY-438)
+- IMPROVE: Please typedef CacheResolver as "cache" for us (IVY-359)
+- IMPROVE: ivy:retrieve should be able to create symlinks (IVY-353) (thanks to John Williams)
+- IMPROVE: Ability to have multiple roots in the <ivy:buildfilelist> task (IVY-340) (thanks to Matt Inger)
+- IMPROVE: Refactoring / documentation / test of matcher package (IVY-375) (thanks to Stephane Baillez)
+- IMPROVE: Add a unit test to verify that latest.integration accepts released modules (IVY-394) (thanks to Gilles Scokart)
+- IMPROVE: New "modules in use" section in console report at the end of resolve (IVY-373) (thanks to John Wiliams)
+- IMPROVE: Generated XML reports now contains more information about the resolved module (IVY-446)
+
+- FIX: Ivy should fail if ';' has been used in publications/artifact/@conf of ivy.xml (IVY-441)
+- FIX: Ivy should fail where dependency uses undefined configuration (IVY-442)
+- FIX: Dynamic revision not calculated properly when using multiple directories (IVY-427)
+- FIX: LatestRevisionStrategy.sort() doesn't sort as specified (IVY-435)
+- FIX: setting m2compatible on ibiblio resolver overwrite root and pattern settings (IVY-437)
+- FIX: ivy.revision property not set correctly for second resolve (IVY-429)
+- FIX: NPE when no organisation or no name is provided in module element of ivyconf (IVY-422)
+- FIX: FileUtil#copy(File src, File dest, CopyProgressListener l, boolean overwrite) (IVY-420)
+- FIX: Invalid pom parsing when version is only declared in parent (IVY-436)
+- FIX: ${project.groupId} and ${project.version} not processed correctly in poms (IVY-425)
+- FIX: Incorrect pom parsing with profile (IVY-423)
+- FIX: Ivy doesn't recognize maven2 classifiers (IVY-418)
+- FIX: PomModuleDescriptorParser fails with nested profile dependency (IVY-392) (thanks to William Lyvers)
+- FIX: Static revision replacement is not working when delivering an artifact with a dependency having extra attributes (IVY-415)
+- FIX: Static revision replacement is not working when delivering an artifact with a dependency on a branch (IVY-404)
+- FIX: latest-time conflict manager not working properly (IVY-407)
+- FIX: LatestRevisionStrategy do not consider all dynamic revisions properly (IVY-383) (thanks to John Williams for the unit test)
+- FIX: IOException during publish causes NullPointerException (IVY-371)
+- FIX: Comments in ivy.xml duplicated (IVY-336) (thanks to Gilles Scokart)
+- FIX: Ivy failure when the ivy.xml file contains non US-ASCII characters (IVY-346) (thanks to Gilles Scokart)
+- FIX: Urlresolver is not possible to use dynamic revisions on nonstandard repository structure (IVY-350) (thanks to Pierre Hägnestrand)
+
