@@ -1,0 +1,34 @@
+			Apache Ivy v1.5.0-alpha1-incubating
+		   ------------------------------------
+
+Supported Platforms
+--------------------
+
+Apache Ivy requires Java level 1.4; it has been tested with Sun Java SDK v1.4.2
+
+Even if not mandatory, Apache Ivy is most of the times used with Apache Ant, for which version 1.6.0 or greater is required.
+
+Installation
+----------------------
+
+Please read doc/doc/install.html for installation instructions.
+      
+
+Getting Started
+----------------
+
+For an introduction to Apache Ivy and how to use it, please read the documentation 
+located in the doc subdirectory.  A good place to start is the index.html
+
+
+Disclaimer
+-----------
+
+Apache Ivy is an effort undergoing incubation at The Apache Software
+Foundation (ASF). Incubation is required of all newly accepted projects
+until a further review indicates that the infrastructure, communications,
+and decision making process have stabilized in a manner consistent with
+other successful ASF projects. While incubation status is not necessarily
+a reflection of the completeness or stability of the code, it does
+indicate that the project has yet to be fully endorsed by the ASF.
+
