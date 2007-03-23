@@ -159,6 +159,7 @@
 		<!-- package the two ivy jars -->
   		<jar 	destfile="${artifacts.build.dir}/${final.name}"
 				basedir="${classes.build.dir}">
+  			<metainf dir="${basedir}" includes="LICENSE,DISCLAIMER" />
 			<manifest>
 				<attribute name="Build-Version" value="${build.version}"/>
 			</manifest>
@@ -166,6 +167,7 @@
   		<jar 	destfile="${artifacts.build.dir}/${final.core.name}"
 				basedir="${classes.build.dir}"
   				excludes="org/apache/ivy/ant/*">
+  			<metainf dir="${basedir}" includes="LICENSE,DISCLAIMER" />
 			<manifest>
 				<attribute name="Build-Version" value="${build.version}"/>
 			</manifest>
