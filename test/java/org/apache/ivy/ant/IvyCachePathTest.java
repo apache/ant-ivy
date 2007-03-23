@@ -155,6 +155,34 @@ public class IvyCachePathTest extends TestCase {
             fail("failure raised an exception with haltonfailure set to false");
         }
     }
+    
+    public void testWithResolveId() throws Exception {
+    	IvyResolve resolve = new IvyResolve();
+    	resolve.setProject(_project);
+    	resolve.setCache(_cache);
+    	resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-simple.xml"));
+    	resolve.setResolveId("withResolveId");
+    	resolve.execute();
+    	
+    	// resolve another ivy file
+    	resolve = new IvyResolve();
+    	resolve.setProject(_project);
+    	resolve.setCache(_cache);
+    	resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-latest.xml"));
+    	resolve.execute();
+    	
+    	_path.setResolveId("withResolveId");
+    	_path.setPathid("withresolveid-pathid");
+    	_path.execute();
+
+        Object ref = _project.getReference("withresolveid-pathid");
+        assertNotNull(ref);
+        assertTrue(ref instanceof Path);
+        Path p = (Path)ref;
+        assertEquals(1, p.size());
+        assertEquals(getArchiveFileInCache("org1", "mod1.2", "2.0", "mod1.2", "jar", "jar").getAbsolutePath(),
+                new File(p.list()[0]).getAbsolutePath());
+    }
 
     private File getArchiveFileInCache(String organisation, String module, String revision, String artifact, String type, String ext) {
 		return TestHelper.getArchiveFileInCache(_path.getIvyInstance(), _cache, 

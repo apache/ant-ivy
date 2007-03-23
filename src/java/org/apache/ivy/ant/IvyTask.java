@@ -236,11 +236,16 @@ public class IvyTask extends Task {
 		return reference;
 	}
     
-	protected ResolveReport getResolvedReport(String org, String module) {
-		return getResolvedReport(org, module, false);
-	}
-	protected ResolveReport getResolvedReport(String org, String module, boolean strict) {
-		return (ResolveReport) getReference("ivy.resolved.report", org, module, strict);
+	protected ResolveReport getResolvedReport(String org, String module, String resolveId) {
+		ResolveReport result = null;
+		
+		if (resolveId == null) {
+			result = (ResolveReport) getReference("ivy.resolved.report", org, module, false);
+		} else {
+			result = (ResolveReport) getReference("ivy.resolved.report." + resolveId, null, null, false);
+		}
+		
+		return result;
 	}
     
 	protected IvyResolve createResolve(boolean haltOnFailure, boolean useOrigin) {

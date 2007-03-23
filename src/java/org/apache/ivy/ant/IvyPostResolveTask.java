@@ -151,7 +151,7 @@ public abstract class IvyPostResolveTask extends IvyTask {
     }
     
     protected ResolveReport getResolvedReport() {
-        return getResolvedReport(getOrganisation(), isInline()?getModule()+"-caller":getModule());
+        return getResolvedReport(getOrganisation(), isInline()?getModule()+"-caller":getModule(), _resolveId);
     }
     
     public String getType() {
