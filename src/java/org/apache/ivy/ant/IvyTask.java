@@ -135,14 +135,8 @@ public class IvyTask extends Task {
     	}
     }
     
-	protected void ensureResolved(boolean haltOnFailure, boolean useOrigin, String org, String module) {
-		ensureResolved(haltOnFailure, useOrigin, org, module, null);
-	}
 	protected void ensureResolved(boolean haltOnFailure, boolean useOrigin, String org, String module, String resolveId) {
     	ensureResolved(haltOnFailure, useOrigin, true, org, module, null, resolveId);
-    }
-    protected void ensureResolved(boolean haltOnFailure, boolean useOrigin, boolean transitive, String org, String module, String conf) {
-    	ensureResolved(haltOnFailure, useOrigin, true, org, module, conf, null);
     }
     protected void ensureResolved(boolean haltOnFailure, boolean useOrigin, boolean transitive, String org, String module, String conf, String resolveId) {
         ensureMessageInitialised();
@@ -170,7 +164,12 @@ public class IvyTask extends Task {
     }
     
     protected String[] getConfsToResolve(String resolveId, String conf) {
-        ModuleDescriptor reference = (ModuleDescriptor) getResolvedDescriptor(resolveId);
+        ModuleDescriptor reference = (ModuleDescriptor) getResolvedDescriptor(resolveId, false);
+        if (reference == null) {
+        	// assume the module has been resolved outside this build
+        	// TODO: find a way to discover which confs were resolved by that previous resolve
+        	return new String[0];
+        }
         String[] rconfs = (String[]) getProject().getReference("ivy.resolved.configurations.ref." + resolveId);
         return getConfsToResolve(reference, conf, rconfs);
     }
@@ -211,8 +210,12 @@ public class IvyTask extends Task {
 	}
     
     protected Object getResolvedDescriptor(String resolveId) {
+    	return getResolvedDescriptor(resolveId, true);
+    }
+    
+    protected Object getResolvedDescriptor(String resolveId, boolean strict) {
     	Object result = getProject().getReference("ivy.resolved.descriptor." + resolveId);
-        if (result == null) {
+        if (strict && (result == null)) {
         	throw new BuildException("ModuleDescriptor for resolve with id '" + resolveId + "' not found.");
         }
         return result;

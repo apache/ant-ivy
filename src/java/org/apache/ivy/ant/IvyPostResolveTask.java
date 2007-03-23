@@ -110,7 +110,7 @@ public abstract class IvyPostResolveTask extends IvyTask {
         	// there (TODO: maybe we can check which reports exist and extract the configurations
         	// from these report names?)
         	if (!orgAndModSetManually) {
-        		ensureResolved(isHaltonfailure(), isUseOrigin(), isTransitive(), getOrganisation(), getModule(), getProperty(_conf, settings, "ivy.resolved.configurations"));
+        		ensureResolved(isHaltonfailure(), isUseOrigin(), isTransitive(), getOrganisation(), getModule(), getProperty(_conf, settings, "ivy.resolved.configurations"), _resolveId);
         	}
         	
 	        _conf = getProperty(_conf, settings, "ivy.resolved.configurations");
