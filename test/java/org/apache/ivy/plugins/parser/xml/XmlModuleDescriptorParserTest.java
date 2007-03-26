@@ -627,7 +627,7 @@ public class XmlModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         
         // confs dep1: conf1->A;conf2->B (mappingoverride = true)
         DependencyDescriptor dd = getDependency(dependencies, "mymodule1");
-        assertEquals(Arrays.asList(new String[] {"conf2", "conf1"}), Arrays.asList(dd.getModuleConfigurations()));
+        assertEquals(Arrays.asList(new String[] {"conf1", "conf2"}), Arrays.asList(dd.getModuleConfigurations()));
         assertEquals(Arrays.asList(new String[] {"A"}), Arrays.asList(dd.getDependencyConfigurations("conf1"))); 
         assertEquals(Arrays.asList(new String[] {"B"}), Arrays.asList(dd.getDependencyConfigurations("conf2")));  
         
@@ -654,7 +654,7 @@ public class XmlModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         
         // confs dep2: extra->extra;all-public->all-public (mappingoverride = true)
         dd = getDependency(dependencies, "mymodule2");
-        assertEquals(Arrays.asList(new String[] {"all-public", "extra"}), Arrays.asList(dd.getModuleConfigurations()));
+        assertEquals(Arrays.asList(new String[] {"extra", "all-public"}), Arrays.asList(dd.getModuleConfigurations()));
         assertEquals(Arrays.asList(new String[] {"extra"}), Arrays.asList(dd.getDependencyConfigurations("extra")));  
         assertEquals(Arrays.asList(new String[] {"all-public"}), Arrays.asList(dd.getDependencyConfigurations("all-public")));  
     }

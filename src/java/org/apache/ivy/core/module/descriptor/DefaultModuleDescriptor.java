@@ -161,7 +161,7 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
 	private String _status = StatusManager.getCurrent().getDefaultStatus();
 	private Date _publicationDate;
 	private Date _resolvedPublicationDate;
-	private List _dependencies = new ArrayList();
+	private List _dependencies = new ArrayList(); // List (DependencyDescriptor)
 	private Map _configurations = new LinkedHashMap(); // Map(String conf -> Configuration)
     private Map _artifactsByConf = new HashMap(); // Map (String conf -> Collection(Artifact))
     private Collection _artifacts = new LinkedHashSet(); // Collection(Artifact) // all artifacts could also be found in the artifactsByConf map, but here we can preserve the order

@@ -20,9 +20,8 @@ package org.apache.ivy.core.module.descriptor;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -95,9 +94,9 @@ public class DefaultDependencyDescriptor implements DependencyDescriptor {
         if (moduleConfs.length == 1 && "*".equals(moduleConfs[0])) {
             if (dd instanceof DefaultDependencyDescriptor) {
                 DefaultDependencyDescriptor ddd = (DefaultDependencyDescriptor)dd;
-                newdd._confs = new HashMap(ddd._confs);
-                newdd._artifactsExcludes = new HashMap(ddd._artifactsExcludes);
-                newdd._artifactsIncludes = new HashMap(ddd._artifactsIncludes);
+                newdd._confs = new LinkedHashMap(ddd._confs);
+                newdd._artifactsExcludes = new LinkedHashMap(ddd._artifactsExcludes);
+                newdd._artifactsIncludes = new LinkedHashMap(ddd._artifactsIncludes);
             } else {
                 throw new IllegalArgumentException("dependency descriptor transformation does not support * module confs with descriptors which aren't DefaultDependencyDescriptor");
             }
@@ -115,10 +114,10 @@ public class DefaultDependencyDescriptor implements DependencyDescriptor {
     }
     
     private ModuleRevisionId _revId;
-    private Map _confs = new HashMap();
-    private Map _artifactsIncludes = new HashMap(); // Map (String masterConf -> Collection(DependencyArtifactDescriptor))
-    private Map _artifactsExcludes = new HashMap(); // Map (String masterConf -> Collection(DependencyArtifactDescriptor))
-    private Set _extends = new HashSet();
+    private Map _confs = new LinkedHashMap();
+    private Map _artifactsIncludes = new LinkedHashMap(); // Map (String masterConf -> Collection(DependencyArtifactDescriptor))
+    private Map _artifactsExcludes = new LinkedHashMap(); // Map (String masterConf -> Collection(DependencyArtifactDescriptor))
+    private Set _extends = new LinkedHashSet();
     
     /**
      * Used to indicate that this revision must be used in case of conflicts, independently
@@ -298,7 +297,7 @@ public class DefaultDependencyDescriptor implements DependencyDescriptor {
         }
         Collection artifacts = (Collection)artifactsMap.get(moduleConfiguration);
         Collection defArtifacts = (Collection)artifactsMap.get("*");
-        Set ret = new HashSet();
+        Set ret = new LinkedHashSet();
         if (artifacts != null) {
             ret.addAll(artifacts);
         }
@@ -309,7 +308,7 @@ public class DefaultDependencyDescriptor implements DependencyDescriptor {
     }
     
     public DependencyArtifactDescriptor[] getDependencyArtifactsIncludes(String[] moduleConfigurations) {
-        Set artifacts = new HashSet();
+        Set artifacts = new LinkedHashSet();
         for (int i = 0; i < moduleConfigurations.length; i++) {
             artifacts.addAll(Arrays.asList(getDependencyArtifactsIncludes(moduleConfigurations[i])));
         }
@@ -317,7 +316,7 @@ public class DefaultDependencyDescriptor implements DependencyDescriptor {
     }
     
     public DependencyArtifactDescriptor[] getDependencyArtifactsExcludes(String[] moduleConfigurations) {
-        Set artifacts = new HashSet();
+        Set artifacts = new LinkedHashSet();
         for (int i = 0; i < moduleConfigurations.length; i++) {
             artifacts.addAll(Arrays.asList(getDependencyArtifactsExcludes(moduleConfigurations[i])));
         }
@@ -333,7 +332,7 @@ public class DefaultDependencyDescriptor implements DependencyDescriptor {
     }
     
     private DependencyArtifactDescriptor[] getAllDependencyArtifacts(Map artifactsMap) {
-        Set ret = new HashSet();
+        Set ret = new LinkedHashSet();
         for (Iterator it = artifactsMap.values().iterator(); it.hasNext();) {
             Collection artifacts = (Collection)it.next();
             ret.addAll(artifacts);
