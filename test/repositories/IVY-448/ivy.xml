@@ -1,0 +1,7 @@
+<ivy-module version="1.0">
+    <info organisation="myorg" module="module1"/>
+    <dependencies>
+        <dependency org="myorg" name="module2" rev="1.0" />
+        <dependency org="myorg" name="module3" rev="2.0" />
+	</dependencies>
+</ivy-module>

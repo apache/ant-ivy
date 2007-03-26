@@ -879,7 +879,7 @@ public class IvyNode implements Comparable {
             throw new IllegalStateException("impossible to get conflict manager when data has not been loaded");
         }
         ConflictManager cm = _md.getConflictManager(mid);
-        return cm == null ? _settings.getDefaultConflictManager() : cm;
+        return cm == null ? _settings.getConflictManager(mid) : cm;
     }
     
     public IvyNode getRealNode() {

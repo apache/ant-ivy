@@ -1,0 +1,12 @@
+<ivysettings>
+    <settings defaultResolver="myresolver" defaultConflictManager="all"/>
+    <resolvers>
+			<url name="myresolver">
+				<ivy pattern="${ivy.settings.dir}/[module]/ivy-[revision].xml" />
+				<artifact pattern="${ivy.settings.dir}/[module]/[artifact]-[revision].[ext]" />
+			</url>
+    </resolvers>
+    <modules>
+        <module organisation="myorg" name=".*" conflict-manager="latest-revision"/>
+    </modules>
+</ivysettings>

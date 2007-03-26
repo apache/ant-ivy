@@ -145,6 +145,6 @@ public class LatestConflictManager extends AbstractConflictManager {
     
 
     public String toString() {
-        return String.valueOf(_strategy);
+        return _strategy != null?String.valueOf(_strategy):_strategyName;
     }
 }

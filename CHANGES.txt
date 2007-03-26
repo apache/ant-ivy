@@ -18,6 +18,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - IMPROVE: New "modules in use" section in console report at the end of resolve (IVY-373) (thanks to John Wiliams)
 - IMPROVE: Generated XML reports now contains more information about the resolved module (IVY-446)
 
+- FIX: Conflict managers ignored, when assigned to modules in Ivy configuration (setting, ivyconf.xml) (IVY-448)
 - FIX: Ivy should fail if ';' has been used in publications/artifact/@conf of ivy.xml (IVY-441)
 - FIX: Ivy should fail where dependency uses undefined configuration (IVY-442)
 - FIX: Dynamic revision not calculated properly when using multiple directories (IVY-427)

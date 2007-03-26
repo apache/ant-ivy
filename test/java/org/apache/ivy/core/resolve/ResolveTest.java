@@ -243,6 +243,26 @@ public class ResolveTest extends TestCase {
         assertFalse(report.hasError());
     }
 
+    public void testResolveWithConflictManagerPerModule() throws Exception {
+        // test case for IVY-448
+    	// all modules from myorg
+        // module1 
+    	//    -> module2-1.0
+    	//    -> module3-2.0
+    	// module2
+    	//    -> module3-1.0
+    	// settings use 'all' as default conflict manager, and latest-revision for modules from myorg
+        Ivy ivy = new Ivy();
+        ivy.configure(new File("test/repositories/IVY-448/ivysettings.xml").toURL());
+        ResolveReport report = ivy.resolve(new File("test/repositories/IVY-448/ivy.xml").toURL(),
+        		getResolveOptions(new String[] {"*"}));
+        assertFalse(report.hasError());
+        
+        // rev 1.0 should have been evicted by latest-revision conflict manager
+        assertTrue(getArchiveFileInCache("myorg", "module3", "2.0", "module3", "jar", "jar").exists());
+        assertFalse(getArchiveFileInCache("myorg", "module3", "1.0", "module3", "jar", "jar").exists());
+    }
+
     public void testResolveRequiresIvyFile() throws Exception {
         // mod1.1 depends on mod1.2, mod1.2 has no ivy file
         Ivy ivy = new Ivy();
