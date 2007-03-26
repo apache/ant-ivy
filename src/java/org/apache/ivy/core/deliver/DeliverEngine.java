@@ -35,6 +35,7 @@ import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.plugins.parser.xml.XmlModuleDescriptorParser;
 import org.apache.ivy.plugins.parser.xml.XmlModuleDescriptorUpdater;
+import org.apache.ivy.plugins.report.XmlReportParser;
 import org.apache.ivy.util.Message;
 import org.xml.sax.SAXException;
 
@@ -44,6 +45,31 @@ public class DeliverEngine {
     public DeliverEngine(IvySettings settings) {
 		_settings = settings;
 	}
+
+    /**
+     * Delivers a resolved ivy file based upon last resolve call status.
+     * 
+     * If resolve report file cannot be found in cache, then it throws 
+     * an IllegalStateException (maybe resolve has not been called before ?).
+     *
+     * @param revision the revision to which the module should be delivered
+     * @param destIvyPattern the pattern to which the delivered ivy file should be written
+     * @param options the options with which deliver should be done 
+     */
+    public void deliver(String revision, String destIvyPattern, DeliverOptions options) throws IOException, ParseException {
+    	String resolveId = options.getResolveId();
+    	if (resolveId == null) {
+            throw new IllegalArgumentException("A resolveId must be specified for delivering.");
+    	}
+    	File[] files = options.getCache().getConfigurationResolveReportsInCache(resolveId);
+    	if (files.length == 0) {
+            throw new IllegalStateException("No previous resolve found for id '" + resolveId + "' Please resolve dependencies before delivering.");
+    	}
+    	XmlReportParser parser = new XmlReportParser();
+    	parser.parse(files[0]);
+    	ModuleRevisionId mrid = parser.getResolvedModule();
+    	deliver(mrid, revision, destIvyPattern, options);
+    }
 
     /**
      * Delivers a resolved ivy file based upon last resolve call status.

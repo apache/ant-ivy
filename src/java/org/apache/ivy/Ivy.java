@@ -265,6 +265,10 @@ public class Ivy {
 		_deliverEngine.deliver(mrid, revision, destIvyPattern, DeliverOptions.newInstance(_settings));
 	}
 
+	public void deliver(String revision, String destIvyPattern, DeliverOptions options) throws IOException, ParseException {
+		_deliverEngine.deliver(revision, destIvyPattern, options);
+	}
+
 	/**
 	 * Example of use:
 	 * deliver(mrid, "1.5", "target/ivy/ivy-[revision].xml", 

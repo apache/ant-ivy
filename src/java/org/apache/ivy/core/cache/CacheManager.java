@@ -18,6 +18,7 @@
 package org.apache.ivy.core.cache;
 
 import java.io.File;
+import java.io.FilenameFilter;
 
 import org.apache.ivy.core.IvyPatternHelper;
 import org.apache.ivy.core.module.descriptor.Artifact;
@@ -63,6 +64,16 @@ public class CacheManager {
     
     public File getConfigurationResolveReportInCache(String resolveId, String conf) {
     	return new File(_cache, resolveId + "-" + conf + ".xml");
+    }
+    
+    public File[] getConfigurationResolveReportsInCache(final String resolveId) {
+		final String prefix = resolveId + "-";
+		final String suffix = ".xml";
+    	return _cache.listFiles(new FilenameFilter() {
+			public boolean accept(File dir, String name) {
+				return (name.startsWith(prefix) && name.endsWith(suffix));
+			}
+    	});
     }
 
     /**

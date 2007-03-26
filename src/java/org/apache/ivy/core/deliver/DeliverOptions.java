@@ -32,6 +32,7 @@ public class DeliverOptions {
 	private PublishingDependencyRevisionResolver _pdrResolver = new DefaultPublishingDRResolver(); 
 	private boolean _validate = true;
 	private boolean _resolveDynamicRevisions = true;
+	private String _resolveId;
 	
 	/**
 	 * Returns an instance of DeliverOptions with options corresponding to default values
@@ -154,8 +155,27 @@ public class DeliverOptions {
 		return this;
 	}
 	
+	/**
+	 * Returns the id of a previous resolve to use for delivering.
+	 * @return the id of a previous resolve
+	 */
+	public String getResolveId() {
+		return _resolveId;
+	}
+	
+	/**
+	 * Sets the id of a previous resolve to use for delivering.
+	 * @param resolveId the id of a previous resolve
+	 * @return the instance of DeliverOptions on which the method has been called, 
+	 * for easy method chaining 
+	 */
+	public DeliverOptions setResolveId(String resolveId) {
+		_resolveId = resolveId;
+		return this;
+	}
+	
 	public String toString() {
-		return "status="+_status+" pubdate="+_pubdate+" validate="+_validate+" resolveDynamicRevisions="+_resolveDynamicRevisions+" cache="+_cache;
+		return "status="+_status+" pubdate="+_pubdate+" validate="+_validate+" resolveDynamicRevisions="+_resolveDynamicRevisions+" cache="+_cache+" resolveId="+_resolveId;
 	}
 	
 }

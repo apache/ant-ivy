@@ -328,13 +328,15 @@ public class IvyDeliver extends IvyTask {
                         settings.substitute(deliveryListPath));
             }
         }
-        if (_organisation == null) {
-            throw new BuildException(
-                    "no organisation provided for ivy deliver task: It can either be set explicitely via the attribute 'organisation' or via 'ivy.organisation' property or a prior call to <resolve/>");
-        }
-        if (_module == null) {
-            throw new BuildException(
-                    "no module name provided for ivy deliver task: It can either be set explicitely via the attribute 'module' or via 'ivy.module' property or a prior call to <resolve/>");
+        if (_resolveId == null) {
+	        if (_organisation == null) {
+	            throw new BuildException(
+	                    "no organisation provided for ivy deliver task: It can either be set explicitely via the attribute 'organisation' or via 'ivy.organisation' property or a prior call to <resolve/>");
+	        }
+	        if (_module == null) {
+	            throw new BuildException(
+	                    "no module name provided for ivy deliver task: It can either be set explicitely via the attribute 'module' or via 'ivy.module' property or a prior call to <resolve/>");
+	        }
         }
         if (_revision == null) {
             _revision = Ivy.getWorkingRevision();
@@ -355,8 +357,11 @@ public class IvyDeliver extends IvyTask {
             throw new BuildException(
                     "no status provided: either provide it as parameter or through the ivy.status.default property");
         }
-        ModuleRevisionId mrid = ModuleRevisionId.newInstance(
-        		_organisation, _module, _revision);
+        
+        ModuleRevisionId mrid = null;
+        if (_resolveId == null) {
+        	mrid = ModuleRevisionId.newInstance(_organisation, _module, _revision);
+        }
         boolean isLeading = false;
         try {
             if (!_deliveryList.exists()) {
@@ -371,13 +376,17 @@ public class IvyDeliver extends IvyTask {
             } else {
                 drResolver = new DefaultPublishingDRResolver();
             }
-            ivy.deliver(mrid, _pubRevision, _deliverpattern, 
-            		new DeliverOptions(_status, pubdate, 
-            				CacheManager.getInstance(settings, _cache), 
-            				drResolver, doValidate(settings), _replacedynamicrev));
-
+            
+            DeliverOptions options = new DeliverOptions(_status, pubdate, 
+    				CacheManager.getInstance(settings, _cache), 
+    				drResolver, doValidate(settings), _replacedynamicrev).setResolveId(_resolveId);
+            if (mrid == null) {
+            	ivy.deliver(_pubRevision, _deliverpattern, options);
+            } else {
+            	ivy.deliver(mrid, _pubRevision, _deliverpattern, options);
+            }
         } catch (Exception e) {
-            throw new BuildException("impossible to deliver " + mrid + ": " + e, e);
+            throw new BuildException("impossible to deliver " + mrid == null ? _resolveId : mrid + ": " + e, e);
         } finally {
             if (isLeading) {
                 if (_deliveryList.exists()) {
