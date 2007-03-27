@@ -110,6 +110,13 @@
 		<property name="offline" value="true" />
 	</target>
 	
+	<target name="default-version">
+		<tstamp> 
+			<format property="pubdate" pattern="yyyyMMddHHmmss"/>  
+		</tstamp>
+		<property name="version.prefix" value="${target.ivy.version}-local-"/>
+		<property name="build.version" value="${version.prefix}${pubdate}"/>
+	</target>
 
     <!-- =================================================================
                DEPENDENCY MNGT, COMPILATION AND JAR
@@ -291,15 +298,15 @@
 	
 	<target name="coverage-report" depends="emma, test-report"  unless="skip.test"
 			description="run tests with instrumentation and generate coverage report">
-		<mkdir dir="${doc.build.dir}/coverage" />
+		<mkdir dir="${coverage.report.dir}" />
 		<emma>
 		    <report sourcepath="${src.dir}" >
 		        <fileset dir="${coverage.dir}" >
 		          <include name="*.emma" />
 		        </fileset>
 
-		        <txt outfile="${doc.build.dir}/coverage/coverage.txt" />
-		        <html outfile="${doc.build.dir}/coverage/coverage.html" />
+		        <txt outfile="${coverage.report.dir}/coverage.txt" />
+		        <html outfile="${coverage.report.dir}/coverage.html" />
 		     </report>
 		 </emma>
 	</target>
@@ -308,97 +315,6 @@
 		<javadoc destdir="${javadoc.build.dir}">
 			<fileset dir="${src.dir}"/>
 		</javadoc>
-	</target>
-	
-    <!-- =================================================================
-               DISTRIBUTION
-         ================================================================= -->
-	<target name="zip-doc" depends="default-version" description="zip the documentation">
-		<zip basedir="${basedir}/doc" destfile="${distrib.dir}/ivy-${build.version}-doc.zip"/>
-	</target>
-
-	<target name="snapshot-src" depends="default-version">
-		<mkdir dir="${distrib.dir}"/>
-		<zip destfile="${distrib.dir}/ivy-${build.version}-src.zip">
-			<zipfileset dir="${src.dir}" prefix="ivy-${build.version}/src/java"/>
-			<zipfileset dir="${basedir}/src/example" prefix="ivy-${build.version}/src/example"/>
-			<zipfileset dir="${test.dir}" prefix="ivy-${build.version}/test/java"/>
-			<zipfileset dir="${basedir}/test/repositories" prefix="ivy-${build.version}/test/repositories"/>
-			<zipfileset dir="${basedir}/test/buildlist" prefix="ivy-${build.version}/test/buildlist"/>
-			<zipfileset dir="${basedir}/test/triggers" prefix="ivy-${build.version}/test/triggers"/>
-			<zipfileset dir="${basedir}/test/xsl" prefix="ivy-${build.version}/test/xsl"/>
-			<zipfileset dir="${src.dir}/org/apache/ivy/plugins/parser/xml" includes="ivy.xsd" fullpath="ivy-${build.version}/ivy.xsd"/>
-			<zipfileset dir="${basedir}" includes="DISCLAIMER" fullpath="ivy-${build.version}/DISCLAIMER"/>
-			<zipfileset dir="${basedir}" includes="LICENSE" fullpath="ivy-${build.version}/LICENSE"/>
-			<zipfileset dir="${basedir}" includes="CHANGES.txt" fullpath="ivy-${build.version}/CHANGES.txt"/>
-			<zipfileset dir="${basedir}" includes="ivysettings.xml" fullpath="ivy-${build.version}/ivysettings.xml"/>
-			<zipfileset dir="${basedir}" includes="build.properties" fullpath="ivy-${build.version}/build.properties"/>
-			<zipfileset dir="${basedir}" includes="ivy.xml" fullpath="ivy-${build.version}/ivy.xml"/>
-
-			<zipfileset dir="${basedir}" includes="build.xml" fullpath="ivy-${build.version}/build.xml"/>
-		</zip>
-	</target>
-
-	<target name="snapshot-bin" depends="default-version, jar">
-		<mkdir dir="${distrib.dir}"/>
-		<ivy:deliver 
-			deliverpattern="${distrib.dir}/ivy.xml" 
-			pubrevision="${build.version}" 
-			pubdate="${pubdate}"
-		    status="${status}"/>
-		<zip destfile="${distrib.dir}/ivy-${build.version}-bin.zip">
-			<zipfileset dir="${basedir}/src/example" prefix="ivy-${build.version}/src/example"/>
-			<zipfileset dir="${basedir}" includes="DISCLAIMER" fullpath="ivy-${build.version}/DISCLAIMER"/>
-			<zipfileset dir="${basedir}" includes="LICENSE" fullpath="ivy-${build.version}/LICENSE"/>
-			<zipfileset dir="${basedir}" includes="CHANGES.txt" fullpath="ivy-${build.version}/CHANGES.txt"/>
-			<zipfileset dir="${src.dir}/org/apache/ivy/plugins/parser/xml" includes="ivy.xsd" fullpath="ivy-${build.version}/ivy.xsd"/>
-			<zipfileset dir="${distrib.dir}" includes="ivy.xml" fullpath="ivy-${build.version}/ivy.xml"/>
-
-			<zipfileset dir="${lib.dir}" prefix="ivy-${build.version}/lib" excludes="junit*.jar,ant*.jar" />
-			<zipfileset dir="${artifacts.build.dir}" includes="${final.name}" fullpath="ivy-${build.version}/ivy-${build.version}.jar"/>
-			<zipfileset dir="${artifacts.build.dir}" includes="${final.core.name}" fullpath="ivy-${build.version}/ivy-core-${build.version}.jar"/>
-		</zip>
-		<copy file="${basedir}/DISCLAIMER" todir="${distrib.dir}" />
-		<copy file="${basedir}/LICENSE" todir="${distrib.dir}" />
-		<copy file="${basedir}/CHANGES.txt" todir="${distrib.dir}" />
-		<copy file="${artifacts.build.dir}/${final.name}" todir="${distrib.dir}" />
-		<copy file="${artifacts.build.dir}/${final.core.name}" todir="${distrib.dir}" />
-		<copy file="${src.dir}/org/apache/ivy/plugins/parser/xml/ivy.xsd" todir="${distrib.dir}" />
-	</target>
-	
-	<target name="default-version">
-		<tstamp> 
-			<format property="pubdate" pattern="yyyyMMddHHmmss"/>  
-		</tstamp>
-		<property name="version.prefix" value="${target.ivy.version}-local-"/>
-		<property name="build.version" value="${version.prefix}${pubdate}"/>
-	</target>
-	
-	<target name="snapshot-version">
-		<property name="version.prefix" value="${target.ivy.version}-dev-"/>
-	</target>
-	
-	<target name="release-version">
-		<input message="please enter version: " addproperty="build.version"/>
-		<input message="please enter status: (integration,milestone,release)" addproperty="status"/>
-	</target>
-	
-	<target name="snapshot" depends="clean, snapshot-version, coverage-report, snapshot-src, snapshot-bin, javadoc, zip-doc" description="used for nightly and integration builds"/>
-	<target name="release" depends="release-version, snapshot" description="make a new release of Ivy"/>
-
-	<!-- 
-		publication on ivy web site
-		requires to be logged in on people.apache.org 
-	-->
-	<available property="loggedin" file="/www/incubator.apache.org/ivy/index.html"/>
-	<target name="publish-latest" if="loggedin" description="publishes the last snapshot done to ivy web site">
-	   <property name="html.dir" value="/www/incubator.apache.org/ivy/downloads/latest/"/>
-	   <delete>
-	       <fileset dir="${html.dir}"/>
-	   </delete>
-	   <copy todir="${html.dir}">
-	       <fileset dir="${distrib.dir}"/>
-	   </copy>
 	</target>
 
 

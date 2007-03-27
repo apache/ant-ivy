@@ -1,0 +1,134 @@
+<project name="IvyRelease" default="snapshot" xmlns:ivy="antlib:fr.jayasoft.ivy.ant">
+	<import file="build.xml"/>
+
+	<target name="generate-doc">
+		<!-- requires java 6 jdk in path and Apache Ant 1.7 -->
+        <copy todir="${doc.build.dir}">
+	        <fileset dir="${doc.src.dir}" includes="images/**,style/**,samples/**" />
+        </copy>
+        <script language="javascript"><![CDATA[
+          importClass(java.io.File);
+        
+	      fs = project.createDataType("fileset");
+	      fs.setDir( new File(project.getProperty("doc.src.dir")) );
+	      fs.setIncludes("**/*.html");
+	      fs.setExcludes("template.html,"
+	      				+"*Template.html,"
+	      				+"conflict-solving-algo.html,"
+	      				+"doc/use.html,"
+	      				+"doc/reference.html,"
+	      				+"samples/**,"
+	      				+"reports/**,"
+	      				+"xooki/**,"
+	      				+"presentations/**,"
+	      				+"test/**");
+	
+	      // Get the files (array) of that fileset
+	      ds = fs.getDirectoryScanner(project);
+	      srcFiles = ds.getIncludedFiles();
+	
+	      // iterate over that array
+	      for (i=0; i<srcFiles.length; i++) {
+	
+	        // get the values via Java API
+	        var file = new File(fs.getDir(project), srcFiles[i]);
+	        
+			var basedir = file.getParent();
+			var filename = file.getName();
+			var filepath = srcFiles[i].substring(0, srcFiles[i].lastIndexOf(project.getProperty("file.separator"))+1);
+        
+	        exec = project.createTask("exec");
+	        exec.setDir(new File(basedir));
+	        exec.setExecutable("jrunscript");
+	        exec.createArg().setValue(project.getProperty("doc.src.dir")+"/xooki/xooki.js");
+	        exec.createArg().setValue("-noddtree");
+	        exec.createArg().setValue(filename);
+	        exec.createArg().setValue(project.getProperty("doc.build.dir")+"/"+filepath);
+	        exec.perform();
+		  }
+        ]]></script>
+	</target>
+
+	<target name="all-doc" depends="javadoc, generate-doc" />
+	
+	<target name="snapshot-src" depends="default-version,all-doc">
+		<mkdir dir="${distrib.dir}"/>
+		<zip destfile="${distrib.dir}/ivy-${build.version}-src.zip">
+			<zipfileset dir="${doc.build.dir}" prefix="ivy-${build.version}/doc"/>
+			<zipfileset dir="${src.dir}" prefix="ivy-${build.version}/src/java"/>
+			<zipfileset dir="${basedir}/src/example" prefix="ivy-${build.version}/src/example"/>
+			<zipfileset dir="${test.dir}" prefix="ivy-${build.version}/test/java"/>
+			<zipfileset dir="${basedir}/test/repositories" prefix="ivy-${build.version}/test/repositories"/>
+			<zipfileset dir="${basedir}/test/buildlist" prefix="ivy-${build.version}/test/buildlist"/>
+			<zipfileset dir="${basedir}/test/triggers" prefix="ivy-${build.version}/test/triggers"/>
+			<zipfileset dir="${basedir}/test/xsl" prefix="ivy-${build.version}/test/xsl"/>
+			<zipfileset dir="${src.dir}/org/apache/ivy/plugins/parser/xml" includes="ivy.xsd" fullpath="ivy-${build.version}/ivy.xsd"/>
+			<zipfileset dir="${basedir}" includes="DISCLAIMER" fullpath="ivy-${build.version}/DISCLAIMER"/>
+			<zipfileset dir="${basedir}" includes="LICENSE" fullpath="ivy-${build.version}/LICENSE"/>
+			<zipfileset dir="${basedir}" includes="CHANGES.txt" fullpath="ivy-${build.version}/CHANGES.txt"/>
+			<zipfileset dir="${basedir}" includes="RELEASE_NOTES" fullpath="ivy-${build.version}/RELEASE_NOTES"/>
+			<zipfileset dir="${basedir}" includes="ivysettings.xml" fullpath="ivy-${build.version}/ivysettings.xml"/>
+			<zipfileset dir="${basedir}" includes="build.properties" fullpath="ivy-${build.version}/build.properties"/>
+			<zipfileset dir="${basedir}" includes="ivy.xml" fullpath="ivy-${build.version}/ivy.xml"/>
+
+			<zipfileset dir="${basedir}" includes="build.xml" fullpath="ivy-${build.version}/build.xml"/>
+		</zip>
+	</target>
+
+	<target name="snapshot-bin" depends="default-version, jar, all-doc">
+		<mkdir dir="${distrib.dir}"/>
+		<ivy:deliver 
+			deliverpattern="${distrib.dir}/ivy.xml" 
+			pubrevision="${build.version}" 
+			pubdate="${pubdate}"
+		    status="${status}"/>
+		<zip destfile="${distrib.dir}/ivy-${build.version}-bin.zip">
+			<zipfileset dir="${doc.build.dir}" prefix="ivy-${build.version}/doc"/>
+			<zipfileset dir="${basedir}/src/example" prefix="ivy-${build.version}/src/example"/>
+			<zipfileset dir="${basedir}" includes="DISCLAIMER" fullpath="ivy-${build.version}/DISCLAIMER"/>
+			<zipfileset dir="${basedir}" includes="LICENSE" fullpath="ivy-${build.version}/LICENSE"/>
+			<zipfileset dir="${basedir}" includes="CHANGES.txt" fullpath="ivy-${build.version}/CHANGES.txt"/>
+			<zipfileset dir="${basedir}" includes="RELEASE_NOTES" fullpath="ivy-${build.version}/RELEASE_NOTES"/>
+			<zipfileset dir="${src.dir}/org/apache/ivy/plugins/parser/xml" includes="ivy.xsd" fullpath="ivy-${build.version}/ivy.xsd"/>
+			<zipfileset dir="${distrib.dir}" includes="ivy.xml" fullpath="ivy-${build.version}/ivy.xml"/>
+
+			<zipfileset dir="${artifacts.build.dir}" includes="${final.name}" fullpath="ivy-${build.version}/ivy-${build.version}.jar"/>
+			<zipfileset dir="${artifacts.build.dir}" includes="${final.core.name}" fullpath="ivy-${build.version}/ivy-core-${build.version}.jar"/>
+		</zip>
+		<copy file="${basedir}/DISCLAIMER" todir="${distrib.dir}" />
+		<copy file="${basedir}/LICENSE" todir="${distrib.dir}" />
+		<copy file="${basedir}/CHANGES.txt" todir="${distrib.dir}" />
+		<copy file="${basedir}/RELEASE_NOTES" todir="${distrib.dir}" />
+		<copy file="${artifacts.build.dir}/${final.name}" todir="${distrib.dir}" />
+		<copy file="${artifacts.build.dir}/${final.core.name}" todir="${distrib.dir}" />
+		<copy file="${src.dir}/org/apache/ivy/plugins/parser/xml/ivy.xsd" todir="${distrib.dir}" />
+	</target>
+	
+	<target name="snapshot-version">
+		<property name="version.prefix" value="${target.ivy.version}-dev-"/>
+	</target>
+	
+	<target name="release-version">
+		<input message="please enter version: " addproperty="build.version"/>
+		<input message="please enter status: (integration,milestone,release)" addproperty="status"/>
+	</target>
+	
+	<target name="snapshot" depends="clean, snapshot-version, coverage-report, snapshot-src, snapshot-bin" description="used for nightly and integration builds"/>
+	<target name="release" depends="release-version, snapshot" description="make a new release of Ivy"/>
+
+	<!-- 
+		publication on ivy web site
+		requires to be logged in on people.apache.org 
+	-->
+	<available property="loggedin" file="/www/incubator.apache.org/ivy/index.html"/>
+	<target name="publish-latest" if="loggedin" description="publishes the last snapshot done to ivy web site">
+	   <property name="html.dir" value="/www/incubator.apache.org/ivy/downloads/latest/"/>
+	   <delete>
+	       <fileset dir="${html.dir}"/>
+	   </delete>
+	   <copy todir="${html.dir}">
+	       <fileset dir="${distrib.dir}"/>
+	   </copy>
+	</target>
+
+</project>

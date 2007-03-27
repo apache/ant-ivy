@@ -130,7 +130,7 @@
             {
               "id":"doc/releasenotes/older",
               "title":"older versions",
-              "abstract":true,
+              "isAbstract":true,
               "children": [
                   {
                     "id":"doc/releasenotes/1.1",

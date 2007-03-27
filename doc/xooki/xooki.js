@@ -17,8 +17,19 @@
 	Some code is largely inspired by code found in the dojo toolkit, 
 	see http://dojotoolkit.org/ for more information.
 */
+
+/*
+This script can be either embedded in a xooki page for in browser processing, or used in batch using rhino or java 6 javascript tool:
+jrunscript path/to/xooki.js [-noddtree] inputFileFromXookiSite.html [path/to/dir/to/put/generated/file]
+
+Be sure to be in the directory where the html input to process is when running this command.
+ */
+var batchMode = (typeof arguments != 'undefined');
+
 var xooki = {};
 xooki.console = ""; // used for debugging purpose only, and only when the debug div is not yet created
+xooki.config = {};
+xooki.c = xooki.config;
 
 function t(msg) {
     // returns the internationalized version of the message, or the message if no translation is available
@@ -47,7 +58,11 @@ function css(clss) {
 function u(path) {
   // convert a path relative to the root to a full URL
   // u stands for Url
-  return xooki.c.root + path;
+  if (batchMode) {
+	return xooki.c.relativeRoot+path;
+  } else {
+	return xooki.c.root + path;
+  }
 }
 function cu(urlCfgProp) {
   // get a path from a configuration path and convert it to an URL
@@ -161,13 +176,13 @@ xooki.url = {
             document.write('<' + 'script');
             document.write(' language="javascript"');
             document.write(' type="text/javascript"');
-            document.write(' src="' + script_filename + '">');
+            document.write(' src="' + xooki.u(script_filename) + '">');
             document.write('</' + 'script' + '>');
         },
 
         action: function(action) {        
             // returns the url for an action on the same page
-            loc = window.location.toString();
+            loc = batchMode?'':xooki.pageURL;
             if (loc.indexOf("#") != -1) {
                 loc = loc.substring(0, loc.indexOf("#"));
             }
@@ -363,7 +378,7 @@ xooki.display = function(message, background) {
 }
 
 xooki.debug = function(message) {
-    var console = document.getElementById('xooki-console');
+    var console = typeof document == 'undefined' ? false : document.getElementById('xooki-console');
     if (console) {
         console.value += message + "\n";
     } else {
@@ -372,7 +387,7 @@ xooki.debug = function(message) {
 }
 
 xooki.debugShowDetail = function (message) {
-    var detail = document.getElementById('xooki-debug-detail');
+    var detail = typeof document == 'undefined' ? false : document.getElementById('xooki-debug-detail');
     if (detail) {
         detail.value=message;
     } else {
@@ -391,12 +406,22 @@ xooki.html = {
     },
     
     pageLink: function(page) {
-    	if (page.abstract) {
+    	if (page.isAbstract) {
     		return page.title;
     	} else {
     		return '<a href="'+pu(page.id)+'" '+(page.id == xooki.page.id?'class="current"':'')+'>'+page.title+'</a>';
     	}
-    }
+    },
+	
+	// insert  the given  header in the html head
+	// can be used only when the browser is still in the head !
+	addHeader: function(/* string */ head) {
+		document.write(head);
+	},
+	
+	setBody: function( /* string */ body) {
+		document.body.innerHTML = body;
+	}
 };
 
 xooki.component = {
@@ -421,14 +446,16 @@ xooki.component = {
         		menu += '<li id="xooki-'+page.children[i].id+'">'+xooki.html.pageLink(page.children[i]);
         		smenu = arguments.callee(page.children[i]);
         		if (smenu != '') {
-        			menu += '<ul ';
         			if (smenu.indexOf('id="xooki-'+xooki.page.id+'"') != -1 
         				|| page.children[i].id == xooki.page.id) {
         				// either a descendant or the node processed is the current page node
         				// we specify that the menu must be opened by default
-        				menu += 'rel="open"';
-        			}
-        			menu += '>'+smenu+'</ul>';
+        				menu += '<ul rel="open"';
+	        			menu += '>'+smenu+'</ul>';
+        			} else if (xooki.c.useddtree) {
+						menu += '<ul ';
+	        			menu += '>'+smenu+'</ul>';
+					}
         		} 
         		menu += '</li>';
         	}
@@ -534,12 +561,14 @@ xooki.render.page = function() {
             + xooki.c.debugPanel;
     }
 
-    document.body.innerHTML = xooki.string.processTemplate(xooki.template.body, xooki.c);
+    xooki.html.setBody(xooki.string.processTemplate(xooki.template.body, xooki.c));
     
     xooki.input.applyChanges();
     
-    // enable dynamic tree menu 
-	ddtreemenu.createTree(css("treemenu"), false);
+	if (xooki.c.useddtree) {
+	    // enable dynamic tree menu 
+		ddtreemenu.createTree(css("treemenu"), false);
+	}
 };
 
 xooki.render.main = function() {
@@ -554,7 +583,7 @@ xooki.render.main = function() {
 
 xooki.input = {
     source: function() {
-        if (document.getElementById('xooki-source') != null) {
+        if (typeof document != 'undefined' && document.getElementById('xooki-source') != null) {
             this._source = document.getElementById('xooki-source').value;
         }
         return this._source;
@@ -582,6 +611,7 @@ xooki.input = {
             }
             filters = this.getInputFilters(format);
             for (var i in filters) {
+				xooki.debug('processing filter '+filters[i]);
                 f = xooki.input.filters[filters[i]];
                 if (typeof f == "function") {
                 	try {
@@ -718,6 +748,131 @@ xooki.postProcess = function() {
 	window.onkeypress = keyCtrl;
 };
 
+
+if (typeof xooki.io == "undefined") {
+    xooki.io = {};
+}
+
+if (batchMode) {
+	importPackage(java.io);
+	
+	xooki.io.loadFile = function( url ) {
+	  var str = '';
+      var r = new BufferedReader(new FileReader(url));
+	  line = r.readLine();
+	  while (line != null) {
+		str += line + '\n';
+		line = r.readLine();
+	  }
+	  r.close();
+	  return str;
+    };
+	
+	xooki.io.saveFile = function (fileUrl, content) {
+		p = new File(fileUrl).getParentFile();
+		if (p != null) {
+			p.mkdirs();
+		}
+		pw = new PrintWriter(new FileWriter(fileUrl));
+		pw.write(content);
+		pw.close();
+		return true;
+	}
+
+    xooki.url.loadURL = function( url ) {
+		return xooki.io.loadFile(url);
+	};
+	
+	xooki.html.addHeader = function (head) {
+		xooki.pageContent = xooki.pageContent.replace(/<\/head>/, head+'\n</head>');
+	};
+	
+	xooki.html.setBody = function(body) {
+		xooki.pageContent = xooki.pageContent.replace(/<body>(.|[^,])*<\/body>/gm, '<body>'+body+'</body>');
+	}
+	
+	xooki.url.include = function(script_filename) {
+		xooki.html.addHeader('<script language="javascript" type="text/javascript" src="'+xooki.c.relativeRoot+'xooki/'+script_filename+'"></script>');
+	};
+	
+	xooki.input.source = function() {
+		if (typeof this._source == 'undefined') {
+			xooki.debug('searching source');
+			var beg = xooki.pageContent.indexOf('<textarea id="xooki-source">');
+			beg += '<textarea id="xooki-source">'.length;
+			var end = xooki.pageContent.lastIndexOf('</textarea>');
+			this._source = xooki.pageContent.substring(beg, end);
+			xooki.debug('source found');
+		}
+		return this._source;
+	}
+	
+	xooki.render.page = function() {
+	    // realize all components available
+		xooki.debug('realizing components');
+	    for (var k in xooki.component) {
+	        xooki.c[k] = xooki.component[k]();
+	    }
+	    
+		xooki.debug('processing body');
+		xooki.c.body = xooki.input.processed();
+
+		xooki.debug('updating body');
+		var body = xooki.string.processTemplate(xooki.template.body, xooki.c);
+		if (xooki.c.useddtree) {
+			body += '<script language="javascript" type="text/javascript">ddtreemenu.createTree("'+css("treemenu")+'", false);</script>';
+		}
+	    xooki.html.setBody(body);
+	};
+
+	xooki.display = function(message, background) {
+		print(message);
+	};
+	
+	xooki.debug = function (message) {
+		if (xooki.c.debug) {
+			print(message+'\n');
+		}
+	};
+	var i=0;
+	if (arguments.length > i && arguments[0] == '-noddtree') {
+		xooki.c.useddtree = false;
+		i++;
+	}
+	
+	if (arguments.length > i && arguments[0] == '-debug') {
+		xooki.c.debug = true;
+		i++;
+	} else {
+		xooki.c.debug = false;
+	}
+	
+	var file = 'index.html';
+	if (arguments.length > i) {
+		file = arguments[i];
+		i++;
+	}
+	var generateToDir = "gen";
+	if (arguments.length > i) {
+		generateToDir = arguments[i];
+		i++;
+	}
+	
+	print('processing '+file+'...\n');
+	xooki.pageContent = xooki.io.loadFile(file);
+	
+	var m = /var xookiConfig = {.*};/.exec(xooki.pageContent);
+	if (typeof m != 'undefined' && m != null) {
+		eval(m[0]);
+	}
+}
+
+if (batchMode) {
+	xooki.pageURL = new File(file).toURL().toExternalForm();
+} else {
+	xooki.pageURL = window.location.toString();
+}
+
 // init xooki engine
 (function() {
     ////////////////////////////////////////////////////////////////////////////
@@ -734,19 +889,26 @@ xooki.postProcess = function() {
             }
         }
     };
-    xooki.config = {};
-    xooki.c = xooki.config;
     if (typeof xookiConfig != "undefined") {xooki.util.mix(xookiConfig, xooki.config);}
     xooki.c.initProperty = initConfigProperty;
     xooki.c.initProperty("level", 0);
     xooki.c.initProperty("root", function() {
-    	root = window.location.toString();
+    	root = xooki.pageURL;
     	// remove trailing parts of the URL to go the root depending on level
     	for (var i=0; i < xooki.c.level + 1; i++) {
     		root = root.substring(0, root.lastIndexOf('/'));
     	}
     	return root + '/';
     });
+    xooki.c.initProperty("relativeRoot", function() {
+    	relativeRoot = '';
+    	for (var i=0; i < xooki.c.level; i++) {
+    		relativeRoot += '../';
+    	}
+    	return relativeRoot;
+    });
+
+    xooki.c.initProperty("useddtree", true);
 
     var globalConfig = xooki.json.loadURL(u("config.json"));
     if (globalConfig != null) {
@@ -755,7 +917,7 @@ xooki.postProcess = function() {
 
     xooki.c.initProperty("defaultInputFormat", "xooki");
     xooki.c.initProperty("xookiInputFormat", ["xooki"]);
-    xooki.c.initProperty("allowEdit", document.location.toString().substr(0,5) == "file:");
+    xooki.c.initProperty("allowEdit", !batchMode && xooki.pageURL.substr(0,5) == "file:");
     
     xooki.input.format.define("xooki", ["code", "shortcuts", "url", "xookiLinks", "jira", "lineBreak"]);
     
@@ -772,13 +934,15 @@ xooki.postProcess = function() {
     xooki.c.css = (typeof xooki.c.css != "undefined")?xooki.c.css:{};    
         
     xooki.c.messages = xooki.json.loadURL(cu("messages")); 
-    xooki.c.browser = {
-        NS: (window.Event) ? 1 : 0
-    };
+	if (!batchMode) {
+	    xooki.c.browser = {
+	        NS: (window.Event) ? 1 : 0
+	    };
     
-    // action
-    // TODO: better handle action extraction
-    xooki.c.action = window.location.search == '?action=print'?'print':xooki.c.action;
+	    // action
+	    // TODO: better handle action extraction
+		xooki.c.action = window.location.search == '?action=print'?'print':xooki.c.action;
+	}
     
     ////////////////////////////////////////////////////////////////////////////
     ////////////////// TOC init
@@ -833,7 +997,7 @@ xooki.postProcess = function() {
        	}
     };
 	
-	var match = new RegExp("^.*\\/((?:.*\\/){"+xooki.config.level+"}[^\\/]*)(?:\\.\\w+)(?:\\?.+)?$", "g").exec(window.location.toString());
+	var match = new RegExp("^.*\\/((?:.*\\/){"+xooki.config.level+"}[^\\/]*)(?:\\.\\w+)(?:\\?.+)?$", "g").exec(xooki.pageURL);
 	var curPageId;
 	if (match == null || match[1] == '') {
 		curPageId = "index";
@@ -858,26 +1022,30 @@ xooki.postProcess = function() {
     xooki.template.source = xooki.url.loadURL(xooki.c.action == "print"?cu("printTemplate"):cu("template"));
 	if(xooki.template.source != null) {
 		xooki.template.head = xooki.template.source.match(/<head>([^§]*)<\/head>/im)[1];
+		var root = batchMode?xooki.c.relativeRoot:xooki.c.root;
 		
         var head = xooki.string.processTemplate(xooki.template.head, xooki.config);
-		head = head.replace(/href="([^\\$:"]+)"/g, 'href="'+xooki.c.root+'$1"');
-		document.write(head);
+		head = head.replace(/href="([^\\$:"]+)"/g, 'href="'+root+'$1"');
+		xooki.html.addHeader(head);
 
 		var body = xooki.template.source.match(/<body>([^§]*)<\/body>/im)[1];
-		body = body.replace(/href="([^\\$:"]+)"/g, 'href="'+xooki.c.root+'$1"');
-		xooki.template.body = body.replace(/src="([^\\$:"]+)"/g, 'src="'+xooki.c.root+'$1"');		
+		body = body.replace(/href="([^\\$:"]+)"/g, 'href="'+root+'$1"');
+		xooki.template.body = body.replace(/src="([^\\$:"]+)"/g, 'src="'+root+'$1"');		
 	}
 	
 
     ////////////////////////////////////////////////////////////////////////////
     ////////////////// includes
     ////////////////////////////////////////////////////////////////////////////
-    xooki.url.include(xooki.u("tree/simpletreemenu.js"));
+	if (batchMode) {
+		xooki.html.addHeader('<script language="javascript" type="text/javascript">xooki = {u: function(url) {return "'+xooki.c.relativeRoot+'xooki/"+url;}};</script>');
+	}
+    xooki.url.include("tree/simpletreemenu.js");
     if (xooki.c.useTrimPath) {
-        xooki.url.include(xooki.u("trimpath/template.js"));
+        xooki.url.include("trimpath/template.js");
     }
     if (xooki.c.allowEdit) {
-        xooki.url.include(xooki.u("xookiEdit.js"));
+        xooki.url.include("xookiEdit.js");
     }
 
     for (var k in xooki.c) {
@@ -920,3 +1088,13 @@ function keyCtrl(evt) {
 		return false;
 	}
 }
+
+if (batchMode) {	
+	xooki.pageContent = xooki.pageContent.replace(/<script type="text\/javascript" src="[^"]*xooki.js"><\/script>/g, '');
+	
+	xooki.render.page();
+
+	print('generating to '+generateToDir+'/'+file);
+	xooki.io.saveFile(generateToDir+'/'+file, xooki.pageContent);
+}
+
