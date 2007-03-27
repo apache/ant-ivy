@@ -100,7 +100,11 @@ public class IvyArtifactProperty extends IvyTask {
         _organisation = getProperty(_organisation, settings, "ivy.organisation", _resolveId);
         _module = getProperty(_module, settings, "ivy.module", _resolveId);
 
-        ensureResolved(isHaltonfailure(), false, getOrganisation(), getModule(), _resolveId);
+        if (_cache == null) {
+            _cache = settings.getDefaultCache();
+        }
+
+        ensureResolved(isHaltonfailure(), false, getOrganisation(), getModule(), _resolveId, _cache);
         
         _conf = getProperty(_conf, settings, "ivy.resolved.configurations", _resolveId);
         if ("*".equals(_conf)) {
@@ -113,9 +117,6 @@ public class IvyArtifactProperty extends IvyTask {
         _organisation = getProperty(_organisation, settings, "ivy.organisation", _resolveId);
         _module = getProperty(_module, settings, "ivy.module", _resolveId);
         
-        if (_cache == null) {
-            _cache = settings.getDefaultCache();
-        }
         
         if ((_organisation == null) && (_resolveId == null)) {
             throw new BuildException("no organisation provided for ivy artifactproperty: It can either be set explicitely via the attribute 'organisation' or via 'ivy.organisation' property or a prior call to <resolve/>");

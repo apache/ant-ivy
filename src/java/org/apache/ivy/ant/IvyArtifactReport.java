@@ -105,16 +105,16 @@ public class IvyArtifactReport extends IvyTask {
 
         Ivy ivy = getIvyInstance();
         IvySettings settings = ivy.getSettings();
+        if (_cache == null) {
+            _cache = settings.getDefaultCache();
+        }
 
-        ensureResolved(isHaltonfailure(), false, null, null, _resolveId);
+        ensureResolved(isHaltonfailure(), false, null, null, _resolveId, _cache);
 
         String organisation = getProperty(null, settings, "ivy.organisation", _resolveId);
         String module = getProperty(null, settings, "ivy.module", _resolveId);
         String revision = getProperty(Ivy.getWorkingRevision(), settings, "ivy.revision", _resolveId);
 
-        if (_cache == null) {
-            _cache = settings.getDefaultCache();
-        }
         _pattern = getProperty(_pattern, settings, "ivy.retrieve.pattern");
         _conf = getProperty(_conf, settings, "ivy.resolved.configurations", _resolveId);
         if ("*".equals(_conf)) {

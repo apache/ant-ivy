@@ -17,6 +17,7 @@
  */
 package org.apache.ivy.ant;
 
+import java.io.File;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
@@ -135,10 +136,10 @@ public class IvyTask extends Task {
     	}
     }
     
-	protected void ensureResolved(boolean haltOnFailure, boolean useOrigin, String org, String module, String resolveId) {
-    	ensureResolved(haltOnFailure, useOrigin, true, org, module, null, resolveId);
+	protected void ensureResolved(boolean haltOnFailure, boolean useOrigin, String org, String module, String resolveId, File cache) {
+    	ensureResolved(haltOnFailure, useOrigin, true, org, module, null, resolveId, cache);
     }
-    protected void ensureResolved(boolean haltOnFailure, boolean useOrigin, boolean transitive, String org, String module, String conf, String resolveId) {
+    protected void ensureResolved(boolean haltOnFailure, boolean useOrigin, boolean transitive, String org, String module, String conf, String resolveId, File cache) {
         ensureMessageInitialised();
         
         String[] confs = null;
@@ -150,6 +151,7 @@ public class IvyTask extends Task {
         
         if (confs.length > 0)  {
         	IvyResolve resolve = createResolve(haltOnFailure, useOrigin);
+        	resolve.setCache(cache);
         	resolve.setTransitive(transitive);
         	resolve.setConf(StringUtils.join(confs, ", "));
         	resolve.setResolveId(resolveId);

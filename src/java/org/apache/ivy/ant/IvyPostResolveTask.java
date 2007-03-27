@@ -74,6 +74,10 @@ public abstract class IvyPostResolveTask extends IvyTask {
         _organisation = getProperty(_organisation, settings, "ivy.organisation");
         _module = getProperty(_module, settings, "ivy.module");
         
+        if (_cache == null) {
+            _cache = settings.getDefaultCache();
+        }
+
         if (isInline()) {
         	_conf = _conf == null ? "*" : _conf;
             if (_organisation == null) {
@@ -110,7 +114,7 @@ public abstract class IvyPostResolveTask extends IvyTask {
         	// there (TODO: maybe we can check which reports exist and extract the configurations
         	// from these report names?)
         	if (!orgAndModSetManually) {
-        		ensureResolved(isHaltonfailure(), isUseOrigin(), isTransitive(), getOrganisation(), getModule(), getProperty(_conf, settings, "ivy.resolved.configurations"), _resolveId);
+        		ensureResolved(isHaltonfailure(), isUseOrigin(), isTransitive(), getOrganisation(), getModule(), getProperty(_conf, settings, "ivy.resolved.configurations"), _resolveId, _cache);
         	}
         	
 	        _conf = getProperty(_conf, settings, "ivy.resolved.configurations");
@@ -131,9 +135,6 @@ public abstract class IvyPostResolveTask extends IvyTask {
         }
         if (_conf == null) {
             throw new BuildException("no conf provided for ivy cache task: It can either be set explicitely via the attribute 'conf' or via 'ivy.resolved.configurations' property or a prior call to <resolve/>");
-        }
-        if (_cache == null) {
-            _cache = settings.getDefaultCache();
         }
         if (_resolveId == null) {
         	_resolveId = ResolveOptions.getDefaultResolveId(getResolvedModuleId());
