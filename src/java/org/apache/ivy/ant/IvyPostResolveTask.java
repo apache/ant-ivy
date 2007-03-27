@@ -98,6 +98,7 @@ public abstract class IvyPostResolveTask extends IvyTask {
         		resolve.setRevision(getRevision());
         		resolve.setInline(true);
         		resolve.setConf(_conf);
+        		resolve.setCache(_cache);
 //        		resolve.setResolveId(_resolveId);  TODO
         		resolve.execute();
         	} else {
