@@ -2757,7 +2757,10 @@ public class ResolveTest extends TestCase {
 	        assertNotNull(nonDefaultManager.getSavedArtifactOrigin((Artifact) report.getArtifacts().get(0)));
     	} finally {
     		// delete the non-default cache
-   			cache2.delete();
+            Delete del = new Delete();
+            del.setProject(new Project());
+            del.setDir(new File("build/cache2"));
+            del.execute();
     	}
     }
     
