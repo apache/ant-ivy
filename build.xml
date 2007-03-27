@@ -334,8 +334,8 @@
 	</target>
 	
 	<target name="javadoc" unless="skip.javadoc">
-		<javadoc destdir="${javadoc.build.dir}">
-			<fileset dir="${src.dir}"/>
+		<javadoc destdir="${javadoc.build.dir}" useexternalfile="true">
+			<fileset dir="${src.dir}" includes="**/*.java,**/package.html"/>
 		</javadoc>
 	</target>
 
