@@ -20,7 +20,7 @@
 
 // this file is included only in edit mode
 
-xooki.url.include(xooki.u("tiddly/util.js"));
+xooki.url.include("tiddly/util.js");
 
 if (typeof xooki.io == "undefined") {
     xooki.io = {};
