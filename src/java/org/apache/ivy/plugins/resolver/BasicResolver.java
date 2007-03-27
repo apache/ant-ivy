@@ -840,6 +840,15 @@ public abstract class BasicResolver extends AbstractResolver {
 		return size;
 	}
 
+    /**
+     * Checks the given resource checksum if a checksum resource exists.
+     * 
+     * @param resource the resource to check
+     * @param dest the file where the resource has been downloaded
+     * @param algorithm the checksum algorithm to use
+     * @return true if the checksum has been successfully checked, false if the checksum wasn't available
+     * @throws IOException if a checksum exist but do not match the downloaded file checksum
+     */
 	private boolean check(Resource resource, File dest, String algorithm) throws IOException {
 		Resource csRes = resource.clone(resource.getName()+"."+algorithm);
 		if (csRes.exists()) {
@@ -847,12 +856,13 @@ public abstract class BasicResolver extends AbstractResolver {
 			File csFile = File.createTempFile("ivytmp", algorithm);
 			try {
 				get(csRes, csFile);
-				if (!ChecksumHelper.check(dest, csFile, algorithm)) {
-					dest.delete();
-					throw new IOException("invalid "+algorithm);
-				} else {
+				try {
+					ChecksumHelper.check(dest, csFile, algorithm);
 					Message.verbose(algorithm + " OK for "+resource);
 					return true;
+				} catch (IOException ex) {
+					dest.delete();
+					throw ex;
 				}
 			} finally {
 				csFile.delete();

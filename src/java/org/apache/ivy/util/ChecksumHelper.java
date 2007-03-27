@@ -36,7 +36,16 @@ public class ChecksumHelper {
 		_algorithms.put("sha1", "SHA-1");
 	}
 	
-	public static boolean check(File dest, File checksumFile, String algorithm) throws IOException {
+	/**
+	 * Checks the checksum of the given file against the given checksumFile,
+	 * and throws an IOException if the checksum is not compliant
+	 * 
+	 * @param dest the file to test
+	 * @param checksumFile the file containing the expected checksum
+	 * @param algorithm the checksum algorithm to use
+	 * @throws IOException if an IO problem occur whle reading files or if the checksum is not compliant
+	 */
+	public static void check(File dest, File checksumFile, String algorithm) throws IOException {
 		String csFileContent = FileUtil.readEntirely(new BufferedReader(new FileReader(checksumFile))).trim().toLowerCase();
 		String expected;
 		int spaceIndex = csFileContent.indexOf(' ');
@@ -47,7 +56,9 @@ public class ChecksumHelper {
 		}
 		
 		String computed = computeAsString(dest, algorithm).trim().toLowerCase();
-		return expected.equals(computed);
+		if (!expected.equals(computed)) {
+			throw new IOException("invalid "+algorithm+": expected="+expected+" computed="+computed);
+		}
 	}    
 	
     public static String computeAsString(File f, String algorithm) throws IOException {

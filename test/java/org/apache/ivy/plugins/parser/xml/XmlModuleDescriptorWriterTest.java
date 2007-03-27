@@ -33,13 +33,21 @@ import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.util.FileUtil;
 
 public class XmlModuleDescriptorWriterTest extends TestCase {
+    private static String LICENSE;
+    static {
+    	try {
+			LICENSE = FileUtil.readEntirely(new BufferedReader(new InputStreamReader(XmlModuleDescriptorWriterTest.class.getResourceAsStream("license.xml"))));
+		} catch (IOException e) {
+			e.printStackTrace();
+		} 
+    }
     private File _dest = new File("build/test/test-write.xml");
 
     public void testSimple() throws Exception {
         DefaultModuleDescriptor md = (DefaultModuleDescriptor)XmlModuleDescriptorParser.getInstance().parseDescriptor(new IvySettings(), XmlModuleDescriptorWriterTest.class.getResource("test-simple.xml"), true);
         md.setResolvedPublicationDate(new GregorianCalendar(2005, 4, 1, 11, 0, 0).getTime());
         md.setResolvedModuleRevisionId(new ModuleRevisionId(md.getModuleRevisionId().getModuleId(), "NONE"));
-        XmlModuleDescriptorWriter.write(md, _dest);
+        XmlModuleDescriptorWriter.write(md, LICENSE, _dest);
         
         assertTrue(_dest.exists());
         String wrote = FileUtil.readEntirely(new BufferedReader(new FileReader(_dest))).replaceAll("\r\n", "\n").replace('\r', '\n');
@@ -49,7 +57,7 @@ public class XmlModuleDescriptorWriterTest extends TestCase {
     
     public void testDependencies() throws Exception {
         ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(new IvySettings(), XmlModuleDescriptorWriterTest.class.getResource("test-dependencies.xml"), true);
-        XmlModuleDescriptorWriter.write(md, _dest);
+        XmlModuleDescriptorWriter.write(md, LICENSE, _dest);
         
         assertTrue(_dest.exists());
         String wrote = FileUtil.readEntirely(new BufferedReader(new FileReader(_dest))).replaceAll("\r\n", "\n").replace('\r', '\n');
@@ -60,7 +68,7 @@ public class XmlModuleDescriptorWriterTest extends TestCase {
     
     public void testFull() throws Exception {
         ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(new IvySettings(), XmlModuleDescriptorWriterTest.class.getResource("test.xml"), true);
-        XmlModuleDescriptorWriter.write(md, _dest);
+        XmlModuleDescriptorWriter.write(md, LICENSE, _dest);
         
         assertTrue(_dest.exists());
         String wrote = FileUtil.readEntirely(new BufferedReader(new FileReader(_dest))).replaceAll("\r\n", "\n").replace('\r', '\n');

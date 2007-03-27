@@ -41,12 +41,18 @@ import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
  */
 public class XmlModuleDescriptorWriter {
     public static void write(ModuleDescriptor md, File output) throws IOException {
+    	write(md, null, output);
+    }
+    public static void write(ModuleDescriptor md, String licenseHeader, File output) throws IOException {
         if (output.getParentFile() != null) {
             output.getParentFile().mkdirs();
         }
         PrintWriter out = new PrintWriter(new OutputStreamWriter(new FileOutputStream(output) , "UTF-8"));
         try {
         	out.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+	        if (licenseHeader != null) {
+		    	out.print(licenseHeader);
+	        }
 	        out.println("<ivy-module version=\"1.0\">"); 
 	    	out.println("\t<info organisation=\""+md.getModuleRevisionId().getOrganisation()+"\"");
 	    	out.println("\t\tmodule=\""+md.getModuleRevisionId().getName()+"\"");
