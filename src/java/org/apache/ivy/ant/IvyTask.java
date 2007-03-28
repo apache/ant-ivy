@@ -17,13 +17,10 @@
  */
 package org.apache.ivy.ant;
 
-import java.io.File;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 
 import org.apache.ivy.Ivy;
@@ -136,77 +133,6 @@ public class IvyTask extends Task {
     	}
     }
     
-	protected void ensureResolved(boolean haltOnFailure, boolean useOrigin, String org, String module, String resolveId, File cache) {
-    	ensureResolved(haltOnFailure, useOrigin, true, org, module, null, resolveId, cache);
-    }
-    protected void ensureResolved(boolean haltOnFailure, boolean useOrigin, boolean transitive, String org, String module, String conf, String resolveId, File cache) {
-        ensureMessageInitialised();
-        
-        String[] confs = null;
-        if (resolveId != null) {
-        	confs = getConfsToResolve(resolveId, conf);
-        } else {
-        	confs = getConfsToResolve(org, module, conf, false);
-        }
-        
-        if (confs.length > 0)  {
-        	IvyResolve resolve = createResolve(haltOnFailure, useOrigin);
-        	resolve.setCache(cache);
-        	resolve.setTransitive(transitive);
-        	resolve.setConf(StringUtils.join(confs, ", "));
-        	resolve.setResolveId(resolveId);
-        	resolve.execute();
-        } 
-    }
-    
-    protected String[] getConfsToResolve(String org, String module, String conf, boolean strict) {
-        ModuleDescriptor reference = (ModuleDescriptor) getResolvedDescriptor(org, module, strict);
-        String[] rconfs = (String[]) getReference("ivy.resolved.configurations.ref", org, module, strict);
-        return getConfsToResolve(reference, conf, rconfs);
-    }
-    
-    protected String[] getConfsToResolve(String resolveId, String conf) {
-        ModuleDescriptor reference = (ModuleDescriptor) getResolvedDescriptor(resolveId, false);
-        if (reference == null) {
-        	// assume the module has been resolved outside this build
-        	// TODO: find a way to discover which confs were resolved by that previous resolve
-        	return new String[0];
-        }
-        String[] rconfs = (String[]) getProject().getReference("ivy.resolved.configurations.ref." + resolveId);
-        return getConfsToResolve(reference, conf, rconfs);
-    }
-
-    private String[] getConfsToResolve(ModuleDescriptor reference, String conf, String[] rconfs) {
-		Message.debug("calculating configurations to resolve");
-        
-        if (reference == null)  {
-    		Message.debug("module not yet resolved, all confs still need to be resolved");
-        	if (conf == null) {
-        		return new String[] {"*"};
-        	} else {
-        		return splitConfs(conf);
-        	}
-        } else if (conf != null) {
-        	String[] confs;
-        	if ("*".equals(conf)) {
-        		confs = reference.getConfigurationsNames();
-        	} else {
-        		confs = splitConfs(conf);
-        	}
-    		HashSet rconfsSet = new HashSet(Arrays.asList(rconfs));
-			HashSet confsSet = new HashSet(Arrays.asList(confs));
-			Message.debug("resolved configurations:   "+rconfsSet);
-			Message.debug("asked configurations:      "+confsSet);
-			confsSet.removeAll(rconfsSet);
-			Message.debug("to resolve configurations: "+confsSet);
-			return (String[]) confsSet.toArray(new String[confsSet.size()]);
-        } else {
-    		Message.debug("module already resolved, no configuration to resolve");
-        	return new String[0];
-        }
-    	
-    }
-    
     protected String[] getResolvedConfigurations(String org, String module, boolean strict) {
 		return (String[]) getReference("ivy.resolved.configurations.ref", org, module, strict);
 	}
@@ -252,27 +178,6 @@ public class IvyTask extends Task {
 		return result;
 	}
     
-	protected IvyResolve createResolve(boolean haltOnFailure, boolean useOrigin) {
-		Message.verbose("no resolved descriptor found: launching default resolve");
-		IvyResolve resolve = new IvyResolve();
-		resolve.setProject(getProject());
-		resolve.setHaltonfailure(haltOnFailure);
-		resolve.setUseOrigin(useOrigin);
-		if (_validate != null) {
-		    resolve.setValidate(_validate.booleanValue());
-		}
-		return resolve;
-	}
-
-    protected boolean shouldResolve(String org, String module) {
-        ensureMessageInitialised();
-        if (org != null  && module != null) {
-            return false;
-        }
-        Object reference = getResolvedDescriptor(org, module); 
-        return (reference == null);
-    }
-
     protected String[] splitConfs(String conf) {
     	if (conf == null) {
     		return null;
