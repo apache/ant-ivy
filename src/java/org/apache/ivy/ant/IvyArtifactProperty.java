@@ -22,9 +22,7 @@ import java.io.File;
 import org.apache.ivy.core.IvyPatternHelper;
 import org.apache.ivy.core.cache.CacheManager;
 import org.apache.ivy.core.module.descriptor.Artifact;
-import org.apache.ivy.core.module.id.ModuleId;
 import org.apache.ivy.core.resolve.ResolveOptions;
-import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.plugins.report.XmlReportParser;
 import org.apache.tools.ant.BuildException;
 
@@ -34,23 +32,10 @@ import org.apache.tools.ant.BuildException;
  * 
  * @author Xavier Hanin
  */
-public class IvyArtifactProperty extends IvyTask {
-    private String _conf;
+public class IvyArtifactProperty extends IvyPostResolveTask {
     private String _name;
     private String _value;
-    
-    private String _organisation;
-    private String _module;
-    private boolean _haltOnFailure = true;
-    private File _cache;
-    private String _resolveId;
 
-    public String getConf() {
-        return _conf;
-    }
-    public void setConf(String conf) {
-        _conf = conf;
-    }
     public String getName() {
         return _name;
     }
@@ -63,79 +48,17 @@ public class IvyArtifactProperty extends IvyTask {
     public void setValue(String value) {
         _value = value;
     }
-    public String getModule() {
-        return _module;
-    }
-    public void setModule(String module) {
-        _module = module;
-    }
-    public String getOrganisation() {
-        return _organisation;
-    }
-    public void setOrganisation(String organisation) {
-        _organisation = organisation;
-    }
-    public boolean isHaltonfailure() {
-        return _haltOnFailure;
-    }
-    public void setHaltonfailure(boolean haltOnFailure) {
-        _haltOnFailure = haltOnFailure;
-    }
-    public File getCache() {
-        return _cache;
-    }
-    public void setCache(File cache) {
-        _cache = cache;
-    }
-    public String getResolveId() {
-    	return _resolveId;
-    }
-    public void setResolveId(String resolveId) {
-    	_resolveId = resolveId;
-    }
 
     public void execute() throws BuildException {
-        IvySettings settings = getSettings(); 
-        
-        _organisation = getProperty(_organisation, settings, "ivy.organisation", _resolveId);
-        _module = getProperty(_module, settings, "ivy.module", _resolveId);
-
-        if (_cache == null) {
-            _cache = settings.getDefaultCache();
-        }
-
-        ensureResolved(isHaltonfailure(), false, getOrganisation(), getModule(), _resolveId, _cache);
-        
-        _conf = getProperty(_conf, settings, "ivy.resolved.configurations", _resolveId);
-        if ("*".equals(_conf)) {
-            _conf = getProperty(settings, "ivy.resolved.configurations", _resolveId);
-            if (_conf == null) {
-                throw new BuildException("bad provided for ivy artifactproperty: * can only be used with a prior call to <resolve/>");
-            }
-        }
-
-        _organisation = getProperty(_organisation, settings, "ivy.organisation", _resolveId);
-        _module = getProperty(_module, settings, "ivy.module", _resolveId);
-        
-        
-        if ((_organisation == null) && (_resolveId == null)) {
-            throw new BuildException("no organisation provided for ivy artifactproperty: It can either be set explicitely via the attribute 'organisation' or via 'ivy.organisation' property or a prior call to <resolve/>");
-        }
-        if ((_module == null) && (_resolveId == null)) {
-            throw new BuildException("no module name provided for ivy artifactproperty: It can either be set explicitely via the attribute 'module' or via 'ivy.module' property or a prior call to <resolve/>");
-        }
-        if (_conf == null) {
-            throw new BuildException("no conf provided for ivy artifactproperty: It can either be set explicitely via the attribute 'conf' or via 'ivy.resolved.configurations' property or a prior call to <resolve/>");
-        }
-        
-        String resolveId = getResolveId();
-        if (resolveId == null) {
-        	resolveId = ResolveOptions.getDefaultResolveId(new ModuleId(_organisation, _module));
-        }
+    	prepareAndCheck();
 
         try {
-        	CacheManager cacheMgr = getIvyInstance().getCacheManager(_cache);
-            String[] confs = splitConfs(_conf);
+        	CacheManager cacheMgr = getIvyInstance().getCacheManager(getCache());
+            String[] confs = splitConfs(getConf());
+            String resolveId = getResolveId();
+            if (resolveId == null) {
+            	resolveId = ResolveOptions.getDefaultResolveId(getResolvedModuleId());
+            }
             XmlReportParser parser = new XmlReportParser();
             for (int i = 0; i < confs.length; i++) {
             	File report = cacheMgr.getConfigurationResolveReportInCache(resolveId, confs[i]);
@@ -144,8 +67,8 @@ public class IvyArtifactProperty extends IvyTask {
                 Artifact[] artifacts = parser.getArtifacts();
                 for (int j = 0; j < artifacts.length; j++) {
                     Artifact artifact = artifacts[j];
-                    String name = IvyPatternHelper.substitute(settings.substitute(getName()), artifact, confs[i]);
-                    String value = IvyPatternHelper.substitute(settings.substitute(getValue()), artifact, confs[i]);
+                    String name = IvyPatternHelper.substitute(getSettings().substitute(getName()), artifact, confs[i]);
+                    String value = IvyPatternHelper.substitute(getSettings().substitute(getValue()), artifact, confs[i]);
                     getProject().setProperty(name, value);
                 }
             }

@@ -27,6 +27,8 @@
 <div class="since">since 1.1</div>
 Sets an ant property for each dependency artifacts previously resolved.
 
+<span class="since">since 1.5</span> This is a [[ant:postresolvetask post resolve task]], with all the behaviour and attributes common to all post resolve tasks.
+
 Please prefer the use of retrieve + standard ant path creation, which make your build more independent from ivy (once artifacts are properly retrieved, ivy is not required any more).
 
 The property name and value are generated using the classical pattern concept, all artifact tokens and ivy variables being available.

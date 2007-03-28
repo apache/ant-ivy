@@ -34,7 +34,6 @@ import javax.xml.transform.sax.SAXTransformerFactory;
 import javax.xml.transform.sax.TransformerHandler;
 import javax.xml.transform.stream.StreamResult;
 
-import org.apache.ivy.Ivy;
 import org.apache.ivy.core.cache.ArtifactOrigin;
 import org.apache.ivy.core.cache.CacheManager;
 import org.apache.ivy.core.module.descriptor.Artifact;
@@ -43,7 +42,6 @@ import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.resolve.IvyNode;
 import org.apache.ivy.core.resolve.ResolveOptions;
 import org.apache.ivy.core.retrieve.RetrieveOptions;
-import org.apache.ivy.core.settings.IvySettings;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.xml.sax.SAXException;
@@ -53,13 +51,9 @@ import org.xml.sax.helpers.AttributesImpl;
 /**
  * Generates a report of all artifacts involved during the last resolve. 
  */
-public class IvyArtifactReport extends IvyTask {
+public class IvyArtifactReport extends IvyPostResolveTask {
     private File _tofile;
-    private String _conf;
     private String _pattern;
-    private boolean _haltOnFailure = true;
-    private File _cache;
-    private String _resolveId;
 
     public File getTofile() {
         return _tofile;
@@ -67,96 +61,45 @@ public class IvyArtifactReport extends IvyTask {
     public void setTofile(File tofile) {
         _tofile = tofile;
     }
-    public String getConf() {
-        return _conf;
-    }
-    public void setConf(String conf) {
-        _conf = conf;
-    }
     public String getPattern() {
         return _pattern;
     }
     public void setPattern(String pattern) {
         _pattern = pattern;
     }
-    public boolean isHaltonfailure() {
-        return _haltOnFailure;
-    }
-    public void setHaltonfailure(boolean haltOnFailure) {
-        _haltOnFailure = haltOnFailure;
-    }
-    public File getCache() {
-        return _cache;
-    }
-    public void setCache(File cache) {
-        _cache = cache;
-    }
-    public String getResolveId() {
-    	return _resolveId;
-    }
-    public void setResolveId(String resolveId) {
-    	_resolveId = resolveId;
-    }
 
     public void execute() throws BuildException {
+    	prepareAndCheck();
         if (_tofile == null) {
             throw new BuildException("no destination file name: please provide it through parameter 'tofile'");
         }
 
-        Ivy ivy = getIvyInstance();
-        IvySettings settings = ivy.getSettings();
-        if (_cache == null) {
-            _cache = settings.getDefaultCache();
-        }
+        _pattern = getProperty(_pattern, getSettings(), "ivy.retrieve.pattern");
 
-        ensureResolved(isHaltonfailure(), false, null, null, _resolveId, _cache);
-
-        String organisation = getProperty(null, settings, "ivy.organisation", _resolveId);
-        String module = getProperty(null, settings, "ivy.module", _resolveId);
-        String revision = getProperty(Ivy.getWorkingRevision(), settings, "ivy.revision", _resolveId);
-
-        _pattern = getProperty(_pattern, settings, "ivy.retrieve.pattern");
-        _conf = getProperty(_conf, settings, "ivy.resolved.configurations", _resolveId);
-        if ("*".equals(_conf)) {
-            _conf = getProperty(settings, "ivy.resolved.configurations", _resolveId);
-            if (_conf == null) {
-                throw new BuildException("bad provided for ivy artifact report task: * can only be used with a prior call to <resolve/>");
-            }
-        }
-
-        if (organisation == null) {
-            throw new BuildException("no organisation provided for ivy artifact report task: It can be set via a prior call to <resolve/>");
-        }
-        if (module == null) {
-            throw new BuildException("no module name provided for ivy artifact report task: It can be set via a prior call to <resolve/>");
-        }
-        if (_conf == null) {
-            throw new BuildException("no conf provided for ivy artifact report task: It can either be set explicitely via the attribute 'conf' or via 'ivy.resolved.configurations' property or a prior call to <resolve/>");
-        }
         try {
-            String[] confs = splitConfs(_conf);
-            CacheManager cacheManager = CacheManager.getInstance(settings, _cache);
+            String[] confs = splitConfs(getConf());
+            CacheManager cacheManager = CacheManager.getInstance(getSettings(), getCache());
             ModuleDescriptor md = null;
-            if (_resolveId != null) {
-            	md = (ModuleDescriptor) getResolvedDescriptor(_resolveId);
+            if (getResolveId() != null) {
+            	md = (ModuleDescriptor) getResolvedDescriptor(getResolveId());
             } else {
-            	md = (ModuleDescriptor) getResolvedDescriptor(organisation, module, false);
+            	md = (ModuleDescriptor) getResolvedDescriptor(getOrganisation(), getModule(), false);
             }
-			IvyNode[] dependencies = ivy.getResolveEngine()
+			IvyNode[] dependencies = getIvyInstance().getResolveEngine()
             	.getDependencies(md, 
             			new ResolveOptions()
             				.setConfs(confs)
             				.setCache(cacheManager)
-            				.setResolveId(_resolveId)
-            				.setValidate(doValidate(settings)),
+            				.setResolveId(getResolveId())
+            				.setValidate(doValidate(getSettings())),
             			null);
 
-            Map artifactsToCopy = ivy.getRetrieveEngine().determineArtifactsToCopy(
-            		ModuleRevisionId.newInstance(organisation, module, revision), 
+            Map artifactsToCopy = getIvyInstance().getRetrieveEngine().determineArtifactsToCopy(
+            		ModuleRevisionId.newInstance(getOrganisation(), getModule(), getRevision()), 
             		_pattern, 
             		new RetrieveOptions()
             			.setConfs(confs)
-            			.setResolveId(_resolveId)
+            			.setResolveId(getResolveId())
             			.setCache(cacheManager));
             
             Map moduleRevToArtifactsMap = new HashMap();
@@ -170,8 +113,7 @@ public class IvyArtifactReport extends IvyTask {
                 moduleRevArtifacts.add(artifact);
             }
 
-            CacheManager cache = getCacheManager();
-            generateXml(cache, dependencies, moduleRevToArtifactsMap, artifactsToCopy);
+            generateXml(cacheManager, dependencies, moduleRevToArtifactsMap, artifactsToCopy);
         } catch (ParseException e) {
             log(e.getMessage(), Project.MSG_ERR);
             throw new BuildException("syntax errors in ivy file: "+e, e);
@@ -338,10 +280,5 @@ public class IvyArtifactReport extends IvyTask {
         }
         return (p.startsWith(l)) ? p.substring(l.length()) : p;
     }
-
-	protected CacheManager getCacheManager() {
-		CacheManager cache = new CacheManager(getSettings(), _cache);
-		return cache;
-	}
 
 }

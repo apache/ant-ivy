@@ -27,6 +27,8 @@
 <span class="since">since 1.4</span>
 The artifactreport task generates an xml report of all artifacts dependencies resolved by the last <a href="../../doc/use/resolve.html">resolve</a> task call during the same build.
 
+<span class="since">since 1.5</span> This is a [[ant:postresolvetask post resolve task]], with all the behaviour and attributes common to all post resolve tasks.
+
 This report is different from the standard <a href="../../doc/use/report.html">report</a> which reports all modules and artifacts, whle this report is much simpler and focuses only on artifacts, and gives more information on artifacts, such as the original location and the retrieve location. 
 
 It is thus easy to use to generate things like a classpath file for an IDE.
