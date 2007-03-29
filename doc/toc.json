@@ -964,7 +964,15 @@
               "children": [
 
                 ]
-            }
+            },
+            {
+              "id":"doc/dev",
+              "title":"Developer doc",
+              "children": [
+
+                ]
+,
+              "level":1            }
           ]
       }
     ]
