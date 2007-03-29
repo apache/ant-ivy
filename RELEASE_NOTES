@@ -8,7 +8,8 @@ CONTENTS
 3. Migrating from Jayasoft Ivy to Apache Ivy
 4. How to Get Involved
 5. How to Report Issues
-6. List of JIRA Issues Fixed in this Release   
+6. Committers and Contributors for this release
+7. List of Changes in this Release   
    
    
 1. What is Apache Ivy?
@@ -89,7 +90,21 @@ in contributing, please visit http://incubator.apache.org/ivy/get-involved.html.
 The Apache Ivy project uses JIRA for issue tracking.  Please report any 
 issues you find at http://issues.apache.org/jira/browse/ivy.
 
-6. List of Changes in this Release
+6. Committers and Contributors for this Release
+
+ Committers
+	Maarten Coene
+	Xavier Hanin
+
+ Contributors
+	Stephane Baillez
+	Pierre Hägnestrand
+	Matt Inger
+	William Lyvers
+	Gilles Scokart
+	John Williams
+
+7. List of Changes in this Release
 
 - NEW: define artifacts not declared by the dependency module descriptor (IVY-419)
 
@@ -102,6 +117,8 @@ issues you find at http://issues.apache.org/jira/browse/ivy.
 - IMPROVE: New "modules in use" section in console report at the end of resolve (IVY-373) (thanks to John Wiliams)
 - IMPROVE: Generated XML reports now contains more information about the resolved module (IVY-446)
 
+- FIX: XmlModuleDescriptorWriterTest not working with Java 6 (IVY-374)
+- FIX: Conflict managers ignored, when assigned to modules in Ivy configuration (setting, ivyconf.xml) (IVY-448)
 - FIX: Ivy should fail if ';' has been used in publications/artifact/@conf of ivy.xml (IVY-441)
 - FIX: Ivy should fail where dependency uses undefined configuration (IVY-442)
 - FIX: Dynamic revision not calculated properly when using multiple directories (IVY-427)
@@ -123,4 +140,3 @@ issues you find at http://issues.apache.org/jira/browse/ivy.
 - FIX: Comments in ivy.xml duplicated (IVY-336) (thanks to Gilles Scokart)
 - FIX: Ivy failure when the ivy.xml file contains non US-ASCII characters (IVY-346) (thanks to Gilles Scokart)
 - FIX: Urlresolver is not possible to use dynamic revisions on nonstandard repository structure (IVY-350) (thanks to Pierre Hägnestrand)
-

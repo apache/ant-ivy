@@ -5,6 +5,45 @@
 				
 for detailed view of each issue, please consult http://issues.apache.org/jira/browse/IVY
 
+ Committers
+ 	Maarteen Coene
+ 	Xavier Hanin
+ 
+ Contributors
+ 	Ingo Adler
+	Stephane Baillez
+	Karl Baum
+	Matthieu Brouillard
+	Kristian Cibulskis
+	Pierre Hägnestrand
+	Peter Hayes
+	Matt Inger
+	Anders Janmyr
+	Christer Jonsson
+	Matthias Kilian
+	Gregory Kisling
+	Tat Leung
+	Costin Leau
+	Antoine Levy-Lambert
+	William Lyvers
+	Stephen Nesbitt
+	Joshua Nichols
+	Bernard Niset
+	Glen Marchesani
+	Mathias Muller
+	Peter Oxenham
+	Emmanuel Pellereau
+	Roshan Punnoose
+	Damon Rand
+	Christian Riege
+	Jean-Baptiste Quenot
+	Andreas Sahlbach
+	Gilles Scokart
+	John Shields
+	Johan Stuyts
+	John Williams
+
+
    version in SVN
 =====================================
 - NEW: define artifacts not declared by the dependency module descriptor (IVY-419)
