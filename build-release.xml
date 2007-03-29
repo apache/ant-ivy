@@ -82,6 +82,7 @@
 			<zipfileset dir="${basedir}/test/xsl" prefix="ivy-${build.version}/test/xsl"/>
 			<zipfileset dir="${src.dir}/org/apache/ivy/plugins/parser/xml" includes="ivy.xsd" fullpath="ivy-${build.version}/ivy.xsd"/>
 			<zipfileset dir="${basedir}" includes="DISCLAIMER" fullpath="ivy-${build.version}/DISCLAIMER"/>
+			<zipfileset dir="${basedir}" includes="NOTICE" fullpath="ivy-${build.version}/NOTICE"/>
 			<zipfileset dir="${basedir}" includes="LICENSE" fullpath="ivy-${build.version}/LICENSE"/>
 			<zipfileset dir="${basedir}" includes="CHANGES.txt" fullpath="ivy-${build.version}/CHANGES.txt"/>
 			<zipfileset dir="${basedir}" includes="RELEASE_NOTES" fullpath="ivy-${build.version}/RELEASE_NOTES"/>
@@ -104,6 +105,7 @@
 			<zipfileset dir="${doc.build.dir}" prefix="ivy-${build.version}/doc"/>
 			<zipfileset dir="${basedir}/src/example" prefix="ivy-${build.version}/src/example"/>
 			<zipfileset dir="${basedir}" includes="DISCLAIMER" fullpath="ivy-${build.version}/DISCLAIMER"/>
+			<zipfileset dir="${basedir}" includes="NOTICE" fullpath="ivy-${build.version}/NOTICE"/>
 			<zipfileset dir="${basedir}" includes="LICENSE" fullpath="ivy-${build.version}/LICENSE"/>
 			<zipfileset dir="${basedir}" includes="CHANGES.txt" fullpath="ivy-${build.version}/CHANGES.txt"/>
 			<zipfileset dir="${basedir}" includes="RELEASE_NOTES" fullpath="ivy-${build.version}/RELEASE_NOTES"/>
