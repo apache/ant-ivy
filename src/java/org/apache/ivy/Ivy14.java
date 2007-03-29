@@ -55,7 +55,7 @@ import org.apache.ivy.util.filter.FilterHelper;
 /**
  * This class can be used for easy migration from Ivy 1.4 API.
  * 
- * Indeed, Ivy 1.5 API has changed substantially, so it can take time to
+ * Indeed, Ivy 2.0 API has changed substantially, so it can take time to
  * migrate existing code using Ivy 1.4 API to the new API.
  * 
  * Using this class it's really easy: replace your instance of Ivy by an 

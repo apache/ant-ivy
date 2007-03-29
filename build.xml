@@ -60,7 +60,7 @@
     	      ivy is in at least one of ant's lib dir or the local lib dir. -->
     	<taskdef resource="fr/jayasoft/ivy/ant/antlib.xml"
     	          uri="antlib:fr.jayasoft.ivy.ant" classpathref="ivy.lib.path"/>
-		<ivy:configure file="${basedir}/ivysettings.xml" /> <!-- not necessary with Ivy 1.5+ -->
+		<ivy:configure file="${basedir}/ivysettings.xml" /> <!-- not necessary with Ivy 2.0+ -->
     </target>
 
 	

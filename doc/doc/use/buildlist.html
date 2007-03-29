@@ -34,7 +34,7 @@ This is particularly useful combined with subant, to build a set of interelated 
 
 <span class="since">since 1.4</span> The ivy.sorted.modules property is set in the ant at the end of the task with a comma separated list of ordered modules. This can be useful for debug or information purpose.
 
-<span class="since">since 1.5</span> The root and leaf attributes can be a delimited list of modules to use as roots.  These modules, and all their dependencies will be included in the build list.
+<span class="since">since 2.0</span> The root and leaf attributes can be a delimited list of modules to use as roots.  These modules, and all their dependencies will be included in the build list.
 <table class="ant">
 <thead>
     <tr><th class="ant-att">Attribute</th><th class="ant-desc">Description</th><th class="ant-req">Required</th></tr>
@@ -43,10 +43,10 @@ This is particularly useful combined with subant, to build a set of interelated 
     <tr><td>reference</td><td>the reference of the path to set</td>
         <td>Yes</td></tr>
     <tr><td>ivyfilepath</td><td>the relative path from files to order to corresponding ivy files</td><td>No. Defaults to ${ivy.buildlist.ivyfilepath}</td></tr>
-    <tr><td>root</td><td><span class="since">since 1.5</span> the names of the modules which should be considered as the root of the buildlist. <br/><span class="since">since 1.3</span> Was limited to only one module name before 1.5.</td><td>No. Defaults to no root (all modules are used in the build list)</td></tr>
+    <tr><td>root</td><td><span class="since">since 2.0</span> the names of the modules which should be considered as the root of the buildlist. <br/><span class="since">since 1.3</span> Was limited to only one module name before 2.0.</td><td>No. Defaults to no root (all modules are used in the build list)</td></tr>
     <tr><td>excluderoot</td><td><span class="since">since 1.3</span> true if the root defined should be excluded from the list</td><td>No. Defaults to false</td></tr>
-    <tr><td>leaf</td><td><span class="since">since 1.5</span> the names of the modules which should be considered as the leaf of the buildlist. <br/><span class="since">since 1.4.1</span> Was limited to only one module name before 1.5.</td><td>No. Defaults to no leaf (all modules are used in the build list)</td></tr>
-    <tr><td>delimiter</td><td><span class="since">since 1.5</span> delimiter to use when specifying multiple module names in the root and leaf properties.</td><td>No. Defaults to the comma (,) character.</td></tr>
+    <tr><td>leaf</td><td><span class="since">since 2.0</span> the names of the modules which should be considered as the leaf of the buildlist. <br/><span class="since">since 1.4.1</span> Was limited to only one module name before 2.0.</td><td>No. Defaults to no leaf (all modules are used in the build list)</td></tr>
+    <tr><td>delimiter</td><td><span class="since">since 2.0</span> delimiter to use when specifying multiple module names in the root and leaf properties.</td><td>No. Defaults to the comma (,) character.</td></tr>
     <tr><td>excludeleaf</td><td><span class="since">since 1.4.1</span> true if the leaf defined should be excluded from the list</td><td>No. Defaults to false</td></tr>
     <tr><td>haltonerror</td><td>true to halt the build when an invalid ivy file is encountered, false to continue</td><td>No. Defaults to true</td></tr>
     <tr><td>skipbuildwithoutivy</td><td>true to skip files of the fileset with no corresponding ivy file, false otherwise. If false the file with no corresponding ivy file will be considered as independent of the other and put at the beginning of the built filelist.</td><td>No. Defaults to false</td></tr>
