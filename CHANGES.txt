@@ -58,6 +58,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - IMPROVE: New "modules in use" section in console report at the end of resolve (IVY-373) (thanks to John Wiliams)
 - IMPROVE: Generated XML reports now contains more information about the resolved module (IVY-446)
 
+- FIX: Ivy standalone is passing null args to main method when invoking with no args (IVY-457)
 - FIX: Invalid error report with m2compatible resolver (IVY-456)
 - FIX: IvyPostResolve Task doesn't use specified cache for the resolve (IVY-453)
 - FIX: XmlModuleDescriptorWriterTest not working with Java 6 (IVY-374)

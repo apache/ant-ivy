@@ -424,7 +424,7 @@ public class Main {
         	Method mainMethod = c.getMethod("main", new Class[] { String[].class });
         	
         	// Split up arguments 
-        	mainMethod.invoke(null, new Object[] { args });
+        	mainMethod.invoke(null, new Object[] { (args == null ? new String[0] : args) });
         } catch (ClassNotFoundException cnfe) {
         	throw new RuntimeException("Could not find class: " + mainclass, cnfe);
         } catch (SecurityException e) {
