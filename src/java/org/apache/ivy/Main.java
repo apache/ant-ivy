@@ -65,7 +65,7 @@ import org.apache.ivy.util.url.URLHandlerRegistry;
 /**
  * class used to launch ivy as a standalone tool
  * arguments are :
- * -conf <conffile> : indicates the path to the ivy configuration file
+ * -settings <settingsfile> : indicates the path to the ivy settings file
  *                  ivysettings.xml is assumed if not given
  * -cache <cachedir> : indicates the path to the cache directory
  *                   cache is assumed if not given
@@ -80,10 +80,14 @@ import org.apache.ivy.util.url.URLHandlerRegistry;
  */
 public class Main {
     private static Options getOptions() {
-        Option conf = OptionBuilder.withArgName( "conffile" )
-            .hasArg()
-            .withDescription(  "use given file for configuration" )
-            .create( "conf" );
+        Option settings = OptionBuilder.withArgName( "settingsfile" )
+	        .hasArg()
+	        .withDescription(  "use given file for settings" )
+	        .create( "settings" );
+        Option conf = OptionBuilder.withArgName( "settingsfile" )
+	        .hasArg()
+	        .withDescription(  "DEPRECATED - use given file for settings" )
+	        .create( "conf" );
         Option cache = OptionBuilder.withArgName( "cachedir" )
             .hasArg()
             .withDescription(  "use given directory for cache" )
@@ -165,6 +169,7 @@ public class Main {
         options.addOption("m2compatible", false, "use maven2 compatibility");
         options.addOption("?", false, "display this help");
         options.addOption(conf);
+        options.addOption(settings);
         options.addOption(confs);
         options.addOption(cache);
         options.addOption(ivyfile);
@@ -225,11 +230,17 @@ public class Main {
                     line.getOptionValue("username", null), 
                     line.getOptionValue("passwd", null));
             
-            String confPath = line.getOptionValue("conf", "");
-            if ("".equals(confPath)) {
+            String settingsPath = line.getOptionValue("settings", "");
+            if ("".equals(settingsPath)) {
+            	settingsPath = line.getOptionValue("conf", "");
+            	if (!"".equals(settingsPath)) {
+            		Message.deprecated("-conf is deprecated, use -settings instead");
+            	}
+            }
+            if ("".equals(settingsPath)) {
                 ivy.configureDefault();
             } else {
-                File conffile = new File(confPath);
+                File conffile = new File(settingsPath);
                 if (!conffile.exists()) {
                     error(options, "ivy configuration file not found: "+conffile);
                 } else if (conffile.isDirectory()) {
