@@ -164,65 +164,6 @@ public abstract class AbstractResourceResolver extends BasicResolver {
     	return found;
     }
 
-//    /**
-//     * Output message to log indicating what have been done to look for an artifact which
-//     * has finally not been found
-//     * 
-//     * @param artifact the artifact which has not been found
-//     */
-//    protected void logIvyNotFound(ModuleRevisionId mrid) {
-//        if (isM2compatible()) {
-//            mrid = convertM2IdForResourceSearch(mrid);
-//        }
-//        Artifact artifact = DefaultArtifact.newIvyArtifact(mrid, null);
-//        logMdNotFound(mrid, artifact);
-//    }
-//
-//    protected void logMdNotFound(ModuleRevisionId mrid, Artifact artifact) {
-//        String revisionToken = mrid.getRevision().startsWith("latest.")?"[any "+mrid.getRevision().substring("latest.".length())+"]":"["+mrid.getRevision()+"]";
-//        Artifact latestArtifact = new DefaultArtifact(ModuleRevisionId.newInstance(mrid, revisionToken), null, artifact.getName(), artifact.getType(), artifact.getExt(), artifact.getExtraAttributes());
-//        if (_ivyPatterns.isEmpty()) {
-//            logIvyAttempt("no ivy pattern => no attempt to find module descriptor file for "+mrid);
-//        } else {
-//            for (Iterator iter = _ivyPatterns.iterator(); iter.hasNext();) {
-//                String pattern = (String)iter.next();
-//                String resolvedFileName = IvyPatternHelper.substitute(pattern, artifact);
-//                logIvyAttempt(resolvedFileName);
-//                if (getSettings().getVersionMatcher().isDynamic(mrid)) {
-//                    resolvedFileName = IvyPatternHelper.substitute(pattern, latestArtifact);
-//                    logIvyAttempt(resolvedFileName);
-//                }
-//            }
-//        }
-//    }
-
-//    /**
-//     * Output message to log indicating what have been done to look for an artifact which
-//     * has finally not been found
-//     * 
-//     * @param artifact the artifact which has not been found
-//     */
-//    protected void logArtifactNotFound(Artifact artifact) {
-//        if (_artifactPatterns.isEmpty()) {
-//        	if (artifact.getUrl() == null) {
-//        		logArtifactAttempt(artifact, "no artifact pattern => no attempt to find artifact "+artifact);
-//        	}
-//        }
-//        Artifact used = artifact;
-//        if (isM2compatible()) {
-//        	used = DefaultArtifact.cloneWithAnotherMrid(artifact, convertM2IdForResourceSearch(artifact.getModuleRevisionId()));
-//        }
-//
-//        for (Iterator iter = _artifactPatterns.iterator(); iter.hasNext();) {
-//            String pattern = (String)iter.next();
-//            String resolvedFileName = IvyPatternHelper.substitute(pattern, used);
-//            logArtifactAttempt(artifact, resolvedFileName);
-//        }
-//    	if (used.getUrl() != null) {
-//    		logArtifactAttempt(artifact, used.getUrl().toString());
-//    	}
-//    }
-
     protected Collection findNames(Map tokenValues, String token) {
         Collection names = new HashSet();
         names.addAll(findIvyNames(tokenValues, token));
