@@ -126,7 +126,7 @@ public class Hello {
           target: clean              
          ================================= -->
     <target name="clean" description="--> clean the project">
-        <delete includeemptydirs="true">
+        <delete includeemptydirs="true" quiet="true">
             <fileset dir="${src.dir}" />
             <fileset dir="${build.dir}" />
     	</delete>

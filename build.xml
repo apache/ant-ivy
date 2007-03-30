@@ -27,17 +27,29 @@
                be built. This section will download Ivy from
                internet and use it for ivy tasks of this build.
          ================================================================= -->
-	<condition property="ivy.home" value="${env.IVY_HOME}">
-		<isset property="env.IVY_HOME" />
-	</condition>
-	<property name="ivy.home" value="${user.home}/.ivy" />
-	<property name="ivy.jar.dir" value="${ivy.home}/jars" />
-	<property name="ivy.jar.file" value="${ivy.jar.dir}/ivy.jar" />
 	
 	<property name="final.name" value="ivy.jar" />
 	<property name="final.core.name" value="ivy-core.jar" />
 	
-	<target name="download-ivy" unless="offline">
+	<target name="init-ivy-user-home" unless="ivy.use.local.home">
+		<condition property="ivy.home" value="${env.IVY_HOME}">
+			<isset property="env.IVY_HOME" />
+		</condition>
+		<property name="ivy.home" value="${user.home}/.ivy" />
+	</target>
+	
+	<target name="init-ivy-local-home" if="ivy.use.local.home">
+		<property name="ivy.home" value="${basedir}/.ivy" />
+	</target>
+	
+	<target name="init-ivy-jar">
+		<property name="ivy.jar.dir" value="${ivy.home}/jars" />
+		<property name="ivy.jar.file" value="${ivy.jar.dir}/ivy.jar" />
+	</target>
+	
+	<target name="init-ivy-home" depends="init-ivy-user-home, init-ivy-local-home, init-ivy-jar" />
+
+	<target name="download-ivy" depends="init-ivy-home" unless="offline">
     	<mkdir dir="${ivy.jar.dir}"/>
 		<!-- download Ivy from web site so that it can be used even without any special installation -->
 		<!-- use a non standard location during migration to apache -->
@@ -45,7 +57,7 @@
     		 dest="${ivy.jar.file}" usetimestamp="true"/>
 	</target>
 	
-	<target name="check-ivy-available">
+	<target name="check-ivy-available" depends="init-ivy-home">
     	<path id="ivy.lib.path">
     	    <fileset dir="${ivy.jar.dir}" includes="*.jar"/>
     	</path>
@@ -108,8 +120,18 @@
     	<delete dir="${lib.dir}"/>
 	</target>
 	
+	<target name="clean-ivy-cache" depends="init-ivy-home">
+    	<delete dir="${ivy.home}/cache"/>
+	</target>
+	
+	<target name="clean-ivy-home" depends="init-ivy-home">
+    	<delete dir="${ivy.home}"/>
+	</target>
+	
 	<target name="clean-examples" description="clean all examples">
 		<subant target="clean" failonerror="false">
+			<!-- use current ivy jar dir for nested calls, to avoid downloading ivy several times -->
+			<property name="ivy.jar.dir" value="${ivy.jar.dir}"/>
     		<fileset dir="src/example" includes="**/build.xml"/>
         </subant>		
 	</target>
@@ -126,6 +148,10 @@
 	
 	<target name="nojavadoc" description="use to skip javadoc">
 		<property name="skip.javadoc" value="true"/>
+	</target>
+	
+	<target name="localivy" description="use a local ivy home">
+		<property name="ivy.use.local.home" value="true"/>
 	</target>
 	
 	<target name="offline" depends="noresolve" description="use to indicate no internet connection is available">

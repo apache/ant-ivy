@@ -133,7 +133,7 @@
 		<input message="please enter status: (integration,milestone,release)" addproperty="status"/>
 	</target>
 	
-	<target name="snapshot" depends="clean, snapshot-version, coverage-report, snapshot-src, snapshot-bin" description="used for nightly and integration builds"/>
+	<target name="snapshot" depends="localivy, clean-ivy-home, init-ivy, clean-all, snapshot-version, coverage-report, snapshot-src, snapshot-bin" description="used for nightly and integration builds"/>
 	<target name="release" depends="release-version, snapshot" description="make a new release of Ivy"/>
 
 	<!-- 
