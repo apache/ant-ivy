@@ -88,6 +88,7 @@ public class RepositoryResolver extends AbstractResourceResolver {
             if (!versionMatcher.isDynamic(mrid) || alwaysCheckExactRevision) {
                 String resourceName = IvyPatternHelper.substitute(pattern, mrid, artifact);
                 Message.debug("\t trying "+resourceName);
+                logAttempt(resourceName);
                 Resource res = repository.getResource(resourceName);
                 boolean reachable = res.exists();
                 if (reachable) {
@@ -117,6 +118,11 @@ public class RepositoryResolver extends AbstractResourceResolver {
     		String pattern, 
     		Artifact artifact, 
     		Date date) {
+        logAttempt(IvyPatternHelper.substitute(pattern, 
+        		ModuleRevisionId.newInstance(
+        				mrid, 
+        				IvyPatternHelper.getTokenString(IvyPatternHelper.REVISION_KEY)), 
+        		artifact));
         ResolvedResource[] rress = ResolverHelper.findAll(repository, mrid, pattern, artifact);
         if (rress == null) {
             Message.debug("\t"+name+": unable to list resources for "+mrid+": pattern="+pattern);

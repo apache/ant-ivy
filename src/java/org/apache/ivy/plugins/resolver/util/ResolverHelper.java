@@ -85,7 +85,8 @@ public class ResolverHelper {
                     return null;
                 }
             } catch (Exception e) {
-                Message.warn("problem while listing resources in "+root+" with "+rep+": "+e.getClass()+" "+e.getMessage());
+                Message.warn("problem while listing resources in "+root+" with "+rep+":");
+                Message.warn("  "+e.getClass().getName()+" "+e.getMessage());
                 return null;
             }
         }
@@ -113,7 +114,8 @@ public class ResolverHelper {
                 return null;
             }
         } catch (Exception e) {
-            Message.warn("problem while listing resources in "+parent+" with "+rep+": "+e.getClass()+" "+e.getMessage());
+            Message.warn("problem while listing resources in "+parent+" with "+rep+":");
+            Message.warn("  "+e.getClass().getName()+" "+e.getMessage());
             return null;
         }        
     }

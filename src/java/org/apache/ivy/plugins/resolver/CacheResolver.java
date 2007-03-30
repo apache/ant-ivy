@@ -21,8 +21,10 @@ import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.Collections;
+import java.util.Date;
 
 import org.apache.ivy.core.module.descriptor.Artifact;
+import org.apache.ivy.core.module.descriptor.DefaultArtifact;
 import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.report.ArtifactDownloadReport;
@@ -66,6 +68,7 @@ public class CacheResolver extends FileSystemResolver {
                 Message.verbose("\t"+getName()+": revision in cache: "+mrid);
                 return rmr;
             } else {
+            	logIvyAttempt(data.getCacheManager().getArchiveFileInCache(DefaultArtifact.newIvyArtifact(mrid, new Date())).getAbsolutePath());
                 Message.verbose("\t"+getName()+": no ivy file in cache found for "+mrid);
                 return null;
             }
@@ -110,7 +113,7 @@ public class CacheResolver extends FileSystemResolver {
                 adr.setDownloadStatus(DownloadStatus.NO);  
                 adr.setSize(archiveFile.length());
             } else {
-                    logArtifactNotFound(artifacts[i]);
+            		logArtifactAttempt(artifacts[i], archiveFile.getAbsolutePath());
                     adr.setDownloadStatus(DownloadStatus.FAILED);                
             }
         }

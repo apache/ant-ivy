@@ -18,6 +18,7 @@
 package org.apache.ivy.plugins.resolver;
 
 import java.io.File;
+import java.text.ParseException;
 import java.util.List;
 
 import junit.framework.TestCase;
@@ -40,6 +41,8 @@ import org.apache.ivy.core.resolve.ResolvedModuleRevision;
 import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.core.sort.SortEngine;
 import org.apache.ivy.plugins.matcher.ExactPatternMatcher;
+import org.apache.ivy.util.Message;
+import org.apache.ivy.util.MockMessageImpl;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.Delete;
 
@@ -176,6 +179,25 @@ public class IBiblioResolverTest extends TestCase {
         
         assertEquals(artifact, ar.getArtifact());
         assertEquals(DownloadStatus.NO, ar.getDownloadStatus());
+    }
+    
+    public void testErrorReport() throws Exception {
+        IBiblioResolver resolver = new IBiblioResolver();
+        resolver.setRoot("http://unknown.host.comx/");
+        resolver.setName("test");
+        resolver.setM2compatible(true);
+        resolver.setSettings(_settings);
+        assertEquals("test", resolver.getName());
+        
+        MockMessageImpl mockMessageImpl = new MockMessageImpl();
+		Message.setImpl(mockMessageImpl);
+        
+        ModuleRevisionId mrid = ModuleRevisionId.newInstance("org.apache", "commons-fileupload", "1.0");
+        ResolvedModuleRevision rmr = resolver.getDependency(new DefaultDependencyDescriptor(mrid, false), _data);
+        assertNull(rmr);
+    	
+        mockMessageImpl.assertLogContains("tried http://unknown.host.comx/org/apache/commons-fileupload/1.0/commons-fileupload-1.0.pom");
+        mockMessageImpl.assertLogContains("tried http://unknown.host.comx/org/apache/commons-fileupload/1.0/commons-fileupload-1.0.jar");
     }
 
     public void testIBiblioArtifacts() throws Exception {

@@ -21,12 +21,14 @@ import java.io.File;
 import java.lang.ref.WeakReference;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Stack;
 
 import org.apache.ivy.Ivy;
 import org.apache.ivy.core.cache.CacheManager;
 import org.apache.ivy.core.event.EventManager;
 import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.plugins.circular.CircularDependencyStrategy;
+import org.apache.ivy.plugins.resolver.DependencyResolver;
 import org.apache.ivy.util.MessageImpl;
 
 
@@ -49,10 +51,12 @@ public class IvyContext {
     private WeakReference _ivy = new WeakReference(null); 
     private File _cache;
     private MessageImpl _messageImpl;
+    private Stack _resolver = new Stack(); // Stack(DependencyResolver)
     
     private Map _contextMap = new HashMap();
 
 	private Thread _operatingThread;
+
 
     
     public static IvyContext getContext() {
@@ -153,6 +157,18 @@ public class IvyContext {
 
 	public void checkInterrupted() {
 		getIvy().checkInterrupted();
+	}
+
+	public DependencyResolver getResolver() {
+		return (DependencyResolver) _resolver.peek();
+	}
+	
+	public void pushResolver(DependencyResolver resolver) {
+		_resolver.push(resolver);
+	}
+	
+	public void popResolver() {
+		_resolver.pop();
 	}
 	
 	// should be better to use context to store this kind of information, but not yet ready to do so...

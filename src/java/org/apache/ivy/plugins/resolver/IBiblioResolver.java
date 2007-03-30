@@ -68,13 +68,6 @@ public class IBiblioResolver extends URLResolver {
             return null;
         }
     }
-    
-    protected void logIvyNotFound(ModuleRevisionId mrid) {
-        if (isM2compatible() && isUsepoms()) {
-            Artifact artifact = DefaultArtifact.newPomArtifact(mrid, null);
-            logMdNotFound(mrid, artifact);
-        }
-    }
 
     public void setM2compatible(boolean m2compatible) {
         super.setM2compatible(m2compatible);
