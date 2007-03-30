@@ -33,7 +33,7 @@ All you need is
 <em>to check out Ivy sources from apache svn, not required if you build from sources packaged in a release</em>
 <li><a href="http://ant.apache.org/">Apache Ant</a> 1.6.2 or greater</li>
 <em>We recommend either ant 1.6.5 or 1.7.0</em>
-<li><a href="http://junit.org">junit</a> jar in your ant lib</li>
+<li><a href="http://junit.org">junit</a> 3.8.2 jar in your ant lib</li>
 <em> this is not required if you use ant 1.7</em>
 <li>a <a href="http://java.sun.com/">jdk</a> 1.4 or greater</li>
 <em>Build instructions have been successfully tested with sun jdk 1.4.2, 1.5.0 and 1.6.0</em>
@@ -78,7 +78,7 @@ svn copy https://svn.apache.org/repos/asf/incubator/ivy/core/trunk \
 <code>
 svn co https://svn.apache.org/repos/asf/incubator/ivy/core/branches/2.0.0-alpha1 ivy-2.0.0-alpha1
 </code>
-<h3>4. Double check the files which needs to be updated for the release.</h3>
+<h3>4. Double check the files which need to be updated for the release.</h3>
 Check again that files have proper revision information.
 It's also time to update the documentation template files which will be used for doc generation to include the version information in the page title.
 For instance in
@@ -103,32 +103,32 @@ svn ci -m "update templates for 2.0.0-alpha-1 release."
 <code>
 svn status
 </code>
-If your working copy is clean, you can launch the release script. If it isn't, make sure to clean it properly. Sometimes you may need to call ant clean if you have started to work with ant builds. If you are confused about your working copy state, delete it and check it out again.
+If your working copy is clean, you can launch the release script. If it isn't, make sure to clean it properly. Sometimes you may need to call ant clean-all if you have started to work with ant builds. If you are confused about your working copy state, delete it and check it out again.
 <h3>7. Launch the release script</h3>
 <code>
 ant -Dbuild.version=2.0.0-alpha1-incubating -Dstatus=milestone -f build-release.xml release
 </code>
 The status should be release only for final releases, and milestone for any other intermediate release.
 If anything is wrong, fix and go back to step 4.
-If the release script is successful, release artifacts will be waiting for you in the build/distrib.
+If the release script is successful, release artifacts will be waiting for you in the build/distrib directory.
 <h3>8. Verify the release</h3>
 Check that all zips can be opened correctly, and that running 'ant' after unzipping the source distribution works properly.
 You can also do a smoke test with the generated ivy.jar , to see if it is able to resolve properly a basic module (for instance you can replace the jar you have in your ~/.ivy/jars directory, clean your cache, and run 'ant clean jar'.
-<h3>9. Tag the svn repository</h3>
-Now that you are satisfied with your release, it is time to tag the svn repo
+<h3>9. Sign and upload the artifacts</h3>
+You will still need to sign the release artifacts and upload them to a location accessible by other Apache commiters
+<h3>10. Cast a vote to approve the release</h3>
+Cast a vote to approve the release, first on the ivy-dev mailing list, then if it is approved, on the general@incubator.apache.org mailing list
+<h3>11. Tag the svn repository</h3>
+Now that the release is approved, it is time to tag the svn repo
 <code>
 svn copy https://svn.apache.org/repos/asf/incubator/ivy/core/branches/2.0.0-alpha1 \
            https://svn.apache.org/repos/asf/incubator/ivy/core/tags/2.0.0-alpha1 \
       -m "Tag release 2.0.0-alpha1."
 </code>
-<h3>10. Sign and upload the artifacts</h3>
-You will still need to sign the release artifacts and upload them to a location accessible by other Apache commiters
-<h3>11. Cast a vote to approve the release</h3>
-Cast a vote to approve the release, first on the ivy-dev mailing list, then if it is approved, on the general@incubator.apache.org mailing list
 <h3>12. Upload to public repository</h3>
 If the release is approved, it's now time to make it public by uploading it to the public Apache distrib repository
 <h3>13. Announce</h3>
-Announce the release on the ivy-dev and ivy-user mailing lists, on the general@i.a.o list and on the user@ant.apache.org.
+Announce the release on the ivy-dev and ivy-user mailing lists, on the general@i.a.o list, announce@apache.org and on the user@ant.apache.org.
 Announce also the release on Ivy web site by editing the doc/index.html on the trunk.
 You can also announce the release on popular web sites, like freshmeat.net (xavier is the owner of the Ivy project on freshmeat), javalobby.org, theserverside.com, dzone.com, ...
 <h3>14. Update this doc</h3>
