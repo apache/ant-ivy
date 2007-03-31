@@ -29,7 +29,7 @@ import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.Delete;
 
-public class IvyPostResolveTest extends TestCase {
+public class IvyPostResolveTaskTest extends TestCase {
     private File _cache;
     private IvyPostResolveTask _task;
     private Project _project;
