@@ -55,7 +55,7 @@ public abstract class IvyPostResolveTask extends IvyTask {
     private String _resolveId;
 
     private String _type;
-    
+    private File _file;
     
     private Filter _artifactFilter = null;
     private boolean useOrigin = false;
@@ -79,6 +79,13 @@ public abstract class IvyPostResolveTask extends IvyTask {
         
         if (_cache == null) {
             _cache = settings.getDefaultCache();
+        }
+        
+        if (_file == null) {
+        	String fileName = getProperty(settings, "ivy.resolved.file", _resolveId);
+        	if (fileName != null) {
+        		_file = new File(fileName);
+        	}
         }
 
         if (isInline()) {
@@ -222,6 +229,7 @@ public abstract class IvyPostResolveTask extends IvyTask {
 		resolve.setHaltonfailure(haltOnFailure);
 		resolve.setUseOrigin(useOrigin);
 		resolve.setValidate(isValidate());
+		resolve.setFile(_file);
 		return resolve;
 	}
 

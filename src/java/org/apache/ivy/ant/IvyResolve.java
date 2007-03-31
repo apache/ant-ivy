@@ -207,6 +207,8 @@ public class IvyResolve extends IvyTask {
 	                getProject().setProperty("ivy.resolved.configurations", _conf);
 	                settings.setVariable("ivy.resolved.configurations", _conf);
 	            }
+	            getProject().setProperty("ivy.resolved.file", _file.getAbsolutePath());
+	            settings.setVariable("ivy.resolved.file", _file.getAbsolutePath());
 	            if (_resolveId != null) {
 		            getProject().setProperty("ivy.organisation." + _resolveId, md.getModuleRevisionId().getOrganisation());
 		            settings.setVariable("ivy.organisation." + _resolveId, md.getModuleRevisionId().getOrganisation());
@@ -223,6 +225,8 @@ public class IvyResolve extends IvyTask {
 		                getProject().setProperty("ivy.resolved.configurations." + _resolveId, _conf);
 		                settings.setVariable("ivy.resolved.configurations." + _resolveId, _conf);
 		            }
+		            getProject().setProperty("ivy.resolved.file." + _resolveId, _file.getAbsolutePath());
+		            settings.setVariable("ivy.resolved.file." + _resolveId, _file.getAbsolutePath());
 	            }
             }
         } catch (MalformedURLException e) {
