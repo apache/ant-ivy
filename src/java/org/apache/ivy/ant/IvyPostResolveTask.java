@@ -166,6 +166,7 @@ public abstract class IvyPostResolveTask extends IvyTask {
         
         if (confs.length > 0)  {
         	IvyResolve resolve = createResolve(haltOnFailure, useOrigin);
+    		resolve.setFile(_file);
         	resolve.setCache(cache);
         	resolve.setTransitive(transitive);
         	resolve.setConf(StringUtils.join(confs, ", "));
@@ -229,7 +230,6 @@ public abstract class IvyPostResolveTask extends IvyTask {
 		resolve.setHaltonfailure(haltOnFailure);
 		resolve.setUseOrigin(useOrigin);
 		resolve.setValidate(isValidate());
-		resolve.setFile(_file);
 		return resolve;
 	}
 
