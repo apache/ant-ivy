@@ -33,7 +33,6 @@ import org.apache.ivy.plugins.parser.xml.XmlModuleDescriptorParser;
 import org.apache.ivy.util.FileUtil;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.Delete;
-import org.apache.tools.ant.types.Path;
 
 
 public class IvyDeliverTest extends TestCase {
