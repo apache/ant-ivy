@@ -204,6 +204,7 @@ public class IvyCachePathTest extends TestCase {
     	
     	_path.setResolveId("withResolveId");
     	_path.setPathid("withresolveid-pathid");
+    	_path.setFile(new File("test/java/org/apache/ivy/ant/ivy-simple.xml"));
     	_path.execute();
 
         Object ref = _project.getReference("withresolveid-pathid");
@@ -213,6 +214,34 @@ public class IvyCachePathTest extends TestCase {
         assertEquals(1, p.size());
         assertEquals(getArchiveFileInCache("org1", "mod1.2", "2.0", "mod1.2", "jar", "jar").getAbsolutePath(),
                 new File(p.list()[0]).getAbsolutePath());
+    }
+    
+    public void testWithResolveIdAndMissingConfs() throws Exception {
+    	Project project = new Project();
+        project.setProperty("ivy.settings.file", "test/repositories/ivysettings.xml");
+
+    	IvyResolve resolve = new IvyResolve();
+    	resolve.setProject(project);
+    	resolve.setCache(_cache);
+    	resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-multiconf.xml"));
+    	resolve.setResolveId("testWithResolveIdAndMissingConfs");
+    	resolve.setConf("default");
+    	resolve.execute();
+    	
+    	// resolve another ivy file
+    	resolve = new IvyResolve();
+    	resolve.setProject(_project);
+    	resolve.setCache(_cache);
+    	resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-latest.xml"));
+    	resolve.execute();
+    	
+        _project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-multiconf.xml");
+
+    	_path.setResolveId("testWithResolveIdAndMissingConfs");
+    	_path.setPathid("withresolveid-pathid");
+    	_path.setConf("default,compile");
+    	_path.setFile(new File("test/java/org/apache/ivy/ant/ivy-multiconf.xml"));
+    	_path.execute();
     }
 
     private File getArchiveFileInCache(String organisation, String module, String revision, String artifact, String type, String ext) {

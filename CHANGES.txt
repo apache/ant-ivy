@@ -48,6 +48,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 =====================================
 - NEW: define artifacts not declared by the dependency module descriptor (IVY-419)
 
+- IMPROVE: Let user specify Ivy file when using a post-resolve task (IVY-455)
 - IMPROVE: IvyArtifactProperty and IvyArtifactReport tasks should be a post resolve task (IVY-452)
 - IMPROVE: Rename ivy configuration in settings to remove ambiguity on configuration meaning (IVY-438)
 - IMPROVE: Please typedef CacheResolver as "cache" for us (IVY-359)

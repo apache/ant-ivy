@@ -184,9 +184,14 @@ public abstract class IvyPostResolveTask extends IvyTask {
     protected String[] getConfsToResolve(String resolveId, String conf) {
         ModuleDescriptor reference = (ModuleDescriptor) getResolvedDescriptor(resolveId, false);
         if (reference == null) {
-        	// assume the module has been resolved outside this build
+        	// assume the module has been resolved outside this build, resolve the required
+        	// configurations again
         	// TODO: find a way to discover which confs were resolved by that previous resolve
-        	return new String[0];
+        	if (conf == null) {
+        		return new String[] {"*"};
+        	} else {
+        		return splitConfs(conf);
+        	}
         }
         String[] rconfs = (String[]) getProject().getReference("ivy.resolved.configurations.ref." + resolveId);
         return getConfsToResolve(reference, conf, rconfs);
@@ -321,6 +326,14 @@ public abstract class IvyPostResolveTask extends IvyTask {
 	
 	public String getResolveId() {
 		return _resolveId;
+	}
+	
+	public void setFile(File file) {
+		_file = file;
+	}
+	
+	public File getFile() {
+		return _file;
 	}
 
 }
