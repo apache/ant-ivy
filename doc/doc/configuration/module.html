@@ -43,12 +43,12 @@ For each module set, you can configure:
     <tr><th class="ivy-att">Attribute</th><th class="ivy-att-desc">Description</th><th class="ivy-att-req">Required</th></tr>
 </thead>
 <tbody>
-    <tr><td>organisation</td><td>the name of the organisation to which apply the resolver. May be a regexp.</td>
+    <tr><td>organisation</td><td>the name of the organisation to which apply the resolver. May be an expression depending on the matcher used (see matcher attribute below).</td>
         <td>Yes</td></tr>
-    <tr><td>name</td><td>the name of the module to which apply the resolver. May be a regexp.</td>
+    <tr><td>name</td><td>the name of the module to which apply the resolver. May be an expression depending on the matcher used (see matcher attribute below).</td>
         <td>Yes</td></tr>
-    <tr><td>matcher</td><td>the matcher to use to match the modules to which the resolver should be applied <span class="since">since 1.3</span></td>
-        <td>No, defaults to exactOrRegexp in pre 1.3 ivy files, and exact in 1.3 and superior</td></tr>
+    <tr><td>matcher</td><td>the <a href="../concept.html#matcher">matcher</a> to use to match the modules to which the resolver should be applied <span class="since">since 1.3</span></td>
+        <td>No, defaults to exactOrRegexp</td></tr>
     <tr><td>resolver</td><td>the name of the resolver to apply. The resolver must have been defined in the resolvers section of the configuration file.</td>
         <td>No</td></tr>
     <tr><td>conflict-manager</td><td>the name of the conflict manager to apply. <span class="since">since 1.4</span></td>
