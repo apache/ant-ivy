@@ -30,7 +30,9 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
+import org.apache.ivy.core.module.id.ArtifactId;
 import org.apache.ivy.core.module.id.ModuleId;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.module.status.StatusManager;
@@ -174,6 +176,7 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
 	private boolean _mappingOverride;
 	private ModuleDescriptorParser _parser;
 	private Resource _resource;
+	private List _excludeRules = new ArrayList(); // List(ExcludeRule)
 
     public DefaultModuleDescriptor(ModuleRevisionId id, String status, Date pubDate) {
         this(id, status, pubDate, false);
@@ -427,7 +430,7 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
     public boolean isNamespaceUseful() {
         for (Iterator iter = _dependencies.iterator(); iter.hasNext();) {
             DependencyDescriptor dd = (DependencyDescriptor)iter.next();
-            if (dd.getAllDependencyArtifactsExcludes().length > 0) {
+            if (dd.getAllExcludeRules().length > 0) {
                 return true;
             }
         }
@@ -494,4 +497,45 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
 		return _resource;
 	}
 
+	public void addExcludeRule(ExcludeRule rule) {
+		_excludeRules .add(rule);
+	}
+
+	public boolean canExclude() {
+		return !_excludeRules.isEmpty();
+	}
+    /**
+     * only works when namespace is properly set. The behaviour is not specified if namespace is not set
+     */
+    public boolean doesExclude(String[] moduleConfigurations, ArtifactId artifactId) {
+        if (_namespace != null) {
+            artifactId = NameSpaceHelper.transform(artifactId, _namespace.getFromSystemTransformer());
+        }
+        ExcludeRule[] rules = getExcludeRules(moduleConfigurations);
+        for (int i = 0; i < rules.length; i++) {
+            if (MatcherHelper.matches(rules[i].getMatcher(), rules[i].getId(), artifactId)) {
+                return true;
+            }
+        }        
+        return false;
+    }
+    public ExcludeRule[] getAllExcludeRules() {
+    	return (ExcludeRule[]) _excludeRules.toArray(new ExcludeRule[_excludeRules.size()]);
+    }
+    public ExcludeRule[] getExcludeRules(String[] moduleConfigurations) {
+        Set rules = new LinkedHashSet();
+        for (Iterator iter = _excludeRules.iterator(); iter.hasNext();) {
+			ExcludeRule rule = (ExcludeRule) iter.next();
+			String[] ruleConfs = rule.getConfigurations();
+			if (containsAny(ruleConfs, moduleConfigurations)) {
+				rules.add(rule);
+			}
+		}
+        return (ExcludeRule[]) rules.toArray(new ExcludeRule[rules.size()]);
+    }
+
+	private boolean containsAny(String[] arr1, String[] arr2) {
+		return new ArrayList(Arrays.asList(arr1))
+				.removeAll(Arrays.asList(arr2));
+	}
 }

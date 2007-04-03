@@ -116,8 +116,8 @@ public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         assertEquals(ModuleRevisionId.newInstance("commons-logging", "commons-logging", "1.0.4"), dds[0].getDependencyRevisionId());
         Map extraAtt = new HashMap();
         extraAtt.put("classifier", "asl");
-        assertEquals(1, dds[0].getAllDependencyArtifactsIncludes().length);
-        assertEquals(extraAtt, dds[0].getAllDependencyArtifactsIncludes()[0].getExtraAttributes());
+        assertEquals(1, dds[0].getAllDependencyArtifacts().length);
+        assertEquals(extraAtt, dds[0].getAllDependencyArtifacts()[0].getExtraAttributes());
     }
     
     // IVY-392
@@ -263,7 +263,7 @@ public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         assertEquals(new HashSet(Arrays.asList(new String[] {"compile", "runtime"})), new HashSet(Arrays.asList(dds[0].getModuleConfigurations())));
         assertEquals(new HashSet(Arrays.asList(new String[] {"master(*)", "compile(*)"})), new HashSet(Arrays.asList(dds[0].getDependencyConfigurations("compile"))));
         assertEquals(new HashSet(Arrays.asList(new String[] {"runtime(*)"})), new HashSet(Arrays.asList(dds[0].getDependencyConfigurations("runtime"))));
-        assertEquals(0, dds[0].getAllDependencyArtifactsExcludes().length);
+        assertEquals(0, dds[0].getAllExcludeRules().length);
         
         assertEquals(ModuleRevisionId.newInstance("dom4j", "dom4j", "1.6"), dds[1].getDependencyRevisionId());
         assertEquals(new HashSet(Arrays.asList(new String[] {"compile", "runtime"})), new HashSet(Arrays.asList(dds[1].getModuleConfigurations())));
@@ -276,7 +276,7 @@ public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         assertEquals(new HashSet(Arrays.asList(new String[] {"compile", "runtime"})), new HashSet(Arrays.asList(dds[2].getModuleConfigurations())));
         assertEquals(new HashSet(Arrays.asList(new String[] {"master(*)", "compile(*)"})), new HashSet(Arrays.asList(dds[2].getDependencyConfigurations("compile"))));
         assertEquals(new HashSet(Arrays.asList(new String[] {"runtime(*)"})), new HashSet(Arrays.asList(dds[2].getDependencyConfigurations("runtime"))));
-        assertEquals(0, dds[2].getAllDependencyArtifactsExcludes().length);
+        assertEquals(0, dds[2].getAllExcludeRules().length);
     }
 
     public void testWithPlugins() throws Exception {

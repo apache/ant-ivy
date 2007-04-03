@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.util.Date;
 
+import org.apache.ivy.core.module.id.ArtifactId;
 import org.apache.ivy.core.module.id.ModuleId;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.plugins.conflict.ConflictManager;
@@ -139,4 +140,24 @@ public interface ModuleDescriptor extends ExtendableItem {
 	 * @return
 	 */
 	Resource getResource();
+    /**
+     * Returns true if this descriptor contains any exclusion rule
+     * @return true if this descriptor contains any exclusion rule
+     */
+	boolean canExclude();
+	/**
+	 * Returns true if an exclude rule of this module attached to any of the given configurations
+	 * matches the given artifact id, and thus exclude it
+	 * @param moduleConfs
+	 * @param artifactId
+	 * @return
+	 */
+	boolean doesExclude(String[] moduleConfs, ArtifactId artifactId);
+	/**
+	 * Returns an array of all the exclude rules this module descriptor currently holds.
+	 * Module Descriptor exclude rules are used to exclude (usually transitive) dependencies
+	 * for the whole module.
+	 * @return an array of {@link ExcludeRule} this module descriptor holds
+	 */
+	public ExcludeRule[] getAllExcludeRules();
 }

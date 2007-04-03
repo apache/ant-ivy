@@ -20,7 +20,6 @@ package org.apache.ivy.core.resolve;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -41,6 +40,7 @@ import org.apache.ivy.core.module.descriptor.Configuration;
 import org.apache.ivy.core.module.descriptor.DefaultArtifact;
 import org.apache.ivy.core.module.descriptor.DependencyArtifactDescriptor;
 import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
+import org.apache.ivy.core.module.descriptor.IncludeRule;
 import org.apache.ivy.core.module.descriptor.MDArtifact;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ArtifactId;
@@ -149,7 +149,10 @@ public class IvyNode implements Comparable {
     private Map _requiredConfs = new HashMap(); 
     
     // Map (String rootModuleConf -> Set(DependencyArtifactDescriptor))
-    private Map _dependencyArtifactsIncludes = new HashMap();
+    private Map _dependencyArtifacts = new HashMap();
+
+    // Map (String rootModuleConf -> Set(IncludeRule))
+    private Map _dependencyIncludes = new HashMap();
 
 
     
@@ -240,7 +243,8 @@ public class IvyNode implements Comparable {
                                 resolved.loadData(rootModuleConf, parent, parentConf, conf, shouldBePublic);
                                 DependencyDescriptor dd = dependencyDescriptor;
                                 if (dd != null) {
-                                    resolved.addDependencyArtifactsIncludes(rootModuleConf, dd.getDependencyArtifactsIncludes(parentConf));
+                                    resolved.addDependencyArtifacts(rootModuleConf, dd.getDependencyArtifacts(parentConf));
+                                    resolved.addDependencyIncludes(rootModuleConf, dd.getIncludeRules(parentConf));
                                 }
                                 _data.replaceNode(getId(), resolved, rootModuleConf); // this actually discards the node
 
@@ -297,7 +301,8 @@ public class IvyNode implements Comparable {
         }
         DependencyDescriptor dd = getDependencyDescriptor(parent);
         if (dd != null) {
-            addDependencyArtifactsIncludes(rootModuleConf, dd.getDependencyArtifactsIncludes(parentConf));
+            addDependencyArtifacts(rootModuleConf, dd.getDependencyArtifacts(parentConf));
+            addDependencyIncludes(rootModuleConf, dd.getIncludeRules(parentConf));
         }
         return loaded;
         
@@ -647,7 +652,7 @@ public class IvyNode implements Comparable {
         updateMapOfSetForKey(node._rootModuleConfs, _rootModuleConfs, rootModuleConf);
         
         // update dependencyArtifactsIncludes
-        updateMapOfSetForKey(node._dependencyArtifactsIncludes, _dependencyArtifactsIncludes, rootModuleConf);
+        updateMapOfSetForKey(node._dependencyArtifacts, _dependencyArtifacts, rootModuleConf);
         
         // update confsToFetch
         updateConfsToFetch(node._fetchedConfigurations);
@@ -726,27 +731,30 @@ public class IvyNode implements Comparable {
         Set artifacts = new HashSet(); // the set we fill before returning
         
         // we check if we have dependencyArtifacts includes description for this rootModuleConf
-        Set includes = (Set)_dependencyArtifactsIncludes.get(rootModuleConf);
+        Set dependencyArtifacts = (Set)_dependencyArtifacts.get(rootModuleConf);
         
-        if (_md.isDefault() && includes != null && !includes.isEmpty()) {
+        if (_md.isDefault() && dependencyArtifacts != null && !dependencyArtifacts.isEmpty()) {
             // the descriptor is a default one: it has been generated from nothing
             // moreover, we have dependency artifacts description
             // these descritions are thus used as if they were declared in the module
             // descriptor. If one is not really present, the error will be raised
             // at download time
-            for (Iterator it = includes.iterator(); it.hasNext();) {
+            for (Iterator it = dependencyArtifacts.iterator(); it.hasNext();) {
                 DependencyArtifactDescriptor dad = (DependencyArtifactDescriptor)it.next();
                 artifacts.add(new MDArtifact(_md, dad.getName(), dad.getType(), dad.getExt(), dad.getUrl(), dad.getExtraAttributes()));
             }
         } else {
-            if (includes == null || includes.isEmpty()) {
-                // no artifacts includes: we get all artifacts as defined by the descriptor
+            Set includes = (Set)_dependencyIncludes.get(rootModuleConf);
+            
+            if ((dependencyArtifacts == null || dependencyArtifacts.isEmpty())
+            		&& (includes == null || includes.isEmpty())) {
+                // no artifacts / includes: we get all artifacts as defined by the descriptor
                 for (Iterator iter = confs.iterator(); iter.hasNext();) {
                     String conf = (String) iter.next();
                     artifacts.addAll(Arrays.asList(_md.getArtifacts(conf)));
                 }
             } else {
-                // we have to get only artifacts listed as "includes"
+            	// we have to get only artifacts listed as "includes"
                 
                 // first we get all artifacts as defined by the module descriptor
                 // and classify them by artifact id
@@ -759,25 +767,29 @@ public class IvyNode implements Comparable {
                     }
                 }
                 
-                // now we can keep only listed ones
-                for (Iterator it = includes.iterator(); it.hasNext();) {
+                // now we add caller defined ones
+                for (Iterator it = dependencyArtifacts.iterator(); it.hasNext();) {
                     DependencyArtifactDescriptor dad = (DependencyArtifactDescriptor)it.next();
-                    if (dad.isAssumePublished()) {
-                        artifacts.add(new MDArtifact(_md, dad.getName(), dad.getType(), dad.getExt(), dad.getUrl(), dad.getExtraAttributes()));
-                    } else {
-                    	Collection arts = findArtifactsMatching(dad, allArtifacts);
-                    	if (arts.isEmpty()) {
-                    		Message.error("a required artifact is not listed by module descriptor: "+dad.getId());
-                    		// we remove it from required list to prevent message to be displayed more than once
-                    		it.remove(); 
-                    	} else {
-                    		Message.debug(this+" in "+rootModuleConf+": including "+arts);
-                    		artifacts.addAll(arts);
-                    	}
-                    }
+                    artifacts.add(new MDArtifact(_md, dad.getName(), dad.getType(), dad.getExt(), 
+                    		dad.getUrl(), dad.getExtraAttributes()));
+                }
+                
+                // and now we filter according to include rules
+                for (Iterator it = includes.iterator(); it.hasNext();) {
+                	IncludeRule dad = (IncludeRule)it.next();
+                	Collection arts = findArtifactsMatching(dad, allArtifacts);
+                	if (arts.isEmpty()) {
+                		Message.error("a required artifact is not listed by module descriptor: "+dad.getId());
+                		// we remove it from required list to prevent message to be displayed more than once
+                		it.remove(); 
+                	} else {
+                		Message.debug(this+" in "+rootModuleConf+": including "+arts);
+                		artifacts.addAll(arts);
+                	}
                 }
             }
         }
+        
         
         // now excludes artifacts that aren't accepted by any caller
         for (Iterator iter = artifacts.iterator(); iter.hasNext();) {
@@ -791,28 +803,32 @@ public class IvyNode implements Comparable {
         return (Artifact[]) artifacts.toArray(new Artifact[artifacts.size()]);
     }
 
-    private static Collection findArtifactsMatching(DependencyArtifactDescriptor dad, Map allArtifacts) {
+    private static Collection findArtifactsMatching(IncludeRule rule, Map allArtifacts) {
         Collection ret = new ArrayList();
         for (Iterator iter = allArtifacts.keySet().iterator(); iter.hasNext();) {
             ArtifactId aid = (ArtifactId)iter.next();
-            if (MatcherHelper.matches(dad.getMatcher(), dad.getId(), aid)) {
+            if (MatcherHelper.matches(rule.getMatcher(), rule.getId(), aid)) {
                 ret.add(allArtifacts.get(aid));
             }
         }
         return ret;
     }
 
-    private void addDependencyArtifactsIncludes(String rootModuleConf, DependencyArtifactDescriptor[] dependencyArtifacts) {
-        addDependencyArtifacts(rootModuleConf, dependencyArtifacts, _dependencyArtifactsIncludes);
+    private void addDependencyArtifacts(String rootModuleConf, DependencyArtifactDescriptor[] dependencyArtifacts) {
+        addObjectsForConf(rootModuleConf, Arrays.asList(dependencyArtifacts), _dependencyArtifacts);
     }
 
-    private void addDependencyArtifacts(String rootModuleConf, DependencyArtifactDescriptor[] dependencyArtifacts, Map artifactsMap) {
-        Set depArtifacts = (Set) artifactsMap.get(rootModuleConf);
-        if (depArtifacts == null) {
-            depArtifacts = new HashSet();
-            artifactsMap.put(rootModuleConf, depArtifacts);
+    private void addDependencyIncludes(String rootModuleConf, IncludeRule[] rules) {
+    	addObjectsForConf(rootModuleConf, Arrays.asList(rules), _dependencyIncludes);
+    }
+
+    private void addObjectsForConf(String rootModuleConf, Collection objectsToAdd, Map map) {
+        Set set = (Set) map.get(rootModuleConf);
+        if (set == null) {
+            set = new HashSet();
+            map.put(rootModuleConf, set);
         }
-        depArtifacts.addAll(Arrays.asList(dependencyArtifacts));
+        set.addAll(objectsToAdd);
     }
     
     

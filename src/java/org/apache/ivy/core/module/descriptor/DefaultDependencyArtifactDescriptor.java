@@ -23,76 +23,48 @@ import java.util.Collection;
 import java.util.Map;
 
 import org.apache.ivy.core.IvyPatternHelper;
-import org.apache.ivy.core.module.id.ArtifactId;
-import org.apache.ivy.plugins.matcher.PatternMatcher;
 import org.apache.ivy.util.extendable.UnmodifiableExtendableItem;
 
 
 public class DefaultDependencyArtifactDescriptor extends UnmodifiableExtendableItem
-	implements DependencyArtifactDescriptor {
+	implements DependencyArtifactDescriptor, ConfigurationAware {
 
-    private DefaultDependencyDescriptor _dd;
-    private ArtifactId _id;
     private Collection _confs = new ArrayList();
-    private boolean _includes;
-    private boolean _assumePublished;
-    private PatternMatcher _patternMatcher;
 	private URL _url;
-    
-    public DefaultDependencyArtifactDescriptor(DefaultDependencyDescriptor dd,
-            String name, String type, String ext, boolean includes, PatternMatcher matcher) {
-		this(dd, name, type, ext, null, includes, false, matcher, null);
-	}
-    /**
+	private String _name;
+	private String _type;
+	private String _ext;
+ 
+	/**
      * @param dd
      * @param name
      * @param type
      * @param url 
      */
-    public DefaultDependencyArtifactDescriptor(DefaultDependencyDescriptor dd,
-            String name, String type, String ext, URL url, boolean includes, boolean assumePublished, PatternMatcher matcher, Map extraAttributes) {
+    public DefaultDependencyArtifactDescriptor(
+    		String name, String type, String ext, URL url, Map extraAttributes) {
     	super(null, extraAttributes);
-        if (dd == null) {
-            throw new NullPointerException("dependency descriptor must not be null");
-        }
         if (name == null) {
             throw new NullPointerException("name must not be null");
         }
         if (type == null) {
             throw new NullPointerException("type must not be null");
         }
-        _dd = dd;
-        _id = new ArtifactId(dd.getDependencyId(), name, type, ext);
-        _includes = includes;
-        _url = url;
-        _patternMatcher = matcher;
-        _assumePublished = assumePublished;
-        initStandardAttributes();
-    }
-
-    public DefaultDependencyArtifactDescriptor(DefaultDependencyDescriptor dd, ArtifactId aid, boolean includes, boolean assumePublished, PatternMatcher matcher, Map extraAttributes) {
-    	super(null, extraAttributes);
-        if (dd == null) {
-            throw new NullPointerException("dependency descriptor must not be null");
+        if (ext == null) {
+            throw new NullPointerException("ext must not be null");
         }
-        _dd = dd;
-        _id = aid;
-        _includes = includes;
-        _patternMatcher = matcher;
-        _assumePublished = assumePublished;
+        _name = name;
+        _type = type;
+        _ext = ext;
+        _url = url;
         initStandardAttributes();
     }
 
 	private void initStandardAttributes() {
-		setStandardAttribute(IvyPatternHelper.ORGANISATION_KEY, _id.getModuleId().getOrganisation());
-        setStandardAttribute(IvyPatternHelper.MODULE_KEY, _id.getModuleId().getName());
-        setStandardAttribute(IvyPatternHelper.ARTIFACT_KEY, _id.getName());
-        setStandardAttribute(IvyPatternHelper.TYPE_KEY, _id.getType());
-        setStandardAttribute(IvyPatternHelper.EXT_KEY, _id.getExt());
+        setStandardAttribute(IvyPatternHelper.ARTIFACT_KEY, getName());
+        setStandardAttribute(IvyPatternHelper.TYPE_KEY, getType());
+        setStandardAttribute(IvyPatternHelper.EXT_KEY, getExt());
         setStandardAttribute("url", _url != null ? String.valueOf(_url) : "");
-        setStandardAttribute("matcher", _patternMatcher.getName());
-        setStandardAttribute("assumePublished", String.valueOf(_assumePublished));
-        setStandardAttribute("includes", String.valueOf(_includes));
 	}
     
 	public boolean equals(Object obj) {
@@ -100,62 +72,42 @@ public class DefaultDependencyArtifactDescriptor extends UnmodifiableExtendableI
             return false;
         }
         DependencyArtifactDescriptor dad = (DependencyArtifactDescriptor)obj;
-        return getId().equals(dad.getId());
+        return getAttributes().equals(dad.getAttributes());
     }
     
     public int hashCode() {
-        return getId().hashCode();
+        return getAttributes().hashCode();
     }
     
     /**
-     * Add a configuration for this artifact (includes or excludes depending on this type dependency artifact descriptor).
-     * This method also updates the corresponding dependency descriptor
+     * Add a configuration for this artifact.
      * @param conf
      */
     public void addConfiguration(String conf) {
         _confs.add(conf);
-        if (_includes) {
-            _dd.addDependencyArtifactIncludes(conf, this);
-        } else {
-            _dd.addDependencyArtifactExcludes(conf, this);
-        }
     }
         
-    public DependencyDescriptor getDependency() {
-        return _dd;
-    }
-    
-    public ArtifactId getId() {
-        return _id;
-    }
-
     public String getName() {
-        return _id.getName();
+        return _name;
     }
 
     public String getType() {
-        return _id.getType();
+        return _type;
     }
     public String getExt() {
-        return _id.getExt();
+        return _ext;
     }
 
     public String[] getConfigurations() {
         return (String[])_confs.toArray(new String[_confs.size()]);
     }
 
-    public PatternMatcher getMatcher() {
-        return _patternMatcher;
-    }
 
 	public URL getUrl() {
 		return _url;
 	}
 
 	public String toString() {
-		return (_includes?"I":"E")+":"+_id+"("+_confs+")"+(_url==null?"":_url.toString());
-	}
-	public boolean isAssumePublished() {
-		return _assumePublished;
+		return "DA:"+_name+"."+_ext+"("+_type+") "+"("+_confs+")"+(_url==null?"":_url.toString());
 	}
 }

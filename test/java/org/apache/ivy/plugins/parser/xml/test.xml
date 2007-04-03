@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<?xml-stylesheet type="text/xsl" href="http://www.jayasoft.fr/org/ivyrep/ivy-doc.xsl"?>
 <!--
    Licensed to the Apache Software Foundation (ASF) under one
    or more contributor license agreements.  See the NOTICE file
@@ -18,7 +17,7 @@
    specific language governing permissions and limitations
    under the License.    
 -->
-<ivy-module version="1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://incubator.apache.org/ivy/schemas/ivy.xsd">
+<ivy-module version="2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://incubator.apache.org/ivy/schemas/ivy.xsd">
 	<info organisation="myorg"
 	       module="mymodule"
 	       revision="myrev"
@@ -98,7 +97,11 @@
 		<dependency org="yourorg" name="yourmodule11" rev="11.1" conf="*->@"/>
 	</dependencies>
 	<conflicts>
-		<manager org="yourorg" module=".*" name="all"/>
+		<manager org="yourorg" module=".*" name="all" matcher="regexp"/>
 		<manager org="theirorg" module="theirmodule1" rev="1.0, 1.1"/>
 	</conflicts>
+	<exclude>
+		<rule module="*servlet*" matcher="glob" conf="myconf1" /> 
+		<rule org="acme" module="test" artifact="test" type="source" ext="jar" /> 
+	</exclude>
 </ivy-module>

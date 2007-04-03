@@ -54,12 +54,21 @@ public interface DependencyDescriptor extends ExtendableItem {
     String[] getDependencyConfigurations(String moduleConfiguration);
     String[] getDependencyConfigurations(String[] moduleConfigurations);
     Namespace getNamespace();
-    DependencyArtifactDescriptor[] getAllDependencyArtifactsIncludes();
-    DependencyArtifactDescriptor[] getDependencyArtifactsIncludes(String moduleConfigurations);
-    DependencyArtifactDescriptor[] getDependencyArtifactsIncludes(String[] moduleConfigurations);
-    DependencyArtifactDescriptor[] getAllDependencyArtifactsExcludes();
-    DependencyArtifactDescriptor[] getDependencyArtifactsExcludes(String moduleConfigurations);
-    DependencyArtifactDescriptor[] getDependencyArtifactsExcludes(String[] moduleConfigurations);
+    DependencyArtifactDescriptor[] getAllDependencyArtifacts();
+    DependencyArtifactDescriptor[] getDependencyArtifacts(String moduleConfigurations);
+    DependencyArtifactDescriptor[] getDependencyArtifacts(String[] moduleConfigurations);
+    IncludeRule[] getAllIncludeRules();
+    IncludeRule[] getIncludeRules(String moduleConfigurations);
+    IncludeRule[] getIncludeRules(String[] moduleConfigurations);
+    ExcludeRule[] getAllExcludeRules();
+    ExcludeRule[] getExcludeRules(String moduleConfigurations);
+    ExcludeRule[] getExcludeRules(String[] moduleConfigurations);
+    /**
+     * Returns true if
+     * @param moduleConfigurations
+     * @param artifactId
+     * @return
+     */
     boolean doesExclude(String[] moduleConfigurations, ArtifactId artifactId);
     /**
      * Returns true if this descriptor contains any exclusion rule

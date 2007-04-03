@@ -32,9 +32,15 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.ivy.Ivy;
 import org.apache.ivy.core.module.descriptor.Configuration;
+import org.apache.ivy.core.module.descriptor.ConfigurationAware;
 import org.apache.ivy.core.module.descriptor.DefaultDependencyArtifactDescriptor;
 import org.apache.ivy.core.module.descriptor.DefaultDependencyDescriptor;
+import org.apache.ivy.core.module.descriptor.DefaultExcludeRule;
+import org.apache.ivy.core.module.descriptor.DefaultIncludeRule;
 import org.apache.ivy.core.module.descriptor.DefaultModuleDescriptor;
+import org.apache.ivy.core.module.descriptor.DependencyArtifactDescriptor;
+import org.apache.ivy.core.module.descriptor.ExcludeRule;
+import org.apache.ivy.core.module.descriptor.IncludeRule;
 import org.apache.ivy.core.module.descriptor.License;
 import org.apache.ivy.core.module.descriptor.MDArtifact;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
@@ -44,7 +50,6 @@ import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.plugins.conflict.ConflictManager;
 import org.apache.ivy.plugins.conflict.FixedConflictManager;
-import org.apache.ivy.plugins.matcher.ExactPatternMatcher;
 import org.apache.ivy.plugins.matcher.PatternMatcher;
 import org.apache.ivy.plugins.namespace.Namespace;
 import org.apache.ivy.plugins.parser.AbstractModuleDescriptorParser;
@@ -134,7 +139,7 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
 	private static final List ALLOWED_VERSIONS = Arrays.asList(new String[] {"1.0", "1.1", "1.2", "1.3", "1.4","2.0"});
     
     private DefaultDependencyDescriptor _dd;
-    private DefaultDependencyArtifactDescriptor _dad;
+    private ConfigurationAware _confAware;
     private MDArtifact _artifact;
     private String _conf;
     private boolean _validate = true;
@@ -150,7 +155,8 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
     private static final int DEP_ARTIFACT = 5;
     private static final int ARTIFACT_INCLUDE = 6;
     private static final int ARTIFACT_EXCLUDE = 7;
-    private static final int CONFLICT = 7;
+    private static final int CONFLICT = 8;
+    private static final int EXCLUDE = 9;
     private int _state = NONE;
 
     public Parser(ModuleDescriptorParser parser, IvySettings ivySettings, boolean validate) {
@@ -264,6 +270,9 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
             } else if ("conflicts".equals(qName)) {
                 _state = CONFLICT;
                 checkConfigurations();
+            } else if ("exclude".equals(qName) && _state != DEP) {
+                _state = EXCLUDE;
+                checkConfigurations();
             } else if ("artifact".equals(qName)) {
                 if (_state == PUB) {
                     // this is a published artifact
@@ -297,9 +306,9 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
                     addError("artifact tag found in invalid tag: "+_state);
                 }
             } else if ("include".equals(qName) && _state == DEP) {
-                addDependencyArtifactsIncludes(qName, attributes);
-            } else if ("exclude".equals(qName)) {
-                addDependencyArtifactsExcludes(qName, attributes);
+                addIncludeRule(qName, attributes);
+            } else if ("exclude".equals(qName) && _state == DEP) {
+                addExcludeRule(qName, attributes);
             } else if ("dependency".equals(qName)) {
                 String org = _ivy.substitute(attributes.getValue("org"));
                 if (org == null) { 
@@ -368,7 +377,7 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
                 case DEP_ARTIFACT:
                 case ARTIFACT_INCLUDE:
                 case ARTIFACT_EXCLUDE:
-                    _dad.addConfiguration(conf);
+                    addConfiguration(conf);
                     break;
                 default:
                     if (_validate) {
@@ -409,6 +418,9 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
                     return;
                 }
                 _md.addConflictManager(new ModuleId(org, mod), matcher, cm);
+            } else if ("rule".equals(qName) && _state == EXCLUDE) {
+                parseRule(qName, attributes);
+    			_md.addExcludeRule((ExcludeRule) _confAware);
             } else if ("include".equals(qName) && _state == CONF) {
                 URL url;
                 String fileName = _ivy.substitute(attributes.getValue("file"));
@@ -451,23 +463,26 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
 
     private void addDependencyArtifacts(String tag, Attributes attributes) throws MalformedURLException {
         _state = DEP_ARTIFACT;
-        addDependencyArtifact(tag, attributes);
+        parseRule(tag, attributes);
     }
 
-    private void addDependencyArtifactsIncludes(String tag, Attributes attributes) throws MalformedURLException {
+    private void addIncludeRule(String tag, Attributes attributes) throws MalformedURLException {
         _state = ARTIFACT_INCLUDE;
-        addDependencyArtifact(tag, attributes);
+        parseRule(tag, attributes);
     }
 
-    private void addDependencyArtifactsExcludes(String tag, Attributes attributes) throws MalformedURLException {
+    private void addExcludeRule(String tag, Attributes attributes) throws MalformedURLException {
         _state = ARTIFACT_EXCLUDE;
-        addDependencyArtifact(tag, attributes);
+        parseRule(tag, attributes);
     }   
     
-    private void addDependencyArtifact(String tag, Attributes attributes) throws MalformedURLException {
+    private void parseRule(String tag, Attributes attributes) throws MalformedURLException {
         String name = _ivy.substitute(attributes.getValue("name"));
         if (name == null) {
-        	name = "artifact".equals(tag)?_dd.getDependencyId().getName() : PatternMatcher.ANY_EXPRESSION;
+        	name = _ivy.substitute(attributes.getValue("artifact"));
+        	if (name == null) {
+        		name = "artifact".equals(tag)?_dd.getDependencyId().getName() : PatternMatcher.ANY_EXPRESSION;
+        	}
         }
         String type = _ivy.substitute(attributes.getValue("type"));
         if (type == null) {
@@ -478,25 +493,25 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
         if (_state == DEP_ARTIFACT) {
             String url = _ivy.substitute(attributes.getValue("url"));
             Map extraAtt = ExtendableItemHelper.getExtraAttributes(attributes, new String[] {"name", "type", "ext", "url", "conf"});
-            _dad = new DefaultDependencyArtifactDescriptor(_dd, name, type, ext, url==null?null:new URL(url), true, true, ExactPatternMatcher.INSTANCE, extraAtt);
+            _confAware = new DefaultDependencyArtifactDescriptor(name, type, ext, url==null?null:new URL(url), extraAtt);
         } else if (_state == ARTIFACT_INCLUDE) {
-        	PatternMatcher matcher = getDependencyArtifactMatcher(attributes.getValue("matcher"));
+        	PatternMatcher matcher = getPatternMatcher(attributes.getValue("matcher"));
             String org = _ivy.substitute(attributes.getValue("org"));
             org = org == null ? PatternMatcher.ANY_EXPRESSION : org;
             String module = _ivy.substitute(attributes.getValue("module"));
             module = module == null ? PatternMatcher.ANY_EXPRESSION : module;
             ArtifactId aid = new ArtifactId(new ModuleId(org, module), name, type, ext);
             Map extraAtt = ExtendableItemHelper.getExtraAttributes(attributes, new String[] {"org", "module", "name", "type", "ext", "matcher", "conf"});
-            _dad = new DefaultDependencyArtifactDescriptor(_dd, aid, true, false, matcher, extraAtt);
-        } else {
-        	PatternMatcher matcher = getDependencyArtifactMatcher(attributes.getValue("matcher"));
+            _confAware = new DefaultIncludeRule(aid, matcher, extraAtt);
+        } else { // _state == ARTIFACT_EXCLUDE
+        	PatternMatcher matcher = getPatternMatcher(attributes.getValue("matcher"));
             String org = _ivy.substitute(attributes.getValue("org"));
             org = org == null ? PatternMatcher.ANY_EXPRESSION : org;
             String module = _ivy.substitute(attributes.getValue("module"));
             module = module == null ? PatternMatcher.ANY_EXPRESSION : module;
             ArtifactId aid = new ArtifactId(new ModuleId(org, module), name, type, ext);
             Map extraAtt = ExtendableItemHelper.getExtraAttributes(attributes, new String[] {"org", "module", "name", "type", "ext", "matcher", "conf"});
-            _dad = new DefaultDependencyArtifactDescriptor(_dd, aid, false, false, matcher, extraAtt);
+            _confAware = new DefaultExcludeRule(aid, matcher, extraAtt);
         }
         String confs = _ivy.substitute(attributes.getValue("conf"));
         // only add confs if they are specified. if they aren't, endElement will handle this
@@ -509,12 +524,31 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
                 conf = confs.split(",");
             }
             for (int i = 0; i < conf.length; i++) {
-                _dad.addConfiguration(conf[i].trim());
+				addConfiguration(conf[i].trim());
             }
         }
     }
 
-	private PatternMatcher getDependencyArtifactMatcher(String m) {
+	private void addConfiguration(String c) {
+		_confAware.addConfiguration(c);
+		if (_state == EXCLUDE) {
+			// we are adding a configuration to a module wide exclude rule
+			// we have nothing special to do here, the rule has already been added to the module descriptor
+		} else {
+			// we are currently adding a configuration to either an include, exclude or artifact element
+			// of a dependency. This means that we have to add this element to the corresponding conf
+			// of the current dependency descriptor
+			if (_confAware instanceof DependencyArtifactDescriptor) {
+				_dd.addDependencyArtifact(c, (DependencyArtifactDescriptor) _confAware);
+			} else if (_confAware instanceof IncludeRule) {
+				_dd.addIncludeRule(c, (IncludeRule) _confAware);
+			} else if (_confAware instanceof ExcludeRule) {
+				_dd.addExcludeRule(c, (ExcludeRule) _confAware);
+			}
+		}
+	}
+
+	private PatternMatcher getPatternMatcher(String m) {
 		String matcherName = _ivy.substitute(m);
         PatternMatcher matcher = matcherName == null ? _defaultMatcher : _ivy.getMatcher(matcherName);
         if (matcher == null) {
@@ -536,14 +570,25 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
         		|| (_state == ARTIFACT_INCLUDE && "include".equals(qName))
         		|| (_state == ARTIFACT_EXCLUDE && "exclude".equals(qName))){
             _state = DEP;
-            if (_dad.getConfigurations().length == 0) {
+            if (_confAware.getConfigurations().length == 0) {
                 String[] confs = _md.getConfigurationsNames();
                 for (int i = 0; i < confs.length; i++) {
-                    _dad.addConfiguration(confs[i]);
+                   addConfiguration(confs[i]);
                 }                
             }
+            _confAware = null;
+        } else if (_state == EXCLUDE && "rule".equals(qName)){
+            if (_confAware.getConfigurations().length == 0) {
+                String[] confs = _md.getConfigurationsNames();
+                for (int i = 0; i < confs.length; i++) {
+                   addConfiguration(confs[i]);
+                }                
+            }
+            _confAware = null;
         } else if ("dependency".equals(qName) && _dd.getModuleConfigurations().length == 0) {
             parseDepsConfs(getDefaultConf(), _dd);
+        } else if ("dependencies".equals(qName)) {
+        	_state = NONE;
         }
     }
 

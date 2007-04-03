@@ -202,7 +202,7 @@ public abstract class BasicResolver extends AbstractResolver {
     				return null;
     			}
     			parser = XmlModuleDescriptorParser.getInstance();
-    			md = DefaultModuleDescriptor.newDefaultInstance(mrid, dd.getAllDependencyArtifactsIncludes());
+    			md = DefaultModuleDescriptor.newDefaultInstance(mrid, dd.getAllDependencyArtifacts());
     			ResolvedResource artifactRef = findFirstArtifactRef(md, dd, data);
     			checkInterrupted();
     			if (artifactRef == null) {

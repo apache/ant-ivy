@@ -86,7 +86,7 @@ public class IvyNodeCallers {
             return _md;
         }
         public boolean canExclude() {
-            return _callerCanExclude || _dd.canExclude();
+            return _callerCanExclude || _md.canExclude() || _dd.canExclude();
         }
         public DependencyDescriptor getDependencyDescriptor() {
             return _dd;
@@ -225,6 +225,9 @@ public class IvyNodeCallers {
             if (dd.doesExclude(moduleConfs, artifact.getId().getArtifactId())) {
                 return true;
             }
+        }
+        if (md.doesExclude(moduleConfs, artifact.getId().getArtifactId())) {
+            return true;
         }
         // ... or if it is excluded by all its callers
         IvyNode c = _node.getData().getNode(md.getModuleRevisionId());

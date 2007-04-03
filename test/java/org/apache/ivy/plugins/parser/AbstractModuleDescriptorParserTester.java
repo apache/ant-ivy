@@ -25,6 +25,8 @@ import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.Configuration;
 import org.apache.ivy.core.module.descriptor.DependencyArtifactDescriptor;
 import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
+import org.apache.ivy.core.module.descriptor.ExcludeRule;
+import org.apache.ivy.core.module.descriptor.IncludeRule;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.descriptor.Configuration.Visibility;
 
@@ -56,11 +58,8 @@ public abstract class AbstractModuleDescriptorParserTester extends TestCase {
         }
     }
 
-    protected void assertDependencyArtifactsIncludes(DependencyDescriptor dd, String[] confs, String[] artifactsNames) {
-    	assertDependencyArtifactsIncludes(dd, confs, artifactsNames, false);
-    }
-    protected void assertDependencyArtifactsIncludes(DependencyDescriptor dd, String[] confs, String[] artifactsNames, boolean assumePublished) {
-        DependencyArtifactDescriptor[] dads = dd.getDependencyArtifactsIncludes(confs);
+    protected void assertDependencyArtifacts(DependencyDescriptor dd, String[] confs, String[] artifactsNames) {
+        DependencyArtifactDescriptor[] dads = dd.getDependencyArtifacts(confs);
         assertNotNull(dads);
         assertEquals(artifactsNames.length, dads.length);
         for (int i = 0; i < artifactsNames.length; i++) {
@@ -68,41 +67,57 @@ public abstract class AbstractModuleDescriptorParserTester extends TestCase {
             for (int j = 0; j < dads.length; j++) {
                 assertNotNull(dads[j]);
                 if (dads[j].getName().equals(artifactsNames[i])) {
-                	assertEquals("unexpected value for assumePublished on "+artifactsNames[i], assumePublished, dads[j].isAssumePublished());
                     found = true;
                     break;
                 }
             }
-            assertTrue("dependency artifact include not found: "+artifactsNames[i], found);
+            assertTrue("dependency artifact not found: "+artifactsNames[i], found);
         }
     }
 
-    protected void assertDependencyArtifactsExcludes(DependencyDescriptor dd, String[] confs, String[] artifactsNames) {
-        DependencyArtifactDescriptor[] dads = dd.getDependencyArtifactsExcludes(confs);
+    protected void assertDependencyArtifactIncludeRules(DependencyDescriptor dd, String[] confs, String[] artifactsNames) {
+        IncludeRule[] dads = dd.getIncludeRules(confs);
         assertNotNull(dads);
         assertEquals(artifactsNames.length, dads.length);
         for (int i = 0; i < artifactsNames.length; i++) {
             boolean found = false;
             for (int j = 0; j < dads.length; j++) {
                 assertNotNull(dads[j]);
-                if (dads[j].getName().equals(artifactsNames[i])) {
+                if (dads[j].getId().getName().equals(artifactsNames[i])) {
                     found = true;
                     break;
                 }
             }
-            assertTrue("dependency artifact exclude not found: "+artifactsNames[i], found);
+            assertTrue("dependency include not found: "+artifactsNames[i], found);
+        }
+    }
+
+    protected void assertDependencyArtifactExcludeRules(DependencyDescriptor dd, String[] confs, String[] artifactsNames) {
+        ExcludeRule[] rules = dd.getExcludeRules(confs);
+        assertNotNull(rules);
+        assertEquals(artifactsNames.length, rules.length);
+        for (int i = 0; i < artifactsNames.length; i++) {
+            boolean found = false;
+            for (int j = 0; j < rules.length; j++) {
+                assertNotNull(rules[j]);
+                if (rules[j].getId().getName().equals(artifactsNames[i])) {
+                    found = true;
+                    break;
+                }
+            }
+            assertTrue("dependency exclude not found: "+artifactsNames[i], found);
         }
     }
 
     protected void assertDependencyModulesExcludes(DependencyDescriptor dd, String[] confs, String[] moduleNames) {
-        DependencyArtifactDescriptor[] dads = dd.getDependencyArtifactsExcludes(confs);
-        assertNotNull(dads);
-        assertEquals(moduleNames.length, dads.length);
+    	ExcludeRule[] rules = dd.getExcludeRules(confs);
+        assertNotNull(rules);
+        assertEquals(moduleNames.length, rules.length);
         for (int i = 0; i < moduleNames.length; i++) {
             boolean found = false;
-            for (int j = 0; j < dads.length; j++) {
-                assertNotNull(dads[j]);
-                if (dads[j].getId().getModuleId().getName().equals(moduleNames[i])) {
+            for (int j = 0; j < rules.length; j++) {
+                assertNotNull(rules[j]);
+                if (rules[j].getId().getModuleId().getName().equals(moduleNames[i])) {
                     found = true;
                     break;
                 }

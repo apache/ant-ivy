@@ -29,6 +29,8 @@ import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.DefaultArtifact;
 import org.apache.ivy.core.module.descriptor.DefaultDependencyArtifactDescriptor;
 import org.apache.ivy.core.module.descriptor.DefaultDependencyDescriptor;
+import org.apache.ivy.core.module.descriptor.DefaultIncludeRule;
+import org.apache.ivy.core.module.id.ArtifactId;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.report.ArtifactDownloadReport;
 import org.apache.ivy.core.report.DownloadReport;
@@ -214,8 +216,8 @@ public class IBiblioResolverTest extends TestCase {
         
         ModuleRevisionId mrid = ModuleRevisionId.newInstance("apache", "nanning", "0.9");
         DefaultDependencyDescriptor dd = new DefaultDependencyDescriptor(mrid, false);
-        dd.addDependencyArtifactIncludes("default", new DefaultDependencyArtifactDescriptor(dd, "nanning-profiler", "jar", "jar", true, ExactPatternMatcher.INSTANCE));
-        dd.addDependencyArtifactIncludes("default", new DefaultDependencyArtifactDescriptor(dd, "nanning-trace", "jar", "jar", true, ExactPatternMatcher.INSTANCE));
+        dd.addIncludeRule("default", new DefaultIncludeRule(new ArtifactId(mrid.getModuleId(), "nanning-profiler", "jar", "jar"), ExactPatternMatcher.INSTANCE, null));
+        dd.addIncludeRule("default", new DefaultIncludeRule(new ArtifactId(mrid.getModuleId(), "nanning-trace", "jar", "jar"), ExactPatternMatcher.INSTANCE, null));
         ResolvedModuleRevision rmr = resolver.getDependency(dd, _data);
         assertNotNull(rmr);
         assertEquals(mrid, rmr.getId());

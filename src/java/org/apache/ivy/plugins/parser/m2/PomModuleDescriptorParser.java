@@ -37,6 +37,7 @@ import org.apache.ivy.core.module.descriptor.Configuration;
 import org.apache.ivy.core.module.descriptor.DefaultArtifact;
 import org.apache.ivy.core.module.descriptor.DefaultDependencyArtifactDescriptor;
 import org.apache.ivy.core.module.descriptor.DefaultDependencyDescriptor;
+import org.apache.ivy.core.module.descriptor.DefaultExcludeRule;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.descriptor.Configuration.Visibility;
 import org.apache.ivy.core.module.id.ArtifactId;
@@ -173,18 +174,13 @@ public class PomModuleDescriptorParser extends AbstractModuleDescriptorParser {
                     extraAtt.put("classifier", _classifier);
                     String[] confs = _dd.getModuleConfigurations();
                     for (int i = 0; i < confs.length; i++) {
-                    	_dd.addDependencyArtifactIncludes(
+                    	_dd.addDependencyArtifact(
                     			confs[i], 
                     			new DefaultDependencyArtifactDescriptor(
-                    					_dd, 
-                    					new ArtifactId(
-                    							_dd.getDependencyId(), 
-                    							_dd.getDependencyId().getName(), 
-                    							"jar", 
-                    							"jar"), // here we have to assume a type and ext for the artifact, so this is a limitation compared to how m2 behave with classifiers
-                    					false, 
-                    					true, // assumePublished = true, Ivy will actually assume this artifact (with the classifier extra artifact) is published by the dependency 
-                    					ExactPatternMatcher.INSTANCE,
+                    					_dd.getDependencyId().getName(), 
+                    					"jar", 
+                    					"jar", // here we have to assume a type and ext for the artifact, so this is a limitation compared to how m2 behave with classifiers
+                    					null,
                     					extraAtt));
                     }
                 }
@@ -192,16 +188,13 @@ public class PomModuleDescriptorParser extends AbstractModuleDescriptorParser {
                     ModuleId mid = (ModuleId)iter.next();
                     String[] confs = _dd.getModuleConfigurations();
                     for (int i = 0; i < confs.length; i++) {
-                        _dd.addDependencyArtifactExcludes(confs[i], 
-                        		new DefaultDependencyArtifactDescriptor(
-                        				_dd, 
+                        _dd.addExcludeRule(confs[i], 
+                        		new DefaultExcludeRule(
                         				new ArtifactId(
                         						mid, 
                         						PatternMatcher.ANY_EXPRESSION, 
                         						PatternMatcher.ANY_EXPRESSION, 
                         						PatternMatcher.ANY_EXPRESSION), 
-                						false, 
-                						false, 
                 						ExactPatternMatcher.INSTANCE,
                 						null));
                     }
