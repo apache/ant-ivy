@@ -171,7 +171,7 @@ public class IvyResolve extends IvyTask {
             		throw new BuildException("'module' not allowed when not using 'org' attribute");
             	}
 	            if (_file == null) {
-	                _file = new File(getProject().getBaseDir(), getProperty(settings, "ivy.dep.file"));
+	                _file = getProject().resolveFile(getProperty(settings, "ivy.dep.file"));
 	            }
 	            report = ivy.resolve(
 	                    _file.toURL(), 

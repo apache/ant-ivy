@@ -24,6 +24,7 @@ import junit.framework.TestCase;
 import org.apache.ivy.Ivy;
 import org.apache.ivy.TestHelper;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
+import org.apache.ivy.core.report.ResolveReport;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.Delete;
@@ -285,6 +286,23 @@ public class IvyResolveTest extends TestCase {
         assertNotNull(project.getReference("ivy.resolved.descriptor.testWithResolveId"));
         assertNotNull(project.getReference("ivy.resolved.configurations.ref"));
         assertNotNull(project.getReference("ivy.resolved.configurations.ref.testWithResolveId"));
+    }
+    
+    public void testResolveWithAbsoluteFile() {
+    	// IVY-396
+    	File ivyFile = new File("test/java/org/apache/ivy/ant/ivy-simple.xml");
+    	_resolve.getProject().setProperty("ivy.dep.file", ivyFile.getAbsolutePath());
+    	_resolve.execute();
+        
+        assertTrue(getResolvedIvyFileInCache(ModuleRevisionId.newInstance("apache", "resolve-simple", "1.0")).exists());
+    }
+    
+    public void testResolveWithRelativeFile() {
+    	// IVY-396
+    	_resolve.getProject().setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-simple.xml");
+    	_resolve.execute();
+        
+        assertTrue(getResolvedIvyFileInCache(ModuleRevisionId.newInstance("apache", "resolve-simple", "1.0")).exists());
     }
     
     private Ivy getIvy() {
