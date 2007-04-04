@@ -53,7 +53,7 @@ public class IvyInfo extends IvyTask {
         Ivy ivy = getIvyInstance();
         IvySettings settings = ivy.getSettings();
         if (_file == null) {
-            _file = new File(getProject().getBaseDir(), getProperty(settings, "ivy.dep.file"));
+            _file = getProject().resolveFile(getProperty(settings, "ivy.dep.file"));
         }
         
         try {
