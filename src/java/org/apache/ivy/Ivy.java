@@ -207,6 +207,15 @@ public class Ivy {
 		postConfigure();
 	}
 	
+	/**
+	 * Configures Ivy with 1.4 compatible default settings
+	 */
+	public void configureDefault14() throws ParseException, IOException {
+		assertBound();
+		_settings.loadDefault14();
+		postConfigure();
+	}
+	
 	/////////////////////////////////////////////////////////////////////////
     //                         CHECK
     /////////////////////////////////////////////////////////////////////////

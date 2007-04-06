@@ -158,9 +158,15 @@ public class IvyConfigure extends IvyTask {
 	                }
 				}
                 if (!_file.exists()) {
-                    Message.info("no settings file found, using default...");
-                    _file = null;
-                    _url = IvySettings.getDefaultSettingsURL();
+                	if (Boolean.valueOf(getProject().getProperty("ivy.14.compatible")).booleanValue()) {
+	                    Message.info("no settings file found, using Ivy 1.4 default...");
+	                    _file = null;
+	                    _url = IvySettings.getDefault14SettingsURL();
+                	} else {
+	                    Message.info("no settings file found, using default...");
+	                    _file = null;
+	                    _url = IvySettings.getDefaultSettingsURL();
+                	}
                 }
             } 
             if (_file != null) {

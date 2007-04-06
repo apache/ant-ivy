@@ -25,13 +25,33 @@ import junit.framework.TestCase;
 
 import org.apache.ivy.Ivy;
 import org.apache.ivy.plugins.resolver.DependencyResolver;
+import org.apache.ivy.plugins.resolver.IBiblioResolver;
+import org.apache.ivy.plugins.resolver.IvyRepResolver;
 
 public class ConfigureTest extends TestCase {
     public void testDefault() throws ParseException, IOException {
         Ivy ivy = new Ivy();
         ivy.configureDefault();
         
-        assertNotNull(ivy.getSettings().getDefaultResolver());
+        IvySettings settings = ivy.getSettings();
+		assertNotNull(settings.getDefaultResolver());
+		
+        DependencyResolver publicResolver = settings.getResolver("public");
+		assertNotNull(publicResolver);
+		assertTrue(publicResolver instanceof IBiblioResolver);
+		IBiblioResolver ibiblio = (IBiblioResolver) publicResolver;
+		assertTrue(ibiblio.isM2compatible());
+    }
+    
+    public void testDefault14() throws ParseException, IOException {
+        Ivy ivy = new Ivy();
+        ivy.configureDefault14();
+        
+        IvySettings settings = ivy.getSettings();
+		assertNotNull(settings.getDefaultResolver());
+		
+        DependencyResolver publicResolver = settings.getResolver("public");
+		assertTrue(publicResolver instanceof IvyRepResolver);
     }
     
     public void testTypedefWithCustomClasspath() throws Exception {

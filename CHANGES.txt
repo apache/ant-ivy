@@ -48,6 +48,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 =====================================
 - NEW: define artifacts not declared by the dependency module descriptor (IVY-419)
 - NEW: Module wide exclude (IVY-431)
+- NEW: The default public resolver used is now ibiblio with m2 compatible mode (IVY-463)
 
 - IMPROVE: Let user specify Ivy file when using a post-resolve task (IVY-455)
 - IMPROVE: IvyArtifactProperty and IvyArtifactReport tasks should be a post resolve task (IVY-452)

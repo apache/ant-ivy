@@ -23,6 +23,9 @@ import junit.framework.TestCase;
 
 import org.apache.ivy.Ivy;
 import org.apache.ivy.core.settings.IvySettings;
+import org.apache.ivy.plugins.resolver.DependencyResolver;
+import org.apache.ivy.plugins.resolver.IBiblioResolver;
+import org.apache.ivy.plugins.resolver.IvyRepResolver;
 import org.apache.tools.ant.Project;
 
 
@@ -36,6 +39,36 @@ public class IvyConfigureTest extends TestCase {
 
         _configure = new IvyConfigure();
         _configure.setProject(project);
+    }
+
+    public void testDefault() throws Exception {
+    	// by default configure look in the current directory for an ivysettings.xml file...
+    	// but Ivy itself has one, and we don't want to use it
+    	_configure.getProject().setProperty("ivy.settings.file", "no/settings/will/use/default.xml");
+        _configure.execute();
+        
+        IvySettings settings = getIvyInstance().getSettings();
+		assertNotNull(settings.getDefaultResolver());
+		
+        DependencyResolver publicResolver = settings.getResolver("public");
+		assertNotNull(publicResolver);
+		assertTrue(publicResolver instanceof IBiblioResolver);
+		IBiblioResolver ibiblio = (IBiblioResolver) publicResolver;
+		assertTrue(ibiblio.isM2compatible());
+    }
+
+    public void testDefault14() throws Exception {
+    	// by default configure look in the current directory for an ivysettings.xml file...
+    	// but Ivy itself has one, and we don't want to use it
+    	_configure.getProject().setProperty("ivy.settings.file", "no/settings/will/use/default.xml");
+    	_configure.getProject().setProperty("ivy.14.compatible", "true");
+        _configure.execute();
+        
+        IvySettings settings = getIvyInstance().getSettings();
+		assertNotNull(settings.getDefaultResolver());
+		
+        DependencyResolver publicResolver = settings.getResolver("public");
+		assertTrue(publicResolver instanceof IvyRepResolver);
     }
 
     public void testFile() throws Exception {

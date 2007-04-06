@@ -62,6 +62,17 @@ defaultCache, ...).
 Previous names have been deprecated, so previous settings files can still be used, but 
 you will see a deprecation warning.
 
+2.3. public resolver in default settings is now ibiblio in m2 compatible mode
+
+In previous versions Ivy used to use the ivyrep resolver as default public resolver, 
+but ivyrep is no longer maintained, while maven 2 repository on ibiblio is growing rapidly.
+
+Since Ivy is compatible with maven 2 repository, defaulting to the ibiblio maven 2 
+repository makes more sense.
+
+If you have any issue of backward compatibility with these new settings, you can simply 
+set the following ant property before calling configure (implicitly or explicitly):
+ivy.14.compatible=true
 
 3. Migrating from Jayasoft Ivy to Apache Ivy
 

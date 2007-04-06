@@ -99,16 +99,10 @@ ivy.shared.default.artifact.pattern=[organisation]/[module]/[revision]/[artifact
 </code>
 
 <h2>Public</h2>
-By default, the public repository is ivyrep. To change the setting of this resolver, you can use the standard way to configure ivyrep:
-<code>ivy.ivyrep.default.ivy.root</code> specify the root for ivy files
-<code>ivy.ivyrep.default.ivy.pattern</code> specify the layout for ivy files
-<code>ivy.ivyrep.default.artifact.root</code> specify the root for artifacts
-<code>ivy.ivyrep.default.artifact.pattern</code> specify the layout for artifacts
-For instance:
-<code>
-ivy.ivyrep.default.ivy.root=http://myserver/ivy/
-ivy.ivyrep.default.artifact.root=http://myserver/ivy/
-</code>
+By default, the public repository is ibiblio in m2 compatible mode. 
+
+<em>In 1.4 version Ivy was using ivyrep has default resolver, if you want to restore this, set
+ivy.14.compatible=true as an ant property</em>
 
 <h1>Going further</h1>
 OK, so we have seen how to easily change the settings of the three main repositories. But what if I want my shared repository is on a web server ? What if the public repository is not compatible with ivyrep ? What if ... 
@@ -156,7 +150,7 @@ No the last thing you will need in order to properly take advantage of the defau
 <code type="xml">
 <ivysettings>
   <resolvers>
-    <ivyrep name="public"/>
+    <ibiblio name="public" m2compatible="true"/>
   </resolvers>
 </ivysettings>
 </code>

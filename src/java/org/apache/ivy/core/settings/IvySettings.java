@@ -303,6 +303,10 @@ public class IvySettings {
         load(getDefaultSettingsURL());
     }
 
+    public void loadDefault14() throws ParseException, IOException {
+        load(getDefault14SettingsURL());
+    }
+
 	private void loadDefaultProperties() throws IOException {
 		loadProperties(getDefaultPropertiesURL(), false);
 	}
@@ -313,6 +317,10 @@ public class IvySettings {
 	
     public static URL getDefaultSettingsURL() {
         return getSettingsURL("ivysettings.xml");
+    }
+
+    public static URL getDefault14SettingsURL() {
+        return getSettingsURL("ivysettings-1.4.xml");
     }
 
 	private String getDefaultSettingsDir() {
