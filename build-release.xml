@@ -85,6 +85,7 @@
 			<zipfileset dir="${basedir}/test/triggers" prefix="${snapshot.full.name}/test/triggers"/>
 			<zipfileset dir="${basedir}/test/xsl" prefix="${snapshot.full.name}/test/xsl"/>
 			<zipfileset dir="${src.dir}/org/apache/ivy/plugins/parser/xml" includes="ivy.xsd" fullpath="${snapshot.full.name}/ivy.xsd"/>
+			<zipfileset dir="${basedir}" includes="MANIFEST.MF" fullpath="${snapshot.full.name}/MANIFEST.MF"/>
 			<zipfileset dir="${basedir}" includes="DISCLAIMER" fullpath="${snapshot.full.name}/DISCLAIMER"/>
 			<zipfileset dir="${basedir}" includes="NOTICE" fullpath="${snapshot.full.name}/NOTICE"/>
 			<zipfileset dir="${basedir}" includes="LICENSE" fullpath="${snapshot.full.name}/LICENSE"/>

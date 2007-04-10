@@ -164,6 +164,7 @@
 		</tstamp>
 		<property name="version.prefix" value="${target.ivy.version}-local-"/>
 		<property name="build.version" value="${version.prefix}${pubdate}"/>
+		<property name="bundle.version" value="${target.ivy.bundle.version}"/>
 	</target>
 
     <!-- =================================================================
@@ -210,13 +211,24 @@
   		<!-- identify compiled ivy version -->
 		<echo message="version=${build.version}${line.separator}" file="${classes.build.dir}/module.properties" append="true"/>
 		<echo message="date=${pubdate}${line.separator}" file="${classes.build.dir}/module.properties" append="true"/>
-		
+
 		<!-- package the two ivy jars -->
   		<jar 	destfile="${artifacts.build.dir}/${final.name}"
-				basedir="${classes.build.dir}">
+				basedir="${classes.build.dir}"
+  				manifest="${basedir}/MANIFEST.MF">
   			<metainf dir="${basedir}" includes="LICENSE,DISCLAIMER,NOTICE" />
 			<manifest>
 				<attribute name="Build-Version" value="${build.version}"/>
+				<attribute name="Bundle-Version" value="${bundle.version}"/>
+				<section name="org/apache/ivy">
+					<attribute name="Extension-name" value="org.apache.ivy" />
+					<attribute name="Specification-Title" value="Apache Ivy" />
+					<attribute name="Specification-Version" value="${build.version}" />
+					<attribute name="Specification-Vendor" value="Apache Software Foundation" />
+					<attribute name="Implementation-Title" value="org.apache.tools.ant" />
+					<attribute name="Implementation-Version" value="${build.version}" />
+					<attribute name="Implementation-Vendor" value="Apache Software Foundation" />
+				</section>
 			</manifest>
 		</jar>
   		<jar 	destfile="${artifacts.build.dir}/${final.core.name}"
