@@ -28,8 +28,8 @@
                internet and use it for ivy tasks of this build.
          ================================================================= -->
 	
-	<property name="final.name" value="apache-ivy.jar" />
-	<property name="final.core.name" value="apache-ivy-core.jar" />
+	<property name="final.name" value="ivy.jar" />
+	<property name="final.core.name" value="ivy-core.jar" />
 	
 	<target name="init-ivy-user-home" unless="ivy.use.local.home">
 		<condition property="ivy.home" value="${env.IVY_HOME}">
@@ -232,6 +232,15 @@
 	</target>
 	
 
+    <!-- =================================================================
+               PUBLISH LOCAL
+         ================================================================= -->
+	<target name="publish-local" depends="jar" description="--> publishes Ivy to Ivy local repository">
+		<ivy:publish resolver="local" pubrevision="${build.version}"
+			artifactsPattern="${artifacts.build.dir}/[artifact].[ext]" 
+			forcedeliver="true"/>
+	</target>
+	
     <!-- =================================================================
                TESTS
          ================================================================= -->
