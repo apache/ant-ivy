@@ -44,7 +44,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 	John Williams
 
 
-   version in SVN
+   2.0.0-alpha1-incubating
 =====================================
 - NEW: define artifacts not declared by the dependency module descriptor (IVY-419)
 - NEW: Module wide exclude (IVY-431)

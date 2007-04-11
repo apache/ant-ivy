@@ -111,6 +111,7 @@ issues you find at http://issues.apache.org/jira/browse/ivy.
 	Stephane Baillez
 	Pierre Hägnestrand
 	Matt Inger
+	Costin Leau
 	William Lyvers
 	Gilles Scokart
 	John Williams
@@ -118,7 +119,12 @@ issues you find at http://issues.apache.org/jira/browse/ivy.
 7. List of Changes in this Release
 
 - NEW: define artifacts not declared by the dependency module descriptor (IVY-419)
+- NEW: Module wide exclude (IVY-431)
+- NEW: The default public resolver used is now ibiblio with m2 compatible mode (IVY-463)
 
+- IMPROVE: OSGIfy ivy artifacts (IVY-464) (thanks to Costin Leau)
+- IMPROVE: Let user specify Ivy file when using a post-resolve task (IVY-455)
+- IMPROVE: IvyArtifactProperty and IvyArtifactReport tasks should be a post resolve task (IVY-452)
 - IMPROVE: Rename ivy configuration in settings to remove ambiguity on configuration meaning (IVY-438)
 - IMPROVE: Please typedef CacheResolver as "cache" for us (IVY-359)
 - IMPROVE: ivy:retrieve should be able to create symlinks (IVY-353) (thanks to John Williams)
@@ -128,6 +134,11 @@ issues you find at http://issues.apache.org/jira/browse/ivy.
 - IMPROVE: New "modules in use" section in console report at the end of resolve (IVY-373) (thanks to John Wiliams)
 - IMPROVE: Generated XML reports now contains more information about the resolved module (IVY-446)
 
+- FIX: ivy-retrieve failure when explicit absolute 'ivy.dep.file' path specified (IVY-396)
+- FIX: IvyPostResolve Task doesn't reuse Ivy file of previous resolve (IVY-458)
+- FIX: Ivy standalone is passing null args to main method when invoking with no args (IVY-457)
+- FIX: Invalid error report with m2compatible resolver (IVY-456)
+- FIX: IvyPostResolve Task doesn't use specified cache for the resolve (IVY-453)
 - FIX: XmlModuleDescriptorWriterTest not working with Java 6 (IVY-374)
 - FIX: Conflict managers ignored, when assigned to modules in Ivy configuration (setting, ivyconf.xml) (IVY-448)
 - FIX: Ivy should fail if ';' has been used in publications/artifact/@conf of ivy.xml (IVY-441)
