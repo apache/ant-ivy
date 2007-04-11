@@ -114,7 +114,7 @@ public class IBiblioResolverTest extends TestCase {
         l = resolver.getArtifactPatterns();
         assertNotNull(l);
         assertEquals(1, l.size());
-        assertEquals("http://www.ibiblio.org/maven2/[organisation]/[module]/[revision]/[artifact]-[revision](-[classifier]).[ext]", l.get(0));
+        assertEquals("http://repo1.maven.org/maven2/[organisation]/[module]/[revision]/[artifact]-[revision](-[classifier]).[ext]", l.get(0));
 
         resolver = (IBiblioResolver)_settings.getResolver("ibiblioD");
         assertFalse(resolver.isM2compatible());
