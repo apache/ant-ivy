@@ -4,41 +4,56 @@
 
 CONTENTS
 1. What is Apache Ivy?
-2. Major Changes in this Release
-3. Migrating from Jayasoft Ivy to Apache Ivy
-4. How to Get Involved
-5. How to Report Issues
-6. Committers and Contributors for this release
-7. List of Changes in this Release   
+2. Status of this release
+3. Major Changes in this Release
+4. Migrating from Jayasoft Ivy to Apache Ivy
+5. How to Get Involved
+6. How to Report Issues
+7. Committers and Contributors for this release
+8. List of Changes in this Release   
    
    
 1. What is Apache Ivy?
 
-Ivy is a tool for managing (recording, tracking, resolving and reporting) 
+Apache Ivy is a tool for managing (recording, tracking, resolving and reporting) 
 project dependencies. 
 It is characterized by the following:
 
    1. flexibility and configurability 
-   		Ivy is essentially process agnostic and is not tied to any 
+   		Apache Ivy is essentially process agnostic and is not tied to any 
    		methodology or structure. 
    		Instead it provides the necessary flexibility and configurability 
    		to be adapted to a broad range of dependency management and build 
    		processes.
    2. tight integration with Apache Ant
-   		while available as a standalone tool, Ivy works particularly well 
+   		while available as a standalone tool, Apache Ivy works particularly well 
    		with Apache Ant providing a number of powerful Ant tasks ranging 
    		from dependency resolution to dependency reporting and publication.
 
+2. Status of this release 
 
+This release of Apache Ivy is the first release within the Apache Incubator,
+and is labelled and should be considered as an alpha version.
 
-2. Major Changes in this Release
+This means that we do not guarantee any stability, that API and features are still 
+likely to change until final 2.0.0 version, and thus we do not encourage the use 
+of this version, except for very early testing.
 
-This section describes what has changed between version 1.4.1 and version 1.5 of 
-Ivy.
-This new version of Ivy is fully compatible with previous versions as long as you do 
-not use custom plugins: Ivy API has changed, but not its behavior.
+The current production quality version is still 1.4.1, which has not been produced 
+within the Apache Software Foundation.
 
-2.1. Java Package Name Changes
+3. Major Changes in this Release
+
+This section describes what has changed between version 1.4.1 and this version of 
+Apache Ivy.
+
+This new version of Apache Ivy is fully compatible with previous versions as long as you do 
+not use custom plugins: Ivy API has changed, but not its behavior:
+
+Some tasks and configuration elements have been renamed, but the old versions
+are still available, they are only deprecated (you will see deprecated warnings).
+
+3.1. Java Package Name Changes
 
 All of the Ivy Java package names have changed in Apache Ivy. They now start 
 with org.apache rather than fr.jayasoft. There have been other changes as well. 
@@ -46,11 +61,11 @@ Important refactorings have done on the source code to ease the understanding
 of Ivy internal architecture by new developers.
 
 A class named org.apache.ivy.Ivy14 is provided with an API compatible with the
-fr.ajaysoft.Ivy class of Ivy 1.4.1, to ease migration to this new version.
+fr.jayasoft.Ivy class of Ivy 1.4.1, to ease migration to this new version.
 
-2.2. Configuration replaced by Settings
+3.2. Configuration replaced by Settings
 
-Configuration used to have two meaning in prior Ivy versions, causing some confusion
+Configuration used to have two meanings in prior Ivy versions, causing some confusion
 with new users.
 To avoid this confusion, Apache Ivy calls settings instead of configuration the files
 used to customize Ivy. Configuration is still used for module configurations.
@@ -62,7 +77,7 @@ defaultCache, ...).
 Previous names have been deprecated, so previous settings files can still be used, but 
 you will see a deprecation warning.
 
-2.3. public resolver in default settings is now ibiblio in m2 compatible mode
+3.3. public resolver in default settings is now ibiblio in m2 compatible mode
 
 In previous versions Ivy used to use the ivyrep resolver as default public resolver, 
 but ivyrep is no longer maintained, while maven 2 repository on ibiblio is growing rapidly.
@@ -74,7 +89,7 @@ If you have any issue of backward compatibility with these new settings, you can
 set the following ant property before calling configure (implicitly or explicitly):
 ivy.14.compatible=true
 
-3. Migrating from Jayasoft Ivy to Apache Ivy
+4. Migrating from Jayasoft Ivy to Apache Ivy
 
 Apache Ivy is fully compatible with Jayasoft Ivy as long as you do not use 
 custom plugins.
@@ -90,18 +105,23 @@ Migrating custom plugins can be done by using the org.apache.ivy.Ivy14 class
 instead of fr.jayasoft.ivy.Ivy, and reorganizing your imports to reflect the 
 changes in the package names.
 
-4. How to Get Involved
+5. How to Get Involved
 
 The Apache Ivy project really needs and appreciates any contributions, 
 including documentation help, source code and feedback.  If you are interested
 in contributing, please visit http://incubator.apache.org/ivy/get-involved.html.
 
-5. How to Report Issues
+6. How to Report Issues
 
 The Apache Ivy project uses JIRA for issue tracking.  Please report any 
-issues you find at http://issues.apache.org/jira/browse/ivy.
+issues you find at http://issues.apache.org/jira/browse/IVY
 
-6. Committers and Contributors for this Release
+7. Committers and Contributors for this Release
+
+Here is the list of people who have contributed source code and documentation
+to this release. Many thanks to all of them, and also to the whole Ivy community
+contributing ideas and feedback, and promoting the use of Ivy. The list would be too
+long, but Ivy couldn't be what it is without you!
 
  Committers
 	Maarten Coene
@@ -116,7 +136,14 @@ issues you find at http://issues.apache.org/jira/browse/ivy.
 	Gilles Scokart
 	John Williams
 
-7. List of Changes in this Release
+8. List of Changes in this Release
+
+For a full release history of Ivy see the file CHANGES.txt
+
+For details about the following changes, check our JIRA install at 
+http://issues.apache.org/jira/browse/ivy
+
+- TASK: refactor Ivy source code to improve readibility (IVY-434)
 
 - NEW: define artifacts not declared by the dependency module descriptor (IVY-419)
 - NEW: Module wide exclude (IVY-431)
