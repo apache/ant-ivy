@@ -36,8 +36,8 @@ The default conf mapping not only defines the conf mapping to use when no conf m
 
 See <a href="../../doc/ivyfile/dependency#defaultconfmapping.html">examples on the dependency</a> page.
 
-<span class="since">since 1.4</span> You can activate a confmappingoverride mode for all configurations, in which case the extending configurations will override the mappings of the configurations they extend from. This is an advanced feature which should be used only if you understand its implication.
-For a discussion about the origin of this feature see <a href="./node/592">this thread</a>.
+<span class="since">since 1.4</span> You can activate a confmappingoverride mode for all configurations, in which case the extending configurations will override the mappings of the configurations they extend from.
+
 
 <h1>Attributes</h1>
 <table class="ivy-attributes">
@@ -64,7 +64,29 @@ For a discussion about the origin of this feature see <a href="./node/592">this 
 </tbody>
 </table>
 
-	</textarea>
+<h1>Configuration mappings details</h1>
+When Ivy parses your Ivy file, it will create (internally) modify the configuration mapping of your dependencies.
+For instance, say you have:
+<code type="xml">
+<configurations defaultconfmapping="conf1->other1;conf2->other2">
+   <conf name="conf1" />
+   <conf name="conf2" extends="conf1" />
+</configurations>
+<dependencies>
+   <dependency name="other-module" conf="conf1" />
+</dependencies>
+</code>
+When Ivy parses this file, it will construct the following dependency (in-memory only):
+<code type="xml"><dependency name="other-module" conf="conf1->other1" /></code>
+
+So, if you now resolve the conf2 configuration, you will only get the other1 dependencies of your other-module.
+
+But when you set confmappingoverride to true, Ivy will construct the following dependency in memory:
+<code type="xml"><dependency name="other-module" conf="conf1->other1;conf2->other2" /></code>
+As you can see, the defaultmappings of the extending configurations are also added (although you didn't explicitly defined them)
+
+When you now resolve the conf2 configuration, you'll get the other2 dependencies of your other-module. 
+</textarea>
 <script type="text/javascript">xooki.postProcess();</script>
 </body>
 </html>
