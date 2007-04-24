@@ -25,12 +25,13 @@ import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.plugins.matcher.PatternMatcher;
 import org.apache.ivy.util.filter.FilterHelper;
 import org.apache.tools.ant.BuildException;
-
+import org.apache.ivy.core.report.ResolveReport;
+import org.apache.tools.ant.BuildException;
 
 /**
  * Allow to install a module or a set of module from repository to another one.
- * 
- * 
+ *
+ *
  * @author Xavier Hanin
  *
  */
@@ -38,13 +39,14 @@ public class IvyInstall extends IvyTask {
     private String  _organisation;
     private String  _module;
     private String  _revision;
-    private File 	_cache; 
+    private File 	_cache;
     private boolean _overwrite = false;
     private String _from;
     private String _to;
     private boolean _transitive;
     private String _type;
     private String _matcher = PatternMatcher.EXACT;
+    private boolean _haltOnUnresolved = true;
     
     public void execute() throws BuildException {
         Ivy ivy = getIvyInstance();
@@ -58,12 +60,12 @@ public class IvyInstall extends IvyTask {
         if (_module == null && PatternMatcher.EXACT.equals(_matcher)) {
             throw new BuildException("no module name provided for ivy publish task: It can either be set explicitely via the attribute 'module' or via 'ivy.module' property or a prior call to <resolve/>");
         } else if (_module == null && !PatternMatcher.EXACT.equals(_matcher)) {
-        	_module = PatternMatcher.ANY_EXPRESSION;
+            _module = PatternMatcher.ANY_EXPRESSION;
         }
         if (_revision == null && PatternMatcher.EXACT.equals(_matcher)) {
             throw new BuildException("no module revision provided for ivy publish task: It can either be set explicitely via the attribute 'revision' or via 'ivy.revision' property or a prior call to <resolve/>");
         } else if (_revision == null && !PatternMatcher.EXACT.equals(_matcher)) {
-        	_revision = PatternMatcher.ANY_EXPRESSION;
+            _revision = PatternMatcher.ANY_EXPRESSION;
         }
         if (_from == null) {
             throw new BuildException("no from resolver name: please provide it through parameter 'from'");
@@ -72,13 +74,26 @@ public class IvyInstall extends IvyTask {
             throw new BuildException("no to resolver name: please provide it through parameter 'to'");
         }
         ModuleRevisionId mrid = ModuleRevisionId.newInstance(_organisation, _module, _revision);
+        ResolveReport report;
         try {
-            ivy.install(mrid, _from, _to, _transitive, doValidate(settings), _overwrite, FilterHelper.getArtifactTypeFilter(_type), _cache, _matcher);
+            report = ivy.install(mrid, _from, _to, _transitive, doValidate(settings), _overwrite, FilterHelper.getArtifactTypeFilter(_type), _cache, _matcher);
         } catch (Exception e) {
             throw new BuildException("impossible to install "+ mrid +": "+e, e);
         }
+        
+        if (report.getUnresolvedDependencies().length > 0 && isHaltonunresolved()) {
+            throw new BuildException(report.getUnresolvedDependencies().length
+            		+" unresolved dependencies - see output for details");
+        }
     }
-
+    
+    public boolean isHaltonunresolved() {
+        return _haltOnUnresolved;
+    }
+    public void setHaltonunresolved(boolean haltOnUnresolved) {
+        _haltOnUnresolved = haltOnUnresolved;
+    }
+    
     public File getCache() {
         return _cache;
     }
@@ -134,11 +149,11 @@ public class IvyInstall extends IvyTask {
     public void setType(String type) {
         _type = type;
     }
-
+    
     public String getMatcher() {
         return _matcher;
     }
-
+    
     public void setMatcher(String matcher) {
         _matcher = matcher;
     }

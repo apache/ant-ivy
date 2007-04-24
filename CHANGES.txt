@@ -13,6 +13,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
  	Ingo Adler
 	Stephane Baillez
 	Karl Baum
+	Jeffrey Blatttman
 	Matthieu Brouillard
 	Kristian Cibulskis
 	Pierre Hägnestrand
@@ -43,6 +44,9 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 	Johan Stuyts
 	John Williams
 
+   version in SVN
+=====================================
+- BUG: ivy:install ant task does not fail on error (IVY-475) (thanks to Jeffrey Blatttman)
 
    2.0.0-alpha1-incubating
 =====================================
