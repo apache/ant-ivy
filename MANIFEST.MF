@@ -30,7 +30,7 @@ Import-Package: javax.xml.parsers,
  org.apache.tools.ant.filters;resolution:=optional,
  org.apache.tools.ant.taskdefs;resolution:=optional,
  org.apache.tools.ant.types;resolution:=optional,
- org.apache.tools.ant.util;resolution:=optional 
+ org.apache.tools.ant.util;resolution:=optional
 Export-Package: org.apache.ivy;version="2.0.0",
  org.apache.ivy.ant;version="2.0.0",
  org.apache.ivy.core;version="2.0.0",
