@@ -46,6 +46,8 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 
    version in SVN
 =====================================
+- IMPROVEMENT: Allow "main" parameters to be passed directly (instead of using -args flag) (IVY-480) (thanks to Archie Cobbs)
+
 - BUG: ivy:install ant task does not fail on error (IVY-475) (thanks to Jeffrey Blatttman)
 
    2.0.0-alpha1-incubating

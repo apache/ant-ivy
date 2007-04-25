@@ -347,8 +347,20 @@ public class Main {
                 }
             }
             if (line.hasOption("main")) {
-                invoke(ivy, cache, md, confs, line.getOptionValue("main"),
-                		line.getOptionValues("args"));
+            	// merge -args and left over args 
+            	String[] fargs = line.getOptionValues("args");
+            	if (fargs == null) {
+            	    fargs = new String[0];
+            	}
+            	String[] extra = line.getArgs();
+            	if (extra == null) {
+            	    extra = new String[0];
+            	}
+            	String[] params = new String[fargs.length + extra.length];
+            	System.arraycopy(fargs, 0, params, 0, fargs.length);
+            	System.arraycopy(extra, 0, params, fargs.length, extra.length);
+            	// invoke with given main class and merged params
+            	invoke(ivy, cache, md, confs, line.getOptionValue("main"), params);
             }
         } catch( ParseException exp ) {
             // oops, something went wrong
