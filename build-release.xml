@@ -76,13 +76,13 @@
 	<target name="snapshot-src" depends="init-snapshot,all-doc">
 		<mkdir dir="${distrib.dir}"/>
 		<zip destfile="${distrib.dir}/${snapshot.full.name}-src.zip">
-			<zipfileset dir="${doc.build.dir}" prefix="${snapshot.full.name}/doc"/>
+			<zipfileset dir="${doc.build.dir}" prefix="${snapshot.full.name}/doc" excludes="**/reports/coverage/**,**/reports/test/**"/>
 			<zipfileset dir="${src.dir}" prefix="${snapshot.full.name}/src/java"/>
 			<zipfileset dir="${basedir}/src/example" prefix="${snapshot.full.name}/src/example"/>
 			<zipfileset dir="${test.dir}" prefix="${snapshot.full.name}/test/java"/>
 			<zipfileset dir="${basedir}/test/repositories" prefix="${snapshot.full.name}/test/repositories"/>
 			<zipfileset dir="${basedir}/test/buildlist" prefix="${snapshot.full.name}/test/buildlist"/>
-			<zipfileset dir="${basedir}/test/triggers" prefix="${snapshot.full.name}/test/triggers"/>
+			<zipfileset dir="${basedir}/test/triggers" prefix="${snapshot.full.name}/test/triggers" excludes="**/cache/**"/>
 			<zipfileset dir="${basedir}/test/xsl" prefix="${snapshot.full.name}/test/xsl"/>
 			<zipfileset dir="${src.dir}/org/apache/ivy/plugins/parser/xml" includes="ivy.xsd" fullpath="${snapshot.full.name}/ivy.xsd"/>
 			<zipfileset dir="${basedir}" includes="MANIFEST.MF" fullpath="${snapshot.full.name}/MANIFEST.MF"/>
@@ -111,7 +111,7 @@
 			pubdate="${pubdate}"
 		    status="${status}"/>
 		<zip destfile="${distrib.dir}/${snapshot.full.name}-bin.zip">
-			<zipfileset dir="${doc.build.dir}" prefix="${snapshot.full.name}/doc"/>
+			<zipfileset dir="${doc.build.dir}" prefix="${snapshot.full.name}/doc" excludes="**/reports/coverage/**,**/reports/test/**"/>
 			<zipfileset dir="${basedir}/src/example" prefix="${snapshot.full.name}/src/example"/>
 			<zipfileset dir="${basedir}" includes="DISCLAIMER" fullpath="${snapshot.full.name}/DISCLAIMER"/>
 			<zipfileset dir="${basedir}" includes="NOTICE" fullpath="${snapshot.full.name}/NOTICE"/>
@@ -119,7 +119,7 @@
 			<zipfileset dir="${basedir}" includes="CHANGES.txt" fullpath="${snapshot.full.name}/CHANGES.txt"/>
 			<zipfileset dir="${basedir}" includes="RELEASE_NOTES" fullpath="${snapshot.full.name}/RELEASE_NOTES"/>
 			<zipfileset dir="${src.dir}/org/apache/ivy/plugins/parser/xml" includes="ivy.xsd" fullpath="${snapshot.full.name}/ivy.xsd"/>
-			<zipfileset dir="${distrib.dir}" includes="ivy.xml" fullpath="${snapshot.full.name}/ivy.xml"/>
+			<zipfileset dir="${basedir}" includes="ivy.xml" fullpath="${snapshot.full.name}/ivy.xml"/>
 
 			<zipfileset dir="${artifacts.build.dir}" includes="${final.name}" fullpath="${snapshot.full.name}/ivy-${build.version}.jar"/>
 			<zipfileset dir="${artifacts.build.dir}" includes="${final.core.name}" fullpath="${snapshot.full.name}/ivy-core-${build.version}.jar"/>
