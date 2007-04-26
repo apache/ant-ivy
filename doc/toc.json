@@ -60,6 +60,21 @@
                 ]
             },
             {
+              "id":"doc/releasenotes/2.0",
+              "title":"2.0",
+              "children": [
+                  {
+                    "id":"doc/releasenotes/2.0.0-alpha-1",
+                    "title":"2.0.0-alpha-1",
+                    "children": [
+
+                      ]
+,
+                    "level":3                  }
+                ]
+,
+              "level":3            },
+            {
               "id":"doc/releasenotes/1.4.1",
               "title":"1.4.1",
               "children": [

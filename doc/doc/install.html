@@ -44,6 +44,18 @@ If you use ant 1.5.1 or superior, you have to modify the build files in the exam
 You can now run the build, if it is successful, you have successfully installed Ivy !
 
 If the build is not successful, check the <a href="../faq.html">FAQ</a> to see what can be the problem with the ivyrep resolver.
+
+<h2>Ivy dependendencies</h2>
+
+The latest binary version of Ivy, 2.0.0-alpha-1, doesn't include the optional dependencies. To download them using Ivy, all you need is to have Ant installed and follow these instructions:
+1. open a shell or command line in the directory where you unzipped your binary distribution, where you can find the ivy-2.0.0-alpha-1-incubating.jar
+2. copy <a href="../samples/build-install.xml">this build</a> script to the directory
+3. run the following command:
+<code>
+ant -f build-install.xml
+</code>
+4. That's all, you should now see the Ivy optional dependencies in the lib directory, organized per configuration (see the ivy.xml for details about the configurations and their use)
+
 <h1>Automatically</h1>
 If you want to use Ivy only in your ant build scripts, and have an internet connection when you build, you can download Ivy from this site and use the downloaded version automatically, using this simple build snippet:
 <code type="xml">
