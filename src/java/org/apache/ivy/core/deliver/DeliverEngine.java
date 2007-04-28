@@ -152,7 +152,7 @@ public class DeliverEngine {
         try {
             XmlModuleDescriptorUpdater.update(_settings, ivyFileURL, 
                     new File(publishedIvy),
-                    resolvedDependencies, options.getStatus(), revision, options.getPubdate(), null, true, null);
+                    resolvedDependencies, options.getStatus(), revision, options.getPubdate(), null, true);
         } catch (SAXException ex) {
             throw new RuntimeException("bad ivy file in cache for "+mrid+": please clean and resolve again" , ex);
         }
