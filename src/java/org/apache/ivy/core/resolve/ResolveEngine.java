@@ -215,7 +215,9 @@ public class ResolveEngine {
             		}
             	}
             }
-            props.store(new FileOutputStream(ivyPropertiesInCache), md.getResolvedModuleRevisionId()+ " resolved revisions");
+            FileOutputStream out = new FileOutputStream(ivyPropertiesInCache);
+            props.store(out, md.getResolvedModuleRevisionId()+ " resolved revisions");
+            out.close();
             Message.verbose("\tresolved ivy file produced in "+ivyFileInCache);
             
             report.setResolveTime(System.currentTimeMillis()-start);

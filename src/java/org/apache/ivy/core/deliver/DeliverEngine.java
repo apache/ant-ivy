@@ -115,7 +115,9 @@ public class DeliverEngine {
             throw new IllegalStateException("ivy properties not found in cache for "+mrid+": please resolve dependencies before publishing ("+ivyFile+")");
         }
         Properties props = new Properties();
-        props.load(new FileInputStream(ivyProperties));
+        FileInputStream in = new FileInputStream(ivyProperties);
+        props.load(in);
+        in.close();
         
         for (Iterator iter = props.keySet().iterator(); iter.hasNext();) {
             String depMridStr = (String)iter.next();
@@ -150,7 +152,7 @@ public class DeliverEngine {
         try {
             XmlModuleDescriptorUpdater.update(_settings, ivyFileURL, 
                     new File(publishedIvy),
-                    resolvedDependencies, options.getStatus(), revision, options.getPubdate(), null, true);
+                    resolvedDependencies, options.getStatus(), revision, options.getPubdate(), null, true, null);
         } catch (SAXException ex) {
             throw new RuntimeException("bad ivy file in cache for "+mrid+": please clean and resolve again" , ex);
         }
