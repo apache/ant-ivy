@@ -56,8 +56,22 @@ public class Credentials {
         }
     }
 
+	/**
+	 * Return a string that can be used for debug purpose.  It contains only stars for each password character.
+	 */
 	public String toString() {
-		return getKey() + " " + getUserName() + "/" + getPasswd();
+		return getKey() + " " + getUserName() + "/" + getPasswdAsStars();
+	}
+
+	private String getPasswdAsStars() {
+		if (_passwd == null) {
+			return null;
+		}
+		StringBuffer sb = new StringBuffer();
+		for (int i = _passwd.length(); i>0; i--) {
+			sb.append('*');
+		}
+		return sb.toString();
 	}
 
 	public boolean equals(Object o) {
