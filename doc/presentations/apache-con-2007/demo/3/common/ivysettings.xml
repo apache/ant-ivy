@@ -18,7 +18,7 @@
 -->
 <ivysettings>
 	<!-- we define our own cache to make the demo independent from default cache location -->
-    <settings defaultCache="../cache" />
+    <settings defaultCache="${ivy.settings.dir}/../../cache" />
 	<!-- include default settings which are ok for the demo -->
 	<include url="${ivy.default.settings.dir}/ivysettings.xml"/>
 </ivysettings>

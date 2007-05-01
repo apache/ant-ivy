@@ -17,10 +17,9 @@
    under the License.    
 -->
 <ivysettings>
-        <settings defaultResolver="maven2" defaultCache="../cache" />
-        <resolvers>
-			<ibiblio name="maven2" m2compatible="true" 
-					 root="http://repo1.maven.org/maven2" />
-        </resolvers>
+	<!-- we define our own cache to make the demo independent from default cache location -->
+    <settings defaultCache="../cache" />
+	<!-- include default settings which are ok for the demo -->
+	<include url="${ivy.default.settings.dir}/ivysettings.xml"/>
 </ivysettings>
 

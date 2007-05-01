@@ -28,7 +28,7 @@
     	<mkdir dir="${ivy.jar.dir}"/>
 		<!-- download Ivy from web site so that it can be used even without any special installation -->
 		<!-- use a non standard location during migration to apache -->
-    	<get src="http://incubator.apache.org/ivy/downloads/latest/ivy.jar"
+    	<get src="http://people.apache.org/~xavier/ivy/2.0.0-alpha-1-incubating/ivy.jar"
     		 dest="${ivy.jar.file}" usetimestamp="true"/>
     	<!-- try to load ivy here from local ivy dir, in case the user has not already dropped
     	      it into ant's lib dir (note that the latter copy will always take precedence).
@@ -42,6 +42,8 @@
     </target>
 	
 	<target name="retrieve-deps" depends="init-ivy">
+		<!-- we do nothing special for the settings, by default Ivy will look into the current directory
+		  and check if an ivysettings.xml is available. If none is present, default settings will be used -->
 		 <ivy:retrieve  organisation="org.apache.struts" 
 		                module="struts2-core" 
 		                revision="2.0.5" 

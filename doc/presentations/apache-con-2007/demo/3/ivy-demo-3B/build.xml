@@ -16,10 +16,8 @@
    specific language governing permissions and limitations
    under the License.    
 -->
-<ivysettings>
-	<!-- we define our own cache to make the demo independent from default cache location -->
-    <settings defaultCache="../cache" />
-	<!-- include default settings which are ok for the demo -->
-	<include url="${ivy.default.settings.dir}/ivysettings.xml"/>
-</ivysettings>
-
+<project name="demo3B" default="publish-local">
+	<property file="build.properties"/>
+	
+	<import file="${common.dir}/build.xml"/>
+</project>

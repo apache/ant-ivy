@@ -16,7 +16,9 @@
    specific language governing permissions and limitations
    under the License.    
 -->
-<project name="demo2" default="retrieve-deps" xmlns:ivy="antlib:org.apache.ivy.ant">
+<project name="demo3-common" xmlns:ivy="antlib:org.apache.ivy.ant">
+	<property file="${common.dir}/build.properties"/>
+
 	<condition property="ivy.home" value="${env.IVY_HOME}">
 		<isset property="env.IVY_HOME" />
 	</condition>
@@ -41,10 +43,42 @@
     	          uri="antlib:org.apache.ivy.ant" classpathref="ivy.lib.path"/>
     </target>
 	
-	<target name="retrieve-deps" depends="init-ivy">
-		<!-- here we don't need to specify which ivy file to use, because the default (ivy.xml) is ok -->
-		<ivy:retrieve 
-			pattern="lib/[conf]/[artifact]-[revision].[ext]"/>
+	<target name="resolve-deps" depends="init-ivy">
+		<ivy:configure file="${common.dir}/ivysettings.xml" />
+		<ivy:resolve
+			file="${basedir}/ivy.xml" useOrigin="true"/>
+		<!-- here we build an ant path directly from artifacts in Ivy cache -->
+		<ivy:cachepath pathid="lib.path.id" conf="runtime" useOrigin="true" />
+	</target>
+	
+	<target name="ivy-report" depends="resolve-deps">
 		<ivy:report todir="report"/>
 	</target>
+	
+	<target name="compile" depends="resolve-deps">
+        <mkdir dir="${classes.dir}" />
+        <javac srcdir="${src.dir}" destdir="${classes.dir}" classpathref="lib.path.id" debug="true" />
+	</target>
+
+    <target name="jar" depends="compile" description="--> make a jar file for this project">
+        <jar destfile="${jar.file}">
+            <fileset dir="${classes.dir}" />
+        </jar>
+    </target>
+	
+    <target name="publish-local" depends="jar" description="--> publish this project in the local ivy repository">
+		<tstamp>
+			<format property="now" pattern="yyyyMMddHHmmss"/>
+		</tstamp>
+        <property name="revision" value="local-${now}"/>
+    	<ivy:publish artifactspattern="${build.dir}/[artifact].[ext]" 
+    			           resolver="local"
+    			           pubrevision="${revision}"
+				           pubdate="${now}"
+    			           status="integration"
+						   forcedeliver="true"
+    	/>
+        <echo message="project ${ant.project.name} published locally with version ${revision}" />
+    </target>
+
 </project>
