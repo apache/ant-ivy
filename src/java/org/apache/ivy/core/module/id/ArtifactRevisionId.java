@@ -50,6 +50,7 @@ public class ArtifactRevisionId extends UnmodifiableExtendableItem {
     public ArtifactRevisionId(ArtifactId artifactId, ModuleRevisionId mrid) {
         this(artifactId, mrid, null);
     }
+
     public ArtifactRevisionId(ArtifactId artifactId, ModuleRevisionId mrid, Map extraAttributes) {
         super(null, extraAttributes);
         _artifactId = artifactId;
@@ -74,6 +75,7 @@ public class ArtifactRevisionId extends UnmodifiableExtendableItem {
     }
     
     public int hashCode() {
+        // WARN: uniqueness needs to be relatively strong here
         int hash = 17;
         hash += getArtifactId().hashCode() * 37;
         hash += getModuleRevisionId().hashCode() * 37;

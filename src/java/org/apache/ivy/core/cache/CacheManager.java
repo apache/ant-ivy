@@ -25,6 +25,7 @@ import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.DefaultArtifact;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
+import org.apache.ivy.core.module.id.ArtifactRevisionId;
 import org.apache.ivy.core.resolve.DefaultModuleRevision;
 import org.apache.ivy.core.resolve.ResolvedModuleRevision;
 import org.apache.ivy.core.settings.IvySettings;
@@ -51,15 +52,18 @@ public class CacheManager {
 	}
 
 	public File getResolvedIvyFileInCache(ModuleRevisionId mrid) {
-        return new File(_cache, IvyPatternHelper.substitute(_settings.getCacheResolvedIvyPattern(), mrid.getOrganisation(), mrid.getName(), mrid.getRevision(), "ivy", "ivy", "xml"));
+        String file = IvyPatternHelper.substitute(_settings.getCacheResolvedIvyPattern(), mrid.getOrganisation(), mrid.getName(), mrid.getRevision(), "ivy", "ivy", "xml");
+        return new File(_cache, file);
     }
 
     public File getResolvedIvyPropertiesInCache(ModuleRevisionId mrid) {
-        return new File(_cache, IvyPatternHelper.substitute(_settings.getCacheResolvedIvyPropertiesPattern(), mrid.getOrganisation(), mrid.getName(), mrid.getRevision(), "ivy", "ivy", "xml"));
+        String file = IvyPatternHelper.substitute(_settings.getCacheResolvedIvyPropertiesPattern(), mrid.getOrganisation(), mrid.getName(), mrid.getRevision(), "ivy", "ivy", "xml");
+        return new File(_cache, file);
     }
 
     public File getIvyFileInCache(ModuleRevisionId mrid) {
-        return new File(_cache, IvyPatternHelper.substitute(_settings.getCacheIvyPattern(), DefaultArtifact.newIvyArtifact(mrid, null)));
+        String file = IvyPatternHelper.substitute(_settings.getCacheIvyPattern(), DefaultArtifact.newIvyArtifact(mrid, null));
+        return new File(_cache, file);
     }
     
     public File getConfigurationResolveReportInCache(String resolveId, String conf) {
@@ -156,15 +160,16 @@ public class CacheManager {
     
     public void saveArtifactOrigin(Artifact artifact, ArtifactOrigin origin) {
        PropertiesFile cdf = getCachedDataFile(artifact.getModuleRevisionId());
-       cdf.setProperty("artifact." + artifact.getName() + "#" + artifact.getExt() + ".is-local", String.valueOf(origin.isLocal()));
-       cdf.setProperty("artifact." + artifact.getName() + "#" + artifact.getExt() + ".location", origin.getLocation());
+       cdf.setProperty(getIsLocalKey(artifact), String.valueOf(origin.isLocal()));
+       cdf.setProperty(getLocationKey(artifact), origin.getLocation());
        cdf.save();
     }
     
     public ArtifactOrigin getSavedArtifactOrigin(Artifact artifact) {
         PropertiesFile cdf = getCachedDataFile(artifact.getModuleRevisionId());
-        String location = cdf.getProperty("artifact." + artifact.getName() + "#" + artifact.getExt() + ".location");
-        boolean isLocal = Boolean.valueOf(cdf.getProperty("artifact." + artifact.getName() + "#" + artifact.getExt() + ".is-local")).booleanValue();
+        String location = cdf.getProperty(getLocationKey(artifact));
+        String local = cdf.getProperty(getIsLocalKey(artifact));
+        boolean isLocal = Boolean.valueOf(local).booleanValue();
         
         if (location == null) {
            // origin has not been specified, return null
@@ -176,11 +181,43 @@ public class CacheManager {
     
     public void removeSavedArtifactOrigin(Artifact artifact) {
         PropertiesFile cdf = getCachedDataFile(artifact.getModuleRevisionId());
-        cdf.remove("artifact." + artifact.getName() + "#" + artifact.getExt() + ".location");
-        cdf.remove("artifact." + artifact.getName() + "#" + artifact.getExt() + ".is-local");
+        cdf.remove(getLocationKey(artifact));
+        cdf.remove(getIsLocalKey(artifact));
         cdf.save();
     }
-    
+
+    /**
+     * Creates the unique prefix key that will reference the artifact within the properties.
+     * @param artifact the artifact to create the unique key from. Cannot be null.
+     * @return the unique prefix key as a string.
+     */
+    private String getPrefixKey(Artifact artifact) {
+        // use the hashcode as a uuid for the artifact (fingers crossed)        
+        int hashCode = artifact.getId().hashCode();
+        // use just some visual cue
+        return "artifact:" + artifact.getName() + "#" + artifact.getType() + "#" + artifact.getExt() + "#" + hashCode;
+    }
+
+    /**
+     * Returns the key used to identify the location of the artifact.
+     * @param artifact the artifact to generate the key from. Cannot be null.
+     * @return the key to be used to reference the artifact location.
+     */
+    private String getLocationKey(Artifact artifact) {
+        String prefix = getPrefixKey(artifact);
+        return prefix + ".location";
+    }
+
+    /**
+     * Returns the key used to identify if the artifact is local.
+     * @param artifact the artifact to generate the key from. Cannot be null.
+     * @return the key to be used to reference the artifact location.
+     */
+    private String getIsLocalKey(Artifact artifact) {
+        String prefix = getPrefixKey(artifact);
+        return prefix + ".is-local";
+    }
+
     private String getSavedResolverName(ModuleDescriptor md) {
         PropertiesFile cdf = getCachedDataFile(md);
         return cdf.getProperty("resolver");

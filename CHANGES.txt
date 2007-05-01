@@ -11,7 +11,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
  
  Contributors
  	Ingo Adler
-	Stephane Baillez
+	Stephane Bailliez
 	Karl Baum
 	Jeffrey Blatttman
 	Matthieu Brouillard
@@ -48,6 +48,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 =====================================
 - IMPROVEMENT: Allow "main" parameters to be passed directly (instead of using -args flag) (IVY-480) (thanks to Archie Cobbs)
 
+- FIX: Cache is storing ArtifactOrigin properties with no guarantee of unicity and types telescope during resolve. (IVY-430) (thanks to Stephane Bailliez)
 - FIX: ivy:install ant task does not fail on error (IVY-475) (thanks to Jeffrey Blatttman)
 - FIX: Credentials are shown in build log even if debug is not enabled (IVY-486) (thanks to Gilles Scokart)
 - FIX: Post-Resolve task shouldn't set the 'resolveid' (IVY-489)
@@ -65,7 +66,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - IMPROVE: Please typedef CacheResolver as "cache" for us (IVY-359)
 - IMPROVE: ivy:retrieve should be able to create symlinks (IVY-353) (thanks to John Williams)
 - IMPROVE: Ability to have multiple roots in the <ivy:buildfilelist> task (IVY-340) (thanks to Matt Inger)
-- IMPROVE: Refactoring / documentation / test of matcher package (IVY-375) (thanks to Stephane Baillez)
+- IMPROVE: Refactoring / documentation / test of matcher package (IVY-375) (thanks to Stephane Bailliez)
 - IMPROVE: Add a unit test to verify that latest.integration accepts released modules (IVY-394) (thanks to Gilles Scokart)
 - IMPROVE: New "modules in use" section in console report at the end of resolve (IVY-373) (thanks to John Wiliams)
 - IMPROVE: Generated XML reports now contains more information about the resolved module (IVY-446)

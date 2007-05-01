@@ -19,20 +19,62 @@ package org.apache.ivy.core.cache;
 
 /**
  * This class contains information about the origin of an artifact.
- * 
- * @author maartenc
+ * @see org.apache.ivy.plugins.resolver.BasicResolver
+ * @see org.apache.ivy.plugins.resolver.util.ResolvedResource
  */
-public class ArtifactOrigin {
-	private boolean _isLocal;
+public class ArtifactOrigin {    
+    private boolean _isLocal;
 	private String _location;
-	public ArtifactOrigin(boolean isLocal, String location) {
+
+    /**
+     *  Create a new instance
+     * 
+     * @param isLocal <code>boolean</code> value indicating if the resource is local (on the filesystem).
+     * @param location the location of the resource (normally a url)
+     */
+    public ArtifactOrigin(boolean isLocal, String location) {
 		_isLocal = isLocal;
 		_location = location;
 	}
-	public boolean isLocal() {
+
+    /**
+     * Is this resource local to this host, i.e. is it on the file system?
+     *
+     * @return <code>boolean</code> value indicating if the resource is local.
+     */
+    public boolean isLocal() {
 		return _isLocal;
 	}
-	public String getLocation() {
+
+    /**
+     * Return the location of the resource (normally a url)
+     *
+     * @return the location of the resource
+     */
+    public String getLocation() {
 		return _location;
 	}
+
+    public String toString() {
+        return "ArtifactOrigin { _isLocal=" + _isLocal + ", _location=" + _location + "}";
+    }
+
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        ArtifactOrigin that = (ArtifactOrigin) o;
+
+        if (_isLocal != that._isLocal) return false;
+        if (!_location.equals(that._location)) return false;
+
+        return true;
+    }
+
+    public int hashCode() {
+        int result;
+        result = (_isLocal ? 1 : 0);
+        result = 31 * result + _location.hashCode();
+        return result;
+    }
 }
