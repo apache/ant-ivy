@@ -78,9 +78,6 @@ public class IvyInstallTest extends TestCase {
             fail("unknown dependency, failure expected (haltunresolved=true)");
         } catch (BuildException be) {
             // success
-            assertTrue("invalid exception message, it should contain '1 unresolved',"
-            		+" but it's: '"+be.getMessage()+"'", 
-            		be.getMessage().indexOf("1 unresolved") != -1);
         }  
     }
 
@@ -90,7 +87,7 @@ public class IvyInstallTest extends TestCase {
         _install.setRevision("zzz");
         _install.setFrom("test");
         _install.setTo("1");
-        _install.setHaltonunresolved(false);
+        _install.setHaltonfailure(false);
         
         try {
             _install.execute();

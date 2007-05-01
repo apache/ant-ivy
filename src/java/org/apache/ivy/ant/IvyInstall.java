@@ -46,7 +46,7 @@ public class IvyInstall extends IvyTask {
     private boolean _transitive;
     private String _type;
     private String _matcher = PatternMatcher.EXACT;
-    private boolean _haltOnUnresolved = true;
+    private boolean _haltOnFailure = true;
     
     public void execute() throws BuildException {
         Ivy ivy = getIvyInstance();
@@ -81,17 +81,16 @@ public class IvyInstall extends IvyTask {
             throw new BuildException("impossible to install "+ mrid +": "+e, e);
         }
         
-        if (report.getUnresolvedDependencies().length > 0 && isHaltonunresolved()) {
-            throw new BuildException(report.getUnresolvedDependencies().length
-            		+" unresolved dependencies - see output for details");
+        if (report.hasError() && isHaltonfailure()) {
+            throw new BuildException("Problem happened while installing modules - see output for details");
         }
     }
     
-    public boolean isHaltonunresolved() {
-        return _haltOnUnresolved;
+    public boolean isHaltonfailure() {
+        return _haltOnFailure;
     }
-    public void setHaltonunresolved(boolean haltOnUnresolved) {
-        _haltOnUnresolved = haltOnUnresolved;
+    public void setHaltonfailure(boolean haltOnFailure) {
+        _haltOnFailure = haltOnFailure;
     }
     
     public File getCache() {
