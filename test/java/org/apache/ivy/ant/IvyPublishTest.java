@@ -27,7 +27,10 @@ import junit.framework.TestCase;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.plugins.parser.xml.XmlModuleDescriptorParser;
+import org.apache.ivy.util.DefaultMessageImpl;
 import org.apache.ivy.util.FileUtil;
+import org.apache.ivy.util.Message;
+import org.apache.ivy.util.MessageImpl;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.Delete;
@@ -50,6 +53,8 @@ public class IvyPublishTest extends TestCase {
         _publish = new IvyPublish();
         _publish.setProject(_project);
         _publish.setCache(_cache);
+        
+        Message.init(new DefaultMessageImpl(10));
     }
 
     private void createCache() {
@@ -85,7 +90,7 @@ public class IvyPublishTest extends TestCase {
     }
 
     public void testSimple() throws Exception {
-        _project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-simple.xml");
+        _project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-multiconf.xml");
         IvyResolve res = new IvyResolve();
         res.setProject(_project);
         res.execute();
@@ -106,6 +111,37 @@ public class IvyPublishTest extends TestCase {
         // should have updated published ivy version
         ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(new IvySettings(), new File("test/repositories/1/apache/resolve-simple/ivys/ivy-1.2.xml").toURL(), false);
         assertEquals("1.2", md.getModuleRevisionId().getRevision());
+    }
+    
+    public void testPublishNotAllConfigs() throws Exception {
+        _project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-multiconf.xml");
+        IvyResolve res = new IvyResolve();
+        res.setProject(_project);
+        res.execute();
+        
+        _publish.setPubrevision("1.2");
+        _publish.setResolver("1");
+        _publish.setConf("compile");
+        _publish.setUpdate(true);
+        File art = new File("build/test/publish/resolve-simple-1.2.jar");
+        FileUtil.copy(new File("test/repositories/1/org1/mod1.1/jars/mod1.1-1.0.jar"), art, null);
+        _publish.execute();
+        
+        // should have do the ivy delivering
+        assertTrue(new File("build/test/publish/ivy-1.2.xml").exists()); 
+        
+        // should have published the files with "1" resolver
+        assertTrue(new File("test/repositories/1/apache/resolve-simple/ivys/ivy-1.2.xml").exists()); 
+        assertTrue(new File("test/repositories/1/apache/resolve-simple/jars/resolve-simple-1.2.jar").exists());
+        
+        // should have updated published ivy version
+        ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(new IvySettings(), new File("test/repositories/1/apache/resolve-simple/ivys/ivy-1.2.xml").toURL(), false);
+        assertEquals("1.2", md.getModuleRevisionId().getRevision());
+        
+        // should only contain the default configuration
+        String[] configs = md.getConfigurationsNames();
+        assertEquals("Number of configurations not correct", 1, configs.length);
+        assertEquals("Compile configuration not present", "compile", configs[0]);
     }
 
     public void testMultiPatterns() throws Exception {

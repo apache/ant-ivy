@@ -23,6 +23,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
@@ -42,6 +43,7 @@ import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.plugins.parser.xml.XmlModuleDescriptorParser;
 import org.apache.ivy.plugins.parser.xml.XmlModuleDescriptorUpdater;
 import org.apache.ivy.plugins.resolver.DependencyResolver;
+import org.apache.ivy.util.ConfigurationUtils;
 import org.apache.ivy.util.Message;
 import org.xml.sax.SAXException;
 
@@ -55,7 +57,7 @@ public class PublishEngine {
      * Publishes a module to the repository.
      * 
      * The publish can update the ivy file to publish if update is set to true. In this case it will use
-     * the given pubrevision, pubdate and status. If pudate is null it will default to the current date.
+     * the given pubrevision, pubdate and status. If pubdate is null it will default to the current date.
      * If status is null it will default to the current ivy file status (which itself defaults to integration if none is found).
      * If update is false, then if the revision is not the same in the ivy file than the one expected (given as parameter),
      * this method will fail with an  IllegalArgumentException.
@@ -97,31 +99,35 @@ public class PublishEngine {
         	ivyFileURL = ivyFile.toURL();
         	md = XmlModuleDescriptorParser.getInstance().parseDescriptor(_settings, ivyFileURL, false);
         	if (options.getSrcIvyPattern() != null) {
-            	if (!options.getPubrevision().equals(md.getModuleRevisionId().getRevision())) {
-            		if (options.isUpdate()) {
-            			File tmp = File.createTempFile("ivy", ".xml");
-            			tmp.deleteOnExit();
-            			try {
-							XmlModuleDescriptorUpdater.update(
-									_settings, 
-									ivyFileURL, 
-									tmp, 
-									new HashMap(), 
-									options.getStatus()==null?md.getStatus():options.getStatus(), 
-									options.getPubrevision(), 
-									options.getPubdate()==null?new Date():options.getPubdate(), 
-									null, 
-									true);
-							ivyFile = tmp;
-							// we parse the new file to get updated module descriptor
-							md = XmlModuleDescriptorParser.getInstance().parseDescriptor(_settings, ivyFile.toURL(), false);
-							options.setSrcIvyPattern(ivyFile.getAbsolutePath());
-						} catch (SAXException e) {
-				        	throw new IllegalStateException("bad ivy file for "+mrid+": "+ivyFile+": "+e);
-						}
-            		} else {
-            			throw new IllegalArgumentException("cannot publish "+ivyFile+" as "+options.getPubrevision()+": bad revision found in ivy file (Revision: "+md.getModuleRevisionId().getRevision()+"). Use forcedeliver or update.");
-            		}
+        		if (options.isUpdate()) {
+        			File tmp = File.createTempFile("ivy", ".xml");
+        			tmp.deleteOnExit();
+        			
+        			String[] confs = ConfigurationUtils.replaceWildcards(options.getConfs(), md);
+        			Set confsToRemove = new HashSet(Arrays.asList(md.getConfigurationsNames()));
+        			confsToRemove.removeAll(Arrays.asList(confs));
+        			
+        			try {
+						XmlModuleDescriptorUpdater.update(
+								_settings, 
+								ivyFileURL, 
+								tmp, 
+								new HashMap(), 
+								options.getStatus()==null?md.getStatus():options.getStatus(), 
+								options.getPubrevision(), 
+								options.getPubdate()==null?new Date():options.getPubdate(), 
+								null, 
+								true,
+								(String[]) confsToRemove.toArray(new String[confsToRemove.size()]));
+						ivyFile = tmp;
+						// we parse the new file to get updated module descriptor
+						md = XmlModuleDescriptorParser.getInstance().parseDescriptor(_settings, ivyFile.toURL(), false);
+						options.setSrcIvyPattern(ivyFile.getAbsolutePath());
+					} catch (SAXException e) {
+			        	throw new IllegalStateException("bad ivy file for "+mrid+": "+ivyFile+": "+e);
+					}
+        		} else if (!options.getPubrevision().equals(md.getModuleRevisionId().getRevision())) {
+           			throw new IllegalArgumentException("cannot publish "+ivyFile+" as "+options.getPubrevision()+": bad revision found in ivy file (Revision: "+md.getModuleRevisionId().getRevision()+"). Use forcedeliver or update.");
             	}
         	} else {
 				md.setResolvedModuleRevisionId(pubmrid);

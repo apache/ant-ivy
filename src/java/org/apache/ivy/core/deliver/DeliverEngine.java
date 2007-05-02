@@ -23,10 +23,13 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.ParseException;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 
 import org.apache.ivy.core.IvyPatternHelper;
 import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
@@ -36,6 +39,7 @@ import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.plugins.parser.xml.XmlModuleDescriptorParser;
 import org.apache.ivy.plugins.parser.xml.XmlModuleDescriptorUpdater;
 import org.apache.ivy.plugins.report.XmlReportParser;
+import org.apache.ivy.util.ConfigurationUtils;
 import org.apache.ivy.util.Message;
 import org.xml.sax.SAXException;
 
@@ -92,7 +96,7 @@ public class DeliverEngine {
         // 1) find the resolved module descriptor in cache
         File ivyFile = options.getCache().getResolvedIvyFileInCache(mrid);
         if (!ivyFile.exists()) {
-            throw new IllegalStateException("ivy file not found in cache for "+mrid+": please resolve dependencies before publishing ("+ivyFile+")");
+            throw new IllegalStateException("ivy file not found in cache for "+mrid+": please resolve dependencies before delivering ("+ivyFile+")");
         }
         ModuleDescriptor md = null;
         URL ivyFileURL = null;
@@ -112,7 +116,7 @@ public class DeliverEngine {
         Map dependenciesStatus = new HashMap(); // Map (ModuleId -> String status)
         File ivyProperties = options.getCache().getResolvedIvyPropertiesInCache(mrid);
         if (!ivyProperties.exists()) {
-            throw new IllegalStateException("ivy properties not found in cache for "+mrid+": please resolve dependencies before publishing ("+ivyFile+")");
+            throw new IllegalStateException("ivy properties not found in cache for "+mrid+": please resolve dependencies before delivering ("+ivyFile+")");
         }
         Properties props = new Properties();
         FileInputStream in = new FileInputStream(ivyProperties);
@@ -149,10 +153,16 @@ public class DeliverEngine {
         //    PublishingDependencyRevisionResolver
         String publishedIvy = IvyPatternHelper.substitute(destIvyPattern, md.getResolvedModuleRevisionId());
         Message.info("\tdelivering ivy file to "+publishedIvy);
+        
+		String[] confs = ConfigurationUtils.replaceWildcards(options.getConfs(), md);
+		Set confsToRemove = new HashSet(Arrays.asList(md.getConfigurationsNames()));
+		confsToRemove.removeAll(Arrays.asList(confs));
+
         try {
             XmlModuleDescriptorUpdater.update(_settings, ivyFileURL, 
                     new File(publishedIvy),
-                    resolvedDependencies, options.getStatus(), revision, options.getPubdate(), null, true);
+                    resolvedDependencies, options.getStatus(), revision, options.getPubdate(), null, true, (
+                    String[]) confsToRemove.toArray(new String[confsToRemove.size()]));
         } catch (SAXException ex) {
             throw new RuntimeException("bad ivy file in cache for "+mrid+": please clean and resolve again" , ex);
         }

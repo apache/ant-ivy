@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml-stylesheet type="text/xsl" href="http://www.somesite.com/ivy-doc.xsl"?>
+<!--
+   Licensed to the Apache Software Foundation (ASF) under one
+   or more contributor license agreements.  See the NOTICE file
+   distributed with this work for additional information
+   regarding copyright ownership.  The ASF licenses this file
+   to you under the Apache License, Version 2.0 (the
+   "License"); you may not use this file except in compliance
+   with the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing,
+   software distributed under the License is distributed on an
+   "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+   KIND, either express or implied.  See the License for the
+   specific language governing permissions and limitations
+   under the License.    
+-->
+<ivy-module version="2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://incubator.apache.org/ivy/schemas/ivy.xsd">
+	<info organisation="myorg"
+	       module="mymodule"
+	       revision="myrev"
+	       status="integration"
+	       publication="20041101110000" />
+	<configurations>
+		<conf name="myconf1" description="desc 1"/>
+		<conf name="myconf2" description="desc 2" visibility="public"/>
+		<conf name="myconf3" description="desc 3" visibility="private"/>
+		<conf name="myconf4" description="desc 4" />
+	</configurations>
+	<publications />
+	<dependencies>
+		<dependency org="yourorg" name="yourmodule1" rev="1.1" conf="myconf1"/>
+		<dependency org="yourorg" name="yourmodule2" rev="2+" conf="myconf1->yourconf1"/>
+		<dependency org="yourorg" name="yourmodule3" rev="3.1" conf="myconf2->yourconf1, yourconf2"/>
+
+		<dependency org="yourorg" name="yourmodule4" rev="4.1">
+			<conf name="myconf2" mapped="yourconf2"/>
+		</dependency>
+
+		<dependency org="yourorg" name="yourmodule5" rev="5.1" conf="myconf2->yourconf2">
+			<conf name="myconf1" mapped="yourconf1"/>
+		</dependency>
+
+		<dependency org="yourorg" name="yourmodule6" rev="latest.integration">
+			<conf name="myconf1" mapped="yourconf1"/>
+			<conf name="myconf2" mapped="yourconf1, yourconf2"/>
+		</dependency>
+
+		<dependency org="yourorg" name="yourmodule7" rev="7.1">
+			<conf name="myconf1">
+				<mapped name="yourconf1"/>
+			</conf>
+			<conf name="myconf2">
+				<mapped name="yourconf1"/>
+				<mapped name="yourconf2"/>
+			</conf>
+		</dependency>
+
+		<dependency org="yourorg" name="yourmodule8" rev="8.1">
+			<artifact name="yourartifact8-1" type="jar"/>
+			<artifact name="yourartifact8-2" type="jar"/>
+		</dependency>		
+
+		<dependency org="yourorg" name="yourmodule9" rev="9.1" conf="myconf1,myconf2,myconf3->default">
+			<artifact name="yourartifact9-1" type="jar" conf="myconf1,myconf2"/>
+			<artifact name="yourartifact9-2" type="jar">
+				<conf name="myconf2"/>
+				<conf name="myconf3"/>
+			</artifact>
+		</dependency>		
+
+		<dependency org="yourorg" name="yourmodule10" rev="10.1" conf="myconf1,myconf2,myconf3->default">
+			<artifact name="yourartifact9-1" type="jar" conf="myconf2"/>
+			<artifact name="yourartifact9-2" type="jar">
+				<conf name="myconf2"/>
+				<conf name="myconf3"/>
+			</artifact>
+		</dependency>		
+	</dependencies>
+</ivy-module>

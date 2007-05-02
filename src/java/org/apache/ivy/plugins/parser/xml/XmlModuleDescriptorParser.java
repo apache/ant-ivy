@@ -101,6 +101,12 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
         return parser.getModuleDescriptor();
     }
 
+    public ModuleDescriptor parseDescriptor(IvySettings ivySettings, InputStream descriptor, Resource res, boolean validate) throws ParseException, IOException {
+        Parser parser = new Parser(this, ivySettings, validate);
+        parser.parse(descriptor, res, validate);
+        return parser.getModuleDescriptor();
+    }
+
     public boolean accept(Resource res) {
         return true; // this the default parser, it thus accepts all resources
     }
@@ -121,7 +127,8 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
                     md.getResolvedModuleRevisionId().getRevision(), 
                     md.getResolvedPublicationDate(),
                     ns,
-                    false);
+                    false,
+                    null);
         } catch (SAXException e) {
             ParseException ex = new ParseException("exception occured while parsing "+res, 0);
             ex.initCause(e);
@@ -190,7 +197,33 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
             throw pe;
         }
     }
-
+    
+    private void parse(InputStream descriptor, Resource res, boolean validate) throws ParseException, IOException {
+        try {
+            setResource(res);
+            URL schemaURL = validate?getClass().getResource("ivy.xsd"):null;
+            XMLHelper.parse(descriptor, schemaURL, this, null);
+            checkConfigurations();
+            replaceConfigurationWildcards();
+            if (!_artifactsDeclared) {
+                String[] confs = _md.getConfigurationsNames();
+                for (int i = 0; i < confs.length; i++) {
+                    _md.addArtifact(confs[i], new MDArtifact(_md, _md.getModuleRevisionId().getName(), "jar", "jar"));
+                }
+            }
+            _md.check();
+        } catch (ParserConfigurationException ex) {
+            IllegalStateException ise = new IllegalStateException(ex.getMessage());
+            ise.initCause(ex);
+            throw ise;
+        } catch (Exception ex) {
+            checkErrors();
+            ParseException pe = new ParseException(ex.getMessage(), 0);
+            pe.initCause(ex);
+            throw pe;
+        }
+    }
+    
     public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
         try {
             if ("ivy-module".equals(qName)) {

@@ -33,6 +33,7 @@ public class DeliverOptions {
 	private boolean _validate = true;
 	private boolean _resolveDynamicRevisions = true;
 	private String _resolveId;
+	private String[] _confs;
 	
 	/**
 	 * Returns an instance of DeliverOptions with options corresponding to default values
@@ -45,7 +46,7 @@ public class DeliverOptions {
 		return new DeliverOptions(null, new Date(), CacheManager.getInstance(settings), 
 				new DefaultPublishingDRResolver(),
 				settings.doValidate(),
-				true);
+				true, null);
 	}
 
 	/**
@@ -58,13 +59,14 @@ public class DeliverOptions {
 	/**
 	 * Creates an instance of DeliverOptions with all options explicitly set.
 	 */
-	public DeliverOptions(String status, Date pubDate, CacheManager cache, PublishingDependencyRevisionResolver pdrResolver, boolean validate, boolean resolveDynamicRevisions) {
+	public DeliverOptions(String status, Date pubDate, CacheManager cache, PublishingDependencyRevisionResolver pdrResolver, boolean validate, boolean resolveDynamicRevisions, String[] confs) {
 		_status = status;
 		_pubdate = pubDate;
 		_cache = cache;
 		_pdrResolver = pdrResolver;
 		_validate = validate;
 		_resolveDynamicRevisions = resolveDynamicRevisions;
+		_confs = confs;
 	}
 
 	public CacheManager getCache() {
@@ -174,8 +176,29 @@ public class DeliverOptions {
 		return this;
 	}
 	
+	/**
+	 * Return the configurations which must be deliverd. Returns <tt>null</tt> if all
+	 * configurations has to be deliverd. Attention: the returned array can contain wildcards!
+	 * @return the configurations to deliver
+	 */
+	public String[] getConfs() {
+		return _confs;
+	}
+	
+	/**
+	 * Sets the configurations to deliver.
+	 * @param confs the configurations to deliver
+	 * @return the instance of DeliverOptions on which the method has been called, 
+	 * for easy method chaining 
+	 */
+	public DeliverOptions setConfs(String[] confs) {
+		_confs = confs;
+		return this;
+	}
+	
 	public String toString() {
 		return "status="+_status+" pubdate="+_pubdate+" validate="+_validate+" resolveDynamicRevisions="+_resolveDynamicRevisions+" cache="+_cache+" resolveId="+_resolveId;
+		
 	}
 	
 }

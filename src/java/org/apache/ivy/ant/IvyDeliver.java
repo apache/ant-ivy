@@ -215,6 +215,8 @@ public class IvyDeliver extends IvyTask {
     private boolean _replacedynamicrev = true;
     
     private String _resolveId;
+    
+    private String _conf;
 
     public File getCache() {
         return _cache;
@@ -303,6 +305,14 @@ public class IvyDeliver extends IvyTask {
     public void setResolveId(String resolveId) {
     	_resolveId = resolveId;
     }
+    
+    public String getConf() {
+    	return _conf;
+    }
+    
+    public void setConf(String confs) {
+    	_conf = confs;
+    }
 
     public void execute() throws BuildException {
     	Ivy ivy = getIvyInstance();
@@ -379,7 +389,7 @@ public class IvyDeliver extends IvyTask {
             
             DeliverOptions options = new DeliverOptions(_status, pubdate, 
     				CacheManager.getInstance(settings, _cache), 
-    				drResolver, doValidate(settings), _replacedynamicrev).setResolveId(_resolveId);
+    				drResolver, doValidate(settings), _replacedynamicrev, splitConfs(_conf)).setResolveId(_resolveId);
             if (mrid == null) {
             	ivy.deliver(_pubRevision, _deliverpattern, options);
             } else {

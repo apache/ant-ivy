@@ -218,13 +218,6 @@ public class IvyPublish extends IvyTask {
         ModuleRevisionId mrid = ModuleRevisionId.newInstance(_organisation, _module, _revision);
         try {
             File ivyFile = new File(IvyPatternHelper.substitute(_srcivypattern, _organisation, _module, _pubRevision, "ivy", "ivy", "xml"));
-            if (null!=_conf && isPublishivy()) {
-            	if (isPublishivy()) {
-            		Message.warn("Impossible to publish ivy file when conf is specified");
-            		Message.warn("Please, set publishivy to false");
-            		setPublishivy(false);
-            	}
-            }
             if (_publishivy && (!ivyFile.exists() || _forcedeliver)) {
                 IvyDeliver deliver = new IvyDeliver();
                 deliver.setProject(getProject());
@@ -240,6 +233,7 @@ public class IvyPublish extends IvyTask {
                 deliver.setStatus(getStatus());
                 deliver.setValidate(doValidate(settings));
                 deliver.setReplacedynamicrev(isReplacedynamicrev());
+                deliver.setConf(_conf);
                 
                 deliver.execute();
             }

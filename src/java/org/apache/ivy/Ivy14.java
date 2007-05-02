@@ -97,7 +97,7 @@ public class Ivy14 {
 	}
 
 	public void deliver(ModuleRevisionId mrid, String revision, File cache, String destIvyPattern, String status, Date pubdate, PublishingDependencyRevisionResolver pdrResolver, boolean validate, boolean resolveDynamicRevisions) throws IOException, ParseException {
-		_ivy.deliver(mrid, revision, destIvyPattern, new DeliverOptions(status, pubdate, CacheManager.getInstance(_ivy.getSettings(), cache), pdrResolver, validate, resolveDynamicRevisions));
+		_ivy.deliver(mrid, revision, destIvyPattern, new DeliverOptions(status, pubdate, CacheManager.getInstance(_ivy.getSettings(), cache), pdrResolver, validate, resolveDynamicRevisions, null));
 	}
 
 	public void deliver(ModuleRevisionId mrid, String revision, File cache, String destIvyPattern, String status, Date pubdate, PublishingDependencyRevisionResolver pdrResolver, boolean validate) throws IOException, ParseException {
