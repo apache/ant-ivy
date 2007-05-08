@@ -322,9 +322,12 @@
 		<taskdef resource="emma_ant.properties" classpathref="emma.classpath" />
 		<property name="emma.enabled" value="true" />
 		<property name="coverage.dir" value="${build.dir}/coverage" />
+		<property name="coverage.classes.dir" value="${coverage.dir}/classes" />
 		<mkdir dir="${coverage.dir}" />
+		<mkdir dir="${coverage.classes.dir}" />
 	    <emma enabled="${emma.enabled}" >
-	      <instr mode="overwrite"
+	      <instr mode="copy"
+	      	     destdir="${coverage.dir}/classes"
  	      	     metadatafile="${coverage.dir}/metadata.emma">
 	      	<instrpath>
 				<pathelement location="${core.classes.build.dir}"/>
@@ -367,6 +370,7 @@
 	       printsummary="yes"
            fork="true">
         	<classpath>
+        		<pathelement location="${coverage.classes.dir}" />
         		<path refid="test.classpath"/>
         	</classpath>
             <jvmarg value="-Demma.coverage.out.file=${coverage.dir}/coverage.emma" />

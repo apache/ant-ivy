@@ -54,6 +54,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - FIX: ivy:install ant task does not fail on error (IVY-475) (thanks to Jeffrey Blatttman)
 - FIX: Credentials are shown in build log even if debug is not enabled (IVY-486) (thanks to Gilles Scokart)
 - FIX: Post-Resolve task shouldn't set the 'resolveid' (IVY-489)
+- FIX: build fails without emma code coverage JARs present (IVY-478)
 
    2.0.0-alpha1-incubating
 =====================================
