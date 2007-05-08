@@ -16,18 +16,11 @@
    specific language governing permissions and limitations
    under the License.    
 -->
-<project name="ivy" default="coverage-report" xmlns:ivy="antlib:fr.jayasoft.ivy.ant">
+<project name="ivy" default="coverage-report" xmlns:ivy="antlib:org.apache.ivy.ant">
 	<property environment="env"/>
 	<property file="version.properties"/>
 	<property file="build.properties"/>
 
-    <!-- =================================================================
-               IVY AUTO INSTALL
-               Ivy eats its own dog food, and thus require Ivy jar to
-               be built. This section will download Ivy from
-               internet and use it for ivy tasks of this build.
-         ================================================================= -->
-	
 	<property name="final.name" value="ivy.jar" />
 	<property name="final.core.name" value="ivy-core.jar" />
 	
@@ -42,39 +35,19 @@
 		<property name="ivy.home" value="${basedir}/.ivy" />
 	</target>
 	
-	<target name="init-ivy-jar">
-		<property name="ivy.jar.dir" value="${ivy.home}/jars" />
-		<property name="ivy.jar.file" value="${ivy.jar.dir}/ivy.jar" />
-	</target>
-	
-	<target name="init-ivy-home" depends="init-ivy-user-home, init-ivy-local-home, init-ivy-jar" />
+	<target name="init-ivy-home" depends="init-ivy-user-home, init-ivy-local-home" />
 
-	<target name="download-ivy" depends="init-ivy-home" unless="offline">
-    	<mkdir dir="${ivy.jar.dir}"/>
-		<!-- download Ivy from web site so that it can be used even without any special installation -->
-		<!-- use a non standard location during migration to apache -->
-    	<get src="http://people.apache.org/~antoine/ivy/ivy-${ivy.install.version}.jar"
-    		 dest="${ivy.jar.file}" usetimestamp="true"/>
-	</target>
-	
-	<target name="check-ivy-available" depends="init-ivy-home">
-    	<path id="ivy.lib.path">
-    	    <fileset dir="${ivy.jar.dir}" includes="*.jar"/>
-    	</path>
-		<available property="ivy.available" resource="fr/jayasoft/ivy/ant/antlib.xml"
-					classpathref="ivy.lib.path" />
-	</target>
-	
-	<target name="init-ivy" depends="download-ivy,check-ivy-available" if="ivy.available">
-    	<!-- try to load ivy here from local ivy dir, in case the user has not already dropped
-    	      it into ant's lib dir (note that the latter copy will always take precedence).
-    	      We will not fail as long as local lib dir exists (it may be empty) and
-    	      ivy is in at least one of ant's lib dir or the local lib dir. -->
-    	<taskdef resource="fr/jayasoft/ivy/ant/antlib.xml"
-    	          uri="antlib:fr.jayasoft.ivy.ant" classpathref="ivy.lib.path"/>
-		<ivy:configure file="${basedir}/ivysettings.xml" /> <!-- not necessary with Ivy 2.0+ -->
+	<target name="init-ivy" depends="compile-ant">
+    	<taskdef resource="org/apache/ivy/ant/antlib.xml"
+    	         uri="antlib:org.apache.ivy.ant">
+			<classpath>
+				<pathelement location="${core.classes.build.dir}"/>
+				<pathelement location="${ant.classes.build.dir}"/>
+			</classpath>
+    	</taskdef>
+		
+		<ivy:configure />
     </target>
-
 	
 	<target name="install" depends="jar" description="build Ivy and install it in Ivy home for consecutive builds">
 		<copy file="${artifacts.build.dir}/${final.name}" tofile="${ivy.jar.file}"/>
@@ -91,7 +64,9 @@
 		</path>
 		<path id="run.classpath">
 			<path refid="build.classpath"/>
-			<pathelement location="${classes.build.dir}"/>
+			<pathelement location="${core.classes.build.dir}"/>
+			<pathelement location="${ant.classes.build.dir}"/>
+			<pathelement location="${optional.classes.build.dir}"/>
 		</path>
         <path id="test.classpath">
             <path refid="run.classpath"/>
@@ -101,6 +76,9 @@
 	
 	<target name="prepare" depends="init">
 	   <mkdir dir="${classes.build.dir}"/>
+	   <mkdir dir="${core.classes.build.dir}"/>
+	   <mkdir dir="${ant.classes.build.dir}"/>
+	   <mkdir dir="${optional.classes.build.dir}"/>
 	   <mkdir dir="${test.build.dir}"/>
 	   <mkdir dir="${artifacts.build.dir}"/>
 	   <mkdir dir="${test.report.dir}"/>
@@ -130,8 +108,6 @@
 	
 	<target name="clean-examples" description="clean all examples">
 		<subant target="clean" failonerror="false">
-			<!-- use current ivy jar dir for nested calls, to avoid downloading ivy several times -->
-			<property name="ivy.jar.dir" value="${ivy.jar.dir}"/>
     		<fileset dir="src/example" includes="**/build.xml"/>
         </subant>		
 	</target>
@@ -170,51 +146,100 @@
     <!-- =================================================================
                DEPENDENCY MNGT, COMPILATION AND JAR
          ================================================================= -->
-	<target name="resolve" depends="init-ivy, prepare" unless="no.resolve" if="ivy.available">
+	<target name="resolve" depends="init-ivy" unless="no.resolve">
 		<ivy:retrieve conf="default,test" />
 	</target>
 
-	<target name="build" depends="resolve">
-		<javac 	srcdir="${src.dir}"
-		        destdir="${classes.build.dir}"
-		        classpathref="build.classpath"
+	<target name="compile-core" depends="prepare">
+		<javac	srcdir="${src.dir}"
+		       	destdir="${core.classes.build.dir}"
+				sourcepath="" 
 				source="${ivy.minimum.javaversion}"
 				target="${ivy.minimum.javaversion}"
-		        debug="${debug.mode}"
-				includeantruntime="no"/>
-	</target>
-
-	<target name="jar" depends="build, default-version">
-		<!--  copy resources -->
-		<copy todir="${classes.build.dir}">
+	    	    debug="${debug.mode}"
+				includeantruntime="no">
+			<excludesfile name="ant.patterns" />
+			<excludesfile name="optional.patterns" />
+		</javac>
+		<copy todir="${core.classes.build.dir}" includeEmptyDirs="false">
     		<fileset dir="${src.dir}">
+    			<include name="org/apache/ivy/core/**" />
       			<exclude name="**/*.java"/>
     		</fileset>
   		</copy>
-		<!-- copy antlib for backward compatibility with fr.jayasoft.ivy package -->
-		<copy file="${src.dir}/org/apache/ivy/ant/antlib.xml" 
-			  todir="${classes.build.dir}/fr/jayasoft/ivy/ant"/>
-		<!-- copy settings files for backward compatibility with ivyconf naming -->
-		<copy file="${classes.build.dir}/org/apache/ivy/core/settings/ivysettings-local.xml"
-			tofile="${classes.build.dir}/org/apache/ivy/core/settings/ivyconf-local.xml" />
-		<copy file="${classes.build.dir}/org/apache/ivy/core/settings/ivysettings-default-chain.xml"
-			tofile="${classes.build.dir}/org/apache/ivy/core/settings/ivyconf-default-chain.xml" />
-		<copy file="${classes.build.dir}/org/apache/ivy/core/settings/ivysettings-main-chain.xml"
-			tofile="${classes.build.dir}/org/apache/ivy/core/settings/ivyconf-main-chain.xml" />
-		<copy file="${classes.build.dir}/org/apache/ivy/core/settings/ivysettings-public.xml"
-			tofile="${classes.build.dir}/org/apache/ivy/core/settings/ivyconf-public.xml" />
-		<copy file="${classes.build.dir}/org/apache/ivy/core/settings/ivysettings-shared.xml"
-			tofile="${classes.build.dir}/org/apache/ivy/core/settings/ivyconf-shared.xml" />
-		<copy file="${classes.build.dir}/org/apache/ivy/core/settings/ivysettings.xml"
-			tofile="${classes.build.dir}/org/apache/ivy/core/settings/ivyconf.xml" />
 		
+		<!-- copy settings files for backward compatibility with ivyconf naming -->
+		<copy file="${core.classes.build.dir}/org/apache/ivy/core/settings/ivysettings-local.xml"
+			tofile="${core.classes.build.dir}/org/apache/ivy/core/settings/ivyconf-local.xml" />
+		<copy file="${core.classes.build.dir}/org/apache/ivy/core/settings/ivysettings-default-chain.xml"
+			tofile="${core.classes.build.dir}/org/apache/ivy/core/settings/ivyconf-default-chain.xml" />
+		<copy file="${core.classes.build.dir}/org/apache/ivy/core/settings/ivysettings-main-chain.xml"
+			tofile="${core.classes.build.dir}/org/apache/ivy/core/settings/ivyconf-main-chain.xml" />
+		<copy file="${core.classes.build.dir}/org/apache/ivy/core/settings/ivysettings-public.xml"
+			tofile="${core.classes.build.dir}/org/apache/ivy/core/settings/ivyconf-public.xml" />
+		<copy file="${core.classes.build.dir}/org/apache/ivy/core/settings/ivysettings-shared.xml"
+			tofile="${core.classes.build.dir}/org/apache/ivy/core/settings/ivyconf-shared.xml" />
+		<copy file="${core.classes.build.dir}/org/apache/ivy/core/settings/ivysettings.xml"
+			tofile="${core.classes.build.dir}/org/apache/ivy/core/settings/ivyconf.xml" />
+	</target>
+
+	<target name="compile-ant" depends="compile-core">
+		<javac	srcdir="${src.dir}"
+		       	destdir="${ant.classes.build.dir}"
+				sourcepath="" 
+				source="${ivy.minimum.javaversion}"
+				target="${ivy.minimum.javaversion}"
+	    	    debug="${debug.mode}"
+				includeantruntime="yes">
+			<classpath>
+				<pathelement location="${core.classes.build.dir}"/>
+			</classpath>
+			<includesfile name="ant.patterns" />
+		</javac>
+		<copy todir="${ant.classes.build.dir}" includeEmptyDirs="false">
+    		<fileset dir="${src.dir}">
+    			<include name="org/apache/ivy/ant/**" />
+      			<exclude name="**/*.java"/>
+    		</fileset>
+  		</copy>
+		
+		<!-- copy antlib for backward compatibility with fr.jayasoft.ivy package -->
+		<copy file="${ant.classes.build.dir}/org/apache/ivy/ant/antlib.xml" 
+			  todir="${ant.classes.build.dir}/fr/jayasoft/ivy/ant"/>
+	</target>
+	
+	<target name="compile-optional" depends="compile-ant, resolve">
+		<javac	srcdir="${src.dir}"
+		       	destdir="${optional.classes.build.dir}"
+				sourcepath="" 
+				source="${ivy.minimum.javaversion}"
+				target="${ivy.minimum.javaversion}"
+	    	    debug="${debug.mode}"
+				includeantruntime="no">
+			<classpath>
+				<pathelement location="${core.classes.build.dir}"/>
+				<fileset dir="${lib.dir}">
+			        <include name="**/*.jar"/>
+			    </fileset>
+			</classpath>
+			<includesfile name="optional.patterns" />
+		</javac>
+		<copy todir="${core.classes.build.dir}" includeEmptyDirs="false">
+    		<fileset dir="${src.dir}">
+    			<exclude name="org/apache/ivy/core/**" />
+    			<exclude name="org/apache/ivy/ant/**" />
+      			<exclude name="**/*.java"/>
+    		</fileset>
+  		</copy>
+	</target>
+
+	<target name="jar" depends="compile-optional, default-version">
   		<!-- identify compiled ivy version -->
-		<echo message="version=${build.version}${line.separator}" file="${classes.build.dir}/module.properties" append="true"/>
-		<echo message="date=${pubdate}${line.separator}" file="${classes.build.dir}/module.properties" append="true"/>
+		<echo message="version=${build.version}${line.separator}" file="${core.classes.build.dir}/module.properties" append="true"/>
+		<echo message="date=${pubdate}${line.separator}" file="${core.classes.build.dir}/module.properties" append="true"/>
 
 		<!-- package the two ivy jars -->
   		<jar 	destfile="${artifacts.build.dir}/${final.name}"
-				basedir="${classes.build.dir}"
   				manifest="${basedir}/MANIFEST.MF">
   			<metainf dir="${basedir}" includes="LICENSE,DISCLAIMER,NOTICE" />
 			<manifest>
@@ -230,17 +255,20 @@
 					<attribute name="Implementation-Vendor" value="Apache Software Foundation" />
 				</section>
 			</manifest>
+  			<fileset dir="${core.classes.build.dir}" />
+  			<fileset dir="${ant.classes.build.dir}" />
+  	  		<fileset dir="${optional.classes.build.dir}" />
 		</jar>
-  		<jar 	destfile="${artifacts.build.dir}/${final.core.name}"
-				basedir="${classes.build.dir}"
-  				excludes="org/apache/ivy/ant/*">
+  		<jar 	destfile="${artifacts.build.dir}/${final.core.name}">
   			<metainf dir="${basedir}" includes="LICENSE,DISCLAIMER,NOTICE" />
 			<manifest>
 				<attribute name="Build-Version" value="${build.version}"/>
 			</manifest>
+  			<fileset dir="${core.classes.build.dir}" />
+  	  		<fileset dir="${optional.classes.build.dir}" />
 		</jar>
 		<!-- clean generated module properties file -->
-		<delete file="${classes.build.dir}/module.properties"/>
+		<delete file="${core.classes.build.dir}/module.properties"/>
 	</target>
 	
 
@@ -288,7 +316,7 @@
 	
 	<target name="init-tests" depends="init-tests-offline, init-tests-online" />
 	
-	<target name="emma" depends="jar" unless="skip.test" if="ivy.available">
+	<target name="emma" depends="jar" unless="skip.test">
 		<ivy:cachepath organisation="emma" module="emma" revision="2.0.5312" 
 			           inline="true" conf="ant" pathid="emma.classpath"/> 
 		<taskdef resource="emma_ant.properties" classpathref="emma.classpath" />
@@ -296,10 +324,14 @@
 		<property name="coverage.dir" value="${build.dir}/coverage" />
 		<mkdir dir="${coverage.dir}" />
 	    <emma enabled="${emma.enabled}" >
-	      <instr instrpath="${classes.build.dir}"
-	             mode="overwrite"
- 	      	     metadatafile="${coverage.dir}/metadata.emma"
-	      />
+	      <instr mode="overwrite"
+ 	      	     metadatafile="${coverage.dir}/metadata.emma">
+	      	<instrpath>
+				<pathelement location="${core.classes.build.dir}"/>
+				<pathelement location="${ant.classes.build.dir}"/>
+				<pathelement location="${optional.classes.build.dir}"/>
+	      	</instrpath>
+	      </instr>
 	    </emma>
 		<delete file="${coverage.dir}/coverage.emma" />
 		<!-- add emma path to test path, because emma jars need to be available when running 

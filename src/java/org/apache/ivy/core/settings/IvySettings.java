@@ -22,6 +22,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Field;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -55,7 +56,6 @@ import org.apache.ivy.plugins.latest.LatestStrategy;
 import org.apache.ivy.plugins.latest.LatestTimeStrategy;
 import org.apache.ivy.plugins.matcher.ExactOrRegexpPatternMatcher;
 import org.apache.ivy.plugins.matcher.ExactPatternMatcher;
-import org.apache.ivy.plugins.matcher.GlobPatternMatcher;
 import org.apache.ivy.plugins.matcher.ModuleIdMatcher;
 import org.apache.ivy.plugins.matcher.PatternMatcher;
 import org.apache.ivy.plugins.matcher.RegexpPatternMatcher;
@@ -179,7 +179,15 @@ public class IvySettings {
         addMatcher(ExactPatternMatcher.INSTANCE);
         addMatcher(RegexpPatternMatcher.INSTANCE);
         addMatcher(ExactOrRegexpPatternMatcher.INSTANCE);
-        addMatcher(GlobPatternMatcher.INSTANCE);
+        
+        try {
+            // GlobPatternMatcher is optional. Only add it when available.
+			Class globClazz = IvySettings.class.getClassLoader().loadClass("org.apache.ivy.plugins.matcher.GlobPatternMatcher");
+			Field instanceField = globClazz.getField("INSTANCE");
+			addMatcher((PatternMatcher) instanceField.get(null));
+		} catch (Exception e) {
+			// ignore: the matcher isn't on the classpath
+		}
         
         addReportOutputter(new XmlReportOutputter());
         addReportOutputter(new LogReportOutputter());

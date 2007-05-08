@@ -1,0 +1,2 @@
+#This file defines the sources to compile for ivy-ant.jar
+org/apache/ivy/ant/**/*.java

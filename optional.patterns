@@ -1,0 +1,13 @@
+#This file defines the sources to compile for ivy-optional.jar
+org/apache/ivy/Main.java
+org/apache/ivy/plugins/matcher/GlobPatternMatcher.java
+org/apache/ivy/plugins/repository/sftp/**/*.java
+org/apache/ivy/plugins/repository/ssh/**/*.java
+org/apache/ivy/plugins/repository/vfs/**/*.java
+org/apache/ivy/plugins/repository/vsftp/**/*.java
+org/apache/ivy/plugins/resolver/AbstractSshBasedResolver.java
+org/apache/ivy/plugins/resolver/SFTPResolver.java
+org/apache/ivy/plugins/resolver/SshResolver.java
+org/apache/ivy/plugins/resolver/VfsResolver.java
+org/apache/ivy/plugins/resolver/VsftpResolver.java
+org/apache/ivy/util/url/HttpClientHandler.java

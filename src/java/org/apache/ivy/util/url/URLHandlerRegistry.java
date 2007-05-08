@@ -44,12 +44,19 @@ public class URLHandlerRegistry {
     public static URLHandler getHttp() {
         try {
             Class.forName("org.apache.commons.httpclient.HttpClient");
+            Class handler = Class.forName("org.apache.ivy.util.url.HttpClientHandler");
             Message.verbose("jakarta commons httpclient detected: using it for http downloading");
-            return new HttpClientHandler(); 
+            return (URLHandler) handler.newInstance(); 
         } catch (ClassNotFoundException e) {
-             Message.verbose("jakarta commons httpclient not found: using jdk url handling");
+            Message.verbose("jakarta commons httpclient not found: using jdk url handling");
             return new BasicURLHandler();
-        }
+        } catch (InstantiationException e) {
+            Message.verbose("couldn't instantiate HttpClientHandler: using jdk url handling");
+            return new BasicURLHandler();
+		} catch (IllegalAccessException e) {
+            Message.verbose("couldn't instantiate HttpClientHandler: using jdk url handling");
+            return new BasicURLHandler();
+		}
     }
 
 }
