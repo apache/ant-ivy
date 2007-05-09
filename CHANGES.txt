@@ -50,6 +50,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 
 - IMPROVEMENT: Allow "main" parameters to be passed directly (instead of using -args flag) (IVY-480) (thanks to Archie Cobbs)
 
+- FIX: EOL in the doc pages (IVY-470)
 - FIX: Cache is storing ArtifactOrigin properties with no guarantee of unicity and types telescope during resolve. (IVY-430) (thanks to Stephane Bailliez)
 - FIX: ivy:install ant task does not fail on error (IVY-475) (thanks to Jeffrey Blatttman)
 - FIX: Credentials are shown in build log even if debug is not enabled (IVY-486) (thanks to Gilles Scokart)

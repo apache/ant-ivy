@@ -422,5 +422,13 @@
 		</javadoc>
 	</target>
 
-
+	<target name="fixcrlf">
+		<fixcrlf srcdir="${doc.src.dir}" includes="**/*.html,**/*.json" excludes="samples/**,presentations/**" eol="lf" />
+		<apply executable="svn">
+			<arg value="propset"/>
+			<arg value="svn:eol-style"/>
+			<arg value='"LF"'/>
+			<fileset dir="${doc.src.dir}" includes="**/*.html,**/*.json" excludes="samples/**,presentations/**" />
+		</apply>
+	</target>
 </project>
