@@ -28,8 +28,9 @@
 The configure task is used to configure ivy with an xml settings file.<br/><br/>
 See <a href="../../doc/configuration.html">settings</a> for details about the settings file itself.<br/><br/>
 <i>Note for developers:<br/>
-After the call to this task, a reference to the configured ivy instance used by all subsequent ant tasks is put in the ant project,
-under the id "ivy.instance".</i>
+After the call to this task, a reference to the configured ivy instance used by all subsequent ant tasks is put in the ant project, under the id "ivy.instance".</i>
+
+<span class="since">since 2.0</span> The file loaded used to be called configuration file in versions prior to 2.0. The name 'settings' and the use of the ivy.settings.file is new to 2.0.
 <table class="ant">
 <thead>
     <tr><th class="ant-att">Attribute</th><th class="ant-desc">Description</th><th class="ant-req">Required</th></tr>
