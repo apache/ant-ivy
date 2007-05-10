@@ -42,7 +42,7 @@ public class IvyPostResolveTaskTest extends TestCase {
         _project.setProperty("ivy.settings.file", "test/repositories/ivysettings.xml");
 
         _task = new IvyPostResolveTask() {
-        	public void execute() throws BuildException {
+        	public void doExecute() throws BuildException {
         		prepareAndCheck();
         	}
         };

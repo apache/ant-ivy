@@ -43,6 +43,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 	John Shields
 	Johan Stuyts
 	John Williams
+	Jaroslaw Wypychowski
 
    version in SVN
 =====================================
@@ -50,6 +51,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 
 - IMPROVEMENT: Allow "main" parameters to be passed directly (instead of using -args flag) (IVY-480) (thanks to Archie Cobbs)
 
+- FIX: Ant project reference lost from context on multiple ant calls in single thread (IVY-497) (thanks to Jaroslaw Wypychowski)
 - FIX: EOL in the doc pages (IVY-470)
 - FIX: Cache is storing ArtifactOrigin properties with no guarantee of unicity and types telescope during resolve. (IVY-430) (thanks to Stephane Bailliez)
 - FIX: ivy:install ant task does not fail on error (IVY-475) (thanks to Jeffrey Blatttman)

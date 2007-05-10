@@ -49,7 +49,7 @@ public class IvyInfo extends IvyTask {
         _file = file;
     }
 
-    public void execute() throws BuildException {
+    public void doExecute() throws BuildException {
         Ivy ivy = getIvyInstance();
         IvySettings settings = ivy.getSettings();
         if (_file == null) {

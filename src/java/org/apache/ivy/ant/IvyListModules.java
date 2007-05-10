@@ -97,7 +97,7 @@ public class IvyListModules extends IvyTask {
 		_branch = branch;
 	}
 
-	public void execute() throws BuildException {
+	public void doExecute() throws BuildException {
         if (_organisation == null) {
             throw new BuildException("no organisation provided for ivy findmodules");
         }

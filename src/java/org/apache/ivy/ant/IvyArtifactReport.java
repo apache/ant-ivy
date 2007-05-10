@@ -68,7 +68,7 @@ public class IvyArtifactReport extends IvyPostResolveTask {
         _pattern = pattern;
     }
 
-    public void execute() throws BuildException {
+    public void doExecute() throws BuildException {
     	prepareAndCheck();
         if (_tofile == null) {
             throw new BuildException("no destination file name: please provide it through parameter 'tofile'");

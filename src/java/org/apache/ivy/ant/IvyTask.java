@@ -31,7 +31,6 @@ import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.util.Message;
 import org.apache.ivy.util.StringUtils;
 import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Task;
 
 
@@ -41,7 +40,7 @@ import org.apache.tools.ant.Task;
  * @author Xavier Hanin
  *
  */
-public class IvyTask extends Task {
+public abstract class IvyTask extends Task {
     public static final String ANT_PROJECT_CONTEXT_KEY = "ant-project";
 	private Boolean _validate = null; 
 
@@ -252,9 +251,42 @@ public class IvyTask extends Task {
         return val;
     }
     
-    public void setProject(Project project) {
-    	super.setProject(project);
-    	IvyContext.getContext().set(ANT_PROJECT_CONTEXT_KEY, project);
+    /**
+     * Called when task starts its execution.
+     */
+    protected void prepareTask(){
+    	//push current project on the stack in context
+		IvyContext.getContext().push(ANT_PROJECT_CONTEXT_KEY, getProject());
     }
+    
+    /**
+     * Called when task is about to finish
+     * Should clean up all state related information (stacks for example)
+     */
+    protected void finalizeTask(){
+		if(!IvyContext.getContext().pop(ANT_PROJECT_CONTEXT_KEY,getProject())){
+			Message.error("ANT project poped from stack not equals current !. Ignoring");
+		}
+    }
+    
+    /**
+     * Ant task execute. 
+     * Calls prepareTask, doExecute, finalzeTask
+     */
+    public final void execute() throws BuildException{
+    	try{
+    		prepareTask();
+    		doExecute();
+    	} finally {
+    		finalizeTask();
+    	}
+    }
+
+    /**
+     * The real logic of task execution after project has been set in the context.
+     * MUST be implemented by subclasses
+     * @throws BuildException
+     */
+    public abstract void doExecute() throws BuildException;
     
 }

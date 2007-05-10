@@ -20,6 +20,8 @@ package org.apache.ivy.core;
 import java.io.File;
 import java.lang.ref.WeakReference;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 
@@ -129,7 +131,89 @@ public class IvyContext {
 	public void set(String key, Object value) {
 		_contextMap.put(key, new WeakReference(value));
 	}
+	
+	/**
+	 * Reads the first object from the list saved under given key in the context.
+	 * If value under key represents non List object then a RuntimeException is thrown.
+	 * @param key context key for the string
+	 * @return top object from the list (index 0) or null if no key or list empty
+	 */
+	public Object peek(String key){
+		synchronized(_contextMap){
+			Object o=_contextMap.get(key);
+			if(o==null) return null;
+			if(o instanceof List){
+				if(((List)o).size()==0) return null;
+				Object ret=((List)o).get(0);
+				return ret;
+			} else {
+				throw new RuntimeException("Cannot top from non List object "+o);
+			}
+		}
+	}
+	
+	/**
+	 * Removes and returns first object from the list saved under given key in the context.
+	 * If value under key represents non List object then a RuntimeException is thrown.
+	 * @param key context key for the string
+	 * @return top object from the list (index 0) or null if no key or list empty
+	 */
+	public Object pop(String key){
+		synchronized(_contextMap){
+			Object o=_contextMap.get(key);
+			if(o==null) return null;
+			if(o instanceof List){
+				if(((List)o).size()==0) return null;
+				Object ret=((List)o).remove(0);
+				return ret;
+			} else {
+				throw new RuntimeException("Cannot pop from non List object "+o);
+			}
+		}
+	}
 
+	/**
+	 * Removes and returns first object from the list saved under given key in the context
+	 * but only if it equals the given expectedValue - if not a false value is returned.
+	 * If value under key represents non List object then a RuntimeException is thrown.
+	 * @param key context key for the string
+	 * @return true if the r
+	 */
+	public boolean pop(String key, Object expectedValue){
+		synchronized(_contextMap){
+			Object o=_contextMap.get(key);
+			if(o==null) return false;
+			if(!o.equals(expectedValue)) return false;
+			if(o instanceof List){
+				if(((List)o).size()==0) return false;
+				((List)o).remove(0);
+				return true;
+			} else {
+				throw new RuntimeException("Cannot pop from non List object "+o);
+			}
+		}
+	}
+
+	/**
+	 * Puts a new object at the start of the list saved under given key in the context.
+	 * If value under key represents non List object then a RuntimeException is thrown.
+	 * If no list exists under given key a new LinkedList is created. This is kept
+	 * without WeakReference in opposite to the put() results.
+	 * @param key key context key for the string
+	 * @param value value to be saved under the key
+	 */
+	public void push(String key, Object value){
+		synchronized(_contextMap){
+			if(!_contextMap.containsKey(key)) _contextMap.put(key, new LinkedList());
+			Object o=_contextMap.get(key);
+			if(o instanceof List){
+				((List)o).add(0,value);
+			} else {
+				throw new RuntimeException("Cannot push to non List object "+o);
+			}
+		}
+	}
+	
 	public Thread getOperatingThread() {
 		return _operatingThread;
 	}

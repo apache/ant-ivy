@@ -81,7 +81,7 @@ public class IvyFindRevision extends IvyTask {
 	}
 
 
-	public void execute() throws BuildException {
+	public void doExecute() throws BuildException {
         if (_organisation == null) {
             throw new BuildException("no organisation provided for ivy findmodules");
         }

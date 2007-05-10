@@ -42,7 +42,7 @@ public class IvyRetrieve extends IvyPostResolveTask {
         _pattern = pattern;
     }
     
-    public void execute() throws BuildException {
+    public void doExecute() throws BuildException {
     	prepareAndCheck();
 
         _pattern = getProperty(_pattern, getSettings(), "ivy.retrieve.pattern");

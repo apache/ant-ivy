@@ -64,7 +64,7 @@ public class IvyCheck extends IvyTask {
     }
     
 
-    public void execute() throws BuildException {
+    public void doExecute() throws BuildException {
         try {
         Ivy ivy = getIvyInstance();
         if (_file != null) {

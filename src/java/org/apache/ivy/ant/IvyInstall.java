@@ -21,11 +21,10 @@ import java.io.File;
 
 import org.apache.ivy.Ivy;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
+import org.apache.ivy.core.report.ResolveReport;
 import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.plugins.matcher.PatternMatcher;
 import org.apache.ivy.util.filter.FilterHelper;
-import org.apache.tools.ant.BuildException;
-import org.apache.ivy.core.report.ResolveReport;
 import org.apache.tools.ant.BuildException;
 
 /**
@@ -48,7 +47,7 @@ public class IvyInstall extends IvyTask {
     private String _matcher = PatternMatcher.EXACT;
     private boolean _haltOnFailure = true;
     
-    public void execute() throws BuildException {
+    public void doExecute() throws BuildException {
         Ivy ivy = getIvyInstance();
         IvySettings settings = ivy.getSettings();
         if (_cache == null) {

@@ -119,7 +119,7 @@ public class IvyReport extends IvyTask {
     	_resolveId = resolveId;
     }
 
-    public void execute() throws BuildException {
+    public void doExecute() throws BuildException {
         Ivy ivy = getIvyInstance();
         IvySettings settings = ivy.getSettings();
         

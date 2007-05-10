@@ -109,7 +109,7 @@ public class IvyExtractFromSources extends IvyTask {
         _concat.addFileset(fileSet);
     }
     
-    public void execute() throws BuildException {
+    public void doExecute() throws BuildException {
         configureConcat();
         Writer out = new StringWriter();
         _concat.setWriter(out);

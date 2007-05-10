@@ -49,7 +49,7 @@ public class IvyArtifactProperty extends IvyPostResolveTask {
         _value = value;
     }
 
-    public void execute() throws BuildException {
+    public void doExecute() throws BuildException {
     	prepareAndCheck();
 
         try {

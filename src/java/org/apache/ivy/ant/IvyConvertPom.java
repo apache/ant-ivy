@@ -53,7 +53,7 @@ public class IvyConvertPom extends IvyTask {
     }
     
     
-    public void execute() throws BuildException {
+    public void doExecute() throws BuildException {
         try {
             if (_pomFile == null) {
                 throw new BuildException("source pom file is required for convertpom task");

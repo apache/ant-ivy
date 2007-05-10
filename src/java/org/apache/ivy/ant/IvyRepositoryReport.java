@@ -64,7 +64,7 @@ public class IvyRepositoryReport extends IvyTask {
     private String _xslext = "html";
     private List _params = new ArrayList();
     
-    public void execute() throws BuildException {
+    public void doExecute() throws BuildException {
         Ivy ivy = getIvyInstance();
         IvySettings settings = ivy.getSettings();
         if (_cache == null) {

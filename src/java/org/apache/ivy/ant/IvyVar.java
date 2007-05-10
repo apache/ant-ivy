@@ -92,7 +92,7 @@ public class IvyVar extends IvyTask {
         _value = value;
     }
     
-    public void execute() throws BuildException {
+    public void doExecute() throws BuildException {
         Ivy ivy = getIvyInstance();
         IvySettings settings = ivy.getSettings();
         if (getName() != null) {

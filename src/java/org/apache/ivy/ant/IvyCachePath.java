@@ -50,7 +50,7 @@ public class IvyCachePath extends IvyCacheTask {
         _id = id;
     }
 
-    public void execute() throws BuildException {
+    public void doExecute() throws BuildException {
         prepareAndCheck();
         if (_pathid == null) {
         	if (_id != null) {

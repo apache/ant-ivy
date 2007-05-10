@@ -116,7 +116,7 @@ public class IvyBuildList extends IvyTask {
 		_delimiter = delimiter;
 	}
 	
-    public void execute() throws BuildException {
+    public void doExecute() throws BuildException {
         if (_reference == null) {
             throw new BuildException("reference should be provided in ivy build list");
         }

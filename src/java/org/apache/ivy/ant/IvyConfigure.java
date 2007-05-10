@@ -125,7 +125,7 @@ public class IvyConfigure extends IvyTask {
     	CredentialsStore.INSTANCE.addCredentials(c.getRealm(), c.getHost(), c.getUsername(), c.getPasswd());
     }
 
-    public void execute() throws BuildException {
+    public void doExecute() throws BuildException {
         try {
 	        loadDefaultProperties();
         } catch (Exception ex) {

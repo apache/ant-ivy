@@ -57,7 +57,7 @@ public class AntCallTrigger extends AbstractTrigger implements Trigger {
 	private String _prefix;
 
 	public void progress(IvyEvent event) {
-		Project project = (Project)IvyContext.getContext().get(IvyTask.ANT_PROJECT_CONTEXT_KEY);
+		Project project = (Project)IvyContext.getContext().peek(IvyTask.ANT_PROJECT_CONTEXT_KEY);
 		if (project == null) {
 			Message.info("ant call trigger can only be used from an ant build. Ignoring.");
 			return;

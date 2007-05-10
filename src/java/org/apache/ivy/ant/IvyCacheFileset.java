@@ -49,7 +49,7 @@ public class IvyCacheFileset extends IvyCacheTask {
     	}
     }
 
-    public void execute() throws BuildException {
+    public void doExecute() throws BuildException {
         prepareAndCheck();
         if (_setid == null) {
             throw new BuildException("setid is required in ivy cachefileset");
