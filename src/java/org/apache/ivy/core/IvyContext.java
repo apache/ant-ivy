@@ -183,9 +183,10 @@ public class IvyContext {
 		synchronized(_contextMap){
 			Object o=_contextMap.get(key);
 			if(o==null) return false;
-			if(!o.equals(expectedValue)) return false;
 			if(o instanceof List){
 				if(((List)o).size()==0) return false;
+				Object top=((List)o).get(0);
+				if(!top.equals(expectedValue)) return false;				
 				((List)o).remove(0);
 				return true;
 			} else {
