@@ -41,6 +41,17 @@ public class InstallTest extends TestCase {
         assertTrue(new File("build/test/install/org1/mod1.2/mod1.2-2.0.jar").exists());
     }
 
+    public void testSimpleWithoutDefaultResolver() throws Exception {
+        Ivy ivy = Ivy.newInstance();
+        ivy.configure(new File("test/repositories/ivysettings-nodefaultresolver.xml"));
+        
+        ivy.install(ModuleRevisionId.newInstance("org1", "mod1.2", "2.0"), 
+                "test", "install", true, true, true, null, _cache, PatternMatcher.EXACT);
+        
+        assertTrue(new File("build/test/install/org1/mod1.2/ivy-2.0.xml").exists());
+        assertTrue(new File("build/test/install/org1/mod1.2/mod1.2-2.0.jar").exists());
+    }
+
     public void testDependencies() throws Exception {
         Ivy ivy = Ivy.newInstance();
         ivy.configure(new File("test/repositories/ivysettings.xml"));

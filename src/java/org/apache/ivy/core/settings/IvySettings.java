@@ -622,6 +622,10 @@ public class IvySettings {
         }
         return _defaultCache;
     }
+    
+    public void setDictatorResolver(DependencyResolver resolver) {
+    	_dictatorResolver = resolver;
+    }
 
     public DependencyResolver getResolver(ModuleId moduleId) {
         if (_dictatorResolver != null) {
