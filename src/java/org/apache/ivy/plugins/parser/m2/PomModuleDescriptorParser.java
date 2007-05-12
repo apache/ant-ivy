@@ -85,6 +85,8 @@ public class PomModuleDescriptorParser extends AbstractModuleDescriptorParser {
         private String _revision;
         private String _scope;
         private String _classifier;
+        private String _type;
+        private String _ext;
         private boolean _optional = false;
         private List _exclusions = new ArrayList();
         private DefaultDependencyDescriptor _dd;
@@ -138,7 +140,10 @@ public class PomModuleDescriptorParser extends AbstractModuleDescriptorParser {
             _properties.put("project.version", _revision);
             _properties.put("pom.version", _revision);
             _md.setModuleRevisionId(mrid);
-            _md.addArtifact("master", new DefaultArtifact(mrid, getDefaultPubDate(),_module, "jar", "jar"));
+            if (_type == null) {
+                _type = _ext = "jar";
+            }
+            _md.addArtifact("master", new DefaultArtifact(mrid, getDefaultPubDate(),_module, _type, _ext));
             _organisation = null;
             _module = null;
             _revision = null;
@@ -177,7 +182,7 @@ public class PomModuleDescriptorParser extends AbstractModuleDescriptorParser {
                     	_dd.addDependencyArtifact(
                     			confs[i], 
                     			new DefaultDependencyArtifactDescriptor(
-                    					_dd.getDependencyId().getName(), 
+                    					_dd.getDependencyId().getName(),
                     					"jar", 
                     					"jar", // here we have to assume a type and ext for the artifact, so this is a limitation compared to how m2 behave with classifiers
                     					null,
@@ -232,6 +237,11 @@ public class PomModuleDescriptorParser extends AbstractModuleDescriptorParser {
             	_revision = txt;
                 return;
             }
+            if (context.equals("project/parent/packaging") && _type == null) {
+            	_type = txt;
+	        _ext = txt;
+                return;
+            }
             if (context.startsWith("project/parent")) {
                 return;
             }
@@ -247,6 +257,9 @@ public class PomModuleDescriptorParser extends AbstractModuleDescriptorParser {
                     _revision = txt;
                 } else if (_revision == null && context.endsWith("version")) {
                     _revision = txt;
+                } else if (_type == null && context.endsWith("packaging")) {
+                    _type = txt;
+                    _ext = txt;
                 } else if (_scope == null && context.endsWith("scope")) {
                     _scope = txt;
                 } else if (_classifier == null && context.endsWith("dependency/classifier")) {

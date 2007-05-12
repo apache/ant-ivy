@@ -51,6 +51,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 
 - IMPROVEMENT: Allow "main" parameters to be passed directly (instead of using -args flag) (IVY-480) (thanks to Archie Cobbs)
 
+- FIX: packaging data not parsed in maven 2 pom (IVY-500) (thanks to Jeffrey Blatttman)
 - FIX: install ant task: requires default resolver in ivy settings (IVY-477)
 - FIX: Ant project reference lost from context on multiple ant calls in single thread (IVY-497) (thanks to Jaroslaw Wypychowski)
 - FIX: EOL in the doc pages (IVY-470)
