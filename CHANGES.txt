@@ -13,7 +13,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
  	Ingo Adler
 	Stephane Bailliez
 	Karl Baum
-	Jeffrey Blatttman
+	Jeffrey Blattman
 	Matthieu Brouillard
 	Kristian Cibulskis
 	Pierre Hägnestrand
@@ -52,12 +52,12 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - IMPROVEMENT: Allow "main" parameters to be passed directly (instead of using -args flag) (IVY-480) (thanks to Archie Cobbs)
 
 - FIX: Configure fails when having httpclient in classpath without commons-logging (IVY-502)
-- FIX: packaging data not parsed in maven 2 pom (IVY-500) (thanks to Jeffrey Blatttman)
+- FIX: packaging data not parsed in maven 2 pom (IVY-500) (thanks to Jeffrey Blattman)
 - FIX: install ant task: requires default resolver in ivy settings (IVY-477)
 - FIX: Ant project reference lost from context on multiple ant calls in single thread (IVY-497) (thanks to Jaroslaw Wypychowski)
 - FIX: EOL in the doc pages (IVY-470)
 - FIX: Cache is storing ArtifactOrigin properties with no guarantee of unicity and types telescope during resolve. (IVY-430) (thanks to Stephane Bailliez)
-- FIX: ivy:install ant task does not fail on error (IVY-475) (thanks to Jeffrey Blatttman)
+- FIX: ivy:install ant task does not fail on error (IVY-475) (thanks to Jeffrey Blattman)
 - FIX: Credentials are shown in build log even if debug is not enabled (IVY-486) (thanks to Gilles Scokart)
 - FIX: Post-Resolve task shouldn't set the 'resolveid' (IVY-489)
 - FIX: build fails without emma code coverage JARs present (IVY-478)
