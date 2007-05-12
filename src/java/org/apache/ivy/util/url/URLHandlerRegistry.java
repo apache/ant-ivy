@@ -53,8 +53,7 @@ public class URLHandlerRegistry {
 		} catch (NoClassDefFoundError e) {
 			Message.verbose("error occurred while loading jakarta commons httpclient: " + e.getMessage());
 			Message.verbose("Using jdk url handling instead.");
-            //return new BasicURLHandler();
-			throw e;
+            return new BasicURLHandler();
         } catch (InstantiationException e) {
             Message.verbose("couldn't instantiate HttpClientHandler: using jdk url handling");
             return new BasicURLHandler();
