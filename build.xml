@@ -163,8 +163,9 @@
 		</javac>
 		<copy todir="${core.classes.build.dir}" includeEmptyDirs="false">
     		<fileset dir="${src.dir}">
-    			<include name="org/apache/ivy/core/**" />
       			<exclude name="**/*.java"/>
+    			<excludesfile name="ant.patterns" />
+    			<excludesfile name="optional.patterns" />
     		</fileset>
   		</copy>
 		
@@ -198,7 +199,7 @@
 		</javac>
 		<copy todir="${ant.classes.build.dir}" includeEmptyDirs="false">
     		<fileset dir="${src.dir}">
-    			<include name="org/apache/ivy/ant/**" />
+    			<includesfile name="ant.patterns" />
       			<exclude name="**/*.java"/>
     		</fileset>
   		</copy>
@@ -226,8 +227,7 @@
 		</javac>
 		<copy todir="${core.classes.build.dir}" includeEmptyDirs="false">
     		<fileset dir="${src.dir}">
-    			<exclude name="org/apache/ivy/core/**" />
-    			<exclude name="org/apache/ivy/ant/**" />
+    			<includesfile name="optional.patterns" />
       			<exclude name="**/*.java"/>
     		</fileset>
   		</copy>

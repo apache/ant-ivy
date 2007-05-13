@@ -11,3 +11,6 @@ org/apache/ivy/plugins/resolver/SshResolver.java
 org/apache/ivy/plugins/resolver/VfsResolver.java
 org/apache/ivy/plugins/resolver/VsftpResolver.java
 org/apache/ivy/util/url/HttpClientHandler.java
+
+#This section defines the resources to copy for ivy-optional.jar
+org/apache/ivy/plugins/repository/vfs/*.xml
