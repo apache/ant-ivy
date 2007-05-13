@@ -187,6 +187,7 @@ public class IvySettings {
 			addMatcher((PatternMatcher) instanceField.get(null));
 		} catch (Exception e) {
 			// ignore: the matcher isn't on the classpath
+    		Message.info("impossible to define glob matcher: org.apache.ivy.plugins.matcher.GlobPatternMatcher was not found on the classpath");
 		}
         
         addReportOutputter(new XmlReportOutputter());
