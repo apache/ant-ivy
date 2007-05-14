@@ -35,7 +35,7 @@
 			     you should had conf information on the dependency itself
 			     saying you depend on mod2.1 only in myconf1:
 			     example: conf="myconf1->*" -->
-			<artifact name="art21A" type="jar" conf="myconf1"/>
+			<include name="art21A" type="jar" conf="myconf1"/>
 		</dependency>
 	</dependencies>
 </ivy-module>

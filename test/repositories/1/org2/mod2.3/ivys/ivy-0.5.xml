@@ -24,7 +24,7 @@
 	/>
 	<dependencies>
 		<dependency name="mod2.1" rev="0.3">
-			<artifact name="art21A" type="jar"/>
+			<include name="art21A" type="jar"/>
 		</dependency>
 	</dependencies>
 </ivy-module>

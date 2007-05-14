@@ -746,7 +746,27 @@ public class ResolveTest extends TestCase {
         assertTrue(!getArchiveFileInCache("org1", "mod1.3", "3.0", "mod1.3", "jar", "jar").exists());
     }
     
-    public void testResolveWithDependencyArtifactsConf1() throws Exception {
+    public void testResolveDefaultWithArtifactsAndConfMapping() throws Exception {
+        // mod2.2 depends on mod1.3 and specify its artifacts and a conf mapping
+        ResolveReport report = _ivy.resolve(new File("test/repositories/1/org2/mod2.2/ivys/ivy-0.5.1.xml").toURL(),
+        		getResolveOptions(new String[] {"myconf1"}));
+        assertNotNull(report);
+        assertFalse(report.hasError());
+        ModuleDescriptor md = report.getModuleDescriptor();
+        assertNotNull(md);
+        ModuleRevisionId mrid = ModuleRevisionId.newInstance("org2", "mod2.2", "0.5.1");
+        assertEquals(mrid, md.getModuleRevisionId());
+        
+        assertTrue(_cacheManager.getResolvedIvyFileInCache(mrid).exists());
+        
+        assertTrue(_cacheManager.getIvyFileInCache(ModuleRevisionId.newInstance("org1", "mod1.3", "3.0")).exists());
+        assertTrue(getArchiveFileInCache("org1", "mod1.3", "3.0", "mod1.3-A", "jar", "jar").exists());
+        assertTrue(getArchiveFileInCache("org1", "mod1.3", "3.0", "mod1.3-B", "jar", "jar").exists());
+        assertTrue(!getArchiveFileInCache("org1", "mod1.3", "3.0", "mod1.3", "jar", "jar").exists());
+    }
+    
+    
+    public void testResolveWithIncludeArtifactsConf1() throws Exception {
         // mod2.3 depends on mod2.1 and selects its artifacts in myconf1
         ResolveReport report = _ivy.resolve(new File("test/repositories/1/org2/mod2.3/ivys/ivy-0.4.xml").toURL(),
         		getResolveOptions(new String[] {"myconf1"}));
@@ -764,7 +784,7 @@ public class ResolveTest extends TestCase {
         assertTrue(!getArchiveFileInCache("org2", "mod2.1", "0.3", "mod2.1", "jar", "jar").exists());
     }
     
-    public void testResolveWithDependencyArtifactsConf2() throws Exception {
+    public void testResolveWithIncludeArtifactsConf2() throws Exception {
         // mod2.3 depends on mod2.1 and selects its artifacts in myconf1
         ResolveReport report = _ivy.resolve(new File("test/repositories/1/org2/mod2.3/ivys/ivy-0.4.xml").toURL(),
         		getResolveOptions(new String[] {"myconf2"}));
@@ -782,7 +802,7 @@ public class ResolveTest extends TestCase {
         assertTrue(!getArchiveFileInCache("org2", "mod2.1", "0.3", "mod2.1", "jar", "jar").exists());
     }
     
-    public void testResolveWithDependencyArtifactsWithoutConf() throws Exception {
+    public void testResolveWithIncludeArtifactsWithoutConf() throws Exception {
         // mod2.3 depends on mod2.1 and selects its artifacts
         ResolveReport report = _ivy.resolve(new File("test/repositories/1/org2/mod2.3/ivys/ivy-0.5.xml").toURL(),
                 getResolveOptions(new String[] {"*"}));

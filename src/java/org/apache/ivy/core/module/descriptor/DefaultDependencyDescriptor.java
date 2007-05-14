@@ -107,7 +107,7 @@ public class DefaultDependencyDescriptor implements DependencyDescriptor {
                 newdd._confs.put(moduleConfs[i], new ArrayList(Arrays.asList(dd.getDependencyConfigurations(moduleConfs[i]))));
                 newdd._excludeRules.put(moduleConfs[i], new ArrayList(Arrays.asList(dd.getExcludeRules(moduleConfs[i]))));
                 newdd._includeRules.put(moduleConfs[i], new ArrayList(Arrays.asList(dd.getIncludeRules(moduleConfs[i]))));
-                newdd._dependencyArtifacts.put(moduleConfs[i], new ArrayList(Arrays.asList(dd.getIncludeRules(moduleConfs[i]))));
+                newdd._dependencyArtifacts.put(moduleConfs[i], new ArrayList(Arrays.asList(dd.getDependencyArtifacts(moduleConfs[i]))));
             }
         }
         if (fromSystem) {
