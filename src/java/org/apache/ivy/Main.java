@@ -435,7 +435,7 @@ public class Main {
         	
         	Method mainMethod = c.getMethod("main", new Class[] { String[].class });
         	
-        	// Split up arguments 
+        	Thread.currentThread().setContextClassLoader(classLoader);
         	mainMethod.invoke(null, new Object[] { (args == null ? new String[0] : args) });
         } catch (ClassNotFoundException cnfe) {
         	throw new RuntimeException("Could not find class: " + mainclass, cnfe);
