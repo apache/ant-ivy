@@ -20,7 +20,6 @@ package org.apache.ivy.core.module.descriptor;
 import java.util.Map;
 
 /**
- * @author Hanin
  *
  */
 public abstract class AbstractArtifact implements Artifact {

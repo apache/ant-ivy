@@ -24,7 +24,6 @@ import java.util.regex.Pattern;
 import org.apache.ivy.plugins.repository.vfs.VfsRepository;
 
 /**
- * @author S. Nesbitt
  *
  */
 public class VfsResolver extends RepositoryResolver {

@@ -22,7 +22,6 @@ import org.apache.ivy.core.module.id.ModuleRevisionId;
 
 /**
  * Unchecked exception thrown when a circular dependency exists between projects.
- * @author baumkar
  *
  */
 

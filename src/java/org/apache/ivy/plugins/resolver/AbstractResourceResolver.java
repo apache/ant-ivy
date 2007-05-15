@@ -45,7 +45,6 @@ import org.apache.ivy.util.Message;
 
 
 /**
- * @author Xavier Hanin
  *
  */
 public abstract class AbstractResourceResolver extends BasicResolver {

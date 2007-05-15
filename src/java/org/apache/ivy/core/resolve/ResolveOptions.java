@@ -29,7 +29,6 @@ import org.apache.ivy.util.filter.FilterHelper;
  * A set of options used during resolve related tasks
  * 
  * @see ResolveEngine
- * @author Xavier Hanin
  */
 public class ResolveOptions {
 	/**
@@ -198,7 +197,7 @@ public class ResolveOptions {
 	}
 	public static String getDefaultResolveId(ModuleDescriptor md) {
     	ModuleId module = md.getModuleRevisionId().getModuleId();
-    	return module.getOrganisation() + "-" + module.getName();
+    	return getDefaultResolveId(module);
 	}
 	public static String getDefaultResolveId(ModuleId moduleId) {
     	return moduleId.getOrganisation() + "-" + moduleId.getName();

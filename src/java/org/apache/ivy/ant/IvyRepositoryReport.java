@@ -43,7 +43,6 @@ import org.apache.tools.ant.taskdefs.XSLTProcess;
  * 
  * The set of modules is specified using organisation/module and matcher.
  * 
- * @author Xavier Hanin
  *
  */
 public class IvyRepositoryReport extends IvyTask {

@@ -33,7 +33,6 @@ import java.util.Properties;
  * 
  * It this thus recommended to void using them, use setProperty and getProperty instead.
  * 
- * @author Xavier Hanin
  *
  */
 public class EncrytedProperties extends Properties {

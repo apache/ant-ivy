@@ -49,9 +49,9 @@ public class ResolveReport {
 	private String _resolveId;
 	
     public ResolveReport(ModuleDescriptor md) {
-        _md = md;
-        _resolveId = ResolveOptions.getDefaultResolveId(md);
+        this(md, ResolveOptions.getDefaultResolveId(md));
     }
+    
     public ResolveReport(ModuleDescriptor md, String resolveId) {
     	_md = md;
     	_resolveId = resolveId;

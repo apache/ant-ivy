@@ -52,7 +52,6 @@ import org.apache.ivy.util.Message;
  * 
  * Tested with SecureCRT 5.0.5
  * 
- * @author Xavier Hanin
  *
  */
 public class VsftpRepository extends AbstractRepository {

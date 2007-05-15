@@ -36,7 +36,6 @@ import org.apache.tools.ant.Project;
 /**
  * Parses information about an ivy file and make them available in ant.
  * 
- * @author Xavier Hanin
  *
  */
 public class IvyInfo extends IvyTask {

@@ -47,7 +47,6 @@ import org.apache.tools.ant.taskdefs.Property;
  * 
  * @see AntBuildTrigger
  * @since 1.4
- * @author Xavier Hanin
  *
  */
 public class AntCallTrigger extends AbstractTrigger implements Trigger {

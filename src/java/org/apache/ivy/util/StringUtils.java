@@ -23,7 +23,6 @@ package org.apache.ivy.util;
  * Usually use commons lang but here we do not want to have such 
  * a dependency for only one feature
  * 
- * @author X. Hanin
  *
  */
 public class StringUtils {

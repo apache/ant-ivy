@@ -42,7 +42,6 @@ import org.apache.ivy.util.Message;
 
 
 /**
- * @author Hanin
  *
  */
 public class ChainResolver extends AbstractResolver {

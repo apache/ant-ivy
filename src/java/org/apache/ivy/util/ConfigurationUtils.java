@@ -28,7 +28,6 @@ import org.apache.ivy.core.module.descriptor.Configuration.Visibility;
 /**
  * Class containing several utility methods for working with configurations.
  * 
- * @author Maarten Coene
  *
  */
 public class ConfigurationUtils {

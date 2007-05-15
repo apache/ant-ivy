@@ -50,7 +50,6 @@ import org.apache.ivy.util.Message;
 
 
 /**
- * @author X.Hanin
  *
  */
 public class DefaultModuleDescriptor implements ModuleDescriptor {

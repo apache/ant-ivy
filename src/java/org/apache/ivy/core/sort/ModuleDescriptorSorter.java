@@ -33,8 +33,6 @@ import org.apache.ivy.util.Message;
 
 /**
  * Inner helper class for sorting ModuleDescriptors.
- * @author baumkar (for most of the code)
- * @author xavier hanin (for the sorting of nodes based upon sort of modules)
  *
  */
 public class ModuleDescriptorSorter {

@@ -38,7 +38,6 @@ import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 
 
 /**
- * @author Xavier Hanin
  *
  */
 public class XmlModuleDescriptorWriter {

@@ -20,7 +20,6 @@ package org.apache.ivy.plugins.resolver;
 import org.apache.ivy.plugins.repository.file.FileRepository;
 
 /**
- * @author Xavier Hanin
  */
 public class FileSystemResolver extends RepositoryResolver {
     public FileSystemResolver() {

@@ -37,7 +37,6 @@ import org.apache.ivy.core.module.descriptor.Artifact;
  * and extra attributes of the artifacts are really used. Other methods (on the artifacts) can return null safely.
  *  
  * @see PublishEngine
- * @author Xavier Hanin
  */
 public class PublishOptions {
 	private CacheManager cache;

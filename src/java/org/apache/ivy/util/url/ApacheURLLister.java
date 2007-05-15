@@ -36,9 +36,6 @@ import org.apache.ivy.util.Message;
  * tested with Apache 1.3.33 server listing, as the one used at ibiblio, and
  * with Apache 2.0.53 server listing, as the one on mirrors.sunsite.dk.
  *
- * @author Glen Marchesani
- * @author Xavier Hanin
- * @author <a href="mailto:johnmshields@yahoo.com">John M. Shields</a>
  */
 public class ApacheURLLister {
     //~ Static variables/initializers ------------------------------------------

@@ -32,7 +32,6 @@ import org.apache.tools.ant.types.PatternSet.NameEntry;
  * Creates an ant fileset consisting in all artifacts found during a resolve.
  * Note that this task is not compatible with the useOrigin mode.
  * 
- * @author Xavier Hanin 
  */
 public class IvyCacheFileset extends IvyCacheTask {
     private String _setid;

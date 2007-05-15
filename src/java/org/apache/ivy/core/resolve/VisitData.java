@@ -30,7 +30,6 @@ import java.util.Map;
  * Indeed, during the visit of the graph, the algorithm can visit the same node
  * from several parents, thus requiring several VisitNode.
  * 
- * @author Xavier Hanin
  *
  */
 public class VisitData {

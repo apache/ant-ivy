@@ -45,7 +45,6 @@ import org.apache.ivy.util.Message;
 
 
 /**
- * @author x.hanin
  *
  */
 public class ConfigurationResolveReport {

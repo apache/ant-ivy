@@ -25,7 +25,6 @@ import org.apache.ivy.util.extendable.ExtendableItem;
 
 
 /**
- * @author x.hanin
  *
  */
 public interface DependencyDescriptor extends ExtendableItem {

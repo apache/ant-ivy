@@ -27,8 +27,6 @@ import junit.framework.TestCase;
 /**
  * Tests {@link ApacheURLLister}.
  *
- * @author Xavier Hanin
- * @author <a href="johnmshields@yahoo.com">John M. Shields</a>
  */
 public class ApacheURLListerTest extends TestCase {
 

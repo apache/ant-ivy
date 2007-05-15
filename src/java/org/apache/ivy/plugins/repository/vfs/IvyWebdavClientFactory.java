@@ -35,9 +35,6 @@ import org.apache.webdav.lib.WebdavResource;
  * 
  * Create a HttpClient instance
  * 
- * @author <a href="mailto:imario@apache.org">Mario Ivankovits</a>
- * @author Maarten Coene
- * @version $Revision: 330479 $ $Date: 2005-11-03 07:19:24 +0100 (Do, 03 Nov 2005) $
  */
 class IvyWebdavClientFactory {
 

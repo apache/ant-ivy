@@ -42,8 +42,6 @@ import org.apache.ivy.util.MessageImpl;
  * 
  * @see IvyThread
  * 
- * @author Xavier Hanin
- * @author Maarten Coene
  */
 public class IvyContext {
 

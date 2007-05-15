@@ -50,6 +50,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - NEW: Hide private or specific conf when publishing (IVY-77)
 
 - IMPROVEMENT: Allow "main" parameters to be passed directly (instead of using -args flag) (IVY-480) (thanks to Archie Cobbs)
+- IMPROVEMENT: Remove @author tags (thanks to Stephane Bailliez)
 
 - FIX: Bug on handling dependency artifacts when a module configuration is specified (IVY-507)
 - FIX: Configure fails when having httpclient in classpath without commons-logging (IVY-502)

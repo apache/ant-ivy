@@ -47,7 +47,6 @@ import org.apache.ivy.util.StringUtils;
  * pre-resolve (organisation=foo, module=bar, revision=1.0, conf=default)
  * post-download (organisation=foo, module=bar, revision=1.0, artifact=foo-test, type=jar, ext=jar)
  * 
- * @author Xavier Hanin
  *
  */
 public class IvyEvent {

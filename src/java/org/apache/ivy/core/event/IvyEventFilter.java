@@ -54,7 +54,6 @@ import org.apache.ivy.util.filter.OrFilter;
  * This means that artifact=foo AND ext=zip OR type=src will match event with artifact matching foo AND (ext matching zip OR type matching src)
  * 
  * @since 1.4
- * @author Xavier Hanin
  *
  */
 public class IvyEventFilter implements Filter {

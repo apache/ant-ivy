@@ -29,7 +29,6 @@ import org.apache.ivy.util.extendable.UnmodifiableExtendableItem;
 
 
 /**
- * @author x.hanin
  *
  */
 public class ModuleRevisionId extends UnmodifiableExtendableItem {

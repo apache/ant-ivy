@@ -52,7 +52,6 @@ import org.apache.ivy.core.IvyPatternHelper;
  * conf.endCreateChild(); // xinterface
  * conf.endCreateChild(); // buildpath
  * 
- * @author x.hanin
  *
  */
 public class Configurator {

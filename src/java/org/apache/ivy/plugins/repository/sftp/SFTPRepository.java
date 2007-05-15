@@ -48,7 +48,6 @@ import com.jcraft.jsch.ChannelSftp.LsEntry;
  * 
  * It relies on jsch for sftp handling, and thus is compatible with sftp version 0, 1, 2 and 3
  * 
- * @author Xavier Hanin
  *
  */
 public class SFTPRepository extends AbstractSshBasedRepository {

@@ -34,7 +34,6 @@ import org.apache.ivy.util.filter.Filter;
  * 
  * 
  * @since 1.4
- * @author Xavier Hanin
  *
  */
 public abstract class AbstractTrigger implements Trigger {

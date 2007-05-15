@@ -44,7 +44,6 @@ import org.apache.ivy.plugins.namespace.NamespaceTransformer;
  * It implements required methods and enables to fill dependency information
  * with the addDependencyConfiguration method.
  * 
- * @author Xavier Hanin
  *
  */
 public class DefaultDependencyDescriptor implements DependencyDescriptor {

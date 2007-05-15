@@ -42,7 +42,6 @@ import org.apache.tools.ant.BuildException;
 /**
  * This task allow to publish a module revision to an Ivy repository.
  * 
- * @author Xavier Hanin
  *
  */
 public class IvyPublish extends IvyTask {

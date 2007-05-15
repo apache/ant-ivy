@@ -33,8 +33,6 @@ import org.apache.ivy.util.Message;
 
 
 /**
- * @author Xavier Hanin
- * @author Christian Riege
  *
  */
 public class BasicURLHandler extends AbstractURLHandler {

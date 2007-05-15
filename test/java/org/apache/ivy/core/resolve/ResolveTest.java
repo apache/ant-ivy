@@ -60,7 +60,6 @@ import org.xml.sax.helpers.DefaultHandler;
 
 
 /**
- * @author Xavier Hanin
  *
  */
 public class ResolveTest extends TestCase {

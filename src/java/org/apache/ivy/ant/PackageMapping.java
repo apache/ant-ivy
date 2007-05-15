@@ -23,7 +23,6 @@ import org.apache.ivy.core.module.id.ModuleRevisionId;
 /**
  * Describes a mapping between a package name and an org name revision uple
  * 
- * @author Xavier Hanin
  *
  */
 public class PackageMapping {

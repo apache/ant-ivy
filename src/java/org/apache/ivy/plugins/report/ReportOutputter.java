@@ -22,7 +22,6 @@ import java.io.File;
 import org.apache.ivy.core.report.ResolveReport;
 
 /**
- * @author x.hanin
  *
  */
 public interface ReportOutputter {

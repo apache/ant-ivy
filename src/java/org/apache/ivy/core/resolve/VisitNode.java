@@ -51,7 +51,6 @@ import org.apache.ivy.plugins.conflict.ConflictManager;
  * <li>rootModuleConf</li> the configuration of the root module which is currently resolved
  * </ul>
  * 
- * @author Xavier Hanin
  */
 public class VisitNode {
 	/**

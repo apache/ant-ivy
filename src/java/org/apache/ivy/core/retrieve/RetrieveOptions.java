@@ -25,7 +25,6 @@ import org.apache.ivy.util.filter.FilterHelper;
  * A set of options used during retrieve related tasks
  * 
  * @see RetrieveEngine
- * @author Xavier Hanin
  */
 public class RetrieveOptions {
 	/**

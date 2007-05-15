@@ -25,7 +25,6 @@ import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.plugins.resolver.DependencyResolver;
 
 /**
- * @author x.hanin
  *
  */
 public interface ResolvedModuleRevision {

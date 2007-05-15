@@ -29,7 +29,6 @@ import org.apache.ivy.util.CopyProgressListener;
  * This interface is responsible for handling some URL manipulation
  * (stream opening, downloading, check reachability, ...). 
  * 
- * @author Xavier Hanin
  *
  */
 public interface URLHandler {

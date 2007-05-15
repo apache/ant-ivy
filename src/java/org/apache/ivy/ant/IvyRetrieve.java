@@ -26,7 +26,6 @@ import org.apache.tools.ant.BuildException;
 /**
  * This task allow to retrieve dependencies from the cache to a local directory like a lib dir.
  * 
- * @author Xavier Hanin
  *
  */
 public class IvyRetrieve extends IvyPostResolveTask {

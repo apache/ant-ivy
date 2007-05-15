@@ -26,7 +26,6 @@ import org.apache.commons.vfs.provider.webdav.WebDavFileSystem;
 /**
  * This class extends from WebDavFileSystem because it doesn't provide an accessible constructor.
  * 
- * @author Maarten Coene
  */
 class IvyWebdavFileSystem extends WebDavFileSystem {
 

@@ -18,7 +18,6 @@
 package org.apache.ivy.core.settings;
 
 /**
- * @author x.hanin
  *
  */
 public class IvyPattern {

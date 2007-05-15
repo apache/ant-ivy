@@ -49,7 +49,6 @@ import org.apache.ivy.util.StringUtils;
 
 
 /**
- * @author Xavier Hanin
  *
  */
 public class XmlReportOutputter implements ReportOutputter {

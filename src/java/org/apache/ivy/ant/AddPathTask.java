@@ -31,7 +31,6 @@ import org.apache.tools.ant.types.Path.PathElement;
  * 
  * The idea is to be able to contribute new sub path elements to an existing path.
  * 
- * @author Xavier Hanin
  */
 public class AddPathTask extends Task {
 	private String _topath;

@@ -21,7 +21,6 @@ package org.apache.ivy.core.module.descriptor;
  * Objects implementing this interface are aware of module configurations,
  * and can thus be added to configurations, and list their configurations.
  * 
- * @author Xavier Hanin
  */
 public interface ConfigurationAware {
     /**

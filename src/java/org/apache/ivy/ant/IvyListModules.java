@@ -29,7 +29,6 @@ import org.apache.tools.ant.BuildException;
  * Look for modules in the repository matching the given criteria, and sets a set of properties
  * according to what was found.
  * 
- * @author Xavier Hanin
  */
 public class IvyListModules extends IvyTask {
 	private String _organisation;

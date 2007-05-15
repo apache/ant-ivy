@@ -48,7 +48,6 @@ import org.apache.tools.ant.types.Path;
 /**
  * Creates an ant filelist of files (usually build.xml) ordered according to the dependencies declared in ivy files.
  * 
- * @author Xavier Hanin
  */
 public class IvyBuildList extends IvyTask {
     private List _buildFiles = new ArrayList(); // List (FileSet)

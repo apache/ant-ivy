@@ -19,7 +19,6 @@ package org.apache.ivy.core.module.id;
 
 
 /**
- * @author x.hanin
  *
  */
 public class ModuleId implements Comparable {

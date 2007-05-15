@@ -43,8 +43,7 @@ import org.apache.tools.ant.taskdefs.Property;
  * Trigger the delivery of a module, which may consist in a recursive delivery of dependencies
  * and on the replacement in the ivy file of dynamic revisions (like latest.integration) by static ones.
  * 
- * @author Xavier Hanin
- * 
+ *
  */
 public class IvyDeliver extends IvyTask {
     private final class DeliverDRResolver extends DefaultPublishingDRResolver {

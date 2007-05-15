@@ -32,7 +32,6 @@ import org.apache.tools.ant.Project;
 /**
  * Convert a pom to an ivy file
  * 
- * @author Xavier Hanin
  *
  */
 public class IvyConvertPom extends IvyTask {

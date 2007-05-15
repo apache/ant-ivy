@@ -39,8 +39,6 @@ import com.jcraft.jsch.Session;
  * class rather than to inherit or delegate it somehow. Nevertheless credit
  * should go to the original author.
  * 
- * @author Andreas Sahlbach
- * @author Christian Plattner, plattner@inf.ethz.ch
  */
 
 public class Scp {

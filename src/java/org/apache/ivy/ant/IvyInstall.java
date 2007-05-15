@@ -31,7 +31,6 @@ import org.apache.tools.ant.BuildException;
  * Allow to install a module or a set of module from repository to another one.
  *
  *
- * @author Xavier Hanin
  *
  */
 public class IvyInstall extends IvyTask {

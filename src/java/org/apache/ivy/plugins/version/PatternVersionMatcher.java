@@ -29,7 +29,6 @@ import org.apache.ivy.plugins.matcher.Matcher;
 
 /**
  * 
- * @author Maarten Coene
  */
 public class PatternVersionMatcher extends AbstractVersionMatcher {
 

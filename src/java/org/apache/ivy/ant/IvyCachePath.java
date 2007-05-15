@@ -29,7 +29,6 @@ import org.apache.tools.ant.types.Path;
 /**
  * Creates an ant path consisting in all artifacts found during a resolve.
  * 
- * @author Xavier Hanin
  */
 public class IvyCachePath extends IvyCacheTask {
     private String _pathid;

@@ -31,7 +31,6 @@ import org.apache.ivy.util.Message;
 
 /**
  * Note: update methods (such as addStatus) should only be called BEFORE any call to accessor methods
- * @author x.hanin
  *
  */
 public class StatusManager {

@@ -27,7 +27,6 @@ import org.apache.ivy.core.module.id.ArtifactRevisionId;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 
 /**
- * @author x.hanin
  *
  */
 public class MDArtifact extends AbstractArtifact {

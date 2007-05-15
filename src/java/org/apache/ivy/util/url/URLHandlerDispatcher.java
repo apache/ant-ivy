@@ -30,7 +30,6 @@ import org.apache.ivy.util.CopyProgressListener;
 /**
  * This class is used to dispatch downloading requests
  * 
- * @author Xavier Hanin
  *
  */
 public class URLHandlerDispatcher implements URLHandler {

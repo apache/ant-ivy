@@ -38,7 +38,6 @@ import org.apache.tools.ant.taskdefs.Property;
 /**
  * Configure Ivy with an ivysettings.xml file
  * 
- * @author Xavier Hanin
  *
  */
 public class IvyConfigure extends IvyTask {

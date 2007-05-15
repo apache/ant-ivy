@@ -38,7 +38,6 @@ import org.apache.tools.ant.BuildException;
  * Base class for tasks needing to be performed after a resolve. 
  * 
  * 
- * @author Xavier Hanin
  *
  */
 public abstract class IvyPostResolveTask extends IvyTask {

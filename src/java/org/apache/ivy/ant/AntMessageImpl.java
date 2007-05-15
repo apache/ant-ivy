@@ -27,7 +27,6 @@ import org.apache.tools.ant.Task;
 /**
  * Implementation of the simple message facility for ant.
  * 
- * @author Xavier Hanin
  */
 public class AntMessageImpl implements MessageImpl {
     private Task _task;

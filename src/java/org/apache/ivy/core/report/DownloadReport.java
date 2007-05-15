@@ -27,7 +27,6 @@ import java.util.Map;
 import org.apache.ivy.core.module.descriptor.Artifact;
 
 /**
- * @author x.hanin
  *
  */
 public class DownloadReport {

@@ -36,7 +36,6 @@ import org.apache.tools.ant.types.FileSet;
  * Note that the check is not performed recursively, i.e. if a dependency has itself dependencies
  * badly described or not available, this check will not discover it.
  *  
- * @author Xavier Hanin
  */
 public class IvyCheck extends IvyTask {
     private File _file = null;

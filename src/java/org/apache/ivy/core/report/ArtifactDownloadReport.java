@@ -21,7 +21,6 @@ import org.apache.ivy.core.cache.ArtifactOrigin;
 import org.apache.ivy.core.module.descriptor.Artifact;
 
 /**
- * @author x.hanin
  *
  */
 public class ArtifactDownloadReport {

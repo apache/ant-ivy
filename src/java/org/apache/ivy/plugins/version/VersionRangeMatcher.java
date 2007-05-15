@@ -45,7 +45,6 @@ import org.apache.ivy.plugins.latest.LatestStrategy;
  * Note that it can't work with latest time strategy, cause no time is known for the limits of the range.
  * Therefore only purely revision based LatestStrategy can be used.  
  * 
- * @author xavier hanin
  *
  */
 public class VersionRangeMatcher   extends AbstractVersionMatcher {

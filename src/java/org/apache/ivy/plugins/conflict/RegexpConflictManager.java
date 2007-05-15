@@ -46,8 +46,7 @@ import org.apache.ivy.util.Message;
  * false non matching modules will result in an exception. If it is true they
  * will be compaired by their full revision.
  * 
- * @author Anders janmyr
- * 
+ *
  */
 public class RegexpConflictManager extends AbstractConflictManager {
 	private Pattern pattern = Pattern.compile("(.*)");

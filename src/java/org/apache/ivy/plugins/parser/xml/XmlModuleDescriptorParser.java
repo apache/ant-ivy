@@ -69,7 +69,6 @@ import org.xml.sax.SAXException;
  * only the SAX API, which makes the parsing code harder
  * to understand.
  * 
- * @author x.hanin
  *
  */
 public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {

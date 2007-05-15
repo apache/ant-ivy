@@ -38,7 +38,6 @@ import org.apache.ivy.core.module.id.ModuleRevisionId;
  * Therefore if a version matcher uses only module descriptors to accept a revision or not it should always return true
  * to needModuleDescriptor(ModuleRevisionId askedMrid, ModuleRevisionId foundMrid) and accept(ModuleRevisionId askedMrid, ModuleRevisionId foundMrid).
  * 
- * @author Xavier Hanin
  */
 public interface VersionMatcher {
     /**

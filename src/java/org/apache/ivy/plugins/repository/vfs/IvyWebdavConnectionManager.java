@@ -36,13 +36,6 @@ import org.apache.commons.httpclient.params.HttpConnectionManagerParams;
  * <p/>
  * imario@apache.org: Keep connection in ThreadLocal.
  *
- * @author <a href="mailto:imario@apache.org">Mario Ivankovits</a>
- * @author <a href="mailto:becke@u.washington.edu">Michael Becke</a>
- * @author Eric Johnson
- * @author <a href="mailto:mbowler@GargoyleSoftware.com">Mike Bowler</a>
- * @author <a href="mailto:oleg@ural.ru">Oleg Kalnichevski</a>
- * @author Laura Werner
- * @author Maarten Coene
  */
 class IvyWebdavConnectionManager implements HttpConnectionManager {
 

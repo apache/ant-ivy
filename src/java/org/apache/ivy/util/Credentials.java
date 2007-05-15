@@ -19,8 +19,6 @@ package org.apache.ivy.util;
 
 /**
  * 
- * @author Christian Riege
- * @author Xavier Hanin
  */
 public class Credentials {
 	private String _realm;

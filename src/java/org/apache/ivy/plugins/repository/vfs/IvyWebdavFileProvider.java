@@ -31,9 +31,6 @@ import org.apache.commons.vfs.provider.webdav.WebdavFileProvider;
  * 
  * A provider for WebDAV.
  *
- * @author <a href="mailto:adammurdoch@apache.org">Adam Murdoch</a>
- * @author Maarten Coene
- * @version $Revision: 417178 $ $Date: 2006-06-26 05:31:41 -0700 (Mon, 26 Jun 2006) $
  */
 public class IvyWebdavFileProvider extends WebdavFileProvider {
 

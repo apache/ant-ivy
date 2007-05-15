@@ -25,7 +25,6 @@ package org.apache.ivy.core;
  * with the original IvyContext.
  * 
  * @see IvyContext
- * @author Xavier Hanin
  */
 public class IvyThread extends Thread {
 	private IvyContext _context = IvyContext.getContext(); 

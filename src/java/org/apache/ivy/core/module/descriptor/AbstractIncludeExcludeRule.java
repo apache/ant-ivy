@@ -30,7 +30,6 @@ import org.apache.ivy.util.extendable.UnmodifiableExtendableItem;
  * Abstract class used as implementation for both {@link IncludeRule} and {@link ExcludeRule},
  * since their contract is almost identical
  * 
- * @author Xavier Hanin
  *
  */
 public abstract class AbstractIncludeExcludeRule extends UnmodifiableExtendableItem 

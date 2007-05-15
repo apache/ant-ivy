@@ -17,10 +17,6 @@
  */
 package org.apache.ivy.plugins.conflict;
 
-/**
- * @author Anders janmyr
- */
-
 import java.io.File;
 
 import junit.framework.TestCase;

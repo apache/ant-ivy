@@ -30,8 +30,6 @@ import org.apache.ivy.core.IvyContext;
 
 /**
  * 
- * @author Xavier Hanin
- * @author Gilles Scokart
  */
 public class Message {
     // messages level copied from ant project, to avoid dependency on ant

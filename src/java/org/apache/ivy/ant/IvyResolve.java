@@ -37,7 +37,6 @@ import org.apache.tools.ant.Project;
 /**
  * This task allow to call the Ivy dependency resolution from ant.
  * 
- * @author Xavier Hanin
  *
  */
 public class IvyResolve extends IvyTask {

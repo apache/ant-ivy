@@ -33,7 +33,6 @@ import org.apache.ivy.util.extendable.ExtendableItem;
 
 
 /**
- * @author x.hanin
  *
  */
 public interface ModuleDescriptor extends ExtendableItem {

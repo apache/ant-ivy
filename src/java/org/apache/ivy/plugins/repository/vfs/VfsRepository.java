@@ -44,10 +44,6 @@ import org.apache.ivy.util.Message;
 /**
  * Implementation of a VFS repository
  * 
- * @author glen
- * @author Matt Inger
- * @author Stephen Nesbitt
- * 
  */
 public class VfsRepository extends AbstractRepository {
 	/**

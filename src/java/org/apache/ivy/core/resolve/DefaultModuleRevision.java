@@ -26,7 +26,6 @@ import org.apache.ivy.plugins.resolver.DependencyResolver;
 
 
 /**
- * @author x.hanin
  *
  */
 public class DefaultModuleRevision implements ResolvedModuleRevision {

@@ -35,8 +35,6 @@ import org.apache.ivy.util.Message;
 
 
 /**
- * @author x.hanin
- * @author Maarten Coene (for the optional part management)
  */
 public class IvyPatternHelper {
     public static final String CONF_KEY = "conf";

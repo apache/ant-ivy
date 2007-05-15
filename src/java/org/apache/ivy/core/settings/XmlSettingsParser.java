@@ -45,7 +45,6 @@ import org.xml.sax.helpers.DefaultHandler;
 
 
 /**
- * @author Xavier Hanin
  */
 public class XmlSettingsParser extends DefaultHandler {
 	private Configurator _configurator;

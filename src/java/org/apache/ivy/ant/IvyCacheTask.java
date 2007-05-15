@@ -44,7 +44,6 @@ import org.apache.tools.ant.BuildException;
  * 
  * Most of the behviour is common to the two, since only the produced element differs.
  * 
- * @author Xavier Hanin
  */
 public abstract class IvyCacheTask extends IvyPostResolveTask {
 

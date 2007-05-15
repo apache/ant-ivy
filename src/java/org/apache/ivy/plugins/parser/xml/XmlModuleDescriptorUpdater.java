@@ -59,7 +59,6 @@ import org.xml.sax.helpers.DefaultHandler;
  * Used to update ivy files. Uses ivy file as source and not ModuleDescriptor to preserve
  * as much as possible the original syntax
  * 
- * @author Hanin
  *
  */
 public class XmlModuleDescriptorUpdater {

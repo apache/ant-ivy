@@ -33,7 +33,6 @@ import org.apache.ivy.plugins.matcher.PatternMatcher;
 
 /**
  * 
- * @author Maarten Coene
  */
 public class Match {
 	private String _revision;

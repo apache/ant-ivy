@@ -77,7 +77,6 @@ import org.apache.ivy.util.filter.Filter;
  * ivy.configure(new URL("ivysettings.xml"));
  * ivy.resolve(new URL("ivy.xml"));
  *  
- * @author Xavier Hanin
  */
 public class Ivy {
     public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyyMMddHHmmss");

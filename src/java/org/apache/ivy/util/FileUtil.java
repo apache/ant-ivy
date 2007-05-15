@@ -38,7 +38,6 @@ import org.apache.ivy.util.url.URLHandlerRegistry;
 
 
 /**
- * @author x.hanin
  *
  */
 public class FileUtil {

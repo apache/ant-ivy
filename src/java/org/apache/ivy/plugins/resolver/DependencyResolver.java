@@ -34,7 +34,6 @@ import org.apache.ivy.core.search.RevisionEntry;
 
 
 /**
- * @author x.hanin
  *
  */
 public interface DependencyResolver {

@@ -18,7 +18,6 @@
 package org.apache.ivy.core.report;
 
 /**
- * @author x.hanin
  *
  */
 public class DownloadStatus {

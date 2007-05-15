@@ -26,8 +26,6 @@ import org.apache.ivy.util.Message;
 
 /**
  * 
- * @author Christian Riege
- * @author Xavier Hanin
  */
 public class CredentialsStore {
     /**

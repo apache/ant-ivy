@@ -35,10 +35,6 @@ import org.apache.ivy.util.Message;
 /**
  * VFS implementation of the Resource interface
  * 
- * @author glen
- * @author Matt Inger
- * @author Stephen Nesbitt
- *
  */
 public class VfsResource implements Resource {	
 	private String _vfsURI;

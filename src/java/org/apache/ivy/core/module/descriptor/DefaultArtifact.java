@@ -25,7 +25,6 @@ import org.apache.ivy.core.module.id.ArtifactRevisionId;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 
 /**
- * @author Hanin
  *
  */
 public class DefaultArtifact extends AbstractArtifact {

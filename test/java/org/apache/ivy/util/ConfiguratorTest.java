@@ -23,7 +23,6 @@ import java.util.List;
 import junit.framework.TestCase;
 
 /**
- * @author x.hanin
  *
  */
 public class ConfiguratorTest extends TestCase {

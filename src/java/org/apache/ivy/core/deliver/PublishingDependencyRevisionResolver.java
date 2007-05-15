@@ -21,7 +21,6 @@ import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 
 /**
- * @author Xavier Hanin
  *
  */
 public interface PublishingDependencyRevisionResolver {

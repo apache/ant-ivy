@@ -42,7 +42,6 @@ import org.apache.tools.ant.util.GlobPatternMapper;
 /**
  * This ant task let users generates reports (html, xml, graphml, ...) from the last resolve done.
  * 
- * @author Xavier Hanin
  */
 public class IvyReport extends IvyTask {
     private File _todir;

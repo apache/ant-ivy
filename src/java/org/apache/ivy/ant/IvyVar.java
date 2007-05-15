@@ -32,7 +32,6 @@ import org.apache.tools.ant.BuildException;
 /**
  * This task let user set ivy variables from ant.
  * 
- * @author Xavier Hanin
  */
 public class IvyVar extends IvyTask {
     private String _name;

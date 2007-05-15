@@ -67,7 +67,6 @@ import org.apache.ivy.util.filter.FilterHelper;
  * 
  * And that should be enough in most cases!
  *  
- * @author Xavier Hanin
  */
 public class Ivy14 {
 	private Ivy _ivy;

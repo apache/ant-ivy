@@ -30,8 +30,6 @@ import org.apache.ivy.core.module.descriptor.DefaultModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 
 /**
- * @author Xavier Hanin
- * @author baumkar
  */
 public class SortTest extends TestCase {
     

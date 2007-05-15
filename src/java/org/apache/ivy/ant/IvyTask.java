@@ -37,7 +37,6 @@ import org.apache.tools.ant.Task;
 /**
  * Base class for all ivy ant tasks, deal particularly with ivy instance storage in ant project.
  * 
- * @author Xavier Hanin
  *
  */
 public abstract class IvyTask extends Task {

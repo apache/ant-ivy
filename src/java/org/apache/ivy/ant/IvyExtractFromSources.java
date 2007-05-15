@@ -47,7 +47,6 @@ import org.apache.tools.ant.types.RegularExpression;
  * Extracts imports from a set of java sources and generate corresponding
  * ivy file
  * 
- * @author Xavier Hanin
  *
  */
 public class IvyExtractFromSources extends IvyTask {
