@@ -52,6 +52,7 @@ This is particularly useful combined with subant, to build a set of interelated 
     <tr><td>haltonerror</td><td>true to halt the build when an invalid ivy file is encountered, false to continue</td><td>No. Defaults to true</td></tr>
     <tr><td>skipbuildwithoutivy</td><td>true to skip files of the fileset with no corresponding ivy file, false otherwise. If false the file with no corresponding ivy file will be considered as independent of the other and put at the beginning of the built filelist.</td><td>No. Defaults to false</td></tr>
     <tr><td>reverse</td><td>true to obtain the list in the reverse order, i.e. from the most dependent to the least one</td><td>No. Defaults to default false</td></tr>
+    <tr><td>settingsRef</td><td><span class="since">(since 2.0)</span> A reference to the ivy settings that must be used by this task</td><td>No, 'ivy.instance' is taken by default.</td></tr>
 </tbody>
 </table>
 
@@ -92,8 +93,6 @@ Builds a list of build.xml files sorted according to the ivy.xml files found in 
     </ivy:buildlist>
 </code>
 Builds a list of build.xml files sorted according to the ivy.xml files found in an ivy directory relative to those build files. Only build.xml files of modules which have dependencies (direct or transitive) on mymodule are put in the result list.
-
-
 
 
 	</textarea>

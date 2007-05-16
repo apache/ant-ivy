@@ -46,7 +46,7 @@
 			</classpath>
     	</taskdef>
 		
-		<ivy:configure />
+		<ivy:settings />
     </target>
 	
 	<target name="install" depends="jar" description="build Ivy and install it in Ivy home for consecutive builds">
@@ -382,9 +382,9 @@
         </junit>
 	</target>
 
-	<target name="test" depends="test-internal">
+	<target name="test" depends="test-internal" description="Run the test">
 		<fail if="test.failed"
-		      message="At least one test has failed. See logs for details"/>
+		      message="At least one test has failed. See logs (in ${test.xml.dir}) for details (use the target test-report to run the test with a report)"/>
 	</target>
 	
     <!-- =================================================================
@@ -398,7 +398,7 @@
 			<report format="frames" todir="${test.report.dir}" />
 		</junitreport>
 		<fail if="test.failed"
-		      message="At least one test has failed. See logs or report"/>
+		      message="At least one test has failed. See logs (in ${test.xml.dir}) or report (in ${test.report.dir})"/>
 	</target>
 	
 	<target name="coverage-report" depends="emma, test-report"  unless="skip.test"
@@ -424,11 +424,13 @@
 
 	<target name="fixcrlf">
 		<fixcrlf srcdir="${doc.src.dir}" includes="**/*.html,**/*.json" excludes="samples/**,presentations/**" eol="lf" />
+		<!-- 
 		<apply executable="svn">
 			<arg value="propset"/>
 			<arg value="svn:eol-style"/>
 			<arg value='"LF"'/>
 			<fileset dir="${doc.src.dir}" includes="**/*.html,**/*.json" excludes="samples/**,presentations/**" />
 		</apply>
+		-->
 	</target>
 </project>

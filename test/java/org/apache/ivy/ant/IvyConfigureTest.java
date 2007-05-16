@@ -28,9 +28,11 @@ import org.apache.ivy.plugins.resolver.IBiblioResolver;
 import org.apache.ivy.plugins.resolver.IvyRepResolver;
 import org.apache.tools.ant.Project;
 
-
+/**
+ * Test the deprecated IvyConfigureTest and the underlying implementation 
+ * AntIvySettings.  When IvyConfigure will be removed, this class should be renamed AntIvySettingsTest
+ */
 public class IvyConfigureTest extends TestCase {
-    private File _cache;
     private IvyConfigure _configure;
     
     protected void setUp() throws Exception {
@@ -40,6 +42,10 @@ public class IvyConfigureTest extends TestCase {
         _configure = new IvyConfigure();
         _configure.setProject(project);
     }
+
+    private Ivy getIvyInstance() {
+		return IvyAntSettings.getDefaultInstance(_configure.getProject()).getConfiguredIvyInstance();
+	}
 
     public void testDefault() throws Exception {
     	// by default configure look in the current directory for an ivysettings.xml file...
@@ -71,12 +77,13 @@ public class IvyConfigureTest extends TestCase {
 		assertTrue(publicResolver instanceof IvyRepResolver);
     }
 
-    public void testFile() throws Exception {
+
+	public void testFile() throws Exception {
         _configure.setFile(new File("test/repositories/ivysettings.xml"));
         
         _configure.execute();
         
-        Ivy ivy = getIvyInstance();
+        Ivy ivy = _configure.getIvyInstance();
         assertNotNull(ivy);
 		IvySettings settings = ivy.getSettings();
         assertNotNull(settings);
@@ -98,7 +105,7 @@ public class IvyConfigureTest extends TestCase {
         
         _configure.execute();
         
-        IvySettings settings = getIvyInstance().getSettings();
+        IvySettings settings = _configure.getIvyInstance().getSettings();
         
         assertEquals(new File("build/cache"), settings.getDefaultCache());
         assertEquals(confUrl, settings.getVariables().get("ivy.settings.url"));
@@ -112,7 +119,7 @@ public class IvyConfigureTest extends TestCase {
         
         _configure.execute();
         
-        IvySettings settings = getIvyInstance().getSettings();
+        IvySettings settings = _configure.getIvyInstance().getSettings();
         assertNotNull(settings);
         
         assertEquals("myvalue", settings.getVariables().get("myproperty"));
@@ -125,14 +132,10 @@ public class IvyConfigureTest extends TestCase {
         
         _configure.execute();
         
-        IvySettings settings = getIvyInstance().getSettings();
+        IvySettings settings = _configure.getIvyInstance().getSettings();
         assertNotNull(settings);
         
         assertEquals("lib/test/[artifact]-[revision].[ext]", settings.getVariables().get("ivy.retrieve.pattern"));
-    }
-
-    private Ivy getIvyInstance() {
-        return (Ivy)_configure.getProject().getReference("ivy.instance");
     }
 
 }

@@ -79,6 +79,7 @@ Here is an example of generate file:
     <tr><td>conf</td><td>a comma separated list of the configurations to use to generate the report</td>
         <td>No. Defaults to the configurations resolved by the last resolve call</td></tr>
     <tr><td>haltonfailure</td><td>true to halt the build on ivy failure, false to continue</td><td>No. Defaults to true</td></tr>
+    <tr><td>settingsRef</td><td>A reference to the ivy settings that must be used by this task <b>(since 2.0)</b></td><td>No, 'ivy.instance' is taken by default.</td></tr>
 </tbody>
 </table>
 <h1>Examples</h1>
@@ -91,7 +92,6 @@ Generates the artifact report for all configurations resolved during the last re
 <ivy:artifactreport tofile="${basedir}/path/to/myreport.xml" conf="default"/>
 </code>
 Generates the artifact report for only the default configuration resolved during the last resolve call.
-
 
 	</textarea>
 <script type="text/javascript">xooki.postProcess();</script>

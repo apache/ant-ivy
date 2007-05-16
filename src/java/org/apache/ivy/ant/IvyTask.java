@@ -20,8 +20,6 @@ package org.apache.ivy.ant;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.apache.ivy.Ivy;
 import org.apache.ivy.core.IvyContext;
@@ -32,6 +30,7 @@ import org.apache.ivy.util.Message;
 import org.apache.ivy.util.StringUtils;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
+import org.apache.tools.ant.types.Reference;
 
 
 /**
@@ -42,6 +41,7 @@ import org.apache.tools.ant.Task;
 public abstract class IvyTask extends Task {
     public static final String ANT_PROJECT_CONTEXT_KEY = "ant-project";
 	private Boolean _validate = null; 
+	private Reference _antIvyEngineRef = null; 
 
     protected boolean doValidate(IvySettings ivy) {
         if (_validate != null) {
@@ -56,28 +56,34 @@ public abstract class IvyTask extends Task {
         _validate = Boolean.valueOf(validate);
     }
     
+    
+    public void setSettingsRef(Reference ref) {
+    	_antIvyEngineRef = ref;
+    }
+    
+    public Reference getSettingsRef() {
+    	return _antIvyEngineRef;
+    }
+    
     protected IvySettings getSettings() {
     	return getIvyInstance().getSettings();
     }
     
     protected Ivy getIvyInstance() {
-        ensureMessageInitialised();
-        Object ref = getProject().getReference("ivy.instances");
-        if (ref != null && !(ref instanceof Map)) {
-            throw new BuildException("ivy problem with ant: ivy.instances reference is not a Map. Please do not sett ivy.instances reference in your ant project. current reference: "+ref+" class="+ref.getClass()+" classloader="+ref.getClass().getClassLoader());
-        }
-        Map instances = (Map) ref;
-        if (instances == null || !instances.containsKey(Ivy.class)) {
-            Message.verbose("no ivy instance found: auto configuring ivy");
-            IvyConfigure configure = new IvyConfigure();
-            configure.setProject(getProject());
-            configure.execute();
-            instances = (Map) getProject().getReference("ivy.instances");
-            if (instances == null || !instances.containsKey(Ivy.class)) {
-                throw new BuildException("ivy internal problem: impossible to get ivy instance after configure... maybe a classloader problem");
-            }
-        } 
-        return (Ivy)instances.get(Ivy.class);
+    	ensureMessageInitialised();
+    	Object antIvyEngine;
+    	if (_antIvyEngineRef!=null) {
+    		antIvyEngine = _antIvyEngineRef.getReferencedObject();
+    		if (! antIvyEngine.getClass().getName().equals(IvyAntSettings.class.getName())) {
+    			throw new BuildException(_antIvyEngineRef.getRefId() + " doesn't reference an ivy:settings" , getLocation());
+    		}
+    		if (! (antIvyEngine instanceof IvyAntSettings)) {
+    			throw new BuildException(_antIvyEngineRef.getRefId() + " has been defined in a different classloader.  Please use the same loader when defining your task, or redeclare your ivy:settings in this classloader" , getLocation());
+    		}
+    	} else {
+    		antIvyEngine = IvyAntSettings.getDefaultInstance(getProject()); 
+    	}
+    	return ((IvyAntSettings)antIvyEngine).getConfiguredIvyInstance();
     }
 
     /** 
@@ -88,22 +94,6 @@ public abstract class IvyTask extends Task {
     protected void ensureMessageInitialised() {
         if (!Message.isInitialised()) { 
             Message.init(new AntMessageImpl(this));
-        }
-
-    }
-    protected void setIvyInstance(Ivy ivy) {
-    	// this reference is not used anymore, what is used is the instances map below
-        getProject().addReference("ivy.instance", ivy);
-        
-        if (ivy != null) {
-        	Message.debug("setting ivy.instance on "+getProject()+": "+ivy+" class="+ivy.getClass().getName()+" classloader="+ivy.getClass().getClassLoader());
-        	// we keep a map of ivy instances per Ivy class, in case of multiple classloaders
-        	Map instances = (Map) getProject().getReference("ivy.instances");
-        	if (instances == null) {
-        		instances = new HashMap();
-        		getProject().addReference("ivy.instances", instances);
-        	}
-        	instances.put(ivy.getClass(), ivy);
         }
     }
     

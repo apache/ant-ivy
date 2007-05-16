@@ -113,23 +113,23 @@ Now that you are a bit more familiar with the structure, let's have a look at th
 So, here are some aspects of this common build file:
 <h2>ivy settings</h2>
 <code type="xml">
-<target name="configure">
+
     <!-- setup ivy default configuration with some custom info -->
     <property name="ivy.local.default.root" value="${repository.dir}/local"/>
     <property name="ivy.shared.default.root" value="${repository.dir}/shared"/>
 
     <!-- here is how we would have configured ivy if we had our own ivysettings file
-        <ivy:configure file="${common.dir}/ivysettings.xml" />
+       <ivy:settings file="${common.dir}/ivysettings.xml" />
     -->
 </target>
 </code>
 
-This target configures ivy only by setting two properties: the location for the local repository and the location for the shared repository. It's the only settings done here, since ivy 1.3 is configured by default to work in a team environment (see <a href="../../tutorial/defaultconf.html">default settings tutorial</a> for details about this). For sure in a real environment the shared repository location would rather be in a team shared directory (or in a more complex repository, again see the default settings tutorial to see how to use something really different).
-This target only indicates in comments how the settings would have been done if the default settings wasn't ok for our purpose.
+This declaration configures ivy only by setting two properties: the location for the local repository and the location for the shared repository. It's the only settings done here, since ivy 1.3 is configured by default to work in a team environment (see <a href="../../tutorial/defaultconf.html">default settings tutorial</a> for details about this). For sure in a real environment the shared repository location would rather be in a team shared directory (or in a more complex repository, again see the default settings tutorial to see how to use something really different).
+There is only in comments how the settings would have been done if the default settings wasn't ok for our purpose.
 
 <h2>resolve dependencies</h2>
 <code type="xml">
-<target name="resolve" depends="configure, clean-lib" description="--> retrieve dependencies with ivy">
+<target name="resolve" depends="clean-lib" description="--> retrieve dependencies with ivy">
     <mkdir dir="${lib.dir}"/> <!-- not usually necessary, ivy creates the directory IF there are dependencies -->
     <!-- this target is named resolve even if we do a retrieve: 
          in fact a resolve will be called, and then the retrieve will simply copy files in the lib directory -->

@@ -107,7 +107,7 @@ public class IvySettings {
     private Map _circularDependencyStrategies = new HashMap(); // Map (String name -> CircularDependencyStrategy)
     private List _triggers = new ArrayList(); // List (Trigger)
     
-    private Map _variables = new HashMap();
+    private IvyVariableContainer _variableContainer = new IvyVariableContainerImpl();
 
     private String _cacheIvyPattern = DEFAULT_CACHE_IVY_PATTERN;
     private String _cacheResolvedIvyPattern = DEFAULT_CACHE_RESOLVED_IVY_PATTERN;
@@ -140,7 +140,13 @@ public class IvySettings {
 	private VersionMatcher _versionMatcher;
 	private StatusManager _statusManager;
 	
+	
 	public IvySettings() {
+		this(new IvyVariableContainerImpl());
+	}
+	
+	public IvySettings(IvyVariableContainer variableContainer) {
+		setVariableContainer(variableContainer);
         setVariable("ivy.default.settings.dir", getDefaultSettingsDir(), true);
         setDeprecatedVariable("ivy.default.conf.dir", "ivy.default.settings.dir");
         
@@ -442,13 +448,9 @@ public class IvySettings {
         setVariable(varName, value, true);
     }
     
+    
     public void setVariable(String varName, String value, boolean overwrite) {
-        if (overwrite || !_variables.containsKey(varName)) {
-            Message.debug("setting '"+varName+"' to '"+value+"'");
-            _variables.put(varName, substitute(value));
-        } else {
-            Message.debug("'"+varName+"' already set: discarding '"+value+"'");
-        }
+    	_variableContainer.setVariable(varName , value, overwrite);
     }
     
     public void addAllVariables(Map variables) {
@@ -481,7 +483,7 @@ public class IvySettings {
      * @return
      */
     public Map getVariables() {
-        return _variables;
+        return _variableContainer.getVariables();
     }
 
     public Class typeDef(String name, String className) {
@@ -929,8 +931,7 @@ public class IvySettings {
     }
 
     public String getVariable(String name) {
-        String val = (String)_variables.get(name);
-        return val==null?val:substitute(val);
+        return _variableContainer.getVariable(name);
     }
 
     public ConflictManager getDefaultConflictManager() {
@@ -979,19 +980,6 @@ public class IvySettings {
         _useRemoteConfig = useRemoteConfig;
     }
 
-    /** 
-     * WARNING: Replace all current ivy variables by the given Map.
-     * Should be used only when restoring variables.
-     * 
-     *  Thr given Map is not copied, but stored by reference.
-     * @param variables
-     */
-    public void setVariables(Map variables) {
-        if (variables == null) {
-            throw new NullPointerException("variables shouldn't be null");
-        }
-        _variables = variables;
-    }
     public boolean logModulesInUse() {
         String var = getVariable("ivy.log.modules.in.use");
         return var == null || Boolean.valueOf(var).booleanValue();
@@ -1080,6 +1068,18 @@ public class IvySettings {
 
 	public Collection getMatcherNames() {
 		return _matchers.keySet();
+	}
+
+	public IvyVariableContainer getVariableContainer() {
+		return _variableContainer;
+	}
+
+	/** 
+	 * Use a different variable container.
+	 * @param variables
+	 */
+	public void setVariableContainer(IvyVariableContainer variables) {
+		_variableContainer = variables;
 	}
 
 }

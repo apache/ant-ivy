@@ -21,7 +21,6 @@
 	<!-- a sample common build.xml file, used for ivy multi-project tutorial
 	     feel free to copy and adapt it to your own needs
 	     Note that the only targets specific to ivy are:
-	        configure
 	     	resolve
 	     	report
 	     	publish
@@ -41,20 +40,20 @@
         <path location="${classes.dir}" />
     </path>
 
-    <target name="configure">
-    	<!-- setup ivy default configuration with some custom info -->
-    	<property name="ivy.local.default.root" value="${repository.dir}/local"/>
-    	<property name="ivy.shared.default.root" value="${repository.dir}/shared"/>
+    
+	<!-- setup ivy default configuration with some custom info -->
+	<property name="ivy.local.default.root" value="${repository.dir}/local"/>
+	<property name="ivy.shared.default.root" value="${repository.dir}/shared"/>
 
-    	<!-- here is how we would have configured ivy if we had our own ivysettings file
-        <ivy:configure file="${common.dir}/ivysettings.xml" />
-         -->
-    </target>
+   	<!-- here is how we would have configured ivy if we had our own ivysettings file
+    <ivy:settings id="ivy.instance file="${common.dir}/ivysettings.xml" />
+    -->
+
 	
     <!-- ================================= 
           target: resolve              
          ================================= -->
-    <target name="resolve" depends="configure, clean-lib" description="--> retrieve dependencies with ivy">
+    <target name="resolve" depends="clean-lib" description="--> retrieve dependencies with ivy">
         <mkdir dir="${lib.dir}"/> <!-- not usually necessary, ivy creates the directory IF there are dependencies -->
     	<!-- this target is named resolve even if we do a retrieve: 
     	     in fact a resolve will be called, and then the retrieve will simply copy files in the lib directory -->
@@ -156,7 +155,7 @@
 	<!-- ================================= 
           target: clean-local              
          ================================= -->
-	<target name="clean-local" depends="configure" description="cleans the local repository for the current module">
+	<target name="clean-local" description="cleans the local repository for the current module">
 	   <delete dir="${ivy.local.default.root}/${ant.project.name}"/>
 	</target>
 

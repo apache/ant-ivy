@@ -55,11 +55,13 @@ ibilio</li>
 <h1>basic, retrieve commons-lang 1.0</h1>
 Let's have a look at the <em>basic</em> target.
 <code type="xml">
-    <target name="basic" depends="init-basic" description="--> retrieve files from well formatted ivy repositories">
-        <ivy:install organisation="apache" module="commons-lang" revision="1.0" from="${from-resolver}" to="${to-resolver}" />
+    <ivy:settings id="basic.settings"    file="${configuration-dir}/ivysettings-basic.xml"/>
+
+    <target name="basic" description="--> retrieve files from well formatted ivy repositories">
+        <ivy:install settingsRef="basic.settings" organisation="apache" module="commons-lang" revision="1.0" from="${from-resolver}" to="${to-resolver}" />
     </target>
 </code>
-After a call to init-basic, that make the ivy initialization with the right ivysettings file, we only call the task <a href="../../../doc/use/install.html">install</a> to retrieve apache commons-lang in it's 1.0 version.
+After a declaration of the basic.settings, that make the ivy initialization with the right ivysettings file, we only call the task <a href="../../../doc/use/install.html">install</a> to retrieve apache commons-lang in it's 1.0 version.
 Here is the ant call output :
 <div class="shell"><pre>Z:\ivy-repository>ant basic
 Buildfile: build.xml
@@ -94,8 +96,8 @@ We can see that we have started our own repository by retrieving the commons-lan
 <h1>basic with dependencies, retrieve hibernate 2.1.8</h1>
 Now let's advance a little more by trying a module that has some dependencies. Here is the target that we will call :
 <code type="xml">
-    <target name="basic-deps" depends="init-basic" description="--> retrieve files from well formatted ivy repositories with dependencies">
-        <ivy:install organisation="hibernate" module="hibernate" revision="2.1.8" from="${from-resolver}" to="${to-resolver}" transitive="true" />
+    <target name="basic-deps" description="--> retrieve files from well formatted ivy repositories with dependencies">
+        <ivy:install settingsRef="basic.settings" organisation="hibernate" module="hibernate" revision="2.1.8" from="${from-resolver}" to="${to-resolver}" transitive="true" />
     </target>
 </code>This target is very similar to the basic one, except it defines the transitivity mode to use. By writing, <em>transitive="true"</em>, we tell the task to retrieve the corresponding module and it's dependencies.
 

@@ -219,6 +219,7 @@ public class IvyPublish extends IvyTask {
             File ivyFile = new File(IvyPatternHelper.substitute(_srcivypattern, _organisation, _module, _pubRevision, "ivy", "ivy", "xml"));
             if (_publishivy && (!ivyFile.exists() || _forcedeliver)) {
                 IvyDeliver deliver = new IvyDeliver();
+                deliver.setSettingsRef(getSettingsRef());
                 deliver.setProject(getProject());
                 deliver.setCache(getCache());
                 deliver.setDeliverpattern(getSrcivypattern());

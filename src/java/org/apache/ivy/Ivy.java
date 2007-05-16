@@ -87,6 +87,13 @@ public class Ivy {
 		return ivy;
 	}
 
+	public static Ivy newInstance(IvySettings settings) {
+		Ivy ivy = new Ivy();
+		ivy.setSettings(settings);
+		ivy.bind();
+		return ivy;
+	}
+	
 	/**
 	 * True if the current processing has been requested to be interrupted,
 	 * false otherwise

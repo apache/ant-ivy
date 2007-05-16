@@ -18,6 +18,7 @@
    under the License.    
 -->
 <antlib xmlns:current="ant:current">
+	<typedef name="settings" classname="org.apache.ivy.ant.IvyAntSettings"/>
 	<taskdef name="configure" classname="org.apache.ivy.ant.IvyConfigure"/>
 	<taskdef name="resolve" classname="org.apache.ivy.ant.IvyResolve"/>
 	<taskdef name="retrieve" classname="org.apache.ivy.ant.IvyRetrieve"/>

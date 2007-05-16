@@ -34,18 +34,13 @@
         <path location="${build.dir}" />
     </path>
     
-    <!-- - - - - - - - - - - - - - - - - - 
-          target: configure                      
-         - - - - - - - - - - - - - - - - - -->
-    <target name="configure">
-        <ivy:configure file="${ivy.settings.dir}/ivysettings.xml" />
-    </target>
+    <ivy:settings file="${ivy.settings.dir}/ivysettings.xml" />
     
     <!-- ================================= 
           target: resolve              
          ================================= -->
-    <target name="resolve" depends="configure" description="--> retreive dependencies with ivy">
-        <ivy:retrieve />
+    <target name="resolve" description="--> retreive dependencies with ivy">
+        <ivy:retrieve/>
     </target>
     
     <!-- ================================= 

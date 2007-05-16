@@ -27,6 +27,6 @@
 		<ivyrep name="libraries" />
 	</resolvers>
 	<modules>
-		<module organisation="apache" name=".*" resolver="projects"/>
+		<module organisation="apache" name="standalone" resolver="projects"/>
 	</modules>
 </ivysettings>

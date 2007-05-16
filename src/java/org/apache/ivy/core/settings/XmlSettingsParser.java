@@ -204,7 +204,7 @@ public class XmlSettingsParser extends DefaultHandler {
                     }
                 }
             } else if ("include".equals(qName)) {
-                Map variables = new HashMap(_ivy.getVariables());
+                IvyVariableContainer variables = (IvyVariableContainer) _ivy.getVariableContainer().clone();
                 try {
                     String propFilePath = _ivy.substitute((String)attributes.get("file"));
                     URL settingsURL = null; 
@@ -231,7 +231,7 @@ public class XmlSettingsParser extends DefaultHandler {
                     }
                     new XmlSettingsParser(_ivy).parse(_configurator, settingsURL);
                 } finally {
-                    _ivy.setVariables(variables);
+                    _ivy.setVariableContainer(variables);
                 }
             } else if ("settings".equals(qName) || "conf".equals(qName)) {
             	if ("conf".equals(qName)) {

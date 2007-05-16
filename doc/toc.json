@@ -377,7 +377,7 @@
             },
             {
               "id":"doc/configuration",
-              "title":"Settings",
+              "title":"Settings Files",
               "children": [
                   {
                     "id":"doc/configuration/property",
@@ -903,6 +903,14 @@
                         }
                       ]
                   },
+                  {
+                    "id":"doc/use/settings",
+                    "title":"settings",
+                    "children": [
+
+                      ]
+,
+                    "level":0                  },
                   {
                     "id":"doc/use/var",
                     "title":"var",
