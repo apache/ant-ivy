@@ -139,6 +139,7 @@ public class PomModuleDescriptorParser extends AbstractModuleDescriptorParser {
             _properties.put("project.artifactId", _module);
             _properties.put("project.version", _revision);
             _properties.put("pom.version", _revision);
+            _properties.put("version", _revision);
             _md.setModuleRevisionId(mrid);
             if (_type == null) {
                 _type = _ext = "jar";

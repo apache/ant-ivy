@@ -52,6 +52,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - IMPROVEMENT: Allow "main" parameters to be passed directly (instead of using -args flag) (IVY-480) (thanks to Archie Cobbs)
 - IMPROVEMENT: Remove @author tags (thanks to Stephane Bailliez)
 
+- FIX: ${revision} property not recognized in poms (IVY-512)
 - FIX: Bug on handling dependency artifacts when a module configuration is specified (IVY-507)
 - FIX: Configure fails when having httpclient in classpath without commons-logging (IVY-502)
 - FIX: packaging data not parsed in maven 2 pom (IVY-500) (thanks to Jeffrey Blattman)

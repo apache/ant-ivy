@@ -2536,6 +2536,24 @@ public class ResolveTest extends TestCase {
         assertTrue(TestHelper.getArchiveFileInCache(ivy, _cache, "org.apache", "test-classified", "1.0", "test-classified", "jar", "jar").exists());
     }
     
+    public void testResolveMaven2WithVersionProperty() throws Exception {
+        Ivy ivy = new Ivy();
+        ivy.configure(new File("test/repositories/m2/ivysettings.xml"));
+        ResolveReport report = ivy.resolve(new File("test/repositories/m2/org/apache/test-version/1.0/test-version-1.0.pom").toURL(),
+                getResolveOptions(new String[] {"*"}));
+        assertNotNull(report);
+        ModuleDescriptor md = report.getModuleDescriptor();
+        assertNotNull(md);
+        ModuleRevisionId mrid = ModuleRevisionId.newInstance("org.apache", "test-version", "1.0");
+        assertEquals(mrid, md.getModuleRevisionId());
+        
+        assertTrue(ivy.getCacheManager(_cache).getResolvedIvyFileInCache(mrid).exists());
+        
+        // dependencies
+        assertTrue(ivy.getCacheManager(_cache).getIvyFileInCache(ModuleRevisionId.newInstance("org.apache", "test-classifier", "1.0")).exists());
+        assertTrue(TestHelper.getArchiveFileInCache(ivy, _cache, "org.apache", "test-classifier", "1.0", "test-classifier", "jar", "jar").exists());
+    }
+    
     public void testNamespaceMapping() throws Exception {
         // the dependency is in another namespace
         Ivy ivy = new Ivy();

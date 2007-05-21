@@ -140,6 +140,16 @@ public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         assertEquals(extraAtt, dds[0].getAllDependencyArtifacts()[0].getExtraAttributes());
     }
     
+    public void testWithVersionProperty() throws Exception {
+        ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(new IvySettings(), getClass().getResource("test-version.pom"), false);
+        assertNotNull(md);
+        
+        DependencyDescriptor[] dds = md.getDependencies();
+        assertNotNull(dds);
+        assertEquals(1, dds.length);
+        assertEquals(ModuleRevisionId.newInstance("org.apache", "test-other", "1.0"), dds[0].getDependencyRevisionId());
+    }
+    
     // IVY-392
     public void testDependenciesWithProfile() throws Exception {
         ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(new IvySettings(), getClass().getResource("test-dependencies-with-profile.pom"), false);
