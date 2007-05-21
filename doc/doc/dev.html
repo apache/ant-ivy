@@ -64,6 +64,32 @@ http://java.sun.com/docs/codeconv/html/CodeConvTOC.doc.html
 
 This is a work in progress though (see IVY-511), but patches helping migration to these conventions are welcome.
 
+<h1>Developing with eclipse</h1>
+Even though you can develop Ivy with your IDE of choice, we support eclipse development by providing ad hoc metadata.
+
+We currently provide two options:
+<h2>Eclipse alone</h2>
+To develop with a simple eclipse install all you need is eclipse 3.1 or greater, with no particular plugin.
+First call the following ant target in your Ivy workspace:
+<code>
+ant eclipse-default
+</code>
+This will resolve the dependencies of Ivy and produce a .classpath using the resolved jars for the build path.
+Then you can use the "Import->Existing project into workspace" eclipse feature to import the Ivy project in your workspace.
+<h2>Eclipse + IvyDE</h2>
+You can also leverage the latest IvyDE version to be able to easily resolve the ivy dependencies from Eclipse.
+To do so all you need is call the following ant target in your Ivy workspace:
+<code>
+ant eclipse-ivyde
+</code>
+or if you don't have ant installed you can simply copy the file .classpath.ivyde and rename it to .classpath
+Then you can import the project using "Import->Existing project into workspace" as long as you already have latest IvyDE installed.
+
+To install latest IvyDE version compatible with the latest Ivy used to resolve Ivy dependencies, you will need to use a snapshot build, not endorsed by the ASF, available here:
+http://people.apache.org/~xavier/ivyde/snapshot/
+
+Download the file and unzip its content in your eclipse installation directory.
+
 <h1>Making a release</h1>
 <h2>Requirements</h2>
 Requirements for making a release are similar to the requirements for building from source, except that sun jdk 1.6 and ant 1.7 are required.

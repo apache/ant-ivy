@@ -43,6 +43,7 @@
 		<dependency org="apache" name="oro" rev="2.0.8" conf="default,oro->default"/>
 		<dependency org="apache" name="commons-vfs" rev="20060920" conf="vfs->default;default,webdav->webdav" />
 		<dependency org="jcraft" name="jsch" rev="0.1.25" conf="default,sftp->default" />
+	    <dependency org="ant" name="ant-launcher" rev="1.6.5" conf="test->default"/>
 		<dependency org="junit" name="junit" rev="3.8.2" conf="test->default" />
 	</dependencies>
 </ivy-module>

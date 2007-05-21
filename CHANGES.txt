@@ -27,6 +27,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 	Costin Leau
 	Antoine Levy-Lambert
 	William Lyvers
+	Jan Materne
 	Stephen Nesbitt
 	Joshua Nichols
 	Bernard Niset
@@ -51,6 +52,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 
 - IMPROVEMENT: Allow "main" parameters to be passed directly (instead of using -args flag) (IVY-480) (thanks to Archie Cobbs)
 - IMPROVEMENT: Remove @author tags (thanks to Stephane Bailliez)
+- IMPROVEMENT: Remove use of deprecated elements in ivysettings.xml (IVY-505) (with contribution from Jan Materne)
 
 - FIX: ${revision} property not recognized in poms (IVY-512)
 - FIX: Bug on handling dependency artifacts when a module configuration is specified (IVY-507)

@@ -147,7 +147,7 @@
                DEPENDENCY MNGT, COMPILATION AND JAR
          ================================================================= -->
 	<target name="resolve" depends="init-ivy" unless="no.resolve">
-		<ivy:retrieve conf="default,test" />
+		<ivy:retrieve conf="default,test" pattern="${lib.dir}/[artifact].[ext]"/>
 	</target>
 
 	<target name="compile-core" depends="prepare">
@@ -432,5 +432,29 @@
 			<fileset dir="${doc.src.dir}" includes="**/*.html,**/*.json" excludes="samples/**,presentations/**" />
 		</apply>
 		-->
+	</target>
+	
+    <!-- =================================================================
+               IDE SPECIFIC
+         ================================================================= -->
+	<available file="${basedir}/.classpath" property="eclipse.classpath.exists"/>
+	<target name="check-eclipse-classpath-overwrite" if="eclipse.classpath.exists">
+		<input message=".classpath file already exists.${line.separator}Are you sure you want to overwrite it and loose your original file?" 
+			   validargs="Y,N,y,n" addproperty="eclipse.classpath.confirm"/>
+		<condition property="eclipse.classpath.abort">
+			<equals arg1="${eclipse.classpath.confirm}" arg2="N" casesensitive="false"/>
+		</condition>
+	</target>
+	
+	<target name="eclipse-default" depends="resolve, check-eclipse-classpath-overwrite"
+			unless="eclipse.classpath.abort"
+			description="--> creates a default .classpath for eclipse, using jars resolved by this ant build">
+		<copy file="${basedir}/.classpath.default" tofile="${basedir}/.classpath" overwrite="true"/>
+	</target>
+
+	<target name="eclipse-ivyde" depends="check-eclipse-classpath-overwrite"
+			unless="eclipse.classpath.abort"
+			description="--> creates a .classpath for eclipse using Apache IvyDE version">
+		<copy file="${basedir}/.classpath.ivyde" tofile="${basedir}/.classpath" overwrite="true"/>
 	</target>
 </project>
