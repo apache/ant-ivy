@@ -96,6 +96,13 @@ public class VisitNode {
      * to get info on the current resolve process
      */
     private ResolveData _data;
+    /**
+     * Boolean.TRUE if a node with a same module id as the one visited 
+     * has already been visited in the current path.
+     * null if not computed yet
+     * Boolean.FALSE otherwise
+     */
+	private Boolean _isCircular;
 
     
     public VisitNode(ResolveData data, IvyNode node, VisitNode parent, String rootModuleConf, String parentConf) {
@@ -258,10 +265,12 @@ public class VisitNode {
      * See getRealNode for details about what a 'real' node is.
      */
     public void useRealNode() {
-        IvyNode node = _data.getNode(_node.getId());
-        if (node != null && node != _node) {
-        	_node = node;
-        }
+    	if (_parent != null) { // use real node make sense only for non root module
+	        IvyNode node = _data.getNode(_node.getId());
+	        if (node != null && node != _node) {
+	        	_node = node;
+	        }
+    	}
     }
 
     public boolean loadData(String conf, boolean shouldBePublic) {
@@ -384,9 +393,28 @@ public class VisitNode {
 		return _parent==null?null:_parent.getNode();
 	}
 
-	public boolean isCircular() {
-		return _node.isCircular();
-	}
+
+    /**
+     * Returns true if this node can already be found in the path
+     * @return
+     */
+    public boolean isCircular() {
+    	if (_isCircular == null) {
+            if (_parent != null) {
+            	_isCircular = Boolean.FALSE; // asumme it's false, and see if it isn't by checking the parent path
+                for (Iterator iter = _parent.getPath().iterator(); iter.hasNext();) {
+    				VisitNode ancestor = (VisitNode) iter.next();
+    				if (getId().getModuleId().equals(ancestor.getId().getModuleId())) {
+    					_isCircular = Boolean.TRUE;
+    					break;
+    				}
+    			}
+            } else {
+				_isCircular = Boolean.FALSE;
+            }
+    	}
+    	return _isCircular.booleanValue();
+    }
 
 	public String[] getConfsToFetch() {
 		return _node.getConfsToFetch();

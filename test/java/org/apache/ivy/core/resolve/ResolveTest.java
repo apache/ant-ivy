@@ -2051,6 +2051,43 @@ public class ResolveTest extends TestCase {
         }
     }
     
+    public void testCircular3() throws Exception {
+    	// test case for IVY-400
+        // mod6.3 depends on mod6.2, which itself depends on mod6.3, 
+    	// in both configuration default and test
+    	
+        ResolveReport report = _ivy.resolve(new File("test/repositories/2/mod6.3/ivy-1.2.xml").toURL(),
+                getResolveOptions(new String[] {"default","test"}));
+        assertFalse(report.hasError());
+        // we should have mod 6.2 artifact in both configurations
+        assertEquals(1, report.getConfigurationReport("default").getArtifactsNumber()); 
+        assertEquals(1, report.getConfigurationReport("test").getArtifactsNumber()); 
+        
+        _settings.setCircularDependencyStrategy(IgnoreCircularDependencyStrategy.getInstance());
+        report = _ivy.resolve(new File("test/repositories/2/mod6.3/ivy-1.2.xml").toURL(),
+                getResolveOptions(new String[] {"default","test"}));
+        assertFalse(report.hasError());
+        assertEquals(1, report.getConfigurationReport("default").getArtifactsNumber()); 
+        assertEquals(1, report.getConfigurationReport("test").getArtifactsNumber()); 
+        
+        _settings.setCircularDependencyStrategy(WarnCircularDependencyStrategy.getInstance());
+        report = _ivy.resolve(new File("test/repositories/2/mod6.3/ivy-1.2.xml").toURL(),
+        		getResolveOptions(new String[] {"default","test"}));
+        assertFalse(report.hasError());
+        assertEquals(1, report.getConfigurationReport("default").getArtifactsNumber()); 
+        assertEquals(1, report.getConfigurationReport("test").getArtifactsNumber()); 
+        
+        _settings.setCircularDependencyStrategy(ErrorCircularDependencyStrategy.getInstance());
+        try {
+	        _ivy.resolve(new File("test/repositories/2/mod6.3/ivy-1.2.xml").toURL(),
+	                getResolveOptions(new String[] {"default","test"}));
+	        fail("no exception with circular dependency strategy set to error");
+        } catch (CircularDependencyException ex)  {
+        	assertEquals("[ org6 | mod6.3 | 1.2 ]->[ org6 | mod6.2 | 1.1 ]->[ org6 | mod6.3 | 1.2 ]", ex.getMessage());
+        }
+    }
+    
+    
     public void testRegularCircular() throws Exception {
         // mod11.1 depends on mod11.2 but excludes itself
         // mod11.2 depends on mod11.1

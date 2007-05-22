@@ -131,7 +131,6 @@ public class IvyNode implements Comparable {
     
     private boolean _downloaded = false;
     private boolean _searched = false;
-    private boolean _isCircular = false;
 
     private Collection _confsToFetch = new HashSet();
     private Collection _fetchedConfigurations = new HashSet();
@@ -865,14 +864,6 @@ public class IvyNode implements Comparable {
     public boolean isLoaded() {
         return _md != null;
     }
-
-    /**
-     * Returns true if this node can already be found among its callers
-     * @return
-     */
-    public boolean isCircular() {
-        return _isCircular;
-    }
     
     public boolean isFetched(String conf) {
         return _fetchedConfigurations.contains(conf);
@@ -992,8 +983,8 @@ public class IvyNode implements Comparable {
 
     public void addCaller(String rootModuleConf, IvyNode callerNode, String callerConf, String[] dependencyConfs, DependencyDescriptor dd) {
     	_callers.addCaller(rootModuleConf, callerNode, callerConf, dependencyConfs, dd);
-        _isCircular = _callers.getAllCallersModuleIds().contains(getId().getModuleId());
-        if (_isCircular) {
+        boolean isCircular = _callers.getAllCallersModuleIds().contains(getId().getModuleId());
+        if (isCircular) {
         	IvyContext.getContext().getCircularDependencyStrategy().handleCircularDependency(
         			toMrids(findPath(getId().getModuleId()), this));
         }

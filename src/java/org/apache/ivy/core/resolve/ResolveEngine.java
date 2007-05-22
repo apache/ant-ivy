@@ -67,6 +67,17 @@ import org.apache.ivy.plugins.resolver.DependencyResolver;
 import org.apache.ivy.util.Message;
 import org.apache.ivy.util.filter.Filter;
 
+/**
+ * The resolve engine which is the core of the dependency resolution
+ * mechanism used in Ivy.
+ * 
+ *  It features several resolve methods, some very simple, like {@link #resolve(File)} 
+ *  and {@link #resolve(URL)} which allow to simply resolve dependencies of a single
+ *  module descriptor, or more complete one, like the {@link #resolve(ModuleDescriptor, ResolveOptions)}
+ *  which allows to provide options to the resolution engine.
+ *  
+ *  @see ResolveOptions
+ */
 public class ResolveEngine {
 	private IvySettings _settings;
 	private EventManager _eventManager;
@@ -76,17 +87,34 @@ public class ResolveEngine {
     private Set _fetchedSet = new HashSet();
 	private DependencyResolver _dictatorResolver;
 	
-	
+	/**
+	 * Constructs a ResolveEngine.
+	 * 
+	 * @param settings the settings to use to configure the engine. Must not be null.
+	 * @param eventManager the event manager to use to send events about the resolution process. Must not be null.
+	 * @param sortEngine the sort engine to use to sort modules before producing the dependency resolution report. Must not be null.
+	 */
     public ResolveEngine(IvySettings settings, EventManager eventManager, SortEngine sortEngine) {
 		_settings = settings;
 		_eventManager = eventManager;
 		_sortEngine = sortEngine;
 	}
 
+    /**
+     * Returns the currently configured dictator resolver, which when non
+     * null is used in place of any specified resolver in the {@link IvySettings}
+     * @return the currently configured dictator resolver, may be null.
+     */
 	public DependencyResolver getDictatorResolver() {
         return _dictatorResolver;
     }
 
+	/**
+	 * Sets a dictator resolver, which is used in place of regular dependency resolver 
+	 * for subsequent dependency resolution by this engine.
+	 * @param dictatorResolver the dictator resolver to use in this engine, 
+	 * 		  null if regular settings should used
+	 */
     public void setDictatorResolver(DependencyResolver dictatorResolver) {
         _dictatorResolver = dictatorResolver;
         _settings.setDictatorResolver(dictatorResolver);
@@ -366,7 +394,8 @@ public class ResolveEngine {
         		throw new NullPointerException("null conf not allowed: confs where: "+Arrays.asList(confs));
         	}
         	
-            // for each configuration we clear the cache of what's been fetched
+        	Message.verbose("resolving dependencies for configuration '"+confs[i]+"'");
+        	// for each configuration we clear the cache of what's been fetched
             _fetchedSet.clear();     
             
             Configuration configuration = md.getConfiguration(confs[i]);
@@ -465,8 +494,10 @@ public class ResolveEngine {
     private void fetchDependencies(VisitNode node, String conf, boolean shouldBePublic) {
     	checkInterrupted();
         long start = System.currentTimeMillis();
-        if (_settings.debugConflictResolution()) {
-            Message.debug(node.getId()+" => resolving dependencies in "+conf);
+        if (node.getParent() != null) {
+        	Message.verbose("== resolving dependencies "+node.getParent().getId()+"->"+node.getId()+" ["+node.getParentConf()+"->"+conf+"]");
+        } else {
+        	Message.verbose("== resolving dependencies for "+node.getId()+" ["+conf+"]");
         }
         resolveConflict(node);
         
