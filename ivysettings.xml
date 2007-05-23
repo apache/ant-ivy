@@ -20,11 +20,26 @@
 	<include url="${ivy.default.conf.dir}/ivyconf-local.xml"/>
 	<settings defaultResolver="public" />
 	<resolvers>
-		<url name="public">
-			<ivy pattern="http://ivyrep.jayasoft.org/[organisation]/[module]/ivy-[revision].xml"/>
-			<artifact pattern="http://ivyrep.jayasoft.org/[organisation]/[module]/[revision]/[artifact].[ext]"/>
-			<artifact pattern="http://repo1.maven.org/maven/[module]/[type]s/[artifact]-[revision].[ext]"/>
-			<artifact pattern="http://repo1.maven.org/maven2/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]"/>
-		</url>
+		<chain name="public" returnFirst="true">
+			<ibiblio name="ibiblio" m2compatible="true"/>
+			<url name="ivy" namespace="ivyrep-ns">
+				<ivy pattern="http://ivyrep.jayasoft.org/[organisation]/[module]/ivy-[revision].xml"/>
+				<artifact pattern="http://ivyrep.jayasoft.org/[organisation]/[module]/[revision]/[artifact].[ext]"/>
+			</url>
+		</chain>
 	</resolvers>
+	<namespaces>
+		<namespace name="ivyrep-ns">
+		  <rule>
+		    <fromsystem>
+		      <src org="commons-vfs|slide" />
+		      <dest org="apache"/>
+		    </fromsystem>
+		    <tosystem>
+		      <src module="(.*)"/>
+		      <dest org="$m1"/>
+		    </tosystem>
+		  </rule>
+		</namespace>
+	</namespaces>
 </ivysettings>

@@ -318,8 +318,13 @@
 	
 	<target name="emma" depends="jar" unless="skip.test">
 		<ivy:cachepath organisation="emma" module="emma" revision="2.0.5312" 
-			           inline="true" conf="ant" pathid="emma.classpath"/> 
-		<taskdef resource="emma_ant.properties" classpathref="emma.classpath" />
+			           inline="true" conf="default" pathid="emma.classpath"/> 
+		<ivy:cachepath organisation="emma" module="emma_ant" revision="2.0.5312" 
+			           inline="true" conf="default" pathid="emma.ant.classpath" transitive="false"/> 
+		<taskdef resource="emma_ant.properties">
+			<classpath refid="emma.classpath" />
+			<classpath refid="emma.ant.classpath" />
+		</taskdef>
 		<property name="emma.enabled" value="true" />
 		<property name="coverage.dir" value="${build.dir}/coverage" />
 		<property name="coverage.classes.dir" value="${coverage.dir}/classes" />
@@ -434,7 +439,32 @@
 		-->
 	</target>
 	
-    <!-- =================================================================
+    <target name="checkstyle" depends="jar" description="checks Ivy codebase according to ${config.dir}/checkstyle-config">		
+    	<ivy:cachepath organisation="checkstyle" module="checkstyle" revision="4.3" 
+        	inline="true" conf="default" pathid="checkstyle.classpath" transitive="true"/> 
+		<taskdef resource="checkstyletask.properties" classpathref="checkstyle.classpath" />
+
+        <mkdir dir="${checkstyle.report.dir}"/>
+        <checkstyle config="${checkstyle.src.dir}/checkstyle-config" failOnViolation="false">
+            <formatter type="xml" toFile="${checkstyle.report.dir}/checkstyle.xml"/>
+            <fileset dir="${src.dir}">
+                <include name="**/*.java"/>
+            </fileset>
+        </checkstyle>
+    </target>
+
+	<target name="checkstyle-report" depends="checkstyle">
+		<property name="checkstyle.basedir" location="${src.dir}"/>
+        <xslt in="${checkstyle.report.dir}/checkstyle.xml" 
+              style="${checkstyle.src.dir}/checkstyle-frames.xsl"
+              out="${checkstyle.report.dir}/output.txt">
+          <param name="basedir" expression="${checkstyle.basedir}"/>
+        </xslt>
+
+	</target>
+	
+
+	<!-- =================================================================
                IDE SPECIFIC
          ================================================================= -->
 	<available file="${basedir}/.classpath" property="eclipse.classpath.exists"/>
