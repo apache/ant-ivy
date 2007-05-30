@@ -69,6 +69,9 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - FIX: Credentials are shown in build log even if debug is not enabled (IVY-486) (thanks to Gilles Scokart)
 - FIX: Post-Resolve task shouldn't set the 'resolveid' (IVY-489)
 - FIX: build fails without emma code coverage JARs present (IVY-478)
+- FIX: buildlist broken - regression in 2.0.0-alpha1-incubating (IVY-493)
+- FIX: Circular dependency startegy in buildlist (IVY-509)
+- FIX: ivy should stop telling me off twice for ivyconf.xml files (IVY-513)
 
    2.0.0-alpha1-incubating
 =====================================

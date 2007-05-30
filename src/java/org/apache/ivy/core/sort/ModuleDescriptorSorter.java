@@ -21,30 +21,31 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Stack;
 
 import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
-import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.plugins.circular.CircularDependencyException;
-import org.apache.ivy.plugins.circular.CircularDependencyHelper;
+import org.apache.ivy.plugins.circular.CircularDependencyStrategy;
 import org.apache.ivy.plugins.version.VersionMatcher;
 import org.apache.ivy.util.Message;
 
 
 /**
- * Inner helper class for sorting ModuleDescriptors.
- *
+ * Inner helper class for sorting ModuleDescriptors.<br>
+ * ModuleDescriptorSorter use CollectionOfModulesToSort to find the dependencies of the modules, and use ModuleInSort
+ * to store some temporary values attached to the modules to sort.
+ * @see ModuleInSort
+ * @see CollectionOfModulesToSort
  */
 public class ModuleDescriptorSorter {
-    
-    
-    private final Collection moduleDescriptors;
-    private final Iterator moduleDescriptorsIterator;
+        
+    private final CollectionOfModulesToSort moduleDescriptors;
     private final List sorted = new LinkedList();
+	private final CircularDependencyStrategy circularDepStrategy;
+      
     
-    public ModuleDescriptorSorter(Collection moduleDescriptors) {
-        this.moduleDescriptors=moduleDescriptors;
-        moduleDescriptorsIterator = new LinkedList(moduleDescriptors).iterator();
+    public ModuleDescriptorSorter(Collection modulesDescriptorsToSort,VersionMatcher matcher, NonMatchingVersionReporter nonMatchingVersionReporter, CircularDependencyStrategy circularDepStrategy) {
+    	this.circularDepStrategy = circularDepStrategy;
+		moduleDescriptors = new CollectionOfModulesToSort(modulesDescriptorsToSort, matcher , nonMatchingVersionReporter);
     }
     
     /**
@@ -52,9 +53,12 @@ public class ModuleDescriptorSorter {
      * @return sorted module
      * @throws CircularDependencyException
      */
-    public List sortModuleDescriptors(VersionMatcher matcher) throws CircularDependencyException {
-        while (moduleDescriptorsIterator.hasNext()) {
-            sortModuleDescriptorsHelp(matcher, (ModuleDescriptor)moduleDescriptorsIterator.next(), new Stack());
+    public List sortModuleDescriptors() throws CircularDependencyException {
+    	Message.debug("Nbr of module to sort : " + moduleDescriptors.size());
+    	Iterator _moduleDescriptorsIterator = moduleDescriptors.iterator();
+        while (_moduleDescriptorsIterator.hasNext()) {
+            ModuleInSort next = (ModuleInSort)_moduleDescriptorsIterator.next();
+			sortModuleDescriptorsHelp(next, next);
         }
         return sorted;
     }
@@ -63,52 +67,33 @@ public class ModuleDescriptorSorter {
      * If current module has already been added to list, returns,
      * Otherwise invokes sortModuleDescriptorsHelp for all dependencies
      * contained within set of moduleDescriptors.  Then finally adds self
-     * to list of sorted.
+     * to list of sorted.<br/>
+     * When a loop is detected by a recursive call, the moduleDescriptors are not added
+     * immediately added to the sorted list.  They are added as loop dependencies of the root, and will be
+     * added to the sorted list only when the root itself will be added. 
      * @param current Current module to add to sorted list.
      * @throws CircularDependencyException
      */
-    private void sortModuleDescriptorsHelp(VersionMatcher matcher, ModuleDescriptor current, Stack callStack) throws CircularDependencyException {
+    private void sortModuleDescriptorsHelp(ModuleInSort current, ModuleInSort caller) throws CircularDependencyException {
         //if already sorted return
-        if (sorted.contains(current)) {
+        if (current.isSorted()) {
             return;
         }
-        if (callStack.contains(current)) {
-            callStack.add(current);
-            Message.verbose("circular dependency ignored during sort: "+CircularDependencyHelper.formatMessage((ModuleDescriptor[]) callStack.toArray(new ModuleDescriptor[callStack.size()])));
-            return;
-        }
+		if (current.checkLoop(caller , circularDepStrategy)) {
+			return;
+		}
         DependencyDescriptor [] descriptors = current.getDependencies();
-        ModuleDescriptor moduleDescriptorDependency = null;
-        for (int i = 0; descriptors!=null && i < descriptors.length; i++) {
-            moduleDescriptorDependency = getModuleDescriptorDependency(matcher, descriptors[i]);
-            
-            if (moduleDescriptorDependency != null) {
-                callStack.push(current);
-                sortModuleDescriptorsHelp(matcher, moduleDescriptorDependency, callStack);
-                callStack.pop();
+        Message.debug("Sort dependencies of : " + current.toString() + " / Number of dependencies = " + descriptors.length);
+        current.setCaller(caller);
+        for (int i = 0; i < descriptors.length; i++) {
+        	ModuleInSort child = moduleDescriptors.getModuleDescriptorDependency(descriptors[i]);
+            if (child != null) {
+                sortModuleDescriptorsHelp(child, current);
             }
         }
-        sorted.add(current);
+        current.endOfCall();
+        Message.debug("Sort done for : " + current.toString());
+        current.addToSortedListIfRequired(sorted);
     }
 
-    /**
-     * @param descriptor
-     * @return a ModuleDescriptor from the collection of module descriptors to sort.
-     * If none exists returns null.
-     */
-    private ModuleDescriptor getModuleDescriptorDependency(VersionMatcher matcher, DependencyDescriptor descriptor) {
-        Iterator i = moduleDescriptors.iterator();
-        ModuleDescriptor md = null;
-        while (i.hasNext()) {
-            md = (ModuleDescriptor) i.next();
-            if (descriptor.getDependencyId().equals(md.getModuleRevisionId().getModuleId())) {
-                if (md.getResolvedModuleRevisionId().getRevision() == null) {
-                    return md;
-                } else if (matcher.accept(descriptor.getDependencyRevisionId(), md)) {
-                    return md;
-                }
-            }
-        }
-        return null;
-    }
 }

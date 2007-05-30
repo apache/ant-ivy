@@ -80,7 +80,14 @@ public class SortEngine {
      * @throws CircularDependencyException if a circular dependency exists
      */
     public List sortModuleDescriptors(Collection moduleDescriptors) throws CircularDependencyException {
-        return new ModuleDescriptorSorter(moduleDescriptors).sortModuleDescriptors(_settings.getVersionMatcher());   
+		return sortModuleDescriptors(moduleDescriptors , new DefaultNonMatchingVersionReporter());   
     }
+
+
+	public List sortModuleDescriptors(Collection moduleDescriptors, NonMatchingVersionReporter nonMatchingVersionReporter) {
+		ModuleDescriptorSorter sorter = new ModuleDescriptorSorter(moduleDescriptors, 
+        		_settings.getVersionMatcher(), nonMatchingVersionReporter , _settings.getCircularDependencyStrategy());
+		return sorter.sortModuleDescriptors();
+	}
 
 }

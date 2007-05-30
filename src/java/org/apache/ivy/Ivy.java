@@ -51,6 +51,7 @@ import org.apache.ivy.core.search.OrganisationEntry;
 import org.apache.ivy.core.search.RevisionEntry;
 import org.apache.ivy.core.search.SearchEngine;
 import org.apache.ivy.core.settings.IvySettings;
+import org.apache.ivy.core.sort.NonMatchingVersionReporter;
 import org.apache.ivy.core.sort.SortEngine;
 import org.apache.ivy.plugins.matcher.PatternMatcher;
 import org.apache.ivy.plugins.repository.TransferEvent;
@@ -332,6 +333,10 @@ public class Ivy {
         return _sortEngine.sortModuleDescriptors(moduleDescriptors);   
     }
     
+    public List sortModuleDescriptors(Collection moduleDescriptors, NonMatchingVersionReporter nonMatchingVersionReporter) {
+    	return _sortEngine.sortModuleDescriptors(moduleDescriptors , nonMatchingVersionReporter);
+	}
+    
     /////////////////////////////////////////////////////////////////////////
     //                         SEARCH
     /////////////////////////////////////////////////////////////////////////
@@ -562,5 +567,7 @@ public class Ivy {
 	public void setSettings(IvySettings settings) {
 		_settings = settings;
 	}
+
+	
 
 }

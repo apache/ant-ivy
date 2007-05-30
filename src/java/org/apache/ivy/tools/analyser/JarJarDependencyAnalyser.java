@@ -73,7 +73,7 @@ public class JarJarDependencyAnalyser implements DependencyAnalyser {
 
 				DefaultModuleDescriptor md = (DefaultModuleDescriptor) mds.get(module.getMrid());
 				
-				DefaultDependencyDescriptor dd = new DefaultDependencyDescriptor(dependency.getMrid(), false);
+				DefaultDependencyDescriptor dd = new DefaultDependencyDescriptor(md,dependency.getMrid(), false, false, true);
 				dd.addDependencyConfiguration(ModuleDescriptor.DEFAULT_CONFIGURATION, ModuleDescriptor.DEFAULT_CONFIGURATION);
 				md.addDependency(dd);
 			}

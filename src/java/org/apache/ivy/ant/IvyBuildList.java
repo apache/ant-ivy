@@ -47,86 +47,85 @@ import org.apache.tools.ant.types.Path;
 
 /**
  * Creates an ant filelist of files (usually build.xml) ordered according to the dependencies declared in ivy files.
- * 
  */
 public class IvyBuildList extends IvyTask {
-    private List _buildFiles = new ArrayList(); // List (FileSet)
-    private String _reference;
-    private boolean _haltOnError = true;
-    private boolean _skipBuildWithoutIvy = false;
-    private boolean _reverse = false;
-    private String _ivyFilePath;
-    private String _root = "*";
-    private boolean _excludeRoot = false;
-    private String _leaf = "*";
-    private String _delimiter = ",";
-    private boolean _excludeLeaf = false;
+    private List buildFileSets = new ArrayList(); // List (FileSet)
+    private String reference;
+    private boolean haltOnError = true;
+    private boolean skipBuildWithoutIvy = false;
+    private boolean reverse = false;
+    private String ivyFilePath;
+    private String root = "*";
+    private boolean excludeRoot = false;
+    private String leaf = "*";
+    private String delimiter = ",";
+    private boolean excludeLeaf = false;
 
 
     public void addFileset(FileSet buildFiles) {
-        _buildFiles.add(buildFiles);
+        buildFileSets.add(buildFiles);
     }
 
     public String getReference() {
-        return _reference;
+        return reference;
     }
 
     public void setReference(String reference) {
-        _reference = reference;
+        this.reference = reference;
     }
 
     public String getRoot() {
-        return _root;
+        return root;
     }
 
     public void setRoot(String root) {
-        _root = root;
+        this.root = root;
     }
 
     public boolean isExcludeRoot() {
-        return _excludeRoot;
+        return excludeRoot;
     }
 
     public void setExcludeRoot(boolean root) {
-        _excludeRoot = root;
+        excludeRoot = root;
     }
 
 	public String getLeaf() {
-		return _leaf;
+		return leaf;
 	}
 
 	public void setLeaf(String leaf) {
-		_leaf = leaf;
+		this.leaf = leaf;
 	}
 
 	public boolean isExcludeLeaf() {
-		return _excludeLeaf;
+		return excludeLeaf;
 	}
 
 	public void setExcludeLeaf(boolean excludeLeaf) {
-		_excludeLeaf = excludeLeaf;
+		this.excludeLeaf = excludeLeaf;
 	}
 
 	public String getDelimiter() {
-		return _delimiter;
+		return delimiter;
 	}
 	
 	public void setDelimiter(String delimiter) {
-		_delimiter = delimiter;
+		this.delimiter = delimiter;
 	}
 	
     public void doExecute() throws BuildException {
-        if (_reference == null) {
+        if (reference == null) {
             throw new BuildException("reference should be provided in ivy build list");
         }
-        if (_buildFiles.isEmpty()) {
+        if (buildFileSets.isEmpty()) {
             throw new BuildException("at least one nested fileset should be provided in ivy build list");
         }
 
         Ivy ivy = getIvyInstance();
         IvySettings settings = ivy.getSettings();
         
-		_ivyFilePath = getProperty(_ivyFilePath, settings, "ivy.buildlist.ivyfilepath");
+		ivyFilePath = getProperty(ivyFilePath, settings, "ivy.buildlist.ivyfilepath");
 
         Path path = new Path(getProject());
 
@@ -135,22 +134,22 @@ public class IvyBuildList extends IvyTask {
         List independent = new ArrayList();
 
         Set rootModuleNames = new LinkedHashSet();
-        if (!"*".equals(_root)) {
-        	StringTokenizer st = new StringTokenizer(_root, _delimiter);
+        if (!"*".equals(root)) {
+        	StringTokenizer st = new StringTokenizer(root, delimiter);
         	while (st.hasMoreTokens()) {
         		rootModuleNames.add(st.nextToken());
         	}
         }
         
         Set leafModuleNames = new LinkedHashSet();
-        if (! "*".equals(_leaf)) {
-        	StringTokenizer st = new StringTokenizer(_leaf, _delimiter);
+        if (! "*".equals(leaf)) {
+        	StringTokenizer st = new StringTokenizer(leaf, delimiter);
         	while (st.hasMoreTokens()) {
         		leafModuleNames.add(st.nextToken());
         	}
         }
         
-        for (ListIterator iter = _buildFiles.listIterator(); iter.hasNext();) {
+        for (ListIterator iter = buildFileSets.listIterator(); iter.hasNext();) {
             FileSet fs = (FileSet)iter.next();
             DirectoryScanner ds = fs.getDirectoryScanner(getProject());
             String[] builds = ds.getIncludedFiles();
@@ -158,7 +157,7 @@ public class IvyBuildList extends IvyTask {
                 File buildFile = new File(ds.getBasedir(), builds[i]);
                 File ivyFile = getIvyFileFor(buildFile);
                 if (!ivyFile.exists()) {
-                    if (_skipBuildWithoutIvy) {
+                    if (skipBuildWithoutIvy) {
                         Message.debug("skipping "+buildFile+": ivy file "+ivyFile+" doesn't exist");
                     } else {
                         Message.verbose("no ivy file for "+buildFile+": ivyfile="+ivyFile+": adding it at the beginning of the path");
@@ -170,8 +169,9 @@ public class IvyBuildList extends IvyTask {
                         ModuleDescriptor md = ModuleDescriptorParserRegistry.getInstance().parseDescriptor(settings, ivyFile.toURL(), doValidate(settings));
                         buildFiles.put(md, buildFile);
                         mdsMap.put(md.getModuleRevisionId().getModuleId().getName(), md);
+                        Message.debug("Add " + md.getModuleRevisionId().getModuleId());
                     } catch (Exception ex) {
-                        if (_haltOnError) {
+                        if (haltOnError) {
                             throw new BuildException("impossible to parse ivy file for "+buildFile+": ivyfile="+ivyFile+" exception="+ex, ex);
                         } else {
                             Message.warn("impossible to parse ivy file for "+buildFile+": ivyfile="+ivyFile+" exception="+ex.getMessage());
@@ -257,7 +257,7 @@ public class IvyBuildList extends IvyTask {
         	ModuleDescriptor rootmd = (ModuleDescriptor) it.next();
             processFilterNodeFromRoot(rootmd, toKeep, moduleIdMap);
             // With the excluderoot attribute set to true, take the rootmd out of the toKeep set.
-            if (_excludeRoot) {
+            if (excludeRoot) {
                 Message.verbose("Excluded module " + rootmd.getModuleRevisionId().getModuleId().getName());
                 toKeep.remove(rootmd);
             }
@@ -315,7 +315,7 @@ public class IvyBuildList extends IvyTask {
         while (it.hasNext()) {
         	ModuleDescriptor leafmd = (ModuleDescriptor) it.next();
             // With the excludeleaf attribute set to true, take the rootmd out of the toKeep set.
-            if (_excludeLeaf) {
+            if (excludeLeaf) {
             	Message.verbose("Excluded module " + leafmd.getModuleRevisionId().getModuleId().getName());
             } else {
             	toKeep.add(leafmd);
@@ -365,40 +365,40 @@ public class IvyBuildList extends IvyTask {
     }
 
     private File getIvyFileFor(File buildFile) {
-        return new File(buildFile.getParentFile(), _ivyFilePath);
+        return new File(buildFile.getParentFile(), ivyFilePath);
     }
 
     public boolean isHaltonerror() {
-        return _haltOnError;
+        return haltOnError;
     }
 
     public void setHaltonerror(boolean haltOnError) {
-        _haltOnError = haltOnError;
+        this.haltOnError = haltOnError;
     }
 
     public String getIvyfilepath() {
-        return _ivyFilePath;
+        return ivyFilePath;
     }
 
     public void setIvyfilepath(String ivyFilePath) {
-        _ivyFilePath = ivyFilePath;
+        this.ivyFilePath = ivyFilePath;
     }
 
     public boolean isSkipbuildwithoutivy() {
-        return _skipBuildWithoutIvy;
+        return skipBuildWithoutIvy;
     }
 
     public void setSkipbuildwithoutivy(boolean skipBuildFilesWithoutIvy) {
-        _skipBuildWithoutIvy = skipBuildFilesWithoutIvy;
+        this.skipBuildWithoutIvy = skipBuildFilesWithoutIvy;
     }
 
     public boolean isReverse() {
-        return _reverse;
+        return reverse;
     }
 
 
     public void setReverse(boolean reverse) {
-        _reverse = reverse;
+        this.reverse = reverse;
     }
 
 }

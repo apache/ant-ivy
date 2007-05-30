@@ -29,6 +29,9 @@ The buildlist task enable to obtain a filelist of files (usually build.xml files
 
 This is particularly useful combined with subant, to build a set of interelated projects being sure that a dependency will be built before any module depending on it.
 
+When the ivy.xml of the modules that you want to order doesn't contains a <a href="../ivyfile/info.html">revision</a> numbers, the rev attributes declared in the dependency is not used.
+When the ivy.xml of the modules that you want to order contains a <a href="../ivyfile/info.html">revision</a> numbers, the revision numbers are used.    If the revision number doesn't match a dependency description a warning is logged and the modules is considered as different modules.  
+
 <span class="since">since 1.3</span> A root attribute can also be used to include, among all the modules found, only the one that are dependencies (either direct or transitive) of a root module. This can also be used with the excluderoot attribute, which when set to true will exclude the root itself from the list.
 
 <span class="since">since 1.4.1</span> A leaf attribute can also be used to include, among all the modules found, only the one that have dependencies (either direct or transitive) on a leaf module. This can also be used with the excludeleaf attribute, which when set to true will exclude the leaf itself from the list.
@@ -36,6 +39,11 @@ This is particularly useful combined with subant, to build a set of interelated 
 <span class="since">since 1.4</span> The ivy.sorted.modules property is set in the ant at the end of the task with a comma separated list of ordered modules. This can be useful for debug or information purpose.
 
 <span class="since">since 2.0</span> The root and leaf attributes can be a delimited list of modules to use as roots.  These modules, and all their dependencies will be included in the build list.
+
+<span class="since">since 2.0</span> By default, all the modules included in a circular dependency are grouped together so that any dependency of any module in the loop will apear before the modules in the loop.  This garantee that if there is a depedendency path between a module A and a module B (but no dependency path from B to A), B will alway apear before A even if A is included in a loop in the provided set of modules to sort.
+Note that circular dependency can also trigger a failure depending on the value configured in the circularDependencyStrategy of your <a href="../configuration/conf.html#circularDependencyStrategy">settings</a>
+
+
 <table class="ant">
 <thead>
     <tr><th class="ant-att">Attribute</th><th class="ant-desc">Description</th><th class="ant-req">Required</th></tr>
@@ -52,7 +60,7 @@ This is particularly useful combined with subant, to build a set of interelated 
     <tr><td>haltonerror</td><td>true to halt the build when an invalid ivy file is encountered, false to continue</td><td>No. Defaults to true</td></tr>
     <tr><td>skipbuildwithoutivy</td><td>true to skip files of the fileset with no corresponding ivy file, false otherwise. If false the file with no corresponding ivy file will be considered as independent of the other and put at the beginning of the built filelist.</td><td>No. Defaults to false</td></tr>
     <tr><td>reverse</td><td>true to obtain the list in the reverse order, i.e. from the most dependent to the least one</td><td>No. Defaults to default false</td></tr>
-    <tr><td>settingsRef</td><td><span class="since">(since 2.0)</span> A reference to the ivy settings that must be used by this task</td><td>No, 'ivy.instance' is taken by default.</td></tr>
+    <tr><td>settingsRef</td><td><span class="since">since 2.0</span> A reference to the ivy settings that must be used by this task</td><td>No, 'ivy.instance' is taken by default.</td></tr>
 </tbody>
 </table>
 

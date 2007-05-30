@@ -76,9 +76,24 @@ public class MockMessageImpl implements MessageImpl {
 				return;
 			}
 		}
-		throw new AssertionFailedError("logs do not contain expected message: expected='"+message+"' logs='"+join(_logs)+"'" );
+		throw new AssertionFailedError("logs do not contain expected message: expected='"+message+"' logs='\n"+join(_logs)+"'" );
 		
 	}
+
+	public void assertLogInfoContains(String message) {
+		assertLogContains(Message.MSG_INFO + " " + message);
+	}
+
+	public void assertLogWarningContains(String message) {
+		Message.sumupProblems();
+		assertLogContains(Message.MSG_WARN + " \t" + message);
+	}
+	
+	public void assertLogErrorContains(String message) {
+		Message.sumupProblems();
+		assertLogContains(Message.MSG_ERR + " " + message);
+	}
+
 
 	private String join(List logs) {
 		StringBuffer sb = new StringBuffer();

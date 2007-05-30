@@ -17,6 +17,9 @@
  */
 package org.apache.ivy.plugins.circular;
 
+import java.util.Iterator;
+import java.util.List;
+
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 
@@ -40,6 +43,20 @@ public class CircularDependencyHelper {
     public static String formatMessage(final ModuleDescriptor[] descriptors) {
     	return formatMessage(toMrids(descriptors));
     }
+    
+    /**
+    * @param loopElements a List<ModuleDescriptor>
+	*/
+    public static String formatMessageFromDescriptors(List loopElements) {
+    	ModuleRevisionId[] mrids = new ModuleRevisionId[loopElements.size()];
+		int pos = 0;
+		for (Iterator it = loopElements.iterator(); it.hasNext();) {
+			ModuleDescriptor descriptor = (ModuleDescriptor) it.next();
+			mrids[pos] = descriptor.getModuleRevisionId();
+			pos++;
+		}
+		return formatMessage(mrids);
+	}
 
 	public static ModuleRevisionId[] toMrids(ModuleDescriptor[] descriptors) {
 		ModuleRevisionId[] mrids = new ModuleRevisionId[descriptors.length];
@@ -48,5 +65,6 @@ public class CircularDependencyHelper {
 		}
 		return mrids;
 	}
+	
 
 }
