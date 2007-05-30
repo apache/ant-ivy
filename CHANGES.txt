@@ -8,6 +8,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
  Committers
  	Maarteen Coene
  	Xavier Hanin
+ 	Gilles Scokart
  
  Contributors
  	Ingo Adler
@@ -40,7 +41,6 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 	Christian Riege
 	Jean-Baptiste Quenot
 	Andreas Sahlbach
-	Gilles Scokart
 	John Shields
 	Johan Stuyts
 	John Williams
