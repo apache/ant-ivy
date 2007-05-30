@@ -84,12 +84,8 @@ public class DefaultDependencyDescriptor implements DependencyDescriptor {
     public static DefaultDependencyDescriptor transformInstance(DependencyDescriptor dd, NamespaceTransformer t, boolean fromSystem) {
         ModuleRevisionId transformParentId = t.transform(dd.getParentRevisionId());
         ModuleRevisionId transformMrid = t.transform(dd.getDependencyRevisionId());
-        DefaultDependencyDescriptor newdd = new DefaultDependencyDescriptor();
+        DefaultDependencyDescriptor newdd = new DefaultDependencyDescriptor(null, transformMrid, dd.isForce(), dd.isChanging(), dd.isTransitive());
         newdd._parentId = transformParentId;
-        newdd._revId = transformMrid;
-        newdd._force = dd.isForce();
-        newdd._changing = dd.isChanging();
-        newdd._transitive = dd.isTransitive();
         String[] moduleConfs = dd.getModuleConfigurations();
         if (moduleConfs.length == 1 && "*".equals(moduleConfs[0])) {
             if (dd instanceof DefaultDependencyDescriptor) {
@@ -139,10 +135,11 @@ public class DefaultDependencyDescriptor implements DependencyDescriptor {
      * This namespace should be used to check 
      */
     private Namespace _namespace = null;
-    private ModuleDescriptor _md;
+    private final ModuleDescriptor _md;
 	private DependencyDescriptor _asSystem = this; 
     
     public DefaultDependencyDescriptor(DependencyDescriptor dd, String revision) {
+    	_md = null;
         _parentId = dd.getParentRevisionId();
         _revId = ModuleRevisionId.newInstance(dd.getDependencyRevisionId(), revision);
         _force = dd.isForce();
@@ -169,13 +166,12 @@ public class DefaultDependencyDescriptor implements DependencyDescriptor {
     }
     
     public DefaultDependencyDescriptor(ModuleRevisionId mrid, boolean force, boolean changing) {
+    	_md = null;
         _revId = mrid;
         _force = force;
         _changing = changing;
     }
     
-    private DefaultDependencyDescriptor() {        
-    }
     
     public ModuleId getDependencyId() {
         return getDependencyRevisionId().getModuleId();

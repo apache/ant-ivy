@@ -89,6 +89,8 @@ public interface ModuleDescriptor extends ExtendableItem {
     String[] getPublicConfigurationsNames();
     Artifact[] getArtifacts(String conf);
 	Artifact[] getAllArtifacts();
+	
+	/** @retun The dependencies of the module.  If there is no dependencies return an empty array (non null) */
     DependencyDescriptor[] getDependencies();
     
     /**
