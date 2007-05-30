@@ -35,7 +35,6 @@ import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.plugins.circular.CircularDependencyHelper;
 import org.apache.ivy.plugins.circular.CircularDependencyStrategy;
-import org.apache.ivy.util.Message;
 
 public class SortTest extends TestCase {
     
@@ -57,14 +56,9 @@ public class SortTest extends TestCase {
         
         ivy = new Ivy();
 		ivy.configureDefault();
-		Message.setImpl(null);
     }
 
     
-    protected void tearDown() throws Exception {
-    	Message.sumupProblems();//purge the warning and error messages
-    	Message.setImpl(null);
-    }
 
 	public void testSort() throws Exception {        
         addDependency(md2,"md1" , "rev1");
@@ -115,7 +109,7 @@ public class SortTest extends TestCase {
         DefaultModuleDescriptor[][] possibleOrder = new DefaultModuleDescriptor[][] {
                 {md1, md3, md2, md4},
                 {md1, md2, md3, md4}//,
-                //{md3, md1, md2, md4}	//It should be better to not have this solution.  The loop should apear has one contigous element.
+                //{md3, md1, md2, md4}	//we don't have this solution.  The loops apear has one contigous element.
             };
         Collection permutations = getAllLists(md1, md3, md2, md4);
         for (Iterator it = permutations.iterator(); it.hasNext();) {
@@ -133,9 +127,6 @@ public class SortTest extends TestCase {
         addDependency(md2,"md1" , "rev1");
         addDependency(md3,"md2" , "rev2");
         addDependency(md4,"md3" , "rev3");
-
-        //MockMessageImpl mockMessageImpl = new MockMessageImpl();
-		//Message.setImpl(mockMessageImpl);
 
 		//Would be much easier with a tool like jmock 
 		class CircularDependencyReporterMock implements CircularDependencyStrategy {
@@ -163,7 +154,6 @@ public class SortTest extends TestCase {
 		ivy.sortModuleDescriptors(toSort);
 		
 		circularDepReportMock.validate();
-        //mockMessageImpl.assertLogWarningContains("circular dependency detected during sort: [ org | md3 | rev3 ]->[ org | md2 | rev2 ]->[ org | md3 | rev3 ]");
     }
         
     /**
