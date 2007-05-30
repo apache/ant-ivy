@@ -58,6 +58,8 @@ public abstract class IvyPostResolveTask extends IvyTask {
     private Filter _artifactFilter = null;
     private boolean useOrigin = false;
     
+    private Boolean keep = null;
+    
     public boolean isUseOrigin() {
     	return useOrigin;
     }
@@ -227,6 +229,7 @@ public abstract class IvyPostResolveTask extends IvyTask {
 		resolve.setHaltonfailure(haltOnFailure);
 		resolve.setUseOrigin(useOrigin);
 		resolve.setValidate(isValidate());
+		resolve.setKeep(isKeep());
 		return resolve;
 	}
 
@@ -326,6 +329,14 @@ public abstract class IvyPostResolveTask extends IvyTask {
 	
 	public File getFile() {
 		return _file;
+	}
+	
+	public void setKeep(boolean keep) {
+		this.keep = Boolean.valueOf(keep);
+	}
+	
+	public boolean isKeep() {
+		return this.keep == null ? !isInline() : this.keep.booleanValue();
 	}
 
 }

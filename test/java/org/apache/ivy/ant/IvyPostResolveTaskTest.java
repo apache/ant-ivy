@@ -159,6 +159,57 @@ public class IvyPostResolveTaskTest extends TestCase {
     	assertTrue(getArchiveFileInCache("org1", "mod1.2", "2.0", "mod1.2", "jar", "jar").exists());
     }
 
+    public void testWithoutKeep() throws Exception {
+    	IvyResolve resolve = new IvyResolve();
+    	resolve.setProject(_project);
+    	resolve.setCache(_cache);
+    	resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-multiconf.xml"));
+    	resolve.setConf("compile");
+    	resolve.execute();
+
+    	ResolveReport reportBefore = (ResolveReport) _project.getReference("ivy.resolved.report");
+    	assertTrue(getArchiveFileInCache("org1", "mod1.1", "2.0", "mod1.1", "jar", "jar").exists());
+    	assertFalse(getArchiveFileInCache("org1", "mod1.2", "2.0", "mod1.2", "jar", "jar").exists());
+    
+    	_task.setConf("*"); // will trigger a resolve
+    	_task.setKeep(false); // don't keep the resolve results
+    	_task.execute();
+
+    	ResolveReport reportAfter = (ResolveReport) _project.getReference("ivy.resolved.report");
+    	
+    	assertSame("IvyPostResolveTask has kept the resolve report where it should have", reportBefore, reportAfter);
+    	assertTrue(getArchiveFileInCache("org1", "mod1.2", "2.0", "mod1.2", "jar", "jar").exists());
+    }
+
+    public void testInlineWithoutKeep() throws Exception {
+    	_task.setOrganisation("org1");
+    	_task.setModule("mod1.1");
+    	_task.setRevision("2.0");
+    	_task.setInline(true);
+    	_task.setConf("*"); // will trigger a resolve
+    	_task.execute();
+
+    	ResolveReport reportAfter = (ResolveReport) _project.getReference("ivy.resolved.report");
+    	
+    	assertNull("IvyPostResolveTask has kept the resolve report where it should have", reportAfter);
+    	assertTrue(getArchiveFileInCache("org1", "mod1.2", "2.1", "mod1.2", "jar", "jar").exists());
+    }
+
+    public void testInlineWithKeep() throws Exception {
+    	_task.setOrganisation("org1");
+    	_task.setModule("mod1.1");
+    	_task.setRevision("2.0");
+    	_task.setInline(true);
+    	_task.setKeep(true);
+    	_task.setConf("*"); // will trigger a resolve
+    	_task.execute();
+
+    	ResolveReport reportAfter = (ResolveReport) _project.getReference("ivy.resolved.report");
+    	
+    	assertNotNull("IvyPostResolveTask has kept the resolve report where it should have", reportAfter);
+    	assertTrue(getArchiveFileInCache("org1", "mod1.2", "2.1", "mod1.2", "jar", "jar").exists());
+    }
+
     public void testWithResolveIdAndPreviousResolveInSameBuildAndLessConfs() throws Exception {
     	IvyResolve resolve = new IvyResolve();
     	resolve.setProject(_project);

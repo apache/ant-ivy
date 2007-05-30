@@ -56,6 +56,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - IMPROVEMENT: Remove @author tags (thanks to Stephane Bailliez)
 - IMPROVEMENT: Remove use of deprecated elements in ivysettings.xml (IVY-505) (with contribution from Jan Materne)
 
+- FIX: The deprecated "keep" attribute on post resolve tasks causes an error (IVY-517)
 - FIX: Some circular dependencies not retrieved (IVY-400)
 - FIX: ${version} property not recognized in poms (IVY-512)
 - FIX: Bug on handling dependency artifacts when a module configuration is specified (IVY-507)
