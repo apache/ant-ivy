@@ -23,10 +23,11 @@ import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.plugins.IvySettingsAware;
+import org.apache.ivy.util.Checks;
 
 public abstract class AbstractVersionMatcher implements VersionMatcher, IvySettingsAware {
 	private String _name;
-	private IvySettings _settings;
+	private IvySettings settings;
 	
 	public AbstractVersionMatcher() {
 	}
@@ -65,11 +66,12 @@ public abstract class AbstractVersionMatcher implements VersionMatcher, IvySetti
     }
 
 	public IvySettings getSettings() {
-		return _settings;
+		return settings;
 	}
 
-	public void setSettings(IvySettings ivy) {
-		_settings = ivy;
+	public void setSettings(IvySettings settings) {
+    	Checks.checkNotNull(settings, "settings");
+		this.settings = settings;
 	}
 
 }
