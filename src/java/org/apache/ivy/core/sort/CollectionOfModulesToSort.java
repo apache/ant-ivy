@@ -35,7 +35,7 @@ import org.apache.ivy.plugins.version.VersionMatcher;
  * dedicated function to retrieve module descriptors based on dependencies descriptors.<br>
  * <i>This class is designed to be used internally by the ModuleDescriptorSorter.</i>
  */
-class CollectionOfModulesToSort implements Iterable {
+class CollectionOfModulesToSort {
 
 	private final List moduleDescriptors;	//List<ModuleInSort>
 	private final VersionMatcher versionMatcher;
