@@ -46,20 +46,17 @@ public class MatcherHelper {
         return matches(m, exp.getModuleId(), aid.getModuleId())
                 && matches(m, exp.getName(), aid.getName())
                 && matches(m, exp.getExt(), aid.getExt())
-                && matches(m, exp.getType(), aid.getType())
-                ;
+                && matches(m, exp.getType(), aid.getType());
     }
 
     public static boolean isExact(PatternMatcher m, ModuleRevisionId exp) {
-        return isExact(m, exp.getOrganisation())
-                && isExact(m, exp.getName())
+        return isExact(m, exp.getOrganisation()) && isExact(m, exp.getName())
                 && isExact(m, exp.getRevision());
     }
 
     // unused
     public static boolean isExact(PatternMatcher m, ModuleId exp) {
-        return isExact(m, exp.getOrganisation())
-                && isExact(m, exp.getName());
+        return isExact(m, exp.getOrganisation()) && isExact(m, exp.getName());
     }
 
     public static boolean isExact(PatternMatcher m, String exp) {

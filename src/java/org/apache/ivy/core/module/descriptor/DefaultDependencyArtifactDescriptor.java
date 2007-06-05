@@ -25,25 +25,28 @@ import java.util.Map;
 import org.apache.ivy.core.IvyPatternHelper;
 import org.apache.ivy.util.extendable.UnmodifiableExtendableItem;
 
-
-public class DefaultDependencyArtifactDescriptor extends UnmodifiableExtendableItem
-	implements DependencyArtifactDescriptor, ConfigurationAware {
+public class DefaultDependencyArtifactDescriptor extends UnmodifiableExtendableItem implements
+        DependencyArtifactDescriptor, ConfigurationAware {
 
     private Collection confs = new ArrayList();
-	private URL url;
-	private String name;
-	private String type;
-	private String ext;
- 
-	/**
+
+    private URL url;
+
+    private String name;
+
+    private String type;
+
+    private String ext;
+
+    /**
      * @param dd
      * @param name
      * @param type
-     * @param url 
+     * @param url
      */
-    public DefaultDependencyArtifactDescriptor(
-    		String name, String type, String ext, URL url, Map extraAttributes) {
-    	super(null, extraAttributes);
+    public DefaultDependencyArtifactDescriptor(String name, String type, String ext, URL url,
+            Map extraAttributes) {
+        super(null, extraAttributes);
         if (name == null) {
             throw new NullPointerException("name must not be null");
         }
@@ -60,33 +63,34 @@ public class DefaultDependencyArtifactDescriptor extends UnmodifiableExtendableI
         initStandardAttributes();
     }
 
-	private void initStandardAttributes() {
+    private void initStandardAttributes() {
         setStandardAttribute(IvyPatternHelper.ARTIFACT_KEY, getName());
         setStandardAttribute(IvyPatternHelper.TYPE_KEY, getType());
         setStandardAttribute(IvyPatternHelper.EXT_KEY, getExt());
         setStandardAttribute("url", url != null ? String.valueOf(url) : "");
-	}
-    
-	public boolean equals(Object obj) {
+    }
+
+    public boolean equals(Object obj) {
         if (!(obj instanceof DependencyArtifactDescriptor)) {
             return false;
         }
-        DependencyArtifactDescriptor dad = (DependencyArtifactDescriptor)obj;
+        DependencyArtifactDescriptor dad = (DependencyArtifactDescriptor) obj;
         return getAttributes().equals(dad.getAttributes());
     }
-    
+
     public int hashCode() {
         return getAttributes().hashCode();
     }
-    
+
     /**
      * Add a configuration for this artifact.
+     * 
      * @param conf
      */
     public void addConfiguration(String conf) {
         confs.add(conf);
     }
-        
+
     public String getName() {
         return name;
     }
@@ -94,6 +98,7 @@ public class DefaultDependencyArtifactDescriptor extends UnmodifiableExtendableI
     public String getType() {
         return type;
     }
+
     public String getExt() {
         return ext;
     }
@@ -102,12 +107,12 @@ public class DefaultDependencyArtifactDescriptor extends UnmodifiableExtendableI
         return (String[]) confs.toArray(new String[confs.size()]);
     }
 
+    public URL getUrl() {
+        return url;
+    }
 
-	public URL getUrl() {
-		return url;
-	}
-
-	public String toString() {
-		return "DA:"+ name +"."+ ext +"("+ type +") "+"("+ confs +")"+(url ==null?"": url.toString());
-	}
+    public String toString() {
+        return "DA:" + name + "." + ext + "(" + type + ") " + "(" + confs + ")"
+                + (url == null ? "" : url.toString());
+    }
 }

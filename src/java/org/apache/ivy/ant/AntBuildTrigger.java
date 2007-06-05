@@ -35,125 +35,127 @@ import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.Ant;
 import org.apache.tools.ant.taskdefs.Property;
 
-
 /**
- * Triggers an ant build on an event occurence.
- * 
- * Example of use:
- * <ant-build-trigger event="pre-resolve-dependency" filter="revision=latest.integration"
- *                    antfile="/path/to/[module]/build.xml" target="compile"/>
- * Triggers an ant build for any dependency in asked in latest.integration, just before resolving the 
- * dependency.
+ * Triggers an ant build on an event occurence. Example of use: <ant-build-trigger
+ * event="pre-resolve-dependency" filter="revision=latest.integration"
+ * antfile="/path/to/[module]/build.xml" target="compile"/> Triggers an ant build for any dependency
+ * in asked in latest.integration, just before resolving the dependency.
  * 
  * @see AntCallTrigger
  * @since 1.4
- *
  */
 public class AntBuildTrigger extends AbstractTrigger implements Trigger {
-	private boolean _onlyonce = true;
-	private String _target = null;
-	private Collection _builds = new ArrayList();
-	private String _buildFilePattern;
-	private String _prefix;
+    private boolean _onlyonce = true;
 
-	public void progress(IvyEvent event) {
-		File f = getBuildFile(event);
-		if (f.exists()) {
-			if (_onlyonce && isBuilt(f)) {
-				Message.verbose("target build file already built, skipping: "+f);
-			} else {
-				Ant ant = new Ant();
-				Project project = (Project)IvyContext.getContext().peek(IvyTask.ANT_PROJECT_CONTEXT_KEY);
-				if (project == null) {
-					project = new Project();
-					project.init();
-				}
-				
-				ant.setProject(project);
-				ant.setTaskName("ant");
-				
-				ant.setAntfile(f.getAbsolutePath());
-				ant.setInheritAll(false);
-				String target = getTarget();
-				if (target != null) {
-					ant.setTarget(target);
-				}
-				Map atts = event.getAttributes();
-				for (Iterator iter = atts.keySet().iterator(); iter.hasNext();) {
-					String key = (String) iter.next();
-					String value = (String) atts.get(key);
-					Property p = ant.createProperty();
-					p.setName(_prefix == null?key:_prefix+key);
-					p.setValue(value);
-				}
-				
-				Message.verbose("triggering build: "+f+" target="+target+" for "+event);
-                MessageImpl impl = IvyContext.getContext().getMessageImpl();
-                try {
-                	IvyContext.getContext().setMessageImpl(null);
-                	try {
-                		ant.execute();
-                	} catch (BuildException e) {
-                		Message.verbose("Exception occurred while executing target " + target);
-                		e.printStackTrace(); // TODO: remove when finished debugging
-                		throw e;
-                	}
-                	markBuilt(f);
-                } finally {
-                	IvyContext.getContext().setMessageImpl(impl);
+    private String _target = null;
+
+    private Collection _builds = new ArrayList();
+
+    private String _buildFilePattern;
+
+    private String _prefix;
+
+    public void progress(IvyEvent event) {
+        File f = getBuildFile(event);
+        if (f.exists()) {
+            if (_onlyonce && isBuilt(f)) {
+                Message.verbose("target build file already built, skipping: " + f);
+            } else {
+                Ant ant = new Ant();
+                Project project = (Project) IvyContext.getContext().peek(
+                    IvyTask.ANT_PROJECT_CONTEXT_KEY);
+                if (project == null) {
+                    project = new Project();
+                    project.init();
                 }
 
-				Message.debug("triggered build finished: "+f+" target="+target+" for "+event);
-			}
-		} else {
-			Message.verbose("no build file found for dependency, skipping: "+f);
-		}
-	}
+                ant.setProject(project);
+                ant.setTaskName("ant");
 
-	private void markBuilt(File f) {
-		_builds.add(f.getAbsolutePath());
-	}
+                ant.setAntfile(f.getAbsolutePath());
+                ant.setInheritAll(false);
+                String target = getTarget();
+                if (target != null) {
+                    ant.setTarget(target);
+                }
+                Map atts = event.getAttributes();
+                for (Iterator iter = atts.keySet().iterator(); iter.hasNext();) {
+                    String key = (String) iter.next();
+                    String value = (String) atts.get(key);
+                    Property p = ant.createProperty();
+                    p.setName(_prefix == null ? key : _prefix + key);
+                    p.setValue(value);
+                }
 
-	private boolean isBuilt(File f) {
-		return _builds.contains(f.getAbsolutePath());
-	}
+                Message.verbose("triggering build: " + f + " target=" + target + " for " + event);
+                MessageImpl impl = IvyContext.getContext().getMessageImpl();
+                try {
+                    IvyContext.getContext().setMessageImpl(null);
+                    try {
+                        ant.execute();
+                    } catch (BuildException e) {
+                        Message.verbose("Exception occurred while executing target " + target);
+                        e.printStackTrace(); // TODO: remove when finished debugging
+                        throw e;
+                    }
+                    markBuilt(f);
+                } finally {
+                    IvyContext.getContext().setMessageImpl(impl);
+                }
 
-	private File getBuildFile(IvyEvent event) {
-		return new File(IvyPatternHelper.substituteTokens(getBuildFilePattern(), event.getAttributes()));
-	}
+                Message.debug("triggered build finished: " + f + " target=" + target + " for "
+                        + event);
+            }
+        } else {
+            Message.verbose("no build file found for dependency, skipping: " + f);
+        }
+    }
 
-	public String getBuildFilePattern() {
-		return _buildFilePattern;
-	}
-	
-	public void setAntfile(String pattern) {
-		_buildFilePattern = pattern;
-	}
+    private void markBuilt(File f) {
+        _builds.add(f.getAbsolutePath());
+    }
 
-	public String getTarget() {
-		return _target;
-	}
+    private boolean isBuilt(File f) {
+        return _builds.contains(f.getAbsolutePath());
+    }
 
-	public void setTarget(String target) {
-		_target = target;
-	}
+    private File getBuildFile(IvyEvent event) {
+        return new File(IvyPatternHelper.substituteTokens(getBuildFilePattern(), event
+                .getAttributes()));
+    }
 
-	public boolean isOnlyonce() {
-		return _onlyonce;
-	}
+    public String getBuildFilePattern() {
+        return _buildFilePattern;
+    }
 
-	public void setOnlyonce(boolean onlyonce) {
-		_onlyonce = onlyonce;
-	}
+    public void setAntfile(String pattern) {
+        _buildFilePattern = pattern;
+    }
 
-	public String getPrefix() {
-		return _prefix;
-	}
+    public String getTarget() {
+        return _target;
+    }
 
-	public void setPrefix(String prefix) {
-		_prefix = prefix;
+    public void setTarget(String target) {
+        _target = target;
+    }
+
+    public boolean isOnlyonce() {
+        return _onlyonce;
+    }
+
+    public void setOnlyonce(boolean onlyonce) {
+        _onlyonce = onlyonce;
+    }
+
+    public String getPrefix() {
+        return _prefix;
+    }
+
+    public void setPrefix(String prefix) {
+        _prefix = prefix;
         if (!prefix.endsWith(".")) {
             _prefix += ".";
         }
-	}
+    }
 }

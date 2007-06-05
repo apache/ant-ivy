@@ -29,9 +29,9 @@ import org.apache.ivy.core.resolve.ResolveOptions;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.Delete;
 
-
 public class XmlReportOutputterTest extends TestCase {
-	private final Ivy _ivy;
+    private final Ivy _ivy;
+
     private File _cache;
 
     public XmlReportOutputterTest() throws Exception {
@@ -47,7 +47,7 @@ public class XmlReportOutputterTest extends TestCase {
         _cache = new File("build/cache");
         _cache.mkdirs();
     }
-    
+
     protected void tearDown() throws Exception {
         cleanCache();
     }
@@ -58,50 +58,57 @@ public class XmlReportOutputterTest extends TestCase {
         del.setDir(_cache);
         del.execute();
     }
-    
-	public void testWriteOrigin() throws Exception {
-        ResolveReport report = _ivy.resolve(new File("test/repositories/1/org1/mod1.1/ivys/ivy-1.0.xml").toURL(),
-        		getResolveOptions(new String[] {"default"}));
+
+    public void testWriteOrigin() throws Exception {
+        ResolveReport report = _ivy.resolve(new File(
+                "test/repositories/1/org1/mod1.1/ivys/ivy-1.0.xml").toURL(),
+            getResolveOptions(new String[] {"default"}));
         assertNotNull(report);
-		
-		ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-		XmlReportOutputter outputter = new XmlReportOutputter();
-		outputter.output(report.getConfigurationReport("default"), buffer);
-		buffer.flush();
-		String xml = buffer.toString();
-		
-        String expectedLocation = "location=\"" + new File("test/repositories/1/org1/mod1.2/jars/mod1.2-2.0.jar").getAbsolutePath() + "\"";
+
+        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+        XmlReportOutputter outputter = new XmlReportOutputter();
+        outputter.output(report.getConfigurationReport("default"), buffer);
+        buffer.flush();
+        String xml = buffer.toString();
+
+        String expectedLocation = "location=\""
+                + new File("test/repositories/1/org1/mod1.2/jars/mod1.2-2.0.jar").getAbsolutePath()
+                + "\"";
         String expectedIsLocal = "is-local=\"true\"";
 
-        assertTrue("XML doesn't contain artifact location attribute", xml.indexOf(expectedLocation) != -1);
-        assertTrue("XML doesn't contain artifact is-local attribute", xml.indexOf(expectedIsLocal) != -1);
-	}
-	
-	public void testWriteModuleInfo() throws Exception {
-        ResolveReport report = _ivy.resolve(new File("test/java/org/apache/ivy/plugins/report/ivy-with-info.xml").toURL(),
-        		getResolveOptions(new String[] {"default"}).setValidate(false));
+        assertTrue("XML doesn't contain artifact location attribute",
+            xml.indexOf(expectedLocation) != -1);
+        assertTrue("XML doesn't contain artifact is-local attribute",
+            xml.indexOf(expectedIsLocal) != -1);
+    }
+
+    public void testWriteModuleInfo() throws Exception {
+        ResolveReport report = _ivy.resolve(new File(
+                "test/java/org/apache/ivy/plugins/report/ivy-with-info.xml").toURL(),
+            getResolveOptions(new String[] {"default"}).setValidate(false));
         assertNotNull(report);
-        
-		ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-		XmlReportOutputter outputter = new XmlReportOutputter();
-		outputter.output(report.getConfigurationReport("default"), buffer);
-		buffer.flush();
-		String xml = buffer.toString();
-		
-		String orgAttribute = "organisation=\"org1\"";
-		String modAttribute = "module=\"mod1\"";
-		String revAttribute = "revision=\"1.0\"";
-		String extra1Attribute = "extra-blabla=\"abc\"";
-		String extra2Attribute = "extra-blabla2=\"123\"";
-		
+
+        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+        XmlReportOutputter outputter = new XmlReportOutputter();
+        outputter.output(report.getConfigurationReport("default"), buffer);
+        buffer.flush();
+        String xml = buffer.toString();
+
+        String orgAttribute = "organisation=\"org1\"";
+        String modAttribute = "module=\"mod1\"";
+        String revAttribute = "revision=\"1.0\"";
+        String extra1Attribute = "extra-blabla=\"abc\"";
+        String extra2Attribute = "extra-blabla2=\"123\"";
+
         assertTrue("XML doesn't contain organisation attribute", xml.indexOf(orgAttribute) != -1);
         assertTrue("XML doesn't contain module attribute", xml.indexOf(modAttribute) != -1);
         assertTrue("XML doesn't contain revision attribute", xml.indexOf(revAttribute) != -1);
         assertTrue("XML doesn't contain extra attribute 1", xml.indexOf(extra1Attribute) != -1);
         assertTrue("XML doesn't contain extra attribute 2", xml.indexOf(extra2Attribute) != -1);
-	}
-    
+    }
+
     private ResolveOptions getResolveOptions(String[] confs) {
-		return new ResolveOptions().setConfs(confs).setCache(CacheManager.getInstance(_ivy.getSettings(), _cache));
-	}
+        return new ResolveOptions().setConfs(confs).setCache(
+            CacheManager.getInstance(_ivy.getSettings(), _cache));
+    }
 }

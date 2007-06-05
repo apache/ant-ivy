@@ -27,9 +27,11 @@ import org.apache.tools.ant.taskdefs.Delete;
 
 public class IvyArtifactPropertyTest extends TestCase {
     private File _cache;
+
     private IvyArtifactProperty _prop;
+
     private Project _project;
-    
+
     protected void setUp() throws Exception {
         createCache();
         _project = new Project();
@@ -44,7 +46,7 @@ public class IvyArtifactPropertyTest extends TestCase {
         _cache = new File("build/cache");
         _cache.mkdirs();
     }
-    
+
     protected void tearDown() throws Exception {
         cleanCache();
     }
@@ -65,22 +67,22 @@ public class IvyArtifactPropertyTest extends TestCase {
         assertNotNull(val);
         assertEquals("build/cache/mod1.2/mod1.2-2.0.jar", val);
     }
-    
+
     public void testWithResolveId() throws Exception {
-    	IvyResolve resolve = new IvyResolve();
-    	resolve.setProject(_project);
-    	resolve.setCache(_cache);
-    	resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-simple.xml"));
-    	resolve.setResolveId("abc");
-    	resolve.execute();
-    	
-    	// resolve another ivy file
-    	resolve = new IvyResolve();
-    	resolve.setProject(_project);
-    	resolve.setCache(_cache);
-    	resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-latest.xml"));
-    	resolve.execute();
-    	
+        IvyResolve resolve = new IvyResolve();
+        resolve.setProject(_project);
+        resolve.setCache(_cache);
+        resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-simple.xml"));
+        resolve.setResolveId("abc");
+        resolve.execute();
+
+        // resolve another ivy file
+        resolve = new IvyResolve();
+        resolve.setProject(_project);
+        resolve.setCache(_cache);
+        resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-latest.xml"));
+        resolve.execute();
+
         _prop.setName("[module].[artifact]-[revision]");
         _prop.setValue("${cache.dir}/[module]/[artifact]-[revision].[type]");
         _prop.setResolveId("abc");
@@ -92,14 +94,14 @@ public class IvyArtifactPropertyTest extends TestCase {
     }
 
     public void testWithResolveIdWithoutResolve() throws Exception {
-    	try {
-	        _prop.setName("[module].[artifact]-[revision]");
-	        _prop.setValue("${cache.dir}/[module]/[artifact]-[revision].[type]");
-	        _prop.setResolveId("abc");
-	        _prop.execute();
-	        fail("Task should have failed because no resolve was performed!");
-    	} catch (BuildException e) {
-    		// this is expected!
-    	}
-   }
+        try {
+            _prop.setName("[module].[artifact]-[revision]");
+            _prop.setValue("${cache.dir}/[module]/[artifact]-[revision].[type]");
+            _prop.setResolveId("abc");
+            _prop.execute();
+            fail("Task should have failed because no resolve was performed!");
+        } catch (BuildException e) {
+            // this is expected!
+        }
+    }
 }

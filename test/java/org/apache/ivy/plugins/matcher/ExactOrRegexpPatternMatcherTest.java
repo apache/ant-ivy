@@ -45,7 +45,7 @@ public class ExactOrRegexpPatternMatcherTest extends AbstractPatternMatcherTest 
             matcher = patternMatcher.getMatcher("(");
             fail("Should fail on invalid regexp syntax");
         } catch (PatternSyntaxException e) {
-            
+
         }
     }
 }

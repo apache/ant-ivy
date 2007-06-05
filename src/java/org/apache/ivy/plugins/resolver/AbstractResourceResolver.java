@@ -43,24 +43,24 @@ import org.apache.ivy.plugins.resolver.util.ResourceMDParser;
 import org.apache.ivy.plugins.version.VersionMatcher;
 import org.apache.ivy.util.Message;
 
-
 /**
  *
  */
 public abstract class AbstractResourceResolver extends BasicResolver {
-    
+
     private static final Map IVY_ARTIFACT_ATTRIBUTES = new HashMap();
     static {
         IVY_ARTIFACT_ATTRIBUTES.put(IvyPatternHelper.ARTIFACT_KEY, "ivy");
         IVY_ARTIFACT_ATTRIBUTES.put(IvyPatternHelper.TYPE_KEY, "ivy");
         IVY_ARTIFACT_ATTRIBUTES.put(IvyPatternHelper.EXT_KEY, "xml");
     }
-    
+
     private List _ivyPatterns = new ArrayList(); // List (String pattern)
-    private List _artifactPatterns = new ArrayList();  // List (String pattern)
+
+    private List _artifactPatterns = new ArrayList(); // List (String pattern)
+
     private boolean _m2compatible = false;
 
-    
     public AbstractResourceResolver() {
     }
 
@@ -69,98 +69,105 @@ public abstract class AbstractResourceResolver extends BasicResolver {
         if (isM2compatible()) {
             mrid = convertM2IdForResourceSearch(mrid);
         }
-        return findResourceUsingPatterns(mrid, _ivyPatterns, DefaultArtifact.newIvyArtifact(mrid, data.getDate()), getRMDParser(dd, data), data.getDate());
+        return findResourceUsingPatterns(mrid, _ivyPatterns, DefaultArtifact.newIvyArtifact(mrid,
+            data.getDate()), getRMDParser(dd, data), data.getDate());
     }
 
-	protected ResolvedResource findArtifactRef(Artifact artifact, Date date) {
+    protected ResolvedResource findArtifactRef(Artifact artifact, Date date) {
         ModuleRevisionId mrid = artifact.getModuleRevisionId();
         if (isM2compatible()) {
             mrid = convertM2IdForResourceSearch(mrid);
         }
-        return findResourceUsingPatterns(mrid, _artifactPatterns, artifact, getDefaultRMDParser(artifact.getModuleRevisionId().getModuleId()), date);
+        return findResourceUsingPatterns(mrid, _artifactPatterns, artifact,
+            getDefaultRMDParser(artifact.getModuleRevisionId().getModuleId()), date);
     }
 
-	protected ResolvedResource findResourceUsingPatterns(ModuleRevisionId moduleRevision, List patternList, Artifact artifact, ResourceMDParser rmdparser, Date date) {
+    protected ResolvedResource findResourceUsingPatterns(ModuleRevisionId moduleRevision,
+            List patternList, Artifact artifact, ResourceMDParser rmdparser, Date date) {
         ResolvedResource rres = null;
-        
+
         List resolvedResources = new ArrayList();
         boolean dynamic = getSettings().getVersionMatcher().isDynamic(moduleRevision);
         boolean stop = false;
         for (Iterator iter = patternList.iterator(); iter.hasNext() && !stop;) {
-            String pattern = (String)iter.next();
+            String pattern = (String) iter.next();
             rres = findResourceUsingPattern(moduleRevision, pattern, artifact, rmdparser, date);
             if (rres != null) {
-            	resolvedResources.add(rres);
-            	stop = !dynamic; // stop iterating if we are not searching a dynamic revision
+                resolvedResources.add(rres);
+                stop = !dynamic; // stop iterating if we are not searching a dynamic revision
             }
         }
-        
+
         if (resolvedResources.size() > 1) {
-        	ResolvedResource[] rress = (ResolvedResource[]) resolvedResources.toArray(new ResolvedResource[resolvedResources.size()]);
-        	rres = findResource(rress, getName(), getLatestStrategy(), getSettings().getVersionMatcher(), rmdparser, moduleRevision, date);
+            ResolvedResource[] rress = (ResolvedResource[]) resolvedResources
+                    .toArray(new ResolvedResource[resolvedResources.size()]);
+            rres = findResource(rress, getName(), getLatestStrategy(), getSettings()
+                    .getVersionMatcher(), rmdparser, moduleRevision, date);
         }
-        
+
         return rres;
     }
-    
-    protected abstract ResolvedResource findResourceUsingPattern(ModuleRevisionId mrid, String pattern, Artifact artifact, ResourceMDParser rmdparser, Date date);
 
-    public static ResolvedResource findResource(
-    		ResolvedResource[] rress, 
-    		String name,
-    		LatestStrategy strategy, 
-    		VersionMatcher versionMatcher, 
-    		ResourceMDParser rmdparser,
-    		ModuleRevisionId mrid, 
-    		Date date) {
-    	ResolvedResource found = null;
-    	List sorted = strategy.sort(rress);
-    	List rejected = new ArrayList();
-    	for (ListIterator iter = sorted.listIterator(sorted.size()); iter.hasPrevious();) {
-			ResolvedResource rres = (ResolvedResource) iter.previous();
-			if ((date != null && rres.getLastModified() > date.getTime())) {
-                Message.verbose("\t"+name+": too young: "+rres);
-                rejected.add(rres.getRevision()+" ("+rres.getLastModified()+")");
-				continue;
-			}
-			ModuleRevisionId foundMrid = ModuleRevisionId.newInstance(mrid, rres.getRevision());
-			if (!versionMatcher.accept(mrid, foundMrid)) {
-                Message.debug("\t"+name+": rejected by version matcher: "+rres);
+    protected abstract ResolvedResource findResourceUsingPattern(ModuleRevisionId mrid,
+            String pattern, Artifact artifact, ResourceMDParser rmdparser, Date date);
+
+    public static ResolvedResource findResource(ResolvedResource[] rress, String name,
+            LatestStrategy strategy, VersionMatcher versionMatcher, ResourceMDParser rmdparser,
+            ModuleRevisionId mrid, Date date) {
+        ResolvedResource found = null;
+        List sorted = strategy.sort(rress);
+        List rejected = new ArrayList();
+        for (ListIterator iter = sorted.listIterator(sorted.size()); iter.hasPrevious();) {
+            ResolvedResource rres = (ResolvedResource) iter.previous();
+            if ((date != null && rres.getLastModified() > date.getTime())) {
+                Message.verbose("\t" + name + ": too young: " + rres);
+                rejected.add(rres.getRevision() + " (" + rres.getLastModified() + ")");
+                continue;
+            }
+            ModuleRevisionId foundMrid = ModuleRevisionId.newInstance(mrid, rres.getRevision());
+            if (!versionMatcher.accept(mrid, foundMrid)) {
+                Message.debug("\t" + name + ": rejected by version matcher: " + rres);
                 rejected.add(rres.getRevision());
-				continue;
-			}
-			if (versionMatcher.needModuleDescriptor(mrid, foundMrid)) {
-        		ResolvedResource r = rmdparser.parse(rres.getResource(), rres.getRevision());
-        		ModuleDescriptor md = ((MDResolvedResource)r).getResolvedModuleRevision().getDescriptor();
-        		if (md.isDefault()) {
-	                Message.debug("\t"+name+": default md rejected by version matcher requiring module descriptor: "+rres);
-	                rejected.add(rres.getRevision()+" (MD)");
-        			continue;
-        		} else if (!versionMatcher.accept(mrid, md)) {
-	                Message.debug("\t"+name+": md rejected by version matcher: "+rres);
-	                rejected.add(rres.getRevision()+" (MD)");
-        			continue;
-        		} else {
-        			found = r;
-        		}
-			} else {
-				found = rres;
-			}
-	    	
-	    	if (found != null) {
-	    		if (!found.getResource().exists()) {
-		    		Message.debug("\t"+name+": resource not reachable for "+mrid+": res="+found.getResource());
-	                logAttempt(found.getResource().toString());
-		    		continue; 
-		    	}
-	    		break;
-	    	}
-		}
-    	if (found == null && !rejected.isEmpty()) {
-    		logAttempt(rejected.toString());
-    	}
-    	
-    	return found;
+                continue;
+            }
+            if (versionMatcher.needModuleDescriptor(mrid, foundMrid)) {
+                ResolvedResource r = rmdparser.parse(rres.getResource(), rres.getRevision());
+                ModuleDescriptor md = ((MDResolvedResource) r).getResolvedModuleRevision()
+                        .getDescriptor();
+                if (md.isDefault()) {
+                    Message
+                            .debug("\t"
+                                    + name
+                                    + ": default md rejected by version matcher requiring module descriptor: "
+                                    + rres);
+                    rejected.add(rres.getRevision() + " (MD)");
+                    continue;
+                } else if (!versionMatcher.accept(mrid, md)) {
+                    Message.debug("\t" + name + ": md rejected by version matcher: " + rres);
+                    rejected.add(rres.getRevision() + " (MD)");
+                    continue;
+                } else {
+                    found = r;
+                }
+            } else {
+                found = rres;
+            }
+
+            if (found != null) {
+                if (!found.getResource().exists()) {
+                    Message.debug("\t" + name + ": resource not reachable for " + mrid + ": res="
+                            + found.getResource());
+                    logAttempt(found.getResource().toString());
+                    continue;
+                }
+                break;
+            }
+        }
+        if (found == null && !rejected.isEmpty()) {
+            logAttempt(rejected.toString());
+        }
+
+        return found;
     }
 
     protected Collection findNames(Map tokenValues, String token) {
@@ -182,11 +189,12 @@ public abstract class AbstractResourceResolver extends BasicResolver {
         getSettings().filterIgnore(names);
         return names;
     }
-    
+
     protected Collection findArtifactNames(Map tokenValues, String token) {
         Collection names = new HashSet();
         tokenValues = new HashMap(tokenValues);
-        tokenValues.put(IvyPatternHelper.ARTIFACT_KEY, tokenValues.get(IvyPatternHelper.MODULE_KEY));
+        tokenValues
+                .put(IvyPatternHelper.ARTIFACT_KEY, tokenValues.get(IvyPatternHelper.MODULE_KEY));
         tokenValues.put(IvyPatternHelper.TYPE_KEY, "jar");
         tokenValues.put(IvyPatternHelper.EXT_KEY, "jar");
         findTokenValues(names, getArtifactPatterns(), tokenValues, token);
@@ -197,8 +205,10 @@ public abstract class AbstractResourceResolver extends BasicResolver {
     // should be overridden by subclasses wanting to have listing features
     protected void findTokenValues(Collection names, List patterns, Map tokenValues, String token) {
     }
+
     /**
      * example of pattern : ~/Workspace/[module]/[module].ivy.xml
+     * 
      * @param pattern
      */
     public void addIvyPattern(String pattern) {
@@ -208,7 +218,7 @@ public abstract class AbstractResourceResolver extends BasicResolver {
     public void addArtifactPattern(String pattern) {
         _artifactPatterns.add(pattern);
     }
-    
+
     public List getIvyPatterns() {
         return Collections.unmodifiableList(_ivyPatterns);
     }
@@ -216,9 +226,11 @@ public abstract class AbstractResourceResolver extends BasicResolver {
     public List getArtifactPatterns() {
         return Collections.unmodifiableList(_artifactPatterns);
     }
+
     protected void setIvyPatterns(List ivyPatterns) {
         _ivyPatterns = ivyPatterns;
     }
+
     protected void setArtifactPatterns(List artifactPatterns) {
         _artifactPatterns = artifactPatterns;
     }
@@ -233,19 +245,19 @@ public abstract class AbstractResourceResolver extends BasicResolver {
     public void addConfiguredArtifact(IvyPattern p) {
         _artifactPatterns.add(p.getPattern());
     }
-    
+
     public void dumpSettings() {
         super.dumpSettings();
-        Message.debug("\t\tm2compatible: "+isM2compatible());
+        Message.debug("\t\tm2compatible: " + isM2compatible());
         Message.debug("\t\tivy patterns:");
         for (ListIterator iter = getIvyPatterns().listIterator(); iter.hasNext();) {
-            String p = (String)iter.next();
-            Message.debug("\t\t\t"+p);
+            String p = (String) iter.next();
+            Message.debug("\t\t\t" + p);
         }
         Message.debug("\t\tartifact patterns:");
         for (ListIterator iter = getArtifactPatterns().listIterator(); iter.hasNext();) {
-            String p = (String)iter.next();
-            Message.debug("\t\t\t"+p);
+            String p = (String) iter.next();
+            Message.debug("\t\t\t" + p);
         }
     }
 
@@ -261,7 +273,8 @@ public abstract class AbstractResourceResolver extends BasicResolver {
         if (mrid.getOrganisation().indexOf('.') == -1) {
             return mrid;
         }
-        return ModuleRevisionId.newInstance(mrid.getOrganisation().replace('.', '/'), mrid.getName(), mrid.getBranch(), mrid.getRevision(), mrid.getExtraAttributes());
+        return ModuleRevisionId.newInstance(mrid.getOrganisation().replace('.', '/'), mrid
+                .getName(), mrid.getBranch(), mrid.getRevision(), mrid.getExtraAttributes());
     }
 
 }

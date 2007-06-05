@@ -68,235 +68,259 @@ import org.apache.ivy.util.Message;
 import org.apache.ivy.util.filter.Filter;
 
 /**
- * The resolve engine which is the core of the dependency resolution
- * mechanism used in Ivy.
+ * The resolve engine which is the core of the dependency resolution mechanism used in Ivy. It
+ * features several resolve methods, some very simple, like {@link #resolve(File)} and
+ * {@link #resolve(URL)} which allow to simply resolve dependencies of a single module descriptor,
+ * or more complete one, like the {@link #resolve(ModuleDescriptor, ResolveOptions)} which allows to
+ * provide options to the resolution engine.
  * 
- *  It features several resolve methods, some very simple, like {@link #resolve(File)} 
- *  and {@link #resolve(URL)} which allow to simply resolve dependencies of a single
- *  module descriptor, or more complete one, like the {@link #resolve(ModuleDescriptor, ResolveOptions)}
- *  which allows to provide options to the resolution engine.
- *  
- *  @see ResolveOptions
+ * @see ResolveOptions
  */
 public class ResolveEngine {
-	private IvySettings settings;
-	private EventManager eventManager;
-	private SortEngine sortEngine;
-	
-	
+    private IvySettings settings;
+
+    private EventManager eventManager;
+
+    private SortEngine sortEngine;
+
     private Set fetchedSet = new HashSet();
-	private DependencyResolver dictatorResolver;
-	
-	/**
-	 * Constructs a ResolveEngine.
-	 * 
-	 * @param settings the settings to use to configure the engine. Must not be null.
-	 * @param eventManager the event manager to use to send events about the resolution process. Must not be null.
-	 * @param sortEngine the sort engine to use to sort modules before producing the dependency resolution report. Must not be null.
-	 */
-    public ResolveEngine(IvySettings settings, EventManager eventManager, SortEngine sortEngine) {
-		this.settings = settings;
-		this.eventManager = eventManager;
-		this.sortEngine = sortEngine;
-	}
+
+    private DependencyResolver dictatorResolver;
 
     /**
-     * Returns the currently configured dictator resolver, which when non
-     * null is used in place of any specified resolver in the {@link IvySettings}
+     * Constructs a ResolveEngine.
+     * 
+     * @param settings
+     *            the settings to use to configure the engine. Must not be null.
+     * @param eventManager
+     *            the event manager to use to send events about the resolution process. Must not be
+     *            null.
+     * @param sortEngine
+     *            the sort engine to use to sort modules before producing the dependency resolution
+     *            report. Must not be null.
+     */
+    public ResolveEngine(IvySettings settings, EventManager eventManager, SortEngine sortEngine) {
+        this.settings = settings;
+        this.eventManager = eventManager;
+        this.sortEngine = sortEngine;
+    }
+
+    /**
+     * Returns the currently configured dictator resolver, which when non null is used in place of
+     * any specified resolver in the {@link IvySettings}
+     * 
      * @return the currently configured dictator resolver, may be null.
      */
-	public DependencyResolver getDictatorResolver() {
+    public DependencyResolver getDictatorResolver() {
         return dictatorResolver;
     }
 
-	/**
-	 * Sets a dictator resolver, which is used in place of regular dependency resolver 
-	 * for subsequent dependency resolution by this engine.
-	 * @param dictatorResolver the dictator resolver to use in this engine, 
-	 * 		  null if regular settings should used
-	 */
+    /**
+     * Sets a dictator resolver, which is used in place of regular dependency resolver for
+     * subsequent dependency resolution by this engine.
+     * 
+     * @param dictatorResolver
+     *            the dictator resolver to use in this engine, null if regular settings should used
+     */
     public void setDictatorResolver(DependencyResolver dictatorResolver) {
         this.dictatorResolver = dictatorResolver;
         settings.setDictatorResolver(dictatorResolver);
     }
 
     public ResolveReport resolve(File ivySource) throws ParseException, IOException {
-    	return resolve(ivySource.toURL());
+        return resolve(ivySource.toURL());
     }
+
     public ResolveReport resolve(URL ivySource) throws ParseException, IOException {
-    	return resolve(ivySource, new ResolveOptions());
+        return resolve(ivySource, new ResolveOptions());
     }
 
     /**
-     * Resolves the module identified by the given mrid with its dependencies if transitive is set to true. 
+     * Resolves the module identified by the given mrid with its dependencies if transitive is set
+     * to true.
      */
-	public ResolveReport resolve(final ModuleRevisionId mrid, ResolveOptions options, boolean changing) throws ParseException, IOException {
-		DefaultModuleDescriptor md;
-		
-		String[] confs = options.getConfs();
-		if (confs.length == 1 && confs[0].equals("*")) {
-			// create new resolve options because this is a different resolve than the real resolve
-			// (which will be a resolve of a newCallerInstance module)
-			ResolvedModuleRevision rmr = findModule(mrid, new ResolveOptions(options));
-			if (rmr == null) {
-				md = DefaultModuleDescriptor.newCallerInstance(mrid, confs, options.isTransitive(), changing);
-				return new ResolveReport(md, options.getResolveId()) {
-					public boolean hasError() {
-						return true;
-					}
-					public List getProblemMessages() {
-						return Arrays.asList(new String[] {"module not found: "+mrid});
-					}
-				};
-			} else {
-				confs = rmr.getDescriptor().getConfigurationsNames();
-				md = DefaultModuleDescriptor.newCallerInstance(ModuleRevisionId.newInstance(mrid, rmr.getId().getRevision()), confs, options.isTransitive(), changing);
-			}
-		} else {
-			md = DefaultModuleDescriptor.newCallerInstance(mrid, confs, options.isTransitive(), changing);
-		}
-		
-		return resolve(md, options);
-	}
-	
+    public ResolveReport resolve(final ModuleRevisionId mrid, ResolveOptions options,
+            boolean changing) throws ParseException, IOException {
+        DefaultModuleDescriptor md;
+
+        String[] confs = options.getConfs();
+        if (confs.length == 1 && confs[0].equals("*")) {
+            // create new resolve options because this is a different resolve than the real resolve
+            // (which will be a resolve of a newCallerInstance module)
+            ResolvedModuleRevision rmr = findModule(mrid, new ResolveOptions(options));
+            if (rmr == null) {
+                md = DefaultModuleDescriptor.newCallerInstance(mrid, confs, options.isTransitive(),
+                    changing);
+                return new ResolveReport(md, options.getResolveId()) {
+                    public boolean hasError() {
+                        return true;
+                    }
+
+                    public List getProblemMessages() {
+                        return Arrays.asList(new String[] {"module not found: " + mrid});
+                    }
+                };
+            } else {
+                confs = rmr.getDescriptor().getConfigurationsNames();
+                md = DefaultModuleDescriptor.newCallerInstance(ModuleRevisionId.newInstance(mrid,
+                    rmr.getId().getRevision()), confs, options.isTransitive(), changing);
+            }
+        } else {
+            md = DefaultModuleDescriptor.newCallerInstance(mrid, confs, options.isTransitive(),
+                changing);
+        }
+
+        return resolve(md, options);
+    }
+
     /**
-     * Resolve dependencies of a module described by an ivy file.
-     * 
-     * Note: the method signature is way too long, we should use a class to store the settings of the resolve.
+     * Resolve dependencies of a module described by an ivy file. Note: the method signature is way
+     * too long, we should use a class to store the settings of the resolve.
      */
-    public ResolveReport resolve(URL ivySource, ResolveOptions options) throws ParseException, IOException {
+    public ResolveReport resolve(URL ivySource, ResolveOptions options) throws ParseException,
+            IOException {
         URLResource res = new URLResource(ivySource);
         ModuleDescriptorParser parser = ModuleDescriptorParserRegistry.getInstance().getParser(res);
-        Message.verbose("using "+parser+" to parse "+ivySource);
+        Message.verbose("using " + parser + " to parse " + ivySource);
         ModuleDescriptor md = parser.parseDescriptor(settings, ivySource, options.isValidate());
         String revision = options.getRevision();
         if (revision == null && md.getResolvedModuleRevisionId().getRevision() == null) {
             revision = Ivy.getWorkingRevision();
         }
         if (revision != null) {
-            md.setResolvedModuleRevisionId(ModuleRevisionId.newInstance(md.getModuleRevisionId(), revision));
+            md.setResolvedModuleRevisionId(ModuleRevisionId.newInstance(md.getModuleRevisionId(),
+                revision));
         }
 
         return resolve(md, options);
     }
-    
+
     /**
-     * Resolve dependencies of a module described by a module descriptor
-     * 
-     * Note: the method signature is way too long, we should use a class to store the settings of the resolve.
+     * Resolve dependencies of a module described by a module descriptor Note: the method signature
+     * is way too long, we should use a class to store the settings of the resolve.
      */
-	public ResolveReport resolve(ModuleDescriptor md, ResolveOptions options) throws ParseException, IOException, FileNotFoundException {
+    public ResolveReport resolve(ModuleDescriptor md, ResolveOptions options)
+            throws ParseException, IOException, FileNotFoundException {
         DependencyResolver oldDictator = getDictatorResolver();
         if (options.isUseCacheOnly()) {
-        	setDictatorResolver(new CacheResolver(settings));
+            setDictatorResolver(new CacheResolver(settings));
         }
         try {
             CacheManager cacheManager = options.getCache();
-            if (cacheManager == null) {  // ensure that a cache is configured
-            	cacheManager = IvyContext.getContext().getCacheManager();
-            	options.setCache(cacheManager);
+            if (cacheManager == null) { // ensure that a cache is configured
+                cacheManager = IvyContext.getContext().getCacheManager();
+                options.setCache(cacheManager);
             } else {
-            	IvyContext.getContext().setCache(cacheManager.getCache());
+                IvyContext.getContext().setCache(cacheManager.getCache());
             }
-            
+
             String[] confs = options.getConfs();
             if (confs.length == 1 && confs[0].equals("*")) {
                 confs = md.getConfigurationsNames();
             }
             options.setConfs(confs);
-            
+
             if (options.getResolveId() == null) {
-            	options.setResolveId(ResolveOptions.getDefaultResolveId(md));
+                options.setResolveId(ResolveOptions.getDefaultResolveId(md));
             }
-            
+
             eventManager.fireIvyEvent(new StartResolveEvent(md, confs));
-            
+
             long start = System.currentTimeMillis();
-            Message.info(":: resolving dependencies :: "+md.getResolvedModuleRevisionId()+(options.isTransitive()?"":" [not transitive]"));
-            Message.info("\tconfs: "+Arrays.asList(confs));
-            Message.verbose("\tvalidate = "+options.isValidate());
+            Message.info(":: resolving dependencies :: " + md.getResolvedModuleRevisionId()
+                    + (options.isTransitive() ? "" : " [not transitive]"));
+            Message.info("\tconfs: " + Arrays.asList(confs));
+            Message.verbose("\tvalidate = " + options.isValidate());
             ResolveReport report = new ResolveReport(md, options.getResolveId());
 
             // resolve dependencies
             IvyNode[] dependencies = getDependencies(md, options, report);
             report.setDependencies(Arrays.asList(dependencies), options.getArtifactFilter());
 
-            
             // produce resolved ivy file and ivy properties in cache
-            File ivyFileInCache = cacheManager.getResolvedIvyFileInCache(md.getResolvedModuleRevisionId());
+            File ivyFileInCache = cacheManager.getResolvedIvyFileInCache(md
+                    .getResolvedModuleRevisionId());
             md.toIvyFile(ivyFileInCache);
 
-            // we store the resolved dependencies revisions and statuses per asked dependency revision id,
+            // we store the resolved dependencies revisions and statuses per asked dependency
+            // revision id,
             // for direct dependencies only.
             // this is used by the deliver task to resolve dynamic revisions to static ones
-            File ivyPropertiesInCache = cacheManager.getResolvedIvyPropertiesInCache(md.getResolvedModuleRevisionId());
+            File ivyPropertiesInCache = cacheManager.getResolvedIvyPropertiesInCache(md
+                    .getResolvedModuleRevisionId());
             Properties props = new Properties();
             if (dependencies.length > 0) {
-            	IvyNode root = dependencies[0].getRoot();
-            	for (int i = 0; i < dependencies.length; i++) {
-            		if (!dependencies[i].isCompletelyEvicted() && !dependencies[i].hasProblem()) {
-            			DependencyDescriptor dd = dependencies[i].getDependencyDescriptor(root);
-            			if (dd != null) {
-            				String rev = dependencies[i].getResolvedId().getRevision();
-            				String status = dependencies[i].getDescriptor().getStatus();
-            				props.put(dd.getDependencyRevisionId().encodeToString(), rev+" "+status);
-            			}
-            		}
-            	}
+                IvyNode root = dependencies[0].getRoot();
+                for (int i = 0; i < dependencies.length; i++) {
+                    if (!dependencies[i].isCompletelyEvicted() && !dependencies[i].hasProblem()) {
+                        DependencyDescriptor dd = dependencies[i].getDependencyDescriptor(root);
+                        if (dd != null) {
+                            String rev = dependencies[i].getResolvedId().getRevision();
+                            String status = dependencies[i].getDescriptor().getStatus();
+                            props.put(dd.getDependencyRevisionId().encodeToString(), rev + " "
+                                    + status);
+                        }
+                    }
+                }
             }
             FileOutputStream out = new FileOutputStream(ivyPropertiesInCache);
-            props.store(out, md.getResolvedModuleRevisionId()+ " resolved revisions");
+            props.store(out, md.getResolvedModuleRevisionId() + " resolved revisions");
             out.close();
-            Message.verbose("\tresolved ivy file produced in "+ivyFileInCache);
-            
-            report.setResolveTime(System.currentTimeMillis()-start);
+            Message.verbose("\tresolved ivy file produced in " + ivyFileInCache);
+
+            report.setResolveTime(System.currentTimeMillis() - start);
 
             if (options.isDownload()) {
-	            Message.verbose(":: downloading artifacts ::");
-	
-	            downloadArtifacts(report, cacheManager, options.isUseOrigin(), options.getArtifactFilter());
+                Message.verbose(":: downloading artifacts ::");
+
+                downloadArtifacts(report, cacheManager, options.isUseOrigin(), options
+                        .getArtifactFilter());
             }
-            
-            
+
             if (options.isOutputReport()) {
-            	outputReport(report, cacheManager.getCache());
+                outputReport(report, cacheManager.getCache());
             }
-            
+
             eventManager.fireIvyEvent(new EndResolveEvent(md, confs, report));
             return report;
         } finally {
             setDictatorResolver(oldDictator);
         }
-	}
+    }
 
-	public void outputReport(ResolveReport report, File cache) {
-		Message.info(":: resolution report ::");
-		report.setProblemMessages(Message.getProblems());
-		// output report
-		report.output(settings.getReportOutputters(), cache);
-		
-		Message.verbose("\tresolve done ("+report.getResolveTime()+"ms resolve - "+report.getDownloadTime()+"ms download)");
-		Message.sumupProblems();
-	}
+    public void outputReport(ResolveReport report, File cache) {
+        Message.info(":: resolution report ::");
+        report.setProblemMessages(Message.getProblems());
+        // output report
+        report.output(settings.getReportOutputters(), cache);
 
-    public void downloadArtifacts(ResolveReport report, CacheManager cacheManager, boolean useOrigin, Filter artifactFilter) {
-    	long start = System.currentTimeMillis();
-    	IvyNode[] dependencies = (IvyNode[]) report.getDependencies().toArray(new IvyNode[report.getDependencies().size()]);
-        
-        eventManager.fireIvyEvent(new PrepareDownloadEvent((Artifact[])report.getArtifacts().toArray(new Artifact[report.getArtifacts().size()])));
-        
+        Message.verbose("\tresolve done (" + report.getResolveTime() + "ms resolve - "
+                + report.getDownloadTime() + "ms download)");
+        Message.sumupProblems();
+    }
+
+    public void downloadArtifacts(ResolveReport report, CacheManager cacheManager,
+            boolean useOrigin, Filter artifactFilter) {
+        long start = System.currentTimeMillis();
+        IvyNode[] dependencies = (IvyNode[]) report.getDependencies().toArray(
+            new IvyNode[report.getDependencies().size()]);
+
+        eventManager.fireIvyEvent(new PrepareDownloadEvent((Artifact[]) report.getArtifacts()
+                .toArray(new Artifact[report.getArtifacts().size()])));
+
         for (int i = 0; i < dependencies.length; i++) {
-        	checkInterrupted();
-            //download artifacts required in all asked configurations
+            checkInterrupted();
+            // download artifacts required in all asked configurations
             if (!dependencies[i].isCompletelyEvicted() && !dependencies[i].hasProblem()) {
                 DependencyResolver resolver = dependencies[i].getModuleRevision()
-                													.getArtifactResolver();
+                        .getArtifactResolver();
                 Artifact[] selectedArtifacts = dependencies[i].getSelectedArtifacts(artifactFilter);
-                DownloadReport dReport = resolver.download(selectedArtifacts, new DownloadOptions(settings, cacheManager, eventManager, useOrigin));
+                DownloadReport dReport = resolver.download(selectedArtifacts, new DownloadOptions(
+                        settings, cacheManager, eventManager, useOrigin));
                 ArtifactDownloadReport[] adrs = dReport.getArtifactsReports();
                 for (int j = 0; j < adrs.length; j++) {
                     if (adrs[j].getDownloadStatus() == DownloadStatus.FAILED) {
-                        Message.warn("\t[NOT FOUND  ] "+adrs[j].getArtifact());
+                        Message.warn("\t[NOT FOUND  ] " + adrs[j].getArtifact());
                         resolver.reportFailure(adrs[j].getArtifact());
                     }
                 }
@@ -309,7 +333,8 @@ public class ResolveEngine {
                     if (dependencies[i].isEvicted(dconfs[j])) {
                         report.getConfigurationReport(dconfs[j]).addDependency(dependencies[i]);
                     } else {
-                        report.getConfigurationReport(dconfs[j]).addDependency(dependencies[i], dReport);
+                        report.getConfigurationReport(dconfs[j]).addDependency(dependencies[i],
+                            dReport);
                     }
                 }
             }
@@ -318,119 +343,135 @@ public class ResolveEngine {
     }
 
     /**
-     * Download an artifact to the cache.
-     * Not used internally, useful especially for IDE plugins
-     * needing to download artifact one by one (for source or javadoc artifact,
-     * for instance).
+     * Download an artifact to the cache. Not used internally, useful especially for IDE plugins
+     * needing to download artifact one by one (for source or javadoc artifact, for instance).
+     * Downloaded artifact file can be accessed using getArchiveFileInCache method. It is possible
+     * to track the progression of the download using classical ivy progress monitoring feature (see
+     * addTransferListener).
      * 
-     * Downloaded artifact file can be accessed using getArchiveFileInCache method.
-     * 
-     * It is possible to track the progression of the download using classical ivy 
-     * progress monitoring feature (see addTransferListener).
-     * 
-     * @param artifact the artifact to download
-     * @param cacheManager the cacheManager to use.
+     * @param artifact
+     *            the artifact to download
+     * @param cacheManager
+     *            the cacheManager to use.
      * @return a report concerning the download
      */
-    public ArtifactDownloadReport download(Artifact artifact, CacheManager cacheManager, boolean useOrigin) {
-        DependencyResolver resolver = settings.getResolver(artifact.getModuleRevisionId().getModuleId());
-        DownloadReport r = resolver.download(new Artifact[] {artifact}, new DownloadOptions(settings, cacheManager, eventManager, useOrigin));
+    public ArtifactDownloadReport download(Artifact artifact, CacheManager cacheManager,
+            boolean useOrigin) {
+        DependencyResolver resolver = settings.getResolver(artifact.getModuleRevisionId()
+                .getModuleId());
+        DownloadReport r = resolver.download(new Artifact[] {artifact}, new DownloadOptions(
+                settings, cacheManager, eventManager, useOrigin));
         return r.getArtifactReport(artifact);
     }
-    
+
     /**
-     * Resolve the dependencies of a module without downloading corresponding artifacts.
-     * The module to resolve is given by its ivy file URL. This method requires
-     * appropriate configuration of the ivy instance, especially resolvers.
+     * Resolve the dependencies of a module without downloading corresponding artifacts. The module
+     * to resolve is given by its ivy file URL. This method requires appropriate configuration of
+     * the ivy instance, especially resolvers.
      * 
-     * @param ivySource url of the ivy file to use for dependency resolving
-     * @param confs an array of configuration names to resolve - must not be null nor empty
-     * @param cache the cache to use - default cache is used if null
-     * @param date the date to which resolution must be done - may be null
+     * @param ivySource
+     *            url of the ivy file to use for dependency resolving
+     * @param confs
+     *            an array of configuration names to resolve - must not be null nor empty
+     * @param cache
+     *            the cache to use - default cache is used if null
+     * @param date
+     *            the date to which resolution must be done - may be null
      * @return an array of the resolved dependencies
-     * @throws ParseException if a parsing problem occured in the ivy file
-     * @throws IOException if an IO problem was raised during ivy file parsing
+     * @throws ParseException
+     *             if a parsing problem occured in the ivy file
+     * @throws IOException
+     *             if an IO problem was raised during ivy file parsing
      */
-    public IvyNode[] getDependencies(URL ivySource, ResolveOptions options) throws ParseException, IOException {
-        return getDependencies(ModuleDescriptorParserRegistry.getInstance()
-        		.parseDescriptor(settings, ivySource, options.isValidate()),
-        		options, null);
+    public IvyNode[] getDependencies(URL ivySource, ResolveOptions options) throws ParseException,
+            IOException {
+        return getDependencies(ModuleDescriptorParserRegistry.getInstance().parseDescriptor(
+            settings, ivySource, options.isValidate()), options, null);
     }
-    
+
     /**
-     * Resolve the dependencies of a module without downloading corresponding artifacts.
-     * The module to resolve is given by its module descriptor.This method requires
-     * appropriate configuration of the ivy instance, especially resolvers.
+     * Resolve the dependencies of a module without downloading corresponding artifacts. The module
+     * to resolve is given by its module descriptor.This method requires appropriate configuration
+     * of the ivy instance, especially resolvers.
      * 
-     * @param md the descriptor of the module for which we want to get dependencies - must not be null
-     * @param options the resolve options to use to resolve the dependencies
-     * @param report a resolve report to fill during resolution - may be null
+     * @param md
+     *            the descriptor of the module for which we want to get dependencies - must not be
+     *            null
+     * @param options
+     *            the resolve options to use to resolve the dependencies
+     * @param report
+     *            a resolve report to fill during resolution - may be null
      * @return an array of the resolved Dependencies
      */
-    public IvyNode[] getDependencies(ModuleDescriptor md, ResolveOptions options, ResolveReport report) {
+    public IvyNode[] getDependencies(ModuleDescriptor md, ResolveOptions options,
+            ResolveReport report) {
         if (md == null) {
             throw new NullPointerException("module descriptor must not be null");
         }
         CacheManager cacheManager = options.getCache();
-        if (cacheManager == null) {  // ensure that a cache is configured
-        	cacheManager = IvyContext.getContext().getCacheManager();
-        	options.setCache(cacheManager);
+        if (cacheManager == null) { // ensure that a cache is configured
+            cacheManager = IvyContext.getContext().getCacheManager();
+            options.setCache(cacheManager);
         } else {
-        	IvyContext.getContext().setCache(cacheManager.getCache());
+            IvyContext.getContext().setCache(cacheManager.getCache());
         }
-        
+
         String[] confs = options.getConfs();
         if (confs.length == 1 && confs[0].equals("*")) {
             confs = md.getConfigurationsNames();
         }
         options.setConfs(confs);
-        
+
         Date reportDate = new Date();
         ResolveData data = new ResolveData(this, options);
         IvyNode rootNode = new IvyNode(data, md);
-        
+
         for (int i = 0; i < confs.length; i++) {
-        	if (confs[i] == null) {
-        		throw new NullPointerException("null conf not allowed: confs where: "+Arrays.asList(confs));
-        	}
-        	
-        	Message.verbose("resolving dependencies for configuration '"+confs[i]+"'");
-        	// for each configuration we clear the cache of what's been fetched
+            if (confs[i] == null) {
+                throw new NullPointerException("null conf not allowed: confs where: "
+                        + Arrays.asList(confs));
+            }
+
+            Message.verbose("resolving dependencies for configuration '" + confs[i] + "'");
+            // for each configuration we clear the cache of what's been fetched
             fetchedSet.clear();
-            
+
             Configuration configuration = md.getConfiguration(confs[i]);
             if (configuration == null) {
-                Message.error("asked configuration not found in "+md.getModuleRevisionId()+": "+confs[i]);
+                Message.error("asked configuration not found in " + md.getModuleRevisionId() + ": "
+                        + confs[i]);
             } else {
                 ConfigurationResolveReport confReport = null;
                 if (report != null) {
                     confReport = report.getConfigurationReport(confs[i]);
                     if (confReport == null) {
-                        confReport = new ConfigurationResolveReport(this, md, confs[i], reportDate, options);
+                        confReport = new ConfigurationResolveReport(this, md, confs[i], reportDate,
+                                options);
                         report.addReport(confs[i], confReport);
                     }
                 }
                 // we reuse the same resolve data with a new report for each conf
-                data.setReport(confReport); 
-                
+                data.setReport(confReport);
+
                 // update the root module conf we are about to fetch
                 VisitNode root = new VisitNode(data, rootNode, null, confs[i], null);
                 root.setRequestedConf(confs[i]);
                 rootNode.updateConfsToFetch(Collections.singleton(confs[i]));
-                
+
                 // go fetch !
                 fetchDependencies(root, confs[i], false);
-                
+
                 // clean data
                 for (Iterator iter = data.getNodes().iterator(); iter.hasNext();) {
                     IvyNode dep = (IvyNode) iter.next();
                     dep.clean();
-                }                
+                }
             }
         }
-        
-        // prune and reverse sort fectched dependencies 
-        Collection dependencies = new LinkedHashSet(data.getNodes().size()); // use a Set to avoids duplicates
+
+        // prune and reverse sort fectched dependencies
+        Collection dependencies = new LinkedHashSet(data.getNodes().size()); // use a Set to
+        // avoids duplicates
         for (Iterator iter = data.getNodes().iterator(); iter.hasNext();) {
             IvyNode dep = (IvyNode) iter.next();
             if (dep != null) {
@@ -441,66 +482,71 @@ public class ResolveEngine {
         Collections.reverse(sortedDependencies);
 
         // handle transitive eviction now:
-        // if a module has been evicted then all its dependencies required 
-        // only by it should be evicted too. Since nodes are now sorted from the more dependent to 
+        // if a module has been evicted then all its dependencies required
+        // only by it should be evicted too. Since nodes are now sorted from the more dependent to
         // the less one, we can traverse the list and check only the direct parent and not all
         // the ancestors
         for (ListIterator iter = sortedDependencies.listIterator(); iter.hasNext();) {
-            IvyNode node = (IvyNode)iter.next();
+            IvyNode node = (IvyNode) iter.next();
             if (!node.isCompletelyEvicted()) {
                 for (int i = 0; i < confs.length; i++) {
                     IvyNodeCallers.Caller[] callers = node.getCallers(confs[i]);
                     if (settings.debugConflictResolution()) {
-                        Message.debug("checking if "+node.getId()+" is transitively evicted in "+confs[i]);
+                        Message.debug("checking if " + node.getId()
+                                + " is transitively evicted in " + confs[i]);
                     }
                     boolean allEvicted = callers.length > 0;
                     for (int j = 0; j < callers.length; j++) {
                         if (callers[j].getModuleRevisionId().equals(md.getModuleRevisionId())) {
                             // the caller is the root module itself, it can't be evicted
                             allEvicted = false;
-                            break;                            
+                            break;
                         } else {
                             IvyNode callerNode = data.getNode(callers[j].getModuleRevisionId());
                             if (callerNode == null) {
-                                Message.warn("ivy internal error: no node found for "+callers[j].getModuleRevisionId()+": looked in "+data.getNodeIds()+" and root module id was "+md.getModuleRevisionId());
+                                Message.warn("ivy internal error: no node found for "
+                                        + callers[j].getModuleRevisionId() + ": looked in "
+                                        + data.getNodeIds() + " and root module id was "
+                                        + md.getModuleRevisionId());
                             } else if (!callerNode.isEvicted(confs[i])) {
                                 allEvicted = false;
                                 break;
                             } else {
                                 if (settings.debugConflictResolution()) {
-                                    Message.debug("caller "+callerNode.getId()+" of "+node.getId()+" is evicted");
+                                    Message.debug("caller " + callerNode.getId() + " of "
+                                            + node.getId() + " is evicted");
                                 }
                             }
                         }
                     }
                     if (allEvicted) {
-                        Message.verbose("all callers are evicted for "+node+": evicting too");
+                        Message.verbose("all callers are evicted for " + node + ": evicting too");
                         node.markEvicted(confs[i], null, null, null);
                     } else {
                         if (settings.debugConflictResolution()) {
-                            Message.debug(node.getId()+" isn't transitively evicted, at least one caller was not evicted");
+                            Message
+                                    .debug(node.getId()
+                                            + " isn't transitively evicted, at least one caller was not evicted");
                         }
                     }
                 }
             }
         }
-        
+
         return (IvyNode[]) dependencies.toArray(new IvyNode[dependencies.size()]);
     }
 
-
-    
-    
     private void fetchDependencies(VisitNode node, String conf, boolean shouldBePublic) {
-    	checkInterrupted();
+        checkInterrupted();
         long start = System.currentTimeMillis();
         if (node.getParent() != null) {
-        	Message.verbose("== resolving dependencies "+node.getParent().getId()+"->"+node.getId()+" ["+node.getParentConf()+"->"+conf+"]");
+            Message.verbose("== resolving dependencies " + node.getParent().getId() + "->"
+                    + node.getId() + " [" + node.getParentConf() + "->" + conf + "]");
         } else {
-        	Message.verbose("== resolving dependencies for "+node.getId()+" ["+conf+"]");
+            Message.verbose("== resolving dependencies for " + node.getId() + " [" + conf + "]");
         }
         resolveConflict(node);
-        
+
         if (node.loadData(conf, shouldBePublic)) {
             resolveConflict(node);
             if (!node.isEvicted()) {
@@ -510,7 +556,7 @@ public class ResolveEngine {
                 }
             }
         } else if (!node.hasProblem()) {
-            // the node has not been loaded but hasn't problem: it was already loaded 
+            // the node has not been loaded but hasn't problem: it was already loaded
             // => we just have to update its dependencies data
             if (!node.isEvicted()) {
                 String[] confs = node.getRealConfs(conf);
@@ -523,38 +569,42 @@ public class ResolveEngine {
             // update selected nodes with confs asked in evicted one
             EvictionData ed = node.getEvictedData();
             if (ed.getSelected() != null) {
-            	for (Iterator iter = ed.getSelected().iterator(); iter.hasNext();) {
-            		IvyNode selected = (IvyNode)iter.next();
-            		if (!selected.isLoaded()) {
-            			// the node is not yet loaded, we can simply update its set of configurations to fetch
-            			selected.updateConfsToFetch(Collections.singleton(conf));
-            		} else {
-            			// the node has already been loaded, we must fetch its dependencies in the required conf 
-            			fetchDependencies(node.gotoNode(selected), conf, true);
-            		}
-            	}
+                for (Iterator iter = ed.getSelected().iterator(); iter.hasNext();) {
+                    IvyNode selected = (IvyNode) iter.next();
+                    if (!selected.isLoaded()) {
+                        // the node is not yet loaded, we can simply update its set of
+                        // configurations to fetch
+                        selected.updateConfsToFetch(Collections.singleton(conf));
+                    } else {
+                        // the node has already been loaded, we must fetch its dependencies in the
+                        // required conf
+                        fetchDependencies(node.gotoNode(selected), conf, true);
+                    }
+                }
             }
         }
         if (settings.debugConflictResolution()) {
-            Message.debug(node.getId()+" => dependencies resolved in "+conf+" ("+(System.currentTimeMillis()-start)+"ms)");
+            Message.debug(node.getId() + " => dependencies resolved in " + conf + " ("
+                    + (System.currentTimeMillis() - start) + "ms)");
         }
     }
 
     private void doFetchDependencies(VisitNode node, String conf) {
         Configuration c = node.getConfiguration(conf);
         if (c == null) {
-            Message.warn("configuration not found '"+conf+"' in "+node.getResolvedId()+": ignoring");
+            Message.warn("configuration not found '" + conf + "' in " + node.getResolvedId()
+                    + ": ignoring");
             if (node.getParent() != null) {
-                Message.warn("it was required from "+node.getParent().getResolvedId());
+                Message.warn("it was required from " + node.getParent().getResolvedId());
             }
             return;
         }
         // we handle the case where the asked configuration extends others:
         // we have to first fetch the extended configurations
-        
+
         // first we check if this is the actual requested conf (not an extended one)
         boolean requestedConfSet = false;
-        if (node.getRequestedConf()==null) {
+        if (node.getRequestedConf() == null) {
             node.setRequestedConf(conf);
             requestedConfSet = true;
         }
@@ -566,14 +616,15 @@ public class ResolveEngine {
         for (int i = 0; i < extendedConfs.length; i++) {
             fetchDependencies(node, extendedConfs[i], false);
         }
-        
+
         // now we can actually resolve this configuration dependencies
         DependencyDescriptor dd = node.getDependencyDescriptor();
         if (!isDependenciesFetched(node.getNode(), conf) && (dd == null || node.isTransitive())) {
             Collection dependencies = node.getDependencies(conf);
             for (Iterator iter = dependencies.iterator(); iter.hasNext();) {
-                VisitNode dep = (VisitNode)iter.next();
-                dep.useRealNode(); // the node may have been resolved to another real one while resolving other deps
+                VisitNode dep = (VisitNode) iter.next();
+                dep.useRealNode(); // the node may have been resolved to another real one while
+                // resolving other deps
                 if (dep.isCircular()) {
                     continue;
                 }
@@ -592,40 +643,47 @@ public class ResolveEngine {
         // we have finiched with this configuration, if it was the original requested conf
         // we can clean it now
         if (requestedConfSet) {
-        	node.setRequestedConf(null);
+            node.setRequestedConf(null);
         }
-        
-    }
 
+    }
 
     /**
      * Returns true if we've already fetched the dependencies for this node and configuration
-     * @param node node to check
-     * @param conf configuration to check
+     * 
+     * @param node
+     *            node to check
+     * @param conf
+     *            configuration to check
      * @return true if we've already fetched this dependency
      */
     private boolean isDependenciesFetched(IvyNode node, String conf) {
         ModuleId moduleId = node.getModuleId();
         ModuleRevisionId moduleRevisionId = node.getResolvedId();
-        String key = moduleId.getOrganisation()+"|"+moduleId.getName()+"|"+moduleRevisionId.getRevision() +
-            "|" + conf;
+        String key = moduleId.getOrganisation() + "|" + moduleId.getName() + "|"
+                + moduleRevisionId.getRevision() + "|" + conf;
         if (fetchedSet.contains(key)) {
             return true;
         }
         fetchedSet.add(key);
         return false;
-    }    
+    }
 
     private void resolveConflict(VisitNode node) {
         resolveConflict(node, node.getParent(), Collections.EMPTY_SET);
     }
+
     /**
-     * Resolves conflict for the given node in the given ancestor.
-     * This method do conflict resolution in ancestor parents recursively,
-     * unless not necessary.
-     * @param node the node for which conflict resolution should be done
-     * @param ancestor the ancestor in which the conflict resolution should be done
-     * @param toevict a collection of IvyNode to evict (as computed by conflict resolution in descendants of ancestor)
+     * Resolves conflict for the given node in the given ancestor. This method do conflict
+     * resolution in ancestor parents recursively, unless not necessary.
+     * 
+     * @param node
+     *            the node for which conflict resolution should be done
+     * @param ancestor
+     *            the ancestor in which the conflict resolution should be done
+     * @param toevict
+     *            a collection of IvyNode to evict (as computed by conflict resolution in
+     *            descendants of ancestor)
      * @return true if conflict resolution has been done, false it can't be done yet
      */
     private boolean resolveConflict(VisitNode node, VisitNode ancestor, Collection toevict) {
@@ -634,118 +692,137 @@ public class ResolveEngine {
         }
         // check if job is not already done
         if (checkConflictSolvedEvicted(node, ancestor)) {
-        	// job is done and node is evicted, nothing to do
+            // job is done and node is evicted, nothing to do
             return true;
         }
         if (checkConflictSolvedSelected(node, ancestor)) {
-        	// job is done and node is selected, nothing to do for this ancestor, but we still have 
-        	// to check higher levels, for which conflict resolution might have been impossible
-        	// before
-        	if (resolveConflict(node, ancestor.getParent(), toevict)) {
-        		// now that conflict resolution is ok in ancestors
-        		// we just have to check if the node wasn't previously evicted in root ancestor
-        		EvictionData evictionData = node.getEvictionDataInRoot(node.getRootModuleConf(), ancestor);
-        		if (evictionData != null) {
-        			// node has been previously evicted in an ancestor: we mark it as evicted
-        			if (settings.debugConflictResolution()) {
-        				Message.debug(node+" was previously evicted in root module conf "+node.getRootModuleConf());
-        			}
+            // job is done and node is selected, nothing to do for this ancestor, but we still have
+            // to check higher levels, for which conflict resolution might have been impossible
+            // before
+            if (resolveConflict(node, ancestor.getParent(), toevict)) {
+                // now that conflict resolution is ok in ancestors
+                // we just have to check if the node wasn't previously evicted in root ancestor
+                EvictionData evictionData = node.getEvictionDataInRoot(node.getRootModuleConf(),
+                    ancestor);
+                if (evictionData != null) {
+                    // node has been previously evicted in an ancestor: we mark it as evicted
+                    if (settings.debugConflictResolution()) {
+                        Message.debug(node + " was previously evicted in root module conf "
+                                + node.getRootModuleConf());
+                    }
 
-        			node.markEvicted(evictionData);                
-        			if (settings.debugConflictResolution()) {
-        				Message.debug("evicting "+node+" by "+evictionData);
-        			}
-        		}
-        		return true;
-        	} else {
-        		return false;
-        	}
-        }
-        
-        // compute conflicts
-        Collection resolvedNodes = new HashSet(ancestor.getNode().getResolvedNodes(node.getModuleId(), node.getRootModuleConf()));
-        resolvedNodes.addAll(ancestor.getNode().getPendingConflicts(node.getRootModuleConf(), node.getModuleId()));
-        Collection conflicts = computeConflicts(node, ancestor, toevict, resolvedNodes);
-        
-        if (settings.debugConflictResolution()) {
-            Message.debug("found conflicting revisions for "+node+" in "+ancestor+": "+conflicts);
-        }
-        
-        ConflictManager conflictManager = ancestor.getNode().getConflictManager(node.getModuleId());
-		Collection resolved = conflictManager.resolveConflicts(ancestor.getNode(), conflicts);
-
-		if (resolved == null) {
-            if (settings.debugConflictResolution()) {
-                Message.debug("impossible to resolve conflicts for "+node+" in "+ancestor+" yet");
-                Message.debug("setting all nodes as pending conflicts for later conflict resolution: "+conflicts);
+                    node.markEvicted(evictionData);
+                    if (settings.debugConflictResolution()) {
+                        Message.debug("evicting " + node + " by " + evictionData);
+                    }
+                }
+                return true;
+            } else {
+                return false;
             }
-            ancestor.getNode().setPendingConflicts(node.getModuleId(), node.getRootModuleConf(), conflicts);
+        }
+
+        // compute conflicts
+        Collection resolvedNodes = new HashSet(ancestor.getNode().getResolvedNodes(
+            node.getModuleId(), node.getRootModuleConf()));
+        resolvedNodes.addAll(ancestor.getNode().getPendingConflicts(node.getRootModuleConf(),
+            node.getModuleId()));
+        Collection conflicts = computeConflicts(node, ancestor, toevict, resolvedNodes);
+
+        if (settings.debugConflictResolution()) {
+            Message.debug("found conflicting revisions for " + node + " in " + ancestor + ": "
+                    + conflicts);
+        }
+
+        ConflictManager conflictManager = ancestor.getNode().getConflictManager(node.getModuleId());
+        Collection resolved = conflictManager.resolveConflicts(ancestor.getNode(), conflicts);
+
+        if (resolved == null) {
+            if (settings.debugConflictResolution()) {
+                Message.debug("impossible to resolve conflicts for " + node + " in " + ancestor
+                        + " yet");
+                Message
+                        .debug("setting all nodes as pending conflicts for later conflict resolution: "
+                                + conflicts);
+            }
+            ancestor.getNode().setPendingConflicts(node.getModuleId(), node.getRootModuleConf(),
+                conflicts);
             return false;
         }
-        
+
         if (settings.debugConflictResolution()) {
-            Message.debug("selected revisions for "+node+" in "+ancestor+": "+resolved);
+            Message.debug("selected revisions for " + node + " in " + ancestor + ": " + resolved);
         }
         if (resolved.contains(node.getNode())) {
             // node has been selected for the current parent
-            
+
             // handle previously selected nodes that are now evicted by this new node
             toevict = resolvedNodes;
             toevict.removeAll(resolved);
-            
+
             for (Iterator iter = toevict.iterator(); iter.hasNext();) {
-                IvyNode te = (IvyNode)iter.next();
-                te.markEvicted(node.getRootModuleConf(), ancestor.getNode(), conflictManager, resolved);
-                
+                IvyNode te = (IvyNode) iter.next();
+                te.markEvicted(node.getRootModuleConf(), ancestor.getNode(), conflictManager,
+                    resolved);
+
                 if (settings.debugConflictResolution()) {
-                    Message.debug("evicting "+te+" by "+te.getEvictedData(node.getRootModuleConf()));
+                    Message.debug("evicting " + te + " by "
+                            + te.getEvictedData(node.getRootModuleConf()));
                 }
             }
-            
+
             // it's very important to update resolved and evicted nodes BEFORE recompute parent call
             // to allow it to recompute its resolved collection with correct data
-            // if necessary            
-            ancestor.getNode().setResolvedNodes(node.getModuleId(), node.getRootModuleConf(), resolved); 
+            // if necessary
+            ancestor.getNode().setResolvedNodes(node.getModuleId(), node.getRootModuleConf(),
+                resolved);
 
-            Collection evicted = new HashSet(ancestor.getNode().getEvictedNodes(node.getModuleId(), node.getRootModuleConf()));
+            Collection evicted = new HashSet(ancestor.getNode().getEvictedNodes(node.getModuleId(),
+                node.getRootModuleConf()));
             evicted.removeAll(resolved);
             evicted.addAll(toevict);
-            ancestor.getNode().setEvictedNodes(node.getModuleId(), node.getRootModuleConf(), evicted);
-            ancestor.getNode().setPendingConflicts(node.getModuleId(), node.getRootModuleConf(), Collections.EMPTY_SET);
-            
+            ancestor.getNode().setEvictedNodes(node.getModuleId(), node.getRootModuleConf(),
+                evicted);
+            ancestor.getNode().setPendingConflicts(node.getModuleId(), node.getRootModuleConf(),
+                Collections.EMPTY_SET);
+
             return resolveConflict(node, ancestor.getParent(), toevict);
         } else {
             // node has been evicted for the current parent
             if (resolved.isEmpty()) {
                 if (settings.debugConflictResolution()) {
-                    Message.verbose("conflict manager '"+conflictManager+"' evicted all revisions among "+conflicts);
+                    Message.verbose("conflict manager '" + conflictManager
+                            + "' evicted all revisions among " + conflicts);
                 }
             }
-            
-            
-            // it's time to update parent resolved and evicted with what was found 
-            
-            Collection evicted = new HashSet(ancestor.getNode().getEvictedNodes(node.getModuleId(), node.getRootModuleConf()));
+
+            // it's time to update parent resolved and evicted with what was found
+
+            Collection evicted = new HashSet(ancestor.getNode().getEvictedNodes(node.getModuleId(),
+                node.getRootModuleConf()));
             toevict.removeAll(resolved);
             evicted.removeAll(resolved);
             evicted.addAll(toevict);
             evicted.add(node.getNode());
-            ancestor.getNode().setEvictedNodes(node.getModuleId(), node.getRootModuleConf(), evicted);
-            ancestor.getNode().setPendingConflicts(node.getModuleId(), node.getRootModuleConf(), Collections.EMPTY_SET);
+            ancestor.getNode().setEvictedNodes(node.getModuleId(), node.getRootModuleConf(),
+                evicted);
+            ancestor.getNode().setPendingConflicts(node.getModuleId(), node.getRootModuleConf(),
+                Collections.EMPTY_SET);
 
-            
             node.markEvicted(ancestor, conflictManager, resolved);
             if (settings.debugConflictResolution()) {
-                Message.debug("evicting "+node+" by "+node.getEvictedData());
+                Message.debug("evicting " + node + " by " + node.getEvictedData());
             }
 
             // if resolved changed we have to go up in the graph
-            Collection prevResolved = ancestor.getNode().getResolvedNodes(node.getModuleId(), node.getRootModuleConf());
+            Collection prevResolved = ancestor.getNode().getResolvedNodes(node.getModuleId(),
+                node.getRootModuleConf());
             boolean solved = true;
-            if (!prevResolved.equals(resolved)) {                
-                ancestor.getNode().setResolvedNodes(node.getModuleId(), node.getRootModuleConf(), resolved);
+            if (!prevResolved.equals(resolved)) {
+                ancestor.getNode().setResolvedNodes(node.getModuleId(), node.getRootModuleConf(),
+                    resolved);
                 for (Iterator iter = resolved.iterator(); iter.hasNext();) {
-                    IvyNode sel = (IvyNode)iter.next();
+                    IvyNode sel = (IvyNode) iter.next();
                     if (!prevResolved.contains(sel)) {
                         solved &= resolveConflict(node.gotoNode(sel), ancestor.getParent(), toevict);
                     }
@@ -755,19 +832,22 @@ public class ResolveEngine {
         }
     }
 
-    private Collection computeConflicts(VisitNode node, VisitNode ancestor, Collection toevict, Collection resolvedNodes) {
+    private Collection computeConflicts(VisitNode node, VisitNode ancestor, Collection toevict,
+            Collection resolvedNodes) {
         Collection conflicts = new HashSet();
         conflicts.add(node.getNode());
         if (resolvedNodes.removeAll(toevict)) {
             // parent.resolved(node.mid) is not up to date:
             // recompute resolved from all sub nodes
-            Collection deps = ancestor.getNode().getDependencies(node.getRootModuleConf(), ancestor.getRequiredConfigurations());
+            Collection deps = ancestor.getNode().getDependencies(node.getRootModuleConf(),
+                ancestor.getRequiredConfigurations());
             for (Iterator iter = deps.iterator(); iter.hasNext();) {
-                IvyNode dep = (IvyNode)iter.next();
+                IvyNode dep = (IvyNode) iter.next();
                 if (dep.getModuleId().equals(node.getModuleId())) {
-                	conflicts.add(dep);
+                    conflicts.add(dep);
                 }
-                conflicts.addAll(dep.getResolvedNodes(node.getModuleId(), node.getRootModuleConf()));
+                conflicts
+                        .addAll(dep.getResolvedNodes(node.getModuleId(), node.getRootModuleConf()));
             }
         } else if (resolvedNodes.isEmpty() && node.getParent() != ancestor) {
             DependencyDescriptor[] dds = ancestor.getDescriptor().getDependencies();
@@ -790,10 +870,10 @@ public class ResolveEngine {
         if (ancestor.getResolvedRevisions(node.getModuleId()).contains(node.getResolvedId())) {
             // resolve conflict has already be done with node with the same id
             if (settings.debugConflictResolution()) {
-                Message.debug("conflict resolution already done for "+node+" in "+ancestor);
+                Message.debug("conflict resolution already done for " + node + " in " + ancestor);
             }
             return true;
-        } 
+        }
         return false;
     }
 
@@ -801,51 +881,48 @@ public class ResolveEngine {
         if (ancestor.getEvictedRevisions(node.getModuleId()).contains(node.getResolvedId())) {
             // resolve conflict has already be done with node with the same id
             if (settings.debugConflictResolution()) {
-                Message.debug("conflict resolution already done for "+node+" in "+ancestor);
+                Message.debug("conflict resolution already done for " + node + " in " + ancestor);
             }
             return true;
         }
         return false;
     }
 
-	public ResolvedModuleRevision findModule(ModuleRevisionId id, ResolveOptions options) {
-		DependencyResolver r = settings.getResolver(id.getModuleId());
-		if (r == null) {
-			throw new IllegalStateException("no resolver found for "+id.getModuleId());
-		}
-        DefaultModuleDescriptor md = DefaultModuleDescriptor.newCallerInstance(id, new String[] {"*"}, false, false);
-        
-        if (options.getResolveId() == null) {
-        	options.setResolveId(ResolveOptions.getDefaultResolveId(md));
+    public ResolvedModuleRevision findModule(ModuleRevisionId id, ResolveOptions options) {
+        DependencyResolver r = settings.getResolver(id.getModuleId());
+        if (r == null) {
+            throw new IllegalStateException("no resolver found for " + id.getModuleId());
         }
-        
-		try {
-			return r.getDependency(
-					new DefaultDependencyDescriptor(id, true), 
-					new ResolveData(
-							this, 
-							options, 
-							new ConfigurationResolveReport(this, md, "default", null, options)));
-		} catch (ParseException e) {
-			throw new RuntimeException("problem while parsing repository module descriptor for "+id+": "+e, e);
-		}
-	}
+        DefaultModuleDescriptor md = DefaultModuleDescriptor.newCallerInstance(id,
+            new String[] {"*"}, false, false);
 
-	public EventManager getEventManager() {
-		return eventManager;
-	}
+        if (options.getResolveId() == null) {
+            options.setResolveId(ResolveOptions.getDefaultResolveId(md));
+        }
 
-	public IvySettings getSettings() {
-		return settings;
-	}
+        try {
+            return r.getDependency(new DefaultDependencyDescriptor(id, true), new ResolveData(this,
+                    options, new ConfigurationResolveReport(this, md, "default", null, options)));
+        } catch (ParseException e) {
+            throw new RuntimeException("problem while parsing repository module descriptor for "
+                    + id + ": " + e, e);
+        }
+    }
 
-	public SortEngine getSortEngine() {
-		return sortEngine;
-	}
+    public EventManager getEventManager() {
+        return eventManager;
+    }
 
-	private void checkInterrupted() {
-		IvyContext.getContext().getIvy().checkInterrupted();
-	}
+    public IvySettings getSettings() {
+        return settings;
+    }
 
-    
+    public SortEngine getSortEngine() {
+        return sortEngine;
+    }
+
+    private void checkInterrupted() {
+        IvyContext.getContext().getIvy().checkInterrupted();
+    }
+
 }

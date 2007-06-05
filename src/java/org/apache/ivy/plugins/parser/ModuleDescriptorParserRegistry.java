@@ -33,51 +33,54 @@ import org.apache.ivy.plugins.parser.xml.XmlModuleDescriptorParser;
 import org.apache.ivy.plugins.repository.Resource;
 import org.apache.ivy.util.Message;
 
-
 public class ModuleDescriptorParserRegistry extends AbstractModuleDescriptorParser {
     private static ModuleDescriptorParserRegistry INSTANCE = new ModuleDescriptorParserRegistry();
-    
+
     public static ModuleDescriptorParserRegistry getInstance() {
         return INSTANCE;
     }
 
     private List _parsers = new LinkedList();
+
     private ModuleDescriptorParserRegistry() {
         _parsers.add(PomModuleDescriptorParser.getInstance());
         _parsers.add(XmlModuleDescriptorParser.getInstance());
     }
-    
+
     /**
      * Adds a the given parser to this registry.
      * 
-     * @param parser the parser to add
+     * @param parser
+     *            the parser to add
      */
     public void addParser(ModuleDescriptorParser parser) {
-    	/*
-    	 * The parser is added in the front of the list of parsers. This is necessary because
-    	 * the XmlModuleDescriptorParser accepts all resources!
-    	 */
-    	_parsers.add(0, parser);
+        /*
+         * The parser is added in the front of the list of parsers. This is necessary because the
+         * XmlModuleDescriptorParser accepts all resources!
+         */
+        _parsers.add(0, parser);
     }
-    
+
     public ModuleDescriptorParser[] getParsers() {
-        return (ModuleDescriptorParser[])_parsers.toArray(new ModuleDescriptorParser[_parsers.size()]);
+        return (ModuleDescriptorParser[]) _parsers.toArray(new ModuleDescriptorParser[_parsers
+                .size()]);
     }
-    
+
     public ModuleDescriptorParser getParser(Resource res) {
         for (Iterator iter = _parsers.iterator(); iter.hasNext();) {
-            ModuleDescriptorParser parser = (ModuleDescriptorParser)iter.next();
+            ModuleDescriptorParser parser = (ModuleDescriptorParser) iter.next();
             if (parser.accept(res)) {
                 return parser;
             }
         }
         return null;
-    }    
-    
-    public ModuleDescriptor parseDescriptor(IvySettings settings, URL descriptorURL, Resource res, boolean validate) throws ParseException, IOException {
+    }
+
+    public ModuleDescriptor parseDescriptor(IvySettings settings, URL descriptorURL, Resource res,
+            boolean validate) throws ParseException, IOException {
         ModuleDescriptorParser parser = getParser(res);
         if (parser == null) {
-            Message.warn("no module descriptor parser found for "+res);
+            Message.warn("no module descriptor parser found for " + res);
             return null;
         }
         return parser.parseDescriptor(settings, descriptorURL, res, validate);
@@ -87,10 +90,11 @@ public class ModuleDescriptorParserRegistry extends AbstractModuleDescriptorPars
         return getParser(res) != null;
     }
 
-    public void toIvyFile(InputStream is, Resource res, File destFile, ModuleDescriptor md) throws ParseException, IOException {
+    public void toIvyFile(InputStream is, Resource res, File destFile, ModuleDescriptor md)
+            throws ParseException, IOException {
         ModuleDescriptorParser parser = getParser(res);
         if (parser == null) {
-            Message.warn("no module descriptor parser found for "+res);
+            Message.warn("no module descriptor parser found for " + res);
         } else {
             parser.toIvyFile(is, res, destFile, md);
         }

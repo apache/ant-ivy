@@ -47,20 +47,23 @@ import org.apache.ivy.util.XMLHelper;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-
 /**
- * IvyRepResolver is a resolver which can be used to resolve dependencies found
- * in the ivy official repository for ivy files and ibiblio maven repository for the artifacts, 
- * or similar repositories.
- * For more flexibility with url and patterns, see {@link org.apache.ivy.plugins.resolver.URLResolver}.
+ * IvyRepResolver is a resolver which can be used to resolve dependencies found in the ivy official
+ * repository for ivy files and ibiblio maven repository for the artifacts, or similar repositories.
+ * For more flexibility with url and patterns, see
+ * {@link org.apache.ivy.plugins.resolver.URLResolver}.
  */
 public class IvyRepResolver extends URLResolver {
     public static final String DEFAULT_IVYPATTERN = "[organisation]/[module]/ivy-[revision].xml";
+
     public static final String DEFAULT_IVYROOT = "http://ivyrep.jayasoft.org/";
+
     private String _ivyroot = null;
+
     private String _ivypattern = null;
 
     private String _artroot = null;
+
     private String _artpattern = null;
 
     public IvyRepResolver() {
@@ -119,13 +122,16 @@ public class IvyRepResolver extends URLResolver {
             return null;
         }
         return _ivyroot + _ivypattern;
-    }    
+    }
+
     private String getWholeArtPattern() {
         return _artroot + _artpattern;
-    }    
+    }
+
     public String getIvypattern() {
         return _ivypattern;
     }
+
     public void setIvypattern(String pattern) {
         if (pattern == null) {
             throw new NullPointerException("pattern must not be null");
@@ -134,14 +140,19 @@ public class IvyRepResolver extends URLResolver {
         ensureIvyConfigured(getSettings());
         updateWholeIvyPattern();
     }
+
     public String getIvyroot() {
         return _ivyroot;
     }
+
     /**
-     * Sets the root of the maven like repository.
-     * The maven like repository is necessarily an http repository.
-     * @param root the root of the maven like repository
-     * @throws IllegalArgumentException if root does not start with "http://"
+     * Sets the root of the maven like repository. The maven like repository is necessarily an http
+     * repository.
+     * 
+     * @param root
+     *            the root of the maven like repository
+     * @throws IllegalArgumentException
+     *             if root does not start with "http://"
      */
     public void setIvyroot(String root) {
         if (root == null) {
@@ -155,19 +166,22 @@ public class IvyRepResolver extends URLResolver {
         ensureIvyConfigured(getSettings());
         updateWholeIvyPattern();
     }
-    
+
     public void setM2compatible(boolean m2compatible) {
         if (m2compatible) {
-            throw new IllegalArgumentException("ivyrep does not support maven2 compatibility. Please use ibiblio resolver instead, or even url or filesystem resolvers for more specific needs.");
+            throw new IllegalArgumentException(
+                    "ivyrep does not support maven2 compatibility. Please use ibiblio resolver instead, or even url or filesystem resolvers for more specific needs.");
         }
     }
-    
+
     private void updateWholeIvyPattern() {
         setIvyPatterns(Collections.singletonList(getWholeIvyPattern()));
     }
+
     private void updateWholeArtPattern() {
         setArtifactPatterns(Collections.singletonList(getWholeArtPattern()));
     }
+
     public void publish(Artifact artifact, File src) {
         throw new UnsupportedOperationException("publish not supported by IBiblioResolver");
     }
@@ -175,12 +189,10 @@ public class IvyRepResolver extends URLResolver {
     public String getArtroot() {
         return _artroot;
     }
-    
 
     public String getArtpattern() {
         return _artpattern;
     }
-    
 
     public void setArtpattern(String pattern) {
         if (pattern == null) {
@@ -190,7 +202,7 @@ public class IvyRepResolver extends URLResolver {
         ensureArtifactConfigured(getSettings());
         updateWholeArtPattern();
     }
-    
+
     public void setArtroot(String root) {
         if (root == null) {
             throw new NullPointerException("root must not be null");
@@ -203,14 +215,15 @@ public class IvyRepResolver extends URLResolver {
         ensureArtifactConfigured(getSettings());
         updateWholeArtPattern();
     }
-    
+
     public OrganisationEntry[] listOrganisations() {
         ensureIvyConfigured(getSettings());
         try {
             URL content = new URL(_ivyroot + "content.xml");
             final List ret = new ArrayList();
             XMLHelper.parse(content, null, new DefaultHandler() {
-                public void startElement(String uri,String localName,String qName,org.xml.sax.Attributes attributes) throws SAXException {
+                public void startElement(String uri, String localName, String qName,
+                        org.xml.sax.Attributes attributes) throws SAXException {
                     if ("organisation".equals(qName)) {
                         String org = attributes.getValue("name");
                         if (org != null) {
@@ -219,29 +232,30 @@ public class IvyRepResolver extends URLResolver {
                     }
                 }
             });
-            return (OrganisationEntry[])ret.toArray(new OrganisationEntry[ret.size()]);
+            return (OrganisationEntry[]) ret.toArray(new OrganisationEntry[ret.size()]);
         } catch (MalformedURLException e) {
         } catch (Exception e) {
-            Message.warn("unable to parse content.xml file on ivyrep: "+e.getMessage());
+            Message.warn("unable to parse content.xml file on ivyrep: " + e.getMessage());
         }
         return super.listOrganisations();
     }
 
-    // overwrite parent to use only ivy patterns (and not artifact ones, cause ibiblio is too slow to answer)
+    // overwrite parent to use only ivy patterns (and not artifact ones, cause ibiblio is too slow
+    // to answer)
     public ModuleEntry[] listModules(OrganisationEntry org) {
         ensureIvyConfigured(getSettings());
         Map tokenValues = new HashMap();
         tokenValues.put(IvyPatternHelper.ORGANISATION_KEY, org.getOrganisation());
         Collection names = findIvyNames(tokenValues, IvyPatternHelper.MODULE_KEY);
         ModuleEntry[] ret = new ModuleEntry[names.size()];
-        int i =0;
+        int i = 0;
         for (Iterator iter = names.iterator(); iter.hasNext(); i++) {
-            String name = (String)iter.next();
+            String name = (String) iter.next();
             ret[i] = new ModuleEntry(org, name);
         }
         return ret;
     }
-    
+
     public RevisionEntry[] listRevisions(ModuleEntry mod) {
         ensureIvyConfigured(getSettings());
         ensureArtifactConfigured(getSettings());
@@ -251,30 +265,34 @@ public class IvyRepResolver extends URLResolver {
     public String getTypeName() {
         return "ivyrep";
     }
-    
-    // override some methods to ensure configuration    
-    public ResolvedModuleRevision getDependency(DependencyDescriptor dd, ResolveData data) throws ParseException {
+
+    // override some methods to ensure configuration
+    public ResolvedModuleRevision getDependency(DependencyDescriptor dd, ResolveData data)
+            throws ParseException {
         ensureIvyConfigured(data.getSettings());
         return super.getDependency(dd, data);
     }
-    
+
     protected ResolvedResource findArtifactRef(Artifact artifact, Date date) {
         ensureArtifactConfigured(getSettings());
         return super.findArtifactRef(artifact, date);
     }
-    
+
     public DownloadReport download(Artifact[] artifacts, DownloadOptions options) {
         ensureArtifactConfigured(options.getSettings());
         return super.download(artifacts, options);
     }
+
     public boolean exists(Artifact artifact) {
         ensureArtifactConfigured(getSettings());
         return super.exists(artifact);
     }
+
     public List getIvyPatterns() {
         ensureIvyConfigured(getSettings());
         return super.getIvyPatterns();
     }
+
     public List getArtifactPatterns() {
         ensureArtifactConfigured(getSettings());
         return super.getArtifactPatterns();

@@ -24,14 +24,14 @@ import java.util.ListIterator;
 import org.apache.ivy.Ivy;
 import org.apache.ivy.plugins.IvyAware;
 
-
 public abstract class AbstractLatestStrategy implements LatestStrategy, IvyAware {
     private String _name;
+
     private Ivy _ivy;
 
     public Ivy getIvy() {
         return _ivy;
-    }    
+    }
 
     public void setIvy(Ivy ivy) {
         _ivy = ivy;
@@ -40,26 +40,26 @@ public abstract class AbstractLatestStrategy implements LatestStrategy, IvyAware
     public String getName() {
         return _name;
     }
-    
+
     public void setName(String name) {
         _name = name;
     }
-    
+
     public String toString() {
         return _name;
     }
-    
+
     public ArtifactInfo findLatest(ArtifactInfo[] infos, Date date) {
-    	List l = sort(infos);
-    	
-    	// the latest revision comes last, use a ListIterator to iterate the
-    	// sorted list in the reverse direction.
-    	for (ListIterator iter = l.listIterator(l.size()); iter.hasPrevious();) {
-			ArtifactInfo info = (ArtifactInfo) iter.previous();
-			if (date == null || info.getLastModified() < date.getTime()) {
-				return info;
-			}
-		}
-    	return null;
+        List l = sort(infos);
+
+        // the latest revision comes last, use a ListIterator to iterate the
+        // sorted list in the reverse direction.
+        for (ListIterator iter = l.listIterator(l.size()); iter.hasPrevious();) {
+            ArtifactInfo info = (ArtifactInfo) iter.previous();
+            if (date == null || info.getLastModified() < date.getTime()) {
+                return info;
+            }
+        }
+        return null;
     }
 }

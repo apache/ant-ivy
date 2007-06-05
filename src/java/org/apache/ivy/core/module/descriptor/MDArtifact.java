@@ -34,20 +34,29 @@ public class MDArtifact extends AbstractArtifact {
     public static Artifact newIvyArtifact(ModuleDescriptor md) {
         return new MDArtifact(md, "ivy", "ivy", "xml");
     }
-    
+
     private ModuleDescriptor md;
+
     private String name;
+
     private String type;
+
     private String ext;
+
     private List confs = new ArrayList();
+
     private ArtifactRevisionId arid;
+
     private Map extraAttributes = null;
-	private URL url;
+
+    private URL url;
 
     public MDArtifact(ModuleDescriptor md, String name, String type, String ext) {
         this(md, name, type, ext, null, null);
     }
-    public MDArtifact(ModuleDescriptor md, String name, String type, String ext, URL url, Map extraAttributes) {
+
+    public MDArtifact(ModuleDescriptor md, String name, String type, String ext, URL url,
+            Map extraAttributes) {
         if (md == null) {
             throw new NullPointerException("null module descriptor not allowed");
         }
@@ -67,20 +76,22 @@ public class MDArtifact extends AbstractArtifact {
         this.url = url;
         this.extraAttributes = extraAttributes;
     }
-    
+
     public ModuleRevisionId getModuleRevisionId() {
         return md.getResolvedModuleRevisionId();
     }
-    
+
     public Date getPublicationDate() {
         return md.getResolvedPublicationDate();
     }
+
     public ArtifactRevisionId getId() {
         if (arid == null) {
-            arid = ArtifactRevisionId.newInstance(md.getResolvedModuleRevisionId(), name, type, ext, extraAttributes);
+            arid = ArtifactRevisionId.newInstance(md.getResolvedModuleRevisionId(), name, type,
+                ext, extraAttributes);
         }
         return arid;
-    }    
+    }
 
     public String getName() {
         return name;
@@ -101,9 +112,9 @@ public class MDArtifact extends AbstractArtifact {
     public void addConfiguration(String conf) {
         confs.add(conf);
     }
-    
-	public URL getUrl() {
-		return url;
-	}
-    
+
+    public URL getUrl() {
+        return url;
+    }
+
 }

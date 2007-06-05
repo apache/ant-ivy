@@ -24,39 +24,44 @@ import org.apache.ivy.core.event.EventManager;
 import org.apache.ivy.core.settings.IvySettings;
 
 public class DownloadOptions {
-	private IvySettings settings;
-	private CacheManager cacheManager;
-	private EventManager eventManager = null; // can be null
-	private boolean useOrigin = false;
+    private IvySettings settings;
 
-	public DownloadOptions(IvySettings settings, File cache) {
-		this(settings, new CacheManager(settings, cache));
-	}
-	
-	public DownloadOptions(IvySettings settings, CacheManager cacheManager) {
-		this(settings, cacheManager, null, false);
-	}
-	
-	public DownloadOptions(IvySettings settings, CacheManager cacheManager, EventManager eventManager, boolean useOrigin) {
-		this.settings = settings;
-		this.cacheManager = cacheManager;
-		this.eventManager = eventManager;
-		this.useOrigin = useOrigin;
-	}
-	
-	public IvySettings getSettings() {
-		return settings;
-	}
-	public boolean isUseOrigin() {
-		return useOrigin;
-	}
+    private CacheManager cacheManager;
 
-	public CacheManager getCacheManager() {
-		return cacheManager;
-	}
+    private EventManager eventManager = null; // can be null
 
-	public EventManager getEventManager() {
-		return eventManager;
-	}
-	
+    private boolean useOrigin = false;
+
+    public DownloadOptions(IvySettings settings, File cache) {
+        this(settings, new CacheManager(settings, cache));
+    }
+
+    public DownloadOptions(IvySettings settings, CacheManager cacheManager) {
+        this(settings, cacheManager, null, false);
+    }
+
+    public DownloadOptions(IvySettings settings, CacheManager cacheManager,
+            EventManager eventManager, boolean useOrigin) {
+        this.settings = settings;
+        this.cacheManager = cacheManager;
+        this.eventManager = eventManager;
+        this.useOrigin = useOrigin;
+    }
+
+    public IvySettings getSettings() {
+        return settings;
+    }
+
+    public boolean isUseOrigin() {
+        return useOrigin;
+    }
+
+    public CacheManager getCacheManager() {
+        return cacheManager;
+    }
+
+    public EventManager getEventManager() {
+        return eventManager;
+    }
+
 }

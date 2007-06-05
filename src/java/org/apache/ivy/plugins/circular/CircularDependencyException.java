@@ -19,28 +19,25 @@ package org.apache.ivy.plugins.circular;
 
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 
-
 /**
  * Unchecked exception thrown when a circular dependency exists between projects.
- *
  */
 
 public class CircularDependencyException extends RuntimeException {
 
     private ModuleRevisionId[] _mrids;
 
-	/**
-     * 
-     * @param descriptors module descriptors in order of circular dependency
+    /**
+     * @param descriptors
+     *            module descriptors in order of circular dependency
      */
     public CircularDependencyException(final ModuleRevisionId[] mrids) {
         super(CircularDependencyHelper.formatMessage(mrids));
         _mrids = mrids;
     }
-    
+
     public ModuleRevisionId[] getPath() {
-    	return _mrids;
+        return _mrids;
     }
-    
 
 }

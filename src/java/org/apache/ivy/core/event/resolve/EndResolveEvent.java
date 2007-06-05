@@ -21,17 +21,17 @@ import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.report.ResolveReport;
 
 public class EndResolveEvent extends ResolveEvent {
-	public static final String NAME = "post-resolve";
+    public static final String NAME = "post-resolve";
 
-	private ResolveReport report;
+    private ResolveReport report;
 
-	public EndResolveEvent(ModuleDescriptor md, String[] confs, ResolveReport report) {
-		super(NAME, md, confs);
-		this.report = report;
-	}
+    public EndResolveEvent(ModuleDescriptor md, String[] confs, ResolveReport report) {
+        super(NAME, md, confs);
+        this.report = report;
+    }
 
-	public ResolveReport getReport() {
-		return report;
-	}
+    public ResolveReport getReport() {
+        return report;
+    }
 
 }

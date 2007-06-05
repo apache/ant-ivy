@@ -25,49 +25,55 @@ import org.apache.ivy.util.Message;
 
 public class IvyVariableContainerImpl implements IvyVariableContainer {
 
-	
-	private HashMap variables = new HashMap();
+    private HashMap variables = new HashMap();
 
-	/* (non-Javadoc)
-	 * @see org.apache.ivy.core.settings.IvyVariableContainer#setVariable(java.lang.String, java.lang.String, boolean)
-	 */
-	public void setVariable(String varName, String value, boolean overwrite) {
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.apache.ivy.core.settings.IvyVariableContainer#setVariable(java.lang.String,
+     *      java.lang.String, boolean)
+     */
+    public void setVariable(String varName, String value, boolean overwrite) {
         if (overwrite || !variables.containsKey(varName)) {
-            Message.debug("setting '"+varName+"' to '"+value+"'");
+            Message.debug("setting '" + varName + "' to '" + value + "'");
             variables.put(varName, substitute(value));
         } else {
-            Message.debug("'"+varName+"' already set: discarding '"+value+"'");
+            Message.debug("'" + varName + "' already set: discarding '" + value + "'");
         }
 
-	}
+    }
 
-	private String substitute(String value) {
-		return IvyPatternHelper.substituteVariables(value, getVariables());
-	}
+    private String substitute(String value) {
+        return IvyPatternHelper.substituteVariables(value, getVariables());
+    }
 
-	/* (non-Javadoc)
-	 * @see org.apache.ivy.core.settings.IvyVariableContainer#getVariables()
-	 */
-	public Map getVariables() {
-		return variables;
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.apache.ivy.core.settings.IvyVariableContainer#getVariables()
+     */
+    public Map getVariables() {
+        return variables;
+    }
 
-	/* (non-Javadoc)
-	 * @see org.apache.ivy.core.settings.IvyVariableContainer#getVariable(java.lang.String)
-	 */
-	public String getVariable(String name) {
-		String val = (String) variables.get(name);
-        return val==null?val:substitute(val);
-	}
-	
-	public Object clone() {
-		IvyVariableContainerImpl clone;
-		try {
-			clone = (IvyVariableContainerImpl) super.clone();
-		} catch (CloneNotSupportedException e) {
-			throw new RuntimeException("unable to clone a " + this.getClass());
-		}
-		clone.variables = (HashMap) variables.clone();
-		return clone;
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.apache.ivy.core.settings.IvyVariableContainer#getVariable(java.lang.String)
+     */
+    public String getVariable(String name) {
+        String val = (String) variables.get(name);
+        return val == null ? val : substitute(val);
+    }
+
+    public Object clone() {
+        IvyVariableContainerImpl clone;
+        try {
+            clone = (IvyVariableContainerImpl) super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeException("unable to clone a " + this.getClass());
+        }
+        clone.variables = (HashMap) variables.clone();
+        return clone;
+    }
 }

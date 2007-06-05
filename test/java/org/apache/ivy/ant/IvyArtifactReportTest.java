@@ -26,9 +26,11 @@ import org.apache.tools.ant.taskdefs.Delete;
 
 public class IvyArtifactReportTest extends TestCase {
     private File _cache;
+
     private IvyArtifactReport _prop;
+
     private Project _project;
-    
+
     protected void setUp() throws Exception {
         createCache();
         _project = new Project();
@@ -43,7 +45,7 @@ public class IvyArtifactReportTest extends TestCase {
         _cache = new File("build/cache");
         _cache.mkdirs();
     }
-    
+
     protected void tearDown() throws Exception {
         cleanCache();
     }
@@ -59,7 +61,7 @@ public class IvyArtifactReportTest extends TestCase {
         _prop.setTofile(new File("build/test-artifact-report.xml"));
         _prop.setFile(new File("test/java/org/apache/ivy/ant/ivy-simple.xml"));
         _prop.execute();
-        
+
         assertTrue(new File("build/test-artifact-report.xml").exists());
     }
 }

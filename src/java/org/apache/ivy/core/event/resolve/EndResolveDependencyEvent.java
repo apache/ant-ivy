@@ -22,23 +22,26 @@ import org.apache.ivy.core.resolve.ResolvedModuleRevision;
 import org.apache.ivy.plugins.resolver.DependencyResolver;
 
 public class EndResolveDependencyEvent extends ResolveDependencyEvent {
-	public static final String NAME = "post-resolve-dependency";
-	private ResolvedModuleRevision module;
+    public static final String NAME = "post-resolve-dependency";
 
-	public EndResolveDependencyEvent(DependencyResolver resolver, DependencyDescriptor dd, ResolvedModuleRevision module) {
-		super(NAME, resolver, dd);
-		this.module = module;
-		if (this.module != null) {
-			// override revision from the dependency descriptor
-			addAttribute("revision", this.module.getDescriptor().getResolvedModuleRevisionId().getRevision());
-			addAttribute("resolved", "true");
-		} else {
-			addAttribute("resolved", "false");
-		}
-	}
+    private ResolvedModuleRevision module;
 
-	public ResolvedModuleRevision getModule() {
-		return module;
-	}
+    public EndResolveDependencyEvent(DependencyResolver resolver, DependencyDescriptor dd,
+            ResolvedModuleRevision module) {
+        super(NAME, resolver, dd);
+        this.module = module;
+        if (this.module != null) {
+            // override revision from the dependency descriptor
+            addAttribute("revision", this.module.getDescriptor().getResolvedModuleRevisionId()
+                    .getRevision());
+            addAttribute("resolved", "true");
+        } else {
+            addAttribute("resolved", "false");
+        }
+    }
+
+    public ResolvedModuleRevision getModule() {
+        return module;
+    }
 
 }

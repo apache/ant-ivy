@@ -20,5 +20,5 @@ package org.apache.ivy.plugins.resolver.util;
 import org.apache.ivy.plugins.repository.Resource;
 
 public interface ResourceMDParser {
-	MDResolvedResource parse(Resource resource, String rev);
+    MDResolvedResource parse(Resource resource, String rev);
 }

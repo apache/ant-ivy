@@ -30,9 +30,11 @@ import org.apache.tools.ant.types.FileSet;
 
 public class IvyCacheFilesetTest extends TestCase {
     private File _cache;
+
     private IvyCacheFileset _fileset;
+
     private Project _project;
-    
+
     protected void setUp() throws Exception {
         createCache();
         _project = new Project();
@@ -47,7 +49,7 @@ public class IvyCacheFilesetTest extends TestCase {
         _cache = new File("build/cache");
         _cache.mkdirs();
     }
-    
+
     protected void tearDown() throws Exception {
         cleanCache();
     }
@@ -66,24 +68,27 @@ public class IvyCacheFilesetTest extends TestCase {
         Object ref = _project.getReference("simple-setid");
         assertNotNull(ref);
         assertTrue(ref instanceof FileSet);
-        FileSet fs = (FileSet)ref;
+        FileSet fs = (FileSet) ref;
         DirectoryScanner directoryScanner = fs.getDirectoryScanner(_project);
         assertEquals(1, directoryScanner.getIncludedFiles().length);
-        assertEquals(getArchiveFileInCache("org1", "mod1.2", "2.0", "mod1.2", "jar", "jar").getAbsolutePath(),
-                new File("build/cache/"+directoryScanner.getIncludedFiles()[0]).getAbsolutePath());
+        assertEquals(getArchiveFileInCache("org1", "mod1.2", "2.0", "mod1.2", "jar", "jar")
+                .getAbsolutePath(), new File("build/cache/"
+                + directoryScanner.getIncludedFiles()[0]).getAbsolutePath());
     }
-    
-    private File getArchiveFileInCache(String organisation, String module, String revision, String artifact, String type, String ext) {
-		return TestHelper.getArchiveFileInCache(_fileset.getIvyInstance(), _cache, 
-				organisation, module, revision, artifact, type, ext);
-	}
 
-    private File getArchiveFileInCache(String organisation, String module, String revision, String artifact, String type, String ext, File cache) {
-		return TestHelper.getArchiveFileInCache(_fileset.getIvyInstance(), cache, 
-				organisation, module, revision, artifact, type, ext);
-	}
+    private File getArchiveFileInCache(String organisation, String module, String revision,
+            String artifact, String type, String ext) {
+        return TestHelper.getArchiveFileInCache(_fileset.getIvyInstance(), _cache, organisation,
+            module, revision, artifact, type, ext);
+    }
 
-	public void testEmptyConf() throws Exception {
+    private File getArchiveFileInCache(String organisation, String module, String revision,
+            String artifact, String type, String ext, File cache) {
+        return TestHelper.getArchiveFileInCache(_fileset.getIvyInstance(), cache, organisation,
+            module, revision, artifact, type, ext);
+    }
+
+    public void testEmptyConf() throws Exception {
         _project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-108.xml");
         _fileset.setSetid("emptyconf-setid");
         _fileset.setConf("empty");
@@ -91,7 +96,7 @@ public class IvyCacheFilesetTest extends TestCase {
         Object ref = _project.getReference("emptyconf-setid");
         assertNotNull(ref);
         assertTrue(ref instanceof FileSet);
-        FileSet fs = (FileSet)ref;
+        FileSet fs = (FileSet) ref;
         DirectoryScanner directoryScanner = fs.getDirectoryScanner(_project);
         assertEquals(0, directoryScanner.getIncludedFiles().length);
     }
@@ -117,30 +122,31 @@ public class IvyCacheFilesetTest extends TestCase {
             fail("failure raised an exception with haltonfailure set to false");
         }
     }
-    
+
     public void testWithoutPreviousResolveAndNonDefaultCache() throws Exception {
-    	File cache2 = new File("build/cache2");
-    	cache2.mkdirs();
-    	
-    	try {
-	        _project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-simple.xml");
-	        _fileset.setSetid("simple-setid");
-	        _fileset.setCache(cache2);
-	        _fileset.execute();
-	        Object ref = _project.getReference("simple-setid");
-	        assertNotNull(ref);
-	        assertTrue(ref instanceof FileSet);
-	        FileSet fs = (FileSet)ref;
-	        DirectoryScanner directoryScanner = fs.getDirectoryScanner(_project);
-	        assertEquals(1, directoryScanner.getIncludedFiles().length);
-	        assertEquals(getArchiveFileInCache("org1", "mod1.2", "2.0", "mod1.2", "jar", "jar", cache2).getAbsolutePath(),
-	                new File("build/cache2/"+directoryScanner.getIncludedFiles()[0]).getAbsolutePath());
-    	} finally {
+        File cache2 = new File("build/cache2");
+        cache2.mkdirs();
+
+        try {
+            _project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-simple.xml");
+            _fileset.setSetid("simple-setid");
+            _fileset.setCache(cache2);
+            _fileset.execute();
+            Object ref = _project.getReference("simple-setid");
+            assertNotNull(ref);
+            assertTrue(ref instanceof FileSet);
+            FileSet fs = (FileSet) ref;
+            DirectoryScanner directoryScanner = fs.getDirectoryScanner(_project);
+            assertEquals(1, directoryScanner.getIncludedFiles().length);
+            assertEquals(getArchiveFileInCache("org1", "mod1.2", "2.0", "mod1.2", "jar", "jar",
+                cache2).getAbsolutePath(), new File("build/cache2/"
+                    + directoryScanner.getIncludedFiles()[0]).getAbsolutePath());
+        } finally {
             Delete del = new Delete();
             del.setProject(new Project());
             del.setDir(cache2);
             del.execute();
-    	}
+        }
     }
-    
+
 }

@@ -32,33 +32,34 @@ public class ConfigureTest extends TestCase {
     public void testDefault() throws ParseException, IOException {
         Ivy ivy = new Ivy();
         ivy.configureDefault();
-        
+
         IvySettings settings = ivy.getSettings();
-		assertNotNull(settings.getDefaultResolver());
-		
+        assertNotNull(settings.getDefaultResolver());
+
         DependencyResolver publicResolver = settings.getResolver("public");
-		assertNotNull(publicResolver);
-		assertTrue(publicResolver instanceof IBiblioResolver);
-		IBiblioResolver ibiblio = (IBiblioResolver) publicResolver;
-		assertTrue(ibiblio.isM2compatible());
+        assertNotNull(publicResolver);
+        assertTrue(publicResolver instanceof IBiblioResolver);
+        IBiblioResolver ibiblio = (IBiblioResolver) publicResolver;
+        assertTrue(ibiblio.isM2compatible());
     }
-    
+
     public void testDefault14() throws ParseException, IOException {
         Ivy ivy = new Ivy();
         ivy.configureDefault14();
-        
+
         IvySettings settings = ivy.getSettings();
-		assertNotNull(settings.getDefaultResolver());
-		
+        assertNotNull(settings.getDefaultResolver());
+
         DependencyResolver publicResolver = settings.getResolver("public");
-		assertTrue(publicResolver instanceof IvyRepResolver);
+        assertTrue(publicResolver instanceof IvyRepResolver);
     }
-    
+
     public void testTypedefWithCustomClasspath() throws Exception {
         Ivy ivy = new Ivy();
-        ivy.setVariable("ivy.custom.test.dir", new File("test/java/org/apache/ivy/core/settings").toURL().toString());
+        ivy.setVariable("ivy.custom.test.dir", new File("test/java/org/apache/ivy/core/settings")
+                .toURL().toString());
         ivy.configure(ConfigureTest.class.getResource("ivysettings-custom-typedef.xml"));
-        
+
         DependencyResolver custom = ivy.getSettings().getResolver("custom");
         assertNotNull(custom);
         assertEquals("org.apache.ivy.plugins.resolver.CustomResolver", custom.getClass().getName());
@@ -66,9 +67,10 @@ public class ConfigureTest extends TestCase {
 
     public void testTypedefWithCustomClasspathWithFile() throws Exception {
         Ivy ivy = new Ivy();
-        ivy.setVariable("ivy.custom.test.dir", new File("test/java/org/apache/ivy/core/settings").toString());
+        ivy.setVariable("ivy.custom.test.dir", new File("test/java/org/apache/ivy/core/settings")
+                .toString());
         ivy.configure(ConfigureTest.class.getResource("ivysettings-custom-typedef2.xml"));
-        
+
         DependencyResolver custom = ivy.getSettings().getResolver("custom");
         assertNotNull(custom);
         assertEquals("org.apache.ivy.plugins.resolver.CustomResolver", custom.getClass().getName());

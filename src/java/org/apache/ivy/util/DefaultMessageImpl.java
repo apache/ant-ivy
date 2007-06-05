@@ -30,11 +30,11 @@ public class DefaultMessageImpl implements MessageImpl {
     public void log(String msg, int level) {
         if (level <= _level) {
             System.out.println(msg);
-        }        
+        }
     }
-    
+
     public void rawlog(String msg, int level) {
-    	log(msg, level);
+        log(msg, level);
     }
 
     public void progress() {

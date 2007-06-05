@@ -19,11 +19,9 @@ package org.apache.ivy.core.search;
 
 import org.apache.ivy.plugins.resolver.DependencyResolver;
 
-
-
-
 public class RevisionEntry {
     private ModuleEntry moduleEntry;
+
     private String revision;
 
     public RevisionEntry(ModuleEntry mod, String name) {
@@ -34,7 +32,6 @@ public class RevisionEntry {
     public ModuleEntry getModuleEntry() {
         return moduleEntry;
     }
-    
 
     public String getRevision() {
         return revision;
@@ -55,5 +52,5 @@ public class RevisionEntry {
     public DependencyResolver getResolver() {
         return moduleEntry.getResolver();
     }
-    
+
 }

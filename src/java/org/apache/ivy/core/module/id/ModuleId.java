@@ -17,14 +17,16 @@
  */
 package org.apache.ivy.core.module.id;
 
-
 /**
  *
  */
 public class ModuleId implements Comparable {
     static final String ENCODE_SEPARATOR = ":#@#:";
+
     private String organisation;
+
     private String name;
+
     private int hash;
 
     public ModuleId(String organisation, String name) {
@@ -33,42 +35,46 @@ public class ModuleId implements Comparable {
         }
         this.organisation = organisation;
         this.name = name;
-        hash = _hashCode(); //stored for performance reasons, hashCode is very used in many maps
+        hash = _hashCode(); // stored for performance reasons, hashCode is very used in many maps
     }
 
     public String getName() {
         return name;
     }
+
     public String getOrganisation() {
         return organisation;
     }
-    
+
     public boolean equals(Object obj) {
-        if (! (obj instanceof ModuleId)) {
+        if (!(obj instanceof ModuleId)) {
             return false;
         }
-        ModuleId other = (ModuleId)obj;
+        ModuleId other = (ModuleId) obj;
         if (other.organisation == null) {
-        	return organisation == null && other.name.equals(name);
+            return organisation == null && other.name.equals(name);
         } else {
-        	return other.organisation.equals(organisation) && other.name.equals(name);
+            return other.organisation.equals(organisation) && other.name.equals(name);
         }
     }
+
     public int hashCode() {
         return hash;
     }
+
     public int _hashCode() {
         int hash = 31;
         hash = hash * 13 + (organisation == null ? 0 : organisation.hashCode());
         hash = hash * 13 + name.hashCode();
         return hash;
     }
+
     public String toString() {
-        return "[ "+ organisation +" | "+ name +" ]";
+        return "[ " + organisation + " | " + name + " ]";
     }
 
     public int compareTo(Object obj) {
-        ModuleId that = (ModuleId)obj;
+        ModuleId that = (ModuleId) obj;
         int result = organisation.compareTo(that.organisation);
         if (result == 0) {
             result = name.compareTo(that.name);
@@ -79,10 +85,11 @@ public class ModuleId implements Comparable {
     public String encodeToString() {
         return getOrganisation() + ENCODE_SEPARATOR + getName();
     }
+
     public static ModuleId decode(String encoded) {
         String[] parts = encoded.split(ENCODE_SEPARATOR);
         if (parts.length != 2) {
-            throw new IllegalArgumentException("badly encoded module id: '"+encoded+"'");
+            throw new IllegalArgumentException("badly encoded module id: '" + encoded + "'");
         }
         return new ModuleId(parts[0], parts[1]);
     }

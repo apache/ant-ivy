@@ -32,11 +32,11 @@ public class InstallTest extends TestCase {
     public void testSimple() throws Exception {
         Ivy ivy = Ivy.newInstance();
         ivy.configure(new File("test/repositories/ivysettings.xml"));
-        
-        ivy.install(ModuleRevisionId.newInstance("org1", "mod1.2", "2.0"), 
-                ivy.getSettings().getDefaultResolver().getName(), 
-                "install", true, true, true, null, _cache, PatternMatcher.EXACT);
-        
+
+        ivy.install(ModuleRevisionId.newInstance("org1", "mod1.2", "2.0"), ivy.getSettings()
+                .getDefaultResolver().getName(), "install", true, true, true, null, _cache,
+            PatternMatcher.EXACT);
+
         assertTrue(new File("build/test/install/org1/mod1.2/ivy-2.0.xml").exists());
         assertTrue(new File("build/test/install/org1/mod1.2/mod1.2-2.0.jar").exists());
     }
@@ -44,10 +44,10 @@ public class InstallTest extends TestCase {
     public void testSimpleWithoutDefaultResolver() throws Exception {
         Ivy ivy = Ivy.newInstance();
         ivy.configure(new File("test/repositories/ivysettings-nodefaultresolver.xml"));
-        
-        ivy.install(ModuleRevisionId.newInstance("org1", "mod1.2", "2.0"), 
-                "test", "install", true, true, true, null, _cache, PatternMatcher.EXACT);
-        
+
+        ivy.install(ModuleRevisionId.newInstance("org1", "mod1.2", "2.0"), "test", "install", true,
+            true, true, null, _cache, PatternMatcher.EXACT);
+
         assertTrue(new File("build/test/install/org1/mod1.2/ivy-2.0.xml").exists());
         assertTrue(new File("build/test/install/org1/mod1.2/mod1.2-2.0.jar").exists());
     }
@@ -55,14 +55,14 @@ public class InstallTest extends TestCase {
     public void testDependencies() throws Exception {
         Ivy ivy = Ivy.newInstance();
         ivy.configure(new File("test/repositories/ivysettings.xml"));
-        
-        ivy.install(ModuleRevisionId.newInstance("org1", "mod1.1", "1.0"), 
-                ivy.getSettings().getDefaultResolver().getName(), 
-                "install", true, true, true, null, _cache, PatternMatcher.EXACT);
-        
+
+        ivy.install(ModuleRevisionId.newInstance("org1", "mod1.1", "1.0"), ivy.getSettings()
+                .getDefaultResolver().getName(), "install", true, true, true, null, _cache,
+            PatternMatcher.EXACT);
+
         assertTrue(new File("build/test/install/org1/mod1.1/ivy-1.0.xml").exists());
         assertTrue(new File("build/test/install/org1/mod1.1/mod1.1-1.0.jar").exists());
-        
+
         assertTrue(new File("build/test/install/org1/mod1.2/ivy-2.0.xml").exists());
         assertTrue(new File("build/test/install/org1/mod1.2/mod1.2-2.0.jar").exists());
     }
@@ -70,14 +70,14 @@ public class InstallTest extends TestCase {
     public void testNotTransitive() throws Exception {
         Ivy ivy = Ivy.newInstance();
         ivy.configure(new File("test/repositories/ivysettings.xml"));
-        
-        ivy.install(ModuleRevisionId.newInstance("org1", "mod1.1", "1.0"), 
-                ivy.getSettings().getDefaultResolver().getName(), 
-                "install", false, true, true, null, _cache, PatternMatcher.EXACT);
-        
+
+        ivy.install(ModuleRevisionId.newInstance("org1", "mod1.1", "1.0"), ivy.getSettings()
+                .getDefaultResolver().getName(), "install", false, true, true, null, _cache,
+            PatternMatcher.EXACT);
+
         assertTrue(new File("build/test/install/org1/mod1.1/ivy-1.0.xml").exists());
         assertTrue(new File("build/test/install/org1/mod1.1/mod1.1-1.0.jar").exists());
-        
+
         assertFalse(new File("build/test/install/org1/mod1.2/ivy-2.0.xml").exists());
         assertFalse(new File("build/test/install/org1/mod1.2/mod1.2-2.0.jar").exists());
     }
@@ -85,33 +85,31 @@ public class InstallTest extends TestCase {
     public void testRegexpMatcher() throws Exception {
         Ivy ivy = Ivy.newInstance();
         ivy.configure(new File("test/repositories/ivysettings.xml"));
-        
-        ivy.install(ModuleRevisionId.newInstance("org1", ".*", ".*"), 
-                "1", 
-                "install", false, true, true, null, _cache, PatternMatcher.REGEXP);
-        
+
+        ivy.install(ModuleRevisionId.newInstance("org1", ".*", ".*"), "1", "install", false, true,
+            true, null, _cache, PatternMatcher.REGEXP);
+
         assertTrue(new File("build/test/install/org1/mod1.1/ivy-1.0.xml").exists());
         assertTrue(new File("build/test/install/org1/mod1.1/mod1.1-1.0.jar").exists());
-        
+
         assertTrue(new File("build/test/install/org1/mod1.1/ivy-1.1.xml").exists());
         assertTrue(new File("build/test/install/org1/mod1.1/mod1.1-1.1.jar").exists());
-        
+
         assertTrue(new File("build/test/install/org1/mod1.2/ivy-2.0.xml").exists());
         assertTrue(new File("build/test/install/org1/mod1.2/mod1.2-2.0.jar").exists());
-        
+
         // mod1.3 is split because Ivy thinks there are two versions of the module:
         // this is the normal behaviour in this case
         assertTrue(new File("build/test/install/org1/mod1.3/ivy-B-3.0.xml").exists());
         assertTrue(new File("build/test/install/org1/mod1.3/ivy-A-3.0.xml").exists());
         assertTrue(new File("build/test/install/org1/mod1.3/mod1.3-A-3.0.jar").exists());
         assertTrue(new File("build/test/install/org1/mod1.3/mod1.3-B-3.0.jar").exists());
-        
+
         assertTrue(new File("build/test/install/org1/mod1.4/ivy-1.0.1.xml").exists());
     }
 
-    
-    
     private File _cache;
+
     protected void setUp() throws Exception {
         createCache();
     }
@@ -120,7 +118,7 @@ public class InstallTest extends TestCase {
         _cache = new File("build/cache");
         _cache.mkdirs();
     }
-    
+
     protected void tearDown() throws Exception {
         cleanCache();
         cleanInstall();
@@ -132,6 +130,7 @@ public class InstallTest extends TestCase {
         del.setDir(_cache);
         del.execute();
     }
+
     private void cleanInstall() {
         Delete del = new Delete();
         del.setProject(new Project());

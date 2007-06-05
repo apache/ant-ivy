@@ -21,12 +21,13 @@ import java.io.File;
 import java.util.Date;
 
 import junit.framework.TestCase;
-import org.apache.ivy.core.settings.IvySettings;
+
+import org.apache.ivy.Ivy;
 import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.DefaultArtifact;
-import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.module.id.ModuleId;
-import org.apache.ivy.Ivy;
+import org.apache.ivy.core.module.id.ModuleRevisionId;
+import org.apache.ivy.core.settings.IvySettings;
 import org.apache.tools.ant.util.FileUtils;
 
 /**
@@ -34,7 +35,9 @@ import org.apache.tools.ant.util.FileUtils;
  */
 public class CacheManagerTest extends TestCase {
     private CacheManager cacheManager;
+
     private Artifact artifact;
+
     private ArtifactOrigin origin;
 
     protected void setUp() throws Exception {
@@ -63,7 +66,7 @@ public class CacheManagerTest extends TestCase {
         assertNull(found);
     }
 
-    public void testUniqueness()  {
+    public void testUniqueness() {
         cacheManager.saveArtifactOrigin(artifact, origin);
 
         artifact = createArtifact("org1", "module", "rev", "name", "type", "ext");
@@ -91,8 +94,8 @@ public class CacheManagerTest extends TestCase {
         assertNull(found);
     }
 
-
-    protected Artifact createArtifact(String org, String module, String rev, String name, String type, String ext) {
+    protected Artifact createArtifact(String org, String module, String rev, String name,
+            String type, String ext) {
         ModuleId mid = new ModuleId(org, module);
         ModuleRevisionId mrid = new ModuleRevisionId(mid, rev);
         return new DefaultArtifact(mrid, new Date(), name, type, ext);

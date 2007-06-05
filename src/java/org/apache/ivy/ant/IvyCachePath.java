@@ -25,22 +25,22 @@ import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.types.Path;
 
-
 /**
  * Creates an ant path consisting in all artifacts found during a resolve.
- * 
  */
 public class IvyCachePath extends IvyCacheTask {
     private String _pathid;
-	private String _id;
+
+    private String _id;
 
     public String getPathid() {
         return _pathid;
     }
+
     public void setPathid(String id) {
         _pathid = id;
     }
-    
+
     /**
      * @deprecated use setPathid instead
      * @param id
@@ -52,25 +52,26 @@ public class IvyCachePath extends IvyCacheTask {
     public void doExecute() throws BuildException {
         prepareAndCheck();
         if (_pathid == null) {
-        	if (_id != null) {
-        		_pathid = _id;
-        		log("ID IS DEPRECATED, PLEASE USE PATHID INSTEAD", Project.MSG_WARN);
-        	} else {
-        		throw new BuildException("pathid is required in ivy classpath");
-        	}
+            if (_id != null) {
+                _pathid = _id;
+                log("ID IS DEPRECATED, PLEASE USE PATHID INSTEAD", Project.MSG_WARN);
+            } else {
+                throw new BuildException("pathid is required in ivy classpath");
+            }
         }
         try {
             Path path = new Path(getProject());
             getProject().addReference(_pathid, path);
-        	CacheManager cache = getCacheManager();
+            CacheManager cache = getCacheManager();
             for (Iterator iter = getArtifacts().iterator(); iter.hasNext();) {
-            	Artifact a = (Artifact) iter.next();
-            	path.createPathElement().setLocation(cache.getArchiveFileInCache(a, cache.getSavedArtifactOrigin(a), isUseOrigin()));
+                Artifact a = (Artifact) iter.next();
+                path.createPathElement().setLocation(
+                    cache.getArchiveFileInCache(a, cache.getSavedArtifactOrigin(a), isUseOrigin()));
             }
         } catch (Exception ex) {
-            throw new BuildException("impossible to build ivy path: "+ex, ex);
+            throw new BuildException("impossible to build ivy path: " + ex, ex);
         }
-        
+
     }
 
 }

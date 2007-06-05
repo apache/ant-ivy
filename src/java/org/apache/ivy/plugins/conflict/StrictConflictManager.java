@@ -25,23 +25,20 @@ import java.util.Iterator;
 import org.apache.ivy.core.resolve.IvyNode;
 import org.apache.ivy.util.Message;
 
-
-
-public class StrictConflictManager extends AbstractConflictManager
-{
+public class StrictConflictManager extends AbstractConflictManager {
 
     public StrictConflictManager() {
     }
 
-
-    public Collection resolveConflicts(IvyNode parent, Collection conflicts)
-    {
+    public Collection resolveConflicts(IvyNode parent, Collection conflicts) {
         IvyNode lastNode = null;
         for (Iterator iter = conflicts.iterator(); iter.hasNext();) {
-            IvyNode node = (IvyNode)iter.next();
+            IvyNode node = (IvyNode) iter.next();
 
             if (lastNode != null && !lastNode.equals(node)) {
-                String msg = lastNode + " (needed by " + Arrays.asList(lastNode.getAllCallers()) + ") conflicts with " + node + " (needed by " + Arrays.asList(node.getAllCallers()) + ")";
+                String msg = lastNode + " (needed by " + Arrays.asList(lastNode.getAllCallers())
+                        + ") conflicts with " + node + " (needed by "
+                        + Arrays.asList(node.getAllCallers()) + ")";
                 Message.error(msg);
                 Message.sumupProblems();
                 throw new StrictConflictException(msg);

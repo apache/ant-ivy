@@ -24,14 +24,15 @@ import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.report.ArtifactDownloadReport;
 import org.apache.ivy.plugins.resolver.DependencyResolver;
 
-
 public class EndArtifactDownloadEvent extends DownloadEvent {
-	public static final String NAME = "post-download-artifact";
+    public static final String NAME = "post-download-artifact";
 
     private DependencyResolver resolver;
+
     private ArtifactDownloadReport report;
 
-    public EndArtifactDownloadEvent(DependencyResolver resolver, Artifact artifact, ArtifactDownloadReport report, File dest) {
+    public EndArtifactDownloadEvent(DependencyResolver resolver, Artifact artifact,
+            ArtifactDownloadReport report, File dest) {
         super(NAME, artifact);
         this.resolver = resolver;
         this.report = report;
@@ -41,8 +42,8 @@ public class EndArtifactDownloadEvent extends DownloadEvent {
         addAttribute("file", dest.getAbsolutePath());
         ArtifactOrigin origin = report.getArtifactOrigin();
         if (origin != null) {
-        	addAttribute("origin", this.report.getArtifactOrigin().getLocation());
-        	addAttribute("local", String.valueOf(this.report.getArtifactOrigin().isLocal()));
+            addAttribute("origin", this.report.getArtifactOrigin().getLocation());
+            addAttribute("local", String.valueOf(this.report.getArtifactOrigin().isLocal()));
         } else {
             addAttribute("origin", "");
             addAttribute("local", "");

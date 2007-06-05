@@ -24,19 +24,18 @@ public abstract class DownloadEvent extends IvyEvent {
     private Artifact artifact;
 
     public DownloadEvent(String name, Artifact artifact) {
-    	super(name);
+        super(name);
         this.artifact = artifact;
         addArtifactAttributes(this.artifact);
     }
 
     protected void addArtifactAttributes(Artifact artifact) {
-		addMridAttributes(artifact.getModuleRevisionId());
-		addAttributes(artifact.getAttributes());
-	}
+        addMridAttributes(artifact.getModuleRevisionId());
+        addAttributes(artifact.getAttributes());
+    }
 
-	public Artifact getArtifact() {
+    public Artifact getArtifact() {
         return artifact;
     }
-    
-    
+
 }

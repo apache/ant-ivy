@@ -26,27 +26,23 @@ import org.apache.commons.vfs.provider.GenericFileName;
 import org.apache.commons.vfs.provider.webdav.WebdavFileProvider;
 
 /**
- * Modified version of the WebdavFileProvider from VFS which adds support for httpclient 3.x.
- * See http://issues.apache.org/jira/browse/VFS-74 for more info.
- * 
- * A provider for WebDAV.
- *
+ * Modified version of the WebdavFileProvider from VFS which adds support for httpclient 3.x. See
+ * http://issues.apache.org/jira/browse/VFS-74 for more info. A provider for WebDAV.
  */
 public class IvyWebdavFileProvider extends WebdavFileProvider {
 
-	/***********************************************************************************************
-	 * Creates a filesystem.
-	 */
-	protected FileSystem doCreateFileSystem(final FileName name,
-			final FileSystemOptions fileSystemOptions) throws FileSystemException {
-		// Create the file system
-		final GenericFileName rootName = (GenericFileName) name;
+    /***********************************************************************************************
+     * Creates a filesystem.
+     */
+    protected FileSystem doCreateFileSystem(final FileName name,
+            final FileSystemOptions fileSystemOptions) throws FileSystemException {
+        // Create the file system
+        final GenericFileName rootName = (GenericFileName) name;
 
-		HttpClient httpClient = IvyWebdavClientFactory.createConnection(rootName.getHostName(),
-				rootName.getPort(), rootName.getUserName(), rootName.getPassword(),
-				fileSystemOptions);
+        HttpClient httpClient = IvyWebdavClientFactory.createConnection(rootName.getHostName(),
+            rootName.getPort(), rootName.getUserName(), rootName.getPassword(), fileSystemOptions);
 
-		return new IvyWebdavFileSystem(rootName, httpClient, fileSystemOptions);
-	}
+        return new IvyWebdavFileSystem(rootName, httpClient, fileSystemOptions);
+    }
 
 }

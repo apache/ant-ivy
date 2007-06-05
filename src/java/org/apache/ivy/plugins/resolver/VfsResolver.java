@@ -17,7 +17,6 @@
  */
 package org.apache.ivy.plugins.resolver;
 
-
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -28,7 +27,9 @@ import org.apache.ivy.plugins.repository.vfs.VfsRepository;
  */
 public class VfsResolver extends RepositoryResolver {
     private static Pattern URLPattern = Pattern.compile("[a-z]*://(.+):(.+)@.*");
+
     private static int PASSWORD_GROUP = 2;
+
     public VfsResolver() {
         setRepository(new VfsRepository());
     }
@@ -40,6 +41,7 @@ public class VfsResolver extends RepositoryResolver {
     public String hidePassword(String name) {
         return prepareForDisplay(name);
     }
+
     public static String prepareForDisplay(String name) {
         StringBuffer s = new StringBuffer(name);
         Matcher m = URLPattern.matcher(s);

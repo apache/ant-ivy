@@ -23,11 +23,13 @@ import org.apache.ivy.plugins.resolver.DependencyResolver;
 
 public class StartArtifactDownloadEvent extends DownloadEvent {
     public static final String NAME = "pre-download-artifact";
-    
-	private DependencyResolver resolver;
-	private ArtifactOrigin origin;
 
-    public StartArtifactDownloadEvent(DependencyResolver resolver, Artifact artifact, ArtifactOrigin origin) {
+    private DependencyResolver resolver;
+
+    private ArtifactOrigin origin;
+
+    public StartArtifactDownloadEvent(DependencyResolver resolver, Artifact artifact,
+            ArtifactOrigin origin) {
         super(NAME, artifact);
         this.resolver = resolver;
         this.origin = origin;
@@ -40,8 +42,8 @@ public class StartArtifactDownloadEvent extends DownloadEvent {
         return resolver;
     }
 
-	public ArtifactOrigin getOrigin() {
-		return origin;
-	}
+    public ArtifactOrigin getOrigin() {
+        return origin;
+    }
 
 }

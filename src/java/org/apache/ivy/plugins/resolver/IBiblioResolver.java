@@ -40,29 +40,33 @@ import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.plugins.resolver.util.ResolvedResource;
 import org.apache.ivy.util.Message;
 
-
 /**
- * IBiblioResolver is a resolver which can be used to resolve dependencies found
- * in the ibiblio maven repository, or similar repositories.
- * For more flexibility with url and patterns, see {@link org.apache.ivy.plugins.resolver.URLResolver}.
+ * IBiblioResolver is a resolver which can be used to resolve dependencies found in the ibiblio
+ * maven repository, or similar repositories. For more flexibility with url and patterns, see
+ * {@link org.apache.ivy.plugins.resolver.URLResolver}.
  */
 public class IBiblioResolver extends URLResolver {
     public static final String DEFAULT_PATTERN = "[module]/[type]s/[artifact]-[revision].[ext]";
+
     public static final String DEFAULT_ROOT = "http://www.ibiblio.org/maven/";
+
     private String _root = null;
+
     private String _pattern = null;
-    
+
     // use poms if m2 compatible is true
     private boolean _usepoms = true;
-    
+
     public IBiblioResolver() {
     }
-    
+
     protected ResolvedResource findIvyFileRef(DependencyDescriptor dd, ResolveData data) {
         if (isM2compatible() && isUsepoms()) {
             ModuleRevisionId mrid = dd.getDependencyRevisionId();
             mrid = convertM2IdForResourceSearch(mrid);
-            ResolvedResource rres = findResourceUsingPatterns(mrid, getIvyPatterns(), DefaultArtifact.newPomArtifact(mrid, data.getDate()), getRMDParser(dd, data), data.getDate());
+            ResolvedResource rres = findResourceUsingPatterns(mrid, getIvyPatterns(),
+                DefaultArtifact.newPomArtifact(mrid, data.getDate()), getRMDParser(dd, data), data
+                        .getDate());
             return rres;
         } else {
             return null;
@@ -72,16 +76,16 @@ public class IBiblioResolver extends URLResolver {
     public void setM2compatible(boolean m2compatible) {
         super.setM2compatible(m2compatible);
         if (m2compatible) {
-        	if (_root == null) {
-        		_root = "http://repo1.maven.org/maven2/";
-        	}
-        	if (_pattern == null) {
-        		_pattern = "[organisation]/[module]/[revision]/[artifact]-[revision](-[classifier]).[ext]";
-        	}
+            if (_root == null) {
+                _root = "http://repo1.maven.org/maven2/";
+            }
+            if (_pattern == null) {
+                _pattern = "[organisation]/[module]/[revision]/[artifact]-[revision](-[classifier]).[ext]";
+            }
             updateWholePattern();
         }
     }
-    
+
     public void ensureConfigured(IvySettings settings) {
         if (settings != null && (_root == null || _pattern == null)) {
             if (_root == null) {
@@ -108,10 +112,12 @@ public class IBiblioResolver extends URLResolver {
 
     private String getWholePattern() {
         return _root + _pattern;
-    }    
+    }
+
     public String getPattern() {
         return _pattern;
     }
+
     public void setPattern(String pattern) {
         if (pattern == null) {
             throw new NullPointerException("pattern must not be null");
@@ -120,14 +126,19 @@ public class IBiblioResolver extends URLResolver {
         ensureConfigured(getSettings());
         updateWholePattern();
     }
+
     public String getRoot() {
         return _root;
     }
+
     /**
-     * Sets the root of the maven like repository.
-     * The maven like repository is necessarily an http repository.
-     * @param root the root of the maven like repository
-     * @throws IllegalArgumentException if root does not start with "http://"
+     * Sets the root of the maven like repository. The maven like repository is necessarily an http
+     * repository.
+     * 
+     * @param root
+     *            the root of the maven like repository
+     * @throws IllegalArgumentException
+     *             if root does not start with "http://"
      */
     public void setRoot(String root) {
         if (root == null) {
@@ -141,83 +152,92 @@ public class IBiblioResolver extends URLResolver {
         ensureConfigured(getSettings());
         updateWholePattern();
     }
-    
+
     private void updateWholePattern() {
         if (isM2compatible() && isUsepoms()) {
             setIvyPatterns(Collections.singletonList(getWholePattern()));
         }
         setArtifactPatterns(Collections.singletonList(getWholePattern()));
     }
+
     public void publish(Artifact artifact, File src) {
         throw new UnsupportedOperationException("publish not supported by IBiblioResolver");
     }
+
     // we do not allow to list organisations on ibiblio, nor modules in ibiblio 1
     public String[] listTokenValues(String token, Map otherTokenValues) {
-    	if (IvyPatternHelper.ORGANISATION_KEY.equals(token)) {
-    		return new String[0];
-    	}
-    	if (IvyPatternHelper.MODULE_KEY.equals(token) && !isM2compatible()) {
-    		return new String[0];
-    	}
+        if (IvyPatternHelper.ORGANISATION_KEY.equals(token)) {
+            return new String[0];
+        }
+        if (IvyPatternHelper.MODULE_KEY.equals(token) && !isM2compatible()) {
+            return new String[0];
+        }
         ensureConfigured(getSettings());
-    	return super.listTokenValues(token, otherTokenValues);
+        return super.listTokenValues(token, otherTokenValues);
     }
+
     public OrganisationEntry[] listOrganisations() {
         return new OrganisationEntry[0];
     }
+
     public ModuleEntry[] listModules(OrganisationEntry org) {
-    	if (isM2compatible()) {
+        if (isM2compatible()) {
             ensureConfigured(getSettings());
             return super.listModules(org);
-    	}
+        }
         return new ModuleEntry[0];
-    }    
+    }
+
     public RevisionEntry[] listRevisions(ModuleEntry mod) {
         ensureConfigured(getSettings());
         return super.listRevisions(mod);
     }
+
     public String getTypeName() {
         return "ibiblio";
     }
 
-    // override some methods to ensure configuration    
-    public ResolvedModuleRevision getDependency(DependencyDescriptor dd, ResolveData data) throws ParseException {
+    // override some methods to ensure configuration
+    public ResolvedModuleRevision getDependency(DependencyDescriptor dd, ResolveData data)
+            throws ParseException {
         ensureConfigured(data.getSettings());
         return super.getDependency(dd, data);
     }
-    
+
     protected ResolvedResource findArtifactRef(Artifact artifact, Date date) {
         ensureConfigured(getSettings());
         return super.findArtifactRef(artifact, date);
     }
-    
+
     public DownloadReport download(Artifact[] artifacts, DownloadOptions options) {
         ensureConfigured(options.getSettings());
         return super.download(artifacts, options);
     }
+
     public boolean exists(Artifact artifact) {
         ensureConfigured(getSettings());
         return super.exists(artifact);
     }
+
     public List getArtifactPatterns() {
         ensureConfigured(getSettings());
         return super.getArtifactPatterns();
     }
 
-	public boolean isUsepoms() {
-		return _usepoms;
-	}
+    public boolean isUsepoms() {
+        return _usepoms;
+    }
 
-	public void setUsepoms(boolean usepoms) {
-		_usepoms = usepoms;
-		updateWholePattern();
-	}
-	
-	public void dumpSettings() {
-		ensureConfigured(getSettings());
-		super.dumpSettings();
-		Message.debug("\t\troot: "+getRoot());
-		Message.debug("\t\tpattern: "+getPattern());
-		Message.debug("\t\tusepoms: "+_usepoms);
-	}
+    public void setUsepoms(boolean usepoms) {
+        _usepoms = usepoms;
+        updateWholePattern();
+    }
+
+    public void dumpSettings() {
+        ensureConfigured(getSettings());
+        super.dumpSettings();
+        Message.debug("\t\troot: " + getRoot());
+        Message.debug("\t\tpattern: " + getPattern());
+        Message.debug("\t\tusepoms: " + _usepoms);
+    }
 }

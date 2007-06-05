@@ -30,7 +30,8 @@ import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.Delete;
 
 public class XmlReportParserTest extends TestCase {
-	private final Ivy _ivy;
+    private final Ivy _ivy;
+
     private File _cache;
 
     public XmlReportParserTest() throws Exception {
@@ -46,7 +47,7 @@ public class XmlReportParserTest extends TestCase {
         _cache = new File("build/cache");
         _cache.mkdirs();
     }
-    
+
     protected void tearDown() throws Exception {
         cleanCache();
     }
@@ -57,22 +58,26 @@ public class XmlReportParserTest extends TestCase {
         del.setDir(_cache);
         del.execute();
     }
-    
+
     public void testGetResolvedModule() throws Exception {
-        ResolveReport report = _ivy.resolve(new File("test/java/org/apache/ivy/plugins/report/ivy-with-info.xml").toURL(),
-        		getResolveOptions(new String[] {"default"}).setValidate(false).setResolveId("testGetResolvedModule"));
+        ResolveReport report = _ivy.resolve(new File(
+                "test/java/org/apache/ivy/plugins/report/ivy-with-info.xml").toURL(),
+            getResolveOptions(new String[] {"default"}).setValidate(false).setResolveId(
+                "testGetResolvedModule"));
         assertNotNull(report);
 
         ModuleRevisionId modRevId = report.getModuleDescriptor().getModuleRevisionId();
-        
+
         XmlReportParser parser = new XmlReportParser();
-        parser.parse(_ivy.getCacheManager(_cache).getConfigurationResolveReportInCache("testGetResolvedModule", "default"));
+        parser.parse(_ivy.getCacheManager(_cache).getConfigurationResolveReportInCache(
+            "testGetResolvedModule", "default"));
         ModuleRevisionId parsedModRevId = parser.getResolvedModule();
-        
+
         assertEquals("Resolved module doesn't equals parsed module", modRevId, parsedModRevId);
     }
-    
+
     private ResolveOptions getResolveOptions(String[] confs) {
-		return new ResolveOptions().setConfs(confs).setCache(CacheManager.getInstance(_ivy.getSettings(), _cache));
-	}
+        return new ResolveOptions().setConfs(confs).setCache(
+            CacheManager.getInstance(_ivy.getSettings(), _cache));
+    }
 }

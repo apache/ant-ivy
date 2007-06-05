@@ -21,32 +21,38 @@ package org.apache.ivy.util;
  * 
  */
 public class Credentials {
-	private String _realm;
-	private String _host;
-	private String _userName;
-	private String _passwd;
-	
-	public Credentials(String realm, String host, String userName, String passwd) {
-		_realm = realm;
-		_host = host;
-		_userName = userName;
-		_passwd = passwd;
-	}
-	
-	public String getHost() {
-		return _host;
-	}
-	public String getPasswd() {
-		return _passwd;
-	}
-	public String getRealm() {
-		return _realm;
-	}
-	public String getUserName() {
-		return _userName;
-	}
+    private String _realm;
 
-	public static String buildKey(String realm, String host) {
+    private String _host;
+
+    private String _userName;
+
+    private String _passwd;
+
+    public Credentials(String realm, String host, String userName, String passwd) {
+        _realm = realm;
+        _host = host;
+        _userName = userName;
+        _passwd = passwd;
+    }
+
+    public String getHost() {
+        return _host;
+    }
+
+    public String getPasswd() {
+        return _passwd;
+    }
+
+    public String getRealm() {
+        return _realm;
+    }
+
+    public String getUserName() {
+        return _userName;
+    }
+
+    public static String buildKey(String realm, String host) {
         if (realm == null || "".equals(realm.trim())) {
             return host;
         } else {
@@ -54,42 +60,43 @@ public class Credentials {
         }
     }
 
-	/**
-	 * Return a string that can be used for debug purpose.  It contains only stars for each password character.
-	 */
-	public String toString() {
-		return getKey() + " " + getUserName() + "/" + getPasswdAsStars();
-	}
+    /**
+     * Return a string that can be used for debug purpose. It contains only stars for each password
+     * character.
+     */
+    public String toString() {
+        return getKey() + " " + getUserName() + "/" + getPasswdAsStars();
+    }
 
-	private String getPasswdAsStars() {
-		if (_passwd == null) {
-			return null;
-		}
-		StringBuffer sb = new StringBuffer();
-		for (int i = _passwd.length(); i>0; i--) {
-			sb.append('*');
-		}
-		return sb.toString();
-	}
+    private String getPasswdAsStars() {
+        if (_passwd == null) {
+            return null;
+        }
+        StringBuffer sb = new StringBuffer();
+        for (int i = _passwd.length(); i > 0; i--) {
+            sb.append('*');
+        }
+        return sb.toString();
+    }
 
-	public boolean equals(Object o) {
-		if(o == null) {
-			return false;
-		}
+    public boolean equals(Object o) {
+        if (o == null) {
+            return false;
+        }
 
-		if(o instanceof Credentials) {
-			Credentials c = (Credentials) o;
-			return getKey().equals(c.getKey());
-		}
+        if (o instanceof Credentials) {
+            Credentials c = (Credentials) o;
+            return getKey().equals(c.getKey());
+        }
 
-		return false;
-	}
-	
-	public int hashCode() {
-		return getKey().hashCode();
-	}
-	
-	public String getKey() {
-		return buildKey(_realm, _host);
-	}
+        return false;
+    }
+
+    public int hashCode() {
+        return getKey().hashCode();
+    }
+
+    public String getKey() {
+        return buildKey(_realm, _host);
+    }
 }

@@ -23,7 +23,6 @@ import java.net.MalformedURLException;
 import org.apache.ivy.plugins.repository.file.FileResource;
 import org.apache.ivy.plugins.repository.url.URLResource;
 
-
 public class ResourceHelper {
     public static boolean equals(Resource res, File f) {
         if (res == null && f == null) {

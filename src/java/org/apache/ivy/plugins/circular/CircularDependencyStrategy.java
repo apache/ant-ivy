@@ -20,8 +20,8 @@ package org.apache.ivy.plugins.circular;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 
 public interface CircularDependencyStrategy {
-	String getName();
+    String getName();
 
-	void handleCircularDependency(ModuleRevisionId[] mrids);
+    void handleCircularDependency(ModuleRevisionId[] mrids);
 
 }

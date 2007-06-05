@@ -23,12 +23,12 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Properties;
 
-
 /**
  * A simple Properties extension easing the loading and saving of data
  */
 public class PropertiesFile extends Properties {
     private File _file;
+
     private String _header;
 
     public PropertiesFile(File file, String header) {
@@ -38,9 +38,10 @@ public class PropertiesFile extends Properties {
             FileInputStream fis = null;
             try {
                 fis = new FileInputStream(_file);
-                load(fis);                    
+                load(fis);
             } catch (Exception ex) {
-                Message.warn("exception occured while reading properties file "+_file+": "+ex.getMessage());
+                Message.warn("exception occured while reading properties file " + _file + ": "
+                        + ex.getMessage());
             }
             try {
                 if (fis != null) {
@@ -60,7 +61,8 @@ public class PropertiesFile extends Properties {
             fos = new FileOutputStream(_file);
             store(fos, _header);
         } catch (Exception ex) {
-            Message.warn("exception occured while writing properties file "+_file+": "+ex.getMessage());
+            Message.warn("exception occured while writing properties file " + _file + ": "
+                    + ex.getMessage());
         }
         try {
             if (fos != null) {

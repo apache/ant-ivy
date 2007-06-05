@@ -19,7 +19,6 @@ package org.apache.ivy.plugins.repository;
 
 import java.util.EventListener;
 
-
 /**
  * Listen to repository transfer
  */

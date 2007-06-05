@@ -41,26 +41,31 @@ import org.apache.ivy.core.sort.SortEngine;
  */
 public class DualResolverTest extends TestCase {
     private IvySettings _settings;
+
     private ResolveEngine _engine;
+
     private ResolveData _data;
+
     private File _cache;
-    
+
     protected void setUp() throws Exception {
         _settings = new IvySettings();
         _engine = new ResolveEngine(_settings, new EventManager(), new SortEngine(_settings));
         _cache = new File("build/cache");
-        _data = new ResolveData(_engine, new ResolveOptions().setCache(CacheManager.getInstance(_settings, _cache)));
+        _data = new ResolveData(_engine, new ResolveOptions().setCache(CacheManager.getInstance(
+            _settings, _cache)));
         _cache.mkdirs();
         _settings.setDefaultCache(_cache);
     }
 
     public void testFromConf() throws Exception {
-        new XmlSettingsParser(_settings).parse(DualResolverTest.class.getResource("dualresolverconf.xml"));
-        
+        new XmlSettingsParser(_settings).parse(DualResolverTest.class
+                .getResource("dualresolverconf.xml"));
+
         DependencyResolver resolver = _settings.getResolver("dualok");
         assertNotNull(resolver);
         assertTrue(resolver instanceof DualResolver);
-        DualResolver dual = (DualResolver)resolver;
+        DualResolver dual = (DualResolver) resolver;
         assertNotNull(dual.getIvyResolver());
         assertEquals("ivy", dual.getIvyResolver().getName());
         assertNotNull(dual.getArtifactResolver());
@@ -69,14 +74,15 @@ public class DualResolverTest extends TestCase {
         resolver = _settings.getResolver("dualnotenough");
         assertNotNull(resolver);
         assertTrue(resolver instanceof DualResolver);
-        dual = (DualResolver)resolver;
+        dual = (DualResolver) resolver;
         assertNotNull(dual.getIvyResolver());
         assertNull(dual.getArtifactResolver());
     }
 
     public void testFromBadConf() throws Exception {
         try {
-            new XmlSettingsParser(_settings).parse(DualResolverTest.class.getResource("dualresolverconf-bad.xml"));
+            new XmlSettingsParser(_settings).parse(DualResolverTest.class
+                    .getResource("dualresolverconf-bad.xml"));
             fail("bad dual resolver configuration should raise exception");
         } catch (Exception ex) {
             // ok -> bad conf has raised an exception
@@ -86,7 +92,8 @@ public class DualResolverTest extends TestCase {
     public void testBad() throws Exception {
         DualResolver dual = new DualResolver();
         dual.setIvyResolver(new IBiblioResolver());
-        DefaultDependencyDescriptor dd = new DefaultDependencyDescriptor(ModuleRevisionId.newInstance("org","mod", "rev"), false);
+        DefaultDependencyDescriptor dd = new DefaultDependencyDescriptor(ModuleRevisionId
+                .newInstance("org", "mod", "rev"), false);
         try {
             dual.getDependency(dd, _data);
             fail("bad dual resolver configuration should raise exception");
@@ -97,13 +104,16 @@ public class DualResolverTest extends TestCase {
 
     public void testResolve() throws Exception {
         DualResolver dual = new DualResolver();
-        MockResolver ivyResolver = MockResolver.buildMockResolver("ivy", true, new GregorianCalendar(2005, 1, 20).getTime());
-        MockResolver artifactResolver = MockResolver.buildMockResolver("artifact", false, new GregorianCalendar(2005, 1, 20).getTime());
+        MockResolver ivyResolver = MockResolver.buildMockResolver("ivy", true,
+            new GregorianCalendar(2005, 1, 20).getTime());
+        MockResolver artifactResolver = MockResolver.buildMockResolver("artifact", false,
+            new GregorianCalendar(2005, 1, 20).getTime());
         dual.setIvyResolver(ivyResolver);
         dual.setArtifactResolver(artifactResolver);
-        DefaultDependencyDescriptor dd = new DefaultDependencyDescriptor(ModuleRevisionId.newInstance("org","mod", "rev"), false);
+        DefaultDependencyDescriptor dd = new DefaultDependencyDescriptor(ModuleRevisionId
+                .newInstance("org", "mod", "rev"), false);
         ResolvedModuleRevision rmr = dual.getDependency(dd, _data);
-        
+
         assertNotNull(rmr);
         assertEquals(dual, rmr.getArtifactResolver());
         assertEquals(Arrays.asList(new DependencyDescriptor[] {dd}), ivyResolver.askedDeps);
@@ -112,13 +122,16 @@ public class DualResolverTest extends TestCase {
 
     public void testResolveFromArtifact() throws Exception {
         DualResolver dual = new DualResolver();
-        MockResolver ivyResolver = MockResolver.buildMockResolver("ivy", false, new GregorianCalendar(2005, 1, 20).getTime());
-        MockResolver artifactResolver = MockResolver.buildMockResolver("artifact", true, new GregorianCalendar(2005, 1, 20).getTime());
+        MockResolver ivyResolver = MockResolver.buildMockResolver("ivy", false,
+            new GregorianCalendar(2005, 1, 20).getTime());
+        MockResolver artifactResolver = MockResolver.buildMockResolver("artifact", true,
+            new GregorianCalendar(2005, 1, 20).getTime());
         dual.setIvyResolver(ivyResolver);
         dual.setArtifactResolver(artifactResolver);
-        DefaultDependencyDescriptor dd = new DefaultDependencyDescriptor(ModuleRevisionId.newInstance("org","mod", "rev"), false);
+        DefaultDependencyDescriptor dd = new DefaultDependencyDescriptor(ModuleRevisionId
+                .newInstance("org", "mod", "rev"), false);
         ResolvedModuleRevision rmr = dual.getDependency(dd, _data);
-        
+
         assertNotNull(rmr);
         assertEquals(artifactResolver, rmr.getResolver());
         assertEquals(Arrays.asList(new DependencyDescriptor[] {dd}), ivyResolver.askedDeps);
@@ -127,13 +140,16 @@ public class DualResolverTest extends TestCase {
 
     public void testResolveFail() throws Exception {
         DualResolver dual = new DualResolver();
-        MockResolver ivyResolver = MockResolver.buildMockResolver("ivy", false, new GregorianCalendar(2005, 1, 20).getTime());
-        MockResolver artifactResolver = MockResolver.buildMockResolver("artifact", false, new GregorianCalendar(2005, 1, 20).getTime());
+        MockResolver ivyResolver = MockResolver.buildMockResolver("ivy", false,
+            new GregorianCalendar(2005, 1, 20).getTime());
+        MockResolver artifactResolver = MockResolver.buildMockResolver("artifact", false,
+            new GregorianCalendar(2005, 1, 20).getTime());
         dual.setIvyResolver(ivyResolver);
         dual.setArtifactResolver(artifactResolver);
-        DefaultDependencyDescriptor dd = new DefaultDependencyDescriptor(ModuleRevisionId.newInstance("org","mod", "rev"), false);
+        DefaultDependencyDescriptor dd = new DefaultDependencyDescriptor(ModuleRevisionId
+                .newInstance("org", "mod", "rev"), false);
         ResolvedModuleRevision rmr = dual.getDependency(dd, _data);
-        
+
         assertNull(rmr);
         assertEquals(Arrays.asList(new DependencyDescriptor[] {dd}), ivyResolver.askedDeps);
         assertEquals(Arrays.asList(new DependencyDescriptor[] {dd}), artifactResolver.askedDeps);

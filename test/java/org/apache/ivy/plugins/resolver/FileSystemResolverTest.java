@@ -50,35 +50,41 @@ import org.apache.ivy.util.FileUtil;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.Delete;
 
-
 /**
  * 
  */
 public class FileSystemResolverTest extends TestCase {
 
     private static final String FS = System.getProperty("file.separator");
-    private static final String IVY_PATTERN = "test"+FS+"repositories"+FS+"1"+FS+"[organisation]"+FS+"[module]"+FS+"ivys"+FS+"ivy-[revision].xml";
+
+    private static final String IVY_PATTERN = "test" + FS + "repositories" + FS + "1" + FS
+            + "[organisation]" + FS + "[module]" + FS + "ivys" + FS + "ivy-[revision].xml";
+
     private IvySettings _settings;
+
     private ResolveEngine _engine;
+
     private ResolveData _data;
+
     private File _cache;
-	private CacheManager _cacheManager;
-    
-    
+
+    private CacheManager _cacheManager;
+
     public FileSystemResolverTest() {
         setupLastModified();
     }
-    
+
     protected void setUp() throws Exception {
-    	_settings = new IvySettings();
+        _settings = new IvySettings();
         _engine = new ResolveEngine(_settings, new EventManager(), new SortEngine(_settings));
         _cache = new File("build/cache");
-        _data = new ResolveData(_engine, new ResolveOptions().setCache(CacheManager.getInstance(_settings, _cache)));
+        _data = new ResolveData(_engine, new ResolveOptions().setCache(CacheManager.getInstance(
+            _settings, _cache)));
         _cache.mkdirs();
         _cacheManager = new CacheManager(_settings, _cache);
         _settings.setDefaultCache(_cache);
     }
-    
+
     private void setupLastModified() {
         // change important last modified dates cause svn doesn't keep them
         long minute = 60 * 1000;
@@ -104,61 +110,66 @@ public class FileSystemResolverTest extends TestCase {
         resolver.setName("test");
         resolver.setSettings(_settings);
         assertEquals("test", resolver.getName());
-        
+
         resolver.addIvyPattern(IVY_PATTERN);
-        resolver.addArtifactPattern("test/repositories/1/[organisation]/[module]/[type]s/[artifact]-[revision].[type]");
-        
+        resolver
+                .addArtifactPattern("test/repositories/1/[organisation]/[module]/[type]s/[artifact]-[revision].[type]");
+
         ModuleRevisionId mrid = ModuleRevisionId.newInstance("org1", "mod1.1", "1.0");
-        ResolvedModuleRevision rmr = resolver.getDependency(new DefaultDependencyDescriptor(mrid, false), _data);
+        ResolvedModuleRevision rmr = resolver.getDependency(new DefaultDependencyDescriptor(mrid,
+                false), _data);
         assertNotNull(rmr);
-        
+
         assertEquals(mrid, rmr.getId());
         Date pubdate = new GregorianCalendar(2004, 10, 1, 11, 0, 0).getTime();
         assertEquals(pubdate, rmr.getPublicationDate());
-        
-        
+
         // test to ask to download
         DefaultArtifact artifact = new DefaultArtifact(mrid, pubdate, "mod1.1", "jar", "jar");
-        DownloadReport report = resolver.download(new Artifact[] {artifact}, getDownloadOptions(false));
+        DownloadReport report = resolver.download(new Artifact[] {artifact},
+            getDownloadOptions(false));
         assertNotNull(report);
-        
+
         assertEquals(1, report.getArtifactsReports().length);
-        
+
         ArtifactDownloadReport ar = report.getArtifactReport(artifact);
         assertNotNull(ar);
-        
+
         assertEquals(artifact, ar.getArtifact());
         assertEquals(DownloadStatus.SUCCESSFUL, ar.getDownloadStatus());
 
         // test to ask to download again, should use cache
         report = resolver.download(new Artifact[] {artifact}, getDownloadOptions(false));
         assertNotNull(report);
-        
+
         assertEquals(1, report.getArtifactsReports().length);
-        
+
         ar = report.getArtifactReport(artifact);
         assertNotNull(ar);
-        
+
         assertEquals(artifact, ar.getArtifact());
         assertEquals(DownloadStatus.NO, ar.getDownloadStatus());
     }
 
     private DownloadOptions getDownloadOptions(boolean useOrigin) {
-		return new DownloadOptions(_settings, _cacheManager, null, useOrigin);
-	}
+        return new DownloadOptions(_settings, _cacheManager, null, useOrigin);
+    }
 
-	public void testMaven2() throws Exception {
+    public void testMaven2() throws Exception {
         FileSystemResolver resolver = new FileSystemResolver();
         resolver.setName("test");
         resolver.setSettings(_settings);
         resolver.setM2compatible(true);
         assertEquals("test", resolver.getName());
-        
-        resolver.addIvyPattern("test/repositories/m2/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]");
-        resolver.addArtifactPattern("test/repositories/m2/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]");
-        
+
+        resolver
+                .addIvyPattern("test/repositories/m2/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]");
+        resolver
+                .addArtifactPattern("test/repositories/m2/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]");
+
         ModuleRevisionId mrid = ModuleRevisionId.newInstance("org.apache", "test", "1.0");
-        ResolvedModuleRevision rmr = resolver.getDependency(new DefaultDependencyDescriptor(mrid, false), _data);
+        ResolvedModuleRevision rmr = resolver.getDependency(new DefaultDependencyDescriptor(mrid,
+                false), _data);
         assertNotNull(rmr);
 
         mrid = ModuleRevisionId.newInstance("org.apache.unknown", "test", "1.0");
@@ -171,15 +182,18 @@ public class FileSystemResolverTest extends TestCase {
         FileSystemResolver resolver = new FileSystemResolver();
         resolver.setName("test");
         resolver.setSettings(_settings);
-        
+
         resolver.addIvyPattern("test/repositories/checksums/[module]/[artifact]-[revision].[ext]");
-        resolver.addArtifactPattern("test/repositories/checksums/[module]/[artifact]-[revision].[ext]");
-        
+        resolver
+                .addArtifactPattern("test/repositories/checksums/[module]/[artifact]-[revision].[ext]");
+
         resolver.setChecksums("sha1, md5");
         ModuleRevisionId mrid = ModuleRevisionId.newInstance("test", "allright", "1.0");
-        ResolvedModuleRevision rmr = resolver.getDependency(new DefaultDependencyDescriptor(mrid, false), _data);
+        ResolvedModuleRevision rmr = resolver.getDependency(new DefaultDependencyDescriptor(mrid,
+                false), _data);
         assertNotNull(rmr);
-        DownloadReport dr = resolver.download(rmr.getDescriptor().getAllArtifacts(), getDownloadOptions(false));
+        DownloadReport dr = resolver.download(rmr.getDescriptor().getAllArtifacts(),
+            getDownloadOptions(false));
         assertEquals(2, dr.getArtifactsReports(DownloadStatus.SUCCESSFUL).length);
 
         resolver.setChecksums("md5");
@@ -189,20 +203,23 @@ public class FileSystemResolverTest extends TestCase {
         resolver.setChecksums("none");
         rmr = resolver.getDependency(new DefaultDependencyDescriptor(mrid, false), _data);
         assertNotNull(rmr);
-        dr = resolver.download(new Artifact[] {new DefaultArtifact(mrid, rmr.getPublicationDate(), mrid.getName(), "jar", "jar")}, getDownloadOptions(false));
+        dr = resolver.download(new Artifact[] {new DefaultArtifact(mrid, rmr.getPublicationDate(),
+                mrid.getName(), "jar", "jar")}, getDownloadOptions(false));
         assertEquals(1, dr.getArtifactsReports(DownloadStatus.SUCCESSFUL).length);
 
         resolver.setChecksums("md5");
         mrid = ModuleRevisionId.newInstance("test", "badartcs", "1.0");
         rmr = resolver.getDependency(new DefaultDependencyDescriptor(mrid, false), _data);
         assertNotNull(rmr);
-        dr = resolver.download(new Artifact[] {new DefaultArtifact(mrid, rmr.getPublicationDate(), mrid.getName(), "jar", "jar")}, getDownloadOptions(false));
+        dr = resolver.download(new Artifact[] {new DefaultArtifact(mrid, rmr.getPublicationDate(),
+                mrid.getName(), "jar", "jar")}, getDownloadOptions(false));
         assertEquals(1, dr.getArtifactsReports(DownloadStatus.FAILED).length);
-        
+
         resolver.setChecksums("");
         rmr = resolver.getDependency(new DefaultDependencyDescriptor(mrid, false), _data);
         assertNotNull(rmr);
-        dr = resolver.download(new Artifact[] {new DefaultArtifact(mrid, rmr.getPublicationDate(), mrid.getName(), "jar", "jar")}, getDownloadOptions(false));
+        dr = resolver.download(new Artifact[] {new DefaultArtifact(mrid, rmr.getPublicationDate(),
+                mrid.getName(), "jar", "jar")}, getDownloadOptions(false));
         assertEquals(1, dr.getArtifactsReports(DownloadStatus.SUCCESSFUL).length);
     }
 
@@ -212,38 +229,43 @@ public class FileSystemResolverTest extends TestCase {
         resolver.setSettings(_settings);
         _settings.addResolver(resolver);
         assertEquals("test", resolver.getName());
-        
-        resolver.addIvyPattern("test"+FS+"repositories"+FS+"checkmodified"+FS+"ivy-[revision].xml");
+
+        resolver.addIvyPattern("test" + FS + "repositories" + FS + "checkmodified" + FS
+                + "ivy-[revision].xml");
         File modify = new File("test/repositories/checkmodified/ivy-1.0.xml");
-        FileUtil.copy(new File("test/repositories/checkmodified/ivy-1.0-before.xml"), modify, null, true);
+        FileUtil.copy(new File("test/repositories/checkmodified/ivy-1.0-before.xml"), modify, null,
+            true);
         Date pubdate = new GregorianCalendar(2004, 10, 1, 11, 0, 0).getTime();
         modify.setLastModified(pubdate.getTime());
-        
+
         ModuleRevisionId mrid = ModuleRevisionId.newInstance("org1", "mod1.1", "1.0");
-        ResolvedModuleRevision rmr = resolver.getDependency(new DefaultDependencyDescriptor(mrid, false), _data);
+        ResolvedModuleRevision rmr = resolver.getDependency(new DefaultDependencyDescriptor(mrid,
+                false), _data);
         assertNotNull(rmr);
-        
+
         assertEquals(mrid, rmr.getId());
         assertEquals(pubdate, rmr.getPublicationDate());
-                
+
         // updates ivy file in repository
-        FileUtil.copy(new File("test/repositories/checkmodified/ivy-1.0-after.xml"), modify, null, true);
+        FileUtil.copy(new File("test/repositories/checkmodified/ivy-1.0-after.xml"), modify, null,
+            true);
         pubdate = new GregorianCalendar(2005, 4, 1, 11, 0, 0).getTime();
         modify.setLastModified(pubdate.getTime());
-        
+
         // should not get the new version
         resolver.setCheckmodified(false);
         rmr = resolver.getDependency(new DefaultDependencyDescriptor(mrid, false), _data);
         assertNotNull(rmr);
-        
+
         assertEquals(mrid, rmr.getId());
-        assertEquals(new GregorianCalendar(2004, 10, 1, 11, 0, 0).getTime(), rmr.getPublicationDate());
+        assertEquals(new GregorianCalendar(2004, 10, 1, 11, 0, 0).getTime(), rmr
+                .getPublicationDate());
 
         // should now get the new version
         resolver.setCheckmodified(true);
         rmr = resolver.getDependency(new DefaultDependencyDescriptor(mrid, false), _data);
         assertNotNull(rmr);
-        
+
         assertEquals(mrid, rmr.getId());
         assertEquals(pubdate, rmr.getPublicationDate());
     }
@@ -254,25 +276,31 @@ public class FileSystemResolverTest extends TestCase {
         resolver.setSettings(_settings);
         _settings.addResolver(resolver);
         assertEquals("test", resolver.getName());
-        
-        resolver.addIvyPattern("test"+FS+"repositories"+FS+"norevision"+FS+"ivy-[module].xml");
-        resolver.addArtifactPattern("test"+FS+"repositories"+FS+"norevision"+FS+"[artifact].[ext]");
+
+        resolver.addIvyPattern("test" + FS + "repositories" + FS + "norevision" + FS
+                + "ivy-[module].xml");
+        resolver.addArtifactPattern("test" + FS + "repositories" + FS + "norevision" + FS
+                + "[artifact].[ext]");
         File modify = new File("test/repositories/norevision/ivy-mod1.1.xml");
         File artifact = new File("test/repositories/norevision/mod1.1.jar");
-        
+
         // 'publish' 'before' version
-        FileUtil.copy(new File("test/repositories/norevision/ivy-mod1.1-before.xml"), modify, null, true);
-        FileUtil.copy(new File("test/repositories/norevision/mod1.1-before.jar"), artifact, null, true);
+        FileUtil.copy(new File("test/repositories/norevision/ivy-mod1.1-before.xml"), modify, null,
+            true);
+        FileUtil.copy(new File("test/repositories/norevision/mod1.1-before.jar"), artifact, null,
+            true);
         Date pubdate = new GregorianCalendar(2004, 10, 1, 11, 0, 0).getTime();
         modify.setLastModified(pubdate.getTime());
-        
-        ModuleRevisionId mrid = ModuleRevisionId.newInstance("org1", "mod1.1", "latest.integration");
-        ResolvedModuleRevision rmr = resolver.getDependency(new DefaultDependencyDescriptor(mrid, false), _data);
+
+        ModuleRevisionId mrid = ModuleRevisionId
+                .newInstance("org1", "mod1.1", "latest.integration");
+        ResolvedModuleRevision rmr = resolver.getDependency(new DefaultDependencyDescriptor(mrid,
+                false), _data);
         assertNotNull(rmr);
-        
+
         assertEquals(ModuleRevisionId.newInstance("org1", "mod1.1", "1.0"), rmr.getId());
         assertEquals(pubdate, rmr.getPublicationDate());
-        
+
         Artifact[] artifacts = rmr.getDescriptor().getArtifacts("default");
         File archiveFileInCache = _cacheManager.getArchiveFileInCache(artifacts[0]);
         resolver.download(artifacts, getDownloadOptions(false));
@@ -280,25 +308,28 @@ public class FileSystemResolverTest extends TestCase {
         BufferedReader r = new BufferedReader(new FileReader(archiveFileInCache));
         assertEquals("before", r.readLine());
         r.close();
-                
-        // updates ivy file and artifact in repository 
-        FileUtil.copy(new File("test/repositories/norevision/ivy-mod1.1-after.xml"), modify, null, true);
-        FileUtil.copy(new File("test/repositories/norevision/mod1.1-after.jar"), artifact, null, true);
+
+        // updates ivy file and artifact in repository
+        FileUtil.copy(new File("test/repositories/norevision/ivy-mod1.1-after.xml"), modify, null,
+            true);
+        FileUtil.copy(new File("test/repositories/norevision/mod1.1-after.jar"), artifact, null,
+            true);
         pubdate = new GregorianCalendar(2005, 4, 1, 11, 0, 0).getTime();
         modify.setLastModified(pubdate.getTime());
         // no need to update new artifact timestamp cause it isn't used
-        
-        // should get the new version even if checkModified is false, beacause we ask a latest.integration
+
+        // should get the new version even if checkModified is false, beacause we ask a
+        // latest.integration
         resolver.setCheckmodified(false);
         rmr = resolver.getDependency(new DefaultDependencyDescriptor(mrid, false), _data);
         assertNotNull(rmr);
-        
+
         assertEquals(ModuleRevisionId.newInstance("org1", "mod1.1", "1.1"), rmr.getId());
         assertEquals(pubdate, rmr.getPublicationDate());
 
         artifacts = rmr.getDescriptor().getArtifacts("default");
         archiveFileInCache = _cacheManager.getArchiveFileInCache(artifacts[0]);
-        
+
         assertFalse(archiveFileInCache.exists());
 
         // should download the new artifact
@@ -316,25 +347,30 @@ public class FileSystemResolverTest extends TestCase {
         resolver.setSettings(_settings);
         _settings.addResolver(resolver);
         assertEquals("test", resolver.getName());
-        
-        resolver.addIvyPattern("test"+FS+"repositories"+FS+"checkmodified"+FS+"ivy-[revision].xml");
-        resolver.addArtifactPattern("test"+FS+"repositories"+FS+"checkmodified"+FS+"[artifact]-[revision].[ext]");
+
+        resolver.addIvyPattern("test" + FS + "repositories" + FS + "checkmodified" + FS
+                + "ivy-[revision].xml");
+        resolver.addArtifactPattern("test" + FS + "repositories" + FS + "checkmodified" + FS
+                + "[artifact]-[revision].[ext]");
         File modify = new File("test/repositories/checkmodified/ivy-1.0.xml");
         File artifact = new File("test/repositories/checkmodified/mod1.1-1.0.jar");
-        
+
         // 'publish' 'before' version
-        FileUtil.copy(new File("test/repositories/checkmodified/ivy-1.0-before.xml"), modify, null, true);
-        FileUtil.copy(new File("test/repositories/checkmodified/mod1.1-1.0-before.jar"), artifact, null, true);
+        FileUtil.copy(new File("test/repositories/checkmodified/ivy-1.0-before.xml"), modify, null,
+            true);
+        FileUtil.copy(new File("test/repositories/checkmodified/mod1.1-1.0-before.jar"), artifact,
+            null, true);
         Date pubdate = new GregorianCalendar(2004, 10, 1, 11, 0, 0).getTime();
         modify.setLastModified(pubdate.getTime());
-        
+
         ModuleRevisionId mrid = ModuleRevisionId.newInstance("org1", "mod1.1", "1.0");
-        ResolvedModuleRevision rmr = resolver.getDependency(new DefaultDependencyDescriptor(mrid, false), _data);
+        ResolvedModuleRevision rmr = resolver.getDependency(new DefaultDependencyDescriptor(mrid,
+                false), _data);
         assertNotNull(rmr);
-        
+
         assertEquals(mrid, rmr.getId());
         assertEquals(pubdate, rmr.getPublicationDate());
-        
+
         Artifact[] artifacts = rmr.getDescriptor().getArtifacts("default");
         resolver.download(artifacts, getDownloadOptions(false));
         File archiveFileInCache = _cacheManager.getArchiveFileInCache(artifacts[0]);
@@ -342,21 +378,25 @@ public class FileSystemResolverTest extends TestCase {
         BufferedReader r = new BufferedReader(new FileReader(archiveFileInCache));
         assertEquals("before", r.readLine());
         r.close();
-                
-        // updates ivy file and artifact in repository 
-        FileUtil.copy(new File("test/repositories/checkmodified/ivy-1.0-after.xml"), modify, null, true);
-        FileUtil.copy(new File("test/repositories/checkmodified/mod1.1-1.0-after.jar"), artifact, null, true);
+
+        // updates ivy file and artifact in repository
+        FileUtil.copy(new File("test/repositories/checkmodified/ivy-1.0-after.xml"), modify, null,
+            true);
+        FileUtil.copy(new File("test/repositories/checkmodified/mod1.1-1.0-after.jar"), artifact,
+            null, true);
         pubdate = new GregorianCalendar(2005, 4, 1, 11, 0, 0).getTime();
         modify.setLastModified(pubdate.getTime());
         // no need to update new artifact timestamp cause it isn't used
-        
-        // should not get the new version: checkmodified is false and edpendency is not told to be a changing one
+
+        // should not get the new version: checkmodified is false and edpendency is not told to be a
+        // changing one
         resolver.setCheckmodified(false);
         rmr = resolver.getDependency(new DefaultDependencyDescriptor(mrid, false), _data);
         assertNotNull(rmr);
-        
+
         assertEquals(mrid, rmr.getId());
-        assertEquals(new GregorianCalendar(2004, 10, 1, 11, 0, 0).getTime(), rmr.getPublicationDate());
+        assertEquals(new GregorianCalendar(2004, 10, 1, 11, 0, 0).getTime(), rmr
+                .getPublicationDate());
 
         assertTrue(archiveFileInCache.exists());
         r = new BufferedReader(new FileReader(archiveFileInCache));
@@ -366,7 +406,7 @@ public class FileSystemResolverTest extends TestCase {
         // should now get the new version cause we say it's a changing one
         rmr = resolver.getDependency(new DefaultDependencyDescriptor(mrid, false, true), _data);
         assertNotNull(rmr);
-        
+
         assertEquals(mrid, rmr.getId());
         assertEquals(pubdate, rmr.getPublicationDate());
 
@@ -385,16 +425,19 @@ public class FileSystemResolverTest extends TestCase {
         resolver.setName("test");
         resolver.setSettings(_settings);
         assertEquals("test", resolver.getName());
-        
+
         resolver.addIvyPattern(IVY_PATTERN);
-        resolver.addArtifactPattern("test/repositories/1/[organisation]/[module]/[type]s/[artifact]-[revision].[type]");
-        
+        resolver
+                .addArtifactPattern("test/repositories/1/[organisation]/[module]/[type]s/[artifact]-[revision].[type]");
+
         resolver.setLatestStrategy(new LatestTimeStrategy());
-        
+
         ModuleRevisionId mrid = ModuleRevisionId.newInstance("org1", "mod1.1", "2.0");
-        ResolvedModuleRevision rmr = resolver.getDependency(new DefaultDependencyDescriptor(ModuleRevisionId.newInstance("org1", "mod1.1", "latest.integration"), false), _data);
+        ResolvedModuleRevision rmr = resolver
+                .getDependency(new DefaultDependencyDescriptor(ModuleRevisionId.newInstance("org1",
+                    "mod1.1", "latest.integration"), false), _data);
         assertNotNull(rmr);
-        
+
         assertEquals(mrid, rmr.getId());
         Date pubdate = new GregorianCalendar(2005, 1, 15, 11, 0, 0).getTime();
         assertEquals(pubdate, rmr.getPublicationDate());
@@ -405,16 +448,19 @@ public class FileSystemResolverTest extends TestCase {
         resolver.setName("test");
         resolver.setSettings(_settings);
         assertEquals("test", resolver.getName());
-        
+
         resolver.addIvyPattern(IVY_PATTERN);
-        resolver.addArtifactPattern("test/repositories/1/[organisation]/[module]/[type]s/[artifact]-[revision].[type]");
-        
+        resolver
+                .addArtifactPattern("test/repositories/1/[organisation]/[module]/[type]s/[artifact]-[revision].[type]");
+
         resolver.setLatestStrategy(new LatestRevisionStrategy());
-        
+
         ModuleRevisionId mrid = ModuleRevisionId.newInstance("org1", "mod1.1", "2.0");
-        ResolvedModuleRevision rmr = resolver.getDependency(new DefaultDependencyDescriptor(ModuleRevisionId.newInstance("org1", "mod1.1", "latest.integration"), false), _data);
+        ResolvedModuleRevision rmr = resolver
+                .getDependency(new DefaultDependencyDescriptor(ModuleRevisionId.newInstance("org1",
+                    "mod1.1", "latest.integration"), false), _data);
         assertNotNull(rmr);
-        
+
         assertEquals(mrid, rmr.getId());
         Date pubdate = new GregorianCalendar(2005, 1, 15, 11, 0, 0).getTime();
         assertEquals(pubdate, rmr.getPublicationDate());
@@ -425,16 +471,19 @@ public class FileSystemResolverTest extends TestCase {
         resolver.setName("test");
         resolver.setSettings(_settings);
         assertEquals("test", resolver.getName());
-        
-        resolver.addIvyPattern(new File("src/java").getAbsolutePath()+"/../../"+IVY_PATTERN);
-        resolver.addArtifactPattern("src/../test/repositories/1/[organisation]/[module]/[type]s/[artifact]-[revision].[type]");
-        
+
+        resolver.addIvyPattern(new File("src/java").getAbsolutePath() + "/../../" + IVY_PATTERN);
+        resolver
+                .addArtifactPattern("src/../test/repositories/1/[organisation]/[module]/[type]s/[artifact]-[revision].[type]");
+
         resolver.setLatestStrategy(new LatestRevisionStrategy());
-        
+
         ModuleRevisionId mrid = ModuleRevisionId.newInstance("org1", "mod1.1", "2.0");
-        ResolvedModuleRevision rmr = resolver.getDependency(new DefaultDependencyDescriptor(ModuleRevisionId.newInstance("org1", "mod1.1", "latest.integration"), false), _data);
+        ResolvedModuleRevision rmr = resolver
+                .getDependency(new DefaultDependencyDescriptor(ModuleRevisionId.newInstance("org1",
+                    "mod1.1", "latest.integration"), false), _data);
         assertNotNull(rmr);
-        
+
         assertEquals(mrid, rmr.getId());
         Date pubdate = new GregorianCalendar(2005, 1, 15, 11, 0, 0).getTime();
         assertEquals(pubdate, rmr.getPublicationDate());
@@ -445,16 +494,18 @@ public class FileSystemResolverTest extends TestCase {
         resolver.setName("test");
         resolver.setSettings(_settings);
         assertEquals("test", resolver.getName());
-        
+
         resolver.addIvyPattern(IVY_PATTERN);
-        resolver.addArtifactPattern("test/repositories/1/[organisation]/[module]/[type]s/[artifact]-[revision].[type]");
-        
+        resolver
+                .addArtifactPattern("test/repositories/1/[organisation]/[module]/[type]s/[artifact]-[revision].[type]");
+
         resolver.setLatestStrategy(new LatestTimeStrategy());
-        
+
         ModuleRevisionId mrid = ModuleRevisionId.newInstance("org1", "mod1.1", "1.1");
-        ResolvedModuleRevision rmr = resolver.getDependency(new DefaultDependencyDescriptor(ModuleRevisionId.newInstance("org1", "mod1.1", "1+"), false), _data);
+        ResolvedModuleRevision rmr = resolver.getDependency(new DefaultDependencyDescriptor(
+                ModuleRevisionId.newInstance("org1", "mod1.1", "1+"), false), _data);
         assertNotNull(rmr);
-        
+
         assertEquals(mrid, rmr.getId());
         Date pubdate = new GregorianCalendar(2005, 0, 2, 11, 0, 0).getTime();
         assertEquals(pubdate, rmr.getPublicationDate());
@@ -465,16 +516,18 @@ public class FileSystemResolverTest extends TestCase {
         resolver.setName("test");
         resolver.setSettings(_settings);
         assertEquals("test", resolver.getName());
-        
+
         resolver.addIvyPattern(IVY_PATTERN);
-        resolver.addArtifactPattern("test/repositories/1/[organisation]/[module]/[type]s/[artifact]-[revision].[type]");
-        
+        resolver
+                .addArtifactPattern("test/repositories/1/[organisation]/[module]/[type]s/[artifact]-[revision].[type]");
+
         resolver.setLatestStrategy(new LatestRevisionStrategy());
-        
+
         ModuleRevisionId mrid = ModuleRevisionId.newInstance("org1", "mod1.1", "1.1");
-        ResolvedModuleRevision rmr = resolver.getDependency(new DefaultDependencyDescriptor(ModuleRevisionId.newInstance("org1", "mod1.1", "1+"), false), _data);
+        ResolvedModuleRevision rmr = resolver.getDependency(new DefaultDependencyDescriptor(
+                ModuleRevisionId.newInstance("org1", "mod1.1", "1+"), false), _data);
         assertNotNull(rmr);
-        
+
         assertEquals(mrid, rmr.getId());
         Date pubdate = new GregorianCalendar(2005, 0, 2, 11, 0, 0).getTime();
         assertEquals(pubdate, rmr.getPublicationDate());
@@ -486,19 +539,24 @@ public class FileSystemResolverTest extends TestCase {
             resolver.setName("test");
             resolver.setSettings(_settings);
             assertEquals("test", resolver.getName());
-            
-            resolver.addIvyPattern("test"+FS+"repositories"+FS+"1"+FS+"[organisation]"+FS+"[module]"+FS+"[revision]"+FS+"[artifact].[ext]");
-            resolver.addArtifactPattern("test/repositories/1/[organisation]/[module]/[type]s/[artifact]-[revision].[ext]");
-            
+
+            resolver.addIvyPattern("test" + FS + "repositories" + FS + "1" + FS + "[organisation]"
+                    + FS + "[module]" + FS + "[revision]" + FS + "[artifact].[ext]");
+            resolver
+                    .addArtifactPattern("test/repositories/1/[organisation]/[module]/[type]s/[artifact]-[revision].[ext]");
+
             ModuleRevisionId mrid = ModuleRevisionId.newInstance("myorg", "mymodule", "myrevision");
             Artifact ivyArtifact = new DefaultArtifact(mrid, new Date(), "ivy", "ivy", "xml");
-            Artifact artifact = new DefaultArtifact(mrid, new Date(), "myartifact", "mytype", "myext");
+            Artifact artifact = new DefaultArtifact(mrid, new Date(), "myartifact", "mytype",
+                    "myext");
             File src = new File("test/repositories/ivysettings.xml");
             resolver.publish(ivyArtifact, src, false);
             resolver.publish(artifact, src, false);
-            
+
             assertTrue(new File("test/repositories/1/myorg/mymodule/myrevision/ivy.xml").exists());
-            assertTrue(new File("test/repositories/1/myorg/mymodule/mytypes/myartifact-myrevision.myext").exists());
+            assertTrue(new File(
+                    "test/repositories/1/myorg/mymodule/mytypes/myartifact-myrevision.myext")
+                    .exists());
         } finally {
             Delete del = new Delete();
             del.setProject(new Project());
@@ -506,30 +564,35 @@ public class FileSystemResolverTest extends TestCase {
             del.execute();
         }
     }
-    
+
     public void testListing() throws Exception {
         FileSystemResolver resolver = new FileSystemResolver();
         resolver.setName("test");
         resolver.setSettings(_settings);
         assertEquals("test", resolver.getName());
-        
+
         resolver.addIvyPattern(IVY_PATTERN);
-        resolver.addArtifactPattern("test/repositories/1/[organisation]/[module]/[type]s/[artifact]-[revision].[ext]");
+        resolver
+                .addArtifactPattern("test/repositories/1/[organisation]/[module]/[type]s/[artifact]-[revision].[ext]");
 
         OrganisationEntry[] orgs = resolver.listOrganisations();
-        ResolverTestHelper.assertOrganisationEntries(resolver, new String[] {"org1", "org2", "org6", "org9", "orgfailure", "yourorg"}, orgs);
-        
+        ResolverTestHelper.assertOrganisationEntries(resolver, new String[] {"org1", "org2",
+                "org6", "org9", "orgfailure", "yourorg"}, orgs);
+
         OrganisationEntry org = ResolverTestHelper.getEntry(orgs, "org1");
         ModuleEntry[] mods = resolver.listModules(org);
-        ResolverTestHelper.assertModuleEntries(resolver, org, new String[] {"mod1.1", "mod1.2", "mod1.3", "mod1.4", "mod1.5", "mod1.6"}, mods);
+        ResolverTestHelper.assertModuleEntries(resolver, org, new String[] {"mod1.1", "mod1.2",
+                "mod1.3", "mod1.4", "mod1.5", "mod1.6"}, mods);
 
         ModuleEntry mod = ResolverTestHelper.getEntry(mods, "mod1.1");
         RevisionEntry[] revs = resolver.listRevisions(mod);
-        ResolverTestHelper.assertRevisionEntries(resolver, mod, new String[] {"1.0", "1.0.1", "1.1", "2.0"}, revs);
+        ResolverTestHelper.assertRevisionEntries(resolver, mod, new String[] {"1.0", "1.0.1",
+                "1.1", "2.0"}, revs);
 
         mod = ResolverTestHelper.getEntry(mods, "mod1.2");
         revs = resolver.listRevisions(mod);
-        ResolverTestHelper.assertRevisionEntries(resolver, mod, new String[] {"1.0", "1.1", "2.0", "2.1", "2.2"}, revs);
+        ResolverTestHelper.assertRevisionEntries(resolver, mod, new String[] {"1.0", "1.1", "2.0",
+                "2.1", "2.2"}, revs);
     }
 
     public void testDownloadWithUseOriginIsTrue() throws Exception {
@@ -537,29 +600,31 @@ public class FileSystemResolverTest extends TestCase {
         resolver.setName("test");
         resolver.setSettings(_settings);
         assertEquals("test", resolver.getName());
-        
+
         resolver.addIvyPattern(IVY_PATTERN);
-        resolver.addArtifactPattern("test/repositories/1/[organisation]/[module]/[type]s/[artifact]-[revision].[type]");
-        
+        resolver
+                .addArtifactPattern("test/repositories/1/[organisation]/[module]/[type]s/[artifact]-[revision].[type]");
+
         ModuleRevisionId mrid = ModuleRevisionId.newInstance("org1", "mod1.1", "1.0");
-        ResolvedModuleRevision rmr = resolver.getDependency(new DefaultDependencyDescriptor(mrid, false), _data);
+        ResolvedModuleRevision rmr = resolver.getDependency(new DefaultDependencyDescriptor(mrid,
+                false), _data);
         assertNotNull(rmr);
-        
+
         assertEquals(mrid, rmr.getId());
         Date pubdate = new GregorianCalendar(2004, 10, 1, 11, 0, 0).getTime();
         assertEquals(pubdate, rmr.getPublicationDate());
-        
-        
+
         // test to ask to download
         DefaultArtifact artifact = new DefaultArtifact(mrid, pubdate, "mod1.1", "jar", "jar");
-        DownloadReport report = resolver.download(new Artifact[] {artifact}, getDownloadOptions(true));
+        DownloadReport report = resolver.download(new Artifact[] {artifact},
+            getDownloadOptions(true));
         assertNotNull(report);
-        
+
         assertEquals(1, report.getArtifactsReports().length);
-        
+
         ArtifactDownloadReport ar = report.getArtifactReport(artifact);
         assertNotNull(ar);
-        
+
         assertEquals(artifact, ar.getArtifact());
         assertEquals(DownloadStatus.NO, ar.getDownloadStatus());
     }

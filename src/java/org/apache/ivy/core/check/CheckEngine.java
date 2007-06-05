@@ -39,30 +39,29 @@ import org.apache.ivy.plugins.resolver.DependencyResolver;
 import org.apache.ivy.util.Message;
 
 public class CheckEngine {
-	private IvySettings settings;
-	private ResolveEngine resolveEngine;
-	
-	
+    private IvySettings settings;
+
+    private ResolveEngine resolveEngine;
+
     public CheckEngine(IvySettings settings, ResolveEngine resolveEngine) {
-		this.settings = settings;
-		this.resolveEngine = resolveEngine;
-	}
+        this.settings = settings;
+        this.resolveEngine = resolveEngine;
+    }
 
-
-
-	/**
-     * Checks the given ivy file using current settings to see if all dependencies
-     * are available, with good confs. If a resolver name is given, it also checks that the declared
-     * publications are available in the corresponding resolver.
-     * Note that the check is not performed recursively, i.e. if a dependency has itself dependencies
-     * badly described or not available, this check will not discover it. 
+    /**
+     * Checks the given ivy file using current settings to see if all dependencies are available,
+     * with good confs. If a resolver name is given, it also checks that the declared publications
+     * are available in the corresponding resolver. Note that the check is not performed
+     * recursively, i.e. if a dependency has itself dependencies badly described or not available,
+     * this check will not discover it.
      */
     public boolean check(URL ivyFile, String resolvername) {
         try {
             boolean result = true;
             // parse ivy file
-            ModuleDescriptor md = ModuleDescriptorParserRegistry.getInstance().parseDescriptor(settings, ivyFile, settings.doValidate());
-            
+            ModuleDescriptor md = ModuleDescriptorParserRegistry.getInstance().parseDescriptor(
+                settings, ivyFile, settings.doValidate());
+
             // check publications if possible
             if (resolvername != null) {
                 DependencyResolver resolver = settings.getResolver(resolvername);
@@ -72,23 +71,27 @@ public class CheckEngine {
                     artifacts.addAll(Arrays.asList(md.getArtifacts(confs[i])));
                 }
                 for (Iterator iter = artifacts.iterator(); iter.hasNext();) {
-                    Artifact art = (Artifact)iter.next();
+                    Artifact art = (Artifact) iter.next();
                     if (!resolver.exists(art)) {
-                        Message.info("declared publication not found: "+art);
+                        Message.info("declared publication not found: " + art);
                         result = false;
                     }
                 }
             }
-            
+
             // check dependencies
             DependencyDescriptor[] dds = md.getDependencies();
-            ResolveData data = new ResolveData(resolveEngine, new ResolveOptions().setCache(CacheManager.getInstance(settings)));
+            ResolveData data = new ResolveData(resolveEngine, new ResolveOptions()
+                    .setCache(CacheManager.getInstance(settings)));
             for (int i = 0; i < dds.length; i++) {
                 // check master confs
                 String[] masterConfs = dds[i].getModuleConfigurations();
                 for (int j = 0; j < masterConfs.length; j++) {
-                    if (!"*".equals(masterConfs[j].trim()) && md.getConfiguration(masterConfs[j]) == null) {
-                        Message.info("dependency required in non existing conf for "+ivyFile+" \n\tin "+dds[i].getDependencyRevisionId()+": "+masterConfs[j]);
+                    if (!"*".equals(masterConfs[j].trim())
+                            && md.getConfiguration(masterConfs[j]) == null) {
+                        Message.info("dependency required in non existing conf for " + ivyFile
+                                + " \n\tin " + dds[i].getDependencyRevisionId() + ": "
+                                + masterConfs[j]);
                         result = false;
                     }
                 }
@@ -96,19 +99,25 @@ public class CheckEngine {
                 DependencyResolver resolver = settings.getResolver(dds[i].getDependencyId());
                 ResolvedModuleRevision rmr = resolver.getDependency(dds[i], data);
                 if (rmr == null) {
-                    Message.info("dependency not found in "+ivyFile+":\n\t"+dds[i]);
+                    Message.info("dependency not found in " + ivyFile + ":\n\t" + dds[i]);
                     result = false;
                 } else {
-                    String[] depConfs = dds[i].getDependencyConfigurations(md.getConfigurationsNames());
+                    String[] depConfs = dds[i].getDependencyConfigurations(md
+                            .getConfigurationsNames());
                     for (int j = 0; j < depConfs.length; j++) {
-                        if (!Arrays.asList(rmr.getDescriptor().getConfigurationsNames()).contains(depConfs[j])) {
-                            Message.info("dependency configuration is missing for "+ivyFile+"\n\tin "+dds[i].getDependencyRevisionId()+": "+depConfs[j]);
+                        if (!Arrays.asList(rmr.getDescriptor().getConfigurationsNames()).contains(
+                            depConfs[j])) {
+                            Message.info("dependency configuration is missing for " + ivyFile
+                                    + "\n\tin " + dds[i].getDependencyRevisionId() + ": "
+                                    + depConfs[j]);
                             result = false;
                         }
                         Artifact[] arts = rmr.getDescriptor().getArtifacts(depConfs[j]);
                         for (int k = 0; k < arts.length; k++) {
                             if (!resolver.exists(arts[k])) {
-                                Message.info("dependency artifact is missing for "+ivyFile+"\n\t in "+dds[i].getDependencyRevisionId()+": "+arts[k]);
+                                Message.info("dependency artifact is missing for " + ivyFile
+                                        + "\n\t in " + dds[i].getDependencyRevisionId() + ": "
+                                        + arts[k]);
                                 result = false;
                             }
                         }
@@ -117,13 +126,13 @@ public class CheckEngine {
             }
             return result;
         } catch (ParseException e) {
-            Message.info("parse problem on "+ivyFile+": "+e);
+            Message.info("parse problem on " + ivyFile + ": " + e);
             return false;
         } catch (IOException e) {
-            Message.info("io problem on "+ivyFile+": "+e);
+            Message.info("io problem on " + ivyFile + ": " + e);
             return false;
         } catch (Exception e) {
-            Message.info("problem on "+ivyFile+": "+e);
+            Message.info("problem on " + ivyFile + ": " + e);
             return false;
         }
     }

@@ -21,18 +21,19 @@ import org.apache.ivy.core.event.IvyEvent;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 
 public class ResolveEvent extends IvyEvent {
-	private ModuleDescriptor md;
-	private String[] confs;
+    private ModuleDescriptor md;
 
-	protected ResolveEvent(String name, ModuleDescriptor md, String[] confs) {
-		super(name);
-		this.md = md;
-		this.confs = confs;
-		addMDAttributes(md);
-		addConfsAttribute(confs);
-	}
+    private String[] confs;
 
-	public ModuleDescriptor getModuleDescriptor() {
-		return md;
-	}
+    protected ResolveEvent(String name, ModuleDescriptor md, String[] confs) {
+        super(name);
+        this.md = md;
+        this.confs = confs;
+        addMDAttributes(md);
+        addConfsAttribute(confs);
+    }
+
+    public ModuleDescriptor getModuleDescriptor() {
+        return md;
+    }
 }

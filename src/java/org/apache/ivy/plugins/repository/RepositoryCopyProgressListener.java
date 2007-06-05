@@ -28,6 +28,7 @@ public class RepositoryCopyProgressListener implements CopyProgressListener {
     }
 
     private Long _totalLength = null;
+
     public void start(CopyProgressEvent evt) {
         if (_totalLength != null) {
             _repository.fireTransferStarted(_totalLength.longValue());

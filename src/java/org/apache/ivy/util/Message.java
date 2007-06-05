@@ -27,7 +27,6 @@ import java.util.Properties;
 
 import org.apache.ivy.core.IvyContext;
 
-
 /**
  * 
  */
@@ -35,55 +34,62 @@ public class Message {
     // messages level copied from ant project, to avoid dependency on ant
     /** Message priority of "error". */
     public static final int MSG_ERR = 0;
+
     /** Message priority of "warning". */
     public static final int MSG_WARN = 1;
+
     /** Message priority of "information". */
     public static final int MSG_INFO = 2;
+
     /** Message priority of "verbose". */
     public static final int MSG_VERBOSE = 3;
+
     /** Message priority of "debug". */
     public static final int MSG_DEBUG = 4;
 
-
     private static List _problems = new ArrayList();
+
     private static List _warns = new ArrayList();
+
     private static List _errors = new ArrayList();
-    
+
     private static boolean _showProgress = true;
-    
+
     private static boolean _showedInfo = false;
-    
+
     public static void init(MessageImpl impl) {
         IvyContext.getContext().setMessageImpl(impl);
         showInfo();
     }
 
-    /** 
+    /**
      * same as init, but without displaying info
+     * 
      * @param impl
      */
     public static void setImpl(MessageImpl impl) {
         IvyContext.getContext().setMessageImpl(impl);
     }
-    
+
     public static MessageImpl getImpl() {
-    	return IvyContext.getContext().getMessageImpl();
+        return IvyContext.getContext().getMessageImpl();
     }
-    
+
     public static boolean isInitialised() {
         return IvyContext.getContext().getMessageImpl() != null;
     }
 
     private static void showInfo() {
-        if (!_showedInfo ) {
+        if (!_showedInfo) {
             Properties props = new Properties();
             URL moduleURL = Message.class.getResource("/module.properties");
             if (moduleURL != null) {
                 try {
-                	InputStream module = moduleURL.openStream();
+                    InputStream module = moduleURL.openStream();
                     props.load(module);
-                    debug("version information loaded from "+moduleURL);
-                    info(":: Ivy "+props.getProperty("version")+" - "+props.getProperty("date")+" :: http://incubator.apache.org/ivy/ ::");
+                    debug("version information loaded from " + moduleURL);
+                    info(":: Ivy " + props.getProperty("version") + " - "
+                            + props.getProperty("date") + " :: http://incubator.apache.org/ivy/ ::");
                     module.close();
                 } catch (IOException e) {
                     info(":: Ivy non official version :: http://incubator.apache.org/ivy/ ::");
@@ -97,97 +103,102 @@ public class Message {
 
     public static void debug(String msg) {
         MessageImpl messageImpl = IvyContext.getContext().getMessageImpl();
-		if (messageImpl != null) {
+        if (messageImpl != null) {
             messageImpl.log(msg, MSG_DEBUG);
         } else {
             System.err.println(msg);
         }
     }
+
     public static void verbose(String msg) {
         MessageImpl messageImpl = IvyContext.getContext().getMessageImpl();
-		if (messageImpl != null) {
+        if (messageImpl != null) {
             messageImpl.log(msg, MSG_VERBOSE);
         } else {
             System.err.println(msg);
         }
     }
+
     public static void info(String msg) {
         MessageImpl messageImpl = IvyContext.getContext().getMessageImpl();
-		if (messageImpl != null) {
+        if (messageImpl != null) {
             messageImpl.log(msg, MSG_INFO);
         } else {
             System.err.println(msg);
         }
     }
+
     public static void rawinfo(String msg) {
         MessageImpl messageImpl = IvyContext.getContext().getMessageImpl();
-		if (messageImpl != null) {
+        if (messageImpl != null) {
             messageImpl.rawlog(msg, MSG_INFO);
         } else {
             System.err.println(msg);
         }
     }
 
-	public static void deprecated(String msg) {
+    public static void deprecated(String msg) {
         MessageImpl messageImpl = IvyContext.getContext().getMessageImpl();
-		if (messageImpl != null) {
-            messageImpl.log("DEPRECATED: "+msg, MSG_WARN);
+        if (messageImpl != null) {
+            messageImpl.log("DEPRECATED: " + msg, MSG_WARN);
         } else {
             System.err.println(msg);
         }
-	}
+    }
+
     public static void warn(String msg) {
         MessageImpl messageImpl = IvyContext.getContext().getMessageImpl();
-		if (messageImpl != null) {
-            messageImpl.log("WARN: "+msg, MSG_VERBOSE);
+        if (messageImpl != null) {
+            messageImpl.log("WARN: " + msg, MSG_VERBOSE);
         } else {
             System.err.println(msg);
         }
-        _problems.add("WARN:  "+msg);
+        _problems.add("WARN:  " + msg);
         _warns.add(msg);
     }
+
     public static void error(String msg) {
         MessageImpl messageImpl = IvyContext.getContext().getMessageImpl();
-		if (messageImpl != null) {
-            // log in verbose mode because message is appended as a problem, and will be 
+        if (messageImpl != null) {
+            // log in verbose mode because message is appended as a problem, and will be
             // logged at the end at error level
-            messageImpl.log("ERROR: "+msg, MSG_VERBOSE);
+            messageImpl.log("ERROR: " + msg, MSG_VERBOSE);
         } else {
             System.err.println(msg);
         }
-        _problems.add("\tERROR: "+msg);
+        _problems.add("\tERROR: " + msg);
         _errors.add(msg);
     }
 
     public static List getProblems() {
         return _problems;
     }
-    
+
     public static void sumupProblems() {
         if (_problems.size() > 0) {
             info("\n:: problems summary ::");
             MessageImpl messageImpl = IvyContext.getContext().getMessageImpl();
-			if (_warns.size() > 0) {
-            	info(":::: WARNINGS");
-            	for (Iterator iter = _warns.iterator(); iter.hasNext();) {
-            		String msg = (String) iter.next();
+            if (_warns.size() > 0) {
+                info(":::: WARNINGS");
+                for (Iterator iter = _warns.iterator(); iter.hasNext();) {
+                    String msg = (String) iter.next();
                     if (messageImpl != null) {
-                    	messageImpl.log("\t"+msg+"\n", MSG_WARN);
+                        messageImpl.log("\t" + msg + "\n", MSG_WARN);
                     } else {
                         System.err.println(msg);
                     }
-            	}
+                }
             }
             if (_errors.size() > 0) {
                 info(":::: ERRORS");
-            	for (Iterator iter = _errors.iterator(); iter.hasNext();) {
-            		String msg = (String) iter.next();
+                for (Iterator iter = _errors.iterator(); iter.hasNext();) {
+                    String msg = (String) iter.next();
                     if (messageImpl != null) {
-                    	messageImpl.log("\t"+msg+"\n", MSG_ERR);
+                        messageImpl.log("\t" + msg + "\n", MSG_ERR);
                     } else {
                         System.err.println(msg);
                     }
-            	}
+                }
             }
             info("\n:: USE VERBOSE OR DEBUG MESSAGE LEVEL FOR MORE DETAILS");
             _problems.clear();
@@ -199,7 +210,7 @@ public class Message {
     public static void progress() {
         if (_showProgress) {
             MessageImpl messageImpl = IvyContext.getContext().getMessageImpl();
-			if (messageImpl != null) {
+            if (messageImpl != null) {
                 messageImpl.progress();
             } else {
                 System.out.println(".");
@@ -214,7 +225,7 @@ public class Message {
     public static void endProgress(String msg) {
         if (_showProgress) {
             MessageImpl messageImpl = IvyContext.getContext().getMessageImpl();
-			if (messageImpl != null) {
+            if (messageImpl != null) {
                 messageImpl.endProgress(msg);
             }
         }
@@ -223,6 +234,7 @@ public class Message {
     public static boolean isShowProgress() {
         return _showProgress;
     }
+
     public static void setShowProgress(boolean progress) {
         _showProgress = progress;
     }

@@ -28,10 +28,11 @@ import org.apache.ivy.plugins.repository.Resource;
 import org.apache.ivy.plugins.repository.TransferEvent;
 import org.apache.ivy.util.FileUtil;
 
-
 public class FileRepository extends AbstractRepository {
     private RepositoryCopyProgressListener _progress = new RepositoryCopyProgressListener(this);
+
     private File _baseDir;
+
     private boolean _local = true;
 
     public FileRepository() {
@@ -60,11 +61,12 @@ public class FileRepository extends AbstractRepository {
         try {
             _progress.setTotalLength(new Long(src.length()));
             if (!FileUtil.copy(src, destination, _progress, overwrite)) {
-            	if (!overwrite) {
-            		throw new IOException("file copy not done from "+src+" to "+destination+": destination probably already exists and overwrite is false");
-            	} else {
-            		throw new IOException("file copy not done from "+src+" to "+destination);
-            	}
+                if (!overwrite) {
+                    throw new IOException("file copy not done from " + src + " to " + destination
+                            + ": destination probably already exists and overwrite is false");
+                } else {
+                    throw new IOException("file copy not done from " + src + " to " + destination);
+                }
             }
         } catch (IOException ex) {
             fireTransferError(ex);
@@ -84,14 +86,14 @@ public class FileRepository extends AbstractRepository {
             if (names != null) {
                 List ret = new ArrayList(names.length);
                 for (int i = 0; i < names.length; i++) {
-                    ret.add(parent+getFileSeparator()+names[i]);
+                    ret.add(parent + getFileSeparator() + names[i]);
                 }
                 return ret;
             }
         }
         return null;
     }
-    
+
     private File getFile(String source) {
         if (_baseDir != null) {
             return new File(_baseDir, source);
@@ -100,12 +102,12 @@ public class FileRepository extends AbstractRepository {
         }
     }
 
-	public boolean isLocal() {
-		return _local;
-	}
+    public boolean isLocal() {
+        return _local;
+    }
 
-	public void setLocal(boolean local) {
-		_local = local;
-	}
+    public void setLocal(boolean local) {
+        _local = local;
+    }
 
 }

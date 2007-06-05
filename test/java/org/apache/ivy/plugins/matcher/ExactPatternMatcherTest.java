@@ -17,12 +17,10 @@
  */
 package org.apache.ivy.plugins.matcher;
 
-
 /**
-* @see ExactPatternMatcher
+ * @see ExactPatternMatcher
  */
 public class ExactPatternMatcherTest extends AbstractPatternMatcherTest {
-
 
     protected void setUp() throws Exception {
         setUp(new ExactPatternMatcher(), true);

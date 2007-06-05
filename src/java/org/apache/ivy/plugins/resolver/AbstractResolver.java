@@ -46,21 +46,24 @@ import org.apache.ivy.plugins.namespace.Namespace;
 import org.apache.ivy.plugins.resolver.util.HasLatestStrategy;
 import org.apache.ivy.util.Message;
 
-
 /**
  * This abstract resolver only provides handling for resolver name
  */
-public abstract class AbstractResolver implements DependencyResolver, IvySettingsAware, HasLatestStrategy {
+public abstract class AbstractResolver implements DependencyResolver, IvySettingsAware,
+        HasLatestStrategy {
 
     /**
-     * True if parsed ivy files should be validated against xsd, false if they should not,
-     * null if default behaviour should be used
+     * True if parsed ivy files should be validated against xsd, false if they should not, null if
+     * default behaviour should be used
      */
     private Boolean _validate = null;
+
     private String _name;
+
     private String _changingPattern;
+
     private String _changingMatcherName = PatternMatcher.EXACT_OR_REGEXP;
-    
+
     private IvySettings _settings;
 
     /**
@@ -79,12 +82,12 @@ public abstract class AbstractResolver implements DependencyResolver, IvySetting
 
     public IvySettings getSettings() {
         return _settings;
-    }    
+    }
 
     public void setSettings(IvySettings ivy) {
         _settings = ivy;
     }
-    
+
     public String getName() {
         return _name;
     }
@@ -93,10 +96,11 @@ public abstract class AbstractResolver implements DependencyResolver, IvySetting
         _name = name;
     }
 
-
     /**
      * this method should remove sensitive information from a location to be displayed in a log
-     * @param name location
+     * 
+     * @param name
+     *            location
      * @return location with sensitive data replaced by stars
      */
     public String hidePassword(String name) {
@@ -112,36 +116,37 @@ public abstract class AbstractResolver implements DependencyResolver, IvySetting
     }
 
     public boolean isValidate() {
-        return _validate == null ? true: _validate.booleanValue();
+        return _validate == null ? true : _validate.booleanValue();
     }
-    
 
     public void setValidate(boolean validate) {
         _validate = Boolean.valueOf(validate);
     }
 
-
     protected void checkInterrupted() {
-		IvyContext.getContext().getIvy().checkInterrupted();
-	}
+        IvyContext.getContext().getIvy().checkInterrupted();
+    }
 
     public void reportFailure() {
-        Message.verbose("no failure report implemented by "+getName());
+        Message.verbose("no failure report implemented by " + getName());
     }
 
     public void reportFailure(Artifact art) {
-        Message.verbose("no failure report implemented by "+getName());
+        Message.verbose("no failure report implemented by " + getName());
     }
 
     public String[] listTokenValues(String token, Map otherTokenValues) {
-    	return new String[0];
+        return new String[0];
     }
+
     public OrganisationEntry[] listOrganisations() {
         return new OrganisationEntry[0];
     }
+
     public ModuleEntry[] listModules(OrganisationEntry org) {
         return new ModuleEntry[0];
     }
+
     public RevisionEntry[] listRevisions(ModuleEntry module) {
         return new RevisionEntry[0];
     }
@@ -149,54 +154,57 @@ public abstract class AbstractResolver implements DependencyResolver, IvySetting
     public String toString() {
         return getName();
     }
+
     public void dumpSettings() {
-        Message.verbose("\t"+getName()+" ["+getTypeName()+"]");
-        Message.debug("\t\tchangingPattern: "+getChangingPattern());
-        Message.debug("\t\tchangingMatcher: "+getChangingMatcherName());
+        Message.verbose("\t" + getName() + " [" + getTypeName() + "]");
+        Message.debug("\t\tchangingPattern: " + getChangingPattern());
+        Message.debug("\t\tchangingMatcher: " + getChangingMatcherName());
     }
 
     public String getTypeName() {
         return getClass().getName();
     }
+
     /**
-     * Default implementation actually download the artifact
-     * Subclasses should overwrite this to avoid the download
+     * Default implementation actually download the artifact Subclasses should overwrite this to
+     * avoid the download
      */
     public boolean exists(Artifact artifact) {
-        DownloadReport dr = download(new Artifact[] {artifact}, new DownloadOptions(getSettings(), new CacheManager(getSettings(), getSettings().getDefaultCache()), null, true));
+        DownloadReport dr = download(new Artifact[] {artifact}, new DownloadOptions(getSettings(),
+                new CacheManager(getSettings(), getSettings().getDefaultCache()), null, true));
         ArtifactDownloadReport adr = dr.getArtifactReport(artifact);
         return adr.getDownloadStatus() != DownloadStatus.FAILED;
     }
-    
-    public LatestStrategy getLatestStrategy() {        
+
+    public LatestStrategy getLatestStrategy() {
         if (_latestStrategy == null) {
             if (getSettings() != null) {
                 if (_latestStrategyName != null && !"default".equals(_latestStrategyName)) {
                     _latestStrategy = getSettings().getLatestStrategy(_latestStrategyName);
                     if (_latestStrategy == null) {
-                        Message.error("unknown latest strategy: "+_latestStrategyName);
+                        Message.error("unknown latest strategy: " + _latestStrategyName);
                         _latestStrategy = getSettings().getDefaultLatestStrategy();
                     }
                 } else {
                     _latestStrategy = getSettings().getDefaultLatestStrategy();
-                    Message.debug(getName()+": no latest strategy defined: using default");
+                    Message.debug(getName() + ": no latest strategy defined: using default");
                 }
             } else {
-                throw new IllegalStateException("no ivy instance found: impossible to get a latest strategy without ivy instance");
+                throw new IllegalStateException(
+                        "no ivy instance found: impossible to get a latest strategy without ivy instance");
             }
         }
         return _latestStrategy;
     }
-    
 
     public void setLatestStrategy(LatestStrategy latestStrategy) {
         _latestStrategy = latestStrategy;
-    }    
+    }
 
     public void setLatest(String strategyName) {
         _latestStrategyName = strategyName;
-    }    
-    
+    }
+
     public String getLatest() {
         if (_latestStrategyName == null) {
             _latestStrategyName = "default";
@@ -204,32 +212,32 @@ public abstract class AbstractResolver implements DependencyResolver, IvySetting
         return _latestStrategyName;
     }
 
-    public Namespace getNamespace() {        
+    public Namespace getNamespace() {
         if (_namespace == null) {
             if (getSettings() != null) {
                 if (_namespaceName != null) {
                     _namespace = getSettings().getNamespace(_namespaceName);
                     if (_namespace == null) {
-                        Message.error("unknown namespace: "+_namespaceName);
+                        Message.error("unknown namespace: " + _namespaceName);
                         _namespace = getSettings().getSystemNamespace();
                     }
                 } else {
                     _namespace = getSettings().getSystemNamespace();
-                    Message.debug(getName()+": no namespace defined: using system");
+                    Message.debug(getName() + ": no namespace defined: using system");
                 }
             } else {
-                Message.verbose(getName()+": no namespace defined nor ivy instance: using system namespace");
+                Message.verbose(getName()
+                        + ": no namespace defined nor ivy instance: using system namespace");
                 _namespace = Namespace.SYSTEM_NAMESPACE;
             }
         }
         return _namespace;
     }
-    
+
     public void setNamespace(String namespaceName) {
         _namespaceName = namespaceName;
-    }    
+    }
 
-    
     // Namespace conversion methods
     protected ModuleDescriptor toSystem(ModuleDescriptor md) {
         return NameSpaceHelper.toSystem(md, getNamespace());
@@ -260,17 +268,18 @@ public abstract class AbstractResolver implements DependencyResolver, IvySetting
     }
 
     protected ResolvedModuleRevision findModuleInCache(ResolveData data, ModuleRevisionId mrid) {
-        ResolvedModuleRevision moduleFromCache = data.getCacheManager().findModuleInCache(toSystem(mrid), doValidate(data));
+        ResolvedModuleRevision moduleFromCache = data.getCacheManager().findModuleInCache(
+            toSystem(mrid), doValidate(data));
         if (moduleFromCache == null) {
             return null;
         }
-        if ((getName() == null ? 
-                moduleFromCache.getResolver().getName() == null : 
-                    moduleFromCache.getResolver() == null ? false : 
-                        getName().equals(moduleFromCache.getResolver().getName()))) {
+        if ((getName() == null ? moduleFromCache.getResolver().getName() == null : moduleFromCache
+                .getResolver() == null ? false : getName().equals(
+            moduleFromCache.getResolver().getName()))) {
             return moduleFromCache;
         } else {
-            Message.debug("found module in cache but with a different resolver: discarding: "+moduleFromCache);
+            Message.debug("found module in cache but with a different resolver: discarding: "
+                    + moduleFromCache);
             return null;
         }
     }
@@ -297,7 +306,8 @@ public abstract class AbstractResolver implements DependencyResolver, IvySetting
         }
         PatternMatcher matcher = _settings.getMatcher(_changingMatcherName);
         if (matcher == null) {
-            throw new IllegalStateException("unknown matcher '"+_changingMatcherName+"'. It is set as changing matcher in "+this);
+            throw new IllegalStateException("unknown matcher '" + _changingMatcherName
+                    + "'. It is set as changing matcher in " + this);
         }
         return matcher.getMatcher(_changingPattern);
     }

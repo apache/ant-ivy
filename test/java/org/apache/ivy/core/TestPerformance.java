@@ -35,7 +35,6 @@ import org.apache.ivy.util.FileUtil;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.Delete;
 
-
 /**
  * Not a Junit test, performance depends on the machine on which the test is run...
  */
@@ -43,6 +42,7 @@ public class TestPerformance {
     private final static String PATTERN = "build/test/perf/[module]/[artifact]-[revision].[ext]";
 
     private final Ivy _ivy;
+
     private File _cache;
 
     public TestPerformance() throws Exception {
@@ -50,10 +50,10 @@ public class TestPerformance {
         FileSystemResolver resolver = new FileSystemResolver();
         resolver.setName("def");
         resolver.setSettings(_ivy.getSettings());
-        
+
         resolver.addIvyPattern(PATTERN);
         resolver.addArtifactPattern(PATTERN);
-        
+
         _ivy.getSettings().addResolver(resolver);
         _ivy.getSettings().setDefaultResolver("def");
     }
@@ -66,7 +66,7 @@ public class TestPerformance {
         _cache = new File("build/cache");
         _cache.mkdirs();
     }
-    
+
     protected void tearDown() throws Exception {
         cleanCache();
     }
@@ -85,27 +85,27 @@ public class TestPerformance {
         del.execute();
     }
 
-
-    private void generateModules(int nbModules, int minDependencies, int maxDependencies, int minVersions, int maxVersions) throws IOException {
+    private void generateModules(int nbModules, int minDependencies, int maxDependencies,
+            int minVersions, int maxVersions) throws IOException {
         int nb = 0;
         int curDep = 1;
         int varDeps = maxDependencies - minDependencies;
         int varVersions = maxVersions - minVersions;
         Random r = new Random(System.currentTimeMillis());
-        
+
         while (nb < nbModules) {
-            int deps = minDependencies + r.nextInt(varDeps+1);
-            int versions = minVersions + r.nextInt(varVersions+1);
-            
+            int deps = minDependencies + r.nextInt(varDeps + 1);
+            int versions = minVersions + r.nextInt(varVersions + 1);
+
             int prevCurDep = curDep;
             for (int ver = 0; ver < versions; ver++) {
-                DefaultModuleDescriptor md = new DefaultModuleDescriptor(ModuleRevisionId.newInstance("apache", "mod"+nb, "1."+ver),
-                        "integration", new Date());
-                
+                DefaultModuleDescriptor md = new DefaultModuleDescriptor(ModuleRevisionId
+                        .newInstance("apache", "mod" + nb, "1." + ver), "integration", new Date());
+
                 curDep = prevCurDep;
-                for (int i = 0; i<deps && curDep < nbModules; i++) {
+                for (int i = 0; i < deps && curDep < nbModules; i++) {
                     int d;
-                    if (i%2 == 1) {
+                    if (i % 2 == 1) {
                         d = nb + i;
                         if (d >= prevCurDep) {
                             d = curDep;
@@ -115,34 +115,42 @@ public class TestPerformance {
                         d = curDep;
                         curDep++;
                     }
-                    DefaultDependencyDescriptor dd = new DefaultDependencyDescriptor(md, 
-                            ModuleRevisionId.newInstance("apache", "mod"+d, "latest.integration"),
+                    DefaultDependencyDescriptor dd = new DefaultDependencyDescriptor(
+                            md,
+                            ModuleRevisionId.newInstance("apache", "mod" + d, "latest.integration"),
                             false, false, true);
                     dd.addDependencyConfiguration("default", "default");
                     md.addDependency(dd);
                 }
-                XmlModuleDescriptorWriter.write(md, new File("build/test/perf/mod"+nb+"/ivy-1."+ver+".xml"));
-                FileUtil.copy(new File("test/repositories/1/org1/mod1.1/jars/mod1.1-1.0.jar"), new File("build/test/perf/mod"+nb+"/mod"+nb+"-1."+ver+".jar"), null);
+                XmlModuleDescriptorWriter.write(md, new File("build/test/perf/mod" + nb + "/ivy-1."
+                        + ver + ".xml"));
+                FileUtil
+                        .copy(new File("test/repositories/1/org1/mod1.1/jars/mod1.1-1.0.jar"),
+                            new File("build/test/perf/mod" + nb + "/mod" + nb + "-1." + ver
+                                    + ".jar"), null);
             }
             nb++;
         }
     }
-    
+
     public void testPerfs() throws Exception {
         generateModules(70, 2, 5, 2, 15);
-        
+
         long start = System.currentTimeMillis();
-        ResolveReport report = _ivy.resolve(new File("build/test/perf/mod0/ivy-1.0.xml").toURL(), getResolveOptions(new String[] {"*"}).setRevision("1.0"));        
+        ResolveReport report = _ivy.resolve(new File("build/test/perf/mod0/ivy-1.0.xml").toURL(),
+            getResolveOptions(new String[] {"*"}).setRevision("1.0"));
         long end = System.currentTimeMillis();
-        System.out.println("resolve "+report.getConfigurationReport("default").getNodesNumber()+" modules took "+(end - start)+" ms");
+        System.out.println("resolve " + report.getConfigurationReport("default").getNodesNumber()
+                + " modules took " + (end - start) + " ms");
 
         cleanRepo();
     }
-    
+
     private ResolveOptions getResolveOptions(String[] confs) {
-		return new ResolveOptions().setConfs(confs).setCache(CacheManager.getInstance(_ivy.getSettings(), _cache));
-	}
-    
+        return new ResolveOptions().setConfs(confs).setCache(
+            CacheManager.getInstance(_ivy.getSettings(), _cache));
+    }
+
     public static void main(String[] args) throws Exception {
         TestPerformance t = new TestPerformance();
         t.setUp();

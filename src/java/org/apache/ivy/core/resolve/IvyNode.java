@@ -56,21 +56,21 @@ import org.apache.ivy.util.Message;
 import org.apache.ivy.util.filter.Filter;
 import org.apache.ivy.util.filter.FilterHelper;
 
-
 public class IvyNode implements Comparable {
     private static final Pattern FALLBACK_CONF_PATTERN = Pattern.compile("(.+)\\((.*)\\)");
 
     private static final class NodeConf {
         private IvyNode node;
+
         private String conf;
 
         public NodeConf(IvyNode node, String conf) {
-        	if (node == null) {
-        		throw new NullPointerException("node must not null");
-        	}
-        	if (conf == null) {
-        		throw new NullPointerException("conf must not null");
-        	}
+            if (node == null) {
+                throw new NullPointerException("node must not null");
+            }
+            if (conf == null) {
+                throw new NullPointerException("conf must not null");
+            }
             this.node = node;
             this.conf = conf;
         }
@@ -82,13 +82,15 @@ public class IvyNode implements Comparable {
         public final IvyNode getNode() {
             return node;
         }
+
         public boolean equals(Object obj) {
             if (!(obj instanceof NodeConf)) {
                 return false;
             }
-            return getNode().equals(((NodeConf)obj).getNode())
-                && getConf().equals(((NodeConf)obj).getConf());
+            return getNode().equals(((NodeConf) obj).getNode())
+                    && getConf().equals(((NodeConf) obj).getConf());
         }
+
         public int hashCode() {
             int hash = 33;
             hash += getNode().hashCode() * 17;
@@ -97,18 +99,17 @@ public class IvyNode implements Comparable {
         }
     }
 
-    ////////// CONTEXT
+    // //////// CONTEXT
     private ResolveData data;
+
     private IvySettings settings;
 
-
-    ////////// DELEGATES
+    // //////// DELEGATES
     private IvyNodeCallers callers;
+
     private IvyNodeEviction eviction;
 
-
-
-    ////////// MAIN DATA
+    // //////// MAIN DATA
 
     private IvyNode root;
 
@@ -119,25 +120,25 @@ public class IvyNode implements Comparable {
     // Map(IvyNode parent -> DependencyDescriptor)
     private Map dds = new HashMap();
 
-
     // Set when data has been loaded only, or when constructed from a module descriptor
     private ModuleDescriptor md;
+
     private ResolvedModuleRevision module;
 
-
-
-    ////////// LOADING METADATA
+    // //////// LOADING METADATA
     private Exception problem = null;
 
     private boolean downloaded = false;
+
     private boolean searched = false;
 
     private Collection confsToFetch = new HashSet();
+
     private Collection fetchedConfigurations = new HashSet();
+
     private Collection loadedRootModuleConfs = new HashSet();
 
-
-    ////////// USAGE DATA
+    // //////// USAGE DATA
 
     // Map (String rootConfName -> Set(String confName))
     // used to know which configurations of the dependency are required
@@ -153,8 +154,6 @@ public class IvyNode implements Comparable {
     // Map (String rootModuleConf -> Set(IncludeRule))
     private Map dependencyIncludes = new HashMap();
 
-
-
     public IvyNode(ResolveData data, IvyNode parent, DependencyDescriptor dd) {
         id = dd.getDependencyRevisionId();
         dds.put(parent, dd);
@@ -169,54 +168,64 @@ public class IvyNode implements Comparable {
         init(data);
     }
 
-	private void init(ResolveData data) {
-		this.data = data;
+    private void init(ResolveData data) {
+        this.data = data;
         settings = data.getSettings();
         eviction = new IvyNodeEviction(this);
         callers = new IvyNodeCallers(this);
-	}
-
+    }
 
     /**
-     * After the call node may be discarded. To avoid using discarded node, make sure
-     * to get the real node after the call
-     * IvyNode node = ...
-     * node.loadData();
-     * node = node.getRealNode();
-     * ...
+     * After the call node may be discarded. To avoid using discarded node, make sure to get the
+     * real node after the call IvyNode node = ... node.loadData(); node = node.getRealNode(); ...
      */
-    public boolean loadData(String rootModuleConf, IvyNode parent, String parentConf, String conf, boolean shouldBePublic) {
+    public boolean loadData(String rootModuleConf, IvyNode parent, String parentConf, String conf,
+            boolean shouldBePublic) {
         boolean loaded = false;
-		if (!isEvicted(rootModuleConf) && (hasConfigurationsToLoad() || !isRootModuleConfLoaded(rootModuleConf)) && !hasProblem()) {
+        if (!isEvicted(rootModuleConf)
+                && (hasConfigurationsToLoad() || !isRootModuleConfLoaded(rootModuleConf))
+                && !hasProblem()) {
             markRootModuleConfLoaded(rootModuleConf);
             if (md == null) {
                 DependencyResolver resolver = data.getSettings().getResolver(getModuleId());
                 if (resolver == null) {
-                    Message.error("no resolver found for "+getModuleId()+": check your configuration");
-                    problem = new RuntimeException("no resolver found for "+getModuleId()+": check your configuration");
+                    Message.error("no resolver found for " + getModuleId()
+                            + ": check your configuration");
+                    problem = new RuntimeException("no resolver found for " + getModuleId()
+                            + ": check your configuration");
                     data.getReport().addDependency(this);
                     return false;
                 }
                 try {
-                    Message.debug("\tusing "+resolver+" to resolve "+getId());
+                    Message.debug("\tusing " + resolver + " to resolve " + getId());
                     DependencyDescriptor dependencyDescriptor = getDependencyDescriptor(parent);
-                    data.getEventManager().fireIvyEvent(new StartResolveDependencyEvent(resolver, dependencyDescriptor));
+                    data.getEventManager().fireIvyEvent(
+                        new StartResolveDependencyEvent(resolver, dependencyDescriptor));
                     module = resolver.getDependency(dependencyDescriptor, data);
-                    data.getEventManager().fireIvyEvent(new EndResolveDependencyEvent(resolver, dependencyDescriptor, module));
+                    data.getEventManager().fireIvyEvent(
+                        new EndResolveDependencyEvent(resolver, dependencyDescriptor, module));
                     if (module != null) {
-                        data.getCacheManager().saveResolver(module.getDescriptor(), module.getResolver().getName());
-                        data.getCacheManager().saveArtResolver(module.getDescriptor(), module.getArtifactResolver().getName());
+                        data.getCacheManager().saveResolver(module.getDescriptor(),
+                            module.getResolver().getName());
+                        data.getCacheManager().saveArtResolver(module.getDescriptor(),
+                            module.getArtifactResolver().getName());
                         if (settings.logModuleWhenFound()) {
-                            Message.info("\tfound "+ module.getId()+" in "+ module.getResolver().getName());
+                            Message.info("\tfound " + module.getId() + " in "
+                                    + module.getResolver().getName());
                         } else {
-                            Message.verbose("\tfound "+ module.getId()+" in "+ module.getResolver().getName());
+                            Message.verbose("\tfound " + module.getId() + " in "
+                                    + module.getResolver().getName());
                         }
 
                         if (data.getSettings().getVersionMatcher().isDynamic(getId())) {
                             // IVY-56: check if revision has actually been resolved
                             if (data.getSettings().getVersionMatcher().isDynamic(module.getId())) {
-                                Message.error("impossible to resolve dynamic revision for "+getId()+": check your configuration and make sure revision is part of your pattern");
-                                problem = new RuntimeException("impossible to resolve dynamic revision");
+                                Message
+                                        .error("impossible to resolve dynamic revision for "
+                                                + getId()
+                                                + ": check your configuration and make sure revision is part of your pattern");
+                                problem = new RuntimeException(
+                                        "impossible to resolve dynamic revision");
                                 data.getReport().addDependency(this);
                                 return false;
                             }
@@ -225,32 +234,41 @@ public class IvyNode implements Comparable {
                                 // exact revision has already been resolved
                                 // => update it and discard this node
                                 md = module.getDescriptor(); // needed for handleConfiguration
-                                if (!handleConfiguration(loaded, rootModuleConf, parent, parentConf, conf, shouldBePublic)) {
+                                if (!handleConfiguration(loaded, rootModuleConf, parent,
+                                    parentConf, conf, shouldBePublic)) {
                                     return false;
                                 }
 
                                 if (resolved.md == null) {
-                                	resolved.md = md;
+                                    resolved.md = md;
                                 }
                                 if (resolved.module == null) {
-                                	resolved.module = module;
+                                    resolved.module = module;
                                 }
                                 resolved.downloaded |= module.isDownloaded();
                                 resolved.searched |= module.isSearched();
                                 resolved.dds.putAll(dds);
                                 resolved.updateDataFrom(this, rootModuleConf);
-                                resolved.loadData(rootModuleConf, parent, parentConf, conf, shouldBePublic);
+                                resolved.loadData(rootModuleConf, parent, parentConf, conf,
+                                    shouldBePublic);
                                 DependencyDescriptor dd = dependencyDescriptor;
                                 if (dd != null) {
-                                    resolved.addDependencyArtifacts(rootModuleConf, dd.getDependencyArtifacts(parentConf));
-                                    resolved.addDependencyIncludes(rootModuleConf, dd.getIncludeRules(parentConf));
+                                    resolved.addDependencyArtifacts(rootModuleConf, dd
+                                            .getDependencyArtifacts(parentConf));
+                                    resolved.addDependencyIncludes(rootModuleConf, dd
+                                            .getIncludeRules(parentConf));
                                 }
-                                data.replaceNode(getId(), resolved, rootModuleConf); // this actually discards the node
+                                data.replaceNode(getId(), resolved, rootModuleConf); // this
+                                // actually
+                                // discards
+                                // the node
 
                                 if (settings.logResolvedRevision()) {
-                                    Message.info("\t["+ module.getId().getRevision()+"] "+getId());
+                                    Message.info("\t[" + module.getId().getRevision() + "] "
+                                            + getId());
                                 } else {
-                                    Message.verbose("\t["+ module.getId().getRevision()+"] "+getId());
+                                    Message.verbose("\t[" + module.getId().getRevision() + "] "
+                                            + getId());
                                 }
 
                                 return true;
@@ -259,7 +277,7 @@ public class IvyNode implements Comparable {
                         downloaded = module.isDownloaded();
                         searched = module.isSearched();
                     } else {
-                        Message.warn("\tmodule not found: "+getId());
+                        Message.warn("\tmodule not found: " + getId());
                         resolver.reportFailure();
                         problem = new RuntimeException("not found");
                     }
@@ -275,17 +293,15 @@ public class IvyNode implements Comparable {
                     loaded = true;
                     if (settings.getVersionMatcher().isDynamic(getId())) {
                         if (settings.logResolvedRevision()) {
-                            Message.info("\t["+ module.getId().getRevision()+"] "+getId());
+                            Message.info("\t[" + module.getId().getRevision() + "] " + getId());
                         } else {
-                            Message.verbose("\t["+ module.getId().getRevision()+"] "+getId());
+                            Message.verbose("\t[" + module.getId().getRevision() + "] " + getId());
                         }
                     }
                     md = module.getDescriptor();
                     confsToFetch.remove("*");
-                    updateConfsToFetch(
-                    		Arrays.asList(
-                    				resolveSpecialConfigurations(
-                    						getRequiredConfigurations(parent, parentConf), this)));
+                    updateConfsToFetch(Arrays.asList(resolveSpecialConfigurations(
+                        getRequiredConfigurations(parent, parentConf), this)));
                 }
             } else {
                 loaded = true;
@@ -293,7 +309,9 @@ public class IvyNode implements Comparable {
         }
         if (hasProblem()) {
             data.getReport().addDependency(this);
-            return handleConfiguration(loaded, rootModuleConf, parent, parentConf, conf, shouldBePublic) && loaded;
+            return handleConfiguration(loaded, rootModuleConf, parent, parentConf, conf,
+                shouldBePublic)
+                    && loaded;
         }
         if (!handleConfiguration(loaded, rootModuleConf, parent, parentConf, conf, shouldBePublic)) {
             return false;
@@ -307,12 +325,10 @@ public class IvyNode implements Comparable {
 
     }
 
-
-
-
     public Collection getDependencies(String rootModuleConf, String[] confs) {
         if (md == null) {
-            throw new IllegalStateException("impossible to get dependencies when data has not been loaded");
+            throw new IllegalStateException(
+                    "impossible to get dependencies when data has not been loaded");
         }
         if (Arrays.asList(confs).contains("*")) {
             confs = md.getConfigurationsNames();
@@ -326,10 +342,12 @@ public class IvyNode implements Comparable {
 
     public Collection getDependencies(String rootModuleConf, String conf, String requestedConf) {
         if (md == null) {
-            throw new IllegalStateException("impossible to get dependencies when data has not been loaded");
+            throw new IllegalStateException(
+                    "impossible to get dependencies when data has not been loaded");
         }
         DependencyDescriptor[] dds = md.getDependencies();
-        Collection dependencies = new LinkedHashSet(); // it's important to respect dependencies order
+        Collection dependencies = new LinkedHashSet(); // it's important to respect dependencies
+        // order
         for (int i = 0; i < dds.length; i++) {
             DependencyDescriptor dd = dds[i];
             String[] dependencyConfigurations = dd.getDependencyConfigurations(conf, requestedConf);
@@ -339,8 +357,9 @@ public class IvyNode implements Comparable {
                 continue;
             }
             if (isDependencyModuleExcluded(rootModuleConf, dd.getDependencyRevisionId(), conf)) {
-                // the whole module is excluded, it is considered as not being part of dependencies at all
-                Message.verbose("excluding "+dd.getDependencyRevisionId()+" in "+conf);
+                // the whole module is excluded, it is considered as not being part of dependencies
+                // at all
+                Message.verbose("excluding " + dd.getDependencyRevisionId() + " in " + conf);
                 continue;
             }
             IvyNode depNode = data.getNode(dd.getDependencyRevisionId());
@@ -354,7 +373,8 @@ public class IvyNode implements Comparable {
                 }
 
             }
-            Collection confs = Arrays.asList(resolveSpecialConfigurations(dependencyConfigurations, depNode));
+            Collection confs = Arrays.asList(resolveSpecialConfigurations(dependencyConfigurations,
+                depNode));
             depNode.updateConfsToFetch(confs);
             depNode.setRequiredConfs(this, conf, confs);
 
@@ -372,13 +392,11 @@ public class IvyNode implements Comparable {
         return (DependencyDescriptor) dds.get(parent);
     }
 
-    private boolean isDependencyModuleExcluded(String rootModuleConf, ModuleRevisionId dependencyRevisionId, String conf) {
-        return callers.doesCallersExclude(rootModuleConf, DefaultArtifact.newIvyArtifact(dependencyRevisionId, null));
+    private boolean isDependencyModuleExcluded(String rootModuleConf,
+            ModuleRevisionId dependencyRevisionId, String conf) {
+        return callers.doesCallersExclude(rootModuleConf, DefaultArtifact.newIvyArtifact(
+            dependencyRevisionId, null));
     }
-
-
-
-
 
     public boolean hasConfigurationsToLoad() {
         return !confsToFetch.isEmpty();
@@ -392,7 +410,8 @@ public class IvyNode implements Comparable {
         return loadedRootModuleConfs.contains(rootModuleConf);
     }
 
-    private boolean handleConfiguration(boolean loaded, String rootModuleConf, IvyNode parent, String parentConf, String conf, boolean shouldBePublic) {
+    private boolean handleConfiguration(boolean loaded, String rootModuleConf, IvyNode parent,
+            String parentConf, String conf, boolean shouldBePublic) {
         if (md != null) {
             String[] confs = getRealConfs(conf);
             for (int i = 0; i < confs.length; i++) {
@@ -400,15 +419,21 @@ public class IvyNode implements Comparable {
                 if (c == null) {
                     confsToFetch.remove(conf);
                     if (!conf.equals(confs[i])) {
-                        problem = new RuntimeException("configuration(s) not found in "+this+": "+conf+". Missing configuration: "+confs[i]+". It was required from "+parent+" "+parentConf);
+                        problem = new RuntimeException("configuration(s) not found in " + this
+                                + ": " + conf + ". Missing configuration: " + confs[i]
+                                + ". It was required from " + parent + " " + parentConf);
                     } else {
-                        problem = new RuntimeException("configuration(s) not found in "+this+": "+confs[i]+". It was required from "+parent+" "+parentConf);
+                        problem = new RuntimeException("configuration(s) not found in " + this
+                                + ": " + confs[i] + ". It was required from " + parent + " "
+                                + parentConf);
                     }
                     data.getReport().addDependency(this);
                     return false;
-                } else if (shouldBePublic && !isRoot() && c.getVisibility() != Configuration.Visibility.PUBLIC) {
+                } else if (shouldBePublic && !isRoot()
+                        && c.getVisibility() != Configuration.Visibility.PUBLIC) {
                     confsToFetch.remove(conf);
-                    problem = new RuntimeException("configuration not public in "+this+": "+c+". It was required from "+parent+" "+parentConf);
+                    problem = new RuntimeException("configuration not public in " + this + ": " + c
+                            + ". It was required from " + parent + " " + parentConf);
                     data.getReport().addDependency(this);
                     return false;
                 }
@@ -450,10 +475,8 @@ public class IvyNode implements Comparable {
      * resolve the '*' special configurations if necessary and possible
      */
     private String[] resolveSpecialConfigurations(String[] dependencyConfigurations, IvyNode node) {
-        if (dependencyConfigurations.length == 1
-                && dependencyConfigurations[0].startsWith("*")
-                && node != null
-                && node.isLoaded()) {
+        if (dependencyConfigurations.length == 1 && dependencyConfigurations[0].startsWith("*")
+                && node != null && node.isLoaded()) {
             String conf = dependencyConfigurations[0];
             if ("*".equals(conf)) {
                 return node.getDescriptor().getPublicConfigurationsNames();
@@ -461,33 +484,36 @@ public class IvyNode implements Comparable {
             // there are exclusions in the configuration
             List exclusions = Arrays.asList(conf.substring(2).split("\\!"));
 
-            List ret = new ArrayList(Arrays.asList(node.getDescriptor().getPublicConfigurationsNames()));
+            List ret = new ArrayList(Arrays.asList(node.getDescriptor()
+                    .getPublicConfigurationsNames()));
             ret.removeAll(exclusions);
 
-            return (String[])ret.toArray(new String[ret.size()]);
+            return (String[]) ret.toArray(new String[ret.size()]);
         }
         return dependencyConfigurations;
     }
 
     /**
      * returns the required configurations from the given node
+     * 
      * @param in
      * @return
      */
     public String[] getRequiredConfigurations(IvyNode in, String inConf) {
         Collection req = (Collection) requiredConfs.get(new NodeConf(in, inConf));
-        return req == null?new String[0]:(String[])req.toArray(new String[req.size()]);
+        return req == null ? new String[0] : (String[]) req.toArray(new String[req.size()]);
     }
 
     /**
      * returns all the current required configurations of the node
+     * 
      * @return
      */
     public String[] getRequiredConfigurations() {
         Collection required = new ArrayList(confsToFetch.size() + fetchedConfigurations.size());
         required.addAll(fetchedConfigurations);
         required.addAll(confsToFetch);
-        return (String[])required.toArray(new String[required.size()]);
+        return (String[]) required.toArray(new String[required.size()]);
     }
 
     private void setRequiredConfs(IvyNode parent, String parentConf, Collection confs) {
@@ -496,7 +522,8 @@ public class IvyNode implements Comparable {
 
     public Configuration getConfiguration(String conf) {
         if (md == null) {
-            throw new IllegalStateException("impossible to get configuration when data has not been loaded");
+            throw new IllegalStateException(
+                    "impossible to get configuration when data has not been loaded");
         }
         String defaultConf = getDefaultConf(conf);
         conf = getMainConf(conf);
@@ -508,8 +535,8 @@ public class IvyNode implements Comparable {
     }
 
     /**
-     * Returns the configurations of the dependency required in a given
-     * root module configuration.
+     * Returns the configurations of the dependency required in a given root module configuration.
+     * 
      * @param rootModuleConf
      * @return
      */
@@ -529,16 +556,17 @@ public class IvyNode implements Comparable {
         }
         if (md != null) {
             // remove all given dependency configurations to the set + extended ones
-                Configuration c = md.getConfiguration(conf);
-                if (conf != null) {
-                    String[] exts = c.getExtends();
-                    for (int i = 0; i < exts.length; i++) {
-                        discardConf(rootModuleConf, exts[i]); // recursive remove of extended configurations
-                    }
-                    depConfs.remove(c.getName());
-                } else {
-                    Message.warn("unknown configuration in "+getId()+": "+conf);
+            Configuration c = md.getConfiguration(conf);
+            if (conf != null) {
+                String[] exts = c.getExtends();
+                for (int i = 0; i < exts.length; i++) {
+                    discardConf(rootModuleConf, exts[i]); // recursive remove of extended
+                    // configurations
                 }
+                depConfs.remove(c.getName());
+            } else {
+                Message.warn("unknown configuration in " + getId() + ": " + conf);
+            }
         } else {
             depConfs.remove(conf);
         }
@@ -556,10 +584,11 @@ public class IvyNode implements Comparable {
                 Configuration conf = md.getConfiguration(dependencyConfs[i]);
                 if (conf != null) {
                     String[] exts = conf.getExtends();
-                    addRootModuleConfigurations(rootModuleConf, exts); // recursive add of extended configurations
+                    addRootModuleConfigurations(rootModuleConf, exts); // recursive add of extended
+                    // configurations
                     depConfs.add(conf.getName());
                 } else {
-                    Message.warn("unknown configuration in "+getId()+": "+dependencyConfs[i]);
+                    Message.warn("unknown configuration in " + getId() + ": " + dependencyConfs[i]);
                 }
             }
         } else {
@@ -571,12 +600,12 @@ public class IvyNode implements Comparable {
 
     /**
      * Returns the root module configurations in which this dependency is required
+     * 
      * @return
      */
     public String[] getRootModuleConfigurations() {
         return (String[]) rootModuleConfs.keySet().toArray(new String[rootModuleConfs.size()]);
     }
-
 
     public String[] getConfsToFetch() {
         return (String[]) confsToFetch.toArray(new String[confsToFetch.size()]);
@@ -606,43 +635,40 @@ public class IvyNode implements Comparable {
 
     }
 
-
-
-
     /**
      * Finds and returns a path in callers from the given module id to the current node
-     * @param from the module id to start the path from
-     * @return a collection representing the path, starting with the from node, followed by
-     * the list of nodes being one path to the current node, excluded
+     * 
+     * @param from
+     *            the module id to start the path from
+     * @return a collection representing the path, starting with the from node, followed by the list
+     *         of nodes being one path to the current node, excluded
      */
     private Collection findPath(ModuleId from) {
-		return findPath(from, this, new LinkedList());
-	}
+        return findPath(from, this, new LinkedList());
+    }
 
     private Collection findPath(ModuleId from, IvyNode node, List path) {
-    	IvyNode parent = (IvyNode) node.getDirectCallerFor(from);
-    	if (parent == null) {
-    		throw new IllegalArgumentException("no path from "+from+" to "+getId()+" found");
-    	}
-    	if (path.contains(parent)) {
-        	path.add(0, parent);
-    		Message.verbose("circular dependency found while looking for the path for another one: was looking for "+from+" as a caller of "+path.get(path.size()-1));
-    		return path;
-    	}
-    	path.add(0, parent);
-    	if (parent.getId().getModuleId().equals(from)) {
-    		return path;
-    	}
-		return findPath(from, parent, path);
-	}
-
-
-
-
+        IvyNode parent = (IvyNode) node.getDirectCallerFor(from);
+        if (parent == null) {
+            throw new IllegalArgumentException("no path from " + from + " to " + getId() + " found");
+        }
+        if (path.contains(parent)) {
+            path.add(0, parent);
+            Message
+                    .verbose("circular dependency found while looking for the path for another one: was looking for "
+                            + from + " as a caller of " + path.get(path.size() - 1));
+            return path;
+        }
+        path.add(0, parent);
+        if (parent.getId().getModuleId().equals(from)) {
+            return path;
+        }
+        return findPath(from, parent, path);
+    }
 
     private void updateDataFrom(IvyNode node, String rootModuleConf) {
         // update callers
-    	callers.updateFrom(node.callers, rootModuleConf);
+        callers.updateFrom(node.callers, rootModuleConf);
 
         // update requiredConfs
         updateMapOfSet(node.requiredConfs, requiredConfs);
@@ -666,9 +692,9 @@ public class IvyNode implements Comparable {
     }
 
     private void updateMapOfSetForKey(Map from, Map to, Object key) {
-        Set set = (Set)from.get(key);
+        Set set = (Set) from.get(key);
         if (set != null) {
-            Set toupdate = (Set)to.get(key);
+            Set toupdate = (Set) to.get(key);
             if (toupdate != null) {
                 toupdate.addAll(set);
             } else {
@@ -677,44 +703,43 @@ public class IvyNode implements Comparable {
         }
     }
 
-
-
-
     /**
-     * Returns all the artifacts of this dependency required in all the
-     * root module configurations
+     * Returns all the artifacts of this dependency required in all the root module configurations
+     * 
      * @return
      */
     public Artifact[] getAllArtifacts() {
         Set ret = new HashSet();
         for (Iterator it = rootModuleConfs.keySet().iterator(); it.hasNext();) {
-            String rootModuleConf = (String)it.next();
+            String rootModuleConf = (String) it.next();
             ret.addAll(Arrays.asList(getArtifacts(rootModuleConf)));
         }
-        return (Artifact[])ret.toArray(new Artifact[ret.size()]);
+        return (Artifact[]) ret.toArray(new Artifact[ret.size()]);
     }
 
     /**
-     * Returns all the artifacts of this dependency required in the
-     * root module configurations in which the node is not evicted
+     * Returns all the artifacts of this dependency required in the root module configurations in
+     * which the node is not evicted
+     * 
      * @param artifactFilter
      * @return
      */
     public Artifact[] getSelectedArtifacts(Filter artifactFilter) {
         Collection ret = new HashSet();
         for (Iterator it = rootModuleConfs.keySet().iterator(); it.hasNext();) {
-            String rootModuleConf = (String)it.next();
+            String rootModuleConf = (String) it.next();
             if (!isEvicted(rootModuleConf)) {
                 ret.addAll(Arrays.asList(getArtifacts(rootModuleConf)));
             }
         }
         ret = FilterHelper.filter(ret, artifactFilter);
-        return (Artifact[])ret.toArray(new Artifact[ret.size()]);
+        return (Artifact[]) ret.toArray(new Artifact[ret.size()]);
     }
 
     /**
-     * Returns the artifacts of this dependency required in the
-     * configurations themselves required in the given root module configuration
+     * Returns the artifacts of this dependency required in the configurations themselves required
+     * in the given root module configuration
+     * 
      * @param rootModuleConf
      * @return
      */
@@ -739,21 +764,22 @@ public class IvyNode implements Comparable {
             // descriptor. If one is not really present, the error will be raised
             // at download time
             for (Iterator it = dependencyArtifacts.iterator(); it.hasNext();) {
-                DependencyArtifactDescriptor dad = (DependencyArtifactDescriptor)it.next();
-                artifacts.add(new MDArtifact(md, dad.getName(), dad.getType(), dad.getExt(), dad.getUrl(), dad.getExtraAttributes()));
+                DependencyArtifactDescriptor dad = (DependencyArtifactDescriptor) it.next();
+                artifacts.add(new MDArtifact(md, dad.getName(), dad.getType(), dad.getExt(), dad
+                        .getUrl(), dad.getExtraAttributes()));
             }
         } else {
             Set includes = (Set) dependencyIncludes.get(rootModuleConf);
 
             if ((dependencyArtifacts == null || dependencyArtifacts.isEmpty())
-            		&& (includes == null || includes.isEmpty())) {
+                    && (includes == null || includes.isEmpty())) {
                 // no artifacts / includes: we get all artifacts as defined by the descriptor
                 for (Iterator iter = confs.iterator(); iter.hasNext();) {
                     String conf = (String) iter.next();
                     artifacts.addAll(Arrays.asList(md.getArtifacts(conf)));
                 }
             } else {
-            	// we have to get only artifacts listed as "includes"
+                // we have to get only artifacts listed as "includes"
 
                 // first we get all artifacts as defined by the module descriptor
                 // and classify them by artifact id
@@ -768,34 +794,35 @@ public class IvyNode implements Comparable {
 
                 // now we add caller defined ones
                 for (Iterator it = dependencyArtifacts.iterator(); it.hasNext();) {
-                    DependencyArtifactDescriptor dad = (DependencyArtifactDescriptor)it.next();
+                    DependencyArtifactDescriptor dad = (DependencyArtifactDescriptor) it.next();
                     artifacts.add(new MDArtifact(md, dad.getName(), dad.getType(), dad.getExt(),
-                    		dad.getUrl(), dad.getExtraAttributes()));
+                            dad.getUrl(), dad.getExtraAttributes()));
                 }
 
                 // and now we filter according to include rules
                 for (Iterator it = includes.iterator(); it.hasNext();) {
-                	IncludeRule dad = (IncludeRule)it.next();
-                	Collection arts = findArtifactsMatching(dad, allArtifacts);
-                	if (arts.isEmpty()) {
-                		Message.error("a required artifact is not listed by module descriptor: "+dad.getId());
-                		// we remove it from required list to prevent message to be displayed more than once
-                		it.remove();
-                	} else {
-                		Message.debug(this+" in "+rootModuleConf+": including "+arts);
-                		artifacts.addAll(arts);
-                	}
+                    IncludeRule dad = (IncludeRule) it.next();
+                    Collection arts = findArtifactsMatching(dad, allArtifacts);
+                    if (arts.isEmpty()) {
+                        Message.error("a required artifact is not listed by module descriptor: "
+                                + dad.getId());
+                        // we remove it from required list to prevent message to be displayed more
+                        // than once
+                        it.remove();
+                    } else {
+                        Message.debug(this + " in " + rootModuleConf + ": including " + arts);
+                        artifacts.addAll(arts);
+                    }
                 }
             }
         }
 
-
         // now excludes artifacts that aren't accepted by any caller
         for (Iterator iter = artifacts.iterator(); iter.hasNext();) {
-            Artifact artifact = (Artifact)iter.next();
+            Artifact artifact = (Artifact) iter.next();
             boolean excluded = callers.doesCallersExclude(rootModuleConf, artifact);
             if (excluded) {
-                Message.debug(this+" in "+rootModuleConf+": excluding "+artifact);
+                Message.debug(this + " in " + rootModuleConf + ": excluding " + artifact);
                 iter.remove();
             }
         }
@@ -805,7 +832,7 @@ public class IvyNode implements Comparable {
     private static Collection findArtifactsMatching(IncludeRule rule, Map allArtifacts) {
         Collection ret = new ArrayList();
         for (Iterator iter = allArtifacts.keySet().iterator(); iter.hasNext();) {
-            ArtifactId aid = (ArtifactId)iter.next();
+            ArtifactId aid = (ArtifactId) iter.next();
             if (MatcherHelper.matches(rule.getMatcher(), rule.getId(), aid)) {
                 ret.add(allArtifacts.get(aid));
             }
@@ -813,12 +840,14 @@ public class IvyNode implements Comparable {
         return ret;
     }
 
-    private void addDependencyArtifacts(String rootModuleConf, DependencyArtifactDescriptor[] dependencyArtifacts) {
-        addObjectsForConf(rootModuleConf, Arrays.asList(dependencyArtifacts), this.dependencyArtifacts);
+    private void addDependencyArtifacts(String rootModuleConf,
+            DependencyArtifactDescriptor[] dependencyArtifacts) {
+        addObjectsForConf(rootModuleConf, Arrays.asList(dependencyArtifacts),
+            this.dependencyArtifacts);
     }
 
     private void addDependencyIncludes(String rootModuleConf, IncludeRule[] rules) {
-    	addObjectsForConf(rootModuleConf, Arrays.asList(rules), dependencyIncludes);
+        addObjectsForConf(rootModuleConf, Arrays.asList(rules), dependencyIncludes);
     }
 
     private void addObjectsForConf(String rootModuleConf, Collection objectsToAdd, Map map) {
@@ -830,9 +859,6 @@ public class IvyNode implements Comparable {
         set.addAll(objectsToAdd);
     }
 
-
-
-
     public boolean hasProblem() {
         return problem != null;
     }
@@ -842,15 +868,15 @@ public class IvyNode implements Comparable {
     }
 
     public String getProblemMessage() {
-    	Exception e = problem;
-    	if (e == null) {
-    		return "";
-    	}
-		String errMsg = e instanceof RuntimeException?e.getMessage():e.toString();
-		if (errMsg == null || errMsg.length()==0 || "null".equals(errMsg)) {
-			errMsg = e.getClass().getName() + " at "+e.getStackTrace()[0].toString();
-		}
-		return errMsg;
+        Exception e = problem;
+        if (e == null) {
+            return "";
+        }
+        String errMsg = e instanceof RuntimeException ? e.getMessage() : e.toString();
+        if (errMsg == null || errMsg.length() == 0 || "null".equals(errMsg)) {
+            errMsg = e.getClass().getName() + " at " + e.getStackTrace()[0].toString();
+        }
+        return errMsg;
     }
 
     public boolean isDownloaded() {
@@ -878,24 +904,25 @@ public class IvyNode implements Comparable {
     }
 
     public IvyNode getRoot() {
-		return root;
-	}
+        return root;
+    }
 
     public ConflictManager getConflictManager(ModuleId mid) {
         if (md == null) {
-            throw new IllegalStateException("impossible to get conflict manager when data has not been loaded");
+            throw new IllegalStateException(
+                    "impossible to get conflict manager when data has not been loaded");
         }
         ConflictManager cm = md.getConflictManager(mid);
         return cm == null ? settings.getConflictManager(mid) : cm;
     }
 
     public IvyNode getRealNode() {
-    	IvyNode real = data.getNode(getId());
-        return real != null?real:this;
+        IvyNode real = data.getNode(getId());
+        return real != null ? real : this;
     }
 
     public ModuleRevisionId getId() {
-    	return id;
+        return id;
     }
 
     public ModuleId getModuleId() {
@@ -906,9 +933,9 @@ public class IvyNode implements Comparable {
         return md;
     }
 
-	public ResolveData getData() {
-		return data;
-	}
+    public ResolveData getData() {
+        return data;
+    }
 
     public ResolvedModuleRevision getModuleRevision() {
         return module;
@@ -922,16 +949,17 @@ public class IvyNode implements Comparable {
     }
 
     /**
-     * Returns the last modified timestamp of the module represented by this Node,
-     * or 0 if the last modified timestamp is currently unkwown (module not loaded)
+     * Returns the last modified timestamp of the module represented by this Node, or 0 if the last
+     * modified timestamp is currently unkwown (module not loaded)
+     * 
      * @return the last modified timestamp of the module represented by this Node
      */
-	public long getLastModified() {
-		if (md != null) {
-			return md.getLastModified();
-		}
-		return 0;
-	}
+    public long getLastModified() {
+        if (md != null) {
+            return md.getLastModified();
+        }
+        return 0;
+    }
 
     public ModuleRevisionId getResolvedId() {
         if (md != null && md.getResolvedModuleRevisionId().getRevision() != null) {
@@ -943,18 +971,18 @@ public class IvyNode implements Comparable {
         }
     }
 
-	/**
-	 * Clean data related to one root module configuration only
-	 */
-	public void clean() {
-		confsToFetch.clear();
-	}
+    /**
+     * Clean data related to one root module configuration only
+     */
+    public void clean() {
+        confsToFetch.clear();
+    }
 
-	///////////////////////////////////////////////////////////////////////////////
-	//          CALLERS MANAGEMENT
-	///////////////////////////////////////////////////////////////////////////////
+    // /////////////////////////////////////////////////////////////////////////////
+    // CALLERS MANAGEMENT
+    // /////////////////////////////////////////////////////////////////////////////
 
-	boolean canExclude(String rootModuleConf) {
+    boolean canExclude(String rootModuleConf) {
         Caller[] callers = getCallers(rootModuleConf);
         for (int i = 0; i < callers.length; i++) {
             if (callers[i].canExclude()) {
@@ -964,60 +992,58 @@ public class IvyNode implements Comparable {
         return false;
     }
 
-	private IvyNode getDirectCallerFor(ModuleId from) {
-		return callers.getDirectCallerFor(from);
-	}
+    private IvyNode getDirectCallerFor(ModuleId from) {
+        return callers.getDirectCallerFor(from);
+    }
 
     public Caller[] getCallers(String rootModuleConf) {
-		return callers.getCallers(rootModuleConf);
-	}
+        return callers.getCallers(rootModuleConf);
+    }
 
-	public Collection getAllCallersModuleIds() {
-		return callers.getAllCallersModuleIds();
-	}
+    public Collection getAllCallersModuleIds() {
+        return callers.getAllCallersModuleIds();
+    }
 
-	public Caller[] getAllCallers() {
-		return callers.getAllCallers();
-	}
+    public Caller[] getAllCallers() {
+        return callers.getAllCallers();
+    }
 
-
-    public void addCaller(String rootModuleConf, IvyNode callerNode, String callerConf, String[] dependencyConfs, DependencyDescriptor dd) {
-    	callers.addCaller(rootModuleConf, callerNode, callerConf, dependencyConfs, dd);
+    public void addCaller(String rootModuleConf, IvyNode callerNode, String callerConf,
+            String[] dependencyConfs, DependencyDescriptor dd) {
+        callers.addCaller(rootModuleConf, callerNode, callerConf, dependencyConfs, dd);
         boolean isCircular = callers.getAllCallersModuleIds().contains(getId().getModuleId());
         if (isCircular) {
-        	IvyContext.getContext().getCircularDependencyStrategy().handleCircularDependency(
-        			toMrids(findPath(getId().getModuleId()), this));
+            IvyContext.getContext().getCircularDependencyStrategy().handleCircularDependency(
+                toMrids(findPath(getId().getModuleId()), this));
         }
     }
 
+    public boolean doesCallersExclude(String rootModuleConf, Artifact artifact, Stack callersStack) {
+        return callers.doesCallersExclude(rootModuleConf, artifact, callersStack);
+    }
 
-	public boolean doesCallersExclude(String rootModuleConf, Artifact artifact, Stack callersStack) {
-		return callers.doesCallersExclude(rootModuleConf, artifact, callersStack);
-	}
+    private ModuleRevisionId[] toMrids(Collection path, IvyNode depNode) {
+        ModuleRevisionId[] ret = new ModuleRevisionId[path.size() + 1];
+        int i = 0;
+        for (Iterator iter = path.iterator(); iter.hasNext(); i++) {
+            IvyNode node = (IvyNode) iter.next();
+            ret[i] = node.getId();
+        }
+        ret[ret.length - 1] = depNode.getId();
+        return ret;
+    }
 
+    // /////////////////////////////////////////////////////////////////////////////
+    // EVICTION MANAGEMENT
+    // /////////////////////////////////////////////////////////////////////////////
 
-	private ModuleRevisionId[] toMrids(Collection path, IvyNode depNode) {
-    	ModuleRevisionId[] ret = new ModuleRevisionId[path.size()+1];
-    	int i=0;
-    	for (Iterator iter = path.iterator(); iter.hasNext(); i++) {
-			IvyNode node = (IvyNode) iter.next();
-			ret[i] = node.getId();
-		}
-    	ret[ret.length-1] = depNode.getId();
-		return ret;
-	}
+    public Collection getResolvedNodes(ModuleId moduleId, String rootModuleConf) {
+        return eviction.getResolvedNodes(moduleId, rootModuleConf);
+    }
 
-	///////////////////////////////////////////////////////////////////////////////
-	//          EVICTION MANAGEMENT
-	///////////////////////////////////////////////////////////////////////////////
-
-	public Collection getResolvedNodes(ModuleId moduleId, String rootModuleConf) {
-		return eviction.getResolvedNodes(moduleId, rootModuleConf);
-	}
-
-	public Collection getResolvedRevisions(ModuleId moduleId, String rootModuleConf) {
-		return eviction.getResolvedRevisions(moduleId, rootModuleConf);
-	}
+    public Collection getResolvedRevisions(ModuleId moduleId, String rootModuleConf) {
+        return eviction.getResolvedRevisions(moduleId, rootModuleConf);
+    }
 
     public void markEvicted(EvictionData evictionData) {
         eviction.markEvicted(evictionData);
@@ -1028,75 +1054,75 @@ public class IvyNode implements Comparable {
         // bug 105: update selected data with evicted one
         if (evictionData.getSelected() != null) {
             for (Iterator iter = evictionData.getSelected().iterator(); iter.hasNext();) {
-                IvyNode selected = (IvyNode)iter.next();
+                IvyNode selected = (IvyNode) iter.next();
                 selected.updateDataFrom(this, evictionData.getRootModuleConf());
             }
         }
     }
 
-	public Collection getAllEvictingConflictManagers() {
-		return eviction.getAllEvictingConflictManagers();
-	}
+    public Collection getAllEvictingConflictManagers() {
+        return eviction.getAllEvictingConflictManagers();
+    }
 
-	public Collection getAllEvictingNodes() {
-		return eviction.getAllEvictingNodes();
-	}
+    public Collection getAllEvictingNodes() {
+        return eviction.getAllEvictingNodes();
+    }
 
-	public String[] getEvictedConfs() {
-		return eviction.getEvictedConfs();
-	}
+    public String[] getEvictedConfs() {
+        return eviction.getEvictedConfs();
+    }
 
-	public EvictionData getEvictedData(String rootModuleConf) {
-		return eviction.getEvictedData(rootModuleConf);
-	}
+    public EvictionData getEvictedData(String rootModuleConf) {
+        return eviction.getEvictedData(rootModuleConf);
+    }
 
-	public Collection getEvictedNodes(ModuleId mid, String rootModuleConf) {
-		return eviction.getEvictedNodes(mid, rootModuleConf);
-	}
+    public Collection getEvictedNodes(ModuleId mid, String rootModuleConf) {
+        return eviction.getEvictedNodes(mid, rootModuleConf);
+    }
 
-	public Collection getEvictedRevisions(ModuleId mid, String rootModuleConf) {
-		return eviction.getEvictedRevisions(mid, rootModuleConf);
-	}
+    public Collection getEvictedRevisions(ModuleId mid, String rootModuleConf) {
+        return eviction.getEvictedRevisions(mid, rootModuleConf);
+    }
 
-	public EvictionData getEvictionDataInRoot(String rootModuleConf, IvyNode ancestor) {
-		return eviction.getEvictionDataInRoot(rootModuleConf, ancestor);
-	}
+    public EvictionData getEvictionDataInRoot(String rootModuleConf, IvyNode ancestor) {
+        return eviction.getEvictionDataInRoot(rootModuleConf, ancestor);
+    }
 
-	public boolean isCompletelyEvicted() {
-		return eviction.isCompletelyEvicted();
-	}
+    public boolean isCompletelyEvicted() {
+        return eviction.isCompletelyEvicted();
+    }
 
-	public boolean isEvicted(String rootModuleConf) {
-		return eviction.isEvicted(rootModuleConf);
-	}
+    public boolean isEvicted(String rootModuleConf) {
+        return eviction.isEvicted(rootModuleConf);
+    }
 
-	public void markEvicted(String rootModuleConf, IvyNode node, ConflictManager conflictManager, Collection resolved) {
-		eviction.markEvicted(rootModuleConf, node, conflictManager, resolved);
-	}
+    public void markEvicted(String rootModuleConf, IvyNode node, ConflictManager conflictManager,
+            Collection resolved) {
+        eviction.markEvicted(rootModuleConf, node, conflictManager, resolved);
+    }
 
-	public void setEvictedNodes(ModuleId moduleId, String rootModuleConf, Collection evicted) {
-		eviction.setEvictedNodes(moduleId, rootModuleConf, evicted);
-	}
+    public void setEvictedNodes(ModuleId moduleId, String rootModuleConf, Collection evicted) {
+        eviction.setEvictedNodes(moduleId, rootModuleConf, evicted);
+    }
 
-	public void setResolvedNodes(ModuleId moduleId, String rootModuleConf, Collection resolved) {
-		eviction.setResolvedNodes(moduleId, rootModuleConf, resolved);
-	}
+    public void setResolvedNodes(ModuleId moduleId, String rootModuleConf, Collection resolved) {
+        eviction.setResolvedNodes(moduleId, rootModuleConf, resolved);
+    }
 
-
-	public String toString() {
+    public String toString() {
         return getResolvedId().toString();
     }
 
     public boolean equals(Object obj) {
-        if (! (obj instanceof IvyNode)) {
+        if (!(obj instanceof IvyNode)) {
             return false;
         }
-        IvyNode node = (IvyNode)obj;
+        IvyNode node = (IvyNode) obj;
         return node.getId().equals(getId());
     }
 
     public int compareTo(Object obj) {
-        IvyNode that = (IvyNode)obj;
+        IvyNode that = (IvyNode) obj;
         return this.getModuleId().compareTo(that.getModuleId());
     }
 
@@ -1105,17 +1131,19 @@ public class IvyNode implements Comparable {
     }
 
     /**
-     * Returns a collection of Nodes in conflict for which conflict has been detected
-     * but conflict resolution hasn't been done yet
+     * Returns a collection of Nodes in conflict for which conflict has been detected but conflict
+     * resolution hasn't been done yet
+     * 
      * @param rootModuleConf
-     * @param mid the module id for which pending conflicts should be found
+     * @param mid
+     *            the module id for which pending conflicts should be found
      * @return a Collection of IvyNode in pending conflict
      */
-	public Collection getPendingConflicts(String rootModuleConf, ModuleId mid) {
-		return eviction.getPendingConflicts(rootModuleConf, mid);
-	}
+    public Collection getPendingConflicts(String rootModuleConf, ModuleId mid) {
+        return eviction.getPendingConflicts(rootModuleConf, mid);
+    }
 
-	public void setPendingConflicts(ModuleId moduleId, String rootModuleConf, Collection conflicts) {
-		eviction.setPendingConflicts(moduleId, rootModuleConf, conflicts);
-	}
+    public void setPendingConflicts(ModuleId moduleId, String rootModuleConf, Collection conflicts) {
+        eviction.setPendingConflicts(moduleId, rootModuleConf, conflicts);
+    }
 }

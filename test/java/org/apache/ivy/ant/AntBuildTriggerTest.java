@@ -26,21 +26,21 @@ import org.apache.ivy.core.report.ResolveReport;
 import org.apache.ivy.util.FileUtil;
 
 public class AntBuildTriggerTest extends TestCase {
-	public void test() throws Exception {
-		assertFalse(new File("test/triggers/ant-build/A/A.jar").exists());
+    public void test() throws Exception {
+        assertFalse(new File("test/triggers/ant-build/A/A.jar").exists());
 
-		Ivy ivy = new Ivy();
-		ivy.configure(new File("test/triggers/ant-build/ivysettings.xml"));
+        Ivy ivy = new Ivy();
+        ivy.configure(new File("test/triggers/ant-build/ivysettings.xml"));
 
-		ResolveReport r = ivy.resolve(new File("test/triggers/ant-build/B/ivy.xml"));
-		assertFalse(r.hasError());
+        ResolveReport r = ivy.resolve(new File("test/triggers/ant-build/B/ivy.xml"));
+        assertFalse(r.hasError());
 
-		// should have triggered an A publish
-		assertTrue(new File("test/triggers/ant-build/local/A/A.jar").exists());
-	}
+        // should have triggered an A publish
+        assertTrue(new File("test/triggers/ant-build/local/A/A.jar").exists());
+    }
 
-	protected void tearDown() throws Exception {
-		FileUtil.forceDelete(new File("test/triggers/ant-build/local/A"));
-		FileUtil.forceDelete(new File("test/triggers/ant-build/cache"));
-	}
+    protected void tearDown() throws Exception {
+        FileUtil.forceDelete(new File("test/triggers/ant-build/local/A"));
+        FileUtil.forceDelete(new File("test/triggers/ant-build/cache"));
+    }
 }

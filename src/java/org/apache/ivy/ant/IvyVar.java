@@ -28,69 +28,60 @@ import org.apache.ivy.Ivy;
 import org.apache.ivy.core.settings.IvySettings;
 import org.apache.tools.ant.BuildException;
 
-
 /**
  * This task let user set ivy variables from ant.
- * 
  */
 public class IvyVar extends IvyTask {
     private String _name;
+
     private String _value;
-    
+
     private File _file;
+
     private String _url;
-    
+
     private String _prefix;
 
     public File getFile() {
         return _file;
     }
-    
 
     public void setFile(File file) {
         _file = file;
     }
-    
 
     public String getName() {
         return _name;
     }
-    
 
     public void setName(String name) {
         _name = name;
     }
-    
 
     public String getPrefix() {
         return _prefix;
     }
-    
 
     public void setPrefix(String prefix) {
         _prefix = prefix;
     }
-    
 
     public String getUrl() {
         return _url;
     }
-    
 
     public void setUrl(String url) {
         _url = url;
     }
-    
 
     public String getValue() {
         return _value;
     }
-    
 
     public void setValue(String value) {
         _value = value;
     }
-    
+
     public void doExecute() throws BuildException {
         Ivy ivy = getIvyInstance();
         IvySettings settings = ivy.getSettings();
@@ -109,20 +100,22 @@ public class IvyVar extends IvyTask {
                 }
                 props.load(is);
             } catch (Exception ex) {
-                throw new BuildException("impossible to load variables from file: "+ex, ex);
+                throw new BuildException("impossible to load variables from file: " + ex, ex);
             } finally {
                 if (is != null) {
-                    try {is.close();} catch (Exception e) {}
+                    try {
+                        is.close();
+                    } catch (Exception e) {
+                    }
                 }
             }
             for (Iterator iter = props.keySet().iterator(); iter.hasNext();) {
-                String name = (String)iter.next();
-                String value = (String)props.get(name);
+                String name = (String) iter.next();
+                String value = (String) props.get(name);
                 settings.setVariable(getVarName(name), value);
             }
         }
     }
-
 
     private String getVarName(String name) {
         String prefix = getPrefix();

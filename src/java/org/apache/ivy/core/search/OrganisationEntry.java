@@ -19,9 +19,9 @@ package org.apache.ivy.core.search;
 
 import org.apache.ivy.plugins.resolver.DependencyResolver;
 
-
 public class OrganisationEntry {
     private DependencyResolver resolver;
+
     private String organisation;
 
     public OrganisationEntry(DependencyResolver resolver, String organisation) {
@@ -32,9 +32,9 @@ public class OrganisationEntry {
     public String getOrganisation() {
         return organisation;
     }
-    
+
     public DependencyResolver getResolver() {
         return resolver;
     }
-    
+
 }

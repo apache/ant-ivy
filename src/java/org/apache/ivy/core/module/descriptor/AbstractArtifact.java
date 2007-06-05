@@ -30,15 +30,16 @@ public abstract class AbstractArtifact implements Artifact {
         if (!(obj instanceof Artifact)) {
             return false;
         }
-        Artifact art = (Artifact)obj;
+        Artifact art = (Artifact) obj;
         return getModuleRevisionId().equals(art.getModuleRevisionId())
-        	&& getPublicationDate()==null?true:getPublicationDate().equals(art.getPublicationDate())
-            && getName().equals(art.getName())
-            && getExt().equals(art.getExt())
-        	&& getType().equals(art.getType())
-            && getExtraAttributes().equals(art.getExtraAttributes());
+                && getPublicationDate() == null ? true : getPublicationDate().equals(
+            art.getPublicationDate())
+                && getName().equals(art.getName())
+                && getExt().equals(art.getExt())
+                && getType().equals(art.getType())
+                && getExtraAttributes().equals(art.getExtraAttributes());
     }
-    
+
     public int hashCode() {
         int hash = 33;
         hash = hash * 17 + getModuleRevisionId().hashCode();
@@ -51,9 +52,9 @@ public abstract class AbstractArtifact implements Artifact {
         hash = hash * 17 + getExtraAttributes().hashCode();
         return hash;
     }
-    
+
     public String toString() {
-        return getModuleRevisionId()+"/"+getName()+"."+getExt()+"["+getType()+"]";
+        return getModuleRevisionId() + "/" + getName() + "." + getExt() + "[" + getType() + "]";
     }
 
     public String getAttribute(String attName) {
@@ -79,6 +80,5 @@ public abstract class AbstractArtifact implements Artifact {
     public Map getStandardAttributes() {
         return getId().getStandardAttributes();
     }
-    
-    
+
 }

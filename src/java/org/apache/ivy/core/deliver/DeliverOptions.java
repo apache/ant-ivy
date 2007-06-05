@@ -26,179 +26,195 @@ import org.apache.ivy.core.settings.IvySettings;
  * A set of options used to do a deliver.
  */
 public class DeliverOptions {
-	private String status;
-	private Date pubdate;
-	private CacheManager cache;
-	private PublishingDependencyRevisionResolver pdrResolver = new DefaultPublishingDRResolver();
-	private boolean validate = true;
-	private boolean resolveDynamicRevisions = true;
-	private String resolveId;
-	private String[] confs;
-	
-	/**
-	 * Returns an instance of DeliverOptions with options corresponding to default values
-	 * taken from the given settings.
-	 * 
-	 * @param settings The settings to use to get default option values
-	 * @return a DeliverOptions instance ready to be used or customized
-	 */
-	public static DeliverOptions newInstance(IvySettings settings) {
-		return new DeliverOptions(null, new Date(), CacheManager.getInstance(settings), 
-				new DefaultPublishingDRResolver(),
-				settings.doValidate(),
-				true, null);
-	}
+    private String status;
 
-	/**
-	 * Creates an instance of DeliverOptions which require to be configured
-	 * using the appropriate setters.
-	 */
-	public DeliverOptions() {
-	}
-	
-	/**
-	 * Creates an instance of DeliverOptions with all options explicitly set.
-	 */
-	public DeliverOptions(String status, Date pubDate, CacheManager cache, PublishingDependencyRevisionResolver pdrResolver, boolean validate, boolean resolveDynamicRevisions, String[] confs) {
-		this.status = status;
-		this.pubdate = pubDate;
-		this.cache = cache;
-		this.pdrResolver = pdrResolver;
-		this.validate = validate;
-		this.resolveDynamicRevisions = resolveDynamicRevisions;
-		this.confs = confs;
-	}
+    private Date pubdate;
 
-	public CacheManager getCache() {
-		return cache;
-	}
+    private CacheManager cache;
 
-	public DeliverOptions setCache(CacheManager cache) {
-		this.cache = cache;
-		return this;
-	}
-	
-	/**
-	 * Return the pdrResolver that will be used during deliver for each 
-	 * dependency to get its published information. 
-	 * This can particularly useful
-	 * when the deliver is made for a release, and when we wish to deliver each
-	 * dependency which is still in integration. The PublishingDependencyRevisionResolver
-	 * can then do the delivering work for the dependency and return the new (delivered)
-	 * dependency info (with the delivered revision). Note that 
-	 * PublishingDependencyRevisionResolver is only called for each <b>direct</b> dependency.
-	 * @return the pdrResolver that will be used during deliver
-	 */
-	public PublishingDependencyRevisionResolver getPdrResolver() {
-		return pdrResolver;
-	}
+    private PublishingDependencyRevisionResolver pdrResolver = new DefaultPublishingDRResolver();
 
-	/**
-	 * Sets the pdrResolver that will be used during deliver for each 
-	 * dependency to get its published information. 
-	 * This can particularly useful
-	 * when the deliver is made for a release, and when we wish to deliver each
-	 * dependency which is still in integration. The PublishingDependencyRevisionResolver
-	 * can then do the delivering work for the dependency and return the new (delivered)
-	 * dependency info (with the delivered revision). Note that 
-	 * PublishingDependencyRevisionResolver is only called for each <b>direct</b> dependency.
-	 * @return the instance of DeliverOptions on which the method has been called, 
-	 * for easy method chaining 
-	 */
-	public DeliverOptions setPdrResolver(PublishingDependencyRevisionResolver pdrResolver) {
-		this.pdrResolver = pdrResolver;
-		return this;
-	}
+    private boolean validate = true;
 
-	public boolean isResolveDynamicRevisions() {
-		return resolveDynamicRevisions;
-	}
+    private boolean resolveDynamicRevisions = true;
 
-	public DeliverOptions setResolveDynamicRevisions(boolean resolveDynamicRevisions) {
-		this.resolveDynamicRevisions = resolveDynamicRevisions;
-		return this;
-	}
+    private String resolveId;
 
-	public boolean isValidate() {
-		return validate;
-	}
+    private String[] confs;
 
-	public DeliverOptions setValidate(boolean validate) {
-		this.validate = validate;
-		return this;
-	}
+    /**
+     * Returns an instance of DeliverOptions with options corresponding to default values taken from
+     * the given settings.
+     * 
+     * @param settings
+     *            The settings to use to get default option values
+     * @return a DeliverOptions instance ready to be used or customized
+     */
+    public static DeliverOptions newInstance(IvySettings settings) {
+        return new DeliverOptions(null, new Date(), CacheManager.getInstance(settings),
+                new DefaultPublishingDRResolver(), settings.doValidate(), true, null);
+    }
 
-	public Date getPubdate() {
-		return pubdate;
-	}
+    /**
+     * Creates an instance of DeliverOptions which require to be configured using the appropriate
+     * setters.
+     */
+    public DeliverOptions() {
+    }
 
-	public DeliverOptions setPubdate(Date pubdate) {
-		this.pubdate = pubdate;
-		return this;
-	}
+    /**
+     * Creates an instance of DeliverOptions with all options explicitly set.
+     */
+    public DeliverOptions(String status, Date pubDate, CacheManager cache,
+            PublishingDependencyRevisionResolver pdrResolver, boolean validate,
+            boolean resolveDynamicRevisions, String[] confs) {
+        this.status = status;
+        this.pubdate = pubDate;
+        this.cache = cache;
+        this.pdrResolver = pdrResolver;
+        this.validate = validate;
+        this.resolveDynamicRevisions = resolveDynamicRevisions;
+        this.confs = confs;
+    }
 
-	/**
-	 * Returns the status to which the module should be delivered,
-	 * or null if the current status should be kept.
-	 * @return the status to which the module should be delivered
-	 */
-	public String getStatus() {
-		return status;
-	}
+    public CacheManager getCache() {
+        return cache;
+    }
 
-	/**
-	 * Sets the status to which the module should be delivered,
-	 * use null if the current status should be kept.
-	 * @return the instance of DeliverOptions on which the method has been called, 
-	 * for easy method chaining 
-	 */
-	public DeliverOptions setStatus(String status) {
-		this.status = status;
-		return this;
-	}
-	
-	/**
-	 * Returns the id of a previous resolve to use for delivering.
-	 * @return the id of a previous resolve
-	 */
-	public String getResolveId() {
-		return resolveId;
-	}
-	
-	/**
-	 * Sets the id of a previous resolve to use for delivering.
-	 * @param resolveId the id of a previous resolve
-	 * @return the instance of DeliverOptions on which the method has been called, 
-	 * for easy method chaining 
-	 */
-	public DeliverOptions setResolveId(String resolveId) {
-		this.resolveId = resolveId;
-		return this;
-	}
-	
-	/**
-	 * Return the configurations which must be deliverd. Returns <tt>null</tt> if all
-	 * configurations has to be deliverd. Attention: the returned array can contain wildcards!
-	 * @return the configurations to deliver
-	 */
-	public String[] getConfs() {
-		return confs;
-	}
-	
-	/**
-	 * Sets the configurations to deliver.
-	 * @param confs the configurations to deliver
-	 * @return the instance of DeliverOptions on which the method has been called, 
-	 * for easy method chaining 
-	 */
-	public DeliverOptions setConfs(String[] confs) {
-		this.confs = confs;
-		return this;
-	}
-	
-	public String toString() {
-		return "status="+ status +" pubdate="+ pubdate +" validate="+ validate +" resolveDynamicRevisions="+ resolveDynamicRevisions +" cache="+ cache +" resolveId="+ resolveId;
-		
-	}
-	
+    public DeliverOptions setCache(CacheManager cache) {
+        this.cache = cache;
+        return this;
+    }
+
+    /**
+     * Return the pdrResolver that will be used during deliver for each dependency to get its
+     * published information. This can particularly useful when the deliver is made for a release,
+     * and when we wish to deliver each dependency which is still in integration. The
+     * PublishingDependencyRevisionResolver can then do the delivering work for the dependency and
+     * return the new (delivered) dependency info (with the delivered revision). Note that
+     * PublishingDependencyRevisionResolver is only called for each <b>direct</b> dependency.
+     * 
+     * @return the pdrResolver that will be used during deliver
+     */
+    public PublishingDependencyRevisionResolver getPdrResolver() {
+        return pdrResolver;
+    }
+
+    /**
+     * Sets the pdrResolver that will be used during deliver for each dependency to get its
+     * published information. This can particularly useful when the deliver is made for a release,
+     * and when we wish to deliver each dependency which is still in integration. The
+     * PublishingDependencyRevisionResolver can then do the delivering work for the dependency and
+     * return the new (delivered) dependency info (with the delivered revision). Note that
+     * PublishingDependencyRevisionResolver is only called for each <b>direct</b> dependency.
+     * 
+     * @return the instance of DeliverOptions on which the method has been called, for easy method
+     *         chaining
+     */
+    public DeliverOptions setPdrResolver(PublishingDependencyRevisionResolver pdrResolver) {
+        this.pdrResolver = pdrResolver;
+        return this;
+    }
+
+    public boolean isResolveDynamicRevisions() {
+        return resolveDynamicRevisions;
+    }
+
+    public DeliverOptions setResolveDynamicRevisions(boolean resolveDynamicRevisions) {
+        this.resolveDynamicRevisions = resolveDynamicRevisions;
+        return this;
+    }
+
+    public boolean isValidate() {
+        return validate;
+    }
+
+    public DeliverOptions setValidate(boolean validate) {
+        this.validate = validate;
+        return this;
+    }
+
+    public Date getPubdate() {
+        return pubdate;
+    }
+
+    public DeliverOptions setPubdate(Date pubdate) {
+        this.pubdate = pubdate;
+        return this;
+    }
+
+    /**
+     * Returns the status to which the module should be delivered, or null if the current status
+     * should be kept.
+     * 
+     * @return the status to which the module should be delivered
+     */
+    public String getStatus() {
+        return status;
+    }
+
+    /**
+     * Sets the status to which the module should be delivered, use null if the current status
+     * should be kept.
+     * 
+     * @return the instance of DeliverOptions on which the method has been called, for easy method
+     *         chaining
+     */
+    public DeliverOptions setStatus(String status) {
+        this.status = status;
+        return this;
+    }
+
+    /**
+     * Returns the id of a previous resolve to use for delivering.
+     * 
+     * @return the id of a previous resolve
+     */
+    public String getResolveId() {
+        return resolveId;
+    }
+
+    /**
+     * Sets the id of a previous resolve to use for delivering.
+     * 
+     * @param resolveId
+     *            the id of a previous resolve
+     * @return the instance of DeliverOptions on which the method has been called, for easy method
+     *         chaining
+     */
+    public DeliverOptions setResolveId(String resolveId) {
+        this.resolveId = resolveId;
+        return this;
+    }
+
+    /**
+     * Return the configurations which must be deliverd. Returns <tt>null</tt> if all
+     * configurations has to be deliverd. Attention: the returned array can contain wildcards!
+     * 
+     * @return the configurations to deliver
+     */
+    public String[] getConfs() {
+        return confs;
+    }
+
+    /**
+     * Sets the configurations to deliver.
+     * 
+     * @param confs
+     *            the configurations to deliver
+     * @return the instance of DeliverOptions on which the method has been called, for easy method
+     *         chaining
+     */
+    public DeliverOptions setConfs(String[] confs) {
+        this.confs = confs;
+        return this;
+    }
+
+    public String toString() {
+        return "status=" + status + " pubdate=" + pubdate + " validate=" + validate
+                + " resolveDynamicRevisions=" + resolveDynamicRevisions + " cache=" + cache
+                + " resolveId=" + resolveId;
+
+    }
+
 }

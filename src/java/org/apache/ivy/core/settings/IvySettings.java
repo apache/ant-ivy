@@ -80,47 +80,75 @@ import org.apache.ivy.util.url.URLHandlerRegistry;
 
 public class IvySettings {
     private static final String DEFAULT_CACHE_ARTIFACT_PATTERN = "[organisation]/[module]/[type]s/[artifact]-[revision](.[ext])";
+
     private static final String DEFAULT_CACHE_DATA_FILE_PATTERN = "[organisation]/[module]/ivydata-[revision].properties";
+
     private static final String DEFAULT_CACHE_IVY_PATTERN = "[organisation]/[module]/ivy-[revision].xml";
+
     private static final String DEFAULT_CACHE_RESOLVED_IVY_PATTERN = "resolved-[organisation]-[module]-[revision].xml";
+
     private static final String DEFAULT_CACHE_RESOLVED_IVY_PROPERTIES_PATTERN = "resolved-[organisation]-[module]-[revision].properties";
 
     private Map typeDefs = new HashMap();
+
     private Map resolversMap = new HashMap();
+
     private DependencyResolver defaultResolver;
+
     private DependencyResolver dictatorResolver = null;
-    
+
     private String defaultResolverName;
+
     private File defaultCache;
 
-	private String defaultBranch = null;
+    private String defaultBranch = null;
 
     private boolean checkUpToDate = true;
+
     private Map moduleSettings = new LinkedHashMap(); // Map (ModuleIdMatcher -> ModuleSettings)
-    
-    private Map conflictsManager = new HashMap(); // Map (String conflictManagerName -> ConflictManager)
-    private Map latestStrategies = new HashMap(); // Map (String latestStrategyName -> LatestStrategy)
+
+    private Map conflictsManager = new HashMap(); // Map (String conflictManagerName ->
+
+    // ConflictManager)
+
+    private Map latestStrategies = new HashMap(); // Map (String latestStrategyName ->
+
+    // LatestStrategy)
+
     private Map namespaces = new HashMap(); // Map (String namespaceName -> Namespace)
+
     private Map matchers = new HashMap(); // Map (String matcherName -> Matcher)
+
     private Map reportOutputters = new HashMap(); // Map (String outputterName -> ReportOutputter)
+
     private Map versionMatchers = new HashMap(); // Map (String matcherName -> VersionMatcher)
-    private Map circularDependencyStrategies = new HashMap(); // Map (String name -> CircularDependencyStrategy)
+
+    private Map circularDependencyStrategies = new HashMap(); // Map (String name ->
+
+    // CircularDependencyStrategy)
+
     private List triggers = new ArrayList(); // List (Trigger)
-    
+
     private IvyVariableContainer variableContainer = new IvyVariableContainerImpl();
 
     private String cacheIvyPattern = DEFAULT_CACHE_IVY_PATTERN;
+
     private String cacheResolvedIvyPattern = DEFAULT_CACHE_RESOLVED_IVY_PATTERN;
+
     private String cacheResolvedIvyPropertiesPattern = DEFAULT_CACHE_RESOLVED_IVY_PROPERTIES_PATTERN;
+
     private String cacheArtifactPattern = DEFAULT_CACHE_ARTIFACT_PATTERN;
+
     private String cacheDataFilePattern = DEFAULT_CACHE_DATA_FILE_PATTERN;
 
     private boolean validate = true;
 
     private LatestStrategy defaultLatestStrategy = null;
+
     private ConflictManager defaultConflictManager = null;
+
     private CircularDependencyStrategy circularDependencyStrategy = null;
-    
+
     private List listingIgnore = new ArrayList();
 
     private boolean repositoriesConfigured;
@@ -128,28 +156,30 @@ public class IvySettings {
     private boolean useRemoteConfig = false;
 
     private File defaultUserDir;
-    
 
     private List classpathURLs = new ArrayList();
 
     private ClassLoader classloader;
-    
-	private long interruptTimeout = 2000;
-	private Boolean debugConflictResolution;
-	private boolean logNotConvertedExclusionRule;
-	private VersionMatcher versionMatcher;
-	private StatusManager statusManager;
-	
-	
-	public IvySettings() {
-		this(new IvyVariableContainerImpl());
-	}
-	
-	public IvySettings(IvyVariableContainer variableContainer) {
-		setVariableContainer(variableContainer);
+
+    private long interruptTimeout = 2000;
+
+    private Boolean debugConflictResolution;
+
+    private boolean logNotConvertedExclusionRule;
+
+    private VersionMatcher versionMatcher;
+
+    private StatusManager statusManager;
+
+    public IvySettings() {
+        this(new IvyVariableContainerImpl());
+    }
+
+    public IvySettings(IvyVariableContainer variableContainer) {
+        setVariableContainer(variableContainer);
         setVariable("ivy.default.settings.dir", getDefaultSettingsDir(), true);
         setDeprecatedVariable("ivy.default.conf.dir", "ivy.default.settings.dir");
-        
+
         String ivyTypeDefs = System.getProperty("ivy.typedef.files");
         if (ivyTypeDefs != null) {
             String[] files = ivyTypeDefs.split("\\,");
@@ -157,9 +187,10 @@ public class IvySettings {
                 try {
                     typeDefs(new FileInputStream(new File(files[i].trim())), true);
                 } catch (FileNotFoundException e) {
-                    Message.warn("typedefs file not found: "+files[i].trim());
+                    Message.warn("typedefs file not found: " + files[i].trim());
                 } catch (IOException e) {
-                    Message.warn("problem with typedef file: "+files[i].trim()+": "+e.getMessage());
+                    Message.warn("problem with typedef file: " + files[i].trim() + ": "
+                            + e.getMessage());
                 }
             }
         } else {
@@ -177,43 +208,48 @@ public class IvySettings {
         addLatestStrategy("latest-lexico", latestLexicographicStrategy);
         addLatestStrategy("latest-time", latestTimeStrategy);
 
-        addConflictManager("latest-revision", new LatestConflictManager("latest-revision", latestRevisionStrategy));
-        addConflictManager("latest-time", new LatestConflictManager("latest-time", latestTimeStrategy));
-        addConflictManager("all", new NoConflictManager());    
+        addConflictManager("latest-revision", new LatestConflictManager("latest-revision",
+                latestRevisionStrategy));
+        addConflictManager("latest-time", new LatestConflictManager("latest-time",
+                latestTimeStrategy));
+        addConflictManager("all", new NoConflictManager());
         addConflictManager("strict", new StrictConflictManager());
-        
+
         addMatcher(ExactPatternMatcher.INSTANCE);
         addMatcher(RegexpPatternMatcher.INSTANCE);
         addMatcher(ExactOrRegexpPatternMatcher.INSTANCE);
-        
+
         try {
             // GlobPatternMatcher is optional. Only add it when available.
-			Class globClazz = IvySettings.class.getClassLoader().loadClass("org.apache.ivy.plugins.matcher.GlobPatternMatcher");
-			Field instanceField = globClazz.getField("INSTANCE");
-			addMatcher((PatternMatcher) instanceField.get(null));
-		} catch (Exception e) {
-			// ignore: the matcher isn't on the classpath
-    		Message.info("impossible to define glob matcher: org.apache.ivy.plugins.matcher.GlobPatternMatcher was not found on the classpath");
-		}
-        
+            Class globClazz = IvySettings.class.getClassLoader().loadClass(
+                "org.apache.ivy.plugins.matcher.GlobPatternMatcher");
+            Field instanceField = globClazz.getField("INSTANCE");
+            addMatcher((PatternMatcher) instanceField.get(null));
+        } catch (Exception e) {
+            // ignore: the matcher isn't on the classpath
+            Message
+                    .info("impossible to define glob matcher: org.apache.ivy.plugins.matcher.GlobPatternMatcher was not found on the classpath");
+        }
+
         addReportOutputter(new XmlReportOutputter());
         addReportOutputter(new LogReportOutputter());
-        
+
         configureDefaultCircularDependencyStrategies();
-        
+
         listingIgnore.add(".cvsignore");
         listingIgnore.add("CVS");
         listingIgnore.add(".svn");
-        
+
         addSystemProperties();
-	}
+    }
 
     private void addSystemProperties() {
         addAllVariables(System.getProperties());
     }
 
     /**
-     * Call this method to ask ivy to configure some variables using either a remote or a local properties file
+     * Call this method to ask ivy to configure some variables using either a remote or a local
+     * properties file
      */
     public void configureRepositories(boolean remote) {
         if (!repositoriesConfigured) {
@@ -222,23 +258,29 @@ public class IvySettings {
             if (useRemoteConfig && remote) {
                 try {
                     URL url = new URL("http://incubator.apache.org/ivy/repository.properties");
-                    Message.verbose("configuring repositories with "+url);
+                    Message.verbose("configuring repositories with " + url);
                     props.load(URLHandlerRegistry.getDefault().openStream(url));
                     configured = true;
                 } catch (Exception ex) {
-                    Message.verbose("unable to use remote repository configuration: "+ex.getMessage());
+                    Message.verbose("unable to use remote repository configuration: "
+                            + ex.getMessage());
                     props = new Properties();
                 }
             }
             if (!configured) {
-            	InputStream repositoryPropsStream = null;
+                InputStream repositoryPropsStream = null;
                 try {
                     repositoryPropsStream = getSettingsURL("repository.properties").openStream();
-					props.load(repositoryPropsStream);
+                    props.load(repositoryPropsStream);
                 } catch (IOException e) {
-                    Message.error("unable to use internal repository configuration: "+e.getMessage());
+                    Message.error("unable to use internal repository configuration: "
+                            + e.getMessage());
                     if (repositoryPropsStream != null) {
-                    	try {repositoryPropsStream.close();} catch(Exception ex) {};
+                        try {
+                            repositoryPropsStream.close();
+                        } catch (Exception ex) {
+                        }
+                        ;
                     }
                 }
             }
@@ -247,10 +289,10 @@ public class IvySettings {
         }
     }
 
-
     public void typeDefs(InputStream stream) throws IOException {
-    	typeDefs(stream, false);
+        typeDefs(stream, false);
     }
+
     public void typeDefs(InputStream stream, boolean silentFail) throws IOException {
         try {
             Properties p = new Properties();
@@ -262,18 +304,18 @@ public class IvySettings {
     }
 
     public void typeDefs(Properties p) {
-    	typeDefs(p, false);
+        typeDefs(p, false);
     }
+
     public void typeDefs(Properties p, boolean silentFail) {
         for (Iterator iter = p.keySet().iterator(); iter.hasNext();) {
             String name = (String) iter.next();
             typeDef(name, p.getProperty(name), silentFail);
         }
     }
-    
-    
+
     public void load(File settingsFile) throws ParseException, IOException {
-        Message.info(":: loading settings :: file = "+settingsFile);
+        Message.info(":: loading settings :: file = " + settingsFile);
         long start = System.currentTimeMillis();
         setSettingsVariables(settingsFile);
         if (getVariable("ivy.default.ivy.user.dir") != null) {
@@ -282,22 +324,23 @@ public class IvySettings {
             getDefaultIvyUserDir();
         }
         getDefaultCache();
-        
+
         loadDefaultProperties();
         try {
             new XmlSettingsParser(this).parse(settingsFile.toURL());
         } catch (MalformedURLException e) {
-            IllegalArgumentException iae = new IllegalArgumentException("given file cannot be transformed to url: "+settingsFile);
+            IllegalArgumentException iae = new IllegalArgumentException(
+                    "given file cannot be transformed to url: " + settingsFile);
             iae.initCause(e);
             throw iae;
         }
         setVariable("ivy.default.ivy.user.dir", getDefaultIvyUserDir().getAbsolutePath(), false);
-        Message.verbose("settings loaded ("+(System.currentTimeMillis()-start)+"ms)");
+        Message.verbose("settings loaded (" + (System.currentTimeMillis() - start) + "ms)");
         dumpSettings();
     }
 
     public void load(URL settingsURL) throws ParseException, IOException {
-        Message.info(":: loading settings :: url = "+settingsURL);
+        Message.info(":: loading settings :: url = " + settingsURL);
         long start = System.currentTimeMillis();
         setSettingsVariables(settingsURL);
         if (getVariable("ivy.default.ivy.user.dir") != null) {
@@ -306,11 +349,11 @@ public class IvySettings {
             getDefaultIvyUserDir();
         }
         getDefaultCache();
-        
+
         loadDefaultProperties();
         new XmlSettingsParser(this).parse(settingsURL);
         setVariable("ivy.default.ivy.user.dir", getDefaultIvyUserDir().getAbsolutePath(), false);
-        Message.verbose("settings loaded ("+(System.currentTimeMillis()-start)+"ms)");
+        Message.verbose("settings loaded (" + (System.currentTimeMillis() - start) + "ms)");
         dumpSettings();
     }
 
@@ -322,14 +365,14 @@ public class IvySettings {
         load(getDefault14SettingsURL());
     }
 
-	private void loadDefaultProperties() throws IOException {
-		loadProperties(getDefaultPropertiesURL(), false);
-	}
+    private void loadDefaultProperties() throws IOException {
+        loadProperties(getDefaultPropertiesURL(), false);
+    }
 
-	public static URL getDefaultPropertiesURL() {
-		return getSettingsURL("ivy.properties");
-	}
-	
+    public static URL getDefaultPropertiesURL() {
+        return getSettingsURL("ivy.properties");
+    }
+
     public static URL getDefaultSettingsURL() {
         return getSettingsURL("ivysettings.xml");
     }
@@ -338,14 +381,15 @@ public class IvySettings {
         return getSettingsURL("ivysettings-1.4.xml");
     }
 
-	private String getDefaultSettingsDir() {
-		String ivysettingsLocation = getDefaultSettingsURL().toExternalForm();
-		return ivysettingsLocation.substring(0, ivysettingsLocation.length() - "ivysettings.xml".length() - 1);
-	}
+    private String getDefaultSettingsDir() {
+        String ivysettingsLocation = getDefaultSettingsURL().toExternalForm();
+        return ivysettingsLocation.substring(0, ivysettingsLocation.length()
+                - "ivysettings.xml".length() - 1);
+    }
 
-	private static URL getSettingsURL(String file) {
-		return XmlSettingsParser.class.getResource(file);
-	}
+    private static URL getSettingsURL(String file) {
+        return XmlSettingsParser.class.getResource(file);
+    }
 
     public void setSettingsVariables(File settingsFile) {
         try {
@@ -356,22 +400,26 @@ public class IvySettings {
             setVariable("ivy.settings.url", settingsFile.toURL().toExternalForm());
             setDeprecatedVariable("ivy.conf.url", "ivy.settings.url");
         } catch (MalformedURLException e) {
-            IllegalArgumentException iae = new IllegalArgumentException("given file cannot be transformed to url: "+settingsFile);
+            IllegalArgumentException iae = new IllegalArgumentException(
+                    "given file cannot be transformed to url: " + settingsFile);
             iae.initCause(e);
             throw iae;
         }
     }
-    
+
     /**
      * Sets a deprecated variable with the value of the new variable
-     * @param deprecatedKey the deprecated variable name
-     * @param newKey the new variable name
+     * 
+     * @param deprecatedKey
+     *            the deprecated variable name
+     * @param newKey
+     *            the new variable name
      */
     private void setDeprecatedVariable(String deprecatedKey, String newKey) {
-		setVariable(deprecatedKey, getVariable(newKey));
-	}
+        setVariable(deprecatedKey, getVariable(newKey));
+    }
 
-	public void setSettingsVariables(URL settingsURL) {
+    public void setSettingsVariables(URL settingsURL) {
         String settingsURLStr = settingsURL.toExternalForm();
         setVariable("ivy.settings.url", settingsURLStr);
         setDeprecatedVariable("ivy.conf.url", "ivy.settings.url");
@@ -380,38 +428,39 @@ public class IvySettings {
             setVariable("ivy.settings.dir", settingsURLStr.substring(0, slashIndex));
             setDeprecatedVariable("ivy.conf.dir", "ivy.settings.dir");
         } else {
-            Message.warn("settings url does not contain any slash (/): ivy.settings.dir variable not set");
+            Message
+                    .warn("settings url does not contain any slash (/): ivy.settings.dir variable not set");
         }
     }
-    
+
     private void dumpSettings() {
-        Message.verbose("\tdefault cache: "+getDefaultCache());
-        Message.verbose("\tdefault resolver: "+getDefaultResolver());
-        Message.debug("\tdefault latest strategy: "+getDefaultLatestStrategy());
-        Message.debug("\tdefault conflict manager: "+getDefaultConflictManager());
-        Message.debug("\tcircular dependency strategy: "+getCircularDependencyStrategy());
-        Message.debug("\tvalidate: "+doValidate());
-        Message.debug("\tcheck up2date: "+isCheckUpToDate());
-        Message.debug("\tcache ivy pattern: "+getCacheIvyPattern());
-        Message.debug("\tcache artifact pattern: "+getCacheArtifactPattern());
-        
+        Message.verbose("\tdefault cache: " + getDefaultCache());
+        Message.verbose("\tdefault resolver: " + getDefaultResolver());
+        Message.debug("\tdefault latest strategy: " + getDefaultLatestStrategy());
+        Message.debug("\tdefault conflict manager: " + getDefaultConflictManager());
+        Message.debug("\tcircular dependency strategy: " + getCircularDependencyStrategy());
+        Message.debug("\tvalidate: " + doValidate());
+        Message.debug("\tcheck up2date: " + isCheckUpToDate());
+        Message.debug("\tcache ivy pattern: " + getCacheIvyPattern());
+        Message.debug("\tcache artifact pattern: " + getCacheArtifactPattern());
+
         if (!classpathURLs.isEmpty()) {
-            Message.verbose("\t-- "+ classpathURLs.size()+" custom classpath urls:");
+            Message.verbose("\t-- " + classpathURLs.size() + " custom classpath urls:");
             for (Iterator iter = classpathURLs.iterator(); iter.hasNext();) {
-                Message.debug("\t\t"+iter.next());
+                Message.debug("\t\t" + iter.next());
             }
         }
-        Message.verbose("\t-- "+ resolversMap.size()+" resolvers:");
+        Message.verbose("\t-- " + resolversMap.size() + " resolvers:");
         for (Iterator iter = resolversMap.values().iterator(); iter.hasNext();) {
-            DependencyResolver resolver = (DependencyResolver)iter.next();
+            DependencyResolver resolver = (DependencyResolver) iter.next();
             resolver.dumpSettings();
         }
         if (!moduleSettings.isEmpty()) {
             Message.debug("\tmodule settings:");
             for (Iterator iter = moduleSettings.keySet().iterator(); iter.hasNext();) {
-                ModuleIdMatcher midm = (ModuleIdMatcher)iter.next();
+                ModuleIdMatcher midm = (ModuleIdMatcher) iter.next();
                 ModuleSettings s = (ModuleSettings) moduleSettings.get(midm);
-                Message.debug("\t\t"+midm+" -> "+s);
+                Message.debug("\t\t" + midm + " -> " + s);
             }
         }
     }
@@ -419,57 +468,59 @@ public class IvySettings {
     public void loadProperties(URL url) throws IOException {
         loadProperties(url, true);
     }
+
     public void loadProperties(URL url, boolean overwrite) throws IOException {
         loadProperties(url.openStream(), overwrite);
     }
+
     public void loadProperties(File file) throws IOException {
         loadProperties(file, true);
     }
-    
+
     public void loadProperties(File file, boolean overwrite) throws IOException {
         loadProperties(new FileInputStream(file), overwrite);
     }
-    
+
     private void loadProperties(InputStream stream, boolean overwrite) throws IOException {
-    	try {
-	        Properties properties = new Properties();
-	        properties.load(stream);
-	        addAllVariables(properties, overwrite);
-    	} finally {
-    		if (stream != null) {
-    			try {
-    				stream.close();
-    			} catch (IOException e) {}
-    		}
-    	}
+        try {
+            Properties properties = new Properties();
+            properties.load(stream);
+            addAllVariables(properties, overwrite);
+        } finally {
+            if (stream != null) {
+                try {
+                    stream.close();
+                } catch (IOException e) {
+                }
+            }
+        }
     }
-    
+
     public void setVariable(String varName, String value) {
         setVariable(varName, value, true);
     }
-    
-    
+
     public void setVariable(String varName, String value, boolean overwrite) {
-    	variableContainer.setVariable(varName , value, overwrite);
+        variableContainer.setVariable(varName, value, overwrite);
     }
-    
+
     public void addAllVariables(Map variables) {
         addAllVariables(variables, true);
     }
 
     public void addAllVariables(Map variables, boolean overwrite) {
         for (Iterator iter = variables.keySet().iterator(); iter.hasNext();) {
-            String key = (String)iter.next();
-            String val = (String)variables.get(key);
+            String key = (String) iter.next();
+            String val = (String) variables.get(key);
             setVariable(key, val, overwrite);
         }
     }
 
     /**
-     * Substitute variables in the given string by their value found in the current 
-     * set of variables
+     * Substitute variables in the given string by their value found in the current set of variables
      * 
-     * @param str the string in which substitution should be made
+     * @param str
+     *            the string in which substitution should be made
      * @return the string where all current ivy variables have been substituted by their value
      */
     public String substitute(String str) {
@@ -477,8 +528,8 @@ public class IvySettings {
     }
 
     /**
-     * Returns the variables loaded in configuration file. Those variables
-     * may better be seen as ant properties 
+     * Returns the variables loaded in configuration file. Those variables may better be seen as ant
+     * properties
      * 
      * @return
      */
@@ -489,25 +540,27 @@ public class IvySettings {
     public Class typeDef(String name, String className) {
         return typeDef(name, className, false);
     }
-    
+
     public Class typeDef(String name, String className, boolean silentFail) {
         Class clazz = classForName(className, silentFail);
         if (clazz != null) {
-        	typeDefs.put(name, clazz);
+            typeDefs.put(name, clazz);
         }
         return clazz;
     }
-    
+
     private Class classForName(String className, boolean silentFail) {
         try {
             return getClassLoader().loadClass(className);
         } catch (ClassNotFoundException e) {
-        	if (silentFail) {
-        		Message.info("impossible to define new type: class not found: "+className+" in "+ classpathURLs +" nor Ivy classloader");
-        		return null;
-        	} else {
-        		throw new RuntimeException("impossible to define new type: class not found: "+className+" in "+ classpathURLs +" nor Ivy classloader");
-        	}
+            if (silentFail) {
+                Message.info("impossible to define new type: class not found: " + className
+                        + " in " + classpathURLs + " nor Ivy classloader");
+                return null;
+            } else {
+                throw new RuntimeException("impossible to define new type: class not found: "
+                        + className + " in " + classpathURLs + " nor Ivy classloader");
+            }
         }
     }
 
@@ -516,14 +569,12 @@ public class IvySettings {
             if (classpathURLs.isEmpty()) {
                 classloader = Ivy.class.getClassLoader();
             } else {
-                classloader = new URLClassLoader(
-                        (URL[]) classpathURLs.toArray(new URL[classpathURLs.size()]),
-                        Ivy.class.getClassLoader());
+                classloader = new URLClassLoader((URL[]) classpathURLs
+                        .toArray(new URL[classpathURLs.size()]), Ivy.class.getClassLoader());
             }
         }
         return classloader;
     }
-
 
     public void addClasspathURL(URL url) {
         classpathURLs.add(url);
@@ -542,11 +593,11 @@ public class IvySettings {
     public void addConfigured(DependencyResolver resolver) {
         addResolver(resolver);
     }
-    
+
     public void addConfigured(ModuleDescriptorParser parser) {
         ModuleDescriptorParserRegistry.getInstance().addParser(parser);
     }
-    
+
     public void addResolver(DependencyResolver resolver) {
         if (resolver == null) {
             throw new NullPointerException("null resolver");
@@ -554,17 +605,17 @@ public class IvySettings {
         init(resolver);
         resolversMap.put(resolver.getName(), resolver);
         if (resolver instanceof ChainResolver) {
-            List subresolvers = ((ChainResolver)resolver).getResolvers();
+            List subresolvers = ((ChainResolver) resolver).getResolvers();
             for (Iterator iter = subresolvers.iterator(); iter.hasNext();) {
-                DependencyResolver dr = (DependencyResolver)iter.next();
+                DependencyResolver dr = (DependencyResolver) iter.next();
                 addResolver(dr);
             }
         } else if (resolver instanceof DualResolver) {
-            DependencyResolver ivyResolver = ((DualResolver)resolver).getIvyResolver();
+            DependencyResolver ivyResolver = ((DualResolver) resolver).getIvyResolver();
             if (ivyResolver != null) {
                 addResolver(ivyResolver);
             }
-            DependencyResolver artifactResolver = ((DualResolver)resolver).getArtifactResolver();
+            DependencyResolver artifactResolver = ((DualResolver) resolver).getArtifactResolver();
             if (artifactResolver != null) {
                 addResolver(artifactResolver);
             }
@@ -574,60 +625,65 @@ public class IvySettings {
     public void setDefaultCache(File cacheDirectory) {
         defaultCache = cacheDirectory;
     }
-    
+
     public void setDefaultResolver(String resolverName) {
         checkResolverName(resolverName);
         defaultResolverName = resolverName;
     }
-    
+
     private void checkResolverName(String resolverName) {
         if (resolverName != null && !resolversMap.containsKey(resolverName)) {
-            throw new IllegalArgumentException("no resolver found called "+resolverName+": check your settings");
+            throw new IllegalArgumentException("no resolver found called " + resolverName
+                    + ": check your settings");
         }
     }
 
     /**
-     * regular expressions as explained in Pattern class may be used in ModuleId
-     * organisation and name
+     * regular expressions as explained in Pattern class may be used in ModuleId organisation and
+     * name
      * 
      * @param moduleId
      * @param resolverName
-     * @param branch 
+     * @param branch
      */
-    public void addModuleConfiguration(ModuleId mid, PatternMatcher matcher, String resolverName, String branch, String conflictManager) {
+    public void addModuleConfiguration(ModuleId mid, PatternMatcher matcher, String resolverName,
+            String branch, String conflictManager) {
         checkResolverName(resolverName);
-        moduleSettings.put(new ModuleIdMatcher(mid, matcher), new ModuleSettings(resolverName, branch, conflictManager));
+        moduleSettings.put(new ModuleIdMatcher(mid, matcher), new ModuleSettings(resolverName,
+                branch, conflictManager));
     }
-    
+
     public File getDefaultIvyUserDir() {
-        if (defaultUserDir ==null) {
-        	if (getVariable("ivy.home") != null) {
-        		setDefaultIvyUserDir(new File(getVariable("ivy.home")));
-        		Message.verbose("using ivy.default.ivy.user.dir variable for default ivy user dir: "+ defaultUserDir);
-        	} else {
-        		setDefaultIvyUserDir(new File(System.getProperty("user.home"), ".ivy"));
-        		Message.verbose("no default ivy user dir defined: set to "+ defaultUserDir);
-        	}
+        if (defaultUserDir == null) {
+            if (getVariable("ivy.home") != null) {
+                setDefaultIvyUserDir(new File(getVariable("ivy.home")));
+                Message
+                        .verbose("using ivy.default.ivy.user.dir variable for default ivy user dir: "
+                                + defaultUserDir);
+            } else {
+                setDefaultIvyUserDir(new File(System.getProperty("user.home"), ".ivy"));
+                Message.verbose("no default ivy user dir defined: set to " + defaultUserDir);
+            }
         }
         return defaultUserDir;
     }
-    
+
     public void setDefaultIvyUserDir(File defaultUserDir) {
         this.defaultUserDir = defaultUserDir;
         setVariable("ivy.default.ivy.user.dir", this.defaultUserDir.getAbsolutePath());
         setVariable("ivy.home", this.defaultUserDir.getAbsolutePath());
-    }    
+    }
 
     public File getDefaultCache() {
-        if (defaultCache ==null) {
+        if (defaultCache == null) {
             defaultCache = new File(getDefaultIvyUserDir(), "cache");
-            Message.verbose("no default cache defined: set to "+ defaultCache);
+            Message.verbose("no default cache defined: set to " + defaultCache);
         }
         return defaultCache;
     }
-    
+
     public void setDictatorResolver(DependencyResolver resolver) {
-    	dictatorResolver = resolver;
+        dictatorResolver = resolver;
     }
 
     public DependencyResolver getResolver(ModuleId moduleId) {
@@ -644,7 +700,7 @@ public class IvySettings {
         }
         DependencyResolver resolver = (DependencyResolver) resolversMap.get(resolverName);
         if (resolver == null) {
-            Message.error("unknown resolver "+resolverName);
+            Message.error("unknown resolver " + resolverName);
         }
         return resolver;
     }
@@ -661,95 +717,100 @@ public class IvySettings {
 
     public String getResolverName(ModuleId moduleId) {
         for (Iterator iter = moduleSettings.keySet().iterator(); iter.hasNext();) {
-            ModuleIdMatcher midm = (ModuleIdMatcher)iter.next();
+            ModuleIdMatcher midm = (ModuleIdMatcher) iter.next();
             if (midm.matches(moduleId)) {
-            	ModuleSettings  ms = (ModuleSettings) moduleSettings.get(midm);
-            	if (ms.getResolverName() != null) {
-            		return ms.getResolverName();
-            	}
+                ModuleSettings ms = (ModuleSettings) moduleSettings.get(midm);
+                if (ms.getResolverName() != null) {
+                    return ms.getResolverName();
+                }
             }
         }
         return defaultResolverName;
     }
-    
-	public String getDefaultBranch(ModuleId moduleId) {
+
+    public String getDefaultBranch(ModuleId moduleId) {
         for (Iterator iter = moduleSettings.keySet().iterator(); iter.hasNext();) {
-            ModuleIdMatcher midm = (ModuleIdMatcher)iter.next();
+            ModuleIdMatcher midm = (ModuleIdMatcher) iter.next();
             if (midm.matches(moduleId)) {
-            	ModuleSettings  ms = (ModuleSettings) moduleSettings.get(midm);
-            	if (ms.getBranch() != null) {
-            		return ms.getBranch();
-            	}
+                ModuleSettings ms = (ModuleSettings) moduleSettings.get(midm);
+                if (ms.getBranch() != null) {
+                    return ms.getBranch();
+                }
             }
         }
-		return getDefaultBranch();
-	}
+        return getDefaultBranch();
+    }
 
-	public String getDefaultBranch() {
-		return defaultBranch;
-	}
-	public void setDefaultBranch(String defaultBranch) {
-		this.defaultBranch = defaultBranch;
-	}
+    public String getDefaultBranch() {
+        return defaultBranch;
+    }
 
-	public ConflictManager getConflictManager(ModuleId moduleId) {
+    public void setDefaultBranch(String defaultBranch) {
+        this.defaultBranch = defaultBranch;
+    }
+
+    public ConflictManager getConflictManager(ModuleId moduleId) {
         for (Iterator iter = moduleSettings.keySet().iterator(); iter.hasNext();) {
-            ModuleIdMatcher midm = (ModuleIdMatcher)iter.next();
+            ModuleIdMatcher midm = (ModuleIdMatcher) iter.next();
             if (midm.matches(moduleId)) {
-            	ModuleSettings  ms = (ModuleSettings) moduleSettings.get(midm);
-            	if (ms.getConflictManager() != null) {
-            		ConflictManager cm = getConflictManager(ms.getConflictManager());
-            		if (cm == null) {
-            			throw new IllegalStateException("ivy badly configured: unknown conflict manager "+ms.getConflictManager());
-            		}
-					return cm;
-            	}
+                ModuleSettings ms = (ModuleSettings) moduleSettings.get(midm);
+                if (ms.getConflictManager() != null) {
+                    ConflictManager cm = getConflictManager(ms.getConflictManager());
+                    if (cm == null) {
+                        throw new IllegalStateException(
+                                "ivy badly configured: unknown conflict manager "
+                                        + ms.getConflictManager());
+                    }
+                    return cm;
+                }
             }
         }
-		return getDefaultConflictManager();
-	}
+        return getDefaultConflictManager();
+    }
 
     public void addConfigured(ConflictManager cm) {
         addConflictManager(cm.getName(), cm);
     }
-    
+
     public ConflictManager getConflictManager(String name) {
         if ("default".equals(name)) {
             return getDefaultConflictManager();
         }
         return (ConflictManager) conflictsManager.get(name);
     }
+
     public void addConflictManager(String name, ConflictManager cm) {
         init(cm);
         conflictsManager.put(name, cm);
     }
-    
+
     public void addConfigured(LatestStrategy latest) {
         addLatestStrategy(latest.getName(), latest);
     }
-    
+
     public LatestStrategy getLatestStrategy(String name) {
         if ("default".equals(name)) {
             return getDefaultLatestStrategy();
         }
         return (LatestStrategy) latestStrategies.get(name);
     }
+
     public void addLatestStrategy(String name, LatestStrategy latest) {
         init(latest);
         latestStrategies.put(name, latest);
     }
-    
+
     public void addConfigured(Namespace ns) {
         addNamespace(ns);
     }
-    
+
     public Namespace getNamespace(String name) {
         if ("system".equals(name)) {
             return getSystemNamespace();
         }
         return (Namespace) namespaces.get(name);
     }
-    
+
     public Namespace getSystemNamespace() {
         return Namespace.SYSTEM_NAMESPACE;
     }
@@ -758,107 +819,108 @@ public class IvySettings {
         init(ns);
         namespaces.put(ns.getName(), ns);
     }
-    
+
     public void addConfigured(PatternMatcher m) {
         addMatcher(m);
     }
-    
+
     public PatternMatcher getMatcher(String name) {
         return (PatternMatcher) matchers.get(name);
     }
-    
+
     public void addMatcher(PatternMatcher m) {
         init(m);
         matchers.put(m.getName(), m);
     }
-    
+
     public void addConfigured(ReportOutputter outputter) {
         addReportOutputter(outputter);
-     }
-     
-     public ReportOutputter getReportOutputter(String name) {
+    }
+
+    public ReportOutputter getReportOutputter(String name) {
         return (ReportOutputter) reportOutputters.get(name);
-     }
-     
-     public void addReportOutputter(ReportOutputter outputter) {
-         init(outputter);
+    }
+
+    public void addReportOutputter(ReportOutputter outputter) {
+        init(outputter);
         reportOutputters.put(outputter.getName(), outputter);
-     }
-     
-     public ReportOutputter[] getReportOutputters() {
-        return (ReportOutputter[]) reportOutputters.values().toArray(new ReportOutputter[reportOutputters.size()]);
-     }
-     
-     public void addConfigured(VersionMatcher vmatcher) {
-         addVersionMatcher(vmatcher);
-      }
-      
-      public VersionMatcher getVersionMatcher(String name) {
-         return (VersionMatcher) versionMatchers.get(name);
-      }
-      
-      public void addVersionMatcher(VersionMatcher vmatcher) {
-          init(vmatcher);
-         versionMatchers.put(vmatcher.getName(), vmatcher);
-         
-         if (versionMatcher == null) {
-        	 versionMatcher = new ChainVersionMatcher();
-        	 addVersionMatcher(new ExactVersionMatcher());
-         }
-         if (versionMatcher instanceof ChainVersionMatcher) {
-			ChainVersionMatcher chain = (ChainVersionMatcher) versionMatcher;
-			chain.add(vmatcher);
-		}
-      }
-      
-      public VersionMatcher[] getVersionMatchers() {
-         return (VersionMatcher[]) versionMatchers.values().toArray(new VersionMatcher[versionMatchers.size()]);
-      }
+    }
 
-      public VersionMatcher getVersionMatcher() {
-          if (versionMatcher == null) {
-              configureDefaultVersionMatcher();
-          }
-          return versionMatcher;
-      }
+    public ReportOutputter[] getReportOutputters() {
+        return (ReportOutputter[]) reportOutputters.values().toArray(
+            new ReportOutputter[reportOutputters.size()]);
+    }
 
-      public void configureDefaultVersionMatcher() {
-          addVersionMatcher(new LatestVersionMatcher());
-          addVersionMatcher(new SubVersionMatcher());
-          addVersionMatcher(new VersionRangeMatcher());
-      }
+    public void addConfigured(VersionMatcher vmatcher) {
+        addVersionMatcher(vmatcher);
+    }
 
+    public VersionMatcher getVersionMatcher(String name) {
+        return (VersionMatcher) versionMatchers.get(name);
+    }
 
-  	public CircularDependencyStrategy getCircularDependencyStrategy() {
-  		if (circularDependencyStrategy == null) {
-  			circularDependencyStrategy = getCircularDependencyStrategy("default");
-  		}
-  		return circularDependencyStrategy;
-  	}
+    public void addVersionMatcher(VersionMatcher vmatcher) {
+        init(vmatcher);
+        versionMatchers.put(vmatcher.getName(), vmatcher);
 
-  	public CircularDependencyStrategy getCircularDependencyStrategy(String name) {
-  		if ("default".equals(name)) {
-  			name = "warn";
-  		}
-		return (CircularDependencyStrategy) circularDependencyStrategies.get(name);
-	}
+        if (versionMatcher == null) {
+            versionMatcher = new ChainVersionMatcher();
+            addVersionMatcher(new ExactVersionMatcher());
+        }
+        if (versionMatcher instanceof ChainVersionMatcher) {
+            ChainVersionMatcher chain = (ChainVersionMatcher) versionMatcher;
+            chain.add(vmatcher);
+        }
+    }
 
-	public void setCircularDependencyStrategy(CircularDependencyStrategy strategy) {
-  		circularDependencyStrategy = strategy;
-  	}
-	
-	public void addConfigured(CircularDependencyStrategy strategy) {
-		addCircularDependencyStrategy(strategy);
-	}
+    public VersionMatcher[] getVersionMatchers() {
+        return (VersionMatcher[]) versionMatchers.values().toArray(
+            new VersionMatcher[versionMatchers.size()]);
+    }
+
+    public VersionMatcher getVersionMatcher() {
+        if (versionMatcher == null) {
+            configureDefaultVersionMatcher();
+        }
+        return versionMatcher;
+    }
+
+    public void configureDefaultVersionMatcher() {
+        addVersionMatcher(new LatestVersionMatcher());
+        addVersionMatcher(new SubVersionMatcher());
+        addVersionMatcher(new VersionRangeMatcher());
+    }
+
+    public CircularDependencyStrategy getCircularDependencyStrategy() {
+        if (circularDependencyStrategy == null) {
+            circularDependencyStrategy = getCircularDependencyStrategy("default");
+        }
+        return circularDependencyStrategy;
+    }
+
+    public CircularDependencyStrategy getCircularDependencyStrategy(String name) {
+        if ("default".equals(name)) {
+            name = "warn";
+        }
+        return (CircularDependencyStrategy) circularDependencyStrategies.get(name);
+    }
+
+    public void setCircularDependencyStrategy(CircularDependencyStrategy strategy) {
+        circularDependencyStrategy = strategy;
+    }
+
+    public void addConfigured(CircularDependencyStrategy strategy) {
+        addCircularDependencyStrategy(strategy);
+    }
 
     private void addCircularDependencyStrategy(CircularDependencyStrategy strategy) {
-		circularDependencyStrategies.put(strategy.getName(), strategy);
-	}
-    
+        circularDependencyStrategies.put(strategy.getName(), strategy);
+    }
+
     private void configureDefaultCircularDependencyStrategies() {
-    	addCircularDependencyStrategy(WarnCircularDependencyStrategy.getInstance());
-    	addCircularDependencyStrategy(ErrorCircularDependencyStrategy.getInstance());
-    	addCircularDependencyStrategy(IgnoreCircularDependencyStrategy.getInstance());
+        addCircularDependencyStrategy(WarnCircularDependencyStrategy.getInstance());
+        addCircularDependencyStrategy(ErrorCircularDependencyStrategy.getInstance());
+        addCircularDependencyStrategy(IgnoreCircularDependencyStrategy.getInstance());
     }
 
     public StatusManager getStatusManager() {
@@ -867,32 +929,35 @@ public class IvySettings {
         }
         return statusManager;
     }
+
     public void setStatusManager(StatusManager statusManager) {
         this.statusManager = statusManager;
     }
 
-
     /**
      * Returns true if the name should be ignored in listing
+     * 
      * @param name
      * @return
      */
     public boolean listingIgnore(String name) {
         return listingIgnore.contains(name);
     }
-    
+
     /**
-     * Filters the names list by removing all names that should be ignored
-     * as defined by the listing ignore list
+     * Filters the names list by removing all names that should be ignored as defined by the listing
+     * ignore list
+     * 
      * @param names
      */
     public void filterIgnore(Collection names) {
         names.removeAll(listingIgnore);
     }
-    
+
     public boolean isCheckUpToDate() {
         return checkUpToDate;
     }
+
     public void setCheckUpToDate(boolean checkUpToDate) {
         this.checkUpToDate = checkUpToDate;
     }
@@ -900,27 +965,22 @@ public class IvySettings {
     public String getCacheArtifactPattern() {
         return cacheArtifactPattern;
     }
-    
 
     public void setCacheArtifactPattern(String cacheArtifactPattern) {
         this.cacheArtifactPattern = cacheArtifactPattern;
     }
-    
 
     public String getCacheIvyPattern() {
         return cacheIvyPattern;
     }
-    
 
     public void setCacheIvyPattern(String cacheIvyPattern) {
         this.cacheIvyPattern = cacheIvyPattern;
     }
-    
 
     public String getCacheDataFilePattern() {
         return cacheDataFilePattern;
     }
-
 
     public boolean doValidate() {
         return validate;
@@ -940,12 +1000,10 @@ public class IvySettings {
         }
         return defaultConflictManager;
     }
-    
 
     public void setDefaultConflictManager(ConflictManager defaultConflictManager) {
         this.defaultConflictManager = defaultConflictManager;
     }
-    
 
     public LatestStrategy getDefaultLatestStrategy() {
         if (defaultLatestStrategy == null) {
@@ -953,25 +1011,24 @@ public class IvySettings {
         }
         return defaultLatestStrategy;
     }
-    
 
     public void setDefaultLatestStrategy(LatestStrategy defaultLatestStrategy) {
         this.defaultLatestStrategy = defaultLatestStrategy;
     }
-    
+
     public void addTrigger(Trigger trigger) {
-    	init(trigger);
-    	triggers.add(trigger);
+        init(trigger);
+        triggers.add(trigger);
     }
-    
+
     public List getTriggers() {
-    	return triggers;
+        return triggers;
     }
 
     public void addConfigured(Trigger trigger) {
-    	addTrigger(trigger);
+        addTrigger(trigger);
     }
-    
+
     public boolean isUseRemoteConfig() {
         return useRemoteConfig;
     }
@@ -998,7 +1055,8 @@ public class IvySettings {
     public boolean debugConflictResolution() {
         if (debugConflictResolution == null) {
             String var = getVariable("ivy.log.conflict.resolution");
-            debugConflictResolution =  Boolean.valueOf(var != null && Boolean.valueOf(var).booleanValue());
+            debugConflictResolution = Boolean.valueOf(var != null
+                    && Boolean.valueOf(var).booleanValue());
         }
         return debugConflictResolution.booleanValue();
     }
@@ -1006,80 +1064,87 @@ public class IvySettings {
     public boolean logNotConvertedExclusionRule() {
         return logNotConvertedExclusionRule;
     }
+
     public void setLogNotConvertedExclusionRule(boolean logNotConvertedExclusionRule) {
         this.logNotConvertedExclusionRule = logNotConvertedExclusionRule;
     }
 
     private void init(Object obj) {
-		if (obj instanceof IvySettingsAware) {
-            ((IvySettingsAware)obj).setSettings(this);
+        if (obj instanceof IvySettingsAware) {
+            ((IvySettingsAware) obj).setSettings(this);
         }
-		if (obj instanceof IvyAware) {
-			//TODO
-//            ((IvyAware)obj).setIvy(this);
+        if (obj instanceof IvyAware) {
+            // TODO
+            // ((IvyAware)obj).setIvy(this);
         }
-	}
-    
-    
-	private static class ModuleSettings {
-		private String _resolverName;
-		private String _branch;
-		private String _conflictManager;
-		public ModuleSettings(String resolverName, String branch, String conflictManager) {
-			_resolverName = resolverName;
-			_branch = branch;
-			_conflictManager = conflictManager;
-		}
-		public String toString() {
-			return _resolverName != null ? "resolver: "+_resolverName:""
-					+_branch != null ? "branch: "+_branch:"";
-		}
-		public String getBranch() {
-			return _branch;
-		}
-		public String getResolverName() {
-			return _resolverName;
-		}
-		protected String getConflictManager() {
-			return _conflictManager;
-		}
-	}
+    }
 
+    private static class ModuleSettings {
+        private String _resolverName;
 
-	public String getCacheResolvedIvyPattern() {
-		return cacheResolvedIvyPattern;
-	}
+        private String _branch;
 
-	public String getCacheResolvedIvyPropertiesPattern() {
-		return cacheResolvedIvyPropertiesPattern;
-	}
+        private String _conflictManager;
 
-	public long getInterruptTimeout() {
-		return interruptTimeout;
-	}
+        public ModuleSettings(String resolverName, String branch, String conflictManager) {
+            _resolverName = resolverName;
+            _branch = branch;
+            _conflictManager = conflictManager;
+        }
 
-	public Collection getResolvers() {
-		return resolversMap.values();
-	}
+        public String toString() {
+            return _resolverName != null ? "resolver: " + _resolverName
+                    : "" + _branch != null ? "branch: " + _branch : "";
+        }
 
-	public Collection getResolverNames() {
-		return resolversMap.keySet();
-	}
+        public String getBranch() {
+            return _branch;
+        }
 
-	public Collection getMatcherNames() {
-		return matchers.keySet();
-	}
+        public String getResolverName() {
+            return _resolverName;
+        }
 
-	public IvyVariableContainer getVariableContainer() {
-		return variableContainer;
-	}
+        protected String getConflictManager() {
+            return _conflictManager;
+        }
+    }
 
-	/** 
-	 * Use a different variable container.
-	 * @param variables
-	 */
-	public void setVariableContainer(IvyVariableContainer variables) {
-		variableContainer = variables;
-	}
+    public String getCacheResolvedIvyPattern() {
+        return cacheResolvedIvyPattern;
+    }
+
+    public String getCacheResolvedIvyPropertiesPattern() {
+        return cacheResolvedIvyPropertiesPattern;
+    }
+
+    public long getInterruptTimeout() {
+        return interruptTimeout;
+    }
+
+    public Collection getResolvers() {
+        return resolversMap.values();
+    }
+
+    public Collection getResolverNames() {
+        return resolversMap.keySet();
+    }
+
+    public Collection getMatcherNames() {
+        return matchers.keySet();
+    }
+
+    public IvyVariableContainer getVariableContainer() {
+        return variableContainer;
+    }
+
+    /**
+     * Use a different variable container.
+     * 
+     * @param variables
+     */
+    public void setVariableContainer(IvyVariableContainer variables) {
+        variableContainer = variables;
+    }
 
 }

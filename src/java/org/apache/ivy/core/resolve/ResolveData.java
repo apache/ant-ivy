@@ -30,148 +30,150 @@ import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.report.ConfigurationResolveReport;
 import org.apache.ivy.core.settings.IvySettings;
 
-
 public class ResolveData {
-	private ResolveEngine engine;
+    private ResolveEngine engine;
+
     private Map visitData; // shared map of all visit data: Map (ModuleRevisionId -> VisitData)
+
     private ConfigurationResolveReport report;
 
     private ResolveOptions options;
 
     public ResolveData(ResolveData data, boolean validate) {
-        this(data.engine, new ResolveOptions(data.options).setValidate(validate), data.report, data.visitData);
+        this(data.engine, new ResolveOptions(data.options).setValidate(validate), data.report,
+                data.visitData);
     }
 
     public ResolveData(ResolveEngine engine, ResolveOptions options) {
         this(engine, options, null, new LinkedHashMap());
     }
 
-    public ResolveData(ResolveEngine engine, ResolveOptions options, ConfigurationResolveReport report) {
+    public ResolveData(ResolveEngine engine, ResolveOptions options,
+            ConfigurationResolveReport report) {
         this(engine, options, report, new LinkedHashMap());
     }
 
-    public ResolveData(ResolveEngine engine, ResolveOptions options, ConfigurationResolveReport report, Map visitData) {
-    	this.engine = engine;
+    public ResolveData(ResolveEngine engine, ResolveOptions options,
+            ConfigurationResolveReport report, Map visitData) {
+        this.engine = engine;
         this.report = report;
         this.visitData = visitData;
         this.options = options;
     }
-    
 
     /**
-     * Returns the Map of visit data.
-     * Map (ModuleRevisionId -> VisitData)
+     * Returns the Map of visit data. Map (ModuleRevisionId -> VisitData)
+     * 
      * @return
      */
     public Map getVisitDataMap() {
         return visitData;
     }
-    
 
     public ConfigurationResolveReport getReport() {
         return report;
     }
-    
-
 
     public IvyNode getNode(ModuleRevisionId mrid) {
         VisitData visitData = getVisitData(mrid);
-		return visitData == null ? null : visitData.getNode();
+        return visitData == null ? null : visitData.getNode();
     }
-    
+
     public Collection getNodes() {
-    	Collection nodes = new ArrayList();
-    	for (Iterator iter = visitData.values().iterator(); iter.hasNext();) {
-			VisitData vdata = (VisitData) iter.next();
-			nodes.add(vdata.getNode());
-		}
-    	return nodes;
+        Collection nodes = new ArrayList();
+        for (Iterator iter = visitData.values().iterator(); iter.hasNext();) {
+            VisitData vdata = (VisitData) iter.next();
+            nodes.add(vdata.getNode());
+        }
+        return nodes;
     }
-    
+
     public Collection getNodeIds() {
-    	return visitData.keySet();
+        return visitData.keySet();
     }
-    
+
     public VisitData getVisitData(ModuleRevisionId mrid) {
-    	return (VisitData) visitData.get(mrid);
+        return (VisitData) visitData.get(mrid);
     }
 
     public void register(VisitNode node) {
-    	register(node.getId(), node);
+        register(node.getId(), node);
     }
 
     public void register(ModuleRevisionId mrid, VisitNode node) {
-		VisitData visitData = getVisitData(mrid);
-    	if (visitData == null) {
-    		visitData = new VisitData(node.getNode());
-    		visitData.addVisitNode(node);
-    		this.visitData.put(mrid, visitData);
-    	} else {
-    		visitData.setNode(node.getNode());
-    		visitData.addVisitNode(node);
-    	}
+        VisitData visitData = getVisitData(mrid);
+        if (visitData == null) {
+            visitData = new VisitData(node.getNode());
+            visitData.addVisitNode(node);
+            this.visitData.put(mrid, visitData);
+        } else {
+            visitData.setNode(node.getNode());
+            visitData.addVisitNode(node);
+        }
     }
 
     /**
-     * Updates the visit data currently associated with the given mrid
-     * with the given node and the visit nodes of the old visitData
-     * for the given rootModuleConf
-     * @param mrid the module revision id for which the update should be done
-     * @param node the IvyNode to associate with the visit data to update
-     * @param rootModuleConf the root module configuration in which the update is made
+     * Updates the visit data currently associated with the given mrid with the given node and the
+     * visit nodes of the old visitData for the given rootModuleConf
+     * 
+     * @param mrid
+     *            the module revision id for which the update should be done
+     * @param node
+     *            the IvyNode to associate with the visit data to update
+     * @param rootModuleConf
+     *            the root module configuration in which the update is made
      */
     void replaceNode(ModuleRevisionId mrid, IvyNode node, String rootModuleConf) {
-		VisitData visitData = getVisitData(mrid);
-    	if (visitData == null) {
-    		throw new IllegalArgumentException("impossible to replace node for id "+mrid+". No registered node found.");
-    	}
-    	VisitData keptVisitData = getVisitData(node.getId());
-    	if (keptVisitData == null) {
-    		throw new IllegalArgumentException("impossible to replace node with "+node+". No registered node found for "+node.getId()+".");
-    	}
-    	// replace visit data in Map (discards old one)
-    	this.visitData.put(mrid, keptVisitData);
-    	// update visit data with discarde visit nodes
-    	keptVisitData.addVisitNodes(rootModuleConf, visitData.getVisitNodes(rootModuleConf));
+        VisitData visitData = getVisitData(mrid);
+        if (visitData == null) {
+            throw new IllegalArgumentException("impossible to replace node for id " + mrid
+                    + ". No registered node found.");
+        }
+        VisitData keptVisitData = getVisitData(node.getId());
+        if (keptVisitData == null) {
+            throw new IllegalArgumentException("impossible to replace node with " + node
+                    + ". No registered node found for " + node.getId() + ".");
+        }
+        // replace visit data in Map (discards old one)
+        this.visitData.put(mrid, keptVisitData);
+        // update visit data with discarde visit nodes
+        keptVisitData.addVisitNodes(rootModuleConf, visitData.getVisitNodes(rootModuleConf));
     }
-    
+
     public void setReport(ConfigurationResolveReport report) {
         this.report = report;
     }
 
-
-	public Date getDate() {
+    public Date getDate() {
         return options.getDate();
     }
-	
+
     public boolean isValidate() {
         return options.isValidate();
     }
-    
-	public boolean isTransitive() {
-		return options.isTransitive();
-	}
-	
-	public ResolveOptions getOptions() {
-		return options;
-	}
 
-	public CacheManager getCacheManager() {
-		return options.getCache();
-	}
+    public boolean isTransitive() {
+        return options.isTransitive();
+    }
 
-	public IvySettings getSettings() {
-		return engine.getSettings();
-	}
+    public ResolveOptions getOptions() {
+        return options;
+    }
 
-	public EventManager getEventManager() {
-		return engine.getEventManager();
-	}
+    public CacheManager getCacheManager() {
+        return options.getCache();
+    }
 
-	public ResolveEngine getEngine() {
-		return engine;
-	}
-    
+    public IvySettings getSettings() {
+        return engine.getSettings();
+    }
 
-    
+    public EventManager getEventManager() {
+        return engine.getEventManager();
+    }
+
+    public ResolveEngine getEngine() {
+        return engine;
+    }
+
 }

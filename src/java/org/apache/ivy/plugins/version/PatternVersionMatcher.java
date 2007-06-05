@@ -26,73 +26,74 @@ import java.util.Map;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.plugins.matcher.Matcher;
 
-
 /**
  * 
  */
 public class PatternVersionMatcher extends AbstractVersionMatcher {
 
-	private List _matches = new ArrayList(); 
-	private Map _revisionMatches = new HashMap();  // revision -> list of Match instances
-	private boolean _init = false;
+    private List _matches = new ArrayList();
 
-	public void addMatch(Match match) {
-		_matches.add(match);
-	}
-	
-	private void init() {
-		if (!_init) {
-			for (Iterator it = _matches.iterator(); it.hasNext(); ) {
-				Match match = (Match) it.next();
-				List matches = (List) _revisionMatches.get(match.getRevision());
-				if (matches == null) {
-					matches = new ArrayList();
-					_revisionMatches.put(match.getRevision(), matches);
-				}
-				matches.add(match);
-			}
-			_init = true;
-		}
-	}
+    private Map _revisionMatches = new HashMap(); // revision -> list of Match instances
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public boolean accept(ModuleRevisionId askedMrid, ModuleRevisionId foundMrid) {
-		init();
-		boolean accept = false;
+    private boolean _init = false;
 
-		String revision = askedMrid.getRevision();
-		int bracketIndex = revision.indexOf('(');
-		if (bracketIndex > 0) {
-			revision = revision.substring(0, bracketIndex);
-		}
-		
-		List matches = (List) _revisionMatches.get(revision);
-		
-		if (matches != null) {
-			Iterator it = matches.iterator();
-			while (!accept && it.hasNext()) {
-				Match match = (Match) it.next();
-				Matcher matcher = match.getPatternMatcher(askedMrid);
-				accept = matcher.matches(foundMrid.getRevision());
-			}
-		}
-		
-		return accept;
-	}
+    public void addMatch(Match match) {
+        _matches.add(match);
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public boolean isDynamic(ModuleRevisionId askedMrid) {
-		init();
-		String revision = askedMrid.getRevision();
-		int bracketIndex = revision.indexOf('(');
-		if (bracketIndex > 0) {
-			revision = revision.substring(0, bracketIndex);
-		}
-		return _revisionMatches.containsKey(revision);
-	}
+    private void init() {
+        if (!_init) {
+            for (Iterator it = _matches.iterator(); it.hasNext();) {
+                Match match = (Match) it.next();
+                List matches = (List) _revisionMatches.get(match.getRevision());
+                if (matches == null) {
+                    matches = new ArrayList();
+                    _revisionMatches.put(match.getRevision(), matches);
+                }
+                matches.add(match);
+            }
+            _init = true;
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public boolean accept(ModuleRevisionId askedMrid, ModuleRevisionId foundMrid) {
+        init();
+        boolean accept = false;
+
+        String revision = askedMrid.getRevision();
+        int bracketIndex = revision.indexOf('(');
+        if (bracketIndex > 0) {
+            revision = revision.substring(0, bracketIndex);
+        }
+
+        List matches = (List) _revisionMatches.get(revision);
+
+        if (matches != null) {
+            Iterator it = matches.iterator();
+            while (!accept && it.hasNext()) {
+                Match match = (Match) it.next();
+                Matcher matcher = match.getPatternMatcher(askedMrid);
+                accept = matcher.matches(foundMrid.getRevision());
+            }
+        }
+
+        return accept;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public boolean isDynamic(ModuleRevisionId askedMrid) {
+        init();
+        String revision = askedMrid.getRevision();
+        int bracketIndex = revision.indexOf('(');
+        if (bracketIndex > 0) {
+            revision = revision.substring(0, bracketIndex);
+        }
+        return _revisionMatches.containsKey(revision);
+    }
 
 }

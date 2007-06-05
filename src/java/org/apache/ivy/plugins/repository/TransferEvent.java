@@ -21,12 +21,9 @@ import java.io.File;
 
 import org.apache.ivy.core.event.IvyEvent;
 
-
 /**
- * TransferEvent is used to notify TransferListeners about progress in transfer
- * of resources form/to the respository
- * 
- * This class is LARGELY inspired by org.apache.maven.wagon.events.TransferEvent
+ * TransferEvent is used to notify TransferListeners about progress in transfer of resources form/to
+ * the respository This class is LARGELY inspired by org.apache.maven.wagon.events.TransferEvent
  * released under the following copyright license:
  * 
  * <pre>
@@ -48,7 +45,6 @@ import org.apache.ivy.core.event.IvyEvent;
  * </pre>
  * 
  * Orginal class written by Michal Maczka.
- * 
  */
 public class TransferEvent extends IvyEvent {
     /**
@@ -86,16 +82,15 @@ public class TransferEvent extends IvyEvent {
      */
     public final static int REQUEST_PUT = 6;
 
-    
-	public static final String TRANSFER_INITIATED_NAME = "transfer-initiated";
+    public static final String TRANSFER_INITIATED_NAME = "transfer-initiated";
 
-	public static final String TRANSFER_STARTED_NAME = "transfer-started";
+    public static final String TRANSFER_STARTED_NAME = "transfer-started";
 
-	public static final String TRANSFER_PROGRESS_NAME = "transfer-progress";
+    public static final String TRANSFER_PROGRESS_NAME = "transfer-progress";
 
-	public static final String TRANSFER_COMPLETED_NAME = "transfer-completed";
+    public static final String TRANSFER_COMPLETED_NAME = "transfer-completed";
 
-	public static final String TRANSFER_ERROR_NAME = "transfer-error";
+    public static final String TRANSFER_ERROR_NAME = "transfer-error";
 
     private Resource _resource;
 
@@ -108,14 +103,17 @@ public class TransferEvent extends IvyEvent {
     private File _localFile;
 
     private Repository _repository;
+
     private long _length;
 
     private long _totalLength;
+
     private boolean _isTotalLengthSet = false;
 
-    public TransferEvent(final Repository repository, final Resource resource, final int eventType, final int requestType) {
-    	super(getName(eventType));
-    	
+    public TransferEvent(final Repository repository, final Resource resource, final int eventType,
+            final int requestType) {
+        super(getName(eventType));
+
         _repository = repository;
         addAttribute("repository", _repository.getName());
         _resource = resource;
@@ -124,16 +122,18 @@ public class TransferEvent extends IvyEvent {
         setEventType(eventType);
 
         setRequestType(requestType);
-        addAttribute("request-type", requestType == REQUEST_GET?"get":"put");
+        addAttribute("request-type", requestType == REQUEST_GET ? "get" : "put");
     }
 
-	public TransferEvent(final Repository repository, final Resource resource, final Exception exception, final int requestType) {
+    public TransferEvent(final Repository repository, final Resource resource,
+            final Exception exception, final int requestType) {
         this(repository, resource, TRANSFER_ERROR, requestType);
 
         _exception = exception;
     }
 
-    public TransferEvent(final Repository repository, final Resource resource, long length, final int requestType) {
+    public TransferEvent(final Repository repository, final Resource resource, long length,
+            final int requestType) {
         this(repository, resource, TRANSFER_PROGRESS, requestType);
 
         _length = length;
@@ -141,21 +141,20 @@ public class TransferEvent extends IvyEvent {
     }
 
     private static String getName(int eventType) {
-    	switch (eventType) {
-		case TRANSFER_INITIATED:
-			return TRANSFER_INITIATED_NAME;
-		case TRANSFER_STARTED:
-			return TRANSFER_STARTED_NAME;
-		case TRANSFER_PROGRESS:
-			return TRANSFER_PROGRESS_NAME;
-		case TRANSFER_COMPLETED:
-			return TRANSFER_COMPLETED_NAME;
-		case TRANSFER_ERROR:
-			return TRANSFER_ERROR_NAME;
-		}
-		return null;
-	}
-
+        switch (eventType) {
+            case TRANSFER_INITIATED:
+                return TRANSFER_INITIATED_NAME;
+            case TRANSFER_STARTED:
+                return TRANSFER_STARTED_NAME;
+            case TRANSFER_PROGRESS:
+                return TRANSFER_PROGRESS_NAME;
+            case TRANSFER_COMPLETED:
+                return TRANSFER_COMPLETED_NAME;
+            case TRANSFER_ERROR:
+                return TRANSFER_ERROR_NAME;
+        }
+        return null;
+    }
 
     /**
      * @return Returns the resource.
@@ -185,21 +184,20 @@ public class TransferEvent extends IvyEvent {
      * Sets the request type
      * 
      * @param requestType
-     *            The requestType to set. The Request type value should be
-     *            either
+     *            The requestType to set. The Request type value should be either
      *            <code>TransferEvent.REQUEST_GET<code> or <code>TransferEvent.REQUEST_PUT<code>.
      * @throws IllegalArgumentException when
      */
     protected void setRequestType(final int requestType) {
         switch (requestType) {
 
-        case REQUEST_PUT:
-            break;
-        case REQUEST_GET:
-            break;
+            case REQUEST_PUT:
+                break;
+            case REQUEST_GET:
+                break;
 
-        default:
-            throw new IllegalArgumentException("Illegal request type: " + requestType);
+            default:
+                throw new IllegalArgumentException("Illegal request type: " + requestType);
         }
 
         _requestType = requestType;
@@ -219,18 +217,18 @@ public class TransferEvent extends IvyEvent {
     protected void setEventType(final int eventType) {
         switch (eventType) {
 
-        case TRANSFER_INITIATED:
-            break;
-        case TRANSFER_STARTED:
-            break;
-        case TRANSFER_COMPLETED:
-            break;
-        case TRANSFER_PROGRESS:
-            break;
-        case TRANSFER_ERROR:
-            break;
-        default:
-            throw new IllegalArgumentException("Illegal event type: " + eventType);
+            case TRANSFER_INITIATED:
+                break;
+            case TRANSFER_STARTED:
+                break;
+            case TRANSFER_COMPLETED:
+                break;
+            case TRANSFER_PROGRESS:
+                break;
+            case TRANSFER_ERROR:
+                break;
+            default:
+                throw new IllegalArgumentException("Illegal event type: " + eventType);
         }
 
         this._eventType = eventType;
@@ -259,11 +257,9 @@ public class TransferEvent extends IvyEvent {
         _localFile = localFile;
     }
 
-
     public long getLength() {
         return _length;
     }
-    
 
     protected void setLength(long length) {
         _length = length;
@@ -288,7 +284,5 @@ public class TransferEvent extends IvyEvent {
     public void setTotalLengthSet(boolean isTotalLengthSet) {
         _isTotalLengthSet = isTotalLengthSet;
     }
-    
-    
-    
+
 }

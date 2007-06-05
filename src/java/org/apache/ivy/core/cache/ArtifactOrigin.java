@@ -19,54 +19,63 @@ package org.apache.ivy.core.cache;
 
 /**
  * This class contains information about the origin of an artifact.
+ * 
  * @see org.apache.ivy.plugins.resolver.BasicResolver
  * @see org.apache.ivy.plugins.resolver.util.ResolvedResource
  */
-public class ArtifactOrigin {    
+public class ArtifactOrigin {
     private boolean isLocal;
-	private String location;
+
+    private String location;
 
     /**
-     *  Create a new instance
+     * Create a new instance
      * 
-     * @param isLocal <code>boolean</code> value indicating if the resource is local (on the filesystem).
-     * @param location the location of the resource (normally a url)
+     * @param isLocal
+     *            <code>boolean</code> value indicating if the resource is local (on the
+     *            filesystem).
+     * @param location
+     *            the location of the resource (normally a url)
      */
     public ArtifactOrigin(boolean isLocal, String location) {
-		this.isLocal = isLocal;
-		this.location = location;
-	}
+        this.isLocal = isLocal;
+        this.location = location;
+    }
 
     /**
      * Is this resource local to this host, i.e. is it on the file system?
-     *
+     * 
      * @return <code>boolean</code> value indicating if the resource is local.
      */
     public boolean isLocal() {
-		return isLocal;
-	}
+        return isLocal;
+    }
 
     /**
      * Return the location of the resource (normally a url)
-     *
+     * 
      * @return the location of the resource
      */
     public String getLocation() {
-		return location;
-	}
+        return location;
+    }
 
     public String toString() {
         return "ArtifactOrigin { isLocal=" + isLocal + ", location=" + location + "}";
     }
 
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
 
         ArtifactOrigin that = (ArtifactOrigin) o;
 
-        if (isLocal != that.isLocal) return false;
-        if (!location.equals(that.location)) return false;
+        if (isLocal != that.isLocal)
+            return false;
+        if (!location.equals(that.location))
+            return false;
 
         return true;
     }

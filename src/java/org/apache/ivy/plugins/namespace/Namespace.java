@@ -23,20 +23,22 @@ import java.util.List;
 
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 
-
 public class Namespace {
     public static final Namespace SYSTEM_NAMESPACE;
     static {
         SYSTEM_NAMESPACE = new Namespace();
     }
-    
+
     private List _rules = new ArrayList();
+
     private String _name;
+
     private boolean _chainRules = false;
+
     private NamespaceTransformer _fromSystemTransformer = new NamespaceTransformer() {
         public ModuleRevisionId transform(ModuleRevisionId mrid) {
             for (Iterator iter = _rules.iterator(); iter.hasNext();) {
-                NamespaceRule rule = (NamespaceRule)iter.next();
+                NamespaceRule rule = (NamespaceRule) iter.next();
                 ModuleRevisionId nmrid = rule.getFromSystem().transform(mrid);
                 if (_chainRules) {
                     mrid = nmrid;
@@ -46,14 +48,16 @@ public class Namespace {
             }
             return mrid;
         }
+
         public boolean isIdentity() {
             return _rules.isEmpty();
         }
     };
+
     private NamespaceTransformer _toSystemTransformer = new NamespaceTransformer() {
         public ModuleRevisionId transform(ModuleRevisionId mrid) {
             for (Iterator iter = _rules.iterator(); iter.hasNext();) {
-                NamespaceRule rule = (NamespaceRule)iter.next();
+                NamespaceRule rule = (NamespaceRule) iter.next();
                 ModuleRevisionId nmrid = rule.getToSystem().transform(mrid);
                 if (_chainRules) {
                     mrid = nmrid;
@@ -63,11 +67,12 @@ public class Namespace {
             }
             return mrid;
         }
+
         public boolean isIdentity() {
             return _rules.isEmpty();
         }
     };
-    
+
     public void addRule(NamespaceRule rule) {
         _rules.add(rule);
     }
@@ -79,10 +84,11 @@ public class Namespace {
     public void setName(String name) {
         _name = name;
     }
-    
+
     public NamespaceTransformer getFromSystemTransformer() {
         return _fromSystemTransformer;
     }
+
     public NamespaceTransformer getToSystemTransformer() {
         return _toSystemTransformer;
     }

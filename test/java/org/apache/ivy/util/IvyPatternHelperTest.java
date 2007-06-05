@@ -27,9 +27,8 @@ import org.apache.ivy.core.IvyPatternHelper;
 public class IvyPatternHelperTest extends TestCase {
     public void testSubstitute() {
         String pattern = "[organisation]/[module]/build/archives/[type]s/[artifact]-[revision].[ext]";
-        assertEquals(
-                "apache/Test/build/archives/jars/test-1.0.jar", 
-                IvyPatternHelper.substitute(pattern, "apache", "Test", "1.0", "test", "jar", "jar"));
+        assertEquals("apache/Test/build/archives/jars/test-1.0.jar", IvyPatternHelper.substitute(
+            pattern, "apache", "Test", "1.0", "test", "jar", "jar"));
     }
 
     public void testCyclicSubstitute() {
@@ -43,7 +42,7 @@ public class IvyPatternHelperTest extends TestCase {
         } catch (Exception ex) {
             // ok
         } catch (Error er) {
-            fail("cyclic var shouldn't raise an error: "+er);
+            fail("cyclic var shouldn't raise an error: " + er);
         }
     }
 
@@ -51,16 +50,17 @@ public class IvyPatternHelperTest extends TestCase {
         Map tokens = new HashMap();
         tokens.put("token", "");
         tokens.put("othertoken", "myval");
-        assertEquals("test-myval", IvyPatternHelper.substituteTokens("test(-[token])(-[othertoken])", tokens));
+        assertEquals("test-myval", IvyPatternHelper.substituteTokens(
+            "test(-[token])(-[othertoken])", tokens));
         tokens.put("token", "val");
-        assertEquals("test-val-myval", IvyPatternHelper.substituteTokens("test(-[token])(-[othertoken])", tokens));
+        assertEquals("test-val-myval", IvyPatternHelper.substituteTokens(
+            "test(-[token])(-[othertoken])", tokens));
     }
 
     public void testOrganization() {
         String pattern = "[organization]/[module]/build/archives/[type]s/[artifact]-[revision].[ext]";
-        assertEquals(
-                "apache/Test/build/archives/jars/test-1.0.jar", 
-                IvyPatternHelper.substitute(pattern, "apache", "Test", "1.0", "test", "jar", "jar"));
+        assertEquals("apache/Test/build/archives/jars/test-1.0.jar", IvyPatternHelper.substitute(
+            pattern, "apache", "Test", "1.0", "test", "jar", "jar"));
     }
 
 }

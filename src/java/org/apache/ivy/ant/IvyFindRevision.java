@@ -24,63 +24,62 @@ import org.apache.ivy.core.resolve.ResolvedModuleRevision;
 import org.apache.ivy.core.settings.IvySettings;
 import org.apache.tools.ant.BuildException;
 
-
 /**
- * Look for the latest module in the repository matching the given criteria, 
- * and sets a set of properties according to what was found.
- * 
+ * Look for the latest module in the repository matching the given criteria, and sets a set of
+ * properties according to what was found.
  */
 public class IvyFindRevision extends IvyTask {
-	private String _organisation;
-	private String _module;
-	private String _branch;
-	private String _revision;
-	
-	private String _property = "ivy.revision";
-	
-	public String getModule() {
-		return _module;
-	}
+    private String _organisation;
 
-	public void setModule(String module) {
-		_module = module;
-	}
+    private String _module;
 
-	public String getOrganisation() {
-		return _organisation;
-	}
+    private String _branch;
 
-	public void setOrganisation(String organisation) {
-		_organisation = organisation;
-	}
+    private String _revision;
 
-	public String getRevision() {
-		return _revision;
-	}
+    private String _property = "ivy.revision";
 
-	public void setRevision(String revision) {
-		_revision = revision;
-	}
+    public String getModule() {
+        return _module;
+    }
 
+    public void setModule(String module) {
+        _module = module;
+    }
 
-	public String getBranch() {
-		return _branch;
-	}
+    public String getOrganisation() {
+        return _organisation;
+    }
 
-	public void setBranch(String branch) {
-		_branch = branch;
-	}
+    public void setOrganisation(String organisation) {
+        _organisation = organisation;
+    }
 
-	public String getProperty() {
-		return _property;
-	}
+    public String getRevision() {
+        return _revision;
+    }
 
-	public void setProperty(String prefix) {
-		_property = prefix;
-	}
+    public void setRevision(String revision) {
+        _revision = revision;
+    }
 
+    public String getBranch() {
+        return _branch;
+    }
 
-	public void doExecute() throws BuildException {
+    public void setBranch(String branch) {
+        _branch = branch;
+    }
+
+    public String getProperty() {
+        return _property;
+    }
+
+    public void setProperty(String prefix) {
+        _property = prefix;
+    }
+
+    public void doExecute() throws BuildException {
         if (_organisation == null) {
             throw new BuildException("no organisation provided for ivy findmodules");
         }
@@ -90,15 +89,16 @@ public class IvyFindRevision extends IvyTask {
         if (_revision == null) {
             throw new BuildException("no revision provided for ivy findmodules");
         }
-        
+
         Ivy ivy = getIvyInstance();
         IvySettings settings = ivy.getSettings();
         if (_branch == null) {
             settings.getDefaultBranch(new ModuleId(_organisation, _module));
         }
-		ResolvedModuleRevision rmr = ivy.findModule(ModuleRevisionId.newInstance(_organisation, _module, _branch, _revision));
-		if (rmr != null) {
-			getProject().setProperty(_property, rmr.getId().getRevision());
-		}
-	}
+        ResolvedModuleRevision rmr = ivy.findModule(ModuleRevisionId.newInstance(_organisation,
+            _module, _branch, _revision));
+        if (rmr != null) {
+            getProject().setProperty(_property, rmr.getId().getRevision());
+        }
+    }
 }

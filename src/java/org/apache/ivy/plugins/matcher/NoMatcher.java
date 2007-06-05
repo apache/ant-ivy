@@ -20,7 +20,7 @@ package org.apache.ivy.plugins.matcher;
 /**
  * A matcher that matches nothing.
  */
-public final /*@Immutable*/ class NoMatcher implements Matcher {
+public final/* @Immutable */class NoMatcher implements Matcher {
 
     public final static Matcher INSTANCE = new NoMatcher();
 

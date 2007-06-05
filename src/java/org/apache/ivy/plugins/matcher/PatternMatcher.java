@@ -18,10 +18,9 @@
 package org.apache.ivy.plugins.matcher;
 
 /**
- * Interface for a pattern matcher.
- * <p/>
- * The pattern matcher is the main abstraction regarding the matching of an expression. Implementation may vary
- * depending on the expression syntax handling that is desired.
+ * Interface for a pattern matcher. <p/> The pattern matcher is the main abstraction regarding the
+ * matching of an expression. Implementation may vary depending on the expression syntax handling
+ * that is desired.
  */
 public interface PatternMatcher {
 
@@ -52,21 +51,21 @@ public interface PatternMatcher {
 
     /**
      * Return the matcher for the given expression.
-     *
-     * @param expression the expression to be matched. Cannot be null ?
+     * 
+     * @param expression
+     *            the expression to be matched. Cannot be null ?
      * @return the matcher instance for the given expression. Never null.
      */
-    public /*@NotNull*/ Matcher getMatcher(/*@NotNull*/ String expression);
+    public/* @NotNull */Matcher getMatcher(/* @NotNull */String expression);
 
     /**
      * return the name of this pattern matcher
-     *
+     * 
      * @return the name of this pattern matcher. Never null.
      * @see #EXACT
      * @see #REGEXP
      * @see #GLOB
      * @see #EXACT_OR_REGEXP
      */
-    public /*@NotNull*/ String getName();
+    public/* @NotNull */String getName();
 }
-

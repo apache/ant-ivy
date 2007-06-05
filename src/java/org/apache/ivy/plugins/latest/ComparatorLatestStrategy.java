@@ -23,31 +23,29 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-
-
 public class ComparatorLatestStrategy extends AbstractLatestStrategy {
 
-	private Comparator _comparator;
+    private Comparator _comparator;
 
-	public ComparatorLatestStrategy() {
-	}
-
-	public ComparatorLatestStrategy(Comparator comparator) {
-		_comparator = comparator;
-	}
-
-    public List sort(ArtifactInfo[] infos) {
-    	List ret = new ArrayList(Arrays.asList(infos));
-    	Collections.sort(ret, _comparator);
-    	return ret;
+    public ComparatorLatestStrategy() {
     }
 
-	public Comparator getComparator() {
-		return _comparator;
-	}
+    public ComparatorLatestStrategy(Comparator comparator) {
+        _comparator = comparator;
+    }
 
-	public void setComparator(Comparator comparator) {
-		_comparator = comparator;
-	}
+    public List sort(ArtifactInfo[] infos) {
+        List ret = new ArrayList(Arrays.asList(infos));
+        Collections.sort(ret, _comparator);
+        return ret;
+    }
+
+    public Comparator getComparator() {
+        return _comparator;
+    }
+
+    public void setComparator(Comparator comparator) {
+        _comparator = comparator;
+    }
 
 }

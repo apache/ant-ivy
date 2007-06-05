@@ -22,11 +22,12 @@ import org.apache.ivy.plugins.IvySettingsAware;
 
 public abstract class AbstractConflictManager implements ConflictManager, IvySettingsAware {
     private String _name;
+
     private IvySettings _settings;
 
     public IvySettings getSettings() {
         return _settings;
-    }    
+    }
 
     public void setSettings(IvySettings ivy) {
         _settings = ivy;
@@ -34,12 +35,12 @@ public abstract class AbstractConflictManager implements ConflictManager, IvySet
 
     public String getName() {
         return _name;
-    }    
+    }
 
     public void setName(String name) {
         _name = name;
     }
-    
+
     public String toString() {
         return _name;
     }

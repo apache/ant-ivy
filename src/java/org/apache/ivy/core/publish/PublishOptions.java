@@ -23,125 +23,129 @@ import org.apache.ivy.core.cache.CacheManager;
 import org.apache.ivy.core.module.descriptor.Artifact;
 
 /**
- * A set of options used during publish related tasks
+ * A set of options used during publish related tasks The publish can update the ivy file to publish
+ * if update is set to true. In this case it will use the given pubrevision, pubdate and status. If
+ * pudate is null it will default to the current date. If status is null it will default to the
+ * current ivy file status (which itself defaults to integration if none is found). If update is
+ * false, then if the revision is not the same in the ivy file than the one expected (given as
+ * parameter), this method will fail with an IllegalArgumentException. pubdate and status are not
+ * used if update is false. extra artifacts can be used to publish more artifacts than actually
+ * declared in the ivy file. This can be useful to publish additional metadata or reports. The extra
+ * artifacts array can be null (= no extra artifacts), and if non null only the name, type, ext url
+ * and extra attributes of the artifacts are really used. Other methods (on the artifacts) can
+ * return null safely.
  * 
- * The publish can update the ivy file to publish if update is set to true. In this case it will use
- * the given pubrevision, pubdate and status. If pudate is null it will default to the current date.
- * If status is null it will default to the current ivy file status (which itself defaults to integration if none is found).
- * If update is false, then if the revision is not the same in the ivy file than the one expected (given as parameter),
- * this method will fail with an  IllegalArgumentException.
- * pubdate and status are not used if update is false.
- * extra artifacts can be used to publish more artifacts than actually declared in the ivy file.
- * This can be useful to publish additional metadata or reports.
- * The extra artifacts array can be null (= no extra artifacts), and if non null only the name, type, ext url 
- * and extra attributes of the artifacts are really used. Other methods (on the artifacts) can return null safely.
- *  
  * @see PublishEngine
  */
 public class PublishOptions {
-	private CacheManager cache;
-	private String srcIvyPattern;
-	
-	private String pubrevision;
-	private String status;
-	private Date pubdate;
-	
-	private Artifact[] extraArtifacts;
-	private boolean validate;
-	private boolean overwrite;
-	private boolean update;
-	
-	private String[] confs;
+    private CacheManager cache;
 
-	public CacheManager getCache() {
-		return cache;
-	}
+    private String srcIvyPattern;
 
-	public PublishOptions setCache(CacheManager cache) {
-		this.cache = cache;
-		return this;
-	}
+    private String pubrevision;
 
-	public String[] getConfs() {
-		return confs;
-	}
+    private String status;
 
-	public PublishOptions setConfs(String[] confs) {
-		this.confs = confs;
-		return this;
-	}
+    private Date pubdate;
 
-	public Artifact[] getExtraArtifacts() {
-		return extraArtifacts;
-	}
+    private Artifact[] extraArtifacts;
 
-	public PublishOptions setExtraArtifacts(Artifact[] extraArtifacts) {
-		this.extraArtifacts = extraArtifacts;
-		return this;
-	}
+    private boolean validate;
 
-	public boolean isOverwrite() {
-		return overwrite;
-	}
+    private boolean overwrite;
 
-	public PublishOptions setOverwrite(boolean overwrite) {
-		this.overwrite = overwrite;
-		return this;
-	}
+    private boolean update;
 
-	public Date getPubdate() {
-		return pubdate;
-	}
+    private String[] confs;
 
-	public PublishOptions setPubdate(Date pubdate) {
-		this.pubdate = pubdate;
-		return this;
-	}
+    public CacheManager getCache() {
+        return cache;
+    }
 
-	public String getPubrevision() {
-		return pubrevision;
-	}
+    public PublishOptions setCache(CacheManager cache) {
+        this.cache = cache;
+        return this;
+    }
 
-	public PublishOptions setPubrevision(String pubrevision) {
-		this.pubrevision = pubrevision;
-		return this;
-	}
+    public String[] getConfs() {
+        return confs;
+    }
 
-	public String getSrcIvyPattern() {
-		return srcIvyPattern;
-	}
+    public PublishOptions setConfs(String[] confs) {
+        this.confs = confs;
+        return this;
+    }
 
-	public PublishOptions setSrcIvyPattern(String srcIvyPattern) {
-		this.srcIvyPattern = srcIvyPattern;
-		return this;
-	}
+    public Artifact[] getExtraArtifacts() {
+        return extraArtifacts;
+    }
 
-	public String getStatus() {
-		return status;
-	}
+    public PublishOptions setExtraArtifacts(Artifact[] extraArtifacts) {
+        this.extraArtifacts = extraArtifacts;
+        return this;
+    }
 
-	public PublishOptions setStatus(String status) {
-		this.status = status;
-		return this;
-	}
+    public boolean isOverwrite() {
+        return overwrite;
+    }
 
-	public boolean isUpdate() {
-		return update;
-	}
+    public PublishOptions setOverwrite(boolean overwrite) {
+        this.overwrite = overwrite;
+        return this;
+    }
 
-	public PublishOptions setUpdate(boolean update) {
-		this.update = update;
-		return this;
-	}
+    public Date getPubdate() {
+        return pubdate;
+    }
 
-	public boolean isValidate() {
-		return validate;
-	}
+    public PublishOptions setPubdate(Date pubdate) {
+        this.pubdate = pubdate;
+        return this;
+    }
 
-	public PublishOptions setValidate(boolean validate) {
-		this.validate = validate;
-		return this;
-	}
-	
-	
+    public String getPubrevision() {
+        return pubrevision;
+    }
+
+    public PublishOptions setPubrevision(String pubrevision) {
+        this.pubrevision = pubrevision;
+        return this;
+    }
+
+    public String getSrcIvyPattern() {
+        return srcIvyPattern;
+    }
+
+    public PublishOptions setSrcIvyPattern(String srcIvyPattern) {
+        this.srcIvyPattern = srcIvyPattern;
+        return this;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public PublishOptions setStatus(String status) {
+        this.status = status;
+        return this;
+    }
+
+    public boolean isUpdate() {
+        return update;
+    }
+
+    public PublishOptions setUpdate(boolean update) {
+        this.update = update;
+        return this;
+    }
+
+    public boolean isValidate() {
+        return validate;
+    }
+
+    public PublishOptions setValidate(boolean validate) {
+        this.validate = validate;
+        return this;
+    }
+
 }

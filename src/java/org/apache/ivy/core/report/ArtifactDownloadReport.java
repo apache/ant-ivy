@@ -25,42 +25,54 @@ import org.apache.ivy.core.module.descriptor.Artifact;
  */
 public class ArtifactDownloadReport {
     private Artifact artifact;
+
     private ArtifactOrigin origin;
+
     private DownloadStatus downloadStatus;
+
     private long size;
-    
+
     public ArtifactDownloadReport(Artifact artifact) {
-    	this.artifact = artifact;
+        this.artifact = artifact;
     }
+
     public DownloadStatus getDownloadStatus() {
         return downloadStatus;
     }
+
     public void setDownloadStatus(DownloadStatus downloadStatus) {
         this.downloadStatus = downloadStatus;
     }
+
     public String getName() {
         return artifact.getName();
     }
+
     public String getType() {
         return artifact.getType();
     }
-	public Artifact getArtifact() {
-		return artifact;
-	}
+
+    public Artifact getArtifact() {
+        return artifact;
+    }
+
     public String getExt() {
         return artifact.getExt();
     }
+
     public long getSize() {
         return size;
     }
-    
+
     public void setSize(long size) {
         this.size = size;
     }
-	public void setArtifactOrigin(ArtifactOrigin origin) {
-		this.origin = origin;
-	}
-	public ArtifactOrigin getArtifactOrigin() {
-		return origin;
-	}
+
+    public void setArtifactOrigin(ArtifactOrigin origin) {
+        this.origin = origin;
+    }
+
+    public ArtifactOrigin getArtifactOrigin() {
+        return origin;
+    }
 }

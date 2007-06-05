@@ -40,7 +40,6 @@ import org.apache.ivy.plugins.resolver.util.HasLatestStrategy;
 import org.apache.ivy.plugins.resolver.util.ResolvedModuleRevisionProxy;
 import org.apache.ivy.util.Message;
 
-
 /**
  *
  */
@@ -63,19 +62,22 @@ public class ChainResolver extends AbstractResolver {
     }
 
     private boolean _returnFirst = false;
+
     private List _chain = new ArrayList();
+
     private boolean _dual;
 
     public void add(DependencyResolver resolver) {
         _chain.add(resolver);
     }
-    
-    public ResolvedModuleRevision getDependency(DependencyDescriptor dd, ResolveData data) throws ParseException {
+
+    public ResolvedModuleRevision getDependency(DependencyDescriptor dd, ResolveData data)
+            throws ParseException {
         data = new ResolveData(data, doValidate(data));
         ResolvedModuleRevision ret = null;
-        
+
         List errors = new ArrayList();
-        
+
         for (Iterator iter = _chain.iterator(); iter.hasNext();) {
             DependencyResolver resolver = (DependencyResolver) iter.next();
             LatestStrategy oldLatest = setLatestIfRequired(resolver, getLatestStrategy());
@@ -83,8 +85,9 @@ public class ChainResolver extends AbstractResolver {
             try {
                 mr = resolver.getDependency(dd, data);
             } catch (Exception ex) {
-            	Message.verbose("problem occured while resolving "+dd+" with "+resolver+": "+ex);
-            	errors.add(ex);
+                Message.verbose("problem occured while resolving " + dd + " with " + resolver
+                        + ": " + ex);
+                errors.add(ex);
             } finally {
                 if (oldLatest != null) {
                     setLatest(resolver, oldLatest);
@@ -93,25 +96,31 @@ public class ChainResolver extends AbstractResolver {
             checkInterrupted();
             if (mr != null) {
                 boolean shouldReturn = _returnFirst;
-                shouldReturn |= !getSettings().getVersionMatcher().isDynamic(dd.getDependencyRevisionId()) && ret != null && !ret.getDescriptor().isDefault();
+                shouldReturn |= !getSettings().getVersionMatcher().isDynamic(
+                    dd.getDependencyRevisionId())
+                        && ret != null && !ret.getDescriptor().isDefault();
                 if (!shouldReturn) {
                     // check if latest is asked and compare to return the most recent
-                    String mrDesc = mr.getId()+(mr.getDescriptor().isDefault()?"[default]":"")+" from "+mr.getResolver().getName();
-                    Message.debug("\tchecking "+mrDesc+" against "+ret);
+                    String mrDesc = mr.getId()
+                            + (mr.getDescriptor().isDefault() ? "[default]" : "") + " from "
+                            + mr.getResolver().getName();
+                    Message.debug("\tchecking " + mrDesc + " against " + ret);
                     if (ret == null) {
-                        Message.debug("\tmodule revision kept as first found: "+mrDesc);
+                        Message.debug("\tmodule revision kept as first found: " + mrDesc);
                         ret = mr;
                     } else if (isAfter(mr, ret, data.getDate())) {
-                        Message.debug("\tmodule revision kept as younger: "+mrDesc);
+                        Message.debug("\tmodule revision kept as younger: " + mrDesc);
                         ret = mr;
                     } else if (!mr.getDescriptor().isDefault() && ret.getDescriptor().isDefault()) {
-                            Message.debug("\tmodule revision kept as better (not default): "+mrDesc);
-                            ret = mr;
+                        Message.debug("\tmodule revision kept as better (not default): " + mrDesc);
+                        ret = mr;
                     } else {
-                        Message.debug("\tmodule revision discarded as older: "+mrDesc);
+                        Message.debug("\tmodule revision discarded as older: " + mrDesc);
                     }
-                    if (!getSettings().getVersionMatcher().isDynamic(dd.getDependencyRevisionId()) && !ret.getDescriptor().isDefault()) {
-                        Message.debug("\tmodule revision found and is not default: returning "+mrDesc);
+                    if (!getSettings().getVersionMatcher().isDynamic(dd.getDependencyRevisionId())
+                            && !ret.getDescriptor().isDefault()) {
+                        Message.debug("\tmodule revision found and is not default: returning "
+                                + mrDesc);
                         return resolvedRevision(mr);
                     }
                 } else {
@@ -120,28 +129,29 @@ public class ChainResolver extends AbstractResolver {
             }
         }
         if (ret == null && !errors.isEmpty()) {
-        	if (errors.size() == 1) {
-        		Exception ex = (Exception) errors.get(0);
-        		if (ex instanceof RuntimeException) {
-        			throw (RuntimeException)ex;
-        		} else if (ex instanceof ParseException) {
-        			throw (ParseException)ex;
-        		} else {
-        			throw new RuntimeException(ex.toString(), ex);
-        		}
-        	} else {
-        		StringBuffer err = new StringBuffer();
-        		for (Iterator iter = errors.iterator(); iter.hasNext();) {
-					Exception ex = (Exception) iter.next();
-					err.append(ex).append("\n");
-				}
-        		err.setLength(err.length() - 1);
-        		throw new RuntimeException("several problems occured while resolving "+dd+":\n"+err);
-        	}
+            if (errors.size() == 1) {
+                Exception ex = (Exception) errors.get(0);
+                if (ex instanceof RuntimeException) {
+                    throw (RuntimeException) ex;
+                } else if (ex instanceof ParseException) {
+                    throw (ParseException) ex;
+                } else {
+                    throw new RuntimeException(ex.toString(), ex);
+                }
+            } else {
+                StringBuffer err = new StringBuffer();
+                for (Iterator iter = errors.iterator(); iter.hasNext();) {
+                    Exception ex = (Exception) iter.next();
+                    err.append(ex).append("\n");
+                }
+                err.setLength(err.length() - 1);
+                throw new RuntimeException("several problems occured while resolving " + dd + ":\n"
+                        + err);
+            }
         }
         return resolvedRevision(ret);
     }
-    
+
     private ResolvedModuleRevision resolvedRevision(ResolvedModuleRevision mr) {
         if (isDual() && mr != null) {
             return new ResolvedModuleRevisionProxy(mr, this);
@@ -149,9 +159,9 @@ public class ChainResolver extends AbstractResolver {
             return mr;
         }
     }
-    
 
-    private LatestStrategy setLatestIfRequired(DependencyResolver resolver, LatestStrategy latestStrategy) {
+    private LatestStrategy setLatestIfRequired(DependencyResolver resolver,
+            LatestStrategy latestStrategy) {
         String latestName = getLatestStrategyName(resolver);
         if (latestName != null && !"default".equals(latestName)) {
             LatestStrategy oldLatest = getLatest(resolver);
@@ -163,17 +173,16 @@ public class ChainResolver extends AbstractResolver {
     }
 
     /**
-     * Returns true if rmr1 is after rmr2, using the latest strategy to determine
-     * which is the latest
+     * Returns true if rmr1 is after rmr2, using the latest strategy to determine which is the
+     * latest
+     * 
      * @param rmr1
      * @param rmr2
      * @return
      */
     private boolean isAfter(ResolvedModuleRevision rmr1, ResolvedModuleRevision rmr2, Date date) {
-        ArtifactInfo[] ais = new ArtifactInfo[] {
-                new ResolvedModuleRevisionArtifactInfo(rmr2),
-                new ResolvedModuleRevisionArtifactInfo(rmr1)
-        };
+        ArtifactInfo[] ais = new ArtifactInfo[] {new ResolvedModuleRevisionArtifactInfo(rmr2),
+                new ResolvedModuleRevisionArtifactInfo(rmr1)};
         return getLatestStrategy().findLatest(ais, date) != ais[0];
     }
 
@@ -196,7 +205,8 @@ public class ChainResolver extends AbstractResolver {
         DownloadReport report = new DownloadReport();
         for (Iterator iter = _chain.iterator(); iter.hasNext() && !artifactsToDownload.isEmpty();) {
             DependencyResolver resolver = (DependencyResolver) iter.next();
-            DownloadReport r = resolver.download((Artifact[])artifactsToDownload.toArray(new Artifact[artifactsToDownload.size()]), options);
+            DownloadReport r = resolver.download((Artifact[]) artifactsToDownload
+                    .toArray(new Artifact[artifactsToDownload.size()]), options);
             ArtifactDownloadReport[] adr = r.getArtifactsReports();
             for (int i = 0; i < adr.length; i++) {
                 if (adr[i].getDownloadStatus() != DownloadStatus.FAILED) {
@@ -206,43 +216,46 @@ public class ChainResolver extends AbstractResolver {
             }
         }
         for (Iterator iter = artifactsToDownload.iterator(); iter.hasNext();) {
-            Artifact art = (Artifact)iter.next();
+            Artifact art = (Artifact) iter.next();
             ArtifactDownloadReport adr = new ArtifactDownloadReport(art);
             adr.setDownloadStatus(DownloadStatus.FAILED);
             report.addArtifactReport(adr);
         }
         return report;
     }
+
     public List getResolvers() {
         return _chain;
     }
+
     public void publish(Artifact artifact, File src, boolean overwrite) throws IOException {
         if (_chain.isEmpty()) {
             throw new IllegalStateException("invalid chain resolver with no sub resolver");
         }
-        ((DependencyResolver)_chain.get(0)).publish(artifact, src, overwrite);
+        ((DependencyResolver) _chain.get(0)).publish(artifact, src, overwrite);
     }
+
     public boolean isReturnFirst() {
         return _returnFirst;
     }
-    
+
     public void setReturnFirst(boolean returnFirst) {
         _returnFirst = returnFirst;
     }
-    
+
     public void dumpSettings() {
-        Message.verbose("\t"+getName()+" [chain] "+_chain);
-        Message.debug("\t\treturn first: "+isReturnFirst());
-        Message.debug("\t\tdual: "+isDual());
+        Message.verbose("\t" + getName() + " [chain] " + _chain);
+        Message.debug("\t\treturn first: " + isReturnFirst());
+        Message.debug("\t\tdual: " + isDual());
         for (Iterator iter = _chain.iterator(); iter.hasNext();) {
-            DependencyResolver r = (DependencyResolver)iter.next();
-            Message.debug("\t\t-> "+r.getName());
+            DependencyResolver r = (DependencyResolver) iter.next();
+            Message.debug("\t\t-> " + r.getName());
         }
     }
-    
+
     public boolean exists(Artifact artifact) {
         for (Iterator iter = _chain.iterator(); iter.hasNext();) {
-            DependencyResolver resolver = (DependencyResolver)iter.next();
+            DependencyResolver resolver = (DependencyResolver) iter.next();
             if (resolver.exists(artifact)) {
                 return true;
             }
@@ -250,17 +263,16 @@ public class ChainResolver extends AbstractResolver {
         return false;
     }
 
-
     private static void setLatest(DependencyResolver resolver, LatestStrategy latest) {
         if (resolver instanceof HasLatestStrategy) {
-            HasLatestStrategy r = (HasLatestStrategy)resolver;
+            HasLatestStrategy r = (HasLatestStrategy) resolver;
             r.setLatestStrategy(latest);
         }
     }
 
     private static LatestStrategy getLatest(DependencyResolver resolver) {
         if (resolver instanceof HasLatestStrategy) {
-            HasLatestStrategy r = (HasLatestStrategy)resolver;
+            HasLatestStrategy r = (HasLatestStrategy) resolver;
             return r.getLatestStrategy();
         }
         return null;
@@ -268,7 +280,7 @@ public class ChainResolver extends AbstractResolver {
 
     private static String getLatestStrategyName(DependencyResolver resolver) {
         if (resolver instanceof HasLatestStrategy) {
-            HasLatestStrategy r = (HasLatestStrategy)resolver;
+            HasLatestStrategy r = (HasLatestStrategy) resolver;
             return r.getLatest();
         }
         return null;

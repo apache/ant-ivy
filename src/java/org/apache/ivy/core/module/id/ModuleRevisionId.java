@@ -26,84 +26,105 @@ import org.apache.ivy.core.IvyContext;
 import org.apache.ivy.core.IvyPatternHelper;
 import org.apache.ivy.util.extendable.UnmodifiableExtendableItem;
 
-
-
 /**
  *
  */
 public class ModuleRevisionId extends UnmodifiableExtendableItem {
     private static final String ENCODE_SEPARATOR = ModuleId.ENCODE_SEPARATOR;
+
     private static final String ENCODE_PREFIX = "+";
+
     private static final String NULL_ENCODE = "@#:NULL:#@";
-    
+
     public static ModuleRevisionId newInstance(String organisation, String name, String revision) {
         return new ModuleRevisionId(new ModuleId(organisation, name), revision);
     }
-    public static ModuleRevisionId newInstance(String organisation, String name, String revision, Map extraAttributes) {
+
+    public static ModuleRevisionId newInstance(String organisation, String name, String revision,
+            Map extraAttributes) {
         return new ModuleRevisionId(new ModuleId(organisation, name), revision, extraAttributes);
     }
-    public static ModuleRevisionId newInstance(String organisation, String name, String branch, String revision) {
+
+    public static ModuleRevisionId newInstance(String organisation, String name, String branch,
+            String revision) {
         return new ModuleRevisionId(new ModuleId(organisation, name), branch, revision);
     }
-    public static ModuleRevisionId newInstance(String organisation, String name, String branch, String revision, Map extraAttributes) {
-        return new ModuleRevisionId(new ModuleId(organisation, name), branch, revision, extraAttributes);
+
+    public static ModuleRevisionId newInstance(String organisation, String name, String branch,
+            String revision, Map extraAttributes) {
+        return new ModuleRevisionId(new ModuleId(organisation, name), branch, revision,
+                extraAttributes);
     }
-	public static ModuleRevisionId newInstance(ModuleRevisionId mrid, String rev) {
-		return new ModuleRevisionId(mrid.getModuleId(), mrid.getBranch(), rev, mrid.getExtraAttributes());
-	}
-    
+
+    public static ModuleRevisionId newInstance(ModuleRevisionId mrid, String rev) {
+        return new ModuleRevisionId(mrid.getModuleId(), mrid.getBranch(), rev, mrid
+                .getExtraAttributes());
+    }
+
     private ModuleId moduleId;
+
     private String branch;
+
     private String revision;
+
     private int hash;
-    
+
     public ModuleRevisionId(ModuleId moduleId, String revision) {
         this(moduleId, null, revision, null);
     }
+
     public ModuleRevisionId(ModuleId moduleId, String branch, String revision) {
         this(moduleId, branch, revision, null);
     }
+
     public ModuleRevisionId(ModuleId moduleId, String revision, Map extraAttributes) {
-    	this(moduleId, null, revision, extraAttributes);
+        this(moduleId, null, revision, extraAttributes);
     }
+
     public ModuleRevisionId(ModuleId moduleId, String branch, String revision, Map extraAttributes) {
         super(null, extraAttributes);
         this.moduleId = moduleId;
-        this.branch = branch == null ? IvyContext.getContext().getSettings().getDefaultBranch(moduleId) : branch;
+        this.branch = branch == null ? IvyContext.getContext().getSettings().getDefaultBranch(
+            moduleId) : branch;
         this.revision = revision == null ? Ivy.getWorkingRevision() : revision;
-        hash = _hashCode(); //stored for performance reasons, hashCode is very used in many maps
+        hash = _hashCode(); // stored for performance reasons, hashCode is very used in many maps
         setStandardAttribute(IvyPatternHelper.ORGANISATION_KEY, this.moduleId.getOrganisation());
         setStandardAttribute(IvyPatternHelper.MODULE_KEY, this.moduleId.getName());
         setStandardAttribute(IvyPatternHelper.BRANCH_KEY, this.branch);
         setStandardAttribute(IvyPatternHelper.REVISION_KEY, this.revision);
     }
-    
+
     public ModuleId getModuleId() {
         return moduleId;
     }
+
     public String getName() {
         return getModuleId().getName();
     }
+
     public String getOrganisation() {
         return getModuleId().getOrganisation();
     }
+
     public String getRevision() {
         return revision;
     }
-    
+
     public boolean equals(Object obj) {
-        if (! (obj instanceof ModuleRevisionId)) {
+        if (!(obj instanceof ModuleRevisionId)) {
             return false;
         }
-        ModuleRevisionId other = (ModuleRevisionId)obj;
+        ModuleRevisionId other = (ModuleRevisionId) obj;
         return other.getRevision().equals(getRevision())
-        	&& (other.getBranch() == null ? getBranch() == null : other.getBranch().equals(getBranch()))
-        	&& other.getModuleId().equals(getModuleId())
-            && other.getExtraAttributes().equals(getExtraAttributes());
+                && (other.getBranch() == null ? getBranch() == null : other.getBranch().equals(
+                    getBranch())) && other.getModuleId().equals(getModuleId())
+                && other.getExtraAttributes().equals(getExtraAttributes());
     }
+
     public int hashCode() {
         return hash;
     }
+
     public int _hashCode() {
         int hash = 31;
         hash = hash * 13 + (getBranch() == null ? 0 : getBranch().hashCode());
@@ -112,63 +133,73 @@ public class ModuleRevisionId extends UnmodifiableExtendableItem {
         hash = hash * 13 + getAttributes().hashCode();
         return hash;
     }
-    
+
     public String toString() {
-        return "[ "+ moduleId.getOrganisation()+" | "+ moduleId.getName()+(branch == null || branch.length() == 0 ?"":" | "+ branch)+" | "+(revision == null?"NONE": revision)+" ]";
+        return "[ " + moduleId.getOrganisation() + " | " + moduleId.getName()
+                + (branch == null || branch.length() == 0 ? "" : " | " + branch) + " | "
+                + (revision == null ? "NONE" : revision) + " ]";
     }
-    
+
     public String encodeToString() {
         StringBuffer buf = new StringBuffer();
         Map attributes = getAttributes();
         for (Iterator iter = attributes.keySet().iterator(); iter.hasNext();) {
-            String attName = (String)iter.next();
+            String attName = (String) iter.next();
             String value = (String) attributes.get(attName);
             value = value == null ? NULL_ENCODE : value;
-            buf.append(ENCODE_PREFIX).append(attName).append(ENCODE_SEPARATOR).append(ENCODE_PREFIX).append(value).append(ENCODE_SEPARATOR);
+            buf.append(ENCODE_PREFIX).append(attName).append(ENCODE_SEPARATOR)
+                    .append(ENCODE_PREFIX).append(value).append(ENCODE_SEPARATOR);
         }
         return buf.toString();
     }
-    
+
     public static ModuleRevisionId decode(String encoded) {
         String[] parts = encoded.split(ENCODE_SEPARATOR);
         if (parts.length % 2 != 0) {
-            throw new IllegalArgumentException("badly encoded module revision id: '"+encoded+"'");
+            throw new IllegalArgumentException("badly encoded module revision id: '" + encoded
+                    + "'");
         }
         Map attributes = new HashMap();
-        for (int i = 0; i < parts.length; i+=2) {
+        for (int i = 0; i < parts.length; i += 2) {
             String attName = parts[i];
             if (!attName.startsWith(ENCODE_PREFIX)) {
-                throw new IllegalArgumentException("badly encoded module revision id: '"+encoded+"': "+attName+" doesn't start with "+ENCODE_PREFIX);
+                throw new IllegalArgumentException("badly encoded module revision id: '" + encoded
+                        + "': " + attName + " doesn't start with " + ENCODE_PREFIX);
             } else {
                 attName = attName.substring(1);
             }
-            String attValue = parts[i+1];
+            String attValue = parts[i + 1];
             if (!attValue.startsWith(ENCODE_PREFIX)) {
-                throw new IllegalArgumentException("badly encoded module revision id: '"+encoded+"': "+attValue+" doesn't start with "+ENCODE_PREFIX);
+                throw new IllegalArgumentException("badly encoded module revision id: '" + encoded
+                        + "': " + attValue + " doesn't start with " + ENCODE_PREFIX);
             } else {
                 attValue = attValue.substring(1);
             }
             if (NULL_ENCODE.equals(attValue)) {
-            	attValue = null;
+                attValue = null;
             }
             attributes.put(attName, attValue);
         }
-        String org = (String)attributes.remove(IvyPatternHelper.ORGANISATION_KEY);
-        String mod = (String)attributes.remove(IvyPatternHelper.MODULE_KEY);
-        String rev = (String)attributes.remove(IvyPatternHelper.REVISION_KEY);
-        String branch = (String)attributes.remove(IvyPatternHelper.BRANCH_KEY);
+        String org = (String) attributes.remove(IvyPatternHelper.ORGANISATION_KEY);
+        String mod = (String) attributes.remove(IvyPatternHelper.MODULE_KEY);
+        String rev = (String) attributes.remove(IvyPatternHelper.REVISION_KEY);
+        String branch = (String) attributes.remove(IvyPatternHelper.BRANCH_KEY);
         if (org == null) {
-            throw new IllegalArgumentException("badly encoded module revision id: '"+encoded+"': no organisation");
+            throw new IllegalArgumentException("badly encoded module revision id: '" + encoded
+                    + "': no organisation");
         }
         if (mod == null) {
-            throw new IllegalArgumentException("badly encoded module revision id: '"+encoded+"': no module name");
+            throw new IllegalArgumentException("badly encoded module revision id: '" + encoded
+                    + "': no module name");
         }
         if (rev == null) {
-            throw new IllegalArgumentException("badly encoded module revision id: '"+encoded+"': no revision");
+            throw new IllegalArgumentException("badly encoded module revision id: '" + encoded
+                    + "': no revision");
         }
         return newInstance(org, mod, branch, rev, attributes);
     }
-	public String getBranch() {
-		return branch;
-	}
+
+    public String getBranch() {
+        return branch;
+    }
 }

@@ -35,17 +35,20 @@ import org.apache.ivy.core.resolve.DownloadOptions;
 import org.apache.ivy.core.resolve.ResolveData;
 import org.apache.ivy.core.resolve.ResolvedModuleRevision;
 
-
-
 public class MockResolver extends AbstractResolver {
-    static MockResolver buildMockResolver(String name, boolean findRevision, final Date publicationDate) {
-        return buildMockResolver(name, findRevision, ModuleRevisionId.newInstance("test", "test", "test"), publicationDate);
+    static MockResolver buildMockResolver(String name, boolean findRevision,
+            final Date publicationDate) {
+        return buildMockResolver(name, findRevision, ModuleRevisionId.newInstance("test", "test",
+            "test"), publicationDate);
     }
 
-    static MockResolver buildMockResolver(String name, boolean findRevision, final ModuleRevisionId mrid, final Date publicationDate) {
+    static MockResolver buildMockResolver(String name, boolean findRevision,
+            final ModuleRevisionId mrid, final Date publicationDate) {
         return buildMockResolver(name, findRevision, mrid, publicationDate, false);
     }
-    static MockResolver buildMockResolver(String name, boolean findRevision, final ModuleRevisionId mrid, final Date publicationDate, final boolean isdefault) {
+
+    static MockResolver buildMockResolver(String name, boolean findRevision,
+            final ModuleRevisionId mrid, final Date publicationDate, final boolean isdefault) {
         final MockResolver r = new MockResolver();
         r.setName(name);
         if (findRevision) {
@@ -65,9 +68,11 @@ public class MockResolver extends AbstractResolver {
                 public ModuleDescriptor getDescriptor() {
                     return new DefaultModuleDescriptor(mrid, "integration", new Date(), isdefault);
                 }
+
                 public boolean isDownloaded() {
                     return true;
                 }
+
                 public boolean isSearched() {
                     return true;
                 }
@@ -75,8 +80,9 @@ public class MockResolver extends AbstractResolver {
                 public DependencyResolver getArtifactResolver() {
                     return r;
                 }
+
                 public URL getLocalMDUrl() {
-                	return null;
+                    return null;
                 }
             };
         }
@@ -84,9 +90,11 @@ public class MockResolver extends AbstractResolver {
     }
 
     List askedDeps = new ArrayList();
+
     ResolvedModuleRevision rmr;
-    
-    public ResolvedModuleRevision getDependency(DependencyDescriptor dd, ResolveData data) throws ParseException {
+
+    public ResolvedModuleRevision getDependency(DependencyDescriptor dd, ResolveData data)
+            throws ParseException {
         askedDeps.add(dd);
         return rmr;
     }
@@ -94,6 +102,7 @@ public class MockResolver extends AbstractResolver {
     public DownloadReport download(Artifact[] artifacts, DownloadOptions options) {
         return null;
     }
+
     public void publish(Artifact artifact, File src, boolean overwrite) throws IOException {
     }
 

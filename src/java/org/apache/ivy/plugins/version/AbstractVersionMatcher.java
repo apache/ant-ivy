@@ -26,24 +26,24 @@ import org.apache.ivy.plugins.IvySettingsAware;
 import org.apache.ivy.util.Checks;
 
 public abstract class AbstractVersionMatcher implements VersionMatcher, IvySettingsAware {
-	private String _name;
-	private IvySettings settings;
-	
-	public AbstractVersionMatcher() {
-	}
+    private String _name;
 
-	public AbstractVersionMatcher(String name) {
-		_name = name;
-	}
+    private IvySettings settings;
 
-	public String getName() {
-		return _name;
-	}
+    public AbstractVersionMatcher() {
+    }
 
-	public void setName(String name) {
-		_name = name;
-	}
+    public AbstractVersionMatcher(String name) {
+        _name = name;
+    }
 
+    public String getName() {
+        return _name;
+    }
+
+    public void setName(String name) {
+        _name = name;
+    }
 
     public boolean needModuleDescriptor(ModuleRevisionId askedMrid, ModuleRevisionId foundMrid) {
         return false;
@@ -52,26 +52,27 @@ public abstract class AbstractVersionMatcher implements VersionMatcher, IvySetti
     public boolean accept(ModuleRevisionId askedMrid, ModuleDescriptor foundMD) {
         return accept(askedMrid, foundMD.getResolvedModuleRevisionId());
     }
-    
+
     /**
-     * This method should be overriden in most cases, because it uses the default contract
-     * to return 1 when it's not possible to know which revision is greater.
+     * This method should be overriden in most cases, because it uses the default contract to return
+     * 1 when it's not possible to know which revision is greater.
      */
-    public int compare(ModuleRevisionId askedMrid, ModuleRevisionId foundMrid, Comparator staticComparator) {
-    	return 0;
+    public int compare(ModuleRevisionId askedMrid, ModuleRevisionId foundMrid,
+            Comparator staticComparator) {
+        return 0;
     }
-    
+
     public String toString() {
-    	return getName();
+        return getName();
     }
 
-	public IvySettings getSettings() {
-		return settings;
-	}
+    public IvySettings getSettings() {
+        return settings;
+    }
 
-	public void setSettings(IvySettings settings) {
-    	Checks.checkNotNull(settings, "settings");
-		this.settings = settings;
-	}
+    public void setSettings(IvySettings settings) {
+        Checks.checkNotNull(settings, "settings");
+        this.settings = settings;
+    }
 
 }

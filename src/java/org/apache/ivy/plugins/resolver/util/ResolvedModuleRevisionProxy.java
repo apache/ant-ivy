@@ -25,14 +25,14 @@ import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.resolve.ResolvedModuleRevision;
 import org.apache.ivy.plugins.resolver.DependencyResolver;
 
-
-/** 
- * the same ResolvedModuleRevision except that we say that it is another resolver
- * the artifact resolver, so that it's it that is used for artifact download
- * ==> forward all except getArtifactResolver method
+/**
+ * the same ResolvedModuleRevision except that we say that it is another resolver the artifact
+ * resolver, so that it's it that is used for artifact download ==> forward all except
+ * getArtifactResolver method
  */
 public final class ResolvedModuleRevisionProxy implements ResolvedModuleRevision {
     private final ResolvedModuleRevision _mr;
+
     DependencyResolver _resolver;
 
     public ResolvedModuleRevisionProxy(ResolvedModuleRevision mr, DependencyResolver artresolver) {
@@ -45,7 +45,7 @@ public final class ResolvedModuleRevisionProxy implements ResolvedModuleRevision
         _mr = mr;
         _resolver = artresolver;
     }
-    
+
     public DependencyResolver getResolver() {
         return _mr.getResolver();
     }
@@ -73,7 +73,8 @@ public final class ResolvedModuleRevisionProxy implements ResolvedModuleRevision
     public boolean isSearched() {
         return _mr.isSearched();
     }
+
     public URL getLocalMDUrl() {
-    	return _mr.getLocalMDUrl();
+        return _mr.getLocalMDUrl();
     }
 }

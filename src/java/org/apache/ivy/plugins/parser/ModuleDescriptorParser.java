@@ -27,20 +27,22 @@ import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.plugins.repository.Resource;
 
-
 public interface ModuleDescriptorParser {
-    public ModuleDescriptor parseDescriptor(IvySettings ivySettings, URL descriptorURL, boolean validate) throws ParseException, IOException;
-    public ModuleDescriptor parseDescriptor(IvySettings ivySettings, URL descriptorURL, Resource res, boolean validate) throws ParseException, IOException;
-    
+    public ModuleDescriptor parseDescriptor(IvySettings ivySettings, URL descriptorURL,
+            boolean validate) throws ParseException, IOException;
+
+    public ModuleDescriptor parseDescriptor(IvySettings ivySettings, URL descriptorURL,
+            Resource res, boolean validate) throws ParseException, IOException;
+
     /**
-     * Convert a module descriptor to an ivy file.
+     * Convert a module descriptor to an ivy file. This method MUST close the given input stream
+     * when job is finished
      * 
-     * This method MUST close the given input stream when job is finished
-     * 
-     * @param is input stream with opened on original module descriptor resource
-     * 
+     * @param is
+     *            input stream with opened on original module descriptor resource
      */
-    public void toIvyFile(InputStream is, Resource res, File destFile, ModuleDescriptor md) throws ParseException, IOException;
+    public void toIvyFile(InputStream is, Resource res, File destFile, ModuleDescriptor md)
+            throws ParseException, IOException;
 
     public boolean accept(Resource res);
 }

@@ -21,16 +21,16 @@ import java.util.Map;
 
 /**
  * Store and provide access to the ivy variables.
+ * 
  * @author gscokart
  */
-public interface IvyVariableContainer extends Cloneable{
+public interface IvyVariableContainer extends Cloneable {
 
-	public abstract void setVariable(String varName, String value,
-			boolean overwrite);
+    public abstract void setVariable(String varName, String value, boolean overwrite);
 
-	public abstract Map getVariables();
+    public abstract Map getVariables();
 
-	public abstract String getVariable(String name);
+    public abstract String getVariable(String name);
 
-	public Object clone();
+    public Object clone();
 }

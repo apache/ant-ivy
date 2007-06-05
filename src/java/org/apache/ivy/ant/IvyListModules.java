@@ -24,79 +24,82 @@ import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.plugins.matcher.PatternMatcher;
 import org.apache.tools.ant.BuildException;
 
-
 /**
  * Look for modules in the repository matching the given criteria, and sets a set of properties
  * according to what was found.
- * 
  */
 public class IvyListModules extends IvyTask {
-	private String _organisation;
-	private String _module;
-	private String _branch = PatternMatcher.ANY_EXPRESSION;
-	private String _revision;
-	private String _matcher = PatternMatcher.EXACT_OR_REGEXP;
-	
-	private String _property;
-	private String _value;
-	
-	public String getMatcher() {
-		return _matcher;
-	}
+    private String _organisation;
 
-	public void setMatcher(String matcher) {
-		_matcher = matcher;
-	}
+    private String _module;
 
-	public String getModule() {
-		return _module;
-	}
+    private String _branch = PatternMatcher.ANY_EXPRESSION;
 
-	public void setModule(String module) {
-		_module = module;
-	}
+    private String _revision;
 
-	public String getProperty() {
-		return _property;
-	}
+    private String _matcher = PatternMatcher.EXACT_OR_REGEXP;
 
-	public void setProperty(String name) {
-		_property = name;
-	}
+    private String _property;
 
-	public String getOrganisation() {
-		return _organisation;
-	}
+    private String _value;
 
-	public void setOrganisation(String organisation) {
-		_organisation = organisation;
-	}
+    public String getMatcher() {
+        return _matcher;
+    }
 
-	public String getRevision() {
-		return _revision;
-	}
+    public void setMatcher(String matcher) {
+        _matcher = matcher;
+    }
 
-	public void setRevision(String revision) {
-		_revision = revision;
-	}
+    public String getModule() {
+        return _module;
+    }
 
-	public String getValue() {
-		return _value;
-	}
+    public void setModule(String module) {
+        _module = module;
+    }
 
-	public void setValue(String value) {
-		_value = value;
-	}
+    public String getProperty() {
+        return _property;
+    }
 
-	public String getBranch() {
-		return _branch;
-	}
+    public void setProperty(String name) {
+        _property = name;
+    }
 
-	public void setBranch(String branch) {
-		_branch = branch;
-	}
+    public String getOrganisation() {
+        return _organisation;
+    }
 
-	public void doExecute() throws BuildException {
+    public void setOrganisation(String organisation) {
+        _organisation = organisation;
+    }
+
+    public String getRevision() {
+        return _revision;
+    }
+
+    public void setRevision(String revision) {
+        _revision = revision;
+    }
+
+    public String getValue() {
+        return _value;
+    }
+
+    public void setValue(String value) {
+        _value = value;
+    }
+
+    public String getBranch() {
+        return _branch;
+    }
+
+    public void setBranch(String branch) {
+        _branch = branch;
+    }
+
+    public void doExecute() throws BuildException {
         if (_organisation == null) {
             throw new BuildException("no organisation provided for ivy findmodules");
         }
@@ -112,13 +115,14 @@ public class IvyListModules extends IvyTask {
         if (_value == null) {
             throw new BuildException("no value provided for ivy findmodules");
         }
-		Ivy ivy = getIvyInstance();
+        Ivy ivy = getIvyInstance();
         IvySettings settings = ivy.getSettings();
-		ModuleRevisionId[] mrids = ivy.listModules(ModuleRevisionId.newInstance(_organisation, _module, _branch, _revision), settings.getMatcher(_matcher));
-		for (int i = 0; i < mrids.length; i++) {
+        ModuleRevisionId[] mrids = ivy.listModules(ModuleRevisionId.newInstance(_organisation,
+            _module, _branch, _revision), settings.getMatcher(_matcher));
+        for (int i = 0; i < mrids.length; i++) {
             String name = IvyPatternHelper.substitute(settings.substitute(_property), mrids[i]);
             String value = IvyPatternHelper.substitute(settings.substitute(_value), mrids[i]);
             getProject().setProperty(name, value);
-		}
-	}
+        }
+    }
 }

@@ -18,12 +18,11 @@
 package org.apache.ivy.plugins.matcher;
 
 /**
- * Implementation of an exact matcher.
- * <p/>
- * The matching will be performed against an expression being a string. It will only
- * matches if both strings are equal (per equals()) rule or if both strings are null.
+ * Implementation of an exact matcher. <p/> The matching will be performed against an expression
+ * being a string. It will only matches if both strings are equal (per equals()) rule or if both
+ * strings are null.
  */
-public /*@Immutable*/ final class ExactPatternMatcher extends AbstractPatternMatcher {
+public/* @Immutable */final class ExactPatternMatcher extends AbstractPatternMatcher {
 
     public static final ExactPatternMatcher INSTANCE = new ExactPatternMatcher();
 
@@ -35,7 +34,7 @@ public /*@Immutable*/ final class ExactPatternMatcher extends AbstractPatternMat
         return new ExactMatcher(expression);
     }
 
-    private static /*@Immutable*/ class ExactMatcher implements Matcher {
+    private static/* @Immutable */class ExactMatcher implements Matcher {
         protected String _expression;
 
         public ExactMatcher(String expression) {

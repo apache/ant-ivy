@@ -25,62 +25,59 @@ import org.apache.ivy.plugins.matcher.PatternMatcher;
 import org.apache.ivy.util.filter.Filter;
 
 /**
- * Base class for easy trigger implementation.
- * 
- * This base class takes of the event filtering part, the only method to implement in subclasses
- * is {@link IvyListener#progress(IvyEvent)} which should do whatever the trigger needs to do when
- * the event occurs. This method will only be called when an event matching the trigger filter occurs.
- * 
- * 
+ * Base class for easy trigger implementation. This base class takes of the event filtering part,
+ * the only method to implement in subclasses is {@link IvyListener#progress(IvyEvent)} which should
+ * do whatever the trigger needs to do when the event occurs. This method will only be called when
+ * an event matching the trigger filter occurs.
  * 
  * @since 1.4
- *
  */
 public abstract class AbstractTrigger implements Trigger {
-	private Filter _filter;
-	
-	private String _event;
-	private String _filterExpression;
-	private String _matcher = PatternMatcher.EXACT;
-	
-	public Filter getEventFilter() {
-		if (_filter == null) {
-			_filter = createFilter();
-		}
-		return _filter;
-	}
+    private Filter _filter;
 
-	private Filter createFilter() {
-		return new IvyEventFilter(getEvent(), getFilter(), getPatternMatcher());
-	}
+    private String _event;
 
-	private PatternMatcher getPatternMatcher() {
-		return IvyContext.getContext().getSettings().getMatcher(_matcher);
-	}
+    private String _filterExpression;
 
-	public String getEvent() {
-		return _event;
-	}
+    private String _matcher = PatternMatcher.EXACT;
 
-	public void setEvent(String event) {
-		_event = event;
-	}
+    public Filter getEventFilter() {
+        if (_filter == null) {
+            _filter = createFilter();
+        }
+        return _filter;
+    }
 
-	public String getFilter() {
-		return _filterExpression;
-	}
+    private Filter createFilter() {
+        return new IvyEventFilter(getEvent(), getFilter(), getPatternMatcher());
+    }
 
-	public void setFilter(String filterExpression) {
-		_filterExpression = filterExpression;
-	}
+    private PatternMatcher getPatternMatcher() {
+        return IvyContext.getContext().getSettings().getMatcher(_matcher);
+    }
 
-	public String getMatcher() {
-		return _matcher;
-	}
+    public String getEvent() {
+        return _event;
+    }
 
-	public void setMatcher(String matcher) {
-		_matcher = matcher;
-	}
+    public void setEvent(String event) {
+        _event = event;
+    }
 
+    public String getFilter() {
+        return _filterExpression;
+    }
+
+    public void setFilter(String filterExpression) {
+        _filterExpression = filterExpression;
+    }
+
+    public String getMatcher() {
+        return _matcher;
+    }
+
+    public void setMatcher(String matcher) {
+        _matcher = matcher;
+    }
 
 }

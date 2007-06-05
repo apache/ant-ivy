@@ -27,13 +27,15 @@ import org.apache.ivy.core.search.RevisionEntry;
  * 
  */
 public class ResolverTestHelper {
-    static void assertOrganisationEntries(DependencyResolver resolver, String[] orgNames, OrganisationEntry[] orgs) {
+    static void assertOrganisationEntries(DependencyResolver resolver, String[] orgNames,
+            OrganisationEntry[] orgs) {
         Assert.assertNotNull(orgs);
         Assert.assertEquals(orgNames.length, orgs.length);
         assertOrganisationEntriesContains(resolver, orgNames, orgs);
     }
-    
-    static void assertOrganisationEntriesContains(DependencyResolver resolver, String[] orgNames, OrganisationEntry[] orgs) {
+
+    static void assertOrganisationEntriesContains(DependencyResolver resolver, String[] orgNames,
+            OrganisationEntry[] orgs) {
         Assert.assertNotNull(orgs);
         for (int i = 0; i < orgNames.length; i++) {
             boolean found = false;
@@ -43,18 +45,19 @@ public class ResolverTestHelper {
                     Assert.assertEquals(resolver, orgs[j].getResolver());
                 }
             }
-            Assert.assertTrue("organisation not found: "+orgNames[i], found);
+            Assert.assertTrue("organisation not found: " + orgNames[i], found);
         }
     }
-    
-    static void assertModuleEntries(DependencyResolver resolver, OrganisationEntry org, String[] names, ModuleEntry[] mods) {
+
+    static void assertModuleEntries(DependencyResolver resolver, OrganisationEntry org,
+            String[] names, ModuleEntry[] mods) {
         Assert.assertNotNull(mods);
         Assert.assertEquals(names.length, mods.length);
         assertModuleEntriesContains(resolver, org, names, mods);
     }
-    
-    
-    static void assertModuleEntriesContains(DependencyResolver resolver, OrganisationEntry org, String[] names, ModuleEntry[] mods) {
+
+    static void assertModuleEntriesContains(DependencyResolver resolver, OrganisationEntry org,
+            String[] names, ModuleEntry[] mods) {
         Assert.assertNotNull(mods);
         for (int i = 0; i < names.length; i++) {
             boolean found = false;
@@ -65,18 +68,19 @@ public class ResolverTestHelper {
                     Assert.assertEquals(org, mods[j].getOrganisationEntry());
                 }
             }
-            Assert.assertTrue("module not found: "+names[i], found);
+            Assert.assertTrue("module not found: " + names[i], found);
         }
     }
-    
-    
-    static void assertRevisionEntries(DependencyResolver resolver, ModuleEntry mod, String[] names, RevisionEntry[] revs) {
+
+    static void assertRevisionEntries(DependencyResolver resolver, ModuleEntry mod, String[] names,
+            RevisionEntry[] revs) {
         Assert.assertNotNull(revs);
         Assert.assertEquals(names.length, revs.length);
         assertRevisionEntriesContains(resolver, mod, names, revs);
     }
-    
-    static void assertRevisionEntriesContains(DependencyResolver resolver, ModuleEntry mod, String[] names, RevisionEntry[] revs) {
+
+    static void assertRevisionEntriesContains(DependencyResolver resolver, ModuleEntry mod,
+            String[] names, RevisionEntry[] revs) {
         Assert.assertNotNull(revs);
         for (int i = 0; i < names.length; i++) {
             boolean found = false;
@@ -87,28 +91,28 @@ public class ResolverTestHelper {
                     Assert.assertEquals(mod, revs[j].getModuleEntry());
                 }
             }
-            Assert.assertTrue("revision not found: "+names[i], found);
+            Assert.assertTrue("revision not found: " + names[i], found);
         }
     }
-    
+
     static OrganisationEntry getEntry(OrganisationEntry[] orgs, String name) {
         for (int i = 0; i < orgs.length; i++) {
             if (name.equals(orgs[i].getOrganisation())) {
                 return orgs[i];
             }
         }
-        Assert.fail("organisation not found: "+name);
+        Assert.fail("organisation not found: " + name);
         return null; // for compilation only
     }
-    
+
     static ModuleEntry getEntry(ModuleEntry[] mods, String name) {
         for (int i = 0; i < mods.length; i++) {
             if (name.equals(mods[i].getModule())) {
                 return mods[i];
             }
         }
-        Assert.fail("module not found: "+name);
+        Assert.fail("module not found: " + name);
         return null; // for compilation only
     }
-    
+
 }

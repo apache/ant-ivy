@@ -33,40 +33,43 @@ import org.apache.ivy.core.resolve.IvyNodeEviction.EvictionData;
 import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.util.Message;
 
-
 /**
  *
  */
 public class LogReportOutputter implements ReportOutputter {
-   
-   public String getName() {
-       return CONSOLE;
-   }
+
+    public String getName() {
+        return CONSOLE;
+    }
 
     public void output(ResolveReport report, File destDir) {
-    	IvySettings settings = IvyContext.getContext().getSettings();
-    	if (settings.logModulesInUse()) {
-    		Message.info("\t:: modules in use:");
-    		List dependencies = new ArrayList(report.getDependencies());
-    		Collections.sort(dependencies);
-    		if (dependencies.size() > 0) {
-    			String[] confs = report.getConfigurations();
-    			for (int i = 0; i < dependencies.size(); i++) {
-    				IvyNode node = (IvyNode)dependencies.get(i);
-    				if (node.isCompletelyEvicted()) {
-    					continue;
-    				}
-    				List nodeConfs = new ArrayList(confs.length);
-    				for (int j = 0; j < confs.length; j++) {
-    					String conf = confs[j];
-    					if (report.getConfigurationReport(conf).getModuleRevisionIds().contains(node.getResolvedId())) {
-    						nodeConfs.add(conf);
-    					}
-    				}
-    				Message.info("\t"+node+" from "+node.getModuleRevision().getResolver().getName()+" in "+nodeConfs);
-    			}
-    		}
-    	}
+        IvySettings settings = IvyContext.getContext().getSettings();
+        if (settings.logModulesInUse()) {
+            Message.info("\t:: modules in use:");
+            List dependencies = new ArrayList(report.getDependencies());
+            Collections.sort(dependencies);
+            if (dependencies.size() > 0) {
+                String[] confs = report.getConfigurations();
+                for (int i = 0; i < dependencies.size(); i++) {
+                    IvyNode node = (IvyNode) dependencies.get(i);
+                    if (node.isCompletelyEvicted()) {
+                        continue;
+                    }
+                    List nodeConfs = new ArrayList(confs.length);
+                    for (int j = 0; j < confs.length; j++) {
+                        String conf = confs[j];
+                        if (report.getConfigurationReport(conf).getModuleRevisionIds().contains(
+                            node.getResolvedId())) {
+                            nodeConfs.add(conf);
+                        }
+                    }
+                    Message
+                            .info("\t" + node + " from "
+                                    + node.getModuleRevision().getResolver().getName() + " in "
+                                    + nodeConfs);
+                }
+            }
+        }
 
         IvyNode[] evicted = report.getEvictedNodes();
 
@@ -75,23 +78,28 @@ public class LogReportOutputter implements ReportOutputter {
             for (int i = 0; i < evicted.length; i++) {
                 Collection allEvictingNodes = evicted[i].getAllEvictingNodes();
                 if (allEvictingNodes == null) {
-                    Message.info("\t"+evicted[i]+" transitively in "+Arrays.asList(evicted[i].getEvictedConfs()));
+                    Message.info("\t" + evicted[i] + " transitively in "
+                            + Arrays.asList(evicted[i].getEvictedConfs()));
                 } else if (allEvictingNodes.isEmpty()) {
-                    Message.info("\t"+evicted[i]+" by [] ("+evicted[i].getAllEvictingConflictManagers()+") in "+Arrays.asList(evicted[i].getEvictedConfs()));
+                    Message.info("\t" + evicted[i] + " by [] ("
+                            + evicted[i].getAllEvictingConflictManagers() + ") in "
+                            + Arrays.asList(evicted[i].getEvictedConfs()));
                 } else {
-                    Message.info("\t"+evicted[i]+" by "+allEvictingNodes+" in "+Arrays.asList(evicted[i].getEvictedConfs()));
+                    Message.info("\t" + evicted[i] + " by " + allEvictingNodes + " in "
+                            + Arrays.asList(evicted[i].getEvictedConfs()));
                 }
                 String[] confs = evicted[i].getEvictedConfs();
                 for (int j = 0; j < confs.length; j++) {
                     EvictionData evictedData = evicted[i].getEvictedData(confs[j]);
-                    Message.verbose("\t  in "+evictedData.getParent()+" with "+evictedData.getConflictManager());
+                    Message.verbose("\t  in " + evictedData.getParent() + " with "
+                            + evictedData.getConflictManager());
                 }
             }
         }
 
         char[] sep = new char[69];
         Arrays.fill(sep, '-');
-        Message.rawinfo("\t"+new String(sep));
+        Message.rawinfo("\t" + new String(sep));
         StringBuffer line = new StringBuffer("\t");
         append(line, "", 18);
         append(line, "modules", 31);
@@ -111,13 +119,13 @@ public class LogReportOutputter implements ReportOutputter {
         append(line, "dwnlded", 7);
         line.append("|");
         Message.rawinfo(line.toString());
-        Message.rawinfo("\t"+new String(sep));
-        
+        Message.rawinfo("\t" + new String(sep));
+
         String[] confs = report.getConfigurations();
         for (int i = 0; i < confs.length; i++) {
             output(report.getConfigurationReport(confs[i]));
         }
-        Message.rawinfo("\t"+new String(sep));
+        Message.rawinfo("\t" + new String(sep));
 
         IvyNode[] unresolved = report.getUnresolvedDependencies();
         if (unresolved.length > 0) {
@@ -126,7 +134,7 @@ public class LogReportOutputter implements ReportOutputter {
             Message.warn("\t::::::::::::::::::::::::::::::::::::::::::::::");
         }
         for (int i = 0; i < unresolved.length; i++) {
-            Message.warn("\t:: "+unresolved[i]+": "+unresolved[i].getProblemMessage());
+            Message.warn("\t:: " + unresolved[i] + ": " + unresolved[i].getProblemMessage());
         }
         if (unresolved.length > 0) {
             Message.warn("\t::::::::::::::::::::::::::::::::::::::::::::::\n");
@@ -140,13 +148,13 @@ public class LogReportOutputter implements ReportOutputter {
             Message.warn("\t::::::::::::::::::::::::::::::::::::::::::::::");
         }
         for (int i = 0; i < errors.length; i++) {
-            Message.warn("\t:: "+errors[i].getArtifact());
+            Message.warn("\t:: " + errors[i].getArtifact());
         }
         if (errors.length > 0) {
             Message.warn("\t::::::::::::::::::::::::::::::::::::::::::::::\n");
         }
     }
-    
+
     public void output(ConfigurationResolveReport report) {
         StringBuffer line = new StringBuffer("\t");
         append(line, report.getConfiguration(), 18);
@@ -159,7 +167,7 @@ public class LogReportOutputter implements ReportOutputter {
         append(line, String.valueOf(report.getDownloadedArtifactsReports().length), 7);
         line.append("|");
 
-        Message.rawinfo(line.toString());        
+        Message.rawinfo(line.toString());
     }
 
     private void append(StringBuffer line, Object o, int limit) {

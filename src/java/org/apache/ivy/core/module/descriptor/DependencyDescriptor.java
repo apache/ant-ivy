@@ -23,56 +23,79 @@ import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.plugins.namespace.Namespace;
 import org.apache.ivy.util.extendable.ExtendableItem;
 
-
 /**
  *
  */
 public interface DependencyDescriptor extends ExtendableItem {
     ModuleId getDependencyId();
+
     /**
-     * Used to indicate that this revision must be used in case of conflicts, independently
-     * of conflicts manager. This only works for direct dependencies, and not transitive ones.
-     * @return true if this dependency should be used, false if conflicts manager
-     * can do its work.
+     * Used to indicate that this revision must be used in case of conflicts, independently of
+     * conflicts manager. This only works for direct dependencies, and not transitive ones.
+     * 
+     * @return true if this dependency should be used, false if conflicts manager can do its work.
      */
     boolean isForce();
+
     /**
-     * Used to indicate that this dependency is a changing one.
-     * A changing dependency in ivy means that the revision may have its artifacts modified
-     * without revision change. When new artifacts are published a new ivy file should also
-     * be published with a new publication date to indicate to ivy that artifacts have changed and that they 
-     * should be downloaded again. 
+     * Used to indicate that this dependency is a changing one. A changing dependency in ivy means
+     * that the revision may have its artifacts modified without revision change. When new artifacts
+     * are published a new ivy file should also be published with a new publication date to indicate
+     * to ivy that artifacts have changed and that they should be downloaded again.
+     * 
      * @return true if this dependency is a changing one
      */
     boolean isChanging();
+
     boolean isTransitive();
+
     ModuleRevisionId getParentRevisionId();
+
     ModuleRevisionId getDependencyRevisionId();
+
     String[] getModuleConfigurations();
+
     String[] getDependencyConfigurations(String moduleConfiguration, String requestedConfiguration);
+
     String[] getDependencyConfigurations(String moduleConfiguration);
+
     String[] getDependencyConfigurations(String[] moduleConfigurations);
+
     Namespace getNamespace();
+
     DependencyArtifactDescriptor[] getAllDependencyArtifacts();
+
     DependencyArtifactDescriptor[] getDependencyArtifacts(String moduleConfigurations);
+
     DependencyArtifactDescriptor[] getDependencyArtifacts(String[] moduleConfigurations);
+
     IncludeRule[] getAllIncludeRules();
+
     IncludeRule[] getIncludeRules(String moduleConfigurations);
+
     IncludeRule[] getIncludeRules(String[] moduleConfigurations);
+
     ExcludeRule[] getAllExcludeRules();
+
     ExcludeRule[] getExcludeRules(String moduleConfigurations);
+
     ExcludeRule[] getExcludeRules(String[] moduleConfigurations);
+
     /**
      * Returns true if
+     * 
      * @param moduleConfigurations
      * @param artifactId
      * @return
      */
     boolean doesExclude(String[] moduleConfigurations, ArtifactId artifactId);
+
     /**
      * Returns true if this descriptor contains any exclusion rule
+     * 
      * @return true if this descriptor contains any exclusion rule
      */
     public boolean canExclude();
-	DependencyDescriptor asSystem();
+
+    DependencyDescriptor asSystem();
 }

@@ -22,6 +22,8 @@ package org.apache.ivy.util;
  */
 public interface CopyProgressListener {
     void start(CopyProgressEvent evt);
+
     void progress(CopyProgressEvent evt);
+
     void end(CopyProgressEvent evt);
 }

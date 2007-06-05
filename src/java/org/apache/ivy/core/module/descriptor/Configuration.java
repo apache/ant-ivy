@@ -22,50 +22,56 @@ import java.util.Set;
 
 import org.apache.ivy.util.extendable.DefaultExtendableItem;
 
-
-
 /**
  * Represents a module configuration
  */
 public class Configuration extends DefaultExtendableItem {
     public static class Visibility {
         public static Visibility PUBLIC = new Visibility("public");
+
         public static Visibility PRIVATE = new Visibility("private");
+
         public static Visibility getVisibility(String name) {
             if ("private".equals(name)) {
                 return PRIVATE;
             } else if ("public".equals(name)) {
                 return PUBLIC;
             } else {
-                throw new IllegalArgumentException("unknwon visibility "+name);
+                throw new IllegalArgumentException("unknwon visibility " + name);
             }
         }
+
         private String name;
+
         private Visibility(String name) {
             this.name = name;
         }
+
         public String toString() {
             return name;
         }
     }
-    
+
     private String name;
+
     private String description;
+
     private String[] _extends;
+
     private Visibility visibility;
+
     private boolean transitive = true;
-    
+
     /**
      * @param name
      * @param visibility
      * @param description
      * @param ext
      */
-    public Configuration(String name, Visibility visibility,
-            String description, String[] ext) {
+    public Configuration(String name, Visibility visibility, String description, String[] ext) {
         this(name, visibility, description, ext, true);
     }
-    
+
     /**
      * @param name
      * @param visibility
@@ -73,8 +79,8 @@ public class Configuration extends DefaultExtendableItem {
      * @param ext
      * @param transitive
      */
-    public Configuration(String name, Visibility visibility,
-            String description, String[] ext, boolean transitive) {
+    public Configuration(String name, Visibility visibility, String description, String[] ext,
+            boolean transitive) {
         if (name == null) {
             throw new NullPointerException("null configuration name not allowed");
         }
@@ -92,71 +98,74 @@ public class Configuration extends DefaultExtendableItem {
                 _extends[i] = ext[i].trim();
             }
         }
-        this.transitive =transitive;
+        this.transitive = transitive;
     }
-    
+
     /**
      * @param name
      */
     public Configuration(String name) {
         this(name, Visibility.PUBLIC, null, null);
     }
-    
+
     /**
      * @return Returns the description. It may be null.
      */
     public String getDescription() {
         return description;
     }
+
     /**
      * @return Returns the extends. May be empty, but never null.
      */
     public String[] getExtends() {
         return _extends;
     }
+
     /**
      * @return Returns the name. Never null;
      */
     public String getName() {
         return name;
     }
+
     /**
      * @return Returns the visibility. Never null.
      */
     public Visibility getVisibility() {
         return visibility;
     }
-    
+
     /**
      * @return Returns the transitive.
      */
     public final boolean isTransitive() {
         return transitive;
     }
-   
+
     public String toString() {
         return name;
     }
-    
+
     public boolean equals(Object obj) {
-        if (! (obj instanceof Configuration)) {
+        if (!(obj instanceof Configuration)) {
             return false;
         }
-        return ((Configuration)obj).getName().equals(getName());
+        return ((Configuration) obj).getName().equals(getName());
     }
-    
+
     public int hashCode() {
         return getName().hashCode();
     }
-    
+
     public void replaceWildcards(ModuleDescriptor md) {
         if (this != md.getConfiguration(name)) {
             throw new IllegalArgumentException(
-            "The given ModuleDescriptor doesn't own this configuration!");
+                    "The given ModuleDescriptor doesn't own this configuration!");
         }
-        
+
         Configuration[] configs = md.getConfigurations();
-        
+
         Set newExtends = new LinkedHashSet();
         for (int j = 0; j < _extends.length; j++) {
             if ("*".equals(_extends[j])) {
@@ -169,10 +178,10 @@ public class Configuration extends DefaultExtendableItem {
                 newExtends.add(_extends[j]);
             }
         }
-        
+
         this._extends = (String[]) newExtends.toArray(new String[newExtends.size()]);
     }
-    
+
     private void addOther(Configuration[] allConfigs, Visibility visibility, Set configs) {
         for (int i = 0; i < allConfigs.length; i++) {
             String currentName = allConfigs[i].getName();
@@ -182,5 +191,5 @@ public class Configuration extends DefaultExtendableItem {
             }
         }
     }
-    
+
 }

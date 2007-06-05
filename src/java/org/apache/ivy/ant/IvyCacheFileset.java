@@ -26,12 +26,9 @@ import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.types.FileSet;
 import org.apache.tools.ant.types.PatternSet.NameEntry;
 
-
-
 /**
- * Creates an ant fileset consisting in all artifacts found during a resolve.
- * Note that this task is not compatible with the useOrigin mode.
- * 
+ * Creates an ant fileset consisting in all artifacts found during a resolve. Note that this task is
+ * not compatible with the useOrigin mode.
  */
 public class IvyCacheFileset extends IvyCacheTask {
     private String _setid;
@@ -39,13 +36,16 @@ public class IvyCacheFileset extends IvyCacheTask {
     public String getSetid() {
         return _setid;
     }
+
     public void setSetid(String id) {
         _setid = id;
     }
+
     public void setUseOrigin(boolean useOrigin) {
-    	if (useOrigin) {
-    		throw new UnsupportedOperationException("the cachefileset task does not support the useOrigin mode, since filesets require to have only one root directory. Please use the the cachepath task instead");
-    	}
+        if (useOrigin) {
+            throw new UnsupportedOperationException(
+                    "the cachefileset task does not support the useOrigin mode, since filesets require to have only one root directory. Please use the the cachepath task instead");
+        }
     }
 
     public void doExecute() throws BuildException {
@@ -58,22 +58,22 @@ public class IvyCacheFileset extends IvyCacheTask {
             fileset.setProject(getProject());
             getProject().addReference(_setid, fileset);
             fileset.setDir(getCache());
-            
+
             List paths = getArtifacts();
             if (paths.isEmpty()) {
                 NameEntry ne = fileset.createExclude();
                 ne.setName("**/*");
             } else {
-            	CacheManager cache = getCacheManager();
+                CacheManager cache = getCacheManager();
                 for (Iterator iter = paths.iterator(); iter.hasNext();) {
-                	Artifact a = (Artifact)iter.next();
+                    Artifact a = (Artifact) iter.next();
                     NameEntry ne = fileset.createInclude();
                     ne.setName(cache.getArchivePathInCache(a, cache.getSavedArtifactOrigin(a)));
                 }
             }
         } catch (Exception ex) {
-            throw new BuildException("impossible to build ivy cache fileset: "+ex, ex);
-        }        
+            throw new BuildException("impossible to build ivy cache fileset: " + ex, ex);
+        }
     }
 
 }

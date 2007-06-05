@@ -23,30 +23,32 @@ import java.util.Map;
 import org.apache.ivy.core.IvyPatternHelper;
 import org.apache.ivy.util.extendable.UnmodifiableExtendableItem;
 
-
 /**
  * identifies an artifact in a particular module revision
  */
 public class ArtifactRevisionId extends UnmodifiableExtendableItem {
-    public static ArtifactRevisionId newInstance(ModuleRevisionId mrid, String name, String type, String ext) {
+    public static ArtifactRevisionId newInstance(ModuleRevisionId mrid, String name, String type,
+            String ext) {
         return newInstance(mrid, name, type, ext, null);
     }
-    
-    public static ArtifactRevisionId newInstance(ModuleRevisionId mrid, String name, String type, String ext, Map extraAttributes) {
-    	// we inject module extra attributes as extra attributes for the artifacts too
-    	if (extraAttributes == null) {
-    		extraAttributes = mrid.getExtraAttributes();
-    	} else {
-    		extraAttributes = new HashMap(extraAttributes);
-    		extraAttributes.putAll(mrid.getExtraAttributes());
-    	}
-        return new ArtifactRevisionId(new ArtifactId(mrid.getModuleId(), name, type, ext), mrid, extraAttributes);
+
+    public static ArtifactRevisionId newInstance(ModuleRevisionId mrid, String name, String type,
+            String ext, Map extraAttributes) {
+        // we inject module extra attributes as extra attributes for the artifacts too
+        if (extraAttributes == null) {
+            extraAttributes = mrid.getExtraAttributes();
+        } else {
+            extraAttributes = new HashMap(extraAttributes);
+            extraAttributes.putAll(mrid.getExtraAttributes());
+        }
+        return new ArtifactRevisionId(new ArtifactId(mrid.getModuleId(), name, type, ext), mrid,
+                extraAttributes);
     }
-    
+
     private ArtifactId _artifactId;
+
     private ModuleRevisionId _mrid;
-    
-    
+
     public ArtifactRevisionId(ArtifactId artifactId, ModuleRevisionId mrid) {
         this(artifactId, mrid, null);
     }
@@ -55,25 +57,26 @@ public class ArtifactRevisionId extends UnmodifiableExtendableItem {
         super(null, extraAttributes);
         _artifactId = artifactId;
         _mrid = mrid;
-        
-        setStandardAttribute(IvyPatternHelper.ORGANISATION_KEY, getModuleRevisionId().getOrganisation());
+
+        setStandardAttribute(IvyPatternHelper.ORGANISATION_KEY, getModuleRevisionId()
+                .getOrganisation());
         setStandardAttribute(IvyPatternHelper.MODULE_KEY, getModuleRevisionId().getName());
         setStandardAttribute(IvyPatternHelper.REVISION_KEY, getModuleRevisionId().getRevision());
         setStandardAttribute(IvyPatternHelper.ARTIFACT_KEY, getName());
         setStandardAttribute(IvyPatternHelper.TYPE_KEY, getType());
         setStandardAttribute(IvyPatternHelper.EXT_KEY, getExt());
     }
-    
+
     public boolean equals(Object obj) {
-        if (! (obj instanceof ArtifactRevisionId)) {
+        if (!(obj instanceof ArtifactRevisionId)) {
             return false;
         }
-        ArtifactRevisionId arid = (ArtifactRevisionId)obj;
-        return getArtifactId().equals(arid.getArtifactId()) 
-            && getModuleRevisionId().equals(arid.getModuleRevisionId())
-            && getExtraAttributes().equals(arid.getExtraAttributes());
+        ArtifactRevisionId arid = (ArtifactRevisionId) obj;
+        return getArtifactId().equals(arid.getArtifactId())
+                && getModuleRevisionId().equals(arid.getModuleRevisionId())
+                && getExtraAttributes().equals(arid.getExtraAttributes());
     }
-    
+
     public int hashCode() {
         // WARN: uniqueness needs to be relatively strong here
         int hash = 17;
@@ -82,18 +85,20 @@ public class ArtifactRevisionId extends UnmodifiableExtendableItem {
         hash += getExtraAttributes().hashCode() * 37;
         return hash;
     }
-    
+
     public String toString() {
-        return "[ "+getModuleRevisionId().getOrganisation()+" | "+ getModuleRevisionId().getName()+" | "+getModuleRevisionId().getRevision()+" :: "+getName()+" . "+getExt()+" ( "+getType()+" ) ]";
+        return "[ " + getModuleRevisionId().getOrganisation() + " | "
+                + getModuleRevisionId().getName() + " | " + getModuleRevisionId().getRevision()
+                + " :: " + getName() + " . " + getExt() + " ( " + getType() + " ) ]";
     }
-    
+
     /**
      * @return Returns the artifactId.
      */
     public ArtifactId getArtifactId() {
         return _artifactId;
     }
-    
+
     public ModuleRevisionId getModuleRevisionId() {
         return _mrid;
     }
@@ -101,20 +106,20 @@ public class ArtifactRevisionId extends UnmodifiableExtendableItem {
     public String getName() {
         return _artifactId.getName();
     }
-    
+
     public String getType() {
         return _artifactId.getType();
     }
-    
+
     public String getExt() {
         return _artifactId.getExt();
     }
-    
+
     /**
      * @return Returns the revision.
      */
     public String getRevision() {
         return _mrid.getRevision();
     }
-    
+
 }

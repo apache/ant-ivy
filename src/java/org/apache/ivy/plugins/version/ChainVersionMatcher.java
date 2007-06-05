@@ -30,73 +30,71 @@ import org.apache.ivy.plugins.IvySettingsAware;
 import org.apache.ivy.util.Checks;
 
 /**
- * An implementation of {@link VersionMatcher} chaining several
- * version matchers, and implemeting the {@link VersionMatcher}
- * interface by returning results from the first matcher in the chain
- * accepting the version. 
+ * An implementation of {@link VersionMatcher} chaining several version matchers, and implemeting
+ * the {@link VersionMatcher} interface by returning results from the first matcher in the chain
+ * accepting the version.
  */
 public class ChainVersionMatcher extends AbstractVersionMatcher {
-	/**
-	 * The list of version matchers in the chain.
-	 * This list will be queried in order, so the last matcher
-	 * will be used only if no other matcher accept the revision
-	 * before.
-	 */
-    private List/*<VersionMatcher>*/ matchers = new LinkedList();
-    
+    /**
+     * The list of version matchers in the chain. This list will be queried in order, so the last
+     * matcher will be used only if no other matcher accept the revision before.
+     */
+    private List/* <VersionMatcher> */matchers = new LinkedList();
+
     /**
      * Unique Constructor.
      */
     public ChainVersionMatcher() {
-    	super("chain");
+        super("chain");
     }
 
     /**
      * Adds a {@link VersionMatcher} to the chain.
      * 
-     * @param matcher the version matcher to add. Must not be null
+     * @param matcher
+     *            the version matcher to add. Must not be null
      */
     public void add(VersionMatcher matcher) {
-    	Checks.checkNotNull(matcher, "matcher");
+        Checks.checkNotNull(matcher, "matcher");
         matchers.add(0, matcher);
-		if (getSettings() != null && matcher instanceof IvySettingsAware) {
-			((IvySettingsAware) matcher).setSettings(getSettings());
-		}
+        if (getSettings() != null && matcher instanceof IvySettingsAware) {
+            ((IvySettingsAware) matcher).setSettings(getSettings());
+        }
     }
-    
+
     /**
-     * Sets the settings this matcher will use, and set to the matcher in the chain
-     * which implements {@link IvySettingsAware}.
+     * Sets the settings this matcher will use, and set to the matcher in the chain which implements
+     * {@link IvySettingsAware}.
      * 
-     * @param settings the settings to use in the whole chain. Must not be null.
+     * @param settings
+     *            the settings to use in the whole chain. Must not be null.
      */
     public void setSettings(IvySettings settings) {
-    	super.setSettings(settings);
-    	for (Iterator iter = matchers.iterator(); iter.hasNext();) {
-			VersionMatcher matcher = (VersionMatcher) iter.next();
-			if (matcher instanceof IvySettingsAware) {
-				((IvySettingsAware) matcher).setSettings(settings);
-			}
-		}
+        super.setSettings(settings);
+        for (Iterator iter = matchers.iterator(); iter.hasNext();) {
+            VersionMatcher matcher = (VersionMatcher) iter.next();
+            if (matcher instanceof IvySettingsAware) {
+                ((IvySettingsAware) matcher).setSettings(settings);
+            }
+        }
     }
-    
+
     /**
      * Returns the list of matchers in the chain.
      * <p>
-     * The list is returned as an unmodifiable view on the actual list of matchers,
-     * and will thus reflect futher changes made in the chain.
+     * The list is returned as an unmodifiable view on the actual list of matchers, and will thus
+     * reflect futher changes made in the chain.
      * 
      * @return the list of matchers in the chain. Is never null.
      */
     public List getMatchers() {
-    	return Collections.unmodifiableList(matchers);
+        return Collections.unmodifiableList(matchers);
     }
-    
 
     public boolean isDynamic(ModuleRevisionId askedMrid) {
-    	Checks.checkNotNull(askedMrid, "askedMrid");
+        Checks.checkNotNull(askedMrid, "askedMrid");
         for (Iterator iter = matchers.iterator(); iter.hasNext();) {
-            VersionMatcher matcher = (VersionMatcher)iter.next();
+            VersionMatcher matcher = (VersionMatcher) iter.next();
             if (matcher.isDynamic(askedMrid)) {
                 return true;
             }
@@ -104,24 +102,26 @@ public class ChainVersionMatcher extends AbstractVersionMatcher {
         return false;
     }
 
-    public int compare(ModuleRevisionId askedMrid, ModuleRevisionId foundMrid, Comparator staticComparator) {
-    	Checks.checkNotNull(askedMrid, "askedMrid");
-    	Checks.checkNotNull(foundMrid, "foundMrid");
-    	Checks.checkNotNull(staticComparator, "staticComparator");
-    	for (Iterator iter = matchers.iterator(); iter.hasNext();) {
-    		VersionMatcher matcher = (VersionMatcher)iter.next();
-    		if (matcher.isDynamic(askedMrid)) {
-    			return matcher.compare(askedMrid, foundMrid, staticComparator);
-    		}
-    	}
-    	throw new IllegalArgumentException("impossible to compare revisions: askedMrid is not dynamic: "+askedMrid);
+    public int compare(ModuleRevisionId askedMrid, ModuleRevisionId foundMrid,
+            Comparator staticComparator) {
+        Checks.checkNotNull(askedMrid, "askedMrid");
+        Checks.checkNotNull(foundMrid, "foundMrid");
+        Checks.checkNotNull(staticComparator, "staticComparator");
+        for (Iterator iter = matchers.iterator(); iter.hasNext();) {
+            VersionMatcher matcher = (VersionMatcher) iter.next();
+            if (matcher.isDynamic(askedMrid)) {
+                return matcher.compare(askedMrid, foundMrid, staticComparator);
+            }
+        }
+        throw new IllegalArgumentException(
+                "impossible to compare revisions: askedMrid is not dynamic: " + askedMrid);
     }
 
     public boolean accept(ModuleRevisionId askedMrid, ModuleRevisionId foundMrid) {
-    	Checks.checkNotNull(askedMrid, "askedMrid");
-    	Checks.checkNotNull(foundMrid, "foundMrid");
+        Checks.checkNotNull(askedMrid, "askedMrid");
+        Checks.checkNotNull(foundMrid, "foundMrid");
         for (Iterator iter = matchers.iterator(); iter.hasNext();) {
-            VersionMatcher matcher = (VersionMatcher)iter.next();
+            VersionMatcher matcher = (VersionMatcher) iter.next();
             if (!iter.hasNext() || matcher.isDynamic(askedMrid)) {
                 return matcher.accept(askedMrid, foundMrid);
             }
@@ -130,10 +130,10 @@ public class ChainVersionMatcher extends AbstractVersionMatcher {
     }
 
     public boolean needModuleDescriptor(ModuleRevisionId askedMrid, ModuleRevisionId foundMrid) {
-    	Checks.checkNotNull(askedMrid, "askedMrid");
-    	Checks.checkNotNull(foundMrid, "foundMrid");
+        Checks.checkNotNull(askedMrid, "askedMrid");
+        Checks.checkNotNull(foundMrid, "foundMrid");
         for (Iterator iter = matchers.iterator(); iter.hasNext();) {
-            VersionMatcher matcher = (VersionMatcher)iter.next();
+            VersionMatcher matcher = (VersionMatcher) iter.next();
             if (!iter.hasNext() || matcher.isDynamic(askedMrid)) {
                 return matcher.needModuleDescriptor(askedMrid, foundMrid);
             }
@@ -142,10 +142,10 @@ public class ChainVersionMatcher extends AbstractVersionMatcher {
     }
 
     public boolean accept(ModuleRevisionId askedMrid, ModuleDescriptor foundMD) {
-    	Checks.checkNotNull(askedMrid, "askedMrid");
-    	Checks.checkNotNull(foundMD, "foundMD");
+        Checks.checkNotNull(askedMrid, "askedMrid");
+        Checks.checkNotNull(foundMD, "foundMD");
         for (Iterator iter = matchers.iterator(); iter.hasNext();) {
-            VersionMatcher matcher = (VersionMatcher)iter.next();
+            VersionMatcher matcher = (VersionMatcher) iter.next();
             if (!iter.hasNext() || matcher.isDynamic(askedMrid)) {
                 return matcher.accept(askedMrid, foundMD);
             }

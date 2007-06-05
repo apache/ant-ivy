@@ -23,12 +23,10 @@ import java.net.PasswordAuthentication;
 import org.apache.ivy.util.Credentials;
 import org.apache.ivy.util.Message;
 
-
 /**
  * 
  */
 public final class IvyAuthenticator extends Authenticator {
-
 
     /**
      * The sole instance.
@@ -36,8 +34,8 @@ public final class IvyAuthenticator extends Authenticator {
     public final static IvyAuthenticator INSTANCE = new IvyAuthenticator();
 
     /**
-     * Private c'tor to prevent instantiation. Also installs this as the default
-     * Authenticator to use by the JVM.
+     * Private c'tor to prevent instantiation. Also installs this as the default Authenticator to
+     * use by the JVM.
      */
     private IvyAuthenticator() {
         // Install this as the default Authenticator object.
@@ -49,10 +47,13 @@ public final class IvyAuthenticator extends Authenticator {
     // Overriding Authenticator *********************************************
 
     protected PasswordAuthentication getPasswordAuthentication() {
-    	Credentials c = CredentialsStore.INSTANCE.getCredentials(getRequestingPrompt(), getRequestingHost());
-        Message.debug("authentication: k='"+Credentials.buildKey(getRequestingPrompt(), getRequestingHost())+"' c='" + c + "'");
-        return c != null ? new PasswordAuthentication(c.getUserName(), c.getPasswd().toCharArray()) : null;
+        Credentials c = CredentialsStore.INSTANCE.getCredentials(getRequestingPrompt(),
+            getRequestingHost());
+        Message.debug("authentication: k='"
+                + Credentials.buildKey(getRequestingPrompt(), getRequestingHost()) + "' c='" + c
+                + "'");
+        return c != null ? new PasswordAuthentication(c.getUserName(), c.getPasswd().toCharArray())
+                : null;
     }
-
 
 }

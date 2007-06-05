@@ -27,7 +27,8 @@ import org.apache.ivy.core.resolve.ResolveOptions;
 import org.apache.ivy.util.FileUtil;
 
 public class StrictConflictManagerTest extends TestCase {
-	private Ivy ivy;
+    private Ivy ivy;
+
     private File _cache;
 
     protected void setUp() throws Exception {
@@ -36,10 +37,10 @@ public class StrictConflictManagerTest extends TestCase {
         _cache = new File("build/cache");
         _cache.mkdirs();
     }
-	
-	protected void tearDown() throws Exception {
-		FileUtil.forceDelete(_cache);
-	}
+
+    protected void tearDown() throws Exception {
+        FileUtil.forceDelete(_cache);
+    }
 
     public void testInitFromConf() throws Exception {
         ConflictManager cm = ivy.getSettings().getDefaultConflictManager();
@@ -47,12 +48,14 @@ public class StrictConflictManagerTest extends TestCase {
     }
 
     public void testNoConflictResolve() throws Exception {
-        ivy.resolve(StrictConflictManagerTest.class.getResource("ivy-noconflict.xml"), getResolveOptions());
+        ivy.resolve(StrictConflictManagerTest.class.getResource("ivy-noconflict.xml"),
+            getResolveOptions());
     }
 
     public void testConflictResolve() throws Exception {
         try {
-            ivy.resolve(StrictConflictManagerTest.class.getResource("ivy-conflict.xml"), getResolveOptions());
+            ivy.resolve(StrictConflictManagerTest.class.getResource("ivy-conflict.xml"),
+                getResolveOptions());
 
             fail("Resolve should have failed with a conflict");
         } catch (StrictConflictException e) {
@@ -60,8 +63,8 @@ public class StrictConflictManagerTest extends TestCase {
         }
     }
 
-    
     private ResolveOptions getResolveOptions() {
-		return new ResolveOptions().setCache(CacheManager.getInstance(ivy.getSettings())).setValidate(false);
-	}
+        return new ResolveOptions().setCache(CacheManager.getInstance(ivy.getSettings()))
+                .setValidate(false);
+    }
 }

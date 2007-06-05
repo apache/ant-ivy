@@ -26,9 +26,11 @@ import org.apache.tools.ant.taskdefs.Delete;
 
 public class IvyReportTest extends TestCase {
     private File _cache;
+
     private IvyReport _report;
+
     private Project _project;
-    
+
     protected void setUp() throws Exception {
         createCache();
         _project = new Project();
@@ -44,7 +46,7 @@ public class IvyReportTest extends TestCase {
         _cache = new File("build/cache");
         _cache.mkdirs();
     }
-    
+
     protected void tearDown() throws Exception {
         cleanCache();
     }
@@ -61,16 +63,17 @@ public class IvyReportTest extends TestCase {
         IvyResolve res = new IvyResolve();
         res.setProject(_project);
         res.execute();
-        
+
         _report.setTodir(new File(_cache, "report"));
         _report.setXml(true);
-        
-        // do not test any xsl transformation here, because of problems of build in our continuous integration server
-        _report.setXsl(false); 
+
+        // do not test any xsl transformation here, because of problems of build in our continuous
+        // integration server
+        _report.setXsl(false);
         _report.setGraph(false);
-        
+
         _report.execute();
-        
+
         assertTrue(new File(_cache, "report/org11-mod11.1-compile.xml").exists());
     }
 }

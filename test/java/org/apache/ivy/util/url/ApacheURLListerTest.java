@@ -23,49 +23,50 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
-
 /**
  * Tests {@link ApacheURLLister}.
- *
  */
 public class ApacheURLListerTest extends TestCase {
 
     /**
      * Tests {@link ApacheURLLister#retrieveListing(URL, boolean, boolean)}.
-     *
+     * 
      * @throws Exception
      */
     public void testRetrieveListing() throws Exception {
         ApacheURLLister lister = new ApacheURLLister();
 
-        List files = lister.retrieveListing(ApacheURLListerTest.class.getResource("apache-file-listing.html"), true, false);
+        List files = lister.retrieveListing(ApacheURLListerTest.class
+                .getResource("apache-file-listing.html"), true, false);
         assertNotNull(files);
         assertTrue(files.size() > 0);
         for (Iterator iter = files.iterator(); iter.hasNext();) {
-			URL file = (URL) iter.next();
-			assertTrue("found a non matching file: "+file, file.getPath().matches(".*/[^/]+\\.(jar|md5|sha1)"));
-		}
-
+            URL file = (URL) iter.next();
+            assertTrue("found a non matching file: " + file, file.getPath().matches(
+                ".*/[^/]+\\.(jar|md5|sha1)"));
+        }
 
         // try a directory listing
-        List dirs = lister.retrieveListing(ApacheURLListerTest.class.getResource("apache-dir-listing.html"), false, true);
+        List dirs = lister.retrieveListing(ApacheURLListerTest.class
+                .getResource("apache-dir-listing.html"), false, true);
         assertNotNull(dirs);
         assertEquals(4, dirs.size());
 
-
-        List empty = lister.retrieveListing(ApacheURLListerTest.class.getResource("apache-dir-listing.html"), true, false);
+        List empty = lister.retrieveListing(ApacheURLListerTest.class
+                .getResource("apache-dir-listing.html"), true, false);
         assertTrue(empty.isEmpty());
     }
-    
+
     /**
      * Tests {@link ApacheURLLister#retrieveListing(URL, boolean, boolean)}.
-     *
+     * 
      * @throws Exception
      */
     public void testRetrieveListingWithSpaces() throws Exception {
         ApacheURLLister lister = new ApacheURLLister();
 
-        List files = lister.retrieveListing(ApacheURLListerTest.class.getResource("listing-with-spaces.html"), true, false);
+        List files = lister.retrieveListing(ApacheURLListerTest.class
+                .getResource("listing-with-spaces.html"), true, false);
         assertNotNull(files);
         assertTrue(files.size() > 0);
     }

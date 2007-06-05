@@ -22,8 +22,8 @@ import org.apache.ivy.plugins.resolver.DependencyResolver;
 
 public class NeedArtifactEvent extends DownloadEvent {
     public static final String NAME = "need-artifact";
-    
-	private DependencyResolver resolver;
+
+    private DependencyResolver resolver;
 
     public NeedArtifactEvent(DependencyResolver resolver, Artifact artifact) {
         super(NAME, artifact);

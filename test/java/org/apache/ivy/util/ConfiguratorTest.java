@@ -26,143 +26,169 @@ import junit.framework.TestCase;
  *
  */
 public class ConfiguratorTest extends TestCase {
-	public static class City {
+    public static class City {
         private List _housings = new ArrayList();
+
         private List _streets = new ArrayList();
 
-    	private String _name;
-		public String getName() {
-			return _name;
-		}
-		public void setName(String name) {
-			_name = name;
-		}
-		public List getHousings() {
-			return _housings;
-		}
-		public List getStreets() {
-			return _streets;
-		}
+        private String _name;
+
+        public String getName() {
+            return _name;
+        }
+
+        public void setName(String name) {
+            _name = name;
+        }
+
+        public List getHousings() {
+            return _housings;
+        }
+
+        public List getStreets() {
+            return _streets;
+        }
+
         public void add(Housing h) {
             _housings.add(h);
         }
+
         public void add(Street s) {
             _streets.add(s);
         }
     }
 
-	public static class Street {
-    	private Class _clazz;
-    	private List _trees = new ArrayList();
-		public List getTrees() {
-			return _trees;
-		}
-    	public void addConfiguredTree(Tree tree) {
-    		_trees.add(tree);
-    	}
-		public Class getClazz() {
-			return _clazz;
-		}
-		public void setClazz(Class clazz) {
-			_clazz = clazz;
-		}
+    public static class Street {
+        private Class _clazz;
+
+        private List _trees = new ArrayList();
+
+        public List getTrees() {
+            return _trees;
+        }
+
+        public void addConfiguredTree(Tree tree) {
+            _trees.add(tree);
+        }
+
+        public Class getClazz() {
+            return _clazz;
+        }
+
+        public void setClazz(Class clazz) {
+            _clazz = clazz;
+        }
     }
 
-	public static abstract class Housing {
+    public static abstract class Housing {
         private List _rooms = new ArrayList();
+
         private boolean _isEmpty;
+
         private Person _proprietary;
 
-		public List getRooms() {
-			return _rooms;
-		}
+        public List getRooms() {
+            return _rooms;
+        }
+
         public void addRoom(Room r) {
             _rooms.add(r);
         }
-		public boolean isEmpty() {
-			return _isEmpty;
-		}
-		public void setEmpty(boolean isEmpty) {
-			_isEmpty = isEmpty;
-		}
-		public Person getProprietary() {
-			return _proprietary;
-		}
-		public void setProprietary(Person proprietary) {
-			_proprietary = proprietary;
-		}
+
+        public boolean isEmpty() {
+            return _isEmpty;
+        }
+
+        public void setEmpty(boolean isEmpty) {
+            _isEmpty = isEmpty;
+        }
+
+        public Person getProprietary() {
+            return _proprietary;
+        }
+
+        public void setProprietary(Person proprietary) {
+            _proprietary = proprietary;
+        }
     }
 
-	public static class House extends Housing {    	
-    }
-    
-	public static class Tree {
-    	private short _age;
-		public short getAge() {
-			return _age;
-		}
-		public void setAge(short age) {
-			_age = age;
-		}
+    public static class House extends Housing {
     }
 
-	public static class Flat extends Housing {
-    	private int _stage;
-		public int getStage() {
-			return _stage;
-		}
-		public void setStage(int stage) {
-			_stage = stage;
-		}
+    public static class Tree {
+        private short _age;
+
+        public short getAge() {
+            return _age;
+        }
+
+        public void setAge(short age) {
+            _age = age;
+        }
     }
 
-	public static class Room {
-    	private short _surface;
-		public short getSurface() {
-			return _surface;
-		}
-		public void setSurface(short surface) {
-			_surface = surface;
-		}
-    }
-    
-	public static class Person {
-    	private String _name;
+    public static class Flat extends Housing {
+        private int _stage;
 
-		public Person(String name) {
-    		_name = name;
-    	}
-		public String getName() {
-			return _name;
-		}
+        public int getStage() {
+            return _stage;
+        }
+
+        public void setStage(int stage) {
+            _stage = stage;
+        }
+    }
+
+    public static class Room {
+        private short _surface;
+
+        public short getSurface() {
+            return _surface;
+        }
+
+        public void setSurface(short surface) {
+            _surface = surface;
+        }
+    }
+
+    public static class Person {
+        private String _name;
+
+        public Person(String name) {
+            _name = name;
+        }
+
+        public String getName() {
+            return _name;
+        }
     }
 
     private Configurator _conf;
-    
-	protected void setUp() throws Exception {
-		_conf = new Configurator();
-	}
-	
-	public void testSetRoot() {
+
+    protected void setUp() throws Exception {
+        _conf = new Configurator();
+    }
+
+    public void testSetRoot() {
         City city = new City();
         _conf.setRoot(city);
         assertEquals(city, _conf.getCurrent());
-	}
-	
+    }
+
     public void testStringAttribute() {
         City city = new City();
         _conf.setRoot(city);
         _conf.setAttribute("name", "bordeaux");
         assertEquals("bordeaux", city.getName());
     }
-    
+
     public void testIntAttribute() {
         Flat flat = new Flat();
         _conf.setRoot(flat);
         _conf.setAttribute("stage", "4");
         assertEquals(4, flat.getStage());
     }
-    
+
     public void testBooleanAttribute() {
         Housing housing = new House();
         _conf.setRoot(housing);
@@ -186,24 +212,25 @@ public class ConfiguratorTest extends TestCase {
         _conf.setAttribute("clazz", getClass().getName());
         assertEquals(getClass(), street.getClazz());
     }
-    
+
     public void testPersonAttribute() {
         Housing housing = new House();
         _conf.setRoot(housing);
         _conf.setAttribute("proprietary", "jean");
         assertEquals("jean", housing.getProprietary().getName());
     }
-    
+
     public void testAddRoom() {
         Housing housing = new House();
         _conf.setRoot(housing);
-    	_conf.startCreateChild("room");
-    	assertEquals(1, housing.getRooms().size());
-    	_conf.setAttribute("surface", "24");
-    	assertEquals(24, ((Room)housing.getRooms().get(0)).getSurface());
-    	_conf.endCreateChild();
+        _conf.startCreateChild("room");
+        assertEquals(1, housing.getRooms().size());
+        _conf.setAttribute("surface", "24");
+        assertEquals(24, ((Room) housing.getRooms().get(0)).getSurface());
+        _conf.endCreateChild();
         assertEquals(housing, _conf.getCurrent());
     }
+
     public void testAddConfiguredTree() {
         Street street = new Street();
         _conf.setRoot(street);
@@ -212,16 +239,17 @@ public class ConfiguratorTest extends TestCase {
         _conf.setAttribute("age", "400");
         _conf.endCreateChild();
         assertEquals(1, street.getTrees().size());
-        assertEquals(400, ((Tree)street.getTrees().get(0)).getAge());
+        assertEquals(400, ((Tree) street.getTrees().get(0)).getAge());
         assertEquals(street, _conf.getCurrent());
     }
+
     public void testAddWithTypeDef() throws Exception {
-    	City city = new City();
-    	_conf.typeDef("house", House.class.getName());
-    	_conf.typeDef("flat", Flat.class.getName());
-    	_conf.typeDef("street", Street.class.getName());
-    	_conf.setRoot(city);
-    	_conf.startCreateChild("house");
+        City city = new City();
+        _conf.typeDef("house", House.class.getName());
+        _conf.typeDef("flat", Flat.class.getName());
+        _conf.typeDef("street", Street.class.getName());
+        _conf.setRoot(city);
+        _conf.startCreateChild("house");
         assertEquals(1, city.getHousings().size());
         assertTrue(city.getHousings().get(0) instanceof House);
         _conf.endCreateChild();
@@ -231,9 +259,10 @@ public class ConfiguratorTest extends TestCase {
         _conf.endCreateChild();
         _conf.startCreateChild("street");
         assertEquals(1, city.getStreets().size());
-    	_conf.endCreateChild();
+        _conf.endCreateChild();
         assertEquals(city, _conf.getCurrent());
     }
+
     public void testNested() throws Exception {
         City city = new City();
         _conf.typeDef("house", House.class.getName());
@@ -247,15 +276,17 @@ public class ConfiguratorTest extends TestCase {
         _conf.endCreateChild();
         _conf.endCreateChild();
         assertEquals(city, _conf.getCurrent());
-        assertEquals(2, ((Housing)city.getHousings().get(0)).getRooms().size());
-        assertEquals(20, ((Room)((Housing)city.getHousings().get(0)).getRooms().get(0)).getSurface());
-        assertEquals(25, ((Room)((Housing)city.getHousings().get(0)).getRooms().get(1)).getSurface());
+        assertEquals(2, ((Housing) city.getHousings().get(0)).getRooms().size());
+        assertEquals(20, ((Room) ((Housing) city.getHousings().get(0)).getRooms().get(0))
+                .getSurface());
+        assertEquals(25, ((Room) ((Housing) city.getHousings().get(0)).getRooms().get(1))
+                .getSurface());
     }
-    
+
     public void testMacro() throws Exception {
         City city = new City();
         _conf.typeDef("house", House.class.getName());
-        
+
         _conf.startMacroDef("castle");
         _conf.addMacroAttribute("surface", "40");
         _conf.addMacroElement("addroom", true);
@@ -270,7 +301,7 @@ public class ConfiguratorTest extends TestCase {
         _conf.endCreateChild();
         _conf.endCreateChild();
         _conf.endMacroDef();
-        
+
         _conf.setRoot(city);
         _conf.startCreateChild("castle");
         _conf.setAttribute("surface", "10");
@@ -283,19 +314,24 @@ public class ConfiguratorTest extends TestCase {
         _conf.endCreateChild();
         _conf.endCreateChild();
         _conf.endCreateChild();
-        
+
         assertEquals(city, _conf.getCurrent());
         assertEquals(2, city.getHousings().size());
 
         // first castle : 2 default rooms of 10 of surface
-        assertEquals(2, ((Housing)city.getHousings().get(0)).getRooms().size());
-        assertEquals(10, ((Room)((Housing)city.getHousings().get(0)).getRooms().get(0)).getSurface());
-        assertEquals(10, ((Room)((Housing)city.getHousings().get(0)).getRooms().get(1)).getSurface());
-        
+        assertEquals(2, ((Housing) city.getHousings().get(0)).getRooms().size());
+        assertEquals(10, ((Room) ((Housing) city.getHousings().get(0)).getRooms().get(0))
+                .getSurface());
+        assertEquals(10, ((Room) ((Housing) city.getHousings().get(0)).getRooms().get(1))
+                .getSurface());
+
         // second castle : 2 default rooms of default surface 40, + one addroom of surface 20
-        assertEquals(3, ((Housing)city.getHousings().get(1)).getRooms().size());
-        assertEquals(40, ((Room)((Housing)city.getHousings().get(1)).getRooms().get(0)).getSurface());
-        assertEquals(40, ((Room)((Housing)city.getHousings().get(1)).getRooms().get(1)).getSurface());
-        assertEquals(20, ((Room)((Housing)city.getHousings().get(1)).getRooms().get(2)).getSurface());
+        assertEquals(3, ((Housing) city.getHousings().get(1)).getRooms().size());
+        assertEquals(40, ((Room) ((Housing) city.getHousings().get(1)).getRooms().get(0))
+                .getSurface());
+        assertEquals(40, ((Room) ((Housing) city.getHousings().get(1)).getRooms().get(1))
+                .getSurface());
+        assertEquals(20, ((Room) ((Housing) city.getHousings().get(1)).getRooms().get(2))
+                .getSurface());
     }
 }

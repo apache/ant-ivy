@@ -27,61 +27,60 @@ import org.apache.ivy.core.module.descriptor.Configuration.Visibility;
 
 /**
  * Class containing several utility methods for working with configurations.
- * 
- *
  */
 public class ConfigurationUtils {
-	
-	/**
-	 * Private constructor to avoid instantiation of this class.
-	 */
-	private ConfigurationUtils() {
-	}
 
-	/**
-	 * Replace all the wildcards in the given configuration array. Supported wildcards
-	 * are:
-	 * <ul>
-	 * <li><b><tt>*</tt>:</b>all configurations</li>
-	 * <li><b><tt>*(public)</tt>:</b>all public configurations</li>
-	 * <li><b><tt>*(private)</tt>:</b>all private configurations</li>
-	 * </ul>
-	 * If the given array of configurations is <tt>null</tt>, all configurations are returned.
-	 * 
-	 * @param confs the configurations, can contain wildcards
-	 * @param md the configurations where the wildcards are replaced
-	 * @return
-	 */
-	public static String[] replaceWildcards(String[] confs, ModuleDescriptor md) {
-		Set result = new LinkedHashSet();
-		
-		if (confs == null) {
-			return md.getConfigurationsNames();
-		}
-		
-		for (int i = 0; i < confs.length; i++) {
-			if ("*".equals(confs[i])) {
-				result.addAll(Arrays.asList(md.getConfigurationsNames()));
-			} else if ("*(public)".equals(confs[i])) {
-				Configuration[] all = md.getConfigurations();
-				for (int j = 0; j < all.length; j++) {
-					if (all[j].getVisibility().equals(Visibility.PUBLIC)) {
-						result.add(all[j].getName());
-					}
-				}
-			} else if ("*(private)".equals(confs[i])) {
-				Configuration[] all = md.getConfigurations();
-				for (int j = 0; j < all.length; j++) {
-					if (all[j].getVisibility().equals(Visibility.PRIVATE)) {
-						result.add(all[j].getName());
-					}
-				}
-			} else {
-				result.add(confs[i]);
-			}
-		}
-		
-		return (String[]) result.toArray(new String[result.size()]); 
-	}
-	
+    /**
+     * Private constructor to avoid instantiation of this class.
+     */
+    private ConfigurationUtils() {
+    }
+
+    /**
+     * Replace all the wildcards in the given configuration array. Supported wildcards are:
+     * <ul>
+     * <li><b><tt>*</tt>:</b>all configurations</li>
+     * <li><b><tt>*(public)</tt>:</b>all public configurations</li>
+     * <li><b><tt>*(private)</tt>:</b>all private configurations</li>
+     * </ul>
+     * If the given array of configurations is <tt>null</tt>, all configurations are returned.
+     * 
+     * @param confs
+     *            the configurations, can contain wildcards
+     * @param md
+     *            the configurations where the wildcards are replaced
+     * @return
+     */
+    public static String[] replaceWildcards(String[] confs, ModuleDescriptor md) {
+        Set result = new LinkedHashSet();
+
+        if (confs == null) {
+            return md.getConfigurationsNames();
+        }
+
+        for (int i = 0; i < confs.length; i++) {
+            if ("*".equals(confs[i])) {
+                result.addAll(Arrays.asList(md.getConfigurationsNames()));
+            } else if ("*(public)".equals(confs[i])) {
+                Configuration[] all = md.getConfigurations();
+                for (int j = 0; j < all.length; j++) {
+                    if (all[j].getVisibility().equals(Visibility.PUBLIC)) {
+                        result.add(all[j].getName());
+                    }
+                }
+            } else if ("*(private)".equals(confs[i])) {
+                Configuration[] all = md.getConfigurations();
+                for (int j = 0; j < all.length; j++) {
+                    if (all[j].getVisibility().equals(Visibility.PRIVATE)) {
+                        result.add(all[j].getName());
+                    }
+                }
+            } else {
+                result.add(confs[i]);
+            }
+        }
+
+        return (String[]) result.toArray(new String[result.size()]);
+    }
+
 }

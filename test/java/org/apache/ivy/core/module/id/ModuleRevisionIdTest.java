@@ -28,15 +28,18 @@ public class ModuleRevisionIdTest extends TestCase {
         testEncodeDecodeToString(ModuleRevisionId.newInstance("org", "name", "revision"));
         testEncodeDecodeToString(ModuleRevisionId.newInstance("org", "name", ""));
         testEncodeDecodeToString(ModuleRevisionId.newInstance("org.apache", "name-post", "1.0"));
-        testEncodeDecodeToString(ModuleRevisionId.newInstance("org/apache", "pre/name", "1.0-dev8/2"));
+        testEncodeDecodeToString(ModuleRevisionId.newInstance("org/apache", "pre/name",
+            "1.0-dev8/2"));
         Map extraAttributes = new HashMap();
         extraAttributes.put("extra", "extravalue");
         extraAttributes.put("att/name", "att/value");
         extraAttributes.put("att.name", "att.value");
         extraAttributes.put("att<name", "att<value");
-        testEncodeDecodeToString(ModuleRevisionId.newInstance("org/apache", "pre/name", "1.0-dev8/2", extraAttributes));
+        testEncodeDecodeToString(ModuleRevisionId.newInstance("org/apache", "pre/name",
+            "1.0-dev8/2", extraAttributes));
         extraAttributes.put("nullatt", null);
-        testEncodeDecodeToString(ModuleRevisionId.newInstance("org/apache", "pre/name", "1.0-dev8/2", extraAttributes));
+        testEncodeDecodeToString(ModuleRevisionId.newInstance("org/apache", "pre/name",
+            "1.0-dev8/2", extraAttributes));
 
     }
 

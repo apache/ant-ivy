@@ -34,95 +34,95 @@ import org.apache.ivy.util.Message;
 import org.apache.ivy.util.PropertiesFile;
 
 public class CacheManager {
-	public static CacheManager getInstance(IvySettings settings, File cache) {
-		return new CacheManager(settings, cache);
-	}
+    public static CacheManager getInstance(IvySettings settings, File cache) {
+        return new CacheManager(settings, cache);
+    }
 
-	public static CacheManager getInstance(IvySettings settings) {
-		return getInstance(settings, settings.getDefaultCache());
-	}
-	
-	private IvySettings settings;
-	private File cache;
+    public static CacheManager getInstance(IvySettings settings) {
+        return getInstance(settings, settings.getDefaultCache());
+    }
+
+    private IvySettings settings;
+
+    private File cache;
 
     public CacheManager(IvySettings settings, File cache) {
-		this.settings = settings;
-		this.cache = cache;
-	}
+        this.settings = settings;
+        this.cache = cache;
+    }
 
-	public File getResolvedIvyFileInCache(ModuleRevisionId mrid) {
-        String file = IvyPatternHelper.substitute(settings.getCacheResolvedIvyPattern(), mrid.getOrganisation(), mrid.getName(), mrid.getRevision(), "ivy", "ivy", "xml");
+    public File getResolvedIvyFileInCache(ModuleRevisionId mrid) {
+        String file = IvyPatternHelper.substitute(settings.getCacheResolvedIvyPattern(), mrid
+                .getOrganisation(), mrid.getName(), mrid.getRevision(), "ivy", "ivy", "xml");
         return new File(cache, file);
     }
 
     public File getResolvedIvyPropertiesInCache(ModuleRevisionId mrid) {
-        String file = IvyPatternHelper.substitute(settings.getCacheResolvedIvyPropertiesPattern(), mrid.getOrganisation(), mrid.getName(), mrid.getRevision(), "ivy", "ivy", "xml");
+        String file = IvyPatternHelper.substitute(settings.getCacheResolvedIvyPropertiesPattern(),
+            mrid.getOrganisation(), mrid.getName(), mrid.getRevision(), "ivy", "ivy", "xml");
         return new File(cache, file);
     }
 
     public File getIvyFileInCache(ModuleRevisionId mrid) {
-        String file = IvyPatternHelper.substitute(settings.getCacheIvyPattern(), DefaultArtifact.newIvyArtifact(mrid, null));
+        String file = IvyPatternHelper.substitute(settings.getCacheIvyPattern(), DefaultArtifact
+                .newIvyArtifact(mrid, null));
         return new File(cache, file);
     }
-    
+
     public File getConfigurationResolveReportInCache(String resolveId, String conf) {
-    	return new File(cache, resolveId + "-" + conf + ".xml");
+        return new File(cache, resolveId + "-" + conf + ".xml");
     }
-    
+
     public File[] getConfigurationResolveReportsInCache(final String resolveId) {
-		final String prefix = resolveId + "-";
-		final String suffix = ".xml";
-    	return cache.listFiles(new FilenameFilter() {
-			public boolean accept(File dir, String name) {
-				return (name.startsWith(prefix) && name.endsWith(suffix));
-			}
-    	});
+        final String prefix = resolveId + "-";
+        final String suffix = ".xml";
+        return cache.listFiles(new FilenameFilter() {
+            public boolean accept(File dir, String name) {
+                return (name.startsWith(prefix) && name.endsWith(suffix));
+            }
+        });
     }
 
     /**
      * Returns a File object pointing to where the artifact can be found on the local file system.
-     * This is usually in the cache, but it can be directly in the repository if it is local
-     * and if the resolve has been done with useOrigin = true
-     * 
+     * This is usually in the cache, but it can be directly in the repository if it is local and if
+     * the resolve has been done with useOrigin = true
      */
     public File getArchiveFileInCache(Artifact artifact) {
-    	ArtifactOrigin origin = getSavedArtifactOrigin(artifact);
-		return getArchiveFileInCache(artifact, origin);
+        ArtifactOrigin origin = getSavedArtifactOrigin(artifact);
+        return getArchiveFileInCache(artifact, origin);
     }
-    
+
     /**
      * Returns a File object pointing to where the artifact can be found on the local file system.
-     * This is usually in the cache, but it can be directly in the repository if it is local
-     * and if the resolve has been done with useOrigin = true
-     * 
+     * This is usually in the cache, but it can be directly in the repository if it is local and if
+     * the resolve has been done with useOrigin = true
      */
     public File getArchiveFileInCache(Artifact artifact, ArtifactOrigin origin) {
-    	File archive = new File(cache, getArchivePathInCache(artifact, origin));
-    	if (!archive.exists() && origin != null && origin.isLocal()) {
-    		File original = new File(origin.getLocation());
-    		if (original.exists()) {
-    			return original;
-    		}
-    	}
-    	return archive;
+        File archive = new File(cache, getArchivePathInCache(artifact, origin));
+        if (!archive.exists() && origin != null && origin.isLocal()) {
+            File original = new File(origin.getLocation());
+            if (original.exists()) {
+                return original;
+            }
+        }
+        return archive;
     }
+
     /**
      * Returns a File object pointing to where the artifact can be found on the local file system,
-     * using or not the original location depending on the availability of origin information provided
-     * as parameter and the setting of useOrigin.
-     * 
-     * If useOrigin is false, this method will always return the file in the cache.
-     * 
+     * using or not the original location depending on the availability of origin information
+     * provided as parameter and the setting of useOrigin. If useOrigin is false, this method will
+     * always return the file in the cache.
      */
     public File getArchiveFileInCache(Artifact artifact, ArtifactOrigin origin, boolean useOrigin) {
-    	if (useOrigin && origin != null && origin.isLocal()) {
-    		return new File(origin.getLocation());
-    	} else {
-    		return new File(cache, getArchivePathInCache(artifact, origin));
-    	}
+        if (useOrigin && origin != null && origin.isLocal()) {
+            return new File(origin.getLocation());
+        } else {
+            return new File(cache, getArchivePathInCache(artifact, origin));
+        }
     }
-    
-    
+
     public String getArchivePathInCache(Artifact artifact) {
         return IvyPatternHelper.substitute(settings.getCacheArtifactPattern(), artifact);
     }
@@ -132,11 +132,13 @@ public class CacheManager {
     }
 
     /**
-     * Saves the information of which resolver was used to resolve a md,
-     * so that this info can be retrieve later (even after a jvm restart)
-     * by getSavedResolverName(ModuleDescriptor md)
-     * @param md the module descriptor resolved
-     * @param name resolver name
+     * Saves the information of which resolver was used to resolve a md, so that this info can be
+     * retrieve later (even after a jvm restart) by getSavedResolverName(ModuleDescriptor md)
+     * 
+     * @param md
+     *            the module descriptor resolved
+     * @param name
+     *            resolver name
      */
     public void saveResolver(ModuleDescriptor md, String name) {
         PropertiesFile cdf = getCachedDataFile(md);
@@ -145,39 +147,41 @@ public class CacheManager {
     }
 
     /**
-     * Saves the information of which resolver was used to resolve a md,
-     * so that this info can be retrieve later (even after a jvm restart)
-     * by getSavedArtResolverName(ModuleDescriptor md)
-     * @param md the module descriptor resolved
-     * @param name artifact resolver name
+     * Saves the information of which resolver was used to resolve a md, so that this info can be
+     * retrieve later (even after a jvm restart) by getSavedArtResolverName(ModuleDescriptor md)
+     * 
+     * @param md
+     *            the module descriptor resolved
+     * @param name
+     *            artifact resolver name
      */
     public void saveArtResolver(ModuleDescriptor md, String name) {
         PropertiesFile cdf = getCachedDataFile(md);
         cdf.setProperty("artifact.resolver", name);
         cdf.save();
     }
-    
+
     public void saveArtifactOrigin(Artifact artifact, ArtifactOrigin origin) {
-       PropertiesFile cdf = getCachedDataFile(artifact.getModuleRevisionId());
-       cdf.setProperty(getIsLocalKey(artifact), String.valueOf(origin.isLocal()));
-       cdf.setProperty(getLocationKey(artifact), origin.getLocation());
-       cdf.save();
+        PropertiesFile cdf = getCachedDataFile(artifact.getModuleRevisionId());
+        cdf.setProperty(getIsLocalKey(artifact), String.valueOf(origin.isLocal()));
+        cdf.setProperty(getLocationKey(artifact), origin.getLocation());
+        cdf.save();
     }
-    
+
     public ArtifactOrigin getSavedArtifactOrigin(Artifact artifact) {
         PropertiesFile cdf = getCachedDataFile(artifact.getModuleRevisionId());
         String location = cdf.getProperty(getLocationKey(artifact));
         String local = cdf.getProperty(getIsLocalKey(artifact));
         boolean isLocal = Boolean.valueOf(local).booleanValue();
-        
+
         if (location == null) {
-           // origin has not been specified, return null
-           return null;
+            // origin has not been specified, return null
+            return null;
         }
-        
+
         return new ArtifactOrigin(isLocal, location);
     }
-    
+
     public void removeSavedArtifactOrigin(Artifact artifact) {
         PropertiesFile cdf = getCachedDataFile(artifact.getModuleRevisionId());
         cdf.remove(getLocationKey(artifact));
@@ -187,19 +191,24 @@ public class CacheManager {
 
     /**
      * Creates the unique prefix key that will reference the artifact within the properties.
-     * @param artifact the artifact to create the unique key from. Cannot be null.
+     * 
+     * @param artifact
+     *            the artifact to create the unique key from. Cannot be null.
      * @return the unique prefix key as a string.
      */
     private String getPrefixKey(Artifact artifact) {
-        // use the hashcode as a uuid for the artifact (fingers crossed)        
+        // use the hashcode as a uuid for the artifact (fingers crossed)
         int hashCode = artifact.getId().hashCode();
         // use just some visual cue
-        return "artifact:" + artifact.getName() + "#" + artifact.getType() + "#" + artifact.getExt() + "#" + hashCode;
+        return "artifact:" + artifact.getName() + "#" + artifact.getType() + "#"
+                + artifact.getExt() + "#" + hashCode;
     }
 
     /**
      * Returns the key used to identify the location of the artifact.
-     * @param artifact the artifact to generate the key from. Cannot be null.
+     * 
+     * @param artifact
+     *            the artifact to generate the key from. Cannot be null.
      * @return the key to be used to reference the artifact location.
      */
     private String getLocationKey(Artifact artifact) {
@@ -209,7 +218,9 @@ public class CacheManager {
 
     /**
      * Returns the key used to identify if the artifact is local.
-     * @param artifact the artifact to generate the key from. Cannot be null.
+     * 
+     * @param artifact
+     *            the artifact to generate the key from. Cannot be null.
      * @return the key to be used to reference the artifact location.
      */
     private String getIsLocalKey(Artifact artifact) {
@@ -228,11 +239,12 @@ public class CacheManager {
     }
 
     private PropertiesFile getCachedDataFile(ModuleDescriptor md) {
-       return getCachedDataFile(md.getResolvedModuleRevisionId());
+        return getCachedDataFile(md.getResolvedModuleRevisionId());
     }
-    
+
     private PropertiesFile getCachedDataFile(ModuleRevisionId mRevId) {
-        return new PropertiesFile(new File(cache, IvyPatternHelper.substitute(settings.getCacheDataFilePattern(),mRevId)), "ivy cached data file for "+mRevId);
+        return new PropertiesFile(new File(cache, IvyPatternHelper.substitute(settings
+                .getCacheDataFilePattern(), mRevId)), "ivy cached data file for " + mRevId);
     }
 
     public ResolvedModuleRevision findModuleInCache(ModuleRevisionId mrid, boolean validate) {
@@ -242,15 +254,20 @@ public class CacheManager {
             if (ivyFile.exists()) {
                 // found in cache !
                 try {
-                    ModuleDescriptor depMD = XmlModuleDescriptorParser.getInstance().parseDescriptor(settings, ivyFile.toURL(), validate);
+                    ModuleDescriptor depMD = XmlModuleDescriptorParser.getInstance()
+                            .parseDescriptor(settings, ivyFile.toURL(), validate);
                     String resolverName = getSavedResolverName(depMD);
                     String artResolverName = getSavedArtResolverName(depMD);
                     DependencyResolver resolver = settings.getResolver(resolverName);
                     if (resolver == null) {
-                        Message.debug("\tresolver not found: "+resolverName+" => trying to use the one configured for "+mrid);                                    
-                        resolver = settings.getResolver(depMD.getResolvedModuleRevisionId().getModuleId());
+                        Message.debug("\tresolver not found: " + resolverName
+                                + " => trying to use the one configured for " + mrid);
+                        resolver = settings.getResolver(depMD.getResolvedModuleRevisionId()
+                                .getModuleId());
                         if (resolver != null) {
-                            Message.debug("\tconfigured resolver found for "+depMD.getResolvedModuleRevisionId()+": "+resolver.getName()+": saving this data");                                    
+                            Message.debug("\tconfigured resolver found for "
+                                    + depMD.getResolvedModuleRevisionId() + ": "
+                                    + resolver.getName() + ": saving this data");
                             saveResolver(depMD, resolver.getName());
                         }
                     }
@@ -259,29 +276,32 @@ public class CacheManager {
                         artResolver = resolver;
                     }
                     if (resolver != null) {
-                        Message.debug("\tfound ivy file in cache for "+mrid+" (resolved by "+resolver.getName()+"): "+ivyFile);
-                        return new DefaultModuleRevision(resolver, artResolver, depMD, false, false, ivyFile.toURL());
+                        Message.debug("\tfound ivy file in cache for " + mrid + " (resolved by "
+                                + resolver.getName() + "): " + ivyFile);
+                        return new DefaultModuleRevision(resolver, artResolver, depMD, false,
+                                false, ivyFile.toURL());
                     } else {
-                        Message.debug("\tresolver not found: "+resolverName+" => cannot use cached ivy file for "+mrid);                                    
+                        Message.debug("\tresolver not found: " + resolverName
+                                + " => cannot use cached ivy file for " + mrid);
                     }
                 } catch (Exception e) {
                     // will try with resolver
-                    Message.debug("\tproblem while parsing cached ivy file for: "+mrid+": "+e.getMessage());                                    
+                    Message.debug("\tproblem while parsing cached ivy file for: " + mrid + ": "
+                            + e.getMessage());
                 }
             } else {
-                Message.debug("\tno ivy file in cache for "+mrid+": tried "+ivyFile);
+                Message.debug("\tno ivy file in cache for " + mrid + ": tried " + ivyFile);
             }
         }
         return null;
     }
 
-
     public String toString() {
-    	return "cache: "+String.valueOf(cache);
+        return "cache: " + String.valueOf(cache);
     }
 
-	public File getCache() {
-		return cache;
-	}
+    public File getCache() {
+        return cache;
+    }
 
 }

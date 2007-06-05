@@ -31,20 +31,22 @@ import org.apache.tools.ant.taskdefs.Delete;
 
 public class IvyPostResolveTaskTest extends TestCase {
     private File _cache;
+
     private IvyPostResolveTask _task;
+
     private Project _project;
-    
+
     protected void setUp() throws Exception {
-    	Message.init(new DefaultMessageImpl(10));
+        Message.init(new DefaultMessageImpl(10));
 
         createCache();
         _project = new Project();
         _project.setProperty("ivy.settings.file", "test/repositories/ivysettings.xml");
 
         _task = new IvyPostResolveTask() {
-        	public void doExecute() throws BuildException {
-        		prepareAndCheck();
-        	}
+            public void doExecute() throws BuildException {
+                prepareAndCheck();
+            }
         };
         _task.setProject(_project);
         _task.setCache(_cache);
@@ -54,7 +56,7 @@ public class IvyPostResolveTaskTest extends TestCase {
         _cache = new File("build/cache");
         _cache.mkdirs();
     }
-    
+
     protected void tearDown() throws Exception {
         cleanCache();
     }
@@ -67,314 +69,343 @@ public class IvyPostResolveTaskTest extends TestCase {
     }
 
     public void testWithPreviousResolveInSameBuildAndLessConfs() throws Exception {
-    	IvyResolve resolve = new IvyResolve();
-    	resolve.setProject(_project);
-    	resolve.setCache(_cache);
-    	resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-multiconf.xml"));
-    	resolve.setConf("default,compile");
-    	resolve.execute();
+        IvyResolve resolve = new IvyResolve();
+        resolve.setProject(_project);
+        resolve.setCache(_cache);
+        resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-multiconf.xml"));
+        resolve.setConf("default,compile");
+        resolve.execute();
 
-    	ResolveReport reportBefore = (ResolveReport) _project.getReference("ivy.resolved.report");
-    
-    	_task.setConf("default");
-    	_task.execute();
+        ResolveReport reportBefore = (ResolveReport) _project.getReference("ivy.resolved.report");
 
-    	ResolveReport reportAfter = (ResolveReport) _project.getReference("ivy.resolved.report");
-    	
-    	assertSame("IvyPostResolveTask has performed a resolve where it shouldn't", reportBefore, reportAfter);
+        _task.setConf("default");
+        _task.execute();
+
+        ResolveReport reportAfter = (ResolveReport) _project.getReference("ivy.resolved.report");
+
+        assertSame("IvyPostResolveTask has performed a resolve where it shouldn't", reportBefore,
+            reportAfter);
     }
 
     public void testWithPreviousResolveInSameBuildAndSameConfs() throws Exception {
-    	IvyResolve resolve = new IvyResolve();
-    	resolve.setProject(_project);
-    	resolve.setCache(_cache);
-    	resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-multiconf.xml"));
-    	resolve.setConf("default");
-    	resolve.execute();
+        IvyResolve resolve = new IvyResolve();
+        resolve.setProject(_project);
+        resolve.setCache(_cache);
+        resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-multiconf.xml"));
+        resolve.setConf("default");
+        resolve.execute();
 
-    	ResolveReport reportBefore = (ResolveReport) _project.getReference("ivy.resolved.report");
-    
-    	_task.setConf("default");
-    	_task.execute();
+        ResolveReport reportBefore = (ResolveReport) _project.getReference("ivy.resolved.report");
 
-    	ResolveReport reportAfter = (ResolveReport) _project.getReference("ivy.resolved.report");
-    	
-    	assertSame("IvyPostResolveTask has performed a resolve where it shouldn't", reportBefore, reportAfter);
+        _task.setConf("default");
+        _task.execute();
+
+        ResolveReport reportAfter = (ResolveReport) _project.getReference("ivy.resolved.report");
+
+        assertSame("IvyPostResolveTask has performed a resolve where it shouldn't", reportBefore,
+            reportAfter);
     }
 
     public void testWithPreviousResolveInSameBuildAndWildcard() throws Exception {
-    	IvyResolve resolve = new IvyResolve();
-    	resolve.setProject(_project);
-    	resolve.setCache(_cache);
-    	resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-multiconf.xml"));
-    	resolve.setConf("*");
-    	resolve.execute();
+        IvyResolve resolve = new IvyResolve();
+        resolve.setProject(_project);
+        resolve.setCache(_cache);
+        resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-multiconf.xml"));
+        resolve.setConf("*");
+        resolve.execute();
 
-    	ResolveReport reportBefore = (ResolveReport) _project.getReference("ivy.resolved.report");
-    
-    	_task.setConf("default");
-    	_task.execute();
+        ResolveReport reportBefore = (ResolveReport) _project.getReference("ivy.resolved.report");
 
-    	ResolveReport reportAfter = (ResolveReport) _project.getReference("ivy.resolved.report");
-    	
-    	assertSame("IvyPostResolveTask has performed a resolve where it shouldn't", reportBefore, reportAfter);
+        _task.setConf("default");
+        _task.execute();
+
+        ResolveReport reportAfter = (ResolveReport) _project.getReference("ivy.resolved.report");
+
+        assertSame("IvyPostResolveTask has performed a resolve where it shouldn't", reportBefore,
+            reportAfter);
     }
 
     public void testWithPreviousResolveInSameBuildAndBothWildcard() throws Exception {
-    	IvyResolve resolve = new IvyResolve();
-    	resolve.setProject(_project);
-    	resolve.setCache(_cache);
-    	resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-multiconf.xml"));
-    	resolve.setConf("*");
-    	resolve.execute();
+        IvyResolve resolve = new IvyResolve();
+        resolve.setProject(_project);
+        resolve.setCache(_cache);
+        resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-multiconf.xml"));
+        resolve.setConf("*");
+        resolve.execute();
 
-    	ResolveReport reportBefore = (ResolveReport) _project.getReference("ivy.resolved.report");
-    
-    	_task.setConf("*");
-    	_task.execute();
+        ResolveReport reportBefore = (ResolveReport) _project.getReference("ivy.resolved.report");
 
-    	ResolveReport reportAfter = (ResolveReport) _project.getReference("ivy.resolved.report");
-    	
-    	assertSame("IvyPostResolveTask has performed a resolve where it shouldn't", reportBefore, reportAfter);
+        _task.setConf("*");
+        _task.execute();
+
+        ResolveReport reportAfter = (ResolveReport) _project.getReference("ivy.resolved.report");
+
+        assertSame("IvyPostResolveTask has performed a resolve where it shouldn't", reportBefore,
+            reportAfter);
     }
 
     public void testWithPreviousResolveInSameBuildAndMoreConfs() throws Exception {
-    	IvyResolve resolve = new IvyResolve();
-    	resolve.setProject(_project);
-    	resolve.setCache(_cache);
-    	resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-multiconf.xml"));
-    	resolve.setConf("compile");
-    	resolve.execute();
+        IvyResolve resolve = new IvyResolve();
+        resolve.setProject(_project);
+        resolve.setCache(_cache);
+        resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-multiconf.xml"));
+        resolve.setConf("compile");
+        resolve.execute();
 
-    	ResolveReport reportBefore = (ResolveReport) _project.getReference("ivy.resolved.report");
-    	assertTrue(getArchiveFileInCache("org1", "mod1.1", "2.0", "mod1.1", "jar", "jar").exists());
-    	assertFalse(getArchiveFileInCache("org1", "mod1.2", "2.0", "mod1.2", "jar", "jar").exists());
-    
-    	_task.setConf("*");
-    	_task.execute();
+        ResolveReport reportBefore = (ResolveReport) _project.getReference("ivy.resolved.report");
+        assertTrue(getArchiveFileInCache("org1", "mod1.1", "2.0", "mod1.1", "jar", "jar").exists());
+        assertFalse(getArchiveFileInCache("org1", "mod1.2", "2.0", "mod1.2", "jar", "jar").exists());
 
-    	ResolveReport reportAfter = (ResolveReport) _project.getReference("ivy.resolved.report");
-    	
-    	assertNotSame("IvyPostResolveTask hasn't performed a resolve where it should have", reportBefore, reportAfter);
-    	assertTrue(getArchiveFileInCache("org1", "mod1.2", "2.0", "mod1.2", "jar", "jar").exists());
+        _task.setConf("*");
+        _task.execute();
+
+        ResolveReport reportAfter = (ResolveReport) _project.getReference("ivy.resolved.report");
+
+        assertNotSame("IvyPostResolveTask hasn't performed a resolve where it should have",
+            reportBefore, reportAfter);
+        assertTrue(getArchiveFileInCache("org1", "mod1.2", "2.0", "mod1.2", "jar", "jar").exists());
     }
 
     public void testWithoutKeep() throws Exception {
-    	IvyResolve resolve = new IvyResolve();
-    	resolve.setProject(_project);
-    	resolve.setCache(_cache);
-    	resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-multiconf.xml"));
-    	resolve.setConf("compile");
-    	resolve.execute();
+        IvyResolve resolve = new IvyResolve();
+        resolve.setProject(_project);
+        resolve.setCache(_cache);
+        resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-multiconf.xml"));
+        resolve.setConf("compile");
+        resolve.execute();
 
-    	ResolveReport reportBefore = (ResolveReport) _project.getReference("ivy.resolved.report");
-    	assertTrue(getArchiveFileInCache("org1", "mod1.1", "2.0", "mod1.1", "jar", "jar").exists());
-    	assertFalse(getArchiveFileInCache("org1", "mod1.2", "2.0", "mod1.2", "jar", "jar").exists());
-    
-    	_task.setConf("*"); // will trigger a resolve
-    	_task.setKeep(false); // don't keep the resolve results
-    	_task.execute();
+        ResolveReport reportBefore = (ResolveReport) _project.getReference("ivy.resolved.report");
+        assertTrue(getArchiveFileInCache("org1", "mod1.1", "2.0", "mod1.1", "jar", "jar").exists());
+        assertFalse(getArchiveFileInCache("org1", "mod1.2", "2.0", "mod1.2", "jar", "jar").exists());
 
-    	ResolveReport reportAfter = (ResolveReport) _project.getReference("ivy.resolved.report");
-    	
-    	assertSame("IvyPostResolveTask has kept the resolve report where it should have", reportBefore, reportAfter);
-    	assertTrue(getArchiveFileInCache("org1", "mod1.2", "2.0", "mod1.2", "jar", "jar").exists());
+        _task.setConf("*"); // will trigger a resolve
+        _task.setKeep(false); // don't keep the resolve results
+        _task.execute();
+
+        ResolveReport reportAfter = (ResolveReport) _project.getReference("ivy.resolved.report");
+
+        assertSame("IvyPostResolveTask has kept the resolve report where it should have",
+            reportBefore, reportAfter);
+        assertTrue(getArchiveFileInCache("org1", "mod1.2", "2.0", "mod1.2", "jar", "jar").exists());
     }
 
     public void testInlineWithoutKeep() throws Exception {
-    	_task.setOrganisation("org1");
-    	_task.setModule("mod1.1");
-    	_task.setRevision("2.0");
-    	_task.setInline(true);
-    	_task.setConf("*"); // will trigger a resolve
-    	_task.execute();
+        _task.setOrganisation("org1");
+        _task.setModule("mod1.1");
+        _task.setRevision("2.0");
+        _task.setInline(true);
+        _task.setConf("*"); // will trigger a resolve
+        _task.execute();
 
-    	ResolveReport reportAfter = (ResolveReport) _project.getReference("ivy.resolved.report");
-    	
-    	assertNull("IvyPostResolveTask has kept the resolve report where it should have", reportAfter);
-    	assertTrue(getArchiveFileInCache("org1", "mod1.2", "2.1", "mod1.2", "jar", "jar").exists());
+        ResolveReport reportAfter = (ResolveReport) _project.getReference("ivy.resolved.report");
+
+        assertNull("IvyPostResolveTask has kept the resolve report where it should have",
+            reportAfter);
+        assertTrue(getArchiveFileInCache("org1", "mod1.2", "2.1", "mod1.2", "jar", "jar").exists());
     }
 
     public void testInlineWithKeep() throws Exception {
-    	_task.setOrganisation("org1");
-    	_task.setModule("mod1.1");
-    	_task.setRevision("2.0");
-    	_task.setInline(true);
-    	_task.setKeep(true);
-    	_task.setConf("*"); // will trigger a resolve
-    	_task.execute();
+        _task.setOrganisation("org1");
+        _task.setModule("mod1.1");
+        _task.setRevision("2.0");
+        _task.setInline(true);
+        _task.setKeep(true);
+        _task.setConf("*"); // will trigger a resolve
+        _task.execute();
 
-    	ResolveReport reportAfter = (ResolveReport) _project.getReference("ivy.resolved.report");
-    	
-    	assertNotNull("IvyPostResolveTask has kept the resolve report where it should have", reportAfter);
-    	assertTrue(getArchiveFileInCache("org1", "mod1.2", "2.1", "mod1.2", "jar", "jar").exists());
+        ResolveReport reportAfter = (ResolveReport) _project.getReference("ivy.resolved.report");
+
+        assertNotNull("IvyPostResolveTask has kept the resolve report where it should have",
+            reportAfter);
+        assertTrue(getArchiveFileInCache("org1", "mod1.2", "2.1", "mod1.2", "jar", "jar").exists());
     }
 
     public void testWithResolveIdAndPreviousResolveInSameBuildAndLessConfs() throws Exception {
-    	IvyResolve resolve = new IvyResolve();
-    	resolve.setProject(_project);
-    	resolve.setCache(_cache);
-    	resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-multiconf.xml"));
-    	resolve.setConf("default,compile");
-    	resolve.setResolveId("testResolveId");
-    	resolve.execute();
+        IvyResolve resolve = new IvyResolve();
+        resolve.setProject(_project);
+        resolve.setCache(_cache);
+        resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-multiconf.xml"));
+        resolve.setConf("default,compile");
+        resolve.setResolveId("testResolveId");
+        resolve.execute();
 
-    	ResolveReport report1 = (ResolveReport) _project.getReference("ivy.resolved.report.testResolveId");
+        ResolveReport report1 = (ResolveReport) _project
+                .getReference("ivy.resolved.report.testResolveId");
 
-    	// perform another resolve
-    	resolve = new IvyResolve();
-    	resolve.setProject(_project);
-    	resolve.setCache(_cache);
-    	resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-simple.xml"));
-    	resolve.setConf("*");
-    	resolve.execute();
-    
-    	ResolveReport reportBefore = (ResolveReport) _project.getReference("ivy.resolved.report");
-    	
-    	_task.setConf("default");
-    	_task.setResolveId("testResolveId");
-    	_task.execute();
+        // perform another resolve
+        resolve = new IvyResolve();
+        resolve.setProject(_project);
+        resolve.setCache(_cache);
+        resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-simple.xml"));
+        resolve.setConf("*");
+        resolve.execute();
 
-    	ResolveReport reportAfter = (ResolveReport) _project.getReference("ivy.resolved.report");
-    	ResolveReport report2 = (ResolveReport) _project.getReference("ivy.resolved.report.testResolveId");
-    	
-    	assertSame("IvyPostResolveTask has performed a resolve where it shouldn't", reportBefore, reportAfter);
-    	assertSame("IvyPostResolveTask has performed a resolve where it shouldn't", report1, report2);
+        ResolveReport reportBefore = (ResolveReport) _project.getReference("ivy.resolved.report");
+
+        _task.setConf("default");
+        _task.setResolveId("testResolveId");
+        _task.execute();
+
+        ResolveReport reportAfter = (ResolveReport) _project.getReference("ivy.resolved.report");
+        ResolveReport report2 = (ResolveReport) _project
+                .getReference("ivy.resolved.report.testResolveId");
+
+        assertSame("IvyPostResolveTask has performed a resolve where it shouldn't", reportBefore,
+            reportAfter);
+        assertSame("IvyPostResolveTask has performed a resolve where it shouldn't", report1,
+            report2);
     }
 
     public void testWithResolveIdAndPreviousResolveInSameBuildAndSameConfs() throws Exception {
-    	IvyResolve resolve = new IvyResolve();
-    	resolve.setProject(_project);
-    	resolve.setCache(_cache);
-    	resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-multiconf.xml"));
-    	resolve.setConf("default");
-    	resolve.setResolveId("testResolveId");
-    	resolve.execute();
+        IvyResolve resolve = new IvyResolve();
+        resolve.setProject(_project);
+        resolve.setCache(_cache);
+        resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-multiconf.xml"));
+        resolve.setConf("default");
+        resolve.setResolveId("testResolveId");
+        resolve.execute();
 
-    	ResolveReport report1 = (ResolveReport) _project.getReference("ivy.resolved.report.testResolveId");
+        ResolveReport report1 = (ResolveReport) _project
+                .getReference("ivy.resolved.report.testResolveId");
 
-    	// perform another resolve
-    	resolve = new IvyResolve();
-    	resolve.setProject(_project);
-    	resolve.setCache(_cache);
-    	resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-simple.xml"));
-    	resolve.setConf("*");
-    	resolve.execute();
+        // perform another resolve
+        resolve = new IvyResolve();
+        resolve.setProject(_project);
+        resolve.setCache(_cache);
+        resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-simple.xml"));
+        resolve.setConf("*");
+        resolve.execute();
 
-    	ResolveReport reportBefore = (ResolveReport) _project.getReference("ivy.resolved.report");
-    
-    	_task.setConf("default");
-    	_task.setResolveId("testResolveId");
-    	_task.execute();
+        ResolveReport reportBefore = (ResolveReport) _project.getReference("ivy.resolved.report");
 
-    	ResolveReport reportAfter = (ResolveReport) _project.getReference("ivy.resolved.report");
-    	ResolveReport report2 = (ResolveReport) _project.getReference("ivy.resolved.report.testResolveId");
-    	
-    	assertSame("IvyPostResolveTask has performed a resolve where it shouldn't", reportBefore, reportAfter);
-    	assertSame("IvyPostResolveTask has performed a resolve where it shouldn't", report1, report2);
+        _task.setConf("default");
+        _task.setResolveId("testResolveId");
+        _task.execute();
+
+        ResolveReport reportAfter = (ResolveReport) _project.getReference("ivy.resolved.report");
+        ResolveReport report2 = (ResolveReport) _project
+                .getReference("ivy.resolved.report.testResolveId");
+
+        assertSame("IvyPostResolveTask has performed a resolve where it shouldn't", reportBefore,
+            reportAfter);
+        assertSame("IvyPostResolveTask has performed a resolve where it shouldn't", report1,
+            report2);
     }
 
     public void testWithResolveIdAndPreviousResolveInSameBuildAndWildcard() throws Exception {
-    	IvyResolve resolve = new IvyResolve();
-    	resolve.setProject(_project);
-    	resolve.setCache(_cache);
-    	resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-multiconf.xml"));
-    	resolve.setConf("*");
-    	resolve.setResolveId("testResolveId");
-    	resolve.execute();
+        IvyResolve resolve = new IvyResolve();
+        resolve.setProject(_project);
+        resolve.setCache(_cache);
+        resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-multiconf.xml"));
+        resolve.setConf("*");
+        resolve.setResolveId("testResolveId");
+        resolve.execute();
 
-    	ResolveReport report1 = (ResolveReport) _project.getReference("ivy.resolved.report.testResolveId");
+        ResolveReport report1 = (ResolveReport) _project
+                .getReference("ivy.resolved.report.testResolveId");
 
-    	// perform another resolve
-    	resolve = new IvyResolve();
-    	resolve.setProject(_project);
-    	resolve.setCache(_cache);
-    	resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-simple.xml"));
-    	resolve.setConf("*");
-    	resolve.execute();
+        // perform another resolve
+        resolve = new IvyResolve();
+        resolve.setProject(_project);
+        resolve.setCache(_cache);
+        resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-simple.xml"));
+        resolve.setConf("*");
+        resolve.execute();
 
-    	ResolveReport reportBefore = (ResolveReport) _project.getReference("ivy.resolved.report");
-    
-    	_task.setConf("default");
-    	_task.setResolveId("testResolveId");
-    	_task.execute();
+        ResolveReport reportBefore = (ResolveReport) _project.getReference("ivy.resolved.report");
 
-    	ResolveReport reportAfter = (ResolveReport) _project.getReference("ivy.resolved.report");
-    	ResolveReport report2 = (ResolveReport) _project.getReference("ivy.resolved.report.testResolveId");
-    	
-    	assertSame("IvyPostResolveTask has performed a resolve where it shouldn't", reportBefore, reportAfter);
-    	assertSame("IvyPostResolveTask has performed a resolve where it shouldn't", report1, report2);
+        _task.setConf("default");
+        _task.setResolveId("testResolveId");
+        _task.execute();
+
+        ResolveReport reportAfter = (ResolveReport) _project.getReference("ivy.resolved.report");
+        ResolveReport report2 = (ResolveReport) _project
+                .getReference("ivy.resolved.report.testResolveId");
+
+        assertSame("IvyPostResolveTask has performed a resolve where it shouldn't", reportBefore,
+            reportAfter);
+        assertSame("IvyPostResolveTask has performed a resolve where it shouldn't", report1,
+            report2);
     }
 
     public void testWithResolveIdAndPreviousResolveInSameBuildAndBothWildcard() throws Exception {
-    	IvyResolve resolve = new IvyResolve();
-    	resolve.setProject(_project);
-    	resolve.setCache(_cache);
-    	resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-multiconf.xml"));
-    	resolve.setConf("*");
-    	resolve.setResolveId("testResolveId");
-    	resolve.execute();
+        IvyResolve resolve = new IvyResolve();
+        resolve.setProject(_project);
+        resolve.setCache(_cache);
+        resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-multiconf.xml"));
+        resolve.setConf("*");
+        resolve.setResolveId("testResolveId");
+        resolve.execute();
 
-    	ResolveReport report1 = (ResolveReport) _project.getReference("ivy.resolved.report.testResolveId");
+        ResolveReport report1 = (ResolveReport) _project
+                .getReference("ivy.resolved.report.testResolveId");
 
-    	// perform another resolve
-    	resolve = new IvyResolve();
-    	resolve.setProject(_project);
-    	resolve.setCache(_cache);
-    	resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-simple.xml"));
-    	resolve.setConf("*");
-    	resolve.execute();
+        // perform another resolve
+        resolve = new IvyResolve();
+        resolve.setProject(_project);
+        resolve.setCache(_cache);
+        resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-simple.xml"));
+        resolve.setConf("*");
+        resolve.execute();
 
-    	ResolveReport reportBefore = (ResolveReport) _project.getReference("ivy.resolved.report");
-    
-    	_task.setConf("*");
-    	_task.setResolveId("testResolveId");
-    	_task.execute();
+        ResolveReport reportBefore = (ResolveReport) _project.getReference("ivy.resolved.report");
 
-    	ResolveReport reportAfter = (ResolveReport) _project.getReference("ivy.resolved.report");
-    	ResolveReport report2 = (ResolveReport) _project.getReference("ivy.resolved.report.testResolveId");
-    	
-    	assertSame("IvyPostResolveTask has performed a resolve where it shouldn't", reportBefore, reportAfter);
-    	assertSame("IvyPostResolveTask has performed a resolve where it shouldn't", report1, report2);
+        _task.setConf("*");
+        _task.setResolveId("testResolveId");
+        _task.execute();
+
+        ResolveReport reportAfter = (ResolveReport) _project.getReference("ivy.resolved.report");
+        ResolveReport report2 = (ResolveReport) _project
+                .getReference("ivy.resolved.report.testResolveId");
+
+        assertSame("IvyPostResolveTask has performed a resolve where it shouldn't", reportBefore,
+            reportAfter);
+        assertSame("IvyPostResolveTask has performed a resolve where it shouldn't", report1,
+            report2);
     }
 
     public void testWithResolveIdAndPreviousResolveInSameBuildAndMoreConfs() throws Exception {
-    	IvyResolve resolve = new IvyResolve();
-    	resolve.setProject(_project);
-    	resolve.setCache(_cache);
-    	resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-multiconf.xml"));
-    	resolve.setConf("compile");
-    	resolve.setResolveId("testResolveId");
-    	resolve.execute();
+        IvyResolve resolve = new IvyResolve();
+        resolve.setProject(_project);
+        resolve.setCache(_cache);
+        resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-multiconf.xml"));
+        resolve.setConf("compile");
+        resolve.setResolveId("testResolveId");
+        resolve.execute();
 
-    	ResolveReport report1 = (ResolveReport) _project.getReference("ivy.resolved.report.testResolveId");
-    	assertTrue(getArchiveFileInCache("org1", "mod1.1", "2.0", "mod1.1", "jar", "jar").exists());
-    	assertFalse(getArchiveFileInCache("org1", "mod1.2", "2.0", "mod1.2", "jar", "jar").exists());
+        ResolveReport report1 = (ResolveReport) _project
+                .getReference("ivy.resolved.report.testResolveId");
+        assertTrue(getArchiveFileInCache("org1", "mod1.1", "2.0", "mod1.1", "jar", "jar").exists());
+        assertFalse(getArchiveFileInCache("org1", "mod1.2", "2.0", "mod1.2", "jar", "jar").exists());
 
-    	// perform another resolve
-    	resolve = new IvyResolve();
-    	resolve.setProject(_project);
-    	resolve.setCache(_cache);
-    	resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-simple.xml"));
-    	resolve.setConf("*");
-    	resolve.execute();
+        // perform another resolve
+        resolve = new IvyResolve();
+        resolve.setProject(_project);
+        resolve.setCache(_cache);
+        resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-simple.xml"));
+        resolve.setConf("*");
+        resolve.execute();
 
-    	ResolveReport reportBefore = (ResolveReport) _project.getReference("ivy.resolved.report");
-    
-    	_task.setConf("*");
-    	_task.setResolveId("testResolveId");
-    	_task.execute();
+        ResolveReport reportBefore = (ResolveReport) _project.getReference("ivy.resolved.report");
 
-    	ResolveReport reportAfter = (ResolveReport) _project.getReference("ivy.resolved.report");
-    	ResolveReport report2 = (ResolveReport) _project.getReference("ivy.resolved.report.testResolveId");
-    	
-    	assertNotSame("IvyPostResolveTask hasn't performed a resolve where it should have", reportBefore, reportAfter);
-    	assertNotSame("IvyPostResolveTask hasn't performed a resolve where it should have", report1, report2);
-    	assertTrue(getArchiveFileInCache("org1", "mod1.2", "2.0", "mod1.2", "jar", "jar").exists());
+        _task.setConf("*");
+        _task.setResolveId("testResolveId");
+        _task.execute();
+
+        ResolveReport reportAfter = (ResolveReport) _project.getReference("ivy.resolved.report");
+        ResolveReport report2 = (ResolveReport) _project
+                .getReference("ivy.resolved.report.testResolveId");
+
+        assertNotSame("IvyPostResolveTask hasn't performed a resolve where it should have",
+            reportBefore, reportAfter);
+        assertNotSame("IvyPostResolveTask hasn't performed a resolve where it should have",
+            report1, report2);
+        assertTrue(getArchiveFileInCache("org1", "mod1.2", "2.0", "mod1.2", "jar", "jar").exists());
     }
 
-    private File getArchiveFileInCache(String organisation, String module, String revision, String artifact, String type, String ext) {
-		return TestHelper.getArchiveFileInCache(_task.getIvyInstance(), _cache, 
-				organisation, module, revision, artifact, type, ext);
-	}
+    private File getArchiveFileInCache(String organisation, String module, String revision,
+            String artifact, String type, String ext) {
+        return TestHelper.getArchiveFileInCache(_task.getIvyInstance(), _cache, organisation,
+            module, revision, artifact, type, ext);
+    }
 }

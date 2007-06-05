@@ -35,7 +35,8 @@ public class NameSpaceHelper {
         return DefaultDependencyDescriptor.transformInstance(dd, ns);
     }
 
-    public static DependencyDescriptor transform(DependencyDescriptor dd, NamespaceTransformer t, boolean fromSystem) {
+    public static DependencyDescriptor transform(DependencyDescriptor dd, NamespaceTransformer t,
+            boolean fromSystem) {
         return DefaultDependencyDescriptor.transformInstance(dd, t, fromSystem);
     }
 
@@ -51,7 +52,8 @@ public class NameSpaceHelper {
         if (md.equals(rmr.getDescriptor())) {
             return rmr;
         }
-        return new DefaultModuleRevision(rmr.getResolver(), rmr.getArtifactResolver(), md, rmr.isSearched(), rmr.isDownloaded(), rmr.getLocalMDUrl());
+        return new DefaultModuleRevision(rmr.getResolver(), rmr.getArtifactResolver(), md, rmr
+                .isSearched(), rmr.isDownloaded(), rmr.getLocalMDUrl());
     }
 
     public static Artifact transform(Artifact artifact, NamespaceTransformer t) {
@@ -62,7 +64,9 @@ public class NameSpaceHelper {
         if (artifact.getModuleRevisionId().equals(mrid)) {
             return artifact;
         }
-        return new DefaultArtifact(mrid, artifact.getPublicationDate(), artifact.getName(), artifact.getType(), artifact.getExt(), artifact.getUrl(), artifact.getExtraAttributes());
+        return new DefaultArtifact(mrid, artifact.getPublicationDate(), artifact.getName(),
+                artifact.getType(), artifact.getExt(), artifact.getUrl(), artifact
+                        .getExtraAttributes());
     }
 
     public static ArtifactId transform(ArtifactId artifactId, NamespaceTransformer t) {

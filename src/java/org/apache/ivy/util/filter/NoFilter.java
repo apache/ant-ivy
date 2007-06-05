@@ -18,11 +18,11 @@
 package org.apache.ivy.util.filter;
 
 public class NoFilter implements Filter {
-	public static final Filter INSTANCE = new NoFilter();
-	
-	private NoFilter() {
-	}
-	
+    public static final Filter INSTANCE = new NoFilter();
+
+    private NoFilter() {
+    }
+
     public boolean accept(Object o) {
         return true;
     }

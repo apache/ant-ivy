@@ -30,35 +30,43 @@ import org.apache.ivy.plugins.conflict.ConflictManager;
 public class IvyNodeEviction {
     public static class EvictionData {
         private IvyNode parent; // can be null in case of transitive eviction
+
         private ConflictManager conflictManager; // can be null in case of transitive eviction
-        private Collection selected; // Collection(IvyNode); can be null in case of transitive eviction
+
+        private Collection selected; // Collection(IvyNode); can be null in case of transitive
+
+        // eviction
+
         private String rootModuleConf;
 
-        public EvictionData(String rootModuleConf, IvyNode parent, ConflictManager conflictManager, Collection selected) {
+        public EvictionData(String rootModuleConf, IvyNode parent, ConflictManager conflictManager,
+                Collection selected) {
             this.rootModuleConf = rootModuleConf;
             this.parent = parent;
             this.conflictManager = conflictManager;
             this.selected = selected;
             for (Iterator iter = selected.iterator(); iter.hasNext();) {
-				Object o = (Object) iter.next();
-				if (! (o instanceof IvyNode)) {
-					throw new IllegalArgumentException("selected nodes must be instance of IvyNode. Found: "+o.getClass().getName());
-				}
-			}
+                Object o = (Object) iter.next();
+                if (!(o instanceof IvyNode)) {
+                    throw new IllegalArgumentException(
+                            "selected nodes must be instance of IvyNode. Found: "
+                                    + o.getClass().getName());
+                }
+            }
         }
-        
+
         public String toString() {
             if (selected != null) {
-                return selected + " in "+ parent +" ("+ conflictManager +") ["+ rootModuleConf +"]";
+                return selected + " in " + parent + " (" + conflictManager + ") [" + rootModuleConf
+                        + "]";
             } else {
-                return "transitively ["+ rootModuleConf +"]";
+                return "transitively [" + rootModuleConf + "]";
             }
         }
 
         public ConflictManager getConflictManager() {
             return conflictManager;
         }
-        
 
         public IvyNode getParent() {
             return parent;
@@ -67,7 +75,6 @@ public class IvyNodeEviction {
         public Collection getSelected() {
             return selected;
         }
-        
 
         public String getRootModuleConf() {
             return rootModuleConf;
@@ -76,15 +83,16 @@ public class IvyNodeEviction {
 
     private static final class ModuleIdConf {
         private ModuleId moduleId;
+
         private String conf;
 
         public ModuleIdConf(ModuleId mid, String conf) {
-        	if (mid == null) {
-        		throw new NullPointerException("mid cannot be null");
-        	}
-        	if (conf == null) {
-        		throw new NullPointerException("conf cannot be null");
-        	}
+            if (mid == null) {
+                throw new NullPointerException("mid cannot be null");
+            }
+            if (conf == null) {
+                throw new NullPointerException("conf cannot be null");
+            }
             moduleId = mid;
             this.conf = conf;
         }
@@ -92,17 +100,19 @@ public class IvyNodeEviction {
         public final String getConf() {
             return conf;
         }
-        
+
         public final ModuleId getModuleId() {
             return moduleId;
         }
+
         public boolean equals(Object obj) {
             if (!(obj instanceof ModuleIdConf)) {
                 return false;
             }
-            return getModuleId().equals(((ModuleIdConf)obj).getModuleId()) 
-                && getConf().equals(((ModuleIdConf)obj).getConf());
+            return getModuleId().equals(((ModuleIdConf) obj).getModuleId())
+                    && getConf().equals(((ModuleIdConf) obj).getConf());
         }
+
         public int hashCode() {
             int hash = 33;
             hash += getModuleId().hashCode() * 17;
@@ -110,66 +120,83 @@ public class IvyNodeEviction {
             return hash;
         }
     }
-    
+
     private IvyNode node;
 
-    private Map selectedDeps = new HashMap(); // Map (ModuleIdConf -> Set(Node)) // map indicating for each dependency which node has been selected
-    private Map pendingConflicts = new HashMap(); // Map (ModuleIdConf -> Set(Node)) // map indicating for each dependency which nodes are in pending conflict (conflict detected but not yet resolved)
+    private Map selectedDeps = new HashMap(); // Map (ModuleIdConf -> Set(Node)) // map indicating
 
-    private Map evictedDeps = new HashMap(); // Map (ModuleIdConf -> Set(Node)) // map indicating for each dependency which node has been evicted
-    private Map evictedRevs = new HashMap(); // Map (ModuleIdConf -> Set(ModuleRevisionId)) // map indicating for each dependency which revision has been evicted
-    
-    private Map evicted = new HashMap(); // Map (root module conf -> EvictionData) // indicates if the node is evicted in each root module conf
-    
+    // for each dependency which node has been selected
+
+    private Map pendingConflicts = new HashMap(); // Map (ModuleIdConf -> Set(Node)) // map
+
+    // indicating for each dependency which nodes
+    // are in pending conflict (conflict detected
+    // but not yet resolved)
+
+    private Map evictedDeps = new HashMap(); // Map (ModuleIdConf -> Set(Node)) // map indicating
+
+    // for each dependency which node has been evicted
+
+    private Map evictedRevs = new HashMap(); // Map (ModuleIdConf -> Set(ModuleRevisionId)) //
+
+    // map indicating for each dependency which revision
+    // has been evicted
+
+    private Map evicted = new HashMap(); // Map (root module conf -> EvictionData) // indicates
+
+    // if the node is evicted in each root module conf
+
     public IvyNodeEviction(IvyNode node) {
-    	if (node == null) {
-    		throw new NullPointerException("node must not be null");
-    	}
-		this.node = node;
-	}
-    
-	public Collection getResolvedNodes(ModuleId mid, String rootModuleConf) {
+        if (node == null) {
+            throw new NullPointerException("node must not be null");
+        }
+        this.node = node;
+    }
+
+    public Collection getResolvedNodes(ModuleId mid, String rootModuleConf) {
         Collection resolved = (Collection) selectedDeps.get(new ModuleIdConf(mid, rootModuleConf));
         Set ret = new HashSet();
         if (resolved != null) {
             for (Iterator iter = resolved.iterator(); iter.hasNext();) {
-                IvyNode node = (IvyNode)iter.next();
+                IvyNode node = (IvyNode) iter.next();
                 ret.add(node.getRealNode());
             }
         }
         return ret;
     }
+
     public Collection getResolvedRevisions(ModuleId mid, String rootModuleConf) {
-    	Collection resolved = (Collection) selectedDeps.get(new ModuleIdConf(mid, rootModuleConf));
-    	if (resolved == null) {
-    		return new HashSet();
-    	} else {
-    		Collection resolvedRevs = new HashSet();
-    		for (Iterator iter = resolved.iterator(); iter.hasNext();) {
-    			IvyNode node = (IvyNode)iter.next();
-    			resolvedRevs.add(node.getId());
-    			resolvedRevs.add(node.getResolvedId());
-    		}
-    		return resolvedRevs;
-    	}
+        Collection resolved = (Collection) selectedDeps.get(new ModuleIdConf(mid, rootModuleConf));
+        if (resolved == null) {
+            return new HashSet();
+        } else {
+            Collection resolvedRevs = new HashSet();
+            for (Iterator iter = resolved.iterator(); iter.hasNext();) {
+                IvyNode node = (IvyNode) iter.next();
+                resolvedRevs.add(node.getId());
+                resolvedRevs.add(node.getResolvedId());
+            }
+            return resolvedRevs;
+        }
     }
 
     public void setResolvedNodes(ModuleId moduleId, String rootModuleConf, Collection resolved) {
         ModuleIdConf moduleIdConf = new ModuleIdConf(moduleId, rootModuleConf);
         selectedDeps.put(moduleIdConf, new HashSet(resolved));
     }
-    
+
     public Collection getEvictedNodes(ModuleId mid, String rootModuleConf) {
         Collection resolved = (Collection) evictedDeps.get(new ModuleIdConf(mid, rootModuleConf));
         Set ret = new HashSet();
         if (resolved != null) {
             for (Iterator iter = resolved.iterator(); iter.hasNext();) {
-                IvyNode node = (IvyNode)iter.next();
+                IvyNode node = (IvyNode) iter.next();
                 ret.add(node.getRealNode());
             }
         }
         return ret;
     }
+
     public Collection getEvictedRevisions(ModuleId mid, String rootModuleConf) {
         Collection evicted = (Collection) evictedRevs.get(new ModuleIdConf(mid, rootModuleConf));
         if (evicted == null) {
@@ -184,60 +211,58 @@ public class IvyNodeEviction {
         evictedDeps.put(moduleIdConf, new HashSet(evicted));
         Collection evictedRevs = new HashSet();
         for (Iterator iter = evicted.iterator(); iter.hasNext();) {
-            IvyNode node = (IvyNode)iter.next();
+            IvyNode node = (IvyNode) iter.next();
             evictedRevs.add(node.getId());
             evictedRevs.add(node.getResolvedId());
         }
         this.evictedRevs.put(moduleIdConf, evictedRevs);
     }
-    
 
     public boolean isEvicted(String rootModuleConf) {
-    	cleanEvicted();
+        cleanEvicted();
         IvyNode root = node.getRoot();
         return root != node
-                && !root.getResolvedRevisions(
-        			node.getId().getModuleId(),
-        			rootModuleConf)
-        				.contains(node.getResolvedId())
-        	&& getEvictedData(rootModuleConf) != null;
+                && !root.getResolvedRevisions(node.getId().getModuleId(), rootModuleConf).contains(
+                    node.getResolvedId()) && getEvictedData(rootModuleConf) != null;
     }
 
     public boolean isCompletelyEvicted() {
         cleanEvicted();
         if (node.isRoot()) {
-        	return false;
+            return false;
         }
         String[] rootModuleConfigurations = node.getRootModuleConfigurations();
-		for (int i = 0; i < rootModuleConfigurations.length; i++) {
-			if (!isEvicted(rootModuleConfigurations[i])) {
-				return false;
-			}
-		}
+        for (int i = 0; i < rootModuleConfigurations.length; i++) {
+            if (!isEvicted(rootModuleConfigurations[i])) {
+                return false;
+            }
+        }
         return true;
     }
-    
+
     private void cleanEvicted() {
         // check if it was evicted by a node that we are now the real node for
         for (Iterator iter = evicted.keySet().iterator(); iter.hasNext();) {
-            String rootModuleConf = (String)iter.next();
+            String rootModuleConf = (String) iter.next();
             EvictionData ed = (EvictionData) evicted.get(rootModuleConf);
             Collection sel = ed.getSelected();
             if (sel != null) {
                 for (Iterator iterator = sel.iterator(); iterator.hasNext();) {
-                    IvyNode n = (IvyNode)iterator.next();
+                    IvyNode n = (IvyNode) iterator.next();
                     if (n.getRealNode().equals(this)) {
                         // yes, we are the real node for a selected one !
                         // we are no more evicted in this conf !
-                        iter.remove();                    
+                        iter.remove();
                     }
                 }
             }
         }
     }
 
-    public void markEvicted(String rootModuleConf, IvyNode node, ConflictManager conflictManager, Collection resolved) {
-        EvictionData evictionData = new EvictionData(rootModuleConf, node, conflictManager, resolved);
+    public void markEvicted(String rootModuleConf, IvyNode node, ConflictManager conflictManager,
+            Collection resolved) {
+        EvictionData evictionData = new EvictionData(rootModuleConf, node, conflictManager,
+                resolved);
         markEvicted(evictionData);
     }
 
@@ -249,20 +274,22 @@ public class IvyNodeEviction {
         cleanEvicted();
         return (EvictionData) evicted.get(rootModuleConf);
     }
+
     public String[] getEvictedConfs() {
         cleanEvicted();
         return (String[]) evicted.keySet().toArray(new String[evicted.keySet().size()]);
     }
 
     /**
-     * Returns null if this node has only be evicted transitively, or the the colletion of selected nodes
-     * if it has been evicted by other selected nodes
+     * Returns null if this node has only be evicted transitively, or the the colletion of selected
+     * nodes if it has been evicted by other selected nodes
+     * 
      * @return
      */
     public Collection getAllEvictingNodes() {
         Collection allEvictingNodes = null;
         for (Iterator iter = evicted.values().iterator(); iter.hasNext();) {
-            EvictionData ed = (EvictionData)iter.next();
+            EvictionData ed = (EvictionData) iter.next();
             Collection selected = ed.getSelected();
             if (selected != null) {
                 if (allEvictingNodes == null) {
@@ -270,58 +297,60 @@ public class IvyNodeEviction {
                 }
                 allEvictingNodes.addAll(selected);
             }
-        }        
+        }
         return allEvictingNodes;
-    }    
+    }
 
     public Collection getAllEvictingConflictManagers() {
         Collection ret = new HashSet();
         for (Iterator iter = evicted.values().iterator(); iter.hasNext();) {
-            EvictionData ed = (EvictionData)iter.next();
+            EvictionData ed = (EvictionData) iter.next();
             ret.add(ed.getConflictManager());
-        }        
+        }
         return ret;
-    }    
-
+    }
 
     /**
-     * Returns the eviction data for this node if it has been previously evicted in the root,
-     * null otherwise (if it hasn't been evicted in root) for the 
-     * given rootModuleConf.
-     * Note that this method only works if conflict resolution has already be done in all the ancestors.
+     * Returns the eviction data for this node if it has been previously evicted in the root, null
+     * otherwise (if it hasn't been evicted in root) for the given rootModuleConf. Note that this
+     * method only works if conflict resolution has already be done in all the ancestors.
      * 
      * @param rootModuleConf
      * @param ancestor
      * @return
      */
     public EvictionData getEvictionDataInRoot(String rootModuleConf, IvyNode ancestor) {
-        Collection selectedNodes = node.getRoot().getResolvedNodes(node.getModuleId(), rootModuleConf);
+        Collection selectedNodes = node.getRoot().getResolvedNodes(node.getModuleId(),
+            rootModuleConf);
         for (Iterator iter = selectedNodes.iterator(); iter.hasNext();) {
-            IvyNode node = (IvyNode)iter.next();
+            IvyNode node = (IvyNode) iter.next();
             if (node.getResolvedId().equals(this.node.getResolvedId())) {
                 // the node is part of the selected ones for the root: no eviction data to return
                 return null;
             }
         }
-        // we didn't find this mrid in the selected ones for the root: it has been previously evicted
-        return new EvictionData(rootModuleConf, ancestor, node.getRoot().getConflictManager(node.getModuleId()), selectedNodes);
+        // we didn't find this mrid in the selected ones for the root: it has been previously
+        // evicted
+        return new EvictionData(rootModuleConf, ancestor, node.getRoot().getConflictManager(
+            node.getModuleId()), selectedNodes);
     }
 
-	public Collection getPendingConflicts(String rootModuleConf, ModuleId mid) {
-        Collection resolved = (Collection) pendingConflicts.get(new ModuleIdConf(mid, rootModuleConf));
+    public Collection getPendingConflicts(String rootModuleConf, ModuleId mid) {
+        Collection resolved = (Collection) pendingConflicts.get(new ModuleIdConf(mid,
+                rootModuleConf));
         Set ret = new HashSet();
         if (resolved != null) {
             for (Iterator iter = resolved.iterator(); iter.hasNext();) {
-                IvyNode node = (IvyNode)iter.next();
+                IvyNode node = (IvyNode) iter.next();
                 ret.add(node.getRealNode());
             }
         }
         return ret;
-	}
+    }
 
-	public void setPendingConflicts(ModuleId moduleId, String rootModuleConf, Collection conflicts) {
+    public void setPendingConflicts(ModuleId moduleId, String rootModuleConf, Collection conflicts) {
         ModuleIdConf moduleIdConf = new ModuleIdConf(moduleId, rootModuleConf);
         pendingConflicts.put(moduleIdConf, new HashSet(conflicts));
-	}
+    }
 
 }

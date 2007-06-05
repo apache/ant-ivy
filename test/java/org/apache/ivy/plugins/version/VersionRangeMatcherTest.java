@@ -23,90 +23,88 @@ import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.plugins.latest.LatestRevisionStrategy;
 
 public class VersionRangeMatcherTest extends TestCase {
-	VersionMatcher _vm = new VersionRangeMatcher("range", new LatestRevisionStrategy());
-	
-	public VersionRangeMatcherTest() {
-	}
-	
-	public void testDynamic() {
-		assertDynamic("lastest.integration", false);
-		assertDynamic("[1.0]", false);
-		assertDynamic("(1.0)", false);
-		assertDynamic("(1.0,2.0)", false);
-		assertDynamic("[1.0;2.0]", false);
+    VersionMatcher _vm = new VersionRangeMatcher("range", new LatestRevisionStrategy());
 
-		assertDynamic("[1.0,2.0]", true);
-		assertDynamic("[1.0,2.0[", true);
-		assertDynamic("]1.0,2.0[", true);
-		assertDynamic("]1.0,2.0]", true);
-		assertDynamic("[1.0,)", true);
-		assertDynamic("(,1.0]", true);
-	}
+    public VersionRangeMatcherTest() {
+    }
 
-	public void testIncludingFinite() {
-		assertAccept("[1.0,2.0]", "1.1", true);
-		assertAccept("[1.0,2.0]", "0.9", false);
-		assertAccept("[1.0,2.0]", "2.1", false);
-		assertAccept("[1.0,2.0]", "1.0", true);
-		assertAccept("[1.0,2.0]", "2.0", true);
-	}
-	
-	public void testExcludingFinite() {
-		assertAccept("]1.0,2.0[", "1.1", true);
-		assertAccept("]1.0,2.0[", "0.9", false);
-		assertAccept("]1.0,2.0[", "2.1", false);
-		
-		assertAccept("]1.0,2.0]", "1.0", false);
-		assertAccept("]1.0,2.0[", "1.0", false);
-		assertAccept("[1.0,2.0[", "1.0", true);
-		
-		assertAccept("[1.0,2.0[", "2.0", false);
-		assertAccept("]1.0,2.0[", "2.0", false);
-		assertAccept("]1.0,2.0]", "2.0", true);
-	}
-	
-	public void testIncludingInfinite() {
-		assertAccept("[1.0,)", "1.1", true);
-		assertAccept("[1.0,)", "2.0", true);
-		assertAccept("[1.0,)", "3.5.6", true);
-		assertAccept("[1.0,)", "1.0", true);
-		
-		assertAccept("[1.0,)", "0.9", false);
+    public void testDynamic() {
+        assertDynamic("lastest.integration", false);
+        assertDynamic("[1.0]", false);
+        assertDynamic("(1.0)", false);
+        assertDynamic("(1.0,2.0)", false);
+        assertDynamic("[1.0;2.0]", false);
 
-		assertAccept("(,2.0]", "1.1", true);
-		assertAccept("(,2.0]", "0.1", true);
-		assertAccept("(,2.0]", "0.2.4", true);
-		assertAccept("(,2.0]", "2.0", true);
-		
-		assertAccept("(,2.0]", "2.3", false);
-	}
-	
-	public void testExcludingInfinite() {
-		assertAccept("]1.0,)", "1.1", true);
-		assertAccept("]1.0,)", "2.0", true);
-		assertAccept("]1.0,)", "3.5.6", true);
+        assertDynamic("[1.0,2.0]", true);
+        assertDynamic("[1.0,2.0[", true);
+        assertDynamic("]1.0,2.0[", true);
+        assertDynamic("]1.0,2.0]", true);
+        assertDynamic("[1.0,)", true);
+        assertDynamic("(,1.0]", true);
+    }
 
-		assertAccept("]1.0,)", "1.0", false);
-		assertAccept("]1.0,)", "0.9", false);
+    public void testIncludingFinite() {
+        assertAccept("[1.0,2.0]", "1.1", true);
+        assertAccept("[1.0,2.0]", "0.9", false);
+        assertAccept("[1.0,2.0]", "2.1", false);
+        assertAccept("[1.0,2.0]", "1.0", true);
+        assertAccept("[1.0,2.0]", "2.0", true);
+    }
 
-		assertAccept("(,2.0[", "1.1", true);
-		assertAccept("(,2.0[", "0.1", true);
-		assertAccept("(,2.0[", "0.2.4", true);
-		
-		assertAccept("(,2.0[", "2.0", false);
-		assertAccept("(,2.0[", "2.3", false);
-	}
-	
-	
-	// assertion helper methods
+    public void testExcludingFinite() {
+        assertAccept("]1.0,2.0[", "1.1", true);
+        assertAccept("]1.0,2.0[", "0.9", false);
+        assertAccept("]1.0,2.0[", "2.1", false);
 
-	private void assertDynamic(String askedVersion, boolean b) {
-		assertEquals(b, _vm.isDynamic(ModuleRevisionId.newInstance("org", "name", askedVersion)));
-	}
+        assertAccept("]1.0,2.0]", "1.0", false);
+        assertAccept("]1.0,2.0[", "1.0", false);
+        assertAccept("[1.0,2.0[", "1.0", true);
 
-	private void assertAccept(String askedVersion, String depVersion, boolean b) {
-		assertEquals(b, _vm.accept(
-				ModuleRevisionId.newInstance("org", "name", askedVersion),
-				ModuleRevisionId.newInstance("org", "name", depVersion)));
-	}
+        assertAccept("[1.0,2.0[", "2.0", false);
+        assertAccept("]1.0,2.0[", "2.0", false);
+        assertAccept("]1.0,2.0]", "2.0", true);
+    }
+
+    public void testIncludingInfinite() {
+        assertAccept("[1.0,)", "1.1", true);
+        assertAccept("[1.0,)", "2.0", true);
+        assertAccept("[1.0,)", "3.5.6", true);
+        assertAccept("[1.0,)", "1.0", true);
+
+        assertAccept("[1.0,)", "0.9", false);
+
+        assertAccept("(,2.0]", "1.1", true);
+        assertAccept("(,2.0]", "0.1", true);
+        assertAccept("(,2.0]", "0.2.4", true);
+        assertAccept("(,2.0]", "2.0", true);
+
+        assertAccept("(,2.0]", "2.3", false);
+    }
+
+    public void testExcludingInfinite() {
+        assertAccept("]1.0,)", "1.1", true);
+        assertAccept("]1.0,)", "2.0", true);
+        assertAccept("]1.0,)", "3.5.6", true);
+
+        assertAccept("]1.0,)", "1.0", false);
+        assertAccept("]1.0,)", "0.9", false);
+
+        assertAccept("(,2.0[", "1.1", true);
+        assertAccept("(,2.0[", "0.1", true);
+        assertAccept("(,2.0[", "0.2.4", true);
+
+        assertAccept("(,2.0[", "2.0", false);
+        assertAccept("(,2.0[", "2.3", false);
+    }
+
+    // assertion helper methods
+
+    private void assertDynamic(String askedVersion, boolean b) {
+        assertEquals(b, _vm.isDynamic(ModuleRevisionId.newInstance("org", "name", askedVersion)));
+    }
+
+    private void assertAccept(String askedVersion, String depVersion, boolean b) {
+        assertEquals(b, _vm.accept(ModuleRevisionId.newInstance("org", "name", askedVersion),
+            ModuleRevisionId.newInstance("org", "name", depVersion)));
+    }
 }

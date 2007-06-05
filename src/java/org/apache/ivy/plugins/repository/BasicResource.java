@@ -21,51 +21,56 @@ import java.io.IOException;
 import java.io.InputStream;
 
 public class BasicResource implements Resource {
-	private boolean _local;
-	private String _name;
-	private long _lastModified;
-	private long _contentLength;
-	private boolean _exists;
-	
-	
-	public BasicResource(String name, boolean exists, long contentLength, long lastModified, boolean local) {
-		_name = name;
-		_exists = exists;
-		_contentLength = contentLength;
-		_lastModified = lastModified;
-		_local = local;
-	}
+    private boolean _local;
 
-	public Resource clone(String cloneName) {
-		throw new UnsupportedOperationException("basic resource do not support the clone method");
-	}
+    private String _name;
 
-	public boolean exists() {
-		return _exists;
-	}
+    private long _lastModified;
 
-	public long getContentLength() {
-		return _contentLength;
-	}
+    private long _contentLength;
 
-	public long getLastModified() {
-		return _lastModified;
-	}
+    private boolean _exists;
 
-	public String getName() {
-		return _name;
-	}
+    public BasicResource(String name, boolean exists, long contentLength, long lastModified,
+            boolean local) {
+        _name = name;
+        _exists = exists;
+        _contentLength = contentLength;
+        _lastModified = lastModified;
+        _local = local;
+    }
 
-	public boolean isLocal() {
-		return _local;
-	}
+    public Resource clone(String cloneName) {
+        throw new UnsupportedOperationException("basic resource do not support the clone method");
+    }
 
-	public InputStream openStream() throws IOException {
-		throw new UnsupportedOperationException("basic resource do not support the openStream method");
-	}
-	
-	public String toString() {
-		return getName();
-	}
+    public boolean exists() {
+        return _exists;
+    }
+
+    public long getContentLength() {
+        return _contentLength;
+    }
+
+    public long getLastModified() {
+        return _lastModified;
+    }
+
+    public String getName() {
+        return _name;
+    }
+
+    public boolean isLocal() {
+        return _local;
+    }
+
+    public InputStream openStream() throws IOException {
+        throw new UnsupportedOperationException(
+                "basic resource do not support the openStream method");
+    }
+
+    public String toString() {
+        return getName();
+    }
 
 }

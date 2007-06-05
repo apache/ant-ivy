@@ -19,15 +19,16 @@ package org.apache.ivy.plugins.matcher;
 
 import junit.framework.TestCase;
 
-
 /**
  * Base test classes for PatternMatcher testcase implementation
  */
 public abstract class AbstractPatternMatcherTest extends TestCase {
     protected PatternMatcher patternMatcher;
+
     protected boolean exact;
 
     protected abstract void setUp() throws Exception;
+
     protected void setUp(PatternMatcher matcher, boolean exact) {
         this.patternMatcher = matcher;
         this.exact = exact;
@@ -39,7 +40,6 @@ public abstract class AbstractPatternMatcherTest extends TestCase {
         assertTrue(matcher.matches("We shall transcend borders. The new is old."));
         assertTrue(matcher.matches("        "));
     }
-
 
     public void testIsExact() {
         Matcher matcher = patternMatcher.getMatcher("*");
@@ -74,27 +74,22 @@ public abstract class AbstractPatternMatcherTest extends TestCase {
 
     public abstract void testImplementation();
 
-
     public void testLoadTestMatches() {
         Matcher matcher = patternMatcher.getMatcher("this.is.an.expression");
-        String[] inputs = {
-                "this.is.an.expression", "this:is:an:expression", "this is an expression",
-                "whatever this is", "maybe, maybe not"
-        };
+        String[] inputs = {"this.is.an.expression", "this:is:an:expression",
+                "this is an expression", "whatever this is", "maybe, maybe not"};
         for (int i = 0; i < 100000; i++) {
-            String input = inputs[i%inputs.length];
+            String input = inputs[i % inputs.length];
             boolean success = matcher.matches(input);
         }
     }
 
     public void testLoadTestGetMatcher() {
-        String[] inputs = {
-                "this.is.an.expression", "this:is:an:expression", "this is an expression",
-                "whatever this is", "maybe, maybe not"
-        };
+        String[] inputs = {"this.is.an.expression", "this:is:an:expression",
+                "this is an expression", "whatever this is", "maybe, maybe not"};
 
         for (int i = 0; i < 100000; i++) {
-            String expression = inputs[i%inputs.length];
+            String expression = inputs[i % inputs.length];
             Matcher matcher = patternMatcher.getMatcher(expression);
         }
     }

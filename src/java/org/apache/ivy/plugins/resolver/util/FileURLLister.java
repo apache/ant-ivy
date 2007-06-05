@@ -24,13 +24,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-
 public class FileURLLister implements URLLister {
     private File _basedir;
 
     public FileURLLister() {
         this(null);
     }
+
     public FileURLLister(File baseDir) {
         _basedir = baseDir;
     }
@@ -45,7 +45,7 @@ public class FileURLLister implements URLLister {
         if (file.exists() && file.isDirectory()) {
             String[] files = file.list();
             List ret = new ArrayList(files.length);
-            URL context = url.getPath().endsWith("/") ? url : new URL(url.toExternalForm()+"/");
+            URL context = url.getPath().endsWith("/") ? url : new URL(url.toExternalForm() + "/");
             for (int i = 0; i < files.length; i++) {
                 ret.add(new URL(context, files[i]));
             }
@@ -54,7 +54,7 @@ public class FileURLLister implements URLLister {
             return Collections.EMPTY_LIST;
         }
     }
-    
+
     public String toString() {
         return "file lister";
     }

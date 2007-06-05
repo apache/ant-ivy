@@ -20,7 +20,7 @@ package org.apache.ivy.plugins.matcher;
 import java.util.regex.PatternSyntaxException;
 
 /**
-* @see GlobPatternMatcher
+ * @see GlobPatternMatcher
  */
 public class GlobPatternMatcherTest extends AbstractPatternMatcherTest {
 

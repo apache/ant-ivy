@@ -32,16 +32,15 @@ import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 import org.apache.tools.ant.types.Reference;
 
-
 /**
  * Base class for all ivy ant tasks, deal particularly with ivy instance storage in ant project.
- * 
- *
  */
 public abstract class IvyTask extends Task {
     public static final String ANT_PROJECT_CONTEXT_KEY = "ant-project";
-	private Boolean _validate = null; 
-	private Reference _antIvyEngineRef = null; 
+
+    private Boolean _validate = null;
+
+    private Reference _antIvyEngineRef = null;
 
     protected boolean doValidate(IvySettings ivy) {
         if (_validate != null) {
@@ -49,127 +48,137 @@ public abstract class IvyTask extends Task {
         }
         return ivy.doValidate();
     }
+
     public boolean isValidate() {
         return _validate == null ? true : _validate.booleanValue();
     }
+
     public void setValidate(boolean validate) {
         _validate = Boolean.valueOf(validate);
     }
-    
-    
+
     public void setSettingsRef(Reference ref) {
-    	_antIvyEngineRef = ref;
-    }
-    
-    public Reference getSettingsRef() {
-    	return _antIvyEngineRef;
-    }
-    
-    protected IvySettings getSettings() {
-    	return getIvyInstance().getSettings();
-    }
-    
-    protected Ivy getIvyInstance() {
-    	ensureMessageInitialised();
-    	Object antIvyEngine;
-    	if (_antIvyEngineRef!=null) {
-    		antIvyEngine = _antIvyEngineRef.getReferencedObject();
-    		if (! antIvyEngine.getClass().getName().equals(IvyAntSettings.class.getName())) {
-    			throw new BuildException(_antIvyEngineRef.getRefId() + " doesn't reference an ivy:settings" , getLocation());
-    		}
-    		if (! (antIvyEngine instanceof IvyAntSettings)) {
-    			throw new BuildException(_antIvyEngineRef.getRefId() + " has been defined in a different classloader.  Please use the same loader when defining your task, or redeclare your ivy:settings in this classloader" , getLocation());
-    		}
-    	} else {
-    		antIvyEngine = IvyAntSettings.getDefaultInstance(getProject()); 
-    	}
-    	return ((IvyAntSettings)antIvyEngine).getConfiguredIvyInstance();
+        _antIvyEngineRef = ref;
     }
 
-    /** 
-     * Every task MUST call ensureMessageInitialised when the execution method
-     * starts (at least before doing any log in order to set the correct task
-     * in the log.
+    public Reference getSettingsRef() {
+        return _antIvyEngineRef;
+    }
+
+    protected IvySettings getSettings() {
+        return getIvyInstance().getSettings();
+    }
+
+    protected Ivy getIvyInstance() {
+        ensureMessageInitialised();
+        Object antIvyEngine;
+        if (_antIvyEngineRef != null) {
+            antIvyEngine = _antIvyEngineRef.getReferencedObject();
+            if (!antIvyEngine.getClass().getName().equals(IvyAntSettings.class.getName())) {
+                throw new BuildException(_antIvyEngineRef.getRefId()
+                        + " doesn't reference an ivy:settings", getLocation());
+            }
+            if (!(antIvyEngine instanceof IvyAntSettings)) {
+                throw new BuildException(
+                        _antIvyEngineRef.getRefId()
+                                + " has been defined in a different classloader.  Please use the same loader when defining your task, or redeclare your ivy:settings in this classloader",
+                        getLocation());
+            }
+        } else {
+            antIvyEngine = IvyAntSettings.getDefaultInstance(getProject());
+        }
+        return ((IvyAntSettings) antIvyEngine).getConfiguredIvyInstance();
+    }
+
+    /**
+     * Every task MUST call ensureMessageInitialised when the execution method starts (at least
+     * before doing any log in order to set the correct task in the log.
      */
     protected void ensureMessageInitialised() {
-        if (!Message.isInitialised()) { 
+        if (!Message.isInitialised()) {
             Message.init(new AntMessageImpl(this));
         }
     }
-    
+
     protected void setResolved(ResolveReport report, boolean keep) {
-    	ModuleDescriptor md = report.getModuleDescriptor();
-    	String[] confs = report.getConfigurations();
-    	if (keep) {
-	        getProject().addReference("ivy.resolved.report", report);
-	        getProject().addReference("ivy.resolved.configurations.ref", confs);
-	        getProject().addReference("ivy.resolved.descriptor", md);
-    	}
-    	String suffix = md.getModuleRevisionId().getModuleId().getOrganisation()+"."+md.getModuleRevisionId().getModuleId().getName();
-        getProject().addReference("ivy.resolved.report."+suffix, report);
-        getProject().addReference("ivy.resolved.descriptor."+suffix, md);
-        getProject().addReference("ivy.resolved.configurations.ref."+suffix, confs);
+        ModuleDescriptor md = report.getModuleDescriptor();
+        String[] confs = report.getConfigurations();
+        if (keep) {
+            getProject().addReference("ivy.resolved.report", report);
+            getProject().addReference("ivy.resolved.configurations.ref", confs);
+            getProject().addReference("ivy.resolved.descriptor", md);
+        }
+        String suffix = md.getModuleRevisionId().getModuleId().getOrganisation() + "."
+                + md.getModuleRevisionId().getModuleId().getName();
+        getProject().addReference("ivy.resolved.report." + suffix, report);
+        getProject().addReference("ivy.resolved.descriptor." + suffix, md);
+        getProject().addReference("ivy.resolved.configurations.ref." + suffix, confs);
     }
+
     protected void setResolved(ResolveReport report, String resolveId, boolean keep) {
-    	setResolved(report, keep);
-    	if (resolveId != null) {
-	    	ModuleDescriptor md = report.getModuleDescriptor();
-	    	String[] confs = report.getConfigurations();
-	        getProject().addReference("ivy.resolved.report."+resolveId, report);
-	        getProject().addReference("ivy.resolved.descriptor."+resolveId, md);
-	        getProject().addReference("ivy.resolved.configurations.ref."+resolveId, confs);
-    	}
+        setResolved(report, keep);
+        if (resolveId != null) {
+            ModuleDescriptor md = report.getModuleDescriptor();
+            String[] confs = report.getConfigurations();
+            getProject().addReference("ivy.resolved.report." + resolveId, report);
+            getProject().addReference("ivy.resolved.descriptor." + resolveId, md);
+            getProject().addReference("ivy.resolved.configurations.ref." + resolveId, confs);
+        }
     }
-    
+
     protected String[] getResolvedConfigurations(String org, String module, boolean strict) {
-		return (String[]) getReference("ivy.resolved.configurations.ref", org, module, strict);
-	}
-    
-    protected Object getResolvedDescriptor(String resolveId) {
-    	return getResolvedDescriptor(resolveId, true);
+        return (String[]) getReference("ivy.resolved.configurations.ref", org, module, strict);
     }
-    
+
+    protected Object getResolvedDescriptor(String resolveId) {
+        return getResolvedDescriptor(resolveId, true);
+    }
+
     protected Object getResolvedDescriptor(String resolveId, boolean strict) {
-    	Object result = getProject().getReference("ivy.resolved.descriptor." + resolveId);
+        Object result = getProject().getReference("ivy.resolved.descriptor." + resolveId);
         if (strict && (result == null)) {
-        	throw new BuildException("ModuleDescriptor for resolve with id '" + resolveId + "' not found.");
+            throw new BuildException("ModuleDescriptor for resolve with id '" + resolveId
+                    + "' not found.");
         }
         return result;
     }
-	protected Object getResolvedDescriptor(String org, String module) {
-		return getResolvedDescriptor(org, module, false);
-	}
-    
-	protected Object getResolvedDescriptor(String org, String module, boolean strict) {
-		return getReference("ivy.resolved.descriptor", org, module, strict);
-	}
-	private Object getReference(String prefix, String org, String module, boolean strict) {
-		Object reference = null;
-		if (org != null && module != null) {
-			reference = getProject().getReference(prefix+"."+org+"."+module);
-		}
-        if (!strict && reference == null) {
-        	reference = getProject().getReference(prefix);
+
+    protected Object getResolvedDescriptor(String org, String module) {
+        return getResolvedDescriptor(org, module, false);
+    }
+
+    protected Object getResolvedDescriptor(String org, String module, boolean strict) {
+        return getReference("ivy.resolved.descriptor", org, module, strict);
+    }
+
+    private Object getReference(String prefix, String org, String module, boolean strict) {
+        Object reference = null;
+        if (org != null && module != null) {
+            reference = getProject().getReference(prefix + "." + org + "." + module);
         }
-		return reference;
-	}
-    
-	protected ResolveReport getResolvedReport(String org, String module, String resolveId) {
-		ResolveReport result = null;
-		
-		if (resolveId == null) {
-			result = (ResolveReport) getReference("ivy.resolved.report", org, module, false);
-		} else {
-			result = (ResolveReport) getReference("ivy.resolved.report." + resolveId, null, null, false);
-		}
-		
-		return result;
-	}
-    
+        if (!strict && reference == null) {
+            reference = getProject().getReference(prefix);
+        }
+        return reference;
+    }
+
+    protected ResolveReport getResolvedReport(String org, String module, String resolveId) {
+        ResolveReport result = null;
+
+        if (resolveId == null) {
+            result = (ResolveReport) getReference("ivy.resolved.report", org, module, false);
+        } else {
+            result = (ResolveReport) getReference("ivy.resolved.report." + resolveId, null, null,
+                false);
+        }
+
+        return result;
+    }
+
     protected String[] splitConfs(String conf) {
-    	if (conf == null) {
-    		return null;
-    	}
+        if (conf == null) {
+            return null;
+        }
         String[] confs = conf.split(",");
         for (int i = 0; i < confs.length; i++) {
             confs[i] = confs[i].trim();
@@ -191,7 +200,9 @@ public abstract class IvyTask extends Task {
             try {
                 return DATE_FORMAT.parse(date);
             } catch (Exception ex) {
-                throw new BuildException("publication date provided in bad format. should be yyyyMMddHHmmss and not "+date);
+                throw new BuildException(
+                        "publication date provided in bad format. should be yyyyMMddHHmmss and not "
+                                + date);
             }
         } else {
             return def;
@@ -203,79 +214,79 @@ public abstract class IvyTask extends Task {
             return getProperty(ivy, name);
         } else {
             value = ivy.substitute(value);
-            Message.debug("parameter found as attribute value: "+name+"="+value);
+            Message.debug("parameter found as attribute value: " + name + "=" + value);
             return value;
         }
     }
-    
+
     protected String getProperty(String value, IvySettings ivy, String name, String resolveId) {
-    	if (resolveId == null) {
-    		return getProperty(value, ivy, name);
-    	} else {
-    		return getProperty(value, ivy, name + "." + resolveId);
-    	}
-    }
-    
-    protected String getProperty(IvySettings ivy, String name, String resolveId) {
-    	if (resolveId == null) {
-    		return getProperty(ivy, name);
-    	} else {
-    		return getProperty(ivy, name + "." + resolveId);
-    	}
+        if (resolveId == null) {
+            return getProperty(value, ivy, name);
+        } else {
+            return getProperty(value, ivy, name + "." + resolveId);
+        }
     }
 
-    protected String getProperty(IvySettings ivy, String name) {        
-        String val =  ivy.getVariable(name);        
+    protected String getProperty(IvySettings ivy, String name, String resolveId) {
+        if (resolveId == null) {
+            return getProperty(ivy, name);
+        } else {
+            return getProperty(ivy, name + "." + resolveId);
+        }
+    }
+
+    protected String getProperty(IvySettings ivy, String name) {
+        String val = ivy.getVariable(name);
         if (val == null) {
             val = ivy.substitute(getProject().getProperty(name));
             if (val != null) {
-                Message.debug("parameter found as ant project property: "+name+"="+val);
+                Message.debug("parameter found as ant project property: " + name + "=" + val);
             } else {
-                Message.debug("parameter not found: "+name);
+                Message.debug("parameter not found: " + name);
             }
         } else {
             val = ivy.substitute(val);
-            Message.debug("parameter found as ivy variable: "+name+"="+val);
+            Message.debug("parameter found as ivy variable: " + name + "=" + val);
         }
         return val;
     }
-    
+
     /**
      * Called when task starts its execution.
      */
-    protected void prepareTask(){
-    	//push current project on the stack in context
-		IvyContext.getContext().push(ANT_PROJECT_CONTEXT_KEY, getProject());
-    }
-    
-    /**
-     * Called when task is about to finish
-     * Should clean up all state related information (stacks for example)
-     */
-    protected void finalizeTask(){
-		if(!IvyContext.getContext().pop(ANT_PROJECT_CONTEXT_KEY,getProject())){
-			Message.error("ANT project poped from stack not equals current !. Ignoring");
-		}
-    }
-    
-    /**
-     * Ant task execute. 
-     * Calls prepareTask, doExecute, finalzeTask
-     */
-    public final void execute() throws BuildException{
-    	try{
-    		prepareTask();
-    		doExecute();
-    	} finally {
-    		finalizeTask();
-    	}
+    protected void prepareTask() {
+        // push current project on the stack in context
+        IvyContext.getContext().push(ANT_PROJECT_CONTEXT_KEY, getProject());
     }
 
     /**
-     * The real logic of task execution after project has been set in the context.
-     * MUST be implemented by subclasses
+     * Called when task is about to finish Should clean up all state related information (stacks for
+     * example)
+     */
+    protected void finalizeTask() {
+        if (!IvyContext.getContext().pop(ANT_PROJECT_CONTEXT_KEY, getProject())) {
+            Message.error("ANT project poped from stack not equals current !. Ignoring");
+        }
+    }
+
+    /**
+     * Ant task execute. Calls prepareTask, doExecute, finalzeTask
+     */
+    public final void execute() throws BuildException {
+        try {
+            prepareTask();
+            doExecute();
+        } finally {
+            finalizeTask();
+        }
+    }
+
+    /**
+     * The real logic of task execution after project has been set in the context. MUST be
+     * implemented by subclasses
+     * 
      * @throws BuildException
      */
     public abstract void doExecute() throws BuildException;
-    
+
 }

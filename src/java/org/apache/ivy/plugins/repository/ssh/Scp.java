@@ -32,13 +32,11 @@ import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
 
 /**
- * This class is using the scp client to transfer data and information for the
- * repository. It is based on the SCPClient from the ganymed ssh library from
- * Christian Plattner. To minimize the dependency to the ssh library and because
- * I needed some additional functionality, I decided to copy'n'paste the single
- * class rather than to inherit or delegate it somehow. Nevertheless credit
+ * This class is using the scp client to transfer data and information for the repository. It is
+ * based on the SCPClient from the ganymed ssh library from Christian Plattner. To minimize the
+ * dependency to the ssh library and because I needed some additional functionality, I decided to
+ * copy'n'paste the single class rather than to inherit or delegate it somehow. Nevertheless credit
  * should go to the original author.
- * 
  */
 
 public class Scp {
@@ -46,38 +44,49 @@ public class Scp {
 
     public class FileInfo {
         private String filename;
+
         private long length;
+
         private long lastModified;
+
         /**
-         * @param filename The filename to set.
+         * @param filename
+         *            The filename to set.
          */
         public void setFilename(String filename) {
             this.filename = filename;
         }
+
         /**
          * @return Returns the filename.
          */
         public String getFilename() {
             return filename;
         }
+
         /**
-         * @param length The length to set.
+         * @param length
+         *            The length to set.
          */
         public void setLength(long length) {
             this.length = length;
         }
+
         /**
          * @return Returns the length.
          */
         public long getLength() {
             return length;
         }
+
         /**
-         * @param lastModified The lastModified to set.
+         * @param lastModified
+         *            The lastModified to set.
          */
         public void setLastModified(long lastModified) {
             this.lastModified = lastModified;
         }
+
         /**
          * @return Returns the lastModified.
          */
@@ -111,13 +120,12 @@ public class Scp {
         throw new RemoteScpException("Remote scp terminated with error (" + err + ").");
     }
 
-    private String receiveLine(InputStream is) throws IOException,RemoteScpException {
+    private String receiveLine(InputStream is) throws IOException, RemoteScpException {
         StringBuffer sb = new StringBuffer(30);
 
         while (true) {
             /*
-             * This is a random limit - if your path names are longer, then
-             * adjust it
+             * This is a random limit - if your path names are longer, then adjust it
              */
 
             if (sb.length() > 8192)
@@ -160,8 +168,7 @@ public class Scp {
         if ((length_substring.length() <= 0) || (name_substring.length() <= 0))
             throw new RemoteScpException("Malformed C line sent by remote SCP binary.");
 
-        if ((6 + length_substring.length() + name_substring.length()) != line
-                .length())
+        if ((6 + length_substring.length() + name_substring.length()) != line.length())
             throw new RemoteScpException("Malformed C line sent by remote SCP binary.");
 
         try {
@@ -178,7 +185,7 @@ public class Scp {
         fileInfo.setLength(len);
         fileInfo.setFilename(name_substring);
     }
-    
+
     private void parseTLine(String line, FileInfo fileInfo) throws RemoteScpException {
         /* Minimum line: "0 0 0 0" ---> 8 chars */
 
@@ -191,26 +198,26 @@ public class Scp {
             throw new RemoteScpException(
                     "Malformed T line sent by remote SCP binary, line too short.");
 
-        int first_msec_begin = line.indexOf(" ")+1;
-        if(first_msec_begin == 0 || first_msec_begin >= line.length())
+        int first_msec_begin = line.indexOf(" ") + 1;
+        if (first_msec_begin == 0 || first_msec_begin >= line.length())
             throw new RemoteScpException(
-            "Malformed T line sent by remote SCP binary, line not enough data.");
-       
-        int atime_begin = line.indexOf(" ",first_msec_begin+1)+1;
-        if(atime_begin == 0 || atime_begin >= line.length())
+                    "Malformed T line sent by remote SCP binary, line not enough data.");
+
+        int atime_begin = line.indexOf(" ", first_msec_begin + 1) + 1;
+        if (atime_begin == 0 || atime_begin >= line.length())
             throw new RemoteScpException(
-            "Malformed T line sent by remote SCP binary, line not enough data.");
-        
-        int second_msec_begin = line.indexOf(" ",atime_begin+1)+1;
-        if(second_msec_begin == 0 || second_msec_begin >= line.length())
+                    "Malformed T line sent by remote SCP binary, line not enough data.");
+
+        int second_msec_begin = line.indexOf(" ", atime_begin + 1) + 1;
+        if (second_msec_begin == 0 || second_msec_begin >= line.length())
             throw new RemoteScpException(
-            "Malformed T line sent by remote SCP binary, line not enough data.");
-       
+                    "Malformed T line sent by remote SCP binary, line not enough data.");
+
         try {
-            modtime = Long.parseLong(line.substring(0,first_msec_begin-1));
-            first_msec =  Long.parseLong(line.substring(first_msec_begin,atime_begin-1));
-            atime = Long.parseLong(line.substring(atime_begin,second_msec_begin-1));
-            second_msec =  Long.parseLong(line.substring(second_msec_begin));
+            modtime = Long.parseLong(line.substring(0, first_msec_begin - 1));
+            first_msec = Long.parseLong(line.substring(first_msec_begin, atime_begin - 1));
+            atime = Long.parseLong(line.substring(atime_begin, second_msec_begin - 1));
+            second_msec = Long.parseLong(line.substring(second_msec_begin));
         } catch (NumberFormatException e) {
             throw new RemoteScpException(
                     "Malformed C line sent by remote SCP binary, cannot parse file length.");
@@ -222,21 +229,21 @@ public class Scp {
 
         fileInfo.setLastModified(modtime);
     }
-    
-    private void sendBytes(Channel channel, byte[] data, String fileName,
-            String mode) throws IOException,RemoteScpException {
+
+    private void sendBytes(Channel channel, byte[] data, String fileName, String mode)
+            throws IOException, RemoteScpException {
         OutputStream os = channel.getOutputStream();
         InputStream is = new BufferedInputStream(channel.getInputStream(), 512);
 
         try {
-            if(channel.isConnected())
+            if (channel.isConnected())
                 channel.start();
             else
                 channel.connect();
         } catch (JSchException e1) {
             throw (IOException) new IOException("Channel connection problems").initCause(e1);
         }
-       
+
         readResponse(is);
 
         String cline = "C" + mode + " " + data.length + " " + fileName + "\n";
@@ -264,7 +271,7 @@ public class Scp {
         InputStream is = new BufferedInputStream(channel.getInputStream(), 512);
 
         try {
-            if(channel.isConnected())
+            if (channel.isConnected())
                 channel.start();
             else
                 channel.connect();
@@ -297,9 +304,7 @@ public class Scp {
                     trans = (int) remain;
 
                 if (fis.read(buffer, 0, trans) != trans)
-                    throw new IOException(
-                            "Cannot read enough from local file "
-                                    + localFile);
+                    throw new IOException("Cannot read enough from local file " + localFile);
 
                 os.write(buffer, 0, trans);
 
@@ -325,21 +330,27 @@ public class Scp {
 
     /**
      * Receive a file via scp and store it in a stream
-     * @param channel ssh channel to use
-     * @param file to receive from remote
-     * @param target to store file into (if null, get only file info)
+     * 
+     * @param channel
+     *            ssh channel to use
+     * @param file
+     *            to receive from remote
+     * @param target
+     *            to store file into (if null, get only file info)
      * @return file information of the file we received
-     * @throws IOException in case of network or protocol trouble
-     * @throws RemoteScpException in case of problems on the target system (connection is fine)
+     * @throws IOException
+     *             in case of network or protocol trouble
+     * @throws RemoteScpException
+     *             in case of problems on the target system (connection is fine)
      */
-    private FileInfo receiveStream(Channel channel, String file, OutputStream targetStream) 
-      throws IOException,RemoteScpException {
+    private FileInfo receiveStream(Channel channel, String file, OutputStream targetStream)
+            throws IOException, RemoteScpException {
         byte[] buffer = new byte[8192];
 
         OutputStream os = channel.getOutputStream();
         InputStream is = channel.getInputStream();
         try {
-            if(channel.isConnected())
+            if (channel.isConnected())
                 channel.start();
             else
                 channel.connect();
@@ -359,7 +370,7 @@ public class Scp {
             String line = receiveLine(is);
 
             if (c == 'T') {
-                parseTLine(line,fileInfo);
+                parseTLine(line, fileInfo);
                 os.write(0x0);
                 os.flush();
                 continue;
@@ -368,48 +379,47 @@ public class Scp {
                 throw new RemoteScpException("Remote SCP error: " + line);
 
             if (c == 'C') {
-                parseCLine(line,fileInfo);
+                parseCLine(line, fileInfo);
                 break;
             }
             throw new RemoteScpException("Remote SCP error: " + ((char) c) + line);
         }
-        if(targetStream != null) {
-            
+        if (targetStream != null) {
+
             os.write(0x0);
             os.flush();
-    
+
             try {
                 long remain = fileInfo.getLength();
-    
+
                 while (remain > 0) {
                     int trans;
                     if (remain > buffer.length)
                         trans = buffer.length;
                     else
                         trans = (int) remain;
-    
+
                     int this_time_received = is.read(buffer, 0, trans);
-    
+
                     if (this_time_received < 0) {
-                        throw new IOException(
-                                "Remote scp terminated connection unexpectedly");
+                        throw new IOException("Remote scp terminated connection unexpectedly");
                     }
-    
+
                     targetStream.write(buffer, 0, this_time_received);
-    
+
                     remain -= this_time_received;
                 }
-    
+
                 targetStream.close();
             } catch (IOException e) {
                 if (targetStream != null)
                     targetStream.close();
-    
+
                 throw (e);
             }
 
             readResponse(is);
-    
+
             os.write(0x0);
             os.flush();
         }
@@ -417,50 +427,65 @@ public class Scp {
     }
 
     /**
-     * Copy a local file to a remote directory, uses mode 0600 when creating the
-     * file on the remote side.
+     * Copy a local file to a remote directory, uses mode 0600 when creating the file on the remote
+     * side.
      * 
-     * @param localFile Path and name of local file.
-     * @param remoteTargetDirectory Remote target directory where the file has to end up (optional)
-     * @param remoteName target filename to use
-     * @throws IOException in case of network problems
-     * @throws RemoteScpException in case of problems on the target system (connection ok)
+     * @param localFile
+     *            Path and name of local file.
+     * @param remoteTargetDirectory
+     *            Remote target directory where the file has to end up (optional)
+     * @param remoteName
+     *            target filename to use
+     * @throws IOException
+     *             in case of network problems
+     * @throws RemoteScpException
+     *             in case of problems on the target system (connection ok)
      */
     public void put(String localFile, String remoteTargetDirectory, String remoteName)
-    throws IOException, RemoteScpException {
+            throws IOException, RemoteScpException {
         put(localFile, remoteTargetDirectory, remoteName, "0600");
     }
 
     /**
-     * Create a remote file and copy the contents of the passed byte array into
-     * it. Uses mode 0600 for creating the remote file.
+     * Create a remote file and copy the contents of the passed byte array into it. Uses mode 0600
+     * for creating the remote file.
      * 
-     * @param data the data to be copied into the remote file.
-     * @param remoteFileName The name of the file which will be created in the remote target directory.
-     * @param remoteTargetDirectory Remote target directory where the file has to end up (optional)
-     * @throws IOException in case of network problems
-     * @throws RemoteScpException in case of problems on the target system (connection ok)
+     * @param data
+     *            the data to be copied into the remote file.
+     * @param remoteFileName
+     *            The name of the file which will be created in the remote target directory.
+     * @param remoteTargetDirectory
+     *            Remote target directory where the file has to end up (optional)
+     * @throws IOException
+     *             in case of network problems
+     * @throws RemoteScpException
+     *             in case of problems on the target system (connection ok)
      */
 
-    public void put(byte[] data, String remoteFileName, String remoteTargetDirectory) 
-    throws IOException,RemoteScpException {
+    public void put(byte[] data, String remoteFileName, String remoteTargetDirectory)
+            throws IOException, RemoteScpException {
         put(data, remoteFileName, remoteTargetDirectory, "0600");
     }
 
     /**
-     * Create a remote file and copy the contents of the passed byte array into
-     * it. The method use the specified mode when creating the file on the
-     * remote side.
+     * Create a remote file and copy the contents of the passed byte array into it. The method use
+     * the specified mode when creating the file on the remote side.
      * 
-     * @param data the data to be copied into the remote file.
-     * @param remoteFileName The name of the file which will be created in the remote target directory.
-     * @param remoteTargetDirectory Remote target directory where the file has to end up (optional)
-     * @param mode a four digit string (e.g., 0644, see "man chmod", "man open")
-     * @throws IOException in case of network problems
-     * @throws RemoteScpException in case of problems on the target system (connection ok)
+     * @param data
+     *            the data to be copied into the remote file.
+     * @param remoteFileName
+     *            The name of the file which will be created in the remote target directory.
+     * @param remoteTargetDirectory
+     *            Remote target directory where the file has to end up (optional)
+     * @param mode
+     *            a four digit string (e.g., 0644, see "man chmod", "man open")
+     * @throws IOException
+     *             in case of network problems
+     * @throws RemoteScpException
+     *             in case of problems on the target system (connection ok)
      */
-    public void put(byte[] data, String remoteFileName, String remoteTargetDirectory, String mode) 
-    throws IOException,RemoteScpException {
+    public void put(byte[] data, String remoteFileName, String remoteTargetDirectory, String mode)
+            throws IOException, RemoteScpException {
         ChannelExec channel = null;
 
         if ((remoteFileName == null) || (mode == null))
@@ -474,7 +499,7 @@ public class Scp {
                 throw new IllegalArgumentException("Invalid mode.");
 
         String cmd = "scp -t ";
-        if(remoteTargetDirectory != null && remoteTargetDirectory.length() > 0) {
+        if (remoteTargetDirectory != null && remoteTargetDirectory.length() > 0) {
             cmd = cmd + "-d " + remoteTargetDirectory;
         }
 
@@ -482,11 +507,11 @@ public class Scp {
             channel = getExecChannel();
             channel.setCommand(cmd);
             sendBytes(channel, data, remoteFileName, mode);
-            //channel.disconnect();
+            // channel.disconnect();
         } catch (JSchException e) {
             if (channel != null)
                 channel.disconnect();
-            throw (IOException) new IOException("Error during SCP transfer."+e.getMessage())
+            throw (IOException) new IOException("Error during SCP transfer." + e.getMessage())
                     .initCause(e);
         }
     }
@@ -497,23 +522,29 @@ public class Scp {
      */
     private ChannelExec getExecChannel() throws JSchException {
         ChannelExec channel;
-        channel = (ChannelExec)session.openChannel("exec");
+        channel = (ChannelExec) session.openChannel("exec");
         return channel;
     }
 
     /**
-     * Copy a local file to a remote site, uses the specified mode when
-     * creating the file on the remote side.
+     * Copy a local file to a remote site, uses the specified mode when creating the file on the
+     * remote side.
      * 
-     * @param localFile Path and name of local file.
-     * @param remoteTargetDir Remote target directory where the file has to end up (optional)
-     * @param remoteTargetName file name to use on the target system 
-     * @param mode a four digit string (e.g., 0644, see "man chmod", "man open")
-     * @throws IOException in case of network problems
-     * @throws RemoteScpException in case of problems on the target system (connection ok)
+     * @param localFile
+     *            Path and name of local file.
+     * @param remoteTargetDir
+     *            Remote target directory where the file has to end up (optional)
+     * @param remoteTargetName
+     *            file name to use on the target system
+     * @param mode
+     *            a four digit string (e.g., 0644, see "man chmod", "man open")
+     * @throws IOException
+     *             in case of network problems
+     * @throws RemoteScpException
+     *             in case of problems on the target system (connection ok)
      */
-    public void put(String localFile, String remoteTargetDir, String remoteTargetName, String mode) 
-    throws IOException,RemoteScpException {
+    public void put(String localFile, String remoteTargetDir, String remoteTargetName, String mode)
+            throws IOException, RemoteScpException {
         ChannelExec channel = null;
 
         if ((localFile == null) || (remoteTargetName == null) || (mode == null))
@@ -525,9 +556,9 @@ public class Scp {
         for (int i = 0; i < mode.length(); i++)
             if (Character.isDigit(mode.charAt(i)) == false)
                 throw new IllegalArgumentException("Invalid mode.");
-           
+
         String cmd = "scp -t ";
-        if(remoteTargetDir != null && remoteTargetDir.length() > 0) {
+        if (remoteTargetDir != null && remoteTargetDir.length() > 0) {
             cmd = cmd + "-d " + remoteTargetDir;
         }
 
@@ -539,38 +570,49 @@ public class Scp {
         } catch (JSchException e) {
             if (channel != null)
                 channel.disconnect();
-            throw (IOException) new IOException("Error during SCP transfer."+e.getMessage())
+            throw (IOException) new IOException("Error during SCP transfer." + e.getMessage())
                     .initCause(e);
         }
     }
 
     /**
      * Download a file from the remote server to a local file.
-     * @param remoteFile Path and name of the remote file.
-     * @param localTarget Local file where to store the data.
-     * @throws IOException in case of network problems
-     * @throws RemoteScpException in case of problems on the target system (connection ok)
+     * 
+     * @param remoteFile
+     *            Path and name of the remote file.
+     * @param localTarget
+     *            Local file where to store the data.
+     * @throws IOException
+     *             in case of network problems
+     * @throws RemoteScpException
+     *             in case of problems on the target system (connection ok)
      */
-    public void get(String remoteFile, String localTarget) throws IOException,RemoteScpException {
+    public void get(String remoteFile, String localTarget) throws IOException, RemoteScpException {
         File f = new File(localTarget);
         FileOutputStream fop = new FileOutputStream(f);
-        get(remoteFile,fop);
+        get(remoteFile, fop);
     }
-    
+
     /**
      * Download a file from the remote server into an OutputStream
-     * @param remoteFile Path and name of the remote file.
-     * @param localTarget OutputStream to store the data.
-     * @throws IOException in case of network problems
-     * @throws RemoteScpException in case of problems on the target system (connection ok)
+     * 
+     * @param remoteFile
+     *            Path and name of the remote file.
+     * @param localTarget
+     *            OutputStream to store the data.
+     * @throws IOException
+     *             in case of network problems
+     * @throws RemoteScpException
+     *             in case of problems on the target system (connection ok)
      */
-    public void get(String remoteFile, OutputStream localTarget) throws IOException,RemoteScpException {
+    public void get(String remoteFile, OutputStream localTarget) throws IOException,
+            RemoteScpException {
         ChannelExec channel = null;
 
         if ((remoteFile == null) || (localTarget == null))
             throw new IllegalArgumentException("Null argument.");
 
-        String cmd = "scp -p -f "+ remoteFile;
+        String cmd = "scp -p -f " + remoteFile;
 
         try {
             channel = getExecChannel();
@@ -580,26 +622,30 @@ public class Scp {
         } catch (JSchException e) {
             if (channel != null)
                 channel.disconnect();
-            throw (IOException) new IOException("Error during SCP transfer."+e.getMessage())
+            throw (IOException) new IOException("Error during SCP transfer." + e.getMessage())
                     .initCause(e);
         }
     }
-    
+
     /**
      * Initiates an SCP sequence but stops after getting fileinformation header
-     * @param remoteFile to get information for
+     * 
+     * @param remoteFile
+     *            to get information for
      * @return the file information got
-     * @throws IOException in case of network problems
-     * @throws RemoteScpException in case of problems on the target system (connection ok)
+     * @throws IOException
+     *             in case of network problems
+     * @throws RemoteScpException
+     *             in case of problems on the target system (connection ok)
      */
-    public FileInfo getFileinfo(String remoteFile) throws IOException,RemoteScpException {
+    public FileInfo getFileinfo(String remoteFile) throws IOException, RemoteScpException {
         ChannelExec channel = null;
         FileInfo fileInfo = null;
-        
+
         if (remoteFile == null)
             throw new IllegalArgumentException("Null argument.");
 
-        String cmd = "scp -p -f \""+remoteFile+"\"";
+        String cmd = "scp -p -f \"" + remoteFile + "\"";
 
         try {
             channel = getExecChannel();
@@ -607,11 +653,11 @@ public class Scp {
             fileInfo = receiveStream(channel, remoteFile, null);
             channel.disconnect();
         } catch (JSchException e) {
-            throw (IOException) new IOException("Error during SCP transfer."+e.getMessage())
-            .initCause(e);
+            throw (IOException) new IOException("Error during SCP transfer." + e.getMessage())
+                    .initCause(e);
         } finally {
             if (channel != null)
-              channel.disconnect();
+                channel.disconnect();
         }
         return fileInfo;
     }

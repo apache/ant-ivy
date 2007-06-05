@@ -26,14 +26,15 @@ public abstract class AbstractPatternMatcher implements PatternMatcher {
 
     /**
      * Create a new instance of a pattern matcher
-     *
-     * @param name the name of the pattern matcher. Never null.
+     * 
+     * @param name
+     *            the name of the pattern matcher. Never null.
      */
-    public AbstractPatternMatcher(/*@NotNull*/ String name) {
+    public AbstractPatternMatcher(/* @NotNull */String name) {
         this.name = name;
     }
 
-    public /*@NotNull*/ Matcher getMatcher(/*@NotNull*/String expression) {
+    public/* @NotNull */Matcher getMatcher(/* @NotNull */String expression) {
         if (expression == null) {
             throw new NullPointerException();
         }
@@ -43,20 +44,20 @@ public abstract class AbstractPatternMatcher implements PatternMatcher {
         return newMatcher(expression);
     }
 
-    public /*@NotNull*/ String getName() {
+    public/* @NotNull */String getName() {
         return name;
     }
 
     /**
      * Returns an instance of the implementation specific matcher.
-     *
-     * @param expression the string to be matched.
+     * 
+     * @param expression
+     *            the string to be matched.
      * @return the instance of the related matcher. Never null.
      */
-    protected abstract /*@NotNull*/ Matcher newMatcher(/*@NotNull*/ String expression);
+    protected abstract/* @NotNull */Matcher newMatcher(/* @NotNull */String expression);
 
     public String toString() {
         return getName();
     }
 }
-

@@ -43,72 +43,81 @@ import org.apache.ivy.core.resolve.ResolveOptions;
 import org.apache.ivy.plugins.report.XmlReportParser;
 import org.apache.ivy.util.Message;
 
-
 /**
  *
  */
 public class ConfigurationResolveReport {
 
     private ModuleDescriptor md;
-	private String conf;
-	private Date date;
-	private Map dependencyReports = new HashMap();
-	private Map dependencies = new LinkedHashMap();
-	private ResolveEngine resolveEngine;
-	private Map modulesIdsMap = new LinkedHashMap();
-	private List modulesIds;
-	private List previousDeps;
 
-	public ConfigurationResolveReport(ResolveEngine resolveEngine, ModuleDescriptor md, String conf, Date date, ResolveOptions options) {
-		this.resolveEngine = resolveEngine;
-    	this.md = md;
-    	this.conf = conf;
-    	this.date = date;
+    private String conf;
 
-		// parse previous deps from previous report file if any
-    	CacheManager cache = options.getCache();
-    	String resolveId = options.getResolveId();
+    private Date date;
+
+    private Map dependencyReports = new HashMap();
+
+    private Map dependencies = new LinkedHashMap();
+
+    private ResolveEngine resolveEngine;
+
+    private Map modulesIdsMap = new LinkedHashMap();
+
+    private List modulesIds;
+
+    private List previousDeps;
+
+    public ConfigurationResolveReport(ResolveEngine resolveEngine, ModuleDescriptor md,
+            String conf, Date date, ResolveOptions options) {
+        this.resolveEngine = resolveEngine;
+        this.md = md;
+        this.conf = conf;
+        this.date = date;
+
+        // parse previous deps from previous report file if any
+        CacheManager cache = options.getCache();
+        String resolveId = options.getResolveId();
         File previousReportFile = cache.getConfigurationResolveReportInCache(resolveId, conf);
-		if (previousReportFile.exists()) {
-			try {
-				XmlReportParser parser = new XmlReportParser();
-				parser.parse(previousReportFile);
-				previousDeps = Arrays.asList(parser.getDependencyRevisionIds());
-			} catch (Exception e) {
-				Message.warn("Error while parsing configuration resolve report " + previousReportFile.getAbsolutePath());
-				e.printStackTrace();
-				previousDeps = null;
-			}
+        if (previousReportFile.exists()) {
+            try {
+                XmlReportParser parser = new XmlReportParser();
+                parser.parse(previousReportFile);
+                previousDeps = Arrays.asList(parser.getDependencyRevisionIds());
+            } catch (Exception e) {
+                Message.warn("Error while parsing configuration resolve report "
+                        + previousReportFile.getAbsolutePath());
+                e.printStackTrace();
+                previousDeps = null;
+            }
         } else {
-			previousDeps = null;
+            previousDeps = null;
         }
     }
-	
-	public boolean hasChanged() {
-		if (previousDeps == null) {
-			return true;
-		}
-		return !new HashSet(previousDeps).equals(getModuleRevisionIds());
-	}
+
+    public boolean hasChanged() {
+        if (previousDeps == null) {
+            return true;
+        }
+        return !new HashSet(previousDeps).equals(getModuleRevisionIds());
+    }
 
     /**
-     * Returns all non evicted and non error dependency mrids
-     * The returned set is ordered so that a dependency will always
-     * be found before their own dependencies
+     * Returns all non evicted and non error dependency mrids The returned set is ordered so that a
+     * dependency will always be found before their own dependencies
+     * 
      * @return all non evicted and non error dependency mrids
      */
     public Set getModuleRevisionIds() {
-		Set mrids = new LinkedHashSet();
-		for (Iterator iter = getDependencies().iterator(); iter.hasNext();) {
-			IvyNode node = (IvyNode) iter.next();
+        Set mrids = new LinkedHashSet();
+        for (Iterator iter = getDependencies().iterator(); iter.hasNext();) {
+            IvyNode node = (IvyNode) iter.next();
             if (!node.isEvicted(getConfiguration()) && !node.hasProblem()) {
                 mrids.add(node.getResolvedId());
             }
-		}
-		return mrids;
-	}
+        }
+        return mrids;
+    }
 
-	public void addDependency(IvyNode node) {
+    public void addDependency(IvyNode node) {
         dependencies.put(node.getId(), node);
         dependencies.put(node.getResolvedId(), node);
         dependencyReports.put(node, Collections.EMPTY_LIST);
@@ -124,147 +133,156 @@ public class ConfigurationResolveReport {
             if (artifactReport != null) {
                 adrs.add(artifactReport);
             } else {
-                Message.debug("no report found for "+artifacts[i]);
+                Message.debug("no report found for " + artifacts[i]);
             }
         }
         dependencyReports.put(node, adrs);
     }
 
+    public String getConfiguration() {
+        return conf;
+    }
 
-	public String getConfiguration() {
-		return conf;
-	}
-	public Date getDate() {
-		return date;
-	}
-	public ModuleDescriptor getModuleDescriptor() {
-		return md;
-	}
-	public IvyNode[] getUnresolvedDependencies() {
+    public Date getDate() {
+        return date;
+    }
+
+    public ModuleDescriptor getModuleDescriptor() {
+        return md;
+    }
+
+    public IvyNode[] getUnresolvedDependencies() {
         List unresolved = new ArrayList();
         for (Iterator iter = getDependencies().iterator(); iter.hasNext();) {
-            IvyNode node = (IvyNode)iter.next();
+            IvyNode node = (IvyNode) iter.next();
             if (node.hasProblem()) {
                 unresolved.add(node);
             }
         }
-		return (IvyNode[])unresolved.toArray(new IvyNode[unresolved.size()]);
-	}
+        return (IvyNode[]) unresolved.toArray(new IvyNode[unresolved.size()]);
+    }
 
     private Collection getDependencies() {
         return new LinkedHashSet(dependencies.values());
     }
+
     public IvyNode[] getEvictedNodes() {
         List evicted = new ArrayList();
         for (Iterator iter = getDependencies().iterator(); iter.hasNext();) {
-            IvyNode node = (IvyNode)iter.next();
+            IvyNode node = (IvyNode) iter.next();
             if (node.isEvicted(conf)) {
                 evicted.add(node);
             }
         }
-        return (IvyNode[])evicted.toArray(new IvyNode[evicted.size()]);
+        return (IvyNode[]) evicted.toArray(new IvyNode[evicted.size()]);
     }
+
     public IvyNode[] getDownloadedNodes() {
         List downloaded = new ArrayList();
         for (Iterator iter = getDependencies().iterator(); iter.hasNext();) {
-            IvyNode node = (IvyNode)iter.next();
+            IvyNode node = (IvyNode) iter.next();
             if (node.isDownloaded() && node.getRealNode() == node) {
                 downloaded.add(node);
             }
         }
-        return (IvyNode[])downloaded.toArray(new IvyNode[downloaded.size()]);
+        return (IvyNode[]) downloaded.toArray(new IvyNode[downloaded.size()]);
     }
+
     public IvyNode[] getSearchedNodes() {
         List downloaded = new ArrayList();
         for (Iterator iter = getDependencies().iterator(); iter.hasNext();) {
-            IvyNode node = (IvyNode)iter.next();
+            IvyNode node = (IvyNode) iter.next();
             if (node.isSearched() && node.getRealNode() == node) {
                 downloaded.add(node);
             }
         }
-        return (IvyNode[])downloaded.toArray(new IvyNode[downloaded.size()]);
+        return (IvyNode[]) downloaded.toArray(new IvyNode[downloaded.size()]);
     }
 
-	public ArtifactDownloadReport[] getDownloadReports(ModuleRevisionId mrid) {
-		Collection col = (Collection) dependencyReports.get(getDependency(mrid));
-		if (col == null) {
-			return new ArtifactDownloadReport[0];
-		}
-		return (ArtifactDownloadReport[]) col.toArray(new ArtifactDownloadReport[col.size()]);
-	}
+    public ArtifactDownloadReport[] getDownloadReports(ModuleRevisionId mrid) {
+        Collection col = (Collection) dependencyReports.get(getDependency(mrid));
+        if (col == null) {
+            return new ArtifactDownloadReport[0];
+        }
+        return (ArtifactDownloadReport[]) col.toArray(new ArtifactDownloadReport[col.size()]);
+    }
 
-	public IvyNode getDependency(ModuleRevisionId mrid) {
-		return (IvyNode) dependencies.get(mrid);
-	}
+    public IvyNode getDependency(ModuleRevisionId mrid) {
+        return (IvyNode) dependencies.get(mrid);
+    }
 
-	/**
-	 * gives all the modules ids concerned by this report, from the most dependent to the least one
-	 * @return a list of ModuleId
-	 */
-	public List getModuleIds() {
-		if (modulesIds == null) {
-			List sortedDependencies = resolveEngine.getSortEngine().sortNodes(getDependencies());
+    /**
+     * gives all the modules ids concerned by this report, from the most dependent to the least one
+     * 
+     * @return a list of ModuleId
+     */
+    public List getModuleIds() {
+        if (modulesIds == null) {
+            List sortedDependencies = resolveEngine.getSortEngine().sortNodes(getDependencies());
             Collections.reverse(sortedDependencies);
-			for (Iterator iter = sortedDependencies.iterator(); iter.hasNext();) {
+            for (Iterator iter = sortedDependencies.iterator(); iter.hasNext();) {
                 IvyNode dependency = (IvyNode) iter.next();
-				ModuleId mid = dependency.getResolvedId().getModuleId();
-				Collection deps = (Collection) modulesIdsMap.get(mid);
-				if (deps == null) {
-					deps = new HashSet();
-					modulesIdsMap.put(mid, deps);
-				}
-				deps.add(dependency);
-			}
-			modulesIds = new ArrayList(modulesIdsMap.keySet());
-		}
-		return Collections.unmodifiableList(modulesIds);
-	}
-	
-	public Collection getNodes(ModuleId mid) {
-		if (modulesIds == null) {
-			getModuleIds();
-		}
-		return (Collection) modulesIdsMap.get(mid);
-	}
+                ModuleId mid = dependency.getResolvedId().getModuleId();
+                Collection deps = (Collection) modulesIdsMap.get(mid);
+                if (deps == null) {
+                    deps = new HashSet();
+                    modulesIdsMap.put(mid, deps);
+                }
+                deps.add(dependency);
+            }
+            modulesIds = new ArrayList(modulesIdsMap.keySet());
+        }
+        return Collections.unmodifiableList(modulesIds);
+    }
 
-	public ResolveEngine getResolveEngine() {
-		return resolveEngine;
-	}
+    public Collection getNodes(ModuleId mid) {
+        if (modulesIds == null) {
+            getModuleIds();
+        }
+        return (Collection) modulesIdsMap.get(mid);
+    }
+
+    public ResolveEngine getResolveEngine() {
+        return resolveEngine;
+    }
 
     public int getArtifactsNumber() {
         int total = 0;
         for (Iterator iter = dependencyReports.values().iterator(); iter.hasNext();) {
-            Collection reports = (Collection)iter.next();
-            total += reports==null?0:reports.size();
+            Collection reports = (Collection) iter.next();
+            total += reports == null ? 0 : reports.size();
         }
         return total;
     }
+
     public ArtifactDownloadReport[] getDownloadedArtifactsReports() {
         List result = new ArrayList();
         for (Iterator iter = dependencyReports.values().iterator(); iter.hasNext();) {
-            Collection reports = (Collection)iter.next();
+            Collection reports = (Collection) iter.next();
             for (Iterator iterator = reports.iterator(); iterator.hasNext();) {
-                ArtifactDownloadReport adr = (ArtifactDownloadReport)iterator.next();
+                ArtifactDownloadReport adr = (ArtifactDownloadReport) iterator.next();
                 if (adr.getDownloadStatus() == DownloadStatus.SUCCESSFUL) {
                     result.add(adr);
                 }
             }
         }
-        return (ArtifactDownloadReport[])result.toArray(new ArtifactDownloadReport[result.size()]);
+        return (ArtifactDownloadReport[]) result.toArray(new ArtifactDownloadReport[result.size()]);
     }
+
     public ArtifactDownloadReport[] getFailedArtifactsReports() {
         List result = new ArrayList();
         for (Iterator iter = dependencyReports.values().iterator(); iter.hasNext();) {
-            Collection reports = (Collection)iter.next();
+            Collection reports = (Collection) iter.next();
             for (Iterator iterator = reports.iterator(); iterator.hasNext();) {
-                ArtifactDownloadReport adr = (ArtifactDownloadReport)iterator.next();
+                ArtifactDownloadReport adr = (ArtifactDownloadReport) iterator.next();
                 if (adr.getDownloadStatus() == DownloadStatus.FAILED) {
                     result.add(adr);
                 }
             }
         }
-        return (ArtifactDownloadReport[])result.toArray(new ArtifactDownloadReport[result.size()]);
+        return (ArtifactDownloadReport[]) result.toArray(new ArtifactDownloadReport[result.size()]);
     }
+
     public boolean hasError() {
         return getUnresolvedDependencies().length > 0 || getFailedArtifactsReports().length > 0;
     }
@@ -272,6 +290,5 @@ public class ConfigurationResolveReport {
     public int getNodesNumber() {
         return getDependencies().size();
     }
-
 
 }

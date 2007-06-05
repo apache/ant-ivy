@@ -22,18 +22,17 @@ import java.util.regex.PatternSyntaxException;
 
 /**
  * A pattern matcher matching input using regular expressions.
- *
+ * 
  * @see Pattern
  */
-public final /*@Immutable*/ class RegexpPatternMatcher extends AbstractPatternMatcher {
+public final/* @Immutable */class RegexpPatternMatcher extends AbstractPatternMatcher {
     public static final RegexpPatternMatcher INSTANCE = new RegexpPatternMatcher();
 
     /*
-    NOTE: Regexp compiler does ~200K compilation/s
-    - If necessary look into using ThreadLocal Pattern to cut on useless object creation
-    - If expression are reused over and over a LRU cache could make sense
+     * NOTE: Regexp compiler does ~200K compilation/s - If necessary look into using ThreadLocal
+     * Pattern to cut on useless object creation - If expression are reused over and over a LRU
+     * cache could make sense
      */
-
 
     public RegexpPatternMatcher() {
         super(REGEXP);
@@ -43,7 +42,7 @@ public final /*@Immutable*/ class RegexpPatternMatcher extends AbstractPatternMa
         return new RegexpMatcher(expression);
     }
 
-    private static /*@Immutable*/ class RegexpMatcher implements Matcher {
+    private static/* @Immutable */class RegexpMatcher implements Matcher {
         private Pattern _pattern;
 
         public RegexpMatcher(String expression) throws PatternSyntaxException {

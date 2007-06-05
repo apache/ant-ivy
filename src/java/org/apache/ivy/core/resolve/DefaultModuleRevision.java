@@ -24,19 +24,24 @@ import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.plugins.resolver.DependencyResolver;
 
-
 /**
  *
  */
 public class DefaultModuleRevision implements ResolvedModuleRevision {
     private DependencyResolver resolver;
+
     private DependencyResolver artifactResolver;
+
     private ModuleDescriptor descriptor;
+
     private boolean isDownloaded;
+
     private boolean isSearched;
+
     private URL localMDUrl;
-    
-    public DefaultModuleRevision(DependencyResolver resolver, DependencyResolver artifactResolver, ModuleDescriptor descriptor, boolean searched, boolean downloaded, URL localMDUrl) {
+
+    public DefaultModuleRevision(DependencyResolver resolver, DependencyResolver artifactResolver,
+            ModuleDescriptor descriptor, boolean searched, boolean downloaded, URL localMDUrl) {
         this.resolver = resolver;
         this.artifactResolver = artifactResolver;
         this.descriptor = descriptor;
@@ -48,7 +53,7 @@ public class DefaultModuleRevision implements ResolvedModuleRevision {
     public DependencyResolver getResolver() {
         return resolver;
     }
-    
+
     public DependencyResolver getArtifactResolver() {
         return artifactResolver;
     }
@@ -60,22 +65,22 @@ public class DefaultModuleRevision implements ResolvedModuleRevision {
     public ModuleRevisionId getId() {
         return descriptor.getResolvedModuleRevisionId();
     }
-    
+
     public Date getPublicationDate() {
         return descriptor.getResolvedPublicationDate();
     }
-    
+
     public boolean equals(Object obj) {
-        if (! (obj instanceof ResolvedModuleRevision)) {
+        if (!(obj instanceof ResolvedModuleRevision)) {
             return false;
         }
-        return ((ResolvedModuleRevision)obj).getId().equals(getId());
+        return ((ResolvedModuleRevision) obj).getId().equals(getId());
     }
-    
+
     public int hashCode() {
         return getId().hashCode();
     }
-    
+
     public String toString() {
         return getId().toString();
     }
@@ -88,8 +93,8 @@ public class DefaultModuleRevision implements ResolvedModuleRevision {
         return isSearched;
     }
 
-	public URL getLocalMDUrl() {
-		return localMDUrl;
-	}
-    
+    public URL getLocalMDUrl() {
+        return localMDUrl;
+    }
+
 }

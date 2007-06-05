@@ -24,28 +24,26 @@ import org.apache.oro.text.regex.MalformedPatternException;
 import org.apache.oro.text.regex.Pattern;
 import org.apache.oro.text.regex.Perl5Matcher;
 
-
-
 /**
  * A pattern matcher matching input using unix-like glob matcher expressions. Meta characters are:
  * <ul>
- * <li> * -  Matches zero or more characters</li>
+ * <li> * - Matches zero or more characters</li>
  * <li> ? - Matches exactly one character.</li>
  * </ul>
- * <p/>
- * <b> Note that this matcher is available only with <a href="http://jakarta.apache.org/oro"Apache Jakarta Oro 2.0.8</a>
- * in your classpath.</b>
- *
- * @see <a href="http://jakarta.apache.org/oro/api/org/apache/oro/text/GlobCompiler.html">GlobCompiler</a>
+ * <p/> <b> Note that this matcher is available only with <a
+ * href="http://jakarta.apache.org/oro"Apache Jakarta Oro 2.0.8</a> in your classpath.</b>
+ * 
+ * @see <a
+ *      href="http://jakarta.apache.org/oro/api/org/apache/oro/text/GlobCompiler.html">GlobCompiler</a>
  */
-public /*@Immutable*/ final class GlobPatternMatcher extends AbstractPatternMatcher {
+public/* @Immutable */final class GlobPatternMatcher extends AbstractPatternMatcher {
 
     public static final GlobPatternMatcher INSTANCE = new GlobPatternMatcher();
 
     /*
-    NOTE: GlobCompiler does ~100K compilation/s
-    - If necessary look into using ThreadLocal for GlobCompiler/Perl5Matcher to cut on useless object creation
-    - If expression are reused over and over a LRU cache could make sense
+     * NOTE: GlobCompiler does ~100K compilation/s - If necessary look into using ThreadLocal for
+     * GlobCompiler/Perl5Matcher to cut on useless object creation - If expression are reused over
+     * and over a LRU cache could make sense
      */
 
     public GlobPatternMatcher() {

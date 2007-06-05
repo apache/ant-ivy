@@ -36,54 +36,55 @@ import org.apache.tools.ant.ProjectHelper;
 import org.apache.tools.ant.input.DefaultInputHandler;
 import org.apache.tools.ant.input.InputHandler;
 
-
 public class AntCallTriggerTest extends TestCase {
-	public void test() throws Exception {
-		assertFalse(new File("test/triggers/ant-call/A/out/foo.txt").exists());		
-		runAnt(new File("test/triggers/ant-call/A/build.xml"), "resolve");
-		// should have unzipped foo.zip
-		assertTrue(new File("test/triggers/ant-call/A/out/foo.txt").exists());		
-	}
-	
-	protected void tearDown() throws Exception {
-		FileUtil.forceDelete(new File("test/triggers/ant-call/A/out"));
-		FileUtil.forceDelete(new File("test/triggers/ant-call/cache"));
-	}
-	
-	private void runAnt(File buildFile, String target) throws BuildException {
-		runAnt(buildFile, target, Project.MSG_INFO);
-	}
-	private void runAnt(File buildFile, String target, int messageLevel) throws BuildException {
-		Vector targets = new Vector();
-		targets.add(target);
-		runAnt(buildFile, targets, messageLevel);
-	}
-	private void runAnt(File buildFile, Vector targets, int messageLevel) throws BuildException {
-		runBuild(buildFile, targets, messageLevel);
-		
-// this exits the jvm at the end of the call
-//		Main.main(new String[] {"-f", buildFile.getAbsolutePath(), target});
-		
-// this does not set the good message level
-//		Ant ant = new Ant();
-//		Project project = new Project();
-//		project.setBaseDir(buildFile.getParentFile());
-//		project.init();
-//		
-//		ant.setProject(project);
-//		ant.setTaskName("ant");
-//		
-//		ant.setAntfile(buildFile.getAbsolutePath());
-//		ant.setInheritAll(false);
-//		if (target != null) {
-//			ant.setTarget(target);
-//		}
-//		ant.execute();
-	}
+    public void test() throws Exception {
+        assertFalse(new File("test/triggers/ant-call/A/out/foo.txt").exists());
+        runAnt(new File("test/triggers/ant-call/A/build.xml"), "resolve");
+        // should have unzipped foo.zip
+        assertTrue(new File("test/triggers/ant-call/A/out/foo.txt").exists());
+    }
 
-	//////////////////////////////////////////////////////////////////////////////
-	// miserable copy (updated to simple test cases) from ant Main class: 
-	// the only available way I found to easily run ant exits jvm at the end
+    protected void tearDown() throws Exception {
+        FileUtil.forceDelete(new File("test/triggers/ant-call/A/out"));
+        FileUtil.forceDelete(new File("test/triggers/ant-call/cache"));
+    }
+
+    private void runAnt(File buildFile, String target) throws BuildException {
+        runAnt(buildFile, target, Project.MSG_INFO);
+    }
+
+    private void runAnt(File buildFile, String target, int messageLevel) throws BuildException {
+        Vector targets = new Vector();
+        targets.add(target);
+        runAnt(buildFile, targets, messageLevel);
+    }
+
+    private void runAnt(File buildFile, Vector targets, int messageLevel) throws BuildException {
+        runBuild(buildFile, targets, messageLevel);
+
+        // this exits the jvm at the end of the call
+        // Main.main(new String[] {"-f", buildFile.getAbsolutePath(), target});
+
+        // this does not set the good message level
+        // Ant ant = new Ant();
+        // Project project = new Project();
+        // project.setBaseDir(buildFile.getParentFile());
+        // project.init();
+        //		
+        // ant.setProject(project);
+        // ant.setTaskName("ant");
+        //		
+        // ant.setAntfile(buildFile.getAbsolutePath());
+        // ant.setInheritAll(false);
+        // if (target != null) {
+        // ant.setTarget(target);
+        // }
+        // ant.execute();
+    }
+
+    // ////////////////////////////////////////////////////////////////////////////
+    // miserable copy (updated to simple test cases) from ant Main class:
+    // the only available way I found to easily run ant exits jvm at the end
     private void runBuild(File buildFile, Vector targets, int messageLevel) throws BuildException {
 
         final Project project = new Project();
@@ -103,26 +104,22 @@ public class AntCallTriggerTest extends TestCase {
             SecurityManager oldsm = null;
             oldsm = System.getSecurityManager();
 
-                //SecurityManager can not be installed here for backwards
-                //compatibility reasons (PD). Needs to be loaded prior to
-                //ant class if we are going to implement it.
-                //System.setSecurityManager(new NoExitSecurityManager());
+            // SecurityManager can not be installed here for backwards
+            // compatibility reasons (PD). Needs to be loaded prior to
+            // ant class if we are going to implement it.
+            // System.setSecurityManager(new NoExitSecurityManager());
             try {
-            	project.setDefaultInputStream(System.in);
+                project.setDefaultInputStream(System.in);
                 System.setIn(new DemuxInputStream(project));
                 System.setOut(new PrintStream(new DemuxOutputStream(project, false)));
                 System.setErr(new PrintStream(new DemuxOutputStream(project, true)));
-
 
                 project.fireBuildStarted();
 
                 project.init();
                 project.setUserProperty("ant.version", Main.getAntVersion());
 
-
-                project.setUserProperty("ant.file",
-                                        buildFile.getAbsolutePath());
-
+                project.setUserProperty("ant.file", buildFile.getAbsolutePath());
 
                 ProjectHelper.configureProject(project, buildFile);
 
@@ -136,7 +133,7 @@ public class AntCallTriggerTest extends TestCase {
                 project.executeTargets(targets);
             } finally {
                 // put back the original security manager
-                //The following will never eval to true. (PD)
+                // The following will never eval to true. (PD)
                 if (oldsm != null) {
                     System.setSecurityManager(oldsm);
                 }
@@ -152,17 +149,16 @@ public class AntCallTriggerTest extends TestCase {
             error = err;
             throw err;
         } finally {
-        	project.fireBuildFinished(error);
+            project.fireBuildFinished(error);
         }
     }
 
-
     /**
-     * Adds the listeners specified in the command line arguments,
-     * along with the default listener, to the specified project.
-     *
-     * @param project The project to add listeners to.
-     *                Must not be <code>null</code>.
+     * Adds the listeners specified in the command line arguments, along with the default listener,
+     * to the specified project.
+     * 
+     * @param project
+     *            The project to add listeners to. Must not be <code>null</code>.
      */
     protected void addBuildListeners(Project project, int level) {
 
@@ -173,33 +169,31 @@ public class AntCallTriggerTest extends TestCase {
 
     /**
      * Creates the InputHandler and adds it to the project.
-     *
-     * @param project the project instance.
-     * @param inputHandlerClassname 
-     *
-     * @exception BuildException if a specified InputHandler
-     *                           implementation could not be loaded.
+     * 
+     * @param project
+     *            the project instance.
+     * @param inputHandlerClassname
+     * @exception BuildException
+     *                if a specified InputHandler implementation could not be loaded.
      */
-    private void addInputHandler(Project project, String inputHandlerClassname) throws BuildException {
+    private void addInputHandler(Project project, String inputHandlerClassname)
+            throws BuildException {
         InputHandler handler = null;
         if (inputHandlerClassname == null) {
             handler = new DefaultInputHandler();
         } else {
             try {
-                handler = (InputHandler)
-                    (Class.forName(inputHandlerClassname).newInstance());
+                handler = (InputHandler) (Class.forName(inputHandlerClassname).newInstance());
                 if (project != null) {
                     project.setProjectReference(handler);
                 }
             } catch (ClassCastException e) {
-                String msg = "The specified input handler class "
-                    + inputHandlerClassname
-                    + " does not implement the InputHandler interface";
+                String msg = "The specified input handler class " + inputHandlerClassname
+                        + " does not implement the InputHandler interface";
                 throw new BuildException(msg);
             } catch (Exception e) {
-                String msg = "Unable to instantiate specified input handler "
-                    + "class " + inputHandlerClassname + " : "
-                    + e.getClass().getName();
+                String msg = "Unable to instantiate specified input handler " + "class "
+                        + inputHandlerClassname + " : " + e.getClass().getName();
                 throw new BuildException(msg);
             }
         }
@@ -211,14 +205,13 @@ public class AntCallTriggerTest extends TestCase {
     // in case the message could end up being written to no loggers (as the
     // loggers could have failed to be created due to this failure)?
     /**
-     * Creates the default build logger for sending build events to the ant
-     * log.
-     *
+     * Creates the default build logger for sending build events to the ant log.
+     * 
      * @return the logger instance for this build.
      */
     private BuildLogger createLogger(int level) {
         BuildLogger logger = null;
-            logger = new DefaultLogger();
+        logger = new DefaultLogger();
 
         logger.setMessageOutputLevel(level);
         logger.setOutputPrintStream(System.out);

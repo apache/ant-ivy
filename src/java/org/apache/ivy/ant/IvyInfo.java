@@ -32,18 +32,16 @@ import org.apache.ivy.plugins.parser.ModuleDescriptorParserRegistry;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 
-
 /**
  * Parses information about an ivy file and make them available in ant.
- * 
- *
  */
 public class IvyInfo extends IvyTask {
     private File _file = null;
-    
+
     public File getFile() {
         return _file;
     }
+
     public void setFile(File file) {
         _file = file;
     }
@@ -54,31 +52,35 @@ public class IvyInfo extends IvyTask {
         if (_file == null) {
             _file = getProject().resolveFile(getProperty(settings, "ivy.dep.file"));
         }
-        
+
         try {
-			ModuleDescriptor md = ModuleDescriptorParserRegistry.getInstance().parseDescriptor(settings, _file.toURL(), doValidate(settings));
-            getProject().setProperty("ivy.organisation", md.getModuleRevisionId().getOrganisation());
+            ModuleDescriptor md = ModuleDescriptorParserRegistry.getInstance().parseDescriptor(
+                settings, _file.toURL(), doValidate(settings));
+            getProject()
+                    .setProperty("ivy.organisation", md.getModuleRevisionId().getOrganisation());
             getProject().setProperty("ivy.module", md.getModuleRevisionId().getName());
             getProject().setProperty("ivy.revision", md.getModuleRevisionId().getRevision());
             getProject().setProperty("ivy.configurations", mergeConfs(md.getConfigurationsNames()));
-            
+
             // store the public configurations in a separate property
             Configuration[] configs = md.getConfigurations();
             List publicConfigsList = new ArrayList();
             for (int i = 0; i < configs.length; i++) {
-            	if (Visibility.PUBLIC.equals(configs[i].getVisibility())) {
-            		publicConfigsList.add(configs[i].getName());
-            	}
+                if (Visibility.PUBLIC.equals(configs[i].getVisibility())) {
+                    publicConfigsList.add(configs[i].getName());
+                }
             }
-            String[] publicConfigs = (String[]) publicConfigsList.toArray(new String[publicConfigsList.size()]);
+            String[] publicConfigs = (String[]) publicConfigsList
+                    .toArray(new String[publicConfigsList.size()]);
             getProject().setProperty("ivy.public.configurations", mergeConfs(publicConfigs));
         } catch (MalformedURLException e) {
-            throw new BuildException("unable to convert given ivy file to url: "+_file+": "+e, e);
+            throw new BuildException(
+                    "unable to convert given ivy file to url: " + _file + ": " + e, e);
         } catch (ParseException e) {
             log(e.getMessage(), Project.MSG_ERR);
-            throw new BuildException("syntax errors in ivy file: "+e, e);
+            throw new BuildException("syntax errors in ivy file: " + e, e);
         } catch (Exception e) {
-            throw new BuildException("impossible to resolve dependencies: "+e, e);
+            throw new BuildException("impossible to resolve dependencies: " + e, e);
         }
     }
 }

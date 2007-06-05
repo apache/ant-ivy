@@ -34,92 +34,86 @@ import org.apache.ivy.core.resolve.IvyNodeEviction.EvictionData;
 import org.apache.ivy.plugins.conflict.ConflictManager;
 
 /**
- * A visit node is an object used to represent one visit from one parent on 
- * an {@link IvyNode} of the dependency graph.
- * 
- * During dependency resolution, the {@link ResolveEngine} visits nodes of the 
- * depency graph following the dependencies, thus the same node can be visited
- * several times, if it is requested from several module.
- * 
- * In this case you will have one VisitNode per parent and per root module 
- * configuration.
- * 
- * Thus VisitNode stores data specific to the visit:
+ * A visit node is an object used to represent one visit from one parent on an {@link IvyNode} of
+ * the dependency graph. During dependency resolution, the {@link ResolveEngine} visits nodes of the
+ * depency graph following the dependencies, thus the same node can be visited several times, if it
+ * is requested from several module. In this case you will have one VisitNode per parent and per
+ * root module configuration. Thus VisitNode stores data specific to the visit:
  * <ul>
- * <li>parent</li> the node from which the visit is occuring
- * <li>parentConf</li> the configuration of the parent in which this node is visited
- * <li>rootModuleConf</li> the configuration of the root module which is currently resolved
+ * <li>parent</li>
+ * the node from which the visit is occuring
+ * <li>parentConf</li>
+ * the configuration of the parent in which this node is visited
+ * <li>rootModuleConf</li>
+ * the configuration of the root module which is currently resolved
  * </ul>
- * 
  */
 public class VisitNode {
-	/**
-	 * The node which is currently visited 
-	 */
-	private IvyNode node;
-    /** 
-     * Represents the current parent of the node during ivy visit
-     * of dependency graph.
+    /**
+     * The node which is currently visited
+     */
+    private IvyNode node;
+
+    /**
+     * Represents the current parent of the node during ivy visit of dependency graph.
      */
     private VisitNode parent = null;
+
     /**
-     * The root node of the current visit
-     * It is null until it is required, see getRoot
+     * The root node of the current visit It is null until it is required, see getRoot
      */
     private VisitNode root = null;
+
     /**
-     * Direct path from root to this node. 
-     * Note that the colleciton is ordered but is not a list implementation 
-     * This collection is null until it is required, see getPath
+     * Direct path from root to this node. Note that the colleciton is ordered but is not a list
+     * implementation This collection is null until it is required, see getPath
      */
     private Collection path = null; // Collection(VisitNode)
-    
-    
+
     /**
-     * The configuration of the parent module in the current visit 
+     * The configuration of the parent module in the current visit
      */
     private String parentConf = null;
+
     /**
-     * The configuration requested by the parent
-     * Note that this is the actual conf requested by the parent, not 
-     * a configuration extended by the requested conf which actually 
-     * trigger the node visit
+     * The configuration requested by the parent Note that this is the actual conf requested by the
+     * parent, not a configuration extended by the requested conf which actually trigger the node
+     * visit
      */
     private String requestedConf;
+
     /**
      * The root configuration which is currently visited
      */
     private String rootModuleConf;
-    
+
     /**
-     * Shared ResolveData instance, which can be used
-     * to get info on the current resolve process
+     * Shared ResolveData instance, which can be used to get info on the current resolve process
      */
     private ResolveData data;
-    /**
-     * Boolean.TRUE if a node with a same module id as the one visited 
-     * has already been visited in the current path.
-     * null if not computed yet
-     * Boolean.FALSE otherwise
-     */
-	private Boolean isCircular;
 
-    
-    public VisitNode(ResolveData data, IvyNode node, VisitNode parent, String rootModuleConf, String parentConf) {
-    	if (data == null) {
-    		throw new NullPointerException("data must not be null");
-    	}
-    	if (node == null) {
-    		throw new NullPointerException("node must not be null");
-    	}
-    	if (rootModuleConf == null) {
-    		throw new NullPointerException("rootModuleConf must not be null");
-    	}
-    	this.data = data;
-    	this.node = node;
-    	this.parent = parent;
-    	this.rootModuleConf = rootModuleConf;
-    	this.parentConf = parentConf;
+    /**
+     * Boolean.TRUE if a node with a same module id as the one visited has already been visited in
+     * the current path. null if not computed yet Boolean.FALSE otherwise
+     */
+    private Boolean isCircular;
+
+    public VisitNode(ResolveData data, IvyNode node, VisitNode parent, String rootModuleConf,
+            String parentConf) {
+        if (data == null) {
+            throw new NullPointerException("data must not be null");
+        }
+        if (node == null) {
+            throw new NullPointerException("node must not be null");
+        }
+        if (rootModuleConf == null) {
+            throw new NullPointerException("rootModuleConf must not be null");
+        }
+        this.data = data;
+        this.node = node;
+        this.parent = parent;
+        this.rootModuleConf = rootModuleConf;
+        this.parentConf = parentConf;
 
         // we do not register if this is a root module (root == no parent)
         init(data, this.parent != null);
@@ -131,27 +125,25 @@ public class VisitNode {
             this.data.register(this);
         }
     }
-    
-    
-	public IvyNode getNode() {
-		return node;
-	}
 
-	/**
+    public IvyNode getNode() {
+        return node;
+    }
+
+    /**
      * @return Returns the configuration requested by the parent
      */
     public String getRequestedConf() {
         return requestedConf;
     }
-    
+
     public void setRequestedConf(String requestedConf) {
         this.requestedConf = requestedConf;
     }
-    
 
     public VisitNode getParent() {
         return parent;
-    }    
+    }
 
     public VisitNode getRoot() {
         if (root == null) {
@@ -200,7 +192,7 @@ public class VisitNode {
     }
 
     public static VisitNode getRoot(VisitNode parent) {
-    	VisitNode root = parent;
+        VisitNode root = parent;
         Collection path = new HashSet();
         path.add(root);
         while (root.getParent() != null && !root.getNode().isRoot()) {
@@ -212,29 +204,29 @@ public class VisitNode {
         }
         return root;
     }
-    
 
     /**
-     * Returns true if the current dependency descriptor is transitive
-     * and the parent configuration is transitive.  Otherwise returns false.
-     * @param node curent node
-     * @return true if current node is transitive and the parent configuration is
-     * transitive.
+     * Returns true if the current dependency descriptor is transitive and the parent configuration
+     * is transitive. Otherwise returns false.
+     * 
+     * @param node
+     *            curent node
+     * @return true if current node is transitive and the parent configuration is transitive.
      */
     public boolean isTransitive() {
-        return (data.isTransitive() &&
-        		node.getDependencyDescriptor(getParentNode()).isTransitive() &&
-                isParentConfTransitive() );
+        return (data.isTransitive() && node.getDependencyDescriptor(getParentNode()).isTransitive() && isParentConfTransitive());
     }
 
     /**
      * Checks if the current node's parent configuration is transitive.
-     * @param node current node
+     * 
+     * @param node
+     *            current node
      * @return true if the node's parent configuration is transitive
      */
     protected boolean isParentConfTransitive() {
         String conf = getParent().getRequestedConf();
-        if (conf==null) {
+        if (conf == null) {
             return true;
         }
         Configuration parentConf = getParentNode().getConfiguration(conf);
@@ -243,12 +235,12 @@ public class VisitNode {
     }
 
     /**
-     * Returns the 'real' node currently visited.
-     * 'Real' means that if we are visiting a node created originally with only a version
-     * constraint, and if this version constraint has been resolved to an existing node
-     * in the graph, we will return the existing node, and not the one originally used
-     * which is about to be discarded, since it's not possible to have in the graph
+     * Returns the 'real' node currently visited. 'Real' means that if we are visiting a node
+     * created originally with only a version constraint, and if this version constraint has been
+     * resolved to an existing node in the graph, we will return the existing node, and not the one
+     * originally used which is about to be discarded, since it's not possible to have in the graph
      * two nodes for the same ModuleRevisionId
+     * 
      * @return the 'real' node currently visited.
      */
     public IvyNode getRealNode() {
@@ -261,223 +253,231 @@ public class VisitNode {
     }
 
     /**
-     * Ask to the current visited node to use a real node only, if one exist. 
-     * See getRealNode for details about what a 'real' node is.
+     * Ask to the current visited node to use a real node only, if one exist. See getRealNode for
+     * details about what a 'real' node is.
      */
     public void useRealNode() {
-    	if (parent != null) { // use real node make sense only for non root module
-	        IvyNode node = data.getNode(this.node.getId());
-	        if (node != null && node != this.node) {
-	        	this.node = node;
-	        }
-    	}
+        if (parent != null) { // use real node make sense only for non root module
+            IvyNode node = data.getNode(this.node.getId());
+            if (node != null && node != this.node) {
+                this.node = node;
+            }
+        }
     }
 
     public boolean loadData(String conf, boolean shouldBePublic) {
-        boolean loaded = node.loadData(rootModuleConf, getParentNode(), parentConf, conf, shouldBePublic);
+        boolean loaded = node.loadData(rootModuleConf, getParentNode(), parentConf, conf,
+            shouldBePublic);
         if (loaded) {
-	        useRealNode();
-	
-	        // if the revision was a dynamic one (which has now be resolved)
-	        // we now register this node on the resolved id
-	        if (data.getSettings().getVersionMatcher().isDynamic(getId())) {
-	            data.register(node.getResolvedId(), this);
-	        }
+            useRealNode();
+
+            // if the revision was a dynamic one (which has now be resolved)
+            // we now register this node on the resolved id
+            if (data.getSettings().getVersionMatcher().isDynamic(getId())) {
+                data.register(node.getResolvedId(), this);
+            }
         }
 
         return loaded;
     }
 
     public Collection getDependencies(String conf) {
-    	Collection deps = node.getDependencies(rootModuleConf, conf, requestedConf);
-    	Collection ret = new ArrayList(deps.size());
-    	for (Iterator iter = deps.iterator(); iter.hasNext();) {
-			IvyNode depNode = (IvyNode) iter.next();
-			ret.add(traverseChild(conf, depNode));
-		}
-    	return ret;
+        Collection deps = node.getDependencies(rootModuleConf, conf, requestedConf);
+        Collection ret = new ArrayList(deps.size());
+        for (Iterator iter = deps.iterator(); iter.hasNext();) {
+            IvyNode depNode = (IvyNode) iter.next();
+            ret.add(traverseChild(conf, depNode));
+        }
+        return ret;
     }
-    
+
     /**
-     * Returns a VisitNode for the given node.
-     * The given node must be a representation of the same module 
-     * (usually in another revision) as the one visited by this node.
+     * Returns a VisitNode for the given node. The given node must be a representation of the same
+     * module (usually in another revision) as the one visited by this node. The given node must
+     * also have been already visited.
      * 
-     * The given node must also have been already visited.
-     * 
-     * @param node the node to visit
+     * @param node
+     *            the node to visit
      * @return a VisitNode for the given node
      */
-	VisitNode gotoNode(IvyNode node) {
-		if (!getModuleId().equals(node.getModuleId())) {
-			throw new IllegalArgumentException("you can't use gotoNode for a node which does not represent the same Module as the one represented by this node.\nCurrent node module id="+getModuleId()+" Given node module id="+node.getModuleId());
-		}
-		VisitData visitData = data.getVisitData(node.getId());
-		if (visitData == null) {
-			throw new IllegalArgumentException("you can't use gotoNode with a node which has not been visited yet.\nGiven node id="+node.getId());
-		}
-		for (Iterator iter = visitData.getVisitNodes(rootModuleConf).iterator(); iter.hasNext();) {
-			VisitNode vnode = (VisitNode) iter.next();
-			if ((parent == null && vnode.getParent() == null) ||
-					(parent != null && parent.getId().equals(vnode.getParent().getId()))) {
-				return vnode;
-			}
-		}
-		// the node has not yet been visited from the current parent, we create a new visit node
-		return traverse(parent, parentConf, node);
-	}
+    VisitNode gotoNode(IvyNode node) {
+        if (!getModuleId().equals(node.getModuleId())) {
+            throw new IllegalArgumentException(
+                    "you can't use gotoNode for a node which does not represent the same Module as the one represented by this node.\nCurrent node module id="
+                            + getModuleId() + " Given node module id=" + node.getModuleId());
+        }
+        VisitData visitData = data.getVisitData(node.getId());
+        if (visitData == null) {
+            throw new IllegalArgumentException(
+                    "you can't use gotoNode with a node which has not been visited yet.\nGiven node id="
+                            + node.getId());
+        }
+        for (Iterator iter = visitData.getVisitNodes(rootModuleConf).iterator(); iter.hasNext();) {
+            VisitNode vnode = (VisitNode) iter.next();
+            if ((parent == null && vnode.getParent() == null)
+                    || (parent != null && parent.getId().equals(vnode.getParent().getId()))) {
+                return vnode;
+            }
+        }
+        // the node has not yet been visited from the current parent, we create a new visit node
+        return traverse(parent, parentConf, node);
+    }
 
-	private VisitNode traverseChild(String parentConf, IvyNode child) {
-		VisitNode parent = this;
-		return traverse(parent, parentConf, child);
-	}
+    private VisitNode traverseChild(String parentConf, IvyNode child) {
+        VisitNode parent = this;
+        return traverse(parent, parentConf, child);
+    }
 
-	private VisitNode traverse(VisitNode parent, String parentConf, IvyNode node) {
-		if (getPath().contains(node)) {
-			IvyContext.getContext().getCircularDependencyStrategy()
-				.handleCircularDependency(toMrids(getPath(), node.getId()));
-			// we do not use the new parent, but the first one, to always be able to go up to the root
-//			parent = getVisitNode(depNode).getParent(); 
-		}
-		return new VisitNode(data, node, parent, rootModuleConf, parentConf);
-	}
+    private VisitNode traverse(VisitNode parent, String parentConf, IvyNode node) {
+        if (getPath().contains(node)) {
+            IvyContext.getContext().getCircularDependencyStrategy().handleCircularDependency(
+                toMrids(getPath(), node.getId()));
+            // we do not use the new parent, but the first one, to always be able to go up to the
+            // root
+            // parent = getVisitNode(depNode).getParent();
+        }
+        return new VisitNode(data, node, parent, rootModuleConf, parentConf);
+    }
 
-	private ModuleRevisionId[] toMrids(Collection path, ModuleRevisionId last) {
-    	ModuleRevisionId[] ret = new ModuleRevisionId[path.size()+1];
-    	int i=0;
-    	for (Iterator iter = path.iterator(); iter.hasNext(); i++) {
-    		VisitNode node = (VisitNode) iter.next();
-			ret[i] = node.getNode().getId();
-		}
-    	ret[ret.length-1] = last;
-		return ret;
-	}
+    private ModuleRevisionId[] toMrids(Collection path, ModuleRevisionId last) {
+        ModuleRevisionId[] ret = new ModuleRevisionId[path.size() + 1];
+        int i = 0;
+        for (Iterator iter = path.iterator(); iter.hasNext(); i++) {
+            VisitNode node = (VisitNode) iter.next();
+            ret[i] = node.getNode().getId();
+        }
+        ret[ret.length - 1] = last;
+        return ret;
+    }
 
-	public ModuleRevisionId getResolvedId() {
-		return node.getResolvedId();
-	}
+    public ModuleRevisionId getResolvedId() {
+        return node.getResolvedId();
+    }
 
-	public void updateConfsToFetch(Collection confs) {
-		node.updateConfsToFetch(confs);
-	}
+    public void updateConfsToFetch(Collection confs) {
+        node.updateConfsToFetch(confs);
+    }
 
-	public ModuleRevisionId getId() {
-		return node.getId();
-	}
+    public ModuleRevisionId getId() {
+        return node.getId();
+    }
 
-	public boolean isEvicted() {
-		return node.isEvicted(rootModuleConf);
-	}
+    public boolean isEvicted() {
+        return node.isEvicted(rootModuleConf);
+    }
 
-	public String[] getRealConfs(String conf) {
-		return node.getRealConfs(conf);
-	}
+    public String[] getRealConfs(String conf) {
+        return node.getRealConfs(conf);
+    }
 
-	public boolean hasProblem() {
-		return node.hasProblem();
-	}
+    public boolean hasProblem() {
+        return node.hasProblem();
+    }
 
-	public Configuration getConfiguration(String conf) {
-		return node.getConfiguration(conf);
-	}
+    public Configuration getConfiguration(String conf) {
+        return node.getConfiguration(conf);
+    }
 
-	public EvictionData getEvictedData() {
-		return node.getEvictedData(rootModuleConf);
-	}
+    public EvictionData getEvictedData() {
+        return node.getEvictedData(rootModuleConf);
+    }
 
-	public DependencyDescriptor getDependencyDescriptor() {
-		return node.getDependencyDescriptor(getParentNode());
-	}
+    public DependencyDescriptor getDependencyDescriptor() {
+        return node.getDependencyDescriptor(getParentNode());
+    }
 
-	private IvyNode getParentNode() {
-		return parent ==null?null: parent.getNode();
-	}
-
+    private IvyNode getParentNode() {
+        return parent == null ? null : parent.getNode();
+    }
 
     /**
      * Returns true if this node can already be found in the path
+     * 
      * @return
      */
     public boolean isCircular() {
-    	if (isCircular == null) {
+        if (isCircular == null) {
             if (parent != null) {
-            	isCircular = Boolean.FALSE; // asumme it's false, and see if it isn't by checking the parent path
+                isCircular = Boolean.FALSE; // asumme it's false, and see if it isn't by checking
+                // the parent path
                 for (Iterator iter = parent.getPath().iterator(); iter.hasNext();) {
-    				VisitNode ancestor = (VisitNode) iter.next();
-    				if (getId().getModuleId().equals(ancestor.getId().getModuleId())) {
-    					isCircular = Boolean.TRUE;
-    					break;
-    				}
-    			}
+                    VisitNode ancestor = (VisitNode) iter.next();
+                    if (getId().getModuleId().equals(ancestor.getId().getModuleId())) {
+                        isCircular = Boolean.TRUE;
+                        break;
+                    }
+                }
             } else {
-				isCircular = Boolean.FALSE;
+                isCircular = Boolean.FALSE;
             }
-    	}
-    	return isCircular.booleanValue();
+        }
+        return isCircular.booleanValue();
     }
 
-	public String[] getConfsToFetch() {
-		return node.getConfsToFetch();
-	}
+    public String[] getConfsToFetch() {
+        return node.getConfsToFetch();
+    }
 
-	public String[] getRequiredConfigurations(VisitNode in, String inConf) {
-		return node.getRequiredConfigurations(in.getNode(), inConf);
-	}
+    public String[] getRequiredConfigurations(VisitNode in, String inConf) {
+        return node.getRequiredConfigurations(in.getNode(), inConf);
+    }
 
-	public ModuleId getModuleId() {
-		return node.getModuleId();
-	}
+    public ModuleId getModuleId() {
+        return node.getModuleId();
+    }
 
-	public Collection getResolvedRevisions(ModuleId mid) {
-		return node.getResolvedRevisions(mid, rootModuleConf);
-	}
+    public Collection getResolvedRevisions(ModuleId mid) {
+        return node.getResolvedRevisions(mid, rootModuleConf);
+    }
 
-	public void markEvicted(EvictionData evictionData) {
-		node.markEvicted(evictionData);
-	}
+    public void markEvicted(EvictionData evictionData) {
+        node.markEvicted(evictionData);
+    }
 
-	public String[] getRequiredConfigurations() {
-		return node.getRequiredConfigurations();
-	}
+    public String[] getRequiredConfigurations() {
+        return node.getRequiredConfigurations();
+    }
 
-	/**
-	 * Marks the current node as evicted by the the given selected IvyNodes, 
-	 * in the given parent and root module configuration, with the given
-	 * {@link ConflictManager}
-	 * 
-	 * @param parent the VisitNode in which eviction has been made
-	 * @param conflictManager the conflict manager responsible for the eviction
-	 * @param selected a Collection of {@link IvyNode} which have been selected 
-	 */
-	public void markEvicted(VisitNode parent, ConflictManager conflictManager, Collection selected) {
-		node.markEvicted(rootModuleConf, parent.getNode(), conflictManager, selected);
-	}
+    /**
+     * Marks the current node as evicted by the the given selected IvyNodes, in the given parent and
+     * root module configuration, with the given {@link ConflictManager}
+     * 
+     * @param parent
+     *            the VisitNode in which eviction has been made
+     * @param conflictManager
+     *            the conflict manager responsible for the eviction
+     * @param selected
+     *            a Collection of {@link IvyNode} which have been selected
+     */
+    public void markEvicted(VisitNode parent, ConflictManager conflictManager, Collection selected) {
+        node.markEvicted(rootModuleConf, parent.getNode(), conflictManager, selected);
+    }
 
-	public ModuleDescriptor getDescriptor() {
-		return node.getDescriptor();
-	}
+    public ModuleDescriptor getDescriptor() {
+        return node.getDescriptor();
+    }
 
-	public EvictionData getEvictionDataInRoot(String rootModuleConf, VisitNode ancestor) {
-		return node.getEvictionDataInRoot(rootModuleConf, ancestor.getNode());
-	}
+    public EvictionData getEvictionDataInRoot(String rootModuleConf, VisitNode ancestor) {
+        return node.getEvictionDataInRoot(rootModuleConf, ancestor.getNode());
+    }
 
-	public Collection getEvictedRevisions(ModuleId moduleId) {
-		return node.getEvictedRevisions(moduleId, rootModuleConf);
-	}
+    public Collection getEvictedRevisions(ModuleId moduleId) {
+        return node.getEvictedRevisions(moduleId, rootModuleConf);
+    }
 
+    // public void setRootModuleConf(String rootModuleConf) {
+    // if (rootModuleConf != null && !rootModuleConf.equals(rootModuleConf)) {
+    // _confsToFetch.clear(); // we change of root module conf => we discard all confs to fetch
+    // }
+    // if (rootModuleConf != null && rootModuleConf.equals(rootModuleConf)) {
+    // _selectedDeps.put(new ModuleIdConf(_id.getModuleId(), rootModuleConf),
+    // Collections.singleton(this));
+    // }
+    // rootModuleConf = rootModuleConf;
+    // }
 
-//    public void setRootModuleConf(String rootModuleConf) {
-//        if (rootModuleConf != null && !rootModuleConf.equals(rootModuleConf)) {
-//            _confsToFetch.clear(); // we change of root module conf => we discard all confs to fetch
-//        }
-//        if (rootModuleConf != null && rootModuleConf.equals(rootModuleConf)) {
-//            _selectedDeps.put(new ModuleIdConf(_id.getModuleId(), rootModuleConf), Collections.singleton(this));
-//        }
-//        rootModuleConf = rootModuleConf;
-//    }
-
-	public String toString() {
-		return node.toString();
-	}
+    public String toString() {
+        return node.toString();
+    }
 
 }

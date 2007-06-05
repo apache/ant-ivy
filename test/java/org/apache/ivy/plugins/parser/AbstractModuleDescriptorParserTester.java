@@ -54,11 +54,12 @@ public abstract class AbstractModuleDescriptorParserTester extends TestCase {
                     break;
                 }
             }
-            assertTrue("artifact not found: "+artifactsNames[i], found);
+            assertTrue("artifact not found: " + artifactsNames[i], found);
         }
     }
 
-    protected void assertDependencyArtifacts(DependencyDescriptor dd, String[] confs, String[] artifactsNames) {
+    protected void assertDependencyArtifacts(DependencyDescriptor dd, String[] confs,
+            String[] artifactsNames) {
         DependencyArtifactDescriptor[] dads = dd.getDependencyArtifacts(confs);
         assertNotNull(dads);
         assertEquals(artifactsNames.length, dads.length);
@@ -71,11 +72,12 @@ public abstract class AbstractModuleDescriptorParserTester extends TestCase {
                     break;
                 }
             }
-            assertTrue("dependency artifact not found: "+artifactsNames[i], found);
+            assertTrue("dependency artifact not found: " + artifactsNames[i], found);
         }
     }
 
-    protected void assertDependencyArtifactIncludeRules(DependencyDescriptor dd, String[] confs, String[] artifactsNames) {
+    protected void assertDependencyArtifactIncludeRules(DependencyDescriptor dd, String[] confs,
+            String[] artifactsNames) {
         IncludeRule[] dads = dd.getIncludeRules(confs);
         assertNotNull(dads);
         assertEquals(artifactsNames.length, dads.length);
@@ -88,11 +90,12 @@ public abstract class AbstractModuleDescriptorParserTester extends TestCase {
                     break;
                 }
             }
-            assertTrue("dependency include not found: "+artifactsNames[i], found);
+            assertTrue("dependency include not found: " + artifactsNames[i], found);
         }
     }
 
-    protected void assertDependencyArtifactExcludeRules(DependencyDescriptor dd, String[] confs, String[] artifactsNames) {
+    protected void assertDependencyArtifactExcludeRules(DependencyDescriptor dd, String[] confs,
+            String[] artifactsNames) {
         ExcludeRule[] rules = dd.getExcludeRules(confs);
         assertNotNull(rules);
         assertEquals(artifactsNames.length, rules.length);
@@ -105,12 +108,13 @@ public abstract class AbstractModuleDescriptorParserTester extends TestCase {
                     break;
                 }
             }
-            assertTrue("dependency exclude not found: "+artifactsNames[i], found);
+            assertTrue("dependency exclude not found: " + artifactsNames[i], found);
         }
     }
 
-    protected void assertDependencyModulesExcludes(DependencyDescriptor dd, String[] confs, String[] moduleNames) {
-    	ExcludeRule[] rules = dd.getExcludeRules(confs);
+    protected void assertDependencyModulesExcludes(DependencyDescriptor dd, String[] confs,
+            String[] moduleNames) {
+        ExcludeRule[] rules = dd.getExcludeRules(confs);
         assertNotNull(rules);
         assertEquals(moduleNames.length, rules.length);
         for (int i = 0; i < moduleNames.length; i++) {
@@ -122,13 +126,14 @@ public abstract class AbstractModuleDescriptorParserTester extends TestCase {
                     break;
                 }
             }
-            assertTrue("dependency module exclude not found: "+moduleNames[i], found);
+            assertTrue("dependency module exclude not found: " + moduleNames[i], found);
         }
     }
 
-    protected void assertConf(ModuleDescriptor md, String name, String desc, Visibility visibility, String[] exts) {
+    protected void assertConf(ModuleDescriptor md, String name, String desc, Visibility visibility,
+            String[] exts) {
         Configuration conf = md.getConfiguration(name);
-        assertNotNull("configuration not found: "+name, conf);
+        assertNotNull("configuration not found: " + name, conf);
         assertEquals(name, conf.getName());
         assertEquals(desc, conf.getDescription());
         assertEquals(visibility, conf.getVisibility());

@@ -31,19 +31,20 @@ import org.apache.ivy.util.url.URLHandlerRegistry;
  * split from XmlIvyConfigurationParserTest due to dependency on network resource
  */
 public class OnlineXmlSettingsParserTest extends TestCase {
-	// remote.test
-    
+    // remote.test
+
     public void testIncludeHttpUrl() throws Exception {
         configureURLHandler();
         IvySettings settings = new IvySettings();
         XmlSettingsParser parser = new XmlSettingsParser(settings);
-        parser.parse(new URL("http://incubator.apache.org/ivy/test/ivysettings-include-http-url.xml"));
-        
+        parser.parse(new URL(
+                "http://incubator.apache.org/ivy/test/ivysettings-include-http-url.xml"));
+
         DependencyResolver resolver = settings.getResolver("ivyrep");
         assertNotNull(resolver);
         assertTrue(resolver instanceof IvyRepResolver);
     }
-    
+
     private void configureURLHandler() {
         URLHandlerDispatcher dispatcher = new URLHandlerDispatcher();
         URLHandler httpHandler = URLHandlerRegistry.getHttp();
@@ -51,5 +52,5 @@ public class OnlineXmlSettingsParserTest extends TestCase {
         dispatcher.setDownloader("https", httpHandler);
         URLHandlerRegistry.setDefault(dispatcher);
     }
-    
+
 }

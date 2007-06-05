@@ -28,7 +28,6 @@ import junit.framework.TestCase;
 import org.apache.ivy.util.FileUtil;
 import org.apache.tools.ant.Project;
 
-
 public class IvyConvertPomTest extends TestCase {
     public void testSimple() throws Exception {
         IvyConvertPom task = new IvyConvertPom();
@@ -38,14 +37,17 @@ public class IvyConvertPomTest extends TestCase {
         destFile.deleteOnExit();
         task.setIvyFile(destFile);
         task.execute();
-        
+
         String wrote = FileUtil.readEntirely(new BufferedReader(new FileReader(destFile)));
-        String expected = readEntirely("test-convertpom.xml").replaceAll("\r\n", "\n").replace('\r', '\n');
+        String expected = readEntirely("test-convertpom.xml").replaceAll("\r\n", "\n").replace(
+            '\r', '\n');
         // do not work properly on all platform and depends on the file date
-//        assertEquals(expected, wrote);
+        // assertEquals(expected, wrote);
     }
 
     private String readEntirely(String resource) throws IOException {
-        return FileUtil.readEntirely(new BufferedReader(new InputStreamReader(IvyConvertPomTest.class.getResource(resource).openStream()))).replaceAll("\r\n", "\n").replace('\r', '\n');
+        return FileUtil.readEntirely(
+            new BufferedReader(new InputStreamReader(IvyConvertPomTest.class.getResource(resource)
+                    .openStream()))).replaceAll("\r\n", "\n").replace('\r', '\n');
     }
 }

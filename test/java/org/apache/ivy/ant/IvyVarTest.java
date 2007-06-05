@@ -29,11 +29,11 @@ public class IvyVarTest extends TestCase {
         task.setName("mytest");
         task.setValue("myvalue");
         task.execute();
-        Ivy ivy  = task.getIvyInstance();
+        Ivy ivy = task.getIvyInstance();
         assertNotNull(ivy);
         assertEquals("myvalue", ivy.getVariable("mytest"));
     }
-    
+
     public void testPrefix() {
         IvyVar task = new IvyVar();
         task.setProject(new Project());
@@ -41,17 +41,17 @@ public class IvyVarTest extends TestCase {
         task.setValue("myvalue");
         task.setPrefix("myprefix");
         task.execute();
-        Ivy ivy  = task.getIvyInstance();
+        Ivy ivy = task.getIvyInstance();
         assertNotNull(ivy);
         assertEquals("myvalue", ivy.getVariable("myprefix.mytest"));
     }
-    
+
     public void testURL() {
         IvyVar task = new IvyVar();
         task.setProject(new Project());
         task.setUrl(IvyVarTest.class.getResource("vartest.properties").toExternalForm());
         task.execute();
-        Ivy ivy  = task.getIvyInstance();
+        Ivy ivy = task.getIvyInstance();
         assertNotNull(ivy);
         assertEquals("myvalue1", ivy.getVariable("mytest1"));
         assertEquals("myvalue2", ivy.getVariable("mytest2"));
@@ -63,7 +63,7 @@ public class IvyVarTest extends TestCase {
         task.setUrl(IvyVarTest.class.getResource("vartest.properties").toExternalForm());
         task.setPrefix("myprefix.");
         task.execute();
-        Ivy ivy  = task.getIvyInstance();
+        Ivy ivy = task.getIvyInstance();
         assertNotNull(ivy);
         assertEquals("myvalue1", ivy.getVariable("myprefix.mytest1"));
         assertEquals("myvalue2", ivy.getVariable("myprefix.mytest2"));

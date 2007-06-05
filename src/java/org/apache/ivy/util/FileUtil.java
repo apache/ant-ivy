@@ -35,36 +35,39 @@ import java.util.List;
 
 import org.apache.ivy.util.url.URLHandlerRegistry;
 
-
-
 /**
  *
  */
 public class FileUtil {
-	// tried some other values with empty files... seems to be the best one (512 * 1024 is very bad)
-    // 8 * 1024 is also the size used by ant in its FileUtils... maybe they've done more study about it ;-)
+    // tried some other values with empty files... seems to be the best one (512 * 1024 is very bad)
+    // 8 * 1024 is also the size used by ant in its FileUtils... maybe they've done more study about
+    // it ;-)
     private static final int BUFFER_SIZE = 8 * 1024;
+
     private static final byte[] EMPTY_BUFFER = new byte[0];
 
-    public static void symlink(File src, File dest, CopyProgressListener l, boolean overwrite) throws IOException {
+    public static void symlink(File src, File dest, CopyProgressListener l, boolean overwrite)
+            throws IOException {
         try {
             if (dest.exists()) {
-        	if (!dest.isFile()) {
-                    throw new IOException("impossible to copy: destination is not a file: "+dest);
-        	}
-        	if (!overwrite) {
-                    Message.verbose(dest+" already exists, nothing done");
+                if (!dest.isFile()) {
+                    throw new IOException("impossible to copy: destination is not a file: " + dest);
+                }
+                if (!overwrite) {
+                    Message.verbose(dest + " already exists, nothing done");
                     return;
-        	}
+                }
             }
             if (dest.getParentFile() != null) {
                 dest.getParentFile().mkdirs();
             }
-            
+
             Runtime runtime = Runtime.getRuntime();
-            Message.verbose("executing 'ln -s -f " + src.getAbsolutePath() + " " + dest.getPath() + "'");
-            Process process = runtime.exec(new String[] {"ln", "-s", "-f", src.getAbsolutePath(), dest.getPath()});
-            
+            Message.verbose("executing 'ln -s -f " + src.getAbsolutePath() + " " + dest.getPath()
+                    + "'");
+            Process process = runtime.exec(new String[] {"ln", "-s", "-f", src.getAbsolutePath(),
+                    dest.getPath()});
+
             if (process.waitFor() != 0) {
                 InputStream errorStream = process.getErrorStream();
                 InputStreamReader isr = new InputStreamReader(errorStream);
@@ -73,50 +76,50 @@ public class FileUtil {
                 StringBuffer error = new StringBuffer();
                 String line;
                 while ((line = br.readLine()) != null) {
-                  error.append(line);
-                  error.append('\n');
+                    error.append(line);
+                    error.append('\n');
                 }
-                
+
                 throw new IOException("error symlinking " + src + " to " + dest + ":\n" + error);
             }
-        }
-        catch (IOException x) {
+        } catch (IOException x) {
             Message.verbose("symlink failed; falling back to copy");
             StringWriter buffer = new StringWriter();
             x.printStackTrace(new PrintWriter(buffer));
             Message.debug(buffer.toString());
             copy(src, dest, l, overwrite);
-        }
-        catch (InterruptedException x) {
+        } catch (InterruptedException x) {
             Thread.currentThread().interrupt();
         }
     }
-  
+
     public static boolean copy(File src, File dest, CopyProgressListener l) throws IOException {
         return copy(src, dest, l, false);
     }
-    public static boolean copy(File src, File dest, CopyProgressListener l, boolean overwrite) throws IOException {
+
+    public static boolean copy(File src, File dest, CopyProgressListener l, boolean overwrite)
+            throws IOException {
         if (dest.exists()) {
-        	if (!dest.isFile()) {
-        		throw new IOException("impossible to copy: destination is not a file: "+dest);
-        	}
-        	if (overwrite) {
-        		if (!dest.canWrite()) {
-        			dest.delete();
-        		} // if dest is writable, the copy will overwrite it without requiring a delete
-        	} else {
-        		Message.verbose(dest+" already exists, nothing done");
-        		return false;
-        	}
+            if (!dest.isFile()) {
+                throw new IOException("impossible to copy: destination is not a file: " + dest);
+            }
+            if (overwrite) {
+                if (!dest.canWrite()) {
+                    dest.delete();
+                } // if dest is writable, the copy will overwrite it without requiring a delete
+            } else {
+                Message.verbose(dest + " already exists, nothing done");
+                return false;
+            }
         }
         copy(new FileInputStream(src), dest, l);
         long srcLen = src.length();
         long destLen = dest.length();
         if (srcLen != destLen) {
-        	dest.delete();
-        	throw new IOException("size of source file " + src.toString() + "("
-        			+ srcLen + ") differs from size of dest file " + dest.toString()
-        			+ "(" + destLen + ") - please retry");
+            dest.delete();
+            throw new IOException("size of source file " + src.toString() + "(" + srcLen
+                    + ") differs from size of dest file " + dest.toString() + "(" + destLen
+                    + ") - please retry");
         }
         dest.setLastModified(src.lastModified());
         return true;
@@ -133,34 +136,35 @@ public class FileUtil {
         copy(src, new FileOutputStream(dest), l);
     }
 
-    public static void copy(InputStream src, OutputStream dest, CopyProgressListener l) throws IOException {
+    public static void copy(InputStream src, OutputStream dest, CopyProgressListener l)
+            throws IOException {
         CopyProgressEvent evt = null;
         if (l != null) {
             evt = new CopyProgressEvent();
         }
         try {
-            byte buffer[]=new byte[BUFFER_SIZE];
+            byte buffer[] = new byte[BUFFER_SIZE];
             int c;
             long total = 0;
-            
+
             if (l != null) {
                 l.start(evt);
             }
-            while( (c = src.read(buffer)) != -1 ) {
-            	if (Thread.currentThread().isInterrupted()) {
-            		throw new IOException("transfer interrupted");
-            	}
+            while ((c = src.read(buffer)) != -1) {
+                if (Thread.currentThread().isInterrupted()) {
+                    throw new IOException("transfer interrupted");
+                }
                 dest.write(buffer, 0, c);
                 total += c;
                 if (l != null) {
                     l.progress(evt.update(buffer, c, total));
                 }
             }
-            
+
             if (l != null) {
-            	evt.update(EMPTY_BUFFER, 0, total);
+                evt.update(EMPTY_BUFFER, 0, total);
             }
-            
+
             // close the streams
             src.close();
             dest.close();
@@ -168,15 +172,15 @@ public class FileUtil {
             try {
                 src.close();
             } catch (IOException ex) {
-            	// ignore
+                // ignore
             }
             try {
-            	dest.close();
+                dest.close();
             } catch (IOException ex) {
-            	// ignore
+                // ignore
             }
         }
-        
+
         if (l != null) {
             l.end(evt);
         }
@@ -193,63 +197,63 @@ public class FileUtil {
         in.close();
         return buf.toString();
     }
-    
+
     public static String concat(String dir, String file) {
-        return dir+"/"+file;
+        return dir + "/" + file;
     }
-    
+
     public static void forceDelete(File f) {
         if (f.isDirectory()) {
             File[] sub = f.listFiles();
             for (int i = 0; i < sub.length; i++) {
                 forceDelete(sub[i]);
             }
-        } 
+        }
         f.delete();
     }
+
     /**
-     * Returns a list of Files composed of all directories being
-     * parent of file and child of root + file and root themselves.
-     * 
-     * Example:
-     * getPathFiles(new File("test"), new File("test/dir1/dir2/file.txt"))
-     * => {new File("test/dir1"), new File("test/dir1/dir2"), new File("test/dir1/dir2/file.txt") }
-     * 
-     * Note that if root is not an ancester of file, or if root is null, all directories from the
-     * file system root will be returned. 
+     * Returns a list of Files composed of all directories being parent of file and child of root +
+     * file and root themselves. Example: getPathFiles(new File("test"), new
+     * File("test/dir1/dir2/file.txt")) => {new File("test/dir1"), new File("test/dir1/dir2"), new
+     * File("test/dir1/dir2/file.txt") } Note that if root is not an ancester of file, or if root is
+     * null, all directories from the file system root will be returned.
      */
-	public static List getPathFiles(File root, File file) {
-		List ret = new ArrayList();
-		while (file != null && !file.getAbsolutePath().equals(root.getAbsolutePath())) {
-			ret.add(file);
-			file = file.getParentFile();
-		}
-		if (root != null) {
-			ret.add(root);
-		}
-		Collections.reverse(ret);
-		return ret;
-	}
-	/**
-	 * Returns a collection of all Files being contained in the given directory,
-	 * recursively, including directories.
-	 * @param dir
-	 * @return
-	 */
-	public static Collection listAll(File dir) {
-		return listAll(dir, new ArrayList());
-	}
-	private static Collection listAll(File file, Collection list) {
-		if (file.exists()) {
-			list.add(file);
-		}
-		if (file.isDirectory()) {
-			File[] files = file.listFiles();
-			for (int i = 0; i < files.length; i++) {
-				listAll(files[i], list);
-			}
-		}
-		return list;
-	}
+    public static List getPathFiles(File root, File file) {
+        List ret = new ArrayList();
+        while (file != null && !file.getAbsolutePath().equals(root.getAbsolutePath())) {
+            ret.add(file);
+            file = file.getParentFile();
+        }
+        if (root != null) {
+            ret.add(root);
+        }
+        Collections.reverse(ret);
+        return ret;
+    }
+
+    /**
+     * Returns a collection of all Files being contained in the given directory, recursively,
+     * including directories.
+     * 
+     * @param dir
+     * @return
+     */
+    public static Collection listAll(File dir) {
+        return listAll(dir, new ArrayList());
+    }
+
+    private static Collection listAll(File file, Collection list) {
+        if (file.exists()) {
+            list.add(file);
+        }
+        if (file.isDirectory()) {
+            File[] files = file.listFiles();
+            for (int i = 0; i < files.length; i++) {
+                listAll(files[i], list);
+            }
+        }
+        return list;
+    }
 
 }

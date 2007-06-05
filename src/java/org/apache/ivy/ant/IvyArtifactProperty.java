@@ -26,53 +26,57 @@ import org.apache.ivy.core.resolve.ResolveOptions;
 import org.apache.ivy.plugins.report.XmlReportParser;
 import org.apache.tools.ant.BuildException;
 
-
 /**
- * Set a set of ant properties according to the last artifact resolved 
- * 
+ * Set a set of ant properties according to the last artifact resolved
  */
 public class IvyArtifactProperty extends IvyPostResolveTask {
     private String _name;
+
     private String _value;
 
     public String getName() {
         return _name;
     }
+
     public void setName(String name) {
         _name = name;
     }
+
     public String getValue() {
         return _value;
     }
+
     public void setValue(String value) {
         _value = value;
     }
 
     public void doExecute() throws BuildException {
-    	prepareAndCheck();
+        prepareAndCheck();
 
         try {
-        	CacheManager cacheMgr = getIvyInstance().getCacheManager(getCache());
+            CacheManager cacheMgr = getIvyInstance().getCacheManager(getCache());
             String[] confs = splitConfs(getConf());
             String resolveId = getResolveId();
             if (resolveId == null) {
-            	resolveId = ResolveOptions.getDefaultResolveId(getResolvedModuleId());
+                resolveId = ResolveOptions.getDefaultResolveId(getResolvedModuleId());
             }
             XmlReportParser parser = new XmlReportParser();
             for (int i = 0; i < confs.length; i++) {
-            	File report = cacheMgr.getConfigurationResolveReportInCache(resolveId, confs[i]);
-            	parser.parse(report);
-            	
+                File report = cacheMgr.getConfigurationResolveReportInCache(resolveId, confs[i]);
+                parser.parse(report);
+
                 Artifact[] artifacts = parser.getArtifacts();
                 for (int j = 0; j < artifacts.length; j++) {
                     Artifact artifact = artifacts[j];
-                    String name = IvyPatternHelper.substitute(getSettings().substitute(getName()), artifact, confs[i]);
-                    String value = IvyPatternHelper.substitute(getSettings().substitute(getValue()), artifact, confs[i]);
+                    String name = IvyPatternHelper.substitute(getSettings().substitute(getName()),
+                        artifact, confs[i]);
+                    String value = IvyPatternHelper.substitute(
+                        getSettings().substitute(getValue()), artifact, confs[i]);
                     getProject().setProperty(name, value);
                 }
             }
         } catch (Exception ex) {
-            throw new BuildException("impossible to add artifact properties: "+ex, ex);
+            throw new BuildException("impossible to add artifact properties: " + ex, ex);
         }
     }
 }

@@ -25,10 +25,11 @@ import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.Delete;
 
-
 public class IvyInstallTest extends TestCase {
     private File _cache;
+
     private IvyInstall _install;
+
     private Project _project;
 
     protected void setUp() throws Exception {
@@ -72,13 +73,13 @@ public class IvyInstallTest extends TestCase {
         _install.setRevision("zzz");
         _install.setFrom("test");
         _install.setTo("1");
-        
+
         try {
             _install.execute();
             fail("unknown dependency, failure expected (haltunresolved=true)");
         } catch (BuildException be) {
             // success
-        }  
+        }
     }
 
     public void testDependencyNotFoundSuccess() {
@@ -88,11 +89,11 @@ public class IvyInstallTest extends TestCase {
         _install.setFrom("test");
         _install.setTo("1");
         _install.setHaltonfailure(false);
-        
+
         try {
             _install.execute();
         } catch (BuildException be) {
             fail("unknown dependency, failure unexepected (haltunresolved=false)");
-        }  
+        }
     }
 }

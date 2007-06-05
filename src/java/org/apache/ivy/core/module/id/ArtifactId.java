@@ -22,11 +22,13 @@ package org.apache.ivy.core.module.id;
  */
 public class ArtifactId {
     private ModuleId mid;
+
     private String name;
+
     private String type;
+
     private String ext;
-    
-    
+
     /**
      * @param mid
      * @param name
@@ -38,18 +40,16 @@ public class ArtifactId {
         this.type = type;
         this.ext = ext;
     }
-    
+
     public boolean equals(Object obj) {
-        if (! (obj instanceof ArtifactId)) {
+        if (!(obj instanceof ArtifactId)) {
             return false;
         }
-        ArtifactId aid = (ArtifactId)obj;
-        return getModuleId().equals(aid.getModuleId()) 
-            && getName().equals(aid.getName()) 
-            && getExt().equals(aid.getExt()) 
-            && getType().equals(aid.getType());
+        ArtifactId aid = (ArtifactId) obj;
+        return getModuleId().equals(aid.getModuleId()) && getName().equals(aid.getName())
+                && getExt().equals(aid.getExt()) && getType().equals(aid.getType());
     }
-    
+
     public int hashCode() {
         int hash = 17;
         hash += getModuleId().hashCode() * 37;
@@ -57,29 +57,32 @@ public class ArtifactId {
         hash += getType().hashCode() * 37;
         return hash;
     }
-    
+
     public String toString() {
-        return getModuleId()+" "+getName()+"."+getType();
+        return getModuleId() + " " + getName() + "." + getType();
     }
-    
+
     /**
      * @return Returns the module id.
      */
     public ModuleId getModuleId() {
         return mid;
     }
+
     /**
      * @return Returns the name.
      */
     public String getName() {
         return name;
     }
+
     /**
      * @return Returns the type.
      */
     public String getType() {
         return type;
     }
+
     /**
      * @return Returns the ext.
      */

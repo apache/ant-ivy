@@ -27,7 +27,9 @@ public class CircularDependencyHelper {
 
     /**
      * Returns a string representation of this circular dependency graph
-     * @param descriptors in order of circular dependency
+     * 
+     * @param descriptors
+     *            in order of circular dependency
      * @return
      */
     public static String formatMessage(final ModuleRevisionId[] mrids) {
@@ -41,30 +43,30 @@ public class CircularDependencyHelper {
     }
 
     public static String formatMessage(final ModuleDescriptor[] descriptors) {
-    	return formatMessage(toMrids(descriptors));
+        return formatMessage(toMrids(descriptors));
     }
-    
-    /**
-    * @param loopElements a List<ModuleDescriptor>
-	*/
-    public static String formatMessageFromDescriptors(List loopElements) {
-    	ModuleRevisionId[] mrids = new ModuleRevisionId[loopElements.size()];
-		int pos = 0;
-		for (Iterator it = loopElements.iterator(); it.hasNext();) {
-			ModuleDescriptor descriptor = (ModuleDescriptor) it.next();
-			mrids[pos] = descriptor.getModuleRevisionId();
-			pos++;
-		}
-		return formatMessage(mrids);
-	}
 
-	public static ModuleRevisionId[] toMrids(ModuleDescriptor[] descriptors) {
-		ModuleRevisionId[] mrids = new ModuleRevisionId[descriptors.length];
-		for (int i = 0; i < descriptors.length; i++) {
-			mrids[i] = descriptors[i].getModuleRevisionId();
-		}
-		return mrids;
-	}
-	
+    /**
+     * @param loopElements
+     *            a List<ModuleDescriptor>
+     */
+    public static String formatMessageFromDescriptors(List loopElements) {
+        ModuleRevisionId[] mrids = new ModuleRevisionId[loopElements.size()];
+        int pos = 0;
+        for (Iterator it = loopElements.iterator(); it.hasNext();) {
+            ModuleDescriptor descriptor = (ModuleDescriptor) it.next();
+            mrids[pos] = descriptor.getModuleRevisionId();
+            pos++;
+        }
+        return formatMessage(mrids);
+    }
+
+    public static ModuleRevisionId[] toMrids(ModuleDescriptor[] descriptors) {
+        ModuleRevisionId[] mrids = new ModuleRevisionId[descriptors.length];
+        for (int i = 0; i < descriptors.length; i++) {
+            mrids[i] = descriptors[i].getModuleRevisionId();
+        }
+        return mrids;
+    }
 
 }

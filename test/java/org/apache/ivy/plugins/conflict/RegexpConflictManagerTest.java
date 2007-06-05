@@ -26,62 +26,58 @@ import org.apache.ivy.core.cache.CacheManager;
 import org.apache.ivy.core.resolve.ResolveOptions;
 import org.apache.ivy.util.FileUtil;
 
-
-public class RegexpConflictManagerTest extends TestCase
-{
+public class RegexpConflictManagerTest extends TestCase {
     private Ivy ivy;
+
     private File _cache;
 
-    protected void setUp() throws Exception
-    {
+    protected void setUp() throws Exception {
         ivy = new Ivy();
-        ivy.configure( RegexpConflictManagerTest.class
-                .getResource( "ivysettings-regexp-test.xml" ) );
+        ivy.configure(RegexpConflictManagerTest.class.getResource("ivysettings-regexp-test.xml"));
         _cache = new File("build/cache");
         _cache.mkdirs();
     }
-	
-	protected void tearDown() throws Exception {
-		FileUtil.forceDelete(_cache);
-	}
 
-    public void testNoApiConflictResolve() throws Exception
-    {
-        try
-        {
-            ivy.resolve( RegexpConflictManagerTest.class
-                    .getResource( "ivy-no-regexp-conflict.xml" ), 
-                    getResolveOptions() );
-        }
-        catch ( StrictConflictException e )
-        {
-            fail( "Unexpected conflict: " + e );
+    protected void tearDown() throws Exception {
+        FileUtil.forceDelete(_cache);
+    }
+
+    public void testNoApiConflictResolve() throws Exception {
+        try {
+            ivy.resolve(RegexpConflictManagerTest.class.getResource("ivy-no-regexp-conflict.xml"),
+                getResolveOptions());
+        } catch (StrictConflictException e) {
+            fail("Unexpected conflict: " + e);
         }
     }
 
-    public void testConflictResolve() throws Exception
-    {
-        try
-        {
-            ivy.resolve( RegexpConflictManagerTest.class
-                    .getResource( "ivy-conflict.xml" ), 
-                    getResolveOptions() );
+    public void testConflictResolve() throws Exception {
+        try {
+            ivy.resolve(RegexpConflictManagerTest.class.getResource("ivy-conflict.xml"),
+                getResolveOptions());
 
-            fail( "Resolve should have failed with a conflict" );
-        }
-        catch ( StrictConflictException e )
-        {
+            fail("Resolve should have failed with a conflict");
+        } catch (StrictConflictException e) {
             // this is expected
-            assertTrue("bad exception message: "+e.getMessage(), 
-            		e.getMessage().indexOf("[ org1 | mod1.2 | 2.0.0 ]:2.0 (needed by [[ apache | resolve-noconflict | 1.0 ]])")!=-1);
-            assertTrue("bad exception message: "+e.getMessage(), 
-            		e.getMessage().indexOf("conflicts with")!=-1);
-            assertTrue("bad exception message: "+e.getMessage(), 
-            		e.getMessage().indexOf("[ org1 | mod1.2 | 2.1.0 ]:2.1 (needed by [[ apache | resolve-noconflict | 1.0 ]])")!=-1);
+            assertTrue(
+                "bad exception message: " + e.getMessage(),
+                e
+                        .getMessage()
+                        .indexOf(
+                            "[ org1 | mod1.2 | 2.0.0 ]:2.0 (needed by [[ apache | resolve-noconflict | 1.0 ]])") != -1);
+            assertTrue("bad exception message: " + e.getMessage(), e.getMessage().indexOf(
+                "conflicts with") != -1);
+            assertTrue(
+                "bad exception message: " + e.getMessage(),
+                e
+                        .getMessage()
+                        .indexOf(
+                            "[ org1 | mod1.2 | 2.1.0 ]:2.1 (needed by [[ apache | resolve-noconflict | 1.0 ]])") != -1);
         }
     }
-    
+
     private ResolveOptions getResolveOptions() {
-		return new ResolveOptions().setCache(CacheManager.getInstance(ivy.getSettings())).setValidate(false);
-	}
+        return new ResolveOptions().setCache(CacheManager.getInstance(ivy.getSettings()))
+                .setValidate(false);
+    }
 }

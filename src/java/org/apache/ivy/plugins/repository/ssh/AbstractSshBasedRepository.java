@@ -27,15 +27,20 @@ import org.apache.ivy.util.Message;
 
 import com.jcraft.jsch.Session;
 
-
 public abstract class AbstractSshBasedRepository extends AbstractRepository {
 
     private File keyFile = null;
+
     private File passFile = null;
+
     private String userPassword = null;
+
     private String keyFilePassword = null;
+
     private String user = "guest";
+
     private String host = null;
+
     private int port = -1;
 
     public AbstractSshBasedRepository() {
@@ -43,10 +48,11 @@ public abstract class AbstractSshBasedRepository extends AbstractRepository {
     }
 
     /**
-     * get a new session using the default attributes
-     * if the given String is a full uri, use the data from the uri
-     * instead
-     * @param pathOrUri might be just a path or a full ssh or sftp uri
+     * get a new session using the default attributes if the given String is a full uri, use the
+     * data from the uri instead
+     * 
+     * @param pathOrUri
+     *            might be just a path or a full ssh or sftp uri
      * @return matching Session
      */
     protected Session getSession(String pathOrUri) throws IOException {
@@ -55,47 +61,45 @@ public abstract class AbstractSshBasedRepository extends AbstractRepository {
         int port = getPort();
         String user = getUser();
         String userPassword = getUserPassword();
-        if(uri != null && uri.getScheme() != null) {
-            if(uri.getHost() != null )
+        if (uri != null && uri.getScheme() != null) {
+            if (uri.getHost() != null)
                 host = uri.getHost();
-            if(uri.getPort() != -1) {
+            if (uri.getPort() != -1) {
                 port = uri.getPort();
             }
-            if(uri.getUserInfo() != null) {
+            if (uri.getUserInfo() != null) {
                 String userInfo = uri.getUserInfo();
-                if(userInfo.indexOf(":") == -1) {
+                if (userInfo.indexOf(":") == -1) {
                     user = userInfo;
                 } else {
                     user = userInfo.substring(0, userInfo.indexOf(":"));
-                    userPassword = userInfo.substring(userInfo.indexOf(":")+1);
+                    userPassword = userInfo.substring(userInfo.indexOf(":") + 1);
                 }
             }
         }
-        return SshCache.getInstance().getSession(host, 
-                                                 port,
-                                                 user,
-                                                 userPassword, 
-                                                 getKeyFile(),
-                                                 getKeyFilePassword(),
-                                                 getPassFile());
+        return SshCache.getInstance().getSession(host, port, user, userPassword, getKeyFile(),
+            getKeyFilePassword(), getPassFile());
     }
-        
+
     /**
      * Just check the uri for sanity
-     * @param source String of the uri
+     * 
+     * @param source
+     *            String of the uri
      * @return URI object of the String or null
      */
     private URI parseURI(String source) {
         try {
             URI uri = new URI(source);
-            if(uri.getScheme() != null && !uri.getScheme().equalsIgnoreCase(getRepositoryScheme()))
-                throw new URISyntaxException(source,"Wrong scheme in URI. Expected "+getRepositoryScheme()+" as scheme!");
-            if(uri.getHost() == null && getHost() == null)
-                throw new URISyntaxException(source,"Missing host in URI or in resolver");
-            if(uri.getPath() == null)
-                throw new URISyntaxException(source,"Missing path in URI");
-            if(uri.getUserInfo() == null && getUser() == null)
-                throw new URISyntaxException(source,"Missing username in URI or in resolver");
+            if (uri.getScheme() != null && !uri.getScheme().equalsIgnoreCase(getRepositoryScheme()))
+                throw new URISyntaxException(source, "Wrong scheme in URI. Expected "
+                        + getRepositoryScheme() + " as scheme!");
+            if (uri.getHost() == null && getHost() == null)
+                throw new URISyntaxException(source, "Missing host in URI or in resolver");
+            if (uri.getPath() == null)
+                throw new URISyntaxException(source, "Missing path in URI");
+            if (uri.getUserInfo() == null && getUser() == null)
+                throw new URISyntaxException(source, "Missing username in URI or in resolver");
             return uri;
         } catch (URISyntaxException e) {
             Message.error(e.getMessage());
@@ -107,17 +111,22 @@ public abstract class AbstractSshBasedRepository extends AbstractRepository {
 
     /**
      * closes the session and remove it from the cache (eg. on case of errors)
-     * @param uri key for the cache
-     * @param conn to release
+     * 
+     * @param uri
+     *            key for the cache
+     * @param conn
+     *            to release
      */
-    protected void releaseSession(Session session,String pathOrUri) {
+    protected void releaseSession(Session session, String pathOrUri) {
         session.disconnect();
         SshCache.getInstance().clearSession(session);
     }
 
     /**
      * set the default user to use for the connection if no user is given or a PEM file is used
-     * @param user to use
+     * 
+     * @param user
+     *            to use
      */
     public void setUser(String user) {
         this.user = user;
@@ -131,19 +140,21 @@ public abstract class AbstractSshBasedRepository extends AbstractRepository {
     }
 
     /**
-     * Sets the full file path to use for accessing a PEM key file 
-     * @param filePath fully qualified name
+     * Sets the full file path to use for accessing a PEM key file
+     * 
+     * @param filePath
+     *            fully qualified name
      */
     public void setKeyFile(File filePath) {
         this.keyFile = filePath;
-        if(!keyFile.exists()) {
-            Message.warn("Pemfile "+keyFile.getAbsolutePath()+" doesn't exist.");
+        if (!keyFile.exists()) {
+            Message.warn("Pemfile " + keyFile.getAbsolutePath() + " doesn't exist.");
             keyFile = null;
-        } else if(!keyFile.canRead()) {
-            Message.warn("Pemfile "+keyFile.getAbsolutePath()+" not readable.");
+        } else if (!keyFile.canRead()) {
+            Message.warn("Pemfile " + keyFile.getAbsolutePath() + " not readable.");
             keyFile = null;
         } else {
-            Message.debug("Using "+keyFile.getAbsolutePath()+" as keyfile.");
+            Message.debug("Using " + keyFile.getAbsolutePath() + " as keyfile.");
         }
     }
 
@@ -155,7 +166,8 @@ public abstract class AbstractSshBasedRepository extends AbstractRepository {
     }
 
     /**
-     * @param user password to use for user/password authentication
+     * @param user
+     *            password to use for user/password authentication
      */
     public void setUserPassword(String password) {
         this.userPassword = password;
@@ -167,13 +179,15 @@ public abstract class AbstractSshBasedRepository extends AbstractRepository {
     public String getKeyFilePassword() {
         return keyFilePassword;
     }
-    
+
     /**
-     * @param keyFilePassword sets password for public key based authentication
+     * @param keyFilePassword
+     *            sets password for public key based authentication
      */
     public void setKeyFilePassword(String keyFilePassword) {
         this.keyFilePassword = keyFilePassword;
     }
+
     /**
      * @return the user password
      */
@@ -187,8 +201,10 @@ public abstract class AbstractSshBasedRepository extends AbstractRepository {
     public String getHost() {
         return host;
     }
+
     /**
-     * @param host the host to set
+     * @param host
+     *            the host to set
      */
     public void setHost(String host) {
         this.host = host;
@@ -202,21 +218,23 @@ public abstract class AbstractSshBasedRepository extends AbstractRepository {
     }
 
     /**
-     * @param port the port to set
+     * @param port
+     *            the port to set
      */
     public void setPort(int port) {
         this.port = port;
     }
-    
+
     /**
-     * @param passFile the passfile to set
+     * @param passFile
+     *            the passfile to set
      */
     public void setPassFile(File passFile) {
         this.passFile = passFile;
     }
-    
+
     /**
-     * @return the passFile 
+     * @return the passFile
      */
     public File getPassFile() {
         return passFile;

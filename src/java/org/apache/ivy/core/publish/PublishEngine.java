@@ -48,141 +48,151 @@ import org.apache.ivy.util.Message;
 import org.xml.sax.SAXException;
 
 public class PublishEngine {
-	private IvySettings settings;
-	
+    private IvySettings settings;
+
     public PublishEngine(IvySettings settings) {
-		this.settings = settings;
-	}
+        this.settings = settings;
+    }
+
     /**
-     * Publishes a module to the repository.
-     * 
-     * The publish can update the ivy file to publish if update is set to true. In this case it will use
-     * the given pubrevision, pubdate and status. If pubdate is null it will default to the current date.
-     * If status is null it will default to the current ivy file status (which itself defaults to integration if none is found).
-     * If update is false, then if the revision is not the same in the ivy file than the one expected (given as parameter),
-     * this method will fail with an  IllegalArgumentException.
-     * pubdate and status are not used if update is false.
-     * extra artifacts can be used to publish more artifacts than actually declared in the ivy file.
-     * This can be useful to publish additional metadata or reports.
-     * The extra artifacts array can be null (= no extra artifacts), and if non null only the name, type, ext url 
-     * and extra attributes of the artifacts are really used. Other methods can return null safely. 
-     * 
+     * Publishes a module to the repository. The publish can update the ivy file to publish if
+     * update is set to true. In this case it will use the given pubrevision, pubdate and status. If
+     * pubdate is null it will default to the current date. If status is null it will default to the
+     * current ivy file status (which itself defaults to integration if none is found). If update is
+     * false, then if the revision is not the same in the ivy file than the one expected (given as
+     * parameter), this method will fail with an IllegalArgumentException. pubdate and status are
+     * not used if update is false. extra artifacts can be used to publish more artifacts than
+     * actually declared in the ivy file. This can be useful to publish additional metadata or
+     * reports. The extra artifacts array can be null (= no extra artifacts), and if non null only
+     * the name, type, ext url and extra attributes of the artifacts are really used. Other methods
+     * can return null safely.
      */
-    public Collection publish(ModuleRevisionId mrid, Collection srcArtifactPattern, String resolverName, PublishOptions options) throws IOException {
-        Message.info(":: publishing :: "+mrid.getModuleId());
-        Message.verbose("\tvalidate = "+options.isValidate());
+    public Collection publish(ModuleRevisionId mrid, Collection srcArtifactPattern,
+            String resolverName, PublishOptions options) throws IOException {
+        Message.info(":: publishing :: " + mrid.getModuleId());
+        Message.verbose("\tvalidate = " + options.isValidate());
         long start = System.currentTimeMillis();
-        
+
         options.setSrcIvyPattern(settings.substitute(options.getSrcIvyPattern()));
         if (options.getPubrevision() == null) {
-        	options.setPubrevision(mrid.getRevision());
+            options.setPubrevision(mrid.getRevision());
         }
         ModuleRevisionId pubmrid = ModuleRevisionId.newInstance(mrid, options.getPubrevision());
         File ivyFile;
         if (options.getSrcIvyPattern() != null) {
-        	ivyFile = new File(IvyPatternHelper.substitute(options.getSrcIvyPattern(), DefaultArtifact.newIvyArtifact(pubmrid, new Date())));
-        	if (!ivyFile.exists()) {
-        		throw new IllegalArgumentException("ivy file to publish not found for "+mrid+": call deliver before ("+ivyFile+")");
-        	}
+            ivyFile = new File(IvyPatternHelper.substitute(options.getSrcIvyPattern(),
+                DefaultArtifact.newIvyArtifact(pubmrid, new Date())));
+            if (!ivyFile.exists()) {
+                throw new IllegalArgumentException("ivy file to publish not found for " + mrid
+                        + ": call deliver before (" + ivyFile + ")");
+            }
         } else {
-        	CacheManager cacheManager = getCacheManager(options);
-        	ivyFile = cacheManager.getResolvedIvyFileInCache(mrid);
-        	if (!ivyFile.exists()) {
-        		throw new IllegalStateException("ivy file not found in cache for "+mrid+": please resolve dependencies before publishing ("+ivyFile+")");
-        	}
+            CacheManager cacheManager = getCacheManager(options);
+            ivyFile = cacheManager.getResolvedIvyFileInCache(mrid);
+            if (!ivyFile.exists()) {
+                throw new IllegalStateException("ivy file not found in cache for " + mrid
+                        + ": please resolve dependencies before publishing (" + ivyFile + ")");
+            }
         }
-        
+
         // let's find the resolved module descriptor
         ModuleDescriptor md = null;
         URL ivyFileURL = null;
         try {
-        	ivyFileURL = ivyFile.toURL();
-        	md = XmlModuleDescriptorParser.getInstance().parseDescriptor(settings, ivyFileURL, false);
-        	if (options.getSrcIvyPattern() != null) {
-        		if (options.isUpdate()) {
-        			File tmp = File.createTempFile("ivy", ".xml");
-        			tmp.deleteOnExit();
-        			
-        			String[] confs = ConfigurationUtils.replaceWildcards(options.getConfs(), md);
-        			Set confsToRemove = new HashSet(Arrays.asList(md.getConfigurationsNames()));
-        			confsToRemove.removeAll(Arrays.asList(confs));
-        			
-        			try {
-						XmlModuleDescriptorUpdater.update(
-                                settings,
-								ivyFileURL, 
-								tmp, 
-								new HashMap(), 
-								options.getStatus()==null?md.getStatus():options.getStatus(), 
-								options.getPubrevision(), 
-								options.getPubdate()==null?new Date():options.getPubdate(), 
-								null, 
-								true,
-								(String[]) confsToRemove.toArray(new String[confsToRemove.size()]));
-						ivyFile = tmp;
-						// we parse the new file to get updated module descriptor
-						md = XmlModuleDescriptorParser.getInstance().parseDescriptor(settings, ivyFile.toURL(), false);
-						options.setSrcIvyPattern(ivyFile.getAbsolutePath());
-					} catch (SAXException e) {
-			        	throw new IllegalStateException("bad ivy file for "+mrid+": "+ivyFile+": "+e);
-					}
-        		} else if (!options.getPubrevision().equals(md.getModuleRevisionId().getRevision())) {
-           			throw new IllegalArgumentException("cannot publish "+ivyFile+" as "+options.getPubrevision()+": bad revision found in ivy file (Revision: "+md.getModuleRevisionId().getRevision()+"). Use forcedeliver or update.");
-            	}
-        	} else {
-				md.setResolvedModuleRevisionId(pubmrid);
-        	}
+            ivyFileURL = ivyFile.toURL();
+            md = XmlModuleDescriptorParser.getInstance().parseDescriptor(settings, ivyFileURL,
+                false);
+            if (options.getSrcIvyPattern() != null) {
+                if (options.isUpdate()) {
+                    File tmp = File.createTempFile("ivy", ".xml");
+                    tmp.deleteOnExit();
+
+                    String[] confs = ConfigurationUtils.replaceWildcards(options.getConfs(), md);
+                    Set confsToRemove = new HashSet(Arrays.asList(md.getConfigurationsNames()));
+                    confsToRemove.removeAll(Arrays.asList(confs));
+
+                    try {
+                        XmlModuleDescriptorUpdater.update(settings, ivyFileURL, tmp, new HashMap(),
+                            options.getStatus() == null ? md.getStatus() : options.getStatus(),
+                            options.getPubrevision(), options.getPubdate() == null ? new Date()
+                                    : options.getPubdate(), null, true, (String[]) confsToRemove
+                                    .toArray(new String[confsToRemove.size()]));
+                        ivyFile = tmp;
+                        // we parse the new file to get updated module descriptor
+                        md = XmlModuleDescriptorParser.getInstance().parseDescriptor(settings,
+                            ivyFile.toURL(), false);
+                        options.setSrcIvyPattern(ivyFile.getAbsolutePath());
+                    } catch (SAXException e) {
+                        throw new IllegalStateException("bad ivy file for " + mrid + ": " + ivyFile
+                                + ": " + e);
+                    }
+                } else if (!options.getPubrevision().equals(md.getModuleRevisionId().getRevision())) {
+                    throw new IllegalArgumentException("cannot publish " + ivyFile + " as "
+                            + options.getPubrevision()
+                            + ": bad revision found in ivy file (Revision: "
+                            + md.getModuleRevisionId().getRevision()
+                            + "). Use forcedeliver or update.");
+                }
+            } else {
+                md.setResolvedModuleRevisionId(pubmrid);
+            }
         } catch (MalformedURLException e) {
-        	throw new RuntimeException("malformed url obtained for file "+ivyFile);
+            throw new RuntimeException("malformed url obtained for file " + ivyFile);
         } catch (ParseException e) {
-        	throw new IllegalStateException("bad ivy file for "+mrid+": "+ivyFile+": "+e);
+            throw new IllegalStateException("bad ivy file for " + mrid + ": " + ivyFile + ": " + e);
         }
-        
+
         DependencyResolver resolver = settings.getResolver(resolverName);
         if (resolver == null) {
-            throw new IllegalArgumentException("unknown resolver "+resolverName);
+            throw new IllegalArgumentException("unknown resolver " + resolverName);
         }
-        
+
         // collect all declared artifacts of this module
         Collection missing = publish(md, srcArtifactPattern, resolver, options);
-        Message.verbose("\tpublish done ("+(System.currentTimeMillis()-start)+"ms)");
+        Message.verbose("\tpublish done (" + (System.currentTimeMillis() - start) + "ms)");
         return missing;
     }
 
-    public Collection publish(ModuleDescriptor md, Collection srcArtifactPattern, DependencyResolver resolver, PublishOptions options) throws IOException {
+    public Collection publish(ModuleDescriptor md, Collection srcArtifactPattern,
+            DependencyResolver resolver, PublishOptions options) throws IOException {
         Collection missing = new ArrayList();
         Set artifactsSet = new HashSet();
-		String[] confs = options.getConfs();
-		if (confs == null || (confs.length == 1 && "*".equals(confs[0]))) {
-			confs = md.getConfigurationsNames();
-		}
+        String[] confs = options.getConfs();
+        if (confs == null || (confs.length == 1 && "*".equals(confs[0]))) {
+            confs = md.getConfigurationsNames();
+        }
 
-		for (int i = 0; i < confs.length; i++) {
+        for (int i = 0; i < confs.length; i++) {
             Artifact[] artifacts = md.getArtifacts(confs[i]);
             for (int j = 0; j < artifacts.length; j++) {
                 artifactsSet.add(artifacts[j]);
             }
         }
-		Artifact[] extraArtifacts = options.getExtraArtifacts();
+        Artifact[] extraArtifacts = options.getExtraArtifacts();
         if (extraArtifacts != null) {
-        	for (int i = 0; i < extraArtifacts.length; i++) {
-				artifactsSet.add(new MDArtifact(md, extraArtifacts[i].getName(), extraArtifacts[i].getType(), extraArtifacts[i].getExt(), extraArtifacts[i].getUrl(), extraArtifacts[i].getExtraAttributes()));
-			}
+            for (int i = 0; i < extraArtifacts.length; i++) {
+                artifactsSet.add(new MDArtifact(md, extraArtifacts[i].getName(), extraArtifacts[i]
+                        .getType(), extraArtifacts[i].getExt(), extraArtifacts[i].getUrl(),
+                        extraArtifacts[i].getExtraAttributes()));
+            }
         }
         // for each declared published artifact in this descriptor, do:
         for (Iterator iter = artifactsSet.iterator(); iter.hasNext();) {
             Artifact artifact = (Artifact) iter.next();
-            //   1) copy the artifact using src patterns and resolver
+            // 1) copy the artifact using src patterns and resolver
             boolean published = false;
-            for (Iterator iterator = srcArtifactPattern.iterator(); iterator.hasNext() && !published;) {
-				String pattern = (String) iterator.next();
-				published = publish(artifact, settings.substitute(pattern), resolver, options.isOverwrite());
-			}
+            for (Iterator iterator = srcArtifactPattern.iterator(); iterator.hasNext()
+                    && !published;) {
+                String pattern = (String) iterator.next();
+                published = publish(artifact, settings.substitute(pattern), resolver, options
+                        .isOverwrite());
+            }
             if (!published) {
-            	Message.info("missing artifact "+artifact+":");
+                Message.info("missing artifact " + artifact + ":");
                 for (Iterator iterator = srcArtifactPattern.iterator(); iterator.hasNext();) {
-    				String pattern = (String) iterator.next();
-                	Message.info("\t"+new File(IvyPatternHelper.substitute(pattern, artifact))+" file does not exist");
+                    String pattern = (String) iterator.next();
+                    Message.info("\t" + new File(IvyPatternHelper.substitute(pattern, artifact))
+                            + " file does not exist");
                 }
                 missing.add(artifact);
             }
@@ -190,17 +200,21 @@ public class PublishEngine {
         if (options.getSrcIvyPattern() != null) {
             Artifact artifact = MDArtifact.newIvyArtifact(md);
             if (!publish(artifact, options.getSrcIvyPattern(), resolver, options.isOverwrite())) {
-                Message.info("missing ivy file for "+md.getModuleRevisionId()+": "
-                		+ new File(IvyPatternHelper.substitute(options.getSrcIvyPattern(), artifact))
-                		+ " file does not exist");
+                Message.info("missing ivy file for "
+                        + md.getModuleRevisionId()
+                        + ": "
+                        + new File(IvyPatternHelper
+                                .substitute(options.getSrcIvyPattern(), artifact))
+                        + " file does not exist");
                 missing.add(artifact);
             }
         }
         return missing;
     }
 
-    private boolean publish(Artifact artifact, String srcArtifactPattern, DependencyResolver resolver, boolean overwrite) throws IOException {
-    	IvyContext.getContext().checkInterrupted();
+    private boolean publish(Artifact artifact, String srcArtifactPattern,
+            DependencyResolver resolver, boolean overwrite) throws IOException {
+        IvyContext.getContext().checkInterrupted();
         File src = new File(IvyPatternHelper.substitute(srcArtifactPattern, artifact));
         if (src.exists()) {
             resolver.publish(artifact, src, overwrite);
@@ -210,15 +224,14 @@ public class PublishEngine {
         }
     }
 
-
-	private CacheManager getCacheManager(PublishOptions options) {
-		CacheManager cacheManager = options.getCache();
-        if (cacheManager == null) {  // ensure that a cache is configured
-        	cacheManager = IvyContext.getContext().getCacheManager();
-        	options.setCache(cacheManager);
+    private CacheManager getCacheManager(PublishOptions options) {
+        CacheManager cacheManager = options.getCache();
+        if (cacheManager == null) { // ensure that a cache is configured
+            cacheManager = IvyContext.getContext().getCacheManager();
+            options.setCache(cacheManager);
         } else {
-        	IvyContext.getContext().setCache(cacheManager.getCache());
+            IvyContext.getContext().setCache(cacheManager.getCache());
         }
-		return cacheManager;
-	}
+        return cacheManager;
+    }
 }

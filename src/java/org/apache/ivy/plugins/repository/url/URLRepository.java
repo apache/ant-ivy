@@ -34,13 +34,13 @@ import org.apache.ivy.plugins.repository.TransferEvent;
 import org.apache.ivy.util.FileUtil;
 import org.apache.ivy.util.url.ApacheURLLister;
 
-
 public class URLRepository extends AbstractRepository {
     private RepositoryCopyProgressListener _progress = new RepositoryCopyProgressListener(this);
+
     private Map _resourcesCache = new HashMap();
 
     public Resource getResource(String source) throws IOException {
-        Resource res = (Resource)_resourcesCache.get(source);
+        Resource res = (Resource) _resourcesCache.get(source);
         if (res == null) {
             res = new URLResource(new URL(source));
             _resourcesCache.put(source, res);
@@ -69,17 +69,19 @@ public class URLRepository extends AbstractRepository {
     }
 
     public void put(File source, String destination, boolean overwrite) throws IOException {
-        throw new UnsupportedOperationException("URL repository is not able to put files for the moment");
+        throw new UnsupportedOperationException(
+                "URL repository is not able to put files for the moment");
     }
 
     private ApacheURLLister _lister = new ApacheURLLister();
+
     public List list(String parent) throws IOException {
         if (parent.startsWith("http")) {
             List urls = _lister.listAll(new URL(parent));
             if (urls != null) {
                 List ret = new ArrayList(urls.size());
                 for (ListIterator iter = urls.listIterator(); iter.hasNext();) {
-                    URL url = (URL)iter.next();
+                    URL url = (URL) iter.next();
                     ret.add(url.toExternalForm());
                 }
                 return ret;
@@ -90,7 +92,7 @@ public class URLRepository extends AbstractRepository {
             if (file.exists() && file.isDirectory()) {
                 String[] files = file.list();
                 List ret = new ArrayList(files.length);
-                URL context = path.endsWith("/") ? new URL(parent) : new URL(parent+"/");
+                URL context = path.endsWith("/") ? new URL(parent) : new URL(parent + "/");
                 for (int i = 0; i < files.length; i++) {
                     ret.add(new URL(context, files[i]).toExternalForm());
                 }

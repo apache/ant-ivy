@@ -34,12 +34,13 @@ import org.apache.ivy.util.FileUtil;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.Delete;
 
-
 public class IvyDeliverTest extends TestCase {
     private File _cache;
+
     private IvyDeliver _deliver;
+
     private Project _project;
-    
+
     protected void setUp() throws Exception {
         cleanTestDir();
         cleanRep();
@@ -57,7 +58,7 @@ public class IvyDeliverTest extends TestCase {
         _cache = new File("build/cache");
         _cache.mkdirs();
     }
-    
+
     protected void tearDown() throws Exception {
         cleanCache();
         cleanTestDir();
@@ -90,131 +91,146 @@ public class IvyDeliverTest extends TestCase {
         IvyResolve res = new IvyResolve();
         res.setProject(_project);
         res.execute();
-        
-        _deliver.setPubrevision("1.2");
-        _deliver.setDeliverpattern("build/test/deliver/ivy-[revision].xml");
-        _deliver.execute();
-        
-        // should have done the ivy delivering
-        File deliveredIvyFile = new File("build/test/deliver/ivy-1.2.xml");
-        assertTrue(deliveredIvyFile.exists()); 
-        ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(new IvySettings(), deliveredIvyFile.toURL(), true);
-        assertEquals(ModuleRevisionId.newInstance("apache", "resolve-latest", "1.2"), md.getModuleRevisionId());
-        DependencyDescriptor[] dds = md.getDependencies();
-        assertEquals(1, dds.length);
-        assertEquals(ModuleRevisionId.newInstance("org1", "mod1.2", "2.2"), dds[0].getDependencyRevisionId());
-    }
-    
-    public void testWithResolveId() throws Exception {
-    	IvyResolve resolve = new IvyResolve();
-    	resolve.setProject(_project);
-    	resolve.setCache(_cache);
-    	resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-simple.xml"));
-    	resolve.setResolveId("withResolveId");
-    	resolve.execute();
-    	
-    	// resolve another ivy file
-    	resolve = new IvyResolve();
-    	resolve.setProject(_project);
-    	resolve.setCache(_cache);
-    	resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-latest.xml"));
-    	resolve.execute();
-    	
-    	_deliver.setResolveId("withResolveId");
+
         _deliver.setPubrevision("1.2");
         _deliver.setDeliverpattern("build/test/deliver/ivy-[revision].xml");
         _deliver.execute();
 
         // should have done the ivy delivering
         File deliveredIvyFile = new File("build/test/deliver/ivy-1.2.xml");
-        assertTrue(deliveredIvyFile.exists()); 
-        ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(new IvySettings(), deliveredIvyFile.toURL(), true);
-        assertEquals(ModuleRevisionId.newInstance("apache", "resolve-simple", "1.2"), md.getModuleRevisionId());
+        assertTrue(deliveredIvyFile.exists());
+        ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(
+            new IvySettings(), deliveredIvyFile.toURL(), true);
+        assertEquals(ModuleRevisionId.newInstance("apache", "resolve-latest", "1.2"), md
+                .getModuleRevisionId());
         DependencyDescriptor[] dds = md.getDependencies();
         assertEquals(1, dds.length);
-        assertEquals(ModuleRevisionId.newInstance("org1", "mod1.2", "2.0"), dds[0].getDependencyRevisionId());
+        assertEquals(ModuleRevisionId.newInstance("org1", "mod1.2", "2.2"), dds[0]
+                .getDependencyRevisionId());
     }
-    
+
+    public void testWithResolveId() throws Exception {
+        IvyResolve resolve = new IvyResolve();
+        resolve.setProject(_project);
+        resolve.setCache(_cache);
+        resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-simple.xml"));
+        resolve.setResolveId("withResolveId");
+        resolve.execute();
+
+        // resolve another ivy file
+        resolve = new IvyResolve();
+        resolve.setProject(_project);
+        resolve.setCache(_cache);
+        resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-latest.xml"));
+        resolve.execute();
+
+        _deliver.setResolveId("withResolveId");
+        _deliver.setPubrevision("1.2");
+        _deliver.setDeliverpattern("build/test/deliver/ivy-[revision].xml");
+        _deliver.execute();
+
+        // should have done the ivy delivering
+        File deliveredIvyFile = new File("build/test/deliver/ivy-1.2.xml");
+        assertTrue(deliveredIvyFile.exists());
+        ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(
+            new IvySettings(), deliveredIvyFile.toURL(), true);
+        assertEquals(ModuleRevisionId.newInstance("apache", "resolve-simple", "1.2"), md
+                .getModuleRevisionId());
+        DependencyDescriptor[] dds = md.getDependencies();
+        assertEquals(1, dds.length);
+        assertEquals(ModuleRevisionId.newInstance("org1", "mod1.2", "2.0"), dds[0]
+                .getDependencyRevisionId());
+    }
+
     public void testWithResolveIdInAnotherBuild() throws Exception {
-    	// create a new build
+        // create a new build
         Project other = new Project();
         other.setProperty("ivy.settings.file", "test/repositories/ivysettings.xml");
         other.setProperty("build", "build/test/deliver");
 
         // do a resolve in the new build
-    	IvyResolve resolve = new IvyResolve();
-    	resolve.setProject(other);
-    	resolve.setCache(_cache);
-    	resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-simple.xml"));
-    	resolve.setResolveId("withResolveId");
-    	resolve.execute();
+        IvyResolve resolve = new IvyResolve();
+        resolve.setProject(other);
+        resolve.setCache(_cache);
+        resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-simple.xml"));
+        resolve.setResolveId("withResolveId");
+        resolve.execute();
 
-    	// resolve another ivy file
-    	resolve = new IvyResolve();
-    	resolve.setProject(_project);
-    	resolve.setCache(_cache);
-    	resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-latest.xml"));
-    	resolve.execute();
-    	
-    	_deliver.setResolveId("withResolveId");
+        // resolve another ivy file
+        resolve = new IvyResolve();
+        resolve.setProject(_project);
+        resolve.setCache(_cache);
+        resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-latest.xml"));
+        resolve.execute();
+
+        _deliver.setResolveId("withResolveId");
         _deliver.setPubrevision("1.2");
         _deliver.setDeliverpattern("build/test/deliver/ivy-[revision].xml");
         _deliver.execute();
 
         // should have done the ivy delivering
         File deliveredIvyFile = new File("build/test/deliver/ivy-1.2.xml");
-        assertTrue(deliveredIvyFile.exists()); 
-        ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(new IvySettings(), deliveredIvyFile.toURL(), true);
-        assertEquals(ModuleRevisionId.newInstance("apache", "resolve-simple", "1.2"), md.getModuleRevisionId());
+        assertTrue(deliveredIvyFile.exists());
+        ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(
+            new IvySettings(), deliveredIvyFile.toURL(), true);
+        assertEquals(ModuleRevisionId.newInstance("apache", "resolve-simple", "1.2"), md
+                .getModuleRevisionId());
         DependencyDescriptor[] dds = md.getDependencies();
         assertEquals(1, dds.length);
-        assertEquals(ModuleRevisionId.newInstance("org1", "mod1.2", "2.0"), dds[0].getDependencyRevisionId());
+        assertEquals(ModuleRevisionId.newInstance("org1", "mod1.2", "2.0"), dds[0]
+                .getDependencyRevisionId());
     }
 
     public void testWithBranch() throws Exception {
-    	// test case for IVY-404
+        // test case for IVY-404
         _project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-latest-branch.xml");
         IvyResolve res = new IvyResolve();
         res.setProject(_project);
         res.execute();
-        
+
         _deliver.setPubrevision("1.2");
         _deliver.setDeliverpattern("build/test/deliver/ivy-[revision].xml");
         _deliver.execute();
-        
+
         // should have done the ivy delivering
         File deliveredIvyFile = new File("build/test/deliver/ivy-1.2.xml");
-        assertTrue(deliveredIvyFile.exists()); 
-        ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(new IvySettings(), deliveredIvyFile.toURL(), true);
-        assertEquals(ModuleRevisionId.newInstance("apache", "resolve-latest", "1.2"), md.getModuleRevisionId());
+        assertTrue(deliveredIvyFile.exists());
+        ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(
+            new IvySettings(), deliveredIvyFile.toURL(), true);
+        assertEquals(ModuleRevisionId.newInstance("apache", "resolve-latest", "1.2"), md
+                .getModuleRevisionId());
         DependencyDescriptor[] dds = md.getDependencies();
         assertEquals(1, dds.length);
-        assertEquals(ModuleRevisionId.newInstance("org1", "mod1.2", "TRUNK", "2.2"), dds[0].getDependencyRevisionId());
+        assertEquals(ModuleRevisionId.newInstance("org1", "mod1.2", "TRUNK", "2.2"), dds[0]
+                .getDependencyRevisionId());
     }
 
     public void testWithExtraAttributes() throws Exception {
-    	// test case for IVY-415
+        // test case for IVY-415
         _project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-latest-extra.xml");
         IvyResolve res = new IvyResolve();
         res.setValidate(false);
         res.setProject(_project);
         res.execute();
-        
+
         _deliver.setPubrevision("1.2");
         _deliver.setDeliverpattern("build/test/deliver/ivy-[revision].xml");
         _deliver.setValidate(false);
         _deliver.execute();
-        
+
         // should have done the ivy delivering
         File deliveredIvyFile = new File("build/test/deliver/ivy-1.2.xml");
-        assertTrue(deliveredIvyFile.exists()); 
-        ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(new IvySettings(), deliveredIvyFile.toURL(), false);
-        assertEquals(ModuleRevisionId.newInstance("apache", "resolve-latest", "1.2"), md.getModuleRevisionId());
+        assertTrue(deliveredIvyFile.exists());
+        ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(
+            new IvySettings(), deliveredIvyFile.toURL(), false);
+        assertEquals(ModuleRevisionId.newInstance("apache", "resolve-latest", "1.2"), md
+                .getModuleRevisionId());
         DependencyDescriptor[] dds = md.getDependencies();
         assertEquals(1, dds.length);
         Map extraAtt = new HashMap();
         extraAtt.put("myExtraAtt", "myValue");
-        assertEquals(ModuleRevisionId.newInstance("org1", "mod1.2", "2.2", extraAtt), dds[0].getDependencyRevisionId());
+        assertEquals(ModuleRevisionId.newInstance("org1", "mod1.2", "2.2", extraAtt), dds[0]
+                .getDependencyRevisionId());
     }
 
     public void testReplaceImportedConfigurations() throws Exception {
@@ -222,17 +238,20 @@ public class IvyDeliverTest extends TestCase {
         IvyResolve res = new IvyResolve();
         res.setProject(_project);
         res.execute();
-        
+
         _deliver.setPubrevision("1.2");
         _deliver.setDeliverpattern("build/test/deliver/ivy-[revision].xml");
         _deliver.execute();
-        
+
         // should have done the ivy delivering
         File deliveredIvyFile = new File("build/test/deliver/ivy-1.2.xml");
-        assertTrue(deliveredIvyFile.exists()); 
-        String deliveredFileContent = FileUtil.readEntirely(new BufferedReader(new FileReader(deliveredIvyFile)));
-        assertTrue("import not replaced: import can still be found in file", deliveredFileContent.indexOf("import") == -1);
-        assertTrue("import not replaced: conf1 cannot be found in file", deliveredFileContent.indexOf("conf1") != -1);
+        assertTrue(deliveredIvyFile.exists());
+        String deliveredFileContent = FileUtil.readEntirely(new BufferedReader(new FileReader(
+                deliveredIvyFile)));
+        assertTrue("import not replaced: import can still be found in file", deliveredFileContent
+                .indexOf("import") == -1);
+        assertTrue("import not replaced: conf1 cannot be found in file", deliveredFileContent
+                .indexOf("conf1") != -1);
     }
 
     public void testReplaceVariables() throws Exception {
@@ -240,19 +259,22 @@ public class IvyDeliverTest extends TestCase {
         IvyResolve res = new IvyResolve();
         res.setProject(_project);
         res.execute();
-        
+
         res.getIvyInstance().getSettings().setVariable("myvar", "myvalue");
-        
+
         _deliver.setPubrevision("1.2");
         _deliver.setDeliverpattern("build/test/deliver/ivy-[revision].xml");
         _deliver.execute();
-        
+
         // should have done the ivy delivering
         File deliveredIvyFile = new File("build/test/deliver/ivy-1.2.xml");
-        assertTrue(deliveredIvyFile.exists()); 
-        String deliveredFileContent = FileUtil.readEntirely(new BufferedReader(new FileReader(deliveredIvyFile)));
-        assertTrue("variable not replaced: myvar can still be found in file", deliveredFileContent.indexOf("myvar") == -1);
-        assertTrue("variable not replaced: myvalue cannot be found in file", deliveredFileContent.indexOf("myvalue") != -1);
+        assertTrue(deliveredIvyFile.exists());
+        String deliveredFileContent = FileUtil.readEntirely(new BufferedReader(new FileReader(
+                deliveredIvyFile)));
+        assertTrue("variable not replaced: myvar can still be found in file", deliveredFileContent
+                .indexOf("myvar") == -1);
+        assertTrue("variable not replaced: myvalue cannot be found in file", deliveredFileContent
+                .indexOf("myvalue") != -1);
     }
 
     public void testNoReplaceDynamicRev() throws Exception {
@@ -260,41 +282,50 @@ public class IvyDeliverTest extends TestCase {
         IvyResolve res = new IvyResolve();
         res.setProject(_project);
         res.execute();
-        
+
         _deliver.setPubrevision("1.2");
         _deliver.setDeliverpattern("build/test/deliver/ivy-[revision].xml");
         _deliver.setReplacedynamicrev(false);
         _deliver.execute();
-        
+
         // should have done the ivy delivering
         File deliveredIvyFile = new File("build/test/deliver/ivy-1.2.xml");
-        assertTrue(deliveredIvyFile.exists()); 
-        ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(new IvySettings(), deliveredIvyFile.toURL(), true);
-        assertEquals(ModuleRevisionId.newInstance("apache", "resolve-latest", "1.2"), md.getModuleRevisionId());
+        assertTrue(deliveredIvyFile.exists());
+        ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(
+            new IvySettings(), deliveredIvyFile.toURL(), true);
+        assertEquals(ModuleRevisionId.newInstance("apache", "resolve-latest", "1.2"), md
+                .getModuleRevisionId());
         DependencyDescriptor[] dds = md.getDependencies();
         assertEquals(1, dds.length);
-        assertEquals(ModuleRevisionId.newInstance("org1", "mod1.2", "latest.integration"), dds[0].getDependencyRevisionId());
+        assertEquals(ModuleRevisionId.newInstance("org1", "mod1.2", "latest.integration"), dds[0]
+                .getDependencyRevisionId());
     }
 
     public void testDifferentRevisionsForSameModule() throws Exception {
-        _project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-different-revisions.xml");
+        _project.setProperty("ivy.dep.file",
+            "test/java/org/apache/ivy/ant/ivy-different-revisions.xml");
         IvyResolve res = new IvyResolve();
         res.setProject(_project);
         res.execute();
-        
+
         _deliver.setPubrevision("1.2");
         _deliver.setDeliverpattern("build/test/deliver/ivy-[revision].xml");
         _deliver.execute();
-        
+
         // should have done the ivy delivering
         File deliveredIvyFile = new File("build/test/deliver/ivy-1.2.xml");
-        assertTrue(deliveredIvyFile.exists()); 
-        ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(new IvySettings(), deliveredIvyFile.toURL(), true);
-        assertEquals(ModuleRevisionId.newInstance("apache", "different-revs", "1.2"), md.getModuleRevisionId());
+        assertTrue(deliveredIvyFile.exists());
+        ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(
+            new IvySettings(), deliveredIvyFile.toURL(), true);
+        assertEquals(ModuleRevisionId.newInstance("apache", "different-revs", "1.2"), md
+                .getModuleRevisionId());
         DependencyDescriptor[] dds = md.getDependencies();
         assertEquals(3, dds.length);
-        assertEquals(ModuleRevisionId.newInstance("org1", "mod1.2", "2.0"), dds[0].getDependencyRevisionId());
-        assertEquals(ModuleRevisionId.newInstance("org1", "mod1.1", "1.0"), dds[1].getDependencyRevisionId());
-        assertEquals(ModuleRevisionId.newInstance("org1", "mod1.2", "1.1"), dds[2].getDependencyRevisionId());
+        assertEquals(ModuleRevisionId.newInstance("org1", "mod1.2", "2.0"), dds[0]
+                .getDependencyRevisionId());
+        assertEquals(ModuleRevisionId.newInstance("org1", "mod1.1", "1.0"), dds[1]
+                .getDependencyRevisionId());
+        assertEquals(ModuleRevisionId.newInstance("org1", "mod1.2", "1.1"), dds[2]
+                .getDependencyRevisionId());
     }
 }

@@ -21,15 +21,15 @@ import org.apache.ivy.core.module.id.ModuleRevisionId;
 
 public class MockVersionMatcher extends AbstractVersionMatcher {
 
-	public MockVersionMatcher() {
-	}
+    public MockVersionMatcher() {
+    }
 
-	public boolean isDynamic(ModuleRevisionId askedMrid) {
-		return false;
-	}
+    public boolean isDynamic(ModuleRevisionId askedMrid) {
+        return false;
+    }
 
-	public boolean accept(ModuleRevisionId askedMrid, ModuleRevisionId foundMrid) {
-		return false;
-	}
+    public boolean accept(ModuleRevisionId askedMrid, ModuleRevisionId foundMrid) {
+        return false;
+    }
 
 }

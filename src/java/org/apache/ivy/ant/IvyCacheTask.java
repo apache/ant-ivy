@@ -38,12 +38,9 @@ import org.apache.ivy.plugins.report.XmlReportParser;
 import org.apache.ivy.util.Message;
 import org.apache.tools.ant.BuildException;
 
-
 /**
- * Base class for the cache path related classes: cachepath and cachefileset.
- * 
- * Most of the behviour is common to the two, since only the produced element differs.
- * 
+ * Base class for the cache path related classes: cachepath and cachefileset. Most of the behviour
+ * is common to the two, since only the produced element differs.
  */
 public abstract class IvyCacheTask extends IvyPostResolveTask {
 
@@ -51,12 +48,12 @@ public abstract class IvyCacheTask extends IvyPostResolveTask {
         Collection artifacts = getAllArtifacts();
         List ret = new ArrayList();
         for (Iterator iter = artifacts.iterator(); iter.hasNext();) {
-            Artifact artifact = (Artifact)iter.next();
+            Artifact artifact = (Artifact) iter.next();
             if (getArtifactFilter().accept(artifact)) {
-            	ret.add(artifact);
+                ret.add(artifact);
             }
         }
-        
+
         return ret;
     }
 
@@ -68,28 +65,31 @@ public abstract class IvyCacheTask extends IvyPostResolveTask {
         if (report != null) {
             Message.debug("using internal report instance to get artifacts list");
             for (int i = 0; i < confs.length; i++) {
-                ConfigurationResolveReport configurationReport = report.getConfigurationReport(confs[i]);
+                ConfigurationResolveReport configurationReport = report
+                        .getConfigurationReport(confs[i]);
                 if (configurationReport == null) {
-                	throw new BuildException("bad confs provided: "+confs[i]+" not found among "+Arrays.asList(report.getConfigurations()));
+                    throw new BuildException("bad confs provided: " + confs[i]
+                            + " not found among " + Arrays.asList(report.getConfigurations()));
                 }
-				Set revisions = configurationReport.getModuleRevisionIds();
-                for (Iterator it = revisions.iterator(); it.hasNext(); ) {
-                	ModuleRevisionId revId = (ModuleRevisionId) it.next();
-                	ArtifactDownloadReport[] aReps = configurationReport.getDownloadReports(revId);
-                	for (int j = 0; j < aReps.length; j++) {
-                		all.add(aReps[j].getArtifact());
-                	}
+                Set revisions = configurationReport.getModuleRevisionIds();
+                for (Iterator it = revisions.iterator(); it.hasNext();) {
+                    ModuleRevisionId revId = (ModuleRevisionId) it.next();
+                    ArtifactDownloadReport[] aReps = configurationReport.getDownloadReports(revId);
+                    for (int j = 0; j < aReps.length; j++) {
+                        all.add(aReps[j].getArtifact());
+                    }
                 }
             }
         } else {
             Message.debug("using stored report to get artifacts list");
-            
+
             XmlReportParser parser = new XmlReportParser();
             CacheManager cacheMgr = getIvyInstance().getCacheManager(getCache());
             for (int i = 0; i < confs.length; i++) {
-            	File reportFile = cacheMgr.getConfigurationResolveReportInCache(getResolveId(), confs[i]);
-            	parser.parse(reportFile);
-            	
+                File reportFile = cacheMgr.getConfigurationResolveReportInCache(getResolveId(),
+                    confs[i]);
+                parser.parse(reportFile);
+
                 Artifact[] artifacts = parser.getArtifacts();
                 all.addAll(Arrays.asList(artifacts));
             }
@@ -97,8 +97,8 @@ public abstract class IvyCacheTask extends IvyPostResolveTask {
         return all;
     }
 
-	protected CacheManager getCacheManager() {
-		CacheManager cache = new CacheManager(getSettings(), getCache());
-		return cache;
-	}
+    protected CacheManager getCacheManager() {
+        CacheManager cache = new CacheManager(getSettings(), getCache());
+        return cache;
+    }
 }

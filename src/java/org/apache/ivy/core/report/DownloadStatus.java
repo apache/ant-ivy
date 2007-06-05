@@ -22,16 +22,20 @@ package org.apache.ivy.core.report;
  */
 public class DownloadStatus {
     private String name;
+
     private DownloadStatus(String name) {
         this.name = name;
     }
-    
+
     /**
      * means that download was not required
      */
     public static final DownloadStatus NO = new DownloadStatus("no");
+
     public static final DownloadStatus SUCCESSFUL = new DownloadStatus("successful");
+
     public static final DownloadStatus FAILED = new DownloadStatus("failed");
+
     public String toString() {
         return name;
     }

@@ -26,12 +26,15 @@ import org.apache.ivy.plugins.repository.Resource;
 import org.apache.ivy.util.url.URLHandlerRegistry;
 import org.apache.ivy.util.url.URLHandler.URLInfo;
 
-
 public class URLResource implements Resource {
     private URL _url;
+
     private boolean _init = false;
+
     private long _lastModified;
+
     private long _contentLength;
+
     private boolean _exists;
 
     public URLResource(URL url) {
@@ -41,13 +44,14 @@ public class URLResource implements Resource {
     public String getName() {
         return _url.toExternalForm();
     }
-    
+
     public Resource clone(String cloneName) {
-    	try {
-			return new URLResource(new URL(cloneName));
-		} catch (MalformedURLException e) {
-			throw new IllegalArgumentException("bad clone name provided: not suitable for an URLResource: "+cloneName);
-		}
+        try {
+            return new URLResource(new URL(cloneName));
+        } catch (MalformedURLException e) {
+            throw new IllegalArgumentException(
+                    "bad clone name provided: not suitable for an URLResource: " + cloneName);
+        }
     }
 
     public long getLastModified() {
@@ -82,15 +86,16 @@ public class URLResource implements Resource {
     public URL getURL() {
         return _url;
     }
+
     public String toString() {
         return getName();
     }
-    
+
     public boolean isLocal() {
         return false;
     }
 
-	public InputStream openStream() throws IOException {
-		return _url.openStream();
-	}
+    public InputStream openStream() throws IOException {
+        return _url.openStream();
+    }
 }

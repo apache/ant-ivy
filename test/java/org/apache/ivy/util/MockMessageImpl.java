@@ -25,83 +25,86 @@ import junit.framework.AssertionFailedError;
 
 public class MockMessageImpl implements MessageImpl {
 
-	private List _endProgress = new ArrayList();
-	private List _logs = new ArrayList();
-	private List _rawLogs = new ArrayList();
-	private int _progressCalls;
+    private List _endProgress = new ArrayList();
 
-	public void endProgress(String msg) {
-		_endProgress .add(msg);
-	}
+    private List _logs = new ArrayList();
 
-	public void log(String msg, int level) {
-		_logs.add(level+" "+msg);
-	}
+    private List _rawLogs = new ArrayList();
 
-	public void progress() {
-		_progressCalls++;
-	}
+    private int _progressCalls;
 
-	public void rawlog(String msg, int level) {
-		_rawLogs.add(level+" "+msg);
-	}
+    public void endProgress(String msg) {
+        _endProgress.add(msg);
+    }
 
-	public List getEndProgress() {
-		return _endProgress;
-	}
+    public void log(String msg, int level) {
+        _logs.add(level + " " + msg);
+    }
 
-	public List getLogs() {
-		return _logs;
-	}
+    public void progress() {
+        _progressCalls++;
+    }
 
-	public int getProgressCalls() {
-		return _progressCalls;
-	}
+    public void rawlog(String msg, int level) {
+        _rawLogs.add(level + " " + msg);
+    }
 
-	public List getRawLogs() {
-		return _rawLogs;
-	}
-	
-	public void clear() {
-		_logs.clear();
-		_rawLogs.clear();
-		_endProgress.clear();
-		_progressCalls = 0;
-	}
+    public List getEndProgress() {
+        return _endProgress;
+    }
 
-	public void assertLogContains(String message) {
-		for (Iterator iter = _logs.iterator(); iter.hasNext();) {
-			String log = (String) iter.next();
-			if (log.indexOf(message) != -1) {
-				return;
-			}
-		}
-		throw new AssertionFailedError("logs do not contain expected message: expected='"+message+"' logs='\n"+join(_logs)+"'" );
-		
-	}
+    public List getLogs() {
+        return _logs;
+    }
 
-	public void assertLogInfoContains(String message) {
-		assertLogContains(Message.MSG_INFO + " " + message);
-	}
+    public int getProgressCalls() {
+        return _progressCalls;
+    }
 
-	public void assertLogWarningContains(String message) {
-		Message.sumupProblems();
-		assertLogContains(Message.MSG_WARN + " \t" + message);
-	}
-	
-	public void assertLogErrorContains(String message) {
-		Message.sumupProblems();
-		assertLogContains(Message.MSG_ERR + " " + message);
-	}
+    public List getRawLogs() {
+        return _rawLogs;
+    }
 
+    public void clear() {
+        _logs.clear();
+        _rawLogs.clear();
+        _endProgress.clear();
+        _progressCalls = 0;
+    }
 
-	private String join(List logs) {
-		StringBuffer sb = new StringBuffer();
-		for (Iterator iter = logs.iterator(); iter.hasNext();) {
-			String log = (String) iter.next();
-			sb.append(log).append("\n");
-		}
-		return sb.toString();
-	}
+    public void assertLogContains(String message) {
+        for (Iterator iter = _logs.iterator(); iter.hasNext();) {
+            String log = (String) iter.next();
+            if (log.indexOf(message) != -1) {
+                return;
+            }
+        }
+        throw new AssertionFailedError("logs do not contain expected message: expected='" + message
+                + "' logs='\n" + join(_logs) + "'");
+
+    }
+
+    public void assertLogInfoContains(String message) {
+        assertLogContains(Message.MSG_INFO + " " + message);
+    }
+
+    public void assertLogWarningContains(String message) {
+        Message.sumupProblems();
+        assertLogContains(Message.MSG_WARN + " \t" + message);
+    }
+
+    public void assertLogErrorContains(String message) {
+        Message.sumupProblems();
+        assertLogContains(Message.MSG_ERR + " " + message);
+    }
+
+    private String join(List logs) {
+        StringBuffer sb = new StringBuffer();
+        for (Iterator iter = logs.iterator(); iter.hasNext();) {
+            String log = (String) iter.next();
+            sb.append(log).append("\n");
+        }
+        return sb.toString();
+    }
 
 }

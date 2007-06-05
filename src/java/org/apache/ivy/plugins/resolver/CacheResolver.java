@@ -41,66 +41,71 @@ import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.plugins.resolver.util.ResolvedResource;
 import org.apache.ivy.util.Message;
 
-
-
 public class CacheResolver extends FileSystemResolver {
     private File _configured = null;
-    
+
     public CacheResolver() {
     }
-    
+
     public CacheResolver(IvySettings settings) {
         setSettings(settings);
         setName("cache");
     }
 
-    public ResolvedModuleRevision getDependency(DependencyDescriptor dd, ResolveData data) throws ParseException {
+    public ResolvedModuleRevision getDependency(DependencyDescriptor dd, ResolveData data)
+            throws ParseException {
         clearIvyAttempts();
 
         ModuleRevisionId mrid = dd.getDependencyRevisionId();
         // check revision
-        
-        // if we do not have to check modified and if the revision is exact and not changing,  
+
+        // if we do not have to check modified and if the revision is exact and not changing,
         // we first search for it in cache
         if (!getSettings().getVersionMatcher().isDynamic(mrid)) {
-            ResolvedModuleRevision rmr = data.getCacheManager().findModuleInCache(mrid, doValidate(data));
+            ResolvedModuleRevision rmr = data.getCacheManager().findModuleInCache(mrid,
+                doValidate(data));
             if (rmr != null) {
-                Message.verbose("\t"+getName()+": revision in cache: "+mrid);
+                Message.verbose("\t" + getName() + ": revision in cache: " + mrid);
                 return rmr;
             } else {
-            	logIvyAttempt(data.getCacheManager().getArchiveFileInCache(DefaultArtifact.newIvyArtifact(mrid, new Date())).getAbsolutePath());
-                Message.verbose("\t"+getName()+": no ivy file in cache found for "+mrid);
+                logIvyAttempt(data.getCacheManager().getArchiveFileInCache(
+                    DefaultArtifact.newIvyArtifact(mrid, new Date())).getAbsolutePath());
+                Message.verbose("\t" + getName() + ": no ivy file in cache found for " + mrid);
                 return null;
             }
         } else {
             ensureConfigured(data.getSettings(), data.getCacheManager().getCache());
             ResolvedResource ivyRef = findIvyFileRef(dd, data);
             if (ivyRef != null) {
-                Message.verbose("\t"+getName()+": found ivy file in cache for "+mrid);
-                Message.verbose("\t\t=> "+ivyRef);
+                Message.verbose("\t" + getName() + ": found ivy file in cache for " + mrid);
+                Message.verbose("\t\t=> " + ivyRef);
 
-                ModuleRevisionId resolvedMrid = ModuleRevisionId.newInstance(mrid, ivyRef.getRevision());
+                ModuleRevisionId resolvedMrid = ModuleRevisionId.newInstance(mrid, ivyRef
+                        .getRevision());
                 IvyNode node = data.getNode(resolvedMrid);
                 if (node != null && node.getModuleRevision() != null) {
                     // this revision has already be resolved : return it
-                    Message.verbose("\t"+getName()+": revision already resolved: "+resolvedMrid);
+                    Message.verbose("\t" + getName() + ": revision already resolved: "
+                            + resolvedMrid);
                     return searchedRmr(node.getModuleRevision());
                 }
-                ResolvedModuleRevision rmr = data.getCacheManager().findModuleInCache(resolvedMrid, doValidate(data));
+                ResolvedModuleRevision rmr = data.getCacheManager().findModuleInCache(resolvedMrid,
+                    doValidate(data));
                 if (rmr != null) {
-                    Message.verbose("\t"+getName()+": revision in cache: "+resolvedMrid);
+                    Message.verbose("\t" + getName() + ": revision in cache: " + resolvedMrid);
                     return searchedRmr(rmr);
                 } else {
-                    Message.error("\t"+getName()+": inconsistent cache: clean it and resolve again");
+                    Message.error("\t" + getName()
+                            + ": inconsistent cache: clean it and resolve again");
                     return null;
                 }
             } else {
-                Message.verbose("\t"+getName()+": no ivy file in cache found for "+mrid);
+                Message.verbose("\t" + getName() + ": no ivy file in cache found for " + mrid);
                 return null;
             }
         }
     }
-    
+
     public DownloadReport download(Artifact[] artifacts, DownloadOptions options) {
         clearArtifactAttempts();
         DownloadReport dr = new DownloadReport();
@@ -109,40 +114,44 @@ public class CacheResolver extends FileSystemResolver {
             dr.addArtifactReport(adr);
             File archiveFile = options.getCacheManager().getArchiveFileInCache(artifacts[i]);
             if (archiveFile.exists()) {
-                Message.verbose("\t[NOT REQUIRED] "+artifacts[i]);
-                adr.setDownloadStatus(DownloadStatus.NO);  
+                Message.verbose("\t[NOT REQUIRED] " + artifacts[i]);
+                adr.setDownloadStatus(DownloadStatus.NO);
                 adr.setSize(archiveFile.length());
             } else {
-            		logArtifactAttempt(artifacts[i], archiveFile.getAbsolutePath());
-                    adr.setDownloadStatus(DownloadStatus.FAILED);                
+                logArtifactAttempt(artifacts[i], archiveFile.getAbsolutePath());
+                adr.setDownloadStatus(DownloadStatus.FAILED);
             }
         }
         return dr;
     }
+
     public boolean exists(Artifact artifact) {
         ensureConfigured();
         return super.exists(artifact);
     }
+
     public void publish(Artifact artifact, File src, boolean overwrite) throws IOException {
         ensureConfigured();
         super.publish(artifact, src, overwrite);
     }
-    
-    
+
     public OrganisationEntry[] listOrganisations() {
         ensureConfigured();
         return super.listOrganisations();
     }
+
     public ModuleEntry[] listModules(OrganisationEntry org) {
         ensureConfigured();
-        return super.listModules(org);        
+        return super.listModules(org);
     }
+
     public RevisionEntry[] listRevisions(ModuleEntry module) {
         ensureConfigured();
-        return super.listRevisions(module);        
+        return super.listRevisions(module);
     }
+
     public void dumpSettings() {
-        Message.verbose("\t"+getName()+" [cache]");
+        Message.verbose("\t" + getName() + " [cache]");
     }
 
     private void ensureConfigured() {
@@ -150,13 +159,17 @@ public class CacheResolver extends FileSystemResolver {
             ensureConfigured(getSettings(), getSettings().getDefaultCache());
         }
     }
+
     private void ensureConfigured(IvySettings settings, File cache) {
         if (settings == null || cache == null || (_configured != null && _configured.equals(cache))) {
             return;
         }
-        setIvyPatterns(Collections.singletonList(cache.getAbsolutePath()+"/"+settings.getCacheIvyPattern()));
-        setArtifactPatterns(Collections.singletonList(cache.getAbsolutePath()+"/"+settings.getCacheArtifactPattern()));
+        setIvyPatterns(Collections.singletonList(cache.getAbsolutePath() + "/"
+                + settings.getCacheIvyPattern()));
+        setArtifactPatterns(Collections.singletonList(cache.getAbsolutePath() + "/"
+                + settings.getCacheArtifactPattern()));
     }
+
     public String getTypeName() {
         return "cache";
     }

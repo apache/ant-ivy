@@ -29,81 +29,89 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ChecksumHelper {
-    
-	private static Map _algorithms = new HashMap();
-	static {
-		_algorithms.put("md5", "MD5");
-		_algorithms.put("sha1", "SHA-1");
-	}
-	
-	/**
-	 * Checks the checksum of the given file against the given checksumFile,
-	 * and throws an IOException if the checksum is not compliant
-	 * 
-	 * @param dest the file to test
-	 * @param checksumFile the file containing the expected checksum
-	 * @param algorithm the checksum algorithm to use
-	 * @throws IOException if an IO problem occur whle reading files or if the checksum is not compliant
-	 */
-	public static void check(File dest, File checksumFile, String algorithm) throws IOException {
-		String csFileContent = FileUtil.readEntirely(new BufferedReader(new FileReader(checksumFile))).trim().toLowerCase();
-		String expected;
-		int spaceIndex = csFileContent.indexOf(' ');
-		if (spaceIndex != -1) {
-			expected = csFileContent.substring(0, spaceIndex);
-		} else {
-			expected = csFileContent;
-		}
-		
-		String computed = computeAsString(dest, algorithm).trim().toLowerCase();
-		if (!expected.equals(computed)) {
-			throw new IOException("invalid "+algorithm+": expected="+expected+" computed="+computed);
-		}
-	}    
-	
-    public static String computeAsString(File f, String algorithm) throws IOException {
-    	return byteArrayToHexString(compute(f, algorithm));
+
+    private static Map _algorithms = new HashMap();
+    static {
+        _algorithms.put("md5", "MD5");
+        _algorithms.put("sha1", "SHA-1");
     }
-    
+
+    /**
+     * Checks the checksum of the given file against the given checksumFile, and throws an
+     * IOException if the checksum is not compliant
+     * 
+     * @param dest
+     *            the file to test
+     * @param checksumFile
+     *            the file containing the expected checksum
+     * @param algorithm
+     *            the checksum algorithm to use
+     * @throws IOException
+     *             if an IO problem occur whle reading files or if the checksum is not compliant
+     */
+    public static void check(File dest, File checksumFile, String algorithm) throws IOException {
+        String csFileContent = FileUtil.readEntirely(
+            new BufferedReader(new FileReader(checksumFile))).trim().toLowerCase();
+        String expected;
+        int spaceIndex = csFileContent.indexOf(' ');
+        if (spaceIndex != -1) {
+            expected = csFileContent.substring(0, spaceIndex);
+        } else {
+            expected = csFileContent;
+        }
+
+        String computed = computeAsString(dest, algorithm).trim().toLowerCase();
+        if (!expected.equals(computed)) {
+            throw new IOException("invalid " + algorithm + ": expected=" + expected + " computed="
+                    + computed);
+        }
+    }
+
+    public static String computeAsString(File f, String algorithm) throws IOException {
+        return byteArrayToHexString(compute(f, algorithm));
+    }
+
     private static byte[] compute(File f, String algorithm) throws IOException {
-    	InputStream is = new FileInputStream(f);
+        InputStream is = new FileInputStream(f);
 
-    	try {
-    		MessageDigest md = getMessageDigest(algorithm);
-    		md.reset();
+        try {
+            MessageDigest md = getMessageDigest(algorithm);
+            md.reset();
 
-    		byte[] buf = new byte[2048];
-    		int len = 0;
-    		while ((len = is.read(buf)) != -1) {
-    			md.update(buf, 0, len);
-    		}
-    		return md.digest();
-    	} finally {
-    		is.close();
-    	}
-	}
+            byte[] buf = new byte[2048];
+            int len = 0;
+            while ((len = is.read(buf)) != -1) {
+                md.update(buf, 0, len);
+            }
+            return md.digest();
+        } finally {
+            is.close();
+        }
+    }
 
+    private static MessageDigest getMessageDigest(String algorithm) {
+        String mdAlgorithm = (String) _algorithms.get(algorithm);
+        if (mdAlgorithm == null) {
+            throw new IllegalArgumentException("unknown algorithm " + algorithm);
+        }
+        try {
+            return MessageDigest.getInstance(mdAlgorithm);
+        } catch (NoSuchAlgorithmException e) {
+            throw new IllegalArgumentException("unknown algorithm " + algorithm);
+        }
+    }
 
-	private static MessageDigest getMessageDigest(String algorithm) {
-		String mdAlgorithm = (String) _algorithms.get(algorithm);
-		if (mdAlgorithm == null) {
-			throw new IllegalArgumentException("unknown algorithm "+algorithm);
-		}
-		try {
-			return MessageDigest.getInstance(mdAlgorithm);
-		} catch (NoSuchAlgorithmException e) {
-			throw new IllegalArgumentException("unknown algorithm "+algorithm);
-		}
-	}
+    // byte to hex string converter
+    private final static char[] CHARS = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a',
+            'b', 'c', 'd', 'e', 'f'};
 
-
-	// byte to hex string converter
-	private final static char[] CHARS = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
-	/**
-	 * Convert a byte[] array to readable string format. This makes the "hex" readable!
-	 * @return result String buffer in String format 
-	 * @param in byte[] buffer to convert to string format
-	 */
+    /**
+     * Convert a byte[] array to readable string format. This makes the "hex" readable!
+     * 
+     * @return result String buffer in String format
+     * @param in
+     *            byte[] buffer to convert to string format
+     */
     public static String byteArrayToHexString(byte in[]) {
         byte ch = 0x00;
 
@@ -118,9 +126,9 @@ public class ChecksumHelper {
             ch = (byte) (ch >>> 4); // shift the bits down
             ch = (byte) (ch & 0x0F); // must do this is high order bit is on!
 
-            out.append(CHARS[ (int) ch]); // convert the nibble to a String Character
-            ch = (byte) (in[i] & 0x0F); // Strip off low nibble 
-            out.append(CHARS[ (int) ch]); // convert the nibble to a String Character
+            out.append(CHARS[(int) ch]); // convert the nibble to a String Character
+            ch = (byte) (in[i] & 0x0F); // Strip off low nibble
+            out.append(CHARS[(int) ch]); // convert the nibble to a String Character
         }
 
         return out.toString();

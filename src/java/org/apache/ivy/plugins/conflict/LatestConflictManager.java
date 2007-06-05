@@ -29,13 +29,11 @@ import org.apache.ivy.plugins.latest.ArtifactInfo;
 import org.apache.ivy.plugins.latest.LatestStrategy;
 import org.apache.ivy.util.Message;
 
-
 public class LatestConflictManager extends AbstractConflictManager {
     public static class NoConflictResolvedYetException extends RuntimeException {
-	}
+    }
 
-
-	private static class IvyNodeArtifactInfo implements ArtifactInfo {
+    private static class IvyNodeArtifactInfo implements ArtifactInfo {
         private final IvyNode _node;
 
         private IvyNodeArtifactInfo(IvyNode dep) {
@@ -43,29 +41,28 @@ public class LatestConflictManager extends AbstractConflictManager {
         }
 
         public long getLastModified() {
-        	long lastModified = _node.getLastModified();
-        	if (lastModified == 0) {
-        		// if the last modified timestamp is unknown, we can't resolve
-        		// the conflicts now, and trigger an exception which will be catched
-        		// in the main resolveConflicts method
-        		throw new NoConflictResolvedYetException();
-        	} else {
-        		return lastModified;
-        	}
+            long lastModified = _node.getLastModified();
+            if (lastModified == 0) {
+                // if the last modified timestamp is unknown, we can't resolve
+                // the conflicts now, and trigger an exception which will be catched
+                // in the main resolveConflicts method
+                throw new NoConflictResolvedYetException();
+            } else {
+                return lastModified;
+            }
         }
 
         public String getRevision() {
             return _node.getResolvedId().getRevision();
         }
-        
+
         public IvyNode getNode() {
             return _node;
         }
     }
 
-
-
     private LatestStrategy _strategy;
+
     private String _strategyName;
 
     public LatestConflictManager() {
@@ -85,34 +82,34 @@ public class LatestConflictManager extends AbstractConflictManager {
             return conflicts;
         }
         for (Iterator iter = conflicts.iterator(); iter.hasNext();) {
-            IvyNode node = (IvyNode)iter.next();
+            IvyNode node = (IvyNode) iter.next();
             DependencyDescriptor dd = node.getDependencyDescriptor(parent);
-            if (dd != null && dd.isForce() 
-            		&& parent.getResolvedId().equals(dd.getParentRevisionId())) {
+            if (dd != null && dd.isForce()
+                    && parent.getResolvedId().equals(dd.getParentRevisionId())) {
                 return Collections.singleton(node);
             }
         }
         try {
-	        ArtifactInfo latest = getStrategy().findLatest(toArtifactInfo(conflicts), null);
-	        if (latest != null) {
-	            return Collections.singleton(((IvyNodeArtifactInfo)latest).getNode());
-	        } else {
-	            return conflicts;
-	        }
+            ArtifactInfo latest = getStrategy().findLatest(toArtifactInfo(conflicts), null);
+            if (latest != null) {
+                return Collections.singleton(((IvyNodeArtifactInfo) latest).getNode());
+            } else {
+                return conflicts;
+            }
         } catch (NoConflictResolvedYetException ex) {
-        	// we have not enough informations in the nodes to resolve conflict
-        	// according to the resolveConflicts contract, we must return null
-        	return null;
+            // we have not enough informations in the nodes to resolve conflict
+            // according to the resolveConflicts contract, we must return null
+            return null;
         }
     }
 
     private ArtifactInfo[] toArtifactInfo(Collection conflicts) {
         List artifacts = new ArrayList(conflicts.size());
         for (Iterator iter = conflicts.iterator(); iter.hasNext();) {
-            IvyNode node = (IvyNode)iter.next();
+            IvyNode node = (IvyNode) iter.next();
             artifacts.add(new IvyNodeArtifactInfo(node));
         }
-        return (ArtifactInfo[])artifacts.toArray(new ArtifactInfo[artifacts.size()]);
+        return (ArtifactInfo[]) artifacts.toArray(new ArtifactInfo[artifacts.size()]);
     }
 
     public LatestStrategy getStrategy() {
@@ -120,7 +117,7 @@ public class LatestConflictManager extends AbstractConflictManager {
             if (_strategyName != null) {
                 _strategy = getSettings().getLatestStrategy(_strategyName);
                 if (_strategy == null) {
-                    Message.error("unknown latest strategy: "+_strategyName);
+                    Message.error("unknown latest strategy: " + _strategyName);
                     _strategy = getSettings().getDefaultLatestStrategy();
                 }
             } else {
@@ -129,22 +126,21 @@ public class LatestConflictManager extends AbstractConflictManager {
         }
         return _strategy;
     }
-    
 
     /**
      * To conform to configurator API
+     * 
      * @param latestStrategy
      */
     public void setLatest(String strategyName) {
         _strategyName = strategyName;
     }
-    
+
     public void setStrategy(LatestStrategy strategy) {
         _strategy = strategy;
     }
-    
 
     public String toString() {
-        return _strategy != null?String.valueOf(_strategy):_strategyName;
+        return _strategy != null ? String.valueOf(_strategy) : _strategyName;
     }
 }

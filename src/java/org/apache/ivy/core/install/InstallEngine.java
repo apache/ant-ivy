@@ -50,19 +50,25 @@ import org.apache.ivy.util.filter.Filter;
 import org.apache.ivy.util.filter.FilterHelper;
 
 public class InstallEngine {
-	private IvySettings settings;
-	private ResolveEngine resolveEngine;
-	private PublishEngine publishEngine;
-	private SearchEngine searchEngine;
-	
-	public InstallEngine(IvySettings settings, SearchEngine searchEngine, ResolveEngine resolveEngine, PublishEngine publishEngine) {
-		this.settings = settings;
-		this.searchEngine = searchEngine;
-		this.resolveEngine = resolveEngine;
-		this.publishEngine = publishEngine;
-	}
+    private IvySettings settings;
 
-	public ResolveReport install(ModuleRevisionId mrid, String from, String to, boolean transitive, boolean validate, boolean overwrite, Filter artifactFilter, File cache, String matcherName) throws IOException {
+    private ResolveEngine resolveEngine;
+
+    private PublishEngine publishEngine;
+
+    private SearchEngine searchEngine;
+
+    public InstallEngine(IvySettings settings, SearchEngine searchEngine,
+            ResolveEngine resolveEngine, PublishEngine publishEngine) {
+        this.settings = settings;
+        this.searchEngine = searchEngine;
+        this.resolveEngine = resolveEngine;
+        this.publishEngine = publishEngine;
+    }
+
+    public ResolveReport install(ModuleRevisionId mrid, String from, String to, boolean transitive,
+            boolean validate, boolean overwrite, Filter artifactFilter, File cache,
+            String matcherName) throws IOException {
         if (cache == null) {
             cache = settings.getDefaultCache();
         }
@@ -72,94 +78,96 @@ public class InstallEngine {
         DependencyResolver fromResolver = settings.getResolver(from);
         DependencyResolver toResolver = settings.getResolver(to);
         if (fromResolver == null) {
-            throw new IllegalArgumentException("unknown resolver "+from+". Available resolvers are: "+ settings.getResolverNames());
+            throw new IllegalArgumentException("unknown resolver " + from
+                    + ". Available resolvers are: " + settings.getResolverNames());
         }
         if (toResolver == null) {
-            throw new IllegalArgumentException("unknown resolver "+to+". Available resolvers are: "+ settings.getResolverNames());
+            throw new IllegalArgumentException("unknown resolver " + to
+                    + ". Available resolvers are: " + settings.getResolverNames());
         }
         PatternMatcher matcher = settings.getMatcher(matcherName);
         if (matcher == null) {
-            throw new IllegalArgumentException("unknown matcher "+matcherName+". Available matchers are: "+ settings.getMatcherNames());
+            throw new IllegalArgumentException("unknown matcher " + matcherName
+                    + ". Available matchers are: " + settings.getMatcherNames());
         }
-        
+
         // build module file declaring the dependency
-        Message.info(":: installing "+mrid+" ::");
+        Message.info(":: installing " + mrid + " ::");
         DependencyResolver oldDicator = resolveEngine.getDictatorResolver();
         boolean log = settings.logNotConvertedExclusionRule();
         try {
-        	settings.setLogNotConvertedExclusionRule(true);
-        	resolveEngine.setDictatorResolver(fromResolver);
-            
-            DefaultModuleDescriptor md = new DefaultModuleDescriptor(ModuleRevisionId.newInstance("apache", "ivy-install", "1.0"), settings.getStatusManager().getDefaultStatus(), new Date());
+            settings.setLogNotConvertedExclusionRule(true);
+            resolveEngine.setDictatorResolver(fromResolver);
+
+            DefaultModuleDescriptor md = new DefaultModuleDescriptor(ModuleRevisionId.newInstance(
+                "apache", "ivy-install", "1.0"), settings.getStatusManager().getDefaultStatus(),
+                    new Date());
             String resolveId = ResolveOptions.getDefaultResolveId(md);
             md.addConfiguration(new Configuration("default"));
-            md.addConflictManager(new ModuleId(ExactPatternMatcher.ANY_EXPRESSION, ExactPatternMatcher.ANY_EXPRESSION), ExactPatternMatcher.INSTANCE, new NoConflictManager());
-            
+            md.addConflictManager(new ModuleId(ExactPatternMatcher.ANY_EXPRESSION,
+                    ExactPatternMatcher.ANY_EXPRESSION), ExactPatternMatcher.INSTANCE,
+                new NoConflictManager());
+
             if (MatcherHelper.isExact(matcher, mrid)) {
-                DefaultDependencyDescriptor dd = new DefaultDependencyDescriptor(md, mrid, false, false, transitive);
+                DefaultDependencyDescriptor dd = new DefaultDependencyDescriptor(md, mrid, false,
+                        false, transitive);
                 dd.addDependencyConfiguration("default", "*");
                 md.addDependency(dd);
             } else {
                 Collection mrids = searchEngine.findModuleRevisionIds(fromResolver, mrid, matcher);
-                                
+
                 for (Iterator iter = mrids.iterator(); iter.hasNext();) {
-                    ModuleRevisionId foundMrid = (ModuleRevisionId)iter.next();
-                    Message.info("\tfound "+foundMrid+" to install: adding to the list");
-                    DefaultDependencyDescriptor dd = new DefaultDependencyDescriptor(md, foundMrid, false, false, transitive);
+                    ModuleRevisionId foundMrid = (ModuleRevisionId) iter.next();
+                    Message.info("\tfound " + foundMrid + " to install: adding to the list");
+                    DefaultDependencyDescriptor dd = new DefaultDependencyDescriptor(md, foundMrid,
+                            false, false, transitive);
                     dd.addDependencyConfiguration("default", "*");
                     md.addDependency(dd);
                 }
-            }                       
-            
+            }
+
             // resolve using appropriate resolver
             ResolveReport report = new ResolveReport(md, resolveId);
-            
+
             Message.info(":: resolving dependencies ::");
-            IvyNode[] dependencies = resolveEngine.getDependencies(
-            		md, 
-            		new ResolveOptions()
-            			.setResolveId(resolveId)
-            			.setConfs(new String[] {"default"})
-            			.setCache(CacheManager.getInstance(settings, cache)),
-            		report);
+            IvyNode[] dependencies = resolveEngine.getDependencies(md, new ResolveOptions()
+                    .setResolveId(resolveId).setConfs(new String[] {"default"}).setCache(
+                        CacheManager.getInstance(settings, cache)), report);
             report.setDependencies(Arrays.asList(dependencies), artifactFilter);
-            
+
             Message.info(":: downloading artifacts to cache ::");
             resolveEngine.downloadArtifacts(report, getCacheManager(cache), false, artifactFilter);
 
             // now that everything is in cache, we can publish all these modules
-            Message.info(":: installing in "+to+" ::");
+            Message.info(":: installing in " + to + " ::");
             for (int i = 0; i < dependencies.length; i++) {
                 ModuleDescriptor depmd = dependencies[i].getDescriptor();
                 if (depmd != null) {
-                    Message.verbose("installing "+depmd.getModuleRevisionId());
-                    publishEngine.publish(
-                    		depmd, 
-                            Collections.singleton(cache.getAbsolutePath()+"/"+ settings.getCacheArtifactPattern()),
-                            toResolver, 
-                            new PublishOptions()
-	                    		.setSrcIvyPattern(cache.getAbsolutePath()+"/"+ settings.getCacheIvyPattern())
-	                    		.setOverwrite(overwrite));
+                    Message.verbose("installing " + depmd.getModuleRevisionId());
+                    publishEngine.publish(depmd, Collections.singleton(cache.getAbsolutePath()
+                            + "/" + settings.getCacheArtifactPattern()), toResolver,
+                        new PublishOptions().setSrcIvyPattern(
+                            cache.getAbsolutePath() + "/" + settings.getCacheIvyPattern())
+                                .setOverwrite(overwrite));
                 }
             }
 
             Message.info(":: install resolution report ::");
-            
+
             // output report
             report.output(settings.getReportOutputters(), cache);
 
             return report;
         } finally {
-        	resolveEngine.setDictatorResolver(oldDicator);
+            resolveEngine.setDictatorResolver(oldDicator);
             settings.setLogNotConvertedExclusionRule(log);
         }
     }
-	
-	private CacheManager getCacheManager(File cache) {
-		//TODO : reuse instance
-		CacheManager cacheManager = new CacheManager(settings, cache);
-		return cacheManager;
-	}
 
+    private CacheManager getCacheManager(File cache) {
+        // TODO : reuse instance
+        CacheManager cacheManager = new CacheManager(settings, cache);
+        return cacheManager;
+    }
 
 }

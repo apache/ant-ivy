@@ -33,66 +33,64 @@ import org.apache.tools.ant.taskdefs.Property;
  */
 public class IvyConfigure extends IvyTask {
 
-	private IvyAntSettings antSettings = new IvyAntSettings();
+    private IvyAntSettings antSettings = new IvyAntSettings();
 
-	public void doExecute() throws BuildException {
-		ensureMessageInitialised();
-		log(
-				"ivy:configure is deprecated, please use the data type ivy:settings instead",
-				Project.MSG_WARN);
-		// ivyConfigure used to export properties in the ant script.
-		// ivy:settings doesn't.
-		try {
-			loadDefaultProperties();
-		} catch (Exception ex) {
-			throw new BuildException(
-					"impossible to load ivy default properties file: " + ex, ex);
-		}
-		antSettings.registerAsDefault();
-	}
+    public void doExecute() throws BuildException {
+        ensureMessageInitialised();
+        log("ivy:configure is deprecated, please use the data type ivy:settings instead",
+            Project.MSG_WARN);
+        // ivyConfigure used to export properties in the ant script.
+        // ivy:settings doesn't.
+        try {
+            loadDefaultProperties();
+        } catch (Exception ex) {
+            throw new BuildException("impossible to load ivy default properties file: " + ex, ex);
+        }
+        antSettings.registerAsDefault();
+    }
 
-	private void loadDefaultProperties() {
-		Property prop = new Property() {
-			public void execute() throws BuildException {
-				Properties props = antSettings.getDefaultProperties();
-				addProperties(props);
-			}
-		};
-		prop.setProject(getProject());
-		prop.execute();
-	}
+    private void loadDefaultProperties() {
+        Property prop = new Property() {
+            public void execute() throws BuildException {
+                Properties props = antSettings.getDefaultProperties();
+                addProperties(props);
+            }
+        };
+        prop.setProject(getProject());
+        prop.execute();
+    }
 
-	public void addConfiguredCredentials(Credentials c) {
-		antSettings.addConfiguredCredentials(c);
-	}
+    public void addConfiguredCredentials(Credentials c) {
+        antSettings.addConfiguredCredentials(c);
+    }
 
-	public void setFile(File file) {
-		antSettings.setFile(file);
-	}
+    public void setFile(File file) {
+        antSettings.setFile(file);
+    }
 
-	public void setHost(String host) {
-		antSettings.setHost(host);
-	}
+    public void setHost(String host) {
+        antSettings.setHost(host);
+    }
 
-	public void setPasswd(String passwd) {
-		antSettings.setPasswd(passwd);
-	}
+    public void setPasswd(String passwd) {
+        antSettings.setPasswd(passwd);
+    }
 
-	public void setProject(Project prj) {
-		super.setProject(prj);
-		antSettings.setProject(prj);
-	}
+    public void setProject(Project prj) {
+        super.setProject(prj);
+        antSettings.setProject(prj);
+    }
 
-	public void setRealm(String realm) {
-		antSettings.setRealm(realm);
-	}
+    public void setRealm(String realm) {
+        antSettings.setRealm(realm);
+    }
 
-	public void setUrl(String confUrl) throws MalformedURLException {
-		antSettings.setUrl(confUrl);
-	}
+    public void setUrl(String confUrl) throws MalformedURLException {
+        antSettings.setUrl(confUrl);
+    }
 
-	public void setUsername(String userName) {
-		antSettings.setUsername(userName);
-	}
+    public void setUsername(String userName) {
+        antSettings.setUsername(userName);
+    }
 
 }

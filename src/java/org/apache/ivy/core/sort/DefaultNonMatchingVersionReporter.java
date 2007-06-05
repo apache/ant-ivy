@@ -24,25 +24,26 @@ import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.util.Message;
 
 /**
- * A default implementation of the reporter used in the sort.  The reporting is isolated here to make
- * it easier to test, and to have a place where adding different type of reporting (silent, warning, exceptions) 
+ * A default implementation of the reporter used in the sort. The reporting is isolated here to make
+ * it easier to test, and to have a place where adding different type of reporting (silent, warning,
+ * exceptions)
  */
 public class DefaultNonMatchingVersionReporter implements NonMatchingVersionReporter {
 
-	public void reportNonMatchingVersion(DependencyDescriptor descriptor, ModuleDescriptor md) {
-    	ModuleRevisionId dependencyRevisionId = descriptor.getDependencyRevisionId();
-    	ModuleRevisionId parentRevisionId = descriptor.getParentRevisionId();
-    	if (parentRevisionId==null) {
-    		//There are some rare case where DependencyDescriptor have no parent.  
-    		//This is should not be used in the SortEngine, but if it is, we show a decent trace.
-    		Message.warn("Non matching revision detected.  Dependency " + dependencyRevisionId +
-        			" doesn't match " + md);
-    	} else {
-    		ModuleId parentModuleId = parentRevisionId.getModuleId(); 
-    		Message.warn("Non matching revision detected.  " + parentModuleId + " depends on " 
-    				+ dependencyRevisionId + ", doesn't match " + md);
-    	}
+    public void reportNonMatchingVersion(DependencyDescriptor descriptor, ModuleDescriptor md) {
+        ModuleRevisionId dependencyRevisionId = descriptor.getDependencyRevisionId();
+        ModuleRevisionId parentRevisionId = descriptor.getParentRevisionId();
+        if (parentRevisionId == null) {
+            // There are some rare case where DependencyDescriptor have no parent.
+            // This is should not be used in the SortEngine, but if it is, we show a decent trace.
+            Message.warn("Non matching revision detected.  Dependency " + dependencyRevisionId
+                    + " doesn't match " + md);
+        } else {
+            ModuleId parentModuleId = parentRevisionId.getModuleId();
+            Message.warn("Non matching revision detected.  " + parentModuleId + " depends on "
+                    + dependencyRevisionId + ", doesn't match " + md);
+        }
 
-	}
+    }
 
 }

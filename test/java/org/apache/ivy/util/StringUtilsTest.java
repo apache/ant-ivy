@@ -20,10 +20,12 @@ package org.apache.ivy.util;
 import junit.framework.TestCase;
 
 public class StringUtilsTest extends TestCase {
-	public void testEncryption() {
-		assertEquals("apache", StringUtils.decrypt(StringUtils.encrypt("apache")));
-		assertEquals("yet another string with 126 digits and others :;%_-$& characters", StringUtils.decrypt(StringUtils.encrypt("yet another string with 126 digits and others :;%_-$& characters")));
-		
-		assertFalse("apache".equals(StringUtils.encrypt("apache")));
-	}
+    public void testEncryption() {
+        assertEquals("apache", StringUtils.decrypt(StringUtils.encrypt("apache")));
+        assertEquals("yet another string with 126 digits and others :;%_-$& characters",
+            StringUtils.decrypt(StringUtils
+                    .encrypt("yet another string with 126 digits and others :;%_-$& characters")));
+
+        assertFalse("apache".equals(StringUtils.encrypt("apache")));
+    }
 }

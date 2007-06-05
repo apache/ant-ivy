@@ -17,7 +17,6 @@
  */
 package org.apache.ivy.plugins.repository.ssh;
 
-
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -37,110 +36,125 @@ import com.jcraft.jsch.ChannelExec;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
 
-
 /**
  * Ivy Repository based on SSH
  */
 public class SshRepository extends AbstractSshBasedRepository {
 
-	private char fileSeparator = '/';
+    private char fileSeparator = '/';
+
     private String listCommand = "ls -1";
+
     private String existCommand = "ls";
+
     private String createDirCommand = "mkdir";
+
     private final static String ARGUMENT_PLACEHOLDER = "%arg";
-	private final static int POLL_SLEEP_TIME = 500;
+
+    private final static int POLL_SLEEP_TIME = 500;
+
     /**
      * create a new resource with lazy initializing
      */
     public Resource getResource(String source) {
-        Message.debug("SShRepository:getResource called: "+source);
-        return new SshResource(this,source);
+        Message.debug("SShRepository:getResource called: " + source);
+        return new SshResource(this, source);
     }
-    
+
     /**
-     * fetch the needed file information for a given file (size, last modification time)
-     * and report it back in a SshResource
-     * @param uri ssh uri for the file to get info for
+     * fetch the needed file information for a given file (size, last modification time) and report
+     * it back in a SshResource
+     * 
+     * @param uri
+     *            ssh uri for the file to get info for
      * @return SshResource filled with the needed informations
-	 * @see org.apache.ivy.plugins.repository.Repository#getResource(java.lang.String)
-	 */
-	public SshResource resolveResource(String source) {
-		Message.debug("SShRepository:resolveResource called: "+source);
-		SshResource result = null;
+     * @see org.apache.ivy.plugins.repository.Repository#getResource(java.lang.String)
+     */
+    public SshResource resolveResource(String source) {
+        Message.debug("SShRepository:resolveResource called: " + source);
+        SshResource result = null;
         Session session = null;
-		try {
+        try {
             session = getSession(source);
             Scp myCopy = new Scp(session);
             Scp.FileInfo fileInfo = myCopy.getFileinfo(new URI(source).getPath());
-            result = new SshResource(this,
-                                     source,
-                                     true,
-                                     fileInfo.getLength(),
-                                     fileInfo.getLastModified());
+            result = new SshResource(this, source, true, fileInfo.getLength(), fileInfo
+                    .getLastModified());
         } catch (IOException e) {
-            if(session != null)
-                releaseSession(session,source);
+            if (session != null)
+                releaseSession(session, source);
             result = new SshResource();
         } catch (URISyntaxException e) {
-             if(session != null)
-                 releaseSession(session,source);
-             result = new SshResource();
+            if (session != null)
+                releaseSession(session, source);
+            result = new SshResource();
         } catch (RemoteScpException e) {
             result = new SshResource();
         }
         Message.debug("SShRepository:resolveResource end.");
-		return result;
-	}
+        return result;
+    }
 
     /**
      * Reads out the output of a ssh session exec
-     * @param channel Channel to read from
-     * @param strStdout StringBuffer that receives Session Stdout output
-     * @param strStderr StringBuffer that receives Session Stderr output
-     * @throws IOException in case of trouble with the network
+     * 
+     * @param channel
+     *            Channel to read from
+     * @param strStdout
+     *            StringBuffer that receives Session Stdout output
+     * @param strStderr
+     *            StringBuffer that receives Session Stderr output
+     * @throws IOException
+     *             in case of trouble with the network
      */
-    private void readSessionOutput(ChannelExec channel, StringBuffer strStdout, StringBuffer strStderr) throws IOException {
+    private void readSessionOutput(ChannelExec channel, StringBuffer strStdout,
+            StringBuffer strStderr) throws IOException {
         InputStream stdout = channel.getInputStream();
         InputStream stderr = channel.getErrStream();
-        
+
         try {
             channel.connect();
         } catch (JSchException e1) {
             throw (IOException) new IOException("Channel connection problems").initCause(e1);
         }
-        
+
         byte[] buffer = new byte[8192];
-        while(true){
+        while (true) {
             int avail = 0;
             while ((avail = stdout.available()) > 0) {
-                int len = stdout.read(buffer,0,(avail > 8191 ? 8192 : avail));
-                strStdout.append(new String(buffer,0,len));
+                int len = stdout.read(buffer, 0, (avail > 8191 ? 8192 : avail));
+                strStdout.append(new String(buffer, 0, len));
             }
             while ((avail = stderr.available()) > 0) {
-                int len = stderr.read(buffer,0,(avail > 8191 ? 8192 : avail));
+                int len = stderr.read(buffer, 0, (avail > 8191 ? 8192 : avail));
                 strStderr.append(new String(buffer, 0, len));
             }
-            if(channel.isClosed()){
+            if (channel.isClosed()) {
                 break;
             }
-            try{Thread.sleep(POLL_SLEEP_TIME);}catch(Exception ee){}
+            try {
+                Thread.sleep(POLL_SLEEP_TIME);
+            } catch (Exception ee) {
+            }
         }
         int avail = 0;
         while ((avail = stdout.available()) > 0) {
-            int len = stdout.read(buffer,0,(avail > 8191 ? 8192 : avail));
-            strStdout.append(new String(buffer,0,len));
+            int len = stdout.read(buffer, 0, (avail > 8191 ? 8192 : avail));
+            strStdout.append(new String(buffer, 0, len));
         }
         while ((avail = stderr.available()) > 0) {
-            int len = stderr.read(buffer,0,(avail > 8191 ? 8192 : avail));
+            int len = stderr.read(buffer, 0, (avail > 8191 ? 8192 : avail));
             strStderr.append(new String(buffer, 0, len));
         }
     }
 
-	/* (non-Javadoc)
-	 * @see org.apache.ivy.repository.Repository#list(java.lang.String)
-	 */
-	public List list(String parent) throws IOException {
-		Message.debug("SShRepository:list called: "+parent);
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.apache.ivy.repository.Repository#list(java.lang.String)
+     */
+    public List list(String parent) throws IOException {
+        Message.debug("SShRepository:list called: " + parent);
         ArrayList result = new ArrayList();
         Session session = null;
         ChannelExec channel = null;
@@ -152,24 +166,24 @@ public class SshRepository extends AbstractSshBasedRepository {
         } catch (URISyntaxException e1) {
             // failed earlier
         }
-        String fullCmd = replaceArgument(listCommand,parentUri.getPath());
+        String fullCmd = replaceArgument(listCommand, parentUri.getPath());
         channel.setCommand(fullCmd);
         StringBuffer stdOut = new StringBuffer();
         StringBuffer stdErr = new StringBuffer();
-        readSessionOutput(channel,stdOut,stdErr);
-        if(channel.getExitStatus() != 0) {
+        readSessionOutput(channel, stdOut, stdErr);
+        if (channel.getExitStatus() != 0) {
             Message.error("Ssh ListCommand exited with status != 0");
             Message.error(stdErr.toString());
             return null;
         } else {
             BufferedReader br = new BufferedReader(new StringReader(stdOut.toString()));
             String line = null;
-            while((line = br.readLine()) != null) {
+            while ((line = br.readLine()) != null) {
                 result.add(line);
             }
         }
-		return result;
-	}
+        return result;
+    }
 
     /**
      * @param session
@@ -179,7 +193,7 @@ public class SshRepository extends AbstractSshBasedRepository {
     private ChannelExec getExecChannel(Session session) throws IOException {
         ChannelExec channel;
         try {
-            channel = (ChannelExec)session.openChannel("exec");
+            channel = (ChannelExec) session.openChannel("exec");
         } catch (JSchException e) {
             throw new IOException();
         }
@@ -187,27 +201,31 @@ public class SshRepository extends AbstractSshBasedRepository {
     }
 
     /**
-     * Replace the argument placeholder with argument or append the argument if no 
-     * placeholder is present
-     * @param command with argument placeholder or not
-     * @param argument 
+     * Replace the argument placeholder with argument or append the argument if no placeholder is
+     * present
+     * 
+     * @param command
+     *            with argument placeholder or not
+     * @param argument
      * @return replaced full command
      */
     private String replaceArgument(String command, String argument) {
         String fullCmd;
-        if(command.indexOf(ARGUMENT_PLACEHOLDER) == -1) {
+        if (command.indexOf(ARGUMENT_PLACEHOLDER) == -1) {
             fullCmd = command + " " + argument;
         } else {
-            fullCmd = command.replaceAll(ARGUMENT_PLACEHOLDER,argument);
+            fullCmd = command.replaceAll(ARGUMENT_PLACEHOLDER, argument);
         }
         return fullCmd;
     }
 
-	/* (non-Javadoc)
-	 * @see org.apache.ivy.repository.Repository#put(java.io.File, java.lang.String, boolean)
-	 */
-	public void put(File source, String destination, boolean overwrite) throws IOException {
-		Message.debug("SShRepository:put called: "+destination);
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.apache.ivy.repository.Repository#put(java.io.File, java.lang.String, boolean)
+     */
+    public void put(File source, String destination, boolean overwrite) throws IOException {
+        Message.debug("SShRepository:put called: " + destination);
         Session session = getSession(destination);
         try {
             URI destinationUri = null;
@@ -220,87 +238,96 @@ public class SshRepository extends AbstractSshBasedRepository {
             int lastSep = filePath.lastIndexOf(fileSeparator);
             String path;
             String name;
-            if(lastSep == -1) {
+            if (lastSep == -1) {
                 name = filePath;
                 path = null;
             } else {
-                name = filePath.substring(lastSep+1);
-                path = filePath.substring(0,lastSep);
+                name = filePath.substring(lastSep + 1);
+                path = filePath.substring(0, lastSep);
             }
             if (!overwrite) {
-                if(checkExistence(filePath,session)) {
+                if (checkExistence(filePath, session)) {
                     throw new IOException("destination file exists and overwrite == true");
                 }
             }
-            if(path != null) {
-                makePath(path,session);
+            if (path != null) {
+                makePath(path, session);
             }
             Scp myCopy = new Scp(session);
-            myCopy.put(source.getCanonicalPath(),path,name);  
+            myCopy.put(source.getCanonicalPath(), path, name);
         } catch (IOException e) {
-            if(session != null)
-                releaseSession(session,destination);
+            if (session != null)
+                releaseSession(session, destination);
             throw e;
         } catch (RemoteScpException e) {
             throw new IOException(e.getMessage());
         }
-	}
-    
+    }
+
     /**
      * Tries to create a directory path on the target system
-     * @param path to create
-     * @param connnection to use
+     * 
+     * @param path
+     *            to create
+     * @param connnection
+     *            to use
      */
     private void makePath(String path, Session session) throws IOException {
         ChannelExec channel = null;
         String trimmed = path;
         try {
-            while(trimmed.length() > 0 && trimmed.charAt(trimmed.length()-1) == fileSeparator)
-                trimmed = trimmed.substring(0,trimmed.length()-1);
-            if(trimmed.length() == 0 || checkExistence(trimmed,session)) {
+            while (trimmed.length() > 0 && trimmed.charAt(trimmed.length() - 1) == fileSeparator)
+                trimmed = trimmed.substring(0, trimmed.length() - 1);
+            if (trimmed.length() == 0 || checkExistence(trimmed, session)) {
                 return;
             }
             int nextSlash = trimmed.lastIndexOf(fileSeparator);
-            if(nextSlash > 0) {
-                String parent = trimmed.substring(0,nextSlash);
-                makePath(parent,session);
+            if (nextSlash > 0) {
+                String parent = trimmed.substring(0, nextSlash);
+                makePath(parent, session);
             }
             channel = getExecChannel(session);
-            String mkdir = replaceArgument( createDirCommand, trimmed);
+            String mkdir = replaceArgument(createDirCommand, trimmed);
             Message.debug("SShRepository: trying to create path: " + mkdir);
             channel.setCommand(mkdir);
             StringBuffer stdOut = new StringBuffer();
             StringBuffer stdErr = new StringBuffer();
-            readSessionOutput(channel,stdOut,stdErr);
+            readSessionOutput(channel, stdOut, stdErr);
         } finally {
-            if(channel != null)
+            if (channel != null)
                 channel.disconnect();
         }
     }
 
     /**
      * check for existence of file or dir on target system
-     * @param filePath to the object to check
-     * @param session to use
+     * 
+     * @param filePath
+     *            to the object to check
+     * @param session
+     *            to use
      * @return true: object exists, false otherwise
      */
     private boolean checkExistence(String filePath, Session session) throws IOException {
         Message.debug("SShRepository: checkExistence called: " + filePath);
         ChannelExec channel = null;
         channel = getExecChannel(session);
-        String fullCmd = replaceArgument( existCommand, filePath);
+        String fullCmd = replaceArgument(existCommand, filePath);
         channel.setCommand(fullCmd);
         StringBuffer stdOut = new StringBuffer();
         StringBuffer stdErr = new StringBuffer();
-        readSessionOutput(channel,stdOut,stdErr);
+        readSessionOutput(channel, stdOut, stdErr);
         return channel.getExitStatus() == 0;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.apache.ivy.repository.Repository#get(java.lang.String, java.io.File)
      */
     public void get(String source, File destination) throws IOException {
-        Message.debug("SShRepository:get called: "+source+" to "+destination.getCanonicalPath());
+        Message.debug("SShRepository:get called: " + source + " to "
+                + destination.getCanonicalPath());
         if (destination.getParentFile() != null) {
             destination.getParentFile().mkdirs();
         }
@@ -312,15 +339,15 @@ public class SshRepository extends AbstractSshBasedRepository {
             } catch (URISyntaxException e) {
                 // fails earlier
             }
-            if(sourceUri == null) {
-                Message.error("could not parse URI "+source);
+            if (sourceUri == null) {
+                Message.error("could not parse URI " + source);
                 return;
             }
             Scp myCopy = new Scp(session);
-            myCopy.get(sourceUri.getPath(),destination.getCanonicalPath());   
+            myCopy.get(sourceUri.getPath(), destination.getCanonicalPath());
         } catch (IOException e) {
-            if(session != null)
-                releaseSession(session,source);
+            if (session != null)
+                releaseSession(session, source);
             throw e;
         } catch (RemoteScpException e) {
             throw new IOException(e.getMessage());
@@ -328,21 +355,23 @@ public class SshRepository extends AbstractSshBasedRepository {
     }
 
     /**
-     * sets the list command to use for a directory listing
-     * listing must be only the filename and each filename on a separate line
-     * @param cmd to use. default is "ls -1"
+     * sets the list command to use for a directory listing listing must be only the filename and
+     * each filename on a separate line
+     * 
+     * @param cmd
+     *            to use. default is "ls -1"
      */
     public void setListCommand(String cmd) {
         this.listCommand = cmd.trim();
     }
-    
+
     /**
      * @return the list command to use
      */
     public String getListCommand() {
         return listCommand;
     }
-    
+
     /**
      * @return the createDirCommand
      */
@@ -351,7 +380,8 @@ public class SshRepository extends AbstractSshBasedRepository {
     }
 
     /**
-     * @param createDirCommand the createDirCommand to set
+     * @param createDirCommand
+     *            the createDirCommand to set
      */
     public void setCreateDirCommand(String createDirCommand) {
         this.createDirCommand = createDirCommand;
@@ -365,34 +395,38 @@ public class SshRepository extends AbstractSshBasedRepository {
     }
 
     /**
-     * @param existCommand the existCommand to set
+     * @param existCommand
+     *            the existCommand to set
      */
     public void setExistCommand(String existCommand) {
         this.existCommand = existCommand;
     }
 
     /**
-     * The file separator is the separator to use on the target system 
-     * On a unix system it is '/', but I don't know, how this is solved 
-     * on different ssh implementations. Using the default might be fine
-     * @param fileSeparator The fileSeparator to use. default '/'
+     * The file separator is the separator to use on the target system On a unix system it is '/',
+     * but I don't know, how this is solved on different ssh implementations. Using the default
+     * might be fine
+     * 
+     * @param fileSeparator
+     *            The fileSeparator to use. default '/'
      */
     public void setFileSeparator(char fileSeparator) {
         this.fileSeparator = fileSeparator;
     }
 
     /**
-     * return ssh as scheme
-     * use the Resolver type name here? 
-     * would be nice if it would be static, so we could use SshResolver.getTypeName()
+     * return ssh as scheme use the Resolver type name here? would be nice if it would be static, so
+     * we could use SshResolver.getTypeName()
      */
     protected String getRepositoryScheme() {
         return "ssh";
     }
-    
+
     /**
      * Not really streaming...need to implement a proper streaming approach?
-     * @param resource to stream
+     * 
+     * @param resource
+     *            to stream
      * @return InputStream of the resource data
      */
     public InputStream openStream(SshResource resource) throws IOException {
@@ -400,10 +434,10 @@ public class SshRepository extends AbstractSshBasedRepository {
         Scp scp = new Scp(session);
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         try {
-            scp.get(resource.getName(),os);
+            scp.get(resource.getName(), os);
         } catch (IOException e) {
-            if(session != null)
-                releaseSession(session,resource.getName());
+            if (session != null)
+                releaseSession(session, resource.getName());
             throw e;
         } catch (RemoteScpException e) {
             throw new IOException(e.getMessage());
