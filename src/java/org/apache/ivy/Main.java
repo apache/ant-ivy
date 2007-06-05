@@ -19,6 +19,7 @@ package org.apache.ivy;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -62,17 +63,13 @@ import org.apache.ivy.util.url.URLHandlerDispatcher;
 import org.apache.ivy.util.url.URLHandlerRegistry;
 
 /**
- * class used to launch ivy as a standalone tool arguments are : -settings <settingsfile> :
- * indicates the path to the ivy settings file ivysettings.xml is assumed if not given -cache
- * <cachedir> : indicates the path to the cache directory cache is assumed if not given -ivy
- * <ivyfile> : indicates the path to the ivy file to use ivy.xml is assumed if not given -retrieve
- * <retrievepattern> : when used, retrieve is also done using the given retrievepattern -revision
- * <revision> : the revision with which the module should be published, required to publish -status
- * <status> : the status with which the module should be published, release is assumed if not given
- * -publish <publishpattern> : the pattern used to publish the resolved ivy file, ivy-[revision].xml
- * is assumed if not given
+ * Class used to launch ivy as a standalone tool.
+ * <p>
+ * Valid arguments can be obtained with the -? argument. 
  */
-public class Main {
+public final class Main {
+    private static final int DEPENDENCY_ARG_COUNT = 3;
+
     private static Options getOptions() {
         Option settings = OptionBuilder.withArgName("settingsfile").hasArg().withDescription(
             "use given file for settings").create("settings");
@@ -86,7 +83,8 @@ public class Main {
                 .withArgName("organisation module revision")
                 .hasArgs()
                 .withDescription(
-                    "use this instead of ivy file to do the rest of the work with this as a dependency.")
+                    "use this instead of ivy file to do the rest "
+                    + "of the work with this as a dependency.")
                 .create("dependency");
         Option confs = OptionBuilder.withArgName("configurations").hasArgs().withDescription(
             "resolve given configurations").create("confs");
@@ -96,7 +94,9 @@ public class Main {
                 .withArgName("cachepathfile")
                 .hasArg()
                 .withDescription(
-                    "outputs a classpath consisting of all dependencies in cache (including transitive ones) of the given ivy file to the given cachepathfile")
+                    "outputs a classpath consisting of all dependencies in cache "
+                    + "(including transitive ones) "
+                    + "of the given ivy file to the given cachepathfile")
                 .create("cachepath");
         Option revision = OptionBuilder.withArgName("revision").hasArg().withDescription(
             "use given revision to publish the module").create("revision");
@@ -169,48 +169,12 @@ public class Main {
                 return;
             }
 
-            if (line.hasOption("debug")) {
-                Message.init(new DefaultMessageImpl(Message.MSG_DEBUG));
-            } else if (line.hasOption("verbose")) {
-                Message.init(new DefaultMessageImpl(Message.MSG_VERBOSE));
-            } else if (line.hasOption("warn")) {
-                Message.init(new DefaultMessageImpl(Message.MSG_WARN));
-            } else if (line.hasOption("error")) {
-                Message.init(new DefaultMessageImpl(Message.MSG_ERR));
-            } else {
-                Message.init(new DefaultMessageImpl(Message.MSG_INFO));
-            }
+            initMessage(line);
 
             boolean validate = line.hasOption("novalidate") ? false : true;
 
             Ivy ivy = Ivy.newInstance();
-            IvySettings settings = ivy.getSettings();
-            settings.addAllVariables(System.getProperties());
-            if (line.hasOption("m2compatible")) {
-                settings.setVariable("ivy.default.configuration.m2compatible", "true");
-            }
-
-            configureURLHandler(line.getOptionValue("realm", null), line.getOptionValue("host",
-                null), line.getOptionValue("username", null), line.getOptionValue("passwd", null));
-
-            String settingsPath = line.getOptionValue("settings", "");
-            if ("".equals(settingsPath)) {
-                settingsPath = line.getOptionValue("conf", "");
-                if (!"".equals(settingsPath)) {
-                    Message.deprecated("-conf is deprecated, use -settings instead");
-                }
-            }
-            if ("".equals(settingsPath)) {
-                ivy.configureDefault();
-            } else {
-                File conffile = new File(settingsPath);
-                if (!conffile.exists()) {
-                    error(options, "ivy configuration file not found: " + conffile);
-                } else if (conffile.isDirectory()) {
-                    error(options, "ivy configuration file is not a file: " + conffile);
-                }
-                ivy.configure(conffile);
-            }
+            IvySettings settings = initSettings(line, options, ivy);
 
             File cache = new File(settings.substitute(line.getOptionValue("cache", settings
                     .getDefaultCache().getAbsolutePath())));
@@ -231,9 +195,10 @@ public class Main {
             File ivyfile;
             if (line.hasOption("dependency")) {
                 String[] dep = line.getOptionValues("dependency");
-                if (dep.length != 3) {
+                if (dep.length != DEPENDENCY_ARG_COUNT) {
                     error(options,
-                        "dependency should be expressed with exactly 3 arguments: organisation module revision");
+                        "dependency should be expressed with exactly 3 arguments: "
+                        + "organisation module revision");
                 }
                 ivyfile = File.createTempFile("ivy", ".xml");
                 ivyfile.deleteOnExit();
@@ -323,6 +288,52 @@ public class Main {
         }
     }
 
+    private static IvySettings initSettings(CommandLine line, Options options, Ivy ivy) 
+            throws java.text.ParseException, IOException {
+        IvySettings settings = ivy.getSettings();
+        settings.addAllVariables(System.getProperties());
+        if (line.hasOption("m2compatible")) {
+            settings.setVariable("ivy.default.configuration.m2compatible", "true");
+        }
+
+        configureURLHandler(line.getOptionValue("realm", null), line.getOptionValue("host",
+            null), line.getOptionValue("username", null), line.getOptionValue("passwd", null));
+
+        String settingsPath = line.getOptionValue("settings", "");
+        if ("".equals(settingsPath)) {
+            settingsPath = line.getOptionValue("conf", "");
+            if (!"".equals(settingsPath)) {
+                Message.deprecated("-conf is deprecated, use -settings instead");
+            }
+        }
+        if ("".equals(settingsPath)) {
+            ivy.configureDefault();
+        } else {
+            File conffile = new File(settingsPath);
+            if (!conffile.exists()) {
+                error(options, "ivy configuration file not found: " + conffile);
+            } else if (conffile.isDirectory()) {
+                error(options, "ivy configuration file is not a file: " + conffile);
+            }
+            ivy.configure(conffile);
+        }
+        return settings;
+    }
+
+    private static void initMessage(CommandLine line) {
+        if (line.hasOption("debug")) {
+            Message.init(new DefaultMessageImpl(Message.MSG_DEBUG));
+        } else if (line.hasOption("verbose")) {
+            Message.init(new DefaultMessageImpl(Message.MSG_VERBOSE));
+        } else if (line.hasOption("warn")) {
+            Message.init(new DefaultMessageImpl(Message.MSG_WARN));
+        } else if (line.hasOption("error")) {
+            Message.init(new DefaultMessageImpl(Message.MSG_ERR));
+        } else {
+            Message.init(new DefaultMessageImpl(Message.MSG_INFO));
+        }
+    }
+
     private static void outputCachePath(Ivy ivy, File cache, ModuleDescriptor md, String[] confs,
             String outFile) {
         try {
@@ -353,7 +364,8 @@ public class Main {
             System.out.println("cachepath output to " + outFile);
 
         } catch (Exception ex) {
-            throw new RuntimeException("impossible to build ivy cache path: " + ex.getMessage(), ex);
+            throw new RuntimeException(
+                "impossible to build ivy cache path: " + ex.getMessage(), ex);
         }
     }
 
@@ -379,7 +391,8 @@ public class Main {
                 urls.add(cacheMgr.getArchiveFileInCache(artifact).toURL());
             }
         } catch (Exception ex) {
-            throw new RuntimeException("impossible to build ivy cache path: " + ex.getMessage(), ex);
+            throw new RuntimeException(
+                "impossible to build ivy cache path: " + ex.getMessage(), ex);
         }
 
         URLClassLoader classLoader = new URLClassLoader((URL[]) urls.toArray(new URL[urls.size()]),
@@ -401,7 +414,8 @@ public class Main {
         } catch (IllegalAccessException e) {
             throw new RuntimeException("No permissions to invoke main method: " + mainclass, e);
         } catch (InvocationTargetException e) {
-            throw new RuntimeException("Unexpected exception invoking main method: " + mainclass, e);
+            throw new RuntimeException(
+                "Unexpected exception invoking main method: " + mainclass, e);
         }
     }
 
@@ -428,4 +442,6 @@ public class Main {
         formatter.printHelp("ivy", options);
     }
 
+    private Main() {
+    }
 }

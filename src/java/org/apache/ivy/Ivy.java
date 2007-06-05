@@ -18,7 +18,6 @@
 package org.apache.ivy;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
 import java.text.ParseException;
@@ -62,18 +61,26 @@ import org.apache.ivy.util.Message;
 import org.apache.ivy.util.filter.Filter;
 
 /**
- * <a href="http://incubator.apache.org/ivy/">Ivy</a> is a free java based dependency manager. This
- * class is the main class of Ivy, which acts as a Facade to all services offered by Ivy:
+ * <a href="http://incubator.apache.org/ivy/">Ivy</a> is a free java based dependency manager.
+ * <p>
+ * This class is the main class of Ivy, which acts as a Facade to all services offered by Ivy:
  * <ul>
  * <li>resolve dependencies</li>
  * <li>retrieve artifacts to a local location</li>
  * <li>deliver and publish modules</li>
  * <li>repository search and listing</li>
  * </li>
- * Here is one typical usage: Ivy ivy = Ivy.newInstance(); ivy.configure(new
- * URL("ivysettings.xml")); ivy.resolve(new URL("ivy.xml"));
+ * Here is one typical usage:
+ * 
+ * <pre>
+ * Ivy ivy = Ivy.newInstance();
+ * ivy.configure(new URL(&quot;ivysettings.xml&quot;));
+ * ivy.resolve(new URL(&quot;ivy.xml&quot;));
+ * </pre>
  */
 public class Ivy {
+    private static final int KILO = 1024;
+
     public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyyMMddHHmmss");
 
     public static Ivy newInstance() {
@@ -92,39 +99,39 @@ public class Ivy {
     /**
      * True if the current processing has been requested to be interrupted, false otherwise
      */
-    private boolean _interrupted;
+    private boolean interrupted;
 
     /**
      * True if this instance of Ivy hass already been bound to its dependencies, false otherwise.
      * 
      * @see bind()
      */
-    private boolean _bound;
+    private boolean bound;
 
     /*
      * Following are dependencies of the Ivy instance on instances of engines and manager which
      * actually do the work The attributes can be set either manually using the corresponding
      * setters, or all at once with the default implementations using the bind method
      */
-    private IvySettings _settings;
+    private IvySettings settings;
 
-    private EventManager _eventManager;
+    private EventManager eventManager;
 
-    private SortEngine _sortEngine;
+    private SortEngine sortEngine;
 
-    private SearchEngine _searchEngine;
+    private SearchEngine searchEngine;
 
-    private CheckEngine _checkEngine;
+    private CheckEngine checkEngine;
 
-    private ResolveEngine _resolveEngine;
+    private ResolveEngine resolveEngine;
 
-    private RetrieveEngine _retrieveEngine;
+    private RetrieveEngine retrieveEngine;
 
-    private DeliverEngine _deliverEngine;
+    private DeliverEngine deliverEngine;
 
-    private PublishEngine _publishEngine;
+    private PublishEngine publishEngine;
 
-    private InstallEngine _installEngine;
+    private InstallEngine installEngine;
 
     /**
      * The default constructor of Ivy allows to create an instance of Ivy with none of its
@@ -144,43 +151,42 @@ public class Ivy {
      */
     public void bind() {
         IvyContext.getContext().setIvy(this);
-        if (_settings == null) {
-            _settings = new IvySettings();
+        if (settings == null) {
+            settings = new IvySettings();
         }
-        if (_eventManager == null) {
-            _eventManager = new EventManager();
+        if (eventManager == null) {
+            eventManager = new EventManager();
         }
-        if (_sortEngine == null) {
-            _sortEngine = new SortEngine(_settings);
+        if (sortEngine == null) {
+            sortEngine = new SortEngine(settings);
         }
-        if (_searchEngine == null) {
-            _searchEngine = new SearchEngine(_settings);
+        if (searchEngine == null) {
+            searchEngine = new SearchEngine(settings);
         }
-        if (_resolveEngine == null) {
-            _resolveEngine = new ResolveEngine(_settings, _eventManager, _sortEngine);
+        if (resolveEngine == null) {
+            resolveEngine = new ResolveEngine(settings, eventManager, sortEngine);
         }
-        if (_retrieveEngine == null) {
-            _retrieveEngine = new RetrieveEngine(_settings);
+        if (retrieveEngine == null) {
+            retrieveEngine = new RetrieveEngine(settings);
         }
-        if (_deliverEngine == null) {
-            _deliverEngine = new DeliverEngine(_settings);
+        if (deliverEngine == null) {
+            deliverEngine = new DeliverEngine(settings);
         }
-        if (_publishEngine == null) {
-            _publishEngine = new PublishEngine(_settings);
+        if (publishEngine == null) {
+            publishEngine = new PublishEngine(settings);
         }
-        if (_installEngine == null) {
-            _installEngine = new InstallEngine(_settings, _searchEngine, _resolveEngine,
-                    _publishEngine);
+        if (installEngine == null) {
+            installEngine = new InstallEngine(settings, searchEngine, resolveEngine, publishEngine);
         }
 
-        _eventManager.addTransferListener(new TransferListener() {
+        eventManager.addTransferListener(new TransferListener() {
             public void transferProgress(TransferEvent evt) {
                 switch (evt.getEventType()) {
                     case TransferEvent.TRANSFER_PROGRESS:
                         Message.progress();
                         break;
                     case TransferEvent.TRANSFER_COMPLETED:
-                        Message.endProgress(" (" + (evt.getTotalLength() / 1024) + "kB)");
+                        Message.endProgress(" (" + (evt.getTotalLength() / KILO) + "kB)");
                         break;
                     default:
                         break;
@@ -188,7 +194,7 @@ public class Ivy {
             }
         });
 
-        _bound = true;
+        bound = true;
     }
 
     // ///////////////////////////////////////////////////////////////////////
@@ -196,19 +202,19 @@ public class Ivy {
     // ///////////////////////////////////////////////////////////////////////
     public void configure(File settingsFile) throws ParseException, IOException {
         assertBound();
-        _settings.load(settingsFile);
+        settings.load(settingsFile);
         postConfigure();
     }
 
     public void configure(URL settingsURL) throws ParseException, IOException {
         assertBound();
-        _settings.load(settingsURL);
+        settings.load(settingsURL);
         postConfigure();
     }
 
     public void configureDefault() throws ParseException, IOException {
         assertBound();
-        _settings.loadDefault();
+        settings.loadDefault();
         postConfigure();
     }
 
@@ -217,7 +223,7 @@ public class Ivy {
      */
     public void configureDefault14() throws ParseException, IOException {
         assertBound();
-        _settings.loadDefault14();
+        settings.loadDefault14();
         postConfigure();
     }
 
@@ -225,7 +231,7 @@ public class Ivy {
     // CHECK
     // ///////////////////////////////////////////////////////////////////////
     public boolean check(URL ivyFile, String resolvername) {
-        return _checkEngine.check(ivyFile, resolvername);
+        return checkEngine.check(ivyFile, resolvername);
     }
 
     // ///////////////////////////////////////////////////////////////////////
@@ -233,26 +239,26 @@ public class Ivy {
     // ///////////////////////////////////////////////////////////////////////
 
     public ResolveReport resolve(File ivySource) throws ParseException, IOException {
-        return _resolveEngine.resolve(ivySource);
+        return resolveEngine.resolve(ivySource);
     }
 
     public ResolveReport resolve(URL ivySource) throws ParseException, IOException {
-        return _resolveEngine.resolve(ivySource);
+        return resolveEngine.resolve(ivySource);
     }
 
     public ResolveReport resolve(ModuleRevisionId mrid, ResolveOptions options, boolean changing)
             throws ParseException, IOException {
-        return _resolveEngine.resolve(mrid, options, changing);
+        return resolveEngine.resolve(mrid, options, changing);
     }
 
     public ResolveReport resolve(URL ivySource, ResolveOptions options) throws ParseException,
             IOException {
-        return _resolveEngine.resolve(ivySource, options);
+        return resolveEngine.resolve(ivySource, options);
     }
 
     public ResolveReport resolve(ModuleDescriptor md, ResolveOptions options)
-            throws ParseException, IOException, FileNotFoundException {
-        return _resolveEngine.resolve(md, options);
+            throws ParseException, IOException {
+        return resolveEngine.resolve(md, options);
     }
 
     // ///////////////////////////////////////////////////////////////////////
@@ -262,7 +268,7 @@ public class Ivy {
     public ResolveReport install(ModuleRevisionId mrid, String from, String to, boolean transitive,
             boolean validate, boolean overwrite, Filter artifactFilter, File cache,
             String matcherName) throws IOException {
-        return _installEngine.install(mrid, from, to, transitive, validate, overwrite,
+        return installEngine.install(mrid, from, to, transitive, validate, overwrite,
             artifactFilter, cache, matcherName);
     }
 
@@ -272,7 +278,7 @@ public class Ivy {
 
     public int retrieve(ModuleRevisionId mrid, String destFilePattern, RetrieveOptions options)
             throws IOException {
-        return _retrieveEngine.retrieve(mrid, destFilePattern, options);
+        return retrieveEngine.retrieve(mrid, destFilePattern, options);
     }
 
     // ///////////////////////////////////////////////////////////////////////
@@ -281,13 +287,12 @@ public class Ivy {
 
     public void deliver(ModuleRevisionId mrid, String revision, String destIvyPattern)
             throws IOException, ParseException {
-        _deliverEngine.deliver(mrid, revision, destIvyPattern, DeliverOptions
-                .newInstance(_settings));
+        deliverEngine.deliver(mrid, revision, destIvyPattern, DeliverOptions.newInstance(settings));
     }
 
     public void deliver(String revision, String destIvyPattern, DeliverOptions options)
             throws IOException, ParseException {
-        _deliverEngine.deliver(revision, destIvyPattern, options);
+        deliverEngine.deliver(revision, destIvyPattern, options);
     }
 
     /**
@@ -303,7 +308,7 @@ public class Ivy {
      */
     public void deliver(ModuleRevisionId mrid, String revision, String destIvyPattern,
             DeliverOptions options) throws IOException, ParseException {
-        _deliverEngine.deliver(mrid, revision, destIvyPattern, options);
+        deliverEngine.deliver(mrid, revision, destIvyPattern, options);
     }
 
     // ///////////////////////////////////////////////////////////////////////
@@ -312,7 +317,7 @@ public class Ivy {
 
     public Collection publish(ModuleRevisionId mrid, Collection srcArtifactPattern,
             String resolverName, PublishOptions options) throws IOException {
-        return _publishEngine.publish(mrid, srcArtifactPattern, resolverName, options);
+        return publishEngine.publish(mrid, srcArtifactPattern, resolverName, options);
     }
 
     // ///////////////////////////////////////////////////////////////////////
@@ -323,7 +328,7 @@ public class Ivy {
      * Sorts the collection of IvyNode from the less dependent to the more dependent
      */
     public List sortNodes(Collection nodes) {
-        return _sortEngine.sortNodes(nodes);
+        return sortEngine.sortNodes(nodes);
     }
 
     /**
@@ -336,12 +341,12 @@ public class Ivy {
      * @return a List of sorted ModuleDescriptors
      */
     public List sortModuleDescriptors(Collection moduleDescriptors) {
-        return _sortEngine.sortModuleDescriptors(moduleDescriptors);
+        return sortEngine.sortModuleDescriptors(moduleDescriptors);
     }
 
     public List sortModuleDescriptors(Collection moduleDescriptors,
             NonMatchingVersionReporter nonMatchingVersionReporter) {
-        return _sortEngine.sortModuleDescriptors(moduleDescriptors, nonMatchingVersionReporter);
+        return sortEngine.sortModuleDescriptors(moduleDescriptors, nonMatchingVersionReporter);
     }
 
     // ///////////////////////////////////////////////////////////////////////
@@ -351,44 +356,44 @@ public class Ivy {
     public ResolvedModuleRevision findModule(ModuleRevisionId mrid) {
         ResolveOptions options = new ResolveOptions();
         options.setValidate(false);
-        options.setCache(CacheManager.getInstance(_settings));
-        return _resolveEngine.findModule(mrid, options);
+        options.setCache(CacheManager.getInstance(settings));
+        return resolveEngine.findModule(mrid, options);
     }
 
     public ModuleEntry[] listModuleEntries(OrganisationEntry org) {
-        return _searchEngine.listModuleEntries(org);
+        return searchEngine.listModuleEntries(org);
     }
 
     public ModuleId[] listModules(ModuleId criteria, PatternMatcher matcher) {
-        return _searchEngine.listModules(criteria, matcher);
+        return searchEngine.listModules(criteria, matcher);
     }
 
     public ModuleRevisionId[] listModules(ModuleRevisionId criteria, PatternMatcher matcher) {
-        return _searchEngine.listModules(criteria, matcher);
+        return searchEngine.listModules(criteria, matcher);
     }
 
     public String[] listModules(String org) {
-        return _searchEngine.listModules(org);
+        return searchEngine.listModules(org);
     }
 
     public OrganisationEntry[] listOrganisationEntries() {
-        return _searchEngine.listOrganisationEntries();
+        return searchEngine.listOrganisationEntries();
     }
 
     public String[] listOrganisations() {
-        return _searchEngine.listOrganisations();
+        return searchEngine.listOrganisations();
     }
 
     public RevisionEntry[] listRevisionEntries(ModuleEntry module) {
-        return _searchEngine.listRevisionEntries(module);
+        return searchEngine.listRevisionEntries(module);
     }
 
     public String[] listRevisions(String org, String module) {
-        return _searchEngine.listRevisions(org, module);
+        return searchEngine.listRevisions(org, module);
     }
 
     public String[] listTokenValues(String token, Map otherTokenValues) {
-        return _searchEngine.listTokenValues(token, otherTokenValues);
+        return searchEngine.listTokenValues(token, otherTokenValues);
     }
 
     // ///////////////////////////////////////////////////////////////////////
@@ -416,25 +421,27 @@ public class Ivy {
             Message.verbose("interrupting operating thread...");
             operatingThread.interrupt();
             synchronized (this) {
-                _interrupted = true;
+                interrupted = true;
             }
             try {
                 Message.verbose("waiting clean interruption of operating thread");
-                operatingThread.join(_settings.getInterruptTimeout());
+                operatingThread.join(settings.getInterruptTimeout());
             } catch (InterruptedException e) {
+                // reset thread interrupt status
+                Thread.currentThread().interrupt();
             }
             if (operatingThread.isAlive()) {
                 Message.warn("waited clean interruption for too long: stopping operating thread");
                 operatingThread.stop();
             }
             synchronized (this) {
-                _interrupted = false;
+                interrupted = false;
             }
         }
     }
 
     public synchronized boolean isInterrupted() {
-        return _interrupted;
+        return interrupted;
     }
 
     /**
@@ -454,37 +461,37 @@ public class Ivy {
 
     public CacheManager getCacheManager(File cache) {
         // TODO : reuse instance
-        CacheManager cacheManager = new CacheManager(_settings, cache);
+        CacheManager cacheManager = new CacheManager(settings, cache);
         return cacheManager;
     }
 
     private void assertBound() {
-        if (!_bound) {
+        if (!bound) {
             bind();
         }
     }
 
     private void postConfigure() {
-        Collection triggers = _settings.getTriggers();
+        Collection triggers = settings.getTriggers();
         for (Iterator iter = triggers.iterator(); iter.hasNext();) {
             Trigger trigger = (Trigger) iter.next();
-            _eventManager.addIvyListener(trigger, trigger.getEventFilter());
+            eventManager.addIvyListener(trigger, trigger.getEventFilter());
         }
     }
 
     public String getVariable(String name) {
         assertBound();
-        return _settings.getVariable(name);
+        return settings.getVariable(name);
     }
 
     public String substitute(String str) {
         assertBound();
-        return _settings.substitute(str);
+        return settings.substitute(str);
     }
 
     public void setVariable(String varName, String value) {
         assertBound();
-        _settings.setVariable(varName, value);
+        settings.setVariable(varName, value);
     }
 
     // ///////////////////////////////////////////////////////////////////
@@ -492,83 +499,83 @@ public class Ivy {
     // ///////////////////////////////////////////////////////////////////
 
     public IvySettings getSettings() {
-        return _settings;
+        return settings;
     }
 
     public EventManager getEventManager() {
-        return _eventManager;
+        return eventManager;
     }
 
     public CheckEngine getCheckEngine() {
-        return _checkEngine;
+        return checkEngine;
     }
 
     public void setCheckEngine(CheckEngine checkEngine) {
-        _checkEngine = checkEngine;
+        this.checkEngine = checkEngine;
     }
 
     public DeliverEngine getDeliverEngine() {
-        return _deliverEngine;
+        return deliverEngine;
     }
 
     public void setDeliverEngine(DeliverEngine deliverEngine) {
-        _deliverEngine = deliverEngine;
+        this.deliverEngine = deliverEngine;
     }
 
     public InstallEngine getInstallEngine() {
-        return _installEngine;
+        return installEngine;
     }
 
     public void setInstallEngine(InstallEngine installEngine) {
-        _installEngine = installEngine;
+        this.installEngine = installEngine;
     }
 
     public PublishEngine getPublishEngine() {
-        return _publishEngine;
+        return publishEngine;
     }
 
     public void setPublishEngine(PublishEngine publishEngine) {
-        _publishEngine = publishEngine;
+        this.publishEngine = publishEngine;
     }
 
     public ResolveEngine getResolveEngine() {
-        return _resolveEngine;
+        return resolveEngine;
     }
 
     public void setResolveEngine(ResolveEngine resolveEngine) {
-        _resolveEngine = resolveEngine;
+        this.resolveEngine = resolveEngine;
     }
 
     public RetrieveEngine getRetrieveEngine() {
-        return _retrieveEngine;
+        return retrieveEngine;
     }
 
     public void setRetrieveEngine(RetrieveEngine retrieveEngine) {
-        _retrieveEngine = retrieveEngine;
+        this.retrieveEngine = retrieveEngine;
     }
 
     public SearchEngine getSearchEngine() {
-        return _searchEngine;
+        return searchEngine;
     }
 
     public void setSearchEngine(SearchEngine searchEngine) {
-        _searchEngine = searchEngine;
+        this.searchEngine = searchEngine;
     }
 
     public SortEngine getSortEngine() {
-        return _sortEngine;
+        return sortEngine;
     }
 
     public void setSortEngine(SortEngine sortEngine) {
-        _sortEngine = sortEngine;
+        this.sortEngine = sortEngine;
     }
 
     public void setEventManager(EventManager eventManager) {
-        _eventManager = eventManager;
+        this.eventManager = eventManager;
     }
 
     public void setSettings(IvySettings settings) {
-        _settings = settings;
+        this.settings = settings;
     }
 
 }
