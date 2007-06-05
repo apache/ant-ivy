@@ -22,29 +22,29 @@ import org.apache.ivy.plugins.resolver.DependencyResolver;
 
 
 public class ModuleEntry {
-    private OrganisationEntry _organisationEntry;
-    private String _module;
+    private OrganisationEntry organisationEntry;
+    private String module;
 
     public ModuleEntry(OrganisationEntry org, String name) {
-        _organisationEntry = org;
-        _module = name;
+        organisationEntry = org;
+        module = name;
     }
 
     public String getOrganisation() {
-        return _organisationEntry.getOrganisation();
+        return organisationEntry.getOrganisation();
     }
     
     public DependencyResolver getResolver() {
-        return _organisationEntry.getResolver();
+        return organisationEntry.getResolver();
     }
 
     public String getModule() {
-        return _module;
+        return module;
     }
     
 
     public OrganisationEntry getOrganisationEntry() {
-        return _organisationEntry;
+        return organisationEntry;
     }
     
 }

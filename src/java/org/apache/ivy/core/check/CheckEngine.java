@@ -39,13 +39,13 @@ import org.apache.ivy.plugins.resolver.DependencyResolver;
 import org.apache.ivy.util.Message;
 
 public class CheckEngine {
-	private IvySettings _settings;
-	private ResolveEngine _resolveEngine;
+	private IvySettings settings;
+	private ResolveEngine resolveEngine;
 	
 	
     public CheckEngine(IvySettings settings, ResolveEngine resolveEngine) {
-		_settings = settings;
-		_resolveEngine = resolveEngine;
+		this.settings = settings;
+		this.resolveEngine = resolveEngine;
 	}
 
 
@@ -61,11 +61,11 @@ public class CheckEngine {
         try {
             boolean result = true;
             // parse ivy file
-            ModuleDescriptor md = ModuleDescriptorParserRegistry.getInstance().parseDescriptor(_settings, ivyFile, _settings.doValidate());
+            ModuleDescriptor md = ModuleDescriptorParserRegistry.getInstance().parseDescriptor(settings, ivyFile, settings.doValidate());
             
             // check publications if possible
             if (resolvername != null) {
-                DependencyResolver resolver = _settings.getResolver(resolvername);
+                DependencyResolver resolver = settings.getResolver(resolvername);
                 String[] confs = md.getConfigurationsNames();
                 Set artifacts = new HashSet();
                 for (int i = 0; i < confs.length; i++) {
@@ -82,7 +82,7 @@ public class CheckEngine {
             
             // check dependencies
             DependencyDescriptor[] dds = md.getDependencies();
-            ResolveData data = new ResolveData(_resolveEngine, new ResolveOptions().setCache(CacheManager.getInstance(_settings)));
+            ResolveData data = new ResolveData(resolveEngine, new ResolveOptions().setCache(CacheManager.getInstance(settings)));
             for (int i = 0; i < dds.length; i++) {
                 // check master confs
                 String[] masterConfs = dds[i].getModuleConfigurations();
@@ -93,7 +93,7 @@ public class CheckEngine {
                     }
                 }
                 // resolve
-                DependencyResolver resolver = _settings.getResolver(dds[i].getDependencyId());
+                DependencyResolver resolver = settings.getResolver(dds[i].getDependencyId());
                 ResolvedModuleRevision rmr = resolver.getDependency(dds[i], data);
                 if (rmr == null) {
                     Message.info("dependency not found in "+ivyFile+":\n\t"+dds[i]);

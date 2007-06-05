@@ -36,16 +36,16 @@ public class VisitData {
 	/**
 	 * A node in the graph of module dependencies resolution
 	 */
-	private IvyNode _node;
+	private IvyNode node;
 	/**
 	 * The associated visit nodes, per rootModuleConf
 	 * Note that the value is a List, because a node can be visited from
 	 * several parents during the resolution process
 	 */
-	private Map _visitNodes = new HashMap(); // Map (String rootModuleConf -> List(VisitNode))
+	private Map visitNodes = new HashMap(); // Map (String rootModuleConf -> List(VisitNode))
 
 	public VisitData(IvyNode node) {
-		_node = node;
+		this.node = node;
 	}
 	
 	public void addVisitNode(VisitNode node) {
@@ -54,20 +54,20 @@ public class VisitData {
 	}
 
 	public List getVisitNodes(String rootModuleConf) {
-		List visits = (List) _visitNodes.get(rootModuleConf);
+		List visits = (List) visitNodes.get(rootModuleConf);
 		if (visits == null) {
 			visits = new ArrayList();
-			_visitNodes.put(rootModuleConf, visits);
+			visitNodes.put(rootModuleConf, visits);
 		}
 		return visits;
 	}
 	
 	public IvyNode getNode() {
-		return _node;
+		return node;
 	}
 
 	public void setNode(IvyNode node) {
-		_node = node;
+		this.node = node;
 	}
 
 	public void addVisitNodes(String rootModuleConf, List visitNodes) {

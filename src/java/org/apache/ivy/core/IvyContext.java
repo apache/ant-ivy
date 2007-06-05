@@ -45,25 +45,25 @@ import org.apache.ivy.util.MessageImpl;
  */
 public class IvyContext {
 
-    private static ThreadLocal _current = new ThreadLocal();
+    private static ThreadLocal current = new ThreadLocal();
     
-    private Ivy _defaultIvy;
-    private WeakReference _ivy = new WeakReference(null); 
-    private File _cache;
-    private MessageImpl _messageImpl;
-    private Stack _resolver = new Stack(); // Stack(DependencyResolver)
+    private Ivy defaultIvy;
+    private WeakReference ivy = new WeakReference(null);
+    private File cache;
+    private MessageImpl messageImpl;
+    private Stack resolver = new Stack(); // Stack(DependencyResolver)
     
-    private Map _contextMap = new HashMap();
+    private Map contextMap = new HashMap();
 
-	private Thread _operatingThread;
+	private Thread operatingThread;
 
 
     
     public static IvyContext getContext() {
-    	IvyContext cur = (IvyContext)_current.get();
+    	IvyContext cur = (IvyContext) current.get();
         if (cur == null) {
             cur = new IvyContext();
-            _current.set(cur);
+            current.set(cur);
         }
         return cur;
     }
@@ -75,7 +75,7 @@ public class IvyContext {
      * @param context the new context to use in this thread.
      */
     public static void setContext(IvyContext context) {
-    	_current.set(context);
+    	current.set(context);
     }
     
     /**
@@ -88,29 +88,29 @@ public class IvyContext {
      * @return the current ivy instance
      */
     public Ivy getIvy() {
-    	Ivy ivy = (Ivy)_ivy.get();
+    	Ivy ivy = (Ivy) this.ivy.get();
         return ivy == null ? getDefaultIvy() : ivy;
     }
 
     private Ivy getDefaultIvy() {
-        if (_defaultIvy == null) {
-            _defaultIvy = Ivy.newInstance();
+        if (defaultIvy == null) {
+            defaultIvy = Ivy.newInstance();
             try {
-            	_defaultIvy.configureDefault();
+            	defaultIvy.configureDefault();
             } catch (Exception e) {
             }            
         }
-        return _defaultIvy;
+        return defaultIvy;
     }
     public void setIvy(Ivy ivy) {
-    	_ivy = new WeakReference(ivy);
-    	_operatingThread = Thread.currentThread();
+    	this.ivy = new WeakReference(ivy);
+    	operatingThread = Thread.currentThread();
     }
     public File getCache() {
-    	return _cache == null ? getSettings().getDefaultCache() : _cache;
+    	return cache == null ? getSettings().getDefaultCache() : cache;
     }
     public void setCache(File cache) {
-    	_cache = cache;
+    	this.cache = cache;
     }
     
     public IvySettings getSettings() {
@@ -122,12 +122,12 @@ public class IvyContext {
 	}
 
 	public Object get(String key) {
-		WeakReference ref = (WeakReference) _contextMap.get(key);
+		WeakReference ref = (WeakReference) contextMap.get(key);
 		return ref == null ? null : ref.get();
 	}
 
 	public void set(String key, Object value) {
-		_contextMap.put(key, new WeakReference(value));
+		contextMap.put(key, new WeakReference(value));
 	}
 	
 	/**
@@ -137,8 +137,8 @@ public class IvyContext {
 	 * @return top object from the list (index 0) or null if no key or list empty
 	 */
 	public Object peek(String key){
-		synchronized(_contextMap){
-			Object o=_contextMap.get(key);
+		synchronized(contextMap){
+			Object o= contextMap.get(key);
 			if(o==null) return null;
 			if(o instanceof List){
 				if(((List)o).size()==0) return null;
@@ -157,8 +157,8 @@ public class IvyContext {
 	 * @return top object from the list (index 0) or null if no key or list empty
 	 */
 	public Object pop(String key){
-		synchronized(_contextMap){
-			Object o=_contextMap.get(key);
+		synchronized(contextMap){
+			Object o= contextMap.get(key);
 			if(o==null) return null;
 			if(o instanceof List){
 				if(((List)o).size()==0) return null;
@@ -178,8 +178,8 @@ public class IvyContext {
 	 * @return true if the r
 	 */
 	public boolean pop(String key, Object expectedValue){
-		synchronized(_contextMap){
-			Object o=_contextMap.get(key);
+		synchronized(contextMap){
+			Object o= contextMap.get(key);
 			if(o==null) return false;
 			if(o instanceof List){
 				if(((List)o).size()==0) return false;
@@ -202,9 +202,9 @@ public class IvyContext {
 	 * @param value value to be saved under the key
 	 */
 	public void push(String key, Object value){
-		synchronized(_contextMap){
-			if(!_contextMap.containsKey(key)) _contextMap.put(key, new LinkedList());
-			Object o=_contextMap.get(key);
+		synchronized(contextMap){
+			if(!contextMap.containsKey(key)) contextMap.put(key, new LinkedList());
+			Object o= contextMap.get(key);
 			if(o instanceof List){
 				((List)o).add(0,value);
 			} else {
@@ -214,7 +214,7 @@ public class IvyContext {
 	}
 	
 	public Thread getOperatingThread() {
-		return _operatingThread;
+		return operatingThread;
 	}
 
 	
@@ -223,11 +223,11 @@ public class IvyContext {
 	 * because Message is used at a lot of place.
 	 */ 
 	public MessageImpl getMessageImpl() {
-		return _messageImpl;
+		return messageImpl;
 	}
 	
 	public void setMessageImpl(MessageImpl impl) {
-		_messageImpl = impl;
+		messageImpl = impl;
 	}
 
 	public EventManager getEventManager() {
@@ -243,15 +243,15 @@ public class IvyContext {
 	}
 
 	public DependencyResolver getResolver() {
-		return (DependencyResolver) _resolver.peek();
+		return (DependencyResolver) resolver.peek();
 	}
 	
 	public void pushResolver(DependencyResolver resolver) {
-		_resolver.push(resolver);
+		this.resolver.push(resolver);
 	}
 	
 	public void popResolver() {
-		_resolver.pop();
+		resolver.pop();
 	}
 	
 	// should be better to use context to store this kind of information, but not yet ready to do so...

@@ -35,24 +35,24 @@ import org.apache.ivy.util.extendable.UnmodifiableExtendableItem;
 public abstract class AbstractIncludeExcludeRule extends UnmodifiableExtendableItem 
 		implements ConfigurationAware {
 
-    private ArtifactId _id;
-    private Collection _confs = new ArrayList();
-    private PatternMatcher _patternMatcher;
+    private ArtifactId id;
+    private Collection confs = new ArrayList();
+    private PatternMatcher patternMatcher;
     
     public AbstractIncludeExcludeRule(ArtifactId aid, PatternMatcher matcher, Map extraAttributes) {
     	super(null, extraAttributes);
-        _id = aid;
-        _patternMatcher = matcher;
+        id = aid;
+        patternMatcher = matcher;
         initStandardAttributes();
     }
 
 	private void initStandardAttributes() {
-		setStandardAttribute(IvyPatternHelper.ORGANISATION_KEY, _id.getModuleId().getOrganisation());
-        setStandardAttribute(IvyPatternHelper.MODULE_KEY, _id.getModuleId().getName());
-        setStandardAttribute(IvyPatternHelper.ARTIFACT_KEY, _id.getName());
-        setStandardAttribute(IvyPatternHelper.TYPE_KEY, _id.getType());
-        setStandardAttribute(IvyPatternHelper.EXT_KEY, _id.getExt());
-        setStandardAttribute("matcher", _patternMatcher.getName());
+		setStandardAttribute(IvyPatternHelper.ORGANISATION_KEY, id.getModuleId().getOrganisation());
+        setStandardAttribute(IvyPatternHelper.MODULE_KEY, id.getModuleId().getName());
+        setStandardAttribute(IvyPatternHelper.ARTIFACT_KEY, id.getName());
+        setStandardAttribute(IvyPatternHelper.TYPE_KEY, id.getType());
+        setStandardAttribute(IvyPatternHelper.EXT_KEY, id.getExt());
+        setStandardAttribute("matcher", patternMatcher.getName());
 	}
     
 	public boolean equals(Object obj) {
@@ -72,22 +72,22 @@ public abstract class AbstractIncludeExcludeRule extends UnmodifiableExtendableI
      * @param conf
      */
     public void addConfiguration(String conf) {
-        _confs.add(conf);
+        confs.add(conf);
     }
         
     public ArtifactId getId() {
-        return _id;
+        return id;
     }
 
     public String[] getConfigurations() {
-        return (String[])_confs.toArray(new String[_confs.size()]);
+        return (String[]) confs.toArray(new String[confs.size()]);
     }
 
     public PatternMatcher getMatcher() {
-        return _patternMatcher;
+        return patternMatcher;
     }
 
 	public String toString() {
-		return _id+"("+_confs+")";
+		return id +"("+ confs +")";
 	}
 }

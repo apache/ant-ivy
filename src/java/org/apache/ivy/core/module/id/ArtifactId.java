@@ -21,10 +21,10 @@ package org.apache.ivy.core.module.id;
  * Identifies an artifact in a module, without revision information
  */
 public class ArtifactId {
-    private ModuleId _mid;
-    private String _name;
-    private String _type;
-    private String _ext;
+    private ModuleId mid;
+    private String name;
+    private String type;
+    private String ext;
     
     
     /**
@@ -33,10 +33,10 @@ public class ArtifactId {
      * @param type
      */
     public ArtifactId(ModuleId mid, String name, String type, String ext) {
-        _mid = mid;
-        _name = name;
-        _type = type;
-        _ext = ext;
+        this.mid = mid;
+        this.name = name;
+        this.type = type;
+        this.ext = ext;
     }
     
     public boolean equals(Object obj) {
@@ -66,24 +66,24 @@ public class ArtifactId {
      * @return Returns the module id.
      */
     public ModuleId getModuleId() {
-        return _mid;
+        return mid;
     }
     /**
      * @return Returns the name.
      */
     public String getName() {
-        return _name;
+        return name;
     }
     /**
      * @return Returns the type.
      */
     public String getType() {
-        return _type;
+        return type;
     }
     /**
      * @return Returns the ext.
      */
     public String getExt() {
-        return _ext;
+        return ext;
     }
 }

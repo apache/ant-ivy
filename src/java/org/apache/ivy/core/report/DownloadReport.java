@@ -30,19 +30,19 @@ import org.apache.ivy.core.module.descriptor.Artifact;
  *
  */
 public class DownloadReport {
-    private Map _artifacts = new HashMap();
+    private Map artifacts = new HashMap();
     
     public void addArtifactReport(ArtifactDownloadReport adr) {
-        _artifacts.put(adr.getArtifact(), adr);
+        artifacts.put(adr.getArtifact(), adr);
     }
     
     public ArtifactDownloadReport[] getArtifactsReports() {
-        return (ArtifactDownloadReport[])_artifacts.values().toArray(new ArtifactDownloadReport[_artifacts.size()]);
+        return (ArtifactDownloadReport[]) artifacts.values().toArray(new ArtifactDownloadReport[artifacts.size()]);
     }
 
     public ArtifactDownloadReport[] getArtifactsReports(DownloadStatus status) {
-        List ret = new ArrayList(_artifacts.size());
-        for (Iterator iter = _artifacts.values().iterator(); iter.hasNext();) {
+        List ret = new ArrayList(artifacts.size());
+        for (Iterator iter = artifacts.values().iterator(); iter.hasNext();) {
             ArtifactDownloadReport adr = (ArtifactDownloadReport)iter.next();
             if (adr.getDownloadStatus() == status) {
                 ret.add(adr);
@@ -52,6 +52,6 @@ public class DownloadReport {
     }
 
 	public ArtifactDownloadReport getArtifactReport(Artifact artifact) {
-		return (ArtifactDownloadReport)_artifacts.get(artifact);
+		return (ArtifactDownloadReport) artifacts.get(artifact);
 	}
 }

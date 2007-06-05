@@ -23,16 +23,16 @@ import org.apache.ivy.plugins.resolver.DependencyResolver;
 public class NeedArtifactEvent extends DownloadEvent {
     public static final String NAME = "need-artifact";
     
-	private DependencyResolver _resolver;
+	private DependencyResolver resolver;
 
     public NeedArtifactEvent(DependencyResolver resolver, Artifact artifact) {
         super(NAME, artifact);
-        _resolver = resolver;
-        addAttribute("resolver", _resolver.getName());
+        this.resolver = resolver;
+        addAttribute("resolver", this.resolver.getName());
     }
 
     public DependencyResolver getResolver() {
-        return _resolver;
+        return resolver;
     }
 
 }

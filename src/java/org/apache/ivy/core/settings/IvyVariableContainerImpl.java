@@ -26,15 +26,15 @@ import org.apache.ivy.util.Message;
 public class IvyVariableContainerImpl implements IvyVariableContainer {
 
 	
-	private HashMap _variables = new HashMap();
+	private HashMap variables = new HashMap();
 
 	/* (non-Javadoc)
 	 * @see org.apache.ivy.core.settings.IvyVariableContainer#setVariable(java.lang.String, java.lang.String, boolean)
 	 */
 	public void setVariable(String varName, String value, boolean overwrite) {
-        if (overwrite || !_variables.containsKey(varName)) {
+        if (overwrite || !variables.containsKey(varName)) {
             Message.debug("setting '"+varName+"' to '"+value+"'");
-            _variables.put(varName, substitute(value));
+            variables.put(varName, substitute(value));
         } else {
             Message.debug("'"+varName+"' already set: discarding '"+value+"'");
         }
@@ -49,14 +49,14 @@ public class IvyVariableContainerImpl implements IvyVariableContainer {
 	 * @see org.apache.ivy.core.settings.IvyVariableContainer#getVariables()
 	 */
 	public Map getVariables() {
-		return _variables;
+		return variables;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.apache.ivy.core.settings.IvyVariableContainer#getVariable(java.lang.String)
 	 */
 	public String getVariable(String name) {
-		String val = (String)_variables.get(name);
+		String val = (String) variables.get(name);
         return val==null?val:substitute(val);
 	}
 	
@@ -67,7 +67,7 @@ public class IvyVariableContainerImpl implements IvyVariableContainer {
 		} catch (CloneNotSupportedException e) {
 			throw new RuntimeException("unable to clone a " + this.getClass());
 		}
-		clone._variables = (HashMap) _variables.clone();
+		clone.variables = (HashMap) variables.clone();
 		return clone;
 	}
 }

@@ -21,20 +21,20 @@ import org.apache.ivy.plugins.resolver.DependencyResolver;
 
 
 public class OrganisationEntry {
-    private DependencyResolver _resolver;
-    private String _organisation;
+    private DependencyResolver resolver;
+    private String organisation;
 
     public OrganisationEntry(DependencyResolver resolver, String organisation) {
-        _resolver = resolver;
-        _organisation = organisation;
+        this.resolver = resolver;
+        this.organisation = organisation;
     }
 
     public String getOrganisation() {
-        return _organisation;
+        return organisation;
     }
     
     public DependencyResolver getResolver() {
-        return _resolver;
+        return resolver;
     }
     
 }

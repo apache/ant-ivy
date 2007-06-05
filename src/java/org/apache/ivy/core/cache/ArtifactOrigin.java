@@ -23,8 +23,8 @@ package org.apache.ivy.core.cache;
  * @see org.apache.ivy.plugins.resolver.util.ResolvedResource
  */
 public class ArtifactOrigin {    
-    private boolean _isLocal;
-	private String _location;
+    private boolean isLocal;
+	private String location;
 
     /**
      *  Create a new instance
@@ -33,8 +33,8 @@ public class ArtifactOrigin {
      * @param location the location of the resource (normally a url)
      */
     public ArtifactOrigin(boolean isLocal, String location) {
-		_isLocal = isLocal;
-		_location = location;
+		this.isLocal = isLocal;
+		this.location = location;
 	}
 
     /**
@@ -43,7 +43,7 @@ public class ArtifactOrigin {
      * @return <code>boolean</code> value indicating if the resource is local.
      */
     public boolean isLocal() {
-		return _isLocal;
+		return isLocal;
 	}
 
     /**
@@ -52,11 +52,11 @@ public class ArtifactOrigin {
      * @return the location of the resource
      */
     public String getLocation() {
-		return _location;
+		return location;
 	}
 
     public String toString() {
-        return "ArtifactOrigin { _isLocal=" + _isLocal + ", _location=" + _location + "}";
+        return "ArtifactOrigin { isLocal=" + isLocal + ", location=" + location + "}";
     }
 
     public boolean equals(Object o) {
@@ -65,16 +65,16 @@ public class ArtifactOrigin {
 
         ArtifactOrigin that = (ArtifactOrigin) o;
 
-        if (_isLocal != that._isLocal) return false;
-        if (!_location.equals(that._location)) return false;
+        if (isLocal != that.isLocal) return false;
+        if (!location.equals(that.location)) return false;
 
         return true;
     }
 
     public int hashCode() {
         int result;
-        result = (_isLocal ? 1 : 0);
-        result = 31 * result + _location.hashCode();
+        result = (isLocal ? 1 : 0);
+        result = 31 * result + location.hashCode();
         return result;
     }
 }

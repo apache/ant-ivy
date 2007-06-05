@@ -50,13 +50,13 @@ import org.apache.ivy.util.StringUtils;
  *
  */
 public class IvyEvent {
-    private EventManager _source;
-    private String _name;
-    private Map _attributes = new HashMap(); 
+    private EventManager source;
+    private String name;
+    private Map attributes = new HashMap();
 
 	protected IvyEvent(String name) {
-		_source = IvyContext.getContext().getEventManager();
-		_name = name;
+		this.source = IvyContext.getContext().getEventManager();
+		this.name = name;
 	}
 	
 	/**
@@ -65,7 +65,7 @@ public class IvyEvent {
 	 * @param value
 	 */
 	protected void addAttribute(String key, String value) {
-		_attributes.put(key, value);
+		attributes.put(key, value);
 	}
 	protected void addMDAttributes(ModuleDescriptor md) {
 		addMridAttributes(md.getResolvedModuleRevisionId());
@@ -87,16 +87,16 @@ public class IvyEvent {
 	}
 
 	protected void addAttributes(Map attributes) {
-		_attributes.putAll(attributes);
+		this.attributes.putAll(attributes);
 	}
 	
 
 	public EventManager getSource() {
-		return _source;
+		return source;
 	}
 
 	public String getName() {
-		return _name;
+		return name;
 	}
 
 	/**
@@ -104,7 +104,7 @@ public class IvyEvent {
 	 * @return the attributes of this event, as a Map(String->String)
 	 */
 	public Map getAttributes() {
-		return new HashMap(_attributes);
+		return new HashMap(attributes);
 	}
     
     public String toString() {
@@ -119,14 +119,14 @@ public class IvyEvent {
     	
     	return getSource().equals(e.getSource()) 
     		&& getName().equals(e.getName()) 
-    		&& _attributes.equals(e._attributes);
+    		&& attributes.equals(e.attributes);
     }
     
     public int hashCode() {
     	int hash = 37;
     	hash = 13 * hash + getSource().hashCode();
     	hash = 13 * hash + getName().hashCode();
-    	hash = 13 * hash + _attributes.hashCode();
+    	hash = 13 * hash + attributes.hashCode();
     	return hash;
     }
 }

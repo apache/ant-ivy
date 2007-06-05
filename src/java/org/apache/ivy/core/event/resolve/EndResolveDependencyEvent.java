@@ -23,14 +23,14 @@ import org.apache.ivy.plugins.resolver.DependencyResolver;
 
 public class EndResolveDependencyEvent extends ResolveDependencyEvent {
 	public static final String NAME = "post-resolve-dependency";
-	private ResolvedModuleRevision _module;
+	private ResolvedModuleRevision module;
 
 	public EndResolveDependencyEvent(DependencyResolver resolver, DependencyDescriptor dd, ResolvedModuleRevision module) {
 		super(NAME, resolver, dd);
-		_module = module;
-		if (_module != null) {
+		this.module = module;
+		if (this.module != null) {
 			// override revision from the dependency descriptor
-			addAttribute("revision", _module.getDescriptor().getResolvedModuleRevisionId().getRevision());
+			addAttribute("revision", this.module.getDescriptor().getResolvedModuleRevisionId().getRevision());
 			addAttribute("resolved", "true");
 		} else {
 			addAttribute("resolved", "false");
@@ -38,7 +38,7 @@ public class EndResolveDependencyEvent extends ResolveDependencyEvent {
 	}
 
 	public ResolvedModuleRevision getModule() {
-		return _module;
+		return module;
 	}
 
 }

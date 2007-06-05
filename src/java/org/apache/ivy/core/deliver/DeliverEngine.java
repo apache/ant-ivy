@@ -44,10 +44,10 @@ import org.apache.ivy.util.Message;
 import org.xml.sax.SAXException;
 
 public class DeliverEngine {
-	private IvySettings _settings;
+	private IvySettings settings;
 	
     public DeliverEngine(IvySettings settings) {
-		_settings = settings;
+		this.settings = settings;
 	}
 
     /**
@@ -91,7 +91,7 @@ public class DeliverEngine {
         Message.info(":: delivering :: "+mrid+" :: "+revision+" :: "+options.getStatus()+" :: "+options.getPubdate());
         Message.verbose("\toptions = "+options);
         long start = System.currentTimeMillis();
-        destIvyPattern = _settings.substitute(destIvyPattern);
+        destIvyPattern = settings.substitute(destIvyPattern);
         
         // 1) find the resolved module descriptor in cache
         File ivyFile = options.getCache().getResolvedIvyFileInCache(mrid);
@@ -102,7 +102,7 @@ public class DeliverEngine {
         URL ivyFileURL = null;
         try {
             ivyFileURL = ivyFile.toURL();
-            md = XmlModuleDescriptorParser.getInstance().parseDescriptor(_settings, ivyFileURL, options.isValidate());
+            md = XmlModuleDescriptorParser.getInstance().parseDescriptor(settings, ivyFileURL, options.isValidate());
             md.setResolvedModuleRevisionId(ModuleRevisionId.newInstance(mrid, revision));
             md.setResolvedPublicationDate(options.getPubdate());
         } catch (MalformedURLException e) {
@@ -159,7 +159,7 @@ public class DeliverEngine {
 		confsToRemove.removeAll(Arrays.asList(confs));
 
         try {
-            XmlModuleDescriptorUpdater.update(_settings, ivyFileURL, 
+            XmlModuleDescriptorUpdater.update(settings, ivyFileURL,
                     new File(publishedIvy),
                     resolvedDependencies, options.getStatus(), revision, options.getPubdate(), null, true, (
                     String[]) confsToRemove.toArray(new String[confsToRemove.size()]));

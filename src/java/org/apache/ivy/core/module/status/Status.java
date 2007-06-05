@@ -18,26 +18,26 @@
 package org.apache.ivy.core.module.status;
 
 public class Status {
-    private String _name;
-    private boolean _integration;
+    private String name;
+    private boolean integration;
     
     public Status() {
     }
     
     public Status(String name, boolean integration) {
-        _name = name;
-        _integration = integration;
+        this.name = name;
+        this.integration = integration;
     }
     public boolean isIntegration() {
-        return _integration;
+        return integration;
     }
     public void setIntegration(boolean integration) {
-        _integration = integration;
+        this.integration = integration;
     }
     public String getName() {
-        return _name;
+        return name;
     }
     public void setName(String name) {
-        _name = name;
+        this.name = name;
     }
 }

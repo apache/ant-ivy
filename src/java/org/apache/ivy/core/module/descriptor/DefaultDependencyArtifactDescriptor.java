@@ -29,11 +29,11 @@ import org.apache.ivy.util.extendable.UnmodifiableExtendableItem;
 public class DefaultDependencyArtifactDescriptor extends UnmodifiableExtendableItem
 	implements DependencyArtifactDescriptor, ConfigurationAware {
 
-    private Collection _confs = new ArrayList();
-	private URL _url;
-	private String _name;
-	private String _type;
-	private String _ext;
+    private Collection confs = new ArrayList();
+	private URL url;
+	private String name;
+	private String type;
+	private String ext;
  
 	/**
      * @param dd
@@ -53,10 +53,10 @@ public class DefaultDependencyArtifactDescriptor extends UnmodifiableExtendableI
         if (ext == null) {
             throw new NullPointerException("ext must not be null");
         }
-        _name = name;
-        _type = type;
-        _ext = ext;
-        _url = url;
+        this.name = name;
+        this.type = type;
+        this.ext = ext;
+        this.url = url;
         initStandardAttributes();
     }
 
@@ -64,7 +64,7 @@ public class DefaultDependencyArtifactDescriptor extends UnmodifiableExtendableI
         setStandardAttribute(IvyPatternHelper.ARTIFACT_KEY, getName());
         setStandardAttribute(IvyPatternHelper.TYPE_KEY, getType());
         setStandardAttribute(IvyPatternHelper.EXT_KEY, getExt());
-        setStandardAttribute("url", _url != null ? String.valueOf(_url) : "");
+        setStandardAttribute("url", url != null ? String.valueOf(url) : "");
 	}
     
 	public boolean equals(Object obj) {
@@ -84,30 +84,30 @@ public class DefaultDependencyArtifactDescriptor extends UnmodifiableExtendableI
      * @param conf
      */
     public void addConfiguration(String conf) {
-        _confs.add(conf);
+        confs.add(conf);
     }
         
     public String getName() {
-        return _name;
+        return name;
     }
 
     public String getType() {
-        return _type;
+        return type;
     }
     public String getExt() {
-        return _ext;
+        return ext;
     }
 
     public String[] getConfigurations() {
-        return (String[])_confs.toArray(new String[_confs.size()]);
+        return (String[]) confs.toArray(new String[confs.size()]);
     }
 
 
 	public URL getUrl() {
-		return _url;
+		return url;
 	}
 
 	public String toString() {
-		return "DA:"+_name+"."+_ext+"("+_type+") "+"("+_confs+")"+(_url==null?"":_url.toString());
+		return "DA:"+ name +"."+ ext +"("+ type +") "+"("+ confs +")"+(url ==null?"": url.toString());
 	}
 }

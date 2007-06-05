@@ -20,25 +20,25 @@ package org.apache.ivy.core.event;
 import org.apache.ivy.util.filter.Filter;
 
 public class FilteredIvyListener implements IvyListener {
-	private IvyListener _listener;
-	private Filter _filter;
+	private IvyListener listener;
+	private Filter filter;
 
 	public FilteredIvyListener(IvyListener listener, Filter filter) {
-		_listener = listener;
-		_filter = filter;
+		this.listener = listener;
+		this.filter = filter;
 	}
 
 	public IvyListener getIvyListener() {
-		return _listener;
+		return listener;
 	}
 
 	public Filter getFilter() {
-		return _filter;
+		return filter;
 	}
 
 	public void progress(IvyEvent event) {
-		if (_filter.accept(event)) {
-			_listener.progress(event);
+		if (filter.accept(event)) {
+			listener.progress(event);
 		}
 	}
 

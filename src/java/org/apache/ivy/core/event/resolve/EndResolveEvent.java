@@ -23,15 +23,15 @@ import org.apache.ivy.core.report.ResolveReport;
 public class EndResolveEvent extends ResolveEvent {
 	public static final String NAME = "post-resolve";
 
-	private ResolveReport _report;
+	private ResolveReport report;
 
 	public EndResolveEvent(ModuleDescriptor md, String[] confs, ResolveReport report) {
 		super(NAME, md, confs);
-		_report = report;
+		this.report = report;
 	}
 
 	public ResolveReport getReport() {
-		return _report;
+		return report;
 	}
 
 }

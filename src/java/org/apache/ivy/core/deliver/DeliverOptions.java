@@ -26,14 +26,14 @@ import org.apache.ivy.core.settings.IvySettings;
  * A set of options used to do a deliver.
  */
 public class DeliverOptions {
-	private String _status;
-	private Date _pubdate;
-	private CacheManager _cache;
-	private PublishingDependencyRevisionResolver _pdrResolver = new DefaultPublishingDRResolver(); 
-	private boolean _validate = true;
-	private boolean _resolveDynamicRevisions = true;
-	private String _resolveId;
-	private String[] _confs;
+	private String status;
+	private Date pubdate;
+	private CacheManager cache;
+	private PublishingDependencyRevisionResolver pdrResolver = new DefaultPublishingDRResolver();
+	private boolean validate = true;
+	private boolean resolveDynamicRevisions = true;
+	private String resolveId;
+	private String[] confs;
 	
 	/**
 	 * Returns an instance of DeliverOptions with options corresponding to default values
@@ -60,21 +60,21 @@ public class DeliverOptions {
 	 * Creates an instance of DeliverOptions with all options explicitly set.
 	 */
 	public DeliverOptions(String status, Date pubDate, CacheManager cache, PublishingDependencyRevisionResolver pdrResolver, boolean validate, boolean resolveDynamicRevisions, String[] confs) {
-		_status = status;
-		_pubdate = pubDate;
-		_cache = cache;
-		_pdrResolver = pdrResolver;
-		_validate = validate;
-		_resolveDynamicRevisions = resolveDynamicRevisions;
-		_confs = confs;
+		this.status = status;
+		this.pubdate = pubDate;
+		this.cache = cache;
+		this.pdrResolver = pdrResolver;
+		this.validate = validate;
+		this.resolveDynamicRevisions = resolveDynamicRevisions;
+		this.confs = confs;
 	}
 
 	public CacheManager getCache() {
-		return _cache;
+		return cache;
 	}
 
 	public DeliverOptions setCache(CacheManager cache) {
-		_cache = cache;
+		this.cache = cache;
 		return this;
 	}
 	
@@ -90,7 +90,7 @@ public class DeliverOptions {
 	 * @return the pdrResolver that will be used during deliver
 	 */
 	public PublishingDependencyRevisionResolver getPdrResolver() {
-		return _pdrResolver;
+		return pdrResolver;
 	}
 
 	/**
@@ -106,34 +106,34 @@ public class DeliverOptions {
 	 * for easy method chaining 
 	 */
 	public DeliverOptions setPdrResolver(PublishingDependencyRevisionResolver pdrResolver) {
-		_pdrResolver = pdrResolver;
+		this.pdrResolver = pdrResolver;
 		return this;
 	}
 
 	public boolean isResolveDynamicRevisions() {
-		return _resolveDynamicRevisions;
+		return resolveDynamicRevisions;
 	}
 
 	public DeliverOptions setResolveDynamicRevisions(boolean resolveDynamicRevisions) {
-		_resolveDynamicRevisions = resolveDynamicRevisions;
+		this.resolveDynamicRevisions = resolveDynamicRevisions;
 		return this;
 	}
 
 	public boolean isValidate() {
-		return _validate;
+		return validate;
 	}
 
 	public DeliverOptions setValidate(boolean validate) {
-		_validate = validate;
+		this.validate = validate;
 		return this;
 	}
 
 	public Date getPubdate() {
-		return _pubdate;
+		return pubdate;
 	}
 
 	public DeliverOptions setPubdate(Date pubdate) {
-		_pubdate = pubdate;
+		this.pubdate = pubdate;
 		return this;
 	}
 
@@ -143,7 +143,7 @@ public class DeliverOptions {
 	 * @return the status to which the module should be delivered
 	 */
 	public String getStatus() {
-		return _status;
+		return status;
 	}
 
 	/**
@@ -153,7 +153,7 @@ public class DeliverOptions {
 	 * for easy method chaining 
 	 */
 	public DeliverOptions setStatus(String status) {
-		_status = status;
+		this.status = status;
 		return this;
 	}
 	
@@ -162,7 +162,7 @@ public class DeliverOptions {
 	 * @return the id of a previous resolve
 	 */
 	public String getResolveId() {
-		return _resolveId;
+		return resolveId;
 	}
 	
 	/**
@@ -172,7 +172,7 @@ public class DeliverOptions {
 	 * for easy method chaining 
 	 */
 	public DeliverOptions setResolveId(String resolveId) {
-		_resolveId = resolveId;
+		this.resolveId = resolveId;
 		return this;
 	}
 	
@@ -182,7 +182,7 @@ public class DeliverOptions {
 	 * @return the configurations to deliver
 	 */
 	public String[] getConfs() {
-		return _confs;
+		return confs;
 	}
 	
 	/**
@@ -192,12 +192,12 @@ public class DeliverOptions {
 	 * for easy method chaining 
 	 */
 	public DeliverOptions setConfs(String[] confs) {
-		_confs = confs;
+		this.confs = confs;
 		return this;
 	}
 	
 	public String toString() {
-		return "status="+_status+" pubdate="+_pubdate+" validate="+_validate+" resolveDynamicRevisions="+_resolveDynamicRevisions+" cache="+_cache+" resolveId="+_resolveId;
+		return "status="+ status +" pubdate="+ pubdate +" validate="+ validate +" resolveDynamicRevisions="+ resolveDynamicRevisions +" cache="+ cache +" resolveId="+ resolveId;
 		
 	}
 	

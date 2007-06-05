@@ -21,9 +21,9 @@ package org.apache.ivy.core.report;
  *
  */
 public class DownloadStatus {
-    private String _name;
+    private String name;
     private DownloadStatus(String name) {
-        _name = name;
+        this.name = name;
     }
     
     /**
@@ -33,6 +33,6 @@ public class DownloadStatus {
     public static final DownloadStatus SUCCESSFUL = new DownloadStatus("successful");
     public static final DownloadStatus FAILED = new DownloadStatus("failed");
     public String toString() {
-        return _name;
+        return name;
     }
 }

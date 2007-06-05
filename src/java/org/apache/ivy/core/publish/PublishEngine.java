@@ -48,10 +48,10 @@ import org.apache.ivy.util.Message;
 import org.xml.sax.SAXException;
 
 public class PublishEngine {
-	private IvySettings _settings;
+	private IvySettings settings;
 	
     public PublishEngine(IvySettings settings) {
-		_settings = settings;
+		this.settings = settings;
 	}
     /**
      * Publishes a module to the repository.
@@ -73,7 +73,7 @@ public class PublishEngine {
         Message.verbose("\tvalidate = "+options.isValidate());
         long start = System.currentTimeMillis();
         
-        options.setSrcIvyPattern(_settings.substitute(options.getSrcIvyPattern()));
+        options.setSrcIvyPattern(settings.substitute(options.getSrcIvyPattern()));
         if (options.getPubrevision() == null) {
         	options.setPubrevision(mrid.getRevision());
         }
@@ -97,7 +97,7 @@ public class PublishEngine {
         URL ivyFileURL = null;
         try {
         	ivyFileURL = ivyFile.toURL();
-        	md = XmlModuleDescriptorParser.getInstance().parseDescriptor(_settings, ivyFileURL, false);
+        	md = XmlModuleDescriptorParser.getInstance().parseDescriptor(settings, ivyFileURL, false);
         	if (options.getSrcIvyPattern() != null) {
         		if (options.isUpdate()) {
         			File tmp = File.createTempFile("ivy", ".xml");
@@ -109,7 +109,7 @@ public class PublishEngine {
         			
         			try {
 						XmlModuleDescriptorUpdater.update(
-								_settings, 
+                                settings,
 								ivyFileURL, 
 								tmp, 
 								new HashMap(), 
@@ -121,7 +121,7 @@ public class PublishEngine {
 								(String[]) confsToRemove.toArray(new String[confsToRemove.size()]));
 						ivyFile = tmp;
 						// we parse the new file to get updated module descriptor
-						md = XmlModuleDescriptorParser.getInstance().parseDescriptor(_settings, ivyFile.toURL(), false);
+						md = XmlModuleDescriptorParser.getInstance().parseDescriptor(settings, ivyFile.toURL(), false);
 						options.setSrcIvyPattern(ivyFile.getAbsolutePath());
 					} catch (SAXException e) {
 			        	throw new IllegalStateException("bad ivy file for "+mrid+": "+ivyFile+": "+e);
@@ -138,7 +138,7 @@ public class PublishEngine {
         	throw new IllegalStateException("bad ivy file for "+mrid+": "+ivyFile+": "+e);
         }
         
-        DependencyResolver resolver = _settings.getResolver(resolverName);
+        DependencyResolver resolver = settings.getResolver(resolverName);
         if (resolver == null) {
             throw new IllegalArgumentException("unknown resolver "+resolverName);
         }
@@ -176,7 +176,7 @@ public class PublishEngine {
             boolean published = false;
             for (Iterator iterator = srcArtifactPattern.iterator(); iterator.hasNext() && !published;) {
 				String pattern = (String) iterator.next();
-				published = publish(artifact, _settings.substitute(pattern), resolver, options.isOverwrite());
+				published = publish(artifact, settings.substitute(pattern), resolver, options.isOverwrite());
 			}
             if (!published) {
             	Message.info("missing artifact "+artifact+":");

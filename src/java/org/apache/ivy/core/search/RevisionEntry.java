@@ -23,37 +23,37 @@ import org.apache.ivy.plugins.resolver.DependencyResolver;
 
 
 public class RevisionEntry {
-    private ModuleEntry _moduleEntry;
-    private String _revision;
+    private ModuleEntry moduleEntry;
+    private String revision;
 
     public RevisionEntry(ModuleEntry mod, String name) {
-        _moduleEntry = mod;
-        _revision = name;
+        moduleEntry = mod;
+        revision = name;
     }
 
     public ModuleEntry getModuleEntry() {
-        return _moduleEntry;
+        return moduleEntry;
     }
     
 
     public String getRevision() {
-        return _revision;
+        return revision;
     }
 
     public String getModule() {
-        return _moduleEntry.getModule();
+        return moduleEntry.getModule();
     }
 
     public String getOrganisation() {
-        return _moduleEntry.getOrganisation();
+        return moduleEntry.getOrganisation();
     }
 
     public OrganisationEntry getOrganisationEntry() {
-        return _moduleEntry.getOrganisationEntry();
+        return moduleEntry.getOrganisationEntry();
     }
 
     public DependencyResolver getResolver() {
-        return _moduleEntry.getResolver();
+        return moduleEntry.getResolver();
     }
     
 }

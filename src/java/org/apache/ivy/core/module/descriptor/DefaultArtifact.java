@@ -49,9 +49,9 @@ public class DefaultArtifact extends AbstractArtifact {
         return new DefaultArtifact(mrid, artifact.getPublicationDate(), artifact.getName(), artifact.getType(), artifact.getExt(), artifact.getUrl(), artifact.getExtraAttributes());
 	}
     
-    Date _publicationDate;
-    ArtifactRevisionId _arid;
-    URL _url;
+    Date publicationDate;
+    ArtifactRevisionId arid;
+    URL url;
     
     public DefaultArtifact(ModuleRevisionId mrid, Date publicationDate, String name, String type, String ext) {
         this(mrid, publicationDate, name, type, ext, null, null);
@@ -76,29 +76,29 @@ public class DefaultArtifact extends AbstractArtifact {
         if (ext == null) {
             throw new NullPointerException("null ext not allowed");
         }
-        _publicationDate = publicationDate;
-        _arid = ArtifactRevisionId.newInstance(mrid, name, type, ext, extraAttributes);
-        _url = url;
+        this.publicationDate = publicationDate;
+        this.arid = ArtifactRevisionId.newInstance(mrid, name, type, ext, extraAttributes);
+        this.url = url;
     }
 
 
 	public ModuleRevisionId getModuleRevisionId() {
-        return _arid.getModuleRevisionId();
+        return arid.getModuleRevisionId();
     }
     public String getName() {
-        return _arid.getName();
+        return arid.getName();
     }
     public Date getPublicationDate() {
-        return _publicationDate;
+        return publicationDate;
     }
     public String getType() {
-        return _arid.getType();
+        return arid.getType();
     }
     public String getExt() {
-        return _arid.getExt();
+        return arid.getExt();
     }
     public ArtifactRevisionId getId() {
-        return _arid;
+        return arid;
     }
 
     public String[] getConfigurations() {
@@ -106,7 +106,7 @@ public class DefaultArtifact extends AbstractArtifact {
     }
 
 	public URL getUrl() {
-		return _url;
+		return url;
 	}
 
 }

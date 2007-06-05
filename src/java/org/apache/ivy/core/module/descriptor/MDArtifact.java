@@ -35,14 +35,14 @@ public class MDArtifact extends AbstractArtifact {
         return new MDArtifact(md, "ivy", "ivy", "xml");
     }
     
-    private ModuleDescriptor _md;
-    private String _name;
-    private String _type;
-    private String _ext;
-    private List  _confs = new ArrayList();
-    private ArtifactRevisionId _arid;
-    private Map _extraAttributes = null;
-	private URL _url;
+    private ModuleDescriptor md;
+    private String name;
+    private String type;
+    private String ext;
+    private List confs = new ArrayList();
+    private ArtifactRevisionId arid;
+    private Map extraAttributes = null;
+	private URL url;
 
     public MDArtifact(ModuleDescriptor md, String name, String type, String ext) {
         this(md, name, type, ext, null, null);
@@ -60,50 +60,50 @@ public class MDArtifact extends AbstractArtifact {
         if (ext == null) {
             throw new NullPointerException("null ext not allowed");
         }
-        _md = md;
-        _name = name;
-        _type = type;
-        _ext = ext;
-        _url = url;
-        _extraAttributes = extraAttributes;
+        this.md = md;
+        this.name = name;
+        this.type = type;
+        this.ext = ext;
+        this.url = url;
+        this.extraAttributes = extraAttributes;
     }
     
     public ModuleRevisionId getModuleRevisionId() {
-        return _md.getResolvedModuleRevisionId();
+        return md.getResolvedModuleRevisionId();
     }
     
     public Date getPublicationDate() {
-        return _md.getResolvedPublicationDate();
+        return md.getResolvedPublicationDate();
     }
     public ArtifactRevisionId getId() {
-        if (_arid == null) {
-            _arid = ArtifactRevisionId.newInstance(_md.getResolvedModuleRevisionId(), _name, _type, _ext, _extraAttributes);
+        if (arid == null) {
+            arid = ArtifactRevisionId.newInstance(md.getResolvedModuleRevisionId(), name, type, ext, extraAttributes);
         }
-        return _arid;
+        return arid;
     }    
 
     public String getName() {
-        return _name;
+        return name;
     }
 
     public String getType() {
-        return _type;
+        return type;
     }
 
     public String getExt() {
-        return _ext;
+        return ext;
     }
 
     public String[] getConfigurations() {
-        return (String[])_confs.toArray(new String[_confs.size()]);
+        return (String[]) confs.toArray(new String[confs.size()]);
     }
 
     public void addConfiguration(String conf) {
-        _confs.add(conf);
+        confs.add(conf);
     }
     
 	public URL getUrl() {
-		return _url;
+		return url;
 	}
     
 }

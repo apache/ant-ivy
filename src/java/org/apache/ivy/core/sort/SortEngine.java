@@ -30,10 +30,10 @@ import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.plugins.circular.CircularDependencyException;
 
 public class SortEngine {
-	private IvySettings _settings;
+	private IvySettings settings;
 	
     public SortEngine(IvySettings settings) {
-		_settings = settings;
+		this.settings = settings;
 	}
 
 
@@ -86,7 +86,7 @@ public class SortEngine {
 
 	public List sortModuleDescriptors(Collection moduleDescriptors, NonMatchingVersionReporter nonMatchingVersionReporter) {
 		ModuleDescriptorSorter sorter = new ModuleDescriptorSorter(moduleDescriptors, 
-        		_settings.getVersionMatcher(), nonMatchingVersionReporter , _settings.getCircularDependencyStrategy());
+        		settings.getVersionMatcher(), nonMatchingVersionReporter , settings.getCircularDependencyStrategy());
 		return sorter.sortModuleDescriptors();
 	}
 

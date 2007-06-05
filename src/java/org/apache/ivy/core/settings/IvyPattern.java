@@ -21,13 +21,13 @@ package org.apache.ivy.core.settings;
  *
  */
 public class IvyPattern {
-    private String _pattern;
+    private String pattern;
 
     public String getPattern() {
-        return _pattern;
+        return pattern;
     }
 
     public void setPattern(String pattern) {
-        _pattern = pattern;
+        this.pattern = pattern;
     }
 }

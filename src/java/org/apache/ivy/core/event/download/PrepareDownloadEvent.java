@@ -22,14 +22,14 @@ import org.apache.ivy.core.module.descriptor.Artifact;
 
 public class PrepareDownloadEvent extends IvyEvent {
 	public static final String NAME = "prepare-download";
-    private Artifact[] _artifacts;
+    private Artifact[] artifacts;
     
     public PrepareDownloadEvent(Artifact[] artifacts) {
     	super(NAME);
-        _artifacts = artifacts;
+        this.artifacts = artifacts;
     }
     
     public Artifact[] getArtifacts() {
-        return _artifacts;
+        return artifacts;
     }
 }

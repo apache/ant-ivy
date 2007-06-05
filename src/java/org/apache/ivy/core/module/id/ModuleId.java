@@ -23,24 +23,24 @@ package org.apache.ivy.core.module.id;
  */
 public class ModuleId implements Comparable {
     static final String ENCODE_SEPARATOR = ":#@#:";
-    private String _organisation;
-    private String _name;
-    private int _hash;
+    private String organisation;
+    private String name;
+    private int hash;
 
     public ModuleId(String organisation, String name) {
         if (name == null) {
             throw new IllegalArgumentException("null name not allowed");
         }
-        _organisation = organisation;
-        _name = name;
-        _hash = _hashCode(); //stored for performance reasons, hashCode is very used in many maps
+        this.organisation = organisation;
+        this.name = name;
+        hash = _hashCode(); //stored for performance reasons, hashCode is very used in many maps
     }
 
     public String getName() {
-        return _name;
+        return name;
     }
     public String getOrganisation() {
-        return _organisation;
+        return organisation;
     }
     
     public boolean equals(Object obj) {
@@ -48,30 +48,30 @@ public class ModuleId implements Comparable {
             return false;
         }
         ModuleId other = (ModuleId)obj;
-        if (other._organisation == null) {
-        	return _organisation == null && other._name.equals(_name);
+        if (other.organisation == null) {
+        	return organisation == null && other.name.equals(name);
         } else {
-        	return other._organisation.equals(_organisation) && other._name.equals(_name);
+        	return other.organisation.equals(organisation) && other.name.equals(name);
         }
     }
     public int hashCode() {
-        return _hash;
+        return hash;
     }
     public int _hashCode() {
         int hash = 31;
-        hash = hash * 13 + (_organisation == null ? 0 : _organisation.hashCode());
-        hash = hash * 13 + _name.hashCode();
+        hash = hash * 13 + (organisation == null ? 0 : organisation.hashCode());
+        hash = hash * 13 + name.hashCode();
         return hash;
     }
     public String toString() {
-        return "[ "+_organisation+" | "+_name+" ]";
+        return "[ "+ organisation +" | "+ name +" ]";
     }
 
     public int compareTo(Object obj) {
         ModuleId that = (ModuleId)obj;
-        int result = _organisation.compareTo(that._organisation);
+        int result = organisation.compareTo(that.organisation);
         if (result == 0) {
-            result = _name.compareTo(that._name);
+            result = name.compareTo(that.name);
         }
         return result;
     }

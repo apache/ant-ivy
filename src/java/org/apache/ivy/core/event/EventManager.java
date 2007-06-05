@@ -27,10 +27,10 @@ import org.apache.ivy.util.filter.Filter;
 
 public class EventManager implements TransferListener {
 
-    private EventListenerList _listeners = new EventListenerList();
+    private EventListenerList listeners = new EventListenerList();
     
     public void addIvyListener(IvyListener listener) {
-        _listeners.add(IvyListener.class, listener);
+        listeners.add(IvyListener.class, listener);
     }
 
     public void addIvyListener(IvyListener listener, String eventName) {
@@ -38,26 +38,26 @@ public class EventManager implements TransferListener {
     }
 
     public void addIvyListener(IvyListener listener, Filter filter) {
-        _listeners.add(IvyListener.class, new FilteredIvyListener(listener, filter));
+        listeners.add(IvyListener.class, new FilteredIvyListener(listener, filter));
     }
 
     public void removeIvyListener(IvyListener listener) {
-        _listeners.remove(IvyListener.class, listener);
-        IvyListener[] listeners = (IvyListener[])_listeners.getListeners(IvyListener.class);
+        listeners.remove(IvyListener.class, listener);
+        IvyListener[] listeners = (IvyListener[]) this.listeners.getListeners(IvyListener.class);
         for (int i = 0; i < listeners.length; i++) {
 			if (listeners[i] instanceof FilteredIvyListener) {
 				if (listener.equals(((FilteredIvyListener)listeners[i]).getIvyListener())) {
-					_listeners.remove(IvyListener.class, listeners[i]);
+					this.listeners.remove(IvyListener.class, listeners[i]);
 				}
 			}
 		}
     }
 
     public boolean hasIvyListener(IvyListener listener) {
-        return Arrays.asList(_listeners.getListeners(IvyListener.class)).contains(listener);
+        return Arrays.asList(listeners.getListeners(IvyListener.class)).contains(listener);
     }
     public void fireIvyEvent(IvyEvent evt) {
-        Object[] listeners = _listeners.getListenerList();
+        Object[] listeners = this.listeners.getListenerList();
         for (int i = listeners.length-2; i>=0; i-=2) {
             if (listeners[i]==IvyListener.class) {
                 ((IvyListener)listeners[i+1]).progress(evt);
@@ -66,18 +66,18 @@ public class EventManager implements TransferListener {
     }
 
     public void addTransferListener(TransferListener listener) {
-        _listeners.add(TransferListener.class, listener);
+        listeners.add(TransferListener.class, listener);
     }
 
     public void removeTransferListener(TransferListener listener) {
-        _listeners.remove(TransferListener.class, listener);
+        listeners.remove(TransferListener.class, listener);
     }
 
     public boolean hasTransferListener(TransferListener listener) {
-        return Arrays.asList(_listeners.getListeners(TransferListener.class)).contains(listener);
+        return Arrays.asList(listeners.getListeners(TransferListener.class)).contains(listener);
     }
     protected void fireTransferEvent(TransferEvent evt) {
-        Object[] listeners = _listeners.getListenerList();
+        Object[] listeners = this.listeners.getListenerList();
         for (int i = listeners.length-2; i>=0; i-=2) {
             if (listeners[i]==TransferListener.class) {
                 ((TransferListener)listeners[i+1]).transferProgress(evt);

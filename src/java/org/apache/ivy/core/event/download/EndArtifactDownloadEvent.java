@@ -28,21 +28,21 @@ import org.apache.ivy.plugins.resolver.DependencyResolver;
 public class EndArtifactDownloadEvent extends DownloadEvent {
 	public static final String NAME = "post-download-artifact";
 
-    private DependencyResolver _resolver;
-    private ArtifactDownloadReport _report;
+    private DependencyResolver resolver;
+    private ArtifactDownloadReport report;
 
     public EndArtifactDownloadEvent(DependencyResolver resolver, Artifact artifact, ArtifactDownloadReport report, File dest) {
         super(NAME, artifact);
-        _resolver = resolver;
-        _report = report;
-        addAttribute("resolver", _resolver.getName());
-        addAttribute("status", _report.getDownloadStatus().toString());
-        addAttribute("size", String.valueOf(_report.getSize()));
+        this.resolver = resolver;
+        this.report = report;
+        addAttribute("resolver", this.resolver.getName());
+        addAttribute("status", this.report.getDownloadStatus().toString());
+        addAttribute("size", String.valueOf(this.report.getSize()));
         addAttribute("file", dest.getAbsolutePath());
         ArtifactOrigin origin = report.getArtifactOrigin();
         if (origin != null) {
-        	addAttribute("origin", _report.getArtifactOrigin().getLocation());
-        	addAttribute("local", String.valueOf(_report.getArtifactOrigin().isLocal()));
+        	addAttribute("origin", this.report.getArtifactOrigin().getLocation());
+        	addAttribute("local", String.valueOf(this.report.getArtifactOrigin().isLocal()));
         } else {
             addAttribute("origin", "");
             addAttribute("local", "");
@@ -50,11 +50,11 @@ public class EndArtifactDownloadEvent extends DownloadEvent {
     }
 
     public ArtifactDownloadReport getReport() {
-        return _report;
+        return report;
     }
 
     public DependencyResolver getResolver() {
-        return _resolver;
+        return resolver;
     }
 
 }

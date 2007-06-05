@@ -27,7 +27,7 @@ package org.apache.ivy.core;
  * @see IvyContext
  */
 public class IvyThread extends Thread {
-	private IvyContext _context = IvyContext.getContext(); 
+	private IvyContext context = IvyContext.getContext();
 
 	public IvyThread() {
 		super();
@@ -67,6 +67,6 @@ public class IvyThread extends Thread {
 	}
 
 	protected void initContext() {
-		IvyContext.setContext(_context);
+		IvyContext.setContext(context);
 	}
 }

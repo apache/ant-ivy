@@ -40,10 +40,10 @@ import org.apache.ivy.plugins.resolver.DependencyResolver;
 import org.apache.ivy.util.Message;
 
 public class SearchEngine {
-	private IvySettings _settings;
+	private IvySettings settings;
 	
     public SearchEngine(IvySettings settings) {
-		_settings = settings;
+		this.settings = settings;
 	}
 
 	/**
@@ -55,7 +55,7 @@ public class SearchEngine {
      */
 	public String[] listTokenValues(String token, Map otherTokenValues) {
         List r = new ArrayList();
-        for (Iterator iter = _settings.getResolvers().iterator(); iter.hasNext();) {
+        for (Iterator iter = settings.getResolvers().iterator(); iter.hasNext();) {
             DependencyResolver resolver = (DependencyResolver)iter.next();
             r.addAll(Arrays.asList(resolver.listTokenValues(token, otherTokenValues)));
         }
@@ -64,7 +64,7 @@ public class SearchEngine {
     
     public OrganisationEntry[] listOrganisationEntries() {
         List entries = new ArrayList();
-        for (Iterator iter = _settings.getResolvers().iterator(); iter.hasNext();) {
+        for (Iterator iter = settings.getResolvers().iterator(); iter.hasNext();) {
             DependencyResolver resolver = (DependencyResolver)iter.next();
             entries.addAll(Arrays.asList(resolver.listOrganisations()));
         }
@@ -72,7 +72,7 @@ public class SearchEngine {
     }
     public String[] listOrganisations() {
         Collection orgs = new HashSet();
-        for (Iterator iter = _settings.getResolvers().iterator(); iter.hasNext();) {
+        for (Iterator iter = settings.getResolvers().iterator(); iter.hasNext();) {
             DependencyResolver resolver = (DependencyResolver)iter.next();
             OrganisationEntry[] entries = resolver.listOrganisations();
             if (entries != null) {
@@ -87,7 +87,7 @@ public class SearchEngine {
     }
     public ModuleEntry[] listModuleEntries(OrganisationEntry org) {
         List entries = new ArrayList();
-        for (Iterator iter = _settings.getResolvers().iterator(); iter.hasNext();) {
+        for (Iterator iter = settings.getResolvers().iterator(); iter.hasNext();) {
             DependencyResolver resolver = (DependencyResolver)iter.next();
             entries.addAll(Arrays.asList(resolver.listModules(org)));
         }
@@ -95,7 +95,7 @@ public class SearchEngine {
     }
     public String[] listModules(String org) {
         List mods = new ArrayList();
-        for (Iterator iter = _settings.getResolvers().iterator(); iter.hasNext();) {
+        for (Iterator iter = settings.getResolvers().iterator(); iter.hasNext();) {
             DependencyResolver resolver = (DependencyResolver)iter.next();
             ModuleEntry[] entries = resolver.listModules(new OrganisationEntry(resolver, org));
             if (entries != null) {
@@ -110,7 +110,7 @@ public class SearchEngine {
     }
     public RevisionEntry[] listRevisionEntries(ModuleEntry module) {
         List entries = new ArrayList();
-        for (Iterator iter = _settings.getResolvers().iterator(); iter.hasNext();) {
+        for (Iterator iter = settings.getResolvers().iterator(); iter.hasNext();) {
             DependencyResolver resolver = (DependencyResolver)iter.next();
             entries.addAll(Arrays.asList(resolver.listRevisions(module)));
         }
@@ -118,7 +118,7 @@ public class SearchEngine {
     }
     public String[] listRevisions(String org, String module) {
         List revs = new ArrayList();
-        for (Iterator iter = _settings.getResolvers().iterator(); iter.hasNext();) {
+        for (Iterator iter = settings.getResolvers().iterator(); iter.hasNext();) {
             DependencyResolver resolver = (DependencyResolver)iter.next();
             RevisionEntry[] entries = resolver.listRevisions(new ModuleEntry(new OrganisationEntry(resolver, org), module));
             if (entries != null) {
@@ -190,7 +190,7 @@ public class SearchEngine {
 						tokenValues.put(IvyPatternHelper.MODULE_KEY, mods[j]);
 						String[] branches = listTokenValues(IvyPatternHelper.BRANCH_KEY, tokenValues);
 						if (branches == null || branches.length == 0) {
-							branches = new String[]  {_settings.getDefaultBranch(new ModuleId(orgs[i], mods[j]))};
+							branches = new String[]  {settings.getDefaultBranch(new ModuleId(orgs[i], mods[j]))};
 						}
 						for (int k = 0; k < branches.length; k++) {
 							if (branches[k] == null || branchMatcher.matches(branches[k])) {

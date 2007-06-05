@@ -29,40 +29,40 @@ import org.apache.ivy.plugins.resolver.DependencyResolver;
  *
  */
 public class DefaultModuleRevision implements ResolvedModuleRevision {
-    private DependencyResolver _resolver;
-    private DependencyResolver _artifactResolver;
-    private ModuleDescriptor _descriptor;
-    private boolean _isDownloaded;
-    private boolean _isSearched;
-    private URL _localMDUrl;
+    private DependencyResolver resolver;
+    private DependencyResolver artifactResolver;
+    private ModuleDescriptor descriptor;
+    private boolean isDownloaded;
+    private boolean isSearched;
+    private URL localMDUrl;
     
     public DefaultModuleRevision(DependencyResolver resolver, DependencyResolver artifactResolver, ModuleDescriptor descriptor, boolean searched, boolean downloaded, URL localMDUrl) {
-        _resolver = resolver;
-        _artifactResolver = artifactResolver;
-        _descriptor = descriptor;
-        _isSearched = searched;
-        _isDownloaded = downloaded;
-        _localMDUrl = localMDUrl;
+        this.resolver = resolver;
+        this.artifactResolver = artifactResolver;
+        this.descriptor = descriptor;
+        isSearched = searched;
+        isDownloaded = downloaded;
+        this.localMDUrl = localMDUrl;
     }
 
     public DependencyResolver getResolver() {
-        return _resolver;
+        return resolver;
     }
     
     public DependencyResolver getArtifactResolver() {
-        return _artifactResolver;
+        return artifactResolver;
     }
 
     public ModuleDescriptor getDescriptor() {
-        return _descriptor;
+        return descriptor;
     }
 
     public ModuleRevisionId getId() {
-        return _descriptor.getResolvedModuleRevisionId();
+        return descriptor.getResolvedModuleRevisionId();
     }
     
     public Date getPublicationDate() {
-        return _descriptor.getResolvedPublicationDate();
+        return descriptor.getResolvedPublicationDate();
     }
     
     public boolean equals(Object obj) {
@@ -81,15 +81,15 @@ public class DefaultModuleRevision implements ResolvedModuleRevision {
     }
 
     public boolean isDownloaded() {
-        return _isDownloaded;
+        return isDownloaded;
     }
 
     public boolean isSearched() {
-        return _isSearched;
+        return isSearched;
     }
 
 	public URL getLocalMDUrl() {
-		return _localMDUrl;
+		return localMDUrl;
 	}
     
 }

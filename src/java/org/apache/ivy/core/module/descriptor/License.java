@@ -18,19 +18,19 @@
 package org.apache.ivy.core.module.descriptor;
 
 public class License {
-    private String _name;
-    private String _url;
+    private String name;
+    private String url;
     public License(String name, String url) {
-        _name = name;
-        _url = url;
+        this.name = name;
+        this.url = url;
     }
 
     public String getName() {
-        return _name;
+        return name;
     }
     
     public String getUrl() {
-        return _url;
+        return url;
     }
     
 }

@@ -22,24 +22,24 @@ import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
 import org.apache.ivy.plugins.resolver.DependencyResolver;
 
 public class ResolveDependencyEvent extends IvyEvent {
-	private DependencyResolver _resolver;
-	private DependencyDescriptor _dd;
+	private DependencyResolver resolver;
+	private DependencyDescriptor dd;
 
 	protected ResolveDependencyEvent(String name, DependencyResolver resolver, DependencyDescriptor dd) {
 		super(name);
-		_resolver = resolver;
-		_dd = dd;
-		addAttribute("resolver", _resolver.getName());
-		addMridAttributes(_dd.getDependencyRevisionId());
-		addAttributes(_dd.getExtraAttributes());
+		this.resolver = resolver;
+		this.dd = dd;
+		addAttribute("resolver", this.resolver.getName());
+		addMridAttributes(this.dd.getDependencyRevisionId());
+		addAttributes(this.dd.getExtraAttributes());
 	}
 
 	public DependencyDescriptor getDependencyDescriptor() {
-		return _dd;
+		return dd;
 	}
 
 	public DependencyResolver getResolver() {
-		return _resolver;
+		return resolver;
 	}
 
 }

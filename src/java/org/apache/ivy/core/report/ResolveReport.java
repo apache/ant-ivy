@@ -39,35 +39,35 @@ import org.apache.ivy.util.filter.Filter;
  * Represents a whole resolution report for a module
  */
 public class ResolveReport {
-    private ModuleDescriptor _md;
-    private Map _confReports = new LinkedHashMap();
-	private List _problemMessages;
-	private List _dependencies; // the list of all dependencies resolved, ordered from the more dependent to the less dependent
-	private List _artifacts;
-	private long _resolveTime;
-	private long _downloadTime;
-	private String _resolveId;
+    private ModuleDescriptor md;
+    private Map confReports = new LinkedHashMap();
+	private List problemMessages;
+	private List dependencies; // the list of all dependencies resolved, ordered from the more dependent to the less dependent
+	private List artifacts;
+	private long resolveTime;
+	private long downloadTime;
+	private String resolveId;
 	
     public ResolveReport(ModuleDescriptor md) {
         this(md, ResolveOptions.getDefaultResolveId(md));
     }
     
     public ResolveReport(ModuleDescriptor md, String resolveId) {
-    	_md = md;
-    	_resolveId = resolveId;
+    	this.md = md;
+    	this.resolveId = resolveId;
     }
     public void addReport(String conf, ConfigurationResolveReport report) {
-        _confReports.put(conf, report);
+        confReports.put(conf, report);
     }
     public ConfigurationResolveReport getConfigurationReport(String conf) {
-        return (ConfigurationResolveReport)_confReports.get(conf);
+        return (ConfigurationResolveReport) confReports.get(conf);
     }
     public String[] getConfigurations() {
-        return (String[])_confReports.keySet().toArray(new String[_confReports.size()]);
+        return (String[]) confReports.keySet().toArray(new String[confReports.size()]);
     }
     public boolean hasError() {
         boolean hasError = false;
-        for (Iterator it = _confReports.values().iterator(); it.hasNext() && !hasError;) {
+        for (Iterator it = confReports.values().iterator(); it.hasNext() && !hasError;) {
             ConfigurationResolveReport report = (ConfigurationResolveReport)it.next();
             hasError |= report.hasError();
         }
@@ -81,12 +81,12 @@ public class ResolveReport {
     }
     
     public ModuleDescriptor getModuleDescriptor() {
-        return _md;
+        return md;
     }
     
     public IvyNode[] getEvictedNodes() {
         Collection all = new HashSet();
-        for (Iterator iter = _confReports.values().iterator(); iter.hasNext();) {
+        for (Iterator iter = confReports.values().iterator(); iter.hasNext();) {
             ConfigurationResolveReport report = (ConfigurationResolveReport)iter.next();
             all.addAll(Arrays.asList(report.getEvictedNodes()));
         }
@@ -94,7 +94,7 @@ public class ResolveReport {
     }
     public IvyNode[] getUnresolvedDependencies() {
         Collection all = new HashSet();
-        for (Iterator iter = _confReports.values().iterator(); iter.hasNext();) {
+        for (Iterator iter = confReports.values().iterator(); iter.hasNext();) {
             ConfigurationResolveReport report = (ConfigurationResolveReport)iter.next();
             all.addAll(Arrays.asList(report.getUnresolvedDependencies()));
         }
@@ -102,14 +102,14 @@ public class ResolveReport {
     }
     public ArtifactDownloadReport[] getFailedArtifactsReports() {
         Collection all = new HashSet();
-        for (Iterator iter = _confReports.values().iterator(); iter.hasNext();) {
+        for (Iterator iter = confReports.values().iterator(); iter.hasNext();) {
             ConfigurationResolveReport report = (ConfigurationResolveReport)iter.next();
             all.addAll(Arrays.asList(report.getFailedArtifactsReports()));
         }
         return (ArtifactDownloadReport[])all.toArray(new ArtifactDownloadReport[all.size()]);
     }
 	public boolean hasChanged() {
-        for (Iterator iter = _confReports.values().iterator(); iter.hasNext();) {
+        for (Iterator iter = confReports.values().iterator(); iter.hasNext();) {
             ConfigurationResolveReport report = (ConfigurationResolveReport)iter.next();
 			if (report.hasChanged()) {
 				return true;
@@ -118,14 +118,14 @@ public class ResolveReport {
 		return false;
 	}
 	public void setProblemMessages(List problems) {
-		_problemMessages = problems;
+		problemMessages = problems;
 	}
 	public List getProblemMessages() {
-		return _problemMessages;
+		return problemMessages;
 	}
 	public List getAllProblemMessages() {
-		List ret = new ArrayList(_problemMessages);
-		for (Iterator iter = _confReports.values().iterator(); iter.hasNext();) {
+		List ret = new ArrayList(problemMessages);
+		for (Iterator iter = confReports.values().iterator(); iter.hasNext();) {
 			ConfigurationResolveReport r = (ConfigurationResolveReport) iter.next();
 			IvyNode[] unresolved = r.getUnresolvedDependencies();
 			for (int i = 0; i < unresolved.length; i++) {
@@ -144,13 +144,13 @@ public class ResolveReport {
 		return ret;
 	}
 	public void setDependencies(List dependencies, Filter artifactFilter) {
-		_dependencies = dependencies;
+		this.dependencies = dependencies;
         // collect list of artifacts
-        _artifacts = new ArrayList();
+        artifacts = new ArrayList();
         for (Iterator iter = dependencies.iterator(); iter.hasNext();) {
 			IvyNode dependency = (IvyNode) iter.next();
 			if (!dependency.isCompletelyEvicted() && !dependency.hasProblem()) {
-				_artifacts.addAll(Arrays.asList(dependency.getSelectedArtifacts(artifactFilter)));
+				artifacts.addAll(Arrays.asList(dependency.getSelectedArtifacts(artifactFilter)));
 			} 
 			// update the configurations reports with the dependencies
 			// these reports will be completed later with download information, if any
@@ -169,7 +169,7 @@ public class ResolveReport {
 	 * @return
 	 */
 	public List getDependencies() {
-		return _dependencies;
+		return dependencies;
 	}
 	/**
 	 * Returns the list of all artifacts which should be downloaded per this resolve
@@ -178,7 +178,7 @@ public class ResolveReport {
 	 * @return
 	 */
 	public List getArtifacts() {
-		return _artifacts;
+		return artifacts;
 	}
 	/**
 	 * gives all the modules ids concerned by this report, from the most dependent to the least one
@@ -186,7 +186,7 @@ public class ResolveReport {
 	 */
 	public List getModuleIds() {
 		List ret = new ArrayList();
-		List sortedDependencies = new ArrayList(_dependencies);
+		List sortedDependencies = new ArrayList(dependencies);
 		for (Iterator iter = sortedDependencies.iterator(); iter.hasNext();) {
 			IvyNode dependency = (IvyNode) iter.next();
 			ModuleId mid = dependency.getResolvedId().getModuleId();
@@ -197,18 +197,18 @@ public class ResolveReport {
 		return ret;
 	}
 	public void setResolveTime(long elapsedTime) {
-		_resolveTime = elapsedTime;
+		resolveTime = elapsedTime;
 	}
 	public long getResolveTime() {
-		return _resolveTime;
+		return resolveTime;
 	}
 	public void setDownloadTime(long elapsedTime) {
-		_downloadTime = elapsedTime;
+		downloadTime = elapsedTime;
 	}
 	public long getDownloadTime() {
-		return _downloadTime;
+		return downloadTime;
 	}
 	public String getResolveId() {
-		return _resolveId;
+		return resolveId;
 	}
 }

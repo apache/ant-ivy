@@ -24,10 +24,10 @@ import org.apache.ivy.core.event.EventManager;
 import org.apache.ivy.core.settings.IvySettings;
 
 public class DownloadOptions {
-	private IvySettings _settings;
-	private CacheManager _cacheManager;
-	private EventManager _eventManager = null; // can be null
-	private boolean _useOrigin = false;
+	private IvySettings settings;
+	private CacheManager cacheManager;
+	private EventManager eventManager = null; // can be null
+	private boolean useOrigin = false;
 
 	public DownloadOptions(IvySettings settings, File cache) {
 		this(settings, new CacheManager(settings, cache));
@@ -38,25 +38,25 @@ public class DownloadOptions {
 	}
 	
 	public DownloadOptions(IvySettings settings, CacheManager cacheManager, EventManager eventManager, boolean useOrigin) {
-		_settings = settings;
-		_cacheManager = cacheManager;
-		_eventManager = eventManager;
-		_useOrigin = useOrigin;
+		this.settings = settings;
+		this.cacheManager = cacheManager;
+		this.eventManager = eventManager;
+		this.useOrigin = useOrigin;
 	}
 	
 	public IvySettings getSettings() {
-		return _settings;
+		return settings;
 	}
 	public boolean isUseOrigin() {
-		return _useOrigin;
+		return useOrigin;
 	}
 
 	public CacheManager getCacheManager() {
-		return _cacheManager;
+		return cacheManager;
 	}
 
 	public EventManager getEventManager() {
-		return _eventManager;
+		return eventManager;
 	}
 	
 }

@@ -32,14 +32,14 @@ import org.apache.ivy.core.settings.IvySettings;
 
 
 public class ResolveData {
-	private ResolveEngine _engine;
-    private Map _visitData; // shared map of all visit data: Map (ModuleRevisionId -> VisitData)
-    private ConfigurationResolveReport _report;
+	private ResolveEngine engine;
+    private Map visitData; // shared map of all visit data: Map (ModuleRevisionId -> VisitData)
+    private ConfigurationResolveReport report;
 
-    private ResolveOptions _options;
+    private ResolveOptions options;
 
     public ResolveData(ResolveData data, boolean validate) {
-        this(data._engine, new ResolveOptions(data._options).setValidate(validate), data._report, data._visitData);
+        this(data.engine, new ResolveOptions(data.options).setValidate(validate), data.report, data.visitData);
     }
 
     public ResolveData(ResolveEngine engine, ResolveOptions options) {
@@ -51,10 +51,10 @@ public class ResolveData {
     }
 
     public ResolveData(ResolveEngine engine, ResolveOptions options, ConfigurationResolveReport report, Map visitData) {
-    	_engine = engine;
-        _report = report;
-        _visitData = visitData;
-        _options = options;
+    	this.engine = engine;
+        this.report = report;
+        this.visitData = visitData;
+        this.options = options;
     }
     
 
@@ -64,12 +64,12 @@ public class ResolveData {
      * @return
      */
     public Map getVisitDataMap() {
-        return _visitData;
+        return visitData;
     }
     
 
     public ConfigurationResolveReport getReport() {
-        return _report;
+        return report;
     }
     
 
@@ -81,7 +81,7 @@ public class ResolveData {
     
     public Collection getNodes() {
     	Collection nodes = new ArrayList();
-    	for (Iterator iter = _visitData.values().iterator(); iter.hasNext();) {
+    	for (Iterator iter = visitData.values().iterator(); iter.hasNext();) {
 			VisitData vdata = (VisitData) iter.next();
 			nodes.add(vdata.getNode());
 		}
@@ -89,11 +89,11 @@ public class ResolveData {
     }
     
     public Collection getNodeIds() {
-    	return _visitData.keySet();
+    	return visitData.keySet();
     }
     
     public VisitData getVisitData(ModuleRevisionId mrid) {
-    	return (VisitData) _visitData.get(mrid);
+    	return (VisitData) visitData.get(mrid);
     }
 
     public void register(VisitNode node) {
@@ -105,7 +105,7 @@ public class ResolveData {
     	if (visitData == null) {
     		visitData = new VisitData(node.getNode());
     		visitData.addVisitNode(node);
-    		_visitData.put(mrid, visitData);
+    		this.visitData.put(mrid, visitData);
     	} else {
     		visitData.setNode(node.getNode());
     		visitData.addVisitNode(node);
@@ -130,46 +130,46 @@ public class ResolveData {
     		throw new IllegalArgumentException("impossible to replace node with "+node+". No registered node found for "+node.getId()+".");
     	}
     	// replace visit data in Map (discards old one)
-    	_visitData.put(mrid, keptVisitData);
+    	this.visitData.put(mrid, keptVisitData);
     	// update visit data with discarde visit nodes
     	keptVisitData.addVisitNodes(rootModuleConf, visitData.getVisitNodes(rootModuleConf));
     }
     
     public void setReport(ConfigurationResolveReport report) {
-        _report = report;
+        this.report = report;
     }
 
 
 	public Date getDate() {
-        return _options.getDate();
+        return options.getDate();
     }
 	
     public boolean isValidate() {
-        return _options.isValidate();
+        return options.isValidate();
     }
     
 	public boolean isTransitive() {
-		return _options.isTransitive();
+		return options.isTransitive();
 	}
 	
 	public ResolveOptions getOptions() {
-		return _options;
+		return options;
 	}
 
 	public CacheManager getCacheManager() {
-		return _options.getCache();
+		return options.getCache();
 	}
 
 	public IvySettings getSettings() {
-		return _engine.getSettings();
+		return engine.getSettings();
 	}
 
 	public EventManager getEventManager() {
-		return _engine.getEventManager();
+		return engine.getEventManager();
 	}
 
 	public ResolveEngine getEngine() {
-		return _engine;
+		return engine;
 	}
     
 

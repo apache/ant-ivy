@@ -45,17 +45,17 @@ public class StatusManager {
         return IvyContext.getContext().getSettings().getStatusManager();
     }
     
-    private List _status = new ArrayList();
-    private String _defaultStatus;
+    private List status = new ArrayList();
+    private String defaultStatus;
     
     // for easier querying only
-    private Map _statusPriorityMap;
-    private Map _statusIntegrationMap;
-    private String _deliveryStatusListString;
+    private Map statusPriorityMap;
+    private Map statusIntegrationMap;
+    private String deliveryStatusListString;
 
     public StatusManager(Status[] status, String defaultStatus) {
-        _status.addAll(Arrays.asList(status));
-        _defaultStatus = defaultStatus;
+        this.status.addAll(Arrays.asList(status));
+        this.defaultStatus = defaultStatus;
 
         computeMaps();
     }
@@ -64,45 +64,45 @@ public class StatusManager {
     }
     
     public void addStatus(Status status) {
-        _status.add(status);
+        this.status.add(status);
     }
 
     public void setDefaultStatus(String defaultStatus) {
-        _defaultStatus = defaultStatus;
+        this.defaultStatus = defaultStatus;
     }
     
     public List getStatuses() {
-        return _status;
+        return status;
     }
     
     private void computeMaps() {
-        if (_status.isEmpty()) {
+        if (status.isEmpty()) {
             throw new IllegalStateException("badly configured statuses: no status found");
         }
-        _statusPriorityMap = new HashMap();
-        for (ListIterator iter = _status.listIterator(); iter.hasNext();) {
+        statusPriorityMap = new HashMap();
+        for (ListIterator iter = status.listIterator(); iter.hasNext();) {
             Status status = (Status)iter.next();
-            _statusPriorityMap.put(status.getName(), new Integer(iter.previousIndex()));
+            statusPriorityMap.put(status.getName(), new Integer(iter.previousIndex()));
         }
-        _statusIntegrationMap = new HashMap();
-        for (Iterator iter = _status.iterator(); iter.hasNext();) {
+        statusIntegrationMap = new HashMap();
+        for (Iterator iter = status.iterator(); iter.hasNext();) {
             Status status = (Status)iter.next();
-            _statusIntegrationMap.put(status.getName(), Boolean.valueOf(status.isIntegration()));
+            statusIntegrationMap.put(status.getName(), Boolean.valueOf(status.isIntegration()));
         }
     }
     
     public boolean isStatus(String status) {
-        if (_statusPriorityMap == null) {
+        if (statusPriorityMap == null) {
             computeMaps();
         }
-        return _statusPriorityMap.containsKey(status);
+        return statusPriorityMap.containsKey(status);
     }
 
     public int getPriority(String status) {
-        if (_statusPriorityMap == null) {
+        if (statusPriorityMap == null) {
             computeMaps();
         }
-        Integer priority = (Integer)_statusPriorityMap.get(status);
+        Integer priority = (Integer) statusPriorityMap.get(status);
         if (priority == null) {
             Message.debug("unknown status "+status+": assuming lowest priority");
             return Integer.MAX_VALUE;
@@ -111,10 +111,10 @@ public class StatusManager {
     }
     
     public boolean isIntegration(String status) {
-        if (_statusIntegrationMap == null) {
+        if (statusIntegrationMap == null) {
             computeMaps();
         }
-        Boolean isIntegration = (Boolean)_statusIntegrationMap.get(status);
+        Boolean isIntegration = (Boolean) statusIntegrationMap.get(status);
         if (isIntegration == null) {
             Message.debug("unknown status "+status+": assuming integration");
             return true;
@@ -123,9 +123,9 @@ public class StatusManager {
     }
 
     public String getDeliveryStatusListString() {
-        if (_deliveryStatusListString == null) {
+        if (deliveryStatusListString == null) {
             StringBuffer ret = new StringBuffer();
-            for (Iterator iter = _status.iterator(); iter.hasNext();) {
+            for (Iterator iter = status.iterator(); iter.hasNext();) {
                 Status status = (Status)iter.next();
                 if (!status.isIntegration()) {
                     ret.append(status.getName()).append(","); 
@@ -134,18 +134,18 @@ public class StatusManager {
             if (ret.length() > 0) {
                 ret.deleteCharAt(ret.length()-1);
             }
-            _deliveryStatusListString = ret.toString();
+            deliveryStatusListString = ret.toString();
         }
-        return _deliveryStatusListString;
+        return deliveryStatusListString;
     }
 
     public String getDefaultStatus() {
-        if (_defaultStatus == null) {
-            if (_status.isEmpty()) {
+        if (defaultStatus == null) {
+            if (status.isEmpty()) {
                 throw new IllegalStateException("badly configured statuses: no status found");
             }
-            _defaultStatus = ((Status)_status.get(_status.size() - 1)).getName();
+            defaultStatus = ((Status) status.get(status.size() - 1)).getName();
         }
-        return _defaultStatus;
+        return defaultStatus;
     }
 }

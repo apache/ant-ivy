@@ -40,20 +40,20 @@ public class Configuration extends DefaultExtendableItem {
                 throw new IllegalArgumentException("unknwon visibility "+name);
             }
         }
-        private String _name;
+        private String name;
         private Visibility(String name) {
-            _name = name;
+            this.name = name;
         }
         public String toString() {
-            return _name;
+            return name;
         }
     }
     
-    private String _name;
-    private String _description;
+    private String name;
+    private String description;
     private String[] _extends;
-    private Visibility _visibility;
-    private boolean _transitive = true;
+    private Visibility visibility;
+    private boolean transitive = true;
     
     /**
      * @param name
@@ -81,9 +81,9 @@ public class Configuration extends DefaultExtendableItem {
         if (visibility == null) {
             throw new NullPointerException("null visibility not allowed");
         }
-        _name = name;
-        _visibility = visibility;
-        _description = description;
+        this.name = name;
+        this.visibility = visibility;
+        this.description = description;
         if (ext == null) {
             _extends = new String[0];
         } else {
@@ -92,7 +92,7 @@ public class Configuration extends DefaultExtendableItem {
                 _extends[i] = ext[i].trim();
             }
         }
-        _transitive=transitive;
+        this.transitive =transitive;
     }
     
     /**
@@ -106,7 +106,7 @@ public class Configuration extends DefaultExtendableItem {
      * @return Returns the description. It may be null.
      */
     public String getDescription() {
-        return _description;
+        return description;
     }
     /**
      * @return Returns the extends. May be empty, but never null.
@@ -118,24 +118,24 @@ public class Configuration extends DefaultExtendableItem {
      * @return Returns the name. Never null;
      */
     public String getName() {
-        return _name;
+        return name;
     }
     /**
      * @return Returns the visibility. Never null.
      */
     public Visibility getVisibility() {
-        return _visibility;
+        return visibility;
     }
     
     /**
      * @return Returns the transitive.
      */
     public final boolean isTransitive() {
-        return _transitive;
+        return transitive;
     }
    
     public String toString() {
-        return _name;
+        return name;
     }
     
     public boolean equals(Object obj) {
@@ -150,7 +150,7 @@ public class Configuration extends DefaultExtendableItem {
     }
     
     public void replaceWildcards(ModuleDescriptor md) {
-        if (this != md.getConfiguration(_name)) {
+        if (this != md.getConfiguration(name)) {
             throw new IllegalArgumentException(
             "The given ModuleDescriptor doesn't own this configuration!");
         }
@@ -176,7 +176,7 @@ public class Configuration extends DefaultExtendableItem {
     private void addOther(Configuration[] allConfigs, Visibility visibility, Set configs) {
         for (int i = 0; i < allConfigs.length; i++) {
             String currentName = allConfigs[i].getName();
-            if (!_name.equals(currentName)
+            if (!name.equals(currentName)
                     && ((visibility == null) || visibility.equals(allConfigs[i].getVisibility()))) {
                 configs.add(currentName);
             }

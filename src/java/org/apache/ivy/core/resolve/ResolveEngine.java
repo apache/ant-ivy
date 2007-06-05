@@ -79,13 +79,13 @@ import org.apache.ivy.util.filter.Filter;
  *  @see ResolveOptions
  */
 public class ResolveEngine {
-	private IvySettings _settings;
-	private EventManager _eventManager;
-	private SortEngine _sortEngine;
+	private IvySettings settings;
+	private EventManager eventManager;
+	private SortEngine sortEngine;
 	
 	
-    private Set _fetchedSet = new HashSet();
-	private DependencyResolver _dictatorResolver;
+    private Set fetchedSet = new HashSet();
+	private DependencyResolver dictatorResolver;
 	
 	/**
 	 * Constructs a ResolveEngine.
@@ -95,9 +95,9 @@ public class ResolveEngine {
 	 * @param sortEngine the sort engine to use to sort modules before producing the dependency resolution report. Must not be null.
 	 */
     public ResolveEngine(IvySettings settings, EventManager eventManager, SortEngine sortEngine) {
-		_settings = settings;
-		_eventManager = eventManager;
-		_sortEngine = sortEngine;
+		this.settings = settings;
+		this.eventManager = eventManager;
+		this.sortEngine = sortEngine;
 	}
 
     /**
@@ -106,7 +106,7 @@ public class ResolveEngine {
      * @return the currently configured dictator resolver, may be null.
      */
 	public DependencyResolver getDictatorResolver() {
-        return _dictatorResolver;
+        return dictatorResolver;
     }
 
 	/**
@@ -116,8 +116,8 @@ public class ResolveEngine {
 	 * 		  null if regular settings should used
 	 */
     public void setDictatorResolver(DependencyResolver dictatorResolver) {
-        _dictatorResolver = dictatorResolver;
-        _settings.setDictatorResolver(dictatorResolver);
+        this.dictatorResolver = dictatorResolver;
+        settings.setDictatorResolver(dictatorResolver);
     }
 
     public ResolveReport resolve(File ivySource) throws ParseException, IOException {
@@ -168,7 +168,7 @@ public class ResolveEngine {
         URLResource res = new URLResource(ivySource);
         ModuleDescriptorParser parser = ModuleDescriptorParserRegistry.getInstance().getParser(res);
         Message.verbose("using "+parser+" to parse "+ivySource);
-        ModuleDescriptor md = parser.parseDescriptor(_settings, ivySource, options.isValidate());
+        ModuleDescriptor md = parser.parseDescriptor(settings, ivySource, options.isValidate());
         String revision = options.getRevision();
         if (revision == null && md.getResolvedModuleRevisionId().getRevision() == null) {
             revision = Ivy.getWorkingRevision();
@@ -188,7 +188,7 @@ public class ResolveEngine {
 	public ResolveReport resolve(ModuleDescriptor md, ResolveOptions options) throws ParseException, IOException, FileNotFoundException {
         DependencyResolver oldDictator = getDictatorResolver();
         if (options.isUseCacheOnly()) {
-        	setDictatorResolver(new CacheResolver(_settings));
+        	setDictatorResolver(new CacheResolver(settings));
         }
         try {
             CacheManager cacheManager = options.getCache();
@@ -209,7 +209,7 @@ public class ResolveEngine {
             	options.setResolveId(ResolveOptions.getDefaultResolveId(md));
             }
             
-            _eventManager.fireIvyEvent(new StartResolveEvent(md, confs));
+            eventManager.fireIvyEvent(new StartResolveEvent(md, confs));
             
             long start = System.currentTimeMillis();
             Message.info(":: resolving dependencies :: "+md.getResolvedModuleRevisionId()+(options.isTransitive()?"":" [not transitive]"));
@@ -262,7 +262,7 @@ public class ResolveEngine {
             	outputReport(report, cacheManager.getCache());
             }
             
-            _eventManager.fireIvyEvent(new EndResolveEvent(md, confs, report));
+            eventManager.fireIvyEvent(new EndResolveEvent(md, confs, report));
             return report;
         } finally {
             setDictatorResolver(oldDictator);
@@ -273,7 +273,7 @@ public class ResolveEngine {
 		Message.info(":: resolution report ::");
 		report.setProblemMessages(Message.getProblems());
 		// output report
-		report.output(_settings.getReportOutputters(), cache);
+		report.output(settings.getReportOutputters(), cache);
 		
 		Message.verbose("\tresolve done ("+report.getResolveTime()+"ms resolve - "+report.getDownloadTime()+"ms download)");
 		Message.sumupProblems();
@@ -283,7 +283,7 @@ public class ResolveEngine {
     	long start = System.currentTimeMillis();
     	IvyNode[] dependencies = (IvyNode[]) report.getDependencies().toArray(new IvyNode[report.getDependencies().size()]);
         
-        _eventManager.fireIvyEvent(new PrepareDownloadEvent((Artifact[])report.getArtifacts().toArray(new Artifact[report.getArtifacts().size()])));
+        eventManager.fireIvyEvent(new PrepareDownloadEvent((Artifact[])report.getArtifacts().toArray(new Artifact[report.getArtifacts().size()])));
         
         for (int i = 0; i < dependencies.length; i++) {
         	checkInterrupted();
@@ -292,7 +292,7 @@ public class ResolveEngine {
                 DependencyResolver resolver = dependencies[i].getModuleRevision()
                 													.getArtifactResolver();
                 Artifact[] selectedArtifacts = dependencies[i].getSelectedArtifacts(artifactFilter);
-                DownloadReport dReport = resolver.download(selectedArtifacts, new DownloadOptions(_settings, cacheManager, _eventManager, useOrigin));
+                DownloadReport dReport = resolver.download(selectedArtifacts, new DownloadOptions(settings, cacheManager, eventManager, useOrigin));
                 ArtifactDownloadReport[] adrs = dReport.getArtifactsReports();
                 for (int j = 0; j < adrs.length; j++) {
                     if (adrs[j].getDownloadStatus() == DownloadStatus.FAILED) {
@@ -333,8 +333,8 @@ public class ResolveEngine {
      * @return a report concerning the download
      */
     public ArtifactDownloadReport download(Artifact artifact, CacheManager cacheManager, boolean useOrigin) {
-        DependencyResolver resolver = _settings.getResolver(artifact.getModuleRevisionId().getModuleId());
-        DownloadReport r = resolver.download(new Artifact[] {artifact}, new DownloadOptions(_settings, cacheManager, _eventManager, useOrigin));
+        DependencyResolver resolver = settings.getResolver(artifact.getModuleRevisionId().getModuleId());
+        DownloadReport r = resolver.download(new Artifact[] {artifact}, new DownloadOptions(settings, cacheManager, eventManager, useOrigin));
         return r.getArtifactReport(artifact);
     }
     
@@ -353,7 +353,7 @@ public class ResolveEngine {
      */
     public IvyNode[] getDependencies(URL ivySource, ResolveOptions options) throws ParseException, IOException {
         return getDependencies(ModuleDescriptorParserRegistry.getInstance()
-        		.parseDescriptor(_settings, ivySource, options.isValidate()), 
+        		.parseDescriptor(settings, ivySource, options.isValidate()),
         		options, null);
     }
     
@@ -396,7 +396,7 @@ public class ResolveEngine {
         	
         	Message.verbose("resolving dependencies for configuration '"+confs[i]+"'");
         	// for each configuration we clear the cache of what's been fetched
-            _fetchedSet.clear();     
+            fetchedSet.clear();
             
             Configuration configuration = md.getConfiguration(confs[i]);
             if (configuration == null) {
@@ -437,7 +437,7 @@ public class ResolveEngine {
                 dependencies.add(dep);
             }
         }
-        List sortedDependencies = _sortEngine.sortNodes(dependencies);
+        List sortedDependencies = sortEngine.sortNodes(dependencies);
         Collections.reverse(sortedDependencies);
 
         // handle transitive eviction now:
@@ -450,7 +450,7 @@ public class ResolveEngine {
             if (!node.isCompletelyEvicted()) {
                 for (int i = 0; i < confs.length; i++) {
                     IvyNodeCallers.Caller[] callers = node.getCallers(confs[i]);
-                    if (_settings.debugConflictResolution()) {
+                    if (settings.debugConflictResolution()) {
                         Message.debug("checking if "+node.getId()+" is transitively evicted in "+confs[i]);
                     }
                     boolean allEvicted = callers.length > 0;
@@ -467,7 +467,7 @@ public class ResolveEngine {
                                 allEvicted = false;
                                 break;
                             } else {
-                                if (_settings.debugConflictResolution()) {
+                                if (settings.debugConflictResolution()) {
                                     Message.debug("caller "+callerNode.getId()+" of "+node.getId()+" is evicted");
                                 }
                             }
@@ -477,7 +477,7 @@ public class ResolveEngine {
                         Message.verbose("all callers are evicted for "+node+": evicting too");
                         node.markEvicted(confs[i], null, null, null);
                     } else {
-                        if (_settings.debugConflictResolution()) {
+                        if (settings.debugConflictResolution()) {
                             Message.debug(node.getId()+" isn't transitively evicted, at least one caller was not evicted");
                         }
                     }
@@ -535,7 +535,7 @@ public class ResolveEngine {
             	}
             }
         }
-        if (_settings.debugConflictResolution()) {
+        if (settings.debugConflictResolution()) {
             Message.debug(node.getId()+" => dependencies resolved in "+conf+" ("+(System.currentTimeMillis()-start)+"ms)");
         }
     }
@@ -609,10 +609,10 @@ public class ResolveEngine {
         ModuleRevisionId moduleRevisionId = node.getResolvedId();
         String key = moduleId.getOrganisation()+"|"+moduleId.getName()+"|"+moduleRevisionId.getRevision() +
             "|" + conf;
-        if (_fetchedSet.contains(key)) {
+        if (fetchedSet.contains(key)) {
             return true;
         }
-        _fetchedSet.add(key);
+        fetchedSet.add(key);
         return false;
     }    
 
@@ -647,12 +647,12 @@ public class ResolveEngine {
         		EvictionData evictionData = node.getEvictionDataInRoot(node.getRootModuleConf(), ancestor);
         		if (evictionData != null) {
         			// node has been previously evicted in an ancestor: we mark it as evicted
-        			if (_settings.debugConflictResolution()) {
+        			if (settings.debugConflictResolution()) {
         				Message.debug(node+" was previously evicted in root module conf "+node.getRootModuleConf());
         			}
 
         			node.markEvicted(evictionData);                
-        			if (_settings.debugConflictResolution()) {
+        			if (settings.debugConflictResolution()) {
         				Message.debug("evicting "+node+" by "+evictionData);
         			}
         		}
@@ -667,7 +667,7 @@ public class ResolveEngine {
         resolvedNodes.addAll(ancestor.getNode().getPendingConflicts(node.getRootModuleConf(), node.getModuleId()));
         Collection conflicts = computeConflicts(node, ancestor, toevict, resolvedNodes);
         
-        if (_settings.debugConflictResolution()) {
+        if (settings.debugConflictResolution()) {
             Message.debug("found conflicting revisions for "+node+" in "+ancestor+": "+conflicts);
         }
         
@@ -675,7 +675,7 @@ public class ResolveEngine {
 		Collection resolved = conflictManager.resolveConflicts(ancestor.getNode(), conflicts);
 
 		if (resolved == null) {
-            if (_settings.debugConflictResolution()) {
+            if (settings.debugConflictResolution()) {
                 Message.debug("impossible to resolve conflicts for "+node+" in "+ancestor+" yet");
                 Message.debug("setting all nodes as pending conflicts for later conflict resolution: "+conflicts);
             }
@@ -683,7 +683,7 @@ public class ResolveEngine {
             return false;
         }
         
-        if (_settings.debugConflictResolution()) {
+        if (settings.debugConflictResolution()) {
             Message.debug("selected revisions for "+node+" in "+ancestor+": "+resolved);
         }
         if (resolved.contains(node.getNode())) {
@@ -697,7 +697,7 @@ public class ResolveEngine {
                 IvyNode te = (IvyNode)iter.next();
                 te.markEvicted(node.getRootModuleConf(), ancestor.getNode(), conflictManager, resolved);
                 
-                if (_settings.debugConflictResolution()) {
+                if (settings.debugConflictResolution()) {
                     Message.debug("evicting "+te+" by "+te.getEvictedData(node.getRootModuleConf()));
                 }
             }
@@ -717,7 +717,7 @@ public class ResolveEngine {
         } else {
             // node has been evicted for the current parent
             if (resolved.isEmpty()) {
-                if (_settings.debugConflictResolution()) {
+                if (settings.debugConflictResolution()) {
                     Message.verbose("conflict manager '"+conflictManager+"' evicted all revisions among "+conflicts);
                 }
             }
@@ -735,7 +735,7 @@ public class ResolveEngine {
 
             
             node.markEvicted(ancestor, conflictManager, resolved);
-            if (_settings.debugConflictResolution()) {
+            if (settings.debugConflictResolution()) {
                 Message.debug("evicting "+node+" by "+node.getEvictedData());
             }
 
@@ -789,7 +789,7 @@ public class ResolveEngine {
     private boolean checkConflictSolvedSelected(VisitNode node, VisitNode ancestor) {
         if (ancestor.getResolvedRevisions(node.getModuleId()).contains(node.getResolvedId())) {
             // resolve conflict has already be done with node with the same id
-            if (_settings.debugConflictResolution()) {
+            if (settings.debugConflictResolution()) {
                 Message.debug("conflict resolution already done for "+node+" in "+ancestor);
             }
             return true;
@@ -800,7 +800,7 @@ public class ResolveEngine {
     private boolean checkConflictSolvedEvicted(VisitNode node, VisitNode ancestor) {
         if (ancestor.getEvictedRevisions(node.getModuleId()).contains(node.getResolvedId())) {
             // resolve conflict has already be done with node with the same id
-            if (_settings.debugConflictResolution()) {
+            if (settings.debugConflictResolution()) {
                 Message.debug("conflict resolution already done for "+node+" in "+ancestor);
             }
             return true;
@@ -809,7 +809,7 @@ public class ResolveEngine {
     }
 
 	public ResolvedModuleRevision findModule(ModuleRevisionId id, ResolveOptions options) {
-		DependencyResolver r = _settings.getResolver(id.getModuleId());
+		DependencyResolver r = settings.getResolver(id.getModuleId());
 		if (r == null) {
 			throw new IllegalStateException("no resolver found for "+id.getModuleId());
 		}
@@ -832,15 +832,15 @@ public class ResolveEngine {
 	}
 
 	public EventManager getEventManager() {
-		return _eventManager;
+		return eventManager;
 	}
 
 	public IvySettings getSettings() {
-		return _settings;
+		return settings;
 	}
 
 	public SortEngine getSortEngine() {
-		return _sortEngine;
+		return sortEngine;
 	}
 
 	private void checkInterrupted() {

@@ -52,10 +52,10 @@ public class ModuleRevisionId extends UnmodifiableExtendableItem {
 		return new ModuleRevisionId(mrid.getModuleId(), mrid.getBranch(), rev, mrid.getExtraAttributes());
 	}
     
-    private ModuleId _moduleId;
-    private String _branch;
-    private String _revision;
-    private int _hash;
+    private ModuleId moduleId;
+    private String branch;
+    private String revision;
+    private int hash;
     
     public ModuleRevisionId(ModuleId moduleId, String revision) {
         this(moduleId, null, revision, null);
@@ -68,18 +68,18 @@ public class ModuleRevisionId extends UnmodifiableExtendableItem {
     }
     public ModuleRevisionId(ModuleId moduleId, String branch, String revision, Map extraAttributes) {
         super(null, extraAttributes);
-        _moduleId = moduleId;
-        _branch = branch == null ? IvyContext.getContext().getSettings().getDefaultBranch(moduleId) : branch;
-        _revision = revision == null ? Ivy.getWorkingRevision() : revision;
-        _hash = _hashCode(); //stored for performance reasons, hashCode is very used in many maps
-        setStandardAttribute(IvyPatternHelper.ORGANISATION_KEY, _moduleId.getOrganisation());
-        setStandardAttribute(IvyPatternHelper.MODULE_KEY, _moduleId.getName());
-        setStandardAttribute(IvyPatternHelper.BRANCH_KEY, _branch);
-        setStandardAttribute(IvyPatternHelper.REVISION_KEY, _revision);
+        this.moduleId = moduleId;
+        this.branch = branch == null ? IvyContext.getContext().getSettings().getDefaultBranch(moduleId) : branch;
+        this.revision = revision == null ? Ivy.getWorkingRevision() : revision;
+        hash = _hashCode(); //stored for performance reasons, hashCode is very used in many maps
+        setStandardAttribute(IvyPatternHelper.ORGANISATION_KEY, this.moduleId.getOrganisation());
+        setStandardAttribute(IvyPatternHelper.MODULE_KEY, this.moduleId.getName());
+        setStandardAttribute(IvyPatternHelper.BRANCH_KEY, this.branch);
+        setStandardAttribute(IvyPatternHelper.REVISION_KEY, this.revision);
     }
     
     public ModuleId getModuleId() {
-        return _moduleId;
+        return moduleId;
     }
     public String getName() {
         return getModuleId().getName();
@@ -88,7 +88,7 @@ public class ModuleRevisionId extends UnmodifiableExtendableItem {
         return getModuleId().getOrganisation();
     }
     public String getRevision() {
-        return _revision;
+        return revision;
     }
     
     public boolean equals(Object obj) {
@@ -102,7 +102,7 @@ public class ModuleRevisionId extends UnmodifiableExtendableItem {
             && other.getExtraAttributes().equals(getExtraAttributes());
     }
     public int hashCode() {
-        return _hash;
+        return hash;
     }
     public int _hashCode() {
         int hash = 31;
@@ -114,7 +114,7 @@ public class ModuleRevisionId extends UnmodifiableExtendableItem {
     }
     
     public String toString() {
-        return "[ "+_moduleId.getOrganisation()+" | "+_moduleId.getName()+(_branch == null || _branch.length() == 0 ?"":" | "+_branch)+" | "+(_revision == null?"NONE":_revision)+" ]";
+        return "[ "+ moduleId.getOrganisation()+" | "+ moduleId.getName()+(branch == null || branch.length() == 0 ?"":" | "+ branch)+" | "+(revision == null?"NONE": revision)+" ]";
     }
     
     public String encodeToString() {
@@ -169,6 +169,6 @@ public class ModuleRevisionId extends UnmodifiableExtendableItem {
         return newInstance(org, mod, branch, rev, attributes);
     }
 	public String getBranch() {
-		return _branch;
+		return branch;
 	}
 }

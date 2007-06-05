@@ -51,10 +51,10 @@ import org.apache.ivy.util.FileUtil;
 import org.apache.ivy.util.Message;
 
 public class RetrieveEngine {
-	private IvySettings _settings;
+	private IvySettings settings;
 	
 	public RetrieveEngine(IvySettings settings) {
-		_settings = settings;
+		this.settings = settings;
 	}
 	
 	/**
@@ -70,11 +70,11 @@ public class RetrieveEngine {
     public int retrieve(ModuleRevisionId mrid, String destFilePattern, RetrieveOptions options) throws IOException {
     	ModuleId moduleId = mrid.getModuleId();
         Message.info(":: retrieving :: "+moduleId+(options.isSync()?" [sync]":""));
-        Message.verbose("\tcheckUpToDate="+_settings.isCheckUpToDate());
+        Message.verbose("\tcheckUpToDate="+ settings.isCheckUpToDate());
         long start = System.currentTimeMillis();
         
-        destFilePattern = IvyPatternHelper.substituteVariables(destFilePattern, _settings.getVariables());
-        String destIvyPattern = IvyPatternHelper.substituteVariables(options.getDestIvyPattern(), _settings.getVariables());
+        destFilePattern = IvyPatternHelper.substituteVariables(destFilePattern, settings.getVariables());
+        String destIvyPattern = IvyPatternHelper.substituteVariables(options.getDestIvyPattern(), settings.getVariables());
         
         CacheManager cacheManager = getCacheManager(options);
         String[] confs = getConfs(mrid, options);
@@ -109,7 +109,7 @@ public class RetrieveEngine {
                 for (Iterator it2 = dest.iterator(); it2.hasNext();) {
                 	IvyContext.getContext().checkInterrupted();
                     File destFile = new File((String)it2.next());
-                    if (!_settings.isCheckUpToDate() || !upToDate(archive, destFile)) {
+                    if (!settings.isCheckUpToDate() || !upToDate(archive, destFile)) {
                         Message.verbose("\t\tto "+destFile);
                         if (options.isMakeSymlinks()) {
                             FileUtil.symlink(archive, destFile, null, true);
@@ -147,7 +147,7 @@ public class RetrieveEngine {
                 	}
                 }
             }
-            Message.info("\t"+targetsCopied+" artifacts copied"+(_settings.isCheckUpToDate()?(", "+targetsUpToDate+" already retrieved"):""));
+            Message.info("\t"+targetsCopied+" artifacts copied"+(settings.isCheckUpToDate()?(", "+targetsUpToDate+" already retrieved"):""));
             Message.verbose("\tretrieve done ("+(System.currentTimeMillis()-start)+"ms)");
             
             return targetsCopied;
@@ -166,7 +166,7 @@ public class RetrieveEngine {
         		URLResource res = new URLResource(ivySource);
         		ModuleDescriptorParser parser = ModuleDescriptorParserRegistry.getInstance().getParser(res);
         		Message.debug("using "+parser+" to parse "+ivyFile);
-        		ModuleDescriptor md = parser.parseDescriptor(_settings, ivySource, false);
+        		ModuleDescriptor md = parser.parseDescriptor(settings, ivySource, false);
         		confs = md.getConfigurationsNames();
         		options.setConfs(confs);
         	} catch (IOException e) {
@@ -219,7 +219,7 @@ public class RetrieveEngine {
 		
         CacheManager cacheManager = getCacheManager(options);
         String[] confs = getConfs(mrid, options);
-        String destIvyPattern = IvyPatternHelper.substituteVariables(options.getDestIvyPattern(), _settings.getVariables());
+        String destIvyPattern = IvyPatternHelper.substituteVariables(options.getDestIvyPattern(), settings.getVariables());
         
         // find what we must retrieve where
         final Map artifactsToCopy = new HashMap(); // Artifact source -> Set (String copyDestAbsolutePath)

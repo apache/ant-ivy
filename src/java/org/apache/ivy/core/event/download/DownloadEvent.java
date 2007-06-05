@@ -21,12 +21,12 @@ import org.apache.ivy.core.event.IvyEvent;
 import org.apache.ivy.core.module.descriptor.Artifact;
 
 public abstract class DownloadEvent extends IvyEvent {
-    private Artifact _artifact;
+    private Artifact artifact;
 
     public DownloadEvent(String name, Artifact artifact) {
     	super(name);
-        _artifact = artifact;
-        addArtifactAttributes(_artifact);
+        this.artifact = artifact;
+        addArtifactAttributes(this.artifact);
     }
 
     protected void addArtifactAttributes(Artifact artifact) {
@@ -35,7 +35,7 @@ public abstract class DownloadEvent extends IvyEvent {
 	}
 
 	public Artifact getArtifact() {
-        return _artifact;
+        return artifact;
     }
     
     
