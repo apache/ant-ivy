@@ -68,6 +68,12 @@ xooki.io.ieRemoveFile = function(filePath) {
 	return(true);
 }
 
+// fix EOL characters in text to use native characters
+xooki.io.fixEOL = function(text) {
+	var nativeEOL = navigator.platform.indexOf('Win') != -1 ? '\r\n' : '\n';
+	return text.replace(/\r?\n/g, nativeEOL);
+}
+
 
 if (typeof xooki.string == "undefined") {
     xooki.string = {};
@@ -257,7 +263,7 @@ xooki.action.saveChanges = function () {
 					xooki.input.source() +
 					original.substr(posClosingArea);
 					
-		save = xooki.io.saveFile(localPath,revised);
+		save = xooki.io.saveFile(localPath,xooki.io.fixEOL(revised));
 	} catch (e) {
 		xooki.error(e);
 	} 
@@ -340,7 +346,7 @@ xooki.action.createChildPage = function (child) {
     	var save;
     	try {
     		// Save new file
-    		save = xooki.io.saveFile(localPath,revised);
+    		save = xooki.io.saveFile(localPath,xooki.io.fixEOL(revised));
     	} catch (e) {
     		xooki.error(e);
     	} 
@@ -360,7 +366,7 @@ xooki.toc.save = function (revised) {
 	var save;
 	var tocPath = xooki.io.getLocalPath(cu("toc"));
 	try {
-		save = xooki.io.saveFile(tocPath, revised);
+		save = xooki.io.saveFile(tocPath, xooki.io.fixEOL(revised));
 	} catch (e) {
 		xooki.error(e);
 	} 
