@@ -4,6 +4,7 @@
 <module name="Checker">
   <module name="TreeWalker">
     <!-- Javadoc requirements -->
+    <!-- TODO uncomment this when javadoc will be improved
     <module name="JavadocType">
       <property name="scope" value="protected"/>
     </module>
@@ -14,6 +15,7 @@
     <module name="JavadocVariable">
        <property name="scope" value="public"/>
     </module>
+	-->
 
     <!-- element naming -->
     <module name="PackageName"/>
@@ -98,11 +100,15 @@
 
     <!-- Miscellaneous other checks. -->
     <module name="ArrayTypeStyle"/>
+    <!--
     <module name="GenericIllegalRegexp">
       <property name="format" value="\s+$"/>
       <property name="message" value="Line has trailing spaces."/>
     </module>
+    -->
+    <!--
     <module name="TodoComment"/>
+    -->
     <module name="UpperEll"/>
     <!-- allow comment suppression of checks -->
     <module name="FileContentsHolder"/>
