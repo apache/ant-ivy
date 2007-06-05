@@ -428,18 +428,28 @@
 	</target>
 
 	<target name="fixcrlf">
-		<fixcrlf srcdir="${doc.src.dir}" includes="**/*.html,**/*.json" excludes="samples/**,presentations/**" eol="lf" />
-		<!-- 
+		<property name="eol.native.includes" 
+			value="**/*.html,**/*.json,**/*.java,**/*.xml,**/*.txt,**/*.MF,**/*.properties,**/*.patterns,**/*.pom,**/*.xsl,**/*.css"/>
+		<property name="eol.native.excludes" 
+			value="build/**,bin/**,lib/**"/>
+
+		<fileset id="eol.native.fileset" 
+			dir="${basedir}" 
+			includes="${eol.native.includes}"
+			excludes="${eol.native.excludes}"/>
+		
+		<fixcrlf srcdir="${basedir}" 
+			includes="${eol.native.includes}" 
+			excludes="${eol.native.excludes}"/>
 		<apply executable="svn">
+			<fileset refid="eol.native.fileset"/>
 			<arg value="propset"/>
 			<arg value="svn:eol-style"/>
-			<arg value='"LF"'/>
-			<fileset dir="${doc.src.dir}" includes="**/*.html,**/*.json" excludes="samples/**,presentations/**" />
+			<arg value='"native"'/>
 		</apply>
-		-->
 	</target>
 	
-    <target name="checkstyle" depends="jar" description="checks Ivy codebase according to ${config.dir}/checkstyle-config">		
+    <target name="checkstyle" depends="jar" description="checks Ivy codebase according to ${checkstyle.src.dir}/checkstyle-config">		
     	<ivy:cachepath organisation="checkstyle" module="checkstyle" revision="4.3" 
         	inline="true" conf="default" pathid="checkstyle.classpath" transitive="true"/> 
 		<taskdef resource="checkstyletask.properties" classpathref="checkstyle.classpath" />
