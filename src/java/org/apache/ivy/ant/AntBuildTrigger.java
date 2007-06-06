@@ -45,20 +45,20 @@ import org.apache.tools.ant.taskdefs.Property;
  * @since 1.4
  */
 public class AntBuildTrigger extends AbstractTrigger implements Trigger {
-    private boolean _onlyonce = true;
+    private boolean onlyOnce = true;
 
-    private String _target = null;
+    private String target = null;
 
-    private Collection _builds = new ArrayList();
+    private Collection builds = new ArrayList();
 
-    private String _buildFilePattern;
+    private String buildFilePattern;
 
-    private String _prefix;
+    private String prefix;
 
     public void progress(IvyEvent event) {
         File f = getBuildFile(event);
         if (f.exists()) {
-            if (_onlyonce && isBuilt(f)) {
+            if (onlyOnce && isBuilt(f)) {
                 Message.verbose("target build file already built, skipping: " + f);
             } else {
                 Ant ant = new Ant();
@@ -83,7 +83,7 @@ public class AntBuildTrigger extends AbstractTrigger implements Trigger {
                     String key = (String) iter.next();
                     String value = (String) atts.get(key);
                     Property p = ant.createProperty();
-                    p.setName(_prefix == null ? key : _prefix + key);
+                    p.setName(prefix == null ? key : prefix + key);
                     p.setValue(value);
                 }
 
@@ -112,11 +112,11 @@ public class AntBuildTrigger extends AbstractTrigger implements Trigger {
     }
 
     private void markBuilt(File f) {
-        _builds.add(f.getAbsolutePath());
+        builds.add(f.getAbsolutePath());
     }
 
     private boolean isBuilt(File f) {
-        return _builds.contains(f.getAbsolutePath());
+        return builds.contains(f.getAbsolutePath());
     }
 
     private File getBuildFile(IvyEvent event) {
@@ -125,37 +125,37 @@ public class AntBuildTrigger extends AbstractTrigger implements Trigger {
     }
 
     public String getBuildFilePattern() {
-        return _buildFilePattern;
+        return buildFilePattern;
     }
 
     public void setAntfile(String pattern) {
-        _buildFilePattern = pattern;
+        buildFilePattern = pattern;
     }
 
     public String getTarget() {
-        return _target;
+        return target;
     }
 
     public void setTarget(String target) {
-        _target = target;
+        this.target = target;
     }
 
     public boolean isOnlyonce() {
-        return _onlyonce;
+        return onlyOnce;
     }
 
     public void setOnlyonce(boolean onlyonce) {
-        _onlyonce = onlyonce;
+        onlyOnce = onlyonce;
     }
 
     public String getPrefix() {
-        return _prefix;
+        return prefix;
     }
 
     public void setPrefix(String prefix) {
-        _prefix = prefix;
+        this.prefix = prefix;
         if (!prefix.endsWith(".")) {
-            _prefix += ".";
+            this.prefix += ".";
         }
     }
 }

@@ -31,73 +31,73 @@ import org.apache.tools.ant.types.Path.PathElement;
  * is to be able to contribute new sub path elements to an existing path.
  */
 public class AddPathTask extends Task {
-    private String _topath;
+    private String toPath;
 
-    private boolean _first = false;
+    private boolean first = false;
 
-    private Path _toadd;
+    private Path toAdd;
 
     public String getTopath() {
-        return _topath;
+        return toPath;
     }
 
-    public void setTopath(String topath) {
-        _topath = topath;
+    public void setTopath(String toPath) {
+        this.toPath = toPath;
     }
 
     public void setProject(Project project) {
         super.setProject(project);
-        _toadd = new Path(project);
+        toAdd = new Path(project);
     }
 
     public void execute() throws BuildException {
-        Object element = getProject().getReference(_topath);
+        Object element = getProject().getReference(toPath);
         if (element == null) {
-            throw new BuildException("destination path not found: " + _topath);
+            throw new BuildException("destination path not found: " + toPath);
         }
         if (!(element instanceof Path)) {
             throw new BuildException("destination path is not a path: " + element.getClass());
         }
         Path dest = (Path) element;
-        if (_first) {
+        if (first) {
             // now way to add path elements at te beginning of the existing path: we do the opposite
             // and replace the reference
-            _toadd.append(dest);
-            getProject().addReference(_topath, _toadd);
+            toAdd.append(dest);
+            getProject().addReference(toPath, toAdd);
         } else {
-            dest.append(_toadd);
+            dest.append(toAdd);
         }
     }
 
     public void add(Path path) throws BuildException {
-        _toadd.add(path);
+        toAdd.add(path);
     }
 
     public void addDirset(DirSet dset) throws BuildException {
-        _toadd.addDirset(dset);
+        toAdd.addDirset(dset);
     }
 
     public void addFilelist(FileList fl) throws BuildException {
-        _toadd.addFilelist(fl);
+        toAdd.addFilelist(fl);
     }
 
     public void addFileset(FileSet fs) throws BuildException {
-        _toadd.addFileset(fs);
+        toAdd.addFileset(fs);
     }
 
     public Path createPath() throws BuildException {
-        return _toadd.createPath();
+        return toAdd.createPath();
     }
 
     public PathElement createPathElement() throws BuildException {
-        return _toadd.createPathElement();
+        return toAdd.createPathElement();
     }
 
     public boolean isFirst() {
-        return _first;
+        return first;
     }
 
     public void setFirst(boolean first) {
-        _first = first;
+        this.first = first;
     }
 }
