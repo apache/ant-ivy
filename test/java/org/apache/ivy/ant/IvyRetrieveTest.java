@@ -175,6 +175,28 @@ public class IvyRetrieveTest extends TestCase {
             "mod1.2", "jar", "jar")).exists());
     }
 
+    public void testWithAPreviousResolveAndResolveId() throws Exception {
+        // first we do a resolve in another project
+        Project project = new Project();
+        project.setProperty("ivy.settings.file", "test/repositories/ivysettings.xml");
+        project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-simple.xml");
+        IvyResolve resolve = new IvyResolve();
+        resolve.setProject(project);
+        resolve.setCache(_cache);
+        resolve.setResolveId("testWithAPreviousResolveAndResolveId");
+        resolve.execute();
+
+        // then we do a retrieve with the correct module information
+        _retrieve.setOrganisation("apache");
+        _retrieve.setModule("resolve-simple");
+        _retrieve.setConf("default");
+        _retrieve.setResolveId("testWithAPreviousResolveAndResolveId");
+        _retrieve.execute();
+
+        assertTrue(new File(IvyPatternHelper.substitute(RETRIEVE_PATTERN, "org1", "mod1.2", "2.0",
+            "mod1.2", "jar", "jar")).exists());
+    }
+
     public void testUseOrigin() throws Exception {
         // test case for IVY-304
         // first we do a resolve with useOrigin=true in another project

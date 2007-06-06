@@ -54,7 +54,8 @@ public class IvyRetrieve extends IvyPostResolveTask {
                 new RetrieveOptions().setConfs(splitConfs(getConf())).setCache(
                     CacheManager.getInstance(getIvyInstance().getSettings(), getCache()))
                         .setDestIvyPattern(_ivypattern).setArtifactFilter(artifactFilter).setSync(
-                            _sync).setUseOrigin(isUseOrigin()).setMakeSymlinks(_symlink));
+                            _sync).setUseOrigin(isUseOrigin()).setMakeSymlinks(_symlink)
+                        .setResolveId(getResolveId()));
             boolean haveTargetsBeenCopied = targetsCopied > 0;
             getProject().setProperty("ivy.nb.targets.copied", String.valueOf(targetsCopied));
             getProject().setProperty("ivy.targets.copied", String.valueOf(haveTargetsBeenCopied));
