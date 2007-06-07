@@ -60,9 +60,9 @@ public class ModuleDescriptorSorter {
      */
     public List sortModuleDescriptors() throws CircularDependencyException {
         Message.debug("Nbr of module to sort : " + moduleDescriptors.size());
-        Iterator _moduleDescriptorsIterator = moduleDescriptors.iterator();
-        while (_moduleDescriptorsIterator.hasNext()) {
-            ModuleInSort next = (ModuleInSort) _moduleDescriptorsIterator.next();
+        Iterator moduleDescriptorsIterator = moduleDescriptors.iterator();
+        while (moduleDescriptorsIterator.hasNext()) {
+            ModuleInSort next = (ModuleInSort) moduleDescriptorsIterator.next();
             sortModuleDescriptorsHelp(next, next);
         }
         return sorted;

@@ -61,8 +61,7 @@ public class SortEngine {
         }
         List list = sortModuleDescriptors(dependenciesMap.keySet());
         List ret = new ArrayList((int) (list.size() * 1.3 + nulls.size())); // attempt to adjust the
-        // size to avoid too
-        // much list resizing
+        // size to avoid too much list resizing
         for (int i = 0; i < list.size(); i++) {
             ModuleDescriptor md = (ModuleDescriptor) list.get(i);
             List n = (List) dependenciesMap.get(md);

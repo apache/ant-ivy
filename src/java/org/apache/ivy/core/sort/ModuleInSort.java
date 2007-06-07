@@ -35,7 +35,8 @@ import org.apache.ivy.util.Message;
  * ModuleInSort can be used in only one ModuleDescriptorSorter at a time.<br>
  * The added fields are : <br>
  * <ul>
- * <li><code>isSorted</code> : is true iff this module has already been added to the sorted list.</li>
+ * <li><code>isSorted</code> : is true iff this module has already been added to the sorted list.
+ * </li>
  * <li><code>loopElements</code> : When the module is the root of a loop (=the first element of a
  * loop met during the sort), <code>loopElements</code> contains all ModuleInSort of the loop
  * (excluding the root itself.</li>
@@ -96,10 +97,10 @@ class ModuleInSort {
         if (caller != null) {
             LinkedList elemOfLoop = new LinkedList();
             elemOfLoop.add(this.module.getModuleRevisionId());
-            for (ModuleInSort stackElem = futurCaller; stackElem != this; stackElem = stackElem.caller) {
-                elemOfLoop.add(stackElem.module.getModuleRevisionId());
-                stackElem.isLoopIntermediateElement = true;
-                loopElements.add(stackElem);
+            for (ModuleInSort stackEl = futurCaller; stackEl != this; stackEl = stackEl.caller) {
+                elemOfLoop.add(stackEl.module.getModuleRevisionId());
+                stackEl.isLoopIntermediateElement = true;
+                loopElements.add(stackEl);
             }
             elemOfLoop.add(this.module.getModuleRevisionId());
             ModuleRevisionId[] mrids = (ModuleRevisionId[]) elemOfLoop

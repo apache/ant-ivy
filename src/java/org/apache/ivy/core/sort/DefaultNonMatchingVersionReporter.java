@@ -36,7 +36,7 @@ public class DefaultNonMatchingVersionReporter implements NonMatchingVersionRepo
         if (parentRevisionId == null) {
             // There are some rare case where DependencyDescriptor have no parent.
             // This is should not be used in the SortEngine, but if it is, we show a decent trace.
-            Message.warn("Non matching revision detected.  Dependency " + dependencyRevisionId
+            Message.warn("Non matching revision detected in sort.  Dependency " + dependencyRevisionId
                     + " doesn't match " + md);
         } else {
             ModuleId parentModuleId = parentRevisionId.getModuleId();

@@ -95,8 +95,9 @@ class CollectionOfModulesToSort {
     public ModuleInSort getModuleDescriptorDependency(DependencyDescriptor descriptor) {
         Collection modulesOfSameId = (Collection) modulesByModuleId.get(descriptor
                 .getDependencyId());
-        if (modulesOfSameId == null)
+        if (modulesOfSameId == null) {
             return null;
+        }
         for (Iterator it = modulesOfSameId.iterator(); it.hasNext();) {
             ModuleInSort mdInSort = (ModuleInSort) it.next();
             if (mdInSort.match(descriptor, versionMatcher)) {

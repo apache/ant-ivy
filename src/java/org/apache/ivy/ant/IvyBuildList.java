@@ -173,8 +173,8 @@ public class IvyBuildList extends IvyTask {
                     } else {
                         Message.verbose("no ivy file for " + buildFile + ": ivyfile=" + ivyFile
                                 + ": adding it at the beginning of the path");
-                        Message
-                                .verbose("\t(set skipbuildwithoutivy to true if you don't want this file to be added to the path)");
+                        Message.verbose("\t(set skipbuildwithoutivy to true if you don't want this" 
+                                + " file to be added to the path)");
                         independent.add(buildFile);
                     }
                 } else {
