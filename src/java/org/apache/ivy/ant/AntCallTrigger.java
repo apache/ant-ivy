@@ -34,22 +34,30 @@ import org.apache.tools.ant.taskdefs.CallTarget;
 import org.apache.tools.ant.taskdefs.Property;
 
 /**
- * Triggers an call to an ant target on an event occurence. This trigger only works when ivy is
- * called from an ant build file, otherwise the trigger only log a failure. Example of use in an
- * ivysettings file: <ant-call-trigger event="post-download-artifact" filter="type=zip"
- * target="unzip"/> Triggers a call to the target "unzip" for any downloaded artifact of type zip
+ * Triggers an call to an ant target on an event occurence.
+ * <p>
+ * This trigger only works when ivy is called from an ant build file, otherwise the trigger only log
+ * a failure.
+ * <p>
+ * Example of use in an ivysettings file:
+ * 
+ * <pre>
+ * &lt;ant-call-trigger event=&quot;post-download-artifact&quot; filter=&quot;type=zip&quot;
+ * target=&quot;unzip&quot;/&gt;
+ * </pre>
+ * Triggers a call to the target "unzip" for any downloaded artifact of type zip
  * 
  * @see AntBuildTrigger
  * @since 1.4
  */
 public class AntCallTrigger extends AbstractTrigger implements Trigger {
-    private boolean _onlyonce = true;
+    private boolean onlyonce = true;
 
-    private String _target = null;
+    private String target = null;
 
-    private Collection _calls = new ArrayList();
+    private Collection calls = new ArrayList();
 
-    private String _prefix;
+    private String prefix;
 
     public void progress(IvyEvent event) {
         Project project = (Project) IvyContext.getContext().peek(IvyTask.ANT_PROJECT_CONTEXT_KEY);
@@ -57,7 +65,7 @@ public class AntCallTrigger extends AbstractTrigger implements Trigger {
             Message.info("ant call trigger can only be used from an ant build. Ignoring.");
             return;
         }
-        if (_onlyonce && isTriggered(event)) {
+        if (onlyonce && isTriggered(event)) {
             Message.verbose("call already triggered for this event, skipping: " + event);
         } else {
             CallTarget call = new CallTarget();
@@ -73,7 +81,7 @@ public class AntCallTrigger extends AbstractTrigger implements Trigger {
                 String key = (String) iter.next();
                 String value = (String) attributes.get(key);
                 Property p = call.createParam();
-                p.setName(_prefix == null ? key : _prefix + key);
+                p.setName(prefix == null ? key : prefix + key);
                 p.setValue(value == null ? "" : value);
             }
 
@@ -92,37 +100,37 @@ public class AntCallTrigger extends AbstractTrigger implements Trigger {
     }
 
     private void markTriggered(IvyEvent event) {
-        _calls.add(event);
+        calls.add(event);
     }
 
     private boolean isTriggered(IvyEvent event) {
-        return _calls.contains(event);
+        return calls.contains(event);
     }
 
     public String getTarget() {
-        return _target;
+        return target;
     }
 
     public void setTarget(String target) {
-        _target = target;
+        this.target = target;
     }
 
     public boolean isOnlyonce() {
-        return _onlyonce;
+        return onlyonce;
     }
 
     public void setOnlyonce(boolean onlyonce) {
-        _onlyonce = onlyonce;
+        this.onlyonce = onlyonce;
     }
 
     public String getPrefix() {
-        return _prefix;
+        return prefix;
     }
 
     public void setPrefix(String prefix) {
-        _prefix = prefix;
+        this.prefix = prefix;
         if (!prefix.endsWith(".")) {
-            _prefix += ".";
+            prefix += ".";
         }
     }
 }
