@@ -17,6 +17,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 	Jeffrey Blattman
 	Matthieu Brouillard
 	Kristian Cibulskis
+	Scott Goldstein
 	Pierre Hägnestrand
 	Peter Hayes
 	Matt Inger
@@ -45,7 +46,6 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 	Johan Stuyts
 	John Williams
 	Jaroslaw Wypychowski
-	Scott Goldstein
 
    version in SVN
 =====================================
