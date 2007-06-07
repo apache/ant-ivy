@@ -17,7 +17,7 @@
    under the License.    
 -->
 <ivysettings>
-	<include url="${ivy.default.conf.dir}/ivyconf-local.xml"/>
+	<include url="${ivy.default.conf.dir}/ivysettings-local.xml"/>
 	<settings defaultResolver="public" />
 	<resolvers>
 		<chain name="public" returnFirst="true">
