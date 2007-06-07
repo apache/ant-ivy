@@ -130,7 +130,7 @@ public class AntCallTrigger extends AbstractTrigger implements Trigger {
     public void setPrefix(String prefix) {
         this.prefix = prefix;
         if (!prefix.endsWith(".")) {
-            prefix += ".";
+            this.prefix += ".";
         }
     }
 }
