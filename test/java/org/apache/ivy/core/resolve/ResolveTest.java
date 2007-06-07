@@ -48,6 +48,7 @@ import org.apache.ivy.plugins.circular.CircularDependencyException;
 import org.apache.ivy.plugins.circular.ErrorCircularDependencyStrategy;
 import org.apache.ivy.plugins.circular.IgnoreCircularDependencyStrategy;
 import org.apache.ivy.plugins.circular.WarnCircularDependencyStrategy;
+import org.apache.ivy.plugins.parser.xml.XmlModuleDescriptorParser;
 import org.apache.ivy.plugins.resolver.BasicResolver;
 import org.apache.ivy.plugins.resolver.DependencyResolver;
 import org.apache.ivy.plugins.resolver.DualResolver;
@@ -57,6 +58,8 @@ import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.Delete;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
+
+import sun.security.action.GetIntegerAction;
 
 /**
  *
@@ -2887,9 +2890,16 @@ public class ResolveTest extends TestCase {
 
         assertTrue(ivy.getCacheManager(_cache).getResolvedIvyFileInCache(mrid).exists());
 
+        // ivy file
+        File ivyFile = ivy.getCacheManager(_cache).getIvyFileInCache(
+            ModuleRevisionId.newInstance("systemorg", "systemmod", "1.0"));
+        assertTrue(ivyFile.exists());
+        ModuleDescriptor parsedMD = XmlModuleDescriptorParser.getInstance()
+            .parseDescriptor(ivy.getSettings(), ivyFile.toURL(), true);
+        assertEquals("systemorg", parsedMD.getModuleRevisionId().getOrganisation());
+        assertEquals("systemmod", parsedMD.getModuleRevisionId().getName());
+
         // dependencies
-        assertTrue(ivy.getCacheManager(_cache).getIvyFileInCache(
-            ModuleRevisionId.newInstance("systemorg", "systemmod", "1.0")).exists());
         assertTrue(TestHelper.getArchiveFileInCache(ivy, _cache, "systemorg", "systemmod", "1.0",
             "A", "jar", "jar").exists());
     }

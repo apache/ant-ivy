@@ -187,13 +187,21 @@ public class XmlModuleDescriptorUpdater {
             _context.push(qName);
             if ("info".equals(qName)) {
                 _organisation = substitute(settings, attributes.getValue("organisation"));
-                write("<info organisation=\"" + _organisation + "\" module=\""
-                        + substitute(settings, attributes.getValue("module")) + "\"");
-                if (revision != null) {
-                    write(" revision=\"" + revision + "\"");
-                } else if (attributes.getValue("revision") != null) {
-                    write(" revision=\"" + substitute(settings, attributes.getValue("revision"))
-                            + "\"");
+                String module = substitute(settings, attributes.getValue("module"));
+                String rev = revision;
+                if (rev == null) {
+                    rev = substitute(settings, attributes.getValue("revision"));
+                }
+                ModuleRevisionId localMid = ModuleRevisionId.newInstance(_organisation, module, null,
+                    rev, ExtendableItemHelper.getExtraAttributes(attributes,
+                        new String[] {"organisation", "module", "revision", "status", "publication", "namespace"}));
+                ModuleRevisionId systemMid = ns == null ? localMid : ns.getToSystemTransformer()
+                        .transform(localMid);
+
+                write("<info organisation=\"" + systemMid.getOrganisation() + "\" module=\""
+                        + systemMid.getName() + "\"");
+                if (systemMid.getRevision() != null) {
+                    write(" revision=\"" + systemMid.getRevision() + "\"");
                 }
                 if (status != null) {
                     write(" status=\"" + status + "\"");

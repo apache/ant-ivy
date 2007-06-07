@@ -469,9 +469,6 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
     }
 
     public Namespace getNamespace() {
-        if (_namespace == null || !isNamespaceUseful()) {
-            return null;
-        }
         return _namespace;
     }
 
