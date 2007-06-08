@@ -32,13 +32,13 @@ import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.Delete;
 
 public class RetrieveTest extends TestCase {
-    private final Ivy _ivy;
+    private final Ivy ivy;
 
-    private File _cache;
+    private File cache;
 
     public RetrieveTest() throws Exception {
-        _ivy = new Ivy();
-        _ivy.configure(new File("test/repositories/ivysettings.xml"));
+        ivy = new Ivy();
+        ivy.configure(new File("test/repositories/ivysettings.xml"));
     }
 
     protected void setUp() throws Exception {
@@ -46,8 +46,8 @@ public class RetrieveTest extends TestCase {
     }
 
     private void createCache() {
-        _cache = new File("build/cache");
-        _cache.mkdirs();
+        cache = new File("build/cache");
+        cache.mkdirs();
     }
 
     protected void tearDown() throws Exception {
@@ -61,13 +61,13 @@ public class RetrieveTest extends TestCase {
     private void cleanCache() {
         Delete del = new Delete();
         del.setProject(new Project());
-        del.setDir(_cache);
+        del.setDir(cache);
         del.execute();
     }
 
     public void testRetrieveSimple() throws Exception {
         // mod1.1 depends on mod1.2
-        ResolveReport report = _ivy.resolve(new File(
+        ResolveReport report = ivy.resolve(new File(
                 "test/repositories/1/org1/mod1.1/ivys/ivy-1.0.xml").toURL(),
             getResolveOptions(new String[] {"*"}));
         assertNotNull(report);
@@ -75,19 +75,19 @@ public class RetrieveTest extends TestCase {
         assertNotNull(md);
 
         String pattern = "build/test/retrieve/[module]/[conf]/[artifact]-[revision].[ext]";
-        _ivy.retrieve(md.getModuleRevisionId(), pattern, getRetrieveOptions());
+        ivy.retrieve(md.getModuleRevisionId(), pattern, getRetrieveOptions());
         assertTrue(new File(IvyPatternHelper.substitute(pattern, "org1", "mod1.2", "2.0", "mod1.2",
             "jar", "jar", "default")).exists());
 
         pattern = "build/test/retrieve/[module]/[conf]/[type]s/[artifact]-[revision].[ext]";
-        _ivy.retrieve(md.getModuleRevisionId(), pattern, getRetrieveOptions());
+        ivy.retrieve(md.getModuleRevisionId(), pattern, getRetrieveOptions());
         assertTrue(new File(IvyPatternHelper.substitute(pattern, "org1", "mod1.2", "2.0", "mod1.2",
             "jar", "jar", "default")).exists());
     }
 
     public void testRetrieveOverwrite() throws Exception {
         // mod1.1 depends on mod1.2
-        ResolveReport report = _ivy.resolve(new File(
+        ResolveReport report = ivy.resolve(new File(
                 "test/repositories/1/org1/mod1.1/ivys/ivy-1.0.xml").toURL(),
             getResolveOptions(new String[] {"*"}));
         assertNotNull(report);
@@ -102,7 +102,7 @@ public class RetrieveTest extends TestCase {
         file.getParentFile().mkdirs();
         file.createNewFile();
         file.setLastModified(10000);
-        _ivy.retrieve(md.getModuleRevisionId(), pattern, getRetrieveOptions());
+        ivy.retrieve(md.getModuleRevisionId(), pattern, getRetrieveOptions());
         assertEquals(
             new File("test/repositories/1/org1/mod1.2/jars/mod1.2-2.0.jar").lastModified(), file
                     .lastModified());
@@ -110,7 +110,7 @@ public class RetrieveTest extends TestCase {
 
     public void testRetrieveWithSymlinks() throws Exception {
         // mod1.1 depends on mod1.2
-        ResolveReport report = _ivy.resolve(new File(
+        ResolveReport report = ivy.resolve(new File(
                 "test/repositories/1/org1/mod1.1/ivys/ivy-1.0.xml").toURL(),
             getResolveOptions(new String[] {"*"}));
         assertNotNull(report);
@@ -118,14 +118,14 @@ public class RetrieveTest extends TestCase {
         assertNotNull(md);
 
         String pattern = "build/test/retrieve/[module]/[conf]/[artifact]-[revision].[ext]";
-        _ivy
+        ivy
                 .retrieve(md.getModuleRevisionId(), pattern, getRetrieveOptions().setMakeSymlinks(
                     true));
         assertLink(IvyPatternHelper.substitute(pattern, "org1", "mod1.2", "2.0", "mod1.2", "jar",
             "jar", "default"));
 
         pattern = "build/test/retrieve/[module]/[conf]/[type]s/[artifact]-[revision].[ext]";
-        _ivy
+        ivy
                 .retrieve(md.getModuleRevisionId(), pattern, getRetrieveOptions().setMakeSymlinks(
                     true));
         assertLink(IvyPatternHelper.substitute(pattern, "org1", "mod1.2", "2.0", "mod1.2", "jar",
@@ -152,8 +152,8 @@ public class RetrieveTest extends TestCase {
 
     public void testRetrieveWithVariable() throws Exception {
         // mod1.1 depends on mod1.2
-        _ivy.setVariable("retrieve.dir", "retrieve");
-        ResolveReport report = _ivy.resolve(new File(
+        ivy.setVariable("retrieve.dir", "retrieve");
+        ResolveReport report = ivy.resolve(new File(
                 "test/repositories/1/org1/mod1.1/ivys/ivy-1.0.xml").toURL(),
             getResolveOptions(new String[] {"*"}));
         assertNotNull(report);
@@ -161,25 +161,25 @@ public class RetrieveTest extends TestCase {
         assertNotNull(md);
 
         String pattern = "build/test/${retrieve.dir}/[module]/[conf]/[artifact]-[revision].[ext]";
-        _ivy.retrieve(md.getModuleRevisionId(), pattern, getRetrieveOptions());
+        ivy.retrieve(md.getModuleRevisionId(), pattern, getRetrieveOptions());
         pattern = IvyPatternHelper.substituteVariable(pattern, "retrieve.dir", "retrieve");
         assertTrue(new File(IvyPatternHelper.substitute(pattern, "org1", "mod1.2", "2.0", "mod1.2",
             "jar", "jar", "default")).exists());
 
         pattern = "build/test/${retrieve.dir}/[module]/[conf]/[type]s/[artifact]-[revision].[ext]";
-        _ivy.retrieve(md.getModuleRevisionId(), pattern, getRetrieveOptions());
+        ivy.retrieve(md.getModuleRevisionId(), pattern, getRetrieveOptions());
         pattern = IvyPatternHelper.substituteVariable(pattern, "retrieve.dir", "retrieve");
         assertTrue(new File(IvyPatternHelper.substitute(pattern, "org1", "mod1.2", "2.0", "mod1.2",
             "jar", "jar", "default")).exists());
     }
 
     private RetrieveOptions getRetrieveOptions() {
-        return new RetrieveOptions().setCache(CacheManager.getInstance(_ivy.getSettings(), _cache));
+        return new RetrieveOptions().setCache(CacheManager.getInstance(ivy.getSettings(), cache));
     }
 
     private ResolveOptions getResolveOptions(String[] confs) {
         return new ResolveOptions().setConfs(confs).setCache(
-            CacheManager.getInstance(_ivy.getSettings(), _cache));
+            CacheManager.getInstance(ivy.getSettings(), cache));
     }
 
 }
