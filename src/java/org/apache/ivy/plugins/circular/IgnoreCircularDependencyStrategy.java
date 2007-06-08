@@ -20,9 +20,10 @@ package org.apache.ivy.plugins.circular;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.util.Message;
 
-public class IgnoreCircularDependencyStrategy extends AbstractCircularDependencyStrategy {
+public final class IgnoreCircularDependencyStrategy extends AbstractCircularDependencyStrategy {
 
-    private static final CircularDependencyStrategy INSTANCE = new IgnoreCircularDependencyStrategy();
+    private static final CircularDependencyStrategy INSTANCE = 
+        new IgnoreCircularDependencyStrategy();
 
     public static CircularDependencyStrategy getInstance() {
         return INSTANCE;

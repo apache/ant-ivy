@@ -18,14 +18,14 @@
 package org.apache.ivy.plugins.circular;
 
 public abstract class AbstractCircularDependencyStrategy implements CircularDependencyStrategy {
-    private String _name;
+    private String name;
 
     protected AbstractCircularDependencyStrategy(String name) {
-        _name = name;
+        this.name = name;
     }
 
     public String getName() {
-        return _name;
+        return this.name;
     }
 
     public String toString() {

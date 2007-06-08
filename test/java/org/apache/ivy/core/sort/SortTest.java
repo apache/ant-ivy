@@ -55,9 +55,9 @@ public class SortTest extends TestCase {
      */
     protected void setUp() throws Exception {
         super.setUp();
-        md1 = createModuleDescriptorToSort("md1", null); // The revison is often not set in the
+        md1 = createModuleDescriptorToSort("md1", null);   // The revison is often not set in the
         // ivy.xml file that are ordered
-        md2 = createModuleDescriptorToSort("md2", "rev2");// But somtimes they are set
+        md2 = createModuleDescriptorToSort("md2", "rev2"); // But somtimes they are set
         md3 = createModuleDescriptorToSort("md3", "rev3");
         md4 = createModuleDescriptorToSort("md4", "rev4");
 
@@ -236,13 +236,15 @@ public class SortTest extends TestCase {
                 Assert.assertEquals("reportNonMatchingVersion has not be called", 1, nbOfCall);
             }
         }
-        NonMatchingVersionReporterMock nonMatchingVersionReporterMock = new NonMatchingVersionReporterMock();
+        NonMatchingVersionReporterMock nonMatchingVersionReporterMock = 
+            new NonMatchingVersionReporterMock();
         List toSort = Arrays.asList(new ModuleDescriptor[] {md4, md3, md2, md1});
         ivy.sortModuleDescriptors(toSort, nonMatchingVersionReporterMock);
         nonMatchingVersionReporterMock.validate();
     }
 
-    private DefaultModuleDescriptor createModuleDescriptorToSort(String moduleName, String revision) {
+    private DefaultModuleDescriptor createModuleDescriptorToSort(String moduleName,
+            String revision) {
         ModuleRevisionId mrid = ModuleRevisionId.newInstance("org", moduleName, revision);
         return new DefaultModuleDescriptor(mrid, "integration", new Date());
     }
@@ -283,19 +285,22 @@ public class SortTest extends TestCase {
         StringBuffer errorMessage = new StringBuffer();
         errorMessage.append("Unexpected order : \n{ ");
         for (int i = 0; i < sorted.size(); i++) {
-            if (i > 0)
+            if (i > 0) {
                 errorMessage.append(" , ");
+            }
             errorMessage.append(((DefaultModuleDescriptor) sorted.get(i)).getModuleRevisionId());
         }
         errorMessage.append("}\nEpected : \n");
         for (int i = 0; i < listOfPossibleSort.length; i++) {
             DefaultModuleDescriptor[] expectedList = listOfPossibleSort[i];
-            if (i > 0)
+            if (i > 0) {
                 errorMessage.append(" or\n");
+            }
             errorMessage.append("{ ");
             for (int j = 0; j < expectedList.length; j++) {
-                if (j > 0)
+                if (j > 0) {
                     errorMessage.append(" , ");
+                }
                 errorMessage.append(expectedList[j].getModuleRevisionId());
             }
             errorMessage.append(" } ");
@@ -305,7 +310,8 @@ public class SortTest extends TestCase {
 
     /** Returns a collection of lists that contains the elements a,b,c and d */
     private Collection getAllLists(Object a, Object b, Object c, Object d) {
-        ArrayList r = new ArrayList(24);
+        final int nbOfList = 24;
+        ArrayList r = new ArrayList(nbOfList);
         r.add(Arrays.asList(new Object[] {a, b, c, d}));
         r.add(Arrays.asList(new Object[] {a, b, d, c}));
         r.add(Arrays.asList(new Object[] {a, c, b, d}));

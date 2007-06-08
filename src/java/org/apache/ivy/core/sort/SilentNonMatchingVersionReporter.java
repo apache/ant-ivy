@@ -15,29 +15,18 @@
  *  limitations under the License.
  *
  */
-package org.apache.ivy.plugins.circular;
+package org.apache.ivy.core.sort;
 
-import org.apache.ivy.core.module.id.ModuleRevisionId;
+import org.apache.ivy.util.Message;
 
 /**
- * Unchecked exception thrown when a circular dependency exists between projects.
+ * A NonMatchingVersionReporter that only print debug message.
  */
+public class SilentNonMatchingVersionReporter extends MessageBasedNonMatchingVersionReporter
+        implements NonMatchingVersionReporter {
 
-public class CircularDependencyException extends RuntimeException {
-
-    private ModuleRevisionId[] mrids;
-
-    /**
-     * @param descriptors
-     *            module descriptors in order of circular dependency
-     */
-    public CircularDependencyException(final ModuleRevisionId[] mrids) {
-        super(CircularDependencyHelper.formatMessage(mrids));
-        this.mrids = mrids;
-    }
-
-    public ModuleRevisionId[] getPath() {
-        return this.mrids;
+    protected void reportMessage(String msg) {
+        Message.debug(msg);
     }
 
 }

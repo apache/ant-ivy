@@ -36,6 +36,7 @@ import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleId;
 import org.apache.ivy.core.settings.IvySettings;
+import org.apache.ivy.core.sort.WarningNonMatchingVersionReporter;
 import org.apache.ivy.plugins.parser.ModuleDescriptorParserRegistry;
 import org.apache.ivy.util.Message;
 import org.apache.tools.ant.BuildException;
@@ -173,7 +174,7 @@ public class IvyBuildList extends IvyTask {
                     } else {
                         Message.verbose("no ivy file for " + buildFile + ": ivyfile=" + ivyFile
                                 + ": adding it at the beginning of the path");
-                        Message.verbose("\t(set skipbuildwithoutivy to true if you don't want this" 
+                        Message.verbose("\t(set skipbuildwithoutivy to true if you don't want this"
                                 + " file to be added to the path)");
                         independent.add(buildFile);
                     }
@@ -214,7 +215,9 @@ public class IvyBuildList extends IvyTask {
             mds = filterModulesFromLeaf(mds, leafModuleDescriptors);
         }
 
-        List sortedModules = ivy.sortModuleDescriptors(mds);
+        WarningNonMatchingVersionReporter nonMatchingVersionReporter =
+            new WarningNonMatchingVersionReporter();
+        List sortedModules = ivy.sortModuleDescriptors(mds, nonMatchingVersionReporter);
 
         for (ListIterator iter = independent.listIterator(); iter.hasNext();) {
             File buildFile = (File) iter.next();

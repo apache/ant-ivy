@@ -51,6 +51,7 @@ import org.apache.ivy.core.search.RevisionEntry;
 import org.apache.ivy.core.search.SearchEngine;
 import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.core.sort.NonMatchingVersionReporter;
+import org.apache.ivy.core.sort.SilentNonMatchingVersionReporter;
 import org.apache.ivy.core.sort.SortEngine;
 import org.apache.ivy.plugins.matcher.PatternMatcher;
 import org.apache.ivy.plugins.repository.TransferEvent;
@@ -338,10 +339,15 @@ public class Ivy {
      * 
      * @param moduleDescriptors
      *            a Collection of ModuleDescriptor to sort
+     * @param nonMatchingVersionReporter
+     *            Used to report some non matching version (when a modules depends on a specific
+     *            revision of an other modules present in the of modules to sort with a different
+     *            revision.
      * @return a List of sorted ModuleDescriptors
+     * @deprecated Use sortModuleDescriptors(Collection,NonMatchingVersionReporter)
      */
     public List sortModuleDescriptors(Collection moduleDescriptors) {
-        return sortEngine.sortModuleDescriptors(moduleDescriptors);
+        return sortEngine.sortModuleDescriptors(moduleDescriptors, new SilentNonMatchingVersionReporter());
     }
 
     public List sortModuleDescriptors(Collection moduleDescriptors,

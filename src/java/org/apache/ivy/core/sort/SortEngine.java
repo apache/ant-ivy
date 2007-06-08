@@ -28,6 +28,8 @@ import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.resolve.IvyNode;
 import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.plugins.circular.CircularDependencyException;
+import org.apache.ivy.plugins.circular.CircularDependencyStrategy;
+import org.apache.ivy.plugins.version.VersionMatcher;
 
 public class SortEngine {
     private IvySettings settings;
@@ -36,7 +38,7 @@ public class SortEngine {
         this.settings = settings;
     }
 
-    public List sortNodes(Collection nodes) {
+    public List sortNodes(Collection nodes) throws CircularDependencyException {
         /*
          * here we want to use the sort algorithm which work on module descriptors : so we first put
          * dependencies on a map from descriptors to dependency, then we sort the keySet (i.e. a
@@ -59,7 +61,8 @@ public class SortEngine {
                 n.add(node);
             }
         }
-        List list = sortModuleDescriptors(dependenciesMap.keySet());
+        List list = sortModuleDescriptors(dependenciesMap.keySet(),
+            new SilentNonMatchingVersionReporter());
         List ret = new ArrayList((int) (list.size() * 1.3 + nulls.size())); // attempt to adjust the
         // size to avoid too much list resizing
         for (int i = 0; i < list.size(); i++) {
@@ -78,20 +81,21 @@ public class SortEngine {
      * 
      * @param moduleDescriptors
      *            a Collection of ModuleDescriptor to sort
+     * @param nonMatchingVersionReporter
+     *            Used to report some non matching version (when a modules depends on a specific
+     *            revision of an other modules present in the of modules to sort with a different
+     *            revision.
      * @return a List of sorted ModuleDescriptors
      * @throws CircularDependencyException
      *             if a circular dependency exists
      */
-    public List sortModuleDescriptors(Collection moduleDescriptors)
-            throws CircularDependencyException {
-        return sortModuleDescriptors(moduleDescriptors, new DefaultNonMatchingVersionReporter());
-    }
-
     public List sortModuleDescriptors(Collection moduleDescriptors,
-            NonMatchingVersionReporter nonMatchingVersionReporter) {
-        ModuleDescriptorSorter sorter = new ModuleDescriptorSorter(moduleDescriptors, settings
-                .getVersionMatcher(), nonMatchingVersionReporter, settings
-                .getCircularDependencyStrategy());
+            NonMatchingVersionReporter nonMatchingVersionReporter)
+            throws CircularDependencyException {
+        VersionMatcher versionMatcher = settings.getVersionMatcher();
+        CircularDependencyStrategy circularDepStrategy = settings.getCircularDependencyStrategy();
+        ModuleDescriptorSorter sorter = new ModuleDescriptorSorter(moduleDescriptors,
+                versionMatcher, nonMatchingVersionReporter, circularDepStrategy);
         return sorter.sortModuleDescriptors();
     }
 

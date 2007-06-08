@@ -61,7 +61,6 @@
 
     <!-- Modifier Checks -->
     <module name="ModifierOrder"/>
-    <module name="RedundantModifier"/>
 
 
     <!-- Checks for blocks -->

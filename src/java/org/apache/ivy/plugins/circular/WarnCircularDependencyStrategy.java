@@ -20,7 +20,7 @@ package org.apache.ivy.plugins.circular;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.util.Message;
 
-public class WarnCircularDependencyStrategy extends AbstractCircularDependencyStrategy {
+public final class WarnCircularDependencyStrategy extends AbstractCircularDependencyStrategy {
 
     private static final CircularDependencyStrategy INSTANCE = new WarnCircularDependencyStrategy();
 
