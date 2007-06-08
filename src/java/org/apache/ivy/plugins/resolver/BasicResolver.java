@@ -80,49 +80,49 @@ import org.apache.ivy.util.Message;
 public abstract class BasicResolver extends AbstractResolver {
     public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyyMMddHHmmss");
 
-    protected String _workspaceName;
+    private String workspaceName;
 
     /**
      * True if the files resolved are dependent of the environment from which they have been
      * resolved, false otherwise. In general, relative paths are dependent of the environment, and
      * absolute paths including machine reference are not.
      */
-    private boolean _envDependent = true;
+    private boolean envDependent = true;
 
-    private List _ivyattempts = new ArrayList();
+    private List ivyattempts = new ArrayList();
 
-    private Map _artattempts = new HashMap();
+    private Map artattempts = new HashMap();
 
-    private Boolean _checkmodified = null;
+    private Boolean checkmodified = null;
 
-    private boolean _checkconsistency = true;
+    private boolean checkconsistency = true;
 
-    private boolean _allownomd = true;
+    private boolean allownomd = true;
 
-    private String _checksums = null;
+    private String checksums = null;
 
-    private URLRepository _extartifactrep = new URLRepository(); // used only to download
+    private URLRepository extartifactrep = new URLRepository(); // used only to download
 
     // external artifacts
 
     public BasicResolver() {
-        _workspaceName = HostUtil.getLocalHostName();
+        workspaceName = HostUtil.getLocalHostName();
     }
 
     public String getWorkspaceName() {
-        return _workspaceName;
+        return workspaceName;
     }
 
     public void setWorkspaceName(String workspaceName) {
-        _workspaceName = workspaceName;
+        this.workspaceName = workspaceName;
     }
 
     public boolean isEnvDependent() {
-        return _envDependent;
+        return envDependent;
     }
 
     public void setEnvDependent(boolean envDependent) {
-        _envDependent = envDependent;
+        this.envDependent = envDependent;
     }
 
     /**
@@ -131,7 +131,7 @@ public abstract class BasicResolver extends AbstractResolver {
      * @return
      */
     public boolean isCheckmodified() {
-        if (_checkmodified == null) {
+        if (checkmodified == null) {
             if (getSettings() != null) {
                 String check = getSettings().getVariable("ivy.resolver.default.check.modified");
                 return check != null ? Boolean.valueOf(check).booleanValue() : false;
@@ -139,12 +139,12 @@ public abstract class BasicResolver extends AbstractResolver {
                 return false;
             }
         } else {
-            return _checkmodified.booleanValue();
+            return checkmodified.booleanValue();
         }
     }
 
     public void setCheckmodified(boolean check) {
-        _checkmodified = Boolean.valueOf(check);
+        checkmodified = Boolean.valueOf(check);
     }
 
     public ResolvedModuleRevision getDependency(DependencyDescriptor dd, ResolveData data)
@@ -161,7 +161,7 @@ public abstract class BasicResolver extends AbstractResolver {
             ModuleRevisionId mrid = dd.getDependencyRevisionId();
             // check revision
             int index = mrid.getRevision().indexOf("@");
-            if (index != -1 && !mrid.getRevision().substring(index + 1).equals(_workspaceName)) {
+            if (index != -1 && !mrid.getRevision().substring(index + 1).equals(workspaceName)) {
                 Message.verbose("\t" + getName() + ": unhandled revision => " + mrid.getRevision());
                 return null;
             }
@@ -217,12 +217,6 @@ public abstract class BasicResolver extends AbstractResolver {
                 if (artifactRef == null) {
                     Message.verbose("\t" + getName() + ": no ivy file nor artifact found for "
                             + mrid);
-                    String[] conf = md.getConfigurationsNames();
-                    for (int i = 0; i < conf.length; i++) {
-                        Artifact[] artifacts = md.getArtifacts(conf[i]);
-                        for (int j = 0; j < artifacts.length; j++) {
-                        }
-                    }
                     if (!checkedCache) {
                         cachedRmr = findModuleInCache(data, mrid);
                     }
@@ -264,7 +258,7 @@ public abstract class BasicResolver extends AbstractResolver {
 
                     // check descriptor data is in sync with resource revision and names
                     systemMd = toSystem(md);
-                    if (_checkconsistency) {
+                    if (checkconsistency) {
                         checkDescriptorConsistency(mrid, md, ivyRef);
                         checkDescriptorConsistency(systemDd.getDependencyRevisionId(), systemMd,
                             ivyRef);
@@ -274,8 +268,9 @@ public abstract class BasicResolver extends AbstractResolver {
                             ((DefaultModuleDescriptor) md).setModuleRevisionId(ModuleRevisionId
                                     .newInstance(mrid, revision));
                         } else {
-                            Message
-                                    .warn("consistency disabled with instance of non DefaultModuleDescriptor... module info can't be updated, so consistency check will be done");
+                            Message.warn(
+                              "consistency disabled with instance of non DefaultModuleDescriptor..."
+                              + " module info can't be updated, so consistency check will be done");
                             checkDescriptorConsistency(mrid, md, ivyRef);
                             checkDescriptorConsistency(systemDd.getDependencyRevisionId(),
                                 systemMd, ivyRef);
@@ -292,7 +287,8 @@ public abstract class BasicResolver extends AbstractResolver {
             ModuleRevisionId resolvedMrid = mrid;
             if (isDynamic) {
                 resolvedMrid = md.getResolvedModuleRevisionId();
-                if (resolvedMrid.getRevision() == null || resolvedMrid.getRevision().length() == 0) {
+                if (resolvedMrid.getRevision() == null 
+                        || resolvedMrid.getRevision().length() == 0) {
                     if (ivyRef.getRevision() == null || ivyRef.getRevision().length() == 0) {
                         resolvedMrid = ModuleRevisionId.newInstance(resolvedMrid, "working@"
                                 + getName());
@@ -344,11 +340,13 @@ public abstract class BasicResolver extends AbstractResolver {
                         DefaultModuleDescriptor dmd = (DefaultModuleDescriptor) md;
                         if (data.getSettings().logNotConvertedExclusionRule()
                                 && dmd.isNamespaceUseful()) {
-                            Message
-                                    .warn("the module descriptor "
-                                            + ivyRef.getResource()
-                                            + " has information which can't be converted into the system namespace. It will require the availability of the namespace '"
-                                            + getNamespace().getName() + "' to be fully usable.");
+                            Message.warn(
+                                "the module descriptor "
+                                + ivyRef.getResource()
+                                + " has information which can't be converted into "
+                                + "the system namespace. "
+                                + "It will require the availability of the namespace '"
+                                + getNamespace().getName() + "' to be fully usable.");
                         }
                     }
                     // copy and update ivy file from source to cache
@@ -620,7 +618,7 @@ public abstract class BasicResolver extends AbstractResolver {
     }
 
     protected void clearIvyAttempts() {
-        _ivyattempts.clear();
+        ivyattempts.clear();
         clearArtifactAttempts();
     }
 
@@ -662,15 +660,15 @@ public abstract class BasicResolver extends AbstractResolver {
     }
 
     protected void logIvyAttempt(String attempt) {
-        _ivyattempts.add(attempt);
+        ivyattempts.add(attempt);
         Message.verbose("\t\ttried " + attempt);
     }
 
     protected void logArtifactAttempt(Artifact art, String attempt) {
-        List attempts = (List) _artattempts.get(art);
+        List attempts = (List) artattempts.get(art);
         if (attempts == null) {
             attempts = new ArrayList();
-            _artattempts.put(art, attempts);
+            artattempts.put(art, attempts);
         }
         attempts.add(attempt);
         Message.verbose("\t\ttried " + attempt);
@@ -691,13 +689,13 @@ public abstract class BasicResolver extends AbstractResolver {
 
     public void reportFailure() {
         Message.warn("==== " + getName() + ": tried");
-        for (ListIterator iter = _ivyattempts.listIterator(); iter.hasNext();) {
+        for (ListIterator iter = ivyattempts.listIterator(); iter.hasNext();) {
             String m = (String) iter.next();
             Message.warn("  " + m);
         }
-        for (Iterator iter = _artattempts.keySet().iterator(); iter.hasNext();) {
+        for (Iterator iter = artattempts.keySet().iterator(); iter.hasNext();) {
             Artifact art = (Artifact) iter.next();
-            List attempts = (List) _artattempts.get(art);
+            List attempts = (List) artattempts.get(art);
             if (attempts != null) {
                 Message.warn("  -- artifact " + art + ":");
                 for (ListIterator iterator = attempts.listIterator(); iterator.hasNext();) {
@@ -710,7 +708,7 @@ public abstract class BasicResolver extends AbstractResolver {
 
     public void reportFailure(Artifact art) {
         Message.warn("==== " + getName() + ": tried");
-        List attempts = (List) _artattempts.get(art);
+        List attempts = (List) artattempts.get(art);
         if (attempts != null) {
             for (ListIterator iter = attempts.listIterator(); iter.hasNext();) {
                 String m = (String) iter.next();
@@ -804,7 +802,7 @@ public abstract class BasicResolver extends AbstractResolver {
                                     if (tmp.getParentFile() != null) {
                                         tmp.getParentFile().mkdirs();
                                     }
-                                    _extartifactrep.get(artifactRef.getResource().getName(), tmp);
+                                    extartifactrep.get(artifactRef.getResource().getName(), tmp);
                                     adr.setSize(tmp.length());
                                 } else {
                                     adr.setSize(getAndCheck(artifactRef.getResource(), tmp));
@@ -844,7 +842,7 @@ public abstract class BasicResolver extends AbstractResolver {
     }
 
     protected void clearArtifactAttempts() {
-        _artattempts.clear();
+        artattempts.clear();
     }
 
     public boolean exists(Artifact artifact) {
@@ -855,7 +853,8 @@ public abstract class BasicResolver extends AbstractResolver {
         return false;
     }
 
-    protected long getPublicationDate(ModuleDescriptor md, DependencyDescriptor dd, ResolveData data) {
+    protected long getPublicationDate(ModuleDescriptor md, DependencyDescriptor dd, 
+            ResolveData data) {
         if (md.getPublicationDate() != null) {
             return md.getPublicationDate().getTime();
         }
@@ -1002,23 +1001,23 @@ public abstract class BasicResolver extends AbstractResolver {
     protected abstract long get(Resource resource, File dest) throws IOException;
 
     public boolean isCheckconsistency() {
-        return _checkconsistency;
+        return checkconsistency;
     }
 
     public void setCheckconsistency(boolean checkConsitency) {
-        _checkconsistency = checkConsitency;
+        checkconsistency = checkConsitency;
     }
 
     public boolean isAllownomd() {
-        return _allownomd;
+        return allownomd;
     }
 
     public void setAllownomd(boolean b) {
-        _allownomd = b;
+        allownomd = b;
     }
 
     public String[] getChecksumAlgorithms() {
-        String csDef = _checksums == null ? getSettings().getVariable("ivy.checksums") : _checksums;
+        String csDef = checksums == null ? getSettings().getVariable("ivy.checksums") : checksums;
         if (csDef == null) {
             return new String[0];
         }
@@ -1036,7 +1035,7 @@ public abstract class BasicResolver extends AbstractResolver {
     }
 
     public void setChecksums(String checksums) {
-        _checksums = checksums;
+        this.checksums = checksums;
     }
 
 }

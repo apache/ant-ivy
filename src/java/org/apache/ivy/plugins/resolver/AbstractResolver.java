@@ -56,44 +56,44 @@ public abstract class AbstractResolver implements DependencyResolver, IvySetting
      * True if parsed ivy files should be validated against xsd, false if they should not, null if
      * default behaviour should be used
      */
-    private Boolean _validate = null;
+    private Boolean validate = null;
 
-    private String _name;
+    private String name;
 
-    private String _changingPattern;
+    private String changingPattern;
 
-    private String _changingMatcherName = PatternMatcher.EXACT_OR_REGEXP;
+    private String changingMatcherName = PatternMatcher.EXACT_OR_REGEXP;
 
-    private IvySettings _settings;
+    private IvySettings settings;
 
     /**
      * The latest strategy to use to find latest among several artifacts
      */
-    private LatestStrategy _latestStrategy;
+    private LatestStrategy latestStrategy;
 
-    private String _latestStrategyName;
+    private String latestStrategyName;
 
     /**
      * The namespace to which this resolver belongs
      */
-    private Namespace _namespace;
+    private Namespace namespace;
 
-    private String _namespaceName;
+    private String namespaceName;
 
     public IvySettings getSettings() {
-        return _settings;
+        return settings;
     }
 
     public void setSettings(IvySettings ivy) {
-        _settings = ivy;
+        settings = ivy;
     }
 
     public String getName() {
-        return _name;
+        return name;
     }
 
     public void setName(String name) {
-        _name = name;
+        this.name = name;
     }
 
     /**
@@ -108,19 +108,19 @@ public abstract class AbstractResolver implements DependencyResolver, IvySetting
     }
 
     protected boolean doValidate(ResolveData data) {
-        if (_validate != null) {
-            return _validate.booleanValue();
+        if (validate != null) {
+            return validate.booleanValue();
         } else {
             return data.isValidate();
         }
     }
 
     public boolean isValidate() {
-        return _validate == null ? true : _validate.booleanValue();
+        return validate == null ? true : validate.booleanValue();
     }
 
     public void setValidate(boolean validate) {
-        _validate = Boolean.valueOf(validate);
+        this.validate = Boolean.valueOf(validate);
     }
 
     protected void checkInterrupted() {
@@ -177,65 +177,66 @@ public abstract class AbstractResolver implements DependencyResolver, IvySetting
     }
 
     public LatestStrategy getLatestStrategy() {
-        if (_latestStrategy == null) {
+        if (latestStrategy == null) {
             if (getSettings() != null) {
-                if (_latestStrategyName != null && !"default".equals(_latestStrategyName)) {
-                    _latestStrategy = getSettings().getLatestStrategy(_latestStrategyName);
-                    if (_latestStrategy == null) {
-                        Message.error("unknown latest strategy: " + _latestStrategyName);
-                        _latestStrategy = getSettings().getDefaultLatestStrategy();
+                if (latestStrategyName != null && !"default".equals(latestStrategyName)) {
+                    latestStrategy = getSettings().getLatestStrategy(latestStrategyName);
+                    if (latestStrategy == null) {
+                        Message.error("unknown latest strategy: " + latestStrategyName);
+                        latestStrategy = getSettings().getDefaultLatestStrategy();
                     }
                 } else {
-                    _latestStrategy = getSettings().getDefaultLatestStrategy();
+                    latestStrategy = getSettings().getDefaultLatestStrategy();
                     Message.debug(getName() + ": no latest strategy defined: using default");
                 }
             } else {
                 throw new IllegalStateException(
-                        "no ivy instance found: impossible to get a latest strategy without ivy instance");
+                    "no ivy instance found: "
+                    + "impossible to get a latest strategy without ivy instance");
             }
         }
-        return _latestStrategy;
+        return latestStrategy;
     }
 
     public void setLatestStrategy(LatestStrategy latestStrategy) {
-        _latestStrategy = latestStrategy;
+        this.latestStrategy = latestStrategy;
     }
 
     public void setLatest(String strategyName) {
-        _latestStrategyName = strategyName;
+        latestStrategyName = strategyName;
     }
 
     public String getLatest() {
-        if (_latestStrategyName == null) {
-            _latestStrategyName = "default";
+        if (latestStrategyName == null) {
+            latestStrategyName = "default";
         }
-        return _latestStrategyName;
+        return latestStrategyName;
     }
 
     public Namespace getNamespace() {
-        if (_namespace == null) {
+        if (namespace == null) {
             if (getSettings() != null) {
-                if (_namespaceName != null) {
-                    _namespace = getSettings().getNamespace(_namespaceName);
-                    if (_namespace == null) {
-                        Message.error("unknown namespace: " + _namespaceName);
-                        _namespace = getSettings().getSystemNamespace();
+                if (namespaceName != null) {
+                    namespace = getSettings().getNamespace(namespaceName);
+                    if (namespace == null) {
+                        Message.error("unknown namespace: " + namespaceName);
+                        namespace = getSettings().getSystemNamespace();
                     }
                 } else {
-                    _namespace = getSettings().getSystemNamespace();
+                    namespace = getSettings().getSystemNamespace();
                     Message.debug(getName() + ": no namespace defined: using system");
                 }
             } else {
                 Message.verbose(getName()
                         + ": no namespace defined nor ivy instance: using system namespace");
-                _namespace = Namespace.SYSTEM_NAMESPACE;
+                namespace = Namespace.SYSTEM_NAMESPACE;
             }
         }
-        return _namespace;
+        return namespace;
     }
 
     public void setNamespace(String namespaceName) {
-        _namespaceName = namespaceName;
+        this.namespaceName = namespaceName;
     }
 
     // Namespace conversion methods
@@ -285,31 +286,31 @@ public abstract class AbstractResolver implements DependencyResolver, IvySetting
     }
 
     public String getChangingMatcherName() {
-        return _changingMatcherName;
+        return changingMatcherName;
     }
 
     public void setChangingMatcher(String changingMatcherName) {
-        _changingMatcherName = changingMatcherName;
+        this.changingMatcherName = changingMatcherName;
     }
 
     public String getChangingPattern() {
-        return _changingPattern;
+        return changingPattern;
     }
 
     public void setChangingPattern(String changingPattern) {
-        _changingPattern = changingPattern;
+        this.changingPattern = changingPattern;
     }
 
     public Matcher getChangingMatcher() {
-        if (_changingPattern == null) {
+        if (changingPattern == null) {
             return NoMatcher.INSTANCE;
         }
-        PatternMatcher matcher = _settings.getMatcher(_changingMatcherName);
+        PatternMatcher matcher = settings.getMatcher(changingMatcherName);
         if (matcher == null) {
-            throw new IllegalStateException("unknown matcher '" + _changingMatcherName
+            throw new IllegalStateException("unknown matcher '" + changingMatcherName
                     + "'. It is set as changing matcher in " + this);
         }
-        return matcher.getMatcher(_changingPattern);
+        return matcher.getMatcher(changingPattern);
     }
 
 }
