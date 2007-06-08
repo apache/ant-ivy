@@ -82,6 +82,9 @@ public class FileUtil {
 
                 throw new IOException("error symlinking " + src + " to " + dest + ":\n" + error);
             }
+            if (!dest.exists()) {
+                throw new IOException("error symlinking " + dest + " doesn't exists"); 
+            }
         } catch (IOException x) {
             Message.verbose("symlink failed; falling back to copy");
             StringWriter buffer = new StringWriter();
