@@ -61,7 +61,7 @@ public abstract class AbstractModuleDescriptorParser implements ModuleDescriptor
 
         private List _errors = new ArrayList();
 
-        protected DefaultModuleDescriptor _md;
+        protected DefaultModuleDescriptor md;
 
         private ModuleDescriptorParser _parser;
 
@@ -81,8 +81,8 @@ public abstract class AbstractModuleDescriptorParser implements ModuleDescriptor
 
         protected void setResource(Resource res) {
             _res = res; // used for log and date only
-            _md = new DefaultModuleDescriptor(_parser, res);
-            _md.setLastModified(getLastModified());
+            md = new DefaultModuleDescriptor(_parser, res);
+            md.setLastModified(getLastModified());
         }
 
         protected Resource getResource() {
@@ -123,7 +123,7 @@ public abstract class AbstractModuleDescriptorParser implements ModuleDescriptor
 
         protected void parseDepsConfs(String[] conf, DefaultDependencyDescriptor dd,
                 boolean useDefaultMappingToGuessRightOperande, boolean evaluateConditions) {
-            replaceConfigurationWildcards(_md);
+            replaceConfigurationWildcards(md);
             for (int i = 0; i < conf.length; i++) {
                 String[] ops = conf[i].split("->");
                 if (ops.length == 1) {
@@ -171,7 +171,7 @@ public abstract class AbstractModuleDescriptorParser implements ModuleDescriptor
                 }
             }
 
-            if (_md.isMappingOverride()) {
+            if (md.isMappingOverride()) {
                 addExtendingConfigurations(conf, dd, useDefaultMappingToGuessRightOperande);
             }
         }
@@ -249,7 +249,7 @@ public abstract class AbstractModuleDescriptorParser implements ModuleDescriptor
         private void addExtendingConfigurations(String conf, DefaultDependencyDescriptor dd,
                 boolean useDefaultMappingToGuessRightOperande) {
             Set configsToAdd = new HashSet();
-            Configuration[] configs = _md.getConfigurations();
+            Configuration[] configs = md.getConfigurations();
             for (int i = 0; i < configs.length; i++) {
                 String[] ext = configs[i].getExtends();
                 for (int j = 0; j < ext.length; j++) {
@@ -333,11 +333,11 @@ public abstract class AbstractModuleDescriptorParser implements ModuleDescriptor
 
         public ModuleDescriptor getModuleDescriptor() throws ParseException {
             checkErrors();
-            return _md;
+            return md;
         }
 
         protected Date getDefaultPubDate() {
-            return new Date(_md.getLastModified());
+            return new Date(md.getLastModified());
         }
 
         protected long getLastModified() {
