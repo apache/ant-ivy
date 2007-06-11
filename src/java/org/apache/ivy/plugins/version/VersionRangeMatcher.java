@@ -66,24 +66,24 @@ public class VersionRangeMatcher extends AbstractVersionMatcher {
 
     private final static String UI_PATTERN = "\\" + UPPER_INFINITE;
 
-    private final static String SEP_PATTERN = "\\" + SEPARATOR;
+    private final static String SEP_PATTERN = "\\s*\\" + SEPARATOR + "\\s*";
 
     private final static String OPEN_PATTERN = "[" + OPEN_INC_PATTERN + OPEN_EXC_PATTERN + "]";
 
     private final static String CLOSE_PATTERN = "[" + CLOSE_INC_PATTERN + CLOSE_EXC_PATTERN + "]";
 
-    private final static String ANY_NON_SPECIAL_PATTERN = "[^" + SEP_PATTERN + OPEN_INC_PATTERN
+    private final static String ANY_NON_SPECIAL_PATTERN = "[^\\s" + SEPARATOR + OPEN_INC_PATTERN
             + OPEN_EXC_PATTERN + CLOSE_INC_PATTERN + CLOSE_EXC_PATTERN + LI_PATTERN + UI_PATTERN
             + "]";
 
-    private final static String FINITE_PATTERN = OPEN_PATTERN + "(" + ANY_NON_SPECIAL_PATTERN
-            + "+)" + SEP_PATTERN + "(" + ANY_NON_SPECIAL_PATTERN + "+)" + CLOSE_PATTERN;
+    private final static String FINITE_PATTERN = OPEN_PATTERN + "\\s*(" + ANY_NON_SPECIAL_PATTERN
+            + "+)" + SEP_PATTERN + "(" + ANY_NON_SPECIAL_PATTERN + "+)\\s*" + CLOSE_PATTERN;
 
-    private final static String LOWER_INFINITE_PATTERN = LI_PATTERN + "\\,("
-            + ANY_NON_SPECIAL_PATTERN + "+)" + CLOSE_PATTERN;
+    private final static String LOWER_INFINITE_PATTERN = LI_PATTERN + SEP_PATTERN + "("
+            + ANY_NON_SPECIAL_PATTERN + "+)\\s*" + CLOSE_PATTERN;
 
-    private final static String UPPER_INFINITE_PATTERN = OPEN_PATTERN + "("
-            + ANY_NON_SPECIAL_PATTERN + "+)\\," + UI_PATTERN;
+    private final static String UPPER_INFINITE_PATTERN = OPEN_PATTERN + "\\s*("
+            + ANY_NON_SPECIAL_PATTERN + "+)" + SEP_PATTERN + UI_PATTERN;
 
     private final static Pattern FINITE_RANGE = Pattern.compile(FINITE_PATTERN);
 
