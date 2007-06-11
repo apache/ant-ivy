@@ -32,54 +32,54 @@ import org.apache.tools.ant.BuildException;
  * This task let user set ivy variables from ant.
  */
 public class IvyVar extends IvyTask {
-    private String _name;
+    private String name;
 
-    private String _value;
+    private String value;
 
-    private File _file;
+    private File file;
 
-    private String _url;
+    private String url;
 
-    private String _prefix;
+    private String prefix;
 
     public File getFile() {
-        return _file;
+        return file;
     }
 
-    public void setFile(File file) {
-        _file = file;
+    public void setFile(File aFile) {
+        file = aFile;
     }
 
     public String getName() {
-        return _name;
+        return name;
     }
 
-    public void setName(String name) {
-        _name = name;
+    public void setName(String aName) {
+        name = aName;
     }
 
     public String getPrefix() {
-        return _prefix;
+        return prefix;
     }
 
-    public void setPrefix(String prefix) {
-        _prefix = prefix;
+    public void setPrefix(String aPrefix) {
+        prefix = aPrefix;
     }
 
     public String getUrl() {
-        return _url;
+        return url;
     }
 
-    public void setUrl(String url) {
-        _url = url;
+    public void setUrl(String aUrl) {
+        url = aUrl;
     }
 
     public String getValue() {
-        return _value;
+        return value;
     }
 
-    public void setValue(String value) {
-        _value = value;
+    public void setValue(String aValue) {
+        value = aValue;
     }
 
     public void doExecute() throws BuildException {
@@ -106,6 +106,7 @@ public class IvyVar extends IvyTask {
                     try {
                         is.close();
                     } catch (Exception e) {
+                        //ignore
                     }
                 }
             }

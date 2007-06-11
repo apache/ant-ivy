@@ -24,6 +24,8 @@ package org.apache.ivy.core.cache;
  * @see org.apache.ivy.plugins.resolver.util.ResolvedResource
  */
 public class ArtifactOrigin {
+    private static final int MAGIC_HASH_VALUE = 31;
+
     private boolean isLocal;
 
     private String location;
@@ -65,17 +67,21 @@ public class ArtifactOrigin {
     }
 
     public boolean equals(Object o) {
-        if (this == o)
+        if (this == o) {
             return true;
-        if (o == null || getClass() != o.getClass())
+        }
+        if (o == null || getClass() != o.getClass()) {
             return false;
+        }
 
         ArtifactOrigin that = (ArtifactOrigin) o;
 
-        if (isLocal != that.isLocal)
+        if (isLocal != that.isLocal) {
             return false;
-        if (!location.equals(that.location))
+        }
+        if (!location.equals(that.location)) {
             return false;
+        }
 
         return true;
     }
@@ -83,7 +89,7 @@ public class ArtifactOrigin {
     public int hashCode() {
         int result;
         result = (isLocal ? 1 : 0);
-        result = 31 * result + location.hashCode();
+        result = MAGIC_HASH_VALUE * result + location.hashCode();
         return result;
     }
 }

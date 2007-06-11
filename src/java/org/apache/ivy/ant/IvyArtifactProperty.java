@@ -30,24 +30,24 @@ import org.apache.tools.ant.BuildException;
  * Set a set of ant properties according to the last artifact resolved
  */
 public class IvyArtifactProperty extends IvyPostResolveTask {
-    private String _name;
+    private String name;
 
-    private String _value;
+    private String value;
 
     public String getName() {
-        return _name;
+        return this.name;
     }
 
     public void setName(String name) {
-        _name = name;
+        this.name = name;
     }
 
     public String getValue() {
-        return _value;
+        return this.value;
     }
 
     public void setValue(String value) {
-        _value = value;
+        this.value = value;
     }
 
     public void doExecute() throws BuildException {

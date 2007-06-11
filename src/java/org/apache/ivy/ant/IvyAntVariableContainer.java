@@ -1,5 +1,19 @@
-/**
- * 
+/*
+ *  Licensed to the Apache Software Foundation (ASF) under one or more
+ *  contributor license agreements.  See the NOTICE file distributed with
+ *  this work for additional information regarding copyright ownership.
+ *  The ASF licenses this file to You under the Apache License, Version 2.0
+ *  (the "License"); you may not use this file except in compliance with
+ *  the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *
  */
 package org.apache.ivy.ant;
 
@@ -13,18 +27,18 @@ import org.apache.tools.ant.Project;
 
 class IvyAntVariableContainer extends IvyVariableContainerImpl implements IvyVariableContainer {
 
-    protected Map _overwrittenProperties = new HashMap();
+    private Map overwrittenProperties = new HashMap();
 
-    protected Project _project;
+    private Project project;
 
     public IvyAntVariableContainer(Project project) {
-        this._project = project;
+        this.project = project;
     }
 
     public String getVariable(String name) {
-        String r = (String) _overwrittenProperties.get(name);
+        String r = (String) overwrittenProperties.get(name);
         if (r == null) {
-            r = _project.getProperty(name);
+            r = project.getProperty(name);
         }
         if (r == null) {
             r = super.getVariable(name);
@@ -34,15 +48,15 @@ class IvyAntVariableContainer extends IvyVariableContainerImpl implements IvyVar
 
     public Map getVariables() {
         Map r = new HashMap(super.getVariables());
-        r.putAll(_project.getProperties());
-        r.putAll(_overwrittenProperties);
+        r.putAll(project.getProperties());
+        r.putAll(overwrittenProperties);
         return r;
     }
 
     public void setVariable(String varName, String value, boolean overwrite) {
         if (overwrite) {
             Message.debug("setting '" + varName + "' to '" + value + "'");
-            _overwrittenProperties.put(varName, value);
+            overwrittenProperties.put(varName, value);
         } else {
             super.setVariable(varName, value, overwrite);
         }

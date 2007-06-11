@@ -27,18 +27,20 @@ import org.apache.tools.ant.Task;
  * Implementation of the simple message facility for ant.
  */
 public class AntMessageImpl implements MessageImpl {
-    private Task _task;
+    private static final int PROGRESS_LOG_PERIOD = 1500;
 
-    private static long _lastProgressFlush = 0;
+    private Task task;
 
-    private static StringBuffer _buf = new StringBuffer();
+    private static long lastProgressFlush = 0;
+
+    private static StringBuffer buf = new StringBuffer();
 
     /**
-     * @param task
+     * @param aTask
      */
-    public AntMessageImpl(Task task) {
-        _task = task;
-        task.getProject().addBuildListener(new BuildListener() {
+    public AntMessageImpl(Task aTask) {
+        task = aTask;
+        aTask.getProject().addBuildListener(new BuildListener() {
             private int stackDepth = 0;
 
             public void buildFinished(BuildEvent event) {
@@ -76,31 +78,31 @@ public class AntMessageImpl implements MessageImpl {
     }
 
     public void log(String msg, int level) {
-        _task.log(msg, level);
+        task.log(msg, level);
     }
 
     public void rawlog(String msg, int level) {
-        _task.getProject().log(msg, level);
+        task.getProject().log(msg, level);
     }
 
     public void progress() {
-        _buf.append(".");
-        if (_lastProgressFlush == 0) {
-            _lastProgressFlush = System.currentTimeMillis();
+        buf.append(".");
+        if (lastProgressFlush == 0) {
+            lastProgressFlush = System.currentTimeMillis();
         }
-        if (_task != null) {
+        if (task != null) {
             // log with ant causes a new line -> we do it only once in a while
-            if (System.currentTimeMillis() - _lastProgressFlush > 1500) {
-                _task.log(_buf.toString());
-                _buf.setLength(0);
-                _lastProgressFlush = System.currentTimeMillis();
+            if (System.currentTimeMillis() - lastProgressFlush > PROGRESS_LOG_PERIOD) {
+                task.log(buf.toString());
+                buf.setLength(0);
+                lastProgressFlush = System.currentTimeMillis();
             }
         }
     }
 
     public void endProgress(String msg) {
-        _task.log(_buf + msg);
-        _buf.setLength(0);
-        _lastProgressFlush = 0;
+        task.log(buf + msg);
+        buf.setLength(0);
+        lastProgressFlush = 0;
     }
 }

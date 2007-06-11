@@ -40,60 +40,60 @@ import org.apache.tools.ant.types.DataType;
 public class IvyAntSettings extends DataType {
 
     public static class Credentials {
-        private String _realm;
+        private String realm;
 
-        private String _host;
+        private String host;
 
-        private String _username;
+        private String username;
 
-        private String _passwd;
+        private String passwd;
 
         public String getPasswd() {
-            return _passwd;
+            return this.passwd;
         }
 
         public void setPasswd(String passwd) {
-            _passwd = passwd;
+            this.passwd = passwd;
         }
 
         public String getRealm() {
-            return _realm;
+            return this.realm;
         }
 
         public void setRealm(String realm) {
-            _realm = format(realm);
+            this.realm = format(realm);
         }
 
         public String getHost() {
-            return _host;
+            return this.host;
         }
 
         public void setHost(String host) {
-            _host = format(host);
+            this.host = format(host);
         }
 
         public String getUsername() {
-            return _username;
+            return this.username;
         }
 
         public void setUsername(String userName) {
-            _username = format(userName);
+            this.username = format(userName);
         }
     }
 
-    private Ivy _ivyEngine = null;
+    private Ivy ivyEngine = null;
 
-    private File _file = null;
+    private File file = null;
 
-    private URL _url = null;
+    private URL url = null;
 
-    private String _realm = null;
+    private String realm = null;
 
-    private String _host = null;
+    private String host = null;
 
-    private String _userName = null;
+    private String userName = null;
 
-    private String _passwd = null;
+    private String passwd = null;
 
     private String id = null;
 
@@ -109,8 +109,8 @@ public class IvyAntSettings extends DataType {
         if (defaultInstanceObj != null
                 && defaultInstanceObj.getClass().getClassLoader() != IvyAntSettings.class
                         .getClassLoader()) {
-            Message
-                    .warn("ivy.instance reference an ivy:settings defined in an other classloader.  An new default one will be used in this project.");
+            Message.warn("ivy.instance reference an ivy:settings defined in an other classloader.  "
+                     + "An new default one will be used in this project.");
             defaultInstanceObj = null;
         }
         if (defaultInstanceObj != null && !(defaultInstanceObj instanceof IvyAntSettings)) {
@@ -119,8 +119,8 @@ public class IvyAntSettings extends DataType {
                     + " an not an IvyAntSettings.  Please don't use this reference id ()");
         }
         if (defaultInstanceObj == null) {
-            Message
-                    .info("No ivy:settings found for the default reference 'ivy.instance'.  A default instance will be used");
+            Message.info("No ivy:settings found for the default reference 'ivy.instance'.  " 
+                    + "A default instance will be used");
             IvyAntSettings defaultInstance = new IvyAntSettings();
             defaultInstance.setProject(project);
             defaultInstance.registerAsDefault();
@@ -136,43 +136,43 @@ public class IvyAntSettings extends DataType {
     }
 
     public File getFile() {
-        return _file;
+        return file;
     }
 
     public URL getUrl() {
-        return _url;
+        return url;
     }
 
     public String getPasswd() {
-        return _passwd;
+        return passwd;
     }
 
-    public void setPasswd(String passwd) {
-        _passwd = passwd;
+    public void setPasswd(String aPasswd) {
+        passwd = aPasswd;
     }
 
     public String getRealm() {
-        return _realm;
+        return realm;
     }
 
-    public void setRealm(String realm) {
-        _realm = format(realm);
+    public void setRealm(String aRealm) {
+        realm = format(aRealm);
     }
 
     public String getHost() {
-        return _host;
+        return host;
     }
 
-    public void setHost(String host) {
-        _host = format(host);
+    public void setHost(String aHost) {
+        host = format(aHost);
     }
 
     public String getUsername() {
-        return _userName;
+        return userName;
     }
 
-    public void setUsername(String userName) {
-        _userName = format(userName);
+    public void setUsername(String aUserName) {
+        userName = format(aUserName);
     }
 
     public String getId() {
@@ -193,15 +193,17 @@ public class IvyAntSettings extends DataType {
     }
 
     public void setFile(File file) {
-        this._file = file;
+        this.file = file;
     }
 
     public void setUrl(String confUrl) throws MalformedURLException {
-        this._url = new URL(confUrl);
+        this.url = new URL(confUrl);
     }
 
     /*
-     * public void execute() throws BuildException { ensureMessageInitialised(); if (getId()==null) {
+     * public void execute() throws BuildException { 
+     * ensureMessageInitialised(); 
+     * if (getId()==null) {
      * log("No id specified for the ivy:settings, set the instance as the default one",
      * Project.MSG_DEBUG); getProject().addReference("ivy.instance", this); } else {
      * getProject().addReference(id, this); } }
@@ -211,10 +213,10 @@ public class IvyAntSettings extends DataType {
      * @return
      */
     public Ivy getConfiguredIvyInstance() {
-        if (_ivyEngine == null) {
-            _ivyEngine = createIvyEngine();
+        if (ivyEngine == null) {
+            ivyEngine = createIvyEngine();
         }
-        return _ivyEngine;
+        return ivyEngine;
     }
 
     private Ivy createIvyEngine() {
@@ -227,30 +229,31 @@ public class IvyAntSettings extends DataType {
 
         Ivy ivy = Ivy.newInstance(settings);
 
-        if (_file == null && _url == null) {
+        if (file == null && url == null) {
             defineDefaultSettingFile(ivyAntVariableContainer);
         }
 
         try {
             configureURLHandler();
-            if (_file != null) {
-                if (!_file.exists()) {
-                    throw new BuildException("settings file does not exist: " + _file);
+            if (file != null) {
+                if (!file.exists()) {
+                    throw new BuildException("settings file does not exist: " + file);
                 }
-                ivy.configure(_file);
+                ivy.configure(file);
             } else {
-                if (_url == null) {
+                if (url == null) {
                     throw new AssertionError(
-                            "ivy setting should have either a file, either an url, and if not defineDefaultSettingFile must set it.");
+                            "ivy setting should have either a file, either an url,"
+                                    + " and if not defineDefaultSettingFile must set it.");
                 }
-                ivy.configure(_url);
+                ivy.configure(url);
             }
         } catch (ParseException e) {
             throw new BuildException("impossible to configure ivy:settings with given "
-                    + (_file != null ? "file: " + _file : "url :" + _url) + " :" + e, e);
+                    + (file != null ? "file: " + file : "url :" + url) + " :" + e, e);
         } catch (IOException e) {
             throw new BuildException("impossible to configure ivy:settings with given "
-                    + (_file != null ? "file: " + _file : "url :" + _url) + " :" + e, e);
+                    + (file != null ? "file: " + file : "url :" + url) + " :" + e, e);
         }
         return ivy;
     }
@@ -290,23 +293,23 @@ public class IvyAntSettings extends DataType {
         File[] settingsLocations = new File[] {
                 new File(getProject().getBaseDir(), settingsFileName),
                 new File(getProject().getBaseDir(), "ivyconf.xml"), new File(settingsFileName),
-                new File("ivyconf.xml"),};
+                new File("ivyconf.xml") };
         for (int i = 0; i < settingsLocations.length; i++) {
-            _file = settingsLocations[i];
-            Message.verbose("searching settings file: trying " + _file);
-            if (_file.exists()) {
+            file = settingsLocations[i];
+            Message.verbose("searching settings file: trying " + file);
+            if (file.exists()) {
                 break;
             }
         }
-        if (!_file.exists()) {
+        if (!file.exists()) {
             if (Boolean.valueOf(getProject().getProperty("ivy.14.compatible")).booleanValue()) {
                 Message.info("no settings file found, using Ivy 1.4 default...");
-                _file = null;
-                _url = IvySettings.getDefault14SettingsURL();
+                file = null;
+                url = IvySettings.getDefault14SettingsURL();
             } else {
                 Message.info("no settings file found, using default...");
-                _file = null;
-                _url = IvySettings.getDefaultSettingsURL();
+                file = null;
+                url = IvySettings.getDefaultSettingsURL();
             }
         }
     }

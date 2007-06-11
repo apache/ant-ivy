@@ -51,34 +51,34 @@ import org.xml.sax.helpers.AttributesImpl;
  * Generates a report of all artifacts involved during the last resolve.
  */
 public class IvyArtifactReport extends IvyPostResolveTask {
-    private File _tofile;
+    private File tofile;
 
-    private String _pattern;
+    private String pattern;
 
     public File getTofile() {
-        return _tofile;
+        return tofile;
     }
 
-    public void setTofile(File tofile) {
-        _tofile = tofile;
+    public void setTofile(File aFile) {
+        tofile = aFile;
     }
 
     public String getPattern() {
-        return _pattern;
+        return pattern;
     }
 
-    public void setPattern(String pattern) {
-        _pattern = pattern;
+    public void setPattern(String aPattern) {
+        pattern = aPattern;
     }
 
     public void doExecute() throws BuildException {
         prepareAndCheck();
-        if (_tofile == null) {
+        if (tofile == null) {
             throw new BuildException(
                     "no destination file name: please provide it through parameter 'tofile'");
         }
 
-        _pattern = getProperty(_pattern, getSettings(), "ivy.retrieve.pattern");
+        pattern = getProperty(pattern, getSettings(), "ivy.retrieve.pattern");
 
         try {
             String[] confs = splitConfs(getConf());
@@ -87,7 +87,8 @@ public class IvyArtifactReport extends IvyPostResolveTask {
             if (getResolveId() != null) {
                 md = (ModuleDescriptor) getResolvedDescriptor(getResolveId());
             } else {
-                md = (ModuleDescriptor) getResolvedDescriptor(getOrganisation(), getModule(), false);
+                md = (ModuleDescriptor) getResolvedDescriptor(getOrganisation(), getModule()
+                        , false);
             }
             IvyNode[] dependencies = getIvyInstance().getResolveEngine().getDependencies(
                 md,
@@ -96,7 +97,7 @@ public class IvyArtifactReport extends IvyPostResolveTask {
 
             Map artifactsToCopy = getIvyInstance().getRetrieveEngine().determineArtifactsToCopy(
                 ModuleRevisionId.newInstance(getOrganisation(), getModule(), getRevision()),
-                _pattern,
+                pattern,
                 new RetrieveOptions().setConfs(confs).setResolveId(getResolveId()).setCache(
                     cacheManager));
 
@@ -124,7 +125,7 @@ public class IvyArtifactReport extends IvyPostResolveTask {
     private void generateXml(CacheManager cache, IvyNode[] dependencies,
             Map moduleRevToArtifactsMap, Map artifactsToCopy) {
         try {
-            FileOutputStream fileOuputStream = new FileOutputStream(_tofile);
+            FileOutputStream fileOuputStream = new FileOutputStream(tofile);
             try {
                 TransformerHandler saxHandler = createTransformerHandler(fileOuputStream);
 
