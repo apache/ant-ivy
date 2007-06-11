@@ -127,8 +127,6 @@ public final class PomModuleDescriptorParser extends AbstractModuleDescriptorPar
     private static final class Parser extends AbstractParser {
         private static final String JAR_EXTENSION = "jar";
 
-        private IvySettings settings;
-
         private Stack contextStack = new Stack();
 
         private String organisation;
@@ -155,9 +153,8 @@ public final class PomModuleDescriptorParser extends AbstractModuleDescriptorPar
         
         private StringBuffer buffer = new StringBuffer();
 
-        public Parser(ModuleDescriptorParser parser, IvySettings settings, Resource res) {
+        public Parser(ModuleDescriptorParser parser, Resource res) {
             super(parser);
-            this.settings = settings;
             setResource(res);
             md.setResolvedPublicationDate(new Date(res.getLastModified()));
             for (int i = 0; i < MAVEN2_CONFIGURATIONS.length; i++) {
@@ -385,7 +382,7 @@ public final class PomModuleDescriptorParser extends AbstractModuleDescriptorPar
 
     public ModuleDescriptor parseDescriptor(IvySettings settings, URL descriptorURL, Resource res,
             boolean validate) throws ParseException, IOException {
-        Parser parser = new Parser(this, settings, res);
+        Parser parser = new Parser(this, res);
         try {
             XMLHelper.parse(descriptorURL, null, parser);
         } catch (SAXException ex) {
