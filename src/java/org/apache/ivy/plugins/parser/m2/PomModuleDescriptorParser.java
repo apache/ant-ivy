@@ -152,6 +152,8 @@ public final class PomModuleDescriptorParser extends AbstractModuleDescriptorPar
         private DefaultDependencyDescriptor dd;
 
         private Map properties = new HashMap();
+        
+        private StringBuffer buffer = new StringBuffer();
 
         public Parser(ModuleDescriptorParser parser, IvySettings settings, Resource res) {
             super(parser);
@@ -215,10 +217,13 @@ public final class PomModuleDescriptorParser extends AbstractModuleDescriptorPar
         }
 
         public void endElement(String uri, String localName, String qName) throws SAXException {
-            if (md.getModuleRevisionId() == null && ("project".equals(getContext()))) {
+            processTextContent();
+            
+            String context = getContext();
+            if (md.getModuleRevisionId() == null && ("project".equals(context))) {
                 fillMrid();
             } else if (((organisation != null && module != null && revision != null) || dd != null)
-                    && "project/dependencies/dependency".equals(getContext())) {
+                    && "project/dependencies/dependency".equals(context)) {
                 if (dd == null) {
                     dd = new DefaultDependencyDescriptor(md, ModuleRevisionId.newInstance(
                         organisation, module, revision), true, false, true);
@@ -273,12 +278,12 @@ public final class PomModuleDescriptorParser extends AbstractModuleDescriptorPar
                 md.addDependency(dd);
                 dd = null;
             } else if ((organisation != null && module != null)
-                   && "project/dependencies/dependency/exclusions/exclusion".equals(getContext())) {
+                   && "project/dependencies/dependency/exclusions/exclusion".equals(context)) {
                 exclusions.add(new ModuleId(organisation, module));
                 organisation = null;
                 module = null;
             }
-            if ("project/dependencies/dependency".equals(getContext())) {
+            if ("project/dependencies/dependency".equals(context)) {
                 organisation = null;
                 module = null;
                 revision = null;
@@ -290,51 +295,62 @@ public final class PomModuleDescriptorParser extends AbstractModuleDescriptorPar
             contextStack.pop();
         }
 
-        public void characters(char[] ch, int start, int length) throws SAXException {
-            String txt = IvyPatternHelper.substituteVariables(new String(ch, start, length).trim(),
-                properties);
-            if (txt.trim().length() == 0) {
-                return;
-            }
-            String context = getContext();
-            if (context.equals("project/parent/groupId") && organisation == null) {
-                organisation = txt;
-                return;
-            }
-            if (context.equals("project/parent/version") && revision == null) {
-                revision = txt;
-                return;
-            }
-            if (context.equals("project/parent/packaging") && type == null) {
-                type = txt;
-                ext = txt;
-                return;
-            }
-            if (context.startsWith("project/parent")) {
-                return;
-            }
-            if (md.getModuleRevisionId() == null
-                    || context.startsWith("project/dependencies/dependency")) {
-                if (context.equals("project/groupId")) {
+        private void processTextContent() {
+            if (buffer != null) {
+                String txt = IvyPatternHelper.substituteVariables(buffer.toString(), properties).trim();
+                buffer = null;
+                
+                if (txt.length() == 0) {
+                    return;
+                }
+                
+                String context = getContext();
+                if (context.equals("project/parent/groupId") && organisation == null) {
                     organisation = txt;
-                } else if (organisation == null && context.endsWith("groupId")) {
-                    organisation = txt;
-                } else if (module == null && context.endsWith("artifactId")) {
-                    module = txt;
-                } else if (context.equals("project/version")
-                        || (revision == null && context.endsWith("version"))) {
+                    return;
+                }
+                if (context.equals("project/parent/version") && revision == null) {
                     revision = txt;
-                } else if (revision == null && context.endsWith("version")) {
-                    revision = txt;
-                } else if (type == null && context.endsWith("packaging")) {
+                    return;
+                } 
+                if (context.equals("project/parent/packaging") && type == null) {
                     type = txt;
                     ext = txt;
-                } else if (scope == null && context.endsWith("scope")) {
-                    scope = txt;
-                } else if (classifier == null && context.endsWith("dependency/classifier")) {
-                    classifier = txt;
+                    return;
+                } 
+                if (context.startsWith("project/parent")) {
+                    return;
+                } 
+                if (md.getModuleRevisionId() == null
+                        || context.startsWith("project/dependencies/dependency")) {
+                    if (context.equals("project/groupId")) {
+                        organisation = txt;
+                    } else if (organisation == null && context.endsWith("groupId")) {
+                        organisation = txt;
+                    } else if (module == null && context.endsWith("artifactId")) {
+                        module = txt;
+                    } else if (context.equals("project/version")
+                            || (revision == null && context.endsWith("version"))) {
+                        revision = txt;
+                    } else if (revision == null && context.endsWith("version")) {
+                        revision = txt;
+                    } else if (type == null && context.endsWith("packaging")) {
+                        type = txt;
+                        ext = txt;
+                    } else if (scope == null && context.endsWith("scope")) {
+                        scope = txt;
+                    } else if (classifier == null && context.endsWith("dependency/classifier")) {
+                        classifier = txt;
+                    }
                 }
             }
+        }
+
+        public void characters(char[] ch, int start, int length) throws SAXException {
+            if (buffer == null) {
+                buffer = new StringBuffer();
+            }
+            buffer.append(ch, start, length);
         }
 
         private String getContext() {

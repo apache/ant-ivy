@@ -57,6 +57,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - IMPROVEMENT: Remove @author tags (thanks to Stephane Bailliez)
 - IMPROVEMENT: Remove use of deprecated elements in ivysettings.xml (IVY-505) (with contribution from Jan Materne)
 
+- FIX: pom parser doesn't necessarily processes all important information (IVY-524)
 - FIX: <info> element of Ivy file in cache is not updated when using namespaces (IVY-516)
 - FIX: Retrieve Ant task ignores resolveId attribute (IVY-522) (thanks to Scott Goldstein)
 - FIX: The deprecated "keep" attribute on post resolve tasks causes an error (IVY-517)
