@@ -47,6 +47,8 @@ public class SortTest extends TestCase {
     private DefaultModuleDescriptor md4;
 
     private static Ivy ivy;
+    
+    
 
     /*
      * (non-Javadoc)
@@ -139,14 +141,17 @@ public class SortTest extends TestCase {
             public void handleCircularDependency(ModuleRevisionId[] mrids) {
                 assertEquals("handleCircularDependency is expected to be called only once", 0,
                     nbOfCall);
-                assertTrue("incorrect cicular dependency invocation"
-                        + CircularDependencyHelper.formatMessage(mrids), mrids.length == 3
-                        && ((mrids[0].equals(md2.getModuleRevisionId())
-                                && mrids[1].equals(md3.getModuleRevisionId()) && mrids[2]
-                                .equals(md2.getModuleRevisionId())) || (mrids[0].equals(md3
-                                .getModuleRevisionId())
-                                && mrids[1].equals(md2.getModuleRevisionId()) && mrids[2]
-                                .equals(md3.getModuleRevisionId()))));
+                String assertMsg = "incorrect cicular dependency invocation" 
+                        + CircularDependencyHelper.formatMessage(mrids);
+                assertEquals(assertMsg, 3 , mrids.length);
+                if (mrids[0].equals(md2.getModuleRevisionId())) {
+                    assertEquals(assertMsg , md3.getModuleRevisionId() , mrids[1]);
+                    assertEquals(assertMsg , md2.getModuleRevisionId() , mrids[2]);
+                } else {
+                    assertEquals(assertMsg , md3.getModuleRevisionId() , mrids[0]);
+                    assertEquals(assertMsg , md2.getModuleRevisionId() , mrids[1]);
+                    assertEquals(assertMsg , md3.getModuleRevisionId() , mrids[2]);
+                }
                 nbOfCall++;
             }
 
@@ -261,9 +266,9 @@ public class SortTest extends TestCase {
     /**
      * Verifies that sorted in one of the list of listOfPossibleSort.
      * 
-     * @param An
+     * @param listOfPossibleSort
      *            array of possible sort result
-     * @param The
+     * @param sorted
      *            actual sortedList to compare
      */
     private void assertSorted(DefaultModuleDescriptor[][] listOfPossibleSort, List sorted) {
