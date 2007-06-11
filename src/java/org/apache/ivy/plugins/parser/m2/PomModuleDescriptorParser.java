@@ -55,7 +55,15 @@ import org.apache.ivy.util.XMLHelper;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
-public class PomModuleDescriptorParser extends AbstractModuleDescriptorParser {
+/**
+ * A parser for Maven 2 POM.
+ * <p>
+ * The configurations used in the generated module descriptor mimics the behavior defined by maven 2
+ * scopes, as documented here:<br/>
+ * http://maven.apache.org/guides/introduction/introduction-to-dependency-mechanism.html
+ * 
+ */
+public final class PomModuleDescriptorParser extends AbstractModuleDescriptorParser {
     public static final Configuration[] MAVEN2_CONFIGURATIONS = new Configuration[] {
             new Configuration("default", Visibility.PUBLIC,
                     "runtime dependencies and master artifact can be used with this conf",
@@ -63,33 +71,44 @@ public class PomModuleDescriptorParser extends AbstractModuleDescriptorParser {
             new Configuration(
                     "master",
                     Visibility.PUBLIC,
-                    "contains only the artifact published by this module itself, with no transitive dependencies",
+                    "contains only the artifact published by this module itself, "
+                    + "with no transitive dependencies",
                     new String[0]),
             new Configuration(
                     "compile",
                     Visibility.PUBLIC,
-                    "this is the default scope, used if none is specified. Compile dependencies are available in all classpaths.",
+                    "this is the default scope, used if none is specified. "
+                    + "Compile dependencies are available in all classpaths.",
                     new String[0]),
             new Configuration(
                     "provided",
                     Visibility.PUBLIC,
-                    "this is much like compile, but indicates you expect the JDK or a container to provide it. It is only available on the compilation classpath, and is not transitive.",
+                    "this is much like compile, but indicates you expect the JDK or a container "
+                    + "to provide it. "
+                    + "It is only available on the compilation classpath, and is not transitive.",
                     new String[0]),
             new Configuration(
                     "runtime",
                     Visibility.PUBLIC,
-                    "this scope indicates that the dependency is not required for compilation, but is for execution. It is in the runtime and test classpaths, but not the compile classpath.",
+                    "this scope indicates that the dependency is not required for compilation, "
+                    + "but is for execution. It is in the runtime and test classpaths, "
+                    + "but not the compile classpath.",
                     new String[] {"compile"}),
             new Configuration(
                     "test",
                     Visibility.PRIVATE,
-                    "this scope indicates that the dependency is not required for normal use of the application, and is only available for the test compilation and execution phases.",
+                    "this scope indicates that the dependency is not required for normal use of "
+                    + "the application, and is only available for the test compilation and "
+                    + "execution phases.",
                     new String[0]),
             new Configuration(
                     "system",
                     Visibility.PUBLIC,
-                    "this scope is similar to provided except that you have to provide the JAR which contains it explicitly. The artifact is always available and is not looked up in a repository.",
-                    new String[0]),};
+                    "this scope is similar to provided except that you have to provide the JAR "
+                    + "which contains it explicitly. The artifact is always available and is not "
+                    + "looked up in a repository.",
+                    new String[0]),
+                    };
 
     private static final Configuration OPTIONAL_CONFIGURATION = new Configuration("optional",
             Visibility.PUBLIC, "contains all optional dependencies", new String[0]);
@@ -106,58 +125,60 @@ public class PomModuleDescriptorParser extends AbstractModuleDescriptorParser {
     }
 
     private static final class Parser extends AbstractParser {
-        private IvySettings _settings;
+        private static final String JAR_EXTENSION = "jar";
 
-        private Stack _contextStack = new Stack();
+        private IvySettings settings;
 
-        private String _organisation;
+        private Stack contextStack = new Stack();
 
-        private String _module;
+        private String organisation;
 
-        private String _revision;
+        private String module;
 
-        private String _scope;
+        private String revision;
 
-        private String _classifier;
+        private String scope;
 
-        private String _type;
+        private String classifier;
 
-        private String _ext;
+        private String type;
 
-        private boolean _optional = false;
+        private String ext;
 
-        private List _exclusions = new ArrayList();
+        private boolean optional = false;
 
-        private DefaultDependencyDescriptor _dd;
+        private List exclusions = new ArrayList();
 
-        private Map _properties = new HashMap();
+        private DefaultDependencyDescriptor dd;
+
+        private Map properties = new HashMap();
 
         public Parser(ModuleDescriptorParser parser, IvySettings settings, Resource res) {
             super(parser);
-            _settings = settings;
+            this.settings = settings;
             setResource(res);
-            _md.setResolvedPublicationDate(new Date(res.getLastModified()));
+            md.setResolvedPublicationDate(new Date(res.getLastModified()));
             for (int i = 0; i < MAVEN2_CONFIGURATIONS.length; i++) {
-                _md.addConfiguration(MAVEN2_CONFIGURATIONS[i]);
+                md.addConfiguration(MAVEN2_CONFIGURATIONS[i]);
             }
         }
 
         public void startElement(String uri, String localName, String qName, Attributes attributes)
                 throws SAXException {
-            _contextStack.push(qName);
+            contextStack.push(qName);
             String context = getContext();
             if ("optional".equals(qName)) {
-                _optional = true;
+                optional = true;
             } else if ("project/dependencies/dependency/exclusions".equals(context)) {
-                if (_dd == null) {
+                if (dd == null) {
                     // stores dd now cause exclusions will override org and module
-                    _dd = new DefaultDependencyDescriptor(_md, ModuleRevisionId.newInstance(
-                        _organisation, _module, _revision), true, false, true);
-                    _organisation = null;
-                    _module = null;
-                    _revision = null;
+                    dd = new DefaultDependencyDescriptor(md, ModuleRevisionId.newInstance(
+                        organisation, module, revision), true, false, true);
+                    organisation = null;
+                    module = null;
+                    revision = null;
                 }
-            } else if (_md.getModuleRevisionId() == null) {
+            } else if (md.getModuleRevisionId() == null) {
                 if ("project/dependencies".equals(context) || "project/profiles".equals(context)
                         || "project/build".equals(context)) {
                     fillMrid();
@@ -166,82 +187,82 @@ public class PomModuleDescriptorParser extends AbstractModuleDescriptorParser {
         }
 
         private void fillMrid() throws SAXException {
-            if (_organisation == null) {
+            if (organisation == null) {
                 throw new SAXException("no groupId found in pom");
             }
-            if (_module == null) {
+            if (module == null) {
                 throw new SAXException("no artifactId found in pom");
             }
-            if (_revision == null) {
-                _revision = "SNAPSHOT";
+            if (revision == null) {
+                revision = "SNAPSHOT";
             }
-            ModuleRevisionId mrid = ModuleRevisionId.newInstance(_organisation, _module, _revision);
-            _properties.put("project.groupId", _organisation);
-            _properties.put("project.artifactId", _module);
-            _properties.put("project.version", _revision);
-            _properties.put("pom.version", _revision);
-            _properties.put("version", _revision);
-            _md.setModuleRevisionId(mrid);
-            if (_type == null) {
-                _type = _ext = "jar";
+            ModuleRevisionId mrid = ModuleRevisionId.newInstance(organisation, module, revision);
+            properties.put("project.groupId", organisation);
+            properties.put("project.artifactId", module);
+            properties.put("project.version", revision);
+            properties.put("pom.version", revision);
+            properties.put("version", revision);
+            md.setModuleRevisionId(mrid);
+            if (type == null) {
+                type = JAR_EXTENSION;
+                ext = JAR_EXTENSION;
             }
-            _md.addArtifact("master", new DefaultArtifact(mrid, getDefaultPubDate(), _module,
-                    _type, _ext));
-            _organisation = null;
-            _module = null;
-            _revision = null;
+            md.addArtifact("master", new DefaultArtifact(mrid, getDefaultPubDate(), module,
+                    type, ext));
+            organisation = null;
+            module = null;
+            revision = null;
         }
 
         public void endElement(String uri, String localName, String qName) throws SAXException {
-            if (_md.getModuleRevisionId() == null && ("project".equals(getContext()))) {
+            if (md.getModuleRevisionId() == null && ("project".equals(getContext()))) {
                 fillMrid();
-            } else if (((_organisation != null && _module != null && _revision != null) || _dd != null)
+            } else if (((organisation != null && module != null && revision != null) || dd != null)
                     && "project/dependencies/dependency".equals(getContext())) {
-                if (_dd == null) {
-                    _dd = new DefaultDependencyDescriptor(_md, ModuleRevisionId.newInstance(
-                        _organisation, _module, _revision), true, false, true);
+                if (dd == null) {
+                    dd = new DefaultDependencyDescriptor(md, ModuleRevisionId.newInstance(
+                        organisation, module, revision), true, false, true);
                 }
-                _scope = _scope == null ? "compile" : _scope;
-                if (_optional && "compile".equals(_scope)) {
-                    _scope = "runtime";
+                scope = scope == null ? "compile" : scope;
+                if (optional && "compile".equals(scope)) {
+                    scope = "runtime";
                 }
-                String mapping = (String) MAVEN2_CONF_MAPPING.get(_scope);
+                String mapping = (String) MAVEN2_CONF_MAPPING.get(scope);
                 if (mapping == null) {
-                    Message.verbose("unknown scope " + _scope + " in " + getResource());
+                    Message.verbose("unknown scope " + scope + " in " + getResource());
                     mapping = (String) MAVEN2_CONF_MAPPING.get("compile");
                 }
-                if (_optional) {
-                    mapping = mapping.replaceAll(_scope + "\\-\\>", "optional->");
-                    if (_md.getConfiguration("optional") == null) {
-                        _md.addConfiguration(OPTIONAL_CONFIGURATION);
+                if (optional) {
+                    mapping = mapping.replaceAll(scope + "\\-\\>", "optional->");
+                    if (md.getConfiguration("optional") == null) {
+                        md.addConfiguration(OPTIONAL_CONFIGURATION);
                     }
                 }
-                parseDepsConfs(mapping, _dd);
+                parseDepsConfs(mapping, dd);
 
-                if (_classifier != null) {
+                if (classifier != null) {
                     // we deal with classifiers by setting an extra attribute and forcing the
                     // dependency to assume such an artifact is published
                     Map extraAtt = new HashMap();
-                    extraAtt.put("classifier", _classifier);
-                    String[] confs = _dd.getModuleConfigurations();
+                    extraAtt.put("classifier", classifier);
+                    String[] confs = dd.getModuleConfigurations();
                     for (int i = 0; i < confs.length; i++) {
-                        _dd.addDependencyArtifact(confs[i],
+                        dd.addDependencyArtifact(confs[i],
                             new DefaultDependencyArtifactDescriptor(
-                                    _dd.getDependencyId().getName(), "jar", "jar", // here we have
-                                    // to assume a
-                                    // type
-                                    // and ext for the artifact, so
-                                    // this is a limitation compared
-                                    // to how m2 behave with
-                                    // classifiers
+                                    dd.getDependencyId().getName(), JAR_EXTENSION, JAR_EXTENSION, 
+                                    /*
+                                     * here we have to assume a type and ext for the artifact, so
+                                     * this is a limitation compared to how m2 behave with
+                                     * classifiers
+                                     */
                                     null, extraAtt));
                     }
                 }
-                for (Iterator iter = _exclusions.iterator(); iter.hasNext();) {
+                for (Iterator iter = exclusions.iterator(); iter.hasNext();) {
                     ModuleId mid = (ModuleId) iter.next();
-                    String[] confs = _dd.getModuleConfigurations();
+                    String[] confs = dd.getModuleConfigurations();
                     for (int i = 0; i < confs.length; i++) {
-                        _dd
+                        dd
                                 .addExcludeRule(confs[i], new DefaultExcludeRule(new ArtifactId(
                                         mid, PatternMatcher.ANY_EXPRESSION,
                                         PatternMatcher.ANY_EXPRESSION,
@@ -249,76 +270,76 @@ public class PomModuleDescriptorParser extends AbstractModuleDescriptorParser {
                                         ExactPatternMatcher.INSTANCE, null));
                     }
                 }
-                _md.addDependency(_dd);
-                _dd = null;
-            } else if ((_organisation != null && _module != null)
-                    && "project/dependencies/dependency/exclusions/exclusion".equals(getContext())) {
-                _exclusions.add(new ModuleId(_organisation, _module));
-                _organisation = null;
-                _module = null;
+                md.addDependency(dd);
+                dd = null;
+            } else if ((organisation != null && module != null)
+                   && "project/dependencies/dependency/exclusions/exclusion".equals(getContext())) {
+                exclusions.add(new ModuleId(organisation, module));
+                organisation = null;
+                module = null;
             }
             if ("project/dependencies/dependency".equals(getContext())) {
-                _organisation = null;
-                _module = null;
-                _revision = null;
-                _scope = null;
-                _classifier = null;
-                _optional = false;
-                _exclusions.clear();
+                organisation = null;
+                module = null;
+                revision = null;
+                scope = null;
+                classifier = null;
+                optional = false;
+                exclusions.clear();
             }
-            _contextStack.pop();
+            contextStack.pop();
         }
 
         public void characters(char[] ch, int start, int length) throws SAXException {
             String txt = IvyPatternHelper.substituteVariables(new String(ch, start, length).trim(),
-                _properties);
+                properties);
             if (txt.trim().length() == 0) {
                 return;
             }
             String context = getContext();
-            if (context.equals("project/parent/groupId") && _organisation == null) {
-                _organisation = txt;
+            if (context.equals("project/parent/groupId") && organisation == null) {
+                organisation = txt;
                 return;
             }
-            if (context.equals("project/parent/version") && _revision == null) {
-                _revision = txt;
+            if (context.equals("project/parent/version") && revision == null) {
+                revision = txt;
                 return;
             }
-            if (context.equals("project/parent/packaging") && _type == null) {
-                _type = txt;
-                _ext = txt;
+            if (context.equals("project/parent/packaging") && type == null) {
+                type = txt;
+                ext = txt;
                 return;
             }
             if (context.startsWith("project/parent")) {
                 return;
             }
-            if (_md.getModuleRevisionId() == null
+            if (md.getModuleRevisionId() == null
                     || context.startsWith("project/dependencies/dependency")) {
                 if (context.equals("project/groupId")) {
-                    _organisation = txt;
-                } else if (_organisation == null && context.endsWith("groupId")) {
-                    _organisation = txt;
-                } else if (_module == null && context.endsWith("artifactId")) {
-                    _module = txt;
+                    organisation = txt;
+                } else if (organisation == null && context.endsWith("groupId")) {
+                    organisation = txt;
+                } else if (module == null && context.endsWith("artifactId")) {
+                    module = txt;
                 } else if (context.equals("project/version")
-                        || (_revision == null && context.endsWith("version"))) {
-                    _revision = txt;
-                } else if (_revision == null && context.endsWith("version")) {
-                    _revision = txt;
-                } else if (_type == null && context.endsWith("packaging")) {
-                    _type = txt;
-                    _ext = txt;
-                } else if (_scope == null && context.endsWith("scope")) {
-                    _scope = txt;
-                } else if (_classifier == null && context.endsWith("dependency/classifier")) {
-                    _classifier = txt;
+                        || (revision == null && context.endsWith("version"))) {
+                    revision = txt;
+                } else if (revision == null && context.endsWith("version")) {
+                    revision = txt;
+                } else if (type == null && context.endsWith("packaging")) {
+                    type = txt;
+                    ext = txt;
+                } else if (scope == null && context.endsWith("scope")) {
+                    scope = txt;
+                } else if (classifier == null && context.endsWith("dependency/classifier")) {
+                    classifier = txt;
                 }
             }
         }
 
         private String getContext() {
             StringBuffer buf = new StringBuffer();
-            for (Iterator iter = _contextStack.iterator(); iter.hasNext();) {
+            for (Iterator iter = contextStack.iterator(); iter.hasNext();) {
                 String ctx = (String) iter.next();
                 buf.append(ctx).append("/");
             }
@@ -329,14 +350,14 @@ public class PomModuleDescriptorParser extends AbstractModuleDescriptorParser {
         }
 
         public ModuleDescriptor getDescriptor() {
-            if (_md.getModuleRevisionId() == null) {
+            if (md.getModuleRevisionId() == null) {
                 return null;
             }
-            return _md;
+            return md;
         }
     }
 
-    private static PomModuleDescriptorParser INSTANCE = new PomModuleDescriptorParser();
+    private static final PomModuleDescriptorParser INSTANCE = new PomModuleDescriptorParser();
 
     public static PomModuleDescriptorParser getInstance() {
         return INSTANCE;
