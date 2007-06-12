@@ -31,23 +31,23 @@ public class VfsURI {
     private String user;
 
     // VFS Schemes
-    static final public String SCHEME_CIFS = "smb";
+    public static final String SCHEME_CIFS = "smb";
 
-    static final public String SCHEME_FILE = "file";
+    public static final String SCHEME_FILE = "file";
 
-    static final public String SCHEME_FTP = "ftp";
+    public static final String SCHEME_FTP = "ftp";
 
-    static final public String SCHEME_HTTP = "http";
+    public static final String SCHEME_HTTP = "http";
 
-    static final public String SCHEME_HTTPS = "https";
+    public static final String SCHEME_HTTPS = "https";
 
-    static final public String SCHEME_SFTP = "sftp";
+    public static final String SCHEME_SFTP = "sftp";
 
-    static final public String SCHEME_WEBDAV = "webdav";
+    public static final  String SCHEME_WEBDAV = "webdav";
 
-    static final public String[] SUPPORTED_SCHEMES = new String[] {
+    public static final String[] SUPPORTED_SCHEMES = new String[] {
     // add other schemes here if other can be tested on your machine
-    SCHEME_FILE,};
+    SCHEME_FILE};
 
     /**
      * Create a set of valid VFS URIs for the file access protocol
@@ -56,7 +56,7 @@ public class VfsURI {
      *            relative path (from the base repo) to the resource to be accessed
      * @return
      */
-    static public VfsURI vfsURIFactory(String scheme, String resource, Ivy ivy) {
+    public static VfsURI vfsURIFactory(String scheme, String resource, Ivy ivy) {
         VfsURI vfsURI = null;
         if (scheme.equals(SCHEME_CIFS)) {
             vfsURI = new VfsURI(SCHEME_CIFS, ivy.getVariable(VfsTestHelper.PROP_VFS_USER_ID), ivy

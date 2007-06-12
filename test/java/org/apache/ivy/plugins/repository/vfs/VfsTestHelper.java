@@ -29,29 +29,29 @@ import org.apache.ivy.util.FileUtil;
 public class VfsTestHelper {
     private Ivy ivy = null;
 
-    public StandardFileSystemManager fsManager = null;
+    public final StandardFileSystemManager fsManager;
 
-    final static public String VFS_CONF = "ivy_vfs.xml";
+    public static final String VFS_CONF = "ivy_vfs.xml";
 
     // Ivy Variables
-    static final public String PROP_VFS_HOST = "vfs.host";
+    public static final String PROP_VFS_HOST = "vfs.host";
 
-    static final public String PROP_VFS_SAMBA_REPO = "vfs.samba.share";
+    public static final String PROP_VFS_SAMBA_REPO = "vfs.samba.share";
 
-    static final public String PROP_VFS_USER_ID = "vfs.user";
+    public static final String PROP_VFS_USER_ID = "vfs.user";
 
-    static final public String PROP_VFS_USER_PASSWD = "vfs.passwd";
+    public static final String PROP_VFS_USER_PASSWD = "vfs.passwd";
 
     // Resources
-    static final public String CWD = System.getProperty("user.dir");
+    public static final String CWD = System.getProperty("user.dir");
 
-    static final public String TEST_REPO_DIR = "test/repositories";
+    public static final String TEST_REPO_DIR = "test/repositories";
 
-    static final private String IVY_CONFIG_FILE = FileUtil.concat(TEST_REPO_DIR, "ivysettings.xml");
+    public static final String IVY_CONFIG_FILE = FileUtil.concat(TEST_REPO_DIR, "ivysettings.xml");
 
-    static final public String TEST_IVY_XML = "2/mod5.1/ivy-4.2.xml";
+    public static final String TEST_IVY_XML = "2/mod5.1/ivy-4.2.xml";
 
-    static final public String SCRATCH_DIR = "_vfsScratchArea";
+    public static final String SCRATCH_DIR = "_vfsScratchArea";
 
     public VfsTestHelper() throws Exception {
         // setup and initialize VFS
