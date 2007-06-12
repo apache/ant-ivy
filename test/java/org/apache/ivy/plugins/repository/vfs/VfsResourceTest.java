@@ -24,6 +24,8 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
+
 import junit.framework.TestCase;
 
 public class VfsResourceTest extends TestCase {
@@ -65,7 +67,7 @@ public class VfsResourceTest extends TestCase {
             // VFS apparently does some weird normalization so that resource id used to create
             // the VFS resource is not necessarily identical to the id returned from the getName
             // method <sigh>. We try to work around this by transforming things into java URIs.
-            if (!new URI(resId).equals(new URI(res.getName()).normalize())) {
+            if (!new URI(escapeUrl(resId)).equals(new URI(escapeUrl(res.getName())).normalize())) {
                 fail("Failed on getName. Expected: " + resId + ". Actual: " + res.getName());
             }
 
@@ -83,6 +85,25 @@ public class VfsResourceTest extends TestCase {
         }
     }
 
+    /**
+    * Escape invalid URL characters (Copied from Wicket, just use StringUtils instead of Strings)
+    *
+    * @param queryString The orginal querystring
+    * @return url The querystring with invalid characters escaped 
+    */
+    private String escapeUrl(String queryString) {
+        queryString = StringUtils.replace(queryString , " ", "%20");
+        queryString = StringUtils.replace(queryString , "\"", "%22");
+        queryString = StringUtils.replace(queryString , "%", "%26");
+        queryString = StringUtils.replace(queryString , "=", "%3D");
+        queryString = StringUtils.replace(queryString , "/", "%2F");
+        queryString = StringUtils.replace(queryString , "+", "%2B");
+        queryString = StringUtils.replace(queryString , "&", "%26");
+        queryString = StringUtils.replace(queryString , "~", "%7E");
+        queryString = StringUtils.replace(queryString , "?", "%3F");
+        return queryString;
+    }     
+    
     /**
      * Validating that resource can be created for files which don't physically exists - e.g.
      * resources that are going to created.
@@ -104,7 +125,7 @@ public class VfsResourceTest extends TestCase {
             // VFS apparently does some weird normalization so that resource id used to create
             // the VFS resource is not necessarily identical to the id returned from the getName
             // method <sigh>. We try to work around this by transforming things into java URIs.
-            if (!new URI(resId).equals(new URI(res.getName()).normalize())) {
+            if (!new URI(escapeUrl(resId)).equals(new URI(escapeUrl(res.getName())).normalize())) {
                 fail("Failed on getName. Expected: " + resId + ". Actual: " + res.getName());
             }
 
