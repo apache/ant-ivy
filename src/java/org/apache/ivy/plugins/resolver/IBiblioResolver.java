@@ -42,7 +42,9 @@ import org.apache.ivy.util.Message;
 
 /**
  * IBiblioResolver is a resolver which can be used to resolve dependencies found in the ibiblio
- * maven repository, or similar repositories. For more flexibility with url and patterns, see
+ * maven repository, or similar repositories.
+ * <p>
+ * For more flexibility with url and patterns, see
  * {@link org.apache.ivy.plugins.resolver.URLResolver}.
  */
 public class IBiblioResolver extends URLResolver {
@@ -50,12 +52,12 @@ public class IBiblioResolver extends URLResolver {
 
     public static final String DEFAULT_ROOT = "http://www.ibiblio.org/maven/";
 
-    private String _root = null;
+    private String root = null;
 
-    private String _pattern = null;
+    private String pattern = null;
 
     // use poms if m2 compatible is true
-    private boolean _usepoms = true;
+    private boolean usepoms = true;
 
     public IBiblioResolver() {
     }
@@ -76,34 +78,35 @@ public class IBiblioResolver extends URLResolver {
     public void setM2compatible(boolean m2compatible) {
         super.setM2compatible(m2compatible);
         if (m2compatible) {
-            if (_root == null) {
-                _root = "http://repo1.maven.org/maven2/";
+            if (root == null) {
+                root = "http://repo1.maven.org/maven2/";
             }
-            if (_pattern == null) {
-                _pattern = "[organisation]/[module]/[revision]/[artifact]-[revision](-[classifier]).[ext]";
+            if (pattern == null) {
+                pattern = 
+                    "[organisation]/[module]/[revision]/[artifact]-[revision](-[classifier]).[ext]";
             }
             updateWholePattern();
         }
     }
 
     public void ensureConfigured(IvySettings settings) {
-        if (settings != null && (_root == null || _pattern == null)) {
-            if (_root == null) {
+        if (settings != null && (root == null || pattern == null)) {
+            if (root == null) {
                 String root = settings.getVariable("ivy.ibiblio.default.artifact.root");
                 if (root != null) {
-                    _root = root;
+                    this.root = root;
                 } else {
                     settings.configureRepositories(true);
-                    _root = settings.getVariable("ivy.ibiblio.default.artifact.root");
+                    this.root = settings.getVariable("ivy.ibiblio.default.artifact.root");
                 }
             }
-            if (_pattern == null) {
+            if (pattern == null) {
                 String pattern = settings.getVariable("ivy.ibiblio.default.artifact.pattern");
                 if (pattern != null) {
-                    _pattern = pattern;
+                    this.pattern = pattern;
                 } else {
                     settings.configureRepositories(false);
-                    _pattern = settings.getVariable("ivy.ibiblio.default.artifact.pattern");
+                    this.pattern = settings.getVariable("ivy.ibiblio.default.artifact.pattern");
                 }
             }
             updateWholePattern();
@@ -111,24 +114,24 @@ public class IBiblioResolver extends URLResolver {
     }
 
     private String getWholePattern() {
-        return _root + _pattern;
+        return root + pattern;
     }
 
     public String getPattern() {
-        return _pattern;
+        return pattern;
     }
 
     public void setPattern(String pattern) {
         if (pattern == null) {
             throw new NullPointerException("pattern must not be null");
         }
-        _pattern = pattern;
+        this.pattern = pattern;
         ensureConfigured(getSettings());
         updateWholePattern();
     }
 
     public String getRoot() {
-        return _root;
+        return root;
     }
 
     /**
@@ -145,9 +148,9 @@ public class IBiblioResolver extends URLResolver {
             throw new NullPointerException("root must not be null");
         }
         if (!root.endsWith("/")) {
-            _root = root + "/";
+            this.root = root + "/";
         } else {
-            _root = root;
+            this.root = root;
         }
         ensureConfigured(getSettings());
         updateWholePattern();
@@ -225,11 +228,11 @@ public class IBiblioResolver extends URLResolver {
     }
 
     public boolean isUsepoms() {
-        return _usepoms;
+        return usepoms;
     }
 
     public void setUsepoms(boolean usepoms) {
-        _usepoms = usepoms;
+        this.usepoms = usepoms;
         updateWholePattern();
     }
 
@@ -238,6 +241,6 @@ public class IBiblioResolver extends URLResolver {
         super.dumpSettings();
         Message.debug("\t\troot: " + getRoot());
         Message.debug("\t\tpattern: " + getPattern());
-        Message.debug("\t\tusepoms: " + _usepoms);
+        Message.debug("\t\tusepoms: " + usepoms);
     }
 }
