@@ -46,7 +46,7 @@
 			</classpath>
     	</taskdef>
 		
-		<ivy:settings />
+		<ivy:settings id="ivy.instance"/>
     </target>
 	
 	<target name="install" depends="jar" description="build Ivy and install it in Ivy home for consecutive builds">
