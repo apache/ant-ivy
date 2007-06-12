@@ -50,5 +50,6 @@
 		<!-- Test depdendencies -->
 	    <dependency org="ant" name="ant-launcher" rev="1.6.5" conf="test->default"/>
 		<dependency org="junit" name="junit" rev="3.8.2" conf="test->default" />
+		<dependency org="commons-lang" name="commons-lang" rev="[1.0,3.0[" conf="test->default" />
 	</dependencies>
 </ivy-module>
