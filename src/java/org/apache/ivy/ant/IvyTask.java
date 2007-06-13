@@ -38,31 +38,31 @@ import org.apache.tools.ant.types.Reference;
 public abstract class IvyTask extends Task {
     public static final String ANT_PROJECT_CONTEXT_KEY = "ant-project";
 
-    private Boolean _validate = null;
+    private Boolean validate = null;
 
-    private Reference _antIvyEngineRef = null;
+    private Reference antIvyEngineRef = null;
 
     protected boolean doValidate(IvySettings ivy) {
-        if (_validate != null) {
-            return _validate.booleanValue();
+        if (validate != null) {
+            return validate.booleanValue();
         }
         return ivy.doValidate();
     }
 
     public boolean isValidate() {
-        return _validate == null ? true : _validate.booleanValue();
+        return validate == null ? true : validate.booleanValue();
     }
 
     public void setValidate(boolean validate) {
-        _validate = Boolean.valueOf(validate);
+        this.validate = Boolean.valueOf(validate);
     }
 
     public void setSettingsRef(Reference ref) {
-        _antIvyEngineRef = ref;
+        antIvyEngineRef = ref;
     }
 
     public Reference getSettingsRef() {
-        return _antIvyEngineRef;
+        return antIvyEngineRef;
     }
 
     protected IvySettings getSettings() {
@@ -72,15 +72,15 @@ public abstract class IvyTask extends Task {
     protected Ivy getIvyInstance() {
         ensureMessageInitialised();
         Object antIvyEngine;
-        if (_antIvyEngineRef != null) {
-            antIvyEngine = _antIvyEngineRef.getReferencedObject();
+        if (antIvyEngineRef != null) {
+            antIvyEngine = antIvyEngineRef.getReferencedObject();
             if (!antIvyEngine.getClass().getName().equals(IvyAntSettings.class.getName())) {
-                throw new BuildException(_antIvyEngineRef.getRefId()
+                throw new BuildException(antIvyEngineRef.getRefId()
                         + " doesn't reference an ivy:settings", getLocation());
             }
             if (!(antIvyEngine instanceof IvyAntSettings)) {
                 throw new BuildException(
-                        _antIvyEngineRef.getRefId()
+                        antIvyEngineRef.getRefId()
                                 + " has been defined in a different classloader.  Please use the same loader when defining your task, or redeclare your ivy:settings in this classloader",
                         getLocation());
             }

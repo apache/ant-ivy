@@ -23,47 +23,47 @@ import org.apache.ivy.core.module.id.ModuleRevisionId;
  * Describes a mapping between a package name and an org name revision uple
  */
 public class PackageMapping {
-    private String _package;
+    private String pkg;
 
-    private String _organisation;
+    private String organisation;
 
-    private String _module;
+    private String module;
 
-    private String _revision;
+    private String revision;
 
     public String getModule() {
-        return _module;
+        return module;
     }
 
     public void setModule(String module) {
-        _module = module;
+        this.module = module;
     }
 
     public String getOrganisation() {
-        return _organisation;
+        return organisation;
     }
 
     public void setOrganisation(String organisation) {
-        _organisation = organisation;
+        this.organisation = organisation;
     }
 
     public String getRevision() {
-        return _revision;
+        return revision;
     }
 
     public void setRevision(String revision) {
-        _revision = revision;
+        this.revision = revision;
     }
 
     public String getPackage() {
-        return _package;
+        return pkg;
     }
 
     public void setPackage(String package1) {
-        _package = package1;
+        pkg = package1;
     }
 
     public ModuleRevisionId getModuleRevisionId() {
-        return ModuleRevisionId.newInstance(_organisation, _module, _revision);
+        return ModuleRevisionId.newInstance(organisation, module, revision);
     }
 }
