@@ -18,6 +18,7 @@
 package org.apache.ivy.ant;
 
 import java.io.File;
+import java.util.Locale;
 
 import junit.framework.TestCase;
 
@@ -26,6 +27,9 @@ import org.apache.ivy.core.report.ResolveReport;
 import org.apache.ivy.util.FileUtil;
 
 public class AntBuildTriggerTest extends TestCase {
+    public void testLocale() {
+        assertEquals(Locale.getDefault().getCountry(), "TR");
+    }
     public void test() throws Exception {
         assertFalse(new File("test/triggers/ant-build/A/A.jar").exists());
 

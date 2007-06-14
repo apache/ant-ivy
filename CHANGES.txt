@@ -57,6 +57,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - IMPROVEMENT: Remove @author tags (thanks to Stephane Bailliez)
 - IMPROVEMENT: Remove use of deprecated elements in ivysettings.xml (IVY-505) (with contribution from Jan Materne)
 
+- FIX: Ivy does not work on Turkish machines (IVY-65)
 - FIX: Ivy does not handle multiple version dependencies in maven2 poms correctly (IVY-494)
 - FIX: pom parser doesn't necessarily processes all important information (IVY-524)
 - FIX: <info> element of Ivy file in cache is not updated when using namespaces (IVY-516)

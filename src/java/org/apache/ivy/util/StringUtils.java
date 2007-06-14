@@ -17,6 +17,8 @@
  */
 package org.apache.ivy.util;
 
+import java.util.Locale;
+
 /**
  * Convenient class used only for uncapitalization Usually use commons lang but here we do not want
  * to have such a dependency for only one feature
@@ -27,9 +29,9 @@ public class StringUtils {
             return string;
         }
         if (string.length() == 1) {
-            return string.toLowerCase();
+            return string.toLowerCase(Locale.US);
         }
-        return string.substring(0, 1).toLowerCase() + string.substring(1);
+        return string.substring(0, 1).toLowerCase(Locale.US) + string.substring(1);
     }
 
     /**

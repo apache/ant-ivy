@@ -21,6 +21,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Locale;
 
 import org.apache.ivy.plugins.repository.AbstractRepository;
 import org.apache.ivy.util.Message;
@@ -91,7 +92,7 @@ public abstract class AbstractSshBasedRepository extends AbstractRepository {
     private URI parseURI(String source) {
         try {
             URI uri = new URI(source);
-            if (uri.getScheme() != null && !uri.getScheme().equalsIgnoreCase(getRepositoryScheme()))
+            if (uri.getScheme() != null && !uri.getScheme().toLowerCase(Locale.US).equals(getRepositoryScheme().toLowerCase(Locale.US)))
                 throw new URISyntaxException(source, "Wrong scheme in URI. Expected "
                         + getRepositoryScheme() + " as scheme!");
             if (uri.getHost() == null && getHost() == null)

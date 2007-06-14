@@ -19,6 +19,7 @@ package org.apache.ivy.plugins.latest;
 
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.ivy.core.IvyContext;
@@ -100,8 +101,8 @@ public class LatestRevisionStrategy extends ComparatorLatestStrategy {
                 }
                 // both are strings, we compare them taking into account special meaning
                 Map specialMeanings = getSpecialMeanings();
-                Integer sm1 = (Integer) specialMeanings.get(parts1[i].toLowerCase());
-                Integer sm2 = (Integer) specialMeanings.get(parts2[i].toLowerCase());
+                Integer sm1 = (Integer) specialMeanings.get(parts1[i].toLowerCase(Locale.US));
+                Integer sm2 = (Integer) specialMeanings.get(parts2[i].toLowerCase(Locale.US));
                 if (sm1 != null) {
                     sm2 = sm2 == null ? new Integer(0) : sm2;
                     return sm1.compareTo(sm2);
@@ -171,7 +172,7 @@ public class LatestRevisionStrategy extends ComparatorLatestStrategy {
 
     public void addConfiguredSpecialMeaning(SpecialMeaning meaning) {
         meaning.validate();
-        getSpecialMeanings().put(meaning.getName().toLowerCase(), meaning.getValue());
+        getSpecialMeanings().put(meaning.getName().toLowerCase(Locale.US), meaning.getValue());
     }
 
     public synchronized Map getSpecialMeanings() {

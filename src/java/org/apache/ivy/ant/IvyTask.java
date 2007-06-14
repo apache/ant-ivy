@@ -20,6 +20,7 @@ package org.apache.ivy.ant;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 import org.apache.ivy.Ivy;
 import org.apache.ivy.core.IvyContext;
@@ -194,7 +195,7 @@ public abstract class IvyTask extends Task {
 
     protected Date getPubDate(String date, Date def) {
         if (date != null) {
-            if ("now".equalsIgnoreCase(date)) {
+            if ("now".equals(date.toLowerCase(Locale.US))) {
                 return new Date();
             }
             try {

@@ -26,6 +26,7 @@ import java.io.InputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 public class ChecksumHelper {
@@ -51,7 +52,7 @@ public class ChecksumHelper {
      */
     public static void check(File dest, File checksumFile, String algorithm) throws IOException {
         String csFileContent = FileUtil.readEntirely(
-            new BufferedReader(new FileReader(checksumFile))).trim().toLowerCase();
+            new BufferedReader(new FileReader(checksumFile))).trim().toLowerCase(Locale.US);
         String expected;
         int spaceIndex = csFileContent.indexOf(' ');
         if (spaceIndex != -1) {
@@ -60,7 +61,7 @@ public class ChecksumHelper {
             expected = csFileContent;
         }
 
-        String computed = computeAsString(dest, algorithm).trim().toLowerCase();
+        String computed = computeAsString(dest, algorithm).trim().toLowerCase(Locale.US);
         if (!expected.equals(computed)) {
             throw new IOException("invalid " + algorithm + ": expected=" + expected + " computed="
                     + computed);

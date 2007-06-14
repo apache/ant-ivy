@@ -20,6 +20,7 @@ package org.apache.ivy.plugins.repository.ssh;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.ivy.core.IvyContext;
@@ -176,7 +177,7 @@ public class SshCache {
         String portToUse = "22";
         if (port != -1 && port != 22)
             portToUse = Integer.toString(port);
-        return user.toLowerCase().trim() + "@" + host.toLowerCase().trim() + ":" + portToUse;
+        return user.toLowerCase(Locale.US).trim() + "@" + host.toLowerCase(Locale.US).trim() + ":" + portToUse;
     }
 
     /**

@@ -23,6 +23,7 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -137,7 +138,7 @@ public class ApacheURLLister {
             int dotIndex = text.indexOf('.');
 
             if (((dotIndex != -1) && !href.startsWith(text.substring(0, dotIndex)))
-                    || ((dotIndex == -1) && !href.equalsIgnoreCase(text))) {
+                    || ((dotIndex == -1) && !href.toLowerCase(Locale.US).equals(text.toLowerCase(Locale.US)))) {
                 // the href and the text do not "match"
                 continue;
             }

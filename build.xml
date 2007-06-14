@@ -380,6 +380,11 @@
         	</classpath>
             <jvmarg value="-Demma.coverage.out.file=${coverage.dir}/coverage.emma" />
             <jvmarg value="-Demma.coverage.out.merge=true" />
+        	
+        	<!-- Added this to test IVY-65 -->
+            <jvmarg value="-Duser.region=TR" />
+            <jvmarg value="-Duser.language=tr" />
+        	
 			<formatter type="xml"/>
 			<batchtest todir="${test.xml.dir}">
     		    <fileset refid="test.fileset" />
