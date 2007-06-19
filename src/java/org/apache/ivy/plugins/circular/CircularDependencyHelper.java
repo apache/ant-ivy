@@ -23,8 +23,13 @@ import java.util.List;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 
-public class CircularDependencyHelper {
+public final class CircularDependencyHelper {
 
+    /** CircularDependencyHelper is not designed to be an instance */
+    private CircularDependencyHelper() {
+        
+    }
+    
     /**
      * Returns a string representation of this circular dependency graph
      * 
