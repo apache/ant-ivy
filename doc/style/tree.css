@@ -1,0 +1,30 @@
+.treeview ul{ 
+margin: 0;
+padding: 0;
+}
+
+.treeview li{ 
+background: white url(../images/bullet.gif) no-repeat left center;
+list-style-type: none;
+padding-left: 22px;
+margin-bottom: 3px;
+}
+
+.treeview li.submenu{ 
+background: white url(../images/closed.gif) no-repeat left 1px;
+cursor: hand !important;
+cursor: pointer !important;
+}
+
+.treeview li.collapsable, .treeview li.open { 
+background: white url(../images/open.gif) no-repeat left 1px;
+}
+
+
+.treeview ul.closed { 
+display: none; 
+}
+
+.treeview .submenu ul li{
+cursor: default;
+}

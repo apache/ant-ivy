@@ -20,7 +20,7 @@
 
 /*
 This script can be either embedded in a xooki page for in browser processing, or used in batch using rhino or java 6 javascript tool:
-jrunscript path/to/xooki.js [-noddtree] inputFileFromXookiSite.html [path/to/dir/to/put/generated/file]
+jrunscript path/to/xooki.js inputFileFromXookiSite.html [path/to/dir/to/put/generated/file]
 
 Be sure to be in the directory where the html input to process is when running this command.
  */
@@ -442,22 +442,26 @@ xooki.component = {
     	var menu = '<ul id="'+css("treemenu")+'" class="treeview">';
     	menu += (function (page) {
         	var menu = '';
-        	for (var i  in page.children) {
-        		menu += '<li id="xooki-'+page.children[i].id+'">'+xooki.html.pageLink(page.children[i]);
-        		smenu = arguments.callee(page.children[i]);
-        		if (smenu != '') {
-        			if (smenu.indexOf('id="xooki-'+xooki.page.id+'"') != -1 
-        				|| page.children[i].id == xooki.page.id) {
-        				// either a descendant or the node processed is the current page node
-        				// we specify that the menu must be opened by default
-        				menu += '<ul rel="open"';
-	        			menu += '>'+smenu+'</ul>';
-        			} else if (xooki.c.useddtree) {
-						menu += '<ul ';
-	        			menu += '>'+smenu+'</ul>';
-					}
-        		} 
-        		menu += '</li>';
+        	for (var i in page.children) {
+                if (typeof page.children[i] == 'object') {
+            		smenu = arguments.callee(page.children[i]);
+            		if (smenu != '') {
+                        menu += '<li id="xooki-'+page.children[i].id+'" class="submenu">'+xooki.html.pageLink(page.children[i]);
+            			if (smenu.indexOf('id="xooki-'+xooki.page.id+'"') != -1 
+            				|| page.children[i].id == xooki.page.id) {
+            				// either a descendant or the node processed is the current page node
+            				// we specify that the menu must be opened by default
+            				menu += '<ul class="open"';
+    	        			menu += '>'+smenu+'</ul>';
+            			} else {
+    						menu += '<ul class="closed"';
+    	        			menu += '>'+smenu+'</ul>';
+    					}
+            		} else {
+                        menu += '<li id="xooki-'+page.children[i].id+'">'+xooki.html.pageLink(page.children[i]);
+                    }
+            		menu += '</li>';
+                }
         	}
         	return menu;
         })(xooki.toc);
@@ -564,11 +568,6 @@ xooki.render.page = function() {
     xooki.html.setBody(xooki.string.processTemplate(xooki.template.body, xooki.c));
     
     xooki.input.applyChanges();
-    
-	if (xooki.c.useddtree) {
-	    // enable dynamic tree menu 
-		ddtreemenu.createTree(css("treemenu"), false);
-	}
 };
 
 xooki.render.main = function() {
@@ -611,16 +610,18 @@ xooki.input = {
             }
             filters = this.getInputFilters(format);
             for (var i in filters) {
-				xooki.debug('processing filter '+filters[i]);
-                f = xooki.input.filters[filters[i]];
-                if (typeof f == "function") {
-                	try {
-                    	source = f(source); // process filter
-                    } catch (e) {
-	                    xooki.error(e, t("error occured while processing filter ${0}", filters[i]));
+                if (typeof filters[i] == 'string') {
+    				xooki.debug('processing filter '+filters[i]);
+                    f = xooki.input.filters[filters[i]];
+                    if (typeof f == "function") {
+                    	try {
+                        	source = f(source); // process filter
+                        } catch (e) {
+    	                    xooki.error(e, t("error occured while processing filter ${0}", filters[i]));
+                        }
+                    } else {
+                        xooki.error(t("unknown filter ${0} used in input format ${1}", filters[i], format));
                     }
-                } else {
-                    xooki.error(t("unknown filter ${0} used in input format ${1}", filters[i], format));
                 }
             }
             return source;
@@ -819,9 +820,6 @@ if (batchMode) {
 
 		xooki.debug('updating body');
 		var body = xooki.string.processTemplate(xooki.template.body, xooki.c);
-		if (xooki.c.useddtree) {
-			body += '<script language="javascript" type="text/javascript">ddtreemenu.createTree("'+css("treemenu")+'", false);</script>';
-		}
 	    xooki.html.setBody(body);
 	};
 
@@ -835,11 +833,6 @@ if (batchMode) {
 		}
 	};
 	var i=0;
-	if (arguments.length > i && arguments[0] == '-noddtree') {
-		xooki.c.useddtree = false;
-		i++;
-	}
-	
 	if (arguments.length > i && arguments[0] == '-debug') {
 		xooki.c.debug = true;
 		i++;
@@ -907,8 +900,6 @@ if (batchMode) {
     	}
     	return relativeRoot;
     });
-
-    xooki.c.initProperty("useddtree", true);
 
     var globalConfig = xooki.json.loadURL(u("config.json"));
     if (globalConfig != null) {
@@ -1040,10 +1031,6 @@ if (batchMode) {
 	if (batchMode) {
 		xooki.html.addHeader('<script language="javascript" type="text/javascript">xooki = {u: function(url) {return "'+xooki.c.relativeRoot+'xooki/"+url;}};</script>');
 	}
-    xooki.url.include("tree/simpletreemenu.js");
-    if (xooki.c.useTrimPath) {
-        xooki.url.include("trimpath/template.js");
-    }
     if (xooki.c.allowEdit) {
         xooki.url.include("xookiEdit.js");
     }
