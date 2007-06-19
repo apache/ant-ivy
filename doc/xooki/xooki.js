@@ -1017,6 +1017,7 @@ if (batchMode) {
 		
         var head = xooki.string.processTemplate(xooki.template.head, xooki.config);
 		head = head.replace(/href="([^\\$:"]+)"/g, 'href="'+root+'$1"');
+		head = head.replace(/src="([^\\$:"]+)"/g, 'src="'+root+'$1"');
 		xooki.html.addHeader(head);
 
 		var body = xooki.template.source.match(/<body>([^§]*)<\/body>/im)[1];
