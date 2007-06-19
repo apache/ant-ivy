@@ -185,6 +185,9 @@ xooki.url.reload = function() {
 }
 
 
+if (typeof xooki.action == "undefined") {
+    xooki.action = {};
+}
 
 xooki.action.quitEdit = function () {
     xooki.input.applyChanges();

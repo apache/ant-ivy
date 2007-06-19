@@ -854,7 +854,7 @@ if (batchMode) {
 	print('processing '+file+'...\n');
 	xooki.pageContent = xooki.io.loadFile(file);
 	
-	var m = /var xookiConfig = {.*};/.exec(xooki.pageContent);
+	var m = /var\s+xookiConfig\s+=\s+{.*};/.exec(xooki.pageContent);
 	if (typeof m != 'undefined' && m != null) {
 		eval(m[0]);
 	}
