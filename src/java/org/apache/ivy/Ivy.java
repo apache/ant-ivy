@@ -159,7 +159,8 @@ public class Ivy {
             eventManager = new EventManager();
         }
         if (sortEngine == null) {
-            sortEngine = new SortEngine(settings);
+            sortEngine = new SortEngine();
+            //Settings element are injected in the getSortEngine method. 
         }
         if (searchEngine == null) {
             searchEngine = new SearchEngine(settings);
@@ -329,7 +330,7 @@ public class Ivy {
      * Sorts the collection of IvyNode from the less dependent to the more dependent
      */
     public List sortNodes(Collection nodes) {
-        return sortEngine.sortNodes(nodes);
+        return getSortEngine().sortNodes(nodes);
     }
 
     /**
@@ -344,15 +345,10 @@ public class Ivy {
      *            revision of an other modules present in the of modules to sort with a different
      *            revision.
      * @return a List of sorted ModuleDescriptors
-     * @deprecated Use sortModuleDescriptors(Collection,NonMatchingVersionReporter)
      */
-    public List sortModuleDescriptors(Collection moduleDescriptors) {
-        return sortEngine.sortModuleDescriptors(moduleDescriptors, new SilentNonMatchingVersionReporter());
-    }
-
     public List sortModuleDescriptors(Collection moduleDescriptors,
             NonMatchingVersionReporter nonMatchingVersionReporter) {
-        return sortEngine.sortModuleDescriptors(moduleDescriptors, nonMatchingVersionReporter);
+        return getSortEngine().sortModuleDescriptors(moduleDescriptors, nonMatchingVersionReporter);
     }
 
     // ///////////////////////////////////////////////////////////////////////
@@ -569,6 +565,8 @@ public class Ivy {
     }
 
     public SortEngine getSortEngine() {
+        sortEngine.setCircularDependencyStrategy(settings.getCircularDependencyStrategy());
+        sortEngine.setVersionMatcher(settings.getVersionMatcher());
         return sortEngine;
     }
 

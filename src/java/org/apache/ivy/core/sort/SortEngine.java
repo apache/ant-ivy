@@ -26,17 +26,28 @@ import java.util.Map;
 
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.resolve.IvyNode;
-import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.plugins.circular.CircularDependencyException;
 import org.apache.ivy.plugins.circular.CircularDependencyStrategy;
 import org.apache.ivy.plugins.version.VersionMatcher;
 
 public class SortEngine {
-    private IvySettings settings;
 
-    public SortEngine(IvySettings settings) {
-        this.settings = settings;
+    private CircularDependencyStrategy circularStrategy;
+
+    private VersionMatcher versionMatcher;
+
+    public SortEngine() {
     }
+
+    
+    public void setCircularDependencyStrategy(CircularDependencyStrategy circularStrategy) {
+        this.circularStrategy = circularStrategy;
+    }
+
+    public void setVersionMatcher(VersionMatcher versionMatcher) {
+        this.versionMatcher = versionMatcher;
+    }
+
 
     public List sortNodes(Collection nodes) throws CircularDependencyException {
         /*
@@ -92,10 +103,8 @@ public class SortEngine {
     public List sortModuleDescriptors(Collection moduleDescriptors,
             NonMatchingVersionReporter nonMatchingVersionReporter)
             throws CircularDependencyException {
-        VersionMatcher versionMatcher = settings.getVersionMatcher();
-        CircularDependencyStrategy circularDepStrategy = settings.getCircularDependencyStrategy();
         ModuleDescriptorSorter sorter = new ModuleDescriptorSorter(moduleDescriptors,
-                versionMatcher, nonMatchingVersionReporter, circularDepStrategy);
+                versionMatcher, nonMatchingVersionReporter, circularStrategy);
         return sorter.sortModuleDescriptors();
     }
 

@@ -27,7 +27,6 @@ import java.util.List;
 import junit.framework.Assert;
 import junit.framework.TestCase;
 
-import org.apache.ivy.Ivy;
 import org.apache.ivy.core.module.descriptor.DefaultDependencyDescriptor;
 import org.apache.ivy.core.module.descriptor.DefaultModuleDescriptor;
 import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
@@ -35,6 +34,9 @@ import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.plugins.circular.CircularDependencyHelper;
 import org.apache.ivy.plugins.circular.CircularDependencyStrategy;
+import org.apache.ivy.plugins.circular.WarnCircularDependencyStrategy;
+import org.apache.ivy.plugins.version.ExactVersionMatcher;
+import org.apache.ivy.plugins.version.LatestVersionMatcher;
 
 public class SortTest extends TestCase {
 
@@ -46,9 +48,9 @@ public class SortTest extends TestCase {
 
     private DefaultModuleDescriptor md4;
 
-    private static Ivy ivy;
-    
-    
+    private SortEngine sortEngine;
+
+    private SilentNonMatchingVersionReporter nonMatchReporter;
 
     /*
      * (non-Javadoc)
@@ -63,8 +65,11 @@ public class SortTest extends TestCase {
         md3 = createModuleDescriptorToSort("md3", "rev3");
         md4 = createModuleDescriptorToSort("md4", "rev4");
 
-        ivy = new Ivy();
-        ivy.configureDefault();
+        sortEngine = new SortEngine();
+        sortEngine.setCircularDependencyStrategy(WarnCircularDependencyStrategy.getInstance());
+        sortEngine.setVersionMatcher(new ExactVersionMatcher());
+        
+        nonMatchReporter = new SilentNonMatchingVersionReporter();
     }
 
     public void testSort() throws Exception {
@@ -78,7 +83,7 @@ public class SortTest extends TestCase {
         Collection permutations = getAllLists(md1, md3, md2, md4);
         for (Iterator it = permutations.iterator(); it.hasNext();) {
             List toSort = (List) it.next();
-            assertSorted(expectedOrder, ivy.sortModuleDescriptors(toSort));
+            assertSorted(expectedOrder, sortEngine.sortModuleDescriptors(toSort, nonMatchReporter));
         }
     }
 
@@ -100,7 +105,7 @@ public class SortTest extends TestCase {
         Collection permutations = getAllLists(md1, md3, md2, md4);
         for (Iterator it = permutations.iterator(); it.hasNext();) {
             List toSort = (List) it.next();
-            assertSorted(possibleOrder, ivy.sortModuleDescriptors(toSort));
+            assertSorted(possibleOrder, sortEngine.sortModuleDescriptors(toSort, nonMatchReporter));
         }
     }
 
@@ -117,7 +122,7 @@ public class SortTest extends TestCase {
         Collection permutations = getAllLists(md1, md3, md2, md4);
         for (Iterator it = permutations.iterator(); it.hasNext();) {
             List toSort = (List) it.next();
-            assertSorted(possibleOrder, ivy.sortModuleDescriptors(toSort));
+            assertSorted(possibleOrder, sortEngine.sortModuleDescriptors(toSort, nonMatchReporter));
         }
     }
 
@@ -160,10 +165,10 @@ public class SortTest extends TestCase {
             }
         }
         CircularDependencyReporterMock circularDepReportMock = new CircularDependencyReporterMock();
-        ivy.getSettings().setCircularDependencyStrategy(circularDepReportMock);
+        sortEngine.setCircularDependencyStrategy(circularDepReportMock);
 
         List toSort = Arrays.asList(new ModuleDescriptor[] {md4, md3, md2, md1});
-        ivy.sortModuleDescriptors(toSort);
+        sortEngine.sortModuleDescriptors(toSort, nonMatchReporter);
 
         circularDepReportMock.validate();
     }
@@ -178,13 +183,15 @@ public class SortTest extends TestCase {
         addDependency(md3, "md2", "latest.integration");
         addDependency(md4, "md3", "latest.integration");
 
+        sortEngine.setVersionMatcher(new LatestVersionMatcher());
+        
         DefaultModuleDescriptor[][] expectedOrder = new DefaultModuleDescriptor[][] {{md1, md2,
                 md3, md4}};
 
         Collection permutations = getAllLists(md1, md3, md2, md4);
         for (Iterator it = permutations.iterator(); it.hasNext();) {
             List toSort = (List) it.next();
-            assertSorted(expectedOrder, ivy.sortModuleDescriptors(toSort));
+            assertSorted(expectedOrder, sortEngine.sortModuleDescriptors(toSort, nonMatchReporter));
         }
 
     }
@@ -210,7 +217,7 @@ public class SortTest extends TestCase {
         Collection permutations = getAllLists(md1, md3, md2, md4);
         for (Iterator it = permutations.iterator(); it.hasNext();) {
             List toSort = (List) it.next();
-            assertSorted(possibleOrder, ivy.sortModuleDescriptors(toSort));
+            assertSorted(possibleOrder, sortEngine.sortModuleDescriptors(toSort, nonMatchReporter));
         }
 
     }
@@ -244,7 +251,7 @@ public class SortTest extends TestCase {
         NonMatchingVersionReporterMock nonMatchingVersionReporterMock = 
             new NonMatchingVersionReporterMock();
         List toSort = Arrays.asList(new ModuleDescriptor[] {md4, md3, md2, md1});
-        ivy.sortModuleDescriptors(toSort, nonMatchingVersionReporterMock);
+        sortEngine.sortModuleDescriptors(toSort, nonMatchingVersionReporterMock);
         nonMatchingVersionReporterMock.validate();
     }
 
