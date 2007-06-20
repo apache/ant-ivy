@@ -18,6 +18,7 @@
 package org.apache.ivy.core.resolve;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
@@ -1067,22 +1068,17 @@ public class ResolveTest extends TestCase {
         ResolveReport report = _ivy.resolve(ResolveTest.class.getResource("ivy-225.xml"),
             getResolveOptions(new String[] {"default"}));
 
-        Set revisions = report.getConfigurationReport("default").getModuleRevisionIds();
+        List revisions = new ArrayList(report.getConfigurationReport("default").getModuleRevisionIds());
         assertTrue("number of revisions is not correct", revisions.size() >= 3);
 
-        // verify the first 3 modules against the ones in the ivy file
-        Iterator it = revisions.iterator();
-        ModuleRevisionId revId1 = (ModuleRevisionId) it.next();
-        assertEquals("mod1.2", revId1.getName());
-        assertEquals("1.1", revId1.getRevision());
+        int mod12Index = revisions.indexOf(ModuleRevisionId.newInstance("org1", "mod1.2", "1.1"));
+        int mod32Index = revisions.indexOf(ModuleRevisionId.newInstance("org3", "mod3.2", "1.4"));
+        int mod51Index = revisions.indexOf(ModuleRevisionId.newInstance("org5", "mod5.1", "4.2"));
 
-        ModuleRevisionId revId2 = (ModuleRevisionId) it.next();
-        assertEquals("mod3.2", revId2.getName());
-        assertEquals("1.4", revId2.getRevision());
-
-        ModuleRevisionId revId3 = (ModuleRevisionId) it.next();
-        assertEquals("mod5.1", revId3.getName());
-        assertEquals("4.2", revId3.getRevision());
+        // verify the order of the modules in the ivy file
+        assertTrue("[ org1 | mod1.2 | 1.1 ] was not found", mod12Index > -1);
+        assertTrue("[ org1 | mod1.2 | 1.1 ] must come before [ org3 | mod3.2 | 1.4 ]", mod12Index < mod32Index);
+        assertTrue("[ org3 | mod3.2 | 1.4 ] must come before [ org5 | mod5.1 | 4.2 ]", mod32Index < mod51Index);
     }
 
     public void testDisableTransitivityPerConfiguration() throws Exception {

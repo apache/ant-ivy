@@ -181,6 +181,10 @@ public class IvyNode implements Comparable {
      */
     public boolean loadData(String rootModuleConf, IvyNode parent, String parentConf, String conf,
             boolean shouldBePublic) {
+        if (!isRoot() && (data.getReport() != null)) {
+            data.getReport().addDependency(this);
+        }
+
         boolean loaded = false;
         if (!isEvicted(rootModuleConf)
                 && (hasConfigurationsToLoad() || !isRootModuleConfLoaded(rootModuleConf))
@@ -193,7 +197,6 @@ public class IvyNode implements Comparable {
                             + ": check your configuration");
                     problem = new RuntimeException("no resolver found for " + getModuleId()
                             + ": check your configuration");
-                    data.getReport().addDependency(this);
                     return false;
                 }
                 try {
@@ -226,7 +229,6 @@ public class IvyNode implements Comparable {
                                                 + ": check your configuration and make sure revision is part of your pattern");
                                 problem = new RuntimeException(
                                         "impossible to resolve dynamic revision");
-                                data.getReport().addDependency(this);
                                 return false;
                             }
                             IvyNode resolved = data.getNode(module.getId());
@@ -287,7 +289,6 @@ public class IvyNode implements Comparable {
 
                 // still not resolved, report error
                 if (module == null) {
-                    data.getReport().addDependency(this);
                     return false;
                 } else {
                     loaded = true;
@@ -308,7 +309,6 @@ public class IvyNode implements Comparable {
             }
         }
         if (hasProblem()) {
-            data.getReport().addDependency(this);
             return handleConfiguration(loaded, rootModuleConf, parent, parentConf, conf,
                 shouldBePublic)
                     && loaded;
@@ -427,14 +427,12 @@ public class IvyNode implements Comparable {
                                 + ": " + confs[i] + ". It was required from " + parent + " "
                                 + parentConf);
                     }
-                    data.getReport().addDependency(this);
                     return false;
                 } else if (shouldBePublic && !isRoot()
                         && c.getVisibility() != Configuration.Visibility.PUBLIC) {
                     confsToFetch.remove(conf);
                     problem = new RuntimeException("configuration not public in " + this + ": " + c
                             + ". It was required from " + parent + " " + parentConf);
-                    data.getReport().addDependency(this);
                     return false;
                 }
                 if (loaded) {
