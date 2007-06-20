@@ -79,7 +79,7 @@ import org.apache.ivy.plugins.version.VersionRangeMatcher;
 import org.apache.ivy.util.Message;
 import org.apache.ivy.util.url.URLHandlerRegistry;
 
-public class IvySettings {
+public class IvySettings implements SortEngineSettings {
     private static final String DEFAULT_CACHE_ARTIFACT_PATTERN =
         "[organisation]/[module]/[type]s/[artifact]-[revision](.[ext])";
 
