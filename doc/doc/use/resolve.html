@@ -42,6 +42,16 @@ set to the comma separated list of configurations resolved
 <b>Since 1.2:</b>
 An additional property is set to true if the resolved dependencies are changes since the last resolve, and to false otherwise: <code>ivy.deps.changed</code>
 
+<b>Since 2.0:</b>
+In addition, if the <i>resolveId</i> attribute has been set, the following properties are set as well:
+<ul>
+<li>ivy.organisation.${resolveId}</li>
+<li>ivy.module.${resolveId}</li>
+<li>ivy.revision.${resolveId}</li>
+<li>ivy.resolved.configurations.${resolveId}</li>
+<li>ivy.deps.changed.${resolveId}</li>
+</ul>
+
 When ivy has finished the resolve task, it outputs a summary of what has been resolved. This summary looks like this:
 <pre>
 ---------------------------------------------------------------------
@@ -59,7 +69,7 @@ This table gives some statistics about the dependency resolution. Each line corr
 This is the total number of dependency modules resolved in this configuration, including transitive ones
 <li>search</li>
 This is the number of dependency modules that required a repository access. The repository access is needed if the module is not yet in cache, or if a latest version is required, or in some other cases (depending on checkModified, for instance)
-<li>downlded</li>
+<li>dwnlded</li>
 This is the number of dependency ivy files downloaded from the repository. This number can be less than the total number of modules even with a clean cache, if no ivy file is provided for some dependencies.
 <li>evicted</li>
 This is the number of dependency module evicted by conflict managers.
@@ -98,7 +108,9 @@ To know if an artifact is local ivy asks to the resolver. Only filesystem resolv
     <tr><td>transitive</td><td>true to resolve dependencies transitively, false otherwise <span class="since">since 1.4</span></td><td>No. Defaults to true</td></tr>
     <tr><td>showprogress</td><td>true to show dots while downloading, false otherwise</td><td>No. Defaults to true</td></tr>
     <tr><td>validate</td><td>true to force ivy files validation against ivy.xsd, false to force no validation</td><td>No. Defaults to default ivy value (as configured in configuration file)</td></tr>
-    <tr><td>settingsRef</td><td>A reference to the ivy settings that must be used by this task <span class="since">(since 2.0)</span></td><td>No, 'ivy.instance' is taken by default.</td></tr></tbody>
+    <tr><td>settingsRef</td><td>A reference to the ivy settings that must be used by this task <span class="since">(since 2.0)</span></td><td>No, 'ivy.instance' is taken by default.</td></tr>
+    <tr><td>resolveId</td><td>An id which can be used later to refer to the results of this resolve <span class="since">(since 2.0)</span></td><td>No, defaults to '[org]-[module]'.</td></tr>
+</tbody>
 </table>
 <h1>Examples</h1>
 <code type="xml">
