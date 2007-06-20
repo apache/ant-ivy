@@ -40,6 +40,7 @@ import org.apache.ivy.Ivy;
 import org.apache.ivy.core.IvyPatternHelper;
 import org.apache.ivy.core.module.id.ModuleId;
 import org.apache.ivy.core.module.status.StatusManager;
+import org.apache.ivy.core.sort.SortEngineSettings;
 import org.apache.ivy.plugins.IvyAware;
 import org.apache.ivy.plugins.IvySettingsAware;
 import org.apache.ivy.plugins.circular.CircularDependencyStrategy;
@@ -79,15 +80,22 @@ import org.apache.ivy.util.Message;
 import org.apache.ivy.util.url.URLHandlerRegistry;
 
 public class IvySettings {
-    private static final String DEFAULT_CACHE_ARTIFACT_PATTERN = "[organisation]/[module]/[type]s/[artifact]-[revision](.[ext])";
+    private static final String DEFAULT_CACHE_ARTIFACT_PATTERN =
+        "[organisation]/[module]/[type]s/[artifact]-[revision](.[ext])";
 
-    private static final String DEFAULT_CACHE_DATA_FILE_PATTERN = "[organisation]/[module]/ivydata-[revision].properties";
+    private static final String DEFAULT_CACHE_DATA_FILE_PATTERN = 
+        "[organisation]/[module]/ivydata-[revision].properties";
 
-    private static final String DEFAULT_CACHE_IVY_PATTERN = "[organisation]/[module]/ivy-[revision].xml";
+    private static final String DEFAULT_CACHE_IVY_PATTERN = 
+        "[organisation]/[module]/ivy-[revision].xml";
 
-    private static final String DEFAULT_CACHE_RESOLVED_IVY_PATTERN = "resolved-[organisation]-[module]-[revision].xml";
+    private static final String DEFAULT_CACHE_RESOLVED_IVY_PATTERN = 
+        "resolved-[organisation]-[module]-[revision].xml";
 
-    private static final String DEFAULT_CACHE_RESOLVED_IVY_PROPERTIES_PATTERN = "resolved-[organisation]-[module]-[revision].properties";
+    private static final String DEFAULT_CACHE_RESOLVED_IVY_PROPERTIES_PATTERN = 
+        "resolved-[organisation]-[module]-[revision].properties";
+
+    private static final long INTERUPT_TIMEOUT = 2000;
 
     private Map typeDefs = new HashMap();
 
@@ -135,7 +143,8 @@ public class IvySettings {
 
     private String cacheResolvedIvyPattern = DEFAULT_CACHE_RESOLVED_IVY_PATTERN;
 
-    private String cacheResolvedIvyPropertiesPattern = DEFAULT_CACHE_RESOLVED_IVY_PROPERTIES_PATTERN;
+    private String cacheResolvedIvyPropertiesPattern = 
+        DEFAULT_CACHE_RESOLVED_IVY_PROPERTIES_PATTERN;
 
     private String cacheArtifactPattern = DEFAULT_CACHE_ARTIFACT_PATTERN;
 
@@ -160,8 +169,6 @@ public class IvySettings {
     private List classpathURLs = new ArrayList();
 
     private ClassLoader classloader;
-
-    private long interruptTimeout = 2000;
 
     private Boolean debugConflictResolution;
 
@@ -227,8 +234,8 @@ public class IvySettings {
             addMatcher((PatternMatcher) instanceField.get(null));
         } catch (Exception e) {
             // ignore: the matcher isn't on the classpath
-            Message
-                    .info("impossible to define glob matcher: org.apache.ivy.plugins.matcher.GlobPatternMatcher was not found on the classpath");
+            Message.info("impossible to define glob matcher: " 
+                + "org.apache.ivy.plugins.matcher.GlobPatternMatcher was not found.");
         }
 
         addReportOutputter(new XmlReportOutputter());
@@ -279,8 +286,8 @@ public class IvySettings {
                         try {
                             repositoryPropsStream.close();
                         } catch (Exception ex) {
+                            //nothing to do
                         }
-                        ;
                     }
                 }
             }
@@ -428,8 +435,8 @@ public class IvySettings {
             setVariable("ivy.settings.dir", settingsURLStr.substring(0, slashIndex));
             setDeprecatedVariable("ivy.conf.dir", "ivy.settings.dir");
         } else {
-            Message
-                    .warn("settings url does not contain any slash (/): ivy.settings.dir variable not set");
+            Message.warn("settings url does not contain any slash (/): " 
+                + "ivy.settings.dir variable not set");
         }
     }
 
@@ -491,6 +498,7 @@ public class IvySettings {
                 try {
                     stream.close();
                 } catch (IOException e) {
+                    //nothing
                 }
             }
         }
@@ -657,8 +665,7 @@ public class IvySettings {
         if (defaultUserDir == null) {
             if (getVariable("ivy.home") != null) {
                 setDefaultIvyUserDir(new File(getVariable("ivy.home")));
-                Message
-                        .verbose("using ivy.default.ivy.user.dir variable for default ivy user dir: "
+                Message.verbose("using ivy.default.ivy.user.dir variable for default ivy user dir: "
                                 + defaultUserDir);
             } else {
                 setDefaultIvyUserDir(new File(System.getProperty("user.home"), ".ivy"));
@@ -1080,33 +1087,33 @@ public class IvySettings {
     }
 
     private static class ModuleSettings {
-        private String _resolverName;
+        private String resolverName;
 
-        private String _branch;
+        private String branch;
 
-        private String _conflictManager;
+        private String conflictManager;
 
-        public ModuleSettings(String resolverName, String branch, String conflictManager) {
-            _resolverName = resolverName;
-            _branch = branch;
-            _conflictManager = conflictManager;
+        public ModuleSettings(String resolver, String branchName, String conflictMgr) {
+            resolverName = resolver;
+            branch = branchName;
+            conflictManager = conflictMgr;
         }
 
         public String toString() {
-            return _resolverName != null ? "resolver: " + _resolverName
-                    : "" + _branch != null ? "branch: " + _branch : "";
+            return resolverName != null ? "resolver: " + resolverName
+                    : "" + branch != null ? "branch: " + branch : "";
         }
 
         public String getBranch() {
-            return _branch;
+            return branch;
         }
 
         public String getResolverName() {
-            return _resolverName;
+            return resolverName;
         }
 
         protected String getConflictManager() {
-            return _conflictManager;
+            return conflictManager;
         }
     }
 
@@ -1119,7 +1126,7 @@ public class IvySettings {
     }
 
     public long getInterruptTimeout() {
-        return interruptTimeout;
+        return INTERUPT_TIMEOUT;
     }
 
     public Collection getResolvers() {
