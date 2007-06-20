@@ -51,7 +51,6 @@ import org.apache.ivy.core.search.RevisionEntry;
 import org.apache.ivy.core.search.SearchEngine;
 import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.core.sort.NonMatchingVersionReporter;
-import org.apache.ivy.core.sort.SilentNonMatchingVersionReporter;
 import org.apache.ivy.core.sort.SortEngine;
 import org.apache.ivy.plugins.matcher.PatternMatcher;
 import org.apache.ivy.plugins.repository.TransferEvent;
@@ -159,8 +158,7 @@ public class Ivy {
             eventManager = new EventManager();
         }
         if (sortEngine == null) {
-            sortEngine = new SortEngine();
-            //Settings element are injected in the getSortEngine method. 
+            sortEngine = new SortEngine(settings);
         }
         if (searchEngine == null) {
             searchEngine = new SearchEngine(settings);
@@ -565,8 +563,6 @@ public class Ivy {
     }
 
     public SortEngine getSortEngine() {
-        sortEngine.setCircularDependencyStrategy(settings.getCircularDependencyStrategy());
-        sortEngine.setVersionMatcher(settings.getVersionMatcher());
         return sortEngine;
     }
 

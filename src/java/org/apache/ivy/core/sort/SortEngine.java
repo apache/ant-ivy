@@ -32,22 +32,16 @@ import org.apache.ivy.plugins.version.VersionMatcher;
 
 public class SortEngine {
 
-    private CircularDependencyStrategy circularStrategy;
+    private SortEngineSettings settings;
 
-    private VersionMatcher versionMatcher;
-
-    public SortEngine() {
+    public SortEngine(SortEngineSettings settings) {
+        if (settings == null) {
+            throw new NullPointerException("SortEngine.settings can not be null");
+        }
+        this.settings = settings;
     }
 
     
-    public void setCircularDependencyStrategy(CircularDependencyStrategy circularStrategy) {
-        this.circularStrategy = circularStrategy;
-    }
-
-    public void setVersionMatcher(VersionMatcher versionMatcher) {
-        this.versionMatcher = versionMatcher;
-    }
-
 
     public List sortNodes(Collection nodes) throws CircularDependencyException {
         /*
@@ -74,8 +68,9 @@ public class SortEngine {
         }
         List list = sortModuleDescriptors(dependenciesMap.keySet(),
             new SilentNonMatchingVersionReporter());
-        List ret = new ArrayList((int) (list.size() * 1.3 + nulls.size())); // attempt to adjust the
-        // size to avoid too much list resizing
+        final double adjustFactor = 1.3;
+        List ret = new ArrayList((int) (list.size() * adjustFactor + nulls.size()));
+        // attempt to adjust the size to avoid too much list resizing
         for (int i = 0; i < list.size(); i++) {
             ModuleDescriptor md = (ModuleDescriptor) list.get(i);
             List n = (List) dependenciesMap.get(md);
@@ -103,9 +98,22 @@ public class SortEngine {
     public List sortModuleDescriptors(Collection moduleDescriptors,
             NonMatchingVersionReporter nonMatchingVersionReporter)
             throws CircularDependencyException {
+        if (nonMatchingVersionReporter == null) {
+            throw new NullPointerException("nonMatchingVersionReporter can not be null");
+        }
         ModuleDescriptorSorter sorter = new ModuleDescriptorSorter(moduleDescriptors,
-                versionMatcher, nonMatchingVersionReporter, circularStrategy);
+                getVersionMatcher(), nonMatchingVersionReporter, getCircularStrategy());
         return sorter.sortModuleDescriptors();
+    }
+
+
+
+    protected CircularDependencyStrategy getCircularStrategy() {
+        return settings.getCircularDependencyStrategy();
+    }
+
+    protected VersionMatcher getVersionMatcher() {
+        return settings.getVersionMatcher();
     }
 
 }

@@ -49,6 +49,8 @@ public class SortTest extends TestCase {
     private DefaultModuleDescriptor md4;
 
     private SortEngine sortEngine;
+    
+    private SimpleSortEngineSettings settings; 
 
     private SilentNonMatchingVersionReporter nonMatchReporter;
 
@@ -65,9 +67,11 @@ public class SortTest extends TestCase {
         md3 = createModuleDescriptorToSort("md3", "rev3");
         md4 = createModuleDescriptorToSort("md4", "rev4");
 
-        sortEngine = new SortEngine();
-        sortEngine.setCircularDependencyStrategy(WarnCircularDependencyStrategy.getInstance());
-        sortEngine.setVersionMatcher(new ExactVersionMatcher());
+        settings = new SimpleSortEngineSettings();
+        settings.setCircularDependencyStrategy(WarnCircularDependencyStrategy.getInstance());
+        settings.setVersionMatcher(new ExactVersionMatcher());
+        
+        sortEngine = new SortEngine(settings);
         
         nonMatchReporter = new SilentNonMatchingVersionReporter();
     }
@@ -148,7 +152,8 @@ public class SortTest extends TestCase {
                     nbOfCall);
                 String assertMsg = "incorrect cicular dependency invocation" 
                         + CircularDependencyHelper.formatMessage(mrids);
-                assertEquals(assertMsg, 3 , mrids.length);
+                final int expectedLength = 3;
+                assertEquals(assertMsg, expectedLength , mrids.length);
                 if (mrids[0].equals(md2.getModuleRevisionId())) {
                     assertEquals(assertMsg , md3.getModuleRevisionId() , mrids[1]);
                     assertEquals(assertMsg , md2.getModuleRevisionId() , mrids[2]);
@@ -165,7 +170,7 @@ public class SortTest extends TestCase {
             }
         }
         CircularDependencyReporterMock circularDepReportMock = new CircularDependencyReporterMock();
-        sortEngine.setCircularDependencyStrategy(circularDepReportMock);
+        settings.setCircularDependencyStrategy(circularDepReportMock);
 
         List toSort = Arrays.asList(new ModuleDescriptor[] {md4, md3, md2, md1});
         sortEngine.sortModuleDescriptors(toSort, nonMatchReporter);
@@ -183,7 +188,7 @@ public class SortTest extends TestCase {
         addDependency(md3, "md2", "latest.integration");
         addDependency(md4, "md3", "latest.integration");
 
-        sortEngine.setVersionMatcher(new LatestVersionMatcher());
+        settings.setVersionMatcher(new LatestVersionMatcher());
         
         DefaultModuleDescriptor[][] expectedOrder = new DefaultModuleDescriptor[][] {{md1, md2,
                 md3, md4}};
