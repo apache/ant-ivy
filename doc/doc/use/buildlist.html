@@ -43,6 +43,8 @@ When the ivy.xml of the modules that you want to order contains a <a href="../iv
 <span class="since">since 2.0</span> By default, all the modules included in a circular dependency are grouped together so that any dependency of any module in the loop will apear before the modules in the loop.  This garantee that if there is a depedendency path between a module A and a module B (but no dependency path from B to A), B will alway apear before A even if A is included in a loop in the provided set of modules to sort.
 Note that circular dependency can also trigger a failure depending on the value configured in the circularDependencyStrategy of your <a href="../configuration/conf.html#circularDependencyStrategy">settings</a>
 
+<span class="since">since 2.0</span> When you are specifying root or leaf modules you can limit the resulting list to only direct dependencies of the roots modules or to modules that directly depends on your leaf modules.
+
 
 <table class="ant">
 <thead>
@@ -55,6 +57,10 @@ Note that circular dependency can also trigger a failure depending on the value 
     <tr><td>root</td><td><span class="since">since 2.0</span> the names of the modules which should be considered as the root of the buildlist. <br/><span class="since">since 1.3</span> Was limited to only one module name before 2.0.</td><td>No. Defaults to no root (all modules are used in the build list)</td></tr>
     <tr><td>excluderoot</td><td><span class="since">since 1.3</span> true if the root defined should be excluded from the list</td><td>No. Defaults to false</td></tr>
     <tr><td>leaf</td><td><span class="since">since 2.0</span> the names of the modules which should be considered as the leaf of the buildlist. <br/><span class="since">since 1.4.1</span> Was limited to only one module name before 2.0.</td><td>No. Defaults to no leaf (all modules are used in the build list)</td></tr>
+  <tr><td>onlydirectdep</td><td><span class="since">since 2.0</span> true if the
+resulting list should be restricted to direct dependencies of root modules or modules that directly depends on the leaf modules.<br/>
+This field is ignored when neither root neither leaf is filled.
+     </td><td>No. Defaults to no false</td></tr>
     <tr><td>delimiter</td><td><span class="since">since 2.0</span> delimiter to use when specifying multiple module names in the root and leaf properties.</td><td>No. Defaults to the comma (,) character.</td></tr>
     <tr><td>excludeleaf</td><td><span class="since">since 1.4.1</span> true if the leaf defined should be excluded from the list</td><td>No. Defaults to false</td></tr>
     <tr><td>haltonerror</td><td>true to halt the build when an invalid ivy file is encountered, false to continue</td><td>No. Defaults to true</td></tr>

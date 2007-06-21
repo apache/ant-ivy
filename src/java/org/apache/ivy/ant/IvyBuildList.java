@@ -72,6 +72,8 @@ public class IvyBuildList extends IvyTask {
 
     private boolean excludeLeaf = false;
 
+    private boolean onlydirectdep = false;
+    
     public void addFileset(FileSet buildFiles) {
         buildFileSets.add(buildFiles);
     }
@@ -124,6 +126,15 @@ public class IvyBuildList extends IvyTask {
         this.delimiter = delimiter;
     }
 
+    public boolean getOnlydirectdep() {
+        return onlydirectdep;
+    }
+
+    public void setOnlydirectdep(boolean onlydirectdep) {
+        this.onlydirectdep = onlydirectdep;
+    }
+
+    
     public void doExecute() throws BuildException {
         if (reference == null) {
             throw new BuildException("reference should be provided in ivy build list");
@@ -282,9 +293,11 @@ public class IvyBuildList extends IvyTask {
             processFilterNodeFromRoot(rootmd, toKeep, moduleIdMap);
             // With the excluderoot attribute set to true, take the rootmd out of the toKeep set.
             if (excludeRoot) {
+                // Only for logging purposes
                 Message.verbose("Excluded module "
                         + rootmd.getModuleRevisionId().getModuleId().getName());
-                toKeep.remove(rootmd);
+            } else {
+                toKeep.add(rootmd);
             }
         }
 
@@ -310,14 +323,17 @@ public class IvyBuildList extends IvyTask {
      *            reference mapping of moduleId to ModuleDescriptor that are part of the BuildList
      */
     private void processFilterNodeFromRoot(ModuleDescriptor node, Set toKeep, Map moduleIdMap) {
-        toKeep.add(node);
+        //toKeep.add(node);
 
         DependencyDescriptor[] deps = node.getDependencies();
         for (int i = 0; i < deps.length; i++) {
             ModuleId id = deps[i].getDependencyId();
             if (moduleIdMap.get(id) != null) {
-                processFilterNodeFromRoot((ModuleDescriptor) moduleIdMap.get(id), toKeep,
-                    moduleIdMap);
+                toKeep.add(moduleIdMap.get(id));
+                if (!getOnlydirectdep()) {
+                    processFilterNodeFromRoot((ModuleDescriptor) moduleIdMap.get(id), toKeep,
+                        moduleIdMap);
+                }
             }
         }
     }
@@ -383,7 +399,9 @@ public class IvyBuildList extends IvyTask {
                 ModuleId id = deps[i].getDependencyId();
                 if (node.getModuleRevisionId().getModuleId().equals(id) && !toKeep.contains(md)) {
                     toKeep.add(md);
-                    processFilterNodeFromLeaf(md, toKeep, moduleIdMap);
+                    if (!getOnlydirectdep()) {
+                        processFilterNodeFromLeaf(md, toKeep, moduleIdMap);
+                    }
                 }
             }
         }
