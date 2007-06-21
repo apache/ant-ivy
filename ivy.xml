@@ -26,7 +26,6 @@
 		<conf name="httpclient" extends="core" description="core + optional httpclient for better http handling"/>
 		<conf name="oro" extends="core" description="to use optional glob matcher"/>
 		<conf name="vfs" extends="core" description="core + optional VirtualFileSystem(VFS) support" />
-		<conf name="webdav" extends="core" description="core + optional VirtualFileSystem(VFS) with webdav support" />
 		<conf name="sftp" extends="core" description="core + optional SFTP support" />
 		<conf name="standalone" extends="core" description="to launch in standalone mode (from command line)"/>
 		<conf name="default" description="full ivy with all dependencies"/>
@@ -45,7 +44,7 @@
 			<exclude org="junit" name="junit"/>
 		</dependency>
 		<dependency org="oro" name="oro" rev="2.0.8" conf="default,oro->default"/>
-		<dependency org="commons-vfs" name="commons-vfs" rev="20060920" conf="vfs->default;default,webdav->webdav" />
+		<dependency org="commons-vfs" name="commons-vfs" rev="1.0" conf="default,vfs->default" />
 		<dependency org="jsch" name="jsch" rev="0.1.25" conf="default,sftp->default" />
 		<!-- Test depdendencies -->
 	    <dependency org="ant" name="ant-launcher" rev="1.6.5" conf="test->default"/>

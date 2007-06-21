@@ -53,6 +53,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - NEW: A checkstyle report is generated (IVY-483) (thanks to Jan Materne)
 - NEW: Hide private or specific conf when publishing (IVY-77)
 
+- IMPROVEMENT: Upgraded VFS dependency to 1.0 and removed dependency on VFS-sandbox (IVY-498)
 - IMPROVEMENT: Use maven2 repository to download dependencies
 - IMPROVEMENT: Allow "main" parameters to be passed directly (instead of using -args flag) (IVY-480) (thanks to Archie Cobbs)
 - IMPROVEMENT: Remove @author tags (thanks to Stephane Bailliez)
