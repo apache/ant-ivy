@@ -70,10 +70,10 @@ public class AntCallTriggerTest extends TestCase {
         // Project project = new Project();
         // project.setBaseDir(buildFile.getParentFile());
         // project.init();
-        //		
+        //
         // ant.setProject(project);
         // ant.setTaskName("ant");
-        //		
+        //
         // ant.setAntfile(buildFile.getAbsolutePath());
         // ant.setInheritAll(false);
         // if (target != null) {

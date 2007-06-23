@@ -35,7 +35,12 @@ import org.apache.ivy.util.Message;
 
 /**
  */
-public class IvyPatternHelper {
+public final class IvyPatternHelper {
+    
+    private IvyPatternHelper() {
+        //Helper class
+    }
+    
     public static final String CONF_KEY = "conf";
 
     public static final String TYPE_KEY = "type";
@@ -62,7 +67,8 @@ public class IvyPatternHelper {
 
     public static String substitute(String pattern, ModuleRevisionId moduleRevision) {
         return substitute(pattern, moduleRevision.getOrganisation(), moduleRevision.getName(),
-            moduleRevision.getRevision(), "ivy", "ivy", "xml", null, moduleRevision.getAttributes());
+            moduleRevision.getRevision(), "ivy", "ivy", "xml", null,
+            moduleRevision.getAttributes());
     }
 
     public static String substitute(String pattern, ModuleRevisionId moduleRevision,
@@ -165,8 +171,8 @@ public class IvyPatternHelper {
             String var = m.group(1);
             String val = (String) variables.get(var);
             if (val != null) {
-                int index;
-                if ((index = substituting.indexOf(var)) != -1) {
+                int index = substituting.indexOf(var);
+                if (index != -1) {
                     List cycle = new ArrayList(substituting.subList(index, substituting.size()));
                     cycle.add(var);
                     throw new IllegalArgumentException("cyclic variable definition: cycle = "
@@ -335,8 +341,8 @@ public class IvyPatternHelper {
             String var = m.group(1);
             String val = (String) params.get(var);
             if (val != null) {
-                int index;
-                if ((index = substituting.indexOf(var)) != -1) {
+                int index = substituting.indexOf(var);
+                if (index != -1) {
                     List cycle = new ArrayList(substituting.subList(index, substituting.size()));
                     cycle.add(var);
                     throw new IllegalArgumentException("cyclic param definition: cycle = " + cycle);
@@ -357,7 +363,8 @@ public class IvyPatternHelper {
     }
 
     public static void main(String[] args) {
-        String pattern = "[organisation]/[module]/build/archives/[type]s/[artifact]-[revision].[ext]";
+        String pattern = "[organisation]/[module]/build/archives/[type]s/" 
+                + "[artifact]-[revision].[ext]";
         System.out.println("pattern= " + pattern);
         System.out.println("resolved= "
                 + substitute(pattern, "apache", "Test", "1.0", "test", "jar", "jar"));

@@ -25,25 +25,25 @@ import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.Delete;
 
 public class IvyArtifactReportTest extends TestCase {
-    private File _cache;
+    private File cache;
 
-    private IvyArtifactReport _prop;
+    private IvyArtifactReport prop;
 
-    private Project _project;
+    private Project project;
 
     protected void setUp() throws Exception {
         createCache();
-        _project = new Project();
-        _project.setProperty("ivy.settings.file", "test/repositories/ivysettings.xml");
+        project = new Project();
+        project.setProperty("ivy.settings.file", "test/repositories/ivysettings.xml");
 
-        _prop = new IvyArtifactReport();
-        _prop.setProject(_project);
-        _prop.setCache(_cache);
+        prop = new IvyArtifactReport();
+        prop.setProject(project);
+        prop.setCache(cache);
     }
 
     private void createCache() {
-        _cache = new File("build/cache");
-        _cache.mkdirs();
+        cache = new File("build/cache");
+        cache.mkdirs();
     }
 
     protected void tearDown() throws Exception {
@@ -53,14 +53,14 @@ public class IvyArtifactReportTest extends TestCase {
     private void cleanCache() {
         Delete del = new Delete();
         del.setProject(new Project());
-        del.setDir(_cache);
+        del.setDir(cache);
         del.execute();
     }
 
     public void testSimple() throws Exception {
-        _prop.setTofile(new File("build/test-artifact-report.xml"));
-        _prop.setFile(new File("test/java/org/apache/ivy/ant/ivy-simple.xml"));
-        _prop.execute();
+        prop.setTofile(new File("build/test-artifact-report.xml"));
+        prop.setFile(new File("test/java/org/apache/ivy/ant/ivy-simple.xml"));
+        prop.execute();
 
         assertTrue(new File("build/test-artifact-report.xml").exists());
     }

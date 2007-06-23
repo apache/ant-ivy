@@ -26,25 +26,25 @@ import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.Delete;
 
 public class IvyArtifactPropertyTest extends TestCase {
-    private File _cache;
+    private File cache;
 
-    private IvyArtifactProperty _prop;
+    private IvyArtifactProperty prop;
 
-    private Project _project;
+    private Project project;
 
     protected void setUp() throws Exception {
         createCache();
-        _project = new Project();
-        _project.setProperty("ivy.settings.file", "test/repositories/ivysettings.xml");
+        project = new Project();
+        project.setProperty("ivy.settings.file", "test/repositories/ivysettings.xml");
 
-        _prop = new IvyArtifactProperty();
-        _prop.setProject(_project);
-        _prop.setCache(_cache);
+        prop = new IvyArtifactProperty();
+        prop.setProject(project);
+        prop.setCache(cache);
     }
 
     private void createCache() {
-        _cache = new File("build/cache");
-        _cache.mkdirs();
+        cache = new File("build/cache");
+        cache.mkdirs();
     }
 
     protected void tearDown() throws Exception {
@@ -54,51 +54,51 @@ public class IvyArtifactPropertyTest extends TestCase {
     private void cleanCache() {
         Delete del = new Delete();
         del.setProject(new Project());
-        del.setDir(_cache);
+        del.setDir(cache);
         del.execute();
     }
 
     public void testSimple() throws Exception {
-        _project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-simple.xml");
-        _prop.setName("[module].[artifact]-[revision]");
-        _prop.setValue("${cache.dir}/[module]/[artifact]-[revision].[type]");
-        _prop.execute();
-        String val = _project.getProperty("mod1.2.mod1.2-2.0");
+        project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-simple.xml");
+        prop.setName("[module].[artifact]-[revision]");
+        prop.setValue("${cache.dir}/[module]/[artifact]-[revision].[type]");
+        prop.execute();
+        String val = project.getProperty("mod1.2.mod1.2-2.0");
         assertNotNull(val);
         assertEquals("build/cache/mod1.2/mod1.2-2.0.jar", val);
     }
 
     public void testWithResolveId() throws Exception {
         IvyResolve resolve = new IvyResolve();
-        resolve.setProject(_project);
-        resolve.setCache(_cache);
+        resolve.setProject(project);
+        resolve.setCache(cache);
         resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-simple.xml"));
         resolve.setResolveId("abc");
         resolve.execute();
 
         // resolve another ivy file
         resolve = new IvyResolve();
-        resolve.setProject(_project);
-        resolve.setCache(_cache);
+        resolve.setProject(project);
+        resolve.setCache(cache);
         resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-latest.xml"));
         resolve.execute();
 
-        _prop.setName("[module].[artifact]-[revision]");
-        _prop.setValue("${cache.dir}/[module]/[artifact]-[revision].[type]");
-        _prop.setResolveId("abc");
-        _prop.execute();
+        prop.setName("[module].[artifact]-[revision]");
+        prop.setValue("${cache.dir}/[module]/[artifact]-[revision].[type]");
+        prop.setResolveId("abc");
+        prop.execute();
 
-        String val = _project.getProperty("mod1.2.mod1.2-2.0");
+        String val = project.getProperty("mod1.2.mod1.2-2.0");
         assertNotNull(val);
         assertEquals("build/cache/mod1.2/mod1.2-2.0.jar", val);
     }
 
     public void testWithResolveIdWithoutResolve() throws Exception {
         try {
-            _prop.setName("[module].[artifact]-[revision]");
-            _prop.setValue("${cache.dir}/[module]/[artifact]-[revision].[type]");
-            _prop.setResolveId("abc");
-            _prop.execute();
+            prop.setName("[module].[artifact]-[revision]");
+            prop.setValue("${cache.dir}/[module]/[artifact]-[revision].[type]");
+            prop.setResolveId("abc");
+            prop.execute();
             fail("Task should have failed because no resolve was performed!");
         } catch (BuildException e) {
             // this is expected!

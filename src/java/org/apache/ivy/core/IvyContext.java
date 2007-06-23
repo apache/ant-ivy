@@ -97,6 +97,7 @@ public class IvyContext {
             try {
                 defaultIvy.configureDefault();
             } catch (Exception e) {
+                //???
             }
         }
         return defaultIvy;
@@ -143,11 +144,13 @@ public class IvyContext {
     public Object peek(String key) {
         synchronized (contextMap) {
             Object o = contextMap.get(key);
-            if (o == null)
+            if (o == null) {
                 return null;
+            }
             if (o instanceof List) {
-                if (((List) o).size() == 0)
+                if (((List) o).size() == 0) {
                     return null;
+                }
                 Object ret = ((List) o).get(0);
                 return ret;
             } else {
@@ -167,11 +170,13 @@ public class IvyContext {
     public Object pop(String key) {
         synchronized (contextMap) {
             Object o = contextMap.get(key);
-            if (o == null)
+            if (o == null) {
                 return null;
+            }
             if (o instanceof List) {
-                if (((List) o).size() == 0)
+                if (((List) o).size() == 0) {
                     return null;
+                }
                 Object ret = ((List) o).remove(0);
                 return ret;
             } else {
@@ -192,14 +197,17 @@ public class IvyContext {
     public boolean pop(String key, Object expectedValue) {
         synchronized (contextMap) {
             Object o = contextMap.get(key);
-            if (o == null)
+            if (o == null) {
                 return false;
+            }
             if (o instanceof List) {
-                if (((List) o).size() == 0)
+                if (((List) o).size() == 0) {
                     return false;
+                }
                 Object top = ((List) o).get(0);
-                if (!top.equals(expectedValue))
+                if (!top.equals(expectedValue)) {
                     return false;
+                }
                 ((List) o).remove(0);
                 return true;
             } else {
@@ -221,8 +229,9 @@ public class IvyContext {
      */
     public void push(String key, Object value) {
         synchronized (contextMap) {
-            if (!contextMap.containsKey(key))
+            if (!contextMap.containsKey(key)) {
                 contextMap.put(key, new LinkedList());
+            }
             Object o = contextMap.get(key);
             if (o instanceof List) {
                 ((List) o).add(0, value);
@@ -280,7 +289,7 @@ public class IvyContext {
     // public IvyNode getRoot() {
     // return (IvyNode) _root.get();
     // }
-    //	
+    //
     // public void setRoot(IvyNode root) {
     // _root = new WeakReference(root);
     // }
