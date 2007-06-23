@@ -66,8 +66,9 @@ public class SshResource implements Resource {
      * @see org.apache.ivy.repository.Resource#exists()
      */
     public boolean exists() {
-        if (!resolved)
+        if (!resolved) {
             resolve();
+        }
         return bExists;
     }
 
@@ -77,8 +78,9 @@ public class SshResource implements Resource {
      * @see org.apache.ivy.repository.Resource#getContentLength()
      */
     public long getContentLength() {
-        if (!resolved)
+        if (!resolved) {
             resolve();
+        }
         return len;
     }
 
@@ -88,8 +90,9 @@ public class SshResource implements Resource {
      * @see org.apache.ivy.repository.Resource#getLastModified()
      */
     public long getLastModified() {
-        if (!resolved)
+        if (!resolved) {
             resolve();
+        }
         return lastModified;
     }
 

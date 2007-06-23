@@ -40,7 +40,7 @@ import com.jcraft.jsch.Session;
  */
 
 public class Scp {
-    Session session;
+    private Session session;
 
     public class FileInfo {
         private String filename;
@@ -96,25 +96,30 @@ public class Scp {
     }
 
     public Scp(Session session) {
-        if (session == null)
+        if (session == null) {
             throw new IllegalArgumentException("Cannot accept null argument!");
+        }
         this.session = session;
     }
 
     private void readResponse(InputStream is) throws IOException, RemoteScpException {
         int c = is.read();
 
-        if (c == 0)
+        if (c == 0) {
             return;
+        }
 
-        if (c == -1)
+        if (c == -1) {
             throw new RemoteScpException("Remote scp terminated unexpectedly.");
+        }
 
-        if ((c != 1) && (c != 2))
+        if ((c != 1) && (c != 2)) {
             throw new RemoteScpException("Remote scp sent illegal error code.");
+        }
 
-        if (c == 2)
+        if (c == 2) {
             throw new RemoteScpException("Remote scp terminated with error.");
+        }
 
         String err = receiveLine(is);
         throw new RemoteScpException("Remote scp terminated with error (" + err + ").");
@@ -128,16 +133,19 @@ public class Scp {
              * This is a random limit - if your path names are longer, then adjust it
              */
 
-            if (sb.length() > 8192)
+            if (sb.length() > 8192) {
                 throw new RemoteScpException("Remote scp sent a too long line");
+            }
 
             int c = is.read();
 
-            if (c < 0)
+            if (c < 0) {
                 throw new RemoteScpException("Remote scp terminated unexpectedly.");
+            }
 
-            if (c == '\n')
+            if (c == '\n') {
                 break;
+            }
 
             sb.append((char) c);
 
@@ -150,82 +158,93 @@ public class Scp {
 
         long len;
 
-        if (line.length() < 8)
+        if (line.length() < 8) {
             throw new RemoteScpException(
                     "Malformed C line sent by remote SCP binary, line too short.");
+        }
 
-        if ((line.charAt(4) != ' ') || (line.charAt(5) == ' '))
+        if ((line.charAt(4) != ' ') || (line.charAt(5) == ' ')) {
             throw new RemoteScpException("Malformed C line sent by remote SCP binary.");
+        }
 
-        int length_name_sep = line.indexOf(' ', 5);
+        int lengthNameSep = line.indexOf(' ', 5);
 
-        if (length_name_sep == -1)
+        if (lengthNameSep == -1) {
             throw new RemoteScpException("Malformed C line sent by remote SCP binary.");
+        }
 
-        String length_substring = line.substring(5, length_name_sep);
-        String name_substring = line.substring(length_name_sep + 1);
+        String lengthSubstring = line.substring(5, lengthNameSep);
+        String nameSubstring = line.substring(lengthNameSep + 1);
 
-        if ((length_substring.length() <= 0) || (name_substring.length() <= 0))
+        if ((lengthSubstring.length() <= 0) || (nameSubstring.length() <= 0)) {
             throw new RemoteScpException("Malformed C line sent by remote SCP binary.");
+        }
 
-        if ((6 + length_substring.length() + name_substring.length()) != line.length())
+        if ((6 + lengthSubstring.length() + nameSubstring.length()) != line.length()) {
             throw new RemoteScpException("Malformed C line sent by remote SCP binary.");
+        }
 
         try {
-            len = Long.parseLong(length_substring);
+            len = Long.parseLong(lengthSubstring);
         } catch (NumberFormatException e) {
             throw new RemoteScpException(
                     "Malformed C line sent by remote SCP binary, cannot parse file length.");
         }
 
-        if (len < 0)
+        if (len < 0) {
             throw new RemoteScpException(
                     "Malformed C line sent by remote SCP binary, illegal file length.");
+        }
 
         fileInfo.setLength(len);
-        fileInfo.setFilename(name_substring);
+        fileInfo.setFilename(nameSubstring);
     }
 
     private void parseTLine(String line, FileInfo fileInfo) throws RemoteScpException {
         /* Minimum line: "0 0 0 0" ---> 8 chars */
 
         long modtime;
-        long first_msec;
+        long firstMsec;
         long atime;
-        long second_msec;
+        long secondMsec;
 
-        if (line.length() < 8)
+        if (line.length() < 8) {
             throw new RemoteScpException(
                     "Malformed T line sent by remote SCP binary, line too short.");
+        }
 
-        int first_msec_begin = line.indexOf(" ") + 1;
-        if (first_msec_begin == 0 || first_msec_begin >= line.length())
+        int firstMsecBegin = line.indexOf(" ") + 1;
+        if (firstMsecBegin == 0 || firstMsecBegin >= line.length()) {
             throw new RemoteScpException(
                     "Malformed T line sent by remote SCP binary, line not enough data.");
+        }
 
-        int atime_begin = line.indexOf(" ", first_msec_begin + 1) + 1;
-        if (atime_begin == 0 || atime_begin >= line.length())
+        int atimeBegin = line.indexOf(" ", firstMsecBegin + 1) + 1;
+        if (atimeBegin == 0 || atimeBegin >= line.length()) {
             throw new RemoteScpException(
                     "Malformed T line sent by remote SCP binary, line not enough data.");
+        }
 
-        int second_msec_begin = line.indexOf(" ", atime_begin + 1) + 1;
-        if (second_msec_begin == 0 || second_msec_begin >= line.length())
+        int secondMsecBegin = line.indexOf(" ", atimeBegin + 1) + 1;
+        if (secondMsecBegin == 0 || secondMsecBegin >= line.length()) {
             throw new RemoteScpException(
                     "Malformed T line sent by remote SCP binary, line not enough data.");
+        }
 
         try {
-            modtime = Long.parseLong(line.substring(0, first_msec_begin - 1));
-            first_msec = Long.parseLong(line.substring(first_msec_begin, atime_begin - 1));
-            atime = Long.parseLong(line.substring(atime_begin, second_msec_begin - 1));
-            second_msec = Long.parseLong(line.substring(second_msec_begin));
+            modtime = Long.parseLong(line.substring(0, firstMsecBegin - 1));
+            firstMsec = Long.parseLong(line.substring(firstMsecBegin, atimeBegin - 1));
+            atime = Long.parseLong(line.substring(atimeBegin, secondMsecBegin - 1));
+            secondMsec = Long.parseLong(line.substring(secondMsecBegin));
         } catch (NumberFormatException e) {
             throw new RemoteScpException(
                     "Malformed C line sent by remote SCP binary, cannot parse file length.");
         }
 
-        if (modtime < 0 || first_msec < 0 || atime < 0 || second_msec < 0)
+        if (modtime < 0 || firstMsec < 0 || atime < 0 || secondMsec < 0) {
             throw new RemoteScpException(
                     "Malformed C line sent by remote SCP binary, illegal file length.");
+        }
 
         fileInfo.setLastModified(modtime);
     }
@@ -236,10 +255,11 @@ public class Scp {
         InputStream is = new BufferedInputStream(channel.getInputStream(), 512);
 
         try {
-            if (channel.isConnected())
+            if (channel.isConnected()) {
                 channel.start();
-            else
+            } else {
                 channel.connect();
+            }
         } catch (JSchException e1) {
             throw (IOException) new IOException("Channel connection problems").initCause(e1);
         }
@@ -271,10 +291,11 @@ public class Scp {
         InputStream is = new BufferedInputStream(channel.getInputStream(), 512);
 
         try {
-            if (channel.isConnected())
+            if (channel.isConnected()) {
                 channel.start();
-            else
+            } else {
                 channel.connect();
+            }
         } catch (JSchException e1) {
             throw (IOException) new IOException("Channel connection problems").initCause(e1);
         }
@@ -298,13 +319,14 @@ public class Scp {
 
             while (remain > 0) {
                 int trans;
-                if (remain > buffer.length)
+                if (remain > buffer.length) {
                     trans = buffer.length;
-                else
+                } else {
                     trans = (int) remain;
-
-                if (fis.read(buffer, 0, trans) != trans)
+                }
+                if (fis.read(buffer, 0, trans) != trans) {
                     throw new IOException("Cannot read enough from local file " + localFile);
+                }
 
                 os.write(buffer, 0, trans);
 
@@ -350,10 +372,11 @@ public class Scp {
         OutputStream os = channel.getOutputStream();
         InputStream is = channel.getInputStream();
         try {
-            if (channel.isConnected())
+            if (channel.isConnected()) {
                 channel.start();
-            else
+            } else {
                 channel.connect();
+            }
         } catch (JSchException e1) {
             throw (IOException) new IOException("Channel connection problems").initCause(e1);
         }
@@ -364,8 +387,9 @@ public class Scp {
 
         while (true) {
             int c = is.read();
-            if (c < 0)
+            if (c < 0) {
                 throw new RemoteScpException("Remote scp terminated unexpectedly.");
+            }
 
             String line = receiveLine(is);
 
@@ -375,8 +399,9 @@ public class Scp {
                 os.flush();
                 continue;
             }
-            if ((c == 1) || (c == 2))
+            if ((c == 1) || (c == 2)) {
                 throw new RemoteScpException("Remote SCP error: " + line);
+            }
 
             if (c == 'C') {
                 parseCLine(line, fileInfo);
@@ -394,27 +419,28 @@ public class Scp {
 
                 while (remain > 0) {
                     int trans;
-                    if (remain > buffer.length)
+                    if (remain > buffer.length) {
                         trans = buffer.length;
-                    else
+                    } else {
                         trans = (int) remain;
+                    }
 
-                    int this_time_received = is.read(buffer, 0, trans);
+                    int thisTimeReceived = is.read(buffer, 0, trans);
 
-                    if (this_time_received < 0) {
+                    if (thisTimeReceived < 0) {
                         throw new IOException("Remote scp terminated connection unexpectedly");
                     }
 
-                    targetStream.write(buffer, 0, this_time_received);
+                    targetStream.write(buffer, 0, thisTimeReceived);
 
-                    remain -= this_time_received;
+                    remain -= thisTimeReceived;
                 }
 
                 targetStream.close();
             } catch (IOException e) {
-                if (targetStream != null)
+                if (targetStream != null) {
                     targetStream.close();
-
+                }
                 throw (e);
             }
 
@@ -488,15 +514,19 @@ public class Scp {
             throws IOException, RemoteScpException {
         ChannelExec channel = null;
 
-        if ((remoteFileName == null) || (mode == null))
+        if ((remoteFileName == null) || (mode == null)) {
             throw new IllegalArgumentException("Null argument.");
+        }
 
-        if (mode.length() != 4)
+        if (mode.length() != 4) {
             throw new IllegalArgumentException("Invalid mode.");
+        }
 
-        for (int i = 0; i < mode.length(); i++)
-            if (Character.isDigit(mode.charAt(i)) == false)
+        for (int i = 0; i < mode.length(); i++) {
+            if (!Character.isDigit(mode.charAt(i))) {
                 throw new IllegalArgumentException("Invalid mode.");
+            }
+        }
 
         String cmd = "scp -t ";
         if (remoteTargetDirectory != null && remoteTargetDirectory.length() > 0) {
@@ -509,8 +539,9 @@ public class Scp {
             sendBytes(channel, data, remoteFileName, mode);
             // channel.disconnect();
         } catch (JSchException e) {
-            if (channel != null)
+            if (channel != null) {
                 channel.disconnect();
+            }
             throw (IOException) new IOException("Error during SCP transfer." + e.getMessage())
                     .initCause(e);
         }
@@ -547,15 +578,19 @@ public class Scp {
             throws IOException, RemoteScpException {
         ChannelExec channel = null;
 
-        if ((localFile == null) || (remoteTargetName == null) || (mode == null))
+        if ((localFile == null) || (remoteTargetName == null) || (mode == null)) {
             throw new IllegalArgumentException("Null argument.");
+        }
 
-        if (mode.length() != 4)
+        if (mode.length() != 4) {
             throw new IllegalArgumentException("Invalid mode.");
+        }
 
-        for (int i = 0; i < mode.length(); i++)
-            if (Character.isDigit(mode.charAt(i)) == false)
+        for (int i = 0; i < mode.length(); i++) {
+            if (!Character.isDigit(mode.charAt(i))) {
                 throw new IllegalArgumentException("Invalid mode.");
+            }
+        }
 
         String cmd = "scp -t ";
         if (remoteTargetDir != null && remoteTargetDir.length() > 0) {
@@ -568,8 +603,9 @@ public class Scp {
             sendFile(channel, localFile, remoteTargetName, mode);
             channel.disconnect();
         } catch (JSchException e) {
-            if (channel != null)
+            if (channel != null) {
                 channel.disconnect();
+            }
             throw (IOException) new IOException("Error during SCP transfer." + e.getMessage())
                     .initCause(e);
         }
@@ -609,8 +645,9 @@ public class Scp {
             RemoteScpException {
         ChannelExec channel = null;
 
-        if ((remoteFile == null) || (localTarget == null))
+        if ((remoteFile == null) || (localTarget == null)) {
             throw new IllegalArgumentException("Null argument.");
+        }
 
         String cmd = "scp -p -f " + remoteFile;
 
@@ -620,8 +657,9 @@ public class Scp {
             receiveStream(channel, remoteFile, localTarget);
             channel.disconnect();
         } catch (JSchException e) {
-            if (channel != null)
+            if (channel != null) {
                 channel.disconnect();
+            }
             throw (IOException) new IOException("Error during SCP transfer." + e.getMessage())
                     .initCause(e);
         }
@@ -642,8 +680,9 @@ public class Scp {
         ChannelExec channel = null;
         FileInfo fileInfo = null;
 
-        if (remoteFile == null)
+        if (remoteFile == null) {
             throw new IllegalArgumentException("Null argument.");
+        }
 
         String cmd = "scp -p -f \"" + remoteFile + "\"";
 
@@ -656,8 +695,9 @@ public class Scp {
             throw (IOException) new IOException("Error during SCP transfer." + e.getMessage())
                     .initCause(e);
         } finally {
-            if (channel != null)
+            if (channel != null) {
                 channel.disconnect();
+            }
         }
         return fileInfo;
     }

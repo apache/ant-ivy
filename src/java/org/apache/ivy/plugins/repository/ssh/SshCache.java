@@ -42,8 +42,10 @@ import com.jcraft.jsch.UserInfo;
  * connecting user / host / port two maps are used to find cache entries one map is using the above
  * keys, the other uses the session itself
  */
-public class SshCache {
+public final class SshCache {
 
+    private static final int SSH_DEFAULT_PORT = 22;
+    
     private SshCache() {
     };
 
@@ -62,7 +64,7 @@ public class SshCache {
 
         private String user = null;
 
-        private int port = 22;
+        private int port = SSH_DEFAULT_PORT;
 
         /**
          * @return the host
@@ -105,8 +107,9 @@ public class SshCache {
          *            to attach
          */
         public void setChannelSftp(ChannelSftp newChannel) {
-            if (channelSftp != null && newChannel != null)
+            if (channelSftp != null && newChannel != null) {
                 throw new IllegalStateException("Only one sftp channelSftp per session allowed");
+            }
             this.channelSftp = newChannel;
         }
 
@@ -175,9 +178,11 @@ public class SshCache {
      */
     private static String createCacheKey(String user, String host, int port) {
         String portToUse = "22";
-        if (port != -1 && port != 22)
+        if (port != -1 && port != SSH_DEFAULT_PORT) {
             portToUse = Integer.toString(port);
-        return user.toLowerCase(Locale.US).trim() + "@" + host.toLowerCase(Locale.US).trim() + ":" + portToUse;
+        }
+        return user.toLowerCase(Locale.US).trim() + "@" 
+                + host.toLowerCase(Locale.US).trim() + ":" + portToUse;
     }
 
     /**
@@ -201,14 +206,15 @@ public class SshCache {
      *            of the session
      * @param port
      *            of the session
-     * @param session
+     * @param newSession
      *            Session to save
      */
     private void setSession(String user, String host, int port, Session newSession) {
         Entry entry = (Entry) uriCacheMap.get(createCacheKey(user, host, port));
         Session oldSession = null;
-        if (entry != null)
+        if (entry != null) {
             oldSession = entry.getSession();
+        }
         if (oldSession != null && !oldSession.equals(newSession) && oldSession.isConnected()) {
             entry.releaseChannelSftp();
             String oldhost = oldSession.getHost();
@@ -218,8 +224,9 @@ public class SshCache {
         }
         if ((newSession == null) && (entry != null)) {
             uriCacheMap.remove(createCacheKey(user, host, port));
-            if (entry.getSession() != null)
+            if (entry.getSession() != null) {
                 sessionCacheMap.remove(entry.getSession());
+            }
         } else {
             Entry newEntry = new Entry(newSession, user, host, port);
             uriCacheMap.put(createCacheKey(user, host, port), newEntry);
@@ -235,8 +242,9 @@ public class SshCache {
      */
     public void clearSession(Session session) {
         Entry entry = (Entry) sessionCacheMap.get(session);
-        if (entry != null)
+        if (entry != null) {
             setSession(entry.getUser(), entry.getHost(), entry.getPort(), null);
+        }
     }
 
     /**
@@ -269,8 +277,9 @@ public class SshCache {
      */
     public void attachChannelSftp(Session session, ChannelSftp channel) {
         Entry entry = getCacheEntry(session);
-        if (entry == null)
+        if (entry == null) {
             throw new IllegalArgumentException("No entry for " + session + " in the cache");
+        }
         entry.setChannelSftp(channel);
     }
 
@@ -297,20 +306,22 @@ public class SshCache {
             File pemFile, String pemPassword, File passFile) throws IOException {
         Entry entry = getCacheEntry(username, host, port);
         Session session = null;
-        if (entry != null)
+        if (entry != null) {
             session = entry.getSession();
+        }
         if (session == null || !session.isConnected()) {
             Message.verbose(":: SSH :: connecting to " + host + "...");
             try {
                 JSch jsch = new JSch();
-                if (port != -1)
+                if (port != -1) {
                     session = jsch.getSession(username, host, port);
-                else
+                } else {
                     session = jsch.getSession(username, host);
+                }
                 if (pemFile != null) {
                     jsch.addIdentity(pemFile.getAbsolutePath(), pemPassword);
                 }
-                session.setUserInfo(new cfUserInfo(host, username, userPassword, pemFile,
+                session.setUserInfo(new CfUserInfo(host, username, userPassword, pemFile,
                         pemPassword, passFile));
                 session.connect();
                 Message.verbose(":: SSH :: connected to " + host + "!");
@@ -330,7 +341,7 @@ public class SshCache {
     /**
      * feeds in password silently into JSch
      */
-    private static class cfUserInfo implements UserInfo {
+    private static class CfUserInfo implements UserInfo {
 
         private String userPassword;
 
@@ -344,7 +355,7 @@ public class SshCache {
 
         private final File passfile;
 
-        public cfUserInfo(String host, String userName, String userPassword, File pemFile,
+        public CfUserInfo(String host, String userName, String userPassword, File pemFile,
                 String pemPassword, File passfile) {
             this.userPassword = userPassword;
             this.pemPassword = pemPassword;

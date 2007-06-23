@@ -63,8 +63,9 @@ public abstract class AbstractSshBasedRepository extends AbstractRepository {
         String user = getUser();
         String userPassword = getUserPassword();
         if (uri != null && uri.getScheme() != null) {
-            if (uri.getHost() != null)
+            if (uri.getHost() != null) {
                 host = uri.getHost();
+            }
             if (uri.getPort() != -1) {
                 port = uri.getPort();
             }
@@ -92,15 +93,20 @@ public abstract class AbstractSshBasedRepository extends AbstractRepository {
     private URI parseURI(String source) {
         try {
             URI uri = new URI(source);
-            if (uri.getScheme() != null && !uri.getScheme().toLowerCase(Locale.US).equals(getRepositoryScheme().toLowerCase(Locale.US)))
+            if (uri.getScheme() != null && !uri.getScheme().toLowerCase(Locale.US).equals(
+                    getRepositoryScheme().toLowerCase(Locale.US))) {
                 throw new URISyntaxException(source, "Wrong scheme in URI. Expected "
                         + getRepositoryScheme() + " as scheme!");
-            if (uri.getHost() == null && getHost() == null)
+            }
+            if (uri.getHost() == null && getHost() == null) {
                 throw new URISyntaxException(source, "Missing host in URI or in resolver");
-            if (uri.getPath() == null)
+            }
+            if (uri.getPath() == null) {
                 throw new URISyntaxException(source, "Missing path in URI");
-            if (uri.getUserInfo() == null && getUser() == null)
+            }
+            if (uri.getUserInfo() == null && getUser() == null) {
                 throw new URISyntaxException(source, "Missing username in URI or in resolver");
+            }
             return uri;
         } catch (URISyntaxException e) {
             Message.error(e.getMessage());
