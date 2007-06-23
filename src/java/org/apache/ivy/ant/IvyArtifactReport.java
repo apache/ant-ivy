@@ -134,7 +134,8 @@ public class IvyArtifactReport extends IvyPostResolveTask {
 
                 for (int i = 0; i < dependencies.length; i++) {
                     IvyNode dependency = dependencies[i];
-                    if (dependency.getModuleRevision() == null || dependency.isCompletelyEvicted()) {
+                    if (dependency.getModuleRevision() == null 
+                            || dependency.isCompletelyEvicted()) {
                         continue;
                     }
 
@@ -189,7 +190,8 @@ public class IvyArtifactReport extends IvyPostResolveTask {
         return saxHandler;
     }
 
-    private void startModule(TransformerHandler saxHandler, IvyNode dependency) throws SAXException {
+    private void startModule(TransformerHandler saxHandler, IvyNode dependency) 
+            throws SAXException {
         AttributesImpl moduleAttrs = new AttributesImpl();
         moduleAttrs.addAttribute(null, "organisation", "organisation", "CDATA", dependency
                 .getModuleId().getOrganisation());
@@ -241,7 +243,7 @@ public class IvyArtifactReport extends IvyPostResolveTask {
             Artifact artifact) throws SAXException {
         ArtifactOrigin origin = cache.getSavedArtifactOrigin(artifact);
         File archiveInCacheFile = cache.getArchiveFileInCache(artifact, origin, false);
-        StringBuffer archiveInCachePathWithSlashes = new StringBuffer(1000);
+        StringBuffer archiveInCachePathWithSlashes = new StringBuffer();
         replaceFileSeparatorWithSlash(archiveInCacheFile, archiveInCachePathWithSlashes);
 
         saxHandler.startElement(null, "cache-location", "cache-location", new AttributesImpl());
@@ -253,7 +255,7 @@ public class IvyArtifactReport extends IvyPostResolveTask {
     private void writeRetrieveLocation(TransformerHandler saxHandler, String artifactDestPath)
             throws SAXException {
         artifactDestPath = removeLeadingPath(getProject().getBaseDir(), new File(artifactDestPath));
-        StringBuffer artifactDestPathWithSlashes = new StringBuffer(1000);
+        StringBuffer artifactDestPathWithSlashes = new StringBuffer();
         replaceFileSeparatorWithSlash(new File(artifactDestPath), artifactDestPathWithSlashes);
 
         saxHandler.startElement(null, "retrieve-location", "retrieve-location",
