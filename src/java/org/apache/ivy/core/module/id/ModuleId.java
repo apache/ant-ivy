@@ -63,9 +63,11 @@ public class ModuleId implements Comparable {
     }
 
     public int _hashCode() {
+        //CheckStyle:MagicNumber| OFF
         int hash = 31;
         hash = hash * 13 + (organisation == null ? 0 : organisation.hashCode());
         hash = hash * 13 + name.hashCode();
+        //CheckStyle:MagicNumber| ON
         return hash;
     }
 

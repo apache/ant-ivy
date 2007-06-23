@@ -90,8 +90,8 @@ public class IvyEventFilter implements Filter {
                 }
             };
         }
-        attFilter = filterExpression == null || filterExpression.trim().length() == 0 ? NoFilter.INSTANCE
-                : parseExpression(filterExpression);
+        attFilter = filterExpression == null || filterExpression.trim().length() == 0 
+                ? NoFilter.INSTANCE : parseExpression(filterExpression);
     }
 
     private Filter parseExpression(String filterExpression) {
