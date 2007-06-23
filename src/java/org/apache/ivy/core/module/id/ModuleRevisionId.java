@@ -81,13 +81,13 @@ public class ModuleRevisionId extends UnmodifiableExtendableItem {
         this(moduleId, null, revision, extraAttributes);
     }
 
-    public ModuleRevisionId(ModuleId moduleId, String branch, String revision, Map extraAttributes) {
+    public ModuleRevisionId(ModuleId moduleId, String branch, String revision, 
+            Map extraAttributes) {
         super(null, extraAttributes);
         this.moduleId = moduleId;
         this.branch = branch == null ? IvyContext.getContext().getSettings().getDefaultBranch(
             moduleId) : branch;
         this.revision = revision == null ? Ivy.getWorkingRevision() : revision;
-        hash = _hashCode(); // stored for performance reasons, hashCode is very used in many maps
         setStandardAttribute(IvyPatternHelper.ORGANISATION_KEY, this.moduleId.getOrganisation());
         setStandardAttribute(IvyPatternHelper.MODULE_KEY, this.moduleId.getName());
         setStandardAttribute(IvyPatternHelper.BRANCH_KEY, this.branch);
@@ -122,17 +122,18 @@ public class ModuleRevisionId extends UnmodifiableExtendableItem {
     }
 
     public int hashCode() {
+        if (hash == 0) {
+            //CheckStyle:MagicNumber| OFF
+            hash = 31;
+            hash = hash * 13 + (getBranch() == null ? 0 : getBranch().hashCode());
+            hash = hash * 13 + getRevision().hashCode();
+            hash = hash * 13 + getModuleId().hashCode();
+            hash = hash * 13 + getAttributes().hashCode();
+            //CheckStyle:MagicNumber| ON
+        }
         return hash;
     }
 
-    public int _hashCode() {
-        int hash = 31;
-        hash = hash * 13 + (getBranch() == null ? 0 : getBranch().hashCode());
-        hash = hash * 13 + getRevision().hashCode();
-        hash = hash * 13 + getModuleId().hashCode();
-        hash = hash * 13 + getAttributes().hashCode();
-        return hash;
-    }
 
     public String toString() {
         return "[ " + moduleId.getOrganisation() + " | " + moduleId.getName()

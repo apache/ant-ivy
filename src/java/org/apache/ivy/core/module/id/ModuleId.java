@@ -58,7 +58,7 @@ public class ModuleId implements Comparable {
     }
 
     public int hashCode() {
-        if (hash==0) {
+        if (hash == 0) {
             //CheckStyle:MagicNumber| OFF
             hash = 31;
             hash = hash * 13 + (organisation == null ? 0 : organisation.hashCode());
