@@ -68,7 +68,7 @@ public class LatestRevisionStrategyTest extends TestCase {
 
     public void testSpecialMeaningComparator() {
         ArtifactInfo[] revs = toMockAI(new String[] {"0.1", "0.2-pre", "0.2-dev", "0.2-rc1",
-                "0.2-final", "0.2-QA", "1.0-dev1",});
+                "0.2-final", "0.2-QA", "1.0-dev1"});
 
         List shuffled = new ArrayList(Arrays.asList(revs));
         Collections.shuffle(shuffled);

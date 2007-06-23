@@ -43,7 +43,8 @@ import org.xml.sax.helpers.DefaultHandler;
 public abstract class AbstractModuleDescriptorParser implements ModuleDescriptorParser {
     public ModuleDescriptor parseDescriptor(IvySettings ivySettings, URL descriptorURL,
             boolean validate) throws ParseException, IOException {
-        return parseDescriptor(ivySettings, descriptorURL, new URLResource(descriptorURL), validate);
+        return parseDescriptor(ivySettings, descriptorURL, 
+            new URLResource(descriptorURL), validate);
     }
 
     protected abstract static class AbstractParser extends DefaultHandler {
@@ -307,8 +308,9 @@ public abstract class AbstractModuleDescriptorParser implements ModuleDescriptor
             String systemId = ex.getSystemId();
             if (systemId != null) {
                 int index = systemId.lastIndexOf('/');
-                if (index != -1)
+                if (index != -1) {
                     systemId = systemId.substring(index + 1);
+                }
                 str.append(systemId);
             } else if (getResource() != null) {
                 str.append(getResource().toString());
