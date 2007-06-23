@@ -95,8 +95,6 @@ public class IvyAntSettings extends DataType {
 
     private String passwd = null;
 
-    private String id = null;
-
     /**
      * Returns the default ivy settings of this classloader. If it doesn't exist yet, a new one is
      * created using the given project to back the VariableContainer.
@@ -175,13 +173,6 @@ public class IvyAntSettings extends DataType {
         userName = format(aUserName);
     }
 
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
 
     private static String format(String str) {
         return str == null ? str : (str.trim().length() == 0 ? null : str.trim());
