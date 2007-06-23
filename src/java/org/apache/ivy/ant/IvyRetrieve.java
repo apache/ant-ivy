@@ -18,43 +18,46 @@
 package org.apache.ivy.ant;
 
 import org.apache.ivy.core.cache.CacheManager;
+import org.apache.ivy.core.retrieve.RetrieveEngine;
 import org.apache.ivy.core.retrieve.RetrieveOptions;
 import org.apache.ivy.util.filter.Filter;
 import org.apache.tools.ant.BuildException;
 
 /**
  * This task allow to retrieve dependencies from the cache to a local directory like a lib dir.
+ * 
+ * @see RetrieveEngine
  */
 public class IvyRetrieve extends IvyPostResolveTask {
-    private String _pattern;
+    private String pattern;
 
-    private String _ivypattern = null;
+    private String ivypattern = null;
 
-    private boolean _sync = false;
+    private boolean sync = false;
 
-    private boolean _symlink = false;
+    private boolean symlink = false;
 
     public String getPattern() {
-        return _pattern;
+        return pattern;
     }
 
     public void setPattern(String pattern) {
-        _pattern = pattern;
+        this.pattern = pattern;
     }
 
     public void doExecute() throws BuildException {
         prepareAndCheck();
 
-        _pattern = getProperty(_pattern, getSettings(), "ivy.retrieve.pattern");
+        pattern = getProperty(pattern, getSettings(), "ivy.retrieve.pattern");
         try {
             Filter artifactFilter = getArtifactFilter();
             int targetsCopied = getIvyInstance().retrieve(
                 getResolvedMrid(),
-                _pattern,
+                pattern,
                 new RetrieveOptions().setConfs(splitConfs(getConf())).setCache(
                     CacheManager.getInstance(getIvyInstance().getSettings(), getCache()))
-                        .setDestIvyPattern(_ivypattern).setArtifactFilter(artifactFilter).setSync(
-                            _sync).setUseOrigin(isUseOrigin()).setMakeSymlinks(_symlink)
+                        .setDestIvyPattern(ivypattern).setArtifactFilter(artifactFilter).setSync(
+                            sync).setUseOrigin(isUseOrigin()).setMakeSymlinks(symlink)
                         .setResolveId(getResolveId()));
             boolean haveTargetsBeenCopied = targetsCopied > 0;
             getProject().setProperty("ivy.nb.targets.copied", String.valueOf(targetsCopied));
@@ -65,25 +68,25 @@ public class IvyRetrieve extends IvyPostResolveTask {
     }
 
     public String getIvypattern() {
-        return _ivypattern;
+        return ivypattern;
     }
 
     public void setIvypattern(String ivypattern) {
-        _ivypattern = ivypattern;
+        this.ivypattern = ivypattern;
     }
 
     public boolean isSync() {
-        return _sync;
+        return sync;
     }
 
     public void setSync(boolean sync) {
-        _sync = sync;
+        this.sync = sync;
     }
 
     /**
      * Option to create symlinks instead of copying.
      */
     public void setSymlink(boolean symlink) {
-        _symlink = symlink;
+        this.symlink = symlink;
     }
 }
