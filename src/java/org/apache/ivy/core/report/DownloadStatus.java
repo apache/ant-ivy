@@ -20,7 +20,7 @@ package org.apache.ivy.core.report;
 /**
  *
  */
-public class DownloadStatus {
+public final class DownloadStatus {
     private String name;
 
     private DownloadStatus(String name) {

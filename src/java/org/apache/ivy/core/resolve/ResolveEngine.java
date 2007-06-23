@@ -18,7 +18,6 @@
 package org.apache.ivy.core.resolve;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URL;
@@ -200,7 +199,7 @@ public class ResolveEngine {
      * is way too long, we should use a class to store the settings of the resolve.
      */
     public ResolveReport resolve(ModuleDescriptor md, ResolveOptions options)
-            throws ParseException, IOException, FileNotFoundException {
+            throws ParseException, IOException {
         DependencyResolver oldDictator = getDictatorResolver();
         if (options.isUseCacheOnly()) {
             setDictatorResolver(new CacheResolver(settings));
@@ -524,9 +523,9 @@ public class ResolveEngine {
                         node.markEvicted(confs[i], null, null, null);
                     } else {
                         if (settings.debugConflictResolution()) {
-                            Message
-                                    .debug(node.getId()
-                                            + " isn't transitively evicted, at least one caller was not evicted");
+                            Message.debug(node.getId()
+                                  + " isn't transitively evicted, at least one caller was" 
+                                  + " not evicted");
                         }
                     }
                 }
@@ -741,9 +740,8 @@ public class ResolveEngine {
             if (settings.debugConflictResolution()) {
                 Message.debug("impossible to resolve conflicts for " + node + " in " + ancestor
                         + " yet");
-                Message
-                        .debug("setting all nodes as pending conflicts for later conflict resolution: "
-                                + conflicts);
+                Message.debug("setting all nodes as pending conflicts for later conflict" 
+                    + " resolution: " + conflicts);
             }
             ancestor.getNode().setPendingConflicts(node.getModuleId(), node.getRootModuleConf(),
                 conflicts);
@@ -824,7 +822,8 @@ public class ResolveEngine {
                 for (Iterator iter = resolved.iterator(); iter.hasNext();) {
                     IvyNode sel = (IvyNode) iter.next();
                     if (!prevResolved.contains(sel)) {
-                        solved &= resolveConflict(node.gotoNode(sel), ancestor.getParent(), toevict);
+                        solved &= resolveConflict(node.gotoNode(sel), ancestor.getParent(),
+                            toevict);
                     }
                 }
             }

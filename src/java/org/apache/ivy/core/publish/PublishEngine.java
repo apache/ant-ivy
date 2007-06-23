@@ -126,7 +126,8 @@ public class PublishEngine {
                         throw new IllegalStateException("bad ivy file for " + mrid + ": " + ivyFile
                                 + ": " + e);
                     }
-                } else if (!options.getPubrevision().equals(md.getModuleRevisionId().getRevision())) {
+                } else if (!options.getPubrevision().equals(
+                            md.getModuleRevisionId().getRevision())) {
                     throw new IllegalArgumentException("cannot publish " + ivyFile + " as "
                             + options.getPubrevision()
                             + ": bad revision found in ivy file (Revision: "

@@ -81,9 +81,11 @@ public class IvyNodeCallers {
         }
 
         public int hashCode() {
+            //CheckStyle:MagicNumber| OFF
             int hash = 31;
             hash = hash * 13 + confs.hashCode();
             hash = hash * 13 + mrid.hashCode();
+            //CheckStyle:MagicNumber| ON
             return hash;
         }
 

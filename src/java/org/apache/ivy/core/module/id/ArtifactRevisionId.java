@@ -45,18 +45,18 @@ public class ArtifactRevisionId extends UnmodifiableExtendableItem {
                 extraAttributes);
     }
 
-    private ArtifactId _artifactId;
+    private ArtifactId artifactId;
 
-    private ModuleRevisionId _mrid;
+    private ModuleRevisionId mrid;
 
     public ArtifactRevisionId(ArtifactId artifactId, ModuleRevisionId mrid) {
         this(artifactId, mrid, null);
     }
 
-    public ArtifactRevisionId(ArtifactId artifactId, ModuleRevisionId mrid, Map extraAttributes) {
+    public ArtifactRevisionId(ArtifactId artfId, ModuleRevisionId mdlRevId, Map extraAttributes) {
         super(null, extraAttributes);
-        _artifactId = artifactId;
-        _mrid = mrid;
+        artifactId = artfId;
+        mrid = mdlRevId;
 
         setStandardAttribute(IvyPatternHelper.ORGANISATION_KEY, getModuleRevisionId()
                 .getOrganisation());
@@ -79,10 +79,13 @@ public class ArtifactRevisionId extends UnmodifiableExtendableItem {
 
     public int hashCode() {
         // WARN: uniqueness needs to be relatively strong here
+        //CheckStyle:MagicNumber| OFF
         int hash = 17;
         hash += getArtifactId().hashCode() * 37;
         hash += getModuleRevisionId().hashCode() * 37;
         hash += getExtraAttributes().hashCode() * 37;
+        //CheckStyle:MagicNumber| ON
+        
         return hash;
     }
 
@@ -96,30 +99,30 @@ public class ArtifactRevisionId extends UnmodifiableExtendableItem {
      * @return Returns the artifactId.
      */
     public ArtifactId getArtifactId() {
-        return _artifactId;
+        return artifactId;
     }
 
     public ModuleRevisionId getModuleRevisionId() {
-        return _mrid;
+        return mrid;
     }
 
     public String getName() {
-        return _artifactId.getName();
+        return artifactId.getName();
     }
 
     public String getType() {
-        return _artifactId.getType();
+        return artifactId.getType();
     }
 
     public String getExt() {
-        return _artifactId.getExt();
+        return artifactId.getExt();
     }
 
     /**
      * @return Returns the revision.
      */
     public String getRevision() {
-        return _mrid.getRevision();
+        return mrid.getRevision();
     }
 
 }

@@ -92,9 +92,11 @@ public class IvyNode implements Comparable {
         }
 
         public int hashCode() {
+            //CheckStyle:MagicNumber| OFF
             int hash = 33;
             hash += getNode().hashCode() * 17;
             hash += getConf().hashCode() * 17;
+            //CheckStyle:MagicNumber| OFF
             return hash;
         }
     }

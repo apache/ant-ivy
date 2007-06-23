@@ -51,10 +51,12 @@ public class ArtifactId {
     }
 
     public int hashCode() {
+        //CheckStyle:MagicNumber| OFF
         int hash = 17;
         hash += getModuleId().hashCode() * 37;
         hash += getName().hashCode() * 37;
         hash += getType().hashCode() * 37;
+        //CheckStyle:MagicNumber| OFF
         return hash;
     }
 
