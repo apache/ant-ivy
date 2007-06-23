@@ -35,7 +35,6 @@ public class ModuleId implements Comparable {
         }
         this.organisation = organisation;
         this.name = name;
-        hash = _hashCode(); // stored for performance reasons, hashCode is very used in many maps
     }
 
     public String getName() {
@@ -59,17 +58,16 @@ public class ModuleId implements Comparable {
     }
 
     public int hashCode() {
+        if (hash==0) {
+            //CheckStyle:MagicNumber| OFF
+            hash = 31;
+            hash = hash * 13 + (organisation == null ? 0 : organisation.hashCode());
+            hash = hash * 13 + name.hashCode();
+            //CheckStyle:MagicNumber| ON
+        }
         return hash;
     }
 
-    public int _hashCode() {
-        //CheckStyle:MagicNumber| OFF
-        int hash = 31;
-        hash = hash * 13 + (organisation == null ? 0 : organisation.hashCode());
-        hash = hash * 13 + name.hashCode();
-        //CheckStyle:MagicNumber| ON
-        return hash;
-    }
 
     public String toString() {
         return "[ " + organisation + " | " + name + " ]";
