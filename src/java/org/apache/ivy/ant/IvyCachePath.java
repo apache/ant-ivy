@@ -29,16 +29,16 @@ import org.apache.tools.ant.types.Path;
  * Creates an ant path consisting in all artifacts found during a resolve.
  */
 public class IvyCachePath extends IvyCacheTask {
-    private String _pathid;
+    private String pathid;
 
-    private String _id;
+    private String id;
 
     public String getPathid() {
-        return _pathid;
+        return pathid;
     }
 
     public void setPathid(String id) {
-        _pathid = id;
+        pathid = id;
     }
 
     /**
@@ -46,14 +46,14 @@ public class IvyCachePath extends IvyCacheTask {
      * @param id
      */
     public void setId(String id) {
-        _id = id;
+        this.id = id;
     }
 
     public void doExecute() throws BuildException {
         prepareAndCheck();
-        if (_pathid == null) {
-            if (_id != null) {
-                _pathid = _id;
+        if (pathid == null) {
+            if (id != null) {
+                pathid = id;
                 log("ID IS DEPRECATED, PLEASE USE PATHID INSTEAD", Project.MSG_WARN);
             } else {
                 throw new BuildException("pathid is required in ivy classpath");
@@ -61,7 +61,7 @@ public class IvyCachePath extends IvyCacheTask {
         }
         try {
             Path path = new Path(getProject());
-            getProject().addReference(_pathid, path);
+            getProject().addReference(pathid, path);
             CacheManager cache = getCacheManager();
             for (Iterator iter = getArtifacts().iterator(); iter.hasNext();) {
                 Artifact a = (Artifact) iter.next();

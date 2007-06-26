@@ -37,29 +37,29 @@ import org.apache.tools.ant.BuildException;
  * Base class for tasks needing to be performed after a resolve.
  */
 public abstract class IvyPostResolveTask extends IvyTask {
-    private String _conf;
+    private String conf;
 
-    private boolean _haltOnFailure = true;
+    private boolean haltOnFailure = true;
 
-    private boolean _transitive = true;
+    private boolean transitive = true;
 
-    private boolean _inline = false;
+    private boolean inline = false;
 
-    private File _cache;
+    private File cache;
 
-    private String _organisation;
+    private String organisation;
 
-    private String _module;
+    private String module;
 
-    private String _revision = "latest.integration";
+    private String revision = "latest.integration";
 
-    private String _resolveId;
+    private String resolveId;
 
-    private String _type;
+    private String type;
 
-    private File _file;
+    private File file;
 
-    private Filter _artifactFilter = null;
+    private Filter artifactFilter = null;
 
     private boolean useOrigin = false;
 
@@ -77,34 +77,38 @@ public abstract class IvyPostResolveTask extends IvyTask {
         Ivy ivy = getIvyInstance();
         IvySettings settings = ivy.getSettings();
 
-        boolean orgAndModSetManually = (_organisation != null) && (_module != null);
+        boolean orgAndModSetManually = (organisation != null) && (module != null);
 
-        _organisation = getProperty(_organisation, settings, "ivy.organisation");
-        _module = getProperty(_module, settings, "ivy.module");
+        organisation = getProperty(organisation, settings, "ivy.organisation");
+        module = getProperty(module, settings, "ivy.module");
 
-        if (_cache == null) {
-            _cache = settings.getDefaultCache();
+        if (cache == null) {
+            cache = settings.getDefaultCache();
         }
 
-        if (_file == null) {
-            String fileName = getProperty(settings, "ivy.resolved.file", _resolveId);
+        if (file == null) {
+            String fileName = getProperty(settings, "ivy.resolved.file", resolveId);
             if (fileName != null) {
-                _file = new File(fileName);
+                file = new File(fileName);
             }
         }
 
         if (isInline()) {
-            _conf = _conf == null ? "*" : _conf;
-            if (_organisation == null) {
+            conf = conf == null ? "*" : conf;
+            if (organisation == null) {
                 throw new BuildException(
-                        "no organisation provided for ivy cache task in inline mode: It can either be set explicitely via the attribute 'organisation' or via 'ivy.organisation' property");
+                        "no organisation provided for ivy cache task in inline mode: "
+                        + "It can either be set explicitely via the attribute 'organisation' "
+                        + "or via 'ivy.organisation' property");
             }
-            if (_module == null) {
+            if (module == null) {
                 throw new BuildException(
-                        "no module name provided for ivy cache task in inline mode: It can either be set explicitely via the attribute 'module' or via 'ivy.module' property");
+                        "no module name provided for ivy cache task in inline mode: "
+                        + "It can either be set explicitely via the attribute 'module' "
+                        + "or via 'ivy.module' property");
             }
             String[] toResolve = getConfsToResolve(getOrganisation(), getModule() + "-caller",
-                _conf, true);
+                conf, true);
             if (toResolve.length > 0) {
                 Message.verbose("using inline mode to resolve " + getOrganisation() + " "
                         + getModule() + " " + getRevision() + " ("
@@ -114,16 +118,16 @@ public abstract class IvyPostResolveTask extends IvyTask {
                 resolve.setModule(getModule());
                 resolve.setRevision(getRevision());
                 resolve.setInline(true);
-                resolve.setConf(_conf);
-                resolve.setCache(_cache);
-                resolve.setResolveId(_resolveId);
+                resolve.setConf(conf);
+                resolve.setCache(cache);
+                resolve.setResolveId(resolveId);
                 resolve.execute();
             } else {
                 Message.verbose("inline resolve already done for " + getOrganisation() + " "
-                        + getModule() + " " + getRevision() + " (" + _conf + ")");
+                        + getModule() + " " + getRevision() + " (" + conf + ")");
             }
-            if ("*".equals(_conf)) {
-                _conf = StringUtils.join(getResolvedConfigurations(getOrganisation(), getModule()
+            if ("*".equals(conf)) {
+                conf = StringUtils.join(getResolvedConfigurations(getOrganisation(), getModule()
                         + "-caller", true), ", ");
             }
         } else {
@@ -135,35 +139,42 @@ public abstract class IvyPostResolveTask extends IvyTask {
             // from these report names?)
             if (!orgAndModSetManually) {
                 ensureResolved(isHaltonfailure(), isUseOrigin(), isTransitive(), getOrganisation(),
-                    getModule(), getProperty(_conf, settings, "ivy.resolved.configurations"),
-                    _resolveId, _cache);
+                    getModule(), getProperty(conf, settings, "ivy.resolved.configurations"),
+                    resolveId, cache);
             }
 
-            _conf = getProperty(_conf, settings, "ivy.resolved.configurations");
-            if ("*".equals(_conf)) {
-                _conf = getProperty(settings, "ivy.resolved.configurations");
-                if (_conf == null) {
+            conf = getProperty(conf, settings, "ivy.resolved.configurations");
+            if ("*".equals(conf)) {
+                conf = getProperty(settings, "ivy.resolved.configurations");
+                if (conf == null) {
                     throw new BuildException(
-                            "bad conf provided for ivy cache task: * can only be used with a prior call to <resolve/>");
+                            "bad conf provided for ivy cache task: "
+                            + "'*' can only be used with a prior call to <resolve/>");
                 }
             }
         }
-        _organisation = getProperty(_organisation, settings, "ivy.organisation");
-        _module = getProperty(_module, settings, "ivy.module");
-        if (_organisation == null) {
+        organisation = getProperty(organisation, settings, "ivy.organisation");
+        module = getProperty(module, settings, "ivy.module");
+        if (organisation == null) {
             throw new BuildException(
-                    "no organisation provided for ivy cache task: It can either be set explicitely via the attribute 'organisation' or via 'ivy.organisation' property or a prior call to <resolve/>");
+                    "no organisation provided for ivy cache task: "
+                    + "It can either be set explicitely via the attribute 'organisation' "
+                    + "or via 'ivy.organisation' property or a prior call to <resolve/>");
         }
-        if (_module == null) {
+        if (module == null) {
             throw new BuildException(
-                    "no module name provided for ivy cache task: It can either be set explicitely via the attribute 'module' or via 'ivy.module' property or a prior call to <resolve/>");
+                    "no module name provided for ivy cache task: "
+                    + "It can either be set explicitely via the attribute 'module' "
+                    + "or via 'ivy.module' property or a prior call to <resolve/>");
         }
-        if (_conf == null) {
+        if (conf == null) {
             throw new BuildException(
-                    "no conf provided for ivy cache task: It can either be set explicitely via the attribute 'conf' or via 'ivy.resolved.configurations' property or a prior call to <resolve/>");
+                    "no conf provided for ivy cache task: "
+                    + "It can either be set explicitely via the attribute 'conf' or "
+                    + "via 'ivy.resolved.configurations' property or a prior call to <resolve/>");
         }
 
-        _artifactFilter = FilterHelper.getArtifactTypeFilter(_type);
+        artifactFilter = FilterHelper.getArtifactTypeFilter(type);
     }
 
     protected void ensureResolved(boolean haltOnFailure, boolean useOrigin, boolean transitive,
@@ -179,7 +190,7 @@ public abstract class IvyPostResolveTask extends IvyTask {
 
         if (confs.length > 0) {
             IvyResolve resolve = createResolve(haltOnFailure, useOrigin);
-            resolve.setFile(_file);
+            resolve.setFile(file);
             resolve.setCache(cache);
             resolve.setTransitive(transitive);
             resolve.setConf(StringUtils.join(confs, ", "));
@@ -265,99 +276,99 @@ public abstract class IvyPostResolveTask extends IvyTask {
 
     protected ResolveReport getResolvedReport() {
         return getResolvedReport(getOrganisation(), isInline() ? getModule() + "-caller"
-                : getModule(), _resolveId);
+                : getModule(), resolveId);
     }
 
     public String getType() {
-        return _type;
+        return type;
     }
 
     public void setType(String type) {
-        _type = type;
+        this.type = type;
     }
 
     public String getConf() {
-        return _conf;
+        return conf;
     }
 
     public void setConf(String conf) {
-        _conf = conf;
+        this.conf = conf;
     }
 
     public String getModule() {
-        return _module;
+        return module;
     }
 
     public void setModule(String module) {
-        _module = module;
+        this.module = module;
     }
 
     public String getOrganisation() {
-        return _organisation;
+        return organisation;
     }
 
     public void setOrganisation(String organisation) {
-        _organisation = organisation;
+        this.organisation = organisation;
     }
 
     public boolean isHaltonfailure() {
-        return _haltOnFailure;
+        return haltOnFailure;
     }
 
     public void setHaltonfailure(boolean haltOnFailure) {
-        _haltOnFailure = haltOnFailure;
+        this.haltOnFailure = haltOnFailure;
     }
 
     public File getCache() {
-        return _cache;
+        return cache;
     }
 
     public void setCache(File cache) {
-        _cache = cache;
+        this.cache = cache;
     }
 
     public String getRevision() {
-        return _revision;
+        return revision;
     }
 
     public void setRevision(String rev) {
-        _revision = rev;
+        revision = rev;
     }
 
     public Filter getArtifactFilter() {
-        return _artifactFilter;
+        return artifactFilter;
     }
 
     public boolean isTransitive() {
-        return _transitive;
+        return transitive;
     }
 
     public void setTransitive(boolean transitive) {
-        _transitive = transitive;
+        this.transitive = transitive;
     }
 
     public boolean isInline() {
-        return _inline;
+        return inline;
     }
 
     public void setInline(boolean inline) {
-        _inline = inline;
+        this.inline = inline;
     }
 
     public void setResolveId(String resolveId) {
-        _resolveId = resolveId;
+        this.resolveId = resolveId;
     }
 
     public String getResolveId() {
-        return _resolveId;
+        return resolveId;
     }
 
     public void setFile(File file) {
-        _file = file;
+        this.file = file;
     }
 
     public File getFile() {
-        return _file;
+        return file;
     }
 
     public void setKeep(boolean keep) {

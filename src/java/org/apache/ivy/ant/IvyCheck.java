@@ -36,18 +36,18 @@ import org.apache.tools.ant.types.FileSet;
  * discover it.
  */
 public class IvyCheck extends IvyTask {
-    private File _file = null;
+    private File file = null;
 
-    private List _filesets = new ArrayList();
+    private List filesets = new ArrayList();
 
-    private String _resolvername;
+    private String resolvername;
 
     public File getFile() {
-        return _file;
+        return file;
     }
 
     public void setFile(File file) {
-        _file = file;
+        this.file = file;
     }
 
     /**
@@ -57,27 +57,27 @@ public class IvyCheck extends IvyTask {
      *            a set of files to check
      */
     public void addFileset(FileSet set) {
-        _filesets.add(set);
+        filesets.add(set);
     }
 
     public String getResolvername() {
-        return _resolvername;
+        return resolvername;
     }
 
     public void setResolvername(String resolverName) {
-        _resolvername = resolverName;
+        resolvername = resolverName;
     }
 
     public void doExecute() throws BuildException {
         try {
             Ivy ivy = getIvyInstance();
-            if (_file != null) {
-                if (ivy.check(_file.toURL(), _resolvername)) {
-                    Message.verbose("checked " + _file + ": OK");
+            if (file != null) {
+                if (ivy.check(file.toURL(), resolvername)) {
+                    Message.verbose("checked " + file + ": OK");
                 }
             }
-            for (int i = 0; i < _filesets.size(); i++) {
-                FileSet fs = (FileSet) _filesets.get(i);
+            for (int i = 0; i < filesets.size(); i++) {
+                FileSet fs = (FileSet) filesets.get(i);
                 DirectoryScanner ds = fs.getDirectoryScanner(getProject());
 
                 File fromDir = fs.getDir(getProject());
@@ -85,7 +85,7 @@ public class IvyCheck extends IvyTask {
                 String[] srcFiles = ds.getIncludedFiles();
                 for (int j = 0; j < srcFiles.length; j++) {
                     File file = new File(fromDir, srcFiles[j]);
-                    if (ivy.check(file.toURL(), _resolvername)) {
+                    if (ivy.check(file.toURL(), resolvername)) {
                         Message.verbose("checked " + file + ": OK");
                     }
                 }

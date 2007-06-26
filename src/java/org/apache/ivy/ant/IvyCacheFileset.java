@@ -31,32 +31,34 @@ import org.apache.tools.ant.types.PatternSet.NameEntry;
  * not compatible with the useOrigin mode.
  */
 public class IvyCacheFileset extends IvyCacheTask {
-    private String _setid;
+    private String setid;
 
     public String getSetid() {
-        return _setid;
+        return setid;
     }
 
     public void setSetid(String id) {
-        _setid = id;
+        setid = id;
     }
 
     public void setUseOrigin(boolean useOrigin) {
         if (useOrigin) {
             throw new UnsupportedOperationException(
-                    "the cachefileset task does not support the useOrigin mode, since filesets require to have only one root directory. Please use the the cachepath task instead");
+                    "the cachefileset task does not support the useOrigin mode, since filesets "
+                    + "require to have only one root directory. Please use the the cachepath "
+                    + "task instead");
         }
     }
 
     public void doExecute() throws BuildException {
         prepareAndCheck();
-        if (_setid == null) {
+        if (setid == null) {
             throw new BuildException("setid is required in ivy cachefileset");
         }
         try {
             FileSet fileset = new FileSet();
             fileset.setProject(getProject());
-            getProject().addReference(_setid, fileset);
+            getProject().addReference(setid, fileset);
             fileset.setDir(getCache());
 
             List paths = getArtifacts();

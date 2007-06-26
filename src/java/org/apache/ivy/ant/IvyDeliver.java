@@ -144,12 +144,12 @@ public class IvyDeliver extends IvyTask {
         public void deliverDependency(ModuleRevisionId depMrid, String version, String status,
                 String depStatus) {
             // call deliver target if any
-            if (_deliverTarget != null && _deliverTarget.trim().length() > 0) {
+            if (deliverTarget != null && deliverTarget.trim().length() > 0) {
 
                 CallTarget ct = (CallTarget) getProject().createTask("antcall");
                 ct.setOwningTarget(getOwningTarget());
                 ct.init();
-                ct.setTarget(_deliverTarget);
+                ct.setTarget(deliverTarget);
                 ct.setInheritAll(true);
                 ct.setInheritRefs(true);
                 Property param = ct.createParam();
@@ -188,214 +188,220 @@ public class IvyDeliver extends IvyTask {
 
     }
 
-    private String _organisation;
+    private String organisation;
 
-    private String _module;
+    private String module;
 
-    private String _revision;
+    private String revision;
 
-    private String _pubRevision;
+    private String pubRevision;
 
-    private File _cache;
+    private File cache;
 
-    private String _deliverpattern;
+    private String deliverpattern;
 
-    private String _status;
+    private String status;
 
-    private String _pubdate;
+    private String pubdate;
 
-    private String _deliverTarget;
+    private String deliverTarget;
 
-    private File _deliveryList;
+    private File deliveryList;
 
-    private boolean _replacedynamicrev = true;
+    private boolean replacedynamicrev = true;
 
-    private String _resolveId;
+    private String resolveId;
 
-    private String _conf;
+    private String conf;
 
     public File getCache() {
-        return _cache;
+        return cache;
     }
 
     public void setCache(File cache) {
-        _cache = cache;
+        this.cache = cache;
     }
 
     public String getDeliverpattern() {
-        return _deliverpattern;
+        return deliverpattern;
     }
 
     public void setDeliverpattern(String destivypattern) {
-        _deliverpattern = destivypattern;
+        this.deliverpattern = destivypattern;
     }
 
     public String getModule() {
-        return _module;
+        return module;
     }
 
     public void setModule(String module) {
-        _module = module;
+        this.module = module;
     }
 
     public String getOrganisation() {
-        return _organisation;
+        return organisation;
     }
 
     public void setOrganisation(String organisation) {
-        _organisation = organisation;
+        this.organisation = organisation;
     }
 
     public String getPubdate() {
-        return _pubdate;
+        return pubdate;
     }
 
     public void setPubdate(String pubdate) {
-        _pubdate = pubdate;
+        this.pubdate = pubdate;
     }
 
     public String getPubrevision() {
-        return _pubRevision;
+        return pubRevision;
     }
 
     public void setPubrevision(String pubRevision) {
-        _pubRevision = pubRevision;
+        this.pubRevision = pubRevision;
     }
 
     public String getRevision() {
-        return _revision;
+        return revision;
     }
 
     public void setRevision(String revision) {
-        _revision = revision;
+        this.revision = revision;
     }
 
     public String getStatus() {
-        return _status;
+        return status;
     }
 
     public void setStatus(String status) {
-        _status = status;
+        this.status = status;
     }
 
     public void setDelivertarget(String deliverTarget) {
-        _deliverTarget = deliverTarget;
+        this.deliverTarget = deliverTarget;
     }
 
     public void setDeliveryList(File deliveryList) {
-        _deliveryList = deliveryList;
+        this.deliveryList = deliveryList;
     }
 
     public boolean isReplacedynamicrev() {
-        return _replacedynamicrev;
+        return replacedynamicrev;
     }
 
     public void setReplacedynamicrev(boolean replacedynamicrev) {
-        _replacedynamicrev = replacedynamicrev;
+        this.replacedynamicrev = replacedynamicrev;
     }
 
     public String getResolveId() {
-        return _resolveId;
+        return resolveId;
     }
 
     public void setResolveId(String resolveId) {
-        _resolveId = resolveId;
+        this.resolveId = resolveId;
     }
 
     public String getConf() {
-        return _conf;
+        return conf;
     }
 
     public void setConf(String confs) {
-        _conf = confs;
+        conf = confs;
     }
 
     public void doExecute() throws BuildException {
         Ivy ivy = getIvyInstance();
         IvySettings settings = ivy.getSettings();
 
-        _organisation = getProperty(_organisation, settings, "ivy.organisation", _resolveId);
-        _module = getProperty(_module, settings, "ivy.module", _resolveId);
-        _revision = getProperty(_revision, settings, "ivy.revision", _resolveId);
-        _pubRevision = getProperty(_pubRevision, settings, "ivy.deliver.revision");
-        if (_cache == null) {
-            _cache = settings.getDefaultCache();
+        organisation = getProperty(organisation, settings, "ivy.organisation", resolveId);
+        module = getProperty(module, settings, "ivy.module", resolveId);
+        revision = getProperty(revision, settings, "ivy.revision", resolveId);
+        pubRevision = getProperty(pubRevision, settings, "ivy.deliver.revision");
+        if (cache == null) {
+            cache = settings.getDefaultCache();
         }
-        _deliverpattern = getProperty(_deliverpattern, settings, "ivy.deliver.ivy.pattern");
-        _status = getProperty(_status, settings, "ivy.status");
-        if (_deliveryList == null) {
+        deliverpattern = getProperty(deliverpattern, settings, "ivy.deliver.ivy.pattern");
+        status = getProperty(status, settings, "ivy.status");
+        if (deliveryList == null) {
             String deliveryListPath = getProperty(settings, "ivy.delivery.list.file");
             if (deliveryListPath == null) {
-                _deliveryList = new File(System.getProperty("java.io.tmpdir")
+                deliveryList = new File(System.getProperty("java.io.tmpdir")
                         + "/delivery.properties");
             } else {
-                _deliveryList = getProject().resolveFile(settings.substitute(deliveryListPath));
+                deliveryList = getProject().resolveFile(settings.substitute(deliveryListPath));
             }
         }
-        if (_resolveId == null) {
-            if (_organisation == null) {
+        if (resolveId == null) {
+            if (organisation == null) {
                 throw new BuildException(
-                        "no organisation provided for ivy deliver task: It can either be set explicitely via the attribute 'organisation' or via 'ivy.organisation' property or a prior call to <resolve/>");
+                        "no organisation provided for ivy deliver task: " 
+                        + "It can either be set explicitely via the attribute 'organisation' " 
+                        + "or via 'ivy.organisation' property or a prior call to <resolve/>");
             }
-            if (_module == null) {
+            if (module == null) {
                 throw new BuildException(
-                        "no module name provided for ivy deliver task: It can either be set explicitely via the attribute 'module' or via 'ivy.module' property or a prior call to <resolve/>");
+                        "no module name provided for ivy deliver task: " 
+                        + "It can either be set explicitely via the attribute 'module' " 
+                        + "or via 'ivy.module' property or a prior call to <resolve/>");
             }
         }
-        if (_revision == null) {
-            _revision = Ivy.getWorkingRevision();
+        if (revision == null) {
+            revision = Ivy.getWorkingRevision();
         }
-        Date pubdate = getPubDate(_pubdate, new Date());
-        if (_pubRevision == null) {
-            if (_revision.startsWith("working@")) {
-                _pubRevision = Ivy.DATE_FORMAT.format(pubdate);
+        Date pubdate = getPubDate(this.pubdate, new Date());
+        if (pubRevision == null) {
+            if (revision.startsWith("working@")) {
+                pubRevision = Ivy.DATE_FORMAT.format(pubdate);
             } else {
-                _pubRevision = _revision;
+                pubRevision = revision;
             }
         }
-        if (_deliverpattern == null) {
+        if (deliverpattern == null) {
             throw new BuildException(
-                    "deliver ivy pattern is missing: either provide it as parameters or through ivy.deliver.ivy.pattern properties");
+                    "deliver ivy pattern is missing: either provide it as parameters "
+                    + "or through ivy.deliver.ivy.pattern properties");
         }
-        if (_status == null) {
+        if (status == null) {
             throw new BuildException(
-                    "no status provided: either provide it as parameter or through the ivy.status.default property");
+                    "no status provided: either provide it as parameter or through "
+                    + "the ivy.status.default property");
         }
 
         ModuleRevisionId mrid = null;
-        if (_resolveId == null) {
-            mrid = ModuleRevisionId.newInstance(_organisation, _module, _revision);
+        if (resolveId == null) {
+            mrid = ModuleRevisionId.newInstance(organisation, module, revision);
         }
         boolean isLeading = false;
         try {
-            if (!_deliveryList.exists()) {
+            if (!deliveryList.exists()) {
                 isLeading = true;
             }
 
             loadDeliveryList();
 
             PublishingDependencyRevisionResolver drResolver;
-            if (_deliverTarget != null && _deliverTarget.trim().length() > 0) {
+            if (deliverTarget != null && deliverTarget.trim().length() > 0) {
                 drResolver = new DeliverDRResolver();
             } else {
                 drResolver = new DefaultPublishingDRResolver();
             }
 
-            DeliverOptions options = new DeliverOptions(_status, pubdate, CacheManager.getInstance(
-                settings, _cache), drResolver, doValidate(settings), _replacedynamicrev,
-                    splitConfs(_conf)).setResolveId(_resolveId);
+            DeliverOptions options = new DeliverOptions(status, pubdate, CacheManager.getInstance(
+                settings, cache), drResolver, doValidate(settings), replacedynamicrev,
+                    splitConfs(conf)).setResolveId(resolveId);
             if (mrid == null) {
-                ivy.deliver(_pubRevision, _deliverpattern, options);
+                ivy.deliver(pubRevision, deliverpattern, options);
             } else {
-                ivy.deliver(mrid, _pubRevision, _deliverpattern, options);
+                ivy.deliver(mrid, pubRevision, deliverpattern, options);
             }
         } catch (Exception e) {
-            throw new BuildException("impossible to deliver " + mrid == null ? _resolveId : mrid
+            throw new BuildException("impossible to deliver " + mrid == null ? resolveId : mrid
                     + ": " + e, e);
         } finally {
             if (isLeading) {
-                if (_deliveryList.exists()) {
-                    _deliveryList.delete();
+                if (deliveryList.exists()) {
+                    deliveryList.delete();
                 }
             }
         }
@@ -405,7 +411,7 @@ public class IvyDeliver extends IvyTask {
         Property property = (Property) getProject().createTask("property");
         property.setOwningTarget(getOwningTarget());
         property.init();
-        property.setFile(_deliveryList);
+        property.setFile(deliveryList);
         property.perform();
     }
 
@@ -413,7 +419,7 @@ public class IvyDeliver extends IvyTask {
         Echo echo = (Echo) getProject().createTask("echo");
         echo.setOwningTarget(getOwningTarget());
         echo.init();
-        echo.setFile(_deliveryList);
+        echo.setFile(deliveryList);
         echo.setMessage(msg + "\n");
         echo.setAppend(true);
         echo.perform();

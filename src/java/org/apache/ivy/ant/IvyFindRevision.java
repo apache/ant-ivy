@@ -29,76 +29,76 @@ import org.apache.tools.ant.BuildException;
  * properties according to what was found.
  */
 public class IvyFindRevision extends IvyTask {
-    private String _organisation;
+    private String organisation;
 
-    private String _module;
+    private String module;
 
-    private String _branch;
+    private String branch;
 
-    private String _revision;
+    private String revision;
 
-    private String _property = "ivy.revision";
+    private String property = "ivy.revision";
 
     public String getModule() {
-        return _module;
+        return module;
     }
 
     public void setModule(String module) {
-        _module = module;
+        this.module = module;
     }
 
     public String getOrganisation() {
-        return _organisation;
+        return organisation;
     }
 
     public void setOrganisation(String organisation) {
-        _organisation = organisation;
+        this.organisation = organisation;
     }
 
     public String getRevision() {
-        return _revision;
+        return revision;
     }
 
     public void setRevision(String revision) {
-        _revision = revision;
+        this.revision = revision;
     }
 
     public String getBranch() {
-        return _branch;
+        return branch;
     }
 
     public void setBranch(String branch) {
-        _branch = branch;
+        this.branch = branch;
     }
 
     public String getProperty() {
-        return _property;
+        return property;
     }
 
     public void setProperty(String prefix) {
-        _property = prefix;
+        this.property = prefix;
     }
 
     public void doExecute() throws BuildException {
-        if (_organisation == null) {
+        if (organisation == null) {
             throw new BuildException("no organisation provided for ivy findmodules");
         }
-        if (_module == null) {
+        if (module == null) {
             throw new BuildException("no module name provided for ivy findmodules");
         }
-        if (_revision == null) {
+        if (revision == null) {
             throw new BuildException("no revision provided for ivy findmodules");
         }
 
         Ivy ivy = getIvyInstance();
         IvySettings settings = ivy.getSettings();
-        if (_branch == null) {
-            settings.getDefaultBranch(new ModuleId(_organisation, _module));
+        if (branch == null) {
+            settings.getDefaultBranch(new ModuleId(organisation, module));
         }
-        ResolvedModuleRevision rmr = ivy.findModule(ModuleRevisionId.newInstance(_organisation,
-            _module, _branch, _revision));
+        ResolvedModuleRevision rmr = ivy.findModule(ModuleRevisionId.newInstance(organisation,
+            module, branch, revision));
         if (rmr != null) {
-            getProject().setProperty(_property, rmr.getId().getRevision());
+            getProject().setProperty(property, rmr.getId().getRevision());
         }
     }
 }

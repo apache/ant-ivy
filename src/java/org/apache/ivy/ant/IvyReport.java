@@ -42,166 +42,172 @@ import org.apache.tools.ant.util.GlobPatternMapper;
  * This ant task let users generates reports (html, xml, graphml, ...) from the last resolve done.
  */
 public class IvyReport extends IvyTask {
-    private File _todir;
+    private File todir;
 
-    private String _organisation;
+    private String organisation;
 
-    private String _module;
+    private String module;
 
-    private String _conf;
+    private String conf;
 
-    private File _cache;
+    private File cache;
 
-    private boolean _graph = true;
+    private boolean graph = true;
 
-    private boolean _dot = false;
+    private boolean dot = false;
 
-    private boolean _xml = false;
+    private boolean xml = false;
 
-    private boolean _xsl = true;
+    private boolean xsl = true;
 
-    private String _xslFile;
+    private String xslFile;
 
-    private String _outputpattern;
+    private String outputpattern;
 
-    private String _xslext = "html";
+    private String xslext = "html";
 
-    private List _params = new ArrayList();
+    private List params = new ArrayList();
 
-    private String _resolveId;
+    private String resolveId;
 
     public File getTodir() {
-        return _todir;
+        return todir;
     }
 
     public void setTodir(File todir) {
-        _todir = todir;
+        this.todir = todir;
     }
 
     public File getCache() {
-        return _cache;
+        return cache;
     }
 
     public void setCache(File cache) {
-        _cache = cache;
+        this.cache = cache;
     }
 
     public String getConf() {
-        return _conf;
+        return conf;
     }
 
     public void setConf(String conf) {
-        _conf = conf;
+        this.conf = conf;
     }
 
     public String getModule() {
-        return _module;
+        return module;
     }
 
     public void setModule(String module) {
-        _module = module;
+        this.module = module;
     }
 
     public String getOrganisation() {
-        return _organisation;
+        return organisation;
     }
 
     public void setOrganisation(String organisation) {
-        _organisation = organisation;
+        this.organisation = organisation;
     }
 
     public boolean isGraph() {
-        return _graph;
+        return graph;
     }
 
     public void setGraph(boolean graph) {
-        _graph = graph;
+        this.graph = graph;
     }
 
     public String getXslfile() {
-        return _xslFile;
+        return xslFile;
     }
 
     public void setXslfile(String xslFile) {
-        _xslFile = xslFile;
+        this.xslFile = xslFile;
     }
 
     public String getOutputpattern() {
-        return _outputpattern;
+        return outputpattern;
     }
 
     public void setOutputpattern(String outputpattern) {
-        _outputpattern = outputpattern;
+        this.outputpattern = outputpattern;
     }
 
     public String getResolveId() {
-        return _resolveId;
+        return resolveId;
     }
 
     public void setResolveId(String resolveId) {
-        _resolveId = resolveId;
+        this.resolveId = resolveId;
     }
 
     public void doExecute() throws BuildException {
         Ivy ivy = getIvyInstance();
         IvySettings settings = ivy.getSettings();
 
-        _organisation = getProperty(_organisation, settings, "ivy.organisation", _resolveId);
-        _module = getProperty(_module, settings, "ivy.module", _resolveId);
-        if (_cache == null) {
-            _cache = settings.getDefaultCache();
+        organisation = getProperty(organisation, settings, "ivy.organisation", resolveId);
+        module = getProperty(module, settings, "ivy.module", resolveId);
+        if (cache == null) {
+            cache = settings.getDefaultCache();
         }
-        _conf = getProperty(_conf, settings, "ivy.resolved.configurations", _resolveId);
-        if ("*".equals(_conf)) {
-            _conf = getProperty(settings, "ivy.resolved.configurations", _resolveId);
+        conf = getProperty(conf, settings, "ivy.resolved.configurations", resolveId);
+        if ("*".equals(conf)) {
+            conf = getProperty(settings, "ivy.resolved.configurations", resolveId);
         }
-        if (_conf == null) {
+        if (conf == null) {
             throw new BuildException(
-                    "no conf provided for ivy report task: It can either be set explicitely via the attribute 'conf' or via 'ivy.resolved.configurations' property or a prior call to <resolve/>");
+                    "no conf provided for ivy report task: "
+                    + "It can either be set explicitely via the attribute 'conf' or"
+                    + "via 'ivy.resolved.configurations' property or a prior call to <resolve/>");
         }
-        if (_todir == null) {
+        if (todir == null) {
             String t = getProperty(settings, "ivy.report.todir");
             if (t != null) {
-                _todir = new File(t);
+                todir = new File(t);
             }
         }
-        _outputpattern = getProperty(_outputpattern, settings, "ivy.report.output.pattern");
-        if (_todir != null && _todir.exists()) {
-            _todir.mkdirs();
+        outputpattern = getProperty(outputpattern, settings, "ivy.report.output.pattern");
+        if (todir != null && todir.exists()) {
+            todir.mkdirs();
         }
-        if (_outputpattern == null) {
-            _outputpattern = "[organisation]-[module]-[conf].[ext]";
+        if (outputpattern == null) {
+            outputpattern = "[organisation]-[module]-[conf].[ext]";
         }
 
-        if (_todir != null && _todir.exists() && !_todir.isDirectory()) {
+        if (todir != null && todir.exists() && !todir.isDirectory()) {
             throw new BuildException("destination directory should be a directory !");
         }
-        if (_organisation == null) {
+        if (organisation == null) {
             throw new BuildException(
-                    "no organisation provided for ivy report task: It can either be set explicitely via the attribute 'organisation' or via 'ivy.organisation' property or a prior call to <resolve/>");
+                    "no organisation provided for ivy report task: "
+                    + "It can either be set explicitely via the attribute 'organisation' or "
+                    + "via 'ivy.organisation' property or a prior call to <resolve/>");
         }
-        if (_module == null) {
+        if (module == null) {
             throw new BuildException(
-                    "no module name provided for ivy report task: It can either be set explicitely via the attribute 'module' or via 'ivy.module' property or a prior call to <resolve/>");
+                    "no module name provided for ivy report task: "
+                    + "It can either be set explicitely via the attribute 'module' or "
+                    + "via 'ivy.module' property or a prior call to <resolve/>");
         }
-        if (_resolveId == null) {
-            _resolveId = ResolveOptions.getDefaultResolveId(new ModuleId(_organisation, _module));
+        if (resolveId == null) {
+            resolveId = ResolveOptions.getDefaultResolveId(new ModuleId(organisation, module));
         }
 
         try {
-            String[] confs = splitConfs(_conf);
-            if (_xsl) {
-                genreport(_cache, _organisation, _module, confs);
+            String[] confs = splitConfs(conf);
+            if (xsl) {
+                genreport(cache, organisation, module, confs);
             }
-            if (_xml) {
-                genxml(_cache, _organisation, _module, confs);
+            if (xml) {
+                genxml(cache, organisation, module, confs);
             }
-            if (_graph) {
-                genStyled(_cache, _organisation, _module, confs, getStylePath(_cache,
+            if (graph) {
+                genStyled(cache, organisation, module, confs, getStylePath(cache,
                     "ivy-report-graph.xsl"), "graphml");
             }
-            if (_dot) {
-                genStyled(_cache, _organisation, _module, confs, getStylePath(_cache,
+            if (dot) {
+                genStyled(cache, organisation, module, confs, getStylePath(cache,
                     "ivy-report-dot.xsl"), "dot");
             }
         } catch (IOException e) {
@@ -211,16 +217,16 @@ public class IvyReport extends IvyTask {
 
     private void genxml(File cache, String organisation, String module, String[] confs)
             throws IOException {
-        CacheManager cacheMgr = getIvyInstance().getCacheManager(_cache);
+        CacheManager cacheMgr = getIvyInstance().getCacheManager(cache);
         for (int i = 0; i < confs.length; i++) {
-            File xml = cacheMgr.getConfigurationResolveReportInCache(_resolveId, confs[i]);
+            File xml = cacheMgr.getConfigurationResolveReportInCache(resolveId, confs[i]);
 
             File out;
-            if (_todir != null) {
-                out = new File(_todir, IvyPatternHelper.substitute(_outputpattern, organisation,
+            if (todir != null) {
+                out = new File(todir, IvyPatternHelper.substitute(outputpattern, organisation,
                     module, "", "", "", "xml", confs[i]));
             } else {
-                out = new File(IvyPatternHelper.substitute(_outputpattern, organisation, module,
+                out = new File(IvyPatternHelper.substitute(outputpattern, organisation, module,
                     "", "", "", "xml", confs[i]));
             }
 
@@ -230,13 +236,13 @@ public class IvyReport extends IvyTask {
 
     private void genreport(File cache, String organisation, String module, String[] confs)
             throws IOException {
-        genStyled(cache, organisation, module, confs, getReportStylePath(cache), _xslext);
+        genStyled(cache, organisation, module, confs, getReportStylePath(cache), xslext);
 
         // copy the css if required
-        if (_todir != null && _xslFile == null) {
-            File css = new File(_todir, "ivy-report.css");
+        if (todir != null && xslFile == null) {
+            File css = new File(todir, "ivy-report.css");
             if (!css.exists()) {
-                Message.debug("copying report css to " + _todir);
+                Message.debug("copying report css to " + todir);
                 FileUtil.copy(XmlReportOutputter.class.getResourceAsStream("ivy-report.css"), css,
                     null);
             }
@@ -246,8 +252,8 @@ public class IvyReport extends IvyTask {
     }
 
     private String getReportStylePath(File cache) throws IOException {
-        if (_xslFile != null) {
-            return _xslFile;
+        if (xslFile != null) {
+            return xslFile;
         }
         // style should be a file (and not an url)
         // so we have to copy it from classpath to cache
@@ -260,8 +266,8 @@ public class IvyReport extends IvyTask {
             String style, String ext) throws IOException {
         // process the report with xslt to generate dot file
         File out;
-        if (_todir != null) {
-            out = _todir;
+        if (todir != null) {
+            out = todir;
         } else {
             out = new File(".");
         }
@@ -279,12 +285,12 @@ public class IvyReport extends IvyTask {
 
         CacheManager cacheMgr = getIvyInstance().getCacheManager(cache);
         for (int i = 0; i < confs.length; i++) {
-            File reportFile = cacheMgr.getConfigurationResolveReportInCache(_resolveId, confs[i]);
+            File reportFile = cacheMgr.getConfigurationResolveReportInCache(resolveId, confs[i]);
             xslt.setIncludes(reportFile.getName());
 
             FileNameMapper reportMapper = new GlobPatternMapper();
             reportMapper.setFrom(reportFile.getName());
-            reportMapper.setTo(IvyPatternHelper.substitute(_outputpattern, organisation, module,
+            reportMapper.setTo(IvyPatternHelper.substitute(outputpattern, organisation, module,
                 "", "", "", ext, confs[i]));
             mapper.add(reportMapper);
         }
@@ -292,13 +298,13 @@ public class IvyReport extends IvyTask {
 
         XSLTProcess.Param param = xslt.createParam();
         param.setName("confs");
-        param.setExpression(_conf);
+        param.setExpression(conf);
         param = xslt.createParam();
         param.setName("extension");
-        param.setExpression(_xslext);
+        param.setExpression(xslext);
 
         // add the provided XSLT parameters
-        for (Iterator it = _params.iterator(); it.hasNext();) {
+        for (Iterator it = params.iterator(); it.hasNext();) {
             param = (XSLTProcess.Param) it.next();
             XSLTProcess.Param realParam = xslt.createParam();
             realParam.setName(param.getName());
@@ -317,41 +323,41 @@ public class IvyReport extends IvyTask {
     }
 
     public boolean isXml() {
-        return _xml;
+        return xml;
     }
 
     public void setXml(boolean xml) {
-        _xml = xml;
+        this.xml = xml;
     }
 
     public boolean isXsl() {
-        return _xsl;
+        return xsl;
     }
 
     public void setXsl(boolean xsl) {
-        _xsl = xsl;
+        this.xsl = xsl;
     }
 
     public String getXslext() {
-        return _xslext;
+        return xslext;
     }
 
     public void setXslext(String xslext) {
-        _xslext = xslext;
+        this.xslext = xslext;
     }
 
     public XSLTProcess.Param createParam() {
         XSLTProcess.Param result = new XSLTProcess.Param();
-        _params.add(result);
+        params.add(result);
         return result;
     }
 
     public boolean isDot() {
-        return _dot;
+        return dot;
     }
 
     public void setDot(boolean dot) {
-        _dot = dot;
+        this.dot = dot;
     }
 
 }

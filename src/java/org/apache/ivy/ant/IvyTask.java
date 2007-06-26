@@ -82,7 +82,9 @@ public abstract class IvyTask extends Task {
             if (!(antIvyEngine instanceof IvyAntSettings)) {
                 throw new BuildException(
                         antIvyEngineRef.getRefId()
-                                + " has been defined in a different classloader.  Please use the same loader when defining your task, or redeclare your ivy:settings in this classloader",
+                                + " has been defined in a different classloader.  "
+                                + "Please use the same loader when defining your task, or "
+                                + "redeclare your ivy:settings in this classloader",
                         getLocation());
             }
         } else {

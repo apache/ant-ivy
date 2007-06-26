@@ -29,96 +29,96 @@ import org.apache.tools.ant.BuildException;
  * properties according to what was found.
  */
 public class IvyBuildNumber extends IvyTask {
-    private String _organisation;
+    private String organisation;
 
-    private String _module;
+    private String module;
 
-    private String _branch;
+    private String branch;
 
-    private String _revision;
+    private String revision;
 
-    private String _revSep = ".";
+    private String revSep = ".";
 
-    private String _prefix = "ivy.";
+    private String prefix = "ivy.";
 
-    private String _default = "0";
+    private String defaultValue = "0";
 
-    private String _defaultBuildNumber = "0";
+    private String defaultBuildNumber = "0";
 
     public String getModule() {
-        return _module;
+        return module;
     }
 
     public void setModule(String module) {
-        _module = module;
+        this.module = module;
     }
 
     public String getOrganisation() {
-        return _organisation;
+        return organisation;
     }
 
     public void setOrganisation(String organisation) {
-        _organisation = organisation;
+        this.organisation = organisation;
     }
 
     public String getRevision() {
-        return _revision;
+        return revision;
     }
 
     public void setRevision(String revision) {
-        _revision = revision;
+        this.revision = revision;
     }
 
     public String getBranch() {
-        return _branch;
+        return branch;
     }
 
     public void setBranch(String branch) {
-        _branch = branch;
+        this.branch = branch;
     }
 
     public String getDefault() {
-        return _default;
+        return defaultValue;
     }
 
     public void setDefault(String default1) {
-        _default = default1;
+        defaultValue = default1;
     }
 
     public String getPrefix() {
-        return _prefix;
+        return prefix;
     }
 
     public void setPrefix(String prefix) {
-        _prefix = prefix;
+        this.prefix = prefix;
     }
 
     public void doExecute() throws BuildException {
-        if (_organisation == null) {
+        if (organisation == null) {
             throw new BuildException("no organisation provided for ivy findmodules");
         }
-        if (_module == null) {
+        if (module == null) {
             throw new BuildException("no module name provided for ivy findmodules");
         }
-        if (_prefix == null) {
+        if (prefix == null) {
             throw new BuildException("null prefix not allowed");
         }
 
         Ivy ivy = getIvyInstance();
         IvySettings settings = ivy.getSettings();
-        if (_branch == null) {
-            settings.getDefaultBranch(new ModuleId(_organisation, _module));
+        if (branch == null) {
+            settings.getDefaultBranch(new ModuleId(organisation, module));
         }
-        if (_revision == null || _revision.length() == 0) {
-            _revision = "latest.integration";
-        } else if (!_revision.endsWith("+")) {
-            _revision = _revision + "+";
+        if (revision == null || revision.length() == 0) {
+            revision = "latest.integration";
+        } else if (!revision.endsWith("+")) {
+            revision = revision + "+";
         }
-        if (!_prefix.endsWith(".") && _prefix.length() > 0) {
-            _prefix = _prefix + ".";
+        if (!prefix.endsWith(".") && prefix.length() > 0) {
+            prefix = prefix + ".";
         }
-        ResolvedModuleRevision rmr = ivy.findModule(ModuleRevisionId.newInstance(_organisation,
-            _module, _branch, _revision));
+        ResolvedModuleRevision rmr = ivy.findModule(ModuleRevisionId.newInstance(organisation,
+            module, branch, revision));
         String revision = rmr == null ? null : rmr.getId().getRevision();
         NewRevision newRevision = computeNewRevision(revision);
         setProperty("revision", newRevision.revision);
@@ -129,13 +129,13 @@ public class IvyBuildNumber extends IvyTask {
 
     private void setProperty(String propertyName, String value) {
         if (value != null) {
-            getProject().setProperty(_prefix + propertyName, value);
+            getProject().setProperty(prefix + propertyName, value);
         }
     }
 
     private NewRevision computeNewRevision(String revision) {
-        String revPrefix = "latest.integration".equals(_revision) ? "" : _revision.substring(0,
-            _revision.length() - 1);
+        String revPrefix = "latest.integration".equals(revision) ? "" : revision.substring(0,
+            revision.length() - 1);
         if (revision != null && !revision.startsWith(revPrefix)) {
             throw new BuildException("invalid exception found in repository: '" + revision
                     + "' for '" + revPrefix + "'");
@@ -143,15 +143,15 @@ public class IvyBuildNumber extends IvyTask {
         if (revision == null) {
             if (revPrefix.length() > 0) {
                 return new NewRevision(revision, revPrefix
-                        + (revPrefix.endsWith(_revSep) ? _defaultBuildNumber : _revSep
-                                + _defaultBuildNumber), null, _defaultBuildNumber);
+                        + (revPrefix.endsWith(revSep) ? defaultBuildNumber : revSep
+                                + defaultBuildNumber), null, defaultBuildNumber);
             } else {
-                Range r = findLastNumber(_default);
+                Range r = findLastNumber(defaultValue);
                 if (r == null) { // no number found
-                    return new NewRevision(revision, _default, null, null);
+                    return new NewRevision(revision, defaultValue, null, null);
                 } else {
-                    long n = Long.parseLong(_default.substring(r.startIndex, r.endIndex));
-                    return new NewRevision(revision, _default, null, String.valueOf(n));
+                    long n = Long.parseLong(defaultValue.substring(r.startIndex, r.endIndex));
+                    return new NewRevision(revision, defaultValue, null, String.valueOf(n));
                 }
             }
         }
@@ -160,13 +160,13 @@ public class IvyBuildNumber extends IvyTask {
             r = findLastNumber(revision);
             if (r == null) {
                 return new NewRevision(revision, revision
-                        + (revision.endsWith(_revSep) ? "1" : _revSep + "1"), null, "1");
+                        + (revision.endsWith(revSep) ? "1" : revSep + "1"), null, "1");
             }
         } else {
             r = findFirstNumber(revision, revPrefix.length());
             if (r == null) {
                 return new NewRevision(revision, revPrefix
-                        + (revPrefix.endsWith(_revSep) ? "1" : _revSep + "1"), null, "1");
+                        + (revPrefix.endsWith(revSep) ? "1" : revSep + "1"), null, "1");
             }
         }
         long n = Long.parseLong(revision.substring(r.startIndex, r.endIndex)) + 1;
@@ -177,7 +177,8 @@ public class IvyBuildNumber extends IvyTask {
     private Range findFirstNumber(String str, int startIndex) {
         // let's find the first digit in the string
         int startNumberIndex = startIndex;
-        while (startNumberIndex < str.length() && !Character.isDigit(str.charAt(startNumberIndex))) {
+        while (startNumberIndex < str.length() 
+                && !Character.isDigit(str.charAt(startNumberIndex))) {
             startNumberIndex++;
         }
         if (startNumberIndex == str.length()) {
@@ -239,18 +240,18 @@ public class IvyBuildNumber extends IvyTask {
     }
 
     public String getRevSep() {
-        return _revSep;
+        return revSep;
     }
 
     public void setRevSep(String revSep) {
-        _revSep = revSep;
+        this.revSep = revSep;
     }
 
     public String getDefaultBuildNumber() {
-        return _defaultBuildNumber;
+        return defaultBuildNumber;
     }
 
     public void setDefaultBuildNumber(String defaultBuildNumber) {
-        _defaultBuildNumber = defaultBuildNumber;
+        this.defaultBuildNumber = defaultBuildNumber;
     }
 }

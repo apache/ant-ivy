@@ -36,26 +36,26 @@ import org.apache.tools.ant.Project;
  * Parses information about an ivy file and make them available in ant.
  */
 public class IvyInfo extends IvyTask {
-    private File _file = null;
+    private File file = null;
 
     public File getFile() {
-        return _file;
+        return file;
     }
 
     public void setFile(File file) {
-        _file = file;
+        this.file = file;
     }
 
     public void doExecute() throws BuildException {
         Ivy ivy = getIvyInstance();
         IvySettings settings = ivy.getSettings();
-        if (_file == null) {
-            _file = getProject().resolveFile(getProperty(settings, "ivy.dep.file"));
+        if (file == null) {
+            file = getProject().resolveFile(getProperty(settings, "ivy.dep.file"));
         }
 
         try {
             ModuleDescriptor md = ModuleDescriptorParserRegistry.getInstance().parseDescriptor(
-                settings, _file.toURL(), doValidate(settings));
+                settings, file.toURL(), doValidate(settings));
             getProject()
                     .setProperty("ivy.organisation", md.getModuleRevisionId().getOrganisation());
             getProject().setProperty("ivy.module", md.getModuleRevisionId().getName());
@@ -75,7 +75,7 @@ public class IvyInfo extends IvyTask {
             getProject().setProperty("ivy.public.configurations", mergeConfs(publicConfigs));
         } catch (MalformedURLException e) {
             throw new BuildException(
-                    "unable to convert given ivy file to url: " + _file + ": " + e, e);
+                    "unable to convert given ivy file to url: " + file + ": " + e, e);
         } catch (ParseException e) {
             log(e.getMessage(), Project.MSG_ERR);
             throw new BuildException("syntax errors in ivy file: " + e, e);

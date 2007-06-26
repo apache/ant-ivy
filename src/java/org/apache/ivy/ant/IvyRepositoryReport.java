@@ -42,87 +42,89 @@ import org.apache.tools.ant.taskdefs.XSLTProcess;
  * specified using organisation/module and matcher.
  */
 public class IvyRepositoryReport extends IvyTask {
-    private String _organisation = "*";
+    private String organisation = "*";
 
-    private String _module;
+    private String module;
 
-    private String _branch;
+    private String branch;
 
-    private String _revision = "latest.integration";
+    private String revision = "latest.integration";
 
-    private File _cache;
+    private File cache;
 
-    private String _matcher = PatternMatcher.EXACT_OR_REGEXP;
+    private String matcher = PatternMatcher.EXACT_OR_REGEXP;
 
-    private File _todir = new File(".");
+    private File todir = new File(".");
 
-    private boolean _graph = false;
+    private boolean graph = false;
 
-    private boolean _dot = false;
+    private boolean dot = false;
 
-    private boolean _xml = true;
+    private boolean xml = true;
 
-    private boolean _xsl = false;
+    private boolean xsl = false;
 
-    private String _xslFile;
+    private String xslFile;
 
-    private String _outputname = "ivy-repository-report";
+    private String outputname = "ivy-repository-report";
 
-    private String _xslext = "html";
+    private String xslext = "html";
 
-    private List _params = new ArrayList();
+    private List params = new ArrayList();
 
     public void doExecute() throws BuildException {
         Ivy ivy = getIvyInstance();
         IvySettings settings = ivy.getSettings();
-        if (_cache == null) {
-            _cache = settings.getDefaultCache();
+        if (cache == null) {
+            cache = settings.getDefaultCache();
         }
-        if (_xsl && _xslFile == null) {
+        if (xsl && xslFile == null) {
             throw new BuildException("xsl file is mandatory when using xsl generation");
         }
-        if (_module == null && PatternMatcher.EXACT.equals(_matcher)) {
+        if (module == null && PatternMatcher.EXACT.equals(matcher)) {
             throw new BuildException(
-                    "no module name provided for ivy repository graph task: It can either be set explicitely via the attribute 'module' or via 'ivy.module' property or a prior call to <resolve/>");
-        } else if (_module == null && !PatternMatcher.EXACT.equals(_matcher)) {
-            _module = PatternMatcher.ANY_EXPRESSION;
+                    "no module name provided for ivy repository graph task: "
+                    + "It can either be set explicitely via the attribute 'module' or "
+                    + "via 'ivy.module' property or a prior call to <resolve/>");
+        } else if (module == null && !PatternMatcher.EXACT.equals(matcher)) {
+            module = PatternMatcher.ANY_EXPRESSION;
         }
-        ModuleRevisionId mrid = ModuleRevisionId.newInstance(_organisation, _module, _revision);
+        ModuleRevisionId mrid = ModuleRevisionId.newInstance(organisation, module, revision);
 
         try {
-            ModuleId[] mids = ivy.listModules(new ModuleId(_organisation, _module), settings
-                    .getMatcher(_matcher));
+            ModuleId[] mids = ivy.listModules(new ModuleId(organisation, module), settings
+                    .getMatcher(matcher));
             ModuleRevisionId[] mrids = new ModuleRevisionId[mids.length];
             for (int i = 0; i < mrids.length; i++) {
-                if (_branch != null) {
-                    mrids[i] = new ModuleRevisionId(mids[i], _branch, _revision);
+                if (branch != null) {
+                    mrids[i] = new ModuleRevisionId(mids[i], branch, revision);
                 } else {
-                    mrids[i] = new ModuleRevisionId(mids[i], _revision);
+                    mrids[i] = new ModuleRevisionId(mids[i], revision);
                 }
             }
             DefaultModuleDescriptor md = DefaultModuleDescriptor.newCallerInstance(mrids, true,
                 false);
             String resolveId = ResolveOptions.getDefaultResolveId(md);
             ResolveReport report = ivy.resolve(md, new ResolveOptions().setResolveId(resolveId)
-                    .setCache(CacheManager.getInstance(settings, _cache)).setValidate(
+                    .setCache(CacheManager.getInstance(settings, cache)).setValidate(
                         doValidate(settings)));
 
-            CacheManager cacheMgr = getIvyInstance().getCacheManager(_cache);
-            new XmlReportOutputter().output(report, _cache);
-            if (_graph) {
+            CacheManager cacheMgr = getIvyInstance().getCacheManager(cache);
+            new XmlReportOutputter().output(report, cache);
+            if (graph) {
                 gengraph(cacheMgr, md.getModuleRevisionId().getOrganisation(), md
                         .getModuleRevisionId().getName());
             }
-            if (_dot) {
+            if (dot) {
                 gendot(cacheMgr, md.getModuleRevisionId().getOrganisation(), md
                         .getModuleRevisionId().getName());
             }
-            if (_xml) {
+            if (xml) {
 
                 FileUtil.copy(cacheMgr.getConfigurationResolveReportInCache(resolveId, "default"),
-                    new File(_todir, _outputname + ".xml"), null);
+                    new File(todir, outputname + ".xml"), null);
             }
-            if (_xsl) {
+            if (xsl) {
                 genreport(cacheMgr, md.getModuleRevisionId().getOrganisation(), md
                         .getModuleRevisionId().getName());
             }
@@ -141,16 +143,16 @@ public class IvyRepositoryReport extends IvyTask {
 
         String resolveId = ResolveOptions.getDefaultResolveId(new ModuleId(organisation, module));
         xslt.setIn(cache.getConfigurationResolveReportInCache(resolveId, "default"));
-        xslt.setOut(new File(_todir, _outputname + "." + _xslext));
+        xslt.setOut(new File(todir, outputname + "." + xslext));
 
-        xslt.setStyle(_xslFile);
+        xslt.setStyle(xslFile);
 
         XSLTProcess.Param param = xslt.createParam();
         param.setName("extension");
-        param.setExpression(_xslext);
+        param.setExpression(xslext);
 
         // add the provided XSLT parameters
-        for (Iterator it = _params.iterator(); it.hasNext();) {
+        for (Iterator it = params.iterator(); it.hasNext();) {
             param = (XSLTProcess.Param) it.next();
             XSLTProcess.Param realParam = xslt.createParam();
             realParam.setName(param.getName());
@@ -196,127 +198,127 @@ public class IvyRepositoryReport extends IvyTask {
 
         String resolveId = ResolveOptions.getDefaultResolveId(new ModuleId(organisation, module));
         xslt.setIn(cache.getConfigurationResolveReportInCache(resolveId, "default"));
-        xslt.setOut(new File(_todir, _outputname + "." + ext));
+        xslt.setOut(new File(todir, outputname + "." + ext));
         xslt.setBasedir(cache.getCache());
         xslt.setStyle(style);
         xslt.execute();
     }
 
     public File getTodir() {
-        return _todir;
+        return todir;
     }
 
     public void setTodir(File todir) {
-        _todir = todir;
+        this.todir = todir;
     }
 
     public boolean isGraph() {
-        return _graph;
+        return graph;
     }
 
     public void setGraph(boolean graph) {
-        _graph = graph;
+        this.graph = graph;
     }
 
     public String getXslfile() {
-        return _xslFile;
+        return xslFile;
     }
 
     public void setXslfile(String xslFile) {
-        _xslFile = xslFile;
+        this.xslFile = xslFile;
     }
 
     public boolean isXml() {
-        return _xml;
+        return xml;
     }
 
     public void setXml(boolean xml) {
-        _xml = xml;
+        this.xml = xml;
     }
 
     public boolean isXsl() {
-        return _xsl;
+        return xsl;
     }
 
     public void setXsl(boolean xsl) {
-        _xsl = xsl;
+        this.xsl = xsl;
     }
 
     public String getXslext() {
-        return _xslext;
+        return xslext;
     }
 
     public void setXslext(String xslext) {
-        _xslext = xslext;
+        this.xslext = xslext;
     }
 
     public XSLTProcess.Param createParam() {
         XSLTProcess.Param result = new XSLTProcess.Param();
-        _params.add(result);
+        params.add(result);
         return result;
     }
 
     public String getOutputname() {
-        return _outputname;
+        return outputname;
     }
 
     public void setOutputname(String outputpattern) {
-        _outputname = outputpattern;
+        outputname = outputpattern;
     }
 
     public File getCache() {
-        return _cache;
+        return cache;
     }
 
     public void setCache(File cache) {
-        _cache = cache;
+        this.cache = cache;
     }
 
     public String getMatcher() {
-        return _matcher;
+        return matcher;
     }
 
     public void setMatcher(String matcher) {
-        _matcher = matcher;
+        this.matcher = matcher;
     }
 
     public String getModule() {
-        return _module;
+        return module;
     }
 
     public void setModule(String module) {
-        _module = module;
+        this.module = module;
     }
 
     public String getOrganisation() {
-        return _organisation;
+        return organisation;
     }
 
     public void setOrganisation(String organisation) {
-        _organisation = organisation;
+        this.organisation = organisation;
     }
 
     public String getRevision() {
-        return _revision;
+        return revision;
     }
 
     public void setRevision(String revision) {
-        _revision = revision;
+        this.revision = revision;
     }
 
     public String getBranch() {
-        return _branch;
+        return branch;
     }
 
     public void setBranch(String branch) {
-        _branch = branch;
+        this.branch = branch;
     }
 
     public boolean isDot() {
-        return _dot;
+        return dot;
     }
 
     public void setDot(boolean dot) {
-        _dot = dot;
+        this.dot = dot;
     }
 }

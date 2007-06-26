@@ -37,94 +37,94 @@ import org.apache.tools.ant.Project;
  * This task allow to call the Ivy dependency resolution from ant.
  */
 public class IvyResolve extends IvyTask {
-    private File _file = null;
+    private File file = null;
 
-    private String _conf = null;
+    private String conf = null;
 
-    private File _cache = null;
+    private File cache = null;
 
-    private String _organisation = null;
+    private String organisation = null;
 
-    private String _module = null;
+    private String module = null;
 
-    private String _revision = null;
+    private String revision = null;
 
-    private String _pubdate = null;
+    private String pubdate = null;
 
-    private boolean _inline = false;
+    private boolean inline = false;
 
-    private boolean _haltOnFailure = true;
+    private boolean haltOnFailure = true;
 
-    private boolean _useCacheOnly = false;
+    private boolean useCacheOnly = false;
 
-    private String _type = null;
+    private String type = null;
 
-    private boolean _transitive = true;
+    private boolean transitive = true;
 
-    private boolean _changing = false;
+    private boolean changing = false;
 
-    private Boolean _keep = null;
+    private Boolean keep = null;
 
-    private String _failureProperty = null;
+    private String failureProperty = null;
 
-    private boolean _useOrigin = false;
+    private boolean useOrigin = false;
 
-    private String _resolveId = null;
+    private String resolveId = null;
 
     public boolean isUseOrigin() {
-        return _useOrigin;
+        return useOrigin;
     }
 
     public void setUseOrigin(boolean useOrigin) {
-        _useOrigin = useOrigin;
+        this.useOrigin = useOrigin;
     }
 
     public String getDate() {
-        return _pubdate;
+        return pubdate;
     }
 
     public void setDate(String pubdate) {
-        _pubdate = pubdate;
+        this.pubdate = pubdate;
     }
 
     public String getRevision() {
-        return _revision;
+        return revision;
     }
 
     public void setRevision(String revision) {
-        _revision = revision;
+        this.revision = revision;
     }
 
     public File getCache() {
-        return _cache;
+        return cache;
     }
 
     public void setCache(File cache) {
-        _cache = cache;
+        this.cache = cache;
     }
 
     public String getConf() {
-        return _conf;
+        return conf;
     }
 
     public void setConf(String conf) {
-        _conf = conf;
+        this.conf = conf;
     }
 
     public File getFile() {
-        return _file;
+        return file;
     }
 
     public void setFile(File file) {
-        _file = file;
+        this.file = file;
     }
 
     public boolean isHaltonfailure() {
-        return _haltOnFailure;
+        return haltOnFailure;
     }
 
     public void setHaltonfailure(boolean haltOnFailure) {
-        _haltOnFailure = haltOnFailure;
+        this.haltOnFailure = haltOnFailure;
     }
 
     public void setShowprogress(boolean show) {
@@ -132,19 +132,19 @@ public class IvyResolve extends IvyTask {
     }
 
     public boolean isUseCacheOnly() {
-        return _useCacheOnly;
+        return useCacheOnly;
     }
 
     public void setUseCacheOnly(boolean useCacheOnly) {
-        _useCacheOnly = useCacheOnly;
+        this.useCacheOnly = useCacheOnly;
     }
 
     public String getType() {
-        return _type;
+        return type;
     }
 
     public void setType(String type) {
-        _type = type;
+        this.type = type;
     }
 
     /**
@@ -157,64 +157,64 @@ public class IvyResolve extends IvyTask {
     }
 
     public void setFailureProperty(String failureProperty) {
-        _failureProperty = failureProperty;
+        this.failureProperty = failureProperty;
     }
 
     public String getFailureProperty() {
-        return _failureProperty;
+        return failureProperty;
     }
 
     public void doExecute() throws BuildException {
         Ivy ivy = getIvyInstance();
         IvySettings settings = ivy.getSettings();
         try {
-            _conf = getProperty(_conf, settings, "ivy.configurations");
-            _type = getProperty(_type, settings, "ivy.resolve.default.type.filter");
-            if (_cache == null) {
-                _cache = settings.getDefaultCache();
+            conf = getProperty(conf, settings, "ivy.configurations");
+            type = getProperty(type, settings, "ivy.resolve.default.type.filter");
+            if (cache == null) {
+                cache = settings.getDefaultCache();
             }
-            String[] confs = splitConfs(_conf);
+            String[] confs = splitConfs(conf);
 
             ResolveReport report;
             if (isInline()) {
-                if (_organisation == null) {
+                if (organisation == null) {
                     throw new BuildException("'organisation' is required when using inline mode");
                 }
-                if (_module == null) {
+                if (module == null) {
                     throw new BuildException("'module' is required when using inline mode");
                 }
-                if (_file != null) {
+                if (file != null) {
                     throw new BuildException("'file' not allowed when using inline mode");
                 }
-                if (_revision == null) {
-                    _revision = "latest.integration";
+                if (revision == null) {
+                    revision = "latest.integration";
                 }
                 report = ivy.resolve(ModuleRevisionId
-                        .newInstance(_organisation, _module, _revision), getResolveOptions(confs,
-                    settings), _changing);
+                        .newInstance(organisation, module, revision), getResolveOptions(confs,
+                    settings), changing);
 
             } else {
-                if (_organisation != null) {
+                if (organisation != null) {
                     throw new BuildException(
                             "'organisation' not allowed when not using 'org' attribute");
                 }
-                if (_module != null) {
+                if (module != null) {
                     throw new BuildException("'module' not allowed when not using 'org' attribute");
                 }
-                if (_file == null) {
-                    _file = getProject().resolveFile(getProperty(settings, "ivy.dep.file"));
+                if (file == null) {
+                    file = getProject().resolveFile(getProperty(settings, "ivy.dep.file"));
                 }
-                report = ivy.resolve(_file.toURL(), getResolveOptions(confs, settings));
+                report = ivy.resolve(file.toURL(), getResolveOptions(confs, settings));
             }
             if (report.hasError()) {
-                if (_failureProperty != null) {
-                    getProject().setProperty(_failureProperty, "true");
+                if (failureProperty != null) {
+                    getProject().setProperty(failureProperty, "true");
                 }
                 if (isHaltonfailure()) {
                     throw new BuildException("resolve failed - see output for details");
                 }
             }
-            setResolved(report, _resolveId, isKeep());
+            setResolved(report, resolveId, isKeep());
 
             if (isKeep()) {
                 ModuleDescriptor md = report.getModuleDescriptor();
@@ -223,66 +223,66 @@ public class IvyResolve extends IvyTask {
                 // call to the other
                 getProject().setProperty("ivy.organisation",
                     md.getModuleRevisionId().getOrganisation());
-                settings
-                        .setVariable("ivy.organisation", md.getModuleRevisionId().getOrganisation());
+                settings.setVariable(
+                    "ivy.organisation", md.getModuleRevisionId().getOrganisation());
                 getProject().setProperty("ivy.module", md.getModuleRevisionId().getName());
                 settings.setVariable("ivy.module", md.getModuleRevisionId().getName());
                 getProject().setProperty("ivy.revision",
                     md.getResolvedModuleRevisionId().getRevision());
-                settings
-                        .setVariable("ivy.revision", md.getResolvedModuleRevisionId().getRevision());
+                settings.setVariable(
+                    "ivy.revision", md.getResolvedModuleRevisionId().getRevision());
                 boolean hasChanged = report.hasChanged();
                 getProject().setProperty("ivy.deps.changed", String.valueOf(hasChanged));
                 settings.setVariable("ivy.deps.changed", String.valueOf(hasChanged));
-                if (_conf.trim().equals("*")) {
+                if (conf.trim().equals("*")) {
                     getProject().setProperty("ivy.resolved.configurations",
                         mergeConfs(md.getConfigurationsNames()));
                     settings.setVariable("ivy.resolved.configurations", mergeConfs(md
                             .getConfigurationsNames()));
                 } else {
-                    getProject().setProperty("ivy.resolved.configurations", _conf);
-                    settings.setVariable("ivy.resolved.configurations", _conf);
+                    getProject().setProperty("ivy.resolved.configurations", conf);
+                    settings.setVariable("ivy.resolved.configurations", conf);
                 }
-                if (_file != null) {
-                    getProject().setProperty("ivy.resolved.file", _file.getAbsolutePath());
-                    settings.setVariable("ivy.resolved.file", _file.getAbsolutePath());
+                if (file != null) {
+                    getProject().setProperty("ivy.resolved.file", file.getAbsolutePath());
+                    settings.setVariable("ivy.resolved.file", file.getAbsolutePath());
                 }
-                if (_resolveId != null) {
-                    getProject().setProperty("ivy.organisation." + _resolveId,
+                if (resolveId != null) {
+                    getProject().setProperty("ivy.organisation." + resolveId,
                         md.getModuleRevisionId().getOrganisation());
-                    settings.setVariable("ivy.organisation." + _resolveId, md.getModuleRevisionId()
+                    settings.setVariable("ivy.organisation." + resolveId, md.getModuleRevisionId()
                             .getOrganisation());
-                    getProject().setProperty("ivy.module." + _resolveId,
+                    getProject().setProperty("ivy.module." + resolveId,
                         md.getModuleRevisionId().getName());
-                    settings.setVariable("ivy.module." + _resolveId, md.getModuleRevisionId()
+                    settings.setVariable("ivy.module." + resolveId, md.getModuleRevisionId()
                             .getName());
-                    getProject().setProperty("ivy.revision." + _resolveId,
+                    getProject().setProperty("ivy.revision." + resolveId,
                         md.getResolvedModuleRevisionId().getRevision());
-                    settings.setVariable("ivy.revision." + _resolveId, md
+                    settings.setVariable("ivy.revision." + resolveId, md
                             .getResolvedModuleRevisionId().getRevision());
-                    getProject().setProperty("ivy.deps.changed." + _resolveId,
+                    getProject().setProperty("ivy.deps.changed." + resolveId,
                         String.valueOf(hasChanged));
-                    settings.setVariable("ivy.deps.changed." + _resolveId, String
+                    settings.setVariable("ivy.deps.changed." + resolveId, String
                             .valueOf(hasChanged));
-                    if (_conf.trim().equals("*")) {
-                        getProject().setProperty("ivy.resolved.configurations." + _resolveId,
+                    if (conf.trim().equals("*")) {
+                        getProject().setProperty("ivy.resolved.configurations." + resolveId,
                             mergeConfs(md.getConfigurationsNames()));
-                        settings.setVariable("ivy.resolved.configurations." + _resolveId,
+                        settings.setVariable("ivy.resolved.configurations." + resolveId,
                             mergeConfs(md.getConfigurationsNames()));
                     } else {
                         getProject()
-                                .setProperty("ivy.resolved.configurations." + _resolveId, _conf);
-                        settings.setVariable("ivy.resolved.configurations." + _resolveId, _conf);
+                                .setProperty("ivy.resolved.configurations." + resolveId, conf);
+                        settings.setVariable("ivy.resolved.configurations." + resolveId, conf);
                     }
-                    getProject().setProperty("ivy.resolved.file." + _resolveId,
-                        _file.getAbsolutePath());
+                    getProject().setProperty("ivy.resolved.file." + resolveId,
+                        file.getAbsolutePath());
                     settings
-                            .setVariable("ivy.resolved.file." + _resolveId, _file.getAbsolutePath());
+                            .setVariable("ivy.resolved.file." + resolveId, file.getAbsolutePath());
                 }
             }
         } catch (MalformedURLException e) {
             throw new BuildException(
-                    "unable to convert given ivy file to url: " + _file + ": " + e, e);
+                    "unable to convert given ivy file to url: " + file + ": " + e, e);
         } catch (ParseException e) {
             log(e.getMessage(), Project.MSG_ERR);
             throw new BuildException("syntax errors in ivy file: " + e, e);
@@ -293,65 +293,65 @@ public class IvyResolve extends IvyTask {
 
     private ResolveOptions getResolveOptions(String[] confs, IvySettings settings) {
         return new ResolveOptions().setConfs(confs).setValidate(doValidate(settings))
-                .setArtifactFilter(FilterHelper.getArtifactTypeFilter(_type))
-                .setRevision(_revision).setCache(CacheManager.getInstance(settings, _cache))
-                .setDate(getPubDate(_pubdate, null)).setUseCacheOnly(_useCacheOnly).setUseOrigin(
-                    _useOrigin).setTransitive(_transitive).setResolveId(_resolveId);
+                .setArtifactFilter(FilterHelper.getArtifactTypeFilter(type))
+                .setRevision(revision).setCache(CacheManager.getInstance(settings, cache))
+                .setDate(getPubDate(pubdate, null)).setUseCacheOnly(useCacheOnly).setUseOrigin(
+                    useOrigin).setTransitive(transitive).setResolveId(resolveId);
     }
 
     public String getModule() {
-        return _module;
+        return module;
     }
 
     public void setModule(String module) {
-        _module = module;
+        this.module = module;
     }
 
     public String getOrganisation() {
-        return _organisation;
+        return organisation;
     }
 
     public void setOrganisation(String organisation) {
-        _organisation = organisation;
+        this.organisation = organisation;
     }
 
     public boolean isTransitive() {
-        return _transitive;
+        return transitive;
     }
 
     public void setTransitive(boolean transitive) {
-        _transitive = transitive;
+        this.transitive = transitive;
     }
 
     public boolean isChanging() {
-        return _changing;
+        return changing;
     }
 
     public void setChanging(boolean changing) {
-        _changing = changing;
+        this.changing = changing;
     }
 
     public boolean isKeep() {
-        return _keep == null ? _organisation == null : _keep.booleanValue();
+        return keep == null ? organisation == null : keep.booleanValue();
     }
 
     public void setKeep(boolean keep) {
-        _keep = Boolean.valueOf(keep);
+        this.keep = Boolean.valueOf(keep);
     }
 
     public boolean isInline() {
-        return _inline;
+        return inline;
     }
 
     public void setInline(boolean inline) {
-        _inline = inline;
+        this.inline = inline;
     }
 
     public String getResolveId() {
-        return _resolveId;
+        return resolveId;
     }
 
     public void setResolveId(String resolveId) {
-        _resolveId = resolveId;
+        this.resolveId = resolveId;
     }
 }

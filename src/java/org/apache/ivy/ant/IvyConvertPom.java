@@ -32,47 +32,47 @@ import org.apache.tools.ant.Project;
  * Convert a pom to an ivy file
  */
 public class IvyConvertPom extends IvyTask {
-    private File _pomFile = null;
+    private File pomFile = null;
 
-    private File _ivyFile = null;
+    private File ivyFile = null;
 
     public File getPomFile() {
-        return _pomFile;
+        return pomFile;
     }
 
     public void setPomFile(File file) {
-        _pomFile = file;
+        pomFile = file;
     }
 
     public File getIvyFile() {
-        return _ivyFile;
+        return ivyFile;
     }
 
     public void setIvyFile(File ivyFile) {
-        _ivyFile = ivyFile;
+        this.ivyFile = ivyFile;
     }
 
     public void doExecute() throws BuildException {
         try {
-            if (_pomFile == null) {
+            if (pomFile == null) {
                 throw new BuildException("source pom file is required for convertpom task");
             }
-            if (_ivyFile == null) {
+            if (ivyFile == null) {
                 throw new BuildException("destination ivy file is required for convertpom task");
             }
             ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(
-                new IvySettings(), _pomFile.toURL(), false);
-            PomModuleDescriptorParser.getInstance().toIvyFile(_pomFile.toURL().openStream(),
-                new URLResource(_pomFile.toURL()), getIvyFile(), md);
+                new IvySettings(), pomFile.toURL(), false);
+            PomModuleDescriptorParser.getInstance().toIvyFile(pomFile.toURL().openStream(),
+                new URLResource(pomFile.toURL()), getIvyFile(), md);
         } catch (MalformedURLException e) {
-            throw new BuildException("unable to convert given pom file to url: " + _pomFile + ": "
+            throw new BuildException("unable to convert given pom file to url: " + pomFile + ": "
                     + e, e);
         } catch (ParseException e) {
             log(e.getMessage(), Project.MSG_ERR);
-            throw new BuildException("syntax errors in pom file " + _pomFile + ": " + e, e);
+            throw new BuildException("syntax errors in pom file " + pomFile + ": " + e, e);
         } catch (Exception e) {
             throw new BuildException("impossible convert given pom file to ivy file: " + e
-                    + " from=" + _pomFile + " to=" + _ivyFile, e);
+                    + " from=" + pomFile + " to=" + ivyFile, e);
         }
     }
 }

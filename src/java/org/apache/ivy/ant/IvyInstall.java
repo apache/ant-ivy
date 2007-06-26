@@ -31,63 +31,69 @@ import org.apache.tools.ant.BuildException;
  * Allow to install a module or a set of module from repository to another one.
  */
 public class IvyInstall extends IvyTask {
-    private String _organisation;
+    private String organisation;
 
-    private String _module;
+    private String module;
 
-    private String _revision;
+    private String revision;
 
-    private File _cache;
+    private File cache;
 
-    private boolean _overwrite = false;
+    private boolean overwrite = false;
 
-    private String _from;
+    private String from;
 
-    private String _to;
+    private String to;
 
-    private boolean _transitive;
+    private boolean transitive;
 
-    private String _type;
+    private String type;
 
-    private String _matcher = PatternMatcher.EXACT;
+    private String matcher = PatternMatcher.EXACT;
 
-    private boolean _haltOnFailure = true;
+    private boolean haltOnFailure = true;
 
     public void doExecute() throws BuildException {
         Ivy ivy = getIvyInstance();
         IvySettings settings = ivy.getSettings();
-        if (_cache == null) {
-            _cache = settings.getDefaultCache();
+        if (cache == null) {
+            cache = settings.getDefaultCache();
         }
-        if (_organisation == null) {
+        if (organisation == null) {
             throw new BuildException(
-                    "no organisation provided for ivy publish task: It can either be set explicitely via the attribute 'organisation' or via 'ivy.organisation' property or a prior call to <resolve/>");
+                    "no organisation provided for ivy publish task: "
+                    + "It can either be set explicitely via the attribute 'organisation' "
+                    + "or via 'ivy.organisation' property or a prior call to <resolve/>");
         }
-        if (_module == null && PatternMatcher.EXACT.equals(_matcher)) {
+        if (module == null && PatternMatcher.EXACT.equals(matcher)) {
             throw new BuildException(
-                    "no module name provided for ivy publish task: It can either be set explicitely via the attribute 'module' or via 'ivy.module' property or a prior call to <resolve/>");
-        } else if (_module == null && !PatternMatcher.EXACT.equals(_matcher)) {
-            _module = PatternMatcher.ANY_EXPRESSION;
+                    "no module name provided for ivy publish task: "
+                    + "It can either be set explicitely via the attribute 'module' "
+                    + "or via 'ivy.module' property or a prior call to <resolve/>");
+        } else if (module == null && !PatternMatcher.EXACT.equals(matcher)) {
+            module = PatternMatcher.ANY_EXPRESSION;
         }
-        if (_revision == null && PatternMatcher.EXACT.equals(_matcher)) {
+        if (revision == null && PatternMatcher.EXACT.equals(matcher)) {
             throw new BuildException(
-                    "no module revision provided for ivy publish task: It can either be set explicitely via the attribute 'revision' or via 'ivy.revision' property or a prior call to <resolve/>");
-        } else if (_revision == null && !PatternMatcher.EXACT.equals(_matcher)) {
-            _revision = PatternMatcher.ANY_EXPRESSION;
+                    "no module revision provided for ivy publish task: "
+                    + "It can either be set explicitely via the attribute 'revision' "
+                    + "or via 'ivy.revision' property or a prior call to <resolve/>");
+        } else if (revision == null && !PatternMatcher.EXACT.equals(matcher)) {
+            revision = PatternMatcher.ANY_EXPRESSION;
         }
-        if (_from == null) {
+        if (from == null) {
             throw new BuildException(
                     "no from resolver name: please provide it through parameter 'from'");
         }
-        if (_to == null) {
+        if (to == null) {
             throw new BuildException(
                     "no to resolver name: please provide it through parameter 'to'");
         }
-        ModuleRevisionId mrid = ModuleRevisionId.newInstance(_organisation, _module, _revision);
+        ModuleRevisionId mrid = ModuleRevisionId.newInstance(organisation, module, revision);
         ResolveReport report;
         try {
-            report = ivy.install(mrid, _from, _to, _transitive, doValidate(settings), _overwrite,
-                FilterHelper.getArtifactTypeFilter(_type), _cache, _matcher);
+            report = ivy.install(mrid, from, to, transitive, doValidate(settings), overwrite,
+                FilterHelper.getArtifactTypeFilter(type), cache, matcher);
         } catch (Exception e) {
             throw new BuildException("impossible to install " + mrid + ": " + e, e);
         }
@@ -99,90 +105,90 @@ public class IvyInstall extends IvyTask {
     }
 
     public boolean isHaltonfailure() {
-        return _haltOnFailure;
+        return haltOnFailure;
     }
 
     public void setHaltonfailure(boolean haltOnFailure) {
-        _haltOnFailure = haltOnFailure;
+        this.haltOnFailure = haltOnFailure;
     }
 
     public File getCache() {
-        return _cache;
+        return cache;
     }
 
     public void setCache(File cache) {
-        _cache = cache;
+        this.cache = cache;
     }
 
     public String getModule() {
-        return _module;
+        return module;
     }
 
     public void setModule(String module) {
-        _module = module;
+        this.module = module;
     }
 
     public String getOrganisation() {
-        return _organisation;
+        return organisation;
     }
 
     public void setOrganisation(String organisation) {
-        _organisation = organisation;
+        this.organisation = organisation;
     }
 
     public String getRevision() {
-        return _revision;
+        return revision;
     }
 
     public void setRevision(String revision) {
-        _revision = revision;
+        this.revision = revision;
     }
 
     public boolean isOverwrite() {
-        return _overwrite;
+        return overwrite;
     }
 
     public void setOverwrite(boolean overwrite) {
-        _overwrite = overwrite;
+        this.overwrite = overwrite;
     }
 
     public String getFrom() {
-        return _from;
+        return from;
     }
 
     public void setFrom(String from) {
-        _from = from;
+        this.from = from;
     }
 
     public String getTo() {
-        return _to;
+        return to;
     }
 
     public void setTo(String to) {
-        _to = to;
+        this.to = to;
     }
 
     public boolean isTransitive() {
-        return _transitive;
+        return transitive;
     }
 
     public void setTransitive(boolean transitive) {
-        _transitive = transitive;
+        this.transitive = transitive;
     }
 
     public String getType() {
-        return _type;
+        return type;
     }
 
     public void setType(String type) {
-        _type = type;
+        this.type = type;
     }
 
     public String getMatcher() {
-        return _matcher;
+        return matcher;
     }
 
     public void setMatcher(String matcher) {
-        _matcher = matcher;
+        this.matcher = matcher;
     }
 }

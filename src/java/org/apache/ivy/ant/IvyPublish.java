@@ -42,62 +42,62 @@ import org.apache.tools.ant.BuildException;
  * This task allow to publish a module revision to an Ivy repository.
  */
 public class IvyPublish extends IvyTask {
-    private String _organisation;
+    private String organisation;
 
-    private String _module;
+    private String module;
 
-    private String _revision;
+    private String revision;
 
-    private String _pubRevision;
+    private String pubRevision;
 
-    private File _cache;
+    private File cache;
 
-    private String _srcivypattern;
+    private String srcivypattern;
 
-    private String _status;
+    private String status;
 
-    private String _conf = null;
+    private String conf = null;
 
-    private String _pubdate;
+    private String pubdate;
 
-    private String _deliverTarget;
+    private String deliverTarget;
 
-    private String _publishResolverName = null;
+    private String publishResolverName = null;
 
-    private List _artifactspattern = new ArrayList();
+    private List artifactspattern = new ArrayList();
 
-    private File _deliveryList;
+    private File deliveryList;
 
-    private boolean _publishivy = true;
+    private boolean publishivy = true;
 
-    private boolean _warnonmissing = true;
+    private boolean warnonmissing = true;
 
-    private boolean _haltonmissing = true;
+    private boolean haltonmissing = true;
 
-    private boolean _overwrite = false;
+    private boolean overwrite = false;
 
-    private boolean _update = false;
+    private boolean update = false;
 
-    private boolean _replacedynamicrev = true;
+    private boolean replacedynamicrev = true;
 
-    private boolean _forcedeliver;
+    private boolean forcedeliver;
 
-    private Collection _artifacts = new ArrayList();
+    private Collection artifacts = new ArrayList();
 
     public File getCache() {
-        return _cache;
+        return cache;
     }
 
     public void setCache(File cache) {
-        _cache = cache;
+        this.cache = cache;
     }
 
     public String getSrcivypattern() {
-        return _srcivypattern;
+        return srcivypattern;
     }
 
     public void setSrcivypattern(String destivypattern) {
-        _srcivypattern = destivypattern;
+        srcivypattern = destivypattern;
     }
 
     /**
@@ -105,7 +105,7 @@ public class IvyPublish extends IvyTask {
      * @return
      */
     public String getDeliverivypattern() {
-        return _srcivypattern;
+        return srcivypattern;
     }
 
     /**
@@ -113,170 +113,178 @@ public class IvyPublish extends IvyTask {
      * @return
      */
     public void setDeliverivypattern(String destivypattern) {
-        _srcivypattern = destivypattern;
+        srcivypattern = destivypattern;
     }
 
     public String getModule() {
-        return _module;
+        return module;
     }
 
     public void setModule(String module) {
-        _module = module;
+        this.module = module;
     }
 
     public String getOrganisation() {
-        return _organisation;
+        return organisation;
     }
 
     public void setOrganisation(String organisation) {
-        _organisation = organisation;
+        this.organisation = organisation;
     }
 
     public String getPubdate() {
-        return _pubdate;
+        return pubdate;
     }
 
     public void setPubdate(String pubdate) {
-        _pubdate = pubdate;
+        this.pubdate = pubdate;
     }
 
     public String getPubrevision() {
-        return _pubRevision;
+        return pubRevision;
     }
 
     public void setPubrevision(String pubRevision) {
-        _pubRevision = pubRevision;
+        this.pubRevision = pubRevision;
     }
 
     public String getRevision() {
-        return _revision;
+        return revision;
     }
 
     public void setRevision(String revision) {
-        _revision = revision;
+        this.revision = revision;
     }
 
     public String getStatus() {
-        return _status;
+        return status;
     }
 
     public void setStatus(String status) {
-        _status = status;
+        this.status = status;
     }
 
     public void setConf(String conf) {
-        _conf = conf;
+        this.conf = conf;
     }
 
     public void setDelivertarget(String deliverTarget) {
-        _deliverTarget = deliverTarget;
+        this.deliverTarget = deliverTarget;
     }
 
     public void setDeliveryList(File deliveryList) {
-        _deliveryList = deliveryList;
+        this.deliveryList = deliveryList;
     }
 
     public String getResolver() {
-        return _publishResolverName;
+        return publishResolverName;
     }
 
     public void setResolver(String publishResolverName) {
-        _publishResolverName = publishResolverName;
+        this.publishResolverName = publishResolverName;
     }
 
     public String getArtifactspattern() {
-        return (String) (_artifactspattern.isEmpty() ? null : _artifactspattern.get(0));
+        return (String) (artifactspattern.isEmpty() ? null : artifactspattern.get(0));
     }
 
     public void setArtifactspattern(String artifactsPattern) {
-        _artifactspattern.clear();
-        _artifactspattern.add(artifactsPattern);
+        artifactspattern.clear();
+        artifactspattern.add(artifactsPattern);
     }
 
     public void addArtifactspattern(String artifactsPattern) {
-        _artifactspattern.add(artifactsPattern);
+        artifactspattern.add(artifactsPattern);
     }
 
     public void addConfiguredArtifacts(ArtifactsPattern p) {
-        _artifactspattern.add(p.getPattern());
+        artifactspattern.add(p.getPattern());
     }
 
     public boolean isReplacedynamicrev() {
-        return _replacedynamicrev;
+        return replacedynamicrev;
     }
 
     public void setReplacedynamicrev(boolean replacedynamicrev) {
-        _replacedynamicrev = replacedynamicrev;
+        this.replacedynamicrev = replacedynamicrev;
     }
 
     public void doExecute() throws BuildException {
         Ivy ivy = getIvyInstance();
         IvySettings settings = ivy.getSettings();
 
-        _organisation = getProperty(_organisation, settings, "ivy.organisation");
-        _module = getProperty(_module, settings, "ivy.module");
-        _revision = getProperty(_revision, settings, "ivy.revision");
-        _pubRevision = getProperty(_pubRevision, settings, "ivy.deliver.revision");
-        if (_cache == null) {
-            _cache = settings.getDefaultCache();
+        organisation = getProperty(organisation, settings, "ivy.organisation");
+        module = getProperty(module, settings, "ivy.module");
+        revision = getProperty(revision, settings, "ivy.revision");
+        pubRevision = getProperty(pubRevision, settings, "ivy.deliver.revision");
+        if (cache == null) {
+            cache = settings.getDefaultCache();
         }
-        if (_artifactspattern.isEmpty()) {
+        if (artifactspattern.isEmpty()) {
             String p = getProperty(null, settings, "ivy.publish.src.artifacts.pattern");
             if (p != null) {
-                _artifactspattern.add(p);
+                artifactspattern.add(p);
             }
         }
-        if (_srcivypattern == null) {
-            _srcivypattern = getArtifactspattern();
+        if (srcivypattern == null) {
+            srcivypattern = getArtifactspattern();
         }
-        _status = getProperty(_status, settings, "ivy.status");
-        if (_organisation == null) {
+        status = getProperty(status, settings, "ivy.status");
+        if (organisation == null) {
             throw new BuildException(
-                    "no organisation provided for ivy publish task: It can either be set explicitely via the attribute 'organisation' or via 'ivy.organisation' property or a prior call to <resolve/>");
+                    "no organisation provided for ivy publish task: "
+                    + "It can either be set explicitely via the attribute 'organisation' "
+                    + "or via 'ivy.organisation' property or a prior call to <resolve/>");
         }
-        if (_module == null) {
+        if (module == null) {
             throw new BuildException(
-                    "no module name provided for ivy publish task: It can either be set explicitely via the attribute 'module' or via 'ivy.module' property or a prior call to <resolve/>");
+                    "no module name provided for ivy publish task: "
+                    + "It can either be set explicitely via the attribute 'module' "
+                    + "or via 'ivy.module' property or a prior call to <resolve/>");
         }
-        if (_revision == null) {
+        if (revision == null) {
             throw new BuildException(
-                    "no module revision provided for ivy publish task: It can either be set explicitely via the attribute 'revision' or via 'ivy.revision' property or a prior call to <resolve/>");
+                    "no module revision provided for ivy publish task: "
+                    + "It can either be set explicitely via the attribute 'revision' "
+                    + "or via 'ivy.revision' property or a prior call to <resolve/>");
         }
-        if (_artifactspattern.isEmpty()) {
+        if (artifactspattern.isEmpty()) {
             throw new BuildException(
-                    "no artifacts pattern: either provide it through parameter or through ivy.publish.src.artifacts.pattern property");
+                    "no artifacts pattern: either provide it through parameter or "
+                    + "through ivy.publish.src.artifacts.pattern property");
         }
-        if (_publishResolverName == null) {
+        if (publishResolverName == null) {
             throw new BuildException(
                     "no publish deliver name: please provide it through parameter 'resolver'");
         }
-        if ("working".equals(_revision)) {
-            _revision = Ivy.getWorkingRevision();
+        if ("working".equals(revision)) {
+            revision = Ivy.getWorkingRevision();
         }
-        Date pubdate = getPubDate(_pubdate, new Date());
-        if (_pubRevision == null) {
-            if (_revision.startsWith("working@")) {
-                _pubRevision = Ivy.DATE_FORMAT.format(pubdate);
+        Date pubdate = getPubDate(this.pubdate, new Date());
+        if (pubRevision == null) {
+            if (revision.startsWith("working@")) {
+                pubRevision = Ivy.DATE_FORMAT.format(pubdate);
             } else {
-                _pubRevision = _revision;
+                pubRevision = revision;
             }
         }
-        if (_status == null) {
+        if (status == null) {
             throw new BuildException(
-                    "no status provided: either provide it as parameter or through the ivy.status.default property");
+                    "no status provided: either provide it as parameter "
+                    + "or through the ivy.status.default property");
         }
-        ModuleRevisionId mrid = ModuleRevisionId.newInstance(_organisation, _module, _revision);
+        ModuleRevisionId mrid = ModuleRevisionId.newInstance(organisation, module, revision);
         try {
-            File ivyFile = new File(IvyPatternHelper.substitute(_srcivypattern, _organisation,
-                _module, _pubRevision, "ivy", "ivy", "xml"));
-            if (_publishivy && (!ivyFile.exists() || _forcedeliver)) {
+            File ivyFile = new File(IvyPatternHelper.substitute(srcivypattern, organisation,
+                module, pubRevision, "ivy", "ivy", "xml"));
+            if (publishivy && (!ivyFile.exists() || forcedeliver)) {
                 IvyDeliver deliver = new IvyDeliver();
                 deliver.setSettingsRef(getSettingsRef());
                 deliver.setProject(getProject());
                 deliver.setCache(getCache());
                 deliver.setDeliverpattern(getSrcivypattern());
-                deliver.setDelivertarget(_deliverTarget);
-                deliver.setDeliveryList(_deliveryList);
+                deliver.setDelivertarget(deliverTarget);
+                deliver.setDeliveryList(deliveryList);
                 deliver.setModule(getModule());
                 deliver.setOrganisation(getOrganisation());
                 deliver.setPubdate(Ivy.DATE_FORMAT.format(pubdate));
@@ -285,27 +293,28 @@ public class IvyPublish extends IvyTask {
                 deliver.setStatus(getStatus());
                 deliver.setValidate(doValidate(settings));
                 deliver.setReplacedynamicrev(isReplacedynamicrev());
-                deliver.setConf(_conf);
+                deliver.setConf(conf);
 
                 deliver.execute();
             }
 
-            Collection missing = ivy.publish(mrid, _artifactspattern, _publishResolverName,
+            Collection missing = ivy.publish(mrid, artifactspattern, publishResolverName,
                 new PublishOptions().setPubrevision(getPubrevision()).setCache(
-                    CacheManager.getInstance(settings, _cache)).setSrcIvyPattern(
-                    _publishivy ? _srcivypattern : null).setStatus(getStatus()).setPubdate(pubdate)
+                    CacheManager.getInstance(settings, cache)).setSrcIvyPattern(
+                    publishivy ? srcivypattern : null).setStatus(getStatus()).setPubdate(pubdate)
                         .setExtraArtifacts(
-                            (Artifact[]) _artifacts.toArray(new Artifact[_artifacts.size()]))
-                        .setValidate(doValidate(settings)).setOverwrite(_overwrite).setUpdate(
-                            _update).setConfs(splitConfs(_conf)));
-            if (_warnonmissing) {
+                            (Artifact[]) artifacts.toArray(new Artifact[artifacts.size()]))
+                        .setValidate(doValidate(settings)).setOverwrite(overwrite).setUpdate(
+                            update).setConfs(splitConfs(conf)));
+            if (warnonmissing) {
                 for (Iterator iter = missing.iterator(); iter.hasNext();) {
                     Artifact artifact = (Artifact) iter.next();
                     Message.warn("missing artifact: " + artifact);
                 }
             }
-            if (_haltonmissing && !missing.isEmpty()) {
-                throw new BuildException("missing published artifacts for " + mrid + ": " + missing);
+            if (haltonmissing && !missing.isEmpty()) {
+                throw new BuildException(
+                    "missing published artifacts for " + mrid + ": " + missing);
             }
 
         } catch (Exception e) {
@@ -315,71 +324,71 @@ public class IvyPublish extends IvyTask {
 
     public PublishArtifact createArtifact() {
         PublishArtifact art = new PublishArtifact();
-        _artifacts.add(art);
+        artifacts.add(art);
         return art;
     }
 
     public boolean isPublishivy() {
-        return _publishivy;
+        return publishivy;
     }
 
     public void setPublishivy(boolean publishivy) {
-        _publishivy = publishivy;
+        this.publishivy = publishivy;
     }
 
     public boolean isWarnonmissing() {
-        return _warnonmissing;
+        return warnonmissing;
     }
 
     public void setWarnonmissing(boolean warnonmissing) {
-        _warnonmissing = warnonmissing;
+        this.warnonmissing = warnonmissing;
     }
 
     public boolean isHaltonmissing() {
-        return _haltonmissing;
+        return haltonmissing;
     }
 
     public void setHaltonmissing(boolean haltonmissing) {
-        _haltonmissing = haltonmissing;
+        this.haltonmissing = haltonmissing;
     }
 
     public boolean isOverwrite() {
-        return _overwrite;
+        return overwrite;
     }
 
     public void setOverwrite(boolean overwrite) {
-        _overwrite = overwrite;
+        this.overwrite = overwrite;
     }
 
     public void setForcedeliver(boolean b) {
-        _forcedeliver = b;
+        forcedeliver = b;
     }
 
     public boolean isForcedeliver() {
-        return _forcedeliver;
+        return forcedeliver;
     }
 
     public boolean isUpdate() {
-        return _update;
+        return update;
     }
 
     public void setUpdate(boolean update) {
-        _update = update;
+        this.update = update;
     }
 
     public class PublishArtifact implements Artifact {
-        private String _ext;
+        private String ext;
 
-        private String _name;
+        private String name;
 
-        private String _type;
+        private String type;
 
         public String[] getConfigurations() {
             return null;
         }
 
         public String getExt() {
-            return _ext == null ? _type : _ext;
+            return ext == null ? type : ext;
         }
 
         public ArtifactRevisionId getId() {
@@ -391,7 +400,7 @@ public class IvyPublish extends IvyTask {
         }
 
         public String getName() {
-            return _name;
+            return name;
         }
 
         public Date getPublicationDate() {
@@ -399,7 +408,7 @@ public class IvyPublish extends IvyTask {
         }
 
         public String getType() {
-            return _type;
+            return type;
         }
 
         public URL getUrl() {
@@ -407,15 +416,15 @@ public class IvyPublish extends IvyTask {
         }
 
         public void setExt(String ext) {
-            _ext = ext;
+            this.ext = ext;
         }
 
         public void setName(String name) {
-            _name = name;
+            this.name = name;
         }
 
         public void setType(String type) {
-            _type = type;
+            this.type = type;
         }
 
         public String getAttribute(String attName) {
@@ -444,14 +453,14 @@ public class IvyPublish extends IvyTask {
     }
 
     public static class ArtifactsPattern {
-        private String _pattern;
+        private String pattern;
 
         public String getPattern() {
-            return _pattern;
+            return pattern;
         }
 
         public void setPattern(String pattern) {
-            _pattern = pattern;
+            this.pattern = pattern;
         }
     }
 }

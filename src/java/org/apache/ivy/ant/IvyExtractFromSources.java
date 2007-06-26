@@ -47,90 +47,90 @@ import org.apache.tools.ant.types.RegularExpression;
  */
 public class IvyExtractFromSources extends IvyTask {
     public static class Ignore {
-        String _package;
+        private String packageName;
 
         public String getPackage() {
-            return _package;
+            return packageName;
         }
 
         public void setPackage(String package1) {
-            _package = package1;
+            packageName = package1;
         }
     }
 
-    private String _organisation;
+    private String organisation;
 
-    private String _module;
+    private String module;
 
-    private String _revision;
+    private String revision;
 
-    private String _status;
+    private String status;
 
-    private List _ignoredPackaged = new ArrayList(); // List (String package)
+    private List ignoredPackaged = new ArrayList(); // List (String package)
 
-    private Map _mapping = new HashMap(); // Map (String package -> ModuleRevisionId)
+    private Map mapping = new HashMap(); // Map (String package -> ModuleRevisionId)
 
-    private Concat _concat = new Concat();
+    private Concat concat = new Concat();
 
-    private File _to;
+    private File to;
 
     public void addConfiguredIgnore(Ignore ignore) {
-        _ignoredPackaged.add(ignore.getPackage());
+        ignoredPackaged.add(ignore.getPackage());
     }
 
     public File getTo() {
-        return _to;
+        return to;
     }
 
     public void setTo(File to) {
-        _to = to;
+        this.to = to;
     }
 
     public String getModule() {
-        return _module;
+        return module;
     }
 
     public void setModule(String module) {
-        _module = module;
+        this.module = module;
     }
 
     public String getOrganisation() {
-        return _organisation;
+        return organisation;
     }
 
     public void setOrganisation(String organisation) {
-        _organisation = organisation;
+        this.organisation = organisation;
     }
 
     public String getRevision() {
-        return _revision;
+        return revision;
     }
 
     public void setRevision(String revision) {
-        _revision = revision;
+        this.revision = revision;
     }
 
     public String getStatus() {
-        return _status;
+        return status;
     }
 
     public void setStatus(String status) {
-        _status = status;
+        this.status = status;
     }
 
     public void addConfiguredMapping(PackageMapping mapping) {
-        _mapping.put(mapping.getPackage(), mapping.getModuleRevisionId());
+        this.mapping.put(mapping.getPackage(), mapping.getModuleRevisionId());
     }
 
     public void addFileSet(FileSet fileSet) {
-        _concat.addFileset(fileSet);
+        concat.addFileset(fileSet);
     }
 
     public void doExecute() throws BuildException {
         configureConcat();
         Writer out = new StringWriter();
-        _concat.setWriter(out);
-        _concat.execute();
+        concat.setWriter(out);
+        concat.execute();
         Set importsSet = new HashSet(Arrays.asList(out.toString().split("\n")));
         Set dependencies = new HashSet();
         for (Iterator iter = importsSet.iterator(); iter.hasNext();) {
@@ -141,15 +141,15 @@ public class IvyExtractFromSources extends IvyTask {
             }
         }
         try {
-            PrintWriter writer = new PrintWriter(new FileOutputStream(_to));
+            PrintWriter writer = new PrintWriter(new FileOutputStream(to));
             writer.println("<ivy-module version=\"1.0\">");
-            writer.println("\t<info organisation=\"" + _organisation + "\"");
-            writer.println("\t       module=\"" + _module + "\"");
-            if (_revision != null) {
-                writer.println("\t       revision=\"" + _revision + "\"");
+            writer.println("\t<info organisation=\"" + organisation + "\"");
+            writer.println("\t       module=\"" + module + "\"");
+            if (revision != null) {
+                writer.println("\t       revision=\"" + revision + "\"");
             }
-            if (_status != null) {
-                writer.println("\t       status=\"" + _status + "\"");
+            if (status != null) {
+                writer.println("\t       status=\"" + status + "\"");
             } else {
                 writer.println("\t       status=\"integration\"");
             }
@@ -165,9 +165,9 @@ public class IvyExtractFromSources extends IvyTask {
             }
             writer.println("</ivy-module>");
             writer.close();
-            log(dependencies.size() + " dependencies put in " + _to);
+            log(dependencies.size() + " dependencies put in " + to);
         } catch (FileNotFoundException e) {
-            throw new BuildException("impossible to create file " + _to + ": " + e, e);
+            throw new BuildException("impossible to create file " + to + ": " + e, e);
         }
     }
 
@@ -179,10 +179,10 @@ public class IvyExtractFromSources extends IvyTask {
         String askedPack = pack;
         ModuleRevisionId ret = null;
         while (ret == null && pack.length() > 0) {
-            if (_ignoredPackaged.contains(pack)) {
+            if (ignoredPackaged.contains(pack)) {
                 return null;
             }
-            ret = (ModuleRevisionId) _mapping.get(pack);
+            ret = (ModuleRevisionId) mapping.get(pack);
             int lastDotIndex = pack.lastIndexOf('.');
             if (lastDotIndex != -1) {
                 pack = pack.substring(0, lastDotIndex);
@@ -197,8 +197,8 @@ public class IvyExtractFromSources extends IvyTask {
     }
 
     private void configureConcat() {
-        _concat.setProject(getProject());
-        _concat.setTaskName(getTaskName());
+        concat.setProject(getProject());
+        concat.setTaskName(getTaskName());
         FilterChain filterChain = new FilterChain();
         LineContainsRegExp lcre = new LineContainsRegExp();
         RegularExpression regexp = new RegularExpression();
@@ -211,6 +211,6 @@ public class IvyExtractFromSources extends IvyTask {
         rre.setReplace("\\1");
         tf.add(rre);
         filterChain.add(tf);
-        _concat.addFilterChain(filterChain);
+        concat.addFilterChain(filterChain);
     }
 }
