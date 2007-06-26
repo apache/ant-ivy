@@ -50,35 +50,35 @@ public class HttpClientHandler extends AbstractURLHandler {
             "EEE, d MMM yyyy HH:mm:ss z", Locale.US);
 
     // proxy configuration: obtain from system properties
-    private int _proxyPort;
+    private int proxyPort;
 
-    private String _proxyRealm = null;
+    private String proxyRealm = null;
 
-    private String _proxyHost = null;
+    private String proxyHost = null;
 
-    private String _proxyUserName = null;
+    private String proxyUserName = null;
 
-    private String _proxyPasswd = null;
+    private String proxyPasswd = null;
 
-    private HttpClientHelper _httpClientHelper;
+    private HttpClientHelper httpClientHelper;
 
     public HttpClientHandler() {
         configureProxy();
     }
 
     private void configureProxy() {
-        _proxyRealm = null;
+        proxyRealm = null;
         // no equivalent for realm in jdk proxy support ?
-        _proxyHost = System.getProperty("http.proxyHost");
+        proxyHost = System.getProperty("http.proxyHost");
         // TODO constant is better ...
         if (useProxy()) {
-            _proxyPort = Integer.parseInt(System.getProperty("http.proxyPort", "80"));
-            _proxyUserName = System.getProperty("http.proxyUser");
-            _proxyPasswd = System.getProperty("http.proxyPassword");
+            proxyPort = Integer.parseInt(System.getProperty("http.proxyPort", "80"));
+            proxyUserName = System.getProperty("http.proxyUser");
+            proxyPasswd = System.getProperty("http.proxyPassword");
             // It seems there is no equivalent in HttpClient for
             // 'http.nonProxyHosts' property
-            Message.verbose("proxy configured: host=" + _proxyHost + " port=" + _proxyPort
-                    + " user=" + _proxyUserName);
+            Message.verbose("proxy configured: host=" + proxyHost + " port=" + proxyPort
+                    + " user=" + proxyUserName);
         } else {
             Message.verbose("no proxy configured");
         }
@@ -122,8 +122,8 @@ public class HttpClientHandler extends AbstractURLHandler {
                     + e.getReason() + " url=" + url);
         } catch (UnknownHostException e) {
             Message.warn("Host " + e.getMessage() + " not found. url=" + url);
-            Message
-                    .info("You probably access the destination server through a proxy server that is not well configured.");
+            Message.info("You probably access the destination server through "
+                + "a proxy server that is not well configured.");
         } catch (IOException e) {
             Message.error("HttpClientHandler: " + e.getMessage() + " url=" + url);
         } finally {
@@ -141,6 +141,7 @@ public class HttpClientHandler extends AbstractURLHandler {
             try {
                 return LAST_MODIFIED_FORMAT.parse(lastModified).getTime();
             } catch (ParseException e) {
+                // ignored
             }
             return System.currentTimeMillis();
         } else {
@@ -153,24 +154,25 @@ public class HttpClientHandler extends AbstractURLHandler {
     }
 
     private HttpClientHelper getHttpClientHelper() {
-        if (_httpClientHelper == null) {
+        if (httpClientHelper == null) {
             // use commons httpclient 3.0 if available
             try {
                 HttpMethodBase.class.getMethod("getResponseContentLength", new Class[0]);
-                _httpClientHelper = new HttpClientHelper3x();
+                httpClientHelper = new HttpClientHelper3x();
                 Message.verbose("using commons httpclient 3.x helper");
             } catch (SecurityException e) {
-                Message
-                        .verbose("unable to get access to getResponseContentLength of commons-httpclient HeadMethod. Please use commons-httpclient 3.0 or use ivy with sufficient security permissions.");
+                Message.verbose("unable to get access to getResponseContentLength of "
+                    + "commons-httpclient HeadMethod. Please use commons-httpclient 3.0 or "
+                    + "use ivy with sufficient security permissions.");
                 Message.verbose("exception: " + e.getMessage());
-                _httpClientHelper = new HttpClientHelper2x();
+                httpClientHelper = new HttpClientHelper2x();
                 Message.verbose("using commons httpclient 2.x helper");
             } catch (NoSuchMethodException e) {
-                _httpClientHelper = new HttpClientHelper2x();
+                httpClientHelper = new HttpClientHelper2x();
                 Message.verbose("using commons httpclient 2.x helper");
             }
         }
-        return _httpClientHelper;
+        return httpClientHelper;
     }
 
     public int getHttpClientMajorVersion() {
@@ -178,7 +180,7 @@ public class HttpClientHandler extends AbstractURLHandler {
         return helper.getHttpClientMajorVersion();
     }
 
-    private GetMethod doGet(URL url) throws IOException, HttpException {
+    private GetMethod doGet(URL url) throws IOException {
         HttpClient client = getClient(url);
 
         GetMethod get = new GetMethod(url.toExternalForm());
@@ -187,7 +189,7 @@ public class HttpClientHandler extends AbstractURLHandler {
         return get;
     }
 
-    private HeadMethod doHead(URL url, int timeout) throws IOException, HttpException {
+    private HeadMethod doHead(URL url, int timeout) throws IOException {
         HttpClient client = getClient(url);
         client.setTimeout(timeout);
 
@@ -207,10 +209,10 @@ public class HttpClientHandler extends AbstractURLHandler {
         client.getParams().setParameter(AuthPolicy.AUTH_SCHEME_PRIORITY, authPrefs);
 
         if (useProxy()) {
-            client.getHostConfiguration().setProxy(_proxyHost, _proxyPort);
+            client.getHostConfiguration().setProxy(proxyHost, proxyPort);
             if (useProxyAuthentication()) {
-                client.getState().setProxyCredentials(_proxyRealm, _proxyHost,
-                    new UsernamePasswordCredentials(_proxyUserName, _proxyPasswd));
+                client.getState().setProxyCredentials(proxyRealm, proxyHost,
+                    new UsernamePasswordCredentials(proxyUserName, proxyPasswd));
             }
         }
         Credentials c = getCredentials(url);
@@ -223,7 +225,7 @@ public class HttpClientHandler extends AbstractURLHandler {
     }
 
     private boolean useProxy() {
-        return _proxyHost != null && _proxyHost.trim().length() > 0;
+        return proxyHost != null && proxyHost.trim().length() > 0;
     }
 
     private boolean useAuthentication(URL url) {
@@ -235,70 +237,72 @@ public class HttpClientHandler extends AbstractURLHandler {
     }
 
     private boolean useProxyAuthentication() {
-        return (_proxyUserName != null && _proxyUserName.trim().length() > 0);
+        return (proxyUserName != null && proxyUserName.trim().length() > 0);
     }
 
     private static final class GETInputStream extends InputStream {
-        private InputStream _is;
+        private InputStream is;
 
-        private GetMethod _get;
+        private GetMethod get;
 
         private GETInputStream(GetMethod get) throws IOException {
-            _get = get;
-            _is = get.getResponseBodyAsStream();
+            this.get = get;
+            is = get.getResponseBodyAsStream();
         }
 
         public int available() throws IOException {
-            return _is.available();
+            return is.available();
         }
 
         public void close() throws IOException {
-            _is.close();
-            _get.releaseConnection();
+            is.close();
+            get.releaseConnection();
         }
 
         public boolean equals(Object obj) {
-            return _is.equals(obj);
+            return is.equals(obj);
         }
 
         public int hashCode() {
-            return _is.hashCode();
+            return is.hashCode();
         }
 
         public void mark(int readlimit) {
-            _is.mark(readlimit);
+            is.mark(readlimit);
         }
 
         public boolean markSupported() {
-            return _is.markSupported();
+            return is.markSupported();
         }
 
         public int read() throws IOException {
-            return _is.read();
+            return is.read();
         }
 
         public int read(byte[] b, int off, int len) throws IOException {
-            return _is.read(b, off, len);
+            return is.read(b, off, len);
         }
 
         public int read(byte[] b) throws IOException {
-            return _is.read(b);
+            return is.read(b);
         }
 
         public void reset() throws IOException {
-            _is.reset();
+            is.reset();
         }
 
         public long skip(long n) throws IOException {
-            return _is.skip(n);
+            return is.skip(n);
         }
 
         public String toString() {
-            return _is.toString();
+            return is.toString();
         }
     }
 
     private static final class HttpClientHelper3x implements HttpClientHelper {
+        private static final int VERSION = 3;
+
         private HttpClientHelper3x() {
         }
 
@@ -310,11 +314,13 @@ public class HttpClientHandler extends AbstractURLHandler {
          * {@inheritDoc}
          */
         public int getHttpClientMajorVersion() {
-            return 3;
+            return VERSION;
         }
     }
 
     private static final class HttpClientHelper2x implements HttpClientHelper {
+        private static final int VERSION = 2;
+
         private HttpClientHelper2x() {
         }
 
@@ -334,7 +340,7 @@ public class HttpClientHandler extends AbstractURLHandler {
          * {@inheritDoc}
          */
         public int getHttpClientMajorVersion() {
-            return 2;
+            return VERSION;
         }
     }
 

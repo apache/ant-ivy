@@ -30,9 +30,9 @@ import org.apache.ivy.util.CopyProgressListener;
  * This class is used to dispatch downloading requests
  */
 public class URLHandlerDispatcher implements URLHandler {
-    protected Map _handlers = new HashMap();
+    private Map handlers = new HashMap();
 
-    protected URLHandler _default = new BasicURLHandler();
+    private URLHandler defaultHandler = new BasicURLHandler();
 
     public URLHandlerDispatcher() {
     }
@@ -78,19 +78,19 @@ public class URLHandlerDispatcher implements URLHandler {
     }
 
     public void setDownloader(String protocol, URLHandler downloader) {
-        _handlers.put(protocol, downloader);
+        handlers.put(protocol, downloader);
     }
 
     public URLHandler getHandler(String protocol) {
-        URLHandler downloader = (URLHandler) _handlers.get(protocol);
-        return downloader == null ? _default : downloader;
+        URLHandler downloader = (URLHandler) handlers.get(protocol);
+        return downloader == null ? defaultHandler : downloader;
     }
 
     public URLHandler getDefault() {
-        return _default;
+        return defaultHandler;
     }
 
     public void setDefault(URLHandler default1) {
-        _default = default1;
+        defaultHandler = default1;
     }
 }

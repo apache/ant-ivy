@@ -31,7 +31,7 @@ public final class IvyAuthenticator extends Authenticator {
     /**
      * The sole instance.
      */
-    public final static IvyAuthenticator INSTANCE = new IvyAuthenticator();
+    public static final IvyAuthenticator INSTANCE = new IvyAuthenticator();
 
     /**
      * Private c'tor to prevent instantiation. Also installs this as the default Authenticator to

@@ -22,39 +22,39 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class UnmodifiableExtendableItem implements ExtendableItem {
-    private Map _attributes = new HashMap();
+    private Map attributes = new HashMap();
 
-    private Map _unmodifiableAttributesView = Collections.unmodifiableMap(_attributes);
+    private Map unmodifiableAttributesView = Collections.unmodifiableMap(attributes);
 
-    private Map _stdAttributes = new HashMap();
+    private Map stdAttributes = new HashMap();
 
-    private Map _unmodifiableStdAttributesView = Collections.unmodifiableMap(_stdAttributes);
+    private Map unmodifiableStdAttributesView = Collections.unmodifiableMap(stdAttributes);
 
-    private Map _extraAttributes = new HashMap();
+    private Map extraAttributes = new HashMap();
 
-    private Map _unmodifiableExtraAttributesView = Collections.unmodifiableMap(_extraAttributes);
+    private Map unmodifiableExtraAttributesView = Collections.unmodifiableMap(extraAttributes);
 
     public UnmodifiableExtendableItem(Map stdAttributes, Map extraAttributes) {
         if (stdAttributes != null) {
-            _attributes.putAll(stdAttributes);
-            _stdAttributes.putAll(stdAttributes);
+            attributes.putAll(stdAttributes);
+            stdAttributes.putAll(stdAttributes);
         }
         if (extraAttributes != null) {
-            _attributes.putAll(extraAttributes);
-            _extraAttributes.putAll(extraAttributes);
+            attributes.putAll(extraAttributes);
+            extraAttributes.putAll(extraAttributes);
         }
     }
 
     public String getAttribute(String attName) {
-        return (String) _attributes.get(attName);
+        return (String) attributes.get(attName);
     }
 
     public String getExtraAttribute(String attName) {
-        return (String) _extraAttributes.get(attName);
+        return (String) extraAttributes.get(attName);
     }
 
     public String getStandardAttribute(String attName) {
-        return (String) _stdAttributes.get(attName);
+        return (String) stdAttributes.get(attName);
     }
 
     protected void setExtraAttribute(String attName, String attValue) {
@@ -67,23 +67,23 @@ public class UnmodifiableExtendableItem implements ExtendableItem {
 
     protected void setAttribute(String attName, String attValue, boolean extra) {
         if (extra) {
-            _extraAttributes.put(attName, attValue);
+            extraAttributes.put(attName, attValue);
         } else {
-            _stdAttributes.put(attName, attValue);
+            stdAttributes.put(attName, attValue);
         }
-        _attributes.put(attName, attValue);
+        attributes.put(attName, attValue);
     }
 
     public Map getAttributes() {
-        return _unmodifiableAttributesView;
+        return unmodifiableAttributesView;
     }
 
     public Map getStandardAttributes() {
-        return _unmodifiableStdAttributesView;
+        return unmodifiableStdAttributesView;
     }
 
     public Map getExtraAttributes() {
-        return _unmodifiableExtraAttributesView;
+        return unmodifiableExtraAttributesView;
     }
 
 }

@@ -18,17 +18,17 @@
 package org.apache.ivy.util.filter;
 
 public class NotFilter implements Filter {
-    private Filter _op;
+    private Filter op;
 
     public NotFilter(Filter op) {
-        _op = op;
+        this.op = op;
     }
 
     public Filter getOp() {
-        return _op;
+        return op;
     }
 
     public boolean accept(Object o) {
-        return !_op.accept(o);
+        return !op.accept(o);
     }
 }

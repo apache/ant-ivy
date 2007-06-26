@@ -30,28 +30,28 @@ import org.apache.ivy.util.CopyProgressListener;
  */
 public interface URLHandler {
     public static class URLInfo {
-        private long _contentLength;
+        private long contentLength;
 
-        private long _lastModified;
+        private long lastModified;
 
-        private boolean _available;
+        private boolean available;
 
         protected URLInfo(boolean available, long contentLength, long lastModified) {
-            _available = available;
-            _contentLength = contentLength;
-            _lastModified = lastModified;
+            this.available = available;
+            this.contentLength = contentLength;
+            this.lastModified = lastModified;
         }
 
         public boolean isReachable() {
-            return _available;
+            return available;
         }
 
         public long getContentLength() {
-            return _contentLength;
+            return contentLength;
         }
 
         public long getLastModified() {
-            return _lastModified;
+            return lastModified;
         }
     }
 

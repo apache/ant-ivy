@@ -138,7 +138,8 @@ public class ApacheURLLister {
             int dotIndex = text.indexOf('.');
 
             if (((dotIndex != -1) && !href.startsWith(text.substring(0, dotIndex)))
-                    || ((dotIndex == -1) && !href.toLowerCase(Locale.US).equals(text.toLowerCase(Locale.US)))) {
+                    || ((dotIndex == -1) 
+                            && !href.toLowerCase(Locale.US).equals(text.toLowerCase(Locale.US)))) {
                 // the href and the text do not "match"
                 continue;
             }

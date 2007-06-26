@@ -36,7 +36,9 @@ import org.apache.ivy.util.Message;
  */
 public class BasicURLHandler extends AbstractURLHandler {
 
-    private static interface HttpStatus {
+    private static final int BUFFER_SIZE = 4096;
+
+    private static class HttpStatus {
         static final int SC_OK = 200;
 
         static final int SC_PROXY_AUTHENTICATION_REQUIRED = 407;
@@ -83,8 +85,8 @@ public class BasicURLHandler extends AbstractURLHandler {
             }
         } catch (UnknownHostException e) {
             Message.warn("Host " + e.getMessage() + " not found. url=" + url);
-            Message
-                    .info("You probably access the destination server through a proxy server that is not well configured.");
+            Message.info("You probably access the destination server through "
+                + "a proxy server that is not well configured.");
         } catch (IOException e) {
             Message.error("Server access Error: " + e.getMessage() + " url=" + url);
         } finally {
@@ -101,7 +103,7 @@ public class BasicURLHandler extends AbstractURLHandler {
             inStream = conn.getInputStream();
             ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 
-            byte[] buffer = new byte[4096];
+            byte[] buffer = new byte[BUFFER_SIZE];
             int len;
             while ((len = inStream.read(buffer)) > 0) {
                 outStream.write(buffer, 0, len);
@@ -146,6 +148,7 @@ public class BasicURLHandler extends AbstractURLHandler {
             try {
                 con.getInputStream().close();
             } catch (IOException e) {
+                // ignored
             }
         }
     }

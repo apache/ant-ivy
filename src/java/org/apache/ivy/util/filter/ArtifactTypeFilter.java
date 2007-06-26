@@ -23,10 +23,10 @@ import java.util.Collection;
 import org.apache.ivy.core.module.descriptor.Artifact;
 
 public class ArtifactTypeFilter implements Filter {
-    private Collection _acceptedTypes;
+    private Collection acceptedTypes;
 
     public ArtifactTypeFilter(Collection acceptedTypes) {
-        _acceptedTypes = new ArrayList(acceptedTypes);
+        this.acceptedTypes = new ArrayList(acceptedTypes);
     }
 
     public boolean accept(Object o) {
@@ -34,6 +34,6 @@ public class ArtifactTypeFilter implements Filter {
             return false;
         }
         Artifact art = (Artifact) o;
-        return _acceptedTypes.contains(art.getType());
+        return acceptedTypes.contains(art.getType());
     }
 }

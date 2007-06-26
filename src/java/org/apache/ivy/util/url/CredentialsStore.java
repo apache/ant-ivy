@@ -26,13 +26,13 @@ import org.apache.ivy.util.Message;
 /**
  * 
  */
-public class CredentialsStore {
+public final class CredentialsStore {
     /**
      * A Map of Credentials objects keyed by the 'key' of the Credentials.
      */
-    private final static Map keyring = new HashMap();
+    private static final Map KEYRING = new HashMap();
 
-    public final static CredentialsStore INSTANCE = new CredentialsStore();
+    public static final CredentialsStore INSTANCE = new CredentialsStore();
 
     private CredentialsStore() {
     }
@@ -43,14 +43,14 @@ public class CredentialsStore {
         }
         Credentials c = new Credentials(realm, host, userName, passwd);
         Message.debug("credentials added: " + c);
-        keyring.put(c.getKey(), c);
+        KEYRING.put(c.getKey(), c);
         // add also with host only, to be able to find credential with host only
         // (useful for httpclient especially)
-        keyring.put(c.getHost(), c);
+        KEYRING.put(c.getHost(), c);
     }
 
     public Credentials getCredentials(String realm, String host) {
-        return (Credentials) keyring.get(Credentials.buildKey(realm, host));
+        return (Credentials) KEYRING.get(Credentials.buildKey(realm, host));
     }
 
 }

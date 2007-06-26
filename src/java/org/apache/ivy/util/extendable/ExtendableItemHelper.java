@@ -25,7 +25,9 @@ import java.util.Map;
 
 import org.xml.sax.Attributes;
 
-public class ExtendableItemHelper {
+public final class ExtendableItemHelper {
+    private ExtendableItemHelper() {
+    }
 
     public static Map getExtraAttributes(Attributes attributes, String prefix) {
         Map ret = new HashMap();

@@ -17,7 +17,7 @@
  */
 package org.apache.ivy.util.filter;
 
-public class NoFilter implements Filter {
+public final class NoFilter implements Filter {
     public static final Filter INSTANCE = new NoFilter();
 
     private NoFilter() {

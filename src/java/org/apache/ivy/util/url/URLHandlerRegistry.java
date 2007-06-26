@@ -22,15 +22,18 @@ import org.apache.ivy.util.Message;
 /**
  *
  */
-public class URLHandlerRegistry {
-    private static URLHandler _default = new BasicURLHandler();
+public final class URLHandlerRegistry {
+    private URLHandlerRegistry() {
+    }
+    
+    private static URLHandler defaultHandler = new BasicURLHandler();
 
     public static URLHandler getDefault() {
-        return _default;
+        return defaultHandler;
     }
 
     public static void setDefault(URLHandler def) {
-        _default = def;
+        defaultHandler = def;
     }
 
     /**
