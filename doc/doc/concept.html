@@ -25,7 +25,7 @@
 </head>
 <body>
 	<textarea id="xooki-source">
-<h1>Dependency Resolver</h1>
+<h1><a name="dependency-resolver"></a>Dependency Resolver</h1>
 A dependency resolver is a pluggable class in ivy which is used to:
 <ul>
 <li>find dependencies ivy files</li>
@@ -50,7 +50,7 @@ If you use only simple modules and do not want to worry about configurations, yo
 
 For details on how to declare your module configurations, how declare in which configuration your artifacts are published, and how to declare configuration mapping, please refer to <a href="../doc/ivyfile.html">ivy file documentation</a>. The <a href="../doc/tutorial/conf.html">configurations tutorial</a> is also a good place to go to learn more about this concept.
 
-<h1>Variables</h1>
+<h1><a name="variables"></a>Variables</h1>
 During configuration, ivy allows to define what are called ivy variables. Ivy variables can be seen as ant properties, and are used in a very similar way. In particular, you use a properties tag in the configuration file to load a properties file containing ivy variables and their values.
 
 But the main differences between ant properties and ivy variables are that ivy variables can be overriden, whereas ant 
@@ -70,7 +70,7 @@ Moreover, in an ant environment, a bunch of variables are going to be set by def
 
 Moreover, it's also important to understand the difference between ivy variables and ivy pattern tokens. 
 See Patterns chapter below to see what pattern tokens are.
-<h1>Patterns</h1>
+<h1><a name="patterns"></a>Patterns</h1>
 
 Ivy patterns are used in many dependency resolvers and ivy tasks, and are a simple way to structure the way ivy works.
 
