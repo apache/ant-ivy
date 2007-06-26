@@ -22,7 +22,7 @@
 	<target name="generate-doc">
 		<!-- requires java 6 jdk in path and Apache Ant 1.7 -->
         <copy todir="${doc.build.dir}">
-	        <fileset dir="${doc.src.dir}" includes="images/**,style/**,samples/**" />
+	        <fileset dir="${doc.src.dir}" includes="images/**,style/**,samples/**,js/**" />
         </copy>
         <script language="javascript"><![CDATA[
           importClass(java.io.File);
@@ -35,7 +35,8 @@
 	      				+"conflict-solving-algo.html,"
 	      				+"doc/use.html,"
 	      				+"doc/reference.html,"
-	      				+"samples/**,"
+						+"samples/**,"
+						+"js/**,"
 	      				+"reports/**,"
 	      				+"xooki/**,"
 	      				+"presentations/**,"
@@ -59,7 +60,6 @@
 	        exec.setDir(new File(basedir));
 	        exec.setExecutable("jrunscript");
 	        exec.createArg().setValue(project.getProperty("doc.src.dir")+"/xooki/xooki.js");
-	        exec.createArg().setValue("-noddtree");
 	        exec.createArg().setValue(filename);
 	        exec.createArg().setValue(project.getProperty("doc.build.dir")+"/"+filepath);
 	        exec.perform();
