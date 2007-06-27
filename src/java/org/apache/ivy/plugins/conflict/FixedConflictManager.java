@@ -25,11 +25,11 @@ import java.util.Iterator;
 import org.apache.ivy.core.resolve.IvyNode;
 
 public class FixedConflictManager extends AbstractConflictManager {
-    private Collection _revs;
+    private Collection revisions;
 
     public FixedConflictManager(String[] revs) {
-        _revs = Arrays.asList(revs);
-        setName("fixed" + _revs);
+        revisions = Arrays.asList(revs);
+        setName("fixed" + revisions);
     }
 
     public Collection resolveConflicts(IvyNode parent, Collection conflicts) {
@@ -37,7 +37,7 @@ public class FixedConflictManager extends AbstractConflictManager {
         for (Iterator iter = conflicts.iterator(); iter.hasNext();) {
             IvyNode node = (IvyNode) iter.next();
             String revision = node.getResolvedId().getRevision();
-            if (_revs.contains(revision)) {
+            if (revisions.contains(revision)) {
                 resolved.add(node);
             }
         }
@@ -45,7 +45,7 @@ public class FixedConflictManager extends AbstractConflictManager {
     }
 
     public Collection getRevs() {
-        return _revs;
+        return revisions;
     }
 
 }

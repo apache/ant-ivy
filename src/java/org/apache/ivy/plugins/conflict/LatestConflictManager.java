@@ -33,15 +33,15 @@ public class LatestConflictManager extends AbstractConflictManager {
     public static class NoConflictResolvedYetException extends RuntimeException {
     }
 
-    private static class IvyNodeArtifactInfo implements ArtifactInfo {
-        private final IvyNode _node;
+    private static final class IvyNodeArtifactInfo implements ArtifactInfo {
+        private final IvyNode node;
 
         private IvyNodeArtifactInfo(IvyNode dep) {
-            _node = dep;
+            node = dep;
         }
 
         public long getLastModified() {
-            long lastModified = _node.getLastModified();
+            long lastModified = node.getLastModified();
             if (lastModified == 0) {
                 // if the last modified timestamp is unknown, we can't resolve
                 // the conflicts now, and trigger an exception which will be catched
@@ -53,28 +53,28 @@ public class LatestConflictManager extends AbstractConflictManager {
         }
 
         public String getRevision() {
-            return _node.getResolvedId().getRevision();
+            return node.getResolvedId().getRevision();
         }
 
         public IvyNode getNode() {
-            return _node;
+            return node;
         }
     }
 
-    private LatestStrategy _strategy;
+    private LatestStrategy strategy;
 
-    private String _strategyName;
+    private String strategyName;
 
     public LatestConflictManager() {
     }
 
     public LatestConflictManager(LatestStrategy strategy) {
-        _strategy = strategy;
+        this.strategy = strategy;
     }
 
     public LatestConflictManager(String name, LatestStrategy strategy) {
         setName(name);
-        _strategy = strategy;
+        this.strategy = strategy;
     }
 
     public Collection resolveConflicts(IvyNode parent, Collection conflicts) {
@@ -113,18 +113,18 @@ public class LatestConflictManager extends AbstractConflictManager {
     }
 
     public LatestStrategy getStrategy() {
-        if (_strategy == null) {
-            if (_strategyName != null) {
-                _strategy = getSettings().getLatestStrategy(_strategyName);
-                if (_strategy == null) {
-                    Message.error("unknown latest strategy: " + _strategyName);
-                    _strategy = getSettings().getDefaultLatestStrategy();
+        if (strategy == null) {
+            if (strategyName != null) {
+                strategy = getSettings().getLatestStrategy(strategyName);
+                if (strategy == null) {
+                    Message.error("unknown latest strategy: " + strategyName);
+                    strategy = getSettings().getDefaultLatestStrategy();
                 }
             } else {
-                _strategy = getSettings().getDefaultLatestStrategy();
+                strategy = getSettings().getDefaultLatestStrategy();
             }
         }
-        return _strategy;
+        return strategy;
     }
 
     /**
@@ -133,14 +133,14 @@ public class LatestConflictManager extends AbstractConflictManager {
      * @param latestStrategy
      */
     public void setLatest(String strategyName) {
-        _strategyName = strategyName;
+        this.strategyName = strategyName;
     }
 
     public void setStrategy(LatestStrategy strategy) {
-        _strategy = strategy;
+        this.strategy = strategy;
     }
 
     public String toString() {
-        return _strategy != null ? String.valueOf(_strategy) : _strategyName;
+        return strategy != null ? String.valueOf(strategy) : strategyName;
     }
 }

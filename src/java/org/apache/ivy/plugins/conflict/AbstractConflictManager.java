@@ -21,27 +21,27 @@ import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.plugins.IvySettingsAware;
 
 public abstract class AbstractConflictManager implements ConflictManager, IvySettingsAware {
-    private String _name;
+    private String name;
 
-    private IvySettings _settings;
+    private IvySettings settings;
 
     public IvySettings getSettings() {
-        return _settings;
+        return settings;
     }
 
-    public void setSettings(IvySettings ivy) {
-        _settings = ivy;
+    public void setSettings(IvySettings settings) {
+        this.settings = settings;
     }
 
     public String getName() {
-        return _name;
+        return name;
     }
 
     public void setName(String name) {
-        _name = name;
+        this.name = name;
     }
 
     public String toString() {
-        return _name;
+        return name;
     }
 }
