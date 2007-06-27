@@ -26,10 +26,10 @@ import org.apache.ivy.util.extendable.DefaultExtendableItem;
  * Represents a module configuration
  */
 public class Configuration extends DefaultExtendableItem {
-    public static class Visibility {
-        public static Visibility PUBLIC = new Visibility("public");
+    public static final class Visibility {
+        public static final Visibility PUBLIC = new Visibility("public");
 
-        public static Visibility PRIVATE = new Visibility("private");
+        public static final Visibility PRIVATE = new Visibility("private");
 
         public static Visibility getVisibility(String name) {
             if ("private".equals(name)) {
@@ -56,7 +56,7 @@ public class Configuration extends DefaultExtendableItem {
 
     private String description;
 
-    private String[] _extends;
+    private String[] extendsFrom;
 
     private Visibility visibility;
 
@@ -91,11 +91,11 @@ public class Configuration extends DefaultExtendableItem {
         this.visibility = visibility;
         this.description = description;
         if (ext == null) {
-            _extends = new String[0];
+            extendsFrom = new String[0];
         } else {
-            _extends = new String[ext.length];
+            extendsFrom = new String[ext.length];
             for (int i = 0; i < ext.length; i++) {
-                _extends[i] = ext[i].trim();
+                extendsFrom[i] = ext[i].trim();
             }
         }
         this.transitive = transitive;
@@ -119,7 +119,7 @@ public class Configuration extends DefaultExtendableItem {
      * @return Returns the extends. May be empty, but never null.
      */
     public String[] getExtends() {
-        return _extends;
+        return extendsFrom;
     }
 
     /**
@@ -167,19 +167,19 @@ public class Configuration extends DefaultExtendableItem {
         Configuration[] configs = md.getConfigurations();
 
         Set newExtends = new LinkedHashSet();
-        for (int j = 0; j < _extends.length; j++) {
-            if ("*".equals(_extends[j])) {
+        for (int j = 0; j < extendsFrom.length; j++) {
+            if ("*".equals(extendsFrom[j])) {
                 addOther(configs, null, newExtends);
-            } else if ("*(public)".equals(_extends[j])) {
+            } else if ("*(public)".equals(extendsFrom[j])) {
                 addOther(configs, Visibility.PUBLIC, newExtends);
-            } else if ("*(private)".equals(_extends[j])) {
+            } else if ("*(private)".equals(extendsFrom[j])) {
                 addOther(configs, Visibility.PRIVATE, newExtends);
             } else {
-                newExtends.add(_extends[j]);
+                newExtends.add(extendsFrom[j]);
             }
         }
 
-        this._extends = (String[]) newExtends.toArray(new String[newExtends.size()]);
+        this.extendsFrom = (String[]) newExtends.toArray(new String[newExtends.size()]);
     }
 
     private void addOther(Configuration[] allConfigs, Visibility visibility, Set configs) {
