@@ -223,10 +223,7 @@ public class IvyArtifactReport extends IvyPostResolveTask {
             AttributesImpl originLocationAttrs = new AttributesImpl();
             if (isOriginLocal) {
                 originLocationAttrs.addAttribute(null, "is-local", "is-local", "CDATA", "true");
-                File originNameFile = new File(originName);
-                StringBuffer originNameWithSlashes = new StringBuffer(1000);
-                replaceFileSeparatorWithSlash(originNameFile, originNameWithSlashes);
-                originLocation = originNameWithSlashes.toString();
+                originLocation = originName.replace('\\', '/');
             } else {
                 originLocationAttrs.addAttribute(null, "is-local", "is-local", "CDATA", "false");
                 originLocation = originName;
@@ -242,45 +239,23 @@ public class IvyArtifactReport extends IvyPostResolveTask {
     private void writeCacheLocation(CacheManager cache, TransformerHandler saxHandler,
             Artifact artifact) throws SAXException {
         ArtifactOrigin origin = cache.getSavedArtifactOrigin(artifact);
-        File archiveInCacheFile = cache.getArchiveFileInCache(artifact, origin, false);
-        StringBuffer archiveInCachePathWithSlashes = new StringBuffer();
-        replaceFileSeparatorWithSlash(archiveInCacheFile, archiveInCachePathWithSlashes);
+        File archiveInCache = cache.getArchiveFileInCache(artifact, origin, false);
 
         saxHandler.startElement(null, "cache-location", "cache-location", new AttributesImpl());
-        char[] archiveInCachePathAsChars = archiveInCachePathWithSlashes.toString().toCharArray();
-        saxHandler.characters(archiveInCachePathAsChars, 0, archiveInCachePathAsChars.length);
+        char[] archiveInCacheAsChars = archiveInCache.getPath().replace('\\', '/').toCharArray();
+        saxHandler.characters(archiveInCacheAsChars, 0, archiveInCacheAsChars.length);
         saxHandler.endElement(null, "cache-location", "cache-location");
     }
 
     private void writeRetrieveLocation(TransformerHandler saxHandler, String artifactDestPath)
             throws SAXException {
         artifactDestPath = removeLeadingPath(getProject().getBaseDir(), new File(artifactDestPath));
-        StringBuffer artifactDestPathWithSlashes = new StringBuffer();
-        replaceFileSeparatorWithSlash(new File(artifactDestPath), artifactDestPathWithSlashes);
 
         saxHandler.startElement(null, "retrieve-location", "retrieve-location",
             new AttributesImpl());
-        char[] artifactDestPathAsChars = artifactDestPathWithSlashes.toString().toCharArray();
+        char[] artifactDestPathAsChars = artifactDestPath.replace('\\', '/').toCharArray();
         saxHandler.characters(artifactDestPathAsChars, 0, artifactDestPathAsChars.length);
         saxHandler.endElement(null, "retrieve-location", "retrieve-location");
-    }
-
-    private void replaceFileSeparatorWithSlash(File file, StringBuffer resultPath) {
-        if (file.getParentFile() != null) {
-            replaceFileSeparatorWithSlash(file.getParentFile(), resultPath);
-            resultPath.append('/');
-        }
-
-        if (file.getName().equals("")) {
-            String fileSeparator = System.getProperty("file.separator");
-            String path = file.getPath();
-            while (path.endsWith(fileSeparator)) {
-                path = path.substring(0, path.length() - fileSeparator.length());
-            }
-            resultPath.append(path);
-        } else {
-            resultPath.append(file.getName());
-        }
     }
 
     // method largely inspired by ant 1.6.5 FileUtils method
