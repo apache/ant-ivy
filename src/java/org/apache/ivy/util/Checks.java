@@ -20,7 +20,10 @@ package org.apache.ivy.util;
 /**
  * Utility class used to perform some checks.
  */
-public class Checks {
+public final class Checks {
+    private Checks() {
+    }
+    
     /**
      * Checks that an object is not null, and throw an exception if the object is null.
      * 

@@ -32,150 +32,162 @@ import java.util.Stack;
 import org.apache.ivy.core.IvyPatternHelper;
 
 /**
- * Ant 1.6.1 like Configurator This configurator is used to configure elements (initialised with
- * setRoot) using the behaviour defined by ant for its tasks. Example (based on <a
- * href="http://ant.apache.org/manual/develop.html#writingowntask">Ant Example</a>) : Configurator
- * conf = new Configurator(); conf.typeDef("buildpath", "Sample$BuildPath");
- * conf.typeDef("xinterface", "Sample$XInterface"); Sample.MyFileSelector mfs = new
- * Sample.MyFileSelector(); conf.setRoot(mfs); conf.startCreateChild("buildpath");
- * conf.setAttribute("path", "."); conf.setAttribute("url", "abc");
- * conf.startCreateChild("xinterface"); conf.setAttribute("count", "4"); conf.endCreateChild(); //
- * xinterface conf.endCreateChild(); // buildpath
+ * Ant 1.6.1 like Configurator 
+ * <p>
+ * This configurator is used to configure elements (initialised with
+ * setRoot) using the behaviour defined by ant for its tasks. 
+ * <p>
+ * Example (based on <a
+ * href="http://ant.apache.org/manual/develop.html#writingowntask">Ant Example</a>):
+ * <pre>
+ * Configurator conf = new Configurator(); 
+ * conf.typeDef("buildpath", "Sample$BuildPath");
+ * conf.typeDef("xinterface", "Sample$XInterface"); 
+ * Sample.MyFileSelector mfs = new Sample.MyFileSelector(); 
+ * conf.setRoot(mfs); 
+ * conf.startCreateChild("buildpath");
+ * conf.setAttribute("path", "."); 
+ * conf.setAttribute("url", "abc");
+ * conf.startCreateChild("xinterface"); 
+ * conf.setAttribute("count", "4"); 
+ * conf.endCreateChild(); // xinterface 
+ * conf.endCreateChild(); // buildpath
+ * </pre>
  */
 public class Configurator {
     public static class Macro {
-        private MacroDef _macrodef;
+        private MacroDef macrodef;
 
-        private Map _attValues = new HashMap();
+        private Map attValues = new HashMap();
 
-        private Map _macroRecords = new HashMap();
+        private Map macroRecords = new HashMap();
 
         public Macro(MacroDef def) {
-            _macrodef = def;
+            macrodef = def;
         }
 
         public void defineAttribute(String attributeName, String value) {
-            if (_macrodef.getAttribute(attributeName) == null) {
+            if (macrodef.getAttribute(attributeName) == null) {
                 throw new IllegalArgumentException("undeclared attribute " + attributeName
-                        + " on macro " + _macrodef.getName());
+                        + " on macro " + macrodef.getName());
             }
-            _attValues.put(attributeName, value);
+            attValues.put(attributeName, value);
         }
 
         public MacroRecord recordCreateChild(String name) {
             MacroRecord macroRecord = new MacroRecord(name);
-            List records = (List) _macroRecords.get(name);
+            List records = (List) macroRecords.get(name);
             if (records == null) {
                 records = new ArrayList();
-                _macroRecords.put(name, records);
+                macroRecords.put(name, records);
             }
             records.add(macroRecord);
             return macroRecord;
         }
 
         public Object play(Configurator conf) {
-            return _macrodef.play(conf, _attValues, _macroRecords);
+            return macrodef.play(conf, attValues, macroRecords);
         }
 
     }
 
     public static class Attribute {
-        private String _name;
+        private String name;
 
-        private String _default;
+        private String defaultValue;
 
         public String getDefault() {
-            return _default;
+            return defaultValue;
         }
 
         public void setDefault(String default1) {
-            _default = default1;
+            defaultValue = default1;
         }
 
         public String getName() {
-            return _name;
+            return name;
         }
 
         public void setName(String name) {
-            _name = name;
+            this.name = name;
         }
     }
 
     public static class Element {
-        private String _name;
+        private String name;
 
-        private boolean _optional = false;
+        private boolean optional = false;
 
         public String getName() {
-            return _name;
+            return name;
         }
 
         public void setName(String name) {
-            _name = name;
+            this.name = name;
         }
 
         public boolean isOptional() {
-            return _optional;
+            return optional;
         }
 
         public void setOptional(boolean optional) {
-            _optional = optional;
+            this.optional = optional;
         }
     }
 
     public static class MacroRecord {
-        private String _name;
+        private String name;
 
-        private Map _attributes = new LinkedHashMap();
+        private Map attributes = new LinkedHashMap();
 
-        private List _children = new ArrayList();
+        private List children = new ArrayList();
 
         public MacroRecord(String name) {
-            _name = name;
+            this.name = name;
         }
 
         public String getName() {
-            return _name;
+            return name;
         }
 
         public void recordAttribute(String name, String value) {
-            _attributes.put(name, value);
+            attributes.put(name, value);
         }
 
         public MacroRecord recordChild(String name) {
             MacroRecord child = new MacroRecord(name);
-            _children.add(child);
+            children.add(child);
             return child;
         }
 
         public Map getAttributes() {
-            return _attributes;
+            return attributes;
         }
 
         public List getChildren() {
-            return _children;
+            return children;
         }
     }
 
     public static class MacroDef {
-        private String _name;
+        private String name;
 
-        private Map _attributes = new HashMap();
+        private Map attributes = new HashMap();
 
-        private Map _elements = new HashMap();
+        private Map elements = new HashMap();
 
-        private MacroRecord _macroRecord;
+        private MacroRecord macroRecord;
 
         public MacroDef(String macroName) {
-            _name = macroName;
+            name = macroName;
         }
 
         public Attribute getAttribute(String attributeName) {
-            return (Attribute) _attributes.get(attributeName);
+            return (Attribute) attributes.get(attributeName);
         }
 
         public Object play(Configurator conf, Map attValues, Map macroRecords) {
-            for (Iterator iter = _attributes.values().iterator(); iter.hasNext();) {
+            for (Iterator iter = attributes.values().iterator(); iter.hasNext();) {
                 Attribute att = (Attribute) iter.next();
                 String val = (String) attValues.get(att.getName());
                 if (val == null) {
@@ -187,7 +199,7 @@ public class Configurator {
                     }
                 }
             }
-            return play(conf, _macroRecord, attValues, macroRecords);
+            return play(conf, macroRecord, attValues, macroRecords);
         }
 
         private Object play(Configurator conf, MacroRecord macroRecord, Map attValues,
@@ -201,7 +213,7 @@ public class Configurator {
             }
             for (Iterator iter = macroRecord.getChildren().iterator(); iter.hasNext();) {
                 MacroRecord child = (MacroRecord) iter.next();
-                Element elt = (Element) _elements.get(child.getName());
+                Element elt = (Element) elements.get(child.getName());
                 if (elt != null) {
                     List elements = (List) childrenRecords.get(child.getName());
                     if (elements != null) {
@@ -229,15 +241,15 @@ public class Configurator {
         }
 
         public String getName() {
-            return _name;
+            return name;
         }
 
         public void addConfiguredAttribute(Attribute att) {
-            _attributes.put(att.getName(), att);
+            attributes.put(att.getName(), att);
         }
 
         public void addConfiguredElement(Element elt) {
-            _elements.put(elt.getName(), elt);
+            elements.put(elt.getName(), elt);
         }
 
         public Macro createMacro() {
@@ -259,31 +271,31 @@ public class Configurator {
         }
 
         public MacroRecord recordCreateChild(String name) {
-            _macroRecord = new MacroRecord(name);
-            return _macroRecord;
+            macroRecord = new MacroRecord(name);
+            return macroRecord;
         }
     }
 
     private static class ObjectDescriptor {
-        private Object _obj;
+        private Object obj;
 
-        private String _objName;
+        private String objName;
 
-        private Map _createMethods = new HashMap();
+        private Map createMethods = new HashMap();
 
-        private Map _addMethods = new HashMap();
+        private Map addMethods = new HashMap();
 
-        private Map _addConfiguredMethods = new HashMap();
+        private Map addConfiguredMethods = new HashMap();
 
-        private Map _setMethods = new HashMap();
+        private Map setMethods = new HashMap();
 
-        private Map _typeAddMethods = new HashMap();
+        private Map typeAddMethods = new HashMap();
 
-        private Map _typeAddConfiguredMethods = new HashMap();
+        private Map typeAddConfiguredMethods = new HashMap();
 
         public ObjectDescriptor(Object object, String objName) {
-            _obj = object;
-            _objName = objName;
+            obj = object;
+            this.objName = objName;
             Method[] methods = object.getClass().getMethods();
             for (int i = 0; i < methods.length; i++) {
                 Method m = methods[i];
@@ -296,7 +308,8 @@ public class Configurator {
                     }
                     addCreateMethod(name, m);
                 } else if (m.getName().startsWith("addConfigured")
-                        && m.getParameterTypes().length == 1 && Void.TYPE.equals(m.getReturnType())) {
+                        && m.getParameterTypes().length == 1 
+                        && Void.TYPE.equals(m.getReturnType())) {
                     String name = StringUtils.uncapitalize(m.getName().substring(
                         "addConfigured".length()));
                     if (name.length() == 0) {
@@ -305,7 +318,8 @@ public class Configurator {
                     addAddConfiguredMethod(name, m);
                 } else if (m.getName().startsWith("add")
                         && !m.getName().startsWith("addConfigured")
-                        && m.getParameterTypes().length == 1 && Void.TYPE.equals(m.getReturnType())) {
+                        && m.getParameterTypes().length == 1 
+                        && Void.TYPE.equals(m.getReturnType())) {
                     String name = StringUtils.uncapitalize(m.getName().substring("add".length()));
                     if (name.length() == 0) {
                         addAddMethod(m);
@@ -323,51 +337,51 @@ public class Configurator {
         }
 
         public void addCreateMethod(String name, Method m) {
-            _createMethods.put(name, m);
+            createMethods.put(name, m);
         }
 
         public void addAddMethod(String name, Method m) {
-            _addMethods.put(name, m);
+            addMethods.put(name, m);
         }
 
         public void addAddConfiguredMethod(String name, Method m) {
-            _addConfiguredMethods.put(name, m);
+            addConfiguredMethods.put(name, m);
         }
 
         private void addAddMethod(Method m) {
-            _typeAddMethods.put(m.getParameterTypes()[0], m);
+            typeAddMethods.put(m.getParameterTypes()[0], m);
         }
 
         private void addAddConfiguredMethod(Method m) {
-            _typeAddConfiguredMethods.put(m.getParameterTypes()[0], m);
+            typeAddConfiguredMethods.put(m.getParameterTypes()[0], m);
         }
 
         public void addSetMethod(String name, Method m) {
-            _setMethods.put(name, m);
+            setMethods.put(name, m);
         }
 
         public Object getObject() {
-            return _obj;
+            return obj;
         }
 
         public Method getCreateMethod(String name) {
-            return (Method) _createMethods.get(name);
+            return (Method) createMethods.get(name);
         }
 
         public Method getAddMethod(String name) {
-            return (Method) _addMethods.get(name);
+            return (Method) addMethods.get(name);
         }
 
         public Method getAddConfiguredMethod(String name) {
-            return (Method) _addConfiguredMethods.get(name);
+            return (Method) addConfiguredMethods.get(name);
         }
 
         public Method getAddMethod(Class type) {
-            return getTypeMatchingMethod(type, _typeAddMethods);
+            return getTypeMatchingMethod(type, typeAddMethods);
         }
 
         public Method getAddConfiguredMethod(Class type) {
-            return getTypeMatchingMethod(type, _typeAddConfiguredMethods);
+            return getTypeMatchingMethod(type, typeAddConfiguredMethods);
         }
 
         private Method getTypeMatchingMethod(Class type, Map typeMethods) {
@@ -385,20 +399,20 @@ public class Configurator {
         }
 
         public Method getSetMethod(String name) {
-            return (Method) _setMethods.get(name);
+            return (Method) setMethods.get(name);
         }
 
         public String getObjectName() {
-            return _objName;
+            return objName;
         }
     }
 
-    private Map _typedefs = new HashMap();
+    private Map typedefs = new HashMap();
 
-    private Map _macrodefs = new HashMap();
+    private Map macrodefs = new HashMap();
 
     // stack in which the top is current configured object descriptor
-    private Stack _objectStack = new Stack();
+    private Stack objectStack = new Stack();
 
     private static final List TRUE_VALUES = Arrays.asList(new String[] {"true", "yes", "on"});
 
@@ -407,30 +421,30 @@ public class Configurator {
     }
 
     public void typeDef(String name, Class clazz) {
-        _typedefs.put(name, clazz);
+        typedefs.put(name, clazz);
     }
 
     public void setRoot(Object root) {
         if (root == null) {
             throw new NullPointerException();
         }
-        _objectStack.clear();
+        objectStack.clear();
         setCurrent(root, null);
     }
 
     public void clear() {
-        _objectStack.clear();
+        objectStack.clear();
     }
 
     private void setCurrent(Object object, String name) {
-        _objectStack.push(new ObjectDescriptor(object, name));
+        objectStack.push(new ObjectDescriptor(object, name));
     }
 
     public Object startCreateChild(String name) {
-        if (_objectStack.isEmpty()) {
+        if (objectStack.isEmpty()) {
             throw new IllegalStateException("set root before creating child");
         }
-        ObjectDescriptor parentOD = (ObjectDescriptor) _objectStack.peek();
+        ObjectDescriptor parentOD = (ObjectDescriptor) objectStack.peek();
         Object parent = parentOD.getObject();
         if (parent instanceof MacroDef) {
             if (!"attribute".equals(name) && !"element".equals(name)) {
@@ -450,13 +464,13 @@ public class Configurator {
             return record;
         }
         Object child = null;
-        MacroDef macrodef = (MacroDef) _macrodefs.get(name);
+        MacroDef macrodef = (MacroDef) macrodefs.get(name);
         if (macrodef != null) {
             Macro macro = macrodef.createMacro();
             setCurrent(macro, name);
             return macro;
         }
-        Class childClass = (Class) _typedefs.get(name);
+        Class childClass = (Class) typedefs.get(name);
         Method addChild = null;
         try {
             if (childClass != null) {
@@ -498,10 +512,10 @@ public class Configurator {
     }
 
     public void addChild(String name, Object child) {
-        if (_objectStack.isEmpty()) {
+        if (objectStack.isEmpty()) {
             throw new IllegalStateException("set root before creating child");
         }
-        ObjectDescriptor parentOD = (ObjectDescriptor) _objectStack.peek();
+        ObjectDescriptor parentOD = (ObjectDescriptor) objectStack.peek();
         try {
             addChild(parentOD, child.getClass(), name, child);
         } catch (InstantiationException ex) {
@@ -541,18 +555,18 @@ public class Configurator {
     }
 
     public boolean isTopLevelMacroRecord() {
-        if (_objectStack.isEmpty()) {
+        if (objectStack.isEmpty()) {
             return false;
         }
-        ObjectDescriptor od = (ObjectDescriptor) _objectStack.peek();
+        ObjectDescriptor od = (ObjectDescriptor) objectStack.peek();
         return (od.getObject() instanceof MacroDef);
     }
 
     public void setAttribute(String attributeName, String value) {
-        if (_objectStack.isEmpty()) {
+        if (objectStack.isEmpty()) {
             throw new IllegalStateException("set root before setting attribute");
         }
-        ObjectDescriptor od = (ObjectDescriptor) _objectStack.peek();
+        ObjectDescriptor od = (ObjectDescriptor) objectStack.peek();
         if (od.getObject() instanceof Macro) {
             ((Macro) od.getObject()).defineAttribute(attributeName, value);
             return;
@@ -605,10 +619,10 @@ public class Configurator {
     }
 
     public void addText(String text) {
-        if (_objectStack.isEmpty()) {
+        if (objectStack.isEmpty()) {
             throw new IllegalStateException("set root before adding text");
         }
-        ObjectDescriptor od = (ObjectDescriptor) _objectStack.peek();
+        ObjectDescriptor od = (ObjectDescriptor) objectStack.peek();
         try {
             od.getObject().getClass().getMethod("addText", new Class[] {String.class}).invoke(
                 od.getObject(), new Object[] {text});
@@ -624,20 +638,20 @@ public class Configurator {
      * @return the finished child
      */
     public Object endCreateChild() {
-        if (_objectStack.isEmpty()) {
+        if (objectStack.isEmpty()) {
             throw new IllegalStateException("set root before ending child");
         }
-        ObjectDescriptor od = (ObjectDescriptor) _objectStack.pop();
-        if (_objectStack.isEmpty()) {
-            _objectStack.push(od); // back to previous state
+        ObjectDescriptor od = (ObjectDescriptor) objectStack.pop();
+        if (objectStack.isEmpty()) {
+            objectStack.push(od); // back to previous state
             throw new IllegalStateException("cannot end root");
         }
         if (od.getObject() instanceof Macro) {
             return ((Macro) od.getObject()).play(this);
         }
-        ObjectDescriptor parentOD = (ObjectDescriptor) _objectStack.peek();
+        ObjectDescriptor parentOD = (ObjectDescriptor) objectStack.peek();
         String name = od.getObjectName();
-        Class childClass = (Class) _typedefs.get(name);
+        Class childClass = (Class) typedefs.get(name);
         Method m = null;
         if (childClass != null) {
             m = parentOD.getAddConfiguredMethod(childClass);
@@ -659,11 +673,11 @@ public class Configurator {
     }
 
     public Object getCurrent() {
-        return _objectStack.isEmpty() ? null : ((ObjectDescriptor) _objectStack.peek()).getObject();
+        return objectStack.isEmpty() ? null : ((ObjectDescriptor) objectStack.peek()).getObject();
     }
 
     public int getDepth() {
-        return _objectStack.size();
+        return objectStack.size();
     }
 
     public MacroDef startMacroDef(String macroName) {
@@ -682,14 +696,14 @@ public class Configurator {
 
     public void endMacroDef() {
         addConfiguredMacrodef(((MacroDef) getCurrent()));
-        _objectStack.pop();
+        objectStack.pop();
     }
 
     public void addConfiguredMacrodef(MacroDef macrodef) {
-        _macrodefs.put(macrodef.getName(), macrodef);
+        macrodefs.put(macrodef.getName(), macrodef);
     }
 
     public Class getTypeDef(String name) {
-        return (Class) _typedefs.get(name);
+        return (Class) typedefs.get(name);
     }
 }

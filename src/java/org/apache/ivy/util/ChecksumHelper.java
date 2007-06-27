@@ -29,12 +29,13 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-public class ChecksumHelper {
+public final class ChecksumHelper {
 
-    private static Map _algorithms = new HashMap();
+    private static final int BUFFER_SIZE = 2048;
+    private static Map algorithms = new HashMap();
     static {
-        _algorithms.put("md5", "MD5");
-        _algorithms.put("sha1", "SHA-1");
+        algorithms.put("md5", "MD5");
+        algorithms.put("sha1", "SHA-1");
     }
 
     /**
@@ -79,7 +80,7 @@ public class ChecksumHelper {
             MessageDigest md = getMessageDigest(algorithm);
             md.reset();
 
-            byte[] buf = new byte[2048];
+            byte[] buf = new byte[BUFFER_SIZE];
             int len = 0;
             while ((len = is.read(buf)) != -1) {
                 md.update(buf, 0, len);
@@ -91,7 +92,7 @@ public class ChecksumHelper {
     }
 
     private static MessageDigest getMessageDigest(String algorithm) {
-        String mdAlgorithm = (String) _algorithms.get(algorithm);
+        String mdAlgorithm = (String) algorithms.get(algorithm);
         if (mdAlgorithm == null) {
             throw new IllegalArgumentException("unknown algorithm " + algorithm);
         }
@@ -103,8 +104,8 @@ public class ChecksumHelper {
     }
 
     // byte to hex string converter
-    private final static char[] CHARS = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a',
-            'b', 'c', 'd', 'e', 'f'};
+    private static final char[] CHARS = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 
+            'a', 'b', 'c', 'd', 'e', 'f'};
 
     /**
      * Convert a byte[] array to readable string format. This makes the "hex" readable!
@@ -113,7 +114,7 @@ public class ChecksumHelper {
      * @param in
      *            byte[] buffer to convert to string format
      */
-    public static String byteArrayToHexString(byte in[]) {
+    public static String byteArrayToHexString(byte[] in) {
         byte ch = 0x00;
 
         if (in == null || in.length <= 0) {
@@ -122,6 +123,7 @@ public class ChecksumHelper {
 
         StringBuffer out = new StringBuffer(in.length * 2);
 
+        //CheckStyle:MagicNumber OFF
         for (int i = 0; i < in.length; i++) {
             ch = (byte) (in[i] & 0xF0); // Strip off high nibble
             ch = (byte) (ch >>> 4); // shift the bits down
@@ -131,8 +133,11 @@ public class ChecksumHelper {
             ch = (byte) (in[i] & 0x0F); // Strip off low nibble
             out.append(CHARS[(int) ch]); // convert the nibble to a String Character
         }
+        //CheckStyle:MagicNumber ON
 
         return out.toString();
     }
 
+    private ChecksumHelper() {
+    }
 }

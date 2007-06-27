@@ -28,7 +28,7 @@ import org.apache.ivy.core.module.descriptor.Configuration.Visibility;
 /**
  * Class containing several utility methods for working with configurations.
  */
-public class ConfigurationUtils {
+public final class ConfigurationUtils {
 
     /**
      * Private constructor to avoid instantiation of this class.
