@@ -18,15 +18,12 @@
 package org.apache.ivy.ant;
 
 import org.apache.ivy.core.cache.CacheManager;
-import org.apache.ivy.core.retrieve.RetrieveEngine;
 import org.apache.ivy.core.retrieve.RetrieveOptions;
 import org.apache.ivy.util.filter.Filter;
 import org.apache.tools.ant.BuildException;
 
 /**
  * This task allow to retrieve dependencies from the cache to a local directory like a lib dir.
- * 
- * @see RetrieveEngine
  */
 public class IvyRetrieve extends IvyPostResolveTask {
     private String pattern;
