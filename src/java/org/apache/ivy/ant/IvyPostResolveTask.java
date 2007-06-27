@@ -138,9 +138,7 @@ public abstract class IvyPostResolveTask extends IvyTask {
             // there (TODO: maybe we can check which reports exist and extract the configurations
             // from these report names?)
             if (!orgAndModSetManually) {
-                ensureResolved(isHaltonfailure(), isUseOrigin(), isTransitive(), getOrganisation(),
-                    getModule(), getProperty(conf, settings, "ivy.resolved.configurations"),
-                    resolveId, cache);
+                ensureResolved(settings);
             }
 
             conf = getProperty(conf, settings, "ivy.resolved.configurations");
@@ -177,24 +175,25 @@ public abstract class IvyPostResolveTask extends IvyTask {
         artifactFilter = FilterHelper.getArtifactTypeFilter(type);
     }
 
-    protected void ensureResolved(boolean haltOnFailure, boolean useOrigin, boolean transitive,
-            String org, String module, String conf, String resolveId, File cache) {
+    protected void ensureResolved(IvySettings settings) {
         ensureMessageInitialised();
+        
+        String requestedConfigs = getProperty(getConf(), settings, "ivy.resolved.configurations");
 
         String[] confs = null;
-        if (resolveId != null) {
-            confs = getConfsToResolve(resolveId, conf);
+        if (getResolveId() != null) {
+            confs = getConfsToResolve(getResolveId(), requestedConfigs);
         } else {
-            confs = getConfsToResolve(org, module, conf, false);
+            confs = getConfsToResolve(getOrganisation(), getModule(), requestedConfigs, false);
         }
 
         if (confs.length > 0) {
-            IvyResolve resolve = createResolve(haltOnFailure, useOrigin);
-            resolve.setFile(file);
-            resolve.setCache(cache);
-            resolve.setTransitive(transitive);
+            IvyResolve resolve = createResolve(isHaltonfailure(), isUseOrigin());
+            resolve.setFile(getFile());
+            resolve.setCache(getCache());
+            resolve.setTransitive(isTransitive());
             resolve.setConf(StringUtils.join(confs, ", "));
-            resolve.setResolveId(resolveId);
+            resolve.setResolveId(getResolveId());
             resolve.execute();
         }
     }
