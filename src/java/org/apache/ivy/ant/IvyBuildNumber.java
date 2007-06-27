@@ -134,8 +134,8 @@ public class IvyBuildNumber extends IvyTask {
     }
 
     private NewRevision computeNewRevision(String revision) {
-        String revPrefix = "latest.integration".equals(revision) ? "" : revision.substring(0,
-            revision.length() - 1);
+        String revPrefix = "latest.integration".equals(this.revision) ? "" 
+                : this.revision.substring(0, this.revision.length() - 1);
         if (revision != null && !revision.startsWith(revPrefix)) {
             throw new BuildException("invalid exception found in repository: '" + revision
                     + "' for '" + revPrefix + "'");
