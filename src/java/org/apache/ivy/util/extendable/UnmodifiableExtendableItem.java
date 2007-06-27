@@ -36,12 +36,12 @@ public class UnmodifiableExtendableItem implements ExtendableItem {
 
     public UnmodifiableExtendableItem(Map stdAttributes, Map extraAttributes) {
         if (stdAttributes != null) {
-            attributes.putAll(stdAttributes);
-            stdAttributes.putAll(stdAttributes);
+            this.attributes.putAll(stdAttributes);
+            this.stdAttributes.putAll(stdAttributes);
         }
         if (extraAttributes != null) {
-            attributes.putAll(extraAttributes);
-            extraAttributes.putAll(extraAttributes);
+            this.attributes.putAll(extraAttributes);
+            this.extraAttributes.putAll(extraAttributes);
         }
     }
 
