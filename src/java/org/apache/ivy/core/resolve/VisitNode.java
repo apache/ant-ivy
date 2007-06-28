@@ -209,12 +209,12 @@ public class VisitNode {
      * Returns true if the current dependency descriptor is transitive and the parent configuration
      * is transitive. Otherwise returns false.
      * 
-     * @param node
-     *            curent node
      * @return true if current node is transitive and the parent configuration is transitive.
      */
     public boolean isTransitive() {
-        return (data.isTransitive() && node.getDependencyDescriptor(getParentNode()).isTransitive() && isParentConfTransitive());
+        return (data.isTransitive() 
+                && node.getDependencyDescriptor(getParentNode()).isTransitive() 
+                && isParentConfTransitive());
     }
 
     /**
@@ -303,14 +303,15 @@ public class VisitNode {
     VisitNode gotoNode(IvyNode node) {
         if (!getModuleId().equals(node.getModuleId())) {
             throw new IllegalArgumentException(
-                    "you can't use gotoNode for a node which does not represent the same Module as the one represented by this node.\nCurrent node module id="
+                    "You can't use gotoNode for a node which does not represent the same Module "
+                            + "as the one represented by this node.\nCurrent node module id="
                             + getModuleId() + " Given node module id=" + node.getModuleId());
         }
         VisitData visitData = data.getVisitData(node.getId());
         if (visitData == null) {
             throw new IllegalArgumentException(
-                    "you can't use gotoNode with a node which has not been visited yet.\nGiven node id="
-                            + node.getId());
+                    "You can't use gotoNode with a node which has not been visited yet.\n"
+                    + "Given node id=" + node.getId());
         }
         for (Iterator iter = visitData.getVisitNodes(rootModuleConf).iterator(); iter.hasNext();) {
             VisitNode vnode = (VisitNode) iter.next();
@@ -444,13 +445,13 @@ public class VisitNode {
      * 
      * @param parent
      *            the VisitNode in which eviction has been made
-     * @param conflictManager
+     * @param conflictMgr
      *            the conflict manager responsible for the eviction
      * @param selected
      *            a Collection of {@link IvyNode} which have been selected
      */
-    public void markEvicted(VisitNode parent, ConflictManager conflictManager, Collection selected) {
-        node.markEvicted(rootModuleConf, parent.getNode(), conflictManager, selected);
+    public void markEvicted(VisitNode parent, ConflictManager conflictMgr, Collection selected) {
+        node.markEvicted(rootModuleConf, parent.getNode(), conflictMgr, selected);
     }
 
     public ModuleDescriptor getDescriptor() {
