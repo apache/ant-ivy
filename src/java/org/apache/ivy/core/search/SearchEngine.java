@@ -221,10 +221,11 @@ public class SearchEngine {
         String resolverName = resolver.getName();
 
         Message.verbose("looking for modules matching " + pattern + " using " + matcher.getName());
-        Namespace fromNamespace = resolver instanceof AbstractResolver ? ((AbstractResolver) resolver)
-                .getNamespace()
-                : null;
-
+        Namespace fromNamespace = null;
+        if (resolver instanceof AbstractResolver) {
+            fromNamespace = ((AbstractResolver) resolver).getNamespace();
+        }
+        
         Collection modules = new ArrayList();
 
         OrganisationEntry[] orgs = resolver.listOrganisations();
