@@ -187,7 +187,7 @@ public class ResolveReport {
      * Returns the list of all dependencies concerned by this report as a List of IvyNode ordered
      * from the more dependent to the least one
      * 
-     * @return
+     * @return  The list of all dependencies.
      */
     public List getDependencies() {
         return dependencies;
@@ -197,7 +197,7 @@ public class ResolveReport {
      * Returns the list of all artifacts which should be downloaded per this resolve To know if the
      * artifact have actually been downloaded use information found in ConfigurationResolveReport.
      * 
-     * @return
+     * @return  The list of all artifacts.
      */
     public List getArtifacts() {
         return artifacts;

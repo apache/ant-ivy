@@ -101,16 +101,14 @@ public class IvyPublish extends IvyTask {
     }
 
     /**
-     * @deprecated use getSrcivypattern instead
-     * @return
+     * @deprecated use {@link #getSrcivypattern()} instead.
      */
     public String getDeliverivypattern() {
         return srcivypattern;
     }
 
     /**
-     * @deprecated use setSrcivypattern instead
-     * @return
+     * @deprecated use {@link #setSrcivypattern(String)} instead.
      */
     public void setDeliverivypattern(String destivypattern) {
         srcivypattern = destivypattern;

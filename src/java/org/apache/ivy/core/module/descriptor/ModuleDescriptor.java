@@ -76,14 +76,14 @@ public interface ModuleDescriptor extends ExtendableItem {
     String getStatus();
 
     /**
-     * may be null if unknown in the descriptor itself
+     * May be <code>null</code> if unknown in the descriptor itself.
      * 
-     * @return
+     * @return  The publication date or <code>null</code> when not knwon.
      */
     Date getPublicationDate();
 
     /**
-     * the publication date of the module revision should be the date at which it has been
+     * The publication date of the module revision should be the date at which it has been
      * published, i.e. in general the date of any of its published artifacts, since all published
      * artifact of a module should follow the same publishing cycle.
      */

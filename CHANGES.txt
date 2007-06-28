@@ -45,6 +45,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 	Andreas Sahlbach
 	John Shields
 	Johan Stuyts
+	Tjeerd Verhagen
 	John Williams
 	Jaroslaw Wypychowski
 
@@ -59,6 +60,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - IMPROVEMENT: Remove @author tags (thanks to Stephane Bailliez)
 - IMPROVEMENT: Remove use of deprecated elements in ivysettings.xml (IVY-505) (with contribution from Jan Materne)
 - IMPROVEMENT: Buildlist onlydirectdep attribute (IVY-473 and IVY-504) (with contribution from Mikkel Bjerg )
+- IMPROVEMENT: Javadoc improvements (IVY-544) (thanks to Tjeerd Verhagen)
 
 - FIX: Evicted modules report depends on the order of the dependencies (IVY-526)
 - FIX: Ivy does not work on Turkish machines (IVY-65)

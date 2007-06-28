@@ -29,6 +29,11 @@ public class ModuleId implements Comparable {
 
     private int hash;
 
+    /**
+     * Constructor.
+     * @param  organisation  The organisation which creates the module.
+     * @param  name  The name of the module.
+     */
     public ModuleId(String organisation, String name) {
         if (name == null) {
             throw new IllegalArgumentException("null name not allowed");
@@ -37,14 +42,23 @@ public class ModuleId implements Comparable {
         this.name = name;
     }
 
+    /**
+     * Returns the name of the module.
+     * @return  The name of the module.
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * Returns the name of the organisation.
+     * @return  The name of the organisation.
+     */
     public String getOrganisation() {
         return organisation;
     }
 
+    /** {@inheritDoc} */    
     public boolean equals(Object obj) {
         if (!(obj instanceof ModuleId)) {
             return false;
@@ -57,6 +71,7 @@ public class ModuleId implements Comparable {
         }
     }
 
+    /** {@inheritDoc} */    
     public int hashCode() {
         if (hash == 0) {
             //CheckStyle:MagicNumber| OFF
@@ -68,11 +83,12 @@ public class ModuleId implements Comparable {
         return hash;
     }
 
-
+    /** {@inheritDoc} */    
     public String toString() {
         return "[ " + organisation + " | " + name + " ]";
     }
 
+    /** {@inheritDoc} */    
     public int compareTo(Object obj) {
         ModuleId that = (ModuleId) obj;
         int result = organisation.compareTo(that.organisation);
@@ -82,10 +98,20 @@ public class ModuleId implements Comparable {
         return result;
     }
 
+    /**
+     * Returns the encoded String representing this ModuleId.
+     * @return  The ModuleId encoded as String.
+     */
     public String encodeToString() {
         return getOrganisation() + ENCODE_SEPARATOR + getName();
     }
 
+    /**
+     * Returns a ModuleId  
+     * @param  encoded  
+     * @return  The new ModuleId.
+     * @throws  IllegalArgumentException  If the given String could not be decoded.
+     */
     public static ModuleId decode(String encoded) {
         String[] parts = encoded.split(ENCODE_SEPARATOR);
         if (parts.length != 2) {
