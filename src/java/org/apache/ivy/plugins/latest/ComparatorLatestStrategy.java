@@ -25,27 +25,27 @@ import java.util.List;
 
 public class ComparatorLatestStrategy extends AbstractLatestStrategy {
 
-    private Comparator _comparator;
+    private Comparator comparator;
 
     public ComparatorLatestStrategy() {
     }
 
     public ComparatorLatestStrategy(Comparator comparator) {
-        _comparator = comparator;
+        this.comparator = comparator;
     }
 
     public List sort(ArtifactInfo[] infos) {
         List ret = new ArrayList(Arrays.asList(infos));
-        Collections.sort(ret, _comparator);
+        Collections.sort(ret, comparator);
         return ret;
     }
 
     public Comparator getComparator() {
-        return _comparator;
+        return comparator;
     }
 
     public void setComparator(Comparator comparator) {
-        _comparator = comparator;
+        this.comparator = comparator;
     }
 
 }

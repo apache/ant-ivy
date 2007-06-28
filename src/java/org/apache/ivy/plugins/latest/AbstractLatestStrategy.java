@@ -25,28 +25,28 @@ import org.apache.ivy.Ivy;
 import org.apache.ivy.plugins.IvyAware;
 
 public abstract class AbstractLatestStrategy implements LatestStrategy, IvyAware {
-    private String _name;
+    private String name;
 
-    private Ivy _ivy;
+    private Ivy ivy;
 
     public Ivy getIvy() {
-        return _ivy;
+        return ivy;
     }
 
     public void setIvy(Ivy ivy) {
-        _ivy = ivy;
+        this.ivy = ivy;
     }
 
     public String getName() {
-        return _name;
+        return name;
     }
 
     public void setName(String name) {
-        _name = name;
+        this.name = name;
     }
 
     public String toString() {
-        return _name;
+        return name;
     }
 
     public ArtifactInfo findLatest(ArtifactInfo[] infos, Date date) {
