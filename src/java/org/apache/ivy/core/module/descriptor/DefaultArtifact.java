@@ -56,11 +56,11 @@ public class DefaultArtifact extends AbstractArtifact {
                         .getExtraAttributes());
     }
 
-    Date publicationDate;
+    private Date publicationDate;
 
-    ArtifactRevisionId arid;
+    private ArtifactRevisionId arid;
 
-    URL url;
+    private URL url;
 
     public DefaultArtifact(ModuleRevisionId mrid, Date publicationDate, String name, String type,
             String ext) {
