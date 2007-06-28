@@ -24,7 +24,7 @@
 	       publication="20041101110000"
 	/>
 	<configurations>
-		<include file="test/java/org/apache/ivy/plugins/parser/xml/imported-configurations.xml"/>
+		<include file="imported-configurations.xml"/>
 		<conf name="conf3"/>
 	</configurations>
 	<dependencies>

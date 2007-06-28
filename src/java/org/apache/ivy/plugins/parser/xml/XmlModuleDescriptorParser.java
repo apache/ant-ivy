@@ -494,14 +494,14 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
                     parseRule(qName, attributes);
                     md.addExcludeRule((ExcludeRule) _confAware);
                 } else if ("include".equals(qName) && _state == CONF) {
-                    String file = attributes.getValue("file");
-                    String pathUrl = file == null ? attributes.getValue("url") : "file://" + file;
-                    if (pathUrl == null) {
+                    URL url = _ivy.getRelativeUrlResolver().getURL(xmlURL,
+                            _ivy.substitute(attributes.getValue("file")),
+                            _ivy.substitute(attributes.getValue("url")));
+                    
+                    if (url == null) {
                         throw new SAXException("include tag must have a file or an url attribute");
                     }
-                    String substitutedPathUrl = _ivy.substitute(pathUrl);
-                    URL url = _ivy.getRelativeUrlResolver().getURL(xmlURL, substitutedPathUrl);
-
+                    
                     // create a new temporary parser to read the configurations from
                     // the specified file.
                     Parser parser = new Parser(getModuleDescriptorParser(), _ivy, false, url);

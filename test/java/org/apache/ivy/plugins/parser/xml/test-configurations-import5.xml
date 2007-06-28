@@ -16,16 +16,18 @@
    specific language governing permissions and limitations
    under the License.    
 -->
-<ivy-module version="1.0"> 
-	<info organisation="apache"
-	       module="resolve-latest"
-	       revision="1.0"
-	       status="release"
+<ivy-module version="1.0">
+	<info organisation="myorg"
+	       module="mymodule"
+	       revision="myrev"
+	       status="integration"
+	       publication="20041101110000"
 	/>
 	<configurations>
-		<include file="imported-configurations.xml"/>
+		<include file="${base.dir}/test/java/org/apache/ivy/plugins/parser/xml/imported-configurations.xml"/>
 	</configurations>
 	<dependencies>
-		<dependency org="org1" name="mod1.2" rev="latest.integration" conf="*->default"/>
+		<dependency name="mymodule1" rev="1.0"/>
+		<dependency name="mymodule2" rev="2.0" conf="conf1->*"/>
 	</dependencies>
 </ivy-module>

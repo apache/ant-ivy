@@ -26,7 +26,7 @@ import java.net.URL;
  * This is was actually done prior 2.0.  This class allow thus to work
  * in a backward compatible mode.
  */
-public class ExecutionRelativeUrlResolver implements RelativeUrlResolver {
+public class ExecutionRelativeUrlResolver extends RelativeUrlResolver {
 
     public URL getURL(URL context, String url) throws MalformedURLException {
         return new URL(url);

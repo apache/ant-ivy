@@ -17,6 +17,7 @@
  */
 package org.apache.ivy.plugins.parser.xml;
 
+import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.Arrays;
@@ -709,6 +710,40 @@ public class XmlModuleDescriptorParserTest extends AbstractModuleDescriptorParse
                 .getDependencyConfigurations("conf1")));
     }
 
+    
+    public void testImportConfigurations5() throws Exception {
+        // import configurations
+        _settings.setVariable("base.dir", new File(".").getAbsolutePath());
+        ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(_settings,
+            getClass().getResource("test-configurations-import5.xml"), true);
+        assertNotNull(md);
+
+        // should have imported configurations
+        assertNotNull(md.getConfigurations());
+        assertEquals(Arrays.asList(new Configuration[] {
+                new Configuration("conf1", Visibility.PUBLIC, "", new String[0]),
+                new Configuration("conf2", Visibility.PRIVATE, "", new String[0])}), Arrays
+                .asList(md.getConfigurations()));
+
+        DependencyDescriptor[] dependencies = md.getDependencies();
+        assertNotNull(dependencies);
+        assertEquals(2, dependencies.length);
+
+        // no conf def => defaults to defaultConf: *->*
+        DependencyDescriptor dd = getDependency(dependencies, "mymodule1");
+        assertEquals(Arrays.asList(new String[] {"*"}), Arrays.asList(dd.getModuleConfigurations()));
+        assertEquals(Arrays.asList(new String[] {"*"}), Arrays.asList(dd
+                .getDependencyConfigurations("conf1")));
+
+        // confs def: conf1->*
+        dd = getDependency(dependencies, "mymodule2");
+        assertEquals(Arrays.asList(new String[] {"conf1"}), Arrays.asList(dd
+                .getModuleConfigurations()));
+        assertEquals(Arrays.asList(new String[] {"*"}), Arrays.asList(dd
+                .getDependencyConfigurations("conf1")));
+    }
+
+    
     public void testExtendOtherConfigs() throws Exception {
         // import configurations and default mapping
         ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(_settings,

@@ -77,8 +77,13 @@ public class XmlModuleUpdaterTest extends TestCase {
 
     public void testUpdateWithImportedMappingOverride() throws Exception {
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+        //This should normally work with test-configurations-import4.xml, but it fail because
+        //the context of the import is not passed.  To fix the test, I have copied the
+        //file to test-configurations-import6.xml in order to use a path relative to
+        //the execution directory.
+        //But that may hidde a bug!
         XmlModuleDescriptorUpdater.update(new IvySettings(), XmlModuleUpdaterTest.class
-                .getResourceAsStream("test-configurations-import4.xml"), buffer, new HashMap(),
+                .getResourceAsStream("test-configurations-import6.xml"), buffer, new HashMap(),
             "release", "mynewrev", new Date(), null, true);
 
         String updatedXml = buffer.toString();

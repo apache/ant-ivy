@@ -24,7 +24,7 @@
 	       publication="20041101110000"
 	/>
 	<configurations>
-		<include file="test/java/org/apache/ivy/plugins/parser/xml/imported-configurations-with-mapping.xml"/>
+		<include file="imported-configurations-with-mapping.xml"/>
 	</configurations>
 	<dependencies>
 		<dependency name="mymodule1" rev="1.0"/>
