@@ -55,11 +55,11 @@ public abstract class AbstractResourceResolver extends BasicResolver {
         IVY_ARTIFACT_ATTRIBUTES.put(IvyPatternHelper.EXT_KEY, "xml");
     }
 
-    private List _ivyPatterns = new ArrayList(); // List (String pattern)
+    private List ivyPatterns = new ArrayList(); // List (String pattern)
 
-    private List _artifactPatterns = new ArrayList(); // List (String pattern)
+    private List artifactPatterns = new ArrayList(); // List (String pattern)
 
-    private boolean _m2compatible = false;
+    private boolean m2compatible = false;
 
     public AbstractResourceResolver() {
     }
@@ -69,7 +69,7 @@ public abstract class AbstractResourceResolver extends BasicResolver {
         if (isM2compatible()) {
             mrid = convertM2IdForResourceSearch(mrid);
         }
-        return findResourceUsingPatterns(mrid, _ivyPatterns, DefaultArtifact.newIvyArtifact(mrid,
+        return findResourceUsingPatterns(mrid, ivyPatterns, DefaultArtifact.newIvyArtifact(mrid,
             data.getDate()), getRMDParser(dd, data), data.getDate());
     }
 
@@ -78,7 +78,7 @@ public abstract class AbstractResourceResolver extends BasicResolver {
         if (isM2compatible()) {
             mrid = convertM2IdForResourceSearch(mrid);
         }
-        return findResourceUsingPatterns(mrid, _artifactPatterns, artifact,
+        return findResourceUsingPatterns(mrid, artifactPatterns, artifact,
             getDefaultRMDParser(artifact.getModuleRevisionId().getModuleId()), date);
     }
 
@@ -135,11 +135,8 @@ public abstract class AbstractResourceResolver extends BasicResolver {
                 ModuleDescriptor md = ((MDResolvedResource) r).getResolvedModuleRevision()
                         .getDescriptor();
                 if (md.isDefault()) {
-                    Message
-                            .debug("\t"
-                                    + name
-                                    + ": default md rejected by version matcher requiring module descriptor: "
-                                    + rres);
+                    Message.debug("\t" + name + ": default md rejected by version matcher" 
+                            + "requiring module descriptor: " + rres);
                     rejected.add(rres.getRevision() + " (MD)");
                     continue;
                 } else if (!versionMatcher.accept(mrid, md)) {
@@ -202,8 +199,8 @@ public abstract class AbstractResourceResolver extends BasicResolver {
         return names;
     }
 
-    // should be overridden by subclasses wanting to have listing features
     protected void findTokenValues(Collection names, List patterns, Map tokenValues, String token) {
+        //to be overridden by subclasses wanting to have listing features
     }
 
     /**
@@ -212,38 +209,38 @@ public abstract class AbstractResourceResolver extends BasicResolver {
      * @param pattern
      */
     public void addIvyPattern(String pattern) {
-        _ivyPatterns.add(pattern);
+        ivyPatterns.add(pattern);
     }
 
     public void addArtifactPattern(String pattern) {
-        _artifactPatterns.add(pattern);
+        artifactPatterns.add(pattern);
     }
 
     public List getIvyPatterns() {
-        return Collections.unmodifiableList(_ivyPatterns);
+        return Collections.unmodifiableList(ivyPatterns);
     }
 
     public List getArtifactPatterns() {
-        return Collections.unmodifiableList(_artifactPatterns);
+        return Collections.unmodifiableList(artifactPatterns);
     }
 
-    protected void setIvyPatterns(List ivyPatterns) {
-        _ivyPatterns = ivyPatterns;
+    protected void setIvyPatterns(List patterns) {
+        ivyPatterns = patterns;
     }
 
-    protected void setArtifactPatterns(List artifactPatterns) {
-        _artifactPatterns = artifactPatterns;
+    protected void setArtifactPatterns(List patterns) {
+        artifactPatterns = patterns;
     }
 
     /*
      * Methods respecting ivy conf method specifications
      */
     public void addConfiguredIvy(IvyPattern p) {
-        _ivyPatterns.add(p.getPattern());
+        ivyPatterns.add(p.getPattern());
     }
 
     public void addConfiguredArtifact(IvyPattern p) {
-        _artifactPatterns.add(p.getPattern());
+        artifactPatterns.add(p.getPattern());
     }
 
     public void dumpSettings() {
@@ -262,11 +259,11 @@ public abstract class AbstractResourceResolver extends BasicResolver {
     }
 
     public boolean isM2compatible() {
-        return _m2compatible;
+        return m2compatible;
     }
 
-    public void setM2compatible(boolean m2compatible) {
-        _m2compatible = m2compatible;
+    public void setM2compatible(boolean compatible) {
+        m2compatible = compatible;
     }
 
     protected ModuleRevisionId convertM2IdForResourceSearch(ModuleRevisionId mrid) {
