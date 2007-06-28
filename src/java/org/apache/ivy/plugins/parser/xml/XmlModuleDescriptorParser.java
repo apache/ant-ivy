@@ -93,14 +93,15 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
      */
     public ModuleDescriptor parseDescriptor(IvySettings ivySettings, URL xmlURL, Resource res,
             boolean validate) throws ParseException, IOException {
-        Parser parser = new Parser(this, ivySettings, validate);
-        parser.parse(xmlURL, res, validate);
+        Parser parser = new Parser(this, ivySettings, validate, xmlURL);
+        parser.parse(res, validate);
         return parser.getModuleDescriptor();
     }
 
-    public ModuleDescriptor parseDescriptor(IvySettings ivySettings, InputStream descriptor,
+    /** Used for test purpose */
+    ModuleDescriptor parseDescriptor(IvySettings ivySettings, InputStream descriptor,
             Resource res, boolean validate) throws ParseException, IOException {
-        Parser parser = new Parser(this, ivySettings, validate);
+        Parser parser = new Parser(this, ivySettings, validate, null);
         parser.parse(descriptor, res, validate);
         return parser.getModuleDescriptor();
     }
@@ -174,13 +175,16 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
 
         private int _state = NONE;
 
-        public Parser(ModuleDescriptorParser parser, IvySettings ivySettings, boolean validate) {
+        private final URL xmlURL;
+
+        public Parser(ModuleDescriptorParser parser, IvySettings ivySettings, boolean validate, URL xmlURL) {
             super(parser);
             _ivy = ivySettings;
             _validate = validate;
+            this.xmlURL = xmlURL;
         }
 
-        private void parse(URL xmlURL, Resource res, boolean validate) throws ParseException,
+        private void parse(Resource res, boolean validate) throws ParseException,
                 IOException {
             try {
                 setResource(res);
@@ -490,21 +494,20 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
                     parseRule(qName, attributes);
                     md.addExcludeRule((ExcludeRule) _confAware);
                 } else if ("include".equals(qName) && _state == CONF) {
-                    URL url;
-                    String fileName = _ivy.substitute(attributes.getValue("file"));
-                    if (fileName == null) {
-                        String urlStr = _ivy.substitute(attributes.getValue("url"));
-                        url = new URL(urlStr);
-                    } else {
-                        url = new File(fileName).toURL();
+                    String file = attributes.getValue("file");
+                    String pathUrl = file == null ? attributes.getValue("url") : "file://" + file;
+                    if (pathUrl == null) {
+                        throw new SAXException("include tag must have a file or an url attribute");
                     }
+                    String substitutedPathUrl = _ivy.substitute(pathUrl);
+                    URL url = _ivy.getRelativeUrlResolver().getURL(xmlURL, substitutedPathUrl);
 
                     // create a new temporary parser to read the configurations from
                     // the specified file.
-                    Parser parser = new Parser(getModuleDescriptorParser(), _ivy, false);
+                    Parser parser = new Parser(getModuleDescriptorParser(), _ivy, false, url);
                     parser.md = new DefaultModuleDescriptor(getModuleDescriptorParser(),
                             new URLResource(url));
-                    XMLHelper.parse(url, null, parser);
+                    XMLHelper.parse(url , null, parser);
 
                     // add the configurations from this temporary parser to this module descriptor
                     Configuration[] configs = parser.getModuleDescriptor().getConfigurations();
@@ -517,8 +520,8 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
                         setDefaultConfMapping(parser.getDefaultConfMapping());
                     }
                     if (parser.md.isMappingOverride()) {
-                        Message
-                                .debug("enabling mapping-override from imported configurations file");
+                        Message.debug("enabling mapping-override from imported configurations" 
+                                + " file");
                         md.setMappingOverride(true);
                     }
                 } else if (_validate && _state != INFO) {

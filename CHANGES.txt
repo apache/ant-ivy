@@ -86,6 +86,8 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - FIX: buildlist broken - regression in 2.0.0-alpha1-incubating (IVY-493)
 - FIX: Circular dependency startegy in buildlist (IVY-509)
 - FIX: ivy should stop telling me off twice for ivyconf.xml files (IVY-513)
+- FIX: Allow relative path in ivy.xml files (IVY-347)
+
 
    2.0.0-alpha1-incubating
 =====================================

@@ -38,6 +38,8 @@ import java.util.Properties;
 
 import org.apache.ivy.Ivy;
 import org.apache.ivy.core.IvyPatternHelper;
+import org.apache.ivy.core.NormalRelativeUrlResolver;
+import org.apache.ivy.core.RelativeUrlResolver;
 import org.apache.ivy.core.module.id.ModuleId;
 import org.apache.ivy.core.module.status.StatusManager;
 import org.apache.ivy.core.sort.SortEngineSettings;
@@ -1154,4 +1156,8 @@ public class IvySettings implements SortEngineSettings {
         variableContainer = variables;
     }
 
+    
+    public RelativeUrlResolver getRelativeUrlResolver() {
+        return new NormalRelativeUrlResolver();
+    }
 }
