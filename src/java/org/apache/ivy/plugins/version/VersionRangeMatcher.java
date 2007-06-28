@@ -39,66 +39,66 @@ import org.apache.ivy.plugins.latest.LatestStrategy;
  */
 public class VersionRangeMatcher extends AbstractVersionMatcher {
     // todo: check these constants
-    private final static String OPEN_INC = "[";
+    private static final String OPEN_INC = "[";
 
-    private final static String OPEN_EXC = "]";
+    private static final String OPEN_EXC = "]";
 
-    private final static String CLOSE_INC = "]";
+    private static final String CLOSE_INC = "]";
 
-    private final static String CLOSE_EXC = "[";
+    private static final String CLOSE_EXC = "[";
 
-    private final static String LOWER_INFINITE = "(";
+    private static final String LOWER_INFINITE = "(";
 
-    private final static String UPPER_INFINITE = ")";
+    private static final String UPPER_INFINITE = ")";
 
-    private final static String SEPARATOR = ",";
+    private static final String SEPARATOR = ",";
 
     // following patterns are built upon constants above and should not be modified
-    private final static String OPEN_INC_PATTERN = "\\" + OPEN_INC;
+    private static final String OPEN_INC_PATTERN = "\\" + OPEN_INC;
 
-    private final static String OPEN_EXC_PATTERN = "\\" + OPEN_EXC;
+    private static final String OPEN_EXC_PATTERN = "\\" + OPEN_EXC;
 
-    private final static String CLOSE_INC_PATTERN = "\\" + CLOSE_INC;
+    private static final String CLOSE_INC_PATTERN = "\\" + CLOSE_INC;
 
-    private final static String CLOSE_EXC_PATTERN = "\\" + CLOSE_EXC;
+    private static final String CLOSE_EXC_PATTERN = "\\" + CLOSE_EXC;
 
-    private final static String LI_PATTERN = "\\" + LOWER_INFINITE;
+    private static final String LI_PATTERN = "\\" + LOWER_INFINITE;
 
-    private final static String UI_PATTERN = "\\" + UPPER_INFINITE;
+    private static final String UI_PATTERN = "\\" + UPPER_INFINITE;
 
-    private final static String SEP_PATTERN = "\\s*\\" + SEPARATOR + "\\s*";
+    private static final String SEP_PATTERN = "\\s*\\" + SEPARATOR + "\\s*";
 
-    private final static String OPEN_PATTERN = "[" + OPEN_INC_PATTERN + OPEN_EXC_PATTERN + "]";
+    private static final String OPEN_PATTERN = "[" + OPEN_INC_PATTERN + OPEN_EXC_PATTERN + "]";
 
-    private final static String CLOSE_PATTERN = "[" + CLOSE_INC_PATTERN + CLOSE_EXC_PATTERN + "]";
+    private static final String CLOSE_PATTERN = "[" + CLOSE_INC_PATTERN + CLOSE_EXC_PATTERN + "]";
 
-    private final static String ANY_NON_SPECIAL_PATTERN = "[^\\s" + SEPARATOR + OPEN_INC_PATTERN
+    private static final String ANY_NON_SPECIAL_PATTERN = "[^\\s" + SEPARATOR + OPEN_INC_PATTERN
             + OPEN_EXC_PATTERN + CLOSE_INC_PATTERN + CLOSE_EXC_PATTERN + LI_PATTERN + UI_PATTERN
             + "]";
 
-    private final static String FINITE_PATTERN = OPEN_PATTERN + "\\s*(" + ANY_NON_SPECIAL_PATTERN
+    private static final String FINITE_PATTERN = OPEN_PATTERN + "\\s*(" + ANY_NON_SPECIAL_PATTERN
             + "+)" + SEP_PATTERN + "(" + ANY_NON_SPECIAL_PATTERN + "+)\\s*" + CLOSE_PATTERN;
 
-    private final static String LOWER_INFINITE_PATTERN = LI_PATTERN + SEP_PATTERN + "("
+    private static final String LOWER_INFINITE_PATTERN = LI_PATTERN + SEP_PATTERN + "("
             + ANY_NON_SPECIAL_PATTERN + "+)\\s*" + CLOSE_PATTERN;
 
-    private final static String UPPER_INFINITE_PATTERN = OPEN_PATTERN + "\\s*("
+    private static final String UPPER_INFINITE_PATTERN = OPEN_PATTERN + "\\s*("
             + ANY_NON_SPECIAL_PATTERN + "+)" + SEP_PATTERN + UI_PATTERN;
 
-    private final static Pattern FINITE_RANGE = Pattern.compile(FINITE_PATTERN);
+    private static final Pattern FINITE_RANGE = Pattern.compile(FINITE_PATTERN);
 
-    private final static Pattern LOWER_INFINITE_RANGE = Pattern.compile(LOWER_INFINITE_PATTERN);
+    private static final Pattern LOWER_INFINITE_RANGE = Pattern.compile(LOWER_INFINITE_PATTERN);
 
-    private final static Pattern UPPER_INFINITE_RANGE = Pattern.compile(UPPER_INFINITE_PATTERN);
+    private static final Pattern UPPER_INFINITE_RANGE = Pattern.compile(UPPER_INFINITE_PATTERN);
 
-    private final static Pattern ALL_RANGE = Pattern.compile(FINITE_PATTERN + "|"
+    private static final Pattern ALL_RANGE = Pattern.compile(FINITE_PATTERN + "|"
             + LOWER_INFINITE_PATTERN + "|" + UPPER_INFINITE_PATTERN);
 
     private final class MRIDArtifactInfo implements ArtifactInfo {
-        private ModuleRevisionId _mrid;
+        private ModuleRevisionId mrid;
 
         public MRIDArtifactInfo(ModuleRevisionId id) {
-            _mrid = id;
+            mrid = id;
         }
 
         public long getLastModified() {
@@ -106,11 +106,11 @@ public class VersionRangeMatcher extends AbstractVersionMatcher {
         }
 
         public String getRevision() {
-            return _mrid.getRevision();
+            return mrid.getRevision();
         }
     }
 
-    private final Comparator COMPARATOR = new Comparator() {
+    private final Comparator comparator = new Comparator() {
         public int compare(Object o1, Object o2) {
             if (o1.equals(o2)) {
                 return 0;
@@ -123,9 +123,9 @@ public class VersionRangeMatcher extends AbstractVersionMatcher {
         }
     };
 
-    private LatestStrategy _latestStrategy;
+    private LatestStrategy latestStrategy;
 
-    private String _latestStrategyName = "default";
+    private String latestStrategyName = "default";
 
     public VersionRangeMatcher() {
         super("version-range");
@@ -137,7 +137,7 @@ public class VersionRangeMatcher extends AbstractVersionMatcher {
 
     public VersionRangeMatcher(String name, LatestStrategy strategy) {
         super(name);
-        _latestStrategy = strategy;
+        this.latestStrategy = strategy;
     }
 
     public boolean isDynamic(ModuleRevisionId askedMrid) {
@@ -170,14 +170,16 @@ public class VersionRangeMatcher extends AbstractVersionMatcher {
 
     private boolean isLower(ModuleRevisionId askedMrid, String revision,
             ModuleRevisionId foundMrid, boolean inclusive) {
-        return COMPARATOR.compare(ModuleRevisionId.newInstance(askedMrid, revision), foundMrid) <= (inclusive ? 0
-                : -1);
+        ModuleRevisionId mRevId = ModuleRevisionId.newInstance(askedMrid, revision);
+        int result = comparator.compare(mRevId, foundMrid);        
+        return result <= (inclusive ? 0 : -1);
     }
 
     private boolean isUpper(ModuleRevisionId askedMrid, String revision,
             ModuleRevisionId foundMrid, boolean inclusive) {
-        return COMPARATOR.compare(ModuleRevisionId.newInstance(askedMrid, revision), foundMrid) >= (inclusive ? 0
-                : 1);
+        ModuleRevisionId mRevId = ModuleRevisionId.newInstance(askedMrid, revision);
+        int result = comparator.compare(mRevId, foundMrid);        
+        return result >= (inclusive ? 0 : 1);
     }
 
     public int compare(ModuleRevisionId askedMrid, ModuleRevisionId foundMrid,
@@ -210,31 +212,31 @@ public class VersionRangeMatcher extends AbstractVersionMatcher {
     }
 
     public LatestStrategy getLatestStrategy() {
-        if (_latestStrategy == null) {
+        if (latestStrategy == null) {
             if (getSettings() == null) {
                 throw new IllegalStateException(
                         "no ivy instance nor latest strategy configured in version range matcher "
                                 + this);
             }
-            if (_latestStrategyName == null) {
+            if (latestStrategyName == null) {
                 throw new IllegalStateException(
                         "null latest strategy defined in version range matcher " + this);
             }
-            _latestStrategy = getSettings().getLatestStrategy(_latestStrategyName);
-            if (_latestStrategy == null) {
-                throw new IllegalStateException("unknown latest strategy '" + _latestStrategyName
+            latestStrategy = getSettings().getLatestStrategy(latestStrategyName);
+            if (latestStrategy == null) {
+                throw new IllegalStateException("unknown latest strategy '" + latestStrategyName
                         + "' configured in version range matcher " + this);
             }
         }
-        return _latestStrategy;
+        return latestStrategy;
     }
 
     public void setLatestStrategy(LatestStrategy latestStrategy) {
-        _latestStrategy = latestStrategy;
+        this.latestStrategy = latestStrategy;
     }
 
     public void setLatest(String latestStrategyName) {
-        _latestStrategyName = latestStrategyName;
+        this.latestStrategyName = latestStrategyName;
     }
 
 }

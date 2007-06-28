@@ -31,28 +31,28 @@ import org.apache.ivy.plugins.matcher.Matcher;
  */
 public class PatternVersionMatcher extends AbstractVersionMatcher {
 
-    private List _matches = new ArrayList();
+    private List matches = new ArrayList();
 
-    private Map _revisionMatches = new HashMap(); // revision -> list of Match instances
+    private Map revisionMatches = new HashMap(); // revision -> list of Match instances
 
-    private boolean _init = false;
+    private boolean init = false;
 
     public void addMatch(Match match) {
-        _matches.add(match);
+        matches.add(match);
     }
 
     private void init() {
-        if (!_init) {
-            for (Iterator it = _matches.iterator(); it.hasNext();) {
+        if (!init) {
+            for (Iterator it = matches.iterator(); it.hasNext();) {
                 Match match = (Match) it.next();
-                List matches = (List) _revisionMatches.get(match.getRevision());
-                if (matches == null) {
-                    matches = new ArrayList();
-                    _revisionMatches.put(match.getRevision(), matches);
+                List revMatches = (List) revisionMatches.get(match.getRevision());
+                if (revMatches == null) {
+                    revMatches = new ArrayList();
+                    revisionMatches.put(match.getRevision(), revMatches);
                 }
-                matches.add(match);
+                revMatches.add(match);
             }
-            _init = true;
+            init = true;
         }
     }
 
@@ -69,10 +69,10 @@ public class PatternVersionMatcher extends AbstractVersionMatcher {
             revision = revision.substring(0, bracketIndex);
         }
 
-        List matches = (List) _revisionMatches.get(revision);
+        List revMatches = (List) revisionMatches.get(revision);
 
-        if (matches != null) {
-            Iterator it = matches.iterator();
+        if (revMatches != null) {
+            Iterator it = revMatches.iterator();
             while (!accept && it.hasNext()) {
                 Match match = (Match) it.next();
                 Matcher matcher = match.getPatternMatcher(askedMrid);
@@ -93,7 +93,7 @@ public class PatternVersionMatcher extends AbstractVersionMatcher {
         if (bracketIndex > 0) {
             revision = revision.substring(0, bracketIndex);
         }
-        return _revisionMatches.containsKey(revision);
+        return revisionMatches.containsKey(revision);
     }
 
 }

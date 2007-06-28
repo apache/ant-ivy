@@ -26,7 +26,7 @@ import org.apache.ivy.plugins.IvySettingsAware;
 import org.apache.ivy.util.Checks;
 
 public abstract class AbstractVersionMatcher implements VersionMatcher, IvySettingsAware {
-    private String _name;
+    private String name;
 
     private IvySettings settings;
 
@@ -34,15 +34,15 @@ public abstract class AbstractVersionMatcher implements VersionMatcher, IvySetti
     }
 
     public AbstractVersionMatcher(String name) {
-        _name = name;
+        this.name = name;
     }
 
     public String getName() {
-        return _name;
+        return name;
     }
 
     public void setName(String name) {
-        _name = name;
+        this.name = name;
     }
 
     public boolean needModuleDescriptor(ModuleRevisionId askedMrid, ModuleRevisionId foundMrid) {

@@ -33,44 +33,44 @@ import org.apache.ivy.plugins.matcher.PatternMatcher;
  * 
  */
 public class Match {
-    private String _revision;
+    private String revision;
 
-    private String _pattern;
+    private String pattern;
 
-    private String _args;
+    private String args;
 
-    private String _matcher;
+    private String matcher;
 
     public String getArgs() {
-        return _args;
+        return args;
     }
 
     public void setArgs(String args) {
-        this._args = args;
+        this.args = args;
     }
 
     public String getMatcher() {
-        return _matcher;
+        return matcher;
     }
 
     public void setMatcher(String matcher) {
-        this._matcher = matcher;
+        this.matcher = matcher;
     }
 
     public String getPattern() {
-        return _pattern;
+        return pattern;
     }
 
     public void setPattern(String pattern) {
-        this._pattern = pattern;
+        this.pattern = pattern;
     }
 
     public String getRevision() {
-        return _revision;
+        return revision;
     }
 
     public void setRevision(String revision) {
-        this._revision = revision;
+        this.revision = revision;
     }
 
     public Matcher getPatternMatcher(ModuleRevisionId askedMrid) {
@@ -91,7 +91,7 @@ public class Match {
         String pattern = getPattern();
         pattern = IvyPatternHelper.substituteVariables(pattern, variables);
 
-        PatternMatcher pMatcher = IvyContext.getContext().getSettings().getMatcher(_matcher);
+        PatternMatcher pMatcher = IvyContext.getContext().getSettings().getMatcher(matcher);
         return pMatcher.getMatcher(pattern);
     }
 
