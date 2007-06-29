@@ -40,7 +40,7 @@
 		</description>
 	</info>
 	<configurations>
-		<include file="test/java/org/apache/ivy/plugins/parser/xml/imported-configurations-with-mapping.xml"/>
+		<include file="imported-configurations-with-mapping.xml"/>
 		<conf name="${myvar}" description="desc 1"/>
 		<conf name="myconf2" description="desc 2" visibility="public"/>
 		<conf name="myconf3" description="desc 3" visibility="private"/>

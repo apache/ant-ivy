@@ -59,6 +59,7 @@ import org.xml.sax.helpers.DefaultHandler;
  * possible the original syntax
  */
 public class XmlModuleDescriptorUpdater {
+    private static final int MAX_HEADER_LENGTH = 10000;
     public static String LINE_SEPARATOR = System.getProperty("line.separator");
 
     /**
@@ -87,10 +88,46 @@ public class XmlModuleDescriptorUpdater {
             final Map resolvedRevisions, final String status, final String revision,
             final Date pubdate, final Namespace ns, final boolean replaceInclude,
             String[] confsToExclude) throws IOException, SAXException {
-        update(settings, srcURL.openStream(), destFile, resolvedRevisions, status, revision,
-            pubdate, ns, replaceInclude, confsToExclude);
+        if (destFile.getParentFile() != null) {
+            destFile.getParentFile().mkdirs();
+        }
+        OutputStream destStream = new FileOutputStream(destFile);
+        try {
+            update(settings, srcURL, destStream, resolvedRevisions, status, revision,
+                pubdate, ns, replaceInclude, confsToExclude);
+        } finally {
+            try {
+                destStream.close();
+            } catch (IOException e) {
+                Message.warn("failed to close a stream : " + e.toString());
+            }
+        }
     }
 
+    public static void update(final IvySettings settings, URL srcURL, OutputStream destFile,
+            final Map resolvedRevisions, final String status, final String revision,
+            final Date pubdate, final Namespace ns, final boolean replaceInclude,
+            String[] confsToExclude) throws IOException, SAXException {
+        InputStream in = srcURL.openStream();
+        try {
+            update(settings, srcURL, in, destFile, resolvedRevisions, status, revision,
+                pubdate, ns, replaceInclude, confsToExclude);
+        } finally {
+            try {
+                in.close();
+            } catch (IOException e) {
+                Message.warn("failed to close a stream : " + e.toString());
+            }
+            try {
+                destFile.close();
+            } catch (IOException e) {
+                Message.warn("failed to close a stream : " + e.toString());
+            }
+        }
+
+    }
+
+    
     public static void update(final IvySettings settings, InputStream in, File destFile,
             final Map resolvedRevisions, final String status, final String revision,
             final Date pubdate, final Namespace ns, final boolean replaceInclude,
@@ -100,16 +137,19 @@ public class XmlModuleDescriptorUpdater {
         }
         OutputStream fos = new FileOutputStream(destFile);
         try {
-            update(settings, in, fos, resolvedRevisions, status, revision, pubdate, ns,
+            //TODO : the inputStream context should be given.
+            update(settings, null, in, fos, resolvedRevisions, status, revision, pubdate, ns,
                 replaceInclude, confsToExclude);
         } finally {
             try {
                 in.close();
             } catch (IOException e) {
+                Message.warn("failed to close a stream : " + e.toString());
             }
             try {
                 fos.close();
             } catch (IOException e) {
+                Message.warn("failed to close a stream : " + e.toString());
             }
         }
     }
@@ -136,10 +176,12 @@ public class XmlModuleDescriptorUpdater {
 
         private final List confs;
 
+        private final URL relativePathCtx;
+
         public UpdaterHandler(final IvySettings settings, final PrintWriter out,
                 final Map resolvedRevisions, final String status, final String revision,
                 final Date pubdate, final Namespace ns, final boolean replaceInclude,
-                final String[] confs) {
+                final String[] confs, final URL relativePathCtx) {
             this.settings = settings;
             this.out = out;
             this.resolvedRevisions = resolvedRevisions;
@@ -148,6 +190,7 @@ public class XmlModuleDescriptorUpdater {
             this.pubdate = pubdate;
             this.ns = ns;
             this.replaceInclude = replaceInclude;
+            this.relativePathCtx = relativePathCtx;
             if (confs != null) {
                 this.confs = Arrays.asList(confs);
             } else {
@@ -228,16 +271,26 @@ public class XmlModuleDescriptorUpdater {
                 }
             } else if (replaceInclude && "include".equals(qName)
                     && _context.contains("configurations")) {
+                //TODO, in the case of !replaceInclude, we should still replace the relative path
+                //by an absolute path. 
                 final ExtendedBuffer buffer = new ExtendedBuffer(getContext());
                 _buffers.push(buffer);
                 try {
                     URL url;
-                    String fileName = substitute(settings, attributes.getValue("file"));
-                    if (fileName == null) {
-                        String urlStr = substitute(settings, attributes.getValue("url"));
-                        url = new URL(urlStr);
+                    if (settings != null) {
+                        url = settings.getRelativeUrlResolver().getURL(relativePathCtx,
+                            settings.substitute(attributes.getValue("file")),
+                            settings.substitute(attributes.getValue("url")));
                     } else {
-                        url = new File(fileName).toURL();
+                        //TODO : settings can be null, but I don't why.  
+                        //Check if the next code is correct in that case
+                        String fileName = attributes.getValue("file");
+                        if (fileName == null) {
+                            String urlStr = attributes.getValue("url");
+                            url = new URL(urlStr);
+                        } else {
+                            url = new File(fileName).toURL();
+                        }
                     }
                     XMLHelper.parse(url, null, new DefaultHandler() {
                         boolean _insideConfigurations = false;
@@ -606,28 +659,21 @@ public class XmlModuleDescriptorUpdater {
 
     }
 
-    public static void update(final IvySettings settings, InputStream inStream,
+    public static void update(final IvySettings settings, URL inStreamCtx, InputStream inStream,
             OutputStream outStream, final Map resolvedRevisions, final String status,
             final String revision, final Date pubdate, final Namespace ns,
-            final boolean replaceInclude) throws IOException, SAXException {
-        update(settings, inStream, outStream, resolvedRevisions, status, revision, pubdate, ns,
-            replaceInclude, null);
-    }
-
-    public static void update(final IvySettings settings, InputStream inStream,
-            OutputStream outStream, final Map resolvedRevisions, final String status,
-            final String revision, final Date pubdate, final Namespace ns,
-            final boolean replaceInclude, String[] confsToExclude) throws IOException, SAXException {
+            final boolean replaceInclude, String[] confsToExclude) 
+            throws IOException, SAXException {
         final PrintWriter out = new PrintWriter(new OutputStreamWriter(outStream, "UTF-8"));
         final BufferedInputStream in = new BufferedInputStream(inStream);
 
-        in.mark(10000); // assume the header is never larger than 10000 bytes.
+        in.mark(MAX_HEADER_LENGTH); // assume the header is never larger than 10000 bytes.
         copyHeader(in, out);
         in.reset(); // reposition the stream at the beginning
 
         try {
             UpdaterHandler updaterHandler = new UpdaterHandler(settings, out, resolvedRevisions,
-                    status, revision, pubdate, ns, replaceInclude, confsToExclude);
+                    status, revision, pubdate, ns, replaceInclude, confsToExclude, inStreamCtx);
             XMLHelper.parse(in, null, updaterHandler, updaterHandler);
         } catch (ParserConfigurationException e) {
             IllegalStateException ise = new IllegalStateException(

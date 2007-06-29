@@ -25,7 +25,7 @@
 	       status="integration"
 	       publication="20041101110000" />
 	<configurations>
-		<include file="test/java/org/apache/ivy/plugins/parser/xml/imported-configurations.xml"/>
+		<include file="imported-configurations.xml"/>
 		<conf name="myconf1" description="desc 1"/>
 		<conf name="myconf2" description="desc 2" visibility="public"/>
 		<conf name="myconf3" description="desc 3" visibility="private"/>

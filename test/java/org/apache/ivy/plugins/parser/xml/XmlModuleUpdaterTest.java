@@ -23,6 +23,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileReader;
 import java.io.InputStreamReader;
+import java.net.URL;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -82,9 +83,11 @@ public class XmlModuleUpdaterTest extends TestCase {
         //file to test-configurations-import6.xml in order to use a path relative to
         //the execution directory.
         //But that may hidde a bug!
-        XmlModuleDescriptorUpdater.update(new IvySettings(), XmlModuleUpdaterTest.class
-                .getResourceAsStream("test-configurations-import6.xml"), buffer, new HashMap(),
-            "release", "mynewrev", new Date(), null, true);
+        URL settingsUrl = new File("test/java/org/apache/ivy/plugins/parser/xml/" 
+            + "test-configurations-import4.xml").toURL();
+        XmlModuleDescriptorUpdater.update(new IvySettings(), settingsUrl, buffer, new HashMap(),
+            "release", "mynewrev", new Date(), null,
+        true, null);
 
         String updatedXml = buffer.toString();
 
@@ -95,9 +98,11 @@ public class XmlModuleUpdaterTest extends TestCase {
 
     public void testUpdateWithExcludeConfigurations1() throws Exception {
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-        XmlModuleDescriptorUpdater.update(new IvySettings(), XmlModuleUpdaterTest.class
-                .getResourceAsStream("test-update-excludedconfs1.xml"), buffer, new HashMap(),
-            "release", "mynewrev", new Date(), null, true, new String[] {"myconf2"});
+        URL settingsUrl = new File("test/java/org/apache/ivy/plugins/parser/xml/" 
+                + "test-update-excludedconfs1.xml").toURL();
+        XmlModuleDescriptorUpdater.update(new IvySettings(), settingsUrl, 
+            buffer, new HashMap(), "release", "mynewrev", new Date(), null, true, 
+            new String[] {"myconf2"});
 
         XmlModuleDescriptorParser parser = XmlModuleDescriptorParser.getInstance();
         ModuleDescriptor updatedMd = parser.parseDescriptor(new IvySettings(),
@@ -120,10 +125,12 @@ public class XmlModuleUpdaterTest extends TestCase {
 
     public void testUpdateWithExcludeConfigurations2() throws Exception {
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+        URL settingFile = new File("test/java/org/apache/ivy/plugins/parser/xml/" 
+            + "test-update-excludedconfs2.xml").toURL();
         try {
-            XmlModuleDescriptorUpdater.update(new IvySettings(), XmlModuleUpdaterTest.class
-                    .getResourceAsStream("test-update-excludedconfs2.xml"), buffer, new HashMap(),
-                "release", "mynewrev", new Date(), null, true, new String[] {"myconf2"});
+            XmlModuleDescriptorUpdater.update(new IvySettings(), settingFile, buffer,
+                new HashMap(), "release", "mynewrev", new Date(), null, true,
+                new String[] {"myconf2"});
             fail("IllegalArgumentException hasn't been thrown");
         } catch (IllegalArgumentException e) {
             // this is ok
@@ -134,8 +141,10 @@ public class XmlModuleUpdaterTest extends TestCase {
 
     public void testUpdateWithExcludeConfigurations3() throws Exception {
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-        XmlModuleDescriptorUpdater.update(new IvySettings(), XmlModuleUpdaterTest.class
-                .getResourceAsStream("test-update-excludedconfs3.xml"), buffer, new HashMap(),
+        URL settingsUrl = new File("test/java/org/apache/ivy/plugins/parser/xml/" 
+            + "test-update-excludedconfs3.xml").toURL();
+
+        XmlModuleDescriptorUpdater.update(new IvySettings(), settingsUrl, buffer, new HashMap(),
             "release", "mynewrev", new Date(), null, true, new String[] {"myconf2", "conf2"});
 
         XmlModuleDescriptorParser parser = XmlModuleDescriptorParser.getInstance();
@@ -161,8 +170,9 @@ public class XmlModuleUpdaterTest extends TestCase {
 
     public void testUpdateWithExcludeConfigurations4() throws Exception {
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-        XmlModuleDescriptorUpdater.update(new IvySettings(), XmlModuleUpdaterTest.class
-                .getResourceAsStream("test-update-excludedconfs4.xml"), buffer, new HashMap(),
+        URL settingsUrl = new File("test/java/org/apache/ivy/plugins/parser/xml/" 
+            + "test-update-excludedconfs4.xml").toURL();
+        XmlModuleDescriptorUpdater.update(new IvySettings(), settingsUrl, buffer, new HashMap(),
             "release", "mynewrev", new Date(), null, true, new String[] {"myconf2"});
 
         XmlModuleDescriptorParser parser = XmlModuleDescriptorParser.getInstance();
@@ -186,8 +196,9 @@ public class XmlModuleUpdaterTest extends TestCase {
 
     public void testUpdateWithExcludeConfigurations5() throws Exception {
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-        XmlModuleDescriptorUpdater.update(new IvySettings(), XmlModuleUpdaterTest.class
-                .getResourceAsStream("test-update-excludedconfs5.xml"), buffer, new HashMap(),
+        URL settingsUrl = new File("test/java/org/apache/ivy/plugins/parser/xml/" 
+            + "test-update-excludedconfs5.xml").toURL();
+        XmlModuleDescriptorUpdater.update(new IvySettings(), settingsUrl, buffer, new HashMap(),
             "release", "mynewrev", new Date(), null, true, new String[] {"myconf2"});
 
         XmlModuleDescriptorParser parser = XmlModuleDescriptorParser.getInstance();
