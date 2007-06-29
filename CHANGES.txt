@@ -63,6 +63,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - IMPROVEMENT: Javadoc improvements (IVY-544) (with contribution from Tjeerd Verhagen)
 - IMPROVEMENT: Unit test improvements (IVY-545) (thanks to Tjeerd Verhagen)
 
+- FIX: pom.groupId is not recognized in maven 2 pom parser (IVY-550)
 - FIX: Evicted modules report depends on the order of the dependencies (IVY-526)
 - FIX: Ivy does not work on Turkish machines (IVY-65)
 - FIX: Ivy does not handle multiple version dependencies in maven2 poms correctly (IVY-494)

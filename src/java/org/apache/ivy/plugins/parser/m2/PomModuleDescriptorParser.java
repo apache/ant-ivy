@@ -197,7 +197,9 @@ public final class PomModuleDescriptorParser extends AbstractModuleDescriptorPar
             }
             ModuleRevisionId mrid = ModuleRevisionId.newInstance(organisation, module, revision);
             properties.put("project.groupId", organisation);
+            properties.put("pom.groupId", organisation);
             properties.put("project.artifactId", module);
+            properties.put("pom.artifactId", module);
             properties.put("project.version", revision);
             properties.put("pom.version", revision);
             properties.put("version", revision);
