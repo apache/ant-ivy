@@ -233,7 +233,10 @@
   		</copy>
 	</target>
 
-	<target name="jar" depends="compile-optional, default-version">
+	<!-- =================================================================
+	     Create the two jar files (Ivy core and Ivy core + Ant tasks)
+	     ================================================================= -->
+	<target name="jar" depends="compile-optional, default-version" description="Create Jar files">
 		<!-- identify compiled ivy version -->
 		<echo message="version=${build.version}${line.separator}" file="${core.classes.build.dir}/module.properties" append="true" />
 		<echo message="date=${pubdate}${line.separator}" file="${core.classes.build.dir}/module.properties" append="true" />
