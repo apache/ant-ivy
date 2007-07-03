@@ -30,7 +30,7 @@
 Container for dependency elements, used to describe the dependencies of this module. 
 If this container is not present, it is assumed that the module has no dependency at all.
 
-This container let the possibility to defines two very similar things: defaultconf and defaultconfmapping.
+This container let the possibility to define two very similar things: defaultconf and defaultconfmapping.
 
 <code>defaultconf</code> exists since Ivy 1.1 and enables to define the default conf attribute to use when no conf is defined for a dependency in this ivy file. It is only used when no conf mapping is defined, and has no influence in other cases.
 
@@ -56,6 +56,8 @@ Note that if both defaultconf and defaultconfmapping are defined, it's the defau
 </thead>
 <tbody>
     <tr><td><a href="../../doc/ivyfile/dependency.html">dependency</a></td><td>declares a dependency for this module</td>
+        <td>0..n</td></tr>
+    <tr><td><a href="../../doc/ivyfile/exclude.html">exclude</a></td><td>excludes artifacts, modules or whole organizations from the set of dependencies of this module <span class="since">since 2.0</span></td>
         <td>0..n</td></tr>
 </tbody>
 </table>

@@ -749,7 +749,15 @@
                                   ]
                               }
                             ]
-                        }
+                        },
+                        {
+                          "id":"doc/ivyfile/exclude",
+                          "title":"exclude",
+                          "children": [
+
+                            ]
+,
+                          "level":2                        }
                       ]
                   },
                   {
