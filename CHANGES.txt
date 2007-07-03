@@ -60,6 +60,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - IMPROVEMENT: Remove @author tags (thanks to Stephane Bailliez)
 - IMPROVEMENT: Remove use of deprecated elements in ivysettings.xml (IVY-505) (with contribution from Jan Materne)
 - IMPROVEMENT: Buildlist onlydirectdep attribute (IVY-473 and IVY-504) (with contribution from Mikkel Bjerg )
+- IMPROVEMENT: Code / XML Polished (IVY-554) (with contribution from Tjeerd Verhagen)
 - IMPROVEMENT: Javadoc improvements (IVY-544) (with contribution from Tjeerd Verhagen)
 - IMPROVEMENT: Unit test improvements (IVY-545) (thanks to Tjeerd Verhagen)
 
