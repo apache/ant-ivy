@@ -45,6 +45,9 @@ import org.apache.ivy.Ivy;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.plugins.namespace.Namespace;
+import org.apache.ivy.plugins.repository.Resource;
+import org.apache.ivy.plugins.repository.file.FileResource;
+import org.apache.ivy.plugins.repository.url.URLResource;
 import org.apache.ivy.util.Message;
 import org.apache.ivy.util.XMLHelper;
 import org.apache.ivy.util.extendable.ExtendableItemHelper;
@@ -128,8 +131,9 @@ public class XmlModuleDescriptorUpdater {
     }
 
     
-    public static void update(final IvySettings settings, InputStream in, File destFile,
-            final Map resolvedRevisions, final String status, final String revision,
+    public static void update(
+            final IvySettings settings, InputStream in, Resource res, 
+            File destFile, final Map resolvedRevisions, final String status, final String revision,
             final Date pubdate, final Namespace ns, final boolean replaceInclude,
             String[] confsToExclude) throws IOException, SAXException {
         if (destFile.getParentFile() != null) {
@@ -137,9 +141,15 @@ public class XmlModuleDescriptorUpdater {
         }
         OutputStream fos = new FileOutputStream(destFile);
         try {
-            //TODO : the inputStream context should be given.
-            update(settings, null, in, fos, resolvedRevisions, status, revision, pubdate, ns,
-                replaceInclude, confsToExclude);
+            //TODO: use resource as input stream context?
+            URL inputStreamContext = null;
+            if (res instanceof URLResource) {
+                inputStreamContext = ((URLResource) res).getURL();
+            } else if (res instanceof FileResource) {
+                inputStreamContext = ((FileResource) res).getFile().toURL();
+            }
+            update(settings, inputStreamContext, in, fos, resolvedRevisions, status, revision, 
+                pubdate, ns, replaceInclude, confsToExclude);
         } finally {
             try {
                 in.close();

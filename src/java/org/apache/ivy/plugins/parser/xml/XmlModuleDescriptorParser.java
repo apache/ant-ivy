@@ -31,6 +31,7 @@ import java.util.Map;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.ivy.Ivy;
+import org.apache.ivy.core.IvyContext;
 import org.apache.ivy.core.module.descriptor.Configuration;
 import org.apache.ivy.core.module.descriptor.ConfigurationAware;
 import org.apache.ivy.core.module.descriptor.DefaultDependencyArtifactDescriptor;
@@ -118,9 +119,10 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
                 DefaultModuleDescriptor dmd = (DefaultModuleDescriptor) md;
                 ns = dmd.getNamespace();
             }
-            XmlModuleDescriptorUpdater.update(null, is, destFile, Collections.EMPTY_MAP, md
-                    .getStatus(), md.getResolvedModuleRevisionId().getRevision(), md
-                    .getResolvedPublicationDate(), ns, false, null);
+            XmlModuleDescriptorUpdater.update(IvyContext.getContext().getSettings(), is, res, 
+                    destFile, Collections.EMPTY_MAP, md.getStatus(), 
+                    md.getResolvedModuleRevisionId().getRevision(), 
+                    md.getResolvedPublicationDate(), ns, true, null);
         } catch (SAXException e) {
             ParseException ex = new ParseException("exception occured while parsing " + res, 0);
             ex.initCause(e);
@@ -134,8 +136,8 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
 
     private static class Parser extends AbstractParser {
 
-        private static final List ALLOWED_VERSIONS = Arrays.asList(new String[] {"1.0", "1.1",
-                "1.2", "1.3", "1.4", "2.0"});
+        private static final List ALLOWED_VERSIONS = Arrays.asList(
+            new String[] {"1.0", "1.1", "1.2", "1.3", "1.4", "2.0"});
 
         private DefaultDependencyDescriptor _dd;
 
