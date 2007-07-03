@@ -246,34 +246,43 @@
 				manifest="${basedir}/MANIFEST.MF">
 			<metainf dir="${basedir}" includes="LICENSE,DISCLAIMER,NOTICE" />
 			<manifest>
+				<attribute name="Specification-Title" value="Apache Ivy with Ant tasks" />
+				<attribute name="Specification-Version" value="${build.version}" />
+				<attribute name="Specification-Vendor" value="Apache Software Foundation" />
+				<attribute name="Implementation-Title" value="org.apache.ivy" />
+				<attribute name="Implementation-Version" value="${build.version}" />
+				<attribute name="Implementation-Vendor" value="Apache Software Foundation" />
+				<attribute name="Extension-name" value="org.apache.ivy" />
 				<attribute name="Build-Version" value="${build.version}" />
 				<attribute name="Bundle-Version" value="${bundle.version}" />
-				<section name="org/apache/ivy">
-					<attribute name="Extension-name" value="org.apache.ivy" />
-					<attribute name="Specification-Title" value="Apache Ivy" />
-					<attribute name="Specification-Version" value="${build.version}" />
-					<attribute name="Specification-Vendor" value="Apache Software Foundation" />
-					<attribute name="Implementation-Title" value="org.apache.tools.ant" />
-					<attribute name="Implementation-Version" value="${build.version}" />
-					<attribute name="Implementation-Vendor" value="Apache Software Foundation" />
-				</section>
 			</manifest>
-				<fileset dir="${core.classes.build.dir}" />
-				<fileset dir="${ant.classes.build.dir}" />
-				<fileset dir="${optional.classes.build.dir}" />
+			<fileset dir="${core.classes.build.dir}" />
+			<fileset dir="${ant.classes.build.dir}" />
+			<fileset dir="${optional.classes.build.dir}" />
 		</jar>
   		<jar destfile="${artifacts.build.dir}/${final.core.name}">
 			<metainf dir="${basedir}" includes="LICENSE,DISCLAIMER,NOTICE" />
 			<manifest>
+				<attribute name="Specification-Title" value="Apache Ivy Core (without Ant tasks)" />
+				<attribute name="Specification-Version" value="${build.version}" />
+				<attribute name="Specification-Vendor" value="Apache Software Foundation" />
+				<attribute name="Implementation-Title" value="org.apache.ivy" />
+				<attribute name="Implementation-Version" value="${build.version}" />
+				<attribute name="Implementation-Vendor" value="Apache Software Foundation" />
 				<attribute name="Build-Version" value="${build.version}" />
 			</manifest>
 			<fileset dir="${core.classes.build.dir}" />
 			<fileset dir="${optional.classes.build.dir}" />
 		</jar>
+		<echo  file="${artifacts.build.dir}/readme.txt">The Ivy jars explained${line.separator}
+${line.separator}
+${final.name}    The full Ivy jar, including all Ivy classes.${line.separator}
+${final.core.name}    The Ivy core, eg everything but classes dependent on Ant.${line.separator}
+		</echo>
+
 		<!-- clean generated module properties file -->
 		<delete file="${core.classes.build.dir}/module.properties" />
 	</target>
-	
 
 	<!-- =================================================================
 	     PUBLISH LOCAL
