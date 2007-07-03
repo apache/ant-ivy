@@ -95,13 +95,12 @@
 			<exclude name="toexclude"/>
 		</dependency>
 		<dependency org="yourorg" name="yourmodule11" rev="11.1" conf="*->@"/>
+		
+		<exclude module="*servlet*" matcher="glob" conf="myconf1" /> 
+		<exclude org="acme" module="test" artifact="test" type="source" ext="jar" /> 
 	</dependencies>
 	<conflicts>
 		<manager org="yourorg" module=".*" name="all" matcher="regexp"/>
 		<manager org="theirorg" module="theirmodule1" rev="1.0, 1.1"/>
 	</conflicts>
-	<exclude>
-		<rule module="*servlet*" matcher="glob" conf="myconf1" /> 
-		<rule org="acme" module="test" artifact="test" type="source" ext="jar" /> 
-	</exclude>
 </ivy-module>

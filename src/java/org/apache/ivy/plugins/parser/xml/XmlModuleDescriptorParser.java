@@ -173,6 +173,8 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
 
         private static final int EXCLUDE = 9;
 
+        private static final int DEPS = 10;
+
         private int _state = NONE;
 
         private final URL xmlURL;
@@ -317,7 +319,7 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
                     _artifactsDeclared = true;
                     checkConfigurations();
                 } else if ("dependencies".equals(qName)) {
-                    _state = DEP;
+                    _state = DEPS;
                     String defaultConf = _ivy.substitute(attributes.getValue("defaultconf"));
                     if (defaultConf != null) {
                         setDefaultConf(defaultConf);
@@ -334,9 +336,6 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
                     checkConfigurations();
                 } else if ("conflicts".equals(qName)) {
                     _state = CONFLICT;
-                    checkConfigurations();
-                } else if ("exclude".equals(qName) && _state != DEP) {
-                    _state = EXCLUDE;
                     checkConfigurations();
                 } else if ("artifact".equals(qName)) {
                     if (_state == PUB) {
@@ -377,7 +376,12 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
                     addIncludeRule(qName, attributes);
                 } else if ("exclude".equals(qName) && _state == DEP) {
                     addExcludeRule(qName, attributes);
-                } else if ("dependency".equals(qName)) {
+                } else if ("exclude".equals(qName) && _state == DEPS) {
+                    _state = EXCLUDE;
+                    parseRule(qName, attributes);
+                    md.addExcludeRule((ExcludeRule) _confAware);
+               } else if ("dependency".equals(qName)) {
+                    _state = DEP;
                     String org = _ivy.substitute(attributes.getValue("org"));
                     if (org == null) {
                         org = md.getModuleRevisionId().getOrganisation();
@@ -490,10 +494,7 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
                         return;
                     }
                     md.addConflictManager(new ModuleId(org, mod), matcher, cm);
-                } else if ("rule".equals(qName) && _state == EXCLUDE) {
-                    parseRule(qName, attributes);
-                    md.addExcludeRule((ExcludeRule) _confAware);
-                } else if ("include".equals(qName) && _state == CONF) {
+                 } else if ("include".equals(qName) && _state == CONF) {
                     URL url = _ivy.getRelativeUrlResolver().getURL(xmlURL,
                             _ivy.substitute(attributes.getValue("file")),
                             _ivy.substitute(attributes.getValue("url")));
@@ -583,7 +584,7 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
                 Map extraAtt = ExtendableItemHelper.getExtraAttributes(attributes, new String[] {
                         "org", "module", "name", "type", "ext", "matcher", "conf"});
                 _confAware = new DefaultIncludeRule(aid, matcher, extraAtt);
-            } else { // _state == ARTIFACT_EXCLUDE
+            } else { // _state == ARTIFACT_EXCLUDE || EXCLUDE
                 PatternMatcher matcher = getPatternMatcher(attributes.getValue("matcher"));
                 String org = _ivy.substitute(attributes.getValue("org"));
                 org = org == null ? PatternMatcher.ANY_EXPRESSION : org;
@@ -663,7 +664,7 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
                     }
                 }
                 _confAware = null;
-            } else if (_state == EXCLUDE && "rule".equals(qName)) {
+            } else if (_state == EXCLUDE) {
                 if (_confAware.getConfigurations().length == 0) {
                     String[] confs = md.getConfigurationsNames();
                     for (int i = 0; i < confs.length; i++) {
@@ -671,8 +672,12 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
                     }
                 }
                 _confAware = null;
-            } else if ("dependency".equals(qName) && _dd.getModuleConfigurations().length == 0) {
-                parseDepsConfs(getDefaultConf(), _dd);
+                _state = DEPS;
+            } else if ("dependency".equals(qName)) {
+                if (_dd.getModuleConfigurations().length == 0) {
+                    parseDepsConfs(getDefaultConf(), _dd);
+                }
+                _state = DEPS;
             } else if ("dependencies".equals(qName)) {
                 _state = NONE;
             }

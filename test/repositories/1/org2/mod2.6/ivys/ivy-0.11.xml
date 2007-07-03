@@ -24,8 +24,7 @@
 	/>
 	<dependencies>
 		<dependency name="mod2.1" rev="0.3" />
+		<dependency org="org1" name="mod1.4" rev="1.0.1" />
+		<exclude module="mod1.1" />
 	</dependencies>
-	<exclude>
-		<rule module="mod1.1" />
-	</exclude>
 </ivy-module>

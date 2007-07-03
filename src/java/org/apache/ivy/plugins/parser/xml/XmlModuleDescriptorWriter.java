@@ -204,6 +204,7 @@ public class XmlModuleDescriptorWriter {
                                 }
                                 out.print("\"");
                             }
+                            out.print(" matcher=\"" + includes[j].getMatcher().getName() + "\"");
                             out.println("/>");
                         }
                     }
@@ -233,6 +234,7 @@ public class XmlModuleDescriptorWriter {
                                 }
                                 out.print("\"");
                             }
+                            out.print(" matcher=\"" + excludes[j].getMatcher().getName() + "\"");
                             out.println("/>");
                         }
                     }
@@ -240,6 +242,33 @@ public class XmlModuleDescriptorWriter {
                         out.println("/>");
                     } else {
                         out.println("\t\t</dependency>");
+                    }
+                }
+                ExcludeRule[] excludes = md.getAllExcludeRules();
+                if (excludes.length > 0) {
+                    for (int j = 0; j < excludes.length; j++) {
+                        out.print("\t\t<exclude");
+                        out.print(" org=\""
+                                + excludes[j].getId().getModuleId().getOrganisation() + "\"");
+                        out.print(" module=\"" + excludes[j].getId().getModuleId().getName()
+                                + "\"");
+                        out.print(" artifact=\"" + excludes[j].getId().getName() + "\"");
+                        out.print(" type=\"" + excludes[j].getId().getType() + "\"");
+                        out.print(" ext=\"" + excludes[j].getId().getExt() + "\"");
+                        String[] ruleConfs = excludes[j].getConfigurations();
+                        if (!Arrays.asList(ruleConfs).equals(
+                            Arrays.asList(md.getConfigurationsNames()))) {
+                            out.print(" conf=\"");
+                            for (int k = 0; k < ruleConfs.length; k++) {
+                                out.print(ruleConfs[k]);
+                                if (k + 1 < ruleConfs.length) {
+                                    out.print(",");
+                                }
+                            }
+                            out.print("\"");
+                        }
+                        out.print(" matcher=\"" + excludes[j].getMatcher().getName() + "\"");
+                        out.println("/>");
                     }
                 }
                 out.println("\t</dependencies>");

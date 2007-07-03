@@ -56,10 +56,12 @@
 			<artifact name="yourartifact9-2" type="jar" ext="jar" conf="myconf2,myconf3"/>
 		</dependency>
 		<dependency org="yourorg" name="yourmodule10" rev="10.1" conf="*->*">
-			<include name="your.*" type="jar" ext="jar"/>
-			<include name="*" type="*" ext="xml"/>
-			<exclude org="*" module="*" name="toexclude" type="*" ext="*"/>
+			<include name="your.*" type="jar" ext="jar" matcher="exact"/>
+			<include name="*" type="*" ext="xml" matcher="exact"/>
+			<exclude org="*" module="*" name="toexclude" type="*" ext="*" matcher="exact"/>
 		</dependency>
 		<dependency org="yourorg" name="yourmodule11" rev="11.1" conf="*->*"/>
+		<exclude org="*" module="*servlet*" artifact="*" type="*" ext="*" conf="myconf1" matcher="glob"/>
+		<exclude org="acme" module="test" artifact="test" type="source" ext="jar" matcher="exact"/>
 	</dependencies>
 </ivy-module>

@@ -201,6 +201,24 @@
 						            <xs:attribute name="conf" type="xs:string"/>
 				            	</xs:complexType>
 				      		</xs:element>
+				      		<xs:element name="exclude" minOccurs="0" maxOccurs="unbounded">
+				            	<xs:complexType>
+							        <xs:sequence>
+							      		<xs:element name="conf" minOccurs="0" maxOccurs="unbounded">
+							            	<xs:complexType>
+									            <xs:attribute name="name" type="xs:string" use="required"/>
+							            	</xs:complexType>
+							      		</xs:element>
+							        </xs:sequence>
+						            <xs:attribute name="org" type="xs:string"/>
+						            <xs:attribute name="module" type="xs:string"/>
+						            <xs:attribute name="artifact" type="xs:string"/>
+						            <xs:attribute name="type" type="xs:string"/>
+						            <xs:attribute name="ext" type="xs:string"/>
+						            <xs:attribute name="conf" type="xs:string"/>
+						            <xs:attribute name="matcher" type="xs:string"/>
+				            	</xs:complexType>
+				      		</xs:element>
 				        </xs:sequence>
 						<xs:attribute name="defaultconf" type="xs:string"/>				        
 						<xs:attribute name="defaultconfmapping" type="xs:string"/>				        
@@ -216,30 +234,6 @@
 						            <xs:attribute name="module" type="xs:string"/>
 						            <xs:attribute name="name" type="xs:string"/>
 						            <xs:attribute name="rev" type="xs:string"/>
-						            <xs:attribute name="matcher" type="xs:string"/>
-				            	</xs:complexType>
-				      		</xs:element>
-				        </xs:sequence>
-			      </xs:complexType>
-      		</xs:element>
-      		<xs:element name="exclude" minOccurs="0">
-			      <xs:complexType>
-				        <xs:sequence>
-				      		<xs:element name="rule" minOccurs="0" maxOccurs="unbounded">
-				            	<xs:complexType>
-							        <xs:sequence>
-							      		<xs:element name="conf" minOccurs="0" maxOccurs="unbounded">
-							            	<xs:complexType>
-									            <xs:attribute name="name" type="xs:string" use="required"/>
-							            	</xs:complexType>
-							      		</xs:element>
-							        </xs:sequence>
-						            <xs:attribute name="org" type="xs:string"/>
-						            <xs:attribute name="module" type="xs:string"/>
-						            <xs:attribute name="artifact" type="xs:string"/>
-						            <xs:attribute name="type" type="xs:string"/>
-						            <xs:attribute name="ext" type="xs:string"/>
-						            <xs:attribute name="conf" type="xs:string"/>
 						            <xs:attribute name="matcher" type="xs:string"/>
 				            	</xs:complexType>
 				      		</xs:element>
