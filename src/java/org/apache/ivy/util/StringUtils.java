@@ -35,12 +35,16 @@ public class StringUtils {
     }
 
     /**
-     * Joins the given object array in one string, each separated by the given separator. Example:
-     * join(new String[] {"one", "two", "three"}, ", ") -> "one, two, three"
+     * Joins the given object array in one string, each separated by the given separator. 
      * 
-     * @param objs
-     * @param sep
-     * @return
+     * Example:
+     * <pre>
+     * join(new String[] {"one", "two", "three"}, ", ") -> "one, two, three"
+     * </pre>
+     * 
+     * @param  objs  The array of objects (<code>toString()</code> is used).
+     * @param  sep  The separator to use.
+     * @return  The concatinated string.
      */
     public static String join(Object[] objs, String sep) {
         StringBuffer buf = new StringBuffer();
@@ -102,7 +106,7 @@ public class StringUtils {
      * 
      * @param str
      *            the encrypted string to decrypt
-     * @return
+     * @return  The decrypted string.
      */
     public final static String decrypt(String str) {
         if (str == null) {

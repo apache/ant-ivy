@@ -250,7 +250,7 @@ public final class SshCache {
     /**
      * retrieves an sftp channel from the cache
      * 
-     * @param host
+     * @param session
      *            to connect to
      * @return channelSftp or null if not successful (channel not existent or dead)
      */
@@ -272,7 +272,7 @@ public final class SshCache {
      * 
      * @param session
      *            to attach the channel to
-     * @param channelSftp
+     * @param channel
      *            channel to attach
      */
     public void attachChannelSftp(Session session, ChannelSftp channel) {
@@ -286,13 +286,13 @@ public final class SshCache {
     /**
      * Gets a session from the cache or establishes a new session if necessary
      * 
-     * @param username
-     *            for the session to use
      * @param host
      *            to connect to
      * @param port
      *            to use for session (-1 == use standard port)
-     * @param password
+     * @param username
+     *            for the session to use
+     * @param userPassword
      *            to use for authentication (optional)
      * @param pemFile
      *            File to use for public key authentication

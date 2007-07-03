@@ -37,13 +37,17 @@ public final class ConfigurationUtils {
     }
 
     /**
-     * Replace all the wildcards in the given configuration array. Supported wildcards are:
+     * Replace the wildcards in the given configuration array, by the name of the given
+     * ModuleDescriptor
+     * 
+     * The supported wildcards are:
      * <ul>
-     * <li><b><tt>*</tt>:</b>all configurations</li>
-     * <li><b><tt>*(public)</tt>:</b>all public configurations</li>
-     * <li><b><tt>*(private)</tt>:</b>all private configurations</li>
+     *   <li><b><tt>*</tt> :</b> all configurations</li>
+     *   <li><b><tt>*(public)</tt> :</b> all public configurations</li>
+     *   <li><b><tt>*(private)</tt> :</b> all private configurations</li>
      * </ul>
-     * If the given array of configurations is <tt>null</tt>, all configurations are returned.
+     * If the given array of configurations is <code>null</code>, all configurations 
+     * from the given module descriptor are returned, including if this array is empty.
      * 
      * @param confs
      *            the configurations, can contain wildcards
@@ -52,12 +56,11 @@ public final class ConfigurationUtils {
      * @return
      */
     public static String[] replaceWildcards(String[] confs, ModuleDescriptor md) {
-        Set result = new LinkedHashSet();
-
         if (confs == null) {
             return md.getConfigurationsNames();
         }
 
+        Set result = new LinkedHashSet();
         for (int i = 0; i < confs.length; i++) {
             if ("*".equals(confs[i])) {
                 result.addAll(Arrays.asList(md.getConfigurationsNames()));

@@ -119,9 +119,9 @@ public abstract class AbstractSshBasedRepository extends AbstractRepository {
     /**
      * closes the session and remove it from the cache (eg. on case of errors)
      * 
-     * @param uri
+     * @param session
      *            key for the cache
-     * @param conn
+     * @param pathOrUri
      *            to release
      */
     protected void releaseSession(Session session, String pathOrUri) {
@@ -173,7 +173,7 @@ public abstract class AbstractSshBasedRepository extends AbstractRepository {
     }
 
     /**
-     * @param user
+     * @param password
      *            password to use for user/password authentication
      */
     public void setUserPassword(String password) {

@@ -33,7 +33,7 @@ public final class FilterHelper {
             return NO_FILTER;
         }
         String[] t = types.split(",");
-        List acceptedTypes = new ArrayList(types.length());
+        List acceptedTypes = new ArrayList(t.length); 
         for (int i = 0; i < t.length; i++) {
             acceptedTypes.add(t[i].trim());
         }
@@ -41,12 +41,17 @@ public final class FilterHelper {
     }
 
     /**
-     * we could have used commons-collections facility for this... if we accepted to add
-     * dependencies on third party jars
+     * Returns a new collection containing only the items from the given collectoin, which are
+     * accepted by the filter.
      * 
-     * @param col
-     * @param filter
-     * @return
+     * @param  col  The collection to filter.
+     * @param  filter  The filter to use.
+     * @return  A new collection instance containing the only the instance accepted by the filter.
+     *
+     * <br />
+     * Comment: We could have used 
+     *          <a  href="http://jakarta.apache.org/commons/collections/">Commons-Collections</a>
+     *          facility for this. If we accepted to add dependencies on third party jars.
      */
     public static Collection filter(Collection col, Filter filter) {
         if (filter == null) {

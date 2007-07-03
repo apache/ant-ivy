@@ -62,10 +62,10 @@ public class SshRepository extends AbstractSshBasedRepository {
     }
 
     /**
-     * fetch the needed file information for a given file (size, last modification time) and report
+     * Fetch the needed file information for a given file (size, last modification time) and report
      * it back in a SshResource
      * 
-     * @param uri
+     * @param source 
      *            ssh uri for the file to get info for
      * @return SshResource filled with the needed informations
      * @see org.apache.ivy.plugins.repository.Repository#getResource(java.lang.String)

@@ -36,7 +36,7 @@ import java.util.List;
 import org.apache.ivy.util.url.URLHandlerRegistry;
 
 /**
- *
+ * Utility class used to deal with file related operations, like copy, full reading, symlink, ...
  */
 public class FileUtil {
     // tried some other values with empty files... seems to be the best one (512 * 1024 is very bad)
@@ -239,8 +239,8 @@ public class FileUtil {
      * Returns a collection of all Files being contained in the given directory, recursively,
      * including directories.
      * 
-     * @param dir
-     * @return
+     * @param  dir  The directory from which all files, including files in subdirectory) are extracted.
+     * @return  A collectoin containing all the files of the given directory and it's subdirectories.
      */
     public static Collection listAll(File dir) {
         return listAll(dir, new ArrayList());

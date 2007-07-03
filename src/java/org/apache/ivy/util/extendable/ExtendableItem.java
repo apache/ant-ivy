@@ -55,7 +55,7 @@ public interface ExtendableItem {
      * The Map keys are attribute names as Strings, and values are corresponding attribute values
      * (as String too)
      * 
-     * @return
+     * @return A Map instance containing all the attributes and their values.
      */
     Map getAttributes();
 
@@ -63,7 +63,7 @@ public interface ExtendableItem {
      * Returns a Map of all standard attributes of this extendable item. The Map keys are attribute
      * names as Strings, and values are corresponding attribute values (as String too)
      * 
-     * @return
+     * @return A Map instance containing all the standard attributes and their values.
      */
     Map getStandardAttributes();
 
@@ -71,7 +71,7 @@ public interface ExtendableItem {
      * Returns a Map of all extra attributes of this extendable item. The Map keys are attribute
      * names as Strings, and values are corresponding attribute values (as String too)
      * 
-     * @return
+     * @return A Map instance containing all the extra attributes and their values.
      */
     Map getExtraAttributes();
 }
