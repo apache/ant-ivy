@@ -1,0 +1,145 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<!--
+   Licensed to the Apache Software Foundation (ASF) under one
+   or more contributor license agreements.  See the NOTICE file
+   distributed with this work for additional information
+   regarding copyright ownership.  The ASF licenses this file
+   to you under the Apache License, Version 2.0 (the
+   "License"); you may not use this file except in compliance
+   with the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing,
+   software distributed under the License is distributed on an
+   "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+   KIND, either express or implied.  See the License for the
+   specific language governing permissions and limitations
+   under the License.    
+-->
+<html>
+<head>
+	<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
+	<script type="text/javascript">var xookiConfig = {level: 1};</script>	
+	<script type="text/javascript" src="../xooki/xooki.js"></script>
+</head>
+<body>
+	<textarea id="xooki-source">
+In this example, we will see the easiest way to use ivy and benefit from its transitive dependencies feature. 
+No settings or other complicated files to write, only the list of libraries the project will use.
+
+<h1>The ivy.xml file</h1>
+This file is used to describe, the dependencies of the project on other libraries.
+Here is the sample : 
+<code>
+<ivy-module version="1.0">
+    <info organisation="jayasoft" module="hello-ivy" />
+    <dependencies>
+        <dependency org="apache" name="commons-lang" rev="2.0" />
+        <dependency org="apache" name="commons-cli" rev="1.0" />
+    </dependencies>
+</ivy-module>
+</code>
+The build file corresponding to use it, contains only :
+<code>
+<project xmlns:ivy="antlib:fr.jayasoft.ivy.ant" name="hello-ivy" default="run">
+    
+    ...
+    
+    <!-- ================================= 
+          target: resolve              
+         ================================= -->
+    <target name="resolve" description="--> retreive dependencies with ivy">
+        <ivy:retrieve />
+    </target>
+</project>
+</code>
+<h1>Running the project</h1>
+To run the sample, open a shell window, and go under the ivyrep example directory.
+Then, on the command prompt, just run ant :
+<div class="shell"><pre>
+I:\ivyrep>ant
+Buildfile: build.xml
+
+resolve:
+:: Ivy 1.0-rc3 - 20050421161206 :: http://ivy.jayasoft.org/ ::
+no configuration file found, using default...
+:: resolving dependencies :: jayasoft/ivyrep-example-working@xmen
+        confs: [default]
+downloading http://www.ibiblio.org/maven/commons-cli/jars/commons-cli-1.0.jar(1.0) ...
+...... (31kB)
+        [SUCCESSFUL ] apache/commons-cli-1.0/commons-cli.jar[jar] (1437ms)
+downloading http://www.ibiblio.org/maven/commons-lang/jars/commons-lang-2.0.jar(2.0) ...
+..................................... (165kB)
+        [SUCCESSFUL ] apache/commons-lang-2.0/commons-lang.jar[jar] (5640ms)
+downloading http://www.ibiblio.org/maven/commons-logging/jars/commons-logging-1.0.jar(1.0) ...
+..... (21kB)
+        [SUCCESSFUL ] apache/commons-logging-1.0/commons-logging.jar[jar] (1250ms)
+:: resolution report ::
+        :: evicted modules:
+        apache/commons-lang-1.0 by [apache/commons-lang-2.0] in [default]
+        ---------------------------------------------------------------------
+        |                  |            modules            ||   artifacts   |
+        |       conf       | number| search|dwnlded|evicted|| number|dwnlded|
+        ---------------------------------------------------------------------
+        |      default     |   4   |   3   |   2   |   1   ||   3   |   3   |
+        ---------------------------------------------------------------------
+:: retrieving :: jayasoft/ivyrep-example
+        confs: [default]
+        3 artifacts copied, 0 already retrieved
+
+run:
+    [mkdir] Created dir: I:\ivyrep\build
+    [javac] Compiling 1 source file to I:\ivyrep\build
+     [java] standard message : hello ivy !
+     [java] capitalized by org.apache.commons.lang.WordUtils : Hello Ivy !
+
+BUILD SUCCESSFUL
+Total time: 16 seconds</pre></div>
+<h1>What happened ?</h1>
+Without any settings, other than it's default settings, ivy uses the ivyrep resolver. This resolver looks for ivy files on <a href="../../ivyrep.html">ivyrep</a>, and for artifacts on ibiblio. That's what happened here. 
+
+The resolve task has found an <a href="http://ivyrep.jayasoft.org/apache/commons-cli/ivy-1.0.xml">ivy file on ivyrep for commons-cli 1.0</a>.
+This ivy file indicates that commons-cli 1.0 depends on commons-lang 1.0 and commons-logging 1.0.
+
+The resolve task detects the conflict between the revision 2.0 of commons-lang that is asked in the ivy above, and the revision 1.0 required in commons-cli. With no particular conflict manager, the 2.0 is selected, and the 1.0 is evicted. The 1.0 being evicted, it is not downloaded at all.
+
+The resolve task has then downloaded the commons-cli 1.0, commons-logging 1.0 and commons-lang.jar 2.0 files from ibiblioand put them to the ivy cache. 
+Then the retrieve task has copied them in the default library directory of the project: the lib dir.
+Some will say that the task was long to achieve. Yes, it's true it was, but it has downloaded from the internet the needed files. Let's try to run it again:
+<div class="shell"><pre>
+I:\ivyrep>ant
+Buildfile: build.xml
+
+resolve:
+:: Ivy 1.0-rc3 - 20050421161206 :: http://ivy.jayasoft.org/ ::
+no configuration file found, using default...
+:: resolving dependencies :: jayasoft/ivyrep-example-working@xmen
+        confs: [default]
+:: resolution report ::
+        :: evicted modules:
+        apache/commons-lang-1.0 by [apache/commons-lang-2.0] in [default]
+        ---------------------------------------------------------------------
+        |                  |            modules            ||   artifacts   |
+        |       conf       | number| search|dwnlded|evicted|| number|dwnlded|
+        ---------------------------------------------------------------------
+        |      default     |   4   |   0   |   0   |   1   ||   3   |   0   |
+        ---------------------------------------------------------------------
+:: retrieving :: jayasoft/ivyrep-example
+        confs: [default]
+        0 artifacts copied, 3 already retrieved
+
+run:
+     [java] standard message : hello ivy !
+     [java] capitalized by org.apache.commons.lang.WordUtils : Hello Ivy !
+
+BUILD SUCCESSFUL
+Total time: 2 seconds</pre></div>
+Great ! the cache was used, no download was needed and the build was almost instantaneous.
+
+If you want to check the content of the cache, by default it is put in your user home in a .ivy/cache directory. Check the next tutorials to see how to configure this.
+
+	</textarea>
+<script type="text/javascript">xooki.postProcess();</script>
+</body>
+</html>

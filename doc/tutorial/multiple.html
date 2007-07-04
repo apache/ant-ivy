@@ -1,0 +1,134 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<!--
+   Licensed to the Apache Software Foundation (ASF) under one
+   or more contributor license agreements.  See the NOTICE file
+   distributed with this work for additional information
+   regarding copyright ownership.  The ASF licenses this file
+   to you under the Apache License, Version 2.0 (the
+   "License"); you may not use this file except in compliance
+   with the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing,
+   software distributed under the License is distributed on an
+   "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+   KIND, either express or implied.  See the License for the
+   specific language governing permissions and limitations
+   under the License.    
+-->
+<html>
+<head>
+	<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
+	<script type="text/javascript">var xookiConfig = {level: 1};</script>	
+	<script type="text/javascript" src="../xooki/xooki.js"></script>
+</head>
+<body>
+	<textarea id="xooki-source">
+This example is an illustration of how artifacts can be retrieved by multiple resolvers. Using multiple resolvers is very important when using continous integration. Indeed, in such environments, you can use multiple repositories and so multiple resolvers to retrieve both released versions of projects than continous integrated versions produced for example with cruise-control. In our example, we will just show how to use two resolvers, one on a local repository and one using ibiblio repository.
+
+<h1>project description</h1>
+<h2>the project : chained-resolvers</h2>
+The project is very simple and contains only one test class : example.Hello
+It depends on two libraries apache commons-lang and a little test library (sources are included in jar file). The test library is used by the project to uppercase a string, and commons-lang is used to capitalize the same string.
+
+Here is the content of the project:
+<ul>
+  <li>build.xml : the ant build file for the project</li>
+  <li>ivy.xml : the ivy project file</li>
+  <li>src\example\Hello.java : the only class of the project</li>
+</ul>
+Take a look at it's <b>ivy.xml</b> file :
+<code>
+<ivy-module version="1.0">
+    <info organisation="jayasoft" module="chained-resolvers" />
+    <dependencies>
+        <dependency org="apache" name="commons-lang" rev="2.0" />
+        <dependency name="test" rev="1.0" />
+    </dependencies>
+</ivy-module>
+</code>
+As we expect, the ivy file declares to be dependent on the two libraries that the project use : apache commons-lang.jar and test.jar.
+
+<h2>the <b>ivy</b> settings</h2>
+The ivy settings is made in the config directory it contains only one file: ivysettings.xml.
+
+Let's analyse it.
+<code>
+<ivysettings>
+  <settings defaultResolver="chain-example" />
+  <resolvers>
+    <chain name="chain-example">
+      <filesystem name="libraries">
+        <artifact pattern="${ivy.settings.dir}/repository/[artifact]-[revision].[type]" />
+      </filesystem>
+      <ibiblio name="ibiblio" />
+    </chain>
+  </resolvers>
+</ivysettings>
+</code>
+<h2>the <b>settings</b> tag</h2>
+This tag initializes ivy with some parameters. Here only one is used, the name of the resolver to use by default.
+
+<h2>the <b>resolvers</b> tag</h2>
+Under this tag, we can find the description of the resolvers that ivy will use. In our example, we have only one resolver, called "chain-example", which is quite special as it defines a list (a chain) of resolvers.
+The resolvers put in the chain are : 
+<ul>
+  <li>libraries : it is a file resolver. This one is configured to look for artifacts in the "repository" sub directory of the directory that contains the ivysettings.xml file.</li>
+  <li>ibiblio : this resolver is a special one. It looks in the ibiblio maven repository to retrieve the libraries.</li>
+</ul>
+
+<h1>walkthrough</h1>
+<div class="step">
+<h2>step 1 : preparation</h2>
+Open a DOS or shell window, and go to the "chained-resolvers" directory.
+</div>
+<div class="step">
+<h2>step 2 : clean directory tree</h2>
+On the prompt type : ant<br>
+This will clean up the entire project directory tree and ivy cache. You can do it each time you want to clean up this example.
+</div>
+<div class="step">
+<h2>step 3 : run the project</h2>
+Goto chainedresolvers-project directory. And simply run <b>ant</b>.
+<div class="shell"><pre>I:\chained-resolvers\chainedresolvers-project>ant
+Buildfile: build.xml
+
+configure:
+:: Ivy 1.0-rc3 - 20050421161206 :: http://ivy.jayasoft.org/ ::
+
+resolve:
+:: resolving dependencies :: jayasoft/chained-resolvers-working@xmen
+        confs: [default]
+downloading http://www.ibiblio.org/maven/commons-lang/jars/commons-lang-2.0.jar(2.0) ...
+.................................... (165kB)
+        [SUCCESSFUL ] apache/commons-lang-2.0/commons-lang.jar[jar] (5390ms)
+downloading file:/I:/chained-resolvers/config/repository/test-1.0.jar(1.0) ...
+. (1kB)
+        [SUCCESSFUL ] jayasoft/test-1.0/test.jar[jar] (16ms)
+:: resolution report ::
+        ---------------------------------------------------------------------
+        |                  |            modules            ||   artifacts   |
+        |       conf       | number| search|dwnlded|evicted|| number|dwnlded|
+        ---------------------------------------------------------------------
+        |      default     |   2   |   2   |   0   |   0   ||   2   |   2   |
+        ---------------------------------------------------------------------
+:: retrieving :: jayasoft/chained-resolvers
+        confs: [default]
+        2 artifacts copied, 0 already retrieved
+
+run:
+    [mkdir] Created dir: I:\chained-resolvers\chainedresolvers-project\build
+    [javac] Compiling 1 source file to I:\chained-resolvers\chainedresolvers-project\build
+     [java] standard message :example world !
+     [java] capitalized by org.apache.commons.lang.WordUtils : Example World !
+     [java] upperCased by test.StringUtils : EXAMPLE WORLD !
+
+BUILD SUCCESSFUL
+Total time: 9 seconds</pre></div></div>
+We can see in the log of the resolve task, that the two dependencies have been retrieved (2 artifacts) and copied to the ivy cache directory (2 downloaded). The run target succeed in using both commons-lang.jar comming from ibiblio repository and test.jar coming from the local repository.
+
+	</textarea>
+<script type="text/javascript">xooki.postProcess();</script>
+</body>
+</html>

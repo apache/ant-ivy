@@ -1,0 +1,308 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<!--
+   Licensed to the Apache Software Foundation (ASF) under one
+   or more contributor license agreements.  See the NOTICE file
+   distributed with this work for additional information
+   regarding copyright ownership.  The ASF licenses this file
+   to you under the Apache License, Version 2.0 (the
+   "License"); you may not use this file except in compliance
+   with the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing,
+   software distributed under the License is distributed on an
+   "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+   KIND, either express or implied.  See the License for the
+   specific language governing permissions and limitations
+   under the License.    
+-->
+<html>
+<head>
+	<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
+	<script type="text/javascript">var xookiConfig = {level: 1};</script>	
+	<script type="text/javascript" src="../xooki/xooki.js"></script>
+</head>
+<body>
+	<textarea id="xooki-source">
+This tutorial introduces the use of configuration in ivy files. Ivy configurations is indeed a very important concept. Someone even told me one day that using Ivy without using configurations is like eating a good cheese without touching the glass of Chateau Margaux 1976 you have just aside :-)
+
+More seriously, configurations in ivy can be better understood as views on your module, and you will see how they can be used efficiently here.
+
+Reference documentation on configurations can be found <a href="../../doc/terminology.html">here</a> and <a href="../../doc/ivyfile/configurations.html">here</a>.
+<h1>Introduction</h1>
+Source code available in src/example/configurations/multi-projects.
+We have two projects :
+  - a library that define an api to filter String array and two implementations of this api.
+  - a very small app that use this library.
+  
+The library produces 3 artifacts:
+  - the api jar,
+  - an implementation jar with no external dependency,
+  - an other implementation that needs commons-collection to perform.
+
+The application only need api to compile and can use any of the two implementation at runtime.
+
+<h1>The library project</h1>
+The first project we defined in this tutorial is the filter-framework.
+In order to have a fine grained artifacts publication definition, we defined configurations to map usage other can make of our library.
+<h2>The ivy.xml file</h2>
+
+<div class="ivy-file">
+<code type="xml">
+<ivy-module version="1.3">
+    <info organisation="jayasoft" module="filter-framework"/>
+    <configurations>
+    	<conf name="api"  description="only provide filter framework API"/>
+      <conf name="homemade-impl" extends="api" description="provide a home made implementation of our api"/>
+      <conf name="cc-impl" extends="api" description="provide an implementation that use apache common collection framework"/>
+      <conf name="test" extends="cc-impl" visibility="private" description="for testing our framework"/>
+    </configurations>
+    <publications>
+      <artifact name="filter-api" type="jar"  conf="api" ext="jar"/>
+      <artifact name="filter-hmimpl" type="jar"  conf="homemade-impl" ext="jar"/>
+      <artifact name="filter-ccimpl" type="jar"  conf="cc-impl" ext="jar"/>      
+    </publications>
+    <dependencies>
+        <dependency org="apache" name="commons-collections" rev="3.1" conf="cc-impl->default"/>
+        <dependency org="junit" name="junit" rev="3.8" conf="test->default"/>
+    </dependencies>
+</ivy-module>
+</code> 
+</div>
+<h2>Explanation</h2>
+As you can see we defined 3 public configurations and a private one (defined junit dependency for testing).
+The 2 implementations conf  <b>homemade-impl</b>,  <b>cc-impl</b> extends <b>api</b> configuration so artifacts defined in api will also be required in its extending conf.
+In the publications tag we defined the artifacts we produce (here it's jars) and we affect them a configuration.
+Later when others will use our library they will have a very flexible way to defined what they need.
+
+<h2>See it in action</h2>
+The library project is build using ant. Open a shell in the root directory of the project and type <b>ant</b>.
+<div class="shell"><pre>
+Buildfile: build.xml
+clean:
+resolve:
+:: Ivy 20060123130642 - 20060123130642 :: http://ivy.jayasoft.org/ ::
+no configuration file found, using default...
+:: configuring :: url = jar:file:/C:/dev/ant/apache-ant-1.6.2/lib/ivy-20060123130642.jar!/fr/jayasoft/ivy/conf/ivysettings.xml
+:: resolving dependencies :: [ jayasoft | filter-framework | working@SPIDER ]
+        confs: [api, homemade-impl, cc-impl, test]
+        found [ apache | commons-collections | 3.1 ] in main
+        found [ junit | junit | 3.8 ] in main
+downloading http://www.ibiblio.org/maven/commons-collections/jars/commons-collections-3.1.jar ................(546kB)
+        [SUCCESSFUL ] [ apache | commons-collections | 3.1 ]/commons-collections.jar[jar] (34320ms)
+downloading http://www.ibiblio.org/maven/junit/jars/junit-3.8.jar ........................... (118kB)
+        [SUCCESSFUL ] [ junit | junit | 3.8 ]/junit.jar[jar] (8462ms)
+:: resolution report ::
+        ---------------------------------------------------------------------
+        |                  |            modules            ||   artifacts   |
+        |       conf       | number| search|dwnlded|evicted|| number|dwnlded|
+        ---------------------------------------------------------------------
+        |        api       |   0   |   0   |   0   |   0   ||   0   |   0   |
+        |   homemade-impl  |   0   |   0   |   0   |   0   ||   0   |   0   |
+        |      cc-impl     |   1   |   1   |   1   |   0   ||   1   |   1   |
+        |       test       |   2   |   2   |   1   |   0   ||   2   |   2   |
+        ---------------------------------------------------------------------
+:: retrieving :: [ jayasoft | filter-framework ]
+        confs: [api, homemade-impl, cc-impl, test]
+        3 artifacts copied, 0 already retrieved
+
+build:
+    [mkdir] Created dir: D:\svn\jayasoft\projects\tools\ivy\src\example\configurations\multi-projects\filter-framework\build
+    [mkdir] Created dir: D:\svn\jayasoft\projects\tools\ivy\src\example\configurations\multi-projects\filter-framework\distrib
+    [javac] Compiling 4 source files to D:\svn\jayasoft\projects\tools\ivy\src\example\configurations\multi-projects\filter-framework\build
+      [jar] Building jar: D:\svn\jayasoft\projects\tools\ivy\src\example\configurations\multi-projects\filter-framework\distrib\filter-api.jar
+      [jar] Building jar: D:\svn\jayasoft\projects\tools\ivy\src\example\configurations\multi-projects\filter-framework\distrib\filter-hmimpl.jar
+      [jar] Building jar: D:\svn\jayasoft\projects\tools\ivy\src\example\configurations\multi-projects\filter-framework\distrib\filter-ccimpl.jar
+
+test:
+    [mkdir] Created dir: D:\svn\jayasoft\projects\tools\ivy\src\example\configurations\multi-projects\filter-framework\build\test-report
+    [mkdir] Created dir: D:\svn\jayasoft\projects\tools\ivy\src\example\configurations\multi-projects\filter-framework\build\test-classes
+    [javac] Compiling 3 source files to D:\svn\jayasoft\projects\tools\ivy\src\example\configurations\multi-projects\filter-framework\build\test-classes
+    [junit] Running filter.ccimpl.CCFilterTest
+    [junit] Tests run: 5, Failures: 0, Errors: 0, Time elapsed: 0.02 sec
+    [junit] Running filter.hmimpl.HMFilterTest
+    [junit] Tests run: 5, Failures: 0, Errors: 0, Time elapsed: 0.01 sec
+
+publish:
+:: delivering :: [ jayasoft | filter-framework | working@SPIDER ] :: 1.3 :: release :: Tue Jan 24 10:53:41 CET 2006
+        delivering ivy file to distrib/ivy.xml
+:: publishing :: [ jayasoft | filter-framework | working@SPIDER ]
+        published filter-api to D:\users\mm\.ivy/local/jayasoft/filter-framework/1.3/jars/filter-api.jar
+        published filter-ccimpl to D:\users\mm\.ivy/local/jayasoft/filter-framework/1.3/jars/filter-ccimpl.jar
+        published filter-hmimpl to D:\users\mm\.ivy/local/jayasoft/filter-framework/1.3/jars/filter-hmimpl.jar
+        published ivy to D:\users\mm\.ivy/local/jayasoft/filter-framework/1.3/ivys/ivy.xml
+     [echo] project filter-framework released with version 1.3
+
+BUILD SUCCESSFUL
+</pre></div>
+The ant's default target is publish. 
+This target use ivy to publish our library binaries in a local repository. 
+As we do not specify any repository path the default one is use. ({home.dir}/.ivy/local/jayasoft/filter-framework/)
+Now we are ready to use our library.
+
+<h1>The application project</h1>
+
+Now that we have shipped our fantastic library, we want to use it!
+The tutorial comes with a sample application called myapp. You will find it in the tutorial folder.
+<h2>The ivy.xml file</h2>
+
+<div class="ivy-file">
+<code type="xml">
+<ivy-module version="1.3">
+    <info organisation="jayasoft" module="myapp"/>
+   
+    <configurations>
+      <conf name="build" visibility="private" description="compilation only need api jar" />
+      <conf name="noexternaljar" description="use only company jar" />
+      <conf name="withexternaljar" description="use company jar and third party jars" />    
+    </configurations>
+    
+    <dependencies>
+        <dependency org="jayasoft" name="filter-framework" rev="latest.integration" conf="build->api; noexternaljar->homemade-impl; withexternaljar->cc-impl"/>
+    </dependencies>
+</ivy-module>
+</code> 
+</div>
+<h2>Explanation</h2>
+We create 3 configurations that define the way we want to use the application.
+The build configuration, (as said before) only need api to compile.
+The other configuration are defined for runtime.
+One configuration will only use "home-made" jars, and the second one will use external jars.
+
+We also defined a dependency on the previous library.
+In the dependency we use configuration mapping to match ours and library configurations.
+You can found more information on configuration mapping <a href="../../doc/ivyfile/configurations.html">here</a>
+<ol>
+  <li><b>build->api</b> : here we tell ivy that our <b>build</b> configuration depends on the api configuration of the dependcy</li>
+  <li><b>noexternaljar->homemade-impl</b> : here we tell ivy that our <b>noexternaljar</b> configuration depends on the <b>homemade-impl</b> configuration of the dependcy.</li>
+  <li><b>withexternaljar->cc-impl</b> : here we tell ivy that our <b>withexternaljar</b> configuration depends on the <b>cc-impl</b> configuration of the dependcy</li>
+</ol>
+Note that we never declares any of the dependency artifacts we need in each configuration: it's the dependency module file which declares the published artifacts and which should be used in each configuration.
+
+In the ant buld.xml file we defined a resolve target as follow:
+
+<code type="xml">
+<target name="resolve" description="--> retreive dependencies with ivy">
+	<ivy:retrieve pattern="${ivy.lib.dir}/[conf]/[artifact].[ext]"/>
+</target> 
+</code> 
+
+When we call this target, Ivy will do a resolve using our ivy.xml file in the root folder and will after do retrieve putting all the artifacts in folder for each configuration. Here is how your lib directory should look like after a call to this target:
+<div class="shell"><pre>
+ Repertoire de D:\ivy\src\example\configurations\multi-projects\myapp\lib
+
+01/24/2006  11:19 AM    <REP>          build
+01/24/2006  11:19 AM    <REP>          noexternaljar
+01/24/2006  11:19 AM    <REP>          withexternaljar
+               0 fichier(s)                0 octets
+
+ Repertoire de D:\ivy\src\example\configurations\multi-projects\myapp\lib\build
+
+01/24/2006  10:53 AM             1,174 filter-api.jar
+               1 fichier(s)            1,174 octets
+
+ Repertoire de D:\ivy\src\example\configurations\multi-projects\myapp\lib\noexternaljar
+
+01/24/2006  10:53 AM             1,174 filter-api.jar
+01/24/2006  10:53 AM             1,030 filter-hmimpl.jar
+               2 fichier(s)            2,204 octets
+
+ Repertoire de D:\ivy\src\example\configurations\multi-projects\myapp\lib\withexternaljar
+01/24/2006  10:53 AM           559,366 commons-collections.jar
+01/24/2006  10:53 AM             1,174 filter-api.jar
+01/24/2006  10:53 AM             1,626 filter-ccimpl.jar
+               3 fichier(s)          562,166 octets
+</pre></div>
+As you can see for each configuration we have now a set of jars.
+
+Let's try to launch our app.
+
+<h2>See it in action</h2>
+Use ant to run the application.
+Default ant target is run-cc and will launch application using common collection jar.
+<div class="shell"><pre>
+Buildfile: build.xml
+
+resolve:
+:: Ivy 20060123130642 - 20060123130642 :: http://ivy.jayasoft.org/ ::
+no configuration file found, using default...
+:: configuring :: url = jar:file:/C:/dev/ant/apache-ant-1.6.2/lib/ivy-20060123130642.jar!/fr/jayasoft/ivy/conf/ivysettings.xml
+:: resolving dependencies :: [ jayasoft | myapp | working@SPIDER ]
+        confs: [build, noexternaljar, withexternaljar]
+        found [ jayasoft | filter-framework | 1.3 ] in local
+        [1.3] [ jayasoft | filter-framework | latest.integration ]
+        found [ apache | commons-collections | 3.1 ] in default
+downloading D:\users\mm\.ivy\local\jayasoft\filter-framework\1.3\jars\filter-ccimpl.jar .... (1kB)
+        [SUCCESSFUL ] [ jayasoft | filter-framework | 1.3 ]/filter-ccimpl.jar[jar] (0ms)
+downloading D:\users\mm\.ivy\local\jayasoft\filter-framework\1.3\jars\filter-api.jar .... (1kB)
+        [SUCCESSFUL ] [ jayasoft | filter-framework | 1.3 ]/filter-api.jar[jar] (0ms)
+downloading D:\users\mm\.ivy\local\jayasoft\filter-framework\1.3\jars\filter-hmimpl.jar .... (1kB)
+        [SUCCESSFUL ] [ jayasoft | filter-framework | 1.3 ]/filter-hmimpl.jar[jar] (10ms)
+:: resolution report ::
+        ---------------------------------------------------------------------
+        |                  |            modules            ||   artifacts   |
+        |       conf       | number| search|dwnlded|evicted|| number|dwnlded|
+        ---------------------------------------------------------------------
+        |       build      |   1   |   1   |   1   |   0   ||   1   |   1   |
+        |   noexternaljar  |   1   |   1   |   1   |   0   ||   2   |   2   |
+        |  withexternaljar |   2   |   1   |   1   |   0   ||   3   |   2   |
+        ---------------------------------------------------------------------
+:: retrieving :: [ jayasoft | myapp ]
+        confs: [build, noexternaljar, withexternaljar]
+        6 artifacts copied, 0 already retrieved
+
+build:
+    [mkdir] Created dir: D:\svn\jayasoft\projects\tools\ivy\src\example\configurations\multi-projects\myapp\build
+    [javac] Compiling 1 source file to D:\svn\jayasoft\projects\tools\ivy\src\example\configurations\multi-projects\myapp\build
+
+run-cc:
+     [java] Filtering with:class filter.ccimpl.CCFilter
+     [java] Result :[two, tree]
+</pre></div>
+Launching application with only home made jars is straingforward.
+type ant run-hm
+
+<div class="shell"><pre>
+Buildfile: build.xml
+
+resolve:
+:: Ivy 20060123130642 - 20060123130642 :: http://ivy.jayasoft.org/ ::
+no configuration file found, using default...
+:: configuring :: url = jar:file:/C:/dev/ant/apache-ant-1.6.2/lib/ivy-20060123130642.jar!/fr/jayasoft/ivy/conf/ivysettings.xml
+:: resolving dependencies :: [ jayasoft | myapp | working@SPIDER ]
+        confs: [build, noexternaljar, withexternaljar]
+        found [ jayasoft | filter-framework | 1.3 ] in default
+        [1.3] [ jayasoft | filter-framework | latest.integration ]
+        found [ apache | commons-collections | 3.1 ] in default
+:: resolution report ::
+        ---------------------------------------------------------------------
+        |                  |            modules            ||   artifacts   |
+        |       conf       | number| search|dwnlded|evicted|| number|dwnlded|
+        ---------------------------------------------------------------------
+        |       build      |   1   |   1   |   0   |   0   ||   1   |   0   |
+        |   noexternaljar  |   1   |   1   |   0   |   0   ||   2   |   0   |
+        |  withexternaljar |   2   |   1   |   0   |   0   ||   3   |   0   |
+        ---------------------------------------------------------------------
+:: retrieving :: [ jayasoft | myapp ]
+        confs: [build, noexternaljar, withexternaljar]
+        0 artifacts copied, 6 already retrieved
+
+build:
+
+run-hm:
+     [java] Filtering with:class filter.hmimpl.HMFilter
+     [java] Result :[two, tree]
+
+BUILD SUCCESSFUL
+</pre></div>
+Nice we got the same result but we can see that implementation class are different.
+
+<h1>Conclusion</h1>
+<b>You should use configuration as often as possible</b>
+Configurations are very important concept in ivy. They allow you to groups artifacts set by meaning.
+When you write ivy file for projects that are supposed to be reused, use configurations to allow people to get only they what they need without having to specify it by hand using artifact tag in dependency section. 
+	</textarea>
+<script type="text/javascript">xooki.postProcess();</script>
+</body>
+</html>

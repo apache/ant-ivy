@@ -20,26 +20,57 @@
 <html>
 <head>
 	<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
-	<script type="text/javascript">var xookiConfig = {level: 0, path: {template: "homeTemplate.html"}};</script>	
+	<script type="text/javascript">var xookiConfig = {level: 0};</script>	
 	<script type="text/javascript" src="xooki/xooki.js"></script>
 </head>
 <body>
 	<textarea id="xooki-source">
-<table border="0" class="home">
-<tr><td colspan="4"><img src="images/ivy-lierre.png"/></td></tr>
-<tr style="font-size:xx-large;"><td colspan="4"><span style="font-size:xx-large;">The agile dependency manager</span></td></tr>
-<tr><td colspan="4" style="font-size:large; padding: 1cm 0 0.7cm 0;">Ivy is a popular dependency manager focusing on flexibility and simplicity.<br/>
-Find out more about its unique <a href="features.html">enterprise features</a>, what <a href="testimonials.html">people say about it</a>,<br/>
-and <a href="doc.html">how it can improve your build system!</a></td></tr>
-<tr class="homeitems"><td><a href="download.html"><img src="images/ivy-dl-2.0.0-alpha-1.png"/></a></td><td><a href="doc.html"><img src="images/ivy-book.png"/></a></td><td><a href="demo.html"><img src="images/ivy-demo.png"/></a></td><td><a href="mailing-lists.html"><img src="images/ivy-forum.png"/></a></td></tr>
-<tr class="homeitems"><td><a href="download.html">download</a></td><td><a href="doc.html">documentation<br/>& tutorials</a></td><td><a href="demo.html">demo</a></td><td><a href="mailing-lists.html">share your experience</a></td></tr>
-</table>
-<hr/><a href="">Latest News</a><table border="0" cellpadding="5">
-<tr><td>05/03/2007</td><td><a href="presentations/apache-con-2007/">slides</a> from ApacheCon EU 2007 are available!</td></tr>
-<tr><td>04/26/2007</td><td>[[history/2.0.0-alpha-1]] version available</td></tr>
-<tr><td>03/28/2007</td><td> <a href="http://www.jetbrains.com/teamcity/features/newfeatures.html#TeamCity_Administration_Interface_Enhancements">TeamCity</a>  integrates Ivy for dependent build management</td></tr>
-<tr><td>03/01/2007</td><td> New site menu and new look for the home page.<br/> [[mailing-lists Tell us]] what you think about it!</td></tr>
-</table></textarea>
+Welcome to the official Ivy documentation.
+
+<h1>What is Ivy?</h1>
+Ivy is a tool for managing (recording, tracking, resolving and reporting) project dependencies. It is characterized by the following:
+<ol>
+<li>flexibility and configurability - Ivy is essentially process agnostic and is not tied to any methodology or structure. Instead it provides the necessary flexibility and configurability to be adapted to a broad range of dependency management and build processes.</li>
+
+<li>tight integration with Apache Ant - while available as a standalone tool, Ivy works particularly well with Apache Ant providing a number of powerful Ant tasks ranging from dependency resolution to dependency reporting and publication.</li>
+</ol>
+Ivy is open source and released under a very permissive <a href="license.html">license</a>.
+Ivy has a lot of powerful [[features]], the most popular and useful being its flexibily, integration with ant, and its strong transitive dependencies management engine.
+The transitive dependencies management is a feature which let you get dependencies of your dependencies, transitively. In order to address this problematic ivy needs to find metadata about your modules, usually in an <a href="doc/ivyfile.html">ivy file</a>. To find these metadata and your dependencies artifacts (usually jars), Ivy can be configured to use a lot of different <a href="doc/configuration/resolvers.html">repositories</a>.
+
+<h1>About this doc</h1>
+This documentation has been migrated from the old Ivy web site hosted by Jayasoft, feel free to report any problem on the [[mailing-lists]].
+
+If you browse this documentation from your installation of ivy, you can also check the <a href="http://incubator.apache.org/ivy/doc.html">online version</a> for latest updates.
+
+You can also browse this documentation offline either by downloading the documentation distribution, or by checking out the doc directory from svn. This documentation uses <a href="http://xooki.sourceforge.net/">xooki</a> as documentation engine, so you can very easily [[get-involved edit it and submit patches]] when you browse it from source.
+
+The online version of this documentation is updated periodically, especially when new features are added during development. So if you find something documented here not available in your version of ivy, it may be because it is available only with the latest <a href="download.html">download</a>.
+
+If you want to view the whole documentation in a single printer-friendly page, please use the <a href="doc.html?action=print">printer-friendly link</a> at the bottom of any documentation page in the online documentation, and you will get a printer friendly version of the current page and all its sub pages.
+
+<h1>Other places to go</h1>
+Check Ivy <a href="features.html">features</a>. 
+Read our <a href="faq.html">FAQ</a>.
+Ask for help on our <a href="mailing-lists.html">mailing lists</a>.
+Report bug or feature request in our <a href="issues.html">issue tracking system</a>.
+Check <a href="links.html">external tools and resources</a>.
+
+<h1>Overview</h1>
+This documentation is decomposed in 3 main parts:
+<ul>
+  <li><a href="doc/tutorial.html">Tutorials</a></li> 
+The tutorials is the best way to begin to play with ivy. You will easily and quickly learn the basics of Ivy.
+  <li><a href="doc/reference.html">Reference</a></li> 
+The reference documentation gives you all the details of Ivy. 
+The introduction part is particularly useful: it defines some vocabulary, explains main concepts such as dependency resolvers and patterns, and give an overview on how ivy works internally. 
+It's also in the reference doc that you will find all you always dreamed to know about ivy configuration, ivy files, and ivy use (especially with ant).
+  <li><a href="doc/appendix.html">Appendix</a></li> 
+The appendix section contains a bunch of Ivy related information which is not part of Ivy reference doc.
+</ul>
+
+You will also find here interesting pages like [[doc/bestpractices]], the [[faq]] or the [[links]] pages.
+	</textarea>
 <script type="text/javascript">xooki.postProcess();</script>
 </body>
 </html>

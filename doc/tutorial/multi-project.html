@@ -1,0 +1,338 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<!--
+   Licensed to the Apache Software Foundation (ASF) under one
+   or more contributor license agreements.  See the NOTICE file
+   distributed with this work for additional information
+   regarding copyright ownership.  The ASF licenses this file
+   to you under the Apache License, Version 2.0 (the
+   "License"); you may not use this file except in compliance
+   with the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing,
+   software distributed under the License is distributed on an
+   "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+   KIND, either express or implied.  See the License for the
+   specific language governing permissions and limitations
+   under the License.    
+-->
+<html>
+<head>
+	<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
+	<script type="text/javascript">var xookiConfig = {level: 1};</script>	
+	<script type="text/javascript" src="../xooki/xooki.js"></script>
+</head>
+<body>
+	<textarea id="xooki-source">
+This example is an illustration of dependency between two project.
+
+The dependant project declares that it uses the standalone one. We will illustrate two things : 
+<ul>
+  <li>public libraries declared by standalone project will automatically be recovered by the dependant project</li>
+  <li>the dependant project will retrieve the "latest" version of the standalone project</li>
+</ul>
+<h1>the projects used</h1>
+<h2>the project : standalone</h2>
+The standalone project is very simple. It depends on the apache library commons-lang and contains only one class: standalone.Main which provides two services:
+<ul>
+  <li>return the version of the project</li>
+  <li>capitalize a string using org.apache.commons.lang.WordUtils.capitalizeFully</li>
+</ul>
+Here is the content of the project:
+<ul>
+  <li>build.xml : the ant build file for the project</li>
+  <li>ivy.xml : the ivy project file</li>
+  <li>src\standalone\Main.java : the only class of the project</li>
+</ul>
+Take a look at it's <b>ivy.xml</b> file:
+<code>
+<ivy-module version="1.0">
+    <info organisation="jayasoft" module="standalone" />
+    <dependencies>
+        <dependency org="apache" name="commons-lang" rev="2.0" />
+    </dependencies>
+</ivy-module>
+</code>
+
+The ivy dependency file declares only one dependency on apache commons-lang library which by default is a public dependency (see <a href="../../doc/ivyfile.html">ivy file definition</a>).
+<h2>the project : depending</h2>
+The project depending is very simple too. It declares only one dependency on the latest version of the standalone project and it contains only one class depending.Main which make 2 things:
+<ul>
+  <li>getting the version of the standalone project throw a call to standalone.Main.getVersion()</li>
+  <li>transform a string throw a call to standalone.Main.capitalizeWords(str)</li>
+</ul>
+Take a look at it's <b>ivy.xml</b> file:
+<code>
+<ivy-module version="1.0">
+    <info organisation="jayasoft" module="depending" />
+    <dependencies>
+        <dependency name="standalone" rev="latest.integration" />
+    </dependencies>
+</ivy-module>
+</code>
+
+<h2>the <b>ivy</b> settings</h2>
+The ivy settings is made in the config directory wich contains 2 files :
+<ul>
+  <li>ivysettings.properties : a property file</li>
+  <li>ivysettings.xml : the file containing the ivy settings</li>
+</ul>
+
+Let's analyse the ivysettings.xml file.
+<code>
+<ivysettings>
+        <properties file="${ivy.settings.dir}/ivysettings.properties" />
+        <settings defaultCache="${ivy.settings.dir}/ivy-cache" defaultResolver="libraries" />
+        <resolvers>
+                <filesystem name="projects">
+                        <artifact pattern="${repository.dir}/[artifact]-[revision].[ext]" />
+                        <ivy pattern="${repository.dir}/[module]-[revision].xml" />
+                </filesystem>
+                <ivyrep name="libraries" />
+        </resolvers>
+        <modules>
+                <module organisation="jayasoft" name=".*" resolver="projects" />
+        </modules>
+</ivysettings>
+</code>
+The file contains four main tags: properties, settings, resolvers and modules.
+<h2>the <b>properties</b> tag</h2>
+This tag only load some properties for the ivy process in the same manner as ant will do it.
+<h2>the <b>settings</b> tag</h2>
+This tag is in charge to initialize some parameters for ivy process. The directory that ivy will use to cache (to store) artifacts found will be in a sub directory called ivy-cache of the directory containing the ivysettings.xml file itself. 
+The second parameter, tells ivy to use a resolver called "libraries" as its default resolver. As a recall, a resolver is in charge to resolve an artifact from some information like: the organisation that provides the artifact, the name of the library and the version of the library. More information can be found in the <a href="../../doc/configuration.html">settings documentation</a>.
+<h2>the <b>resolvers</b> tag</h2>
+This tag defines the resolvers to use. Here we have two resolvers defined: "projects" and "libraries".
+The filesystem resolver called "projects" is able to resolve the internal dependencies wanted. 
+The ivyrep resolver called "libraries" is able to find dependencies on <a href="../../ivyrep.html">ivyrep</a>.
+<h2>the <b>modules</b> tag</h2>
+The modules tag allows to configure which resolver should be use for which module. Here the settings only tells to use the "projects" resolver for all modules having for organisation "jayasoft" and any module name (.* regexp matches any module name).
+For other modules (i.e. all modules not from jayasoft), since there is no special settings, the default resolver will be used: "libraries".
+<h1>walkthrough</h1>
+<div class="step">
+<h2>step 1: preparation</h2>
+Open a DOS or shell window, and go to the "dependance" directory.
+</div>
+<div class="step">
+<h2>step 2: clean directory tree</h2>
+On the prompt type : ant
+This will clean up the entire project directory tree. You can do it each time you want to clean up this example.
+</div>
+<div class="step">
+<h2>step 3: publication of standalone project</h2>
+Goto standalone directory  and publish the project
+<div class="shell"><pre>I:\standalone>ant publish
+Buildfile: build.xml
+
+configure:
+:: Ivy 1.0-rc3 - 20050421161206 :: http://ivy.jayasoft.org/ ::
+
+resolve:
+:: resolving dependencies :: jayasoft/standalone-working@xmen
+        confs: [default]
+downloading http://www.ibiblio.org/maven/commons-lang/jars/commons-lang-2.0.jar(2.0) ...
+.................................... (165kB)
+        [SUCCESSFUL ] apache/commons-lang-2.0/commons-lang.jar[jar] (6672ms)
+:: resolution report ::
+        ---------------------------------------------------------------------
+        |                  |            modules            ||   artifacts   |
+        |       conf       | number| search|dwnlded|evicted|| number|dwnlded|
+        ---------------------------------------------------------------------
+        |      default     |   1   |   1   |   0   |   0   ||   1   |   1   |
+        ---------------------------------------------------------------------
+:: retrieving :: jayasoft/standalone
+        confs: [default]
+        1 artifacts copied, 0 already retrieved
+
+compile:
+    [mkdir] Created dir: I:\standalone\build\classes
+    [javac] Compiling 1 source file to I:\standalone\build\classes
+
+jar:
+[propertyfile] Creating new property file: I:\standalone\build\classes\version.properties
+      [jar] Building jar: I:\standalone\build\standalone.jar
+
+publish:
+:: delivering :: jayasoft/standalone-working@xmen :: 1 :: release :: Wed Apr 27 08:41:47 CEST 2005
+        delivering ivy file to I:\standalone/build/ivy.xml
+:: publishing :: jayasoft/standalone-working@xmen
+        published standalone to I:\config\repository\standalone-1.jar
+        published ivy to I:\config\repository\standalone-1.xml
+     [echo] project standalone released with version 1
+
+BUILD SUCCESSFUL
+Total time: 10 seconds</pre></div>
+What we see here:
+<ul>
+  <li>the project depends on 1 library (1 artifact)</li>
+  <li>the library was not in the ivy cache and so was downloaded (1 downloaded)</li>
+  <li>the project has been released under version number 1</li>
+</ul>
+</div>
+To give more details on the publish, as you can see the call to the publish task has resulted in two main things:
+- the delivery of a resolved ivy file to build/ivy.xml. This has been done because by default the publish task not only publishes artifacts but also ivy file. So it has looked to the path where the ivy file to publish should be, using the artifactspattern: ${build.dir}/[artifact].[ext].
+For an ivy file, this resolves to build/ivy.xml. Because this file does not exist, it automatically make a call to the deliver task which delivers a resolved ivy file to this destination.
+- the publication of artifact standalone and resolved ivy file to the repository. Both are mere copy of files found in the current project, more precisely in the build dir. This is because the artifactspattern has been set to ${build.dir}/[artifact].[ext], so standalone artifact is found in build/standalone.jar and ivy file in build/ivy.xml. And because we have asked the publish task to publish them using the "projects" resolver, these files are copied to repository\standalone-1.jar and to repository\standalone-1.xml, respecting the artifact and ivy patterns of our settings (see above).
+
+<div class="step">
+<h2>step 4: running the depending project</h2>
+Goto to directory depending and run ant
+<div class="shell"><pre>I:\depending>ant
+Buildfile: build.xml
+
+clean:
+
+configure:
+:: Ivy 1.0-rc3 - 20050421161206 :: http://ivy.jayasoft.org/ ::
+
+resolve:
+:: resolving dependencies :: jayasoft/depending-working@xmen
+        confs: [default]
+        [1] jayasoft/standalone
+downloading file:/I:/config/repository/standalone-1.jar(1) ...
+. (1kB)
+        [SUCCESSFUL ] jayasoft/standalone-1/standalone.jar[jar] (15ms)
+:: resolution report ::
+        ---------------------------------------------------------------------
+        |                  |            modules            ||   artifacts   |
+        |       conf       | number| search|dwnlded|evicted|| number|dwnlded|
+        ---------------------------------------------------------------------
+        |      default     |   2   |   2   |   2   |   0   ||   2   |   1   |
+        ---------------------------------------------------------------------
+:: retrieving :: jayasoft/depending
+        confs: [default]
+        2 artifacts copied, 0 already retrieved
+
+compile:
+    [mkdir] Created dir: I:\depending\build\classes
+    [javac] Compiling 1 source file to I:\depending\build\classes
+
+run:
+     [java] you are using version 1 of class standalone.Main
+     [java] standard message : i am depending.Main and standalone.Main will do the job for me
+     [java]     [standalone.Main] capitalizing string "i am depending.Main and standalone.Main will do the job for me" 
+				     using org.apache.commons.lang.WordUtils
+     [java] capitalized message : I Am Depending.main And Standalone.main Will Do The Job For Me
+
+BUILD SUCCESSFUL
+Total time: 3 seconds</pre></div>
+What we see here :
+<ul>
+  <li>the project depends on 2 libraries (2 artifacts)</li>
+  <li>one of the libraries was in the cache because there was only 1 download (1 downloaded)</li>
+  <li>ivy retrieved the version 1 of the project standalone. The call to standalone.Main.getVersion() has returned 1. If you look in the depending/lib directory, you should see standalone-1.jar which is the artifact version 1 of the project standalone</li>
+  <li>the call to standalone.Main.capitalizeWords(str) succeed, which means that the required library were in the classpath. If you look at the lib directory, you will see that the library commons-lang-2.0.jar was retrieved. This library was declared to be used by the project "standalone", so ivy get it too for the dependant project.</li>
+</ul>
+</div>
+<div class="step">
+<h2>step 5 : new version of standalone project</h2>
+Like we did before in step 3, publish again the standalone project. This will result as a new version of the project.
+<div class="shell"><pre>I:\standalone>ant publish
+Buildfile: build.xml
+
+configure:
+:: Ivy 1.0-rc3 - 20050421161206 :: http://ivy.jayasoft.org/ ::
+
+resolve:
+:: resolving dependencies :: jayasoft/standalone-working@xmen
+        confs: [default]
+:: resolution report ::
+        ---------------------------------------------------------------------
+        |                  |            modules            ||   artifacts   |
+        |       conf       | number| search|dwnlded|evicted|| number|dwnlded|
+        ---------------------------------------------------------------------
+        |      default     |   1   |   0   |   0   |   0   ||   1   |   0   |
+        ---------------------------------------------------------------------
+:: retrieving :: jayasoft/standalone
+        confs: [default]
+        0 artifacts copied, 1 already retrieved
+
+compile:
+
+jar:
+[propertyfile] Updating property file: I:\standalone\build\classes\version.properties
+      [jar] Building jar: I:\standalone\build\standalone.jar
+
+publish:
+   [delete] Deleting: I:\standalone\build\ivy.xml
+:: delivering :: jayasoft/standalone-working@xmen :: 2 :: release :: Wed Apr 27 09:17:13 CEST 2005
+        delivering ivy file to I:\standalone/build/ivy.xml
+:: publishing :: jayasoft/standalone-working@xmen
+        published standalone to I:\config\repository\standalone-2.jar
+        published ivy to I:\config\repository\standalone-2.xml
+     [echo] project standalone released with version 2
+
+BUILD SUCCESSFUL
+Total time: 2 seconds</pre></div>
+Now if you look in your repository folder, you must find 2 version published of the standalone project.
+Let's look at it:
+<div class="shell"><pre>I:\dependence\standalone>dir ..\config\repository /w
+ Le volume dans le lecteur I s'appelle DATA
+ Le numéro de série du volume est 30E5-91BA
+
+ Répertoire de I:\dependence\config\repository
+
+[.]                [..]               standalone-1.jar   standalone-1.xml   standalone-2.jar   standalone-2.xml
+               4 fichier(s)            3 936 octets
+               2 Rép(s)   9 874 350 080 octets libres
+
+I:\dependence\standalone></pre></div>
+</div>
+Ok now our repository contains two versions of the project <b>standalone</b>, other projects can refer to both versions.
+<div class="step">
+<h2>step 6 : depending got the new version</h2>
+What do we expect about running again the depending project? Two major things are expected: 
+<ul>
+  <li>retrieve the version 2 as the latest.integration version of the standalone project</li>
+  <li>running the test must display version 2 of standalone project</li>
+</ul>
+Let's go!!!
+<div class="shell"><pre>I:\depending>ant
+Buildfile: build.xml
+
+clean:
+   [delete] Deleting 3 files from I:\depending
+   [delete] Deleted 4 directories from I:\depending
+
+configure:
+:: Ivy 1.0-rc3 - 20050421161206 :: http://ivy.jayasoft.org/ ::
+
+resolve:
+:: resolving dependencies :: jayasoft/depending-working@xmen
+        confs: [default]
+        [2] jayasoft/standalone
+downloading file:/I:/config/repository/standalone-2.jar(2) ...
+. (1kB)
+        [SUCCESSFUL ] jayasoft/standalone-2/standalone.jar[jar] (0ms)
+:: resolution report ::
+        ---------------------------------------------------------------------
+        |                  |            modules            ||   artifacts   |
+        |       conf       | number| search|dwnlded|evicted|| number|dwnlded|
+        ---------------------------------------------------------------------
+        |      default     |   2   |   2   |   2   |   0   ||   2   |   1   |
+        ---------------------------------------------------------------------
+:: retrieving :: jayasoft/depending
+        confs: [default]
+        2 artifacts copied, 0 already retrieved
+
+compile:
+    [mkdir] Created dir: I:\depending\build\classes
+    [javac] Compiling 1 source file to I:\depending\build\classes
+
+run:
+     [java] you are using version 2 of class standalone.Main
+     [java] standard message : i am depending.Main and standalone.Main will do the job for me
+     [java]     [standalone.Main] capitalizing string "i am depending.Main and standalone.Main will do the job for me" 
+			     using org.apache.commons.lang.WordUtils
+     [java] capitalized message : I Am Depending.main And Standalone.main Will Do The Job For Me
+
+BUILD SUCCESSFUL
+Total time: 3 seconds</pre></div>
+Ok we have the result expected as the run target shows that we are using the version 2 of the main class of standalone project. If we take a look at the resolve target results, we can see that one artifact has been downloaded to the ivy cache. In fact this file is the version 2 of the standalone project that was taken from the repository, you can now retrieve it in the ivy-cache directory.
+</div>
+
+	</textarea>
+<script type="text/javascript">xooki.postProcess();</script>
+</body>
+</html>

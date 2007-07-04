@@ -1,0 +1,61 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<!--
+   Licensed to the Apache Software Foundation (ASF) under one
+   or more contributor license agreements.  See the NOTICE file
+   distributed with this work for additional information
+   regarding copyright ownership.  The ASF licenses this file
+   to you under the Apache License, Version 2.0 (the
+   "License"); you may not use this file except in compliance
+   with the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing,
+   software distributed under the License is distributed on an
+   "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+   KIND, either express or implied.  See the License for the
+   specific language governing permissions and limitations
+   under the License.    
+-->
+<html>
+<head>
+	<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
+	<script type="text/javascript">var xookiConfig = {level: 1};</script>	
+	<script type="text/javascript" src="../xooki/xooki.js"></script>
+</head>
+<body>
+	<textarea id="xooki-source">
+With the <a href="../../doc/use/install.html">install</a> ant task you are given the possibility to copy ivy descriptors and artifacts found from a resolver and publish them into another resolver.<br/> 
+
+This tutorial will show you how to build your own clean enterprise repository of ivy descriptors and modules artifacts.
+We will first use some basic ivy settings files to show how it works, and then we will use advanced features like <a href="../../doc/configuration/namespaces.html">namespaces</a> to build a real enterprise repository.
+
+<h1>The project used</h1>
+The project that we will use is quite simple.
+It is composed of an ant build file, and some ivy settings files.
+
+Here are the accessible target that we will use : 
+<div class="shell"><pre>
+Z:\ivy-repository>ant -p
+Buildfile: build.xml
+
+Main targets:
+
+ advanced                                 --> retrieve files from public repositories (ivyrep, ibiblio, ...) using namespaces
+ basic                                    --> retrieve files from well formatted ivy repositories
+ basic-deps                               --> retrieve files from well formatted ivy repositories with dependencies
+ clean-cache                              --> clean the cache
+ clean-repo                               --> clean the destination repository
+ commons-lang-1-0-ibiblio-no-namespace    --> retrieve commons-lang 1.0 from ibiblio maven using no namespaces
+ commons-lang-1-0-ibiblio-with-namespace  --> retrieve commons-lang 1.0 from ibiblio maven using namespaces
+ maven1                                   --> retrieve commons-lang 1.0 from maven1 repo using namespaces
+ maven2                                   --> retrieve files from maven2 repo using namespaces
+Default target: basic</pre></div>
+<br/><br/>
+The project is accessible in the <a href="/latest/ivy">sources</a> of Ivy into : IVY_HOME/src/example/build-a-ivy-repository
+
+
+	</textarea>
+<script type="text/javascript">xooki.postProcess();</script>
+</body>
+</html>

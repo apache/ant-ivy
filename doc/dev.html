@@ -1,0 +1,176 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<!--
+   Licensed to the Apache Software Foundation (ASF) under one
+   or more contributor license agreements.  See the NOTICE file
+   distributed with this work for additional information
+   regarding copyright ownership.  The ASF licenses this file
+   to you under the Apache License, Version 2.0 (the
+   "License"); you may not use this file except in compliance
+   with the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing,
+   software distributed under the License is distributed on an
+   "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+   KIND, either express or implied.  See the License for the
+   specific language governing permissions and limitations
+   under the License.    
+-->
+<html>
+<head>
+	<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
+	<script type="text/javascript">var xookiConfig = {level: 0};</script>	
+	<script type="text/javascript" src="xooki/xooki.js"></script>
+</head>
+<body>
+	<textarea id="xooki-source">
+<h1>Building from source</h1>
+To build Ivy from source it's really easy. 
+<h2>Requirements</h2>
+All you need is 
+<ul>
+<li>an <a href="http://subversion.tigris.org/">svn</a> client</li>
+<em>to check out Ivy sources from apache svn, not required if you build from sources packaged in a release</em>
+<li><a href="http://ant.apache.org/">Apache Ant</a> 1.6.2 or greater</li>
+<em>We recommend either ant 1.6.5 or 1.7.0</em>
+<li><a href="http://junit.org">junit</a> 3.8.2 jar in your ant lib</li>
+<em> this is not required if you use ant 1.7</em>
+<li>a <a href="http://java.sun.com/">jdk</a> 1.4 or greater</li>
+<em>Build instructions have been successfully tested with sun jdk 1.4.2, 1.5.0 and 1.6.0</em>
+</ul>
+
+<h2>Procedure</h2>
+<h3>Get the source</h3>
+You can either get the sources from a [[download release]], or get them directly from svn. For instance, to get the trunk version:
+<code>
+svn co https://svn.apache.org/repos/asf/incubator/ivy/core/trunk ivy
+</code>
+<h3>Build</h3>
+Go to the directory where you get the Ivy sources (you should see a file named build.xml) and run:
+<code>
+ant
+</code>
+<h3>Check the result</h3>
+The ant build will download Ivy if you don't already have a proper version in your home, compile, and run tests with coverage metrics.
+If everything goes well, you should see the message
+<code>
+BUILD SUCCESSFUL
+</code>
+Then you can check the test results in the build/doc/reports/test directory, the jars are in build/artifacts, and the test coverage report in build/doc/reports/coverage
+<h1>Coding conventions</h1>
+The Ivy code base is supposed to follow the standard java conventions:
+http://java.sun.com/docs/codeconv/html/CodeConvTOC.doc.html
+
+This is a work in progress though (see IVY-511), but patches helping migration to these conventions are welcome.
+
+<h1>Developing with eclipse</h1>
+Even though you can develop Ivy with your IDE of choice, we support eclipse development by providing ad hoc metadata.
+
+We currently provide two options:
+<h2>Eclipse alone</h2>
+To develop with a simple eclipse install all you need is eclipse 3.1 or greater, with no particular plugin.
+First call the following ant target in your Ivy workspace:
+<code>
+ant eclipse-default
+</code>
+This will resolve the dependencies of Ivy and produce a .classpath using the resolved jars for the build path.
+Then you can use the "Import->Existing project into workspace" eclipse feature to import the Ivy project in your workspace.
+<h2>Eclipse + IvyDE</h2>
+You can also leverage the latest IvyDE version to be able to easily resolve the ivy dependencies from Eclipse.
+To do so all you need is call the following ant target in your Ivy workspace:
+<code>
+ant eclipse-ivyde
+</code>
+or if you don't have ant installed you can simply copy the file .classpath.ivyde and rename it to .classpath
+Then you can import the project using "Import->Existing project into workspace" as long as you already have latest IvyDE installed.
+
+To install latest IvyDE version compatible with the latest Ivy used to resolve Ivy dependencies, you will need to use a snapshot build, not endorsed by the ASF, available here:
+http://people.apache.org/~xavier/ivyde/snapshot/
+
+Download the file and unzip its content in your eclipse installation directory.
+
+<h1>Making a release</h1>
+<h2>Requirements</h2>
+Requirements for making a release are similar to the requirements for building from source, except that sun jdk 1.6 and ant 1.7 are required.
+<h2>Procedure</h2>
+<h3>1. Check the files which needs to be updated for the release.</h3>
+On the trunk, check that files which require update for the release are up to date.
+This includes particularly:
+RELEASE_NOTES
+CHANGES
+README
+<h3>2. Create a release branch</h3>
+This will allow to work separately from other developers, in case you need any last modification.
+<code>
+svn copy https://svn.apache.org/repos/asf/incubator/ivy/core/trunk \
+           https://svn.apache.org/repos/asf/incubator/ivy/core/branches/2.0.0-alpha1 \
+      -m "Creating a release branch for 2.0.0-alpha1."
+</code>
+<h3>3. Check out the branch</h3>
+<code>
+svn co https://svn.apache.org/repos/asf/incubator/ivy/core/branches/2.0.0-alpha1 ivy-2.0.0-alpha1
+</code>
+<h3>4. Double check the files which need to be updated for the release.</h3>
+Check again that files have proper revision information.
+It's also time to update the documentation template files which will be used for doc generation to include the version information in the page title.
+For instance in
+<code>
+doc/homeTemplate.html
+doc/template.html
+doc/printTemplate.html
+</code>
+replace
+<code>
+<title>${title} | Ivy</title>
+</code>
+by
+<code>
+<title>${title} | Ivy 2.0.0-alpha1-incubating</title>
+</code>
+<h3>5. Commit your changes</h3>
+<code>
+svn ci -m "update templates for 2.0.0-alpha-1 release."
+</code>
+<h3>6. Check that you have no pending modifications</h3>
+<code>
+svn status
+</code>
+If your working copy is clean, you can launch the release script. If it isn't, make sure to clean it properly. Sometimes you may need to call ant clean-all if you have started to work with ant builds. If you are confused about your working copy state, delete it and check it out again.
+<h3>7. Launch the release script</h3>
+<code>
+ant -Dbuild.version=2.0.0-alpha1-incubating -Dstatus=milestone -f build-release.xml release
+</code>
+The status should be release only for final releases, and milestone for any other intermediate release.
+If anything is wrong, fix and go back to step 4.
+If the release script is successful, release artifacts will be waiting for you in the build/distrib directory.
+<h3>8. Verify the release</h3>
+Check that all zips can be opened correctly, and that running 'ant' after unzipping the source distribution works properly.
+You can also do a smoke test with the generated ivy.jar , to see if it is able to resolve properly a basic module (for instance you can replace the jar you have in your ~/.ivy/jars directory, clean your cache, and run 'ant clean jar'.
+<h3>9. Sign and upload the artifacts</h3>
+You will still need to sign the release artifacts and upload them to a location accessible by other Apache commiters
+<h3>10. Cast a vote to approve the release</h3>
+Cast a vote to approve the release, first on the ivy-dev mailing list, then if it is approved, on the general@incubator.apache.org mailing list
+<h3>11. Tag the svn repository</h3>
+Now that the release is approved, it is time to tag the svn repo
+<code>
+svn copy https://svn.apache.org/repos/asf/incubator/ivy/core/branches/2.0.0-alpha1 \
+           https://svn.apache.org/repos/asf/incubator/ivy/core/tags/2.0.0-alpha1 \
+      -m "Tag release 2.0.0-alpha1."
+</code>
+<h3>12. Upload to public repository</h3>
+If the release is approved, it's now time to make it public by uploading it to the public Apache distrib repository (i.e. /www/people.apache.org/dist/incubator/ivy/[version] on people.a.o).
+
+<h3>13. Announce</h3>
+Announce the release on the ivy-dev and ivy-user mailing lists, on the general@i.a.o list, announce@apache.org and on the user@ant.apache.org.
+Announce also the release on Ivy web site by editing the doc/index.html on the trunk.
+You can also announce the release on popular web sites, like freshmeat.net (xavier is the owner of the Ivy project on freshmeat), javalobby.org, theserverside.com, dzone.com, ...
+<h3>14. Update this doc</h3>
+If you feel like anything is missing or misleading in this release doc, update it as soon as you encounter the problem.
+<h3>15. Merge your modifications back to the trunk if necessary.</h3>
+Modifications on the template files do not need to be merged, but if you had troubles during your release you may want to merge your fixes back to the trunk.
+<h3>16. Prepare next release</h3>
+Update the file version.properties with the version of the next release so that anyone building from the trunk will obtain jar with the correct version number.</textarea>
+<script type="text/javascript">xooki.postProcess();</script>
+</body>
+</html>

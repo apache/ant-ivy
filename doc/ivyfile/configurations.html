@@ -1,0 +1,92 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<!--
+   Licensed to the Apache Software Foundation (ASF) under one
+   or more contributor license agreements.  See the NOTICE file
+   distributed with this work for additional information
+   regarding copyright ownership.  The ASF licenses this file
+   to you under the Apache License, Version 2.0 (the
+   "License"); you may not use this file except in compliance
+   with the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing,
+   software distributed under the License is distributed on an
+   "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+   KIND, either express or implied.  See the License for the
+   specific language governing permissions and limitations
+   under the License.    
+-->
+<html>
+<head>
+	<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
+	<script type="text/javascript">var xookiConfig = {level: 1};</script>	
+	<script type="text/javascript" src="../xooki/xooki.js"></script>
+</head>
+<body>
+	<textarea id="xooki-source">
+<b>Tag:</b> configurations <b>Parent:</b> <a href="../../doc/ivyfile.html">ivy-module</a>
+
+Container for configuration element. If this container is not present, it is assumed that the module has one public configuration called 'default'.
+
+<span class="since">since 1.3</span> You can define a new default conf mapping on this container by specifying the defaultconfmapping attribute.
+
+A default conf mapping is very similar to the defaultconf which can be set on the dependencies tag, but it has a slightly different behaviour. 
+The default conf mapping not only defines the conf mapping to use when no conf mapping is specified for a dependency in this ivy file, but it also modify the way ivy interprets conf mapping with no mapped conf. In this case, Ivy will look in the default conf mapping and use the conf mapping defined in the default conf mapping for the conf for which there is no mapped conf.
+
+See <a href="../../doc/ivyfile/dependency#defaultconfmapping.html">examples on the dependency</a> page.
+
+<span class="since">since 1.4</span> You can activate a confmappingoverride mode for all configurations, in which case the extending configurations will override the mappings of the configurations they extend from.
+
+
+<h1>Attributes</h1>
+<table class="ivy-attributes">
+<thead>
+    <tr><th class="ivy-att">Attribute</th><th class="ivy-att-desc">Description</th><th class="ivy-att-req">Required</th></tr>
+</thead>
+<tbody>
+    <tr><td>defaultconfmapping</td><td>the default conf mapping to use in this ivy file <span class="since">since 1.3</span></td>
+        <td>No, defaults to no default conf mapping</td></tr>
+    <tr><td>confmappingoverride</td><td>true to activate configuration mapping override, false otherwise <span class="since">since 1.4</span></td>
+        <td>No, defaults to false</td></tr>
+</tbody>
+</table>
+<h1>Child elements</h1>
+<table class="ivy-children">
+<thead>
+    <tr><th class="ivy-chld">Element</th><th class="ivy-chld-desc">Description</th><th class="ivy-chld-card">Cardinality</th></tr>
+</thead>
+<tbody>
+    <tr><td><a href="../../doc/ivyfile/conf.html">conf</a></td><td>declares a configuration of this module</td>
+        <td>0..n</td></tr>
+    <tr><td><a href="../../doc/ivyfile/include.html">include</a></td><td>include configurations from another file</td>
+        <td>0..n</td></tr>
+</tbody>
+</table>
+
+<h1>Configuration mappings details</h1>
+When Ivy parses your Ivy file, it will create (internally) modify the configuration mapping of your dependencies.
+For instance, say you have:
+<code type="xml">
+<configurations defaultconfmapping="conf1->other1;conf2->other2">
+   <conf name="conf1" />
+   <conf name="conf2" extends="conf1" />
+</configurations>
+<dependencies>
+   <dependency name="other-module" conf="conf1" />
+</dependencies>
+</code>
+When Ivy parses this file, it will construct the following dependency (in-memory only):
+<code type="xml"><dependency name="other-module" conf="conf1->other1" /></code>
+
+So, if you now resolve the conf2 configuration, you will only get the other1 dependencies of your other-module.
+
+But when you set confmappingoverride to true, Ivy will construct the following dependency in memory:
+<code type="xml"><dependency name="other-module" conf="conf1->other1;conf2->other2" /></code>
+As you can see, the defaultmappings of the extending configurations are also added (although you didn't explicitly defined them)
+
+When you now resolve the conf2 configuration, you'll get the other2 dependencies of your other-module. 
+</textarea>
+<script type="text/javascript">xooki.postProcess();</script>
+</body>
+</html>
