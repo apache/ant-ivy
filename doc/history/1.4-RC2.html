@@ -20,25 +20,30 @@
 <html>
 <head>
 	<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
-	<script type="text/javascript">var xookiConfig = {level: 2};</script>	
-	<script type="text/javascript" src="../../xooki/xooki.js"></script>
+	<script type="text/javascript">var xookiConfig = {level: 1};</script>	
+	<script type="text/javascript" src="../xooki/xooki.js"></script>
 </head>
 <body>
 	<textarea id="xooki-source">
-<h1>Changes log (2005-04-18)</h1>
-- IMPROVE: improved messages: more debug, more verbose, and more details on failures
-- FIX: bug with '\' in path patterns
-- FIX: bug with relative paths patterns
-- FIX: configure task tries ivy.conf.file as relative to base dir and to current dir
-- FIX: file system resolver publishes ivy files with ivy pattern
-- FIX: 0 content length considered as non existing (behaviour of jre 5.0 on linux) 
-       => empty ressources are now considered as non existing
+Here are the release notes of version 1.4-RC2.
+A new and noteworthy section is available on <a href="../../doc/releasenotes/1.4.html">version 1.4 page</a>.
 
-<h1>Downloads</h1>
-<a href="http://www.jayasoft.org/downloads/ivy/ivy-1.0-rc2-bin.zip">ivy-1.0-rc2-bin.zip</a> (1164 kB)
-<a href="http://www.jayasoft.org/downloads/ivy/ivy-1.0-rc2-src.zip">ivy-1.0-rc2-src.zip</a> (987 kB)
-<a href="http://www.jayasoft.org/downloads/ivy/ivy-1.0-rc2-src-withdep.zip">ivy-1.0-rc2-src-withdep.zip</a> (1250 kB)
+You can download it here:
+<ul><li><a href="http://www.jayasoft.org/downloads/ivy/1.4-RC2/ivy-1.4-RC2-bin.zip">binaries</a></li>
+<li><a href="http://www.jayasoft.org/downloads/ivy/1.4-RC2/ivy-1.4-RC2-src.zip">sources</a></li>
+<li><a href="http://www.jayasoft.org/downloads/ivy/1.4-RC2/ivy-1.4-RC2-doc.zip">documentation</a></li>
+</ul>
 
+It includes only bug fixes since 1.4-RC1.
+<code>
+   version 1.4-RC2 - 2006-09-27
+=====================================
+- FIX: m2compatible flag is ignored for display of failed artifact searches (IVY-303)
+- FIX: AntCallTriggerTest and AntBuildTriggerTest fail when run from ivy build.xml (IVY-310)
+- FIX: Classloader problem with ant (IVY-311)
+- FIX: Make resolve overview more compact (IVY-299)
+- FIX: Could not write to "tmp:///webdav_tmp.c1" because it is read-only (IVY-312)
+</code>
 	</textarea>
 <script type="text/javascript">xooki.postProcess();</script>
 </body>

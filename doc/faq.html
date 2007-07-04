@@ -35,7 +35,7 @@ The major drawback of the project lib dir is that the same dependencies are stor
 With the shared repository the problem is often to maintain the list of dependencies of the project. This list is often lost within the build file, which does not help maintenance. Moreover, this solution often requires a download of the whole repository, unless home made dependencies management solution has been used.</p>
 <p>Finally, the major drawback of these solutions is that they do not use transitive dependencies. Transitive dependencies are the dependencies of your dependencies. Managing transitive dependencies  let you declare dependencies only on what you really need, and not what the module you use themselves need. This not only eases your dependencies declaration, but it also improves a lot the maintenability of your project, especially in multi-project environment. Imagine you develop a component used in several other projects. Then each time your component needs a new dependency, without transitive dependencies, you have to update all the projects using your component ! And this could really take a lot of time !</p>
 <h2><a name="why-should-i-use-ivy"></a>Why should I use Ivy ?</h2>
-<p>If you are convinced of using a dependencies manager, you may wonder why using Ivy and not another tool. We are not able to answer this question without being biased, but have a look at Ivy <a href="features.html">features</a> and the <a href="doc/m2comparison.html">product comparison</a> we provide, and you will certainly see that Ivy is one of the best dependencies manager currently available ;-)</p>
+<p>If you are convinced of using a dependencies manager, you may wonder why using Ivy and not another tool. We are not able to answer this question without being biased, but have a look at Ivy <a href="features.html">features</a> and the [[m2comparison product comparison]] we provide, and you will certainly see that Ivy is one of the best dependencies manager currently available ;-)</p>
 <h2><a name="how-does-ivy-differ-from-maven-2"></a>How does Ivy differ from Maven2 ?</h2>
 <p>The answer to this question is too long, so it deserves its own page <a href="doc/m2comparison.html">here</a>.</p>
 <h1>Ivy in use</h1>
@@ -110,7 +110,7 @@ Then you configure ivy to indicate where it can find your dependencies. Thus you
 <p>This the default behaviour of ivy, which relies on the revision and on its cache to avoid too many downloads. However, this can be changed on each resolver using the <em>checkmodified</em> attribute, or globally by setting <em>ivy.resolver.default.check.modified</em> variable to true.</p>
 <h1>Misc</h1>
 <h2><a name="release-notes"></a>Where are the release notes ?</h2>
-<p>Release notes can be found in the <a href="doc/releasenotes.html">documentation</a>.</p>
+<p>Release notes can be found in the [[doc/index documentation]].</p>
 <h2><a name="more-information"></a>Where can I get more information?</h2>
 <p>If you need more information about Ivy than the one found in the documentation, you can see the <a href="links.html">links</a> page, use the <a href="forum/core.html">forum</a> to ask your question to the community, or use your favorite search engine.<br />
 For search engine search, we advise to use ivy + ant or java as base keywords, since ivy alone is a very common word.</p></textarea>

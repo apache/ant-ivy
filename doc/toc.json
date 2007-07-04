@@ -36,7 +36,13 @@
               "id":"faq",
               "title":"FAQ",
               "children": [
+                  {
+                    "id":"m2comparison",
+                    "title":"Ivy / Maven2 Comparison",
+                    "children": [
 
+                      ]
+                  }
                 ]
             },
             {
@@ -58,123 +64,94 @@
               "children": [
 
                 ]
-            },
+            }
+          ]
+      },
+      {
+        "id":"doc/index",
+        "title":"Documentation",
+        "children": [
             {
-              "id":"doc/releasenotes/2.0",
-              "title":"2.0",
+              "id":"doc/tutorial",
+              "title":"Tutorials",
               "children": [
                   {
-                    "id":"doc/releasenotes/2.0.0-alpha-1",
-                    "title":"2.0.0-alpha-1",
-                    "children": [
-
-                      ]
-,
-                    "level":3                  }
-                ]
-,
-              "level":3            },
-            {
-              "id":"doc/releasenotes/1.4.1",
-              "title":"1.4.1",
-              "children": [
-
-                ]
-            },
-            {
-              "id":"doc/releasenotes/1.4",
-              "title":"1.4",
-              "children": [
-                  {
-                    "id":"doc/releasenotes/1.4-RC1",
-                    "title":"1.4-RC1",
+                    "id":"doc/tutorial/start",
+                    "title":"Quick Start",
                     "children": [
 
                       ]
                   },
                   {
-                    "id":"doc/releasenotes/1.4-RC2",
-                    "title":"1.4-RC2",
-                    "children": [
-
-                      ]
-                  }
-                ]
-            },
-            {
-              "id":"doc/releasenotes/1.3.1",
-              "title":"1.3.1",
-              "children": [
-
-                ]
-            },
-            {
-              "id":"doc/releasenotes/1.3",
-              "title":"1.3",
-              "children": [
-                  {
-                    "id":"doc/releasenotes/1.3-rc1",
-                    "title":"1.3-RC1",
+                    "id":"doc/tutorial/ivyrep",
+                    "title":"Using IvyRep",
                     "children": [
 
                       ]
                   },
                   {
-                    "id":"doc/releasenotes/1.3-rc2",
-                    "title":"1.3-RC2",
+                    "id":"doc/tutorial/defaultconf",
+                    "title":"Adjusting default settings",
                     "children": [
 
                       ]
                   },
                   {
-                    "id":"doc/releasenotes/1.3-rc3",
-                    "title":"1.3-RC3",
-                    "children": [
-
-                      ]
-                  }
-                ]
-            },
-            {
-              "id":"doc/releasenotes/1.2a",
-              "title":"1.2a",
-              "children": [
-
-                ]
-            },
-            {
-              "id":"doc/releasenotes/older",
-              "title":"older versions",
-              "isAbstract":true,
-              "children": [
-                  {
-                    "id":"doc/releasenotes/1.1",
-                    "title":"1.1",
+                    "id":"doc/tutorial/multiple",
+                    "title":"Multiple Resolvers",
                     "children": [
 
                       ]
                   },
                   {
-                    "id":"doc/releasenotes/1.0",
-                    "title":"1.0",
+                    "id":"doc/tutorial/dual",
+                    "title":"Dual Resolver",
+                    "children": [
+
+                      ]
+                  },
+                  {
+                    "id":"doc/tutorial/multi-project",
+                    "title":"Project dependencies",
+                    "children": [
+
+                      ]
+                  },
+                  {
+                    "id":"doc/tutorial/multiproject",
+                    "title":"Using Ivy in multiple projects environment",
+                    "children": [
+
+                      ]
+                  },
+                  {
+                    "id":"doc/tutorial/conf",
+                    "title":"Using Ivy Configurations",
+                    "children": [
+
+                      ]
+                  },
+                  {
+                    "id":"doc/tutorial/build-repository",
+                    "title":"Building a repository",
                     "children": [
                         {
-                          "id":"doc/releasenotes/1.0-rc1",
-                          "title":"1.0-rc1",
+                          "id":"doc/tutorial/build-repository/basic",
+                          "title":"Basic repository replication",
                           "children": [
 
                             ]
                         },
                         {
-                          "id":"doc/releasenotes/1.0-rc2",
-                          "title":"1.0-rc2",
+                          "id":"doc/tutorial/build-repository/advanced1",
+                          "title":"Advanced repository - step 1",
                           "children": [
 
                             ]
                         },
                         {
-                          "id":"doc/releasenotes/1.0-rc3",
-                          "title":"1.0-rc3",
+                          "id":"doc/tutorial/build-repository/advanced2",
+                          "title":"Advanced repository - step 2",
                           "children": [
 
                             ]
@@ -182,139 +159,8 @@
                       ]
                   },
                   {
-                    "id":"doc/releasenotes/0.9",
-                    "title":"0.9",
-                    "children": [
-
-                      ]
-                  },
-                  {
-                    "id":"doc/releasenotes/0.8",
-                    "title":"0.8",
-                    "children": [
-
-                      ]
-                  },
-                  {
-                    "id":"doc/releasenotes/0.7",
-                    "title":"0.7",
-                    "children": [
-
-                      ]
-                  },
-                  {
-                    "id":"doc/releasenotes/0.6.1",
-                    "title":"0.6.1",
-                    "children": [
-
-                      ]
-                  },
-                  {
-                    "id":"doc/releasenotes/0.6",
-                    "title":"0.6",
-                    "children": [
-
-                      ]
-                  },
-                  {
-                    "id":"doc/releasenotes/0.5.1",
-                    "title":"0.5.1",
-                    "children": [
-
-                      ]
-                  },
-                  {
-                    "id":"doc/releasenotes/0.5",
-                    "title":"0.5",
-                    "children": [
-
-                      ]
-                  }
-                ]
-            }
-          ]
-      },
-      {
-        "id":"doc/tutorial",
-        "title":"Tutorials",
-        "children": [
-            {
-              "id":"doc/tutorial/start",
-              "title":"Quick Start",
-              "children": [
-
-                ]
-            },
-            {
-              "id":"doc/tutorial/ivyrep",
-              "title":"Using IvyRep",
-              "children": [
-
-                ]
-            },
-            {
-              "id":"doc/tutorial/defaultconf",
-              "title":"Adjusting default settings",
-              "children": [
-
-                ]
-            },
-            {
-              "id":"doc/tutorial/multiple",
-              "title":"Multiple Resolvers",
-              "children": [
-
-                ]
-            },
-            {
-              "id":"doc/tutorial/dual",
-              "title":"Dual Resolver",
-              "children": [
-
-                ]
-            },
-            {
-              "id":"doc/tutorial/multi-project",
-              "title":"Project dependencies",
-              "children": [
-
-                ]
-            },
-            {
-              "id":"doc/tutorial/multiproject",
-              "title":"Using Ivy in multiple projects environment",
-              "children": [
-
-                ]
-            },
-            {
-              "id":"doc/tutorial/conf",
-              "title":"Using Ivy Configurations",
-              "children": [
-
-                ]
-            },
-            {
-              "id":"doc/tutorial/build-repository",
-              "title":"Building a repository",
-              "children": [
-                  {
-                    "id":"doc/tutorial/build-repository/basic",
-                    "title":"Basic repository replication",
-                    "children": [
-
-                      ]
-                  },
-                  {
-                    "id":"doc/tutorial/build-repository/advanced1",
-                    "title":"Advanced repository - step 1",
-                    "children": [
-
-                      ]
-                  },
-                  {
-                    "id":"doc/tutorial/build-repository/advanced2",
-                    "title":"Advanced repository - step 2",
+                    "id":"doc/moreexamples",
+                    "title":"More examples",
                     "children": [
 
                       ]
@@ -322,147 +168,140 @@
                 ]
             },
             {
-              "id":"doc/moreexamples",
-              "title":"More examples",
-              "children": [
-
-                ]
-            }
-          ]
-      },
-      {
-        "id":"doc",
-        "title":"Documentation",
-        "children": [
-            {
-              "id":"doc/intro",
-              "title":"Introduction",
+              "id":"doc/reference",
+              "title":"Reference",
               "children": [
                   {
-                    "id":"doc/terminology",
-                    "title":"Terminology",
-                    "children": [
-
-                      ]
-                  },
-                  {
-                    "id":"doc/concept",
-                    "title":"Main Concepts",
-                    "children": [
-
-                      ]
-                  },
-                  {
-                    "id":"doc/principle",
-                    "title":"How does it work ?",
-                    "children": [
-
-                      ]
-                  },
-                  {
-                    "id":"doc/bestpractices",
-                    "title":"Best practices",
-                    "children": [
-
-                      ]
-                  },
-                  {
-                    "id":"doc/install",
-                    "title":"Installation",
-                    "children": [
-
-                      ]
-                  }
-                ]
-            },
-            {
-              "id":"doc/configuration",
-              "title":"Settings Files",
-              "children": [
-                  {
-                    "id":"doc/configuration/property",
-                    "title":"property",
-                    "children": [
-
-                      ]
-                  },
-                  {
-                    "id":"doc/configuration/properties",
-                    "title":"properties",
-                    "children": [
-
-                      ]
-                  },
-                  {
-                    "id":"doc/configuration/conf",
-                    "title":"settings",
-                    "children": [
-
-                      ]
-                  },
-                  {
-                    "id":"doc/configuration/include",
-                    "title":"include",
-                    "children": [
-
-                      ]
-                  },
-                  {
-                    "id":"doc/configuration/classpath",
-                    "title":"classpath",
-                    "children": [
-
-                      ]
-                  },
-                  {
-                    "id":"doc/configuration/typedef",
-                    "title":"typedef",
-                    "children": [
-
-                      ]
-                  },
-                  {
-                    "id":"doc/configuration/latest-strategies",
-                    "title":"latest-strategies",
-                    "children": [
-
-                      ]
-                  },
-                  {
-                    "id":"doc/configuration/parsers",
-                    "title":"parsers",
-                    "children": [
-
-                      ]
-                  },
-                  {
-                    "id":"doc/configuration/namespaces",
-                    "title":"namespaces",
+                    "id":"doc/intro",
+                    "title":"Introduction",
                     "children": [
                         {
-                          "id":"doc/configuration/namespace",
-                          "title":"namespace",
+                          "id":"doc/terminology",
+                          "title":"Terminology",
+                          "children": [
+
+                            ]
+                        },
+                        {
+                          "id":"doc/concept",
+                          "title":"Main Concepts",
+                          "children": [
+
+                            ]
+                        },
+                        {
+                          "id":"doc/principle",
+                          "title":"How does it work ?",
+                          "children": [
+
+                            ]
+                        },
+                        {
+                          "id":"doc/bestpractices",
+                          "title":"Best practices",
+                          "children": [
+
+                            ]
+                        },
+                        {
+                          "id":"doc/install",
+                          "title":"Installation",
+                          "children": [
+
+                            ]
+                        }
+                      ]
+                  },
+                  {
+                    "id":"doc/configuration",
+                    "title":"Settings Files",
+                    "children": [
+                        {
+                          "id":"doc/configuration/property",
+                          "title":"property",
+                          "children": [
+
+                            ]
+                        },
+                        {
+                          "id":"doc/configuration/properties",
+                          "title":"properties",
+                          "children": [
+
+                            ]
+                        },
+                        {
+                          "id":"doc/configuration/conf",
+                          "title":"settings",
+                          "children": [
+
+                            ]
+                        },
+                        {
+                          "id":"doc/configuration/include",
+                          "title":"include",
+                          "children": [
+
+                            ]
+                        },
+                        {
+                          "id":"doc/configuration/classpath",
+                          "title":"classpath",
+                          "children": [
+
+                            ]
+                        },
+                        {
+                          "id":"doc/configuration/typedef",
+                          "title":"typedef",
+                          "children": [
+
+                            ]
+                        },
+                        {
+                          "id":"doc/configuration/latest-strategies",
+                          "title":"latest-strategies",
+                          "children": [
+
+                            ]
+                        },
+                        {
+                          "id":"doc/configuration/parsers",
+                          "title":"parsers",
+                          "children": [
+
+                            ]
+                        },
+                        {
+                          "id":"doc/configuration/namespaces",
+                          "title":"namespaces",
                           "children": [
                               {
-                                "id":"doc/configuration/namespace/rule",
-                                "title":"rule",
+                                "id":"doc/configuration/namespace",
+                                "title":"namespace",
                                 "children": [
                                     {
-                                      "id":"doc/configuration/namespace/fromtosystem",
-                                      "title":"fromsystem / tosystem",
+                                      "id":"doc/configuration/namespace/rule",
+                                      "title":"rule",
                                       "children": [
                                           {
-                                            "id":"doc/configuration/namespace/src",
-                                            "title":"src",
+                                            "id":"doc/configuration/namespace/fromtosystem",
+                                            "title":"fromsystem / tosystem",
                                             "children": [
+                                                {
+                                                  "id":"doc/configuration/namespace/src",
+                                                  "title":"src",
+                                                  "children": [
 
-                                              ]
-                                          },
-                                          {
-                                            "id":"doc/configuration/namespace/dest",
-                                            "title":"dest",
-                                            "children": [
+                                                    ]
+                                                },
+                                                {
+                                                  "id":"doc/configuration/namespace/dest",
+                                                  "title":"dest",
+                                                  "children": [
 
+                                                    ]
+                                                }
                                               ]
                                           }
                                         ]
@@ -470,277 +309,213 @@
                                   ]
                               }
                             ]
-                        }
-                      ]
-                  },
-                  {
-                    "id":"doc/configuration/macrodef",
-                    "title":"macrodef",
-                    "children": [
-                        {
-                          "id":"doc/configuration/macrodef/attribute",
-                          "title":"attribute",
-                          "children": [
-
-                            ]
-                        }
-                      ]
-                  },
-                  {
-                    "id":"doc/configuration/resolvers",
-                    "title":"resolvers",
-                    "children": [
-                        {
-                          "id":"doc/resolver/ivyrep",
-                          "title":"IvyRep Resolver",
-                          "children": [
-
-                            ]
                         },
                         {
-                          "id":"doc/resolver/ibiblio",
-                          "title":"IBiblio Resolver",
-                          "children": [
-
-                            ]
-                        },
-                        {
-                          "id":"doc/resolver/filesystem",
-                          "title":"File System resolver",
-                          "children": [
-
-                            ]
-                        },
-                        {
-                          "id":"doc/resolver/url",
-                          "title":"Url Resolver",
-                          "children": [
-
-                            ]
-                        },
-                        {
-                          "id":"doc/resolver/chain",
-                          "title":"Chain Resolver",
-                          "children": [
-
-                            ]
-                        },
-                        {
-                          "id":"doc/resolver/dual",
-                          "title":"Dual resolver",
-                          "children": [
-
-                            ]
-                        },
-                        {
-                          "id":"doc/resolver/sftp",
-                          "title":"sftp resolver",
-                          "children": [
-
-                            ]
-                        },
-                        {
-                          "id":"doc/resolver/ssh",
-                          "title":"ssh resolver",
-                          "children": [
-
-                            ]
-                        },
-                        {
-                          "id":"doc/resolver/vfs",
-                          "title":"vfs",
-                          "children": [
-
-                            ]
-                        }
-                      ]
-                  },
-                  {
-                    "id":"doc/configuration/conflict-managers",
-                    "title":"conflict-managers",
-                    "children": [
-
-                      ]
-                  },
-                  {
-                    "id":"doc/configuration/modules",
-                    "title":"modules",
-                    "children": [
-                        {
-                          "id":"doc/configuration/module",
-                          "title":"module",
-                          "children": [
-
-                            ]
-                        }
-                      ]
-                  },
-                  {
-                    "id":"doc/configuration/outputters",
-                    "title":"outputters",
-                    "children": [
-
-                      ]
-                  },
-                  {
-                    "id":"doc/configuration/statuses",
-                    "title":"statuses",
-                    "children": [
-                        {
-                          "id":"doc/configuration/status",
-                          "title":"status",
-                          "children": [
-
-                            ]
-                        }
-                      ]
-                  },
-                  {
-                    "id":"doc/configuration/triggers",
-                    "title":"triggers",
-                    "children": [
-
-                      ]
-                  },
-                  {
-                    "id":"doc/configuration/version-matchers",
-                    "title":"version-matchers",
-                    "children": [
-
-                      ]
-                  }
-                ]
-            },
-            {
-              "id":"doc/ivyfile",
-              "title":"Ivy Files",
-              "children": [
-                  {
-                    "id":"doc/ivyfile/info",
-                    "title":"info",
-                    "children": [
-                        {
-                          "id":"doc/ivyfile/license",
-                          "title":"license",
-                          "children": [
-
-                            ]
-                        },
-                        {
-                          "id":"doc/ivyfile/ivyauthor",
-                          "title":"ivyauthor",
-                          "children": [
-
-                            ]
-                        },
-                        {
-                          "id":"doc/ivyfile/repository",
-                          "title":"repository",
-                          "children": [
-
-                            ]
-                        },
-                        {
-                          "id":"doc/ivyfile/description",
-                          "title":"description",
-                          "children": [
-
-                            ]
-                        }
-                      ]
-                  },
-                  {
-                    "id":"doc/ivyfile/configurations",
-                    "title":"configurations",
-                    "children": [
-                        {
-                          "id":"doc/ivyfile/conf",
-                          "title":"conf",
-                          "children": [
-
-                            ]
-                        },
-                        {
-                          "id":"doc/ivyfile/include",
-                          "title":"include",
-                          "children": [
-
-                            ]
-                        }
-                      ]
-                  },
-                  {
-                    "id":"doc/ivyfile/publications",
-                    "title":"publications",
-                    "children": [
-                        {
-                          "id":"doc/ivyfile/artifact",
-                          "title":"artifact",
+                          "id":"doc/configuration/macrodef",
+                          "title":"macrodef",
                           "children": [
                               {
-                                "id":"doc/ivyfile/artifact-conf",
-                                "title":"conf",
+                                "id":"doc/configuration/macrodef/attribute",
+                                "title":"attribute",
                                 "children": [
 
                                   ]
                               }
                             ]
+                        },
+                        {
+                          "id":"doc/configuration/resolvers",
+                          "title":"resolvers",
+                          "children": [
+                              {
+                                "id":"doc/resolver/ivyrep",
+                                "title":"IvyRep Resolver",
+                                "children": [
+
+                                  ]
+                              },
+                              {
+                                "id":"doc/resolver/ibiblio",
+                                "title":"IBiblio Resolver",
+                                "children": [
+
+                                  ]
+                              },
+                              {
+                                "id":"doc/resolver/filesystem",
+                                "title":"File System resolver",
+                                "children": [
+
+                                  ]
+                              },
+                              {
+                                "id":"doc/resolver/url",
+                                "title":"Url Resolver",
+                                "children": [
+
+                                  ]
+                              },
+                              {
+                                "id":"doc/resolver/chain",
+                                "title":"Chain Resolver",
+                                "children": [
+
+                                  ]
+                              },
+                              {
+                                "id":"doc/resolver/dual",
+                                "title":"Dual resolver",
+                                "children": [
+
+                                  ]
+                              },
+                              {
+                                "id":"doc/resolver/sftp",
+                                "title":"sftp resolver",
+                                "children": [
+
+                                  ]
+                              },
+                              {
+                                "id":"doc/resolver/ssh",
+                                "title":"ssh resolver",
+                                "children": [
+
+                                  ]
+                              },
+                              {
+                                "id":"doc/resolver/vfs",
+                                "title":"vfs",
+                                "children": [
+
+                                  ]
+                              }
+                            ]
+                        },
+                        {
+                          "id":"doc/configuration/conflict-managers",
+                          "title":"conflict-managers",
+                          "children": [
+
+                            ]
+                        },
+                        {
+                          "id":"doc/configuration/modules",
+                          "title":"modules",
+                          "children": [
+                              {
+                                "id":"doc/configuration/module",
+                                "title":"module",
+                                "children": [
+
+                                  ]
+                              }
+                            ]
+                        },
+                        {
+                          "id":"doc/configuration/outputters",
+                          "title":"outputters",
+                          "children": [
+
+                            ]
+                        },
+                        {
+                          "id":"doc/configuration/statuses",
+                          "title":"statuses",
+                          "children": [
+                              {
+                                "id":"doc/configuration/status",
+                                "title":"status",
+                                "children": [
+
+                                  ]
+                              }
+                            ]
+                        },
+                        {
+                          "id":"doc/configuration/triggers",
+                          "title":"triggers",
+                          "children": [
+
+                            ]
+                        },
+                        {
+                          "id":"doc/configuration/version-matchers",
+                          "title":"version-matchers",
+                          "children": [
+
+                            ]
                         }
                       ]
                   },
                   {
-                    "id":"doc/ivyfile/dependencies",
-                    "title":"dependencies",
+                    "id":"doc/ivyfile",
+                    "title":"Ivy Files",
                     "children": [
                         {
-                          "id":"doc/ivyfile/dependency",
-                          "title":"dependency",
+                          "id":"doc/ivyfile/info",
+                          "title":"info",
                           "children": [
                               {
-                                "id":"doc/ivyfile/dependency-conf",
-                                "title":"conf",
+                                "id":"doc/ivyfile/license",
+                                "title":"license",
                                 "children": [
-                                    {
-                                      "id":"doc/ivyfile/mapped",
-                                      "title":"mapped",
-                                      "children": [
 
-                                        ]
-                                    }
                                   ]
                               },
                               {
-                                "id":"doc/ivyfile/dependency-artifact",
+                                "id":"doc/ivyfile/ivyauthor",
+                                "title":"ivyauthor",
+                                "children": [
+
+                                  ]
+                              },
+                              {
+                                "id":"doc/ivyfile/repository",
+                                "title":"repository",
+                                "children": [
+
+                                  ]
+                              },
+                              {
+                                "id":"doc/ivyfile/description",
+                                "title":"description",
+                                "children": [
+
+                                  ]
+                              }
+                            ]
+                        },
+                        {
+                          "id":"doc/ivyfile/configurations",
+                          "title":"configurations",
+                          "children": [
+                              {
+                                "id":"doc/ivyfile/conf",
+                                "title":"conf",
+                                "children": [
+
+                                  ]
+                              },
+                              {
+                                "id":"doc/ivyfile/include",
+                                "title":"include",
+                                "children": [
+
+                                  ]
+                              }
+                            ]
+                        },
+                        {
+                          "id":"doc/ivyfile/publications",
+                          "title":"publications",
+                          "children": [
+                              {
+                                "id":"doc/ivyfile/artifact",
                                 "title":"artifact",
                                 "children": [
                                     {
-                                      "id":"doc/ivyfile/dependency-artifact-conf",
-                                      "title":"conf",
-                                      "children": [
-
-                                        ]
-                                    }
-                                  ]
-                              },
-                              {
-                                "id":"doc/ivyfile/artifact-exclude",
-                                "title":"exclude",
-                                "children": [
-                                    {
-                                      "id":"doc/ivyfile/artifact-exclude-conf",
-                                      "title":"conf",
-                                      "children": [
-
-                                        ]
-                                    }
-                                  ]
-                              },
-                              {
-                                "id":"doc/ivyfile/dependency-include",
-                                "title":"include",
-                                "children": [
-                                    {
-                                      "id":"doc/ivyfile/dependency-include-conf",
+                                      "id":"doc/ivyfile/artifact-conf",
                                       "title":"conf",
                                       "children": [
 
@@ -751,22 +526,284 @@
                             ]
                         },
                         {
-                          "id":"doc/ivyfile/exclude",
-                          "title":"exclude",
+                          "id":"doc/ivyfile/dependencies",
+                          "title":"dependencies",
                           "children": [
+                              {
+                                "id":"doc/ivyfile/dependency",
+                                "title":"dependency",
+                                "children": [
+                                    {
+                                      "id":"doc/ivyfile/dependency-conf",
+                                      "title":"conf",
+                                      "children": [
+                                          {
+                                            "id":"doc/ivyfile/mapped",
+                                            "title":"mapped",
+                                            "children": [
 
+                                              ]
+                                          }
+                                        ]
+                                    },
+                                    {
+                                      "id":"doc/ivyfile/dependency-artifact",
+                                      "title":"artifact",
+                                      "children": [
+                                          {
+                                            "id":"doc/ivyfile/dependency-artifact-conf",
+                                            "title":"conf",
+                                            "children": [
+
+                                              ]
+                                          }
+                                        ]
+                                    },
+                                    {
+                                      "id":"doc/ivyfile/artifact-exclude",
+                                      "title":"exclude",
+                                      "children": [
+                                          {
+                                            "id":"doc/ivyfile/artifact-exclude-conf",
+                                            "title":"conf",
+                                            "children": [
+
+                                              ]
+                                          }
+                                        ]
+                                    },
+                                    {
+                                      "id":"doc/ivyfile/dependency-include",
+                                      "title":"include",
+                                      "children": [
+                                          {
+                                            "id":"doc/ivyfile/dependency-include-conf",
+                                            "title":"conf",
+                                            "children": [
+
+                                              ]
+                                          }
+                                        ]
+                                    }
+                                  ]
+                              },
+                              {
+                                "id":"doc/ivyfile/exclude",
+                                "title":"exclude",
+                                "children": [
+
+                                  ]
+                              }
                             ]
-,
-                          "level":2                        }
+                        },
+                        {
+                          "id":"doc/ivyfile/conflicts",
+                          "title":"conflicts",
+                          "children": [
+                              {
+                                "id":"doc/ivyfile/manager",
+                                "title":"manager",
+                                "children": [
+
+                                  ]
+                              }
+                            ]
+                        }
                       ]
                   },
                   {
-                    "id":"doc/ivyfile/conflicts",
-                    "title":"conflicts",
+                    "id":"doc/ant",
+                    "title":"Using from Ant",
                     "children": [
                         {
-                          "id":"doc/ivyfile/manager",
-                          "title":"manager",
+                          "id":"doc/use/artifactproperty",
+                          "title":"artifactproperty",
+                          "children": [
+
+                            ]
+                        },
+                        {
+                          "id":"doc/use/artifactreport",
+                          "title":"artifactreport",
+                          "children": [
+
+                            ]
+                        },
+                        {
+                          "id":"doc/use/buildlist",
+                          "title":"buildlist",
+                          "children": [
+
+                            ]
+                        },
+                        {
+                          "id":"doc/use/buildnumber",
+                          "title":"buildnumber",
+                          "children": [
+
+                            ]
+                        },
+                        {
+                          "id":"doc/use/cachefileset",
+                          "title":"cachefileset",
+                          "children": [
+
+                            ]
+                        },
+                        {
+                          "id":"doc/use/cachepath",
+                          "title":"cachepath",
+                          "children": [
+
+                            ]
+                        },
+                        {
+                          "id":"doc/use/configure",
+                          "title":"configure",
+                          "children": [
+
+                            ]
+                        },
+                        {
+                          "id":"doc/use/deliver",
+                          "title":"deliver",
+                          "children": [
+
+                            ]
+                        },
+                        {
+                          "id":"doc/use/findrevision",
+                          "title":"findrevision",
+                          "children": [
+
+                            ]
+                        },
+                        {
+                          "id":"doc/use/info",
+                          "title":"info",
+                          "children": [
+
+                            ]
+                        },
+                        {
+                          "id":"doc/use/install",
+                          "title":"install",
+                          "children": [
+
+                            ]
+                        },
+                        {
+                          "id":"doc/use/listmodules",
+                          "title":"listmodules",
+                          "children": [
+
+                            ]
+                        },
+                        {
+                          "id":"doc/use/postresolvetask",
+                          "title":"post resolve tasks",
+                          "children": [
+
+                            ]
+                        },
+                        {
+                          "id":"doc/use/publish",
+                          "title":"publish",
+                          "children": [
+
+                            ]
+                        },
+                        {
+                          "id":"doc/use/repreport",
+                          "title":"repreport",
+                          "children": [
+
+                            ]
+                        },
+                        {
+                          "id":"doc/use/resolve",
+                          "title":"resolve",
+                          "children": [
+
+                            ]
+                        },
+                        {
+                          "id":"doc/use/retrieve",
+                          "title":"retrieve",
+                          "children": [
+
+                            ]
+                        },
+                        {
+                          "id":"doc/use/report",
+                          "title":"report",
+                          "children": [
+                              {
+                                "id":"doc/yed",
+                                "title":"Using yEd to layout report graphs",
+                                "children": [
+
+                                  ]
+                              }
+                            ]
+                        },
+                        {
+                          "id":"doc/use/settings",
+                          "title":"settings",
+                          "children": [
+
+                            ]
+                        },
+                        {
+                          "id":"doc/use/var",
+                          "title":"var",
+                          "children": [
+
+                            ]
+                        }
+                      ]
+                  },
+                  {
+                    "id":"doc/standalone",
+                    "title":"Using standalone",
+                    "children": [
+
+                      ]
+                  }
+                ]
+            },
+            {
+              "id":"doc/dev",
+              "title":"Developer doc",
+              "children": [
+                  {
+                    "id":"doc/extend",
+                    "title":"Extending Ivy",
+                    "children": [
+
+                      ]
+                  }
+                ]
+            }
+          ]
+      },
+      {
+        "id":"history",
+        "title":"History",
+        "isAbstract":true,
+        "children": [
+            {
+              "id":"2.x",
+              "title":"2.x",
+              "isAbstract":true,
+              "children": [
+                  {
+                    "id":"history/2.0",
+                    "title":"2.0.x",
+                    "children": [
+                        {
+                          "id":"history/2.0.0-alpha-1",
+                          "title":"2.0.0-alpha-1",
                           "children": [
 
                             ]
@@ -776,135 +813,93 @@
                 ]
             },
             {
-              "id":"doc/ant",
-              "title":"Using from Ant",
+              "id":"1.x",
+              "title":"1.x",
+              "isAbstract":true,
               "children": [
                   {
-                    "id":"doc/use/artifactproperty",
-                    "title":"artifactproperty",
-                    "children": [
-
-                      ]
-                  },
-                  {
-                    "id":"doc/use/artifactreport",
-                    "title":"artifactreport",
-                    "children": [
-
-                      ]
-                  },
-                  {
-                    "id":"doc/use/buildlist",
-                    "title":"buildlist",
-                    "children": [
-
-                      ]
-                  },
-                  {
-                    "id":"doc/use/buildnumber",
-                    "title":"buildnumber",
-                    "children": [
-
-                      ]
-                  },
-                  {
-                    "id":"doc/use/cachefileset",
-                    "title":"cachefileset",
-                    "children": [
-
-                      ]
-                  },
-                  {
-                    "id":"doc/use/cachepath",
-                    "title":"cachepath",
-                    "children": [
-
-                      ]
-                  },
-                  {
-                    "id":"doc/use/configure",
-                    "title":"configure",
-                    "children": [
-
-                      ]
-                  },
-                  {
-                    "id":"doc/use/deliver",
-                    "title":"deliver",
-                    "children": [
-
-                      ]
-                  },
-                  {
-                    "id":"doc/use/findrevision",
-                    "title":"findrevision",
-                    "children": [
-
-                      ]
-                  },
-                  {
-                    "id":"doc/use/info",
-                    "title":"info",
-                    "children": [
-
-                      ]
-                  },
-                  {
-                    "id":"doc/use/install",
-                    "title":"install",
-                    "children": [
-
-                      ]
-                  },
-                  {
-                    "id":"doc/use/listmodules",
-                    "title":"listmodules",
-                    "children": [
-
-                      ]
-                  },
-                  {
-                    "id":"doc/use/postresolvetask",
-                    "title":"post resolve tasks",
-                    "children": [
-
-                      ]
-                  },
-                  {
-                    "id":"doc/use/publish",
-                    "title":"publish",
-                    "children": [
-
-                      ]
-                  },
-                  {
-                    "id":"doc/use/repreport",
-                    "title":"repreport",
-                    "children": [
-
-                      ]
-                  },
-                  {
-                    "id":"doc/use/resolve",
-                    "title":"resolve",
-                    "children": [
-
-                      ]
-                  },
-                  {
-                    "id":"doc/use/retrieve",
-                    "title":"retrieve",
-                    "children": [
-
-                      ]
-                  },
-                  {
-                    "id":"doc/use/report",
-                    "title":"report",
+                    "id":"1.4.x",
+                    "title":"1.4.x",
+                    "isAbstract":true,
                     "children": [
                         {
-                          "id":"doc/yed",
-                          "title":"Using yEd to layout report graphs",
+                          "id":"history/1.4.1",
+                          "title":"1.4.1",
+                          "children": [
+
+                            ]
+                        },
+                        {
+                          "id":"history/1.4",
+                          "title":"1.4",
+                          "children": [
+                              {
+                                "id":"history/1.4-RC1",
+                                "title":"1.4-RC1",
+                                "children": [
+
+                                  ]
+                              },
+                              {
+                                "id":"history/1.4-RC2",
+                                "title":"1.4-RC2",
+                                "children": [
+
+                                  ]
+                              }
+                            ]
+                        }
+                      ]
+                  },
+                  {
+                    "id":"1.3.x",
+                    "title":"1.3.x",
+                    "isAbstract":true,
+                    "children": [
+                        {
+                          "id":"history/1.3.1",
+                          "title":"1.3.1",
+                          "children": [
+
+                            ]
+                        },
+                        {
+                          "id":"history/1.3",
+                          "title":"1.3",
+                          "children": [
+                              {
+                                "id":"history/1.3-rc1",
+                                "title":"1.3-RC1",
+                                "children": [
+
+                                  ]
+                              },
+                              {
+                                "id":"history/1.3-rc2",
+                                "title":"1.3-RC2",
+                                "children": [
+
+                                  ]
+                              },
+                              {
+                                "id":"history/1.3-rc3",
+                                "title":"1.3-RC3",
+                                "children": [
+
+                                  ]
+                              }
+                            ]
+                        }
+                      ]
+                  },
+                  {
+                    "id":"1.2.x",
+                    "title":"1.2.x",
+                    "isAbstract":true,
+                    "children": [
+                        {
+                          "id":"history/1.2a",
+                          "title":"1.2a",
                           "children": [
 
                             ]
@@ -912,50 +907,105 @@
                       ]
                   },
                   {
-                    "id":"doc/use/settings",
-                    "title":"settings",
+                    "id":"1.1.x",
+                    "title":"1.1.x",
+                    "isAbstract":true,
                     "children": [
+                        {
+                          "id":"history/1.1",
+                          "title":"1.1",
+                          "children": [
 
+                            ]
+                        }
                       ]
-,
-                    "level":0                  },
+                  },
                   {
-                    "id":"doc/use/var",
-                    "title":"var",
+                    "id":"1.0.x",
+                    "title":"1.0.x",
+                    "isAbstract":true,
                     "children": [
+                        {
+                          "id":"history/1.0",
+                          "title":"1.0",
+                          "children": [
+                              {
+                                "id":"history/1.0-rc1",
+                                "title":"1.0-rc1",
+                                "children": [
 
+                                  ]
+                              },
+                              {
+                                "id":"history/1.0-rc2",
+                                "title":"1.0-rc2",
+                                "children": [
+
+                                  ]
+                              },
+                              {
+                                "id":"history/1.0-rc3",
+                                "title":"1.0-rc3",
+                                "children": [
+
+                                  ]
+                              }
+                            ]
+                        }
                       ]
                   }
                 ]
             },
             {
-              "id":"doc/standalone",
-              "title":"Using standalone",
-              "children": [
-
-                ]
-            },
-            {
-              "id":"doc/extend",
-              "title":"Extending Ivy",
-              "children": [
-
-                ]
-            },
-            {
-              "id":"doc/appendix",
-              "title":"Appendix",
+              "id":"0.x",
+              "title":"0.x",
+              "isAbstract":true,
               "children": [
                   {
-                    "id":"ivyrep",
-                    "title":"IvyRep",
+                    "id":"history/0.9",
+                    "title":"0.9",
                     "children": [
 
                       ]
                   },
                   {
-                    "id":"doc/m2comparison",
-                    "title":"Ivy / Maven2 Comparison",
+                    "id":"history/0.8",
+                    "title":"0.8",
+                    "children": [
+
+                      ]
+                  },
+                  {
+                    "id":"history/0.7",
+                    "title":"0.7",
+                    "children": [
+
+                      ]
+                  },
+                  {
+                    "id":"history/0.6.1",
+                    "title":"0.6.1",
+                    "children": [
+
+                      ]
+                  },
+                  {
+                    "id":"history/0.6",
+                    "title":"0.6",
+                    "children": [
+
+                      ]
+                  },
+                  {
+                    "id":"history/0.5.1",
+                    "title":"0.5.1",
+                    "children": [
+
+                      ]
+                  },
+                  {
+                    "id":"history/0.5",
+                    "title":"0.5",
                     "children": [
 
                       ]
@@ -968,13 +1018,6 @@
         "id":"get-involved",
         "title":"Get Involved",
         "children": [
-            {
-              "id":"write-doc",
-              "title":"Contribute documentation",
-              "children": [
-
-                ]
-            },
             {
               "id":"mailing-lists",
               "title":"Mailing lists",
@@ -997,13 +1040,12 @@
                 ]
             },
             {
-              "id":"doc/dev",
-              "title":"Developer doc",
+              "id":"write-doc",
+              "title":"Contribute documentation",
               "children": [
 
                 ]
-,
-              "level":1            }
+            }
           ]
       }
     ]
