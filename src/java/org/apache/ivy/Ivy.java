@@ -102,7 +102,7 @@ public class Ivy {
     private boolean interrupted;
 
     /**
-     * True if this instance of Ivy hass already been bound to its dependencies, false otherwise.
+     * True if this instance of Ivy has already been bound to its dependencies, false otherwise.
      * 
      * @see bind()
      */
@@ -146,7 +146,7 @@ public class Ivy {
 
     /**
      * This method is used to bind this Ivy instance to required dependencies, i.e. instance of
-     * settings, engines, and so on. After thes call Ivy is still not configured, which means that
+     * settings, engines, and so on. After this call Ivy is still not configured, which means that
      * the settings object is still empty.
      */
     public void bind() {
