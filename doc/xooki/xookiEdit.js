@@ -142,6 +142,12 @@ xooki.json.serialize = function (o, indent) {
 		    if ("meta" == k) {
 		      continue;
             }
+            // let a chance to the object to define its transient keys, using a meta.isTransient function
+            if (typeof o.meta != 'undefined' 
+                && typeof o.meta.isTransient == 'function'
+                && o.meta.isTransient(k)) {
+                continue;
+            }
 			var useKey;
 			if (typeof(k) == "number"){
 				useKey = '"' + k + '"';
@@ -151,7 +157,13 @@ xooki.json.serialize = function (o, indent) {
 				// skip non-string or number keys
 				continue;
 			}
-			val = me(o[k], indent+"    ");
+            val = o[k];
+            // let a chance to the object to define its serialized value
+            if (typeof o.meta != 'undefined' 
+                && typeof o.meta.getSerializeValue == 'function') {
+                val = o.meta.getSerializeValue(o, k);
+            }
+			val = me(val, indent+"    ");
 			if(typeof(val) != "string"){
 				// skip non-serializable values
 				continue;
@@ -321,8 +333,9 @@ xooki.action.createChild = function () {
 }
 
 xooki.action.createChildPage = function (child) {
-    if (typeof child.level == 'undefined') {
-        child.level = child.id.split('/').length - 1;
+    if (typeof child.meta == 'undefined' || typeof child.meta.level == 'undefined') {
+        if (typeof child.meta == 'undefined') child.meta = {};
+        child.meta.level = child.id.split('/').length - 1;
     }
         
     var pagetpl = xooki.url.loadURL(cu("blankPageTpl"));
@@ -341,10 +354,11 @@ xooki.action.createChildPage = function (child) {
         // usually used by templates
         if (typeof child.relroot == 'undefined') {
             child.relroot = "";
-        	for (var i=0; i < child.level; i++) {
+        	for (var i=0; i < child.meta.level; i++) {
         		child.relroot += "../";
         	}
         }
+        child.level = child.meta.level;
 		var revised = xooki.string.processTemplate(pagetpl, child);
     	var save;
     	try {
@@ -364,10 +378,10 @@ xooki.action.createChildPage = function (child) {
 
 xooki.toc.save = function (revised) {
     if (!revised) {
-        revised = xooki.json.serialize({children: this.children});
+        revised = xooki.json.serialize({children: this.actualRoot.children});
     }
 	var save;
-	var tocPath = xooki.io.getLocalPath(cu("toc"));
+	var tocPath = xooki.io.getLocalPath(this.url);
 	try {
 		save = xooki.io.saveFile(tocPath, xooki.io.fixEOL(revised));
 	} catch (e) {
@@ -378,7 +392,7 @@ xooki.toc.save = function (revised) {
 }
 
 
-xooki.util = {}
+if (typeof xooki.util == 'undefined') xooki.util = {}
 xooki.util.copy = function(o) {
     var copy = {};
     for (var k in o) {
