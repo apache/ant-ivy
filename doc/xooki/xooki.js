@@ -103,6 +103,9 @@ xooki.util = {
         if (typeof override == "undefined") {
             override = true;
         }
+        if (typeof into == "undefined") {
+            into = {};
+        }
         for (var k in src) {
             if (typeof src[k] == "object" && !xooki.util.isArray(src[k])) {
                 if (override || typeof into[k] == "object" || typeof into[k] == "undefined") {
@@ -115,6 +118,11 @@ xooki.util = {
                 into[k] = src[k];
             }
         }
+        return into;
+    },
+    initArray: function(a) {
+        if (this.isArray(a)) return a;
+        else return {};
     }
 }
 
@@ -138,7 +146,7 @@ xooki.url = {
         	return req;	
         },
                 
-        loadURL: function( url ) {
+        loadURL: function( url, warnOnError ) {
         	req = this.newXmlHttpRequest();
         	if(req) {
         		try {
@@ -147,7 +155,10 @@ xooki.url = {
         	
         			return req.responseText;
         		} catch (e) {
-        			xooki.error(e, t("problem while loading URL ${0}", url));
+                    if (warnOnError != false)
+                        xooki.error(e, t("problem while loading URL ${0}", url));
+                    else
+                        xooki.debug(t("problem while loading URL ${0}: ${1}", url, e));
                 }		
         	}
         	return null;
@@ -178,6 +189,17 @@ xooki.url = {
             document.write(' type="text/javascript"');
             document.write(' src="' + xooki.u(script_filename) + '">');
             document.write('</' + 'script' + '>');
+        },
+        
+        evalURL: function( url, warnOnErrorUrl ) {
+            script = this.loadURL(url, warnOnErrorUrl);
+            if (script != null) {
+                try {
+                    eval(script);
+                } catch (e) {
+        			xooki.error(e, t("error while executing script from URL ${0}", url));
+                }
+            }
         },
 
         action: function(action) {        
@@ -335,6 +357,14 @@ xooki.string = {
             outerEnd: closeResult.end,
             children: children
         };        
+    },
+    
+    mul: function (/*string*/ s, /*int*/ n) {
+        r = '';
+        for (var i=0; i < n; i++) {
+    		r += s;
+    	}
+        return r;
     }
 };
     
@@ -668,19 +698,27 @@ xooki.input = {
             //    [[page/id My Title]]
             return input.replace(new RegExp("\\[\\[([^\\]]+)\\]\\]", "g"), function (str, code, offset, s) {
                 var index = code.indexOf(' ');
-                var id = index>0?code.substring(0,index):code;
+                var id = (index>0?code.substring(0,index):code);
                 
                 var title;
-                var url = pu(id);
-                if (index>0) {
-                	title = code.substring(index+1);
-               	} else if (typeof xooki.toc.pages[id] != "undefined") {
+                var url;
+                var titleSuffix = "";
+                
+                if (typeof xooki.toc.pages[xooki.toc.importRoot + id] != "undefined") {
+               	    title = xooki.toc.pages[xooki.toc.importRoot + id].title;
+                    url = pu(xooki.toc.importRoot + id);
+               	} else if (xooki.toc.importRoot.length > 0 && typeof xooki.toc.pages[id] != "undefined") {
                	    title = xooki.toc.pages[id].title;
+                    url = pu(id);
                	} else {
                		title = code;
                		url = u(code);
+                    titleSuffix = '?';
                	}
-                return '<a href="'+url+'">'+title+'</a>';
+                if (index>0) {
+                	title = code.substring(index+1);
+                }
+                return '<a href="'+url+'">'+title+titleSuffix+'</a>';
             });
         },
         
@@ -884,27 +922,31 @@ if (batchMode) {
     };
     if (typeof xookiConfig != "undefined") {xooki.util.mix(xookiConfig, xooki.config);}
     xooki.c.initProperty = initConfigProperty;
-    xooki.c.initProperty("level", 0);
-    xooki.c.initProperty("root", function() {
+    xooki.c.computeRoot = function() {
     	root = xooki.pageURL;
     	// remove trailing parts of the URL to go the root depending on level
     	for (var i=0; i < xooki.c.level + 1; i++) {
     		root = root.substring(0, root.lastIndexOf('/'));
     	}
     	return root + '/';
-    });
-    xooki.c.initProperty("relativeRoot", function() {
-    	relativeRoot = '';
-    	for (var i=0; i < xooki.c.level; i++) {
-    		relativeRoot += '../';
-    	}
-    	return relativeRoot;
-    });
+    };
+    xooki.c.computeRelativeRoot = function() {
+    	return xooki.string.mul('../', xooki.c.level);
+    };
+    xooki.c.setImportLevel = function(level) {
+        this.level+=level;
+        this.root = this.computeRoot();
+        this.relativeRoot = this.computeRelativeRoot();
+    };
+    xooki.c.initProperty("level", 0);
+    xooki.c.initProperty("root", xooki.c.computeRoot);
+    xooki.c.initProperty("relativeRoot", xooki.c.computeRelativeRoot);
+    globalConfig = xooki.url.loadURL(u("config.json"), false);
+    if (globalConfig != null) 
+        xooki.util.mix(globalConfig, xooki.c, false);
+    xooki.url.evalURL(u("config.js"), false);
+    xooki.url.evalURL(u("config.extra.js"), false);
 
-    var globalConfig = xooki.json.loadURL(u("config.json"));
-    if (globalConfig != null) {
-        xooki.util.mix(globalConfig, xooki.config, false);
-    }
 
     xooki.c.initProperty("defaultInputFormat", "xooki");
     xooki.c.initProperty("xookiInputFormat", ["xooki"]);
@@ -934,30 +976,85 @@ if (batchMode) {
 	    // TODO: better handle action extraction
 		xooki.c.action = window.location.search == '?action=print'?'print':xooki.c.action;
 	}
+	
+	var match = new RegExp("^.*\\/((?:.*\\/){"+xooki.c.level+"}[^\\/]*)(?:\\.\\w+)(?:\\?.+)?$", "g").exec(xooki.pageURL);
+	if (match == null || match[1] == '') {
+		xooki.c.curPageId = "index";
+	} else {
+		xooki.c.curPageId = match[1];
+	}
     
     ////////////////////////////////////////////////////////////////////////////
     ////////////////// TOC init
     ////////////////////////////////////////////////////////////////////////////
     xooki.toc = xooki.json.loadURL(cu("toc"));
+    xooki.toc.url = cu("toc");
     xooki.toc.pages = {}; // to store a by id map of pages objects
+    xooki.toc.importRoot = '';
+    xooki.toc.actualRoot = xooki.toc; // this is the real root of the TOC, in case of a TOC imported, it will point to the root of the TOC on which import has been performed
 
 	// populate meta data
-	(function(page, parent, index, level) {
+	(function(page, parent, index, level, prefix) {
+        if (prefix.length > 0) {
+            page.meta = xooki.util.mix({id: page.id}, page.meta);
+            page.id = prefix + page.id;
+        }
         xooki.toc.pages[page.id] = page;
         
-        page.meta = {
-            parent: parent,
+        page.meta = xooki.util.mix({
             index: index,
-            level: level
-        };
+            level: level,
+            getSerializeValue: function(o, k) {
+                if (k == 'id' && typeof this.id != 'undefined') {
+                    return this.id;
+                } else {
+                    return o[k];
+                }
+            }
+        }, page.meta);
+        page.meta.parent = parent;
+        if (typeof page.importNode != 'undefined' && !page.isImported) {
+            // this node requires to import another xooki TOC
+            importedTocUrl = u(page.importRoot + '/toc.json');
+            importedToc = xooki.json.loadURL(importedTocUrl);
+            // look for the imported node in the importedTOC and import it in main TOC
+            (function(page, parent, index, level, prefix, importedToc, node, id, populateFunction) {
+                if (node.id == id) {
+                    xooki.util.mix(node, page, false);
+                    page.id = id;
+                    page.isImported = true;
+                    page.meta = xooki.util.mix({
+                        isTransient: function(k) {
+                            // only title, importRoot and importNode should be serialized
+                            return k != 'title' && k != 'importRoot' && k != 'importNode';
+                        }
+                    }, page.meta);
+                    if (xooki.c.curPageId.indexOf(prefix) == 0) {
+                        // the current page is in this imported TOC
+                        xooki.toc.actualRoot = importedToc;
+                        xooki.toc.url = u(page.importRoot + '/toc.json');
+                        xooki.toc.importRoot = prefix;
+                    }
+                    populateFunction(page, parent, index, level, prefix);
+                    return true;
+                } else if (typeof node.children != 'undefined') {
+                    for (var i=0; i<node.children.length; i++) {
+                        if (arguments.callee(page, parent, index, level, prefix, importedToc, node.children[i], id, populateFunction)) {
+                            return true;
+                        }
+                    }
+                }
+                return false;
+            })(page, parent, index, level, page.importRoot+'/', importedToc, importedToc, page.importNode, arguments.callee);
+        }
         if (typeof page.children == 'undefined') {
             page.children = [];
         } else {
             for (var i=0; i<page.children.length; i++) {
-                arguments.callee(page.children[i], page, i, level+1); // recurse
+                arguments.callee(page.children[i], page, i, level+1, prefix); // recurse
             }
         }
-    })(xooki.toc, null, 0, -1);
+    })(xooki.toc, null, 0, -1, '');
     
     xooki.toc.getNextPage = function(page, root) {
         if (page.children.length > 0) {
@@ -987,18 +1084,10 @@ if (batchMode) {
        		return null;
        	}
     };
-	
-	var match = new RegExp("^.*\\/((?:.*\\/){"+xooki.config.level+"}[^\\/]*)(?:\\.\\w+)(?:\\?.+)?$", "g").exec(xooki.pageURL);
-	var curPageId;
-	if (match == null || match[1] == '') {
-		curPageId = "index";
-	} else {
-		curPageId = match[1];
-	}
-	xooki.page = xooki.toc.pages[curPageId];
+	xooki.page = xooki.toc.pages[xooki.c.curPageId];
 
 	if (xooki.page == null) {
-		xooki.warn(t('page id not found in TOC: ${0}',curPageId));
+		xooki.warn(t('page id not found in TOC: ${0}',xooki.c.curPageId));
 		xooki.page = xooki.toc.children[0];
 	} 
 	if (typeof xooki.config.title == 'undefined') {
