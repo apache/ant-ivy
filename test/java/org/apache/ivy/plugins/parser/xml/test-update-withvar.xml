@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml-stylesheet type="text/xsl" href="http://www.somesite.com/ivy-doc.xsl"?>
+<!--
+   Licensed to the Apache Software Foundation (ASF) under one
+   or more contributor license agreements.  See the NOTICE file
+   distributed with this work for additional information
+   regarding copyright ownership.  The ASF licenses this file
+   to you under the Apache License, Version 2.0 (the
+   "License"); you may not use this file except in compliance
+   with the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing,
+   software distributed under the License is distributed on an
+   "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+   KIND, either express or implied.  See the License for the
+   specific language governing permissions and limitations
+   under the License.    
+-->
+<!-- A comment before the first tag -->
+<ivy-module version="2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://incubator.apache.org/ivy/schemas/ivy.xsd">
+	<!-- A comment with accent é & special characters -->
+	<info organisation="${myorg}"
+	       module="${mymodule}"
+	       revision="${myrev}"
+	       status="${mystatus}"
+	       publication="{mypubdate}">
+	       
+		<license name="${mylicense}" url="${mylicenseurl}"/>
+		
+		<ivyauthor name="jayasoft" url="http://www.jayasoft.org/"/>
+		<ivyauthor name="${myorg}" url="${myorgurl}"/>
+
+		<repository name="${ivyrep}" url="${ivyrepurl}" pattern="${ivyreppattern}" ivys="${ivys}" artifacts="${artifacts}"/>
+
+		<description homepage="${homepage}">	       
+	This module is <b>great</b> !<br/>
+	You can use it especially with myconf1 and myconf2, and myconf4 is not too bad too.
+		</description>
+	</info>
+	<configurations>
+		<include file="${includefile}"/>
+		<conf name="${myvar}" description="${mydesc}"/>
+		<conf name="myconf2" description="desc 2" visibility="${visibility}"/>
+		<conf name="myconf3" description="desc 3" visibility="private"/>
+		<conf name="myconf4" description="desc 4" extends="${myvar}, myconf2"/>		
+		<conf name="myoldconf" description="my old desc" deprecated="${deprecated}"/>
+	</configurations>
+	<publications>
+		<artifact name="${myartifact1}" type="${mytype}"/>
+		<artifact name="myartifact2" type="jar" conf="${myvar}"/>
+		<artifact name="myartifact3" type="jar" conf="myconf1, myconf2, myconf3"/>
+		<artifact name="myartifact4" type="jar">
+			<conf name="${myvar}"/>
+			<conf name="myconf3"/>
+		</artifact>
+	</publications>
+	<dependencies>
+		<dependency name="${mymodule2}" rev="${mymodule2rev}"/>
+		<dependency name="mymodule3" rev="2.0" changing="${changing}" transitive="${transitive}"/>
+		<dependency org="yourorg" name="yourmodule1" rev="1.1" conf="${myvar}"/>
+		<dependency org="yourorg" name="yourmodule2" rev="2+" conf="myconf1->yourconf1"/>
+		<dependency org="yourorg" name="yourmodule3" rev="3.1" conf="myconf1->yourconf1, yourconf2"/>
+		<dependency org="yourorg" name="yourmodule4" rev="4.1" conf="myconf1, myconf2->yourconf1, yourconf2"/>
+		<dependency org="yourorg" name="yourmodule5" rev="5.1" conf="myconf1->yourconf1;myconf2->yourconf1, yourconf2"/>
+
+		<dependency org="yourorg" name="yourmodule6" rev="latest.integration">
+			<conf name="${myvar}" mapped="${targetconf}"/>
+			<conf name="myconf2" mapped="yourconf1, yourconf2"/>
+		</dependency>
+
+		<dependency org="yourorg" name="yourmodule7" rev="7.1">
+			<conf name="myconf1">
+				<mapped name="yourconf1"/>
+			</conf>
+			<conf name="myconf2">
+				<mapped name="yourconf1"/>
+				<mapped name="yourconf2"/>
+			</conf>
+		</dependency>
+
+		<dependency org="yourorg" name="yourmodule8" rev="8.1">
+			<artifact name="yourartifact8-1" type="jar"/>
+			<artifact name="yourartifact8-2" type="jar"/>
+		</dependency>		
+
+		<dependency org="yourorg" name="yourmodule9" rev="9.1" conf="myconf1,myconf2,myconf3->default">
+			<artifact name="${art9-1}" type="${mytype}" conf="${myvar},myconf2"/>
+			<artifact name="yourartifact9-2" type="jar">
+				<conf name="myconf2"/>
+				<conf name="${conf3}"/>
+			</artifact>
+		</dependency>		
+
+		<dependency org="yourorg" name="yourmodule10" rev="10.1">
+			<include name="${includename}" type="${mytype}"/>
+			<include ext="${includeext}"/>
+			<exclude name="${excludename}"/>
+		</dependency>
+		<dependency org="yourorg" name="yourmodule11" rev="11.1" conf="*->@"/>
+
+		<exclude module="${excludemodule}" matcher="${excludematcher}" conf="${myvar}" /> 
+		<exclude org="${excludeorg}" module="test" artifact="${excludeartifact}" type="${excludetype}" ext="jar" /> 
+	</dependencies>
+	<conflicts>
+		<manager org="${yourorg}" module="${yourmodule}" name="${all}" matcher="${regexp}"/>
+		<manager org="theirorg" module="theirmodule1" rev="${theirrev}"/>
+	</conflicts>
+</ivy-module>

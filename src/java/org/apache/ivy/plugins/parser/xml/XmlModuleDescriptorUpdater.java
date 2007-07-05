@@ -322,13 +322,13 @@ public class XmlModuleDescriptorUpdater {
                                     _confMappingOverride = Boolean.valueOf(mappingOverride);
                                 }
                             } else if ("conf".equals(qName) && _insideConfigurations) {
-                                String confName = attributes.getValue("name");
+                                String confName = substitute(settings, attributes.getValue("name"));
                                 if (!confs.contains(confName)) {
                                     buffer.setPrint(true);
                                     if (_doIndent) {
                                         write("/>\n\t\t");
                                     }
-                                    String extend = attributes.getValue("extends");
+                                    String extend = substitute(settings, attributes.getValue("extends"));
                                     if (extend != null) {
                                         for (StringTokenizer tok = new StringTokenizer(extend, ", "); tok
                                                 .hasMoreTokens();) {
@@ -397,7 +397,7 @@ public class XmlModuleDescriptorUpdater {
                     } else if ("branch".equals(attName)) {
                         write(" branch=\"" + systemMid.getBranch() + "\"");
                     } else if ("conf".equals(attName)) {
-                        String oldMapping = attributes.getValue("conf");
+                        String oldMapping = substitute(settings, attributes.getValue("conf"));
                         if (oldMapping.length() > 0) {
                             String newMapping = removeConfigurationsFromMapping(oldMapping, confs);
                             if (newMapping.length() > 0) {
@@ -416,8 +416,8 @@ public class XmlModuleDescriptorUpdater {
                 for (int i = 0; i < attributes.getLength(); i++) {
                     String attName = attributes.getQName(i);
                     if ("defaultconfmapping".equals(attName)) {
-                        String newMapping = removeConfigurationsFromMapping(attributes
-                                .getValue("defaultconfmapping"), confs);
+                        String newMapping = removeConfigurationsFromMapping(substitute(settings,
+                            attributes.getValue("defaultconfmapping")), confs);
                         if (newMapping.length() > 0) {
                             write(" " + attributes.getQName(i) + "=\"" + newMapping + "\"");
                         }
@@ -441,10 +441,10 @@ public class XmlModuleDescriptorUpdater {
                 }
             } else if ("ivy-module/configurations/conf".equals(getContext())) {
                 _buffers.push(new ExtendedBuffer(getContext()));
-                String confName = attributes.getValue("name");
+                String confName = substitute(settings, attributes.getValue("name"));
                 if (!confs.contains(confName)) {
                     ((ExtendedBuffer) _buffers.peek()).setPrint(true);
-                    String extend = attributes.getValue("extends");
+                    String extend = substitute(settings, attributes.getValue("extends"));
                     if (extend != null) {
                         for (StringTokenizer tok = new StringTokenizer(extend, ", "); tok
                                 .hasMoreTokens();) {
@@ -467,7 +467,7 @@ public class XmlModuleDescriptorUpdater {
                     || "ivy-module/dependencies/dependency/artifact/conf".equals(getContext())) {
                 _buffers.push(new ExtendedBuffer(getContext()));
                 ((ExtendedBuffer) _confAttributeBuffers.peek()).setDefaultPrint(false);
-                String confName = attributes.getValue("name");
+                String confName = substitute(settings, attributes.getValue("name"));
                 if (!confs.contains(confName)) {
                     ((ExtendedBuffer) _confAttributeBuffers.peek()).setPrint(true);
                     ((ExtendedBuffer) _buffers.peek()).setPrint(true);
@@ -487,7 +487,7 @@ public class XmlModuleDescriptorUpdater {
                 for (int i = 0; i < attributes.getLength(); i++) {
                     String attName = attributes.getQName(i);
                     if ("conf".equals(attName)) {
-                        String confName = attributes.getValue("conf");
+                        String confName = substitute(settings, attributes.getValue("conf"));
                         String newConf = removeConfigurationsFromList(confName, confs);
                         if (newConf.length() > 0) {
                             write(" " + attributes.getQName(i) + "=\"" + newConf + "\"");

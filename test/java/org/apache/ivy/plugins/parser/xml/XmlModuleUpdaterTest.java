@@ -76,6 +76,77 @@ public class XmlModuleUpdaterTest extends TestCase {
         assertEquals(expected, updated);
     }
 
+    public void testVariableReplacement() throws Exception {
+        /*
+         * For updated file to be equals to updated.xml, we have to fix the line separator to the
+         * one used in updated.xml, in order for this test to works in all platforms (default line
+         * separator used in updater being platform dependent
+         */
+        XmlModuleDescriptorUpdater.LINE_SEPARATOR = "\n";
+        File dest = new File("build/updated-test2.xml");
+        dest.deleteOnExit();
+        Map resolvedRevisions = new HashMap();
+        resolvedRevisions.put(ModuleRevisionId.newInstance("yourorg", "yourmodule2", "2+"), "2.5");
+        resolvedRevisions.put(ModuleRevisionId.newInstance("yourorg", "yourmodule6",
+            "latest.integration"), "6.3");
+
+        GregorianCalendar cal = new GregorianCalendar();
+        cal.set(2005, 2, 22, 14, 32, 54);
+
+        Ivy ivy = Ivy.newInstance();
+        ivy.setVariable("myorg", "myorg");
+        ivy.setVariable("mymodule", "mymodule");
+        ivy.setVariable("myrev", "myrev");
+        ivy.setVariable("mystatus", "integration");
+        ivy.setVariable("mypubdate", "20050322143254");
+        ivy.setVariable("mylicense", "MyLicense");
+        ivy.setVariable("mylicenseurl", "http://www.my.org/mymodule/mylicense.html");
+        ivy.setVariable("myorgurl", "http://www.myorg.org/");
+        ivy.setVariable("ivyrep", "ivyrep");
+        ivy.setVariable("ivyrepurl", "http://www.jayasoft.fr/org/ivyrep/");
+        ivy.setVariable("ivyreppattern", "[organisation]/[module]/ivy-[revision].xml");
+        ivy.setVariable("ivys", "true");
+        ivy.setVariable("artifacts", "false");
+        ivy.setVariable("homepage", "http://www.my.org/mymodule/");
+        ivy.setVariable("includefile", "imported-configurations-with-mapping.xml");
+        ivy.setVariable("mydesc", "desc 1");
+        ivy.setVariable("visibility", "public");
+        ivy.setVariable("myvar", "myconf1");
+        ivy.setVariable("deprecated", "20050115");
+        ivy.setVariable("myartifact1", "myartifact1");
+        ivy.setVariable("mytype", "jar");
+        ivy.setVariable("mymodule2", "mymodule2");
+        ivy.setVariable("mymodule2rev", "2.0");
+        ivy.setVariable("changing", "true");
+        ivy.setVariable("transitive", "false");
+        ivy.setVariable("targetconf", "yourconf1");
+        ivy.setVariable("art9-1", "yourartifact9-1");
+        ivy.setVariable("conf3", "myconf3");
+        ivy.setVariable("includename", "your.*");
+        ivy.setVariable("includeext", "xml");
+        ivy.setVariable("excludename", "toexclude");
+        ivy.setVariable("excludemodule", "*servlet*");
+        ivy.setVariable("excludematcher", "glob");
+        ivy.setVariable("excludeorg", "acme");
+        ivy.setVariable("excludeartifact", "test");
+        ivy.setVariable("excludetype", "source");
+        ivy.setVariable("yourorg", "yourorg");
+        ivy.setVariable("yourmodule", ".*");
+        ivy.setVariable("all", "all");
+        ivy.setVariable("regexp", "regexp");
+        ivy.setVariable("theirrev", "1.0, 1.1");
+        
+        XmlModuleDescriptorUpdater.update(ivy.getSettings(), XmlModuleUpdaterTest.class
+                .getResource("test-update-withvar.xml"), dest, resolvedRevisions, "release", "mynewrev",
+            cal.getTime(), null, true, null);
+
+        assertTrue(dest.exists());
+        String expected = FileUtil.readEntirely(new BufferedReader(new InputStreamReader(
+                XmlModuleUpdaterTest.class.getResourceAsStream("updated.xml"))));
+        String updated = FileUtil.readEntirely(new BufferedReader(new FileReader(dest)));
+        assertEquals(expected, updated);
+    }
+
     public void testUpdateWithImportedMappingOverride() throws Exception {
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
         URL settingsUrl = new File("test/java/org/apache/ivy/plugins/parser/xml/" 
