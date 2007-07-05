@@ -55,7 +55,7 @@ Take a look at it's <b>ivy.xml</b> file:
 </ivy-module>
 </code>
 
-The ivy dependency file declares only one dependency on apache commons-lang library which by default is a public dependency (see <a href="../../doc/ivyfile.html">ivy file definition</a>).
+The ivy dependency file declares only one dependency on apache commons-lang library which by default is a public dependency (see <a href="../ivyfile.html">ivy file definition</a>).
 <h2>the project : depending</h2>
 The project depending is very simple too. It declares only one dependency on the latest version of the standalone project and it contains only one class depending.Main which make 2 things:
 <ul>
@@ -101,7 +101,7 @@ The file contains four main tags: properties, settings, resolvers and modules.
 This tag only load some properties for the ivy process in the same manner as ant will do it.
 <h2>the <b>settings</b> tag</h2>
 This tag is in charge to initialize some parameters for ivy process. The directory that ivy will use to cache (to store) artifacts found will be in a sub directory called ivy-cache of the directory containing the ivysettings.xml file itself. 
-The second parameter, tells ivy to use a resolver called "libraries" as its default resolver. As a recall, a resolver is in charge to resolve an artifact from some information like: the organisation that provides the artifact, the name of the library and the version of the library. More information can be found in the <a href="../../doc/configuration.html">settings documentation</a>.
+The second parameter, tells ivy to use a resolver called "libraries" as its default resolver. As a recall, a resolver is in charge to resolve an artifact from some information like: the organisation that provides the artifact, the name of the library and the version of the library. More information can be found in the <a href="../configuration.html">settings documentation</a>.
 <h2>the <b>resolvers</b> tag</h2>
 This tag defines the resolvers to use. Here we have two resolvers defined: "projects" and "libraries".
 The filesystem resolver called "projects" is able to resolve the internal dependencies wanted. 

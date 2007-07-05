@@ -25,7 +25,7 @@
 </head>
 <body>
 	<textarea id="xooki-source">
-<b>Tag:</b> dependency <b>Parent:</b> <a href="../../doc/ivyfile/dependencies.html">dependencies</a>
+<b>Tag:</b> dependency <b>Parent:</b> <a href="../ivyfile/dependencies.html">dependencies</a>
 
 Declares a dependency for this module. A dependency is described by the module on which the current module depends (identified by its name, organisation and revision), and a mapping of configurations.
 
@@ -35,7 +35,7 @@ The revision can be given as a fixed one (1.5.2, for instance) or as a latest (o
 <li>latest.integration</li> selects the latest revision of the dependency module.
 <li>latest.[any status]</li> selects the latest revision of the dependency module with at least the specified status. <span class="since">since 1.4</span>
 For instance latest.milestone will select the latest version being either a milestone or a release, and latest.release will only selects the latest release. Note that in order to find the latest revision with the appropriate status Ivy has to parse all the ivy files in your repository from the last one until it finds such a revision. Hence don't be surprised if the resolution slow down.
-See also [[doc/configuration/statuses]] to see how to configure module statuses.
+See also [[configuration/statuses]] to see how to configure module statuses.
 <li>end the revision with a +</li> selects the latest sub-revision of the dependency module. For instance, 
 if the dependency module exists in revision 1.0.3, 1.0.7 and 1.1.2, "1.0.+" will select 1.0.7.
 <li>version ranges</li> mathematical notation for ranges can be used to match a range of version. <span class="since">since 1.4</span>  
@@ -49,8 +49,8 @@ Examples:
 (,2.0] matches all versions lower or equal to 2.0
 (,2.0[ matches all versions lower than 2.0 
 </ul>
-<span class="since">since 1.4</span> If you don't find a way to expression your dependency version constraint among these, you can <a href="../../doc/configuration/version-matchers.html">plug your own</a>.
-The way to determine which revision is the "latest" between two is configurable through the use of pluggable LatestStrategy. See <a href="../../doc/reference.html">ivy main concepts</a> for details about this.
+<span class="since">since 1.4</span> If you don't find a way to expression your dependency version constraint among these, you can <a href="../configuration/version-matchers.html">plug your own</a>.
+The way to determine which revision is the "latest" between two is configurable through the use of pluggable LatestStrategy. See <a href="../reference.html">ivy main concepts</a> for details about this.
 
 <h2>Configurations mapping</h2>
 This mapping indicates which configurations of the dependency are required in which configurations of the current module, also called master configurations.
@@ -60,11 +60,11 @@ There are several ways to declare this mapping of configurations, choose dependi
 The first way to declare this mapping is called the inline mapping. It is maybe the less natural at first, but it's powerful and concise. Inline mapping can take several forms.
 
 <ul>
-<li>Specify one configuration name</li> This means that in this master configuration the same dependency configuration is needed (except if a defaultconfmapping has been specified in this ivy file, see <a href="../../doc/ivyfile/configurations.html">configurations</a> for details, or table below for examples).
+<li>Specify one configuration name</li> This means that in this master configuration the same dependency configuration is needed (except if a defaultconfmapping has been specified in this ivy file, see <a href="../ivyfile/configurations.html">configurations</a> for details, or table below for examples).
 For instance, if the current module has defined a configuration named 'runtime', and the dependency too, then having an inline mapping configuration set to 'runtime' means that in the runtime master configuration the runtime dependency configuration is required.
 
 <a name="defaultconfmapping"/>More examples:
-The table below indicates how ivy interpret the conf attribute according to how <a href="../../doc/ivyfile/configurations.html">defaultconfmapping</a> is set:<table class="ivy-attributes"><thead><tr><th>defaultconfmapping</th><th>conf</th><th>ivy interpretation</th></tr>
+The table below indicates how ivy interpret the conf attribute according to how <a href="../ivyfile/configurations.html">defaultconfmapping</a> is set:<table class="ivy-attributes"><thead><tr><th>defaultconfmapping</th><th>conf</th><th>ivy interpretation</th></tr>
 </thead>
 <tbody>
 <tr><td></td><td></td><td><code>*->*</code></td></tr>
@@ -120,9 +120,9 @@ See <a href="#dependency-artifact">dependency artifact restriction</a> for detai
 <h2>Forcing revision</h2>
 Finally, the dependency element also supports an a force attribute (since 0.8), which gives an indication
 to conflicts manager to force the revision of a dependency to the one given here.<br/>
-See <a href="../../doc/ivyfile/conflicts.html">conflicts manager</a> for details. <br/><br/>
+See <a href="../ivyfile/conflicts.html">conflicts manager</a> for details. <br/><br/>
 
-<span class="since">since 1.4</span> this tag supports <a href="../../doc/concept#extra.html">extra attributes</a>
+<span class="since">since 1.4</span> this tag supports <a href="../concept#extra.html">extra attributes</a>
 <h1>Attributes</h1>
 <table class="ivy-attributes">
 <thead>
@@ -134,11 +134,11 @@ See <a href="../../doc/ivyfile/conflicts.html">conflicts manager</a> for details
     <tr><td>name</td><td>the module name of the dependency</td>
         <td>Yes</td></tr>
     <tr><td>branch</td><td>the branch of the dependency. <span class="since">since 1.4</span></td>
-        <td>No, defaults to the default branch <a href="../../doc/configuration/conf.html">configured</a> for the dependency.</td></tr>
+        <td>No, defaults to the default branch <a href="../configuration/conf.html">configured</a> for the dependency.</td></tr>
     <tr><td>rev</td><td>the revision of the dependency. See <a href="#revision">above</a> for details.</td>
         <td>Yes</td></tr>
     <tr><td>force</td><td>a boolean to give an indication to conflict manager that this dependency 
-     should be forced to this revision (see <a href="../../doc/ivyfile/conflicts.html">conflicts manager</a>)</td>
+     should be forced to this revision (see <a href="../ivyfile/conflicts.html">conflicts manager</a>)</td>
         <td>No, defaults to false</td></tr>
     <tr><td>conf</td><td>an inline mapping configuration spec (see above for details)</td>
         <td>No, defaults to defaultconf attribute of dependencies element if neither conf attribute nor conf children element is given</td></tr>
@@ -154,11 +154,11 @@ See <a href="../../doc/ivyfile/conflicts.html">conflicts manager</a> for details
     <tr><th class="ivy-chld">Element</th><th class="ivy-chld-desc">Description</th><th class="ivy-chld-card">Cardinality</th></tr>
 </thead>
 <tbody>
-    <tr><td><a href="../../doc/ivyfile/dependency-conf.html">conf</a></td><td>defines configuration mapping has sub element</td>
+    <tr><td><a href="../ivyfile/dependency-conf.html">conf</a></td><td>defines configuration mapping has sub element</td>
         <td>0..n</td></tr>
-    <tr><td><a href="../../doc/ivyfile/dependency-artifact.html">artifact / include</a></td><td>defines artifacts inclusion - use only if you do not control dependency ivy file</td>
+    <tr><td><a href="../ivyfile/dependency-artifact.html">artifact / include</a></td><td>defines artifacts inclusion - use only if you do not control dependency ivy file</td>
         <td>0..n</td></tr>
-    <tr><td><a href="../../doc/ivyfile/artifact-exclude.html">exclude</a></td><td>defines artifacts exclusion - use only if you do not control dependency ivy file</td>
+    <tr><td><a href="../ivyfile/artifact-exclude.html">exclude</a></td><td>defines artifacts exclusion - use only if you do not control dependency ivy file</td>
         <td>0..n</td></tr>
 </tbody>
 </table>

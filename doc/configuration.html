@@ -25,10 +25,10 @@
 </head>
 <body>
 	<textarea id="xooki-source">
-In order to work as you want, ivy sometimes need some settings. Actually, ivy can work with no specific settings at all, see the <a href="../doc/tutorial/defaultconf.html">default settings documentation</a> for details about that. But ivy is able 
+In order to work as you want, ivy sometimes need some settings. Actually, ivy can work with no specific settings at all, see the <a href="tutorial/defaultconf.html">default settings documentation</a> for details about that. But ivy is able 
 to work in very different contexts. You just have to configure it properly.
 
-Settings are specified through an xml file, usually called ivysettings.xml. To configure ivy from ant, you just have to call the configure task and pass it the path to your settings file (see <a href="../doc/use/configure.html">configure</a> task documentation for details).
+Settings are specified through an xml file, usually called ivysettings.xml. To configure ivy from ant, you just have to call the configure task and pass it the path to your settings file (see <a href="use/configure.html">configure</a> task documentation for details).
 
 Here is an example of settings file :
 <code type="xml">
@@ -67,36 +67,36 @@ The settings file is structured in some parts and left other open. Indeed each r
 
 <pre>
 ivysettings
-    <a href="../doc/configuration/property.html">property</a>
-    <a href="../doc/configuration/properties.html">properties</a>
-    <a href="../doc/configuration/conf.html">settings</a>
-    <a href="../doc/configuration/include.html">include</a>
-    <a href="../doc/configuration/classpath.html">classpath</a>
-    <a href="../doc/configuration/typedef.html">typedef</a>
-    <a href="../doc/configuration/latest-strategies.html">latest-strategies</a>
-    <a href="../doc/configuration/version-matchers.html">version-matchers</a>
-    <a href="../doc/configuration/triggers.html">triggers</a>
-    <a href="../doc/configuration/parsers.html">parsers</a>
-    <a href="../doc/configuration/conflict-managers.html">conflict-managers</a>
-    <a href="../doc/configuration/outputters.html">outputters</a>
-    <a href="../doc/configuration/namespaces.html">namespaces</a>
-        <a href="../doc/configuration/namespace.html">namespace</a>
-            <a href="../doc/configuration/namespace/rule.html">rule</a>
-                <a href="../doc/configuration/namespace/fromtosystem.html">fromsystem</a>
-                    <a href="../doc/configuration/namespace/src.html">src</a>
-                    <a href="../doc/configuration/namespace/dest.html">dest</a>
-                <a href="../doc/configuration/namespace/fromtosystem.html">tosystem</a>
-                    <a href="../doc/configuration/namespace/src.html">src</a>
-                    <a href="../doc/configuration/namespace/dest.html">dest</a>
-    <a href="../doc/configuration/macrodef.html">macrodef</a>
-        <a href="../doc/configuration/macrodef/attribute.html">attribute</a>
+    <a href="configuration/property.html">property</a>
+    <a href="configuration/properties.html">properties</a>
+    <a href="configuration/conf.html">settings</a>
+    <a href="configuration/include.html">include</a>
+    <a href="configuration/classpath.html">classpath</a>
+    <a href="configuration/typedef.html">typedef</a>
+    <a href="configuration/latest-strategies.html">latest-strategies</a>
+    <a href="configuration/version-matchers.html">version-matchers</a>
+    <a href="configuration/triggers.html">triggers</a>
+    <a href="configuration/parsers.html">parsers</a>
+    <a href="configuration/conflict-managers.html">conflict-managers</a>
+    <a href="configuration/outputters.html">outputters</a>
+    <a href="configuration/namespaces.html">namespaces</a>
+        <a href="configuration/namespace.html">namespace</a>
+            <a href="configuration/namespace/rule.html">rule</a>
+                <a href="configuration/namespace/fromtosystem.html">fromsystem</a>
+                    <a href="configuration/namespace/src.html">src</a>
+                    <a href="configuration/namespace/dest.html">dest</a>
+                <a href="configuration/namespace/fromtosystem.html">tosystem</a>
+                    <a href="configuration/namespace/src.html">src</a>
+                    <a href="configuration/namespace/dest.html">dest</a>
+    <a href="configuration/macrodef.html">macrodef</a>
+        <a href="configuration/macrodef/attribute.html">attribute</a>
         any resolver
-    <a href="../doc/configuration/resolvers.html">resolvers</a>
+    <a href="configuration/resolvers.html">resolvers</a>
         any resolver
-    <a href="../doc/configuration/modules.html">modules</a>
-        <a href="../doc/configuration/module.html">module</a>
-    <a href="../doc/configuration/statuses.html">statuses</a>
-        <a href="../doc/configuration/status.html">status</a>
+    <a href="configuration/modules.html">modules</a>
+        <a href="configuration/module.html">module</a>
+    <a href="configuration/statuses.html">statuses</a>
+        <a href="configuration/status.html">status</a>
 </pre>
 
 <h1>ivysettings</h1>
@@ -109,39 +109,39 @@ Root tag of any ivysettings file.
     <tr><th class="ivy-chld">Element</th><th class="ivy-chld-desc">Description</th><th class="ivy-chld-card">Cardinality</th></tr>
 </thead>
 <tbody>
-    <tr><td><a href="../doc/configuration/property.html">property</a></td><td>set an ivy variable</td>
+    <tr><td><a href="configuration/property.html">property</a></td><td>set an ivy variable</td>
         <td>0..n</td></tr>
-    <tr><td><a href="../doc/configuration/properties.html">properties</a></td><td>loads a properties file as ivy variables</td>
+    <tr><td><a href="configuration/properties.html">properties</a></td><td>loads a properties file as ivy variables</td>
         <td>0..n</td></tr>
-    <tr><td><a href="../doc/configuration/conf.html">settings</a></td><td>configures ivy with some defaults</td>
+    <tr><td><a href="configuration/conf.html">settings</a></td><td>configures ivy with some defaults</td>
         <td>0..1</td></tr>
-    <tr><td><a href="../doc/configuration/include.html">include</a></td><td>includes another settings file</td>
+    <tr><td><a href="configuration/include.html">include</a></td><td>includes another settings file</td>
         <td>0..n</td></tr>
-    <tr><td><a href="../doc/configuration/classpath.html">classpath</a></td><td>add a location in the classpath used to load plugins</td>
+    <tr><td><a href="configuration/classpath.html">classpath</a></td><td>add a location in the classpath used to load plugins</td>
         <td>0..n</td></tr>
-    <tr><td><a href="../doc/configuration/typedef.html">typedef</a></td><td>defines new types in ivy</td>
+    <tr><td><a href="configuration/typedef.html">typedef</a></td><td>defines new types in ivy</td>
         <td>0..n</td></tr>
-    <tr><td><a href="../doc/configuration/latest-strategies.html">latest-strategies</a></td><td>defines latest strategies</td>
+    <tr><td><a href="configuration/latest-strategies.html">latest-strategies</a></td><td>defines latest strategies</td>
         <td>0..1</td></tr>
-    <tr><td><a href="../doc/configuration/parsers.html">parsers</a></td><td>defines module descriptor parsers</td>
+    <tr><td><a href="configuration/parsers.html">parsers</a></td><td>defines module descriptor parsers</td>
         <td>0..1</td></tr>
-    <tr><td><a href="../doc/configuration/version-matchers.html">version-matchers</a></td><td>defines new version matchers</td>
+    <tr><td><a href="configuration/version-matchers.html">version-matchers</a></td><td>defines new version matchers</td>
         <td>0..1</td></tr>
-    <tr><td><a href="../doc/configuration/triggers.html">triggers</a></td><td>register triggers on ivy events</td>
+    <tr><td><a href="configuration/triggers.html">triggers</a></td><td>register triggers on ivy events</td>
         <td>0..1</td></tr>
-    <tr><td><a href="../doc/configuration/namespaces.html">namespaces</a></td><td>defines new namespaces</td>
+    <tr><td><a href="configuration/namespaces.html">namespaces</a></td><td>defines new namespaces</td>
         <td>0..1</td></tr>
-    <tr><td><a href="../doc/configuration/macrodef.html">macrodef</a></td><td>defines a new macro resolver</td>
+    <tr><td><a href="configuration/macrodef.html">macrodef</a></td><td>defines a new macro resolver</td>
         <td>0..n</td></tr>
-    <tr><td><a href="../doc/configuration/resolvers.html">resolvers</a></td><td>defines dependency resolvers</td>
+    <tr><td><a href="configuration/resolvers.html">resolvers</a></td><td>defines dependency resolvers</td>
         <td>0..1</td></tr>
-    <tr><td><a href="../doc/configuration/conflict-managers.html">conflict-managers</a></td><td>defines conflicts managers</td>
+    <tr><td><a href="configuration/conflict-managers.html">conflict-managers</a></td><td>defines conflicts managers</td>
         <td>0..1</td></tr>
-    <tr><td><a href="../doc/configuration/modules.html">modules</a></td><td>defines rules between modules and dependency resolvers</td>
+    <tr><td><a href="configuration/modules.html">modules</a></td><td>defines rules between modules and dependency resolvers</td>
         <td>0..1</td></tr>
-    <tr><td><a href="../doc/configuration/outputters.html">outputters</a></td><td>defines the list of available report outputters</td>
+    <tr><td><a href="configuration/outputters.html">outputters</a></td><td>defines the list of available report outputters</td>
         <td>0..1</td></tr>
-    <tr><td><a href="../doc/configuration/statuses.html">statuses</a></td><td>defines the list of available statuses</td>
+    <tr><td><a href="configuration/statuses.html">statuses</a></td><td>defines the list of available statuses</td>
         <td>0..1</td></tr>
 </tbody>
 </table>

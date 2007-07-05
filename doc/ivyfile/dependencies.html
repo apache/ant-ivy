@@ -25,7 +25,7 @@
 </head>
 <body>
 	<textarea id="xooki-source">
-<b>Tag:</b> dependencies <b>Parent:</b> <a href="../../doc/ivyfile/.html">ivy-module</a>
+<b>Tag:</b> dependencies <b>Parent:</b> <a href="../ivyfile/.html">ivy-module</a>
 
 Container for dependency elements, used to describe the dependencies of this module. 
 If this container is not present, it is assumed that the module has no dependency at all.
@@ -34,7 +34,7 @@ This container let the possibility to define two very similar things: defaultcon
 
 <code>defaultconf</code> exists since Ivy 1.1 and enables to define the default conf attribute to use when no conf is defined for a dependency in this ivy file. It is only used when no conf mapping is defined, and has no influence in other cases.
 
-<code>defaultconfmapping</code> exists since Ivy 1.3 and enables not only to define the default conf mapping when no conf is specified for a dependency in this ivy file, but it also influence the way conf mapping with no mapped conf are interpreted (see <a href="../../doc/ivyfile/configurations.html">configurations doc page</a> for details about this).
+<code>defaultconfmapping</code> exists since Ivy 1.3 and enables not only to define the default conf mapping when no conf is specified for a dependency in this ivy file, but it also influence the way conf mapping with no mapped conf are interpreted (see <a href="../ivyfile/configurations.html">configurations doc page</a> for details about this).
 
 Note that if both defaultconf and defaultconfmapping are defined, it's the defaultconfmapping that is used. Note also that if several defaultconfmapping are defined (one in the configurations tag, one or several in included configurations file, and/or one in the dependency tag, then it's only the last which is taken into account, the others will have no effect at all.
 <h1>Attributes</h1>
@@ -55,9 +55,9 @@ Note that if both defaultconf and defaultconfmapping are defined, it's the defau
     <tr><th class="ivy-chld">Element</th><th class="ivy-chld-desc">Description</th><th class="ivy-chld-card">Cardinality</th></tr>
 </thead>
 <tbody>
-    <tr><td><a href="../../doc/ivyfile/dependency.html">dependency</a></td><td>declares a dependency for this module</td>
+    <tr><td><a href="../ivyfile/dependency.html">dependency</a></td><td>declares a dependency for this module</td>
         <td>0..n</td></tr>
-    <tr><td><a href="../../doc/ivyfile/exclude.html">exclude</a></td><td>excludes artifacts, modules or whole organizations from the set of dependencies of this module <span class="since">since 2.0</span></td>
+    <tr><td><a href="../ivyfile/exclude.html">exclude</a></td><td>excludes artifacts, modules or whole organizations from the set of dependencies of this module <span class="since">since 2.0</span></td>
         <td>0..n</td></tr>
 </tbody>
 </table>

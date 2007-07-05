@@ -29,7 +29,7 @@ This tutorial introduces the use of configuration in ivy files. Ivy configuratio
 
 More seriously, configurations in ivy can be better understood as views on your module, and you will see how they can be used efficiently here.
 
-Reference documentation on configurations can be found <a href="../../doc/terminology.html">here</a> and <a href="../../doc/ivyfile/configurations.html">here</a>.
+Reference documentation on configurations can be found <a href="../terminology.html">here</a> and <a href="../ivyfile/configurations.html">here</a>.
 <h1>Introduction</h1>
 Source code available in src/example/configurations/multi-projects.
 We have two projects :
@@ -172,7 +172,7 @@ One configuration will only use "home-made" jars, and the second one will use ex
 
 We also defined a dependency on the previous library.
 In the dependency we use configuration mapping to match ours and library configurations.
-You can found more information on configuration mapping <a href="../../doc/ivyfile/configurations.html">here</a>
+You can found more information on configuration mapping <a href="../ivyfile/configurations.html">here</a>
 <ol>
   <li><b>build->api</b> : here we tell ivy that our <b>build</b> configuration depends on the api configuration of the dependcy</li>
   <li><b>noexternaljar->homemade-impl</b> : here we tell ivy that our <b>noexternaljar</b> configuration depends on the <b>homemade-impl</b> configuration of the dependcy.</li>

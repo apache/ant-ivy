@@ -27,7 +27,7 @@
 	<textarea id="xooki-source">
 <b>Tag:</b> conflict-managers
 
-Defines a list of <a href="../../doc/concept#conflict.html">conflicts managers</a> usable in ivy. Each conflict manager is identified by its name, given as an attribute.
+Defines a list of <a href="../concept.html#conflict">conflicts managers</a> usable in ivy. Each conflict manager is identified by its name, given as an attribute.
 The child tag used for the conflict manager must be equal to a name of a conflict manager type (either built-in
 or added with the typedef tag).
 
@@ -39,7 +39,7 @@ Here is a list of predefined conflicts managers (which do not require anything i
 <li>strict</li> this conflict manager throws an exception (i.e. causes a build failure) whenever a conflict is found.
 </ul>
 The two "latest" conflict managers also take into account the force attribute of the dependencies.
-Indeed direct dependencies can declare a force attribute (see <a href="../../doc/ivyfile/dependency.html">dependency</a>), which indicates the the revision given in the direct dependency should be prefered over indirect dependencies.
+Indeed direct dependencies can declare a force attribute (see <a href="../ivyfile/dependency.html">dependency</a>), which indicates the the revision given in the direct dependency should be prefered over indirect dependencies.
 
 Here is a list of conflict manager types available, which can be used to define your own custom conflict managers:
 <ul>

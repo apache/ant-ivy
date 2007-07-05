@@ -25,11 +25,11 @@
 </head>
 <body>
 	<textarea id="xooki-source">
-<b>Tag:</b> info <b>Parent:</b> <a href="../../doc/ivyfile.html">ivy-module</a>
+<b>Tag:</b> info <b>Parent:</b> <a href="../ivyfile.html">ivy-module</a>
 
 Gives information about the module this ivy file describe.
 
-<span class="since">since 1.4</span> This tag supports <a href="../../doc/concept#extra.html">extra attributes</a>.
+<span class="since">since 1.4</span> This tag supports <a href="../concept.html#extra">extra attributes</a>.
 
 <h1>Attributes</h1>
 <table class="ivy-attributes">
@@ -42,10 +42,10 @@ Gives information about the module this ivy file describe.
     <tr><td>module</td><td>the name of the module described by this ivy file.</td>
         <td>Yes</td></tr>
     <tr><td>branch</td><td>the branch of this module. <span class="since">since 1.4</span></td>
-        <td>No, defaults to the default branch <a href="../../doc/configuration/conf.html">configured</a>, or nothing if no default branch is configured</td></tr>
+        <td>No, defaults to the default branch <a href="../configuration/conf.html">configured</a>, or nothing if no default branch is configured</td></tr>
     <tr><td>revision</td><td>the revision of this module.</td>
         <td>Yes in repository ivy files, no in ivy files to resolve</td></tr>
-    <tr><td>status</td><td>the status of this module. See <a href="../../doc/reference.html">terminology</a> section for details</td>
+    <tr><td>status</td><td>the status of this module. See <a href="../reference.html">terminology</a> section for details</td>
         <td>No, default to 'integration'</td></tr>
     <tr><td>publication</td><td>the date of publication of this module. It should be given in this format: yyyyMMddHHmmss</td>
         <td>No, but it's a good practice to set it with delivered ivy files</td></tr>
@@ -57,13 +57,13 @@ Gives information about the module this ivy file describe.
     <tr><th class="ivy-chld">Element</th><th class="ivy-chld-desc">Description</th><th class="ivy-chld-card">Cardinality</th></tr>
 </thead>
 <tbody>
-    <tr><td><a href="../../doc/ivyfile/license.html">license</a></td><td>contains information about the licenses of the described module</td>
+    <tr><td><a href="../ivyfile/license.html">license</a></td><td>contains information about the licenses of the described module</td>
         <td>0..n</td></tr>
-    <tr><td><a href="../../doc/ivyfile/ivyauthor.html">ivyauthor</a></td><td>describes who has contributed to write the ivy file</td>
+    <tr><td><a href="../ivyfile/ivyauthor.html">ivyauthor</a></td><td>describes who has contributed to write the ivy file</td>
         <td>0..n</td></tr>
-    <tr><td><a href="../../doc/ivyfile/repository.html">repository</a></td><td>describes on which public repositories this module can be found</td>
+    <tr><td><a href="../ivyfile/repository.html">repository</a></td><td>describes on which public repositories this module can be found</td>
         <td>0..n</td></tr>
-    <tr><td><a href="../../doc/ivyfile/.html">description</a></td><td>describes how to use the module</td>
+    <tr><td><a href="../ivyfile/.html">description</a></td><td>describes how to use the module</td>
         <td>0..1</td></tr>
 </tbody>
 </table>

@@ -37,7 +37,7 @@ Moreover, the fact that it is the responsibility of the resolver to find ivy fil
 
 As you see, a dependency resolver can be thought as a class responsible of describing a repository.
 
-If you want to see which resolvers are available in ivy, you can go to the corresponding <a href="../doc/configuration/resolvers.html">configuration section</a>
+If you want to see which resolvers are available in ivy, you can go to the corresponding <a href="configuration/resolvers.html">configuration section</a>
 
 <h1><a name="configurations">Module configurations explained</a></h1>
 Module configurations are described in the terminology page as <em>a way to use or construct a module</em>. Configurations being a central part of Ivy, they need more explanations as a concept.
@@ -48,7 +48,7 @@ Moreover, because dependencies in ivy are expressed on modules and not on artifa
 
 If you use only simple modules and do not want to worry about configurations, you don't have to worry about them. They're still there under the hood, cause ivy can't work without configuration. But most of the time if you declare nothing, ivy assumes that the artifacts of your module are published in all configurations, and that all the dependencies configurations are required in all configurations. And it works in simple cases. But whenever you want to separate things within a module, or get more control over things published and got through dependencies resolution, configuration may answer most of your needs.
 
-For details on how to declare your module configurations, how declare in which configuration your artifacts are published, and how to declare configuration mapping, please refer to <a href="../doc/ivyfile.html">ivy file documentation</a>. The <a href="../doc/tutorial/conf.html">configurations tutorial</a> is also a good place to go to learn more about this concept.
+For details on how to declare your module configurations, how declare in which configuration your artifacts are published, and how to declare configuration mapping, please refer to <a href="ivyfile.html">ivy file documentation</a>. The <a href="tutorial/conf.html">configurations tutorial</a> is also a good place to go to learn more about this concept.
 
 <h1><a name="variables"></a>Variables</h1>
 During configuration, ivy allows to define what are called ivy variables. Ivy variables can be seen as ant properties, and are used in a very similar way. In particular, you use a properties tag in the configuration file to load a properties file containing ivy variables and their values.
@@ -66,7 +66,7 @@ where <i>variablename</i> is the name of the variable.
 
 Finally, it's also important to be aware of the time of substitution of variables. This substitution is done as soon as possible. This means that when ivy encounter a reference to a variable, it tries to substitute it if such a variable is defined. Consequently, <strong>any later modification of the variable will not alter the value already substituted</strong>.
 
-Moreover, in an ant environment, a bunch of variables are going to be set by default via the ant property file loading mechanism (in fact they are first loaded as ant properties and then imported as ivy variables, see <a href="../doc/use.html"></a>), and even in the ant properties themselves there is going to be eager substitution on loading, effectively making it impossible to override some variable purely via the ivysettings.properties file. Some variables will really only be able to be overriden via ant properties because of this.
+Moreover, in an ant environment, a bunch of variables are going to be set by default via the ant property file loading mechanism (in fact they are first loaded as ant properties and then imported as ivy variables, see <a href="use.html"></a>), and even in the ant properties themselves there is going to be eager substitution on loading, effectively making it impossible to override some variable purely via the ivysettings.properties file. Some variables will really only be able to be overriden via ant properties because of this.
 
 Moreover, it's also important to understand the difference between ivy variables and ivy pattern tokens. 
 See Patterns chapter below to see what pattern tokens are.
@@ -138,7 +138,7 @@ This algorithm takes into account special meaning of some text. For instance, wi
 <li>latest-lexico</li>: it compares the revisions as string, using lexicographic order (the one used by java string comparison).
 </ul>
 
-See also how to configure new latest strategies <a href="../doc/configuration/latest-strategies.html">here</a>.
+See also how to configure new latest strategies <a href="configuration/latest-strategies.html">here</a>.
 
 <h1><a name="conflict">Conflict Manager</a></h1>
 A conflict manager is able to select, among a list of module revisions in conflict, a list of revisions to keep.
@@ -147,9 +147,9 @@ But in some cases you will need to keep several revisions, and load in separate 
 
 A list of revisions is said to be in conflict if they correspond to the same module, i.e. the same organisation/module name couple.
 
-The list of available conflict managers is available on the <a href="../doc/configuration/conflict-managers.html">conflict manager configuration page</a>.
+The list of available conflict managers is available on the <a href="configuration/conflict-managers.html">conflict manager configuration page</a>.
 
-To have more details on how to setup your conflict managers by module, see <a href="../doc/ivyfile/conflicts.html">conflicts</a> section in ivy file reference.
+To have more details on how to setup your conflict managers by module, see <a href="ivyfile/conflicts.html">conflicts</a> section in ivy file reference.
 
 <h1><a name="matcher">Pattern matcher</a></h1>
 <span class="since">since 1.3</span>
@@ -189,7 +189,7 @@ And you can define your repository pattern as:
 ${repository.dir}/[organisation]/[module]/[color]/[revision]/[artifact].[ext]
 </code>
 
-Note that in order to use extra attributes, you will need to disable ivy file validation, since your files won't fulffill anymore the official ivy xsd. See the <a href="../doc/configuration/conf.html">configuration doc page</a> to see how to disable validation.
+Note that in order to use extra attributes, you will need to disable ivy file validation, since your files won't fulffill anymore the official ivy xsd. See the <a href="configuration/conf.html">configuration doc page</a> to see how to disable validation.
 <h1><a name="checksum">Checksums</a></h1>
 <span class="since">since 1.4</span>
 Ivy allow to use checksums, also known as digester, to verify the correctness of a downloaded file.
@@ -214,7 +214,7 @@ When Ivy performs the dependency resolution and some other tasks, it fires event
 
 This is a particularly powerful and flexible feature which allow for example to perform a build of a dependency just before it is resolved, or follow what's happening during the dependency resolution process accuratly, and so on.
 
-For more details about event and triggers, see the <a href="../doc/configuration/triggers.html">triggers</a> documentation page in the configuration section of this documentation.
+For more details about event and triggers, see the <a href="configuration/triggers.html">triggers</a> documentation page in the configuration section of this documentation.
 
 <h1><a name="circular">Circular Dependencies</a></h1>
 <span class="since">since 1.4</span>
@@ -229,7 +229,7 @@ Prior to Ivy 1.4 circular dependencies where causing a failure in Ivy. As of Ivy
 <li>error</li> halt the dependency resolution when a circular dependency is found. 
 </ul>
 
-See the <a href="../doc/configuration/conf.html">configuration page</a> to see how to configure the circular dependency strategy you want to use.
+See the <a href="configuration/conf.html">configuration page</a> to see how to configure the circular dependency strategy you want to use.
 	</textarea>
 <script type="text/javascript">xooki.postProcess();</script>
 </body>

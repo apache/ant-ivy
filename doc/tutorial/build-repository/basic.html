@@ -61,7 +61,7 @@ Let's have a look at the <em>basic</em> target.
         <ivy:install settingsRef="basic.settings" organisation="apache" module="commons-lang" revision="1.0" from="${from-resolver}" to="${to-resolver}" />
     </target>
 </code>
-After a declaration of the basic.settings, that make the ivy initialization with the right ivysettings file, we only call the task <a href="../../../doc/use/install.html">install</a> to retrieve apache commons-lang in it's 1.0 version.
+After a declaration of the basic.settings, that make the ivy initialization with the right ivysettings file, we only call the task <a href="../../use/install.html">install</a> to retrieve apache commons-lang in it's 1.0 version.
 Here is the ant call output :
 <div class="shell"><pre>Z:\ivy-repository>ant basic
 Buildfile: build.xml
@@ -161,7 +161,7 @@ Z:\ivy-repository></pre>
 
 We can see here that <a href="/ivy">ivy</a> has resolved hibernate 2.1.8 and 24 depending modules. If we look at the ivy file for <a href="http://ivyrep.jayasoft.org/hibernate/hibernate/ivy-2.1.8.xml">hibernate 2.1.8</a>, we can see that it defines 17 dependencies. The 7 others that ivy retrieved, were transitive ones used in direct dependent modules of hibernate.
 
-We can notice that we have retrieve 3 different revisions of apache commons-logging (1.0.2, 1.0.3, 1.0.4) and 2 revisions of commons-collections (1.2, 1.2.1). This is due to the fact that we use the "no conflict" <a href="../../../doc/configuration/conflict-managers.html">conflic manager</a> in the ivysettings file.
+We can notice that we have retrieve 3 different revisions of apache commons-logging (1.0.2, 1.0.3, 1.0.4) and 2 revisions of commons-collections (1.2, 1.2.1). This is due to the fact that we use the "no conflict" <a href="../../configuration/conflict-managers.html">conflic manager</a> in the ivysettings file.
 We do not want to evict any modules because we are building our own repository !
 
 8 modules artifacts have not been downloaded cause they have not been found on ibiblio with the ivysettings as it is.
