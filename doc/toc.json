@@ -107,6 +107,7 @@
                   {
                     "id":"intro",
                     "title":"Introduction",
+                    "isAbstract":true,
                     "children": [
                         {
                           "id":"terminology",
@@ -720,5 +721,5 @@
             }
           ]
       }
-      ]
+    ]
 }
