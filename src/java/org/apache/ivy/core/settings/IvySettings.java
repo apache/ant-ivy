@@ -670,7 +670,7 @@ public class IvySettings implements SortEngineSettings {
                 Message.verbose("using ivy.default.ivy.user.dir variable for default ivy user dir: "
                                 + defaultUserDir);
             } else {
-                setDefaultIvyUserDir(new File(System.getProperty("user.home"), ".ivy"));
+                setDefaultIvyUserDir(new File(System.getProperty("user.home"), ".ivy2"));
                 Message.verbose("no default ivy user dir defined: set to " + defaultUserDir);
             }
         }
