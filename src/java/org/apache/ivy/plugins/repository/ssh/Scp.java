@@ -285,7 +285,7 @@ public class Scp {
 
     private void sendFile(Channel channel, String localFile, String remoteName, String mode)
             throws IOException, RemoteScpException {
-        byte[] buffer = new byte[8192];
+        byte[] buffer = new byte[64 * 1024];
 
         OutputStream os = new BufferedOutputStream(channel.getOutputStream(), 40000);
         InputStream is = new BufferedInputStream(channel.getInputStream(), 512);
@@ -367,7 +367,7 @@ public class Scp {
      */
     private FileInfo receiveStream(Channel channel, String file, OutputStream targetStream)
             throws IOException, RemoteScpException {
-        byte[] buffer = new byte[8192];
+        byte[] buffer = new byte[64 * 1024];
 
         OutputStream os = channel.getOutputStream();
         InputStream is = channel.getInputStream();

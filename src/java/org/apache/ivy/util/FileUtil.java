@@ -39,10 +39,9 @@ import org.apache.ivy.util.url.URLHandlerRegistry;
  * Utility class used to deal with file related operations, like copy, full reading, symlink, ...
  */
 public class FileUtil {
-    // tried some other values with empty files... seems to be the best one (512 * 1024 is very bad)
-    // 8 * 1024 is also the size used by ant in its FileUtils... maybe they've done more study about
-    // it ;-)
-    private static final int BUFFER_SIZE = 8 * 1024;
+    // according to tests by users, 64kB seems to be a good value for the buffer used during copy
+    // further improvements could be obtained using NIO API
+    private static final int BUFFER_SIZE = 64 * 1024;
 
     private static final byte[] EMPTY_BUFFER = new byte[0];
 

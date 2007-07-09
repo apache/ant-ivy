@@ -41,6 +41,12 @@ import com.jcraft.jsch.Session;
  */
 public class SshRepository extends AbstractSshBasedRepository {
 
+    private static final int BUFFER_SIZE = 64 * 1024;
+    
+    private static final String ARGUMENT_PLACEHOLDER = "%arg";
+    
+    private static final int POLL_SLEEP_TIME = 500;
+
     private char fileSeparator = '/';
 
     private String listCommand = "ls -1";
@@ -48,10 +54,6 @@ public class SshRepository extends AbstractSshBasedRepository {
     private String existCommand = "ls";
 
     private String createDirCommand = "mkdir";
-
-    private final static String ARGUMENT_PLACEHOLDER = "%arg";
-
-    private final static int POLL_SLEEP_TIME = 500;
 
     /**
      * create a new resource with lazy initializing
@@ -118,15 +120,15 @@ public class SshRepository extends AbstractSshBasedRepository {
             throw (IOException) new IOException("Channel connection problems").initCause(e1);
         }
 
-        byte[] buffer = new byte[8192];
+        byte[] buffer = new byte[BUFFER_SIZE];
         while (true) {
             int avail = 0;
             while ((avail = stdout.available()) > 0) {
-                int len = stdout.read(buffer, 0, (avail > 8191 ? 8192 : avail));
+                int len = stdout.read(buffer, 0, (avail > BUFFER_SIZE - 1 ? BUFFER_SIZE : avail));
                 strStdout.append(new String(buffer, 0, len));
             }
             while ((avail = stderr.available()) > 0) {
-                int len = stderr.read(buffer, 0, (avail > 8191 ? 8192 : avail));
+                int len = stderr.read(buffer, 0, (avail > BUFFER_SIZE - 1 ? BUFFER_SIZE : avail));
                 strStderr.append(new String(buffer, 0, len));
             }
             if (channel.isClosed()) {
@@ -135,15 +137,16 @@ public class SshRepository extends AbstractSshBasedRepository {
             try {
                 Thread.sleep(POLL_SLEEP_TIME);
             } catch (Exception ee) {
+                // ignored
             }
         }
         int avail = 0;
         while ((avail = stdout.available()) > 0) {
-            int len = stdout.read(buffer, 0, (avail > 8191 ? 8192 : avail));
+            int len = stdout.read(buffer, 0, (avail > BUFFER_SIZE - 1 ? BUFFER_SIZE : avail));
             strStdout.append(new String(buffer, 0, len));
         }
         while ((avail = stderr.available()) > 0) {
-            int len = stderr.read(buffer, 0, (avail > 8191 ? 8192 : avail));
+            int len = stderr.read(buffer, 0, (avail > BUFFER_SIZE - 1 ? BUFFER_SIZE : avail));
             strStderr.append(new String(buffer, 0, len));
         }
     }

@@ -36,7 +36,7 @@ import org.apache.ivy.util.Message;
  */
 public class BasicURLHandler extends AbstractURLHandler {
 
-    private static final int BUFFER_SIZE = 4096;
+    private static final int BUFFER_SIZE = 64 * 1024;
 
     private static class HttpStatus {
         static final int SC_OK = 200;
