@@ -633,6 +633,7 @@ public class IvySettings implements SortEngineSettings {
     }
 
     public void setDefaultCache(File cacheDirectory) {
+        setVariable("ivy.cache.dir", cacheDirectory.getAbsolutePath(), false);
         defaultCache = cacheDirectory;
     }
 
@@ -685,7 +686,7 @@ public class IvySettings implements SortEngineSettings {
 
     public File getDefaultCache() {
         if (defaultCache == null) {
-            defaultCache = new File(getDefaultIvyUserDir(), "cache");
+            setDefaultCache(new File(getDefaultIvyUserDir(), "cache"));
             Message.verbose("no default cache defined: set to " + defaultCache);
         }
         return defaultCache;

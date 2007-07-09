@@ -143,6 +143,9 @@ public class IvyConfigureTest extends TestCase {
 
         assertEquals("value", 
             configure.getProject().getProperty("ivy.test.variable"));
+
+        assertEquals(configure.getIvyInstance().getSettings().getDefaultCache().getAbsolutePath(), 
+            configure.getProject().getProperty("ivy.cache.dir"));
     }
 
     public void testOverrideVariables() throws Exception {

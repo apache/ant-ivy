@@ -30,6 +30,7 @@
 Configures some important ivy info: default cache, default resolver, ...
 
 Default cache is used whenever a cache is not provided. It usually points to a directory in your filesystem. <strong>This should not point to a directory used as a repository!</strong>
+<span class="since">Since 2.0</span> Once the settings are loaded, the value of the defaultCache (either configured or the default value) is stored in an Ivy variable: ivy.cache.dir.
 
 Default resolver is used whenever nothing else is configured in the modules section of the configuration file. It should give the name of a dependency resolver defined in the resolvers section of the configuration file.
 
