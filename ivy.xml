@@ -46,7 +46,7 @@
 		<dependency org="oro" name="oro" rev="2.0.8" conf="default,oro->default"/>
 		<dependency org="commons-vfs" name="commons-vfs" rev="1.0" conf="default,vfs->default" />
 		<dependency org="jsch" name="jsch" rev="0.1.25" conf="default,sftp->default" />
-		<!-- Test depdendencies -->
+		<!-- Test dependencies -->
 	    <dependency org="ant" name="ant-launcher" rev="1.6.5" conf="test->default"/>
 		<dependency org="junit" name="junit" rev="3.8.2" conf="test->default" />
 		<dependency org="commons-lang" name="commons-lang" rev="[1.0,3.0[" conf="test->default" />

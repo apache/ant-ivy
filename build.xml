@@ -28,11 +28,11 @@
 		<condition property="ivy.home" value="${env.IVY_HOME}">
 			<isset property="env.IVY_HOME" />
 		</condition>
-		<property name="ivy.home" value="${user.home}/.ivy" />
+		<property name="ivy.home" value="${user.home}/.ivy2" />
 	</target>
 	
 	<target name="init-ivy-local-home" if="ivy.use.local.home">
-		<property name="ivy.home" value="${basedir}/.ivy" />
+		<property name="ivy.home" value="${basedir}/.ivy2" />
 	</target>
 	
 	<target name="init-ivy-home" depends="init-ivy-user-home, init-ivy-local-home" />
@@ -50,6 +50,7 @@
 	</target>
 	
 	<target name="install" depends="jar" description="build Ivy and install it in Ivy home for consecutive builds">
+		<property name="ivy.jar.file" value="${ivy.home}/jars/ivy.jar" />
 		<copy file="${artifacts.build.dir}/${final.name}" tofile="${ivy.jar.file}" />
 	</target>
 
@@ -439,7 +440,7 @@ ${final.core.name}    The Ivy core, eg everything but classes dependent on Ant.$
 	</target>
 	
 	<target name="javadoc" unless="skip.javadoc">
-		<javadoc destdir="${javadoc.build.dir}">
+		<javadoc destdir="${javadoc.build.dir}" useexternalfile="true">
 			<fileset dir="${src.dir}" includes="**/*.java,**/package.html" />
 		</javadoc>
 	</target>
