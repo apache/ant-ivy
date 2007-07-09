@@ -47,7 +47,7 @@ This let you add ivy plugins without relying on ant classpath for instance, easi
 <code type="xml">
 <ivysettings>
   <classpath file="${ivy.settings.dir}/custom-resolver.jar"/>
-  <typedef name="custom" classname="fr.jayasoft.ivy.resolver.CustomResolver"/>
+  <typedef name="custom" classname="org.apache.ivy.resolver.CustomResolver"/>
   <resolvers>
     <custom name="custom"/>
   </resolvers>
@@ -59,7 +59,7 @@ Adds custom-resolver.jar found in the same directory as the ivysettings.xml file
 <code type="xml">
 <ivysettings>
   <classpath url="http://www.myserver.com/ivy/custom-resolver.jar"/>
-  <typedef name="custom" classname="fr.jayasoft.ivy.resolver.CustomResolver"/>
+  <typedef name="custom" classname="org.apache.ivy.resolver.CustomResolver"/>
   <resolvers>
     <custom name="custom"/>
   </resolvers>
