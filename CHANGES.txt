@@ -54,6 +54,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - NEW: A checkstyle report is generated (IVY-483) (thanks to Jan Materne)
 - NEW: Hide private or specific conf when publishing (IVY-77)
 
+- IMPROVEMENT: Expose Ivy variables as Ant Properties (IVY-564)
 - IMPROVEMENT: Change default cache location (IVY-530)
 - IMPROVEMENT: Upgraded VFS dependency to 1.0 and removed dependency on VFS-sandbox (IVY-498)
 - IMPROVEMENT: Use maven2 repository to download dependencies

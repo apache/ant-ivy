@@ -26,12 +26,22 @@
 	<textarea id="xooki-source">
 <span class="since">(since 2.0)</span>
 
-The settings declaration is used to configure ivy with an xml settings file.<br/><br/>
+The settings declaration is used to configure ivy with an xml settings file.
 
-See <a href="../doc/configuration.html">Settings Files</a> for details about the settings file itself.<br/><br/>
+See <a href="../doc/configuration.html">Settings Files</a> for details about the settings file itself.
 
-Multiple settings can be defined in a build script.  Every task can reference his own settings.<br/><br/>
+Multiple settings can be defined in a build script.  Every task can reference its own settings.
 
+All Ivy variables set during the settings are available in the Ant project as long as they were not set in Ant before (Ant properties are immutable). 
+Moreover, the variables are exposed under two names: the variable name, and the variable name suffixed by dot + the settings id (if any). 
+For instance, if you load a settings with the id 'myid', and define a variable my.variable=my.value in the Ivy settings, both my.variable and my.variable.myid will now be available as properties in Ant and equal to 'my.value'. If you later load another settings with the id 'yourid', and in this settings assign the variable 'my.variable' the value 'your.value', in the Ant project you will have:
+<code>
+my.variable=my.value
+my.variable.myid=my.value
+my.variable.yourid=your.value
+</code>
+
+<h2>Attributes</h2>
 <table class="ant">
 <thead>
     <tr><th class="ant-att">Attribute</th><th class="ant-desc">Description</th><th class="ant-req">Required</th></tr>

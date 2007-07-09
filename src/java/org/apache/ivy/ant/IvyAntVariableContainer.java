@@ -18,7 +18,9 @@
 package org.apache.ivy.ant;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.ivy.core.settings.IvyVariableContainer;
 import org.apache.ivy.core.settings.IvyVariableContainerImpl;
@@ -59,6 +61,39 @@ class IvyAntVariableContainer extends IvyVariableContainerImpl implements IvyVar
             overwrittenProperties.put(varName, value);
         } else {
             super.setVariable(varName, value, overwrite);
+        }
+    }
+
+    /**
+     * Updates the Ant Project used in this container with variables set in Ivy.
+     * 
+     * All variables defined in Ivy will be set in the Ant project under two names:
+     * <ul>
+     * <li>the name of the variable</li>
+     * <li>the name of the variable suffxied with a dot + the given id, 
+     * if the given id is not null</li>
+     * </ul>
+     * 
+     * @param
+     *      id  The identifier of the settings in which the variables have been set, which
+     *          should be used as property names suffix
+     */
+    public void updateProject(String id) {
+        Map r = new HashMap(super.getVariables());
+        r.putAll(overwrittenProperties);
+        for (Iterator it = r.entrySet().iterator(); it.hasNext();) {
+            Entry entry = (Entry) it.next();
+            
+            setPropertyIfNotSet((String) entry.getKey(), (String) entry.getValue());
+            if (id != null) {
+                setPropertyIfNotSet((String) entry.getKey() + "." + id, (String) entry.getValue());
+            }
+        }
+    }
+
+    private void setPropertyIfNotSet(String property, String value) {
+        if (project.getProperty(property) == null) {
+            project.setProperty(property, value);
         }
     }
 }

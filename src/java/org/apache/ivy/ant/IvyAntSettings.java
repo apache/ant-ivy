@@ -94,6 +94,8 @@ public class IvyAntSettings extends DataType {
     private String userName = null;
 
     private String passwd = null;
+    
+    private String id = null;
 
     /**
      * Returns the default ivy settings of this classloader. If it doesn't exist yet, a new one is
@@ -190,6 +192,14 @@ public class IvyAntSettings extends DataType {
     public void setUrl(String confUrl) throws MalformedURLException {
         this.url = new URL(confUrl);
     }
+    
+    /*
+     * This is usually not necessary to define a reference in Ant, but it's the only
+     * way to know the id of the settings, which we use to set ant properties.
+     */
+    public void setId(String id) {
+        this.id = id;
+    }
 
     /*
      * public void execute() throws BuildException { 
@@ -240,6 +250,7 @@ public class IvyAntSettings extends DataType {
                 }
                 ivy.configure(url);
             }
+            ivyAntVariableContainer.updateProject(id);
         } catch (ParseException e) {
             throw new BuildException("impossible to configure ivy:settings with given "
                     + (file != null ? "file: " + file : "url :" + url) + " :" + e, e);

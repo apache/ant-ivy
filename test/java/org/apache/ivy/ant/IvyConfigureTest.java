@@ -33,27 +33,27 @@ import org.apache.tools.ant.Project;
  * IvyConfigure will be removed, this class should be renamed AntIvySettingsTest
  */
 public class IvyConfigureTest extends TestCase {
-    private IvyConfigure _configure;
+    private IvyConfigure configure;
 
     protected void setUp() throws Exception {
         Project project = new Project();
         project.setProperty("myproperty", "myvalue");
 
-        _configure = new IvyConfigure();
-        _configure.setProject(project);
+        configure = new IvyConfigure();
+        configure.setProject(project);
     }
 
     private Ivy getIvyInstance() {
-        return IvyAntSettings.getDefaultInstance(_configure.getProject())
+        return IvyAntSettings.getDefaultInstance(configure.getProject())
                 .getConfiguredIvyInstance();
     }
 
     public void testDefault() throws Exception {
         // by default configure look in the current directory for an ivysettings.xml file...
         // but Ivy itself has one, and we don't want to use it
-        _configure.getProject()
+        configure.getProject()
                 .setProperty("ivy.settings.file", "no/settings/will/use/default.xml");
-        _configure.execute();
+        configure.execute();
 
         IvySettings settings = getIvyInstance().getSettings();
         assertNotNull(settings.getDefaultResolver());
@@ -68,10 +68,10 @@ public class IvyConfigureTest extends TestCase {
     public void testDefault14() throws Exception {
         // by default configure look in the current directory for an ivysettings.xml file...
         // but Ivy itself has one, and we don't want to use it
-        _configure.getProject()
+        configure.getProject()
                 .setProperty("ivy.settings.file", "no/settings/will/use/default.xml");
-        _configure.getProject().setProperty("ivy.14.compatible", "true");
-        _configure.execute();
+        configure.getProject().setProperty("ivy.14.compatible", "true");
+        configure.execute();
 
         IvySettings settings = getIvyInstance().getSettings();
         assertNotNull(settings.getDefaultResolver());
@@ -81,11 +81,11 @@ public class IvyConfigureTest extends TestCase {
     }
 
     public void testFile() throws Exception {
-        _configure.setFile(new File("test/repositories/ivysettings.xml"));
+        configure.setFile(new File("test/repositories/ivysettings.xml"));
 
-        _configure.execute();
+        configure.execute();
 
-        Ivy ivy = _configure.getIvyInstance();
+        Ivy ivy = configure.getIvyInstance();
         assertNotNull(ivy);
         IvySettings settings = ivy.getSettings();
         assertNotNull(settings);
@@ -106,11 +106,11 @@ public class IvyConfigureTest extends TestCase {
         if (confDirUrl.endsWith("/")) {
             confDirUrl = confDirUrl.substring(0, confDirUrl.length() - 1);
         }
-        _configure.setUrl(confUrl);
+        configure.setUrl(confUrl);
 
-        _configure.execute();
+        configure.execute();
 
-        IvySettings settings = _configure.getIvyInstance().getSettings();
+        IvySettings settings = configure.getIvyInstance().getSettings();
 
         assertEquals(new File("build/cache"), settings.getDefaultCache());
         assertEquals(confUrl, settings.getVariables().get("ivy.settings.url"));
@@ -121,29 +121,42 @@ public class IvyConfigureTest extends TestCase {
     public void testAntProperties() throws Exception {
         String confUrl = IvyConfigureTest.class.getResource("ivysettings-test.xml")
                 .toExternalForm();
-        _configure.setUrl(confUrl);
+        configure.setUrl(confUrl);
 
-        _configure.execute();
+        configure.execute();
 
-        IvySettings settings = _configure.getIvyInstance().getSettings();
+        IvySettings settings = configure.getIvyInstance().getSettings();
         assertNotNull(settings);
 
         assertEquals("myvalue", settings.getVariables().get("myproperty"));
         assertEquals("myvalue", settings.getDefaultCache().getName());
     }
 
+    public void testExposeAntProperties() throws Exception {
+        String confUrl = IvyConfigureTest.class.getResource("ivysettings-props.xml")
+                .toExternalForm();
+        configure.setUrl(confUrl);
+        
+        configure.execute();
+
+        assertNotNull(configure.getIvyInstance());
+
+        assertEquals("value", 
+            configure.getProject().getProperty("ivy.test.variable"));
+    }
+
     public void testOverrideVariables() throws Exception {
         String confUrl = IvyConfigureTest.class.getResource("ivysettings-props.xml")
                 .toExternalForm();
-        _configure.setUrl(confUrl);
+        configure.setUrl(confUrl);
 
-        _configure.execute();
+        configure.execute();
 
-        IvySettings settings = _configure.getIvyInstance().getSettings();
+        IvySettings settings = configure.getIvyInstance().getSettings();
         assertNotNull(settings);
 
-        assertEquals("lib/test/[artifact]-[revision].[ext]", settings.getVariables().get(
-            "ivy.retrieve.pattern"));
+        assertEquals("lib/test/[artifact]-[revision].[ext]", 
+            settings.getVariables().get("ivy.retrieve.pattern"));
     }
 
 }
