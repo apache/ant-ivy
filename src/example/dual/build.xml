@@ -16,7 +16,7 @@
    specific language governing permissions and limitations
    under the License.    
 -->
-<project default="clean-all">
+<project default="clean-all" xmlns:ivy="antlib:org.apache.ivy.ant">
     
     <!-- ================================= 
           target: clean              
@@ -29,7 +29,9 @@
           target: clean-cache              
          ================================= -->
 	<target name="clean-cache" description="--> clean the ivy cache">
-		<delete dir="${user.home}/.ivy-cache"/>
+		<property name="ivy.settings.dir" value="config" />
+		<ivy:settings file="${ivy.settings.dir}/ivysettings.xml" />
+		<ivy:cleancache />
 	</target>
 	
 	<target name="clean-all" depends="clean, clean-cache" description="--> clean directories and ivy cache"/>

@@ -17,11 +17,11 @@
    under the License.    
 -->
 <project name="all" 
-         xmlns:ivy="antlib:fr.jayasoft.ivy.ant">
+         xmlns:ivy="antlib:org.apache.ivy.ant">
          
 	<!-- here is the version of ivy we will use. change this property to try a newer 
          version if you want -->
-	<property name="ivy.jar.dir" value="${user.home}/.ivy/jars" />
+	<property name="ivy.jar.dir" value="${user.home}/.ivy2/jars" />
 	<property name="ivy.jar.file" value="${ivy.jar.dir}/ivy.jar" />
 
     <property name="build.dir" value="build" />
@@ -42,8 +42,8 @@
     	<path id="ivy.lib.path">
     	    <fileset dir="${ivy.jar.dir}" includes="*.jar"/>
     	</path>
-    	<taskdef resource="fr/jayasoft/ivy/ant/antlib.xml"
-    	          uri="antlib:fr.jayasoft.ivy.ant" classpathref="ivy.lib.path"/>
+    	<taskdef resource="org/apache/ivy/ant/antlib.xml"
+    	          uri="antlib:org.apache.ivy.ant" classpathref="ivy.lib.path"/>
     </target>    
          
   <target name="buildlist" depends="install-ivy"> 
@@ -56,7 +56,8 @@
     <subant target="new-version" buildpathref="build-path" />
   </target>
 
-  <target name="publish-all" depends="buildlist" description="compile, jar and publish all projects in the right order">
+  <target name="publish-all" depends="buildlist" 
+  			description="compile, jar and publish all projects in the right order">
     <subant target="publish" buildpathref="build-path" />
   </target>
 
@@ -64,9 +65,10 @@
     <subant target="clean" buildpathref="build-path" />
   </target>
   
-  <target name="clean" depends="clean-all" description="clean tutorial: delete repository, ivy cache, and all projects">
+  <target name="clean" depends="clean-all, install-ivy" 
+  			description="clean tutorial: delete repository, ivy cache, and all projects">
     <delete dir="repository"/>
-    <delete dir="ivy-cache"/>
+  	<ivy:cleancache />
   </target>
   
   

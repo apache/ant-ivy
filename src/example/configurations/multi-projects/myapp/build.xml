@@ -88,6 +88,6 @@
           target: clean-cache              
          ================================= -->
 	<target name="clean-cache" description="--> clean the ivy cache">
-		<delete dir="${user.home}/.ivy/cache"/>
+		<ivy:cleancache />
 	</target>
 </project>

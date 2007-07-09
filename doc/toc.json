@@ -592,6 +592,13 @@
                             ]
                         },
                         {
+                          "id":"use/cleancache",
+                          "title":"cleancache",
+                          "children": [
+
+                            ]
+                        },
+                        {
                           "id":"use/configure",
                           "title":"configure",
                           "children": [

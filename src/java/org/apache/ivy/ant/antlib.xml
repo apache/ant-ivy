@@ -41,4 +41,5 @@
 	<taskdef name="listmodules" classname="org.apache.ivy.ant.IvyListModules"/>
 	<taskdef name="findrevision" classname="org.apache.ivy.ant.IvyFindRevision"/>
 	<taskdef name="buildnumber" classname="org.apache.ivy.ant.IvyBuildNumber"/>
+	<taskdef name="cleancache" classname="org.apache.ivy.ant.IvyCleanCache"/>
 </antlib>

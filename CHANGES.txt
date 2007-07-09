@@ -51,6 +51,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 
    version in SVN
 =====================================
+- NEW: Add cleancache task (IVY-565)
 - NEW: A checkstyle report is generated (IVY-483) (thanks to Jan Materne)
 - NEW: Hide private or specific conf when publishing (IVY-77)
 
@@ -67,6 +68,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - IMPROVEMENT: Javadoc improvements (IVY-544) (with contribution from Tjeerd Verhagen)
 - IMPROVEMENT: Unit test improvements (IVY-545) (thanks to Tjeerd Verhagen)
 
+- FIX: Ant target "clean" on Ivy multi-project tutorial points to wrong cache directory. (IVY-548)
 - FIX: Variables not replaced during deliver (IVY-520) (thanks to John Williams)
 - FIX: XmlModuleDescriptorWriter does not produce matcher attribute on include and exclude rules (IVY-556)
 - FIX: pom.groupId is not recognized in maven 2 pom parser (IVY-550)
