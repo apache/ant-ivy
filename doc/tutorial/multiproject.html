@@ -29,7 +29,7 @@
 
 In the previous tutorial you have seen how to deal with dependencies between two simple projects.
 
-This tutorial will guide you through the use of ivy in a more complete environment. All the sources of this tutorial are available in src/example/multi-project in ivy distribution (warning: the sources attached with ivy 1.3 contain an error in the common.xml file. Please use either latest build to find proper example sources or replace the common.xml file with <a href="../../samples/multi-project/common.xml">this one</a>).
+This tutorial will guide you through the use of ivy in a more complete environment. All the sources of this tutorial are available in src/example/multi-project in ivy distribution (warning: the sources attached with ivy 1.3 contain an error in the common.xml file. Please use either latest build to find proper example sources or replace the common.xml file with <a href="../samples/multi-project/common.xml">this one</a>).
 
 <h1>Context</h1>
 Here is a 10000ft overview of the projects involved in this tutorial:
@@ -46,7 +46,7 @@ For sure this is not aimed to demonstrate how to develop a complex app or give i
 But this gives a simple understanding of how ivy can be used to develop an application divided in multiple modules.
 
 Now, here is how these modules relate to each other:
-<a href="../../samples/projects-dependencies-graph.jpg"><img src="../../samples/projects-dependencies-graph-small.jpg" alt="dependencies graph"/><br/><center><i>click to enlarge</i></center></a>
+<a href="../samples/projects-dependencies-graph.jpg"><img src="../samples/projects-dependencies-graph-small.jpg" alt="dependencies graph"/><br/><center><i>click to enlarge</i></center></a>
 
 Modules in yellow are the modules described in this tutorial, and modules in blue are external dependencies (we will see how to generate this graph later in this tutorial).
 
@@ -55,10 +55,10 @@ As you can see, we have here a pretty interesting set of modules with dependenci
 <h1>The example files</h1>
 The sources for this tutorial can be found in src/example/multi-project in the ivy distribution. In this directory, you will find the following files:
 <ul>
-<li><a href="./misc/ivy/samples/multi-project/build.xml">build.xml</a></li>This is a root build file which can be used to call targets on all modules, in the order of their dependencies (ensuring that a module is always built before any module depending on it, for instance)
+<li><a href="../samples/multi-project/build.xml">build.xml</a></li>This is a root build file which can be used to call targets on all modules, in the order of their dependencies (ensuring that a module is always built before any module depending on it, for instance)
 <li>common
 <ul>
-<li><a href="./misc/ivy/samples/multi-project/common.xml">common.xml</a></li> the common build file imported by all build.xml files for each project. This build defines the targets which can be used in all projects.
+<li><a href="../samples/multi-project/common.xml">common.xml</a></li> the common build file imported by all build.xml files for each project. This build defines the targets which can be used in all projects.
 <li>build.properties</li>some properties common to all projects
 </ul>
 </li>
@@ -124,7 +124,7 @@ So, here are some aspects of this common build file:
 </target>
 </code>
 
-This declaration configures ivy only by setting two properties: the location for the local repository and the location for the shared repository. It's the only settings done here, since ivy 1.3 is configured by default to work in a team environment (see <a href="../../tutorial/defaultconf.html">default settings tutorial</a> for details about this). For sure in a real environment the shared repository location would rather be in a team shared directory (or in a more complex repository, again see the default settings tutorial to see how to use something really different).
+This declaration configures ivy only by setting two properties: the location for the local repository and the location for the shared repository. It's the only settings done here, since ivy 1.3 is configured by default to work in a team environment (see [[tutorial/defaultconf default settings tutorial]] for details about this). For sure in a real environment the shared repository location would rather be in a team shared directory (or in a more complex repository, again see the default settings tutorial to see how to use something really different).
 There is only in comments how the settings would have been done if the default settings wasn't ok for our purpose.
 
 <h2>resolve dependencies</h2>

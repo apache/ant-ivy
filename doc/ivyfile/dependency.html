@@ -25,7 +25,7 @@
 </head>
 <body>
 	<textarea id="xooki-source">
-<b>Tag:</b> dependency <b>Parent:</b> <a href="../ivyfile/dependencies.html">dependencies</a>
+<b>Tag:</b> dependency <b>Parent:</b> <a href="dependencies.html">dependencies</a>
 
 Declares a dependency for this module. A dependency is described by the module on which the current module depends (identified by its name, organisation and revision), and a mapping of configurations.
 
@@ -94,8 +94,7 @@ Example:
 Let's foo be a module with two configurations, A and B, B extending A.
 Then a dependency declaring conf A-># will get A dep conf in its confs A (when resolving A, ivy will find interpret the # symbol as A) and B dep conf in its conf B (when resolving B, ivy will interpret the # symbol as B, even if this dependency is only required because of the A dependency).
 
-See <a href="./node/514">this thread</a> on the forum for a more detailed motivation behind this keyword.
-If you don't understand really how this works, do not use :-)
+If you don't understand really how this works, do not use it :-)
 
 <span class="since">since 1.4</span> '%' can be used as left side operand to mean 'all the other configurations'. This can be usefull when you only have a specific mapping for some configurations and a default mapping for all the others.
 
@@ -122,7 +121,7 @@ Finally, the dependency element also supports an a force attribute (since 0.8), 
 to conflicts manager to force the revision of a dependency to the one given here.<br/>
 See <a href="../ivyfile/conflicts.html">conflicts manager</a> for details. <br/><br/>
 
-<span class="since">since 1.4</span> this tag supports <a href="../concept#extra.html">extra attributes</a>
+<span class="since">since 1.4</span> this tag supports <a href="../concept.html#extra">extra attributes</a>
 <h1>Attributes</h1>
 <table class="ivy-attributes">
 <thead>

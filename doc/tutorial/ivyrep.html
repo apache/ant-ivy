@@ -66,13 +66,13 @@ resolve:
 no configuration file found, using default...
 :: resolving dependencies :: jayasoft/ivyrep-example-working@xmen
         confs: [default]
-downloading http://www.ibiblio.org/maven/commons-cli/jars/commons-cli-1.0.jar(1.0) ...
+downloading http://www.ibiblio.org/maven/commons-cli/jars/commons-cli-1.0.jar (1.0) ...
 ...... (31kB)
         [SUCCESSFUL ] apache/commons-cli-1.0/commons-cli.jar[jar] (1437ms)
-downloading http://www.ibiblio.org/maven/commons-lang/jars/commons-lang-2.0.jar(2.0) ...
+downloading http://www.ibiblio.org/maven/commons-lang/jars/commons-lang-2.0.jar (2.0) ...
 ..................................... (165kB)
         [SUCCESSFUL ] apache/commons-lang-2.0/commons-lang.jar[jar] (5640ms)
-downloading http://www.ibiblio.org/maven/commons-logging/jars/commons-logging-1.0.jar(1.0) ...
+downloading http://www.ibiblio.org/maven/commons-logging/jars/commons-logging-1.0.jar (1.0) ...
 ..... (21kB)
         [SUCCESSFUL ] apache/commons-logging-1.0/commons-logging.jar[jar] (1250ms)
 :: resolution report ::
@@ -97,7 +97,7 @@ run:
 BUILD SUCCESSFUL
 Total time: 16 seconds</pre></div>
 <h1>What happened ?</h1>
-Without any settings, other than it's default settings, ivy uses the ivyrep resolver. This resolver looks for ivy files on <a href="../../ivyrep.html">ivyrep</a>, and for artifacts on ibiblio. That's what happened here. 
+Without any settings, other than it's default settings, ivy uses the ivyrep resolver. This resolver looks for ivy files on <a href="http://ivyrep.jayasoft.org/">ivyrep</a>, and for artifacts on ibiblio. That's what happened here. 
 
 The resolve task has found an <a href="http://ivyrep.jayasoft.org/apache/commons-cli/ivy-1.0.xml">ivy file on ivyrep for commons-cli 1.0</a>.
 This ivy file indicates that commons-cli 1.0 depends on commons-lang 1.0 and commons-logging 1.0.

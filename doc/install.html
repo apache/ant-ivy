@@ -27,7 +27,7 @@
 	<textarea id="xooki-source">
 There are basically two way to install Ivy. Either manually or automatically.
 <h1>Manually</h1>
-Download the version you want <a href="../download.html">here</a>, unpack the downloaded zip file wherever you want, and copy the ivy jar file in your ant lib directory (ANT_HOME/lib).
+Download the version you want [[download here]], unpack the downloaded zip file wherever you want, and copy the ivy jar file in your ant lib directory (ANT_HOME/lib).
 
 If you use ant 1.6.0 or superior, you can then simply go to the src/example/hello-ivy dir and run ant: if the build is successful, you have successfully installed Ivy !
 
@@ -43,13 +43,13 @@ If you use ant 1.5.1 or superior, you have to modify the build files in the exam
 - replace ivy:xxx tasks by ivy-xxx
 You can now run the build, if it is successful, you have successfully installed Ivy !
 
-If the build is not successful, check the <a href="../faq.html">FAQ</a> to see what can be the problem with the ivyrep resolver.
+If the build is not successful, check the [[faq FAQ]] to see what can be the problem with the ivyrep resolver.
 
 <h2>Ivy dependendencies</h2>
 
 The latest binary version of Ivy, 2.0.0-alpha-1, doesn't include the optional dependencies. To download them using Ivy, all you need is to have Ant installed and follow these instructions:
 1. open a shell or command line in the directory where you unzipped your binary distribution, where you can find the ivy-2.0.0-alpha-1-incubating.jar
-2. copy <a href="../samples/build-install.xml">this build</a> script to the directory
+2. copy <a href="samples/build-install.xml">this build</a> script to the directory
 3. run the following command:
 <code>
 ant -f build-install.xml

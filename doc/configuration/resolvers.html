@@ -50,7 +50,7 @@ Note that this works only if the resolver has been already defined, and not if i
 <h1>Built-in Resolvers</h1>
 Ivy comes with a set of built-in dependency resolvers able to answer to the most common needs. 
 
-If you don't find the one you want here, you can also check if some one has not contributed it in the <a href="../../links.html">links page</a>, or even <a href="../extend.html">write your own</a>.
+If you don't find the one you want here, you can also check if some one has not contributed it in the [[links links page]], or even <a href="../extend.html">write your own</a>.
 
 There are basically two types of resolver in Ivy: composite and standard resolvers. A composite resolver is a resolver which delegates the work to other resolvers. The other resolvers are standard resolvers.
 
@@ -100,7 +100,7 @@ All resolvers of the same type share some common attributes detailed here:
         <td>Yes</td>
         <td>Yes</td>
     </tr>
-    <tr><td>changingMatcher</td><td>The name of the <a href="../concept#matcher.html">pattern matcher</a> to use to match a revision against the configured changingPattern. <span class="since">since 1.4</span></td>
+    <tr><td>changingMatcher</td><td>The name of the <a href="../concept.html#matcher">pattern matcher</a> to use to match a revision against the configured changingPattern. <span class="since">since 1.4</span></td>
         <td>No, defaults to exactOrRegexp</td>
         <td>Yes</td>
         <td>Yes</td>
@@ -125,7 +125,7 @@ All resolvers of the same type share some common attributes detailed here:
         <td>No (except dual)</td>
         <td>Yes</td>
     </tr>
-    <tr><td>checksums</td><td>a comma separated list of <a href="../concept#checksum.html">checksum algorithms</a> to use both for publication and checking <span class="since">since 1.4</span></td>
+    <tr><td>checksums</td><td>a comma separated list of <a href="../concept.html#checksum">checksum algorithms</a> to use both for publication and checking <span class="since">since 1.4</span></td>
         <td>No, defaults to ${ivy.checksums}</td>
         <td>No</td>
         <td>Yes</td>

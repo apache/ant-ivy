@@ -27,12 +27,12 @@
 	<textarea id="xooki-source">
 We will study here two cases, corresponding to the two basics targets found in the previous build.xml project file.
 
-<h1>Basic : ivysettings.xml file used</h1>
+<h1>Basic: ivysettings.xml file used</h1>
 The ivy settings file that we will use is very simple here. It defines two resolvers, libraries and local-repository. The first one is used to retrieve the files that we want, the second is used to copy them. The second one will become our own repository.
 <ul>
-<li>ivyrep : nothing special on it, ivy files will be looked for on ivyrep and artifacts will be downloaded from 
+<li>ivyrep: nothing special on it, ivy files will be looked for on ivyrep and artifacts will be downloaded from 
 ibilio</li>
-<li>local-repository :  will store the found files</li>
+<li>local-repository:  will store the found files</li>
 </ul>
 
 <div class="ivy-file">
@@ -159,7 +159,7 @@ Total time: 14 minutes 57 seconds
 Z:\ivy-repository></pre>
 </div>
 
-We can see here that <a href="/ivy">ivy</a> has resolved hibernate 2.1.8 and 24 depending modules. If we look at the ivy file for <a href="http://ivyrep.jayasoft.org/hibernate/hibernate/ivy-2.1.8.xml">hibernate 2.1.8</a>, we can see that it defines 17 dependencies. The 7 others that ivy retrieved, were transitive ones used in direct dependent modules of hibernate.
+We can see here that Ivy has resolved hibernate 2.1.8 and 24 depending modules. If we look at the ivy file for <a href="http://ivyrep.jayasoft.org/hibernate/hibernate/ivy-2.1.8.xml">hibernate 2.1.8</a>, we can see that it defines 17 dependencies. The 7 others that ivy retrieved, were transitive ones used in direct dependent modules of hibernate.
 
 We can notice that we have retrieve 3 different revisions of apache commons-logging (1.0.2, 1.0.3, 1.0.4) and 2 revisions of commons-collections (1.2, 1.2.1). This is due to the fact that we use the "no conflict" <a href="../../configuration/conflict-managers.html">conflic manager</a> in the ivysettings file.
 We do not want to evict any modules because we are building our own repository !

@@ -28,7 +28,7 @@
 
 The settings declaration is used to configure ivy with an xml settings file.
 
-See <a href="../doc/configuration.html">Settings Files</a> for details about the settings file itself.
+See [[configuration Settings Files]] for details about the settings file itself.<br/><br/>
 
 Multiple settings can be defined in a build script.  Every task can reference its own settings.
 
@@ -71,7 +71,7 @@ A special attention should be applied when you have a multi-project build with <
 <h2>Examples</h2>
 <h3>Simplest settings</h3>
 <code><ivy:settings id="ivy.instance"/></code>
-Use either ${ivy.settings.file} if it exists, or the <a href="./misc/ivy/samples/ivysettings-default.xml">default settings file</a><br>
+Use either ${ivy.settings.file} if it exists, or the <a href="../samples/ivysettings-default.xml">default settings file</a><br>
 This simplest setting is implicit.
 <h3>Configure with a file</h3>
 <code><ivy:settings id="ivy.instance" file="mysettings.xml" /></code>

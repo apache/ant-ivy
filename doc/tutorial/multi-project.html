@@ -105,7 +105,7 @@ The second parameter, tells ivy to use a resolver called "libraries" as its defa
 <h2>the <b>resolvers</b> tag</h2>
 This tag defines the resolvers to use. Here we have two resolvers defined: "projects" and "libraries".
 The filesystem resolver called "projects" is able to resolve the internal dependencies wanted. 
-The ivyrep resolver called "libraries" is able to find dependencies on <a href="../../ivyrep.html">ivyrep</a>.
+The ivyrep resolver called "libraries" is able to find dependencies on <a href="http://ivyrep.jayasoft.org/">ivyrep</a>.
 <h2>the <b>modules</b> tag</h2>
 The modules tag allows to configure which resolver should be use for which module. Here the settings only tells to use the "projects" resolver for all modules having for organisation "jayasoft" and any module name (.* regexp matches any module name).
 For other modules (i.e. all modules not from jayasoft), since there is no special settings, the default resolver will be used: "libraries".
@@ -131,7 +131,7 @@ configure:
 resolve:
 :: resolving dependencies :: jayasoft/standalone-working@xmen
         confs: [default]
-downloading http://www.ibiblio.org/maven/commons-lang/jars/commons-lang-2.0.jar(2.0) ...
+downloading http://www.ibiblio.org/maven/commons-lang/jars/commons-lang-2.0.jar (2.0) ...
 .................................... (165kB)
         [SUCCESSFUL ] apache/commons-lang-2.0/commons-lang.jar[jar] (6672ms)
 :: resolution report ::
@@ -190,7 +190,7 @@ resolve:
 :: resolving dependencies :: jayasoft/depending-working@xmen
         confs: [default]
         [1] jayasoft/standalone
-downloading file:/I:/config/repository/standalone-1.jar(1) ...
+downloading file:/I:/config/repository/standalone-1.jar (1) ...
 . (1kB)
         [SUCCESSFUL ] jayasoft/standalone-1/standalone.jar[jar] (15ms)
 :: resolution report ::
@@ -302,7 +302,7 @@ resolve:
 :: resolving dependencies :: jayasoft/depending-working@xmen
         confs: [default]
         [2] jayasoft/standalone
-downloading file:/I:/config/repository/standalone-2.jar(2) ...
+downloading file:/I:/config/repository/standalone-2.jar (2) ...
 . (1kB)
         [SUCCESSFUL ] jayasoft/standalone-2/standalone.jar[jar] (0ms)
 :: resolution report ::

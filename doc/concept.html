@@ -66,7 +66,7 @@ where <i>variablename</i> is the name of the variable.
 
 Finally, it's also important to be aware of the time of substitution of variables. This substitution is done as soon as possible. This means that when ivy encounter a reference to a variable, it tries to substitute it if such a variable is defined. Consequently, <strong>any later modification of the variable will not alter the value already substituted</strong>.
 
-Moreover, in an ant environment, a bunch of variables are going to be set by default via the ant property file loading mechanism (in fact they are first loaded as ant properties and then imported as ivy variables, see <a href="use.html"></a>), and even in the ant properties themselves there is going to be eager substitution on loading, effectively making it impossible to override some variable purely via the ivysettings.properties file. Some variables will really only be able to be overriden via ant properties because of this.
+Moreover, in an ant environment, a bunch of variables are going to be set by default via the ant property file loading mechanism (actually they are first loaded as ant properties and then imported as ivy variables, see [[ant]]), and even in the ant properties themselves there is going to be eager substitution on loading, effectively making it impossible to override some variable purely via the ivysettings.properties file. Some variables will really only be able to be overriden via ant properties because of this.
 
 Moreover, it's also important to understand the difference between ivy variables and ivy pattern tokens. 
 See Patterns chapter below to see what pattern tokens are.

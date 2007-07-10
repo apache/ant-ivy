@@ -29,7 +29,15 @@ The main and most frequent way to use ivy is from an ant build file. However, iv
 
 If you use ant version <b>1.6.0</b> or superior, you just have to add ivy namespace to your project (<code>xmlns:ivy="antlib:org.apache.ivy.ant"</code> attribute of your project tag), and you can call ivy tasks.
 
-If you want to make your build handle ivy.jar in either ant lib dir or a local lib dir, you can follow <a href="http://www.jayasoft.org/node/233.html">this tip</a> given by colin sampaleanu.
+If you want to make your build handle ivy.jar in either ant lib dir or a local lib dir, you can use a taskdef like this:
+<code>
+<path id="ivy.lib.path">
+    <fileset dir="path/to/dir/with/ivy/jar" includes="*.jar"/>
+</path>
+<taskdef resource="org/apache/ivy/ant/antlib.xml"
+         uri="antlib:org.apache.ivy.ant" classpathref="ivy.lib.path"/>
+</code>
+Combined with the antlib definition in the project namespace, it will load Ivy classes either from your ant lib or a local directory (path/to/dir/with/ivy/jar in this example).
 
 If you use ant <b>1.5.1</b> or superior, you have to define the tasks you use in your build file. For instance:
 <code>
@@ -92,7 +100,7 @@ ivy.buildlist.ivyfilepath = ivy.xml
 
 ivy.checksums=sha1,md5
 </code>
-<em>For the latest version of these properties, you can check the [[svn:src/java/org/apache/ivy/ivy.properties svn version]].</em>
+<em>For the latest version of these properties, you can check the [[svn:src/java/org/apache/ivy/core/settings/ivy.properties svn version]].</em>
 
 <h1>Ivy tasks attributes : generalities</h1>
 Some tasks attributes values may be given through different places. The three possible places are :
@@ -108,7 +116,7 @@ The ivy instance considered here is an instance of the class Ivy, which is setup
 It isn't generally necessary to understand this, but it can lead to some issues if you forget to call configure before another task and if the configure step was required in your environment.
 
 <h1>Usual cycle of main tasks</h1>
-<center><img src="../images/main-tasks.png" /></center>
+<center><img src="images/main-tasks.png" /></center>
 <h1>Example</h1>
 Here is a more complete example of build file using ivy:
 
