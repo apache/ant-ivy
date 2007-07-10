@@ -32,14 +32,26 @@ import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
 
 /**
- * This class is using the scp client to transfer data and information for the repository. It is
- * based on the SCPClient from the ganymed ssh library from Christian Plattner. To minimize the
- * dependency to the ssh library and because I needed some additional functionality, I decided to
- * copy'n'paste the single class rather than to inherit or delegate it somehow. Nevertheless credit
- * should go to the original author.
+ * This class is using the scp client to transfer data and information for the repository. 
+ * <p>
+ * It is based on the SCPClient from the ganymed ssh library from Christian Plattner,
+ * released under a BSD style license. 
+ * <p>
+ * To minimize the dependency to the ssh library and because we needed some additional 
+ * functionality, we decided to copy'n'paste the single class rather than to inherit or 
+ * delegate it somehow. 
+ * <p>
+ * Nevertheless credit should go to the original author.
  */
-
 public class Scp {
+    private static final int BUFFER_SIZE = 64 * 1024;
+
+    /*
+     * Maximum length authorized for scp lines. 
+     * This is a random limit - if your path names are longer, then adjust it.
+     */
+    private static final int MAX_SCP_LINE_LENGTH = 8192;
+    
     private Session session;
 
     public class FileInfo {
@@ -129,11 +141,8 @@ public class Scp {
         StringBuffer sb = new StringBuffer(30);
 
         while (true) {
-            /*
-             * This is a random limit - if your path names are longer, then adjust it
-             */
 
-            if (sb.length() > 8192) {
+            if (sb.length() > MAX_SCP_LINE_LENGTH) {
                 throw new RemoteScpException("Remote scp sent a too long line");
             }
 
@@ -285,7 +294,7 @@ public class Scp {
 
     private void sendFile(Channel channel, String localFile, String remoteName, String mode)
             throws IOException, RemoteScpException {
-        byte[] buffer = new byte[64 * 1024];
+        byte[] buffer = new byte[BUFFER_SIZE];
 
         OutputStream os = new BufferedOutputStream(channel.getOutputStream(), 40000);
         InputStream is = new BufferedInputStream(channel.getInputStream(), 512);
@@ -367,7 +376,7 @@ public class Scp {
      */
     private FileInfo receiveStream(Channel channel, String file, OutputStream targetStream)
             throws IOException, RemoteScpException {
-        byte[] buffer = new byte[64 * 1024];
+        byte[] buffer = new byte[BUFFER_SIZE];
 
         OutputStream os = channel.getOutputStream();
         InputStream is = channel.getInputStream();
