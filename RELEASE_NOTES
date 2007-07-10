@@ -1,4 +1,4 @@
-	               Apache Ivy v2.0.0-alpha1-incubating
+	               Apache Ivy v2.0.0-alpha2-incubating
                                Release Notes
    -----------------------------------------------------------------------
 
@@ -32,12 +32,10 @@ It is characterized by the following:
 
 2. Status of this release 
 
-This release of Apache Ivy is the first release within the Apache Incubator,
-and is labelled and should be considered as an alpha version.
-
-This means that we do not guarantee any stability, that API and features are still 
-likely to change until final 2.0.0 version, and thus we do not encourage the use 
-of this version, except for very early testing.
+This is the second release of Ivy in the Apache incubator, and as an
+alpha version we do not guarantee any stability. API and features
+are still likely to change until final 2.0.0 version. Still we encourage
+the use of this version for early testing.
 
 The current production quality version is still 1.4.1, which has not been produced 
 within the Apache Software Foundation.
@@ -77,7 +75,16 @@ defaultCache, ...).
 Previous names have been deprecated, so previous settings files can still be used, but 
 you will see a deprecation warning.
 
-3.3. public resolver in default settings is now ibiblio in m2 compatible mode
+3.3. Review of settings loading
+
+This new Ivy version experience with a new way of loading the settings. The configure task
+is deprecated, and replaced by a settings datatype. By using the settings datatype, you can
+easily use several settings inside one Ant build script, and use a scope to tell Ivy which
+settings to use when calling a task which requires some settings.
+
+This is still an experiment though, so feedback is very welcome in the mailing lists.
+
+3.4. Public resolver in default settings is now ibiblio in m2 compatible mode
 
 In previous versions Ivy used to use the ivyrep resolver as default public resolver, 
 but ivyrep is no longer maintained, while maven 2 repository on ibiblio is growing rapidly.
@@ -86,8 +93,18 @@ Since Ivy is compatible with maven 2 repository, defaulting to the ibiblio maven
 repository makes more sense.
 
 If you have any issue of backward compatibility with these new settings, you can simply 
-set the following ant property before calling configure (implicitly or explicitly):
+set the following ant property before loading the settings (implicitly or explicitly):
 ivy.14.compatible=true
+
+3.5. Relative paths resolution
+
+Relative paths resolution in Ivy used to be resolved against the current directory. 
+Some work is in progress in this area, currently relative path resolution for the inclusion
+of configuration files in Ivy files has been modified to work relative to the Ivy file in which
+the configurations are included.
+
+This may break your dependency resolution if you used to use relative paths for configuration
+file inclusion.
 
 4. Migrating from Jayasoft Ivy to Apache Ivy
 
@@ -100,6 +117,8 @@ strongly suggest to update your configuration files:
 - rename the files called ivyconf*.xml in ivysettings*.xml
 - rename 'ivyconf' element in 'ivysettings'
 - rename 'conf' element of those settings file in 'settings'
+
+We also suggest using the new org.apache.ivy.ant package name for the antlib declaration.
 
 Migrating custom plugins can be done by using the org.apache.ivy.Ivy14 class
 instead of fr.jayasoft.ivy.Ivy, and reorganizing your imports to reflect the 
@@ -126,15 +145,18 @@ long, but Ivy couldn't be what it is without you!
  Committers
 	Maarten Coene
 	Xavier Hanin
+	Gilles Scokart
 
  Contributors
-	Stephane Baillez
-	Pierre Hägnestrand
-	Matt Inger
-	Costin Leau
-	William Lyvers
-	Gilles Scokart
+ 	Stephane Bailliez
+	Mikkel Bjerg
+	Jeffrey Blattman
+	Archie Cobbs
+	Scott Goldstein
+	Jan Materne
+	Tjeerd Verhagen
 	John Williams
+	Jaroslaw Wypychowski
 
 8. List of Changes in this Release
 
@@ -143,49 +165,51 @@ For a full release history of Ivy see the file CHANGES.txt
 For details about the following changes, check our JIRA install at 
 http://issues.apache.org/jira/browse/ivy
 
-- TASK: refactor Ivy source code to improve readibility (IVY-434)
+List of changes since Ivy 2.0.0-alpha-1-incubating:
+- NEW: Add cleancache task (IVY-565)
+- NEW: A checkstyle report is generated (IVY-483) (thanks to Jan Materne)
+- NEW: Hide private or specific conf when publishing (IVY-77)
 
-- NEW: define artifacts not declared by the dependency module descriptor (IVY-419)
-- NEW: Module wide exclude (IVY-431)
-- NEW: The default public resolver used is now ibiblio with m2 compatible mode (IVY-463)
+- IMPROVEMENT: File buffer increased to 64KB (IVY-551)
+- IMPROVEMENT: Expose default cache location as an ant property (IVY-563)
+- IMPROVEMENT: Expose Ivy variables as Ant Properties (IVY-564)
+- IMPROVEMENT: Change default cache location (IVY-530)
+- IMPROVEMENT: Upgraded VFS dependency to 1.0 and removed dependency on VFS-sandbox (IVY-498)
+- IMPROVEMENT: Use maven2 repository to download dependencies
+- IMPROVEMENT: Allow "main" parameters to be passed directly (instead of using -args flag) (IVY-480) (thanks to Archie Cobbs)
+- IMPROVEMENT: Remove @author tags (thanks to Stephane Bailliez)
+- IMPROVEMENT: Remove use of deprecated elements in ivysettings.xml (IVY-505) (with contribution from Jan Materne)
+- IMPROVEMENT: Buildlist onlydirectdep attribute (IVY-473 and IVY-504) (with contribution from Mikkel Bjerg)
+- IMPROVEMENT: Code / XML Polished (IVY-554) (with contribution from Tjeerd Verhagen)
+- IMPROVEMENT: Javadoc improvements (IVY-544) (with contribution from Tjeerd Verhagen)
+- IMPROVEMENT: Unit test improvements (IVY-545) (thanks to Tjeerd Verhagen)
+- IMPROVEMENT: Dependent jars missing in ivy binaries (IVY-481)
 
-- IMPROVE: OSGIfy ivy artifacts (IVY-464) (thanks to Costin Leau)
-- IMPROVE: Let user specify Ivy file when using a post-resolve task (IVY-455)
-- IMPROVE: IvyArtifactProperty and IvyArtifactReport tasks should be a post resolve task (IVY-452)
-- IMPROVE: Rename ivy configuration in settings to remove ambiguity on configuration meaning (IVY-438)
-- IMPROVE: Please typedef CacheResolver as "cache" for us (IVY-359)
-- IMPROVE: ivy:retrieve should be able to create symlinks (IVY-353) (thanks to John Williams)
-- IMPROVE: Ability to have multiple roots in the <ivy:buildfilelist> task (IVY-340) (thanks to Matt Inger)
-- IMPROVE: Refactoring / documentation / test of matcher package (IVY-375) (thanks to Stephane Baillez)
-- IMPROVE: Add a unit test to verify that latest.integration accepts released modules (IVY-394) (thanks to Gilles Scokart)
-- IMPROVE: New "modules in use" section in console report at the end of resolve (IVY-373) (thanks to John Wiliams)
-- IMPROVE: Generated XML reports now contains more information about the resolved module (IVY-446)
-
-- FIX: ivy-retrieve failure when explicit absolute 'ivy.dep.file' path specified (IVY-396)
-- FIX: IvyPostResolve Task doesn't reuse Ivy file of previous resolve (IVY-458)
-- FIX: Ivy standalone is passing null args to main method when invoking with no args (IVY-457)
-- FIX: Invalid error report with m2compatible resolver (IVY-456)
-- FIX: IvyPostResolve Task doesn't use specified cache for the resolve (IVY-453)
-- FIX: XmlModuleDescriptorWriterTest not working with Java 6 (IVY-374)
-- FIX: Conflict managers ignored, when assigned to modules in Ivy configuration (setting, ivyconf.xml) (IVY-448)
-- FIX: Ivy should fail if ';' has been used in publications/artifact/@conf of ivy.xml (IVY-441)
-- FIX: Ivy should fail where dependency uses undefined configuration (IVY-442)
-- FIX: Dynamic revision not calculated properly when using multiple directories (IVY-427)
-- FIX: LatestRevisionStrategy.sort() doesn't sort as specified (IVY-435)
-- FIX: setting m2compatible on ibiblio resolver overwrite root and pattern settings (IVY-437)
-- FIX: ivy.revision property not set correctly for second resolve (IVY-429)
-- FIX: NPE when no organisation or no name is provided in module element of ivyconf (IVY-422)
-- FIX: FileUtil#copy(File src, File dest, CopyProgressListener l, boolean overwrite) (IVY-420)
-- FIX: Invalid pom parsing when version is only declared in parent (IVY-436)
-- FIX: ${project.groupId} and ${project.version} not processed correctly in poms (IVY-425)
-- FIX: Incorrect pom parsing with profile (IVY-423)
-- FIX: Ivy doesn't recognize maven2 classifiers (IVY-418)
-- FIX: PomModuleDescriptorParser fails with nested profile dependency (IVY-392) (thanks to William Lyvers)
-- FIX: Static revision replacement is not working when delivering an artifact with a dependency having extra attributes (IVY-415)
-- FIX: Static revision replacement is not working when delivering an artifact with a dependency on a branch (IVY-404)
-- FIX: latest-time conflict manager not working properly (IVY-407)
-- FIX: LatestRevisionStrategy do not consider all dynamic revisions properly (IVY-383) (thanks to John Williams for the unit test)
-- FIX: IOException during publish causes NullPointerException (IVY-371)
-- FIX: Comments in ivy.xml duplicated (IVY-336) (thanks to Gilles Scokart)
-- FIX: Ivy failure when the ivy.xml file contains non US-ASCII characters (IVY-346) (thanks to Gilles Scokart)
-- FIX: Urlresolver is not possible to use dynamic revisions on nonstandard repository structure (IVY-350) (thanks to Pierre Hägnestrand)
+- FIX: Ant target "clean" on Ivy multi-project tutorial points to wrong cache directory. (IVY-548)
+- FIX: Variables not replaced during deliver (IVY-520) (thanks to John Williams)
+- FIX: XmlModuleDescriptorWriter does not produce matcher attribute on include and exclude rules (IVY-556)
+- FIX: pom.groupId is not recognized in maven 2 pom parser (IVY-550)
+- FIX: Evicted modules report depends on the order of the dependencies (IVY-526)
+- FIX: Ivy does not work on Turkish machines (IVY-65)
+- FIX: Ivy does not handle multiple version dependencies in maven2 poms correctly (IVY-494)
+- FIX: pom parser doesn't necessarily processes all important information (IVY-524)
+- FIX: <info> element of Ivy file in cache is not updated when using namespaces (IVY-516)
+- FIX: Retrieve Ant task ignores resolveId attribute (IVY-522) (thanks to Scott Goldstein)
+- FIX: The deprecated "keep" attribute on post resolve tasks causes an error (IVY-517)
+- FIX: Some circular dependencies not retrieved (IVY-400)
+- FIX: ${version} property not recognized in poms (IVY-512)
+- FIX: Bug on handling dependency artifacts when a module configuration is specified (IVY-507)
+- FIX: Configure fails when having httpclient in classpath without commons-logging (IVY-502)
+- FIX: packaging data not parsed in maven 2 pom (IVY-500) (thanks to Jeffrey Blattman)
+- FIX: install ant task: requires default resolver in ivy settings (IVY-477)
+- FIX: Ant project reference lost from context on multiple ant calls in single thread (IVY-497) (thanks to Jaroslaw Wypychowski)
+- FIX: EOL in the doc pages (IVY-470)
+- FIX: Cache is storing ArtifactOrigin properties with no guarantee of unicity and types telescope during resolve. (IVY-430) (thanks to Stephane Bailliez)
+- FIX: ivy:install ant task does not fail on error (IVY-475) (thanks to Jeffrey Blattman)
+- FIX: Credentials are shown in build log even if debug is not enabled (IVY-486)
+- FIX: Post-Resolve task shouldn't set the 'resolveid' (IVY-489)
+- FIX: build fails without emma code coverage JARs present (IVY-478)
+- FIX: buildlist broken - regression in 2.0.0-alpha1-incubating (IVY-493)
+- FIX: Circular dependency startegy in buildlist (IVY-509)
+- FIX: ivy should stop telling me off twice for ivyconf.xml files (IVY-513)
+- FIX: Allow relative path in ivy.xml files (IVY-347)

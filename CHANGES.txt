@@ -51,6 +51,9 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 
    version in SVN
 =====================================
+
+   2.0.0-alpha2-incubating
+=====================================
 - NEW: Add cleancache task (IVY-565)
 - NEW: A checkstyle report is generated (IVY-483) (thanks to Jan Materne)
 - NEW: Hide private or specific conf when publishing (IVY-77)
@@ -64,7 +67,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - IMPROVEMENT: Allow "main" parameters to be passed directly (instead of using -args flag) (IVY-480) (thanks to Archie Cobbs)
 - IMPROVEMENT: Remove @author tags (thanks to Stephane Bailliez)
 - IMPROVEMENT: Remove use of deprecated elements in ivysettings.xml (IVY-505) (with contribution from Jan Materne)
-- IMPROVEMENT: Buildlist onlydirectdep attribute (IVY-473 and IVY-504) (with contribution from Mikkel Bjerg )
+- IMPROVEMENT: Buildlist onlydirectdep attribute (IVY-473 and IVY-504) (with contribution from Mikkel Bjerg)
 - IMPROVEMENT: Code / XML Polished (IVY-554) (with contribution from Tjeerd Verhagen)
 - IMPROVEMENT: Javadoc improvements (IVY-544) (with contribution from Tjeerd Verhagen)
 - IMPROVEMENT: Unit test improvements (IVY-545) (thanks to Tjeerd Verhagen)
