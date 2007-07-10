@@ -1,4 +1,4 @@
-			Apache Ivy v2.0.0-alpha1-incubating
+			Apache Ivy v2.0.0-alpha2-incubating
 		   ------------------------------------
 
 Supported Platforms
@@ -6,12 +6,13 @@ Supported Platforms
 
 Apache Ivy requires Java level 1.4; it has been tested with Sun Java SDK v1.4.2
 
-Even if not mandatory, Apache Ivy is most of the times used with Apache Ant, for which version 1.6.0 or greater is required.
+Even if not mandatory, Apache Ivy is most of the times used with Apache Ant, 
+for which version 1.6.0 or greater is required.
 
 Installation
-----------------------
+-------------
 
-Please read doc/doc/install.html for installation instructions.
+Please read doc/install.html for installation instructions.
       
 
 Getting Started
