@@ -16,4 +16,10 @@ SSH and SFTP support is provided by the JCraft JSch package,
 which is open source software, available under
 the terms of a BSD style license.  
 The original software and related information is available
-at http://www.jcraft.com/jsch/. 
+at http://www.jcraft.com/jsch/.
+
+The documentation distributed with Ivy uses jQuery,
+which is open source software, available under 
+the terms of a MIT license.
+The original software and related information is available
+at http://jquery.com/
