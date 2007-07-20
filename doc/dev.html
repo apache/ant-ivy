@@ -193,7 +193,7 @@ svn copy https://svn.apache.org/repos/asf/incubator/ivy/core/branches/2.0.0-alph
 <h3>13. Upload to public repository</h3>
 If the release is approved, it's now time to make it public by uploading it to the public Apache distrib repository (i.e. /www/people.apache.org/dist/incubator/ivy/[version] on people.a.o).
 
-<h3>14. Update site</h3>
+<h3>14. Update the web site</h3>
 Add a link to the released version documentation in the web site. 
 
 To do so, you need to:
@@ -222,9 +222,11 @@ Then launch "ant init-imported-history" in the site directory, and check the doc
 
 Then you can update the release notes page of the imported documentation if necessary, to include the announcement for example.
 
+It's time to update the download image used on the home page and the download page. Use site/images/ivy-dl.xcf as a basis if you have <a href="http://www.gimp.org/">gimp</a> installed. Then you can update the home page to refer to this image, and add a news item announcing the new version. Update also the download page with the new image and update the links to the download location.
+
 You are now ready to commit your changes (make sure to commit changes in imported locations too), and update the online site:
 <code>
-ant publish-site
+ant clean publish-site
 </code>
 
 <h3>15. Announce</h3>
@@ -236,7 +238,9 @@ If you feel like anything is missing or misleading in this release doc, update i
 <h3>17. Merge your modifications back to the trunk if necessary.</h3>
 Modifications on the template files do not need to be merged, but if you had troubles during your release you may want to merge your fixes back to the trunk.
 <h3>18. Prepare next release</h3>
-Update the file version.properties with the version of the next release so that anyone building from the trunk will obtain jar with the correct version number.</textarea>
+Update the file version.properties with the version of the next release so that anyone building from the trunk will obtain jar with the correct version number.
+
+Release the version in <a href="https://issues.apache.org/jira/browse/IVY">jira</a>, and create a new unreleased version for the next planned version.</textarea>
 <script type="text/javascript">xooki.postProcess();</script>
 </body>
 </html>
