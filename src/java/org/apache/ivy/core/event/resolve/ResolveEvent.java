@@ -23,12 +23,9 @@ import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 public class ResolveEvent extends IvyEvent {
     private ModuleDescriptor md;
 
-    private String[] confs;
-
     protected ResolveEvent(String name, ModuleDescriptor md, String[] confs) {
         super(name);
         this.md = md;
-        this.confs = confs;
         addMDAttributes(md);
         addConfsAttribute(confs);
     }
