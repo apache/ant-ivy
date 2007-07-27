@@ -34,6 +34,7 @@ import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.report.ArtifactDownloadReport;
 import org.apache.ivy.core.report.ConfigurationResolveReport;
 import org.apache.ivy.core.report.ResolveReport;
+import org.apache.ivy.core.resolve.ResolveOptions;
 import org.apache.ivy.plugins.report.XmlReportParser;
 import org.apache.ivy.util.Message;
 import org.apache.tools.ant.BuildException;
@@ -85,8 +86,12 @@ public abstract class IvyCacheTask extends IvyPostResolveTask {
 
             XmlReportParser parser = new XmlReportParser();
             CacheManager cacheMgr = getIvyInstance().getCacheManager(getCache());
+            String resolvedId = getResolveId();
+            if (resolvedId==null) {
+                resolvedId = ResolveOptions.getDefaultResolveId(getResolvedModuleId());
+            }
             for (int i = 0; i < confs.length; i++) {
-                File reportFile = cacheMgr.getConfigurationResolveReportInCache(getResolveId(),
+                File reportFile = cacheMgr.getConfigurationResolveReportInCache(resolvedId,
                     confs[i]);
                 parser.parse(reportFile);
 

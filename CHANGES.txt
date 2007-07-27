@@ -51,6 +51,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 
    version in SVN
 =====================================
+- FIX: cachepath based on a resolve done in a previous build broken (IVY-583)
 
    2.0.0-alpha2-incubating
 =====================================
