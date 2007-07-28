@@ -36,18 +36,19 @@ public class SshResolver extends AbstractSshBasedResolver {
      *            file separator to use on the target system
      */
     public void setFileSeparator(String sep) {
-        if (sep == null || sep.length() != 1)
+        if (sep == null || sep.length() != 1) {
             throw new IllegalArgumentException(
                     "File Separator has to be a single character and not " + sep);
+        }
         ((SshRepository) getRepository()).setFileSeparator(sep.trim().charAt(0));
     }
 
     /**
      * set the command to get a directory listing the command has to be a shell command working on
      * the target system and has to produce a listing of filenames, with each filename on a new line
-     * the term %arg can be used in the command to substitue the path to be listed (e.g. "ls -1 %arg |
-     * grep -v CVS" to get a listing without CVS directory) if %arg is not part of the command, the
-     * path will be appended to the command default is: "ls -1"
+     * the term %arg can be used in the command to substitue the path to be listed 
+     * (e.g. "ls -1 %arg | grep -v CVS" to get a listing without CVS directory) if %arg is not
+     * part of the command, the path will be appended to the command default is: "ls -1"
      */
     public void setListCommand(String cmd) {
         ((SshRepository) getRepository()).setListCommand(cmd);
@@ -55,10 +56,10 @@ public class SshResolver extends AbstractSshBasedResolver {
 
     /**
      * set the command to check for existence of a file the command has to be a shell command
-     * working on the target system and has to create an exit status of 0 for an existent file and <>
-     * 0 for a non existing file given as argument the term %arg can be used in the command to
-     * substitue the path to be listed if %arg is not part of the command, the path will be appended
-     * to the command default is: "ls"
+     * working on the target system and has to create an exit status of 0 for an existent file 
+     * and <> 0 for a non existing file given as argument the term %arg can be used in the command
+     * to substitue the path to be listed if %arg is not part of the command, the path will be 
+     * appended to the command default is: "ls"
      */
     public void setExistCommand(String cmd) {
         ((SshRepository) getRepository()).setExistCommand(cmd);

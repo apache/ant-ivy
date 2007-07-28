@@ -42,8 +42,6 @@ import org.apache.ivy.plugins.resolver.util.ResolvedResource;
 import org.apache.ivy.util.Message;
 
 public class CacheResolver extends FileSystemResolver {
-    private File _configured = null;
-
     public CacheResolver() {
     }
 
@@ -161,7 +159,7 @@ public class CacheResolver extends FileSystemResolver {
     }
 
     private void ensureConfigured(IvySettings settings, File cache) {
-        if (settings == null || cache == null || (_configured != null && _configured.equals(cache))) {
+        if (settings == null || cache == null) {
             return;
         }
         setIvyPatterns(Collections.singletonList(cache.getAbsolutePath() + "/"

@@ -45,30 +45,30 @@ import org.apache.ivy.util.Message;
  */
 public class ChainResolver extends AbstractResolver {
     public static class ResolvedModuleRevisionArtifactInfo implements ArtifactInfo {
-        private ResolvedModuleRevision _rmr;
+        private ResolvedModuleRevision rmr;
 
         public ResolvedModuleRevisionArtifactInfo(ResolvedModuleRevision rmr) {
-            _rmr = rmr;
+            this.rmr = rmr;
         }
 
         public String getRevision() {
-            return _rmr.getId().getRevision();
+            return rmr.getId().getRevision();
         }
 
         public long getLastModified() {
-            return _rmr.getPublicationDate().getTime();
+            return rmr.getPublicationDate().getTime();
         }
 
     }
 
-    private boolean _returnFirst = false;
+    private boolean returnFirst = false;
 
-    private List _chain = new ArrayList();
+    private List chain = new ArrayList();
 
-    private boolean _dual;
+    private boolean dual;
 
     public void add(DependencyResolver resolver) {
-        _chain.add(resolver);
+        chain.add(resolver);
     }
 
     public ResolvedModuleRevision getDependency(DependencyDescriptor dd, ResolveData data)
@@ -78,7 +78,7 @@ public class ChainResolver extends AbstractResolver {
 
         List errors = new ArrayList();
 
-        for (Iterator iter = _chain.iterator(); iter.hasNext();) {
+        for (Iterator iter = chain.iterator(); iter.hasNext();) {
             DependencyResolver resolver = (DependencyResolver) iter.next();
             LatestStrategy oldLatest = setLatestIfRequired(resolver, getLatestStrategy());
             ResolvedModuleRevision mr = null;
@@ -95,7 +95,7 @@ public class ChainResolver extends AbstractResolver {
             }
             checkInterrupted();
             if (mr != null) {
-                boolean shouldReturn = _returnFirst;
+                boolean shouldReturn = returnFirst;
                 shouldReturn |= !getSettings().getVersionMatcher().isDynamic(
                     dd.getDependencyRevisionId())
                         && ret != null && !ret.getDescriptor().isDefault();
@@ -187,14 +187,14 @@ public class ChainResolver extends AbstractResolver {
     }
 
     public void reportFailure() {
-        for (Iterator iter = _chain.iterator(); iter.hasNext();) {
+        for (Iterator iter = chain.iterator(); iter.hasNext();) {
             DependencyResolver resolver = (DependencyResolver) iter.next();
             resolver.reportFailure();
         }
     }
 
     public void reportFailure(Artifact art) {
-        for (Iterator iter = _chain.iterator(); iter.hasNext();) {
+        for (Iterator iter = chain.iterator(); iter.hasNext();) {
             DependencyResolver resolver = (DependencyResolver) iter.next();
             resolver.reportFailure(art);
         }
@@ -203,7 +203,7 @@ public class ChainResolver extends AbstractResolver {
     public DownloadReport download(Artifact[] artifacts, DownloadOptions options) {
         List artifactsToDownload = new ArrayList(Arrays.asList(artifacts));
         DownloadReport report = new DownloadReport();
-        for (Iterator iter = _chain.iterator(); iter.hasNext() && !artifactsToDownload.isEmpty();) {
+        for (Iterator iter = chain.iterator(); iter.hasNext() && !artifactsToDownload.isEmpty();) {
             DependencyResolver resolver = (DependencyResolver) iter.next();
             DownloadReport r = resolver.download((Artifact[]) artifactsToDownload
                     .toArray(new Artifact[artifactsToDownload.size()]), options);
@@ -225,36 +225,36 @@ public class ChainResolver extends AbstractResolver {
     }
 
     public List getResolvers() {
-        return _chain;
+        return chain;
     }
 
     public void publish(Artifact artifact, File src, boolean overwrite) throws IOException {
-        if (_chain.isEmpty()) {
+        if (chain.isEmpty()) {
             throw new IllegalStateException("invalid chain resolver with no sub resolver");
         }
-        ((DependencyResolver) _chain.get(0)).publish(artifact, src, overwrite);
+        ((DependencyResolver) chain.get(0)).publish(artifact, src, overwrite);
     }
 
     public boolean isReturnFirst() {
-        return _returnFirst;
+        return returnFirst;
     }
 
     public void setReturnFirst(boolean returnFirst) {
-        _returnFirst = returnFirst;
+        this.returnFirst = returnFirst;
     }
 
     public void dumpSettings() {
-        Message.verbose("\t" + getName() + " [chain] " + _chain);
+        Message.verbose("\t" + getName() + " [chain] " + chain);
         Message.debug("\t\treturn first: " + isReturnFirst());
         Message.debug("\t\tdual: " + isDual());
-        for (Iterator iter = _chain.iterator(); iter.hasNext();) {
+        for (Iterator iter = chain.iterator(); iter.hasNext();) {
             DependencyResolver r = (DependencyResolver) iter.next();
             Message.debug("\t\t-> " + r.getName());
         }
     }
 
     public boolean exists(Artifact artifact) {
-        for (Iterator iter = _chain.iterator(); iter.hasNext();) {
+        for (Iterator iter = chain.iterator(); iter.hasNext();) {
             DependencyResolver resolver = (DependencyResolver) iter.next();
             if (resolver.exists(artifact)) {
                 return true;
@@ -287,11 +287,11 @@ public class ChainResolver extends AbstractResolver {
     }
 
     public void setDual(boolean b) {
-        _dual = b;
+        dual = b;
     }
 
     public boolean isDual() {
-        return _dual;
+        return dual;
     }
 
 }

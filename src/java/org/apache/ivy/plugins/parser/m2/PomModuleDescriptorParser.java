@@ -296,7 +296,8 @@ public final class PomModuleDescriptorParser extends AbstractModuleDescriptorPar
 
         private void processTextContent() {
             if (buffer != null) {
-                String txt = IvyPatternHelper.substituteVariables(buffer.toString(), properties).trim();
+                String txt = IvyPatternHelper.substituteVariables(buffer.toString(), 
+                        properties).trim();
                 buffer = null;
                 
                 if (txt.length() == 0) {

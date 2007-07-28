@@ -58,35 +58,35 @@ public class IvyRepResolver extends URLResolver {
 
     public static final String DEFAULT_IVYROOT = "http://ivyrep.jayasoft.org/";
 
-    private String _ivyroot = null;
+    private String ivyroot = null;
 
-    private String _ivypattern = null;
+    private String ivypattern = null;
 
-    private String _artroot = null;
+    private String artroot = null;
 
-    private String _artpattern = null;
+    private String artpattern = null;
 
     public IvyRepResolver() {
     }
 
     private void ensureArtifactConfigured(IvySettings settings) {
-        if (settings != null && (_artroot == null || _artpattern == null)) {
-            if (_artroot == null) {
+        if (settings != null && (artroot == null || artpattern == null)) {
+            if (artroot == null) {
                 String root = settings.getVariable("ivy.ivyrep.default.artifact.root");
                 if (root != null) {
-                    _artroot = root;
+                    artroot = root;
                 } else {
                     settings.configureRepositories(true);
-                    _artroot = settings.getVariable("ivy.ivyrep.default.artifact.root");
+                    artroot = settings.getVariable("ivy.ivyrep.default.artifact.root");
                 }
             }
-            if (_artpattern == null) {
+            if (artpattern == null) {
                 String pattern = settings.getVariable("ivy.ivyrep.default.artifact.pattern");
                 if (pattern != null) {
-                    _artpattern = pattern;
+                    artpattern = pattern;
                 } else {
                     settings.configureRepositories(false);
-                    _artpattern = settings.getVariable("ivy.ivyrep.default.artifact.pattern");
+                    artpattern = settings.getVariable("ivy.ivyrep.default.artifact.pattern");
                 }
             }
             updateWholeArtPattern();
@@ -94,23 +94,23 @@ public class IvyRepResolver extends URLResolver {
     }
 
     private void ensureIvyConfigured(IvySettings settings) {
-        if (settings != null && (_ivyroot == null || _ivypattern == null)) {
-            if (_ivyroot == null) {
+        if (settings != null && (ivyroot == null || ivypattern == null)) {
+            if (ivyroot == null) {
                 String root = settings.getVariable("ivy.ivyrep.default.ivy.root");
                 if (root != null) {
-                    _ivyroot = root;
+                    ivyroot = root;
                 } else {
                     settings.configureRepositories(true);
-                    _ivyroot = settings.getVariable("ivy.ivyrep.default.ivy.root");
+                    ivyroot = settings.getVariable("ivy.ivyrep.default.ivy.root");
                 }
             }
-            if (_ivypattern == null) {
+            if (ivypattern == null) {
                 String pattern = settings.getVariable("ivy.ivyrep.default.ivy.pattern");
                 if (pattern != null) {
-                    _ivypattern = pattern;
+                    ivypattern = pattern;
                 } else {
                     settings.configureRepositories(false);
-                    _ivypattern = settings.getVariable("ivy.ivyrep.default.ivy.pattern");
+                    ivypattern = settings.getVariable("ivy.ivyrep.default.ivy.pattern");
                 }
             }
             updateWholeIvyPattern();
@@ -118,31 +118,31 @@ public class IvyRepResolver extends URLResolver {
     }
 
     private String getWholeIvyPattern() {
-        if (_ivyroot == null || _ivypattern == null) {
+        if (ivyroot == null || ivypattern == null) {
             return null;
         }
-        return _ivyroot + _ivypattern;
+        return ivyroot + ivypattern;
     }
 
     private String getWholeArtPattern() {
-        return _artroot + _artpattern;
+        return artroot + artpattern;
     }
 
     public String getIvypattern() {
-        return _ivypattern;
+        return ivypattern;
     }
 
     public void setIvypattern(String pattern) {
         if (pattern == null) {
             throw new NullPointerException("pattern must not be null");
         }
-        _ivypattern = pattern;
+        ivypattern = pattern;
         ensureIvyConfigured(getSettings());
         updateWholeIvyPattern();
     }
 
     public String getIvyroot() {
-        return _ivyroot;
+        return ivyroot;
     }
 
     /**
@@ -159,9 +159,9 @@ public class IvyRepResolver extends URLResolver {
             throw new NullPointerException("root must not be null");
         }
         if (!root.endsWith("/")) {
-            _ivyroot = root + "/";
+            ivyroot = root + "/";
         } else {
-            _ivyroot = root;
+            ivyroot = root;
         }
         ensureIvyConfigured(getSettings());
         updateWholeIvyPattern();
@@ -169,8 +169,9 @@ public class IvyRepResolver extends URLResolver {
 
     public void setM2compatible(boolean m2compatible) {
         if (m2compatible) {
-            throw new IllegalArgumentException(
-                    "ivyrep does not support maven2 compatibility. Please use ibiblio resolver instead, or even url or filesystem resolvers for more specific needs.");
+            throw new IllegalArgumentException("ivyrep does not support maven2 compatibility. " 
+                + "Please use ibiblio resolver instead, or even url or filesystem resolvers for" 
+                + " more specific needs.");
         }
     }
 
@@ -187,18 +188,18 @@ public class IvyRepResolver extends URLResolver {
     }
 
     public String getArtroot() {
-        return _artroot;
+        return artroot;
     }
 
     public String getArtpattern() {
-        return _artpattern;
+        return artpattern;
     }
 
     public void setArtpattern(String pattern) {
         if (pattern == null) {
             throw new NullPointerException("pattern must not be null");
         }
-        _artpattern = pattern;
+        artpattern = pattern;
         ensureArtifactConfigured(getSettings());
         updateWholeArtPattern();
     }
@@ -208,9 +209,9 @@ public class IvyRepResolver extends URLResolver {
             throw new NullPointerException("root must not be null");
         }
         if (!root.endsWith("/")) {
-            _artroot = root + "/";
+            artroot = root + "/";
         } else {
-            _artroot = root;
+            artroot = root;
         }
         ensureArtifactConfigured(getSettings());
         updateWholeArtPattern();
@@ -219,7 +220,7 @@ public class IvyRepResolver extends URLResolver {
     public OrganisationEntry[] listOrganisations() {
         ensureIvyConfigured(getSettings());
         try {
-            URL content = new URL(_ivyroot + "content.xml");
+            URL content = new URL(ivyroot + "content.xml");
             final List ret = new ArrayList();
             XMLHelper.parse(content, null, new DefaultHandler() {
                 public void startElement(String uri, String localName, String qName,
@@ -234,6 +235,7 @@ public class IvyRepResolver extends URLResolver {
             });
             return (OrganisationEntry[]) ret.toArray(new OrganisationEntry[ret.size()]);
         } catch (MalformedURLException e) {
+            //???
         } catch (Exception e) {
             Message.warn("unable to parse content.xml file on ivyrep: " + e.getMessage());
         }

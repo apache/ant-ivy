@@ -61,10 +61,16 @@ import org.xml.sax.helpers.DefaultHandler;
  * Used to update ivy files. Uses ivy file as source and not ModuleDescriptor to preserve as much as
  * possible the original syntax
  */
-public class XmlModuleDescriptorUpdater {
+public final class XmlModuleDescriptorUpdater {
     private static final int MAX_HEADER_LENGTH = 10000;
+    //CheckStyle:StaticVariableName| OFF    
+    //LINE_SEPARATOR is actually a constant, but we have to modify it for the tests
     public static String LINE_SEPARATOR = System.getProperty("line.separator");
-
+    //CheckStyle:StaticVariableName| ON
+    
+    private XmlModuleDescriptorUpdater() {
+    }
+    
     /**
      * used to copy a module descriptor xml file (also known as ivy file) and update the revisions
      * of its dependencies, its status and revision
@@ -211,266 +217,55 @@ public class XmlModuleDescriptorUpdater {
         // never print *ln* cause \n is found in copied characters stream
         // nor do we need do handle indentation, original one is maintained except for attributes
 
-        private String _organisation = null;
+        private String organisation = null;
 
-        private String _defaultConfMapping = null; // defaultConfMapping of imported
-
-        // configurations, if any
-
-        private Boolean _confMappingOverride = null; // confMappingOverride of imported
+        private String defaultConfMapping = null; // defaultConfMapping of imported
 
         // configurations, if any
 
-        private String _justOpen = null; // used to know if the last open tag was empty, to
+        private Boolean confMappingOverride = null; // confMappingOverride of imported
+
+        // configurations, if any
+
+        private String justOpen = null; // used to know if the last open tag was empty, to
 
         // adjust termination with /> instead of ></qName>
 
-        private Stack _context = new Stack();
+        private Stack context = new Stack();
 
-        private Stack _buffers = new Stack();
+        private Stack buffers = new Stack();
 
-        private Stack _confAttributeBuffers = new Stack();
+        private Stack confAttributeBuffers = new Stack();
 
         public void startElement(String uri, String localName, String qName, Attributes attributes)
                 throws SAXException {
             inHeader = false;
-            if (_justOpen != null) {
+            if (justOpen != null) {
                 write(">");
             }
-            _context.push(qName);
+            context.push(qName);
             if ("info".equals(qName)) {
-                _organisation = substitute(settings, attributes.getValue("organisation"));
-                String module = substitute(settings, attributes.getValue("module"));
-                String rev = revision;
-                if (rev == null) {
-                    rev = substitute(settings, attributes.getValue("revision"));
-                }
-                ModuleRevisionId localMid = ModuleRevisionId.newInstance(_organisation, module, null,
-                    rev, ExtendableItemHelper.getExtraAttributes(attributes,
-                        new String[] {"organisation", "module", "revision", "status", "publication", "namespace"}));
-                ModuleRevisionId systemMid = ns == null ? localMid : ns.getToSystemTransformer()
-                        .transform(localMid);
-
-                write("<info organisation=\"" + systemMid.getOrganisation() + "\" module=\""
-                        + systemMid.getName() + "\"");
-                if (systemMid.getRevision() != null) {
-                    write(" revision=\"" + systemMid.getRevision() + "\"");
-                }
-                if (status != null) {
-                    write(" status=\"" + status + "\"");
-                } else {
-                    write(" status=\"" + substitute(settings, attributes.getValue("status")) + "\"");
-                }
-                if (pubdate != null) {
-                    write(" publication=\"" + Ivy.DATE_FORMAT.format(pubdate) + "\"");
-                } else if (attributes.getValue("publication") != null) {
-                    write(" publication=\""
-                            + substitute(settings, attributes.getValue("publication")) + "\"");
-                }
-                Collection stdAtts = Arrays.asList(new String[] {"organisation", "module",
-                        "revision", "status", "publication", "namespace"});
-                if (attributes.getValue("namespace") != null) {
-                    write(" namespace=\"" + substitute(settings, attributes.getValue("namespace"))
-                            + "\"");
-                }
-                for (int i = 0; i < attributes.getLength(); i++) {
-                    if (!stdAtts.contains(attributes.getQName(i))) {
-                        write(" " + attributes.getQName(i) + "=\""
-                                + substitute(settings, attributes.getValue(i)) + "\"");
-                    }
-                }
+                infoStarted(attributes);
             } else if (replaceInclude && "include".equals(qName)
-                    && _context.contains("configurations")) {
+                    && context.contains("configurations")) {
                 //TODO, in the case of !replaceInclude, we should still replace the relative path
                 //by an absolute path. 
-                final ExtendedBuffer buffer = new ExtendedBuffer(getContext());
-                _buffers.push(buffer);
-                try {
-                    URL url;
-                    if (settings != null) {
-                        url = settings.getRelativeUrlResolver().getURL(relativePathCtx,
-                            settings.substitute(attributes.getValue("file")),
-                            settings.substitute(attributes.getValue("url")));
-                    } else {
-                        //TODO : settings can be null, but I don't why.  
-                        //Check if the next code is correct in that case
-                        String fileName = attributes.getValue("file");
-                        if (fileName == null) {
-                            String urlStr = attributes.getValue("url");
-                            url = new URL(urlStr);
-                        } else {
-                            url = new File(fileName).toURL();
-                        }
-                    }
-                    XMLHelper.parse(url, null, new DefaultHandler() {
-                        boolean _insideConfigurations = false;
-
-                        boolean _doIndent = false;
-
-                        public void startElement(String uri, String localName, String qName,
-                                Attributes attributes) throws SAXException {
-                            if ("configurations".equals(qName)) {
-                                _insideConfigurations = true;
-                                String defaultconf = substitute(settings, attributes
-                                        .getValue("defaultconfmapping"));
-                                if (defaultconf != null) {
-                                    _defaultConfMapping = defaultconf;
-                                }
-                                String mappingOverride = substitute(settings, attributes
-                                        .getValue("confmappingoverride"));
-                                if (mappingOverride != null) {
-                                    _confMappingOverride = Boolean.valueOf(mappingOverride);
-                                }
-                            } else if ("conf".equals(qName) && _insideConfigurations) {
-                                String confName = substitute(settings, attributes.getValue("name"));
-                                if (!confs.contains(confName)) {
-                                    buffer.setPrint(true);
-                                    if (_doIndent) {
-                                        write("/>\n\t\t");
-                                    }
-                                    String extend = substitute(settings, attributes.getValue("extends"));
-                                    if (extend != null) {
-                                        for (StringTokenizer tok = new StringTokenizer(extend, ", "); tok
-                                                .hasMoreTokens();) {
-                                            String current = tok.nextToken();
-                                            if (confs.contains(current)) {
-                                                throw new IllegalArgumentException(
-                                                        "Cannot exclude a configuration which is extended.");
-                                            }
-                                        }
-
-                                    }
-
-                                    write("<" + qName);
-                                    for (int i = 0; i < attributes.getLength(); i++) {
-                                        write(" " + attributes.getQName(i) + "=\""
-                                                + substitute(settings, attributes.getValue(i))
-                                                + "\"");
-                                    }
-                                    _doIndent = true;
-                                }
-                            }
-                        }
-
-                        public void endElement(String uri, String localName, String name)
-                                throws SAXException {
-                            if ("configurations".equals(name)) {
-                                _insideConfigurations = false;
-                            }
-                        }
-                    });
-                } catch (Exception e) {
-                    Message.warn("exception occured while importing configurations: "
-                            + e.getMessage());
-                    throw new SAXException(e);
-                }
+                includeStarted(attributes);
             } else if ("ivy-module/dependencies/dependency".equals(getContext())) {
-                ExtendedBuffer buffer = new ExtendedBuffer(getContext());
-                _buffers.push(buffer);
-                _confAttributeBuffers.push(buffer);
-                buffer.setDefaultPrint(attributes.getValue("conf") == null);
-                write("<dependency");
-                String org = substitute(settings, attributes.getValue("org"));
-                org = org == null ? _organisation : org;
-                String module = substitute(settings, attributes.getValue("name"));
-                String branch = substitute(settings, attributes.getValue("branch"));
-                String revision = substitute(settings, attributes.getValue("rev"));
-                ModuleRevisionId localMid = ModuleRevisionId.newInstance(org, module, branch,
-                    revision, ExtendableItemHelper.getExtraAttributes(attributes,
-                        XmlModuleDescriptorParser.DEPENDENCY_REGULAR_ATTRIBUTES));
-                ModuleRevisionId systemMid = ns == null ? localMid : ns.getToSystemTransformer()
-                        .transform(localMid);
-
-                for (int i = 0; i < attributes.getLength(); i++) {
-                    String attName = attributes.getQName(i);
-                    if ("rev".equals(attName)) {
-                        String rev = (String) resolvedRevisions.get(systemMid);
-                        if (rev != null) {
-                            write(" rev=\"" + rev + "\"");
-                        } else {
-                            write(" rev=\"" + systemMid.getRevision() + "\"");
-                        }
-                    } else if ("org".equals(attName)) {
-                        write(" org=\"" + systemMid.getOrganisation() + "\"");
-                    } else if ("name".equals(attName)) {
-                        write(" name=\"" + systemMid.getName() + "\"");
-                    } else if ("branch".equals(attName)) {
-                        write(" branch=\"" + systemMid.getBranch() + "\"");
-                    } else if ("conf".equals(attName)) {
-                        String oldMapping = substitute(settings, attributes.getValue("conf"));
-                        if (oldMapping.length() > 0) {
-                            String newMapping = removeConfigurationsFromMapping(oldMapping, confs);
-                            if (newMapping.length() > 0) {
-                                write(" conf=\"" + newMapping + "\"");
-                                ((ExtendedBuffer) _buffers.peek()).setPrint(true);
-                            }
-                        }
-                    } else {
-                        write(" " + attName + "=\""
-                                + substitute(settings, attributes.getValue(attName)) + "\"");
-                    }
-                }
+                startElementInDependency(attributes);
             } else if ("dependencies".equals(qName)) {
-                // copy
-                write("<" + qName);
-                for (int i = 0; i < attributes.getLength(); i++) {
-                    String attName = attributes.getQName(i);
-                    if ("defaultconfmapping".equals(attName)) {
-                        String newMapping = removeConfigurationsFromMapping(substitute(settings,
-                            attributes.getValue("defaultconfmapping")), confs);
-                        if (newMapping.length() > 0) {
-                            write(" " + attributes.getQName(i) + "=\"" + newMapping + "\"");
-                        }
-                    } else {
-                        write(" " + attributes.getQName(i) + "=\""
-                                + substitute(settings, attributes.getValue(i)) + "\"");
-                    }
-                }
-                // add default conf mapping if needed
-                if (_defaultConfMapping != null
-                        && attributes.getValue("defaultconfmapping") == null) {
-                    String newMapping = removeConfigurationsFromMapping(_defaultConfMapping, confs);
-                    if (newMapping.length() > 0) {
-                        write(" defaultconfmapping=\"" + newMapping + "\"");
-                    }
-                }
-                // add confmappingoverride if needed
-                if (_confMappingOverride != null
-                        && attributes.getValue("confmappingoverride") == null) {
-                    write(" confmappingoverride=\"" + _confMappingOverride.toString() + "\"");
-                }
+                startDependencies(attributes);
             } else if ("ivy-module/configurations/conf".equals(getContext())) {
-                _buffers.push(new ExtendedBuffer(getContext()));
-                String confName = substitute(settings, attributes.getValue("name"));
-                if (!confs.contains(confName)) {
-                    ((ExtendedBuffer) _buffers.peek()).setPrint(true);
-                    String extend = substitute(settings, attributes.getValue("extends"));
-                    if (extend != null) {
-                        for (StringTokenizer tok = new StringTokenizer(extend, ", "); tok
-                                .hasMoreTokens();) {
-                            String current = tok.nextToken();
-                            if (confs.contains(current)) {
-                                throw new IllegalArgumentException(
-                                        "Cannot exclude a configuration which is extended.");
-                            }
-                        }
-                    }
-
-                    write("<" + qName);
-                    for (int i = 0; i < attributes.getLength(); i++) {
-                        write(" " + attributes.getQName(i) + "=\""
-                                + substitute(settings, attributes.getValue(i)) + "\"");
-                    }
-                }
+                startElementInConfigurationsConf(qName, attributes);
             } else if ("ivy-module/publications/artifact/conf".equals(getContext())
                     || "ivy-module/dependencies/dependency/conf".equals(getContext())
                     || "ivy-module/dependencies/dependency/artifact/conf".equals(getContext())) {
-                _buffers.push(new ExtendedBuffer(getContext()));
-                ((ExtendedBuffer) _confAttributeBuffers.peek()).setDefaultPrint(false);
+                buffers.push(new ExtendedBuffer(getContext()));
+                ((ExtendedBuffer) confAttributeBuffers.peek()).setDefaultPrint(false);
                 String confName = substitute(settings, attributes.getValue("name"));
                 if (!confs.contains(confName)) {
-                    ((ExtendedBuffer) _confAttributeBuffers.peek()).setPrint(true);
-                    ((ExtendedBuffer) _buffers.peek()).setPrint(true);
+                    ((ExtendedBuffer) confAttributeBuffers.peek()).setPrint(true);
+                    ((ExtendedBuffer) buffers.peek()).setPrint(true);
                     write("<" + qName);
                     for (int i = 0; i < attributes.getLength(); i++) {
                         write(" " + attributes.getQName(i) + "=\""
@@ -480,8 +275,8 @@ public class XmlModuleDescriptorUpdater {
             } else if ("ivy-module/publications/artifact".equals(getContext())
                     || "ivy-module/dependencies/dependency/artifact".equals(getContext())) {
                 ExtendedBuffer buffer = new ExtendedBuffer(getContext());
-                _buffers.push(buffer);
-                _confAttributeBuffers.push(buffer);
+                buffers.push(buffer);
+                confAttributeBuffers.push(buffer);
                 write("<" + qName);
                 buffer.setDefaultPrint(attributes.getValue("conf") == null);
                 for (int i = 0; i < attributes.getLength(); i++) {
@@ -491,7 +286,7 @@ public class XmlModuleDescriptorUpdater {
                         String newConf = removeConfigurationsFromList(confName, confs);
                         if (newConf.length() > 0) {
                             write(" " + attributes.getQName(i) + "=\"" + newConf + "\"");
-                            ((ExtendedBuffer) _buffers.peek()).setPrint(true);
+                            ((ExtendedBuffer) buffers.peek()).setPrint(true);
                         }
                     } else {
                         write(" " + attributes.getQName(i) + "=\""
@@ -506,22 +301,255 @@ public class XmlModuleDescriptorUpdater {
                             + substitute(settings, attributes.getValue(i)) + "\"");
                 }
             }
-            _justOpen = qName;
+            justOpen = qName;
             // indent.append("\t");
         }
 
+        private void startElementInConfigurationsConf(String qName, Attributes attributes) {
+            buffers.push(new ExtendedBuffer(getContext()));
+            String confName = substitute(settings, attributes.getValue("name"));
+            if (!confs.contains(confName)) {
+                ((ExtendedBuffer) buffers.peek()).setPrint(true);
+                String extend = substitute(settings, attributes.getValue("extends"));
+                if (extend != null) {
+                    for (StringTokenizer tok = new StringTokenizer(extend, ", "); tok
+                            .hasMoreTokens();) {
+                        String current = tok.nextToken();
+                        if (confs.contains(current)) {
+                            throw new IllegalArgumentException(
+                                    "Cannot exclude a configuration which is extended.");
+                        }
+                    }
+                }
+
+                write("<" + qName);
+                for (int i = 0; i < attributes.getLength(); i++) {
+                    write(" " + attributes.getQName(i) + "=\""
+                            + substitute(settings, attributes.getValue(i)) + "\"");
+                }
+            }
+        }
+
+        private void startDependencies(Attributes attributes) {
+            // copy
+            write("<dependencies");
+            for (int i = 0; i < attributes.getLength(); i++) {
+                String attName = attributes.getQName(i);
+                if ("defaultconfmapping".equals(attName)) {
+                    String newMapping = removeConfigurationsFromMapping(substitute(settings,
+                        attributes.getValue("defaultconfmapping")), confs);
+                    if (newMapping.length() > 0) {
+                        write(" " + attributes.getQName(i) + "=\"" + newMapping + "\"");
+                    }
+                } else {
+                    write(" " + attributes.getQName(i) + "=\""
+                            + substitute(settings, attributes.getValue(i)) + "\"");
+                }
+            }
+            // add default conf mapping if needed
+            if (defaultConfMapping != null
+                    && attributes.getValue("defaultconfmapping") == null) {
+                String newMapping = removeConfigurationsFromMapping(defaultConfMapping, confs);
+                if (newMapping.length() > 0) {
+                    write(" defaultconfmapping=\"" + newMapping + "\"");
+                }
+            }
+            // add confmappingoverride if needed
+            if (confMappingOverride != null
+                    && attributes.getValue("confmappingoverride") == null) {
+                write(" confmappingoverride=\"" + confMappingOverride.toString() + "\"");
+            }
+        }
+
+        private void startElementInDependency(Attributes attributes) {
+            ExtendedBuffer buffer = new ExtendedBuffer(getContext());
+            buffers.push(buffer);
+            confAttributeBuffers.push(buffer);
+            buffer.setDefaultPrint(attributes.getValue("conf") == null);
+            write("<dependency");
+            String org = substitute(settings, attributes.getValue("org"));
+            org = org == null ? organisation : org;
+            String module = substitute(settings, attributes.getValue("name"));
+            String branch = substitute(settings, attributes.getValue("branch"));
+            String revision = substitute(settings, attributes.getValue("rev"));
+            ModuleRevisionId localMid = ModuleRevisionId.newInstance(org, module, branch,
+                revision, ExtendableItemHelper.getExtraAttributes(attributes,
+                    XmlModuleDescriptorParser.DEPENDENCY_REGULAR_ATTRIBUTES));
+            ModuleRevisionId systemMid = ns == null ? localMid : ns.getToSystemTransformer()
+                    .transform(localMid);
+
+            for (int i = 0; i < attributes.getLength(); i++) {
+                String attName = attributes.getQName(i);
+                if ("rev".equals(attName)) {
+                    String rev = (String) resolvedRevisions.get(systemMid);
+                    if (rev != null) {
+                        write(" rev=\"" + rev + "\"");
+                    } else {
+                        write(" rev=\"" + systemMid.getRevision() + "\"");
+                    }
+                } else if ("org".equals(attName)) {
+                    write(" org=\"" + systemMid.getOrganisation() + "\"");
+                } else if ("name".equals(attName)) {
+                    write(" name=\"" + systemMid.getName() + "\"");
+                } else if ("branch".equals(attName)) {
+                    write(" branch=\"" + systemMid.getBranch() + "\"");
+                } else if ("conf".equals(attName)) {
+                    String oldMapping = substitute(settings, attributes.getValue("conf"));
+                    if (oldMapping.length() > 0) {
+                        String newMapping = removeConfigurationsFromMapping(oldMapping, confs);
+                        if (newMapping.length() > 0) {
+                            write(" conf=\"" + newMapping + "\"");
+                            ((ExtendedBuffer) buffers.peek()).setPrint(true);
+                        }
+                    }
+                } else {
+                    write(" " + attName + "=\""
+                            + substitute(settings, attributes.getValue(attName)) + "\"");
+                }
+            }
+        }
+
+        private void includeStarted(Attributes attributes) throws SAXException {
+            final ExtendedBuffer buffer = new ExtendedBuffer(getContext());
+            buffers.push(buffer);
+            try {
+                URL url;
+                if (settings != null) {
+                    url = settings.getRelativeUrlResolver().getURL(relativePathCtx,
+                        settings.substitute(attributes.getValue("file")),
+                        settings.substitute(attributes.getValue("url")));
+                } else {
+                    //TODO : settings can be null, but I don't why.  
+                    //Check if the next code is correct in that case
+                    String fileName = attributes.getValue("file");
+                    if (fileName == null) {
+                        String urlStr = attributes.getValue("url");
+                        url = new URL(urlStr);
+                    } else {
+                        url = new File(fileName).toURL();
+                    }
+                }
+                XMLHelper.parse(url, null, new DefaultHandler() {
+                    private boolean insideConfigurations = false;
+
+                    private boolean doIndent = false;
+
+                    public void startElement(String uri, String localName, String qName,
+                            Attributes attributes) throws SAXException {
+                        if ("configurations".equals(qName)) {
+                            insideConfigurations = true;
+                            String defaultconf = substitute(settings, attributes
+                                    .getValue("defaultconfmapping"));
+                            if (defaultconf != null) {
+                                defaultConfMapping = defaultconf;
+                            }
+                            String mappingOverride = substitute(settings, attributes
+                                    .getValue("confmappingoverride"));
+                            if (mappingOverride != null) {
+                                confMappingOverride = Boolean.valueOf(mappingOverride);
+                            }
+                        } else if ("conf".equals(qName) && insideConfigurations) {
+                            String confName = substitute(settings, attributes.getValue("name"));
+                            if (!confs.contains(confName)) {
+                                buffer.setPrint(true);
+                                if (doIndent) {
+                                    write("/>\n\t\t");
+                                }
+                                String extend = substitute(settings, 
+                                    attributes.getValue("extends"));
+                                if (extend != null) {
+                                    for (StringTokenizer tok = new StringTokenizer(extend, ", "); 
+                                            tok.hasMoreTokens();) {
+                                        String current = tok.nextToken();
+                                        if (confs.contains(current)) {
+                                            throw new IllegalArgumentException("Cannot exclude a " 
+                                                    + "configuration which is extended.");
+                                        }
+                                    }
+
+                                }
+
+                                write("<" + qName);
+                                for (int i = 0; i < attributes.getLength(); i++) {
+                                    write(" " + attributes.getQName(i) + "=\""
+                                            + substitute(settings, attributes.getValue(i))
+                                            + "\"");
+                                }
+                                doIndent = true;
+                            }
+                        }
+                    }
+
+                    public void endElement(String uri, String localName, String name)
+                            throws SAXException {
+                        if ("configurations".equals(name)) {
+                            insideConfigurations = false;
+                        }
+                    }
+                });
+            } catch (Exception e) {
+                Message.warn("exception occured while importing configurations: "
+                        + e.getMessage());
+                throw new SAXException(e);
+            }
+        }
+
+        private void infoStarted(Attributes attributes) {
+            organisation = substitute(settings, attributes.getValue("organisation"));
+            String module = substitute(settings, attributes.getValue("module"));
+            String rev = revision;
+            if (rev == null) {
+                rev = substitute(settings, attributes.getValue("revision"));
+            }
+            ModuleRevisionId localMid = ModuleRevisionId.newInstance(organisation, module, null,
+                rev, ExtendableItemHelper.getExtraAttributes(attributes,
+                    new String[] {"organisation", "module", "revision", "status", "publication",
+                        "namespace"}));
+            ModuleRevisionId systemMid = ns == null ? localMid : ns.getToSystemTransformer()
+                    .transform(localMid);
+
+            write("<info organisation=\"" + systemMid.getOrganisation() + "\" module=\""
+                    + systemMid.getName() + "\"");
+            if (systemMid.getRevision() != null) {
+                write(" revision=\"" + systemMid.getRevision() + "\"");
+            }
+            if (status != null) {
+                write(" status=\"" + status + "\"");
+            } else {
+                write(" status=\"" + substitute(settings, attributes.getValue("status")) + "\"");
+            }
+            if (pubdate != null) {
+                write(" publication=\"" + Ivy.DATE_FORMAT.format(pubdate) + "\"");
+            } else if (attributes.getValue("publication") != null) {
+                write(" publication=\""
+                        + substitute(settings, attributes.getValue("publication")) + "\"");
+            }
+            Collection stdAtts = Arrays.asList(new String[] {"organisation", "module",
+                    "revision", "status", "publication", "namespace"});
+            if (attributes.getValue("namespace") != null) {
+                write(" namespace=\"" + substitute(settings, attributes.getValue("namespace"))
+                        + "\"");
+            }
+            for (int i = 0; i < attributes.getLength(); i++) {
+                if (!stdAtts.contains(attributes.getQName(i))) {
+                    write(" " + attributes.getQName(i) + "=\""
+                            + substitute(settings, attributes.getValue(i)) + "\"");
+                }
+            }
+        }
+
         private void write(String content) {
-            if (_buffers.isEmpty()) {
+            if (buffers.isEmpty()) {
                 out.print(content);
             } else {
-                ExtendedBuffer buffer = (ExtendedBuffer) _buffers.peek();
+                ExtendedBuffer buffer = (ExtendedBuffer) buffers.peek();
                 buffer.getBuffer().append(content);
             }
         }
 
         private String getContext() {
             StringBuffer buf = new StringBuffer();
-            for (Iterator iter = _context.iterator(); iter.hasNext();) {
+            for (Iterator iter = context.iterator(); iter.hasNext();) {
                 String ctx = (String) iter.next();
                 buf.append(ctx).append("/");
             }
@@ -586,39 +614,39 @@ public class XmlModuleDescriptorUpdater {
         }
 
         public void characters(char[] ch, int start, int length) throws SAXException {
-            if (_justOpen != null) {
+            if (justOpen != null) {
                 write(">");
-                _justOpen = null;
+                justOpen = null;
             }
             write(String.valueOf(ch, start, length));
         }
 
         public void endElement(String uri, String localName, String qName) throws SAXException {
-            if (qName.equals(_justOpen)) {
+            if (qName.equals(justOpen)) {
                 write("/>");
             } else {
                 write("</" + qName + ">");
             }
 
-            if (!_buffers.isEmpty()) {
-                ExtendedBuffer buffer = (ExtendedBuffer) _buffers.peek();
+            if (!buffers.isEmpty()) {
+                ExtendedBuffer buffer = (ExtendedBuffer) buffers.peek();
                 if (buffer.getContext().equals(getContext())) {
-                    _buffers.pop();
+                    buffers.pop();
                     if (buffer.isPrint()) {
                         write(buffer.getBuffer().toString());
                     }
                 }
             }
 
-            if (!_confAttributeBuffers.isEmpty()) {
-                ExtendedBuffer buffer = (ExtendedBuffer) _confAttributeBuffers.peek();
+            if (!confAttributeBuffers.isEmpty()) {
+                ExtendedBuffer buffer = (ExtendedBuffer) confAttributeBuffers.peek();
                 if (buffer.getContext().equals(getContext())) {
-                    _confAttributeBuffers.pop();
+                    confAttributeBuffers.pop();
                 }
             }
 
-            _justOpen = null;
-            _context.pop();
+            justOpen = null;
+            context.pop();
         }
 
         public void endDocument() throws SAXException {
@@ -724,39 +752,39 @@ public class XmlModuleDescriptorUpdater {
     }
 
     private static class ExtendedBuffer {
-        private String _context = null;
+        private String context = null;
 
-        private Boolean _print = null;
+        private Boolean print = null;
 
-        private boolean _defaultPrint = false;
+        private boolean defaultPrint = false;
 
-        private StringBuffer _buffer = new StringBuffer();
+        private StringBuffer buffer = new StringBuffer();
 
         ExtendedBuffer(String context) {
-            this._context = context;
+            this.context = context;
         }
 
         boolean isPrint() {
-            if (_print == null) {
-                return _defaultPrint;
+            if (print == null) {
+                return defaultPrint;
             }
-            return _print.booleanValue();
+            return print.booleanValue();
         }
 
         void setPrint(boolean print) {
-            this._print = Boolean.valueOf(print);
+            this.print = Boolean.valueOf(print);
         }
 
         void setDefaultPrint(boolean print) {
-            this._defaultPrint = print;
+            this.defaultPrint = print;
         }
 
         StringBuffer getBuffer() {
-            return _buffer;
+            return buffer;
         }
 
         String getContext() {
-            return _context;
+            return context;
         }
     }
 }

@@ -47,15 +47,15 @@ import com.jcraft.jsch.ChannelSftp.LsEntry;
  */
 public class SFTPRepository extends AbstractSshBasedRepository {
     private final class MyProgressMonitor implements SftpProgressMonitor {
-        private long _totalLength;
+        private long totalLength;
 
         public void init(int op, String src, String dest, long max) {
-            _totalLength = max;
+            totalLength = max;
             fireTransferStarted(max);
         }
 
         public void end() {
-            fireTransferCompleted(_totalLength);
+            fireTransferCompleted(totalLength);
         }
 
         public boolean count(long count) {
@@ -133,8 +133,9 @@ public class SFTPRepository extends AbstractSshBasedRepository {
         fireTransferInitiated(getResource(destination), TransferEvent.REQUEST_PUT);
         ChannelSftp c = getSftpChannel(destination);
         try {
-            if (!overwrite && checkExistence(destination, c))
+            if (!overwrite && checkExistence(destination, c)) {
                 throw new IOException("destination file exists and overwrite == true");
+            }
             if (destination.indexOf('/') != -1) {
                 mkdirs(destination.substring(0, destination.lastIndexOf('/')), c);
             }

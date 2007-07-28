@@ -23,7 +23,12 @@ import java.util.Locale;
  * Convenient class used only for uncapitalization Usually use commons lang but here we do not want
  * to have such a dependency for only one feature
  */
-public class StringUtils {
+public final class StringUtils {
+    
+    private StringUtils() {
+        //Utility class
+    }
+    
     public static String uncapitalize(String string) {
         if (string == null || string.length() == 0) {
             return string;
@@ -59,7 +64,7 @@ public class StringUtils {
 
     // basic string codec (same algo as CVS passfile, inspired by ant CVSPass class
     /** Array contain char conversion data */
-    private final static char[] SHIFTS = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16,
+    private static final char[] SHIFTS = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16,
             17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 114, 120, 53, 79, 96, 109,
             72, 108, 70, 64, 76, 67, 116, 74, 68, 87, 111, 52, 75, 119, 49, 34, 82, 81, 95, 65,
             112, 86, 118, 110, 122, 105, 41, 57, 83, 43, 46, 102, 40, 89, 38, 103, 45, 50, 42, 123,
@@ -84,7 +89,7 @@ public class StringUtils {
      *            the string to encrypt
      * @return the encrypted version of the string
      */
-    public final static String encrypt(String str) {
+    public static final String encrypt(String str) {
         if (str == null) {
             return null;
         }
@@ -108,7 +113,7 @@ public class StringUtils {
      *            the encrypted string to decrypt
      * @return  The decrypted string.
      */
-    public final static String decrypt(String str) {
+    public static final String decrypt(String str) {
         if (str == null) {
             return null;
         }

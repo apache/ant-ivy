@@ -52,37 +52,37 @@ public class VsftpRepository extends AbstractRepository {
     private static final SimpleDateFormat FORMAT = new SimpleDateFormat("MMM dd, yyyy HH:mm",
             Locale.US);
 
-    private String _host;
+    private String host;
 
-    private String _username;
+    private String username;
 
-    private String _authentication = "gssapi";
+    private String authentication = "gssapi";
 
-    private Reader _in;
+    private Reader in;
 
-    private Reader _err;
+    private Reader err;
 
-    private PrintWriter _out;
+    private PrintWriter out;
 
-    private volatile StringBuffer _errors = new StringBuffer();
+    private volatile StringBuffer errors = new StringBuffer();
 
-    private long _readTimeout = 30000;
+    private long readTimeout = 30000;
 
-    private long _reuseConnection = 5 * 60 * 1000; // reuse connection during 5 minutes by default
+    private long reuseConnection = 5 * 60 * 1000; // reuse connection during 5 minutes by default
 
-    private volatile long _lastCommand;
+    private volatile long lastCommand;
 
-    private volatile boolean _inCommand;
+    private volatile boolean inCommand;
 
-    private Process _process;
+    private Process process;
 
-    private Thread _connectionCleaner;
+    private Thread connectionCleaner;
 
-    private Thread _errorsReader;
+    private Thread errorsReader;
 
-    private volatile long _errorsLastUpdateTime;
+    private volatile long errorsLastUpdateTime;
 
-    private Ivy _ivy = null;
+    private Ivy ivy = null;
 
     public Resource getResource(String source) throws IOException {
         initIvy();
@@ -90,7 +90,7 @@ public class VsftpRepository extends AbstractRepository {
     }
 
     private void initIvy() {
-        _ivy = IvyContext.getContext().getIvy();
+        ivy = IvyContext.getContext().getIvy();
     }
 
     protected Resource getInitResource(String source) throws IOException {
@@ -135,7 +135,7 @@ public class VsftpRepository extends AbstractRepository {
 
             long prevLength = 0;
             long lastUpdate = System.currentTimeMillis();
-            long timeout = _readTimeout;
+            long timeout = readTimeout;
             while (get.isAlive()) {
                 checkInterrupted();
                 long length = to.exists() ? to.length() : 0;
@@ -148,22 +148,25 @@ public class VsftpRepository extends AbstractRepository {
                         Message.verbose("download hang for more than " + timeout
                                 + "ms. Interrupting.");
                         get.interrupt();
-                        if (to.exists())
+                        if (to.exists()) {
                             to.delete();
+                        }
                         throw new IOException(source + " download timeout from " + getHost());
                     }
                 }
                 try {
                     get.join(100);
                 } catch (InterruptedException e) {
-                    if (to.exists())
+                    if (to.exists()) {
                         to.delete();
+                    }
                     return;
                 }
             }
             if (ex[0] != null) {
-                if (to.exists())
+                if (to.exists()) {
                     to.delete();
+                }
                 throw ex[0];
             }
 
@@ -245,7 +248,6 @@ public class VsftpRepository extends AbstractRepository {
         int index = destDir.lastIndexOf('/');
         if (index != -1) {
             mkdirs(destDir.substring(0, index));
-            ;
         }
         sendCommand("mkdir " + destDir);
     }
@@ -255,11 +257,11 @@ public class VsftpRepository extends AbstractRepository {
     }
 
     protected String sendCommand(String command) throws IOException {
-        return sendCommand(command, false, _readTimeout);
+        return sendCommand(command, false, readTimeout);
     }
 
     protected void sendCommand(String command, Pattern expectedResponse) throws IOException {
-        sendCommand(command, expectedResponse, _readTimeout);
+        sendCommand(command, expectedResponse, readTimeout);
     }
 
     /**
@@ -281,12 +283,12 @@ public class VsftpRepository extends AbstractRepository {
     }
 
     protected String sendCommand(String command, boolean sendErrorAsResponse) throws IOException {
-        return sendCommand(command, sendErrorAsResponse, _readTimeout);
+        return sendCommand(command, sendErrorAsResponse, readTimeout);
     }
 
     protected String sendCommand(String command, boolean sendErrorAsResponse, boolean single)
             throws IOException {
-        return sendCommand(command, sendErrorAsResponse, single, _readTimeout);
+        return sendCommand(command, sendErrorAsResponse, single, readTimeout);
     }
 
     protected String sendCommand(String command, boolean sendErrorAsResponse, long timeout)
@@ -300,15 +302,15 @@ public class VsftpRepository extends AbstractRepository {
         // end of process and end of stream...
 
         checkInterrupted();
-        _inCommand = true;
-        _errorsLastUpdateTime = 0;
+        inCommand = true;
+        errorsLastUpdateTime = 0;
         synchronized (this) {
-            if (!single || _in != null) {
+            if (!single || in != null) {
                 ensureConnectionOpened();
                 Message.debug("sending command '" + command + "' to " + getHost());
                 updateLastCommandTime();
-                _out.println(command);
-                _out.flush();
+                out.println(command);
+                out.flush();
             } else {
                 sendSingleCommand(command);
             }
@@ -317,7 +319,7 @@ public class VsftpRepository extends AbstractRepository {
         try {
             return readResponse(sendErrorAsResponse, timeout);
         } finally {
-            _inCommand = false;
+            inCommand = false;
             if (single) {
                 closeConnection();
             }
@@ -325,7 +327,7 @@ public class VsftpRepository extends AbstractRepository {
     }
 
     protected String readResponse(boolean sendErrorAsResponse) throws IOException {
-        return readResponse(sendErrorAsResponse, _readTimeout);
+        return readResponse(sendErrorAsResponse, readTimeout);
     }
 
     protected synchronized String readResponse(final boolean sendErrorAsResponse, long timeout)
@@ -342,7 +344,7 @@ public class VsftpRepository extends AbstractRepository {
                         // the reading is done in a for loop making five attempts to read the stream
                         // if we do not reach the next prompt
                         for (int attempts = 0; !getPrompt && attempts < 5; attempts++) {
-                            while ((c = _in.read()) != -1) {
+                            while ((c = in.read()) != -1) {
                                 attempts = 0; // we manage to read something, reset numer of
                                 // attempts
                                 response.append((char) c);
@@ -364,12 +366,12 @@ public class VsftpRepository extends AbstractRepository {
                         }
                         if (getPrompt) {
                             // wait enough for error stream to be fully read
-                            if (_errorsLastUpdateTime == 0) {
+                            if (errorsLastUpdateTime == 0) {
                                 // no error written yet, but it may be pending...
-                                _errorsLastUpdateTime = _lastCommand;
+                                errorsLastUpdateTime = lastCommand;
                             }
 
-                            while ((System.currentTimeMillis() - _errorsLastUpdateTime) < 50) {
+                            while ((System.currentTimeMillis() - errorsLastUpdateTime) < 50) {
                                 try {
                                     Thread.sleep(30);
                                 } catch (InterruptedException e) {
@@ -377,12 +379,12 @@ public class VsftpRepository extends AbstractRepository {
                                 }
                             }
                         }
-                        if (_errors.length() > 0) {
+                        if (errors.length() > 0) {
                             if (sendErrorAsResponse) {
-                                response.append(_errors);
-                                _errors.setLength(0);
+                                response.append(errors);
+                                errors.setLength(0);
                             } else {
-                                throw new IOException(chomp(_errors).toString());
+                                throw new IOException(chomp(errors).toString());
                             }
                         }
                         chomp(response);
@@ -404,6 +406,7 @@ public class VsftpRepository extends AbstractRepository {
             try {
                 wait(timeout);
             } catch (InterruptedException e) {
+                //nothing to do
             }
         }
         updateLastCommandTime();
@@ -440,7 +443,7 @@ public class VsftpRepository extends AbstractRepository {
     }
 
     protected synchronized void ensureConnectionOpened() throws IOException {
-        if (_in == null) {
+        if (in == null) {
             Message.verbose("connecting to " + getUsername() + "@" + getHost() + "... ");
             String connectionCommand = getConnectionCommand();
             exec(connectionCommand);
@@ -448,30 +451,31 @@ public class VsftpRepository extends AbstractRepository {
             try {
                 readResponse(false); // waits for first prompt
 
-                if (_reuseConnection > 0) {
-                    _connectionCleaner = new IvyThread() {
+                if (reuseConnection > 0) {
+                    connectionCleaner = new IvyThread() {
                         public void run() {
                             initContext();
                             try {
                                 long sleep = 10;
-                                while (_in != null && sleep > 0) {
+                                while (in != null && sleep > 0) {
                                     sleep(sleep);
-                                    sleep = _reuseConnection
-                                            - (System.currentTimeMillis() - _lastCommand);
-                                    if (_inCommand) {
-                                        sleep = sleep <= 0 ? _reuseConnection : sleep;
+                                    sleep = reuseConnection
+                                            - (System.currentTimeMillis() - lastCommand);
+                                    if (inCommand) {
+                                        sleep = sleep <= 0 ? reuseConnection : sleep;
                                     }
                                 }
                             } catch (InterruptedException e) {
+                                //nothing to do
                             }
                             disconnect();
                         }
                     };
-                    _connectionCleaner.start();
+                    connectionCleaner.start();
                 }
 
-                if (_ivy != null) {
-                    _ivy.getEventManager().addIvyListener(new IvyListener() {
+                if (ivy != null) {
+                    ivy.getEventManager().addIvyListener(new IvyListener() {
                         public void progress(IvyEvent event) {
                             disconnect();
                             event.getSource().removeIvyListener(this);
@@ -489,35 +493,36 @@ public class VsftpRepository extends AbstractRepository {
     }
 
     private void updateLastCommandTime() {
-        _lastCommand = System.currentTimeMillis();
+        lastCommand = System.currentTimeMillis();
     }
 
     private void exec(String command) throws IOException {
         Message.debug("launching '" + command + "'");
-        _process = Runtime.getRuntime().exec(command);
-        _in = new InputStreamReader(_process.getInputStream());
-        _err = new InputStreamReader(_process.getErrorStream());
-        _out = new PrintWriter(_process.getOutputStream());
+        process = Runtime.getRuntime().exec(command);
+        in = new InputStreamReader(process.getInputStream());
+        err = new InputStreamReader(process.getErrorStream());
+        out = new PrintWriter(process.getOutputStream());
 
-        _errorsReader = new IvyThread() {
+        errorsReader = new IvyThread() {
             public void run() {
                 initContext();
                 int c;
                 try {
-                    while (_err != null && (c = _err.read()) != -1) {
-                        _errors.append((char) c);
-                        _errorsLastUpdateTime = System.currentTimeMillis();
+                    while (err != null && (c = err.read()) != -1) {
+                        errors.append((char) c);
+                        errorsLastUpdateTime = System.currentTimeMillis();
                     }
                 } catch (IOException e) {
+                    //nothing to do
                 }
             }
         };
-        _errorsReader.start();
+        errorsReader.start();
     }
 
     private void checkInterrupted() {
-        if (_ivy != null) {
-            _ivy.checkInterrupted();
+        if (ivy != null) {
+            ivy.checkInterrupted();
         }
     }
 
@@ -536,17 +541,18 @@ public class VsftpRepository extends AbstractRepository {
      * Called whenever an api level method end
      */
     private void cleanup() {
-        if (_reuseConnection == 0) {
+        if (reuseConnection == 0) {
             disconnect();
         }
     }
 
     public synchronized void disconnect() {
-        if (_in != null) {
+        if (in != null) {
             Message.verbose("disconnecting from " + getHost() + "... ");
             try {
                 sendCommand("exit", false, 300);
             } catch (IOException e) {
+                //nothing I can do
             } finally {
                 closeConnection();
                 Message.verbose("disconnected of " + getHost());
@@ -555,35 +561,39 @@ public class VsftpRepository extends AbstractRepository {
     }
 
     private synchronized void closeConnection() {
-        if (_connectionCleaner != null) {
-            _connectionCleaner.interrupt();
+        if (connectionCleaner != null) {
+            connectionCleaner.interrupt();
         }
-        if (_errorsReader != null) {
-            _errorsReader.interrupt();
+        if (errorsReader != null) {
+            errorsReader.interrupt();
         }
         try {
-            _process.destroy();
+            process.destroy();
         } catch (Exception ex) {
+            //nothing I can do
         }
         try {
-            _in.close();
+            in.close();
         } catch (Exception e) {
+            //nothing I can do
         }
         try {
-            _err.close();
+            err.close();
         } catch (Exception e) {
+            //nothing I can do
         }
         try {
-            _out.close();
+            out.close();
         } catch (Exception e) {
+            //nothing I can do
         }
 
-        _connectionCleaner = null;
-        _errorsReader = null;
-        _process = null;
-        _in = null;
-        _out = null;
-        _err = null;
+        connectionCleaner = null;
+        errorsReader = null;
+        process = null;
+        in = null;
+        out = null;
+        err = null;
         Message.debug("connection to " + getHost() + " closed");
     }
 
@@ -619,12 +629,12 @@ public class VsftpRepository extends AbstractRepository {
     }
 
     protected String getSingleCommand(String command) {
-        return "vsh -noprompt -auth " + _authentication + " " + _username + "@" + _host + " "
+        return "vsh -noprompt -auth " + authentication + " " + username + "@" + host + " "
                 + command;
     }
 
     protected String getConnectionCommand() {
-        return "vsftp -noprompt -auth " + _authentication + " " + _username + "@" + _host;
+        return "vsftp -noprompt -auth " + authentication + " " + username + "@" + host;
     }
 
     protected Pattern getExpectedDownloadMessage(String source, File to) {
@@ -640,27 +650,27 @@ public class VsftpRepository extends AbstractRepository {
     }
 
     public String getAuthentication() {
-        return _authentication;
+        return authentication;
     }
 
     public void setAuthentication(String authentication) {
-        _authentication = authentication;
+        this.authentication = authentication;
     }
 
     public String getHost() {
-        return _host;
+        return host;
     }
 
     public void setHost(String host) {
-        _host = host;
+        this.host = host;
     }
 
     public String getUsername() {
-        return _username;
+        return username;
     }
 
     public void setUsername(String username) {
-        _username = username;
+        this.username = username;
     }
 
     private static StringBuffer chomp(StringBuffer str) {
@@ -685,14 +695,14 @@ public class VsftpRepository extends AbstractRepository {
      * @param time
      */
     public void setReuseConnection(long time) {
-        _reuseConnection = time;
+        this.reuseConnection = time;
     }
 
     public long getReadTimeout() {
-        return _readTimeout;
+        return readTimeout;
     }
 
     public void setReadTimeout(long readTimeout) {
-        _readTimeout = readTimeout;
+        this.readTimeout = readTimeout;
     }
 }

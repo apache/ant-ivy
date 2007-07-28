@@ -41,17 +41,17 @@ import org.apache.ivy.util.Message;
  * first resolver added if the ivy resolver, the second is the artifact one.
  */
 public class DualResolver extends AbstractResolver {
-    private DependencyResolver _ivyResolver;
+    private DependencyResolver ivyResolver;
 
-    private DependencyResolver _artifactResolver;
+    private DependencyResolver artifactResolver;
 
-    private boolean _allownomd = true;
+    private boolean allownomd = true;
 
     public void add(DependencyResolver resolver) {
-        if (_ivyResolver == null) {
-            _ivyResolver = resolver;
-        } else if (_artifactResolver == null) {
-            _artifactResolver = resolver;
+        if (ivyResolver == null) {
+            ivyResolver = resolver;
+        } else if (artifactResolver == null) {
+            artifactResolver = resolver;
         } else {
             throw new IllegalStateException(
                     "exactly two resolvers must be added: ivy(1) and artifact(2) one");
@@ -60,18 +60,18 @@ public class DualResolver extends AbstractResolver {
 
     public ResolvedModuleRevision getDependency(DependencyDescriptor dd, ResolveData data)
             throws ParseException {
-        if (_ivyResolver == null || _artifactResolver == null) {
+        if (ivyResolver == null || artifactResolver == null) {
             throw new IllegalStateException(
                     "exactly two resolvers must be added: ivy(1) and artifact(2) one");
         }
         data = new ResolveData(data, doValidate(data));
-        final ResolvedModuleRevision mr = _ivyResolver.getDependency(dd, data);
+        final ResolvedModuleRevision mr = ivyResolver.getDependency(dd, data);
         if (mr == null) {
             checkInterrupted();
             if (isAllownomd()) {
                 Message.verbose("ivy resolver didn't find " + dd.getDependencyRevisionId()
                         + ": trying with artifact resolver");
-                return _artifactResolver.getDependency(dd, data);
+                return artifactResolver.getDependency(dd, data);
             } else {
                 return null;
             }
@@ -81,61 +81,61 @@ public class DualResolver extends AbstractResolver {
     }
 
     public void reportFailure() {
-        _ivyResolver.reportFailure();
-        _artifactResolver.reportFailure();
+        ivyResolver.reportFailure();
+        artifactResolver.reportFailure();
     }
 
     public void reportFailure(Artifact art) {
-        _ivyResolver.reportFailure(art);
-        _artifactResolver.reportFailure(art);
+        ivyResolver.reportFailure(art);
+        artifactResolver.reportFailure(art);
     }
 
     public DownloadReport download(Artifact[] artifacts, DownloadOptions options) {
-        return _artifactResolver.download(artifacts, options);
+        return artifactResolver.download(artifacts, options);
     }
 
     public DependencyResolver getArtifactResolver() {
-        return _artifactResolver;
+        return artifactResolver;
     }
 
     public void setArtifactResolver(DependencyResolver artifactResolver) {
-        _artifactResolver = artifactResolver;
+        this.artifactResolver = artifactResolver;
     }
 
     public DependencyResolver getIvyResolver() {
-        return _ivyResolver;
+        return ivyResolver;
     }
 
     public void setIvyResolver(DependencyResolver ivyResolver) {
-        _ivyResolver = ivyResolver;
+        this.ivyResolver = ivyResolver;
     }
 
     public void publish(Artifact artifact, File src, boolean overwrite) throws IOException {
         if ("ivy".equals(artifact.getType())) {
-            _ivyResolver.publish(artifact, src, overwrite);
+            ivyResolver.publish(artifact, src, overwrite);
         } else {
-            _artifactResolver.publish(artifact, src, overwrite);
+            artifactResolver.publish(artifact, src, overwrite);
         }
     }
 
     public void dumpSettings() {
-        if (_ivyResolver == null || _artifactResolver == null) {
+        if (ivyResolver == null || artifactResolver == null) {
             throw new IllegalStateException(
                     "exactly two resolvers must be added: ivy(1) and artifact(2) one");
         }
-        Message.verbose("\t" + getName() + " [dual " + _ivyResolver.getName() + " "
-                + _artifactResolver.getName() + "]");
+        Message.verbose("\t" + getName() + " [dual " + ivyResolver.getName() + " "
+                + artifactResolver.getName() + "]");
     }
 
     public boolean exists(Artifact artifact) {
-        return _artifactResolver.exists(artifact);
+        return artifactResolver.exists(artifact);
     }
 
     public boolean isAllownomd() {
-        return _allownomd;
+        return allownomd;
     }
 
     public void setAllownomd(boolean allownomd) {
-        _allownomd = allownomd;
+        this.allownomd = allownomd;
     }
 }

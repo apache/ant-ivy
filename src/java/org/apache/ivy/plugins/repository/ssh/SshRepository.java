@@ -83,12 +83,14 @@ public class SshRepository extends AbstractSshBasedRepository {
             result = new SshResource(this, source, true, fileInfo.getLength(), fileInfo
                     .getLastModified());
         } catch (IOException e) {
-            if (session != null)
+            if (session != null) {
                 releaseSession(session, source);
+            }
             result = new SshResource();
         } catch (URISyntaxException e) {
-            if (session != null)
+            if (session != null) {
                 releaseSession(session, source);
+            }
             result = new SshResource();
         } catch (RemoteScpException e) {
             result = new SshResource();
@@ -259,8 +261,9 @@ public class SshRepository extends AbstractSshBasedRepository {
             Scp myCopy = new Scp(session);
             myCopy.put(source.getCanonicalPath(), path, name);
         } catch (IOException e) {
-            if (session != null)
+            if (session != null) {
                 releaseSession(session, destination);
+            }
             throw e;
         } catch (RemoteScpException e) {
             throw new IOException(e.getMessage());
@@ -279,8 +282,9 @@ public class SshRepository extends AbstractSshBasedRepository {
         ChannelExec channel = null;
         String trimmed = path;
         try {
-            while (trimmed.length() > 0 && trimmed.charAt(trimmed.length() - 1) == fileSeparator)
+            while (trimmed.length() > 0 && trimmed.charAt(trimmed.length() - 1) == fileSeparator) {
                 trimmed = trimmed.substring(0, trimmed.length() - 1);
+            }
             if (trimmed.length() == 0 || checkExistence(trimmed, session)) {
                 return;
             }
@@ -297,8 +301,9 @@ public class SshRepository extends AbstractSshBasedRepository {
             StringBuffer stdErr = new StringBuffer();
             readSessionOutput(channel, stdOut, stdErr);
         } finally {
-            if (channel != null)
+            if (channel != null) {
                 channel.disconnect();
+            }
         }
     }
 
@@ -349,8 +354,9 @@ public class SshRepository extends AbstractSshBasedRepository {
             Scp myCopy = new Scp(session);
             myCopy.get(sourceUri.getPath(), destination.getCanonicalPath());
         } catch (IOException e) {
-            if (session != null)
+            if (session != null) {
                 releaseSession(session, source);
+            }
             throw e;
         } catch (RemoteScpException e) {
             throw new IOException(e.getMessage());
@@ -439,8 +445,9 @@ public class SshRepository extends AbstractSshBasedRepository {
         try {
             scp.get(resource.getName(), os);
         } catch (IOException e) {
-            if (session != null)
+            if (session != null) {
                 releaseSession(session, resource.getName());
+            }
             throw e;
         } catch (RemoteScpException e) {
             throw new IOException(e.getMessage());
