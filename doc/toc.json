@@ -547,7 +547,7 @@
                   },
                   {
                     "id":"ant",
-                    "title":"Using from Ant",
+                    "title":"Ant Targets",
                     "children": [
                         {
                           "id":"use/artifactproperty",
