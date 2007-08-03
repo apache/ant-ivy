@@ -33,6 +33,7 @@ public class IvyArtifactProperty extends IvyPostResolveTask {
     private String name;
 
     private String value;
+    private boolean overwrite = false;
 
     public String getName() {
         return this.name;
@@ -50,6 +51,12 @@ public class IvyArtifactProperty extends IvyPostResolveTask {
         this.value = value;
     }
 
+    
+    public void setOverwrite(boolean overwrite) {
+        this.overwrite  = overwrite;
+        
+    }
+    
     public void doExecute() throws BuildException {
         prepareAndCheck();
 
@@ -72,11 +79,19 @@ public class IvyArtifactProperty extends IvyPostResolveTask {
                         artifact, confs[i]);
                     String value = IvyPatternHelper.substitute(
                         getSettings().substitute(getValue()), artifact, confs[i]);
-                    getProject().setProperty(name, value);
+                    setProperty(name, value);
                 }
             }
         } catch (Exception ex) {
             throw new BuildException("impossible to add artifact properties: " + ex, ex);
+        }
+    }
+
+    private void setProperty(String name, String value) {
+        if (overwrite) {
+            getProject().setProperty(name, value);
+        } else {
+            getProject().setNewProperty(name,value);
         }
     }
 }
