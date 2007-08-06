@@ -36,30 +36,30 @@ import org.apache.tools.ant.taskdefs.Delete;
 import org.apache.tools.ant.taskdefs.Echo;
 
 public class IvyPublishTest extends TestCase {
-    private File _cache;
+    private File cache;
 
-    private IvyPublish _publish;
+    private IvyPublish publish;
 
-    private Project _project;
+    private Project project;
 
     protected void setUp() throws Exception {
         cleanTestDir();
         cleanRep();
         createCache();
-        _project = new Project();
-        _project.setProperty("ivy.settings.file", "test/repositories/ivysettings.xml");
-        _project.setProperty("build", "build/test/publish");
+        project = new Project();
+        project.setProperty("ivy.settings.file", "test/repositories/ivysettings.xml");
+        project.setProperty("build", "build/test/publish");
 
-        _publish = new IvyPublish();
-        _publish.setProject(_project);
-        _publish.setCache(_cache);
+        publish = new IvyPublish();
+        publish.setProject(project);
+        publish.setCache(cache);
 
         Message.init(new DefaultMessageImpl(10));
     }
 
     private void createCache() {
-        _cache = new File("build/cache");
-        _cache.mkdirs();
+        cache = new File("build/cache");
+        cache.mkdirs();
     }
 
     protected void tearDown() throws Exception {
@@ -71,7 +71,7 @@ public class IvyPublishTest extends TestCase {
     private void cleanCache() {
         Delete del = new Delete();
         del.setProject(new Project());
-        del.setDir(_cache);
+        del.setDir(cache);
         del.execute();
     }
 
@@ -90,16 +90,16 @@ public class IvyPublishTest extends TestCase {
     }
 
     public void testSimple() throws Exception {
-        _project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-multiconf.xml");
+        project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-multiconf.xml");
         IvyResolve res = new IvyResolve();
-        res.setProject(_project);
+        res.setProject(project);
         res.execute();
 
-        _publish.setPubrevision("1.2");
-        _publish.setResolver("1");
+        publish.setPubrevision("1.2");
+        publish.setResolver("1");
         File art = new File("build/test/publish/resolve-simple-1.2.jar");
         FileUtil.copy(new File("test/repositories/1/org1/mod1.1/jars/mod1.1-1.0.jar"), art, null);
-        _publish.execute();
+        publish.execute();
 
         // should have do the ivy delivering
         assertTrue(new File("build/test/publish/ivy-1.2.xml").exists());
@@ -117,18 +117,18 @@ public class IvyPublishTest extends TestCase {
     }
 
     public void testPublishNotAllConfigs() throws Exception {
-        _project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-multiconf.xml");
+        project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-multiconf.xml");
         IvyResolve res = new IvyResolve();
-        res.setProject(_project);
+        res.setProject(project);
         res.execute();
 
-        _publish.setPubrevision("1.2");
-        _publish.setResolver("1");
-        _publish.setConf("compile");
-        _publish.setUpdate(true);
+        publish.setPubrevision("1.2");
+        publish.setResolver("1");
+        publish.setConf("compile");
+        publish.setUpdate(true);
         File art = new File("build/test/publish/resolve-simple-1.2.jar");
         FileUtil.copy(new File("test/repositories/1/org1/mod1.1/jars/mod1.1-1.0.jar"), art, null);
-        _publish.execute();
+        publish.execute();
 
         // should have do the ivy delivering
         assertTrue(new File("build/test/publish/ivy-1.2.xml").exists());
@@ -151,20 +151,20 @@ public class IvyPublishTest extends TestCase {
     }
 
     public void testMultiPatterns() throws Exception {
-        _project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-publish-multi.xml");
+        project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-publish-multi.xml");
         IvyResolve res = new IvyResolve();
-        res.setProject(_project);
+        res.setProject(project);
         res.execute();
 
-        _publish.setPubrevision("1.2");
-        _publish.setResolver("1");
+        publish.setPubrevision("1.2");
+        publish.setResolver("1");
         File art = new File("build/test/publish/1/multi1-1.2.jar");
         FileUtil.copy(new File("test/repositories/1/org1/mod1.1/jars/mod1.1-1.0.jar"), art, null);
         art = new File("build/test/publish/2/multi2-1.2.jar");
         FileUtil.copy(new File("test/repositories/1/org1/mod1.1/jars/mod1.1-1.0.jar"), art, null);
-        _publish.addArtifactspattern("build/test/publish/1/[artifact]-[revision].[ext]");
-        _publish.addArtifactspattern("build/test/publish/2/[artifact]-[revision].[ext]");
-        _publish.execute();
+        publish.addArtifactspattern("build/test/publish/1/[artifact]-[revision].[ext]");
+        publish.addArtifactspattern("build/test/publish/2/[artifact]-[revision].[ext]");
+        publish.execute();
 
         // should have do the ivy delivering
         assertTrue(new File("build/test/publish/1/ivy-1.2.xml").exists());
@@ -176,19 +176,19 @@ public class IvyPublishTest extends TestCase {
     }
 
     public void testCustom() throws Exception {
-        _project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-custom.xml");
+        project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-custom.xml");
         IvyResolve res = new IvyResolve();
         res.setValidate(false);
-        res.setProject(_project);
+        res.setProject(project);
         res.execute();
 
-        _publish.setPubrevision("1.2");
-        _publish.setPubdate("20060906141243");
-        _publish.setResolver("1");
-        _publish.setValidate(false);
+        publish.setPubrevision("1.2");
+        publish.setPubdate("20060906141243");
+        publish.setResolver("1");
+        publish.setValidate(false);
         File art = new File("build/test/publish/resolve-custom-1.2.jar");
         FileUtil.copy(new File("test/repositories/1/org1/mod1.1/jars/mod1.1-1.0.jar"), art, null);
-        _publish.execute();
+        publish.execute();
 
         // should have do the ivy delivering
         assertTrue(new File("build/test/publish/ivy-1.2.xml").exists());
@@ -218,21 +218,21 @@ public class IvyPublishTest extends TestCase {
     }
 
     public void testNoDeliver() throws Exception {
-        _project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-latest.xml");
+        project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-latest.xml");
         IvyResolve res = new IvyResolve();
-        res.setProject(_project);
+        res.setProject(project);
         res.execute();
 
-        _publish.setPubrevision("1.3");
-        _publish.setResolver("1");
-        _publish.setSrcivypattern("build/test/publish/ivy-1.3.xml");
+        publish.setPubrevision("1.3");
+        publish.setResolver("1");
+        publish.setSrcivypattern("build/test/publish/ivy-1.3.xml");
 
         FileUtil.copy(new File("test/java/org/apache/ivy/ant/ivy-publish.xml"), new File(
                 "build/test/publish/ivy-1.3.xml"), null);
 
         File art = new File("build/test/publish/resolve-latest-1.3.jar");
         FileUtil.copy(new File("test/repositories/1/org1/mod1.1/jars/mod1.1-1.0.jar"), art, null);
-        _publish.execute();
+        publish.execute();
 
         // should have published the files with "1" resolver
         assertTrue(new File("test/repositories/1/apache/resolve-latest/ivys/ivy-1.3.xml").exists());
@@ -251,22 +251,22 @@ public class IvyPublishTest extends TestCase {
     }
 
     public void testForceDeliver() throws Exception {
-        _project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-latest.xml");
+        project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-latest.xml");
         IvyResolve res = new IvyResolve();
-        res.setProject(_project);
+        res.setProject(project);
         res.execute();
 
-        _publish.setPubrevision("1.3");
-        _publish.setResolver("1");
-        _publish.setSrcivypattern("build/test/publish/ivy-1.3.xml");
-        _publish.setForcedeliver(true);
+        publish.setPubrevision("1.3");
+        publish.setResolver("1");
+        publish.setSrcivypattern("build/test/publish/ivy-1.3.xml");
+        publish.setForcedeliver(true);
 
         FileUtil.copy(new File("test/java/org/apache/ivy/ant/ivy-latest.xml"), new File(
                 "build/test/publish/ivy-1.3.xml"), null);
 
         File art = new File("build/test/publish/resolve-latest-1.3.jar");
         FileUtil.copy(new File("test/repositories/1/org1/mod1.1/jars/mod1.1-1.0.jar"), art, null);
-        _publish.execute();
+        publish.execute();
 
         // should have published the files with "1" resolver
         assertTrue(new File("test/repositories/1/apache/resolve-latest/ivys/ivy-1.3.xml").exists());
@@ -281,14 +281,14 @@ public class IvyPublishTest extends TestCase {
     }
 
     public void testBadNoDeliver() throws Exception {
-        _project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-latest.xml");
+        project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-latest.xml");
         IvyResolve res = new IvyResolve();
-        res.setProject(_project);
+        res.setProject(project);
         res.execute();
 
-        _publish.setPubrevision("1.3");
-        _publish.setResolver("1");
-        _publish.setSrcivypattern("build/test/publish/ivy-1.3.xml");
+        publish.setPubrevision("1.3");
+        publish.setResolver("1");
+        publish.setSrcivypattern("build/test/publish/ivy-1.3.xml");
 
         FileUtil.copy(new File("test/java/org/apache/ivy/ant/ivy-latest.xml"), new File(
                 "build/test/publish/ivy-1.3.xml"), null);
@@ -296,26 +296,26 @@ public class IvyPublishTest extends TestCase {
         File art = new File("build/test/publish/resolve-latest-1.3.jar");
         FileUtil.copy(new File("test/repositories/1/org1/mod1.1/jars/mod1.1-1.0.jar"), art, null);
         try {
-            _publish.execute();
+            publish.execute();
             fail("shouldn't publish ivy file with bad revision");
         } catch (BuildException ex) {
-
+            //normal
         }
     }
 
     public void testReadonly() throws Exception {
-        _project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-simple.xml");
+        project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-simple.xml");
         IvyResolve res = new IvyResolve();
-        res.setProject(_project);
+        res.setProject(project);
         res.execute();
 
-        _publish.setPubrevision("1.2");
-        _publish.setResolver("1");
+        publish.setPubrevision("1.2");
+        publish.setResolver("1");
         File art = new File("build/test/publish/resolve-simple-1.2.jar");
         FileUtil.copy(new File("test/repositories/1/org1/mod1.1/jars/mod1.1-1.0.jar"), art, null);
 
         Echo echo = new Echo();
-        echo.setProject(_project);
+        echo.setProject(project);
         echo.setMessage("new version");
         echo.setFile(art);
         echo.execute();
@@ -325,7 +325,7 @@ public class IvyPublishTest extends TestCase {
         FileUtil.copy(new File("test/repositories/1/org1/mod1.1/jars/mod1.1-1.0.jar"), dest, null);
 
         echo = new Echo();
-        echo.setProject(_project);
+        echo.setProject(project);
         echo.setMessage("old version");
         echo.setFile(dest);
         echo.execute();
@@ -333,7 +333,7 @@ public class IvyPublishTest extends TestCase {
         dest.setReadOnly();
 
         try {
-            _publish.execute();
+            publish.execute();
             fail("by default, publish should fail when a readonly artifact already exist");
         } catch (Exception ex) {
             assertTrue(dest.exists());
@@ -344,18 +344,18 @@ public class IvyPublishTest extends TestCase {
     }
 
     public void testOverwrite() throws Exception {
-        _project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-simple.xml");
+        project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-simple.xml");
         IvyResolve res = new IvyResolve();
-        res.setProject(_project);
+        res.setProject(project);
         res.execute();
 
-        _publish.setPubrevision("1.2");
-        _publish.setResolver("1");
+        publish.setPubrevision("1.2");
+        publish.setResolver("1");
         File art = new File("build/test/publish/resolve-simple-1.2.jar");
         FileUtil.copy(new File("test/repositories/1/org1/mod1.1/jars/mod1.1-1.0.jar"), art, null);
 
         Echo echo = new Echo();
-        echo.setProject(_project);
+        echo.setProject(project);
         echo.setMessage("new version");
         echo.setFile(art);
         echo.execute();
@@ -365,13 +365,13 @@ public class IvyPublishTest extends TestCase {
         FileUtil.copy(new File("test/repositories/1/org1/mod1.1/jars/mod1.1-1.0.jar"), dest, null);
 
         echo = new Echo();
-        echo.setProject(_project);
+        echo.setProject(project);
         echo.setMessage("old version");
         echo.setFile(dest);
         echo.execute();
 
-        _publish.setOverwrite(true);
-        _publish.execute();
+        publish.setOverwrite(true);
+        publish.execute();
         assertTrue(dest.exists());
         BufferedReader reader = new BufferedReader(new FileReader(dest));
         assertEquals("new version", reader.readLine());
@@ -379,18 +379,18 @@ public class IvyPublishTest extends TestCase {
     }
 
     public void testOverwriteReadOnly() throws Exception {
-        _project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-simple.xml");
+        project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-simple.xml");
         IvyResolve res = new IvyResolve();
-        res.setProject(_project);
+        res.setProject(project);
         res.execute();
 
-        _publish.setPubrevision("1.2");
-        _publish.setResolver("1");
+        publish.setPubrevision("1.2");
+        publish.setResolver("1");
         File art = new File("build/test/publish/resolve-simple-1.2.jar");
         FileUtil.copy(new File("test/repositories/1/org1/mod1.1/jars/mod1.1-1.0.jar"), art, null);
 
         Echo echo = new Echo();
-        echo.setProject(_project);
+        echo.setProject(project);
         echo.setMessage("new version");
         echo.setFile(art);
         echo.execute();
@@ -400,15 +400,15 @@ public class IvyPublishTest extends TestCase {
         FileUtil.copy(new File("test/repositories/1/org1/mod1.1/jars/mod1.1-1.0.jar"), dest, null);
 
         echo = new Echo();
-        echo.setProject(_project);
+        echo.setProject(project);
         echo.setMessage("old version");
         echo.setFile(dest);
         echo.execute();
 
         dest.setReadOnly();
 
-        _publish.setOverwrite(true);
-        _publish.execute();
+        publish.setOverwrite(true);
+        publish.execute();
         assertTrue(dest.exists());
         BufferedReader reader = new BufferedReader(new FileReader(dest));
         assertEquals("new version", reader.readLine());

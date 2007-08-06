@@ -29,23 +29,23 @@ import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.Delete;
 
 public class IvyResolveTest extends TestCase {
-    private File _cache;
+    private File cache;
 
-    private IvyResolve _resolve;
+    private IvyResolve resolve;
 
     protected void setUp() throws Exception {
         createCache();
         Project project = new Project();
         project.setProperty("ivy.settings.file", "test/repositories/ivysettings.xml");
 
-        _resolve = new IvyResolve();
-        _resolve.setProject(project);
-        _resolve.setCache(_cache);
+        resolve = new IvyResolve();
+        resolve.setProject(project);
+        resolve.setCache(cache);
     }
 
     private void createCache() {
-        _cache = new File("build/cache");
-        _cache.mkdirs();
+        cache = new File("build/cache");
+        cache.mkdirs();
     }
 
     protected void tearDown() throws Exception {
@@ -55,14 +55,14 @@ public class IvyResolveTest extends TestCase {
     private void cleanCache() {
         Delete del = new Delete();
         del.setProject(new Project());
-        del.setDir(_cache);
+        del.setDir(cache);
         del.execute();
     }
 
     public void testSimple() throws Exception {
         // depends on org="org1" name="mod1.2" rev="2.0"
-        _resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-simple.xml"));
-        _resolve.execute();
+        resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-simple.xml"));
+        resolve.execute();
 
         assertTrue(getResolvedIvyFileInCache(
             ModuleRevisionId.newInstance("apache", "resolve-simple", "1.0")).exists());
@@ -75,25 +75,25 @@ public class IvyResolveTest extends TestCase {
 
     private File getArchiveFileInCache(String organisation, String module, String revision,
             String artifact, String type, String ext) {
-        return TestHelper.getArchiveFileInCache(getIvy(), _cache, organisation, module, revision,
+        return TestHelper.getArchiveFileInCache(getIvy(), cache, organisation, module, revision,
             artifact, type, ext);
     }
 
     private File getIvyFileInCache(ModuleRevisionId id) {
-        return getIvy().getCacheManager(_cache).getIvyFileInCache(id);
+        return getIvy().getCacheManager(cache).getIvyFileInCache(id);
     }
 
     private File getResolvedIvyFileInCache(ModuleRevisionId id) {
-        return getIvy().getCacheManager(_cache).getResolvedIvyFileInCache(id);
+        return getIvy().getCacheManager(cache).getResolvedIvyFileInCache(id);
     }
 
     public void testInline() throws Exception {
         // same as before, but expressing dependency directly without ivy file
-        _resolve.setOrganisation("org1");
-        _resolve.setModule("mod1.2");
-        _resolve.setRevision("2.0");
-        _resolve.setInline(true);
-        _resolve.execute();
+        resolve.setOrganisation("org1");
+        resolve.setModule("mod1.2");
+        resolve.setRevision("2.0");
+        resolve.setInline(true);
+        resolve.execute();
 
         // dependencies
         assertTrue(getIvyFileInCache(ModuleRevisionId.newInstance("org1", "mod1.2", "2.0"))
@@ -102,8 +102,8 @@ public class IvyResolveTest extends TestCase {
     }
 
     public void testWithSlashes() throws Exception {
-        _resolve.setFile(new File("test/java/org/apache/ivy/core/resolve/ivy-198.xml"));
-        _resolve.execute();
+        resolve.setFile(new File("test/java/org/apache/ivy/core/resolve/ivy-198.xml"));
+        resolve.execute();
 
         File resolvedIvyFileInCache = getResolvedIvyFileInCache(ModuleRevisionId.newInstance(
             "myorg/mydep", "system/module", "1.0"));
@@ -121,36 +121,36 @@ public class IvyResolveTest extends TestCase {
     }
 
     public void testDepsChanged() throws Exception {
-        _resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-simple.xml"));
-        _resolve.execute();
+        resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-simple.xml"));
+        resolve.execute();
 
         assertEquals("true", getIvy().getVariable("ivy.deps.changed"));
 
-        _resolve.execute();
+        resolve.execute();
 
         assertEquals("false", getIvy().getVariable("ivy.deps.changed"));
     }
 
     public void testConflictingDepsChanged() throws Exception {
-        _resolve.setFile(new File("test/repositories/2/mod4.1/ivy-4.1.xml"));
-        _resolve.execute();
+        resolve.setFile(new File("test/repositories/2/mod4.1/ivy-4.1.xml"));
+        resolve.execute();
 
         assertEquals("true", getIvy().getVariable("ivy.deps.changed"));
 
-        _resolve.execute();
+        resolve.execute();
 
         assertEquals("false", getIvy().getVariable("ivy.deps.changed"));
     }
 
     public void testDouble() throws Exception {
-        _resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-simple.xml"));
-        _resolve.execute();
+        resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-simple.xml"));
+        resolve.execute();
 
         assertEquals("resolve-simple", getIvy().getVariable("ivy.module"));
         assertEquals("1.0", getIvy().getVariable("ivy.revision"));
 
-        _resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-double.xml"));
-        _resolve.execute();
+        resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-double.xml"));
+        resolve.execute();
 
         assertEquals("resolve-double", getIvy().getVariable("ivy.module"));
         assertEquals("1.1", getIvy().getVariable("ivy.revision"));
@@ -158,8 +158,8 @@ public class IvyResolveTest extends TestCase {
 
     public void testFailure() throws Exception {
         try {
-            _resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-failure.xml"));
-            _resolve.execute();
+            resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-failure.xml"));
+            resolve.execute();
             fail("failure didn't raised an exception with default haltonfailure setting");
         } catch (BuildException ex) {
             // ok => should raise an exception
@@ -168,8 +168,8 @@ public class IvyResolveTest extends TestCase {
 
     public void testFailureOnBadDependencyIvyFile() throws Exception {
         try {
-            _resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-failure2.xml"));
-            _resolve.execute();
+            resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-failure2.xml"));
+            resolve.execute();
             fail("failure didn't raised an exception with default haltonfailure setting");
         } catch (BuildException ex) {
             // ok => should raise an exception
@@ -178,8 +178,8 @@ public class IvyResolveTest extends TestCase {
 
     public void testFailureOnBadStatusInDependencyIvyFile() throws Exception {
         try {
-            _resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-failure3.xml"));
-            _resolve.execute();
+            resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-failure3.xml"));
+            resolve.execute();
             fail("failure didn't raised an exception with default haltonfailure setting");
         } catch (BuildException ex) {
             // ok => should raise an exception
@@ -188,9 +188,9 @@ public class IvyResolveTest extends TestCase {
 
     public void testHaltOnFailure() throws Exception {
         try {
-            _resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-failure.xml"));
-            _resolve.setHaltonfailure(false);
-            _resolve.execute();
+            resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-failure.xml"));
+            resolve.setHaltonfailure(false);
+            resolve.execute();
         } catch (BuildException ex) {
             ex.printStackTrace();
             fail("failure raised an exception with haltonfailure set to false");
@@ -198,13 +198,13 @@ public class IvyResolveTest extends TestCase {
     }
 
     public void testWithResolveId() throws Exception {
-        _resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-simple.xml"));
-        _resolve.setResolveId("testWithResolveId");
-        _resolve.execute();
+        resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-simple.xml"));
+        resolve.setResolveId("testWithResolveId");
+        resolve.execute();
 
         assertTrue(getResolvedIvyFileInCache(
             ModuleRevisionId.newInstance("apache", "resolve-simple", "1.0")).exists());
-        assertTrue(getIvy().getCacheManager(_cache).getConfigurationResolveReportInCache(
+        assertTrue(getIvy().getCacheManager(cache).getConfigurationResolveReportInCache(
             "testWithResolveId", "default").exists());
 
         // dependencies
@@ -213,7 +213,7 @@ public class IvyResolveTest extends TestCase {
         assertTrue(getArchiveFileInCache("org1", "mod1.2", "2.0", "mod1.2", "jar", "jar").exists());
 
         // test the properties
-        Project project = _resolve.getProject();
+        Project project = resolve.getProject();
         assertEquals("apache", project.getProperty("ivy.organisation"));
         assertEquals("apache", project.getProperty("ivy.organisation.testWithResolveId"));
         assertEquals("resolve-simple", project.getProperty("ivy.module"));
@@ -236,17 +236,17 @@ public class IvyResolveTest extends TestCase {
     }
 
     public void testDoubleResolveWithResolveId() throws Exception {
-        _resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-simple.xml"));
-        _resolve.setResolveId("testWithResolveId");
-        _resolve.execute();
+        resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-simple.xml"));
+        resolve.setResolveId("testWithResolveId");
+        resolve.execute();
 
         IvyResolve newResolve = new IvyResolve();
-        newResolve.setProject(_resolve.getProject());
+        newResolve.setProject(resolve.getProject());
         newResolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-simple2.xml"));
         newResolve.execute();
 
         // test the properties
-        Project project = _resolve.getProject();
+        Project project = resolve.getProject();
         assertEquals("apache2", project.getProperty("ivy.organisation"));
         assertEquals("apache", project.getProperty("ivy.organisation.testWithResolveId"));
         assertEquals("resolve-simple2", project.getProperty("ivy.module"));
@@ -269,18 +269,18 @@ public class IvyResolveTest extends TestCase {
     }
 
     public void testDifferentResolveWithSameResolveId() throws Exception {
-        _resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-simple.xml"));
-        _resolve.setResolveId("testWithResolveId");
-        _resolve.execute();
+        resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-simple.xml"));
+        resolve.setResolveId("testWithResolveId");
+        resolve.execute();
 
         IvyResolve newResolve = new IvyResolve();
-        newResolve.setProject(_resolve.getProject());
+        newResolve.setProject(resolve.getProject());
         newResolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-simple2.xml"));
         newResolve.setResolveId("testWithResolveId");
         newResolve.execute();
 
         // test the properties
-        Project project = _resolve.getProject();
+        Project project = resolve.getProject();
         assertEquals("apache2", project.getProperty("ivy.organisation"));
         assertEquals("apache2", project.getProperty("ivy.organisation.testWithResolveId"));
         assertEquals("resolve-simple2", project.getProperty("ivy.module"));
@@ -305,8 +305,8 @@ public class IvyResolveTest extends TestCase {
     public void testResolveWithAbsoluteFile() {
         // IVY-396
         File ivyFile = new File("test/java/org/apache/ivy/ant/ivy-simple.xml");
-        _resolve.getProject().setProperty("ivy.dep.file", ivyFile.getAbsolutePath());
-        _resolve.execute();
+        resolve.getProject().setProperty("ivy.dep.file", ivyFile.getAbsolutePath());
+        resolve.execute();
 
         assertTrue(getResolvedIvyFileInCache(
             ModuleRevisionId.newInstance("apache", "resolve-simple", "1.0")).exists());
@@ -314,16 +314,16 @@ public class IvyResolveTest extends TestCase {
 
     public void testResolveWithRelativeFile() {
         // IVY-396
-        _resolve.getProject().setProperty("ivy.dep.file",
+        resolve.getProject().setProperty("ivy.dep.file",
             "test/java/org/apache/ivy/ant/ivy-simple.xml");
-        _resolve.execute();
+        resolve.execute();
 
         assertTrue(getResolvedIvyFileInCache(
             ModuleRevisionId.newInstance("apache", "resolve-simple", "1.0")).exists());
     }
 
     private Ivy getIvy() {
-        return _resolve.getIvyInstance();
+        return resolve.getIvyInstance();
     }
 
 }

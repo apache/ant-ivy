@@ -26,26 +26,26 @@ import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.Delete;
 
 public class IvyInstallTest extends TestCase {
-    private File _cache;
+    private File cache;
 
-    private IvyInstall _install;
+    private IvyInstall install;
 
-    private Project _project;
+    private Project project;
 
     protected void setUp() throws Exception {
         createCache();
         cleanTestLib();
-        _project = new Project();
-        _project.setProperty("ivy.settings.file", "test/repositories/ivysettings.xml");
+        project = new Project();
+        project.setProperty("ivy.settings.file", "test/repositories/ivysettings.xml");
 
-        _install = new IvyInstall();
-        _install.setProject(_project);
-        _install.setCache(_cache);
+        install = new IvyInstall();
+        install.setProject(project);
+        install.setCache(cache);
     }
 
     private void createCache() {
-        _cache = new File("build/cache");
-        _cache.mkdirs();
+        cache = new File("build/cache");
+        cache.mkdirs();
     }
 
     protected void tearDown() throws Exception {
@@ -56,7 +56,7 @@ public class IvyInstallTest extends TestCase {
     private void cleanCache() {
         Delete del = new Delete();
         del.setProject(new Project());
-        del.setDir(_cache);
+        del.setDir(cache);
         del.execute();
     }
 
@@ -68,14 +68,14 @@ public class IvyInstallTest extends TestCase {
     }
 
     public void testDependencyNotFoundFailure() {
-        _install.setOrganisation("xxx");
-        _install.setModule("yyy");
-        _install.setRevision("zzz");
-        _install.setFrom("test");
-        _install.setTo("1");
+        install.setOrganisation("xxx");
+        install.setModule("yyy");
+        install.setRevision("zzz");
+        install.setFrom("test");
+        install.setTo("1");
 
         try {
-            _install.execute();
+            install.execute();
             fail("unknown dependency, failure expected (haltunresolved=true)");
         } catch (BuildException be) {
             // success
@@ -83,15 +83,15 @@ public class IvyInstallTest extends TestCase {
     }
 
     public void testDependencyNotFoundSuccess() {
-        _install.setOrganisation("xxx");
-        _install.setModule("yyy");
-        _install.setRevision("zzz");
-        _install.setFrom("test");
-        _install.setTo("1");
-        _install.setHaltonfailure(false);
+        install.setOrganisation("xxx");
+        install.setModule("yyy");
+        install.setRevision("zzz");
+        install.setFrom("test");
+        install.setTo("1");
+        install.setHaltonfailure(false);
 
         try {
-            _install.execute();
+            install.execute();
         } catch (BuildException be) {
             fail("unknown dependency, failure unexepected (haltunresolved=false)");
         }

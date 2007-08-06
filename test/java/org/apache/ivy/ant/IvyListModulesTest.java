@@ -25,22 +25,22 @@ import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.Delete;
 
 public class IvyListModulesTest extends TestCase {
-    private File _cache;
+    private File cache;
 
-    private IvyListModules _findModules;
+    private IvyListModules findModules;
 
     protected void setUp() throws Exception {
         createCache();
         Project project = new Project();
         project.setProperty("ivy.settings.file", "test/repositories/ivysettings.xml");
 
-        _findModules = new IvyListModules();
-        _findModules.setProject(project);
+        findModules = new IvyListModules();
+        findModules.setProject(project);
     }
 
     private void createCache() {
-        _cache = new File("build/cache");
-        _cache.mkdirs();
+        cache = new File("build/cache");
+        cache.mkdirs();
     }
 
     protected void tearDown() throws Exception {
@@ -50,30 +50,30 @@ public class IvyListModulesTest extends TestCase {
     private void cleanCache() {
         Delete del = new Delete();
         del.setProject(new Project());
-        del.setDir(_cache);
+        del.setDir(cache);
         del.execute();
     }
 
     public void testExact() throws Exception {
-        _findModules.setOrganisation("org1");
-        _findModules.setModule("mod1.1");
-        _findModules.setRevision("1.0");
-        _findModules.setProperty("found");
-        _findModules.setValue("[organisation]/[module]/[revision]");
-        _findModules.execute();
-        assertEquals("org1/mod1.1/1.0", _findModules.getProject().getProperty("found"));
+        findModules.setOrganisation("org1");
+        findModules.setModule("mod1.1");
+        findModules.setRevision("1.0");
+        findModules.setProperty("found");
+        findModules.setValue("[organisation]/[module]/[revision]");
+        findModules.execute();
+        assertEquals("org1/mod1.1/1.0", findModules.getProject().getProperty("found"));
     }
 
     public void testAllRevs() throws Exception {
-        _findModules.setOrganisation("org1");
-        _findModules.setModule("mod1.1");
-        _findModules.setRevision("*");
-        _findModules.setProperty("found.[revision]");
-        _findModules.setValue("true");
-        _findModules.execute();
-        assertEquals("true", _findModules.getProject().getProperty("found.1.0"));
-        assertEquals("true", _findModules.getProject().getProperty("found.1.1"));
-        assertEquals("true", _findModules.getProject().getProperty("found.2.0"));
+        findModules.setOrganisation("org1");
+        findModules.setModule("mod1.1");
+        findModules.setRevision("*");
+        findModules.setProperty("found.[revision]");
+        findModules.setValue("true");
+        findModules.execute();
+        assertEquals("true", findModules.getProject().getProperty("found.1.0"));
+        assertEquals("true", findModules.getProject().getProperty("found.1.1"));
+        assertEquals("true", findModules.getProject().getProperty("found.2.0"));
     }
 
 }

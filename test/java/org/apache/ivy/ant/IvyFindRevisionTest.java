@@ -25,22 +25,22 @@ import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.Delete;
 
 public class IvyFindRevisionTest extends TestCase {
-    private File _cache;
+    private File cache;
 
-    private IvyFindRevision _findRevision;
+    private IvyFindRevision findRevision;
 
     protected void setUp() throws Exception {
         createCache();
         Project project = new Project();
         project.setProperty("ivy.settings.file", "test/repositories/ivysettings.xml");
 
-        _findRevision = new IvyFindRevision();
-        _findRevision.setProject(project);
+        findRevision = new IvyFindRevision();
+        findRevision.setProject(project);
     }
 
     private void createCache() {
-        _cache = new File("build/cache");
-        _cache.mkdirs();
+        cache = new File("build/cache");
+        cache.mkdirs();
     }
 
     protected void tearDown() throws Exception {
@@ -50,33 +50,33 @@ public class IvyFindRevisionTest extends TestCase {
     private void cleanCache() {
         Delete del = new Delete();
         del.setProject(new Project());
-        del.setDir(_cache);
+        del.setDir(cache);
         del.execute();
     }
 
     public void testProperty() throws Exception {
-        _findRevision.setOrganisation("org1");
-        _findRevision.setModule("mod1.1");
-        _findRevision.setRevision("1.0");
-        _findRevision.setProperty("test.revision");
-        _findRevision.execute();
-        assertEquals("1.0", _findRevision.getProject().getProperty("test.revision"));
+        findRevision.setOrganisation("org1");
+        findRevision.setModule("mod1.1");
+        findRevision.setRevision("1.0");
+        findRevision.setProperty("test.revision");
+        findRevision.execute();
+        assertEquals("1.0", findRevision.getProject().getProperty("test.revision"));
     }
 
     public void testLatest() throws Exception {
-        _findRevision.setOrganisation("org1");
-        _findRevision.setModule("mod1.1");
-        _findRevision.setRevision("latest.integration");
-        _findRevision.execute();
-        assertEquals("2.0", _findRevision.getProject().getProperty("ivy.revision"));
+        findRevision.setOrganisation("org1");
+        findRevision.setModule("mod1.1");
+        findRevision.setRevision("latest.integration");
+        findRevision.execute();
+        assertEquals("2.0", findRevision.getProject().getProperty("ivy.revision"));
     }
 
     public void testLatestSubversion() throws Exception {
-        _findRevision.setOrganisation("org1");
-        _findRevision.setModule("mod1.1");
-        _findRevision.setRevision("1.0+");
-        _findRevision.execute();
-        assertEquals("1.0.1", _findRevision.getProject().getProperty("ivy.revision"));
+        findRevision.setOrganisation("org1");
+        findRevision.setModule("mod1.1");
+        findRevision.setRevision("1.0+");
+        findRevision.execute();
+        assertEquals("1.0.1", findRevision.getProject().getProperty("ivy.revision"));
     }
 
 }

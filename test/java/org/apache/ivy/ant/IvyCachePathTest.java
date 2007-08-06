@@ -28,25 +28,25 @@ import org.apache.tools.ant.taskdefs.Delete;
 import org.apache.tools.ant.types.Path;
 
 public class IvyCachePathTest extends TestCase {
-    private File _cache;
+    private File cache;
 
-    private IvyCachePath _path;
+    private IvyCachePath path;
 
-    private Project _project;
+    private Project project;
 
     protected void setUp() throws Exception {
         createCache();
-        _project = new Project();
-        _project.setProperty("ivy.settings.file", "test/repositories/ivysettings.xml");
+        project = new Project();
+        project.setProperty("ivy.settings.file", "test/repositories/ivysettings.xml");
 
-        _path = new IvyCachePath();
-        _path.setProject(_project);
-        _path.setCache(_cache);
+        path = new IvyCachePath();
+        path.setProject(project);
+        path.setCache(cache);
     }
 
     private void createCache() {
-        _cache = new File("build/cache");
-        _cache.mkdirs();
+        cache = new File("build/cache");
+        cache.mkdirs();
     }
 
     protected void tearDown() throws Exception {
@@ -56,15 +56,15 @@ public class IvyCachePathTest extends TestCase {
     private void cleanCache() {
         Delete del = new Delete();
         del.setProject(new Project());
-        del.setDir(_cache);
+        del.setDir(cache);
         del.execute();
     }
 
     public void testSimple() throws Exception {
-        _project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-simple.xml");
-        _path.setPathid("simple-pathid");
-        _path.execute();
-        Object ref = _project.getReference("simple-pathid");
+        project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-simple.xml");
+        path.setPathid("simple-pathid");
+        path.execute();
+        Object ref = project.getReference("simple-pathid");
         assertNotNull(ref);
         assertTrue(ref instanceof Path);
         Path p = (Path) ref;
@@ -76,20 +76,20 @@ public class IvyCachePathTest extends TestCase {
     public void testInline1() throws Exception {
         // we first resolve another ivy file
         IvyResolve resolve = new IvyResolve();
-        resolve.setProject(_project);
+        resolve.setProject(project);
         resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-latest.xml"));
         resolve.execute();
 
         assertTrue(getArchiveFileInCache("org1", "mod1.2", "2.2", "mod1.2", "jar", "jar").exists());
 
         // then we resolve a dependency directly
-        _path.setOrganisation("org1");
-        _path.setModule("mod1.2");
-        _path.setRevision("2.0");
-        _path.setInline(true);
-        _path.setPathid("simple-pathid");
-        _path.execute();
-        Object ref = _project.getReference("simple-pathid");
+        path.setOrganisation("org1");
+        path.setModule("mod1.2");
+        path.setRevision("2.0");
+        path.setInline(true);
+        path.setPathid("simple-pathid");
+        path.execute();
+        Object ref = project.getReference("simple-pathid");
         assertNotNull(ref);
         assertTrue(ref instanceof Path);
         Path p = (Path) ref;
@@ -100,13 +100,13 @@ public class IvyCachePathTest extends TestCase {
 
     public void testInline2() throws Exception {
         // we first resolve a dependency directly
-        _path.setOrganisation("org1");
-        _path.setModule("mod1.2");
-        _path.setRevision("2.0");
-        _path.setInline(true);
-        _path.setPathid("simple-pathid");
-        _path.execute();
-        Object ref = _project.getReference("simple-pathid");
+        path.setOrganisation("org1");
+        path.setModule("mod1.2");
+        path.setRevision("2.0");
+        path.setInline(true);
+        path.setPathid("simple-pathid");
+        path.execute();
+        Object ref = project.getReference("simple-pathid");
         assertNotNull(ref);
         assertTrue(ref instanceof Path);
         Path p = (Path) ref;
@@ -116,7 +116,7 @@ public class IvyCachePathTest extends TestCase {
 
         // we then resolve another ivy file
         IvyResolve resolve = new IvyResolve();
-        resolve.setProject(_project);
+        resolve.setProject(project);
         resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-latest.xml"));
         resolve.execute();
 
@@ -124,11 +124,11 @@ public class IvyCachePathTest extends TestCase {
     }
 
     public void testEmptyConf() throws Exception {
-        _project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-108.xml");
-        _path.setPathid("emptyconf-pathid");
-        _path.setConf("empty");
-        _path.execute();
-        Object ref = _project.getReference("emptyconf-pathid");
+        project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-108.xml");
+        path.setPathid("emptyconf-pathid");
+        path.setConf("empty");
+        path.execute();
+        Object ref = project.getReference("emptyconf-pathid");
         assertNotNull(ref);
         assertTrue(ref instanceof Path);
         Path p = (Path) ref;
@@ -137,9 +137,9 @@ public class IvyCachePathTest extends TestCase {
 
     public void testFailure() throws Exception {
         try {
-            _project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-failure.xml");
-            _path.setPathid("failure-pathid");
-            _path.execute();
+            project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-failure.xml");
+            path.setPathid("failure-pathid");
+            path.execute();
             fail("failure didn't raised an exception with default haltonfailure setting");
         } catch (BuildException ex) {
             // ok => should raised an exception
@@ -148,10 +148,10 @@ public class IvyCachePathTest extends TestCase {
 
     public void testHaltOnFailure() throws Exception {
         try {
-            _project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-failure.xml");
-            _path.setPathid("haltfailure-pathid");
-            _path.setHaltonfailure(false);
-            _path.execute();
+            project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-failure.xml");
+            path.setPathid("haltfailure-pathid");
+            path.setHaltonfailure(false);
+            path.execute();
         } catch (BuildException ex) {
             fail("failure raised an exception with haltonfailure set to false");
         }
@@ -159,24 +159,24 @@ public class IvyCachePathTest extends TestCase {
 
     public void testWithResolveId() throws Exception {
         IvyResolve resolve = new IvyResolve();
-        resolve.setProject(_project);
-        resolve.setCache(_cache);
+        resolve.setProject(project);
+        resolve.setCache(cache);
         resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-simple.xml"));
         resolve.setResolveId("withResolveId");
         resolve.execute();
 
         // resolve another ivy file
         resolve = new IvyResolve();
-        resolve.setProject(_project);
-        resolve.setCache(_cache);
+        resolve.setProject(project);
+        resolve.setCache(cache);
         resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-latest.xml"));
         resolve.execute();
 
-        _path.setResolveId("withResolveId");
-        _path.setPathid("withresolveid-pathid");
-        _path.execute();
+        path.setResolveId("withResolveId");
+        path.setPathid("withresolveid-pathid");
+        path.execute();
 
-        Object ref = _project.getReference("withresolveid-pathid");
+        Object ref = project.getReference("withresolveid-pathid");
         assertNotNull(ref);
         assertTrue(ref instanceof Path);
         Path p = (Path) ref;
@@ -191,24 +191,24 @@ public class IvyCachePathTest extends TestCase {
 
         IvyResolve resolve = new IvyResolve();
         resolve.setProject(project);
-        resolve.setCache(_cache);
+        resolve.setCache(cache);
         resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-simple.xml"));
         resolve.setResolveId("withResolveId");
         resolve.execute();
 
         // resolve another ivy file
         resolve = new IvyResolve();
-        resolve.setProject(_project);
-        resolve.setCache(_cache);
+        resolve.setProject(project);
+        resolve.setCache(cache);
         resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-latest.xml"));
         resolve.execute();
 
-        _path.setResolveId("withResolveId");
-        _path.setPathid("withresolveid-pathid");
-        _path.setFile(new File("test/java/org/apache/ivy/ant/ivy-simple.xml"));
-        _path.execute();
+        path.setResolveId("withResolveId");
+        path.setPathid("withresolveid-pathid");
+        path.setFile(new File("test/java/org/apache/ivy/ant/ivy-simple.xml"));
+        path.execute();
 
-        Object ref = _project.getReference("withresolveid-pathid");
+        Object ref = project.getReference("withresolveid-pathid");
         assertNotNull(ref);
         assertTrue(ref instanceof Path);
         Path p = (Path) ref;
@@ -223,7 +223,7 @@ public class IvyCachePathTest extends TestCase {
 
         IvyResolve resolve = new IvyResolve();
         resolve.setProject(project);
-        resolve.setCache(_cache);
+        resolve.setCache(cache);
         resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-multiconf.xml"));
         resolve.setResolveId("testWithResolveIdAndMissingConfs");
         resolve.setConf("default");
@@ -231,23 +231,23 @@ public class IvyCachePathTest extends TestCase {
 
         // resolve another ivy file
         resolve = new IvyResolve();
-        resolve.setProject(_project);
-        resolve.setCache(_cache);
+        resolve.setProject(project);
+        resolve.setCache(cache);
         resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-latest.xml"));
         resolve.execute();
 
-        _project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-multiconf.xml");
+        project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-multiconf.xml");
 
-        _path.setResolveId("testWithResolveIdAndMissingConfs");
-        _path.setPathid("withresolveid-pathid");
-        _path.setConf("default,compile");
-        _path.setFile(new File("test/java/org/apache/ivy/ant/ivy-multiconf.xml"));
-        _path.execute();
+        path.setResolveId("testWithResolveIdAndMissingConfs");
+        path.setPathid("withresolveid-pathid");
+        path.setConf("default,compile");
+        path.setFile(new File("test/java/org/apache/ivy/ant/ivy-multiconf.xml"));
+        path.execute();
     }
 
     private File getArchiveFileInCache(String organisation, String module, String revision,
             String artifact, String type, String ext) {
-        return TestHelper.getArchiveFileInCache(_path.getIvyInstance(), _cache, organisation,
+        return TestHelper.getArchiveFileInCache(path.getIvyInstance(), cache, organisation,
             module, revision, artifact, type, ext);
     }
 }

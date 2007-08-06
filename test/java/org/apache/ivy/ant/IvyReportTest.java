@@ -25,26 +25,26 @@ import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.Delete;
 
 public class IvyReportTest extends TestCase {
-    private File _cache;
+    private File cache;
 
-    private IvyReport _report;
+    private IvyReport report;
 
-    private Project _project;
+    private Project project;
 
     protected void setUp() throws Exception {
         createCache();
-        _project = new Project();
-        _project.setProperty("ivy.settings.file", "test/repositories/ivysettings.xml");
+        project = new Project();
+        project.setProperty("ivy.settings.file", "test/repositories/ivysettings.xml");
 
-        _report = new IvyReport();
-        _report.setTaskName("report");
-        _report.setProject(_project);
-        _report.setCache(_cache);
+        report = new IvyReport();
+        report.setTaskName("report");
+        report.setProject(project);
+        report.setCache(cache);
     }
 
     private void createCache() {
-        _cache = new File("build/cache");
-        _cache.mkdirs();
+        cache = new File("build/cache");
+        cache.mkdirs();
     }
 
     protected void tearDown() throws Exception {
@@ -54,26 +54,26 @@ public class IvyReportTest extends TestCase {
     private void cleanCache() {
         Delete del = new Delete();
         del.setProject(new Project());
-        del.setDir(_cache);
+        del.setDir(cache);
         del.execute();
     }
 
     public void testRegularCircular() throws Exception {
-        _project.setProperty("ivy.dep.file", "test/repositories/2/mod11.1/ivy-1.0.xml");
+        project.setProperty("ivy.dep.file", "test/repositories/2/mod11.1/ivy-1.0.xml");
         IvyResolve res = new IvyResolve();
-        res.setProject(_project);
+        res.setProject(project);
         res.execute();
 
-        _report.setTodir(new File(_cache, "report"));
-        _report.setXml(true);
+        report.setTodir(new File(cache, "report"));
+        report.setXml(true);
 
         // do not test any xsl transformation here, because of problems of build in our continuous
         // integration server
-        _report.setXsl(false);
-        _report.setGraph(false);
+        report.setXsl(false);
+        report.setGraph(false);
 
-        _report.execute();
+        report.execute();
 
-        assertTrue(new File(_cache, "report/org11-mod11.1-compile.xml").exists());
+        assertTrue(new File(cache, "report/org11-mod11.1-compile.xml").exists());
     }
 }

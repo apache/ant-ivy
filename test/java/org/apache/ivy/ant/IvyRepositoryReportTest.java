@@ -25,23 +25,23 @@ import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.Delete;
 
 public class IvyRepositoryReportTest extends TestCase {
-    private File _cache;
+    private File cache;
 
-    private IvyRepositoryReport _report;
+    private IvyRepositoryReport report;
 
     protected void setUp() throws Exception {
         createCache();
         Project project = new Project();
         project.setProperty("ivy.settings.file", "test/repositories/ivysettings-1.xml");
 
-        _report = new IvyRepositoryReport();
-        _report.setProject(project);
-        _report.setCache(_cache);
+        report = new IvyRepositoryReport();
+        report.setProject(project);
+        report.setCache(cache);
     }
 
     private void createCache() {
-        _cache = new File("build/cache");
-        _cache.mkdirs();
+        cache = new File("build/cache");
+        cache.mkdirs();
     }
 
     protected void tearDown() throws Exception {
@@ -51,7 +51,7 @@ public class IvyRepositoryReportTest extends TestCase {
     private void cleanCache() {
         Delete del = new Delete();
         del.setProject(new Project());
-        del.setDir(_cache);
+        del.setDir(cache);
         del.execute();
     }
 

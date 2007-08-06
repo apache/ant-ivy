@@ -35,28 +35,28 @@ import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.Delete;
 
 public class IvyDeliverTest extends TestCase {
-    private File _cache;
+    private File cache;
 
-    private IvyDeliver _deliver;
+    private IvyDeliver deliver;
 
-    private Project _project;
+    private Project project;
 
     protected void setUp() throws Exception {
         cleanTestDir();
         cleanRep();
         createCache();
-        _project = new Project();
-        _project.setProperty("ivy.settings.file", "test/repositories/ivysettings.xml");
-        _project.setProperty("build", "build/test/deliver");
+        project = new Project();
+        project.setProperty("ivy.settings.file", "test/repositories/ivysettings.xml");
+        project.setProperty("build", "build/test/deliver");
 
-        _deliver = new IvyDeliver();
-        _deliver.setProject(_project);
-        _deliver.setCache(_cache);
+        deliver = new IvyDeliver();
+        deliver.setProject(project);
+        deliver.setCache(cache);
     }
 
     private void createCache() {
-        _cache = new File("build/cache");
-        _cache.mkdirs();
+        cache = new File("build/cache");
+        cache.mkdirs();
     }
 
     protected void tearDown() throws Exception {
@@ -68,7 +68,7 @@ public class IvyDeliverTest extends TestCase {
     private void cleanCache() {
         Delete del = new Delete();
         del.setProject(new Project());
-        del.setDir(_cache);
+        del.setDir(cache);
         del.execute();
     }
 
@@ -87,14 +87,14 @@ public class IvyDeliverTest extends TestCase {
     }
 
     public void testSimple() throws Exception {
-        _project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-latest.xml");
+        project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-latest.xml");
         IvyResolve res = new IvyResolve();
-        res.setProject(_project);
+        res.setProject(project);
         res.execute();
 
-        _deliver.setPubrevision("1.2");
-        _deliver.setDeliverpattern("build/test/deliver/ivy-[revision].xml");
-        _deliver.execute();
+        deliver.setPubrevision("1.2");
+        deliver.setDeliverpattern("build/test/deliver/ivy-[revision].xml");
+        deliver.execute();
 
         // should have done the ivy delivering
         File deliveredIvyFile = new File("build/test/deliver/ivy-1.2.xml");
@@ -111,23 +111,23 @@ public class IvyDeliverTest extends TestCase {
 
     public void testWithResolveId() throws Exception {
         IvyResolve resolve = new IvyResolve();
-        resolve.setProject(_project);
-        resolve.setCache(_cache);
+        resolve.setProject(project);
+        resolve.setCache(cache);
         resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-simple.xml"));
         resolve.setResolveId("withResolveId");
         resolve.execute();
 
         // resolve another ivy file
         resolve = new IvyResolve();
-        resolve.setProject(_project);
-        resolve.setCache(_cache);
+        resolve.setProject(project);
+        resolve.setCache(cache);
         resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-latest.xml"));
         resolve.execute();
 
-        _deliver.setResolveId("withResolveId");
-        _deliver.setPubrevision("1.2");
-        _deliver.setDeliverpattern("build/test/deliver/ivy-[revision].xml");
-        _deliver.execute();
+        deliver.setResolveId("withResolveId");
+        deliver.setPubrevision("1.2");
+        deliver.setDeliverpattern("build/test/deliver/ivy-[revision].xml");
+        deliver.execute();
 
         // should have done the ivy delivering
         File deliveredIvyFile = new File("build/test/deliver/ivy-1.2.xml");
@@ -151,22 +151,22 @@ public class IvyDeliverTest extends TestCase {
         // do a resolve in the new build
         IvyResolve resolve = new IvyResolve();
         resolve.setProject(other);
-        resolve.setCache(_cache);
+        resolve.setCache(cache);
         resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-simple.xml"));
         resolve.setResolveId("withResolveId");
         resolve.execute();
 
         // resolve another ivy file
         resolve = new IvyResolve();
-        resolve.setProject(_project);
-        resolve.setCache(_cache);
+        resolve.setProject(project);
+        resolve.setCache(cache);
         resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-latest.xml"));
         resolve.execute();
 
-        _deliver.setResolveId("withResolveId");
-        _deliver.setPubrevision("1.2");
-        _deliver.setDeliverpattern("build/test/deliver/ivy-[revision].xml");
-        _deliver.execute();
+        deliver.setResolveId("withResolveId");
+        deliver.setPubrevision("1.2");
+        deliver.setDeliverpattern("build/test/deliver/ivy-[revision].xml");
+        deliver.execute();
 
         // should have done the ivy delivering
         File deliveredIvyFile = new File("build/test/deliver/ivy-1.2.xml");
@@ -183,14 +183,14 @@ public class IvyDeliverTest extends TestCase {
 
     public void testWithBranch() throws Exception {
         // test case for IVY-404
-        _project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-latest-branch.xml");
+        project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-latest-branch.xml");
         IvyResolve res = new IvyResolve();
-        res.setProject(_project);
+        res.setProject(project);
         res.execute();
 
-        _deliver.setPubrevision("1.2");
-        _deliver.setDeliverpattern("build/test/deliver/ivy-[revision].xml");
-        _deliver.execute();
+        deliver.setPubrevision("1.2");
+        deliver.setDeliverpattern("build/test/deliver/ivy-[revision].xml");
+        deliver.execute();
 
         // should have done the ivy delivering
         File deliveredIvyFile = new File("build/test/deliver/ivy-1.2.xml");
@@ -207,16 +207,16 @@ public class IvyDeliverTest extends TestCase {
 
     public void testWithExtraAttributes() throws Exception {
         // test case for IVY-415
-        _project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-latest-extra.xml");
+        project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-latest-extra.xml");
         IvyResolve res = new IvyResolve();
         res.setValidate(false);
-        res.setProject(_project);
+        res.setProject(project);
         res.execute();
 
-        _deliver.setPubrevision("1.2");
-        _deliver.setDeliverpattern("build/test/deliver/ivy-[revision].xml");
-        _deliver.setValidate(false);
-        _deliver.execute();
+        deliver.setPubrevision("1.2");
+        deliver.setDeliverpattern("build/test/deliver/ivy-[revision].xml");
+        deliver.setValidate(false);
+        deliver.execute();
 
         // should have done the ivy delivering
         File deliveredIvyFile = new File("build/test/deliver/ivy-1.2.xml");
@@ -234,14 +234,14 @@ public class IvyDeliverTest extends TestCase {
     }
 
     public void testReplaceImportedConfigurations() throws Exception {
-        _project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-import-confs.xml");
+        project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-import-confs.xml");
         IvyResolve res = new IvyResolve();
-        res.setProject(_project);
+        res.setProject(project);
         res.execute();
 
-        _deliver.setPubrevision("1.2");
-        _deliver.setDeliverpattern("build/test/deliver/ivy-[revision].xml");
-        _deliver.execute();
+        deliver.setPubrevision("1.2");
+        deliver.setDeliverpattern("build/test/deliver/ivy-[revision].xml");
+        deliver.execute();
 
         // should have done the ivy delivering
         File deliveredIvyFile = new File("build/test/deliver/ivy-1.2.xml");
@@ -255,16 +255,16 @@ public class IvyDeliverTest extends TestCase {
     }
 
     public void testReplaceVariables() throws Exception {
-        _project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-with-variables.xml");
+        project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-with-variables.xml");
         IvyResolve res = new IvyResolve();
-        res.setProject(_project);
+        res.setProject(project);
         res.execute();
 
         res.getIvyInstance().getSettings().setVariable("myvar", "myvalue");
 
-        _deliver.setPubrevision("1.2");
-        _deliver.setDeliverpattern("build/test/deliver/ivy-[revision].xml");
-        _deliver.execute();
+        deliver.setPubrevision("1.2");
+        deliver.setDeliverpattern("build/test/deliver/ivy-[revision].xml");
+        deliver.execute();
 
         // should have done the ivy delivering
         File deliveredIvyFile = new File("build/test/deliver/ivy-1.2.xml");
@@ -278,15 +278,15 @@ public class IvyDeliverTest extends TestCase {
     }
 
     public void testNoReplaceDynamicRev() throws Exception {
-        _project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-latest.xml");
+        project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-latest.xml");
         IvyResolve res = new IvyResolve();
-        res.setProject(_project);
+        res.setProject(project);
         res.execute();
 
-        _deliver.setPubrevision("1.2");
-        _deliver.setDeliverpattern("build/test/deliver/ivy-[revision].xml");
-        _deliver.setReplacedynamicrev(false);
-        _deliver.execute();
+        deliver.setPubrevision("1.2");
+        deliver.setDeliverpattern("build/test/deliver/ivy-[revision].xml");
+        deliver.setReplacedynamicrev(false);
+        deliver.execute();
 
         // should have done the ivy delivering
         File deliveredIvyFile = new File("build/test/deliver/ivy-1.2.xml");
@@ -302,15 +302,15 @@ public class IvyDeliverTest extends TestCase {
     }
 
     public void testDifferentRevisionsForSameModule() throws Exception {
-        _project.setProperty("ivy.dep.file",
+        project.setProperty("ivy.dep.file",
             "test/java/org/apache/ivy/ant/ivy-different-revisions.xml");
         IvyResolve res = new IvyResolve();
-        res.setProject(_project);
+        res.setProject(project);
         res.execute();
 
-        _deliver.setPubrevision("1.2");
-        _deliver.setDeliverpattern("build/test/deliver/ivy-[revision].xml");
-        _deliver.execute();
+        deliver.setPubrevision("1.2");
+        deliver.setDeliverpattern("build/test/deliver/ivy-[revision].xml");
+        deliver.execute();
 
         // should have done the ivy delivering
         File deliveredIvyFile = new File("build/test/deliver/ivy-1.2.xml");

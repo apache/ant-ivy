@@ -39,23 +39,24 @@ import org.apache.tools.ant.taskdefs.Delete;
  * Not a Junit test, performance depends on the machine on which the test is run...
  */
 public class TestPerformance {
-    private final static String PATTERN = "build/test/perf/[module]/[artifact]-[revision].[ext]";
+    private static final String PATTERN = 
+            "build/test/perf/[module]/[artifact]-[revision].[ext]";
 
-    private final Ivy _ivy;
+    private final Ivy ivy;
 
-    private File _cache;
+    private File cache;
 
     public TestPerformance() throws Exception {
-        _ivy = new Ivy();
+        ivy = new Ivy();
         FileSystemResolver resolver = new FileSystemResolver();
         resolver.setName("def");
-        resolver.setSettings(_ivy.getSettings());
+        resolver.setSettings(ivy.getSettings());
 
         resolver.addIvyPattern(PATTERN);
         resolver.addArtifactPattern(PATTERN);
 
-        _ivy.getSettings().addResolver(resolver);
-        _ivy.getSettings().setDefaultResolver("def");
+        ivy.getSettings().addResolver(resolver);
+        ivy.getSettings().setDefaultResolver("def");
     }
 
     protected void setUp() throws Exception {
@@ -63,8 +64,8 @@ public class TestPerformance {
     }
 
     private void createCache() {
-        _cache = new File("build/cache");
-        _cache.mkdirs();
+        cache = new File("build/cache");
+        cache.mkdirs();
     }
 
     protected void tearDown() throws Exception {
@@ -74,7 +75,7 @@ public class TestPerformance {
     private void cleanCache() {
         Delete del = new Delete();
         del.setProject(new Project());
-        del.setDir(_cache);
+        del.setDir(cache);
         del.execute();
     }
 
@@ -137,7 +138,7 @@ public class TestPerformance {
         generateModules(70, 2, 5, 2, 15);
 
         long start = System.currentTimeMillis();
-        ResolveReport report = _ivy.resolve(new File("build/test/perf/mod0/ivy-1.0.xml").toURL(),
+        ResolveReport report = ivy.resolve(new File("build/test/perf/mod0/ivy-1.0.xml").toURL(),
             getResolveOptions(new String[] {"*"}).setRevision("1.0"));
         long end = System.currentTimeMillis();
         System.out.println("resolve " + report.getConfigurationReport("default").getNodesNumber()
@@ -148,7 +149,7 @@ public class TestPerformance {
 
     private ResolveOptions getResolveOptions(String[] confs) {
         return new ResolveOptions().setConfs(confs).setCache(
-            CacheManager.getInstance(_ivy.getSettings(), _cache));
+            CacheManager.getInstance(ivy.getSettings(), cache));
     }
 
     public static void main(String[] args) throws Exception {
