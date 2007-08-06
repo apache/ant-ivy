@@ -42,10 +42,11 @@ All these tasks will trigger automatically a resolve if:
 <li>organisation and module are not set</li>
 </ul>
 
-Since Ivy 1.4, there are two ways to run a [[ant:resolve]]: with an ivy file, or with the inline mode.
+<span class="since">Since Ivy 1.4</span>, there are two ways to run a [[ant:resolve]]: with an ivy file, or with the inline mode.
 When you call resolve with an ivy file, the default for it is to keep the resolved data for use by the subsequent post resolve tasks. When you run an inline resolve, the default is not to keep the data. You can override this behaviour by setting the keep attribute as you like.
 
 If you want to to reuse the resolved data obtained through a call to resolve in another build (i.e. not the current one), then you have to set the organisation and module attributes. This work only if the cache was not cleaned since your last resolve call. This does not work with inline calls, which must be performed in the same build.
+
 
 The attributes listed are then mostly used only if a resolve is triggered automatically.
 
@@ -55,9 +56,10 @@ The attributes listed are then mostly used only if a resolve is triggered automa
     <tr><th class="ant-att">Attribute</th><th class="ant-desc">Description</th><th class="ant-req">Required</th></tr>
 </thead>
 <tbody>
-    <tr><td>conf</td><td>a comma separated list of the configurations to retrieve</td>
-        <td>No. Defaults to the configurations resolved by the last resolve call, or * if no resolve was explicitly called</td></tr>
-    <tr><td>inline</td><td>true to use inline mode, false to resolve an ivy file <span class="since">since 1.4</span></td><td>No. defaults false</td></tr>
+    <tr><td>conf</td><td>a comma separated list of the configurations to retrieve or '*'.
+<span class="since">Since 2.0</span> you can also use '*(public)' or '*(private)'.  Note that '*' is interpreted as '*(public)' when inline is true.</td>
+        <td>No. Defaults to the configurations resolved by the last resolve call, or '*' if no resolve was explicitly called</td></tr>
+    <tr><td>inline</td><td>true to use inline mode, false to resolve an ivy file <span class="since">(since 1.4)</span></td><td>No. defaults false</td></tr>
     <tr><td>organisation</td><td>the organisation of the module to retrieve. This usually doesn't need to be set since it defaults to the last resolved one, except for inline mode where it is required.</td><td>Yes in inline mode, otherwise no, it then defaults to last resolved module name</td></tr>
     <tr><td>module</td><td>the name of the module to retrieve. This usually doesn't need to be set since it defaults to the last resolved one, except for inline mode where it is required.</td><td>Yes in inline mode, otherwise no, it then defaults to last resolved module name</td></tr>
     <tr><td>revision</td><td>the revision constraint of the module to retrieve. Used only in inline mode. <span class="since">since 1.4</span></td><td>No. Defaults to latest.integration</td></tr>

@@ -109,6 +109,12 @@ public abstract class IvyPostResolveTask extends IvyTask {
             }
             String[] toResolve = getConfsToResolve(getOrganisation(), getModule() + "-caller",
                 conf, true);
+            //When we make an inline resolution, we can not resolve private confs.
+            for (int i = 0; i < toResolve.length; i++) {
+                if ("*".equals(toResolve[i])) {
+                    toResolve[i] = "*(public)";
+                }
+            }
             if (toResolve.length > 0) {
                 Message.verbose("using inline mode to resolve " + getOrganisation() + " "
                         + getModule() + " " + getRevision() + " ("

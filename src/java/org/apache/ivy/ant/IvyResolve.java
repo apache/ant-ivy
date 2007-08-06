@@ -186,6 +186,11 @@ public class IvyResolve extends IvyTask {
                 if (file != null) {
                     throw new BuildException("'file' not allowed when using inline mode");
                 }
+                for (int i = 0; i < confs.length; i++) {
+                    if ("*".equals(confs[i])) {
+                        confs[i] = "*(public)";
+                    }
+                }
                 if (revision == null) {
                     revision = "latest.integration";
                 }
@@ -292,11 +297,17 @@ public class IvyResolve extends IvyTask {
     }
 
     private ResolveOptions getResolveOptions(String[] confs, IvySettings settings) {
-        return new ResolveOptions().setConfs(confs).setValidate(doValidate(settings))
+        return new ResolveOptions()
+                .setConfs(confs)
+                .setValidate(doValidate(settings))
                 .setArtifactFilter(FilterHelper.getArtifactTypeFilter(type))
-                .setRevision(revision).setCache(CacheManager.getInstance(settings, cache))
-                .setDate(getPubDate(pubdate, null)).setUseCacheOnly(useCacheOnly).setUseOrigin(
-                    useOrigin).setTransitive(transitive).setResolveId(resolveId);
+                .setRevision(revision)
+                .setCache(CacheManager.getInstance(settings, cache))
+                .setDate(getPubDate(pubdate, null))
+                .setUseCacheOnly(useCacheOnly)
+                .setUseOrigin(useOrigin)
+                .setTransitive(transitive)
+                .setResolveId(resolveId);
     }
 
     public String getModule() {

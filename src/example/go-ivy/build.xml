@@ -81,7 +81,7 @@
 		<echo message="using ivy to resolve commons-lang 2.1..."/>
         <!-- here comes the magic line: asks ivy to resolve a dependency on 
              commons-lang 2.1 and to build an ant path with it from its cache  -->
-        <ivy:cachepath organisation="commons-lang" module="commons-lang" revision="2.1" conf="default"
+        <ivy:cachepath organisation="commons-lang" module="commons-lang" revision="2.1" 
                        pathid="lib.path.id" inline="true"/>
         
 		<echo message="compiling..."/>

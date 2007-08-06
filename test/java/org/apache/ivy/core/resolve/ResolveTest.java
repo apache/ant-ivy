@@ -786,6 +786,55 @@ public class ResolveTest extends TestCase {
                 .exists());
     }
 
+    
+    public void testResolveWithStartPublicConf() throws Exception {
+        // mod2.2 depends on mod1.3 and selects its artifacts
+        ResolveReport report = ivy.resolve(new File(
+                "test/repositories/1/org2/mod2.2/ivys/ivy-0.8.xml").toURL(),
+            getResolveOptions(new String[] {"*(public)"}));
+        assertNotNull(report);
+        ModuleDescriptor md = report.getModuleDescriptor();
+        assertNotNull(md);
+        ModuleRevisionId mrid = ModuleRevisionId.newInstance("org2", "mod2.2", "0.8");
+        assertEquals(mrid, md.getModuleRevisionId());
+
+        assertTrue(cacheManager.getResolvedIvyFileInCache(mrid).exists());
+
+        // dependencies
+        assertTrue(cacheManager.getIvyFileInCache(
+            ModuleRevisionId.newInstance("org1", "mod1.3", "3.0")).exists());
+        assertTrue(getArchiveFileInCache("org1", "mod1.3", "3.0", "mod1.3-A", "jar", "jar")
+                .exists());
+        assertTrue(getArchiveFileInCache("org1", "mod1.3", "3.0", "mod1.3-B", "jar", "jar")
+                .exists());
+        assertTrue(!getArchiveFileInCache("org1", "mod1.3", "3.0", "mod1.3", "jar", "jar")
+                    .exists());
+    }
+
+    public void testResolveWithPrivateConf() throws Exception {
+        // mod2.2 depends on mod1.3 and selects its artifacts
+        ResolveReport report = ivy.resolve(new File(
+                "test/repositories/1/org2/mod2.2/ivys/ivy-0.8.xml").toURL(),
+            getResolveOptions(new String[] {"*(private)"}));
+        assertNotNull(report);
+        ModuleDescriptor md = report.getModuleDescriptor();
+        assertNotNull(md);
+        ModuleRevisionId mrid = ModuleRevisionId.newInstance("org2", "mod2.2", "0.8");
+        assertEquals(mrid, md.getModuleRevisionId());
+
+        assertTrue(cacheManager.getResolvedIvyFileInCache(mrid).exists());
+
+        assertTrue(cacheManager.getIvyFileInCache(
+            ModuleRevisionId.newInstance("org1", "mod1.3", "3.0")).exists());
+        assertTrue(getArchiveFileInCache("org1", "mod1.3", "3.0", "mod1.3-A", "jar", "jar")
+                .exists());
+        assertTrue(!getArchiveFileInCache("org1", "mod1.3", "3.0", "mod1.3-B", "jar", "jar")
+                .exists());
+        assertTrue(!getArchiveFileInCache("org1", "mod1.3", "3.0", "mod1.3", "jar", "jar")
+                .exists());
+    }
+    
+    
     public void testResolveDefaultWithArtifactsConf1() throws Exception {
         // mod2.2 depends on mod1.3 and selects its artifacts
         ResolveReport report = ivy.resolve(new File(
@@ -831,6 +880,9 @@ public class ResolveTest extends TestCase {
         assertTrue(!getArchiveFileInCache("org1", "mod1.3", "3.0", "mod1.3", "jar", "jar").exists());
     }
 
+    
+    
+    
     public void testResolveDefaultWithArtifactsAndConfMapping() throws Exception {
         // mod2.2 depends on mod1.3 and specify its artifacts and a conf mapping
         ResolveReport report = ivy.resolve(new File(
