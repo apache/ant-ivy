@@ -22,6 +22,7 @@ import java.util.Date;
 import org.apache.ivy.core.cache.CacheManager;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleId;
+import org.apache.ivy.util.ConfigurationUtils;
 import org.apache.ivy.util.filter.Filter;
 import org.apache.ivy.util.filter.FilterHelper;
 
@@ -137,10 +138,46 @@ public class ResolveOptions {
         return this;
     }
 
+    /**
+     * Indicates if the configurations use a special configuration 
+     * * , *(private) or *(public).
+     * When special configurations are used, to must have the module
+     * descriptor in order to get the list of configurations.
+     * @see #getConfs()
+     * @see #getConfs(ModuleDescriptor)
+     */
+    public boolean useSpecialConfs() {
+        for (int i = 0; confs != null && i < confs.length; i++) {
+            if (confs[0].startsWith("*")) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * @pre can only be called if useSpecialConfs()==false.  When it is true, 
+     * you have to provide a module desciptor so that configurations can be resolved.
+     * @see #getConfs(ModuleDescriptor)
+     */
     public String[] getConfs() {
+        if (useSpecialConfs()) {
+            throw new AssertionError("ResolveOptions.getConfs() " 
+                + "can not be used for options used special confs.");
+        }
         return confs;
     }
 
+    /** 
+     * Get the aksed confs.  Special confs (like *) use the moduleDescriptor to find the values * 
+     * @param md Used to get the exact values for special confs. 
+     * */
+    public String[] getConfs(ModuleDescriptor md) {
+        //TODO add isInline, in that case, replace * by *(public).
+        return ConfigurationUtils.replaceWildcards(confs, md);
+    }
+
+    
     public ResolveOptions setConfs(String[] confs) {
         this.confs = confs;
         return this;
@@ -227,6 +264,7 @@ public class ResolveOptions {
         return this;
     }
 
+
     public static String getDefaultResolveId(ModuleDescriptor md) {
         ModuleId module = md.getModuleRevisionId().getModuleId();
         return getDefaultResolveId(module);
@@ -235,4 +273,5 @@ public class ResolveOptions {
     public static String getDefaultResolveId(ModuleId moduleId) {
         return moduleId.getOrganisation() + "-" + moduleId.getName();
     }
+
 }

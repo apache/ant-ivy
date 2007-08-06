@@ -53,6 +53,9 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 =====================================
 - FIX: cachepath based on a resolve done in a previous build broken (IVY-583)
 
+- IMPROVEMENT: artifactproperty should not overwrite the existing properties (IVY-587)
+- IMPROVEMENT: Support *(private) and *(public) in the confs parameter of the resolve (IVY-588)
+
    2.0.0-alpha2-incubating
 =====================================
 - NEW: Add cleancache task (IVY-565)

@@ -142,14 +142,13 @@ public class ResolveEngine {
             boolean changing) throws ParseException, IOException {
         DefaultModuleDescriptor md;
 
-        String[] confs = options.getConfs();
-        if (confs.length == 1 && confs[0].equals("*")) {
+        if (options.useSpecialConfs()) {
             // create new resolve options because this is a different resolve than the real resolve
             // (which will be a resolve of a newCallerInstance module)
             ResolvedModuleRevision rmr = findModule(mrid, new ResolveOptions(options));
             if (rmr == null) {
-                md = DefaultModuleDescriptor.newCallerInstance(mrid, confs, options.isTransitive(),
-                    changing);
+                md = DefaultModuleDescriptor.newCallerInstance(mrid, 
+                    options.getConfs(rmr.getDescriptor()), options.isTransitive(), changing);
                 return new ResolveReport(md, options.getResolveId()) {
                     public boolean hasError() {
                         return true;
@@ -160,13 +159,13 @@ public class ResolveEngine {
                     }
                 };
             } else {
-                confs = rmr.getDescriptor().getConfigurationsNames();
+                String[] confs = options.getConfs(rmr.getDescriptor());
                 md = DefaultModuleDescriptor.newCallerInstance(ModuleRevisionId.newInstance(mrid,
                     rmr.getId().getRevision()), confs, options.isTransitive(), changing);
             }
         } else {
-            md = DefaultModuleDescriptor.newCallerInstance(mrid, confs, options.isTransitive(),
-                changing);
+            md = DefaultModuleDescriptor.newCallerInstance(mrid, options.getConfs()
+                , options.isTransitive(), changing);
         }
 
         return resolve(md, options);
@@ -213,10 +212,7 @@ public class ResolveEngine {
                 IvyContext.getContext().setCache(cacheManager.getCache());
             }
 
-            String[] confs = options.getConfs();
-            if (confs.length == 1 && confs[0].equals("*")) {
-                confs = md.getConfigurationsNames();
-            }
+            String[] confs = options.getConfs(md);
             options.setConfs(confs);
 
             if (options.getResolveId() == null) {
@@ -415,10 +411,7 @@ public class ResolveEngine {
             IvyContext.getContext().setCache(cacheManager.getCache());
         }
 
-        String[] confs = options.getConfs();
-        if (confs.length == 1 && confs[0].equals("*")) {
-            confs = md.getConfigurationsNames();
-        }
+        String[] confs = options.getConfs(md);
         options.setConfs(confs);
 
         Date reportDate = new Date();
