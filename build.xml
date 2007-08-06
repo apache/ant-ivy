@@ -115,23 +115,23 @@
 	
 	<target name="clean-all" depends="clean, clean-lib, clean-examples" />
 	
-	<target name="noresolve" description="use to skip dependency resolution">
+	<target name="/noresolve" description="use to skip dependency resolution">
 		<property name="no.resolve" value="true" />
 	</target>
 	
-	<target name="notest" description="use to skip tests">
+	<target name="/notest" description="use to skip tests">
 		<property name="skip.test" value="true" />
 	</target>
 	
-	<target name="nojavadoc" description="use to skip javadoc">
+	<target name="/nojavadoc" description="use to skip javadoc">
 		<property name="skip.javadoc" value="true" />
 	</target>
 	
-	<target name="localivy" description="use a local ivy home">
+	<target name="/localivy" description="use a local ivy home">
 		<property name="ivy.use.local.home" value="true" />
 	</target>
 	
-	<target name="offline" depends="noresolve" description="use to indicate no internet connection is available">
+	<target name="/offline" depends="/noresolve" description="use to indicate no internet connection is available">
 		<property name="offline" value="true" />
 	</target>
 	
@@ -288,7 +288,7 @@ ${final.core.name}    The Ivy core, eg everything but classes dependent on Ant.$
 	<!-- =================================================================
 	     PUBLISH LOCAL
 	     ================================================================= -->
-	<target name="publish-local" depends="jar" description="--> publishes Ivy to Ivy local repository">
+	<target name="publish-local" depends="jar" description="publishes Ivy to Ivy local repository">
 		<ivy:publish resolver="local" pubrevision="${build.version}"
 			artifactsPattern="${artifacts.build.dir}/[artifact].[ext]" 
 			forcedeliver="true" />
@@ -505,13 +505,13 @@ ${final.core.name}    The Ivy core, eg everything but classes dependent on Ant.$
 	
 	<target name="eclipse-default" depends="resolve, check-eclipse-classpath-overwrite"
 			unless="eclipse.classpath.abort"
-			description="--> creates a default .classpath for eclipse, using jars resolved by this ant build">
+			description="creates a default .classpath for eclipse, using jars resolved by this ant build">
 		<copy file="${basedir}/.classpath.default" tofile="${basedir}/.classpath" overwrite="true" />
 	</target>
 
 	<target name="eclipse-ivyde" depends="check-eclipse-classpath-overwrite"
 			unless="eclipse.classpath.abort"
-			description="--> creates a .classpath for eclipse using Apache IvyDE version">
+			description="creates a .classpath for eclipse using Apache IvyDE version">
 		<copy file="${basedir}/.classpath.ivyde" tofile="${basedir}/.classpath" overwrite="true" />
 	</target>
 </project>
