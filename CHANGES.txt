@@ -55,6 +55,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 
 - IMPROVEMENT: artifactproperty should not overwrite the existing properties (IVY-587)
 - IMPROVEMENT: Support *(private) and *(public) in the confs parameter of the resolve (IVY-588)
+- IMPROVEMENT: replace * by *(public) when resolving inline (IVY-589)
 
    2.0.0-alpha2-incubating
 =====================================
