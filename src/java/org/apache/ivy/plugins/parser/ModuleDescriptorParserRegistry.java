@@ -27,7 +27,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
-import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.plugins.parser.m2.PomModuleDescriptorParser;
 import org.apache.ivy.plugins.parser.xml.XmlModuleDescriptorParser;
 import org.apache.ivy.plugins.repository.Resource;
@@ -76,7 +75,7 @@ public class ModuleDescriptorParserRegistry extends AbstractModuleDescriptorPars
         return null;
     }
 
-    public ModuleDescriptor parseDescriptor(IvySettings settings, URL descriptorURL, Resource res,
+    public ModuleDescriptor parseDescriptor(ParserSettings settings, URL descriptorURL, Resource res,
             boolean validate) throws ParseException, IOException {
         ModuleDescriptorParser parser = getParser(res);
         if (parser == null) {

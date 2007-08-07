@@ -33,7 +33,7 @@ import org.apache.ivy.plugins.repository.Resource;
 
 public class ModuleDescriptorParserRegistryTest extends TestCase {
     public static class MyParser extends AbstractModuleDescriptorParser {
-        public ModuleDescriptor parseDescriptor(IvySettings ivy, URL descriptorURL, Resource res,
+        public ModuleDescriptor parseDescriptor(ParserSettings ivy, URL descriptorURL, Resource res,
                 boolean validate) throws ParseException, IOException {
             return DefaultModuleDescriptor.newDefaultInstance(ModuleRevisionId.newInstance("test",
                 "parser", "1.0"));

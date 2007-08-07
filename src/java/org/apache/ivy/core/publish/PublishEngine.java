@@ -39,7 +39,6 @@ import org.apache.ivy.core.module.descriptor.DefaultArtifact;
 import org.apache.ivy.core.module.descriptor.MDArtifact;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
-import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.plugins.parser.xml.XmlModuleDescriptorParser;
 import org.apache.ivy.plugins.parser.xml.XmlModuleDescriptorUpdater;
 import org.apache.ivy.plugins.resolver.DependencyResolver;
@@ -48,9 +47,9 @@ import org.apache.ivy.util.Message;
 import org.xml.sax.SAXException;
 
 public class PublishEngine {
-    private IvySettings settings;
+    private PublishEngineSettings settings;
 
-    public PublishEngine(IvySettings settings) {
+    public PublishEngine(PublishEngineSettings settings) {
         this.settings = settings;
     }
 

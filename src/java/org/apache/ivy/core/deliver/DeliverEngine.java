@@ -35,7 +35,6 @@ import org.apache.ivy.core.IvyPatternHelper;
 import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
-import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.plugins.parser.xml.XmlModuleDescriptorParser;
 import org.apache.ivy.plugins.parser.xml.XmlModuleDescriptorUpdater;
 import org.apache.ivy.plugins.report.XmlReportParser;
@@ -44,9 +43,9 @@ import org.apache.ivy.util.Message;
 import org.xml.sax.SAXException;
 
 public class DeliverEngine {
-    private IvySettings settings;
+    private DeliverEngineSettings settings;
 
-    public DeliverEngine(IvySettings settings) {
+    public DeliverEngine(DeliverEngineSettings settings) {
         this.settings = settings;
     }
 

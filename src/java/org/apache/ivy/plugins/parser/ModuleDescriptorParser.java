@@ -24,14 +24,13 @@ import java.net.URL;
 import java.text.ParseException;
 
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
-import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.plugins.repository.Resource;
 
 public interface ModuleDescriptorParser {
-    public ModuleDescriptor parseDescriptor(IvySettings ivySettings, URL descriptorURL,
+    public ModuleDescriptor parseDescriptor(ParserSettings ivySettings, URL descriptorURL,
             boolean validate) throws ParseException, IOException;
 
-    public ModuleDescriptor parseDescriptor(IvySettings ivySettings, URL descriptorURL,
+    public ModuleDescriptor parseDescriptor(ParserSettings ivySettings, URL descriptorURL,
             Resource res, boolean validate) throws ParseException, IOException;
 
     /**

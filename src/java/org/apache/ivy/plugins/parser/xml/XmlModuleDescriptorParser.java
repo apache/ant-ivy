@@ -48,13 +48,13 @@ import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ArtifactId;
 import org.apache.ivy.core.module.id.ModuleId;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
-import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.plugins.conflict.ConflictManager;
 import org.apache.ivy.plugins.conflict.FixedConflictManager;
 import org.apache.ivy.plugins.matcher.PatternMatcher;
 import org.apache.ivy.plugins.namespace.Namespace;
 import org.apache.ivy.plugins.parser.AbstractModuleDescriptorParser;
 import org.apache.ivy.plugins.parser.ModuleDescriptorParser;
+import org.apache.ivy.plugins.parser.ParserSettings;
 import org.apache.ivy.plugins.repository.Resource;
 import org.apache.ivy.plugins.repository.url.URLResource;
 import org.apache.ivy.util.Message;
@@ -92,7 +92,7 @@ public final class XmlModuleDescriptorParser extends AbstractModuleDescriptorPar
      * @throws ParseException
      * @throws IOException
      */
-    public ModuleDescriptor parseDescriptor(IvySettings ivySettings, URL xmlURL, Resource res,
+    public ModuleDescriptor parseDescriptor(ParserSettings ivySettings, URL xmlURL, Resource res,
             boolean validate) throws ParseException, IOException {
         Parser parser = new Parser(this, ivySettings, validate, xmlURL);
         parser.parse(res, validate);
@@ -100,7 +100,7 @@ public final class XmlModuleDescriptorParser extends AbstractModuleDescriptorPar
     }
 
     /** Used for test purpose */
-    ModuleDescriptor parseDescriptor(IvySettings ivySettings, InputStream descriptor,
+    ModuleDescriptor parseDescriptor(ParserSettings ivySettings, InputStream descriptor,
             Resource res, boolean validate) throws ParseException, IOException {
         Parser parser = new Parser(this, ivySettings, validate, null);
         parser.parse(descriptor, res, validate);
@@ -149,7 +149,7 @@ public final class XmlModuleDescriptorParser extends AbstractModuleDescriptorPar
 
         private boolean validate = true;
 
-        private IvySettings ivy;
+        private ParserSettings ivy;
 
         private boolean artifactsDeclared = false;
 
@@ -181,7 +181,7 @@ public final class XmlModuleDescriptorParser extends AbstractModuleDescriptorPar
 
         private final URL xmlURL;
 
-        public Parser(ModuleDescriptorParser parser, IvySettings ivySettings, boolean validate,
+        public Parser(ModuleDescriptorParser parser, ParserSettings ivySettings, boolean validate,
                 URL xmlURL) {
             super(parser);
             ivy = ivySettings;

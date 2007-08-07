@@ -40,8 +40,10 @@ import org.apache.ivy.Ivy;
 import org.apache.ivy.core.IvyPatternHelper;
 import org.apache.ivy.core.NormalRelativeUrlResolver;
 import org.apache.ivy.core.RelativeUrlResolver;
+import org.apache.ivy.core.deliver.DeliverEngineSettings;
 import org.apache.ivy.core.module.id.ModuleId;
 import org.apache.ivy.core.module.status.StatusManager;
+import org.apache.ivy.core.publish.PublishEngineSettings;
 import org.apache.ivy.core.sort.SortEngineSettings;
 import org.apache.ivy.plugins.IvyAware;
 import org.apache.ivy.plugins.IvySettingsAware;
@@ -65,6 +67,7 @@ import org.apache.ivy.plugins.matcher.RegexpPatternMatcher;
 import org.apache.ivy.plugins.namespace.Namespace;
 import org.apache.ivy.plugins.parser.ModuleDescriptorParser;
 import org.apache.ivy.plugins.parser.ModuleDescriptorParserRegistry;
+import org.apache.ivy.plugins.parser.ParserSettings;
 import org.apache.ivy.plugins.report.LogReportOutputter;
 import org.apache.ivy.plugins.report.ReportOutputter;
 import org.apache.ivy.plugins.report.XmlReportOutputter;
@@ -81,7 +84,7 @@ import org.apache.ivy.plugins.version.VersionRangeMatcher;
 import org.apache.ivy.util.Message;
 import org.apache.ivy.util.url.URLHandlerRegistry;
 
-public class IvySettings implements SortEngineSettings {
+public class IvySettings implements SortEngineSettings , PublishEngineSettings , ParserSettings , DeliverEngineSettings {
     private static final String DEFAULT_CACHE_ARTIFACT_PATTERN =
         "[organisation]/[module]/[type]s/[artifact]-[revision](.[ext])";
 

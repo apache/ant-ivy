@@ -43,11 +43,11 @@ import org.apache.ivy.core.module.descriptor.Configuration.Visibility;
 import org.apache.ivy.core.module.id.ArtifactId;
 import org.apache.ivy.core.module.id.ModuleId;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
-import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.plugins.matcher.ExactPatternMatcher;
 import org.apache.ivy.plugins.matcher.PatternMatcher;
 import org.apache.ivy.plugins.parser.AbstractModuleDescriptorParser;
 import org.apache.ivy.plugins.parser.ModuleDescriptorParser;
+import org.apache.ivy.plugins.parser.ParserSettings;
 import org.apache.ivy.plugins.parser.xml.XmlModuleDescriptorWriter;
 import org.apache.ivy.plugins.repository.Resource;
 import org.apache.ivy.util.Message;
@@ -383,7 +383,7 @@ public final class PomModuleDescriptorParser extends AbstractModuleDescriptorPar
 
     }
 
-    public ModuleDescriptor parseDescriptor(IvySettings settings, URL descriptorURL, Resource res,
+    public ModuleDescriptor parseDescriptor(ParserSettings settings, URL descriptorURL, Resource res,
             boolean validate) throws ParseException, IOException {
         Parser parser = new Parser(this, res);
         try {

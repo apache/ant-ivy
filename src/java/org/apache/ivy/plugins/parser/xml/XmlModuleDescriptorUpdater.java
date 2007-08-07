@@ -45,6 +45,7 @@ import org.apache.ivy.Ivy;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.plugins.namespace.Namespace;
+import org.apache.ivy.plugins.parser.ParserSettings;
 import org.apache.ivy.plugins.repository.Resource;
 import org.apache.ivy.plugins.repository.file.FileResource;
 import org.apache.ivy.plugins.repository.url.URLResource;
@@ -93,7 +94,7 @@ public final class XmlModuleDescriptorUpdater {
             confsToExclude);
     }
 
-    public static void update(final IvySettings settings, URL srcURL, File destFile,
+    public static void update(final ParserSettings settings, URL srcURL, File destFile,
             final Map resolvedRevisions, final String status, final String revision,
             final Date pubdate, final Namespace ns, final boolean replaceInclude,
             String[] confsToExclude) throws IOException, SAXException {
@@ -113,7 +114,7 @@ public final class XmlModuleDescriptorUpdater {
         }
     }
 
-    public static void update(final IvySettings settings, URL srcURL, OutputStream destFile,
+    public static void update(final ParserSettings settings, URL srcURL, OutputStream destFile,
             final Map resolvedRevisions, final String status, final String revision,
             final Date pubdate, final Namespace ns, final boolean replaceInclude,
             String[] confsToExclude) throws IOException, SAXException {
@@ -172,7 +173,7 @@ public final class XmlModuleDescriptorUpdater {
 
     private static class UpdaterHandler extends DefaultHandler implements LexicalHandler {
 
-        private final IvySettings settings;
+        private final ParserSettings settings;
 
         private final PrintWriter out;
 
@@ -194,7 +195,7 @@ public final class XmlModuleDescriptorUpdater {
 
         private final URL relativePathCtx;
 
-        public UpdaterHandler(final IvySettings settings, final PrintWriter out,
+        public UpdaterHandler(final ParserSettings settings, final PrintWriter out,
                 final Map resolvedRevisions, final String status, final String revision,
                 final Date pubdate, final Namespace ns, final boolean replaceInclude,
                 final String[] confs, final URL relativePathCtx) {
@@ -559,7 +560,7 @@ public final class XmlModuleDescriptorUpdater {
             return buf.toString();
         }
 
-        private String substitute(IvySettings ivy, String value) {
+        private String substitute(ParserSettings ivy, String value) {
             return ivy == null ? value : ivy.substitute(value);
         }
 
@@ -697,7 +698,7 @@ public final class XmlModuleDescriptorUpdater {
 
     }
 
-    public static void update(final IvySettings settings, URL inStreamCtx, InputStream inStream,
+    public static void update(final ParserSettings settings, URL inStreamCtx, InputStream inStream,
             OutputStream outStream, final Map resolvedRevisions, final String status,
             final String revision, final Date pubdate, final Namespace ns,
             final boolean replaceInclude, String[] confsToExclude) 
