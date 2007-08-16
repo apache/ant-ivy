@@ -33,7 +33,7 @@ public class LatestRevisionStrategyTest extends TestCase {
 
         List shuffled = new ArrayList(Arrays.asList(revs));
         Collections.shuffle(shuffled);
-        Collections.sort(shuffled, new LatestRevisionStrategy().COMPARATOR);
+        Collections.sort(shuffled, new LatestRevisionStrategy().new ArtifactInfoComparator());
         assertEquals(Arrays.asList(revs), shuffled);
     }
 
@@ -81,7 +81,7 @@ public class LatestRevisionStrategyTest extends TestCase {
         specialMeaning.setName("QA");
         specialMeaning.setValue(new Integer(4));
         latestRevisionStrategy.addConfiguredSpecialMeaning(specialMeaning);
-        Collections.sort(shuffled, latestRevisionStrategy.COMPARATOR);
+        Collections.sort(shuffled, latestRevisionStrategy.new ArtifactInfoComparator());
         assertEquals(Arrays.asList(revs), shuffled);
     }
 

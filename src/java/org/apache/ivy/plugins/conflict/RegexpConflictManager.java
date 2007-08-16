@@ -35,7 +35,8 @@ import org.apache.ivy.util.Message;
  *    &lt;!-- Match all revisions, but ignore the last dot(.) and the character after it.
  *        Used to match api changes in out milestones. --&gt;
  *    &lt;conflict-managers&gt;
- *        &lt;regexp-cm name=&quot;regexp&quot; regexp=&quot;(.*)\..$&quot; ignoreNonMatching=&quot;true&quot;/&gt;
+ *        &lt;regexp-cm name=&quot;regexp&quot; 
+ *                   regexp=&quot;(.*)\..$&quot; ignoreNonMatching=&quot;true&quot;/&gt;
  *    &lt;/conflict-managers&gt;
  * </pre>
  * 

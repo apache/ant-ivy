@@ -27,62 +27,23 @@ import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.plugins.version.VersionMatcher;
 
 public class LatestRevisionStrategy extends ComparatorLatestStrategy {
-    public static class SpecialMeaning {
-        private String _name;
-
-        private Integer _value;
-
-        public String getName() {
-            return _name;
-        }
-
-        public void setName(String name) {
-            _name = name;
-        }
-
-        public Integer getValue() {
-            return _value;
-        }
-
-        public void setValue(Integer value) {
-            _value = value;
-        }
-
-        public void validate() {
-            if (_name == null) {
-                throw new IllegalStateException("a special meaning should have a name");
-            }
-            if (_value == null) {
-                throw new IllegalStateException("a special meaning should have a value");
-            }
-        }
-    }
-
-    private static final Map DEFAULT_SPECIAL_MEANINGS;
-    static {
-        DEFAULT_SPECIAL_MEANINGS = new HashMap();
-        DEFAULT_SPECIAL_MEANINGS.put("dev", new Integer(-1));
-        DEFAULT_SPECIAL_MEANINGS.put("rc", new Integer(1));
-        DEFAULT_SPECIAL_MEANINGS.put("final", new Integer(2));
-    }
-
     /**
      * Compares two ModuleRevisionId by their revision. Revisions are compared using an algorithm
      * inspired by PHP version_compare one.
      */
-    public final Comparator STATIC_COMPARATOR = new Comparator() {
+    final class MridComparator implements Comparator {
         public int compare(Object o1, Object o2) {
             String rev1 = ((ModuleRevisionId) o1).getRevision();
             String rev2 = ((ModuleRevisionId) o2).getRevision();
-
+        
             rev1 = rev1.replaceAll("([a-zA-Z])(\\d)", "$1.$2");
             rev1 = rev1.replaceAll("(\\d)([a-zA-Z])", "$1.$2");
             rev2 = rev2.replaceAll("([a-zA-Z])(\\d)", "$1.$2");
             rev2 = rev2.replaceAll("(\\d)([a-zA-Z])", "$1.$2");
-
+        
             String[] parts1 = rev1.split("[\\._\\-\\+]");
             String[] parts2 = rev2.split("[\\._\\-\\+]");
-
+        
             int i = 0;
             for (; i < parts1.length && i < parts2.length; i++) {
                 if (parts1[i].equals(parts2[i])) {
@@ -124,19 +85,18 @@ public class LatestRevisionStrategy extends ComparatorLatestStrategy {
         private boolean isNumber(String str) {
             return str.matches("\\d+");
         }
-    };
+    }
 
     /**
      * Compares two ArtifactInfo by their revision. Revisions are compared using an algorithm
      * inspired by PHP version_compare one, unless a dynamic revision is given, in which case the
      * version matcher is used to perform the comparison.
      */
-    public Comparator COMPARATOR = new Comparator() {
-
+    final class ArtifactInfoComparator implements Comparator {
         public int compare(Object o1, Object o2) {
             String rev1 = ((ArtifactInfo) o1).getRevision();
             String rev2 = ((ArtifactInfo) o2).getRevision();
-
+        
             /*
              * The revisions can still be not resolved, so we use the current version matcher to
              * know if one revision is dynamic, and in this case if it should be considered greater
@@ -149,24 +109,66 @@ public class LatestRevisionStrategy extends ComparatorLatestStrategy {
             ModuleRevisionId mrid1 = ModuleRevisionId.newInstance("", "", rev1);
             ModuleRevisionId mrid2 = ModuleRevisionId.newInstance("", "", rev2);
             if (vmatcher.isDynamic(mrid1)) {
-                int c = vmatcher.compare(mrid1, mrid2, STATIC_COMPARATOR);
+                int c = vmatcher.compare(mrid1, mrid2, mridComparator);
                 return c >= 0 ? 1 : -1;
             } else if (vmatcher.isDynamic(mrid2)) {
-                int c = vmatcher.compare(mrid2, mrid1, STATIC_COMPARATOR);
+                int c = vmatcher.compare(mrid2, mrid1, mridComparator);
                 return c >= 0 ? -1 : 1;
             }
+        
+            return mridComparator.compare(mrid1, mrid2);
+        }
+    }
 
-            return STATIC_COMPARATOR.compare(mrid1, mrid2);
+    public static class SpecialMeaning {
+        private String name;
+
+        private Integer value;
+
+        public String getName() {
+            return name;
         }
 
-    };
+        public void setName(String name) {
+            this.name = name;
+        }
 
-    private Map _specialMeanings = null;
+        public Integer getValue() {
+            return value;
+        }
 
-    private boolean _usedefaultspecialmeanings = true;
+        public void setValue(Integer value) {
+            this.value = value;
+        }
+
+        public void validate() {
+            if (name == null) {
+                throw new IllegalStateException("a special meaning should have a name");
+            }
+            if (value == null) {
+                throw new IllegalStateException("a special meaning should have a value");
+            }
+        }
+    }
+
+    private static final Map DEFAULT_SPECIAL_MEANINGS;
+    static {
+        DEFAULT_SPECIAL_MEANINGS = new HashMap();
+        DEFAULT_SPECIAL_MEANINGS.put("dev", new Integer(-1));
+        DEFAULT_SPECIAL_MEANINGS.put("rc", new Integer(1));
+        DEFAULT_SPECIAL_MEANINGS.put("final", new Integer(2));
+    }
+
+    private final Comparator mridComparator = new MridComparator();
+
+    private final Comparator artifactInfoComparator = new ArtifactInfoComparator();
+
+    private Map specialMeanings = null;
+
+    private boolean usedefaultspecialmeanings = true;
 
     public LatestRevisionStrategy() {
-        setComparator(COMPARATOR);
+        setComparator(artifactInfoComparator);
         setName("latest-revision");
     }
 
@@ -176,20 +178,20 @@ public class LatestRevisionStrategy extends ComparatorLatestStrategy {
     }
 
     public synchronized Map getSpecialMeanings() {
-        if (_specialMeanings == null) {
-            _specialMeanings = new HashMap();
+        if (specialMeanings == null) {
+            specialMeanings = new HashMap();
             if (isUsedefaultspecialmeanings()) {
-                _specialMeanings.putAll(DEFAULT_SPECIAL_MEANINGS);
+                specialMeanings.putAll(DEFAULT_SPECIAL_MEANINGS);
             }
         }
-        return _specialMeanings;
+        return specialMeanings;
     }
 
     public boolean isUsedefaultspecialmeanings() {
-        return _usedefaultspecialmeanings;
+        return usedefaultspecialmeanings;
     }
 
     public void setUsedefaultspecialmeanings(boolean usedefaultspecialmeanings) {
-        _usedefaultspecialmeanings = usedefaultspecialmeanings;
+        this.usedefaultspecialmeanings = usedefaultspecialmeanings;
     }
 }
