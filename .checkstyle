@@ -5,6 +5,7 @@
         <additional-data name="protect-config-file" value="true"/>
     </local-check-config>
     <fileset name="Ivy Checkstyle config" enabled="true" check-config-name="Ivy Checkstyle Config" local="true">
-        <file-match-pattern match-pattern=".java$" include-pattern="true"/>
+        <file-match-pattern match-pattern="^src.java.*.java$" include-pattern="true"/>
+        <file-match-pattern match-pattern="^src.example.*.java$" include-pattern="true"/>
     </fileset>
 </fileset-config>

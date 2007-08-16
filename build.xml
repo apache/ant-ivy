@@ -109,7 +109,7 @@
 	
 	<target name="clean-examples" description="clean all examples">
 		<subant target="clean" failonerror="false">
-			<fileset dir="src/example" includes="**/build.xml" />
+			<fileset dir="${example.dir}" includes="**/build.xml" />
 		</subant>		
 	</target>
 	
@@ -476,6 +476,9 @@ ${final.core.name}    The Ivy core, eg everything but classes dependent on Ant.$
 		<checkstyle config="${checkstyle.src.dir}/checkstyle-config" failOnViolation="false">
 			<formatter type="xml" toFile="${checkstyle.report.dir}/checkstyle.xml" />
 			<fileset dir="${src.dir}">
+				<include name="**/*.java" />
+			</fileset>
+			<fileset dir="${example.dir}">
 				<include name="**/*.java" />
 			</fileset>
 		</checkstyle>
