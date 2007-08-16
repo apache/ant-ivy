@@ -87,7 +87,7 @@ public abstract class IvyCacheTask extends IvyPostResolveTask {
             XmlReportParser parser = new XmlReportParser();
             CacheManager cacheMgr = getIvyInstance().getCacheManager(getCache());
             String resolvedId = getResolveId();
-            if (resolvedId==null) {
+            if (resolvedId == null) {
                 resolvedId = ResolveOptions.getDefaultResolveId(getResolvedModuleId());
             }
             for (int i = 0; i < confs.length; i++) {

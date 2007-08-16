@@ -137,18 +137,18 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
             return md;
         }
         DefaultModuleDescriptor nmd = new DefaultModuleDescriptor(md.getParser(), md.getResource());
-        nmd._revId = t.transform(md.getModuleRevisionId());
-        nmd._resolvedRevId = t.transform(md.getResolvedModuleRevisionId());
-        nmd._status = md.getStatus();
-        nmd._publicationDate = md.getPublicationDate();
-        nmd._resolvedPublicationDate = md.getResolvedPublicationDate();
+        nmd.revId = t.transform(md.getModuleRevisionId());
+        nmd.resolvedRevId = t.transform(md.getResolvedModuleRevisionId());
+        nmd.status = md.getStatus();
+        nmd.publicationDate = md.getPublicationDate();
+        nmd.resolvedPublicationDate = md.getResolvedPublicationDate();
         DependencyDescriptor[] dd = md.getDependencies();
         for (int i = 0; i < dd.length; i++) {
-            nmd._dependencies.add(NameSpaceHelper.toSystem(dd[i], ns));
+            nmd.dependencies.add(NameSpaceHelper.toSystem(dd[i], ns));
         }
         Configuration[] confs = md.getConfigurations();
         for (int i = 0; i < confs.length; i++) {
-            nmd._configurations.put(confs[i].getName(), confs[i]);
+            nmd.configurations.put(confs[i].getName(), confs[i]);
             Artifact[] arts = md.getArtifacts(confs[i].getName());
             for (int j = 0; j < arts.length; j++) {
                 nmd.addArtifact(confs[i].getName(), NameSpaceHelper.transform(arts[j], t));
@@ -157,61 +157,59 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
         nmd.setDefault(md.isDefault());
         if (md instanceof DefaultModuleDescriptor) {
             DefaultModuleDescriptor dmd = (DefaultModuleDescriptor) md;
-            nmd._conflictManagers.putAll(dmd._conflictManagers);
+            nmd.conflictManagers.putAll(dmd.conflictManagers);
         } else {
-            Message
-                    .warn("transformed module descriptor is not a default module descriptor: impossible to copy conflict manager configuration: "
-                            + md);
+            Message.warn(
+                "transformed module descriptor is not a default module descriptor: "
+                + "impossible to copy conflict manager configuration: " + md);
         }
-        nmd._licenses.addAll(Arrays.asList(md.getLicenses()));
-        nmd._homePage = md.getHomePage();
-        nmd._lastModified = md.getLastModified();
-        nmd._namespace = ns;
+        nmd.licenses.addAll(Arrays.asList(md.getLicenses()));
+        nmd.homePage = md.getHomePage();
+        nmd.lastModified = md.getLastModified();
+        nmd.namespace = ns;
 
         return nmd;
     }
 
-    private ModuleRevisionId _revId;
+    private ModuleRevisionId revId;
 
-    private ModuleRevisionId _resolvedRevId;
+    private ModuleRevisionId resolvedRevId;
 
-    private String _status = StatusManager.getCurrent().getDefaultStatus();
+    private String status = StatusManager.getCurrent().getDefaultStatus();
 
-    private Date _publicationDate;
+    private Date publicationDate;
 
-    private Date _resolvedPublicationDate;
+    private Date resolvedPublicationDate;
 
-    private List _dependencies = new ArrayList(); // List (DependencyDescriptor)
+    private List dependencies = new ArrayList(); // List (DependencyDescriptor)
 
-    private Map _configurations = new LinkedHashMap(); // Map(String conf -> Configuration)
+    private Map configurations = new LinkedHashMap(); // Map(String conf -> Configuration)
 
-    private Map _artifactsByConf = new HashMap(); // Map (String conf -> Collection(Artifact))
+    private Map artifactsByConf = new HashMap(); // Map (String conf -> Collection(Artifact))
 
-    private Collection _artifacts = new LinkedHashSet(); // Collection(Artifact) // all artifacts
-
-    // could also be found in the
-    // artifactsByConf map, but here we can
+    private Collection artifacts = new LinkedHashSet(); // Collection(Artifact) 
+    // all artifacts could also be found in the artifactsByConf map, but here we can
     // preserve the order
 
-    private boolean _isDefault = false;
+    private boolean isDefault = false;
 
-    private Map _conflictManagers = new LinkedHashMap(); // Map (ModuleId -> )
+    private Map conflictManagers = new LinkedHashMap(); // Map (ModuleId -> )
 
-    private List _licenses = new ArrayList(); // List(License)
+    private List licenses = new ArrayList(); // List(License)
 
-    private String _homePage;
+    private String homePage;
 
-    private long _lastModified = 0;
+    private long lastModified = 0;
 
-    private Namespace _namespace;
+    private Namespace namespace;
 
-    private boolean _mappingOverride;
+    private boolean mappingOverride;
 
-    private ModuleDescriptorParser _parser;
+    private ModuleDescriptorParser parser;
 
-    private Resource _resource;
+    private Resource resource;
 
-    private List _excludeRules = new ArrayList(); // List(ExcludeRule)
+    private List excludeRules = new ArrayList(); // List(ExcludeRule)
 
     public DefaultModuleDescriptor(ModuleRevisionId id, String status, Date pubDate) {
         this(id, status, pubDate, false);
@@ -225,12 +223,12 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
         if (status == null) {
             throw new NullPointerException("null status not allowed");
         }
-        _revId = id;
-        _resolvedRevId = id;
-        _status = status;
-        _publicationDate = pubDate;
-        _resolvedPublicationDate = _publicationDate == null ? new Date() : _publicationDate;
-        _isDefault = isDefault;
+        revId = id;
+        resolvedRevId = id;
+        this.status = status;
+        publicationDate = pubDate;
+        resolvedPublicationDate = publicationDate == null ? new Date() : publicationDate;
+        this.isDefault = isDefault;
     }
 
     /**
@@ -238,60 +236,60 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
      * created by this constructor !
      */
     public DefaultModuleDescriptor(ModuleDescriptorParser parser, Resource res) {
-        _parser = parser;
-        _resource = res;
+        this.parser = parser;
+        resource = res;
     }
 
     public boolean isDefault() {
-        return _isDefault;
+        return isDefault;
     }
 
     public void setPublicationDate(Date publicationDate) {
-        _publicationDate = publicationDate;
-        if (_resolvedPublicationDate == null) {
-            _resolvedPublicationDate = _publicationDate == null ? new Date() : _publicationDate;
+        this.publicationDate = publicationDate;
+        if (resolvedPublicationDate == null) {
+            resolvedPublicationDate = publicationDate == null ? new Date() : publicationDate;
         }
     }
 
     public Date getPublicationDate() {
-        return _publicationDate;
+        return publicationDate;
     }
 
     public void setResolvedPublicationDate(Date publicationDate) {
         if (publicationDate == null) {
             throw new NullPointerException("null publication date not allowed");
         }
-        _resolvedPublicationDate = publicationDate;
+        resolvedPublicationDate = publicationDate;
     }
 
     public Date getResolvedPublicationDate() {
-        return _resolvedPublicationDate;
+        return resolvedPublicationDate;
     }
 
     public void setModuleRevisionId(ModuleRevisionId revId) {
         if (revId == null) {
             throw new NullPointerException("null module revision id not allowed");
         }
-        _revId = revId;
-        if (_resolvedRevId == null) {
-            _resolvedRevId = _revId;
+        this.revId = revId;
+        if (resolvedRevId == null) {
+            resolvedRevId = revId;
         }
     }
 
     public void setResolvedModuleRevisionId(ModuleRevisionId revId) {
-        _resolvedRevId = revId;
+        resolvedRevId = revId;
     }
 
     public void setStatus(String status) {
-        _status = status;
+        this.status = status;
     }
 
     public void addDependency(DependencyDescriptor dependency) {
-        _dependencies.add(dependency);
+        dependencies.add(dependency);
     }
 
     public void addConfiguration(Configuration conf) {
-        _configurations.put(conf.getName(), conf);
+        configurations.put(conf.getName(), conf);
     }
 
     /**
@@ -302,44 +300,44 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
      * @param artifact
      */
     public void addArtifact(String conf, Artifact artifact) {
-        if (!_configurations.containsKey(conf)) {
+        if (!configurations.containsKey(conf)) {
             throw new IllegalArgumentException("Configuration '" + conf
                     + "' doesn't exist in module " + this);
         }
 
-        Collection artifacts = (Collection) _artifactsByConf.get(conf);
+        Collection artifacts = (Collection) artifactsByConf.get(conf);
         if (artifacts == null) {
             artifacts = new ArrayList();
-            _artifactsByConf.put(conf, artifacts);
+            artifactsByConf.put(conf, artifacts);
         }
         artifacts.add(artifact);
-        _artifacts.add(artifact);
+        this.artifacts.add(artifact);
     }
 
     public ModuleRevisionId getModuleRevisionId() {
-        return _revId;
+        return revId;
     }
 
     public ModuleRevisionId getResolvedModuleRevisionId() {
-        return _resolvedRevId;
+        return resolvedRevId;
     }
 
     public String getStatus() {
-        return _status;
+        return status;
     }
 
     public Configuration[] getConfigurations() {
-        return (Configuration[]) _configurations.values().toArray(
-            new Configuration[_configurations.size()]);
+        return (Configuration[]) configurations.values().toArray(
+            new Configuration[configurations.size()]);
     }
 
     public String[] getConfigurationsNames() {
-        return (String[]) _configurations.keySet().toArray(new String[_configurations.size()]);
+        return (String[]) configurations.keySet().toArray(new String[configurations.size()]);
     }
 
     public String[] getPublicConfigurationsNames() {
         List ret = new ArrayList();
-        for (Iterator iter = _configurations.values().iterator(); iter.hasNext();) {
+        for (Iterator iter = configurations.values().iterator(); iter.hasNext();) {
             Configuration conf = (Configuration) iter.next();
             if (conf.getVisibility() == Configuration.Visibility.PUBLIC) {
                 ret.add(conf.getName());
@@ -353,11 +351,11 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
      * if not found.
      */
     public Configuration getConfiguration(String confName) {
-        return (Configuration) _configurations.get(confName);
+        return (Configuration) configurations.get(confName);
     }
 
     public Artifact[] getArtifacts(String conf) {
-        Collection artifacts = (Collection) _artifactsByConf.get(conf);
+        Collection artifacts = (Collection) artifactsByConf.get(conf);
         if (artifacts == null) {
             return new Artifact[0];
         } else {
@@ -366,16 +364,16 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
     }
 
     public Artifact[] getAllArtifacts() {
-        return (Artifact[]) _artifacts.toArray(new Artifact[_artifacts.size()]);
+        return (Artifact[]) artifacts.toArray(new Artifact[artifacts.size()]);
     }
 
     public DependencyDescriptor[] getDependencies() {
-        return (DependencyDescriptor[]) _dependencies
-                .toArray(new DependencyDescriptor[_dependencies.size()]);
+        return (DependencyDescriptor[]) dependencies
+                .toArray(new DependencyDescriptor[dependencies.size()]);
     }
 
     public boolean dependsOn(VersionMatcher matcher, ModuleDescriptor md) {
-        for (Iterator iter = _dependencies.iterator(); iter.hasNext();) {
+        for (Iterator iter = dependencies.iterator(); iter.hasNext();) {
             DependencyDescriptor dd = (DependencyDescriptor) iter.next();
             if (dd.getDependencyId().equals(md.getModuleRevisionId().getModuleId())) {
                 if (md.getResolvedModuleRevisionId().getRevision() == null) {
@@ -389,35 +387,35 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
     }
 
     public void toIvyFile(File destFile) throws ParseException, IOException {
-        if (_parser != null && _resource != null) {
-            _parser.toIvyFile(_resource.openStream(), _resource, destFile, this);
+        if (parser != null && resource != null) {
+            parser.toIvyFile(resource.openStream(), resource, destFile, this);
         } else {
             XmlModuleDescriptorWriter.write(this, destFile);
         }
     }
 
     public String toString() {
-        return "module: " + _revId + " status=" + _status + " publication=" + _publicationDate
-                + " configurations=" + _configurations + " artifacts=" + _artifactsByConf
-                + " dependencies=" + _dependencies;
+        return "module: " + revId + " status=" + status + " publication=" + publicationDate
+                + " configurations=" + configurations + " artifacts=" + artifactsByConf
+                + " dependencies=" + dependencies;
     }
 
     public void setDefault(boolean b) {
-        _isDefault = b;
+        isDefault = b;
     }
 
     private static class ModuleIdMatcher {
-        private PatternMatcher _matcher;
+        private PatternMatcher matcher;
 
-        private ModuleId _mid;
+        private ModuleId mid;
 
         public ModuleIdMatcher(PatternMatcher matcher, ModuleId mid) {
-            _matcher = matcher;
-            _mid = mid;
+            this.matcher = matcher;
+            this.mid = mid;
         }
 
         public boolean matches(ModuleId mid) {
-            return MatcherHelper.matches(_matcher, _mid, mid);
+            return MatcherHelper.matches(matcher, this.mid, mid);
         }
     }
 
@@ -431,49 +429,49 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
      */
     public void addConflictManager(ModuleId moduleId, PatternMatcher matcher,
             ConflictManager manager) {
-        _conflictManagers.put(new ModuleIdMatcher(matcher, moduleId), manager);
+        conflictManagers.put(new ModuleIdMatcher(matcher, moduleId), manager);
     }
 
     public ConflictManager getConflictManager(ModuleId moduleId) {
-        for (Iterator iter = _conflictManagers.keySet().iterator(); iter.hasNext();) {
+        for (Iterator iter = conflictManagers.keySet().iterator(); iter.hasNext();) {
             ModuleIdMatcher matcher = (ModuleIdMatcher) iter.next();
             if (matcher.matches(moduleId)) {
-                return (ConflictManager) _conflictManagers.get(matcher);
+                return (ConflictManager) conflictManagers.get(matcher);
             }
         }
         return null;
     }
 
     public void addLicense(License license) {
-        _licenses.add(license);
+        licenses.add(license);
     }
 
     public License[] getLicenses() {
-        return (License[]) _licenses.toArray(new License[_licenses.size()]);
+        return (License[]) licenses.toArray(new License[licenses.size()]);
     }
 
     public String getHomePage() {
-        return _homePage;
+        return homePage;
     }
 
     public void setHomePage(String homePage) {
-        _homePage = homePage;
+        this.homePage = homePage;
     }
 
     public long getLastModified() {
-        return _lastModified;
+        return lastModified;
     }
 
     public void setLastModified(long lastModified) {
-        _lastModified = lastModified;
+        this.lastModified = lastModified;
     }
 
     public Namespace getNamespace() {
-        return _namespace;
+        return namespace;
     }
 
     public boolean isNamespaceUseful() {
-        for (Iterator iter = _dependencies.iterator(); iter.hasNext();) {
+        for (Iterator iter = dependencies.iterator(); iter.hasNext();) {
             DependencyDescriptor dd = (DependencyDescriptor) iter.next();
             if (dd.getAllExcludeRules().length > 0) {
                 return true;
@@ -483,7 +481,7 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
     }
 
     public void setNamespace(Namespace ns) {
-        _namespace = ns;
+        namespace = ns;
     }
 
     /**
@@ -491,11 +489,11 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
      * configurations existence is checked
      */
     public void check() {
-        for (Iterator iter = _configurations.values().iterator(); iter.hasNext();) {
+        for (Iterator iter = configurations.values().iterator(); iter.hasNext();) {
             Configuration conf = (Configuration) iter.next();
             String[] ext = conf.getExtends();
             for (int i = 0; i < ext.length; i++) {
-                if (!_configurations.containsKey(ext[i].trim())) {
+                if (!configurations.containsKey(ext[i].trim())) {
                     throw new IllegalStateException("unknown configuration '" + ext[i]
                             + "'. It is extended by " + conf.getName());
                 }
@@ -504,51 +502,51 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
     }
 
     public void setMappingOverride(boolean override) {
-        _mappingOverride = override;
+        mappingOverride = override;
     }
 
     public boolean isMappingOverride() {
-        return _mappingOverride;
+        return mappingOverride;
     }
 
     public String getAttribute(String attName) {
-        return _resolvedRevId.getAttribute(attName);
+        return resolvedRevId.getAttribute(attName);
     }
 
     public Map getAttributes() {
-        return _resolvedRevId.getAttributes();
+        return resolvedRevId.getAttributes();
     }
 
     public String getExtraAttribute(String attName) {
-        return _resolvedRevId.getExtraAttribute(attName);
+        return resolvedRevId.getExtraAttribute(attName);
     }
 
     public Map getExtraAttributes() {
-        return _resolvedRevId.getExtraAttributes();
+        return resolvedRevId.getExtraAttributes();
     }
 
     public String getStandardAttribute(String attName) {
-        return _resolvedRevId.getStandardAttribute(attName);
+        return resolvedRevId.getStandardAttribute(attName);
     }
 
     public Map getStandardAttributes() {
-        return _resolvedRevId.getStandardAttributes();
+        return resolvedRevId.getStandardAttributes();
     }
 
     public ModuleDescriptorParser getParser() {
-        return _parser;
+        return parser;
     }
 
     public Resource getResource() {
-        return _resource;
+        return resource;
     }
 
     public void addExcludeRule(ExcludeRule rule) {
-        _excludeRules.add(rule);
+        excludeRules.add(rule);
     }
 
     public boolean canExclude() {
-        return !_excludeRules.isEmpty();
+        return !excludeRules.isEmpty();
     }
 
     /**
@@ -556,8 +554,8 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
      * set
      */
     public boolean doesExclude(String[] moduleConfigurations, ArtifactId artifactId) {
-        if (_namespace != null) {
-            artifactId = NameSpaceHelper.transform(artifactId, _namespace
+        if (namespace != null) {
+            artifactId = NameSpaceHelper.transform(artifactId, namespace
                     .getFromSystemTransformer());
         }
         ExcludeRule[] rules = getExcludeRules(moduleConfigurations);
@@ -570,12 +568,12 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
     }
 
     public ExcludeRule[] getAllExcludeRules() {
-        return (ExcludeRule[]) _excludeRules.toArray(new ExcludeRule[_excludeRules.size()]);
+        return (ExcludeRule[]) excludeRules.toArray(new ExcludeRule[excludeRules.size()]);
     }
 
     public ExcludeRule[] getExcludeRules(String[] moduleConfigurations) {
         Set rules = new LinkedHashSet();
-        for (Iterator iter = _excludeRules.iterator(); iter.hasNext();) {
+        for (Iterator iter = excludeRules.iterator(); iter.hasNext();) {
             ExcludeRule rule = (ExcludeRule) iter.next();
             String[] ruleConfs = rule.getConfigurations();
             if (containsAny(ruleConfs, moduleConfigurations)) {

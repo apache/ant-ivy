@@ -26,8 +26,8 @@ import org.apache.ivy.util.extendable.ExtendableItem;
 
 /**
  * Representation of a published 'file' in the development environment. An artifact is generally a
- * file that is produced by a project build. This is typically a <code>jar</code>, a <code>war</code>,
- * an <code>ear</code>, a <code>zip</code>, a <code>deb</code>, etc.
+ * file that is produced by a project build. This is typically a <code>jar</code>, 
+ * a <code>war</code>, an <code>ear</code>, a <code>zip</code>, a <code>deb</code>, etc.
  */
 public interface Artifact extends ExtendableItem {
 

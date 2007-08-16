@@ -54,7 +54,7 @@ public class DefaultDependencyDescriptor implements DependencyDescriptor {
      * namespace, because they aren't transformable (the name space hasn't the ability to convert
      * regular expressions). However, method doesExclude will work with system artifacts.</i>
      * 
-     * @param md
+     * @param dd
      * @param ns
      * @return
      */
@@ -64,7 +64,7 @@ public class DefaultDependencyDescriptor implements DependencyDescriptor {
             return dd;
         }
         DefaultDependencyDescriptor newdd = transformInstance(dd, t, false);
-        newdd._namespace = ns;
+        newdd.namespace = ns;
         return newdd;
     }
 
@@ -83,105 +83,103 @@ public class DefaultDependencyDescriptor implements DependencyDescriptor {
         ModuleRevisionId transformMrid = t.transform(dd.getDependencyRevisionId());
         DefaultDependencyDescriptor newdd = new DefaultDependencyDescriptor(null, transformMrid, dd
                 .isForce(), dd.isChanging(), dd.isTransitive());
-        newdd._parentId = transformParentId;
+        newdd.parentId = transformParentId;
         String[] moduleConfs = dd.getModuleConfigurations();
         if (moduleConfs.length == 1 && "*".equals(moduleConfs[0])) {
             if (dd instanceof DefaultDependencyDescriptor) {
                 DefaultDependencyDescriptor ddd = (DefaultDependencyDescriptor) dd;
-                newdd._confs = new LinkedHashMap(ddd._confs);
-                newdd._excludeRules = new LinkedHashMap(ddd._excludeRules);
-                newdd._includeRules = new LinkedHashMap(ddd._includeRules);
-                newdd._dependencyArtifacts = new LinkedHashMap(ddd._dependencyArtifacts);
+                newdd.confs = new LinkedHashMap(ddd.confs);
+                newdd.excludeRules = new LinkedHashMap(ddd.excludeRules);
+                newdd.includeRules = new LinkedHashMap(ddd.includeRules);
+                newdd.dependencyArtifacts = new LinkedHashMap(ddd.dependencyArtifacts);
             } else {
                 throw new IllegalArgumentException(
-                        "dependency descriptor transformation does not support * module confs with descriptors which aren't DefaultDependencyDescriptor");
+                        "dependency descriptor transformation does not support * module confs "
+                        + "with descriptors which aren't DefaultDependencyDescriptor");
             }
         } else {
             for (int i = 0; i < moduleConfs.length; i++) {
-                newdd._confs.put(moduleConfs[i], new ArrayList(Arrays.asList(dd
+                newdd.confs.put(moduleConfs[i], new ArrayList(Arrays.asList(dd
                         .getDependencyConfigurations(moduleConfs[i]))));
-                newdd._excludeRules.put(moduleConfs[i], new ArrayList(Arrays.asList(dd
+                newdd.excludeRules.put(moduleConfs[i], new ArrayList(Arrays.asList(dd
                         .getExcludeRules(moduleConfs[i]))));
-                newdd._includeRules.put(moduleConfs[i], new ArrayList(Arrays.asList(dd
+                newdd.includeRules.put(moduleConfs[i], new ArrayList(Arrays.asList(dd
                         .getIncludeRules(moduleConfs[i]))));
-                newdd._dependencyArtifacts.put(moduleConfs[i], new ArrayList(Arrays.asList(dd
+                newdd.dependencyArtifacts.put(moduleConfs[i], new ArrayList(Arrays.asList(dd
                         .getDependencyArtifacts(moduleConfs[i]))));
             }
         }
         if (fromSystem) {
-            newdd._asSystem = dd;
+            newdd.asSystem = dd;
         }
         return newdd;
     }
 
-    private ModuleRevisionId _revId;
+    private ModuleRevisionId revId;
 
-    private Map _confs = new LinkedHashMap();
+    private Map confs = new LinkedHashMap();
 
-    private Map _dependencyArtifacts = new LinkedHashMap(); // Map (String masterConf ->
+    // Map (String masterConf -> Collection(DependencyArtifactDescriptor))
+    private Map dependencyArtifacts = new LinkedHashMap(); 
 
-    // Collection(DependencyArtifactDescriptor))
+    // Map (String masterConf -> Collection(IncludeRule))
+    private Map includeRules = new LinkedHashMap(); 
 
-    private Map _includeRules = new LinkedHashMap(); // Map (String masterConf ->
+    // Map (String masterConf -> Collection(ExcludeRule))
+    private Map excludeRules = new LinkedHashMap(); 
 
-    // Collection(IncludeRule))
-
-    private Map _excludeRules = new LinkedHashMap(); // Map (String masterConf ->
-
-    // Collection(ExcludeRule))
-
-    private Set _extends = new LinkedHashSet();
+    private Set extendsConfs = new LinkedHashSet();
 
     /**
      * Used to indicate that this revision must be used in case of conflicts, independently of
      * conflicts manager
      */
-    private boolean _force;
+    private boolean isForce;
 
     /**
      * Used to indicate that the dependency is a changing one, i.e. that ivy should not rely on the
      * version to know if it can trust artifacts in cache
      */
-    private boolean _changing;
+    private boolean isChanging;
 
-    private ModuleRevisionId _parentId;
+    private ModuleRevisionId parentId;
 
-    private boolean _transitive = true;
+    private boolean isTransitive = true;
 
     /**
      * This namespace should be used to check
      */
-    private Namespace _namespace = null;
+    private Namespace namespace = null;
 
-    private final ModuleDescriptor _md;
+    private final ModuleDescriptor md;
 
-    private DependencyDescriptor _asSystem = this;
+    private DependencyDescriptor asSystem = this;
 
     public DefaultDependencyDescriptor(DependencyDescriptor dd, String revision) {
-        _md = null;
-        _parentId = dd.getParentRevisionId();
-        _revId = ModuleRevisionId.newInstance(dd.getDependencyRevisionId(), revision);
-        _force = dd.isForce();
-        _changing = dd.isChanging();
-        _transitive = dd.isTransitive();
+        md = null;
+        parentId = dd.getParentRevisionId();
+        revId = ModuleRevisionId.newInstance(dd.getDependencyRevisionId(), revision);
+        isForce = dd.isForce();
+        isChanging = dd.isChanging();
+        isTransitive = dd.isTransitive();
         String[] moduleConfs = dd.getModuleConfigurations();
         for (int i = 0; i < moduleConfs.length; i++) {
-            _confs.put(moduleConfs[i], new ArrayList(Arrays.asList(dd
+            confs.put(moduleConfs[i], new ArrayList(Arrays.asList(dd
                     .getDependencyConfigurations(moduleConfs[i]))));
-            _excludeRules.put(moduleConfs[i], new ArrayList(Arrays.asList(dd
+            excludeRules.put(moduleConfs[i], new ArrayList(Arrays.asList(dd
                     .getExcludeRules(moduleConfs[i]))));
-            _includeRules.put(moduleConfs[i], new ArrayList(Arrays.asList(dd
+            includeRules.put(moduleConfs[i], new ArrayList(Arrays.asList(dd
                     .getIncludeRules(moduleConfs[i]))));
         }
     }
 
     public DefaultDependencyDescriptor(ModuleDescriptor md, ModuleRevisionId mrid, boolean force,
             boolean changing, boolean transitive) {
-        _md = md;
-        _revId = mrid;
-        _force = force;
-        _changing = changing;
-        _transitive = transitive;
+        this.md = md;
+        revId = mrid;
+        isForce = force;
+        isChanging = changing;
+        isTransitive = transitive;
     }
 
     public DefaultDependencyDescriptor(ModuleRevisionId mrid, boolean force) {
@@ -189,10 +187,10 @@ public class DefaultDependencyDescriptor implements DependencyDescriptor {
     }
 
     public DefaultDependencyDescriptor(ModuleRevisionId mrid, boolean force, boolean changing) {
-        _md = null;
-        _revId = mrid;
-        _force = force;
-        _changing = changing;
+        md = null;
+        revId = mrid;
+        isForce = force;
+        isChanging = changing;
     }
 
     public ModuleId getDependencyId() {
@@ -200,11 +198,11 @@ public class DefaultDependencyDescriptor implements DependencyDescriptor {
     }
 
     public ModuleRevisionId getDependencyRevisionId() {
-        return _revId;
+        return revId;
     }
 
     public String[] getModuleConfigurations() {
-        return (String[]) _confs.keySet().toArray(new String[_confs.keySet().size()]);
+        return (String[]) confs.keySet().toArray(new String[confs.keySet().size()]);
     }
 
     public String[] getDependencyConfigurations(String moduleConfiguration) {
@@ -223,15 +221,15 @@ public class DefaultDependencyDescriptor implements DependencyDescriptor {
      */
     public String[] getDependencyConfigurations(String moduleConfiguration,
             String requestedConfiguration) {
-        List confs = (List) _confs.get(moduleConfiguration);
-        if (confs == null) {
+        List confsList = (List) confs.get(moduleConfiguration);
+        if (confsList == null) {
             // there is no mapping defined for this configuration, add the 'other' mappings.
-            confs = (List) _confs.get("%");
+            confsList = (List) confs.get("%");
         }
-        List defConfs = (List) _confs.get("*");
+        List defConfs = (List) confs.get("*");
         Collection ret = new LinkedHashSet();
-        if (confs != null) {
-            ret.addAll(confs);
+        if (confsList != null) {
+            ret.addAll(confsList);
         }
         if (defConfs != null) {
             ret.addAll(defConfs);
@@ -266,7 +264,8 @@ public class DefaultDependencyDescriptor implements DependencyDescriptor {
 
     protected static String replaceSelfFallbackPattern(final String conf,
             final String moduleConfiguration) {
-        return replaceFallbackConfigurationPattern(SELF_FALLBACK_PATTERN, conf, moduleConfiguration);
+        return replaceFallbackConfigurationPattern(
+            SELF_FALLBACK_PATTERN, conf, moduleConfiguration);
     }
 
     protected static String replaceThisFallbackPattern(final String conf,
@@ -312,18 +311,18 @@ public class DefaultDependencyDescriptor implements DependencyDescriptor {
 
     public DependencyArtifactDescriptor[] getDependencyArtifacts(String moduleConfiguration) {
         Collection artifacts = getCollectionForConfiguration(moduleConfiguration,
-            _dependencyArtifacts);
+            dependencyArtifacts);
         return (DependencyArtifactDescriptor[]) artifacts
                 .toArray(new DependencyArtifactDescriptor[artifacts.size()]);
     }
 
     public IncludeRule[] getIncludeRules(String moduleConfiguration) {
-        Collection rules = getCollectionForConfiguration(moduleConfiguration, _includeRules);
+        Collection rules = getCollectionForConfiguration(moduleConfiguration, includeRules);
         return (IncludeRule[]) rules.toArray(new IncludeRule[rules.size()]);
     }
 
     public ExcludeRule[] getExcludeRules(String moduleConfiguration) {
-        Collection rules = getCollectionForConfiguration(moduleConfiguration, _excludeRules);
+        Collection rules = getCollectionForConfiguration(moduleConfiguration, excludeRules);
         return (ExcludeRule[]) rules.toArray(new ExcludeRule[rules.size()]);
     }
 
@@ -369,18 +368,18 @@ public class DefaultDependencyDescriptor implements DependencyDescriptor {
     }
 
     public DependencyArtifactDescriptor[] getAllDependencyArtifacts() {
-        Set ret = mergeAll(_dependencyArtifacts);
+        Set ret = mergeAll(dependencyArtifacts);
         return (DependencyArtifactDescriptor[]) ret.toArray(new DependencyArtifactDescriptor[ret
                 .size()]);
     }
 
     public IncludeRule[] getAllIncludeRules() {
-        Set ret = mergeAll(_includeRules);
+        Set ret = mergeAll(includeRules);
         return (IncludeRule[]) ret.toArray(new IncludeRule[ret.size()]);
     }
 
     public ExcludeRule[] getAllExcludeRules() {
-        Set ret = mergeAll(_excludeRules);
+        Set ret = mergeAll(excludeRules);
         return (ExcludeRule[]) ret.toArray(new ExcludeRule[ret.size()]);
     }
 
@@ -394,34 +393,34 @@ public class DefaultDependencyDescriptor implements DependencyDescriptor {
     }
 
     public void addDependencyConfiguration(String masterConf, String depConf) {
-        if ((_md != null) && !"*".equals(masterConf) && !"%".equals(masterConf)) {
-            Configuration config = _md.getConfiguration(masterConf);
+        if ((md != null) && !"*".equals(masterConf) && !"%".equals(masterConf)) {
+            Configuration config = md.getConfiguration(masterConf);
             if (config == null) {
                 throw new IllegalArgumentException("Configuration '" + masterConf
-                        + "' does not exist in module " + _md);
+                        + "' does not exist in module " + md);
             }
         }
 
-        List confs = (List) _confs.get(masterConf);
-        if (confs == null) {
-            confs = new ArrayList();
-            _confs.put(masterConf, confs);
+        List confsList = (List) confs.get(masterConf);
+        if (confsList == null) {
+            confsList = new ArrayList();
+            confs.put(masterConf, confsList);
         }
-        if (!confs.contains(depConf)) {
-            confs.add(depConf);
+        if (!confsList.contains(depConf)) {
+            confsList.add(depConf);
         }
     }
 
     public void addDependencyArtifact(String masterConf, DependencyArtifactDescriptor dad) {
-        addObjectToConfiguration(masterConf, dad, _dependencyArtifacts);
+        addObjectToConfiguration(masterConf, dad, dependencyArtifacts);
     }
 
     public void addIncludeRule(String masterConf, IncludeRule rule) {
-        addObjectToConfiguration(masterConf, rule, _includeRules);
+        addObjectToConfiguration(masterConf, rule, includeRules);
     }
 
     public void addExcludeRule(String masterConf, ExcludeRule rule) {
-        addObjectToConfiguration(masterConf, rule, _excludeRules);
+        addObjectToConfiguration(masterConf, rule, excludeRules);
     }
 
     private void addObjectToConfiguration(String callerConf, Object toAdd, Map confsMap) {
@@ -438,8 +437,8 @@ public class DefaultDependencyDescriptor implements DependencyDescriptor {
      * set
      */
     public boolean doesExclude(String[] moduleConfigurations, ArtifactId artifactId) {
-        if (_namespace != null) {
-            artifactId = NameSpaceHelper.transform(artifactId, _namespace
+        if (namespace != null) {
+            artifactId = NameSpaceHelper.transform(artifactId, namespace
                     .getFromSystemTransformer());
         }
         ExcludeRule[] rules = getExcludeRules(moduleConfigurations);
@@ -457,63 +456,63 @@ public class DefaultDependencyDescriptor implements DependencyDescriptor {
      * @return
      */
     public boolean canExclude() {
-        return !_excludeRules.isEmpty();
+        return !excludeRules.isEmpty();
     }
 
     public void addExtends(String conf) {
-        _extends.add(conf);
+        extendsConfs.add(conf);
     }
 
     public String toString() {
-        return "dependency: " + _revId + " " + _confs;
+        return "dependency: " + revId + " " + confs;
     }
 
     public boolean isForce() {
-        return _force;
+        return isForce;
     }
 
     public ModuleRevisionId getParentRevisionId() {
-        return _md != null ? _md.getResolvedModuleRevisionId() : _parentId;
+        return md != null ? md.getResolvedModuleRevisionId() : parentId;
     }
 
     public boolean isChanging() {
-        return _changing;
+        return isChanging;
     }
 
     public boolean isTransitive() {
-        return _transitive;
+        return isTransitive;
     }
 
     public Namespace getNamespace() {
-        return _namespace;
+        return namespace;
     }
 
     public String getAttribute(String attName) {
-        return _revId.getAttribute(attName);
+        return revId.getAttribute(attName);
     }
 
     public Map getAttributes() {
-        return _revId.getAttributes();
+        return revId.getAttributes();
     }
 
     public String getExtraAttribute(String attName) {
-        return _revId.getExtraAttribute(attName);
+        return revId.getExtraAttribute(attName);
     }
 
     public Map getExtraAttributes() {
-        return _revId.getExtraAttributes();
+        return revId.getExtraAttributes();
     }
 
     public String getStandardAttribute(String attName) {
-        return _revId.getStandardAttribute(attName);
+        return revId.getStandardAttribute(attName);
     }
 
     public Map getStandardAttributes() {
-        return _revId.getStandardAttributes();
+        return revId.getStandardAttributes();
     }
 
     public DependencyDescriptor asSystem() {
-        return _asSystem;
+        return asSystem;
     }
 
 }

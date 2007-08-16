@@ -41,6 +41,7 @@ public abstract class AbstractArtifact implements Artifact {
     }
 
     public int hashCode() {
+        //CheckStyle:MagicNumber| OFF
         int hash = 33;
         hash = hash * 17 + getModuleRevisionId().hashCode();
         if (getPublicationDate() != null) {
@@ -50,6 +51,7 @@ public abstract class AbstractArtifact implements Artifact {
         hash = hash * 17 + getExt().hashCode();
         hash = hash * 17 + getType().hashCode();
         hash = hash * 17 + getExtraAttributes().hashCode();
+        //CheckStyle:MagicNumber| ON
         return hash;
     }
 

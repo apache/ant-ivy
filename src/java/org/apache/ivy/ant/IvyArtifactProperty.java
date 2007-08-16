@@ -91,7 +91,7 @@ public class IvyArtifactProperty extends IvyPostResolveTask {
         if (overwrite) {
             getProject().setProperty(name, value);
         } else {
-            getProject().setNewProperty(name,value);
+            getProject().setNewProperty(name, value);
         }
     }
 }
