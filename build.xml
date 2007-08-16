@@ -253,6 +253,7 @@
 				<attribute name="Implementation-Title" value="org.apache.ivy" />
 				<attribute name="Implementation-Version" value="${build.version}" />
 				<attribute name="Implementation-Vendor" value="Apache Software Foundation" />
+				<attribute name="Implementation-Vendor-Id" value="org.apache" />
 				<attribute name="Extension-name" value="org.apache.ivy" />
 				<attribute name="Build-Version" value="${build.version}" />
 				<attribute name="Bundle-Version" value="${bundle.version}" />
@@ -270,6 +271,7 @@
 				<attribute name="Implementation-Title" value="org.apache.ivy" />
 				<attribute name="Implementation-Version" value="${build.version}" />
 				<attribute name="Implementation-Vendor" value="Apache Software Foundation" />
+				<attribute name="Implementation-Vendor-Id" value="org.apache" />
 				<attribute name="Build-Version" value="${build.version}" />
 			</manifest>
 			<fileset dir="${core.classes.build.dir}" />
