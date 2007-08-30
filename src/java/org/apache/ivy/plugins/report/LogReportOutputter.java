@@ -91,8 +91,10 @@ public class LogReportOutputter implements ReportOutputter {
                 String[] confs = evicted[i].getEvictedConfs();
                 for (int j = 0; j < confs.length; j++) {
                     EvictionData evictedData = evicted[i].getEvictedData(confs[j]);
-                    Message.verbose("\t  in " + evictedData.getParent() + " with "
-                            + evictedData.getConflictManager());
+                    if (evictedData.getParent() != null) {
+                        Message.verbose("\t  in " + evictedData.getParent() + " with "
+                                + evictedData.getConflictManager());
+                    }
                 }
             }
         }
