@@ -186,11 +186,11 @@ public class IvyCachePathTest extends TestCase {
     }
 
     public void testWithResolveIdWithoutResolve() throws Exception {
-        Project project = new Project();
-        project.setProperty("ivy.settings.file", "test/repositories/ivysettings.xml");
+        Project otherProject = new Project();
+        otherProject.setProperty("ivy.settings.file", "test/repositories/ivysettings.xml");
 
         IvyResolve resolve = new IvyResolve();
-        resolve.setProject(project);
+        resolve.setProject(otherProject);
         resolve.setCache(cache);
         resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-simple.xml"));
         resolve.setResolveId("withResolveId");
@@ -218,11 +218,11 @@ public class IvyCachePathTest extends TestCase {
     }
 
     public void testWithResolveIdAndMissingConfs() throws Exception {
-        Project project = new Project();
-        project.setProperty("ivy.settings.file", "test/repositories/ivysettings.xml");
+        Project otherProject = new Project();
+        otherProject.setProperty("ivy.settings.file", "test/repositories/ivysettings.xml");
 
         IvyResolve resolve = new IvyResolve();
-        resolve.setProject(project);
+        resolve.setProject(otherProject);
         resolve.setCache(cache);
         resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-multiconf.xml"));
         resolve.setResolveId("testWithResolveIdAndMissingConfs");
