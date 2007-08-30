@@ -20,6 +20,7 @@ package org.apache.ivy.core.resolve;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -1499,6 +1500,30 @@ public class ResolveTest extends TestCase {
         assertFalse(getArchiveFileInCache("org1", "mod1.2", "2.0", "mod1.2", "jar", "jar").exists());
     }
 
+    public void testTransitiveEvictionWithExtendingConf() throws Exception {
+        // IVY-590
+        ResolveReport report = ivy.resolve(ResolveTest.class.getResource("ivy-590.xml"),
+            getResolveOptions(new String[] {"*"}));
+        assertNotNull(report);
+        
+        // dependencies
+        assertTrue(cacheManager.getIvyFileInCache(
+            ModuleRevisionId.newInstance("org1", "mod1.2", "2.0")).exists());
+        assertTrue(getArchiveFileInCache("org1", "mod1.2", "2.0", "mod1.2", "jar", "jar").exists());
+        
+        // test eviction
+        ConfigurationResolveReport compileReport = report.getConfigurationReport("compile");
+        IvyNode[] evicted = compileReport.getEvictedNodes();
+        assertNotNull(evicted);
+        
+        Collection evictedModules = new ArrayList();
+        for (int i = 0; i < evicted.length; i++) {
+            evictedModules.add(evicted[i].getId());
+        }
+        
+        assertTrue(evictedModules.contains(ModuleRevisionId.newInstance("org1", "mod1.2", "2.0")));
+    }
+    
     public void testResolveConflictInConf() throws Exception {
         // conflicts in separate confs are not conflicts
 

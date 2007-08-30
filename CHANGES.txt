@@ -51,6 +51,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 
    version in SVN
 =====================================
+- FIX: NullPointerException whilst resolving transitive dependencies (IVY-590)
 - FIX: cachepath based on a resolve done in a previous build broken (IVY-583)
 
 - IMPROVEMENT: artifactproperty should not overwrite the existing properties (IVY-587)

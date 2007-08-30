@@ -28,31 +28,43 @@ import org.apache.ivy.core.module.id.ModuleId;
 import org.apache.ivy.plugins.conflict.ConflictManager;
 
 public class IvyNodeEviction {
+    /**
+     * This class contains data about the eviction of an {@link IvyNode}.
+     */
     public static class EvictionData {
-        private IvyNode parent; // can be null in case of transitive eviction
+        /**
+         * Can be null in case of transitive eviction.
+         */
+        private IvyNode parent;
 
-        private ConflictManager conflictManager; // can be null in case of transitive eviction
+        /**
+         * Can be null in case of transitive eviction.
+         */
+        private ConflictManager conflictManager;
 
-        private Collection selected; // Collection(IvyNode); can be null in case of transitive
-
-        // eviction
+        /**
+         * Can be null in case of transitive eviction.
+         */
+        private Collection selected; // Collection(IvyNode)
 
         private String rootModuleConf;
 
+        /**
+         * Creates a new object containing the eviction data of an {@link IvyNode}.
+         * 
+         * @param rootModuleConf the rootmodule configuration
+         * @param parent the parent node (or <tt>null</tt> in case of transitive eviction)
+         * @param conflictManager the conflictmanager which evicted the node (or <tt>null</tt> in
+         *                        case of transitive eviction)
+         * @param selected a collection of {@link IvyNode}s which evict the evicted node (or 
+         *                 <tt>null</tt> in case of transitive eviction)
+         */
         public EvictionData(String rootModuleConf, IvyNode parent, ConflictManager conflictManager,
                 Collection selected) {
             this.rootModuleConf = rootModuleConf;
             this.parent = parent;
             this.conflictManager = conflictManager;
             this.selected = selected;
-            for (Iterator iter = selected.iterator(); iter.hasNext();) {
-                Object o = (Object) iter.next();
-                if (!(o instanceof IvyNode)) {
-                    throw new IllegalArgumentException(
-                            "selected nodes must be instance of IvyNode. Found: "
-                                    + o.getClass().getName());
-                }
-            }
         }
 
         public String toString() {
