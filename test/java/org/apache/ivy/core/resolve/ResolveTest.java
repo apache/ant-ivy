@@ -2211,6 +2211,24 @@ public class ResolveTest extends TestCase {
             ModuleRevisionId.newInstance("org1", "mod_released", "1.1")).exists());
     }
 
+    public void testLatestWithMultiplePatterns() throws Exception {
+        // The test verify that latest.integration dependencies can be resolved 
+        // when using a resolver with multiple patterns, when only the first pattern 
+        // finds something - test case for IVY-602
+
+        // mod9.2 depends on latest.integration of mod6.2
+        Ivy ivy = Ivy.newInstance();
+        ivy.configure(new File("test/repositories/ivysettings-IVY602.xml"));
+
+        ResolveReport report = ivy.resolve(new File(
+            "test/repositories/1/org9/mod9.2/ivys/ivy-1.3.xml").toURL(),
+            getResolveOptions(new String[] {"default"}));
+        assertNotNull(report);
+        assertFalse(report.hasError());
+
+        assertTrue(getArchiveFileInCache("org6", "mod6.2", "2.0", "mod6.2", "jar", "jar").exists());
+    }
+
     public void testVersionRange1() throws Exception {
         // mod 1.4 depends on mod1.2 [1.0,2.0[
         ResolveReport report = ivy.resolve(new File(

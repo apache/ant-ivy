@@ -84,14 +84,13 @@ public abstract class AbstractResourceResolver extends BasicResolver {
 
     protected ResolvedResource findResourceUsingPatterns(ModuleRevisionId moduleRevision,
             List patternList, Artifact artifact, ResourceMDParser rmdparser, Date date) {
-        ResolvedResource rres = null;
-
         List resolvedResources = new ArrayList();
         boolean dynamic = getSettings().getVersionMatcher().isDynamic(moduleRevision);
         boolean stop = false;
         for (Iterator iter = patternList.iterator(); iter.hasNext() && !stop;) {
             String pattern = (String) iter.next();
-            rres = findResourceUsingPattern(moduleRevision, pattern, artifact, rmdparser, date);
+            ResolvedResource rres = findResourceUsingPattern(
+                moduleRevision, pattern, artifact, rmdparser, date);
             if (rres != null) {
                 resolvedResources.add(rres);
                 stop = !dynamic; // stop iterating if we are not searching a dynamic revision
@@ -101,11 +100,13 @@ public abstract class AbstractResourceResolver extends BasicResolver {
         if (resolvedResources.size() > 1) {
             ResolvedResource[] rress = (ResolvedResource[]) resolvedResources
                     .toArray(new ResolvedResource[resolvedResources.size()]);
-            rres = findResource(rress, getName(), getLatestStrategy(), getSettings()
+            return findResource(rress, getName(), getLatestStrategy(), getSettings()
                     .getVersionMatcher(), rmdparser, moduleRevision, date);
+        } else if (resolvedResources.size() == 1) {
+            return (ResolvedResource) resolvedResources.get(0);
+        } else {
+            return null;
         }
-
-        return rres;
     }
 
     protected abstract ResolvedResource findResourceUsingPattern(ModuleRevisionId mrid,
