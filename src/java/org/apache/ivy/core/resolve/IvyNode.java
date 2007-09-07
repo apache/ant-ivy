@@ -48,7 +48,6 @@ import org.apache.ivy.core.module.id.ModuleId;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.resolve.IvyNodeCallers.Caller;
 import org.apache.ivy.core.resolve.IvyNodeEviction.EvictionData;
-import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.plugins.conflict.ConflictManager;
 import org.apache.ivy.plugins.matcher.MatcherHelper;
 import org.apache.ivy.plugins.resolver.DependencyResolver;
@@ -104,7 +103,7 @@ public class IvyNode implements Comparable {
     // //////// CONTEXT
     private ResolveData data;
 
-    private IvySettings settings;
+    private ResolveEngineSettings settings;
 
     // //////// DELEGATES
     private IvyNodeCallers callers;

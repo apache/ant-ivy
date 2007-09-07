@@ -34,7 +34,6 @@ import org.apache.ivy.core.module.descriptor.DefaultArtifact;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.report.DownloadReport;
 import org.apache.ivy.core.resolve.DownloadOptions;
-import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.plugins.latest.LatestStrategy;
 import org.apache.ivy.plugins.repository.AbstractRepository;
 import org.apache.ivy.plugins.repository.Repository;
@@ -226,7 +225,7 @@ public class RepositoryResolver extends AbstractResourceResolver {
         Message.debug("\t\trepository: " + getRepository());
     }
 
-    public void setSettings(IvySettings settings) {
+    public void setSettings(ResolverSettings settings) {
         super.setSettings(settings);
         if (settings != null) {
             if (_alwaysCheckExactRevision == null) {

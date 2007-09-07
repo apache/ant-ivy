@@ -40,10 +40,15 @@ import org.apache.ivy.Ivy;
 import org.apache.ivy.core.IvyPatternHelper;
 import org.apache.ivy.core.NormalRelativeUrlResolver;
 import org.apache.ivy.core.RelativeUrlResolver;
+import org.apache.ivy.core.cache.CacheSettings;
+import org.apache.ivy.core.check.CheckEngineSettings;
 import org.apache.ivy.core.deliver.DeliverEngineSettings;
+import org.apache.ivy.core.install.InstallEngineSettings;
 import org.apache.ivy.core.module.id.ModuleId;
 import org.apache.ivy.core.module.status.StatusManager;
 import org.apache.ivy.core.publish.PublishEngineSettings;
+import org.apache.ivy.core.resolve.ResolveEngineSettings;
+import org.apache.ivy.core.retrieve.RetrieveEngineSettings;
 import org.apache.ivy.core.sort.SortEngineSettings;
 import org.apache.ivy.plugins.IvyAware;
 import org.apache.ivy.plugins.IvySettingsAware;
@@ -74,6 +79,7 @@ import org.apache.ivy.plugins.report.XmlReportOutputter;
 import org.apache.ivy.plugins.resolver.ChainResolver;
 import org.apache.ivy.plugins.resolver.DependencyResolver;
 import org.apache.ivy.plugins.resolver.DualResolver;
+import org.apache.ivy.plugins.resolver.ResolverSettings;
 import org.apache.ivy.plugins.trigger.Trigger;
 import org.apache.ivy.plugins.version.ChainVersionMatcher;
 import org.apache.ivy.plugins.version.ExactVersionMatcher;
@@ -84,7 +90,9 @@ import org.apache.ivy.plugins.version.VersionRangeMatcher;
 import org.apache.ivy.util.Message;
 import org.apache.ivy.util.url.URLHandlerRegistry;
 
-public class IvySettings implements SortEngineSettings , PublishEngineSettings , ParserSettings , DeliverEngineSettings {
+public class IvySettings implements SortEngineSettings, PublishEngineSettings, ParserSettings,
+        DeliverEngineSettings, CacheSettings, CheckEngineSettings, InstallEngineSettings, 
+        ResolverSettings, ResolveEngineSettings, RetrieveEngineSettings {
     private static final String DEFAULT_CACHE_ARTIFACT_PATTERN =
         "[organisation]/[module]/[type]s/[artifact]-[revision](.[ext])";
 
@@ -1085,6 +1093,8 @@ public class IvySettings implements SortEngineSettings , PublishEngineSettings ,
     private void init(Object obj) {
         if (obj instanceof IvySettingsAware) {
             ((IvySettingsAware) obj).setSettings(this);
+        } else if (obj instanceof DependencyResolver){
+            ((DependencyResolver) obj).setSettings(this);
         }
         if (obj instanceof IvyAware) {
             // TODO

@@ -28,7 +28,6 @@ import org.apache.ivy.core.cache.CacheManager;
 import org.apache.ivy.core.event.EventManager;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.report.ConfigurationResolveReport;
-import org.apache.ivy.core.settings.IvySettings;
 
 public class ResolveData {
     private ResolveEngine engine;
@@ -164,7 +163,7 @@ public class ResolveData {
         return options.getCache();
     }
 
-    public IvySettings getSettings() {
+    public ResolveEngineSettings getSettings() {
         return engine.getSettings();
     }
 

@@ -40,7 +40,6 @@ import org.apache.ivy.core.resolve.ResolvedModuleRevision;
 import org.apache.ivy.core.search.ModuleEntry;
 import org.apache.ivy.core.search.OrganisationEntry;
 import org.apache.ivy.core.search.RevisionEntry;
-import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.plugins.resolver.util.ResolvedResource;
 import org.apache.ivy.util.Message;
 import org.apache.ivy.util.XMLHelper;
@@ -69,7 +68,7 @@ public class IvyRepResolver extends URLResolver {
     public IvyRepResolver() {
     }
 
-    private void ensureArtifactConfigured(IvySettings settings) {
+    private void ensureArtifactConfigured(ResolverSettings settings) {
         if (settings != null && (artroot == null || artpattern == null)) {
             if (artroot == null) {
                 String root = settings.getVariable("ivy.ivyrep.default.artifact.root");
@@ -93,7 +92,7 @@ public class IvyRepResolver extends URLResolver {
         }
     }
 
-    private void ensureIvyConfigured(IvySettings settings) {
+    private void ensureIvyConfigured(ResolverSettings settings) {
         if (settings != null && (ivyroot == null || ivypattern == null)) {
             if (ivyroot == null) {
                 String root = settings.getVariable("ivy.ivyrep.default.ivy.root");
@@ -281,7 +280,7 @@ public class IvyRepResolver extends URLResolver {
     }
 
     public DownloadReport download(Artifact[] artifacts, DownloadOptions options) {
-        ensureArtifactConfigured(options.getSettings());
+        ensureArtifactConfigured(getSettings());
         return super.download(artifacts, options);
     }
 

@@ -76,7 +76,7 @@ import org.apache.ivy.util.filter.Filter;
  * @see ResolveOptions
  */
 public class ResolveEngine {
-    private IvySettings settings;
+    private ResolveEngineSettings settings;
 
     private EventManager eventManager;
 
@@ -98,7 +98,7 @@ public class ResolveEngine {
      *            the sort engine to use to sort modules before producing the dependency resolution
      *            report. Must not be null.
      */
-    public ResolveEngine(IvySettings settings, EventManager eventManager, SortEngine sortEngine) {
+    public ResolveEngine(ResolveEngineSettings settings, EventManager eventManager, SortEngine sortEngine) {
         this.settings = settings;
         this.eventManager = eventManager;
         this.sortEngine = sortEngine;
@@ -311,7 +311,7 @@ public class ResolveEngine {
                         .getArtifactResolver();
                 Artifact[] selectedArtifacts = dependencies[i].getSelectedArtifacts(artifactFilter);
                 DownloadReport dReport = resolver.download(selectedArtifacts, new DownloadOptions(
-                        settings, cacheManager, eventManager, useOrigin));
+                        cacheManager, eventManager, useOrigin));
                 ArtifactDownloadReport[] adrs = dReport.getArtifactsReports();
                 for (int j = 0; j < adrs.length; j++) {
                     if (adrs[j].getDownloadStatus() == DownloadStatus.FAILED) {
@@ -355,7 +355,7 @@ public class ResolveEngine {
         DependencyResolver resolver = settings.getResolver(artifact.getModuleRevisionId()
                 .getModuleId());
         DownloadReport r = resolver.download(new Artifact[] {artifact}, new DownloadOptions(
-                settings, cacheManager, eventManager, useOrigin));
+                cacheManager, eventManager, useOrigin));
         return r.getArtifactReport(artifact);
     }
 
@@ -905,7 +905,7 @@ public class ResolveEngine {
         return eventManager;
     }
 
-    public IvySettings getSettings() {
+    public ResolveEngineSettings getSettings() {
         return settings;
     }
 

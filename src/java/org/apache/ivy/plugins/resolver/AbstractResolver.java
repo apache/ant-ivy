@@ -35,8 +35,6 @@ import org.apache.ivy.core.resolve.ResolvedModuleRevision;
 import org.apache.ivy.core.search.ModuleEntry;
 import org.apache.ivy.core.search.OrganisationEntry;
 import org.apache.ivy.core.search.RevisionEntry;
-import org.apache.ivy.core.settings.IvySettings;
-import org.apache.ivy.plugins.IvySettingsAware;
 import org.apache.ivy.plugins.latest.LatestStrategy;
 import org.apache.ivy.plugins.matcher.Matcher;
 import org.apache.ivy.plugins.matcher.NoMatcher;
@@ -49,8 +47,7 @@ import org.apache.ivy.util.Message;
 /**
  * This abstract resolver only provides handling for resolver name
  */
-public abstract class AbstractResolver implements DependencyResolver, IvySettingsAware,
-        HasLatestStrategy {
+public abstract class AbstractResolver implements DependencyResolver, HasLatestStrategy {
 
     /**
      * True if parsed ivy files should be validated against xsd, false if they should not, null if
@@ -64,7 +61,7 @@ public abstract class AbstractResolver implements DependencyResolver, IvySetting
 
     private String changingMatcherName = PatternMatcher.EXACT_OR_REGEXP;
 
-    private IvySettings settings;
+    private ResolverSettings settings;
 
     /**
      * The latest strategy to use to find latest among several artifacts
@@ -80,11 +77,11 @@ public abstract class AbstractResolver implements DependencyResolver, IvySetting
 
     private String namespaceName;
 
-    public IvySettings getSettings() {
+    public ResolverSettings getSettings() {
         return settings;
     }
 
-    public void setSettings(IvySettings ivy) {
+    public void setSettings(ResolverSettings ivy) {
         settings = ivy;
     }
 
@@ -170,7 +167,7 @@ public abstract class AbstractResolver implements DependencyResolver, IvySetting
      * avoid the download
      */
     public boolean exists(Artifact artifact) {
-        DownloadReport dr = download(new Artifact[] {artifact}, new DownloadOptions(getSettings(),
+        DownloadReport dr = download(new Artifact[] {artifact}, new DownloadOptions(
                 new CacheManager(getSettings(), getSettings().getDefaultCache()), null, true));
         ArtifactDownloadReport adr = dr.getArtifactReport(artifact);
         return adr.getDownloadStatus() != DownloadStatus.FAILED;

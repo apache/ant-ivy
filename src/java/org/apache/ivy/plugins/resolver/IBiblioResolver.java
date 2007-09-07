@@ -36,7 +36,6 @@ import org.apache.ivy.core.resolve.ResolvedModuleRevision;
 import org.apache.ivy.core.search.ModuleEntry;
 import org.apache.ivy.core.search.OrganisationEntry;
 import org.apache.ivy.core.search.RevisionEntry;
-import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.plugins.resolver.util.ResolvedResource;
 import org.apache.ivy.util.Message;
 
@@ -89,7 +88,7 @@ public class IBiblioResolver extends URLResolver {
         }
     }
 
-    public void ensureConfigured(IvySettings settings) {
+    public void ensureConfigured(ResolverSettings settings) {
         if (settings != null && (root == null || pattern == null)) {
             if (root == null) {
                 String root = settings.getVariable("ivy.ibiblio.default.artifact.root");
@@ -213,7 +212,7 @@ public class IBiblioResolver extends URLResolver {
     }
 
     public DownloadReport download(Artifact[] artifacts, DownloadOptions options) {
-        ensureConfigured(options.getSettings());
+        ensureConfigured(getSettings());
         return super.download(artifacts, options);
     }
 

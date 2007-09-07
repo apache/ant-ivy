@@ -95,4 +95,6 @@ public interface DependencyResolver {
     RevisionEntry[] listRevisions(ModuleEntry module);
 
     void dumpSettings();
+    
+    void setSettings(ResolverSettings settings);
 }

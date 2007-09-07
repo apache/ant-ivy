@@ -33,17 +33,16 @@ import org.apache.ivy.core.resolve.ResolveData;
 import org.apache.ivy.core.resolve.ResolveEngine;
 import org.apache.ivy.core.resolve.ResolveOptions;
 import org.apache.ivy.core.resolve.ResolvedModuleRevision;
-import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.plugins.parser.ModuleDescriptorParserRegistry;
 import org.apache.ivy.plugins.resolver.DependencyResolver;
 import org.apache.ivy.util.Message;
 
 public class CheckEngine {
-    private IvySettings settings;
+    private CheckEngineSettings settings;
 
     private ResolveEngine resolveEngine;
 
-    public CheckEngine(IvySettings settings, ResolveEngine resolveEngine) {
+    public CheckEngine(CheckEngineSettings settings, ResolveEngine resolveEngine) {
         this.settings = settings;
         this.resolveEngine = resolveEngine;
     }

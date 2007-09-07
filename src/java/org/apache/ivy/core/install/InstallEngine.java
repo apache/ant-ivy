@@ -39,7 +39,6 @@ import org.apache.ivy.core.resolve.IvyNode;
 import org.apache.ivy.core.resolve.ResolveEngine;
 import org.apache.ivy.core.resolve.ResolveOptions;
 import org.apache.ivy.core.search.SearchEngine;
-import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.plugins.conflict.NoConflictManager;
 import org.apache.ivy.plugins.matcher.ExactPatternMatcher;
 import org.apache.ivy.plugins.matcher.MatcherHelper;
@@ -50,7 +49,7 @@ import org.apache.ivy.util.filter.Filter;
 import org.apache.ivy.util.filter.FilterHelper;
 
 public class InstallEngine {
-    private IvySettings settings;
+    private InstallEngineSettings settings;
 
     private ResolveEngine resolveEngine;
 
@@ -58,7 +57,7 @@ public class InstallEngine {
 
     private SearchEngine searchEngine;
 
-    public InstallEngine(IvySettings settings, SearchEngine searchEngine,
+    public InstallEngine(InstallEngineSettings settings, SearchEngine searchEngine,
             ResolveEngine resolveEngine, PublishEngine publishEngine) {
         this.settings = settings;
         this.searchEngine = searchEngine;

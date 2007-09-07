@@ -42,7 +42,6 @@ import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleId;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.resolve.ResolveOptions;
-import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.plugins.parser.ModuleDescriptorParser;
 import org.apache.ivy.plugins.parser.ModuleDescriptorParserRegistry;
 import org.apache.ivy.plugins.report.XmlReportParser;
@@ -51,9 +50,9 @@ import org.apache.ivy.util.FileUtil;
 import org.apache.ivy.util.Message;
 
 public class RetrieveEngine {
-    private IvySettings settings;
+    private RetrieveEngineSettings settings;
 
-    public RetrieveEngine(IvySettings settings) {
+    public RetrieveEngine(RetrieveEngineSettings settings) {
         this.settings = settings;
     }
 

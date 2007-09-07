@@ -27,28 +27,31 @@ import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.resolve.DefaultModuleRevision;
 import org.apache.ivy.core.resolve.ResolvedModuleRevision;
-import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.plugins.parser.xml.XmlModuleDescriptorParser;
 import org.apache.ivy.plugins.resolver.DependencyResolver;
 import org.apache.ivy.util.Message;
 import org.apache.ivy.util.PropertiesFile;
 
 public class CacheManager {
-    public static CacheManager getInstance(IvySettings settings, File cache) {
+    public static CacheManager getInstance(CacheSettings settings, File cache) {
         return new CacheManager(settings, cache);
     }
 
-    public static CacheManager getInstance(IvySettings settings) {
+    public static CacheManager getInstance(CacheSettings settings) {
         return getInstance(settings, settings.getDefaultCache());
     }
 
-    private IvySettings settings;
+    private CacheSettings settings;
 
     private File cache;
 
-    public CacheManager(IvySettings settings, File cache) {
+    public CacheManager(CacheSettings settings, File cache) {
         this.settings = settings;
-        this.cache = cache;
+        if (cache==null) {
+            this.cache=settings.getDefaultCache();
+        } else {
+            this.cache = cache;
+        }
     }
 
     public File getResolvedIvyFileInCache(ModuleRevisionId mrid) {

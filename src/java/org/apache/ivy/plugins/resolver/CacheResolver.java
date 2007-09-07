@@ -37,7 +37,6 @@ import org.apache.ivy.core.resolve.ResolvedModuleRevision;
 import org.apache.ivy.core.search.ModuleEntry;
 import org.apache.ivy.core.search.OrganisationEntry;
 import org.apache.ivy.core.search.RevisionEntry;
-import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.plugins.resolver.util.ResolvedResource;
 import org.apache.ivy.util.Message;
 
@@ -45,7 +44,7 @@ public class CacheResolver extends FileSystemResolver {
     public CacheResolver() {
     }
 
-    public CacheResolver(IvySettings settings) {
+    public CacheResolver(ResolverSettings settings) {
         setSettings(settings);
         setName("cache");
     }
@@ -158,7 +157,7 @@ public class CacheResolver extends FileSystemResolver {
         }
     }
 
-    private void ensureConfigured(IvySettings settings, File cache) {
+    private void ensureConfigured(ResolverSettings settings, File cache) {
         if (settings == null || cache == null) {
             return;
         }
