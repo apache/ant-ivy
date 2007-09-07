@@ -46,6 +46,7 @@ import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.core.sort.SortEngine;
 import org.apache.ivy.plugins.latest.LatestRevisionStrategy;
 import org.apache.ivy.plugins.latest.LatestTimeStrategy;
+import org.apache.ivy.util.CacheCleaner;
 import org.apache.ivy.util.FileUtil;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.Delete;
@@ -100,10 +101,7 @@ public class FileSystemResolverTest extends TestCase {
     }
 
     protected void tearDown() throws Exception {
-        Delete del = new Delete();
-        del.setProject(new Project());
-        del.setDir(cache);
-        del.execute();
+        CacheCleaner.deleteDir(cache);
     }
 
     public void testFixedRevision() throws Exception {
@@ -154,7 +152,7 @@ public class FileSystemResolverTest extends TestCase {
     }
 
     private DownloadOptions getDownloadOptions(boolean useOrigin) {
-        return new DownloadOptions(settings, cacheManager, null, useOrigin);
+        return new DownloadOptions(cacheManager, null, useOrigin);
     }
 
     public void testMaven2() throws Exception {

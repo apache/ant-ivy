@@ -26,8 +26,7 @@ import org.apache.ivy.Ivy;
 import org.apache.ivy.core.cache.CacheManager;
 import org.apache.ivy.core.report.ResolveReport;
 import org.apache.ivy.core.resolve.ResolveOptions;
-import org.apache.tools.ant.Project;
-import org.apache.tools.ant.taskdefs.Delete;
+import org.apache.ivy.util.CacheCleaner;
 
 public class XmlReportOutputterTest extends TestCase {
     private final Ivy _ivy;
@@ -53,10 +52,7 @@ public class XmlReportOutputterTest extends TestCase {
     }
 
     private void cleanCache() {
-        Delete del = new Delete();
-        del.setProject(new Project());
-        del.setDir(_cache);
-        del.execute();
+        CacheCleaner.deleteDir(_cache);
     }
 
     public void testWriteOrigin() throws Exception {

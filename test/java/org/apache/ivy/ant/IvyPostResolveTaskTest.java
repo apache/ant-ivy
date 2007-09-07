@@ -23,11 +23,11 @@ import junit.framework.TestCase;
 
 import org.apache.ivy.TestHelper;
 import org.apache.ivy.core.report.ResolveReport;
+import org.apache.ivy.util.CacheCleaner;
 import org.apache.ivy.util.DefaultMessageImpl;
 import org.apache.ivy.util.Message;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
-import org.apache.tools.ant.taskdefs.Delete;
 
 public class IvyPostResolveTaskTest extends TestCase {
     private File cache;
@@ -58,14 +58,7 @@ public class IvyPostResolveTaskTest extends TestCase {
     }
 
     protected void tearDown() throws Exception {
-        cleanCache();
-    }
-
-    private void cleanCache() {
-        Delete del = new Delete();
-        del.setProject(new Project());
-        del.setDir(cache);
-        del.execute();
+        CacheCleaner.deleteDir(cache);
     }
 
     public void testWithPreviousResolveInSameBuildAndLessConfs() throws Exception {

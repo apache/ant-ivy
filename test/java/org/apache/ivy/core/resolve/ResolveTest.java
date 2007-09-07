@@ -53,6 +53,7 @@ import org.apache.ivy.plugins.resolver.BasicResolver;
 import org.apache.ivy.plugins.resolver.DependencyResolver;
 import org.apache.ivy.plugins.resolver.DualResolver;
 import org.apache.ivy.plugins.resolver.FileSystemResolver;
+import org.apache.ivy.util.CacheCleaner;
 import org.apache.ivy.util.FileUtil;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.Delete;
@@ -88,15 +89,9 @@ public class ResolveTest extends TestCase {
     }
 
     protected void tearDown() throws Exception {
-        cleanCache();
+        CacheCleaner.deleteDir(cache);
     }
 
-    private void cleanCache() {
-        Delete del = new Delete();
-        del.setProject(new Project());
-        del.setDir(cache);
-        del.execute();
-    }
 
     public void testResolveWithRetainingArtifactName() throws Exception {
         settings.setCacheArtifactPattern(ivy.substitute("[module]/[originalname].[ext]"));
@@ -2115,7 +2110,7 @@ public class ResolveTest extends TestCase {
         assertTrue(cacheManager.getIvyFileInCache(
             ModuleRevisionId.newInstance("org8", "mod8.1", "1.0")).exists());
 
-        cleanCache();
+        CacheCleaner.deleteDir(cache);
         createCache();
         report = ivy.resolve(new File("test/repositories/2/mod14.4/ivy-1.1.xml").toURL(),
             getResolveOptions(new String[] {"standalone"}));

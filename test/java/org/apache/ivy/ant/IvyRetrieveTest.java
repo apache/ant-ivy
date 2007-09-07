@@ -24,9 +24,9 @@ import junit.framework.TestCase;
 
 import org.apache.ivy.TestHelper;
 import org.apache.ivy.core.IvyPatternHelper;
+import org.apache.ivy.util.CacheCleaner;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
-import org.apache.tools.ant.taskdefs.Delete;
 
 public class IvyRetrieveTest extends TestCase {
     private static final String IVY_RETRIEVE_PATTERN = 
@@ -43,7 +43,7 @@ public class IvyRetrieveTest extends TestCase {
 
     protected void setUp() throws Exception {
         createCache();
-        cleanTestLib();
+        CacheCleaner.deleteDir(new File("build/test/lib"));
         project = new Project();
         project.setProperty("ivy.settings.file", "test/repositories/ivysettings.xml");
 
@@ -59,22 +59,8 @@ public class IvyRetrieveTest extends TestCase {
     }
 
     protected void tearDown() throws Exception {
-        cleanCache();
-        cleanTestLib();
-    }
-
-    private void cleanCache() {
-        Delete del = new Delete();
-        del.setProject(new Project());
-        del.setDir(cache);
-        del.execute();
-    }
-
-    private void cleanTestLib() {
-        Delete del = new Delete();
-        del.setProject(new Project());
-        del.setDir(new File("build/test/lib"));
-        del.execute();
+        CacheCleaner.deleteDir(cache);
+        CacheCleaner.deleteDir(new File("build/test/lib"));
     }
 
     public void testSimple() throws Exception {
