@@ -33,7 +33,7 @@ public class IvyRetrieveTest extends TestCase {
             "build/test/lib/[organisation]/[module]/ivy-[revision].xml";
 
     private static final String RETRIEVE_PATTERN = 
-            "µbuild/test/lib/[conf]/[artifact]-[revision].[type]";
+            "build/test/lib/[conf]/[artifact]-[revision].[type]";
 
     private File cache;
 

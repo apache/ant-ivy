@@ -54,10 +54,14 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - FIX: NullPointerException whilst resolving transitive dependencies (IVY-590)
 - FIX: cachepath based on a resolve done in a previous build broken (IVY-583)
 - FIX: Resolving dynamic version fails when using multiple patterns if only one pattern find a revision and others don't (IVY-602)
+- FIX: Invalid character in IvyRetrieveTest causing most tests to fail (IVY-604)
 
 - IMPROVEMENT: artifactproperty should not overwrite the existing properties (IVY-587)
 - IMPROVEMENT: Support *(private) and *(public) in the confs parameter of the resolve (IVY-588)
 - IMPROVEMENT: replace * by *(public) when resolving inline (IVY-589)
+
+- REFACTORING: Extract a settings interface for the different engines
+
 
    2.0.0-alpha2-incubating
 =====================================
