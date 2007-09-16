@@ -46,6 +46,7 @@ public class IvyDeliverTest extends TestCase {
         cleanRep();
         createCache();
         project = new Project();
+        project.init();
         project.setProperty("ivy.settings.file", "test/repositories/ivysettings.xml");
         project.setProperty("build", "build/test/deliver");
 
