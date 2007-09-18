@@ -225,7 +225,7 @@ public class IvyAntSettings extends DataType {
         IvyAntVariableContainer ivyAntVariableContainer = new IvyAntVariableContainer(getProject());
 
         IvySettings settings = new IvySettings(ivyAntVariableContainer);
-        // NB: It is alrady done in the ivy.configure, but it is required for
+        // NB: It is already done in the ivy.configure, but it is required for
         // defineDefaultSettingFile (that should be done before the ivy.configure
         settings.addAllVariables(getDefaultProperties(), false);
 
