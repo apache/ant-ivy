@@ -51,6 +51,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 
    version in SVN
 =====================================
+- FIX: Static revision replacement is not working when a dynamic revision is evicted by a transitive dependency (IVY-603) (with contribution from Matthias Kilian)
 - FIX: NullPointerException whilst resolving transitive dependencies (IVY-590)
 - FIX: cachepath based on a resolve done in a previous build broken (IVY-583)
 - FIX: Resolving dynamic version fails when using multiple patterns if only one pattern find a revision and others don't (IVY-602)

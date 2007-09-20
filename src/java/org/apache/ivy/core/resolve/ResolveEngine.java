@@ -247,7 +247,7 @@ public class ResolveEngine {
             if (dependencies.length > 0) {
                 IvyNode root = dependencies[0].getRoot();
                 for (int i = 0; i < dependencies.length; i++) {
-                    if (!dependencies[i].isCompletelyEvicted() && !dependencies[i].hasProblem()) {
+                    if (!dependencies[i].hasProblem()) {
                         DependencyDescriptor dd = dependencies[i].getDependencyDescriptor(root);
                         if (dd != null) {
                             String rev = dependencies[i].getResolvedId().getRevision();
