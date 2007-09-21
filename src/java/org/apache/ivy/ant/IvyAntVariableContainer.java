@@ -96,4 +96,10 @@ class IvyAntVariableContainer extends IvyVariableContainerImpl implements IvyVar
             project.setProperty(property, value);
         }
     }
+    
+    public Object clone() {
+        IvyAntVariableContainer result = (IvyAntVariableContainer) super.clone();
+        result.overwrittenProperties = (HashMap) ((HashMap) this.overwrittenProperties).clone();
+        return result;
+    }
 }

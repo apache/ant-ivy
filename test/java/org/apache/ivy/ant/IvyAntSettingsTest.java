@@ -17,6 +17,8 @@
  */
 package org.apache.ivy.ant;
 
+import java.io.File;
+
 import org.apache.tools.ant.Project;
 
 import junit.framework.TestCase;
@@ -44,6 +46,14 @@ public class IvyAntSettingsTest extends TestCase {
             antSettings.getProject().getProperty("ivy.test.variable"));
         assertEquals("value", 
             antSettings.getProject().getProperty("ivy.test.variable.this.id"));
+    }
+
+    public void testIncludeTwice() throws Exception {
+        // IVY-601
+        antSettings.setFile(new File("test/java/org/apache/ivy/ant/ivysettings-include-twice.xml"));
+        antSettings.setId("this.id");
+
+        assertNotNull(antSettings.getConfiguredIvyInstance());
     }
 
 
