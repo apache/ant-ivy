@@ -51,6 +51,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 
    version in SVN
 =====================================
+- FIX: java.lang.IllegalArgumentException: Invalid uri when working with version ranges (IVY-390)
 - FIX: Ivy settings include -tag url attribute does not work correctly (IVY-601)
 - FIX: Static revision replacement is not working when a dynamic revision is evicted by a transitive dependency (IVY-603) (with contribution from Matthias Kilian)
 - FIX: NullPointerException whilst resolving transitive dependencies (IVY-590)

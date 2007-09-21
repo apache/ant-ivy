@@ -19,6 +19,8 @@ package org.apache.ivy.util.url;
 
 import java.net.URL;
 
+import org.apache.ivy.util.url.URLHandler.URLInfo;
+
 import junit.framework.TestCase;
 
 /**
@@ -30,5 +32,15 @@ public class HttpclientURLHandlerTest extends TestCase {
         URLHandler handler = new HttpClientHandler();
         assertTrue(handler.isReachable(new URL("http://www.google.fr/")));
         assertFalse(handler.isReachable(new URL("http://www.google.fr/unknownpage.html")));
+    }
+
+    public void testGetURLInfo() throws Exception {
+        // IVY-390
+        URLHandler handler = new HttpClientHandler();
+        URLInfo info = handler
+                .getURLInfo(new URL(
+                        "http://repo1.maven.org/maven2/commons-lang/commons-lang/[1.0,3.0[/commons-lang-[1.0,3.0[.pom"));
+        
+        assertEquals(URLHandler.UNAVAILABLE, info);
     }
 }

@@ -126,6 +126,9 @@ public class HttpClientHandler extends AbstractURLHandler {
                 + "a proxy server that is not well configured.");
         } catch (IOException e) {
             Message.error("HttpClientHandler: " + e.getMessage() + " url=" + url);
+        } catch (IllegalArgumentException e) {
+            // thrown by HttpClient to indicate the URL is not valid, this happens for instance
+            // when trying to download a dynamic version (cfr IVY-390)
         } finally {
             if (head != null) {
                 head.releaseConnection();
