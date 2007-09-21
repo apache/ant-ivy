@@ -47,13 +47,28 @@ public final class IvyAuthenticator extends Authenticator {
     // Overriding Authenticator *********************************************
 
     protected PasswordAuthentication getPasswordAuthentication() {
-        Credentials c = CredentialsStore.INSTANCE.getCredentials(getRequestingPrompt(),
-            getRequestingHost());
-        Message.debug("authentication: k='"
-                + Credentials.buildKey(getRequestingPrompt(), getRequestingHost()) + "' c='" + c
-                + "'");
-        return c != null ? new PasswordAuthentication(c.getUserName(), c.getPasswd().toCharArray())
-                : null;
+        PasswordAuthentication result = null;
+        
+        String proxyHost = System.getProperty("http.proxyHost");
+        if (getRequestingHost().equals(proxyHost)) {
+            String proxyUser = System.getProperty("http.proxyUser");
+            if ((proxyUser != null) && (proxyUser.trim().length() > 0)) {
+                String proxyPass = System.getProperty("http.proxyPassword", "");
+                Message.debug("authenicating to proxy server with username [" + proxyUser + "]");
+                result = new PasswordAuthentication(proxyUser, proxyPass.toCharArray());
+            }
+        } else {
+            Credentials c = CredentialsStore.INSTANCE.getCredentials(getRequestingPrompt(),
+                getRequestingHost());
+            Message.debug("authentication: k='"
+                    + Credentials.buildKey(getRequestingPrompt(), getRequestingHost()) + "' c='" + c
+                    + "'");
+            if (c != null) {
+                result = new PasswordAuthentication(c.getUserName(), c.getPasswd().toCharArray());
+            }
+        }
+        
+        return result;
     }
 
 }
