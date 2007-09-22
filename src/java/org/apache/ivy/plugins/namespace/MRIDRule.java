@@ -18,57 +18,57 @@
 package org.apache.ivy.plugins.namespace;
 
 public class MRIDRule {
-    private String _org;
+    private String org;
 
-    private String _module;
+    private String module;
 
-    private String _branch;
+    private String branch;
 
-    private String _rev;
+    private String rev;
 
     public MRIDRule(String org, String mod, String rev) {
-        _org = org;
-        _module = mod;
-        _rev = rev;
+        this.org = org;
+        this.module = mod;
+        this.rev = rev;
     }
 
     public MRIDRule() {
     }
 
     public String getModule() {
-        return _module;
+        return module;
     }
 
     public void setModule(String module) {
-        _module = module;
+        this.module = module;
     }
 
     public String getOrg() {
-        return _org;
+        return org;
     }
 
     public void setOrg(String org) {
-        _org = org;
+        this.org = org;
     }
 
     public String getRev() {
-        return _rev;
+        return rev;
     }
 
     public void setRev(String rev) {
-        _rev = rev;
+        this.rev = rev;
     }
 
     public String toString() {
-        return "[ " + _org + " " + _module + (_branch != null ? " " + _branch : "") + " " + _rev
+        return "[ " + org + " " + module + (branch != null ? " " + branch : "") + " " + rev
                 + " ]";
     }
 
     public String getBranch() {
-        return _branch;
+        return branch;
     }
 
     public void setBranch(String branch) {
-        _branch = branch;
+        this.branch = branch;
     }
 }

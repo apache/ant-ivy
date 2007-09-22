@@ -29,18 +29,18 @@ public class Namespace {
         SYSTEM_NAMESPACE = new Namespace();
     }
 
-    private List _rules = new ArrayList();
+    private List rules = new ArrayList();
 
-    private String _name;
+    private String name;
 
-    private boolean _chainRules = false;
+    private boolean chainRules = false;
 
-    private NamespaceTransformer _fromSystemTransformer = new NamespaceTransformer() {
+    private NamespaceTransformer fromSystemTransformer = new NamespaceTransformer() {
         public ModuleRevisionId transform(ModuleRevisionId mrid) {
-            for (Iterator iter = _rules.iterator(); iter.hasNext();) {
+            for (Iterator iter = rules.iterator(); iter.hasNext();) {
                 NamespaceRule rule = (NamespaceRule) iter.next();
                 ModuleRevisionId nmrid = rule.getFromSystem().transform(mrid);
-                if (_chainRules) {
+                if (chainRules) {
                     mrid = nmrid;
                 } else if (!nmrid.equals(mrid)) {
                     return nmrid;
@@ -50,16 +50,16 @@ public class Namespace {
         }
 
         public boolean isIdentity() {
-            return _rules.isEmpty();
+            return rules.isEmpty();
         }
     };
 
-    private NamespaceTransformer _toSystemTransformer = new NamespaceTransformer() {
+    private NamespaceTransformer toSystemTransformer = new NamespaceTransformer() {
         public ModuleRevisionId transform(ModuleRevisionId mrid) {
-            for (Iterator iter = _rules.iterator(); iter.hasNext();) {
+            for (Iterator iter = rules.iterator(); iter.hasNext();) {
                 NamespaceRule rule = (NamespaceRule) iter.next();
                 ModuleRevisionId nmrid = rule.getToSystem().transform(mrid);
-                if (_chainRules) {
+                if (chainRules) {
                     mrid = nmrid;
                 } else if (!nmrid.equals(mrid)) {
                     return nmrid;
@@ -69,35 +69,35 @@ public class Namespace {
         }
 
         public boolean isIdentity() {
-            return _rules.isEmpty();
+            return rules.isEmpty();
         }
     };
 
     public void addRule(NamespaceRule rule) {
-        _rules.add(rule);
+        rules.add(rule);
     }
 
     public String getName() {
-        return _name;
+        return name;
     }
 
     public void setName(String name) {
-        _name = name;
+        this.name = name;
     }
 
     public NamespaceTransformer getFromSystemTransformer() {
-        return _fromSystemTransformer;
+        return fromSystemTransformer;
     }
 
     public NamespaceTransformer getToSystemTransformer() {
-        return _toSystemTransformer;
+        return toSystemTransformer;
     }
 
     public boolean isChainrules() {
-        return _chainRules;
+        return chainRules;
     }
 
     public void setChainrules(boolean chainRules) {
-        _chainRules = chainRules;
+        this.chainRules = chainRules;
     }
 }

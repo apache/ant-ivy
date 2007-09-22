@@ -29,7 +29,9 @@ import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.resolve.DefaultModuleRevision;
 import org.apache.ivy.core.resolve.ResolvedModuleRevision;
 
-public class NameSpaceHelper {
+public final class NameSpaceHelper {
+    private NameSpaceHelper() {
+    }
 
     public static DependencyDescriptor toSystem(DependencyDescriptor dd, Namespace ns) {
         return DefaultDependencyDescriptor.transformInstance(dd, ns);

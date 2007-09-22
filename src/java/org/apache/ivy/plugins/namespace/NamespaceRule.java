@@ -18,49 +18,49 @@
 package org.apache.ivy.plugins.namespace;
 
 public class NamespaceRule {
-    private String _name;
+    private String name;
 
-    private String _description;
+    private String description;
 
-    private MRIDTransformationRule _fromSystem;
+    private MRIDTransformationRule fromSystem;
 
-    private MRIDTransformationRule _toSystem;
+    private MRIDTransformationRule toSystem;
 
     public MRIDTransformationRule getFromSystem() {
-        return _fromSystem;
+        return fromSystem;
     }
 
     public void addFromsystem(MRIDTransformationRule fromSystem) {
-        if (_fromSystem != null) {
+        if (fromSystem != null) {
             throw new IllegalArgumentException("only one fromsystem is allowed per rule");
         }
-        _fromSystem = fromSystem;
+        this.fromSystem = fromSystem;
     }
 
     public MRIDTransformationRule getToSystem() {
-        return _toSystem;
+        return toSystem;
     }
 
     public void addTosystem(MRIDTransformationRule toSystem) {
-        if (_toSystem != null) {
+        if (toSystem != null) {
             throw new IllegalArgumentException("only one tosystem is allowed per rule");
         }
-        _toSystem = toSystem;
+        this.toSystem = toSystem;
     }
 
     public String getDescription() {
-        return _description;
+        return description;
     }
 
     public void setDescription(String description) {
-        _description = description;
+        this.description = description;
     }
 
     public String getName() {
-        return _name;
+        return name;
     }
 
     public void setName(String name) {
-        _name = name;
+        this.name = name;
     }
 }

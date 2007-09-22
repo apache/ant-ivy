@@ -30,33 +30,35 @@ public class MRIDTransformationRule implements NamespaceTransformer {
     private static class MridRuleMatcher {
         private static final String[] TYPES = new String[] {"o", "m", "b", "r"};
 
-        private Matcher[] _matchers = new Matcher[4];
+        private Matcher[] matchers = new Matcher[TYPES.length];
 
         public boolean match(MRIDRule src, ModuleRevisionId mrid) {
-            _matchers[0] = Pattern.compile(getPattern(src.getOrg()))
+            //CheckStyle:MagicNumber| OFF
+            matchers[0] = Pattern.compile(getPattern(src.getOrg()))
                     .matcher(mrid.getOrganisation());
-            if (!_matchers[0].matches()) {
+            if (!matchers[0].matches()) {
                 return false;
             }
-            _matchers[1] = Pattern.compile(getPattern(src.getModule())).matcher(mrid.getName());
-            if (!_matchers[1].matches()) {
+            matchers[1] = Pattern.compile(getPattern(src.getModule())).matcher(mrid.getName());
+            if (!matchers[1].matches()) {
                 return false;
             }
             if (mrid.getBranch() == null) {
-                _matchers[2] = null;
+                matchers[2] = null;
             } else {
-                _matchers[2] = Pattern.compile(getPattern(src.getBranch())).matcher(
+                matchers[2] = Pattern.compile(getPattern(src.getBranch())).matcher(
                     mrid.getBranch());
-                if (!_matchers[2].matches()) {
+                if (!matchers[2].matches()) {
                     return false;
                 }
             }
-            _matchers[3] = Pattern.compile(getPattern(src.getRev())).matcher(mrid.getRevision());
-            if (!_matchers[3].matches()) {
+            matchers[3] = Pattern.compile(getPattern(src.getRev())).matcher(mrid.getRevision());
+            if (!matchers[3].matches()) {
                 return false;
             }
 
             return true;
+            //CheckStyle:MagicNumber| ON
         }
 
         public ModuleRevisionId apply(MRIDRule dest, ModuleRevisionId mrid) {
@@ -70,7 +72,7 @@ public class MRIDTransformationRule implements NamespaceTransformer {
 
         private String applyRules(String str, String type) {
             for (int i = 0; i < TYPES.length; i++) {
-                str = applyTypeRule(str, TYPES[i], type, _matchers[i]);
+                str = applyTypeRule(str, TYPES[i], type, matchers[i]);
             }
             return str;
         }
@@ -109,28 +111,28 @@ public class MRIDTransformationRule implements NamespaceTransformer {
         }
     }
 
-    private List _src = new ArrayList();
+    private List src = new ArrayList();
 
-    private MRIDRule _dest;
+    private MRIDRule dest;
 
     public void addSrc(MRIDRule src) {
-        _src.add(src);
+        this.src.add(src);
     }
 
     public void addDest(MRIDRule dest) {
-        if (_dest != null) {
+        if (dest != null) {
             throw new IllegalArgumentException("only one dest is allowed per mapping");
         }
-        _dest = dest;
+        this.dest = dest;
     }
 
     public ModuleRevisionId transform(ModuleRevisionId mrid) {
         MridRuleMatcher matcher = new MridRuleMatcher();
-        for (Iterator iter = _src.iterator(); iter.hasNext();) {
+        for (Iterator iter = src.iterator(); iter.hasNext();) {
             MRIDRule rule = (MRIDRule) iter.next();
             if (matcher.match(rule, mrid)) {
-                ModuleRevisionId destMrid = matcher.apply(_dest, mrid);
-                Message.debug("found matching namespace rule: " + rule + ". Applied " + _dest
+                ModuleRevisionId destMrid = matcher.apply(dest, mrid);
+                Message.debug("found matching namespace rule: " + rule + ". Applied " + dest
                         + " on " + mrid + ". Transformed to " + destMrid);
                 return destMrid;
             }
