@@ -120,7 +120,7 @@ public class MRIDTransformationRule implements NamespaceTransformer {
     }
 
     public void addDest(MRIDRule dest) {
-        if (dest != null) {
+        if (this.dest != null) {
             throw new IllegalArgumentException("only one dest is allowed per mapping");
         }
         this.dest = dest;

@@ -31,7 +31,7 @@ public class NamespaceRule {
     }
 
     public void addFromsystem(MRIDTransformationRule fromSystem) {
-        if (fromSystem != null) {
+        if (this.fromSystem != null) {
             throw new IllegalArgumentException("only one fromsystem is allowed per rule");
         }
         this.fromSystem = fromSystem;
@@ -42,7 +42,7 @@ public class NamespaceRule {
     }
 
     public void addTosystem(MRIDTransformationRule toSystem) {
-        if (toSystem != null) {
+        if (this.toSystem != null) {
             throw new IllegalArgumentException("only one tosystem is allowed per rule");
         }
         this.toSystem = toSystem;
