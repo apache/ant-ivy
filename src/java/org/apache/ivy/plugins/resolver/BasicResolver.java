@@ -149,231 +149,226 @@ public abstract class BasicResolver extends AbstractResolver {
 
     public ResolvedModuleRevision getDependency(DependencyDescriptor dd, ResolveData data)
             throws ParseException {
-        IvyContext.getContext().pushResolver(this);
-        try {
-            DependencyDescriptor systemDd = dd;
-            dd = fromSystem(dd);
+        DependencyDescriptor systemDd = dd;
+        dd = fromSystem(dd);
 
-            clearIvyAttempts();
-            clearArtifactAttempts();
-            boolean downloaded = false;
-            boolean searched = false;
-            ModuleRevisionId mrid = dd.getDependencyRevisionId();
-            // check revision
-            int index = mrid.getRevision().indexOf("@");
-            if (index != -1 && !mrid.getRevision().substring(index + 1).equals(workspaceName)) {
-                Message.verbose("\t" + getName() + ": unhandled revision => " + mrid.getRevision());
+        clearIvyAttempts();
+        clearArtifactAttempts();
+        boolean downloaded = false;
+        boolean searched = false;
+        ModuleRevisionId mrid = dd.getDependencyRevisionId();
+        // check revision
+        int index = mrid.getRevision().indexOf("@");
+        if (index != -1 && !mrid.getRevision().substring(index + 1).equals(workspaceName)) {
+            Message.verbose("\t" + getName() + ": unhandled revision => " + mrid.getRevision());
+            return null;
+        }
+
+        boolean isDynamic = getSettings().getVersionMatcher().isDynamic(mrid);
+        if (isDynamic && !acceptLatest()) {
+            Message.error("dynamic revisions not handled by " + getClass().getName()
+                    + ". impossible to resolve " + mrid);
+            return null;
+        }
+
+        boolean isChangingRevision = getChangingMatcher().matches(mrid.getRevision());
+        boolean isChangingDependency = isChangingRevision || dd.isChanging();
+        
+        // if we do not have to check modified and if the revision is exact and not changing,
+        // we first search for it in cache
+        ResolvedModuleRevision cachedRmr = null;
+        boolean checkedCache = false;
+        if (!isDynamic && !isCheckmodified() && !isChangingDependency) {
+            cachedRmr = findModuleInCache(data, mrid);
+            checkedCache = true;
+            if (cachedRmr != null) {
+                if (cachedRmr.getDescriptor().isDefault() && cachedRmr.getResolver() != this) {
+                    Message.verbose("\t" + getName() + ": found revision in cache: " + mrid
+                            + " (resolved by " + cachedRmr.getResolver().getName()
+                            + "): but it's a default one, maybe we can find a better one");
+                } else {
+                    Message.verbose("\t" + getName() + ": revision in cache: " + mrid);
+                    return toSystem(cachedRmr);
+                }
+            }
+        }
+        checkInterrupted();
+        URL cachedIvyURL = null;
+        ResolvedResource ivyRef = findIvyFileRef(dd, data);
+        checkInterrupted();
+        searched = true;
+
+        // get module descriptor
+        ModuleDescriptorParser parser;
+        ModuleDescriptor md;
+        ModuleDescriptor systemMd = null;
+        if (ivyRef == null) {
+            if (!isAllownomd()) {
+                Message.verbose("\t" + getName() + ": no ivy file found for " + mrid);
                 return null;
             }
-
-            boolean isDynamic = getSettings().getVersionMatcher().isDynamic(mrid);
-            if (isDynamic && !acceptLatest()) {
-                Message.error("dynamic revisions not handled by " + getClass().getName()
-                        + ". impossible to resolve " + mrid);
-                return null;
-            }
-
-            boolean isChangingRevision = getChangingMatcher().matches(mrid.getRevision());
-            boolean isChangingDependency = isChangingRevision || dd.isChanging();
-
-            // if we do not have to check modified and if the revision is exact and not changing,
-            // we first search for it in cache
-            ResolvedModuleRevision cachedRmr = null;
-            boolean checkedCache = false;
-            if (!isDynamic && !isCheckmodified() && !isChangingDependency) {
-                cachedRmr = findModuleInCache(data, mrid);
-                checkedCache = true;
+            parser = XmlModuleDescriptorParser.getInstance();
+            md = DefaultModuleDescriptor.newDefaultInstance(mrid, dd
+                    .getAllDependencyArtifacts());
+            ResolvedResource artifactRef = findFirstArtifactRef(md, dd, data);
+            checkInterrupted();
+            if (artifactRef == null) {
+                Message.verbose("\t" + getName() + ": no ivy file nor artifact found for "
+                        + mrid);
+                if (!checkedCache) {
+                    cachedRmr = findModuleInCache(data, mrid);
+                }
                 if (cachedRmr != null) {
-                    if (cachedRmr.getDescriptor().isDefault() && cachedRmr.getResolver() != this) {
-                        Message.verbose("\t" + getName() + ": found revision in cache: " + mrid
-                                + " (resolved by " + cachedRmr.getResolver().getName()
-                                + "): but it's a default one, maybe we can find a better one");
-                    } else {
-                        Message.verbose("\t" + getName() + ": revision in cache: " + mrid);
-                        return toSystem(cachedRmr);
-                    }
+                    Message.verbose("\t" + getName() + ": revision in cache: " + mrid);
+                    return toSystem(cachedRmr);
                 }
-            }
-            checkInterrupted();
-            URL cachedIvyURL = null;
-            ResolvedResource ivyRef = findIvyFileRef(dd, data);
-            checkInterrupted();
-            searched = true;
-
-            // get module descriptor
-            ModuleDescriptorParser parser;
-            ModuleDescriptor md;
-            ModuleDescriptor systemMd = null;
-            if (ivyRef == null) {
-                if (!isAllownomd()) {
-                    Message.verbose("\t" + getName() + ": no ivy file found for " + mrid);
-                    return null;
-                }
-                parser = XmlModuleDescriptorParser.getInstance();
-                md = DefaultModuleDescriptor.newDefaultInstance(mrid, dd
-                        .getAllDependencyArtifacts());
-                ResolvedResource artifactRef = findFirstArtifactRef(md, dd, data);
-                checkInterrupted();
-                if (artifactRef == null) {
-                    Message.verbose("\t" + getName() + ": no ivy file nor artifact found for "
-                            + mrid);
-                    if (!checkedCache) {
-                        cachedRmr = findModuleInCache(data, mrid);
-                    }
-                    if (cachedRmr != null) {
-                        Message.verbose("\t" + getName() + ": revision in cache: " + mrid);
-                        return toSystem(cachedRmr);
-                    }
-                    return null;
-                } else {
-                    long lastModified = artifactRef.getLastModified();
-                    if (lastModified != 0 && md instanceof DefaultModuleDescriptor) {
-                        ((DefaultModuleDescriptor) md).setLastModified(lastModified);
-                    }
-                    Message.verbose("\t" + getName() + ": no ivy file found for " + mrid
-                            + ": using default data");
-                    if (isDynamic) {
-                        md.setResolvedModuleRevisionId(ModuleRevisionId.newInstance(mrid,
-                            artifactRef.getRevision()));
-                    }
-                }
-            } else {
-                ResolvedModuleRevision rmr = null;
-                if (ivyRef instanceof MDResolvedResource) {
-                    rmr = ((MDResolvedResource) ivyRef).getResolvedModuleRevision();
-                }
-                if (rmr == null) {
-                    rmr = parse(ivyRef, dd, data);
-                    if (rmr == null) {
-                        return null;
-                    }
-                }
-                if (!rmr.isDownloaded()) {
-                    return toSystem(rmr);
-                } else {
-                    md = rmr.getDescriptor();
-                    parser = ModuleDescriptorParserRegistry.getInstance().getParser(
-                        ivyRef.getResource());
-                    cachedIvyURL = rmr.getLocalMDUrl();
-
-                    // check descriptor data is in sync with resource revision and names
-                    systemMd = toSystem(md);
-                    if (checkconsistency) {
-                        checkDescriptorConsistency(mrid, md, ivyRef);
-                        checkDescriptorConsistency(systemDd.getDependencyRevisionId(), systemMd,
-                            ivyRef);
-                    } else {
-                        if (md instanceof DefaultModuleDescriptor) {
-                            String revision = getRevision(ivyRef, mrid, md);
-                            ((DefaultModuleDescriptor) md).setModuleRevisionId(ModuleRevisionId
-                                    .newInstance(mrid, revision));
-                        } else {
-                            Message.warn(
-                              "consistency disabled with instance of non DefaultModuleDescriptor..."
-                              + " module info can't be updated, so consistency check will be done");
-                            checkDescriptorConsistency(mrid, md, ivyRef);
-                            checkDescriptorConsistency(systemDd.getDependencyRevisionId(),
-                                systemMd, ivyRef);
-                        }
-                    }
-                }
-            }
-
-            if (systemMd == null) {
-                systemMd = toSystem(md);
-            }
-
-            // resolve revision
-            ModuleRevisionId resolvedMrid = mrid;
-            if (isDynamic) {
-                resolvedMrid = md.getResolvedModuleRevisionId();
-                if (resolvedMrid.getRevision() == null 
-                        || resolvedMrid.getRevision().length() == 0) {
-                    if (ivyRef.getRevision() == null || ivyRef.getRevision().length() == 0) {
-                        resolvedMrid = ModuleRevisionId.newInstance(resolvedMrid, "working@"
-                                + getName());
-                    } else {
-                        resolvedMrid = ModuleRevisionId.newInstance(resolvedMrid, ivyRef
-                                .getRevision());
-                    }
-                }
-                Message.verbose("\t\t[" + resolvedMrid.getRevision() + "] " + mrid.getModuleId());
-            }
-            md.setResolvedModuleRevisionId(resolvedMrid);
-            systemMd.setResolvedModuleRevisionId(toSystem(resolvedMrid)); // keep system md in
-            // sync with md
-
-            // check module descriptor revision
-            if (!getSettings().getVersionMatcher().accept(mrid, md)) {
-                Message.info("\t" + getName() + ": unacceptable revision => was="
-                        + md.getModuleRevisionId().getRevision() + " required="
-                        + mrid.getRevision());
                 return null;
+            } else {
+                long lastModified = artifactRef.getLastModified();
+                if (lastModified != 0 && md instanceof DefaultModuleDescriptor) {
+                    ((DefaultModuleDescriptor) md).setLastModified(lastModified);
+                }
+                Message.verbose("\t" + getName() + ": no ivy file found for " + mrid
+                        + ": using default data");
+                if (isDynamic) {
+                    md.setResolvedModuleRevisionId(ModuleRevisionId.newInstance(mrid,
+                        artifactRef.getRevision()));
+                }
             }
-
-            // resolve and check publication date
-            if (data.getDate() != null) {
-                long pubDate = getPublicationDate(md, dd, data);
-                if (pubDate > data.getDate().getTime()) {
-                    Message.info("\t" + getName() + ": unacceptable publication date => was="
-                            + new Date(pubDate) + " required=" + data.getDate());
-                    return null;
-                } else if (pubDate == -1) {
-                    Message.info("\t" + getName()
-                            + ": impossible to guess publication date: artifact missing for "
-                            + mrid);
+        } else {
+            ResolvedModuleRevision rmr = null;
+            if (ivyRef instanceof MDResolvedResource) {
+                rmr = ((MDResolvedResource) ivyRef).getResolvedModuleRevision();
+            }
+            if (rmr == null) {
+                rmr = parse(ivyRef, dd, data);
+                if (rmr == null) {
                     return null;
                 }
-                md.setResolvedPublicationDate(new Date(pubDate));
-                systemMd.setResolvedPublicationDate(new Date(pubDate)); // keep system md in sync
-                // with md
             }
+            if (!rmr.isDownloaded()) {
+                return toSystem(rmr);
+            } else {
+                md = rmr.getDescriptor();
+                parser = ModuleDescriptorParserRegistry.getInstance().getParser(
+                    ivyRef.getResource());
+                cachedIvyURL = rmr.getLocalMDUrl();
 
-            try {
-                File ivyFile = data.getCacheManager().getIvyFileInCache(
-                    systemMd.getResolvedModuleRevisionId());
-                if (ivyRef == null) {
-                    // a basic ivy file is written containing default data
-                    XmlModuleDescriptorWriter.write(systemMd, ivyFile);
+                // check descriptor data is in sync with resource revision and names
+                systemMd = toSystem(md);
+                if (checkconsistency) {
+                    checkDescriptorConsistency(mrid, md, ivyRef);
+                    checkDescriptorConsistency(systemDd.getDependencyRevisionId(), systemMd,
+                        ivyRef);
                 } else {
                     if (md instanceof DefaultModuleDescriptor) {
-                        DefaultModuleDescriptor dmd = (DefaultModuleDescriptor) md;
-                        if (data.getSettings().logNotConvertedExclusionRule()
-                                && dmd.isNamespaceUseful()) {
-                            Message.warn(
-                                "the module descriptor "
-                                + ivyRef.getResource()
-                                + " has information which can't be converted into "
-                                + "the system namespace. "
-                                + "It will require the availability of the namespace '"
-                                + getNamespace().getName() + "' to be fully usable.");
-                        }
+                        String revision = getRevision(ivyRef, mrid, md);
+                        ((DefaultModuleDescriptor) md).setModuleRevisionId(ModuleRevisionId
+                                .newInstance(mrid, revision));
+                    } else {
+                        Message.warn(
+                          "consistency disabled with instance of non DefaultModuleDescriptor..."
+                          + " module info can't be updated, so consistency check will be done");
+                        checkDescriptorConsistency(mrid, md, ivyRef);
+                        checkDescriptorConsistency(systemDd.getDependencyRevisionId(),
+                            systemMd, ivyRef);
                     }
-                    // copy and update ivy file from source to cache
-                    parser.toIvyFile(cachedIvyURL.openStream(), ivyRef.getResource(), ivyFile,
-                        systemMd);
-                    long repLastModified = ivyRef.getLastModified();
-                    if (repLastModified > 0) {
-                        ivyFile.setLastModified(repLastModified);
-                    }
-                }
-            } catch (Exception e) {
-                if (ivyRef == null) {
-                    Message.warn("impossible to create ivy file in cache for module : "
-                            + resolvedMrid);
-                } else {
-                    e.printStackTrace();
-                    Message.warn("impossible to copy ivy file to cache : " + ivyRef.getResource());
                 }
             }
-
-            data.getCacheManager().saveResolver(systemMd, getName());
-            data.getCacheManager().saveArtResolver(systemMd, getName());
-            return new DefaultModuleRevision(this, this, systemMd, searched, downloaded,
-                    cachedIvyURL);
-        } finally {
-            IvyContext.getContext().popResolver();
         }
+
+        if (systemMd == null) {
+            systemMd = toSystem(md);
+        }
+
+        // resolve revision
+        ModuleRevisionId resolvedMrid = mrid;
+        if (isDynamic) {
+            resolvedMrid = md.getResolvedModuleRevisionId();
+            if (resolvedMrid.getRevision() == null 
+                    || resolvedMrid.getRevision().length() == 0) {
+                if (ivyRef.getRevision() == null || ivyRef.getRevision().length() == 0) {
+                    resolvedMrid = ModuleRevisionId.newInstance(resolvedMrid, "working@"
+                            + getName());
+                } else {
+                    resolvedMrid = ModuleRevisionId.newInstance(resolvedMrid, ivyRef
+                            .getRevision());
+                }
+            }
+            Message.verbose("\t\t[" + resolvedMrid.getRevision() + "] " + mrid.getModuleId());
+        }
+        md.setResolvedModuleRevisionId(resolvedMrid);
+        systemMd.setResolvedModuleRevisionId(toSystem(resolvedMrid)); // keep system md in
+        // sync with md
+
+        // check module descriptor revision
+        if (!getSettings().getVersionMatcher().accept(mrid, md)) {
+            Message.info("\t" + getName() + ": unacceptable revision => was="
+                    + md.getModuleRevisionId().getRevision() + " required="
+                    + mrid.getRevision());
+            return null;
+        }
+
+        // resolve and check publication date
+        if (data.getDate() != null) {
+            long pubDate = getPublicationDate(md, dd, data);
+            if (pubDate > data.getDate().getTime()) {
+                Message.info("\t" + getName() + ": unacceptable publication date => was="
+                        + new Date(pubDate) + " required=" + data.getDate());
+                return null;
+            } else if (pubDate == -1) {
+                Message.info("\t" + getName()
+                        + ": impossible to guess publication date: artifact missing for "
+                        + mrid);
+                return null;
+            }
+            md.setResolvedPublicationDate(new Date(pubDate));
+            systemMd.setResolvedPublicationDate(new Date(pubDate)); // keep system md in sync
+            // with md
+        }
+
+        try {
+            File ivyFile = data.getCacheManager().getIvyFileInCache(
+                systemMd.getResolvedModuleRevisionId());
+            if (ivyRef == null) {
+                // a basic ivy file is written containing default data
+                XmlModuleDescriptorWriter.write(systemMd, ivyFile);
+            } else {
+                if (md instanceof DefaultModuleDescriptor) {
+                    DefaultModuleDescriptor dmd = (DefaultModuleDescriptor) md;
+                    if (data.getSettings().logNotConvertedExclusionRule()
+                            && dmd.isNamespaceUseful()) {
+                        Message.warn(
+                            "the module descriptor "
+                            + ivyRef.getResource()
+                            + " has information which can't be converted into "
+                            + "the system namespace. "
+                            + "It will require the availability of the namespace '"
+                            + getNamespace().getName() + "' to be fully usable.");
+                    }
+                }
+                // copy and update ivy file from source to cache
+                parser.toIvyFile(cachedIvyURL.openStream(), ivyRef.getResource(), ivyFile,
+                    systemMd);
+                long repLastModified = ivyRef.getLastModified();
+                if (repLastModified > 0) {
+                    ivyFile.setLastModified(repLastModified);
+                }
+            }
+        } catch (Exception e) {
+            if (ivyRef == null) {
+                Message.warn("impossible to create ivy file in cache for module : "
+                        + resolvedMrid);
+            } else {
+                e.printStackTrace();
+                Message.warn("impossible to copy ivy file to cache : " + ivyRef.getResource());
+            }
+        }
+
+        data.getCacheManager().saveResolver(systemMd, getName());
+        data.getCacheManager().saveArtResolver(systemMd, getName());
+        return new DefaultModuleRevision(this, this, systemMd, searched, downloaded,
+                cachedIvyURL);
     }
 
     private String getRevision(ResolvedResource ivyRef, ModuleRevisionId askedMrid,
@@ -674,16 +669,12 @@ public abstract class BasicResolver extends AbstractResolver {
         Message.verbose("\t\ttried " + attempt);
     }
 
-    protected static void logAttempt(String attempt) {
-        DependencyResolver resolver = IvyContext.getContext().getResolver();
-        if (resolver instanceof BasicResolver) {
-            Artifact currentArtifact = (Artifact) IvyContext.getContext().get(
-                resolver.getName() + ".artifact");
-            if (currentArtifact != null) {
-                ((BasicResolver) resolver).logArtifactAttempt(currentArtifact, attempt);
-            } else {
-                ((BasicResolver) resolver).logIvyAttempt(attempt);
-            }
+    protected void logAttempt(String attempt) {
+        Artifact currentArtifact = (Artifact) IvyContext.getContext().get(getName() + ".artifact");
+        if (currentArtifact != null) {
+            logArtifactAttempt(currentArtifact, attempt);
+        } else {
+            logIvyAttempt(attempt);
         }
     }
 
@@ -722,123 +713,118 @@ public abstract class BasicResolver extends AbstractResolver {
     }
 
     public DownloadReport download(Artifact[] artifacts, DownloadOptions options) {
-        IvyContext.getContext().pushResolver(this);
-        try {
-            CacheManager cacheManager = options.getCacheManager();
-            EventManager eventManager = options.getEventManager();
+        CacheManager cacheManager = options.getCacheManager();
+        EventManager eventManager = options.getEventManager();
 
-            boolean useOrigin = options.isUseOrigin();
+        boolean useOrigin = options.isUseOrigin();
 
-            clearArtifactAttempts();
-            DownloadReport dr = new DownloadReport();
-            for (int i = 0; i < artifacts.length; i++) {
-                final ArtifactDownloadReport adr = new ArtifactDownloadReport(artifacts[i]);
-                dr.addArtifactReport(adr);
-                if (eventManager != null) {
-                    eventManager.fireIvyEvent(new NeedArtifactEvent(this, artifacts[i]));
+        clearArtifactAttempts();
+        DownloadReport dr = new DownloadReport();
+        for (int i = 0; i < artifacts.length; i++) {
+            final ArtifactDownloadReport adr = new ArtifactDownloadReport(artifacts[i]);
+            dr.addArtifactReport(adr);
+            if (eventManager != null) {
+                eventManager.fireIvyEvent(new NeedArtifactEvent(this, artifacts[i]));
+            }
+            ArtifactOrigin origin = cacheManager.getSavedArtifactOrigin(artifacts[i]);
+            // if we can use origin file, we just ask ivy for the file in cache, and it will
+            // return
+            // the original one if possible. If we are not in useOrigin mode, we use the
+            // getArchivePath
+            // method which always return a path in the actual cache
+            File archiveFile = cacheManager.getArchiveFileInCache(artifacts[i], origin, options
+                    .isUseOrigin());
+
+            if (archiveFile.exists()) {
+                Message.verbose("\t[NOT REQUIRED] " + artifacts[i]);
+                adr.setDownloadStatus(DownloadStatus.NO);
+                adr.setSize(archiveFile.length());
+                adr.setArtifactOrigin(origin);
+            } else {
+                Artifact artifact = fromSystem(artifacts[i]);
+                if (!artifact.equals(artifacts[i])) {
+                    Message.verbose("\t" + getName() + "looking for artifact " + artifact
+                            + " (is " + artifacts[i] + " in system namespace)");
                 }
-                ArtifactOrigin origin = cacheManager.getSavedArtifactOrigin(artifacts[i]);
-                // if we can use origin file, we just ask ivy for the file in cache, and it will
-                // return
-                // the original one if possible. If we are not in useOrigin mode, we use the
-                // getArchivePath
-                // method which always return a path in the actual cache
-                File archiveFile = cacheManager.getArchiveFileInCache(artifacts[i], origin, options
-                        .isUseOrigin());
-
-                if (archiveFile.exists()) {
-                    Message.verbose("\t[NOT REQUIRED] " + artifacts[i]);
-                    adr.setDownloadStatus(DownloadStatus.NO);
-                    adr.setSize(archiveFile.length());
-                    adr.setArtifactOrigin(origin);
-                } else {
-                    Artifact artifact = fromSystem(artifacts[i]);
-                    if (!artifact.equals(artifacts[i])) {
-                        Message.verbose("\t" + getName() + "looking for artifact " + artifact
-                                + " (is " + artifacts[i] + " in system namespace)");
-                    }
-                    long start = System.currentTimeMillis();
-                    try {
-                        ResolvedResource artifactRef = getArtifactRef(artifact, null);
-                        if (artifactRef != null) {
-                            origin = new ArtifactOrigin(artifactRef.getResource().isLocal(),
-                                    artifactRef.getResource().getName());
-                            if (useOrigin && artifactRef.getResource().isLocal()) {
-                                Message.verbose("\t[NOT REQUIRED] " + artifacts[i]);
-                                cacheManager.saveArtifactOrigin(artifacts[i], origin);
-                                archiveFile = cacheManager.getArchiveFileInCache(artifacts[i],
-                                    origin);
-                                adr.setDownloadStatus(DownloadStatus.NO);
-                                adr.setSize(archiveFile.length());
-                                adr.setArtifactOrigin(origin);
-                            } else {
-                                // refresh archive file now that we better now its origin
-                                archiveFile = cacheManager.getArchiveFileInCache(artifacts[i],
-                                    origin, useOrigin);
-                                if (ResourceHelper.equals(artifactRef.getResource(), archiveFile)) {
-                                    Message.error("invalid configuration for resolver '"
-                                            + getName()
-                                            + "': pointing artifacts to ivy cache is forbidden !");
-                                    return null;
-                                }
-                                Message.info("downloading " + artifactRef.getResource() + " ...");
-                                if (eventManager != null) {
-                                    eventManager.fireIvyEvent(new StartArtifactDownloadEvent(this,
-                                            artifacts[i], origin));
-                                }
-
-                                File tmp = cacheManager.getArchiveFileInCache(new DefaultArtifact(
-                                        artifacts[i].getModuleRevisionId(), artifacts[i]
-                                                .getPublicationDate(), artifacts[i].getName(),
-                                        artifacts[i].getType(), artifacts[i].getExt() + ".part",
-                                        artifacts[i].getExtraAttributes()), origin, useOrigin);
-
-                                // deal with artifact with url special case
-                                if (artifactRef.getResource().getName().equals(
-                                    String.valueOf(artifacts[i].getUrl()))) {
-                                    Message.verbose("\t" + getName() + ": downloading "
-                                            + artifactRef.getResource().getName());
-                                    Message.debug("\t\tto " + tmp);
-                                    if (tmp.getParentFile() != null) {
-                                        tmp.getParentFile().mkdirs();
-                                    }
-                                    extartifactrep.get(artifactRef.getResource().getName(), tmp);
-                                    adr.setSize(tmp.length());
-                                } else {
-                                    adr.setSize(getAndCheck(artifactRef.getResource(), tmp));
-                                }
-                                if (!tmp.renameTo(archiveFile)) {
-                                    Message.warn("\t[FAILED     ] " + artifacts[i]
-                                            + " impossible to move temp file to definitive one ("
-                                            + (System.currentTimeMillis() - start) + "ms)");
-                                    adr.setDownloadStatus(DownloadStatus.FAILED);
-                                } else {
-                                    cacheManager.saveArtifactOrigin(artifacts[i], origin);
-                                    Message.info("\t[SUCCESSFUL ] " + artifacts[i] + " ("
-                                            + (System.currentTimeMillis() - start) + "ms)");
-                                    adr.setDownloadStatus(DownloadStatus.SUCCESSFUL);
-                                    adr.setArtifactOrigin(origin);
-                                }
-                            }
+                long start = System.currentTimeMillis();
+                try {
+                    ResolvedResource artifactRef = getArtifactRef(artifact, null);
+                    if (artifactRef != null) {
+                        origin = new ArtifactOrigin(artifactRef.getResource().isLocal(),
+                                artifactRef.getResource().getName());
+                        if (useOrigin && artifactRef.getResource().isLocal()) {
+                            Message.verbose("\t[NOT REQUIRED] " + artifacts[i]);
+                            cacheManager.saveArtifactOrigin(artifacts[i], origin);
+                            archiveFile = cacheManager.getArchiveFileInCache(artifacts[i],
+                                origin);
+                            adr.setDownloadStatus(DownloadStatus.NO);
+                            adr.setSize(archiveFile.length());
+                            adr.setArtifactOrigin(origin);
                         } else {
-                            adr.setDownloadStatus(DownloadStatus.FAILED);
+                            // refresh archive file now that we better now its origin
+                            archiveFile = cacheManager.getArchiveFileInCache(artifacts[i],
+                                origin, useOrigin);
+                            if (ResourceHelper.equals(artifactRef.getResource(), archiveFile)) {
+                                Message.error("invalid configuration for resolver '"
+                                        + getName()
+                                        + "': pointing artifacts to ivy cache is forbidden !");
+                                return null;
+                            }
+                            Message.info("downloading " + artifactRef.getResource() + " ...");
+                            if (eventManager != null) {
+                                eventManager.fireIvyEvent(new StartArtifactDownloadEvent(this,
+                                        artifacts[i], origin));
+                            }
+
+                            File tmp = cacheManager.getArchiveFileInCache(new DefaultArtifact(
+                                    artifacts[i].getModuleRevisionId(), artifacts[i]
+                                            .getPublicationDate(), artifacts[i].getName(),
+                                    artifacts[i].getType(), artifacts[i].getExt() + ".part",
+                                    artifacts[i].getExtraAttributes()), origin, useOrigin);
+
+                            // deal with artifact with url special case
+                            if (artifactRef.getResource().getName().equals(
+                                String.valueOf(artifacts[i].getUrl()))) {
+                                Message.verbose("\t" + getName() + ": downloading "
+                                        + artifactRef.getResource().getName());
+                                Message.debug("\t\tto " + tmp);
+                                if (tmp.getParentFile() != null) {
+                                    tmp.getParentFile().mkdirs();
+                                }
+                                extartifactrep.get(artifactRef.getResource().getName(), tmp);
+                                adr.setSize(tmp.length());
+                            } else {
+                                adr.setSize(getAndCheck(artifactRef.getResource(), tmp));
+                            }
+                            if (!tmp.renameTo(archiveFile)) {
+                                Message.warn("\t[FAILED     ] " + artifacts[i]
+                                        + " impossible to move temp file to definitive one ("
+                                        + (System.currentTimeMillis() - start) + "ms)");
+                                adr.setDownloadStatus(DownloadStatus.FAILED);
+                            } else {
+                                cacheManager.saveArtifactOrigin(artifacts[i], origin);
+                                Message.info("\t[SUCCESSFUL ] " + artifacts[i] + " ("
+                                        + (System.currentTimeMillis() - start) + "ms)");
+                                adr.setDownloadStatus(DownloadStatus.SUCCESSFUL);
+                                adr.setArtifactOrigin(origin);
+                            }
                         }
-                    } catch (Exception ex) {
-                        Message.warn("\t[FAILED     ] " + artifacts[i] + " : " + ex.getMessage()
-                                + " (" + (System.currentTimeMillis() - start) + "ms)");
+                    } else {
                         adr.setDownloadStatus(DownloadStatus.FAILED);
                     }
-                    checkInterrupted();
+                } catch (Exception ex) {
+                    Message.warn("\t[FAILED     ] " + artifacts[i] + " : " + ex.getMessage()
+                            + " (" + (System.currentTimeMillis() - start) + "ms)");
+                    adr.setDownloadStatus(DownloadStatus.FAILED);
                 }
-                if (eventManager != null) {
-                    eventManager.fireIvyEvent(new EndArtifactDownloadEvent(this, artifacts[i], adr,
-                            archiveFile));
-                }
+                checkInterrupted();
             }
-            return dr;
-        } finally {
-            IvyContext.getContext().popResolver();
+            if (eventManager != null) {
+                eventManager.fireIvyEvent(new EndArtifactDownloadEvent(this, artifacts[i], adr,
+                        archiveFile));
+            }
         }
+        return dr;
     }
 
     protected void clearArtifactAttempts() {

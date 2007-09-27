@@ -23,14 +23,12 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Stack;
 
 import org.apache.ivy.Ivy;
 import org.apache.ivy.core.cache.CacheManager;
 import org.apache.ivy.core.event.EventManager;
 import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.plugins.circular.CircularDependencyStrategy;
-import org.apache.ivy.plugins.resolver.DependencyResolver;
 import org.apache.ivy.util.MessageImpl;
 
 /**
@@ -50,8 +48,6 @@ public class IvyContext {
     private File cache;
 
     private MessageImpl messageImpl;
-
-    private Stack resolver = new Stack(); // Stack(DependencyResolver)
 
     private Map contextMap = new HashMap();
 
@@ -268,18 +264,6 @@ public class IvyContext {
 
     public void checkInterrupted() {
         getIvy().checkInterrupted();
-    }
-
-    public DependencyResolver getResolver() {
-        return (DependencyResolver) resolver.peek();
-    }
-
-    public void pushResolver(DependencyResolver resolver) {
-        this.resolver.push(resolver);
-    }
-
-    public void popResolver() {
-        resolver.pop();
     }
 
     // should be better to use context to store this kind of information, but not yet ready to do

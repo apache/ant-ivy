@@ -112,7 +112,7 @@ public abstract class AbstractResourceResolver extends BasicResolver {
     protected abstract ResolvedResource findResourceUsingPattern(ModuleRevisionId mrid,
             String pattern, Artifact artifact, ResourceMDParser rmdparser, Date date);
 
-    public static ResolvedResource findResource(ResolvedResource[] rress, String name,
+    public ResolvedResource findResource(ResolvedResource[] rress, String name,
             LatestStrategy strategy, VersionMatcher versionMatcher, ResourceMDParser rmdparser,
             ModuleRevisionId mrid, Date date) {
         ResolvedResource found = null;

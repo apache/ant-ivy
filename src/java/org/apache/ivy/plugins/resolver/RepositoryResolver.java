@@ -80,7 +80,7 @@ public class RepositoryResolver extends AbstractResourceResolver {
             isAlwaysCheckExactRevision());
     }
 
-    public static ResolvedResource findResourceUsingPattern(String name, Repository repository,
+    public ResolvedResource findResourceUsingPattern(String name, Repository repository,
             LatestStrategy strategy, VersionMatcher versionMatcher, ResourceMDParser rmdparser,
             ModuleRevisionId mrid, String pattern, Artifact artifact, Date date,
             boolean alwaysCheckExactRevision) {
@@ -113,7 +113,7 @@ public class RepositoryResolver extends AbstractResourceResolver {
         }
     }
 
-    private static ResolvedResource findDynamicResourceUsingPattern(String name,
+    private ResolvedResource findDynamicResourceUsingPattern(String name,
             Repository repository, LatestStrategy strategy, VersionMatcher versionMatcher,
             ResourceMDParser rmdparser, ModuleRevisionId mrid, String pattern, Artifact artifact,
             Date date) {
