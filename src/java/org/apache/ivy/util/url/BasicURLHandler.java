@@ -60,6 +60,7 @@ public class BasicURLHandler extends AbstractURLHandler {
         try {
             con = url.openConnection();
             if (con instanceof HttpURLConnection) {
+                ((HttpURLConnection) con).setRequestMethod("HEAD");
                 int status = ((HttpURLConnection) con).getResponseCode();
                 if (status == HttpStatus.SC_OK) {
                     return new URLInfo(true, ((HttpURLConnection) con).getContentLength(), con

@@ -16,6 +16,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 	Karl Baum
 	Mikkel Bjerg
 	Jeffrey Blattman
+	Jim Bonanno
 	Matthieu Brouillard
 	Kristian Cibulskis
 	Scott Goldstein
@@ -61,6 +62,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - FIX: Resolving dynamic version fails when using multiple patterns if only one pattern find a revision and others don't (IVY-602)
 - FIX: Invalid character in IvyRetrieveTest causing most tests to fail (IVY-604)
 
+- IMPROVEMENT: BasicURLHandler should use method=head for getURLInfo (IVY-611) (thanks to Jim Bonanno)
 - IMPROVEMENT: artifactproperty should not overwrite the existing properties (IVY-587)
 - IMPROVEMENT: Support *(private) and *(public) in the confs parameter of the resolve (IVY-588)
 - IMPROVEMENT: replace * by *(public) when resolving inline (IVY-589)
