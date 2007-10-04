@@ -52,6 +52,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 
    version in SVN
 =====================================
+- FIX: Ivy doesn't work with Ant 1.6.2 (IVY-614)
 - FIX: EmptyStackException when upgrading from 1.4 to 2.0 (IVY-610)
 - FIX: Ivy:retrieve fails through proxy server (IVY-529)
 - FIX: java.lang.IllegalArgumentException: Invalid uri when working with version ranges (IVY-390)

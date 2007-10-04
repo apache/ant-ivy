@@ -279,21 +279,6 @@ public class IvyReport extends IvyTask {
 
         xslt.setDestdir(out);
         xslt.setBasedir(cache);
-
-        Mapper mapper = new Mapper(getProject());
-        xslt.addMapper(mapper);
-
-        CacheManager cacheMgr = getIvyInstance().getCacheManager(cache);
-        for (int i = 0; i < confs.length; i++) {
-            File reportFile = cacheMgr.getConfigurationResolveReportInCache(resolveId, confs[i]);
-            xslt.setIncludes(reportFile.getName());
-
-            FileNameMapper reportMapper = new GlobPatternMapper();
-            reportMapper.setFrom(reportFile.getName());
-            reportMapper.setTo(IvyPatternHelper.substitute(outputpattern, organisation, module,
-                "", "", "", ext, confs[i]));
-            mapper.add(reportMapper);
-        }
         xslt.setStyle(style);
 
         XSLTProcess.Param param = xslt.createParam();
@@ -311,7 +296,16 @@ public class IvyReport extends IvyTask {
             realParam.setExpression(param.getExpression());
         }
 
-        xslt.execute();
+        CacheManager cacheMgr = getIvyInstance().getCacheManager(cache);
+        for (int i = 0; i < confs.length; i++) {
+            File reportFile = cacheMgr.getConfigurationResolveReportInCache(resolveId, confs[i]);
+            File outFile = new File(out, IvyPatternHelper.substitute(outputpattern, organisation, module,
+                "", "", "", ext, confs[i]));
+            
+            xslt.setIn(reportFile);
+            xslt.setOut(outFile);
+            xslt.execute();
+        }
     }
 
     private String getStylePath(File cache, String styleResourceName) throws IOException {

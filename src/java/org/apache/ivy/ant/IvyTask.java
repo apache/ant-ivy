@@ -74,7 +74,7 @@ public abstract class IvyTask extends Task {
         ensureMessageInitialised();
         Object antIvyEngine;
         if (antIvyEngineRef != null) {
-            antIvyEngine = antIvyEngineRef.getReferencedObject();
+            antIvyEngine = antIvyEngineRef.getReferencedObject(getProject());
             if (!antIvyEngine.getClass().getName().equals(IvyAntSettings.class.getName())) {
                 throw new BuildException(antIvyEngineRef.getRefId()
                         + " doesn't reference an ivy:settings", getLocation());

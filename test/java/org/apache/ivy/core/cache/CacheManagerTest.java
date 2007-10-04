@@ -28,6 +28,8 @@ import org.apache.ivy.core.module.descriptor.DefaultArtifact;
 import org.apache.ivy.core.module.id.ModuleId;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.settings.IvySettings;
+import org.apache.tools.ant.Project;
+import org.apache.tools.ant.taskdefs.Delete;
 import org.apache.tools.ant.util.FileUtils;
 
 /**
@@ -54,7 +56,10 @@ public class CacheManagerTest extends TestCase {
     }
 
     protected void tearDown() throws Exception {
-        FileUtils.delete(cacheManager.getCache());
+        Delete del = new Delete();
+        del.setProject(new Project());
+        del.setDir(cacheManager.getCache());
+        del.execute();
     }
 
     public void testArtifactOrigin() {

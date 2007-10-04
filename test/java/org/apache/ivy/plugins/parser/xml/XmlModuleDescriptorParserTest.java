@@ -44,13 +44,14 @@ import org.apache.ivy.plugins.matcher.PatternMatcher;
 import org.apache.ivy.plugins.parser.AbstractModuleDescriptorParserTester;
 import org.apache.ivy.util.XMLHelper;
 
-/**
- * 
- */
 public class XmlModuleDescriptorParserTest extends AbstractModuleDescriptorParserTester {
-    // junit test -- DO NOT REMOVE used by ant to know it's a junit test
-
-    private IvySettings settings = new IvySettings();
+    private IvySettings settings = null;
+    
+    protected void setUp() throws Exception {
+        super.setUp();
+        
+        this.settings = new IvySettings();
+    }
 
     public void testSimple() throws Exception {
         ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(settings,

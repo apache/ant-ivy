@@ -76,7 +76,7 @@ public class IvyTaskTest extends TestCase {
             }
         };
         task.setProject(p);
-        task.setSettingsRef(new Reference(p, "mySettings"));
+        task.setSettingsRef(new Reference("mySettings"));
         Ivy ivy = task.getIvyInstance();
         assertNotNull(ivy);
         IvySettings settings = ivy.getSettings();

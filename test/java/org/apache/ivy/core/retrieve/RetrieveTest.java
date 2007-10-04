@@ -32,16 +32,13 @@ import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.Delete;
 
 public class RetrieveTest extends TestCase {
-    private final Ivy ivy;
+    private Ivy ivy;
 
     private File cache;
 
-    public RetrieveTest() throws Exception {
-        ivy = new Ivy();
-        ivy.configure(new File("test/repositories/ivysettings.xml"));
-    }
-
     protected void setUp() throws Exception {
+        ivy = Ivy.newInstance();
+        ivy.configure(new File("test/repositories/ivysettings.xml"));
         createCache();
     }
 

@@ -41,7 +41,6 @@ import org.apache.ivy.plugins.parser.ModuleDescriptorParserRegistry;
 import org.apache.ivy.util.Message;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.DirectoryScanner;
-import org.apache.tools.ant.types.FileList;
 import org.apache.tools.ant.types.FileSet;
 import org.apache.tools.ant.types.Path;
 
@@ -408,12 +407,9 @@ public class IvyBuildList extends IvyTask {
     }
 
     private void addBuildFile(Path path, File buildFile) {
-        FileList fl = new FileList();
-        fl.setDir(buildFile.getParentFile());
-        FileList.FileName fileName = new FileList.FileName();
-        fileName.setName(buildFile.getName());
-        fl.addConfiguredFile(fileName);
-        path.addFilelist(fl);
+        FileSet fs = new FileSet();
+        fs.setFile(buildFile);
+        path.addFileset(fs);
     }
 
     private File getIvyFileFor(File buildFile) {

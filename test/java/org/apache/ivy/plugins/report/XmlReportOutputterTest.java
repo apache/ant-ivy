@@ -29,16 +29,13 @@ import org.apache.ivy.core.resolve.ResolveOptions;
 import org.apache.ivy.util.CacheCleaner;
 
 public class XmlReportOutputterTest extends TestCase {
-    private final Ivy _ivy;
+    private Ivy _ivy;
 
     private File _cache;
 
-    public XmlReportOutputterTest() throws Exception {
+    protected void setUp() throws Exception {
         _ivy = new Ivy();
         _ivy.configure(new File("test/repositories/ivysettings.xml"));
-    }
-
-    protected void setUp() throws Exception {
         createCache();
     }
 

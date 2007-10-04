@@ -21,7 +21,6 @@ import java.util.Date;
 
 import junit.framework.TestCase;
 
-import org.apache.ivy.Ivy;
 import org.apache.ivy.core.event.resolve.EndResolveEvent;
 import org.apache.ivy.core.event.resolve.StartResolveEvent;
 import org.apache.ivy.core.module.descriptor.DefaultModuleDescriptor;
@@ -30,19 +29,18 @@ import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.report.ResolveReport;
 
 public class IvyEventFilterTest extends TestCase {
-    Ivy ivy = new Ivy();
 
-    ModuleDescriptor md = new DefaultModuleDescriptor(ModuleRevisionId.newInstance("foo", "bar",
-        "1.0"), "integration", new Date());
-
-    ModuleDescriptor md2 = new DefaultModuleDescriptor(ModuleRevisionId.newInstance("foo2", "bar",
-        "1.0"), "integration", new Date());
-
-    ModuleDescriptor md3 = new DefaultModuleDescriptor(ModuleRevisionId.newInstance("foo3", "baz",
-        "1.0"), "integration", new Date());
-
-    ModuleDescriptor md4 = new DefaultModuleDescriptor(ModuleRevisionId.newInstance("foo", "baz",
-        "1.0"), "integration", new Date());
+    private ModuleDescriptor md = null;
+    private ModuleDescriptor md2 = null;
+    private ModuleDescriptor md3 = null;
+    private ModuleDescriptor md4 = null;
+    
+    public void setUp() throws Exception {
+        md = new DefaultModuleDescriptor(ModuleRevisionId.newInstance("foo", "bar", "1.0"), "integration", new Date());
+        md2 = new DefaultModuleDescriptor(ModuleRevisionId.newInstance("foo2", "bar", "1.0"), "integration", new Date());
+        md3 = new DefaultModuleDescriptor(ModuleRevisionId.newInstance("foo3", "baz", "1.0"), "integration", new Date());
+        md4 = new DefaultModuleDescriptor(ModuleRevisionId.newInstance("foo", "baz", "1.0"), "integration", new Date());
+    }
 
     public void testSimple() {
         IvyEventFilter f = new IvyEventFilter("pre-resolve", null, null);

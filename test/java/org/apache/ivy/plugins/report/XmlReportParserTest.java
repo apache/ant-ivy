@@ -30,16 +30,13 @@ import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.Delete;
 
 public class XmlReportParserTest extends TestCase {
-    private final Ivy _ivy;
+    private Ivy _ivy;
 
     private File _cache;
 
-    public XmlReportParserTest() throws Exception {
+    protected void setUp() throws Exception {
         _ivy = new Ivy();
         _ivy.configure(new File("test/repositories/ivysettings.xml"));
-    }
-
-    protected void setUp() throws Exception {
         createCache();
     }
 
