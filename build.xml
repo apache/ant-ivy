@@ -410,6 +410,7 @@ ${final.core.name}    The Ivy core, eg everything but classes dependent on Ant.$
     
     <target name="test-internal" depends="build-test, init-tests" unless="skip.test">
         <mkdir dir="${test.xml.dir}" />
+    	
         <junit 
            haltonfailure="off"
            haltonerror="off"
@@ -417,12 +418,14 @@ ${final.core.name}    The Ivy core, eg everything but classes dependent on Ant.$
            failureproperty="test.failed"
            showoutput="no"
            printsummary="yes"
-           includeantruntime="no"
+           includeantruntime="yes"
            fork="true">
             <classpath>
                 <pathelement location="${coverage.classes.dir}" />
                 <fileset dir="${lib.dir}">
                     <include name="*.jar" />
+                	<exclude name="ant.jar" />
+                	<exclude name="ant-*.jar" />
                 </fileset>
                 <pathelement location="${core.classes.build.dir}" />
                 <pathelement location="${ant.classes.build.dir}" />
