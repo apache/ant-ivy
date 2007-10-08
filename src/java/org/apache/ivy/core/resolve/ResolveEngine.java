@@ -98,7 +98,8 @@ public class ResolveEngine {
      *            the sort engine to use to sort modules before producing the dependency resolution
      *            report. Must not be null.
      */
-    public ResolveEngine(ResolveEngineSettings settings, EventManager eventManager, SortEngine sortEngine) {
+    public ResolveEngine(ResolveEngineSettings settings, EventManager eventManager,
+                         SortEngine sortEngine) {
         this.settings = settings;
         this.eventManager = eventManager;
         this.sortEngine = sortEngine;
@@ -194,8 +195,7 @@ public class ResolveEngine {
     }
 
     /**
-     * Resolve dependencies of a module described by a module descriptor Note: the method signature
-     * is way too long, we should use a class to store the settings of the resolve.
+     * Resolve dependencies of a module described by a module descriptor.
      */
     public ResolveReport resolve(ModuleDescriptor md, ResolveOptions options)
             throws ParseException, IOException {
@@ -241,8 +241,8 @@ public class ResolveEngine {
             // revision id,
             // for direct dependencies only.
             // this is used by the deliver task to resolve dynamic revisions to static ones
-            File ivyPropertiesInCache = cacheManager.getResolvedIvyPropertiesInCache(md
-                    .getResolvedModuleRevisionId());
+            File ivyPropertiesInCache = cacheManager.getResolvedIvyPropertiesInCache(
+                        md.getResolvedModuleRevisionId());
             Properties props = new Properties();
             if (dependencies.length > 0) {
                 IvyNode root = dependencies[0].getRoot();
@@ -250,10 +250,24 @@ public class ResolveEngine {
                     if (!dependencies[i].hasProblem()) {
                         DependencyDescriptor dd = dependencies[i].getDependencyDescriptor(root);
                         if (dd != null) {
-                            String rev = dependencies[i].getResolvedId().getRevision();
-                            String status = dependencies[i].getDescriptor().getStatus();
-                            props.put(dd.getDependencyRevisionId().encodeToString(), rev + " "
-                                    + status);
+                            ModuleRevisionId depResolvedId = dependencies[i].getResolvedId();
+                            ModuleDescriptor depDescriptor = dependencies[i].getDescriptor();
+                            ModuleRevisionId depRevisionId = dd.getDependencyRevisionId();
+                            if (depResolvedId == null) {
+                                throw new NullPointerException("getResolvedId() is null for " 
+                                    + dependencies[i].toString());
+                            }
+                            if (depDescriptor == null) {
+                                throw new NullPointerException("getDescriptor() is null for " 
+                                    + dependencies[i].toString());
+                            }
+                            if (depRevisionId == null) {
+                                throw new NullPointerException("getDependencyRevisionId() "
+                                    + "is null for " + dd.toString());
+                            }
+                            String rev = depResolvedId.getRevision();
+                            String status = depDescriptor.getStatus();
+                            props.put(depRevisionId.encodeToString(), rev + " " + status);
                         }
                     }
                 }
