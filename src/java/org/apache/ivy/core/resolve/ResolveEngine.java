@@ -257,16 +257,13 @@ public class ResolveEngine {
                                 throw new NullPointerException("getResolvedId() is null for " 
                                     + dependencies[i].toString());
                             }
-                            if (depDescriptor == null) {
-                                throw new NullPointerException("getDescriptor() is null for " 
-                                    + dependencies[i].toString());
-                            }
                             if (depRevisionId == null) {
                                 throw new NullPointerException("getDependencyRevisionId() "
                                     + "is null for " + dd.toString());
                             }
                             String rev = depResolvedId.getRevision();
-                            String status = depDescriptor.getStatus();
+                            //The evicted modules have no descritpion, so we can't put their status. 
+                            String status = depDescriptor==null ? "?" : depDescriptor.getStatus();
                             props.put(depRevisionId.encodeToString(), rev + " " + status);
                         }
                     }
