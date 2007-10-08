@@ -1323,6 +1323,7 @@ public class ResolveTest extends TestCase {
         assertTrue(getArchiveFileInCache("org3", "mod3.1", "1.0", "mod3.1", "jar", "jar").exists());
     }
 
+    
     public void testResolveConflict() throws Exception {
         // mod4.1 v 4.1 depends on
         // - mod1.1 v 1.0 which depends on mod1.2 v 2.0
@@ -1448,6 +1449,17 @@ public class ResolveTest extends TestCase {
             "jar").exists());
     }
 
+    /**
+     * Test IVY-618. 
+     */
+/*    public void testResolveConflictFromPoms() throws Exception {
+        ResolveReport report = ivy.resolve(new File("test/repositories/2/mod9.1/ivy-1.0.xml")
+                .toURL(), getResolveOptions(new String[] {"*"}));
+        assertNotNull(report);
+        assertFalse(report.hasError());
+    }
+*/
+    
     public void testTransitiveEviction() throws Exception {
         // mod7.3 depends on mod7.2 v1.0 and on mod7.1 v2.0
         // mod7.2 v1.0 depends on mod7.1 v1.0 (which then should be evicted)
