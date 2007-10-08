@@ -1452,13 +1452,13 @@ public class ResolveTest extends TestCase {
     /**
      * Test IVY-618. 
      */
-/*    public void testResolveConflictFromPoms() throws Exception {
-        ResolveReport report = ivy.resolve(new File("test/repositories/2/mod9.1/ivy-1.0.xml")
+    public void testResolveConflictFromPoms() throws Exception {
+        ResolveReport report = ivy.resolve(new File("test/repositories/2/mod10.1/ivy-1.0.xml")
                 .toURL(), getResolveOptions(new String[] {"*"}));
         assertNotNull(report);
         assertFalse(report.hasError());
     }
-*/
+
     
     public void testTransitiveEviction() throws Exception {
         // mod7.3 depends on mod7.2 v1.0 and on mod7.1 v2.0

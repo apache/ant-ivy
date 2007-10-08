@@ -18,7 +18,7 @@
 -->
 <ivy-module version="1.0">
 	<info organisation="org9"
-	       module="mod9.1"
+	       module="mod17.1"
 	       revision="1.0"
 	       status="integration"
 	       publication="20050704110000"
