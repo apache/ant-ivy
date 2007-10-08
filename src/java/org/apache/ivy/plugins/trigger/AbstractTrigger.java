@@ -33,19 +33,19 @@ import org.apache.ivy.util.filter.Filter;
  * @since 1.4
  */
 public abstract class AbstractTrigger implements Trigger {
-    private Filter _filter;
+    private Filter filter;
 
-    private String _event;
+    private String event;
 
-    private String _filterExpression;
+    private String expression;
 
-    private String _matcher = PatternMatcher.EXACT;
+    private String matcher = PatternMatcher.EXACT;
 
     public Filter getEventFilter() {
-        if (_filter == null) {
-            _filter = createFilter();
+        if (filter == null) {
+            filter = createFilter();
         }
-        return _filter;
+        return filter;
     }
 
     private Filter createFilter() {
@@ -53,31 +53,31 @@ public abstract class AbstractTrigger implements Trigger {
     }
 
     private PatternMatcher getPatternMatcher() {
-        return IvyContext.getContext().getSettings().getMatcher(_matcher);
+        return IvyContext.getContext().getSettings().getMatcher(matcher);
     }
 
     public String getEvent() {
-        return _event;
+        return event;
     }
 
     public void setEvent(String event) {
-        _event = event;
+        this.event = event;
     }
 
     public String getFilter() {
-        return _filterExpression;
+        return expression;
     }
 
     public void setFilter(String filterExpression) {
-        _filterExpression = filterExpression;
+        expression = filterExpression;
     }
 
     public String getMatcher() {
-        return _matcher;
+        return matcher;
     }
 
     public void setMatcher(String matcher) {
-        _matcher = matcher;
+        this.matcher = matcher;
     }
 
 }
