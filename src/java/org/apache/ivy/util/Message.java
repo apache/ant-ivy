@@ -17,14 +17,11 @@
  */
 package org.apache.ivy.util;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Properties;
 
+import org.apache.ivy.Ivy;
 import org.apache.ivy.core.IvyContext;
 
 /**
@@ -86,22 +83,8 @@ public final class Message {
 
     private static void showInfo() {
         if (!showedInfo) {
-            Properties props = new Properties();
-            URL moduleURL = Message.class.getResource("/module.properties");
-            if (moduleURL != null) {
-                try {
-                    InputStream module = moduleURL.openStream();
-                    props.load(module);
-                    debug("version information loaded from " + moduleURL);
-                    info(":: Ivy " + props.getProperty("version") + " - "
-                           + props.getProperty("date") + " :: http://incubator.apache.org/ivy/ ::");
-                    module.close();
-                } catch (IOException e) {
-                    info(":: Ivy non official version :: http://incubator.apache.org/ivy/ ::");
-                }
-            } else {
-                info(":: Ivy non official version :: http://incubator.apache.org/ivy/ ::");
-            }
+            info(":: Ivy " + Ivy.getIvyVersion() + " - "
+                   + Ivy.getIvyDate() + " :: " + Ivy.getIvyHomeURL() + " ::");
             showedInfo = true;
         }
     }

@@ -19,6 +19,7 @@ package org.apache.ivy;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -26,6 +27,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 import org.apache.ivy.core.IvyContext;
 import org.apache.ivy.core.cache.CacheManager;
@@ -82,6 +84,65 @@ public class Ivy {
     private static final int KILO = 1024;
 
     public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyyMMddHHmmss");
+    
+    /**
+     * the current version of Ivy, as displayed on the console when 
+     * Ivy is initialized
+     */
+    private static final String IVY_VERSION;
+    /**
+     * the date at which this version of Ivy has been built.
+     * May be empty if unknown.
+     */
+    private static final String IVY_DATE;
+    
+    static {
+        // initialize IVY_VERSION and IVY_DATE
+        Properties props = new Properties();
+        URL moduleURL = Message.class.getResource("/module.properties");
+        if (moduleURL != null) {
+            try {
+                InputStream module = moduleURL.openStream();
+                props.load(module);
+                module.close();
+            } catch (IOException e) {
+                // ignore this exception, we will initialize with default values
+            }
+        }
+        IVY_VERSION = props.getProperty("version", "non official version");
+        IVY_DATE = props.getProperty("date", "");
+    }
+    
+    /**
+     * Returns the current version of Ivy, as displayed on the console when 
+     * Ivy is initialized.
+     * 
+     * @return the current version of Ivy
+     * @see #getIvyVersion()
+     */
+    public static String getIvyVersion() {
+        return IVY_VERSION;
+    }
+
+    /**
+     * Returns the date at which this version of Ivy has been built.
+     * <p>
+     * May be empty if unknown.
+     * 
+     * @return the date at which this version of Ivy has been built
+     * @see #getIvyVersion()
+     */
+    public static String getIvyDate() {
+        return IVY_DATE;
+    }
+    
+    /**
+     * Returns the URL at which Ivy web site can be found.
+     * @return the URL at which Ivy web site can be found
+     */
+    public static String getIvyHomeURL() {
+        return "http://incubator.apache.org/ivy/";
+    }
 
     public static Ivy newInstance() {
         Ivy ivy = new Ivy();
