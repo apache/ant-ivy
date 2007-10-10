@@ -221,6 +221,8 @@ public final class PomModuleDescriptorParser extends AbstractModuleDescriptorPar
             String context = getContext();
             if (md.getModuleRevisionId() == null && ("project".equals(context))) {
                 fillMrid();
+            } else if ("project/parent/version".equals(context)) {
+                properties.put("parent.version", revision);
             } else if (((organisation != null && module != null && revision != null) || dd != null)
                     && "project/dependencies/dependency".equals(context)) {
                 if (dd == null) {
