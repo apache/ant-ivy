@@ -57,6 +57,36 @@ public class IvyReportTest extends TestCase {
         del.setDir(cache);
         del.execute();
     }
+    
+    public void testSimple() throws Exception {
+        IvyResolve res = new IvyResolve();
+        res.setProject(project);
+        res.setFile(new File("test/java/org/apache/ivy/ant/ivy-simple.xml"));
+        res.setCache(cache);
+        res.execute();
+
+        report.setTodir(new File(cache, "report"));
+        report.execute();
+        
+        assertTrue(new File(cache, "report/apache-resolve-simple-default.html").exists());
+        assertTrue(new File(cache, "report/apache-resolve-simple-default.graphml").exists());
+    }
+
+    public void testMultipleConfigurations() throws Exception {
+        IvyResolve res = new IvyResolve();
+        res.setProject(project);
+        res.setFile(new File("test/java/org/apache/ivy/ant/ivy-multiconf.xml"));
+        res.setCache(cache);
+        res.execute();
+
+        report.setTodir(new File(cache, "report"));
+        report.execute();
+        
+        assertTrue(new File(cache, "report/apache-resolve-simple-default.html").exists());
+        assertTrue(new File(cache, "report/apache-resolve-simple-default.graphml").exists());
+        assertTrue(new File(cache, "report/apache-resolve-simple-compile.html").exists());
+        assertTrue(new File(cache, "report/apache-resolve-simple-compile.graphml").exists());
+    }
 
     public void testRegularCircular() throws Exception {
         project.setProperty("ivy.dep.file", "test/repositories/2/mod11.1/ivy-1.0.xml");

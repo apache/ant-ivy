@@ -17,11 +17,25 @@
  */
 package org.apache.ivy.ant;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
+import javax.xml.transform.Source;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.stream.StreamSource;
 
 import org.apache.ivy.Ivy;
 import org.apache.ivy.core.IvyPatternHelper;
@@ -34,9 +48,7 @@ import org.apache.ivy.util.FileUtil;
 import org.apache.ivy.util.Message;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.taskdefs.XSLTProcess;
-import org.apache.tools.ant.types.Mapper;
-import org.apache.tools.ant.util.FileNameMapper;
-import org.apache.tools.ant.util.GlobPatternMapper;
+import org.apache.tools.ant.util.JAXPUtils;
 
 /**
  * This ant task let users generates reports (html, xml, graphml, ...) from the last resolve done.
@@ -60,7 +72,7 @@ public class IvyReport extends IvyTask {
 
     private boolean xsl = true;
 
-    private String xslFile;
+    private File xslFile;
 
     private String outputpattern;
 
@@ -118,11 +130,11 @@ public class IvyReport extends IvyTask {
         this.graph = graph;
     }
 
-    public String getXslfile() {
+    public File getXslfile() {
         return xslFile;
     }
 
-    public void setXslfile(String xslFile) {
+    public void setXslfile(File xslFile) {
         this.xslFile = xslFile;
     }
 
@@ -251,7 +263,7 @@ public class IvyReport extends IvyTask {
         }
     }
 
-    private String getReportStylePath(File cache) throws IOException {
+    private File getReportStylePath(File cache) throws IOException {
         if (xslFile != null) {
             return xslFile;
         }
@@ -259,11 +271,13 @@ public class IvyReport extends IvyTask {
         // so we have to copy it from classpath to cache
         File style = new File(cache, "ivy-report.xsl");
         FileUtil.copy(XmlReportOutputter.class.getResourceAsStream("ivy-report.xsl"), style, null);
-        return style.getAbsolutePath();
+        return style;
     }
 
     private void genStyled(File cache, String organisation, String module, String[] confs,
-            String style, String ext) throws IOException {
+            File style, String ext) throws IOException {
+        CacheManager cacheMgr = getIvyInstance().getCacheManager(cache);
+
         // process the report with xslt to generate dot file
         File out;
         if (todir != null) {
@@ -271,49 +285,90 @@ public class IvyReport extends IvyTask {
         } else {
             out = new File(".");
         }
-
-        XSLTProcess xslt = new XSLTProcess();
-        xslt.setTaskName(getTaskName());
-        xslt.setProject(getProject());
-        xslt.init();
-
-        xslt.setDestdir(out);
-        xslt.setBasedir(cache);
-        xslt.setStyle(style);
-
-        XSLTProcess.Param param = xslt.createParam();
-        param.setName("confs");
-        param.setExpression(conf);
-        param = xslt.createParam();
-        param.setName("extension");
-        param.setExpression(xslext);
-
-        // add the provided XSLT parameters
-        for (Iterator it = params.iterator(); it.hasNext();) {
-            param = (XSLTProcess.Param) it.next();
-            XSLTProcess.Param realParam = xslt.createParam();
-            realParam.setName(param.getName());
-            realParam.setExpression(param.getExpression());
-        }
-
-        CacheManager cacheMgr = getIvyInstance().getCacheManager(cache);
-        for (int i = 0; i < confs.length; i++) {
-            File reportFile = cacheMgr.getConfigurationResolveReportInCache(resolveId, confs[i]);
-            File outFile = new File(out, IvyPatternHelper.substitute(outputpattern, organisation, module,
-                "", "", "", ext, confs[i]));
+        
+        InputStream xsltStream = null;
+        try {
+            // create stream to stylesheet
+            xsltStream = new BufferedInputStream(new FileInputStream(style));
+            Source xsltSource = new StreamSource(xsltStream, JAXPUtils.getSystemId(style));
             
-            xslt.setIn(reportFile);
-            xslt.setOut(outFile);
-            xslt.execute();
+            // create transformer
+            TransformerFactory tFactory = TransformerFactory.newInstance();
+            Transformer transformer = tFactory.newTransformer(xsltSource);
+            
+            // add standard parameters
+            transformer.setParameter("confs", conf);
+            transformer.setParameter("extension", xslext);
+            
+            // add the provided XSLT parameters
+            for (Iterator it = params.iterator(); it.hasNext();) {
+                XSLTProcess.Param param = (XSLTProcess.Param) it.next();
+                transformer.setParameter(param.getName(), param.getExpression());
+            }
+            
+            // create the report
+            for (int i = 0; i < confs.length; i++) {
+                File reportFile = cacheMgr.getConfigurationResolveReportInCache(resolveId, confs[i]);
+                File outFile = new File(out, IvyPatternHelper.substitute(outputpattern, organisation, module,
+                    "", "", "", ext, confs[i]));
+                
+                log("Processing " + reportFile + " to " + outFile);
+                
+                // make sure the output directory exist
+                File outFileDir = outFile.getParentFile();
+                if (!outFileDir.exists()) {
+                    if (!outFileDir.mkdirs()) {
+                        throw new BuildException("Unable to create directory: "
+                                                 + outFileDir.getAbsolutePath());
+                    }
+                }
+                
+                InputStream inStream = null;
+                OutputStream outStream = null;
+                try {
+                    inStream = new BufferedInputStream(new FileInputStream(reportFile));
+                    outStream = new BufferedOutputStream(new FileOutputStream(outFile));
+                    StreamResult res = new StreamResult(outStream);
+                    Source src = new StreamSource(inStream, JAXPUtils.getSystemId(style));
+                    transformer.transform(src, res);
+                } catch (TransformerException e) {
+                    throw new BuildException(e);
+                } finally {
+                    if (inStream != null) {
+                        try {
+                            inStream.close();
+                        } catch (IOException e) {
+                            // ignore
+                        }
+                    } 
+                    if (outStream != null) {
+                        try {
+                            outStream.close();
+                        } catch (IOException e) {
+                            // ignore
+                        }
+                    }
+                }
+            }
+        } catch (TransformerConfigurationException e) {
+            throw new BuildException(e);
+        } finally {
+            if (xsltStream != null) {
+                try {
+                    xsltStream.close();
+                } catch (IOException e) {
+                    // ignore
+                }
+            }
         }
     }
 
-    private String getStylePath(File cache, String styleResourceName) throws IOException {
+    private File getStylePath(File cache, String styleResourceName) throws IOException {
         // style should be a file (and not an url)
         // so we have to copy it from classpath to cache
         File style = new File(cache, styleResourceName);
         FileUtil.copy(XmlReportOutputter.class.getResourceAsStream(styleResourceName), style, null);
-        return style.getAbsolutePath();
+        return style;
     }
 
     public boolean isXml() {
