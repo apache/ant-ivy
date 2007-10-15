@@ -85,6 +85,7 @@
         <mkdir dir="${test.build.dir}" />
         <mkdir dir="${artifacts.build.dir}" />
         <mkdir dir="${test.report.dir}" />
+    	<mkdir dir="${ivy.report.dir}" />
     </target>
     
     <target name="clean">
@@ -480,12 +481,16 @@ ${final.core.name}    The Ivy core, eg everything but classes dependent on Ant.$
          </emma>
     </target>
     
+	<target name="ivy-report" depends="resolve">
+		<ivy:report todir="${ivy.report.dir}"/>
+	</target>
+
     <target name="javadoc" unless="skip.javadoc">
         <javadoc destdir="${javadoc.build.dir}" useexternalfile="true">
             <fileset dir="${src.dir}" includes="**/*.java,**/package.html" />
         </javadoc>
     </target>
-
+	
     <target name="fixcrlf">
         <property name="eol.native.includes" 
             value="**/*.html,**/*.json,**/*.java,**/*.xml,**/*.txt,**/*.MF,**/*.properties,**/*.patterns,**/*.pom,**/*.xsl,**/*.css" />
