@@ -173,7 +173,7 @@
 	</target>
 	
 	<target name="prepare-snapshot" 
-	        depends="localivy, clean-ivy-home, clean, clean-lib, snapshot-version, install, clean-examples, coverage-report" />
+	        depends="/localivy, clean-ivy-home, clean, clean-lib, snapshot-version, install, clean-examples, coverage-report" />
 	<target name="snapshot" 
 			depends="prepare-snapshot, snapshot-src, snapshot-bin, snapshot-jars, snapshot-xsd, snapshot-checksums" 
 			description="used for nightly and integration builds"/>
