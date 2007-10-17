@@ -59,19 +59,37 @@
          PREPARATION, CLEANING AND FLAGS TASKS
          ================================================================= -->
     <target name="init">
-        <path id="build.classpath">
+        <path id="lib.classpath">
             <fileset dir="${lib.dir}">
                 <include name="*.jar" />
             </fileset>
         </path>
+        <path id="build.bootstrap.classpath">
+            <pathelement location="${core.classes.build.dir}" />
+        </path>
+        <path id="build.ant.classpath">
+            <pathelement location="${core.classes.build.dir}" />
+            <path refid="lib.classpath" />
+        </path>
+        <path id="build.optional.classpath">
+            <path refid="build.ant.classpath" />
+        </path>
         <path id="run.classpath">
-            <path refid="build.classpath" />
             <pathelement location="${core.classes.build.dir}" />
             <pathelement location="${ant.classes.build.dir}" />
             <pathelement location="${optional.classes.build.dir}" />
+            <path refid="lib.classpath" />
         </path>
         <path id="test.classpath">
-            <path refid="run.classpath" />
+            <pathelement location="${coverage.classes.dir}" />
+            <fileset dir="${lib.dir}">
+                <include name="*.jar" />
+                <exclude name="ant.jar" />
+                <exclude name="ant-*.jar" />
+            </fileset>
+            <pathelement location="${core.classes.build.dir}" />
+            <pathelement location="${ant.classes.build.dir}" />
+            <pathelement location="${optional.classes.build.dir}" />
             <pathelement path="${test.build.dir}" />
         </path>
     </target>
@@ -193,13 +211,11 @@
         <javac  srcdir="${src.dir}"
                 destdir="${bootstrap.classes.build.dir}"
                 sourcepath="" 
+                classpathref="build.bootstrap.classpath"
                 source="${ivy.minimum.javaversion}"
                 target="${ivy.minimum.javaversion}"
                 debug="${debug.mode}"
                 includeantruntime="yes">
-            <classpath>
-                <pathelement location="${core.classes.build.dir}" />
-            </classpath>
             <includesfile name="ant.patterns" />
         </javac>
         <copy todir="${bootstrap.classes.build.dir}" includeEmptyDirs="false">
@@ -215,16 +231,11 @@
         <javac  srcdir="${src.dir}"
                 destdir="${ant.classes.build.dir}"
                 sourcepath="" 
+                classpathref="build.ant.classpath"
                 source="${ivy.minimum.javaversion}"
                 target="${ivy.minimum.javaversion}"
                 debug="${debug.mode}"
                 includeantruntime="no">
-            <classpath>
-                <pathelement location="${core.classes.build.dir}" />
-                <fileset dir="${lib.dir}">
-                    <include name="**/*.jar"/>
-                </fileset>
-            </classpath>
             <includesfile name="ant.patterns" />
         </javac>
         <copy todir="${ant.classes.build.dir}" includeEmptyDirs="false">
@@ -243,16 +254,11 @@
         <javac  srcdir="${src.dir}"
                 destdir="${optional.classes.build.dir}"
                 sourcepath="" 
+                classpathref="build.optional.classpath"
                 source="${ivy.minimum.javaversion}"
                 target="${ivy.minimum.javaversion}"
                 debug="${debug.mode}"
                 includeantruntime="no">
-            <classpath>
-                <pathelement location="${core.classes.build.dir}" />
-                <fileset dir="${lib.dir}">
-                    <include name="**/*.jar"/>
-                </fileset>
-            </classpath>
             <includesfile name="optional.patterns" />
             <includesfile name="ant.patterns" />
         </javac>
@@ -422,16 +428,7 @@ ${final.core.name}    The Ivy core, eg everything but classes dependent on Ant.$
            includeantruntime="yes"
            fork="true">
             <classpath>
-                <pathelement location="${coverage.classes.dir}" />
-                <fileset dir="${lib.dir}">
-                    <include name="*.jar" />
-                	<exclude name="ant.jar" />
-                	<exclude name="ant-*.jar" />
-                </fileset>
-                <pathelement location="${core.classes.build.dir}" />
-                <pathelement location="${ant.classes.build.dir}" />
-                <pathelement location="${optional.classes.build.dir}" />
-                <pathelement path="${test.build.dir}" />
+                <path refid="test.classpath" />
             </classpath>
             <jvmarg value="-Demma.coverage.out.file=${coverage.dir}/coverage.emma" />
             <jvmarg value="-Demma.coverage.out.merge=true" />
