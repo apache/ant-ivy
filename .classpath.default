@@ -11,10 +11,8 @@
 	<classpathentry kind="lib" path="lib/commons-lang.jar"/>
 	<classpathentry kind="lib" path="lib/commons-logging.jar"/>
 	<classpathentry kind="lib" path="lib/commons-vfs.jar"/>
-	<classpathentry kind="lib" path="lib/jdom.jar"/>
 	<classpathentry kind="lib" path="lib/jsch.jar"/>
 	<classpathentry kind="lib" path="lib/junit.jar"/>
 	<classpathentry kind="lib" path="lib/oro.jar"/>
-	<classpathentry kind="lib" path="lib/slide-webdavlib.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
