@@ -38,7 +38,7 @@ public class OnlineXmlSettingsParserTest extends TestCase {
         IvySettings settings = new IvySettings();
         XmlSettingsParser parser = new XmlSettingsParser(settings);
         parser.parse(new URL(
-                "http://incubator.apache.org/ivy/test/ivysettings-include-http-url.xml"));
+                "http://ant.apache.org/ivy/test/ivysettings-include-http-url.xml"));
 
         DependencyResolver resolver = settings.getResolver("ivyrep");
         assertNotNull(resolver);
