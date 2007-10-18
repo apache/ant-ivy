@@ -18,6 +18,7 @@
 package org.apache.ivy.ant;
 
 import java.io.File;
+import java.util.Locale;
 
 import junit.framework.TestCase;
 
@@ -59,33 +60,51 @@ public class IvyReportTest extends TestCase {
     }
     
     public void testSimple() throws Exception {
-        IvyResolve res = new IvyResolve();
-        res.setProject(project);
-        res.setFile(new File("test/java/org/apache/ivy/ant/ivy-simple.xml"));
-        res.setCache(cache);
-        res.execute();
-
-        report.setTodir(new File(cache, "report"));
-        report.execute();
+        Locale oldLocale = Locale.getDefault();
         
-        assertTrue(new File(cache, "report/apache-resolve-simple-default.html").exists());
-        assertTrue(new File(cache, "report/apache-resolve-simple-default.graphml").exists());
+        try {
+            // set the locale to UK as workaround for SUN bug 6240963
+            Locale.setDefault(Locale.UK);
+
+            IvyResolve res = new IvyResolve();
+            res.setProject(project);
+            res.setFile(new File("test/java/org/apache/ivy/ant/ivy-simple.xml"));
+            res.setCache(cache);
+            res.execute();
+    
+            report.setTodir(new File(cache, "report"));
+            report.execute();
+            
+            assertTrue(new File(cache, "report/apache-resolve-simple-default.html").exists());
+            assertTrue(new File(cache, "report/apache-resolve-simple-default.graphml").exists());
+        } finally {
+            Locale.setDefault(oldLocale);
+        }
     }
 
     public void testMultipleConfigurations() throws Exception {
-        IvyResolve res = new IvyResolve();
-        res.setProject(project);
-        res.setFile(new File("test/java/org/apache/ivy/ant/ivy-multiconf.xml"));
-        res.setCache(cache);
-        res.execute();
-
-        report.setTodir(new File(cache, "report"));
-        report.execute();
+        Locale oldLocale = Locale.getDefault();
         
-        assertTrue(new File(cache, "report/apache-resolve-simple-default.html").exists());
-        assertTrue(new File(cache, "report/apache-resolve-simple-default.graphml").exists());
-        assertTrue(new File(cache, "report/apache-resolve-simple-compile.html").exists());
-        assertTrue(new File(cache, "report/apache-resolve-simple-compile.graphml").exists());
+        try {
+            // set the locale to UK as workaround for SUN bug 6240963
+            Locale.setDefault(Locale.UK);
+
+            IvyResolve res = new IvyResolve();
+            res.setProject(project);
+            res.setFile(new File("test/java/org/apache/ivy/ant/ivy-multiconf.xml"));
+            res.setCache(cache);
+            res.execute();
+    
+            report.setTodir(new File(cache, "report"));
+            report.execute();
+            
+            assertTrue(new File(cache, "report/apache-resolve-simple-default.html").exists());
+            assertTrue(new File(cache, "report/apache-resolve-simple-default.graphml").exists());
+            assertTrue(new File(cache, "report/apache-resolve-simple-compile.html").exists());
+            assertTrue(new File(cache, "report/apache-resolve-simple-compile.graphml").exists());
+        } finally {
+            Locale.setDefault(oldLocale);
+        }
     }
 
     public void testRegularCircular() throws Exception {
