@@ -141,7 +141,7 @@ public class Ivy {
      * @return the URL at which Ivy web site can be found
      */
     public static String getIvyHomeURL() {
-        return "http://incubator.apache.org/ivy/";
+        return "http://ant.apache.org/ivy/";
     }
 
     public static Ivy newInstance() {
