@@ -65,6 +65,7 @@ class ModuleInSort {
         return isLoopIntermediateElement;
     }
 
+    /** This ModuleInSort has been placed on the sorted list */
     public boolean isSorted() {
         if (isSorted) {
             Message.debug("Module descriptor already sorted : "
@@ -75,6 +76,21 @@ class ModuleInSort {
         }
     }
 
+    /** This ModuleInSort has already been analyzed.  It is either already added
+     * to the sorted list, either it is included in a loop and will be added
+     * when the root of the loop will be added to the list. 
+     */
+    public boolean isProcessed() {
+        if (isSorted || isLoopIntermediateElement) {
+            Message.debug("Module descriptor is processed : "
+                    + module.getModuleRevisionId().toString());
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    
     public void setCaller(ModuleInSort caller) {
         this.caller = caller;
     }

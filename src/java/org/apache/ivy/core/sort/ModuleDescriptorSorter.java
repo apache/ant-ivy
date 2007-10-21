@@ -83,7 +83,7 @@ public class ModuleDescriptorSorter {
     private void sortModuleDescriptorsHelp(ModuleInSort current, ModuleInSort caller)
             throws CircularDependencyException {
         // if already sorted return
-        if (current.isSorted()) {
+        if (current.isProcessed()) {
             return;
         }
         if (current.checkLoop(caller, circularDepStrategy)) {

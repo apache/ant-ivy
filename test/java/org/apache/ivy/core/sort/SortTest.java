@@ -17,6 +17,7 @@
  */
 package org.apache.ivy.core.sort;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -32,6 +33,7 @@ import org.apache.ivy.core.module.descriptor.DefaultModuleDescriptor;
 import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
+import org.apache.ivy.core.report.ResolveReport;
 import org.apache.ivy.plugins.circular.CircularDependencyHelper;
 import org.apache.ivy.plugins.circular.CircularDependencyStrategy;
 import org.apache.ivy.plugins.circular.WarnCircularDependencyStrategy;
@@ -130,6 +132,19 @@ public class SortTest extends TestCase {
         }
     }
 
+    //Test IVY-624
+    public void testCircularDependencyInfiniteLoop() throws Exception {
+        addDependency(md1, "md2", "rev2");
+        addDependency(md1, "md3", "rev3");
+        addDependency(md2, "md3", "rev3");        
+        addDependency(md3, "md4", "rev4");
+        addDependency(md4, "md1", "rev1");
+        addDependency(md4, "md2", "rev2");
+        List toSort = Arrays.asList(new Object[] {md1, md2, md3, md4});
+        sortEngine.sortModuleDescriptors(toSort, nonMatchReporter);
+        //If it ends, it's ok.
+    }
+    
     /**
      * In case of Circular dependency a warning is generated.
      */
