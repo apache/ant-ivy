@@ -16,13 +16,6 @@
                       ]
                   },
                   {
-                    "id":"tutorial/ivyrep",
-                    "title":"Using IvyRep",
-                    "children": [
-
-                      ]
-                  },
-                  {
                     "id":"tutorial/defaultconf",
                     "title":"Adjusting default settings",
                     "children": [

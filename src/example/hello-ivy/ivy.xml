@@ -16,9 +16,10 @@
    specific language governing permissions and limitations
    under the License.    
 -->
-<ivy-module version="1.0">
+<ivy-module version="2.0">
     <info organisation="apache" module="hello-ivy"/>
     <dependencies>
-        <dependency org="apache" name="commons-lang" rev="2.1"/>
+        <dependency org="commons-lang" name="commons-lang" rev="2.0"/>
+        <dependency org="commons-cli" name="commons-cli" rev="1.0"/>
     </dependencies>
 </ivy-module>

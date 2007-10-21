@@ -25,11 +25,7 @@
 </head>
 <body>
 	<textarea id="xooki-source">
-In this example, we will see one of the easiest way to use ivy. No settings or other complicated files to write, only the list of libraries the project will use. 
-
-If you have already followed the go-ivy tutorial on the <a href="../tutorial.html">tutorials home page</a>, this tutorial will be already familiar. It is actually pretty much the same, except that it requires ivy to be installed in your ant lib, and the java source and the ivy dependencies are available in separate files. For the java source, it's definitely recommended to put it in a separate file. For ivy dependencies, it depends on your usage and is discussed on the <a href="../bestpractices.html">best practices page</a>. 
-
-But enough introduction material, let's go with this simple tutorial!
+In this example, we will see one of the easiest way to use Ivy. With no specific settings, Ivy uses the maven 2 repository to resolve the dependencies you declare in an Ivy file. Let's have a look at the content of the files involved. 
 
 <em>You'll find this tutorial sources in the ivy distribution in the src/example/hello-ivy directory.</em>
 
@@ -37,18 +33,37 @@ But enough introduction material, let's go with this simple tutorial!
 This file is used to describe the dependencies of the project on other libraries.
 Here is the sample: 
 <code type="xml">
-<ivy-module version="1.0">
-    <info organisation="jayasoft" module="hello-ivy" />
+<ivy-module version="2.0">
+    <info organisation="apache" module="hello-ivy"/>
     <dependencies>
-        <dependency org="apache" name="commons-lang" rev="2.0" />
+        <dependency org="commons-lang" name="commons-lang" rev="2.0"/>
+        <dependency org="commons-cli" name="commons-cli" rev="1.0"/>
     </dependencies>
 </ivy-module>
 </code>
 
+The format of this file should pretty easy to understand, but let's give some details about what is declared here. First, the root element ivy-module, with the version attribute used to tell Ivy which version of Ivy this file use. 
+
+Then there is an info tag, which is used to give information about the module for which we are defining dependencies. Here we define only the organization and module name, you are free to choose whatever you want for them, but we recommend avoiding spaces.
+
+Finally the dependencies section let you define dependencies. Here this module depends on two libraries: commons-lang and commons-cli. As you can see we use the org and name attribute to define the organization and module name of the dependencies we need. The rev attribute is used to specify the revision of the module you depend on. 
+
+To know what to put in these attributes, you need to know the exact information for the libraries you depend on. Ivy using the maven 2 repository by default, we recommend to use <a href="http://mvnrepository.com">mvnrepository.com</a> to look for the module you want. Once you find it, you will have details on how to declare the dependency in a maven POM. For instance:
+<code>
+<dependency>
+    <groupId>commons-lang</groupId>
+    <artifactId>commons-lang</artifactId>
+    <version>2.0</version>
+</dependency>
+</code>
+To convert this in an Ivy dependency declaration, all you have to do is use the groupId as organization, the artifactId as module name, and the version as revision. That's what we did for the dependencies in this tutorial, commons-lang and commons-cli. Note that having commons-lang and commons-cli as organization is not the best example of what the organization should be: it should better be org.apache, org.apache.commons or org.apache.commons.lang. But this is how these modules are identified in the maven 2 repository, so the simplest way to get them is to use the details as is (you will see in [[tutorial/build-repository]] that you can use namespaces to redefine these names if you want something cleaner).
+
+If you want more details on what you can do in Ivy files, you can have a look at the [[ivyfile Ivy files reference documentation]].
 <h1>The build.xml file</h1>
-The build file corresponding to use it, contains only:
+The corresponding build file contains a set of target, allowing to resolve dependencies declared in the Ivy file, to compile an run the sample code, produce a report of dependency resolution, and clean the cache or the project.
+You can use the standard "ant -p" to get the list of available targets. Feel free to have a look at the whole file, but here is the part relevant to dependency resolution:
 <code type="xml">
-<project xmlns:ivy="antlib:fr.jayasoft.ivy.ant" name="hello-ivy" default="run">
+<project xmlns:ivy="antlib:org.apache.ivy.ant" name="hello-ivy" default="run">
     
     ...
     
@@ -60,67 +75,104 @@ The build file corresponding to use it, contains only:
     </target>
 </project>
 </code>
+As you can see, it's very easy to call Ivy to resolve and retrieve dependencies: all you need if Ivy is properly [[install installed]] is to define a xml namespace in your Ant file (xmlns:ivy="antlib:org.apache.ivy.ant"). Then all the [[ant Ivy ant tasks]] will be available in this namespace.
+
+Here we use only one task: the [[use/retrieve]] task. With no attributes, it will use default settings and look for a file named ivy.xml for dependency definition. That's exactly what we want, so we need nothing more than that.
 <h1>Running the project</h1>
-To run the sample, open a dos (or shell) window, and go under the hello-ivy example directory.
-Then, on the command prompt, just run ant :
+Ok, now that we have seen the files involved, let's run the sample to see what happens. Open a shell (or command line) window, and go under the hello-ivy example directory.
+Then, on the command prompt, run 'ant':
 <div class="shell"><pre>
 I:\hello-ivy>ant
 Buildfile: build.xml
 
 resolve:
-:: Ivy 1.0-rc3 - 20050421161206 :: http://ivy.jayasoft.org/ ::
-no configuration file found, using default...
-:: resolving dependencies :: jayasoft/hello-ivy-working@xmen
-        confs: [default]
-downloading http://www.ibiblio.org/maven/commons-lang/jars/commons-lang-2.0.jar(2.0) ...
-..................................... (165kB)
-        [SUCCESSFUL ] apache/commons-lang-2.0/commons-lang.jar[jar] (4688ms)
-:: resolution report ::
+[ivy:retrieve] :: Ivy 2.0.0-beta1 - 20071017234142 :: http://ant.apache.org/ivy/ ::
+[ivy:retrieve] No ivy:settings found for the default reference 'ivy.instance'.  A default instance will be used
+[ivy:retrieve] no settings file found, using default...
+[ivy:retrieve] :: loading settings :: url = jar:file:/D:/dev/ant/apache-ant-1.7.0/lib/ivy-2.0.0-beta1.jar!/org/apache/ivy/core/settings/ivysettings.xml
+[ivy:retrieve] :: resolving dependencies :: [ apache | hello-ivy | working@diablo ]
+[ivy:retrieve]  confs: [default]
+[ivy:retrieve]  found [ commons-lang | commons-lang | 2.0 ] in public
+[ivy:retrieve]  found [ commons-cli | commons-cli | 1.0 ] in public
+[ivy:retrieve]  found [ commons-logging | commons-logging | 1.0 ] in public
+[ivy:retrieve] downloading http://repo1.maven.org/maven2/commons-lang/commons-lang/2.0/commons-lang-2.0.jar ...
+[ivy:retrieve] ................
+[ivy:retrieve] .. (165kB)
+[ivy:retrieve] .. (0kB)
+[ivy:retrieve]  [SUCCESSFUL ] [ commons-lang | commons-lang | 2.0 ]/commons-lang.jar[jar] (3813ms)
+[ivy:retrieve] downloading http://repo1.maven.org/maven2/commons-cli/commons-cli/1.0/commons-cli-1.0.jar ...
+[ivy:retrieve] ....... (29kB)
+[ivy:retrieve] .. (0kB)
+[ivy:retrieve]  [SUCCESSFUL ] [ commons-cli | commons-cli | 1.0 ]/commons-cli.jar[jar] (2533ms)
+[ivy:retrieve] downloading http://repo1.maven.org/maven2/commons-logging/commons-logging/1.0/commons-logging-1.0.jar ...
+[ivy:retrieve] ..... (21kB)
+[ivy:retrieve] .. (0kB)
+[ivy:retrieve]  [SUCCESSFUL ] [ commons-logging | commons-logging | 1.0 ]/commons-logging.jar[jar] (2504ms)
+[ivy:retrieve] :: resolution report ::
+[ivy:retrieve]  :: evicted modules:
+[ivy:retrieve]  [ commons-lang | commons-lang | 1.0 ] by [[ commons-lang | commons-lang | 2.0 ]] in [default]
         ---------------------------------------------------------------------
         |                  |            modules            ||   artifacts   |
         |       conf       | number| search|dwnlded|evicted|| number|dwnlded|
         ---------------------------------------------------------------------
-        |      default     |   1   |   1   |   0   |   0   ||   1   |   1   |
+        |      default     |   4   |   3   |   0   |   1   ||   3   |   3   |
         ---------------------------------------------------------------------
-:: retrieving :: jayasoft/hello-ivy
-        confs: [default]
-        1 artifacts copied, 0 already retrieved
+[ivy:retrieve] :: retrieving :: [ apache | hello-ivy ]
+[ivy:retrieve]  confs: [default]
+[ivy:retrieve]  3 artifacts copied, 0 already retrieved
 
 run:
-    [mkdir] Created dir: I:\hello-ivy\build
-    [javac] Compiling 1 source file to I:\hello-ivy\build
+    [mkdir] Created dir: I:\build
+    [javac] Compiling 1 source file to I:\build
      [java] standard message : hello ivy !
      [java] capitalized by org.apache.commons.lang.WordUtils : Hello Ivy !
 
 BUILD SUCCESSFUL
-Total time: 8 seconds</pre></div>
+Total time: 16 seconds
+</pre></div>
 <h1>What happened ?</h1>
-Without any settings, other than it's default settings, ivy retrieve files from the maven ibiblio libraries repository. That's what happened here. 
-The resolve task has downloaded the commons-lang.jar file from ibiblio, then copied it to the ivy cache and then dispatch it in the default library directory of the project : the lib dir.
-Some will say that the task was long to achieve. Yeah, it's true it was, but it has downloaded from the web the needed file. Let's try to run it again:
+Without any settings, Ivy retrieve files from the maven 2 repository. That's what happened here. 
+The resolve task has found the commons-lang and commons-cli modules in the maven 2 repository, identified that commons-cli depends on commons-logging and so resolved it as a transitive dependency. Then Ivy has downloaded all corresponding artifacts in its cache (by default in your user home, in a .ivy2/cache directory). Then the retrieve task we are using copy all the jars from the ivy cache to the default library directory of the project: the lib dir (you can change this easily by setting the pattern attribute on the [[use/retrieve]] task).
+
+Some may say that the task was long to achieve. Yeah, it's true it was, but it has downloaded from the web all the needed files. Let's try to run it again:
 <div class="shell"><pre>I:\hello-ivy>ant
 Buildfile: build.xml
 
 resolve:
-:: resolving dependencies :: jayasoft/hello-ivy-null :: [default]
-:: resolution report ::
-        [default] jayasoft/hello-ivy-working@rahan: 1 artifacts (0 downloaded)
-:: retrieving :: jayasoft/hello-ivy :: [default]
+[ivy:retrieve] :: Ivy 2.0.0-beta1 - 20071017234142 :: http://ant.apache.org/ivy/ ::
+[ivy:retrieve] No ivy:settings found for the default reference 'ivy.instance'.  A default instance will be used
+[ivy:retrieve] no settings file found, using default...
+[ivy:retrieve] :: loading settings :: url = jar:file:/D:/dev/ant/apache-ant-1.7.0/lib/ivy-2.0.0-beta1.jar!/org/apache/ivy/core/settings/ivysettings.xml
+[ivy:retrieve] :: resolving dependencies :: [ apache | hello-ivy | working@diablo ]
+[ivy:retrieve]  confs: [default]
+[ivy:retrieve]  found [ commons-lang | commons-lang | 2.0 ] in public
+[ivy:retrieve]  found [ commons-cli | commons-cli | 1.0 ] in public
+[ivy:retrieve]  found [ commons-logging | commons-logging | 1.0 ] in public
+[ivy:retrieve] :: resolution report ::
+[ivy:retrieve]  :: evicted modules:
+[ivy:retrieve]  [ commons-lang | commons-lang | 1.0 ] by [[ commons-lang | commons-lang | 2.0 ]] in [default]
+        ---------------------------------------------------------------------
+        |                  |            modules            ||   artifacts   |
+        |       conf       | number| search|dwnlded|evicted|| number|dwnlded|
+        ---------------------------------------------------------------------
+        |      default     |   4   |   0   |   0   |   1   ||   3   |   0   |
+        ---------------------------------------------------------------------
+[ivy:retrieve] :: retrieving :: [ apache | hello-ivy ]
+[ivy:retrieve]  confs: [default]
+[ivy:retrieve]  0 artifacts copied, 3 already retrieved
 
 run:
      [java] standard message : hello ivy !
      [java] capitalized by org.apache.commons.lang.WordUtils : Hello Ivy !
 
 BUILD SUCCESSFUL
-Total time: 1 second</pre></div>
-Great ! the cache was used, no download was needed and the build was instantaneous.
-
-If you want to check the content of the cache, by default it is put in your user home in a .ivy/cache directory.
+Total time: 1 second
+</pre></div>
+Great! the cache was used, no download was needed and the build was instantaneous.
 
 And now, if you want to generate a report detailing all the dependencies of your module, you can call the report target, and check the generated file in the build directory. You should obtain something looking like <a href="../samples/jayasoft-ivyrep-example-default.html">this</a>.
 
-You are now ready to go to the next tutorials to go one step beyond using ivy transitive dependencies management.
-	</textarea>
+As you can see, using Ivy to resolve dependencies stored in the maven 2 repository is extremely easy. Now you can go on with next tutorials to learn more about [[tutorial/conf how to use module configurations]] which is a very powerful Ivy specific feature. Other tutorials are also available where you will learn how to use Ivy settings to leverage a possibly complex enterprise repository. It may also be a good time to start reading the [[reference reference documentation]], and especially the introduction material which gives a good overview of Ivy. The [[bestpractices best practices]] page is also a must read to start thinking about how to use Ant+Ivy to build a clean and robust build system.</textarea>
 <script type="text/javascript">xooki.postProcess();</script>
 </body>
 </html>

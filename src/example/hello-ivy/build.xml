@@ -45,13 +45,17 @@
         <ivy:report todir="${build.dir}"/>
     </target>
 
-	<!-- ================================= 
+    <!-- ================================= 
           target: run
          ================================= -->
     <target name="run" depends="resolve" description="--> compile and run the project">
         <mkdir dir="${build.dir}" />
         <javac srcdir="${src.dir}" destdir="${build.dir}" classpathref="lib.path.id" />
-        <java classpathref="run.path.id" classname="example.Hello"/>
+    	<property name="msg" value="hello ivy !"/>
+        <java classpathref="run.path.id" classname="example.Hello">
+        	<arg value="-message"/>
+        	<arg value="${msg}"/>
+    	</java>
     </target>
 
     <!-- ================================= 
