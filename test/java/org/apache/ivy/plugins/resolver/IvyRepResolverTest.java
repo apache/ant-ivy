@@ -48,8 +48,6 @@ import org.apache.tools.ant.taskdefs.Delete;
  * 
  */
 public class IvyRepResolverTest extends TestCase {
-    // remote.test
-
     private IvySettings _settings;
 
     private ResolveEngine _engine;
@@ -97,24 +95,44 @@ public class IvyRepResolverTest extends TestCase {
         assertEquals("http://www.ibiblio.org/mymaven/[module]/jars/[artifact]-[revision].jar", l
                 .get(0));
     }
-
-    public void testIvyRep() throws Exception {
+    
+    public void testMandatoryRoot() throws Exception {
+        // IVY-625: should fail if no ivyroot specified
         IvyRepResolver resolver = new IvyRepResolver();
         resolver.setName("test");
         resolver.setSettings(_settings);
-        assertEquals("test", resolver.getName());
 
         ModuleRevisionId mrid = ModuleRevisionId.newInstance("apache", "commons-cli", "1.0");
+        try {
+            resolver.getDependency(new DefaultDependencyDescriptor(mrid, false), _data);
+            fail("using ivyrep resolver without ivyroot should raise an exception");
+        } catch (IllegalStateException ex) {
+            assertTrue(
+                "exception thrown when using ivyrep with no ivyroot should talk about the root", 
+                ex.getMessage().indexOf("ivyroot") != -1);
+        }
+    }
+
+    public void testIvyRepWithLocalURL() throws Exception {
+        IvyRepResolver resolver = new IvyRepResolver();
+        String rootpath = new File("test/repositories/1").getAbsolutePath();
+
+        resolver.setName("testLocal");
+        resolver.setIvyroot("file:" + rootpath);
+        resolver.setIvypattern("[organisation]/[module]/ivys/ivy-[revision].xml");
+        resolver.setArtroot("file:"+rootpath);
+        resolver.setArtpattern("[organisation]/[module]/jars/[artifact]-[revision].[ext]");
+        resolver.setSettings(_settings);
+
+        ModuleRevisionId mrid = ModuleRevisionId.newInstance("org1", "mod1.1", "1.0");
         ResolvedModuleRevision rmr = resolver.getDependency(new DefaultDependencyDescriptor(mrid,
                 false), _data);
         assertNotNull(rmr);
-        assertEquals(mrid, rmr.getId());
-        assertEquals(2, rmr.getDescriptor().getDependencies().length);
 
         DefaultArtifact artifact = new DefaultArtifact(mrid, rmr.getPublicationDate(),
-                "commons-cli", "jar", "jar");
+            "mod1.1", "jar", "jar");
         DownloadReport report = resolver.download(new Artifact[] {artifact}, new DownloadOptions(
-                _settings, _cache));
+            _settings, _cache));
         assertNotNull(report);
 
         assertEquals(1, report.getArtifactsReports().length);
@@ -137,43 +155,5 @@ public class IvyRepResolverTest extends TestCase {
 
         assertEquals(artifact, ar.getArtifact());
         assertEquals(DownloadStatus.NO, ar.getDownloadStatus());
-    }
-
-    /*
-     * Tests IvyRepResolver with a root path given as 'file:/path_to_root'
-     */
-    public void testIvyRepLocalURL() throws Exception {
-        IvyRepResolver resolver = new IvyRepResolver();
-        String rootpath = new File("test/repositories/1").getAbsolutePath();
-
-        resolver.setName("testLocal");
-        resolver.setIvyroot("file:" + rootpath);
-        resolver.setIvypattern("[organisation]/[module]/ivys/ivy-[revision].xml");
-        resolver.setSettings(_settings);
-
-        ModuleRevisionId mrid = ModuleRevisionId.newInstance("org1", "mod1.1", "1.0");
-        ResolvedModuleRevision rmr = resolver.getDependency(new DefaultDependencyDescriptor(mrid,
-                false), _data);
-        assertNotNull(rmr);
-    }
-
-    public void testListing() {
-        IvyRepResolver resolver = new IvyRepResolver();
-        resolver.setName("test");
-        resolver.setSettings(_settings);
-
-        OrganisationEntry[] orgs = resolver.listOrganisations();
-        ResolverTestHelper.assertOrganisationEntriesContains(resolver, new String[] {"hibernate",
-                "apache"}, orgs);
-
-        OrganisationEntry org = ResolverTestHelper.getEntry(orgs, "apache");
-        ModuleEntry[] mods = resolver.listModules(org);
-        ResolverTestHelper.assertModuleEntriesContains(resolver, org, new String[] {
-                "commons-logging", "commons-lang"}, mods);
-
-        ModuleEntry mod = ResolverTestHelper.getEntry(mods, "commons-logging");
-        RevisionEntry[] revs = resolver.listRevisions(mod);
-        ResolverTestHelper.assertRevisionEntriesContains(resolver, mod, new String[] {"1.0",
-                "1.0.2", "1.0.3", "1.0.4"}, revs);
     }
 }

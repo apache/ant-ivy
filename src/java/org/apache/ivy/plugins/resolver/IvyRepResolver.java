@@ -99,8 +99,10 @@ public class IvyRepResolver extends URLResolver {
                 if (root != null) {
                     ivyroot = root;
                 } else {
-                    settings.configureRepositories(true);
-                    ivyroot = settings.getVariable("ivy.ivyrep.default.ivy.root");
+                    throw new IllegalStateException(
+                        "ivyroot is mandatory on IvyRepResolver. " 
+                        + "Make sure to set it in your settings, before setting ivypattern "
+                        + "if you wish to set ivypattern too.");
                 }
             }
             if (ivypattern == null) {

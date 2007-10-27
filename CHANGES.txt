@@ -70,6 +70,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - IMPROVEMENT: Support *(private) and *(public) in the confs parameter of the resolve (IVY-588)
 - IMPROVEMENT: replace * by *(public) when resolving inline (IVY-589)
 - IMPROVEMENT: Improvements on hello ivy example (IVY-626) (with contribution from Jacob Grydholt Jensen)
+- IMPROVEMENT: Make the root attribute in the ivyrep resolver mandatory (IVY-625)
 
 - REFACTORING: Extract a settings interface for the different engines
 
