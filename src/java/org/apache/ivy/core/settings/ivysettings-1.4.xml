@@ -19,7 +19,7 @@
 <ivysettings>
 	<settings defaultResolver="default"/>
 	<resolvers>
-		<ivyrep name="public" />
+		<ivyrep name="public" ivyroot="http://ivyrep.jayasoft.org/" />
 	</resolvers>
 	<include url="${ivy.default.settings.dir}/ivysettings-shared.xml"/>
 	<include url="${ivy.default.settings.dir}/ivysettings-local.xml"/>
