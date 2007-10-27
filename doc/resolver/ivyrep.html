@@ -30,10 +30,11 @@
 <tr><td class="title">Handle latest</td><td class="value">yes, at least if the repository server is apache based</td></tr>
 <tr><td class="title">Handle publish</td><td class="value">no</td></tr>
 </table>
-This resolver usually uses <a href="http://ivyrep.jayasoft.org/">ivyrep</a> to find ivy files and ibiblio to find artifacts.
-However it can be configured to use other similar repositories.
+This resolver usually uses an URL based repository usually similar in structure to <a href="http://ivyrep.jayasoft.org/">ivyrep</a> to find ivy files, and ibiblio to find artifacts.
+It can also be configured to use other similar repositories.
 
-<i>Note that if no ivy file is found on ivyrep, then this resolver behaves like ibiblio resolver. Thus it's usually better to use this resolver instead of ibiblio one, which is provided mainly for compatibility reasons.</i>
+Since ivyrep is not maintained anymore, the ivyroot attribute is mandatory, and the use of this resolver is not recommended (we recommend using [[resolver/url url resolver]] as replacement in most cases).
+
 <h1>Attributes</h1>
 This resolver shares the <a href="../configuration/resolvers.html#common">common attributes</a> of standard resolvers.
 <table class="ivy-attributes">
@@ -42,7 +43,7 @@ This resolver shares the <a href="../configuration/resolvers.html#common">common
 </thead>
 <tbody>
     <tr><td>ivyroot</td><td>the root of the ivy repository.</td>
-        <td>No, defaults to ${ivy.ivyrep.default.ivy.root}</td></tr>
+        <td>Yes, but may be provided through ${ivy.ivyrep.default.ivy.root} <span class="since">since 2.0</span></td></tr>
     <tr><td>ivypattern</td><td>a pattern describing the layout of the ivy repository.</td>
         <td>No, defaults to ${ivy.ivyrep.default.ivy.pattern}</td></tr>
     <tr><td>artroot</td><td>the root of the artifacts repository.</td>
@@ -52,12 +53,6 @@ This resolver shares the <a href="../configuration/resolvers.html#common">common
 </tbody>
 </table>
 <h1>Examples</h1>
-<code type="xml">
-<ivyrep name="ivyrep" />
-</code>
-A default ivyrep resolver, looking for ivy files on ivyrep and artifacts on ibiblio.
-
-<hr/>
 <code type="xml">
 <ivyrep name="ivyrep" ivyroot="http://ivyrep.mycompany.com"/>
 </code>
