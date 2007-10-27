@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
@@ -32,6 +33,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.StringTokenizer;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -120,6 +122,8 @@ public final class Main {
             "the main class to runtime process").create("main");
         Option args = OptionBuilder.withArgName("args").hasArgs().withDescription(
             "the arguments to runtime process").create("args");
+        Option cp = OptionBuilder.withArgName("cp").hasArg().withDescription(
+            "extra classpath, used only in combination with option main").create("cp");
 
         Options options = new Options();
 
@@ -152,6 +156,7 @@ public final class Main {
         options.addOption(passwd);
         options.addOption(main);
         options.addOption(args);
+        options.addOption(cp);
 
         return options;
     }
@@ -265,6 +270,9 @@ public final class Main {
                 }
             }
             if (line.hasOption("main")) {
+                // check if the option cp has been set
+                List fileList = getExtraClasspathFileList(line);
+
                 // merge -args and left over args
                 String[] fargs = line.getOptionValues("args");
                 if (fargs == null) {
@@ -278,7 +286,7 @@ public final class Main {
                 System.arraycopy(fargs, 0, params, 0, fargs.length);
                 System.arraycopy(extra, 0, params, fargs.length, extra.length);
                 // invoke with given main class and merged params
-                invoke(ivy, cache, md, confs, line.getOptionValue("main"), params);
+                invoke(ivy, cache, md, confs, fileList, line.getOptionValue("main"), params);
             }
         } catch (ParseException exp) {
             // oops, something went wrong
@@ -286,6 +294,28 @@ public final class Main {
 
             usage(options);
         }
+    }
+
+    private static List getExtraClasspathFileList(CommandLine line) {
+        List fileList = null;
+        if (line.hasOption("cp")) {
+            fileList = new ArrayList();
+            String[] cpArray = line.getOptionValues("cp");
+            for (int index = 0; index < cpArray.length; index++) {
+                StringTokenizer tokenizer = new StringTokenizer(cpArray[index], 
+                    System.getProperty("path.separator"));
+                while (tokenizer.hasMoreTokens()) {
+                    String token = tokenizer.nextToken();
+                    File file = new File(token);
+                    if (file.exists()) {
+                        fileList.add(file);
+                    } else {
+                        Message.warn("The extra classpath '" + file + "' does not exist.");
+                    }
+                }
+            }
+        }
+        return fileList;
     }
 
     private static IvySettings initSettings(CommandLine line, Options options, Ivy ivy) 
@@ -370,9 +400,21 @@ public final class Main {
     }
 
     private static void invoke(Ivy ivy, File cache, ModuleDescriptor md, String[] confs,
-            String mainclass, String[] args) {
+            List fileList, String mainclass, String[] args) {
         List urls = new ArrayList();
 
+        // Add option cp (extra classpath) urls
+        if (fileList != null && fileList.size() > 0) {
+            for (Iterator iter = fileList.iterator(); iter.hasNext();) {
+                File file = (File) iter.next();
+                try {
+                    urls.add(file.toURL());
+                } catch (MalformedURLException e) {
+                    // Should not happen, just ignore.
+                } 
+            }
+        }
+        
         try {
             Collection all = new LinkedHashSet();
             CacheManager cacheMgr = ivy.getCacheManager(cache);

@@ -65,6 +65,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - FIX: Resolving dynamic version fails when using multiple patterns if only one pattern find a revision and others don't (IVY-602)
 - FIX: Invalid character in IvyRetrieveTest causing most tests to fail (IVY-604)
 
+- IMPROVEMENT: Adding option 'cp', which makes it possible for main to be loaded from file (IVY-543) (thanks to Tjeerd Verhagen)
 - IMPROVEMENT: BasicURLHandler should use method=head for getURLInfo (IVY-611) (thanks to Jim Bonanno)
 - IMPROVEMENT: artifactproperty should not overwrite the existing properties (IVY-587)
 - IMPROVEMENT: Support *(private) and *(public) in the confs parameter of the resolve (IVY-588)
