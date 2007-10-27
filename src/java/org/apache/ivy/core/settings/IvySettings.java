@@ -277,7 +277,7 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
             boolean configured = false;
             if (useRemoteConfig && remote) {
                 try {
-                    URL url = new URL("http://incubator.apache.org/ivy/repository.properties");
+                    URL url = new URL("http://ant.apache.org/ivy/repository.properties");
                     Message.verbose("configuring repositories with " + url);
                     props.load(URLHandlerRegistry.getDefault().openStream(url));
                     configured = true;
