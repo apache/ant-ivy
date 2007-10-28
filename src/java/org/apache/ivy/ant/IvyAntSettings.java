@@ -288,15 +288,18 @@ public class IvyAntSettings extends DataType {
      */
     private void defineDefaultSettingFile(IvyVariableContainer variableContainer) {
         String settingsFileName = variableContainer.getVariable("ivy.conf.file");
-        if (settingsFileName != null) {
+        if (settingsFileName != null 
+                && !settingsFileName.equals(variableContainer.getVariable("ivy.settings.file"))) {
             Message.deprecated("'ivy.conf.file' is deprecated, use 'ivy.settings.file' instead");
         } else {
             settingsFileName = variableContainer.getVariable("ivy.settings.file");
         }
         File[] settingsLocations = new File[] {
                 new File(getProject().getBaseDir(), settingsFileName),
-                new File(getProject().getBaseDir(), "ivyconf.xml"), new File(settingsFileName),
-                new File("ivyconf.xml") };
+                new File(getProject().getBaseDir(), "ivyconf.xml"), 
+                new File(settingsFileName),
+                new File("ivyconf.xml") 
+        };
         for (int i = 0; i < settingsLocations.length; i++) {
             file = settingsLocations[i];
             Message.verbose("searching settings file: trying " + file);

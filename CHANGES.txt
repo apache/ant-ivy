@@ -64,6 +64,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - FIX: cachepath based on a resolve done in a previous build broken (IVY-583)
 - FIX: Resolving dynamic version fails when using multiple patterns if only one pattern find a revision and others don't (IVY-602)
 - FIX: Invalid character in IvyRetrieveTest causing most tests to fail (IVY-604)
+- FIX: ivy:settings and ivy:retrieve with explicit id causes unwarranted DEPRECATED warning (thanks to Jacob Grydholt Jensen)
 
 - IMPROVEMENT: Adding option 'cp', which makes it possible for main to be loaded from file (IVY-543) (thanks to Tjeerd Verhagen)
 - IMPROVEMENT: BasicURLHandler should use method=head for getURLInfo (IVY-611) (thanks to Jim Bonanno)
