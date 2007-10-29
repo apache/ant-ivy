@@ -296,10 +296,21 @@ public final class Main {
         }
     }
 
-    private static List getExtraClasspathFileList(CommandLine line) {
+    /**
+     * Parses the <code>cp</code> option from the command line, and returns a list of {@link File}.
+     * <p>
+     * All the files contained in the returned List exist, non existing files are simply skipped
+     * with a warning.
+     * 
+     * @param line
+     *            the command line in which the cp option shold be parsed
+     * @return a List of files to include as extra classpath entries, or <code>null</code> if no
+     *         cp option was provided.
+     */
+    private static List/*<File>*/ getExtraClasspathFileList(CommandLine line) {
         List fileList = null;
         if (line.hasOption("cp")) {
-            fileList = new ArrayList();
+            fileList = new ArrayList/*<File>*/();
             String[] cpArray = line.getOptionValues("cp");
             for (int index = 0; index < cpArray.length; index++) {
                 StringTokenizer tokenizer = new StringTokenizer(cpArray[index], 
@@ -310,7 +321,8 @@ public final class Main {
                     if (file.exists()) {
                         fileList.add(file);
                     } else {
-                        Message.warn("The extra classpath '" + file + "' does not exist.");
+                        Message.warn(
+                            "Skipping extra classpath '" + file + "' as it does not exist.");
                     }
                 }
             }
