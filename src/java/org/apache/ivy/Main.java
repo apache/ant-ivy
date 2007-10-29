@@ -301,6 +301,7 @@ public final class Main {
      * <p>
      * All the files contained in the returned List exist, non existing files are simply skipped
      * with a warning.
+     * </p>
      * 
      * @param line
      *            the command line in which the cp option shold be parsed
