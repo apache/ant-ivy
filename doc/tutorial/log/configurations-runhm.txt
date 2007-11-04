@@ -1,0 +1,33 @@
+Buildfile: src\example\configurations\multi-projects\myapp\build.xml
+
+resolve:
+[ivy:retrieve] :: Ivy 2.0.0-beta1-local-20071104204849 - 20071104204849 :: http://ant.apache.org/ivy/ ::
+[ivy:retrieve] No ivy:settings found for the default reference 'ivy.instance'.  A default instance will be used
+[ivy:retrieve] no settings file found, using default...
+[ivy:retrieve] :: loading settings :: url = jar:file:/c:/dev/data/opensource_workspace/ivy/build/artifact/ivy-core.jar!/org/apache/ivy/core/settings/ivysettings.xml
+[ivy:retrieve] :: resolving dependencies :: [ org.apache | myapp | working@BEN-ScokartG ]
+[ivy:retrieve] 	confs: [build, noexternaljar, withexternaljar]
+[ivy:retrieve] 	found [ org.apache | filter-framework | 1.3 ] in local
+[ivy:retrieve] 	[1.3] [ org.apache | filter-framework | latest.integration ]
+[ivy:retrieve] 	found [ commons-collections | commons-collections | 3.1 ] in public
+[ivy:retrieve] :: resolution report ::
+	---------------------------------------------------------------------
+	|                  |            modules            ||   artifacts   |
+	|       conf       | number| search|dwnlded|evicted|| number|dwnlded|
+	---------------------------------------------------------------------
+	|       build      |   1   |   1   |   0   |   0   ||   1   |   0   |
+	|   noexternaljar  |   1   |   1   |   0   |   0   ||   2   |   0   |
+	|  withexternaljar |   2   |   1   |   0   |   0   ||   3   |   0   |
+	---------------------------------------------------------------------
+[ivy:retrieve] :: retrieving :: [ org.apache | myapp ]
+[ivy:retrieve] 	confs: [build, noexternaljar, withexternaljar]
+[ivy:retrieve] 	0 artifacts copied, 6 already retrieved
+
+build:
+
+run-hm:
+     [java] Filtering with:class filter.hmimpl.HMFilter
+     [java] Result :[two, tree]
+
+BUILD SUCCESSFUL
+Total time: 3 seconds

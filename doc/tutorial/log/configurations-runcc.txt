@@ -1,0 +1,47 @@
+Buildfile: src\example\configurations\multi-projects\myapp\build.xml
+
+resolve:
+[ivy:retrieve] :: Ivy 2.0.0-beta1-local-20071104204849 - 20071104204849 :: http://ant.apache.org/ivy/ ::
+[ivy:retrieve] No ivy:settings found for the default reference 'ivy.instance'.  A default instance will be used
+[ivy:retrieve] no settings file found, using default...
+[ivy:retrieve] :: loading settings :: url = jar:file:/c:/dev/data/opensource_workspace/ivy/build/artifact/ivy-core.jar!/org/apache/ivy/core/settings/ivysettings.xml
+[ivy:retrieve] :: resolving dependencies :: [ org.apache | myapp | working@BEN-ScokartG ]
+[ivy:retrieve] 	confs: [build, noexternaljar, withexternaljar]
+[ivy:retrieve] 	found [ org.apache | filter-framework | 1.3 ] in local
+[ivy:retrieve] 	[1.3] [ org.apache | filter-framework | latest.integration ]
+[ivy:retrieve] 	found [ commons-collections | commons-collections | 3.1 ] in public
+[ivy:retrieve] downloading C:\Documents and Settings\scokartg\.ivy2\local\org.apache\filter-framework\1.3\jars\filter-api.jar ...
+[ivy:retrieve] .. (1kB)
+[ivy:retrieve] .. (0kB)
+[ivy:retrieve] 	[SUCCESSFUL ] [ org.apache | filter-framework | 1.3 ]/filter-api.jar[jar] (40ms)
+[ivy:retrieve] downloading C:\Documents and Settings\scokartg\.ivy2\local\org.apache\filter-framework\1.3\jars\filter-hmimpl.jar ...
+[ivy:retrieve] .. (1kB)
+[ivy:retrieve] .. (0kB)
+[ivy:retrieve] 	[SUCCESSFUL ] [ org.apache | filter-framework | 1.3 ]/filter-hmimpl.jar[jar] (20ms)
+[ivy:retrieve] downloading C:\Documents and Settings\scokartg\.ivy2\local\org.apache\filter-framework\1.3\jars\filter-ccimpl.jar ...
+[ivy:retrieve] .. (1kB)
+[ivy:retrieve] .. (0kB)
+[ivy:retrieve] 	[SUCCESSFUL ] [ org.apache | filter-framework | 1.3 ]/filter-ccimpl.jar[jar] (80ms)
+[ivy:retrieve] :: resolution report ::
+	---------------------------------------------------------------------
+	|                  |            modules            ||   artifacts   |
+	|       conf       | number| search|dwnlded|evicted|| number|dwnlded|
+	---------------------------------------------------------------------
+	|       build      |   1   |   1   |   0   |   0   ||   1   |   1   |
+	|   noexternaljar  |   1   |   1   |   0   |   0   ||   2   |   2   |
+	|  withexternaljar |   2   |   1   |   0   |   0   ||   3   |   2   |
+	---------------------------------------------------------------------
+[ivy:retrieve] :: retrieving :: [ org.apache | myapp ]
+[ivy:retrieve] 	confs: [build, noexternaljar, withexternaljar]
+[ivy:retrieve] 	6 artifacts copied, 0 already retrieved
+
+build:
+    [mkdir] Created dir: C:\dev\data\opensource_workspace\ivy\src\example\configurations\multi-projects\myapp\build
+    [javac] Compiling 1 source file to C:\dev\data\opensource_workspace\ivy\src\example\configurations\multi-projects\myapp\build
+
+run-cc:
+     [java] Filtering with:class filter.ccimpl.CCFilter
+     [java] Result :[two, tree]
+
+BUILD SUCCESSFUL
+Total time: 4 seconds

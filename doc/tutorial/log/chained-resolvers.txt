@@ -1,0 +1,37 @@
+Buildfile: src\example\chained-resolvers\chainedresolvers-project\build.xml
+
+resolve:
+[ivy:retrieve] :: Ivy 2.0.0-beta1-local-20071104204849 - 20071104204849 :: http://ant.apache.org/ivy/ ::
+[ivy:retrieve] :: loading settings :: file = C:\dev\data\opensource_workspace\ivy\src\example\chained-resolvers\config\ivysettings.xml
+[ivy:retrieve] :: resolving dependencies :: [ org.apache | chained-resolvers | working@BEN-ScokartG ]
+[ivy:retrieve] 	confs: [default]
+[ivy:retrieve] 	found [ commons-lang | commons-lang | 2.0 ] in ibiblio
+[ivy:retrieve] 	found [ org.apache | test | 1.0 ] in libraries
+[ivy:retrieve] downloading http://www.ibiblio.org/maven/commons-lang/jars/commons-lang-2.0.jar ...
+[ivy:retrieve] .............................................................
+[ivy:retrieve] ......................................................... (165kB)
+[ivy:retrieve] .. (0kB)
+[ivy:retrieve] 	[SUCCESSFUL ] [ commons-lang | commons-lang | 2.0 ]/commons-lang.jar[jar] (5928ms)
+[ivy:retrieve] downloading C:\dev\data\opensource_workspace\ivy\src\example\chained-resolvers\config\repository\test-1.0.jar ...
+[ivy:retrieve] .. (1kB)
+[ivy:retrieve] 	[SUCCESSFUL ] [ org.apache | test | 1.0 ]/test.jar[jar] (10ms)
+[ivy:retrieve] :: resolution report ::
+	---------------------------------------------------------------------
+	|                  |            modules            ||   artifacts   |
+	|       conf       | number| search|dwnlded|evicted|| number|dwnlded|
+	---------------------------------------------------------------------
+	|      default     |   2   |   2   |   0   |   0   ||   2   |   2   |
+	---------------------------------------------------------------------
+[ivy:retrieve] :: retrieving :: [ org.apache | chained-resolvers ]
+[ivy:retrieve] 	confs: [default]
+[ivy:retrieve] 	2 artifacts copied, 0 already retrieved
+
+run:
+    [mkdir] Created dir: C:\dev\data\opensource_workspace\ivy\src\example\chained-resolvers\chainedresolvers-project\build
+    [javac] Compiling 1 source file to C:\dev\data\opensource_workspace\ivy\src\example\chained-resolvers\chainedresolvers-project\build
+     [java] standard message :example world !
+     [java] capitalized by org.apache.commons.lang.WordUtils : Example World !
+     [java] upperCased by test.StringUtils : EXAMPLE WORLD !
+
+BUILD SUCCESSFUL
+Total time: 12 seconds

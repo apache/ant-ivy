@@ -1,0 +1,36 @@
+Buildfile: src\example\dependence\standalone\build.xml
+
+resolve:
+[ivy:retrieve] :: Ivy 2.0.0-beta1-local-20071104204849 - 20071104204849 :: http://ant.apache.org/ivy/ ::
+[ivy:retrieve] :: loading settings :: file = C:\dev\data\opensource_workspace\ivy\src\example\dependence\config\ivysettings.xml
+[ivy:retrieve] :: resolving dependencies :: [ org.apache | standalone | working@BEN-ScokartG ]
+[ivy:retrieve] 	confs: [default]
+[ivy:retrieve] 	found [ commons-lang | commons-lang | 2.0 ] in libraries
+[ivy:retrieve] :: resolution report ::
+	---------------------------------------------------------------------
+	|                  |            modules            ||   artifacts   |
+	|       conf       | number| search|dwnlded|evicted|| number|dwnlded|
+	---------------------------------------------------------------------
+	|      default     |   1   |   0   |   0   |   0   ||   1   |   0   |
+	---------------------------------------------------------------------
+[ivy:retrieve] :: retrieving :: [ org.apache | standalone ]
+[ivy:retrieve] 	confs: [default]
+[ivy:retrieve] 	0 artifacts copied, 1 already retrieved
+
+compile:
+
+jar:
+[propertyfile] Updating property file: C:\dev\data\opensource_workspace\ivy\src\example\dependence\standalone\build\classes\version.properties
+      [jar] Building jar: C:\dev\data\opensource_workspace\ivy\src\example\dependence\standalone\build\standalone.jar
+
+publish:
+   [delete] Deleting: C:\dev\data\opensource_workspace\ivy\src\example\dependence\standalone\build\ivy.xml
+[ivy:publish] :: delivering :: [ org.apache | standalone | working@BEN-ScokartG ] :: 2 :: release :: Sun Nov 04 20:50:33 CET 2007
+[ivy:publish] 	delivering ivy file to C:\dev\data\opensource_workspace\ivy\src\example\dependence\standalone/build/ivy.xml
+[ivy:publish] :: publishing :: [ org.apache | standalone ]
+[ivy:publish] 	published standalone to C:\dev\data\opensource_workspace\ivy\src\example\dependence\config/repository/standalone-2.jar
+[ivy:publish] 	published ivy to C:\dev\data\opensource_workspace\ivy\src\example\dependence\config/repository/standalone-2.xml
+     [echo] project standalone released with version 2
+
+BUILD SUCCESSFUL
+Total time: 2 seconds

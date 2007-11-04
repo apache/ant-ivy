@@ -85,53 +85,7 @@ Ok, now that we have seen the files involved, let's run the sample to see what h
 Then, at the command prompt, run 'ant':
 <div class="shell"><pre>
 I:\hello-ivy>ant
-Buildfile: build.xml
-
-resolve:
-[ivy:retrieve] :: Ivy 2.0.0-beta1 - 20071017234142 :: http://ant.apache.org/ivy/ ::
-[ivy:retrieve] No ivy:settings found for the default reference 'ivy.instance'.  A default instance will be used
-[ivy:retrieve] no settings file found, using default...
-[ivy:retrieve] :: loading settings :: url = jar:file:/D:/dev/ant/apache-ant-1.7.0/lib/ivy-2.0.0-beta1.jar!
-               /org/apache/ivy/core/settings/ivysettings.xml
-[ivy:retrieve] :: resolving dependencies :: [ apache | hello-ivy | working@diablo ]
-[ivy:retrieve]  confs: [default]
-[ivy:retrieve]  found [ commons-lang | commons-lang | 2.0 ] in public
-[ivy:retrieve]  found [ commons-cli | commons-cli | 1.0 ] in public
-[ivy:retrieve]  found [ commons-logging | commons-logging | 1.0 ] in public
-[ivy:retrieve] downloading http://repo1.maven.org/maven2/commons-lang/commons-lang/2.0/commons-lang-2.0.jar ...
-[ivy:retrieve] ................
-[ivy:retrieve] .. (165kB)
-[ivy:retrieve] .. (0kB)
-[ivy:retrieve]  [SUCCESSFUL ] [ commons-lang | commons-lang | 2.0 ]/commons-lang.jar[jar] (3813ms)
-[ivy:retrieve] downloading http://repo1.maven.org/maven2/commons-cli/commons-cli/1.0/commons-cli-1.0.jar ...
-[ivy:retrieve] ....... (29kB)
-[ivy:retrieve] .. (0kB)
-[ivy:retrieve]  [SUCCESSFUL ] [ commons-cli | commons-cli | 1.0 ]/commons-cli.jar[jar] (2533ms)
-[ivy:retrieve] downloading http://repo1.maven.org/maven2/commons-logging/commons-logging/1.0/commons-logging-1.0.jar ...
-[ivy:retrieve] ..... (21kB)
-[ivy:retrieve] .. (0kB)
-[ivy:retrieve]  [SUCCESSFUL ] [ commons-logging | commons-logging | 1.0 ]/commons-logging.jar[jar] (2504ms)
-[ivy:retrieve] :: resolution report ::
-[ivy:retrieve]  :: evicted modules:
-[ivy:retrieve]  [ commons-lang | commons-lang | 1.0 ] by [[ commons-lang | commons-lang | 2.0 ]] in [default]
-        ---------------------------------------------------------------------
-        |                  |            modules            ||   artifacts   |
-        |       conf       | number| search|dwnlded|evicted|| number|dwnlded|
-        ---------------------------------------------------------------------
-        |      default     |   4   |   3   |   0   |   1   ||   3   |   3   |
-        ---------------------------------------------------------------------
-[ivy:retrieve] :: retrieving :: [ apache | hello-ivy ]
-[ivy:retrieve]  confs: [default]
-[ivy:retrieve]  3 artifacts copied, 0 already retrieved
-
-run:
-    [mkdir] Created dir: I:\build
-    [javac] Compiling 1 source file to I:\build
-     [java] standard message : hello ivy !
-     [java] capitalized by org.apache.commons.lang.WordUtils : Hello Ivy !
-
-BUILD SUCCESSFUL
-Total time: 16 seconds
+[<tutorial/log/hello-ivy-1.txt>]
 </pre></div>
 <h1>What happened ?</h1>
 Without any settings, Ivy retrieves files from the maven 2 repository. That's what happened here. 
@@ -139,38 +93,7 @@ The resolve task has found the commons-lang and commons-cli modules in the maven
 
 You might say that the task took a long time just to write out a "Hello Ivy !" message. But remember that a lot of time was spent downloading the required files from the web. Let's try to run it again:
 <div class="shell"><pre>I:\hello-ivy>ant
-Buildfile: build.xml
-
-resolve:
-[ivy:retrieve] :: Ivy 2.0.0-beta1 - 20071017234142 :: http://ant.apache.org/ivy/ ::
-[ivy:retrieve] No ivy:settings found for the default reference 'ivy.instance'.  A default instance will be used
-[ivy:retrieve] no settings file found, using default...
-[ivy:retrieve] :: loading settings :: url = jar:file:/D:/dev/ant/apache-ant-1.7.0/lib/ivy-2.0.0-beta1.jar!
-               /org/apache/ivy/core/settings/ivysettings.xml
-[ivy:retrieve] :: resolving dependencies :: [ apache | hello-ivy | working@diablo ]
-[ivy:retrieve]  confs: [default]
-[ivy:retrieve]  found [ commons-lang | commons-lang | 2.0 ] in public
-[ivy:retrieve]  found [ commons-cli | commons-cli | 1.0 ] in public
-[ivy:retrieve]  found [ commons-logging | commons-logging | 1.0 ] in public
-[ivy:retrieve] :: resolution report ::
-[ivy:retrieve]  :: evicted modules:
-[ivy:retrieve]  [ commons-lang | commons-lang | 1.0 ] by [[ commons-lang | commons-lang | 2.0 ]] in [default]
-        ---------------------------------------------------------------------
-        |                  |            modules            ||   artifacts   |
-        |       conf       | number| search|dwnlded|evicted|| number|dwnlded|
-        ---------------------------------------------------------------------
-        |      default     |   4   |   0   |   0   |   1   ||   3   |   0   |
-        ---------------------------------------------------------------------
-[ivy:retrieve] :: retrieving :: [ apache | hello-ivy ]
-[ivy:retrieve]  confs: [default]
-[ivy:retrieve]  0 artifacts copied, 3 already retrieved
-
-run:
-     [java] standard message : hello ivy !
-     [java] capitalized by org.apache.commons.lang.WordUtils : Hello Ivy !
-
-BUILD SUCCESSFUL
-Total time: 1 second
+[<tutorial/log/hello-ivy-2.txt>]
 </pre></div>
 Great! the cache was used, no download was needed and the build was instantaneous.
 

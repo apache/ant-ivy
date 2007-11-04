@@ -78,64 +78,9 @@ Later when others will use our library they will have a very flexible way to def
 
 <h2>See it in action</h2>
 The library project is build using ant. Open a shell in the root directory of the project and type <b>ant</b>.
-<div class="shell"><pre>
-Buildfile: build.xml
-clean:
-resolve:
-:: Ivy 20060123130642 - 20060123130642 :: http://ivy.jayasoft.org/ ::
-no configuration file found, using default...
-:: configuring :: url = jar:file:/C:/dev/ant/apache-ant-1.6.2/lib/ivy-20060123130642.jar!/fr/jayasoft/ivy/conf/ivysettings.xml
-:: resolving dependencies :: [ jayasoft | filter-framework | working@SPIDER ]
-        confs: [api, homemade-impl, cc-impl, test]
-        found [ apache | commons-collections | 3.1 ] in main
-        found [ junit | junit | 3.8 ] in main
-downloading http://www.ibiblio.org/maven/commons-collections/jars/commons-collections-3.1.jar ................(546kB)
-        [SUCCESSFUL ] [ apache | commons-collections | 3.1 ]/commons-collections.jar[jar] (34320ms)
-downloading http://www.ibiblio.org/maven/junit/jars/junit-3.8.jar ........................... (118kB)
-        [SUCCESSFUL ] [ junit | junit | 3.8 ]/junit.jar[jar] (8462ms)
-:: resolution report ::
-        ---------------------------------------------------------------------
-        |                  |            modules            ||   artifacts   |
-        |       conf       | number| search|dwnlded|evicted|| number|dwnlded|
-        ---------------------------------------------------------------------
-        |        api       |   0   |   0   |   0   |   0   ||   0   |   0   |
-        |   homemade-impl  |   0   |   0   |   0   |   0   ||   0   |   0   |
-        |      cc-impl     |   1   |   1   |   1   |   0   ||   1   |   1   |
-        |       test       |   2   |   2   |   1   |   0   ||   2   |   2   |
-        ---------------------------------------------------------------------
-:: retrieving :: [ jayasoft | filter-framework ]
-        confs: [api, homemade-impl, cc-impl, test]
-        3 artifacts copied, 0 already retrieved
-
-build:
-    [mkdir] Created dir: D:\svn\jayasoft\projects\tools\ivy\src\example\configurations\multi-projects\filter-framework\build
-    [mkdir] Created dir: D:\svn\jayasoft\projects\tools\ivy\src\example\configurations\multi-projects\filter-framework\distrib
-    [javac] Compiling 4 source files to D:\svn\jayasoft\projects\tools\ivy\src\example\configurations\multi-projects\filter-framework\build
-      [jar] Building jar: D:\svn\jayasoft\projects\tools\ivy\src\example\configurations\multi-projects\filter-framework\distrib\filter-api.jar
-      [jar] Building jar: D:\svn\jayasoft\projects\tools\ivy\src\example\configurations\multi-projects\filter-framework\distrib\filter-hmimpl.jar
-      [jar] Building jar: D:\svn\jayasoft\projects\tools\ivy\src\example\configurations\multi-projects\filter-framework\distrib\filter-ccimpl.jar
-
-test:
-    [mkdir] Created dir: D:\svn\jayasoft\projects\tools\ivy\src\example\configurations\multi-projects\filter-framework\build\test-report
-    [mkdir] Created dir: D:\svn\jayasoft\projects\tools\ivy\src\example\configurations\multi-projects\filter-framework\build\test-classes
-    [javac] Compiling 3 source files to D:\svn\jayasoft\projects\tools\ivy\src\example\configurations\multi-projects\filter-framework\build\test-classes
-    [junit] Running filter.ccimpl.CCFilterTest
-    [junit] Tests run: 5, Failures: 0, Errors: 0, Time elapsed: 0.02 sec
-    [junit] Running filter.hmimpl.HMFilterTest
-    [junit] Tests run: 5, Failures: 0, Errors: 0, Time elapsed: 0.01 sec
-
-publish:
-:: delivering :: [ jayasoft | filter-framework | working@SPIDER ] :: 1.3 :: release :: Tue Jan 24 10:53:41 CET 2006
-        delivering ivy file to distrib/ivy.xml
-:: publishing :: [ jayasoft | filter-framework | working@SPIDER ]
-        published filter-api to D:\users\mm\.ivy/local/jayasoft/filter-framework/1.3/jars/filter-api.jar
-        published filter-ccimpl to D:\users\mm\.ivy/local/jayasoft/filter-framework/1.3/jars/filter-ccimpl.jar
-        published filter-hmimpl to D:\users\mm\.ivy/local/jayasoft/filter-framework/1.3/jars/filter-hmimpl.jar
-        published ivy to D:\users\mm\.ivy/local/jayasoft/filter-framework/1.3/ivys/ivy.xml
-     [echo] project filter-framework released with version 1.3
-
-BUILD SUCCESSFUL
-</pre></div>
+<!--div class="shell"><pre-->
+<ilayer src="log/hello-ivy.txt" visibility="show"></ilayer>
+<!--/pre></div-->
 The ant's default target is publish. 
 This target use ivy to publish our library binaries in a local repository. 
 As we do not specify any repository path the default one is use. ({home.dir}/.ivy/local/jayasoft/filter-framework/)
@@ -222,80 +167,13 @@ Let's try to launch our app.
 Use ant to run the application.
 Default ant target is run-cc and will launch application using common collection jar.
 <div class="shell"><pre>
-Buildfile: build.xml
-
-resolve:
-:: Ivy 20060123130642 - 20060123130642 :: http://ivy.jayasoft.org/ ::
-no configuration file found, using default...
-:: configuring :: url = jar:file:/C:/dev/ant/apache-ant-1.6.2/lib/ivy-20060123130642.jar!/fr/jayasoft/ivy/conf/ivysettings.xml
-:: resolving dependencies :: [ jayasoft | myapp | working@SPIDER ]
-        confs: [build, noexternaljar, withexternaljar]
-        found [ jayasoft | filter-framework | 1.3 ] in local
-        [1.3] [ jayasoft | filter-framework | latest.integration ]
-        found [ apache | commons-collections | 3.1 ] in default
-downloading D:\users\mm\.ivy\local\jayasoft\filter-framework\1.3\jars\filter-ccimpl.jar .... (1kB)
-        [SUCCESSFUL ] [ jayasoft | filter-framework | 1.3 ]/filter-ccimpl.jar[jar] (0ms)
-downloading D:\users\mm\.ivy\local\jayasoft\filter-framework\1.3\jars\filter-api.jar .... (1kB)
-        [SUCCESSFUL ] [ jayasoft | filter-framework | 1.3 ]/filter-api.jar[jar] (0ms)
-downloading D:\users\mm\.ivy\local\jayasoft\filter-framework\1.3\jars\filter-hmimpl.jar .... (1kB)
-        [SUCCESSFUL ] [ jayasoft | filter-framework | 1.3 ]/filter-hmimpl.jar[jar] (10ms)
-:: resolution report ::
-        ---------------------------------------------------------------------
-        |                  |            modules            ||   artifacts   |
-        |       conf       | number| search|dwnlded|evicted|| number|dwnlded|
-        ---------------------------------------------------------------------
-        |       build      |   1   |   1   |   1   |   0   ||   1   |   1   |
-        |   noexternaljar  |   1   |   1   |   1   |   0   ||   2   |   2   |
-        |  withexternaljar |   2   |   1   |   1   |   0   ||   3   |   2   |
-        ---------------------------------------------------------------------
-:: retrieving :: [ jayasoft | myapp ]
-        confs: [build, noexternaljar, withexternaljar]
-        6 artifacts copied, 0 already retrieved
-
-build:
-    [mkdir] Created dir: D:\svn\jayasoft\projects\tools\ivy\src\example\configurations\multi-projects\myapp\build
-    [javac] Compiling 1 source file to D:\svn\jayasoft\projects\tools\ivy\src\example\configurations\multi-projects\myapp\build
-
-run-cc:
-     [java] Filtering with:class filter.ccimpl.CCFilter
-     [java] Result :[two, tree]
+[<tutorial/log/configurations-runcc.txt>]
 </pre></div>
 Launching application with only home made jars is straingforward.
 type ant run-hm
 
 <div class="shell"><pre>
-Buildfile: build.xml
-
-resolve:
-:: Ivy 20060123130642 - 20060123130642 :: http://ivy.jayasoft.org/ ::
-no configuration file found, using default...
-:: configuring :: url = jar:file:/C:/dev/ant/apache-ant-1.6.2/lib/ivy-20060123130642.jar!/fr/jayasoft/ivy/conf/ivysettings.xml
-:: resolving dependencies :: [ jayasoft | myapp | working@SPIDER ]
-        confs: [build, noexternaljar, withexternaljar]
-        found [ jayasoft | filter-framework | 1.3 ] in default
-        [1.3] [ jayasoft | filter-framework | latest.integration ]
-        found [ apache | commons-collections | 3.1 ] in default
-:: resolution report ::
-        ---------------------------------------------------------------------
-        |                  |            modules            ||   artifacts   |
-        |       conf       | number| search|dwnlded|evicted|| number|dwnlded|
-        ---------------------------------------------------------------------
-        |       build      |   1   |   1   |   0   |   0   ||   1   |   0   |
-        |   noexternaljar  |   1   |   1   |   0   |   0   ||   2   |   0   |
-        |  withexternaljar |   2   |   1   |   0   |   0   ||   3   |   0   |
-        ---------------------------------------------------------------------
-:: retrieving :: [ jayasoft | myapp ]
-        confs: [build, noexternaljar, withexternaljar]
-        0 artifacts copied, 6 already retrieved
-
-build:
-
-run-hm:
-     [java] Filtering with:class filter.hmimpl.HMFilter
-     [java] Result :[two, tree]
-
-BUILD SUCCESSFUL
-</pre></div>
+[<tutorial/log/configurations-runhm.txt>]</pre></div>
 Nice we got the same result but we can see that implementation class are different.
 
 <h1>Conclusion</h1>

@@ -1,0 +1,41 @@
+Buildfile: src\example\dependence\depending\build.xml
+
+clean:
+   [delete] Deleting 3 files from C:\dev\data\opensource_workspace\ivy\src\example\dependence\depending
+   [delete] Deleted 4 directories from C:\dev\data\opensource_workspace\ivy\src\example\dependence\depending
+
+resolve:
+[ivy:retrieve] :: Ivy 2.0.0-beta1-local-20071104204849 - 20071104204849 :: http://ant.apache.org/ivy/ ::
+[ivy:retrieve] :: loading settings :: file = C:\dev\data\opensource_workspace\ivy\src\example\dependence\config\ivysettings.xml
+[ivy:retrieve] :: resolving dependencies :: [ org.apache | depending | working@BEN-ScokartG ]
+[ivy:retrieve] 	confs: [default]
+[ivy:retrieve] 	found [ org.apache | standalone | 2 ] in projects
+[ivy:retrieve] 	[2] [ org.apache | standalone | latest.integration ]
+[ivy:retrieve] 	found [ commons-lang | commons-lang | 2.0 ] in libraries
+[ivy:retrieve] downloading C:\dev\data\opensource_workspace\ivy\src\example\dependence\config\repository\standalone-2.jar ...
+[ivy:retrieve] .. (1kB)
+[ivy:retrieve] .. (0kB)
+[ivy:retrieve] 	[SUCCESSFUL ] [ org.apache | standalone | 2 ]/standalone.jar[jar] (100ms)
+[ivy:retrieve] :: resolution report ::
+	---------------------------------------------------------------------
+	|                  |            modules            ||   artifacts   |
+	|       conf       | number| search|dwnlded|evicted|| number|dwnlded|
+	---------------------------------------------------------------------
+	|      default     |   2   |   1   |   0   |   0   ||   2   |   1   |
+	---------------------------------------------------------------------
+[ivy:retrieve] :: retrieving :: [ org.apache | depending ]
+[ivy:retrieve] 	confs: [default]
+[ivy:retrieve] 	2 artifacts copied, 0 already retrieved
+
+compile:
+    [mkdir] Created dir: C:\dev\data\opensource_workspace\ivy\src\example\dependence\depending\build\classes
+    [javac] Compiling 1 source file to C:\dev\data\opensource_workspace\ivy\src\example\dependence\depending\build\classes
+
+run:
+     [java] you are using version 2 of class standalone.Main
+     [java] standard message : i am depending.Main and standalone.Main will do the job for me
+     [java]     [standalone.Main] capitalizing string "i am depending.Main and standalone.Main will do the job for me" using org.apache.commons.lang.WordUtils
+     [java] capitalized message : I Am Depending.main And Standalone.main Will Do The Job For Me
+
+BUILD SUCCESSFUL
+Total time: 5 seconds
