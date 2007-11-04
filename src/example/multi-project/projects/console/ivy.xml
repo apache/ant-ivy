@@ -18,7 +18,7 @@
 -->
 <ivy-module version="1.0">
     <info 
-        organisation="apache"
+        organisation="org.apache"
         module="console"
         status="integration"/>
     <dependencies>

@@ -17,7 +17,7 @@
    under the License.    
 -->
 <ivy-module version="1.0">
-    <info organisation="apache" module="filter-framework"/>
+    <info organisation="org.apache" module="filter-framework"/>
     <configurations>
     	<conf name="api"  description="only provide filter framework API"/>
     	<conf name="homemade-impl" extends="api" description="provide a home made implementation of our api"/>
@@ -30,7 +30,7 @@
     	<artifact name="filter-ccimpl" type="jar"  conf="cc-impl" ext="jar"/>    	
     </publications>
     <dependencies>
-        <dependency org="apache" name="commons-collections" rev="3.1" conf="cc-impl->default"/>
+        <dependency org="commons-collections" name="commons-collections" rev="3.1" conf="cc-impl->default"/>
         <dependency org="junit" name="junit" rev="3.8" conf="test->default"/>
     </dependencies>
 </ivy-module>

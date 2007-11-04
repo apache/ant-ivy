@@ -18,7 +18,7 @@
    under the License.    
 -->
 <ivy-module version="1.0">
-    <info organisation="apache" module="configurations" >
+    <info organisation="org.apache" module="configurations" >
     	<description>
     		This is an example project that aims to demonstrate the usage of the configuration in ivy.
     		This project provide 4 configurations. Each configurations describe the requirement to build or run the project
@@ -33,7 +33,7 @@
     
     <dependencies>
 	    <!-- this dependency is needed for all configuration -->
-        <dependency org="apache" name="commons-cli" rev="1.0" />
+        <dependency org="org.apache" name="commons-cli" rev="1.0" />
         <!-- when launching our app in dev mode we use mckoi db and mckoi jdbc client conf="run.dev->embedded, client"-->
         <dependency org="mckoi" name="mckoi" rev="1.0.2"  conf="rundev->default"/> 
         <!-- when launching our app in production environement we needs other jdbc driver -->

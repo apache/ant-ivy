@@ -17,7 +17,7 @@
    under the License.    
 -->
 <ivy-module version="1.0">
-    <info organisation="apache" module="myapp"/>
+    <info organisation="org.apache" module="myapp"/>
     
     <configurations>
        	<conf name="build" visibility="private" description="compilation only need api jar" />
@@ -26,6 +26,6 @@
     </configurations>
     
     <dependencies>
-        <dependency org="apache" name="filter-framework" rev="latest.integration" conf="build->api; noexternaljar->homemade-impl; withexternaljar->cc-impl"/>
+        <dependency org="org.apache" name="filter-framework" rev="latest.integration" conf="build->api; noexternaljar->homemade-impl; withexternaljar->cc-impl"/>
     </dependencies>
 </ivy-module>

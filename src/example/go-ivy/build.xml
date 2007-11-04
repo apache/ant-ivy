@@ -33,7 +33,7 @@
         After a successful build run "ant" again and you will see the build will be
         much faster.
         
-        More information can be found at http://incubator.apache.org/ivy/
+        More information can be found at http://ant.apache.org/ivy/
         -->
 	
 	<!-- here is the version of ivy we will use. change this property to try a newer 
