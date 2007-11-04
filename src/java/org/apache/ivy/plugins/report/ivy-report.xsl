@@ -160,21 +160,21 @@
 <xsl:template name="icons">
     <xsl:param name="revision"/>
     <xsl:if test="$revision/@searched = 'true'">
-         <img src="http://ivy.jayasoft.org/images/searched.gif" alt="searched" title="required a search in repository"/>
+         <img src="http://ant.apache.org/ivy/images/searched.gif" alt="searched" title="required a search in repository"/>
     </xsl:if>
     <xsl:if test="$revision/@downloaded = 'true'">
-         <img src="http://ivy.jayasoft.org/images/downloaded.gif" alt="downloaded" title="downloaded from repository"/>
+         <img src="http://ant.apache.org/ivy/images/downloaded.gif" alt="downloaded" title="downloaded from repository"/>
     </xsl:if>
     <xsl:if test="$revision/@evicted">
         <xsl:element name="img">
-            <xsl:attribute name="src">http://ivy.jayasoft.org/images/evicted.gif</xsl:attribute>
+            <xsl:attribute name="src">http://ant.apache.org/ivy/images/evicted.gif</xsl:attribute>
             <xsl:attribute name="alt">evicted</xsl:attribute>
             <xsl:attribute name="title">evicted by <xsl:for-each select="$revision/evicted-by"><xsl:value-of select="@rev"/> </xsl:for-each></xsl:attribute>
         </xsl:element>
     </xsl:if>
     <xsl:if test="$revision/@error">
         <xsl:element name="img">
-            <xsl:attribute name="src">http://ivy.jayasoft.org/images/error.gif</xsl:attribute>
+            <xsl:attribute name="src">http://ant.apache.org/ivy/images/error.gif</xsl:attribute>
             <xsl:attribute name="alt">error</xsl:attribute>
             <xsl:attribute name="title">error: <xsl:value-of select="$revision/@error"/></xsl:attribute>
         </xsl:element>
@@ -259,7 +259,7 @@
     <link rel="stylesheet" type="text/css" href="ivy-report.css" /> 
   </head>
   <body>
-    <div id="logo"><a href="http://ivy.jayasoft.org/"><img src="http://ivy.jayasoft.org/logo.png"/></a></div>
+    <div id="logo"><a href="http://ant.apache.org/ivy/"><img src="http://ant.apache.org/ivy/images/logo.png"/></a></div>
     <h1>
       <xsl:element name="a">
         <xsl:attribute name="name"><xsl:value-of select="info/@organisation"/>-<xsl:value-of select="info/@module"/></xsl:attribute>
@@ -289,10 +289,10 @@
         <table class="header">
           <tr><td class="title">Modules</td><td class="value"><xsl:value-of select="count($modules)"/></td></tr>
           <tr><td class="title">Revisions</td><td class="value"><xsl:value-of select="count($revisions)"/>  
-            (<xsl:value-of select="count($searcheds)"/> searched <img src="http://ivy.jayasoft.org/images/searched.gif" alt="searched" title="module revisions which required a search with a dependency resolver to be resolved"/>,
-            <xsl:value-of select="count($downloadeds)"/> downloaded <img src="http://ivy.jayasoft.org/images/downloaded.gif" alt="downloaded" title="module revisions for which ivy file was downloaded by dependency resolver"/>,
-            <xsl:value-of select="count($evicteds)"/> evicted <img src="http://ivy.jayasoft.org/images/evicted.gif" alt="evicted" title="module revisions which were evicted by others"/>,
-            <xsl:value-of select="count($errors)"/> errors <img src="http://ivy.jayasoft.org/images/error.gif" alt="error" title="module revisions on which error occured"/>)</td></tr>
+            (<xsl:value-of select="count($searcheds)"/> searched <img src="http://ant.apache.org/ivy/images/searched.gif" alt="searched" title="module revisions which required a search with a dependency resolver to be resolved"/>,
+            <xsl:value-of select="count($downloadeds)"/> downloaded <img src="http://ant.apache.org/ivy/images/downloaded.gif" alt="downloaded" title="module revisions for which ivy file was downloaded by dependency resolver"/>,
+            <xsl:value-of select="count($evicteds)"/> evicted <img src="http://ant.apache.org/ivy/images/evicted.gif" alt="evicted" title="module revisions which were evicted by others"/>,
+            <xsl:value-of select="count($errors)"/> errors <img src="http://ant.apache.org/ivy/images/error.gif" alt="error" title="module revisions on which error occured"/>)</td></tr>
           <tr><td class="title">Artifacts</td><td class="value"><xsl:value-of select="count($artifacts)"/> 
             (<xsl:value-of select="count($dlartifacts)"/> downloaded,
             <xsl:value-of select="count($faileds)"/> failed)</td></tr>
