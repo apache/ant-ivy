@@ -70,3 +70,6 @@ run build/tmp.log                              src/example/configurations/multi-
 run build/tmp.log                              src/example/configurations/multi-projects/myapp/build.xml clean
 run doc/tutorial/log/configurations-runcc.txt  src/example/configurations/multi-projects/myapp/build.xml
 run doc/tutorial/log/configurations-runhm.txt  src/example/configurations/multi-projects/myapp/build.xml run-hm
+
+#Update samples
+cp src/example/go-ivy/build.xml doc/samples/build.xml
