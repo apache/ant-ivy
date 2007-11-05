@@ -25,8 +25,8 @@ function run () {
 	#run OUTPUT_FILE ANT_SCRIPT [TARGET...]
 	#Execute ANT_SCRIPT and store the output in OUTPUT_FILE.  
 	#It stops the execution of the main script if the ant script fails
-	echo "Run ant $2 $3 $4 > $1"
-	ant -lib build/artifact	-f $2 $3 $4> $1 2>&1
+	echo "Run ant $2 $3 $4 $5 > $1"
+	ant -lib build/artifact	-f $2 $3 $4 $5 > $1 2>&1
 	if [[ $? == 0 ]] ; then 
 		echo "SUCESSFULL";
 	else
@@ -66,8 +66,9 @@ run doc/tutorial/log/dependence-depending-2.txt  src/example/dependence/dependin
 
 
 #configuration - Using Ivy Configuration - conf.html
-run build/tmp.log                              src/example/configurations/multi-projects/filter-framework/build.xml
 run build/tmp.log                              src/example/configurations/multi-projects/myapp/build.xml clean
+run build/tmp.log    						   src/example/configurations/multi-projects/filter-framework/build.xml clean clean-cache clean-local
+run doc/tutorial/log/configurations-lib.txt    src/example/configurations/multi-projects/filter-framework/build.xml
 run doc/tutorial/log/configurations-runcc.txt  src/example/configurations/multi-projects/myapp/build.xml
 run doc/tutorial/log/configurations-runhm.txt  src/example/configurations/multi-projects/myapp/build.xml run-hm
 

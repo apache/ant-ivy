@@ -1,0 +1,71 @@
+Buildfile: src\example\configurations\multi-projects\filter-framework\build.xml
+
+clean:
+
+resolve:
+[ivy:retrieve] :: Ivy 2.0.0-beta1-local-20071105200109 - 20071105200109 :: http://ant.apache.org/ivy/ ::
+[ivy:retrieve] No ivy:settings found for the default reference 'ivy.instance'.  A default instance will be used
+[ivy:retrieve] no settings file found, using default...
+[ivy:retrieve] :: loading settings :: url = jar:file:/c:/dev/data/opensource_workspace/ivy/build/artifact/ivy-core.jar!/org/apache/ivy/core/settings/ivysettings.xml
+[ivy:retrieve] :: resolving dependencies :: [ org.apache | filter-framework | working@BEN-ScokartG ]
+[ivy:retrieve] 	confs: [api, homemade-impl, cc-impl, test]
+[ivy:retrieve] 	found [ commons-collections | commons-collections | 3.1 ] in public
+[ivy:retrieve] 	found [ junit | junit | 3.8 ] in public
+[ivy:retrieve] downloading http://repo1.maven.org/maven2/commons-collections/commons-collections/3.1/commons-collections-3.1.jar ...
+[ivy:retrieve] .............................................................................
+[ivy:retrieve] ..............................................................................................
+[ivy:retrieve] .................................................
+[ivy:retrieve] ..................................................................................................
+[ivy:retrieve] ................................................... (546kB)
+[ivy:retrieve] .. (0kB)
+[ivy:retrieve] 	[SUCCESSFUL ] [ commons-collections | commons-collections | 3.1 ]/commons-collections.jar[jar] (8322ms)
+[ivy:retrieve] downloading http://repo1.maven.org/maven2/junit/junit/3.8/junit-3.8.jar ...
+[ivy:retrieve] ...............................................................................
+[ivy:retrieve] ...... (118kB)
+[ivy:retrieve] .. (0kB)
+[ivy:retrieve] 	[SUCCESSFUL ] [ junit | junit | 3.8 ]/junit.jar[jar] (3015ms)
+[ivy:retrieve] :: resolution report ::
+	---------------------------------------------------------------------
+	|                  |            modules            ||   artifacts   |
+	|       conf       | number| search|dwnlded|evicted|| number|dwnlded|
+	---------------------------------------------------------------------
+	|        api       |   0   |   0   |   0   |   0   ||   0   |   0   |
+	|   homemade-impl  |   0   |   0   |   0   |   0   ||   0   |   0   |
+	|      cc-impl     |   1   |   1   |   0   |   0   ||   1   |   1   |
+	|       test       |   2   |   2   |   0   |   0   ||   2   |   2   |
+	---------------------------------------------------------------------
+[ivy:retrieve] :: retrieving :: [ org.apache | filter-framework ]
+[ivy:retrieve] 	confs: [api, homemade-impl, cc-impl, test]
+[ivy:retrieve] 	3 artifacts copied, 0 already retrieved
+
+build:
+    [mkdir] Created dir: C:\dev\data\opensource_workspace\ivy\src\example\configurations\multi-projects\filter-framework\build
+    [mkdir] Created dir: C:\dev\data\opensource_workspace\ivy\src\example\configurations\multi-projects\filter-framework\distrib
+    [javac] Compiling 4 source files to C:\dev\data\opensource_workspace\ivy\src\example\configurations\multi-projects\filter-framework\build
+    [javac] Note: Some input files use unchecked or unsafe operations.
+    [javac] Note: Recompile with -Xlint:unchecked for details.
+      [jar] Building jar: C:\dev\data\opensource_workspace\ivy\src\example\configurations\multi-projects\filter-framework\distrib\filter-api.jar
+      [jar] Building jar: C:\dev\data\opensource_workspace\ivy\src\example\configurations\multi-projects\filter-framework\distrib\filter-hmimpl.jar
+      [jar] Building jar: C:\dev\data\opensource_workspace\ivy\src\example\configurations\multi-projects\filter-framework\distrib\filter-ccimpl.jar
+
+test:
+    [mkdir] Created dir: C:\dev\data\opensource_workspace\ivy\src\example\configurations\multi-projects\filter-framework\build\test-report
+    [mkdir] Created dir: C:\dev\data\opensource_workspace\ivy\src\example\configurations\multi-projects\filter-framework\build\test-classes
+    [javac] Compiling 3 source files to C:\dev\data\opensource_workspace\ivy\src\example\configurations\multi-projects\filter-framework\build\test-classes
+    [junit] Running filter.ccimpl.CCFilterTest
+    [junit] Tests run: 5, Failures: 0, Errors: 0, Time elapsed: 0.02 sec
+    [junit] Running filter.hmimpl.HMFilterTest
+    [junit] Tests run: 5, Failures: 0, Errors: 0, Time elapsed: 0 sec
+
+publish:
+[ivy:publish] :: delivering :: [ org.apache | filter-framework | working@BEN-ScokartG ] :: 1.3 :: release :: Mon Nov 05 21:10:46 CET 2007
+[ivy:publish] 	delivering ivy file to C:\dev\data\opensource_workspace\ivy\src\example\configurations\multi-projects\filter-framework\distrib/ivy.xml
+[ivy:publish] :: publishing :: [ org.apache | filter-framework ]
+[ivy:publish] 	published filter-hmimpl to C:\Documents and Settings\scokartg\.ivy2\local/org.apache/filter-framework/1.3/jars/filter-hmimpl.jar
+[ivy:publish] 	published filter-api to C:\Documents and Settings\scokartg\.ivy2\local/org.apache/filter-framework/1.3/jars/filter-api.jar
+[ivy:publish] 	published filter-ccimpl to C:\Documents and Settings\scokartg\.ivy2\local/org.apache/filter-framework/1.3/jars/filter-ccimpl.jar
+[ivy:publish] 	published ivy to C:\Documents and Settings\scokartg\.ivy2\local/org.apache/filter-framework/1.3/ivys/ivy.xml
+     [echo] project filter-framework released with version 1.3
+
+BUILD SUCCESSFUL
+Total time: 20 seconds
