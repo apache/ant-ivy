@@ -184,7 +184,6 @@ List of changes since Ivy 2.0.0-alpha-1-incubating:
 - IMPROVEMENT: Javadoc improvements (IVY-544) (with contribution from Tjeerd Verhagen)
 - IMPROVEMENT: Unit test improvements (IVY-545) (thanks to Tjeerd Verhagen)
 - IMPROVEMENT: Dependent jars missing in ivy binaries (IVY-481)
-- IMPROVEMENT: ivy html reports now refers http://ant.apache.org (partial IVY-414)
 
 - FIX: Ant target "clean" on Ivy multi-project tutorial points to wrong cache directory. (IVY-548)
 - FIX: Variables not replaced during deliver (IVY-520) (thanks to John Williams)
