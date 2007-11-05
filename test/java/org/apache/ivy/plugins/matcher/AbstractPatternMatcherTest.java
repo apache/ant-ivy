@@ -65,7 +65,7 @@ public abstract class AbstractPatternMatcherTest extends TestCase {
 
     public void testNullExpression() {
         try {
-            Matcher matcher = patternMatcher.getMatcher(null);
+            patternMatcher.getMatcher(null);
             fail("Should fail for null expression");
         } catch (NullPointerException expected) {
 
@@ -80,7 +80,7 @@ public abstract class AbstractPatternMatcherTest extends TestCase {
                 "this is an expression", "whatever this is", "maybe, maybe not"};
         for (int i = 0; i < 100000; i++) {
             String input = inputs[i % inputs.length];
-            boolean success = matcher.matches(input);
+            matcher.matches(input);
         }
     }
 
@@ -90,7 +90,7 @@ public abstract class AbstractPatternMatcherTest extends TestCase {
 
         for (int i = 0; i < 100000; i++) {
             String expression = inputs[i % inputs.length];
-            Matcher matcher = patternMatcher.getMatcher(expression);
+            patternMatcher.getMatcher(expression);
         }
     }
 }

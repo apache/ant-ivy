@@ -100,6 +100,7 @@ public class IvyConfigureTest extends TestCase {
         assertEquals("myvalue", settings.getVariables().get("myproperty"));
     }
 
+    /*@SuppressWarnings*/
     public void testURL() throws Exception {
         String confUrl = new File("test/repositories/ivysettings.xml").toURL().toExternalForm();
         String confDirUrl = new File("test/repositories").toURL().toExternalForm();
