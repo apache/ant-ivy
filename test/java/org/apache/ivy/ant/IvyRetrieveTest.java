@@ -207,6 +207,16 @@ public class IvyRetrieveTest extends TestCase {
         assertTrue(new File(IvyPatternHelper.substitute(RETRIEVE_PATTERN, "org1", "mod1.2", "2.0",
             "mod1.2", "jar", "jar")).exists());
     }
+    
+    public void testRetrieveWithOriginalNamePattern() throws Exception {
+        retrieve.setFile(new File("test/java/org/apache/ivy/ant/ivy-631.xml"));
+        retrieve.setConf("default");
+        retrieve.setPattern("build/test/lib/[conf]/[originalname].[ext]");
+        retrieve.setSync(true);
+        retrieve.execute();
+        
+        assertTrue(new File("build/test/lib/default/mod1.2-2.2.jar").exists());
+    }
 
     public void testFailureWithoutAPreviousResolve() throws Exception {
         // we do a retrieve with the module information whereas no resolve has been previously done

@@ -45,8 +45,6 @@ public class MDArtifact extends AbstractArtifact {
 
     private List confs = new ArrayList();
 
-    private ArtifactRevisionId arid;
-
     private Map extraAttributes = null;
 
     private URL url;
@@ -86,11 +84,9 @@ public class MDArtifact extends AbstractArtifact {
     }
 
     public ArtifactRevisionId getId() {
-        if (arid == null) {
-            arid = ArtifactRevisionId.newInstance(md.getResolvedModuleRevisionId(), name, type,
+        // do not cache the result because the resolvedModuleRevisionId can change!
+        return ArtifactRevisionId.newInstance(md.getResolvedModuleRevisionId(), name, type,
                 ext, extraAttributes);
-        }
-        return arid;
     }
 
     public String getName() {

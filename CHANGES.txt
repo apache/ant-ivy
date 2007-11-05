@@ -98,6 +98,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - IMPROVEMENT: Unit test improvements (IVY-545) (thanks to Tjeerd Verhagen)
 - IMPROVEMENT: Dependent jars missing in ivy binaries (IVY-481)
 
+- FIX: Retrieval not expanding "[originalname]". (IVY-631)
 - FIX: Ant target "clean" on Ivy multi-project tutorial points to wrong cache directory. (IVY-548)
 - FIX: Variables not replaced during deliver (IVY-520) (thanks to John Williams)
 - FIX: XmlModuleDescriptorWriter does not produce matcher attribute on include and exclude rules (IVY-556)
