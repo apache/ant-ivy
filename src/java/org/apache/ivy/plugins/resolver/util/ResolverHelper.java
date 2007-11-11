@@ -139,7 +139,10 @@ public class ResolverHelper {
                 String rres = IvyPatternHelper.substituteToken(partiallyResolvedPattern,
                     IvyPatternHelper.REVISION_KEY, revs[i]);
                 try {
-                    ret.add(new ResolvedResource(rep.getResource(rres), revs[i]));
+                    Resource res = rep.getResource(rres);
+                    if ((res != null) && res.exists()) {
+                        ret.add(new ResolvedResource(res, revs[i]));
+                    }
                 } catch (IOException e) {
                     Message.warn("impossible to get resource from name listed by repository: "
                             + rres + ": " + e.getMessage());

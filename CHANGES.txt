@@ -53,6 +53,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 
    version in SVN
 =====================================
+- FIX: Resolution failure when no ivy.xml file present (IVY-630)
 - FIX: ${parent.version} property is not recognized in maven2 pom (IVY-620)
 - FIX: Ivy doesn't work with Ant 1.6.2 (IVY-614)
 - FIX: EmptyStackException when upgrading from 1.4 to 2.0 (IVY-610)

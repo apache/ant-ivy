@@ -24,6 +24,8 @@ import junit.framework.TestCase;
 import org.apache.ivy.Ivy;
 import org.apache.ivy.TestHelper;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
+import org.apache.ivy.util.DefaultMessageImpl;
+import org.apache.ivy.util.Message;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.Delete;
@@ -71,6 +73,20 @@ public class IvyResolveTest extends TestCase {
         assertTrue(getIvyFileInCache(ModuleRevisionId.newInstance("org1", "mod1.2", "2.0"))
                 .exists());
         assertTrue(getArchiveFileInCache("org1", "mod1.2", "2.0", "mod1.2", "jar", "jar").exists());
+    }
+    
+    public void testResolveWithoutIvyFile() throws Exception {
+        // IVY-630
+        resolve.getProject().setProperty("ivy.settings.file", "test/repositories/IVY-630/ivysettings.xml");
+        
+        resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-630.xml"));
+        resolve.setConf("default");
+        resolve.setHaltonfailure(false);
+        resolve.execute();
+        
+        assertTrue(getIvyFileInCache(ModuleRevisionId.newInstance("junit", "junit", "4.1"))
+            .exists());
+        assertTrue(getArchiveFileInCache("junit", "junit", "4.1", "junit", "jar", "jar").exists());
     }
 
     private File getArchiveFileInCache(String organisation, String module, String revision,
