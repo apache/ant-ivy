@@ -24,8 +24,6 @@ import junit.framework.TestCase;
 import org.apache.ivy.Ivy;
 import org.apache.ivy.TestHelper;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
-import org.apache.ivy.util.DefaultMessageImpl;
-import org.apache.ivy.util.Message;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.Delete;
