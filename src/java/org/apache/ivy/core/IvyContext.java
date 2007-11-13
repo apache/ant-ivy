@@ -31,7 +31,6 @@ import org.apache.ivy.core.event.EventManager;
 import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.plugins.circular.CircularDependencyStrategy;
 import org.apache.ivy.util.MessageLogger;
-import org.apache.tools.ant.Project;
 
 /**
  * This class represents an execution context of an Ivy action. It contains several getters to
