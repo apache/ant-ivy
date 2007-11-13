@@ -35,6 +35,7 @@
 	<taskdef name="buildlist" classname="org.apache.ivy.ant.IvyBuildList"/>
 	<taskdef name="install" classname="org.apache.ivy.ant.IvyInstall"/>
 	<taskdef name="convertpom" classname="org.apache.ivy.ant.IvyConvertPom"/>
+	<taskdef name="makepom" classname="org.apache.ivy.ant.IvyMakePom"/>
 	<taskdef name="artifactreport" classname="org.apache.ivy.ant.IvyArtifactReport"/>
 	<taskdef name="info" classname="org.apache.ivy.ant.IvyInfo"/>
 	<taskdef name="addpath" classname="org.apache.ivy.ant.AddPathTask"/>

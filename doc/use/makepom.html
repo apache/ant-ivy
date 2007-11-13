@@ -1,0 +1,72 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<!--
+   Licensed to the Apache Software Foundation (ASF) under one
+   or more contributor license agreements.  See the NOTICE file
+   distributed with this work for additional information
+   regarding copyright ownership.  The ASF licenses this file
+   to you under the Apache License, Version 2.0 (the
+   "License"); you may not use this file except in compliance
+   with the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing,
+   software distributed under the License is distributed on an
+   "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+   KIND, either express or implied.  See the License for the
+   specific language governing permissions and limitations
+   under the License.    
+-->
+<html>
+<head>
+	<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
+	<script type="text/javascript">var xookiConfig = {level: 1};</script>	
+	<script type="text/javascript" src="../xooki/xooki.js"></script>
+</head>
+<body>
+	<textarea id="xooki-source">
+<span class="since">since 2.0</span>
+The makepom task allows to convert an ivy file to a pom file.
+
+An example of use is to publish an Ivy managed module to a maven 2 repository.
+
+<em>Note that all Ivy features are not supported by maven poms, so the converted pom may not resolve to the exact same dependencies as the original ivy file.</em>
+
+<h1>Attributes</h1>
+<table class="ant">
+<thead>
+    <tr><th class="ant-att">Attribute</th><th class="ant-desc">Description</th><th class="ant-req">Required</th></tr>
+</thead>
+<tbody>
+    <tr><td>ivyfile</td><td>the source ivy file to convert</td>
+        <td>Yes</td></tr>
+    <tr><td>pomfile</td><td>the destination pom file to write</td>
+        <td>Yes</td></tr>
+<tr><td>settingsRef</td><td>A reference to the ivy settings that must be used by this task</td><td>No, 'ivy.instance' is taken by default.</td></tr>
+</tbody>
+</table>
+<h1>Child elements</h1>
+<table class="ivy-children">
+<thead>
+    <tr><th class="ivy-chld">Element</th><th class="ivy-chld-desc">Description</th><th class="ivy-chld-card">Cardinality</th></tr>
+</thead>
+<tbody>
+    <tr><td>mapping</td>
+        <td>describes the mapping from an Ivy configuration to a POM scope.<br/>These elements takes two attributes: <ul><li>conf</li> the configuration to map<li>scope</li>the scope to which it should be mapped</ul></td>
+        <td>0..n</td></tr>
+</tbody>
+</table>
+
+<h1>Examples</h1>
+<code type="xml">
+<ivy:makepom ivyfile="${basedir}/path/to/ivy.xml" pomfile="${basedir}/path/to/module.pom">
+   <mapping conf="default" scope="compile"/>
+   <mapping conf="runtime" scope="runtime"/>
+</ivy:makepom>
+</code>
+Converts ${basedir}/path/to/ivy.xml to a pom and writes the result to ${basedir}/path/to/module.pom. The configuration 'default' in the parsed ivy file will be mapped to the scope 'compile', the configuration 'runtime' will be mapped to 'runtime', and other configurations will be considered optional.
+
+	</textarea>
+<script type="text/javascript">xooki.postProcess();</script>
+</body>
+</html>

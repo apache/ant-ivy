@@ -322,6 +322,14 @@ ${final.core.name}    The Ivy core, eg everything but classes dependent on Ant.$
         <!-- clean generated module properties file -->
         <delete file="${core.classes.build.dir}/module.properties" />
     </target>
+	
+	<target name="makepom" depends="init-ivy">
+        <!-- TODO: use this to prepare a deployment to maven 2 repository -->
+		<ivy:makepom ivyfile="${basedir}/ivy.xml" pomfile="${basedir}/ivy.pom">
+			<mapping conf="core" scope="compile"/>
+			<mapping conf="test" scope="test"/>
+		</ivy:makepom>
+	</target>
 
     <!-- =================================================================
          PUBLISH LOCAL

@@ -634,6 +634,13 @@
                             ]
                         },
                         {
+                          "id":"use/makepom",
+                          "title":"makepom",
+                          "children": [
+
+                            ]
+                        },
+                        {
                           "id":"use/postresolvetask",
                           "title":"post resolve tasks",
                           "children": [
