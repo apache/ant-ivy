@@ -182,8 +182,6 @@ public abstract class IvyPostResolveTask extends IvyTask {
     }
 
     protected void ensureResolved(IvySettings settings) {
-        ensureMessageInitialised();
-        
         String requestedConfigs = getProperty(getConf(), settings, "ivy.resolved.configurations");
 
         String[] confs = null;

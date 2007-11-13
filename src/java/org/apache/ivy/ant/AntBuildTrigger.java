@@ -29,7 +29,6 @@ import org.apache.ivy.core.event.IvyEvent;
 import org.apache.ivy.plugins.trigger.AbstractTrigger;
 import org.apache.ivy.plugins.trigger.Trigger;
 import org.apache.ivy.util.Message;
-import org.apache.ivy.util.MessageImpl;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.Ant;
@@ -97,20 +96,14 @@ public class AntBuildTrigger extends AbstractTrigger implements Trigger {
                 }
 
                 Message.verbose("triggering build: " + f + " target=" + target + " for " + event);
-                MessageImpl impl = IvyContext.getContext().getMessageImpl();
                 try {
-                    IvyContext.getContext().setMessageImpl(null);
-                    try {
-                        ant.execute();
-                    } catch (BuildException e) {
-                        Message.verbose("Exception occurred while executing target " + target);
-                        e.printStackTrace(); // TODO: remove when finished debugging
-                        throw e;
-                    }
-                    markBuilt(f);
-                } finally {
-                    IvyContext.getContext().setMessageImpl(impl);
+                    ant.execute();
+                } catch (BuildException e) {
+                    Message.verbose("Exception occurred while executing target " + target);
+                    e.printStackTrace(); // TODO: remove when finished debugging
+                    throw e;
                 }
+                markBuilt(f);
 
                 Message.debug("triggered build finished: " + f + " target=" + target + " for "
                         + event);

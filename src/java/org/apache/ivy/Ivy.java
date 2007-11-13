@@ -60,6 +60,7 @@ import org.apache.ivy.plugins.repository.TransferListener;
 import org.apache.ivy.plugins.trigger.Trigger;
 import org.apache.ivy.util.HostUtil;
 import org.apache.ivy.util.Message;
+import org.apache.ivy.util.MessageLoggerEngine;
 import org.apache.ivy.util.filter.Filter;
 
 /**
@@ -71,7 +72,7 @@ import org.apache.ivy.util.filter.Filter;
  * <li>retrieve artifacts to a local location</li>
  * <li>deliver and publish modules</li>
  * <li>repository search and listing</li>
- * </li>
+ * </ul>
  * Here is one typical usage:
  * 
  * <pre>
@@ -79,8 +80,48 @@ import org.apache.ivy.util.filter.Filter;
  * ivy.configure(new URL(&quot;ivysettings.xml&quot;));
  * ivy.resolve(new URL(&quot;ivy.xml&quot;));
  * </pre>
+ * 
+ * </p>
+ * <h2>Using Ivy engines directly</h2>
+ * <p>
+ * If the methods offered by the {@link Ivy} class are not flexible enough and you want to use Ivy
+ * engines directly, you need to call the methods within a single {@link IvyContext} associated to
+ * the {@link Ivy} instance you use.<br/> To do so, it is recommended to use the
+ * {@link #execute(org.apache.ivy.Ivy.IvyCallback)} method like this:
+ * <pre>
+ * Ivy ivy = Ivy.newInstance();
+ * ivy.execute(new IvyCallback() {
+ *     public Object doInIvyContext(Ivy ivy, IvyContext context) {
+ *         // obviously we can use regular Ivy methods in the callback 
+ *         ivy.configure(new URL(&quot;ivysettings.xml&quot;));
+ *         // and we can safely use Ivy engines too
+ *         ivy.getResolveEngine().resolve(new URL(&quot;ivy.xml&quot;));
+ *         return null;
+ *     }
+ * });
+ * </pre>
+ * 
+ * </p>
  */
 public class Ivy {
+    /**
+     * Callback used to execute a set of Ivy related methods within an {@link IvyContext}.
+     * 
+     * @see Ivy#execute(org.apache.ivy.Ivy.IvyCallback)
+     */
+    public static interface IvyCallback {
+        /**
+         * Executes Ivy related job within an {@link IvyContext}
+         * 
+         * @param ivy
+         *            the {@link Ivy} instance to which this callback is related
+         * @param context
+         *            the {@link IvyContext} in which this callback is executed
+         * @return the result of this job, <code>null</code> if there is no result
+         */
+        public Object doInIvyContext(Ivy ivy, IvyContext context);
+    }
+    
     private static final int KILO = 1024;
 
     public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyyMMddHHmmss");
@@ -193,6 +234,11 @@ public class Ivy {
     private PublishEngine publishEngine;
 
     private InstallEngine installEngine;
+    
+    /**
+     * The logger engine to use to log messages when using this Ivy instance.
+     */
+    private MessageLoggerEngine loggerEngine = new MessageLoggerEngine();
 
     /**
      * The default constructor of Ivy allows to create an instance of Ivy with none of its
@@ -207,92 +253,192 @@ public class Ivy {
 
     /**
      * This method is used to bind this Ivy instance to required dependencies, i.e. instance of
-     * settings, engines, and so on. After this call Ivy is still not configured, which means that
+     * settings, engines, and so on. 
+     * <p>
+     * After this call Ivy is still not configured, which means that
      * the settings object is still empty.
+     * </p>
      */
     public void bind() {
-        IvyContext.getContext().setIvy(this);
-        if (settings == null) {
-            settings = new IvySettings();
-        }
-        if (eventManager == null) {
-            eventManager = new EventManager();
-        }
-        if (sortEngine == null) {
-            sortEngine = new SortEngine(settings);
-        }
-        if (searchEngine == null) {
-            searchEngine = new SearchEngine(settings);
-        }
-        if (resolveEngine == null) {
-            resolveEngine = new ResolveEngine(settings, eventManager, sortEngine);
-        }
-        if (retrieveEngine == null) {
-            retrieveEngine = new RetrieveEngine(settings);
-        }
-        if (deliverEngine == null) {
-            deliverEngine = new DeliverEngine(settings);
-        }
-        if (publishEngine == null) {
-            publishEngine = new PublishEngine(settings);
-        }
-        if (installEngine == null) {
-            installEngine = new InstallEngine(settings, searchEngine, resolveEngine, publishEngine);
-        }
-
-        eventManager.addTransferListener(new TransferListener() {
-            public void transferProgress(TransferEvent evt) {
-                switch (evt.getEventType()) {
-                    case TransferEvent.TRANSFER_PROGRESS:
-                        Message.progress();
-                        break;
-                    case TransferEvent.TRANSFER_COMPLETED:
-                        Message.endProgress(" (" + (evt.getTotalLength() / KILO) + "kB)");
-                        break;
-                    default:
-                        break;
-                }
+        pushContext();
+        try {
+            if (settings == null) {
+                settings = new IvySettings();
             }
-        });
-
-        bound = true;
+            if (eventManager == null) {
+                eventManager = new EventManager();
+            }
+            if (sortEngine == null) {
+                sortEngine = new SortEngine(settings);
+            }
+            if (searchEngine == null) {
+                searchEngine = new SearchEngine(settings);
+            }
+            if (resolveEngine == null) {
+                resolveEngine = new ResolveEngine(settings, eventManager, sortEngine);
+            }
+            if (retrieveEngine == null) {
+                retrieveEngine = new RetrieveEngine(settings);
+            }
+            if (deliverEngine == null) {
+                deliverEngine = new DeliverEngine(settings);
+            }
+            if (publishEngine == null) {
+                publishEngine = new PublishEngine(settings);
+            }
+            if (installEngine == null) {
+                installEngine = new InstallEngine(
+                    settings, searchEngine, resolveEngine, publishEngine);
+            }
+    
+            eventManager.addTransferListener(new TransferListener() {
+                public void transferProgress(TransferEvent evt) {
+                    switch (evt.getEventType()) {
+                        case TransferEvent.TRANSFER_PROGRESS:
+                            Message.progress();
+                            break;
+                        case TransferEvent.TRANSFER_COMPLETED:
+                            Message.endProgress(" (" + (evt.getTotalLength() / KILO) + "kB)");
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            });
+    
+            bound = true;
+        } finally {
+            popContext();
+        }
     }
+    
+    /**
+     * Executes the given callback in the context of this Ivy instance.
+     * <p>
+     * Alternatively you can use the {@link #pushContext()} and {@link #popContext()} methods, but
+     * this is not recommended:
+     * 
+     * <pre>
+     * Object result = null;
+     * pushContext();
+     * try {
+     *     result = callback.doInIvyContext(this, IvyContext.getContext());
+     * } finally {
+     *     popContext();
+     * }
+     * doSomethingWithResult(result);
+     * </pre>
+     * 
+     * </p>
+     * 
+     * @param callback
+     * @return
+     */
+    public Object execute(IvyCallback callback) {
+        pushContext();
+        try {
+            return callback.doInIvyContext(this, IvyContext.getContext());
+        } finally {
+            popContext();
+        }
+    }
+    
+    /**
+     * Pushes a new IvyContext bound to this Ivy instance if the current context is not already
+     * bound to this Ivy instance. If the current context is already bound to this Ivy instance, it
+     * pushes the current context on the context stack, so that you can (and must) always call
+     * {@link #popContext()} when you're done.
+     * <p>
+     * Alternatively, you can use the {@link #execute(org.apache.ivy.Ivy.IvyCallback)} method which
+     * takes care of everything for you.
+     * </p>
+     */
+    public void pushContext() {
+        if (IvyContext.getContext().peekIvy() != this) {
+            IvyContext.pushNewContext();
+            IvyContext.getContext().setIvy(this);
+        } else {
+            IvyContext.pushContext(IvyContext.getContext());
+        }
+    }
+
+
+    /**
+     * Pops the current Ivy context.
+     * <p>
+     * You must call this method once and only once for each call to {@link #pushContext()}, when
+     * you're done with the your Ivy related work.
+     * </p>
+     * <p>
+     * Alternatively, you can use the {@link #execute(org.apache.ivy.Ivy.IvyCallback)} method which
+     * takes care of everything for you.
+     * </p>
+     */
+    public void popContext() {
+        IvyContext.popContext();
+    }
+    
 
     // ///////////////////////////////////////////////////////////////////////
     // LOAD SETTINGS
     // ///////////////////////////////////////////////////////////////////////
     public void configure(File settingsFile) throws ParseException, IOException {
-        assertBound();
-        settings.load(settingsFile);
-        postConfigure();
+        pushContext();
+        try {
+            assertBound();
+            settings.load(settingsFile);
+            postConfigure();
+        } finally {
+            popContext();
+        }
     }
 
     public void configure(URL settingsURL) throws ParseException, IOException {
-        assertBound();
-        settings.load(settingsURL);
-        postConfigure();
+        pushContext();
+        try {
+            assertBound();
+            settings.load(settingsURL);
+            postConfigure();
+        } finally {
+            popContext();
+        }
     }
 
     public void configureDefault() throws ParseException, IOException {
-        assertBound();
-        settings.loadDefault();
-        postConfigure();
+        pushContext();
+        try {
+            assertBound();
+            settings.loadDefault();
+            postConfigure();
+        } finally {
+            popContext();
+        }
     }
 
     /**
      * Configures Ivy with 1.4 compatible default settings
      */
     public void configureDefault14() throws ParseException, IOException {
-        assertBound();
-        settings.loadDefault14();
-        postConfigure();
+        pushContext();
+        try {
+            assertBound();
+            settings.loadDefault14();
+            postConfigure();
+        } finally {
+            popContext();
+        }
     }
 
     // ///////////////////////////////////////////////////////////////////////
     // CHECK
     // ///////////////////////////////////////////////////////////////////////
     public boolean check(URL ivyFile, String resolvername) {
-        return checkEngine.check(ivyFile, resolvername);
+        pushContext();
+        try {
+            return checkEngine.check(ivyFile, resolvername);
+        } finally {
+            popContext();
+        }
     }
 
     // ///////////////////////////////////////////////////////////////////////
@@ -300,26 +446,51 @@ public class Ivy {
     // ///////////////////////////////////////////////////////////////////////
 
     public ResolveReport resolve(File ivySource) throws ParseException, IOException {
-        return resolveEngine.resolve(ivySource);
+        pushContext();
+        try {
+            return resolveEngine.resolve(ivySource);
+        } finally {
+            popContext();
+        }
     }
 
     public ResolveReport resolve(URL ivySource) throws ParseException, IOException {
-        return resolveEngine.resolve(ivySource);
+        pushContext();
+        try {
+            return resolveEngine.resolve(ivySource);
+        } finally {
+            popContext();
+        }
     }
 
     public ResolveReport resolve(ModuleRevisionId mrid, ResolveOptions options, boolean changing)
             throws ParseException, IOException {
-        return resolveEngine.resolve(mrid, options, changing);
+        pushContext();
+        try {
+            return resolveEngine.resolve(mrid, options, changing);
+        } finally {
+            popContext();
+        }
     }
 
-    public ResolveReport resolve(URL ivySource, ResolveOptions options) throws ParseException,
-            IOException {
-        return resolveEngine.resolve(ivySource, options);
+    public ResolveReport resolve(URL ivySource, ResolveOptions options) 
+            throws ParseException, IOException {
+        pushContext();
+        try {
+            return resolveEngine.resolve(ivySource, options);
+        } finally {
+            popContext();
+        }
     }
 
     public ResolveReport resolve(ModuleDescriptor md, ResolveOptions options)
             throws ParseException, IOException {
-        return resolveEngine.resolve(md, options);
+        pushContext();
+        try {
+            return resolveEngine.resolve(md, options);
+        } finally {
+            popContext();
+        }
     }
 
     // ///////////////////////////////////////////////////////////////////////
@@ -329,8 +500,13 @@ public class Ivy {
     public ResolveReport install(ModuleRevisionId mrid, String from, String to, boolean transitive,
             boolean validate, boolean overwrite, Filter artifactFilter, File cache,
             String matcherName) throws IOException {
-        return installEngine.install(mrid, from, to, transitive, validate, overwrite,
-            artifactFilter, cache, matcherName);
+        pushContext();
+        try {
+            return installEngine.install(mrid, from, to, transitive, validate, overwrite,
+                artifactFilter, cache, matcherName);
+        } finally {
+            popContext();
+        }
     }
 
     // ///////////////////////////////////////////////////////////////////////
@@ -339,7 +515,12 @@ public class Ivy {
 
     public int retrieve(ModuleRevisionId mrid, String destFilePattern, RetrieveOptions options)
             throws IOException {
-        return retrieveEngine.retrieve(mrid, destFilePattern, options);
+        pushContext();
+        try {
+            return retrieveEngine.retrieve(mrid, destFilePattern, options);
+        } finally {
+            popContext();
+        }
     }
 
     // ///////////////////////////////////////////////////////////////////////
@@ -348,12 +529,23 @@ public class Ivy {
 
     public void deliver(ModuleRevisionId mrid, String revision, String destIvyPattern)
             throws IOException, ParseException {
-        deliverEngine.deliver(mrid, revision, destIvyPattern, DeliverOptions.newInstance(settings));
+        pushContext();
+        try {
+            deliverEngine.deliver(
+                mrid, revision, destIvyPattern, DeliverOptions.newInstance(settings));
+        } finally {
+            popContext();
+        }
     }
 
     public void deliver(String revision, String destIvyPattern, DeliverOptions options)
             throws IOException, ParseException {
-        deliverEngine.deliver(revision, destIvyPattern, options);
+        pushContext();
+        try {
+            deliverEngine.deliver(revision, destIvyPattern, options);
+        } finally {
+            popContext();
+        }
     }
 
     /**
@@ -369,7 +561,12 @@ public class Ivy {
      */
     public void deliver(ModuleRevisionId mrid, String revision, String destIvyPattern,
             DeliverOptions options) throws IOException, ParseException {
-        deliverEngine.deliver(mrid, revision, destIvyPattern, options);
+        pushContext();
+        try {
+            deliverEngine.deliver(mrid, revision, destIvyPattern, options);
+        } finally {
+            popContext();
+        }
     }
 
     // ///////////////////////////////////////////////////////////////////////
@@ -378,7 +575,12 @@ public class Ivy {
 
     public Collection publish(ModuleRevisionId mrid, Collection srcArtifactPattern,
             String resolverName, PublishOptions options) throws IOException {
-        return publishEngine.publish(mrid, srcArtifactPattern, resolverName, options);
+        pushContext();
+        try {
+            return publishEngine.publish(mrid, srcArtifactPattern, resolverName, options);
+        } finally {
+            popContext();
+        }
     }
 
     // ///////////////////////////////////////////////////////////////////////
@@ -389,7 +591,12 @@ public class Ivy {
      * Sorts the collection of IvyNode from the less dependent to the more dependent
      */
     public List sortNodes(Collection nodes) {
-        return getSortEngine().sortNodes(nodes);
+        pushContext();
+        try {
+            return getSortEngine().sortNodes(nodes);
+        } finally {
+            popContext();
+        }
     }
 
     /**
@@ -407,7 +614,13 @@ public class Ivy {
      */
     public List sortModuleDescriptors(Collection moduleDescriptors,
             NonMatchingVersionReporter nonMatchingVersionReporter) {
-        return getSortEngine().sortModuleDescriptors(moduleDescriptors, nonMatchingVersionReporter);
+        pushContext();
+        try {
+            return getSortEngine().sortModuleDescriptors(
+                moduleDescriptors, nonMatchingVersionReporter);
+        } finally {
+            popContext();
+        }
     }
 
     // ///////////////////////////////////////////////////////////////////////
@@ -415,46 +628,96 @@ public class Ivy {
     // ///////////////////////////////////////////////////////////////////////
 
     public ResolvedModuleRevision findModule(ModuleRevisionId mrid) {
-        ResolveOptions options = new ResolveOptions();
-        options.setValidate(false);
-        options.setCache(CacheManager.getInstance(settings));
-        return resolveEngine.findModule(mrid, options);
+        pushContext();
+        try {
+            ResolveOptions options = new ResolveOptions();
+            options.setValidate(false);
+            options.setCache(CacheManager.getInstance(settings));
+            return resolveEngine.findModule(mrid, options);
+        } finally {
+            popContext();
+        }
     }
 
     public ModuleEntry[] listModuleEntries(OrganisationEntry org) {
-        return searchEngine.listModuleEntries(org);
+        pushContext();
+        try {
+            return searchEngine.listModuleEntries(org);
+        } finally {
+            popContext();
+        }
     }
 
     public ModuleId[] listModules(ModuleId criteria, PatternMatcher matcher) {
-        return searchEngine.listModules(criteria, matcher);
+        pushContext();
+        try {
+            return searchEngine.listModules(criteria, matcher);
+        } finally {
+            popContext();
+        }
     }
 
     public ModuleRevisionId[] listModules(ModuleRevisionId criteria, PatternMatcher matcher) {
-        return searchEngine.listModules(criteria, matcher);
+        pushContext();
+        try {
+            return searchEngine.listModules(criteria, matcher);
+        } finally {
+            popContext();
+        }
     }
 
     public String[] listModules(String org) {
-        return searchEngine.listModules(org);
+        pushContext();
+        try {
+            return searchEngine.listModules(org);
+        } finally {
+            popContext();
+        }
     }
 
     public OrganisationEntry[] listOrganisationEntries() {
-        return searchEngine.listOrganisationEntries();
+        pushContext();
+        try {
+            return searchEngine.listOrganisationEntries();
+        } finally {
+            popContext();
+        }
     }
 
     public String[] listOrganisations() {
-        return searchEngine.listOrganisations();
+        pushContext();
+        try {
+            return searchEngine.listOrganisations();
+        } finally {
+            popContext();
+        }
     }
 
     public RevisionEntry[] listRevisionEntries(ModuleEntry module) {
-        return searchEngine.listRevisionEntries(module);
+        pushContext();
+        try {
+            return searchEngine.listRevisionEntries(module);
+        } finally {
+            popContext();
+        }
     }
 
     public String[] listRevisions(String org, String module) {
-        return searchEngine.listRevisions(org, module);
+        pushContext();
+        try {
+            return searchEngine.listRevisions(org, module);
+        } finally {
+            popContext();
+        }
     }
 
     public String[] listTokenValues(String token, Map otherTokenValues) {
-        return searchEngine.listTokenValues(token, otherTokenValues);
+        pushContext();
+        try {
+            return searchEngine.listTokenValues(token, otherTokenValues);
+        } finally {
+            popContext();
+        }
     }
 
     // ///////////////////////////////////////////////////////////////////////
@@ -541,18 +804,33 @@ public class Ivy {
     }
 
     public String getVariable(String name) {
-        assertBound();
-        return settings.getVariable(name);
+        pushContext();
+        try {
+            assertBound();
+            return settings.getVariable(name);
+        } finally {
+            popContext();
+        }
     }
 
     public String substitute(String str) {
-        assertBound();
-        return settings.substitute(str);
+        pushContext();
+        try {
+            assertBound();
+            return settings.substitute(str);
+        } finally {
+            popContext();
+        }
     }
 
     public void setVariable(String varName, String value) {
-        assertBound();
-        settings.setVariable(varName, value);
+        pushContext();
+        try {
+            assertBound();
+            settings.setVariable(varName, value);
+        } finally {
+            popContext();
+        }
     }
 
     // ///////////////////////////////////////////////////////////////////
@@ -639,4 +917,7 @@ public class Ivy {
         this.settings = settings;
     }
 
+    public MessageLoggerEngine getLoggerEngine() {
+        return loggerEngine;
+    }
 }

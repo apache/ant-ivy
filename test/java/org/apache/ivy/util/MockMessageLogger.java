@@ -23,7 +23,7 @@ import java.util.List;
 
 import junit.framework.AssertionFailedError;
 
-public class MockMessageImpl implements MessageImpl {
+public class MockMessageLogger extends AbstractMessageLogger {
 
     private List _endProgress = new ArrayList();
 
@@ -33,7 +33,7 @@ public class MockMessageImpl implements MessageImpl {
 
     private int _progressCalls;
 
-    public void endProgress(String msg) {
+    public void doEndProgress(String msg) {
         _endProgress.add(msg);
     }
 
@@ -41,7 +41,7 @@ public class MockMessageImpl implements MessageImpl {
         _logs.add(level + " " + msg);
     }
 
-    public void progress() {
+    public void doProgress() {
         _progressCalls++;
     }
 

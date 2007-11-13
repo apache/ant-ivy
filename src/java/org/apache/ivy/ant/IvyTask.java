@@ -71,7 +71,6 @@ public abstract class IvyTask extends Task {
     }
 
     protected Ivy getIvyInstance() {
-        ensureMessageInitialised();
         Object antIvyEngine;
         if (antIvyEngineRef != null) {
             antIvyEngine = antIvyEngineRef.getReferencedObject(getProject());
@@ -90,17 +89,9 @@ public abstract class IvyTask extends Task {
         } else {
             antIvyEngine = IvyAntSettings.getDefaultInstance(getProject());
         }
-        return ((IvyAntSettings) antIvyEngine).getConfiguredIvyInstance();
-    }
-
-    /**
-     * Every task MUST call ensureMessageInitialised when the execution method starts (at least
-     * before doing any log in order to set the correct task in the log.
-     */
-    protected void ensureMessageInitialised() {
-        if (!Message.isInitialised()) {
-            Message.init(new AntMessageImpl(this));
-        }
+        Ivy ivy = ((IvyAntSettings) antIvyEngine).getConfiguredIvyInstance();
+        AntMessageLogger.register(this, ivy);
+        return ivy;
     }
 
     protected void setResolved(ResolveReport report, boolean keep) {

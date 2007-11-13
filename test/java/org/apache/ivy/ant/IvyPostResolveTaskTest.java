@@ -24,7 +24,7 @@ import junit.framework.TestCase;
 import org.apache.ivy.TestHelper;
 import org.apache.ivy.core.report.ResolveReport;
 import org.apache.ivy.util.CacheCleaner;
-import org.apache.ivy.util.DefaultMessageImpl;
+import org.apache.ivy.util.DefaultMessageLogger;
 import org.apache.ivy.util.Message;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
@@ -37,8 +37,7 @@ public class IvyPostResolveTaskTest extends TestCase {
     private Project project;
 
     protected void setUp() throws Exception {
-        Message.init(new DefaultMessageImpl(10));
-
+        Message.setDefaultLogger(new DefaultMessageLogger(10));
         createCache();
         project = new Project();
         project.setProperty("ivy.settings.file", "test/repositories/ivysettings.xml");

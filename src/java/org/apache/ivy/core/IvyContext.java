@@ -23,13 +23,14 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Stack;
 
 import org.apache.ivy.Ivy;
 import org.apache.ivy.core.cache.CacheManager;
 import org.apache.ivy.core.event.EventManager;
 import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.plugins.circular.CircularDependencyStrategy;
-import org.apache.ivy.util.MessageImpl;
+import org.apache.ivy.util.MessageLogger;
 
 /**
  * This class represents an execution context of an Ivy action. It contains several getters to
@@ -39,52 +40,99 @@ import org.apache.ivy.util.MessageImpl;
  */
 public class IvyContext {
 
-    private static ThreadLocal current = new ThreadLocal();
+    private static ThreadLocal/*<Stack<IvyContext>>*/ current = new ThreadLocal();
 
     private Ivy defaultIvy;
 
-    private WeakReference ivy = new WeakReference(null);
+    private WeakReference/*<Ivy>*/ ivy = new WeakReference(null);
 
     private File cache;
-
-    private MessageImpl messageImpl;
 
     private Map contextMap = new HashMap();
 
     private Thread operatingThread;
 
     public static IvyContext getContext() {
-        IvyContext cur = (IvyContext) current.get();
+        Stack cur = getCurrentStack();
+        if (cur.isEmpty()) {
+            cur.push(new IvyContext());
+        }
+        return (IvyContext) cur.peek();
+    }
+    
+    private static Stack/*<IvyContext>*/ getCurrentStack() {
+        Stack cur = (Stack) current.get();
         if (cur == null) {
-            cur = new IvyContext();
+            cur = new Stack();
             current.set(cur);
         }
         return cur;
     }
 
     /**
+     * Creates a new IvyContext and pushes it as the current context in the current thread.
+     * <p>
+     * {@link #popContext()} should usually be called when the job for which this context has been
+     * pushed is finsihed.
+     * </p>
+     */
+    public static void pushNewContext() {
+        pushContext(new IvyContext());
+    }
+    
+    /**
      * Changes the context associated with this thread. This is especially useful when launching a
-     * new thread, to associate it with the same context as the initial one.
+     * new thread, to associate it with the same context as the initial one. Do not forget to call
+     * {@link #popContext()} when done.
      * 
      * @param context
      *            the new context to use in this thread.
      */
-    public static void setContext(IvyContext context) {
-        current.set(context);
+    public static void pushContext(IvyContext context) {
+        getCurrentStack().push(context);
+    }
+    
+    /**
+     * Pops one context used with this thread. This is usually called after having finished a task
+     * for which a call to {@link #pushNewContext()} or {@link #pushContext(IvyContext)} was done
+     * prior to beginning the task.
+     */
+    public static void popContext() {
+        getCurrentStack().pop();
     }
 
     /**
-     * Returns the current ivy instance. When calling any public ivy method on an ivy instance, a
-     * reference to this instance is put in this context, and thus accessible using this method,
-     * until no code reference this instance and the garbage collector collects it. Then, or if no
-     * ivy method has been called, a default ivy instance is returned by this method, so that it
-     * never returns null.
+     * Returns the current ivy instance.
+     * <p>
+     * When calling any public ivy method on an ivy instance, a reference to this instance is put in
+     * this context, and thus accessible using this method, until no code reference this instance
+     * and the garbage collector collects it.
+     * </p>
+     * <p>
+     * Then, or if no ivy method has been called, a default ivy instance is returned by this method,
+     * so that it never returns <code>null</code>.
+     * </p>
      * 
      * @return the current ivy instance
      */
     public Ivy getIvy() {
-        Ivy ivy = (Ivy) this.ivy.get();
+        Ivy ivy = peekIvy();
         return ivy == null ? getDefaultIvy() : ivy;
+    }
+
+    /**
+     * Returns the Ivy instance associated with this context, or <code>null</code> if no such
+     * instance is currently associated with this context.
+     * <p>
+     * If you want get a default Ivy instance in case no instance if currently associated, use
+     * {@link #getIvy()}.
+     * </p>
+     * 
+     * @return the current ivy instance, or <code>null</code> if there is no current ivy instance.
+     */
+    public Ivy peekIvy() {
+        Ivy ivy = (Ivy) this.ivy.get();
+        return ivy;
     }
 
     private Ivy getDefaultIvy() {
@@ -241,17 +289,9 @@ public class IvyContext {
         return operatingThread;
     }
 
-    /*
-     * NB : The messageImpl is only used by Message. It should be better to place it there.
-     * Alternatively, the Message itself could be placed here, bu this is has a major impact because
-     * Message is used at a lot of place.
-     */
-    public MessageImpl getMessageImpl() {
-        return messageImpl;
-    }
 
-    public void setMessageImpl(MessageImpl impl) {
-        messageImpl = impl;
+    public MessageLogger getMessageLogger() {
+        return getIvy().getLoggerEngine();
     }
 
     public EventManager getEventManager() {

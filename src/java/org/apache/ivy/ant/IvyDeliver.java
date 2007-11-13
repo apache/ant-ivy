@@ -21,7 +21,6 @@ import java.io.File;
 import java.util.Date;
 
 import org.apache.ivy.Ivy;
-import org.apache.ivy.core.IvyContext;
 import org.apache.ivy.core.cache.CacheManager;
 import org.apache.ivy.core.deliver.DefaultPublishingDRResolver;
 import org.apache.ivy.core.deliver.DeliverOptions;
@@ -31,7 +30,6 @@ import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.module.status.StatusManager;
 import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.util.Message;
-import org.apache.ivy.util.MessageImpl;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.taskdefs.CallTarget;
 import org.apache.tools.ant.taskdefs.Echo;
@@ -168,13 +166,7 @@ public class IvyDeliver extends IvyTask {
                 param.setName("dependency.status");
                 param.setValue(depStatus == null ? "null" : depStatus);
 
-                MessageImpl impl = IvyContext.getContext().getMessageImpl();
-                try {
-                    IvyContext.getContext().setMessageImpl(null);
-                    ct.perform();
-                } finally {
-                    IvyContext.getContext().setMessageImpl(impl);
-                }
+                ct.perform();
 
                 String deliveredProperty = depMrid.getName() + "." + depMrid.getRevision()
                         + ".delivered";

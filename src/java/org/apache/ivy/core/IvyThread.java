@@ -65,6 +65,6 @@ public class IvyThread extends Thread {
     }
 
     protected void initContext() {
-        IvyContext.setContext(context);
+        IvyContext.pushContext(context);
     }
 }

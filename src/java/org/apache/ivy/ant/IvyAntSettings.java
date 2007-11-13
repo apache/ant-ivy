@@ -229,12 +229,14 @@ public class IvyAntSettings extends DataType {
         // defineDefaultSettingFile (that should be done before the ivy.configure
         settings.addAllVariables(getDefaultProperties(), false);
 
-        Ivy ivy = Ivy.newInstance(settings);
-
+        
         if (file == null && url == null) {
             defineDefaultSettingFile(ivyAntVariableContainer);
         }
 
+        Ivy ivy = Ivy.newInstance(settings);
+        ivy.getLoggerEngine().pushLogger(new AntMessageLogger(this));
+        Message.showInfo();
         try {
             configureURLHandler();
             if (file != null) {
@@ -257,6 +259,8 @@ public class IvyAntSettings extends DataType {
         } catch (IOException e) {
             throw new BuildException("impossible to configure ivy:settings with given "
                     + (file != null ? "file: " + file : "url :" + url) + " :" + e, e);
+        } finally {
+            ivy.getLoggerEngine().popLogger();
         }
         return ivy;
     }

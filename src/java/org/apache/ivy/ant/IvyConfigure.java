@@ -36,7 +36,6 @@ public class IvyConfigure extends IvyTask {
     private IvyAntSettings antSettings = new IvyAntSettings();
 
     public void doExecute() throws BuildException {
-        ensureMessageInitialised();
         log("ivy:configure is deprecated, please use the data type ivy:settings instead",
             Project.MSG_WARN);
         // ivyConfigure used to export properties in the ant script.

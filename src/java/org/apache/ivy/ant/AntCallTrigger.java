@@ -28,7 +28,6 @@ import org.apache.ivy.core.event.IvyEvent;
 import org.apache.ivy.plugins.trigger.AbstractTrigger;
 import org.apache.ivy.plugins.trigger.Trigger;
 import org.apache.ivy.util.Message;
-import org.apache.ivy.util.MessageImpl;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.CallTarget;
 import org.apache.tools.ant.taskdefs.Property;
@@ -86,14 +85,8 @@ public class AntCallTrigger extends AbstractTrigger implements Trigger {
             }
 
             Message.verbose("triggering ant call: target=" + target + " for " + event);
-            MessageImpl impl = IvyContext.getContext().getMessageImpl();
-            try {
-                IvyContext.getContext().setMessageImpl(null);
-                call.execute();
-                markTriggered(event);
-            } finally {
-                IvyContext.getContext().setMessageImpl(impl);
-            }
+            call.execute();
+            markTriggered(event);
 
             Message.debug("triggered ant call finished: target=" + target + " for " + event);
         }

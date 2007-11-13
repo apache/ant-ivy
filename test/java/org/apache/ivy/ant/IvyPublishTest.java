@@ -27,7 +27,7 @@ import junit.framework.TestCase;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.plugins.parser.xml.XmlModuleDescriptorParser;
-import org.apache.ivy.util.DefaultMessageImpl;
+import org.apache.ivy.util.DefaultMessageLogger;
 import org.apache.ivy.util.FileUtil;
 import org.apache.ivy.util.Message;
 import org.apache.tools.ant.BuildException;
@@ -55,7 +55,7 @@ public class IvyPublishTest extends TestCase {
         publish.setProject(project);
         publish.setCache(cache);
 
-        Message.init(new DefaultMessageImpl(10));
+        Message.setDefaultLogger(new DefaultMessageLogger(10));
     }
 
     private void createCache() {

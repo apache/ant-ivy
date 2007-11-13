@@ -17,8 +17,6 @@
  */
 package org.apache.ivy.util;
 
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.ivy.Ivy;
@@ -27,10 +25,12 @@ import org.apache.ivy.core.IvyContext;
 /**
  * Logging utility class.
  * <p>
- * To initialize Message you can call {@link #init(MessageImpl)} with
- * the {@link MessageImpl} of your choice.
- * <p> 
- * This only takes effect in the current thread.
+ * This class provides static methods for easy access to the current logger in {@link IvyContext}.
+ * </p>
+ * <p>
+ * To configure logging, you should use the methods provided by the {@link MessageLoggerEngine}
+ * associated with the {@link Ivy} engine.
+ * </p>
  */
 public final class Message {
     // messages level copied from ant project, to avoid dependency on ant
@@ -49,39 +49,24 @@ public final class Message {
     /** Message priority of "debug". */
     public static final int MSG_DEBUG = 4;
 
-    private static List problems = new ArrayList();
-
-    private static List warns = new ArrayList();
-
-    private static List errors = new ArrayList();
-
-    private static boolean showProgress = true;
 
     private static boolean showedInfo = false;
 
-    public static void init(MessageImpl impl) {
-        IvyContext.getContext().setMessageImpl(impl);
-        showInfo();
+    private static MessageLogger defaultLogger = new DefaultMessageLogger(Message.MSG_INFO);
+
+    public static MessageLogger getDefaultLogger() {
+        return defaultLogger;
     }
 
-    /**
-     * same as init, but without displaying info
-     * 
-     * @param impl
-     */
-    public static void setImpl(MessageImpl impl) {
-        IvyContext.getContext().setMessageImpl(impl);
+    public static void setDefaultLogger(MessageLogger logger) {
+        defaultLogger = logger;
     }
 
-    public static MessageImpl getImpl() {
-        return IvyContext.getContext().getMessageImpl();
+    private static MessageLogger getLogger() {
+        return IvyContext.getContext().getMessageLogger();
     }
 
-    public static boolean isInitialised() {
-        return IvyContext.getContext().getMessageImpl() != null;
-    }
-
-    private static void showInfo() {
+    public static void showInfo() {
         if (!showedInfo) {
             info(":: Ivy " + Ivy.getIvyVersion() + " - "
                    + Ivy.getIvyDate() + " :: " + Ivy.getIvyHomeURL() + " ::");
@@ -90,147 +75,61 @@ public final class Message {
     }
 
     public static void debug(String msg) {
-        MessageImpl messageImpl = IvyContext.getContext().getMessageImpl();
-        if (messageImpl != null) {
-            messageImpl.log(msg, MSG_DEBUG);
-        } else {
-            System.err.println(msg);
-        }
+        getLogger().debug(msg);
     }
 
     public static void verbose(String msg) {
-        MessageImpl messageImpl = IvyContext.getContext().getMessageImpl();
-        if (messageImpl != null) {
-            messageImpl.log(msg, MSG_VERBOSE);
-        } else {
-            System.err.println(msg);
-        }
+        getLogger().verbose(msg);
     }
 
     public static void info(String msg) {
-        MessageImpl messageImpl = IvyContext.getContext().getMessageImpl();
-        if (messageImpl != null) {
-            messageImpl.log(msg, MSG_INFO);
-        } else {
-            System.err.println(msg);
-        }
+        getLogger().info(msg);
     }
 
     public static void rawinfo(String msg) {
-        MessageImpl messageImpl = IvyContext.getContext().getMessageImpl();
-        if (messageImpl != null) {
-            messageImpl.rawlog(msg, MSG_INFO);
-        } else {
-            System.err.println(msg);
-        }
+        getLogger().rawinfo(msg);
     }
 
     public static void deprecated(String msg) {
-        MessageImpl messageImpl = IvyContext.getContext().getMessageImpl();
-        if (messageImpl != null) {
-            messageImpl.log("DEPRECATED: " + msg, MSG_WARN);
-        } else {
-            System.err.println(msg);
-        }
+        getLogger().deprecated(msg);
     }
 
     public static void warn(String msg) {
-        MessageImpl messageImpl = IvyContext.getContext().getMessageImpl();
-        if (messageImpl != null) {
-            messageImpl.log("WARN: " + msg, MSG_VERBOSE);
-        } else {
-            System.err.println(msg);
-        }
-        problems.add("WARN:  " + msg);
-        warns.add(msg);
+        getLogger().warn(msg);
     }
 
     public static void error(String msg) {
-        MessageImpl messageImpl = IvyContext.getContext().getMessageImpl();
-        if (messageImpl != null) {
-            // log in verbose mode because message is appended as a problem, and will be
-            // logged at the end at error level
-            messageImpl.log("ERROR: " + msg, MSG_VERBOSE);
-        } else {
-            System.err.println(msg);
-        }
-        problems.add("\tERROR: " + msg);
-        errors.add(msg);
+        getLogger().error(msg);
     }
 
     public static List getProblems() {
-        return problems;
+        return getLogger().getProblems();
     }
 
     public static void sumupProblems() {
-        if (problems.size() > 0) {
-            info("\n:: problems summary ::");
-            MessageImpl messageImpl = IvyContext.getContext().getMessageImpl();
-            if (warns.size() > 0) {
-                info(":::: WARNINGS");
-                for (Iterator iter = warns.iterator(); iter.hasNext();) {
-                    String msg = (String) iter.next();
-                    if (messageImpl != null) {
-                        messageImpl.log("\t" + msg + "\n", MSG_WARN);
-                    } else {
-                        System.err.println(msg);
-                    }
-                }
-            }
-            if (errors.size() > 0) {
-                info(":::: ERRORS");
-                for (Iterator iter = errors.iterator(); iter.hasNext();) {
-                    String msg = (String) iter.next();
-                    if (messageImpl != null) {
-                        messageImpl.log("\t" + msg + "\n", MSG_ERR);
-                    } else {
-                        System.err.println(msg);
-                    }
-                }
-            }
-            info("\n:: USE VERBOSE OR DEBUG MESSAGE LEVEL FOR MORE DETAILS");
-            problems.clear();
-            warns.clear();
-            errors.clear();
-        }
+        getLogger().sumupProblems();
     }
 
     public static void progress() {
-        if (showProgress) {
-            MessageImpl messageImpl = IvyContext.getContext().getMessageImpl();
-            if (messageImpl != null) {
-                messageImpl.progress();
-            } else {
-                System.out.println(".");
-            }
-        }
+        getLogger().progress();
     }
 
     public static void endProgress() {
-        endProgress("");
+        getLogger().endProgress();
     }
 
     public static void endProgress(String msg) {
-        if (showProgress) {
-            MessageImpl messageImpl = IvyContext.getContext().getMessageImpl();
-            if (messageImpl != null) {
-                messageImpl.endProgress(msg);
-            }
-        }
+        getLogger().endProgress(msg);
     }
 
     public static boolean isShowProgress() {
-        return showProgress;
+        return getLogger().isShowProgress();
     }
 
     public static void setShowProgress(boolean progress) {
-        showProgress = progress;
+        getLogger().setShowProgress(progress);
     }
 
-    public static void uninit() {
-        IvyContext.getContext().setMessageImpl(null);
-    }
-    
     private Message() {
     }
 }

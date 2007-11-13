@@ -57,7 +57,7 @@ import org.apache.ivy.core.retrieve.RetrieveOptions;
 import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.plugins.parser.xml.XmlModuleDescriptorWriter;
 import org.apache.ivy.plugins.report.XmlReportParser;
-import org.apache.ivy.util.DefaultMessageImpl;
+import org.apache.ivy.util.DefaultMessageLogger;
 import org.apache.ivy.util.Message;
 import org.apache.ivy.util.url.CredentialsStore;
 import org.apache.ivy.util.url.URLHandler;
@@ -174,11 +174,11 @@ public final class Main {
                 return;
             }
 
-            initMessage(line);
 
             boolean validate = line.hasOption("novalidate") ? false : true;
 
             Ivy ivy = Ivy.newInstance();
+            initMessage(line, ivy);
             IvySettings settings = initSettings(line, options, ivy);
 
             File cache = new File(settings.substitute(line.getOptionValue("cache", settings
@@ -288,6 +288,7 @@ public final class Main {
                 // invoke with given main class and merged params
                 invoke(ivy, cache, md, confs, fileList, line.getOptionValue("main"), params);
             }
+            ivy.getLoggerEngine().popLogger();
         } catch (ParseException exp) {
             // oops, something went wrong
             System.err.println("Parsing failed.  Reason: " + exp.getMessage());
@@ -363,17 +364,17 @@ public final class Main {
         return settings;
     }
 
-    private static void initMessage(CommandLine line) {
+    private static void initMessage(CommandLine line, Ivy ivy) {
         if (line.hasOption("debug")) {
-            Message.init(new DefaultMessageImpl(Message.MSG_DEBUG));
+            ivy.getLoggerEngine().pushLogger(new DefaultMessageLogger(Message.MSG_DEBUG));
         } else if (line.hasOption("verbose")) {
-            Message.init(new DefaultMessageImpl(Message.MSG_VERBOSE));
+            ivy.getLoggerEngine().pushLogger(new DefaultMessageLogger(Message.MSG_VERBOSE));
         } else if (line.hasOption("warn")) {
-            Message.init(new DefaultMessageImpl(Message.MSG_WARN));
+            ivy.getLoggerEngine().pushLogger(new DefaultMessageLogger(Message.MSG_WARN));
         } else if (line.hasOption("error")) {
-            Message.init(new DefaultMessageImpl(Message.MSG_ERR));
+            ivy.getLoggerEngine().pushLogger(new DefaultMessageLogger(Message.MSG_ERR));
         } else {
-            Message.init(new DefaultMessageImpl(Message.MSG_INFO));
+            ivy.getLoggerEngine().pushLogger(new DefaultMessageLogger(Message.MSG_INFO));
         }
     }
 

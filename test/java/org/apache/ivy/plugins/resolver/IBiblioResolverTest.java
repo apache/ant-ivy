@@ -22,6 +22,7 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
+import org.apache.ivy.core.IvyContext;
 import org.apache.ivy.core.cache.CacheManager;
 import org.apache.ivy.core.event.EventManager;
 import org.apache.ivy.core.module.descriptor.Artifact;
@@ -42,7 +43,7 @@ import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.core.sort.SortEngine;
 import org.apache.ivy.plugins.matcher.ExactPatternMatcher;
 import org.apache.ivy.util.Message;
-import org.apache.ivy.util.MockMessageImpl;
+import org.apache.ivy.util.MockMessageLogger;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.Delete;
 
@@ -208,8 +209,8 @@ public class IBiblioResolverTest extends TestCase {
         resolver.setSettings(_settings);
         assertEquals("test", resolver.getName());
 
-        MockMessageImpl mockMessageImpl = new MockMessageImpl();
-        Message.setImpl(mockMessageImpl);
+        MockMessageLogger mockMessageImpl = new MockMessageLogger();
+        IvyContext.getContext().getIvy().getLoggerEngine().setDefaultLogger(mockMessageImpl);
 
         ModuleRevisionId mrid = ModuleRevisionId.newInstance("org.apache", "commons-fileupload",
             "1.0");
