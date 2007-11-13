@@ -124,5 +124,47 @@ public abstract class XMLHelper {
     public static boolean canUseSchemaValidation() {
         return _canUseSchemaValidation;
     }
+    
+    /**
+     * Escapes invalid XML characters in the given character data using XML entities.
+     * For the moment, only the following characters are being escaped: (<), (&), (') 
+     * and (").
+     * 
+     * Remark: we don't escape the (>) character to keep the readability of the
+     * configuration mapping! The XML spec only requires that the (&) and (<)
+     * characters are being escaped inside character data.
+     * 
+     * @param text the character data to escape
+     * @return the escaped character data
+     */
+    public static String escape(String text) {
+        if (text == null) {
+            return null;
+        }
+        
+        StringBuffer result = new StringBuffer(text.length());
+        
+        char[] chars = text.toCharArray();
+        for (int i = 0; i < chars.length; i++) {
+            switch (chars[i]) {
+                case '&':
+                    result.append("&amp;");
+                    break;
+                case '<':
+                    result.append("&lt;");
+                    break;
+                case '\'':
+                    result.append("&apos;");
+                    break;
+                case '\"':
+                    result.append("&quot;");
+                    break;
+                default:
+                    result.append(chars[i]);
+            }
+        }
+        
+        return result.toString();
+    }
 
 }

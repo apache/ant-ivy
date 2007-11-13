@@ -509,13 +509,13 @@ public final class XmlModuleDescriptorUpdater {
             ModuleRevisionId systemMid = ns == null ? localMid : ns.getToSystemTransformer()
                     .transform(localMid);
 
-            write("<info organisation=\"" + systemMid.getOrganisation() + "\" module=\""
-                    + systemMid.getName() + "\"");
+            write("<info organisation=\"" + XMLHelper.escape(systemMid.getOrganisation()) + "\" module=\""
+                    + XMLHelper.escape(systemMid.getName()) + "\"");
             if (systemMid.getRevision() != null) {
-                write(" revision=\"" + systemMid.getRevision() + "\"");
+                write(" revision=\"" + XMLHelper.escape(systemMid.getRevision()) + "\"");
             }
             if (status != null) {
-                write(" status=\"" + status + "\"");
+                write(" status=\"" + XMLHelper.escape(status) + "\"");
             } else {
                 write(" status=\"" + substitute(settings, attributes.getValue("status")) + "\"");
             }
@@ -561,7 +561,8 @@ public final class XmlModuleDescriptorUpdater {
         }
 
         private String substitute(ParserSettings ivy, String value) {
-            return ivy == null ? value : ivy.substitute(value);
+            String result = ivy == null ? value : ivy.substitute(value);
+            return XMLHelper.escape(result);
         }
 
         private String removeConfigurationsFromMapping(String mapping, List confsToRemove) {

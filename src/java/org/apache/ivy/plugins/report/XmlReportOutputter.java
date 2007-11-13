@@ -46,6 +46,7 @@ import org.apache.ivy.core.resolve.IvyNodeEviction.EvictionData;
 import org.apache.ivy.util.FileUtil;
 import org.apache.ivy.util.Message;
 import org.apache.ivy.util.StringUtils;
+import org.apache.ivy.util.XMLHelper;
 
 /**
  *
@@ -104,19 +105,19 @@ public class XmlReportOutputter implements ReportOutputter {
         out.println("<?xml-stylesheet type=\"text/xsl\" href=\"ivy-report.xsl\"?>");
         out.println("<ivy-report version=\"1.0\">");
         out.println("\t<info");
-        out.println("\t\torganisation=\"" + mrid.getOrganisation() + "\"");
-        out.println("\t\tmodule=\"" + mrid.getName() + "\"");
-        out.println("\t\trevision=\"" + mrid.getRevision() + "\"");
+        out.println("\t\torganisation=\"" + XMLHelper.escape(mrid.getOrganisation()) + "\"");
+        out.println("\t\tmodule=\"" + XMLHelper.escape(mrid.getName()) + "\"");
+        out.println("\t\trevision=\"" + XMLHelper.escape(mrid.getRevision()) + "\"");
         if (mrid.getBranch() != null) {
-            out.println("\t\tbranch=\"" + mrid.getBranch() + "\"");
+            out.println("\t\tbranch=\"" + XMLHelper.escape(mrid.getBranch()) + "\"");
         }
         Map extraAttributes = mrid.getExtraAttributes();
         for (Iterator it = extraAttributes.entrySet().iterator(); it.hasNext();) {
             Map.Entry entry = (Entry) it.next();
-            out.println("\t\textra-" + entry.getKey() + "=\"" + entry.getValue() + "\"");
+            out.println("\t\textra-" + entry.getKey() + "=\"" + XMLHelper.escape(entry.getValue().toString()) + "\"");
         }
-        out.println("\t\tconf=\"" + report.getConfiguration() + "\"");
-        out.println("\t\tconfs=\"" + StringUtils.join(confs, ", ") + "\"");
+        out.println("\t\tconf=\"" + XMLHelper.escape(report.getConfiguration()) + "\"");
+        out.println("\t\tconfs=\"" + XMLHelper.escape(StringUtils.join(confs, ", ")) + "\"");
         out.println("\t\tdate=\"" + Ivy.DATE_FORMAT.format(report.getDate()) + "\"/>");
 
         out.println("\t<dependencies>");
@@ -126,9 +127,9 @@ public class XmlReportOutputter implements ReportOutputter {
 
         for (Iterator iter = report.getModuleIds().iterator(); iter.hasNext();) {
             ModuleId mid = (ModuleId) iter.next();
-            out.println("\t\t<module organisation=\"" + mid.getOrganisation() + "\"" + " name=\""
-                    + mid.getName() + "\"" + " resolver=\""
-                    + report.getResolveEngine().getSettings().getResolverName(mid) + "\">");
+            out.println("\t\t<module organisation=\"" + XMLHelper.escape(mid.getOrganisation()) + "\"" + " name=\""
+                    + XMLHelper.escape(mid.getName()) + "\"" + " resolver=\""
+                    + XMLHelper.escape(report.getResolveEngine().getSettings().getResolverName(mid)) + "\">");
             for (Iterator it2 = report.getNodes(mid).iterator(); it2.hasNext();) {
                 IvyNode dep = (IvyNode) it2.next();
                 ModuleDescriptor md = null;
@@ -137,44 +138,45 @@ public class XmlReportOutputter implements ReportOutputter {
                 }
                 StringBuffer details = new StringBuffer();
                 if (dep.isLoaded()) {
-                    details.append(" status=\"").append(dep.getDescriptor().getStatus()).append(
-                        "\"").append(" pubdate=\"").append(
-                        Ivy.DATE_FORMAT.format(new Date(dep.getPublication()))).append("\"")
-                            .append(" resolver=\"").append(
-                                dep.getModuleRevision().getResolver().getName()).append("\"")
-                            .append(" artresolver=\"").append(
-                                dep.getModuleRevision().getArtifactResolver().getName()).append(
-                                "\"");
+                    details.append(" status=\"");
+                    details.append(XMLHelper.escape(dep.getDescriptor().getStatus()));
+                    details.append("\" pubdate=\"");
+                    details.append(Ivy.DATE_FORMAT.format(new Date(dep.getPublication())));
+                    details.append("\" resolver=\"");
+                    details.append(XMLHelper.escape(dep.getModuleRevision().getResolver().getName()));
+                    details.append("\" artresolver=\"");
+                    details.append(XMLHelper.escape(dep.getModuleRevision().getArtifactResolver().getName()));
+                    details.append("\"");
                 }
                 if (dep.isEvicted(report.getConfiguration())) {
                     EvictionData ed = dep.getEvictedData(report.getConfiguration());
                     if (ed.getConflictManager() != null) {
-                        details.append(" evicted=\"").append(ed.getConflictManager()).append("\"");
+                        details.append(" evicted=\"").append(XMLHelper.escape(ed.getConflictManager().toString())).append("\"");
                     } else {
                         details.append(" evicted=\"transitive\"");
                     }
                 }
                 if (dep.hasProblem()) {
-                    details.append(" error=\"").append(dep.getProblem().getMessage()).append("\"");
+                    details.append(" error=\"").append(XMLHelper.escape(dep.getProblem().getMessage())).append("\"");
                 }
                 if (md != null && md.getHomePage() != null) {
-                    details.append(" homepage=\"").append(md.getHomePage()).append("\"");
+                    details.append(" homepage=\"").append(XMLHelper.escape(md.getHomePage())).append("\"");
                 }
                 extraAttributes = md != null ? md.getExtraAttributes() : dep.getResolvedId()
                         .getExtraAttributes();
                 for (Iterator iterator = extraAttributes.keySet().iterator(); iterator.hasNext();) {
                     String attName = (String) iterator.next();
                     details.append(" extra-").append(attName).append("=\"").append(
-                        extraAttributes.get(attName)).append("\"");
+                        XMLHelper.escape(extraAttributes.get(attName).toString())).append("\"");
                 }
                 String defaultValue = dep.getDescriptor() != null ? " default=\""
                         + dep.getDescriptor().isDefault() + "\"" : "";
                 int position = dependencies.indexOf(dep.getResolvedId());
                 out.println("\t\t\t<revision name=\""
-                        + dep.getResolvedId().getRevision()
+                        + XMLHelper.escape(dep.getResolvedId().getRevision())
                         + "\""
                         + (dep.getResolvedId().getBranch() == null ? "" : " branch=\""
-                                + dep.getResolvedId().getBranch() + "\"") + details
+                                + XMLHelper.escape(dep.getResolvedId().getBranch()) + "\"") + details
                         + " downloaded=\"" + dep.isDownloaded() + "\"" + " searched=\""
                         + dep.isSearched() + "\"" + defaultValue + " conf=\""
                         + toString(dep.getConfigurations(report.getConfiguration())) + "\""
@@ -184,11 +186,11 @@ public class XmlReportOutputter implements ReportOutputter {
                     for (int i = 0; i < licenses.length; i++) {
                         String lurl;
                         if (licenses[i].getUrl() != null) {
-                            lurl = " url=\"" + licenses[i].getUrl() + "\"";
+                            lurl = " url=\"" + XMLHelper.escape(licenses[i].getUrl()) + "\"";
                         } else {
                             lurl = "";
                         }
-                        out.println("\t\t\t\t<license name=\"" + licenses[i].getName() + "\""
+                        out.println("\t\t\t\t<license name=\"" + XMLHelper.escape(licenses[i].getName()) + "\""
                                 + lurl + "/>");
                     }
                 }
@@ -199,7 +201,7 @@ public class XmlReportOutputter implements ReportOutputter {
                         for (Iterator it3 = selected.iterator(); it3.hasNext();) {
                             IvyNode sel = (IvyNode) it3.next();
                             out.println("\t\t\t\t<evicted-by rev=\""
-                                    + sel.getResolvedId().getRevision() + "\"/>");
+                                    + XMLHelper.escape(sel.getResolvedId().getRevision()) + "\"/>");
                         }
                     }
                 }
@@ -212,30 +214,30 @@ public class XmlReportOutputter implements ReportOutputter {
                             .hasNext();) {
                         String attName = (String) iterator.next();
                         callerDetails.append(" extra-").append(attName).append("=\"").append(
-                            callerExtraAttributes.get(attName)).append("\"");
+                            XMLHelper.escape(callerExtraAttributes.get(attName).toString())).append("\"");
                     }
 
                     out.println("\t\t\t\t<caller organisation=\""
-                            + callers[i].getModuleRevisionId().getOrganisation() + "\""
-                            + " name=\"" + callers[i].getModuleRevisionId().getName() + "\""
-                            + " conf=\"" + toString(callers[i].getCallerConfigurations()) + "\""
-                            + " rev=\"" + callers[i].getAskedDependencyId().getRevision() + "\""
+                            + XMLHelper.escape(callers[i].getModuleRevisionId().getOrganisation()) + "\""
+                            + " name=\"" + XMLHelper.escape(callers[i].getModuleRevisionId().getName()) + "\""
+                            + " conf=\"" + XMLHelper.escape(toString(callers[i].getCallerConfigurations())) + "\""
+                            + " rev=\"" + XMLHelper.escape(callers[i].getAskedDependencyId().getRevision()) + "\""
                             + callerDetails + "/>");
                 }
                 ArtifactDownloadReport[] adr = report.getDownloadReports(dep.getResolvedId());
                 out.println("\t\t\t\t<artifacts>");
                 for (int i = 0; i < adr.length; i++) {
-                    out.print("\t\t\t\t\t<artifact name=\"" + adr[i].getName() + "\" type=\""
-                            + adr[i].getType() + "\" ext=\"" + adr[i].getExt() + "\"");
+                    out.print("\t\t\t\t\t<artifact name=\"" + XMLHelper.escape(adr[i].getName()) + "\" type=\""
+                            + XMLHelper.escape(adr[i].getType()) + "\" ext=\"" + XMLHelper.escape(adr[i].getExt()) + "\"");
                     extraAttributes = adr[i].getArtifact().getExtraAttributes();
                     for (Iterator iterator = extraAttributes.keySet().iterator(); iterator
                             .hasNext();) {
                         String attName = (String) iterator.next();
                         out
-                                .print(" extra-" + attName + "=\"" + extraAttributes.get(attName)
+                                .print(" extra-" + attName + "=\"" + XMLHelper.escape(extraAttributes.get(attName).toString())
                                         + "\"");
                     }
-                    out.print(" status=\"" + adr[i].getDownloadStatus() + "\"");
+                    out.print(" status=\"" + XMLHelper.escape(adr[i].getDownloadStatus().toString()) + "\"");
                     out.print(" size=\"" + adr[i].getSize() + "\"");
 
                     ArtifactOrigin origin = adr[i].getArtifactOrigin();
@@ -243,7 +245,7 @@ public class XmlReportOutputter implements ReportOutputter {
                         out.println(">");
                         out.println("\t\t\t\t\t\t<origin-location is-local=\""
                                 + String.valueOf(origin.isLocal()) + "\"" + " location=\""
-                                + origin.getLocation() + "\"/>");
+                                + XMLHelper.escape(origin.getLocation()) + "\"/>");
                         out.println("\t\t\t\t\t</artifact>");
                     } else {
                         out.println("/>");
@@ -267,6 +269,6 @@ public class XmlReportOutputter implements ReportOutputter {
                 buf.append(", ");
             }
         }
-        return buf.toString();
+        return XMLHelper.escape(buf.toString());
     }
 }

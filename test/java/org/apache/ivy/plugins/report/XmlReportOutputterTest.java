@@ -75,6 +75,25 @@ public class XmlReportOutputterTest extends TestCase {
             xml.indexOf(expectedIsLocal) != -1);
     }
 
+    public void testEscapeXml() throws Exception {
+        _ivy.configure(new File("test/repositories/IVY-635/ivysettings.xml"));
+        ResolveReport report = _ivy.resolve(new File(
+                "test/java/org/apache/ivy/plugins/report/ivy-635.xml").toURL(),
+            getResolveOptions(new String[] {"default"}));
+        assertNotNull(report);
+        
+        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+        XmlReportOutputter outputter = new XmlReportOutputter();
+        outputter.output(report.getConfigurationReport("default"), buffer);
+        buffer.flush();
+        String xml = buffer.toString();
+        
+        String expectedArtName = "art1&amp;_.txt";
+
+        assertTrue("XML doesn't contain escaped artifact name",
+            xml.indexOf(expectedArtName) != -1);
+    }
+
     public void testWriteModuleInfo() throws Exception {
         ResolveReport report = _ivy.resolve(new File(
                 "test/java/org/apache/ivy/plugins/report/ivy-with-info.xml").toURL(),

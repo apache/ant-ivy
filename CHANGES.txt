@@ -53,6 +53,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 
    version in SVN
 =====================================
+- FIX: Attempt to download a file with & in its name causes SAXParseException in Ivy (IVY-635)
 - FIX: Bad IvyContext scope causing memory leak and bad handling of subproject builds (IVY-639)
 - FIX: Resolution failure when no ivy.xml file present (IVY-630)
 - FIX: ${parent.version} property is not recognized in maven2 pom (IVY-620)
