@@ -32,6 +32,7 @@ import junit.framework.TestCase;
 
 import org.apache.ivy.Ivy;
 import org.apache.ivy.TestHelper;
+import org.apache.ivy.core.IvyContext;
 import org.apache.ivy.core.cache.ArtifactOrigin;
 import org.apache.ivy.core.cache.CacheManager;
 import org.apache.ivy.core.module.descriptor.Artifact;
@@ -94,34 +95,39 @@ public class ResolveTest extends TestCase {
 
 
     public void testResolveWithRetainingArtifactName() throws Exception {
-        settings.setCacheArtifactPattern(ivy.substitute("[module]/[originalname].[ext]"));
-        ResolveReport report = ivy.resolve(new File("test/repositories/2/mod15.2/ivy-1.1.xml")
-                .toURL(), getResolveOptions(new String[] {"default"}));
-        assertNotNull(report);
+        ivy.pushContext();
+        try {
+            settings.setCacheArtifactPattern(ivy.substitute("[module]/[originalname].[ext]"));
+            ResolveReport report = ivy.resolve(new File("test/repositories/2/mod15.2/ivy-1.1.xml")
+            .toURL(), getResolveOptions(new String[] {"default"}));
+            assertNotNull(report);
 
-        ArtifactDownloadReport[] dReports = report.getConfigurationReport("default")
-                .getDownloadReports(ModuleRevisionId.newInstance("org15", "mod15.1", "1.1"));
-        assertNotNull(dReports);
-        assertEquals("number of downloaded artifacts not correct", 1, dReports.length);
+            ArtifactDownloadReport[] dReports = report.getConfigurationReport("default")
+            .getDownloadReports(ModuleRevisionId.newInstance("org15", "mod15.1", "1.1"));
+            assertNotNull(dReports);
+            assertEquals("number of downloaded artifacts not correct", 1, dReports.length);
 
-        Artifact artifact = dReports[0].getArtifact();
-        assertNotNull(artifact);
+            Artifact artifact = dReports[0].getArtifact();
+            assertNotNull(artifact);
 
-        String cachePath = cacheManager.getArchivePathInCache(artifact);
-        assertTrue("artifact name has not been retained: " + cachePath, cachePath
+            String cachePath = cacheManager.getArchivePathInCache(artifact);
+            assertTrue("artifact name has not been retained: " + cachePath, cachePath
                 .endsWith("library.jar"));
 
-        dReports = report.getConfigurationReport("default").getDownloadReports(
-            ModuleRevisionId.newInstance("org14", "mod14.1", "1.1"));
-        assertNotNull(dReports);
-        assertEquals("number of downloaded artifacts not correct", 1, dReports.length);
+            dReports = report.getConfigurationReport("default").getDownloadReports(
+                ModuleRevisionId.newInstance("org14", "mod14.1", "1.1"));
+            assertNotNull(dReports);
+            assertEquals("number of downloaded artifacts not correct", 1, dReports.length);
 
-        artifact = dReports[0].getArtifact();
-        assertNotNull(artifact);
+            artifact = dReports[0].getArtifact();
+            assertNotNull(artifact);
 
-        cachePath = cacheManager.getArchivePathInCache(artifact);
-        assertTrue("artifact name has not been retained: " + cachePath, cachePath
+            cachePath = cacheManager.getArchivePathInCache(artifact);
+            assertTrue("artifact name has not been retained: " + cachePath, cachePath
                 .endsWith("mod14.1-1.1.jar"));
+        } finally {
+            ivy.popContext();
+        }
     }
 
     public void testArtifactOrigin() throws Exception {

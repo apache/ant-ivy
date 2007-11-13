@@ -31,6 +31,7 @@ import org.apache.ivy.core.event.EventManager;
 import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.plugins.circular.CircularDependencyStrategy;
 import org.apache.ivy.util.MessageLogger;
+import org.apache.tools.ant.Project;
 
 /**
  * This class represents an execution context of an Ivy action. It contains several getters to
@@ -99,6 +100,32 @@ public class IvyContext {
      */
     public static void popContext() {
         getCurrentStack().pop();
+    }
+
+
+    /**
+     * Reads the first object from the list saved under given key in the first context from the
+     * context stack in which this key is defined. If value under key in any of the contexts form
+     * the stack represents non List object then a RuntimeException is thrown.
+     * <p>
+     * This methods does a similar job to {@link #peek(String)}, except that it considers the whole
+     * context stack and not only one instance.
+     * </p>
+     * 
+     * @param key
+     *            context key for the string
+     * @return top object from the list (index 0) of the first context in the stack containing this
+     *         key or null if no key or list empty in all contexts from the context stack
+     * @see #peek(String)
+     */
+    public static Object peekInContextStack(String key) {
+        Object value = null;
+        Stack contextStack = getCurrentStack();
+        for (int i = contextStack.size() - 1; i >= 0 && value == null; i--) {
+            IvyContext ctx = (IvyContext) contextStack.get(i);
+            value = ctx.peek(key);
+        }
+        return value;
     }
 
     /**
@@ -202,6 +229,7 @@ public class IvyContext {
             }
         }
     }
+
 
     /**
      * Removes and returns first object from the list saved under given key in the context. If value

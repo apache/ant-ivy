@@ -70,7 +70,7 @@ public class AntBuildTrigger extends AbstractTrigger implements Trigger {
                 Message.verbose("target build file already built, skipping: " + f);
             } else {
                 Ant ant = new Ant();
-                Project project = (Project) IvyContext.getContext().peek(
+                Project project = (Project) IvyContext.peekInContextStack(
                     IvyTask.ANT_PROJECT_CONTEXT_KEY);
                 if (project == null) {
                     project = new Project();
