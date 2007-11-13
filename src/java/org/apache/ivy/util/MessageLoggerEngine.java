@@ -37,6 +37,12 @@ public class MessageLoggerEngine implements MessageLogger {
     private final Stack/*<MessageLogger>*/ loggerStack = new Stack();
     
     private MessageLogger defaultLogger = Message.getDefaultLogger();
+
+    private List problems = new ArrayList();
+
+    private List warns = new ArrayList();
+
+    private List errors = new ArrayList();
     
     public MessageLoggerEngine() {
     }
@@ -87,34 +93,27 @@ public class MessageLoggerEngine implements MessageLogger {
     }
 
     // consolidated methods
+    public void warn(String msg) {
+        peekLogger().warn(msg);
+        problems.add("WARN:  " + msg);
+        warns.add(msg);
+    }
     
+    public void error(String msg) {
+        peekLogger().error(msg);
+        problems.add("\tERROR: " + msg);
+        errors.add(msg);
+    }
+
     public List getErrors() {
-        List errors = new ArrayList();
-        errors.addAll(defaultLogger.getErrors());
-        for (Iterator iter = loggerStack.iterator(); iter.hasNext();) {
-            MessageLogger l = (MessageLogger) iter.next();
-            errors.addAll(l.getErrors());
-        }
         return errors;
     }
 
     public List getProblems() {
-        List problems = new ArrayList();
-        problems.addAll(defaultLogger.getProblems());
-        for (Iterator iter = loggerStack.iterator(); iter.hasNext();) {
-            MessageLogger l = (MessageLogger) iter.next();
-            problems.addAll(l.getProblems());
-        }
         return problems;
     }
 
     public List getWarns() {
-        List warns = new ArrayList();
-        warns.addAll(defaultLogger.getWarns());
-        for (Iterator iter = loggerStack.iterator(); iter.hasNext();) {
-            MessageLogger l = (MessageLogger) iter.next();
-            warns.addAll(l.getWarns());
-        }
         return warns;
     }
 
@@ -129,6 +128,9 @@ public class MessageLoggerEngine implements MessageLogger {
             MessageLogger l = (MessageLogger) iter.next();
             l.clearProblems();
         }
+        problems.clear();
+        errors.clear();
+        warns.clear();
     }
 
     public void setShowProgress(boolean progress) {
@@ -163,10 +165,6 @@ public class MessageLoggerEngine implements MessageLogger {
         peekLogger().endProgress(msg);
     }
 
-    public void error(String msg) {
-        peekLogger().error(msg);
-    }
-
     public void info(String msg) {
         peekLogger().info(msg);
     }
@@ -189,10 +187,6 @@ public class MessageLoggerEngine implements MessageLogger {
 
     public void verbose(String msg) {
         peekLogger().verbose(msg);
-    }
-
-    public void warn(String msg) {
-        peekLogger().warn(msg);
     }
 
     
