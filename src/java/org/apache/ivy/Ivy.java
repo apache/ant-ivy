@@ -355,9 +355,13 @@ public class Ivy {
      */
     public void pushContext() {
         if (IvyContext.getContext().peekIvy() != this) {
+            // the current Ivy context is associated with another Ivy instance, we push a new
+            // instance
             IvyContext.pushNewContext();
             IvyContext.getContext().setIvy(this);
         } else {
+            // the current Ivy context is already associated with this Ivy instance, we only push it
+            // for popping consistency
             IvyContext.pushContext(IvyContext.getContext());
         }
     }
