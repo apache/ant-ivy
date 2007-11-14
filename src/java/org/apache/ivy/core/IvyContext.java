@@ -17,7 +17,6 @@
  */
 package org.apache.ivy.core;
 
-import java.io.File;
 import java.lang.ref.WeakReference;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -46,7 +45,7 @@ public class IvyContext {
 
     private WeakReference/*<Ivy>*/ ivy = new WeakReference(null);
 
-    private File cache;
+    private CacheManager cacheManager;
 
     private Map contextMap = new HashMap();
 
@@ -176,14 +175,6 @@ public class IvyContext {
     public void setIvy(Ivy ivy) {
         this.ivy = new WeakReference(ivy);
         operatingThread = Thread.currentThread();
-    }
-
-    public File getCache() {
-        return cache == null ? getSettings().getDefaultCache() : cache;
-    }
-
-    public void setCache(File cache) {
-        this.cache = cache;
     }
 
     public IvySettings getSettings() {
@@ -324,9 +315,17 @@ public class IvyContext {
     public EventManager getEventManager() {
         return getIvy().getEventManager();
     }
+    
+    public void setCacheManager(CacheManager cacheManager) {
+        this.cacheManager = cacheManager;
+    }
 
     public CacheManager getCacheManager() {
-        return CacheManager.getInstance(getSettings(), getCache());
+        CacheManager result = cacheManager;
+        if (result == null) {
+            result = CacheManager.getInstance(getSettings());
+        }
+        return result;
     }
 
     public void checkInterrupted() {

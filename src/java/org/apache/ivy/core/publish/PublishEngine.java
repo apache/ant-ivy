@@ -230,7 +230,7 @@ public class PublishEngine {
             cacheManager = IvyContext.getContext().getCacheManager();
             options.setCache(cacheManager);
         } else {
-            IvyContext.getContext().setCache(cacheManager.getCache());
+            IvyContext.getContext().setCacheManager(cacheManager);
         }
         return cacheManager;
     }

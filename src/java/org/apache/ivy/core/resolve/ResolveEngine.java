@@ -209,7 +209,7 @@ public class ResolveEngine {
                 cacheManager = IvyContext.getContext().getCacheManager();
                 options.setCache(cacheManager);
             } else {
-                IvyContext.getContext().setCache(cacheManager.getCache());
+                IvyContext.getContext().setCacheManager(cacheManager);
             }
 
             String[] confs = options.getConfs(md);
@@ -419,7 +419,7 @@ public class ResolveEngine {
             cacheManager = IvyContext.getContext().getCacheManager();
             options.setCache(cacheManager);
         } else {
-            IvyContext.getContext().setCache(cacheManager.getCache());
+            IvyContext.getContext().setCacheManager(cacheManager);
         }
 
         String[] confs = options.getConfs(md);
