@@ -18,6 +18,9 @@
 package org.apache.ivy.core.resolve;
 
 import java.io.File;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -55,7 +58,9 @@ import org.apache.ivy.plugins.resolver.DependencyResolver;
 import org.apache.ivy.plugins.resolver.DualResolver;
 import org.apache.ivy.plugins.resolver.FileSystemResolver;
 import org.apache.ivy.util.CacheCleaner;
+import org.apache.ivy.util.DefaultMessageLogger;
 import org.apache.ivy.util.FileUtil;
+import org.apache.ivy.util.Message;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.Delete;
 import org.xml.sax.SAXException;
@@ -1748,6 +1753,16 @@ public class ResolveTest extends TestCase {
                 .newInstance("org5", "mod5.1", "4.2")).length);
     }
 
+    /*
+    public void testMultipleEviction() throws Exception {
+        
+        ResolveReport report = ivy.resolve(
+            new File("test/repositories/1/IVY-644/M1/ivys/ivy-1.0.xml").toURL(),
+            getResolveOptions(new String[] {"*"}));
+        assertFalse(report.hasError());
+    }
+    */
+    
     public void testResolveForce() throws Exception {
         // mod4.1 v 4.2 depends on
         // - mod1.2 v 2.0 and forces it
