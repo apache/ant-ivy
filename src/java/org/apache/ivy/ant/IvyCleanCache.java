@@ -36,6 +36,7 @@ public class IvyCleanCache extends IvyTask {
 
     public void doExecute() throws BuildException {
         Delete delete = new Delete();
+        delete.setTaskName(getTaskName());
         delete.setProject(getProject());
         delete.setDir(getIvyInstance().getSettings().getDefaultCache());
         delete.perform();
