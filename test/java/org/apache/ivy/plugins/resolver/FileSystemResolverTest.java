@@ -596,7 +596,7 @@ public class FileSystemResolverTest extends TestCase {
 
         OrganisationEntry[] orgs = resolver.listOrganisations();
         ResolverTestHelper.assertOrganisationEntries(resolver, new String[] {"org1", "org2",
-                "org6", "org9", "orgfailure", "yourorg"}, orgs);
+                "org6", "org9", "orgfailure", "yourorg", "IVY-644"}, orgs);
 
         OrganisationEntry org = ResolverTestHelper.getEntry(orgs, "org1");
         ModuleEntry[] mods = resolver.listModules(org);
