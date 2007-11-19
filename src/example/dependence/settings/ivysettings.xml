@@ -16,9 +16,17 @@
    specific language governing permissions and limitations
    under the License.    
 -->
-<ivy-module version="1.0">
-    <info organisation="org.apache" module="depending"/>
-    <dependencies>
-        <dependency name="standalone" rev="latest.integration" />
-    </dependencies>
-</ivy-module>
+<ivysettings>
+	<properties file="${ivy.settings.dir}/ivysettings.properties"/>
+	<settings defaultCache="${ivy.settings.dir}/ivy-cache" defaultResolver="libraries"/>
+	<resolvers>
+		<filesystem name="projects">
+			<artifact pattern="${repository.dir}/[artifact]-[revision].[ext]" />
+			<ivy pattern="${repository.dir}/[module]-[revision].xml" />
+		</filesystem>
+		<ibiblio name="libraries" m2compatible="true" usepoms="false" />
+	</resolvers>
+	<modules>
+		<module organisation="org.apache" name="dependee" resolver="projects"/>
+	</modules>
+</ivysettings>

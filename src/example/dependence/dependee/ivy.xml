@@ -17,7 +17,7 @@
    under the License.    
 -->
 <ivy-module version="1.0">
-    <info organisation="org.apache" module="standalone"/>
+    <info organisation="org.apache" module="dependee"/>
     <dependencies>
         <dependency org="commons-lang" name="commons-lang" rev="2.0"/>
     </dependencies>
