@@ -278,8 +278,10 @@
         <echo message="version=${build.version}${line.separator}" file="${core.classes.build.dir}/module.properties" append="true" />
         <echo message="date=${pubdate}${line.separator}" file="${core.classes.build.dir}/module.properties" append="true" />
 
+    	<mkdir dir="${artifacts.build.dir}/jars/"/>
+
         <!-- package the two ivy jars -->
-        <jar destfile="${artifacts.build.dir}/${final.name}"
+        <jar destfile="${artifacts.build.dir}/jars/${final.name}"
                 manifest="${basedir}/MANIFEST.MF">
             <metainf dir="${basedir}" includes="LICENSE,DISCLAIMER,NOTICE" />
             <manifest>
@@ -298,7 +300,7 @@
             <fileset dir="${ant.classes.build.dir}" />
             <fileset dir="${optional.classes.build.dir}" />
         </jar>
-        <jar destfile="${artifacts.build.dir}/${final.core.name}">
+        <jar destfile="${artifacts.build.dir}/jars/${final.core.name}">
             <metainf dir="${basedir}" includes="LICENSE,DISCLAIMER,NOTICE" />
             <manifest>
                 <attribute name="Specification-Title" value="Apache Ivy Core (without Ant tasks)" />
@@ -331,12 +333,25 @@ ${final.core.name}    The Ivy core, eg everything but classes dependent on Ant.$
 		</ivy:makepom>
 	</target>
 
-    <!-- =================================================================
+    <target name="sources" depends="default-version" description="Create source archive files">
+    	<mkdir dir="${artifacts.build.dir}/sources/"/>
+        <jar destfile="${artifacts.build.dir}/sources/${final.name}"
+                manifest="${basedir}/MANIFEST.MF">
+            <fileset dir="${src.dir}" />
+        </jar>
+    	<!-- TODO : we should restrict sources files to the core only -->
+        <jar destfile="${artifacts.build.dir}/sources/${final.core.name}"
+                manifest="${basedir}/MANIFEST.MF">
+            <fileset dir="${src.dir}" />
+        </jar>
+	</target>
+
+	<!-- =================================================================
          PUBLISH LOCAL
          ================================================================= -->
-    <target name="publish-local" depends="jar" description="publishes Ivy to Ivy local repository">
+    <target name="publish-local" depends="jar,sources" description="publishes Ivy to Ivy local repository">
         <ivy:publish resolver="local" pubrevision="${build.version}"
-            artifactsPattern="${artifacts.build.dir}/[artifact].[ext]" 
+            artifactsPattern="${artifacts.build.dir}/[type]s/[artifact].[ext]" 
             forcedeliver="true" />
     </target>
     

@@ -34,6 +34,8 @@
 	<publications>
 		<artifact name="ivy" type="jar" conf="default"/>
 		<artifact name="ivy-core" type="jar" conf="core"/>
+		<artifact name="ivy" type="source" ext="jar" conf="default"/>
+		<artifact name="ivy-core" type="source" ext="jar" conf="core"/>
 	</publications>
 	<dependencies>
 	    <dependency org="ant" name="ant" rev="1.6" conf="default"/>
