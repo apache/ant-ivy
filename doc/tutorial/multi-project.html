@@ -25,104 +25,105 @@
 </head>
 <body>
 	<textarea id="xooki-source">
-This example is an illustration of dependency between two project.
+This example is an illustration of dependency between two projects.
 
-The dependant project declares that it uses the standalone one. We will illustrate two things : 
+The depender project declares that it uses the dependee one. We will illustrate two things: 
 <ul>
-  <li>public libraries declared by standalone project will automatically be recovered by the dependant project</li>
-  <li>the dependant project will retrieve the "latest" version of the standalone project</li>
+  <li>public libraries declared by standalone project will automatically be retrieved by the dependant project</li>
+  <li>the depender project will retrieve the "latest" version of the dependee project</li>
 </ul>
 <h1>the projects used</h1>
-<h2>the project : standalone</h2>
-The standalone project is very simple. It depends on the apache library commons-lang and contains only one class: standalone.Main which provides two services:
+<h2>dependee</h2>
+The dependee project is very simple. It depends on the apache library commons-lang and contains only one class: standalone.Main which provides two services:
 <ul>
   <li>return the version of the project</li>
   <li>capitalize a string using org.apache.commons.lang.WordUtils.capitalizeFully</li>
 </ul>
 Here is the content of the project:
 <ul>
-  <li>build.xml : the ant build file for the project</li>
-  <li>ivy.xml : the ivy project file</li>
-  <li>src\standalone\Main.java : the only class of the project</li>
+  <li>build.xml: the ant build file for the project</li>
+  <li>ivy.xml: the project ivy file</li>
+  <li>src\standalone\Main.java: the only class of the project</li>
 </ul>
-Take a look at it's <b>ivy.xml</b> file:
+Take a look at the <b>ivy.xml</b> file:
 <code>
 <ivy-module version="1.0">
-    <info organisation="jayasoft" module="standalone" />
+    <info organisation="org.apache" module="dependee"/>
     <dependencies>
-        <dependency org="apache" name="commons-lang" rev="2.0" />
+        <dependency org="commons-lang" name="commons-lang" rev="2.0"/>
     </dependencies>
 </ivy-module>
 </code>
 
-The ivy dependency file declares only one dependency on apache commons-lang library which by default is a public dependency (see <a href="../ivyfile.html">ivy file definition</a>).
-<h2>the project : depending</h2>
-The project depending is very simple too. It declares only one dependency on the latest version of the standalone project and it contains only one class depending.Main which make 2 things:
+The ivy dependency file declares only one dependency on apache commons-lang library.
+<h2>depender</h2>
+The project depender is very simple too. It declares only one dependency on the latest version of the dependee project and it contains only one class depending.Main which make 2 things:
 <ul>
   <li>getting the version of the standalone project throw a call to standalone.Main.getVersion()</li>
   <li>transform a string throw a call to standalone.Main.capitalizeWords(str)</li>
 </ul>
-Take a look at it's <b>ivy.xml</b> file:
+Take a look at the <b>ivy.xml</b> file:
 <code>
 <ivy-module version="1.0">
-    <info organisation="jayasoft" module="depending" />
+    <info organisation="org.apache" module="depender"/>
     <dependencies>
-        <dependency name="standalone" rev="latest.integration" />
+        <dependency name="dependee" rev="latest.integration" />
     </dependencies>
 </ivy-module>
 </code>
 
-<h2>the <b>ivy</b> settings</h2>
-The ivy settings is made in the config directory wich contains 2 files :
+<h2>the settings</h2>
+The ivy settings is made in the settings directory which contains 2 files:
 <ul>
-  <li>ivysettings.properties : a property file</li>
-  <li>ivysettings.xml : the file containing the ivy settings</li>
+  <li>ivysettings.properties: a property file</li>
+  <li>ivysettings.xml: the file containing the settings</li>
 </ul>
 
-Let's analyse the ivysettings.xml file.
+Let's have a look at the ivysettings.xml file:
 <code>
 <ivysettings>
-        <properties file="${ivy.settings.dir}/ivysettings.properties" />
-        <settings defaultCache="${ivy.settings.dir}/ivy-cache" defaultResolver="libraries" />
-        <resolvers>
-                <filesystem name="projects">
-                        <artifact pattern="${repository.dir}/[artifact]-[revision].[ext]" />
-                        <ivy pattern="${repository.dir}/[module]-[revision].xml" />
-                </filesystem>
-                <ivyrep name="libraries" />
-        </resolvers>
-        <modules>
-                <module organisation="jayasoft" name=".*" resolver="projects" />
-        </modules>
+	<properties file="${ivy.settings.dir}/ivysettings.properties"/>
+	<settings defaultCache="${ivy.settings.dir}/ivy-cache" defaultResolver="libraries"/>
+	<resolvers>
+		<filesystem name="projects">
+			<artifact pattern="${repository.dir}/[artifact]-[revision].[ext]" />
+			<ivy pattern="${repository.dir}/[module]-[revision].xml" />
+		</filesystem>
+		<ibiblio name="libraries" m2compatible="true" usepoms="false" />
+	</resolvers>
+	<modules>
+		<module organisation="org.apache" name="dependee" resolver="projects"/>
+	</modules>
 </ivysettings>
 </code>
 The file contains four main tags: properties, settings, resolvers and modules.
-<h2>the <b>properties</b> tag</h2>
-This tag only load some properties for the ivy process in the same manner as ant will do it.
-<h2>the <b>settings</b> tag</h2>
-This tag is in charge to initialize some parameters for ivy process. The directory that ivy will use to cache (to store) artifacts found will be in a sub directory called ivy-cache of the directory containing the ivysettings.xml file itself. 
-The second parameter, tells ivy to use a resolver called "libraries" as its default resolver. As a recall, a resolver is in charge to resolve an artifact from some information like: the organisation that provides the artifact, the name of the library and the version of the library. More information can be found in the <a href="../configuration.html">settings documentation</a>.
-<h2>the <b>resolvers</b> tag</h2>
+<h2>properties</h2>
+This tag only load some properties for the ivy process in the same manner as ant would do it.
+<h2>settings</h2>
+This tag is in charge of initializing some parameters for ivy process. The directory that ivy will use to cache artifacts will be in a sub directory called ivy-cache of the directory containing the ivysettings.xml file itself. 
+The second parameter, tells ivy to use a resolver called "libraries" as its default resolver. More information can be found in the [[configuration settings reference documentation]].
+<h2>resolvers</h2>
 This tag defines the resolvers to use. Here we have two resolvers defined: "projects" and "libraries".
-The filesystem resolver called "projects" is able to resolve the internal dependencies wanted. 
-The ivyrep resolver called "libraries" is able to find dependencies on <a href="http://ivyrep.jayasoft.org/">ivyrep</a>.
-<h2>the <b>modules</b> tag</h2>
-The modules tag allows to configure which resolver should be use for which module. Here the settings only tells to use the "projects" resolver for all modules having for organisation "jayasoft" and any module name (.* regexp matches any module name).
-For other modules (i.e. all modules not from jayasoft), since there is no special settings, the default resolver will be used: "libraries".
+The filesystem resolver called "projects" is able to resolve the internal dependencies by locating them on the local filesystem. 
+The ibiblio resolver called "libraries" is able to find dependencies on maven 2 repository, but doesn't use maven poms.
+<h2>modules</h2>
+The modules tag allows to configure which resolver should be used for which module. Here the settings only tells to use the "projects" resolver for all modules having for organisation "org.apache" and for module name "dependee". This actually corresponds to only one module, but a regular expression could be used, or many other kind of expressions (like glob expressions).
+
+For other modules (i.e. all modules but org.apache#dependee), since there is no special settings, the default resolver will be used: "libraries".
 <h1>walkthrough</h1>
 <div class="step">
 <h2>step 1: preparation</h2>
-Open a DOS or shell window, and go to the "dependance" directory.
+Open a DOS or shell window, and go to the "src/example/dependence" directory.
 </div>
 <div class="step">
 <h2>step 2: clean directory tree</h2>
-On the prompt type : ant
+On the prompt type: ant
 This will clean up the entire project directory tree. You can do it each time you want to clean up this example.
 </div>
 <div class="step">
-<h2>step 3: publication of standalone project</h2>
-Goto standalone directory  and publish the project
-<div class="shell"><pre>I:\standalone>ant publish
+<h2>step 3: publication of dependee project</h2>
+Go to dependee directory  and publish the project
+<div class="shell"><pre>I:\dependee>ant publish
 [<tutorial/log/dependence-standalone.txt>]
 </pre></div>
 What we see here:
@@ -133,57 +134,55 @@ What we see here:
 </ul>
 </div>
 To give more details on the publish, as you can see the call to the publish task has resulted in two main things:
-- the delivery of a resolved ivy file to build/ivy.xml. This has been done because by default the publish task not only publishes artifacts but also ivy file. So it has looked to the path where the ivy file to publish should be, using the artifactspattern: ${build.dir}/[artifact].[ext].
-For an ivy file, this resolves to build/ivy.xml. Because this file does not exist, it automatically make a call to the deliver task which delivers a resolved ivy file to this destination.
-- the publication of artifact standalone and resolved ivy file to the repository. Both are mere copy of files found in the current project, more precisely in the build dir. This is because the artifactspattern has been set to ${build.dir}/[artifact].[ext], so standalone artifact is found in build/standalone.jar and ivy file in build/ivy.xml. And because we have asked the publish task to publish them using the "projects" resolver, these files are copied to repository\standalone-1.jar and to repository\standalone-1.xml, respecting the artifact and ivy patterns of our settings (see above).
+<ul>
+<li>the delivery of a resolved ivy file to build/ivy.xml.</li>
+This has been done because by default the publish task not only publishes artifacts but also ivy file. So it has looked to the path where the ivy file to publish should be, using the artifactspattern: ${build.dir}/[artifact].[ext].
+For an ivy file, this resolves to build/ivy.xml. Because this file does not exist, it automatically makes a call to the deliver task which delivers a resolved ivy file to this destination.
+<li>the publication of artifact dependee and resolved ivy file to the repository.</li>
+Both are mere copy of files found in the current project, more precisely in the build dir. This is because the artifactspattern has been set to ${build.dir}/[artifact].[ext], so dependee artifact is found in build/dependee.jar and ivy file in build/ivy.xml. And because we have asked the publish task to publish them using the "projects" resolver, these files are copied to repository\dependee-1.jar and to repository\dependee-1.xml, respecting the artifact and ivy patterns of our settings (see above).
+</ul>
 
 <div class="step">
-<h2>step 4: running the depending project</h2>
-Goto to directory depending and run ant
-<div class="shell"><pre>I:\depending>ant
+<h2>step 4: running the depender project</h2>
+Go to directory depender and run ant
+<div class="shell"><pre>I:\depender>ant
 [<tutorial/log/dependence-depending.txt>]
 </pre></div>
-What we see here :
+What we see here:
 <ul>
   <li>the project depends on 2 libraries (2 artifacts)</li>
   <li>one of the libraries was in the cache because there was only 1 download (1 downloaded)</li>
-  <li>ivy retrieved the version 1 of the project standalone. The call to standalone.Main.getVersion() has returned 1. If you look in the depending/lib directory, you should see standalone-1.jar which is the artifact version 1 of the project standalone</li>
-  <li>the call to standalone.Main.capitalizeWords(str) succeed, which means that the required library were in the classpath. If you look at the lib directory, you will see that the library commons-lang-2.0.jar was retrieved. This library was declared to be used by the project "standalone", so ivy get it too for the dependant project.</li>
+  <li>ivy retrieved the version 1 of the project dependee. The call to standalone.Main.getVersion() has returned 1. If you look in the depender/lib directory, you should see dependee-1.jar which is the artifact version 1 of the project dependee</li>
+  <li>the call to standalone.Main.capitalizeWords(str) succeed, which means that the required library were in the classpath. If you look at the lib directory, you will see that the library commons-lang-2.0.jar was retrieved. This library was declared to be used by the project "dependee", so ivy get it too for the depender project.</li>
 </ul>
 </div>
 <div class="step">
-<h2>step 5 : new version of standalone project</h2>
-Like we did before in step 3, publish again the standalone project. This will result as a new version of the project.
-<div class="shell"><pre>I:\standalone>ant publish
-[<tutorial/log/standalone-2.txt>]
+<h2>step 5: new version of dependee project</h2>
+Like we did before in step 3, publish again the dependee project. This will result as a new version of the project.
+<div class="shell"><pre>I:\dependee>ant publish
+[<tutorial/log/dependence-standalone-2.txt>]
 </pre></div>
-Now if you look in your repository folder, you must find 2 version published of the standalone project.
+Now if you look in your repository folder, you will find 2 version published of the dependee project.
 Let's look at it:
-<div class="shell"><pre>I:\dependence\standalone>dir ..\config\repository /w
- Le volume dans le lecteur I s'appelle DATA
- Le numéro de série du volume est 30E5-91BA
+<div class="shell"><pre>I:\dependee>dir ..\settings\repository /w
 
- Répertoire de I:\dependence\config\repository
+[.]                [..]               dependee-1.jar   dependee-1.xml   dependee-2.jar   dependee-2.xml
 
-[.]                [..]               standalone-1.jar   standalone-1.xml   standalone-2.jar   standalone-2.xml
-               4 fichier(s)            3 936 octets
-               2 Rép(s)   9 874 350 080 octets libres
-
-I:\dependence\standalone></pre></div>
+I:\dependee></pre></div>
 </div>
-Ok now our repository contains two versions of the project <b>standalone</b>, other projects can refer to both versions.
+Ok now our repository contains two versions of the project <b>dependee</b>, other projects can refer to both versions.
 <div class="step">
-<h2>step 6 : depending got the new version</h2>
-What do we expect about running again the depending project? Two major things are expected: 
+<h2>step 6: get the new version in <em>depender</em> project</h2>
+What do we expect about running again the depender project? Two major things are expected: 
 <ul>
-  <li>retrieve the version 2 as the latest.integration version of the standalone project</li>
-  <li>running the test must display version 2 of standalone project</li>
+  <li>retrieve the version 2 as the latest.integration version of the dependee project</li>
+  <li>running the test must display version 2 of dependee project</li>
 </ul>
 Let's go!!!
-<div class="shell"><pre>I:\depending>ant
-[<tutorial/log/dependence-depending-2>]
+<div class="shell"><pre>I:\depender>ant
+[<tutorial/log/dependence-depending-2.txt>]
 </pre></div>
-Ok we have the result expected as the run target shows that we are using the version 2 of the main class of standalone project. If we take a look at the resolve target results, we can see that one artifact has been downloaded to the ivy cache. In fact this file is the version 2 of the standalone project that was taken from the repository, you can now retrieve it in the ivy-cache directory.
+Ok we have the result expected as the run target shows that we are using the version 2 of the main class of dependee project. If we take a look at the resolve target results, we can see that one artifact has been downloaded to the ivy cache. In fact this file is the version 2 of the dependee project that was taken from the repository, you can now retrieve it in the ivy-cache directory.
 </div>
 
 	</textarea>
