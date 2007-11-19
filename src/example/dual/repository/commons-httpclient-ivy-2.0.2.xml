@@ -24,6 +24,6 @@
         status="release"
         publication="20041010174300"/>
     <dependencies>
-        <dependency name="commons-logging" rev="1.0.4" conf="default"/>
+        <dependency org="commons-logging" name="commons-logging" rev="1.0.4" conf="default"/>
     </dependencies>
 </ivy-module>

@@ -29,7 +29,7 @@
           target: clean-cache              
          ================================= -->
 	<target name="clean-cache" description="--> clean the ivy cache">
-		<property name="ivy.settings.dir" value="config" />
+		<property name="ivy.settings.dir" value="settings" />
 		<ivy:settings file="${ivy.settings.dir}/ivysettings.xml" id="ivy.instance"/>
 		<ivy:cleancache />
 	</target>

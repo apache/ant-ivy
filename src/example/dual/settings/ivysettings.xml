@@ -23,7 +23,7 @@
       <filesystem name="ivys">
         <ivy pattern="${ivy.settings.dir}/../repository/[module]-ivy-[revision].xml" />
       </filesystem>
-      <ibiblio name="ibiblio" />
+      <ibiblio name="ibiblio" m2compatible="true" usepoms="false" />
     </dual>
   </resolvers>
 </ivysettings>

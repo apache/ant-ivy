@@ -23,7 +23,7 @@
     <property name="src.dir" value="${basedir}/src" />
     
     <!-- ivy properties used -->
-    <property name="ivy.settings.dir" value="../config" />
+    <property name="ivy.settings.dir" value="../settings" />
 
 	<!-- paths used for compilation and run  -->
     <path id="lib.path.id">
@@ -39,7 +39,7 @@
     <!-- ================================= 
           target: resolve              
          ================================= -->
-    <target name="resolve" description="--> retrieve dependencies with ivy">
+    <target name="resolve" description="--> resolve and retrieve dependencies with ivy">
         <ivy:retrieve />
     </target>
     
@@ -76,6 +76,6 @@
           target: clean-cache              
          ================================= -->
 	<target name="clean-cache" description="--> clean the ivy cache">
-		<delete dir="${user.home}/.ivy-cache"/>
+		<ivy:cleancache />
 	</target>
 </project>
