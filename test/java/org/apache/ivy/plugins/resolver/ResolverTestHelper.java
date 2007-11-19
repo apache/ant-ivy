@@ -17,6 +17,8 @@
  */
 package org.apache.ivy.plugins.resolver;
 
+import java.util.Arrays;
+
 import junit.framework.Assert;
 
 import org.apache.ivy.core.search.ModuleEntry;
@@ -30,7 +32,9 @@ public class ResolverTestHelper {
     static void assertOrganisationEntries(DependencyResolver resolver, String[] orgNames,
             OrganisationEntry[] orgs) {
         Assert.assertNotNull(orgs);
-        Assert.assertEquals(orgNames.length, orgs.length);
+        Assert.assertEquals("invalid organisation entries: unmatched number: expected: " 
+            + Arrays.asList(orgNames) + " but was "+Arrays.asList(orgs),
+            orgNames.length, orgs.length);
         assertOrganisationEntriesContains(resolver, orgNames, orgs);
     }
 
@@ -52,7 +56,9 @@ public class ResolverTestHelper {
     static void assertModuleEntries(DependencyResolver resolver, OrganisationEntry org,
             String[] names, ModuleEntry[] mods) {
         Assert.assertNotNull(mods);
-        Assert.assertEquals(names.length, mods.length);
+        Assert.assertEquals("invalid module entries: unmatched number: expected: " 
+            + Arrays.asList(names) + " but was "+Arrays.asList(mods),
+            names.length, mods.length);
         assertModuleEntriesContains(resolver, org, names, mods);
     }
 
@@ -75,7 +81,9 @@ public class ResolverTestHelper {
     static void assertRevisionEntries(DependencyResolver resolver, ModuleEntry mod, String[] names,
             RevisionEntry[] revs) {
         Assert.assertNotNull(revs);
-        Assert.assertEquals(names.length, revs.length);
+        Assert.assertEquals("invalid revision entries: unmatched number: expected: " 
+            + Arrays.asList(names) + " but was "+Arrays.asList(revs),
+            names.length, revs.length);
         assertRevisionEntriesContains(resolver, mod, names, revs);
     }
 
