@@ -130,6 +130,8 @@ public final class PomModuleDescriptorParser extends AbstractModuleDescriptorPar
         private Stack contextStack = new Stack();
 
         private String organisation;
+        
+        private String relocationOrganisation = null;
 
         private String module;
 
@@ -283,6 +285,14 @@ public final class PomModuleDescriptorParser extends AbstractModuleDescriptorPar
                 exclusions.add(new ModuleId(organisation, module));
                 organisation = null;
                 module = null;
+            } else if ("project/distributionManagement/relocation".equals(context)) {
+                md.setModuleRevisionId(ModuleRevisionId
+                        .newInstance(organisation, module, revision));
+                dd = new DefaultDependencyDescriptor(md, ModuleRevisionId.newInstance(
+                    relocationOrganisation, module, revision), true, false, true);
+                dd.addDependencyConfiguration("*", "*");
+                md.addDependency(dd);
+                dd = null;
             }
             if ("project/dependencies/dependency".equals(context)) {
                 organisation = null;
@@ -320,6 +330,10 @@ public final class PomModuleDescriptorParser extends AbstractModuleDescriptorPar
                     ext = txt;
                     return;
                 } 
+                if (context.equals("project/distributionManagement/relocation/groupId")) {
+                    relocationOrganisation = txt;
+                    return;
+                }
                 if (context.startsWith("project/parent")) {
                     return;
                 } 
