@@ -25,44 +25,54 @@
 </head>
 <body>
 	<textarea id="xooki-source">
-This example is an illustration of how artifacts can be retrieved by multiple resolvers. Using multiple resolvers is very important when using continous integration. Indeed, in such environments, you can use multiple repositories and so multiple resolvers to retrieve both released versions of projects than continous integrated versions produced for example with cruise-control. In our example, we will just show how to use two resolvers, one on a local repository and one using ibiblio repository.
+This example is an illustration of how modules can be retrieved by multiple resolvers. Using multiple resolvers can be useful in many contexts, here are some examples:
+<ul>
+<li>separate integration builds from releases</li>
+<li>use a public repository for third party modules and a private one for internal modules</li>
+<li>use a repository for storing modules which are not accurate in an unmanaged public repository</li>
+<li>use a local repository to expose builds made on one developer's station</li>
+</ul>
+
+In Ivy, the use of multiple resolvers is supported by one compound resolver called a chain resolver.
+
+In our example, we will simply show how to use two resolvers, one on a local repository and one using maven2 repository.
 
 <h1>project description</h1>
-<h2>the project : chained-resolvers</h2>
-The project is very simple and contains only one test class : example.Hello
-It depends on two libraries apache commons-lang and a little test library (sources are included in jar file). The test library is used by the project to uppercase a string, and commons-lang is used to capitalize the same string.
+<h2>the project: chained-resolvers</h2>
+The project is very simple and contains only one simple class: example.Hello.
+
+It depends on two libraries: Apache commons-lang and a little test library (sources are included in jar file). The test library is used by the project to uppercase a string, and commons-lang is used to capitalize the same string.
 
 Here is the content of the project:
 <ul>
-  <li>build.xml : the ant build file for the project</li>
-  <li>ivy.xml : the ivy project file</li>
-  <li>src\example\Hello.java : the only class of the project</li>
+  <li>build.xml: the ant build file for the project</li>
+  <li>ivy.xml: the ivy project file</li>
+  <li>src\example\Hello.java: the only class of the project</li>
 </ul>
-Take a look at it's <b>ivy.xml</b> file :
+Let's have a look at the <b>ivy.xml</b> file:
 <code>
 <ivy-module version="1.0">
-    <info organisation="jayasoft" module="chained-resolvers" />
+    <info organisation="org.apache" module="chained-resolvers"/>
     <dependencies>
-        <dependency org="apache" name="commons-lang" rev="2.0" />
-        <dependency name="test" rev="1.0" />
+        <dependency org="commons-lang" name="commons-lang" rev="2.0"/>
+        <dependency name="test" rev="1.0"/>
     </dependencies>
 </ivy-module>
 </code>
-As we expect, the ivy file declares to be dependent on the two libraries that the project use : apache commons-lang.jar and test.jar.
+As we expect, the ivy file declares to be dependent on the two libraries that the project use: commons-lang and test. Note that we don't specify the organisation for the dependency test, in this case Ivy assumes the same org as the declaring module, ie org.apache in this case.
 
-<h2>the <b>ivy</b> settings</h2>
-The ivy settings is made in the config directory it contains only one file: ivysettings.xml.
+<h2>the <b>ivy settings</b></h2>
+The ivy settings is made in the settings directory it contains only one file: ivysettings.xml.
 
-Let's analyse it.
 <code>
 <ivysettings>
-  <settings defaultResolver="chain-example" />
+  <settings defaultResolver="chain-example"/>
   <resolvers>
     <chain name="chain-example">
       <filesystem name="libraries">
-        <artifact pattern="${ivy.settings.dir}/repository/[artifact]-[revision].[type]" />
+        <artifact pattern="${ivy.settings.dir}/repository/[artifact]-[revision].[ext]" />
       </filesystem>
-      <ibiblio name="ibiblio" />
+      <ibiblio name="ibiblio" m2compatible="true" />
     </chain>
   </resolvers>
 </ivysettings>
@@ -78,25 +88,45 @@ The resolvers put in the chain are :
   <li>ibiblio : this resolver is a special one. It looks in the ibiblio maven repository to retrieve the libraries.</li>
 </ul>
 
+That's it, we have configured a chain of resolvers!
+
 <h1>walkthrough</h1>
 <div class="step">
-<h2>step 1 : preparation</h2>
+<h2>step 1: preparation</h2>
 Open a DOS or shell window, and go to the "chained-resolvers" directory.
 </div>
 <div class="step">
-<h2>step 2 : clean directory tree</h2>
-On the prompt type : ant<br>
+<h2>step 2: clean directory tree</h2>
+On the prompt type: ant<br>
 This will clean up the entire project directory tree and ivy cache. You can do it each time you want to clean up this example.
+
+<div class="tip">
+In almost all examples, we provide a clean target as default target. Since most examples use the same Ivy cache, you will clean the whole Ivy cache each time you call this target. 
+
+Cleaning Ivy cache is something you can do with no fear (except performance): it's only a cache, everything can be (and should be) obtained again from repositories. For those coming from maven 2 land, this may sounds strange, but remember that in Ivy, the cache is not a local repository, things are kept cleanly isolated.
+</div>
 </div>
 <div class="step">
-<h2>step 3 : run the project</h2>
-Goto chainedresolvers-project directory. And simply run <b>ant</b>.
+<h2>step 3: run the project</h2>
+Go to chainedresolvers-project directory. And simply run <b>ant</b>.
 
 <div class="shell"><pre>I:\chained-resolvers\chainedresolvers-project>ant
 [<tutorial/log/chained-resolvers.txt>]
 </pre></div></div>
 
-We can see in the log of the resolve task, that the two dependencies have been retrieved (2 artifacts) and copied to the ivy cache directory (2 downloaded). The run target succeed in using both commons-lang.jar comming from ibiblio repository and test.jar coming from the local repository.
+We can see in the log of the resolve task, that the two dependencies have been retrieved (2 artifacts) and copied to the ivy cache directory (2 downloaded). 
+
+The run target succeed in using both commons-lang.jar comming from ibiblio repository and test.jar coming from the local repository.
+
+<h1>Going further</h1>
+This very simple example helps to see how to make a basic setting of two resolvers in a chain. The [[resolver/chain chain resolver's reference documentation]] is available for those who would like to know all the features offered by this resolver.
+
+The most interesting things to know that you can try out from this basic example are:
+<ul>
+<li>a chain is not limited to two nested resolvers, you can use the number you want</li>
+<li>by setting returnFirst="true", you can have a chain which stops as soon as it has found a result for a given module</li>
+<li>by setting dual="true", the full chain will be used both for module descriptors and artifacts, while with dual="false", the resolver in the chain which found the module descriptor (if any) is also used for artifacts</li>
+</ul>
 
 	</textarea>
 <script type="text/javascript">xooki.postProcess();</script>
