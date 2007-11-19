@@ -283,4 +283,7 @@ public abstract class IvyTask extends Task {
      */
     public abstract void doExecute() throws BuildException;
 
+    public String toString() {
+        return getClass().getName() + ":" + getTaskName();
+    }
 }

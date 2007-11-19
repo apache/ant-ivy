@@ -259,6 +259,7 @@ public abstract class IvyPostResolveTask extends IvyTask {
     protected IvyResolve createResolve(boolean haltOnFailure, boolean useOrigin) {
         Message.verbose("no resolved descriptor found: launching default resolve");
         IvyResolve resolve = new IvyResolve();
+        resolve.setTaskName(getTaskName());
         resolve.setProject(getProject());
         resolve.setHaltonfailure(haltOnFailure);
         resolve.setUseOrigin(useOrigin);

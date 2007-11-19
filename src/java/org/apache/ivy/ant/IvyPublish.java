@@ -278,6 +278,7 @@ public class IvyPublish extends IvyTask {
             if (publishivy && (!ivyFile.exists() || forcedeliver)) {
                 IvyDeliver deliver = new IvyDeliver();
                 deliver.setSettingsRef(getSettingsRef());
+                deliver.setTaskName(getTaskName());
                 deliver.setProject(getProject());
                 deliver.setCache(getCache());
                 deliver.setDeliverpattern(getSrcivypattern());

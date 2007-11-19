@@ -129,4 +129,8 @@ public class AntMessageLogger extends AbstractMessageLogger {
         buf.setLength(0);
         lastProgressFlush = 0;
     }
+    
+    public String toString() {
+        return "AntMessageLogger:" + projectComponent;
+    }
 }
