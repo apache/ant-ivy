@@ -53,4 +53,7 @@ public class RevisionEntry {
         return moduleEntry.getResolver();
     }
 
+    public String toString() {
+        return moduleEntry + ";" + revision;
+    }
 }

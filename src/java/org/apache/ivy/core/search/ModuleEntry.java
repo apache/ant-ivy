@@ -45,4 +45,7 @@ public class ModuleEntry {
         return organisationEntry;
     }
 
+    public String toString() {
+        return organisationEntry + "#" + module;
+    }
 }

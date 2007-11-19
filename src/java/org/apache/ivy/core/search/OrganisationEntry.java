@@ -37,4 +37,7 @@ public class OrganisationEntry {
         return resolver;
     }
 
+    public String toString() {
+        return organisation;
+    }
 }
