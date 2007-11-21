@@ -290,7 +290,7 @@ public final class PomModuleDescriptorParser extends AbstractModuleDescriptorPar
                         .newInstance(organisation, module, revision));
                 dd = new DefaultDependencyDescriptor(md, ModuleRevisionId.newInstance(
                     relocationOrganisation, module, revision), true, false, true);
-                dd.addDependencyConfiguration("*", "*");
+                dd.addDependencyConfiguration("*", "@");
                 md.addDependency(dd);
                 dd = null;
             }
