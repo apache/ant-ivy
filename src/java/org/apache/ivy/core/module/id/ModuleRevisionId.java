@@ -61,11 +61,11 @@ public class ModuleRevisionId extends UnmodifiableExtendableItem {
                 .getExtraAttributes());
     }
 
-    private ModuleId moduleId;
+    private final ModuleId moduleId;
 
-    private String branch;
+    private final String branch;
 
-    private String revision;
+    private final String revision;
 
     private int hash;
 
@@ -115,10 +115,18 @@ public class ModuleRevisionId extends UnmodifiableExtendableItem {
             return false;
         }
         ModuleRevisionId other = (ModuleRevisionId) obj;
-        return other.getRevision().equals(getRevision())
-                && (other.getBranch() == null ? getBranch() == null : other.getBranch().equals(
-                    getBranch())) && other.getModuleId().equals(getModuleId())
-                && other.getExtraAttributes().equals(getExtraAttributes());
+
+        if (!other.getRevision().equals(getRevision())) {
+            return false;
+        } else if (other.getBranch() == null && getBranch() != null) {
+            return false;
+        } else if (other.getBranch() != null && !other.getBranch().equals(getBranch())) {
+            return false;
+        } else if (!other.getModuleId().equals(getModuleId())) {
+            return false;
+        } else {
+            return other.getExtraAttributes().equals(getExtraAttributes());
+        }
     }
 
     public int hashCode() {

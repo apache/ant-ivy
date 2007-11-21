@@ -22,17 +22,18 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class UnmodifiableExtendableItem implements ExtendableItem {
-    private Map attributes = new HashMap();
+    private final Map attributes = new HashMap();
 
-    private Map unmodifiableAttributesView = Collections.unmodifiableMap(attributes);
+    private final Map unmodifiableAttributesView = Collections.unmodifiableMap(attributes);
 
-    private Map stdAttributes = new HashMap();
+    private final Map stdAttributes = new HashMap();
 
-    private Map unmodifiableStdAttributesView = Collections.unmodifiableMap(stdAttributes);
+    private final Map unmodifiableStdAttributesView = Collections.unmodifiableMap(stdAttributes);
 
-    private Map extraAttributes = new HashMap();
+    private final Map extraAttributes = new HashMap();
 
-    private Map unmodifiableExtraAttributesView = Collections.unmodifiableMap(extraAttributes);
+    private final Map unmodifiableExtraAttributesView = 
+                                    Collections.unmodifiableMap(extraAttributes);
 
     public UnmodifiableExtendableItem(Map stdAttributes, Map extraAttributes) {
         if (stdAttributes != null) {
