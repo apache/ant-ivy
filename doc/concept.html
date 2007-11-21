@@ -230,7 +230,23 @@ Prior to Ivy 1.4 circular dependencies where causing a failure in Ivy. As of Ivy
 </ul>
 
 See the <a href="configuration/conf.html">configuration page</a> to see how to configure the circular dependency strategy you want to use.
-	</textarea>
+
+<h1><a name="change">Cache and Change Management</a></h1>
+Ivy heavily relies on a local cache to avoid accessing remote repositories too often, thus saving a low of network bandwidth and time. To optimize the dependency resolution and the way the cache is used, Ivy assumes by default that a revision never changes. So once Ivy has a module in its cache (metadata and artifacts), it trusts the cache and do not even query the repository. This optimization is very useful in most cases, and causes no problem as long as you respect this paradigm: a revision never changes. Besides performance, there are several [[bestpractices good reasons]] to follow this principle.	
+
+However, depending on your current build system and your dependency management strategy, you may prefer to update sometimes your modules. There are two kind of changes to consider:
+<h3>change in module metadata</h3>
+Since pretty often module metadata are not considered by module providers with as much attention as their API or behavior (if they even provide module metadata), it happens more than we would like that we have to update module metadata: a dependency has been forgotten, or another one is missing, ...
+
+In this case, setting checkModified="true" on your dependency resolver will be the solution. This flag tells to Ivy to check if module metadata has been modified compared to the cache. Ivy first checks the metadata last modified timestamp on the repository to download it only if necessary, and then update it when needed.
+<h3>Changes in artifacts</h3>
+Some people, especially those coming from maven 2 land, like to use one special revision to handle often updated modules. In maven 2 this is called a SNAPSHOT version, and some argue that it helps saves disk space to keep only one version for the high number of intermediary builds you can make whilst developing.
+
+Ivy supports this kind of approach with the notion of changing revision. A changing revision is just that: a revision for which Ivy should consider that the artifacts may change over time. To handle this, you can either specify a dependency as changing on the [[ivyfile/dependency]] tag, or use the changingPattern and changingMatcher attributes on your [[configuration/resolvers]] to indicate which revision or group of revisions should be considered as changing.
+
+Once Ivy knows that a revision is changing, it will follow this principle to avoid checking your repository too often: if the module metadata has not changed, it will considered the whole module (including artifacts) as not changed. Even if the module descriptor file has changed, it will check the publication data of the module to see if this is a new publication of the same revision or not. Then if the publication date has changed, it will check the artifacts last modified timestamps, and download them accordingly.
+
+So if you want to use changing revisions, use the [[ant:publish]] task to publish your modules, it will take care of updating the publication date, and everything will work fine. And remember to set checkModified=true" on your resolver too!</textarea>
 <script type="text/javascript">xooki.postProcess();</script>
 </body>
 </html>

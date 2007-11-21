@@ -114,12 +114,12 @@ If you prefer more verbose mapping declaration, everything is also possible with
 
 <h2>Artifact restriction</h2>
 Moreover, the dependency element also supports an artifact restriction feature (since 0.6).
-See <a href="#dependency-artifact">dependency artifact restriction</a> for details. <br/><br/>
+See <a href="#dependency-artifact">dependency artifact restriction</a> for details.
 
 <h2>Forcing revision</h2>
 Finally, the dependency element also supports an a force attribute (since 0.8), which gives an indication
-to conflicts manager to force the revision of a dependency to the one given here.<br/>
-See <a href="../ivyfile/conflicts.html">conflicts manager</a> for details. <br/><br/>
+to conflicts manager to force the revision of a dependency to the one given here.
+See <a href="../ivyfile/conflicts.html">conflicts manager</a> for details. 
 
 <span class="since">since 1.4</span> this tag supports <a href="../concept.html#extra">extra attributes</a>
 <h1>Attributes</h1>
@@ -143,7 +143,7 @@ See <a href="../ivyfile/conflicts.html">conflicts manager</a> for details. <br/>
         <td>No, defaults to defaultconf attribute of dependencies element if neither conf attribute nor conf children element is given</td></tr>
     <tr><td>transitive</td><td>true to resolve this dependency transitively, false otherwise (<span class="since">since 1.2</span>)</td>
         <td>No, defaults to true</td></tr>
-    <tr><td>changing</td><td>true if the dependency artifacts may change without revision change, false otherwise (<span class="since">since 1.2</span>). Artifacts update will be looked after only if the publication date of the ivy file has changed. Note that this is not a recommended use and that it avoid some cache optimization in ivy.</td>
+    <tr><td>changing</td><td>true if the dependency artifacts may change without revision change, false otherwise (<span class="since">since 1.2</span>). See <a href="../concept.html#change">cache and change management</a> for details.</td>
         <td>No, defaults to false</td></tr>
 </tbody>
 </table>
