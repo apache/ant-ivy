@@ -98,6 +98,10 @@ public class IvyNode implements Comparable {
             //CheckStyle:MagicNumber| OFF
             return hash;
         }
+        
+        public String toString() {
+            return "NodeConf(" + conf + ")";
+        }
     }
 
     // //////// CONTEXT
@@ -182,14 +186,21 @@ public class IvyNode implements Comparable {
      */
     public boolean loadData(String rootModuleConf, IvyNode parent, String parentConf, String conf,
             boolean shouldBePublic) {
+        Message.debug("loadData of " + this.toString() + " of rootConf=" + rootModuleConf);
         if (!isRoot() && (data.getReport() != null)) {
             data.getReport().addDependency(this);
         }
 
         boolean loaded = false;
-        if (!isEvicted(rootModuleConf)
-                && (hasConfigurationsToLoad() || !isRootModuleConfLoaded(rootModuleConf))
-                && !hasProblem()) {
+        if (hasProblem()) {
+            Message.debug("Node has problem.  Skip loading");
+            handleConfiguration(loaded, rootModuleConf, parent, parentConf, conf, shouldBePublic);
+            return false;
+        } else if (isEvicted(rootModuleConf)) {
+            Message.debug(rootModuleConf + " is evicted.  Skip loading");
+        } else if (!hasConfigurationsToLoad() && isRootModuleConfLoaded(rootModuleConf)) {
+            Message.debug(rootModuleConf + " is loaded and no conf to load.  Skip loading");
+        } else {
             markRootModuleConfLoaded(rootModuleConf);
             if (md == null) {
                 DependencyResolver resolver = data.getSettings().getResolver(getModuleId());
@@ -309,11 +320,6 @@ public class IvyNode implements Comparable {
                 loaded = true;
             }
         }
-        if (hasProblem()) {
-            return handleConfiguration(loaded, rootModuleConf, parent, parentConf, conf,
-                shouldBePublic)
-                    && loaded;
-        }
         if (!handleConfiguration(loaded, rootModuleConf, parent, parentConf, conf, shouldBePublic)) {
             return false;
         }
@@ -347,8 +353,7 @@ public class IvyNode implements Comparable {
                     "impossible to get dependencies when data has not been loaded");
         }
         DependencyDescriptor[] dds = md.getDependencies();
-        Collection dependencies = new LinkedHashSet(); // it's important to respect dependencies
-        // order
+        Collection dependencies = new LinkedHashSet(); // it's important to respect order
         for (int i = 0; i < dds.length; i++) {
             DependencyDescriptor dd = dds[i];
             String[] dependencyConfigurations = dd.getDependencyConfigurations(conf, requestedConf);
@@ -547,6 +552,7 @@ public class IvyNode implements Comparable {
         return (String[]) depConfs.toArray(new String[depConfs.size()]);
     }
 
+    //This is never called.  Could we remove it?
     public void discardConf(String rootModuleConf, String conf) {
         Set depConfs = (Set) rootModuleConfs.get(rootModuleConf);
         if (depConfs == null) {
@@ -750,7 +756,13 @@ public class IvyNode implements Comparable {
             // no configuration required => no artifact required
             return new Artifact[0];
         }
+        if (md == null) {
+            throw new IllegalStateException(
+                    "impossible to get artefacts when data has not been loaded. IvyNode = "
+                    + this.toString());
+        }
 
+        
         Set artifacts = new HashSet(); // the set we fill before returning
 
         // we check if we have dependencyArtifacts includes description for this rootModuleConf
@@ -909,7 +921,8 @@ public class IvyNode implements Comparable {
     public ConflictManager getConflictManager(ModuleId mid) {
         if (md == null) {
             throw new IllegalStateException(
-                    "impossible to get conflict manager when data has not been loaded");
+                    "impossible to get conflict manager when data has not been loaded. IvyNode = "
+                    + this.toString());
         }
         ConflictManager cm = md.getConflictManager(mid);
         return cm == null ? settings.getConflictManager(mid) : cm;
@@ -1097,7 +1110,9 @@ public class IvyNode implements Comparable {
 
     public void markEvicted(String rootModuleConf, IvyNode node, ConflictManager conflictManager,
             Collection resolved) {
-        eviction.markEvicted(rootModuleConf, node, conflictManager, resolved);
+        EvictionData evictionData = new EvictionData(rootModuleConf, node, conflictManager,
+                resolved);
+        markEvicted(evictionData);
     }
 
     public void setEvictedNodes(ModuleId moduleId, String rootModuleConf, Collection evicted) {

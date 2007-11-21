@@ -91,6 +91,10 @@ public class IvyNodeEviction {
         public String getRootModuleConf() {
             return rootModuleConf;
         }
+
+        public boolean isTransitivelyEvicted() {
+            return parent == null;
+        }
     }
 
     private static final class ModuleIdConf {
@@ -235,9 +239,13 @@ public class IvyNodeEviction {
     public boolean isEvicted(String rootModuleConf) {
         cleanEvicted();
         IvyNode root = node.getRoot();
-        return root != node
-                && !root.getResolvedRevisions(node.getId().getModuleId(), rootModuleConf).contains(
-                    node.getResolvedId()) && getEvictedData(rootModuleConf) != null;
+        ModuleId moduleId = node.getId().getModuleId();
+        Collection resolvedRevisions = root.getResolvedRevisions(moduleId, rootModuleConf);
+        EvictionData evictedData = getEvictedData(rootModuleConf);
+        return root != node && evictedData != null 
+            && (!resolvedRevisions.contains(node.getResolvedId())
+                || evictedData.isTransitivelyEvicted()
+               );
     }
 
     public boolean isCompletelyEvicted() {
@@ -271,13 +279,6 @@ public class IvyNodeEviction {
                 }
             }
         }
-    }
-
-    public void markEvicted(String rootModuleConf, IvyNode node, ConflictManager conflictManager,
-            Collection resolved) {
-        EvictionData evictionData = new EvictionData(rootModuleConf, node, conflictManager,
-                resolved);
-        markEvicted(evictionData);
     }
 
     public void markEvicted(EvictionData evictionData) {

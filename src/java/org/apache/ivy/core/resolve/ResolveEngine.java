@@ -548,10 +548,11 @@ public class ResolveEngine {
         } else {
             Message.verbose("== resolving dependencies for " + node.getId() + " [" + conf + "]");
         }
-        resolveConflict(node);
+        resolveConflict(node, conf);
 
         if (node.loadData(conf, shouldBePublic)) {
-            resolveConflict(node);
+            resolveConflict(node, conf); //We just did it. Should it be redone? 
+                                   //NB:removing it break a unit test.
             if (!node.isEvicted()) {
                 String[] confs = node.getRealConfs(conf);
                 for (int i = 0; i < confs.length; i++) {
@@ -672,8 +673,8 @@ public class ResolveEngine {
         return false;
     }
 
-    private void resolveConflict(VisitNode node) {
-        resolveConflict(node, node.getParent(), Collections.EMPTY_SET);
+    private void resolveConflict(VisitNode node, String conf) {
+        resolveConflict(node, node.getParent(), conf,Collections.EMPTY_SET);
     }
 
     /**
@@ -689,7 +690,8 @@ public class ResolveEngine {
      *            descendants of ancestor)
      * @return true if conflict resolution has been done, false it can't be done yet
      */
-    private boolean resolveConflict(VisitNode node, VisitNode ancestor, Collection toevict) {
+    private boolean resolveConflict(VisitNode node, VisitNode ancestor, String conf,
+            Collection toevict) {
         if (ancestor == null || node == ancestor) {
             return true;
         }
@@ -702,7 +704,7 @@ public class ResolveEngine {
             // job is done and node is selected, nothing to do for this ancestor, but we still have
             // to check higher levels, for which conflict resolution might have been impossible
             // before
-            if (resolveConflict(node, ancestor.getParent(), toevict)) {
+            if (resolveConflict(node, ancestor.getParent(), conf, toevict)) {
                 // now that conflict resolution is ok in ancestors
                 // we just have to check if the node wasn't previously evicted in root ancestor
                 EvictionData evictionData = node.getEvictionDataInRoot(node.getRootModuleConf(),
@@ -730,7 +732,7 @@ public class ResolveEngine {
             node.getModuleId(), node.getRootModuleConf()));
         resolvedNodes.addAll(ancestor.getNode().getPendingConflicts(node.getRootModuleConf(),
             node.getModuleId()));
-        Collection conflicts = computeConflicts(node, ancestor, toevict, resolvedNodes);
+        Collection conflicts = computeConflicts(node, ancestor, conf, toevict, resolvedNodes);
 
         if (settings.debugConflictResolution()) {
             Message.debug("found conflicting revisions for " + node + " in " + ancestor + ": "
@@ -788,7 +790,7 @@ public class ResolveEngine {
             ancestor.getNode().setPendingConflicts(node.getModuleId(), node.getRootModuleConf(),
                 Collections.EMPTY_SET);
 
-            return resolveConflict(node, ancestor.getParent(), toevict);
+            return resolveConflict(node, ancestor.getParent(), conf, toevict);
         } else {
             // node has been evicted for the current parent
             if (resolved.isEmpty()) {
@@ -827,7 +829,7 @@ public class ResolveEngine {
                     IvyNode sel = (IvyNode) iter.next();
                     if (!prevResolved.contains(sel)) {
                         solved &= resolveConflict(node.gotoNode(sel), ancestor.getParent(),
-                            toevict);
+                            conf, toevict);
                     }
                 }
             }
@@ -835,8 +837,8 @@ public class ResolveEngine {
         }
     }
 
-    private Collection computeConflicts(VisitNode node, VisitNode ancestor, Collection toevict,
-            Collection resolvedNodes) {
+    private Collection computeConflicts(VisitNode node, VisitNode ancestor, String conf,
+            Collection toevict, Collection resolvedNodes) {
         Collection conflicts = new HashSet();
         conflicts.add(node.getNode());
         if (resolvedNodes.removeAll(toevict)) {
@@ -853,14 +855,13 @@ public class ResolveEngine {
                         .addAll(dep.getResolvedNodes(node.getModuleId(), node.getRootModuleConf()));
             }
         } else if (resolvedNodes.isEmpty() && node.getParent() != ancestor) {
-            DependencyDescriptor[] dds = ancestor.getDescriptor().getDependencies();
-            for (int i = 0; i < dds.length; i++) {
-                if (dds[i].getDependencyId().equals(node.getModuleId())) {
-                    IvyNode n = node.getNode().findNode(dds[i].getDependencyRevisionId());
-                    if (n != null) {
-                        conflicts.add(n);
-                        break;
-                    }
+            //Conflict must only be computed per root configuration at this step.
+            Collection ancestorDepIvyNodes = node.getParent().getNode()
+                        .getDependencies(node.getRootModuleConf(), new String[] {conf});
+            for (Iterator it = ancestorDepIvyNodes.iterator(); it.hasNext();) {
+                IvyNode ancestorDep = (IvyNode) it.next();
+                if (ancestorDep.getModuleId().equals(node.getModuleId())) {
+                    conflicts.add(ancestorDep);
                 }
             }
         } else {

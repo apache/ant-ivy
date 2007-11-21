@@ -18,9 +18,6 @@
 package org.apache.ivy.core.resolve;
 
 import java.io.File;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -35,7 +32,6 @@ import junit.framework.TestCase;
 
 import org.apache.ivy.Ivy;
 import org.apache.ivy.TestHelper;
-import org.apache.ivy.core.IvyContext;
 import org.apache.ivy.core.cache.ArtifactOrigin;
 import org.apache.ivy.core.cache.CacheManager;
 import org.apache.ivy.core.module.descriptor.Artifact;
@@ -58,9 +54,7 @@ import org.apache.ivy.plugins.resolver.DependencyResolver;
 import org.apache.ivy.plugins.resolver.DualResolver;
 import org.apache.ivy.plugins.resolver.FileSystemResolver;
 import org.apache.ivy.util.CacheCleaner;
-import org.apache.ivy.util.DefaultMessageLogger;
 import org.apache.ivy.util.FileUtil;
-import org.apache.ivy.util.Message;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.Delete;
 import org.xml.sax.SAXException;
@@ -675,8 +669,6 @@ public class ResolveTest extends TestCase {
             ModuleRevisionId.newInstance("org1", "mod1.2", "2.1")).exists());
         assertTrue(getArchiveFileInCache("org1", "mod1.2", "2.1", "mod1.2", "jar", "jar").exists());
 
-        assertFalse(cacheManager.getIvyFileInCache(
-            ModuleRevisionId.newInstance("org1", "mod1.2", "2.0")).exists());
         assertFalse(getArchiveFileInCache("org1", "mod1.2", "2.0", "mod1.2", "jar", "jar").exists());
     }
 
@@ -1474,7 +1466,7 @@ public class ResolveTest extends TestCase {
     public void testTransitiveEviction() throws Exception {
         // mod7.3 depends on mod7.2 v1.0 and on mod7.1 v2.0
         // mod7.2 v1.0 depends on mod7.1 v1.0 (which then should be evicted)
-        // mod7.1 v1.0 depends on mod 1.2 v1.0 (which should be evicted by transitivity)
+        // mod7.1 v1.0 depends on mod 1.2 v2.0 (which should be evicted by transitivity)
 
         ResolveReport report = ivy.resolve(new File("test/repositories/2/mod7.3/ivy-1.0.xml")
                 .toURL(), getResolveOptions(new String[] {"*"}));
@@ -1495,9 +1487,9 @@ public class ResolveTest extends TestCase {
             ModuleRevisionId.newInstance("org7", "mod7.1", "2.0")).exists());
         assertTrue(getArchiveFileInCache("org7", "mod7.1", "2.0", "mod7.1", "jar", "jar").exists());
 
-        assertTrue(!getArchiveFileInCache("org7", "mod7.1", "1.0", "mod7.1", "jar", "jar").exists());
+        assertFalse(getArchiveFileInCache("org7", "mod7.1", "1.0", "mod7.1", "jar", "jar").exists());
 
-        assertTrue(!getArchiveFileInCache("org1", "mod1.2", "2.0", "mod1.2", "jar", "jar").exists());
+        assertFalse(getArchiveFileInCache("org1", "mod1.2", "2.0", "mod1.2", "jar", "jar").exists());
     }
 
     public void testTransitiveEviction2() throws Exception {
@@ -1753,15 +1745,15 @@ public class ResolveTest extends TestCase {
                 .newInstance("org5", "mod5.1", "4.2")).length);
     }
 
-    /*
+    
     public void testMultipleEviction() throws Exception {
         
         ResolveReport report = ivy.resolve(
             new File("test/repositories/1/IVY-644/M1/ivys/ivy-1.0.xml").toURL(),
-            getResolveOptions(new String[] {"*"}));
+            getResolveOptions(new String[] {"test" , "runtime" })); //NB the order impact the bug
         assertFalse(report.hasError());
     }
-    */
+    
     
     public void testResolveForce() throws Exception {
         // mod4.1 v 4.2 depends on
