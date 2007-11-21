@@ -194,8 +194,6 @@ public class IvyNode implements Comparable {
         boolean loaded = false;
         if (hasProblem()) {
             Message.debug("Node has problem.  Skip loading");
-            handleConfiguration(loaded, rootModuleConf, parent, parentConf, conf, shouldBePublic);
-            return false;
         } else if (isEvicted(rootModuleConf)) {
             Message.debug(rootModuleConf + " is evicted.  Skip loading");
         } else if (!hasConfigurationsToLoad() && isRootModuleConfLoaded(rootModuleConf)) {
@@ -320,16 +318,18 @@ public class IvyNode implements Comparable {
                 loaded = true;
             }
         }
-        if (!handleConfiguration(loaded, rootModuleConf, parent, parentConf, conf, shouldBePublic)) {
+        handleConfiguration(loaded, rootModuleConf, parent, parentConf, conf, shouldBePublic);
+        if (hasProblem()) {
+            Message.debug("problem : " + problem.getMessage());
             return false;
+        } else {
+            DependencyDescriptor dd = getDependencyDescriptor(parent);
+            if (dd != null) {
+                addDependencyArtifacts(rootModuleConf, dd.getDependencyArtifacts(parentConf));
+                addDependencyIncludes(rootModuleConf, dd.getIncludeRules(parentConf));
+            }
+            return loaded;
         }
-        DependencyDescriptor dd = getDependencyDescriptor(parent);
-        if (dd != null) {
-            addDependencyArtifacts(rootModuleConf, dd.getDependencyArtifacts(parentConf));
-            addDependencyIncludes(rootModuleConf, dd.getIncludeRules(parentConf));
-        }
-        return loaded;
-
     }
 
     public Collection getDependencies(String rootModuleConf, String[] confs) {
