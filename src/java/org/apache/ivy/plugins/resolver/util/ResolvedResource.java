@@ -21,25 +21,25 @@ import org.apache.ivy.plugins.latest.ArtifactInfo;
 import org.apache.ivy.plugins.repository.Resource;
 
 public class ResolvedResource implements ArtifactInfo {
-    private Resource _res;
+    private Resource res;
 
-    private String _rev;
+    private String rev;
 
     public ResolvedResource(Resource res, String rev) {
-        _res = res;
-        _rev = rev;
+        this.res = res;
+        this.rev = rev;
     }
 
     public String getRevision() {
-        return _rev;
+        return rev;
     }
 
     public Resource getResource() {
-        return _res;
+        return res;
     }
 
     public String toString() {
-        return _res + " (" + _rev + ")";
+        return res + " (" + rev + ")";
     }
 
     public long getLastModified() {
