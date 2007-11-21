@@ -2938,8 +2938,7 @@ public class ResolveTest extends TestCase {
             "test", "jar", "jar").exists());
     }
 
-    
-    public void testResolveMaven2Relocation() throws Exception {
+    public void testResolveMaven2RelocationOfGroupId() throws Exception {
         //Same as testResolveMaven2 but with a relocated module pointing to the module
         //used in testResolveMaven2.
         ivy = new Ivy();
@@ -2948,6 +2947,34 @@ public class ResolveTest extends TestCase {
         try {        
             ResolveReport report = ivy.resolve(new File(
                     "test/repositories/m2/org/relocated/test3/1.0/test3-1.0.pom").toURL(),
+                getResolveOptions(new String[] {"*"}));
+            assertNotNull(report);
+    
+            // dependencies
+            assertTrue(ivy.getCacheManager(cache).getIvyFileInCache(
+                ModuleRevisionId.newInstance("org.apache", "test2", "1.0")).exists());
+            assertTrue(TestHelper.getArchiveFileInCache(ivy, cache, "org.apache", "test2", "1.0",
+                "test2", "jar", "jar").exists());
+    
+            assertTrue(ivy.getCacheManager(cache).getIvyFileInCache(
+                ModuleRevisionId.newInstance("org.apache", "test", "1.0")).exists());
+            assertTrue(TestHelper.getArchiveFileInCache(ivy, cache, "org.apache", "test", "1.0",
+                "test", "jar", "jar").exists());
+        } finally {
+            ivy.popContext();
+        }
+    }
+
+
+    public void testResolveMaven2FullRelocation() throws Exception {
+        //Same as testResolveMaven2 but with a relocated module pointing to the module
+        //used in testResolveMaven2.
+        ivy = new Ivy();
+        ivy.configure(new File("test/repositories/m2/ivysettings.xml"));
+        ivy.pushContext();
+        try {        
+            ResolveReport report = ivy.resolve(new File(
+                    "test/repositories/m2/org/relocated/test3full/1.1/test3full-1.1.pom").toURL(),
                 getResolveOptions(new String[] {"*"}));
             assertNotNull(report);
     

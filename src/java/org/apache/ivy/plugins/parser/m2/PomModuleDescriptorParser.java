@@ -155,6 +155,10 @@ public final class PomModuleDescriptorParser extends AbstractModuleDescriptorPar
         
         private StringBuffer buffer = new StringBuffer();
 
+        private String relocationModule;
+
+        private String relocationRevision;
+
         public Parser(ModuleDescriptorParser parser, Resource res) {
             super(parser);
             setResource(res);
@@ -288,8 +292,17 @@ public final class PomModuleDescriptorParser extends AbstractModuleDescriptorPar
             } else if ("project/distributionManagement/relocation".equals(context)) {
                 md.setModuleRevisionId(ModuleRevisionId
                         .newInstance(organisation, module, revision));
+                if (relocationOrganisation == null ) {
+                    relocationOrganisation = organisation;
+                }
+                if (relocationModule == null ) {
+                    relocationModule = module;
+                }
+                if (relocationRevision == null ) {
+                    relocationRevision = revision;
+                }
                 dd = new DefaultDependencyDescriptor(md, ModuleRevisionId.newInstance(
-                    relocationOrganisation, module, revision), true, false, true);
+                    relocationOrganisation, relocationModule, relocationRevision), true, false, true);
                 dd.addDependencyConfiguration("*", "@");
                 md.addDependency(dd);
                 dd = null;
@@ -331,7 +344,15 @@ public final class PomModuleDescriptorParser extends AbstractModuleDescriptorPar
                     return;
                 } 
                 if (context.equals("project/distributionManagement/relocation/groupId")) {
-                    relocationOrganisation = txt;
+                    relocationOrganisation= txt;
+                    return;
+                }
+                if (context.equals("project/distributionManagement/relocation/artifactId")) {
+                    relocationModule = txt;
+                    return;
+                }
+                if (context.equals("project/distributionManagement/relocation/version")) {
+                    relocationRevision = txt;
                     return;
                 }
                 if (context.startsWith("project/parent")) {
