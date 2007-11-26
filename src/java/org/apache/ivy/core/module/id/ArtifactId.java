@@ -64,8 +64,10 @@ public class ArtifactId {
 
     /** {@inheritDoc} */
     public String toString() {
-        return getModuleId() + " " + getName() + "." + getType();
-    }
+        return getModuleId()
+            + "!" + getName() + "." + getExt() 
+            + (getType().equals(getExt()) ? "" : "(" + getType() + ")");
+}
 
     /**
      * @return Returns the module id.

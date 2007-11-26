@@ -2364,7 +2364,7 @@ public class ResolveTest extends TestCase {
             fail("no exception with circular dependency strategy set to error");
         } catch (CircularDependencyException ex) {
             assertEquals(
-                "[ org6 | mod6.3 | 1.0 ]->[ org6 | mod6.2 | 1.0 ]->[ org6 | mod6.3 | latest.integration ]",
+                "org6#mod6.3;1.0->org6#mod6.2;1.0->org6#mod6.3;latest.integration",
                 ex.getMessage());
         }
     }
@@ -2384,7 +2384,7 @@ public class ResolveTest extends TestCase {
         } catch (CircularDependencyException ex) {
             // ok
             assertEquals(
-                "[ org8 | mod8.5 | NONE ]->[ org8 | mod8.6 | 2.+ ]->[ org8 | mod8.5 | 2.+ ]", ex
+                "org8#mod8.5;NONE->org8#mod8.6;2.+->org8#mod8.5;2.+", ex
                         .getMessage());
         }
     }
@@ -2422,7 +2422,7 @@ public class ResolveTest extends TestCase {
             fail("no exception with circular dependency strategy set to error");
         } catch (CircularDependencyException ex) {
             assertEquals(
-                "[ org6 | mod6.3 | 1.2 ]->[ org6 | mod6.2 | 1.1 ]->[ org6 | mod6.3 | 1.2 ]", ex
+                "org6#mod6.3;1.2->org6#mod6.2;1.1->org6#mod6.3;1.2", ex
                         .getMessage());
         }
     }

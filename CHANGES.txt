@@ -80,6 +80,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - IMPROVEMENT: ivy html reports now refers http://ant.apache.org (partial IVY-414)
 - IMPROVEMENT: Improvements on hello ivy example (IVY-626) (with contribution from Jacob Grydholt Jensen)
 - IMPROVEMENT: Make the root attribute in the ivyrep resolver mandatory (IVY-625)
+- IMPROVEMENT: New text representation for main module metadata concepts (IVY-649)
 
 - NEW: Add a task/code to create M2 POM files from Ivy configurations (IVY-416)
 - NEW: [Build] Publish the ivy sources (IVY-646) (thanks to Nicolas Lalevée)

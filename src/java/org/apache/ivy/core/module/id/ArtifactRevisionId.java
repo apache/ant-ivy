@@ -90,9 +90,9 @@ public class ArtifactRevisionId extends UnmodifiableExtendableItem {
     }
 
     public String toString() {
-        return "[ " + getModuleRevisionId().getOrganisation() + " | "
-                + getModuleRevisionId().getName() + " | " + getModuleRevisionId().getRevision()
-                + " :: " + getName() + " . " + getExt() + " ( " + getType() + " ) ]";
+        return getModuleRevisionId()
+                + "!" + getName() + "." + getExt() 
+                + (getType().equals(getExt()) ? "" : "(" + getType() + ")");
     }
 
     /**

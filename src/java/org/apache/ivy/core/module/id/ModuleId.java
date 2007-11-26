@@ -85,7 +85,7 @@ public class ModuleId implements Comparable {
 
     /** {@inheritDoc} */    
     public String toString() {
-        return "[ " + organisation + " | " + name + " ]";
+        return organisation + "#" + name;
     }
 
     /** {@inheritDoc} */    

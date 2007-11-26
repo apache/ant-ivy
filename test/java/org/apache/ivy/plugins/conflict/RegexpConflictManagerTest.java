@@ -64,7 +64,7 @@ public class RegexpConflictManagerTest extends TestCase {
                 e
                         .getMessage()
                         .indexOf(
-                            "[ org1 | mod1.2 | 2.0.0 ]:2.0 (needed by [[ apache | resolve-noconflict | 1.0 ]])") != -1);
+                            "org1#mod1.2;2.0.0:2.0 (needed by [apache#resolve-noconflict;1.0])") != -1);
             assertTrue("bad exception message: " + e.getMessage(), e.getMessage().indexOf(
                 "conflicts with") != -1);
             assertTrue(
@@ -72,7 +72,7 @@ public class RegexpConflictManagerTest extends TestCase {
                 e
                         .getMessage()
                         .indexOf(
-                            "[ org1 | mod1.2 | 2.1.0 ]:2.1 (needed by [[ apache | resolve-noconflict | 1.0 ]])") != -1);
+                            "org1#mod1.2;2.1.0:2.1 (needed by [apache#resolve-noconflict;1.0])") != -1);
         }
     }
 

@@ -20,6 +20,8 @@ package org.apache.ivy.core.module.id;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.ivy.Ivy;
 import org.apache.ivy.core.IvyContext;
@@ -35,6 +37,43 @@ public class ModuleRevisionId extends UnmodifiableExtendableItem {
     private static final String ENCODE_PREFIX = "+";
 
     private static final String NULL_ENCODE = "@#:NULL:#@";
+    
+    private static final String STRICT_CHARS_PATTERN = "[a-zA-Z0-9\\-/\\._+=]";
+    private static final String REV_STRICT_CHARS_PATTERN = "[a-zA-Z0-9\\-/\\._+=,\\[\\]\\{\\}:]";
+    private static final Pattern MRID_PATTERN = 
+        Pattern.compile(
+            "(" + STRICT_CHARS_PATTERN + "*)" 
+            + "#(" + STRICT_CHARS_PATTERN + "+)" 
+            + "(?:#(" + STRICT_CHARS_PATTERN + "+))?" 
+            + ";(" + REV_STRICT_CHARS_PATTERN + "+)");
+
+    /**
+     * Parses a module revision id text representation and returns a new {@link ModuleRevisionId}
+     * instance corresponding to the parsed String.
+     * <p>
+     * The result is unspecified if the module doesn't respect strict name conventions.
+     * </p>
+     * 
+     * @param mrid
+     *            the text representation of the module (as returned by {@link #toString()}). Must
+     *            not be <code>null</code>.
+     * @return a {@link ModuleRevisionId} corresponding to the given text representation
+     * @throws IllegalArgumentException
+     *             if the given text representation does not match the {@link ModuleRevisionId} text
+     *             representation rules.
+     */
+    public static ModuleRevisionId parse(String mrid) {
+        Matcher m = MRID_PATTERN.matcher(mrid.trim());
+        if (!m.matches()) {
+            throw new IllegalArgumentException(
+                    "module revision text representation do not match expected pattern."
+                            + " given mrid='" + mrid + "' expected form=" + MRID_PATTERN);
+        }
+
+        //CheckStyle:MagicNumber| OFF
+        return newInstance(m.group(1), m.group(2), m.group(3), m.group(4));
+        //CheckStyle:MagicNumber| ON
+    }
 
     public static ModuleRevisionId newInstance(String organisation, String name, String revision) {
         return new ModuleRevisionId(new ModuleId(organisation, name), revision);
@@ -144,9 +183,9 @@ public class ModuleRevisionId extends UnmodifiableExtendableItem {
 
 
     public String toString() {
-        return "[ " + moduleId.getOrganisation() + " | " + moduleId.getName()
-                + (branch == null || branch.length() == 0 ? "" : " | " + branch) + " | "
-                + (revision == null ? "NONE" : revision) + " ]";
+        return moduleId
+                + (branch == null || branch.length() == 0 ? "" : "#" + branch) + ";"
+                + (revision == null ? "NONE" : revision);
     }
 
     public String encodeToString() {
