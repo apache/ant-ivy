@@ -31,7 +31,7 @@
 	
     <!-- paths used for compilation and run  -->
     <path id="compile.path.id">
-        <fileset dir="${lib.dir}/cc-Impl" />
+        <fileset dir="${lib.dir}/cc-impl" />
 	</path>
 	
     <path id="test.path.id">
