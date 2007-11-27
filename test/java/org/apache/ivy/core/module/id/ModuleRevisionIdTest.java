@@ -29,7 +29,9 @@ public class ModuleRevisionIdTest extends TestCase {
         testParse("org#module;2.0");
         testParse("org#module#branch;myversion");
         testParse("org#module#branch;[1.2,1.3]");
+        testParse("org#module#branch;working@test");
         testParse(" org#module#branch;[1.2,1.3] ");
+        testParse(" org#module#branch;[1.2,1.3) ");
         
         testParseFailure("bad");
         testParseFailure("org#mod");

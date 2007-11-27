@@ -1,0 +1,39 @@
+<body>
+<p>
+This packages gathers classes used to represent identifiers of objects involved in dependency management.
+</p>
+<p>
+As identifiers, they do not store any information on the module content and detailed metadata (like dependencies).
+</p>
+<h2>Classes</h2>
+<p>
+<ul>
+<li>ModuleId</li> is used as the identifier of module, without considering its version. It's basically an organization and module name couple.
+<li>ModuleRevisionId</li> is used as the identifier of a module in a particular version or version constraint. It is composed of a ModuleId, a revision, and optionally a branch and extra attributes. 
+<li>ArtifactId</li> identifies an artifact without considering its version. It's basically a ModuleId and an artifact name, type and extension, plus optional extra attributes.
+<li>ArtifactRevisionId</li> identifies an artifact of a module in a particular version. It is composed of a ModuleRevisionId along with artifact identifier like the name type and extension. 
+</ul>
+</p>
+<h2>Text Representation</h2>
+<p>
+These classes share an homogeneous text representation, which can be easily obtained through the toString() method.
+</p>
+<p>
+The general pattern is: <code>[organisation]#[module]#[branch];[revision]![artifact].[ext]([type])</code>
+The # before the branch is present only if the branch is not empty.<br/>
+The type and surrounding parenthesis are present only if different from the extension.
+</p>
+<p>
+A textual representation can be parsed into an object (supported for ModuleRevisionId only yet), as long as a strict set of characters is used for each field (which is recommended).<br/>
+Allowed characters are:
+<ul>
+<li>organisation</li> a-z A-Z 0-9 - / . _ + =
+<li>module</li> a-z A-Z 0-9 - / . _ + =
+<li>branch</li> a-z A-Z 0-9 - / . _ + =
+<li>revision</li> a-z A-Z 0-9 - / . _ + = , [ ] { } ( ) : @
+<li>artifact</li> a-z A-Z 0-9 - / . _ + =
+<li>extension</li> a-z A-Z 0-9 - / . _ + =
+<li>type</li> a-z A-Z 0-9 - / . _ + =
+</ul>
+
+</body>

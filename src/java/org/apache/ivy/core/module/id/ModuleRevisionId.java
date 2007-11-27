@@ -39,7 +39,8 @@ public class ModuleRevisionId extends UnmodifiableExtendableItem {
     private static final String NULL_ENCODE = "@#:NULL:#@";
     
     private static final String STRICT_CHARS_PATTERN = "[a-zA-Z0-9\\-/\\._+=]";
-    private static final String REV_STRICT_CHARS_PATTERN = "[a-zA-Z0-9\\-/\\._+=,\\[\\]\\{\\}:]";
+    private static final String REV_STRICT_CHARS_PATTERN 
+        = "[a-zA-Z0-9\\-/\\._+=,\\[\\]\\{\\}\\(\\):@]";
     private static final Pattern MRID_PATTERN = 
         Pattern.compile(
             "(" + STRICT_CHARS_PATTERN + "*)" 
