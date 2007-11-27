@@ -47,8 +47,8 @@ public class CacheManager {
 
     public CacheManager(CacheSettings settings, File cache) {
         this.settings = settings;
-        if (cache==null) {
-            this.cache=settings.getDefaultCache();
+        if (cache == null) {
+            this.cache = settings.getDefaultCache();
         } else {
             this.cache = cache;
         }
