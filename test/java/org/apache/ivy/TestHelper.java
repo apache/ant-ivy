@@ -18,7 +18,11 @@
 package org.apache.ivy;
 
 import java.io.File;
+import java.util.Collection;
 import java.util.Date;
+import java.util.HashSet;
+
+import junit.framework.Assert;
 
 import org.apache.ivy.core.cache.CacheManager;
 import org.apache.ivy.core.module.descriptor.DefaultArtifact;
@@ -38,4 +42,38 @@ public class TestHelper {
             organisation, module, revision), new Date(), artifact, type, ext));
     }
 
+    /**
+     * Assertion utility methods to test if a collection of {@link ModuleRevisionId} matches a given
+     * expected set of mrids.
+     * <p>
+     * Expected mrids is given as a String of comma separated string representations of
+     * {@link ModuleRevisionId}.
+     * 
+     * @param expectedMrids
+     *            the expected set of mrids
+     * @param mrids
+     *            the3 mrids to test
+     */
+    public static void assertModuleRevisionIds(String expectedMrids,
+            Collection/* <ModuleRevisionId> */mrids) {
+        Collection expected = parseMrids(expectedMrids);
+        Assert.assertEquals(expected, mrids);
+    }
+
+    /**
+     * Returns a Set of {@link ModuleRevisionId} corresponding to the given comma separated list of
+     * their text representation.
+     * 
+     * @param mrids
+     *            the text representation of the {@link ModuleRevisionId}
+     * @return a collection of {@link ModuleRevisionId}
+     */
+    public static Collection parseMrids(String mrids) {
+        String[] m = mrids.split(", ");
+        Collection c = new HashSet();
+        for (int i = 0; i < m.length; i++) {
+            c.add(ModuleRevisionId.parse(m[i]));
+        }
+        return c;
+    }
 }

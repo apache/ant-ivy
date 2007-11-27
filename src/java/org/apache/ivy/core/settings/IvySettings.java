@@ -57,6 +57,7 @@ import org.apache.ivy.plugins.circular.ErrorCircularDependencyStrategy;
 import org.apache.ivy.plugins.circular.IgnoreCircularDependencyStrategy;
 import org.apache.ivy.plugins.circular.WarnCircularDependencyStrategy;
 import org.apache.ivy.plugins.conflict.ConflictManager;
+import org.apache.ivy.plugins.conflict.LatestCompatibleConflictManager;
 import org.apache.ivy.plugins.conflict.LatestConflictManager;
 import org.apache.ivy.plugins.conflict.NoConflictManager;
 import org.apache.ivy.plugins.conflict.StrictConflictManager;
@@ -229,7 +230,9 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
         addLatestStrategy("latest-time", latestTimeStrategy);
 
         addConflictManager("latest-revision", new LatestConflictManager("latest-revision",
-                latestRevisionStrategy));
+            latestRevisionStrategy));
+        addConflictManager("latest-compatible", 
+            new LatestCompatibleConflictManager("latest-compatible", latestRevisionStrategy));
         addConflictManager("latest-time", new LatestConflictManager("latest-time",
                 latestTimeStrategy));
         addConflictManager("all", new NoConflictManager());

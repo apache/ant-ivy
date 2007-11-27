@@ -27,6 +27,8 @@ import java.util.Stack;
 import org.apache.ivy.Ivy;
 import org.apache.ivy.core.cache.CacheManager;
 import org.apache.ivy.core.event.EventManager;
+import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
+import org.apache.ivy.core.resolve.ResolveData;
 import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.plugins.circular.CircularDependencyStrategy;
 import org.apache.ivy.util.MessageLogger;
@@ -51,6 +53,23 @@ public class IvyContext {
 
     private Thread operatingThread;
 
+    private ResolveData resolveData;
+
+    private DependencyDescriptor dd;
+    
+    public IvyContext() {
+    }
+
+    public IvyContext(IvyContext ctx) {
+        defaultIvy = ctx.defaultIvy;
+        ivy = ctx.ivy;
+        cacheManager = ctx.cacheManager;
+        contextMap = new HashMap(ctx.contextMap);
+        operatingThread = ctx.operatingThread;
+        resolveData = ctx.resolveData;
+        dd = ctx.dd;
+    }
+
     public static IvyContext getContext() {
         Stack cur = getCurrentStack();
         if (cur.isEmpty()) {
@@ -72,11 +91,25 @@ public class IvyContext {
      * Creates a new IvyContext and pushes it as the current context in the current thread.
      * <p>
      * {@link #popContext()} should usually be called when the job for which this context has been
-     * pushed is finsihed.
+     * pushed is finished.
      * </p>
+     * @return the newly pushed context
      */
-    public static void pushNewContext() {
-        pushContext(new IvyContext());
+    public static IvyContext pushNewContext() {
+        return pushContext(new IvyContext());
+    }
+
+    /**
+     * Creates a new IvyContext as a copy of the current one and pushes it as the current context in
+     * the current thread.
+     * <p>
+     * {@link #popContext()} should usually be called when the job for which this context has been
+     * pushed is finished.
+     * </p>
+    * @return the newly pushed context
+     */
+    public static IvyContext pushNewCopyContext() {
+        return pushContext(new IvyContext(getContext()));
     }
     
     /**
@@ -86,18 +119,22 @@ public class IvyContext {
      * 
      * @param context
      *            the new context to use in this thread.
+    * @return the pushed context
      */
-    public static void pushContext(IvyContext context) {
+    public static IvyContext pushContext(IvyContext context) {
         getCurrentStack().push(context);
+        return context;
     }
     
     /**
      * Pops one context used with this thread. This is usually called after having finished a task
      * for which a call to {@link #pushNewContext()} or {@link #pushContext(IvyContext)} was done
      * prior to beginning the task.
+     * 
+     * @return the popped context
      */
-    public static void popContext() {
-        getCurrentStack().pop();
+    public static IvyContext popContext() {
+        return (IvyContext) getCurrentStack().pop();
     }
 
 
@@ -332,24 +369,20 @@ public class IvyContext {
         getIvy().checkInterrupted();
     }
 
-    // should be better to use context to store this kind of information, but not yet ready to do
-    // so...
-    // private WeakReference _root = new WeakReference(null);
-    // private String _rootModuleConf = null;
-    // public IvyNode getRoot() {
-    // return (IvyNode) _root.get();
-    // }
-    //
-    // public void setRoot(IvyNode root) {
-    // _root = new WeakReference(root);
-    // }
-    //
-    // public String getRootModuleConf() {
-    // return _rootModuleConf;
-    // }
-    //
-    // public void setRootModuleConf(String rootModuleConf) {
-    // _rootModuleConf = rootModuleConf;
-    // }
+    public void setResolveData(ResolveData data) {
+        this.resolveData = data;
+    }
+    
+    public ResolveData getResolveData() {
+        return resolveData;
+    }
+
+    public void setDependencyDescriptor(DependencyDescriptor dd) {
+        this.dd = dd;
+    }
+    
+    public DependencyDescriptor getDependencyDescriptor() {
+        return dd;
+    }
 
 }

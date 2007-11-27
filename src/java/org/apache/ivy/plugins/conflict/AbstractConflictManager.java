@@ -17,6 +17,9 @@
  */
 package org.apache.ivy.plugins.conflict;
 
+import java.util.Collection;
+
+import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
 import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.plugins.IvySettingsAware;
 
@@ -43,5 +46,9 @@ public abstract class AbstractConflictManager implements ConflictManager, IvySet
 
     public String toString() {
         return name;
+    }
+    
+    public void handleAllBlacklistedRevisions(
+            DependencyDescriptor dd, Collection foundBlacklisted) {
     }
 }

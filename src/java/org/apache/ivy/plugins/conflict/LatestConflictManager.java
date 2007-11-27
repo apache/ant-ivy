@@ -33,7 +33,7 @@ public class LatestConflictManager extends AbstractConflictManager {
     public static class NoConflictResolvedYetException extends RuntimeException {
     }
 
-    private static final class IvyNodeArtifactInfo implements ArtifactInfo {
+    protected static final class IvyNodeArtifactInfo implements ArtifactInfo {
         private final IvyNode node;
 
         private IvyNodeArtifactInfo(IvyNode dep) {
@@ -90,9 +90,10 @@ public class LatestConflictManager extends AbstractConflictManager {
             }
         }
         try {
-            ArtifactInfo latest = getStrategy().findLatest(toArtifactInfo(conflicts), null);
+            IvyNodeArtifactInfo latest = (IvyNodeArtifactInfo) 
+                getStrategy().findLatest(toArtifactInfo(conflicts), null);
             if (latest != null) {
-                return Collections.singleton(((IvyNodeArtifactInfo) latest).getNode());
+                return Collections.singleton(latest.getNode());
             } else {
                 return conflicts;
             }
@@ -103,7 +104,7 @@ public class LatestConflictManager extends AbstractConflictManager {
         }
     }
 
-    private ArtifactInfo[] toArtifactInfo(Collection conflicts) {
+    protected ArtifactInfo[] toArtifactInfo(Collection conflicts) {
         List artifacts = new ArrayList(conflicts.size());
         for (Iterator iter = conflicts.iterator(); iter.hasNext();) {
             IvyNode node = (IvyNode) iter.next();

@@ -262,8 +262,9 @@ public class ResolveEngine {
                                     + "is null for " + dd.toString());
                             }
                             String rev = depResolvedId.getRevision();
-                            //The evicted modules have no descritpion, so we can't put their status. 
-                            String status = depDescriptor==null ? "?" : depDescriptor.getStatus();
+                            // The evicted modules have no description, so we can't put their
+                            // status.
+                            String status = depDescriptor == null ? "?" : depDescriptor.getStatus();
                             props.put(depRevisionId.encodeToString(), rev + " " + status);
                         }
                     }
@@ -289,6 +290,10 @@ public class ResolveEngine {
 
             eventManager.fireIvyEvent(new EndResolveEvent(md, confs, report));
             return report;
+        } catch (RuntimeException ex) {
+            Message.error(ex.getMessage());
+            Message.sumupProblems();
+            throw ex;
         } finally {
             setDictatorResolver(oldDictator);
         }
@@ -336,7 +341,8 @@ public class ResolveEngine {
                     // the report itself is responsible to take into account only
                     // artifacts required in its corresponding configuration
                     // (as described by the Dependency object)
-                    if (dependencies[i].isEvicted(dconfs[j])) {
+                    if (dependencies[i].isEvicted(dconfs[j]) 
+                            || dependencies[i].isBlacklisted(dconfs[j])) {
                         report.getConfigurationReport(dconfs[j]).addDependency(dependencies[i]);
                     } else {
                         report.getConfigurationReport(dconfs[j]).addDependency(dependencies[i],
@@ -415,11 +421,12 @@ public class ResolveEngine {
             throw new NullPointerException("module descriptor must not be null");
         }
         CacheManager cacheManager = options.getCache();
+        IvyContext context = IvyContext.getContext();
         if (cacheManager == null) { // ensure that a cache is configured
-            cacheManager = IvyContext.getContext().getCacheManager();
+            cacheManager = context.getCacheManager();
             options.setCache(cacheManager);
         } else {
-            IvyContext.getContext().setCacheManager(cacheManager);
+            context.setCacheManager(cacheManager);
         }
 
         String[] confs = options.getConfs(md);
@@ -427,6 +434,7 @@ public class ResolveEngine {
 
         Date reportDate = new Date();
         ResolveData data = new ResolveData(this, options);
+        context.setResolveData(data);
         IvyNode rootNode = new IvyNode(data, md);
 
         for (int i = 0; i < confs.length; i++) {
@@ -462,7 +470,19 @@ public class ResolveEngine {
                 rootNode.updateConfsToFetch(Collections.singleton(confs[i]));
 
                 // go fetch !
-                fetchDependencies(root, confs[i], false);
+                boolean fetched = false;
+                while (!fetched) {
+                    try {
+                        fetchDependencies(root, confs[i], false);
+                        fetched = true;
+                    } catch (RestartResolveProcess restart) {
+                        Message.verbose("=======================================================");
+                        Message.verbose("=           RESTARTING RESOLVE PROCESS");
+                        Message.verbose("= " + restart.getMessage());
+                        Message.verbose("=======================================================");
+                        fetchedSet.clear();
+                    }
+                }
 
                 // clean data
                 for (Iterator iter = data.getNodes().iterator(); iter.hasNext();) {
@@ -473,12 +493,13 @@ public class ResolveEngine {
         }
 
         // prune and reverse sort fectched dependencies
-        Collection dependencies = new LinkedHashSet(data.getNodes().size()); // use a Set to
-        // avoids duplicates
-        for (Iterator iter = data.getNodes().iterator(); iter.hasNext();) {
-            IvyNode dep = (IvyNode) iter.next();
-            if (dep != null) {
-                dependencies.add(dep);
+        Collection nodes = data.getNodes();
+        // use a Set to avoid duplicates, linked to preserve order
+        Collection dependencies = new LinkedHashSet(nodes.size()); 
+        for (Iterator iter = nodes.iterator(); iter.hasNext();) {
+            IvyNode node = (IvyNode) iter.next();
+            if (node != null && !node.isRoot() && !node.isCompletelyBlacklisted()) {
+                dependencies.add(node);
             }
         }
         List sortedDependencies = sortEngine.sortNodes(dependencies);
@@ -536,6 +557,8 @@ public class ResolveEngine {
             }
         }
 
+        context.setResolveData(null);
+        
         return (IvyNode[]) dependencies.toArray(new IvyNode[dependencies.size()]);
     }
 
@@ -551,8 +574,10 @@ public class ResolveEngine {
         resolveConflict(node, conf);
 
         if (node.loadData(conf, shouldBePublic)) {
-            resolveConflict(node, conf); //We just did it. Should it be redone? 
-                                   //NB:removing it break a unit test.
+            // we resolve conflict again now that we have all information loaded
+            // indeed in some cases conflict manager need more information than just asked
+            // dependency to take the decision
+            resolveConflict(node, conf); 
             if (!node.isEvicted()) {
                 String[] confs = node.getRealConfs(conf);
                 for (int i = 0; i < confs.length; i++) {
@@ -674,7 +699,7 @@ public class ResolveEngine {
     }
 
     private void resolveConflict(VisitNode node, String conf) {
-        resolveConflict(node, node.getParent(), conf,Collections.EMPTY_SET);
+        resolveConflict(node, node.getParent(), conf, Collections.EMPTY_SET);
     }
 
     /**

@@ -49,6 +49,7 @@ import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.resolve.IvyNodeCallers.Caller;
 import org.apache.ivy.core.resolve.IvyNodeEviction.EvictionData;
 import org.apache.ivy.plugins.conflict.ConflictManager;
+import org.apache.ivy.plugins.conflict.LatestCompatibleConflictManager;
 import org.apache.ivy.plugins.matcher.MatcherHelper;
 import org.apache.ivy.plugins.resolver.DependencyResolver;
 import org.apache.ivy.util.Message;
@@ -103,6 +104,8 @@ public class IvyNode implements Comparable {
             return "NodeConf(" + conf + ")";
         }
     }
+    
+    
 
     // //////// CONTEXT
     private ResolveData data;
@@ -136,7 +139,7 @@ public class IvyNode implements Comparable {
     private boolean downloaded = false;
 
     private boolean searched = false;
-
+    
     private Collection confsToFetch = new HashSet();
 
     private Collection fetchedConfigurations = new HashSet();
@@ -158,6 +161,9 @@ public class IvyNode implements Comparable {
 
     // Map (String rootModuleConf -> Set(IncludeRule))
     private Map dependencyIncludes = new HashMap();
+    
+    // Map (String rootModuleConf -> IvyNodeBlacklist)
+    private Map blacklisted = new HashMap();
 
     public IvyNode(ResolveData data, IvyNode parent, DependencyDescriptor dd) {
         id = dd.getDependencyRevisionId();
@@ -230,9 +236,9 @@ public class IvyNode implements Comparable {
                                     + module.getResolver().getName());
                         }
 
-                        if (data.getSettings().getVersionMatcher().isDynamic(getId())) {
+                        if (settings.getVersionMatcher().isDynamic(getId())) {
                             // IVY-56: check if revision has actually been resolved
-                            if (data.getSettings().getVersionMatcher().isDynamic(module.getId())) {
+                            if (settings.getVersionMatcher().isDynamic(module.getId())) {
                                 Message
                                         .error("impossible to resolve dynamic revision for "
                                                 + getId()
@@ -260,7 +266,7 @@ public class IvyNode implements Comparable {
                                 resolved.downloaded |= module.isDownloaded();
                                 resolved.searched |= module.isSearched();
                                 resolved.dds.putAll(dds);
-                                resolved.updateDataFrom(this, rootModuleConf);
+                                resolved.updateDataFrom(this, rootModuleConf, true);
                                 resolved.loadData(rootModuleConf, parent, parentConf, conf,
                                     shouldBePublic);
                                 DependencyDescriptor dd = dependencyDescriptor;
@@ -270,10 +276,9 @@ public class IvyNode implements Comparable {
                                     resolved.addDependencyIncludes(rootModuleConf, dd
                                             .getIncludeRules(parentConf));
                                 }
-                                data.replaceNode(getId(), resolved, rootModuleConf); // this
-                                // actually
-                                // discards
-                                // the node
+                                
+                                data.replaceNode(getId(), resolved, rootModuleConf); 
+                                // this actually discards the node
 
                                 if (settings.logResolvedRevision()) {
                                     Message.info("\t[" + module.getId().getRevision() + "] "
@@ -293,6 +298,8 @@ public class IvyNode implements Comparable {
                         resolver.reportFailure();
                         problem = new RuntimeException("not found");
                     }
+                } catch (ResolveProcessException e) {
+                    throw e;
                 } catch (Exception e) {
                     problem = e;
                 }
@@ -671,9 +678,22 @@ public class IvyNode implements Comparable {
         return findPath(from, parent, path);
     }
 
-    private void updateDataFrom(IvyNode node, String rootModuleConf) {
+    /**
+     * Update data in this node from data of the given node, for the given root module
+     * configuration.
+     * 
+     * @param node
+     *            the source node from which data should be copied
+     * @param rootModuleConf
+     *            the root module configuration for which data should be updated
+     * @param real
+     *            true if the node to update from actually corresponds to the same real node
+     *            (usually updated because of dynamic revision resolution), false if it's not the
+     *            same real node (usually updated because of node eviction)
+     */
+    private void updateDataFrom(IvyNode node, String rootModuleConf, boolean real) {
         // update callers
-        callers.updateFrom(node.callers, rootModuleConf);
+        callers.updateFrom(node.callers, rootModuleConf, real);
 
         // update requiredConfs
         updateMapOfSet(node.requiredConfs, requiredConfs);
@@ -724,7 +744,7 @@ public class IvyNode implements Comparable {
 
     /**
      * Returns all the artifacts of this dependency required in the root module configurations in
-     * which the node is not evicted
+     * which the node is not evicted nor blacklisted
      * 
      * @param artifactFilter
      * @return
@@ -733,7 +753,7 @@ public class IvyNode implements Comparable {
         Collection ret = new HashSet();
         for (Iterator it = rootModuleConfs.keySet().iterator(); it.hasNext();) {
             String rootModuleConf = (String) it.next();
-            if (!isEvicted(rootModuleConf)) {
+            if (!isEvicted(rootModuleConf) && !isBlacklisted(rootModuleConf)) {
                 ret.addAll(Arrays.asList(getArtifacts(rootModuleConf)));
             }
         }
@@ -1020,6 +1040,10 @@ public class IvyNode implements Comparable {
         return callers.getAllCallers();
     }
 
+    public Caller[] getAllRealCallers() {
+        return callers.getAllRealCallers();
+    }
+
     public void addCaller(String rootModuleConf, IvyNode callerNode, String callerConf,
             String[] dependencyConfs, DependencyDescriptor dd) {
         callers.addCaller(rootModuleConf, callerNode, callerConf, dependencyConfs, dd);
@@ -1067,7 +1091,7 @@ public class IvyNode implements Comparable {
         if (evictionData.getSelected() != null) {
             for (Iterator iter = evictionData.getSelected().iterator(); iter.hasNext();) {
                 IvyNode selected = (IvyNode) iter.next();
-                selected.updateDataFrom(this, evictionData.getRootModuleConf());
+                selected.updateDataFrom(this, evictionData.getRootModuleConf(), false);
             }
         }
     }
@@ -1160,4 +1184,92 @@ public class IvyNode implements Comparable {
     public void setPendingConflicts(ModuleId moduleId, String rootModuleConf, Collection conflicts) {
         eviction.setPendingConflicts(moduleId, rootModuleConf, conflicts);
     }
+
+    // /////////////////////////////////////////////////////////////////////////////
+    // BLACKLISTING MANAGEMENT
+    // /////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * Blacklists the current node, so that a new resolve process won't ever consider this node as
+     * available in the repository.
+     * <p>
+     * This is useful in combination with {@link RestartResolveProcess} for conflict manager
+     * implementation which use a best effort strategy to find compatible dependency set, like
+     * {@link LatestCompatibleConflictManager}
+     * </p>
+     * 
+     * @param rootModuleConf the root module configuration in which the node should be blacklisted
+     */
+    public void blacklist(IvyNodeBlacklist bdata) {
+        if (data.getSettings().logResolvedRevision()) {
+            Message.info("BLACKLISTING " + bdata);
+        } else {
+            Message.verbose("BLACKLISTING " + bdata);
+        }
+        
+        clearEvictionDataInAllCallers(bdata.getRootModuleConf(), this);
+        
+        blacklisted.put(bdata.getRootModuleConf(), bdata);
+        data.blacklist(this);
+    }
+
+
+    private void clearEvictionDataInAllCallers(String rootModuleConf, IvyNode node) {
+        Caller[] callers = node.getCallers(rootModuleConf);
+        for (int i = 0; i < callers.length; i++) {
+            IvyNode callerNode = findNode(callers[i].getModuleRevisionId());
+            if (callerNode != null) {
+                callerNode.eviction = new IvyNodeEviction(callerNode);
+                clearEvictionDataInAllCallers(rootModuleConf, callerNode);
+            }
+        }
+    }
+    
+    /**
+     * Indicates if this node has been blacklisted in the given root module conf.
+     * <p>
+     * A blacklisted node should be considered as if it doesn't even exist on the repository.
+     * </p>
+     * 
+     * @param rootModuleConf
+     *            the root module conf for which we'd like to know if the node is blacklisted
+     * 
+     * @return true if this node is blacklisted int he given root module conf, false otherwise
+     * @see #blacklist(String)
+     */
+    public boolean isBlacklisted(String rootModuleConf) {
+        return blacklisted.containsKey(rootModuleConf);
+    }
+    
+    /**
+     * Indicates if this node has been blacklisted in all root module configurations.
+     * 
+     * @return true if this node is blacklisted in all root module configurations, false otherwise
+     * @see #blacklist(String)
+     */
+    public boolean isCompletelyBlacklisted() {
+        if (isRoot()) {
+            return false;
+        }
+        String[] rootModuleConfigurations = getRootModuleConfigurations();
+        for (int i = 0; i < rootModuleConfigurations.length; i++) {
+            if (!isBlacklisted(rootModuleConfigurations[i])) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Returns the blacklist data of this node in the given root module conf, or <code>null</code>
+     * if this node is not blacklisted in this root module conf.
+     * 
+     * @param rootModuleConf
+     *            the root module configuration to consider
+     * @return the blacklist data if any
+     */
+    public IvyNodeBlacklist getBlacklistData(String rootModuleConf) {
+        return (IvyNodeBlacklist) blacklisted.get(rootModuleConf);
+    }
+
 }

@@ -23,6 +23,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.ivy.core.cache.CacheManager;
 import org.apache.ivy.core.event.EventManager;
@@ -33,7 +34,7 @@ public class ResolveData {
     private ResolveEngine engine;
 
     private Map visitData; // shared map of all visit data: Map (ModuleRevisionId -> VisitData)
-
+    
     private ConfigurationResolveReport report;
 
     private ResolveOptions options;
@@ -58,15 +59,6 @@ public class ResolveData {
         this.report = report;
         this.visitData = visitData;
         this.options = options;
-    }
-
-    /**
-     * Returns the Map of visit data. Map (ModuleRevisionId -> VisitData)
-     * 
-     * @return
-     */
-    public Map getVisitDataMap() {
-        return visitData;
     }
 
     public ConfigurationResolveReport getReport() {
@@ -173,6 +165,23 @@ public class ResolveData {
 
     public ResolveEngine getEngine() {
         return engine;
+    }
+
+    void blacklist(IvyNode node) {
+        for (Iterator iter = visitData.entrySet().iterator(); iter.hasNext();) {
+            Entry entry = (Entry) iter.next();
+            VisitData vdata = (VisitData) entry.getValue();
+            if (vdata.getNode() == node && !node.getResolvedId().equals(entry.getKey())) {
+                // this visit data was associated with the blacklisted node, 
+                // we discard this association
+                iter.remove();
+            }
+        }
+    }
+
+    public boolean isBlacklisted(String rootModuleConf, ModuleRevisionId mrid) {
+        IvyNode node = getNode(mrid);
+        return node != null && node.isBlacklisted(rootModuleConf);
     }
 
 }

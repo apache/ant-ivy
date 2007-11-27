@@ -73,11 +73,9 @@ public class RegexpConflictManager extends AbstractConflictManager {
 
             if (lastNode != null && !matchEquals(node, lastNode)) {
                 String msg = lastNode + ":" + getMatch(lastNode) + " (needed by "
-                        + Arrays.asList(lastNode.getAllCallers()) + ") conflicts with " + node
+                        + Arrays.asList(lastNode.getAllRealCallers()) + ") conflicts with " + node
                         + ":" + getMatch(node) + " (needed by "
-                        + Arrays.asList(node.getAllCallers()) + ")";
-                Message.error(msg);
-                Message.sumupProblems();
+                        + Arrays.asList(node.getAllRealCallers()) + ")";
                 throw new StrictConflictException(msg);
             }
             if (lastNode == null || nodeIsGreater(node, lastNode)) {

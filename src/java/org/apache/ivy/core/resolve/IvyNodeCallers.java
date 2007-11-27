@@ -44,6 +44,8 @@ public class IvyNodeCallers {
 
         private boolean callerCanExclude;
 
+        private boolean real = true;
+
         public Caller(ModuleDescriptor md, ModuleRevisionId mrid, DependencyDescriptor dd,
                 boolean callerCanExclude) {
             this.md = md;
@@ -108,6 +110,14 @@ public class IvyNodeCallers {
         public DependencyDescriptor getDependencyDescriptor() {
             return dd;
         }
+
+        public void setRealCaller(boolean b) {
+            this.real  = b;
+        }
+        
+        public boolean isRealCaller() {
+            return real;
+        }
     }
 
     // Map (String rootModuleConf -> Map (ModuleRevisionId -> Caller)): key in second map is used to
@@ -138,7 +148,7 @@ public class IvyNodeCallers {
     public void addCaller(String rootModuleConf, IvyNode callerNode, String callerConf,
             String[] dependencyConfs, DependencyDescriptor dd) {
         ModuleDescriptor md = callerNode.getDescriptor();
-        ModuleRevisionId mrid = callerNode.getId();
+        ModuleRevisionId mrid = callerNode.getResolvedId();
         if (mrid.getModuleId().equals(node.getId().getModuleId())) {
             throw new IllegalArgumentException("a module is not authorized to depend on itself: "
                     + node.getId());
@@ -162,6 +172,14 @@ public class IvyNodeCallers {
         }
         allCallers.put(mrid.getModuleId(), callerNode);
     }
+    
+    void removeCaller(String rootModuleConf, ModuleRevisionId callerMrid) {
+        allCallers.remove(callerMrid.getModuleId());
+        Map callers = (Map) callersByRootConf.get(rootModuleConf);
+        if (callers != null) {
+            callers.remove(callerMrid);
+        }
+    }
 
     public Caller[] getCallers(String rootModuleConf) {
         Map callers = (Map) callersByRootConf.get(rootModuleConf);
@@ -180,11 +198,25 @@ public class IvyNodeCallers {
         return (Caller[]) all.toArray(new Caller[all.size()]);
     }
 
+    public Caller[] getAllRealCallers() {
+        Set all = new HashSet();
+        for (Iterator iter = callersByRootConf.values().iterator(); iter.hasNext();) {
+            Map callers = (Map) iter.next();
+            for (Iterator iterator = callers.values().iterator(); iterator.hasNext();) {
+                Caller c = (Caller) iterator.next();
+                if (c.isRealCaller()) {
+                    all.add(c);
+                }
+            }
+        }
+        return (Caller[]) all.toArray(new Caller[all.size()]);
+    }
+
     public Collection getAllCallersModuleIds() {
         return allCallers.keySet();
     }
 
-    public void updateFrom(IvyNodeCallers callers, String rootModuleConf) {
+    void updateFrom(IvyNodeCallers callers, String rootModuleConf, boolean real) {
         Map nodecallers = (Map) callers.callersByRootConf.get(rootModuleConf);
         if (nodecallers != null) {
             Map thiscallers = (Map) callersByRootConf.get(rootModuleConf);
@@ -195,6 +227,9 @@ public class IvyNodeCallers {
             for (Iterator iter = nodecallers.values().iterator(); iter.hasNext();) {
                 Caller caller = (Caller) iter.next();
                 if (!thiscallers.containsKey(caller.getModuleRevisionId())) {
+                    if (!real) {
+                        caller.setRealCaller(false);
+                    }
                     thiscallers.put(caller.getModuleRevisionId(), caller);
                 }
             }

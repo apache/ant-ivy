@@ -17,13 +17,11 @@
  */
 package org.apache.ivy.plugins.conflict;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 
 import org.apache.ivy.core.resolve.IvyNode;
-import org.apache.ivy.util.Message;
 
 public class StrictConflictManager extends AbstractConflictManager {
 
@@ -36,12 +34,7 @@ public class StrictConflictManager extends AbstractConflictManager {
             IvyNode node = (IvyNode) iter.next();
 
             if (lastNode != null && !lastNode.equals(node)) {
-                String msg = lastNode + " (needed by " + Arrays.asList(lastNode.getAllCallers())
-                        + ") conflicts with " + node + " (needed by "
-                        + Arrays.asList(node.getAllCallers()) + ")";
-                Message.error(msg);
-                Message.sumupProblems();
-                throw new StrictConflictException(msg);
+                throw new StrictConflictException(lastNode, node);
             }
             lastNode = node;
         }

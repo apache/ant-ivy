@@ -19,6 +19,7 @@ package org.apache.ivy.plugins.conflict;
 
 import java.util.Collection;
 
+import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
 import org.apache.ivy.core.resolve.IvyNode;
 
 public interface ConflictManager {
@@ -40,4 +41,20 @@ public interface ConflictManager {
     Collection resolveConflicts(IvyNode parent, Collection conflicts);
 
     String getName();
+
+    /**
+     * Method called when all revisions available for a version constraint have been blacklisted,
+     * and thus the dependency can't be resolved.
+     * <p>
+     * This will never happen if the conflict manager doesn't blacklist any module, so providing an
+     * empty implementation in this case is fine.
+     * </p>
+     * 
+     * @param dd
+     *            the dependency descriptor for which all revisions are blacklisted.
+     * @param foundBlacklisted
+     *            the list of all ModuleRevisionId found which are blacklisted
+     */
+    void handleAllBlacklistedRevisions(
+            DependencyDescriptor dd, Collection/*<ModuleRevisionId>*/ foundBlacklisted);
 }

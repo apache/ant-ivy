@@ -32,6 +32,7 @@ import org.apache.ivy.core.module.id.ModuleId;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.resolve.IvyNodeEviction.EvictionData;
 import org.apache.ivy.plugins.conflict.ConflictManager;
+import org.apache.ivy.util.Checks;
 
 /**
  * A visit node is an object used to represent one visit from one parent on an {@link IvyNode} of
@@ -100,30 +101,17 @@ public class VisitNode {
 
     public VisitNode(ResolveData data, IvyNode node, VisitNode parent, String rootModuleConf,
             String parentConf) {
-        if (data == null) {
-            throw new NullPointerException("data must not be null");
-        }
-        if (node == null) {
-            throw new NullPointerException("node must not be null");
-        }
-        if (rootModuleConf == null) {
-            throw new NullPointerException("rootModuleConf must not be null");
-        }
+        Checks.checkNotNull(data, "data");
+        Checks.checkNotNull(node, "node");
+        Checks.checkNotNull(rootModuleConf, "rootModuleConf");
+        
         this.data = data;
         this.node = node;
         this.parent = parent;
         this.rootModuleConf = rootModuleConf;
         this.parentConf = parentConf;
 
-        // we do not register if this is a root module (root == no parent)
-        init(data, this.parent != null);
-    }
-
-    private void init(ResolveData data, boolean register) {
-        this.data = data;
-        if (register) {
-            this.data.register(this);
-        }
+        this.data.register(this);
     }
 
     public IvyNode getNode() {

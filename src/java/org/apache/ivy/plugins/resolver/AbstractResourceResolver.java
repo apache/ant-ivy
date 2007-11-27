@@ -28,14 +28,17 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 
+import org.apache.ivy.core.IvyContext;
 import org.apache.ivy.core.IvyPatternHelper;
 import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.DefaultArtifact;
 import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
+import org.apache.ivy.core.resolve.IvyNode;
 import org.apache.ivy.core.resolve.ResolveData;
 import org.apache.ivy.core.settings.IvyPattern;
+import org.apache.ivy.plugins.conflict.ConflictManager;
 import org.apache.ivy.plugins.latest.LatestStrategy;
 import org.apache.ivy.plugins.resolver.util.MDResolvedResource;
 import org.apache.ivy.plugins.resolver.util.ResolvedResource;
@@ -118,6 +121,9 @@ public abstract class AbstractResourceResolver extends BasicResolver {
         ResolvedResource found = null;
         List sorted = strategy.sort(rress);
         List rejected = new ArrayList();
+        List foundBlacklisted = new ArrayList();
+        IvyContext context = IvyContext.getContext();
+        
         for (ListIterator iter = sorted.listIterator(sorted.size()); iter.hasPrevious();) {
             ResolvedResource rres = (ResolvedResource) iter.previous();
             if ((date != null && rres.getLastModified() > date.getTime())) {
@@ -126,6 +132,16 @@ public abstract class AbstractResourceResolver extends BasicResolver {
                 continue;
             }
             ModuleRevisionId foundMrid = ModuleRevisionId.newInstance(mrid, rres.getRevision());
+            
+            ResolveData data = context.getResolveData();
+            if (data.getReport() != null 
+                    && data.isBlacklisted(data.getReport().getConfiguration(), foundMrid)) {
+                Message.debug("\t" + name + ": blacklisted: " + rres);
+                rejected.add(rres.getRevision() + " (blacklisted)");
+                foundBlacklisted.add(foundMrid);
+                continue;
+            }
+            
             if (!versionMatcher.accept(mrid, foundMrid)) {
                 Message.debug("\t" + name + ": rejected by version matcher: " + rres);
                 rejected.add(rres.getRevision());
@@ -163,6 +179,14 @@ public abstract class AbstractResourceResolver extends BasicResolver {
         }
         if (found == null && !rejected.isEmpty()) {
             logAttempt(rejected.toString());
+        }
+        if (found == null && !foundBlacklisted.isEmpty()) {
+            // all acceptable versions have been blacklisted, this means that an unsolvable conflict
+            // has been found
+            DependencyDescriptor dd = context.getDependencyDescriptor();
+            IvyNode parentNode = context.getResolveData().getNode(dd.getParentRevisionId());
+            ConflictManager cm = parentNode.getConflictManager(mrid.getModuleId());
+            cm.handleAllBlacklistedRevisions(dd, foundBlacklisted);
         }
 
         return found;
