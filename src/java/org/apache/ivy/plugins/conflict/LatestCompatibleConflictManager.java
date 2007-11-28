@@ -33,6 +33,7 @@ import org.apache.ivy.core.resolve.IvyNodeBlacklist;
 import org.apache.ivy.core.resolve.ResolveData;
 import org.apache.ivy.core.resolve.RestartResolveProcess;
 import org.apache.ivy.core.resolve.IvyNodeCallers.Caller;
+import org.apache.ivy.core.resolve.IvyNodeEviction.EvictionData;
 import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.plugins.latest.LatestStrategy;
 import org.apache.ivy.plugins.version.VersionMatcher;
@@ -182,17 +183,24 @@ public class LatestCompatibleConflictManager extends LatestConflictManager {
 
     private void blackListIncompatibleCallerAndRestartResolveIfPossible(IvySettings settings,
             IvyNode parent, IvyNode selected, IvyNode evicted) {
-        Collection toBlacklist = blackListIncompatibleCaller(
+        final Collection toBlacklist = blackListIncompatibleCaller(
             settings.getVersionMatcher(), parent, selected, evicted, evicted); 
         if (toBlacklist != null) {
+            final StringBuffer blacklisted = new StringBuffer();
             for (Iterator iterator = toBlacklist.iterator(); iterator.hasNext();) {
                 IvyNodeBlacklist blacklist = (IvyNodeBlacklist) iterator.next();
                 blacklist.getBlacklistedNode().blacklist(blacklist);
+                blacklisted.append(blacklist.getBlacklistedNode());
+                if (iterator.hasNext()) {
+                    blacklisted.append(" ");
+                }
             }
 
             String rootModuleConf = 
                 IvyContext.getContext().getResolveData().getReport().getConfiguration();
-            evicted.markEvicted(rootModuleConf, parent, this, Collections.singleton(selected));
+            evicted.markEvicted(
+                new EvictionData(rootModuleConf, parent, this, Collections.singleton(selected), 
+                    "with blacklisting of " + blacklisted));
 
             if (settings.debugConflictResolution()) {
                 Message.debug("evicting " + evicted + " by "

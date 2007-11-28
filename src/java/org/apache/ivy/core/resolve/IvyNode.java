@@ -1104,6 +1104,10 @@ public class IvyNode implements Comparable {
         return eviction.getAllEvictingNodes();
     }
 
+    public Collection/*<String>*/ getAllEvictingNodesDetails() {
+        return eviction.getAllEvictingNodesDetails();
+    }
+
     public String[] getEvictedConfs() {
         return eviction.getEvictedConfs();
     }

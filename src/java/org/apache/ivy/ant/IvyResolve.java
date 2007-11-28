@@ -27,6 +27,7 @@ import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.report.ResolveReport;
 import org.apache.ivy.core.resolve.ResolveOptions;
+import org.apache.ivy.core.resolve.ResolveProcessException;
 import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.util.Message;
 import org.apache.ivy.util.filter.FilterHelper;
@@ -291,8 +292,10 @@ public class IvyResolve extends IvyTask {
         } catch (ParseException e) {
             log(e.getMessage(), Project.MSG_ERR);
             throw new BuildException("syntax errors in ivy file: " + e, e);
+        } catch (ResolveProcessException e) {
+            throw new BuildException("impossible to resolve dependencies:\n\t" + e.getMessage(), e);
         } catch (Exception e) {
-            throw new BuildException("impossible to resolve dependencies: " + e, e);
+            throw new BuildException("impossible to resolve dependencies:\n\t" + e, e);
         }
     }
 

@@ -174,6 +174,9 @@ public class XmlReportOutputter implements ReportOutputter {
             } else {
                 details.append(" evicted=\"transitive\"");
             }
+            details.append(" evicted-reason=\"")
+                .append(XMLHelper.escape(ed.getDetail() == null ? "" : ed.getDetail()))
+                .append("\"");
         }
         if (dep.hasProblem()) {
             details.append(" error=\"").append(
@@ -253,6 +256,9 @@ public class XmlReportOutputter implements ReportOutputter {
                     + " rev=\"" 
                     + XMLHelper.escape(
                         callers[i].getAskedDependencyId().getRevision()) + "\""
+                    + " callerrev=\"" 
+                    + XMLHelper.escape(
+                        callers[i].getModuleRevisionId().getRevision()) + "\""
                     + callerDetails + "/>");
         }
         ArtifactDownloadReport[] adr = report.getDownloadReports(dep.getResolvedId());

@@ -76,7 +76,7 @@ public class LogReportOutputter implements ReportOutputter {
         if (evicted.length > 0) {
             Message.info("\t:: evicted modules:");
             for (int i = 0; i < evicted.length; i++) {
-                Collection allEvictingNodes = evicted[i].getAllEvictingNodes();
+                Collection allEvictingNodes = evicted[i].getAllEvictingNodesDetails();
                 if (allEvictingNodes == null) {
                     Message.info("\t" + evicted[i] + " transitively in "
                             + Arrays.asList(evicted[i].getEvictedConfs()));

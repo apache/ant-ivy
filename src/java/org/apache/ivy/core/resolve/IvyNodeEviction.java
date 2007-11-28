@@ -49,28 +49,57 @@ public class IvyNodeEviction {
 
         private String rootModuleConf;
 
+        private String detail;
+
         /**
          * Creates a new object containing the eviction data of an {@link IvyNode}.
          * 
-         * @param rootModuleConf the rootmodule configuration
-         * @param parent the parent node (or <tt>null</tt> in case of transitive eviction)
-         * @param conflictManager the conflictmanager which evicted the node (or <tt>null</tt> in
-         *                        case of transitive eviction)
-         * @param selected a collection of {@link IvyNode}s which evict the evicted node (or 
-         *                 <tt>null</tt> in case of transitive eviction)
+         * @param rootModuleConf
+         *            the root module configuration
+         * @param parent
+         *            the parent node (or <tt>null</tt> in case of transitive eviction)
+         * @param conflictManager
+         *            the conflict manager which evicted the node (or <tt>null</tt> in case of
+         *            transitive eviction)
+         * @param selected
+         *            a collection of {@link IvyNode}s which evict the evicted node (or
+         *            <tt>null</tt> in case of transitive eviction)
          */
         public EvictionData(String rootModuleConf, IvyNode parent, ConflictManager conflictManager,
                 Collection selected) {
+            this(rootModuleConf, parent, conflictManager, selected, null);
+        }
+
+        /**
+         * Creates a new object containing the eviction data of an {@link IvyNode}.
+         * 
+         * @param rootModuleConf
+         *            the root module configuration
+         * @param parent
+         *            the parent node (or <tt>null</tt> in case of transitive eviction)
+         * @param conflictManager
+         *            the conflict manager which evicted the node (or <tt>null</tt> in case of
+         *            transitive eviction)
+         * @param selected
+         *            a collection of {@link IvyNode}s which evict the evicted node (or
+         *            <tt>null</tt> in case of transitive eviction)
+         * @param detail
+         *            a String detailing the reason why the node was evicted
+         */
+        public EvictionData(String rootModuleConf, IvyNode parent, ConflictManager conflictManager,
+                Collection selected, String detail) {
             this.rootModuleConf = rootModuleConf;
             this.parent = parent;
             this.conflictManager = conflictManager;
             this.selected = selected;
+            this.detail = detail;
         }
 
         public String toString() {
             if (selected != null) {
-                return selected + " in " + parent + " (" + conflictManager + ") [" + rootModuleConf
-                        + "]";
+                return selected + " in " + parent 
+                    + (detail == null ? "" : " " + detail)
+                    + " (" + conflictManager + ") [" + rootModuleConf + "]";
             } else {
                 return "transitively [" + rootModuleConf + "]";
             }
@@ -94,6 +123,10 @@ public class IvyNodeEviction {
 
         public boolean isTransitivelyEvicted() {
             return parent == null;
+        }
+        
+        public String getDetail() {
+            return detail;
         }
     }
 
@@ -296,7 +329,7 @@ public class IvyNodeEviction {
     }
 
     /**
-     * Returns null if this node has only be evicted transitively, or the the colletion of selected
+     * Returns null if this node has only be evicted transitively, or the the collection of selected
      * nodes if it has been evicted by other selected nodes
      * 
      * @return
@@ -314,6 +347,27 @@ public class IvyNodeEviction {
             }
         }
         return allEvictingNodes;
+    }
+    
+    public Collection/*<String>*/ getAllEvictingNodesDetails() {
+        Collection ret = null;
+        for (Iterator iter = evicted.values().iterator(); iter.hasNext();) {
+            EvictionData ed = (EvictionData) iter.next();
+            Collection selected = ed.getSelected();
+            if (selected != null) {
+                if (ret == null) {
+                    ret = new HashSet();
+                }
+                if (selected.size() == 1) {
+                    ret.add(selected.iterator().next() 
+                        + (ed.getDetail() == null ? "" : " " + ed.getDetail()));
+                } else if (selected.size() > 1) {
+                    ret.add(selected 
+                        + (ed.getDetail() == null ? "" : " " + ed.getDetail()));
+                }
+            }
+        }
+        return ret;
     }
 
     public Collection getAllEvictingConflictManagers() {
