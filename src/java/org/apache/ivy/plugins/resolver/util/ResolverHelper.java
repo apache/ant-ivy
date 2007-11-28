@@ -86,6 +86,10 @@ public class ResolverHelper {
                 } else {
                     return null;
                 }
+            } catch (IOException e) {
+                Message.verbose("problem while listing resources in " + root + " with " + rep + ":");
+                Message.verbose("  " + e.getClass().getName() + " " + e.getMessage());
+                return null;
             } catch (Exception e) {
                 Message.warn("problem while listing resources in " + root + " with " + rep + ":");
                 Message.warn("  " + e.getClass().getName() + " " + e.getMessage());
@@ -115,6 +119,10 @@ public class ResolverHelper {
                 Message.debug("\t\tno resources found");
                 return null;
             }
+        } catch (IOException e) {
+            Message.verbose("problem while listing resources in " + parent + " with " + rep + ":");
+            Message.verbose("  " + e.getClass().getName() + " " + e.getMessage());
+            return null;
         } catch (Exception e) {
             Message.warn("problem while listing resources in " + parent + " with " + rep + ":");
             Message.warn("  " + e.getClass().getName() + " " + e.getMessage());
