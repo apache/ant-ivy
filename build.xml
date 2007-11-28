@@ -50,9 +50,9 @@
         <ivy:settings id="ivy.instance" />
     </target>
     
-    <target name="install" depends="jar" description="build Ivy and install it in Ivy home for consecutive builds">
+    <target name="install" depends="init-ivy-home, jar" description="build Ivy and install it in Ivy home for consecutive builds">
         <property name="ivy.jar.file" value="${ivy.home}/jars/ivy.jar" />
-        <copy file="${artifacts.build.dir}/${final.name}" tofile="${ivy.jar.file}" />
+        <copy file="${artifacts.build.dir}/jars/${final.name}" tofile="${ivy.jar.file}" />
     </target>
 
     <!-- =================================================================
