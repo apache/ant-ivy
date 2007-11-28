@@ -150,7 +150,7 @@ public final class FileUtil {
             evt = new CopyProgressEvent();
         }
         try {
-            byte buffer[] = new byte[BUFFER_SIZE];
+            byte[] buffer = new byte[BUFFER_SIZE];
             int c;
             long total = 0;
 
