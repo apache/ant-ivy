@@ -134,7 +134,8 @@ public abstract class AbstractResourceResolver extends BasicResolver {
             ModuleRevisionId foundMrid = ModuleRevisionId.newInstance(mrid, rres.getRevision());
             
             ResolveData data = context.getResolveData();
-            if (data.getReport() != null 
+            if (data != null
+                    && data.getReport() != null 
                     && data.isBlacklisted(data.getReport().getConfiguration(), foundMrid)) {
                 Message.debug("\t" + name + ": blacklisted: " + rres);
                 rejected.add(rres.getRevision() + " (blacklisted)");
