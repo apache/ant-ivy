@@ -18,7 +18,7 @@
 -->
 <ivy-module version="1.0">
     <info 
-        organisation="org.apache"
+        organisation="org.apache.ivy.example"
         module="list"
         status="integration"/>
     <configurations>
@@ -30,6 +30,6 @@
     </publications>
     <dependencies>
       <dependency name="version" rev="latest.integration" conf="core->default" />
-      <dependency org="org.apache" name="commons-cli" rev="1.0" conf="standalone->default" />
+      <dependency org="commons-cli" name="commons-cli" rev="1.0" conf="standalone->default" />
     </dependencies>
 </ivy-module>

@@ -18,7 +18,7 @@
 -->
 <ivy-module version="1.0">
     <info 
-        organisation="org.apache"
+        organisation="org.apache.ivy.example"
         module="size"
         status="integration"/>
     <dependencies>
