@@ -197,7 +197,7 @@ public class LatestCompatibleConflictManager extends LatestConflictManager {
             }
 
             String rootModuleConf = 
-                IvyContext.getContext().getResolveData().getReport().getConfiguration();
+                parent.getData().getReport().getConfiguration();
             evicted.markEvicted(
                 new EvictionData(rootModuleConf, parent, this, Collections.singleton(selected), 
                     "with blacklisting of " + blacklisted));
@@ -232,8 +232,7 @@ public class LatestCompatibleConflictManager extends LatestConflictManager {
             IvyNode conflictParent, IvyNode selectedNode, IvyNode evictedNode, IvyNode node) {
         Collection/*<IvyNodeBlacklist>*/ blacklisted = new ArrayList/*<IvyNodeBlacklist>*/();
         Caller[] callers = node.getAllCallers();
-        String rootModuleConf = IvyContext.getContext().getResolveData()
-            .getReport().getConfiguration();
+        String rootModuleConf = conflictParent.getData().getReport().getConfiguration();
         for (int i = 0; i < callers.length; i++) {
             IvyNode callerNode = node.findNode(callers[i].getModuleRevisionId());
             if (callerNode.isBlacklisted(rootModuleConf)) {
