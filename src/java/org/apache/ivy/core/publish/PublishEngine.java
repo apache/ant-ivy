@@ -184,8 +184,8 @@ public class PublishEngine {
             for (Iterator iterator = srcArtifactPattern.iterator(); iterator.hasNext()
                     && !published;) {
                 String pattern = (String) iterator.next();
-                published = publish(artifact, settings.substitute(pattern), resolver, options
-                        .isOverwrite());
+                published = publish(
+                    artifact, settings.substitute(pattern), resolver, options.isOverwrite());
             }
             if (!published) {
                 Message.info("missing artifact " + artifact + ":");
