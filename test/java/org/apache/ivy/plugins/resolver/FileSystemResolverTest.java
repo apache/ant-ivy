@@ -567,18 +567,54 @@ public class FileSystemResolverTest extends TestCase {
             Artifact artifact = new DefaultArtifact(mrid, new Date(), "myartifact", "mytype",
                     "myext");
             File src = new File("test/repositories/ivysettings.xml");
-            resolver.publish(ivyArtifact, src, false);
-            resolver.publish(artifact, src, false);
+            boolean successfullyPublished = false;
+            resolver.beginPublishTransaction(mrid, false);
+            try {
+                resolver.publish(ivyArtifact, src, false);
+                resolver.publish(artifact, src, false);
+                resolver.commitPublishTransaction();
+                successfullyPublished = true;
+            } finally {
+                if (!successfullyPublished)
+                    resolver.abortPublishTransaction();
+            }
 
             assertTrue(new File("test/repositories/1/myorg/mymodule/myrevision/ivy.xml").exists());
             assertTrue(new File(
                     "test/repositories/1/myorg/mymodule/mytypes/myartifact-myrevision.myext")
                     .exists());
         } finally {
-            Delete del = new Delete();
-            del.setProject(new Project());
-            del.setDir(new File("test/repositories/1/myorg"));
-            del.execute();
+            FileUtil.forceDelete(new File("test/repositories/1/myorg"));
+        }
+    }
+
+    public void testAbortTransaction() throws Exception {
+        try {
+            FileSystemResolver resolver = new FileSystemResolver();
+            resolver.setName("test");
+            resolver.setSettings(settings);
+
+            resolver.addIvyPattern(
+                "test/repositories/1/[organisation]/[module]/[revision]/[artifact].[ext]");
+            resolver.addArtifactPattern(
+                 "test/repositories/1/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]");
+
+            ModuleRevisionId mrid = ModuleRevisionId.newInstance("myorg", "mymodule", "myrevision");
+            Artifact ivyArtifact = new DefaultArtifact(mrid, new Date(), "ivy", "ivy", "xml");
+            Artifact artifact = new DefaultArtifact(mrid, new Date(), "myartifact", "mytype",
+                    "myext");
+            File src = new File("test/repositories/ivysettings.xml");
+            resolver.beginPublishTransaction(mrid, false);
+            resolver.publish(ivyArtifact, src, false);
+            resolver.publish(artifact, src, false);
+            resolver.abortPublishTransaction();
+
+            assertFalse(new File("test/repositories/1/myorg/mymodule/myrevision/ivy.xml").exists());
+            assertFalse(new File(
+                    "test/repositories/1/myorg/mymodule/mytypes/myartifact-myrevision.myext")
+                    .exists());
+        } finally {
+            FileUtil.forceDelete(new File("test/repositories/1/myorg"));
         }
     }
 

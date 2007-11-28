@@ -20,6 +20,7 @@ package org.apache.ivy.plugins.resolver;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
@@ -161,10 +162,14 @@ public class RepositoryResolver extends AbstractResourceResolver {
             mrid = convertM2IdForResourceSearch(mrid);
         }
 
-        String dest = IvyPatternHelper.substitute(destPattern, mrid, artifact);
+        String dest = getDestination(destPattern, artifact, mrid);
 
         put(artifact, src, dest, overwrite);
         Message.info("\tpublished " + artifact.getName() + " to " + hidePassword(dest));
+    }
+
+    protected String getDestination(String pattern, Artifact artifact, ModuleRevisionId mrid) {
+        return IvyPatternHelper.substitute(pattern, mrid, artifact);
     }
 
     private void put(Artifact artifact, File src, String dest, boolean overwrite)
@@ -211,11 +216,11 @@ public class RepositoryResolver extends AbstractResourceResolver {
             String[] values = ResolverHelper.listTokenValues(repository, partiallyResolvedPattern,
                 token);
             if (values != null) {
-                names.addAll(Arrays.asList(values));
+                names.addAll(filterNames(new ArrayList(Arrays.asList(values))));
             }
         }
     }
-
+    
     public String getTypeName() {
         return "repository";
     }
@@ -242,4 +247,5 @@ public class RepositoryResolver extends AbstractResourceResolver {
     public void setAlwaysCheckExactRevision(boolean alwaysCheckExactRevision) {
         this.alwaysCheckExactRevision = Boolean.valueOf(alwaysCheckExactRevision);
     }
+
 }

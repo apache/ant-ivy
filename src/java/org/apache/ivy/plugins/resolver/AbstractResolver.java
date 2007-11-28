@@ -17,6 +17,7 @@
  */
 package org.apache.ivy.plugins.resolver;
 
+import java.io.IOException;
 import java.util.Map;
 
 import org.apache.ivy.core.IvyContext;
@@ -51,7 +52,7 @@ public abstract class AbstractResolver implements DependencyResolver, HasLatestS
 
     /**
      * True if parsed ivy files should be validated against xsd, false if they should not, null if
-     * default behaviour should be used
+     * default behaviur should be used
      */
     private Boolean validate = null;
 
@@ -309,5 +310,19 @@ public abstract class AbstractResolver implements DependencyResolver, HasLatestS
         }
         return matcher.getMatcher(changingPattern);
     }
+    
+    public void abortPublishTransaction() throws IOException {
+        /* Default implementation is a no-op */
+    }
+
+    public void commitPublishTransaction() throws IOException {
+        /* Default implementation is a no-op */
+    }
+
+    public void beginPublishTransaction(
+            ModuleRevisionId module, boolean overwrite) throws IOException {
+        /* Default implementation is a no-op */
+    }
+
 
 }

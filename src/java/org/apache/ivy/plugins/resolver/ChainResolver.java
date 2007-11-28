@@ -28,6 +28,7 @@ import java.util.List;
 
 import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
+import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.report.ArtifactDownloadReport;
 import org.apache.ivy.core.report.DownloadReport;
 import org.apache.ivy.core.report.DownloadStatus;
@@ -229,10 +230,28 @@ public class ChainResolver extends AbstractResolver {
     }
 
     public void publish(Artifact artifact, File src, boolean overwrite) throws IOException {
+
+        getFirstResolver().publish(artifact, src, overwrite);
+    }
+
+    public void abortPublishTransaction() throws IOException {
+        getFirstResolver().abortPublishTransaction();
+    }
+
+    public void beginPublishTransaction(
+            ModuleRevisionId module, boolean overwrite) throws IOException {
+        getFirstResolver().beginPublishTransaction(module, overwrite);
+    }
+
+    public void commitPublishTransaction() throws IOException {
+        getFirstResolver().commitPublishTransaction();
+    }
+
+    private DependencyResolver getFirstResolver() {
         if (chain.isEmpty()) {
             throw new IllegalStateException("invalid chain resolver with no sub resolver");
         }
-        ((DependencyResolver) chain.get(0)).publish(artifact, src, overwrite);
+        return ((DependencyResolver) chain.get(0));
     }
 
     public boolean isReturnFirst() {

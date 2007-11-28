@@ -24,6 +24,7 @@ import java.util.Map;
 
 import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
+import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.report.DownloadReport;
 import org.apache.ivy.core.resolve.DownloadOptions;
 import org.apache.ivy.core.resolve.ResolveData;
@@ -62,6 +63,10 @@ public interface DependencyResolver {
     boolean exists(Artifact artifact);
 
     void publish(Artifact artifact, File src, boolean overwrite) throws IOException;
+    
+    void beginPublishTransaction(ModuleRevisionId module, boolean overwrite) throws IOException;
+    void abortPublishTransaction() throws IOException;
+    void commitPublishTransaction() throws IOException;
 
     /**
      * Reports last resolve failure as Messages

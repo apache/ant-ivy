@@ -35,6 +35,8 @@ public class FileRepository extends AbstractRepository {
 
     private boolean local = true;
 
+    private File transactionDirectory;
+
     public FileRepository() {
         baseDir = null;
     }
@@ -55,6 +57,14 @@ public class FileRepository extends AbstractRepository {
     public void put(File source, String destination, boolean overwrite) throws IOException {
         fireTransferInitiated(getResource(destination), TransferEvent.REQUEST_PUT);
         copy(source, getFile(destination), overwrite);
+    }
+    
+    public void move(File src, File dest) {
+        src.renameTo(dest);
+    }
+
+    public void delete(File f) {
+        FileUtil.forceDelete(f);
     }
 
     private void copy(File src, File destination, boolean overwrite) throws IOException {

@@ -176,37 +176,48 @@ public class PublishEngine {
                         extraArtifacts[i].getExtraAttributes()));
             }
         }
-        // for each declared published artifact in this descriptor, do:
-        for (Iterator iter = artifactsSet.iterator(); iter.hasNext();) {
-            Artifact artifact = (Artifact) iter.next();
-            // 1) copy the artifact using src patterns and resolver
-            boolean published = false;
-            for (Iterator iterator = srcArtifactPattern.iterator(); iterator.hasNext()
-                    && !published;) {
-                String pattern = (String) iterator.next();
-                published = publish(
-                    artifact, settings.substitute(pattern), resolver, options.isOverwrite());
-            }
-            if (!published) {
-                Message.info("missing artifact " + artifact + ":");
-                for (Iterator iterator = srcArtifactPattern.iterator(); iterator.hasNext();) {
+        boolean successfullyPublished = false;
+        try {
+            resolver.beginPublishTransaction(md.getModuleRevisionId(), options.isOverwrite());
+            // for each declared published artifact in this descriptor, do:
+            for (Iterator iter = artifactsSet.iterator(); iter.hasNext();) {
+                Artifact artifact = (Artifact) iter.next();
+                // 1) copy the artifact using src patterns and resolver
+                boolean published = false;
+                for (Iterator iterator = srcArtifactPattern.iterator(); iterator.hasNext()
+                        && !published;) {
                     String pattern = (String) iterator.next();
-                    Message.info("\t" + new File(IvyPatternHelper.substitute(pattern, artifact))
-                            + " file does not exist");
+                    published = publish(
+                        artifact, settings.substitute(pattern), resolver, options.isOverwrite());
                 }
-                missing.add(artifact);
+                if (!published) {
+                    Message.info("missing artifact " + artifact + ":");
+                    for (Iterator iterator = srcArtifactPattern.iterator(); iterator.hasNext();) {
+                        String pattern = (String) iterator.next();
+                        Message.info("\t"
+                                + new File(IvyPatternHelper.substitute(pattern, artifact))
+                                + " file does not exist");
+                    }
+                    missing.add(artifact);
+                }
             }
-        }
-        if (options.getSrcIvyPattern() != null) {
-            Artifact artifact = MDArtifact.newIvyArtifact(md);
-            if (!publish(artifact, options.getSrcIvyPattern(), resolver, options.isOverwrite())) {
-                Message.info("missing ivy file for "
-                        + md.getModuleRevisionId()
-                        + ": "
-                        + new File(IvyPatternHelper
-                                .substitute(options.getSrcIvyPattern(), artifact))
-                        + " file does not exist");
-                missing.add(artifact);
+            if (options.getSrcIvyPattern() != null) {
+                Artifact artifact = MDArtifact.newIvyArtifact(md);
+                if (!publish(
+                        artifact, options.getSrcIvyPattern(), resolver, options.isOverwrite())) {
+                    Message.info("missing ivy file for "
+                            + md.getModuleRevisionId()
+                            + ": "
+                            + new File(IvyPatternHelper.substitute(options.getSrcIvyPattern(),
+                                artifact)) + " file does not exist");
+                    missing.add(artifact);
+                }
+            }
+            resolver.commitPublishTransaction();
+            successfullyPublished = true;
+        } finally {
+            if (!successfullyPublished) {
+                resolver.abortPublishTransaction();
             }
         }
         return missing;

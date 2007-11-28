@@ -23,6 +23,7 @@ import java.text.ParseException;
 
 import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
+import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.report.DownloadReport;
 import org.apache.ivy.core.resolve.DownloadOptions;
 import org.apache.ivy.core.resolve.ResolveData;
@@ -116,6 +117,24 @@ public class DualResolver extends AbstractResolver {
         } else {
             artifactResolver.publish(artifact, src, overwrite);
         }
+    }
+
+    public void abortPublishTransaction() throws IOException {
+        ivyResolver.abortPublishTransaction();
+        artifactResolver.abortPublishTransaction();
+    }
+
+
+    public void beginPublishTransaction(
+            ModuleRevisionId module, boolean overwrite) throws IOException {
+        ivyResolver.beginPublishTransaction(module, overwrite);
+        artifactResolver.beginPublishTransaction(module, overwrite);
+    }
+
+
+    public void commitPublishTransaction() throws IOException {
+        ivyResolver.commitPublishTransaction();
+        artifactResolver.commitPublishTransaction();
     }
 
     public void dumpSettings() {

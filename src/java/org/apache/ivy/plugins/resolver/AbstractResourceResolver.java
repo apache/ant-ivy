@@ -126,6 +126,10 @@ public abstract class AbstractResourceResolver extends BasicResolver {
         
         for (ListIterator iter = sorted.listIterator(sorted.size()); iter.hasPrevious();) {
             ResolvedResource rres = (ResolvedResource) iter.previous();
+            if (filterNames(new ArrayList(Collections.singleton(rres.getRevision()))).isEmpty()) {
+                Message.debug("\t" + name + ": filtered by name: " + rres);
+                continue;
+            }
             if ((date != null && rres.getLastModified() > date.getTime())) {
                 Message.verbose("\t" + name + ": too young: " + rres);
                 rejected.add(rres.getRevision() + " (" + rres.getLastModified() + ")");
@@ -209,7 +213,7 @@ public abstract class AbstractResourceResolver extends BasicResolver {
         tokenValues.put(IvyPatternHelper.TYPE_KEY, "ivy");
         tokenValues.put(IvyPatternHelper.EXT_KEY, "xml");
         findTokenValues(names, getIvyPatterns(), tokenValues, token);
-        getSettings().filterIgnore(names);
+        filterNames(names);
         return names;
     }
 
@@ -221,6 +225,21 @@ public abstract class AbstractResourceResolver extends BasicResolver {
         tokenValues.put(IvyPatternHelper.TYPE_KEY, "jar");
         tokenValues.put(IvyPatternHelper.EXT_KEY, "jar");
         findTokenValues(names, getArtifactPatterns(), tokenValues, token);
+        filterNames(names);
+        return names;
+    }
+
+    /**
+     * Filters names before returning them in the findXXXNames or findTokenValues method.
+     * <p>
+     * Remember to call the super implementation when overriding this method.
+     * </p>
+     * 
+     * @param names
+     *            the list to filter.
+     * @return the filtered list
+     */
+    protected Collection filterNames(Collection names) {
         getSettings().filterIgnore(names);
         return names;
     }
