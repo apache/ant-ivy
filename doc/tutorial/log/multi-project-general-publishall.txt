@@ -1,0 +1,338 @@
+Buildfile: build.xml
+
+load-ivy:
+
+buildlist:
+[ivy:buildlist] :: loading settings :: url = jar:file:/D:/Users/xavier/.ivy2/jars/ivy.jar!/org/apache/ivy/core/settings/ivysettings.xml
+[ivy:buildlist] No ivy:settings found for the default reference 'ivy.instance'.  A default instance will be used
+[ivy:buildlist] no settings file found, using default...
+[ivy:buildlist] :: Ivy 2.0.0-beta1-local-20071128121716 - 20071128121716 :: http://ant.apache.org/ivy/ ::
+:: loading settings :: url = jar:file:/D:/Users/xavier/.ivy2/jars/ivy.jar!/org/apache/ivy/core/settings/ivysettings.xml
+
+publish-all:
+
+clean-build:
+
+load-ivy:
+
+ivy-new-version:
+ [ivy:info] :: loading settings :: url = jar:file:/D:/Users/xavier/.ivy2/jars/ivy.jar!/org/apache/ivy/core/settings/ivysettings.xml
+ [ivy:info] No ivy:settings found for the default reference 'ivy.instance'.  A default instance will be used
+ [ivy:info] no settings file found, using default...
+ [ivy:info] :: Ivy 2.0.0-beta1-local-20071128121716 - 20071128121716 :: http://ant.apache.org/ivy/ ::
+:: loading settings :: url = jar:file:/D:/Users/xavier/.ivy2/jars/ivy.jar!/org/apache/ivy/core/settings/ivysettings.xml
+
+version:
+    [mkdir] Created dir: D:\users\xavier\documents\wkspace\apache\ivy\core\trunk\src\example\multi-project\projects\version\build\classes
+
+clean-lib:
+
+resolve:
+    [mkdir] Created dir: D:\users\xavier\documents\wkspace\apache\ivy\core\trunk\src\example\multi-project\projects\version\lib
+[ivy:resolve] :: resolving dependencies :: org.apache.ivy.example#version;working@diablo
+[ivy:resolve]   confs: [default]
+[ivy:resolve] :: resolution report ::
+        ---------------------------------------------------------------------
+        |                  |            modules            ||   artifacts   |
+        |       conf       | number| search|dwnlded|evicted|| number|dwnlded|
+        ---------------------------------------------------------------------
+        |      default     |   0   |   0   |   0   |   0   ||   0   |   0   |
+        ---------------------------------------------------------------------
+[ivy:retrieve] :: retrieving :: org.apache.ivy.example#version
+[ivy:retrieve]  confs: [default]
+[ivy:retrieve]  0 artifacts copied, 0 already retrieved
+
+compile:
+    [javac] Compiling 1 source file to D:\users\xavier\documents\wkspace\apache\ivy\core\trunk\src\example\multi-project\projects\version\build\classes
+    [javac] Note: D:\users\xavier\documents\wkspace\apache\ivy\core\trunk\src\example\multi-project\projects\version\src\version\Version.java uses unchecked or unsafe operations.
+    [javac] Note: Recompile with -Xlint:unchecked for details.
+
+jar:
+      [jar] Building jar: D:\users\xavier\documents\wkspace\apache\ivy\core\trunk\src\example\multi-project\projects\version\build\version.jar
+
+publish:
+[ivy:publish] :: delivering :: org.apache.ivy.example#version;working@diablo :: 1.0-dev-b1 :: release :: Wed Nov 28 13:10:13 CET 2007
+[ivy:publish]   delivering ivy file to D:\users\xavier\documents\wkspace\apache\ivy\core\trunk\src\example\multi-project\projects\version/build/ivy.xml
+[ivy:publish] :: publishing :: org.apache.ivy.example#version
+[ivy:publish]   published version to D:\users\xavier\documents\wkspace\apache\ivy\core\trunk\src\example\multi-project\projects\version/../../common/../repository/shared/org.apache.ivy.example/version/1.0-dev-b1/jars/version.jar
+[ivy:publish]   published ivy to D:\users\xavier\documents\wkspace\apache\ivy\core\trunk\src\example\multi-project\projects\version/../../common/../repository/shared/org.apache.ivy.example/version/1.0-dev-b1/ivys/ivy.xml
+     [echo] project version released with version 1.0-dev-b1
+
+clean-build:
+
+load-ivy:
+
+ivy-new-version:
+ [ivy:info] :: loading settings :: url = jar:file:/D:/Users/xavier/.ivy2/jars/ivy.jar!/org/apache/ivy/core/settings/ivysettings.xml
+ [ivy:info] No ivy:settings found for the default reference 'ivy.instance'.  A default instance will be used
+ [ivy:info] no settings file found, using default...
+ [ivy:info] :: Ivy 2.0.0-beta1-local-20071128121716 - 20071128121716 :: http://ant.apache.org/ivy/ ::
+:: loading settings :: url = jar:file:/D:/Users/xavier/.ivy2/jars/ivy.jar!/org/apache/ivy/core/settings/ivysettings.xml
+
+version:
+    [mkdir] Created dir: D:\users\xavier\documents\wkspace\apache\ivy\core\trunk\src\example\multi-project\projects\list\build\classes
+
+clean-lib:
+
+resolve:
+    [mkdir] Created dir: D:\users\xavier\documents\wkspace\apache\ivy\core\trunk\src\example\multi-project\projects\list\lib
+[ivy:resolve] :: resolving dependencies :: org.apache.ivy.example#list;working@diablo
+[ivy:resolve]   confs: [core, standalone]
+[ivy:resolve]   found org.apache.ivy.example#version;1.0-dev-b1 in shared
+[ivy:resolve]   [1.0-dev-b1] org.apache.ivy.example#version;latest.integration
+[ivy:resolve]   found commons-cli#commons-cli;1.0 in public
+[ivy:resolve]   found commons-logging#commons-logging;1.0 in public
+[ivy:resolve]   found commons-lang#commons-lang;1.0 in public
+[ivy:resolve]   found junit#junit;3.7 in public
+[ivy:resolve] :: resolution report ::
+        ---------------------------------------------------------------------
+        |                  |            modules            ||   artifacts   |
+        |       conf       | number| search|dwnlded|evicted|| number|dwnlded|
+        ---------------------------------------------------------------------
+        |       core       |   1   |   1   |   0   |   0   ||   1   |   0   |
+        |    standalone    |   5   |   1   |   0   |   0   ||   5   |   0   |
+        ---------------------------------------------------------------------
+[ivy:retrieve] :: retrieving :: org.apache.ivy.example#list
+[ivy:retrieve]  confs: [core, standalone]
+[ivy:retrieve]  5 artifacts copied, 0 already retrieved
+
+compile:
+    [javac] Compiling 2 source files to D:\users\xavier\documents\wkspace\apache\ivy\core\trunk\src\example\multi-project\projects\list\build\classes
+    [javac] Note: D:\users\xavier\documents\wkspace\apache\ivy\core\trunk\src\example\multi-project\projects\list\src\list\ListFile.java uses unchecked or unsafe operations.
+    [javac] Note: Recompile with -Xlint:unchecked for details.
+
+jar:
+      [jar] Building jar: D:\users\xavier\documents\wkspace\apache\ivy\core\trunk\src\example\multi-project\projects\list\build\list.jar
+
+publish:
+[ivy:publish] :: delivering :: org.apache.ivy.example#list;working@diablo :: 1.0-dev-b1 :: release :: Wed Nov 28 13:10:16 CET 2007
+[ivy:publish]   delivering ivy file to D:\users\xavier\documents\wkspace\apache\ivy\core\trunk\src\example\multi-project\projects\list/build/ivy.xml
+[ivy:publish] :: publishing :: org.apache.ivy.example#list
+[ivy:publish]   published list to D:\users\xavier\documents\wkspace\apache\ivy\core\trunk\src\example\multi-project\projects\list/../../common/../repository/shared/org.apache.ivy.example/list/1.0-dev-b1/jars/list.jar
+[ivy:publish]   published ivy to D:\users\xavier\documents\wkspace\apache\ivy\core\trunk\src\example\multi-project\projects\list/../../common/../repository/shared/org.apache.ivy.example/list/1.0-dev-b1/ivys/ivy.xml
+     [echo] project list released with version 1.0-dev-b1
+
+clean-build:
+
+load-ivy:
+
+ivy-new-version:
+ [ivy:info] :: loading settings :: url = jar:file:/D:/Users/xavier/.ivy2/jars/ivy.jar!/org/apache/ivy/core/settings/ivysettings.xml
+ [ivy:info] No ivy:settings found for the default reference 'ivy.instance'.  A default instance will be used
+ [ivy:info] no settings file found, using default...
+ [ivy:info] :: Ivy 2.0.0-beta1-local-20071128121716 - 20071128121716 :: http://ant.apache.org/ivy/ ::
+:: loading settings :: url = jar:file:/D:/Users/xavier/.ivy2/jars/ivy.jar!/org/apache/ivy/core/settings/ivysettings.xml
+
+version:
+    [mkdir] Created dir: D:\users\xavier\documents\wkspace\apache\ivy\core\trunk\src\example\multi-project\projects\find\build\classes
+
+clean-lib:
+
+resolve:
+    [mkdir] Created dir: D:\users\xavier\documents\wkspace\apache\ivy\core\trunk\src\example\multi-project\projects\find\lib
+[ivy:resolve] :: resolving dependencies :: org.apache.ivy.example#find;working@diablo
+[ivy:resolve]   confs: [core, standalone]
+[ivy:resolve]   found org.apache.ivy.example#version;1.0-dev-b1 in shared
+[ivy:resolve]   [1.0-dev-b1] org.apache.ivy.example#version;latest.integration
+[ivy:resolve]   found org.apache.ivy.example#list;1.0-dev-b1 in shared
+[ivy:resolve]   [1.0-dev-b1] org.apache.ivy.example#list;latest.integration
+[ivy:resolve]   found commons-collections#commons-collections;3.1 in public
+[ivy:resolve]   found commons-cli#commons-cli;1.0 in public
+[ivy:resolve]   found commons-logging#commons-logging;1.0 in public
+[ivy:resolve]   found commons-lang#commons-lang;1.0 in public
+[ivy:resolve]   found junit#junit;3.7 in public
+[ivy:resolve] :: resolution report ::
+        ---------------------------------------------------------------------
+        |                  |            modules            ||   artifacts   |
+        |       conf       | number| search|dwnlded|evicted|| number|dwnlded|
+        ---------------------------------------------------------------------
+        |       core       |   3   |   2   |   0   |   0   ||   3   |   0   |
+        |    standalone    |   7   |   2   |   0   |   0   ||   7   |   0   |
+        ---------------------------------------------------------------------
+[ivy:retrieve] :: retrieving :: org.apache.ivy.example#find
+[ivy:retrieve]  confs: [core, standalone]
+[ivy:retrieve]  7 artifacts copied, 0 already retrieved
+
+compile:
+    [javac] Compiling 2 source files to D:\users\xavier\documents\wkspace\apache\ivy\core\trunk\src\example\multi-project\projects\find\build\classes
+
+jar:
+      [jar] Building jar: D:\users\xavier\documents\wkspace\apache\ivy\core\trunk\src\example\multi-project\projects\find\build\find.jar
+
+publish:
+[ivy:publish] :: delivering :: org.apache.ivy.example#find;working@diablo :: 1.0-dev-b1 :: release :: Wed Nov 28 13:10:18 CET 2007
+[ivy:publish]   delivering ivy file to D:\users\xavier\documents\wkspace\apache\ivy\core\trunk\src\example\multi-project\projects\find/build/ivy.xml
+[ivy:publish] :: publishing :: org.apache.ivy.example#find
+[ivy:publish]   published find to D:\users\xavier\documents\wkspace\apache\ivy\core\trunk\src\example\multi-project\projects\find/../../common/../repository/shared/org.apache.ivy.example/find/1.0-dev-b1/jars/find.jar
+[ivy:publish]   published ivy to D:\users\xavier\documents\wkspace\apache\ivy\core\trunk\src\example\multi-project\projects\find/../../common/../repository/shared/org.apache.ivy.example/find/1.0-dev-b1/ivys/ivy.xml
+     [echo] project find released with version 1.0-dev-b1
+
+clean-build:
+
+load-ivy:
+
+ivy-new-version:
+ [ivy:info] :: loading settings :: url = jar:file:/D:/Users/xavier/.ivy2/jars/ivy.jar!/org/apache/ivy/core/settings/ivysettings.xml
+ [ivy:info] No ivy:settings found for the default reference 'ivy.instance'.  A default instance will be used
+ [ivy:info] no settings file found, using default...
+ [ivy:info] :: Ivy 2.0.0-beta1-local-20071128121716 - 20071128121716 :: http://ant.apache.org/ivy/ ::
+:: loading settings :: url = jar:file:/D:/Users/xavier/.ivy2/jars/ivy.jar!/org/apache/ivy/core/settings/ivysettings.xml
+
+version:
+    [mkdir] Created dir: D:\users\xavier\documents\wkspace\apache\ivy\core\trunk\src\example\multi-project\projects\size\build\classes
+
+clean-lib:
+
+resolve:
+    [mkdir] Created dir: D:\users\xavier\documents\wkspace\apache\ivy\core\trunk\src\example\multi-project\projects\size\lib
+[ivy:resolve] :: resolving dependencies :: org.apache.ivy.example#size;working@diablo
+[ivy:resolve]   confs: [default]
+[ivy:resolve]   found org.apache.ivy.example#version;1.0-dev-b1 in shared
+[ivy:resolve]   [1.0-dev-b1] org.apache.ivy.example#version;latest.integration
+[ivy:resolve]   found org.apache.ivy.example#list;1.0-dev-b1 in shared
+[ivy:resolve]   [1.0-dev-b1] org.apache.ivy.example#list;latest.integration
+[ivy:resolve] :: resolution report ::
+        ---------------------------------------------------------------------
+        |                  |            modules            ||   artifacts   |
+        |       conf       | number| search|dwnlded|evicted|| number|dwnlded|
+        ---------------------------------------------------------------------
+        |      default     |   2   |   2   |   0   |   0   ||   2   |   0   |
+        ---------------------------------------------------------------------
+[ivy:retrieve] :: retrieving :: org.apache.ivy.example#size
+[ivy:retrieve]  confs: [default]
+[ivy:retrieve]  2 artifacts copied, 0 already retrieved
+
+compile:
+    [javac] Compiling 1 source file to D:\users\xavier\documents\wkspace\apache\ivy\core\trunk\src\example\multi-project\projects\size\build\classes
+
+jar:
+      [jar] Building jar: D:\users\xavier\documents\wkspace\apache\ivy\core\trunk\src\example\multi-project\projects\size\build\size.jar
+
+publish:
+[ivy:publish] :: delivering :: org.apache.ivy.example#size;working@diablo :: 1.0-dev-b1 :: release :: Wed Nov 28 13:10:21 CET 2007
+[ivy:publish]   delivering ivy file to D:\users\xavier\documents\wkspace\apache\ivy\core\trunk\src\example\multi-project\projects\size/build/ivy.xml
+[ivy:publish] :: publishing :: org.apache.ivy.example#size
+[ivy:publish]   published size to D:\users\xavier\documents\wkspace\apache\ivy\core\trunk\src\example\multi-project\projects\size/../../common/../repository/shared/org.apache.ivy.example/size/1.0-dev-b1/jars/size.jar
+[ivy:publish]   published ivy to D:\users\xavier\documents\wkspace\apache\ivy\core\trunk\src\example\multi-project\projects\size/../../common/../repository/shared/org.apache.ivy.example/size/1.0-dev-b1/ivys/ivy.xml
+     [echo] project size released with version 1.0-dev-b1
+
+clean-build:
+
+load-ivy:
+
+ivy-new-version:
+ [ivy:info] :: loading settings :: url = jar:file:/D:/Users/xavier/.ivy2/jars/ivy.jar!/org/apache/ivy/core/settings/ivysettings.xml
+ [ivy:info] No ivy:settings found for the default reference 'ivy.instance'.  A default instance will be used
+ [ivy:info] no settings file found, using default...
+ [ivy:info] :: Ivy 2.0.0-beta1-local-20071128121716 - 20071128121716 :: http://ant.apache.org/ivy/ ::
+:: loading settings :: url = jar:file:/D:/Users/xavier/.ivy2/jars/ivy.jar!/org/apache/ivy/core/settings/ivysettings.xml
+
+version:
+    [mkdir] Created dir: D:\users\xavier\documents\wkspace\apache\ivy\core\trunk\src\example\multi-project\projects\sizewhere\build\classes
+
+clean-lib:
+
+resolve:
+    [mkdir] Created dir: D:\users\xavier\documents\wkspace\apache\ivy\core\trunk\src\example\multi-project\projects\sizewhere\lib
+[ivy:resolve] :: resolving dependencies :: org.apache.ivy.example#sizewhere;working@diablo
+[ivy:resolve]   confs: [core, standalone]
+[ivy:resolve]   found org.apache.ivy.example#version;1.0-dev-b1 in shared
+[ivy:resolve]   [1.0-dev-b1] org.apache.ivy.example#version;latest.integration
+[ivy:resolve]   found org.apache.ivy.example#size;1.0-dev-b1 in shared
+[ivy:resolve]   [1.0-dev-b1] org.apache.ivy.example#size;latest.integration
+[ivy:resolve]   found org.apache.ivy.example#list;1.0-dev-b1 in shared
+[ivy:resolve]   found org.apache.ivy.example#find;1.0-dev-b1 in shared
+[ivy:resolve]   [1.0-dev-b1] org.apache.ivy.example#find;latest.integration
+[ivy:resolve]   found commons-collections#commons-collections;3.1 in public
+[ivy:resolve]   found commons-cli#commons-cli;1.0 in public
+[ivy:resolve]   found commons-logging#commons-logging;1.0 in public
+[ivy:resolve]   found commons-lang#commons-lang;1.0 in public
+[ivy:resolve]   found junit#junit;3.7 in public
+[ivy:resolve] :: resolution report ::
+        ---------------------------------------------------------------------
+        |                  |            modules            ||   artifacts   |
+        |       conf       | number| search|dwnlded|evicted|| number|dwnlded|
+        ---------------------------------------------------------------------
+        |       core       |   5   |   3   |   0   |   0   ||   5   |   0   |
+        |    standalone    |   9   |   3   |   0   |   0   ||   9   |   0   |
+        ---------------------------------------------------------------------
+[ivy:retrieve] :: retrieving :: org.apache.ivy.example#sizewhere
+[ivy:retrieve]  confs: [core, standalone]
+[ivy:retrieve]  9 artifacts copied, 0 already retrieved
+
+compile:
+    [javac] Compiling 2 source files to D:\users\xavier\documents\wkspace\apache\ivy\core\trunk\src\example\multi-project\projects\sizewhere\build\classes
+
+jar:
+      [jar] Building jar: D:\users\xavier\documents\wkspace\apache\ivy\core\trunk\src\example\multi-project\projects\sizewhere\build\sizewhere.jar
+
+publish:
+[ivy:publish] :: delivering :: org.apache.ivy.example#sizewhere;working@diablo :: 1.0-dev-b1 :: release :: Wed Nov 28 13:10:24 CET 2007
+[ivy:publish]   delivering ivy file to D:\users\xavier\documents\wkspace\apache\ivy\core\trunk\src\example\multi-project\projects\sizewhere/build/ivy.xml
+[ivy:publish] :: publishing :: org.apache.ivy.example#sizewhere
+[ivy:publish]   published sizewhere to D:\users\xavier\documents\wkspace\apache\ivy\core\trunk\src\example\multi-project\projects\sizewhere/../../common/../repository/shared/org.apache.ivy.example/sizewhere/1.0-dev-b1/jars/sizewhere.jar
+[ivy:publish]   published ivy to D:\users\xavier\documents\wkspace\apache\ivy\core\trunk\src\example\multi-project\projects\sizewhere/../../common/../repository/shared/org.apache.ivy.example/sizewhere/1.0-dev-b1/ivys/ivy.xml
+     [echo] project sizewhere released with version 1.0-dev-b1
+
+clean-build:
+
+load-ivy:
+
+ivy-new-version:
+ [ivy:info] :: loading settings :: url = jar:file:/D:/Users/xavier/.ivy2/jars/ivy.jar!/org/apache/ivy/core/settings/ivysettings.xml
+ [ivy:info] No ivy:settings found for the default reference 'ivy.instance'.  A default instance will be used
+ [ivy:info] no settings file found, using default...
+ [ivy:info] :: Ivy 2.0.0-beta1-local-20071128121716 - 20071128121716 :: http://ant.apache.org/ivy/ ::
+:: loading settings :: url = jar:file:/D:/Users/xavier/.ivy2/jars/ivy.jar!/org/apache/ivy/core/settings/ivysettings.xml
+
+version:
+    [mkdir] Created dir: D:\users\xavier\documents\wkspace\apache\ivy\core\trunk\src\example\multi-project\projects\console\build\classes
+
+clean-lib:
+
+resolve:
+    [mkdir] Created dir: D:\users\xavier\documents\wkspace\apache\ivy\core\trunk\src\example\multi-project\projects\console\lib
+[ivy:resolve] :: resolving dependencies :: org.apache.ivy.example#console;working@diablo
+[ivy:resolve]   confs: [default]
+[ivy:resolve]   found org.apache.ivy.example#version;1.0-dev-b1 in shared
+[ivy:resolve]   [1.0-dev-b1] org.apache.ivy.example#version;latest.integration
+[ivy:resolve]   found org.apache.ivy.example#list;1.0-dev-b1 in shared
+[ivy:resolve]   [1.0-dev-b1] org.apache.ivy.example#list;latest.integration
+[ivy:resolve]   found commons-cli#commons-cli;1.0 in public
+[ivy:resolve]   found commons-logging#commons-logging;1.0 in public
+[ivy:resolve]   found commons-lang#commons-lang;1.0 in public
+[ivy:resolve]   found junit#junit;3.7 in public
+[ivy:resolve]   found org.apache.ivy.example#find;1.0-dev-b1 in shared
+[ivy:resolve]   [1.0-dev-b1] org.apache.ivy.example#find;latest.integration
+[ivy:resolve]   found commons-collections#commons-collections;3.1 in public
+[ivy:resolve]   found org.apache.ivy.example#sizewhere;1.0-dev-b1 in shared
+[ivy:resolve]   [1.0-dev-b1] org.apache.ivy.example#sizewhere;latest.integration
+[ivy:resolve]   found org.apache.ivy.example#size;1.0-dev-b1 in shared
+[ivy:resolve] :: resolution report ::
+        ---------------------------------------------------------------------
+        |                  |            modules            ||   artifacts   |
+        |       conf       | number| search|dwnlded|evicted|| number|dwnlded|
+        ---------------------------------------------------------------------
+        |      default     |   10  |   4   |   0   |   0   ||   10  |   0   |
+        ---------------------------------------------------------------------
+[ivy:retrieve] :: retrieving :: org.apache.ivy.example#console
+[ivy:retrieve]  confs: [default]
+[ivy:retrieve]  10 artifacts copied, 0 already retrieved
+
+compile:
+    [javac] Compiling 1 source file to D:\users\xavier\documents\wkspace\apache\ivy\core\trunk\src\example\multi-project\projects\console\build\classes
+    [javac] Note: D:\users\xavier\documents\wkspace\apache\ivy\core\trunk\src\example\multi-project\projects\console\src\console\Main.java uses unchecked or unsafe operations.
+    [javac] Note: Recompile with -Xlint:unchecked for details.
+
+jar:
+      [jar] Building jar: D:\users\xavier\documents\wkspace\apache\ivy\core\trunk\src\example\multi-project\projects\console\build\console.jar
+
+publish:
+[ivy:publish] :: delivering :: org.apache.ivy.example#console;working@diablo :: 1.0-dev-b1 :: release :: Wed Nov 28 13:10:27 CET 2007
+[ivy:publish]   delivering ivy file to D:\users\xavier\documents\wkspace\apache\ivy\core\trunk\src\example\multi-project\projects\console/build/ivy.xml
+[ivy:publish] :: publishing :: org.apache.ivy.example#console
+[ivy:publish]   published console to D:\users\xavier\documents\wkspace\apache\ivy\core\trunk\src\example\multi-project\projects\console/../../common/../repository/shared/org.apache.ivy.example/console/1.0-dev-b1/jars/console.jar
+[ivy:publish]   published ivy to D:\users\xavier\documents\wkspace\apache\ivy\core\trunk\src\example\multi-project\projects\console/../../common/../repository/shared/org.apache.ivy.example/console/1.0-dev-b1/ivys/ivy.xml
+     [echo] project console released with version 1.0-dev-b1
+
+BUILD SUCCESSFUL

@@ -1,0 +1,7 @@
+Buildfile: build.xml
+
+Main targets:
+
+ clean        clean tutorial: delete repository, ivy cache, and all projects
+ clean-all    clean all projects
+ publish-all  compile, jar and publish all projects in the right order
