@@ -34,7 +34,10 @@ import org.apache.ivy.plugins.repository.Repository;
 import org.apache.ivy.plugins.repository.Resource;
 import org.apache.ivy.util.Message;
 
-public class ResolverHelper {
+public final class ResolverHelper {
+    private ResolverHelper() {
+    }
+    
     // lists all the values a token can take in a pattern, as listed by a given url lister
     public static String[] listTokenValues(Repository rep, String pattern, String token) {
         String fileSep = rep.getFileSeparator();
@@ -87,7 +90,8 @@ public class ResolverHelper {
                     return null;
                 }
             } catch (IOException e) {
-                Message.verbose("problem while listing resources in " + root + " with " + rep + ":");
+                Message.verbose(
+                    "problem while listing resources in " + root + " with " + rep + ":");
                 Message.verbose("  " + e.getClass().getName() + " " + e.getMessage());
                 return null;
             } catch (Exception e) {
@@ -160,13 +164,14 @@ public class ResolverHelper {
                 Message.debug("\tfound resolved res: " + ret);
             }
             return (ResolvedResource[]) ret.toArray(new ResolvedResource[ret.size()]);
-        } else if (partiallyResolvedPattern.indexOf("[" + IvyPatternHelper.REVISION_KEY + "]") == -1) {
+        } else if (partiallyResolvedPattern.indexOf(
+                "[" + IvyPatternHelper.REVISION_KEY + "]") == -1) {
             // the partially resolved pattern is completely resolved, check the resource
             try {
                 Resource res = rep.getResource(partiallyResolvedPattern);
                 if (res.exists()) {
-                    Message
-                            .debug("\tonly one resource found without real listing: using and defining it as working@"
+                    Message.debug("\tonly one resource found without real listing: "
+                                    + "using and defining it as working@"
                                     + rep.getName() + " revision: " + res.getName());
                     return new ResolvedResource[] {new ResolvedResource(res, "working@"
                             + rep.getName())};
