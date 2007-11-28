@@ -25,33 +25,33 @@ import java.io.InputStream;
 import org.apache.ivy.plugins.repository.Resource;
 
 public class FileResource implements Resource {
-    private File _file;
+    private File file;
 
-    private FileRepository _repository;
+    private FileRepository repository;
 
     public FileResource(FileRepository repository, File f) {
-        _repository = repository;
-        _file = f;
+        this.repository = repository;
+        this.file = f;
     }
 
     public String getName() {
-        return _file.getPath();
+        return file.getPath();
     }
 
     public Resource clone(String cloneName) {
-        return new FileResource(_repository, new File(cloneName));
+        return new FileResource(repository, new File(cloneName));
     }
 
     public long getLastModified() {
-        return _file.lastModified();
+        return file.lastModified();
     }
 
     public long getContentLength() {
-        return _file.length();
+        return file.length();
     }
 
     public boolean exists() {
-        return _file.exists();
+        return file.exists();
     }
 
     public String toString() {
@@ -59,18 +59,18 @@ public class FileResource implements Resource {
     }
 
     public File getFile() {
-        return _file;
+        return file;
     }
 
     public FileRepository getRepository() {
-        return _repository;
+        return repository;
     }
 
     public boolean isLocal() {
-        return _repository.isLocal();
+        return repository.isLocal();
     }
 
     public InputStream openStream() throws IOException {
-        return new FileInputStream(_file);
+        return new FileInputStream(file);
     }
 }

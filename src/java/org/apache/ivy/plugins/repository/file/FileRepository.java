@@ -29,18 +29,18 @@ import org.apache.ivy.plugins.repository.TransferEvent;
 import org.apache.ivy.util.FileUtil;
 
 public class FileRepository extends AbstractRepository {
-    private RepositoryCopyProgressListener _progress = new RepositoryCopyProgressListener(this);
+    private RepositoryCopyProgressListener progress = new RepositoryCopyProgressListener(this);
 
-    private File _baseDir;
+    private File baseDir;
 
-    private boolean _local = true;
+    private boolean local = true;
 
     public FileRepository() {
-        _baseDir = null;
+        baseDir = null;
     }
 
     public FileRepository(File basedir) {
-        _baseDir = basedir;
+        this.baseDir = basedir;
     }
 
     public Resource getResource(String source) throws IOException {
@@ -59,8 +59,8 @@ public class FileRepository extends AbstractRepository {
 
     private void copy(File src, File destination, boolean overwrite) throws IOException {
         try {
-            _progress.setTotalLength(new Long(src.length()));
-            if (!FileUtil.copy(src, destination, _progress, overwrite)) {
+            progress.setTotalLength(new Long(src.length()));
+            if (!FileUtil.copy(src, destination, progress, overwrite)) {
                 if (!overwrite) {
                     throw new IOException("file copy not done from " + src + " to " + destination
                             + ": destination probably already exists and overwrite is false");
@@ -75,7 +75,7 @@ public class FileRepository extends AbstractRepository {
             fireTransferError(ex);
             throw ex;
         } finally {
-            _progress.setTotalLength(null);
+            progress.setTotalLength(null);
         }
     }
 
@@ -95,19 +95,19 @@ public class FileRepository extends AbstractRepository {
     }
 
     private File getFile(String source) {
-        if (_baseDir != null) {
-            return new File(_baseDir, source);
+        if (baseDir != null) {
+            return new File(baseDir, source);
         } else {
             return new File(source);
         }
     }
 
     public boolean isLocal() {
-        return _local;
+        return local;
     }
 
     public void setLocal(boolean local) {
-        _local = local;
+        this.local = local;
     }
 
 }
