@@ -51,25 +51,25 @@ import org.apache.ivy.util.Message;
  */
 public class RepositoryResolver extends AbstractResourceResolver {
 
-    private Repository _repository;
+    private Repository repository;
 
-    private Boolean _alwaysCheckExactRevision = null;
+    private Boolean alwaysCheckExactRevision = null;
 
     public RepositoryResolver() {
     }
 
     public Repository getRepository() {
-        return _repository;
+        return repository;
     }
 
     public void setRepository(Repository repository) {
-        _repository = repository;
+        this.repository = repository;
     }
 
     public void setName(String name) {
         super.setName(name);
-        if (_repository instanceof AbstractRepository) {
-            ((AbstractRepository) _repository).setName(name);
+        if (repository instanceof AbstractRepository) {
+            ((AbstractRepository) repository).setName(name);
         }
     }
 
@@ -141,7 +141,7 @@ public class RepositoryResolver extends AbstractResourceResolver {
         if (dest.getParentFile() != null) {
             dest.getParentFile().mkdirs();
         }
-        _repository.get(resource.getName(), dest);
+        repository.get(resource.getName(), dest);
         return dest.length();
     }
 
@@ -169,7 +169,7 @@ public class RepositoryResolver extends AbstractResourceResolver {
 
     private void put(Artifact artifact, File src, String dest, boolean overwrite)
             throws IOException {
-        _repository.put(artifact, src, dest, overwrite);
+        repository.put(artifact, src, dest, overwrite);
         String[] checksums = getChecksumAlgorithms();
         for (int i = 0; i < checksums.length; i++) {
             putChecksum(artifact, src, dest, overwrite, checksums[i]);
@@ -182,7 +182,7 @@ public class RepositoryResolver extends AbstractResourceResolver {
         try {
             FileUtil.copy(new ByteArrayInputStream(ChecksumHelper.computeAsString(src, algorithm)
                     .getBytes()), csFile, null);
-            _repository.put(DefaultArtifact.cloneWithAnotherTypeAndExt(artifact, algorithm,
+            repository.put(DefaultArtifact.cloneWithAnotherTypeAndExt(artifact, algorithm,
                 artifact.getExt() + "." + algorithm), csFile, dest + "." + algorithm, overwrite);
         } finally {
             csFile.delete();
@@ -193,12 +193,12 @@ public class RepositoryResolver extends AbstractResourceResolver {
         EventManager eventManager = options.getEventManager();
         try {
             if (eventManager != null) {
-                _repository.addTransferListener(eventManager);
+                repository.addTransferListener(eventManager);
             }
             return super.download(artifacts, options);
         } finally {
             if (eventManager != null) {
-                _repository.removeTransferListener(eventManager);
+                repository.removeTransferListener(eventManager);
             }
         }
     }
@@ -208,7 +208,7 @@ public class RepositoryResolver extends AbstractResourceResolver {
             String pattern = (String) iter.next();
             String partiallyResolvedPattern = IvyPatternHelper.substituteTokens(pattern,
                 tokenValues);
-            String[] values = ResolverHelper.listTokenValues(_repository, partiallyResolvedPattern,
+            String[] values = ResolverHelper.listTokenValues(repository, partiallyResolvedPattern,
                 token);
             if (values != null) {
                 names.addAll(Arrays.asList(values));
@@ -228,18 +228,18 @@ public class RepositoryResolver extends AbstractResourceResolver {
     public void setSettings(ResolverSettings settings) {
         super.setSettings(settings);
         if (settings != null) {
-            if (_alwaysCheckExactRevision == null) {
-                _alwaysCheckExactRevision = Boolean.valueOf(settings
+            if (alwaysCheckExactRevision == null) {
+                alwaysCheckExactRevision = Boolean.valueOf(settings
                         .getVariable("ivy.default.always.check.exact.revision"));
             }
         }
     }
 
     public boolean isAlwaysCheckExactRevision() {
-        return _alwaysCheckExactRevision == null ? true : _alwaysCheckExactRevision.booleanValue();
+        return alwaysCheckExactRevision == null ? true : alwaysCheckExactRevision.booleanValue();
     }
 
     public void setAlwaysCheckExactRevision(boolean alwaysCheckExactRevision) {
-        _alwaysCheckExactRevision = Boolean.valueOf(alwaysCheckExactRevision);
+        this.alwaysCheckExactRevision = Boolean.valueOf(alwaysCheckExactRevision);
     }
 }
