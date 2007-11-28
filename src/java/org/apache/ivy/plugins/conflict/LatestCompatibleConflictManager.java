@@ -24,6 +24,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
+import java.util.Stack;
 
 import org.apache.ivy.core.IvyContext;
 import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
@@ -183,8 +184,10 @@ public class LatestCompatibleConflictManager extends LatestConflictManager {
 
     private void blackListIncompatibleCallerAndRestartResolveIfPossible(IvySettings settings,
             IvyNode parent, IvyNode selected, IvyNode evicted) {
+        Stack callerStack = new Stack();
+        callerStack.push(evicted);
         final Collection toBlacklist = blackListIncompatibleCaller(
-            settings.getVersionMatcher(), parent, selected, evicted, evicted); 
+            settings.getVersionMatcher(), parent, selected, evicted, callerStack); 
         if (toBlacklist != null) {
             final StringBuffer blacklisted = new StringBuffer();
             for (Iterator iterator = toBlacklist.iterator(); iterator.hasNext();) {
@@ -229,8 +232,10 @@ public class LatestCompatibleConflictManager extends LatestConflictManager {
      */
     private Collection/*<IvyNodeBlacklist>*/ blackListIncompatibleCaller(
             VersionMatcher versionMatcher,
-            IvyNode conflictParent, IvyNode selectedNode, IvyNode evictedNode, IvyNode node) {
+            IvyNode conflictParent, IvyNode selectedNode, IvyNode evictedNode, 
+            Stack/*<IvyNode>*/ callerStack) {
         Collection/*<IvyNodeBlacklist>*/ blacklisted = new ArrayList/*<IvyNodeBlacklist>*/();
+        IvyNode node = (IvyNode) callerStack.peek();
         Caller[] callers = node.getAllCallers();
         String rootModuleConf = conflictParent.getData().getReport().getConfiguration();
         for (int i = 0; i < callers.length; i++) {
@@ -247,13 +252,20 @@ public class LatestCompatibleConflictManager extends LatestConflictManager {
                     // caller in a particular path, this is a strict conflict
                     return null;
                 }
-                Collection sub = blackListIncompatibleCaller(
-                    versionMatcher, conflictParent, selectedNode, evictedNode, callerNode);
-                if (sub == null) {
-                    // propagate the fact that a path with unblacklistable caller has been found
-                    return null;
+                if (!callerStack.contains(callerNode)) {
+                    callerStack.push(callerNode);
+                    Collection sub = blackListIncompatibleCaller(
+                        versionMatcher, conflictParent, selectedNode, evictedNode, callerStack);
+                    callerStack.pop();
+                    if (sub == null) {
+                        // propagate the fact that a path with unblacklistable caller has been found
+                        return null;
+                    } else {
+                        blacklisted.addAll(sub);
+                    }
                 } else {
-                    blacklisted.addAll(sub);
+                    // circular dependency, nothing to do, this path should not be considered as a
+                    // problem
                 }
             }
         }

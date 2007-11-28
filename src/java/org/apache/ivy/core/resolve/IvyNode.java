@@ -1211,20 +1211,27 @@ public class IvyNode implements Comparable {
             Message.verbose("BLACKLISTING " + bdata);
         }
         
-        clearEvictionDataInAllCallers(bdata.getRootModuleConf(), this);
+        Stack callerStack = new Stack();
+        callerStack.push(this);
+        clearEvictionDataInAllCallers(bdata.getRootModuleConf(), callerStack);
         
         blacklisted.put(bdata.getRootModuleConf(), bdata);
         data.blacklist(this);
     }
 
 
-    private void clearEvictionDataInAllCallers(String rootModuleConf, IvyNode node) {
+    private void clearEvictionDataInAllCallers(String rootModuleConf, Stack/*<IvyNode>*/ callerStack) {
+        IvyNode node = (IvyNode) callerStack.peek();
         Caller[] callers = node.getCallers(rootModuleConf);
         for (int i = 0; i < callers.length; i++) {
             IvyNode callerNode = findNode(callers[i].getModuleRevisionId());
             if (callerNode != null) {
                 callerNode.eviction = new IvyNodeEviction(callerNode);
-                clearEvictionDataInAllCallers(rootModuleConf, callerNode);
+                if (!callerStack.contains(callerNode)) {
+                    callerStack.push(callerNode);
+                    clearEvictionDataInAllCallers(rootModuleConf, callerStack);
+                    callerStack.pop();
+                }
             }
         }
     }
