@@ -33,9 +33,9 @@ import java.io.InputStream;
  * <h4>Implementation Notes</h4>
  * In implementing the interface you need to ensure the following behaviors:
  * <ul>
- * <li>All of the methods specified in the interface fail by returning an empty value (<code>false</code>,
- * <code>0</code>, <code>""</code>). In other words, the specified interface methods should
- * not throw RuntimeExceptions. </li>
+ * <li>All of the methods specified in the interface fail by returning an empty value 
+ * (<code>false</code>, <code>0</code>, <code>""</code>). 
+ * In other words, the specified interface methods should not throw RuntimeExceptions. </li>
  * <li>Failure conditions should be logged using the {@link org.apache.ivy.util.Message#verbose}
  * method. </li>
  * <li>Failure of one of the interface's specified methods results in all other interface specified
