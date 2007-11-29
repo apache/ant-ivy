@@ -20,8 +20,10 @@ package org.apache.ivy.plugins.resolver;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -37,15 +39,43 @@ public class FileSystemResolver extends RepositoryResolver {
 
     private static final String TRANSACTION_DESTINATION_SUFFIX = ".part";
     private static final Pattern TRANSACTION_PATTERN = 
-        Pattern.compile("(.*\\[revision\\])[/\\\\][^/\\\\]+");
+        Pattern.compile("(.*\\[revision\\])([/\\\\][^/\\\\]+)");
     
+    /**
+     * Transactional mode.
+     * 
+     * auto: use transaction if possible, only log verbose message if not
+     * true: always use transaction, fail if not supported
+     * false: never use transactions
+     */
     private String transactional = "auto"; // one of 'auto', 'true' or 'false'
     
+    /**
+     * When set indicates if this resolver supports transaction
+     */
     private Boolean supportTransaction;
+    /**
+     * The pattern leading to the directory where files are published before being moved at the end
+     * of a transaction
+     */
     private String baseTransactionPattern;
+    /**
+     * Map between actual patterns and patterns used during the transaction to put files in a
+     * temporary directory
+     */
+    private Map/*<String,String>*/ fullTransactionPatterns = new HashMap();
 
+    /**
+     * Is the current transaction open in overwrite mode?
+     */
     private boolean overwriteTransaction = false;
+    /**
+     * Location where files are published during the transaction
+     */
     private File transactionTempDir;
+    /**
+     * Location where files should end up at the end of the transaction
+     */
     private File transactionDestDir;
     
     public FileSystemResolver() {
@@ -71,10 +101,16 @@ public class FileSystemResolver extends RepositoryResolver {
 
     protected String getDestination(String pattern, Artifact artifact, ModuleRevisionId mrid) {
         if (supportTransaction() && !overwriteTransaction) {
+            
+            String destPattern = (String) fullTransactionPatterns.get(pattern);
+            if (destPattern == null) {
+                throw new IllegalArgumentException(
+                    "unsupported pattern for publish destination pattern: " + pattern 
+                    + ". supported patterns: " + fullTransactionPatterns.keySet());
+            }
             return IvyPatternHelper.substitute(
-                pattern, 
-                ModuleRevisionId.newInstance(
-                    mrid, mrid.getRevision() + TRANSACTION_DESTINATION_SUFFIX), 
+                destPattern, 
+                mrid, 
                 artifact);
         } else {
             return super.getDestination(pattern, artifact, mrid);
@@ -159,6 +195,8 @@ public class FileSystemResolver extends RepositoryResolver {
                     return;
                 } else {
                     baseTransactionPattern = m.group(1);
+                    fullTransactionPatterns.put(pattern, 
+                        m.group(1) + TRANSACTION_DESTINATION_SUFFIX + m.group(2));
                 }
             }
             if (artifactPatterns.size() > 0) {
@@ -172,9 +210,14 @@ public class FileSystemResolver extends RepositoryResolver {
                         unsupportedTransaction("ivy pattern and artifact pattern "
                             + "do not use the same directory for revision");
                         return;
+                    } else {
+                        fullTransactionPatterns.put(pattern, 
+                            m.group(1) + TRANSACTION_DESTINATION_SUFFIX + m.group(2));
                     }
                 } else {
                     baseTransactionPattern = m.group(1);
+                    fullTransactionPatterns.put(pattern, 
+                        m.group(1) + TRANSACTION_DESTINATION_SUFFIX + m.group(2));
                 }
             }
             supportTransaction = Boolean.TRUE;

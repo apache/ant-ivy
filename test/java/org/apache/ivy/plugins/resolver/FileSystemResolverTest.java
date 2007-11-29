@@ -567,21 +567,53 @@ public class FileSystemResolverTest extends TestCase {
             Artifact artifact = new DefaultArtifact(mrid, new Date(), "myartifact", "mytype",
                     "myext");
             File src = new File("test/repositories/ivysettings.xml");
-            boolean successfullyPublished = false;
             resolver.beginPublishTransaction(mrid, false);
-            try {
-                resolver.publish(ivyArtifact, src, false);
-                resolver.publish(artifact, src, false);
-                resolver.commitPublishTransaction();
-                successfullyPublished = true;
-            } finally {
-                if (!successfullyPublished)
-                    resolver.abortPublishTransaction();
-            }
+            resolver.publish(ivyArtifact, src, false);
+            resolver.publish(artifact, src, false);
+            resolver.commitPublishTransaction();
 
             assertTrue(new File("test/repositories/1/myorg/mymodule/myrevision/ivy.xml").exists());
             assertTrue(new File(
                     "test/repositories/1/myorg/mymodule/mytypes/myartifact-myrevision.myext")
+                    .exists());
+        } finally {
+            FileUtil.forceDelete(new File("test/repositories/1/myorg"));
+        }
+    }
+
+    public void testPublishTransaction() throws Exception {
+        try {
+            FileSystemResolver resolver = new FileSystemResolver();
+            resolver.setName("test");
+            resolver.setSettings(settings);
+
+            resolver.addIvyPattern(
+                "test/repositories/1/[organisation]/[module]/[revision]/[artifact].[ext]");
+            resolver.addArtifactPattern(
+                 "test/repositories/1/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]");
+
+            ModuleRevisionId mrid = ModuleRevisionId.newInstance("myorg", "mymodule", "myrevision");
+            Artifact ivyArtifact = new DefaultArtifact(mrid, new Date(), "ivy", "ivy", "xml");
+            Artifact artifact = new DefaultArtifact(mrid, new Date(), "myartifact", "mytype",
+                    "myext");
+            File src = new File("test/repositories/ivysettings.xml");
+            
+            resolver.beginPublishTransaction(mrid, false);
+            
+            // files should not be available until the transaction is committed
+            resolver.publish(ivyArtifact, src, false);
+            assertFalse(new File("test/repositories/1/myorg/mymodule/myrevision/ivy.xml").exists());
+
+            resolver.publish(artifact, src, false);
+            assertFalse(new File(
+                "test/repositories/1/myorg/mymodule/mytypes/myartifact-myrevision.myext")
+                .exists());
+
+            resolver.commitPublishTransaction();
+
+            assertTrue(new File("test/repositories/1/myorg/mymodule/myrevision/ivy.xml").exists());
+            assertTrue(new File(
+                    "test/repositories/1/myorg/mymodule/myrevision/myartifact-myrevision.myext")
                     .exists());
         } finally {
             FileUtil.forceDelete(new File("test/repositories/1/myorg"));
@@ -611,12 +643,139 @@ public class FileSystemResolverTest extends TestCase {
 
             assertFalse(new File("test/repositories/1/myorg/mymodule/myrevision/ivy.xml").exists());
             assertFalse(new File(
-                    "test/repositories/1/myorg/mymodule/mytypes/myartifact-myrevision.myext")
+                    "test/repositories/1/myorg/mymodule/myrevision/myartifact-myrevision.myext")
                     .exists());
         } finally {
             FileUtil.forceDelete(new File("test/repositories/1/myorg"));
         }
     }
+
+    public void testUnsupportedTransaction() throws Exception {
+        try {
+            FileSystemResolver resolver = new FileSystemResolver();
+            resolver.setName("test");
+            resolver.setSettings(settings);
+            resolver.setTransactional("true");
+
+            resolver.addArtifactPattern(
+                // this pattern is not supported for transaction publish
+                 "test/repositories/1/[organisation]/[module]/[artifact]-[revision].[ext]");
+
+            ModuleRevisionId mrid = ModuleRevisionId.newInstance("myorg", "mymodule", "myrevision");
+            Artifact artifact = new DefaultArtifact(mrid, new Date(), "myartifact", "mytype",
+                    "myext");
+            File src = new File("test/repositories/ivysettings.xml");
+            try {
+                resolver.beginPublishTransaction(mrid, false);
+                
+                resolver.publish(artifact, src, false);
+                fail("publishing with transaction=true and an unsupported pattern should raise an exception");
+            } catch (IllegalStateException ex) {
+                assertTrue(ex.getMessage().indexOf("transactional") != -1);
+            }
+        } finally {
+            FileUtil.forceDelete(new File("test/repositories/1/myorg"));
+        }
+    }
+
+    public void testUnsupportedTransaction2() throws Exception {
+        try {
+            FileSystemResolver resolver = new FileSystemResolver();
+            resolver.setName("test");
+            resolver.setSettings(settings);
+            resolver.setTransactional("true");
+
+            // the two patterns are inconsistent and thus not supported for transactions
+            resolver.addIvyPattern(
+                "test/repositories/1/[organisation]-[module]/[revision]/[artifact]-[revision].[ext]");
+            resolver.addArtifactPattern(
+                "test/repositories/1/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]");
+
+            ModuleRevisionId mrid = ModuleRevisionId.newInstance("myorg", "mymodule", "myrevision");
+            Artifact ivyArtifact = new DefaultArtifact(mrid, new Date(), "ivy", "ivy", "xml");
+            Artifact artifact = new DefaultArtifact(mrid, new Date(), "myartifact", "mytype",
+                    "myext");
+            File src = new File("test/repositories/ivysettings.xml");
+            try {
+                resolver.beginPublishTransaction(mrid, false);
+                resolver.publish(ivyArtifact, src, false);
+                resolver.publish(artifact, src, false);
+                fail("publishing with transaction=true and an unsupported combination of patterns should raise an exception");
+            } catch (IllegalStateException ex) {
+                assertTrue(ex.getMessage().indexOf("transactional") != -1);
+            }
+        } finally {
+            FileUtil.forceDelete(new File("test/repositories/1/myorg"));
+        }
+    }
+
+    public void testUnsupportedTransaction3() throws Exception {
+        try {
+            FileSystemResolver resolver = new FileSystemResolver();
+            resolver.setName("test");
+            resolver.setSettings(settings);
+            resolver.setTransactional("true");
+
+            resolver.addArtifactPattern(
+                 "test/repositories/1/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]");
+
+            ModuleRevisionId mrid = ModuleRevisionId.newInstance("myorg", "mymodule", "myrevision");
+            Artifact artifact = new DefaultArtifact(mrid, new Date(), "myartifact", "mytype",
+                    "myext");
+            File src = new File("test/repositories/ivysettings.xml");
+            try {
+                // overwrite transaction not supported
+                resolver.beginPublishTransaction(mrid, true);
+                
+                resolver.publish(artifact, src, true);
+                fail("publishing with transaction=true and overzrite mode should raise an exception");
+            } catch (IllegalStateException ex) {
+                assertTrue(ex.getMessage().indexOf("transactional") != -1);
+            }
+        } finally {
+            FileUtil.forceDelete(new File("test/repositories/1/myorg"));
+        }
+    }
+    
+    public void testDisableTransaction() throws Exception {
+        try {
+            FileSystemResolver resolver = new FileSystemResolver();
+            resolver.setName("test");
+            resolver.setSettings(settings);
+            resolver.setTransactional("false");
+
+            resolver.addIvyPattern(
+                "test/repositories/1/[organisation]/[module]/[revision]/[artifact].[ext]");
+            resolver.addArtifactPattern(
+                "test/repositories/1/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]");
+
+            ModuleRevisionId mrid = ModuleRevisionId.newInstance("myorg", "mymodule", "myrevision");
+            Artifact ivyArtifact = new DefaultArtifact(mrid, new Date(), "ivy", "ivy", "xml");
+            Artifact artifact = new DefaultArtifact(mrid, new Date(), "myartifact", "mytype",
+                    "myext");
+            File src = new File("test/repositories/ivysettings.xml");
+            resolver.beginPublishTransaction(mrid, false);
+            
+            // with transactions disabled the file should be available as soon as they are published
+            resolver.publish(ivyArtifact, src, false);
+            assertTrue(new File("test/repositories/1/myorg/mymodule/myrevision/ivy.xml").exists());
+            
+            resolver.publish(artifact, src, false);
+            assertTrue(new File(
+                "test/repositories/1/myorg/mymodule/myrevision/myartifact-myrevision.myext")
+                .exists());
+
+            resolver.commitPublishTransaction();
+            
+            assertTrue(new File("test/repositories/1/myorg/mymodule/myrevision/ivy.xml").exists());
+            assertTrue(new File(
+                    "test/repositories/1/myorg/mymodule/myrevision/myartifact-myrevision.myext")
+                    .exists());
+        } finally {
+            FileUtil.forceDelete(new File("test/repositories/1/myorg"));
+        }
+    }
+
 
     public void testListing() throws Exception {
         FileSystemResolver resolver = new FileSystemResolver();
