@@ -298,13 +298,16 @@ public class IvyPublish extends IvyTask {
             }
 
             Collection missing = ivy.publish(mrid, artifactspattern, publishResolverName,
-                new PublishOptions().setPubrevision(getPubrevision()).setCache(
-                    CacheManager.getInstance(settings, cache)).setSrcIvyPattern(
-                    publishivy ? srcivypattern : null).setStatus(getStatus()).setPubdate(pubdate)
-                        .setExtraArtifacts(
-                            (Artifact[]) artifacts.toArray(new Artifact[artifacts.size()]))
-                        .setValidate(doValidate(settings)).setOverwrite(overwrite).setUpdate(
-                            update).setConfs(splitConfs(conf)));
+                new PublishOptions()
+                    .setPubrevision(getPubrevision())
+                    .setCache(ivy.getCacheManager(cache))
+                    .setSrcIvyPattern(publishivy ? srcivypattern : null)
+                    .setStatus(getStatus())
+                    .setPubdate(pubdate)
+                    .setExtraArtifacts(
+                        (Artifact[]) artifacts.toArray(new Artifact[artifacts.size()]))
+                    .setValidate(doValidate(settings)).setOverwrite(overwrite).setUpdate(
+                        update).setConfs(splitConfs(conf)));
             if (warnonmissing) {
                 for (Iterator iter = missing.iterator(); iter.hasNext();) {
                     Artifact artifact = (Artifact) iter.next();

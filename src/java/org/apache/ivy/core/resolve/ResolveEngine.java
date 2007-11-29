@@ -37,6 +37,7 @@ import java.util.Set;
 import org.apache.ivy.Ivy;
 import org.apache.ivy.core.IvyContext;
 import org.apache.ivy.core.cache.CacheManager;
+import org.apache.ivy.core.cache.RepositoryCacheManager;
 import org.apache.ivy.core.event.EventManager;
 import org.apache.ivy.core.event.download.PrepareDownloadEvent;
 import org.apache.ivy.core.event.resolve.EndResolveEvent;
@@ -285,7 +286,7 @@ public class ResolveEngine {
             }
 
             if (options.isOutputReport()) {
-                outputReport(report, cacheManager.getCache());
+                outputReport(report, cacheManager.getResolutionCacheRoot());
             }
 
             eventManager.fireIvyEvent(new EndResolveEvent(md, confs, report));
@@ -310,7 +311,7 @@ public class ResolveEngine {
         Message.sumupProblems();
     }
 
-    public void downloadArtifacts(ResolveReport report, CacheManager cacheManager,
+    public void downloadArtifacts(ResolveReport report, RepositoryCacheManager cacheManager,
             boolean useOrigin, Filter artifactFilter) {
         long start = System.currentTimeMillis();
         IvyNode[] dependencies = (IvyNode[]) report.getDependencies().toArray(
@@ -367,7 +368,7 @@ public class ResolveEngine {
      *            the cacheManager to use.
      * @return a report concerning the download
      */
-    public ArtifactDownloadReport download(Artifact artifact, CacheManager cacheManager,
+    public ArtifactDownloadReport download(Artifact artifact, RepositoryCacheManager cacheManager,
             boolean useOrigin) {
         DependencyResolver resolver = settings.getResolver(artifact.getModuleRevisionId()
                 .getModuleId());

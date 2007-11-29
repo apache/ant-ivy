@@ -33,6 +33,7 @@ import java.util.Map.Entry;
 import org.apache.ivy.Ivy;
 import org.apache.ivy.core.cache.ArtifactOrigin;
 import org.apache.ivy.core.cache.CacheManager;
+import org.apache.ivy.core.cache.ResolutionCacheManager;
 import org.apache.ivy.core.module.descriptor.License;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleId;
@@ -68,7 +69,7 @@ public class XmlReportOutputter implements ReportOutputter {
             File destDir) {
         try {
             destDir.mkdirs();
-            CacheManager cacheMgr = new CacheManager(null, destDir);
+            ResolutionCacheManager cacheMgr = new CacheManager(null, destDir);
             File reportFile = cacheMgr.getConfigurationResolveReportInCache(resolveId, report
                     .getConfiguration());
             OutputStream stream = new FileOutputStream(reportFile);

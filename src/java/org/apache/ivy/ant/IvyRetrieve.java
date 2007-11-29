@@ -17,7 +17,6 @@
  */
 package org.apache.ivy.ant;
 
-import org.apache.ivy.core.cache.CacheManager;
 import org.apache.ivy.core.retrieve.RetrieveOptions;
 import org.apache.ivy.util.filter.Filter;
 import org.apache.tools.ant.BuildException;
@@ -51,11 +50,15 @@ public class IvyRetrieve extends IvyPostResolveTask {
             int targetsCopied = getIvyInstance().retrieve(
                 getResolvedMrid(),
                 pattern,
-                new RetrieveOptions().setConfs(splitConfs(getConf())).setCache(
-                    CacheManager.getInstance(getIvyInstance().getSettings(), getCache()))
-                        .setDestIvyPattern(ivypattern).setArtifactFilter(artifactFilter).setSync(
-                            sync).setUseOrigin(isUseOrigin()).setMakeSymlinks(symlink)
-                        .setResolveId(getResolveId()));
+                new RetrieveOptions()
+                    .setConfs(splitConfs(getConf()))
+                    .setCache(getIvyInstance().getCacheManager(getCache()))
+                    .setDestIvyPattern(ivypattern)
+                    .setArtifactFilter(artifactFilter)
+                    .setSync(sync)
+                    .setUseOrigin(isUseOrigin())
+                    .setMakeSymlinks(symlink)
+                    .setResolveId(getResolveId()));
             boolean haveTargetsBeenCopied = targetsCopied > 0;
             getProject().setProperty("ivy.nb.targets.copied", String.valueOf(targetsCopied));
             getProject().setProperty("ivy.targets.copied", String.valueOf(haveTargetsBeenCopied));

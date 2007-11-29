@@ -36,7 +36,7 @@ import java.util.Map;
 import org.apache.ivy.core.IvyContext;
 import org.apache.ivy.core.IvyPatternHelper;
 import org.apache.ivy.core.cache.ArtifactOrigin;
-import org.apache.ivy.core.cache.CacheManager;
+import org.apache.ivy.core.cache.RepositoryCacheManager;
 import org.apache.ivy.core.event.EventManager;
 import org.apache.ivy.core.event.download.EndArtifactDownloadEvent;
 import org.apache.ivy.core.event.download.NeedArtifactEvent;
@@ -720,7 +720,7 @@ public abstract class BasicResolver extends AbstractResolver {
     }
 
     public DownloadReport download(Artifact[] artifacts, DownloadOptions options) {
-        CacheManager cacheManager = options.getCacheManager();
+        RepositoryCacheManager cacheManager = options.getCacheManager();
         EventManager eventManager = options.getEventManager();
 
         boolean useOrigin = options.isUseOrigin();

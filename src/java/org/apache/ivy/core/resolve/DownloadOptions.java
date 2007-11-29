@@ -20,25 +20,26 @@ package org.apache.ivy.core.resolve;
 import java.io.File;
 
 import org.apache.ivy.core.cache.CacheManager;
+import org.apache.ivy.core.cache.RepositoryCacheManager;
 import org.apache.ivy.core.event.EventManager;
 import org.apache.ivy.core.settings.IvySettings;
 
 public class DownloadOptions {
-    private CacheManager cacheManager;
+    private RepositoryCacheManager cacheManager;
 
     private EventManager eventManager = null; // can be null
 
     private boolean useOrigin = false;
 
     public DownloadOptions(IvySettings settings, File cache) {
-        this(new CacheManager(settings, cache));
+        this(CacheManager.getInstance(settings, cache));
     }
 
-    public DownloadOptions(CacheManager cacheManager) {
+    public DownloadOptions(RepositoryCacheManager cacheManager) {
         this(cacheManager, null, false);
     }
 
-    public DownloadOptions(CacheManager cacheManager, EventManager eventManager,
+    public DownloadOptions(RepositoryCacheManager cacheManager, EventManager eventManager,
             boolean useOrigin) {
         this.cacheManager = cacheManager;
         this.eventManager = eventManager;
@@ -49,7 +50,7 @@ public class DownloadOptions {
         return useOrigin;
     }
 
-    public CacheManager getCacheManager() {
+    public RepositoryCacheManager getCacheManager() {
         return cacheManager;
     }
 

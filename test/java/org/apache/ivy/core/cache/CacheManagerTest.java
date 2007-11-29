@@ -30,7 +30,6 @@ import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.settings.IvySettings;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.Delete;
-import org.apache.tools.ant.util.FileUtils;
 
 /**
  * @see CacheManager
@@ -58,7 +57,8 @@ public class CacheManagerTest extends TestCase {
     protected void tearDown() throws Exception {
         Delete del = new Delete();
         del.setProject(new Project());
-        del.setDir(cacheManager.getCache());
+        del.setDir(cacheManager.getRepositoryCacheRoot());
+        del.setDir(cacheManager.getResolutionCacheRoot());
         del.execute();
     }
 

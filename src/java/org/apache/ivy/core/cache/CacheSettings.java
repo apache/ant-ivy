@@ -25,8 +25,11 @@ import org.apache.ivy.plugins.resolver.DependencyResolver;
 import org.apache.ivy.plugins.version.VersionMatcher;
 
 public interface CacheSettings extends ParserSettings {
-
     File getDefaultCache();
+    
+    File getResolutionCacheRoot(File cache);
+    
+    File getRepositoryCacheRoot(File cache);
 
     String getCacheResolvedIvyPattern();
 
@@ -43,5 +46,4 @@ public interface CacheSettings extends ParserSettings {
     DependencyResolver getResolver(ModuleId moduleId);
 
     DependencyResolver getResolver(String artResolverName);
-
 }

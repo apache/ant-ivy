@@ -379,8 +379,9 @@ public class IvyDeliver extends IvyTask {
                 drResolver = new DefaultPublishingDRResolver();
             }
 
-            DeliverOptions options = new DeliverOptions(status, pubdate, CacheManager.getInstance(
-                settings, cache), drResolver, doValidate(settings), replacedynamicrev,
+            DeliverOptions options = new DeliverOptions(status, pubdate, 
+                ivy.getCacheManager(cache),
+                drResolver, doValidate(settings), replacedynamicrev,
                     splitConfs(conf)).setResolveId(resolveId);
             if (mrid == null) {
                 ivy.deliver(pubRevision, deliverpattern, options);

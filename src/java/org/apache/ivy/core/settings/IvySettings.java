@@ -705,6 +705,32 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
         }
         return defaultCache;
     }
+    
+    public void setRepositoryCacheRoot(String repositoryCacheRoot) {
+        setVariable("ivy.cache.repository", repositoryCacheRoot, true);
+    }
+    
+    public void setResolutionCacheRoot(String resolutionCacheRoot) {
+        setVariable("ivy.cache.resolution", resolutionCacheRoot, true);
+    }
+    
+    public File getRepositoryCacheRoot(File cache) {
+        String repositoryCacheRoot = getVariable("ivy.cache.repository");
+        if (repositoryCacheRoot != null) {
+            return new File(cache, repositoryCacheRoot);
+        } else {
+            return cache;
+        }
+    }
+
+    public File getResolutionCacheRoot(File cache) {
+        String resolutionCacheRoot = getVariable("ivy.cache.resolution");
+        if (resolutionCacheRoot != null) {
+            return new File(cache, resolutionCacheRoot);
+        } else {
+            return cache;
+        }
+    }
 
     public void setDictatorResolver(DependencyResolver resolver) {
         dictatorResolver = resolver;

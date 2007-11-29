@@ -196,8 +196,8 @@ public class IvyResolve extends IvyTask {
                     revision = "latest.integration";
                 }
                 report = ivy.resolve(ModuleRevisionId
-                        .newInstance(organisation, module, revision), getResolveOptions(confs,
-                    settings), changing);
+                        .newInstance(organisation, module, revision), 
+                        getResolveOptions(ivy, confs, settings), changing);
 
             } else {
                 if (organisation != null) {
@@ -210,7 +210,7 @@ public class IvyResolve extends IvyTask {
                 if (file == null) {
                     file = getProject().resolveFile(getProperty(settings, "ivy.dep.file"));
                 }
-                report = ivy.resolve(file.toURL(), getResolveOptions(confs, settings));
+                report = ivy.resolve(file.toURL(), getResolveOptions(ivy, confs, settings));
             }
             if (report.hasError()) {
                 if (failureProperty != null) {
@@ -299,13 +299,13 @@ public class IvyResolve extends IvyTask {
         }
     }
 
-    private ResolveOptions getResolveOptions(String[] confs, IvySettings settings) {
+    private ResolveOptions getResolveOptions(Ivy ivy, String[] confs, IvySettings settings) {
         return new ResolveOptions()
                 .setConfs(confs)
                 .setValidate(doValidate(settings))
                 .setArtifactFilter(FilterHelper.getArtifactTypeFilter(type))
                 .setRevision(revision)
-                .setCache(CacheManager.getInstance(settings, cache))
+                .setCache(ivy.getCacheManager(cache))
                 .setDate(getPubDate(pubdate, null))
                 .setUseCacheOnly(useCacheOnly)
                 .setUseOrigin(useOrigin)

@@ -471,6 +471,37 @@ public class ResolveTest extends TestCase {
         assertTrue(new File(cache, "mod1.2.jar").exists());
     }
 
+    public void testChangeCacheLayout2() throws Exception {
+        Ivy ivy = new Ivy();
+        ivy.configure(new File("test/repositories/ivysettings.xml"));
+        ivy.getSettings().setRepositoryCacheRoot("repository");
+        ivy.getSettings().setResolutionCacheRoot("workspace");
+        ivy.getSettings().setCacheIvyPattern("[module]/ivy.xml");
+        ivy.getSettings().setCacheArtifactPattern("[artifact].[ext]");
+
+        // mod1.1 depends on mod1.2
+        ResolveReport report = ivy.resolve(new File(
+                "test/repositories/1/org1/mod1.1/ivys/ivy-1.0.xml").toURL(), getResolveOptions(ivy
+                .getSettings(), new String[] {"*"}));
+        assertNotNull(report);
+        ModuleDescriptor md = report.getModuleDescriptor();
+        assertNotNull(md);
+        ModuleRevisionId mrid = ModuleRevisionId.newInstance("org1", "mod1.1", "1.0");
+        assertEquals(mrid, md.getModuleRevisionId());
+
+        assertTrue(ivy.getCacheManager(cache).getResolvedIvyFileInCache(mrid)
+            .toString().indexOf("workspace") != -1);
+        assertTrue(ivy.getCacheManager(cache).getResolvedIvyFileInCache(mrid).exists());
+
+        // dependencies
+        assertTrue(ivy.getCacheManager(cache).getIvyFileInCache(
+            ModuleRevisionId.newInstance("org1", "mod1.2", "2.0")).exists());
+        assertTrue(new File(cache, "repository/mod1.2/ivy.xml").exists());
+        assertTrue(TestHelper.getArchiveFileInCache(ivy, cache, "org1", "mod1.2", "2.0", "mod1.2",
+            "jar", "jar").exists());
+        assertTrue(new File(cache, "repository/mod1.2.jar").exists());
+    }
+
     public void testResolveExtends() throws Exception {
         // mod6.1 depends on mod1.2 2.0 in conf default, and conf extension extends default
         ResolveReport report = ivy.resolve(new File(

@@ -19,7 +19,7 @@ package org.apache.ivy.ant;
 
 import java.util.Iterator;
 
-import org.apache.ivy.core.cache.CacheManager;
+import org.apache.ivy.core.cache.RepositoryCacheManager;
 import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
@@ -62,7 +62,7 @@ public class IvyCachePath extends IvyCacheTask {
         try {
             Path path = new Path(getProject());
             getProject().addReference(pathid, path);
-            CacheManager cache = getCacheManager();
+            RepositoryCacheManager cache = getCacheManager();
             for (Iterator iter = getArtifacts().iterator(); iter.hasNext();) {
                 Artifact a = (Artifact) iter.next();
                 path.createPathElement().setLocation(

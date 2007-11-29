@@ -34,6 +34,7 @@ import java.util.Set;
 import org.apache.ivy.core.IvyContext;
 import org.apache.ivy.core.IvyPatternHelper;
 import org.apache.ivy.core.cache.CacheManager;
+import org.apache.ivy.core.cache.ResolutionCacheManager;
 import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.DefaultArtifact;
 import org.apache.ivy.core.module.descriptor.MDArtifact;
@@ -86,7 +87,7 @@ public class PublishEngine {
                         + ": call deliver before (" + ivyFile + ")");
             }
         } else {
-            CacheManager cacheManager = getCacheManager(options);
+            ResolutionCacheManager cacheManager = getCacheManager(options);
             ivyFile = cacheManager.getResolvedIvyFileInCache(mrid);
             if (!ivyFile.exists()) {
                 throw new IllegalStateException("ivy file not found in cache for " + mrid
@@ -235,13 +236,11 @@ public class PublishEngine {
         }
     }
 
-    private CacheManager getCacheManager(PublishOptions options) {
-        CacheManager cacheManager = options.getCache();
+    private ResolutionCacheManager getCacheManager(PublishOptions options) {
+        ResolutionCacheManager cacheManager = options.getCache();
         if (cacheManager == null) { // ensure that a cache is configured
             cacheManager = IvyContext.getContext().getCacheManager();
             options.setCache(cacheManager);
-        } else {
-            IvyContext.getContext().setCacheManager(cacheManager);
         }
         return cacheManager;
     }

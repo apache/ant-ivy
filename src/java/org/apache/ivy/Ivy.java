@@ -788,9 +788,7 @@ public class Ivy {
     }
 
     public CacheManager getCacheManager(File cache) {
-        // TODO : reuse instance
-        CacheManager cacheManager = new CacheManager(settings, cache);
-        return cacheManager;
+        return CacheManager.getInstance(settings, cache);
     }
 
     private void assertBound() {

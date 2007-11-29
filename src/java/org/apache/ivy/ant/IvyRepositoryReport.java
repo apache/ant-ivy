@@ -24,7 +24,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.ivy.Ivy;
-import org.apache.ivy.core.cache.CacheManager;
+import org.apache.ivy.core.cache.ResolutionCacheManager;
 import org.apache.ivy.core.module.descriptor.DefaultModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleId;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
@@ -105,11 +105,13 @@ public class IvyRepositoryReport extends IvyTask {
             DefaultModuleDescriptor md = DefaultModuleDescriptor.newCallerInstance(mrids, true,
                 false);
             String resolveId = ResolveOptions.getDefaultResolveId(md);
-            ResolveReport report = ivy.resolve(md, new ResolveOptions().setResolveId(resolveId)
-                    .setCache(CacheManager.getInstance(settings, cache)).setValidate(
-                        doValidate(settings)));
+            ResolveReport report = ivy.resolve(md, 
+                new ResolveOptions()
+                    .setResolveId(resolveId)
+                    .setCache(ivy.getCacheManager(cache))
+                    .setValidate(doValidate(settings)));
 
-            CacheManager cacheMgr = getIvyInstance().getCacheManager(cache);
+            ResolutionCacheManager cacheMgr = getIvyInstance().getCacheManager(cache);
             new XmlReportOutputter().output(report, cache);
             if (graph) {
                 gengraph(cacheMgr, md.getModuleRevisionId().getOrganisation(), md
@@ -133,7 +135,7 @@ public class IvyRepositoryReport extends IvyTask {
         }
     }
 
-    private void genreport(CacheManager cache, String organisation, String module)
+    private void genreport(ResolutionCacheManager cache, String organisation, String module)
             throws IOException {
         // first process the report with xslt
         XSLTProcess xslt = new XSLTProcess();
@@ -162,9 +164,10 @@ public class IvyRepositoryReport extends IvyTask {
         xslt.execute();
     }
 
-    private void gengraph(CacheManager cache, String organisation, String module)
+    private void gengraph(ResolutionCacheManager cache, String organisation, String module)
             throws IOException {
-        gen(cache, organisation, module, getGraphStylePath(cache.getCache()), "graphml");
+        gen(cache, organisation, module, 
+            getGraphStylePath(cache.getResolutionCacheRoot()), "graphml");
     }
 
     private String getGraphStylePath(File cache) throws IOException {
@@ -176,8 +179,9 @@ public class IvyRepositoryReport extends IvyTask {
         return style.getAbsolutePath();
     }
 
-    private void gendot(CacheManager cache, String organisation, String module) throws IOException {
-        gen(cache, organisation, module, getDotStylePath(cache.getCache()), "dot");
+    private void gendot(
+            ResolutionCacheManager cache, String organisation, String module) throws IOException {
+        gen(cache, organisation, module, getDotStylePath(cache.getResolutionCacheRoot()), "dot");
     }
 
     private String getDotStylePath(File cache) throws IOException {
@@ -189,7 +193,7 @@ public class IvyRepositoryReport extends IvyTask {
         return style.getAbsolutePath();
     }
 
-    private void gen(CacheManager cache, String organisation, String module, String style,
+    private void gen(ResolutionCacheManager cache, String organisation, String module, String style,
             String ext) throws IOException {
         XSLTProcess xslt = new XSLTProcess();
         xslt.setTaskName(getTaskName());
@@ -199,7 +203,7 @@ public class IvyRepositoryReport extends IvyTask {
         String resolveId = ResolveOptions.getDefaultResolveId(new ModuleId(organisation, module));
         xslt.setIn(cache.getConfigurationResolveReportInCache(resolveId, "default"));
         xslt.setOut(new File(todir, outputname + "." + ext));
-        xslt.setBasedir(cache.getCache());
+        xslt.setBasedir(cache.getResolutionCacheRoot());
         xslt.setStyle(style);
         xslt.execute();
     }

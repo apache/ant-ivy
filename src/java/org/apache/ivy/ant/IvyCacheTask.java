@@ -28,7 +28,8 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.ivy.core.cache.CacheManager;
+import org.apache.ivy.core.cache.RepositoryCacheManager;
+import org.apache.ivy.core.cache.ResolutionCacheManager;
 import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.report.ArtifactDownloadReport;
@@ -85,7 +86,7 @@ public abstract class IvyCacheTask extends IvyPostResolveTask {
             Message.debug("using stored report to get artifacts list");
 
             XmlReportParser parser = new XmlReportParser();
-            CacheManager cacheMgr = getIvyInstance().getCacheManager(getCache());
+            ResolutionCacheManager cacheMgr = getIvyInstance().getCacheManager(getCache());
             String resolvedId = getResolveId();
             if (resolvedId == null) {
                 resolvedId = ResolveOptions.getDefaultResolveId(getResolvedModuleId());
@@ -102,8 +103,7 @@ public abstract class IvyCacheTask extends IvyPostResolveTask {
         return all;
     }
 
-    protected CacheManager getCacheManager() {
-        CacheManager cache = new CacheManager(getSettings(), getCache());
-        return cache;
+    protected RepositoryCacheManager getCacheManager() {
+        return getIvyInstance().getCacheManager(getCache());
     }
 }

@@ -131,7 +131,7 @@ public class InstallEngine {
             Message.info(":: resolving dependencies ::");
             IvyNode[] dependencies = resolveEngine.getDependencies(md, new ResolveOptions()
                     .setResolveId(resolveId).setConfs(new String[] {"default"}).setCache(
-                        CacheManager.getInstance(settings, cache)), report);
+                        getCacheManager(cache)), report);
             report.setDependencies(Arrays.asList(dependencies), artifactFilter);
 
             Message.info(":: downloading artifacts to cache ::");
@@ -164,9 +164,7 @@ public class InstallEngine {
     }
 
     private CacheManager getCacheManager(File cache) {
-        // TODO : reuse instance
-        CacheManager cacheManager = new CacheManager(settings, cache);
-        return cacheManager;
+        return CacheManager.getInstance(settings, cache);
     }
 
 }

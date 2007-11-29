@@ -20,7 +20,7 @@ package org.apache.ivy.ant;
 import java.io.File;
 
 import org.apache.ivy.core.IvyPatternHelper;
-import org.apache.ivy.core.cache.CacheManager;
+import org.apache.ivy.core.cache.ResolutionCacheManager;
 import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.resolve.ResolveOptions;
 import org.apache.ivy.plugins.report.XmlReportParser;
@@ -61,7 +61,7 @@ public class IvyArtifactProperty extends IvyPostResolveTask {
         prepareAndCheck();
 
         try {
-            CacheManager cacheMgr = getIvyInstance().getCacheManager(getCache());
+            ResolutionCacheManager cacheMgr = getIvyInstance().getCacheManager(getCache());
             String[] confs = splitConfs(getConf());
             String resolveId = getResolveId();
             if (resolveId == null) {

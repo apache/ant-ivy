@@ -27,7 +27,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.ivy.core.cache.ArtifactOrigin;
-import org.apache.ivy.core.cache.CacheManager;
+import org.apache.ivy.core.cache.RepositoryCacheManager;
 import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.DefaultArtifact;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
@@ -428,7 +428,7 @@ public final class IvyPatternHelper {
                 Artifact artifact = new DefaultArtifact(revId, null, artifactName, artifactType,
                         artifactExt);
 
-                CacheManager cacheManager = IvyContext.getContext().getCacheManager();
+                RepositoryCacheManager cacheManager = IvyContext.getContext().getCacheManager();
 
                 origin = cacheManager.getSavedArtifactOrigin(artifact);
 

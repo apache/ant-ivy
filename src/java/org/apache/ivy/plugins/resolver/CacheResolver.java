@@ -71,7 +71,7 @@ public class CacheResolver extends FileSystemResolver {
                 return null;
             }
         } else {
-            ensureConfigured(data.getSettings(), data.getCacheManager().getCache());
+            ensureConfigured(data.getSettings(), data.getCacheManager().getRepositoryCacheRoot());
             ResolvedResource ivyRef = findIvyFileRef(dd, data);
             if (ivyRef != null) {
                 Message.verbose("\t" + getName() + ": found ivy file in cache for " + mrid);

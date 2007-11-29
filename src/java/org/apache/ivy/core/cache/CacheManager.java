@@ -20,6 +20,7 @@ package org.apache.ivy.core.cache;
 import java.io.File;
 import java.io.FilenameFilter;
 
+import org.apache.ivy.core.IvyContext;
 import org.apache.ivy.core.IvyPatternHelper;
 import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.DefaultArtifact;
@@ -32,7 +33,7 @@ import org.apache.ivy.plugins.resolver.DependencyResolver;
 import org.apache.ivy.util.Message;
 import org.apache.ivy.util.PropertiesFile;
 
-public class CacheManager {
+public class CacheManager implements RepositoryCacheManager, ResolutionCacheManager {
     public static CacheManager getInstance(CacheSettings settings, File cache) {
         return new CacheManager(settings, cache);
     }
@@ -46,7 +47,7 @@ public class CacheManager {
     private File cache;
 
     public CacheManager(CacheSettings settings, File cache) {
-        this.settings = settings;
+        this.settings = settings == null ? IvyContext.getContext().getSettings() : settings;
         if (cache == null) {
             this.cache = settings.getDefaultCache();
         } else {
@@ -57,33 +58,33 @@ public class CacheManager {
     public File getResolvedIvyFileInCache(ModuleRevisionId mrid) {
         String file = IvyPatternHelper.substitute(settings.getCacheResolvedIvyPattern(), mrid
                 .getOrganisation(), mrid.getName(), mrid.getRevision(), "ivy", "ivy", "xml");
-        return new File(cache, file);
+        return new File(getResolutionCacheRoot(), file);
     }
 
     public File getResolvedIvyPropertiesInCache(ModuleRevisionId mrid) {
         String file = IvyPatternHelper.substitute(settings.getCacheResolvedIvyPropertiesPattern(),
             mrid.getOrganisation(), mrid.getName(), mrid.getRevision(), "ivy", "ivy", "xml");
-        return new File(cache, file);
-    }
-
-    public File getIvyFileInCache(ModuleRevisionId mrid) {
-        String file = IvyPatternHelper.substitute(settings.getCacheIvyPattern(), DefaultArtifact
-                .newIvyArtifact(mrid, null));
-        return new File(cache, file);
+        return new File(getResolutionCacheRoot(), file);
     }
 
     public File getConfigurationResolveReportInCache(String resolveId, String conf) {
-        return new File(cache, resolveId + "-" + conf + ".xml");
+        return new File(getResolutionCacheRoot(), resolveId + "-" + conf + ".xml");
     }
 
     public File[] getConfigurationResolveReportsInCache(final String resolveId) {
         final String prefix = resolveId + "-";
         final String suffix = ".xml";
-        return cache.listFiles(new FilenameFilter() {
+        return getResolutionCacheRoot().listFiles(new FilenameFilter() {
             public boolean accept(File dir, String name) {
                 return (name.startsWith(prefix) && name.endsWith(suffix));
             }
         });
+    }
+
+    public File getIvyFileInCache(ModuleRevisionId mrid) {
+        String file = IvyPatternHelper.substitute(settings.getCacheIvyPattern(), DefaultArtifact
+                .newIvyArtifact(mrid, null));
+        return new File(getRepositoryCacheRoot(), file);
     }
 
     /**
@@ -102,7 +103,7 @@ public class CacheManager {
      * the resolve has been done with useOrigin = true
      */
     public File getArchiveFileInCache(Artifact artifact, ArtifactOrigin origin) {
-        File archive = new File(cache, getArchivePathInCache(artifact, origin));
+        File archive = new File(getRepositoryCacheRoot(), getArchivePathInCache(artifact, origin));
         if (!archive.exists() && origin != null && origin.isLocal()) {
             File original = new File(origin.getLocation());
             if (original.exists()) {
@@ -122,7 +123,7 @@ public class CacheManager {
         if (useOrigin && origin != null && origin.isLocal()) {
             return new File(origin.getLocation());
         } else {
-            return new File(cache, getArchivePathInCache(artifact, origin));
+            return new File(getRepositoryCacheRoot(), getArchivePathInCache(artifact, origin));
         }
     }
 
@@ -246,7 +247,8 @@ public class CacheManager {
     }
 
     private PropertiesFile getCachedDataFile(ModuleRevisionId mRevId) {
-        return new PropertiesFile(new File(cache, IvyPatternHelper.substitute(settings
+        return new PropertiesFile(new File(getRepositoryCacheRoot(), 
+            IvyPatternHelper.substitute(settings
                 .getCacheDataFilePattern(), mRevId)), "ivy cached data file for " + mRevId);
     }
 
@@ -303,8 +305,12 @@ public class CacheManager {
         return "cache: " + String.valueOf(cache);
     }
 
-    public File getCache() {
-        return cache;
+    public File getRepositoryCacheRoot() {
+        return settings.getRepositoryCacheRoot(cache);
+    }
+    
+    public File getResolutionCacheRoot() {
+        return settings.getResolutionCacheRoot(cache);
     }
 
 }

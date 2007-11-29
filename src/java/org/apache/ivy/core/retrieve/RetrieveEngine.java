@@ -36,6 +36,8 @@ import java.util.Set;
 import org.apache.ivy.core.IvyContext;
 import org.apache.ivy.core.IvyPatternHelper;
 import org.apache.ivy.core.cache.CacheManager;
+import org.apache.ivy.core.cache.RepositoryCacheManager;
+import org.apache.ivy.core.cache.ResolutionCacheManager;
 import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.DefaultArtifact;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
@@ -75,7 +77,7 @@ public class RetrieveEngine {
         String destIvyPattern = IvyPatternHelper.substituteVariables(options.getDestIvyPattern(),
             settings.getVariables());
 
-        CacheManager cacheManager = getCacheManager(options);
+        RepositoryCacheManager cacheManager = getCacheManager(options);
         String[] confs = getConfs(mrid, options);
         Message.info("\tconfs: " + Arrays.asList(confs));
 
@@ -231,7 +233,7 @@ public class RetrieveEngine {
             options.setResolveId(ResolveOptions.getDefaultResolveId(moduleId));
         }
 
-        CacheManager cacheManager = getCacheManager(options);
+        ResolutionCacheManager cacheManager = getCacheManager(options);
         String[] confs = getConfs(mrid, options);
         String destIvyPattern = IvyPatternHelper.substituteVariables(options.getDestIvyPattern(),
             settings.getVariables());

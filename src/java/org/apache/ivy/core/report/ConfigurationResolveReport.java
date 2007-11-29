@@ -32,7 +32,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.ivy.core.cache.CacheManager;
+import org.apache.ivy.core.cache.ResolutionCacheManager;
 import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleId;
@@ -74,7 +74,7 @@ public class ConfigurationResolveReport {
         this.date = date;
 
         // parse previous deps from previous report file if any
-        CacheManager cache = options.getCache();
+        ResolutionCacheManager cache = options.getCache();
         String resolveId = options.getResolveId();
         File previousReportFile = cache.getConfigurationResolveReportInCache(resolveId, conf);
         if (previousReportFile.exists()) {

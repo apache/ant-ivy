@@ -39,7 +39,7 @@ import javax.xml.transform.stream.StreamSource;
 
 import org.apache.ivy.Ivy;
 import org.apache.ivy.core.IvyPatternHelper;
-import org.apache.ivy.core.cache.CacheManager;
+import org.apache.ivy.core.cache.ResolutionCacheManager;
 import org.apache.ivy.core.module.id.ModuleId;
 import org.apache.ivy.core.resolve.ResolveOptions;
 import org.apache.ivy.core.settings.IvySettings;
@@ -229,7 +229,7 @@ public class IvyReport extends IvyTask {
 
     private void genxml(File cache, String organisation, String module, String[] confs)
             throws IOException {
-        CacheManager cacheMgr = getIvyInstance().getCacheManager(cache);
+        ResolutionCacheManager cacheMgr = getIvyInstance().getCacheManager(cache);
         for (int i = 0; i < confs.length; i++) {
             File xml = cacheMgr.getConfigurationResolveReportInCache(resolveId, confs[i]);
 
@@ -276,7 +276,7 @@ public class IvyReport extends IvyTask {
 
     private void genStyled(File cache, String organisation, String module, String[] confs,
             File style, String ext) throws IOException {
-        CacheManager cacheMgr = getIvyInstance().getCacheManager(cache);
+        ResolutionCacheManager cacheMgr = getIvyInstance().getCacheManager(cache);
 
         // process the report with xslt to generate dot file
         File out;
@@ -308,8 +308,10 @@ public class IvyReport extends IvyTask {
             
             // create the report
             for (int i = 0; i < confs.length; i++) {
-                File reportFile = cacheMgr.getConfigurationResolveReportInCache(resolveId, confs[i]);
-                File outFile = new File(out, IvyPatternHelper.substitute(outputpattern, organisation, module,
+                File reportFile = 
+                    cacheMgr.getConfigurationResolveReportInCache(resolveId, confs[i]);
+                File outFile = 
+                    new File(out, IvyPatternHelper.substitute(outputpattern, organisation, module,
                     "", "", "", ext, confs[i]));
                 
                 log("Processing " + reportFile + " to " + outFile);
