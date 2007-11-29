@@ -20,7 +20,7 @@ package org.apache.ivy.plugins.circular;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.util.Message;
 
-public final class WarnCircularDependencyStrategy extends AbstractCircularDependencyStrategy {
+public final class WarnCircularDependencyStrategy extends AbstractLogCircularDependencyStrategy {
 
     private static final CircularDependencyStrategy INSTANCE = new WarnCircularDependencyStrategy();
 
@@ -32,7 +32,9 @@ public final class WarnCircularDependencyStrategy extends AbstractCircularDepend
         super("warn");
     }
 
-    public void handleCircularDependency(ModuleRevisionId[] mrids) {
-        Message.warn("circular dependency found: " + CircularDependencyHelper.formatMessage(mrids));
+    protected void logCircularDependency(ModuleRevisionId[] mrids) {
+        Message.warn("circular dependency found: " 
+            + CircularDependencyHelper.formatMessage(mrids));
     }
+
 }

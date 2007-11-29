@@ -84,6 +84,10 @@ public class MockMessageLogger extends AbstractMessageLogger {
 
     }
 
+
+    public void assertLogVerboseContains(String message) {
+        assertLogContains(Message.MSG_VERBOSE + " " + message);
+    }
     public void assertLogInfoContains(String message) {
         assertLogContains(Message.MSG_INFO + " " + message);
     }

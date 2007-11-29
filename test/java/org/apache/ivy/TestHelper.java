@@ -76,4 +76,17 @@ public class TestHelper {
         }
         return c;
     }
+    
+    /**
+     * Returns an array of {@link ModuleRevisionId} corresponding to the given comma separated list of
+     * their text representation.
+     * 
+     * @param mrids
+     *            the text representation of the {@link ModuleRevisionId}
+     * @return an array of {@link ModuleRevisionId}
+     */
+    public static ModuleRevisionId[] parseMridsToArray(String mrids) {
+        Collection parsedMrids = parseMrids(mrids);
+        return (ModuleRevisionId[]) parsedMrids.toArray(new ModuleRevisionId[parsedMrids.size()]);
+    }
 }
