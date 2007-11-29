@@ -42,13 +42,13 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 	Peter Oxenham
 	Emmanuel Pellereau
 	Roshan Punnoose
+	Jean-Baptiste Quenot
 	Damon Rand
 	Geoff Reedy
 	Christian Riege
 	Andreas Sahlbach
 	John Shields
 	Johan Stuyts
-	Jean-Baptiste Quenot
 	Tjeerd Verhagen
 	John Williams
 	Jaroslaw Wypychowski
