@@ -18,24 +18,25 @@
 -->
 <ivysettings>
 	<!-- you can override this property to use mirrors 
-      http://mirrors.dotsrc.org/maven2
-      http://ftp.ggi-project.org/pub/packages/maven2
-      http://mirrors.sunsite.dk/maven2
-      http://public.planetmirror.com/pub/maven2
-      http://ibiblio.lsu.edu/main/pub/packages/maven2
-      http://www.ibiblio.net/pub/packages/maven2
+	  http://mirrors.dotsrc.org/maven2
+	  http://ftp.ggi-project.org/pub/packages/maven2
+	  http://mirrors.sunsite.dk/maven2
+	  http://public.planetmirror.com/pub/maven2
+	  http://ibiblio.lsu.edu/main/pub/packages/maven2
+	  http://www.ibiblio.net/pub/packages/maven2
 	-->
-	<property name="ibiblio-maven1-root" value="http://www.ibiblio.org/maven/" override="false" />
+	<property name="ibiblio-maven2-root" value="http://repo1.maven.org/maven2/" override="false" />
 
 	<namespaces>
-		<namespace name="ibiblio-maven">
-			<rule>	<!-- apache modules -->
-				<fromsystem>
-					<src org="apache" module=".+" />
-					<dest org="$m0" module="$m0" />
-				</fromsystem>
-				<tosystem>
--					<src org="commons-.+" module="commons-.+" />
+    	<namespace name="ibiblio-maven2">
+	        <rule>	<!-- imported apache maven1 projects -->
+            	<fromsystem>
+                	<src org="apache" module=".+"/>
+	
+                    <dest org="$m0" module="$m0"/>
+                </fromsystem>
+                <tosystem>
+					<src org="commons-.+" module="commons-.+" />
 					<src org="ant.*" module="ant.*" />
 					<src org="avalon-.+" module="avalon-.+" />
 					<src org="avalon" module="avalon" />
@@ -105,20 +106,34 @@
 					<src org="xml-apis" module="xml-apis" />
 					<src org="xml-resolver" module="xml-resolver" />
 					<src org="xml-security" module="xml-security" />
-					<src org="xmlbeans" module="xmlbeans" /> 
+					<src org="xmlbeans" module="xmlbeans" />
 					<src org="xmlrpc" module="xmlrpc" />
+					
 					<dest org="apache" module="$m0"/>
-				</tosystem>
+            	</tosystem>
+        	</rule>
+
+			<rule> <!-- new apache projects -->
+	    		<fromsystem>
+		        	<src org="apache" />
+        			<dest org="org.apache"/>
+		    	</fromsystem>
+			    <tosystem>
+    		    	<src org="org.apache" />
+	    		    <dest org="apache" />
+		    	</tosystem>
 			</rule>
-		</namespace>
+    	</namespace>
 	</namespaces>
 	<resolvers>
-		<ibiblio	name="ibiblio-maven" 
-					root="${ibiblio-maven1-root}" 
-					pattern="[module]/[type]s/[artifact]-[revision].[ext]"
-					m2compatible="false"
-					namespace="ibiblio-maven"
+		<ibiblio	name="ibiblio-maven2" 
+					root="${ibiblio-maven2-root}" 
+					m2compatible="true"
+					namespace="ibiblio-maven2"
+		/>
+		<ibiblio	name="ibiblio-maven2-nonamespace" 
+					root="${ibiblio-maven2-root}" 
+					m2compatible="true"
 		/>
 	</resolvers>
 </ivysettings>
-	
