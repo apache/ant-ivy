@@ -21,36 +21,36 @@ import org.apache.ivy.util.CopyProgressEvent;
 import org.apache.ivy.util.CopyProgressListener;
 
 public class RepositoryCopyProgressListener implements CopyProgressListener {
-    private final AbstractRepository _repository;
+    private final AbstractRepository repository;
 
     public RepositoryCopyProgressListener(AbstractRepository repository) {
-        _repository = repository;
+        this.repository = repository;
     }
 
-    private Long _totalLength = null;
+    private Long totalLength = null;
 
     public void start(CopyProgressEvent evt) {
-        if (_totalLength != null) {
-            _repository.fireTransferStarted(_totalLength.longValue());
+        if (totalLength != null) {
+            repository.fireTransferStarted(totalLength.longValue());
         } else {
-            _repository.fireTransferStarted();
+            repository.fireTransferStarted();
         }
     }
 
     public void progress(CopyProgressEvent evt) {
-        _repository.fireTransferProgress(evt.getReadBytes());
+        repository.fireTransferProgress(evt.getReadBytes());
     }
 
     public void end(CopyProgressEvent evt) {
-        _repository.fireTransferProgress(evt.getReadBytes());
-        _repository.fireTransferCompleted();
+        repository.fireTransferProgress(evt.getReadBytes());
+        repository.fireTransferCompleted();
     }
 
     public Long getTotalLength() {
-        return _totalLength;
+        return totalLength;
     }
 
     public void setTotalLength(Long totalLength) {
-        _totalLength = totalLength;
+        this.totalLength = totalLength;
     }
 }
