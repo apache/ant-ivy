@@ -55,6 +55,8 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 
    version in SVN
 =====================================
+- FIX: m2 incompatibility - IVY does not recognize property section (IVY-637)
+- FIX: m2 incompatibility - IVY does not recognize parent pom (IVY-636)
 - FIX: Attempt to download a file with & in its name causes SAXParseException in Ivy (IVY-635)
 - FIX: Bad IvyContext scope causing memory leak and bad handling of subproject builds (IVY-639)
 - FIX: Resolution failure when no ivy.xml file present (IVY-630)

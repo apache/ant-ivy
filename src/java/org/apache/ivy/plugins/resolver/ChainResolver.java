@@ -39,6 +39,7 @@ import org.apache.ivy.plugins.latest.ArtifactInfo;
 import org.apache.ivy.plugins.latest.LatestStrategy;
 import org.apache.ivy.plugins.resolver.util.HasLatestStrategy;
 import org.apache.ivy.plugins.resolver.util.ResolvedModuleRevisionProxy;
+import org.apache.ivy.plugins.resolver.util.ResolvedResource;
 import org.apache.ivy.util.Message;
 
 /**
@@ -187,6 +188,18 @@ public class ChainResolver extends AbstractResolver {
         return getLatestStrategy().findLatest(ais, date) != ais[0];
     }
 
+    public ResolvedResource findIvyFileRef(DependencyDescriptor dd, ResolveData data) {
+        for (Iterator iter = chain.iterator(); iter.hasNext();) {
+            DependencyResolver resolver = (DependencyResolver) iter.next();
+            ResolvedResource result = resolver.findIvyFileRef(dd, data);
+            if (result != null) {
+                return result;
+            }
+        }
+        
+        return null;
+    }
+
     public void reportFailure() {
         for (Iterator iter = chain.iterator(); iter.hasNext();) {
             DependencyResolver resolver = (DependencyResolver) iter.next();
@@ -312,5 +325,6 @@ public class ChainResolver extends AbstractResolver {
     public boolean isDual() {
         return dual;
     }
+
 
 }

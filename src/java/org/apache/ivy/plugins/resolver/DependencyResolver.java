@@ -32,6 +32,7 @@ import org.apache.ivy.core.resolve.ResolvedModuleRevision;
 import org.apache.ivy.core.search.ModuleEntry;
 import org.apache.ivy.core.search.OrganisationEntry;
 import org.apache.ivy.core.search.RevisionEntry;
+import org.apache.ivy.plugins.resolver.util.ResolvedResource;
 
 /**
  *
@@ -57,6 +58,16 @@ public interface DependencyResolver {
      */
     ResolvedModuleRevision getDependency(DependencyDescriptor dd, ResolveData data)
             throws ParseException;
+    
+    /**
+     * Finds the module descriptor for the specified <tt>DependencyDescriptor</tt>.
+     * If this resolver can't find the module descriptor, <tt>null</tt> is returned.
+     * 
+     * @param dd the dependency descriptor
+     * @param data the resolve data
+     * @return the module descriptor, or <tt>null</tt>
+     */
+    ResolvedResource findIvyFileRef(DependencyDescriptor dd, ResolveData data);
 
     DownloadReport download(Artifact[] artifacts, DownloadOptions options);
 

@@ -29,6 +29,7 @@ import org.apache.ivy.core.resolve.DownloadOptions;
 import org.apache.ivy.core.resolve.ResolveData;
 import org.apache.ivy.core.resolve.ResolvedModuleRevision;
 import org.apache.ivy.plugins.resolver.util.ResolvedModuleRevisionProxy;
+import org.apache.ivy.plugins.resolver.util.ResolvedResource;
 import org.apache.ivy.util.Message;
 
 /**
@@ -79,6 +80,10 @@ public class DualResolver extends AbstractResolver {
         } else {
             return new ResolvedModuleRevisionProxy(mr, this);
         }
+    }
+
+    public ResolvedResource findIvyFileRef(DependencyDescriptor dd, ResolveData data) {
+        return ivyResolver.findIvyFileRef(dd, data);
     }
 
     public void reportFailure() {
@@ -157,4 +162,5 @@ public class DualResolver extends AbstractResolver {
     public void setAllownomd(boolean allownomd) {
         this.allownomd = allownomd;
     }
+
 }

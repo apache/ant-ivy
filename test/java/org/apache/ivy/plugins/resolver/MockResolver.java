@@ -34,6 +34,7 @@ import org.apache.ivy.core.report.DownloadReport;
 import org.apache.ivy.core.resolve.DownloadOptions;
 import org.apache.ivy.core.resolve.ResolveData;
 import org.apache.ivy.core.resolve.ResolvedModuleRevision;
+import org.apache.ivy.plugins.resolver.util.ResolvedResource;
 
 public class MockResolver extends AbstractResolver {
     static MockResolver buildMockResolver(String name, boolean findRevision,
@@ -104,6 +105,10 @@ public class MockResolver extends AbstractResolver {
     }
 
     public void publish(Artifact artifact, File src, boolean overwrite) throws IOException {
+    }
+
+    public ResolvedResource findIvyFileRef(DependencyDescriptor dd, ResolveData data) {
+        return null;
     }
 
 }

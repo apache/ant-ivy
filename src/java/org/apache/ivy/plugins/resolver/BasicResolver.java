@@ -907,8 +907,6 @@ public abstract class BasicResolver extends AbstractResolver {
 
     protected abstract Collection findNames(Map tokenValues, String token);
 
-    protected abstract ResolvedResource findIvyFileRef(DependencyDescriptor dd, ResolveData data);
-
     protected ResolvedResource findFirstArtifactRef(ModuleDescriptor md, DependencyDescriptor dd,
             ResolveData data) {
         ResolvedResource ret = null;

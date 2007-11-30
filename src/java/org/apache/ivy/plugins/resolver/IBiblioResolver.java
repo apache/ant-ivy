@@ -61,7 +61,7 @@ public class IBiblioResolver extends URLResolver {
     public IBiblioResolver() {
     }
 
-    protected ResolvedResource findIvyFileRef(DependencyDescriptor dd, ResolveData data) {
+    public ResolvedResource findIvyFileRef(DependencyDescriptor dd, ResolveData data) {
         if (isM2compatible() && isUsepoms()) {
             ModuleRevisionId mrid = dd.getDependencyRevisionId();
             mrid = convertM2IdForResourceSearch(mrid);

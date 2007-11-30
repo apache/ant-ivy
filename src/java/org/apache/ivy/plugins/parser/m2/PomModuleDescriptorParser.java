@@ -28,21 +28,27 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Stack;
 
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.apache.ivy.core.IvyContext;
 import org.apache.ivy.core.IvyPatternHelper;
 import org.apache.ivy.core.module.descriptor.Configuration;
 import org.apache.ivy.core.module.descriptor.DefaultArtifact;
 import org.apache.ivy.core.module.descriptor.DefaultDependencyArtifactDescriptor;
 import org.apache.ivy.core.module.descriptor.DefaultDependencyDescriptor;
 import org.apache.ivy.core.module.descriptor.DefaultExcludeRule;
+import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.descriptor.Configuration.Visibility;
 import org.apache.ivy.core.module.id.ArtifactId;
 import org.apache.ivy.core.module.id.ModuleId;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
+import org.apache.ivy.core.resolve.ResolveData;
+import org.apache.ivy.core.resolve.ResolveEngine;
+import org.apache.ivy.core.resolve.ResolveOptions;
 import org.apache.ivy.plugins.matcher.ExactPatternMatcher;
 import org.apache.ivy.plugins.matcher.PatternMatcher;
 import org.apache.ivy.plugins.parser.AbstractModuleDescriptorParser;
@@ -50,6 +56,8 @@ import org.apache.ivy.plugins.parser.ModuleDescriptorParser;
 import org.apache.ivy.plugins.parser.ParserSettings;
 import org.apache.ivy.plugins.parser.xml.XmlModuleDescriptorWriter;
 import org.apache.ivy.plugins.repository.Resource;
+import org.apache.ivy.plugins.resolver.DependencyResolver;
+import org.apache.ivy.plugins.resolver.util.ResolvedResource;
 import org.apache.ivy.util.Message;
 import org.apache.ivy.util.XMLHelper;
 import org.xml.sax.Attributes;
@@ -126,6 +134,8 @@ public final class PomModuleDescriptorParser extends AbstractModuleDescriptorPar
 
     private static final class Parser extends AbstractParser {
         private static final String JAR_EXTENSION = "jar";
+        
+        private ParserSettings settings;
 
         private Stack contextStack = new Stack();
 
@@ -159,9 +169,10 @@ public final class PomModuleDescriptorParser extends AbstractModuleDescriptorPar
 
         private String relocationRevision;
 
-        public Parser(ModuleDescriptorParser parser, Resource res) {
+        public Parser(ModuleDescriptorParser parser, Resource res, ParserSettings settings) {
             super(parser);
             setResource(res);
+            this.settings = settings;
             md.setResolvedPublicationDate(new Date(res.getLastModified()));
             for (int i = 0; i < MAVEN2_CONFIGURATIONS.length; i++) {
                 md.addConfiguration(MAVEN2_CONFIGURATIONS[i]);
@@ -229,6 +240,10 @@ public final class PomModuleDescriptorParser extends AbstractModuleDescriptorPar
                 fillMrid();
             } else if ("project/parent/version".equals(context)) {
                 properties.put("parent.version", revision);
+            } else if ("project/parent/groupId".equals(context)) {
+                properties.put("parent.groupId", organisation);
+            } else if (context.equals("project/parent")) {
+                parseParentPom();
             } else if (((organisation != null && module != null && revision != null) || dd != null)
                     && "project/dependencies/dependency".equals(context)) {
                 if (dd == null) {
@@ -338,11 +353,14 @@ public final class PomModuleDescriptorParser extends AbstractModuleDescriptorPar
                     revision = txt;
                     return;
                 } 
+                if (context.equals("project/parent/artifactId")) {
+                    properties.put("parent.artifactId", txt);
+                }
                 if (context.equals("project/parent/packaging") && type == null) {
                     type = txt;
                     ext = txt;
                     return;
-                } 
+                }
                 if (context.equals("project/distributionManagement/relocation/groupId")) {
                     relocationOrganisation= txt;
                     return;
@@ -358,6 +376,10 @@ public final class PomModuleDescriptorParser extends AbstractModuleDescriptorPar
                 if (context.startsWith("project/parent")) {
                     return;
                 } 
+                if (context.startsWith("project/properties")) {
+                    String key = context.substring("project/properties/".length());
+                    properties.put(key, txt);
+                }
                 if (md.getModuleRevisionId() == null
                         || context.startsWith("project/dependencies/dependency")) {
                     if (context.equals("project/groupId")) {
@@ -408,6 +430,78 @@ public final class PomModuleDescriptorParser extends AbstractModuleDescriptorPar
             }
             return md;
         }
+        
+        public void parseParentPom() throws SAXException {
+            String parentOrg = (String) properties.get("parent.groupId");
+            String parentName = (String) properties.get("parent.artifactId");
+            String parentVersion = (String) properties.get("parent.version");
+            
+            if (parentOrg != null && parentName != null && parentVersion != null) {
+                ModuleRevisionId parent = ModuleRevisionId.newInstance(parentOrg, parentName, 
+                                           parentVersion);
+                DependencyResolver resolver = settings.getResolver(parent.getModuleId());
+                
+                DependencyDescriptor dd = new DefaultDependencyDescriptor(parent, true);
+                ResolveData data = IvyContext.getContext().getResolveData();
+                if (data == null) {
+                    return;
+//                    TODO: maybe do something like this:
+//                    ResolveEngine engine = IvyContext.getContext().getIvy().getResolveEngine();
+//                    ResolveOptions options = new ResolveOptions();
+//                    options.setCache(IvyContext.getContext().getCacheManager());
+//                    options.setDownload(false);
+//                    data = new ResolveData(engine, options);
+                }
+                
+                ResolvedResource rr = resolver.findIvyFileRef(dd, data);
+                
+                if (rr == null) {
+                    // parent not found. Maybe we should throw an exception here?
+                    return;
+                }
+                
+                Parser parser = new Parser(getModuleDescriptorParser(), rr.getResource(), settings);
+                InputStream pomStream = null;
+                try {
+                    pomStream = rr.getResource().openStream();
+                    XMLHelper.parse(pomStream, null, parser, null);
+                } catch (IOException e) {
+                    throw new SAXException("Error occurred while parsing parent", e);
+                } catch (ParserConfigurationException e) {
+                    throw new SAXException("Error occurred while parsing parent", e);
+                } finally {
+                    if (pomStream != null) {
+                        try {
+                            pomStream.close();
+                        } catch (IOException e) {
+                            // ignore
+                        }
+                    }
+                }
+                
+                // move the parent properties into ours
+                Map parentProps = parser.properties;
+                Set keys = parentProps.keySet();
+                for ( Iterator iter = keys.iterator(); iter.hasNext();  ) {
+                    String key = iter.next().toString();
+                    if ( key.startsWith("pom")) {
+                        // don't see a need to copy pom values from parent...
+                        // ignore
+                    } else if ( key.startsWith("parent")) {
+                        // don't see a need to copy parent values from parent...
+                        // ignore
+                    } else {
+                        // the key may need the groupId substituted
+                        String _key = IvyPatternHelper.substituteVariables(key, 
+                                parentProps).trim();
+                        String _value = IvyPatternHelper.substituteVariables(parentProps.get(key).toString(), 
+                                parentProps).trim();
+                        properties.put(_key, _value);
+                    }
+                }
+
+            }
+        }
     }
 
     private static final PomModuleDescriptorParser INSTANCE = new PomModuleDescriptorParser();
@@ -417,12 +511,11 @@ public final class PomModuleDescriptorParser extends AbstractModuleDescriptorPar
     }
 
     private PomModuleDescriptorParser() {
-
     }
 
     public ModuleDescriptor parseDescriptor(ParserSettings settings, URL descriptorURL, Resource res,
             boolean validate) throws ParseException, IOException {
-        Parser parser = new Parser(this, res);
+        Parser parser = new Parser(this, res, settings);
         try {
             XMLHelper.parse(descriptorURL, null, parser);
         } catch (SAXException ex) {
