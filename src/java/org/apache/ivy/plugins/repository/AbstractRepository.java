@@ -26,78 +26,78 @@ import javax.swing.event.EventListenerList;
 import org.apache.ivy.core.module.descriptor.Artifact;
 
 public abstract class AbstractRepository implements Repository {
-    private EventListenerList _listeners = new EventListenerList();
+    private EventListenerList listeners = new EventListenerList();
 
-    private String _name;
+    private String name;
 
-    private TransferEvent _evt;
+    private TransferEvent evt;
 
     public void addTransferListener(TransferListener listener) {
-        _listeners.add(TransferListener.class, listener);
+        listeners.add(TransferListener.class, listener);
     }
 
     public void removeTransferListener(TransferListener listener) {
-        _listeners.remove(TransferListener.class, listener);
+        listeners.remove(TransferListener.class, listener);
     }
 
     public boolean hasTransferListener(TransferListener listener) {
-        return Arrays.asList(_listeners.getListeners(TransferListener.class)).contains(listener);
+        return Arrays.asList(listeners.getListeners(TransferListener.class)).contains(listener);
     }
 
     protected void fireTransferInitiated(Resource res, int requestType) {
-        _evt = new TransferEvent(this, res, TransferEvent.TRANSFER_INITIATED, requestType);
-        fireTransferEvent(_evt);
+        evt = new TransferEvent(this, res, TransferEvent.TRANSFER_INITIATED, requestType);
+        fireTransferEvent(evt);
     }
 
     protected void fireTransferStarted() {
-        _evt.setEventType(TransferEvent.TRANSFER_STARTED);
-        fireTransferEvent(_evt);
+        evt.setEventType(TransferEvent.TRANSFER_STARTED);
+        fireTransferEvent(evt);
     }
 
     protected void fireTransferStarted(long totalLength) {
-        _evt.setEventType(TransferEvent.TRANSFER_STARTED);
-        _evt.setTotalLength(totalLength);
-        _evt.setTotalLengthSet(true);
-        fireTransferEvent(_evt);
+        evt.setEventType(TransferEvent.TRANSFER_STARTED);
+        evt.setTotalLength(totalLength);
+        evt.setTotalLengthSet(true);
+        fireTransferEvent(evt);
     }
 
     protected void fireTransferProgress(long length) {
-        _evt.setEventType(TransferEvent.TRANSFER_PROGRESS);
-        _evt.setLength(length);
-        if (!_evt.isTotalLengthSet()) {
-            _evt.setTotalLength(_evt.getTotalLength() + length);
+        evt.setEventType(TransferEvent.TRANSFER_PROGRESS);
+        evt.setLength(length);
+        if (!evt.isTotalLengthSet()) {
+            evt.setTotalLength(evt.getTotalLength() + length);
         }
-        fireTransferEvent(_evt);
+        fireTransferEvent(evt);
     }
 
     protected void fireTransferCompleted() {
-        _evt.setEventType(TransferEvent.TRANSFER_COMPLETED);
-        if (_evt.getTotalLength() > 0 && !_evt.isTotalLengthSet()) {
-            _evt.setTotalLengthSet(true);
+        evt.setEventType(TransferEvent.TRANSFER_COMPLETED);
+        if (evt.getTotalLength() > 0 && !evt.isTotalLengthSet()) {
+            evt.setTotalLengthSet(true);
         }
-        fireTransferEvent(_evt);
+        fireTransferEvent(evt);
     }
 
     protected void fireTransferCompleted(long totalLength) {
-        _evt.setEventType(TransferEvent.TRANSFER_COMPLETED);
-        _evt.setTotalLength(totalLength);
-        _evt.setTotalLengthSet(true);
-        fireTransferEvent(_evt);
+        evt.setEventType(TransferEvent.TRANSFER_COMPLETED);
+        evt.setTotalLength(totalLength);
+        evt.setTotalLengthSet(true);
+        fireTransferEvent(evt);
     }
 
     protected void fireTransferError() {
-        _evt.setEventType(TransferEvent.TRANSFER_ERROR);
-        fireTransferEvent(_evt);
+        evt.setEventType(TransferEvent.TRANSFER_ERROR);
+        fireTransferEvent(evt);
     }
 
     protected void fireTransferError(Exception ex) {
-        _evt.setEventType(TransferEvent.TRANSFER_ERROR);
-        _evt.setException(ex);
-        fireTransferEvent(_evt);
+        evt.setEventType(TransferEvent.TRANSFER_ERROR);
+        evt.setException(ex);
+        fireTransferEvent(evt);
     }
 
     protected void fireTransferEvent(TransferEvent evt) {
-        Object[] listeners = _listeners.getListenerList();
+        Object[] listeners = this.listeners.getListenerList();
         for (int i = listeners.length - 2; i >= 0; i -= 2) {
             if (listeners[i] == TransferListener.class) {
                 ((TransferListener) listeners[i + 1]).transferProgress(evt);
@@ -114,11 +114,11 @@ public abstract class AbstractRepository implements Repository {
     }
 
     public String getName() {
-        return _name;
+        return name;
     }
 
     public void setName(String name) {
-        _name = name;
+        this.name = name;
     }
 
     public String toString() {
