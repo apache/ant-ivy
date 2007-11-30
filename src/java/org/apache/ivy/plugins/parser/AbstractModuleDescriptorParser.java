@@ -49,56 +49,56 @@ public abstract class AbstractModuleDescriptorParser implements ModuleDescriptor
     protected abstract static class AbstractParser extends DefaultHandler {
         private static final String DEFAULT_CONF_MAPPING = "*->*";
 
-        private String _defaultConf; // used only as defaultconf, not used for
+        private String defaultConf; // used only as defaultconf, not used for
 
         // guesssing right side part of a mapping
-        private String _defaultConfMapping; // same as default conf but is used
+        private String defaultConfMapping; // same as default conf but is used
 
         // for guesssing right side part of a mapping
-        private DefaultDependencyDescriptor _defaultConfMappingDescriptor;
+        private DefaultDependencyDescriptor defaultConfMappingDescriptor;
 
-        private Resource _res;
+        private Resource res;
 
-        private List _errors = new ArrayList();
+        private List errors = new ArrayList();
 
         protected DefaultModuleDescriptor md;
 
-        private ModuleDescriptorParser _parser;
+        private ModuleDescriptorParser parser;
 
         protected AbstractParser(ModuleDescriptorParser parser) {
-            _parser = parser;
+            this.parser = parser;
         }
 
         public ModuleDescriptorParser getModuleDescriptorParser() {
-            return _parser;
+            return parser;
         }
 
         protected void checkErrors() throws ParseException {
-            if (!_errors.isEmpty()) {
-                throw new ParseException(_errors.toString(), 0);
+            if (!errors.isEmpty()) {
+                throw new ParseException(errors.toString(), 0);
             }
         }
 
         protected void setResource(Resource res) {
-            _res = res; // used for log and date only
-            md = new DefaultModuleDescriptor(_parser, res);
+            this.res = res; // used for log and date only
+            md = new DefaultModuleDescriptor(parser, res);
             md.setLastModified(getLastModified());
         }
 
         protected Resource getResource() {
-            return _res;
+            return res;
         }
 
         protected String getDefaultConfMapping() {
-            return _defaultConfMapping;
+            return defaultConfMapping;
         }
 
         protected void setDefaultConfMapping(String defaultConf) {
-            _defaultConfMapping = defaultConf;
+            defaultConfMapping = defaultConf;
         }
 
         protected void parseDepsConfs(String confs, DefaultDependencyDescriptor dd) {
-            parseDepsConfs(confs, dd, _defaultConfMapping != null);
+            parseDepsConfs(confs, dd, defaultConfMapping != null);
         }
 
         protected void parseDepsConfs(String confs, DefaultDependencyDescriptor dd,
@@ -138,8 +138,8 @@ public abstract class AbstractModuleDescriptorParser implements ModuleDescriptor
                                     .getDependencyConfigurations(modConfs[j]);
                             if (depConfs.length > 0) {
                                 for (int k = 0; k < depConfs.length; k++) {
-                                    String mappedDependency = evaluateConditions ? evaluateCondition(
-                                        depConfs[k].trim(), dd)
+                                    String mappedDependency = evaluateConditions 
+                                    ? evaluateCondition(depConfs[k].trim(), dd)
                                             : depConfs[k].trim();
                                     if (mappedDependency != null) {
                                         dd.addDependencyConfiguration(modConfs[j].trim(),
@@ -255,14 +255,9 @@ public abstract class AbstractModuleDescriptorParser implements ModuleDescriptor
                 for (int j = 0; j < ext.length; j++) {
                     if (conf.equals(ext[j])) {
                         String configName = configs[i].getName();
-                        // if
-                        // (getDefaultConfMappingDescriptor().getDependencyConfigurations(configName).length
-                        // > 0) {
                         configsToAdd.add(configName);
-                        // } else {
                         addExtendingConfigurations(configName, dd,
                             useDefaultMappingToGuessRightOperande);
-                        // }
                     }
                 }
             }
@@ -272,19 +267,19 @@ public abstract class AbstractModuleDescriptorParser implements ModuleDescriptor
         }
 
         protected DependencyDescriptor getDefaultConfMappingDescriptor() {
-            if (_defaultConfMappingDescriptor == null) {
-                _defaultConfMappingDescriptor = new DefaultDependencyDescriptor(ModuleRevisionId
+            if (defaultConfMappingDescriptor == null) {
+                defaultConfMappingDescriptor = new DefaultDependencyDescriptor(ModuleRevisionId
                         .newInstance("", "", ""), false);
-                parseDepsConfs(_defaultConfMapping, _defaultConfMappingDescriptor, false, false);
+                parseDepsConfs(defaultConfMapping, defaultConfMappingDescriptor, false, false);
             }
-            return _defaultConfMappingDescriptor;
+            return defaultConfMappingDescriptor;
         }
 
         protected void addError(String msg) {
-            if (_res != null) {
-                _errors.add(msg + " in " + _res + "\n");
+            if (res != null) {
+                errors.add(msg + " in " + res + "\n");
             } else {
-                _errors.add(msg + "\n");
+                errors.add(msg + "\n");
             }
         }
 
@@ -324,12 +319,12 @@ public abstract class AbstractModuleDescriptorParser implements ModuleDescriptor
         } // getLocationString(SAXParseException):String
 
         protected String getDefaultConf() {
-            return _defaultConfMapping != null ? _defaultConfMapping
-                    : (_defaultConf != null ? _defaultConf : DEFAULT_CONF_MAPPING);
+            return defaultConfMapping != null ? defaultConfMapping
+                    : (defaultConf != null ? defaultConf : DEFAULT_CONF_MAPPING);
         }
 
         protected void setDefaultConf(String defaultConf) {
-            _defaultConf = defaultConf;
+            this.defaultConf = defaultConf;
         }
 
         public ModuleDescriptor getModuleDescriptor() throws ParseException {
