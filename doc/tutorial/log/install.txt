@@ -1,0 +1,30 @@
+Buildfile: build.xml
+
+load-ivy:
+
+init-ivy:
+
+maven2:
+[ivy:install] :: loading settings :: url = jar:file://home/xavier/.ivy2/jars/ivy.jar!/org/apache/ivy/core/settings/ivysettings.xml
+[ivy:install] :: Ivy 2.0.0-beta1-local-20071130005044 - 20071130005044 :: http://ant.apache.org/ivy/ ::
+:: loading settings :: file = /home/xavier/ivy/settings/ivysettings-advanced.xml
+[ivy:install] :: installing commons-lang#commons-lang;1.0 ::
+[ivy:install] :: resolving dependencies ::
+[ivy:install]   found commons-lang#commons-lang;1.0 in libraries
+[ivy:install] :: downloading artifacts to cache ::
+[ivy:install] downloading http://repo1.maven.org/maven2/commons-lang/commons-lang/1.0/commons-lang-1.0.jar ...
+[ivy:install] ............. (62kB)
+[ivy:install] .. (0kB)
+[ivy:install]   [SUCCESSFUL ] commons-lang#commons-lang;1.0/commons-lang.jar[jar] (2464ms)
+[ivy:install] :: installing in my-repository ::
+[ivy:install]   published commons-lang to /home/xavier/ivy/myrepository/no-namespace/commons-lang/commons-lang/jars/commons-lang-1.0.jar
+[ivy:install]   published ivy to /home/xavier/ivy/myrepository/no-namespace/commons-lang/commons-lang/ivys/ivy-1.0.xml
+[ivy:install] :: install resolution report ::
+        ---------------------------------------------------------------------
+        |                  |            modules            ||   artifacts   |
+        |       conf       | number| search|dwnlded|evicted|| number|dwnlded|
+        ---------------------------------------------------------------------
+        |      default     |   1   |   1   |   0   |   0   ||   1   |   1   |
+        ---------------------------------------------------------------------
+
+BUILD SUCCESSFUL
