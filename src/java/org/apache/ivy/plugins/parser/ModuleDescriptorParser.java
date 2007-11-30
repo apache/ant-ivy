@@ -23,7 +23,9 @@ import java.io.InputStream;
 import java.net.URL;
 import java.text.ParseException;
 
+import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
+import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.plugins.repository.Resource;
 
 public interface ModuleDescriptorParser {
@@ -44,4 +46,22 @@ public interface ModuleDescriptorParser {
             throws ParseException, IOException;
 
     public boolean accept(Resource res);
+
+    /**
+     * Return the 'type' of module artifacts this parser is parsing
+     * @return the 'type' of module artifacts this parser is parsing
+     */
+    public String getType();
+
+    /**
+     * Returns the module metadata artifact corresponding to the given module revision id that this
+     * parser parses
+     * 
+     * @param res
+     *            the resource for which the module artifact should be returned
+     * @param mrid
+     *            the module revision id for which the module artifact should be returned
+     * @return the module artifact corresponding to the given mrid and resource
+     */
+    public Artifact getMetadataArtifact(ModuleRevisionId mrid, Resource res);
 }

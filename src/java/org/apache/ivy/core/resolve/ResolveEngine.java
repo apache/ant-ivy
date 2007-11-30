@@ -328,7 +328,7 @@ public class ResolveEngine {
                         .getArtifactResolver();
                 Artifact[] selectedArtifacts = dependencies[i].getSelectedArtifacts(artifactFilter);
                 DownloadReport dReport = resolver.download(selectedArtifacts, new DownloadOptions(
-                        cacheManager, eventManager, useOrigin));
+                        cacheManager, useOrigin));
                 ArtifactDownloadReport[] adrs = dReport.getArtifactsReports();
                 for (int j = 0; j < adrs.length; j++) {
                     if (adrs[j].getDownloadStatus() == DownloadStatus.FAILED) {
@@ -373,7 +373,7 @@ public class ResolveEngine {
         DependencyResolver resolver = settings.getResolver(artifact.getModuleRevisionId()
                 .getModuleId());
         DownloadReport r = resolver.download(new Artifact[] {artifact}, new DownloadOptions(
-                cacheManager, eventManager, useOrigin));
+                cacheManager, useOrigin));
         return r.getArtifactReport(artifact);
     }
 

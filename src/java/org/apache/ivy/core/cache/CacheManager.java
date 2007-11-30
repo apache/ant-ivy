@@ -26,10 +26,17 @@ import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.DefaultArtifact;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
+import org.apache.ivy.core.report.ArtifactDownloadReport;
+import org.apache.ivy.core.report.DownloadStatus;
 import org.apache.ivy.core.resolve.DefaultModuleRevision;
 import org.apache.ivy.core.resolve.ResolvedModuleRevision;
+import org.apache.ivy.plugins.lock.LockStrategy;
 import org.apache.ivy.plugins.parser.xml.XmlModuleDescriptorParser;
+import org.apache.ivy.plugins.repository.ArtifactResourceResolver;
+import org.apache.ivy.plugins.repository.ResourceDownloader;
+import org.apache.ivy.plugins.repository.ResourceHelper;
 import org.apache.ivy.plugins.resolver.DependencyResolver;
+import org.apache.ivy.plugins.resolver.util.ResolvedResource;
 import org.apache.ivy.util.Message;
 import org.apache.ivy.util.PropertiesFile;
 
@@ -43,8 +50,10 @@ public class CacheManager implements RepositoryCacheManager, ResolutionCacheMana
     }
 
     private CacheSettings settings;
-
+    
     private File cache;
+
+    private LockStrategy lockStrategy;
 
     public CacheManager(CacheSettings settings, File cache) {
         this.settings = settings == null ? IvyContext.getContext().getSettings() : settings;
@@ -284,7 +293,7 @@ public class CacheManager implements RepositoryCacheManager, ResolutionCacheMana
                         Message.debug("\tfound ivy file in cache for " + mrid + " (resolved by "
                                 + resolver.getName() + "): " + ivyFile);
                         return new DefaultModuleRevision(resolver, artResolver, depMD, false,
-                                false, ivyFile.toURL());
+                                false);
                     } else {
                         Message.debug("\tresolver not found: " + resolverName
                                 + " => cannot use cached ivy file for " + mrid);
@@ -313,4 +322,103 @@ public class CacheManager implements RepositoryCacheManager, ResolutionCacheMana
         return settings.getResolutionCacheRoot(cache);
     }
 
+    public LockStrategy getLockStrategy() {
+        if (lockStrategy == null) {
+            lockStrategy = settings.getDefaultLockStrategy();
+        }
+        return lockStrategy;
+    }
+    
+    public void setLockStrategy(LockStrategy lockStrategy) {
+        this.lockStrategy = lockStrategy;
+    }
+    
+    public ArtifactDownloadReport download(
+            Artifact artifact, 
+            ArtifactResourceResolver resourceResolver, 
+            ResourceDownloader resourceDownloader, 
+            CacheDownloadOptions options) {
+        final ArtifactDownloadReport adr = new ArtifactDownloadReport(artifact);
+        
+        LockStrategy lockStrategy = getLockStrategy();
+        
+        boolean useOrigin = options.isUseOrigin();
+        try {
+            if (!lockStrategy.lockArtifact(artifact, getArchiveFileInCache(artifact))) {
+                adr.setDownloadStatus(DownloadStatus.FAILED);
+                adr.setDownloadDetails("impossible to get artifact lock with " + lockStrategy);
+            }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt(); // reset interrupt status 
+            throw new RuntimeException("operation interrupted");
+        }
+        try {
+            DownloadListener listener = options.getListener();
+            if (listener != null) {
+                listener.needArtifact(this, artifact);
+            }
+            ArtifactOrigin origin = getSavedArtifactOrigin(artifact);
+            // if we can use origin file, we just ask ivy for the file in cache, and it will
+            // return the original one if possible. If we are not in useOrigin mode, we use the
+            // getArchivePath method which always return a path in the actual cache
+            File archiveFile = getArchiveFileInCache(artifact, origin, useOrigin);
+
+            if (archiveFile.exists() && !options.isForce()) {
+                adr.setDownloadStatus(DownloadStatus.NO);
+                adr.setSize(archiveFile.length());
+                adr.setArtifactOrigin(origin);
+            } else {
+                long start = System.currentTimeMillis();
+                try {
+                    ResolvedResource artifactRef = resourceResolver.resolve(artifact);
+                    if (artifactRef != null) {
+                        origin = new ArtifactOrigin(artifactRef.getResource().isLocal(),
+                            artifactRef.getResource().getName());
+                        if (useOrigin && artifactRef.getResource().isLocal()) {
+                            saveArtifactOrigin(artifact, origin);
+                            archiveFile = getArchiveFileInCache(artifact,
+                                origin);
+                            adr.setDownloadStatus(DownloadStatus.NO);
+                            adr.setSize(archiveFile.length());
+                            adr.setArtifactOrigin(origin);
+                        } else {
+                            // refresh archive file now that we better now its origin
+                            archiveFile = getArchiveFileInCache(artifact,
+                                origin, useOrigin);
+                            if (ResourceHelper.equals(artifactRef.getResource(), archiveFile)) {
+                                throw new IllegalStateException("invalid settings for '"
+                                    + resourceResolver
+                                    + "': pointing repository to ivy cache is forbidden !");
+                            } 
+                            if (listener != null) {
+                                listener.startArtifactDownload(this, artifactRef, artifact, origin);
+                            }
+
+                            resourceDownloader.download(
+                                artifact, artifactRef.getResource(), archiveFile);
+                            adr.setSize(archiveFile.length());
+                            saveArtifactOrigin(artifact, origin);
+                            adr.setDownloadTimeMillis(System.currentTimeMillis() - start);
+                            adr.setDownloadStatus(DownloadStatus.SUCCESSFUL);
+                            adr.setArtifactOrigin(origin);
+                        }
+                    } else {
+                        // this exception is catched below and result in a download failed status
+                        throw new Exception("artifact missing");
+                    }
+                } catch (Exception ex) {
+                    adr.setDownloadStatus(DownloadStatus.FAILED);
+                    adr.setDownloadDetails(ex.getMessage());
+                    adr.setDownloadTimeMillis(System.currentTimeMillis() - start);
+                }
+            }
+            if (listener != null) {
+                listener.endArtifactDownload(this, artifact, adr,
+                    archiveFile);
+            }
+            return adr;
+        } finally {
+            lockStrategy.unlockArtifact(artifact, getArchiveFileInCache(artifact));
+        }
+    }
 }

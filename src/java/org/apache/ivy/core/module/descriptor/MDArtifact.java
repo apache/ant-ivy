@@ -32,7 +32,7 @@ import org.apache.ivy.core.module.id.ModuleRevisionId;
 public class MDArtifact extends AbstractArtifact {
 
     public static Artifact newIvyArtifact(ModuleDescriptor md) {
-        return new MDArtifact(md, "ivy", "ivy", "xml");
+        return new MDArtifact(md, "ivy", "ivy", "xml", true);
     }
 
     private ModuleDescriptor md;
@@ -48,9 +48,17 @@ public class MDArtifact extends AbstractArtifact {
     private Map extraAttributes = null;
 
     private URL url;
+    
+    private boolean isMetadata = false;
 
     public MDArtifact(ModuleDescriptor md, String name, String type, String ext) {
         this(md, name, type, ext, null, null);
+    }
+
+    public MDArtifact(ModuleDescriptor md, 
+            String name, String type, String ext, boolean isMetadata) {
+        this(md, name, type, ext, null, null);
+        this.isMetadata = isMetadata;
     }
 
     public MDArtifact(ModuleDescriptor md, String name, String type, String ext, URL url,
@@ -113,4 +121,7 @@ public class MDArtifact extends AbstractArtifact {
         return url;
     }
 
+    public boolean isMetadata() {
+        return isMetadata;
+    }
 }

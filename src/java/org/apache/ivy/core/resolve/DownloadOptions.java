@@ -27,8 +27,6 @@ import org.apache.ivy.core.settings.IvySettings;
 public class DownloadOptions {
     private RepositoryCacheManager cacheManager;
 
-    private EventManager eventManager = null; // can be null
-
     private boolean useOrigin = false;
 
     public DownloadOptions(IvySettings settings, File cache) {
@@ -36,13 +34,11 @@ public class DownloadOptions {
     }
 
     public DownloadOptions(RepositoryCacheManager cacheManager) {
-        this(cacheManager, null, false);
+        this(cacheManager, false);
     }
 
-    public DownloadOptions(RepositoryCacheManager cacheManager, EventManager eventManager,
-            boolean useOrigin) {
+    public DownloadOptions(RepositoryCacheManager cacheManager, boolean useOrigin) {
         this.cacheManager = cacheManager;
-        this.eventManager = eventManager;
         this.useOrigin = useOrigin;
     }
 
@@ -52,10 +48,6 @@ public class DownloadOptions {
 
     public RepositoryCacheManager getCacheManager() {
         return cacheManager;
-    }
-
-    public EventManager getEventManager() {
-        return eventManager;
     }
 
 }

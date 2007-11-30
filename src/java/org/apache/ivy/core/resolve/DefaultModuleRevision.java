@@ -38,16 +38,13 @@ public class DefaultModuleRevision implements ResolvedModuleRevision {
 
     private boolean isSearched;
 
-    private URL localMDUrl;
-
     public DefaultModuleRevision(DependencyResolver resolver, DependencyResolver artifactResolver,
-            ModuleDescriptor descriptor, boolean searched, boolean downloaded, URL localMDUrl) {
+            ModuleDescriptor descriptor, boolean searched, boolean downloaded) {
         this.resolver = resolver;
         this.artifactResolver = artifactResolver;
         this.descriptor = descriptor;
         isSearched = searched;
         isDownloaded = downloaded;
-        this.localMDUrl = localMDUrl;
     }
 
     public DependencyResolver getResolver() {
@@ -91,10 +88,6 @@ public class DefaultModuleRevision implements ResolvedModuleRevision {
 
     public boolean isSearched() {
         return isSearched;
-    }
-
-    public URL getLocalMDUrl() {
-        return localMDUrl;
     }
 
 }

@@ -35,6 +35,7 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.ivy.core.IvyContext;
 import org.apache.ivy.core.IvyPatternHelper;
+import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.Configuration;
 import org.apache.ivy.core.module.descriptor.DefaultArtifact;
 import org.apache.ivy.core.module.descriptor.DefaultDependencyArtifactDescriptor;
@@ -225,8 +226,10 @@ public final class PomModuleDescriptorParser extends AbstractModuleDescriptorPar
                 type = JAR_EXTENSION;
                 ext = JAR_EXTENSION;
             }
-            md.addArtifact("master", new DefaultArtifact(mrid, getDefaultPubDate(), module,
-                    type, ext));
+            md.setModuleArtifact(
+                DefaultArtifact.newPomArtifact(mrid, getDefaultPubDate()));
+            md.addArtifact("master", 
+                new DefaultArtifact(mrid, getDefaultPubDate(), module, type, ext));
             organisation = null;
             module = null;
             revision = null;
@@ -428,6 +431,7 @@ public final class PomModuleDescriptorParser extends AbstractModuleDescriptorPar
             if (md.getModuleRevisionId() == null) {
                 return null;
             }
+            
             return md;
         }
         
@@ -550,4 +554,13 @@ public final class PomModuleDescriptorParser extends AbstractModuleDescriptorPar
     public String toString() {
         return "pom parser";
     }
+
+    public Artifact getMetadataArtifact(ModuleRevisionId mrid, Resource res) {
+        return DefaultArtifact.newPomArtifact(mrid, new Date(res.getLastModified()));
+    }
+    
+    public String getType() {
+        return "pom";
+    }
+
 }

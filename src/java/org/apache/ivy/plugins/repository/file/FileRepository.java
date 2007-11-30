@@ -35,8 +35,6 @@ public class FileRepository extends AbstractRepository {
 
     private boolean local = true;
 
-    private File transactionDirectory;
-
     public FileRepository() {
         baseDir = null;
     }
@@ -69,8 +67,8 @@ public class FileRepository extends AbstractRepository {
 
     private void copy(File src, File destination, boolean overwrite) throws IOException {
         try {
-            progress.setTotalLength(new Long(src.length()));
-            if (!FileUtil.copy(src, destination, progress, overwrite)) {
+            getProgressListener().setTotalLength(new Long(src.length()));
+            if (!FileUtil.copy(src, destination, getProgressListener(), overwrite)) {
                 if (!overwrite) {
                     throw new IOException("file copy not done from " + src + " to " + destination
                             + ": destination probably already exists and overwrite is false");
@@ -85,8 +83,12 @@ public class FileRepository extends AbstractRepository {
             fireTransferError(ex);
             throw ex;
         } finally {
-            progress.setTotalLength(null);
+            getProgressListener().setTotalLength(null);
         }
+    }
+
+    protected RepositoryCopyProgressListener getProgressListener() {
+        return progress;
     }
 
     public List list(String parent) throws IOException {

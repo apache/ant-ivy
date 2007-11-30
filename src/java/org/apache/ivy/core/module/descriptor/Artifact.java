@@ -88,4 +88,13 @@ public interface Artifact extends ExtendableItem {
      * @return the id of the artifact
      */
     ArtifactRevisionId getId();
+    
+    /**
+     * Returns true if this artifact represents a module metadata artifact, false if it's a
+     * published artifact
+     * 
+     * @return true if this artifact represents a module metadata artifact, false if it's a
+     *         published artifact
+     */
+    boolean isMetadata();
 }

@@ -57,6 +57,8 @@ import org.apache.ivy.core.sort.SortEngine;
 import org.apache.ivy.plugins.matcher.PatternMatcher;
 import org.apache.ivy.plugins.repository.TransferEvent;
 import org.apache.ivy.plugins.repository.TransferListener;
+import org.apache.ivy.plugins.resolver.BasicResolver;
+import org.apache.ivy.plugins.resolver.DependencyResolver;
 import org.apache.ivy.plugins.trigger.Trigger;
 import org.apache.ivy.util.HostUtil;
 import org.apache.ivy.util.Message;
@@ -802,6 +804,13 @@ public class Ivy {
         for (Iterator iter = triggers.iterator(); iter.hasNext();) {
             Trigger trigger = (Trigger) iter.next();
             eventManager.addIvyListener(trigger, trigger.getEventFilter());
+        }
+        
+        for (Iterator iter = settings.getResolvers().iterator(); iter.hasNext();) {
+            DependencyResolver resolver = (DependencyResolver) iter.next();
+            if (resolver instanceof BasicResolver) {
+                ((BasicResolver) resolver).setEventManager(eventManager);
+            }
         }
     }
 

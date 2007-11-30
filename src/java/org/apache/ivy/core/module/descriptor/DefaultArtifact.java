@@ -30,30 +30,50 @@ import org.apache.ivy.core.module.id.ModuleRevisionId;
 public class DefaultArtifact extends AbstractArtifact {
 
     public static Artifact newIvyArtifact(ModuleRevisionId mrid, Date pubDate) {
-        return new DefaultArtifact(mrid, pubDate, "ivy", "ivy", "xml");
+        return new DefaultArtifact(mrid, pubDate, "ivy", "ivy", "xml", true);
     }
 
     public static Artifact newPomArtifact(ModuleRevisionId mrid, Date pubDate) {
-        return new DefaultArtifact(mrid, pubDate, mrid.getName(), "pom", "pom");
+        return new DefaultArtifact(mrid, pubDate, mrid.getName(), "pom", "pom", true);
+    }
+
+    public static Artifact cloneWithAnotherExt(Artifact artifact, String newExt) {
+        return cloneWithAnotherTypeAndExt(artifact, artifact.getType(), newExt);
     }
 
     public static Artifact cloneWithAnotherType(Artifact artifact, String newType) {
-        return new DefaultArtifact(artifact.getModuleRevisionId(), artifact.getPublicationDate(),
-                artifact.getName(), newType, artifact.getExt(), artifact.getUrl(), artifact
-                        .getExtraAttributes());
+        return cloneWithAnotherTypeAndExt(artifact, newType, artifact.getExt());
     }
 
     public static Artifact cloneWithAnotherTypeAndExt(Artifact artifact, String newType,
             String newExt) {
-        return new DefaultArtifact(artifact.getModuleRevisionId(), artifact.getPublicationDate(),
-                artifact.getName(), newType, newExt, artifact.getUrl(), artifact
-                        .getExtraAttributes());
+        return new DefaultArtifact(
+            ArtifactRevisionId.newInstance(
+                artifact.getModuleRevisionId(), 
+                artifact.getName(), newType, newExt, 
+                artifact.getExtraAttributes()), 
+            artifact.getPublicationDate(), 
+            artifact.getUrl(), artifact.isMetadata());
+    }
+
+    public static Artifact cloneWithAnotherName(Artifact artifact, String name) {
+        return new DefaultArtifact(
+            ArtifactRevisionId.newInstance(
+                artifact.getModuleRevisionId(), 
+                name, artifact.getType(), artifact.getExt(), 
+                artifact.getExtraAttributes()), 
+            artifact.getPublicationDate(), 
+            artifact.getUrl(), artifact.isMetadata());
     }
 
     public static Artifact cloneWithAnotherMrid(Artifact artifact, ModuleRevisionId mrid) {
-        return new DefaultArtifact(mrid, artifact.getPublicationDate(), artifact.getName(),
-                artifact.getType(), artifact.getExt(), artifact.getUrl(), artifact
-                        .getExtraAttributes());
+        return new DefaultArtifact(
+            ArtifactRevisionId.newInstance(
+                mrid, 
+                artifact.getName(), artifact.getType(), artifact.getExt(), 
+                artifact.getExtraAttributes()), 
+            artifact.getPublicationDate(), 
+            artifact.getUrl(), artifact.isMetadata());
     }
 
     private Date publicationDate;
@@ -61,10 +81,18 @@ public class DefaultArtifact extends AbstractArtifact {
     private ArtifactRevisionId arid;
 
     private URL url;
+    
+    private boolean isMetadata = false;
 
-    public DefaultArtifact(ModuleRevisionId mrid, Date publicationDate, String name, String type,
-            String ext) {
+    public DefaultArtifact(ModuleRevisionId mrid, Date publicationDate, 
+            String name, String type, String ext) {
         this(mrid, publicationDate, name, type, ext, null, null);
+    }
+
+    public DefaultArtifact(ModuleRevisionId mrid, Date publicationDate, 
+            String name, String type, String ext, boolean isMetadata) {
+        this(mrid, publicationDate, name, type, ext, null, null);
+        this.isMetadata = isMetadata;
     }
 
     public DefaultArtifact(ModuleRevisionId mrid, Date publicationDate, String name, String type,
@@ -74,24 +102,21 @@ public class DefaultArtifact extends AbstractArtifact {
 
     public DefaultArtifact(ModuleRevisionId mrid, Date publicationDate, String name, String type,
             String ext, URL url, Map extraAttributes) {
-        if (mrid == null) {
-            throw new NullPointerException("null mrid not allowed");
+        this(ArtifactRevisionId.newInstance(mrid, name, type, ext, extraAttributes), 
+            publicationDate, url, false);
+    }
+    public DefaultArtifact(
+            ArtifactRevisionId arid, Date publicationDate, URL url, boolean isMetadata) {
+        if (arid == null) {
+            throw new NullPointerException("null arid not allowed");
         }
         if (publicationDate == null) {
             publicationDate = new Date();
         }
-        if (name == null) {
-            throw new NullPointerException("null name not allowed");
-        }
-        if (type == null) {
-            throw new NullPointerException("null type not allowed");
-        }
-        if (ext == null) {
-            throw new NullPointerException("null ext not allowed");
-        }
         this.publicationDate = publicationDate;
-        this.arid = ArtifactRevisionId.newInstance(mrid, name, type, ext, extraAttributes);
+        this.arid = arid;
         this.url = url;
+        this.isMetadata = isMetadata;
     }
 
     public ModuleRevisionId getModuleRevisionId() {
@@ -126,4 +151,7 @@ public class DefaultArtifact extends AbstractArtifact {
         return url;
     }
 
+    public boolean isMetadata() {
+        return isMetadata;
+    }
 }

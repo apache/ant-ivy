@@ -55,7 +55,7 @@ public final class NameSpaceHelper {
             return rmr;
         }
         return new DefaultModuleRevision(rmr.getResolver(), rmr.getArtifactResolver(), md, rmr
-                .isSearched(), rmr.isDownloaded(), rmr.getLocalMDUrl());
+                .isSearched(), rmr.isDownloaded());
     }
 
     public static Artifact transform(Artifact artifact, NamespaceTransformer t) {

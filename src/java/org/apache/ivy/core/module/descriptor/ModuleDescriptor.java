@@ -103,6 +103,13 @@ public interface ModuleDescriptor extends ExtendableItem {
 
     Artifact[] getArtifacts(String conf);
 
+    /**
+     * Returns all artifacts of this module, excluding the artifact corresponding to the module
+     * descriptor.
+     * 
+     * @return all published artifacts of this module
+     * @see #getMetadataArtifact()
+     */
     Artifact[] getAllArtifacts();
 
     /**
@@ -169,6 +176,19 @@ public interface ModuleDescriptor extends ExtendableItem {
      * @return
      */
     Resource getResource();
+
+    /**
+     * Returns the Artifact representing this module descriptor itself.
+     * <p>
+     * Even though the module descriptor is never described as a published artifact of a module in
+     * the module descriptor itself, it is often useful to consider it as any other artifact of the
+     * module. This method allows to access to the Artifact object representing this module
+     * descriptor for this purpose.
+     * </p>
+     * 
+     * @return the Artifact representing this module descriptor itself.
+     */
+    Artifact getMetadataArtifact();
 
     /**
      * Returns true if this descriptor contains any exclusion rule

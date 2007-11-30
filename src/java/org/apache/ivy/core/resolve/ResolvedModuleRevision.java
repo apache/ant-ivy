@@ -51,6 +51,4 @@ public interface ResolvedModuleRevision {
     boolean isDownloaded();
 
     boolean isSearched();
-
-    public URL getLocalMDUrl();
 }

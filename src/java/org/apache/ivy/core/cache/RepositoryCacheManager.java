@@ -22,7 +22,10 @@ import java.io.File;
 import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
+import org.apache.ivy.core.report.ArtifactDownloadReport;
 import org.apache.ivy.core.resolve.ResolvedModuleRevision;
+import org.apache.ivy.plugins.repository.ArtifactResourceResolver;
+import org.apache.ivy.plugins.repository.ResourceDownloader;
 
 public interface RepositoryCacheManager {
     public abstract File getRepositoryCacheRoot();
@@ -86,5 +89,25 @@ public interface RepositoryCacheManager {
 
     public abstract ResolvedModuleRevision findModuleInCache(
             ModuleRevisionId mrid, boolean validate);
+    
+    /**
+     * Downloads an artifact to this cache.
+     * 
+     * @param artifact
+     *            the artifact to download
+     * @param resourceResolver
+     *            a resource resolver to use if the artifact needs to be resolved to a Resource for
+     *            downloading
+     * @param resourceDownloader
+     *            a resource downloader to use if actual download of the resource is needed
+     * @param options
+     *            a set of options to adjust the download 
+     * @return a report indicating how the download was performed
+     */
+    public abstract ArtifactDownloadReport download(
+            Artifact artifact, 
+            ArtifactResourceResolver resourceResolver, 
+            ResourceDownloader resourceDownloader, 
+            CacheDownloadOptions options);
 
 }

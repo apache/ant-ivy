@@ -195,7 +195,7 @@ public class RepositoryResolver extends AbstractResourceResolver {
     }
 
     public DownloadReport download(Artifact[] artifacts, DownloadOptions options) {
-        EventManager eventManager = options.getEventManager();
+        EventManager eventManager = getEventManager();
         try {
             if (eventManager != null) {
                 repository.addTransferListener(eventManager);

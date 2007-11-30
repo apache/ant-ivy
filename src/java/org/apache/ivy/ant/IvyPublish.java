@@ -452,6 +452,10 @@ public class IvyPublish extends IvyTask {
         public Map getStandardAttributes() {
             return new HashMap();
         }
+        
+        public boolean isMetadata() {
+            return false;
+        }
     }
 
     public static class ArtifactsPattern {

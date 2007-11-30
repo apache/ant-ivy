@@ -65,6 +65,8 @@ import org.apache.ivy.plugins.latest.LatestLexicographicStrategy;
 import org.apache.ivy.plugins.latest.LatestRevisionStrategy;
 import org.apache.ivy.plugins.latest.LatestStrategy;
 import org.apache.ivy.plugins.latest.LatestTimeStrategy;
+import org.apache.ivy.plugins.lock.LockStrategy;
+import org.apache.ivy.plugins.lock.NoLockStrategy;
 import org.apache.ivy.plugins.matcher.ExactOrRegexpPatternMatcher;
 import org.apache.ivy.plugins.matcher.ExactPatternMatcher;
 import org.apache.ivy.plugins.matcher.ModuleIdMatcher;
@@ -135,6 +137,9 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
 
     // Map (String latestStrategyName -> LatestStrategy)
     private Map latestStrategies = new HashMap(); 
+    
+    // Map (String name -> LockStrategy)
+    private Map lockStrategies = new HashMap(); 
 
     // Map (String namespaceName -> Namespace)
     private Map namespaces = new HashMap(); 
@@ -170,6 +175,8 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
     private boolean validate = true;
 
     private LatestStrategy defaultLatestStrategy = null;
+
+    private LockStrategy defaultLockStrategy = null;
 
     private ConflictManager defaultConflictManager = null;
 
@@ -853,6 +860,22 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
         latestStrategies.put(name, latest);
     }
 
+    public void addConfigured(LockStrategy lockStrategy) {
+        addLockStrategy(lockStrategy.getName(), lockStrategy);
+    }
+
+    public LockStrategy getLockStrategy(String name) {
+        if ("default".equals(name)) {
+            return getDefaultLockStrategy();
+        }
+        return (LockStrategy) lockStrategies.get(name);
+    }
+
+    public void addLockStrategy(String name, LockStrategy lockStrategy) {
+        init(lockStrategy);
+        lockStrategies.put(name, lockStrategy);
+    }
+
     public void addConfigured(Namespace ns) {
         addNamespace(ns);
     }
@@ -1067,6 +1090,17 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
 
     public void setDefaultLatestStrategy(LatestStrategy defaultLatestStrategy) {
         this.defaultLatestStrategy = defaultLatestStrategy;
+    }
+
+    public LockStrategy getDefaultLockStrategy() {
+        if (defaultLockStrategy == null) {
+            defaultLockStrategy = new NoLockStrategy();
+        }
+        return defaultLockStrategy;
+    }
+
+    public void setDefaultLockStrategy(LockStrategy defaultLockStrategy) {
+        this.defaultLockStrategy = defaultLockStrategy;
     }
 
     public void addTrigger(Trigger trigger) {

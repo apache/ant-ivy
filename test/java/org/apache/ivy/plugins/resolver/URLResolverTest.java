@@ -335,7 +335,7 @@ public class URLResolverTest extends TestCase {
         // test to ask to download
         DefaultArtifact artifact = new DefaultArtifact(mrid, pubdate, "mod1.1", "jar", "jar");
         DownloadReport report = resolver.download(new Artifact[] {artifact}, new DownloadOptions(
-                new CacheManager(_settings, _cache), null, true));
+                new CacheManager(_settings, _cache), true));
         assertNotNull(report);
 
         assertEquals(1, report.getArtifactsReports().length);

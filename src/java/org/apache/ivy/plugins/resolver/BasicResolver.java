@@ -18,6 +18,7 @@
 package org.apache.ivy.plugins.resolver;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -36,6 +37,8 @@ import java.util.Map;
 import org.apache.ivy.core.IvyContext;
 import org.apache.ivy.core.IvyPatternHelper;
 import org.apache.ivy.core.cache.ArtifactOrigin;
+import org.apache.ivy.core.cache.CacheDownloadOptions;
+import org.apache.ivy.core.cache.DownloadListener;
 import org.apache.ivy.core.cache.RepositoryCacheManager;
 import org.apache.ivy.core.event.EventManager;
 import org.apache.ivy.core.event.download.EndArtifactDownloadEvent;
@@ -63,8 +66,9 @@ import org.apache.ivy.plugins.parser.ModuleDescriptorParser;
 import org.apache.ivy.plugins.parser.ModuleDescriptorParserRegistry;
 import org.apache.ivy.plugins.parser.xml.XmlModuleDescriptorParser;
 import org.apache.ivy.plugins.parser.xml.XmlModuleDescriptorWriter;
+import org.apache.ivy.plugins.repository.ArtifactResourceResolver;
 import org.apache.ivy.plugins.repository.Resource;
-import org.apache.ivy.plugins.repository.ResourceHelper;
+import org.apache.ivy.plugins.repository.ResourceDownloader;
 import org.apache.ivy.plugins.repository.url.URLRepository;
 import org.apache.ivy.plugins.repository.url.URLResource;
 import org.apache.ivy.plugins.resolver.util.MDResolvedResource;
@@ -100,6 +104,8 @@ public abstract class BasicResolver extends AbstractResolver {
     private boolean allownomd = true;
 
     private String checksums = null;
+    
+    private EventManager eventManager = null; // may remain null
 
     private URLRepository extartifactrep = new URLRepository(); // used only to download
 
@@ -123,6 +129,14 @@ public abstract class BasicResolver extends AbstractResolver {
 
     public void setEnvDependent(boolean envDependent) {
         this.envDependent = envDependent;
+    }
+    
+    public void setEventManager(EventManager eventManager) {
+        this.eventManager = eventManager;
+    }
+    
+    public EventManager getEventManager() {
+        return eventManager;
     }
 
     /**
@@ -197,7 +211,6 @@ public abstract class BasicResolver extends AbstractResolver {
                 }
             }
             checkInterrupted();
-            URL cachedIvyURL = null;
             ResolvedResource ivyRef = findIvyFileRef(dd, data);
             checkInterrupted();
             searched = true;
@@ -256,7 +269,6 @@ public abstract class BasicResolver extends AbstractResolver {
                     md = rmr.getDescriptor();
                     parser = ModuleDescriptorParserRegistry.getInstance().getParser(
                         ivyRef.getResource());
-                    cachedIvyURL = rmr.getLocalMDUrl();
 
                     // check descriptor data is in sync with resource revision and names
                     systemMd = toSystem(md);
@@ -330,29 +342,39 @@ public abstract class BasicResolver extends AbstractResolver {
                 systemMd.setResolvedPublicationDate(new Date(pubDate)); // keep system md in sync
                 // with md
             }
+            
+            if (!md.isDefault() 
+                    && data.getSettings().logNotConvertedExclusionRule() 
+                    && md instanceof DefaultModuleDescriptor) {
+                DefaultModuleDescriptor dmd = (DefaultModuleDescriptor) md;
+                if (dmd.isNamespaceUseful()) {
+                    Message.warn(
+                        "the module descriptor "
+                        + ivyRef.getResource()
+                        + " has information which can't be converted into "
+                        + "the system namespace. "
+                        + "It will require the availability of the namespace '"
+                        + getNamespace().getName() + "' to be fully usable.");
+                }
+            }
 
-            try {
-                File ivyFile = data.getCacheManager().getIvyFileInCache(
+            RepositoryCacheManager cacheManager = data.getCacheManager();
+            // TODO: this should be done with a lock on the metadata artifact (moved to the cache manager)
+           try {
+                File ivyFile = cacheManager.getIvyFileInCache(
                     systemMd.getResolvedModuleRevisionId());
                 if (ivyRef == null) {
                     // a basic ivy file is written containing default data
                     XmlModuleDescriptorWriter.write(systemMd, ivyFile);
                 } else {
-                    if (md instanceof DefaultModuleDescriptor) {
-                        DefaultModuleDescriptor dmd = (DefaultModuleDescriptor) md;
-                        if (data.getSettings().logNotConvertedExclusionRule()
-                                && dmd.isNamespaceUseful()) {
-                            Message.warn(
-                                "the module descriptor "
-                                + ivyRef.getResource()
-                                + " has information which can't be converted into "
-                                + "the system namespace. "
-                                + "It will require the availability of the namespace '"
-                                + getNamespace().getName() + "' to be fully usable.");
-                        }
-                    }
                     // copy and update ivy file from source to cache
-                    parser.toIvyFile(cachedIvyURL.openStream(), ivyRef.getResource(), ivyFile,
+                    parser.toIvyFile(
+                        new FileInputStream(
+                            cacheManager.getArchiveFileInCache(
+                                getOriginalMetadataArtifact(
+                                    parser.getMetadataArtifact(
+                                        resolvedMrid, ivyRef.getResource())))), 
+                        ivyRef.getResource(), ivyFile,
                         systemMd);
                     long repLastModified = ivyRef.getLastModified();
                     if (repLastModified > 0) {
@@ -364,15 +386,16 @@ public abstract class BasicResolver extends AbstractResolver {
                     Message.warn("impossible to create ivy file in cache for module : "
                         + resolvedMrid);
                 } else {
-                    e.printStackTrace();
-                    Message.warn("impossible to copy ivy file to cache : " + ivyRef.getResource());
+                    Message.warn("impossible to copy ivy file to cache: " + ivyRef.getResource()
+                        + ". " + e.getClass().getName() + ": " + e.getMessage());
                 }
             }
 
-            data.getCacheManager().saveResolver(systemMd, getName());
-            data.getCacheManager().saveArtResolver(systemMd, getName());
-            return new DefaultModuleRevision(this, this, systemMd, searched, downloaded,
-                cachedIvyURL);
+            cacheManager.saveResolver(systemMd, getName());
+            cacheManager.saveArtResolver(systemMd, getName());
+            
+            
+            return new DefaultModuleRevision(this, this, systemMd, searched, downloaded);
         } finally {
             IvyContext.popContext();
         }
@@ -398,18 +421,18 @@ public abstract class BasicResolver extends AbstractResolver {
         return revision;
     }
 
-    public ResolvedModuleRevision parse(ResolvedResource ivyRef, DependencyDescriptor dd,
+    public ResolvedModuleRevision parse(final ResolvedResource mdRef, DependencyDescriptor dd,
             ResolveData data) throws ParseException {
 
         ModuleRevisionId mrid = dd.getDependencyRevisionId();
         ModuleDescriptorParser parser = ModuleDescriptorParserRegistry.getInstance().getParser(
-            ivyRef.getResource());
+            mdRef.getResource());
         if (parser == null) {
-            Message.warn("no module descriptor parser available for " + ivyRef.getResource());
+            Message.warn("no module descriptor parser available for " + mdRef.getResource());
             return null;
         }
         Message.verbose("\t" + getName() + ": found md file for " + mrid);
-        Message.verbose("\t\t=> " + ivyRef);
+        Message.verbose("\t\t=> " + mdRef);
         Message.debug("\tparser = " + parser);
 
         boolean isChangingRevision = getChangingMatcher().matches(mrid.getRevision());
@@ -419,7 +442,7 @@ public abstract class BasicResolver extends AbstractResolver {
 
         // first check if this dependency has not yet been resolved
         if (getSettings().getVersionMatcher().isDynamic(mrid)) {
-            resolvedMrid = ModuleRevisionId.newInstance(mrid, ivyRef.getRevision());
+            resolvedMrid = ModuleRevisionId.newInstance(mrid, mdRef.getRevision());
             IvyNode node = getSystemNode(data, resolvedMrid);
             if (node != null && node.getModuleRevision() != null) {
                 // this revision has already be resolved : return it
@@ -435,6 +458,7 @@ public abstract class BasicResolver extends AbstractResolver {
             }
         }
 
+        // TODO: this should be done while the lock on the original artifact is acquired (in cache manager #download)
         // now let's see if we can find it in cache and if it is up to date
         ResolvedModuleRevision rmr = findModuleInCache(data, resolvedMrid);
         if (rmr != null) {
@@ -447,7 +471,7 @@ public abstract class BasicResolver extends AbstractResolver {
                     Message.verbose("\t" + getName() + ": revision in cache: " + mrid);
                     return searchedRmr(rmr);
                 }
-                long repLastModified = ivyRef.getLastModified();
+                long repLastModified = mdRef.getLastModified();
                 long cacheLastModified = rmr.getDescriptor().getLastModified();
                 if (!rmr.getDescriptor().isDefault() && repLastModified <= cacheLastModified) {
                     Message.verbose("\t" + getName() + ": revision in cache (not updated): "
@@ -466,39 +490,38 @@ public abstract class BasicResolver extends AbstractResolver {
             }
         }
 
-        // now download ivy file and parse it
-        URL cachedIvyURL = null;
-        File ivyTempFile = null;
-        try {
-            // first check if source file is not cache file itself
-            if (ResourceHelper.equals(ivyRef.getResource(), data.getCacheManager()
-                    .getIvyFileInCache(toSystem(resolvedMrid)))) {
-                Message.error("invalid configuration for resolver '" + getName()
-                        + "': pointing ivy files to ivy cache is forbidden !");
-                return null;
-            }
+        // now download module descriptor and parse it
+        Artifact moduleArtifact = parser.getMetadataArtifact(resolvedMrid, mdRef.getResource());
+        ArtifactDownloadReport report = data.getCacheManager().download(
+            getOriginalMetadataArtifact(moduleArtifact), 
+            new ArtifactResourceResolver() {
+                public ResolvedResource resolve(Artifact artifact) {
+                    return mdRef;
+                }
+            }, downloader, 
+            new CacheDownloadOptions().setListener(downloadListener).setForce(true));
+        Message.verbose("\t" + report);            
 
-            // temp file is used to prevent downloading twice
-            ivyTempFile = File.createTempFile("ivy", "xml");
-            ivyTempFile.deleteOnExit();
-            Message.debug("\t" + getName() + ": downloading " + ivyRef.getResource() + " to "
-                    + ivyTempFile);
-            getAndCheck(ivyRef.getResource(), ivyTempFile);
-            try {
-                cachedIvyURL = ivyTempFile.toURL();
-            } catch (MalformedURLException ex) {
-                Message.warn("malformed url exception for temp file: " + ivyTempFile + ": "
-                        + ex.getMessage());
-                return null;
-            }
-        } catch (IOException ex) {
-            Message.warn("problem while downloading ivy file: " + ivyRef.getResource() + " to "
-                    + ivyTempFile + ": " + ex.getMessage());
+        if (report.getDownloadStatus() == DownloadStatus.FAILED) {
+            Message.warn("problem while downloading module descriptor: " + mdRef.getResource() 
+                + ": " + report.getDownloadDetails() 
+                + " (" + report.getDownloadTimeMillis() + "ms)");
+            return null;
+        }
+
+        File originalMDCacheFile = data.getCacheManager().getArchiveFileInCache(
+            report.getArtifact(), report.getArtifactOrigin(), false);
+        URL cachedMDURL = null;
+        try {
+            cachedMDURL = originalMDCacheFile.toURL();
+        } catch (MalformedURLException ex) {
+            Message.warn("malformed url exception for original in cache file: " 
+                + originalMDCacheFile + ": " + ex.getMessage());
             return null;
         }
         try {
-            ModuleDescriptor md = parser.parseDescriptor(data.getSettings(), cachedIvyURL, ivyRef
-                    .getResource(), doValidate(data));
+            ModuleDescriptor md = parser.parseDescriptor(
+                data.getSettings(), cachedMDURL, mdRef.getResource(), doValidate(data));
             Message.debug("\t" + getName() + ": parsed downloaded md file for " + mrid + " parsed="
                     + md.getModuleRevisionId());
 
@@ -531,13 +554,18 @@ public abstract class BasicResolver extends AbstractResolver {
                 Message.verbose(dd
                         + " is changing, but has not changed: will trust cached artifacts if any");
             }
-            return new DefaultModuleRevision(this, this, md, true, true, cachedIvyURL);
+            return new DefaultModuleRevision(this, this, md, true, true);
         } catch (IOException ex) {
-            Message.warn("io problem while parsing ivy file: " + ivyRef.getResource() + ": "
+            Message.warn("io problem while parsing ivy file: " + mdRef.getResource() + ": "
                     + ex.getMessage());
             return null;
         }
 
+    }
+
+    private Artifact getOriginalMetadataArtifact(Artifact moduleArtifact) {
+        return DefaultArtifact.cloneWithAnotherName(moduleArtifact, 
+            moduleArtifact.getName() + ".original");
     }
 
     protected ResourceMDParser getRMDParser(final DependencyDescriptor dd, final ResolveData data) {
@@ -564,8 +592,7 @@ public abstract class BasicResolver extends AbstractResolver {
             public MDResolvedResource parse(Resource resource, String rev) {
                 return new MDResolvedResource(resource, rev, new DefaultModuleRevision(
                         BasicResolver.this, BasicResolver.this, DefaultModuleDescriptor
-                                .newDefaultInstance(new ModuleRevisionId(mid, rev)), false, false,
-                        null));
+                                .newDefaultInstance(new ModuleRevisionId(mid, rev)), false, false));
             }
         };
     }
@@ -654,10 +681,6 @@ public abstract class BasicResolver extends AbstractResolver {
             public DependencyResolver getArtifactResolver() {
                 return rmr.getArtifactResolver();
             }
-
-            public URL getLocalMDUrl() {
-                return rmr.getLocalMDUrl();
-            }
         };
     }
 
@@ -721,115 +744,17 @@ public abstract class BasicResolver extends AbstractResolver {
 
     public DownloadReport download(Artifact[] artifacts, DownloadOptions options) {
         RepositoryCacheManager cacheManager = options.getCacheManager();
-        EventManager eventManager = options.getEventManager();
-
-        boolean useOrigin = options.isUseOrigin();
 
         clearArtifactAttempts();
         DownloadReport dr = new DownloadReport();
         for (int i = 0; i < artifacts.length; i++) {
-            final ArtifactDownloadReport adr = new ArtifactDownloadReport(artifacts[i]);
+            ArtifactDownloadReport adr = cacheManager.download(
+                artifacts[i], artifactResourceResolver, downloader, 
+                new CacheDownloadOptions().setListener(downloadListener)
+                    .setUseOrigin(options.isUseOrigin()));
+            Message.info("\t" + adr);
             dr.addArtifactReport(adr);
-            if (eventManager != null) {
-                eventManager.fireIvyEvent(new NeedArtifactEvent(this, artifacts[i]));
-            }
-            ArtifactOrigin origin = cacheManager.getSavedArtifactOrigin(artifacts[i]);
-            // if we can use origin file, we just ask ivy for the file in cache, and it will
-            // return
-            // the original one if possible. If we are not in useOrigin mode, we use the
-            // getArchivePath
-            // method which always return a path in the actual cache
-            File archiveFile = cacheManager.getArchiveFileInCache(artifacts[i], origin, options
-                    .isUseOrigin());
-
-            if (archiveFile.exists()) {
-                Message.verbose("\t[NOT REQUIRED] " + artifacts[i]);
-                adr.setDownloadStatus(DownloadStatus.NO);
-                adr.setSize(archiveFile.length());
-                adr.setArtifactOrigin(origin);
-            } else {
-                Artifact artifact = fromSystem(artifacts[i]);
-                if (!artifact.equals(artifacts[i])) {
-                    Message.verbose("\t" + getName() + "looking for artifact " + artifact
-                            + " (is " + artifacts[i] + " in system namespace)");
-                }
-                long start = System.currentTimeMillis();
-                try {
-                    ResolvedResource artifactRef = getArtifactRef(artifact, null);
-                    if (artifactRef != null) {
-                        origin = new ArtifactOrigin(artifactRef.getResource().isLocal(),
-                                artifactRef.getResource().getName());
-                        if (useOrigin && artifactRef.getResource().isLocal()) {
-                            Message.verbose("\t[NOT REQUIRED] " + artifacts[i]);
-                            cacheManager.saveArtifactOrigin(artifacts[i], origin);
-                            archiveFile = cacheManager.getArchiveFileInCache(artifacts[i],
-                                origin);
-                            adr.setDownloadStatus(DownloadStatus.NO);
-                            adr.setSize(archiveFile.length());
-                            adr.setArtifactOrigin(origin);
-                        } else {
-                            // refresh archive file now that we better now its origin
-                            archiveFile = cacheManager.getArchiveFileInCache(artifacts[i],
-                                origin, useOrigin);
-                            if (ResourceHelper.equals(artifactRef.getResource(), archiveFile)) {
-                                Message.error("invalid configuration for resolver '"
-                                        + getName()
-                                        + "': pointing artifacts to ivy cache is forbidden !");
-                                return null;
-                            }
-                            Message.info("downloading " + artifactRef.getResource() + " ...");
-                            if (eventManager != null) {
-                                eventManager.fireIvyEvent(new StartArtifactDownloadEvent(this,
-                                        artifacts[i], origin));
-                            }
-
-                            File tmp = cacheManager.getArchiveFileInCache(new DefaultArtifact(
-                                    artifacts[i].getModuleRevisionId(), artifacts[i]
-                                            .getPublicationDate(), artifacts[i].getName(),
-                                    artifacts[i].getType(), artifacts[i].getExt() + ".part",
-                                    artifacts[i].getExtraAttributes()), origin, useOrigin);
-
-                            // deal with artifact with url special case
-                            if (artifactRef.getResource().getName().equals(
-                                String.valueOf(artifacts[i].getUrl()))) {
-                                Message.verbose("\t" + getName() + ": downloading "
-                                        + artifactRef.getResource().getName());
-                                Message.debug("\t\tto " + tmp);
-                                if (tmp.getParentFile() != null) {
-                                    tmp.getParentFile().mkdirs();
-                                }
-                                extartifactrep.get(artifactRef.getResource().getName(), tmp);
-                                adr.setSize(tmp.length());
-                            } else {
-                                adr.setSize(getAndCheck(artifactRef.getResource(), tmp));
-                            }
-                            if (!tmp.renameTo(archiveFile)) {
-                                Message.warn("\t[FAILED     ] " + artifacts[i]
-                                        + " impossible to move temp file to definitive one ("
-                                        + (System.currentTimeMillis() - start) + "ms)");
-                                adr.setDownloadStatus(DownloadStatus.FAILED);
-                            } else {
-                                cacheManager.saveArtifactOrigin(artifacts[i], origin);
-                                Message.info("\t[SUCCESSFUL ] " + artifacts[i] + " ("
-                                        + (System.currentTimeMillis() - start) + "ms)");
-                                adr.setDownloadStatus(DownloadStatus.SUCCESSFUL);
-                                adr.setArtifactOrigin(origin);
-                            }
-                        }
-                    } else {
-                        adr.setDownloadStatus(DownloadStatus.FAILED);
-                    }
-                } catch (Exception ex) {
-                    Message.warn("\t[FAILED     ] " + artifacts[i] + " : " + ex.getMessage()
-                            + " (" + (System.currentTimeMillis() - start) + "ms)");
-                    adr.setDownloadStatus(DownloadStatus.FAILED);
-                }
-                checkInterrupted();
-            }
-            if (eventManager != null) {
-                eventManager.fireIvyEvent(new EndArtifactDownloadEvent(this, artifacts[i], adr,
-                        archiveFile));
-            }
+            checkInterrupted();
         }
         return dr;
     }
@@ -1028,5 +953,67 @@ public abstract class BasicResolver extends AbstractResolver {
     public void setChecksums(String checksums) {
         this.checksums = checksums;
     }
+    
+    private final ArtifactResourceResolver artifactResourceResolver 
+                                        = new ArtifactResourceResolver() {
+        public ResolvedResource resolve(Artifact artifact) {
+            artifact = fromSystem(artifact);
+            return getArtifactRef(artifact, null);
+        }
+    };
 
+    private final ResourceDownloader downloader = new ResourceDownloader() {
+        public void download(Artifact artifact, Resource resource, File dest) throws IOException {
+            if (dest.exists()) {
+                dest.delete();
+            }
+            File part = new File(dest.getAbsolutePath() + ".part");
+            if (resource.getName().equals(
+                String.valueOf(artifact.getUrl()))) {
+                if (part.getParentFile() != null) {
+                    part.getParentFile().mkdirs();
+                }
+                extartifactrep.get(resource.getName(), part);
+            } else {
+                getAndCheck(resource, part);
+            }
+            if (!part.renameTo(dest)) {
+                throw new IOException(
+                    "impossible to move part file to definitive one: " 
+                    + part + " -> " + dest);
+            }
+            
+        }
+    };
+
+    private final DownloadListener downloadListener = new DownloadListener() {
+        public void needArtifact(RepositoryCacheManager cache, Artifact artifact) {
+            if (eventManager != null) {
+                eventManager.fireIvyEvent(new NeedArtifactEvent(BasicResolver.this, artifact));
+            }
+        }
+        public void startArtifactDownload(
+                RepositoryCacheManager cache, ResolvedResource rres, 
+                Artifact artifact, ArtifactOrigin origin) {
+            if (artifact.isMetadata()) {
+                Message.verbose("downloading " + rres.getResource() + " ...");
+            } else {
+                Message.info("downloading " + rres.getResource() + " ...");
+            }
+            if (eventManager != null) {
+                eventManager.fireIvyEvent(
+                    new StartArtifactDownloadEvent(
+                        BasicResolver.this, artifact, origin));
+            }            
+        }
+        public void endArtifactDownload(
+                RepositoryCacheManager cache, Artifact artifact, 
+                ArtifactDownloadReport adr, File archiveFile) {
+            if (eventManager != null) {
+                eventManager.fireIvyEvent(
+                    new EndArtifactDownloadEvent(
+                        BasicResolver.this, artifact, adr, archiveFile));
+            }
+        }
+    };
 }

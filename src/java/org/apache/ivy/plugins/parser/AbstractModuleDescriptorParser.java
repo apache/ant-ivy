@@ -26,7 +26,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.Configuration;
+import org.apache.ivy.core.module.descriptor.DefaultArtifact;
 import org.apache.ivy.core.module.descriptor.DefaultDependencyDescriptor;
 import org.apache.ivy.core.module.descriptor.DefaultModuleDescriptor;
 import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
@@ -44,6 +46,14 @@ public abstract class AbstractModuleDescriptorParser implements ModuleDescriptor
             boolean validate) throws ParseException, IOException {
         return parseDescriptor(ivySettings, descriptorURL, 
             new URLResource(descriptorURL), validate);
+    }
+    
+    public String getType() {
+        return "ivy";
+    }
+    
+    public Artifact getMetadataArtifact(ModuleRevisionId mrid, Resource res) {
+        return DefaultArtifact.newIvyArtifact(mrid, new Date(res.getLastModified()));
     }
 
     protected abstract static class AbstractParser extends DefaultHandler {

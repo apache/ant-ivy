@@ -20,6 +20,7 @@ package org.apache.ivy.core.cache;
 import java.io.File;
 
 import org.apache.ivy.core.module.id.ModuleId;
+import org.apache.ivy.plugins.lock.LockStrategy;
 import org.apache.ivy.plugins.parser.ParserSettings;
 import org.apache.ivy.plugins.resolver.DependencyResolver;
 import org.apache.ivy.plugins.version.VersionMatcher;
@@ -46,4 +47,8 @@ public interface CacheSettings extends ParserSettings {
     DependencyResolver getResolver(ModuleId moduleId);
 
     DependencyResolver getResolver(String artResolverName);
+    
+    LockStrategy getLockStrategy(String name);
+    
+    LockStrategy getDefaultLockStrategy();
 }

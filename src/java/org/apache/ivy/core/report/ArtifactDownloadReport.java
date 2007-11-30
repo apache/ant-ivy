@@ -32,6 +32,10 @@ public class ArtifactDownloadReport {
 
     private long size;
 
+    private String downloadDetails = "";
+
+    private long downloadTimeMillis;
+
     public ArtifactDownloadReport(Artifact artifact) {
         this.artifact = artifact;
     }
@@ -74,5 +78,34 @@ public class ArtifactDownloadReport {
 
     public ArtifactOrigin getArtifactOrigin() {
         return origin;
+    }
+
+    public void setDownloadDetails(String message) {
+        downloadDetails = message;
+    }
+    
+    public String getDownloadDetails() {
+        return downloadDetails;
+    }
+
+    public void setDownloadTimeMillis(long l) {
+        downloadTimeMillis = l;
+    }
+    
+    public long getDownloadTimeMillis() {
+        return downloadTimeMillis;
+    }
+    
+    public String toString() {
+        if (downloadStatus == DownloadStatus.SUCCESSFUL) {
+            return "[SUCCESSFUL ] " + artifact + " (" + downloadTimeMillis + "ms)";
+        } else if (downloadStatus == DownloadStatus.FAILED) {
+            return "[FAILED     ] " + artifact + " : " + downloadDetails
+                + " (" + downloadTimeMillis + "ms)";
+        } else if (downloadStatus == DownloadStatus.NO) {
+            return "[NOT REQUIRED] " + artifact;
+        } else {
+            return super.toString();
+        }
     }
 }

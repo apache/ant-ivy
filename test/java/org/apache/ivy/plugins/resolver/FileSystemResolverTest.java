@@ -48,8 +48,6 @@ import org.apache.ivy.plugins.latest.LatestRevisionStrategy;
 import org.apache.ivy.plugins.latest.LatestTimeStrategy;
 import org.apache.ivy.util.CacheCleaner;
 import org.apache.ivy.util.FileUtil;
-import org.apache.tools.ant.Project;
-import org.apache.tools.ant.taskdefs.Delete;
 
 /**
  * 
@@ -77,7 +75,7 @@ public class FileSystemResolverTest extends TestCase {
     }
 
     protected void setUp() throws Exception {
-        settings = new IvySettings();
+         settings = new IvySettings();
         engine = new ResolveEngine(settings, new EventManager(), new SortEngine(settings));
         cache = new File("build/cache");
         data = new ResolveData(engine, new ResolveOptions().setCache(CacheManager.getInstance(
@@ -152,7 +150,7 @@ public class FileSystemResolverTest extends TestCase {
     }
 
     private DownloadOptions getDownloadOptions(boolean useOrigin) {
-        return new DownloadOptions(cacheManager, null, useOrigin);
+        return new DownloadOptions(cacheManager, useOrigin);
     }
 
     public void testMaven2() throws Exception {

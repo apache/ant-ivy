@@ -34,6 +34,7 @@ import org.apache.ivy.Ivy;
 import org.apache.ivy.core.IvyContext;
 import org.apache.ivy.core.module.descriptor.Configuration;
 import org.apache.ivy.core.module.descriptor.ConfigurationAware;
+import org.apache.ivy.core.module.descriptor.DefaultArtifact;
 import org.apache.ivy.core.module.descriptor.DefaultDependencyArtifactDescriptor;
 import org.apache.ivy.core.module.descriptor.DefaultDependencyDescriptor;
 import org.apache.ivy.core.module.descriptor.DefaultExcludeRule;
@@ -197,6 +198,9 @@ public final class XmlModuleDescriptorParser extends AbstractModuleDescriptorPar
                 XMLHelper.parse(xmlURL, schemaURL, this);
                 checkConfigurations();
                 replaceConfigurationWildcards();
+                md.setModuleArtifact(
+                    DefaultArtifact.newIvyArtifact(
+                        md.getResolvedModuleRevisionId(), md.getPublicationDate()));
                 if (!artifactsDeclared) {
                     String[] confs = md.getConfigurationsNames();
                     for (int i = 0; i < confs.length; i++) {

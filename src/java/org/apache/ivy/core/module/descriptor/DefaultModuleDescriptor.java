@@ -208,8 +208,10 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
     private ModuleDescriptorParser parser;
 
     private Resource resource;
-
+    
     private List excludeRules = new ArrayList(); // List(ExcludeRule)
+
+    private Artifact moduleArtifact;
 
     public DefaultModuleDescriptor(ModuleRevisionId id, String status, Date pubDate) {
         this(id, status, pubDate, false);
@@ -238,6 +240,17 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
     public DefaultModuleDescriptor(ModuleDescriptorParser parser, Resource res) {
         this.parser = parser;
         resource = res;
+    }
+    
+    public Artifact getMetadataArtifact() {
+        if (moduleArtifact == null) {
+            moduleArtifact = DefaultArtifact.newIvyArtifact(resolvedRevId, publicationDate);
+        }
+        return moduleArtifact;
+    }
+    
+    public void setModuleArtifact(Artifact moduleArtifact) {
+        this.moduleArtifact = moduleArtifact;
     }
 
     public boolean isDefault() {
