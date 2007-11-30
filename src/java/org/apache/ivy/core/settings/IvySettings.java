@@ -127,29 +127,32 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
 
     private boolean checkUpToDate = true;
 
-    private Map moduleSettings = new LinkedHashMap(); // Map (ModuleIdMatcher -> ModuleSettings)
+    // Map (ModuleIdMatcher -> ModuleSettings)
+    private Map moduleSettings = new LinkedHashMap(); 
 
-    private Map conflictsManager = new HashMap(); // Map (String conflictManagerName ->
+    // Map (String conflictManagerName -> ConflictManager)
+    private Map conflictsManager = new HashMap(); 
 
-    // ConflictManager)
+    // Map (String latestStrategyName -> LatestStrategy)
+    private Map latestStrategies = new HashMap(); 
 
-    private Map latestStrategies = new HashMap(); // Map (String latestStrategyName ->
+    // Map (String namespaceName -> Namespace)
+    private Map namespaces = new HashMap(); 
 
-    // LatestStrategy)
+    // Map (String matcherName -> Matcher)
+    private Map matchers = new HashMap(); 
 
-    private Map namespaces = new HashMap(); // Map (String namespaceName -> Namespace)
+    // Map (String outputterName -> ReportOutputter)
+    private Map reportOutputters = new HashMap(); 
 
-    private Map matchers = new HashMap(); // Map (String matcherName -> Matcher)
+    // Map (String matcherName -> VersionMatcher)
+    private Map versionMatchers = new HashMap(); 
 
-    private Map reportOutputters = new HashMap(); // Map (String outputterName -> ReportOutputter)
+    // Map (String name -> CircularDependencyStrategy)
+    private Map circularDependencyStrategies = new HashMap(); 
 
-    private Map versionMatchers = new HashMap(); // Map (String matcherName -> VersionMatcher)
-
-    private Map circularDependencyStrategies = new HashMap(); // Map (String name ->
-
-    // CircularDependencyStrategy)
-
-    private List triggers = new ArrayList(); // List (Trigger)
+    // List (Trigger)
+    private List triggers = new ArrayList(); 
 
     private IvyVariableContainer variableContainer = new IvyVariableContainerImpl();
 
