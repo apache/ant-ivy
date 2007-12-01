@@ -202,6 +202,8 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
 
     private StatusManager statusManager;
 
+    private Boolean debugLocking;
+
     public IvySettings() {
         this(new IvyVariableContainerImpl());
     }
@@ -1146,6 +1148,15 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
                     && Boolean.valueOf(var).booleanValue());
         }
         return debugConflictResolution.booleanValue();
+    }
+
+    public boolean debugLocking() {
+        if (debugLocking == null) {
+            String var = getVariable("ivy.log.locking");
+            debugLocking = Boolean.valueOf(var != null
+                    && Boolean.valueOf(var).booleanValue());
+        }
+        return debugLocking.booleanValue();
     }
 
     public boolean logNotConvertedExclusionRule() {

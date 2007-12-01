@@ -33,6 +33,10 @@ import org.apache.ivy.core.module.descriptor.Artifact;
  * The lock methods should return true when the lock is either actually acquired or not performed by
  * the strategy.
  * </p>
+ * <p>
+ * Locking used in the locking strategy must support reentrant lock. Reentrant locking should be
+ * performed for the whole strategy.
+ * </p>
  */
 public interface LockStrategy {
 

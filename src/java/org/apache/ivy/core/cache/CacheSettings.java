@@ -51,4 +51,6 @@ public interface CacheSettings extends ParserSettings {
     LockStrategy getLockStrategy(String name);
     
     LockStrategy getDefaultLockStrategy();
+    
+    boolean debugLocking();
 }

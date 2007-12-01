@@ -262,25 +262,17 @@ public abstract class AbstractResolver implements DependencyResolver, HasLatestS
         return NameSpaceHelper.transform(dd, getNamespace().getFromSystemTransformer(), true);
     }
 
+    protected DependencyDescriptor toSystem(DependencyDescriptor dd) {
+        return NameSpaceHelper.transform(dd, getNamespace().getToSystemTransformer(), true);
+    }
+
     protected IvyNode getSystemNode(ResolveData data, ModuleRevisionId resolvedMrid) {
         return data.getNode(toSystem(resolvedMrid));
     }
 
     protected ResolvedModuleRevision findModuleInCache(ResolveData data, ModuleRevisionId mrid) {
-        ResolvedModuleRevision moduleFromCache = data.getCacheManager().findModuleInCache(
-            toSystem(mrid), doValidate(data));
-        if (moduleFromCache == null) {
-            return null;
-        }
-        if ((getName() == null ? moduleFromCache.getResolver().getName() == null : moduleFromCache
-                .getResolver() == null ? false : getName().equals(
-            moduleFromCache.getResolver().getName()))) {
-            return moduleFromCache;
-        } else {
-            Message.debug("found module in cache but with a different resolver: discarding: "
-                    + moduleFromCache);
-            return null;
-        }
+        return data.getCacheManager().findModuleInCache(
+            mrid, doValidate(data), getName());
     }
 
     public String getChangingMatcherName() {

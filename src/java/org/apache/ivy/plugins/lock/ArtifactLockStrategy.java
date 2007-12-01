@@ -23,6 +23,15 @@ import org.apache.ivy.core.module.descriptor.Artifact;
 
 public class ArtifactLockStrategy extends FileBasedLockStrategy {
     public ArtifactLockStrategy() {
+        init();
+    }
+
+    public ArtifactLockStrategy(boolean debugLocking) {
+        super(debugLocking);
+        init();
+    }
+
+    private void init() {
         setName("artifact-lock");
     }
 

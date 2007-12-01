@@ -38,7 +38,9 @@ import org.apache.ivy.core.IvyContext;
 import org.apache.ivy.core.IvyPatternHelper;
 import org.apache.ivy.core.cache.ArtifactOrigin;
 import org.apache.ivy.core.cache.CacheDownloadOptions;
+import org.apache.ivy.core.cache.CacheMetadataOptions;
 import org.apache.ivy.core.cache.DownloadListener;
+import org.apache.ivy.core.cache.ModuleDescriptorWriter;
 import org.apache.ivy.core.cache.RepositoryCacheManager;
 import org.apache.ivy.core.event.EventManager;
 import org.apache.ivy.core.event.download.EndArtifactDownloadEvent;
@@ -161,94 +163,95 @@ public abstract class BasicResolver extends AbstractResolver {
         checkmodified = Boolean.valueOf(check);
     }
 
-    public ResolvedModuleRevision getDependency(DependencyDescriptor dd, ResolveData data)
+    public ResolvedModuleRevision getDependency(DependencyDescriptor dde, ResolveData data)
             throws ParseException {
         IvyContext context = IvyContext.pushNewCopyContext();
-        context.setDependencyDescriptor(dd);
+        DependencyDescriptor systemDd = dde;
+        DependencyDescriptor nsDd = fromSystem(dde);
+        context.setDependencyDescriptor(systemDd);
         context.setResolveData(data);
         try {
-            DependencyDescriptor systemDd = dd;
-            dd = fromSystem(dd);
-
             clearIvyAttempts();
             clearArtifactAttempts();
             boolean downloaded = false;
             boolean searched = false;
-            ModuleRevisionId mrid = dd.getDependencyRevisionId();
+            ModuleRevisionId systemMrid = systemDd.getDependencyRevisionId();
+            ModuleRevisionId  nsMrid = nsDd.getDependencyRevisionId();
+            
             // check revision
-            int index = mrid.getRevision().indexOf("@");
-            if (index != -1 && !mrid.getRevision().substring(index + 1).equals(workspaceName)) {
-                Message.verbose("\t" + getName() + ": unhandled revision => " + mrid.getRevision());
+            int index = systemMrid.getRevision().indexOf("@");
+            if (index != -1 && !systemMrid.getRevision().substring(index + 1).equals(workspaceName)) {
+                Message.verbose("\t" + getName() + ": unhandled revision => " + systemMrid.getRevision());
                 return null;
             }
 
-            boolean isDynamic = getSettings().getVersionMatcher().isDynamic(mrid);
+            boolean isDynamic = getSettings().getVersionMatcher().isDynamic(systemMrid);
             if (isDynamic && !acceptLatest()) {
                 Message.error("dynamic revisions not handled by " + getClass().getName()
-                    + ". impossible to resolve " + mrid);
+                    + ". impossible to resolve " + systemMrid);
                 return null;
             }
 
-            boolean isChangingRevision = getChangingMatcher().matches(mrid.getRevision());
-            boolean isChangingDependency = isChangingRevision || dd.isChanging();
+            boolean isChangingRevision = getChangingMatcher().matches(systemMrid.getRevision());
+            boolean isChangingDependency = isChangingRevision || systemDd.isChanging();
 
             // if we do not have to check modified and if the revision is exact and not changing,
             // we first search for it in cache
             ResolvedModuleRevision cachedRmr = null;
             boolean checkedCache = false;
             if (!isDynamic && !isCheckmodified() && !isChangingDependency) {
-                cachedRmr = findModuleInCache(data, mrid);
+                cachedRmr = findModuleInCache(data, systemMrid);
                 checkedCache = true;
                 if (cachedRmr != null) {
                     if (cachedRmr.getDescriptor().isDefault() && cachedRmr.getResolver() != this) {
-                        Message.verbose("\t" + getName() + ": found revision in cache: " + mrid
+                        Message.verbose("\t" + getName() + ": found revision in cache: " + systemMrid
                             + " (resolved by " + cachedRmr.getResolver().getName()
                             + "): but it's a default one, maybe we can find a better one");
                     } else {
-                        Message.verbose("\t" + getName() + ": revision in cache: " + mrid);
-                        return toSystem(cachedRmr);
+                        Message.verbose("\t" + getName() + ": revision in cache: " + systemMrid);
+                        return cachedRmr;
                     }
                 }
             }
             checkInterrupted();
-            ResolvedResource ivyRef = findIvyFileRef(dd, data);
+            ResolvedResource ivyRef = findIvyFileRef(nsDd, data);
             checkInterrupted();
             searched = true;
 
             // get module descriptor
-            ModuleDescriptorParser parser;
-            ModuleDescriptor md;
+            final ModuleDescriptorParser parser;
+            ModuleDescriptor nsMd;
             ModuleDescriptor systemMd = null;
             if (ivyRef == null) {
                 if (!isAllownomd()) {
-                    Message.verbose("\t" + getName() + ": no ivy file found for " + mrid);
+                    Message.verbose("\t" + getName() + ": no ivy file found for " + systemMrid);
                     return null;
                 }
                 parser = XmlModuleDescriptorParser.getInstance();
-                md = DefaultModuleDescriptor.newDefaultInstance(mrid, dd
+                nsMd = DefaultModuleDescriptor.newDefaultInstance(nsMrid, nsDd
                     .getAllDependencyArtifacts());
-                ResolvedResource artifactRef = findFirstArtifactRef(md, dd, data);
+                ResolvedResource artifactRef = findFirstArtifactRef(nsMd, nsDd, data);
                 checkInterrupted();
                 if (artifactRef == null) {
                     Message.verbose("\t" + getName() + ": no ivy file nor artifact found for "
-                        + mrid);
+                        + systemMrid);
                     if (!checkedCache) {
-                        cachedRmr = findModuleInCache(data, mrid);
+                        cachedRmr = findModuleInCache(data, systemMrid);
                     }
                     if (cachedRmr != null) {
-                        Message.verbose("\t" + getName() + ": revision in cache: " + mrid);
-                        return toSystem(cachedRmr);
+                        Message.verbose("\t" + getName() + ": revision in cache: " + systemMrid);
+                        return cachedRmr;
                     }
                     return null;
                 } else {
                     long lastModified = artifactRef.getLastModified();
-                    if (lastModified != 0 && md instanceof DefaultModuleDescriptor) {
-                        ((DefaultModuleDescriptor) md).setLastModified(lastModified);
+                    if (lastModified != 0 && nsMd instanceof DefaultModuleDescriptor) {
+                        ((DefaultModuleDescriptor) nsMd).setLastModified(lastModified);
                     }
-                    Message.verbose("\t" + getName() + ": no ivy file found for " + mrid
+                    Message.verbose("\t" + getName() + ": no ivy file found for " + systemMrid
                         + ": using default data");
                     if (isDynamic) {
-                        md.setResolvedModuleRevisionId(ModuleRevisionId.newInstance(mrid,
+                        nsMd.setResolvedModuleRevisionId(ModuleRevisionId.newInstance(nsMrid,
                             artifactRef.getRevision()));
                     }
                 }
@@ -258,7 +261,7 @@ public abstract class BasicResolver extends AbstractResolver {
                     rmr = ((MDResolvedResource) ivyRef).getResolvedModuleRevision();
                 }
                 if (rmr == null) {
-                    rmr = parse(ivyRef, dd, data);
+                    rmr = parse(ivyRef, systemDd, data);
                     if (rmr == null) {
                         return null;
                     }
@@ -266,41 +269,39 @@ public abstract class BasicResolver extends AbstractResolver {
                 if (!rmr.isDownloaded()) {
                     return toSystem(rmr);
                 } else {
-                    md = rmr.getDescriptor();
+                    nsMd = rmr.getDescriptor();
                     parser = ModuleDescriptorParserRegistry.getInstance().getParser(
                         ivyRef.getResource());
 
                     // check descriptor data is in sync with resource revision and names
-                    systemMd = toSystem(md);
+                    systemMd = toSystem(nsMd);
                     if (checkconsistency) {
-                        checkDescriptorConsistency(mrid, md, ivyRef);
-                        checkDescriptorConsistency(systemDd.getDependencyRevisionId(), systemMd,
-                            ivyRef);
+                        checkDescriptorConsistency(systemMrid, systemMd, ivyRef);
+                        checkDescriptorConsistency(nsMrid, nsMd, ivyRef);
                     } else {
-                        if (md instanceof DefaultModuleDescriptor) {
-                            String revision = getRevision(ivyRef, mrid, md);
-                            ((DefaultModuleDescriptor) md).setModuleRevisionId(ModuleRevisionId
-                                .newInstance(mrid, revision));
+                        if (nsMd instanceof DefaultModuleDescriptor) {
+                            String revision = getRevision(ivyRef, nsMrid, nsMd);
+                            ((DefaultModuleDescriptor) nsMd).setModuleRevisionId(ModuleRevisionId
+                                .newInstance(nsMrid, revision));
                         } else {
                             Message.warn(
-                                "consistency disabled with instance of non DefaultModuleDescriptor..."
-                                + " module info can't be updated, so consistency check will be done");
-                            checkDescriptorConsistency(mrid, md, ivyRef);
-                            checkDescriptorConsistency(systemDd.getDependencyRevisionId(),
-                                systemMd, ivyRef);
+                              "consistency disabled with instance of non DefaultModuleDescriptor..."
+                              + " module info can't be updated, so consistency check will be done");
+                            checkDescriptorConsistency(nsMrid, nsMd, ivyRef);
+                            checkDescriptorConsistency(systemMrid, systemMd, ivyRef);
                         }
                     }
                 }
             }
 
             if (systemMd == null) {
-                systemMd = toSystem(md);
+                systemMd = toSystem(nsMd);
             }
 
             // resolve revision
-            ModuleRevisionId resolvedMrid = mrid;
+            ModuleRevisionId resolvedMrid = nsMrid;
             if (isDynamic) {
-                resolvedMrid = md.getResolvedModuleRevisionId();
+                resolvedMrid = nsMd.getResolvedModuleRevisionId();
                 if (resolvedMrid.getRevision() == null 
                         || resolvedMrid.getRevision().length() == 0) {
                     if (ivyRef.getRevision() == null || ivyRef.getRevision().length() == 0) {
@@ -311,23 +312,25 @@ public abstract class BasicResolver extends AbstractResolver {
                             .getRevision());
                     }
                 }
-                Message.verbose("\t\t[" + resolvedMrid.getRevision() + "] " + mrid.getModuleId());
+                Message.verbose("\t\t[" + toSystem(resolvedMrid).getRevision() + "] " 
+                    + systemMrid.getModuleId());
             }
-            md.setResolvedModuleRevisionId(resolvedMrid);
-            systemMd.setResolvedModuleRevisionId(toSystem(resolvedMrid)); // keep system md in
-            // sync with md
+            nsMd.setResolvedModuleRevisionId(resolvedMrid);
+
+            // keep system md in sync with ns md
+            systemMd.setResolvedModuleRevisionId(toSystem(resolvedMrid)); 
 
             // check module descriptor revision
-            if (!getSettings().getVersionMatcher().accept(mrid, md)) {
+            if (!getSettings().getVersionMatcher().accept(systemMrid, systemMd)) {
                 Message.info("\t" + getName() + ": unacceptable revision => was="
-                    + md.getModuleRevisionId().getRevision() + " required="
-                    + mrid.getRevision());
+                    + systemMd.getModuleRevisionId().getRevision() + " required="
+                    + systemMrid.getRevision());
                 return null;
             }
 
             // resolve and check publication date
             if (data.getDate() != null) {
-                long pubDate = getPublicationDate(md, dd, data);
+                long pubDate = getPublicationDate(systemMd, systemDd, data);
                 if (pubDate > data.getDate().getTime()) {
                     Message.info("\t" + getName() + ": unacceptable publication date => was="
                         + new Date(pubDate) + " required=" + data.getDate());
@@ -335,18 +338,17 @@ public abstract class BasicResolver extends AbstractResolver {
                 } else if (pubDate == -1) {
                     Message.info("\t" + getName()
                         + ": impossible to guess publication date: artifact missing for "
-                        + mrid);
+                        + systemMrid);
                     return null;
                 }
-                md.setResolvedPublicationDate(new Date(pubDate));
-                systemMd.setResolvedPublicationDate(new Date(pubDate)); // keep system md in sync
-                // with md
+                nsMd.setResolvedPublicationDate(new Date(pubDate));
+                systemMd.setResolvedPublicationDate(new Date(pubDate)); 
             }
             
-            if (!md.isDefault() 
+            if (!nsMd.isDefault() 
                     && data.getSettings().logNotConvertedExclusionRule() 
-                    && md instanceof DefaultModuleDescriptor) {
-                DefaultModuleDescriptor dmd = (DefaultModuleDescriptor) md;
+                    && nsMd instanceof DefaultModuleDescriptor) {
+                DefaultModuleDescriptor dmd = (DefaultModuleDescriptor) nsMd;
                 if (dmd.isNamespaceUseful()) {
                     Message.warn(
                         "the module descriptor "
@@ -359,41 +361,36 @@ public abstract class BasicResolver extends AbstractResolver {
             }
 
             RepositoryCacheManager cacheManager = data.getCacheManager();
-            // TODO: this should be done with a lock on the metadata artifact (moved to the cache manager)
-           try {
-                File ivyFile = cacheManager.getIvyFileInCache(
-                    systemMd.getResolvedModuleRevisionId());
-                if (ivyRef == null) {
-                    // a basic ivy file is written containing default data
-                    XmlModuleDescriptorWriter.write(systemMd, ivyFile);
-                } else {
-                    // copy and update ivy file from source to cache
-                    parser.toIvyFile(
-                        new FileInputStream(
-                            cacheManager.getArchiveFileInCache(
-                                getOriginalMetadataArtifact(
-                                    parser.getMetadataArtifact(
-                                        resolvedMrid, ivyRef.getResource())))), 
-                        ivyRef.getResource(), ivyFile,
-                        systemMd);
-                    long repLastModified = ivyRef.getLastModified();
-                    if (repLastModified > 0) {
-                        ivyFile.setLastModified(repLastModified);
+            
+            // the metadata artifact which was used to cache the original metadata file 
+            Artifact requestedMetadataArtifact = 
+                ivyRef == null 
+                ? systemMd.getMetadataArtifact()
+                : parser.getMetadataArtifact(
+                    ModuleRevisionId.newInstance(systemMrid, ivyRef.getRevision()), 
+                    ivyRef.getResource());
+            
+            cacheManager.originalToCachedModuleDescriptor(this, ivyRef, requestedMetadataArtifact, 
+                    systemMd, new ModuleDescriptorWriter() {
+                public void write(ResolvedResource originalMdResource, ModuleDescriptor md, 
+                        File src, File dest) 
+                        throws IOException, ParseException {
+                    if (originalMdResource == null) {
+                        // a basic ivy file is written containing default data
+                        XmlModuleDescriptorWriter.write(md, dest);
+                    } else {
+                        // copy and update ivy file from source to cache
+                        parser.toIvyFile(
+                            new FileInputStream(src), 
+                            originalMdResource.getResource(), dest,
+                            md);
+                        long repLastModified = originalMdResource.getLastModified();
+                        if (repLastModified > 0) {
+                            dest.setLastModified(repLastModified);
+                        }
                     }
                 }
-            } catch (Exception e) {
-                if (ivyRef == null) {
-                    Message.warn("impossible to create ivy file in cache for module : "
-                        + resolvedMrid);
-                } else {
-                    Message.warn("impossible to copy ivy file to cache: " + ivyRef.getResource()
-                        + ". " + e.getClass().getName() + ": " + e.getMessage());
-                }
-            }
-
-            cacheManager.saveResolver(systemMd, getName());
-            cacheManager.saveArtResolver(systemMd, getName());
-            
+            });            
             
             return new DefaultModuleRevision(this, this, systemMd, searched, downloaded);
         } finally {
@@ -424,9 +421,12 @@ public abstract class BasicResolver extends AbstractResolver {
     public ResolvedModuleRevision parse(final ResolvedResource mdRef, DependencyDescriptor dd,
             ResolveData data) throws ParseException {
 
+        DependencyDescriptor nsDd = dd;
+        dd = toSystem(nsDd);
+        
         ModuleRevisionId mrid = dd.getDependencyRevisionId();
-        ModuleDescriptorParser parser = ModuleDescriptorParserRegistry.getInstance().getParser(
-            mdRef.getResource());
+        ModuleDescriptorParser parser = ModuleDescriptorParserRegistry
+                .getInstance().getParser(mdRef.getResource());
         if (parser == null) {
             Message.warn("no module descriptor parser available for " + mdRef.getResource());
             return null;
@@ -435,15 +435,12 @@ public abstract class BasicResolver extends AbstractResolver {
         Message.verbose("\t\t=> " + mdRef);
         Message.debug("\tparser = " + parser);
 
-        boolean isChangingRevision = getChangingMatcher().matches(mrid.getRevision());
-        boolean isChangingDependency = isChangingRevision || dd.isChanging();
-        Date cachedPublicationDate = null;
         ModuleRevisionId resolvedMrid = mrid;
 
         // first check if this dependency has not yet been resolved
         if (getSettings().getVersionMatcher().isDynamic(mrid)) {
             resolvedMrid = ModuleRevisionId.newInstance(mrid, mdRef.getRevision());
-            IvyNode node = getSystemNode(data, resolvedMrid);
+            IvyNode node = data.getNode(resolvedMrid);
             if (node != null && node.getModuleRevision() != null) {
                 // this revision has already be resolved : return it
                 if (node.getDescriptor() != null && node.getDescriptor().isDefault()) {
@@ -453,119 +450,22 @@ public abstract class BasicResolver extends AbstractResolver {
                 } else {
                     Message.verbose("\t" + getName() + ": revision already resolved: "
                             + resolvedMrid);
-                    return searchedRmr(node.getModuleRevision());
+                    return DefaultModuleRevision.searchedRmr(node.getModuleRevision());
                 }
             }
         }
 
-        // TODO: this should be done while the lock on the original artifact is acquired (in cache manager #download)
-        // now let's see if we can find it in cache and if it is up to date
-        ResolvedModuleRevision rmr = findModuleInCache(data, resolvedMrid);
-        if (rmr != null) {
-            if (rmr.getDescriptor().isDefault() && rmr.getResolver() != this) {
-                Message.verbose("\t" + getName() + ": found revision in cache: " + mrid
-                        + " (resolved by " + rmr.getResolver().getName()
-                        + "): but it's a default one, maybe we can find a better one");
-            } else {
-                if (!isCheckmodified() && !isChangingDependency) {
-                    Message.verbose("\t" + getName() + ": revision in cache: " + mrid);
-                    return searchedRmr(rmr);
-                }
-                long repLastModified = mdRef.getLastModified();
-                long cacheLastModified = rmr.getDescriptor().getLastModified();
-                if (!rmr.getDescriptor().isDefault() && repLastModified <= cacheLastModified) {
-                    Message.verbose("\t" + getName() + ": revision in cache (not updated): "
-                            + resolvedMrid);
-                    return searchedRmr(rmr);
-                } else {
-                    Message.verbose("\t" + getName() + ": revision in cache is not up to date: "
-                            + resolvedMrid);
-                    if (isChangingDependency) {
-                        // ivy file has been updated, we should see if it has a new publication date
-                        // to see if a new download is required (in case the dependency is a
-                        // changing one)
-                        cachedPublicationDate = rmr.getDescriptor().getResolvedPublicationDate();
-                    }
-                }
-            }
-        }
-
-        // now download module descriptor and parse it
         Artifact moduleArtifact = parser.getMetadataArtifact(resolvedMrid, mdRef.getResource());
-        ArtifactDownloadReport report = data.getCacheManager().download(
-            getOriginalMetadataArtifact(moduleArtifact), 
-            new ArtifactResourceResolver() {
-                public ResolvedResource resolve(Artifact artifact) {
-                    return mdRef;
-                }
-            }, downloader, 
-            new CacheDownloadOptions().setListener(downloadListener).setForce(true));
-        Message.verbose("\t" + report);            
-
-        if (report.getDownloadStatus() == DownloadStatus.FAILED) {
-            Message.warn("problem while downloading module descriptor: " + mdRef.getResource() 
-                + ": " + report.getDownloadDetails() 
-                + " (" + report.getDownloadTimeMillis() + "ms)");
-            return null;
-        }
-
-        File originalMDCacheFile = data.getCacheManager().getArchiveFileInCache(
-            report.getArtifact(), report.getArtifactOrigin(), false);
-        URL cachedMDURL = null;
-        try {
-            cachedMDURL = originalMDCacheFile.toURL();
-        } catch (MalformedURLException ex) {
-            Message.warn("malformed url exception for original in cache file: " 
-                + originalMDCacheFile + ": " + ex.getMessage());
-            return null;
-        }
-        try {
-            ModuleDescriptor md = parser.parseDescriptor(
-                data.getSettings(), cachedMDURL, mdRef.getResource(), doValidate(data));
-            Message.debug("\t" + getName() + ": parsed downloaded md file for " + mrid + " parsed="
-                    + md.getModuleRevisionId());
-
-            // check if we should delete old artifacts
-            boolean deleteOldArtifacts = false;
-            if (cachedPublicationDate != null
-                    && !cachedPublicationDate.equals(md.getResolvedPublicationDate())) {
-                // artifacts have changed, they should be downloaded again
-                Message.verbose(dd + " has changed: deleting old artifacts");
-                deleteOldArtifacts = true;
-            }
-            if (deleteOldArtifacts) {
-                String[] confs = rmr.getDescriptor().getConfigurationsNames();
-                for (int i = 0; i < confs.length; i++) {
-                    Artifact[] arts = rmr.getDescriptor().getArtifacts(confs[i]);
-                    for (int j = 0; j < arts.length; j++) {
-                        Artifact transformedArtifact = toSystem(arts[j]);
-                        ArtifactOrigin origin = data.getCacheManager().getSavedArtifactOrigin(
-                            transformedArtifact);
-                        File artFile = data.getCacheManager().getArchiveFileInCache(
-                            transformedArtifact, origin, false);
-                        if (artFile.exists()) {
-                            Message.debug("deleting " + artFile);
-                            artFile.delete();
-                        }
-                        data.getCacheManager().removeSavedArtifactOrigin(transformedArtifact);
-                    }
-                }
-            } else if (isChangingDependency) {
-                Message.verbose(dd
-                        + " is changing, but has not changed: will trust cached artifacts if any");
-            }
-            return new DefaultModuleRevision(this, this, md, true, true);
-        } catch (IOException ex) {
-            Message.warn("io problem while parsing ivy file: " + mdRef.getResource() + ": "
-                    + ex.getMessage());
-            return null;
-        }
-
-    }
-
-    private Artifact getOriginalMetadataArtifact(Artifact moduleArtifact) {
-        return DefaultArtifact.cloneWithAnotherName(moduleArtifact, 
-            moduleArtifact.getName() + ".original");
+        boolean isChangingRevision = getChangingMatcher().matches(mrid.getRevision());
+        boolean isChangingDependency = isChangingRevision || dd.isChanging();
+        return data.getCacheManager().cacheModuleDescriptor(
+            this, mdRef, moduleArtifact, downloader, 
+            (CacheMetadataOptions) new CacheMetadataOptions()
+                .setChanging(isChangingDependency)
+                .setCheckmodified(isCheckmodified())
+                .setValidate(doValidate(data))
+                .setNamespace(getNamespace())
+                .setListener(downloadListener));
     }
 
     protected ResourceMDParser getRMDParser(final DependencyDescriptor dd, final ResolveData data) {
@@ -649,39 +549,6 @@ public abstract class BasicResolver extends AbstractResolver {
     protected void clearIvyAttempts() {
         ivyattempts.clear();
         clearArtifactAttempts();
-    }
-
-    protected ResolvedModuleRevision searchedRmr(final ResolvedModuleRevision rmr) {
-        // delegate all to previously found except isSearched
-        return new ResolvedModuleRevision() {
-            public boolean isSearched() {
-                return true;
-            }
-
-            public boolean isDownloaded() {
-                return rmr.isDownloaded();
-            }
-
-            public ModuleDescriptor getDescriptor() {
-                return rmr.getDescriptor();
-            }
-
-            public Date getPublicationDate() {
-                return rmr.getPublicationDate();
-            }
-
-            public ModuleRevisionId getId() {
-                return rmr.getId();
-            }
-
-            public DependencyResolver getResolver() {
-                return rmr.getResolver();
-            }
-
-            public DependencyResolver getArtifactResolver() {
-                return rmr.getArtifactResolver();
-            }
-        };
     }
 
     protected void logIvyAttempt(String attempt) {

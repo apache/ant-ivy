@@ -18,14 +18,21 @@
 package org.apache.ivy.core.cache;
 
 import java.io.File;
+import java.text.ParseException;
 
 import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.report.ArtifactDownloadReport;
+import org.apache.ivy.core.resolve.ResolveData;
 import org.apache.ivy.core.resolve.ResolvedModuleRevision;
+import org.apache.ivy.plugins.namespace.Namespace;
 import org.apache.ivy.plugins.repository.ArtifactResourceResolver;
+import org.apache.ivy.plugins.repository.Resource;
 import org.apache.ivy.plugins.repository.ResourceDownloader;
+import org.apache.ivy.plugins.resolver.BasicResolver;
+import org.apache.ivy.plugins.resolver.DependencyResolver;
+import org.apache.ivy.plugins.resolver.util.ResolvedResource;
 
 public interface RepositoryCacheManager {
     public abstract File getRepositoryCacheRoot();
@@ -87,8 +94,21 @@ public interface RepositoryCacheManager {
 
     public abstract void removeSavedArtifactOrigin(Artifact artifact);
 
+    /**
+     * Search a module descriptor in cache for a mrid
+     * 
+     * @param mrid
+     *            the id of the module to search
+     * @param validate
+     *            true to validate ivy file found in cache before returning
+     * @param expectedResolver
+     *            the resolver with which the md in cache must have been resolved to be returned,
+     *            null if this doesn't matter
+     * @return the ResolvedModuleRevision corresponding to the module found, null if none correct
+     *         has been found in cache
+     */
     public abstract ResolvedModuleRevision findModuleInCache(
-            ModuleRevisionId mrid, boolean validate);
+            ModuleRevisionId mrid, boolean validate, String expectedResolver);
     
     /**
      * Downloads an artifact to this cache.
@@ -110,4 +130,15 @@ public interface RepositoryCacheManager {
             ResourceDownloader resourceDownloader, 
             CacheDownloadOptions options);
 
+    public ResolvedModuleRevision cacheModuleDescriptor(
+            DependencyResolver resolver, ResolvedResource orginalMetadataRef, 
+            Artifact requestedMetadataArtifact, 
+            ResourceDownloader downloader, CacheMetadataOptions options) throws ParseException;
+
+    public Artifact getOriginalMetadataArtifact(Artifact moduleArtifact);
+
+    public void originalToCachedModuleDescriptor(
+            DependencyResolver resolver, ResolvedResource orginalMetadataRef, 
+            Artifact requestedMetadataArtifact, 
+            ModuleDescriptor md, ModuleDescriptorWriter writer);
 }

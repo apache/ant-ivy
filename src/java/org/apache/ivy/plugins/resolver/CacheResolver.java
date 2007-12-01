@@ -59,8 +59,8 @@ public class CacheResolver extends FileSystemResolver {
         // if we do not have to check modified and if the revision is exact and not changing,
         // we first search for it in cache
         if (!getSettings().getVersionMatcher().isDynamic(mrid)) {
-            ResolvedModuleRevision rmr = data.getCacheManager().findModuleInCache(mrid,
-                doValidate(data));
+            ResolvedModuleRevision rmr = data.getCacheManager()
+                .findModuleInCache(mrid, doValidate(data), null);
             if (rmr != null) {
                 Message.verbose("\t" + getName() + ": revision in cache: " + mrid);
                 return rmr;
@@ -84,13 +84,13 @@ public class CacheResolver extends FileSystemResolver {
                     // this revision has already be resolved : return it
                     Message.verbose("\t" + getName() + ": revision already resolved: "
                             + resolvedMrid);
-                    return searchedRmr(node.getModuleRevision());
+                    return node.getModuleRevision();
                 }
                 ResolvedModuleRevision rmr = data.getCacheManager().findModuleInCache(resolvedMrid,
-                    doValidate(data));
+                    doValidate(data), null);
                 if (rmr != null) {
                     Message.verbose("\t" + getName() + ": revision in cache: " + resolvedMrid);
-                    return searchedRmr(rmr);
+                    return rmr;
                 } else {
                     Message.error("\t" + getName()
                             + ": inconsistent cache: clean it and resolve again");
@@ -114,6 +114,7 @@ public class CacheResolver extends FileSystemResolver {
                 Message.verbose("\t[NOT REQUIRED] " + artifacts[i]);
                 adr.setDownloadStatus(DownloadStatus.NO);
                 adr.setSize(archiveFile.length());
+                adr.setDownloadedFile(archiveFile);
             } else {
                 logArtifactAttempt(artifacts[i], archiveFile.getAbsolutePath());
                 adr.setDownloadStatus(DownloadStatus.FAILED);

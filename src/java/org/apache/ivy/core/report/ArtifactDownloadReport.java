@@ -17,16 +17,24 @@
  */
 package org.apache.ivy.core.report;
 
+import java.io.File;
+
 import org.apache.ivy.core.cache.ArtifactOrigin;
 import org.apache.ivy.core.module.descriptor.Artifact;
 
 /**
- *
+ * Report on the download of an artifact from a repository to a local (cached) file.
+ * <p>
+ * Note that depending on cache implementation, the artifact may not be actually downloaded, but
+ * used directly from its original location.
+ * </p>
  */
 public class ArtifactDownloadReport {
     private Artifact artifact;
 
     private ArtifactOrigin origin;
+    
+    private File downloadedFile;
 
     private DownloadStatus downloadStatus;
 
@@ -107,5 +115,19 @@ public class ArtifactDownloadReport {
         } else {
             return super.toString();
         }
+    }
+
+    /**
+     * Returns the file where the artifact has been downloaded, or <code>null</code> if and only
+     * if the download failed.
+     * 
+     * @return the file where the artifact has been downloaded
+     */
+    public File getDownloadedFile() {
+        return downloadedFile;
+    }
+
+    public void setDownloadedFile(File downloadedFile) {
+        this.downloadedFile = downloadedFile;
     }
 }

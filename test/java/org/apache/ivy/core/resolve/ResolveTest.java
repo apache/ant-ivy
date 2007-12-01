@@ -3318,7 +3318,7 @@ public class ResolveTest extends TestCase {
         ivy.configure(new File("test/repositories/external-artifacts/ivysettings.xml"));
 
         ResolveReport report = ivy.resolve(new File("test/repositories/external-artifacts/ivy.xml")
-                .toURL(), getResolveOptions(new String[] {"*"}).setValidate(false));
+                .toURL(), getResolveOptions(ivy.getSettings(), new String[] {"*"}).setValidate(false));
         assertFalse(report.hasError());
 
         assertTrue(getArchiveFileInCache("apache", "A", "1.0", "a", "jar", "jar").exists());

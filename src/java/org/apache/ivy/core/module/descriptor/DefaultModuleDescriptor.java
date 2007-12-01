@@ -211,7 +211,7 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
     
     private List excludeRules = new ArrayList(); // List(ExcludeRule)
 
-    private Artifact moduleArtifact;
+    private Artifact metadataArtifact;
 
     public DefaultModuleDescriptor(ModuleRevisionId id, String status, Date pubDate) {
         this(id, status, pubDate, false);
@@ -243,14 +243,15 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
     }
     
     public Artifact getMetadataArtifact() {
-        if (moduleArtifact == null) {
-            moduleArtifact = DefaultArtifact.newIvyArtifact(resolvedRevId, publicationDate);
+        if (metadataArtifact == null) {
+            metadataArtifact = DefaultArtifact.newIvyArtifact(
+                resolvedRevId, resolvedPublicationDate);
         }
-        return moduleArtifact;
+        return metadataArtifact;
     }
     
     public void setModuleArtifact(Artifact moduleArtifact) {
-        this.moduleArtifact = moduleArtifact;
+        this.metadataArtifact = moduleArtifact;
     }
 
     public boolean isDefault() {

@@ -90,4 +90,37 @@ public class DefaultModuleRevision implements ResolvedModuleRevision {
         return isSearched;
     }
 
+    public static ResolvedModuleRevision searchedRmr(final ResolvedModuleRevision rmr) {
+        // delegate all to previously found except isSearched
+        return new ResolvedModuleRevision() {
+            public boolean isSearched() {
+                return true;
+            }
+
+            public boolean isDownloaded() {
+                return rmr.isDownloaded();
+            }
+
+            public ModuleDescriptor getDescriptor() {
+                return rmr.getDescriptor();
+            }
+
+            public Date getPublicationDate() {
+                return rmr.getPublicationDate();
+            }
+
+            public ModuleRevisionId getId() {
+                return rmr.getId();
+            }
+
+            public DependencyResolver getResolver() {
+                return rmr.getResolver();
+            }
+
+            public DependencyResolver getArtifactResolver() {
+                return rmr.getArtifactResolver();
+            }
+        };
+    }
+    
 }

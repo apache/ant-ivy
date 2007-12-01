@@ -19,6 +19,11 @@ package org.apache.ivy.core.cache;
 
 import java.io.File;
 import java.io.FilenameFilter;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.text.ParseException;
+import java.util.Date;
 
 import org.apache.ivy.core.IvyContext;
 import org.apache.ivy.core.IvyPatternHelper;
@@ -29,12 +34,19 @@ import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.report.ArtifactDownloadReport;
 import org.apache.ivy.core.report.DownloadStatus;
 import org.apache.ivy.core.resolve.DefaultModuleRevision;
+import org.apache.ivy.core.resolve.ResolveData;
 import org.apache.ivy.core.resolve.ResolvedModuleRevision;
 import org.apache.ivy.plugins.lock.LockStrategy;
+import org.apache.ivy.plugins.namespace.NameSpaceHelper;
+import org.apache.ivy.plugins.namespace.Namespace;
+import org.apache.ivy.plugins.parser.ModuleDescriptorParser;
+import org.apache.ivy.plugins.parser.ModuleDescriptorParserRegistry;
 import org.apache.ivy.plugins.parser.xml.XmlModuleDescriptorParser;
 import org.apache.ivy.plugins.repository.ArtifactResourceResolver;
+import org.apache.ivy.plugins.repository.Resource;
 import org.apache.ivy.plugins.repository.ResourceDownloader;
 import org.apache.ivy.plugins.repository.ResourceHelper;
+import org.apache.ivy.plugins.resolver.BasicResolver;
 import org.apache.ivy.plugins.resolver.DependencyResolver;
 import org.apache.ivy.plugins.resolver.util.ResolvedResource;
 import org.apache.ivy.util.Message;
@@ -54,6 +66,9 @@ public class CacheManager implements RepositoryCacheManager, ResolutionCacheMana
     private File cache;
 
     private LockStrategy lockStrategy;
+
+    // TODO: use different names when we'll be able to have multiple cache managers
+    private String name = "cache"; 
 
     public CacheManager(CacheSettings settings, File cache) {
         this.settings = settings == null ? IvyContext.getContext().getSettings() : settings;
@@ -261,7 +276,8 @@ public class CacheManager implements RepositoryCacheManager, ResolutionCacheMana
                 .getCacheDataFilePattern(), mRevId)), "ivy cached data file for " + mRevId);
     }
 
-    public ResolvedModuleRevision findModuleInCache(ModuleRevisionId mrid, boolean validate) {
+    public ResolvedModuleRevision findModuleInCache(
+            ModuleRevisionId mrid, boolean validate, String expectedResolver) {
         // first, check if it is in cache
         if (!settings.getVersionMatcher().isDynamic(mrid)) {
             File ivyFile = getIvyFileInCache(mrid);
@@ -292,8 +308,17 @@ public class CacheManager implements RepositoryCacheManager, ResolutionCacheMana
                     if (resolver != null) {
                         Message.debug("\tfound ivy file in cache for " + mrid + " (resolved by "
                                 + resolver.getName() + "): " + ivyFile);
-                        return new DefaultModuleRevision(resolver, artResolver, depMD, false,
-                                false);
+                        if (expectedResolver != null 
+                                && expectedResolver.equals(resolver.getName())) {
+                            return new DefaultModuleRevision(
+                                resolver, artResolver, depMD, false, false);
+                        } else {
+                            Message.debug(
+                                "found module in cache but with a different resolver: "
+                                + "discarding: " + mrid 
+                                + "; expected resolver=" + expectedResolver 
+                                + "; resolver=" + resolver.getName());                            
+                        }
                     } else {
                         Message.debug("\tresolver not found: " + resolverName
                                 + " => cannot use cached ivy file for " + mrid);
@@ -339,18 +364,14 @@ public class CacheManager implements RepositoryCacheManager, ResolutionCacheMana
             ResourceDownloader resourceDownloader, 
             CacheDownloadOptions options) {
         final ArtifactDownloadReport adr = new ArtifactDownloadReport(artifact);
+        boolean useOrigin = options.isUseOrigin();
         
         LockStrategy lockStrategy = getLockStrategy();
         
-        boolean useOrigin = options.isUseOrigin();
-        try {
-            if (!lockStrategy.lockArtifact(artifact, getArchiveFileInCache(artifact))) {
-                adr.setDownloadStatus(DownloadStatus.FAILED);
-                adr.setDownloadDetails("impossible to get artifact lock with " + lockStrategy);
-            }
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt(); // reset interrupt status 
-            throw new RuntimeException("operation interrupted");
+        if (!lockArtifact(artifact)) {
+            adr.setDownloadStatus(DownloadStatus.FAILED);
+            adr.setDownloadDetails("impossible to get artifact lock with " + lockStrategy);
+            return adr;
         }
         try {
             DownloadListener listener = options.getListener();
@@ -367,6 +388,7 @@ public class CacheManager implements RepositoryCacheManager, ResolutionCacheMana
                 adr.setDownloadStatus(DownloadStatus.NO);
                 adr.setSize(archiveFile.length());
                 adr.setArtifactOrigin(origin);
+                adr.setDownloadedFile(archiveFile);
             } else {
                 long start = System.currentTimeMillis();
                 try {
@@ -381,6 +403,7 @@ public class CacheManager implements RepositoryCacheManager, ResolutionCacheMana
                             adr.setDownloadStatus(DownloadStatus.NO);
                             adr.setSize(archiveFile.length());
                             adr.setArtifactOrigin(origin);
+                            adr.setDownloadedFile(archiveFile);
                         } else {
                             // refresh archive file now that we better now its origin
                             archiveFile = getArchiveFileInCache(artifact,
@@ -401,6 +424,7 @@ public class CacheManager implements RepositoryCacheManager, ResolutionCacheMana
                             adr.setDownloadTimeMillis(System.currentTimeMillis() - start);
                             adr.setDownloadStatus(DownloadStatus.SUCCESSFUL);
                             adr.setArtifactOrigin(origin);
+                            adr.setDownloadedFile(archiveFile);
                         }
                     } else {
                         // this exception is catched below and result in a download failed status
@@ -418,7 +442,182 @@ public class CacheManager implements RepositoryCacheManager, ResolutionCacheMana
             }
             return adr;
         } finally {
-            lockStrategy.unlockArtifact(artifact, getArchiveFileInCache(artifact));
+            unlockArtifact(artifact);
         }
     }
+    
+    private boolean lockArtifact(Artifact artifact) {
+        try {
+            return getLockStrategy().lockArtifact(artifact, getArchiveFileInCache(artifact, null));
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt(); // reset interrupt status 
+            throw new RuntimeException("operation interrupted");
+        }
+    }
+    
+    private void unlockArtifact(Artifact artifact) {
+        getLockStrategy().unlockArtifact(artifact, getArchiveFileInCache(artifact, null));
+    }
+    
+    public void originalToCachedModuleDescriptor(
+            DependencyResolver resolver, ResolvedResource orginalMetadataRef,
+            Artifact requestedMetadataArtifact,
+            ModuleDescriptor md, ModuleDescriptorWriter writer) {
+        Artifact originalMetadataArtifact = getOriginalMetadataArtifact(requestedMetadataArtifact);
+        File mdFileInCache = getIvyFileInCache(md.getResolvedModuleRevisionId());
+
+        if (!lockArtifact(originalMetadataArtifact)) {
+            Message.warn("impossible to get artifact lock for: " + requestedMetadataArtifact);
+            return;
+        }
+        try {
+            writer.write(orginalMetadataRef, md, 
+                getArchiveFileInCache(originalMetadataArtifact), 
+                mdFileInCache);
+
+            saveResolver(md, resolver.getName());
+            saveArtResolver(md, resolver.getName());
+        } catch (RuntimeException e) {
+            throw e;
+        } catch (Exception e) {
+            Message.warn("impossible to put metadata file in cache: " 
+                + (orginalMetadataRef == null 
+                        ? String.valueOf(md.getResolvedModuleRevisionId()) 
+                        : String.valueOf(orginalMetadataRef))
+                + ". " + e.getClass().getName() + ": " + e.getMessage());
+        } finally {
+            unlockArtifact(originalMetadataArtifact);
+        }
+    }
+    
+    public ResolvedModuleRevision cacheModuleDescriptor(
+            DependencyResolver resolver, final ResolvedResource mdRef, Artifact moduleArtifact, 
+            ResourceDownloader downloader, CacheMetadataOptions options) throws ParseException {
+        ModuleDescriptorParser parser = ModuleDescriptorParserRegistry
+            .getInstance().getParser(mdRef.getResource());
+        Date cachedPublicationDate = null;
+        ArtifactDownloadReport report;
+        ModuleRevisionId mrid = moduleArtifact.getModuleRevisionId();
+        Artifact originalMetadataArtifact = getOriginalMetadataArtifact(moduleArtifact);
+        if (!lockArtifact(originalMetadataArtifact)) {
+            Message.error("impossible to acquire lock for " + originalMetadataArtifact);
+            return null;
+        }
+        try {
+        // now let's see if we can find it in cache and if it is up to date
+        ResolvedModuleRevision rmr = findModuleInCache(
+            mrid, options.isValidate(), resolver.getName());
+        if (rmr != null) {
+            if (rmr.getDescriptor().isDefault() && rmr.getResolver() != this) {
+                Message.verbose("\t" + getName() + ": found revision in cache: " + mrid
+                        + " (resolved by " + rmr.getResolver().getName()
+                        + "): but it's a default one, maybe we can find a better one");
+            } else {
+                if (!options.isCheckmodified() && !options.isChanging()) {
+                    Message.verbose("\t" + getName() + ": revision in cache: " + mrid);
+                    return DefaultModuleRevision.searchedRmr(rmr);
+                }
+                long repLastModified = mdRef.getLastModified();
+                long cacheLastModified = rmr.getDescriptor().getLastModified();
+                if (!rmr.getDescriptor().isDefault() && repLastModified <= cacheLastModified) {
+                    Message.verbose("\t" + getName() + ": revision in cache (not updated): "
+                            + mrid);
+                    return DefaultModuleRevision.searchedRmr(rmr);
+                } else {
+                    Message.verbose("\t" + getName() + ": revision in cache is not up to date: "
+                            + mrid);
+                    if (options.isChanging()) {
+                        // ivy file has been updated, we should see if it has a new publication date
+                        // to see if a new download is required (in case the dependency is a
+                        // changing one)
+                        cachedPublicationDate = rmr.getDescriptor().getResolvedPublicationDate();
+                    }
+                }
+            }
+        }
+
+        // now download module descriptor and parse it
+        report = download(
+            originalMetadataArtifact, 
+            new ArtifactResourceResolver() {
+                public ResolvedResource resolve(Artifact artifact) {
+                    return mdRef;
+                }
+            }, downloader, 
+            new CacheDownloadOptions().setListener(options.getListener()).setForce(true));
+        Message.verbose("\t" + report); 
+        } finally {
+            unlockArtifact(originalMetadataArtifact);
+        }
+
+        if (report.getDownloadStatus() == DownloadStatus.FAILED) {
+            Message.warn("problem while downloading module descriptor: " + mdRef.getResource() 
+                + ": " + report.getDownloadDetails() 
+                + " (" + report.getDownloadTimeMillis() + "ms)");
+            return null;
+        }
+
+        URL cachedMDURL = null;
+        try {
+            cachedMDURL = report.getDownloadedFile().toURL();
+        } catch (MalformedURLException ex) {
+            Message.warn("malformed url exception for original in cache file: " 
+                + report.getDownloadedFile() + ": " + ex.getMessage());
+            return null;
+        }
+        try {
+            ModuleDescriptor md = parser.parseDescriptor(
+                settings, cachedMDURL, mdRef.getResource(), options.isValidate());
+            Message.debug("\t" + getName() + ": parsed downloaded md file for " + mrid 
+                + "; parsed=" + md.getModuleRevisionId());
+
+            // check if we should delete old artifacts
+            boolean deleteOldArtifacts = false;
+            if (cachedPublicationDate != null
+                    && !cachedPublicationDate.equals(md.getResolvedPublicationDate())) {
+                // artifacts have changed, they should be downloaded again
+                Message.verbose(mrid + " has changed: deleting old artifacts");
+                deleteOldArtifacts = true;
+            }
+            if (deleteOldArtifacts) {
+                String[] confs = md.getConfigurationsNames();
+                for (int i = 0; i < confs.length; i++) {
+                    Artifact[] arts = md.getArtifacts(confs[i]);
+                    for (int j = 0; j < arts.length; j++) {
+                        Artifact transformedArtifact = NameSpaceHelper.transform(
+                            arts[j], options.getNamespace().getToSystemTransformer());
+                        ArtifactOrigin origin = getSavedArtifactOrigin(
+                            transformedArtifact);
+                        File artFile = getArchiveFileInCache(
+                            transformedArtifact, origin, false);
+                        if (artFile.exists()) {
+                            Message.debug("deleting " + artFile);
+                            artFile.delete();
+                        }
+                        removeSavedArtifactOrigin(transformedArtifact);
+                    }
+                }
+            } else if (options.isChanging()) {
+                Message.verbose(mrid
+                        + " is changing, but has not changed: will trust cached artifacts if any");
+            }
+            return new DefaultModuleRevision(resolver, resolver, md, true, true);
+        } catch (IOException ex) {
+            Message.warn("io problem while parsing ivy file: " + mdRef.getResource() + ": "
+                    + ex.getMessage());
+            return null;
+        }
+        
+    }
+    
+    public Artifact getOriginalMetadataArtifact(Artifact moduleArtifact) {
+        return DefaultArtifact.cloneWithAnotherName(moduleArtifact, 
+            moduleArtifact.getName() + ".original");
+    }
+
+
+    private String getName() {
+        return name;
+    }
+    
 }

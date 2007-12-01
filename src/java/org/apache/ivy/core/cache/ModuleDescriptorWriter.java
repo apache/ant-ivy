@@ -15,18 +15,16 @@
  *  limitations under the License.
  *
  */
-package org.apache.ivy.util;
+package org.apache.ivy.core.cache;
 
 import java.io.File;
+import java.io.IOException;
+import java.text.ParseException;
 
-public class CacheCleaner {
+import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
+import org.apache.ivy.plugins.resolver.util.ResolvedResource;
 
-    /** 
-     * Delete the directory and all it contains.
-     * Previously, we used the ant delete task, but it occasionaly failed (access denied)
-     * on my machine for unknown reason.   
-     **/
-    public static void deleteDir(File toDelete) {
-        FileUtil.forceDelete(toDelete);
-    }
+public interface ModuleDescriptorWriter {
+    public void write(ResolvedResource originalMdResource, ModuleDescriptor md, 
+            File src, File dest) throws IOException, ParseException;
 }

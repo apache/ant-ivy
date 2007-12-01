@@ -36,13 +36,11 @@ import org.apache.ivy.plugins.repository.RepositoryCopyProgressListener;
 import org.apache.ivy.plugins.repository.file.FileRepository;
 import org.apache.ivy.plugins.resolver.FileSystemResolver;
 import org.apache.ivy.util.CopyProgressEvent;
-import org.apache.ivy.util.DefaultMessageLogger;
 import org.apache.ivy.util.FileUtil;
 import org.apache.ivy.util.Message;
 
 public class ArtifactLockStrategyTest extends TestCase {
     protected void setUp() throws Exception {
-        Message.setDefaultLogger(new DefaultMessageLogger(Message.MSG_DEBUG));
         FileUtil.forceDelete(new File("build/test/cache"));
     }
     protected void tearDown() throws Exception {
@@ -57,15 +55,26 @@ public class ArtifactLockStrategyTest extends TestCase {
         // issues, and not multi thread related issues.
         IvySettings settings1 = new IvySettings();
         IvySettings settings2 = new IvySettings();
-                
+        IvySettings settings3 = new IvySettings();
+
+        // run 3 concurrent resolves, one taking 100ms to download files, one 20ms and one 5ms
+        // the first one do 10 resolves, the second one 20 and the third 50
+        // note that the download time is useful only at the very beginning, then the cached file is used
         ResolveThread t1 = asyncResolve(
-            settings1, createSlowResolver(settings1, 100), "org6#mod6.4;3");
+            settings1, createSlowResolver(settings1, 100), "org6#mod6.4;3", 10);
         ResolveThread t2 = asyncResolve(
-            settings2, createSlowResolver(settings2, 50), "org6#mod6.4;3");
-        t1.join(1000);
-        t2.join(1000);
-        assertFound("org6#mod6.4;3", t1.getResult());
-        assertFound("org6#mod6.4;3", t2.getResult());
+            settings2, createSlowResolver(settings2, 20), "org6#mod6.4;3", 20);
+        ResolveThread t3 = asyncResolve(
+            settings3, createSlowResolver(settings3, 5), "org6#mod6.4;3", 50);
+        t1.join(10000);
+        t2.join(10000);
+        t3.join(10000);
+        assertEquals(10, t1.getCount());
+        assertFound("org6#mod6.4;3", t1.getFinalResult());
+        assertEquals(20, t2.getCount());
+        assertFound("org6#mod6.4;3", t2.getFinalResult());
+        assertEquals(50, t3.getCount());
+        assertFound("org6#mod6.4;3", t3.getFinalResult());
     }    
 
     
@@ -100,8 +109,8 @@ public class ArtifactLockStrategyTest extends TestCase {
 
     
     private ResolveThread asyncResolve(
-            IvySettings settings, FileSystemResolver resolver, String module) {
-        ResolveThread thread = new ResolveThread(settings, resolver, module);
+            IvySettings settings, FileSystemResolver resolver, String module, int loop) {
+        ResolveThread thread = new ResolveThread(settings, resolver, module, loop);
         thread.start();
         return thread;
     }
@@ -128,28 +137,44 @@ public class ArtifactLockStrategyTest extends TestCase {
         }
     }
     private class ResolveThread extends Thread {
-        private ResolvedModuleRevision result;
         private IvySettings settings;
         private FileSystemResolver resolver;
         private String module;
+        private int loop;
+
+        private ResolvedModuleRevision finalResult;
+        private int count;
         
-        public ResolveThread(IvySettings settings, FileSystemResolver resolver, String module) {
+        public ResolveThread(IvySettings settings, FileSystemResolver resolver, String module, int loop) {
             this.settings = settings;
             this.resolver = resolver;
             this.module = module;
+            this.loop = loop;
         }
         
-        public ResolvedModuleRevision getResult() {
-            return result;
+        public synchronized ResolvedModuleRevision getFinalResult() {
+            return finalResult;
+        }
+        public synchronized int getCount() {
+            return count;
         }
         public void run() {
-            try {
-                ResolvedModuleRevision rmr = resolveModule(settings, resolver, module);
-                synchronized (this) {
-                    result = rmr;
+            ResolvedModuleRevision rmr = null;
+            for (int i =0; i<loop; i++) {
+                try {
+                    rmr = resolveModule(settings, resolver, module);
+                    if (rmr == null) {
+                        throw new RuntimeException("module not found: " + module);
+                    }
+                    synchronized (this) {
+                        count++;
+                    }
+                } catch (ParseException e) {
+                    Message.info("parse exception "+e);
                 }
-            } catch (ParseException e) {
-                Message.info("parse exception "+e);
+            }
+            synchronized (this) {
+                finalResult = rmr;
             }
         }
     }

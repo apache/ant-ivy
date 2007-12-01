@@ -56,7 +56,7 @@ public abstract class AbstractArtifact implements Artifact {
     }
 
     public String toString() {
-        return getModuleRevisionId() + "/" + getName() + "." + getExt() + "[" + getType() + "]";
+        return String.valueOf(getId());
     }
 
     public String getAttribute(String attName) {

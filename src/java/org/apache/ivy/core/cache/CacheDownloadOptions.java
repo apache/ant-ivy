@@ -17,10 +17,12 @@
  */
 package org.apache.ivy.core.cache;
 
+
 public class CacheDownloadOptions {
     private boolean useOrigin = false;
     private DownloadListener listener = null;
     private boolean force = false;
+    
     public boolean isUseOrigin() {
         return useOrigin;
     }
