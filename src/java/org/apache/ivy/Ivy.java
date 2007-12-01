@@ -286,7 +286,7 @@ public class Ivy {
                 deliverEngine = new DeliverEngine(settings);
             }
             if (publishEngine == null) {
-                publishEngine = new PublishEngine(settings);
+                publishEngine = new PublishEngine(settings, eventManager);
             }
             if (installEngine == null) {
                 installEngine = new InstallEngine(
@@ -810,7 +810,7 @@ public class Ivy {
             DependencyResolver resolver = (DependencyResolver) iter.next();
             if (resolver instanceof BasicResolver) {
                 ((BasicResolver) resolver).setEventManager(eventManager);
-            }
+    }
         }
     }
 

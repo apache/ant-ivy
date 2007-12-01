@@ -120,6 +120,41 @@ The event available in Ivy are the following ones:
         </td>
         <td>Fired after an artifact has been downloaded from a repository to the cache</td>
     </tr>
+    <tr><td>pre-publish-artifact <br><span class="since">since 2.0</span></td>
+        <td>
+          <ul>
+            <li>organisation</li>the organisation of the artifact which is about to be published
+            <li>module</li>the name of the module of the artifact which is about to be published
+            <li>revision</li>the revision of the the artifact which is about to be published
+            <li>artifact</li>the name of the the artifact which is about to be published
+            <li>type</li>the type of the the artifact which is about to be published
+            <li>ext</li>the extension of the the artifact which is about to be published
+            <li>resolver</li>the name of the resolver into which the artifact is about to be published
+            <li>file</li>the absolute path of the source file for the artifact
+            <li>overwrite</li>"true" if the new data will overwrite existing artifacts, "false" otherwise
+          </ul>
+        </td>
+        <td>Fired before an artifact is published into a repository</td>
+    </tr>
+    <tr><td>post-publish-artifact <br><span class="since">since 2.0</span></td>
+        <td>
+          <ul>
+            <li>organisation</li>the organisation of the artifact that was published
+            <li>module</li>the name of the module of the artifact that was published
+            <li>revision</li>the revision of the the artifact that was published
+            <li>artifact</li>the name of the the artifact that was published
+            <li>type</li>the type of the the artifact that was published
+            <li>ext</li>the extension of the the artifact that was published
+            <li>resolver</li>the name of the resolver into which the artifact was published
+            <li>file</li>the absolute path of the source file for the artifact
+            <li>overwrite</li>"true" if the new data overwrote existing artifacts, "false" otherwise
+            <li>status</li>"successful" if the artifact published successfully; "failed" if the artifact failed to publish, or if the status is unknown
+          </ul>
+        </td>
+        <td>Fired after an artifact is published into a repository.  Note that this event is fired
+        whether or not the publication succeeded.  The "status" property can be checked to 
+        verify success.</td>
+    </tr>
 </tbody>
 </table>
 

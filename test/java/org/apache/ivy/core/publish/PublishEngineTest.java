@@ -50,7 +50,7 @@ public class PublishEngineTest extends TestCase {
 
     public void testAtomicity() throws Exception {
         IvySettings settings = new IvySettings();
-        final PublishEngine engine = new PublishEngine(settings);
+        final PublishEngine engine = new PublishEngine(settings, new EventManager());
         final int[] counter = new int[] {0};
         
         final DefaultModuleDescriptor md = DefaultModuleDescriptor

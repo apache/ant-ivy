@@ -33,8 +33,10 @@ import java.util.Set;
 
 import org.apache.ivy.core.IvyContext;
 import org.apache.ivy.core.IvyPatternHelper;
-import org.apache.ivy.core.cache.CacheManager;
 import org.apache.ivy.core.cache.ResolutionCacheManager;
+import org.apache.ivy.core.event.EventManager;
+import org.apache.ivy.core.event.publish.EndArtifactPublishEvent;
+import org.apache.ivy.core.event.publish.StartArtifactPublishEvent;
 import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.DefaultArtifact;
 import org.apache.ivy.core.module.descriptor.MDArtifact;
@@ -49,9 +51,11 @@ import org.xml.sax.SAXException;
 
 public class PublishEngine {
     private PublishEngineSettings settings;
+    private EventManager eventManager;
 
-    public PublishEngine(PublishEngineSettings settings) {
+    public PublishEngine(PublishEngineSettings settings, EventManager eventManager) {
         this.settings = settings;
+        this.eventManager = eventManager;
     }
 
     /**
@@ -228,11 +232,21 @@ public class PublishEngine {
             DependencyResolver resolver, boolean overwrite) throws IOException {
         IvyContext.getContext().checkInterrupted();
         File src = new File(IvyPatternHelper.substitute(srcArtifactPattern, artifact));
-        if (src.exists()) {
-            resolver.publish(artifact, src, overwrite);
-            return true;
-        } else {
-            return false;
+        
+        //notify triggers that an artifact is about to be published
+        eventManager.fireIvyEvent(
+            new StartArtifactPublishEvent(resolver, artifact, src, overwrite));
+        boolean successful = false; //set to true once the publish succeeds
+        try {
+            if (src.exists()) {
+                resolver.publish(artifact, src, overwrite);
+                successful = true;
+            }
+            return successful;
+        } finally {
+            //notify triggers that the publish is finished, successfully or not.
+            eventManager.fireIvyEvent(
+                new EndArtifactPublishEvent(resolver, artifact, src, overwrite, successful));
         }
     }
 
