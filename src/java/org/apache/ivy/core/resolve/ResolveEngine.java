@@ -865,7 +865,7 @@ public class ResolveEngine {
 
     private Collection computeConflicts(VisitNode node, VisitNode ancestor, String conf,
             Collection toevict, Collection resolvedNodes) {
-        Collection conflicts = new HashSet();
+        Collection conflicts = new LinkedHashSet();
         conflicts.add(node.getNode());
         if (resolvedNodes.removeAll(toevict)) {
             // parent.resolved(node.mid) is not up to date:

@@ -121,6 +121,15 @@ public class LatestCompatibleConflictManagerTest extends TestCase {
         resolveAndAssert("ivy-latest-compatible-6.xml", "#B;3.4, #C;4.6, #D;2.5");
     }
 
+    public void testCompatibilityResolve7() throws Exception {
+        /* Test data: (same as 1, but with reverse dependencies order 
+            #A;7-> { #C;[2.0,2.5] #B;1.4 }
+            #B;1.4->#D;1.5
+            #C;2.5->#D;[1.0,1.6]
+         */
+        resolveAndAssert("ivy-latest-compatible-7.xml", "#B;1.4, #C;2.5, #D;1.5");
+    }
+
 
     public void testConflict() throws Exception {
         /* Test data:

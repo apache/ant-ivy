@@ -97,8 +97,11 @@ public class LatestCompatibleConflictManager extends LatestConflictManager {
             }
             // no incompatibility nor dynamic version found, let's return the latest static version
             if (conflicts.size() == 2) {
-                // very common special case of only two modules in conflict
-                return Collections.singleton(conflicts.iterator().next());
+                // very common special case of only two modules in conflict, 
+                // let's return the second one (static)
+                Iterator it = conflicts.iterator();
+                it.next();
+                return Collections.singleton(it.next());
             }
             Collection newConflicts = new LinkedHashSet(conflicts);
             newConflicts.remove(node);
