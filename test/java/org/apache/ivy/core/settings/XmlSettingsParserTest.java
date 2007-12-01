@@ -177,6 +177,23 @@ public class XmlSettingsParserTest extends TestCase {
         assertEquals("all", settings.getConflictManager(new ModuleId("apache", "ant")).getName());
     }
 
+    public void testCache() throws Exception {
+        IvySettings settings = new IvySettings();
+        XmlSettingsParser parser = new XmlSettingsParser(settings);
+        parser.parse(XmlSettingsParserTest.class.getResource("ivysettings-cache.xml"));
+
+        File defaultCache = settings.getDefaultCache();
+        assertNotNull(defaultCache);
+        assertEquals("mycache", defaultCache.getName());
+        assertEquals(new File(defaultCache, "repository"), settings.getRepositoryCacheRoot(defaultCache));
+        assertEquals(new File(defaultCache, "resolution"), settings.getResolutionCacheRoot(defaultCache));
+        assertEquals("artifact-lock", settings.getDefaultLockStrategy().getName());
+
+        assertEquals("[module]/ivys/ivy-[revision].xml", settings.getCacheIvyPattern());
+        assertEquals("[module]/[type]s/[artifact]-[revision].[ext]", settings
+                .getCacheArtifactPattern());
+    }
+
     public void testVersionMatchers1() throws Exception {
         IvySettings settings = new IvySettings();
         XmlSettingsParser parser = new XmlSettingsParser(settings);

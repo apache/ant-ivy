@@ -65,6 +65,7 @@ import org.apache.ivy.plugins.latest.LatestLexicographicStrategy;
 import org.apache.ivy.plugins.latest.LatestRevisionStrategy;
 import org.apache.ivy.plugins.latest.LatestStrategy;
 import org.apache.ivy.plugins.latest.LatestTimeStrategy;
+import org.apache.ivy.plugins.lock.ArtifactLockStrategy;
 import org.apache.ivy.plugins.lock.LockStrategy;
 import org.apache.ivy.plugins.lock.NoLockStrategy;
 import org.apache.ivy.plugins.matcher.ExactOrRegexpPatternMatcher;
@@ -240,6 +241,9 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
         addLatestStrategy("latest-revision", latestRevisionStrategy);
         addLatestStrategy("latest-lexico", latestLexicographicStrategy);
         addLatestStrategy("latest-time", latestTimeStrategy);
+        
+        addLockStrategy("no-lock", new NoLockStrategy());
+        addLockStrategy("artifact-lock", new ArtifactLockStrategy());
 
         addConflictManager("latest-revision", new LatestConflictManager("latest-revision",
             latestRevisionStrategy));
