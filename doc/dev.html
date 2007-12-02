@@ -44,7 +44,7 @@ All you need is
 <h3>Get the source</h3>
 You can either get the sources from a [[download release]], or get them directly from svn. For instance, to get the trunk version:
 <code>
-svn co https://svn.apache.org/repos/asf/incubator/ivy/core/trunk ivy
+svn co https://svn.apache.org/repos/asf/ant/ivy/core/trunk ivy
 </code>
 <h3>Build</h3>
 Go to the directory where you get the Ivy sources (you should see a file named build.xml) and run:
@@ -103,13 +103,13 @@ README
 <h3>2. Create a release branch</h3>
 This will allow to work separately from other developers, in case you need any last modification.
 <code>
-svn copy https://svn.apache.org/repos/asf/incubator/ivy/core/trunk \
-           https://svn.apache.org/repos/asf/incubator/ivy/core/branches/2.0.0-alpha1 \
+svn copy https://svn.apache.org/repos/asf/ant/ivy/core/trunk \
+           https://svn.apache.org/repos/asf/ant/ivy/core/branches/2.0.0-alpha1 \
       -m "Creating a release branch for 2.0.0-alpha1."
 </code>
 <h3>3. Check out the branch</h3>
 <code>
-svn co https://svn.apache.org/repos/asf/incubator/ivy/core/branches/2.0.0-alpha1 ivy-2.0.0-alpha1
+svn co https://svn.apache.org/repos/asf/ant/ivy/core/branches/2.0.0-alpha1 ivy-2.0.0-alpha1
 </code>
 <h3>4. Double check the files which need to be updated for the release.</h3>
 Check again that files have proper revision information.
@@ -186,8 +186,8 @@ Cast a vote to approve the release, first on the ivy-dev mailing list, then if i
 <h3>12. Tag the svn repository</h3>
 Now that the release is approved, it is time to tag the svn repo
 <code>
-svn copy https://svn.apache.org/repos/asf/incubator/ivy/core/branches/2.0.0-alpha1 \
-           https://svn.apache.org/repos/asf/incubator/ivy/core/tags/2.0.0-alpha1 \
+svn copy https://svn.apache.org/repos/asf/ant/ivy/core/branches/2.0.0-alpha1 \
+           https://svn.apache.org/repos/asf/ant/ivy/core/tags/2.0.0-alpha1 \
       -m "Tag release 2.0.0-alpha1."
 </code>
 <h3>13. Upload to public repository</h3>
@@ -201,7 +201,7 @@ To do so, you need to:
 <li>add a svn externals reference to the documentation</li>
 edit the svn properties of site/history, and in the svn:externals property, add a line like this one:
 <code>
-2.0.0-alpha2 https://svn.apache.org/repos/asf/incubator/ivy/core/branches/2.0.0-alpha2/doc
+2.0.0-alpha2 https://svn.apache.org/repos/asf/ant/ivy/core/branches/2.0.0-alpha2/doc
 </code>
 <li>edit the toc.json file in the site component of Ivy</li>
 and add something like that:
