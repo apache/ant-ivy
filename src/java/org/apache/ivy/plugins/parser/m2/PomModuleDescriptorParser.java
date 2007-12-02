@@ -136,6 +136,10 @@ public final class PomModuleDescriptorParser extends AbstractModuleDescriptorPar
     private static final class Parser extends AbstractParser {
         private static final String JAR_EXTENSION = "jar";
         
+        private static final String DEPENDENCY_MANAGEMENT = "dependency.management";
+        
+        private static final String DEPENDENCY_MANAGEMENT_DELIMITER = "__";
+        
         private ParserSettings settings;
 
         private Stack contextStack = new Stack();
@@ -169,6 +173,13 @@ public final class PomModuleDescriptorParser extends AbstractModuleDescriptorPar
         private String relocationModule;
 
         private String relocationRevision;
+        
+        private String dmGroupId;
+        
+        private String dmArtifactId;
+        
+        private String dmVersion;
+
 
         public Parser(ModuleDescriptorParser parser, Resource res, ParserSettings settings) {
             super(parser);
@@ -247,9 +258,19 @@ public final class PomModuleDescriptorParser extends AbstractModuleDescriptorPar
                 properties.put("parent.groupId", organisation);
             } else if (context.equals("project/parent")) {
                 parseParentPom();
-            } else if (((organisation != null && module != null && revision != null) || dd != null)
+            } else if (((organisation != null && module != null) || dd != null)
                     && "project/dependencies/dependency".equals(context)) {
+                if (revision == null) {
+                    // if the revision is null, see if we can get it from the dependency management
+                    String key = DEPENDENCY_MANAGEMENT + DEPENDENCY_MANAGEMENT_DELIMITER + organisation + 
+                        DEPENDENCY_MANAGEMENT_DELIMITER + module;
+                    revision = (String) properties.get(key);
+                }
                 if (dd == null) {
+                    // if we still don't have revision, then we are done.
+                    if (revision == null) {
+                        return;
+                    }
                     dd = new DefaultDependencyDescriptor(md, ModuleRevisionId.newInstance(
                         organisation, module, revision), true, false, true);
                 }
@@ -324,6 +345,13 @@ public final class PomModuleDescriptorParser extends AbstractModuleDescriptorPar
                 dd.addDependencyConfiguration("*", "@");
                 md.addDependency(dd);
                 dd = null;
+            } else if ("project/dependencyManagement/dependencies/dependency".equals(context)) {
+                if ( dmGroupId != null && dmArtifactId != null && dmVersion != null ) {
+                   // Note: we can't use substitute pattern, fillMrid has not been called yet.
+                   String key = DEPENDENCY_MANAGEMENT + DEPENDENCY_MANAGEMENT_DELIMITER + dmGroupId + 
+                   DEPENDENCY_MANAGEMENT_DELIMITER + dmArtifactId;
+                   properties.put(key, dmVersion);
+                }
             }
             if ("project/dependencies/dependency".equals(context)) {
                 organisation = null;
@@ -379,6 +407,18 @@ public final class PomModuleDescriptorParser extends AbstractModuleDescriptorPar
                 if (context.startsWith("project/parent")) {
                     return;
                 } 
+                if (context.equals("project/dependencyManagement/dependencies/dependency/groupId")) {
+                    dmGroupId = txt;
+                    return;
+                }
+                if (context.equals("project/dependencyManagement/dependencies/dependency/artifactId")) {
+                    dmArtifactId = txt;
+                    return;
+                }
+                if (context.equals("project/dependencyManagement/dependencies/dependency/version")) {
+                    dmVersion = txt;
+                   return;
+                }
                 if (context.startsWith("project/properties")) {
                     String key = context.substring("project/properties/".length());
                     properties.put(key, txt);
@@ -444,17 +484,19 @@ public final class PomModuleDescriptorParser extends AbstractModuleDescriptorPar
                 ModuleRevisionId parent = ModuleRevisionId.newInstance(parentOrg, parentName, 
                                            parentVersion);
                 DependencyResolver resolver = settings.getResolver(parent.getModuleId());
+                if (resolver == null) {
+                    // TODO: Maybe log warning or throw exception here?
+                    return;
+                }
                 
                 DependencyDescriptor dd = new DefaultDependencyDescriptor(parent, true);
                 ResolveData data = IvyContext.getContext().getResolveData();
                 if (data == null) {
-                    return;
-//                    TODO: maybe do something like this:
-//                    ResolveEngine engine = IvyContext.getContext().getIvy().getResolveEngine();
-//                    ResolveOptions options = new ResolveOptions();
-//                    options.setCache(IvyContext.getContext().getCacheManager());
-//                    options.setDownload(false);
-//                    data = new ResolveData(engine, options);
+                    ResolveEngine engine = IvyContext.getContext().getIvy().getResolveEngine();
+                    ResolveOptions options = new ResolveOptions();
+                    options.setCache(IvyContext.getContext().getCacheManager());
+                    options.setDownload(false);
+                    data = new ResolveData(engine, options);
                 }
                 
                 ResolvedResource rr = resolver.findIvyFileRef(dd, data);
