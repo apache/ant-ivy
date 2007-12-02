@@ -18,15 +18,34 @@
 package org.apache.ivy;
 
 import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import junit.framework.Assert;
 
 import org.apache.ivy.core.cache.CacheManager;
+import org.apache.ivy.core.event.EventManager;
+import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.DefaultArtifact;
+import org.apache.ivy.core.module.descriptor.DefaultDependencyDescriptor;
+import org.apache.ivy.core.module.descriptor.DefaultModuleDescriptor;
+import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
+import org.apache.ivy.core.resolve.ResolveData;
+import org.apache.ivy.core.resolve.ResolveEngine;
+import org.apache.ivy.core.resolve.ResolveOptions;
+import org.apache.ivy.core.settings.IvySettings;
+import org.apache.ivy.core.sort.SortEngine;
+import org.apache.ivy.plugins.parser.xml.XmlModuleDescriptorWriter;
+import org.apache.ivy.plugins.resolver.DependencyResolver;
+import org.apache.ivy.plugins.resolver.FileSystemResolver;
+import org.apache.ivy.util.FileUtil;
 
 public class TestHelper {
 
@@ -69,8 +88,8 @@ public class TestHelper {
      * @return a collection of {@link ModuleRevisionId}
      */
     public static Collection parseMrids(String mrids) {
-        String[] m = mrids.split(", ");
-        Collection c = new HashSet();
+        String[] m = mrids.split(",?\\s+");
+        Collection c = new LinkedHashSet();
         for (int i = 0; i < m.length; i++) {
             c.add(ModuleRevisionId.parse(m[i]));
         }
@@ -88,5 +107,192 @@ public class TestHelper {
     public static ModuleRevisionId[] parseMridsToArray(String mrids) {
         Collection parsedMrids = parseMrids(mrids);
         return (ModuleRevisionId[]) parsedMrids.toArray(new ModuleRevisionId[parsedMrids.size()]);
+    }
+    
+    /**
+     * Parses a string represenation of a module descriptor in micro ivy format.
+     * <p>
+     * Examples:
+     * <pre>
+     * #A;1
+     * </pre>
+     * <hr/>
+     * <pre>
+     * #A;2-> #B;[1.0,1.5]
+     * </pre>
+     * <hr/>
+     * <pre>
+     * #A;3-> { #B;[1.0,1.5] #C;[2.0,2.5] }
+     * </pre>
+     * </p>
+     * 
+     * @param microIvy the micro ivy description of the module descriptor
+     * @return the parsed module descriptor
+     */
+    public static ModuleDescriptor parseMicroIvyDescriptor(String microIvy) {
+        Pattern mridPattern = ModuleRevisionId.NON_CAPTURING_PATTERN;
+        Matcher m = mridPattern.matcher(microIvy);
+        if (m.matches()) {
+            return DefaultModuleDescriptor
+                .newBasicInstance(ModuleRevisionId.parse(microIvy), new Date());
+        }
+        
+        Pattern oneDependencyPattern = Pattern.compile(
+            "(" + mridPattern + ")\\s*->\\s*(" + mridPattern + ")");
+        m = oneDependencyPattern.matcher(microIvy);
+        if (m.matches()) {
+            DefaultModuleDescriptor md = DefaultModuleDescriptor
+                .newBasicInstance(ModuleRevisionId.parse(m.group(1)), new Date());
+            md.addDependency(new DefaultDependencyDescriptor(ModuleRevisionId.parse(m.group(2)), false));
+            return md;
+        }
+        
+        String p = "(" + mridPattern + ")\\s*->\\s*\\{\\s*((?:" 
+                    + mridPattern + ",?\\s+)*" + mridPattern + ")?\\s*\\}";
+        Pattern multipleDependenciesPattern = Pattern.compile(
+            p);
+        m = multipleDependenciesPattern.matcher(microIvy);
+        if (m.matches()) {
+            DefaultModuleDescriptor md = DefaultModuleDescriptor
+                .newBasicInstance(ModuleRevisionId.parse(m.group(1)), new Date());
+            String mrids = m.group(2);
+            if (mrids != null) {
+                Collection depMrids = parseMrids(mrids);
+                for (Iterator iter = depMrids.iterator(); iter.hasNext();) {
+                    ModuleRevisionId dep = (ModuleRevisionId) iter.next();
+                    md.addDependency(new DefaultDependencyDescriptor(dep, false));
+                }
+            }
+            return md;
+        }
+        throw new IllegalArgumentException("invalid micro ivy format: "+microIvy);
+    }
+    
+    /**
+     * Parses a collection of module descriptors in the micro ivy format, separated by double semi
+     * columns.
+     * 
+     * @param microIvy
+     *            the text representation of the collection of module descriptors
+     * @return the collection of module descriptors parsed
+     */
+    public static Collection/*<ModuleDescriptor>*/ parseMicroIvyDescriptors(String microIvy) {
+        String[] mds = microIvy.split("\\s*;;\\s*");
+        Collection r = new ArrayList();
+        for (int i = 0; i < mds.length; i++) {
+            r.add(parseMicroIvyDescriptor(mds[i]));
+        }
+        return r;
+    }
+    
+    /**
+     * Fills a repository with a set of module, using empty files for published artifacts.
+     * 
+     * @param resolver the resolver to use to publish the modules
+     * @param mds the descriptors of the modules to put in the repository
+     * @throws IOException if an IO problem occurs while filling the repository
+     */
+    public static void fillRepository(
+            DependencyResolver resolver, Collection/*<ModuleDescriptor>*/ mds) throws IOException {
+        File tmp = File.createTempFile("ivy", "tmp");
+        try {
+            for (Iterator iter = mds.iterator(); iter.hasNext();) {
+                boolean overwrite = false;
+                ModuleDescriptor md = (ModuleDescriptor) iter.next();
+                resolver.beginPublishTransaction(md.getModuleRevisionId(), overwrite);
+                boolean published = false;
+                try {
+                    XmlModuleDescriptorWriter.write(md, tmp);
+                    resolver.publish(md.getMetadataArtifact(), tmp, overwrite);
+                    tmp.delete();
+                    tmp.createNewFile();
+                    Artifact[] artifacts = md.getAllArtifacts();
+                    for (int i = 0; i < artifacts.length; i++) {
+                        resolver.publish(artifacts[i], tmp, overwrite);
+                    }
+                    resolver.commitPublishTransaction();
+                } finally {
+                    if (!published) {
+                        resolver.abortPublishTransaction();
+                    }
+                }
+            }
+        } finally {
+            tmp.delete();
+        }
+    }
+    
+    /**
+     * A file system resolver which can be used with the
+     * {@link #fillRepository(DependencyResolver, Collection)} method to create a test case of
+     * module descriptor.
+     * <p>
+     * When finished you should call {@link #cleanTestRepository()}
+     * </p>
+     */
+    public static FileSystemResolver newTestRepository() {
+        FileSystemResolver testRepository = new FileSystemResolver();
+        testRepository.setName("test");
+        testRepository.addIvyPattern(
+            "build/test/test-repo/[organisation]/[module]/[revision]/[artifact].[ext]");
+        testRepository.addArtifactPattern(
+            "build/test/test-repo/[organisation]/[module]/[revision]/[artifact].[ext]");
+        return testRepository;
+    }
+
+    /**
+     * Cleans up the test repository.
+     * @see #newTestRepository()
+     */
+    public static void cleanTestRepository() {
+        FileUtil.forceDelete(new File("build/test/test-repo"));
+    }
+    
+    /**
+     * Cleans up the test repository and cache.
+     * @see #newTestSettings()
+     */
+    public static void cleanTest() {
+        cleanTestRepository();
+        FileUtil.forceDelete(new File("build/test/cache"));
+    }
+    
+    /**
+     * Init a test resolver as default, useful combined with
+     * {@link #fillRepository(DependencyResolver, Collection)}.
+     * 
+     * @param settings
+     *            the settings to initialize
+     * @return test settings
+     */
+    public static IvySettings loadTestSettings(IvySettings settings) {
+        settings.setDefaultCache(new File("build/test/cache"));
+        settings.addResolver(newTestRepository());
+        settings.setDefaultResolver("test");
+        return settings;
+    }
+    
+    /**
+     * Create basic resolve data using the given settings
+     * 
+     * @param settings
+     *            the settings to use to create the resolve data
+     * @return basic resolve data useful for testing
+     */
+    public static ResolveData newResolveData(IvySettings settings) {
+        return new ResolveData(
+            new ResolveEngine(settings, new EventManager(), new SortEngine(settings)), 
+            newResolveOptions(settings));        
+    }
+
+    /**
+     * Create basic resolve options using the given settings
+     * 
+     * @param settings
+     *            the settings to use to create the resolve options
+     * @return the basic resolve options, useful for testing
+     */
+    public static ResolveOptions newResolveOptions(IvySettings settings) {
+        return new ResolveOptions().setCache(CacheManager.getInstance(settings));
     }
 }

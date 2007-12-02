@@ -17,131 +17,134 @@
  */
 package org.apache.ivy.plugins.conflict;
 
-import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
 
 import junit.framework.TestCase;
 
 import org.apache.ivy.Ivy;
+import org.apache.ivy.TestFixture;
 import org.apache.ivy.TestHelper;
-import org.apache.ivy.core.cache.CacheManager;
 import org.apache.ivy.core.report.ConfigurationResolveReport;
 import org.apache.ivy.core.report.ResolveReport;
-import org.apache.ivy.core.resolve.ResolveOptions;
-import org.apache.ivy.util.DefaultMessageLogger;
-import org.apache.ivy.util.FileUtil;
-import org.apache.ivy.util.Message;
 
 public class LatestCompatibleConflictManagerTest extends TestCase {
-    private Ivy ivy;
+    private TestFixture fixture;
 
-    private File cache;
-    
     protected void setUp() throws Exception {
-        Message.setDefaultLogger(new DefaultMessageLogger(Message.MSG_DEBUG));
-        ivy = new Ivy();
-        ivy.configure(LatestCompatibleConflictManagerTest.class.getResource("ivysettings-latest-compatible.xml"));
-        cache = new File("build/cache");
-        cache.mkdirs();
+        fixture = new TestFixture();
+        LatestCompatibleConflictManager cm = new LatestCompatibleConflictManager();
+        fixture.getSettings().addConfigured(cm);
+        fixture.getSettings().setDefaultConflictManager(cm);
     }
 
     protected void tearDown() throws Exception {
-        FileUtil.forceDelete(cache);
+        fixture.clean();
     }
 
     public void testInitFromSettings() throws Exception {
+        Ivy ivy = new Ivy();
+        ivy.configure(LatestCompatibleConflictManagerTest
+            .class.getResource("ivysettings-latest-compatible.xml"));
         ConflictManager cm = ivy.getSettings().getDefaultConflictManager();
         assertTrue(cm instanceof LatestCompatibleConflictManager);
     }
 
     public void testCompatibilityResolve1() throws Exception {
-        /* Test data:
-            #A;1-> { #B;1.4 #C;[2.0,2.5] }
-            #B;1.4->#D;1.5
-            #C;2.5->#D;[1.0,1.6]
-         */
-        resolveAndAssert("ivy-latest-compatible-1.xml", "#B;1.4, #C;2.5, #D;1.5");
+        fixture
+            .addMD("#A;1-> { #B;1.4 #C;[2.0,2.5] }")
+            .addMD("#B;1.4->#D;1.5")
+            .addMD("#C;2.5->#D;[1.0,1.6]")
+            .addMD("#D;1.5").addMD("#D;1.6")
+            .init();
+        resolveAndAssert("#A;1", "#B;1.4, #C;2.5, #D;1.5");
     }
 
     public void testCompatibilityResolve2() throws Exception {
-        /* Test data:
-            #A;2-> { #B;[1.0,1.5] #C;[2.0,2.5] }
-            #B;1.4->#D;1.5
-            #B;1.5->#D;2.0
-            #C;2.5->#D;[1.0,1.6]
-         */
-        resolveAndAssert("ivy-latest-compatible-2.xml", "#B;1.4, #C;2.5, #D;1.5");
+        fixture
+            .addMD("#A;2-> { #B;[1.0,1.5] #C;[2.0,2.5] }")
+            .addMD("#B;1.4->#D;1.5")
+            .addMD("#B;1.5->#D;2.0")
+            .addMD("#C;2.5->#D;[1.0,1.6]")
+            .addMD("#D;1.5").addMD("#D;1.6").addMD("#D;2.0")
+            .init();
+        resolveAndAssert("#A;2", "#B;1.4, #C;2.5, #D;1.5");
     }
 
     public void testCompatibilityResolve3() throws Exception {
-        /* Test data:
-            #A;3-> { #B;[2.0,2.5] #C;[3.0,3.5] }
-            #B;2.3-> { #D;1.5 #E;1.0 }
-            #B;2.4-> { #D;1.5 #E;2.0 }
-            #B;2.5-> { #D;2.0 }
-            #C;3.4-> { #D;[1.0,1.6] #E;1.0 } 
-            #C;3.5-> { #D;[1.0,1.6] #E;1.9 } 
-         */
-        resolveAndAssert("ivy-latest-compatible-3.xml", "#B;2.3, #C;3.4, #D;1.5, #E;1.0");
+        fixture
+            .addMD("#A;3-> { #B;[2.0,2.5] #C;[3.0,3.5] }")
+            .addMD("#B;2.3-> { #D;1.5 #E;1.0 }")
+            .addMD("#B;2.4-> { #D;1.5 #E;2.0 }")
+            .addMD("#B;2.5-> { #D;2.0 }")
+            .addMD("#B;2.5-> { #D;2.0 }")
+            .addMD("#C;3.4-> { #D;[1.0,1.6] #E;1.0 }")
+            .addMD("#C;3.5-> { #D;[1.0,1.6] #E;1.9 }")
+            .addMD("#D;1.5").addMD("#D;1.6").addMD("#D;2.0")
+            .addMD("#E;1.0").addMD("#E;1.9").addMD("#E;2.0")
+            .init();
+        resolveAndAssert("#A;3", "#B;2.3, #C;3.4, #D;1.5, #E;1.0");
     }
 
     public void testCompatibilityResolve4() throws Exception {
-        /* Test data:
-            #A;4-> { #B;[1.0,1.5] #C;[2.0,2.5] #F;[1.0,1.1] }
-            #B;1.4->#D;1.5
-            #B;1.5->#D;2.0
-            #C;2.5->#D;[1.0,1.6]
-            #F;1.0->#D;1.5
-            #F;1.1->#D;1.6
-         */
-        resolveAndAssert("ivy-latest-compatible-4.xml", "#B;1.4, #C;2.5, #D;1.5, #F;1.0");
+        fixture
+            .addMD("#A;4-> { #B;[1.0,1.5] #C;[2.0,2.5] #F;[1.0,1.1] }")
+            .addMD("#B;1.4->#D;1.5")
+            .addMD("#B;1.5->#D;2.0")
+            .addMD("#C;2.5->#D;[1.0,1.6]")
+            .addMD("#F;1.0->#D;1.5")
+            .addMD("#F;1.1->#D;1.6")
+            .addMD("#D;1.5").addMD("#D;1.6").addMD("#D;2.0")
+            .init();
+        resolveAndAssert("#A;4", "#B;1.4, #C;2.5, #D;1.5, #F;1.0");
     }
 
     public void testCompatibilityResolve5() throws Exception {
-        /* Test data:
-            #A;5->{ #B;[1.0,1.5] #C;2.6 }
-            #B;1.3->{ }
-            #B;1.4->#D;1.5
-            #B;1.5->#D;2.0
-            #C;2.6->#D;1.6
-         */
-        resolveAndAssert("ivy-latest-compatible-5.xml", "#B;1.3, #C;2.6, #D;1.6");
+        fixture
+            .addMD("#A;5->{ #B;[1.0,1.5] #C;2.6 }")
+            .addMD("#B;1.3->{ }")
+            .addMD("#B;1.4->#D;1.5")
+            .addMD("#B;1.5->#D;2.0")
+            .addMD("#C;2.6->#D;1.6")
+            .addMD("#D;1.5").addMD("#D;1.6").addMD("#D;2.0")
+            .init();
+        resolveAndAssert("#A;5", "#B;1.3, #C;2.6, #D;1.6");
     }
 
     public void testCompatibilityResolve6() throws Exception {
-        /* Test data:
-            #A;6->{ #B;[3.0,3.5] #C;4.6 }
-            #B;3.4->#D;2.5
-            #B;3.5->#D;3.0
-            #C;4.6->#D;2.5
-            #D;3.0->#B;3.5 (circular dependency)
-            #D;2.5->#B;3.4 (circular dependency)
-         */
-        resolveAndAssert("ivy-latest-compatible-6.xml", "#B;3.4, #C;4.6, #D;2.5");
+        fixture
+            .addMD("#A;6->{ #B;[3.0,3.5] #C;4.6 }")
+            .addMD("#B;3.4->#D;2.5")
+            .addMD("#B;3.5->#D;3.0")
+            .addMD("#C;4.6->#D;2.5")
+            .addMD("#D;3.0->#B;3.5") // circular dependency
+            .addMD("#D;2.5->#B;3.4") // circular dependency
+            .addMD("#D;2.5").addMD("#D;3.0")
+            .init();
+        resolveAndAssert("#A;6", "#B;3.4, #C;4.6, #D;2.5");
     }
 
     public void testCompatibilityResolve7() throws Exception {
-        /* Test data: (same as 1, but with reverse dependencies order 
-            #A;7-> { #C;[2.0,2.5] #B;1.4 }
-            #B;1.4->#D;1.5
-            #C;2.5->#D;[1.0,1.6]
-         */
-        resolveAndAssert("ivy-latest-compatible-7.xml", "#B;1.4, #C;2.5, #D;1.5");
+        fixture
+            .addMD("#A;1-> { #C;[2.0,2.5] #B;1.4 }")
+            .addMD("#B;1.4->#D;1.5")
+            .addMD("#C;2.5->#D;[1.0,1.6]")
+            .addMD("#D;1.5").addMD("#D;1.6")
+            .init();
+        resolveAndAssert("#A;1", "#B;1.4, #C;2.5, #D;1.5");
     }
 
 
     public void testConflict() throws Exception {
-        /* Test data:
-            #A;conflict-> { #B;[1.5,1.6] #C;2.5 }
-            #B;1.5->#D;2.0
-            #B;1.6->#D;2.0
-            #C;2.5->#D;[1.0,1.6]
-         */
         try {
-            ivy.resolve(
-                LatestCompatibleConflictManagerTest.class.getResource("ivy-latest-compatible-conflict.xml"),
-                getResolveOptions());
+            fixture
+                .addMD("#A;conflict-> { #B;[1.5,1.6] #C;2.5 }")
+                .addMD("#B;1.5->#D;2.0")
+                .addMD("#B;1.6->#D;2.0")
+                .addMD("#C;2.5->#D;[1.0,1.6]")
+                .addMD("#D;1.5").addMD("#D;1.6").addMD("#D;2.0")
+                .init();
+            fixture.resolve("#A;conflict");
 
             fail("Resolve should have failed with a conflict");
         } catch (StrictConflictException e) {
@@ -149,20 +152,12 @@ public class LatestCompatibleConflictManagerTest extends TestCase {
         }
     }
 
-    private void resolveAndAssert(String ivyFile, String expectedModuleSet) 
+    private void resolveAndAssert(String mrid, String expectedModuleSet) 
         throws ParseException, IOException {
-        ResolveReport report = ivy.resolve(
-            LatestCompatibleConflictManagerTest.class.getResource(ivyFile),
-            getResolveOptions());
+        ResolveReport report = fixture.resolve(mrid);
         assertFalse(report.hasError());
         ConfigurationResolveReport defaultReport = report.getConfigurationReport("default");
         TestHelper.assertModuleRevisionIds(expectedModuleSet, 
             defaultReport.getModuleRevisionIds());
-    }
-    
-    private ResolveOptions getResolveOptions() {
-        return new ResolveOptions()
-                .setCache(CacheManager.getInstance(ivy.getSettings()))
-                .setValidate(false);
     }
 }

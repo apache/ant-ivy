@@ -41,12 +41,26 @@ public class ModuleRevisionId extends UnmodifiableExtendableItem {
     private static final String STRICT_CHARS_PATTERN = "[a-zA-Z0-9\\-/\\._+=]";
     private static final String REV_STRICT_CHARS_PATTERN 
         = "[a-zA-Z0-9\\-/\\._+=,\\[\\]\\{\\}\\(\\):@]";
-    private static final Pattern MRID_PATTERN = 
+
+    /**
+     * Pattern to use to matched mrid text representation.
+     * @see #parse(String)
+     */
+    public static final Pattern MRID_PATTERN = 
         Pattern.compile(
             "(" + STRICT_CHARS_PATTERN + "*)" 
             + "#(" + STRICT_CHARS_PATTERN + "+)" 
             + "(?:#(" + STRICT_CHARS_PATTERN + "+))?" 
             + ";(" + REV_STRICT_CHARS_PATTERN + "+)");
+    /**
+     * Same as MRID_PATTERN but using non capturing groups, useful to build larger regexp
+     */
+    public static final Pattern NON_CAPTURING_PATTERN = 
+        Pattern.compile(
+            "(?:" + STRICT_CHARS_PATTERN + "*)" 
+            + "#(?:" + STRICT_CHARS_PATTERN + "+)" 
+            + "(?:#(?:" + STRICT_CHARS_PATTERN + "+))?" 
+            + ";(?:" + REV_STRICT_CHARS_PATTERN + "+)");
 
     /**
      * Parses a module revision id text representation and returns a new {@link ModuleRevisionId}
