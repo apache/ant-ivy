@@ -143,7 +143,7 @@ public class FileSystemResolver extends RepositoryResolver {
             ModuleRevisionId module, boolean overwrite) throws IOException {
         if (supportTransaction()) {
             if (transactionTempDir != null) {
-                throw new IllegalStateException("a transaction is only started and not closed!");
+                throw new IllegalStateException("a transaction is already started and not closed!");
             }
             overwriteTransaction = overwrite;
             if (overwriteTransaction) {
