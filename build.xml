@@ -424,7 +424,8 @@ ${final.core.name}    The Ivy core, eg everything but classes dependent on Ant.$
         <delete file="${coverage.dir}/coverage.emma" />
         <!-- add emma path to test path, because emma jars need to be available when running 
              instrumented classes -->
-        <ivy:addpath topath="test.classpath">
+        <ivy:addpath topath="test.classpath" first="true">
+          <pathelement location="${coverage.dir}/classes" />
           <path refid="emma.classpath" />
         </ivy:addpath>
     </target>
