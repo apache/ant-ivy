@@ -56,6 +56,25 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 
    version in SVN
 =====================================
+- NEW: Share cache with locking (IVY-654)
+- NEW: support atomic publish operation (IVY-492) (with contribution from Geoff Reedy)
+- NEW: latest compatible conflict manager (IVY-648)
+- NEW: Add a task/code to create M2 POM files from Ivy configurations (IVY-416)
+- NEW: [Build] Publish the ivy sources (IVY-646) (thanks to Nicolas Lalevée)
+
+- IMPROVEMENT: split the cache into an downloaded artifacts cache and a metadata cache (IVY-628)
+- IMPROVEMENT: add publish triggers to event system (IVY-650) (thanks to Jason Trump)
+- IMPROVEMENT: Only display unique circular dependencies during Resolve (IVY-653)
+- IMPROVEMENT: Adding option 'cp', which makes it possible for main to be loaded from file (IVY-543) (thanks to Tjeerd Verhagen)
+- IMPROVEMENT: BasicURLHandler should use method=head for getURLInfo (IVY-611) (thanks to Jim Bonanno)
+- IMPROVEMENT: artifactproperty should not overwrite the existing properties (IVY-587)
+- IMPROVEMENT: Support *(private) and *(public) in the confs parameter of the resolve (IVY-588)
+- IMPROVEMENT: replace * by *(public) when resolving inline (IVY-589)
+- IMPROVEMENT: ivy html reports now refers http://ant.apache.org (partial IVY-414)
+- IMPROVEMENT: Improvements on hello ivy example (IVY-626) (with contribution from Jacob Grydholt Jensen)
+- IMPROVEMENT: Make the root attribute in the ivyrep resolver mandatory (IVY-625)
+- IMPROVEMENT: New text representation for main module metadata concepts (IVY-649)
+
 - FIX: m2 incompatibility - IVY does not recognize property section (IVY-637)
 - FIX: m2 incompatibility - IVY does not recognize parent pom (IVY-636)
 - FIX: Attempt to download a file with & in its name causes SAXParseException in Ivy (IVY-635)
@@ -74,25 +93,6 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - FIX: Resolving dynamic version fails when using multiple patterns if only one pattern find a revision and others don't (IVY-602)
 - FIX: Invalid character in IvyRetrieveTest causing most tests to fail (IVY-604)
 - FIX: ivy:settings and ivy:retrieve with explicit id causes unwarranted DEPRECATED warning (thanks to Jacob Grydholt Jensen)
-
-- IMPROVEMENT: split the cache into an downloaded artifacts cache and a metadata cache (IVY-628)
-- IMPROVEMENT: add publish triggers to event system (IVY-650) (thanks to Jason Trump)
-- IMPROVEMENT: Only display unique circular dependencies during Resolve (IVY-653)
-- IMPROVEMENT: Adding option 'cp', which makes it possible for main to be loaded from file (IVY-543) (thanks to Tjeerd Verhagen)
-- IMPROVEMENT: BasicURLHandler should use method=head for getURLInfo (IVY-611) (thanks to Jim Bonanno)
-- IMPROVEMENT: artifactproperty should not overwrite the existing properties (IVY-587)
-- IMPROVEMENT: Support *(private) and *(public) in the confs parameter of the resolve (IVY-588)
-- IMPROVEMENT: replace * by *(public) when resolving inline (IVY-589)
-- IMPROVEMENT: ivy html reports now refers http://ant.apache.org (partial IVY-414)
-- IMPROVEMENT: Improvements on hello ivy example (IVY-626) (with contribution from Jacob Grydholt Jensen)
-- IMPROVEMENT: Make the root attribute in the ivyrep resolver mandatory (IVY-625)
-- IMPROVEMENT: New text representation for main module metadata concepts (IVY-649)
-
-- NEW: Share cache with locking (IVY-654)
-- NEW: support atomic publish operation (IVY-492) (with contribution from Geoff Reedy)
-- NEW: latest compatible conflict manager (IVY-648)
-- NEW: Add a task/code to create M2 POM files from Ivy configurations (IVY-416)
-- NEW: [Build] Publish the ivy sources (IVY-646) (thanks to Nicolas Lalevée)
 
 - REFACTORING: Extract a settings interface for the different engines
 
