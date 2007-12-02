@@ -308,7 +308,7 @@ public class XmlSettingsParser extends DefaultHandler {
                 defaultCircular = (String) attributes.get("circularDependencyStrategy");
 
             } else if ("cache".equals(qName)) {
-                String lockingStrategy = (String) attributes.get("lockingStrategy");
+                String lockingStrategy = (String) attributes.get("lockStrategy");
                 if (lockingStrategy != null) {
                     ivy.setDefaultLockStrategy(
                         ivy.getLockStrategy(ivy.substitute(lockingStrategy)));

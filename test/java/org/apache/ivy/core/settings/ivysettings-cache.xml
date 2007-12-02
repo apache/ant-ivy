@@ -22,6 +22,6 @@
 			repositoryDir="repository"
 			repositoryIvyPattern="[module]/ivys/ivy-[revision].xml" 
 			repositoryArtifactPattern="[module]/[type]s/[artifact]-[revision].[ext]"
-			lockingStrategy="artifact-lock"
+			lockStrategy="artifact-lock"
 	/>
 </ivysettings>
