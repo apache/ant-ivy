@@ -1,6 +1,6 @@
 				Ivy 
 				- The agile open source dependency manager
-				- http://incubator.apache.org/ivy
+				- http://ant.apache.org/ivy
 				============================================
 				
 for detailed view of each issue, please consult http://issues.apache.org/jira/browse/IVY

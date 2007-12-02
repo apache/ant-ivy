@@ -71,7 +71,6 @@
 			<zipfileset dir="${basedir}/test/xsl" prefix="${snapshot.full.name}/test/xsl"/>
 			<zipfileset dir="${src.dir}/org/apache/ivy/plugins/parser/xml" includes="ivy.xsd" fullpath="${snapshot.full.name}/ivy.xsd"/>
 			<zipfileset dir="${basedir}" includes="MANIFEST.MF" fullpath="${snapshot.full.name}/MANIFEST.MF"/>
-			<zipfileset dir="${basedir}" includes="DISCLAIMER" fullpath="${snapshot.full.name}/DISCLAIMER"/>
 			<zipfileset dir="${basedir}" includes="NOTICE" fullpath="${snapshot.full.name}/NOTICE"/>
 			<zipfileset dir="${basedir}" includes="LICENSE*" prefix="${snapshot.full.name}"/>
 			<zipfileset dir="${basedir}" includes="CHANGES.txt" fullpath="${snapshot.full.name}/CHANGES.txt"/>
@@ -91,7 +90,6 @@
 		<zip destfile="${distrib.dir}/${snapshot.full.name}-bin.zip">
 			<zipfileset dir="${doc.build.dir}" prefix="${snapshot.full.name}/doc" excludes="**/reports/coverage/**,**/reports/test/**"/>
 			<zipfileset dir="${basedir}/src/example" prefix="${snapshot.full.name}/src/example"/>
-			<zipfileset dir="${basedir}" includes="DISCLAIMER" fullpath="${snapshot.full.name}/DISCLAIMER"/>
 			<zipfileset dir="${basedir}" includes="NOTICE" fullpath="${snapshot.full.name}/NOTICE"/>
 			<zipfileset dir="${basedir}" includes="LICENSE*" prefix="${snapshot.full.name}"/>
 			<zipfileset dir="${basedir}" includes="CHANGES.txt" fullpath="${snapshot.full.name}/CHANGES.txt"/>
@@ -115,7 +113,6 @@
 		<zip destfile="${distrib.dir}/${snapshot.full.name}-bin-with-deps.zip">
 			<zipfileset dir="${doc.build.dir}" prefix="${snapshot.full.name}/doc" excludes="**/reports/coverage/**,**/reports/test/**"/>
 			<zipfileset dir="${basedir}/src/example" prefix="${snapshot.full.name}/src/example"/>
-			<zipfileset dir="${basedir}" includes="DISCLAIMER" fullpath="${snapshot.full.name}/DISCLAIMER"/>
 			<zipfileset dir="${basedir}" includes="NOTICE" fullpath="${snapshot.full.name}/NOTICE"/>
 			<zipfileset dir="${basedir}" includes="LICENSE*" prefix="${snapshot.full.name}"/>
 			<zipfileset dir="${basedir}" includes="CHANGES.txt" fullpath="${snapshot.full.name}/CHANGES.txt"/>
