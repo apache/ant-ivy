@@ -45,35 +45,35 @@ import org.apache.tools.ant.taskdefs.Delete;
  * Tests ChainResolver
  */
 public class ChainResolverTest extends TestCase {
-    private IvySettings _settings;
+    private IvySettings settings;
 
-    private ResolveEngine _engine;
+    private ResolveEngine engine;
 
-    private ResolveData _data;
+    private ResolveData data;
 
-    private File _cache;
+    private File cache;
 
     protected void setUp() throws Exception {
-        _settings = new IvySettings();
-        _engine = new ResolveEngine(_settings, new EventManager(), new SortEngine(_settings));
-        _cache = new File("build/cache");
-        _data = new ResolveData(_engine, new ResolveOptions().setCache(CacheManager.getInstance(
-            _settings, _cache)));
-        _cache.mkdirs();
-        _settings.setDefaultCache(_cache);
+        settings = new IvySettings();
+        engine = new ResolveEngine(settings, new EventManager(), new SortEngine(settings));
+        cache = new File("build/cache");
+        data = new ResolveData(engine, new ResolveOptions().setCache(CacheManager.getInstance(
+            settings, cache)));
+        cache.mkdirs();
+        settings.setDefaultCache(cache);
     }
 
     protected void tearDown() throws Exception {
         Delete del = new Delete();
         del.setProject(new Project());
-        del.setDir(_cache);
+        del.setDir(cache);
         del.execute();
     }
 
     public void testOrderFromConf() throws Exception {
-        new XmlSettingsParser(_settings).parse(ChainResolverTest.class
+        new XmlSettingsParser(settings).parse(ChainResolverTest.class
                 .getResource("chainresolverconf.xml"));
-        DependencyResolver resolver = _settings.getResolver("chain");
+        DependencyResolver resolver = settings.getResolver("chain");
         assertNotNull(resolver);
         assertTrue(resolver instanceof ChainResolver);
         ChainResolver chain = (ChainResolver) resolver;
@@ -91,7 +91,7 @@ public class ChainResolverTest extends TestCase {
 
     public void testName() throws Exception {
         ChainResolver chain = new ChainResolver();
-        chain.setSettings(_settings);
+        chain.setSettings(settings);
         chain.setName("chain");
         assertEquals("chain", chain.getName());
     }
@@ -99,7 +99,7 @@ public class ChainResolverTest extends TestCase {
     public void testResolveOrder() throws Exception {
         ChainResolver chain = new ChainResolver();
         chain.setName("chain");
-        chain.setSettings(_settings);
+        chain.setSettings(settings);
         MockResolver[] resolvers = new MockResolver[] {
                 MockResolver.buildMockResolver("1", false, null),
                 MockResolver.buildMockResolver("2", true, null),
@@ -111,7 +111,7 @@ public class ChainResolverTest extends TestCase {
 
         DefaultDependencyDescriptor dd = new DefaultDependencyDescriptor(ModuleRevisionId
                 .newInstance("org", "mod", "rev"), false);
-        ResolvedModuleRevision rmr = chain.getDependency(dd, _data);
+        ResolvedModuleRevision rmr = chain.getDependency(dd, data);
         assertNotNull(rmr);
         assertEquals("2", rmr.getResolver().getName());
         assertEquals(Arrays.asList(new DependencyDescriptor[] {dd}), resolvers[0].askedDeps);
@@ -122,7 +122,7 @@ public class ChainResolverTest extends TestCase {
     public void testLatestTimeResolve() throws Exception {
         ChainResolver chain = new ChainResolver();
         chain.setName("chain");
-        chain.setSettings(_settings);
+        chain.setSettings(settings);
         chain.setLatestStrategy(new LatestTimeStrategy());
         MockResolver[] resolvers = new MockResolver[] {
                 MockResolver.buildMockResolver("1", true, new GregorianCalendar(2005, 1, 20)
@@ -142,7 +142,7 @@ public class ChainResolverTest extends TestCase {
 
         DefaultDependencyDescriptor dd = new DefaultDependencyDescriptor(ModuleRevisionId
                 .newInstance("org", "mod", "latest.integration"), false);
-        ResolvedModuleRevision rmr = chain.getDependency(dd, _data);
+        ResolvedModuleRevision rmr = chain.getDependency(dd, data);
         assertNotNull(rmr);
         assertEquals("3", rmr.getResolver().getName());
         List ddAsList = Arrays.asList(new DependencyDescriptor[] {dd});
@@ -154,7 +154,7 @@ public class ChainResolverTest extends TestCase {
     public void testLatestRevisionResolve() throws Exception {
         ChainResolver chain = new ChainResolver();
         chain.setName("chain");
-        chain.setSettings(_settings);
+        chain.setSettings(settings);
         chain.setLatestStrategy(new LatestRevisionStrategy());
         MockResolver[] resolvers = new MockResolver[] {
                 MockResolver.buildMockResolver("1", true, ModuleRevisionId.newInstance("org",
@@ -177,7 +177,7 @@ public class ChainResolverTest extends TestCase {
 
         DefaultDependencyDescriptor dd = new DefaultDependencyDescriptor(ModuleRevisionId
                 .newInstance("org", "mod", "latest.integration"), false);
-        ResolvedModuleRevision rmr = chain.getDependency(dd, _data);
+        ResolvedModuleRevision rmr = chain.getDependency(dd, data);
         assertNotNull(rmr);
         assertEquals("5", rmr.getResolver().getName());
         List ddAsList = Arrays.asList(new DependencyDescriptor[] {dd});
@@ -189,7 +189,7 @@ public class ChainResolverTest extends TestCase {
     public void testWithDefault() throws Exception {
         ChainResolver chain = new ChainResolver();
         chain.setName("chain");
-        chain.setSettings(_settings);
+        chain.setSettings(settings);
         chain.setLatestStrategy(new LatestRevisionStrategy());
         MockResolver[] resolvers = new MockResolver[] {
                 MockResolver.buildMockResolver("1", false, null),
@@ -213,7 +213,7 @@ public class ChainResolverTest extends TestCase {
 
         DefaultDependencyDescriptor dd = new DefaultDependencyDescriptor(ModuleRevisionId
                 .newInstance("org", "mod", "4"), false);
-        ResolvedModuleRevision rmr = chain.getDependency(dd, _data);
+        ResolvedModuleRevision rmr = chain.getDependency(dd, data);
         assertNotNull(rmr);
         assertEquals("5", rmr.getResolver().getName());
         List ddAsList = Arrays.asList(new DependencyDescriptor[] {dd});
@@ -228,7 +228,7 @@ public class ChainResolverTest extends TestCase {
     public void testLatestWithDefault() throws Exception {
         ChainResolver chain = new ChainResolver();
         chain.setName("chain");
-        chain.setSettings(_settings);
+        chain.setSettings(settings);
         chain.setLatestStrategy(new LatestRevisionStrategy());
         MockResolver[] resolvers = new MockResolver[] {
                 MockResolver.buildMockResolver("1", true, ModuleRevisionId.newInstance("org",
@@ -255,7 +255,7 @@ public class ChainResolverTest extends TestCase {
 
         DefaultDependencyDescriptor dd = new DefaultDependencyDescriptor(ModuleRevisionId
                 .newInstance("org", "mod", "latest.integration"), false);
-        ResolvedModuleRevision rmr = chain.getDependency(dd, _data);
+        ResolvedModuleRevision rmr = chain.getDependency(dd, data);
         assertNotNull(rmr);
         assertEquals("5", rmr.getResolver().getName());
         List ddAsList = Arrays.asList(new DependencyDescriptor[] {dd});
@@ -267,7 +267,7 @@ public class ChainResolverTest extends TestCase {
     public void testFixedWithDefault() throws Exception {
         ChainResolver chain = new ChainResolver();
         chain.setName("chain");
-        chain.setSettings(_settings);
+        chain.setSettings(settings);
         chain.setLatestStrategy(new LatestRevisionStrategy());
         MockResolver[] resolvers = new MockResolver[] {
                 MockResolver.buildMockResolver("1", false, null),
@@ -286,7 +286,7 @@ public class ChainResolverTest extends TestCase {
 
         DefaultDependencyDescriptor dd = new DefaultDependencyDescriptor(ModuleRevisionId
                 .newInstance("org", "mod", "4"), false);
-        ResolvedModuleRevision rmr = chain.getDependency(dd, _data);
+        ResolvedModuleRevision rmr = chain.getDependency(dd, data);
         assertNotNull(rmr);
         assertEquals("4", rmr.getResolver().getName());
         List ddAsList = Arrays.asList(new DependencyDescriptor[] {dd});
@@ -304,12 +304,12 @@ public class ChainResolverTest extends TestCase {
         // test case for IVY-206
         ChainResolver chain = new ChainResolver();
         chain.setName("chain");
-        chain.setSettings(_settings);
+        chain.setSettings(settings);
 
         // no ivy pattern for first resolver: will only find a 'default' module
         FileSystemResolver resolver = new FileSystemResolver();
         resolver.setName("1");
-        resolver.setSettings(_settings);
+        resolver.setSettings(settings);
 
         resolver
                 .addArtifactPattern("test/repositories/1/[organisation]/[module]/[type]s/[artifact]-[revision].[type]");
@@ -319,7 +319,7 @@ public class ChainResolverTest extends TestCase {
         // kept
         resolver = new FileSystemResolver();
         resolver.setName("2");
-        resolver.setSettings(_settings);
+        resolver.setSettings(settings);
 
         resolver
                 .addIvyPattern("test/repositories/1/[organisation]/[module]/ivys/ivy-[revision].xml");
@@ -327,11 +327,11 @@ public class ChainResolverTest extends TestCase {
                 .addArtifactPattern("test/repositories/1/[organisation]/[module]/[type]s/[artifact]-[revision].[type]");
         chain.add(resolver);
 
-        _settings.addResolver(chain);
+        settings.addResolver(chain);
 
         DefaultDependencyDescriptor dd = new DefaultDependencyDescriptor(ModuleRevisionId
                 .newInstance("org1", "mod1.1", "1.0"), false);
-        ResolvedModuleRevision rmr = chain.getDependency(dd, _data);
+        ResolvedModuleRevision rmr = chain.getDependency(dd, data);
         assertNotNull(rmr);
         assertEquals("2", rmr.getResolver().getName());
     }
@@ -339,7 +339,7 @@ public class ChainResolverTest extends TestCase {
     public void testReturnFirst() throws Exception {
         ChainResolver chain = new ChainResolver();
         chain.setName("chain");
-        chain.setSettings(_settings);
+        chain.setSettings(settings);
         chain.setReturnFirst(true);
         MockResolver[] resolvers = new MockResolver[] {
                 MockResolver.buildMockResolver("1", true, new GregorianCalendar(2005, 1, 20)
@@ -359,7 +359,7 @@ public class ChainResolverTest extends TestCase {
 
         DefaultDependencyDescriptor dd = new DefaultDependencyDescriptor(ModuleRevisionId
                 .newInstance("org", "mod", "latest.integration"), false);
-        ResolvedModuleRevision rmr = chain.getDependency(dd, _data);
+        ResolvedModuleRevision rmr = chain.getDependency(dd, data);
         assertNotNull(rmr);
         assertEquals("1", rmr.getResolver().getName());
         for (int i = 1; i < resolvers.length; i++) {
@@ -373,22 +373,22 @@ public class ChainResolverTest extends TestCase {
         // 1 ---- we first do a first resolve which puts a default file in cache
         ChainResolver chain = new ChainResolver();
         chain.setName("chain");
-        chain.setSettings(_settings);
+        chain.setSettings(settings);
 
         // no ivy pattern for resolver: will only find a 'default' module
         FileSystemResolver resolver = new FileSystemResolver();
         resolver.setName("old");
-        resolver.setSettings(_settings);
+        resolver.setSettings(settings);
 
         resolver
                 .addArtifactPattern("test/repositories/1/[organisation]/[module]/[type]s/[artifact]-[revision].[type]");
         chain.add(resolver);
 
-        _settings.addResolver(chain);
+        settings.addResolver(chain);
 
         DefaultDependencyDescriptor dd = new DefaultDependencyDescriptor(ModuleRevisionId
                 .newInstance("org1", "mod1.1", "1.0"), false);
-        chain.getDependency(dd, _data);
+        chain.getDependency(dd, data);
 
         // 2 ---- now we ask to resolve dependencies with a chain in return first mode, in which the
         // first resolver
@@ -396,20 +396,20 @@ public class ChainResolverTest extends TestCase {
 
         chain = new ChainResolver();
         chain.setName("chain");
-        chain.setSettings(_settings);
+        chain.setSettings(settings);
         chain.setReturnFirst(true);
 
         // no pattern for first resolver: will not find the module
         resolver = new FileSystemResolver();
         resolver.setName("1");
-        resolver.setSettings(_settings);
+        resolver.setSettings(settings);
 
         chain.add(resolver);
 
         // second resolver will find the real module, which should be kept
         resolver = new FileSystemResolver();
         resolver.setName("2");
-        resolver.setSettings(_settings);
+        resolver.setSettings(settings);
 
         resolver
                 .addIvyPattern("test/repositories/1/[organisation]/[module]/ivys/ivy-[revision].xml");
@@ -417,9 +417,9 @@ public class ChainResolverTest extends TestCase {
                 .addArtifactPattern("test/repositories/1/[organisation]/[module]/[type]s/[artifact]-[revision].[type]");
         chain.add(resolver);
 
-        _settings.addResolver(chain);
+        settings.addResolver(chain);
 
-        ResolvedModuleRevision rmr = chain.getDependency(dd, _data);
+        ResolvedModuleRevision rmr = chain.getDependency(dd, data);
         assertNotNull(rmr);
         assertEquals("2", rmr.getResolver().getName());
     }
@@ -427,7 +427,7 @@ public class ChainResolverTest extends TestCase {
     public void testDual() throws Exception {
         ChainResolver chain = new ChainResolver();
         chain.setName("chain");
-        chain.setSettings(_settings);
+        chain.setSettings(settings);
         chain.setDual(true);
         MockResolver[] resolvers = new MockResolver[] {
                 MockResolver.buildMockResolver("1", false, null),
@@ -440,7 +440,7 @@ public class ChainResolverTest extends TestCase {
 
         DefaultDependencyDescriptor dd = new DefaultDependencyDescriptor(ModuleRevisionId
                 .newInstance("org", "mod", "rev"), false);
-        ResolvedModuleRevision rmr = chain.getDependency(dd, _data);
+        ResolvedModuleRevision rmr = chain.getDependency(dd, data);
         assertNotNull(rmr);
         assertEquals("2", rmr.getResolver().getName());
         assertEquals("chain", rmr.getArtifactResolver().getName());
