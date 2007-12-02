@@ -484,6 +484,8 @@ public class ResolveTest extends TestCase {
                 "test/repositories/1/org1/mod1.1/ivys/ivy-1.0.xml").toURL(), getResolveOptions(ivy
                 .getSettings(), new String[] {"*"}));
         assertNotNull(report);
+        assertFalse(report.hasError());
+        
         ModuleDescriptor md = report.getModuleDescriptor();
         assertNotNull(md);
         ModuleRevisionId mrid = ModuleRevisionId.newInstance("org1", "mod1.1", "1.0");
@@ -492,6 +494,8 @@ public class ResolveTest extends TestCase {
         assertTrue(ivy.getCacheManager(cache).getResolvedIvyFileInCache(mrid)
             .toString().indexOf("workspace") != -1);
         assertTrue(ivy.getCacheManager(cache).getResolvedIvyFileInCache(mrid).exists());
+        assertTrue(ivy.getCacheManager(cache).getConfigurationResolveReportInCache(
+            report.getResolveId(), "default").exists());
 
         // dependencies
         assertTrue(ivy.getCacheManager(cache).getIvyFileInCache(

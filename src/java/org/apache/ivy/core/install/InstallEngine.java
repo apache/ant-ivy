@@ -154,7 +154,7 @@ public class InstallEngine {
             Message.info(":: install resolution report ::");
 
             // output report
-            report.output(settings.getReportOutputters(), cache);
+            resolveEngine.outputReport(report, getCacheManager(cache));
 
             return report;
         } finally {

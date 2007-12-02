@@ -112,7 +112,7 @@ public class IvyRepositoryReport extends IvyTask {
                     .setValidate(doValidate(settings)));
 
             ResolutionCacheManager cacheMgr = getIvyInstance().getCacheManager(cache);
-            new XmlReportOutputter().output(report, cache);
+            new XmlReportOutputter().output(report, cacheMgr);
             if (graph) {
                 gengraph(cacheMgr, md.getModuleRevisionId().getOrganisation(), md
                         .getModuleRevisionId().getName());

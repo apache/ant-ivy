@@ -17,7 +17,7 @@
  */
 package org.apache.ivy.core.report;
 
-import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -27,6 +27,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.ivy.core.cache.ResolutionCacheManager;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleId;
 import org.apache.ivy.core.resolve.IvyNode;
@@ -86,9 +87,10 @@ public class ResolveReport {
         return hasError;
     }
 
-    public void output(ReportOutputter[] outputters, File cache) {
+    public void output(ReportOutputter[] outputters, ResolutionCacheManager cacheMgr) 
+            throws IOException {
         for (int i = 0; i < outputters.length; i++) {
-            outputters[i].output(this, cache);
+            outputters[i].output(this, cacheMgr);
         }
     }
 

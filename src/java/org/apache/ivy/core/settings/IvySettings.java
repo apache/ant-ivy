@@ -270,8 +270,8 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
                 + "org.apache.ivy.plugins.matcher.GlobPatternMatcher was not found.");
         }
 
-        addReportOutputter(new XmlReportOutputter());
         addReportOutputter(new LogReportOutputter());
+        addReportOutputter(new XmlReportOutputter());
 
         configureDefaultCircularDependencyStrategies();
 

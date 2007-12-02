@@ -17,8 +17,9 @@
  */
 package org.apache.ivy.plugins.report;
 
-import java.io.File;
+import java.io.IOException;
 
+import org.apache.ivy.core.cache.ResolutionCacheManager;
 import org.apache.ivy.core.report.ResolveReport;
 
 /**
@@ -29,7 +30,8 @@ public interface ReportOutputter {
 
     public static final String XML = "xml";
 
-    public abstract void output(ResolveReport report, File destDir);
+    public abstract void output(ResolveReport report, ResolutionCacheManager cacheMgr) 
+            throws IOException;
 
     public abstract String getName();
 }

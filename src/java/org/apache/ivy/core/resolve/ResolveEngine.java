@@ -22,6 +22,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -38,6 +39,7 @@ import org.apache.ivy.Ivy;
 import org.apache.ivy.core.IvyContext;
 import org.apache.ivy.core.cache.CacheManager;
 import org.apache.ivy.core.cache.RepositoryCacheManager;
+import org.apache.ivy.core.cache.ResolutionCacheManager;
 import org.apache.ivy.core.event.EventManager;
 import org.apache.ivy.core.event.download.PrepareDownloadEvent;
 import org.apache.ivy.core.event.resolve.EndResolveEvent;
@@ -61,6 +63,7 @@ import org.apache.ivy.core.sort.SortEngine;
 import org.apache.ivy.plugins.conflict.ConflictManager;
 import org.apache.ivy.plugins.parser.ModuleDescriptorParser;
 import org.apache.ivy.plugins.parser.ModuleDescriptorParserRegistry;
+import org.apache.ivy.plugins.report.XmlReportOutputter;
 import org.apache.ivy.plugins.repository.url.URLResource;
 import org.apache.ivy.plugins.resolver.CacheResolver;
 import org.apache.ivy.plugins.resolver.DependencyResolver;
@@ -286,8 +289,12 @@ public class ResolveEngine {
             }
 
             if (options.isOutputReport()) {
-                outputReport(report, cacheManager.getResolutionCacheRoot());
+                outputReport(report, cacheManager);
             }
+
+            Message.verbose("\tresolve done (" + report.getResolveTime() + "ms resolve - "
+                    + report.getDownloadTime() + "ms download)");
+            Message.sumupProblems();
 
             eventManager.fireIvyEvent(new EndResolveEvent(md, confs, report));
             return report;
@@ -300,15 +307,12 @@ public class ResolveEngine {
         }
     }
 
-    public void outputReport(ResolveReport report, File cache) {
+    public void outputReport(ResolveReport report, ResolutionCacheManager cacheMgr) 
+            throws IOException {
         Message.info(":: resolution report ::");
         report.setProblemMessages(Message.getProblems());
         // output report
-        report.output(settings.getReportOutputters(), cache);
-
-        Message.verbose("\tresolve done (" + report.getResolveTime() + "ms resolve - "
-                + report.getDownloadTime() + "ms download)");
-        Message.sumupProblems();
+        report.output(settings.getReportOutputters(), cacheMgr);
     }
 
     public void downloadArtifacts(ResolveReport report, RepositoryCacheManager cacheManager,

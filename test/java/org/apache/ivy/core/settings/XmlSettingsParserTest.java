@@ -23,6 +23,7 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
+import org.apache.ivy.core.cache.ResolutionCacheManager;
 import org.apache.ivy.core.module.id.ModuleId;
 import org.apache.ivy.core.report.ResolveReport;
 import org.apache.ivy.plugins.latest.LatestRevisionStrategy;
@@ -396,7 +397,7 @@ public class XmlSettingsParserTest extends TestCase {
 
     public static class MyOutputter implements ReportOutputter {
 
-        public void output(ResolveReport report, File destDir) {
+        public void output(ResolveReport report, ResolutionCacheManager cacheMgr) {
         }
 
         public String getName() {

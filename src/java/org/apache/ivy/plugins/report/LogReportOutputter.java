@@ -17,7 +17,7 @@
  */
 package org.apache.ivy.plugins.report;
 
-import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -25,6 +25,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.ivy.core.IvyContext;
+import org.apache.ivy.core.cache.ResolutionCacheManager;
 import org.apache.ivy.core.report.ArtifactDownloadReport;
 import org.apache.ivy.core.report.ConfigurationResolveReport;
 import org.apache.ivy.core.report.ResolveReport;
@@ -42,7 +43,7 @@ public class LogReportOutputter implements ReportOutputter {
         return CONSOLE;
     }
 
-    public void output(ResolveReport report, File destDir) {
+    public void output(ResolveReport report, ResolutionCacheManager cacheMgr) throws IOException {
         IvySettings settings = IvyContext.getContext().getSettings();
         if (settings.logModulesInUse()) {
             Message.info("\t:: modules in use:");
@@ -99,6 +100,7 @@ public class LogReportOutputter implements ReportOutputter {
             }
         }
 
+        //CheckStyle:MagicNumber| OFF
         char[] sep = new char[69];
         Arrays.fill(sep, '-');
         Message.rawinfo("\t" + new String(sep));
@@ -119,6 +121,7 @@ public class LogReportOutputter implements ReportOutputter {
         line.append("|");
         append(line, "number", 7);
         append(line, "dwnlded", 7);
+        //CheckStyle:MagicNumber| ON
         line.append("|");
         Message.rawinfo(line.toString());
         Message.rawinfo("\t" + new String(sep));
@@ -159,6 +162,7 @@ public class LogReportOutputter implements ReportOutputter {
 
     public void output(ConfigurationResolveReport report) {
         StringBuffer line = new StringBuffer("\t");
+        //CheckStyle:MagicNumber| OFF
         append(line, report.getConfiguration(), 18);
         append(line, String.valueOf(report.getNodesNumber()), 7);
         append(line, String.valueOf(report.getSearchedNodes().length), 7);
@@ -167,6 +171,7 @@ public class LogReportOutputter implements ReportOutputter {
         line.append("|");
         append(line, String.valueOf(report.getArtifactsNumber()), 7);
         append(line, String.valueOf(report.getDownloadedArtifactsReports().length), 7);
+        //CheckStyle:MagicNumber| ON
         line.append("|");
 
         Message.rawinfo(line.toString());

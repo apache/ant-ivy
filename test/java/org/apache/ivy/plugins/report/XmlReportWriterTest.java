@@ -28,7 +28,7 @@ import org.apache.ivy.core.report.ResolveReport;
 import org.apache.ivy.core.resolve.ResolveOptions;
 import org.apache.ivy.util.CacheCleaner;
 
-public class XmlReportOutputterTest extends TestCase {
+public class XmlReportWriterTest extends TestCase {
     private Ivy _ivy;
 
     private File _cache;
@@ -59,8 +59,8 @@ public class XmlReportOutputterTest extends TestCase {
         assertNotNull(report);
 
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-        XmlReportOutputter outputter = new XmlReportOutputter();
-        outputter.output(report.getConfigurationReport("default"), buffer);
+        XmlReportWriter writer = new XmlReportWriter();
+        writer.output(report.getConfigurationReport("default"), buffer);
         buffer.flush();
         String xml = buffer.toString();
 
@@ -83,8 +83,8 @@ public class XmlReportOutputterTest extends TestCase {
         assertNotNull(report);
         
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-        XmlReportOutputter outputter = new XmlReportOutputter();
-        outputter.output(report.getConfigurationReport("default"), buffer);
+        XmlReportWriter writer = new XmlReportWriter();
+        writer.output(report.getConfigurationReport("default"), buffer);
         buffer.flush();
         String xml = buffer.toString();
         
@@ -101,8 +101,8 @@ public class XmlReportOutputterTest extends TestCase {
         assertNotNull(report);
 
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-        XmlReportOutputter outputter = new XmlReportOutputter();
-        outputter.output(report.getConfigurationReport("default"), buffer);
+        XmlReportWriter writer = new XmlReportWriter();
+        writer.output(report.getConfigurationReport("default"), buffer);
         buffer.flush();
         String xml = buffer.toString();
 
