@@ -1,0 +1,119 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<!--
+   Licensed to the Apache Software Foundation (ASF) under one
+   or more contributor license agreements.  See the NOTICE file
+   distributed with this work for additional information
+   regarding copyright ownership.  The ASF licenses this file
+   to you under the Apache License, Version 2.0 (the
+   "License"); you may not use this file except in compliance
+   with the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing,
+   software distributed under the License is distributed on an
+   "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+   KIND, either express or implied.  See the License for the
+   specific language governing permissions and limitations
+   under the License.    
+-->
+<html>
+<head>
+	<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
+	<script type="text/javascript">var xookiConfig = {level: 2};</script>	
+	<script type="text/javascript" src="../../xooki/xooki.js"></script>
+</head>
+<body>
+	<textarea id="xooki-source">
+Now that you have seen how simple it is to create your own repository from an existing one, you may wonder how you can handle more complex cases, when the source and destination repositories don't follow the same naming conventions for instance. 
+
+
+<h1>On the road to a professional repository</h1>
+We will study in this section how to build a <strong>professionnal</strong> repository. What is a <strong>professionnal</strong> repository? Our vision is to say that a good quality repository must follow clear rules about projects naming and must offer corrects, usuables, configurables and verified project descriptors. In order to achieve those goals, we think that you have to build your own repository.
+We have seen in the previous example, that we could use some public repositories to begin to build our own repository. 
+Nevertheless, the result is not always the expected one, especially concerning the naming rules used. 
+
+This problem is pretty usual when you have an existing repository, and want to benefit from a large public repositories which do not follow the same naming conventions. Or simply because you find the public repository you use as a basis is not consistent enough - why all apache commons module aren't don't use the org.apache.commons organization? For historical reasons. But if you setup your own repository you may not want to suffer from history.
+
+Fortunately Ivy has a very powerful answer to this kind of problem: [[configuration/namespaces namespaces]].
+
+<h1>Using namespaces</h1>
+If you look at the repository built with the [[tutorial/build-repository/basic previous tutorial]], you will see exactly what we were talking about: all apache commons module use their own name as organization.
+
+So let's see what Ivy can do using namespaces (we will dig into details later):
+<div class="shell"><pre>Z:\>ant commons-lang-1-0-ibiblio-with-namespace
+[<tutorial/log/install-namespace.txt>]</pre></div>
+Now if we look at our repository, it seems to look fine.
+<div class="shell"><pre>Z:\>dir /s /B /A:-D myrepository\advanced
+Z:\myrepository\advanced\apache\commons-lang\ivys\ivy-1.0.xml
+Z:\myrepository\advanced\apache\commons-lang\ivys\ivy-1.0.xml.md5
+Z:\myrepository\advanced\apache\commons-lang\ivys\ivy-1.0.xml.sha1
+Z:\myrepository\advanced\apache\commons-lang\jars\commons-lang-1.0.jar
+Z:\myrepository\advanced\apache\commons-lang\jars\commons-lang-1.0.jar.md5
+Z:\myrepository\advanced\apache\commons-lang\jars\commons-lang-1.0.jar.sha1</pre></div>
+We can even have a look at the commons-lang ivy file in our repo:
+<div><code type="xml">
+<?xml version="1.0" encoding="UTF-8"?>
+<ivy-module version="1.0">
+	<info organisation="apache"
+		module="commons-lang"
+		revision="1.0"
+		status="integration"
+		publication="20051124062021"
+		namespace="ibiblio-maven2"
+	/>
+
+...
+</code></div>
+Allright, we see that the organization is now 'apache'. But where did Ivy picked this up?
+<h2>How does this work ?</h2>
+Actually Ivy uses the same repository as before as source repository, with only one difference: the namespace parameter:
+<code type="xml">
+<ibiblio	name="libraries" 
+    root="${ibiblio-maven2-root}" 
+    m2compatible="true"
+    namespace="maven2"
+/>
+</code>
+
+A namespace is defined by a set of rules. These rules are based on regular expressions and tell Ivy how to convert data from the repository namespace from and to what is called the system namespace, i.e. the namespace in which Ivy runs most of the time (Ivy cache is always using the system namespace for instance).
+
+For the namespace we call maven2, we have declared some rules, here is one:
+<h3>rule handling imported apache maven1 projects</h3>
+<code type="xml"><rule>	<!-- imported apache maven1 projects -->
+	<fromsystem>
+	    <src org="apache" module=".+"/>
+	    
+	    <dest org="$m0" module="$m0"/>
+	</fromsystem>
+	<tosystem>
+	    <src org="commons-.+" module="commons-.+" />
+	    <src org="ant.*" module="ant.*" />
+	    ...
+	    <src org="xmlrpc" module="xmlrpc" />
+
+	    <dest org="apache" module="$m0"/>
+	</tosystem>
+</rule></code>
+<div class="postit"><u>Note about regular expressions usage :</u>
+In order to distinguish matching regular expressions found in organization, module and revision the notation used prefixes the matching regular expression with the letters 'o', 'm' and 'r'.
+$o0 : the whole matching value in the organization attribute
+$o1 : the first matching expression group that was marked in the organization attribute
+...
+The same applies for modules : $m0, $m1, ...
+and for revisions : $r0, $r1, ...
+</div>
+To understand namespaces, 
+<ul>
+<li><b>fromsystem :</b> we define here that the projects defined in the system namespace under the organization called "apache" are transformed into the destination namespace into projects whose organization is named with the module name, whatever the revision is. For example, the project apache#commons-lang;1.0  in the system namespace will be translated into commons-lang#commons-lang;1.0 in the maven2 resolver namespace.</li>
+<li><b>tosystem :</b> we define here the reverse mapping, ie how to translate <em>apache</em> projects from maven 2 repo into apache projects in the system namespace. The rule used here tells that all projects matching commons-.+ (see it as java regular expression) for their organization name and module name are transformed into projects whose organisation is apache with the module name as it was found. The same kind of rule is applied for others apache projects like ant, etc.</li>
+</ul>
+
+Ok, you should now get the idea behind namespace, you can now check the whole namespace settings provided in the example, and test the installation of a module and its dependencies using namespaces.
+
+Run <code>ant maven2-namespace-deps</code> and you will see the resulting repository is cleaner than the first one we built.
+
+From our experience investing in creating a namespace is worth the time it costs if you often need to add new modules or revisions of third party libraries in your own repository, where naming rules are already existing or rather strict. </textarea>
+<script type="text/javascript">xooki.postProcess();</script>
+</body>
+</html>

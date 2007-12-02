@@ -25,202 +25,93 @@
 </head>
 <body>
 	<textarea id="xooki-source">
-We will study here two cases, corresponding to the two basics targets found in the previous build.xml project file.
+In this first step we use the [[ant:install]] task to install modules from the maven 2 repository to a file system based repository. We first install a module with no dependency, then a module with its dependencies.
 
 <h1>Basic: ivysettings.xml file used</h1>
-The ivy settings file that we will use is very simple here. It defines two resolvers, libraries and local-repository. The first one is used to retrieve the files that we want, the second is used to copy them. The second one will become our own repository.
-<ul>
-<li>ivyrep: nothing special on it, ivy files will be looked for on ivyrep and artifacts will be downloaded from 
-ibilio</li>
-<li>local-repository:  will store the found files</li>
-</ul>
+The ivy settings file that we will use is very simple here. It defines two resolvers, libraries and my-repository. The first one is used as the source, the second one as the destination. In a typical setup the second one would be configured using [[configuration:include included]] settings, used by the development team.
 
-<div class="ivy-file">
 <code type="xml">
 <ivysettings>
-    <settings defaultCache="${ivy.cache.dir}"	
-              defaultResolver="local-repository" 
-              defaultConflictManager="all" />    <!-- in order to get all revisions without any eviction -->
-    <resolvers>
-        <ivyrep name="libraries" />
-        <filesystem name="local-repository">
-            <ivy pattern="${dest.repo.dir}/[organisation]/[module]/ivys/ivy-[revision].xml"/>
-            <artifact pattern="${dest.repo.dir}/[organisation]/[module]/[type]s/[artifact]-[revision].[type]"/>
-        </filesystem>
-    </resolvers>
+	<settings	defaultCache="${ivy.cache.dir}/no-namespace"	
+			defaultResolver="libraries"
+			defaultConflictManager="all" />		<!-- in order to get all revisions without any eviction -->
+	<resolvers>
+		<ibiblio name="libraries" m2compatible="true" />
+  		<filesystem name="my-repository">
+  			<ivy pattern="${dest.repo.dir}/no-namespace/[organisation]/[module]/ivys/ivy-[revision].xml"/>
+  			<artifact pattern="${dest.repo.dir}/no-namespace/[organisation]/[module]/[type]s/[artifact]-[revision].[ext]"/>
+  		</filesystem>
+	</resolvers>
 </ivysettings>
 </code>
-</div>
 
-<h1>basic, retrieve commons-lang 1.0</h1>
-Let's have a look at the <em>basic</em> target.
+<h1>install a simple module with no dependencies</h1>
+Let's have a look at the <em>maven2</em> target.
 <code type="xml">
-    <ivy:settings id="basic.settings"    file="${configuration-dir}/ivysettings-basic.xml"/>
-
-    <target name="basic" description="--> retrieve files from well formatted ivy repositories">
-        <ivy:install settingsRef="basic.settings" organisation="apache" module="commons-lang" revision="1.0" from="${from-resolver}" to="${to-resolver}" />
+    <target name="maven2" depends="init-ivy"
+    	description="--> install module from maven 2 repository">
+    	<ivy:install settingsRef="basic.settings" 
+    		organisation="commons-lang" module="commons-lang" revision="1.0" 
+    		from="${from.resolver}" to="${to.resolver}" />
     </target>
 </code>
-After a declaration of the basic.settings, that make the ivy initialization with the right ivysettings file, we only call the task <a href="../../use/install.html">install</a> to retrieve apache commons-lang in it's 1.0 version.
+Pretty simple, we call the [[ant:install] task with the settings we have loaded using [[ant:settings ivy:settings]] as usual, we provide fromResolver (source) and toResolver (destination) using properties to ease the maintenance of the script, but it's basically the name of our resolvers: 'libraries' for the source and 'my-repository' for the destination.
+
 Here is the ant call output :
-<div class="shell"><pre>Z:\ivy-repository>ant basic
-Buildfile: build.xml
+<div class="shell"><pre>Z:\>ant maven2
+[<tutorial/log/install.txt>]
+</pre></div>
+The trace tells us that the module definition was found using the "libraries" resolver and that the corresponding artifact was downloaded from maven 2 repository. Then both were published to the filesystem repository (my-repository).
 
-init-basic:
-:: Ivy 20060123130642 - 20060123130642 :: http://ivy.jayasoft.org/ ::
-:: configuring :: file = Z:\ivy-repository\ivy-conf-basic.xml
-
-basic:
-:: installing [ apache | commons-lang | 1.0 ] ::
-:: resolving dependencies ::
-        found [ apache | commons-lang | 1.0 ] in libraries
-:: downloading artifacts to cache ::
-downloading http://www.ibiblio.org/maven/commons-lang/jars/commons-lang-1.0.jar ...
-............ (62kB)
-        [SUCCESSFUL ] [ apache | commons-lang | 1.0 ]/commons-lang.jar[jar] (1203ms)
-:: installing in local-repository ::
-        published commons-lang to Z:\ivy-repository/ivy-local-repository/apache/commons-lang/jars/commons-lang-1.0.jar
-        published ivy to Z:\ivy-repository/ivy-local-repository/apache/commons-lang/ivys/ivy-1.0.xml
-
-BUILD SUCCESSFUL
-Total time: 2 seconds</pre></div>
-The trace tells us that the module definition was found using the "libraries" resolver and that the corresponding artifact was downloaded from ibiblio. Then both were published in the local repository.
-
-If we take a look at our repository :
-<div class="shell"><pre>Z:\ivy-repository>dir /s /B /A:-D ivy-local-repository
-Z:\ivy-repository\ivy-local-repository\apache\commons-lang\ivys\ivy-1.0.xml
-Z:\ivy-repository\ivy-local-repository\apache\commons-lang\jars\commons-lang-1.0.jar
-Z:\ivy-repository></pre>
+Let's have a look at our repository :
+<div class="shell"><pre>Z:\>dir /s /B /A:-D myrepository
+Z:\myrepository\no-namespace\commons-lang\commons-lang\ivys\ivy-1.0.xml
+Z:\myrepository\no-namespace\commons-lang\commons-lang\ivys\ivy-1.0.xml.md5
+Z:\myrepository\no-namespace\commons-lang\commons-lang\ivys\ivy-1.0.xml.sha1
+Z:\myrepository\no-namespace\commons-lang\commons-lang\jars\commons-lang-1.0.jar
+Z:\myrepository\no-namespace\commons-lang\commons-lang\jars\commons-lang-1.0.jar.md5
+Z:\myrepository\no-namespace\commons-lang\commons-lang\jars\commons-lang-1.0.jar.sha1</pre>
 </div>
-We can see that we have started our own repository by retrieving the commons-lang 1.0 ivy file descriptor and jar.
-<h1>basic with dependencies, retrieve hibernate 2.1.8</h1>
-Now let's advance a little more by trying a module that has some dependencies. Here is the target that we will call :
+We can see that we now have the commons-lang module version 1.0 in our repository, with a generated ivy.xml file, its jar, and all the md5 and sha1 checksums for future consistency checks when developers will use this repository to resolve modules.
+
+<h1>install a module with dependencies</h1>
+Now let's say that we want to be sure all the dependencies of the module we install are available in our repository after the installation. We could either install without dependencies on a staging repository and check the missing dependencies (more control), or use transitive dependency management and ask Ivy to install everything for us (much simpler).
+
+The target called is very similar to the one described above, except that we explicitly ask for transitive installation.
 <code type="xml">
-    <target name="basic-deps" description="--> retrieve files from well formatted ivy repositories with dependencies">
-        <ivy:install settingsRef="basic.settings" organisation="hibernate" module="hibernate" revision="2.1.8" from="${from-resolver}" to="${to-resolver}" transitive="true" />
+    <target name="maven2-deps" depends="init-ivy" 
+    	description="--> install module from maven 2 repository with dependencies">
+    	<ivy:install settingsRef="basic.settings" 
+    		organisation="org.hibernate" module="hibernate" revision="3.2.5.ga" 
+    		from="${from.resolver}" to="${to.resolver}" transitive="true" />
     </target>
-</code>This target is very similar to the basic one, except it defines the transitivity mode to use. By writing, <em>transitive="true"</em>, we tell the task to retrieve the corresponding module and it's dependencies.
+</code>
 
-Ok let's call the target :
-<div class="shell"><pre>Z:\ivy-repository>ant basic-deps
-Buildfile: build.xml
-
-init-basic:
-:: Ivy 20060123130642 - 20060123130642 :: http://ivy.jayasoft.org/ ::
-:: configuring :: file = Z:\ivy-repository\ivy-conf-basic.xml
-
-basic-deps:
-:: installing [ hibernate | hibernate | 2.1.8 ] ::
-:: resolving dependencies ::
-        found [ hibernate | hibernate | 2.1.8 ] in libraries
-        found [ cglib | cglib | 2.0.2 ] in libraries
-        found [ apache | commons-collections | 2.1.1 ] in libraries
-        found [ apache | commons-logging | 1.0.4 ] in libraries
-        found [ dom4j | dom4j | 1.4 ] in libraries
-        found [ ehcache | ehcache | 0.9 ] in libraries
-        found [ odmg | odmg | 3.0 ] in libraries
-        found [ sun | jta | 1.0 ] in libraries
-        found [ apache | xalan | 2.4.0 ] in libraries
-        found [ apache | xerces | 2.4.0 ] in libraries
-        found [ sun | jdbc | 2.0 ] in libraries
-        found [ sun | jca | 1.0 ] in libraries
-        found [ sun | jaas | 1.0 ] in libraries
-        found [ c3p0 | c3p0 | 0.8.4.5 ] in libraries
-        found [ apache | commons-dbcp | 1.2.1 ] in libraries
-        found [ apache | commons-pool | 1.2 ] in libraries
-        found [ apache | commons-collections | 2.1 ] in libraries
-        found [ apache | xerces | 2.0.2 ] in libraries
-        found [ proxool | proxool | 0.8.3 ] in libraries
-        found [ jboss | jboss-cache | 1.1.1 ] in libraries
-        found [ opensymphony | oscache | 2.0 ] in libraries
-        found [ apache | commons-logging | 1.0.3 ] in libraries
-        found [ swarmcache | swarmcache | 1.0RC2 ] in libraries
-        found [ apache | commons-logging | 1.0.2 ] in libraries
-        found [ jgroups | jgroups | 2.2 ] in libraries
-:: downloading artifacts to cache ::
-downloading http://www.ibiblio.org/maven/hibernate/jars/hibernate-2.1.8.jar ...
-...........
-............
-.. (944kB)
-        [SUCCESSFUL ] [ hibernate | hibernate | 2.1.8 ]/hibernate.jar[jar] (97063ms)
-
-
-SOME MINUTES LATER .... ;-)
-
-
-downloading http://www.ibiblio.org/maven/commons-logging/jars/commons-logging-1.0.4.jar ...
-..
-......
-.. (37kB)
-        [SUCCESSFUL ] [ apache | commons-logging | 1.0.4 ]/commons-logging.jar[jar] (24172ms)
-
-BUILD SUCCESSFUL
-Total time: 14 minutes 57 seconds
-Z:\ivy-repository></pre>
+If you call this target, you will see that Ivy installs not only the hibernate module but also its dependencies:
+<div class="shell"><pre>Z:\>ant maven2-deps
+[<tutorial/log/install-deps.txt>]
+</pre>
 </div>
 
-We can see here that Ivy has resolved hibernate 2.1.8 and 24 depending modules. If we look at the ivy file for <a href="http://ivyrep.jayasoft.org/hibernate/hibernate/ivy-2.1.8.xml">hibernate 2.1.8</a>, we can see that it defines 17 dependencies. The 7 others that ivy retrieved, were transitive ones used in direct dependent modules of hibernate.
+As you can see the installation has failed, if you look at the log you will see that there are missing artifacts on the source repository. This means that you will need to download those artifacts manually, and copy them to your destination repository to complete the installation. Fortunately Ivy use a best effort algorithm during install, so that you have everything installed but the missing artifacts.
 
-We can notice that we have retrieve 3 different revisions of apache commons-logging (1.0.2, 1.0.3, 1.0.4) and 2 revisions of commons-collections (1.2, 1.2.1). This is due to the fact that we use the "no conflict" <a href="../../configuration/conflict-managers.html">conflic manager</a> in the ivysettings file.
-We do not want to evict any modules because we are building our own repository !
+You may also have notice that Ivy has installed 2 different revisions of commons-logging (1.0.2, 1.0.4). This is due to the fact that we use the "no conflict" [[configuration/conflict-managers conflict manager]] in the ivysettings file.
 
-8 modules artifacts have not been downloaded cause they have not been found on ibiblio with the ivysettings as it is.
-We will see how to handle this problem in the advanced tutorial.
+We do not want to evict any modules because we are building our own repository. Indeed if we get both commons-logging 1.0.2 and 1.0.4 it's because some modules among the transitive dependencies of hibernate depend on 1.0.2 and other on 1.0.4. If we got only 1.0.4, the module depending on 1.0.2 would be inconsistent in your own repository (depending on a version you don't have installed). Thus developers using this module directly would run into a problem.
 
-If we look at our repository now, it starts to look to something good :
-
-<div class="shell"><pre>Z:\ivy-repository>dir /s /B /A:-D ivy-local-repository
-Z:\ivy-repository\ivy-local-repository\apache\commons-collections\ivys\ivy-2.1.1.xml
-Z:\ivy-repository\ivy-local-repository\apache\commons-collections\ivys\ivy-2.1.xml
-Z:\ivy-repository\ivy-local-repository\apache\commons-collections\jars\commons-collections-2.1.1.jar
-Z:\ivy-repository\ivy-local-repository\apache\commons-collections\jars\commons-collections-2.1.jar
-Z:\ivy-repository\ivy-local-repository\apache\commons-dbcp\ivys\ivy-1.2.1.xml
-Z:\ivy-repository\ivy-local-repository\apache\commons-dbcp\jars\commons-dbcp-1.2.1.jar
-Z:\ivy-repository\ivy-local-repository\apache\commons-lang\ivys\ivy-1.0.xml
-Z:\ivy-repository\ivy-local-repository\apache\commons-lang\jars\commons-lang-1.0.jar
-Z:\ivy-repository\ivy-local-repository\apache\commons-logging\ivys\ivy-1.0.2.xml
-Z:\ivy-repository\ivy-local-repository\apache\commons-logging\ivys\ivy-1.0.3.xml
-Z:\ivy-repository\ivy-local-repository\apache\commons-logging\ivys\ivy-1.0.4.xml
-Z:\ivy-repository\ivy-local-repository\apache\commons-logging\jars\commons-logging-1.0.2.jar
-Z:\ivy-repository\ivy-local-repository\apache\commons-logging\jars\commons-logging-1.0.3.jar
-Z:\ivy-repository\ivy-local-repository\apache\commons-logging\jars\commons-logging-1.0.4.jar
-Z:\ivy-repository\ivy-local-repository\apache\commons-pool\ivys\ivy-1.2.xml
-Z:\ivy-repository\ivy-local-repository\apache\commons-pool\jars\commons-pool-1.2.jar
-Z:\ivy-repository\ivy-local-repository\apache\xalan\ivys\ivy-2.4.0.xml
-Z:\ivy-repository\ivy-local-repository\apache\xalan\jars\xalan-2.4.0.jar
-Z:\ivy-repository\ivy-local-repository\apache\xerces\ivys\ivy-2.0.2.xml
-Z:\ivy-repository\ivy-local-repository\apache\xerces\ivys\ivy-2.4.0.xml
-Z:\ivy-repository\ivy-local-repository\apache\xerces\jars\xerces-2.0.2.jar
-Z:\ivy-repository\ivy-local-repository\apache\xerces\jars\xerces-2.4.0.jar
-Z:\ivy-repository\ivy-local-repository\apache\xerces\jars\xmlParserAPIs-2.0.2.jar
-Z:\ivy-repository\ivy-local-repository\c3p0\c3p0\ivys\ivy-0.8.4.5.xml
-Z:\ivy-repository\ivy-local-repository\c3p0\c3p0\jars\c3p0-0.8.4.5.jar
-Z:\ivy-repository\ivy-local-repository\cglib\cglib\ivys\ivy-2.0.2.xml
-Z:\ivy-repository\ivy-local-repository\cglib\cglib\jars\cglib-full-2.0.2.jar
-Z:\ivy-repository\ivy-local-repository\dom4j\dom4j\ivys\ivy-1.4.xml
-Z:\ivy-repository\ivy-local-repository\dom4j\dom4j\jars\dom4j-1.4.jar
-Z:\ivy-repository\ivy-local-repository\ehcache\ehcache\ivys\ivy-0.9.xml
-Z:\ivy-repository\ivy-local-repository\ehcache\ehcache\jars\ehcache-0.9.jar
-Z:\ivy-repository\ivy-local-repository\hibernate\hibernate\ivys\ivy-2.1.8.xml
-Z:\ivy-repository\ivy-local-repository\hibernate\hibernate\jars\hibernate-2.1.8.jar
-Z:\ivy-repository\ivy-local-repository\jboss\jboss-cache\ivys\ivy-1.1.1.xml
-Z:\ivy-repository\ivy-local-repository\jgroups\jgroups\ivys\ivy-2.2.xml
-Z:\ivy-repository\ivy-local-repository\odmg\odmg\ivys\ivy-3.0.xml
-Z:\ivy-repository\ivy-local-repository\odmg\odmg\jars\odmg-3.0.jar
-Z:\ivy-repository\ivy-local-repository\opensymphony\oscache\ivys\ivy-2.0.xml
-Z:\ivy-repository\ivy-local-repository\proxool\proxool\ivys\ivy-0.8.3.xml
-Z:\ivy-repository\ivy-local-repository\proxool\proxool\jars\proxool-0.8.3.jar
-Z:\ivy-repository\ivy-local-repository\sun\jaas\ivys\ivy-1.0.xml
-Z:\ivy-repository\ivy-local-repository\sun\jca\ivys\ivy-1.0.xml
-Z:\ivy-repository\ivy-local-repository\sun\jdbc\ivys\ivy-2.0.xml
-Z:\ivy-repository\ivy-local-repository\sun\jta\ivys\ivy-1.0.xml
-Z:\ivy-repository\ivy-local-repository\swarmcache\swarmcache\ivys\ivy-1.0RC2.xml
-Z:\ivy-repository\ivy-local-repository\swarmcache\swarmcache\jars\swarmcache-1.0RC2.jar
-
-Z:\ivy-repository></pre>
+If you now have a closer look at your repository, you will probably notice that it isn't an exact replication of the original one. Let's have a look at one module content:
+<div class="shell"><pre>Z:\>dir /s /B /A:-D myrepository\no-namespace\org.hibernate\hibernate\
+Z:\myrepository\no-namespace\org.hibernate\hibernate\ivys\ivy-3.2.5.ga.xml
+Z:\myrepository\no-namespace\org.hibernate\hibernate\ivys\ivy-3.2.5.ga.xml.md5
+Z:\myrepository\no-namespace\org.hibernate\hibernate\ivys\ivy-3.2.5.ga.xml.sha1
+Z:\myrepository\no-namespace\org.hibernate\hibernate\jars\hibernate-3.2.5.ga.jar
+Z:\myrepository\no-namespace\org.hibernate\hibernate\jars\hibernate-3.2.5.ga.jar.md5
+Z:\myrepository\no-namespace\org.hibernate\hibernate\jars\hibernate-3.2.5.ga.jar.sha1</pre>
 </div>
 
-	</textarea>
+As you can see there is no pom here (pom is the module metadata format used by maven 2, available on the maven 2 repository). Instead you can see there's an ivy file, which is actually the original hibernate pom converted into an ivy file. So now you have a true Ivy repository with ivy files, where you can use the full power of Ivy if you want to adjust the module metadata (module configurations, fine grain exclusions and transitivity control, per module conflict manager, ...).
+
+Ok, enough for this simple repository installation, the [[tutorial/build-repository/advanced next tutorial]] will now show how you can deal with more complex cases where your source and destination repositories do not follow the same naming conventions.</textarea>
 <script type="text/javascript">xooki.postProcess();</script>
 </body>
 </html>

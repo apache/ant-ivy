@@ -37,7 +37,7 @@
                       ]
                   },
                   {
-                    "id":"tutorial/multi-project",
+                    "id":"tutorial/dependence",
                     "title":"Project dependencies",
                     "children": [
 
@@ -63,21 +63,14 @@
                     "children": [
                         {
                           "id":"tutorial/build-repository/basic",
-                          "title":"Basic repository replication",
+                          "title":"Basic repository copy",
                           "children": [
 
                             ]
                         },
                         {
-                          "id":"tutorial/build-repository/advanced1",
-                          "title":"Advanced repository - step 1",
-                          "children": [
-
-                            ]
-                        },
-                        {
-                          "id":"tutorial/build-repository/advanced2",
-                          "title":"Advanced repository - step 2",
+                          "id":"tutorial/build-repository/advanced",
+                          "title":"Using namespaces",
                           "children": [
 
                             ]

@@ -25,13 +25,14 @@
 </head>
 <body>
 	<textarea id="xooki-source">
-With the <a href="../use/install.html">install</a> ant task you are given the possibility to copy ivy descriptors and artifacts found from a resolver and publish them into another resolver.<br/> 
+The [[ant:install]] task let you copy a module or a set of modules from one repository to another one. This is very useful to build and maintain a enterprise or a team repository. If you don't want to give access to the public maven 2 repository to the developers in your team (to keep control over which modules are in use in your company or your team for instance), it can sometimes become tiresome to answer the developers request to add new modules or new versions by hand.
 
-This tutorial will show you how to build your own clean enterprise repository of ivy descriptors and modules artifacts.
-We will first use some basic ivy settings files to show how it works, and then we will use advanced features like <a href="../configuration/namespaces.html">namespaces</a> to build a real enterprise repository.
+Fortunately the [[ant:install]] task is here to help: you can use specific settings for your repository maintenance build which will be used to maintain your target enterprise repository. These settings will point to another repository (for instance the maven 2 public repository) so that you will just have to ask Ivy to install the modules you want with a simple command line.
+
+To demonstrate this we will first use some basic ivy settings files to show how it works, and then we will use the advanced [[configuration/namespaces]] feature  to demonstrate how to deal with naming mismatch between the source and target repository.
 
 <h1>The project used</h1>
-The project that we will use is quite simple.
+The project that we will use is pretty simple.
 It is composed of an ant build file, and some ivy settings files.
 
 Here are the accessible target that we will use : 
@@ -41,18 +42,20 @@ Buildfile: build.xml
 
 Main targets:
 
- advanced                                 --> retrieve files from public repositories (ivyrep, ibiblio, ...) using namespaces
- basic                                    --> retrieve files from well formatted ivy repositories
- basic-deps                               --> retrieve files from well formatted ivy repositories with dependencies
- clean-cache                              --> clean the cache
- clean-repo                               --> clean the destination repository
- commons-lang-1-0-ibiblio-no-namespace    --> retrieve commons-lang 1.0 from ibiblio maven using no namespaces
- commons-lang-1-0-ibiblio-with-namespace  --> retrieve commons-lang 1.0 from ibiblio maven using namespaces
- maven1                                   --> retrieve commons-lang 1.0 from maven1 repo using namespaces
- maven2                                   --> retrieve files from maven2 repo using namespaces
-Default target: basic</pre></div>
+ clean-cache            --> clean the cache
+ clean-repo             --> clean the destination repository
+ maven2                 --> install module from maven 2 repository
+ maven2-deps            --> install module from maven 2 repository with dependencies
+ maven2-namespace       --> install module from maven 2 using namespaces
+ maven2-namespace-deps  --> install module with dependencies from maven2 repo using namespaces
+Default target: basic
+</pre></div>
 <br/><br/>
-The project is accessible in the [[svn:src/example/build-a-ivy-repository sources]]
+The project is accessible in the [[svn:src/example/build-a-ivy-repository src/example/build-a-ivy-repository]]
+
+Next steps:
+[[tutorial/build-repository/basic]]
+[[tutorial/build-repository/advanced]]
 
 
 	</textarea>

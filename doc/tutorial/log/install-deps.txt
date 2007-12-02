@@ -160,64 +160,64 @@ maven2-deps:
 [ivy:install] .. (0kB)
 [ivy:install]   [SUCCESSFUL ] xerces#xercesImpl;2.6.2/xercesImpl.jar[jar] (6906ms)
 [ivy:install] :: installing in my-repository ::
-[ivy:install]   published hibernate to /home/xavier/ivy/myrepository/no-namespace/org.hibernate/hibernate/jars/hibernate-3.2.5.ga.jar
-[ivy:install]   published ivy to /home/xavier/ivy/myrepository/no-namespace/org.hibernate/hibernate/ivys/ivy-3.2.5.ga.xml
-[ivy:install]   published ehcache to /home/xavier/ivy/myrepository/no-namespace/net.sf.ehcache/ehcache/jars/ehcache-1.2.3.jar
-[ivy:install]   published ivy to /home/xavier/ivy/myrepository/no-namespace/net.sf.ehcache/ehcache/ivys/ivy-1.2.3.xml
+[ivy:install]   published hibernate to myrepository/no-namespace/org.hibernate/hibernate/jars/hibernate-3.2.5.ga.jar
+[ivy:install]   published ivy to myrepository/no-namespace/org.hibernate/hibernate/ivys/ivy-3.2.5.ga.xml
+[ivy:install]   published ehcache to myrepository/no-namespace/net.sf.ehcache/ehcache/jars/ehcache-1.2.3.jar
+[ivy:install]   published ivy to myrepository/no-namespace/net.sf.ehcache/ehcache/ivys/ivy-1.2.3.xml
 [ivy:install] missing artifact javax.transaction#jta;1.0.1B/jta.jar[jar]:
-[ivy:install]   /home/xavier/ivy/cache/no-namespace/javax.transaction/jta/jars/jta-1.0.1B.jar file does not exist
-[ivy:install]   published ivy to /home/xavier/ivy/myrepository/no-namespace/javax.transaction/jta/ivys/ivy-1.0.1B.xml
-[ivy:install]   published commons-logging to /home/xavier/ivy/myrepository/no-namespace/commons-logging/commons-logging/jars/commons-logging-1.0.4.jar
-[ivy:install]   published ivy to /home/xavier/ivy/myrepository/no-namespace/commons-logging/commons-logging/ivys/ivy-1.0.4.xml
-[ivy:install]   published asm-attrs to /home/xavier/ivy/myrepository/no-namespace/asm/asm-attrs/jars/asm-attrs-1.5.3.jar
-[ivy:install]   published ivy to /home/xavier/ivy/myrepository/no-namespace/asm/asm-attrs/ivys/ivy-1.5.3.xml
-[ivy:install]   published dom4j to /home/xavier/ivy/myrepository/no-namespace/dom4j/dom4j/jars/dom4j-1.6.1.jar
-[ivy:install]   published ivy to /home/xavier/ivy/myrepository/no-namespace/dom4j/dom4j/ivys/ivy-1.6.1.xml
-[ivy:install]   published antlr to /home/xavier/ivy/myrepository/no-namespace/antlr/antlr/jars/antlr-2.7.6.jar
-[ivy:install]   published ivy to /home/xavier/ivy/myrepository/no-namespace/antlr/antlr/ivys/ivy-2.7.6.xml
-[ivy:install]   published cglib to /home/xavier/ivy/myrepository/no-namespace/cglib/cglib/jars/cglib-2.1_3.jar
-[ivy:install]   published ivy to /home/xavier/ivy/myrepository/no-namespace/cglib/cglib/ivys/ivy-2.1_3.xml
-[ivy:install]   published asm to /home/xavier/ivy/myrepository/no-namespace/asm/asm/jars/asm-1.5.3.jar
-[ivy:install]   published ivy to /home/xavier/ivy/myrepository/no-namespace/asm/asm/ivys/ivy-1.5.3.xml
-[ivy:install]   published commons-collections to /home/xavier/ivy/myrepository/no-namespace/commons-collections/commons-collections/jars/commons-collections-2.1.1.jar
-[ivy:install]   published ivy to /home/xavier/ivy/myrepository/no-namespace/commons-collections/commons-collections/ivys/ivy-2.1.1.xml
-[ivy:install]   published commons-collections to /home/xavier/ivy/myrepository/no-namespace/commons-collections/commons-collections/jars/commons-collections-2.1.jar
-[ivy:install]   published ivy to /home/xavier/ivy/myrepository/no-namespace/commons-collections/commons-collections/ivys/ivy-2.1.xml
-[ivy:install]   published ant to /home/xavier/ivy/myrepository/no-namespace/ant/ant/jars/ant-1.6.5.jar
-[ivy:install]   published ivy to /home/xavier/ivy/myrepository/no-namespace/ant/ant/ivys/ivy-1.6.5.xml
-[ivy:install]   published swarmcache to /home/xavier/ivy/myrepository/no-namespace/swarmcache/swarmcache/jars/swarmcache-1.0RC2.jar
-[ivy:install]   published ivy to /home/xavier/ivy/myrepository/no-namespace/swarmcache/swarmcache/ivys/ivy-1.0RC2.xml
-[ivy:install]   published jboss-cache to /home/xavier/ivy/myrepository/no-namespace/jboss/jboss-cache/jars/jboss-cache-1.2.2.jar
-[ivy:install]   published ivy to /home/xavier/ivy/myrepository/no-namespace/jboss/jboss-cache/ivys/ivy-1.2.2.xml
-[ivy:install]   published jgroups-all to /home/xavier/ivy/myrepository/no-namespace/jgroups/jgroups-all/jars/jgroups-all-2.2.8.jar
-[ivy:install]   published ivy to /home/xavier/ivy/myrepository/no-namespace/jgroups/jgroups-all/ivys/ivy-2.2.8.xml
-[ivy:install]   published c3p0 to /home/xavier/ivy/myrepository/no-namespace/c3p0/c3p0/jars/c3p0-0.9.1.jar
-[ivy:install]   published ivy to /home/xavier/ivy/myrepository/no-namespace/c3p0/c3p0/ivys/ivy-0.9.1.xml
+[ivy:install]   cache/no-namespace/javax.transaction/jta/jars/jta-1.0.1B.jar file does not exist
+[ivy:install]   published ivy to myrepository/no-namespace/javax.transaction/jta/ivys/ivy-1.0.1B.xml
+[ivy:install]   published commons-logging to myrepository/no-namespace/commons-logging/commons-logging/jars/commons-logging-1.0.4.jar
+[ivy:install]   published ivy to myrepository/no-namespace/commons-logging/commons-logging/ivys/ivy-1.0.4.xml
+[ivy:install]   published asm-attrs to myrepository/no-namespace/asm/asm-attrs/jars/asm-attrs-1.5.3.jar
+[ivy:install]   published ivy to myrepository/no-namespace/asm/asm-attrs/ivys/ivy-1.5.3.xml
+[ivy:install]   published dom4j to myrepository/no-namespace/dom4j/dom4j/jars/dom4j-1.6.1.jar
+[ivy:install]   published ivy to myrepository/no-namespace/dom4j/dom4j/ivys/ivy-1.6.1.xml
+[ivy:install]   published antlr to myrepository/no-namespace/antlr/antlr/jars/antlr-2.7.6.jar
+[ivy:install]   published ivy to myrepository/no-namespace/antlr/antlr/ivys/ivy-2.7.6.xml
+[ivy:install]   published cglib to myrepository/no-namespace/cglib/cglib/jars/cglib-2.1_3.jar
+[ivy:install]   published ivy to myrepository/no-namespace/cglib/cglib/ivys/ivy-2.1_3.xml
+[ivy:install]   published asm to myrepository/no-namespace/asm/asm/jars/asm-1.5.3.jar
+[ivy:install]   published ivy to myrepository/no-namespace/asm/asm/ivys/ivy-1.5.3.xml
+[ivy:install]   published commons-collections to myrepository/no-namespace/commons-collections/commons-collections/jars/commons-collections-2.1.1.jar
+[ivy:install]   published ivy to myrepository/no-namespace/commons-collections/commons-collections/ivys/ivy-2.1.1.xml
+[ivy:install]   published commons-collections to myrepository/no-namespace/commons-collections/commons-collections/jars/commons-collections-2.1.jar
+[ivy:install]   published ivy to myrepository/no-namespace/commons-collections/commons-collections/ivys/ivy-2.1.xml
+[ivy:install]   published ant to myrepository/no-namespace/ant/ant/jars/ant-1.6.5.jar
+[ivy:install]   published ivy to myrepository/no-namespace/ant/ant/ivys/ivy-1.6.5.xml
+[ivy:install]   published swarmcache to myrepository/no-namespace/swarmcache/swarmcache/jars/swarmcache-1.0RC2.jar
+[ivy:install]   published ivy to myrepository/no-namespace/swarmcache/swarmcache/ivys/ivy-1.0RC2.xml
+[ivy:install]   published jboss-cache to myrepository/no-namespace/jboss/jboss-cache/jars/jboss-cache-1.2.2.jar
+[ivy:install]   published ivy to myrepository/no-namespace/jboss/jboss-cache/ivys/ivy-1.2.2.xml
+[ivy:install]   published jgroups-all to myrepository/no-namespace/jgroups/jgroups-all/jars/jgroups-all-2.2.8.jar
+[ivy:install]   published ivy to myrepository/no-namespace/jgroups/jgroups-all/ivys/ivy-2.2.8.xml
+[ivy:install]   published c3p0 to myrepository/no-namespace/c3p0/c3p0/jars/c3p0-0.9.1.jar
+[ivy:install]   published ivy to myrepository/no-namespace/c3p0/c3p0/ivys/ivy-0.9.1.xml
 [ivy:install] missing artifact javax.security#jacc;1.0/jacc.jar[jar]:
-[ivy:install]   /home/xavier/ivy/cache/no-namespace/javax.security/jacc/jars/jacc-1.0.jar file does not exist
-[ivy:install]   published ivy to /home/xavier/ivy/myrepository/no-namespace/javax.security/jacc/ivys/ivy-1.0.xml
-[ivy:install]   published oscache to /home/xavier/ivy/myrepository/no-namespace/opensymphony/oscache/jars/oscache-2.1.jar
-[ivy:install]   published ivy to /home/xavier/ivy/myrepository/no-namespace/opensymphony/oscache/ivys/ivy-2.1.xml
-[ivy:install]   published proxool to /home/xavier/ivy/myrepository/no-namespace/proxool/proxool/jars/proxool-0.8.3.jar
-[ivy:install]   published ivy to /home/xavier/ivy/myrepository/no-namespace/proxool/proxool/ivys/ivy-0.8.3.xml
-[ivy:install]   published commons-logging to /home/xavier/ivy/myrepository/no-namespace/commons-logging/commons-logging/jars/commons-logging-1.0.2.jar
-[ivy:install]   published ivy to /home/xavier/ivy/myrepository/no-namespace/commons-logging/commons-logging/ivys/ivy-1.0.2.xml
-[ivy:install]   published jboss-system to /home/xavier/ivy/myrepository/no-namespace/jboss/jboss-system/jars/jboss-system-4.0.2.jar
-[ivy:install]   published ivy to /home/xavier/ivy/myrepository/no-namespace/jboss/jboss-system/ivys/ivy-4.0.2.xml
-[ivy:install]   published jboss-common to /home/xavier/ivy/myrepository/no-namespace/jboss/jboss-common/jars/jboss-common-4.0.2.jar
-[ivy:install]   published ivy to /home/xavier/ivy/myrepository/no-namespace/jboss/jboss-common/ivys/ivy-4.0.2.xml
-[ivy:install]   published jboss-minimal to /home/xavier/ivy/myrepository/no-namespace/jboss/jboss-minimal/jars/jboss-minimal-4.0.2.jar
-[ivy:install]   published ivy to /home/xavier/ivy/myrepository/no-namespace/jboss/jboss-minimal/ivys/ivy-4.0.2.xml
-[ivy:install]   published jboss-j2se to /home/xavier/ivy/myrepository/no-namespace/jboss/jboss-j2se/jars/jboss-j2se-200504122039.jar
-[ivy:install]   published ivy to /home/xavier/ivy/myrepository/no-namespace/jboss/jboss-j2se/ivys/ivy-200504122039.xml
-[ivy:install]   published concurrent to /home/xavier/ivy/myrepository/no-namespace/concurrent/concurrent/jars/concurrent-1.3.4.jar
-[ivy:install]   published ivy to /home/xavier/ivy/myrepository/no-namespace/concurrent/concurrent/ivys/ivy-1.3.4.xml
-[ivy:install]   published jgroups-all to /home/xavier/ivy/myrepository/no-namespace/jgroups/jgroups-all/jars/jgroups-all-2.2.7.jar
-[ivy:install]   published ivy to /home/xavier/ivy/myrepository/no-namespace/jgroups/jgroups-all/ivys/ivy-2.2.7.xml
-[ivy:install]   published webdavlib to /home/xavier/ivy/myrepository/no-namespace/slide/webdavlib/jars/webdavlib-2.0.jar
-[ivy:install]   published ivy to /home/xavier/ivy/myrepository/no-namespace/slide/webdavlib/ivys/ivy-2.0.xml
-[ivy:install]   published xercesImpl to /home/xavier/ivy/myrepository/no-namespace/xerces/xercesImpl/jars/xercesImpl-2.6.2.jar
-[ivy:install]   published ivy to /home/xavier/ivy/myrepository/no-namespace/xerces/xercesImpl/ivys/ivy-2.6.2.xml
+[ivy:install]   cache/no-namespace/javax.security/jacc/jars/jacc-1.0.jar file does not exist
+[ivy:install]   published ivy to myrepository/no-namespace/javax.security/jacc/ivys/ivy-1.0.xml
+[ivy:install]   published oscache to myrepository/no-namespace/opensymphony/oscache/jars/oscache-2.1.jar
+[ivy:install]   published ivy to myrepository/no-namespace/opensymphony/oscache/ivys/ivy-2.1.xml
+[ivy:install]   published proxool to myrepository/no-namespace/proxool/proxool/jars/proxool-0.8.3.jar
+[ivy:install]   published ivy to myrepository/no-namespace/proxool/proxool/ivys/ivy-0.8.3.xml
+[ivy:install]   published commons-logging to myrepository/no-namespace/commons-logging/commons-logging/jars/commons-logging-1.0.2.jar
+[ivy:install]   published ivy to myrepository/no-namespace/commons-logging/commons-logging/ivys/ivy-1.0.2.xml
+[ivy:install]   published jboss-system to myrepository/no-namespace/jboss/jboss-system/jars/jboss-system-4.0.2.jar
+[ivy:install]   published ivy to myrepository/no-namespace/jboss/jboss-system/ivys/ivy-4.0.2.xml
+[ivy:install]   published jboss-common to myrepository/no-namespace/jboss/jboss-common/jars/jboss-common-4.0.2.jar
+[ivy:install]   published ivy to myrepository/no-namespace/jboss/jboss-common/ivys/ivy-4.0.2.xml
+[ivy:install]   published jboss-minimal to myrepository/no-namespace/jboss/jboss-minimal/jars/jboss-minimal-4.0.2.jar
+[ivy:install]   published ivy to myrepository/no-namespace/jboss/jboss-minimal/ivys/ivy-4.0.2.xml
+[ivy:install]   published jboss-j2se to myrepository/no-namespace/jboss/jboss-j2se/jars/jboss-j2se-200504122039.jar
+[ivy:install]   published ivy to myrepository/no-namespace/jboss/jboss-j2se/ivys/ivy-200504122039.xml
+[ivy:install]   published concurrent to myrepository/no-namespace/concurrent/concurrent/jars/concurrent-1.3.4.jar
+[ivy:install]   published ivy to myrepository/no-namespace/concurrent/concurrent/ivys/ivy-1.3.4.xml
+[ivy:install]   published jgroups-all to myrepository/no-namespace/jgroups/jgroups-all/jars/jgroups-all-2.2.7.jar
+[ivy:install]   published ivy to myrepository/no-namespace/jgroups/jgroups-all/ivys/ivy-2.2.7.xml
+[ivy:install]   published webdavlib to myrepository/no-namespace/slide/webdavlib/jars/webdavlib-2.0.jar
+[ivy:install]   published ivy to myrepository/no-namespace/slide/webdavlib/ivys/ivy-2.0.xml
+[ivy:install]   published xercesImpl to myrepository/no-namespace/xerces/xercesImpl/jars/xercesImpl-2.6.2.jar
+[ivy:install]   published ivy to myrepository/no-namespace/xerces/xercesImpl/ivys/ivy-2.6.2.xml
 [ivy:install] :: install resolution report ::
         ---------------------------------------------------------------------
         |                  |            modules            ||   artifacts   |
@@ -227,6 +227,6 @@ maven2-deps:
         ---------------------------------------------------------------------
 
 BUILD FAILED
-/home/xavier/ivy/build.xml:80: Problem happened while installing modules - see output for details
+build.xml:80: Problem happened while installing modules - see output for details
 
 Total time: 2 minutes 49 seconds
