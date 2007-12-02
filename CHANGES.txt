@@ -65,7 +65,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - IMPROVEMENT: Maven Dependency Management is not used to determine artifact version (IVY-616) (thanks to Jim Bonanno)
 - IMPROVEMENT: split the cache into an downloaded artifacts cache and a metadata cache (IVY-628)
 - IMPROVEMENT: add publish triggers to event system (IVY-650) (thanks to Jason Trump)
-- IMPROVEMENT: Only display unique circular dependencies during Resolve (IVY-653)
+- IMPROVEMENT: Only display unique circular dependencies during Resolve (IVY-653 IVY-514) (with contribution from John Williams)
 - IMPROVEMENT: Adding option 'cp', which makes it possible for main to be loaded from file (IVY-543) (thanks to Tjeerd Verhagen)
 - IMPROVEMENT: BasicURLHandler should use method=head for getURLInfo (IVY-611) (thanks to Jim Bonanno)
 - IMPROVEMENT: artifactproperty should not overwrite the existing properties (IVY-587)

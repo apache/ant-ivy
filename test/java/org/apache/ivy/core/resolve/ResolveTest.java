@@ -2458,7 +2458,7 @@ public class ResolveTest extends TestCase {
             fail("no exception with circular dependency strategy set to error");
         } catch (CircularDependencyException ex) {
             assertEquals(
-                "org6#mod6.3;1.2->org6#mod6.2;1.1->org6#mod6.3;1.2", ex
+                "org6#mod6.3;1.2->org6#mod6.2;1.1->...", ex
                         .getMessage());
         }
     }

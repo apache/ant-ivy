@@ -17,8 +17,10 @@
  */
 package org.apache.ivy.plugins.circular;
 
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
@@ -35,14 +37,21 @@ public final class CircularDependencyHelper {
      * 
      * @param descriptors
      *            in order of circular dependency
-     * @return
+     * @return a string representation of this circular dependency graph
      */
     public static String formatMessage(final ModuleRevisionId[] mrids) {
+        Set alreadyAdded = new HashSet();
         StringBuffer buff = new StringBuffer();
         buff.append(mrids[0]);
+        alreadyAdded.add(mrids[0]);
         for (int i = 1; i < mrids.length; i++) {
             buff.append("->");
-            buff.append(mrids[i]);
+            if (alreadyAdded.add(mrids[i])) {
+                buff.append(mrids[i]);
+            } else {
+                buff.append("...");
+                break;
+            }
         }
         return buff.toString();
     }
