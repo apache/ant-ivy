@@ -193,6 +193,20 @@
                             ]
                         },
                         {
+                          "id":"configuration/lock-strategies",
+                          "title":"lock-strategies",
+                          "children": [
+
+                            ]
+                        },
+                        {
+                          "id":"configuration/cache",
+                          "title":"cache",
+                          "children": [
+
+                            ]
+                        },
+                        {
                           "id":"configuration/latest-strategies",
                           "title":"latest-strategies",
                           "children": [

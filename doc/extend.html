@@ -25,41 +25,30 @@
 </head>
 <body>
 	<textarea id="xooki-source">
-Many things are configurable in ivy, and many things are available with ivy core. But when you want to do 
-something not built in ivy core, you can still plug your own code.<br/><br/>
+Many things are configurable in Ivy, and many things are available with Ivy core. But when you want to do something not built in ivy core, you can still plug your own code.
 
-Several things are pluggable in ivy:
+Many things are pluggable in Ivy:
 <ul>
 <li>module descriptor parsers</li>
 <li>dependency resolvers</li>
+<li>lock strategies</li>
 <li>latest strategies</li>
+<li>circular dependency strategies</li>
 <li>conflict managers</li>
 <li>report outputters</li>
 <li>version matchers</li>
 <li>triggers</li>
 </ul>
 
-Before trying to implement your own, we encourage you to check if the solution to your problem cannot be 
-addressed by existing features, or by [[links contributed ones]]. Do not hesitate to ask for help on the [[mailing-lists]].<br/><br/>
+Before trying to implement your own, we encourage you to check if the solution to your problem cannot be addressed by existing features, or by [[links contributed ones]]. Do not hesitate to ask for help on the [[mailing-lists]].
 
-If you still don't find what you need, then you'll have to develop your own plugin or find someone who could do that for you.<br/><br/>
+If you still don't find what you need, then you'll have to develop your own plugin or find someone who could do that for you.
 
-Here are the main things to know if you want to develop your own plugins...<br/><br/>
+All ivy plug-ins use the same code patterns as ant specific tasks for parameters. This means that if you want to have a "myattribute" of type String, you just have to declare a method called setMyattribute(String val) on your plug-in. The same applies to child tags, you just have to follow Ant specifications.
 
-All ivy plug-ins use the same code patterns as ant specific tasks for parameters. This means that
-if you want to have a "myattribute" of type String, you just have to declare a method called
-setMyattribute(String val) on your plug-in. The same applies to child tags, you just have to follow ant specifications.<br/><br/>
+All pluggable code in Ivy is located in the [[svn:src/java/org/apache/ivy/plugins org.apache.ivy.plugins]] package. In each package you will find an interface that you must implement to provide a new plugin. We usually also provide an abstract class easing the implementation and making your code more independent of interface changes. We heavily recommend using these abstract classes as a base class.
 
-Knowing that, you then have to implement the appropriate interface:
-<ul>
-<li>org.apache.ivy.DependencyResolver for dependency resolvers</li>
-<li>org.apache.ivy.LatestStrategy for latest strategies</li>
-<li>org.apache.ivy.ConflictManager for conflict managers</li>
-<li>org.apache.ivy.parser.ModuleDescriptorParser for module descriptor parsers</li>
-</ul>
-
-To help you understand what is required in each implementation, and what you can use to do it, have a look to existing implementations, it's the best advice we can give you!
-
+To understand how your implementation can be done, we suggest looking at existing implementations we provide, it's the best way to get started.
 	</textarea>
 <script type="text/javascript">xooki.postProcess();</script>
 </body>

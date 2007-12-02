@@ -25,16 +25,16 @@
 </head>
 <body>
 	<textarea id="xooki-source">
-In order to work as you want, ivy sometimes need some settings. Actually, ivy can work with no specific settings at all, see the <a href="tutorial/defaultconf.html">default settings documentation</a> for details about that. But ivy is able 
-to work in very different contexts. You just have to configure it properly.
+In order to work as you want, ivy sometimes need some settings. Actually, ivy can work with no specific settings at all, see the <a href="tutorial/defaultconf.html">default settings documentation</a> for details about that. But ivy is able to work in very different contexts. You just have to configure it properly.
 
-Settings are specified through an xml file, usually called ivysettings.xml. To configure ivy from ant, you just have to call the configure task and pass it the path to your settings file (see <a href="use/configure.html">configure</a> task documentation for details).
+Settings are specified through an xml file, usually called ivysettings.xml. To configure ivy from ant, you just have to use the [[ant:settings]] datatype with the path of your settings file.
 
 Here is an example of settings file :
 <code type="xml">
 <ivysettings>
         <properties file="${ivy.settings.dir}/ivysettings-file.properties" />
-        <settings defaultCache="${cache.dir}" defaultResolver="ibiblio" checkUpToDate="false" />
+        <settings defaultResolver="ibiblio" checkUpToDate="false" />
+        <cache basedir="${cache.dir}" />
         <resolvers>
                 <ibiblio name="ibiblio" />
                 <filesystem name="internal">
@@ -73,6 +73,8 @@ ivysettings
     <a href="configuration/include.html">include</a>
     <a href="configuration/classpath.html">classpath</a>
     <a href="configuration/typedef.html">typedef</a>
+    <a href="configuration/lock-strategies.html">lock-strategies</a>
+    <a href="configuration/cache.html">cache</a>
     <a href="configuration/latest-strategies.html">latest-strategies</a>
     <a href="configuration/version-matchers.html">version-matchers</a>
     <a href="configuration/triggers.html">triggers</a>
@@ -121,6 +123,10 @@ Root tag of any ivysettings file.
         <td>0..n</td></tr>
     <tr><td><a href="configuration/typedef.html">typedef</a></td><td>defines new types in ivy</td>
         <td>0..n</td></tr>
+    <tr><td><a href="configuration/lock-strategies.html">lock-strategies</a></td><td>defines lock strategies</td>
+        <td>0..1</td></tr>
+    <tr><td><a href="configuration/cache.html">cache</a></td><td>set up the cache</td>
+        <td>0..1</td></tr>
     <tr><td><a href="configuration/latest-strategies.html">latest-strategies</a></td><td>defines latest strategies</td>
         <td>0..1</td></tr>
     <tr><td><a href="configuration/parsers.html">parsers</a></td><td>defines module descriptor parsers</td>
