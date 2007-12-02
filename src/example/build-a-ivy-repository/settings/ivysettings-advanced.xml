@@ -32,7 +32,7 @@
 	<property name="ibiblio-maven2-root" value="http://repo1.maven.org/maven2/" override="false" />
 
 	<namespaces>
-    	<namespace name="ibiblio-maven2">
+    	<namespace name="maven2">
 	        <rule>	<!-- imported apache maven1 projects -->
             	<fromsystem>
                 	<src org="apache" module=".+"/>
@@ -159,7 +159,7 @@
 		<ibiblio	name="libraries" 
 					root="${ibiblio-maven2-root}" 
 					m2compatible="true"
-					namespace="ibiblio-maven2"
+					namespace="maven2"
 		/>
 	</resolvers>
 </ivysettings>

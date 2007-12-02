@@ -20,7 +20,7 @@
 <!-- ====================================================================== 
      This is a sample project to build our own ivy repository.
      ====================================================================== -->
-<project name="ivy-repository" default="basic" xmlns:ivy="antlib:org.apache.ivy.ant">
+<project name="ivy-repository" default="maven2" xmlns:ivy="antlib:org.apache.ivy.ant">
 	<property name="settings.dir" value="settings"/>
 	<property name="from.resolver" value="libraries"/>
 	<property name="to.resolver" value="my-repository"/>
