@@ -619,7 +619,13 @@ public abstract class BasicResolver extends AbstractResolver {
                 artifacts[i], artifactResourceResolver, downloader, 
                 new CacheDownloadOptions().setListener(downloadListener)
                     .setUseOrigin(options.isUseOrigin()));
-            Message.info("\t" + adr);
+            if (DownloadStatus.FAILED == adr.getDownloadStatus()) {
+                if (!ArtifactDownloadReport.MISSING_ARTIFACT.equals(adr.getDownloadDetails())) {
+                    Message.warn("\t" + adr);
+                }
+            } else {
+                Message.info("\t" + adr);
+            }
             dr.addArtifactReport(adr);
             checkInterrupted();
         }

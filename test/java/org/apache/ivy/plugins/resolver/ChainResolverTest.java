@@ -19,16 +19,23 @@ package org.apache.ivy.plugins.resolver;
 
 import java.io.File;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 
 import junit.framework.TestCase;
 
+import org.apache.ivy.core.IvyContext;
 import org.apache.ivy.core.cache.CacheManager;
 import org.apache.ivy.core.event.EventManager;
+import org.apache.ivy.core.module.descriptor.Artifact;
+import org.apache.ivy.core.module.descriptor.DefaultArtifact;
 import org.apache.ivy.core.module.descriptor.DefaultDependencyDescriptor;
 import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
+import org.apache.ivy.core.report.DownloadReport;
+import org.apache.ivy.core.report.DownloadStatus;
+import org.apache.ivy.core.resolve.DownloadOptions;
 import org.apache.ivy.core.resolve.ResolveData;
 import org.apache.ivy.core.resolve.ResolveEngine;
 import org.apache.ivy.core.resolve.ResolveOptions;
@@ -38,6 +45,8 @@ import org.apache.ivy.core.settings.XmlSettingsParser;
 import org.apache.ivy.core.sort.SortEngine;
 import org.apache.ivy.plugins.latest.LatestRevisionStrategy;
 import org.apache.ivy.plugins.latest.LatestTimeStrategy;
+import org.apache.ivy.util.Message;
+import org.apache.ivy.util.MockMessageLogger;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.Delete;
 
@@ -446,4 +455,45 @@ public class ChainResolverTest extends TestCase {
         assertEquals("chain", rmr.getArtifactResolver().getName());
     }
 
+    public void testDownloadWithDual() throws Exception {
+        ChainResolver chain = new ChainResolver();
+        chain.setName("chain");
+        chain.setSettings(settings);
+        chain.setDual(true);
+
+        // first resolver has only an artifact pattern which don't lead to anything: it won't find the module
+        FileSystemResolver resolver = new FileSystemResolver();
+        resolver.setName("1");
+        resolver.setSettings(settings);
+        resolver.addArtifactPattern(
+            "test/repositories/nowhere/[organisation]/[module]/[type]s/[artifact]-[revision].[type]");
+
+        chain.add(resolver);
+
+        resolver = new FileSystemResolver();
+        resolver.setName("2");
+        resolver.setSettings(settings);
+
+        resolver.addIvyPattern(
+            "test/repositories/1/[organisation]/[module]/ivys/ivy-[revision].xml");
+        resolver.addArtifactPattern(
+            "test/repositories/1/[organisation]/[module]/[type]s/[artifact]-[revision].[type]");
+        chain.add(resolver);
+
+        settings.addResolver(chain);
+
+        MockMessageLogger mockLogger = new MockMessageLogger();
+        IvyContext.getContext().getIvy().getLoggerEngine().setDefaultLogger(mockLogger);
+        DownloadReport report = chain.download(
+            new Artifact[] {new DefaultArtifact(
+                ModuleRevisionId.parse("org1#mod1.1;1.0"),
+                new Date(), "mod1.1", "jar", "jar")}, 
+            new DownloadOptions(CacheManager.getInstance(settings)));
+        assertNotNull(report);
+        assertEquals(1, report.getArtifactsReports().length);
+        assertEquals(DownloadStatus.SUCCESSFUL, report.getArtifactsReports()[0].getDownloadStatus());
+        mockLogger.assertLogDoesntContain("[FAILED     ] org1#mod1.1;1.0!mod1.1.jar");
+    }
+
+    
 }

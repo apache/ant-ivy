@@ -34,19 +34,15 @@ import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.report.ArtifactDownloadReport;
 import org.apache.ivy.core.report.DownloadStatus;
 import org.apache.ivy.core.resolve.DefaultModuleRevision;
-import org.apache.ivy.core.resolve.ResolveData;
 import org.apache.ivy.core.resolve.ResolvedModuleRevision;
 import org.apache.ivy.plugins.lock.LockStrategy;
 import org.apache.ivy.plugins.namespace.NameSpaceHelper;
-import org.apache.ivy.plugins.namespace.Namespace;
 import org.apache.ivy.plugins.parser.ModuleDescriptorParser;
 import org.apache.ivy.plugins.parser.ModuleDescriptorParserRegistry;
 import org.apache.ivy.plugins.parser.xml.XmlModuleDescriptorParser;
 import org.apache.ivy.plugins.repository.ArtifactResourceResolver;
-import org.apache.ivy.plugins.repository.Resource;
 import org.apache.ivy.plugins.repository.ResourceDownloader;
 import org.apache.ivy.plugins.repository.ResourceHelper;
-import org.apache.ivy.plugins.resolver.BasicResolver;
 import org.apache.ivy.plugins.resolver.DependencyResolver;
 import org.apache.ivy.plugins.resolver.util.ResolvedResource;
 import org.apache.ivy.util.Message;
@@ -427,8 +423,9 @@ public class CacheManager implements RepositoryCacheManager, ResolutionCacheMana
                             adr.setDownloadedFile(archiveFile);
                         }
                     } else {
-                        // this exception is catched below and result in a download failed status
-                        throw new Exception("artifact missing");
+                        adr.setDownloadStatus(DownloadStatus.FAILED);
+                        adr.setDownloadDetails(ArtifactDownloadReport.MISSING_ARTIFACT);
+                        adr.setDownloadTimeMillis(System.currentTimeMillis() - start);
                     }
                 } catch (Exception ex) {
                     adr.setDownloadStatus(DownloadStatus.FAILED);
@@ -437,8 +434,7 @@ public class CacheManager implements RepositoryCacheManager, ResolutionCacheMana
                 }
             }
             if (listener != null) {
-                listener.endArtifactDownload(this, artifact, adr,
-                    archiveFile);
+                listener.endArtifactDownload(this, artifact, adr, archiveFile);
             }
             return adr;
         } finally {

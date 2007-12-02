@@ -30,6 +30,17 @@ import org.apache.ivy.core.module.descriptor.Artifact;
  * </p>
  */
 public class ArtifactDownloadReport {
+    /**
+     * download details used when the download "fails" when the artifact is simply missing on the
+     * remote repository.
+     * <p>
+     * For historical reason the status can't be used to distinguish a real failure from a missing
+     * artifact by using the status, in both cases it's DownloadStatus.FAILED. The details message
+     * can be used for this purpose though.
+     * </p>
+     */
+    public static final String MISSING_ARTIFACT = "missing artifact";
+    
     private Artifact artifact;
 
     private ArtifactOrigin origin;
@@ -108,7 +119,7 @@ public class ArtifactDownloadReport {
         if (downloadStatus == DownloadStatus.SUCCESSFUL) {
             return "[SUCCESSFUL ] " + artifact + " (" + downloadTimeMillis + "ms)";
         } else if (downloadStatus == DownloadStatus.FAILED) {
-            return "[FAILED     ] " + artifact + " : " + downloadDetails
+            return "[FAILED     ] " + artifact + ": " + downloadDetails
                 + " (" + downloadTimeMillis + "ms)";
         } else if (downloadStatus == DownloadStatus.NO) {
             return "[NOT REQUIRED] " + artifact;
