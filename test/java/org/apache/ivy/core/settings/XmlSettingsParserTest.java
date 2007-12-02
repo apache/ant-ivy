@@ -24,11 +24,14 @@ import java.util.List;
 import junit.framework.TestCase;
 
 import org.apache.ivy.core.cache.ResolutionCacheManager;
+import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.id.ModuleId;
 import org.apache.ivy.core.report.ResolveReport;
 import org.apache.ivy.plugins.latest.LatestRevisionStrategy;
 import org.apache.ivy.plugins.latest.LatestStrategy;
 import org.apache.ivy.plugins.latest.LatestTimeStrategy;
+import org.apache.ivy.plugins.lock.AbstractLockStrategy;
+import org.apache.ivy.plugins.lock.LockStrategy;
 import org.apache.ivy.plugins.parser.ModuleDescriptorParserRegistry;
 import org.apache.ivy.plugins.parser.ModuleDescriptorParserRegistryTest;
 import org.apache.ivy.plugins.report.ReportOutputter;
@@ -395,8 +398,17 @@ public class XmlSettingsParserTest extends TestCase {
         assertTrue(testOutputter instanceof MyOutputter);
     }
 
-    public static class MyOutputter implements ReportOutputter {
+    public void testLockingStrategies() throws Exception {
+        IvySettings settings = new IvySettings();
+        XmlSettingsParser parser = new XmlSettingsParser(settings);
+        parser.parse(XmlSettingsParserTest.class.getResource("ivysettings-lock-strategies.xml"));
 
+        LockStrategy lockStrategy = settings.getLockStrategy("test");
+        assertNotNull(lockStrategy);
+        assertTrue(lockStrategy instanceof MyLockStrategy);
+    }
+
+    public static class MyOutputter implements ReportOutputter {
         public void output(ResolveReport report, ResolutionCacheManager cacheMgr) {
         }
 
@@ -404,5 +416,14 @@ public class XmlSettingsParserTest extends TestCase {
             return "test";
         }
 
+    }
+    
+    public static class MyLockStrategy extends AbstractLockStrategy {
+        public boolean lockArtifact(Artifact artifact, File artifactFileToDownload) throws InterruptedException {
+            return false;
+        }
+
+        public void unlockArtifact(Artifact artifact, File artifactFileToDownload) {
+        }
     }
 }
