@@ -75,6 +75,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - FIX: Invalid character in IvyRetrieveTest causing most tests to fail (IVY-604)
 - FIX: ivy:settings and ivy:retrieve with explicit id causes unwarranted DEPRECATED warning (thanks to Jacob Grydholt Jensen)
 
+- IMPROVEMENT: split the cache into an downloaded artifacts cache and a metadata cache (IVY-628)
 - IMPROVEMENT: add publish triggers to event system (IVY-650) (thanks to Jason Trump)
 - IMPROVEMENT: Only display unique circular dependencies during Resolve (IVY-653)
 - IMPROVEMENT: Adding option 'cp', which makes it possible for main to be loaded from file (IVY-543) (thanks to Tjeerd Verhagen)
@@ -87,6 +88,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - IMPROVEMENT: Make the root attribute in the ivyrep resolver mandatory (IVY-625)
 - IMPROVEMENT: New text representation for main module metadata concepts (IVY-649)
 
+- NEW: Share cache with locking (IVY-654)
 - NEW: support atomic publish operation (IVY-492) (with contribution from Geoff Reedy)
 - NEW: latest compatible conflict manager (IVY-648)
 - NEW: Add a task/code to create M2 POM files from Ivy configurations (IVY-416)
