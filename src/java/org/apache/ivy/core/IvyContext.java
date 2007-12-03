@@ -31,6 +31,7 @@ import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
 import org.apache.ivy.core.resolve.ResolveData;
 import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.plugins.circular.CircularDependencyStrategy;
+import org.apache.ivy.util.Message;
 import org.apache.ivy.util.MessageLogger;
 
 /**
@@ -346,7 +347,20 @@ public class IvyContext {
 
 
     public MessageLogger getMessageLogger() {
-        return getIvy().getLoggerEngine();
+        // calling getIvy() instead of peekIvy() is not possible here: it will initialize a default
+        // Ivy instance, with default settings, but settings themselves may log messages and lead to
+        // a call to this method. So we use the current Ivy instance if any, or the default Ivy
+        // instance, or the default MessageLogger.
+        Ivy ivy = peekIvy();
+        if (ivy == null) {
+            if (defaultIvy == null) {
+                return Message.getDefaultLogger();
+            } else {
+                return defaultIvy.getLoggerEngine();
+            }
+        } else {
+            return ivy.getLoggerEngine();
+        }
     }
 
     public EventManager getEventManager() {

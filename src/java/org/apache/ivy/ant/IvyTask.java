@@ -249,7 +249,9 @@ public abstract class IvyTask extends Task {
      * Called when task starts its execution.
      */
     protected void prepareTask() {
-        // push current project on the stack in context
+        // push current project and Ivy on the stack in context
+        IvyContext.pushNewCopyContext();
+        IvyContext.getContext().setIvy(getIvyInstance());
         IvyContext.getContext().push(ANT_PROJECT_CONTEXT_KEY, getProject());
     }
 
@@ -261,6 +263,7 @@ public abstract class IvyTask extends Task {
         if (!IvyContext.getContext().pop(ANT_PROJECT_CONTEXT_KEY, getProject())) {
             Message.error("ANT project poped from stack not equals current !. Ignoring");
         }
+        IvyContext.popContext();
     }
 
     /**

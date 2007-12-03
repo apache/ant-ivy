@@ -27,6 +27,7 @@ import org.apache.ivy.core.resolve.ResolveEngine;
 import org.apache.ivy.core.resolve.ResolveOptions;
 import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.core.sort.SortEngine;
+import org.apache.ivy.util.Message;
 import org.apache.ivy.util.MockMessageLogger;
 
 public class WarnCircularDependencyStrategyTest extends TestCase {
@@ -41,7 +42,7 @@ public class WarnCircularDependencyStrategyTest extends TestCase {
 
     private void resetLogger() {
         mockMessageImpl = new MockMessageLogger();
-        IvyContext.getContext().getIvy().getLoggerEngine().setDefaultLogger(mockMessageImpl);
+        Message.setDefaultLogger(mockMessageImpl);
     }
     
     public void testLog() throws Exception {

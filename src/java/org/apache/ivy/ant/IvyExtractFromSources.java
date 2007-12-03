@@ -35,6 +35,7 @@ import java.util.Set;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
+import org.apache.tools.ant.Task;
 import org.apache.tools.ant.filters.LineContainsRegExp;
 import org.apache.tools.ant.filters.TokenFilter;
 import org.apache.tools.ant.taskdefs.Concat;
@@ -45,7 +46,7 @@ import org.apache.tools.ant.types.RegularExpression;
 /**
  * Extracts imports from a set of java sources and generate corresponding ivy file
  */
-public class IvyExtractFromSources extends IvyTask {
+public class IvyExtractFromSources extends Task {
     public static class Ignore {
         private String packageName;
 
@@ -126,7 +127,7 @@ public class IvyExtractFromSources extends IvyTask {
         concat.addFileset(fileSet);
     }
 
-    public void doExecute() throws BuildException {
+    public void execute() throws BuildException {
         configureConcat();
         Writer out = new StringWriter();
         concat.setWriter(out);

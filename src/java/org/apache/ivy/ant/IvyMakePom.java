@@ -92,7 +92,7 @@ public class IvyMakePom extends IvyTask {
                 throw new BuildException("destination pom file is required for makepom task");
             }
             ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(
-                new IvySettings(), ivyFile.toURL(), false);
+                getSettings(), ivyFile.toURL(), false);
             PomModuleDescriptorWriter.write(md, 
                 mappings.isEmpty() 
                     ? PomModuleDescriptorWriter.DEFAULT_MAPPING

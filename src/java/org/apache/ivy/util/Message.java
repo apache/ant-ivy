@@ -54,11 +54,20 @@ public final class Message {
 
     private static MessageLogger defaultLogger = new DefaultMessageLogger(Message.MSG_INFO);
 
+    /**
+     * Returns the current default logger.
+     * @return the current default logger; is never <code>null</code>.
+     */
     public static MessageLogger getDefaultLogger() {
         return defaultLogger;
     }
 
+    /**
+     * Change the default logger used when no other logger is currently configured
+     * @param logger the new default logger, must not be <code>null</code>
+     */
     public static void setDefaultLogger(MessageLogger logger) {
+        Checks.checkNotNull(logger, "logger");
         defaultLogger = logger;
     }
 

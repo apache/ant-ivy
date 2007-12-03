@@ -36,7 +36,7 @@ import java.util.Stack;
 public class MessageLoggerEngine implements MessageLogger {
     private final Stack/*<MessageLogger>*/ loggerStack = new Stack();
     
-    private MessageLogger defaultLogger = Message.getDefaultLogger();
+    private MessageLogger defaultLogger = null;
 
     private List problems = new ArrayList();
 
@@ -87,9 +87,15 @@ public class MessageLoggerEngine implements MessageLogger {
      */
     private MessageLogger peekLogger() {
         if (loggerStack.isEmpty()) {
-            return defaultLogger;
+            return getDefaultLogger();
         }
         return (MessageLogger) loggerStack.peek();
+    }
+
+    private MessageLogger getDefaultLogger() {
+        // we don't store the logger returned by Message.getDefaultLogger() to always stay in sync
+        // as long as our default logger has not been set explicitly with setDefaultLogger()
+        return defaultLogger == null ? Message.getDefaultLogger() : defaultLogger;
     }
 
     // consolidated methods
@@ -123,7 +129,7 @@ public class MessageLoggerEngine implements MessageLogger {
     }
     
     public void clearProblems() {
-        defaultLogger.clearProblems();
+        getDefaultLogger().clearProblems();
         for (Iterator iter = loggerStack.iterator(); iter.hasNext();) {
             MessageLogger l = (MessageLogger) iter.next();
             l.clearProblems();
@@ -134,7 +140,7 @@ public class MessageLoggerEngine implements MessageLogger {
     }
 
     public void setShowProgress(boolean progress) {
-        defaultLogger.setShowProgress(progress);
+        getDefaultLogger().setShowProgress(progress);
         // updates all loggers in the stack
         for (Iterator iter = loggerStack.iterator(); iter.hasNext();) {
             MessageLogger l = (MessageLogger) iter.next();
@@ -144,7 +150,7 @@ public class MessageLoggerEngine implements MessageLogger {
     
     public boolean isShowProgress() {
         // testing the default logger is enough, all loggers should be in sync
-        return defaultLogger.isShowProgress();
+        return getDefaultLogger().isShowProgress();
     }
 
     // delegation methods

@@ -21,9 +21,11 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.util.Properties;
 
+import org.apache.ivy.Ivy;
 import org.apache.ivy.ant.IvyAntSettings.Credentials;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
+import org.apache.tools.ant.Task;
 import org.apache.tools.ant.taskdefs.Property;
 
 /**
@@ -31,11 +33,11 @@ import org.apache.tools.ant.taskdefs.Property;
  * 
  * @deprecated Use the IvyAntSettings instead.
  */
-public class IvyConfigure extends IvyTask {
+public class IvyConfigure extends Task {
 
     private IvyAntSettings antSettings = new IvyAntSettings();
 
-    public void doExecute() throws BuildException {
+    public void execute() throws BuildException {
         log("ivy:configure is deprecated, please use the data type ivy:settings instead",
             Project.MSG_WARN);
         // ivyConfigure used to export properties in the ant script.
@@ -90,6 +92,10 @@ public class IvyConfigure extends IvyTask {
 
     public void setUsername(String userName) {
         antSettings.setUsername(userName);
+    }
+
+    public Ivy getIvyInstance() {
+        return antSettings.getConfiguredIvyInstance();
     }
 
 }

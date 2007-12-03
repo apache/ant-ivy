@@ -20,7 +20,7 @@ package org.apache.ivy.plugins.circular;
 import junit.framework.TestCase;
 
 import org.apache.ivy.TestHelper;
-import org.apache.ivy.core.IvyContext;
+import org.apache.ivy.util.Message;
 import org.apache.ivy.util.MockMessageLogger;
 
 public class IgnoreCircularDependencyStrategyTest extends TestCase {
@@ -31,7 +31,7 @@ public class IgnoreCircularDependencyStrategyTest extends TestCase {
         strategy = IgnoreCircularDependencyStrategy.getInstance();
         
         mockMessageImpl = new MockMessageLogger();
-        IvyContext.getContext().getIvy().getLoggerEngine().setDefaultLogger(mockMessageImpl);
+        Message.setDefaultLogger(mockMessageImpl);
     }
     
     public void testLog() throws Exception {

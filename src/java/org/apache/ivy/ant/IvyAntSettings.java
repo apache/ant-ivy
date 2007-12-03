@@ -109,8 +109,8 @@ public class IvyAntSettings extends DataType {
         if (defaultInstanceObj != null
                 && defaultInstanceObj.getClass().getClassLoader() != IvyAntSettings.class
                         .getClassLoader()) {
-            Message.warn("ivy.instance reference an ivy:settings defined in an other classloader.  "
-                     + "An new default one will be used in this project.");
+            project.log("ivy.instance reference an ivy:settings defined in an other classloader.  "
+                     + "An new default one will be used in this project.", Project.MSG_WARN);
             defaultInstanceObj = null;
         }
         if (defaultInstanceObj != null && !(defaultInstanceObj instanceof IvyAntSettings)) {
@@ -119,8 +119,8 @@ public class IvyAntSettings extends DataType {
                     + " an not an IvyAntSettings.  Please don't use this reference id ()");
         }
         if (defaultInstanceObj == null) {
-            Message.info("No ivy:settings found for the default reference 'ivy.instance'.  " 
-                    + "A default instance will be used");
+            project.log("No ivy:settings found for the default reference 'ivy.instance'.  " 
+                    + "A default instance will be used", Project.MSG_INFO);
             IvyAntSettings defaultInstance = new IvyAntSettings();
             defaultInstance.setProject(project);
             defaultInstance.registerAsDefault();
@@ -269,7 +269,7 @@ public class IvyAntSettings extends DataType {
         URL url = IvySettings.getDefaultPropertiesURL();
         // this is copy of loadURL code from ant Property task (not available in 1.5.1)
         Properties props = new Properties();
-        Message.verbose("Loading " + url);
+        verbose("Loading " + url);
         try {
             InputStream is = url.openStream();
             try {
@@ -294,7 +294,7 @@ public class IvyAntSettings extends DataType {
         String settingsFileName = variableContainer.getVariable("ivy.conf.file");
         if (settingsFileName != null 
                 && !settingsFileName.equals(variableContainer.getVariable("ivy.settings.file"))) {
-            Message.deprecated("'ivy.conf.file' is deprecated, use 'ivy.settings.file' instead");
+            info("DEPRECATED: 'ivy.conf.file' is deprecated, use 'ivy.settings.file' instead");
         } else {
             settingsFileName = variableContainer.getVariable("ivy.settings.file");
         }
@@ -306,22 +306,34 @@ public class IvyAntSettings extends DataType {
         };
         for (int i = 0; i < settingsLocations.length; i++) {
             file = settingsLocations[i];
-            Message.verbose("searching settings file: trying " + file);
+            verbose("searching settings file: trying " + file);
             if (file.exists()) {
                 break;
             }
         }
         if (!file.exists()) {
             if (Boolean.valueOf(getProject().getProperty("ivy.14.compatible")).booleanValue()) {
-                Message.info("no settings file found, using Ivy 1.4 default...");
+                info("no settings file found, using Ivy 1.4 default...");
                 file = null;
                 url = IvySettings.getDefault14SettingsURL();
             } else {
-                Message.info("no settings file found, using default...");
+                info("no settings file found, using default...");
                 file = null;
                 url = IvySettings.getDefaultSettingsURL();
             }
         }
+    }
+
+    private void verbose(String msg) {
+        log(msg, Project.MSG_VERBOSE);
+    }
+
+    private void info(String msg) {
+        log(msg, Project.MSG_INFO);
+    }
+
+    private void warn(String msg) {
+        log(msg, Project.MSG_WARN);
     }
 
     private void configureURLHandler() {
