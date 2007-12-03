@@ -22,7 +22,6 @@ import java.net.MalformedURLException;
 import java.text.ParseException;
 
 import org.apache.ivy.Ivy;
-import org.apache.ivy.core.cache.CacheManager;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.report.ResolveReport;

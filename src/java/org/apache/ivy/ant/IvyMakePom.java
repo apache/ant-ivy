@@ -27,7 +27,6 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
-import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.plugins.parser.m2.PomModuleDescriptorWriter;
 import org.apache.ivy.plugins.parser.m2.PomModuleDescriptorWriter.ConfigurationScopeMapping;
 import org.apache.ivy.plugins.parser.xml.XmlModuleDescriptorParser;

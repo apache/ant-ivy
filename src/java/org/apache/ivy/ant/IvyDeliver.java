@@ -21,7 +21,6 @@ import java.io.File;
 import java.util.Date;
 
 import org.apache.ivy.Ivy;
-import org.apache.ivy.core.cache.CacheManager;
 import org.apache.ivy.core.deliver.DefaultPublishingDRResolver;
 import org.apache.ivy.core.deliver.DeliverOptions;
 import org.apache.ivy.core.deliver.PublishingDependencyRevisionResolver;
