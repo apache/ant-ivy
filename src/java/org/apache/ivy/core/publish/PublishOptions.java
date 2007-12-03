@@ -19,7 +19,6 @@ package org.apache.ivy.core.publish;
 
 import java.util.Date;
 
-import org.apache.ivy.core.cache.CacheManager;
 import org.apache.ivy.core.cache.ResolutionCacheManager;
 import org.apache.ivy.core.module.descriptor.Artifact;
 

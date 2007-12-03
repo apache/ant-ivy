@@ -17,7 +17,6 @@
  */
 package org.apache.ivy.core.resolve;
 
-import java.net.URL;
 import java.util.Date;
 
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;

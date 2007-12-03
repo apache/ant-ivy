@@ -21,7 +21,6 @@ import java.io.File;
 
 import org.apache.ivy.core.cache.CacheManager;
 import org.apache.ivy.core.cache.RepositoryCacheManager;
-import org.apache.ivy.core.event.EventManager;
 import org.apache.ivy.core.settings.IvySettings;
 
 public class DownloadOptions {

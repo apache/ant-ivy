@@ -1174,7 +1174,7 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
     private void init(Object obj) {
         if (obj instanceof IvySettingsAware) {
             ((IvySettingsAware) obj).setSettings(this);
-        } else if (obj instanceof DependencyResolver){
+        } else if (obj instanceof DependencyResolver) {
             ((DependencyResolver) obj).setSettings(this);
         }
         if (obj instanceof IvyAware) {
