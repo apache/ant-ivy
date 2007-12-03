@@ -330,27 +330,6 @@ ${final.core.name}    The Ivy core, eg everything but classes dependent on Ant.$
         <!-- clean generated module properties file -->
         <delete file="${core.classes.build.dir}/module.properties" />
     </target>
-	
-	<target name="makepom" depends="init-ivy">
-        <!-- TODO: use this to prepare a deployment to maven 2 repository -->
-		<ivy:makepom ivyfile="${basedir}/ivy.xml" pomfile="${basedir}/ivy.pom">
-			<mapping conf="core" scope="compile"/>
-			<mapping conf="test" scope="test"/>
-		</ivy:makepom>
-	</target>
-
-    <target name="sources" depends="default-version" description="Create source archive files">
-    	<mkdir dir="${artifacts.build.dir}/sources/"/>
-        <jar destfile="${artifacts.build.dir}/sources/${final.name}"
-                manifest="${basedir}/MANIFEST.MF">
-            <fileset dir="${src.dir}" />
-        </jar>
-    	<!-- TODO : we should restrict sources files to the core only -->
-        <jar destfile="${artifacts.build.dir}/sources/${final.core.name}"
-                manifest="${basedir}/MANIFEST.MF">
-            <fileset dir="${src.dir}" />
-        </jar>
-	</target>
 
 	<!-- =================================================================
          PUBLISH LOCAL
@@ -514,9 +493,22 @@ ${final.core.name}    The Ivy core, eg everything but classes dependent on Ant.$
 
     <target name="javadoc" unless="skip.javadoc">
         <javadoc destdir="${javadoc.build.dir}" useexternalfile="true">
-            <fileset dir="${src.dir}" includes="**/*.java,**/package.html" />
+            <fileset dir="${src.dir}" includes="**/*.java" />
         </javadoc>
     </target>
+	
+    <target name="sources" depends="default-version" description="Create source archive files">
+    	<mkdir dir="${artifacts.build.dir}/sources/"/>
+        <jar destfile="${artifacts.build.dir}/sources/${final.name}"
+                manifest="${basedir}/MANIFEST.MF">
+            <fileset dir="${src.dir}" />
+        </jar>
+    	<!-- TODO : we should restrict sources files to the core only -->
+        <jar destfile="${artifacts.build.dir}/sources/${final.core.name}"
+                manifest="${basedir}/MANIFEST.MF">
+            <fileset dir="${src.dir}" />
+        </jar>
+	</target>
 	
     <target name="fixcrlf">
         <property name="eol.native.includes" 

@@ -98,8 +98,8 @@
 			<zipfileset dir="${distrib.dir}" includes="ivy.xml" fullpath="${snapshot.full.name}/ivy.xml"/>
 			<zipfileset dir="${basedir}" includes="build-for-bin-distrib.xml" fullpath="${snapshot.full.name}/build.xml"/>
 
-			<zipfileset dir="${artifacts.build.dir}" includes="${final.name}" fullpath="${snapshot.full.name}/ivy-${build.version}.jar"/>
-			<zipfileset dir="${artifacts.build.dir}" includes="${final.core.name}" fullpath="${snapshot.full.name}/ivy-core-${build.version}.jar"/>
+			<zipfileset dir="${artifacts.build.dir}/jars" includes="${final.name}" fullpath="${snapshot.full.name}/ivy-${build.version}.jar"/>
+			<zipfileset dir="${artifacts.build.dir}/jars" includes="${final.core.name}" fullpath="${snapshot.full.name}/ivy-core-${build.version}.jar"/>
 		</zip>
 		<tar destfile="${distrib.dir}/${snapshot.full.name}-bin.tar.gz" 
 			compression="gzip" longfile="gnu">
@@ -120,8 +120,8 @@
 			<zipfileset dir="${src.dir}/org/apache/ivy/plugins/parser/xml" includes="ivy.xsd" fullpath="${snapshot.full.name}/ivy.xsd"/>
 			<zipfileset dir="${distrib.dir}" includes="ivy.xml" fullpath="${snapshot.full.name}/ivy.xml"/>
 	
-			<zipfileset dir="${artifacts.build.dir}" includes="${final.name}" fullpath="${snapshot.full.name}/ivy-${build.version}.jar"/>
-			<zipfileset dir="${artifacts.build.dir}" includes="${final.core.name}" fullpath="${snapshot.full.name}/ivy-core-${build.version}.jar"/>
+			<zipfileset dir="${artifacts.build.dir}/jars" includes="${final.name}" fullpath="${snapshot.full.name}/ivy-${build.version}.jar"/>
+			<zipfileset dir="${artifacts.build.dir}/jars" includes="${final.core.name}" fullpath="${snapshot.full.name}/ivy-core-${build.version}.jar"/>
 
 			<zipfileset dir="${build.dir}/lib" prefix="${snapshot.full.name}/lib"/>
 		</zip>
@@ -136,24 +136,49 @@
 	
 	<target name="snapshot-jars" depends="init-snapshot, jar">
 		<mkdir dir="${distrib.dir}"/>
-		<copy file="${artifacts.build.dir}/${final.name}" todir="${distrib.dir}" />
-		<copy file="${artifacts.build.dir}/${final.core.name}" todir="${distrib.dir}" />
+		<copy file="${artifacts.build.dir}/jars/${final.name}" todir="${distrib.dir}" />
+		<copy file="${artifacts.build.dir}/jars/${final.core.name}" todir="${distrib.dir}" />
 	</target>
 	
 	<target name="snapshot-xsd" depends="init-snapshot">
 		<mkdir dir="${distrib.dir}"/>
 		<copy file="${src.dir}/org/apache/ivy/plugins/parser/xml/ivy.xsd" todir="${distrib.dir}" />
 	</target>
+	
+
+	<target name="snapshot-maven2" depends="init-snapshot, snapshot-metadata, jar, sources, javadoc">
+		<property name="m2.distrib.dir" value="${distrib.dir}/maven2/${build.version}" />
+		<ivy:makepom ivyfile="${distrib.dir}/ivy.xml" 
+	                 pomfile="${m2.distrib.dir}/ivy-${build.version}.pom">
+			<mapping conf="core" scope="compile"/>
+			<mapping conf="test" scope="test"/>
+		</ivy:makepom>
+		<copy file="${artifacts.build.dir}/jars/${final.name}" 
+				tofile="${m2.distrib.dir}/ivy-${build.version}.jar" />
+		<!-- jar javadocs -->
+	    <jar destfile="${m2.distrib.dir}/ivy-${build.version}-javadoc.jar"
+	            manifest="${basedir}/MANIFEST.MF">
+	        <fileset dir="${javadoc.build.dir}" />
+	    </jar>
+		<!-- copy sources jar -->
+		<copy file="${artifacts.build.dir}/sources/${final.name}" 
+				tofile="${m2.distrib.dir}/ivy-${build.version}-sources.jar" />
+	</target>
+	
 
 	<target name="snapshot-checksums">
 		<checksum algorithm="md5">
 			<fileset dir="${distrib.dir}">
+				<include name="*.pom"/>
+				<include name="*.jar"/>
 				<include name="*.zip"/>
 				<include name="*.gz"/>
 			</fileset>
 		</checksum>
 		<checksum algorithm="sha">
 			<fileset dir="${distrib.dir}">
+				<include name="*.pom"/>
+				<include name="*.jar"/>
 				<include name="*.zip"/>
 				<include name="*.gz"/>
 			</fileset>
@@ -172,7 +197,7 @@
 	<target name="prepare-snapshot" 
 	        depends="/localivy, clean-ivy-home, clean, clean-lib, snapshot-version, install, clean-examples, coverage-report" />
 	<target name="snapshot" 
-			depends="prepare-snapshot, snapshot-src, snapshot-bin, snapshot-jars, snapshot-xsd, snapshot-checksums" 
+			depends="prepare-snapshot, snapshot-src, snapshot-bin, snapshot-jars, snapshot-xsd, snapshot-maven2, snapshot-checksums" 
 			description="used for nightly and integration builds"/>
 	<target name="release" depends="release-version, snapshot" description="make a new release of Ivy"/>
 
