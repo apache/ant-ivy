@@ -40,7 +40,7 @@ public class PomModuleDescriptorWriterTest extends TestCase {
         }
     }
     private File _dest = new File("build/test/test-write.xml");
-
+    
     public void testSimple() throws Exception {
         ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(
             new IvySettings(), getClass().getResource("test-simple.pom"), false);
@@ -99,6 +99,8 @@ public class PomModuleDescriptorWriterTest extends TestCase {
     }
 
     public void setUp() {
+        // don't add ivy version to se static files for comparison
+        PomModuleDescriptorWriter.setAddIvyVersion(false);
         if (_dest.exists()) {
             _dest.delete();
         }
