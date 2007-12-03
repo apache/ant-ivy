@@ -26,9 +26,9 @@ import org.apache.ivy.plugins.repository.vfs.VfsRepository;
  *
  */
 public class VfsResolver extends RepositoryResolver {
-    private static Pattern URLPattern = Pattern.compile("[a-z]*://(.+):(.+)@.*");
+    private static final Pattern URL_PATTERN = Pattern.compile("[a-z]*://(.+):(.+)@.*");
 
-    private static int PASSWORD_GROUP = 2;
+    private static final int PASSWORD_GROUP = 2;
 
     public VfsResolver() {
         setRepository(new VfsRepository());
@@ -44,7 +44,7 @@ public class VfsResolver extends RepositoryResolver {
 
     public static String prepareForDisplay(String name) {
         StringBuffer s = new StringBuffer(name);
-        Matcher m = URLPattern.matcher(s);
+        Matcher m = URL_PATTERN.matcher(s);
         if (m.matches()) {
             final String password = m.group(PASSWORD_GROUP);
             final int passwordposi = s.indexOf(password);
