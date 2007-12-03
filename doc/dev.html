@@ -52,7 +52,8 @@ Go to the directory where you get the Ivy sources (you should see a file named b
 ant
 </code>
 <h3>Check the result</h3>
-The ant build will download Ivy if you don't already have a proper version in your home, compile, and run tests with coverage metrics.
+The ant build will compile the core classes of Ivy and use them to resolve the dependencies (used for some optional features). Then it will compile and run tests with coverage metrics.
+
 If everything goes well, you should see the message
 <code>
 BUILD SUCCESSFUL
@@ -90,6 +91,11 @@ http://people.apache.org/~xavier/ivyde/snapshot/
 
 Download the file and unzip its content in your eclipse installation directory.
 
+<h2>recommended plugins</h2>
+The Ivy project comes with settings for the <a href="http://eclipse-cs.sourceforge.net/">checkstyle plugin</a> we recommend to use to avoid introducing new disgression to the checkstyle rules we use.
+If you use this plugin, you will many errors in Ivy. As we said, following strict checkstyle rules is a work in progress and we used to have pretty different code conventions (like using _ as prefix for private attributes), so we still have things to fix. We usually use the filter in the problems view to filter out checkstyle errors from this view, which helps to know what the real compilation problem are.
+
+Besides this plugin we also recommend to use a subversion plugin, <a href="http://www.eclipse.org/subversive/">subversive</a> or <a href="http://subclipse.tigris.org">subclipse</a> being the two options currently available in the open source landscape.
 <h1>Making a release</h1>
 <h2>Requirements</h2>
 Requirements for making a release are similar to the requirements for building from source, except that sun jdk 1.6 and ant 1.7 are required.
