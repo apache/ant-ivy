@@ -53,6 +53,7 @@ import org.apache.ivy.core.module.id.ModuleId;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.report.ArtifactDownloadReport;
 import org.apache.ivy.core.report.DownloadReport;
+import org.apache.ivy.core.report.DownloadStatus;
 import org.apache.ivy.core.resolve.DefaultModuleRevision;
 import org.apache.ivy.core.resolve.DownloadOptions;
 import org.apache.ivy.core.resolve.IvyNode;
@@ -177,8 +178,10 @@ public abstract class BasicResolver extends AbstractResolver {
             
             // check revision
             int index = systemMrid.getRevision().indexOf("@");
-            if (index != -1 && !systemMrid.getRevision().substring(index + 1).equals(workspaceName)) {
-                Message.verbose("\t" + getName() + ": unhandled revision => " + systemMrid.getRevision());
+            if (index != -1 
+                    && !systemMrid.getRevision().substring(index + 1).equals(workspaceName)) {
+                Message.verbose("\t" + getName() 
+                    + ": unhandled revision => " + systemMrid.getRevision());
                 return null;
             }
 
