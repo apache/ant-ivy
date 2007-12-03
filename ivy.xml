@@ -17,7 +17,7 @@
    under the License.    
 -->
 <ivy-module version="1.0"> 
-	<info organisation="apache"
+	<info organisation="org.apache.ivy"
 	       module="ivy"
 	       status="integration"
 	/>
