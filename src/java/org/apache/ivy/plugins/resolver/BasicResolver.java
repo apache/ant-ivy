@@ -20,7 +20,6 @@ package org.apache.ivy.plugins.resolver;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -47,7 +46,6 @@ import org.apache.ivy.core.event.download.EndArtifactDownloadEvent;
 import org.apache.ivy.core.event.download.NeedArtifactEvent;
 import org.apache.ivy.core.event.download.StartArtifactDownloadEvent;
 import org.apache.ivy.core.module.descriptor.Artifact;
-import org.apache.ivy.core.module.descriptor.DefaultArtifact;
 import org.apache.ivy.core.module.descriptor.DefaultModuleDescriptor;
 import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
@@ -55,7 +53,6 @@ import org.apache.ivy.core.module.id.ModuleId;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.report.ArtifactDownloadReport;
 import org.apache.ivy.core.report.DownloadReport;
-import org.apache.ivy.core.report.DownloadStatus;
 import org.apache.ivy.core.resolve.DefaultModuleRevision;
 import org.apache.ivy.core.resolve.DownloadOptions;
 import org.apache.ivy.core.resolve.IvyNode;
@@ -204,7 +201,8 @@ public abstract class BasicResolver extends AbstractResolver {
                 checkedCache = true;
                 if (cachedRmr != null) {
                     if (cachedRmr.getDescriptor().isDefault() && cachedRmr.getResolver() != this) {
-                        Message.verbose("\t" + getName() + ": found revision in cache: " + systemMrid
+                        Message.verbose("\t" + getName() + ": found revision in cache: " 
+                            + systemMrid
                             + " (resolved by " + cachedRmr.getResolver().getName()
                             + "): but it's a default one, maybe we can find a better one");
                     } else {

@@ -17,7 +17,6 @@
  */
 package org.apache.ivy.plugins.resolver.util;
 
-import java.net.URL;
 import java.util.Date;
 
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
@@ -73,4 +72,5 @@ public final class ResolvedModuleRevisionProxy implements ResolvedModuleRevision
     public boolean isSearched() {
         return _mr.isSearched();
     }
+
 }
