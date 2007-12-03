@@ -146,8 +146,6 @@ public final class PomModuleDescriptorParser extends AbstractModuleDescriptorPar
 
         private String organisation;
         
-        private String relocationOrganisation = null;
-
         private String module;
 
         private String revision;
@@ -170,6 +168,8 @@ public final class PomModuleDescriptorParser extends AbstractModuleDescriptorPar
         
         private StringBuffer buffer = new StringBuffer();
 
+        private String relocationOrganisation = null;
+        
         private String relocationModule;
 
         private String relocationRevision;
@@ -262,8 +262,8 @@ public final class PomModuleDescriptorParser extends AbstractModuleDescriptorPar
                     && "project/dependencies/dependency".equals(context)) {
                 if (revision == null) {
                     // if the revision is null, see if we can get it from the dependency management
-                    String key = DEPENDENCY_MANAGEMENT + DEPENDENCY_MANAGEMENT_DELIMITER + organisation + 
-                        DEPENDENCY_MANAGEMENT_DELIMITER + module;
+                    String key = DEPENDENCY_MANAGEMENT + DEPENDENCY_MANAGEMENT_DELIMITER 
+                        + organisation + DEPENDENCY_MANAGEMENT_DELIMITER + module;
                     revision = (String) properties.get(key);
                 }
                 if (dd == null) {
@@ -329,27 +329,50 @@ public final class PomModuleDescriptorParser extends AbstractModuleDescriptorPar
                 organisation = null;
                 module = null;
             } else if ("project/distributionManagement/relocation".equals(context)) {
-                md.setModuleRevisionId(ModuleRevisionId
-                        .newInstance(organisation, module, revision));
-                if (relocationOrganisation == null ) {
+                if (relocationOrganisation == null) {
                     relocationOrganisation = organisation;
                 }
-                if (relocationModule == null ) {
+                if (relocationModule == null) {
                     relocationModule = module;
                 }
-                if (relocationRevision == null ) {
+                if (relocationRevision == null) {
                     relocationRevision = revision;
                 }
-                dd = new DefaultDependencyDescriptor(md, ModuleRevisionId.newInstance(
-                    relocationOrganisation, relocationModule, relocationRevision), true, false, true);
-                dd.addDependencyConfiguration("*", "@");
-                md.addDependency(dd);
-                dd = null;
+                ModuleRevisionId myModuleRev = ModuleRevisionId.newInstance(
+                    organisation, module, revision);
+                ModuleRevisionId relocationeModuleRev = ModuleRevisionId.newInstance(
+                    relocationOrganisation, relocationModule, relocationRevision);
+                md.setModuleRevisionId(myModuleRev);
+                if (relocationOrganisation.equals(organisation) 
+                        && relocationModule.equals(module)) {                    
+                    Message.error("Relocation to an other version number not supported in ivy : "
+                        + myModuleRev + " relocated to " + relocationModule 
+                        + ". Please update your dependency to directly use the right version.");
+                    Message.warn("Resolution will only pick dependencies of the relocated element." 
+                        + "  Artefact and other metadata will be ignored.");
+                    Parser relocationParser = parserOtherPom(relocationeModuleRev);
+                    if (relocationParser == null) {
+                        throw new SAXException("Relocation can not be found : " + relocationModule);
+                    }
+                    DependencyDescriptor[] dependencies = relocationParser.md.getDependencies();
+                    for (int i = 0; i < dependencies.length; i++) {
+                        md.addDependency(dependencies[i]);
+                    }                    
+                } else {
+                    Message.info(myModuleRev.toString() + " is relocated to " 
+                        + relocationeModuleRev + ". Please update your dependencies.");
+                    Message.verbose("Relocated module will be considered as a dependency");
+                    dd = new DefaultDependencyDescriptor(md, relocationeModuleRev,
+                        true, false, true);
+                    dd.addDependencyConfiguration("*", "@");
+                    md.addDependency(dd);
+                    dd = null;
+                }
             } else if ("project/dependencyManagement/dependencies/dependency".equals(context)) {
-                if ( dmGroupId != null && dmArtifactId != null && dmVersion != null ) {
+                if (dmGroupId != null && dmArtifactId != null && dmVersion != null) {
                    // Note: we can't use substitute pattern, fillMrid has not been called yet.
-                   String key = DEPENDENCY_MANAGEMENT + DEPENDENCY_MANAGEMENT_DELIMITER + dmGroupId + 
-                   DEPENDENCY_MANAGEMENT_DELIMITER + dmArtifactId;
+                   String key = DEPENDENCY_MANAGEMENT + DEPENDENCY_MANAGEMENT_DELIMITER 
+                       + dmGroupId + DEPENDENCY_MANAGEMENT_DELIMITER + dmArtifactId;
                    properties.put(key, dmVersion);
                 }
             }
@@ -393,7 +416,7 @@ public final class PomModuleDescriptorParser extends AbstractModuleDescriptorPar
                     return;
                 }
                 if (context.equals("project/distributionManagement/relocation/groupId")) {
-                    relocationOrganisation= txt;
+                    relocationOrganisation = txt;
                     return;
                 }
                 if (context.equals("project/distributionManagement/relocation/artifactId")) {
@@ -407,15 +430,18 @@ public final class PomModuleDescriptorParser extends AbstractModuleDescriptorPar
                 if (context.startsWith("project/parent")) {
                     return;
                 } 
-                if (context.equals("project/dependencyManagement/dependencies/dependency/groupId")) {
+                if (context.equals(
+                    "project/dependencyManagement/dependencies/dependency/groupId")) {
                     dmGroupId = txt;
                     return;
                 }
-                if (context.equals("project/dependencyManagement/dependencies/dependency/artifactId")) {
+                if (context.equals(
+                    "project/dependencyManagement/dependencies/dependency/artifactId")) {
                     dmArtifactId = txt;
                     return;
                 }
-                if (context.equals("project/dependencyManagement/dependencies/dependency/version")) {
+                if (context.equals(
+                    "project/dependencyManagement/dependencies/dependency/version")) {
                     dmVersion = txt;
                    return;
                 }
@@ -483,70 +509,79 @@ public final class PomModuleDescriptorParser extends AbstractModuleDescriptorPar
             if (parentOrg != null && parentName != null && parentVersion != null) {
                 ModuleRevisionId parent = ModuleRevisionId.newInstance(parentOrg, parentName, 
                                            parentVersion);
-                DependencyResolver resolver = settings.getResolver(parent.getModuleId());
-                if (resolver == null) {
-                    // TODO: Maybe log warning or throw exception here?
+                Parser parser = parserOtherPom(parent);
+                if (parser == null) {
+                    //see comments in parserOtherPom for case where parser==nul 
                     return;
-                }
-                
-                DependencyDescriptor dd = new DefaultDependencyDescriptor(parent, true);
-                ResolveData data = IvyContext.getContext().getResolveData();
-                if (data == null) {
-                    ResolveEngine engine = IvyContext.getContext().getIvy().getResolveEngine();
-                    ResolveOptions options = new ResolveOptions();
-                    options.setCache(IvyContext.getContext().getCacheManager());
-                    options.setDownload(false);
-                    data = new ResolveData(engine, options);
-                }
-                
-                ResolvedResource rr = resolver.findIvyFileRef(dd, data);
-                
-                if (rr == null) {
-                    // parent not found. Maybe we should throw an exception here?
-                    return;
-                }
-                
-                Parser parser = new Parser(getModuleDescriptorParser(), rr.getResource(), settings);
-                InputStream pomStream = null;
-                try {
-                    pomStream = rr.getResource().openStream();
-                    XMLHelper.parse(pomStream, null, parser, null);
-                } catch (IOException e) {
-                    throw new SAXException("Error occurred while parsing parent", e);
-                } catch (ParserConfigurationException e) {
-                    throw new SAXException("Error occurred while parsing parent", e);
-                } finally {
-                    if (pomStream != null) {
-                        try {
-                            pomStream.close();
-                        } catch (IOException e) {
-                            // ignore
-                        }
-                    }
                 }
                 
                 // move the parent properties into ours
                 Map parentProps = parser.properties;
                 Set keys = parentProps.keySet();
-                for ( Iterator iter = keys.iterator(); iter.hasNext();  ) {
+                for (Iterator iter = keys.iterator(); iter.hasNext();) {
                     String key = iter.next().toString();
-                    if ( key.startsWith("pom")) {
+                    if (key.startsWith("pom")) {
                         // don't see a need to copy pom values from parent...
                         // ignore
-                    } else if ( key.startsWith("parent")) {
+                    } else if (key.startsWith("parent")) {
                         // don't see a need to copy parent values from parent...
                         // ignore
                     } else {
                         // the key may need the groupId substituted
-                        String _key = IvyPatternHelper.substituteVariables(key, 
+                        String fullKey = IvyPatternHelper.substituteVariables(key, 
                                 parentProps).trim();
-                        String _value = IvyPatternHelper.substituteVariables(parentProps.get(key).toString(), 
-                                parentProps).trim();
-                        properties.put(_key, _value);
+                        String fullValue = IvyPatternHelper.substituteVariables(
+                                parentProps.get(key).toString(), parentProps).trim();
+                        properties.put(fullKey, fullValue);
                     }
                 }
 
             }
+        }
+
+        private Parser parserOtherPom(ModuleRevisionId other) throws SAXException {
+            DependencyResolver resolver = settings.getResolver(other.getModuleId());
+            if (resolver == null) {
+                // TODO: Maybe log warning or throw exception here?
+                return null;
+            }
+            
+            DependencyDescriptor dd = new DefaultDependencyDescriptor(other, true);
+            ResolveData data = IvyContext.getContext().getResolveData();
+            if (data == null) {
+                ResolveEngine engine = IvyContext.getContext().getIvy().getResolveEngine();
+                ResolveOptions options = new ResolveOptions();
+                options.setCache(IvyContext.getContext().getCacheManager());
+                options.setDownload(false);
+                data = new ResolveData(engine, options);
+            }
+            
+            ResolvedResource rr = resolver.findIvyFileRef(dd, data);
+            
+            if (rr == null) {
+                // parent not found. Maybe we should throw an exception here?
+                return null;
+            }
+            
+            Parser parser = new Parser(getModuleDescriptorParser(), rr.getResource(), settings);
+            InputStream pomStream = null;
+            try {
+                pomStream = rr.getResource().openStream();
+                XMLHelper.parse(pomStream, null, parser, null);
+            } catch (IOException e) {
+                throw new SAXException("Error occurred while parsing parent", e);
+            } catch (ParserConfigurationException e) {
+                throw new SAXException("Error occurred while parsing parent", e);
+            } finally {
+                if (pomStream != null) {
+                    try {
+                        pomStream.close();
+                    } catch (IOException e) {
+                        // ignore
+                    }
+                }
+            }
+            return parser;
         }
     }
 
@@ -559,8 +594,8 @@ public final class PomModuleDescriptorParser extends AbstractModuleDescriptorPar
     private PomModuleDescriptorParser() {
     }
 
-    public ModuleDescriptor parseDescriptor(ParserSettings settings, URL descriptorURL, Resource res,
-            boolean validate) throws ParseException, IOException {
+    public ModuleDescriptor parseDescriptor(ParserSettings settings, URL descriptorURL, 
+            Resource res, boolean validate) throws ParseException, IOException {
         Parser parser = new Parser(this, res, settings);
         try {
             XMLHelper.parse(descriptorURL, null, parser);

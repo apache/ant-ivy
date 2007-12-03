@@ -3029,6 +3029,85 @@ public class ResolveTest extends TestCase {
         }
     }
 
+
+    public void testResolveVesionRelocationChainedWithGroupRelocation() throws Exception {
+        ivy = new Ivy();
+        ivy.configure(new File("test/repositories/m2/ivysettings.xml"));
+        ivy.pushContext();
+        try {        
+            ResolveReport report = ivy.resolve(new File(
+                    "test/repositories/m2/org/relocated/test3/1.1/test3-1.1.pom").toURL(),
+                getResolveOptions(new String[] {"*"}));
+            assertNotNull(report);
+    
+            // dependencies
+            assertTrue(ivy.getCacheManager(cache).getIvyFileInCache(
+                ModuleRevisionId.newInstance("org.apache", "test2", "1.0")).exists());
+            assertTrue(TestHelper.getArchiveFileInCache(ivy, cache, "org.apache", "test2", "1.0",
+                "test2", "jar", "jar").exists());
+    
+            assertTrue(ivy.getCacheManager(cache).getIvyFileInCache(
+                ModuleRevisionId.newInstance("org.apache", "test", "1.0")).exists());
+            assertTrue(TestHelper.getArchiveFileInCache(ivy, cache, "org.apache", "test", "1.0",
+                "test", "jar", "jar").exists());
+        } finally {
+            ivy.popContext();
+        }
+    }
+
+
+    public void testResolveTransitivelyToRelocatedPom() throws Exception {
+        ivy = new Ivy();
+        ivy.configure(new File("test/repositories/m2/ivysettings.xml"));
+        ivy.pushContext();
+        try {        
+            ResolveReport report = ivy.resolve(new File(
+                    "test/repositories/m2/org/relocated/testRelocationUser/1.0/" +
+                    "testRelocationUser-1.0.pom").toURL(),
+                getResolveOptions(new String[] {"compile"}));
+            assertNotNull(report);
+            assertFalse(report.hasError());
+            // dependencies
+            assertTrue(ivy.getCacheManager(cache).getIvyFileInCache(
+                ModuleRevisionId.newInstance("org.apache", "test2", "1.0")).exists());
+            assertTrue(TestHelper.getArchiveFileInCache(ivy, cache, "org.apache", "test2", "1.0",
+                "test2", "jar", "jar").exists());
+    
+            assertTrue(ivy.getCacheManager(cache).getIvyFileInCache(
+                ModuleRevisionId.newInstance("org.apache", "test", "1.0")).exists());
+            assertTrue(TestHelper.getArchiveFileInCache(ivy, cache, "org.apache", "test", "1.0",
+                "test", "jar", "jar").exists());
+        } finally {
+            ivy.popContext();
+        }
+    }
+
+    public void testResolveTransitivelyToPomRelocatedToNewVersion() throws Exception {
+        ivy = new Ivy();
+        ivy.configure(new File("test/repositories/m2/ivysettings.xml"));
+        ivy.pushContext();
+        try {        
+            ResolveReport report = ivy.resolve(new File(
+                    "test/repositories/m2/org/relocated/testRelocationUser/1.1/" +
+                    "testRelocationUser-1.1.pom").toURL(),
+                getResolveOptions(new String[] {"compile"}));
+            assertNotNull(report);
+            assertFalse(report.hasError());
+            // dependencies
+            assertTrue(ivy.getCacheManager(cache).getIvyFileInCache(
+                ModuleRevisionId.newInstance("org.apache", "test2", "1.0")).exists());
+            assertTrue(TestHelper.getArchiveFileInCache(ivy, cache, "org.apache", "test2", "1.0",
+                "test2", "jar", "jar").exists());
+    
+            assertTrue(ivy.getCacheManager(cache).getIvyFileInCache(
+                ModuleRevisionId.newInstance("org.apache", "test", "1.0")).exists());
+            assertTrue(TestHelper.getArchiveFileInCache(ivy, cache, "org.apache", "test", "1.0",
+                "test", "jar", "jar").exists());
+        } finally {
+            ivy.popContext();
+        }
+    }
+
     
     public void testResolveMaven2Classifiers() throws Exception {
         // test case for IVY-418
