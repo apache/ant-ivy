@@ -55,32 +55,32 @@ public class TransferEvent extends IvyEvent {
     /**
      * A transfer was started.
      */
-    public final static int TRANSFER_STARTED = 1;
+    public static final int TRANSFER_STARTED = 1;
 
     /**
      * A transfer is completed.
      */
-    public final static int TRANSFER_COMPLETED = 2;
+    public static final int TRANSFER_COMPLETED = 2;
 
     /**
      * A transfer is in progress.
      */
-    public final static int TRANSFER_PROGRESS = 3;
+    public static final int TRANSFER_PROGRESS = 3;
 
     /**
      * An error occured during transfer
      */
-    public final static int TRANSFER_ERROR = 4;
+    public static final int TRANSFER_ERROR = 4;
 
     /**
      * Indicates GET transfer (from the repository)
      */
-    public final static int REQUEST_GET = 5;
+    public static final int REQUEST_GET = 5;
 
     /**
      * Indicates PUT transfer (to the repository)
      */
-    public final static int REQUEST_PUT = 6;
+    public static final int REQUEST_PUT = 6;
 
     public static final String TRANSFER_INITIATED_NAME = "transfer-initiated";
 
@@ -92,32 +92,32 @@ public class TransferEvent extends IvyEvent {
 
     public static final String TRANSFER_ERROR_NAME = "transfer-error";
 
-    private Resource _resource;
+    private Resource resource;
 
-    private int _eventType;
+    private int eventType;
 
-    private int _requestType;
+    private int requestType;
 
-    private Exception _exception;
+    private Exception exception;
 
-    private File _localFile;
+    private File localFile;
 
-    private Repository _repository;
+    private Repository repository;
 
-    private long _length;
+    private long length;
 
-    private long _totalLength;
+    private long totalLength;
 
-    private boolean _isTotalLengthSet = false;
+    private boolean isTotalLengthSet = false;
 
     public TransferEvent(final Repository repository, final Resource resource, final int eventType,
             final int requestType) {
         super(getName(eventType));
 
-        _repository = repository;
-        addAttribute("repository", _repository.getName());
-        _resource = resource;
-        addAttribute("resource", _resource.getName());
+        this.repository = repository;
+        addAttribute("repository", this.repository.getName());
+        this.resource = resource;
+        addAttribute("resource", this.resource.getName());
 
         setEventType(eventType);
 
@@ -129,15 +129,15 @@ public class TransferEvent extends IvyEvent {
             final Exception exception, final int requestType) {
         this(repository, resource, TRANSFER_ERROR, requestType);
 
-        _exception = exception;
+        this.exception = exception;
     }
 
     public TransferEvent(final Repository repository, final Resource resource, long length,
             final int requestType) {
         this(repository, resource, TRANSFER_PROGRESS, requestType);
 
-        _length = length;
-        _totalLength = length;
+        this.length = length;
+        this.totalLength = length;
     }
 
     private static String getName(int eventType) {
@@ -152,22 +152,23 @@ public class TransferEvent extends IvyEvent {
                 return TRANSFER_COMPLETED_NAME;
             case TRANSFER_ERROR:
                 return TRANSFER_ERROR_NAME;
+            default:
+                return null;
         }
-        return null;
     }
 
     /**
      * @return Returns the resource.
      */
     public Resource getResource() {
-        return _resource;
+        return resource;
     }
 
     /**
      * @return Returns the exception.
      */
     public Exception getException() {
-        return _exception;
+        return exception;
     }
 
     /**
@@ -177,7 +178,7 @@ public class TransferEvent extends IvyEvent {
      *         <code>TransferEvent.REQUEST_GET<code> or <code>TransferEvent.REQUEST_PUT<code>
      */
     public int getRequestType() {
-        return _requestType;
+        return requestType;
     }
 
     /**
@@ -200,14 +201,14 @@ public class TransferEvent extends IvyEvent {
                 throw new IllegalArgumentException("Illegal request type: " + requestType);
         }
 
-        _requestType = requestType;
+        this.requestType = requestType;
     }
 
     /**
      * @return Returns the eventType.
      */
     public int getEventType() {
-        return _eventType;
+        return eventType;
     }
 
     /**
@@ -231,22 +232,22 @@ public class TransferEvent extends IvyEvent {
                 throw new IllegalArgumentException("Illegal event type: " + eventType);
         }
 
-        this._eventType = eventType;
+        this.eventType = eventType;
     }
 
     /**
-     * @param _resource
+     * @param resource
      *            The resource to set.
      */
     protected void setResource(final Resource resource) {
-        _resource = resource;
+        this.resource = resource;
     }
 
     /**
      * @return Returns the local file.
      */
     public File getLocalFile() {
-        return _localFile;
+        return localFile;
     }
 
     /**
@@ -254,35 +255,35 @@ public class TransferEvent extends IvyEvent {
      *            The local file to set.
      */
     protected void setLocalFile(File localFile) {
-        _localFile = localFile;
+        this.localFile = localFile;
     }
 
     public long getLength() {
-        return _length;
+        return length;
     }
 
     protected void setLength(long length) {
-        _length = length;
+        this.length = length;
     }
 
     public long getTotalLength() {
-        return _totalLength;
+        return totalLength;
     }
 
     protected void setTotalLength(long totalLength) {
-        _totalLength = totalLength;
+        this.totalLength = totalLength;
     }
 
     public void setException(Exception exception) {
-        _exception = exception;
+        this.exception = exception;
     }
 
     public boolean isTotalLengthSet() {
-        return _isTotalLengthSet;
+        return isTotalLengthSet;
     }
 
     public void setTotalLengthSet(boolean isTotalLengthSet) {
-        _isTotalLengthSet = isTotalLengthSet;
+        this.isTotalLengthSet = isTotalLengthSet;
     }
 
 }
