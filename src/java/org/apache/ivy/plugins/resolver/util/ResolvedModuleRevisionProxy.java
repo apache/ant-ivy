@@ -30,9 +30,9 @@ import org.apache.ivy.plugins.resolver.DependencyResolver;
  * getArtifactResolver method
  */
 public final class ResolvedModuleRevisionProxy implements ResolvedModuleRevision {
-    private final ResolvedModuleRevision _mr;
+    private final ResolvedModuleRevision mr;
 
-    DependencyResolver _resolver;
+    private DependencyResolver resolver;
 
     public ResolvedModuleRevisionProxy(ResolvedModuleRevision mr, DependencyResolver artresolver) {
         if (mr == null) {
@@ -41,36 +41,36 @@ public final class ResolvedModuleRevisionProxy implements ResolvedModuleRevision
         if (artresolver == null) {
             throw new NullPointerException("null resolver not allowed");
         }
-        _mr = mr;
-        _resolver = artresolver;
+        this.mr = mr;
+        this.resolver = artresolver;
     }
 
     public DependencyResolver getResolver() {
-        return _mr.getResolver();
+        return mr.getResolver();
     }
 
     public DependencyResolver getArtifactResolver() {
-        return _resolver;
+        return resolver;
     }
 
     public ModuleRevisionId getId() {
-        return _mr.getId();
+        return mr.getId();
     }
 
     public Date getPublicationDate() {
-        return _mr.getPublicationDate();
+        return mr.getPublicationDate();
     }
 
     public ModuleDescriptor getDescriptor() {
-        return _mr.getDescriptor();
+        return mr.getDescriptor();
     }
 
     public boolean isDownloaded() {
-        return _mr.isDownloaded();
+        return mr.isDownloaded();
     }
 
     public boolean isSearched() {
-        return _mr.isSearched();
+        return mr.isSearched();
     }
 
 }

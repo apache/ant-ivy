@@ -25,14 +25,14 @@ import java.util.Collections;
 import java.util.List;
 
 public class FileURLLister implements URLLister {
-    private File _basedir;
+    private File basedir;
 
     public FileURLLister() {
         this(null);
     }
 
     public FileURLLister(File baseDir) {
-        _basedir = baseDir;
+        this.basedir = baseDir;
     }
 
     public boolean accept(String pattern) {
@@ -41,7 +41,7 @@ public class FileURLLister implements URLLister {
 
     public List listAll(URL url) throws IOException {
         String path = url.getPath();
-        File file = _basedir == null ? new File(path) : new File(_basedir, path);
+        File file = basedir == null ? new File(path) : new File(basedir, path);
         if (file.exists() && file.isDirectory()) {
             String[] files = file.list();
             List ret = new ArrayList(files.length);
