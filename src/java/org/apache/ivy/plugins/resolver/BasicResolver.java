@@ -624,6 +624,8 @@ public abstract class BasicResolver extends AbstractResolver {
                 if (!ArtifactDownloadReport.MISSING_ARTIFACT.equals(adr.getDownloadDetails())) {
                     Message.warn("\t" + adr);
                 }
+            } else if (DownloadStatus.NO == adr.getDownloadStatus()) {
+                Message.verbose("\t" + adr);
             } else {
                 Message.info("\t" + adr);
             }
