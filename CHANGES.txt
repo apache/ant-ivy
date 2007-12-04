@@ -97,7 +97,8 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 
 - REFACTORING: Extract a settings interface for the different engines
 
-- TASK: review all tutorials to make sure they are in sync with 2.0 (IVY-591) (with contribution from Jing Xue)
+- TASK: Review all tutorials to make sure they are in sync with 2.0 (IVY-591) (with contribution from Jing Xue)
+- TASK: Satisfy the US export control laws for software "specially designed" to use cryptography. (IVY-593)
 
 
    2.0.0-alpha2-incubating
