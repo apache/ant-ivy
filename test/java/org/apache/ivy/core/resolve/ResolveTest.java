@@ -3565,6 +3565,15 @@ public class ResolveTest extends TestCase {
         assertEquals("1.1", dependency.getResolvedId().getRevision());
     }
 
+    
+    public void testPrivateConfigurationTransferWhenConflict() throws Exception {        
+        ResolveReport report = ivy.resolve(
+            new File("test/repositories/1/orgConflictAndPrivateConf/root/ivys/ivy-1.0.xml").toURL(),
+            getResolveOptions(new String[] {"assembly"}));
+        assertFalse(report.hasError());        
+    }
+
+    
     // //////////////////////////////////////////////////////////
     // helper methods to ease the tests
     // //////////////////////////////////////////////////////////
