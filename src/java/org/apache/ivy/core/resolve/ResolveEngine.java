@@ -306,7 +306,8 @@ public class ResolveEngine {
 
     public void outputReport(ResolveReport report, ResolutionCacheManager cacheMgr) 
             throws IOException {
-        Message.info(":: resolution report ::");
+        Message.info(":: resolution report :: resolve " + report.getResolveTime() + "ms"
+            + " :: artifacts dl " + report.getDownloadTime() + "ms");
         report.setProblemMessages(Message.getProblems());
         // output report
         report.output(settings.getReportOutputters(), cacheMgr);
@@ -321,6 +322,7 @@ public class ResolveEngine {
         eventManager.fireIvyEvent(new PrepareDownloadEvent((Artifact[]) report.getArtifacts()
                 .toArray(new Artifact[report.getArtifacts().size()])));
 
+        long totalSize = 0;
         for (int i = 0; i < dependencies.length; i++) {
             checkInterrupted();
             // download artifacts required in all asked configurations
@@ -333,8 +335,10 @@ public class ResolveEngine {
                 ArtifactDownloadReport[] adrs = dReport.getArtifactsReports();
                 for (int j = 0; j < adrs.length; j++) {
                     if (adrs[j].getDownloadStatus() == DownloadStatus.FAILED) {
-                        Message.warn("\t[NOT FOUND  ] " + adrs[j].getArtifact());
+                        Message.warn("\t" + adrs[j]);
                         resolver.reportFailure(adrs[j].getArtifact());
+                    } else if (adrs[j].getDownloadStatus() == DownloadStatus.SUCCESSFUL) {
+                        totalSize += adrs[j].getSize();
                     }
                 }
                 // update concerned reports
@@ -354,6 +358,7 @@ public class ResolveEngine {
             }
         }
         report.setDownloadTime(System.currentTimeMillis() - start);
+        report.setDownloadSize(totalSize);
     }
 
     /**

@@ -73,6 +73,11 @@ public class TransferEvent extends IvyEvent {
     public static final int TRANSFER_ERROR = 4;
 
     /**
+     * Used to check event type validity: should always be 0 <= type <= LAST_EVENT_TYPE
+     */
+    private static final int LAST_EVENT_TYPE = TRANSFER_ERROR;
+    
+    /**
      * Indicates GET transfer (from the repository)
      */
     public static final int REQUEST_GET = 5;
@@ -109,20 +114,26 @@ public class TransferEvent extends IvyEvent {
     private long totalLength;
 
     private boolean isTotalLengthSet = false;
+    
+    /**
+     * This attribute is used to store the time at which the event enters a type.
+     * <p>
+     * The array should better be seen as a Map from event type (int) to the time at which the event
+     * entered that type, 0 if it never entered this type.
+     * </p>
+     */
+    private long[] timeTracking = new long[LAST_EVENT_TYPE + 1];
 
     public TransferEvent(final Repository repository, final Resource resource, final int eventType,
             final int requestType) {
         super(getName(eventType));
 
         this.repository = repository;
-        addAttribute("repository", this.repository.getName());
-        this.resource = resource;
-        addAttribute("resource", this.resource.getName());
+        setResource(resource);
 
         setEventType(eventType);
 
         setRequestType(requestType);
-        addAttribute("request-type", requestType == REQUEST_GET ? "get" : "put");
     }
 
     public TransferEvent(final Repository repository, final Resource resource,
@@ -202,6 +213,7 @@ public class TransferEvent extends IvyEvent {
         }
 
         this.requestType = requestType;
+        addAttribute("request-type", requestType == REQUEST_GET ? "get" : "put");
     }
 
     /**
@@ -216,23 +228,19 @@ public class TransferEvent extends IvyEvent {
      *            The eventType to set.
      */
     protected void setEventType(final int eventType) {
-        switch (eventType) {
-
-            case TRANSFER_INITIATED:
-                break;
-            case TRANSFER_STARTED:
-                break;
-            case TRANSFER_COMPLETED:
-                break;
-            case TRANSFER_PROGRESS:
-                break;
-            case TRANSFER_ERROR:
-                break;
-            default:
-                throw new IllegalArgumentException("Illegal event type: " + eventType);
+        checkEventType(eventType);
+        if (this.eventType != eventType) {
+            this.eventType = eventType;
+            timeTracking[eventType] = System.currentTimeMillis();
+            if (eventType > TRANSFER_INITIATED) {
+                addAttribute("total-duration", 
+                    String.valueOf(getElapsedTime(TRANSFER_INITIATED, eventType)));
+                if (eventType > TRANSFER_STARTED) {
+                    addAttribute("duration", 
+                        String.valueOf(getElapsedTime(TRANSFER_STARTED, eventType)));
+                }
+            }
         }
-
-        this.eventType = eventType;
     }
 
     /**
@@ -241,6 +249,7 @@ public class TransferEvent extends IvyEvent {
      */
     protected void setResource(final Resource resource) {
         this.resource = resource;
+        addAttribute("resource", this.resource.getName());
     }
 
     /**
@@ -285,5 +294,61 @@ public class TransferEvent extends IvyEvent {
     public void setTotalLengthSet(boolean isTotalLengthSet) {
         this.isTotalLengthSet = isTotalLengthSet;
     }
+    
+    public Repository getRepository() {
+        return repository;
+    }
 
+    /**
+     * Returns the elapsed time (in ms) between when the event entered one type until it entered
+     * another event time.
+     * <p>
+     * This is especially useful to get the elapsed transfer time:
+     * <pre>
+     * getElapsedTime(TransferEvent.TRANSFER_STARTED, TransferEvent.TRANSFER_COMPLETED);
+     * </pre>
+     * </p>
+     * <p>
+     * Special cases:
+     * <ul>
+     * <li>returns -1 if the event never entered the fromEventType or the toEventType.</li>
+     * <li>returns 0 if the event entered toEventType before fromEventType</li>
+     * </ul>
+     * </p>
+     * 
+     * @param fromEventType
+     *            the event type constant from which time should be measured
+     * @param toEventType
+     *            the event type constant to which time should be measured
+     * @return the elapsed time (in ms) between when the event entered fromEventType until it
+     *         entered toEventType.
+     * @throws IllegalArgumentException
+     *             if either type is not a known constant event type.
+     */
+    public long getElapsedTime(int fromEventType, int toEventType) {
+        checkEventType(fromEventType);
+        checkEventType(toEventType);
+        long start = timeTracking[fromEventType];
+        long end = timeTracking[toEventType];
+        if (start == 0 || end == 0) {
+            return -1;
+        } else if (end < start) {
+            return 0;
+        } else {
+            return end - start;
+        }
+    }
+
+    /**
+     * Checks the given event type is a valid event type, throws an {@link IllegalArgumentException}
+     * if it isn't
+     * 
+     * @param eventType
+     *            the event type to check
+     */
+    private void checkEventType(int eventType) {
+        if (eventType < 0 || eventType > LAST_EVENT_TYPE) {
+            throw new IllegalArgumentException("invalid event type " + eventType);
+        }
+    }
 }

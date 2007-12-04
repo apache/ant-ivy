@@ -19,12 +19,18 @@ package org.apache.ivy.core.retrieve;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import junit.framework.TestCase;
 
 import org.apache.ivy.Ivy;
 import org.apache.ivy.core.IvyPatternHelper;
 import org.apache.ivy.core.cache.CacheManager;
+import org.apache.ivy.core.event.IvyEvent;
+import org.apache.ivy.core.event.IvyListener;
+import org.apache.ivy.core.event.retrieve.EndRetrieveEvent;
+import org.apache.ivy.core.event.retrieve.StartRetrieveEvent;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.report.ResolveReport;
 import org.apache.ivy.core.resolve.ResolveOptions;
@@ -80,6 +86,37 @@ public class RetrieveTest extends TestCase {
         ivy.retrieve(md.getModuleRevisionId(), pattern, getRetrieveOptions());
         assertTrue(new File(IvyPatternHelper.substitute(pattern, "org1", "mod1.2", "2.0", "mod1.2",
             "jar", "jar", "default")).exists());
+    }
+
+    public void testEvent() throws Exception {
+        ResolveReport report = ivy.resolve(new File(
+                "test/repositories/1/org1/mod1.1/ivys/ivy-1.0.xml").toURL(),
+            getResolveOptions(new String[] {"*"}));
+
+        final List events = new ArrayList();
+        ivy.getEventManager().addIvyListener(new IvyListener() {
+            public void progress(IvyEvent event) {
+                events.add(event);
+            }
+        });
+        ModuleDescriptor md = report.getModuleDescriptor();
+        String pattern = "build/test/retrieve/[module]/[conf]/[artifact]-[revision].[ext]";
+        ivy.retrieve(md.getModuleRevisionId(), pattern, getRetrieveOptions());
+        assertEquals(2, events.size());
+        assertTrue(events.get(0) instanceof StartRetrieveEvent);
+        assertTrue(events.get(1) instanceof EndRetrieveEvent);
+        EndRetrieveEvent ev = (EndRetrieveEvent) events.get(1);
+        assertEquals(1, ev.getNbCopied());
+        assertEquals(0, ev.getNbUpToDate());
+
+        events.clear();
+        ivy.retrieve(md.getModuleRevisionId(), pattern, getRetrieveOptions());
+        assertEquals(2, events.size());
+        assertTrue(events.get(0) instanceof StartRetrieveEvent);
+        assertTrue(events.get(1) instanceof EndRetrieveEvent);
+        ev = (EndRetrieveEvent) events.get(1);
+        assertEquals(0, ev.getNbCopied());
+        assertEquals(1, ev.getNbUpToDate());
     }
 
     public void testRetrieveOverwrite() throws Exception {

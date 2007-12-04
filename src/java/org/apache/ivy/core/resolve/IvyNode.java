@@ -217,11 +217,13 @@ public class IvyNode implements Comparable {
                 try {
                     Message.debug("\tusing " + resolver + " to resolve " + getId());
                     DependencyDescriptor dependencyDescriptor = getDependencyDescriptor(parent);
+                    long start = System.currentTimeMillis();
                     data.getEventManager().fireIvyEvent(
                         new StartResolveDependencyEvent(resolver, dependencyDescriptor));
                     module = resolver.getDependency(dependencyDescriptor, data);
                     data.getEventManager().fireIvyEvent(
-                        new EndResolveDependencyEvent(resolver, dependencyDescriptor, module));
+                        new EndResolveDependencyEvent(resolver, dependencyDescriptor, module,
+                            System.currentTimeMillis() - start));
                     if (module != null) {
                         data.getCacheManager().saveResolver(module.getDescriptor(),
                             module.getResolver().getName());

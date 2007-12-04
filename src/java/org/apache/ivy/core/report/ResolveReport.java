@@ -43,19 +43,20 @@ public class ResolveReport {
 
     private Map confReports = new LinkedHashMap();
 
-    private List problemMessages;
+    private List problemMessages = new ArrayList();
 
-    private List dependencies; // the list of all dependencies resolved, ordered from the more
+    private List dependencies = new ArrayList(); 
+    // the list of all dependencies resolved, ordered from the more dependent to the less dependent
 
-    // dependent to the less dependent
-
-    private List artifacts;
+    private List artifacts = new ArrayList();
 
     private long resolveTime;
 
     private long downloadTime;
 
     private String resolveId;
+
+    private long downloadSize;
 
     public ResolveReport(ModuleDescriptor md) {
         this(md, ResolveOptions.getDefaultResolveId(md));
@@ -237,6 +238,23 @@ public class ResolveReport {
 
     public long getDownloadTime() {
         return downloadTime;
+    }
+
+    public void setDownloadSize(long size) {
+        this.downloadSize = size;
+    }
+    
+    /**
+     * The total size of downloaded artifacts, in bytes.
+     * <p>
+     * This only includes artifacts actually downloaded to cache (DownloadStatus.SUCCESSFUL), and
+     * not artifacts already in cache or used at their original location.
+     * </p>
+     * 
+     * @return The total size of downloaded artifacts, in bytes.
+     */
+    public long getDownloadSize() {
+        return downloadSize;
     }
 
     public String getResolveId() {

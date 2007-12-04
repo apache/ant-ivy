@@ -26,10 +26,14 @@ public class EndResolveDependencyEvent extends ResolveDependencyEvent {
 
     private ResolvedModuleRevision module;
 
+    private long duration;
+
     public EndResolveDependencyEvent(DependencyResolver resolver, DependencyDescriptor dd,
-            ResolvedModuleRevision module) {
+            ResolvedModuleRevision module, long duration) {
         super(NAME, resolver, dd);
         this.module = module;
+        this.duration = duration;
+        addAttribute("duration", String.valueOf(duration));
         if (this.module != null) {
             // override revision from the dependency descriptor
             addAttribute("revision", this.module.getDescriptor().getResolvedModuleRevisionId()
@@ -42,6 +46,22 @@ public class EndResolveDependencyEvent extends ResolveDependencyEvent {
 
     public ResolvedModuleRevision getModule() {
         return module;
+    }
+    
+    /**
+     * Returns the time elapsed to resolve the dependency.
+     * <p>
+     * The time elapsed to resolve a dependency includes the time required to locate the the actual
+     * revision if the dependency descriptor use a version constraint, and to download the module
+     * metadata if necessary. It doesn't include any conflict management operations nor transitive
+     * dependency management. It's basically the time elapsed since the corresponding
+     * {@link StartResolveDependencyEvent}
+     * </p>
+     * 
+     * @return the time elapsed to resolve the dependency.
+     */
+    public long getDuration() {
+        return duration;
     }
 
 }

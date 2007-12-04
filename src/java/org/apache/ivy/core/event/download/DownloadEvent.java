@@ -32,6 +32,7 @@ public abstract class DownloadEvent extends IvyEvent {
     protected void addArtifactAttributes(Artifact artifact) {
         addMridAttributes(artifact.getModuleRevisionId());
         addAttributes(artifact.getAttributes());
+        addAttribute("metadata", String.valueOf(artifact.isMetadata()));
     }
 
     public Artifact getArtifact() {

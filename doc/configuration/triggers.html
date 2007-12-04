@@ -50,30 +50,33 @@ The event available in Ivy are the following ones:
             <li>conf</li>comma separated list of configurations which will be resolved
           </ul>
         </td>
-        <td>Fired before a module dependencies will be resolved</td>
+        <td>Fired at the beginning of the resolve process, before a module dependencies and transitive dependencies are resolved.</td>
     </tr>
     <tr><td>pre-resolve-dependency</td>
         <td>
           <ul>
             <li>organisation</li>the organisation of the dependency resolved
             <li>module</li>the name of the dependency resolved
-            <li>revision</li>the revision asked for the dependency
+            <li>req-revision</li>the requested revision for the dependency <span class="since">since 2.0</span> (provided for consistency with post-resolve-dependency)
+            <li>revision</li>the requested revision for the dependency
             <li>resolver</li>the name of the resolver used to resolve the dependency
           </ul>
         </td>
-        <td>Fired before each dependency is resolved in a single resolve call</td>
+        <td>Fired before each dependency is resolved. In this case resolved means resolving the actual revision if the requested revision is a version constraint and not a static version, and downloading all necessary metadata information.</td>
     </tr>
     <tr><td>post-resolve-dependency</td>
         <td>
           <ul>
             <li>organisation</li>the organisation of the dependency resolved
             <li>module</li>the name of the dependency resolved
-            <li>revision</li>the revision of the dependency resolved, or the revision asked if the resolution was not successful
+            <li>req-revision</li>the requested revision for the dependency <span class="since">since 2.0</span>
+            <li>revision</li>the revision of the dependency resolved, or the requested revision if the resolution was not successful
             <li>resolved</li>true if the resolution was successful, false otherwise
+            <li>duration</li>the time elapsed to resolve the dependency (in ms) <span class="since">since 2.0</span>
             <li>resolver</li>the name of the resolver used to resolve the dependency
           </ul>
         </td>
-        <td>Fired after each dependency resolved in a single resolve call</td>
+        <td>Fired after each dependency is resolved</td>
     </tr>
     <tr><td>post-resolve</td>
         <td>
@@ -82,9 +85,15 @@ The event available in Ivy are the following ones:
             <li>module</li>the name of the module for which the dependencies have been resolved
             <li>revision</li>the revision of the module for which the dependencies have been resolved
             <li>conf</li>comma separated list of configurations resolved
+            <li>resolve-id</li>the identifier of the resolution process <span class="since">since 2.0</span>
+            <li>nb-dependencies</li>total number of dependencies, including transitive and evicted ones <span class="since">since 2.0</span>
+            <li>nb-artifacts</li>total number of artifacts resolved, excluding metadata artifacts <span class="since">since 2.0</span>
+            <li>resolve-duration</li>the time (in ms) elapsed to resolve dependencies, before dowloading artifacts <span class="since">since 2.0</span>
+            <li>download-duration</li>the time (in ms) elapsed to download all artifacts, excluding metadata artifacts downloaded during the first phase of the resolution process <span class="since">since 2.0</span>
+            <li>download-size</li>the total size (in bytes) of all downloaded artifacts, excluding metadata artifacts. Only artifacts actually downloaded (not in cache or used from their original location) are considered <span class="since">since 2.0</span>
           </ul>
         </td>
-        <td>Fired after a module dependencies has been resolved</td>
+        <td>Fired at the end of the resolve process, when all module dependencies have been resolved</td>
     </tr>
     <tr><td>pre-download-artifact</td>
         <td>
@@ -95,6 +104,7 @@ The event available in Ivy are the following ones:
             <li>artifact</li>the name of the the artifact which is about to be downloaded
             <li>type</li>the type of the the artifact which is about to be downloaded
             <li>ext</li>the extension of the the artifact which is about to be downloaded
+            <li>metadata</li>true if the artifact to be downloaded is a metadata artifact, false for published artifacts <span class="since">since 2.0</span>
             <li>resolver</li>the name of the resolver used to download the artifact
             <li>origin</li>the origin location from which it will be downloaded
             <li>local</li>true if it's a local artifact, false otherwise
@@ -111,14 +121,46 @@ The event available in Ivy are the following ones:
             <li>artifact</li>the name of the the artifact which was just downloaded
             <li>type</li>the type of the the artifact which was just downloaded
             <li>ext</li>the extension of the the artifact which was just downloaded
+            <li>metadata</li>true if the downloaded artifact is a metadata artifact, false for published artifacts <span class="since">since 2.0</span>
             <li>resolver</li>the name of the resolver used to download the artifact
             <li>origin</li>the origin location from which it was downloaded
             <li>local</li>true if it's a local artifact, false otherwise
             <li>size</li>the size in bytes of the downloaded artifact
+            <li>duration</li>the time elapsed to download the artifact (in ms) <span class="since">since 2.0</span>
             <li>file</li>the file to which it has been downloaded
           </ul>
         </td>
         <td>Fired after an artifact has been downloaded from a repository to the cache</td>
+    </tr>
+    <tr><td>pre-retrieve <br><span class="since">since 2.0</span></td>
+        <td>
+          <ul>
+            <li>organisation</li>the organisation of the module for which the dependencies will be retrieved
+            <li>module</li>the name of the module for which the dependencies will be retrieved
+            <li>revision</li>the revision of the module for which the dependencies will be retrieved
+            <li>conf</li>comma separated list of configurations which will be retrieved
+            <li>symlink</li>true if Ivy will use symbolic links instead of copies on supported platforms, false otherwise
+            <li>sync</li>true if the retrieve process will be performed in sync mode, false otherwise
+          </ul>
+        </td>
+        <td>Fired at the beginning of the retrieve process.</td>
+    </tr>
+    <tr><td>post-retrieve <br><span class="since">since 2.0</span></td>
+        <td>
+          <ul>
+            <li>organisation</li>the organisation of the module for which the dependencies have been retrieved
+            <li>module</li>the name of the module for which the dependencies will be retrieved
+            <li>revision</li>the revision of the module for which the dependencies have been retrieved
+            <li>conf</li>comma separated list of configurations which have been retrieved
+            <li>symlink</li>true if Ivy used symbolic links instead of copies on supported platforms, false otherwise
+            <li>sync</li>true if the retrieve process has been performed in sync mode, false otherwise
+            <li>duration</li>the time elapsed in ms during the retrieve process
+            <li>size</li>the total size of artifacts which have actually been copied (or symlinked)
+            <li>nbCopied</li>the number of artifacts copied or symlinked
+            <li>nbUptodate</li>the number of artifacts which were already present and up to date at the destination location
+          </ul>
+        </td>
+        <td>Fired at the end of the retrieve process.</td>
     </tr>
     <tr><td>pre-publish-artifact <br><span class="since">since 2.0</span></td>
         <td>
@@ -182,6 +224,7 @@ Ivy comes with two built-in triggers:
 <tbody>
 <tr><td>ant-build</td><td>Triggers an ant build.</td></tr>
 <tr><td>ant-call</td><td>Calls a target in the current ant build.</td></tr>
+<tr><td>log</td><td>Logs a message on the console or in a log file.</td></tr>
 </tbody>
 </table>
 
@@ -247,7 +290,17 @@ Here is how the target can look like:
      <unzip src="${dep.file}" dest="${basedir}/out"/>
 </target>
 </code>
-	</textarea>
+<hr/>
+<code type="xml">
+<triggers>
+    <log file="ivy.log" 
+          message='downloaded "${origin}" to "${file}" (${duration}ms - ${size}B)'
+          event="post-download-artifact" filter="status=successful"/>
+</triggers>
+</code>
+Logs any successful artifact download, with information on the source and destination, and details on download size and duration.
+
+The file attribute is optional, the log trigger will output messages to console if it isn't provided.</textarea>
 <script type="text/javascript">xooki.postProcess();</script>
 </body>
 </html>

@@ -280,7 +280,7 @@ public class Ivy {
                 resolveEngine = new ResolveEngine(settings, eventManager, sortEngine);
             }
             if (retrieveEngine == null) {
-                retrieveEngine = new RetrieveEngine(settings);
+                retrieveEngine = new RetrieveEngine(settings, eventManager);
             }
             if (deliverEngine == null) {
                 deliverEngine = new DeliverEngine(settings);

@@ -38,6 +38,9 @@ import org.apache.ivy.core.IvyPatternHelper;
 import org.apache.ivy.core.cache.CacheManager;
 import org.apache.ivy.core.cache.RepositoryCacheManager;
 import org.apache.ivy.core.cache.ResolutionCacheManager;
+import org.apache.ivy.core.event.EventManager;
+import org.apache.ivy.core.event.retrieve.EndRetrieveEvent;
+import org.apache.ivy.core.event.retrieve.StartRetrieveEvent;
 import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.DefaultArtifact;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
@@ -52,10 +55,15 @@ import org.apache.ivy.util.FileUtil;
 import org.apache.ivy.util.Message;
 
 public class RetrieveEngine {
+    private static final int KILO = 1024;
+
     private RetrieveEngineSettings settings;
 
-    public RetrieveEngine(RetrieveEngineSettings settings) {
+    private EventManager eventManager;
+
+    public RetrieveEngine(RetrieveEngineSettings settings, EventManager eventManager) {
         this.settings = settings;
+        this.eventManager = eventManager;
     }
 
     /**
@@ -80,6 +88,9 @@ public class RetrieveEngine {
         RepositoryCacheManager cacheManager = getCacheManager(options);
         String[] confs = getConfs(mrid, options);
         Message.info("\tconfs: " + Arrays.asList(confs));
+        if (this.eventManager != null) {
+            this.eventManager.fireIvyEvent(new StartRetrieveEvent(mrid, confs, options));
+        }
 
         try {
             Map artifactsToCopy = determineArtifactsToCopy(mrid, destFilePattern, options);
@@ -95,6 +106,7 @@ public class RetrieveEngine {
             // do retrieve
             int targetsCopied = 0;
             int targetsUpToDate = 0;
+            long totalCopiedSize = 0;
             for (Iterator iter = artifactsToCopy.keySet().iterator(); iter.hasNext();) {
                 Artifact artifact = (Artifact) iter.next();
                 File archive;
@@ -123,6 +135,7 @@ public class RetrieveEngine {
                         } else {
                             FileUtil.copy(archive, destFile, null, true);
                         }
+                        totalCopiedSize += destFile.length();
                         targetsCopied++;
                     } else {
                         Message.verbose("\t\tto " + destFile + " [NOT REQUIRED]");
@@ -157,12 +170,19 @@ public class RetrieveEngine {
                     }
                 }
             }
+            long elapsedTime = System.currentTimeMillis() - start;
             Message.info("\t"
                     + targetsCopied
                     + " artifacts copied"
                     + (settings.isCheckUpToDate() ? (", " + targetsUpToDate + " already retrieved")
-                            : ""));
-            Message.verbose("\tretrieve done (" + (System.currentTimeMillis() - start) + "ms)");
+                            : "")
+                    + " (" + (totalCopiedSize / KILO) + "kB/" + elapsedTime + "ms)");
+            Message.verbose("\tretrieve done (" + (elapsedTime) + "ms)");
+            if (this.eventManager != null) {
+                this.eventManager.fireIvyEvent(new EndRetrieveEvent(
+                    mrid, confs, elapsedTime, targetsCopied, targetsUpToDate, totalCopiedSize, 
+                    options));
+            }
 
             return targetsCopied;
         } catch (Exception ex) {

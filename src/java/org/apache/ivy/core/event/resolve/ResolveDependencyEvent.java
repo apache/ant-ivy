@@ -34,6 +34,7 @@ public class ResolveDependencyEvent extends IvyEvent {
         addAttribute("resolver", this.resolver.getName());
         addMridAttributes(this.dd.getDependencyRevisionId());
         addAttributes(this.dd.getExtraAttributes());
+        addAttribute("req-revision", dd.getDependencyRevisionId().getRevision());
     }
 
     public DependencyDescriptor getDependencyDescriptor() {

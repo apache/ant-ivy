@@ -193,16 +193,75 @@ public final class FileUtil {
         }
     }
 
+    /**
+     * Reads the whole BufferedReader line by line, using \n as line separator for each line.
+     * <p>
+     * Note that this method will add a final \n to the last line even though there is no new line
+     * character at the end of last line in the original reader.
+     * </p>
+     * <p>
+     * The BufferedReader is closed when this method returns.
+     * </p>
+     * 
+     * @param in
+     *            the {@link BufferedReader} to read from
+     * @return a String with the whole content read from the {@link BufferedReader}
+     * @throws IOException
+     *             if an IO problems occur during reading
+     */
     public static String readEntirely(BufferedReader in) throws IOException {
-        StringBuffer buf = new StringBuffer();
+        try {
+            StringBuffer buf = new StringBuffer();
 
-        String line = in.readLine();
-        while (line != null) {
-            buf.append(line + "\n");
-            line = in.readLine();
+            String line = in.readLine();
+            while (line != null) {
+                buf.append(line + "\n");
+                line = in.readLine();
+            }
+            return buf.toString();
+        } finally {
+            in.close();
         }
-        in.close();
-        return buf.toString();
+    }
+
+    /**
+     * Reads the entire content of the file and returns it as a String.
+     * 
+     * @param f
+     *            the file to read from
+     * @return a String with the file content
+     * @throws IOException
+     *             if an IO problems occurs during reading
+     */
+    public static String readEntirely(File f) throws IOException {
+        return readEntirely(new FileInputStream(f));
+    }
+    
+    /**
+     * Reads the entire content of the {@link InputStream} and returns it as a String.
+     * <p>
+     * The input stream is closed when this method returns.
+     * </p>
+     * 
+     * @param is
+     *            the {@link InputStream} to read from
+     * @return a String with the input stream content
+     * @throws IOException
+     *             if an IO problems occurs during reading
+     */
+    public static String readEntirely(InputStream is) throws IOException {
+        try {
+            StringBuffer sb = new StringBuffer();
+            byte[] buffer = new byte[BUFFER_SIZE];
+            int c;
+
+            while ((c = is.read(buffer)) != -1) {
+                sb.append(new String(buffer, 0, c));
+            }
+            return sb.toString();
+        } finally {
+            is.close();
+        }
     }
 
     public static String concat(String dir, String file) {

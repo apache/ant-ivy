@@ -28,6 +28,12 @@ public class EndResolveEvent extends ResolveEvent {
     public EndResolveEvent(ModuleDescriptor md, String[] confs, ResolveReport report) {
         super(NAME, md, confs);
         this.report = report;
+        addAttribute("resolve-id", String.valueOf(report.getResolveId()));
+        addAttribute("nb-dependencies", String.valueOf(report.getDependencies().size()));
+        addAttribute("nb-artifacts", String.valueOf(report.getArtifacts().size()));
+        addAttribute("resolve-duration", String.valueOf(report.getResolveTime()));
+        addAttribute("download-duration", String.valueOf(report.getDownloadTime()));
+        addAttribute("download-size", String.valueOf(report.getDownloadSize()));
     }
 
     public ResolveReport getReport() {

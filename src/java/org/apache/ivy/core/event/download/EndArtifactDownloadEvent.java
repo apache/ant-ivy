@@ -38,12 +38,14 @@ public class EndArtifactDownloadEvent extends DownloadEvent {
         this.report = report;
         addAttribute("resolver", this.resolver.getName());
         addAttribute("status", this.report.getDownloadStatus().toString());
+        addAttribute("details", this.report.getDownloadDetails());
         addAttribute("size", String.valueOf(this.report.getSize()));
         addAttribute("file", dest.getAbsolutePath());
+        addAttribute("duration", String.valueOf(this.report.getDownloadTimeMillis()));
         ArtifactOrigin origin = report.getArtifactOrigin();
         if (origin != null) {
-            addAttribute("origin", this.report.getArtifactOrigin().getLocation());
-            addAttribute("local", String.valueOf(this.report.getArtifactOrigin().isLocal()));
+            addAttribute("origin", origin.getLocation());
+            addAttribute("local", String.valueOf(origin.isLocal()));
         } else {
             addAttribute("origin", "");
             addAttribute("local", "");

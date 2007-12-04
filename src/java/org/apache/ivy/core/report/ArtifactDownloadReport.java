@@ -119,8 +119,13 @@ public class ArtifactDownloadReport {
         if (downloadStatus == DownloadStatus.SUCCESSFUL) {
             return "[SUCCESSFUL ] " + artifact + " (" + downloadTimeMillis + "ms)";
         } else if (downloadStatus == DownloadStatus.FAILED) {
-            return "[FAILED     ] " + artifact + ": " + downloadDetails
+            if (downloadDetails == MISSING_ARTIFACT) {
+                return "[NOT FOUND  ] " + artifact
                 + " (" + downloadTimeMillis + "ms)";
+            } else {
+                return "[FAILED     ] " + artifact + ": " + downloadDetails
+                    + " (" + downloadTimeMillis + "ms)";
+            }
         } else if (downloadStatus == DownloadStatus.NO) {
             return "[NOT REQUIRED] " + artifact;
         } else {
