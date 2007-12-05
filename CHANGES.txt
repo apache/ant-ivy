@@ -54,7 +54,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 	John Williams
 	Jaroslaw Wypychowski
 
-   version in SVN
+   2.0.0-beta1
 =====================================
 - NEW: Share cache with locking (IVY-654)
 - NEW: support atomic publish operation (IVY-492) (with contribution from Geoff Reedy)
