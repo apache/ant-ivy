@@ -1,0 +1,228 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<!--
+   Licensed to the Apache Software Foundation (ASF) under one
+   or more contributor license agreements.  See the NOTICE file
+   distributed with this work for additional information
+   regarding copyright ownership.  The ASF licenses this file
+   to you under the Apache License, Version 2.0 (the
+   "License"); you may not use this file except in compliance
+   with the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing,
+   software distributed under the License is distributed on an
+   "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+   KIND, either express or implied.  See the License for the
+   specific language governing permissions and limitations
+   under the License.    
+-->
+<html>
+<head>
+	<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
+	<script type="text/javascript">var xookiConfig = {level: 0};</script>	
+	<script type="text/javascript" src="xooki/xooki.js"></script>
+</head>
+<body>
+	<textarea id="xooki-source">
+<h2>Release Notes</h2>
+CONTENTS
+1. What is Apache Ivy?
+2. Status of this release
+3. Major Changes in this Release
+4. Migrating from Jayasoft Ivy to Apache Ivy
+5. How to Get Involved
+6. How to Report Issues
+7. Committers and Contributors for this release
+8. List of Changes in this Release   
+   
+   
+<h3>1. What is Apache Ivy?</h3>
+
+Apache Ivy is a tool for managing (recording, tracking, resolving and reporting) 
+project dependencies. 
+It is characterized by the following:
+
+   1. flexibility and configurability 
+   		Apache Ivy is essentially process agnostic and is not tied to any 
+   		methodology or structure. 
+   		Instead it provides the necessary flexibility and configurability 
+   		to be adapted to a broad range of dependency management and build 
+   		processes.
+   2. tight integration with Apache Ant
+   		while available as a standalone tool, Apache Ivy works particularly well 
+   		with Apache Ant providing a number of powerful Ant tasks ranging 
+   		from dependency resolution to dependency reporting and publication.
+
+<h3>2. Status of this release </h3>
+
+This is the first release of Ivy since it has graduated as a sub project of Apache Ant. 
+As a beta version, we encourage the use of this version for testing and validation.
+Still API and features are still likely to change until final 2.0.0 version. 
+
+The current production quality version is still 1.4.1, which has not been produced 
+within the Apache Software Foundation.
+
+<h3>3. Major Changes in this Release</h3>
+
+This section describes what has changed between version 1.4.1 and this version of Apache Ivy.
+
+This new version of Apache Ivy is almost fully compatible with previous versions as long as you do not use custom plugins: Ivy API has changed, but not its behavior.
+
+Some tasks and configuration elements have been renamed, but the old versions
+are still available, they are only deprecated (you will see deprecated warnings). 
+
+<h4>3.1. Java Package Name Changes</h4>
+
+All of the Ivy Java package names have changed in Apache Ivy. They now start 
+with org.apache rather than fr.jayasoft. There have been other changes as well. 
+Important refactorings have done on the source code to ease the understanding
+of Ivy internal architecture by new developers.
+
+A class named org.apache.ivy.Ivy14 is provided with an API compatible with the
+fr.jayasoft.Ivy class of Ivy 1.4.1, to ease migration to this new version.
+
+<h4>3.2. Configuration replaced by Settings</h4>
+
+Configuration used to have two meanings in prior Ivy versions, causing some confusion with new users.
+To avoid this confusion, Apache Ivy calls settings instead of configuration the files used to customize Ivy. Configuration is still used for module configurations.
+
+Besides the changes in the documentation, this renaming also imply a modification in settings files, which now use ivysettings as root element instead of ivyconf, and settings instead of conf element to define top level defaults (such as defaultCache, ...).
+Previous names have been deprecated, so previous settings files can still be used, but you will see a deprecation warning.
+
+<h4>3.3. Review of settings loading</h4>
+
+This new Ivy version experience with a new way of loading the settings. The configure task is deprecated, and replaced by a settings datatype. By using the settings datatype, you can easily use several settings inside one Ant build script, and use a scope to tell Ivy which settings to use when calling a task which requires some settings.
+
+This is still an experiment though, so feedback is very welcome in the mailing lists.
+
+<h4>3.4. Public resolver in default settings is now ibiblio in m2 compatible mode</h4>
+
+In previous versions Ivy used to use the ivyrep resolver as default public resolver, but ivyrep is no longer maintained, while maven 2 repository on ibiblio is growing rapidly.
+
+Since Ivy is compatible with maven 2 repository, defaulting to the ibiblio maven 2 repository makes more sense.
+
+If you have any issue of backward compatibility with these new settings, you can simply set the following ant property before loading the settings (implicitly or explicitly):
+ivy.14.compatible=true
+
+<h4>3.5. Relative paths resolution</h4>
+
+Relative paths resolution in Ivy used to be resolved against the current directory. 
+Some work is in progress in this area, currently relative path resolution for the inclusion of configuration files in Ivy files has been modified to work relative to the Ivy file in which the configurations are included.
+
+This may break your dependency resolution if you used to use relative paths for configuration file inclusion.
+
+<h4>3.6 Ivyrep ivyroot attribute is now mandatory</h4>
+
+If you still use the ivyrep resolver, you will need to provide an ivyroot.
+To restore the previous behavior, use ivyroot="http://ivyrep.jayasoft.org/".
+
+Since Ivyrep is not maintained anymore, we recommend moving away from this repository anyway.
+
+<h3>4. Migrating from Jayasoft Ivy to Apache Ivy</h3>
+
+Apache Ivy is fully compatible with Jayasoft Ivy as long as you do not use 
+custom plugins.
+This means that you can use Apache Ivy as a drop in replacement of Jayasoft Ivy.
+
+However due to the the renaming of configuration files to settings files, we
+strongly suggest to update your configuration files:
+- rename the files called ivyconf*.xml in ivysettings*.xml
+- rename 'ivyconf' element in 'ivysettings'
+- rename 'conf' element of those settings file in 'settings'
+
+We also suggest using the new org.apache.ivy.ant package name for the antlib declaration.
+
+Migrating custom plugins can be done by using the org.apache.ivy.Ivy14 class
+instead of fr.jayasoft.ivy.Ivy, and reorganizing your imports to reflect the 
+changes in the package names.
+
+<h3>5. How to Get Involved</h3>
+
+The Apache Ivy project really needs and appreciates any contributions, 
+including documentation help, source code and feedback.  If you are interested
+in contributing, please visit http://ant.apache.org/ivy/get-involved.html.
+
+<h3>6. How to Report Issues</h3>
+
+The Apache Ivy project uses JIRA for issue tracking.  Please report any 
+issues you find at http://issues.apache.org/jira/browse/IVY
+
+<h3>7. Committers and Contributors for this Release</h3>
+
+Here is the list of people who have contributed source code and documentation
+to this release. Many thanks to all of them, and also to the whole Ivy community
+contributing ideas and feedback, and promoting the use of Ivy. The list would be too long, but Ivy couldn't be what it is without you!
+<h4>Committers</h4>
+	Maarten Coene
+	Xavier Hanin
+	Gilles Scokart
+<h4>Contributors</h4>
+    Jim Bonanno
+    Jacob Grydholt Jensen
+    Matthias Kilian
+    Nicolas Lalevée
+    Geoff Reedy
+    Jason Trump
+    Tjeerd Verhagen
+    John Williams
+    Jing Xue
+
+Since this is our first release as a subproject of Ant, we'd also like to take this opportunity to thank the Apache Ant project for accepting Ivy as a subproject, the Apache Incubator community for their guidance to behave the "Apache way", and our mentors Antoine Levy-Lambert, Stephane Bailliez, Steve Loughran and Stefan Bodewig for their precious time and help during the incubation process.
+    
+<h3>8. List of Changes in this Release</h3>
+
+For a full release history of Ivy see the file CHANGES.txt
+
+For details about the following changes, check our JIRA install at 
+http://issues.apache.org/jira/browse/ivy
+
+List of changes since Ivy 2.0.0-alpha-2-incubating:
+- NEW: Share cache with locking (IVY-654)
+- NEW: support atomic publish operation (IVY-492) (with contribution from Geoff Reedy)
+- NEW: latest compatible conflict manager (IVY-648)
+- NEW: Add a task/code to create M2 POM files from Ivy configurations (IVY-416)
+- NEW: [Build] Publish the ivy sources (IVY-646) (thanks to Nicolas Lalevée)
+
+- IMPROVEMENT: Ease performance auditing (IVY-655)
+- IMPROVEMENT: Maven Dependency Management is not used to determine artifact version (IVY-616) (thanks to Jim Bonanno)
+- IMPROVEMENT: split the cache into an downloaded artifacts cache and a metadata cache (IVY-628)
+- IMPROVEMENT: add publish triggers to event system (IVY-650) (thanks to Jason Trump)
+- IMPROVEMENT: Only display unique circular dependencies during Resolve (IVY-653 IVY-514) (with contribution from John Williams)
+- IMPROVEMENT: Adding option 'cp', which makes it possible for main to be loaded from file (IVY-543) (thanks to Tjeerd Verhagen)
+- IMPROVEMENT: BasicURLHandler should use method=head for getURLInfo (IVY-611) (thanks to Jim Bonanno)
+- IMPROVEMENT: artifactproperty should not overwrite the existing properties (IVY-587)
+- IMPROVEMENT: Support *(private) and *(public) in the confs parameter of the resolve (IVY-588)
+- IMPROVEMENT: replace * by *(public) when resolving inline (IVY-589)
+- IMPROVEMENT: ivy html reports now refers http://ant.apache.org (partial IVY-414)
+- IMPROVEMENT: Improvements on hello ivy example (IVY-626) (with contribution from Jacob Grydholt Jensen)
+- IMPROVEMENT: Make the root attribute in the ivyrep resolver mandatory (IVY-625)
+- IMPROVEMENT: New text representation for main module metadata concepts (IVY-649)
+
+- FIX: m2 incompatibility - IVY does not recognize property section (IVY-637)
+- FIX: m2 incompatibility - IVY does not recognize parent pom (IVY-636)
+- FIX: Attempt to download a file with & in its name causes SAXParseException in Ivy (IVY-635)
+- FIX: Bad IvyContext scope causing memory leak and bad handling of subproject builds (IVY-639)
+- FIX: Resolution failure when no ivy.xml file present (IVY-630)
+- FIX: ${parent.version} property is not recognized in maven2 pom (IVY-620)
+- FIX: Handle relocation tag in maven 2 pom (IVY-586)
+- FIX: Ivy doesn't work with Ant 1.6.2 (IVY-614)
+- FIX: EmptyStackException when upgrading from 1.4 to 2.0 (IVY-610)
+- FIX: Ivy:retrieve fails through proxy server (IVY-529)
+- FIX: java.lang.IllegalArgumentException: Invalid uri when working with version ranges (IVY-390)
+- FIX: Ivy settings include -tag url attribute does not work correctly (IVY-601)
+- FIX: Static revision replacement is not working when a dynamic revision is evicted by a transitive dependency (IVY-603) (with contribution from Matthias Kilian)
+- FIX: NullPointerException whilst resolving transitive dependencies (IVY-590)
+- FIX: cachepath based on a resolve done in a previous build broken (IVY-583)
+- FIX: Resolving dynamic version fails when using multiple patterns if only one pattern find a revision and others don't (IVY-602)
+- FIX: Invalid character in IvyRetrieveTest causing most tests to fail (IVY-604)
+- FIX: ivy:settings and ivy:retrieve with explicit id causes unwarranted DEPRECATED warning (thanks to Jacob Grydholt Jensen)
+
+- REFACTORING: Extract a settings interface for the different engines
+
+- TASK: Review all tutorials to make sure they are in sync with 2.0 (IVY-591) (with contribution from Jing Xue)
+- TASK: Satisfy the US export control laws for software "specially designed" to use cryptography. (IVY-593)
+	</textarea>
+<script type="text/javascript">xooki.postProcess();</script>
+</body>
+</html>
