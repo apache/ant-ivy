@@ -61,23 +61,28 @@ public abstract class FileBasedLockStrategy extends AbstractLockStrategy {
         
     protected boolean acquireLock(File file) throws InterruptedException {
         if (isDebugLocking()) {
-            Message.info("acquiring lock on " + file);
+            debugLocking("acquiring lock on " + file);
         }
         long start = System.currentTimeMillis();
-        synchronized (this) {
-            if (hasLock(file)) {
-                incrementLock(file);
-                return true;
-            }
-        }
         do {
-            if (locker.tryLock(file)) {
-                if (isDebugLocking()) {
-                    Message.info("lock acquired on " + file 
-                        + " in " + (System.currentTimeMillis() - start) + "ms");
+            synchronized (this) {
+                if (hasLock(file)) {
+                    int holdLocks = incrementLock(file);
+                    if (isDebugLocking()) {
+                        debugLocking("reentrant lock acquired on " + file 
+                            + " in " + (System.currentTimeMillis() - start) + "ms"
+                            + " - hold locks = " + holdLocks);
+                    }
+                    return true;
                 }
-                incrementLock(file);
-                return true;
+                if (locker.tryLock(file)) {
+                    if (isDebugLocking()) {
+                        debugLocking("lock acquired on " + file 
+                            + " in " + (System.currentTimeMillis() - start) + "ms");
+                    }
+                    incrementLock(file);
+                    return true;
+                }
             }
             Thread.sleep(SLEEP_TIME);
         } while (System.currentTimeMillis() - start < timeout);
@@ -85,26 +90,40 @@ public abstract class FileBasedLockStrategy extends AbstractLockStrategy {
     }
 
     protected void releaseLock(File file) {
-        if (decrementLock(file) == 0) {
-            locker.unlock(file);
-            if (isDebugLocking()) {
-                Message.info("lock released on " + file);
+        synchronized (this) {
+            int holdLocks = decrementLock(file);
+            if (holdLocks == 0) {
+                locker.unlock(file);
+                if (isDebugLocking()) {
+                    debugLocking("lock released on " + file);
+                }
+            } else {
+                if (isDebugLocking()) {
+                    debugLocking("reentrant lock released on " + file 
+                        + " - hold locks = " + holdLocks);
+                }                
             }
         }
     }
 
     
-    private synchronized boolean hasLock(File file) {
+    private static void debugLocking(String msg) {
+        Message.info(Thread.currentThread() + " " + System.currentTimeMillis() + " " + msg);
+    }
+
+    private boolean hasLock(File file) {
         Integer c = (Integer) currentLockCounters.get(file);
         return c != null && c.intValue() > 0;
     }
     
-    private synchronized void incrementLock(File file) {
+    private int incrementLock(File file) {
         Integer c = (Integer) currentLockCounters.get(file);
-        currentLockCounters.put(file, new Integer(c == null ? 1 : c.intValue() + 1));
+        int holdLocks = c == null ? 1 : c.intValue() + 1;
+        currentLockCounters.put(file, new Integer(holdLocks));
+        return holdLocks;
     }
 
-    private synchronized int decrementLock(File file) {
+    private int decrementLock(File file) {
         Integer c = (Integer) currentLockCounters.get(file);
         int dc = c == null ? 0 : c.intValue() - 1;
         currentLockCounters.put(file, new Integer(dc));
@@ -134,7 +153,7 @@ public abstract class FileBasedLockStrategy extends AbstractLockStrategy {
                         return true;
                     } else {
                         if (debugLocking) {
-                            Message.info("file creation failed " + file);
+                            debugLocking("file creation failed " + file);
                         }
                     }
                 }
@@ -177,7 +196,7 @@ public abstract class FileBasedLockStrategy extends AbstractLockStrategy {
                             return true;
                         } else {
                             if (debugLocking) {
-                                Message.info("failed to acquire lock on " + file);
+                                debugLocking("failed to acquire lock on " + file);
                             }
                         }
                     } finally {

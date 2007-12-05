@@ -225,9 +225,8 @@ public class IvyNode implements Comparable {
                         new EndResolveDependencyEvent(resolver, dependencyDescriptor, module,
                             System.currentTimeMillis() - start));
                     if (module != null) {
-                        data.getCacheManager().saveResolver(module.getDescriptor(),
-                            module.getResolver().getName());
-                        data.getCacheManager().saveArtResolver(module.getDescriptor(),
+                        data.getCacheManager().saveResolvers(module.getDescriptor(),
+                            module.getResolver().getName(),
                             module.getArtifactResolver().getName());
                         if (settings.logModuleWhenFound()) {
                             Message.info("\tfound " + module.getId() + " in "

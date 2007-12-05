@@ -243,7 +243,7 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
         addLatestStrategy("latest-time", latestTimeStrategy);
         
         addLockStrategy("no-lock", new NoLockStrategy());
-        addLockStrategy("artifact-lock", new ArtifactLockStrategy());
+        addLockStrategy("artifact-lock", new ArtifactLockStrategy(debugLocking()));
 
         addConflictManager("latest-revision", new LatestConflictManager("latest-revision",
             latestRevisionStrategy));
@@ -1154,7 +1154,7 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
         return debugConflictResolution.booleanValue();
     }
 
-    public boolean debugLocking() {
+    public final boolean debugLocking() {
         if (debugLocking == null) {
             String var = getVariable("ivy.log.locking");
             debugLocking = Boolean.valueOf(var != null
