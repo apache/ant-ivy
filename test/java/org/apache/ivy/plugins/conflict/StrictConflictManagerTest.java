@@ -52,9 +52,25 @@ public class StrictConflictManagerTest extends TestCase {
             getResolveOptions());
     }
 
+    public void testNoConflictWithDynamicRevisionResolve() throws Exception {
+        ivy.resolve(StrictConflictManagerTest.class.getResource("ivy-noconflict-dynamic.xml"),
+            getResolveOptions());
+    }
+
     public void testConflictResolve() throws Exception {
         try {
             ivy.resolve(StrictConflictManagerTest.class.getResource("ivy-conflict.xml"),
+                getResolveOptions());
+
+            fail("Resolve should have failed with a conflict");
+        } catch (StrictConflictException e) {
+            // this is expected
+        }
+    }
+
+    public void testConflictWithDynamicRevisionResolve() throws Exception {
+        try {
+            ivy.resolve(StrictConflictManagerTest.class.getResource("ivy-conflict-dynamic.xml"),
                 getResolveOptions());
 
             fail("Resolve should have failed with a conflict");

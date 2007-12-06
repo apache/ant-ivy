@@ -54,6 +54,11 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 	John Williams
 	Jaroslaw Wypychowski
 
+   version in SVN
+=====================================
+- FIX: Strict conflictmanager seems to not support dynamic revisions (IVY-474)
+
+
    2.0.0-beta1
 =====================================
 - NEW: Share cache with locking (IVY-654)
