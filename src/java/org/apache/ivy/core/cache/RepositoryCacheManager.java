@@ -63,32 +63,21 @@ public interface RepositoryCacheManager {
     public abstract String getArchivePathInCache(Artifact artifact, ArtifactOrigin origin);
 
     /**
-     * Saves the information of which resolver was used to resolve a md, so that this info can be
-     * retrieve later (even after a jvm restart) by getSavedResolverName(ModuleDescriptor md)
+     * Saves the information of which resolvers were used to resolve a module (both for metadata and
+     * artifact), so that this info can be loaded later (even after a jvm restart) for the use of
+     * {@link #findModuleInCache(ModuleRevisionId, boolean, String)}.
      * 
      * @param md
      *            the module descriptor resolved
-     * @param name
-     *            resolver name
-     */
-    public abstract void saveResolver(ModuleDescriptor md, String name);
-
-    /**
-     * Saves the information of which resolver was used to resolve a md, so that this info can be
-     * retrieve later (even after a jvm restart) by getSavedArtResolverName(ModuleDescriptor md)
-     * 
-     * @param md
-     *            the module descriptor resolved
-     * @param name
+     * @param metadataResolverName
+     *            metadata resolver name
+     * @param artifactResolverName
      *            artifact resolver name
      */
-    public abstract void saveArtResolver(ModuleDescriptor md, String name);
-
-    public abstract void saveArtifactOrigin(Artifact artifact, ArtifactOrigin origin);
+    public abstract void saveResolvers(
+            ModuleDescriptor descriptor, String metadataResolverName, String artifactResolverName);
 
     public abstract ArtifactOrigin getSavedArtifactOrigin(Artifact artifact);
-
-    public abstract void removeSavedArtifactOrigin(Artifact artifact);
 
     /**
      * Search a module descriptor in cache for a mrid
@@ -130,8 +119,6 @@ public interface RepositoryCacheManager {
             DependencyResolver resolver, ResolvedResource orginalMetadataRef, 
             Artifact requestedMetadataArtifact, 
             ResourceDownloader downloader, CacheMetadataOptions options) throws ParseException;
-
-    public Artifact getOriginalMetadataArtifact(Artifact moduleArtifact);
 
     public void originalToCachedModuleDescriptor(
             DependencyResolver resolver, ResolvedResource orginalMetadataRef, 

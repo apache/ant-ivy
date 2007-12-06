@@ -109,7 +109,7 @@ public final class PomModuleDescriptorWriter {
                     out.println("      <scope>" + scope + "</scope>");
                 }
                 if (mapping.isOptional(dds[i].getModuleConfigurations())) {
-                    out.println("      <optional/>");
+                    out.println("      <optional>true</optional>");
                 }
                 out.println("    </dependency>");
             }
