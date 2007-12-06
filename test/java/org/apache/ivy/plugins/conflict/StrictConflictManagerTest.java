@@ -29,17 +29,17 @@ import org.apache.ivy.util.FileUtil;
 public class StrictConflictManagerTest extends TestCase {
     private Ivy ivy;
 
-    private File _cache;
+    private File cache;
 
     protected void setUp() throws Exception {
         ivy = new Ivy();
         ivy.configure(StrictConflictManagerTest.class.getResource("ivysettings-strict-test.xml"));
-        _cache = new File("build/cache");
-        _cache.mkdirs();
+        cache = new File("build/cache");
+        cache.mkdirs();
     }
 
     protected void tearDown() throws Exception {
-        FileUtil.forceDelete(_cache);
+        FileUtil.forceDelete(cache);
     }
 
     public void testInitFromConf() throws Exception {
