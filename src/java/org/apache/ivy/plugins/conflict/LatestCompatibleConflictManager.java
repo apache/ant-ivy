@@ -75,8 +75,7 @@ public class LatestCompatibleConflictManager extends LatestConflictManager {
         if (conflicts.size() < 2) {
             return conflicts;
         }
-        IvySettings settings = IvyContext.getContext().getSettings();
-        VersionMatcher versionMatcher = settings.getVersionMatcher();
+        VersionMatcher versionMatcher = getSettings().getVersionMatcher();
         
         Iterator iter = conflicts.iterator();
         IvyNode node = (IvyNode) iter.next();
@@ -162,15 +161,14 @@ public class LatestCompatibleConflictManager extends LatestConflictManager {
                  getStrategy().findLatest(
                      toArtifactInfo(Arrays.asList(new IvyNode[] {node, other})), null);
              if (latest != null) {
-                 IvySettings settings = IvyContext.getContext().getSettings();
                  IvyNode latestNode = latest.getNode();
                  IvyNode oldestNode = latestNode == node ? other : node;
                  blackListIncompatibleCallerAndRestartResolveIfPossible(
-                     settings, parent, oldestNode, latestNode); 
+                     getSettings(), parent, oldestNode, latestNode); 
                  // if we arrive here, we haven' managed to blacklist all paths to the latest
                  // node, we try with the oldest
                  blackListIncompatibleCallerAndRestartResolveIfPossible(
-                     settings, parent, latestNode, oldestNode); 
+                     getSettings(), parent, latestNode, oldestNode); 
                  // still not possible, we aren't able to find a solution to the incompatibility
                  handleUnsolvableConflict(parent, conflicts, node, other);
                  
