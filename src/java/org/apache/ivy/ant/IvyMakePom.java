@@ -30,8 +30,10 @@ import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.plugins.parser.m2.PomModuleDescriptorWriter;
 import org.apache.ivy.plugins.parser.m2.PomModuleDescriptorWriter.ConfigurationScopeMapping;
 import org.apache.ivy.plugins.parser.xml.XmlModuleDescriptorParser;
+import org.apache.ivy.util.FileUtil;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
+import org.apache.tools.ant.util.FileUtils;
 
 /**
  * Convert an ivy file to a pom
@@ -56,6 +58,8 @@ public class IvyMakePom extends IvyTask {
 
     private File pomFile = null;
 
+    private File headerFile = null;
+
     private File ivyFile = null;
 
     private Collection mappings = new ArrayList();
@@ -75,6 +79,14 @@ public class IvyMakePom extends IvyTask {
     public void setIvyFile(File ivyFile) {
         this.ivyFile = ivyFile;
     }
+
+    public File getHeaderFile() {
+        return headerFile;
+    }
+
+    public void setHeaderFile(File headerFile) {
+        this.headerFile = headerFile;
+    }
     
     public Mapping createMapping() {
         Mapping mapping = new Mapping();
@@ -92,7 +104,8 @@ public class IvyMakePom extends IvyTask {
             }
             ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(
                 getSettings(), ivyFile.toURL(), false);
-            PomModuleDescriptorWriter.write(md, 
+            PomModuleDescriptorWriter.write(md,
+                headerFile == null ? null : FileUtil.readEntirely(getHeaderFile()),
                 mappings.isEmpty() 
                     ? PomModuleDescriptorWriter.DEFAULT_MAPPING
                     : new ConfigurationScopeMapping(getMappingsMap()), pomFile);
