@@ -138,7 +138,7 @@ public class TestHelper {
         }
         
         Pattern oneDependencyPattern = Pattern.compile(
-            "(" + mridPattern + ")\\s*->\\s*(" + mridPattern + ")");
+            "(" + mridPattern.pattern() + ")\\s*->\\s*(" + mridPattern.pattern() + ")");
         m = oneDependencyPattern.matcher(microIvy);
         if (m.matches()) {
             DefaultModuleDescriptor md = DefaultModuleDescriptor
@@ -147,8 +147,8 @@ public class TestHelper {
             return md;
         }
         
-        String p = "(" + mridPattern + ")\\s*->\\s*\\{\\s*((?:" 
-                    + mridPattern + ",?\\s+)*" + mridPattern + ")?\\s*\\}";
+        String p = "(" + mridPattern.pattern() + ")\\s*->\\s*\\{\\s*((?:" 
+                    + mridPattern.pattern() + ",?\\s+)*" + mridPattern.pattern() + ")?\\s*\\}";
         Pattern multipleDependenciesPattern = Pattern.compile(
             p);
         m = multipleDependenciesPattern.matcher(microIvy);
