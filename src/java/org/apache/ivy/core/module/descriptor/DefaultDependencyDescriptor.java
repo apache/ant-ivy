@@ -47,7 +47,7 @@ public class DefaultDependencyDescriptor implements DependencyDescriptor {
     private static final Pattern SELF_FALLBACK_PATTERN = Pattern.compile("@(\\(.*\\))?");
 
     private static final Pattern THIS_FALLBACK_PATTERN = Pattern.compile("#(\\(.*\\))?");
-
+    
     /**
      * Transforms the given dependency descriptor of the given namespace and return a new dependency
      * descriptor in the system namespace. <i>Note that exclude rules are not converted in system
@@ -89,9 +89,9 @@ public class DefaultDependencyDescriptor implements DependencyDescriptor {
             if (dd instanceof DefaultDependencyDescriptor) {
                 DefaultDependencyDescriptor ddd = (DefaultDependencyDescriptor) dd;
                 newdd.confs = new LinkedHashMap(ddd.confs);
-                newdd.excludeRules = new LinkedHashMap(ddd.excludeRules);
-                newdd.includeRules = new LinkedHashMap(ddd.includeRules);
-                newdd.dependencyArtifacts = new LinkedHashMap(ddd.dependencyArtifacts);
+                newdd.setExcludeRules(new LinkedHashMap(ddd.getExcludeRules()));
+                newdd.setIncludeRules(new LinkedHashMap(ddd.getIncludeRules()));
+                newdd.setDependencyArtifacts(new LinkedHashMap(ddd.getDependencyArtifacts()));
             } else {
                 throw new IllegalArgumentException(
                         "dependency descriptor transformation does not support * module confs "
@@ -101,11 +101,11 @@ public class DefaultDependencyDescriptor implements DependencyDescriptor {
             for (int i = 0; i < moduleConfs.length; i++) {
                 newdd.confs.put(moduleConfs[i], new ArrayList(Arrays.asList(dd
                         .getDependencyConfigurations(moduleConfs[i]))));
-                newdd.excludeRules.put(moduleConfs[i], new ArrayList(Arrays.asList(dd
+                newdd.getExcludeRules().put(moduleConfs[i], new ArrayList(Arrays.asList(dd
                         .getExcludeRules(moduleConfs[i]))));
-                newdd.includeRules.put(moduleConfs[i], new ArrayList(Arrays.asList(dd
+                newdd.getIncludeRules().put(moduleConfs[i], new ArrayList(Arrays.asList(dd
                         .getIncludeRules(moduleConfs[i]))));
-                newdd.dependencyArtifacts.put(moduleConfs[i], new ArrayList(Arrays.asList(dd
+                newdd.getDependencyArtifacts().put(moduleConfs[i], new ArrayList(Arrays.asList(dd
                         .getDependencyArtifacts(moduleConfs[i]))));
             }
         }
@@ -120,15 +120,13 @@ public class DefaultDependencyDescriptor implements DependencyDescriptor {
     private Map confs = new LinkedHashMap();
 
     // Map (String masterConf -> Collection(DependencyArtifactDescriptor))
-    private Map dependencyArtifacts = new LinkedHashMap(); 
+    private Map dependencyArtifacts; // initialized on demand only for memory consumption reason
 
     // Map (String masterConf -> Collection(IncludeRule))
-    private Map includeRules = new LinkedHashMap(); 
+    private Map includeRules;  // initialized on demand only for memory consumption reason
 
     // Map (String masterConf -> Collection(ExcludeRule))
-    private Map excludeRules = new LinkedHashMap(); 
-
-    private Set extendsConfs = new LinkedHashSet();
+    private Map excludeRules;  // initialized on demand only for memory consumption reason
 
     /**
      * Used to indicate that this revision must be used in case of conflicts, independently of
@@ -163,6 +161,8 @@ public class DefaultDependencyDescriptor implements DependencyDescriptor {
         isChanging = dd.isChanging();
         isTransitive = dd.isTransitive();
         String[] moduleConfs = dd.getModuleConfigurations();
+        Map excludeRules = getExcludeRules();
+        Map includeRules = getIncludeRules();
         for (int i = 0; i < moduleConfs.length; i++) {
             confs.put(moduleConfs[i], new ArrayList(Arrays.asList(dd
                     .getDependencyConfigurations(moduleConfs[i]))));
@@ -327,7 +327,7 @@ public class DefaultDependencyDescriptor implements DependencyDescriptor {
     }
 
     private Set getCollectionForConfiguration(String moduleConfiguration, Map collectionMap) {
-        if (collectionMap.isEmpty()) {
+        if (collectionMap == null || collectionMap.isEmpty()) {
             return Collections.EMPTY_SET;
         }
         Collection artifacts = (Collection) collectionMap.get(moduleConfiguration);
@@ -368,17 +368,26 @@ public class DefaultDependencyDescriptor implements DependencyDescriptor {
     }
 
     public DependencyArtifactDescriptor[] getAllDependencyArtifacts() {
+        if (dependencyArtifacts == null) {
+            return new DependencyArtifactDescriptor[0];
+        }
         Set ret = mergeAll(dependencyArtifacts);
         return (DependencyArtifactDescriptor[]) ret.toArray(new DependencyArtifactDescriptor[ret
                 .size()]);
     }
 
     public IncludeRule[] getAllIncludeRules() {
+        if (includeRules == null) {
+            return new IncludeRule[0];
+        }
         Set ret = mergeAll(includeRules);
         return (IncludeRule[]) ret.toArray(new IncludeRule[ret.size()]);
     }
 
     public ExcludeRule[] getAllExcludeRules() {
+        if (excludeRules == null) {
+            return new ExcludeRule[0];
+        }
         Set ret = mergeAll(excludeRules);
         return (ExcludeRule[]) ret.toArray(new ExcludeRule[ret.size()]);
     }
@@ -412,15 +421,15 @@ public class DefaultDependencyDescriptor implements DependencyDescriptor {
     }
 
     public void addDependencyArtifact(String masterConf, DependencyArtifactDescriptor dad) {
-        addObjectToConfiguration(masterConf, dad, dependencyArtifacts);
+        addObjectToConfiguration(masterConf, dad, getDependencyArtifacts());
     }
 
     public void addIncludeRule(String masterConf, IncludeRule rule) {
-        addObjectToConfiguration(masterConf, rule, includeRules);
+        addObjectToConfiguration(masterConf, rule, getIncludeRules());
     }
 
     public void addExcludeRule(String masterConf, ExcludeRule rule) {
-        addObjectToConfiguration(masterConf, rule, excludeRules);
+        addObjectToConfiguration(masterConf, rule, getExcludeRules());
     }
 
     private void addObjectToConfiguration(String callerConf, Object toAdd, Map confsMap) {
@@ -456,11 +465,7 @@ public class DefaultDependencyDescriptor implements DependencyDescriptor {
      * @return
      */
     public boolean canExclude() {
-        return !excludeRules.isEmpty();
-    }
-
-    public void addExtends(String conf) {
-        extendsConfs.add(conf);
+        return excludeRules != null && !excludeRules.isEmpty();
     }
 
     public String toString() {
@@ -513,6 +518,39 @@ public class DefaultDependencyDescriptor implements DependencyDescriptor {
 
     public DependencyDescriptor asSystem() {
         return asSystem;
+    }
+
+    private void setDependencyArtifacts(Map dependencyArtifacts) {
+        this.dependencyArtifacts = dependencyArtifacts;
+    }
+
+    private Map getDependencyArtifacts() {
+        if (dependencyArtifacts == null) {
+            dependencyArtifacts = new LinkedHashMap();
+        }
+        return dependencyArtifacts;
+    }
+
+    private void setIncludeRules(Map includeRules) {
+        this.includeRules = includeRules;
+    }
+
+    private Map getIncludeRules() {
+        if (includeRules == null) {
+            includeRules = new LinkedHashMap();
+        }
+        return includeRules;
+    }
+
+    private void setExcludeRules(Map excludeRules) {
+        this.excludeRules = excludeRules;
+    }
+
+    private Map getExcludeRules() {
+        if (excludeRules == null) {
+            excludeRules = new LinkedHashMap();
+        }
+        return excludeRules;
     }
 
 }

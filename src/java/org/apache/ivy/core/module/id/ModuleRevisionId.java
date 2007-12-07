@@ -20,6 +20,7 @@ package org.apache.ivy.core.module.id;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.WeakHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -41,6 +42,9 @@ public class ModuleRevisionId extends UnmodifiableExtendableItem {
     private static final String STRICT_CHARS_PATTERN = "[a-zA-Z0-9\\-/\\._+=]";
     private static final String REV_STRICT_CHARS_PATTERN 
         = "[a-zA-Z0-9\\-/\\._+=,\\[\\]\\{\\}\\(\\):@]";
+
+    
+    private static final Map/*<ModuleRevisionId, ModuleRevisionId>*/ CACHE = new WeakHashMap();
 
     /**
      * Pattern to use to matched mrid text representation.
@@ -91,28 +95,60 @@ public class ModuleRevisionId extends UnmodifiableExtendableItem {
     }
 
     public static ModuleRevisionId newInstance(String organisation, String name, String revision) {
-        return new ModuleRevisionId(new ModuleId(organisation, name), revision);
+        return intern(
+            new ModuleRevisionId(ModuleId.newInstance(organisation, name), revision));
     }
 
     public static ModuleRevisionId newInstance(String organisation, String name, String revision,
             Map extraAttributes) {
-        return new ModuleRevisionId(new ModuleId(organisation, name), revision, extraAttributes);
+        return intern(
+            new ModuleRevisionId(ModuleId.newInstance(organisation, name), 
+                revision, extraAttributes));
     }
 
     public static ModuleRevisionId newInstance(String organisation, String name, String branch,
             String revision) {
-        return new ModuleRevisionId(new ModuleId(organisation, name), branch, revision);
+        return intern(
+            new ModuleRevisionId(ModuleId.newInstance(organisation, name), 
+                branch, revision));
     }
 
     public static ModuleRevisionId newInstance(String organisation, String name, String branch,
             String revision, Map extraAttributes) {
-        return new ModuleRevisionId(new ModuleId(organisation, name), branch, revision,
-                extraAttributes);
+        return intern(
+            new ModuleRevisionId(ModuleId.newInstance(organisation, name), 
+                branch, revision, extraAttributes));
     }
 
     public static ModuleRevisionId newInstance(ModuleRevisionId mrid, String rev) {
-        return new ModuleRevisionId(mrid.getModuleId(), mrid.getBranch(), rev, mrid
-                .getExtraAttributes());
+        return intern(
+            new ModuleRevisionId(mrid.getModuleId(), 
+                mrid.getBranch(), rev, mrid.getExtraAttributes()));
+    }
+    
+    /**
+     * Returns an intern instance of the given ModuleRevisionId if any, or put the given
+     * ModuleRevisionId in a cache of intern instances and returns it.
+     * <p>
+     * This method should be called on ModuleRevisionId created with one of the constructor to
+     * decrease memory footprint.
+     * </p>
+     * <p>
+     * When using static newInstances methods, this method is already called.
+     * </p>
+     * 
+     * @param moduleRevisionId
+     *            the module revision id to intern
+     * @return an interned ModuleRevisionId
+     */
+    public static ModuleRevisionId intern(ModuleRevisionId moduleRevisionId) {
+        ModuleRevisionId r = (ModuleRevisionId) CACHE.get(moduleRevisionId);
+        if (r == null) {
+            r = moduleRevisionId;
+            CACHE.put(r, r);
+
+        }
+        return r;
     }
 
     private final ModuleId moduleId;
@@ -123,6 +159,8 @@ public class ModuleRevisionId extends UnmodifiableExtendableItem {
 
     private int hash;
 
+    // TODO: make these constructors private and use only static factory methods
+    
     public ModuleRevisionId(ModuleId moduleId, String revision) {
         this(moduleId, null, revision, null);
     }
@@ -131,11 +169,11 @@ public class ModuleRevisionId extends UnmodifiableExtendableItem {
         this(moduleId, branch, revision, null);
     }
 
-    public ModuleRevisionId(ModuleId moduleId, String revision, Map extraAttributes) {
+    private ModuleRevisionId(ModuleId moduleId, String revision, Map extraAttributes) {
         this(moduleId, null, revision, extraAttributes);
     }
 
-    public ModuleRevisionId(ModuleId moduleId, String branch, String revision, 
+    private ModuleRevisionId(ModuleId moduleId, String branch, String revision, 
             Map extraAttributes) {
         super(null, extraAttributes);
         this.moduleId = moduleId;

@@ -17,11 +17,49 @@
  */
 package org.apache.ivy.core.module.id;
 
+import java.util.Map;
+import java.util.WeakHashMap;
+
 /**
  *
  */
 public class ModuleId implements Comparable {
     static final String ENCODE_SEPARATOR = ":#@#:";
+    
+    private static final Map/*<ModuleId, ModuleId>*/ CACHE = new WeakHashMap();
+
+    /**
+     * Returns a ModuleId for the given organization and module name.
+     * 
+     * @param org
+     *            the module's organization, can be <code>null</code>
+     * @param name
+     *            the module's name, must not be <code>null</code>
+     * @return a ModuleId instance
+     */
+    public static ModuleId newInstance(String org, String name) {
+        return intern(new ModuleId(org, name));
+    }
+    /**
+     * Returns an intern instance of a ModuleId equals to the given ModuleId if any, or the given
+     * ModuleId.
+     * <p>
+     * This is useful to reduce the number of instances of ModuleId kept in memory, and thus reduce
+     * memory footprint.
+     * </p>
+     * 
+     * @param moduleId
+     *            the module id to return
+     * @return a unit instance of the given module id.
+     */
+    public static ModuleId intern(ModuleId moduleId) {
+        ModuleId r = (ModuleId) CACHE.get(moduleId);
+        if (r == null) {
+            r = moduleId;
+            CACHE.put(r, r);
+        }
+        return r;
+    }
 
     private String organisation;
 
