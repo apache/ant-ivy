@@ -257,7 +257,7 @@ public final class XmlModuleDescriptorWriter {
      * 
      * @param extra the extra attributes, can be <tt>null</tt>
      * @param out the writer to use
-     * @param indent the string to write before writing the attributes (if any)
+     * @param prefix the string to write before writing the attributes (if any)
      */
     private static void printExtraAttributes(Map extra, PrintWriter out, String prefix) {
         if (extra == null) {
