@@ -211,6 +211,7 @@ public class TestHelper {
                         resolver.publish(artifacts[i], tmp, overwrite);
                     }
                     resolver.commitPublishTransaction();
+                    published = true;
                 } finally {
                     if (!published) {
                         resolver.abortPublishTransaction();
