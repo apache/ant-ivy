@@ -585,7 +585,7 @@ public class ResolveEngine {
             // indeed in some cases conflict manager need more information than just asked
             // dependency to take the decision
             resolveConflict(node, conf); 
-            if (!node.isEvicted()) {
+            if (!node.isEvicted() && !node.isCircular()) {
                 String[] confs = node.getRealConfs(conf);
                 for (int i = 0; i < confs.length; i++) {
                     doFetchDependencies(node, confs[i]);
@@ -594,7 +594,7 @@ public class ResolveEngine {
         } else if (!node.hasProblem()) {
             // the node has not been loaded but hasn't problem: it was already loaded
             // => we just have to update its dependencies data
-            if (!node.isEvicted()) {
+            if (!node.isEvicted() && !node.isCircular()) {
                 String[] confs = node.getRealConfs(conf);
                 for (int i = 0; i < confs.length; i++) {
                     doFetchDependencies(node, confs[i]);
@@ -661,9 +661,6 @@ public class ResolveEngine {
                 VisitNode dep = (VisitNode) iter.next();
                 dep.useRealNode(); // the node may have been resolved to another real one while
                 // resolving other deps
-                if (dep.isCircular()) {
-                    continue;
-                }
                 String[] confs = dep.getRequiredConfigurations(node, conf);
                 for (int i = 0; i < confs.length; i++) {
                     fetchDependencies(dep, confs[i], true);

@@ -113,6 +113,16 @@ public class LatestCompatibleConflictManagerTest extends TestCase {
 
     public void testCompatibilityResolve6() throws Exception {
         fixture
+            .addMD("#A;1-> { #C;[2.0,2.5] #B;1.4 }")
+            .addMD("#B;1.4->#D;1.5")
+            .addMD("#C;2.5->#D;[1.0,1.6]")
+            .addMD("#D;1.5").addMD("#D;1.6")
+            .init();
+        resolveAndAssert("#A;1", "#B;1.4, #C;2.5, #D;1.5");
+    }
+
+    public void testCompatibilityResolveCircularDependency1() throws Exception {
+        fixture
             .addMD("#A;6->{ #B;[3.0,3.5] #C;4.6 }")
             .addMD("#B;3.4->#D;2.5")
             .addMD("#B;3.5->#D;3.0")
@@ -124,14 +134,31 @@ public class LatestCompatibleConflictManagerTest extends TestCase {
         resolveAndAssert("#A;6", "#B;3.4, #C;4.6, #D;2.5");
     }
 
-    public void testCompatibilityResolve7() throws Exception {
+    public void testCompatibilityResolveCircularDependency2() throws Exception {
         fixture
-            .addMD("#A;1-> { #C;[2.0,2.5] #B;1.4 }")
-            .addMD("#B;1.4->#D;1.5")
-            .addMD("#C;2.5->#D;[1.0,1.6]")
-            .addMD("#D;1.5").addMD("#D;1.6")
+            .addMD("#A;1->#C;2")
+            .addMD("#C;1->#B;1")
+            .addMD("#C;2->#B;2")
+            .addMD("#C;3->#B;3")
+            .addMD("#B;1->#C;latest.integration") // circular dependency
+            .addMD("#B;2->#C;latest.integration") // circular dependency
+            .addMD("#B;3->#C;latest.integration") // circular dependency
             .init();
-        resolveAndAssert("#A;1", "#B;1.4, #C;2.5, #D;1.5");
+        resolveAndAssert("#A;1", "#B;2, #C;2");
+    }
+
+    public void testCompatibilityResolveCircularDependency3() throws Exception {
+        // same as 2, but A depends on B
+        fixture
+            .addMD("#A;1->#B;2")
+            .addMD("#C;1->#B;1")
+            .addMD("#C;2->#B;2")
+            .addMD("#C;3->#B;3")
+            .addMD("#B;1->#C;latest.integration") // circular dependency
+            .addMD("#B;2->#C;latest.integration") // circular dependency
+            .addMD("#B;3->#C;latest.integration") // circular dependency
+            .init();
+        resolveAndAssert("#A;1", "#B;2, #C;2");
     }
 
 

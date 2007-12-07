@@ -237,8 +237,8 @@ public class LatestCompatibleConflictManager extends LatestConflictManager {
             Stack/*<IvyNode>*/ callerStack) {
         Collection/*<IvyNodeBlacklist>*/ blacklisted = new ArrayList/*<IvyNodeBlacklist>*/();
         IvyNode node = (IvyNode) callerStack.peek();
-        Caller[] callers = node.getAllCallers();
         String rootModuleConf = conflictParent.getData().getReport().getConfiguration();
+        Caller[] callers = node.getCallers(rootModuleConf);
         for (int i = 0; i < callers.length; i++) {
             IvyNode callerNode = node.findNode(callers[i].getModuleRevisionId());
             if (callerNode.isBlacklisted(rootModuleConf)) {
@@ -248,12 +248,16 @@ public class LatestCompatibleConflictManager extends LatestConflictManager {
                 blacklisted.add(new IvyNodeBlacklist(
                     conflictParent, selectedNode, evictedNode, node, rootModuleConf));
             } else {
-                if (callerNode == null) {
-                    // we have reached the root without finding a way to change the blacklist a
-                    // caller in a particular path, this is a strict conflict
-                    return null;
-                }
-                if (!callerStack.contains(callerNode)) {
+                if (callerStack.subList(0, callerStack.size() - 1).contains(node)) {
+                    // circular dependency found and handled: the current top of the stack (node)
+                    // was already contained in the rest of the stack, the circle is closed, nothing
+                    // else to do
+                } else {
+                    if (callerNode == null) {
+                        // we have reached the root without finding a way to change the blacklist a
+                        // caller in a particular path, this is a strict conflict
+                        return null;
+                    }
                     callerStack.push(callerNode);
                     Collection sub = blackListIncompatibleCaller(
                         versionMatcher, conflictParent, selectedNode, evictedNode, callerStack);
@@ -264,13 +268,11 @@ public class LatestCompatibleConflictManager extends LatestConflictManager {
                     } else {
                         blacklisted.addAll(sub);
                     }
-                } else {
-                    // circular dependency, nothing to do, this path should not be considered as a
-                    // problem
                 }
             }
         }
-        if (blacklisted.isEmpty()) {
+        if (blacklisted.isEmpty() 
+                && !callerStack.subList(0, callerStack.size() - 1).contains(node)) {
             return null;
         }
         return blacklisted;
