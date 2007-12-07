@@ -42,6 +42,7 @@ import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.publish.PublishEngine;
 import org.apache.ivy.core.publish.PublishOptions;
 import org.apache.ivy.core.report.ResolveReport;
+import org.apache.ivy.core.repository.RepositoryManagementEngine;
 import org.apache.ivy.core.resolve.ResolveEngine;
 import org.apache.ivy.core.resolve.ResolveOptions;
 import org.apache.ivy.core.resolve.ResolvedModuleRevision;
@@ -236,6 +237,8 @@ public class Ivy {
     private PublishEngine publishEngine;
 
     private InstallEngine installEngine;
+
+    private RepositoryManagementEngine repositoryEngine;
     
     /**
      * The logger engine to use to log messages when using this Ivy instance.
@@ -291,6 +294,10 @@ public class Ivy {
             if (installEngine == null) {
                 installEngine = new InstallEngine(
                     settings, searchEngine, resolveEngine, publishEngine);
+            }
+            if (repositoryEngine == null) {
+                repositoryEngine = new RepositoryManagementEngine(
+                    settings, searchEngine, resolveEngine);
             }
     
             eventManager.addTransferListener(new TransferListener() {
@@ -918,6 +925,14 @@ public class Ivy {
 
     public void setSortEngine(SortEngine sortEngine) {
         this.sortEngine = sortEngine;
+    }
+    
+    public RepositoryManagementEngine getRepositoryEngine() {
+        return repositoryEngine;
+    }
+    
+    public void setRepositoryEngine(RepositoryManagementEngine repositoryEngine) {
+        this.repositoryEngine = repositoryEngine;
     }
 
     public void setEventManager(EventManager eventManager) {

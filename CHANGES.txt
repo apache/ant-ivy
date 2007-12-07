@@ -57,6 +57,8 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 
    version in SVN
 =====================================
+- NEW: Introduce RepositoryManagementEngine (IVY-665 - not completed yet)
+
 - IMPROVEMENT: Decrease memory footprint (IVY-662)
 
 - FIX: latest compatible conflict manager fails with circular dependencies and dynamic revision (IVY-663)

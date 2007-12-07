@@ -26,6 +26,7 @@ import org.apache.ivy.core.module.id.ArtifactId;
 import org.apache.ivy.core.module.id.ModuleId;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.plugins.conflict.ConflictManager;
+import org.apache.ivy.plugins.latest.ArtifactInfo;
 import org.apache.ivy.plugins.parser.ModuleDescriptorParser;
 import org.apache.ivy.plugins.repository.Resource;
 import org.apache.ivy.plugins.version.VersionMatcher;
@@ -34,7 +35,7 @@ import org.apache.ivy.util.extendable.ExtendableItem;
 /**
  *
  */
-public interface ModuleDescriptor extends ExtendableItem {
+public interface ModuleDescriptor extends ExtendableItem, ArtifactInfo {
     public static final String DEFAULT_CONFIGURATION = "default";
 
     public static final String CALLER_ALL_CONFIGURATION = "all";

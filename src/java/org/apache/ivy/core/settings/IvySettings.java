@@ -47,6 +47,7 @@ import org.apache.ivy.core.install.InstallEngineSettings;
 import org.apache.ivy.core.module.id.ModuleId;
 import org.apache.ivy.core.module.status.StatusManager;
 import org.apache.ivy.core.publish.PublishEngineSettings;
+import org.apache.ivy.core.repository.RepositoryManagementEngineSettings;
 import org.apache.ivy.core.resolve.ResolveEngineSettings;
 import org.apache.ivy.core.retrieve.RetrieveEngineSettings;
 import org.apache.ivy.core.sort.SortEngineSettings;
@@ -96,7 +97,8 @@ import org.apache.ivy.util.url.URLHandlerRegistry;
 
 public class IvySettings implements SortEngineSettings, PublishEngineSettings, ParserSettings,
         DeliverEngineSettings, CacheSettings, CheckEngineSettings, InstallEngineSettings, 
-        ResolverSettings, ResolveEngineSettings, RetrieveEngineSettings {
+        ResolverSettings, ResolveEngineSettings, RetrieveEngineSettings, 
+        RepositoryManagementEngineSettings {
     private static final String DEFAULT_CACHE_ARTIFACT_PATTERN =
         "[organisation]/[module]/[type]s/[artifact]-[revision](.[ext])";
 
@@ -204,6 +206,8 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
     private StatusManager statusManager;
 
     private Boolean debugLocking;
+
+    private Boolean dumpMemoryUsage;
 
     public IvySettings() {
         this(new IvyVariableContainerImpl());
@@ -393,6 +397,26 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
         new XmlSettingsParser(this).parse(settingsURL);
         setVariable("ivy.default.ivy.user.dir", getDefaultIvyUserDir().getAbsolutePath(), false);
         Message.verbose("settings loaded (" + (System.currentTimeMillis() - start) + "ms)");
+        dumpSettings();
+    }
+    
+    /**
+     * Default initialization of settings, useful when you don't want to load your settings from a
+     * settings file or URL, but prefer to set them manually. By calling this method you will still
+     * have the basic initialization done when loading settings.
+     * 
+     * @throws IOException
+     */
+    public void defaultInit() throws IOException {
+        if (getVariable("ivy.default.ivy.user.dir") != null) {
+            setDefaultIvyUserDir(new File(getVariable("ivy.default.ivy.user.dir")));
+        } else {
+            getDefaultIvyUserDir();
+        }
+        getDefaultCache();
+
+        loadDefaultProperties();
+        setVariable("ivy.default.ivy.user.dir", getDefaultIvyUserDir().getAbsolutePath(), false);
         dumpSettings();
     }
 
@@ -1162,6 +1186,16 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
         }
         return debugLocking.booleanValue();
     }
+
+    public boolean dumpMemoryUsage() {
+        if (dumpMemoryUsage == null) {
+            String var = getVariable("ivy.log.memory");
+            dumpMemoryUsage = Boolean.valueOf(var != null
+                    && Boolean.valueOf(var).booleanValue());
+        }
+        return dumpMemoryUsage.booleanValue();
+    }
+
 
     public boolean logNotConvertedExclusionRule() {
         return logNotConvertedExclusionRule;

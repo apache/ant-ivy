@@ -279,6 +279,10 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
     public Date getResolvedPublicationDate() {
         return resolvedPublicationDate;
     }
+    
+    public String getRevision() {
+        return getResolvedModuleRevisionId().getRevision();
+    }
 
     public void setModuleRevisionId(ModuleRevisionId revId) {
         if (revId == null) {

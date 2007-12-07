@@ -133,9 +133,10 @@ public class FileSystemResolver extends RepositoryResolver {
             if (transactionTempDir == null) {
                 throw new IllegalStateException("no current transaction!");
             }
+            getFileRepository().move(transactionTempDir, transactionDestDir);
             Message.info("\tpublish commited: moved " + transactionTempDir 
                 + " \n\t\tto " + transactionDestDir);
-            getFileRepository().move(transactionTempDir, transactionDestDir);
+            closeTransaction();
         }
     }
 

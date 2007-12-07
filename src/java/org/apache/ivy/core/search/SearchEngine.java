@@ -23,6 +23,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -54,7 +55,7 @@ public class SearchEngine {
      * @return
      */
     public String[] listTokenValues(String token, Map otherTokenValues) {
-        List r = new ArrayList();
+        Collection r = new LinkedHashSet();
         for (Iterator iter = settings.getResolvers().iterator(); iter.hasNext();) {
             DependencyResolver resolver = (DependencyResolver) iter.next();
             r.addAll(Arrays.asList(resolver.listTokenValues(token, otherTokenValues)));
@@ -206,10 +207,13 @@ public class SearchEngine {
                                             branches[k], revs[l]));
                                     }
                                 }
+                                tokenValues.remove(IvyPatternHelper.REVISION_KEY);
                             }
                         }
+                        tokenValues.remove(IvyPatternHelper.BRANCH_KEY);
                     }
                 }
+                tokenValues.remove(IvyPatternHelper.MODULE_KEY);
             }
         }
         return (ModuleRevisionId[]) ret.toArray(new ModuleRevisionId[ret.size()]);
