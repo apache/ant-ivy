@@ -76,51 +76,51 @@ public final class PomModuleDescriptorParser extends AbstractModuleDescriptorPar
     public static final Configuration[] MAVEN2_CONFIGURATIONS = new Configuration[] {
             new Configuration("default", Visibility.PUBLIC,
                     "runtime dependencies and master artifact can be used with this conf",
-                    new String[] {"runtime", "master"}),
+                    new String[] {"runtime", "master"}, true, null),
             new Configuration(
                     "master",
                     Visibility.PUBLIC,
                     "contains only the artifact published by this module itself, "
                     + "with no transitive dependencies",
-                    new String[0]),
+                    new String[0], true, null),
             new Configuration(
                     "compile",
                     Visibility.PUBLIC,
                     "this is the default scope, used if none is specified. "
                     + "Compile dependencies are available in all classpaths.",
-                    new String[0]),
+                    new String[0], true, null),
             new Configuration(
                     "provided",
                     Visibility.PUBLIC,
                     "this is much like compile, but indicates you expect the JDK or a container "
                     + "to provide it. "
                     + "It is only available on the compilation classpath, and is not transitive.",
-                    new String[0]),
+                    new String[0], true, null),
             new Configuration(
                     "runtime",
                     Visibility.PUBLIC,
                     "this scope indicates that the dependency is not required for compilation, "
                     + "but is for execution. It is in the runtime and test classpaths, "
                     + "but not the compile classpath.",
-                    new String[] {"compile"}),
+                    new String[] {"compile"}, true, null),
             new Configuration(
                     "test",
                     Visibility.PRIVATE,
                     "this scope indicates that the dependency is not required for normal use of "
                     + "the application, and is only available for the test compilation and "
                     + "execution phases.",
-                    new String[0]),
+                    new String[0], true, null),
             new Configuration(
                     "system",
                     Visibility.PUBLIC,
                     "this scope is similar to provided except that you have to provide the JAR "
                     + "which contains it explicitly. The artifact is always available and is not "
                     + "looked up in a repository.",
-                    new String[0]),
+                    new String[0], true, null),
                     };
 
     private static final Configuration OPTIONAL_CONFIGURATION = new Configuration("optional",
-            Visibility.PUBLIC, "contains all optional dependencies", new String[0]);
+            Visibility.PUBLIC, "contains all optional dependencies", new String[0], true, null);
 
     private static final Map MAVEN2_CONF_MAPPING = new HashMap();
 

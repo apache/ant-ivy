@@ -61,26 +61,30 @@ public class Configuration extends DefaultExtendableItem {
     private Visibility visibility;
 
     private boolean transitive = true;
+    
+    private String deprecated;
 
     /**
-     * @param name
-     * @param visibility
-     * @param description
-     * @param ext
+     * Creates a new configuration.
+     * 
+     * @param name the name of the configuration
      */
-    public Configuration(String name, Visibility visibility, String description, String[] ext) {
-        this(name, visibility, description, ext, true);
+    public Configuration(String name) {
+        this(name, Visibility.PUBLIC, null, null, true, null);
     }
 
     /**
-     * @param name
-     * @param visibility
-     * @param description
-     * @param ext
-     * @param transitive
+     * Creates a new configuration.
+     * 
+     * @param name the name of the configuration
+     * @param visibility the visibility of the configuration
+     * @param description a description
+     * @param ext the configurations to extend from
+     * @param transitive indicates if the configuration is transitive
+     * @param deprecated the deprecation message
      */
-    public Configuration(String name, Visibility visibility, String description, String[] ext,
-            boolean transitive) {
+    public Configuration(String name, Visibility visibility, String description, String[] ext, 
+            boolean transitive, String deprecated) {
         if (name == null) {
             throw new NullPointerException("null configuration name not allowed");
         }
@@ -99,15 +103,17 @@ public class Configuration extends DefaultExtendableItem {
             }
         }
         this.transitive = transitive;
+        this.deprecated = deprecated;
     }
 
     /**
-     * @param name
+     * Returns the deprecation message, or <tt>null</tt> if not specified.
+     * @return Returns the deprecation message.
      */
-    public Configuration(String name) {
-        this(name, Visibility.PUBLIC, null, null);
+    public String getDeprecated() {
+        return deprecated;
     }
-
+    
     /**
      * @return Returns the description. It may be null.
      */

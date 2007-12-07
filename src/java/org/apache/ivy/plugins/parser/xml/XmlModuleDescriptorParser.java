@@ -383,15 +383,16 @@ public final class XmlModuleDescriptorParser extends AbstractModuleDescriptorPar
                     String transitiveValue = attributes.getValue("transitive");
                     boolean transitive = (transitiveValue == null) ? true : Boolean
                             .valueOf(attributes.getValue("transitive")).booleanValue();
+                    String deprecated = attributes.getValue("deprecated");
                     Configuration configuration = new Configuration(conf,
                             Configuration.Visibility
                                     .getVisibility(visibility == null ? "public"
                                             : visibility), ivy.substitute(attributes
                                     .getValue("description")), ext == null ? null : ext
-                                    .split(","), transitive);
+                                    .split(","), transitive, deprecated);
                     ExtendableItemHelper.fillExtraAttributes(configuration, attributes,
                         new String[] {"name", "visibility", "extends", "transitive",
-                                "description"});
+                                "description", "deprecated"});
                     md.addConfiguration(configuration);
                     break;
                 case PUB:

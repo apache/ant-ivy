@@ -628,8 +628,8 @@ public class XmlModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         // should have imported configurations
         assertNotNull(md.getConfigurations());
         assertEquals(Arrays.asList(new Configuration[] {
-                new Configuration("conf1", Visibility.PUBLIC, "", new String[0]),
-                new Configuration("conf2", Visibility.PRIVATE, "", new String[0])}), Arrays
+                new Configuration("conf1", Visibility.PUBLIC, "", new String[0], true, null),
+                new Configuration("conf2", Visibility.PRIVATE, "", new String[0], true, null)}), Arrays
                 .asList(md.getConfigurations()));
 
         DependencyDescriptor[] dependencies = md.getDependencies();
@@ -660,9 +660,9 @@ public class XmlModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         // should have imported configurations and added the one defined in the file itself
         assertNotNull(md.getConfigurations());
         assertEquals(Arrays.asList(new Configuration[] {
-                new Configuration("conf1", Visibility.PUBLIC, "", new String[0]),
-                new Configuration("conf2", Visibility.PRIVATE, "", new String[0]),
-                new Configuration("conf3", Visibility.PUBLIC, "", new String[0])}), Arrays
+                new Configuration("conf1", Visibility.PUBLIC, "", new String[0], true, null),
+                new Configuration("conf2", Visibility.PRIVATE, "", new String[0], true, null),
+                new Configuration("conf3", Visibility.PUBLIC, "", new String[0], true, null)}), Arrays
                 .asList(md.getConfigurations()));
 
         DependencyDescriptor[] dependencies = md.getDependencies();
@@ -695,8 +695,8 @@ public class XmlModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         // should have imported configurations
         assertNotNull(md.getConfigurations());
         assertEquals(Arrays.asList(new Configuration[] {
-                new Configuration("conf1", Visibility.PUBLIC, "", new String[0]),
-                new Configuration("conf2", Visibility.PRIVATE, "", new String[0])}), Arrays
+                new Configuration("conf1", Visibility.PUBLIC, "", new String[0], true, null),
+                new Configuration("conf2", Visibility.PRIVATE, "", new String[0], true, null)}), Arrays
                 .asList(md.getConfigurations()));
 
         DependencyDescriptor[] dependencies = md.getDependencies();
@@ -731,8 +731,8 @@ public class XmlModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         // should have imported configurations
         assertNotNull(md.getConfigurations());
         assertEquals(Arrays.asList(new Configuration[] {
-                new Configuration("conf1", Visibility.PUBLIC, "", new String[0]),
-                new Configuration("conf2", Visibility.PRIVATE, "", new String[0])}), Arrays
+                new Configuration("conf1", Visibility.PUBLIC, "", new String[0], true, null),
+                new Configuration("conf2", Visibility.PRIVATE, "", new String[0], true, null)}), Arrays
                 .asList(md.getConfigurations()));
 
         DependencyDescriptor[] dependencies = md.getDependencies();

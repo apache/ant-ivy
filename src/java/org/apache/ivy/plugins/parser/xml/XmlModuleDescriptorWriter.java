@@ -309,6 +309,9 @@ public final class XmlModuleDescriptorWriter {
                     }
                     out.print("\"");
                 }
+                if (confs[i].getDeprecated() != null) {
+                    out.print(" deprecated=\"" + XMLHelper.escape(confs[i].getDeprecated()) + "\"");
+                }
                 printExtraAttributes(confs[i].getExtraAttributes(), out, " ");
                 out.println("/>");
             }
