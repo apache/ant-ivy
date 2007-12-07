@@ -71,8 +71,11 @@ public class TestFixture {
     public TestFixture() {
         try {
             this.ivy = new Ivy();
-            ivy.configureDefault();
+            IvySettings settings = new IvySettings();
+            settings.defaultInit();
+            ivy.setSettings(settings);
             TestHelper.loadTestSettings(ivy.getSettings());
+            ivy.bind();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
