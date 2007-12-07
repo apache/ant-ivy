@@ -341,8 +341,7 @@ public final class XmlModuleDescriptorWriter {
             }
         }
         if (!md.getExtraAttributes().isEmpty()) {
-            out.print("\t\t");
-            printExtraAttributes(md.getExtraAttributes(), out, "");
+            printExtraAttributes(md.getExtraAttributes(), out, "\t\t");
             out.println();
         }
         out.println("\t/>");
