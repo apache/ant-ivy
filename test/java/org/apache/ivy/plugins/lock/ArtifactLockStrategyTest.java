@@ -66,9 +66,9 @@ public class ArtifactLockStrategyTest extends TestCase {
             settings2, createSlowResolver(settings2, 20), "org6#mod6.4;3", 20);
         ResolveThread t3 = asyncResolve(
             settings3, createSlowResolver(settings3, 5), "org6#mod6.4;3", 50);
-        t1.join(10000);
-        t2.join(10000);
-        t3.join(10000);
+        t1.join(100000);
+        t2.join(20000);
+        t3.join(20000);
         assertEquals(10, t1.getCount());
         assertFound("org6#mod6.4;3", t1.getFinalResult());
         assertEquals(20, t2.getCount());
@@ -140,7 +140,7 @@ public class ArtifactLockStrategyTest extends TestCase {
         private IvySettings settings;
         private FileSystemResolver resolver;
         private String module;
-        private int loop;
+        private final int loop;
 
         private ResolvedModuleRevision finalResult;
         private int count;
@@ -167,10 +167,19 @@ public class ArtifactLockStrategyTest extends TestCase {
                         throw new RuntimeException("module not found: " + module);
                     }
                     synchronized (this) {
+                        //Message.info(this.toString() + " count = " + count);
                         count++;
                     }
                 } catch (ParseException e) {
                     Message.info("parse exception "+e);
+                } catch (RuntimeException e) {
+                    Message.info("exception "+e);
+                    e.printStackTrace();
+                    throw e;
+                } catch (Error e) {
+                    Message.info("exception "+e);
+                    e.printStackTrace();
+                    throw e;
                 }
             }
             synchronized (this) {
