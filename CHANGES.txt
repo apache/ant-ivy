@@ -19,6 +19,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 	Jim Bonanno
 	Matthieu Brouillard
 	Kristian Cibulskis
+	Andrea Bernardo Ciddio
 	Jacob Grydholt Jensen
 	Scott Goldstein
 	Pierre Hägnestrand
@@ -57,6 +58,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
    version in SVN
 =====================================
 - FIX: Strict conflictmanager seems to not support dynamic revisions (IVY-474)
+- FIX: NPE in namespace transformation during the ivy:findrevision and ivy:resolve task execution (IVY-659) (thanks to Andrea Bernardo Ciddio)
 
 
    2.0.0-beta1

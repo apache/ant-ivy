@@ -37,6 +37,9 @@ public class Namespace {
 
     private NamespaceTransformer fromSystemTransformer = new NamespaceTransformer() {
         public ModuleRevisionId transform(ModuleRevisionId mrid) {
+            if (mrid == null) {
+                return null;
+            }
             for (Iterator iter = rules.iterator(); iter.hasNext();) {
                 NamespaceRule rule = (NamespaceRule) iter.next();
                 ModuleRevisionId nmrid = rule.getFromSystem().transform(mrid);
@@ -56,6 +59,9 @@ public class Namespace {
 
     private NamespaceTransformer toSystemTransformer = new NamespaceTransformer() {
         public ModuleRevisionId transform(ModuleRevisionId mrid) {
+            if (mrid == null) {
+                return null;
+            }
             for (Iterator iter = rules.iterator(); iter.hasNext();) {
                 NamespaceRule rule = (NamespaceRule) iter.next();
                 ModuleRevisionId nmrid = rule.getToSystem().transform(mrid);
