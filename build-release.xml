@@ -64,6 +64,7 @@
 			<zipfileset dir="${doc.build.dir}" prefix="${snapshot.full.name}/doc" excludes="**/reports/coverage/**,**/reports/test/**"/>
 			<zipfileset dir="${src.dir}" prefix="${snapshot.full.name}/src/java"/>
 			<zipfileset dir="${basedir}/src/example" prefix="${snapshot.full.name}/src/example"/>
+			<zipfileset dir="${basedir}/src/etc" prefix="${snapshot.full.name}/src/etc"/>
 			<zipfileset dir="${test.dir}" prefix="${snapshot.full.name}/test/java"/>
 			<zipfileset dir="${basedir}/test/repositories" prefix="${snapshot.full.name}/test/repositories"/>
 			<zipfileset dir="${basedir}/test/buildlist" prefix="${snapshot.full.name}/test/buildlist"/>
@@ -72,10 +73,13 @@
 			<zipfileset dir="${src.dir}/org/apache/ivy/plugins/parser/xml" includes="ivy.xsd" fullpath="${snapshot.full.name}/ivy.xsd"/>
 			<zipfileset dir="${basedir}" includes="MANIFEST.MF" fullpath="${snapshot.full.name}/MANIFEST.MF"/>
 			<zipfileset dir="${basedir}" includes="NOTICE" fullpath="${snapshot.full.name}/NOTICE"/>
+			<zipfileset dir="${basedir}" includes="README" prefix="${snapshot.full.name}"/>
 			<zipfileset dir="${basedir}" includes="LICENSE*" prefix="${snapshot.full.name}"/>
 			<zipfileset dir="${basedir}" includes="CHANGES.txt" fullpath="${snapshot.full.name}/CHANGES.txt"/>
 			<zipfileset dir="${basedir}" includes="RELEASE_NOTES" fullpath="${snapshot.full.name}/RELEASE_NOTES"/>
 			<zipfileset dir="${basedir}" includes="build.properties" fullpath="${snapshot.full.name}/build.properties"/>
+			<zipfileset dir="${basedir}" includes="ant.patterns" fullpath="${snapshot.full.name}/ant.patterns"/>
+			<zipfileset dir="${basedir}" includes="optional.patterns" fullpath="${snapshot.full.name}/optional.patterns"/>
 			<zipfileset dir="${distrib.dir}" includes="ivy.xml" fullpath="${snapshot.full.name}/ivy.xml"/>
 
 			<zipfileset dir="${basedir}" includes="build.xml" fullpath="${snapshot.full.name}/build.xml"/>
@@ -91,6 +95,7 @@
 			<zipfileset dir="${doc.build.dir}" prefix="${snapshot.full.name}/doc" excludes="**/reports/coverage/**,**/reports/test/**"/>
 			<zipfileset dir="${basedir}/src/example" prefix="${snapshot.full.name}/src/example"/>
 			<zipfileset dir="${basedir}" includes="NOTICE" fullpath="${snapshot.full.name}/NOTICE"/>
+			<zipfileset dir="${basedir}" includes="README" prefix="${snapshot.full.name}"/>
 			<zipfileset dir="${basedir}" includes="LICENSE*" prefix="${snapshot.full.name}"/>
 			<zipfileset dir="${basedir}" includes="CHANGES.txt" fullpath="${snapshot.full.name}/CHANGES.txt"/>
 			<zipfileset dir="${basedir}" includes="RELEASE_NOTES" fullpath="${snapshot.full.name}/RELEASE_NOTES"/>
@@ -114,6 +119,7 @@
 			<zipfileset dir="${doc.build.dir}" prefix="${snapshot.full.name}/doc" excludes="**/reports/coverage/**,**/reports/test/**"/>
 			<zipfileset dir="${basedir}/src/example" prefix="${snapshot.full.name}/src/example"/>
 			<zipfileset dir="${basedir}" includes="NOTICE" fullpath="${snapshot.full.name}/NOTICE"/>
+			<zipfileset dir="${basedir}" includes="README" prefix="${snapshot.full.name}"/>
 			<zipfileset dir="${basedir}" includes="LICENSE*" prefix="${snapshot.full.name}"/>
 			<zipfileset dir="${basedir}" includes="CHANGES.txt" fullpath="${snapshot.full.name}/CHANGES.txt"/>
 			<zipfileset dir="${basedir}" includes="RELEASE_NOTES" fullpath="${snapshot.full.name}/RELEASE_NOTES"/>
@@ -149,7 +155,8 @@
 	<target name="snapshot-maven2" depends="init-snapshot, snapshot-metadata, jar, sources, javadoc">
 		<property name="m2.distrib.dir" value="${distrib.dir}/maven2/${build.version}" />
 		<ivy:makepom ivyfile="${distrib.dir}/ivy.xml" 
-	                 pomfile="${m2.distrib.dir}/ivy-${build.version}.pom">
+	                 pomfile="${m2.distrib.dir}/ivy-${build.version}.pom"
+                     headerfile="${basedir}/src/etc/license/license-header.xml">
 			<mapping conf="core" scope="compile"/>
 			<mapping conf="test" scope="test"/>
 		</ivy:makepom>
