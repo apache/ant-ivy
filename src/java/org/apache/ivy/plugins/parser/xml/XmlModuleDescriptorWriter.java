@@ -109,6 +109,8 @@ public final class XmlModuleDescriptorWriter {
                 }
                 out.print("\"");
                 
+                printExtraAttributes(dds[i].getExtraAttributes(), out, " ");
+                
                 DependencyArtifactDescriptor[] depArtifacts = dds[i].getAllDependencyArtifacts();
                 if (depArtifacts.length > 0) {
                     out.println(">");
@@ -243,13 +245,30 @@ public final class XmlModuleDescriptorWriter {
                     }
                     out.print("\"");
                 }
-                Map extra = depArtifacts[j].getExtraAttributes();
-                for (Iterator iter = extra.entrySet().iterator(); iter.hasNext();) {
-                    Map.Entry entry = (Map.Entry) iter.next();
-                    out.print(" " + entry.getKey() + "=\"" + XMLHelper.escape(entry.getValue().toString()) + "\"");
-                }
+                printExtraAttributes(depArtifacts[j].getExtraAttributes(), out, " ");
                 out.println("/>");
             }
+        }
+    }
+
+    /**
+     * Writes the specified <tt>Map</tt> containing the extra attributes to the
+     * given <tt>PrintWriter</tt>.
+     * 
+     * @param extra the extra attributes, can be <tt>null</tt>
+     * @param out the writer to use
+     * @param indent the string to write before writing the attributes (if any)
+     */
+    private static void printExtraAttributes(Map extra, PrintWriter out, String prefix) {
+        if (extra == null) {
+            return;
+        }
+        
+        String delim = prefix;
+        for (Iterator iter = extra.entrySet().iterator(); iter.hasNext();) {
+            Map.Entry entry = (Map.Entry) iter.next();
+            out.print(delim + entry.getKey() + "=\"" + XMLHelper.escape(entry.getValue().toString()) + "\"");
+            delim = " ";
         }
     }
 
@@ -262,6 +281,7 @@ public final class XmlModuleDescriptorWriter {
             out.print(" type=\"" + XMLHelper.escape(artifacts[i].getType()) + "\"");
             out.print(" ext=\"" + XMLHelper.escape(artifacts[i].getExt()) + "\"");
             out.print(" conf=\"" + XMLHelper.escape(getConfs(md, artifacts[i])) + "\"");
+            printExtraAttributes(artifacts[i].getExtraAttributes(), out, " ");
             out.println("/>");
         }
         out.println("\t</publications>");
@@ -289,6 +309,7 @@ public final class XmlModuleDescriptorWriter {
                     }
                     out.print("\"");
                 }
+                printExtraAttributes(confs[i].getExtraAttributes(), out, " ");
                 out.println("/>");
             }
             out.println("\t</configurations>");
@@ -318,6 +339,11 @@ public final class XmlModuleDescriptorWriter {
             if (dmd.getNamespace() != null && !dmd.getNamespace().getName().equals("system")) {
                 out.println("\t\tnamespace=\"" + XMLHelper.escape(dmd.getNamespace().getName()) + "\"");
             }
+        }
+        if (!md.getExtraAttributes().isEmpty()) {
+            out.print("\t\t");
+            printExtraAttributes(md.getExtraAttributes(), out, "");
+            out.println();
         }
         out.println("\t/>");
     }

@@ -17,7 +17,6 @@
  */
 package org.apache.ivy.core.module.id;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.ivy.core.IvyPatternHelper;
@@ -34,15 +33,8 @@ public class ArtifactRevisionId extends UnmodifiableExtendableItem {
 
     public static ArtifactRevisionId newInstance(ModuleRevisionId mrid, String name, String type,
             String ext, Map extraAttributes) {
-        // we inject module extra attributes as extra attributes for the artifacts too
-        if (extraAttributes == null) {
-            extraAttributes = mrid.getExtraAttributes();
-        } else {
-            extraAttributes = new HashMap(extraAttributes);
-            extraAttributes.putAll(mrid.getExtraAttributes());
-        }
         return new ArtifactRevisionId(new ArtifactId(mrid.getModuleId(), name, type, ext), mrid,
-                extraAttributes);
+            extraAttributes);
     }
 
     private ArtifactId artifactId;
