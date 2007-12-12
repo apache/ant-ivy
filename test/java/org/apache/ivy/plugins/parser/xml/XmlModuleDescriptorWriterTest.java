@@ -78,7 +78,7 @@ public class XmlModuleDescriptorWriterTest extends TestCase {
 
     public void testFull() throws Exception {
         ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(
-            new IvySettings(), XmlModuleDescriptorWriterTest.class.getResource("test.xml"), true);
+            new IvySettings(), XmlModuleDescriptorWriterTest.class.getResource("test.xml"), false);
         XmlModuleDescriptorWriter.write(md, LICENSE, _dest);
 
         assertTrue(_dest.exists());
