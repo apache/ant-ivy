@@ -50,6 +50,9 @@
 		<dependency org="junit" name="junit" rev="3.8.2" conf="test->default" />
 		<dependency org="commons-lang" name="commons-lang" rev="[1.0,3.0[" conf="test->default" />
 		
+		<!-- This dependency is necessary for having validation in junit tests when running with JDK1.4 -->
+		<dependency org="xerces" name="xercesImpl" rev="2.6.2" conf="test->default" />
+		
 		<!-- Global exclude for junit -->
 		<exclude org="junit" module="junit" conf="core,default" />
 	</dependencies>
