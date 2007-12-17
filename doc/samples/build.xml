@@ -38,7 +38,7 @@
 	
 	<!-- here is the version of ivy we will use. change this property to try a newer 
          version if you want -->
-	<property name="ivy.install.version" value="2.0.0-alpha-2-incubating" />
+	<property name="ivy.install.version" value="2.0.0-beta1" />
 	<property name="ivy.jar.dir" value="${basedir}/ivy" />
 	<property name="ivy.jar.file" value="${ivy.jar.dir}/ivy.jar" />
 
@@ -50,7 +50,7 @@
     	<mkdir dir="${ivy.jar.dir}"/>
 		<!-- download Ivy from web site so that it can be used even without any special installation -->
 		<echo message="installing ivy..."/>
-    	<get src="http://people.apache.org/~xavier/ivy/${ivy.install.version}/ivy.jar"
+    	<get src="http://repo1.maven.org/maven2/org/apache/ivy/ivy/${ivy.install.version}/ivy-${ivy.install.version}.jar"
     		 dest="${ivy.jar.file}" usetimestamp="true"/>
     </target>
     
