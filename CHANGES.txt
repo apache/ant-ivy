@@ -61,6 +61,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 
 - IMPROVEMENT: Decrease memory footprint (IVY-662)
 
+- FIX: Ivy doesn't respect the order of the ivy patterns as defined in the settings (IVY-676)
 - FIX: XmlModuleDescriptorWriter doesn't write the deprecated attribute of the "ivy-module/configurations/conf" element (IVY-664)
 - FIX: XMLModuleDescriptorWriter does not write extra attributes (IVY-471) (with contribution from Mikkel Bjerg)
 - FIX: latest compatible conflict manager fails with circular dependencies and dynamic revision (IVY-663)

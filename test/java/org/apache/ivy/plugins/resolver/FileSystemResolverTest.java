@@ -46,6 +46,7 @@ import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.core.sort.SortEngine;
 import org.apache.ivy.plugins.latest.LatestRevisionStrategy;
 import org.apache.ivy.plugins.latest.LatestTimeStrategy;
+import org.apache.ivy.plugins.resolver.util.ResolvedResource;
 import org.apache.ivy.util.CacheCleaner;
 import org.apache.ivy.util.FileUtil;
 
@@ -147,6 +148,23 @@ public class FileSystemResolverTest extends TestCase {
 
         assertEquals(artifact, ar.getArtifact());
         assertEquals(DownloadStatus.NO, ar.getDownloadStatus());
+    }
+    
+    public void testFindIvyFileRefWithMultipleIvyPatterns() throws Exception {
+        // cfr IVY-676
+        FileSystemResolver resolver = new FileSystemResolver();
+        resolver.setName("test");
+        resolver.setSettings(settings);
+        resolver.addIvyPattern("test/repositories/multi-ivypattern/ivy1/ivy-[revision].xml");
+        resolver.addIvyPattern("test/repositories/multi-ivypattern/ivy2/ivy-[revision].xml");
+        
+        ModuleRevisionId mrid = ModuleRevisionId.newInstance("org1", "mod1.1", "1.0+");
+        ResolvedResource ivyRef = resolver.findIvyFileRef(
+            new DefaultDependencyDescriptor(mrid, false), data);
+        
+        // check that the found ivy file is the one from the first pattern!
+        assertEquals("test/repositories/multi-ivypattern/ivy1/ivy-1.0.xml", 
+            ivyRef.getResource().getName().replace('\\', '/'));
     }
 
     private DownloadOptions getDownloadOptions(boolean useOrigin) {

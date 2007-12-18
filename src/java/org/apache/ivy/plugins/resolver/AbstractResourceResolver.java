@@ -27,6 +27,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.ivy.core.IvyContext;
 import org.apache.ivy.core.IvyPatternHelper;
@@ -88,13 +89,16 @@ public abstract class AbstractResourceResolver extends BasicResolver {
     protected ResolvedResource findResourceUsingPatterns(ModuleRevisionId moduleRevision,
             List patternList, Artifact artifact, ResourceMDParser rmdparser, Date date) {
         List resolvedResources = new ArrayList();
+        Set foundRevisions = new HashSet();
         boolean dynamic = getSettings().getVersionMatcher().isDynamic(moduleRevision);
         boolean stop = false;
         for (Iterator iter = patternList.iterator(); iter.hasNext() && !stop;) {
             String pattern = (String) iter.next();
             ResolvedResource rres = findResourceUsingPattern(
                 moduleRevision, pattern, artifact, rmdparser, date);
-            if (rres != null) {
+            if ((rres != null) && !foundRevisions.contains(rres.getRevision())) {
+                // only add the first found ResolvedResource for each revision
+                foundRevisions.add(rres.getRevision());
                 resolvedResources.add(rres);
                 stop = !dynamic; // stop iterating if we are not searching a dynamic revision
             }
