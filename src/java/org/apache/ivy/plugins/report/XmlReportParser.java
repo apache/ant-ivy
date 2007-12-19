@@ -42,93 +42,93 @@ import org.xml.sax.helpers.DefaultHandler;
 
 public class XmlReportParser {
     private static class SaxXmlReportParser {
-        private List _mrids;
+        private List mrids;
 
-        private List _defaultMrids;
+        private List defaultMrids;
 
-        private List _realMrids;
+        private List realMrids;
 
-        private List _artifacts;
+        private List artifacts;
 
-        private ModuleRevisionId _mRevisionId;
+        private ModuleRevisionId mRevisionId;
 
-        private File _report;
+        private File report;
 
         SaxXmlReportParser(File report) {
-            _artifacts = new ArrayList();
-            _mrids = new ArrayList();
-            _defaultMrids = new ArrayList();
-            _realMrids = new ArrayList();
-            _report = report;
+            artifacts = new ArrayList();
+            mrids = new ArrayList();
+            defaultMrids = new ArrayList();
+            realMrids = new ArrayList();
+            this.report = report;
         }
 
         public void parse() throws Exception {
             SAXParser saxParser = SAXParserFactory.newInstance().newSAXParser();
-            saxParser.parse(_report, new DefaultHandler() {
-                private String _organisation;
+            saxParser.parse(report, new DefaultHandler() {
+                private String organisation;
 
-                private String _module;
+                private String module;
 
-                private String _branch;
+                private String branch;
 
-                private String _revision;
+                private String revision;
 
-                private int _position;
+                private int position;
 
-                private Date _pubdate;
+                private Date pubdate;
 
-                private boolean _skip;
+                private boolean skip;
 
-                private ModuleRevisionId _mrid;
+                private ModuleRevisionId mrid;
 
-                private boolean _default;
+                private boolean isDefault;
 
-                private SortedMap _revisionsMap = new TreeMap(); // Use a TreeMap to order by
+                private SortedMap revisionsMap = new TreeMap(); // Use a TreeMap to order by
 
                 // position (position = key)
 
-                private List _revisionArtifacts = null;
+                private List revisionArtifacts = null;
 
                 public void startElement(String uri, String localName, String qName,
                         Attributes attributes) throws SAXException {
                     if ("module".equals(qName)) {
-                        _organisation = attributes.getValue("organisation");
-                        _module = attributes.getValue("name");
+                        organisation = attributes.getValue("organisation");
+                        module = attributes.getValue("name");
                     } else if ("revision".equals(qName)) {
-                        _revisionArtifacts = new ArrayList();
-                        _branch = attributes.getValue("branch");
-                        _revision = attributes.getValue("name");
-                        _default = Boolean.valueOf(attributes.getValue("default")).booleanValue();
+                        revisionArtifacts = new ArrayList();
+                        branch = attributes.getValue("branch");
+                        revision = attributes.getValue("name");
+                        isDefault = Boolean.valueOf(attributes.getValue("default")).booleanValue();
                         // retrieve position from file. If no position is found, it may be an old
                         // report generated with a previous version,
                         // in which case, we put it at the last position
                         String pos = attributes.getValue("position");
-                        _position = pos == null ? getMaxPos() + 1 : Integer.valueOf(pos).intValue();
+                        position = pos == null ? getMaxPos() + 1 : Integer.valueOf(pos).intValue();
                         if (attributes.getValue("error") != null
                                 || attributes.getValue("evicted") != null) {
-                            _skip = true;
+                            skip = true;
                         } else {
-                            _revisionsMap.put(new Integer(_position), _revisionArtifacts);
-                            _mrid = ModuleRevisionId.newInstance(_organisation, _module, _branch,
-                                _revision, ExtendableItemHelper.getExtraAttributes(attributes,
+                            revisionsMap.put(new Integer(position), revisionArtifacts);
+                            mrid = ModuleRevisionId.newInstance(organisation, module, branch,
+                                revision, ExtendableItemHelper.getExtraAttributes(attributes,
                                     "extra-"));
-                            _mrids.add(_mrid);
-                            if (_default) {
-                                _defaultMrids.add(_mrid);
+                            mrids.add(mrid);
+                            if (isDefault) {
+                                defaultMrids.add(mrid);
                             } else {
-                                _realMrids.add(_mrid);
+                                realMrids.add(mrid);
                             }
                             try {
-                                _pubdate = Ivy.DATE_FORMAT.parse(attributes.getValue("pubdate"));
-                                _skip = false;
+                                pubdate = Ivy.DATE_FORMAT.parse(attributes.getValue("pubdate"));
+                                skip = false;
                             } catch (ParseException e) {
                                 throw new IllegalArgumentException("invalid publication date for "
-                                        + _organisation + " " + _module + " " + _revision + ": "
+                                        + organisation + " " + module + " " + revision + ": "
                                         + attributes.getValue("pubdate"));
                             }
                         }
                     } else if ("artifact".equals(qName)) {
-                        if (_skip) {
+                        if (skip) {
                             return;
                         }
                         String status = attributes.getValue("status");
@@ -138,10 +138,10 @@ public class XmlReportParser {
                         String artifactName = attributes.getValue("name");
                         String type = attributes.getValue("type");
                         String ext = attributes.getValue("ext");
-                        Artifact artifact = new DefaultArtifact(_mrid, _pubdate, artifactName,
+                        Artifact artifact = new DefaultArtifact(mrid, pubdate, artifactName,
                                 type, ext, ExtendableItemHelper.getExtraAttributes(attributes,
                                     "extra-"));
-                        _revisionArtifacts.add(artifact);
+                        revisionArtifacts.add(artifact);
                     } else if ("info".equals(qName)) {
                         String organisation = attributes.getValue("organisation");
                         String name = attributes.getValue("module");
@@ -151,12 +151,12 @@ public class XmlReportParser {
                         for (int i = 0; i < attributes.getLength(); i++) {
                             String attName = attributes.getQName(i);
                             if (attName.startsWith("extra-")) {
-                                String extraAttrName = attName.substring(6);
+                                String extraAttrName = attName.substring("extra-".length());
                                 String extraAttrValue = attributes.getValue(i);
                                 extraAttributes.put(extraAttrName, extraAttrValue);
                             }
                         }
-                        _mRevisionId = ModuleRevisionId.newInstance(organisation, name, branch,
+                        mRevisionId = ModuleRevisionId.newInstance(organisation, name, branch,
                             revision, extraAttributes);
                     }
                 }
@@ -165,34 +165,34 @@ public class XmlReportParser {
                         throws SAXException {
                     if ("dependencies".equals(qname)) {
                         // add the artifacts in the correct order
-                        for (Iterator it = _revisionsMap.values().iterator(); it.hasNext();) {
+                        for (Iterator it = revisionsMap.values().iterator(); it.hasNext();) {
                             List artifacts = (List) it.next();
-                            _artifacts.addAll(artifacts);
+                            SaxXmlReportParser.this.artifacts.addAll(artifacts);
                         }
                     }
                 }
 
                 private int getMaxPos() {
-                    return _revisionsMap.isEmpty() ? -1 : ((Integer) _revisionsMap.keySet()
-                            .toArray()[_revisionsMap.size() - 1]).intValue();
+                    return revisionsMap.isEmpty() ? -1 : ((Integer) revisionsMap.keySet()
+                            .toArray()[revisionsMap.size() - 1]).intValue();
                 }
             });
         }
 
         public List getArtifacts() {
-            return _artifacts;
+            return artifacts;
         }
 
         public List getModuleRevisionIds() {
-            return _mrids;
+            return mrids;
         }
 
         public List getRealModuleRevisionIds() {
-            return _realMrids;
+            return realMrids;
         }
 
         public ModuleRevisionId getResolvedModule() {
-            return _mRevisionId;
+            return mRevisionId;
         }
     }
 
