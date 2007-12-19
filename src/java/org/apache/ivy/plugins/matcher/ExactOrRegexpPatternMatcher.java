@@ -39,20 +39,20 @@ public/* @Immutable */final class ExactOrRegexpPatternMatcher extends AbstractPa
     }
 
     private static final class ExactOrRegexpMatcher implements Matcher {
-        private Matcher _exact;
+        private Matcher exact;
 
-        private Matcher _regexp;
+        private Matcher regexp;
 
         public ExactOrRegexpMatcher(String expression) {
-            _exact = ExactPatternMatcher.INSTANCE.getMatcher(expression);
-            _regexp = RegexpPatternMatcher.INSTANCE.getMatcher(expression);
+            exact = ExactPatternMatcher.INSTANCE.getMatcher(expression);
+            regexp = RegexpPatternMatcher.INSTANCE.getMatcher(expression);
         }
 
         public boolean matches(String input) {
             if (input == null) {
                 throw new NullPointerException();
             }
-            return _exact.matches(input) || _regexp.matches(input);
+            return exact.matches(input) || regexp.matches(input);
         }
 
         public boolean isExact() {

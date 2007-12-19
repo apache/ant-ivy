@@ -21,7 +21,7 @@ package org.apache.ivy.plugins.matcher;
  * A matcher that will match everything.
  */
 public/* @Immutable */class AnyMatcher implements Matcher {
-    public final static Matcher INSTANCE = new AnyMatcher();
+    public static final Matcher INSTANCE = new AnyMatcher();
 
     public AnyMatcher() {
     }

@@ -55,11 +55,11 @@ public/* @Immutable */final class GlobPatternMatcher extends AbstractPatternMatc
     }
 
     private static class GlobMatcher implements Matcher {
-        private Pattern _pattern;
+        private Pattern pattern;
 
         public GlobMatcher(String expression) throws PatternSyntaxException {
             try {
-                _pattern = new GlobCompiler().compile(expression);
+                pattern = new GlobCompiler().compile(expression);
             } catch (MalformedPatternException e) {
                 throw new PatternSyntaxException(e.getMessage(), expression, 0);
             }
@@ -69,7 +69,7 @@ public/* @Immutable */final class GlobPatternMatcher extends AbstractPatternMatc
             if (input == null) {
                 throw new NullPointerException();
             }
-            return new Perl5Matcher().matches(input, _pattern);
+            return new Perl5Matcher().matches(input, pattern);
         }
 
         public boolean isExact() {

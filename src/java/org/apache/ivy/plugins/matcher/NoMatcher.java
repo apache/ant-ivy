@@ -22,7 +22,7 @@ package org.apache.ivy.plugins.matcher;
  */
 public final/* @Immutable */class NoMatcher implements Matcher {
 
-    public final static Matcher INSTANCE = new NoMatcher();
+    public static final Matcher INSTANCE = new NoMatcher();
 
     public NoMatcher() {
     }

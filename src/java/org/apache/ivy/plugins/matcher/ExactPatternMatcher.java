@@ -35,17 +35,17 @@ public/* @Immutable */final class ExactPatternMatcher extends AbstractPatternMat
     }
 
     private static/* @Immutable */class ExactMatcher implements Matcher {
-        protected String _expression;
+        private String expression;
 
         public ExactMatcher(String expression) {
-            _expression = expression;
+            this.expression = expression;
         }
 
         public boolean matches(String input) {
             if (input == null) {
                 throw new NullPointerException();
             }
-            return input.equals(_expression);
+            return input.equals(expression);
         }
 
         public boolean isExact() {

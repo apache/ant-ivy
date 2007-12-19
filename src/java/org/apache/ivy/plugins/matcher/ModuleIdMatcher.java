@@ -21,27 +21,28 @@ import org.apache.ivy.core.module.id.ModuleId;
 
 public class ModuleIdMatcher {
     // TODO this class should be moved out of this package
-    private Matcher _orgMatcher;
+    private Matcher orgMatcher;
 
-    private Matcher _moduleMatcher;
+    private Matcher moduleMatcher;
 
-    private ModuleId _mid;
+    private ModuleId mid;
 
-    private PatternMatcher _pm;
+    private PatternMatcher pm;
 
     public ModuleIdMatcher(ModuleId mid, PatternMatcher pm) {
-        _mid = mid;
-        _pm = pm;
-        _orgMatcher = pm.getMatcher(mid.getOrganisation() == null ? PatternMatcher.ANY_EXPRESSION
+        this.mid = mid;
+        this.pm = pm;
+        this.orgMatcher = pm.getMatcher(mid.getOrganisation() == null 
+                ? PatternMatcher.ANY_EXPRESSION
                 : mid.getOrganisation());
-        _moduleMatcher = pm.getMatcher(mid.getName());
+        this.moduleMatcher = pm.getMatcher(mid.getName());
     }
 
     public boolean matches(ModuleId mid) {
-        return _orgMatcher.matches(mid.getOrganisation()) && _moduleMatcher.matches(mid.getName());
+        return orgMatcher.matches(mid.getOrganisation()) && moduleMatcher.matches(mid.getName());
     }
 
     public String toString() {
-        return _mid + " (" + _pm.getName() + ")";
+        return mid + " (" + pm.getName() + ")";
     }
 }

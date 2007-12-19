@@ -24,8 +24,11 @@ import org.apache.ivy.core.module.id.ModuleRevisionId;
 /**
  * Set of helper methods to match ModuleId, ModuleRevisionId, ArtifactId
  */
-public class MatcherHelper {
+public final class MatcherHelper {
     // TODO this class might be better off as MatcherUtils in util package
+    
+    private MatcherHelper() {
+    }
 
     public static boolean matches(PatternMatcher m, String expression, String input) {
         return m.getMatcher(expression).matches(input);

@@ -43,20 +43,20 @@ public final/* @Immutable */class RegexpPatternMatcher extends AbstractPatternMa
     }
 
     private static/* @Immutable */class RegexpMatcher implements Matcher {
-        private Pattern _pattern;
+        private Pattern pattern;
 
         public RegexpMatcher(String expression) throws PatternSyntaxException {
             if (expression == null) {
                 throw new NullPointerException();
             }
-            _pattern = Pattern.compile(expression);
+            pattern = Pattern.compile(expression);
         }
 
         public boolean matches(String input) {
             if (input == null) {
                 throw new NullPointerException();
             }
-            return _pattern.matcher(input).matches();
+            return pattern.matcher(input).matches();
         }
 
         public boolean isExact() {
