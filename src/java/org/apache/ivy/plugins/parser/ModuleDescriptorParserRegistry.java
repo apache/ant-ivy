@@ -32,18 +32,19 @@ import org.apache.ivy.plugins.parser.xml.XmlModuleDescriptorParser;
 import org.apache.ivy.plugins.repository.Resource;
 import org.apache.ivy.util.Message;
 
-public class ModuleDescriptorParserRegistry extends AbstractModuleDescriptorParser {
-    private static ModuleDescriptorParserRegistry INSTANCE = new ModuleDescriptorParserRegistry();
+public final class ModuleDescriptorParserRegistry extends AbstractModuleDescriptorParser {
+    private static final ModuleDescriptorParserRegistry INSTANCE 
+        = new ModuleDescriptorParserRegistry();
 
     public static ModuleDescriptorParserRegistry getInstance() {
         return INSTANCE;
     }
 
-    private List _parsers = new LinkedList();
+    private List parsers = new LinkedList();
 
     private ModuleDescriptorParserRegistry() {
-        _parsers.add(PomModuleDescriptorParser.getInstance());
-        _parsers.add(XmlModuleDescriptorParser.getInstance());
+        parsers.add(PomModuleDescriptorParser.getInstance());
+        parsers.add(XmlModuleDescriptorParser.getInstance());
     }
 
     /**
@@ -57,16 +58,16 @@ public class ModuleDescriptorParserRegistry extends AbstractModuleDescriptorPars
          * The parser is added in the front of the list of parsers. This is necessary because the
          * XmlModuleDescriptorParser accepts all resources!
          */
-        _parsers.add(0, parser);
+        parsers.add(0, parser);
     }
 
     public ModuleDescriptorParser[] getParsers() {
-        return (ModuleDescriptorParser[]) _parsers.toArray(new ModuleDescriptorParser[_parsers
+        return (ModuleDescriptorParser[]) parsers.toArray(new ModuleDescriptorParser[parsers
                 .size()]);
     }
 
     public ModuleDescriptorParser getParser(Resource res) {
-        for (Iterator iter = _parsers.iterator(); iter.hasNext();) {
+        for (Iterator iter = parsers.iterator(); iter.hasNext();) {
             ModuleDescriptorParser parser = (ModuleDescriptorParser) iter.next();
             if (parser.accept(res)) {
                 return parser;
@@ -75,8 +76,8 @@ public class ModuleDescriptorParserRegistry extends AbstractModuleDescriptorPars
         return null;
     }
 
-    public ModuleDescriptor parseDescriptor(ParserSettings settings, URL descriptorURL, Resource res,
-            boolean validate) throws ParseException, IOException {
+    public ModuleDescriptor parseDescriptor(ParserSettings settings, URL descriptorURL, 
+            Resource res, boolean validate) throws ParseException, IOException {
         ModuleDescriptorParser parser = getParser(res);
         if (parser == null) {
             Message.warn("no module descriptor parser found for " + res);
