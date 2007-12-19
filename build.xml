@@ -168,7 +168,7 @@
         </tstamp>
         <property name="version.prefix" value="${target.ivy.version}-local-" />
         <property name="build.version" value="${version.prefix}${pubdate}" />
-        <property name="bundle.version" value="${target.ivy.bundle.version}" />
+        <property name="bundle.version" value="${target.ivy.bundle.version}_${pubdate}" />
     </target>
 
     <!-- =================================================================
@@ -285,10 +285,23 @@
         <echo message="date=${pubdate}${line.separator}" file="${core.classes.build.dir}/module.properties" append="true" />
 
     	<mkdir dir="${artifacts.build.dir}/jars/"/>
+    	
+    	<!-- 
+    		there is a default Bundle-Version attribute in the source MANIFEST, used to ease 
+    		development in eclipse. 
+    		We remove this line to make sure we get the Bundle-Version as set in the jar task 
+    	-->
+    	<copy file="${basedir}/META-INF/MANIFEST.MF" tofile="${artifacts.build.dir}/MANIFEST.MF">
+    		<filterchain>
+    			<linecontains negate="true">
+    			  <contains value="Bundle-Version"/>
+    			</linecontains>
+    		</filterchain>
+    	</copy>
 
         <!-- package the two ivy jars -->
         <jar destfile="${artifacts.build.dir}/jars/${final.name}"
-                manifest="${basedir}/MANIFEST.MF">
+                manifest="${artifacts.build.dir}/MANIFEST.MF">
             <metainf dir="${basedir}" includes="LICENSE,DISCLAIMER,NOTICE" />
             <manifest>
                 <attribute name="Specification-Title" value="Apache Ivy with Ant tasks" />
@@ -321,6 +334,9 @@
             <fileset dir="${core.classes.build.dir}" />
             <fileset dir="${optional.classes.build.dir}" />
         </jar>
+    	<!-- copy main jar to ease its use as an OSGi bundle -->
+    	<copy file="${artifacts.build.dir}/jars/${final.name}" 
+    		  tofile="${artifacts.build.dir}/org.apache.ivy_${bundle.version}.jar" />
         <echo  file="${artifacts.build.dir}/readme.txt">The Ivy jars explained${line.separator}
 ${line.separator}
 ${final.name}    The full Ivy jar, including all Ivy classes.${line.separator}
