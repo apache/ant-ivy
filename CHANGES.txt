@@ -67,7 +67,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - FIX: latest compatible conflict manager fails with circular dependencies and dynamic revision (IVY-663)
 - FIX: Strict conflictmanager seems to not support dynamic revisions (IVY-474)
 - FIX: NPE in namespace transformation during the ivy:findrevision and ivy:resolve task execution (IVY-659) (thanks to Andrea Bernardo Ciddio)
-
+- FIX: Maven test scope includes all runtime dependencies (IVY-682)
 
    2.0.0-beta1
 =====================================

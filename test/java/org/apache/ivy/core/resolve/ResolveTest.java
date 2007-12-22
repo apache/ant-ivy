@@ -2953,7 +2953,7 @@ public class ResolveTest extends TestCase {
         ivy.configure(new File("test/repositories/m2/ivysettings.xml"));
         ResolveReport report = ivy.resolve(new File(
                 "test/repositories/m2/org/apache/test3/1.0/test3-1.0.pom").toURL(),
-            getResolveOptions(new String[] {"*"}));
+            getResolveOptions(new String[] {"test"}));
         assertNotNull(report);
         ModuleDescriptor md = report.getModuleDescriptor();
         assertNotNull(md);
@@ -2971,7 +2971,7 @@ public class ResolveTest extends TestCase {
         assertTrue(ivy.getCacheManager(cache).getIvyFileInCache(
             ModuleRevisionId.newInstance("org.apache", "test", "1.0")).exists());
         assertTrue(TestHelper.getArchiveFileInCache(ivy, cache, "org.apache", "test", "1.0",
-            "test", "jar", "jar").exists());
+            "test", "jar", "jar").exists());        
     }
 
     public void testResolveMaven2RelocationOfGroupId() throws Exception {

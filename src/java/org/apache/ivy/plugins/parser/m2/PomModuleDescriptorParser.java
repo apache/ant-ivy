@@ -109,7 +109,7 @@ public final class PomModuleDescriptorParser extends AbstractModuleDescriptorPar
                     "this scope indicates that the dependency is not required for normal use of "
                     + "the application, and is only available for the test compilation and "
                     + "execution phases.",
-                    new String[0], true, null),
+                    new String[] {"runtime"}, true, null),
             new Configuration(
                     "system",
                     Visibility.PUBLIC,
@@ -364,7 +364,13 @@ public final class PomModuleDescriptorParser extends AbstractModuleDescriptorPar
                     Message.verbose("Relocated module will be considered as a dependency");
                     dd = new DefaultDependencyDescriptor(md, relocationeModuleRev,
                         true, false, true);
-                    dd.addDependencyConfiguration("*", "@");
+                    /*Map all public dependencies */
+                    dd.addDependencyConfiguration("compile","compile");
+                    dd.addDependencyConfiguration("runtime","runtime");
+                    dd.addDependencyConfiguration("default","default");
+                    dd.addDependencyConfiguration("master","master");
+                    dd.addDependencyConfiguration("provided","provided");
+                    dd.addDependencyConfiguration("system","system");
                     md.addDependency(dd);
                     dd = null;
                 }
