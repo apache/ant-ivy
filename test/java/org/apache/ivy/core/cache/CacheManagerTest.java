@@ -68,7 +68,7 @@ public class CacheManagerTest extends TestCase {
 
         artifact = createArtifact("org", "module", "rev", "name", "type2", "ext");
         found = cacheManager.getSavedArtifactOrigin(artifact);
-        assertNull(found);
+        assertEquals(ArtifactOrigin.UNKNOWN, found);
     }
 
     public void testUniqueness() {
@@ -76,27 +76,27 @@ public class CacheManagerTest extends TestCase {
 
         artifact = createArtifact("org1", "module", "rev", "name", "type", "ext");
         ArtifactOrigin found = cacheManager.getSavedArtifactOrigin(artifact);
-        assertNull(found);
+        assertEquals(ArtifactOrigin.UNKNOWN, found);
 
         artifact = createArtifact("org", "module1", "rev", "name", "type", "ext");
         found = cacheManager.getSavedArtifactOrigin(artifact);
-        assertNull(found);
+        assertEquals(ArtifactOrigin.UNKNOWN, found);
 
         artifact = createArtifact("org", "module", "rev1", "name", "type", "ext");
         found = cacheManager.getSavedArtifactOrigin(artifact);
-        assertNull(found);
+        assertEquals(ArtifactOrigin.UNKNOWN, found);
 
         artifact = createArtifact("org", "module", "rev", "name1", "type", "ext");
         found = cacheManager.getSavedArtifactOrigin(artifact);
-        assertNull(found);
+        assertEquals(ArtifactOrigin.UNKNOWN, found);
 
         artifact = createArtifact("org", "module", "rev", "name", "type1", "ext");
         found = cacheManager.getSavedArtifactOrigin(artifact);
-        assertNull(found);
+        assertEquals(ArtifactOrigin.UNKNOWN, found);
 
         artifact = createArtifact("org", "module", "rev", "name", "type", "ext1");
         found = cacheManager.getSavedArtifactOrigin(artifact);
-        assertNull(found);
+        assertEquals(ArtifactOrigin.UNKNOWN, found);
     }
 
     protected Artifact createArtifact(String org, String module, String rev, String name,

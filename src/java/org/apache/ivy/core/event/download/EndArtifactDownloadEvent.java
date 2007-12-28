@@ -43,7 +43,7 @@ public class EndArtifactDownloadEvent extends DownloadEvent {
         addAttribute("file", dest.getAbsolutePath());
         addAttribute("duration", String.valueOf(this.report.getDownloadTimeMillis()));
         ArtifactOrigin origin = report.getArtifactOrigin();
-        if (origin != null) {
+        if (origin != null && origin != ArtifactOrigin.UNKNOWN) {
             addAttribute("origin", origin.getLocation());
             addAttribute("local", String.valueOf(origin.isLocal()));
         } else {

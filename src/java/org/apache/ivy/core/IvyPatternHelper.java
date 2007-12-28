@@ -436,11 +436,15 @@ public final class IvyPatternHelper {
 
                 origin = cacheManager.getSavedArtifactOrigin(artifact);
 
-                if (origin == null) {
+                if (origin == ArtifactOrigin.UNKNOWN) {
                     Message.debug("no artifact origin found for " + artifact + " in "
                             + cacheManager);
                     return null;
                 }
+            }
+
+            if (origin == ArtifactOrigin.UNKNOWN) {
+                return null;
             }
 
             // we assume that the original filename is the last part of the original file location

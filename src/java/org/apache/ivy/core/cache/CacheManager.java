@@ -33,7 +33,7 @@ import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.report.ArtifactDownloadReport;
 import org.apache.ivy.core.report.DownloadStatus;
-import org.apache.ivy.core.resolve.DefaultModuleRevision;
+import org.apache.ivy.core.report.MetadataArtifactDownloadReport;
 import org.apache.ivy.core.resolve.ResolvedModuleRevision;
 import org.apache.ivy.plugins.lock.LockStrategy;
 import org.apache.ivy.plugins.namespace.NameSpaceHelper;
@@ -124,7 +124,8 @@ public class CacheManager implements RepositoryCacheManager, ResolutionCacheMana
      */
     public File getArchiveFileInCache(Artifact artifact, ArtifactOrigin origin) {
         File archive = new File(getRepositoryCacheRoot(), getArchivePathInCache(artifact, origin));
-        if (!archive.exists() && origin != null && origin.isLocal()) {
+        if (!archive.exists() 
+                && origin != null && origin != ArtifactOrigin.UNKNOWN && origin.isLocal()) {
             File original = new File(origin.getLocation());
             if (original.exists()) {
                 return original;
@@ -140,7 +141,7 @@ public class CacheManager implements RepositoryCacheManager, ResolutionCacheMana
      * always return the file in the cache.
      */
     public File getArchiveFileInCache(Artifact artifact, ArtifactOrigin origin, boolean useOrigin) {
-        if (useOrigin && origin != null && origin.isLocal()) {
+        if (useOrigin && origin != null && origin != ArtifactOrigin.UNKNOWN && origin.isLocal()) {
             return new File(origin.getLocation());
         } else {
             return new File(getRepositoryCacheRoot(), getArchivePathInCache(artifact, origin));
@@ -229,7 +230,7 @@ public class CacheManager implements RepositoryCacheManager, ResolutionCacheMana
         ModuleRevisionId mrid = artifact.getModuleRevisionId();
         if (!lockMetadataArtifact(mrid)) {
             Message.error("impossible to acquire lock for " + mrid);
-            return null;
+            return ArtifactOrigin.UNKNOWN;
         }
         try {
             PropertiesFile cdf = getCachedDataFile(artifact.getModuleRevisionId());
@@ -239,7 +240,7 @@ public class CacheManager implements RepositoryCacheManager, ResolutionCacheMana
 
             if (location == null) {
                 // origin has not been specified, return null
-                return null;
+                return ArtifactOrigin.UNKNOWN;
             }
 
             return new ArtifactOrigin(isLocal, location);
@@ -311,7 +312,7 @@ public class CacheManager implements RepositoryCacheManager, ResolutionCacheMana
                     // found in cache !
                     try {
                         ModuleDescriptor depMD = XmlModuleDescriptorParser.getInstance()
-                        .parseDescriptor(settings, ivyFile.toURL(), validate);
+                            .parseDescriptor(settings, ivyFile.toURL(), validate);
                         String resolverName = getSavedResolverName(depMD);
                         String artResolverName = getSavedArtResolverName(depMD);
                         DependencyResolver resolver = settings.getResolver(resolverName);
@@ -336,8 +337,17 @@ public class CacheManager implements RepositoryCacheManager, ResolutionCacheMana
                                 + resolver.getName() + "): " + ivyFile);
                             if (expectedResolver != null 
                                     && expectedResolver.equals(resolver.getName())) {
-                                return new DefaultModuleRevision(
-                                    resolver, artResolver, depMD, false, false);
+                                MetadataArtifactDownloadReport madr 
+                                    = new MetadataArtifactDownloadReport(
+                                        depMD.getMetadataArtifact());
+                                madr.setDownloadStatus(DownloadStatus.NO);
+                                madr.setSearched(false);
+                                madr.setLocalFile(ivyFile);
+                                madr.setSize(ivyFile.length());
+                                madr.setArtifactOrigin(
+                                    getSavedArtifactOrigin(depMD.getMetadataArtifact()));
+                                return new ResolvedModuleRevision(
+                                    resolver, artResolver, depMD, madr);
                             } else {
                                 Message.debug(
                                     "found module in cache but with a different resolver: "
@@ -481,7 +491,8 @@ public class CacheManager implements RepositoryCacheManager, ResolutionCacheMana
     public void originalToCachedModuleDescriptor(
             DependencyResolver resolver, ResolvedResource orginalMetadataRef,
             Artifact requestedMetadataArtifact,
-            ModuleDescriptor md, ModuleDescriptorWriter writer) {
+            ResolvedModuleRevision rmr, ModuleDescriptorWriter writer) {
+        ModuleDescriptor md = rmr.getDescriptor();
         Artifact originalMetadataArtifact = getOriginalMetadataArtifact(requestedMetadataArtifact);
         File mdFileInCache = getIvyFileInCache(md.getResolvedModuleRevisionId());
 
@@ -491,11 +502,14 @@ public class CacheManager implements RepositoryCacheManager, ResolutionCacheMana
             return;
         }
         try {
+            File originalFileInCache = getArchiveFileInCache(originalMetadataArtifact);
             writer.write(orginalMetadataRef, md, 
-                getArchiveFileInCache(originalMetadataArtifact), 
+                originalFileInCache, 
                 mdFileInCache);
 
             saveResolvers(md, resolver.getName(), resolver.getName());
+            rmr.getReport().setOriginalLocalFile(originalFileInCache);
+            rmr.getReport().setLocalFile(mdFileInCache);
         } catch (RuntimeException e) {
             throw e;
         } catch (Exception e) {
@@ -534,14 +548,16 @@ public class CacheManager implements RepositoryCacheManager, ResolutionCacheMana
                 } else {
                     if (!options.isCheckmodified() && !options.isChanging()) {
                         Message.verbose("\t" + getName() + ": revision in cache: " + mrid);
-                        return DefaultModuleRevision.searchedRmr(rmr);
+                        rmr.getReport().setSearched(true);
+                        return rmr;
                     }
                     long repLastModified = mdRef.getLastModified();
                     long cacheLastModified = rmr.getDescriptor().getLastModified();
                     if (!rmr.getDescriptor().isDefault() && repLastModified <= cacheLastModified) {
                         Message.verbose("\t" + getName() + ": revision in cache (not updated): "
                             + mrid);
-                        return DefaultModuleRevision.searchedRmr(rmr);
+                        rmr.getReport().setSearched(true);
+                        return rmr;
                     } else {
                         Message.verbose("\t" + getName() + ": revision in cache is not up to date: "
                             + mrid);
@@ -618,7 +634,19 @@ public class CacheManager implements RepositoryCacheManager, ResolutionCacheMana
                     Message.verbose(mrid
                         + " is changing, but has not changed: will trust cached artifacts if any");
                 }
-                return new DefaultModuleRevision(resolver, resolver, md, true, true);
+                
+                MetadataArtifactDownloadReport madr 
+                    = new MetadataArtifactDownloadReport(md.getMetadataArtifact());
+                madr.setSearched(true);
+                madr.setDownloadStatus(report.getDownloadStatus());
+                madr.setDownloadDetails(report.getDownloadDetails());
+                madr.setArtifactOrigin(report.getArtifactOrigin());
+                madr.setDownloadTimeMillis(report.getDownloadTimeMillis());
+                madr.setOriginalLocalFile(report.getLocalFile());
+                madr.setSize(report.getSize());
+                saveArtifactOrigin(md.getMetadataArtifact(), report.getArtifactOrigin());
+                
+                return new ResolvedModuleRevision(resolver, resolver, md, madr);
             } catch (IOException ex) {
                 Message.warn("io problem while parsing ivy file: " + mdRef.getResource() + ": "
                     + ex.getMessage());

@@ -26,7 +26,6 @@ import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ArtifactId;
 import org.apache.ivy.core.module.id.ModuleId;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
-import org.apache.ivy.core.resolve.DefaultModuleRevision;
 import org.apache.ivy.core.resolve.ResolvedModuleRevision;
 
 public final class NameSpaceHelper {
@@ -54,8 +53,8 @@ public final class NameSpaceHelper {
         if (md.equals(rmr.getDescriptor())) {
             return rmr;
         }
-        return new DefaultModuleRevision(rmr.getResolver(), rmr.getArtifactResolver(), md, rmr
-                .isSearched(), rmr.isDownloaded());
+        return new ResolvedModuleRevision(
+            rmr.getResolver(), rmr.getArtifactResolver(), md, rmr.getReport());
     }
 
     public static Artifact transform(Artifact artifact, NamespaceTransformer t) {

@@ -21,12 +21,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 
-import org.apache.ivy.core.cache.CacheManager;
-import org.apache.ivy.core.cache.RepositoryCacheManager;
 import org.apache.ivy.core.module.descriptor.Configuration;
 import org.apache.ivy.core.module.descriptor.DefaultDependencyDescriptor;
 import org.apache.ivy.core.module.descriptor.DefaultModuleDescriptor;
@@ -34,7 +31,6 @@ import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleId;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.publish.PublishEngine;
-import org.apache.ivy.core.publish.PublishOptions;
 import org.apache.ivy.core.report.ArtifactDownloadReport;
 import org.apache.ivy.core.report.ResolveReport;
 import org.apache.ivy.core.resolve.IvyNode;
@@ -157,11 +153,8 @@ public class InstallEngine {
                         }
                         
                         // publish metadata
-                        // TODO cache: store metadata cache info in report and reuse it
-                        RepositoryCacheManager cacheManager = 
-                            dependencies[i].getModuleRevision().getResolver()
-                                .getRepositoryCacheManager();
-                        File localIvyFile = cacheManager.getIvyFileInCache(depMrid);
+                        File localIvyFile = dependencies[i]
+                                                    .getModuleRevision().getReport().getLocalFile();
                         toResolver.publish(depmd.getMetadataArtifact(), localIvyFile, overwrite);
                         
                         // end module publish

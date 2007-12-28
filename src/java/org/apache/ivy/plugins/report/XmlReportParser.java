@@ -38,6 +38,7 @@ import org.apache.ivy.core.module.descriptor.DefaultArtifact;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.report.ArtifactDownloadReport;
 import org.apache.ivy.core.report.DownloadStatus;
+import org.apache.ivy.core.report.MetadataArtifactDownloadReport;
 import org.apache.ivy.util.extendable.ExtendableItemHelper;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -45,15 +46,17 @@ import org.xml.sax.helpers.DefaultHandler;
 
 public class XmlReportParser {
     private static class SaxXmlReportParser {
-        private List mrids;
+        private List/*<ModuleRevisionId>*/ mrids;
 
-        private List defaultMrids;
+        private List/*<ModuleRevisionId>*/ defaultMrids;
 
-        private List realMrids;
+        private List/*<ModuleRevisionId>*/ realMrids;
 
-        private List artifacts;
+        private List/*<Artifact>*/ artifacts;
 
-        private List artifactReports;
+        private List/*<ArtifactDownloadReport>*/ artifactReports;
+        
+        private Map/*<ModuleRevisionId,MetadataArtifactDownloadReport>*/ metadataReports;
 
         private ModuleRevisionId mRevisionId;
 
@@ -65,6 +68,7 @@ public class XmlReportParser {
             mrids = new ArrayList();
             defaultMrids = new ArrayList();
             realMrids = new ArrayList();
+            metadataReports = new HashMap();
             this.report = report;
         }
 
@@ -122,6 +126,11 @@ public class XmlReportParser {
                             if (isDefault) {
                                 defaultMrids.add(mrid);
                             } else {
+                                Artifact metadataArtifact = 
+                                    DefaultArtifact.newIvyArtifact(mrid, pubdate);
+                                MetadataArtifactDownloadReport madr = 
+                                    new MetadataArtifactDownloadReport(metadataArtifact);
+                                metadataReports.put(mrid, madr);
                                 realMrids.add(mrid);
                             }
                             try {
@@ -131,6 +140,39 @@ public class XmlReportParser {
                                 throw new IllegalArgumentException("invalid publication date for "
                                         + organisation + " " + module + " " + revision + ": "
                                         + attributes.getValue("pubdate"));
+                            }
+                        }
+                    } else if ("metadata-artifact".equals(qName)) {
+                        if (skip) {
+                            return;
+                        }
+                        MetadataArtifactDownloadReport madr = 
+                            (MetadataArtifactDownloadReport) metadataReports.get(mrid);
+                        if (madr != null) {
+                            madr.setDownloadStatus(
+                                DownloadStatus.fromString(attributes.getValue("status")));
+                            madr.setDownloadDetails(attributes.getValue("details"));
+                            madr.setSize(Long.parseLong(attributes.getValue("size")));
+                            madr.setDownloadTimeMillis(Long.parseLong(attributes.getValue("time")));
+                            madr.setSearched(Boolean.parseBoolean(attributes.getValue("searched")));
+                            if (attributes.getValue("location") != null) {
+                                madr.setLocalFile(new File(attributes.getValue("location")));
+                            }
+                            if (attributes.getValue("original-local-location") != null) {
+                                madr.setOriginalLocalFile(
+                                    new File(attributes.getValue("original-local-location")));
+                            }
+                            if (attributes.getValue("origin-location") != null) {
+                                if (ArtifactOrigin.UNKNOWN.getLocation().equals(
+                                        attributes.getValue("origin-location"))) {
+                                    madr.setArtifactOrigin(ArtifactOrigin.UNKNOWN);
+                                } else {
+                                    madr.setArtifactOrigin(
+                                        new ArtifactOrigin(
+                                            Boolean.parseBoolean(
+                                                attributes.getValue("origin-is-local")),
+                                            attributes.getValue("origin-location")));
+                                }
                             }
                         }
                     } else if ("artifact".equals(qName)) {
@@ -160,10 +202,15 @@ public class XmlReportParser {
                         ArtifactDownloadReport aReport = (ArtifactDownloadReport) 
                             revisionArtifacts.get(revisionArtifacts.size() - 1);
                         
-                        aReport.setArtifactOrigin(
-                            new ArtifactOrigin(
-                                Boolean.parseBoolean(attributes.getValue("is-local")),
-                                attributes.getValue("location")));
+                        if (ArtifactOrigin.UNKNOWN.getLocation().equals(
+                            attributes.getValue("location"))) {
+                            aReport.setArtifactOrigin(ArtifactOrigin.UNKNOWN);
+                        } else {
+                            aReport.setArtifactOrigin(
+                                new ArtifactOrigin(
+                                    Boolean.parseBoolean(attributes.getValue("is-local")),
+                                    attributes.getValue("location")));
+                        }
                     } else if ("info".equals(qName)) {
                         String organisation = attributes.getValue("organisation");
                         String name = attributes.getValue("module");
@@ -228,6 +275,10 @@ public class XmlReportParser {
         public ModuleRevisionId getResolvedModule() {
             return mRevisionId;
         }
+
+        public MetadataArtifactDownloadReport getMetadataArtifactReport(ModuleRevisionId id) {
+            return (MetadataArtifactDownloadReport) metadataReports.get(id);
+        }
     }
 
     private SaxXmlReportParser parser = null;
@@ -267,6 +318,10 @@ public class XmlReportParser {
     public ModuleRevisionId[] getRealDependencyRevisionIds() {
         return (ModuleRevisionId[]) parser.getRealModuleRevisionIds().toArray(
             new ModuleRevisionId[parser.getRealModuleRevisionIds().size()]);
+    }
+
+    public MetadataArtifactDownloadReport getMetadataArtifactReport(ModuleRevisionId id) {
+        return parser.getMetadataArtifactReport(id);
     }
 
     /**

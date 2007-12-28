@@ -38,7 +38,6 @@ import org.apache.ivy.core.resolve.ResolvedModuleRevision;
 import org.apache.ivy.plugins.latest.ArtifactInfo;
 import org.apache.ivy.plugins.latest.LatestStrategy;
 import org.apache.ivy.plugins.resolver.util.HasLatestStrategy;
-import org.apache.ivy.plugins.resolver.util.ResolvedModuleRevisionProxy;
 import org.apache.ivy.plugins.resolver.util.ResolvedResource;
 import org.apache.ivy.util.Message;
 
@@ -156,7 +155,8 @@ public class ChainResolver extends AbstractResolver {
 
     private ResolvedModuleRevision resolvedRevision(ResolvedModuleRevision mr) {
         if (isDual() && mr != null) {
-            return new ResolvedModuleRevisionProxy(mr, this);
+            return new ResolvedModuleRevision(
+                mr.getResolver(), this, mr.getDescriptor(), mr.getReport());
         } else {
             return mr;
         }

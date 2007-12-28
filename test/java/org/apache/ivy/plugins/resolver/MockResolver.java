@@ -19,7 +19,6 @@ package org.apache.ivy.plugins.resolver;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -29,9 +28,9 @@ import org.apache.ivy.core.cache.RepositoryCacheManager;
 import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.DefaultModuleDescriptor;
 import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
-import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.report.DownloadReport;
+import org.apache.ivy.core.report.MetadataArtifactDownloadReport;
 import org.apache.ivy.core.resolve.DownloadOptions;
 import org.apache.ivy.core.resolve.ResolveData;
 import org.apache.ivy.core.resolve.ResolvedModuleRevision;
@@ -54,39 +53,10 @@ public class MockResolver extends AbstractResolver {
         final MockResolver r = new MockResolver();
         r.setName(name);
         if (findRevision) {
-            r.rmr = new ResolvedModuleRevision() {
-                public DependencyResolver getResolver() {
-                    return r;
-                }
-
-                public ModuleRevisionId getId() {
-                    return mrid;
-                }
-
-                public Date getPublicationDate() {
-                    return publicationDate;
-                }
-
-                public ModuleDescriptor getDescriptor() {
-                    return new DefaultModuleDescriptor(mrid, "integration", new Date(), isdefault);
-                }
-
-                public boolean isDownloaded() {
-                    return true;
-                }
-
-                public boolean isSearched() {
-                    return true;
-                }
-
-                public DependencyResolver getArtifactResolver() {
-                    return r;
-                }
-
-                public URL getLocalMDUrl() {
-                    return null;
-                }
-            };
+            DefaultModuleDescriptor md = new DefaultModuleDescriptor(
+                mrid, "integration", publicationDate, isdefault);
+            r.rmr = new ResolvedModuleRevision(
+                r, r, md, new MetadataArtifactDownloadReport(md.getMetadataArtifact()));
         }
         return r;
     }

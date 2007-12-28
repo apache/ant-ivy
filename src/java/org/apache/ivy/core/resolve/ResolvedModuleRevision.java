@@ -21,33 +21,102 @@ import java.util.Date;
 
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
+import org.apache.ivy.core.report.MetadataArtifactDownloadReport;
 import org.apache.ivy.plugins.resolver.DependencyResolver;
 
 /**
- *
+ * Represents a module revision provisioned on the local filesystem.
  */
-public interface ResolvedModuleRevision {
+public class ResolvedModuleRevision {
+    
+    private DependencyResolver resolver;
+
+    private DependencyResolver artifactResolver;
+
+    private ModuleDescriptor descriptor;
+
+    private MetadataArtifactDownloadReport report;
+
+    public ResolvedModuleRevision(DependencyResolver resolver, DependencyResolver artifactResolver,
+            ModuleDescriptor descriptor, MetadataArtifactDownloadReport report) {
+        this.resolver = resolver;
+        this.artifactResolver = artifactResolver;
+        this.descriptor = descriptor;
+        this.report = report;
+    }
+
+    /**
+     * Returns the identifier of the resolved module.
+     * 
+     * @return the identifier of the resolved module.
+     */
+    public ModuleRevisionId getId() {
+        return descriptor.getResolvedModuleRevisionId();
+    }
+
+
+    /**
+     * Returns the date of publication of the resolved module.
+     * 
+     * @return the date of publication of the resolved module.
+     */
+    public Date getPublicationDate() {
+        return descriptor.getResolvedPublicationDate();
+    }
+    
+
+    /**
+     * Returns the descriptor of the resolved module.
+     * 
+     * @return the descriptor of the resolved module.
+     */
+    public ModuleDescriptor getDescriptor() {
+        return descriptor;
+    }
+
+
     /**
      * The resolver which resolved this ResolvedModuleRevision
      * 
      * @return The resolver which resolved this ResolvedModuleRevision
      */
-    DependencyResolver getResolver();
+    public DependencyResolver getResolver() {
+        return resolver;
+    }
 
     /**
      * The resolver to use to download artifacts
      * 
      * @return The resolver to use to download artifacts
      */
-    DependencyResolver getArtifactResolver();
+    public DependencyResolver getArtifactResolver() {
+        return artifactResolver;
+    }
 
-    ModuleRevisionId getId();
 
-    Date getPublicationDate();
+    /**
+     * Returns a report of the resolved module metadata artifact provisioning.
+     * 
+     * @return a report of the resolved module metadata artifact provisioning.
+     */
+    public MetadataArtifactDownloadReport getReport() {
+        return report;
+    }
 
-    ModuleDescriptor getDescriptor();
 
-    boolean isDownloaded();
+    public boolean equals(Object obj) {
+        if (!(obj instanceof ResolvedModuleRevision)) {
+            return false;
+        }
+        return ((ResolvedModuleRevision) obj).getId().equals(getId());
+    }
 
-    boolean isSearched();
+    public int hashCode() {
+        return getId().hashCode();
+    }
+
+    public String toString() {
+        return getId().toString();
+    }
+
 }

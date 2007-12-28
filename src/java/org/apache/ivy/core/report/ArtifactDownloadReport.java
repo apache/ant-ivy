@@ -146,4 +146,8 @@ public class ArtifactDownloadReport {
     public void setLocalFile(File localFile) {
         this.localFile = localFile;
     }
+    
+    public boolean isDownloaded() {
+        return DownloadStatus.SUCCESSFUL == downloadStatus;
+    }
 }

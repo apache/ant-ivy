@@ -54,7 +54,7 @@ import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.report.ArtifactDownloadReport;
 import org.apache.ivy.core.report.DownloadReport;
 import org.apache.ivy.core.report.DownloadStatus;
-import org.apache.ivy.core.resolve.DefaultModuleRevision;
+import org.apache.ivy.core.report.MetadataArtifactDownloadReport;
 import org.apache.ivy.core.resolve.DownloadOptions;
 import org.apache.ivy.core.resolve.IvyNode;
 import org.apache.ivy.core.resolve.ResolveData;
@@ -171,8 +171,6 @@ public abstract class BasicResolver extends AbstractResolver {
         try {
             clearIvyAttempts();
             clearArtifactAttempts();
-            boolean downloaded = false;
-            boolean searched = false;
             ModuleRevisionId systemMrid = systemDd.getDependencyRevisionId();
             ModuleRevisionId  nsMrid = nsDd.getDependencyRevisionId();
             
@@ -215,9 +213,9 @@ public abstract class BasicResolver extends AbstractResolver {
                 }
             }
             checkInterrupted();
+            ResolvedModuleRevision rmr = null;
             ResolvedResource ivyRef = findIvyFileRef(nsDd, data);
             checkInterrupted();
-            searched = true;
 
             // get module descriptor
             final ModuleDescriptorParser parser;
@@ -255,9 +253,14 @@ public abstract class BasicResolver extends AbstractResolver {
                         nsMd.setResolvedModuleRevisionId(ModuleRevisionId.newInstance(nsMrid,
                             artifactRef.getRevision()));
                     }
+                    systemMd = toSystem(nsMd);
+                    MetadataArtifactDownloadReport madr = 
+                        new MetadataArtifactDownloadReport(systemMd.getMetadataArtifact());
+                    madr.setDownloadStatus(DownloadStatus.NO);
+                    madr.setSearched(true);
+                    rmr = new ResolvedModuleRevision(this, this, systemMd, madr);
                 }
             } else {
-                ResolvedModuleRevision rmr = null;
                 if (ivyRef instanceof MDResolvedResource) {
                     rmr = ((MDResolvedResource) ivyRef).getResolvedModuleRevision();
                 }
@@ -267,7 +270,7 @@ public abstract class BasicResolver extends AbstractResolver {
                         return null;
                     }
                 }
-                if (!rmr.isDownloaded()) {
+                if (!rmr.getReport().isDownloaded()) {
                     return toSystem(rmr);
                 } else {
                     nsMd = rmr.getDescriptor();
@@ -280,10 +283,10 @@ public abstract class BasicResolver extends AbstractResolver {
                         checkDescriptorConsistency(systemMrid, systemMd, ivyRef);
                         checkDescriptorConsistency(nsMrid, nsMd, ivyRef);
                     } else {
-                        if (nsMd instanceof DefaultModuleDescriptor) {
-                            String revision = getRevision(ivyRef, nsMrid, nsMd);
-                            ((DefaultModuleDescriptor) nsMd).setModuleRevisionId(ModuleRevisionId
-                                .newInstance(nsMrid, revision));
+                        if (systemMd instanceof DefaultModuleDescriptor) {
+                            String revision = getRevision(ivyRef, systemMrid, systemMd);
+                            ((DefaultModuleDescriptor) systemMd).setModuleRevisionId(
+                                ModuleRevisionId.newInstance(systemMrid, revision));
                         } else {
                             Message.warn(
                               "consistency disabled with instance of non DefaultModuleDescriptor..."
@@ -292,17 +295,23 @@ public abstract class BasicResolver extends AbstractResolver {
                             checkDescriptorConsistency(systemMrid, systemMd, ivyRef);
                         }
                     }
+                    MetadataArtifactDownloadReport madr = 
+                        new MetadataArtifactDownloadReport(systemMd.getMetadataArtifact());
+                    madr.setDownloadStatus(rmr.getReport().getDownloadStatus());
+                    madr.setDownloadDetails(rmr.getReport().getDownloadDetails());
+                    madr.setArtifactOrigin(rmr.getReport().getArtifactOrigin());
+                    madr.setDownloadTimeMillis(rmr.getReport().getDownloadTimeMillis());
+                    madr.setSize(rmr.getReport().getSize());
+                    madr.setOriginalLocalFile(rmr.getReport().getOriginalLocalFile());
+                    madr.setSearched(true);
+                    rmr = new ResolvedModuleRevision(this, this, systemMd, madr);
                 }
             }
 
-            if (systemMd == null) {
-                systemMd = toSystem(nsMd);
-            }
-
             // resolve revision
-            ModuleRevisionId resolvedMrid = nsMrid;
+            ModuleRevisionId resolvedMrid = systemMrid;
             if (isDynamic) {
-                resolvedMrid = nsMd.getResolvedModuleRevisionId();
+                resolvedMrid = systemMd.getResolvedModuleRevisionId();
                 if (resolvedMrid.getRevision() == null 
                         || resolvedMrid.getRevision().length() == 0) {
                     if (ivyRef.getRevision() == null || ivyRef.getRevision().length() == 0) {
@@ -316,10 +325,7 @@ public abstract class BasicResolver extends AbstractResolver {
                 Message.verbose("\t\t[" + toSystem(resolvedMrid).getRevision() + "] " 
                     + systemMrid.getModuleId());
             }
-            nsMd.setResolvedModuleRevisionId(resolvedMrid);
-
-            // keep system md in sync with ns md
-            systemMd.setResolvedModuleRevisionId(toSystem(resolvedMrid)); 
+            systemMd.setResolvedModuleRevisionId(resolvedMrid); 
 
             // check module descriptor revision
             if (!getSettings().getVersionMatcher().accept(systemMrid, systemMd)) {
@@ -342,14 +348,13 @@ public abstract class BasicResolver extends AbstractResolver {
                         + systemMrid);
                     return null;
                 }
-                nsMd.setResolvedPublicationDate(new Date(pubDate));
                 systemMd.setResolvedPublicationDate(new Date(pubDate)); 
             }
             
-            if (!nsMd.isDefault() 
+            if (!systemMd.isDefault() 
                     && data.getSettings().logNotConvertedExclusionRule() 
-                    && nsMd instanceof DefaultModuleDescriptor) {
-                DefaultModuleDescriptor dmd = (DefaultModuleDescriptor) nsMd;
+                    && systemMd instanceof DefaultModuleDescriptor) {
+                DefaultModuleDescriptor dmd = (DefaultModuleDescriptor) systemMd;
                 if (dmd.isNamespaceUseful()) {
                     Message.warn(
                         "the module descriptor "
@@ -372,7 +377,7 @@ public abstract class BasicResolver extends AbstractResolver {
                     ivyRef.getResource());
             
             cacheManager.originalToCachedModuleDescriptor(this, ivyRef, requestedMetadataArtifact, 
-                    systemMd, new ModuleDescriptorWriter() {
+                    rmr, new ModuleDescriptorWriter() {
                 public void write(ResolvedResource originalMdResource, ModuleDescriptor md, 
                         File src, File dest) 
                         throws IOException, ParseException {
@@ -393,7 +398,7 @@ public abstract class BasicResolver extends AbstractResolver {
                 }
             });            
             
-            return new DefaultModuleRevision(this, this, systemMd, searched, downloaded);
+            return rmr;
         } finally {
             IvyContext.popContext();
         }
@@ -451,7 +456,8 @@ public abstract class BasicResolver extends AbstractResolver {
                 } else {
                     Message.verbose("\t" + getName() + ": revision already resolved: "
                             + resolvedMrid);
-                    return DefaultModuleRevision.searchedRmr(node.getModuleRevision());
+                    node.getModuleRevision().getReport().setSearched(true);
+                    return node.getModuleRevision();
                 }
             }
         }
@@ -491,9 +497,14 @@ public abstract class BasicResolver extends AbstractResolver {
     protected ResourceMDParser getDefaultRMDParser(final ModuleId mid) {
         return new ResourceMDParser() {
             public MDResolvedResource parse(Resource resource, String rev) {
-                return new MDResolvedResource(resource, rev, new DefaultModuleRevision(
-                        BasicResolver.this, BasicResolver.this, DefaultModuleDescriptor
-                                .newDefaultInstance(new ModuleRevisionId(mid, rev)), false, false));
+                DefaultModuleDescriptor md = 
+                    DefaultModuleDescriptor.newDefaultInstance(new ModuleRevisionId(mid, rev));
+                MetadataArtifactDownloadReport madr = 
+                    new MetadataArtifactDownloadReport(md.getMetadataArtifact());
+                madr.setDownloadStatus(DownloadStatus.NO);
+                madr.setSearched(true);
+                return new MDResolvedResource(resource, rev, new ResolvedModuleRevision(
+                        BasicResolver.this, BasicResolver.this, md, madr));
             }
         };
     }

@@ -35,6 +35,7 @@ import org.apache.ivy.core.module.id.ModuleId;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.report.ArtifactDownloadReport;
 import org.apache.ivy.core.report.ConfigurationResolveReport;
+import org.apache.ivy.core.report.MetadataArtifactDownloadReport;
 import org.apache.ivy.core.resolve.IvyNode;
 import org.apache.ivy.core.resolve.IvyNodeCallers.Caller;
 import org.apache.ivy.core.resolve.IvyNodeEviction.EvictionData;
@@ -171,6 +172,33 @@ public class XmlReportWriter {
                     + XMLHelper.escape(licenses[i].getName()) + "\""
                         + lurl + "/>");
             }
+        }
+        if (dep.getModuleRevision() != null) {
+            MetadataArtifactDownloadReport madr = dep.getModuleRevision().getReport();
+            out.print("\t\t\t\t<metadata-artifact");
+            out.print(" status=\"" 
+                + XMLHelper.escape(madr.getDownloadStatus().toString()) + "\"");
+            out.print(" details=\"" + XMLHelper.escape(madr.getDownloadDetails()) + "\"");
+            out.print(" size=\"" + madr.getSize() + "\"");
+            out.print(" time=\"" + madr.getDownloadTimeMillis() + "\"");
+            if (madr.getLocalFile() != null) {
+                out.print(" location=\"" 
+                    + XMLHelper.escape(madr.getLocalFile().getAbsolutePath()) + "\"");
+            }
+
+            out.print(" searched=\"" + madr.isSearched() + "\"");
+            if (madr.getOriginalLocalFile() != null) {
+                out.print(" original-local-location=\"" 
+                    + XMLHelper.escape(madr.getOriginalLocalFile().getAbsolutePath()) + "\"");
+            }
+
+            ArtifactOrigin origin = madr.getArtifactOrigin();
+            if (origin != null) {
+                out.print(" origin-is-local=\"" + String.valueOf(origin.isLocal()) + "\""); 
+                out.print(" origin-location=\"" + XMLHelper.escape(origin.getLocation()) + "\"");
+            }
+            out.println("/>");
+            
         }
         if (dep.isEvicted(report.getConfiguration())) {
             EvictionData ed = dep.getEvictedData(report.getConfiguration());

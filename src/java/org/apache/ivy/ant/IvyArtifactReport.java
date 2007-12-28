@@ -219,7 +219,7 @@ public class IvyArtifactReport extends IvyPostResolveTask {
             RepositoryCacheManager cache, TransformerHandler saxHandler, Artifact artifact) 
             throws IOException, SAXException {
         ArtifactOrigin origin = cache.getSavedArtifactOrigin(artifact);
-        if (origin != null) {
+        if (origin != ArtifactOrigin.UNKNOWN) {
             String originName = origin.getLocation();
             boolean isOriginLocal = origin.isLocal();
 

@@ -24,6 +24,11 @@ package org.apache.ivy.core.cache;
  * @see org.apache.ivy.plugins.resolver.util.ResolvedResource
  */
 public class ArtifactOrigin {
+    /**
+     * ArtifactOrigin instance used when the origin is unknown.
+     */
+    public static final ArtifactOrigin UNKNOWN = new ArtifactOrigin(false, "UNKNOWN");
+    
     private static final int MAGIC_HASH_VALUE = 31;
 
     private boolean isLocal;

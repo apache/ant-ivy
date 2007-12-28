@@ -75,6 +75,14 @@ public interface RepositoryCacheManager {
     public abstract void saveResolvers(
             ModuleDescriptor descriptor, String metadataResolverName, String artifactResolverName);
 
+    /**
+     * Returns the artifact origin of the given artifact as saved in this cache, or
+     * {@link ArtifactOrigin#UNKNOWN} if the origin is unknown.
+     * 
+     * @param artifact
+     *            the artifact for which the saved artifact origin should be returned.
+     * @return the artifact origin of the given artifact as saved in this cache
+     */
     public abstract ArtifactOrigin getSavedArtifactOrigin(Artifact artifact);
 
     /**
@@ -121,5 +129,5 @@ public interface RepositoryCacheManager {
     public void originalToCachedModuleDescriptor(
             DependencyResolver resolver, ResolvedResource orginalMetadataRef, 
             Artifact requestedMetadataArtifact, 
-            ModuleDescriptor md, ModuleDescriptorWriter writer);
+            ResolvedModuleRevision rmr, ModuleDescriptorWriter writer);
 }

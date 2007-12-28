@@ -28,7 +28,6 @@ import org.apache.ivy.core.report.DownloadReport;
 import org.apache.ivy.core.resolve.DownloadOptions;
 import org.apache.ivy.core.resolve.ResolveData;
 import org.apache.ivy.core.resolve.ResolvedModuleRevision;
-import org.apache.ivy.plugins.resolver.util.ResolvedModuleRevisionProxy;
 import org.apache.ivy.plugins.resolver.util.ResolvedResource;
 import org.apache.ivy.util.Message;
 
@@ -78,7 +77,8 @@ public class DualResolver extends AbstractResolver {
                 return null;
             }
         } else {
-            return new ResolvedModuleRevisionProxy(mr, this);
+            return new ResolvedModuleRevision(
+                mr.getResolver(), this, mr.getDescriptor(), mr.getReport());
         }
     }
 

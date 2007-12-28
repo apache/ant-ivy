@@ -258,13 +258,7 @@ public class RetrieveEngine {
             if (destIvyPattern != null) {
                 ModuleRevisionId[] mrids = parser.getRealDependencyRevisionIds();
                 for (int j = 0; j < mrids.length; j++) {
-                    ArtifactDownloadReport aReport = new ArtifactDownloadReport(
-                        DefaultArtifact.newIvyArtifact(mrids[j], null));
-                    aReport.setDownloadStatus(DownloadStatus.SUCCESSFUL);
-                    // TODO cache: store metadata cache info in report and reuse it
-                    aReport.setLocalFile(settings.getResolver(mrids[j].getModuleId())
-                        .getRepositoryCacheManager().getIvyFileInCache(mrids[j]));
-                    artifacts.add(aReport);
+                    artifacts.add(parser.getMetadataArtifactReport(mrids[j]));
                 }
             }
             for (Iterator iter = artifacts.iterator(); iter.hasNext();) {

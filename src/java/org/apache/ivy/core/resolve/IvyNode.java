@@ -264,8 +264,8 @@ public class IvyNode implements Comparable {
                                 if (resolved.module == null) {
                                     resolved.module = module;
                                 }
-                                resolved.downloaded |= module.isDownloaded();
-                                resolved.searched |= module.isSearched();
+                                resolved.downloaded |= module.getReport().isDownloaded();
+                                resolved.searched |= module.getReport().isSearched();
                                 resolved.dds.putAll(dds);
                                 resolved.updateDataFrom(this, rootModuleConf, true);
                                 resolved.loadData(rootModuleConf, parent, parentConf, conf,
@@ -292,8 +292,8 @@ public class IvyNode implements Comparable {
                                 return true;
                             }
                         }
-                        downloaded = module.isDownloaded();
-                        searched = module.isSearched();
+                        downloaded = module.getReport().isDownloaded();
+                        searched = module.getReport().isSearched();
                     } else {
                         Message.warn("\tmodule not found: " + getId());
                         resolver.reportFailure();
@@ -302,6 +302,7 @@ public class IvyNode implements Comparable {
                 } catch (ResolveProcessException e) {
                     throw e;
                 } catch (Exception e) {
+                    e.printStackTrace();
                     problem = e;
                 }
 
