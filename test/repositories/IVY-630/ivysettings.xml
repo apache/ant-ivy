@@ -17,7 +17,7 @@
    under the License.    
 -->
 <ivysettings>
-	<settings defaultCache="${cache.dir}" defaultResolver="1" checkUpToDate="true" />
+	<settings defaultCache="build/cache" defaultResolver="1" checkUpToDate="true" />
 	<resolvers>
 		<filesystem allownomd="true" name="1">
 			<ivy pattern="${ivy.settings.dir}/[module]-[revision]/ivy.xml"/>

@@ -23,6 +23,7 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
+import org.apache.ivy.core.cache.DefaultRepositoryCacheManager;
 import org.apache.ivy.core.cache.ResolutionCacheManager;
 import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.id.ModuleId;
@@ -59,9 +60,9 @@ public class XmlSettingsParserTest extends TestCase {
         assertFalse(settings.isCheckUpToDate());
         assertFalse(settings.doValidate());
 
-        assertEquals("[module]/ivys/ivy-[revision].xml", settings.getCacheIvyPattern());
+        assertEquals("[module]/ivys/ivy-[revision].xml", settings.getDefaultCacheIvyPattern());
         assertEquals("[module]/[type]s/[artifact]-[revision].[ext]", settings
-                .getCacheArtifactPattern());
+                .getDefaultCacheArtifactPattern());
 
         LatestStrategy latest = settings.getLatestStrategy("mylatest-revision");
         assertNotNull(latest);
@@ -186,16 +187,34 @@ public class XmlSettingsParserTest extends TestCase {
         XmlSettingsParser parser = new XmlSettingsParser(settings);
         parser.parse(XmlSettingsParserTest.class.getResource("ivysettings-cache.xml"));
 
-        File defaultCache = settings.getDefaultCache();
-        assertNotNull(defaultCache);
-        assertEquals("mycache", defaultCache.getName());
-        assertEquals(new File(defaultCache, "repository"), settings.getRepositoryCacheRoot(defaultCache));
-        assertEquals(new File(defaultCache, "resolution"), settings.getResolutionCacheRoot(defaultCache));
+        assertEquals(new File("repository"), settings.getDefaultRepositoryCacheBasedir());
+        assertEquals(new File("resolution"), settings.getDefaultResolutionCacheBasedir());
         assertEquals("artifact-lock", settings.getDefaultLockStrategy().getName());
 
-        assertEquals("[module]/ivys/ivy-[revision].xml", settings.getCacheIvyPattern());
+        assertEquals("[module]/ivys/ivy-[revision].xml", settings.getDefaultCacheIvyPattern());
         assertEquals("[module]/[type]s/[artifact]-[revision].[ext]", settings
-                .getCacheArtifactPattern());
+                .getDefaultCacheArtifactPattern());
+        
+        DefaultRepositoryCacheManager c = (DefaultRepositoryCacheManager) settings.getRepositoryCacheManager("mycache");
+        assertNotNull(c);
+        assertEquals("mycache", c.getName());
+        assertEquals(new File("mycache"), c.getBasedir());
+        assertEquals("no-lock", c.getLockStrategy().getName());
+
+        assertEquals("[module]/ivy-[revision].xml", c.getIvyPattern());
+        assertEquals("[module]/[artifact]-[revision].[ext]", c.getArtifactPattern());
+        
+        DefaultRepositoryCacheManager c2 = (DefaultRepositoryCacheManager) settings.getRepositoryCacheManager("mycache2");
+        assertNotNull(c2);
+        assertEquals("mycache2", c2.getName());
+        assertEquals(new File("repository"), c2.getBasedir());
+        assertEquals("artifact-lock", c2.getLockStrategy().getName());
+
+        assertEquals("[module]/ivys/ivy-[revision].xml", c2.getIvyPattern());
+        assertEquals("[module]/[type]s/[artifact]-[revision].[ext]", c2.getArtifactPattern());
+        
+        assertEquals(c2, settings.getResolver("A").getRepositoryCacheManager());
+        assertEquals(c, settings.getResolver("B").getRepositoryCacheManager());
     }
 
     public void testVersionMatchers1() throws Exception {

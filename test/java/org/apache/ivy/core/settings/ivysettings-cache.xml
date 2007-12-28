@@ -17,11 +17,31 @@
    under the License.    
 -->
 <ivysettings>
-	<cache basedir="mycache"
+	<settings defaultCacheManager="mycache2" />
+	<cacheDefaults 
 			resolutionDir="resolution"
 			repositoryDir="repository"
 			repositoryIvyPattern="[module]/ivys/ivy-[revision].xml" 
 			repositoryArtifactPattern="[module]/[type]s/[artifact]-[revision].[ext]"
 			lockStrategy="artifact-lock"
 	/>
+	<caches>
+		<cache name="mycache" 
+				basedir="mycache"
+				ivyPattern="[module]/ivy-[revision].xml" 
+				artifactPattern="[module]/[artifact]-[revision].[ext]"
+				lock="no-lock"
+		/>
+		<cache name="mycache2" />
+	</caches>
+	<resolvers>
+		<filesystem name="A">
+			<ivy pattern="${shared}/[organisation]/[module]/ivys/ivy-[revision].xml"/>
+			<artifact pattern="${shared}/[organisation]/[module]/[type]s/[artifact]-[revision].[type]"/>
+		</filesystem>
+		<filesystem name="B" cache="mycache">
+			<ivy pattern="${libraries.dir}/[organisation]/[module]/ivys/ivy-[revision].xml"/>
+			<artifact pattern="${libraries.dir}/[organisation]/[module]/[type]s/[artifact]-[revision].[type]"/>
+		</filesystem>
+	</resolvers>
 </ivysettings>

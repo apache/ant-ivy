@@ -20,10 +20,11 @@ package org.apache.ivy.plugins.resolver;
 import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.Date;
 
-import org.apache.ivy.core.cache.CacheSettings;
+import org.apache.ivy.core.cache.DefaultRepositoryCacheManager;
+import org.apache.ivy.core.cache.RepositoryCacheManager;
 import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.DefaultArtifact;
 import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
@@ -154,21 +155,23 @@ public class CacheResolver extends FileSystemResolver {
     }
 
     private void ensureConfigured() {
-        if (getSettings() != null) {
-            // TODO: we need to address new cache management 
-            // (where repository cache is not always in default cache directory)
-            ensureConfigured(getSettings(), getSettings().getDefaultCache());
+        if (getIvyPatterns().isEmpty()) {
+            setIvyPatterns(new ArrayList());
+            setArtifactPatterns(new ArrayList());
+            RepositoryCacheManager[] caches = getSettings().getRepositoryCacheManagers();
+            for (int i = 0; i < caches.length; i++) {
+                if (caches[i] instanceof DefaultRepositoryCacheManager) {
+                    DefaultRepositoryCacheManager c = (DefaultRepositoryCacheManager) caches[i];
+                    addIvyPattern(c.getBasedir().getAbsolutePath() + "/" + c.getIvyPattern());
+                    addArtifactPattern(
+                        c.getBasedir().getAbsolutePath() + "/" + c.getArtifactPattern());
+                } else {
+                    Message.verbose(
+                        caches[i] + ": cache implementation is not a DefaultRepositoryCacheManager:"
+                        + " unable to configure cache resolver with it");
+                }
+            }
         }
-    }
-
-    private void ensureConfigured(CacheSettings settings, File cache) {
-        if (settings == null || cache == null) {
-            return;
-        }
-        setIvyPatterns(Collections.singletonList(cache.getAbsolutePath() + "/"
-                + settings.getCacheIvyPattern()));
-        setArtifactPatterns(Collections.singletonList(cache.getAbsolutePath() + "/"
-                + settings.getCacheArtifactPattern()));
     }
 
     public String getTypeName() {

@@ -23,7 +23,7 @@ import java.util.Date;
 import java.util.Random;
 
 import org.apache.ivy.Ivy;
-import org.apache.ivy.core.cache.CacheManager;
+import org.apache.ivy.core.cache.DefaultResolutionCacheManager;
 import org.apache.ivy.core.module.descriptor.DefaultDependencyDescriptor;
 import org.apache.ivy.core.module.descriptor.DefaultModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleRevisionId;

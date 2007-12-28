@@ -22,7 +22,8 @@ import java.text.ParseException;
 
 import junit.framework.TestCase;
 
-import org.apache.ivy.core.cache.CacheManager;
+import org.apache.ivy.core.cache.DefaultRepositoryCacheManager;
+import org.apache.ivy.core.cache.RepositoryCacheManager;
 import org.apache.ivy.core.event.EventManager;
 import org.apache.ivy.core.module.descriptor.DefaultDependencyDescriptor;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
@@ -78,8 +79,9 @@ public class ArtifactLockStrategyTest extends TestCase {
     }    
 
     
-    private CacheManager newCacheManager(IvySettings settings) {
-        CacheManager cacheManager = new CacheManager(settings, new File("build/test/cache"));
+    private RepositoryCacheManager newCacheManager(IvySettings settings) {
+        DefaultRepositoryCacheManager cacheManager 
+            = new DefaultRepositoryCacheManager("cache", settings, new File("build/test/cache"));
         cacheManager.setLockStrategy(new ArtifactLockStrategy());
         return cacheManager;
     }

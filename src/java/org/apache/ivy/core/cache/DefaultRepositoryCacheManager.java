@@ -18,14 +18,12 @@
 package org.apache.ivy.core.cache;
 
 import java.io.File;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.ParseException;
 import java.util.Date;
 
-import org.apache.ivy.core.IvyContext;
 import org.apache.ivy.core.IvyPatternHelper;
 import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.DefaultArtifact;
@@ -35,6 +33,8 @@ import org.apache.ivy.core.report.ArtifactDownloadReport;
 import org.apache.ivy.core.report.DownloadStatus;
 import org.apache.ivy.core.report.MetadataArtifactDownloadReport;
 import org.apache.ivy.core.resolve.ResolvedModuleRevision;
+import org.apache.ivy.core.settings.IvySettings;
+import org.apache.ivy.plugins.IvySettingsAware;
 import org.apache.ivy.plugins.lock.LockStrategy;
 import org.apache.ivy.plugins.namespace.NameSpaceHelper;
 import org.apache.ivy.plugins.parser.ModuleDescriptorParser;
@@ -48,63 +48,112 @@ import org.apache.ivy.plugins.resolver.util.ResolvedResource;
 import org.apache.ivy.util.Message;
 import org.apache.ivy.util.PropertiesFile;
 
-public class CacheManager implements RepositoryCacheManager, ResolutionCacheManager {
-    public static CacheManager getInstance(CacheSettings settings, File cache) {
-        return new CacheManager(settings, cache);
-    }
+public class DefaultRepositoryCacheManager implements RepositoryCacheManager, IvySettingsAware {
+    private static final String DEFAULT_ARTIFACT_PATTERN =
+        "[organisation]/[module]/[type]s/[artifact]-[revision](.[ext])";
 
-    public static CacheManager getInstance(CacheSettings settings) {
-        return getInstance(settings, settings.getDefaultCache());
-    }
+    private static final String DEFAULT_DATA_FILE_PATTERN = 
+        "[organisation]/[module]/ivydata-[revision].properties";
 
-    private CacheSettings settings;
+    private static final String DEFAULT_IVY_PATTERN = 
+        "[organisation]/[module]/ivy-[revision].xml";
+
+    private IvySettings settings;
     
-    private File cache;
+    private File basedir;
 
     private LockStrategy lockStrategy;
 
-    // TODO: use different names when we'll be able to have multiple cache managers
-    private String name = "cache"; 
+    private String name;
 
-    public CacheManager(CacheSettings settings, File cache) {
-        this.settings = settings == null ? IvyContext.getContext().getSettings() : settings;
-        if (cache == null) {
-            this.cache = settings.getDefaultCache();
-        } else {
-            this.cache = cache;
-        }
+    private String ivyPattern; 
+
+    private String dataFilePattern = DEFAULT_DATA_FILE_PATTERN; 
+    
+    private String artifactPattern;
+
+    private String lockStrategyName; 
+
+    public DefaultRepositoryCacheManager() {
     }
 
-    public File getResolvedIvyFileInCache(ModuleRevisionId mrid) {
-        String file = IvyPatternHelper.substitute(settings.getCacheResolvedIvyPattern(), mrid
-                .getOrganisation(), mrid.getName(), mrid.getRevision(), "ivy", "ivy", "xml");
-        return new File(getResolutionCacheRoot(), file);
+    public DefaultRepositoryCacheManager(String name, IvySettings settings, File basedir) {
+        setName(name);
+        setSettings(settings);
+        setBasedir(basedir);
     }
 
-    public File getResolvedIvyPropertiesInCache(ModuleRevisionId mrid) {
-        String file = IvyPatternHelper.substitute(settings.getCacheResolvedIvyPropertiesPattern(),
-            mrid.getOrganisation(), mrid.getName(), mrid.getRevision(), "ivy", "ivy", "xml");
-        return new File(getResolutionCacheRoot(), file);
+    public IvySettings getSettings() {
+        return settings;
     }
 
-    public File getConfigurationResolveReportInCache(String resolveId, String conf) {
-        return new File(getResolutionCacheRoot(), resolveId + "-" + conf + ".xml");
-    }
-
-    public File[] getConfigurationResolveReportsInCache(final String resolveId) {
-        final String prefix = resolveId + "-";
-        final String suffix = ".xml";
-        return getResolutionCacheRoot().listFiles(new FilenameFilter() {
-            public boolean accept(File dir, String name) {
-                return (name.startsWith(prefix) && name.endsWith(suffix));
-            }
-        });
+    public void setSettings(IvySettings settings) {
+        this.settings = settings;
     }
 
     public File getIvyFileInCache(ModuleRevisionId mrid) {
-        String file = IvyPatternHelper.substitute(settings.getCacheIvyPattern(), DefaultArtifact
+        String file = IvyPatternHelper.substitute(getIvyPattern(), DefaultArtifact
                 .newIvyArtifact(mrid, null));
         return new File(getRepositoryCacheRoot(), file);
+    }
+
+    public String getIvyPattern() {
+        if (ivyPattern == null) {
+            if (settings != null) {
+                ivyPattern = settings.getDefaultCacheIvyPattern();
+            }
+            if (ivyPattern == null) {
+                ivyPattern = DEFAULT_IVY_PATTERN;
+            }
+        }
+        return ivyPattern;
+    }
+    
+    public String getArtifactPattern() {
+        if (artifactPattern == null) {
+            if (settings != null) {
+                artifactPattern = settings.getDefaultCacheArtifactPattern();
+            }
+            if (artifactPattern == null) {
+                artifactPattern = DEFAULT_ARTIFACT_PATTERN;
+            }
+        }
+        return artifactPattern;
+    }
+
+    public void setArtifactPattern(String artifactPattern) {
+        this.artifactPattern = artifactPattern;
+    }
+
+    public File getBasedir() {
+        if (basedir == null) {
+            basedir = settings.getDefaultRepositoryCacheBasedir();
+        }
+        return basedir;
+    }
+
+    public void setBasedir(File cache) {
+        this.basedir = cache;
+    }
+
+    public String getDataFilePattern() {
+        return dataFilePattern;
+    }
+
+    public void setDataFilePattern(String dataFilePattern) {
+        this.dataFilePattern = dataFilePattern;
+    }
+
+    public void setIvyPattern(String ivyPattern) {
+        this.ivyPattern = ivyPattern;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     /**
@@ -149,11 +198,11 @@ public class CacheManager implements RepositoryCacheManager, ResolutionCacheMana
     }
 
     public String getArchivePathInCache(Artifact artifact) {
-        return IvyPatternHelper.substitute(settings.getCacheArtifactPattern(), artifact);
+        return IvyPatternHelper.substitute(getArtifactPattern(), artifact);
     }
 
     public String getArchivePathInCache(Artifact artifact, ArtifactOrigin origin) {
-        return IvyPatternHelper.substitute(settings.getCacheArtifactPattern(), artifact, origin);
+        return IvyPatternHelper.substitute(getArtifactPattern(), artifact, origin);
     }
 
     /**
@@ -294,8 +343,8 @@ public class CacheManager implements RepositoryCacheManager, ResolutionCacheMana
 
     private PropertiesFile getCachedDataFile(ModuleRevisionId mRevId) {
         return new PropertiesFile(new File(getRepositoryCacheRoot(), 
-            IvyPatternHelper.substitute(settings
-                .getCacheDataFilePattern(), mRevId)), "ivy cached data file for " + mRevId);
+            IvyPatternHelper.substitute(
+                getDataFilePattern(), mRevId)), "ivy cached data file for " + mRevId);
     }
 
     public ResolvedModuleRevision findModuleInCache(
@@ -375,26 +424,30 @@ public class CacheManager implements RepositoryCacheManager, ResolutionCacheMana
     }
 
     public String toString() {
-        return "cache: " + String.valueOf(cache);
+        return name;
     }
 
     public File getRepositoryCacheRoot() {
-        return settings.getRepositoryCacheRoot(cache);
-    }
-    
-    public File getResolutionCacheRoot() {
-        return settings.getResolutionCacheRoot(cache);
+        return getBasedir();
     }
 
     public LockStrategy getLockStrategy() {
         if (lockStrategy == null) {
-            lockStrategy = settings.getDefaultLockStrategy();
+            if (lockStrategyName != null) {
+                lockStrategy = settings.getLockStrategy(lockStrategyName);
+            } else {
+                lockStrategy = settings.getDefaultLockStrategy();
+            }
         }
         return lockStrategy;
     }
     
     public void setLockStrategy(LockStrategy lockStrategy) {
         this.lockStrategy = lockStrategy;
+    }
+    
+    public void setLock(String lockStrategyName) {
+        this.lockStrategyName = lockStrategyName;
     }
     
     public ArtifactDownloadReport download(
@@ -710,9 +763,5 @@ public class CacheManager implements RepositoryCacheManager, ResolutionCacheMana
             moduleArtifact.getName() + ".original");
     }
 
-
-    private String getName() {
-        return name;
-    }
     
 }

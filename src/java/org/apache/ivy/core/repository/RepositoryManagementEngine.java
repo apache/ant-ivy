@@ -26,7 +26,6 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeSet;
 
-import org.apache.ivy.core.cache.CacheManager;
 import org.apache.ivy.core.module.descriptor.DefaultDependencyDescriptor;
 import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
@@ -40,8 +39,8 @@ import org.apache.ivy.plugins.latest.ArtifactInfo;
 import org.apache.ivy.plugins.matcher.PatternMatcher;
 import org.apache.ivy.plugins.matcher.RegexpPatternMatcher;
 import org.apache.ivy.plugins.version.VersionMatcher;
-import org.apache.ivy.util.Message;
 import org.apache.ivy.util.MemoryUtil;
+import org.apache.ivy.util.Message;
 
 /**
  * The repository management can be used to load all metadata from a repository, analyze them, and
@@ -113,7 +112,6 @@ public class RepositoryManagementEngine {
     ///////////////////////////////////////////
     private SearchEngine searchEngine;
     private ResolveEngine resolveEngine;
-    private CacheManager cacheManager;
     private RepositoryManagementEngineSettings settings;
     
 
@@ -122,9 +120,6 @@ public class RepositoryManagementEngine {
         this.settings = settings;
         this.searchEngine = searchEngine;
         this.resolveEngine = resolveEngine;
-        // TODO: use a cache configured to avoid actual caching, 
-        // when IVY-399 will be better implemented
-        this.cacheManager = CacheManager.getInstance(settings);
     }
 
     /**

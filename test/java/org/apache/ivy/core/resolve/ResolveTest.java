@@ -33,6 +33,7 @@ import junit.framework.TestCase;
 import org.apache.ivy.Ivy;
 import org.apache.ivy.TestHelper;
 import org.apache.ivy.core.cache.ArtifactOrigin;
+import org.apache.ivy.core.cache.DefaultRepositoryCacheManager;
 import org.apache.ivy.core.cache.RepositoryCacheManager;
 import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.DefaultArtifact;
@@ -95,7 +96,8 @@ public class ResolveTest extends TestCase {
     public void testResolveWithRetainingArtifactName() throws Exception {
         ivy.pushContext();
         try {
-            settings.setCacheArtifactPattern(ivy.substitute("[module]/[originalname].[ext]"));
+            ((DefaultRepositoryCacheManager) settings.getDefaultRepositoryCacheManager())
+                .setArtifactPattern(ivy.substitute("[module]/[originalname].[ext]"));
             ResolveReport report = ivy.resolve(new File("test/repositories/2/mod15.2/ivy-1.1.xml")
             .toURL(), getResolveOptions(new String[] {"default"}));
             assertNotNull(report);
@@ -447,8 +449,11 @@ public class ResolveTest extends TestCase {
     public void testChangeCacheLayout() throws Exception {
         Ivy ivy = new Ivy();
         ivy.configure(new File("test/repositories/ivysettings.xml"));
-        ivy.getSettings().setCacheIvyPattern("[module]/ivy.xml");
-        ivy.getSettings().setCacheArtifactPattern("[artifact].[ext]");
+        DefaultRepositoryCacheManager cacheMgr = 
+            (DefaultRepositoryCacheManager) ivy.getSettings().getDefaultRepositoryCacheManager();
+
+        cacheMgr.setIvyPattern("[module]/ivy.xml");
+        cacheMgr.setArtifactPattern("[artifact].[ext]");
 
         // mod1.1 depends on mod1.2
         ResolveReport report = ivy.resolve(new File(
@@ -474,10 +479,15 @@ public class ResolveTest extends TestCase {
     public void testChangeCacheLayout2() throws Exception {
         Ivy ivy = new Ivy();
         ivy.configure(new File("test/repositories/ivysettings.xml"));
-        ivy.getSettings().setRepositoryCacheRoot("repository");
-        ivy.getSettings().setResolutionCacheRoot("workspace");
-        ivy.getSettings().setCacheIvyPattern("[module]/ivy.xml");
-        ivy.getSettings().setCacheArtifactPattern("[artifact].[ext]");
+        ivy.getSettings().setDefaultRepositoryCacheBasedir(
+            new File(ivy.getSettings().getDefaultCache(), "repository").getAbsolutePath());
+        ivy.getSettings().setDefaultResolutionCacheBasedir(
+            new File(ivy.getSettings().getDefaultCache(), "workspace").getAbsolutePath());
+        DefaultRepositoryCacheManager cacheMgr = 
+            (DefaultRepositoryCacheManager) ivy.getSettings().getDefaultRepositoryCacheManager();
+
+        cacheMgr.setIvyPattern("[module]/ivy.xml");
+        cacheMgr.setArtifactPattern("[artifact].[ext]");
 
         // mod1.1 depends on mod1.2
         ResolveReport report = ivy.resolve(new File(

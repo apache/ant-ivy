@@ -32,10 +32,10 @@ import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.Delete;
 
 /**
- * @see CacheManager
+ * @see DefaultResolutionCacheManager
  */
-public class CacheManagerTest extends TestCase {
-    private CacheManager cacheManager;
+public class DefaultRepositoryCacheManagerTest extends TestCase {
+    private DefaultRepositoryCacheManager cacheManager;
 
     private Artifact artifact;
 
@@ -47,7 +47,9 @@ public class CacheManagerTest extends TestCase {
         ivy.configureDefault();
         IvySettings settings = ivy.getSettings();
         f.delete(); // we want to use the file as a directory, so we delete the file itself
-        cacheManager = new CacheManager(settings, f);
+        cacheManager = new DefaultRepositoryCacheManager();
+        cacheManager.setSettings(settings);
+        cacheManager.setBasedir(f);
 
         artifact = createArtifact("org", "module", "rev", "name", "type", "ext");
         origin = new ArtifactOrigin(true, "/some/where");
@@ -58,7 +60,6 @@ public class CacheManagerTest extends TestCase {
         Delete del = new Delete();
         del.setProject(new Project());
         del.setDir(cacheManager.getRepositoryCacheRoot());
-        del.setDir(cacheManager.getResolutionCacheRoot());
         del.execute();
     }
 

@@ -27,7 +27,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.ivy.core.cache.CacheManager;
+import org.apache.ivy.core.cache.DefaultResolutionCacheManager;
 import org.apache.ivy.core.deliver.DeliverOptions;
 import org.apache.ivy.core.deliver.PublishingDependencyRevisionResolver;
 import org.apache.ivy.core.module.descriptor.Artifact;
@@ -138,11 +138,6 @@ public class Ivy14 {
 
     public ArtifactDownloadReport download(Artifact artifact, File cache, boolean useOrigin) {
         return ivy.getResolveEngine().download(artifact, useOrigin);
-    }
-
-    public void downloadArtifacts(ResolveReport report, CacheManager cacheManager,
-            boolean useOrigin, Filter artifactFilter) {
-        ivy.getResolveEngine().downloadArtifacts(report, useOrigin, artifactFilter);
     }
 
     public ResolvedModuleRevision findModule(ModuleRevisionId id) {

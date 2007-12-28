@@ -26,7 +26,7 @@ import junit.framework.TestCase;
 
 import org.apache.ivy.Ivy;
 import org.apache.ivy.core.IvyPatternHelper;
-import org.apache.ivy.core.cache.CacheManager;
+import org.apache.ivy.core.cache.DefaultResolutionCacheManager;
 import org.apache.ivy.core.event.IvyEvent;
 import org.apache.ivy.core.event.IvyListener;
 import org.apache.ivy.core.event.retrieve.EndRetrieveEvent;

@@ -78,6 +78,8 @@ public abstract class AbstractResolver implements DependencyResolver, HasLatestS
 
     private String namespaceName;
     
+    private String cacheManagerName;
+    
     private RepositoryCacheManager repositoryCacheManager;
 
     public ResolverSettings getSettings() {
@@ -159,6 +161,7 @@ public abstract class AbstractResolver implements DependencyResolver, HasLatestS
         Message.verbose("\t" + getName() + " [" + getTypeName() + "]");
         Message.debug("\t\tchangingPattern: " + getChangingPattern());
         Message.debug("\t\tchangingMatcher: " + getChangingMatcherName());
+        Message.debug("\t\tcache: " + cacheManagerName);
     }
 
     public String getTypeName() {
@@ -306,13 +309,21 @@ public abstract class AbstractResolver implements DependencyResolver, HasLatestS
     
     public RepositoryCacheManager getRepositoryCacheManager() {
         if (repositoryCacheManager == null) {
-            repositoryCacheManager = settings.getDefaultRepositoryCacheManager();
+            if (cacheManagerName == null) {
+                repositoryCacheManager = settings.getDefaultRepositoryCacheManager();
+            } else {
+                repositoryCacheManager = settings.getRepositoryCacheManager(cacheManagerName);
+            }
         }
         return repositoryCacheManager;
     }
     
     public void setRepositoryCacheManager(RepositoryCacheManager repositoryCacheManager) {
         this.repositoryCacheManager = repositoryCacheManager;
+    }
+    
+    public void setCache(String cacheName) {
+        cacheManagerName = cacheName;
     }
     
     public void abortPublishTransaction() throws IOException {

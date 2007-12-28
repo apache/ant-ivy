@@ -18,6 +18,7 @@
 package org.apache.ivy.plugins.parser;
 
 import org.apache.ivy.core.RelativeUrlResolver;
+import org.apache.ivy.core.cache.ResolutionCacheManager;
 import org.apache.ivy.core.module.id.ModuleId;
 import org.apache.ivy.core.module.status.StatusManager;
 import org.apache.ivy.plugins.conflict.ConflictManager;
@@ -28,6 +29,8 @@ import org.apache.ivy.plugins.resolver.DependencyResolver;
 public interface ParserSettings {
 
     String substitute(String value);
+    
+    ResolutionCacheManager getResolutionCacheManager();
 
     ConflictManager getConflictManager(String name);
 

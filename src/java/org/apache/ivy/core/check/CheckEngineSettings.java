@@ -17,11 +17,11 @@
  */
 package org.apache.ivy.core.check;
 
-import org.apache.ivy.core.cache.CacheSettings;
 import org.apache.ivy.core.module.id.ModuleId;
+import org.apache.ivy.plugins.parser.ParserSettings;
 import org.apache.ivy.plugins.resolver.DependencyResolver;
 
-public interface CheckEngineSettings extends CacheSettings {
+public interface CheckEngineSettings extends ParserSettings {
 
     boolean doValidate();
 

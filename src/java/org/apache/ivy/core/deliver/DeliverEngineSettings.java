@@ -17,9 +17,9 @@
  */
 package org.apache.ivy.core.deliver;
 
-import org.apache.ivy.core.cache.CacheSettings;
+import org.apache.ivy.plugins.parser.ParserSettings;
 
-public interface DeliverEngineSettings extends CacheSettings {
+public interface DeliverEngineSettings extends ParserSettings {
 
     String substitute(String destIvyPattern);
 

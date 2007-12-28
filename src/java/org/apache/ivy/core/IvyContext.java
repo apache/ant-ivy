@@ -25,7 +25,6 @@ import java.util.Map;
 import java.util.Stack;
 
 import org.apache.ivy.Ivy;
-import org.apache.ivy.core.cache.CacheManager;
 import org.apache.ivy.core.event.EventManager;
 import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
 import org.apache.ivy.core.resolve.ResolveData;
@@ -48,8 +47,6 @@ public class IvyContext {
 
     private WeakReference/*<Ivy>*/ ivy = new WeakReference(null);
 
-    private CacheManager cacheManager;
-
     private Map contextMap = new HashMap();
 
     private Thread operatingThread;
@@ -64,7 +61,6 @@ public class IvyContext {
     public IvyContext(IvyContext ctx) {
         defaultIvy = ctx.defaultIvy;
         ivy = ctx.ivy;
-        cacheManager = ctx.cacheManager;
         contextMap = new HashMap(ctx.contextMap);
         operatingThread = ctx.operatingThread;
         resolveData = ctx.resolveData;

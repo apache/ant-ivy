@@ -40,8 +40,8 @@ import org.apache.ivy.Ivy;
 import org.apache.ivy.core.IvyPatternHelper;
 import org.apache.ivy.core.NormalRelativeUrlResolver;
 import org.apache.ivy.core.RelativeUrlResolver;
-import org.apache.ivy.core.cache.CacheManager;
-import org.apache.ivy.core.cache.CacheSettings;
+import org.apache.ivy.core.cache.DefaultRepositoryCacheManager;
+import org.apache.ivy.core.cache.DefaultResolutionCacheManager;
 import org.apache.ivy.core.cache.RepositoryCacheManager;
 import org.apache.ivy.core.cache.ResolutionCacheManager;
 import org.apache.ivy.core.check.CheckEngineSettings;
@@ -99,24 +99,9 @@ import org.apache.ivy.util.Message;
 import org.apache.ivy.util.url.URLHandlerRegistry;
 
 public class IvySettings implements SortEngineSettings, PublishEngineSettings, ParserSettings,
-        DeliverEngineSettings, CacheSettings, CheckEngineSettings, InstallEngineSettings, 
+        DeliverEngineSettings, CheckEngineSettings, InstallEngineSettings, 
         ResolverSettings, ResolveEngineSettings, RetrieveEngineSettings, 
         RepositoryManagementEngineSettings {
-    private static final String DEFAULT_CACHE_ARTIFACT_PATTERN =
-        "[organisation]/[module]/[type]s/[artifact]-[revision](.[ext])";
-
-    private static final String DEFAULT_CACHE_DATA_FILE_PATTERN = 
-        "[organisation]/[module]/ivydata-[revision].properties";
-
-    private static final String DEFAULT_CACHE_IVY_PATTERN = 
-        "[organisation]/[module]/ivy-[revision].xml";
-
-    private static final String DEFAULT_CACHE_RESOLVED_IVY_PATTERN = 
-        "resolved-[organisation]-[module]-[revision].xml";
-
-    private static final String DEFAULT_CACHE_RESOLVED_IVY_PROPERTIES_PATTERN = 
-        "resolved-[organisation]-[module]-[revision].properties";
-
     private static final long INTERUPT_TIMEOUT = 2000;
 
     private Map typeDefs = new HashMap();
@@ -162,21 +147,13 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
     // Map (String name -> CircularDependencyStrategy)
     private Map circularDependencyStrategies = new HashMap(); 
 
+    // Map (String name -> RepositoryCacheManager)
+    private Map repositoryCacheManagers = new HashMap(); 
+
     // List (Trigger)
     private List triggers = new ArrayList(); 
 
     private IvyVariableContainer variableContainer = new IvyVariableContainerImpl();
-
-    private String cacheIvyPattern = DEFAULT_CACHE_IVY_PATTERN;
-
-    private String cacheResolvedIvyPattern = DEFAULT_CACHE_RESOLVED_IVY_PATTERN;
-
-    private String cacheResolvedIvyPropertiesPattern = 
-        DEFAULT_CACHE_RESOLVED_IVY_PROPERTIES_PATTERN;
-
-    private String cacheArtifactPattern = DEFAULT_CACHE_ARTIFACT_PATTERN;
-
-    private String cacheDataFilePattern = DEFAULT_CACHE_DATA_FILE_PATTERN;
 
     private boolean validate = true;
 
@@ -187,6 +164,10 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
     private ConflictManager defaultConflictManager = null;
 
     private CircularDependencyStrategy circularDependencyStrategy = null;
+
+    private RepositoryCacheManager defaultRepositoryCacheManager = null;
+
+    private ResolutionCacheManager resolutionCacheManager = null;
 
     private List listingIgnore = new ArrayList();
 
@@ -211,6 +192,10 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
     private Boolean debugLocking;
 
     private Boolean dumpMemoryUsage;
+
+    private String defaultCacheIvyPattern;
+
+    private String defaultCacheArtifactPattern;
 
     public IvySettings() {
         this(new IvyVariableContainerImpl());
@@ -507,8 +492,6 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
         Message.debug("\tcircular dependency strategy: " + getCircularDependencyStrategy());
         Message.debug("\tvalidate: " + doValidate());
         Message.debug("\tcheck up2date: " + isCheckUpToDate());
-        Message.debug("\tcache ivy pattern: " + getCacheIvyPattern());
-        Message.debug("\tcache artifact pattern: " + getCacheArtifactPattern());
 
         if (!classpathURLs.isEmpty()) {
             Message.verbose("\t-- " + classpathURLs.size() + " custom classpath urls:");
@@ -754,29 +737,29 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
         return defaultCache;
     }
     
-    public void setRepositoryCacheRoot(String repositoryCacheRoot) {
+    public void setDefaultRepositoryCacheBasedir(String repositoryCacheRoot) {
         setVariable("ivy.cache.repository", repositoryCacheRoot, true);
     }
     
-    public void setResolutionCacheRoot(String resolutionCacheRoot) {
+    public void setDefaultResolutionCacheBasedir(String resolutionCacheRoot) {
         setVariable("ivy.cache.resolution", resolutionCacheRoot, true);
     }
     
-    public File getRepositoryCacheRoot(File cache) {
+    public File getDefaultRepositoryCacheBasedir() {
         String repositoryCacheRoot = getVariable("ivy.cache.repository");
         if (repositoryCacheRoot != null) {
-            return new File(cache, repositoryCacheRoot);
+            return new File(repositoryCacheRoot);
         } else {
-            return cache;
+            return getDefaultCache();
         }
     }
 
-    public File getResolutionCacheRoot(File cache) {
+    public File getDefaultResolutionCacheBasedir() {
         String resolutionCacheRoot = getVariable("ivy.cache.resolution");
         if (resolutionCacheRoot != null) {
-            return new File(cache, resolutionCacheRoot);
+            return new File(resolutionCacheRoot);
         } else {
-            return cache;
+            return getDefaultCache();
         }
     }
 
@@ -947,6 +930,24 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
         matchers.put(m.getName(), m);
     }
 
+    public void addConfigured(RepositoryCacheManager c) {
+        addRepositoryCacheManager(c);
+    }
+
+    public RepositoryCacheManager getRepositoryCacheManager(String name) {
+        return (RepositoryCacheManager) repositoryCacheManagers.get(name);
+    }
+
+    public void addRepositoryCacheManager(RepositoryCacheManager c) {
+        init(c);
+        repositoryCacheManagers.put(c.getName(), c);
+    }
+
+    public RepositoryCacheManager[] getRepositoryCacheManagers() {
+        return (RepositoryCacheManager[]) repositoryCacheManagers.values().toArray(
+            new RepositoryCacheManager[repositoryCacheManagers.size()]);
+    }
+
     public void addConfigured(ReportOutputter outputter) {
         addReportOutputter(outputter);
     }
@@ -1075,35 +1076,7 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
     public void setCheckUpToDate(boolean checkUpToDate) {
         this.checkUpToDate = checkUpToDate;
     }
-
-    public ResolutionCacheManager getResolutionCacheManager() {
-        return CacheManager.getInstance(this, getDefaultCache());
-    }
     
-    public RepositoryCacheManager getDefaultRepositoryCacheManager() {
-        return CacheManager.getInstance(this, getDefaultCache());
-    }
-
-    public String getCacheArtifactPattern() {
-        return cacheArtifactPattern;
-    }
-
-    public void setCacheArtifactPattern(String cacheArtifactPattern) {
-        this.cacheArtifactPattern = cacheArtifactPattern;
-    }
-
-    public String getCacheIvyPattern() {
-        return cacheIvyPattern;
-    }
-
-    public void setCacheIvyPattern(String cacheIvyPattern) {
-        this.cacheIvyPattern = cacheIvyPattern;
-    }
-
-    public String getCacheDataFilePattern() {
-        return cacheDataFilePattern;
-    }
-
     public boolean doValidate() {
         return validate;
     }
@@ -1147,6 +1120,32 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
 
     public void setDefaultLockStrategy(LockStrategy defaultLockStrategy) {
         this.defaultLockStrategy = defaultLockStrategy;
+    }
+
+    public RepositoryCacheManager getDefaultRepositoryCacheManager() {
+        if (defaultRepositoryCacheManager == null) {
+            defaultRepositoryCacheManager 
+                = new DefaultRepositoryCacheManager(
+                    "default-cache", this, getDefaultRepositoryCacheBasedir());
+            addRepositoryCacheManager(defaultRepositoryCacheManager);
+        }
+        return defaultRepositoryCacheManager;
+    }
+
+    public void setDefaultRepositoryCacheManager(RepositoryCacheManager cache) {
+        this.defaultRepositoryCacheManager = cache;
+    }
+
+    public ResolutionCacheManager getResolutionCacheManager() {
+        if (resolutionCacheManager == null) {
+            resolutionCacheManager 
+                = new DefaultResolutionCacheManager(getDefaultResolutionCacheBasedir());
+        }
+        return resolutionCacheManager;
+    }
+    
+    public void setResolutionCacheManager(ResolutionCacheManager resolutionCacheManager) {
+        this.resolutionCacheManager = resolutionCacheManager;
     }
 
     public void addTrigger(Trigger trigger) {
@@ -1264,14 +1263,6 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
         }
     }
 
-    public String getCacheResolvedIvyPattern() {
-        return cacheResolvedIvyPattern;
-    }
-
-    public String getCacheResolvedIvyPropertiesPattern() {
-        return cacheResolvedIvyPropertiesPattern;
-    }
-
     public long getInterruptTimeout() {
         return INTERUPT_TIMEOUT;
     }
@@ -1304,5 +1295,21 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
     
     public RelativeUrlResolver getRelativeUrlResolver() {
         return new NormalRelativeUrlResolver();
+    }
+
+    public void setDefaultCacheIvyPattern(String defaultCacheIvyPattern) {
+        this.defaultCacheIvyPattern = defaultCacheIvyPattern;
+    }
+    
+    public String getDefaultCacheIvyPattern() {
+        return defaultCacheIvyPattern;
+    }
+
+    public void setDefaultCacheArtifactPattern(String defaultCacheArtifactPattern) {
+        this.defaultCacheArtifactPattern = defaultCacheArtifactPattern;
+    }
+    
+    public String getDefaultCacheArtifactPattern() {
+        return defaultCacheArtifactPattern;
     }
 }

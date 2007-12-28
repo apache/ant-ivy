@@ -31,34 +31,12 @@ import org.apache.ivy.plugins.resolver.DependencyResolver;
 import org.apache.ivy.plugins.resolver.util.ResolvedResource;
 
 public interface RepositoryCacheManager {
-    public abstract File getIvyFileInCache(ModuleRevisionId mrid);
 
     /**
-     * Returns a File object pointing to where the artifact can be found on the local file system.
-     * This is usually in the cache, but it can be directly in the repository if it is local and if
-     * the resolve has been done with useOrigin = true
+     * Returns the name of the repository cache manager.
+     * @return the name of the repository cache manager.
      */
-    public abstract File getArchiveFileInCache(Artifact artifact);
-
-    /**
-     * Returns a File object pointing to where the artifact can be found on the local file system.
-     * This is usually in the cache, but it can be directly in the repository if it is local and if
-     * the resolve has been done with useOrigin = true
-     */
-    public abstract File getArchiveFileInCache(Artifact artifact, ArtifactOrigin origin);
-
-    /**
-     * Returns a File object pointing to where the artifact can be found on the local file system,
-     * using or not the original location depending on the availability of origin information
-     * provided as parameter and the setting of useOrigin. If useOrigin is false, this method will
-     * always return the file in the cache.
-     */
-    public abstract File getArchiveFileInCache(Artifact artifact, ArtifactOrigin origin,
-            boolean useOrigin);
-
-    public abstract String getArchivePathInCache(Artifact artifact);
-
-    public abstract String getArchivePathInCache(Artifact artifact, ArtifactOrigin origin);
+    public abstract String getName();
 
     /**
      * Saves the information of which resolvers were used to resolve a module (both for metadata and
@@ -130,4 +108,39 @@ public interface RepositoryCacheManager {
             DependencyResolver resolver, ResolvedResource orginalMetadataRef, 
             Artifact requestedMetadataArtifact, 
             ResolvedModuleRevision rmr, ModuleDescriptorWriter writer);
+
+    
+    
+    /* 
+     * TODO: remove these methods from here 
+     * (require some clients change + tests rely on DefaultRepositoryCacheManager)
+     */ 
+    public abstract File getIvyFileInCache(ModuleRevisionId mrid);
+
+    /**
+     * Returns a File object pointing to where the artifact can be found on the local file system.
+     * This is usually in the cache, but it can be directly in the repository if it is local and if
+     * the resolve has been done with useOrigin = true
+     */
+    public abstract File getArchiveFileInCache(Artifact artifact);
+
+    /**
+     * Returns a File object pointing to where the artifact can be found on the local file system.
+     * This is usually in the cache, but it can be directly in the repository if it is local and if
+     * the resolve has been done with useOrigin = true
+     */
+    public abstract File getArchiveFileInCache(Artifact artifact, ArtifactOrigin origin);
+
+    /**
+     * Returns a File object pointing to where the artifact can be found on the local file system,
+     * using or not the original location depending on the availability of origin information
+     * provided as parameter and the setting of useOrigin. If useOrigin is false, this method will
+     * always return the file in the cache.
+     */
+    public abstract File getArchiveFileInCache(Artifact artifact, ArtifactOrigin origin,
+            boolean useOrigin);
+
+    public abstract String getArchivePathInCache(Artifact artifact);
+
+    public abstract String getArchivePathInCache(Artifact artifact, ArtifactOrigin origin);
 }

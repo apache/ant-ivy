@@ -59,6 +59,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 =====================================
 - NEW: Introduce RepositoryManagementEngine (IVY-665 - not completed yet)
 
+- IMPROVEMENT: Flexible cache management (IVY-399 - not completed yet)
 - IMPROVEMENT: Decrease memory footprint (IVY-662)
 
 - FIX: Ivy doesn't respect the order of the ivy patterns as defined in the settings (IVY-676)

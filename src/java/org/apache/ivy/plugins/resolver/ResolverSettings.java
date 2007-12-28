@@ -19,16 +19,23 @@ package org.apache.ivy.plugins.resolver;
 
 import java.util.Collection;
 
-import org.apache.ivy.core.cache.CacheSettings;
+import org.apache.ivy.core.cache.RepositoryCacheManager;
 import org.apache.ivy.plugins.latest.LatestStrategy;
 import org.apache.ivy.plugins.namespace.Namespace;
+import org.apache.ivy.plugins.parser.ParserSettings;
 import org.apache.ivy.plugins.version.VersionMatcher;
 
-public interface ResolverSettings extends CacheSettings {
+public interface ResolverSettings extends ParserSettings {
 
     LatestStrategy getLatestStrategy(String latestStrategyName);
 
     LatestStrategy getDefaultLatestStrategy();
+    
+    RepositoryCacheManager getRepositoryCacheManager(String name);
+    
+    RepositoryCacheManager getDefaultRepositoryCacheManager();
+    
+    RepositoryCacheManager[] getRepositoryCacheManagers();
 
     Namespace getNamespace(String namespaceName);
 

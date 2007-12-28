@@ -43,7 +43,6 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
-import org.apache.ivy.core.cache.CacheManager;
 import org.apache.ivy.core.cache.ResolutionCacheManager;
 import org.apache.ivy.core.deliver.DeliverOptions;
 import org.apache.ivy.core.module.descriptor.DefaultDependencyDescriptor;
@@ -189,7 +188,6 @@ public final class Main {
             } else if (!cache.isDirectory()) {
                 error(options, cache + " is not a directory");
             }
-            CacheManager cacheManager = CacheManager.getInstance(settings, cache);
 
             String[] confs;
             if (line.hasOption("confs")) {

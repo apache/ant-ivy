@@ -22,7 +22,7 @@ import java.io.File;
 import junit.framework.TestCase;
 
 import org.apache.ivy.Ivy;
-import org.apache.ivy.core.cache.CacheManager;
+import org.apache.ivy.core.cache.DefaultResolutionCacheManager;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.report.ResolveReport;
 import org.apache.ivy.core.resolve.ResolveOptions;
