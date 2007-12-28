@@ -154,7 +154,7 @@ public class XmlReportParser {
                             madr.setDownloadDetails(attributes.getValue("details"));
                             madr.setSize(Long.parseLong(attributes.getValue("size")));
                             madr.setDownloadTimeMillis(Long.parseLong(attributes.getValue("time")));
-                            madr.setSearched(Boolean.parseBoolean(attributes.getValue("searched")));
+                            madr.setSearched(parseBoolean(attributes.getValue("searched")));
                             if (attributes.getValue("location") != null) {
                                 madr.setLocalFile(new File(attributes.getValue("location")));
                             }
@@ -169,8 +169,7 @@ public class XmlReportParser {
                                 } else {
                                     madr.setArtifactOrigin(
                                         new ArtifactOrigin(
-                                            Boolean.parseBoolean(
-                                                attributes.getValue("origin-is-local")),
+                                            parseBoolean(attributes.getValue("origin-is-local")),
                                             attributes.getValue("origin-location")));
                                 }
                             }
@@ -208,7 +207,7 @@ public class XmlReportParser {
                         } else {
                             aReport.setArtifactOrigin(
                                 new ArtifactOrigin(
-                                    Boolean.parseBoolean(attributes.getValue("is-local")),
+                                    parseBoolean(attributes.getValue("is-local")),
                                     attributes.getValue("location")));
                         }
                     } else if ("info".equals(qName)) {
@@ -254,6 +253,10 @@ public class XmlReportParser {
                             .toArray()[revisionsMap.size() - 1]).intValue();
                 }
             });
+        }
+        
+        private static boolean parseBoolean(String str) {
+            return (str != null) && str.equalsIgnoreCase("true");
         }
 
         public List getArtifacts() {
