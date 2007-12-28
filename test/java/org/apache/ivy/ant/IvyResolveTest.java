@@ -23,6 +23,7 @@ import junit.framework.TestCase;
 
 import org.apache.ivy.Ivy;
 import org.apache.ivy.TestHelper;
+import org.apache.ivy.core.cache.RepositoryCacheManager;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
@@ -37,10 +38,10 @@ public class IvyResolveTest extends TestCase {
         createCache();
         Project project = new Project();
         project.setProperty("ivy.settings.file", "test/repositories/ivysettings.xml");
+        project.setProperty("ivy.cache.dir", cache.getAbsolutePath());
 
         resolve = new IvyResolve();
         resolve.setProject(project);
-        resolve.setCache(cache);
     }
 
     private void createCache() {
@@ -89,16 +90,16 @@ public class IvyResolveTest extends TestCase {
 
     private File getArchiveFileInCache(String organisation, String module, String revision,
             String artifact, String type, String ext) {
-        return TestHelper.getArchiveFileInCache(getIvy(), cache, organisation, module, revision,
+        return TestHelper.getArchiveFileInCache(getIvy(), organisation, module, revision,
             artifact, type, ext);
     }
 
     private File getIvyFileInCache(ModuleRevisionId id) {
-        return getIvy().getCacheManager(cache).getIvyFileInCache(id);
+        return TestHelper.getRepositoryCacheManager(getIvy(), id).getIvyFileInCache(id);
     }
 
     private File getResolvedIvyFileInCache(ModuleRevisionId id) {
-        return getIvy().getCacheManager(cache).getResolvedIvyFileInCache(id);
+        return getIvy().getResolutionCacheManager().getResolvedIvyFileInCache(id);
     }
 
     public void testInline() throws Exception {
@@ -218,7 +219,7 @@ public class IvyResolveTest extends TestCase {
 
         assertTrue(getResolvedIvyFileInCache(
             ModuleRevisionId.newInstance("apache", "resolve-simple", "1.0")).exists());
-        assertTrue(getIvy().getCacheManager(cache).getConfigurationResolveReportInCache(
+        assertTrue(getIvy().getResolutionCacheManager().getConfigurationResolveReportInCache(
             "testWithResolveId", "default").exists());
 
         // dependencies

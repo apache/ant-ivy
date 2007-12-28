@@ -82,7 +82,6 @@ public class IvyTest extends TestCase {
     }
 
     private ResolveOptions getResolveOptions(IvySettings settings, String[] confs) {
-        return new ResolveOptions().setConfs(confs).setCache(
-            CacheManager.getInstance(settings, settings.getDefaultCache()));
+        return new ResolveOptions().setConfs(confs);
     }
 }

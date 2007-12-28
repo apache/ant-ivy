@@ -49,8 +49,6 @@ public class IvyPublish extends IvyTask {
 
     private String pubRevision;
 
-    private File cache;
-
     private String srcivypattern;
 
     private String status;
@@ -83,12 +81,8 @@ public class IvyPublish extends IvyTask {
 
     private Collection artifacts = new ArrayList();
 
-    public File getCache() {
-        return cache;
-    }
-
     public void setCache(File cache) {
-        this.cache = cache;
+        cacheAttributeNotSupported();
     }
 
     public String getSrcivypattern() {
@@ -214,9 +208,6 @@ public class IvyPublish extends IvyTask {
         module = getProperty(module, settings, "ivy.module");
         revision = getProperty(revision, settings, "ivy.revision");
         pubRevision = getProperty(pubRevision, settings, "ivy.deliver.revision");
-        if (cache == null) {
-            cache = settings.getDefaultCache();
-        }
         if (artifactspattern.isEmpty()) {
             String p = getProperty(null, settings, "ivy.publish.src.artifacts.pattern");
             if (p != null) {
@@ -279,7 +270,6 @@ public class IvyPublish extends IvyTask {
                 deliver.setSettingsRef(getSettingsRef());
                 deliver.setTaskName(getTaskName());
                 deliver.setProject(getProject());
-                deliver.setCache(getCache());
                 deliver.setDeliverpattern(getSrcivypattern());
                 deliver.setDelivertarget(deliverTarget);
                 deliver.setDeliveryList(deliveryList);
@@ -299,7 +289,6 @@ public class IvyPublish extends IvyTask {
             Collection missing = ivy.publish(mrid, artifactspattern, publishResolverName,
                 new PublishOptions()
                     .setPubrevision(getPubrevision())
-                    .setCache(ivy.getCacheManager(cache))
                     .setSrcIvyPattern(publishivy ? srcivypattern : null)
                     .setStatus(getStatus())
                     .setPubdate(pubdate)

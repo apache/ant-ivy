@@ -367,18 +367,6 @@ public class IvyContext {
         return getIvy().getEventManager();
     }
     
-    public void setCacheManager(CacheManager cacheManager) {
-        this.cacheManager = cacheManager;
-    }
-
-    public CacheManager getCacheManager() {
-        CacheManager result = cacheManager;
-        if (result == null) {
-            result = CacheManager.getInstance(getSettings());
-        }
-        return result;
-    }
-
     public void checkInterrupted() {
         getIvy().checkInterrupted();
     }

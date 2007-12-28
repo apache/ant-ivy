@@ -20,9 +20,6 @@ package org.apache.ivy.plugins.resolver;
 import java.io.File;
 import java.util.List;
 
-import junit.framework.TestCase;
-
-import org.apache.ivy.core.cache.CacheManager;
 import org.apache.ivy.core.event.EventManager;
 import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.DefaultArtifact;
@@ -31,14 +28,10 @@ import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.report.ArtifactDownloadReport;
 import org.apache.ivy.core.report.DownloadReport;
 import org.apache.ivy.core.report.DownloadStatus;
-import org.apache.ivy.core.resolve.DownloadOptions;
 import org.apache.ivy.core.resolve.ResolveData;
 import org.apache.ivy.core.resolve.ResolveEngine;
 import org.apache.ivy.core.resolve.ResolveOptions;
 import org.apache.ivy.core.resolve.ResolvedModuleRevision;
-import org.apache.ivy.core.search.ModuleEntry;
-import org.apache.ivy.core.search.OrganisationEntry;
-import org.apache.ivy.core.search.RevisionEntry;
 import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.core.sort.SortEngine;
 import org.apache.tools.ant.Project;
@@ -47,7 +40,7 @@ import org.apache.tools.ant.taskdefs.Delete;
 /**
  * 
  */
-public class IvyRepResolverTest extends TestCase {
+public class IvyRepResolverTest extends AbstractDependencyResolverTest {
     private IvySettings _settings;
 
     private ResolveEngine _engine;
@@ -60,8 +53,7 @@ public class IvyRepResolverTest extends TestCase {
         _settings = new IvySettings();
         _engine = new ResolveEngine(_settings, new EventManager(), new SortEngine(_settings));
         _cache = new File("build/cache");
-        _data = new ResolveData(_engine, new ResolveOptions().setCache(CacheManager.getInstance(
-            _settings, _cache)));
+        _data = new ResolveData(_engine, new ResolveOptions());
         _cache.mkdirs();
         _settings.setDefaultCache(_cache);
     }
@@ -131,8 +123,7 @@ public class IvyRepResolverTest extends TestCase {
 
         DefaultArtifact artifact = new DefaultArtifact(mrid, rmr.getPublicationDate(),
             "mod1.1", "jar", "jar");
-        DownloadReport report = resolver.download(new Artifact[] {artifact}, new DownloadOptions(
-            _settings, _cache));
+        DownloadReport report = resolver.download(new Artifact[] {artifact}, downloadOptions());
         assertNotNull(report);
 
         assertEquals(1, report.getArtifactsReports().length);
@@ -144,8 +135,7 @@ public class IvyRepResolverTest extends TestCase {
         assertEquals(DownloadStatus.SUCCESSFUL, ar.getDownloadStatus());
 
         // test to ask to download again, should use cache
-        report = resolver.download(new Artifact[] {artifact},
-            new DownloadOptions(_settings, _cache));
+        report = resolver.download(new Artifact[] {artifact}, downloadOptions());
         assertNotNull(report);
 
         assertEquals(1, report.getArtifactsReports().length);

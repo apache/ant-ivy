@@ -31,8 +31,6 @@ import org.apache.ivy.plugins.resolver.DependencyResolver;
 import org.apache.ivy.plugins.resolver.util.ResolvedResource;
 
 public interface RepositoryCacheManager {
-    public abstract File getRepositoryCacheRoot();
-    
     public abstract File getIvyFileInCache(ModuleRevisionId mrid);
 
     /**

@@ -230,7 +230,13 @@ public class XmlReportWriter {
             }
             out.print(" status=\"" 
                 + XMLHelper.escape(adr[i].getDownloadStatus().toString()) + "\"");
+            out.print(" details=\"" + XMLHelper.escape(adr[i].getDownloadDetails()) + "\"");
             out.print(" size=\"" + adr[i].getSize() + "\"");
+            out.print(" time=\"" + adr[i].getDownloadTimeMillis() + "\"");
+            if (adr[i].getLocalFile() != null) {
+                out.print(" location=\"" 
+                    + XMLHelper.escape(adr[i].getLocalFile().getAbsolutePath()) + "\"");
+            }
 
             ArtifactOrigin origin = adr[i].getArtifactOrigin();
             if (origin != null) {

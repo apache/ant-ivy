@@ -21,9 +21,6 @@ import java.io.File;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
-import junit.framework.TestCase;
-
-import org.apache.ivy.core.cache.CacheManager;
 import org.apache.ivy.core.event.EventManager;
 import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.DefaultArtifact;
@@ -48,7 +45,7 @@ import org.apache.tools.ant.taskdefs.Delete;
 /**
  * Tests URLResolver. Http tests are based upon ibiblio site.
  */
-public class URLResolverTest extends TestCase {
+public class URLResolverTest extends AbstractDependencyResolverTest {
     // remote.test
     private IvySettings _settings;
 
@@ -62,8 +59,7 @@ public class URLResolverTest extends TestCase {
         _settings = new IvySettings();
         _engine = new ResolveEngine(_settings, new EventManager(), new SortEngine(_settings));
         _cache = new File("build/cache");
-        _data = new ResolveData(_engine, new ResolveOptions().setCache(CacheManager.getInstance(
-            _settings, _cache)));
+        _data = new ResolveData(_engine, new ResolveOptions());
         _cache.mkdirs();
         _settings.setDefaultCache(_cache);
     }
@@ -97,8 +93,7 @@ public class URLResolverTest extends TestCase {
 
         // test to ask to download
         DefaultArtifact artifact = new DefaultArtifact(mrid, pubdate, "mod1.1", "jar", "jar");
-        DownloadReport report = resolver.download(new Artifact[] {artifact}, new DownloadOptions(
-                _settings, _cache));
+        DownloadReport report = resolver.download(new Artifact[] {artifact}, downloadOptions());
         assertNotNull(report);
 
         assertEquals(1, report.getArtifactsReports().length);
@@ -110,8 +105,7 @@ public class URLResolverTest extends TestCase {
         assertEquals(DownloadStatus.SUCCESSFUL, ar.getDownloadStatus());
 
         // test to ask to download again, should use cache
-        report = resolver.download(new Artifact[] {artifact},
-            new DownloadOptions(_settings, _cache));
+        report = resolver.download(new Artifact[] {artifact}, downloadOptions());
         assertNotNull(report);
 
         assertEquals(1, report.getArtifactsReports().length);
@@ -165,8 +159,7 @@ public class URLResolverTest extends TestCase {
 
         DefaultArtifact artifact = new DefaultArtifact(mrid, rmr.getPublicationDate(),
                 "commons-fileupload", "jar", "jar");
-        DownloadReport report = resolver.download(new Artifact[] {artifact}, new DownloadOptions(
-                _settings, _cache));
+        DownloadReport report = resolver.download(new Artifact[] {artifact}, downloadOptions());
         assertNotNull(report);
 
         assertEquals(1, report.getArtifactsReports().length);
@@ -178,8 +171,7 @@ public class URLResolverTest extends TestCase {
         assertEquals(DownloadStatus.SUCCESSFUL, ar.getDownloadStatus());
 
         // test to ask to download again, should use cache
-        report = resolver.download(new Artifact[] {artifact},
-            new DownloadOptions(_settings, _cache));
+        report = resolver.download(new Artifact[] {artifact}, downloadOptions());
         assertNotNull(report);
 
         assertEquals(1, report.getArtifactsReports().length);
@@ -218,7 +210,7 @@ public class URLResolverTest extends TestCase {
         DefaultArtifact trace = new DefaultArtifact(mrid, rmr.getPublicationDate(),
                 "nanning-trace", "jar", "jar");
         DownloadReport report = resolver.download(new Artifact[] {profiler, trace},
-            new DownloadOptions(_settings, _cache));
+            downloadOptions());
         assertNotNull(report);
 
         assertEquals(2, report.getArtifactsReports().length);
@@ -236,8 +228,7 @@ public class URLResolverTest extends TestCase {
         assertEquals(DownloadStatus.SUCCESSFUL, ar.getDownloadStatus());
 
         // test to ask to download again, should use cache
-        report = resolver.download(new Artifact[] {profiler, trace}, new DownloadOptions(_settings,
-                _cache));
+        report = resolver.download(new Artifact[] {profiler, trace}, downloadOptions());
         assertNotNull(report);
 
         assertEquals(2, report.getArtifactsReports().length);
@@ -334,8 +325,8 @@ public class URLResolverTest extends TestCase {
 
         // test to ask to download
         DefaultArtifact artifact = new DefaultArtifact(mrid, pubdate, "mod1.1", "jar", "jar");
-        DownloadReport report = resolver.download(new Artifact[] {artifact}, new DownloadOptions(
-                new CacheManager(_settings, _cache), true));
+        DownloadReport report = resolver.download(new Artifact[] {artifact}, 
+            new DownloadOptions(true));
         assertNotNull(report);
 
         assertEquals(1, report.getArtifactsReports().length);

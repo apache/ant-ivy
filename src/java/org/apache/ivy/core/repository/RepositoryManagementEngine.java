@@ -320,7 +320,7 @@ public class RepositoryManagementEngine {
 
     private ResolveData newResolveData() {
         return new ResolveData(resolveEngine, 
-            new ResolveOptions().setCache(cacheManager).setUseOrigin(true));
+            new ResolveOptions().setUseOrigin(true));
     }
 
     private void ensureAnalyzed() {

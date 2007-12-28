@@ -39,7 +39,7 @@ import org.apache.ivy.core.sort.SortEngine;
 /**
  * Test for DualResolver
  */
-public class DualResolverTest extends TestCase {
+public class DualResolverTest extends AbstractDependencyResolverTest {
     private IvySettings _settings;
 
     private ResolveEngine _engine;
@@ -52,8 +52,7 @@ public class DualResolverTest extends TestCase {
         _settings = new IvySettings();
         _engine = new ResolveEngine(_settings, new EventManager(), new SortEngine(_settings));
         _cache = new File("build/cache");
-        _data = new ResolveData(_engine, new ResolveOptions().setCache(CacheManager.getInstance(
-            _settings, _cache)));
+        _data = new ResolveData(_engine, new ResolveOptions());
         _cache.mkdirs();
         _settings.setDefaultCache(_cache);
     }

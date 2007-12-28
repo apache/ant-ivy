@@ -36,8 +36,6 @@ import java.util.Set;
 
 import org.apache.ivy.Ivy;
 import org.apache.ivy.core.IvyContext;
-import org.apache.ivy.core.cache.CacheManager;
-import org.apache.ivy.core.cache.RepositoryCacheManager;
 import org.apache.ivy.core.cache.ResolutionCacheManager;
 import org.apache.ivy.core.event.EventManager;
 import org.apache.ivy.core.event.download.PrepareDownloadEvent;
@@ -205,14 +203,6 @@ public class ResolveEngine {
             setDictatorResolver(new CacheResolver(settings));
         }
         try {
-            CacheManager cacheManager = options.getCache();
-            if (cacheManager == null) { // ensure that a cache is configured
-                cacheManager = IvyContext.getContext().getCacheManager();
-                options.setCache(cacheManager);
-            } else {
-                IvyContext.getContext().setCacheManager(cacheManager);
-            }
-
             String[] confs = options.getConfs(md);
             options.setConfs(confs);
 
@@ -234,6 +224,7 @@ public class ResolveEngine {
             report.setDependencies(Arrays.asList(dependencies), options.getArtifactFilter());
 
             // produce resolved ivy file and ivy properties in cache
+            ResolutionCacheManager cacheManager = settings.getResolutionCacheManager();
             File ivyFileInCache = cacheManager.getResolvedIvyFileInCache(md
                     .getResolvedModuleRevisionId());
             md.toIvyFile(ivyFileInCache);
@@ -281,8 +272,7 @@ public class ResolveEngine {
             if (options.isDownload()) {
                 Message.verbose(":: downloading artifacts ::");
 
-                downloadArtifacts(report, cacheManager, options.isUseOrigin(), options
-                        .getArtifactFilter());
+                downloadArtifacts(report, options.isUseOrigin(), options.getArtifactFilter());
             }
 
             if (options.isOutputReport()) {
@@ -313,7 +303,7 @@ public class ResolveEngine {
         report.output(settings.getReportOutputters(), cacheMgr);
     }
 
-    public void downloadArtifacts(ResolveReport report, RepositoryCacheManager cacheManager,
+    public void downloadArtifacts(ResolveReport report, 
             boolean useOrigin, Filter artifactFilter) {
         long start = System.currentTimeMillis();
         IvyNode[] dependencies = (IvyNode[]) report.getDependencies().toArray(
@@ -330,8 +320,8 @@ public class ResolveEngine {
                 DependencyResolver resolver = dependencies[i].getModuleRevision()
                         .getArtifactResolver();
                 Artifact[] selectedArtifacts = dependencies[i].getSelectedArtifacts(artifactFilter);
-                DownloadReport dReport = resolver.download(selectedArtifacts, new DownloadOptions(
-                        cacheManager, useOrigin));
+                DownloadReport dReport = resolver.download(selectedArtifacts, 
+                    new DownloadOptions(useOrigin));
                 ArtifactDownloadReport[] adrs = dReport.getArtifactsReports();
                 for (int j = 0; j < adrs.length; j++) {
                     if (adrs[j].getDownloadStatus() == DownloadStatus.FAILED) {
@@ -364,22 +354,23 @@ public class ResolveEngine {
     /**
      * Download an artifact to the cache. Not used internally, useful especially for IDE plugins
      * needing to download artifact one by one (for source or javadoc artifact, for instance).
-     * Downloaded artifact file can be accessed using getArchiveFileInCache method. It is possible
-     * to track the progression of the download using classical ivy progress monitoring feature (see
-     * addTransferListener).
+     * <p>
+     * Downloaded artifact file can be accessed using {@link ArtifactDownloadReport#getLocalFile()}.
+     * </p>
+     * <p>
+     * It is possible to track the progression of the download using classical ivy progress
+     * monitoring feature (see addTransferListener).
+     * </p>
      * 
      * @param artifact
      *            the artifact to download
-     * @param cacheManager
-     *            the cacheManager to use.
      * @return a report concerning the download
      */
-    public ArtifactDownloadReport download(Artifact artifact, RepositoryCacheManager cacheManager,
-            boolean useOrigin) {
+    public ArtifactDownloadReport download(Artifact artifact, boolean useOrigin) {
         DependencyResolver resolver = settings.getResolver(artifact.getModuleRevisionId()
                 .getModuleId());
-        DownloadReport r = resolver.download(new Artifact[] {artifact}, new DownloadOptions(
-                cacheManager, useOrigin));
+        DownloadReport r = resolver.download(new Artifact[] {artifact}, 
+            new DownloadOptions(useOrigin));
         return r.getArtifactReport(artifact);
     }
 
@@ -392,7 +383,7 @@ public class ResolveEngine {
      *            url of the ivy file to use for dependency resolving
      * @param confs
      *            an array of configuration names to resolve - must not be null nor empty
-     * @param cache
+     * @param getCache
      *            the cache to use - default cache is used if null
      * @param date
      *            the date to which resolution must be done - may be null
@@ -427,14 +418,7 @@ public class ResolveEngine {
         if (md == null) {
             throw new NullPointerException("module descriptor must not be null");
         }
-        CacheManager cacheManager = options.getCache();
         IvyContext context = IvyContext.getContext();
-        if (cacheManager == null) { // ensure that a cache is configured
-            cacheManager = context.getCacheManager();
-            options.setCache(cacheManager);
-        } else {
-            context.setCacheManager(cacheManager);
-        }
 
         String[] confs = options.getConfs(md);
         options.setConfs(confs);

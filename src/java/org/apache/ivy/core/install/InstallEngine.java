@@ -26,6 +26,7 @@ import java.util.Date;
 import java.util.Iterator;
 
 import org.apache.ivy.core.cache.CacheManager;
+import org.apache.ivy.core.cache.RepositoryCacheManager;
 import org.apache.ivy.core.module.descriptor.Configuration;
 import org.apache.ivy.core.module.descriptor.DefaultDependencyDescriptor;
 import org.apache.ivy.core.module.descriptor.DefaultModuleDescriptor;
@@ -34,6 +35,7 @@ import org.apache.ivy.core.module.id.ModuleId;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.publish.PublishEngine;
 import org.apache.ivy.core.publish.PublishOptions;
+import org.apache.ivy.core.report.ArtifactDownloadReport;
 import org.apache.ivy.core.report.ResolveReport;
 import org.apache.ivy.core.resolve.IvyNode;
 import org.apache.ivy.core.resolve.ResolveEngine;
@@ -66,11 +68,8 @@ public class InstallEngine {
     }
 
     public ResolveReport install(ModuleRevisionId mrid, String from, String to, boolean transitive,
-            boolean validate, boolean overwrite, Filter artifactFilter, File cache,
+            boolean validate, boolean overwrite, Filter artifactFilter, 
             String matcherName) throws IOException {
-        if (cache == null) {
-            cache = settings.getDefaultCache();
-        }
         if (artifactFilter == null) {
             artifactFilter = FilterHelper.NO_FILTER;
         }
@@ -130,41 +129,62 @@ public class InstallEngine {
 
             Message.info(":: resolving dependencies ::");
             IvyNode[] dependencies = resolveEngine.getDependencies(md, new ResolveOptions()
-                    .setResolveId(resolveId).setConfs(new String[] {"default"}).setCache(
-                        getCacheManager(cache)), report);
+                    .setResolveId(resolveId).setConfs(new String[] {"default"}), report);
             report.setDependencies(Arrays.asList(dependencies), artifactFilter);
 
             Message.info(":: downloading artifacts to cache ::");
-            resolveEngine.downloadArtifacts(report, getCacheManager(cache), false, artifactFilter);
+            resolveEngine.downloadArtifacts(report, false, artifactFilter);
 
             // now that everything is in cache, we can publish all these modules
             Message.info(":: installing in " + to + " ::");
             for (int i = 0; i < dependencies.length; i++) {
                 ModuleDescriptor depmd = dependencies[i].getDescriptor();
                 if (depmd != null) {
-                    Message.verbose("installing " + depmd.getModuleRevisionId());
-                    publishEngine.publish(depmd, Collections.singleton(cache.getAbsolutePath()
-                            + "/" + settings.getCacheArtifactPattern()), toResolver,
-                        new PublishOptions().setSrcIvyPattern(
-                            cache.getAbsolutePath() + "/" + settings.getCacheIvyPattern())
-                                .setOverwrite(overwrite));
+                    ModuleRevisionId depMrid = depmd.getModuleRevisionId();
+                    Message.verbose("installing " + depMrid);
+                    boolean successfullyPublished = false;
+                    try {
+                        toResolver.beginPublishTransaction(depMrid, overwrite);
+                        
+                        // publish artifacts
+                        ArtifactDownloadReport[] artifacts = 
+                                report.getArtifactsReports(depMrid);
+                        for (int j = 0; j < artifacts.length; j++) {
+                            if (artifacts[j].getLocalFile() != null) {
+                                toResolver.publish(artifacts[j].getArtifact(), 
+                                    artifacts[j].getLocalFile(), overwrite);
+                            }
+                        }
+                        
+                        // publish metadata
+                        // TODO cache: store metadata cache info in report and reuse it
+                        RepositoryCacheManager cacheManager = 
+                            dependencies[i].getModuleRevision().getResolver()
+                                .getRepositoryCacheManager();
+                        File localIvyFile = cacheManager.getIvyFileInCache(depMrid);
+                        toResolver.publish(depmd.getMetadataArtifact(), localIvyFile, overwrite);
+                        
+                        // end module publish
+                        toResolver.commitPublishTransaction();
+                        successfullyPublished  = true;
+                    } finally {
+                        if (!successfullyPublished) {
+                            toResolver.abortPublishTransaction();
+                        }
+                    }
                 }
             }
 
             Message.info(":: install resolution report ::");
 
             // output report
-            resolveEngine.outputReport(report, getCacheManager(cache));
+            resolveEngine.outputReport(report, settings.getResolutionCacheManager());
 
             return report;
         } finally {
             resolveEngine.setDictatorResolver(oldDicator);
             settings.setLogNotConvertedExclusionRule(log);
         }
-    }
-
-    private CacheManager getCacheManager(File cache) {
-        return CacheManager.getInstance(settings, cache);
     }
 
 }

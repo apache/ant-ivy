@@ -39,7 +39,7 @@ public class IvyArtifactPropertyTest extends TestCase {
 
         prop = new IvyArtifactProperty();
         prop.setProject(project);
-        prop.setCache(cache);
+        System.setProperty("ivy.cache.dir", cache.getAbsolutePath());
     }
 
     private void createCache() {
@@ -71,7 +71,6 @@ public class IvyArtifactPropertyTest extends TestCase {
     public void testWithResolveId() throws Exception {
         IvyResolve resolve = new IvyResolve();
         resolve.setProject(project);
-        resolve.setCache(cache);
         resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-simple.xml"));
         resolve.setResolveId("abc");
         resolve.execute();
@@ -79,7 +78,6 @@ public class IvyArtifactPropertyTest extends TestCase {
         // resolve another ivy file
         resolve = new IvyResolve();
         resolve.setProject(project);
-        resolve.setCache(cache);
         resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-latest.xml"));
         resolve.execute();
 

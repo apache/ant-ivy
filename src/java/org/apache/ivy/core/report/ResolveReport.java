@@ -30,6 +30,7 @@ import java.util.Map;
 import org.apache.ivy.core.cache.ResolutionCacheManager;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleId;
+import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.resolve.IvyNode;
 import org.apache.ivy.core.resolve.ResolveOptions;
 import org.apache.ivy.plugins.report.ReportOutputter;
@@ -122,6 +123,24 @@ public class ResolveReport {
         for (Iterator iter = confReports.values().iterator(); iter.hasNext();) {
             ConfigurationResolveReport report = (ConfigurationResolveReport) iter.next();
             all.addAll(Arrays.asList(report.getFailedArtifactsReports()));
+        }
+        return (ArtifactDownloadReport[]) all.toArray(new ArtifactDownloadReport[all.size()]);
+    }
+
+    public ArtifactDownloadReport[] getAllArtifactsReports() {
+        Collection all = new HashSet();
+        for (Iterator iter = confReports.values().iterator(); iter.hasNext();) {
+            ConfigurationResolveReport report = (ConfigurationResolveReport) iter.next();
+            all.addAll(Arrays.asList(report.getAllArtifactsReports()));
+        }
+        return (ArtifactDownloadReport[]) all.toArray(new ArtifactDownloadReport[all.size()]);
+    }
+
+    public ArtifactDownloadReport[] getArtifactsReports(ModuleRevisionId mrid) {
+        Collection all = new HashSet();
+        for (Iterator iter = confReports.values().iterator(); iter.hasNext();) {
+            ConfigurationResolveReport report = (ConfigurationResolveReport) iter.next();
+            all.addAll(Arrays.asList(report.getDownloadReports(mrid)));
         }
         return (ArtifactDownloadReport[]) all.toArray(new ArtifactDownloadReport[all.size()]);
     }

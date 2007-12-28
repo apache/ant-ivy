@@ -19,7 +19,6 @@ package org.apache.ivy.core.publish;
 
 import java.util.Date;
 
-import org.apache.ivy.core.cache.ResolutionCacheManager;
 import org.apache.ivy.core.module.descriptor.Artifact;
 
 /**
@@ -38,8 +37,6 @@ import org.apache.ivy.core.module.descriptor.Artifact;
  * @see PublishEngine
  */
 public class PublishOptions {
-    private ResolutionCacheManager cache;
-
     private String srcIvyPattern;
 
     private String pubrevision;
@@ -57,15 +54,6 @@ public class PublishOptions {
     private boolean update;
 
     private String[] confs;
-
-    public ResolutionCacheManager getCache() {
-        return cache;
-    }
-
-    public PublishOptions setCache(ResolutionCacheManager cacheManager) {
-        this.cache = cacheManager;
-        return this;
-    }
 
     public String[] getConfs() {
         return confs;

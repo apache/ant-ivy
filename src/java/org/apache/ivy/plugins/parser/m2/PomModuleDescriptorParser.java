@@ -557,7 +557,6 @@ public final class PomModuleDescriptorParser extends AbstractModuleDescriptorPar
             if (data == null) {
                 ResolveEngine engine = IvyContext.getContext().getIvy().getResolveEngine();
                 ResolveOptions options = new ResolveOptions();
-                options.setCache(IvyContext.getContext().getCacheManager());
                 options.setDownload(false);
                 data = new ResolveData(engine, options);
             }

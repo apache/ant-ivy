@@ -77,7 +77,6 @@ public class RegexpConflictManagerTest extends TestCase {
     }
 
     private ResolveOptions getResolveOptions() {
-        return new ResolveOptions().setCache(CacheManager.getInstance(ivy.getSettings()))
-                .setValidate(false);
+        return new ResolveOptions().setValidate(false);
     }
 }

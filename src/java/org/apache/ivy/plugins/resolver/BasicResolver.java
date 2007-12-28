@@ -361,7 +361,7 @@ public abstract class BasicResolver extends AbstractResolver {
                 }
             }
 
-            RepositoryCacheManager cacheManager = data.getCacheManager();
+            RepositoryCacheManager cacheManager = getRepositoryCacheManager();
             
             // the metadata artifact which was used to cache the original metadata file 
             Artifact requestedMetadataArtifact = 
@@ -459,7 +459,7 @@ public abstract class BasicResolver extends AbstractResolver {
         Artifact moduleArtifact = parser.getMetadataArtifact(resolvedMrid, mdRef.getResource());
         boolean isChangingRevision = getChangingMatcher().matches(mrid.getRevision());
         boolean isChangingDependency = isChangingRevision || dd.isChanging();
-        return data.getCacheManager().cacheModuleDescriptor(
+        return getRepositoryCacheManager().cacheModuleDescriptor(
             this, mdRef, moduleArtifact, downloader, 
             (CacheMetadataOptions) new CacheMetadataOptions()
                 .setChanging(isChangingDependency)
@@ -611,7 +611,7 @@ public abstract class BasicResolver extends AbstractResolver {
     }
 
     public DownloadReport download(Artifact[] artifacts, DownloadOptions options) {
-        RepositoryCacheManager cacheManager = options.getCacheManager();
+        RepositoryCacheManager cacheManager = getRepositoryCacheManager();
 
         clearArtifactAttempts();
         DownloadReport dr = new DownloadReport();

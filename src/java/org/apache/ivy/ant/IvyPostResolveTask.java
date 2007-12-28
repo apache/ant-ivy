@@ -45,8 +45,6 @@ public abstract class IvyPostResolveTask extends IvyTask {
 
     private boolean inline = false;
 
-    private File cache;
-
     private String organisation;
 
     private String module;
@@ -81,10 +79,6 @@ public abstract class IvyPostResolveTask extends IvyTask {
 
         organisation = getProperty(organisation, settings, "ivy.organisation");
         module = getProperty(module, settings, "ivy.module");
-
-        if (cache == null) {
-            cache = settings.getDefaultCache();
-        }
 
         if (file == null) {
             String fileName = getProperty(settings, "ivy.resolved.file", resolveId);
@@ -125,7 +119,6 @@ public abstract class IvyPostResolveTask extends IvyTask {
                 resolve.setRevision(getRevision());
                 resolve.setInline(true);
                 resolve.setConf(conf);
-                resolve.setCache(cache);
                 resolve.setResolveId(resolveId);
                 resolve.execute();
             } else {
@@ -194,7 +187,6 @@ public abstract class IvyPostResolveTask extends IvyTask {
         if (confs.length > 0) {
             IvyResolve resolve = createResolve(isHaltonfailure(), isUseOrigin());
             resolve.setFile(getFile());
-            resolve.setCache(getCache());
             resolve.setTransitive(isTransitive());
             resolve.setConf(StringUtils.join(confs, ", "));
             resolve.setResolveId(getResolveId());
@@ -323,12 +315,8 @@ public abstract class IvyPostResolveTask extends IvyTask {
         this.haltOnFailure = haltOnFailure;
     }
 
-    public File getCache() {
-        return cache;
-    }
-
     public void setCache(File cache) {
-        this.cache = cache;
+        cacheAttributeNotSupported();
     }
 
     public String getRevision() {

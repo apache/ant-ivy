@@ -29,7 +29,7 @@ import java.util.regex.Pattern;
 
 import junit.framework.Assert;
 
-import org.apache.ivy.core.cache.CacheManager;
+import org.apache.ivy.core.cache.RepositoryCacheManager;
 import org.apache.ivy.core.event.EventManager;
 import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.DefaultArtifact;
@@ -49,16 +49,27 @@ import org.apache.ivy.util.FileUtil;
 
 public class TestHelper {
 
-    public static File getArchiveFileInCache(Ivy ivy, File cache, String organisation,
-            String module, String revision, String artifact, String type, String ext) {
-        return getArchiveFileInCache(ivy.getCacheManager(cache), organisation, module, revision,
-            artifact, type, ext);
+    public static DefaultArtifact newArtifact(
+            String organisation, String module, String revision, 
+            String artifact, String type, String ext) {
+        return new DefaultArtifact(ModuleRevisionId.newInstance(
+            organisation, module, revision), new Date(), artifact, type, ext);
+    }
+    
+
+    public static File getArchiveFileInCache(Ivy ivy, String organisation, String module, 
+            String revision, String artifactName, String type, String ext) {
+        DefaultArtifact artifact = newArtifact(organisation, module, revision,
+            artifactName, type, ext);
+        return getRepositoryCacheManager(ivy, artifact.getModuleRevisionId())
+            .getArchiveFileInCache(artifact);
     }
 
-    public static File getArchiveFileInCache(CacheManager cacheManager, String organisation,
-            String module, String revision, String artifact, String type, String ext) {
-        return cacheManager.getArchiveFileInCache(new DefaultArtifact(ModuleRevisionId.newInstance(
-            organisation, module, revision), new Date(), artifact, type, ext));
+
+    public static RepositoryCacheManager getRepositoryCacheManager(Ivy ivy, ModuleRevisionId id) {
+        // WARN: this doesn't work if the resolver registered is a compound resolver (chain or dual)
+        // and a sub resolver doesn't use the same cache manager as the parent
+        return ivy.getSettings().getResolver(id.getModuleId()).getRepositoryCacheManager();
     }
 
     /**
@@ -294,6 +305,6 @@ public class TestHelper {
      * @return the basic resolve options, useful for testing
      */
     public static ResolveOptions newResolveOptions(IvySettings settings) {
-        return new ResolveOptions().setCache(CacheManager.getInstance(settings));
+        return new ResolveOptions();
     }
 }

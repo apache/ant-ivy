@@ -23,6 +23,7 @@ import java.text.ParseException;
 import java.util.Collections;
 import java.util.Date;
 
+import org.apache.ivy.core.cache.CacheSettings;
 import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.DefaultArtifact;
 import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
@@ -59,19 +60,19 @@ public class CacheResolver extends FileSystemResolver {
         // if we do not have to check modified and if the revision is exact and not changing,
         // we first search for it in cache
         if (!getSettings().getVersionMatcher().isDynamic(mrid)) {
-            ResolvedModuleRevision rmr = data.getCacheManager()
+            ResolvedModuleRevision rmr = getRepositoryCacheManager()
                 .findModuleInCache(mrid, doValidate(data), null);
             if (rmr != null) {
                 Message.verbose("\t" + getName() + ": revision in cache: " + mrid);
                 return rmr;
             } else {
-                logIvyAttempt(data.getCacheManager().getArchiveFileInCache(
+                logIvyAttempt(getRepositoryCacheManager().getArchiveFileInCache(
                     DefaultArtifact.newIvyArtifact(mrid, new Date())).getAbsolutePath());
                 Message.verbose("\t" + getName() + ": no ivy file in cache found for " + mrid);
                 return null;
             }
         } else {
-            ensureConfigured(data.getSettings(), data.getCacheManager().getRepositoryCacheRoot());
+            ensureConfigured();
             ResolvedResource ivyRef = findIvyFileRef(dd, data);
             if (ivyRef != null) {
                 Message.verbose("\t" + getName() + ": found ivy file in cache for " + mrid);
@@ -86,8 +87,8 @@ public class CacheResolver extends FileSystemResolver {
                             + resolvedMrid);
                     return node.getModuleRevision();
                 }
-                ResolvedModuleRevision rmr = data.getCacheManager().findModuleInCache(resolvedMrid,
-                    doValidate(data), null);
+                ResolvedModuleRevision rmr = getRepositoryCacheManager()
+                    .findModuleInCache(resolvedMrid, doValidate(data), null);
                 if (rmr != null) {
                     Message.verbose("\t" + getName() + ": revision in cache: " + resolvedMrid);
                     return rmr;
@@ -109,12 +110,12 @@ public class CacheResolver extends FileSystemResolver {
         for (int i = 0; i < artifacts.length; i++) {
             final ArtifactDownloadReport adr = new ArtifactDownloadReport(artifacts[i]);
             dr.addArtifactReport(adr);
-            File archiveFile = options.getCacheManager().getArchiveFileInCache(artifacts[i]);
+            File archiveFile = getRepositoryCacheManager().getArchiveFileInCache(artifacts[i]);
             if (archiveFile.exists()) {
                 Message.verbose("\t[NOT REQUIRED] " + artifacts[i]);
                 adr.setDownloadStatus(DownloadStatus.NO);
                 adr.setSize(archiveFile.length());
-                adr.setDownloadedFile(archiveFile);
+                adr.setLocalFile(archiveFile);
             } else {
                 logArtifactAttempt(artifacts[i], archiveFile.getAbsolutePath());
                 adr.setDownloadStatus(DownloadStatus.FAILED);
@@ -154,11 +155,13 @@ public class CacheResolver extends FileSystemResolver {
 
     private void ensureConfigured() {
         if (getSettings() != null) {
+            // TODO: we need to address new cache management 
+            // (where repository cache is not always in default cache directory)
             ensureConfigured(getSettings(), getSettings().getDefaultCache());
         }
     }
 
-    private void ensureConfigured(ResolverSettings settings, File cache) {
+    private void ensureConfigured(CacheSettings settings, File cache) {
         if (settings == null || cache == null) {
             return;
         }

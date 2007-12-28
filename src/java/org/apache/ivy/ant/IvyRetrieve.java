@@ -52,7 +52,6 @@ public class IvyRetrieve extends IvyPostResolveTask {
                 pattern,
                 new RetrieveOptions()
                     .setConfs(splitConfs(getConf()))
-                    .setCache(getIvyInstance().getCacheManager(getCache()))
                     .setDestIvyPattern(ivypattern)
                     .setArtifactFilter(artifactFilter)
                     .setSync(sync)

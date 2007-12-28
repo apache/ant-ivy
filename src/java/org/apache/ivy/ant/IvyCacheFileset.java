@@ -17,11 +17,11 @@
  */
 package org.apache.ivy.ant;
 
+import java.io.File;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.ivy.core.cache.RepositoryCacheManager;
-import org.apache.ivy.core.module.descriptor.Artifact;
+import org.apache.ivy.core.report.ArtifactDownloadReport;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.types.FileSet;
 import org.apache.tools.ant.types.PatternSet.NameEntry;
@@ -59,22 +59,72 @@ public class IvyCacheFileset extends IvyCacheTask {
             FileSet fileset = new FileSet();
             fileset.setProject(getProject());
             getProject().addReference(setid, fileset);
-            fileset.setDir(getCache());
 
-            List paths = getArtifacts();
-            if (paths.isEmpty()) {
+            List paths = getArtifactReports();
+            File base = null;
+            for (Iterator iter = paths.iterator(); iter.hasNext();) {
+                ArtifactDownloadReport a = (ArtifactDownloadReport) iter.next();
+                if (a.getLocalFile() != null) {
+                    base = getBaseDir(base, a.getLocalFile());
+                }
+            }
+            if (base == null) {
+                fileset.setDir(new File("."));
                 NameEntry ne = fileset.createExclude();
                 ne.setName("**/*");
             } else {
-                RepositoryCacheManager cache = getCacheManager();
+                fileset.setDir(base);
                 for (Iterator iter = paths.iterator(); iter.hasNext();) {
-                    Artifact a = (Artifact) iter.next();
-                    NameEntry ne = fileset.createInclude();
-                    ne.setName(cache.getArchivePathInCache(a, cache.getSavedArtifactOrigin(a)));
+                    ArtifactDownloadReport a = (ArtifactDownloadReport) iter.next();
+                    if (a.getLocalFile() != null) {
+                        NameEntry ne = fileset.createInclude();
+                        ne.setName(getPath(base, a.getLocalFile()));
+                    }
                 }
             }
         } catch (Exception ex) {
             throw new BuildException("impossible to build ivy cache fileset: " + ex, ex);
+        }
+    }
+
+    /**
+     * Returns the path of the file relative to the given base directory.
+     * 
+     * @param base the parent directory to which the file must be evaluated.
+     * @param file the file for which the path should be returned
+     * @returnthe path of the file relative to the given base directory.
+     */
+    private String getPath(File base, File file) {
+        return file.getAbsolutePath().substring(base.getAbsolutePath().length() + 1);
+    }
+
+    /**
+     * Returns the common base directory between a current base directory and a given file.
+     * <p>
+     * The returned base directory must be a parent of both the current base and the given file.
+     * </p>
+     * 
+     * @param base
+     *            the current base directory, may be null.
+     * @param file
+     *            the file for which the new base directory should be returned.
+     * @return the common base directory between a current base directory and a given file.
+     */
+    private File getBaseDir(File base, File file) {
+        if (base == null) {
+            return file.getParentFile();
+        } else {
+            String basePath = base.getAbsolutePath();
+            String filePath = file.getAbsolutePath();
+            for (int i = 0; i < basePath.length(); i++) {
+                if (i >= filePath.length()) {
+                    return file.getParentFile();
+                }
+                if (basePath.charAt(i) != filePath.charAt(i)) {
+                    return new File(basePath.substring(0, i));
+                }
+            }
+            return base;
         }
     }
 

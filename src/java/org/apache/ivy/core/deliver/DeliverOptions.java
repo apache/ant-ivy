@@ -19,7 +19,6 @@ package org.apache.ivy.core.deliver;
 
 import java.util.Date;
 
-import org.apache.ivy.core.cache.CacheManager;
 import org.apache.ivy.core.settings.IvySettings;
 
 /**
@@ -29,8 +28,6 @@ public class DeliverOptions {
     private String status;
 
     private Date pubdate;
-
-    private CacheManager cache;
 
     private PublishingDependencyRevisionResolver pdrResolver = new DefaultPublishingDRResolver();
 
@@ -51,7 +48,7 @@ public class DeliverOptions {
      * @return a DeliverOptions instance ready to be used or customized
      */
     public static DeliverOptions newInstance(IvySettings settings) {
-        return new DeliverOptions(null, new Date(), CacheManager.getInstance(settings),
+        return new DeliverOptions(null, new Date(), 
                 new DefaultPublishingDRResolver(), settings.doValidate(), true, null);
     }
 
@@ -65,25 +62,15 @@ public class DeliverOptions {
     /**
      * Creates an instance of DeliverOptions with all options explicitly set.
      */
-    public DeliverOptions(String status, Date pubDate, CacheManager cache,
+    public DeliverOptions(String status, Date pubDate, 
             PublishingDependencyRevisionResolver pdrResolver, boolean validate,
             boolean resolveDynamicRevisions, String[] confs) {
         this.status = status;
         this.pubdate = pubDate;
-        this.cache = cache;
         this.pdrResolver = pdrResolver;
         this.validate = validate;
         this.resolveDynamicRevisions = resolveDynamicRevisions;
         this.confs = confs;
-    }
-
-    public CacheManager getCache() {
-        return cache;
-    }
-
-    public DeliverOptions setCache(CacheManager cache) {
-        this.cache = cache;
-        return this;
     }
 
     /**
@@ -212,7 +199,7 @@ public class DeliverOptions {
 
     public String toString() {
         return "status=" + status + " pubdate=" + pubdate + " validate=" + validate
-                + " resolveDynamicRevisions=" + resolveDynamicRevisions + " cache=" + cache
+                + " resolveDynamicRevisions=" + resolveDynamicRevisions
                 + " resolveId=" + resolveId;
 
     }

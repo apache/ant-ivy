@@ -187,8 +187,6 @@ public class IvyDeliver extends IvyTask {
 
     private String pubRevision;
 
-    private File cache;
-
     private String deliverpattern;
 
     private String status;
@@ -205,12 +203,8 @@ public class IvyDeliver extends IvyTask {
 
     private String conf;
 
-    public File getCache() {
-        return cache;
-    }
-
     public void setCache(File cache) {
-        this.cache = cache;
+        cacheAttributeNotSupported();
     }
 
     public String getDeliverpattern() {
@@ -309,9 +303,6 @@ public class IvyDeliver extends IvyTask {
         module = getProperty(module, settings, "ivy.module", resolveId);
         revision = getProperty(revision, settings, "ivy.revision", resolveId);
         pubRevision = getProperty(pubRevision, settings, "ivy.deliver.revision");
-        if (cache == null) {
-            cache = settings.getDefaultCache();
-        }
         deliverpattern = getProperty(deliverpattern, settings, "ivy.deliver.ivy.pattern");
         status = getProperty(status, settings, "ivy.status");
         if (deliveryList == null) {
@@ -379,7 +370,6 @@ public class IvyDeliver extends IvyTask {
             }
 
             DeliverOptions options = new DeliverOptions(status, pubdate, 
-                ivy.getCacheManager(cache),
                 drResolver, doValidate(settings), replacedynamicrev,
                     splitConfs(conf)).setResolveId(resolveId);
             if (mrid == null) {

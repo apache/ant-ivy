@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.util.Map;
 
+import org.apache.ivy.core.cache.RepositoryCacheManager;
 import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
@@ -113,4 +114,13 @@ public interface DependencyResolver {
     void dumpSettings();
     
     void setSettings(ResolverSettings settings);
+
+    /**
+     * Returns the {@link RepositoryCacheManager} used to manage the repository cache associated
+     * with this dependency resolver.
+     * 
+     * @return the {@link RepositoryCacheManager} used to manage the repository cache associated
+     *         with this dependency resolver.
+     */
+    RepositoryCacheManager getRepositoryCacheManager();
 }

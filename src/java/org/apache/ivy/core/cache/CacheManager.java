@@ -420,7 +420,7 @@ public class CacheManager implements RepositoryCacheManager, ResolutionCacheMana
                 adr.setDownloadStatus(DownloadStatus.NO);
                 adr.setSize(archiveFile.length());
                 adr.setArtifactOrigin(origin);
-                adr.setDownloadedFile(archiveFile);
+                adr.setLocalFile(archiveFile);
             } else {
                 long start = System.currentTimeMillis();
                 try {
@@ -435,7 +435,7 @@ public class CacheManager implements RepositoryCacheManager, ResolutionCacheMana
                             adr.setDownloadStatus(DownloadStatus.NO);
                             adr.setSize(archiveFile.length());
                             adr.setArtifactOrigin(origin);
-                            adr.setDownloadedFile(archiveFile);
+                            adr.setLocalFile(archiveFile);
                         } else {
                             // refresh archive file now that we better now its origin
                             archiveFile = getArchiveFileInCache(artifact,
@@ -456,7 +456,7 @@ public class CacheManager implements RepositoryCacheManager, ResolutionCacheMana
                             adr.setDownloadTimeMillis(System.currentTimeMillis() - start);
                             adr.setDownloadStatus(DownloadStatus.SUCCESSFUL);
                             adr.setArtifactOrigin(origin);
-                            adr.setDownloadedFile(archiveFile);
+                            adr.setLocalFile(archiveFile);
                         }
                     } else {
                         adr.setDownloadStatus(DownloadStatus.FAILED);
@@ -576,10 +576,10 @@ public class CacheManager implements RepositoryCacheManager, ResolutionCacheMana
 
             URL cachedMDURL = null;
             try {
-                cachedMDURL = report.getDownloadedFile().toURL();
+                cachedMDURL = report.getLocalFile().toURL();
             } catch (MalformedURLException ex) {
                 Message.warn("malformed url exception for original in cache file: " 
-                    + report.getDownloadedFile() + ": " + ex.getMessage());
+                    + report.getLocalFile() + ": " + ex.getMessage());
                 return null;
             }
             try {

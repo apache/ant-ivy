@@ -26,6 +26,10 @@ import org.apache.ivy.plugins.resolver.DependencyResolver;
 import org.apache.ivy.plugins.version.VersionMatcher;
 
 public interface CacheSettings extends ParserSettings {
+    RepositoryCacheManager getDefaultRepositoryCacheManager();
+    
+    ResolutionCacheManager getResolutionCacheManager();
+    
     File getDefaultCache();
     
     File getResolutionCacheRoot(File cache);

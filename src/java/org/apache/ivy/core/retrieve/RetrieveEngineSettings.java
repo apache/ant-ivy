@@ -19,9 +19,9 @@ package org.apache.ivy.core.retrieve;
 
 import java.util.Map;
 
-import org.apache.ivy.plugins.parser.ParserSettings;
+import org.apache.ivy.core.cache.CacheSettings;
 
-public interface RetrieveEngineSettings extends ParserSettings {
+public interface RetrieveEngineSettings extends CacheSettings {
 
     boolean isCheckUpToDate();
 

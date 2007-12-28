@@ -44,13 +44,14 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.ivy.core.cache.CacheManager;
+import org.apache.ivy.core.cache.ResolutionCacheManager;
 import org.apache.ivy.core.deliver.DeliverOptions;
-import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.DefaultDependencyDescriptor;
 import org.apache.ivy.core.module.descriptor.DefaultModuleDescriptor;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.publish.PublishOptions;
+import org.apache.ivy.core.report.ArtifactDownloadReport;
 import org.apache.ivy.core.report.ResolveReport;
 import org.apache.ivy.core.resolve.ResolveOptions;
 import org.apache.ivy.core.retrieve.RetrieveOptions;
@@ -227,8 +228,8 @@ public final class Main {
                 }
             }
 
-            ResolveOptions resolveOptions = new ResolveOptions().setConfs(confs).setCache(
-                cacheManager).setValidate(validate).setUseOrigin(line.hasOption("useOrigin"));
+            ResolveOptions resolveOptions = new ResolveOptions().setConfs(confs)
+                .setValidate(validate).setUseOrigin(line.hasOption("useOrigin"));
             ResolveReport report = ivy.resolve(ivyfile.toURL(), resolveOptions);
             if (report.hasError()) {
                 System.exit(1);
@@ -244,7 +245,7 @@ public final class Main {
                     retrievePattern = retrievePattern + "/lib/[conf]/[artifact].[ext]";
                 }
                 ivy.retrieve(md.getModuleRevisionId(), retrievePattern, new RetrieveOptions()
-                        .setConfs(confs).setCache(cacheManager).setSync(line.hasOption("sync"))
+                        .setConfs(confs).setSync(line.hasOption("sync"))
                         .setUseOrigin(line.hasOption("useOrigin")));
             }
             if (line.hasOption("cachepath")) {
@@ -257,12 +258,12 @@ public final class Main {
                         .getOptionValue("revision")), settings.substitute(line.getOptionValue(
                     "deliverto", "ivy-[revision].xml")), DeliverOptions.newInstance(settings)
                         .setStatus(settings.substitute(line.getOptionValue("status", "release")))
-                        .setValidate(validate).setCache(cacheManager));
+                        .setValidate(validate));
                 if (line.hasOption("publish")) {
                     ivy.publish(md.getResolvedModuleRevisionId(), Collections.singleton(settings
                             .substitute(line.getOptionValue("publishpattern",
                                 "distrib/[type]s/[artifact]-[revision].[ext]"))), line
-                            .getOptionValue("publish"), new PublishOptions().setCache(cacheManager)
+                            .getOptionValue("publish"), new PublishOptions()
                             .setPubrevision(settings.substitute(line.getOptionValue("revision")))
                             .setValidate(validate).setSrcIvyPattern(
                                 settings.substitute(line.getOptionValue("deliverto",
@@ -384,26 +385,27 @@ public final class Main {
             String pathSeparator = System.getProperty("path.separator");
             StringBuffer buf = new StringBuffer();
             Collection all = new LinkedHashSet();
-            CacheManager cacheMgr = ivy.getCacheManager(cache);
+            ResolutionCacheManager cacheMgr = ivy.getResolutionCacheManager();
             XmlReportParser parser = new XmlReportParser();
             for (int i = 0; i < confs.length; i++) {
                 String resolveId = ResolveOptions.getDefaultResolveId(md);
                 File report = cacheMgr.getConfigurationResolveReportInCache(resolveId, confs[i]);
                 parser.parse(report);
 
-                Artifact[] artifacts = parser.getArtifacts();
-                all.addAll(Arrays.asList(artifacts));
+                all.addAll(Arrays.asList(parser.getArtifactReports()));
             }
             for (Iterator iter = all.iterator(); iter.hasNext();) {
-                Artifact artifact = (Artifact) iter.next();
-                buf.append(ivy.getCacheManager(cache).getArchiveFileInCache(artifact)
-                        .getCanonicalPath());
-                if (iter.hasNext()) {
+                ArtifactDownloadReport artifact = (ArtifactDownloadReport) iter.next();
+                if (artifact.getLocalFile() != null) {
+                    buf.append(artifact.getLocalFile().getCanonicalPath());
                     buf.append(pathSeparator);
                 }
             }
+            
             PrintWriter writer = new PrintWriter(new FileOutputStream(outFile));
-            writer.println(buf.toString());
+            if (buf.length() > 0) {
+                writer.println(buf.substring(0, buf.length() - pathSeparator.length()));
+            }
             writer.close();
             System.out.println("cachepath output to " + outFile);
 
@@ -431,20 +433,21 @@ public final class Main {
         
         try {
             Collection all = new LinkedHashSet();
-            CacheManager cacheMgr = ivy.getCacheManager(cache);
+            ResolutionCacheManager cacheMgr = ivy.getResolutionCacheManager();
             XmlReportParser parser = new XmlReportParser();
             for (int i = 0; i < confs.length; i++) {
                 String resolveId = ResolveOptions.getDefaultResolveId(md);
                 File report = cacheMgr.getConfigurationResolveReportInCache(resolveId, confs[i]);
                 parser.parse(report);
 
-                Artifact[] artifacts = parser.getArtifacts();
-                all.addAll(Arrays.asList(artifacts));
+                all.addAll(Arrays.asList(parser.getArtifactReports()));
             }
             for (Iterator iter = all.iterator(); iter.hasNext();) {
-                Artifact artifact = (Artifact) iter.next();
+                ArtifactDownloadReport artifact = (ArtifactDownloadReport) iter.next();
 
-                urls.add(cacheMgr.getArchiveFileInCache(artifact).toURL());
+                if (artifact.getLocalFile() != null) {
+                    urls.add(artifact.getLocalFile().toURL());
+                }
             }
         } catch (Exception ex) {
             throw new RuntimeException(

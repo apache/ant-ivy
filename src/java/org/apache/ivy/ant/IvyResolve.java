@@ -41,8 +41,6 @@ public class IvyResolve extends IvyTask {
 
     private String conf = null;
 
-    private File cache = null;
-
     private String organisation = null;
 
     private String module = null;
@@ -95,12 +93,8 @@ public class IvyResolve extends IvyTask {
         this.revision = revision;
     }
 
-    public File getCache() {
-        return cache;
-    }
-
     public void setCache(File cache) {
-        this.cache = cache;
+        cacheAttributeNotSupported();
     }
 
     public String getConf() {
@@ -170,9 +164,6 @@ public class IvyResolve extends IvyTask {
         try {
             conf = getProperty(conf, settings, "ivy.configurations");
             type = getProperty(type, settings, "ivy.resolve.default.type.filter");
-            if (cache == null) {
-                cache = settings.getDefaultCache();
-            }
             String[] confs = splitConfs(conf);
 
             ResolveReport report;
@@ -304,7 +295,6 @@ public class IvyResolve extends IvyTask {
                 .setValidate(doValidate(settings))
                 .setArtifactFilter(FilterHelper.getArtifactTypeFilter(type))
                 .setRevision(revision)
-                .setCache(ivy.getCacheManager(cache))
                 .setDate(getPubDate(pubdate, null))
                 .setUseCacheOnly(useCacheOnly)
                 .setUseOrigin(useOrigin)

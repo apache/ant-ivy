@@ -35,10 +35,11 @@ import javax.xml.transform.sax.TransformerHandler;
 import javax.xml.transform.stream.StreamResult;
 
 import org.apache.ivy.core.cache.ArtifactOrigin;
-import org.apache.ivy.core.cache.CacheManager;
+import org.apache.ivy.core.cache.RepositoryCacheManager;
 import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
+import org.apache.ivy.core.report.ArtifactDownloadReport;
 import org.apache.ivy.core.resolve.IvyNode;
 import org.apache.ivy.core.resolve.ResolveOptions;
 import org.apache.ivy.core.retrieve.RetrieveOptions;
@@ -82,7 +83,6 @@ public class IvyArtifactReport extends IvyPostResolveTask {
 
         try {
             String[] confs = splitConfs(getConf());
-            CacheManager cacheManager = CacheManager.getInstance(getSettings(), getCache());
             ModuleDescriptor md = null;
             if (getResolveId() != null) {
                 md = (ModuleDescriptor) getResolvedDescriptor(getResolveId());
@@ -92,28 +92,28 @@ public class IvyArtifactReport extends IvyPostResolveTask {
             }
             IvyNode[] dependencies = getIvyInstance().getResolveEngine().getDependencies(
                 md,
-                new ResolveOptions().setConfs(confs).setCache(cacheManager).setResolveId(
+                new ResolveOptions().setConfs(confs).setResolveId(
                     getResolveId()).setValidate(doValidate(getSettings())), null);
 
             Map artifactsToCopy = getIvyInstance().getRetrieveEngine().determineArtifactsToCopy(
                 ModuleRevisionId.newInstance(getOrganisation(), getModule(), getRevision()),
                 pattern,
-                new RetrieveOptions().setConfs(confs).setResolveId(getResolveId()).setCache(
-                    cacheManager));
+                new RetrieveOptions().setConfs(confs).setResolveId(getResolveId()));
 
             Map moduleRevToArtifactsMap = new HashMap();
             for (Iterator iter = artifactsToCopy.keySet().iterator(); iter.hasNext();) {
-                Artifact artifact = (Artifact) iter.next();
-                Set moduleRevArtifacts = (Set) moduleRevToArtifactsMap.get(artifact
+                ArtifactDownloadReport artifact = (ArtifactDownloadReport) iter.next();
+                Set moduleRevArtifacts = (Set) moduleRevToArtifactsMap.get(artifact.getArtifact()
                         .getModuleRevisionId());
                 if (moduleRevArtifacts == null) {
                     moduleRevArtifacts = new HashSet();
-                    moduleRevToArtifactsMap.put(artifact.getModuleRevisionId(), moduleRevArtifacts);
+                    moduleRevToArtifactsMap.put(
+                        artifact.getArtifact().getModuleRevisionId(), moduleRevArtifacts);
                 }
                 moduleRevArtifacts.add(artifact);
             }
 
-            generateXml(cacheManager, dependencies, moduleRevToArtifactsMap, artifactsToCopy);
+            generateXml(dependencies, moduleRevToArtifactsMap, artifactsToCopy);
         } catch (ParseException e) {
             log(e.getMessage(), Project.MSG_ERR);
             throw new BuildException("syntax errors in ivy file: " + e, e);
@@ -122,7 +122,7 @@ public class IvyArtifactReport extends IvyPostResolveTask {
         }
     }
 
-    private void generateXml(CacheManager cache, IvyNode[] dependencies,
+    private void generateXml(IvyNode[] dependencies,
             Map moduleRevToArtifactsMap, Map artifactsToCopy) {
         try {
             FileOutputStream fileOuputStream = new FileOutputStream(tofile);
@@ -145,13 +145,16 @@ public class IvyArtifactReport extends IvyPostResolveTask {
                             .getModuleRevision().getId());
                     if (artifactsOfModuleRev != null) {
                         for (Iterator iter = artifactsOfModuleRev.iterator(); iter.hasNext();) {
-                            Artifact artifact = (Artifact) iter.next();
+                            ArtifactDownloadReport artifact = (ArtifactDownloadReport) iter.next();
+                            
+                            RepositoryCacheManager cache = dependency.getModuleRevision()
+                                .getArtifactResolver().getRepositoryCacheManager();
 
-                            startArtifact(saxHandler, artifact);
+                            startArtifact(saxHandler, artifact.getArtifact());
 
-                            writeOriginLocationIfPresent(cache, saxHandler, artifact);
+                            writeOriginLocationIfPresent(cache, saxHandler, artifact.getArtifact());
 
-                            writeCacheLocation(cache, saxHandler, artifact);
+                            writeCacheLocation(cache, saxHandler, artifact.getArtifact());
 
                             Set artifactDestPaths = (Set) artifactsToCopy.get(artifact);
                             for (Iterator iterator = artifactDestPaths.iterator(); iterator
@@ -212,8 +215,9 @@ public class IvyArtifactReport extends IvyPostResolveTask {
         saxHandler.startElement(null, "artifact", "artifact", artifactAttrs);
     }
 
-    private void writeOriginLocationIfPresent(CacheManager cache, TransformerHandler saxHandler,
-            Artifact artifact) throws IOException, SAXException {
+    private void writeOriginLocationIfPresent(
+            RepositoryCacheManager cache, TransformerHandler saxHandler, Artifact artifact) 
+            throws IOException, SAXException {
         ArtifactOrigin origin = cache.getSavedArtifactOrigin(artifact);
         if (origin != null) {
             String originName = origin.getLocation();
@@ -236,7 +240,7 @@ public class IvyArtifactReport extends IvyPostResolveTask {
         }
     }
 
-    private void writeCacheLocation(CacheManager cache, TransformerHandler saxHandler,
+    private void writeCacheLocation(RepositoryCacheManager cache, TransformerHandler saxHandler,
             Artifact artifact) throws SAXException {
         ArtifactOrigin origin = cache.getSavedArtifactOrigin(artifact);
         File archiveInCache = cache.getArchiveFileInCache(artifact, origin, false);

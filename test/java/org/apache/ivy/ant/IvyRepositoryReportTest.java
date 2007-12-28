@@ -36,7 +36,7 @@ public class IvyRepositoryReportTest extends TestCase {
 
         report = new IvyRepositoryReport();
         report.setProject(project);
-        report.setCache(cache);
+        System.setProperty("ivy.cache.dir", cache.getAbsolutePath());
     }
 
     private void createCache() {

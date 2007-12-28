@@ -62,8 +62,6 @@ public class IvyReport extends IvyTask {
 
     private String conf;
 
-    private File cache;
-
     private boolean graph = true;
 
     private boolean dot = false;
@@ -90,12 +88,8 @@ public class IvyReport extends IvyTask {
         this.todir = todir;
     }
 
-    public File getCache() {
-        return cache;
-    }
-
     public void setCache(File cache) {
-        this.cache = cache;
+        cacheAttributeNotSupported();
     }
 
     public String getConf() {
@@ -160,9 +154,6 @@ public class IvyReport extends IvyTask {
 
         organisation = getProperty(organisation, settings, "ivy.organisation", resolveId);
         module = getProperty(module, settings, "ivy.module", resolveId);
-        if (cache == null) {
-            cache = settings.getDefaultCache();
-        }
         conf = getProperty(conf, settings, "ivy.resolved.configurations", resolveId);
         if ("*".equals(conf)) {
             conf = getProperty(settings, "ivy.resolved.configurations", resolveId);
@@ -209,27 +200,27 @@ public class IvyReport extends IvyTask {
         try {
             String[] confs = splitConfs(conf);
             if (xsl) {
-                genreport(cache, organisation, module, confs);
+                genreport(organisation, module, confs);
             }
             if (xml) {
-                genxml(cache, organisation, module, confs);
+                genxml(organisation, module, confs);
             }
             if (graph) {
-                genStyled(cache, organisation, module, confs, getStylePath(cache,
-                    "ivy-report-graph.xsl"), "graphml");
+                genStyled(organisation, module, confs, 
+                    getStylePath("ivy-report-graph.xsl"), "graphml");
             }
             if (dot) {
-                genStyled(cache, organisation, module, confs, getStylePath(cache,
-                    "ivy-report-dot.xsl"), "dot");
+                genStyled(organisation, module, confs, 
+                    getStylePath("ivy-report-dot.xsl"), "dot");
             }
         } catch (IOException e) {
             throw new BuildException("impossible to generate report: " + e, e);
         }
     }
 
-    private void genxml(File cache, String organisation, String module, String[] confs)
+    private void genxml(String organisation, String module, String[] confs)
             throws IOException {
-        ResolutionCacheManager cacheMgr = getIvyInstance().getCacheManager(cache);
+        ResolutionCacheManager cacheMgr = getIvyInstance().getResolutionCacheManager();
         for (int i = 0; i < confs.length; i++) {
             File xml = cacheMgr.getConfigurationResolveReportInCache(resolveId, confs[i]);
 
@@ -246,9 +237,9 @@ public class IvyReport extends IvyTask {
         }
     }
 
-    private void genreport(File cache, String organisation, String module, String[] confs)
+    private void genreport(String organisation, String module, String[] confs)
             throws IOException {
-        genStyled(cache, organisation, module, confs, getReportStylePath(cache), xslext);
+        genStyled(organisation, module, confs, getReportStylePath(), xslext);
 
         // copy the css if required
         if (todir != null && xslFile == null) {
@@ -258,25 +249,24 @@ public class IvyReport extends IvyTask {
                 FileUtil.copy(XmlReportOutputter.class.getResourceAsStream("ivy-report.css"), css,
                     null);
             }
-            FileUtil.copy(XmlReportOutputter.class.getResourceAsStream("ivy-report.css"), new File(
-                    cache, "ivy-report.css"), null);
         }
     }
 
-    private File getReportStylePath(File cache) throws IOException {
+    private File getReportStylePath() throws IOException {
         if (xslFile != null) {
             return xslFile;
         }
         // style should be a file (and not an url)
         // so we have to copy it from classpath to cache
-        File style = new File(cache, "ivy-report.xsl");
+        ResolutionCacheManager cacheMgr = getIvyInstance().getResolutionCacheManager();
+        File style = new File(cacheMgr.getResolutionCacheRoot(), "ivy-report.xsl");
         FileUtil.copy(XmlReportOutputter.class.getResourceAsStream("ivy-report.xsl"), style, null);
         return style;
     }
 
-    private void genStyled(File cache, String organisation, String module, String[] confs,
+    private void genStyled(String organisation, String module, String[] confs,
             File style, String ext) throws IOException {
-        ResolutionCacheManager cacheMgr = getIvyInstance().getCacheManager(cache);
+        ResolutionCacheManager cacheMgr = getIvyInstance().getResolutionCacheManager();
 
         // process the report with xslt to generate dot file
         File out;
@@ -365,10 +355,11 @@ public class IvyReport extends IvyTask {
         }
     }
 
-    private File getStylePath(File cache, String styleResourceName) throws IOException {
+    private File getStylePath(String styleResourceName) throws IOException {
         // style should be a file (and not an url)
         // so we have to copy it from classpath to cache
-        File style = new File(cache, styleResourceName);
+        ResolutionCacheManager cacheMgr = getIvyInstance().getResolutionCacheManager();
+        File style = new File(cacheMgr.getResolutionCacheRoot(), styleResourceName);
         FileUtil.copy(XmlReportOutputter.class.getResourceAsStream(styleResourceName), style, null);
         return style;
     }

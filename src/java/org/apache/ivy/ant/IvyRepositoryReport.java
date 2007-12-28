@@ -50,8 +50,6 @@ public class IvyRepositoryReport extends IvyTask {
 
     private String revision = "latest.integration";
 
-    private File cache;
-
     private String matcher = PatternMatcher.EXACT_OR_REGEXP;
 
     private File todir = new File(".");
@@ -75,9 +73,6 @@ public class IvyRepositoryReport extends IvyTask {
     public void doExecute() throws BuildException {
         Ivy ivy = getIvyInstance();
         IvySettings settings = ivy.getSettings();
-        if (cache == null) {
-            cache = settings.getDefaultCache();
-        }
         if (xsl && xslFile == null) {
             throw new BuildException("xsl file is mandatory when using xsl generation");
         }
@@ -108,10 +103,9 @@ public class IvyRepositoryReport extends IvyTask {
             ResolveReport report = ivy.resolve(md, 
                 new ResolveOptions()
                     .setResolveId(resolveId)
-                    .setCache(ivy.getCacheManager(cache))
                     .setValidate(doValidate(settings)));
 
-            ResolutionCacheManager cacheMgr = getIvyInstance().getCacheManager(cache);
+            ResolutionCacheManager cacheMgr = getIvyInstance().getResolutionCacheManager();
             new XmlReportOutputter().output(report, cacheMgr);
             if (graph) {
                 gengraph(cacheMgr, md.getModuleRevisionId().getOrganisation(), md
@@ -270,12 +264,8 @@ public class IvyRepositoryReport extends IvyTask {
         outputname = outputpattern;
     }
 
-    public File getCache() {
-        return cache;
-    }
-
     public void setCache(File cache) {
-        this.cache = cache;
+        cacheAttributeNotSupported();
     }
 
     public String getMatcher() {

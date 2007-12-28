@@ -28,9 +28,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.ivy.core.cache.RepositoryCacheManager;
 import org.apache.ivy.core.cache.ResolutionCacheManager;
-import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.report.ArtifactDownloadReport;
 import org.apache.ivy.core.report.ConfigurationResolveReport;
@@ -46,20 +44,20 @@ import org.apache.tools.ant.BuildException;
  */
 public abstract class IvyCacheTask extends IvyPostResolveTask {
 
-    protected List getArtifacts() throws BuildException, ParseException, IOException {
-        Collection artifacts = getAllArtifacts();
+    protected List getArtifactReports() throws BuildException, ParseException, IOException {
+        Collection artifacts = getAllArtifactReports();
         List ret = new ArrayList();
         for (Iterator iter = artifacts.iterator(); iter.hasNext();) {
-            Artifact artifact = (Artifact) iter.next();
-            if (getArtifactFilter().accept(artifact)) {
-                ret.add(artifact);
+            ArtifactDownloadReport artifactReport = (ArtifactDownloadReport) iter.next();
+            if (getArtifactFilter().accept(artifactReport.getArtifact())) {
+                ret.add(artifactReport);
             }
         }
 
         return ret;
     }
 
-    private Collection getAllArtifacts() throws ParseException, IOException {
+    private Collection getAllArtifactReports() throws ParseException, IOException {
         String[] confs = splitConfs(getConf());
         Collection all = new LinkedHashSet();
 
@@ -76,17 +74,16 @@ public abstract class IvyCacheTask extends IvyPostResolveTask {
                 Set revisions = configurationReport.getModuleRevisionIds();
                 for (Iterator it = revisions.iterator(); it.hasNext();) {
                     ModuleRevisionId revId = (ModuleRevisionId) it.next();
-                    ArtifactDownloadReport[] aReps = configurationReport.getDownloadReports(revId);
-                    for (int j = 0; j < aReps.length; j++) {
-                        all.add(aReps[j].getArtifact());
-                    }
+                    ArtifactDownloadReport[] aReports 
+                        = configurationReport.getDownloadReports(revId);
+                    all.addAll(Arrays.asList(aReports));
                 }
             }
         } else {
             Message.debug("using stored report to get artifacts list");
 
             XmlReportParser parser = new XmlReportParser();
-            ResolutionCacheManager cacheMgr = getIvyInstance().getCacheManager(getCache());
+            ResolutionCacheManager cacheMgr = getIvyInstance().getResolutionCacheManager();
             String resolvedId = getResolveId();
             if (resolvedId == null) {
                 resolvedId = ResolveOptions.getDefaultResolveId(getResolvedModuleId());
@@ -96,14 +93,10 @@ public abstract class IvyCacheTask extends IvyPostResolveTask {
                     confs[i]);
                 parser.parse(reportFile);
 
-                Artifact[] artifacts = parser.getArtifacts();
-                all.addAll(Arrays.asList(artifacts));
+                ArtifactDownloadReport[] aReports = parser.getArtifactReports();
+                all.addAll(Arrays.asList(aReports));
             }
         }
         return all;
-    }
-
-    protected RepositoryCacheManager getCacheManager() {
-        return getIvyInstance().getCacheManager(getCache());
     }
 }

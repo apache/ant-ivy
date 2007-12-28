@@ -80,8 +80,7 @@ public class CheckEngine {
 
             // check dependencies
             DependencyDescriptor[] dds = md.getDependencies();
-            ResolveData data = new ResolveData(resolveEngine, new ResolveOptions()
-                    .setCache(CacheManager.getInstance(settings)));
+            ResolveData data = new ResolveData(resolveEngine, new ResolveOptions());
             for (int i = 0; i < dds.length; i++) {
                 // check master confs
                 String[] masterConfs = dds[i].getModuleConfigurations();

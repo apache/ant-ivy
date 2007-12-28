@@ -32,6 +32,7 @@ import java.util.Properties;
 import java.util.Set;
 
 import org.apache.ivy.core.IvyPatternHelper;
+import org.apache.ivy.core.cache.ResolutionCacheManager;
 import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
@@ -67,7 +68,7 @@ public class DeliverEngine {
         if (resolveId == null) {
             throw new IllegalArgumentException("A resolveId must be specified for delivering.");
         }
-        File[] files = options.getCache().getConfigurationResolveReportsInCache(resolveId);
+        File[] files = getCache().getConfigurationResolveReportsInCache(resolveId);
         if (files.length == 0) {
             throw new IllegalStateException("No previous resolve found for id '" + resolveId
                     + "' Please resolve dependencies before delivering.");
@@ -76,6 +77,10 @@ public class DeliverEngine {
         parser.parse(files[0]);
         ModuleRevisionId mrid = parser.getResolvedModule();
         deliver(mrid, revision, destIvyPattern, options);
+    }
+
+    private ResolutionCacheManager getCache() {
+        return settings.getResolutionCacheManager();
     }
 
     /**
@@ -101,7 +106,7 @@ public class DeliverEngine {
         destIvyPattern = settings.substitute(destIvyPattern);
 
         // 1) find the resolved module descriptor in cache
-        File ivyFile = options.getCache().getResolvedIvyFileInCache(mrid);
+        File ivyFile = getCache().getResolvedIvyFileInCache(mrid);
         if (!ivyFile.exists()) {
             throw new IllegalStateException("ivy file not found in cache for " + mrid
                     + ": please resolve dependencies before delivering (" + ivyFile + ")");
@@ -124,7 +129,7 @@ public class DeliverEngine {
         // 2) parse resolvedRevisions From properties file
         Map resolvedRevisions = new HashMap(); // Map (ModuleId -> String revision)
         Map dependenciesStatus = new HashMap(); // Map (ModuleId -> String status)
-        File ivyProperties = options.getCache().getResolvedIvyPropertiesInCache(mrid);
+        File ivyProperties = getCache().getResolvedIvyPropertiesInCache(mrid);
         if (!ivyProperties.exists()) {
             throw new IllegalStateException("ivy properties not found in cache for " + mrid
                     + ": please resolve dependencies before delivering (" + ivyFile + ")");

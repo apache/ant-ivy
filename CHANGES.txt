@@ -69,6 +69,8 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - FIX: NPE in namespace transformation during the ivy:findrevision and ivy:resolve task execution (IVY-659) (thanks to Andrea Bernardo Ciddio)
 - FIX: Maven test scope includes all runtime dependencies (IVY-682)
 
+- TASK: Remove cache attribute on Ant tasks (IVY-685)
+
    2.0.0-beta1
 =====================================
 - NEW: Share cache with locking (IVY-654)

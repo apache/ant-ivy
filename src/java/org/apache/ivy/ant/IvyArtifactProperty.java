@@ -61,7 +61,7 @@ public class IvyArtifactProperty extends IvyPostResolveTask {
         prepareAndCheck();
 
         try {
-            ResolutionCacheManager cacheMgr = getIvyInstance().getCacheManager(getCache());
+            ResolutionCacheManager cacheMgr = getIvyInstance().getResolutionCacheManager();
             String[] confs = splitConfs(getConf());
             String resolveId = getResolveId();
             if (resolveId == null) {

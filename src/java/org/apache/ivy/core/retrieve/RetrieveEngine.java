@@ -35,8 +35,6 @@ import java.util.Set;
 
 import org.apache.ivy.core.IvyContext;
 import org.apache.ivy.core.IvyPatternHelper;
-import org.apache.ivy.core.cache.CacheManager;
-import org.apache.ivy.core.cache.RepositoryCacheManager;
 import org.apache.ivy.core.cache.ResolutionCacheManager;
 import org.apache.ivy.core.event.EventManager;
 import org.apache.ivy.core.event.retrieve.EndRetrieveEvent;
@@ -46,6 +44,8 @@ import org.apache.ivy.core.module.descriptor.DefaultArtifact;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleId;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
+import org.apache.ivy.core.report.ArtifactDownloadReport;
+import org.apache.ivy.core.report.DownloadStatus;
 import org.apache.ivy.core.resolve.ResolveOptions;
 import org.apache.ivy.plugins.parser.ModuleDescriptorParser;
 import org.apache.ivy.plugins.parser.ModuleDescriptorParserRegistry;
@@ -85,7 +85,6 @@ public class RetrieveEngine {
         String destIvyPattern = IvyPatternHelper.substituteVariables(options.getDestIvyPattern(),
             settings.getVariables());
 
-        RepositoryCacheManager cacheManager = getCacheManager(options);
         String[] confs = getConfs(mrid, options);
         Message.info("\tconfs: " + Arrays.asList(confs));
         if (this.eventManager != null) {
@@ -108,21 +107,8 @@ public class RetrieveEngine {
             int targetsUpToDate = 0;
             long totalCopiedSize = 0;
             for (Iterator iter = artifactsToCopy.keySet().iterator(); iter.hasNext();) {
-                Artifact artifact = (Artifact) iter.next();
-                File archive;
-                if ("ivy".equals(artifact.getType())) {
-                    archive = cacheManager.getIvyFileInCache(artifact.getModuleRevisionId());
-                } else {
-                    archive = cacheManager.getArchiveFileInCache(artifact, cacheManager
-                            .getSavedArtifactOrigin(artifact), options.isUseOrigin());
-                    if (!options.isUseOrigin() && !archive.exists()) {
-                        // file is not available in cache, maybe the last resolve was performed with
-                        // useOrigin=true.
-                        // we try to use the best we can
-                        archive = cacheManager.getArchiveFileInCache(artifact, cacheManager
-                                .getSavedArtifactOrigin(artifact));
-                    }
-                }
+                ArtifactDownloadReport artifact = (ArtifactDownloadReport) iter.next();
+                File archive = artifact.getLocalFile();
                 Set dest = (Set) artifactsToCopy.get(artifact);
                 Message.verbose("\tretrieving " + archive);
                 for (Iterator it2 = dest.iterator(); it2.hasNext();) {
@@ -194,7 +180,7 @@ public class RetrieveEngine {
         String[] confs = options.getConfs();
         if (confs == null || (confs.length == 1 && "*".equals(confs[0]))) {
             try {
-                File ivyFile = options.getCache().getResolvedIvyFileInCache(mrid);
+                File ivyFile = getCache().getResolvedIvyFileInCache(mrid);
                 Message.verbose("no explicit confs given for retrieve, using ivy file: " + ivyFile);
                 URL ivySource = ivyFile.toURL();
                 URLResource res = new URLResource(ivySource);
@@ -215,15 +201,8 @@ public class RetrieveEngine {
         return confs;
     }
 
-    private CacheManager getCacheManager(RetrieveOptions options) {
-        CacheManager cacheManager = options.getCache();
-        if (cacheManager == null) { // ensure that a cache is configured
-            cacheManager = IvyContext.getContext().getCacheManager();
-            options.setCache(cacheManager);
-        } else {
-            IvyContext.getContext().setCacheManager(cacheManager);
-        }
-        return cacheManager;
+    private ResolutionCacheManager getCache() {
+        return settings.getResolutionCacheManager();
     }
 
     private void sync(Collection target, Collection existing) {
@@ -253,18 +232,20 @@ public class RetrieveEngine {
             options.setResolveId(ResolveOptions.getDefaultResolveId(moduleId));
         }
 
-        ResolutionCacheManager cacheManager = getCacheManager(options);
+        ResolutionCacheManager cacheManager = getCache();
         String[] confs = getConfs(mrid, options);
         String destIvyPattern = IvyPatternHelper.substituteVariables(options.getDestIvyPattern(),
             settings.getVariables());
 
         // find what we must retrieve where
-        final Map artifactsToCopy = new HashMap(); // Artifact source -> Set (String
-        // copyDestAbsolutePath)
-        final Map conflictsMap = new HashMap(); // String copyDestAbsolutePath -> Set (Artifact
-        // source)
-        final Map conflictsConfMap = new HashMap(); // String copyDestAbsolutePath -> Set (String
-        // conf)
+
+        // ArtifactDownloadReport source -> Set (String copyDestAbsolutePath)
+        final Map artifactsToCopy = new HashMap();
+        // String copyDestAbsolutePath -> Set (ArtifactDownloadReport source)
+        final Map conflictsMap = new HashMap(); 
+        // String copyDestAbsolutePath -> Set (String conf)
+        final Map conflictsConfMap = new HashMap(); 
+        
         XmlReportParser parser = new XmlReportParser();
         for (int i = 0; i < confs.length; i++) {
             final String conf = confs[i];
@@ -273,15 +254,21 @@ public class RetrieveEngine {
                 conf);
             parser.parse(report);
 
-            Collection artifacts = new ArrayList(Arrays.asList(parser.getArtifacts()));
+            Collection artifacts = new ArrayList(Arrays.asList(parser.getArtifactReports()));
             if (destIvyPattern != null) {
                 ModuleRevisionId[] mrids = parser.getRealDependencyRevisionIds();
                 for (int j = 0; j < mrids.length; j++) {
-                    artifacts.add(DefaultArtifact.newIvyArtifact(mrids[j], null));
+                    ArtifactDownloadReport aReport = new ArtifactDownloadReport(
+                        DefaultArtifact.newIvyArtifact(mrids[j], null));
+                    aReport.setDownloadStatus(DownloadStatus.SUCCESSFUL);
+                    // TODO cache: store metadata cache info in report and reuse it
+                    aReport.setLocalFile(settings.getResolver(mrids[j].getModuleId())
+                        .getRepositoryCacheManager().getIvyFileInCache(mrids[j]));
+                    artifacts.add(aReport);
                 }
             }
             for (Iterator iter = artifacts.iterator(); iter.hasNext();) {
-                Artifact artifact = (Artifact) iter.next();
+                ArtifactDownloadReport artifact = (ArtifactDownloadReport) iter.next();
                 String destPattern = "ivy".equals(artifact.getType()) ? destIvyPattern
                         : destFilePattern;
 
@@ -290,7 +277,8 @@ public class RetrieveEngine {
                     continue; // skip this artifact, the filter didn't accept it!
                 }
 
-                String destFileName = IvyPatternHelper.substitute(destPattern, artifact, conf);
+                String destFileName = IvyPatternHelper.substitute(
+                                        destPattern, artifact.getArtifact(), conf);
 
                 Set dest = (Set) artifactsToCopy.get(artifact);
                 if (dest == null) {
@@ -332,14 +320,15 @@ public class RetrieveEngine {
                         + " in "
                         + conflictsConfs
                         + ": "
-                        + ((Artifact) artifactsList.get(artifactsList.size() - 1))
-                                .getModuleRevisionId().getRevision() + " won");
+                        + ((ArtifactDownloadReport) artifactsList.get(artifactsList.size() - 1))
+                                .getArtifact().getModuleRevisionId().getRevision() + " won");
 
                 // we now iterate over the list beginning with the artifact preceding the winner,
                 // and going backward to the least artifact
                 for (int i = artifactsList.size() - 2; i >= 0; i--) {
-                    Artifact looser = (Artifact) artifactsList.get(i);
-                    Message.verbose("\t\tremoving conflict looser artifact: " + looser);
+                    ArtifactDownloadReport looser = (ArtifactDownloadReport) artifactsList.get(i);
+                    Message.verbose("\t\tremoving conflict looser artifact: " 
+                        + looser.getArtifact());
                     // for each loser, we remove the pair (loser - copyDest) in the artifactsToCopy
                     // map
                     Set dest = (Set) artifactsToCopy.get(looser);

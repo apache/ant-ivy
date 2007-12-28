@@ -52,7 +52,7 @@ public class IvyDeliverTest extends TestCase {
 
         deliver = new IvyDeliver();
         deliver.setProject(project);
-        deliver.setCache(cache);
+        System.setProperty("ivy.cache.dir", cache.getAbsolutePath());
     }
 
     private void createCache() {
@@ -113,7 +113,6 @@ public class IvyDeliverTest extends TestCase {
     public void testWithResolveId() throws Exception {
         IvyResolve resolve = new IvyResolve();
         resolve.setProject(project);
-        resolve.setCache(cache);
         resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-simple.xml"));
         resolve.setResolveId("withResolveId");
         resolve.execute();
@@ -121,7 +120,6 @@ public class IvyDeliverTest extends TestCase {
         // resolve another ivy file
         resolve = new IvyResolve();
         resolve.setProject(project);
-        resolve.setCache(cache);
         resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-latest.xml"));
         resolve.execute();
 
@@ -152,7 +150,6 @@ public class IvyDeliverTest extends TestCase {
         // do a resolve in the new build
         IvyResolve resolve = new IvyResolve();
         resolve.setProject(other);
-        resolve.setCache(cache);
         resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-simple.xml"));
         resolve.setResolveId("withResolveId");
         resolve.execute();
@@ -160,7 +157,6 @@ public class IvyDeliverTest extends TestCase {
         // resolve another ivy file
         resolve = new IvyResolve();
         resolve.setProject(project);
-        resolve.setCache(cache);
         resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-latest.xml"));
         resolve.execute();
 

@@ -53,7 +53,7 @@ public class IvyPublishTest extends TestCase {
 
         publish = new IvyPublish();
         publish.setProject(project);
-        publish.setCache(cache);
+        System.setProperty("ivy.cache.dir", cache.getAbsolutePath());
 
         Message.setDefaultLogger(new DefaultMessageLogger(10));
     }

@@ -208,12 +208,11 @@ public class RetrieveTest extends TestCase {
     }
 
     private RetrieveOptions getRetrieveOptions() {
-        return new RetrieveOptions().setCache(CacheManager.getInstance(ivy.getSettings(), cache));
+        return new RetrieveOptions();
     }
 
     private ResolveOptions getResolveOptions(String[] confs) {
-        return new ResolveOptions().setConfs(confs).setCache(
-            CacheManager.getInstance(ivy.getSettings(), cache));
+        return new ResolveOptions().setConfs(confs);
     }
 
 }

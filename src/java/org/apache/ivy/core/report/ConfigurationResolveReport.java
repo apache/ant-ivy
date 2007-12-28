@@ -74,7 +74,7 @@ public class ConfigurationResolveReport {
         this.date = date;
 
         // parse previous deps from previous report file if any
-        ResolutionCacheManager cache = options.getCache();
+        ResolutionCacheManager cache = resolveEngine.getSettings().getResolutionCacheManager();
         String resolveId = options.getResolveId();
         File previousReportFile = cache.getConfigurationResolveReportInCache(resolveId, conf);
         if (previousReportFile.exists()) {
@@ -253,6 +253,15 @@ public class ConfigurationResolveReport {
             total += reports == null ? 0 : reports.size();
         }
         return total;
+    }
+
+    public ArtifactDownloadReport[] getAllArtifactsReports() {
+        List result = new ArrayList();
+        for (Iterator iter = dependencyReports.values().iterator(); iter.hasNext();) {
+            Collection reports = (Collection) iter.next();
+            result.addAll(reports);
+        }
+        return (ArtifactDownloadReport[]) result.toArray(new ArtifactDownloadReport[result.size()]);
     }
 
     public ArtifactDownloadReport[] getDownloadedArtifactsReports() {

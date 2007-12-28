@@ -49,7 +49,7 @@ public class IvyRetrieveTest extends TestCase {
 
         retrieve = new IvyRetrieve();
         retrieve.setProject(project);
-        retrieve.setCache(cache);
+        System.setProperty("ivy.cache.dir", cache.getAbsolutePath());
         retrieve.setPattern(RETRIEVE_PATTERN);
     }
 
@@ -150,7 +150,6 @@ public class IvyRetrieveTest extends TestCase {
         project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-simple.xml");
         IvyResolve resolve = new IvyResolve();
         resolve.setProject(project);
-        resolve.setCache(cache);
         resolve.execute();
 
         // then we do a retrieve with the correct module information
@@ -170,7 +169,6 @@ public class IvyRetrieveTest extends TestCase {
         project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-simple.xml");
         IvyResolve resolve = new IvyResolve();
         resolve.setProject(project);
-        resolve.setCache(cache);
         resolve.setResolveId("testWithAPreviousResolveAndResolveId");
         resolve.execute();
 
@@ -193,7 +191,6 @@ public class IvyRetrieveTest extends TestCase {
         project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-simple.xml");
         IvyResolve resolve = new IvyResolve();
         resolve.setProject(project);
-        resolve.setCache(cache);
         resolve.setUseOrigin(true);
         resolve.execute();
 
@@ -336,7 +333,6 @@ public class IvyRetrieveTest extends TestCase {
 
         retrieve = new IvyRetrieve();
         retrieve.setProject(project);
-        retrieve.setCache(cache);
         retrieve.setPattern(RETRIEVE_PATTERN);
         retrieve.setConf("compile,unittest");
         retrieve.execute();
@@ -352,7 +348,7 @@ public class IvyRetrieveTest extends TestCase {
 
     private File getArchiveFileInCache(String organisation, String module, String revision,
             String artifact, String type, String ext) {
-        return TestHelper.getArchiveFileInCache(retrieve.getIvyInstance(), cache, organisation,
+        return TestHelper.getArchiveFileInCache(retrieve.getIvyInstance(), organisation,
             module, revision, artifact, type, ext);
     }
 

@@ -45,7 +45,7 @@ public class ArtifactDownloadReport {
 
     private ArtifactOrigin origin;
     
-    private File downloadedFile;
+    private File localFile;
 
     private DownloadStatus downloadStatus;
 
@@ -134,16 +134,16 @@ public class ArtifactDownloadReport {
     }
 
     /**
-     * Returns the file where the artifact has been downloaded, or <code>null</code> if and only
-     * if the download failed.
+     * Returns the File where the artifact is available on the local filesystem, 
+     * or <code>null</code> if and only if the artifact caching failed.
      * 
-     * @return the file where the artifact has been downloaded
+     * @return the file where the artifact is now available on the local filesystem.
      */
-    public File getDownloadedFile() {
-        return downloadedFile;
+    public File getLocalFile() {
+        return localFile;
     }
 
-    public void setDownloadedFile(File downloadedFile) {
-        this.downloadedFile = downloadedFile;
+    public void setLocalFile(File localFile) {
+        this.localFile = localFile;
     }
 }

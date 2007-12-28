@@ -19,8 +19,7 @@ package org.apache.ivy.ant;
 
 import java.util.Iterator;
 
-import org.apache.ivy.core.cache.RepositoryCacheManager;
-import org.apache.ivy.core.module.descriptor.Artifact;
+import org.apache.ivy.core.report.ArtifactDownloadReport;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.types.Path;
@@ -62,11 +61,9 @@ public class IvyCachePath extends IvyCacheTask {
         try {
             Path path = new Path(getProject());
             getProject().addReference(pathid, path);
-            RepositoryCacheManager cache = getCacheManager();
-            for (Iterator iter = getArtifacts().iterator(); iter.hasNext();) {
-                Artifact a = (Artifact) iter.next();
-                path.createPathElement().setLocation(
-                    cache.getArchiveFileInCache(a, cache.getSavedArtifactOrigin(a), isUseOrigin()));
+            for (Iterator iter = getArtifactReports().iterator(); iter.hasNext();) {
+                ArtifactDownloadReport a = (ArtifactDownloadReport) iter.next();
+                path.createPathElement().setLocation(a.getLocalFile());
             }
         } catch (Exception ex) {
             throw new BuildException("impossible to build ivy path: " + ex, ex);

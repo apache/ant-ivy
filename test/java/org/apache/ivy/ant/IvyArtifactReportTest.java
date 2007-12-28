@@ -38,7 +38,7 @@ public class IvyArtifactReportTest extends TestCase {
 
         prop = new IvyArtifactReport();
         prop.setProject(project);
-        prop.setCache(cache);
+        System.setProperty("ivy.cache.dir", cache.getAbsolutePath());
     }
 
     private void createCache() {

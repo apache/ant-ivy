@@ -87,6 +87,7 @@ public class ArtifactLockStrategyTest extends TestCase {
     
     private FileSystemResolver createSlowResolver(IvySettings settings, final int sleep) {
         FileSystemResolver resolver = new FileSystemResolver();
+        resolver.setRepositoryCacheManager(newCacheManager(settings));
         resolver.setRepository(new FileRepository() {
             private RepositoryCopyProgressListener progress = new RepositoryCopyProgressListener(this) {
                 public void progress(CopyProgressEvent evt) {
@@ -127,8 +128,7 @@ public class ArtifactLockStrategyTest extends TestCase {
             new DefaultDependencyDescriptor(ModuleRevisionId.parse(module), false), 
             new ResolveData(
                 new ResolveEngine(settings, new EventManager(), new SortEngine(settings)), 
-                new ResolveOptions().setCache(
-                    newCacheManager(settings))));
+                new ResolveOptions()));
     }
     private void sleepSilently(int timeout) {
         try {

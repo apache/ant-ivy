@@ -289,4 +289,14 @@ public abstract class IvyTask extends Task {
     public String toString() {
         return getClass().getName() + ":" + getTaskName();
     }
+    
+
+    /**
+     * Informs the user that the cache attribute is not supported any more.
+     */
+    protected void cacheAttributeNotSupported() {
+        throw new BuildException(
+            "cache attribute is not supported any more. See IVY-685 for details.");
+    }
+
 }

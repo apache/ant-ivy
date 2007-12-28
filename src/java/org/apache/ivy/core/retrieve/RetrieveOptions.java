@@ -17,7 +17,6 @@
  */
 package org.apache.ivy.core.retrieve;
 
-import org.apache.ivy.core.cache.CacheManager;
 import org.apache.ivy.util.filter.Filter;
 import org.apache.ivy.util.filter.FilterHelper;
 
@@ -32,12 +31,6 @@ public class RetrieveOptions {
      * configurations of the module will be retrieved.
      */
     private String[] confs = new String[] {"*"};
-
-    /**
-     * The cache manager to retrieve files from. If null, the default cache manager of the current
-     * Ivy instance will be used.
-     */
-    private CacheManager cache = null;
 
     /**
      * The pattern to which ivy files should be retrieved. If destIvyPattern is null no ivy files
@@ -79,15 +72,6 @@ public class RetrieveOptions {
 
     public RetrieveOptions setArtifactFilter(Filter artifactFilter) {
         this.artifactFilter = artifactFilter;
-        return this;
-    }
-
-    public CacheManager getCache() {
-        return cache;
-    }
-
-    public RetrieveOptions setCache(CacheManager cacheManager) {
-        this.cache = cacheManager;
         return this;
     }
 

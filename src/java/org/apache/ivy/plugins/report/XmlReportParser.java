@@ -32,9 +32,12 @@ import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
 import org.apache.ivy.Ivy;
+import org.apache.ivy.core.cache.ArtifactOrigin;
 import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.DefaultArtifact;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
+import org.apache.ivy.core.report.ArtifactDownloadReport;
+import org.apache.ivy.core.report.DownloadStatus;
 import org.apache.ivy.util.extendable.ExtendableItemHelper;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -50,12 +53,15 @@ public class XmlReportParser {
 
         private List artifacts;
 
+        private List artifactReports;
+
         private ModuleRevisionId mRevisionId;
 
         private File report;
 
         SaxXmlReportParser(File report) {
             artifacts = new ArrayList();
+            artifactReports = new ArrayList();
             mrids = new ArrayList();
             defaultMrids = new ArrayList();
             realMrids = new ArrayList();
@@ -132,16 +138,32 @@ public class XmlReportParser {
                             return;
                         }
                         String status = attributes.getValue("status");
-                        if (status != null && "failed".equals(status)) {
-                            return;
-                        }
                         String artifactName = attributes.getValue("name");
                         String type = attributes.getValue("type");
                         String ext = attributes.getValue("ext");
                         Artifact artifact = new DefaultArtifact(mrid, pubdate, artifactName,
                                 type, ext, ExtendableItemHelper.getExtraAttributes(attributes,
                                     "extra-"));
-                        revisionArtifacts.add(artifact);
+                        ArtifactDownloadReport aReport = new ArtifactDownloadReport(artifact);
+                        aReport.setDownloadStatus(DownloadStatus.fromString(status));
+                        aReport.setDownloadDetails(attributes.getValue("details"));
+                        aReport.setSize(Long.parseLong(attributes.getValue("size")));
+                        aReport.setDownloadTimeMillis(Long.parseLong(attributes.getValue("time")));
+                        if (attributes.getValue("location") != null) {
+                            aReport.setLocalFile(new File(attributes.getValue("location")));
+                        }
+                        revisionArtifacts.add(aReport);
+                    } else if ("origin-location".equals(qName)) {
+                        if (skip) {
+                            return;
+                        }
+                        ArtifactDownloadReport aReport = (ArtifactDownloadReport) 
+                            revisionArtifacts.get(revisionArtifacts.size() - 1);
+                        
+                        aReport.setArtifactOrigin(
+                            new ArtifactOrigin(
+                                Boolean.parseBoolean(attributes.getValue("is-local")),
+                                attributes.getValue("location")));
                     } else if ("info".equals(qName)) {
                         String organisation = attributes.getValue("organisation");
                         String name = attributes.getValue("module");
@@ -166,8 +188,16 @@ public class XmlReportParser {
                     if ("dependencies".equals(qname)) {
                         // add the artifacts in the correct order
                         for (Iterator it = revisionsMap.values().iterator(); it.hasNext();) {
-                            List artifacts = (List) it.next();
-                            SaxXmlReportParser.this.artifacts.addAll(artifacts);
+                            List artifactReports = (List) it.next();
+                            SaxXmlReportParser.this.artifactReports.addAll(artifactReports);
+                            for (Iterator iter = artifactReports.iterator(); iter.hasNext();) {
+                                ArtifactDownloadReport artifactReport 
+                                    = (ArtifactDownloadReport) iter.next();
+                                if (artifactReport.getDownloadStatus() != DownloadStatus.FAILED) {
+                                    artifacts.add(artifactReport.getArtifact());
+                                }
+                            }
+                            
                         }
                     }
                 }
@@ -181,6 +211,10 @@ public class XmlReportParser {
 
         public List getArtifacts() {
             return artifacts;
+        }
+
+        public List getArtifactReports() {
+            return artifactReports;
         }
 
         public List getModuleRevisionIds() {
@@ -218,6 +252,11 @@ public class XmlReportParser {
     public Artifact[] getArtifacts() {
         return (Artifact[]) parser.getArtifacts().toArray(
             new Artifact[parser.getArtifacts().size()]);
+    }
+
+    public ArtifactDownloadReport[] getArtifactReports() {
+        return (ArtifactDownloadReport[]) parser.getArtifactReports().toArray(
+            new ArtifactDownloadReport[parser.getArtifactReports().size()]);
     }
 
     public ModuleRevisionId[] getDependencyRevisionIds() {

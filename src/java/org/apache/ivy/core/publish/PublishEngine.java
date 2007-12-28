@@ -91,7 +91,7 @@ public class PublishEngine {
                         + ": call deliver before (" + ivyFile + ")");
             }
         } else {
-            ResolutionCacheManager cacheManager = getCacheManager(options);
+            ResolutionCacheManager cacheManager = settings.getResolutionCacheManager();
             ivyFile = cacheManager.getResolvedIvyFileInCache(mrid);
             if (!ivyFile.exists()) {
                 throw new IllegalStateException("ivy file not found in cache for " + mrid
@@ -187,7 +187,7 @@ public class PublishEngine {
             // for each declared published artifact in this descriptor, do:
             for (Iterator iter = artifactsSet.iterator(); iter.hasNext();) {
                 Artifact artifact = (Artifact) iter.next();
-                // 1) copy the artifact using src patterns and resolver
+                // copy the artifact using src patterns and resolver
                 boolean published = false;
                 for (Iterator iterator = srcArtifactPattern.iterator(); iterator.hasNext()
                         && !published;) {
@@ -230,9 +230,9 @@ public class PublishEngine {
 
     private boolean publish(Artifact artifact, String srcArtifactPattern,
             DependencyResolver resolver, boolean overwrite) throws IOException {
-        IvyContext.getContext().checkInterrupted();
         File src = new File(IvyPatternHelper.substitute(srcArtifactPattern, artifact));
         
+        IvyContext.getContext().checkInterrupted();
         //notify triggers that an artifact is about to be published
         eventManager.fireIvyEvent(
             new StartArtifactPublishEvent(resolver, artifact, src, overwrite));
@@ -248,14 +248,5 @@ public class PublishEngine {
             eventManager.fireIvyEvent(
                 new EndArtifactPublishEvent(resolver, artifact, src, overwrite, successful));
         }
-    }
-
-    private ResolutionCacheManager getCacheManager(PublishOptions options) {
-        ResolutionCacheManager cacheManager = options.getCache();
-        if (cacheManager == null) { // ensure that a cache is configured
-            cacheManager = IvyContext.getContext().getCacheManager();
-            options.setCache(cacheManager);
-        }
-        return cacheManager;
     }
 }

@@ -48,7 +48,7 @@ public class IvyPostResolveTaskTest extends TestCase {
             }
         };
         task.setProject(project);
-        task.setCache(cache);
+        System.setProperty("ivy.cache.dir", cache.getAbsolutePath());
     }
 
     private void createCache() {
@@ -63,7 +63,6 @@ public class IvyPostResolveTaskTest extends TestCase {
     public void testWithPreviousResolveInSameBuildAndLessConfs() throws Exception {
         IvyResolve resolve = new IvyResolve();
         resolve.setProject(project);
-        resolve.setCache(cache);
         resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-multiconf.xml"));
         resolve.setConf("default,compile");
         resolve.execute();
@@ -82,7 +81,6 @@ public class IvyPostResolveTaskTest extends TestCase {
     public void testWithPreviousResolveInSameBuildAndSameConfs() throws Exception {
         IvyResolve resolve = new IvyResolve();
         resolve.setProject(project);
-        resolve.setCache(cache);
         resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-multiconf.xml"));
         resolve.setConf("default");
         resolve.execute();
@@ -101,7 +99,6 @@ public class IvyPostResolveTaskTest extends TestCase {
     public void testWithPreviousResolveInSameBuildAndWildcard() throws Exception {
         IvyResolve resolve = new IvyResolve();
         resolve.setProject(project);
-        resolve.setCache(cache);
         resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-multiconf.xml"));
         resolve.setConf("*");
         resolve.execute();
@@ -120,7 +117,6 @@ public class IvyPostResolveTaskTest extends TestCase {
     public void testWithPreviousResolveInSameBuildAndBothWildcard() throws Exception {
         IvyResolve resolve = new IvyResolve();
         resolve.setProject(project);
-        resolve.setCache(cache);
         resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-multiconf.xml"));
         resolve.setConf("*");
         resolve.execute();
@@ -139,7 +135,6 @@ public class IvyPostResolveTaskTest extends TestCase {
     public void testWithPreviousResolveInSameBuildAndMoreConfs() throws Exception {
         IvyResolve resolve = new IvyResolve();
         resolve.setProject(project);
-        resolve.setCache(cache);
         resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-multiconf.xml"));
         resolve.setConf("compile");
         resolve.execute();
@@ -163,7 +158,6 @@ public class IvyPostResolveTaskTest extends TestCase {
     public void testWithoutKeep() throws Exception {
         IvyResolve resolve = new IvyResolve();
         resolve.setProject(project);
-        resolve.setCache(cache);
         resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-multiconf.xml"));
         resolve.setConf("compile");
         resolve.execute();
@@ -219,7 +213,6 @@ public class IvyPostResolveTaskTest extends TestCase {
     public void testWithResolveIdAndPreviousResolveInSameBuildAndLessConfs() throws Exception {
         IvyResolve resolve = new IvyResolve();
         resolve.setProject(project);
-        resolve.setCache(cache);
         resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-multiconf.xml"));
         resolve.setConf("default,compile");
         resolve.setResolveId("testResolveId");
@@ -231,7 +224,6 @@ public class IvyPostResolveTaskTest extends TestCase {
         // perform another resolve
         resolve = new IvyResolve();
         resolve.setProject(project);
-        resolve.setCache(cache);
         resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-simple.xml"));
         resolve.setConf("*");
         resolve.execute();
@@ -255,7 +247,6 @@ public class IvyPostResolveTaskTest extends TestCase {
     public void testWithResolveIdAndPreviousResolveInSameBuildAndSameConfs() throws Exception {
         IvyResolve resolve = new IvyResolve();
         resolve.setProject(project);
-        resolve.setCache(cache);
         resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-multiconf.xml"));
         resolve.setConf("default");
         resolve.setResolveId("testResolveId");
@@ -267,7 +258,6 @@ public class IvyPostResolveTaskTest extends TestCase {
         // perform another resolve
         resolve = new IvyResolve();
         resolve.setProject(project);
-        resolve.setCache(cache);
         resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-simple.xml"));
         resolve.setConf("*");
         resolve.execute();
@@ -291,7 +281,6 @@ public class IvyPostResolveTaskTest extends TestCase {
     public void testWithResolveIdAndPreviousResolveInSameBuildAndWildcard() throws Exception {
         IvyResolve resolve = new IvyResolve();
         resolve.setProject(project);
-        resolve.setCache(cache);
         resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-multiconf.xml"));
         resolve.setConf("*");
         resolve.setResolveId("testResolveId");
@@ -303,7 +292,6 @@ public class IvyPostResolveTaskTest extends TestCase {
         // perform another resolve
         resolve = new IvyResolve();
         resolve.setProject(project);
-        resolve.setCache(cache);
         resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-simple.xml"));
         resolve.setConf("*");
         resolve.execute();
@@ -327,7 +315,6 @@ public class IvyPostResolveTaskTest extends TestCase {
     public void testWithResolveIdAndPreviousResolveInSameBuildAndBothWildcard() throws Exception {
         IvyResolve resolve = new IvyResolve();
         resolve.setProject(project);
-        resolve.setCache(cache);
         resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-multiconf.xml"));
         resolve.setConf("*");
         resolve.setResolveId("testResolveId");
@@ -339,7 +326,6 @@ public class IvyPostResolveTaskTest extends TestCase {
         // perform another resolve
         resolve = new IvyResolve();
         resolve.setProject(project);
-        resolve.setCache(cache);
         resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-simple.xml"));
         resolve.setConf("*");
         resolve.execute();
@@ -363,7 +349,6 @@ public class IvyPostResolveTaskTest extends TestCase {
     public void testWithResolveIdAndPreviousResolveInSameBuildAndMoreConfs() throws Exception {
         IvyResolve resolve = new IvyResolve();
         resolve.setProject(project);
-        resolve.setCache(cache);
         resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-multiconf.xml"));
         resolve.setConf("compile");
         resolve.setResolveId("testResolveId");
@@ -379,7 +364,6 @@ public class IvyPostResolveTaskTest extends TestCase {
         // perform another resolve
         resolve = new IvyResolve();
         resolve.setProject(project);
-        resolve.setCache(cache);
         resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-simple.xml"));
         resolve.setConf("*");
         resolve.execute();
@@ -403,7 +387,7 @@ public class IvyPostResolveTaskTest extends TestCase {
 
     private File getArchiveFileInCache(String organisation, String module, String revision,
             String artifact, String type, String ext) {
-        return TestHelper.getArchiveFileInCache(task.getIvyInstance(), cache, organisation,
+        return TestHelper.getArchiveFileInCache(task.getIvyInstance(), organisation,
             module, revision, artifact, type, ext);
     }
 }

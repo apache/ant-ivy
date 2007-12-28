@@ -42,6 +42,7 @@ import org.apache.ivy.util.FileUtil;
 
 public class PublishEngineTest extends TestCase {
     protected void setUp() throws Exception {
+        System.setProperty("ivy.cache.dir", new File("build/test/publish/cache").getAbsolutePath());
         FileUtil.forceDelete(new File("build/test/publish"));
     }
     protected void tearDown() throws Exception {
@@ -131,8 +132,7 @@ public class PublishEngineTest extends TestCase {
             new DefaultDependencyDescriptor(ModuleRevisionId.parse(module), false), 
             new ResolveData(
                 new ResolveEngine(settings, new EventManager(), new SortEngine(settings)), 
-                new ResolveOptions().setCache(
-                    new CacheManager(settings, new File("build/test/publish/cache")))));
+                new ResolveOptions()));
     }
     private void sleepSilently(int timeout) {
         try {

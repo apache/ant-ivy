@@ -19,7 +19,6 @@ package org.apache.ivy.core.resolve;
 
 import java.util.Date;
 
-import org.apache.ivy.core.cache.CacheManager;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleId;
 import org.apache.ivy.util.ConfigurationUtils;
@@ -43,11 +42,6 @@ public class ResolveOptions {
      * default revision is given if necessary (no revision found in ivy file)
      */
     private String revision = null;
-
-    /**
-     * The cache manager to use during resolve. If it is null, default cache manager will be used.
-     */
-    private CacheManager cache = null;
 
     /**
      * the date for which the dependencies should be resolved. All obtained artifacts should have a
@@ -108,7 +102,6 @@ public class ResolveOptions {
     public ResolveOptions(ResolveOptions options) {
         confs = options.confs;
         revision = options.revision;
-        cache = options.cache;
         date = options.date;
         validate = options.validate;
         useCacheOnly = options.useCacheOnly;
@@ -126,15 +119,6 @@ public class ResolveOptions {
 
     public ResolveOptions setArtifactFilter(Filter artifactFilter) {
         this.artifactFilter = artifactFilter;
-        return this;
-    }
-
-    public CacheManager getCache() {
-        return cache;
-    }
-
-    public ResolveOptions setCache(CacheManager cache) {
-        this.cache = cache;
         return this;
     }
 

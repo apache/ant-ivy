@@ -20,10 +20,7 @@ package org.apache.ivy.plugins.resolver;
 import java.io.File;
 import java.util.List;
 
-import junit.framework.TestCase;
-
 import org.apache.ivy.core.IvyContext;
-import org.apache.ivy.core.cache.CacheManager;
 import org.apache.ivy.core.event.EventManager;
 import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.DefaultArtifact;
@@ -34,7 +31,6 @@ import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.report.ArtifactDownloadReport;
 import org.apache.ivy.core.report.DownloadReport;
 import org.apache.ivy.core.report.DownloadStatus;
-import org.apache.ivy.core.resolve.DownloadOptions;
 import org.apache.ivy.core.resolve.ResolveData;
 import org.apache.ivy.core.resolve.ResolveEngine;
 import org.apache.ivy.core.resolve.ResolveOptions;
@@ -42,7 +38,6 @@ import org.apache.ivy.core.resolve.ResolvedModuleRevision;
 import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.core.sort.SortEngine;
 import org.apache.ivy.plugins.matcher.ExactPatternMatcher;
-import org.apache.ivy.util.Message;
 import org.apache.ivy.util.MockMessageLogger;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.Delete;
@@ -50,7 +45,7 @@ import org.apache.tools.ant.taskdefs.Delete;
 /**
  * 
  */
-public class IBiblioResolverTest extends TestCase {
+public class IBiblioResolverTest extends AbstractDependencyResolverTest {
     // remote.test
 
     private IvySettings _settings;
@@ -65,8 +60,7 @@ public class IBiblioResolverTest extends TestCase {
         _settings = new IvySettings();
         _engine = new ResolveEngine(_settings, new EventManager(), new SortEngine(_settings));
         _cache = new File("build/cache");
-        _data = new ResolveData(_engine, new ResolveOptions().setCache(CacheManager.getInstance(
-            _settings, _cache)));
+        _data = new ResolveData(_engine, new ResolveOptions());
         _cache.mkdirs();
         _settings.setDefaultCache(_cache);
     }
@@ -175,8 +169,7 @@ public class IBiblioResolverTest extends TestCase {
 
         DefaultArtifact artifact = new DefaultArtifact(mrid, rmr.getPublicationDate(),
                 "commons-fileupload", "jar", "jar");
-        DownloadReport report = resolver.download(new Artifact[] {artifact}, new DownloadOptions(
-                _settings, _cache));
+        DownloadReport report = resolver.download(new Artifact[] {artifact}, downloadOptions());
         assertNotNull(report);
 
         assertEquals(1, report.getArtifactsReports().length);
@@ -189,7 +182,7 @@ public class IBiblioResolverTest extends TestCase {
 
         // test to ask to download again, should use cache
         report = resolver.download(new Artifact[] {artifact},
-            new DownloadOptions(_settings, _cache));
+            downloadOptions());
         assertNotNull(report);
 
         assertEquals(1, report.getArtifactsReports().length);
@@ -251,7 +244,7 @@ public class IBiblioResolverTest extends TestCase {
         DefaultArtifact trace = new DefaultArtifact(mrid, rmr.getPublicationDate(),
                 "nanning-trace", "jar", "jar");
         DownloadReport report = resolver.download(new Artifact[] {profiler, trace},
-            new DownloadOptions(_settings, _cache));
+            downloadOptions());
         assertNotNull(report);
 
         assertEquals(2, report.getArtifactsReports().length);
@@ -269,8 +262,7 @@ public class IBiblioResolverTest extends TestCase {
         assertEquals(DownloadStatus.SUCCESSFUL, ar.getDownloadStatus());
 
         // test to ask to download again, should use cache
-        report = resolver.download(new Artifact[] {profiler, trace}, new DownloadOptions(_settings,
-                _cache));
+        report = resolver.download(new Artifact[] {profiler, trace}, downloadOptions());
         assertNotNull(report);
 
         assertEquals(2, report.getArtifactsReports().length);

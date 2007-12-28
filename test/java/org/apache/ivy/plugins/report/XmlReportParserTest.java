@@ -66,7 +66,7 @@ public class XmlReportParserTest extends TestCase {
         ModuleRevisionId modRevId = report.getModuleDescriptor().getModuleRevisionId();
 
         XmlReportParser parser = new XmlReportParser();
-        parser.parse(_ivy.getCacheManager(_cache).getConfigurationResolveReportInCache(
+        parser.parse(_ivy.getResolutionCacheManager().getConfigurationResolveReportInCache(
             "testGetResolvedModule", "default"));
         ModuleRevisionId parsedModRevId = parser.getResolvedModule();
 
@@ -74,7 +74,6 @@ public class XmlReportParserTest extends TestCase {
     }
 
     private ResolveOptions getResolveOptions(String[] confs) {
-        return new ResolveOptions().setConfs(confs).setCache(
-            CacheManager.getInstance(_ivy.getSettings(), _cache));
+        return new ResolveOptions().setConfs(confs);
     }
 }

@@ -40,7 +40,7 @@ public class IvyInstallTest extends TestCase {
 
         install = new IvyInstall();
         install.setProject(project);
-        install.setCache(cache);
+        System.setProperty("ivy.cache.dir", cache.getAbsolutePath());
     }
 
     private void createCache() {

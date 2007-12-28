@@ -37,8 +37,6 @@ public class IvyInstall extends IvyTask {
 
     private String revision;
 
-    private File cache;
-
     private boolean overwrite = false;
 
     private String from;
@@ -56,9 +54,6 @@ public class IvyInstall extends IvyTask {
     public void doExecute() throws BuildException {
         Ivy ivy = getIvyInstance();
         IvySettings settings = ivy.getSettings();
-        if (cache == null) {
-            cache = settings.getDefaultCache();
-        }
         if (organisation == null) {
             throw new BuildException(
                     "no organisation provided for ivy publish task: "
@@ -93,7 +88,7 @@ public class IvyInstall extends IvyTask {
         ResolveReport report;
         try {
             report = ivy.install(mrid, from, to, transitive, doValidate(settings), overwrite,
-                FilterHelper.getArtifactTypeFilter(type), cache, matcher);
+                FilterHelper.getArtifactTypeFilter(type), matcher);
         } catch (Exception e) {
             throw new BuildException("impossible to install " + mrid + ": " + e, e);
         }
@@ -112,12 +107,8 @@ public class IvyInstall extends IvyTask {
         this.haltOnFailure = haltOnFailure;
     }
 
-    public File getCache() {
-        return cache;
-    }
-
     public void setCache(File cache) {
-        this.cache = cache;
+        cacheAttributeNotSupported();
     }
 
     public String getModule() {

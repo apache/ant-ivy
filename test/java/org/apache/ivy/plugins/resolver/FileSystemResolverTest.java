@@ -23,8 +23,6 @@ import java.io.FileReader;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
-import junit.framework.TestCase;
-
 import org.apache.ivy.core.cache.CacheManager;
 import org.apache.ivy.core.event.EventManager;
 import org.apache.ivy.core.module.descriptor.Artifact;
@@ -53,7 +51,7 @@ import org.apache.ivy.util.FileUtil;
 /**
  * 
  */
-public class FileSystemResolverTest extends TestCase {
+public class FileSystemResolverTest extends AbstractDependencyResolverTest {
     //CheckStyle:MagicNumberCheck OFF
 
     private static final String FS = System.getProperty("file.separator");
@@ -79,8 +77,7 @@ public class FileSystemResolverTest extends TestCase {
          settings = new IvySettings();
         engine = new ResolveEngine(settings, new EventManager(), new SortEngine(settings));
         cache = new File("build/cache");
-        data = new ResolveData(engine, new ResolveOptions().setCache(CacheManager.getInstance(
-            settings, cache)));
+        data = new ResolveData(engine, new ResolveOptions());
         cache.mkdirs();
         cacheManager = new CacheManager(settings, cache);
         settings.setDefaultCache(cache);
@@ -168,7 +165,7 @@ public class FileSystemResolverTest extends TestCase {
     }
 
     private DownloadOptions getDownloadOptions(boolean useOrigin) {
-        return new DownloadOptions(cacheManager, useOrigin);
+        return new DownloadOptions(useOrigin);
     }
 
     public void testMaven2() throws Exception {

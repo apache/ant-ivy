@@ -151,10 +151,6 @@ public class ResolveData {
         return options;
     }
 
-    public RepositoryCacheManager getCacheManager() {
-        return options.getCache();
-    }
-
     public ResolveEngineSettings getSettings() {
         return engine.getSettings();
     }

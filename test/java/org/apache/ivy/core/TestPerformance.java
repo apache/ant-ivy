@@ -148,8 +148,7 @@ public class TestPerformance {
     }
 
     private ResolveOptions getResolveOptions(String[] confs) {
-        return new ResolveOptions().setConfs(confs).setCache(
-            CacheManager.getInstance(ivy.getSettings(), cache));
+        return new ResolveOptions().setConfs(confs);
     }
 
     public static void main(String[] args) throws Exception {

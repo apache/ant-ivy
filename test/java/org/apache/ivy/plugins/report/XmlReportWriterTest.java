@@ -120,7 +120,6 @@ public class XmlReportWriterTest extends TestCase {
     }
 
     private ResolveOptions getResolveOptions(String[] confs) {
-        return new ResolveOptions().setConfs(confs).setCache(
-            CacheManager.getInstance(_ivy.getSettings(), _cache));
+        return new ResolveOptions().setConfs(confs);
     }
 }

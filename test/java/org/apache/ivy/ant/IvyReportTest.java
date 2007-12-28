@@ -40,7 +40,7 @@ public class IvyReportTest extends TestCase {
         report = new IvyReport();
         report.setTaskName("report");
         report.setProject(project);
-        report.setCache(cache);
+        System.setProperty("ivy.cache.dir", cache.getAbsolutePath());
     }
 
     private void createCache() {
@@ -69,7 +69,6 @@ public class IvyReportTest extends TestCase {
             IvyResolve res = new IvyResolve();
             res.setProject(project);
             res.setFile(new File("test/java/org/apache/ivy/ant/ivy-simple.xml"));
-            res.setCache(cache);
             res.execute();
     
             report.setTodir(new File(cache, "report"));
@@ -92,7 +91,6 @@ public class IvyReportTest extends TestCase {
             IvyResolve res = new IvyResolve();
             res.setProject(project);
             res.setFile(new File("test/java/org/apache/ivy/ant/ivy-multiconf.xml"));
-            res.setCache(cache);
             res.execute();
     
             report.setTodir(new File(cache, "report"));

@@ -15,17 +15,16 @@
  *  limitations under the License.
  *
  */
-package org.apache.ivy.core.resolve;
+package org.apache.ivy.plugins.resolver;
 
+import org.apache.ivy.core.resolve.DownloadOptions;
 
-public class DownloadOptions {
-    private boolean useOrigin = false;
+import junit.framework.TestCase;
 
-    public DownloadOptions(boolean useOrigin) {
-        this.useOrigin = useOrigin;
+public class AbstractDependencyResolverTest extends TestCase {
+
+    protected DownloadOptions downloadOptions() {
+        return new DownloadOptions(false);
     }
 
-    public boolean isUseOrigin() {
-        return useOrigin;
-    }
 }

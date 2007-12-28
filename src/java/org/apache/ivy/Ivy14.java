@@ -106,7 +106,7 @@ public class Ivy14 {
             String status, Date pubdate, PublishingDependencyRevisionResolver pdrResolver,
             boolean validate, boolean resolveDynamicRevisions) throws IOException, ParseException {
         ivy.deliver(mrid, revision, destIvyPattern, new DeliverOptions(status, pubdate,
-                CacheManager.getInstance(ivy.getSettings(), cache), pdrResolver, validate,
+                pdrResolver, validate,
                 resolveDynamicRevisions, null));
     }
 
@@ -123,8 +123,7 @@ public class Ivy14 {
         return ivy.getRetrieveEngine().determineArtifactsToCopy(
             new ModuleRevisionId(moduleId, Ivy.getWorkingRevision()),
             destFilePattern,
-            new RetrieveOptions().setConfs(confs).setCache(
-                CacheManager.getInstance(ivy.getSettings(), cache)).setDestIvyPattern(
+            new RetrieveOptions().setConfs(confs).setDestIvyPattern(
                 destIvyPattern).setArtifactFilter(artifactFilter));
     }
 
@@ -133,24 +132,22 @@ public class Ivy14 {
         return ivy.getRetrieveEngine().determineArtifactsToCopy(
             new ModuleRevisionId(moduleId, Ivy.getWorkingRevision()),
             destFilePattern,
-            new RetrieveOptions().setConfs(confs).setCache(
-                CacheManager.getInstance(ivy.getSettings(), cache)).setDestIvyPattern(
+            new RetrieveOptions().setConfs(confs).setDestIvyPattern(
                 destIvyPattern));
     }
 
     public ArtifactDownloadReport download(Artifact artifact, File cache, boolean useOrigin) {
-        return ivy.getResolveEngine().download(artifact, ivy.getCacheManager(cache), useOrigin);
+        return ivy.getResolveEngine().download(artifact, useOrigin);
     }
 
     public void downloadArtifacts(ResolveReport report, CacheManager cacheManager,
             boolean useOrigin, Filter artifactFilter) {
-        ivy.getResolveEngine().downloadArtifacts(report, cacheManager, useOrigin, artifactFilter);
+        ivy.getResolveEngine().downloadArtifacts(report, useOrigin, artifactFilter);
     }
 
     public ResolvedModuleRevision findModule(ModuleRevisionId id) {
         ResolveOptions options = new ResolveOptions();
         options.setValidate(false);
-        options.setCache(CacheManager.getInstance(ivy.getSettings()));
         return ivy.getResolveEngine().findModule(id, options);
     }
 
@@ -185,7 +182,7 @@ public class Ivy14 {
     public ResolveReport install(ModuleRevisionId mrid, String from, String to, boolean transitive,
             boolean validate, boolean overwrite, Filter artifactFilter, File cache,
             String matcherName) throws IOException {
-        return ivy.install(mrid, from, to, transitive, validate, overwrite, artifactFilter, cache,
+        return ivy.install(mrid, from, to, transitive, validate, overwrite, artifactFilter, 
             matcherName);
     }
 
@@ -252,8 +249,7 @@ public class Ivy14 {
             Collection srcArtifactPattern, String resolverName, String srcIvyPattern,
             String status, Date pubdate, Artifact[] extraArtifacts, boolean validate,
             boolean overwrite, boolean update, String conf) throws IOException {
-        return ivy.publish(mrid, srcArtifactPattern, resolverName, new PublishOptions().setCache(
-            ivy.getCacheManager(cache == null ? ivy.getSettings().getDefaultCache() : cache))
+        return ivy.publish(mrid, srcArtifactPattern, resolverName, new PublishOptions()
                 .setStatus(status).setPubdate(pubdate).setPubrevision(pubrevision)
                 .setSrcIvyPattern(srcIvyPattern).setExtraArtifacts(extraArtifacts)
                 .setUpdate(update).setValidate(validate).setOverwrite(overwrite).setConfs(
@@ -264,8 +260,7 @@ public class Ivy14 {
             String srcArtifactPattern, String resolverName, String srcIvyPattern, boolean validate,
             boolean overwrite) throws IOException {
         return ivy.publish(mrid, Collections.singleton(srcArtifactPattern), resolverName,
-            new PublishOptions().setCache(
-                ivy.getCacheManager(cache == null ? ivy.getSettings().getDefaultCache() : cache))
+            new PublishOptions()
                     .setPubrevision(pubrevision).setSrcIvyPattern(srcIvyPattern).setValidate(
                         validate).setOverwrite(overwrite));
     }
@@ -274,8 +269,7 @@ public class Ivy14 {
             String srcArtifactPattern, String resolverName, String srcIvyPattern, boolean validate)
             throws IOException {
         return ivy.publish(mrid, Collections.singleton(srcArtifactPattern), resolverName,
-            new PublishOptions().setCache(
-                ivy.getCacheManager(cache == null ? ivy.getSettings().getDefaultCache() : cache))
+            new PublishOptions()
                     .setPubrevision(pubrevision).setSrcIvyPattern(srcIvyPattern).setValidate(
                         validate));
     }
@@ -285,8 +279,7 @@ public class Ivy14 {
             Date pubdate, Artifact[] extraArtifacts, boolean validate, boolean overwrite,
             boolean update, String conf) throws IOException {
         return ivy.publish(mrid, Collections.singleton(srcArtifactPattern), resolverName,
-            new PublishOptions().setCache(
-                ivy.getCacheManager(cache == null ? ivy.getSettings().getDefaultCache() : cache))
+            new PublishOptions()
                     .setStatus(status).setPubdate(pubdate).setPubrevision(pubrevision)
                     .setSrcIvyPattern(srcIvyPattern).setExtraArtifacts(extraArtifacts).setUpdate(
                         update).setValidate(validate).setOverwrite(overwrite).setConfs(
@@ -308,8 +301,7 @@ public class Ivy14 {
     private ResolveOptions newResolveOptions(String[] confs, String revision, File cache,
             Date date, boolean validate, boolean useCacheOnly, boolean transitive,
             boolean useOrigin, boolean download, boolean outputReport, Filter artifactFilter) {
-        return new ResolveOptions().setConfs(confs).setRevision(revision).setCache(
-            ivy.getCacheManager(cache == null ? ivy.getSettings().getDefaultCache() : cache))
+        return new ResolveOptions().setConfs(confs).setRevision(revision)
                 .setValidate(validate).setUseCacheOnly(useCacheOnly).setTransitive(transitive)
                 .setUseOrigin(useOrigin).setDownload(download).setOutputReport(outputReport)
                 .setArtifactFilter(artifactFilter);
@@ -399,8 +391,7 @@ public class Ivy14 {
             boolean makeSymlinks) {
         try {
             return ivy.retrieve(new ModuleRevisionId(moduleId, Ivy.getWorkingRevision()),
-                destFilePattern, new RetrieveOptions().setConfs(confs).setCache(
-                    CacheManager.getInstance(ivy.getSettings(), cache)).setDestIvyPattern(
+                destFilePattern, new RetrieveOptions().setConfs(confs).setDestIvyPattern(
                     destIvyPattern).setArtifactFilter(artifactFilter).setSync(sync).setUseOrigin(
                     useOrigin).setMakeSymlinks(makeSymlinks));
         } catch (IOException e) {
@@ -412,8 +403,7 @@ public class Ivy14 {
             String destIvyPattern, Filter artifactFilter, boolean sync, boolean useOrigin) {
         try {
             return ivy.retrieve(new ModuleRevisionId(moduleId, Ivy.getWorkingRevision()),
-                destFilePattern, new RetrieveOptions().setConfs(confs).setCache(
-                    CacheManager.getInstance(ivy.getSettings(), cache)).setDestIvyPattern(
+                destFilePattern, new RetrieveOptions().setConfs(confs).setDestIvyPattern(
                     destIvyPattern).setArtifactFilter(artifactFilter).setSync(sync).setUseOrigin(
                     useOrigin));
         } catch (IOException e) {
@@ -425,8 +415,7 @@ public class Ivy14 {
             String destIvyPattern, Filter artifactFilter) {
         try {
             return ivy.retrieve(new ModuleRevisionId(moduleId, Ivy.getWorkingRevision()),
-                destFilePattern, new RetrieveOptions().setConfs(confs).setCache(
-                    CacheManager.getInstance(ivy.getSettings(), cache)).setDestIvyPattern(
+                destFilePattern, new RetrieveOptions().setConfs(confs).setDestIvyPattern(
                     destIvyPattern).setArtifactFilter(artifactFilter));
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -437,8 +426,7 @@ public class Ivy14 {
             String destIvyPattern) {
         try {
             return ivy.retrieve(new ModuleRevisionId(moduleId, Ivy.getWorkingRevision()),
-                destFilePattern, new RetrieveOptions().setConfs(confs).setCache(
-                    CacheManager.getInstance(ivy.getSettings(), cache)).setDestIvyPattern(
+                destFilePattern, new RetrieveOptions().setConfs(confs).setDestIvyPattern(
                     destIvyPattern));
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -448,8 +436,7 @@ public class Ivy14 {
     public int retrieve(ModuleId moduleId, String[] confs, File cache, String destFilePattern) {
         try {
             return ivy.retrieve(new ModuleRevisionId(moduleId, Ivy.getWorkingRevision()),
-                destFilePattern, new RetrieveOptions().setConfs(confs).setCache(
-                    CacheManager.getInstance(ivy.getSettings(), cache)));
+                destFilePattern, new RetrieveOptions().setConfs(confs));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

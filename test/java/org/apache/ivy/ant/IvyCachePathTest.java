@@ -41,7 +41,7 @@ public class IvyCachePathTest extends TestCase {
 
         path = new IvyCachePath();
         path.setProject(project);
-        path.setCache(cache);
+        System.setProperty("ivy.cache.dir", cache.getAbsolutePath());
     }
 
     private void createCache() {
@@ -160,7 +160,6 @@ public class IvyCachePathTest extends TestCase {
     public void testWithResolveId() throws Exception {
         IvyResolve resolve = new IvyResolve();
         resolve.setProject(project);
-        resolve.setCache(cache);
         resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-simple.xml"));
         resolve.setResolveId("withResolveId");
         resolve.execute();
@@ -168,7 +167,6 @@ public class IvyCachePathTest extends TestCase {
         // resolve another ivy file
         resolve = new IvyResolve();
         resolve.setProject(project);
-        resolve.setCache(cache);
         resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-latest.xml"));
         resolve.execute();
 
@@ -191,7 +189,6 @@ public class IvyCachePathTest extends TestCase {
 
         IvyResolve resolve = new IvyResolve();
         resolve.setProject(otherProject);
-        resolve.setCache(cache);
         resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-simple.xml"));
         resolve.setResolveId("withResolveId");
         resolve.execute();
@@ -199,7 +196,6 @@ public class IvyCachePathTest extends TestCase {
         // resolve another ivy file
         resolve = new IvyResolve();
         resolve.setProject(project);
-        resolve.setCache(cache);
         resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-latest.xml"));
         resolve.execute();
 
@@ -223,7 +219,6 @@ public class IvyCachePathTest extends TestCase {
 
         IvyResolve resolve = new IvyResolve();
         resolve.setProject(otherProject);
-        resolve.setCache(cache);
         resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-multiconf.xml"));
         resolve.setResolveId("testWithResolveIdAndMissingConfs");
         resolve.setConf("default");
@@ -232,7 +227,6 @@ public class IvyCachePathTest extends TestCase {
         // resolve another ivy file
         resolve = new IvyResolve();
         resolve.setProject(project);
-        resolve.setCache(cache);
         resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-latest.xml"));
         resolve.execute();
 
@@ -247,7 +241,7 @@ public class IvyCachePathTest extends TestCase {
 
     private File getArchiveFileInCache(String organisation, String module, String revision,
             String artifact, String type, String ext) {
-        return TestHelper.getArchiveFileInCache(path.getIvyInstance(), cache, organisation,
+        return TestHelper.getArchiveFileInCache(path.getIvyInstance(), organisation,
             module, revision, artifact, type, ext);
     }
 }

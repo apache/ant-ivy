@@ -23,10 +23,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 
-import junit.framework.TestCase;
-
 import org.apache.ivy.core.IvyContext;
-import org.apache.ivy.core.cache.CacheManager;
 import org.apache.ivy.core.event.EventManager;
 import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.DefaultArtifact;
@@ -45,7 +42,6 @@ import org.apache.ivy.core.settings.XmlSettingsParser;
 import org.apache.ivy.core.sort.SortEngine;
 import org.apache.ivy.plugins.latest.LatestRevisionStrategy;
 import org.apache.ivy.plugins.latest.LatestTimeStrategy;
-import org.apache.ivy.util.Message;
 import org.apache.ivy.util.MockMessageLogger;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.Delete;
@@ -53,7 +49,7 @@ import org.apache.tools.ant.taskdefs.Delete;
 /**
  * Tests ChainResolver
  */
-public class ChainResolverTest extends TestCase {
+public class ChainResolverTest extends AbstractDependencyResolverTest {
     private IvySettings settings;
 
     private ResolveEngine engine;
@@ -66,8 +62,7 @@ public class ChainResolverTest extends TestCase {
         settings = new IvySettings();
         engine = new ResolveEngine(settings, new EventManager(), new SortEngine(settings));
         cache = new File("build/cache");
-        data = new ResolveData(engine, new ResolveOptions().setCache(CacheManager.getInstance(
-            settings, cache)));
+        data = new ResolveData(engine, new ResolveOptions());
         cache.mkdirs();
         settings.setDefaultCache(cache);
     }
@@ -488,7 +483,7 @@ public class ChainResolverTest extends TestCase {
             new Artifact[] {new DefaultArtifact(
                 ModuleRevisionId.parse("org1#mod1.1;1.0"),
                 new Date(), "mod1.1", "jar", "jar")}, 
-            new DownloadOptions(CacheManager.getInstance(settings)));
+            new DownloadOptions(false));
         assertNotNull(report);
         assertEquals(1, report.getArtifactsReports().length);
         assertEquals(DownloadStatus.SUCCESSFUL, report.getArtifactsReports()[0].getDownloadStatus());

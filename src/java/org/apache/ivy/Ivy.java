@@ -31,6 +31,8 @@ import java.util.Properties;
 
 import org.apache.ivy.core.IvyContext;
 import org.apache.ivy.core.cache.CacheManager;
+import org.apache.ivy.core.cache.RepositoryCacheManager;
+import org.apache.ivy.core.cache.ResolutionCacheManager;
 import org.apache.ivy.core.check.CheckEngine;
 import org.apache.ivy.core.deliver.DeliverEngine;
 import org.apache.ivy.core.deliver.DeliverOptions;
@@ -511,12 +513,12 @@ public class Ivy {
     // ///////////////////////////////////////////////////////////////////////
 
     public ResolveReport install(ModuleRevisionId mrid, String from, String to, boolean transitive,
-            boolean validate, boolean overwrite, Filter artifactFilter, File cache,
-            String matcherName) throws IOException {
+            boolean validate, boolean overwrite, Filter artifactFilter, String matcherName) 
+            throws IOException {
         pushContext();
         try {
             return installEngine.install(mrid, from, to, transitive, validate, overwrite,
-                artifactFilter, cache, matcherName);
+                artifactFilter, matcherName);
         } finally {
             popContext();
         }
@@ -645,7 +647,6 @@ public class Ivy {
         try {
             ResolveOptions options = new ResolveOptions();
             options.setValidate(false);
-            options.setCache(CacheManager.getInstance(settings));
             return resolveEngine.findModule(mrid, options);
         } finally {
             popContext();
@@ -796,9 +797,10 @@ public class Ivy {
         return "working@" + HostUtil.getLocalHostName();
     }
 
-    public CacheManager getCacheManager(File cache) {
-        return CacheManager.getInstance(settings, cache);
+    public ResolutionCacheManager getResolutionCacheManager() {
+        return settings.getResolutionCacheManager();
     }
+
 
     private void assertBound() {
         if (!bound) {

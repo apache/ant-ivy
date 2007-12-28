@@ -40,7 +40,10 @@ import org.apache.ivy.Ivy;
 import org.apache.ivy.core.IvyPatternHelper;
 import org.apache.ivy.core.NormalRelativeUrlResolver;
 import org.apache.ivy.core.RelativeUrlResolver;
+import org.apache.ivy.core.cache.CacheManager;
 import org.apache.ivy.core.cache.CacheSettings;
+import org.apache.ivy.core.cache.RepositoryCacheManager;
+import org.apache.ivy.core.cache.ResolutionCacheManager;
 import org.apache.ivy.core.check.CheckEngineSettings;
 import org.apache.ivy.core.deliver.DeliverEngineSettings;
 import org.apache.ivy.core.install.InstallEngineSettings;
@@ -740,8 +743,13 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
 
     public File getDefaultCache() {
         if (defaultCache == null) {
-            setDefaultCache(new File(getDefaultIvyUserDir(), "cache"));
-            Message.verbose("no default cache defined: set to " + defaultCache);
+            String cache = getVariable("ivy.cache.dir");
+            if (cache != null) {
+                defaultCache = new File(cache);
+            } else {
+                setDefaultCache(new File(getDefaultIvyUserDir(), "cache"));
+                Message.verbose("no default cache defined: set to " + defaultCache);
+            }
         }
         return defaultCache;
     }
@@ -1066,6 +1074,14 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
 
     public void setCheckUpToDate(boolean checkUpToDate) {
         this.checkUpToDate = checkUpToDate;
+    }
+
+    public ResolutionCacheManager getResolutionCacheManager() {
+        return CacheManager.getInstance(this, getDefaultCache());
+    }
+    
+    public RepositoryCacheManager getDefaultRepositoryCacheManager() {
+        return CacheManager.getInstance(this, getDefaultCache());
     }
 
     public String getCacheArtifactPattern() {

@@ -31,6 +31,7 @@ import org.apache.ivy.core.cache.RepositoryCacheManager;
 import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.DefaultArtifact;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
+import org.apache.ivy.plugins.resolver.DependencyResolver;
 import org.apache.ivy.util.Message;
 
 /**
@@ -428,7 +429,10 @@ public final class IvyPatternHelper {
                 Artifact artifact = new DefaultArtifact(revId, null, artifactName, artifactType,
                         artifactExt);
 
-                RepositoryCacheManager cacheManager = IvyContext.getContext().getCacheManager();
+                // TODO cache: see how we could know which actual cache manager to use, since this 
+                // will fail when using a resolver in a chain with a specific cache manager
+                RepositoryCacheManager cacheManager = IvyContext.getContext().getSettings()
+                        .getResolver(revId.getModuleId()).getRepositoryCacheManager(); 
 
                 origin = cacheManager.getSavedArtifactOrigin(artifact);
 

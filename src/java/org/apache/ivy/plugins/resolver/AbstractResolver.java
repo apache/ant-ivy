@@ -21,7 +21,7 @@ import java.io.IOException;
 import java.util.Map;
 
 import org.apache.ivy.core.IvyContext;
-import org.apache.ivy.core.cache.CacheManager;
+import org.apache.ivy.core.cache.RepositoryCacheManager;
 import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
@@ -77,6 +77,8 @@ public abstract class AbstractResolver implements DependencyResolver, HasLatestS
     private Namespace namespace;
 
     private String namespaceName;
+    
+    private RepositoryCacheManager repositoryCacheManager;
 
     public ResolverSettings getSettings() {
         return settings;
@@ -168,8 +170,7 @@ public abstract class AbstractResolver implements DependencyResolver, HasLatestS
      * avoid the download
      */
     public boolean exists(Artifact artifact) {
-        DownloadReport dr = download(new Artifact[] {artifact}, new DownloadOptions(
-                CacheManager.getInstance(getSettings()), true));
+        DownloadReport dr = download(new Artifact[] {artifact}, new DownloadOptions(true));
         ArtifactDownloadReport adr = dr.getArtifactReport(artifact);
         return adr.getDownloadStatus() != DownloadStatus.FAILED;
     }
@@ -271,7 +272,7 @@ public abstract class AbstractResolver implements DependencyResolver, HasLatestS
     }
 
     protected ResolvedModuleRevision findModuleInCache(ResolveData data, ModuleRevisionId mrid) {
-        return data.getCacheManager().findModuleInCache(
+        return getRepositoryCacheManager().findModuleInCache(
             mrid, doValidate(data), getName());
     }
 
@@ -301,6 +302,17 @@ public abstract class AbstractResolver implements DependencyResolver, HasLatestS
                     + "'. It is set as changing matcher in " + this);
         }
         return matcher.getMatcher(changingPattern);
+    }
+    
+    public RepositoryCacheManager getRepositoryCacheManager() {
+        if (repositoryCacheManager == null) {
+            repositoryCacheManager = settings.getDefaultRepositoryCacheManager();
+        }
+        return repositoryCacheManager;
+    }
+    
+    public void setRepositoryCacheManager(RepositoryCacheManager repositoryCacheManager) {
+        this.repositoryCacheManager = repositoryCacheManager;
     }
     
     public void abortPublishTransaction() throws IOException {
