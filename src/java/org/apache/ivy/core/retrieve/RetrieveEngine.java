@@ -265,7 +265,7 @@ public class RetrieveEngine {
                         : destFilePattern;
 
                 if (!"ivy".equals(artifact.getType())
-                        && !options.getArtifactFilter().accept(artifact)) {
+                        && !options.getArtifactFilter().accept(artifact.getArtifact())) {
                     continue; // skip this artifact, the filter didn't accept it!
                 }
 
