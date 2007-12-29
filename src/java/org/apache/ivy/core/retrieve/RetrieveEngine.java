@@ -40,12 +40,10 @@ import org.apache.ivy.core.event.EventManager;
 import org.apache.ivy.core.event.retrieve.EndRetrieveEvent;
 import org.apache.ivy.core.event.retrieve.StartRetrieveEvent;
 import org.apache.ivy.core.module.descriptor.Artifact;
-import org.apache.ivy.core.module.descriptor.DefaultArtifact;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleId;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.report.ArtifactDownloadReport;
-import org.apache.ivy.core.report.DownloadStatus;
 import org.apache.ivy.core.resolve.ResolveOptions;
 import org.apache.ivy.plugins.parser.ModuleDescriptorParser;
 import org.apache.ivy.plugins.parser.ModuleDescriptorParserRegistry;
@@ -353,8 +351,8 @@ public class RetrieveEngine {
         return new Comparator() {
             // younger conflict resolving policy
             public int compare(Object o1, Object o2) {
-                Artifact a1 = (Artifact) o1;
-                Artifact a2 = (Artifact) o2;
+                Artifact a1 = ((ArtifactDownloadReport) o1).getArtifact();
+                Artifact a2 = ((ArtifactDownloadReport) o2).getArtifact();
                 if (a1.getPublicationDate().after(a2.getPublicationDate())) {
                     // a1 is after a2 <=> a1 is younger than a2 <=> a1 wins the conflict battle
                     return +1;
