@@ -17,7 +17,6 @@
  */
 package org.apache.ivy.core.cache;
 
-import java.io.File;
 import java.text.ParseException;
 
 import org.apache.ivy.core.module.descriptor.Artifact;
@@ -99,48 +98,49 @@ public interface RepositoryCacheManager {
             ResourceDownloader resourceDownloader, 
             CacheDownloadOptions options);
 
-    public ResolvedModuleRevision cacheModuleDescriptor(
-            DependencyResolver resolver, ResolvedResource orginalMetadataRef, 
-            Artifact requestedMetadataArtifact, 
+    /**
+     * Caches an original module descriptor.
+     * <p>
+     * After this call, the original module descriptor file (with no modification nor conversion)
+     * should be available as a local file.
+     * </p>
+     * 
+     * @param resolver
+     *            the dependency resolver from which the cache request comes from
+     * @param orginalMetadataRef
+     *            a resolved resource pointing to the remote original module descriptor
+     * @param requestedMetadataArtifact
+     *            the module descriptor artifact as requested originally
+     * @param downloader
+     *            a ResourceDownloader able to download the original module descriptor resource if
+     *            required by this cache implementation
+     * @param options
+     *            options to apply to cache this module descriptor
+     * @return a {@link ResolvedModuleRevision} representing the local cached module descriptor, or
+     *         null if it failed
+     * @throws ParseException
+     *             if an exception occured while parsing the module descriptor
+     */
+    public ResolvedModuleRevision cacheModuleDescriptor(DependencyResolver resolver,
+            ResolvedResource orginalMetadataRef, Artifact requestedMetadataArtifact,
             ResourceDownloader downloader, CacheMetadataOptions options) throws ParseException;
 
-    public void originalToCachedModuleDescriptor(
-            DependencyResolver resolver, ResolvedResource orginalMetadataRef, 
-            Artifact requestedMetadataArtifact, 
+    /**
+     * Stores a standardized version of an original module descriptor in the cache for later use.
+     * 
+     * @param resolver
+     *            the dependency resolver from which the cache request comes from
+     * @param orginalMetadataRef
+     *            a resolved resource pointing to the remote original module descriptor
+     * @param requestedMetadataArtifact
+     *            the module descriptor artifact as requested originally
+     * @param rmr
+     *            the {@link ResolvedModuleRevision} representing the local cached module descriptor
+     * @param writer
+     *            a {@link ModuleDescriptorWriter} able to write the module descriptor to a stream.
+     */
+    public void originalToCachedModuleDescriptor(DependencyResolver resolver,
+            ResolvedResource orginalMetadataRef, Artifact requestedMetadataArtifact,
             ResolvedModuleRevision rmr, ModuleDescriptorWriter writer);
-
     
-    
-    /* 
-     * TODO: remove these methods from here 
-     * (require some clients change + tests rely on DefaultRepositoryCacheManager)
-     */ 
-    public abstract File getIvyFileInCache(ModuleRevisionId mrid);
-
-    /**
-     * Returns a File object pointing to where the artifact can be found on the local file system.
-     * This is usually in the cache, but it can be directly in the repository if it is local and if
-     * the resolve has been done with useOrigin = true
-     */
-    public abstract File getArchiveFileInCache(Artifact artifact);
-
-    /**
-     * Returns a File object pointing to where the artifact can be found on the local file system.
-     * This is usually in the cache, but it can be directly in the repository if it is local and if
-     * the resolve has been done with useOrigin = true
-     */
-    public abstract File getArchiveFileInCache(Artifact artifact, ArtifactOrigin origin);
-
-    /**
-     * Returns a File object pointing to where the artifact can be found on the local file system,
-     * using or not the original location depending on the availability of origin information
-     * provided as parameter and the setting of useOrigin. If useOrigin is false, this method will
-     * always return the file in the cache.
-     */
-    public abstract File getArchiveFileInCache(Artifact artifact, ArtifactOrigin origin,
-            boolean useOrigin);
-
-    public abstract String getArchivePathInCache(Artifact artifact);
-
-    public abstract String getArchivePathInCache(Artifact artifact, ArtifactOrigin origin);
 }

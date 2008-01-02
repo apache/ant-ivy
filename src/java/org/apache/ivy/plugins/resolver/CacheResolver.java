@@ -21,12 +21,11 @@ import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Date;
 
+import org.apache.ivy.core.cache.ArtifactOrigin;
 import org.apache.ivy.core.cache.DefaultRepositoryCacheManager;
 import org.apache.ivy.core.cache.RepositoryCacheManager;
 import org.apache.ivy.core.module.descriptor.Artifact;
-import org.apache.ivy.core.module.descriptor.DefaultArtifact;
 import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.report.ArtifactDownloadReport;
@@ -39,6 +38,7 @@ import org.apache.ivy.core.resolve.ResolvedModuleRevision;
 import org.apache.ivy.core.search.ModuleEntry;
 import org.apache.ivy.core.search.OrganisationEntry;
 import org.apache.ivy.core.search.RevisionEntry;
+import org.apache.ivy.plugins.repository.file.FileResource;
 import org.apache.ivy.plugins.resolver.util.ResolvedResource;
 import org.apache.ivy.util.Message;
 
@@ -67,8 +67,6 @@ public class CacheResolver extends FileSystemResolver {
                 Message.verbose("\t" + getName() + ": revision in cache: " + mrid);
                 return rmr;
             } else {
-                logIvyAttempt(getRepositoryCacheManager().getArchiveFileInCache(
-                    DefaultArtifact.newIvyArtifact(mrid, new Date())).getAbsolutePath());
                 Message.verbose("\t" + getName() + ": no ivy file in cache found for " + mrid);
                 return null;
             }
@@ -111,14 +109,17 @@ public class CacheResolver extends FileSystemResolver {
         for (int i = 0; i < artifacts.length; i++) {
             final ArtifactDownloadReport adr = new ArtifactDownloadReport(artifacts[i]);
             dr.addArtifactReport(adr);
-            File archiveFile = getRepositoryCacheManager().getArchiveFileInCache(artifacts[i]);
-            if (archiveFile.exists()) {
+            ResolvedResource artifactRef = getArtifactRef(artifacts[i], null);
+            if (artifactRef != null) {
                 Message.verbose("\t[NOT REQUIRED] " + artifacts[i]);
+                ArtifactOrigin origin = new ArtifactOrigin(
+                    true, artifactRef.getResource().getName());
+                File archiveFile = ((FileResource) artifactRef.getResource()).getFile();
                 adr.setDownloadStatus(DownloadStatus.NO);
                 adr.setSize(archiveFile.length());
+                adr.setArtifactOrigin(origin);
                 adr.setLocalFile(archiveFile);
             } else {
-                logArtifactAttempt(artifacts[i], archiveFile.getAbsolutePath());
                 adr.setDownloadStatus(DownloadStatus.FAILED);
             }
         }

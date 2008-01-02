@@ -152,9 +152,9 @@ public class IvyArtifactReport extends IvyPostResolveTask {
 
                             startArtifact(saxHandler, artifact.getArtifact());
 
-                            writeOriginLocationIfPresent(cache, saxHandler, artifact.getArtifact());
+                            writeOriginLocationIfPresent(cache, saxHandler, artifact);
 
-                            writeCacheLocation(cache, saxHandler, artifact.getArtifact());
+                            writeCacheLocation(cache, saxHandler, artifact);
 
                             Set artifactDestPaths = (Set) artifactsToCopy.get(artifact);
                             for (Iterator iterator = artifactDestPaths.iterator(); iterator
@@ -216,10 +216,11 @@ public class IvyArtifactReport extends IvyPostResolveTask {
     }
 
     private void writeOriginLocationIfPresent(
-            RepositoryCacheManager cache, TransformerHandler saxHandler, Artifact artifact) 
+            RepositoryCacheManager cache, TransformerHandler saxHandler, 
+            ArtifactDownloadReport artifact) 
             throws IOException, SAXException {
-        ArtifactOrigin origin = cache.getSavedArtifactOrigin(artifact);
-        if (origin != ArtifactOrigin.UNKNOWN) {
+        ArtifactOrigin origin = artifact.getArtifactOrigin();
+        if (origin != ArtifactOrigin.UNKNOWN && origin != null) {
             String originName = origin.getLocation();
             boolean isOriginLocal = origin.isLocal();
 
@@ -241,9 +242,8 @@ public class IvyArtifactReport extends IvyPostResolveTask {
     }
 
     private void writeCacheLocation(RepositoryCacheManager cache, TransformerHandler saxHandler,
-            Artifact artifact) throws SAXException {
-        ArtifactOrigin origin = cache.getSavedArtifactOrigin(artifact);
-        File archiveInCache = cache.getArchiveFileInCache(artifact, origin, false);
+            ArtifactDownloadReport artifact) throws SAXException {
+        File archiveInCache = artifact.getLocalFile();
 
         saxHandler.startElement(null, "cache-location", "cache-location", new AttributesImpl());
         char[] archiveInCacheAsChars = archiveInCache.getPath().replace('\\', '/').toCharArray();

@@ -29,7 +29,7 @@ import java.util.regex.Pattern;
 
 import junit.framework.Assert;
 
-import org.apache.ivy.core.cache.RepositoryCacheManager;
+import org.apache.ivy.core.cache.DefaultRepositoryCacheManager;
 import org.apache.ivy.core.event.EventManager;
 import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.DefaultArtifact;
@@ -66,10 +66,11 @@ public class TestHelper {
     }
 
 
-    public static RepositoryCacheManager getRepositoryCacheManager(Ivy ivy, ModuleRevisionId id) {
+    public static DefaultRepositoryCacheManager getRepositoryCacheManager(Ivy ivy, ModuleRevisionId id) {
         // WARN: this doesn't work if the resolver registered is a compound resolver (chain or dual)
         // and a sub resolver doesn't use the same cache manager as the parent
-        return ivy.getSettings().getResolver(id.getModuleId()).getRepositoryCacheManager();
+        return (DefaultRepositoryCacheManager) 
+            ivy.getSettings().getResolver(id.getModuleId()).getRepositoryCacheManager();
     }
 
     /**

@@ -23,8 +23,7 @@ import java.io.FileReader;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
-import org.apache.ivy.core.cache.DefaultResolutionCacheManager;
-import org.apache.ivy.core.cache.RepositoryCacheManager;
+import org.apache.ivy.core.cache.DefaultRepositoryCacheManager;
 import org.apache.ivy.core.event.EventManager;
 import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.DefaultArtifact;
@@ -68,7 +67,7 @@ public class FileSystemResolverTest extends AbstractDependencyResolverTest {
 
     private File cache;
 
-    private RepositoryCacheManager cacheManager;
+    private DefaultRepositoryCacheManager cacheManager;
 
     public FileSystemResolverTest() {
         setupLastModified();
@@ -81,7 +80,7 @@ public class FileSystemResolverTest extends AbstractDependencyResolverTest {
         data = new ResolveData(engine, new ResolveOptions());
         cache.mkdirs();
         settings.setDefaultCache(cache);
-        cacheManager = settings.getDefaultRepositoryCacheManager();
+        cacheManager = (DefaultRepositoryCacheManager) settings.getDefaultRepositoryCacheManager();
     }
 
     private void setupLastModified() {

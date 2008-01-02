@@ -34,7 +34,6 @@ import org.apache.ivy.Ivy;
 import org.apache.ivy.TestHelper;
 import org.apache.ivy.core.cache.ArtifactOrigin;
 import org.apache.ivy.core.cache.DefaultRepositoryCacheManager;
-import org.apache.ivy.core.cache.RepositoryCacheManager;
 import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.DefaultArtifact;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
@@ -3617,7 +3616,7 @@ public class ResolveTest extends TestCase {
         return TestHelper.getRepositoryCacheManager(ivy, id).getIvyFileInCache(id);
     }
 
-    private RepositoryCacheManager getRepositoryCacheManager(ModuleRevisionId id) {
+    private DefaultRepositoryCacheManager getRepositoryCacheManager(ModuleRevisionId id) {
         return TestHelper.getRepositoryCacheManager(ivy, id);
     }
 
