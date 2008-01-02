@@ -21,21 +21,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.ListIterator;
 
-import org.apache.ivy.Ivy;
-import org.apache.ivy.plugins.IvyAware;
-
-public abstract class AbstractLatestStrategy implements LatestStrategy, IvyAware {
+public abstract class AbstractLatestStrategy implements LatestStrategy {
     private String name;
-
-    private Ivy ivy;
-
-    public Ivy getIvy() {
-        return ivy;
-    }
-
-    public void setIvy(Ivy ivy) {
-        this.ivy = ivy;
-    }
 
     public String getName() {
         return name;

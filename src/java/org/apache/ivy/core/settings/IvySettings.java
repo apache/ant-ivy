@@ -54,7 +54,6 @@ import org.apache.ivy.core.repository.RepositoryManagementEngineSettings;
 import org.apache.ivy.core.resolve.ResolveEngineSettings;
 import org.apache.ivy.core.retrieve.RetrieveEngineSettings;
 import org.apache.ivy.core.sort.SortEngineSettings;
-import org.apache.ivy.plugins.IvyAware;
 import org.apache.ivy.plugins.IvySettingsAware;
 import org.apache.ivy.plugins.circular.CircularDependencyStrategy;
 import org.apache.ivy.plugins.circular.ErrorCircularDependencyStrategy;
@@ -1225,10 +1224,6 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
             ((IvySettingsAware) obj).setSettings(this);
         } else if (obj instanceof DependencyResolver) {
             ((DependencyResolver) obj).setSettings(this);
-        }
-        if (obj instanceof IvyAware) {
-            // TODO
-            // ((IvyAware)obj).setIvy(this);
         }
     }
 
