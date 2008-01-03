@@ -22,6 +22,7 @@ import java.io.FilenameFilter;
 
 import org.apache.ivy.core.IvyPatternHelper;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
+import org.apache.ivy.util.FileUtil;
 
 public class DefaultResolutionCacheManager implements ResolutionCacheManager {
     private static final String DEFAULT_CACHE_RESOLVED_IVY_PATTERN = 
@@ -113,5 +114,9 @@ public class DefaultResolutionCacheManager implements ResolutionCacheManager {
     public String toString() {
         return name;
     }
-    
+
+    public void clean() {
+        FileUtil.forceDelete(getBasedir());
+    }
+
 }

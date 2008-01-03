@@ -143,4 +143,9 @@ public interface RepositoryCacheManager {
             ResolvedResource orginalMetadataRef, Artifact requestedMetadataArtifact,
             ResolvedModuleRevision rmr, ModuleDescriptorWriter writer);
     
+    /**
+     * Cleans the whole cache.
+     */
+    public void clean();
+    
 }

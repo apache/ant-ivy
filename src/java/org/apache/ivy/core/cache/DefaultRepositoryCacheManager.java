@@ -45,6 +45,7 @@ import org.apache.ivy.plugins.repository.ResourceDownloader;
 import org.apache.ivy.plugins.repository.ResourceHelper;
 import org.apache.ivy.plugins.resolver.DependencyResolver;
 import org.apache.ivy.plugins.resolver.util.ResolvedResource;
+import org.apache.ivy.util.FileUtil;
 import org.apache.ivy.util.Message;
 import org.apache.ivy.util.PropertiesFile;
 
@@ -763,5 +764,8 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
             moduleArtifact.getName() + ".original");
     }
 
+    public void clean() {
+        FileUtil.forceDelete(getBasedir());
+    }
     
 }
