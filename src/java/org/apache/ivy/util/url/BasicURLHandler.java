@@ -32,7 +32,7 @@ import org.apache.ivy.util.FileUtil;
 import org.apache.ivy.util.Message;
 
 /**
- *
+ * 
  */
 public class BasicURLHandler extends AbstractURLHandler {
 

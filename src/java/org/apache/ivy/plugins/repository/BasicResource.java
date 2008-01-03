@@ -21,23 +21,23 @@ import java.io.IOException;
 import java.io.InputStream;
 
 public class BasicResource implements Resource {
-    private boolean _local;
+    private boolean local;
 
-    private String _name;
+    private String name;
 
-    private long _lastModified;
+    private long lastModified;
 
-    private long _contentLength;
+    private long contentLength;
 
-    private boolean _exists;
+    private boolean exists;
 
     public BasicResource(String name, boolean exists, long contentLength, long lastModified,
             boolean local) {
-        _name = name;
-        _exists = exists;
-        _contentLength = contentLength;
-        _lastModified = lastModified;
-        _local = local;
+        this.name = name;
+        this.exists = exists;
+        this.contentLength = contentLength;
+        this.lastModified = lastModified;
+        this.local = local;
     }
 
     public Resource clone(String cloneName) {
@@ -45,23 +45,23 @@ public class BasicResource implements Resource {
     }
 
     public boolean exists() {
-        return _exists;
+        return this.exists;
     }
 
     public long getContentLength() {
-        return _contentLength;
+        return this.contentLength;
     }
 
     public long getLastModified() {
-        return _lastModified;
+        return this.lastModified;
     }
 
     public String getName() {
-        return _name;
+        return this.name;
     }
 
     public boolean isLocal() {
-        return _local;
+        return this.local;
     }
 
     public InputStream openStream() throws IOException {

@@ -35,6 +35,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 	Antoine Levy-Lambert
 	William Lyvers
 	Jan Materne
+	Markus M. May
 	Stephen Nesbitt
 	Joshua Nichols
 	Bernard Niset
@@ -71,6 +72,8 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - FIX: Maven test scope includes all runtime dependencies (IVY-682)
 
 - TASK: Remove cache attribute on Ant tasks (IVY-685)
+
+- Improvement in coding conventions (IVY-511) (with contribution from Markus M. May)
 
    2.0.0-beta1
 =====================================
