@@ -62,6 +62,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 
 - IMPROVEMENT: Flexible cache management (IVY-399 - not completed yet)
 - IMPROVEMENT: Decrease memory footprint (IVY-662)
+- IMPROVEMENT: Downgrade Ant version requirement to 1.6 to build Ivy (IVY-687)
 
 - FIX: Ivy doesn't respect the order of the ivy patterns as defined in the settings (IVY-676)
 - FIX: XmlModuleDescriptorWriter doesn't write the deprecated attribute of the "ivy-module/configurations/conf" element (IVY-664)

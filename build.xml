@@ -293,9 +293,14 @@
     	-->
     	<copy file="${basedir}/META-INF/MANIFEST.MF" tofile="${artifacts.build.dir}/MANIFEST.MF">
     		<filterchain>
+    			<!-- with Ant 1.7 excluding the line would be:
     			<linecontains negate="true">
-    			  <contains value="Bundle-Version"/>
+    				<contains value="Bundle-Version"/>
     			</linecontains>
+    			-->
+    			<linecontainsregexp>
+    			  <regexp pattern="[^B][^u][^n][^d][^l][^e][^\-][^V][^e][^r][^s][^i][^o][^n].*"/>
+    			</linecontainsregexp>
     		</filterchain>
     	</copy>
 
