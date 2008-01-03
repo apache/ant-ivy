@@ -385,8 +385,8 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
                         if (resolver != null) {
                             Message.debug("\tfound ivy file in cache for " + mrid + " (resolved by "
                                 + resolver.getName() + "): " + ivyFile);
-                            if (expectedResolver != null 
-                                    && expectedResolver.equals(resolver.getName())) {
+                            if (expectedResolver == null 
+                                    || expectedResolver.equals(resolver.getName())) {
                                 MetadataArtifactDownloadReport madr 
                                     = new MetadataArtifactDownloadReport(
                                         depMD.getMetadataArtifact());
@@ -562,7 +562,9 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
                 mdFileInCache);
 
             saveResolvers(md, resolver.getName(), resolver.getName());
-            rmr.getReport().setOriginalLocalFile(originalFileInCache);
+            if (!md.isDefault()) {
+                rmr.getReport().setOriginalLocalFile(originalFileInCache);
+            }
             rmr.getReport().setLocalFile(mdFileInCache);
         } catch (RuntimeException e) {
             throw e;
@@ -592,10 +594,9 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
         }
         try {
             // now let's see if we can find it in cache and if it is up to date
-            ResolvedModuleRevision rmr = findModuleInCache(
-                mrid, options.isValidate(), resolver.getName());
+            ResolvedModuleRevision rmr = findModuleInCache(mrid, options.isValidate(), null);
             if (rmr != null) {
-                if (rmr.getDescriptor().isDefault() && rmr.getResolver() != this) {
+                if (rmr.getDescriptor().isDefault() && rmr.getResolver() != resolver) {
                     Message.verbose("\t" + getName() + ": found revision in cache: " + mrid
                         + " (resolved by " + rmr.getResolver().getName()
                         + "): but it's a default one, maybe we can find a better one");

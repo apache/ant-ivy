@@ -275,8 +275,13 @@ public abstract class AbstractResolver implements DependencyResolver, HasLatestS
     }
 
     protected ResolvedModuleRevision findModuleInCache(ResolveData data, ModuleRevisionId mrid) {
+        return findModuleInCache(data, mrid, false);
+    }
+
+    protected ResolvedModuleRevision findModuleInCache(
+            ResolveData data, ModuleRevisionId mrid, boolean anyResolver) {
         return getRepositoryCacheManager().findModuleInCache(
-            mrid, doValidate(data), getName());
+            mrid, doValidate(data), anyResolver ? null : getName());
     }
 
     public String getChangingMatcherName() {

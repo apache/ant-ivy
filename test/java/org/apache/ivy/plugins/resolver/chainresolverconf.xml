@@ -17,7 +17,7 @@
    under the License.    
 -->
 <ivysettings>
-  <conf defaultResolver="chain"/>
+  <settings defaultResolver="chain"/>
   <resolvers>
     <chain name="chain">
       <ibiblio name="1" />

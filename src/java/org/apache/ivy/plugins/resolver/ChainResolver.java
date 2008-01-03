@@ -68,8 +68,32 @@ public class ChainResolver extends AbstractResolver {
 
     private boolean dual;
 
+    private Boolean checkmodified = null;
+
     public void add(DependencyResolver resolver) {
         chain.add(resolver);
+    }
+
+    /**
+     * True if this resolver should check lastmodified date to know if ivy files are up to date.
+     * 
+     * @return
+     */
+    public boolean isCheckmodified() {
+        if (checkmodified == null) {
+            if (getSettings() != null) {
+                String check = getSettings().getVariable("ivy.resolver.default.check.modified");
+                return check != null ? Boolean.valueOf(check).booleanValue() : false;
+            } else {
+                return false;
+            }
+        } else {
+            return checkmodified.booleanValue();
+        }
+    }
+
+    public void setCheckmodified(boolean check) {
+        checkmodified = Boolean.valueOf(check);
     }
 
     public ResolvedModuleRevision getDependency(DependencyDescriptor dd, ResolveData data)
@@ -79,10 +103,28 @@ public class ChainResolver extends AbstractResolver {
 
         List errors = new ArrayList();
 
+        ResolvedModuleRevision mr = null;
+
+        ModuleRevisionId mrid = dd.getDependencyRevisionId();
+
+        boolean isDynamic = getSettings().getVersionMatcher().isDynamic(mrid);
+
+        boolean isChangingRevision = getChangingMatcher().matches(mrid.getRevision());
+        boolean isChangingDependency = isChangingRevision || dd.isChanging();
+
+        if (!isDynamic && !isCheckmodified() && !isChangingDependency) {
+            Message.verbose(getName() + ": not dynamic, not check modified and not changing."
+                    + " Checking cache for: " + mrid);
+            mr = findModuleInCache(data, mrid, true);
+            if (mr != null) {
+                Message.verbose("chain " + getName() + ": module revision found in cache: " + mrid);
+                return resolvedRevision(mr);
+            }
+        }
+
         for (Iterator iter = chain.iterator(); iter.hasNext();) {
             DependencyResolver resolver = (DependencyResolver) iter.next();
             LatestStrategy oldLatest = setLatestIfRequired(resolver, getLatestStrategy());
-            ResolvedModuleRevision mr = null;
             try {
                 mr = resolver.getDependency(dd, data);
             } catch (Exception ex) {
@@ -97,8 +139,7 @@ public class ChainResolver extends AbstractResolver {
             checkInterrupted();
             if (mr != null) {
                 boolean shouldReturn = returnFirst;
-                shouldReturn |= !getSettings().getVersionMatcher().isDynamic(
-                    dd.getDependencyRevisionId())
+                shouldReturn |= !isDynamic
                         && ret != null && !ret.getDescriptor().isDefault();
                 if (!shouldReturn) {
                     // check if latest is asked and compare to return the most recent
@@ -118,7 +159,7 @@ public class ChainResolver extends AbstractResolver {
                     } else {
                         Message.debug("\tmodule revision discarded as older: " + mrDesc);
                     }
-                    if (!getSettings().getVersionMatcher().isDynamic(dd.getDependencyRevisionId())
+                    if (!isDynamic
                             && !ret.getDescriptor().isDefault()) {
                         Message.debug("\tmodule revision found and is not default: returning "
                                 + mrDesc);
