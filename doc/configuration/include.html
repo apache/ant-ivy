@@ -45,7 +45,7 @@ The included ivysettings file has to be a complete well formed ivysettings file,
 <code type="xml">
 <ivysettings>
   <property name="myrepository" value="path/to/my/real/rep"/>
-  <conf defaultResolver="default"/>
+  <settings defaultResolver="default"/>
   <include file="path/to/ivysettings-default.xml"/>
 </ivysettings>
 </code>
@@ -59,7 +59,7 @@ with ivysettings-default.xml:
 </ivysettings>
 </code>
 
-The included ivysettings defines a resolver named default, which is an ivyrep resolver, with its root configured as being the value of myrepository variable. This variable is given the value path/to/rep in the included file, but because the attribute overwrite is set to false, it will not overide the value given in the main ivysettings including this one, so the value used for myrepository will be path/to/my/real/rep.
+The included ivysettings defines a resolver named default, which is an ivyrep resolver, with its root configured as being the value of myrepository variable. This variable is given the value path/to/rep in the included file, but because the attribute overwrite is set to false, it will not override the value given in the main ivysettings including this one, so the value used for myrepository will be path/to/my/real/rep.
 <hr/>
 <code type="xml">
 <ivysettings>
