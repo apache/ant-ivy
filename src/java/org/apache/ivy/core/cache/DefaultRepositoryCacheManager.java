@@ -447,7 +447,7 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
         this.lockStrategy = lockStrategy;
     }
     
-    public void setLock(String lockStrategyName) {
+    public void setLockStrategy(String lockStrategyName) {
         this.lockStrategyName = lockStrategyName;
     }
     
