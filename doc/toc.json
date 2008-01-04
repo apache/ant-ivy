@@ -165,13 +165,6 @@
                             ]
                         },
                         {
-                          "id":"configuration/cacheDefaults",
-                          "title":"cacheDefaults",
-                          "children": [
-
-                            ]
-                        },
-                        {
                           "id":"configuration/include",
                           "title":"include",
                           "children": [
@@ -197,6 +190,19 @@
                           "title":"lock-strategies",
                           "children": [
 
+                            ]
+                        },
+                        {
+                          "id":"configuration/caches",
+                          "title":"caches",
+                          "children": [
+                              {
+                                "id":"configuration/caches/cache",
+                                "title":"cache",
+                                "children": [
+
+                                  ]
+                              }
                             ]
                         },
                         {

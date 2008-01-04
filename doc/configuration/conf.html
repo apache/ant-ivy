@@ -29,10 +29,8 @@
 
 Configures some important ivy info: default cache, default resolver, ...
 
-Default cache is used whenever a cache is not provided. It usually points to a directory in your filesystem. <strong>This should not point to a directory used as a repository!</strong>
-<span class="since">Since 2.0</span> Once the settings are loaded, the value of the defaultCache (either configured or the default value) is stored in an Ivy variable: ivy.cache.dir.
-<span class="since">Since 2.0</span> A new [[configuration/cache]] tag is provided where you can fully configure the cache. As of 2.0 beta 1, we recommend using the cache tag even though configuring using the attributes available on this tag is still possible.
-
+Default cache is the default directory used for both the resolution and repository cache(s). It usually points to a directory in your filesystem. If you want to isolate resolution cache from repository cache, we recommend setting both the resolutionCacheDir attribute on this tag and the basedir attribute on [[configuration/caches]] instead of using defaultCache.
+See [[concept cache concept]] for details on Ivy cache concept.
 
 Default resolver is used whenever nothing else is configured in the modules section of the configuration file. It should give the name of a dependency resolver defined in the resolvers section of the configuration file.
 
@@ -52,8 +50,10 @@ cache to another place in your filesystem). Usually it is a good thing to check 
     <tr><th class="ivy-att">Attribute</th><th class="ivy-att-desc">Description</th><th class="ivy-att-req">Required</th></tr>
 </thead>
 <tbody>
-    <tr><td>defaultCache</td><td>a path to a directory to use as default cache.  <i>We recommend using the basedir on the [[configuration/cache]] tag instead</i></td>
+    <tr><td>defaultCache</td><td>a path to a directory to use as default basedir for both resolution and repository cache(s)</td>
         <td>No, defaults to .ivy2/cache in user home</td></tr>
+    <tr><td>resolutionCacheDir</td><td>the path of the directory to use to put all resolution cache data <span class="since">since 2.0</span></td>
+        <td>No, defaults to defaultCache</td></tr>
     <tr><td>defaultResolver</td><td>the name of the default resolver to use</td>
         <td>No, but all modules should be configured in the modules section if not provided</td></tr>
     <tr><td>defaultLatestStrategy</td><td>the name of the default latest strategy to use</td>
@@ -76,8 +76,7 @@ cache to another place in your filesystem). Usually it is a good thing to check 
         <td>No, defaults to false</td></tr>
 </tbody>
 </table>
-
-	</textarea>
+</textarea>
 <script type="text/javascript">xooki.postProcess();</script>
 </body>
 </html>

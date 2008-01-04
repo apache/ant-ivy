@@ -231,11 +231,27 @@ Prior to Ivy 1.4 circular dependencies where causing a failure in Ivy. As of Ivy
 
 See the <a href="configuration/conf.html">configuration page</a> to see how to configure the circular dependency strategy you want to use.
 
-<h1><a name="change">Cache and Change Management</a></h1>
-Ivy heavily relies on a local cache to avoid accessing remote repositories too often, thus saving a low of network bandwidth and time. To optimize the dependency resolution and the way the cache is used, Ivy assumes by default that a revision never changes. So once Ivy has a module in its cache (metadata and artifacts), it trusts the cache and do not even query the repository. This optimization is very useful in most cases, and causes no problem as long as you respect this paradigm: a revision never changes. Besides performance, there are several [[bestpractices good reasons]] to follow this principle.	
+<h1>Cache and Change Management</h1>
+Ivy heavily relies on local cache(s) to avoid accessing remote repositories too often, thus saving a low of network bandwidth and time. 
+
+<h2><a name="cache">Cache types</a></h2>
+Ivy cache is composed of two different parts:
+<ul>
+<li>the repository cache</li>
+The repository cache is where Ivy stores data downloaded from module repositories, along with some meta information concerning these artifacts, like their original location.
+This part of the cache can be shared if you use a well suited [[configuration/lock-strategies lock strategy]]. 
+<li>the resolution cache</li>
+This part of the cache is used to store resolution data, which is used by Ivy to reuse the results of a resolve process.
+This part of the cache is overwritten each time a new resolve is performed, and should never be used by multiple processes at the same time.
+</ul>
+
+While there is always only one resolution cache, you can [[configuration/caches define multiple repository caches]], each [[configuration/resolvers resolver]] being able to use a separate cache.
+
+<h2><a name="change">Change management</a></h2>
+To optimize the dependency resolution and the way the cache is used, Ivy assumes by default that a revision never changes. So once Ivy has a module in its cache (metadata and artifacts), it trusts the cache and do not even query the repository. This optimization is very useful in most cases, and causes no problem as long as you respect this paradigm: a revision never changes. Besides performance, there are several [[bestpractices good reasons]] to follow this principle.	
 
 However, depending on your current build system and your dependency management strategy, you may prefer to update sometimes your modules. There are two kind of changes to consider:
-<h3>change in module metadata</h3>
+<h3>Changes in module metadata</h3>
 Since pretty often module metadata are not considered by module providers with as much attention as their API or behavior (if they even provide module metadata), it happens more than we would like that we have to update module metadata: a dependency has been forgotten, or another one is missing, ...
 
 In this case, setting checkModified="true" on your dependency resolver will be the solution. This flag tells to Ivy to check if module metadata has been modified compared to the cache. Ivy first checks the metadata last modified timestamp on the repository to download it only if necessary, and then update it when needed.
