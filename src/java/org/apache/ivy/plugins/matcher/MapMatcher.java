@@ -17,32 +17,39 @@
  */
 package org.apache.ivy.plugins.matcher;
 
-import org.apache.ivy.core.module.id.ModuleId;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Map.Entry;
 
-public class ModuleIdMatcher {
-    // TODO this class should be moved out of this package
-    private Matcher orgMatcher;
-
-    private Matcher moduleMatcher;
-
-    private ModuleId mid;
+public class MapMatcher {
+    private Map/*<String, Matcher>*/ matchers = new HashMap();
 
     private PatternMatcher pm;
 
-    public ModuleIdMatcher(ModuleId mid, PatternMatcher pm) {
-        this.mid = mid;
+    private Map attributes;
+
+    public MapMatcher(Map attributes, PatternMatcher pm) {
+        this.attributes = attributes;
         this.pm = pm;
-        this.orgMatcher = pm.getMatcher(mid.getOrganisation() == null 
-                ? PatternMatcher.ANY_EXPRESSION
-                : mid.getOrganisation());
-        this.moduleMatcher = pm.getMatcher(mid.getName());
+        for (Iterator iter = attributes.entrySet().iterator(); iter.hasNext();) {
+            Entry entry = (Entry) iter.next();
+            matchers.put(entry.getKey(), pm.getMatcher((String) entry.getValue()));
+        }
     }
 
-    public boolean matches(ModuleId mid) {
-        return orgMatcher.matches(mid.getOrganisation()) && moduleMatcher.matches(mid.getName());
+    public boolean matches(Map/*<String,String>*/ m) {
+        for (Iterator iter = matchers.entrySet().iterator(); iter.hasNext();) {
+            Entry entry = (Entry) iter.next();
+            if (!((Matcher) entry.getValue())
+                    .matches((String) m.get(entry.getKey()))) {
+                return false;
+            }
+        }
+        return true;
     }
 
     public String toString() {
-        return mid + " (" + pm.getName() + ")";
+        return attributes + " (" + pm.getName() + ")";
     }
 }

@@ -283,7 +283,7 @@ public class RepositoryManagementEngine {
     }
 
     private void loadModuleRevision(ModuleRevisionId mrid) throws Exception {
-        ResolvedModuleRevision module = settings.getResolver(mrid.getModuleId())
+        ResolvedModuleRevision module = settings.getResolver(mrid)
                     .getDependency(new DefaultDependencyDescriptor(mrid, false), 
                 newResolveData());
         if (module == null) {

@@ -369,8 +369,7 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
                         if (resolver == null) {
                             Message.debug("\tresolver not found: " + resolverName
                                 + " => trying to use the one configured for " + mrid);
-                            resolver = settings.getResolver(depMD.getResolvedModuleRevisionId()
-                                .getModuleId());
+                            resolver = settings.getResolver(depMD.getResolvedModuleRevisionId());
                             if (resolver != null) {
                                 Message.debug("\tconfigured resolver found for "
                                     + depMD.getResolvedModuleRevisionId() + ": "

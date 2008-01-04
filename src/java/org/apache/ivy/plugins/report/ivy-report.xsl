@@ -386,7 +386,6 @@
          <xsl:attribute name="name"><xsl:value-of select="@organisation"/>-<xsl:value-of select="@name"/></xsl:attribute>
       </xsl:element>
       <xsl:value-of select="@name"/> by <xsl:value-of select="@organisation"/>
-      <span class="resolved">resolved by <b><xsl:value-of select="@resolver"/></b></span>
     </h3>    
       <xsl:for-each select="revision">
         <h4>

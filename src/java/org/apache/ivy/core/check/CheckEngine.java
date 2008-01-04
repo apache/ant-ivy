@@ -93,7 +93,8 @@ public class CheckEngine {
                     }
                 }
                 // resolve
-                DependencyResolver resolver = settings.getResolver(dds[i].getDependencyId());
+                DependencyResolver resolver = 
+                    settings.getResolver(dds[i].getDependencyRevisionId());
                 ResolvedModuleRevision rmr = resolver.getDependency(dds[i], data);
                 if (rmr == null) {
                     Message.info("dependency not found in " + ivyFile + ":\n\t" + dds[i]);

@@ -546,7 +546,7 @@ public final class PomModuleDescriptorParser extends AbstractModuleDescriptorPar
         }
 
         private Parser parserOtherPom(ModuleRevisionId other) throws SAXException {
-            DependencyResolver resolver = settings.getResolver(other.getModuleId());
+            DependencyResolver resolver = settings.getResolver(other);
             if (resolver == null) {
                 // TODO: Maybe log warning or throw exception here?
                 return null;

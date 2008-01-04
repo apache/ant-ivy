@@ -48,6 +48,7 @@ import org.apache.ivy.core.check.CheckEngineSettings;
 import org.apache.ivy.core.deliver.DeliverEngineSettings;
 import org.apache.ivy.core.install.InstallEngineSettings;
 import org.apache.ivy.core.module.id.ModuleId;
+import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.module.status.StatusManager;
 import org.apache.ivy.core.publish.PublishEngineSettings;
 import org.apache.ivy.core.repository.RepositoryManagementEngineSettings;
@@ -73,7 +74,7 @@ import org.apache.ivy.plugins.lock.LockStrategy;
 import org.apache.ivy.plugins.lock.NoLockStrategy;
 import org.apache.ivy.plugins.matcher.ExactOrRegexpPatternMatcher;
 import org.apache.ivy.plugins.matcher.ExactPatternMatcher;
-import org.apache.ivy.plugins.matcher.ModuleIdMatcher;
+import org.apache.ivy.plugins.matcher.MapMatcher;
 import org.apache.ivy.plugins.matcher.PatternMatcher;
 import org.apache.ivy.plugins.matcher.RegexpPatternMatcher;
 import org.apache.ivy.plugins.namespace.Namespace;
@@ -506,7 +507,7 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
         if (!moduleSettings.isEmpty()) {
             Message.debug("\tmodule settings:");
             for (Iterator iter = moduleSettings.keySet().iterator(); iter.hasNext();) {
-                ModuleIdMatcher midm = (ModuleIdMatcher) iter.next();
+                MapMatcher midm = (MapMatcher) iter.next();
                 ModuleSettings s = (ModuleSettings) moduleSettings.get(midm);
                 Message.debug("\t\t" + midm + " -> " + s);
             }
@@ -689,18 +690,14 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
     }
 
     /**
-     * regular expressions as explained in Pattern class may be used in ModuleId organisation and
-     * name
-     * 
-     * @param moduleId
-     * @param resolverName
-     * @param branch
+     * regular expressions as explained in Pattern class may be used in attributes
      */
-    public void addModuleConfiguration(ModuleId mid, PatternMatcher matcher, String resolverName,
+    public void addModuleConfiguration(Map attributes, PatternMatcher matcher, String resolverName,
             String branch, String conflictManager) {
         checkResolverName(resolverName);
-        moduleSettings.put(new ModuleIdMatcher(mid, matcher), new ModuleSettings(resolverName,
-                branch, conflictManager));
+        moduleSettings.put(
+            new MapMatcher(attributes, matcher), 
+            new ModuleSettings(resolverName, branch, conflictManager));
     }
 
     public File getDefaultIvyUserDir() {
@@ -766,11 +763,11 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
         dictatorResolver = resolver;
     }
 
-    public DependencyResolver getResolver(ModuleId moduleId) {
+    public DependencyResolver getResolver(ModuleRevisionId mrid) {
         if (dictatorResolver != null) {
             return dictatorResolver;
         }
-        String resolverName = getResolverName(moduleId);
+        String resolverName = getResolverName(mrid);
         return getResolver(resolverName);
     }
 
@@ -795,10 +792,10 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
         return defaultResolver;
     }
 
-    public String getResolverName(ModuleId moduleId) {
+    public String getResolverName(ModuleRevisionId mrid) {
         for (Iterator iter = moduleSettings.keySet().iterator(); iter.hasNext();) {
-            ModuleIdMatcher midm = (ModuleIdMatcher) iter.next();
-            if (midm.matches(moduleId)) {
+            MapMatcher midm = (MapMatcher) iter.next();
+            if (midm.matches(mrid.getAttributes())) {
                 ModuleSettings ms = (ModuleSettings) moduleSettings.get(midm);
                 if (ms.getResolverName() != null) {
                     return ms.getResolverName();
@@ -810,8 +807,8 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
 
     public String getDefaultBranch(ModuleId moduleId) {
         for (Iterator iter = moduleSettings.keySet().iterator(); iter.hasNext();) {
-            ModuleIdMatcher midm = (ModuleIdMatcher) iter.next();
-            if (midm.matches(moduleId)) {
+            MapMatcher midm = (MapMatcher) iter.next();
+            if (midm.matches(getAttributes(moduleId))) {
                 ModuleSettings ms = (ModuleSettings) moduleSettings.get(midm);
                 if (ms.getBranch() != null) {
                     return ms.getBranch();
@@ -831,8 +828,8 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
 
     public ConflictManager getConflictManager(ModuleId moduleId) {
         for (Iterator iter = moduleSettings.keySet().iterator(); iter.hasNext();) {
-            ModuleIdMatcher midm = (ModuleIdMatcher) iter.next();
-            if (midm.matches(moduleId)) {
+            MapMatcher midm = (MapMatcher) iter.next();
+            if (midm.matches(getAttributes(moduleId))) {
                 ModuleSettings ms = (ModuleSettings) moduleSettings.get(midm);
                 if (ms.getConflictManager() != null) {
                     ConflictManager cm = getConflictManager(ms.getConflictManager());
@@ -846,6 +843,21 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
             }
         }
         return getDefaultConflictManager();
+    }
+
+    /**
+     * Converts the given module id to a Map containing entries for the organisation and module
+     * name.
+     * 
+     * @param moduleId
+     *            the module id to convert
+     * @return a Map with exactly two entries, one for the organisation, one for the module name.
+     */
+    private Map getAttributes(ModuleId moduleId) {
+        Map att = new HashMap();
+        att.put(IvyPatternHelper.ORGANISATION_KEY, moduleId.getOrganisation());
+        att.put(IvyPatternHelper.MODULE_KEY, moduleId.getName());
+        return att;
     }
 
     public void addConfigured(ConflictManager cm) {

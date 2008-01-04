@@ -30,8 +30,8 @@ import java.util.Map;
 
 import javax.xml.parsers.SAXParserFactory;
 
+import org.apache.ivy.core.IvyPatternHelper;
 import org.apache.ivy.core.cache.RepositoryCacheManager;
-import org.apache.ivy.core.module.id.ModuleId;
 import org.apache.ivy.core.module.status.StatusManager;
 import org.apache.ivy.plugins.circular.CircularDependencyStrategy;
 import org.apache.ivy.plugins.conflict.ConflictManager;
@@ -125,7 +125,7 @@ public class XmlSettingsParser extends DefaultHandler {
         // we first copy attributes in a Map to be able to modify them
         Map attributes = new HashMap();
         for (int i = 0; i < att.getLength(); i++) {
-            attributes.put(att.getQName(i), att.getValue(i));
+            attributes.put(att.getQName(i), ivy.substitute(att.getValue(i)));
         }
 
         try {
@@ -183,15 +183,15 @@ public class XmlSettingsParser extends DefaultHandler {
                     configurator.startCreateChild(qName);
                     for (Iterator iter = attributes.keySet().iterator(); iter.hasNext();) {
                         String attName = (String) iter.next();
-                        configurator.setAttribute(attName, ivy.substitute((String) attributes
-                                .get(attName)));
+                        configurator.setAttribute(attName, (String) attributes
+                                .get(attName));
                     }
                 }
             } else if ("classpath".equals(qName)) {
-                String urlStr = ivy.substitute((String) attributes.get("url"));
+                String urlStr = (String) attributes.get("url");
                 URL url = null;
                 if (urlStr == null) {
-                    String file = ivy.substitute((String) attributes.get("file"));
+                    String file = (String) attributes.get("file");
                     if (file == null) {
                         throw new IllegalArgumentException(
                                 "either url or file should be given for classpath element");
@@ -203,14 +203,14 @@ public class XmlSettingsParser extends DefaultHandler {
                 }
                 ivy.addClasspathURL(url);
             } else if ("typedef".equals(qName)) {
-                String name = ivy.substitute((String) attributes.get("name"));
-                String className = ivy.substitute((String) attributes.get("classname"));
+                String name = (String) attributes.get("name");
+                String className = (String) attributes.get("classname");
                 Class clazz = ivy.typeDef(name, className);
                 configurator.typeDef(name, clazz);
             } else if ("property".equals(qName)) {
-                String name = ivy.substitute((String) attributes.get("name"));
-                String value = ivy.substitute((String) attributes.get("value"));
-                String override = ivy.substitute((String) attributes.get("override"));
+                String name = (String) attributes.get("name");
+                String value = (String) attributes.get("value");
+                String override = (String) attributes.get("override");
                 if (name == null) {
                     throw new IllegalArgumentException("missing attribute name on property tag");
                 }
@@ -220,8 +220,8 @@ public class XmlSettingsParser extends DefaultHandler {
                 ivy.setVariable(name, value, override == null ? true : Boolean.valueOf(override)
                         .booleanValue());
             } else if ("properties".equals(qName)) {
-                String propFilePath = ivy.substitute((String) attributes.get("file"));
-                String override = ivy.substitute((String) attributes.get("override"));
+                String propFilePath = (String) attributes.get("file");
+                String override = (String) attributes.get("override");
                 try {
                     Message.verbose("loading properties: " + propFilePath);
                     ivy.loadProperties(new File(propFilePath), override == null ? true : Boolean
@@ -244,10 +244,10 @@ public class XmlSettingsParser extends DefaultHandler {
                 IvyVariableContainer variables = (IvyVariableContainer) ivy.getVariableContainer()
                         .clone();
                 try {
-                    String propFilePath = ivy.substitute((String) attributes.get("file"));
+                    String propFilePath = (String) attributes.get("file");
                     URL settingsURL = null;
                     if (propFilePath == null) {
-                        propFilePath = ivy.substitute((String) attributes.get("url"));
+                        propFilePath = (String) attributes.get("url");
                         if (propFilePath == null) {
                             Message.error("bad include tag: specify file or url to include");
                             return;
@@ -279,42 +279,42 @@ public class XmlSettingsParser extends DefaultHandler {
                 }
                 String cache = (String) attributes.get("defaultCache");
                 if (cache != null) {
-                    ivy.setDefaultCache(new File(ivy.substitute(cache)));
+                    ivy.setDefaultCache(new File(cache));
                 }
                 String defaultBranch = (String) attributes.get("defaultBranch");
                 if (defaultBranch != null) {
-                    ivy.setDefaultBranch(ivy.substitute(defaultBranch));
+                    ivy.setDefaultBranch(defaultBranch);
                 }
                 String validate = (String) attributes.get("validate");
                 if (validate != null) {
-                    ivy.setValidate(Boolean.valueOf(ivy.substitute(validate)).booleanValue());
+                    ivy.setValidate(Boolean.valueOf(validate).booleanValue());
                 }
                 String up2d = (String) attributes.get("checkUpToDate");
                 if (up2d != null) {
-                    ivy.setCheckUpToDate(Boolean.valueOf(ivy.substitute(up2d)).booleanValue());
+                    ivy.setCheckUpToDate(Boolean.valueOf(up2d).booleanValue());
                 }
                 String useRemoteConfig = (String) attributes.get("useRemoteConfig");
                 if (useRemoteConfig != null) {
-                    ivy.setUseRemoteConfig(Boolean.valueOf(ivy.substitute(useRemoteConfig))
+                    ivy.setUseRemoteConfig(Boolean.valueOf(useRemoteConfig)
                             .booleanValue());
                 }
                 String resolutionDir = (String) attributes.get("resolutionCacheDir");
                 if (resolutionDir != null) {
-                    ivy.setDefaultResolutionCacheBasedir(ivy.substitute(resolutionDir));
+                    ivy.setDefaultResolutionCacheBasedir(resolutionDir);
                 }
                 String cacheIvyPattern = (String) attributes.get("cacheIvyPattern");
                 if (cacheIvyPattern != null) {
                     Message.deprecated(
                         "'cacheIvyPattern' is deprecated, use 'caches[@ivyPattern]' instead"
                         + " (" + settings + ")");
-                    ivy.setDefaultCacheIvyPattern(ivy.substitute(cacheIvyPattern));
+                    ivy.setDefaultCacheIvyPattern(cacheIvyPattern);
                 }
                 String cacheArtPattern = (String) attributes.get("cacheArtifactPattern");
                 if (cacheArtPattern != null) {
                     Message.deprecated(
                         "'cacheArtifactPattern' is deprecated, "
                         + "use 'caches[@artifactPattern]' instead (" + settings + ")");
-                    ivy.setDefaultCacheArtifactPattern(ivy.substitute(cacheArtPattern));
+                    ivy.setDefaultCacheArtifactPattern(cacheArtPattern);
                 }
 
                 // we do not set following defaults here since no instances has been registered yet
@@ -331,26 +331,26 @@ public class XmlSettingsParser extends DefaultHandler {
                 
                 String cacheIvyPattern = (String) attributes.get("ivyPattern");
                 if (cacheIvyPattern != null) {
-                    ivy.setDefaultCacheIvyPattern(ivy.substitute(cacheIvyPattern));
+                    ivy.setDefaultCacheIvyPattern(cacheIvyPattern);
                 }
                 String cacheArtPattern = (String) attributes.get("artifactPattern");
                 if (cacheArtPattern != null) {
-                    ivy.setDefaultCacheArtifactPattern(ivy.substitute(cacheArtPattern));
+                    ivy.setDefaultCacheArtifactPattern(cacheArtPattern);
                 }
                 String repositoryDir = (String) attributes.get("basedir");
                 if (repositoryDir != null) {
-                    ivy.setDefaultRepositoryCacheBasedir(ivy.substitute(repositoryDir)); 
+                    ivy.setDefaultRepositoryCacheBasedir(repositoryDir); 
                 }
            } else if ("version-matchers".equals(qName)) {
                 currentConfiguratorTag = qName;
                 configurator.setRoot(ivy);
-                if ("true".equals(ivy.substitute((String) attributes.get("usedefaults")))) {
+                if ("true".equals((String) attributes.get("usedefaults"))) {
                     ivy.configureDefaultVersionMatcher();
                 }
             } else if ("statuses".equals(qName)) {
                 currentConfiguratorTag = qName;
                 StatusManager m = new StatusManager();
-                String defaultStatus = ivy.substitute((String) attributes.get("default"));
+                String defaultStatus = (String) attributes.get("default");
                 if (defaultStatus != null) {
                     m.setDefaultStatus(defaultStatus);
                 }
@@ -365,22 +365,13 @@ public class XmlSettingsParser extends DefaultHandler {
                         .get("name"));
                 macrodef.addAttribute("name", null);
             } else if ("module".equals(qName)) {
-                String organisation = ivy.substitute((String) attributes.get("organisation"));
-                String module = ivy.substitute((String) attributes.get("name"));
-                String resolver = ivy.substitute((String) attributes.get("resolver"));
-                String branch = ivy.substitute((String) attributes.get("branch"));
-                String cm = ivy.substitute((String) attributes.get("conflict-manager"));
-                String matcher = ivy.substitute((String) attributes.get("matcher"));
+                attributes.put(IvyPatternHelper.MODULE_KEY, attributes.remove("name"));
+                String resolver = (String) attributes.remove("resolver");
+                String branch = (String) attributes.remove("branch");
+                String cm = (String) attributes.remove("conflict-manager");
+                String matcher = (String) attributes.remove("matcher");
                 matcher = matcher == null ? PatternMatcher.EXACT_OR_REGEXP : matcher;
-                if (organisation == null) {
-                    throw new IllegalArgumentException(
-                         "'organisation' is mandatory in module element: check your configuration");
-                }
-                if (module == null) {
-                    throw new IllegalArgumentException(
-                            "'name' is mandatory in module element: check your configuration");
-                }
-                ivy.addModuleConfiguration(new ModuleId(organisation, module), ivy
+                ivy.addModuleConfiguration(attributes, ivy
                         .getMatcher(matcher), resolver, branch, cm);
             }
         } catch (ParseException ex) {
@@ -409,7 +400,7 @@ public class XmlSettingsParser extends DefaultHandler {
             ivy.setDefaultResolver(ivy.substitute(defaultResolver));
         }
         if (defaultCM != null) {
-            ConflictManager conflictManager = ivy.getConflictManager(ivy.substitute(defaultCM));
+            ConflictManager conflictManager = ivy.getConflictManager(defaultCM);
             if (conflictManager == null) {
                 throw new IllegalArgumentException("unknown conflict manager "
                         + ivy.substitute(defaultCM));

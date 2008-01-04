@@ -46,6 +46,7 @@
 		</filesystem>
 	</resolvers>
 	<modules>
+		<module organisation="apache" name="ivy*" revision="2*" matcher="glob" resolver="int2"/>
 		<module organisation="apache" name="ivy*" matcher="glob" resolver="int1"/>
 		<module organisation="apache" name=".*" resolver="internal"/>
 	</modules>

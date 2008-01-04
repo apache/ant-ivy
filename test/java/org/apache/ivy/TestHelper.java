@@ -70,7 +70,7 @@ public class TestHelper {
         // WARN: this doesn't work if the resolver registered is a compound resolver (chain or dual)
         // and a sub resolver doesn't use the same cache manager as the parent
         return (DefaultRepositoryCacheManager) 
-            ivy.getSettings().getResolver(id.getModuleId()).getRepositoryCacheManager();
+            ivy.getSettings().getResolver(id).getRepositoryCacheManager();
     }
 
     /**

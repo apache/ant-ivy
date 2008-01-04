@@ -432,7 +432,7 @@ public final class IvyPatternHelper {
                 // TODO cache: see how we could know which actual cache manager to use, since this 
                 // will fail when using a resolver in a chain with a specific cache manager
                 RepositoryCacheManager cacheManager = IvyContext.getContext().getSettings()
-                        .getResolver(revId.getModuleId()).getRepositoryCacheManager(); 
+                        .getResolver(revId).getRepositoryCacheManager(); 
 
                 origin = cacheManager.getSavedArtifactOrigin(artifact);
 

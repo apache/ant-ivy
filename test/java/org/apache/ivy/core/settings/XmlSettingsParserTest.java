@@ -27,6 +27,7 @@ import org.apache.ivy.core.cache.DefaultRepositoryCacheManager;
 import org.apache.ivy.core.cache.ResolutionCacheManager;
 import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.id.ModuleId;
+import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.report.ResolveReport;
 import org.apache.ivy.plugins.latest.LatestRevisionStrategy;
 import org.apache.ivy.plugins.latest.LatestStrategy;
@@ -103,36 +104,16 @@ public class XmlSettingsParserTest extends TestCase {
         assertNotNull(strategy);
         assertTrue(strategy instanceof LatestTimeStrategy);
 
-        assertEquals("libraries", settings.getResolver(new ModuleId("unknown", "lib")).getName());
-        assertEquals("internal", settings.getResolver(new ModuleId("apache", "ant")).getName());
-        assertEquals("int1", settings.getResolver(new ModuleId("apache", "ivy")).getName());
-        assertEquals("int1", settings.getResolver(new ModuleId("apache", "ivyde")).getName());
-    }
-
-    public void testNoOrgInModule() throws Exception {
-        IvySettings settings = new IvySettings();
-        XmlSettingsParser parser = new XmlSettingsParser(settings);
-        try {
-            parser.parse(XmlSettingsParserTest.class
-                    .getResource("ivysettings-no-org-in-module.xml"));
-            fail("no organisation in module is supposed to raise an exception");
-        } catch (ParseException e) {
-            assertTrue("bad exception message: " + e.getMessage(), e.getMessage().indexOf(
-                "'organisation'") != -1);
-        }
-    }
-
-    public void testNoNameInModule() throws Exception {
-        IvySettings settings = new IvySettings();
-        XmlSettingsParser parser = new XmlSettingsParser(settings);
-        try {
-            parser.parse(XmlSettingsParserTest.class
-                    .getResource("ivysettings-no-name-in-module.xml"));
-            fail("no name in module is supposed to raise an exception");
-        } catch (ParseException e) {
-            assertTrue("bad exception message: " + e.getMessage(),
-                e.getMessage().indexOf("'name'") != -1);
-        }
+        assertEquals("libraries", 
+            settings.getResolver(ModuleRevisionId.newInstance("unknown", "lib", "1.0")).getName());
+        assertEquals("internal", 
+            settings.getResolver(ModuleRevisionId.newInstance("apache", "ant", "1.0")).getName());
+        assertEquals("int2", 
+            settings.getResolver(ModuleRevisionId.newInstance("apache", "ivy", "2.0")).getName());
+        assertEquals("int1", 
+            settings.getResolver(ModuleRevisionId.newInstance("apache", "ivy", "1.0")).getName());
+        assertEquals("int1", 
+            settings.getResolver(ModuleRevisionId.newInstance("apache", "ivyde", "1.0")).getName());
     }
 
     public void testTypedef() throws Exception {

@@ -55,6 +55,7 @@ import org.apache.ivy.core.report.DownloadReport;
 import org.apache.ivy.core.report.DownloadStatus;
 import org.apache.ivy.core.report.ResolveReport;
 import org.apache.ivy.core.resolve.IvyNodeEviction.EvictionData;
+import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.core.sort.SortEngine;
 import org.apache.ivy.plugins.conflict.ConflictManager;
 import org.apache.ivy.plugins.parser.ModuleDescriptorParser;
@@ -367,8 +368,7 @@ public class ResolveEngine {
      * @return a report concerning the download
      */
     public ArtifactDownloadReport download(Artifact artifact, boolean useOrigin) {
-        DependencyResolver resolver = settings.getResolver(artifact.getModuleRevisionId()
-                .getModuleId());
+        DependencyResolver resolver = settings.getResolver(artifact.getModuleRevisionId());
         DownloadReport r = resolver.download(new Artifact[] {artifact}, 
             new DownloadOptions(useOrigin));
         return r.getArtifactReport(artifact);
@@ -911,7 +911,7 @@ public class ResolveEngine {
     }
 
     public ResolvedModuleRevision findModule(ModuleRevisionId id, ResolveOptions options) {
-        DependencyResolver r = settings.getResolver(id.getModuleId());
+        DependencyResolver r = settings.getResolver(id);
         if (r == null) {
             throw new IllegalStateException("no resolver found for " + id.getModuleId());
         }

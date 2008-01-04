@@ -18,6 +18,7 @@
 package org.apache.ivy.core.resolve;
 
 import org.apache.ivy.core.module.id.ModuleId;
+import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.plugins.conflict.ConflictManager;
 import org.apache.ivy.plugins.report.ReportOutputter;
 import org.apache.ivy.plugins.resolver.DependencyResolver;
@@ -31,9 +32,7 @@ public interface ResolveEngineSettings extends ResolverSettings {
 
     ReportOutputter[] getReportOutputters();
 
-    DependencyResolver getResolver(ModuleId moduleId);
-
-    String getResolverName(ModuleId mid);
+    String getResolverName(ModuleRevisionId mid);
 
     boolean logNotConvertedExclusionRule();
 
