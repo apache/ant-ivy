@@ -23,8 +23,9 @@
 	        defaultResolver="libraries" 
 			validate="false"
 			checkUpToDate="false"
-			cacheIvyPattern="[module]/ivys/ivy-[revision].xml" 
-			cacheArtifactPattern="[module]/[type]s/[artifact]-[revision].[ext]"/>
+			/>
+	<caches ivyPattern="[module]/ivys/ivy-[revision].xml" 
+			artifactPattern="[module]/[type]s/[artifact]-[revision].[ext]" />
 	<latest-strategies>
 	    <latest-revision name="mylatest-revision">
 	    	<specialMeaning name="PRE" value="-2"/>
