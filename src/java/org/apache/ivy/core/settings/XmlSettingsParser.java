@@ -162,15 +162,14 @@ public class XmlSettingsParser extends DefaultHandler {
                         child = ivy.getLatestStrategy(name);
                         if (child == null) {
                             throw new IllegalArgumentException("unknown latest strategy " + name
-                                    + ": latest strategy should be defined before being referenced");
+                                   + ": latest strategy should be defined before being referenced");
                         }
                     } else if ("conflict-managers".equals(currentConfiguratorTag)) {
                         child = ivy.getConflictManager(name);
                         if (child == null) {
                             throw new IllegalArgumentException(
-                                    "unknown conflict manager "
-                                            + name
-                                            + ": conflict manager should be defined before being referenced");
+                                 "unknown conflict manager " + name
+                                 + ": conflict manager should be defined before being referenced");
                         }
                     }
                     if (child == null) {
@@ -232,10 +231,10 @@ public class XmlSettingsParser extends DefaultHandler {
                                 .valueOf(override).booleanValue());
                     } catch (Exception urlEx) {
                         throw new IllegalArgumentException(
-                                "unable to load properties from "
-                                        + propFilePath
-                                        + ". Tried both as an url and a file, with no success. File exception: "
-                                        + fileEx + ". URL exception: " + urlEx);
+                            "unable to load properties from "
+                            + propFilePath
+                            + ". Tried both as an url and a file, with no success. File exception: "
+                            + fileEx + ". URL exception: " + urlEx);
                     }
                 }
             } else if ("include".equals(qName)) {
@@ -371,7 +370,7 @@ public class XmlSettingsParser extends DefaultHandler {
                 matcher = matcher == null ? PatternMatcher.EXACT_OR_REGEXP : matcher;
                 if (organisation == null) {
                     throw new IllegalArgumentException(
-                            "'organisation' is mandatory in module element: check your configuration");
+                         "'organisation' is mandatory in module element: check your configuration");
                 }
                 if (module == null) {
                     throw new IllegalArgumentException(
