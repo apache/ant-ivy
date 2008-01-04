@@ -24,11 +24,12 @@ import java.net.UnknownHostException;
  * This class contains basic helper methods for the Host. 
  * 
  */
-public class HostUtil {
+public final class HostUtil {
     /**
      * This default constructor is to hide this class from initialization through other classes.
      */
-    private HostUtil() {}
+    private HostUtil() {
+    }
     
     /**
      * This method returns the name of the current Host, if this name cannot be determined,

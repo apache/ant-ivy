@@ -27,20 +27,20 @@ import java.util.Properties;
  * A simple Properties extension easing the loading and saving of data
  */
 public class PropertiesFile extends Properties {
-    private File _file;
+    private File file;
 
-    private String _header;
+    private String header;
 
     public PropertiesFile(File file, String header) {
-        _file = file;
-        _header = header;
-        if (_file.exists()) {
+        this.file = file;
+        this.header = header;
+        if (file.exists()) {
             FileInputStream fis = null;
             try {
-                fis = new FileInputStream(_file);
+                fis = new FileInputStream(file);
                 load(fis);
             } catch (Exception ex) {
-                Message.warn("exception occured while reading properties file " + _file + ": "
+                Message.warn("exception occured while reading properties file " + file + ": "
                         + ex.getMessage());
             }
             try {
@@ -48,6 +48,7 @@ public class PropertiesFile extends Properties {
                     fis.close();
                 }
             } catch (IOException e) {
+                // ignored
             }
         }
     }
@@ -55,13 +56,13 @@ public class PropertiesFile extends Properties {
     public void save() {
         FileOutputStream fos = null;
         try {
-            if (_file.getParentFile() != null && !_file.getParentFile().exists()) {
-                _file.getParentFile().mkdirs();
+            if (file.getParentFile() != null && !file.getParentFile().exists()) {
+                file.getParentFile().mkdirs();
             }
-            fos = new FileOutputStream(_file);
-            store(fos, _header);
+            fos = new FileOutputStream(file);
+            store(fos, header);
         } catch (Exception ex) {
-            Message.warn("exception occured while writing properties file " + _file + ": "
+            Message.warn("exception occured while writing properties file " + file + ": "
                     + ex.getMessage());
         }
         try {
@@ -69,6 +70,7 @@ public class PropertiesFile extends Properties {
                 fos.close();
             }
         } catch (IOException e) {
+            // ignored
         }
     }
 

@@ -21,11 +21,11 @@ package org.apache.ivy.util;
  * Event reporting a stream copy progression
  */
 public class CopyProgressEvent {
-    private long _totalReadBytes;
+    private long totalReadBytes;
 
-    private byte[] _buffer;
+    private byte[] buffer;
 
-    private int _readBytes;
+    private int readBytes;
 
     public CopyProgressEvent() {
     }
@@ -39,22 +39,22 @@ public class CopyProgressEvent {
     }
 
     protected CopyProgressEvent update(byte[] buffer, int read, long total) {
-        _buffer = buffer;
-        _readBytes = read;
-        _totalReadBytes = total;
+        this.buffer = buffer;
+        this.readBytes = read;
+        this.totalReadBytes = total;
         return this;
     }
 
     public long getTotalReadBytes() {
-        return _totalReadBytes;
+        return totalReadBytes;
     }
 
     public byte[] getBuffer() {
-        return _buffer;
+        return buffer;
     }
 
     public int getReadBytes() {
-        return _readBytes;
+        return readBytes;
     }
 
 }

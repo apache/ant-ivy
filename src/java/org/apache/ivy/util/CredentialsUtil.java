@@ -36,14 +36,16 @@ import javax.swing.JTextField;
 
 import org.apache.ivy.Ivy;
 
-public class CredentialsUtil {
+public final class CredentialsUtil {
 
     private static final class CredentialPanel extends JPanel {
-        JTextField userNameField = new JTextField(20);
+        private static final int FIELD_LENGTH = 20;
 
-        JTextField passwordField = new JPasswordField(20);
+        private JTextField userNameField = new JTextField(FIELD_LENGTH);
 
-        JCheckBox rememberDataCB = new JCheckBox("remember my information");
+        private JTextField passwordField = new JPasswordField(FIELD_LENGTH);
+
+        private JCheckBox rememberDataCB = new JCheckBox("remember my information");
 
         CredentialPanel(Credentials credentials, File passfile) {
             GridBagLayout layout = new GridBagLayout();
@@ -119,6 +121,7 @@ public class CredentialsUtil {
                         try {
                             fos.close();
                         } catch (Exception e) {
+                            // ignored
                         }
                     }
                 }
@@ -151,6 +154,7 @@ public class CredentialsUtil {
                     try {
                         fis.close();
                     } catch (IOException e) {
+                        // ignored
                     }
                 }
             }
@@ -158,4 +162,6 @@ public class CredentialsUtil {
         return c;
     }
 
+    private CredentialsUtil() {
+    }
 }

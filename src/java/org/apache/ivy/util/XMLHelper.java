@@ -32,39 +32,41 @@ import org.xml.sax.ext.LexicalHandler;
 import org.xml.sax.helpers.DefaultHandler;
 
 public abstract class XMLHelper {
-    private static SAXParserFactory _validatingFactory = SAXParserFactory.newInstance();
+    private static final SAXParserFactory VALIDATING_FACTORY = SAXParserFactory.newInstance();
 
-    private static SAXParserFactory _factory = SAXParserFactory.newInstance();
+    private static final SAXParserFactory FACTORY = SAXParserFactory.newInstance();
 
-    static final String JAXP_SCHEMA_LANGUAGE = "http://java.sun.com/xml/jaxp/properties/schemaLanguage";
+    static final String JAXP_SCHEMA_LANGUAGE 
+        = "http://java.sun.com/xml/jaxp/properties/schemaLanguage";
 
-    static final String JAXP_SCHEMA_SOURCE = "http://java.sun.com/xml/jaxp/properties/schemaSource";
+    static final String JAXP_SCHEMA_SOURCE 
+        = "http://java.sun.com/xml/jaxp/properties/schemaSource";
 
     static final String W3C_XML_SCHEMA = "http://www.w3.org/2001/XMLSchema";
 
-    private static boolean _canUseSchemaValidation = true;
+    private static boolean canUseSchemaValidation = true;
 
     static {
-        _validatingFactory.setNamespaceAware(true);
-        _validatingFactory.setValidating(true);
+        VALIDATING_FACTORY.setNamespaceAware(true);
+        VALIDATING_FACTORY.setValidating(true);
     }
 
     private static SAXParser newSAXParser(URL schema, InputStream schemaStream)
             throws ParserConfigurationException, SAXException {
-        if (!_canUseSchemaValidation || schema == null) {
-            return _factory.newSAXParser();
+        if (!canUseSchemaValidation || schema == null) {
+            return FACTORY.newSAXParser();
         }
         try {
-            SAXParser parser = _validatingFactory.newSAXParser();
+            SAXParser parser = VALIDATING_FACTORY.newSAXParser();
             parser.setProperty(JAXP_SCHEMA_LANGUAGE, W3C_XML_SCHEMA);
             parser.setProperty(JAXP_SCHEMA_SOURCE, schemaStream);
             return parser;
         } catch (SAXNotRecognizedException ex) {
-            System.err
-                    .println("WARNING: problem while setting JAXP validating property on SAXParser... XML validation will not be done: "
-                            + ex.getMessage());
-            _canUseSchemaValidation = false;
-            return _factory.newSAXParser();
+            System.err.println(
+                "WARNING: problem while setting JAXP validating property on SAXParser... "
+                + "XML validation will not be done: " + ex.getMessage());
+            canUseSchemaValidation = false;
+            return FACTORY.newSAXParser();
         }
     }
 
@@ -77,7 +79,8 @@ public abstract class XMLHelper {
         parse(xmlURL, schema, handler, null);
     }
 
-    public static void parse(URL xmlURL, URL schema, DefaultHandler handler, LexicalHandler lHandler)
+    public static void parse(
+            URL xmlURL, URL schema, DefaultHandler handler, LexicalHandler lHandler)
             throws SAXException, IOException, ParserConfigurationException {
         InputStream xmlStream = URLHandlerRegistry.getDefault().openStream(xmlURL);
         try {
@@ -86,12 +89,14 @@ public abstract class XMLHelper {
             try {
                 xmlStream.close();
             } catch (IOException e) {
+                // ignored
             }
         }
     }
 
-    public static void parse(InputStream xmlStream, URL schema, DefaultHandler handler,
-            LexicalHandler lHandler) throws SAXException, IOException, ParserConfigurationException {
+    public static void parse(
+            InputStream xmlStream, URL schema, DefaultHandler handler, LexicalHandler lHandler) 
+            throws SAXException, IOException, ParserConfigurationException {
         InputStream schemaStream = null;
         try {
             if (schema != null) {
@@ -103,8 +108,8 @@ public abstract class XMLHelper {
                 try {
                     parser.setProperty("http://xml.org/sax/properties/lexical-handler", lHandler);
                 } catch (SAXException ex) {
-                    System.err
-                            .println("WARNING: problem while setting the lexical handler property on SAXParser: "
+                    System.err.println(
+                        "WARNING: problem while setting the lexical handler property on SAXParser: "
                                     + ex.getMessage());
                     // continue without the lexical handler
                 }
@@ -116,13 +121,14 @@ public abstract class XMLHelper {
                 try {
                     schemaStream.close();
                 } catch (IOException ex) {
+                    // ignored
                 }
             }
         }
     }
 
     public static boolean canUseSchemaValidation() {
-        return _canUseSchemaValidation;
+        return canUseSchemaValidation;
     }
     
     /**
@@ -167,4 +173,6 @@ public abstract class XMLHelper {
         return result.toString();
     }
 
+    private XMLHelper() {
+    }
 }

@@ -21,35 +21,35 @@ package org.apache.ivy.util;
  * 
  */
 public class Credentials {
-    private String _realm;
+    private String realm;
 
-    private String _host;
+    private String host;
 
-    private String _userName;
+    private String userName;
 
-    private String _passwd;
+    private String passwd;
 
     public Credentials(String realm, String host, String userName, String passwd) {
-        _realm = realm;
-        _host = host;
-        _userName = userName;
-        _passwd = passwd;
+        this.realm = realm;
+        this.host = host;
+        this.userName = userName;
+        this.passwd = passwd;
     }
 
     public String getHost() {
-        return _host;
+        return host;
     }
 
     public String getPasswd() {
-        return _passwd;
+        return passwd;
     }
 
     public String getRealm() {
-        return _realm;
+        return realm;
     }
 
     public String getUserName() {
-        return _userName;
+        return userName;
     }
 
     public static String buildKey(String realm, String host) {
@@ -69,11 +69,11 @@ public class Credentials {
     }
 
     private String getPasswdAsStars() {
-        if (_passwd == null) {
+        if (passwd == null) {
             return null;
         }
         StringBuffer sb = new StringBuffer();
-        for (int i = _passwd.length(); i > 0; i--) {
+        for (int i = passwd.length(); i > 0; i--) {
             sb.append('*');
         }
         return sb.toString();
@@ -97,6 +97,6 @@ public class Credentials {
     }
 
     public String getKey() {
-        return buildKey(_realm, _host);
+        return buildKey(realm, host);
     }
 }
