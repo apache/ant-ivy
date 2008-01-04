@@ -515,6 +515,38 @@ public class ResolveTest extends TestCase {
         assertTrue(new File(cache, "repository/mod1.2.jar").exists());
     }
 
+    public void testMultipleCache() throws Exception {
+        Ivy ivy = new Ivy();
+        ivy.configure(new File("test/repositories/ivysettings-multicache.xml"));
+
+        // mod2.1 depends on mod1.1 which depends on mod1.2
+        ResolveReport report = ivy.resolve(
+            new File("test/repositories/1/org2/mod2.1/ivys/ivy-0.3.xml").toURL(),
+            getResolveOptions(new String[] {"*"}));
+        assertNotNull(report);
+        assertFalse(report.hasError());
+        
+        // dependencies
+        DefaultArtifact depArtifact = 
+            TestHelper.newArtifact("org1", "mod1.1", "1.0", "mod1.1", "jar", "jar");
+        ModuleRevisionId depMrid = ModuleRevisionId.newInstance("org1", "mod1.1", "1.0");
+        DefaultRepositoryCacheManager cacheMgr1 = 
+            (DefaultRepositoryCacheManager)ivy.getSettings().getDefaultRepositoryCacheManager();
+        DefaultRepositoryCacheManager cacheMgr2 = 
+            (DefaultRepositoryCacheManager)ivy.getSettings().getRepositoryCacheManager("cache2");
+
+        // ivy file should be cached in default cache, and artifact in cache2
+        assertTrue(cacheMgr1.getIvyFileInCache(depMrid).exists());
+        assertFalse(cacheMgr1.getArchiveFileInCache(depArtifact).exists());
+        assertEquals(new File(cache, "repo1/mod1.1/ivy-1.0.xml"), 
+            cacheMgr1.getIvyFileInCache(depMrid));
+        
+        assertFalse(cacheMgr2.getIvyFileInCache(depMrid).exists());
+        assertTrue(cacheMgr2.getArchiveFileInCache(depArtifact).exists());
+        assertEquals(new File(cache, "repo2/mod1.1-1.0/mod1.1.jar"), 
+            cacheMgr2.getArchiveFileInCache(depArtifact));
+    }
+
     public void testResolveExtends() throws Exception {
         // mod6.1 depends on mod1.2 2.0 in conf default, and conf extension extends default
         ResolveReport report = ivy.resolve(new File(
