@@ -36,6 +36,7 @@ import org.apache.ivy.core.module.status.StatusManager;
 import org.apache.ivy.plugins.circular.CircularDependencyStrategy;
 import org.apache.ivy.plugins.conflict.ConflictManager;
 import org.apache.ivy.plugins.latest.LatestStrategy;
+import org.apache.ivy.plugins.lock.LockStrategy;
 import org.apache.ivy.plugins.matcher.PatternMatcher;
 import org.apache.ivy.util.Configurator;
 import org.apache.ivy.util.Message;
@@ -65,6 +66,8 @@ public class XmlSettingsParser extends DefaultHandler {
     private String defaultCacheManager;
 
     private String defaultCircular;
+
+    private String defaultLock;
 
     private String currentConfiguratorTag;
 
@@ -271,8 +274,8 @@ public class XmlSettingsParser extends DefaultHandler {
                 }
             } else if ("settings".equals(qName) || "conf".equals(qName)) {
                 if ("conf".equals(qName) && !deprecatedMessagePrinted) {
-                    Message.deprecated("'conf' is deprecated, use 'settings' instead (" + settings
-                            + ")");
+                    Message.deprecated(
+                        "'conf' is deprecated, use 'settings' instead (" + settings + ")");
                 }
                 String cache = (String) attributes.get("defaultCache");
                 if (cache != null) {
@@ -290,52 +293,53 @@ public class XmlSettingsParser extends DefaultHandler {
                 if (up2d != null) {
                     ivy.setCheckUpToDate(Boolean.valueOf(ivy.substitute(up2d)).booleanValue());
                 }
-                String cacheIvyPattern = (String) attributes.get("cacheIvyPattern");
-                if (cacheIvyPattern != null) {
-                    ivy.setDefaultCacheIvyPattern(ivy.substitute(cacheIvyPattern));
-                }
-                String cacheArtPattern = (String) attributes.get("cacheArtifactPattern");
-                if (cacheArtPattern != null) {
-                    ivy.setDefaultCacheArtifactPattern(ivy.substitute(cacheArtPattern));
-                }
                 String useRemoteConfig = (String) attributes.get("useRemoteConfig");
                 if (useRemoteConfig != null) {
                     ivy.setUseRemoteConfig(Boolean.valueOf(ivy.substitute(useRemoteConfig))
                             .booleanValue());
+                }
+                String resolutionDir = (String) attributes.get("resolutionCacheDir");
+                if (resolutionDir != null) {
+                    ivy.setDefaultResolutionCacheBasedir(ivy.substitute(resolutionDir));
+                }
+                String cacheIvyPattern = (String) attributes.get("cacheIvyPattern");
+                if (cacheIvyPattern != null) {
+                    Message.deprecated(
+                        "'cacheIvyPattern' is deprecated, use 'caches[@ivyPattern]' instead"
+                        + " (" + settings + ")");
+                    ivy.setDefaultCacheIvyPattern(ivy.substitute(cacheIvyPattern));
+                }
+                String cacheArtPattern = (String) attributes.get("cacheArtifactPattern");
+                if (cacheArtPattern != null) {
+                    Message.deprecated(
+                        "'cacheArtifactPattern' is deprecated, "
+                        + "use 'caches[@artifactPattern]' instead (" + settings + ")");
+                    ivy.setDefaultCacheArtifactPattern(ivy.substitute(cacheArtPattern));
                 }
 
                 // we do not set following defaults here since no instances has been registered yet
                 defaultResolver = (String) attributes.get("defaultResolver");
                 defaultCM = (String) attributes.get("defaultConflictManager");
                 defaultLatest = (String) attributes.get("defaultLatestStrategy");
-                defaultCacheManager = (String) attributes.get("defaultCacheManager");
                 defaultCircular = (String) attributes.get("circularDependencyStrategy");
 
-            } else if ("cacheDefaults".equals(qName)) {
-                String lockingStrategy = (String) attributes.get("lockStrategy");
-                if (lockingStrategy != null) {
-                    ivy.setDefaultLockStrategy(
-                        ivy.getLockStrategy(ivy.substitute(lockingStrategy)));
-                }
-                String cacheIvyPattern = (String) attributes.get("repositoryIvyPattern");
+            } else if ("caches".equals(qName)) {
+                currentConfiguratorTag = qName;
+                configurator.setRoot(ivy);
+                defaultLock = (String) attributes.get("lockStrategy");
+                defaultCacheManager = (String) attributes.get("default");
+                
+                String cacheIvyPattern = (String) attributes.get("ivyPattern");
                 if (cacheIvyPattern != null) {
                     ivy.setDefaultCacheIvyPattern(ivy.substitute(cacheIvyPattern));
                 }
-                String cacheArtPattern = (String) attributes.get("repositoryArtifactPattern");
+                String cacheArtPattern = (String) attributes.get("artifactPattern");
                 if (cacheArtPattern != null) {
                     ivy.setDefaultCacheArtifactPattern(ivy.substitute(cacheArtPattern));
                 }
-                String cache = (String) attributes.get("defaultBasedir");
-                if (cache != null) {
-                    ivy.setDefaultCache(new File(ivy.substitute(cache)));
-                }
-                String repositoryDir = (String) attributes.get("repositoryDir");
+                String repositoryDir = (String) attributes.get("basedir");
                 if (repositoryDir != null) {
                     ivy.setDefaultRepositoryCacheBasedir(ivy.substitute(repositoryDir)); 
-                }
-                String resolutionDir = (String) attributes.get("resolutionDir");
-                if (resolutionDir != null) {
-                    ivy.setDefaultResolutionCacheBasedir(ivy.substitute(resolutionDir));
                 }
            } else if ("version-matchers".equals(qName)) {
                 currentConfiguratorTag = qName;
@@ -437,6 +441,14 @@ public class XmlSettingsParser extends DefaultHandler {
                         + ivy.substitute(defaultCircular));
             }
             ivy.setCircularDependencyStrategy(strategy);
+        }
+        if (defaultLock != null) {
+            LockStrategy strategy = ivy.getLockStrategy(ivy.substitute(defaultLock));
+            if (strategy == null) {
+                throw new IllegalArgumentException("unknown lock strategy "
+                        + ivy.substitute(defaultLock));
+            }
+            ivy.setDefaultLockStrategy(strategy);
         }
     }
 }
