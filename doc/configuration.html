@@ -34,7 +34,7 @@ Here is an example of settings file :
 <ivysettings>
         <properties file="${ivy.settings.dir}/ivysettings-file.properties" />
         <settings defaultResolver="ibiblio" checkUpToDate="false" />
-        <cache basedir="${cache.dir}" />
+        <cacheDefaults defaultBasedir="${cache.dir}" />
         <resolvers>
                 <ibiblio name="ibiblio" />
                 <filesystem name="internal">
@@ -70,11 +70,11 @@ ivysettings
     <a href="configuration/property.html">property</a>
     <a href="configuration/properties.html">properties</a>
     <a href="configuration/conf.html">settings</a>
+    <a href="configuration/cacheDefaults.html">cacheDefaults</a>
     <a href="configuration/include.html">include</a>
     <a href="configuration/classpath.html">classpath</a>
     <a href="configuration/typedef.html">typedef</a>
     <a href="configuration/lock-strategies.html">lock-strategies</a>
-    <a href="configuration/cache.html">cache</a>
     <a href="configuration/latest-strategies.html">latest-strategies</a>
     <a href="configuration/version-matchers.html">version-matchers</a>
     <a href="configuration/triggers.html">triggers</a>
@@ -117,6 +117,8 @@ Root tag of any ivysettings file.
         <td>0..n</td></tr>
     <tr><td><a href="configuration/conf.html">settings</a></td><td>configures ivy with some defaults</td>
         <td>0..1</td></tr>
+    <tr><td><a href="configuration/cacheDefaults.html">cacheDefaults</a></td><td>set up default values for cache(s)</td>
+        <td>0..1</td></tr>
     <tr><td><a href="configuration/include.html">include</a></td><td>includes another settings file</td>
         <td>0..n</td></tr>
     <tr><td><a href="configuration/classpath.html">classpath</a></td><td>add a location in the classpath used to load plugins</td>
@@ -124,8 +126,6 @@ Root tag of any ivysettings file.
     <tr><td><a href="configuration/typedef.html">typedef</a></td><td>defines new types in ivy</td>
         <td>0..n</td></tr>
     <tr><td><a href="configuration/lock-strategies.html">lock-strategies</a></td><td>defines lock strategies</td>
-        <td>0..1</td></tr>
-    <tr><td><a href="configuration/cache.html">cache</a></td><td>set up the cache</td>
         <td>0..1</td></tr>
     <tr><td><a href="configuration/latest-strategies.html">latest-strategies</a></td><td>defines latest strategies</td>
         <td>0..1</td></tr>
