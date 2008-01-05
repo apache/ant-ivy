@@ -84,7 +84,7 @@ public class XmlReportWriter {
             ModuleId mid = (ModuleId) iter.next();
             out.println("\t\t<module organisation=\"" 
                 + XMLHelper.escape(mid.getOrganisation()) + "\"" + " name=\""
-                    + XMLHelper.escape(mid.getName()) + "\"" + "\">");
+                    + XMLHelper.escape(mid.getName()) + "\" >");
             for (Iterator it2 = report.getNodes(mid).iterator(); it2.hasNext();) {
                 IvyNode dep = (IvyNode) it2.next();
                 ouputRevision(report, out, dependencies, dep);
