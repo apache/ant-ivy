@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
 <!--
    Licensed to the Apache Software Foundation (ASF) under one
    or more contributor license agreements.  See the NOTICE file
@@ -16,19 +17,16 @@
    specific language governing permissions and limitations
    under the License.    
 -->
-<ivysettings>
-   <settings 
-     defaultCache="${ivy.settings.dir}/cache" 
-	 defaultResolver="default" 
-	 />
-   <caches      
-   	 ivyPattern="[organisation]/[module]/[eatt]/[revision]/ivy.xml"
-     artifactPattern="[organisation]/[module]/[eatt]/[revision]/[artifact]-[platform].[ext]"
-   />
-   <resolvers>
-        <filesystem name="default"> 
-          <ivy pattern="${ivy.settings.dir}/[module]/[eatt]/[revision]/ivy.xml" /> 
-          <artifact pattern="${ivy.settings.dir}/[module]/[eatt]/[revision]/[artifact]-[platform].[ext]" />
-        </filesystem>
-    </resolvers> 
-</ivysettings>
+<ivy-module version="1.0" xmlns:e="http://ant.apache.org/ivy/extra">
+    <info 
+        organisation="apache"
+        module="mymodule"
+        e:eatt="task1"
+        revision="1855"
+        status="integration">
+	</info>
+	<publications>
+		<artifact name="mymodule" e:platform="windows" type="jar"/>
+		<artifact name="mymodule" e:platform="linux" type="jar"/>
+	</publications>
+</ivy-module>

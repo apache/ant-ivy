@@ -16,19 +16,9 @@
    specific language governing permissions and limitations
    under the License.    
 -->
-<ivysettings>
-   <settings 
-     defaultCache="${ivy.settings.dir}/cache" 
-	 defaultResolver="default" 
-	 />
-   <caches      
-   	 ivyPattern="[organisation]/[module]/[eatt]/[revision]/ivy.xml"
-     artifactPattern="[organisation]/[module]/[eatt]/[revision]/[artifact]-[platform].[ext]"
-   />
-   <resolvers>
-        <filesystem name="default"> 
-          <ivy pattern="${ivy.settings.dir}/[module]/[eatt]/[revision]/ivy.xml" /> 
-          <artifact pattern="${ivy.settings.dir}/[module]/[eatt]/[revision]/[artifact]-[platform].[ext]" />
-        </filesystem>
-    </resolvers> 
-</ivysettings>
+<ivy-module version="1.0" xmlns:e="http://ant.apache.org/ivy/extra">
+	<info organisation="myorg"
+	       module="mymodule"
+	       e:myextra="myval"
+	/>
+</ivy-module>

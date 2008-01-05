@@ -19,7 +19,9 @@ package org.apache.ivy.util.extendable;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 
 public class UnmodifiableExtendableItem implements ExtendableItem {
     private final Map attributes = new HashMap();
@@ -35,14 +37,25 @@ public class UnmodifiableExtendableItem implements ExtendableItem {
     private final Map unmodifiableExtraAttributesView = 
                                     Collections.unmodifiableMap(extraAttributes);
 
+    /*
+     * this is the only place where extra attributes are stored in qualified form. In all other maps
+     * they are stored unqualified.
+     */
+    private final Map qualifiedExtraAttributes = new HashMap();
+
+    private final Map unmodifiableQualifiedExtraAttributesView = 
+                                    Collections.unmodifiableMap(qualifiedExtraAttributes);
+
     public UnmodifiableExtendableItem(Map stdAttributes, Map extraAttributes) {
         if (stdAttributes != null) {
             this.attributes.putAll(stdAttributes);
             this.stdAttributes.putAll(stdAttributes);
         }
         if (extraAttributes != null) {
-            this.attributes.putAll(extraAttributes);
-            this.extraAttributes.putAll(extraAttributes);
+            for (Iterator iter = extraAttributes.entrySet().iterator(); iter.hasNext();) {
+                Entry extraAtt = (Entry) iter.next();
+                setExtraAttribute((String) extraAtt.getKey(), (String) extraAtt.getValue());
+            }
         }
     }
 
@@ -51,7 +64,11 @@ public class UnmodifiableExtendableItem implements ExtendableItem {
     }
 
     public String getExtraAttribute(String attName) {
-        return (String) extraAttributes.get(attName);
+        String v = (String) qualifiedExtraAttributes.get(attName);
+        if (v == null) {
+            v = (String) extraAttributes.get(attName);
+        }
+        return v;
     }
 
     public String getStandardAttribute(String attName) {
@@ -68,6 +85,13 @@ public class UnmodifiableExtendableItem implements ExtendableItem {
 
     protected void setAttribute(String attName, String attValue, boolean extra) {
         if (extra) {
+            qualifiedExtraAttributes.put(attName, attValue);
+            
+            // unqualify att name if required
+            int index = attName.indexOf(':');
+            if (index != -1) {
+                attName = attName.substring(index + 1);
+            }
             extraAttributes.put(attName, attValue);
         } else {
             stdAttributes.put(attName, attValue);
@@ -85,6 +109,10 @@ public class UnmodifiableExtendableItem implements ExtendableItem {
 
     public Map getExtraAttributes() {
         return unmodifiableExtraAttributesView;
+    }
+    
+    public Map getQualifiedExtraAttributes() {
+        return unmodifiableQualifiedExtraAttributesView;
     }
 
 }

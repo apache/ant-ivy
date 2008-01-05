@@ -508,6 +508,10 @@ public class DefaultDependencyDescriptor implements DependencyDescriptor {
         return revId.getExtraAttributes();
     }
 
+    public Map getQualifiedExtraAttributes() {
+        return revId.getQualifiedExtraAttributes();
+    }
+
     public String getStandardAttribute(String attName) {
         return revId.getStandardAttribute(attName);
     }

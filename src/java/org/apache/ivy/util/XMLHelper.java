@@ -41,6 +41,9 @@ public abstract class XMLHelper {
 
     static final String JAXP_SCHEMA_SOURCE 
         = "http://java.sun.com/xml/jaxp/properties/schemaSource";
+    
+    static final String XML_NAMESPACE_PREFIXES
+        = "http://xml.org/sax/features/namespace-prefixes";
 
     static final String W3C_XML_SCHEMA = "http://www.w3.org/2001/XMLSchema";
 
@@ -60,6 +63,7 @@ public abstract class XMLHelper {
             SAXParser parser = VALIDATING_FACTORY.newSAXParser();
             parser.setProperty(JAXP_SCHEMA_LANGUAGE, W3C_XML_SCHEMA);
             parser.setProperty(JAXP_SCHEMA_SOURCE, schemaStream);
+            parser.getXMLReader().setFeature(XML_NAMESPACE_PREFIXES, true);
             return parser;
         } catch (SAXNotRecognizedException ex) {
             System.err.println(

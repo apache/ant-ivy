@@ -19,12 +19,13 @@
    under the License.    
 -->
 <!-- A comment before the first tag -->
-<ivy-module version="2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://incubator.apache.org/ivy/schemas/ivy.xsd">
+<ivy-module version="2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://incubator.apache.org/ivy/schemas/ivy.xsd" xmlns:e="http://ant.apache.org/ivy/extra">
 	<!-- A comment with accent é & special characters -->
 	<info organisation="${myorg}"
 	       module="${mymodule}"
 	       revision="${myrev}"
 	       status="${mystatus}"
+	       e:myextra="myval"
 	       publication="{mypubdate}">
 	       
 		<license name="${mylicense}" url="${mylicenseurl}"/>

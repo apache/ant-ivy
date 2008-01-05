@@ -25,6 +25,7 @@ import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.ivy.Ivy;
 import org.apache.ivy.core.module.descriptor.Artifact;
@@ -36,6 +37,7 @@ import org.apache.ivy.core.module.descriptor.ExcludeRule;
 import org.apache.ivy.core.module.descriptor.IncludeRule;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.util.XMLHelper;
+import org.apache.ivy.util.extendable.ExtendableItem;
 
 /**
  *
@@ -62,7 +64,14 @@ public final class XmlModuleDescriptorWriter {
             if (licenseHeader != null) {
                 out.print(licenseHeader);
             }
-            out.println("<ivy-module version=\"1.0\">");
+            StringBuffer xmlNamespace = new StringBuffer();
+            Map namespaces = md.getExtraAttributesNamespaces();
+            for (Iterator iter = namespaces.entrySet().iterator(); iter.hasNext();) {
+                Entry ns = (Entry) iter.next();
+                xmlNamespace.append(" xmlns:").append(ns.getKey()).append("=\"")
+                            .append(ns.getValue()).append("\"");
+            }
+            out.println("<ivy-module version=\"1.0\"" + xmlNamespace + ">");
             printInfoTag(md, out);
             printConfigurations(md, out);
             printPublications(md, out);
@@ -111,7 +120,7 @@ public final class XmlModuleDescriptorWriter {
                 }
                 out.print("\"");
                 
-                printExtraAttributes(dds[i].getExtraAttributes(), out, " ");
+                printExtraAttributes(dds[i], out, " ");
                 
                 DependencyArtifactDescriptor[] depArtifacts = dds[i].getAllDependencyArtifacts();
                 if (depArtifacts.length > 0) {
@@ -254,10 +263,22 @@ public final class XmlModuleDescriptorWriter {
                     }
                     out.print("\"");
                 }
-                printExtraAttributes(depArtifacts[j].getExtraAttributes(), out, " ");
+                printExtraAttributes(depArtifacts[j], out, " ");
                 out.println("/>");
             }
         }
+    }
+
+    /**
+     * Writes the extra attributes of the given {@link ExtendableItem} to the
+     * given <tt>PrintWriter</tt>.
+     * 
+     * @param item the {@link ExtendableItem}, cannot be <tt>null</tt>
+     * @param out the writer to use
+     * @param prefix the string to write before writing the attributes (if any)
+     */
+    private static void printExtraAttributes(ExtendableItem item, PrintWriter out, String prefix) {
+        printExtraAttributes(item.getQualifiedExtraAttributes(), out, prefix);
     }
 
     /**
@@ -291,7 +312,7 @@ public final class XmlModuleDescriptorWriter {
             out.print(" type=\"" + XMLHelper.escape(artifacts[i].getType()) + "\"");
             out.print(" ext=\"" + XMLHelper.escape(artifacts[i].getExt()) + "\"");
             out.print(" conf=\"" + XMLHelper.escape(getConfs(md, artifacts[i])) + "\"");
-            printExtraAttributes(artifacts[i].getExtraAttributes(), out, " ");
+            printExtraAttributes(artifacts[i], out, " ");
             out.println("/>");
         }
         out.println("\t</publications>");
@@ -324,7 +345,7 @@ public final class XmlModuleDescriptorWriter {
                 if (confs[i].getDeprecated() != null) {
                     out.print(" deprecated=\"" + XMLHelper.escape(confs[i].getDeprecated()) + "\"");
                 }
-                printExtraAttributes(confs[i].getExtraAttributes(), out, " ");
+                printExtraAttributes(confs[i], out, " ");
                 out.println("/>");
             }
             out.println("\t</configurations>");
@@ -358,7 +379,7 @@ public final class XmlModuleDescriptorWriter {
             }
         }
         if (!md.getExtraAttributes().isEmpty()) {
-            printExtraAttributes(md.getExtraAttributes(), out, "\t\t");
+            printExtraAttributes(md, out, "\t\t");
             out.println();
         }
         out.println("\t/>");

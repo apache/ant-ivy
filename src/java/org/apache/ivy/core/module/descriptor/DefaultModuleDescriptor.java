@@ -212,6 +212,8 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
     private List excludeRules = new ArrayList(); // List(ExcludeRule)
 
     private Artifact metadataArtifact;
+    
+    private Map/*<String,String>*/ extraAttributesNamespaces = new LinkedHashMap();
 
     public DefaultModuleDescriptor(ModuleRevisionId id, String status, Date pubDate) {
         this(id, status, pubDate, false);
@@ -543,6 +545,10 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
         return resolvedRevId.getExtraAttributes();
     }
 
+    public Map getQualifiedExtraAttributes() {
+        return resolvedRevId.getQualifiedExtraAttributes();
+    }
+
     public String getStandardAttribute(String attName) {
         return resolvedRevId.getStandardAttribute(attName);
     }
@@ -603,5 +609,13 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
 
     private boolean containsAny(String[] arr1, String[] arr2) {
         return new ArrayList(Arrays.asList(arr1)).removeAll(Arrays.asList(arr2));
+    }
+    
+    public Map getExtraAttributesNamespaces() {
+        return extraAttributesNamespaces;
+    }
+
+    public void addExtraAttributeNamespace(String prefix, String namespace) {
+        extraAttributesNamespaces.put(prefix, namespace);
     }
 }

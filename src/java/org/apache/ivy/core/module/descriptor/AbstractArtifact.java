@@ -74,6 +74,10 @@ public abstract class AbstractArtifact implements Artifact {
     public Map getExtraAttributes() {
         return getId().getExtraAttributes();
     }
+    
+    public Map getQualifiedExtraAttributes() {
+        return getId().getQualifiedExtraAttributes();
+    }
 
     public String getStandardAttribute(String attName) {
         return getId().getStandardAttribute(attName);

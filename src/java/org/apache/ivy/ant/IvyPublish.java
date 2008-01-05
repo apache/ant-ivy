@@ -432,6 +432,10 @@ public class IvyPublish extends IvyTask {
         public Map getExtraAttributes() {
             return new HashMap();
         }
+        
+        public Map getQualifiedExtraAttributes() {
+            return getExtraAttributes();
+        }
 
         public String getStandardAttribute(String attName) {
             return null;

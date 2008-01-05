@@ -60,6 +60,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 =====================================
 - NEW: Introduce RepositoryManagementEngine (IVY-665 - not completed yet)
 
+- IMPROVEMENT: Use namespace aware validation (IVY-553)
 - IMPROVEMENT: use ModuleRevisionId instead of ModuleId in IvySettings#getResolver (IVY-691)
 - IMPROVEMENT: Flexible cache management (IVY-399 - not completed yet)
 - IMPROVEMENT: Decrease memory footprint (IVY-662)

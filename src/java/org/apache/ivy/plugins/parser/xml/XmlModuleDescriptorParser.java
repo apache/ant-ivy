@@ -580,6 +580,14 @@ public final class XmlModuleDescriptorParser extends AbstractModuleDescriptorPar
                         + " as default matcher");
                 defaultMatcher = ivy.getMatcher(PatternMatcher.EXACT_OR_REGEXP);
             }
+            
+            for (int i = 0; i < attributes.getLength(); i++) {
+                if (attributes.getQName(i).startsWith("xmlns:")) {
+                    md.addExtraAttributeNamespace(
+                        attributes.getQName(i).substring("xmlns:".length()), 
+                        attributes.getValue(i));
+                }
+            }
         }
 
         private void addDependencyArtifacts(String tag, Attributes attributes)

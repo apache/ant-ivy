@@ -21,6 +21,7 @@ import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.Date;
+import java.util.Map;
 
 import org.apache.ivy.core.module.id.ArtifactId;
 import org.apache.ivy.core.module.id.ModuleId;
@@ -216,4 +217,17 @@ public interface ModuleDescriptor extends ExtendableItem, ArtifactInfo {
      * @return an array of {@link ExcludeRule} this module descriptor holds
      */
     public ExcludeRule[] getAllExcludeRules();
+
+    /**
+     * Returns the list of xml namespaces used by extra attributes, as Map from prefix to namespace
+     * URIs.
+     * <p>
+     * The returned list is never <code>null</code>, it is empty when no extra attribute is used
+     * or if extra attributes are used without xml namespaces
+     * </p>
+     * 
+     * @return the list of xml namespaces used by extra attributes, as Map from prefix to namespace
+     *         URIs.
+     */
+    Map/*<String,String>*/ getExtraAttributesNamespaces();
 }

@@ -3472,6 +3472,20 @@ public class ResolveTest extends TestCase {
         assertTrue(new File(cache, "apache/mymodule/task1/1854/mymodule-linux.jar").exists());
     }
 
+    public void testNamespaceExtraAttributes() throws Exception {
+        Ivy ivy = new Ivy();
+        ivy.configure(new File("test/repositories/extra-attributes/ivysettings.xml"));
+        ivy.getSettings().setDefaultCache(cache);
+
+        ResolveReport report = ivy.resolve(ResolveTest.class.getResource("ivy-extra-att-ns.xml"),
+            getResolveOptions(ivy.getSettings(), new String[] {"*"}).setValidate(true));
+        assertFalse(report.hasError());
+
+        assertTrue(new File(cache, "apache/mymodule/task1/1855/ivy.xml").exists());
+        assertTrue(new File(cache, "apache/mymodule/task1/1855/mymodule-windows.jar").exists());
+        assertTrue(new File(cache, "apache/mymodule/task1/1855/mymodule-linux.jar").exists());
+    }
+
     public void testBranches1() throws Exception {
         Ivy ivy = new Ivy();
         ivy.configure(new File("test/repositories/branches/ivysettings.xml"));

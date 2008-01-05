@@ -168,13 +168,16 @@ Note also that with any matcher the character '*' has the special meaning of mat
 Several tags in ivy xml files are extensible with what is called extra attributes. 
 The idea is very simple: if you need some more information to define your modules, you can add the attribute you want and you will then be able to access it as any other attribute in your patterns for example.
 
+<span class="since">since 2.0</span>
+It's possible and recommended to use xml namespaces for your extra attributes. Using an Ivy extra namespace is the easiest way to add your own extra attributes.
+
 Example:
 Here is an ivy file with the attribute 'color' set to blue:
 <code type="xml">
-<ivy-module version="1.4">
+<ivy-module version="2.0" xmlns:e="http://ant.apache.org/ivy/extra">
 	<info organisation="apache"
 	       module="foo"
-	       color="blue"
+	       e:color="blue"
 	       status="integration"
 	       revision="1.59"
 	/>
@@ -182,14 +185,16 @@ Here is an ivy file with the attribute 'color' set to blue:
 </code>
 Then you can use the extra attribute when you declare a dependency on foo:
 <code>
-<dependency org="apache" name="foo" color="blue" rev="1.5+" />
+<dependency org="apache" name="foo" e:color="blue" rev="1.5+" />
 </code>
 And you can define your repository pattern as:
 <code>
 ${repository.dir}/[organisation]/[module]/[color]/[revision]/[artifact].[ext]
 </code>
 
-Note that in order to use extra attributes, you will need to disable ivy file validation, since your files won't fulffill anymore the official ivy xsd. See the <a href="configuration/conf.html">configuration doc page</a> to see how to disable validation.
+Note that in patterns you must use the unqualified attribute name (no namespace prefix).
+
+If you don't want to use xml namespaces, it's possible but you will need to disable ivy file validation, since your files won't fulffill anymore the official ivy xsd. See the <a href="configuration/conf.html">settings documentation</a> to see how to disable validation.
 <h1><a name="checksum">Checksums</a></h1>
 <span class="since">since 1.4</span>
 Ivy allow to use checksums, also known as digester, to verify the correctness of a downloaded file.

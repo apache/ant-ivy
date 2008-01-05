@@ -21,6 +21,7 @@ import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashSet;
@@ -34,6 +35,7 @@ import org.apache.ivy.core.module.descriptor.License;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.descriptor.Configuration.Visibility;
 import org.apache.ivy.core.module.id.ModuleId;
+import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.plugins.conflict.ConflictManager;
 import org.apache.ivy.plugins.conflict.FixedConflictManager;
@@ -73,6 +75,20 @@ public class XmlModuleDescriptorParserTest extends AbstractModuleDescriptorParse
 
         assertNotNull(md.getDependencies());
         assertEquals(0, md.getDependencies().length);
+    }
+
+    public void testNamespaces() throws Exception {
+        ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(settings,
+            getClass().getResource("test-namespaces.xml"), true);
+        assertNotNull(md);
+        ModuleRevisionId mrid = md.getModuleRevisionId();
+        assertEquals("myorg", mrid.getOrganisation());
+        assertEquals("mymodule", mrid.getName());
+        assertEquals("myval", mrid.getExtraAttribute("e:myextra"));
+        assertEquals(Collections.singletonMap("e:myextra", "myval"), mrid.getQualifiedExtraAttributes());
+        assertEquals("myval", mrid.getExtraAttribute("myextra"));
+        assertEquals(Collections.singletonMap("myextra", "myval"), mrid.getExtraAttributes());
+        assertEquals("http://ant.apache.org/ivy/extra", md.getExtraAttributesNamespaces().get("e"));
     }
 
     public void testEmptyDependencies() throws Exception {
