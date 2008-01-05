@@ -17,7 +17,9 @@
  */
 package org.apache.ivy.plugins.parser.m2;
 
+import java.io.File;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -29,11 +31,29 @@ import org.apache.ivy.core.module.id.ModuleId;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.plugins.parser.AbstractModuleDescriptorParserTester;
+import org.apache.ivy.plugins.parser.xml.XmlModuleDescriptorParser;
 import org.apache.ivy.plugins.parser.xml.XmlModuleDescriptorParserTest;
 import org.apache.ivy.plugins.repository.url.URLResource;
 
 public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParserTester {
     // junit test -- DO NOT REMOVE used by ant to know it's a junit test
+    
+    private File dest = new File("build/test/test-write.xml");
+
+    public void setUp() {
+        if (dest.exists()) {
+            dest.delete();
+        }
+        if (!dest.getParentFile().exists()) {
+            dest.getParentFile().mkdirs();
+        }
+    }
+
+    protected void tearDown() throws Exception {
+        if (dest.exists()) {
+            dest.delete();
+        }
+    }
 
     public void testAccept() throws Exception {
         assertTrue(PomModuleDescriptorParser.getInstance().accept(
@@ -154,7 +174,7 @@ public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParse
     public void testDependenciesWithClassifier() throws Exception {
         ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(
             new IvySettings(), getClass().getResource("test-dependencies-with-classifier.pom"),
-            false);
+            true);
         assertNotNull(md);
 
         assertEquals(ModuleRevisionId.newInstance("org.apache", "test", "1.0"), md
@@ -165,8 +185,26 @@ public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         assertEquals(1, dds.length);
         assertEquals(ModuleRevisionId.newInstance("commons-logging", "commons-logging", "1.0.4"),
             dds[0].getDependencyRevisionId());
-        Map extraAtt = new HashMap();
-        extraAtt.put("classifier", "asl");
+        Map extraAtt = Collections.singletonMap("classifier", "asl");
+        assertEquals(1, dds[0].getAllDependencyArtifacts().length);
+        assertEquals(extraAtt, dds[0].getAllDependencyArtifacts()[0].getExtraAttributes());
+        
+        // now we verify the conversion to an Ivy file
+        PomModuleDescriptorParser.getInstance().toIvyFile(
+            getClass().getResource("test-dependencies-with-classifier.pom").openStream(), 
+            new URLResource(getClass().getResource("test-dependencies-with-classifier.pom")), 
+            dest, md);
+        
+        assertTrue(dest.exists());
+        
+        // the converted Ivy file should be parsable with validate=true
+        ModuleDescriptor md2 = XmlModuleDescriptorParser.getInstance()
+            .parseDescriptor(new IvySettings(), dest.toURL(), true);
+        
+        // and the parsed module descriptor should be similar to the original
+        assertNotNull(md2);
+        assertEquals(md.getModuleRevisionId(), md2.getModuleRevisionId());
+        dds = md2.getDependencies();
         assertEquals(1, dds[0].getAllDependencyArtifacts().length);
         assertEquals(extraAtt, dds[0].getAllDependencyArtifacts()[0].getExtraAttributes());
     }

@@ -23,6 +23,7 @@ import java.io.InputStream;
 import java.net.URL;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -33,6 +34,7 @@ import java.util.Stack;
 
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.apache.ivy.Ivy;
 import org.apache.ivy.core.IvyContext;
 import org.apache.ivy.core.IvyPatternHelper;
 import org.apache.ivy.core.module.descriptor.Artifact;
@@ -294,8 +296,13 @@ public final class PomModuleDescriptorParser extends AbstractModuleDescriptorPar
                 if (classifier != null) {
                     // we deal with classifiers by setting an extra attribute and forcing the
                     // dependency to assume such an artifact is published
-                    Map extraAtt = new HashMap();
-                    extraAtt.put("classifier", classifier);
+                    
+                    // declare the extra attribute namespace if not declared yet
+                    if (!md.getExtraAttributesNamespaces().containsKey("m")) {
+                        md.addExtraAttributeNamespace("m", Ivy.getIvyHomeURL() + "maven");
+                    }
+                    Map extraAtt = Collections.singletonMap("m:classifier", classifier);
+                    
                     String[] confs = dd.getModuleConfigurations();
                     for (int i = 0; i < confs.length; i++) {
                         dd.addDependencyArtifact(confs[i],
