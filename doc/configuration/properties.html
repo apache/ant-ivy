@@ -28,6 +28,9 @@
 <b>Tag:</b> properties<br/>
 <br/>
 Loads a properties file into ivy variables. See variables chapter above for details about ivy variables.
+
+<span class="since">Since 2.0</span>: it is possible to access environment variables. This can be done by specifying the environment attribute. This attribute specifies the prefix which can be used to access these environment variables. For instance, if you specify environment="env", you can access the PATH environment variable with the env.PATH property name.
+
 <h1>Attributes</h1>
 <table class="ivy-attributes">
 <thead>
@@ -35,8 +38,9 @@ Loads a properties file into ivy variables. See variables chapter above for deta
 </thead>
 <tbody>
     <tr><td>file</td><td>a path to a properties file to load</td>
-        <td>Yes</td></tr>
-    <tr><td>override</td><td>indicates if the variable found in the properties file should override their previous value, if any <span class="since">since 1.3</span></td>
+        <td rowspan="2">One of these</td></tr>
+    <tr><td>environment</td><td>the prefix to use when retrieving environment variables <span class="since">(since 2.0)</span></td>
+    <tr><td>override</td><td>indicates if the variable found in the properties file should override their previous value, if any <span class="since">(since 1.3)</span></td>
         <td>No, defaults to true</td></tr>
 </tbody>
 </table>
