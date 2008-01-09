@@ -70,4 +70,33 @@ public class ApacheURLListerTest extends TestCase {
         assertNotNull(files);
         assertTrue(files.size() > 0);
     }
+
+    public void testRetrieveArchivaListing() throws Exception {
+        ApacheURLLister lister = new ApacheURLLister();
+
+        List d = lister.listDirectories(ApacheURLListerTest.class
+                .getResource("archiva-listing.html"));
+        assertNotNull(d);
+        // archiva listing is not valid html at all currently (1.0, unclosed a tags), 
+        // and we don't want to adapt to this
+//        assertEquals(3, d.size());
+    }
+
+    public void testRetrieveFixedArchivaListing() throws Exception {
+        ApacheURLLister lister = new ApacheURLLister();
+
+        List d = lister.listDirectories(ApacheURLListerTest.class
+                .getResource("fixed-archiva-listing.html"));
+        assertNotNull(d);
+        assertEquals(3, d.size());
+    }
+
+    public void testRetrieveMavenProxyListing() throws Exception {
+        ApacheURLLister lister = new ApacheURLLister();
+
+        List d = lister.listDirectories(ApacheURLListerTest.class
+                .getResource("maven-proxy-listing.html"));
+        assertNotNull(d);
+        assertEquals(3, d.size());
+    }
 }

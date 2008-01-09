@@ -132,6 +132,11 @@ public class ApacheURLLister {
                 href = href.substring(slashIndex + 1);
             }
 
+            // relative to current href: convert to simple relative one
+            if (href.startsWith("./")) {
+                href = href.substring("./".length());
+            }
+
             // exclude those where they do not match
             // href will never be truncated, text may be truncated by apache
             // may have a '.' from either the extension (.jar) or "..&gt;"

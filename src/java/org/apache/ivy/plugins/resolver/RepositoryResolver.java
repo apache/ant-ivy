@@ -120,7 +120,7 @@ public class RepositoryResolver extends AbstractResourceResolver {
             Date date) {
         logAttempt(IvyPatternHelper.substitute(pattern, ModuleRevisionId.newInstance(mrid,
             IvyPatternHelper.getTokenString(IvyPatternHelper.REVISION_KEY)), artifact));
-        ResolvedResource[] rress = ResolverHelper.findAll(repository, mrid, pattern, artifact);
+        ResolvedResource[] rress = listResources(repository, mrid, pattern, artifact);
         if (rress == null) {
             Message.debug("\t" + name + ": unable to list resources for " + mrid + ": pattern="
                     + pattern);
@@ -134,6 +134,26 @@ public class RepositoryResolver extends AbstractResourceResolver {
             }
             return found;
         }
+    }
+
+    /**
+     * List all revisions as resolved resources for the given artifact in the given repository using
+     * the given pattern, and using the given mrid except its revision.
+     * 
+     * @param repository
+     *            the repository in which revisions should be located
+     * @param mrid
+     *            the module revision id to look for (except revision)
+     * @param pattern
+     *            the pattern to use to locate the revisions
+     * @param artifact
+     *            the artifact to find
+     * @return an array of ResolvedResource, all pointing to a different revision of the given
+     *         Artifact.
+     */
+    protected ResolvedResource[] listResources(
+            Repository repository, ModuleRevisionId mrid, String pattern, Artifact artifact) {
+        return ResolverHelper.findAll(repository, mrid, pattern, artifact);
     }
 
     protected long get(Resource resource, File dest) throws IOException {
