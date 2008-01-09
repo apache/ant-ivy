@@ -221,24 +221,32 @@ public class XmlSettingsParser extends DefaultHandler {
                         .booleanValue());
             } else if ("properties".equals(qName)) {
                 String propFilePath = (String) attributes.get("file");
-                String override = (String) attributes.get("override");
-                try {
-                    Message.verbose("loading properties: " + propFilePath);
-                    ivy.loadProperties(new File(propFilePath), override == null ? true : Boolean
-                            .valueOf(override).booleanValue());
-                } catch (Exception fileEx) {
-                    Message.verbose("failed to load properties as file: trying as url: "
-                            + propFilePath);
+                String environmentPrefix = (String) attributes.get("environment");
+                if (propFilePath != null) {
+                    String override = (String) attributes.get("override");
                     try {
-                        ivy.loadProperties(new URL(propFilePath), override == null ? true : Boolean
+                        Message.verbose("loading properties: " + propFilePath);
+                        ivy.loadProperties(new File(propFilePath), override == null ? true : Boolean
                                 .valueOf(override).booleanValue());
-                    } catch (Exception urlEx) {
-                        throw new IllegalArgumentException(
-                            "unable to load properties from "
-                            + propFilePath
-                            + ". Tried both as an url and a file, with no success. File exception: "
-                            + fileEx + ". URL exception: " + urlEx);
+                    } catch (Exception fileEx) {
+                        Message.verbose("failed to load properties as file: trying as url: "
+                                + propFilePath);
+                        try {
+                            ivy.loadProperties(new URL(propFilePath), override == null ? true : Boolean
+                                    .valueOf(override).booleanValue());
+                        } catch (Exception urlEx) {
+                            throw new IllegalArgumentException(
+                                    "unable to load properties from "
+                                            + propFilePath
+                                            + ". Tried both as an url and a file, with no success. File exception: "
+                                            + fileEx + ". URL exception: " + urlEx);
+                        }
                     }
+                } else if (environmentPrefix != null) {
+                    ivy.getVariableContainer().setEnvironmentPrefix(environmentPrefix);
+                } else {
+                    throw new IllegalArgumentException("Didn't find a 'file' or 'environment' attribute " +
+                    		"on the 'properties' element");
                 }
             } else if ("include".equals(qName)) {
                 IvyVariableContainer variables = (IvyVariableContainer) ivy.getVariableContainer()

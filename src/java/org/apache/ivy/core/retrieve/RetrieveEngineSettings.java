@@ -17,14 +17,13 @@
  */
 package org.apache.ivy.core.retrieve;
 
-import java.util.Map;
-
+import org.apache.ivy.core.settings.IvyVariableContainer;
 import org.apache.ivy.plugins.parser.ParserSettings;
 
 public interface RetrieveEngineSettings extends ParserSettings {
 
     boolean isCheckUpToDate();
 
-    Map getVariables();
+    IvyVariableContainer getVariables();
 
 }

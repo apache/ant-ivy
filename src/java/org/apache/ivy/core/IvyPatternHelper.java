@@ -31,7 +31,8 @@ import org.apache.ivy.core.cache.RepositoryCacheManager;
 import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.DefaultArtifact;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
-import org.apache.ivy.plugins.resolver.DependencyResolver;
+import org.apache.ivy.core.settings.IvyVariableContainer;
+import org.apache.ivy.core.settings.IvyVariableContainerImpl;
 import org.apache.ivy.util.Message;
 
 /**
@@ -151,15 +152,15 @@ public final class IvyPatternHelper {
         return substituteTokens(pattern, tokens);
     }
 
-    public static String substitute(String pattern, Map variables, Map tokens) {
-        return substituteTokens(substituteVariables(pattern, variables), tokens);
+    public static String substituteVariables(String pattern, Map variables) {
+        return substituteVariables(pattern, new IvyVariableContainerImpl(variables), new Stack());
     }
 
-    public static String substituteVariables(String pattern, Map variables) {
+    public static String substituteVariables(String pattern, IvyVariableContainer variables) {
         return substituteVariables(pattern, variables, new Stack());
     }
 
-    private static String substituteVariables(String pattern, Map variables, Stack substituting) {
+    private static String substituteVariables(String pattern, IvyVariableContainer variables, Stack substituting) {
         // if you supply null, null is what you get
         if (pattern == null) {
             return null;
@@ -170,7 +171,7 @@ public final class IvyPatternHelper {
         StringBuffer sb = new StringBuffer();
         while (m.find()) {
             String var = m.group(1);
-            String val = (String) variables.get(var);
+            String val = (String) variables.getVariable(var);
             if (val != null) {
                 int index = substituting.indexOf(var);
                 if (index != -1) {
@@ -325,10 +326,10 @@ public final class IvyPatternHelper {
     }
 
     public static String substituteParams(String pattern, Map params) {
-        return substituteParams(pattern, params, new Stack());
+        return substituteParams(pattern, new IvyVariableContainerImpl(params), new Stack());
     }
 
-    private static String substituteParams(String pattern, Map params, Stack substituting) {
+    private static String substituteParams(String pattern, IvyVariableContainer params, Stack substituting) {
         // TODO : refactor this with substituteVariables
         // if you supply null, null is what you get
         if (pattern == null) {
@@ -340,7 +341,7 @@ public final class IvyPatternHelper {
         StringBuffer sb = new StringBuffer();
         while (m.find()) {
             String var = m.group(1);
-            String val = (String) params.get(var);
+            String val = (String) params.getVariable(var);
             if (val != null) {
                 int index = substituting.indexOf(var);
                 if (index != -1) {
@@ -361,21 +362,6 @@ public final class IvyPatternHelper {
         m.appendTail(sb);
 
         return sb.toString();
-    }
-
-    public static void main(String[] args) {
-        String pattern = "[organisation]/[module]/build/archives/[type]s/" 
-                + "[artifact]-[revision].[ext]";
-        System.out.println("pattern= " + pattern);
-        System.out.println("resolved= "
-                + substitute(pattern, "apache", "Test", "1.0", "test", "jar", "jar"));
-
-        Map variables = new HashMap();
-        variables.put("test", "mytest");
-        variables.put("test2", "${test}2");
-        pattern = "${test} ${test2} ${nothing}";
-        System.out.println("pattern= " + pattern);
-        System.out.println("resolved= " + substituteVariables(pattern, variables));
     }
 
     /**

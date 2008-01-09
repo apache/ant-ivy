@@ -574,7 +574,7 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
      * @return the string where all current ivy variables have been substituted by their value
      */
     public String substitute(String str) {
-        return IvyPatternHelper.substituteVariables(str, getVariables());
+        return IvyPatternHelper.substituteVariables(str, variableContainer);
     }
 
     /**
@@ -583,8 +583,8 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
      * 
      * @return
      */
-    public Map getVariables() {
-        return variableContainer.getVariables();
+    public IvyVariableContainer getVariables() {
+        return variableContainer;
     }
 
     public Class typeDef(String name, String className) {

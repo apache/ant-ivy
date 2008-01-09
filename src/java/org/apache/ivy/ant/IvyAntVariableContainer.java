@@ -26,6 +26,7 @@ import org.apache.ivy.core.settings.IvyVariableContainer;
 import org.apache.ivy.core.settings.IvyVariableContainerImpl;
 import org.apache.ivy.util.Message;
 import org.apache.tools.ant.Project;
+import org.apache.tools.ant.taskdefs.Property;
 
 class IvyAntVariableContainer extends IvyVariableContainerImpl implements IvyVariableContainer {
 
@@ -45,13 +46,6 @@ class IvyAntVariableContainer extends IvyVariableContainerImpl implements IvyVar
         if (r == null) {
             r = super.getVariable(name);
         }
-        return r;
-    }
-
-    public Map getVariables() {
-        Map r = new HashMap(super.getVariables());
-        r.putAll(project.getProperties());
-        r.putAll(overwrittenProperties);
         return r;
     }
 
@@ -88,6 +82,14 @@ class IvyAntVariableContainer extends IvyVariableContainerImpl implements IvyVar
             if (id != null) {
                 setPropertyIfNotSet((String) entry.getKey() + "." + id, (String) entry.getValue());
             }
+        }
+        
+        if (getEnvironmentPrefix() != null) {
+            Property propTask = new Property();
+            propTask.setProject(project);
+            propTask.setEnvironment(getEnvironmentPrefix());
+            propTask.init();
+            propTask.execute();
         }
     }
 

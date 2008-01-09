@@ -59,6 +59,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
    version in SVN
 =====================================
 - NEW: Introduce RepositoryManagementEngine (IVY-665 - not completed yet)
+- NEW: Add support for importing environment variables (IVY-608)
 
 - IMPROVEMENT: Make IBiblio resolver compatible with maven proxy (IVY-466)
 - IMPROVEMENT: Use namespace aware validation (IVY-553)

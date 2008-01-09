@@ -25,8 +25,17 @@ import org.apache.ivy.util.Message;
 
 public class IvyVariableContainerImpl implements IvyVariableContainer {
 
-    private HashMap variables = new HashMap();
+    private Map variables;
+    private String envPrefix;
 
+    public IvyVariableContainerImpl() {
+        this.variables = new HashMap();
+    }
+    
+    public IvyVariableContainerImpl(Map variables) {
+        this.variables = variables;
+    }
+    
     /*
      * (non-Javadoc)
      * 
@@ -40,20 +49,26 @@ public class IvyVariableContainerImpl implements IvyVariableContainer {
         } else {
             Message.debug("'" + varName + "' already set: discarding '" + value + "'");
         }
-
+    }
+    
+    public void setEnvironmentPrefix(String prefix) {
+        if ((prefix != null) && !prefix.endsWith(".")) {
+            this.envPrefix = prefix + ".";
+        } else {
+            this.envPrefix = prefix;
+        }
     }
 
     private String substitute(String value) {
-        return IvyPatternHelper.substituteVariables(value, getVariables());
+        return IvyPatternHelper.substituteVariables(value, this);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.ivy.core.settings.IvyVariableContainer#getVariables()
-     */
-    public Map getVariables() {
+    protected Map getVariables() {
         return variables;
+    }
+    
+    protected String getEnvironmentPrefix() {
+        return envPrefix;
     }
 
     /*
@@ -62,8 +77,14 @@ public class IvyVariableContainerImpl implements IvyVariableContainer {
      * @see org.apache.ivy.core.settings.IvyVariableContainer#getVariable(java.lang.String)
      */
     public String getVariable(String name) {
-        String val = (String) variables.get(name);
-        return val == null ? val : substitute(val);
+        String val = null;
+        if ((envPrefix != null) && name.startsWith(envPrefix)) {
+            val = System.getenv(name.substring(envPrefix.length()));
+        } else {
+            val = (String) variables.get(name);
+        }
+        
+        return val;
     }
 
     public Object clone() {
@@ -73,7 +94,7 @@ public class IvyVariableContainerImpl implements IvyVariableContainer {
         } catch (CloneNotSupportedException e) {
             throw new RuntimeException("unable to clone a " + this.getClass());
         }
-        clone.variables = (HashMap) variables.clone();
+        clone.variables = new HashMap(this.variables);
         return clone;
     }
 }

@@ -49,14 +49,14 @@ public class IvyTaskTest extends TestCase {
         assertEquals(new File("build/cache"), settings.getDefaultCache());
         // The next test doesn't always works on windows (mix C: and c: drive)
         assertEquals(new File("test/repositories/ivysettings.xml").getAbsolutePath().toUpperCase(),
-            new File((String) settings.getVariables().get("ivy.settings.file")).getAbsolutePath()
+            new File((String) settings.getVariables().getVariable("ivy.settings.file")).getAbsolutePath()
                     .toUpperCase());
         assertEquals(new File("test/repositories/ivysettings.xml").toURL().toExternalForm()
-                .toUpperCase(), ((String) settings.getVariables().get("ivy.settings.url"))
+                .toUpperCase(), ((String) settings.getVariables().getVariable("ivy.settings.url"))
                 .toUpperCase());
         assertEquals(new File("test/repositories").getAbsolutePath().toUpperCase(),
-            ((String) settings.getVariables().get("ivy.settings.dir")).toUpperCase());
-        assertEquals("myvalue", settings.getVariables().get("myproperty"));
+            ((String) settings.getVariables().getVariable("ivy.settings.dir")).toUpperCase());
+        assertEquals("myvalue", settings.getVariables().getVariable("myproperty"));
     }
 
     public void testReferencedSettings() throws MalformedURLException {
@@ -84,12 +84,12 @@ public class IvyTaskTest extends TestCase {
 
         assertEquals(new File("build/cache"), settings.getDefaultCache());
         assertEquals(new File("test/repositories/ivysettings.xml").getAbsolutePath(), settings
-                .getVariables().get("ivy.settings.file"));
+                .getVariables().getVariable("ivy.settings.file"));
         assertEquals(new File("test/repositories/ivysettings.xml").toURL().toExternalForm(),
-            settings.getVariables().get("ivy.settings.url"));
-        assertEquals(new File("test/repositories").getAbsolutePath(), settings.getVariables().get(
+            settings.getVariables().getVariable("ivy.settings.url"));
+        assertEquals(new File("test/repositories").getAbsolutePath(), settings.getVariables().getVariable(
             "ivy.settings.dir"));
-        assertEquals("myvalue", settings.getVariables().get("myproperty"));
+        assertEquals("myvalue", settings.getVariables().getVariable("myproperty"));
 
     }
 
