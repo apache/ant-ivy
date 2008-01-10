@@ -20,8 +20,8 @@ package org.apache.ivy.core.cache;
 import java.text.ParseException;
 
 import org.apache.ivy.core.module.descriptor.Artifact;
+import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
-import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.report.ArtifactDownloadReport;
 import org.apache.ivy.core.resolve.ResolvedModuleRevision;
 import org.apache.ivy.plugins.repository.ArtifactResourceResolver;
@@ -40,7 +40,7 @@ public interface RepositoryCacheManager {
     /**
      * Saves the information of which resolvers were used to resolve a module (both for metadata and
      * artifact), so that this info can be loaded later (even after a jvm restart) for the use of
-     * {@link #findModuleInCache(ModuleRevisionId, boolean, String)}.
+     * {@link #findModuleInCache(DependencyDescriptor, CacheMetadataOptions, String)}.
      * 
      * @param md
      *            the module descriptor resolved
@@ -65,10 +65,10 @@ public interface RepositoryCacheManager {
     /**
      * Search a module descriptor in cache for a mrid
      * 
-     * @param mrid
-     *            the id of the module to search
-     * @param validate
-     *            true to validate ivy file found in cache before returning
+     * @param dd
+     *            the dependency descriptor identifying the module to search
+     * @param options
+     *            options on how caching should be handled
      * @param expectedResolver
      *            the resolver with which the md in cache must have been resolved to be returned,
      *            null if this doesn't matter
@@ -76,7 +76,7 @@ public interface RepositoryCacheManager {
      *         has been found in cache
      */
     public abstract ResolvedModuleRevision findModuleInCache(
-            ModuleRevisionId mrid, boolean validate, String expectedResolver);
+            DependencyDescriptor dd, CacheMetadataOptions options, String expectedResolver);
     
     /**
      * Downloads an artifact to this cache.
@@ -109,6 +109,8 @@ public interface RepositoryCacheManager {
      *            the dependency resolver from which the cache request comes from
      * @param orginalMetadataRef
      *            a resolved resource pointing to the remote original module descriptor
+     * @param dd
+     *            the dependency descriptor for which the module descriptor should be cached
      * @param requestedMetadataArtifact
      *            the module descriptor artifact as requested originally
      * @param downloader
@@ -122,8 +124,9 @@ public interface RepositoryCacheManager {
      *             if an exception occured while parsing the module descriptor
      */
     public ResolvedModuleRevision cacheModuleDescriptor(DependencyResolver resolver,
-            ResolvedResource orginalMetadataRef, Artifact requestedMetadataArtifact,
-            ResourceDownloader downloader, CacheMetadataOptions options) throws ParseException;
+            ResolvedResource orginalMetadataRef, DependencyDescriptor dd, 
+            Artifact requestedMetadataArtifact,  ResourceDownloader downloader, 
+            CacheMetadataOptions options) throws ParseException;
 
     /**
      * Stores a standardized version of an original module descriptor in the cache for later use.

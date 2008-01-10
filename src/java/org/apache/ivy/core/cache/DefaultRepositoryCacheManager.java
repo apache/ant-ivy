@@ -27,6 +27,7 @@ import java.util.Date;
 import org.apache.ivy.core.IvyPatternHelper;
 import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.DefaultArtifact;
+import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.report.ArtifactDownloadReport;
@@ -36,6 +37,9 @@ import org.apache.ivy.core.resolve.ResolvedModuleRevision;
 import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.plugins.IvySettingsAware;
 import org.apache.ivy.plugins.lock.LockStrategy;
+import org.apache.ivy.plugins.matcher.Matcher;
+import org.apache.ivy.plugins.matcher.NoMatcher;
+import org.apache.ivy.plugins.matcher.PatternMatcher;
 import org.apache.ivy.plugins.namespace.NameSpaceHelper;
 import org.apache.ivy.plugins.parser.ModuleDescriptorParser;
 import org.apache.ivy.plugins.parser.ModuleDescriptorParserRegistry;
@@ -58,6 +62,9 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
 
     private static final String DEFAULT_IVY_PATTERN = 
         "[organisation]/[module]/ivy-[revision].xml";
+    
+    // default TTL for resolved revisions is one hour
+    private static final long DEFAULT_TTL = 1000 * 60 * 60 * 1; 
 
     private IvySettings settings;
     
@@ -74,6 +81,14 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
     private String artifactPattern;
 
     private String lockStrategyName; 
+
+    private String changingPattern;
+
+    private String changingMatcherName = PatternMatcher.EXACT_OR_REGEXP;
+
+    private Boolean checkmodified;
+
+    private long defaultTTL = DEFAULT_TTL;
 
     public DefaultRepositoryCacheManager() {
     }
@@ -136,6 +151,14 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
     public void setBasedir(File cache) {
         this.basedir = cache;
     }
+    
+    public long getDefaultTTL() {
+        return defaultTTL;
+    }
+    
+    public void setDefaultTTL(long defaultTTL) {
+        this.defaultTTL = defaultTTL;
+    }
 
     public String getDataFilePattern() {
         return dataFilePattern;
@@ -157,6 +180,45 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
         this.name = name;
     }
 
+    public String getChangingMatcherName() {
+        return changingMatcherName;
+    }
+
+    public void setChangingMatcher(String changingMatcherName) {
+        this.changingMatcherName = changingMatcherName;
+    }
+
+    public String getChangingPattern() {
+        return changingPattern;
+    }
+
+    public void setChangingPattern(String changingPattern) {
+        this.changingPattern = changingPattern;
+    }
+
+
+    /**
+     * True if this resolver should check lastmodified date to know if ivy files are up to date.
+     * 
+     * @return
+     */
+    public boolean isCheckmodified() {
+        if (checkmodified == null) {
+            if (getSettings() != null) {
+                String check = getSettings().getVariable("ivy.resolver.default.check.modified");
+                return check != null ? Boolean.valueOf(check).booleanValue() : false;
+            } else {
+                return false;
+            }
+        } else {
+            return checkmodified.booleanValue();
+        }
+    }
+
+    public void setCheckmodified(boolean check) {
+        checkmodified = Boolean.valueOf(check);
+    }
+    
     /**
      * Returns a File object pointing to where the artifact can be found on the local file system.
      * This is usually in the cache, but it can be directly in the repository if it is local and if
@@ -349,78 +411,140 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
     }
 
     public ResolvedModuleRevision findModuleInCache(
-            ModuleRevisionId mrid, boolean validate, String expectedResolver) {
-        if (!settings.getVersionMatcher().isDynamic(mrid)) {
-            if (!lockMetadataArtifact(mrid)) {
-                Message.error("impossible to acquire lock for " + mrid);
-                return null;
-            }
-            try {
-                // first, check if it is in cache
-                File ivyFile = getIvyFileInCache(mrid);
-                if (ivyFile.exists()) {
-                    // found in cache !
-                    try {
-                        ModuleDescriptor depMD = XmlModuleDescriptorParser.getInstance()
-                            .parseDescriptor(settings, ivyFile.toURL(), validate);
-                        String resolverName = getSavedResolverName(depMD);
-                        String artResolverName = getSavedArtResolverName(depMD);
-                        DependencyResolver resolver = settings.getResolver(resolverName);
-                        if (resolver == null) {
-                            Message.debug("\tresolver not found: " + resolverName
-                                + " => trying to use the one configured for " + mrid);
-                            resolver = settings.getResolver(depMD.getResolvedModuleRevisionId());
-                            if (resolver != null) {
-                                Message.debug("\tconfigured resolver found for "
-                                    + depMD.getResolvedModuleRevisionId() + ": "
-                                    + resolver.getName() + ": saving this data");
-                                saveResolver(depMD, resolver.getName());
-                            }
-                        }
-                        DependencyResolver artResolver = settings.getResolver(artResolverName);
-                        if (artResolver == null) {
-                            artResolver = resolver;
-                        }
-                        if (resolver != null) {
-                            Message.debug("\tfound ivy file in cache for " + mrid + " (resolved by "
-                                + resolver.getName() + "): " + ivyFile);
-                            if (expectedResolver == null 
-                                    || expectedResolver.equals(resolver.getName())) {
-                                MetadataArtifactDownloadReport madr 
-                                    = new MetadataArtifactDownloadReport(
-                                        depMD.getMetadataArtifact());
-                                madr.setDownloadStatus(DownloadStatus.NO);
-                                madr.setSearched(false);
-                                madr.setLocalFile(ivyFile);
-                                madr.setSize(ivyFile.length());
-                                madr.setArtifactOrigin(
-                                    getSavedArtifactOrigin(depMD.getMetadataArtifact()));
-                                return new ResolvedModuleRevision(
-                                    resolver, artResolver, depMD, madr);
-                            } else {
-                                Message.debug(
-                                    "found module in cache but with a different resolver: "
-                                    + "discarding: " + mrid 
-                                    + "; expected resolver=" + expectedResolver 
-                                    + "; resolver=" + resolver.getName());
-                            }
-                        } else {
-                            Message.debug("\tresolver not found: " + resolverName
-                                + " => cannot use cached ivy file for " + mrid);
-                        }
-                    } catch (Exception e) {
-                        // will try with resolver
-                        Message.debug("\tproblem while parsing cached ivy file for: " + mrid + ": "
-                            + e.getMessage());
-                    }
+            DependencyDescriptor dd, CacheMetadataOptions options, String expectedResolver) {
+        ModuleRevisionId mrid = dd.getDependencyRevisionId();
+        if (isCheckmodified(dd, options)) {
+            Message.verbose("don't use cache for " + mrid + ": checkModified=true");
+            return null;
+        }
+        if (isChanging(dd, options)) {
+            Message.verbose("don't use cache for " + mrid + ": changing=true");
+            return null;
+        }
+        return doFindModuleInCache(mrid, options, expectedResolver);
+    }
+
+    private ResolvedModuleRevision doFindModuleInCache(
+            ModuleRevisionId mrid, CacheMetadataOptions options, String expectedResolver) {
+        if (!lockMetadataArtifact(mrid)) {
+            Message.error("impossible to acquire lock for " + mrid);
+            return null;
+        }
+        try {
+            if (settings.getVersionMatcher().isDynamic(mrid)) {
+                String resolvedRevision = getResolvedRevision(mrid, options);
+                if (resolvedRevision != null) {
+                    Message.verbose("found resolved revision in cache: " 
+                        + mrid + " => " + resolvedRevision);
+                    mrid = ModuleRevisionId.newInstance(mrid, resolvedRevision);
                 } else {
-                    Message.debug("\tno ivy file in cache for " + mrid + ": tried " + ivyFile);
+                    return null;
                 }
-            } finally {
-                unlockMetadataArtifact(mrid);
             }
+
+            File ivyFile = getIvyFileInCache(mrid);
+            if (ivyFile.exists()) {
+                // found in cache !
+                try {
+                    ModuleDescriptor depMD = XmlModuleDescriptorParser.getInstance()
+                    .parseDescriptor(settings, ivyFile.toURL(), options.isValidate());
+                    String resolverName = getSavedResolverName(depMD);
+                    String artResolverName = getSavedArtResolverName(depMD);
+                    DependencyResolver resolver = settings.getResolver(resolverName);
+                    if (resolver == null) {
+                        Message.debug("\tresolver not found: " + resolverName
+                            + " => trying to use the one configured for " + mrid);
+                        resolver = settings.getResolver(depMD.getResolvedModuleRevisionId());
+                        if (resolver != null) {
+                            Message.debug("\tconfigured resolver found for "
+                                + depMD.getResolvedModuleRevisionId() + ": "
+                                + resolver.getName() + ": saving this data");
+                            saveResolver(depMD, resolver.getName());
+                        }
+                    }
+                    DependencyResolver artResolver = settings.getResolver(artResolverName);
+                    if (artResolver == null) {
+                        artResolver = resolver;
+                    }
+                    if (resolver != null) {
+                        Message.debug("\tfound ivy file in cache for " + mrid + " (resolved by "
+                            + resolver.getName() + "): " + ivyFile);
+                        if (expectedResolver == null 
+                                || expectedResolver.equals(resolver.getName())) {
+                            MetadataArtifactDownloadReport madr 
+                            = new MetadataArtifactDownloadReport(
+                                depMD.getMetadataArtifact());
+                            madr.setDownloadStatus(DownloadStatus.NO);
+                            madr.setSearched(false);
+                            madr.setLocalFile(ivyFile);
+                            madr.setSize(ivyFile.length());
+                            madr.setArtifactOrigin(
+                                getSavedArtifactOrigin(depMD.getMetadataArtifact()));
+                            return new ResolvedModuleRevision(
+                                resolver, artResolver, depMD, madr);
+                        } else {
+                            Message.debug(
+                                "found module in cache but with a different resolver: "
+                                + "discarding: " + mrid 
+                                + "; expected resolver=" + expectedResolver 
+                                + "; resolver=" + resolver.getName());
+                        }
+                    } else {
+                        Message.debug("\tresolver not found: " + resolverName
+                            + " => cannot use cached ivy file for " + mrid);
+                    }
+                } catch (Exception e) {
+                    // will try with resolver
+                    Message.debug("\tproblem while parsing cached ivy file for: " + mrid + ": "
+                        + e.getMessage());
+                }
+            } else {
+                Message.debug("\tno ivy file in cache for " + mrid + ": tried " + ivyFile);
+            }
+        } finally {
+            unlockMetadataArtifact(mrid);
         }
         return null;
+    }
+
+    private String getResolvedRevision(ModuleRevisionId mrid, CacheMetadataOptions options) {
+        String resolvedRevision = null;
+        if (options.isForce()) {
+            Message.verbose("refresh mode: no check for cached resolved revision for " + mrid);
+            return null;
+        }
+        PropertiesFile cachedResolvedRevision = getCachedDataFile(mrid);
+        String expiration = cachedResolvedRevision.getProperty("expiration.time");
+        if (expiration == null) {
+            Message.verbose("no cached resolved revision for " + mrid);
+            return null;
+        } 
+        if (System.currentTimeMillis() > Long.parseLong(expiration)) {
+            Message.verbose("cached resolved revision expired for " + mrid);
+            return null;
+        }
+        resolvedRevision = cachedResolvedRevision.getProperty("resolved.revision");
+        if (resolvedRevision == null) {
+            Message.verbose("no cached resolved revision value for " + mrid);
+            return null;
+        }
+        return resolvedRevision;
+    }
+
+    private void saveResolvedRevision(ModuleRevisionId mrid, String revision) {
+        PropertiesFile cachedResolvedRevision = getCachedDataFile(mrid);
+        cachedResolvedRevision.setProperty("expiration.time", getExpiration(mrid));
+        cachedResolvedRevision.setProperty("resolved.revision", revision);
+        cachedResolvedRevision.save();
+    }
+
+    private String getExpiration(ModuleRevisionId mrid) {
+        return String.valueOf(System.currentTimeMillis() + getTTL(mrid));
+    }
+
+    protected long getTTL(ModuleRevisionId mrid) {
+        // TODO: implement TTL rules
+        return defaultTTL;
     }
 
     public String toString() {
@@ -561,6 +685,11 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
                 mdFileInCache);
 
             saveResolvers(md, resolver.getName(), resolver.getName());
+            
+            if (getSettings().getVersionMatcher().isDynamic(md.getModuleRevisionId())) {
+                saveResolvedRevision(md.getModuleRevisionId(), rmr.getId().getRevision());
+            }
+                
             if (!md.isDefault()) {
                 rmr.getReport().setOriginalLocalFile(originalFileInCache);
             }
@@ -579,8 +708,9 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
     }
 
     public ResolvedModuleRevision cacheModuleDescriptor(
-            DependencyResolver resolver, final ResolvedResource mdRef, Artifact moduleArtifact, 
-            ResourceDownloader downloader, CacheMetadataOptions options) throws ParseException {
+            DependencyResolver resolver, final ResolvedResource mdRef, DependencyDescriptor dd, 
+            Artifact moduleArtifact, ResourceDownloader downloader, CacheMetadataOptions options) 
+            throws ParseException {
         ModuleDescriptorParser parser = ModuleDescriptorParserRegistry
             .getInstance().getParser(mdRef.getResource());
         Date cachedPublicationDate = null;
@@ -593,14 +723,14 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
         }
         try {
             // now let's see if we can find it in cache and if it is up to date
-            ResolvedModuleRevision rmr = findModuleInCache(mrid, options.isValidate(), null);
+            ResolvedModuleRevision rmr = doFindModuleInCache(mrid, options, null);
             if (rmr != null) {
                 if (rmr.getDescriptor().isDefault() && rmr.getResolver() != resolver) {
                     Message.verbose("\t" + getName() + ": found revision in cache: " + mrid
                         + " (resolved by " + rmr.getResolver().getName()
                         + "): but it's a default one, maybe we can find a better one");
                 } else {
-                    if (!options.isCheckmodified() && !options.isChanging()) {
+                    if (!isCheckmodified(dd, options) && !isChanging(dd, options)) {
                         Message.verbose("\t" + getName() + ": revision in cache: " + mrid);
                         rmr.getReport().setSearched(true);
                         return rmr;
@@ -615,7 +745,7 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
                     } else {
                         Message.verbose("\t" + getName() + ": revision in cache is not up to date: "
                             + mrid);
-                        if (options.isChanging()) {
+                        if (isChanging(dd, options)) {
                             // ivy file has been updated, we should see if it has a new publication
                             // date to see if a new download is required (in case the dependency is
                             // a changing one)
@@ -684,7 +814,7 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
                             removeSavedArtifactOrigin(transformedArtifact);
                         }
                     }
-                } else if (options.isChanging()) {
+                } else if (isChanging(dd, options)) {
                     Message.verbose(mrid
                         + " is changing, but has not changed: will trust cached artifacts if any");
                 }
@@ -763,9 +893,46 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
         return DefaultArtifact.cloneWithAnotherName(moduleArtifact, 
             moduleArtifact.getName() + ".original");
     }
+    
 
+    private boolean isChanging(DependencyDescriptor dd, CacheMetadataOptions options) {
+        return dd.isChanging() 
+            || getChangingMatcher(options).matches(dd.getDependencyRevisionId().getRevision());
+    }
+
+    private Matcher getChangingMatcher(CacheMetadataOptions options) {
+        String changingPattern = options.getChangingPattern() != null 
+                ? options.getChangingPattern() : this.changingPattern;
+        if (changingPattern == null) {
+            return NoMatcher.INSTANCE;
+        }
+        String changingMatcherName = options.getChangingMatcherName() != null 
+            ? options.getChangingMatcherName() : this.changingMatcherName;
+        PatternMatcher matcher = settings.getMatcher(changingMatcherName);
+        if (matcher == null) {
+            throw new IllegalStateException("unknown matcher '" + changingMatcherName
+                    + "'. It is set as changing matcher in " + this);
+        }
+        return matcher.getMatcher(changingPattern);
+    }
+
+    private boolean isCheckmodified(DependencyDescriptor dd, CacheMetadataOptions options) {
+        if (options.isCheckmodified() != null) {
+            return options.isCheckmodified().booleanValue();
+        }
+        return isCheckmodified();
+    }
+    
     public void clean() {
         FileUtil.forceDelete(getBasedir());
     }
-    
+
+    public void dumpSettings() {
+        Message.verbose("\t" + getName());
+        Message.debug("\t\tivyPattern: " + getIvyPattern());
+        Message.debug("\t\tartifactPattern: " + getArtifactPattern());
+        Message.debug("\t\tlockingStrategy: " + getLockStrategy().getName());
+        Message.debug("\t\tchangingPattern: " + getChangingPattern());
+        Message.debug("\t\tchangingMatcher: " + getChangingMatcherName());
+    }
 }

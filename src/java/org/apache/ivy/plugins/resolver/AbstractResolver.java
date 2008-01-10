@@ -17,11 +17,20 @@
  */
 package org.apache.ivy.plugins.resolver;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Map;
 
 import org.apache.ivy.core.IvyContext;
+import org.apache.ivy.core.cache.ArtifactOrigin;
+import org.apache.ivy.core.cache.CacheDownloadOptions;
+import org.apache.ivy.core.cache.CacheMetadataOptions;
+import org.apache.ivy.core.cache.DownloadListener;
 import org.apache.ivy.core.cache.RepositoryCacheManager;
+import org.apache.ivy.core.event.EventManager;
+import org.apache.ivy.core.event.download.EndArtifactDownloadEvent;
+import org.apache.ivy.core.event.download.NeedArtifactEvent;
+import org.apache.ivy.core.event.download.StartArtifactDownloadEvent;
 import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
@@ -37,12 +46,10 @@ import org.apache.ivy.core.search.ModuleEntry;
 import org.apache.ivy.core.search.OrganisationEntry;
 import org.apache.ivy.core.search.RevisionEntry;
 import org.apache.ivy.plugins.latest.LatestStrategy;
-import org.apache.ivy.plugins.matcher.Matcher;
-import org.apache.ivy.plugins.matcher.NoMatcher;
-import org.apache.ivy.plugins.matcher.PatternMatcher;
 import org.apache.ivy.plugins.namespace.NameSpaceHelper;
 import org.apache.ivy.plugins.namespace.Namespace;
 import org.apache.ivy.plugins.resolver.util.HasLatestStrategy;
+import org.apache.ivy.plugins.resolver.util.ResolvedResource;
 import org.apache.ivy.util.Message;
 
 /**
@@ -58,11 +65,9 @@ public abstract class AbstractResolver implements DependencyResolver, HasLatestS
 
     private String name;
 
-    private String changingPattern;
-
-    private String changingMatcherName = PatternMatcher.EXACT_OR_REGEXP;
-
     private ResolverSettings settings;
+    
+    private EventManager eventManager = null; // may remain null
 
     /**
      * The latest strategy to use to find latest among several artifacts
@@ -81,6 +86,13 @@ public abstract class AbstractResolver implements DependencyResolver, HasLatestS
     private String cacheManagerName;
     
     private RepositoryCacheManager repositoryCacheManager;
+
+    // used to store default values for nested cache
+    private String changingMatcherName;
+
+    private String changingPattern;
+
+    private Boolean checkmodified;
 
     public ResolverSettings getSettings() {
         return settings;
@@ -159,8 +171,6 @@ public abstract class AbstractResolver implements DependencyResolver, HasLatestS
 
     public void dumpSettings() {
         Message.verbose("\t" + getName() + " [" + getTypeName() + "]");
-        Message.debug("\t\tchangingPattern: " + getChangingPattern());
-        Message.debug("\t\tchangingMatcher: " + getChangingMatcherName());
         Message.debug("\t\tcache: " + cacheManagerName);
     }
 
@@ -274,42 +284,35 @@ public abstract class AbstractResolver implements DependencyResolver, HasLatestS
         return data.getNode(toSystem(resolvedMrid));
     }
 
-    protected ResolvedModuleRevision findModuleInCache(ResolveData data, ModuleRevisionId mrid) {
-        return findModuleInCache(data, mrid, false);
+    protected ResolvedModuleRevision findModuleInCache(
+            DependencyDescriptor dd, CacheMetadataOptions options) {
+        return findModuleInCache(dd, options, false);
     }
 
     protected ResolvedModuleRevision findModuleInCache(
-            ResolveData data, ModuleRevisionId mrid, boolean anyResolver) {
+            DependencyDescriptor dd, CacheMetadataOptions options, boolean anyResolver) {
         return getRepositoryCacheManager().findModuleInCache(
-            mrid, doValidate(data), anyResolver ? null : getName());
-    }
-
-    public String getChangingMatcherName() {
-        return changingMatcherName;
+            dd, options, anyResolver ? null : getName());
     }
 
     public void setChangingMatcher(String changingMatcherName) {
         this.changingMatcherName = changingMatcherName;
     }
-
-    public String getChangingPattern() {
-        return changingPattern;
+    
+    protected String getChangingMatcherName() {
+        return changingMatcherName;
     }
 
     public void setChangingPattern(String changingPattern) {
         this.changingPattern = changingPattern;
     }
+    
+    protected String getChangingPattern() {
+        return changingPattern;
+    }
 
-    public Matcher getChangingMatcher() {
-        if (changingPattern == null) {
-            return NoMatcher.INSTANCE;
-        }
-        PatternMatcher matcher = settings.getMatcher(changingMatcherName);
-        if (matcher == null) {
-            throw new IllegalStateException("unknown matcher '" + changingMatcherName
-                    + "'. It is set as changing matcher in " + this);
-        }
-        return matcher.getMatcher(changingPattern);
+    public void setCheckmodified(boolean check) {
+        checkmodified = Boolean.valueOf(check);
     }
     
     public RepositoryCacheManager getRepositoryCacheManager() {
@@ -331,6 +334,29 @@ public abstract class AbstractResolver implements DependencyResolver, HasLatestS
         cacheManagerName = cacheName;
     }
     
+    public void setEventManager(EventManager eventManager) {
+        this.eventManager = eventManager;
+    }
+    
+    public EventManager getEventManager() {
+        return eventManager;
+    }
+
+    protected CacheMetadataOptions getCacheOptions(ResolveData data) {
+        return (CacheMetadataOptions) new CacheMetadataOptions()
+            .setChangingMatcherName(getChangingMatcherName())
+            .setChangingPattern(getChangingPattern())
+            .setCheckmodified(checkmodified)
+            .setValidate(doValidate(data))
+            .setNamespace(getNamespace())
+            .setForce(data.getOptions().isRefresh())
+            .setListener(downloadListener);
+    }
+
+    protected CacheDownloadOptions getCacheDownloadOptions() {
+        return new CacheDownloadOptions().setListener(downloadListener);
+    }
+    
     public void abortPublishTransaction() throws IOException {
         /* Default implementation is a no-op */
     }
@@ -344,5 +370,35 @@ public abstract class AbstractResolver implements DependencyResolver, HasLatestS
         /* Default implementation is a no-op */
     }
 
+    private final DownloadListener downloadListener = new DownloadListener() {
+        public void needArtifact(RepositoryCacheManager cache, Artifact artifact) {
+            if (eventManager != null) {
+                eventManager.fireIvyEvent(new NeedArtifactEvent(AbstractResolver.this, artifact));
+            }
+        }
+        public void startArtifactDownload(
+                RepositoryCacheManager cache, ResolvedResource rres, 
+                Artifact artifact, ArtifactOrigin origin) {
+            if (artifact.isMetadata()) {
+                Message.verbose("downloading " + rres.getResource() + " ...");
+            } else {
+                Message.info("downloading " + rres.getResource() + " ...");
+            }
+            if (eventManager != null) {
+                eventManager.fireIvyEvent(
+                    new StartArtifactDownloadEvent(
+                        AbstractResolver.this, artifact, origin));
+            }            
+        }
+        public void endArtifactDownload(
+                RepositoryCacheManager cache, Artifact artifact, 
+                ArtifactDownloadReport adr, File archiveFile) {
+            if (eventManager != null) {
+                eventManager.fireIvyEvent(
+                    new EndArtifactDownloadEvent(
+                        AbstractResolver.this, artifact, adr, archiveFile));
+            }
+        }
+    };
 
 }

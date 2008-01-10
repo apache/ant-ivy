@@ -107,21 +107,15 @@ public class ChainResolver extends AbstractResolver {
 
         ModuleRevisionId mrid = dd.getDependencyRevisionId();
 
-        boolean isDynamic = getSettings().getVersionMatcher().isDynamic(mrid);
 
-        boolean isChangingRevision = getChangingMatcher().matches(mrid.getRevision());
-        boolean isChangingDependency = isChangingRevision || dd.isChanging();
-
-        if (!isDynamic && !isCheckmodified() && !isChangingDependency) {
-            Message.verbose(getName() + ": not dynamic, not check modified and not changing."
-                    + " Checking cache for: " + mrid);
-            mr = findModuleInCache(data, mrid, true);
-            if (mr != null) {
-                Message.verbose("chain " + getName() + ": module revision found in cache: " + mrid);
-                return resolvedRevision(mr);
-            }
+        Message.verbose(getName() + ": Checking cache for: " + dd);
+        mr = findModuleInCache(dd, getCacheOptions(data), true);
+        if (mr != null) {
+            Message.verbose(getName() + ": module revision found in cache: " + mr.getId());
+            return resolvedRevision(mr);
         }
 
+        boolean isDynamic = getSettings().getVersionMatcher().isDynamic(mrid);
         for (Iterator iter = chain.iterator(); iter.hasNext();) {
             DependencyResolver resolver = (DependencyResolver) iter.next();
             LatestStrategy oldLatest = setLatestIfRequired(resolver, getLatestStrategy());

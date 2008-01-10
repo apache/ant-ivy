@@ -26,6 +26,7 @@ import org.apache.ivy.core.cache.ArtifactOrigin;
 import org.apache.ivy.core.cache.DefaultRepositoryCacheManager;
 import org.apache.ivy.core.cache.RepositoryCacheManager;
 import org.apache.ivy.core.module.descriptor.Artifact;
+import org.apache.ivy.core.module.descriptor.DefaultDependencyDescriptor;
 import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.report.ArtifactDownloadReport;
@@ -58,18 +59,14 @@ public class CacheResolver extends FileSystemResolver {
         ModuleRevisionId mrid = dd.getDependencyRevisionId();
         // check revision
 
-        // if we do not have to check modified and if the revision is exact and not changing,
-        // we first search for it in cache
-        if (!getSettings().getVersionMatcher().isDynamic(mrid)) {
-            ResolvedModuleRevision rmr = getRepositoryCacheManager()
-                .findModuleInCache(mrid, doValidate(data), null);
-            if (rmr != null) {
-                Message.verbose("\t" + getName() + ": revision in cache: " + mrid);
-                return rmr;
-            } else {
-                Message.verbose("\t" + getName() + ": no ivy file in cache found for " + mrid);
-                return null;
-            }
+        ResolvedModuleRevision rmr = getRepositoryCacheManager()
+            .findModuleInCache(dd, getCacheOptions(data), null);
+        if (rmr != null) {
+            Message.verbose("\t" + getName() + ": revision in cache: " + mrid);
+            return rmr;
+        } else if (!getSettings().getVersionMatcher().isDynamic(mrid)) {
+            Message.verbose("\t" + getName() + ": no ivy file in cache found for " + mrid);
+            return null;
         } else {
             ensureConfigured();
             ResolvedResource ivyRef = findIvyFileRef(dd, data);
@@ -86,8 +83,9 @@ public class CacheResolver extends FileSystemResolver {
                             + resolvedMrid);
                     return node.getModuleRevision();
                 }
-                ResolvedModuleRevision rmr = getRepositoryCacheManager()
-                    .findModuleInCache(resolvedMrid, doValidate(data), null);
+                rmr = getRepositoryCacheManager().findModuleInCache(
+                        new DefaultDependencyDescriptor(dd, ivyRef.getRevision()), 
+                        getCacheOptions(data), null);
                 if (rmr != null) {
                     Message.verbose("\t" + getName() + ": revision in cache: " + resolvedMrid);
                     return rmr;

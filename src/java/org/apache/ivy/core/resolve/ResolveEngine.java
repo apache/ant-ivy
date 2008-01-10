@@ -218,6 +218,7 @@ public class ResolveEngine {
                     + (options.isTransitive() ? "" : " [not transitive]"));
             Message.info("\tconfs: " + Arrays.asList(confs));
             Message.verbose("\tvalidate = " + options.isValidate());
+            Message.verbose("\trefresh = " + options.isRefresh());
             ResolveReport report = new ResolveReport(md, options.getResolveId());
 
             // resolve dependencies

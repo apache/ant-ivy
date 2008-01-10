@@ -55,8 +55,6 @@ import org.apache.ivy.plugins.resolver.DualResolver;
 import org.apache.ivy.plugins.resolver.FileSystemResolver;
 import org.apache.ivy.util.CacheCleaner;
 import org.apache.ivy.util.FileUtil;
-import org.apache.tools.ant.Project;
-import org.apache.tools.ant.taskdefs.Delete;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
@@ -372,22 +370,10 @@ public class ResolveTest extends TestCase {
     public void testFromCache2() throws Exception {
         // mod1.1 depends on mod1.2
 
-        // configuration
-        Ivy ivy = Ivy.newInstance();
-        DualResolver resolver = new DualResolver();
-        resolver.setName("dual");
-        FileSystemResolver r = new FileSystemResolver();
-        r.setName("1");
-        r.addArtifactPattern("build/testCache2/[artifact]-[revision].[ext]");
-        resolver.add(r);
-        r = new FileSystemResolver();
-        r.setName("2");
-        r.addArtifactPattern("build/testCache2/[artifact]-[revision].[ext]");
-        resolver.add(r);
-        ivy.getSettings().addResolver(resolver);
-        ivy.getSettings().setDefaultResolver("dual");
+        Ivy ivy = ivyTestCache();
 
         // set up repository
+        FileUtil.forceDelete(new File("build/testCache2"));
         File art = new File("build/testCache2/mod1.2-2.0.jar");
         FileUtil.copy(new File("test/repositories/1/org1/mod1.2/jars/mod1.2-2.0.jar"), art, null);
 
@@ -398,10 +384,7 @@ public class ResolveTest extends TestCase {
         assertFalse(report.hasError());
 
         // now we clean the repository to simulate repo not available (network pb for instance)
-        Delete del = new Delete();
-        del.setProject(new Project());
-        del.setDir(new File("build/testCache2"));
-        del.execute();
+        FileUtil.forceDelete(new File("build/testCache2"));
 
         // now do a new resolve: it should use cached data
         report = ivy.resolve(new File("test/repositories/1/org1/mod1.1/ivys/ivy-1.0.xml").toURL(),
@@ -419,6 +402,111 @@ public class ResolveTest extends TestCase {
         assertTrue(getIvyFileInCache(
             ModuleRevisionId.newInstance("org1", "mod1.2", "2.0")).exists());
         assertTrue(getArchiveFileInCache("org1", "mod1.2", "2.0", "mod1.2", "jar", "jar").exists());
+    }
+
+    public void testDynamicFromCache1() throws Exception {
+        // mod1.4;1.0.2 depends on mod1.2;[1.0,2.0[
+
+        Ivy ivy = ivyTestCache();
+
+        // set up repository
+        FileUtil.forceDelete(new File("build/testCache2"));
+        FileUtil.copy(
+            new File("test/repositories/1/org1/mod1.2/jars/mod1.2-2.0.jar"), 
+            new File("build/testCache2/mod1.2-1.5.jar"), null);
+
+        // we first do a simple resolve so that module is in cache
+        ResolveReport report = ivy.resolve(new File(
+                "test/repositories/1/org1/mod1.4/ivys/ivy-1.0.2.xml").toURL(),
+            getResolveOptions(new String[] {"*"}));
+        assertFalse(report.hasError());
+
+        assertEquals(
+            new HashSet(Arrays.asList(new ModuleRevisionId[] {
+                    ModuleRevisionId.newInstance("org1", "mod1.2", "1.5")})), 
+            report.getConfigurationReport("default").getModuleRevisionIds());
+
+        // now we clean the repository to simulate repo not available (network pb for instance)
+        FileUtil.forceDelete(new File("build/testCache2"));
+
+        // now do a new resolve: it should use cached data
+        report = ivy.resolve(new File("test/repositories/1/org1/mod1.4/ivys/ivy-1.0.2.xml").toURL(),
+            getResolveOptions(new String[] {"*"}));
+        assertFalse(report.hasError());
+        
+        assertEquals(
+            new HashSet(Arrays.asList(new ModuleRevisionId[] {
+                    ModuleRevisionId.newInstance("org1", "mod1.2", "1.5")})), 
+            report.getConfigurationReport("default").getModuleRevisionIds());
+    }
+
+
+    public void testRefreshDynamicFromCache() throws Exception {
+        // mod1.4;1.0.2 depends on mod1.2;[1.0,2.0[
+        Ivy ivy = ivyTestCache();
+
+        // set up repository
+        FileUtil.forceDelete(new File("build/testCache2"));
+        FileUtil.copy(
+            new File("test/repositories/1/org1/mod1.2/jars/mod1.2-2.0.jar"), 
+            new File("build/testCache2/mod1.2-1.5.jar"), null);
+
+        // we first do a simple resolve so that module is in cache
+        ResolveReport report = ivy.resolve(new File(
+                "test/repositories/1/org1/mod1.4/ivys/ivy-1.0.2.xml").toURL(),
+            getResolveOptions(new String[] {"*"}));
+        assertFalse(report.hasError());
+
+        // now we update the repository
+        FileUtil.copy(
+            new File("test/repositories/1/org1/mod1.2/jars/mod1.2-2.0.jar"), 
+            new File("build/testCache2/mod1.2-1.6.jar"), null);
+
+        // now do a new resolve: it should use cached data
+        report = ivy.resolve(new File("test/repositories/1/org1/mod1.4/ivys/ivy-1.0.2.xml").toURL(),
+            getResolveOptions(new String[] {"*"}));
+        assertFalse(report.hasError());
+        
+        assertEquals(
+            new HashSet(Arrays.asList(new ModuleRevisionId[] {
+                    ModuleRevisionId.newInstance("org1", "mod1.2", "1.5")})), 
+            report.getConfigurationReport("default").getModuleRevisionIds());
+
+        // resolve again with refresh: it should find the new version
+        report = ivy.resolve(new File("test/repositories/1/org1/mod1.4/ivys/ivy-1.0.2.xml").toURL(),
+            getResolveOptions(new String[] {"*"}).setRefresh(true));
+        assertFalse(report.hasError());
+        
+        assertEquals(
+            new HashSet(Arrays.asList(new ModuleRevisionId[] {
+                    ModuleRevisionId.newInstance("org1", "mod1.2", "1.6")})), 
+            report.getConfigurationReport("default").getModuleRevisionIds());
+        
+        FileUtil.forceDelete(new File("build/testCache2"));
+    }
+
+    /**
+     * Configures an Ivy instance using a resolver locating modules on file system, in a
+     * build/testCache2 location which is created for the test and removed after, and can thus
+     * easily simulate a repository availability problem
+     * 
+     * @return the configured ivy instance
+     */
+    private Ivy ivyTestCache() {
+        Ivy ivy = Ivy.newInstance();
+        DualResolver resolver = new DualResolver();
+        resolver.setName("dual");
+        FileSystemResolver r = new FileSystemResolver();
+        r.setName("1");
+        r.addArtifactPattern("build/testCache2/[artifact]-[revision].[ext]");
+        resolver.add(r);
+        r = new FileSystemResolver();
+        r.setName("2");
+        r.addArtifactPattern("build/testCache2/[artifact]-[revision].[ext]");
+        resolver.add(r);
+        ivy.getSettings().addResolver(resolver);
+        ivy.getSettings().setDefaultResolver("dual");
+        return ivy;
     }
 
     public void testFromCacheOnly() throws Exception {

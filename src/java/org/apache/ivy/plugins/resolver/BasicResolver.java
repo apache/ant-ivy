@@ -97,15 +97,11 @@ public abstract class BasicResolver extends AbstractResolver {
 
     private Map artattempts = new HashMap();
 
-    private Boolean checkmodified = null;
-
     private boolean checkconsistency = true;
 
     private boolean allownomd = true;
 
     private String checksums = null;
-    
-    private EventManager eventManager = null; // may remain null
 
     private URLRepository extartifactrep = new URLRepository(); // used only to download
 
@@ -129,36 +125,6 @@ public abstract class BasicResolver extends AbstractResolver {
 
     public void setEnvDependent(boolean envDependent) {
         this.envDependent = envDependent;
-    }
-    
-    public void setEventManager(EventManager eventManager) {
-        this.eventManager = eventManager;
-    }
-    
-    public EventManager getEventManager() {
-        return eventManager;
-    }
-
-    /**
-     * True if this resolver should check lastmodified date to know if ivy files are up to date.
-     * 
-     * @return
-     */
-    public boolean isCheckmodified() {
-        if (checkmodified == null) {
-            if (getSettings() != null) {
-                String check = getSettings().getVariable("ivy.resolver.default.check.modified");
-                return check != null ? Boolean.valueOf(check).booleanValue() : false;
-            } else {
-                return false;
-            }
-        } else {
-            return checkmodified.booleanValue();
-        }
-    }
-
-    public void setCheckmodified(boolean check) {
-        checkmodified = Boolean.valueOf(check);
     }
 
     public ResolvedModuleRevision getDependency(DependencyDescriptor dde, ResolveData data)
@@ -190,30 +156,23 @@ public abstract class BasicResolver extends AbstractResolver {
                 return null;
             }
 
-            boolean isChangingRevision = getChangingMatcher().matches(systemMrid.getRevision());
-            boolean isChangingDependency = isChangingRevision || systemDd.isChanging();
-
-            // if we do not have to check modified and if the revision is exact and not changing,
-            // we first search for it in cache
-            ResolvedModuleRevision cachedRmr = null;
-            boolean checkedCache = false;
-            if (!isDynamic && !isCheckmodified() && !isChangingDependency) {
-                cachedRmr = findModuleInCache(data, systemMrid);
-                checkedCache = true;
-                if (cachedRmr != null) {
-                    if (cachedRmr.getDescriptor().isDefault() && cachedRmr.getResolver() != this) {
-                        Message.verbose("\t" + getName() + ": found revision in cache: " 
-                            + systemMrid
-                            + " (resolved by " + cachedRmr.getResolver().getName()
-                            + "): but it's a default one, maybe we can find a better one");
-                    } else {
-                        Message.verbose("\t" + getName() + ": revision in cache: " + systemMrid);
-                        return cachedRmr;
-                    }
+            // we first search for the dependency in cache
+            ResolvedModuleRevision rmr = null;
+            rmr = findModuleInCache(systemDd, getCacheOptions(data));
+            if (rmr != null) {
+                if (rmr.getDescriptor().isDefault() && rmr.getResolver() != this) {
+                    Message.verbose("\t" + getName() + ": found revision in cache: " 
+                        + systemMrid
+                        + " (resolved by " + rmr.getResolver().getName()
+                        + "): but it's a default one, maybe we can find a better one");
+                } else {
+                    Message.verbose("\t" + getName() + ": revision in cache: " + systemMrid);
+                    return rmr;
                 }
             }
+            
             checkInterrupted();
-            ResolvedModuleRevision rmr = null;
+            
             ResolvedResource ivyRef = findIvyFileRef(nsDd, data);
             checkInterrupted();
 
@@ -234,13 +193,6 @@ public abstract class BasicResolver extends AbstractResolver {
                 if (artifactRef == null) {
                     Message.verbose("\t" + getName() + ": no ivy file nor artifact found for "
                         + systemMrid);
-                    if (!checkedCache) {
-                        cachedRmr = findModuleInCache(data, systemMrid);
-                    }
-                    if (cachedRmr != null) {
-                        Message.verbose("\t" + getName() + ": revision in cache: " + systemMrid);
-                        return cachedRmr;
-                    }
                     return null;
                 } else {
                     long lastModified = artifactRef.getLastModified();
@@ -463,16 +415,9 @@ public abstract class BasicResolver extends AbstractResolver {
         }
 
         Artifact moduleArtifact = parser.getMetadataArtifact(resolvedMrid, mdRef.getResource());
-        boolean isChangingRevision = getChangingMatcher().matches(mrid.getRevision());
-        boolean isChangingDependency = isChangingRevision || dd.isChanging();
         return getRepositoryCacheManager().cacheModuleDescriptor(
-            this, mdRef, moduleArtifact, downloader, 
-            (CacheMetadataOptions) new CacheMetadataOptions()
-                .setChanging(isChangingDependency)
-                .setCheckmodified(isCheckmodified())
-                .setValidate(doValidate(data))
-                .setNamespace(getNamespace())
-                .setListener(downloadListener));
+            this, mdRef, dd, moduleArtifact, downloader, 
+            getCacheOptions(data));
     }
 
     protected ResourceMDParser getRMDParser(final DependencyDescriptor dd, final ResolveData data) {
@@ -629,7 +574,7 @@ public abstract class BasicResolver extends AbstractResolver {
         for (int i = 0; i < artifacts.length; i++) {
             ArtifactDownloadReport adr = cacheManager.download(
                 artifacts[i], artifactResourceResolver, downloader, 
-                new CacheDownloadOptions().setListener(downloadListener)
+                getCacheDownloadOptions()
                     .setUseOrigin(options.isUseOrigin()));
             if (DownloadStatus.FAILED == adr.getDownloadStatus()) {
                 if (!ArtifactDownloadReport.MISSING_ARTIFACT.equals(adr.getDownloadDetails())) {
@@ -873,34 +818,4 @@ public abstract class BasicResolver extends AbstractResolver {
         }
     };
 
-    private final DownloadListener downloadListener = new DownloadListener() {
-        public void needArtifact(RepositoryCacheManager cache, Artifact artifact) {
-            if (eventManager != null) {
-                eventManager.fireIvyEvent(new NeedArtifactEvent(BasicResolver.this, artifact));
-            }
-        }
-        public void startArtifactDownload(
-                RepositoryCacheManager cache, ResolvedResource rres, 
-                Artifact artifact, ArtifactOrigin origin) {
-            if (artifact.isMetadata()) {
-                Message.verbose("downloading " + rres.getResource() + " ...");
-            } else {
-                Message.info("downloading " + rres.getResource() + " ...");
-            }
-            if (eventManager != null) {
-                eventManager.fireIvyEvent(
-                    new StartArtifactDownloadEvent(
-                        BasicResolver.this, artifact, origin));
-            }            
-        }
-        public void endArtifactDownload(
-                RepositoryCacheManager cache, Artifact artifact, 
-                ArtifactDownloadReport adr, File archiveFile) {
-            if (eventManager != null) {
-                eventManager.fireIvyEvent(
-                    new EndArtifactDownloadEvent(
-                        BasicResolver.this, artifact, adr, archiveFile));
-            }
-        }
-    };
 }

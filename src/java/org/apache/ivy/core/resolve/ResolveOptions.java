@@ -96,6 +96,8 @@ public class ResolveOptions {
      */
     private String resolveId;
 
+    private boolean refresh;
+
     public ResolveOptions() {
     }
 
@@ -104,6 +106,7 @@ public class ResolveOptions {
         revision = options.revision;
         date = options.date;
         validate = options.validate;
+        refresh = options.refresh;
         useCacheOnly = options.useCacheOnly;
         transitive = options.transitive;
         download = options.download;
@@ -246,6 +249,15 @@ public class ResolveOptions {
     public ResolveOptions setResolveId(String resolveId) {
         this.resolveId = resolveId;
         return this;
+    }
+
+    public ResolveOptions setRefresh(boolean refresh) {
+        this.refresh = refresh;
+        return this;
+    }
+    
+    public boolean isRefresh() {
+        return refresh;
     }
 
 
