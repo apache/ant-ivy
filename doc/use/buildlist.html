@@ -45,6 +45,8 @@ Note that circular dependency can also trigger a failure depending on the value 
 
 <span class="since">since 2.0</span> When you are specifying root or leaf modules you can limit the resulting list to only direct dependencies of the roots modules or to modules that directly depends on your leaf modules.
 
+<span class="since">since 2.0</span> You can also specify a restartFrom modules.  The difference with root or leaf,  is that you get a list starting at the restartFrom module followed by all the modules that would be after if the parameter would not be there (even if there is no dependency between the restartFrom and the following module).
+
 
 <table class="ant">
 <thead>
@@ -66,6 +68,7 @@ This field is ignored when neither root neither leaf is filled.
     <tr><td>haltonerror</td><td>true to halt the build when an invalid ivy file is encountered, false to continue</td><td>No. Defaults to true</td></tr>
     <tr><td>skipbuildwithoutivy</td><td>true to skip files of the fileset with no corresponding ivy file, false otherwise. If false the file with no corresponding ivy file will be considered as independent of the other and put at the beginning of the built filelist.</td><td>No. Defaults to false</td></tr>
     <tr><td>reverse</td><td>true to obtain the list in the reverse order, i.e. from the most dependent to the least one</td><td>No. Defaults to default false</td></tr>
+    <tr><td>restartFrom</td><td><span class="since">since 2.0</span> The name of the module which should be considered as the starting point in the buildlist. This allows for the build to be started at any point in the dependency chain. <br/></td><td>No. Defaults to no restart point (all modules are used in the build list).</td></tr>
     <tr><td>settingsRef</td><td><span class="since">since 2.0</span> A reference to the ivy settings that must be used by this task</td><td>No, 'ivy.instance' is taken by default.</td></tr>
 </tbody>
 </table>

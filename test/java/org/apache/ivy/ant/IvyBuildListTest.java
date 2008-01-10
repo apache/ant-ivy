@@ -384,5 +384,44 @@ public class IvyBuildListTest extends TestCase {
                 .getAbsolutePath());
     }
 
+    
+    public void testRestartFrom() {
+        Project p = new Project();
+
+        IvyBuildList buildlist = new IvyBuildList();
+        buildlist.setProject(p);
+        buildlist.setRestartFrom("C");
+
+        FileSet fs = new FileSet();
+        fs.setDir(new File("test/buildlist"));
+        fs.setIncludes("**/build.xml");
+        buildlist.addFileset(fs);
+
+        buildlist.setReference("ordered.build.files");
+
+        buildlist.execute();
+
+        Object o = p.getReference("ordered.build.files");
+        assertNotNull(o);
+        assertTrue(o instanceof Path);
+
+        Path path = (Path) o;
+        String[] files = path.list();
+        assertNotNull(files);
+        
+        assertEquals(4, files.length);
+
+        assertEquals(new File("test/buildlist/C/build.xml").getAbsolutePath(), new File(files[0])
+                .getAbsolutePath());
+        assertEquals(new File("test/buildlist/A/build.xml").getAbsolutePath(), new File(files[1])
+                .getAbsolutePath());
+        assertEquals(new File("test/buildlist/D/build.xml").getAbsolutePath(), new File(files[2])
+                .getAbsolutePath());
+        assertEquals(new File("test/buildlist/E/build.xml").getAbsolutePath(), new File(files[3])
+                .getAbsolutePath());
+    }
+
+
+    
 }
 //CheckStyle:MagicNumber| ON

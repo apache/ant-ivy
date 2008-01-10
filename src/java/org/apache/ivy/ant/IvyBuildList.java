@@ -72,7 +72,9 @@ public class IvyBuildList extends IvyTask {
     private boolean excludeLeaf = false;
 
     private boolean onlydirectdep = false;
-    
+
+    private String restartFrom = "*";
+        
     public void addFileset(FileSet buildFiles) {
         buildFileSets.add(buildFiles);
     }
@@ -170,6 +172,13 @@ public class IvyBuildList extends IvyTask {
             }
         }
 
+        Set restartFromModuleNames = new LinkedHashSet();
+        if (!"*".equals(restartFrom)) {
+            StringTokenizer st = new StringTokenizer(restartFrom, delimiter);
+            // Only accept one (first) module
+            restartFromModuleNames.add(st.nextToken());
+        }
+        
         for (ListIterator iter = buildFileSets.listIterator(); iter.hasNext();) {
             FileSet fs = (FileSet) iter.next();
             DirectoryScanner ds = fs.getDirectoryScanner(getProject());
@@ -214,6 +223,8 @@ public class IvyBuildList extends IvyTask {
             "leaf");
         List rootModuleDescriptors = convertModuleNamesToModuleDescriptors(mdsMap, rootModuleNames,
             "root");
+        List restartFromModuleDescriptors = convertModuleNamesToModuleDescriptors(mdsMap, restartFromModuleNames,
+            "restartFrom");
 
         Collection mds = new ArrayList(mdsMap.values());
         if (!rootModuleDescriptors.isEmpty()) {
@@ -235,6 +246,24 @@ public class IvyBuildList extends IvyTask {
         }
         if (isReverse()) {
             Collections.reverse(sortedModules);
+        }
+        // Remove modules that are before the restartFrom point
+        // Independant modules (without valid ivy file) can not be addressed
+        // so they are not removed from build path.
+        if (!restartFromModuleDescriptors.isEmpty()) {
+            boolean foundRestartFrom = false;
+            List keptModules = new ArrayList();
+            ModuleDescriptor restartFromModuleDescriptor = (ModuleDescriptor)restartFromModuleDescriptors.get(0);
+            for (ListIterator iter = sortedModules.listIterator(); iter.hasNext();) {
+                ModuleDescriptor md = (ModuleDescriptor) iter.next();
+                if (md.equals(restartFromModuleDescriptor)) {
+                    foundRestartFrom = true;
+                }
+                if (foundRestartFrom) {
+                    keptModules.add(md);
+                }
+            }
+            sortedModules = keptModules;
         }
         StringBuffer order = new StringBuffer();
         for (ListIterator iter = sortedModules.listIterator(); iter.hasNext();) {
@@ -448,4 +477,13 @@ public class IvyBuildList extends IvyTask {
         this.reverse = reverse;
     }
 
+    public String getRestartFrom() {
+        return restartFrom;
+    }
+
+    public void setRestartFrom(String restartFrom) {
+        this.restartFrom = restartFrom;
+    }
+
+    
 }
