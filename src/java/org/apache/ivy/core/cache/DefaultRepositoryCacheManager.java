@@ -23,6 +23,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.ParseException;
 import java.util.Date;
+import java.util.Map;
+import java.util.regex.Pattern;
 
 import org.apache.ivy.core.IvyPatternHelper;
 import org.apache.ivy.core.module.descriptor.Artifact;
@@ -30,6 +32,7 @@ import org.apache.ivy.core.module.descriptor.DefaultArtifact;
 import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
+import org.apache.ivy.core.module.id.ModuleRules;
 import org.apache.ivy.core.report.ArtifactDownloadReport;
 import org.apache.ivy.core.report.DownloadStatus;
 import org.apache.ivy.core.report.MetadataArtifactDownloadReport;
@@ -37,6 +40,8 @@ import org.apache.ivy.core.resolve.ResolvedModuleRevision;
 import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.plugins.IvySettingsAware;
 import org.apache.ivy.plugins.lock.LockStrategy;
+import org.apache.ivy.plugins.matcher.ExactPatternMatcher;
+import org.apache.ivy.plugins.matcher.MapMatcher;
 import org.apache.ivy.plugins.matcher.Matcher;
 import org.apache.ivy.plugins.matcher.NoMatcher;
 import org.apache.ivy.plugins.matcher.PatternMatcher;
@@ -63,9 +68,6 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
     private static final String DEFAULT_IVY_PATTERN = 
         "[organisation]/[module]/ivy-[revision].xml";
     
-    // default TTL for resolved revisions is one hour
-    private static final long DEFAULT_TTL = 1000 * 60 * 60 * 1; 
-
     private IvySettings settings;
     
     private File basedir;
@@ -87,8 +89,10 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
     private String changingMatcherName = PatternMatcher.EXACT_OR_REGEXP;
 
     private Boolean checkmodified;
+    
+    private ModuleRules/*<Long>*/ ttlRules = new ModuleRules();
 
-    private long defaultTTL = DEFAULT_TTL;
+    private Long defaultTTL = null;
 
     public DefaultRepositoryCacheManager() {
     }
@@ -153,11 +157,18 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
     }
     
     public long getDefaultTTL() {
-        return defaultTTL;
+        if (defaultTTL == null) {
+            defaultTTL = new Long(parseDuration(settings.getVariable("ivy.cache.ttl.default")));
+        }
+        return defaultTTL.longValue();
     }
     
     public void setDefaultTTL(long defaultTTL) {
-        this.defaultTTL = defaultTTL;
+        this.defaultTTL = new Long(defaultTTL);
+    }
+    
+    public void setDefaultTTL(String defaultTTL) {
+        this.defaultTTL = new Long(parseDuration(defaultTTL));
     }
 
     public String getDataFilePattern() {
@@ -196,6 +207,60 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
         this.changingPattern = changingPattern;
     }
 
+    public void addTTL(Map attributes, PatternMatcher matcher, long duration) {
+        ttlRules.defineRule(new MapMatcher(attributes, matcher), new Long(duration));
+    }
+    
+    public void addConfiguredTtl(Map/*<String,String>*/ attributes) {
+        String duration = (String) attributes.remove("duration");
+        if (duration == null) {
+            throw new IllegalArgumentException("'duration' attribute is mandatory for ttl");
+        }
+        String matcher = (String) attributes.remove("matcher");
+        addTTL(
+            attributes, 
+            matcher == null ? ExactPatternMatcher.INSTANCE : settings.getMatcher(matcher), 
+                    parseDuration(duration));
+    }
+
+
+    private static final Pattern DURATION_PATTERN 
+        = Pattern.compile("(?:(\\d+)d)? ?(?:(\\d+)h)? ?(?:(\\d+)m)? ?(?:(\\d+)s)? ?(?:(\\d+)ms)?");
+
+    private static final int MILLIS_IN_SECONDS = 1000; 
+    private static final int MILLIS_IN_MINUTES = 60 * MILLIS_IN_SECONDS;
+    private static final int MILLIS_IN_HOUR = 60 * MILLIS_IN_MINUTES;
+    private static final int MILLIS_IN_DAY = 24 * MILLIS_IN_HOUR;
+
+    private long parseDuration(String duration) {
+        if (duration == null) {
+            return 0;
+        }
+        java.util.regex.Matcher m = DURATION_PATTERN.matcher(duration);
+        if (m.matches()) {
+            //CheckStyle:MagicNumber| OFF
+            int days = getGroupIntValue(m, 1);
+            int hours = getGroupIntValue(m, 2);
+            int minutes = getGroupIntValue(m, 3);
+            int seconds = getGroupIntValue(m, 4);
+            int millis = getGroupIntValue(m, 5);
+            //CheckStyle:MagicNumber| ON
+            
+            return days * MILLIS_IN_DAY 
+            + hours * MILLIS_IN_HOUR
+            + minutes * MILLIS_IN_MINUTES
+            + seconds * MILLIS_IN_SECONDS
+            + millis;
+        } else {
+            throw new IllegalArgumentException("invalid duration '" 
+                + duration + "': it must match " + DURATION_PATTERN.pattern());
+        }
+    }
+
+    private int getGroupIntValue(java.util.regex.Matcher m, int groupNumber) {
+        String g = m.group(groupNumber);
+        return g == null || g.length() == 0 ? 0 : Integer.parseInt(g);
+    }
 
     /**
      * True if this resolver should check lastmodified date to know if ivy files are up to date.
@@ -508,43 +573,59 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
     }
 
     private String getResolvedRevision(ModuleRevisionId mrid, CacheMetadataOptions options) {
-        String resolvedRevision = null;
-        if (options.isForce()) {
-            Message.verbose("refresh mode: no check for cached resolved revision for " + mrid);
+        if (!lockMetadataArtifact(mrid)) {
+            Message.error("impossible to acquire lock for " + mrid);
             return null;
         }
-        PropertiesFile cachedResolvedRevision = getCachedDataFile(mrid);
-        String expiration = cachedResolvedRevision.getProperty("expiration.time");
-        if (expiration == null) {
-            Message.verbose("no cached resolved revision for " + mrid);
-            return null;
-        } 
-        if (System.currentTimeMillis() > Long.parseLong(expiration)) {
-            Message.verbose("cached resolved revision expired for " + mrid);
-            return null;
+        try {
+            String resolvedRevision = null;
+            if (options.isForce()) {
+                Message.verbose("refresh mode: no check for cached resolved revision for " + mrid);
+                return null;
+            }
+            PropertiesFile cachedResolvedRevision = getCachedDataFile(mrid);
+            String expiration = cachedResolvedRevision.getProperty("expiration.time");
+            if (expiration == null) {
+                Message.verbose("no cached resolved revision for " + mrid);
+                return null;
+            } 
+            if (System.currentTimeMillis() > Long.parseLong(expiration)) {
+                Message.verbose("cached resolved revision expired for " + mrid);
+                return null;
+            }
+            resolvedRevision = cachedResolvedRevision.getProperty("resolved.revision");
+            if (resolvedRevision == null) {
+                Message.verbose("no cached resolved revision value for " + mrid);
+                return null;
+            }
+            return resolvedRevision;
+        } finally {
+            unlockMetadataArtifact(mrid);
         }
-        resolvedRevision = cachedResolvedRevision.getProperty("resolved.revision");
-        if (resolvedRevision == null) {
-            Message.verbose("no cached resolved revision value for " + mrid);
-            return null;
-        }
-        return resolvedRevision;
     }
 
     private void saveResolvedRevision(ModuleRevisionId mrid, String revision) {
-        PropertiesFile cachedResolvedRevision = getCachedDataFile(mrid);
-        cachedResolvedRevision.setProperty("expiration.time", getExpiration(mrid));
-        cachedResolvedRevision.setProperty("resolved.revision", revision);
-        cachedResolvedRevision.save();
+        if (!lockMetadataArtifact(mrid)) {
+            Message.error("impossible to acquire lock for " + mrid);
+            return;
+        }
+        try {
+            PropertiesFile cachedResolvedRevision = getCachedDataFile(mrid);
+            cachedResolvedRevision.setProperty("expiration.time", getExpiration(mrid));
+            cachedResolvedRevision.setProperty("resolved.revision", revision);
+            cachedResolvedRevision.save();
+        } finally {
+            unlockMetadataArtifact(mrid);
+        }
     }
 
     private String getExpiration(ModuleRevisionId mrid) {
         return String.valueOf(System.currentTimeMillis() + getTTL(mrid));
     }
 
-    protected long getTTL(ModuleRevisionId mrid) {
-        // TODO: implement TTL rules
-        return defaultTTL;
+    public long getTTL(ModuleRevisionId mrid) {
+        Long ttl = (Long) ttlRules.getRule(mrid);
+        return ttl == null ? getDefaultTTL() : ttl.longValue();
     }
 
     public String toString() {
@@ -686,7 +767,8 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
 
             saveResolvers(md, resolver.getName(), resolver.getName());
             
-            if (getSettings().getVersionMatcher().isDynamic(md.getModuleRevisionId())) {
+            if (getSettings().getVersionMatcher().isDynamic(md.getModuleRevisionId())
+                    && getTTL(md.getModuleRevisionId()) > 0) {
                 saveResolvedRevision(md.getModuleRevisionId(), rmr.getId().getRevision());
             }
                 
@@ -935,4 +1017,5 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
         Message.debug("\t\tchangingPattern: " + getChangingPattern());
         Message.debug("\t\tchangingMatcher: " + getChangingMatcherName());
     }
+
 }

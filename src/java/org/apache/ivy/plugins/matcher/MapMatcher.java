@@ -34,7 +34,10 @@ public class MapMatcher {
         this.pm = pm;
         for (Iterator iter = attributes.entrySet().iterator(); iter.hasNext();) {
             Entry entry = (Entry) iter.next();
-            matchers.put(entry.getKey(), pm.getMatcher((String) entry.getValue()));
+            String value = (String) entry.getValue();
+            if (value != null) {
+                matchers.put(entry.getKey(), pm.getMatcher(value));
+            }
         }
     }
 

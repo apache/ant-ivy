@@ -103,6 +103,8 @@ After the call to this task, a reference to the module descriptor resolved is pu
     <tr><td>useOrigin</td><td>true to avoid the copy of local artifacts to the cache and use directly their original location, false otherwise <span class="since">since 1.4</span>. 
 To know if an artifact is local ivy asks to the resolver. Only filesystem resolver is considered local by default, but this can be disabled if you want to force the copy on one filesystem resolver and use the original location on another. Note that it is safe to use useOrigin even if you some no local resolvers, Ivy will behave as usual in this case. Note also that this only applies to artifacts, not to ivy files, which are still copied in the cache.</td><td>No. defaults to false</td></tr>
 
+    <tr><td>refresh</td><td>true to force Ivy to resolve dynamic revision in this resolve process, false to use cached resolved revision <span class="since">since 2.0</span></td><td>No. defaults to false</td></tr>
+
     <tr><td>inline</td><td>true to use inline mode, false to resolve an ivy file <span class="since">since 1.4</span></td><td>No. defaults to false</td></tr>
 
     <tr><td>organisation</td><td>the organisation of the module to resolve in inline mode <span class="since">since 1.4</span></td><td>Yes in inline mode, no otherwise.</td></tr>

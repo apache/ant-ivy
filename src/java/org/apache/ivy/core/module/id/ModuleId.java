@@ -19,6 +19,8 @@ package org.apache.ivy.core.module.id;
 
 import java.util.Map;
 import java.util.WeakHashMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  *
@@ -156,5 +158,36 @@ public class ModuleId implements Comparable {
             throw new IllegalArgumentException("badly encoded module id: '" + encoded + "'");
         }
         return new ModuleId(parts[0], parts[1]);
+    }
+
+    /**
+     * Pattern to use to matched mid text representation.
+     * @see #parse(String)
+     */
+    public static final Pattern MID_PATTERN = 
+        Pattern.compile(
+            "(" + ModuleRevisionId.STRICT_CHARS_PATTERN + "*)" 
+            + "#(" + ModuleRevisionId.STRICT_CHARS_PATTERN + "+)"); 
+
+    /**
+     * Parses the module id text representation and returns it as a {@link ModuleId} instance.
+     * 
+     * @param mid
+     *            the module id text representation to parse
+     * @return the ModuleId instance corresponding to the representation
+     * @throws IllegalArgumentException
+     *             if the given text representation cannot be parsed
+     */
+    public static ModuleId parse(String mid) {
+        Matcher m = MID_PATTERN.matcher(mid);
+        if (!m.matches()) {
+            throw new IllegalArgumentException(
+                    "module text representation do not match expected pattern."
+                            + " given mid='" + mid + "' expected form=" + MID_PATTERN.pattern());
+        }
+
+        //CheckStyle:MagicNumber| OFF
+        return newInstance(m.group(1), m.group(2));
+        //CheckStyle:MagicNumber| ON
     }
 }

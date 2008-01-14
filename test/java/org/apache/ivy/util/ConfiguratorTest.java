@@ -19,6 +19,7 @@ package org.apache.ivy.util;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import junit.framework.TestCase;
 
@@ -62,6 +63,8 @@ public class ConfiguratorTest extends TestCase {
         private Class _clazz;
 
         private List _trees = new ArrayList();
+        
+        private List _walkers = new ArrayList();
 
         public List getTrees() {
             return _trees;
@@ -69,6 +72,14 @@ public class ConfiguratorTest extends TestCase {
 
         public void addConfiguredTree(Tree tree) {
             _trees.add(tree);
+        }
+        
+        public List getWalkers() {
+            return _walkers;
+        }
+        
+        public void addConfiguredWalker(Map walkerAttributes) {
+            _walkers.add(new Person((String) walkerAttributes.get("name")));
         }
 
         public Class getClazz() {
@@ -240,6 +251,18 @@ public class ConfiguratorTest extends TestCase {
         _conf.endCreateChild();
         assertEquals(1, street.getTrees().size());
         assertEquals(400, ((Tree) street.getTrees().get(0)).getAge());
+        assertEquals(street, _conf.getCurrent());
+    }
+
+    public void testAddConfiguredWalker() {
+        Street street = new Street();
+        _conf.setRoot(street);
+        _conf.startCreateChild("walker");
+        assertTrue(street.getWalkers().isEmpty());
+        _conf.setAttribute("name", "xavier");
+        _conf.endCreateChild();
+        assertEquals(1, street.getWalkers().size());
+        assertEquals("xavier", ((Person) street.getWalkers().get(0)).getName());
         assertEquals(street, _conf.getCurrent());
     }
 

@@ -47,10 +47,39 @@ The default repository cache implementation caches files on the local filesystem
         <td>No, defaults to default cache artifact pattern as configured in [[configuration/caches]]</td></tr>
     <tr><td>lockStrategy</td><td>the name of the [[configuration/lock-strategies lock strategy]] to use for this cache</td>
         <td>No, defaults to default lock strategy as configured in [[configuration/caches]]</td></tr>
+    <tr><td>defaultTTL</td><td>the default [[configuration/caches/ttl TTL]] to use when no specific one is defined</td>
+        <td>No, defaults to ${ivy.cache.ttl.default}</td></tr>
 </tbody>
 </table>
 
-</textarea>
+<h1>Child elements</h1>
+<table class="ivy-children">
+<thead>
+    <tr><th class="ivy-chld">Element</th><th class="ivy-chld-desc">Description</th><th class="ivy-chld-card">Cardinality</th></tr>
+</thead>
+<tbody>
+    <tr><td>[[configuration/caches/ttl]]</td><td>defines a TTL rule</td>
+        <td>0..n</td></tr>
+</tbody>
+</table>
+
+<h1>Examples</h1>
+<code>
+<cache name="mycache" 
+       basedir="/path/to/mycache"
+       ivyPattern="[module]/ivy-[revision].xml" 
+       artifactPattern="[module]/[artifact]-[revision].[ext]"
+       lockStrategy="no-lock"
+       defaultTTL="1s">
+    <ttl revision="latest.integration" duration="200ms" />
+    <ttl organisation="org1" duration="10m 20s" />
+    <ttl organisation="org2" duration="5h" />
+    <ttl organisation="org3" duration="2d 12h" />
+</cache>
+</code>
+Defines a cache called 'mycache', storing files in the '/path/to/mycache' directory using '[module]/ivy-[revision].xml' as pattern to store Ivy files and '[module]/[artifact]-[revision].[ext]' as pattern to store other artifacts.
+The lock strategy used by this cache is the 'no-lock' strategy, which does not perform any locking. 
+The defaultTTL used is of 1s, meaning that by default dynamic revision result will be stored and used for one second. TTL rules then define that all 'latest.integration' revisions will be stored and used for 200ms, while other dynamic revisions from org1 org2 and org3 modules will be stored respectively for 10 minutes 20 seconds; 5 hours; and 2 days and 12 hours.</textarea>
 <script type="text/javascript">xooki.postProcess();</script>
 </body>
 </html>

@@ -27,4 +27,7 @@ public final class NoFilter implements Filter {
         return true;
     }
 
+    public String toString() {
+        return "NoFilter";
+    }
 }

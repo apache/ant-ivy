@@ -28,7 +28,12 @@
 				ivyPattern="[module]/ivy-[revision].xml" 
 				artifactPattern="[module]/[artifact]-[revision].[ext]"
 				lockStrategy="no-lock"
-		/>
+				defaultTTL="1s">
+			<ttl revision="latest.integration" duration="200ms" />
+			<ttl organisation="org1" duration="10m 20s" />
+			<ttl organisation="org2" duration="5h" />
+			<ttl organisation="org3" duration="2d 12h" />
+		</cache>
 		<cache name="mycache2" />
 	</caches>
 	<resolvers>

@@ -59,6 +59,8 @@ public class IvyResolve extends IvyTask {
 
     private boolean transitive = true;
 
+    private boolean refresh = false;
+
     private boolean changing = false;
 
     private Boolean keep = null;
@@ -139,6 +141,14 @@ public class IvyResolve extends IvyTask {
 
     public void setType(String type) {
         this.type = type;
+    }
+    
+    public boolean isRefresh() {
+        return refresh;
+    }
+
+    public void setRefresh(boolean refresh) {
+        this.refresh = refresh;
     }
 
     /**
@@ -298,6 +308,7 @@ public class IvyResolve extends IvyTask {
                 .setDate(getPubDate(pubdate, null))
                 .setUseCacheOnly(useCacheOnly)
                 .setUseOrigin(useOrigin)
+                .setRefresh(refresh)
                 .setTransitive(transitive)
                 .setResolveId(resolveId);
     }

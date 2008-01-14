@@ -179,6 +179,14 @@ public class XmlSettingsParserTest extends TestCase {
         DefaultRepositoryCacheManager c = (DefaultRepositoryCacheManager) settings.getRepositoryCacheManager("mycache");
         assertNotNull(c);
         assertEquals("mycache", c.getName());
+        assertEquals(1000, c.getDefaultTTL());
+        assertEquals(200, c.getTTL(ModuleRevisionId.newInstance("apache", "ivy", "latest.integration")));
+        assertEquals(10 * 60 * 1000 + 20 * 1000, // 10m 20s 
+            c.getTTL(ModuleRevisionId.newInstance("org1", "A", "A")));
+        assertEquals(5 * 3600 * 1000, // 5h 
+            c.getTTL(ModuleRevisionId.newInstance("org2", "A", "A")));
+        assertEquals(60 * 3600 * 1000, // 2d 12h = 60h 
+            c.getTTL(ModuleRevisionId.newInstance("org3", "A", "A")));
         assertEquals(new File("mycache"), c.getBasedir());
         assertEquals("no-lock", c.getLockStrategy().getName());
 

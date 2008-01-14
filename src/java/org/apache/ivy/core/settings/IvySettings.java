@@ -31,7 +31,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -49,6 +48,7 @@ import org.apache.ivy.core.deliver.DeliverEngineSettings;
 import org.apache.ivy.core.install.InstallEngineSettings;
 import org.apache.ivy.core.module.id.ModuleId;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
+import org.apache.ivy.core.module.id.ModuleRules;
 import org.apache.ivy.core.module.status.StatusManager;
 import org.apache.ivy.core.publish.PublishEngineSettings;
 import org.apache.ivy.core.repository.RepositoryManagementEngineSettings;
@@ -96,6 +96,7 @@ import org.apache.ivy.plugins.version.SubVersionMatcher;
 import org.apache.ivy.plugins.version.VersionMatcher;
 import org.apache.ivy.plugins.version.VersionRangeMatcher;
 import org.apache.ivy.util.Message;
+import org.apache.ivy.util.filter.Filter;
 import org.apache.ivy.util.url.URLHandlerRegistry;
 
 public class IvySettings implements SortEngineSettings, PublishEngineSettings, ParserSettings,
@@ -120,8 +121,7 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
 
     private boolean checkUpToDate = true;
 
-    // Map (ModuleIdMatcher -> ModuleSettings)
-    private Map moduleSettings = new LinkedHashMap(); 
+    private ModuleRules moduleSettings = new ModuleRules(); 
 
     // Map (String conflictManagerName -> ConflictManager)
     private Map conflictsManager = new HashMap(); 
@@ -504,14 +504,8 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
             DependencyResolver resolver = (DependencyResolver) iter.next();
             resolver.dumpSettings();
         }
-        if (!moduleSettings.isEmpty()) {
-            Message.debug("\tmodule settings:");
-            for (Iterator iter = moduleSettings.keySet().iterator(); iter.hasNext();) {
-                MapMatcher midm = (MapMatcher) iter.next();
-                ModuleSettings s = (ModuleSettings) moduleSettings.get(midm);
-                Message.debug("\t\t" + midm + " -> " + s);
-            }
-        }
+        Message.debug("\tmodule settings:");
+        moduleSettings.dump("\t\t");
     }
 
     public void loadProperties(URL url) throws IOException {
@@ -695,7 +689,7 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
     public void addModuleConfiguration(Map attributes, PatternMatcher matcher, String resolverName,
             String branch, String conflictManager) {
         checkResolverName(resolverName);
-        moduleSettings.put(
+        moduleSettings.defineRule(
             new MapMatcher(attributes, matcher), 
             new ModuleSettings(resolverName, branch, conflictManager));
     }
@@ -793,29 +787,21 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
     }
 
     public String getResolverName(ModuleRevisionId mrid) {
-        for (Iterator iter = moduleSettings.keySet().iterator(); iter.hasNext();) {
-            MapMatcher midm = (MapMatcher) iter.next();
-            if (midm.matches(mrid.getAttributes())) {
-                ModuleSettings ms = (ModuleSettings) moduleSettings.get(midm);
-                if (ms.getResolverName() != null) {
-                    return ms.getResolverName();
-                }
+        ModuleSettings ms = (ModuleSettings) moduleSettings.getRule(mrid, new Filter() {
+            public boolean accept(Object o) {
+                return ((ModuleSettings) o).getResolverName() != null;
             }
-        }
-        return defaultResolverName;
+        });
+        return ms == null ? defaultResolverName : ms.getResolverName();
     }
 
     public String getDefaultBranch(ModuleId moduleId) {
-        for (Iterator iter = moduleSettings.keySet().iterator(); iter.hasNext();) {
-            MapMatcher midm = (MapMatcher) iter.next();
-            if (midm.matches(getAttributes(moduleId))) {
-                ModuleSettings ms = (ModuleSettings) moduleSettings.get(midm);
-                if (ms.getBranch() != null) {
-                    return ms.getBranch();
-                }
+        ModuleSettings ms = (ModuleSettings) moduleSettings.getRule(moduleId, new Filter() {
+            public boolean accept(Object o) {
+                return ((ModuleSettings) o).getBranch() != null;
             }
-        }
-        return getDefaultBranch();
+        });
+        return ms == null ? getDefaultBranch() : ms.getBranch();
     }
 
     public String getDefaultBranch() {
@@ -827,37 +813,22 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
     }
 
     public ConflictManager getConflictManager(ModuleId moduleId) {
-        for (Iterator iter = moduleSettings.keySet().iterator(); iter.hasNext();) {
-            MapMatcher midm = (MapMatcher) iter.next();
-            if (midm.matches(getAttributes(moduleId))) {
-                ModuleSettings ms = (ModuleSettings) moduleSettings.get(midm);
-                if (ms.getConflictManager() != null) {
-                    ConflictManager cm = getConflictManager(ms.getConflictManager());
-                    if (cm == null) {
-                        throw new IllegalStateException(
-                                "ivy badly configured: unknown conflict manager "
-                                        + ms.getConflictManager());
-                    }
-                    return cm;
-                }
+        ModuleSettings ms = (ModuleSettings) moduleSettings.getRule(moduleId, new Filter() {
+            public boolean accept(Object o) {
+                return ((ModuleSettings) o).getConflictManager() != null;
             }
+        });
+        if (ms == null) {
+            return getDefaultConflictManager();
+        } else {
+            ConflictManager cm = getConflictManager(ms.getConflictManager());
+            if (cm == null) {
+                throw new IllegalStateException(
+                        "ivy badly configured: unknown conflict manager "
+                                + ms.getConflictManager());
+            }
+            return cm;
         }
-        return getDefaultConflictManager();
-    }
-
-    /**
-     * Converts the given module id to a Map containing entries for the organisation and module
-     * name.
-     * 
-     * @param moduleId
-     *            the module id to convert
-     * @return a Map with exactly two entries, one for the organisation, one for the module name.
-     */
-    private Map getAttributes(ModuleId moduleId) {
-        Map att = new HashMap();
-        att.put(IvyPatternHelper.ORGANISATION_KEY, moduleId.getOrganisation());
-        att.put(IvyPatternHelper.MODULE_KEY, moduleId.getName());
-        return att;
     }
 
     public void addConfigured(ConflictManager cm) {

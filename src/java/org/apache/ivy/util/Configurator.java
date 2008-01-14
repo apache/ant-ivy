@@ -357,6 +357,11 @@ public class Configurator {
         }
 
         public void addSetMethod(String name, Method m) {
+            Method current = (Method) setMethods.get(name);
+            if (current != null && current.getParameterTypes()[0] == String.class) {
+                // setter methods with String attribute take precedence 
+                return;
+            }
             setMethods.put(name, m);
         }
 
@@ -493,7 +498,11 @@ public class Configurator {
                 addChild = parentOD.getAddConfiguredMethod(name);
                 if (addChild != null) {
                     childClass = addChild.getParameterTypes()[0];
-                    child = childClass.newInstance();
+                    if (Map.class == childClass) {
+                        child = new HashMap();
+                    } else {
+                        child = childClass.newInstance();
+                    }
                     setCurrent(child, name);
                     return child;
                 }
@@ -545,7 +554,11 @@ public class Configurator {
         addChild = parentOD.getAddConfiguredMethod(childClass);
         if (addChild != null) {
             if (child == null) {
-                child = childClass.newInstance();
+                if (Map.class == childClass) {
+                    child = new HashMap();
+                } else {
+                    child = childClass.newInstance();
+                }
             }
             setCurrent(child, name);
             return child;
@@ -577,6 +590,10 @@ public class Configurator {
         }
         Method m = od.getSetMethod(attributeName);
         if (m == null) {
+            if (od.getObject() instanceof Map) {
+                ((Map) od.getObject()).put(attributeName, value);
+                return;
+            } 
             throw new IllegalArgumentException("no set method found for " + attributeName + " on "
                     + od.getObject().getClass());
         }
