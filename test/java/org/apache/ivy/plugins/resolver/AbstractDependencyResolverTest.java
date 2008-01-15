@@ -24,7 +24,7 @@ import junit.framework.TestCase;
 public class AbstractDependencyResolverTest extends TestCase {
 
     protected DownloadOptions downloadOptions() {
-        return new DownloadOptions(false);
+        return new DownloadOptions();
     }
 
 }

@@ -574,8 +574,7 @@ public abstract class BasicResolver extends AbstractResolver {
         for (int i = 0; i < artifacts.length; i++) {
             ArtifactDownloadReport adr = cacheManager.download(
                 artifacts[i], artifactResourceResolver, downloader, 
-                getCacheDownloadOptions()
-                    .setUseOrigin(options.isUseOrigin()));
+                getCacheDownloadOptions());
             if (DownloadStatus.FAILED == adr.getDownloadStatus()) {
                 if (!ArtifactDownloadReport.MISSING_ARTIFACT.equals(adr.getDownloadDetails())) {
                     Message.warn("\t" + adr);

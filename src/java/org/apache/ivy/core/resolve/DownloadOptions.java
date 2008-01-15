@@ -19,13 +19,7 @@ package org.apache.ivy.core.resolve;
 
 
 public class DownloadOptions {
-    private boolean useOrigin = false;
 
-    public DownloadOptions(boolean useOrigin) {
-        this.useOrigin = useOrigin;
-    }
-
-    public boolean isUseOrigin() {
-        return useOrigin;
+    public DownloadOptions() {
     }
 }

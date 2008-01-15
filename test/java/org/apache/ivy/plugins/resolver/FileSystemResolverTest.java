@@ -123,7 +123,7 @@ public class FileSystemResolverTest extends AbstractDependencyResolverTest {
         // test to ask to download
         DefaultArtifact artifact = new DefaultArtifact(mrid, pubdate, "mod1.1", "jar", "jar");
         DownloadReport report = resolver.download(new Artifact[] {artifact},
-            getDownloadOptions(false));
+            getDownloadOptions());
         assertNotNull(report);
 
         assertEquals(1, report.getArtifactsReports().length);
@@ -135,7 +135,7 @@ public class FileSystemResolverTest extends AbstractDependencyResolverTest {
         assertEquals(DownloadStatus.SUCCESSFUL, ar.getDownloadStatus());
 
         // test to ask to download again, should use cache
-        report = resolver.download(new Artifact[] {artifact}, getDownloadOptions(false));
+        report = resolver.download(new Artifact[] {artifact}, getDownloadOptions());
         assertNotNull(report);
 
         assertEquals(1, report.getArtifactsReports().length);
@@ -164,8 +164,8 @@ public class FileSystemResolverTest extends AbstractDependencyResolverTest {
             ivyRef.getResource().getName().replace('\\', '/'));
     }
 
-    private DownloadOptions getDownloadOptions(boolean useOrigin) {
-        return new DownloadOptions(useOrigin);
+    private DownloadOptions getDownloadOptions() {
+        return new DownloadOptions();
     }
 
     public void testMaven2() throws Exception {
@@ -211,7 +211,7 @@ public class FileSystemResolverTest extends AbstractDependencyResolverTest {
                 false), data);
         assertNotNull(rmr);
         DownloadReport dr = resolver.download(rmr.getDescriptor().getAllArtifacts(),
-            getDownloadOptions(false));
+            getDownloadOptions());
         assertEquals(2, dr.getArtifactsReports(DownloadStatus.SUCCESSFUL).length);
 
         resolver.setChecksums("md5");
@@ -222,7 +222,7 @@ public class FileSystemResolverTest extends AbstractDependencyResolverTest {
         rmr = resolver.getDependency(new DefaultDependencyDescriptor(mrid, false), data);
         assertNotNull(rmr);
         dr = resolver.download(new Artifact[] {new DefaultArtifact(mrid, rmr.getPublicationDate(),
-                mrid.getName(), "jar", "jar")}, getDownloadOptions(false));
+                mrid.getName(), "jar", "jar")}, getDownloadOptions());
         assertEquals(1, dr.getArtifactsReports(DownloadStatus.SUCCESSFUL).length);
 
         resolver.setChecksums("md5");
@@ -230,14 +230,14 @@ public class FileSystemResolverTest extends AbstractDependencyResolverTest {
         rmr = resolver.getDependency(new DefaultDependencyDescriptor(mrid, false), data);
         assertNotNull(rmr);
         dr = resolver.download(new Artifact[] {new DefaultArtifact(mrid, rmr.getPublicationDate(),
-                mrid.getName(), "jar", "jar")}, getDownloadOptions(false));
+                mrid.getName(), "jar", "jar")}, getDownloadOptions());
         assertEquals(1, dr.getArtifactsReports(DownloadStatus.FAILED).length);
 
         resolver.setChecksums("");
         rmr = resolver.getDependency(new DefaultDependencyDescriptor(mrid, false), data);
         assertNotNull(rmr);
         dr = resolver.download(new Artifact[] {new DefaultArtifact(mrid, rmr.getPublicationDate(),
-                mrid.getName(), "jar", "jar")}, getDownloadOptions(false));
+                mrid.getName(), "jar", "jar")}, getDownloadOptions());
         assertEquals(1, dr.getArtifactsReports(DownloadStatus.SUCCESSFUL).length);
     }
 
@@ -321,7 +321,7 @@ public class FileSystemResolverTest extends AbstractDependencyResolverTest {
 
         Artifact[] artifacts = rmr.getDescriptor().getArtifacts("default");
         File archiveFileInCache = cacheManager.getArchiveFileInCache(artifacts[0]);
-        resolver.download(artifacts, getDownloadOptions(false));
+        resolver.download(artifacts, getDownloadOptions());
         assertTrue(archiveFileInCache.exists());
         BufferedReader r = new BufferedReader(new FileReader(archiveFileInCache));
         assertEquals("before", r.readLine());
@@ -352,7 +352,7 @@ public class FileSystemResolverTest extends AbstractDependencyResolverTest {
 
         // should download the new artifact
         artifacts = rmr.getDescriptor().getArtifacts("default");
-        resolver.download(artifacts, getDownloadOptions(false));
+        resolver.download(artifacts, getDownloadOptions());
         assertTrue(archiveFileInCache.exists());
         r = new BufferedReader(new FileReader(archiveFileInCache));
         assertEquals("after", r.readLine());
@@ -390,7 +390,7 @@ public class FileSystemResolverTest extends AbstractDependencyResolverTest {
         assertEquals(pubdate, rmr.getPublicationDate());
 
         Artifact[] artifacts = rmr.getDescriptor().getArtifacts("default");
-        resolver.download(artifacts, getDownloadOptions(false));
+        resolver.download(artifacts, getDownloadOptions());
         File archiveFileInCache = cacheManager.getArchiveFileInCache(artifacts[0]);
         assertTrue(archiveFileInCache.exists());
         BufferedReader r = new BufferedReader(new FileReader(archiveFileInCache));
@@ -431,7 +431,7 @@ public class FileSystemResolverTest extends AbstractDependencyResolverTest {
         assertFalse(archiveFileInCache.exists());
 
         artifacts = rmr.getDescriptor().getArtifacts("default");
-        resolver.download(artifacts, getDownloadOptions(false));
+        resolver.download(artifacts, getDownloadOptions());
         assertTrue(archiveFileInCache.exists());
         r = new BufferedReader(new FileReader(archiveFileInCache));
         assertEquals("after", r.readLine());
@@ -827,6 +827,7 @@ public class FileSystemResolverTest extends AbstractDependencyResolverTest {
         FileSystemResolver resolver = new FileSystemResolver();
         resolver.setName("test");
         resolver.setSettings(settings);
+        ((DefaultRepositoryCacheManager) resolver.getRepositoryCacheManager()).setUseOrigin(true);
         assertEquals("test", resolver.getName());
 
         resolver.addIvyPattern(IVY_PATTERN);
@@ -847,7 +848,7 @@ public class FileSystemResolverTest extends AbstractDependencyResolverTest {
         // test to ask to download
         DefaultArtifact artifact = new DefaultArtifact(mrid, pubdate, "mod1.1", "jar", "jar");
         DownloadReport report = resolver.download(new Artifact[] {artifact},
-            getDownloadOptions(true));
+            getDownloadOptions());
         assertNotNull(report);
 
         assertEquals(1, report.getArtifactsReports().length);

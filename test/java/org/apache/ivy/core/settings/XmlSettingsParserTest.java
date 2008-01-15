@@ -175,6 +175,7 @@ public class XmlSettingsParserTest extends TestCase {
         assertEquals("[module]/ivys/ivy-[revision].xml", settings.getDefaultCacheIvyPattern());
         assertEquals("[module]/[type]s/[artifact]-[revision].[ext]", settings
                 .getDefaultCacheArtifactPattern());
+        assertEquals(true, settings.isDefaultUseOrigin());
         
         DefaultRepositoryCacheManager c = (DefaultRepositoryCacheManager) settings.getRepositoryCacheManager("mycache");
         assertNotNull(c);
@@ -188,6 +189,7 @@ public class XmlSettingsParserTest extends TestCase {
         assertEquals(60 * 3600 * 1000, // 2d 12h = 60h 
             c.getTTL(ModuleRevisionId.newInstance("org3", "A", "A")));
         assertEquals(new File("mycache"), c.getBasedir());
+        assertEquals(false, c.isUseOrigin());
         assertEquals("no-lock", c.getLockStrategy().getName());
 
         assertEquals("[module]/ivy-[revision].xml", c.getIvyPattern());
@@ -201,6 +203,8 @@ public class XmlSettingsParserTest extends TestCase {
 
         assertEquals("[module]/ivys/ivy-[revision].xml", c2.getIvyPattern());
         assertEquals("[module]/[type]s/[artifact]-[revision].[ext]", c2.getArtifactPattern());
+
+        assertEquals(true, c2.isUseOrigin());
         
         assertEquals(c2, settings.getResolver("A").getRepositoryCacheManager());
         assertEquals(c, settings.getResolver("B").getRepositoryCacheManager());

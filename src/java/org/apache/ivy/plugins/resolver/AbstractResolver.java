@@ -183,7 +183,7 @@ public abstract class AbstractResolver implements DependencyResolver, HasLatestS
      * avoid the download
      */
     public boolean exists(Artifact artifact) {
-        DownloadReport dr = download(new Artifact[] {artifact}, new DownloadOptions(true));
+        DownloadReport dr = download(new Artifact[] {artifact}, new DownloadOptions());
         ArtifactDownloadReport adr = dr.getArtifactReport(artifact);
         return adr.getDownloadStatus() != DownloadStatus.FAILED;
     }

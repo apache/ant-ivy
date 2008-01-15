@@ -32,13 +32,6 @@ This is a [[ant:postresolvetask post resolve task]], with all the behaviour and 
 Please prefer the use of retrieve + standard ant path creation, which make your build more independent from ivy (once artifacts are properly retrieved, ivy is not required any more).
 
 Built path is registered in ant with a given id, and can thus be used like any other ant path using refid.
-
-<span class="since">since 1.4</span> The behaviour is like this when 'useOrigin=true':
-<ul>
-<li>if the artifact is not local, the location from within the cache is used</li>
-<li>if the artifact is a local artifact, it's original location is used</li>
-</ul>
-Note that if resolve has been called separately, the copy to the cache may have occur normally if useOrigin was not set when calling [[ant:resolve]]. If resolve has not been called, it will be called automatically with useOrigin set to the value specified on this task.
   
 <table class="ant">
 <thead>
@@ -50,8 +43,6 @@ Note that if resolve has been called separately, the copy to the cache may have 
     <tr><td>conf</td><td>a comma separated list of the configurations to put in the created path</td>
         <td>No. Defaults to the configurations resolved by the last resolve call, or * if no resolve was explicitly called</td></tr>
     <tr><td>type</td><td>comma separated list of artifact types to accept in the path, * for all (<span class="since">since 1.2</span>)</td><td>No. Defaults to *</td></tr>
-    <tr><td>useOrigin</td><td>true to use original location of local artifacts, false to use only cache locations <span class="since">since 1.4</span></td>
-        <td>No. Defaults false</td></tr>
     <tr><td>settingsRef</td><td><span class="since">(since 2.0)</span> A reference to the ivy settings that must be used by this task</td><td>No, 'ivy.instance' is taken by default.</td></tr>
 </tbody>
 </table>

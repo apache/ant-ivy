@@ -133,7 +133,8 @@ public final class Main {
         options.addOption("error", false, "set message level to error");
         options.addOption("novalidate", false, "do not validate ivy files against xsd");
         options.addOption("useOrigin", false,
-            "use original artifact location with local resolvers instead of copying to the cache");
+            "DEPRECATED: use original artifact location "
+            + "with local resolvers instead of copying to the cache");
         options.addOption("sync", false, "in conjonction with -retrieve, does a synced retrieve");
         options.addOption("m2compatible", false, "use maven2 compatibility");
         options.addOption("?", false, "display this help");
@@ -226,8 +227,11 @@ public final class Main {
                 }
             }
 
+            if (line.hasOption("useOrigin")) {
+                ivy.getSettings().useDeprecatedUseOrigin();
+            }
             ResolveOptions resolveOptions = new ResolveOptions().setConfs(confs)
-                .setValidate(validate).setUseOrigin(line.hasOption("useOrigin"));
+                .setValidate(validate);
             ResolveReport report = ivy.resolve(ivyfile.toURL(), resolveOptions);
             if (report.hasError()) {
                 System.exit(1);

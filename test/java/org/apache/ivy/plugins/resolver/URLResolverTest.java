@@ -21,6 +21,7 @@ import java.io.File;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
+import org.apache.ivy.core.cache.DefaultRepositoryCacheManager;
 import org.apache.ivy.core.event.EventManager;
 import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.DefaultArtifact;
@@ -312,6 +313,7 @@ public class URLResolverTest extends AbstractDependencyResolverTest {
         resolver.addArtifactPattern("file:" + rootpath
                 + "/[organisation]/[module]/[type]s/[artifact]-[revision].[type]");
         resolver.setName("test");
+        ((DefaultRepositoryCacheManager) resolver.getRepositoryCacheManager()).setUseOrigin(true);
         assertEquals("test", resolver.getName());
 
         ModuleRevisionId mrid = ModuleRevisionId.newInstance("org1", "mod1.1", "1.0");
@@ -326,7 +328,7 @@ public class URLResolverTest extends AbstractDependencyResolverTest {
         // test to ask to download
         DefaultArtifact artifact = new DefaultArtifact(mrid, pubdate, "mod1.1", "jar", "jar");
         DownloadReport report = resolver.download(new Artifact[] {artifact}, 
-            new DownloadOptions(true));
+            new DownloadOptions());
         assertNotNull(report);
 
         assertEquals(1, report.getArtifactsReports().length);

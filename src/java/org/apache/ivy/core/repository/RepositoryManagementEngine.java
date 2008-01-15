@@ -64,6 +64,9 @@ import org.apache.ivy.util.Message;
  * This engine is not intended to be used concurrently with publish, the order of repository loaded
  * being undeterministic and long, it could end up in having an inconsistent in memory state.
  * </p>
+ * <p>
+ * For better performance, we strongly suggest using this engine with cache in useOrigin mode.
+ * </p>
  */
 public class RepositoryManagementEngine {
     private static final double THOUSAND = 1000.0;
@@ -314,8 +317,7 @@ public class RepositoryManagementEngine {
     }
 
     private ResolveData newResolveData() {
-        return new ResolveData(resolveEngine, 
-            new ResolveOptions().setUseOrigin(true));
+        return new ResolveData(resolveEngine, new ResolveOptions());
     }
 
     private void ensureAnalyzed() {

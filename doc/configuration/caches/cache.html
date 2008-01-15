@@ -45,6 +45,9 @@ The default repository cache implementation caches files on the local filesystem
         <td>No, defaults to default cache ivy pattern as configured in [[configuration/caches]]</td></tr>
     <tr><td>artifactPattern</td><td>the pattern to use to store cached artifacts</td>
         <td>No, defaults to default cache artifact pattern as configured in [[configuration/caches]]</td></tr>
+    <tr><td>useOrigin</td><td>true to avoid the copy of local artifacts to the cache and use directly their original location, false otherwise. 
+To know if an artifact is local ivy asks to the resolver. Only filesystem resolver is considered local by default, but this can be disabled if you want to force the copy on one filesystem resolver and use the original location on another. Note that it is safe to use useOrigin even if you use the cache for some non local resolvers. In this case the cache will behave as usual, copying files to the cache. Note also that this only applies to artifacts, not to ivy files, which are still copied in the cache.</td>
+        <td>No. defaults to the default value configured in [[configuration/caches]]</td></tr>
     <tr><td>lockStrategy</td><td>the name of the [[configuration/lock-strategies lock strategy]] to use for this cache</td>
         <td>No, defaults to default lock strategy as configured in [[configuration/caches]]</td></tr>
     <tr><td>defaultTTL</td><td>the default [[configuration/caches/ttl TTL]] to use when no specific one is defined</td>

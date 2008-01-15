@@ -89,6 +89,8 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
     private String changingMatcherName = PatternMatcher.EXACT_OR_REGEXP;
 
     private Boolean checkmodified;
+
+    private Boolean useOrigin;
     
     private ModuleRules/*<Long>*/ ttlRules = new ModuleRules();
 
@@ -263,7 +265,7 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
     }
 
     /**
-     * True if this resolver should check lastmodified date to know if ivy files are up to date.
+     * True if this cache should check lastmodified date to know if ivy files are up to date.
      * 
      * @return
      */
@@ -282,6 +284,26 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
 
     public void setCheckmodified(boolean check) {
         checkmodified = Boolean.valueOf(check);
+    }
+    
+    /**
+     * True if this cache should use artifacts original location when possible, false if they should
+     * be copied to cache.
+     */
+    public boolean isUseOrigin() {
+        if (useOrigin == null) {
+            if (getSettings() != null) {
+                return getSettings().isDefaultUseOrigin();
+            } else {
+                return false;
+            }
+        } else {
+            return useOrigin.booleanValue();
+        }
+    }
+
+    public void setUseOrigin(boolean b) {
+        useOrigin = Boolean.valueOf(b);
     }
     
     /**
@@ -317,7 +339,8 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
      * provided as parameter and the setting of useOrigin. If useOrigin is false, this method will
      * always return the file in the cache.
      */
-    public File getArchiveFileInCache(Artifact artifact, ArtifactOrigin origin, boolean useOrigin) {
+    private File getArchiveFileInCache(
+            Artifact artifact, ArtifactOrigin origin, boolean useOrigin) {
         if (useOrigin && origin != null && origin != ArtifactOrigin.UNKNOWN && origin.isLocal()) {
             return new File(origin.getLocation());
         } else {
@@ -661,7 +684,7 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
             ResourceDownloader resourceDownloader, 
             CacheDownloadOptions options) {
         final ArtifactDownloadReport adr = new ArtifactDownloadReport(artifact);
-        boolean useOrigin = options.isUseOrigin();
+        boolean useOrigin = isUseOrigin();
         
         // TODO: see if we could lock on the artifact to download only, instead of the module
         // metadata artifact. We'd need to store artifact origin and is local in artifact specific

@@ -337,6 +337,10 @@ public class XmlSettingsParser extends DefaultHandler {
                 defaultLock = (String) attributes.get("lockStrategy");
                 defaultCacheManager = (String) attributes.get("default");
                 
+                String useOrigin = (String) attributes.get("useOrigin");
+                if (useOrigin != null) {
+                    ivy.setDefaultUseOrigin(Boolean.valueOf(useOrigin).booleanValue());
+                }
                 String cacheIvyPattern = (String) attributes.get("ivyPattern");
                 if (cacheIvyPattern != null) {
                     ivy.setDefaultCacheIvyPattern(cacheIvyPattern);

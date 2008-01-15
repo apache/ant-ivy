@@ -197,6 +197,8 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
 
     private String defaultCacheArtifactPattern;
 
+    private boolean defaultUseOrigin;
+
     public IvySettings() {
         this(new IvyVariableContainerImpl());
     }
@@ -1289,5 +1291,20 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
     
     public String getDefaultCacheArtifactPattern() {
         return defaultCacheArtifactPattern;
+    }
+
+    public void setDefaultUseOrigin(boolean useOrigin) {
+        defaultUseOrigin = useOrigin;
+    }
+    
+    public boolean isDefaultUseOrigin() {
+        return defaultUseOrigin;
+    }
+    
+    public void useDeprecatedUseOrigin() {
+        Message.deprecated("useOrigin option is deprecated when calling resolve, use useOrigin"
+            + " setting on the cache implementation instead");
+        setDefaultUseOrigin(true);
+        
     }
 }

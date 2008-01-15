@@ -274,7 +274,7 @@ public class ResolveEngine {
             if (options.isDownload()) {
                 Message.verbose(":: downloading artifacts ::");
 
-                downloadArtifacts(report, options.isUseOrigin(), options.getArtifactFilter());
+                downloadArtifacts(report, options.getArtifactFilter());
             }
 
             if (options.isOutputReport()) {
@@ -305,8 +305,7 @@ public class ResolveEngine {
         report.output(settings.getReportOutputters(), cacheMgr);
     }
 
-    public void downloadArtifacts(ResolveReport report, 
-            boolean useOrigin, Filter artifactFilter) {
+    public void downloadArtifacts(ResolveReport report, Filter artifactFilter) {
         long start = System.currentTimeMillis();
         IvyNode[] dependencies = (IvyNode[]) report.getDependencies().toArray(
             new IvyNode[report.getDependencies().size()]);
@@ -323,7 +322,7 @@ public class ResolveEngine {
                         .getArtifactResolver();
                 Artifact[] selectedArtifacts = dependencies[i].getSelectedArtifacts(artifactFilter);
                 DownloadReport dReport = resolver.download(selectedArtifacts, 
-                    new DownloadOptions(useOrigin));
+                    new DownloadOptions());
                 ArtifactDownloadReport[] adrs = dReport.getArtifactsReports();
                 for (int j = 0; j < adrs.length; j++) {
                     if (adrs[j].getDownloadStatus() == DownloadStatus.FAILED) {
@@ -371,7 +370,7 @@ public class ResolveEngine {
     public ArtifactDownloadReport download(Artifact artifact, boolean useOrigin) {
         DependencyResolver resolver = settings.getResolver(artifact.getModuleRevisionId());
         DownloadReport r = resolver.download(new Artifact[] {artifact}, 
-            new DownloadOptions(useOrigin));
+            new DownloadOptions());
         return r.getArtifactReport(artifact);
     }
 

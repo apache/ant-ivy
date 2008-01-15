@@ -300,6 +300,9 @@ public class IvyResolve extends IvyTask {
     }
 
     private ResolveOptions getResolveOptions(Ivy ivy, String[] confs, IvySettings settings) {
+        if (useOrigin) {
+            settings.useDeprecatedUseOrigin();
+        }
         return new ResolveOptions()
                 .setConfs(confs)
                 .setValidate(doValidate(settings))
@@ -307,7 +310,6 @@ public class IvyResolve extends IvyTask {
                 .setRevision(revision)
                 .setDate(getPubDate(pubdate, null))
                 .setUseCacheOnly(useCacheOnly)
-                .setUseOrigin(useOrigin)
                 .setRefresh(refresh)
                 .setTransitive(transitive)
                 .setResolveId(resolveId);

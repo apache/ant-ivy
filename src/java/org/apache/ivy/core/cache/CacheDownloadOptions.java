@@ -19,17 +19,9 @@ package org.apache.ivy.core.cache;
 
 
 public class CacheDownloadOptions {
-    private boolean useOrigin = false;
     private DownloadListener listener = null;
     private boolean force = false;
-    
-    public boolean isUseOrigin() {
-        return useOrigin;
-    }
-    public CacheDownloadOptions setUseOrigin(boolean useOrigin) {
-        this.useOrigin = useOrigin;
-        return this;
-    }
+
     public DownloadListener getListener() {
         return listener;
     }

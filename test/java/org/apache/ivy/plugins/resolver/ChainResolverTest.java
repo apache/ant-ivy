@@ -534,7 +534,7 @@ public class ChainResolverTest extends AbstractDependencyResolverTest {
             new Artifact[] {new DefaultArtifact(
                 ModuleRevisionId.parse("org1#mod1.1;1.0"),
                 new Date(), "mod1.1", "jar", "jar")}, 
-            new DownloadOptions(false));
+            new DownloadOptions());
         assertNotNull(report);
         assertEquals(1, report.getArtifactsReports().length);
         assertEquals(DownloadStatus.SUCCESSFUL, report.getArtifactsReports()[0].getDownloadStatus());

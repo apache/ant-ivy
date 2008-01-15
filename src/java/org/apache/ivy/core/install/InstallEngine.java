@@ -129,7 +129,7 @@ public class InstallEngine {
             report.setDependencies(Arrays.asList(dependencies), artifactFilter);
 
             Message.info(":: downloading artifacts to cache ::");
-            resolveEngine.downloadArtifacts(report, false, artifactFilter);
+            resolveEngine.downloadArtifacts(report, artifactFilter);
 
             // now that everything is in cache, we can publish all these modules
             Message.info(":: installing in " + to + " ::");

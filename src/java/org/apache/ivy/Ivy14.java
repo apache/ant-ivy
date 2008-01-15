@@ -47,6 +47,7 @@ import org.apache.ivy.core.search.RevisionEntry;
 import org.apache.ivy.core.sort.SilentNonMatchingVersionReporter;
 import org.apache.ivy.plugins.matcher.PatternMatcher;
 import org.apache.ivy.plugins.resolver.DependencyResolver;
+import org.apache.ivy.util.Message;
 import org.apache.ivy.util.filter.Filter;
 import org.apache.ivy.util.filter.FilterHelper;
 
@@ -296,9 +297,12 @@ public class Ivy14 {
     private ResolveOptions newResolveOptions(String[] confs, String revision, File cache,
             Date date, boolean validate, boolean useCacheOnly, boolean transitive,
             boolean useOrigin, boolean download, boolean outputReport, Filter artifactFilter) {
+        if (useOrigin) {
+            ivy.getSettings().useDeprecatedUseOrigin();
+        }
         return new ResolveOptions().setConfs(confs).setRevision(revision)
                 .setValidate(validate).setUseCacheOnly(useCacheOnly).setTransitive(transitive)
-                .setUseOrigin(useOrigin).setDownload(download).setOutputReport(outputReport)
+                .setDownload(download).setOutputReport(outputReport)
                 .setArtifactFilter(artifactFilter);
     }
 

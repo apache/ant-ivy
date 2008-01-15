@@ -80,13 +80,6 @@ public class ResolveOptions {
     private boolean outputReport = true;
 
     /**
-     * True if the original files from the repositories should be used instead of downloaded ones,
-     * false otherwise. This means that artifacts which can be used directory in their original
-     * location won't be downloaded if this option is set to true
-     */
-    private boolean useOrigin = false;
-
-    /**
      * A filter to use to avoid downloading all artifacts.
      */
     private Filter artifactFilter = FilterHelper.NO_FILTER;
@@ -111,7 +104,6 @@ public class ResolveOptions {
         transitive = options.transitive;
         download = options.download;
         outputReport = options.outputReport;
-        useOrigin = options.useOrigin;
         artifactFilter = options.artifactFilter;
         resolveId = options.resolveId;
     }
@@ -230,15 +222,6 @@ public class ResolveOptions {
 
     public ResolveOptions setRevision(String revision) {
         this.revision = revision;
-        return this;
-    }
-
-    public boolean isUseOrigin() {
-        return useOrigin;
-    }
-
-    public ResolveOptions setUseOrigin(boolean useOrigin) {
-        this.useOrigin = useOrigin;
         return this;
     }
 

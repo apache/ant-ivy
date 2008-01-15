@@ -22,11 +22,13 @@
 	        basedir="repository" 
 	        ivyPattern="[module]/ivys/ivy-[revision].xml" 
 	        artifactPattern="[module]/[type]s/[artifact]-[revision].[ext]"
+	        useOrigin="true"
 			lockStrategy="artifact-lock">
 		<cache name="mycache" 
 				basedir="mycache"
 				ivyPattern="[module]/ivy-[revision].xml" 
 				artifactPattern="[module]/[artifact]-[revision].[ext]"
+				useOrigin="false"
 				lockStrategy="no-lock"
 				defaultTTL="1s">
 			<ttl revision="latest.integration" duration="200ms" />
