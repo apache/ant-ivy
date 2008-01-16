@@ -72,6 +72,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - IMPROVEMENT: Decrease memory footprint (IVY-662)
 - IMPROVEMENT: Downgrade Ant version requirement to 1.6 to build Ivy (IVY-687)
 
+- FIX: Ivy swallows ParseException when using a latest strategy requiring module descriptors (IVY-702)
 - FIX: Problem with cached Ivy files which have extra attributes (IVY-693)
 - FIX: Detection of newer and better artifacts should not happen if 'checkModified' is set to 'false' (IVY-389) (with contribution from Johan Stuyts)
 - FIX: Ivy doesn't respect the order of the ivy patterns as defined in the settings (IVY-676)

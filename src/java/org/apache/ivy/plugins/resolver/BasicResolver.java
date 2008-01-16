@@ -432,6 +432,8 @@ public abstract class BasicResolver extends AbstractResolver {
                         return new MDResolvedResource(resource, rev, rmr);
                     }
                 } catch (ParseException e) {
+                    Message.warn("Failed to parse the file '" + resource + "': "
+                            + e.getMessage());
                     return null;
                 }
             }
