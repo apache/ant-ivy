@@ -21,6 +21,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 	Mirko Bulovic
 	Kristian Cibulskis
 	Andrea Bernardo Ciddio
+	Benjamin Francisoud
 	Jacob Grydholt Jensen
 	Scott Goldstein
 	Pierre Hägnestrand
@@ -73,6 +74,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - IMPROVEMENT: Downgrade Ant version requirement to 1.6 to build Ivy (IVY-687)
 - IMPROVEMENT: In the ResolveReport class, add the possibility to filter the evicted module while getting the list of DownloadArtifact (IVY-704) (thanks to Nicolas Lalevée)
 
+- FIX: Update install ivy build file example (IVY-705) (thanks to Benjamin Francisoud)
 - FIX: Ivy swallows ParseException when using a latest strategy requiring module descriptors (IVY-702) (thanks to Nicolas Lalevée)
 - FIX: Problem with cached Ivy files which have extra attributes (IVY-693)
 - FIX: Detection of newer and better artifacts should not happen if 'checkModified' is set to 'false' (IVY-389) (with contribution from Johan Stuyts)
