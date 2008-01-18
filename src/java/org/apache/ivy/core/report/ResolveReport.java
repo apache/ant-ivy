@@ -21,9 +21,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -104,7 +104,7 @@ public class ResolveReport {
     }
 
     public IvyNode[] getEvictedNodes() {
-        Collection all = new HashSet();
+        Collection all = new LinkedHashSet();
         for (Iterator iter = confReports.values().iterator(); iter.hasNext();) {
             ConfigurationResolveReport report = (ConfigurationResolveReport) iter.next();
             all.addAll(Arrays.asList(report.getEvictedNodes()));
@@ -113,7 +113,7 @@ public class ResolveReport {
     }
 
     public IvyNode[] getUnresolvedDependencies() {
-        Collection all = new HashSet();
+        Collection all = new LinkedHashSet();
         for (Iterator iter = confReports.values().iterator(); iter.hasNext();) {
             ConfigurationResolveReport report = (ConfigurationResolveReport) iter.next();
             all.addAll(Arrays.asList(report.getUnresolvedDependencies()));
@@ -155,7 +155,7 @@ public class ResolveReport {
      */
     public ArtifactDownloadReport[] getArtifactsReports(
             DownloadStatus downloadStatus, boolean withEvicted) {
-        Collection all = new HashSet();
+        Collection all = new LinkedHashSet();
         for (Iterator iter = confReports.values().iterator(); iter.hasNext();) {
             ConfigurationResolveReport report = (ConfigurationResolveReport) iter.next();
             ArtifactDownloadReport[] reports = 
@@ -166,7 +166,7 @@ public class ResolveReport {
     }
 
     public ArtifactDownloadReport[] getArtifactsReports(ModuleRevisionId mrid) {
-        Collection all = new HashSet();
+        Collection all = new LinkedHashSet();
         for (Iterator iter = confReports.values().iterator(); iter.hasNext();) {
             ConfigurationResolveReport report = (ConfigurationResolveReport) iter.next();
             all.addAll(Arrays.asList(report.getDownloadReports(mrid)));

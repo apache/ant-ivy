@@ -23,7 +23,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -54,7 +53,7 @@ public class ConfigurationResolveReport {
 
     private Date date;
 
-    private Map dependencyReports = new HashMap();
+    private Map dependencyReports = new LinkedHashMap();
 
     private Map dependencies = new LinkedHashMap();
 
@@ -178,7 +177,7 @@ public class ConfigurationResolveReport {
     }
 
     private Set/*<ModuleRevisionId>*/ getEvictedMrids() {
-        Set/*<ModuleRevisionId>*/ evicted = new HashSet();
+        Set/*<ModuleRevisionId>*/ evicted = new LinkedHashSet();
         IvyNode[] evictedNodes = getEvictedNodes();
         for (int i = 0; i < evictedNodes.length; i++) {
             evicted.add(evictedNodes[i].getId());
@@ -234,7 +233,7 @@ public class ConfigurationResolveReport {
                 ModuleId mid = dependency.getResolvedId().getModuleId();
                 Collection deps = (Collection) modulesIdsMap.get(mid);
                 if (deps == null) {
-                    deps = new HashSet();
+                    deps = new LinkedHashSet();
                     modulesIdsMap.put(mid, deps);
                 }
                 deps.add(dependency);
@@ -288,7 +287,7 @@ public class ConfigurationResolveReport {
      */
     public ArtifactDownloadReport[] getArtifactsReports(
             DownloadStatus downloadStatus, boolean withEvicted) {
-        Collection all = new HashSet();
+        Collection all = new LinkedHashSet();
         Collection evictedMrids = null;
         if (!withEvicted) {
             evictedMrids = getEvictedMrids();
