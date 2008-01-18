@@ -44,7 +44,7 @@ import org.apache.ivy.plugins.report.XmlReportParser;
 import org.apache.ivy.util.Message;
 
 /**
- *
+ * Represents a whole resolution report for a module but for a specific configuration
  */
 public class ConfigurationResolveReport {
 
@@ -177,6 +177,15 @@ public class ConfigurationResolveReport {
         return (IvyNode[]) evicted.toArray(new IvyNode[evicted.size()]);
     }
 
+    private Set/*<ModuleRevisionId>*/ getEvictedMrids() {
+        Set/*<ModuleRevisionId>*/ evicted = new HashSet();
+        IvyNode[] evictedNodes = getEvictedNodes();
+        for (int i = 0; i < evictedNodes.length; i++) {
+            evicted.add(evictedNodes[i].getId());
+        }
+        return evicted;
+    }
+
     public IvyNode[] getDownloadedNodes() {
         List downloaded = new ArrayList();
         for (Iterator iter = getDependencies().iterator(); iter.hasNext();) {
@@ -255,41 +264,67 @@ public class ConfigurationResolveReport {
         return total;
     }
 
+    /**
+     * Get every report on the download requests.
+     * 
+     * @return the list of reports, never <code>null</code>
+     */
     public ArtifactDownloadReport[] getAllArtifactsReports() {
-        List result = new ArrayList();
-        for (Iterator iter = dependencyReports.values().iterator(); iter.hasNext();) {
-            Collection reports = (Collection) iter.next();
-            result.addAll(reports);
-        }
-        return (ArtifactDownloadReport[]) result.toArray(new ArtifactDownloadReport[result.size()]);
+        return getArtifactsReports(null, true);
     }
 
+    /**
+     * Get the report on the download requests. The list of download report can be restricted to a
+     * specific download status, and also remove the download report for the evicted modules.
+     * 
+     * @param downloadStatus
+     *            the status of download to retreive. Set it to <code>null</code> for no
+     *            restriction on the download status
+     * @param withEvicted
+     *            set it to <code>true</code> if the report for the evicted modules have to be
+     *            retrieved.
+     * @return the list of reports, never <code>null</code>
+     * @see ArtifactDownloadReport
+     */
+    public ArtifactDownloadReport[] getArtifactsReports(
+            DownloadStatus downloadStatus, boolean withEvicted) {
+        Collection all = new HashSet();
+        Collection evictedMrids = null;
+        if (!withEvicted) {
+            evictedMrids = getEvictedMrids();
+        }
+        for (Iterator iter = dependencyReports.values().iterator(); iter.hasNext();) {
+            Collection reports = (Collection) iter.next();
+            for (Iterator itReport  = reports.iterator(); itReport.hasNext();) {
+                ArtifactDownloadReport report = (ArtifactDownloadReport) itReport.next();
+                if (downloadStatus != null && report.getDownloadStatus() != downloadStatus) {
+                    continue;
+                }
+                if (withEvicted 
+                        || !evictedMrids.contains(report.getArtifact().getModuleRevisionId())) {
+                    all.add(report);   
+                }
+            }
+        }
+        return (ArtifactDownloadReport[]) all.toArray(new ArtifactDownloadReport[all.size()]);
+    }
+
+    /**
+     * Get the report on the sucessfull download requests with the evicted modules
+     * 
+     * @return the list of reports, never <code>null</code>
+     */
     public ArtifactDownloadReport[] getDownloadedArtifactsReports() {
-        List result = new ArrayList();
-        for (Iterator iter = dependencyReports.values().iterator(); iter.hasNext();) {
-            Collection reports = (Collection) iter.next();
-            for (Iterator iterator = reports.iterator(); iterator.hasNext();) {
-                ArtifactDownloadReport adr = (ArtifactDownloadReport) iterator.next();
-                if (adr.getDownloadStatus() == DownloadStatus.SUCCESSFUL) {
-                    result.add(adr);
-                }
-            }
-        }
-        return (ArtifactDownloadReport[]) result.toArray(new ArtifactDownloadReport[result.size()]);
+        return getArtifactsReports(DownloadStatus.SUCCESSFUL, true);
     }
 
+    /**
+     * Get the report on the failed download requests with the evicted modules
+     * 
+     * @return the list of reports, never <code>null</code>
+     */
     public ArtifactDownloadReport[] getFailedArtifactsReports() {
-        List result = new ArrayList();
-        for (Iterator iter = dependencyReports.values().iterator(); iter.hasNext();) {
-            Collection reports = (Collection) iter.next();
-            for (Iterator iterator = reports.iterator(); iterator.hasNext();) {
-                ArtifactDownloadReport adr = (ArtifactDownloadReport) iterator.next();
-                if (adr.getDownloadStatus() == DownloadStatus.FAILED) {
-                    result.add(adr);
-                }
-            }
-        }
-        return (ArtifactDownloadReport[]) result.toArray(new ArtifactDownloadReport[result.size()]);
+        return getArtifactsReports(DownloadStatus.FAILED, true);
     }
 
     public boolean hasError() {

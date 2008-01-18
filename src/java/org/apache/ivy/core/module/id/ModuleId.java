@@ -23,7 +23,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- *
+ * Identifies a module, without revision information
+ * 
+ * @see <a href="package-summary.html">org.apache.ivy.core.module.id</a>
  */
 public class ModuleId implements Comparable {
     static final String ENCODE_SEPARATOR = ":#@#:";

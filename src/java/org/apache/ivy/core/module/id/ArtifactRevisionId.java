@@ -23,7 +23,9 @@ import org.apache.ivy.core.IvyPatternHelper;
 import org.apache.ivy.util.extendable.UnmodifiableExtendableItem;
 
 /**
- * identifies an artifact in a particular module revision
+ * Identifies an artifact in a particular module revision
+ * 
+ * @see <a href="package-summary.html">org.apache.ivy.core.module.id</a>
  */
 public class ArtifactRevisionId extends UnmodifiableExtendableItem {
     public static ArtifactRevisionId newInstance(ModuleRevisionId mrid, String name, String type,

@@ -34,7 +34,7 @@ import org.apache.ivy.plugins.version.VersionMatcher;
 import org.apache.ivy.util.extendable.ExtendableItem;
 
 /**
- *
+ * Decriptor of a module. This is the Java representation of an ivy.xml
  */
 public interface ModuleDescriptor extends ExtendableItem, ArtifactInfo {
     public static final String DEFAULT_CONFIGURATION = "default";

@@ -71,6 +71,10 @@ public class ArtifactDownloadReport {
         return artifact.getName();
     }
 
+    /**
+     * 
+     * @return the type of the downloaded artifact
+     */
     public String getType() {
         return artifact.getType();
     }

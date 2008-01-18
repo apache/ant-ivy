@@ -71,6 +71,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - IMPROVEMENT: Flexible cache management (IVY-399 - not completed yet)
 - IMPROVEMENT: Decrease memory footprint (IVY-662)
 - IMPROVEMENT: Downgrade Ant version requirement to 1.6 to build Ivy (IVY-687)
+- IMPROVEMENT: In the ResolveReport class, add the possibility to filter the evicted module while getting the list of DownloadArtifact (IVY-704) (thanks to Nicolas Lalevée)
 
 - FIX: Ivy swallows ParseException when using a latest strategy requiring module descriptors (IVY-702) (thanks to Nicolas Lalevée)
 - FIX: Problem with cached Ivy files which have extra attributes (IVY-693)

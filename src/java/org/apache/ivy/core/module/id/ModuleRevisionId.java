@@ -30,7 +30,9 @@ import org.apache.ivy.core.IvyPatternHelper;
 import org.apache.ivy.util.extendable.UnmodifiableExtendableItem;
 
 /**
- *
+ * Identifies a module in a particular version
+ * 
+ * @see <a href="package-summary.html">org.apache.ivy.core.module.id</a>
  */
 public class ModuleRevisionId extends UnmodifiableExtendableItem {
     private static final String ENCODE_SEPARATOR = ModuleId.ENCODE_SEPARATOR;
@@ -43,7 +45,6 @@ public class ModuleRevisionId extends UnmodifiableExtendableItem {
     private static final String REV_STRICT_CHARS_PATTERN 
         = "[a-zA-Z0-9\\-/\\._+=,\\[\\]\\{\\}\\(\\):@]";
 
-    
     private static final Map/*<ModuleRevisionId, ModuleRevisionId>*/ CACHE = new WeakHashMap();
 
     /**

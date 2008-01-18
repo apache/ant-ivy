@@ -42,12 +42,15 @@ import org.apache.ivy.util.filter.Filter;
 public class ResolveReport {
     private ModuleDescriptor md;
 
+    /** String conf -> ConfigurationResolveReport report */
     private Map confReports = new LinkedHashMap();
 
     private List problemMessages = new ArrayList();
 
-    private List dependencies = new ArrayList(); 
-    // the list of all dependencies resolved, ordered from the more dependent to the less dependent
+    /**
+     * the list of all dependencies resolved, ordered from the more dependent to the less dependent
+     */
+    private List dependencies = new ArrayList();
 
     private List artifacts = new ArrayList();
 
@@ -89,7 +92,7 @@ public class ResolveReport {
         return hasError;
     }
 
-    public void output(ReportOutputter[] outputters, ResolutionCacheManager cacheMgr) 
+    public void output(ReportOutputter[] outputters, ResolutionCacheManager cacheMgr)
             throws IOException {
         for (int i = 0; i < outputters.length; i++) {
             outputters[i].output(this, cacheMgr);
@@ -118,20 +121,46 @@ public class ResolveReport {
         return (IvyNode[]) all.toArray(new IvyNode[all.size()]);
     }
 
+    /**
+     * Get every report on the download requests.
+     * 
+     * @return the list of reports, never <code>null</code>
+     */
     public ArtifactDownloadReport[] getFailedArtifactsReports() {
-        Collection all = new HashSet();
-        for (Iterator iter = confReports.values().iterator(); iter.hasNext();) {
-            ConfigurationResolveReport report = (ConfigurationResolveReport) iter.next();
-            all.addAll(Arrays.asList(report.getFailedArtifactsReports()));
-        }
-        return (ArtifactDownloadReport[]) all.toArray(new ArtifactDownloadReport[all.size()]);
+        return getArtifactsReports(DownloadStatus.FAILED, true);
     }
 
+    /**
+     * Get every report on the download requests.
+     * 
+     * @return the list of reports, never <code>null</code>
+     */
     public ArtifactDownloadReport[] getAllArtifactsReports() {
+        return getArtifactsReports(null, true);
+    }
+
+    /**
+     * Get the report on the download requests. The list of download report can be restricted to a
+     * specific download status, and also remove the download report for the evicted modules.
+     * 
+     * @param downloadStatus
+     *            the status of download to retreive. Set it to <code>null</code> for no
+     *            restriction on the download status
+     * @param withEvicted
+     *            set it to <code>true</code> if the report for the evicted modules have to be
+     *            retrieved, <code>false</code> to exclude reports from modules evicted in all
+     *            configurations.
+     * @return the list of reports, never <code>null</code>
+     * @see ConfigurationResolveReport#getArtifactsReports(DownloadStatus, boolean)
+     */
+    public ArtifactDownloadReport[] getArtifactsReports(
+            DownloadStatus downloadStatus, boolean withEvicted) {
         Collection all = new HashSet();
         for (Iterator iter = confReports.values().iterator(); iter.hasNext();) {
             ConfigurationResolveReport report = (ConfigurationResolveReport) iter.next();
-            all.addAll(Arrays.asList(report.getAllArtifactsReports()));
+            ArtifactDownloadReport[] reports = 
+                report.getArtifactsReports(downloadStatus, withEvicted);
+            all.addAll(Arrays.asList(reports));
         }
         return (ArtifactDownloadReport[]) all.toArray(new ArtifactDownloadReport[all.size()]);
     }
@@ -209,7 +238,7 @@ public class ResolveReport {
      * Returns the list of all dependencies concerned by this report as a List of IvyNode ordered
      * from the more dependent to the least one
      * 
-     * @return  The list of all dependencies.
+     * @return The list of all dependencies.
      */
     public List getDependencies() {
         return dependencies;
@@ -219,7 +248,7 @@ public class ResolveReport {
      * Returns the list of all artifacts which should be downloaded per this resolve To know if the
      * artifact have actually been downloaded use information found in ConfigurationResolveReport.
      * 
-     * @return  The list of all artifacts.
+     * @return The list of all artifacts.
      */
     public List getArtifacts() {
         return artifacts;
@@ -262,7 +291,7 @@ public class ResolveReport {
     public void setDownloadSize(long size) {
         this.downloadSize = size;
     }
-    
+
     /**
      * The total size of downloaded artifacts, in bytes.
      * <p>
