@@ -21,9 +21,12 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.HashMap;
 import java.util.Locale;
 
 import org.apache.ivy.plugins.repository.AbstractRepository;
+import org.apache.ivy.util.Credentials;
+import org.apache.ivy.util.CredentialsUtil;
 import org.apache.ivy.util.Message;
 
 import com.jcraft.jsch.Session;
@@ -38,7 +41,7 @@ public abstract class AbstractSshBasedRepository extends AbstractRepository {
 
     private String keyFilePassword = null;
 
-    private String user = "guest";
+    private String user = null;
 
     private String host = null;
 
@@ -47,6 +50,15 @@ public abstract class AbstractSshBasedRepository extends AbstractRepository {
     public AbstractSshBasedRepository() {
         super();
     }
+
+
+    /**
+     * hashmap of user/hosts with credentials.
+     * key is hostname, value is Credentials
+     **/
+    private static HashMap credentialsCache = new HashMap();
+
+    private static final  int MAX_CREDENTILAS_CACHE_SIZE = 100;
 
     /**
      * get a new session using the default attributes if the given String is a full uri, use the
@@ -79,6 +91,15 @@ public abstract class AbstractSshBasedRepository extends AbstractRepository {
                 }
             }
         }
+        if (user == null) {
+             Credentials c = requestCredentials(host);
+             if (c != null) {
+                 user = c.getUserName();
+                 userPassword = c.getPasswd();
+             } else {
+                 Message.error("username is not set");
+             }
+        }
         return SshCache.getInstance().getSession(host, port, user, userPassword, getKeyFile(),
             getKeyFilePassword(), getPassFile());
     }
@@ -104,9 +125,9 @@ public abstract class AbstractSshBasedRepository extends AbstractRepository {
             if (uri.getPath() == null) {
                 throw new URISyntaxException(source, "Missing path in URI");
             }
-            if (uri.getUserInfo() == null && getUser() == null) {
-                throw new URISyntaxException(source, "Missing username in URI or in resolver");
-            }
+            //if (uri.getUserInfo() == null && getUser() == null) {
+            //    throw new URISyntaxException(source, "Missing username in URI or in resolver");
+            //}
             return uri;
         } catch (URISyntaxException e) {
             Message.error(e.getMessage());
@@ -114,6 +135,32 @@ public abstract class AbstractSshBasedRepository extends AbstractRepository {
             Message.error("Please use scheme://user:pass@hostname/path/to/repository");
             return null;
         }
+    }
+
+    /**
+     *  Called, when user was not found in URL.
+     * Maintain static hashe of credentials and retrieve or ask credentials
+     * for host.
+     *
+     * @param host 
+     *       host for which we want to get credentials.
+     * @return credentials for given host 
+     **/
+    private Credentials requestCredentials(String host) {
+      Object o =  credentialsCache.get(host);
+      if (o == null) { 
+         Credentials c = CredentialsUtil.promptCredentials(
+             new Credentials(null, host, user, userPassword), getPassFile());
+         if (c != null) {
+            if (credentialsCache.size() > MAX_CREDENTILAS_CACHE_SIZE) {
+              credentialsCache.clear();
+            }
+            credentialsCache.put(host, c);
+         }
+         return c;
+      } else {
+         return (Credentials) o;
+      }
     }
 
     /**

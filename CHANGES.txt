@@ -75,6 +75,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - IMPROVEMENT: Downgrade Ant version requirement to 1.6 to build Ivy (IVY-687)
 - IMPROVEMENT: In the ResolveReport class, add the possibility to filter the evicted module while getting the list of DownloadArtifact (IVY-704) (thanks to Nicolas Lalevée)
 
+- FIX: When in ssh plugin we does not set username in scheme, Ivy always try to connect with guest username, even if we change one in panel. (IVY-710) (thanks to Ruslan Shevchenko)
 - FIX: NPE in SshCache during publish with ssh resolver without passFile (IVY-709) (thanks to Ruslan Shevchenko)
 - FIX: Update install ivy build file example (IVY-705) (thanks to Benjamin Francisoud)
 - FIX: Ivy swallows ParseException when using a latest strategy requiring module descriptors (IVY-702) (thanks to Nicolas Lalevée)
