@@ -327,10 +327,8 @@ public final class SshCache {
                 Message.verbose(":: SSH :: connected to " + host + "!");
                 setSession(username, host, port, session);
             } catch (JSchException e) {
-                if (passFile!=null) {
-                  if (passFile.exists()) {
+                if (passFile != null && passFile.exists()) {
                     passFile.delete();
-                  }
                 }
                 IOException ex = new IOException(e.getMessage());
                 ex.initCause(e);
