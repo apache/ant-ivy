@@ -66,6 +66,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - NEW: Add ability for buildlist task to start build from specified module in the list (IVY-697) (thanks to Mirko Bulovic)
 - NEW: Cache dynamic revision resolution (IVY-694)
 
+- IMPROVEMENT: Review settings loading in Ant (IVY-703)
 - IMPROVEMENT: Move useOrigin to repository cache manager (IVY-700)
 - IMPROVEMENT: Make IBiblio resolver compatible with maven proxy (IVY-466)
 - IMPROVEMENT: Use namespace aware validation (IVY-553)

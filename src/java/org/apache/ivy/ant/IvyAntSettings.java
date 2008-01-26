@@ -23,6 +23,8 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.ParseException;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Properties;
 
 import org.apache.ivy.Ivy;
@@ -35,9 +37,10 @@ import org.apache.ivy.util.url.URLHandlerDispatcher;
 import org.apache.ivy.util.url.URLHandlerRegistry;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
-import org.apache.tools.ant.types.DataType;
+import org.apache.tools.ant.Task;
+import org.apache.tools.ant.taskdefs.Property;
 
-public class IvyAntSettings extends DataType {
+public class IvyAntSettings extends Task {
 
     public static class Credentials {
         private String realm;
@@ -81,6 +84,24 @@ public class IvyAntSettings extends DataType {
         }
     }
 
+    /**
+     * Use to override a previous definition of settings with the same id 
+     */
+    public static final String OVERRIDE_TRUE = "true";
+    /**
+     * Use to avoid overriding a previous definition of settings with the same id
+     */
+    public static final String OVERRIDE_FALSE = "false";
+    /**
+     * Use to raise an error if attempting to override a previous definition of settings with the
+     * same id
+     */
+    public static final String OVERRIDE_NOT_ALLOWED = "notallowed";
+
+    private static final Collection OVERRIDE_VALUES = Arrays.asList(new String[] {
+            OVERRIDE_TRUE, OVERRIDE_FALSE, OVERRIDE_NOT_ALLOWED
+    });
+
     private Ivy ivyEngine = null;
 
     private File file = null;
@@ -95,7 +116,9 @@ public class IvyAntSettings extends DataType {
 
     private String passwd = null;
     
-    private String id = null;
+    private String id = "ivy.instance";
+
+    private String override = OVERRIDE_NOT_ALLOWED;
 
     /**
      * Returns the default ivy settings of this classloader. If it doesn't exist yet, a new one is
@@ -123,16 +146,11 @@ public class IvyAntSettings extends DataType {
                     + "A default instance will be used", Project.MSG_INFO);
             IvyAntSettings defaultInstance = new IvyAntSettings();
             defaultInstance.setProject(project);
-            defaultInstance.registerAsDefault();
+            defaultInstance.perform();
             return defaultInstance;
         } else {
             return (IvyAntSettings) defaultInstanceObj;
         }
-
-    }
-
-    protected void registerAsDefault() {
-        getProject().addReference("ivy.instance", this);
     }
 
     public File getFile() {
@@ -192,6 +210,14 @@ public class IvyAntSettings extends DataType {
     public void setUrl(String confUrl) throws MalformedURLException {
         this.url = new URL(confUrl);
     }
+
+    public void setOverride(String override) {
+        if (!OVERRIDE_VALUES.contains(override)) {
+            throw new IllegalArgumentException("invalid override value '" + override + "'. "
+                + "Valid values are " + OVERRIDE_VALUES);
+        }
+        this.override = override;
+    }
     
     /*
      * This is usually not necessary to define a reference in Ant, but it's the only
@@ -199,6 +225,10 @@ public class IvyAntSettings extends DataType {
      */
     public void setId(String id) {
         this.id = id;
+    }
+    
+    public String getId() {
+        return id;
     }
 
     /*
@@ -216,19 +246,40 @@ public class IvyAntSettings extends DataType {
      */
     public Ivy getConfiguredIvyInstance() {
         if (ivyEngine == null) {
-            ivyEngine = createIvyEngine();
+            perform();
         }
         return ivyEngine;
     }
 
-    private Ivy createIvyEngine() {
+    public void execute() throws BuildException {
+        if (!OVERRIDE_TRUE.equals(override)) {
+            if (getProject().getReference(id) != null) {
+                if (OVERRIDE_FALSE.equals(override)) {
+                    verbose("a settings definition is already available for " + id + ": skipping");
+                    return;
+                } else {
+                    // OVERRIDE_NOT_ALLOWED
+                    throw new BuildException(
+                        "overriding a previous definition of ivy:settings with the id '" + id + "'" 
+                        + " is not allowed when using override='" + OVERRIDE_NOT_ALLOWED + "'.");
+                }
+            }
+        }
+        getProject().addReference(id, this);
+        Property prop = new Property() {
+            public void execute() throws BuildException {
+                addProperties(getDefaultProperties());
+            }
+        };
+        prop.setProject(getProject());
+        prop.execute();
+        createIvyEngine();
+    }
+
+    private void createIvyEngine() {
         IvyAntVariableContainer ivyAntVariableContainer = new IvyAntVariableContainer(getProject());
 
         IvySettings settings = new IvySettings(ivyAntVariableContainer);
-        // NB: It is already done in the ivy.configure, but it is required for
-        // defineDefaultSettingFile (that should be done before the ivy.configure
-        settings.addAllVariables(getDefaultProperties(), false);
-
         
         if (file == null && url == null) {
             defineDefaultSettingFile(ivyAntVariableContainer);
@@ -253,6 +304,7 @@ public class IvyAntSettings extends DataType {
                 ivy.configure(url);
             }
             ivyAntVariableContainer.updateProject(id);
+            ivyEngine = ivy;
         } catch (ParseException e) {
             throw new BuildException("impossible to configure ivy:settings with given "
                     + (file != null ? "file: " + file : "url :" + url) + " :" + e, e);
@@ -262,7 +314,6 @@ public class IvyAntSettings extends DataType {
         } finally {
             ivy.getLoggerEngine().popLogger();
         }
-        return ivy;
     }
 
     protected Properties getDefaultProperties() {
@@ -286,7 +337,7 @@ public class IvyAntSettings extends DataType {
     }
 
     /**
-     * Set _file or _url to its default value
+     * Set file or url to its default value
      * 
      * @param variableContainer
      */

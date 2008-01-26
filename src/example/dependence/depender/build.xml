@@ -36,7 +36,7 @@
         <path location="${classes.dir}" />
     </path>
 
-    <ivy:settings file="${ivy.settings.dir}/ivysettings.xml" id="ivy.instance"/>
+    <ivy:settings file="${ivy.settings.dir}/ivysettings.xml" />
     
     <!-- ================================= 
           target: resolve              
