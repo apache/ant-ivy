@@ -107,6 +107,10 @@ public class RetrieveEngine {
             for (Iterator iter = artifactsToCopy.keySet().iterator(); iter.hasNext();) {
                 ArtifactDownloadReport artifact = (ArtifactDownloadReport) iter.next();
                 File archive = artifact.getLocalFile();
+                if (archive == null) {
+                    Message.verbose("\tno local file available for " + artifact + ": skipping");
+                    continue;
+                }
                 Set dest = (Set) artifactsToCopy.get(artifact);
                 Message.verbose("\tretrieving " + archive);
                 for (Iterator it2 = dest.iterator(); it2.hasNext();) {
