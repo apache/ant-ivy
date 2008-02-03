@@ -25,6 +25,7 @@ import java.io.OutputStream;
 import org.apache.ivy.core.cache.ResolutionCacheManager;
 import org.apache.ivy.core.report.ConfigurationResolveReport;
 import org.apache.ivy.core.report.ResolveReport;
+import org.apache.ivy.core.resolve.ResolveOptions;
 import org.apache.ivy.util.FileUtil;
 import org.apache.ivy.util.Message;
 
@@ -39,7 +40,9 @@ public class XmlReportOutputter implements ReportOutputter {
         return XML;
     }
 
-    public void output(ResolveReport report, ResolutionCacheManager cacheMgr) throws IOException {
+    public void output(
+            ResolveReport report, ResolutionCacheManager cacheMgr, ResolveOptions options) 
+            throws IOException {
         String[] confs = report.getConfigurations();
         for (int i = 0; i < confs.length; i++) {
             output(report.getConfigurationReport(confs[i]), report.getResolveId(), confs, cacheMgr);

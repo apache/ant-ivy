@@ -69,6 +69,12 @@ The attributes listed are then mostly used only if a resolve is triggered automa
     <tr><td>file</td><td>the file to resolve if a resolve is necessary <span class="since">since 2.0</span></td><td>No. Defaults to the previous resolved Ivy file or to ${ivy.dep.file}</td></tr>
 	<tr><td>settingsRef</td><td>A reference to the ivy settings that must be used by this task <span class="since">(since 2.0)</span></td><td>No, 'ivy.instance' is taken by default.</td></tr>
 	<tr><td>resolveId</td><td>The id which was used for a previous resolve, or the resolveId if a new resolve is performed <span class="since">(since 2.0)</span></td><td>No, defaults to '[org]-[module]'.</td></tr>
+    <tr><td>log</td><td>the log setting to use during the resolve process. <span class="since">(since 2.0)</span><br/>
+Available options are:
+<ul><li>default</li> the default log settings, where all usual messages are output to the console
+<li>download-only</li> disable all usual messages but download ones. A resolve with everything in cache won't output any message.
+<li>quiet</li> disable all usual messages, making the whole resolve process quiet unless errors occur
+</ul></td><td>No, defaults to 'default'.</td></tr>
 </tbody>
 </table>
 <h1>Examples</h1>

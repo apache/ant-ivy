@@ -33,6 +33,7 @@ import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.publish.PublishEngine;
 import org.apache.ivy.core.report.ArtifactDownloadReport;
 import org.apache.ivy.core.report.ResolveReport;
+import org.apache.ivy.core.resolve.DownloadOptions;
 import org.apache.ivy.core.resolve.IvyNode;
 import org.apache.ivy.core.resolve.ResolveEngine;
 import org.apache.ivy.core.resolve.ResolveOptions;
@@ -124,12 +125,13 @@ public class InstallEngine {
             ResolveReport report = new ResolveReport(md, resolveId);
 
             Message.info(":: resolving dependencies ::");
-            IvyNode[] dependencies = resolveEngine.getDependencies(md, new ResolveOptions()
-                    .setResolveId(resolveId).setConfs(new String[] {"default"}), report);
+            ResolveOptions options = new ResolveOptions()
+                                .setResolveId(resolveId).setConfs(new String[] {"default"});
+            IvyNode[] dependencies = resolveEngine.getDependencies(md, options, report);
             report.setDependencies(Arrays.asList(dependencies), artifactFilter);
 
             Message.info(":: downloading artifacts to cache ::");
-            resolveEngine.downloadArtifacts(report, artifactFilter);
+            resolveEngine.downloadArtifacts(report, artifactFilter, new DownloadOptions());
 
             // now that everything is in cache, we can publish all these modules
             Message.info(":: installing in " + to + " ::");
@@ -171,7 +173,7 @@ public class InstallEngine {
             Message.info(":: install resolution report ::");
 
             // output report
-            resolveEngine.outputReport(report, settings.getResolutionCacheManager());
+            resolveEngine.outputReport(report, settings.getResolutionCacheManager(), options);
 
             return report;
         } finally {

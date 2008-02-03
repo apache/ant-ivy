@@ -33,6 +33,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.ivy.core.IvyContext;
+import org.apache.ivy.core.LogOptions;
 import org.apache.ivy.core.event.resolve.EndResolveDependencyEvent;
 import org.apache.ivy.core.event.resolve.StartResolveDependencyEvent;
 import org.apache.ivy.core.module.descriptor.Artifact;
@@ -229,7 +230,8 @@ public class IvyNode implements Comparable {
                             module.getDescriptor(),
                             module.getResolver().getName(),
                             module.getArtifactResolver().getName());
-                        if (settings.logModuleWhenFound()) {
+                        if (settings.logModuleWhenFound() 
+                                && LogOptions.LOG_DEFAULT.equals(getData().getOptions().getLog())) {
                             Message.info("\tfound " + module.getId() + " in "
                                     + module.getResolver().getName());
                         } else {

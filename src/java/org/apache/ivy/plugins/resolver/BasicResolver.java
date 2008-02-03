@@ -35,6 +35,7 @@ import java.util.Map;
 
 import org.apache.ivy.core.IvyContext;
 import org.apache.ivy.core.IvyPatternHelper;
+import org.apache.ivy.core.LogOptions;
 import org.apache.ivy.core.cache.ArtifactOrigin;
 import org.apache.ivy.core.cache.CacheDownloadOptions;
 import org.apache.ivy.core.cache.CacheMetadataOptions;
@@ -576,12 +577,14 @@ public abstract class BasicResolver extends AbstractResolver {
         for (int i = 0; i < artifacts.length; i++) {
             ArtifactDownloadReport adr = cacheManager.download(
                 artifacts[i], artifactResourceResolver, downloader, 
-                getCacheDownloadOptions());
+                getCacheDownloadOptions(options));
             if (DownloadStatus.FAILED == adr.getDownloadStatus()) {
                 if (!ArtifactDownloadReport.MISSING_ARTIFACT.equals(adr.getDownloadDetails())) {
                     Message.warn("\t" + adr);
                 }
             } else if (DownloadStatus.NO == adr.getDownloadStatus()) {
+                Message.verbose("\t" + adr);
+            } else if (LogOptions.LOG_QUIET.equals(options.getLog())) {
                 Message.verbose("\t" + adr);
             } else {
                 Message.info("\t" + adr);

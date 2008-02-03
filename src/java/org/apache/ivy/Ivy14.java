@@ -37,6 +37,7 @@ import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.publish.PublishOptions;
 import org.apache.ivy.core.report.ArtifactDownloadReport;
 import org.apache.ivy.core.report.ResolveReport;
+import org.apache.ivy.core.resolve.DownloadOptions;
 import org.apache.ivy.core.resolve.IvyNode;
 import org.apache.ivy.core.resolve.ResolveOptions;
 import org.apache.ivy.core.resolve.ResolvedModuleRevision;
@@ -138,7 +139,9 @@ public class Ivy14 {
     }
 
     public ArtifactDownloadReport download(Artifact artifact, File cache, boolean useOrigin) {
-        return ivy.getResolveEngine().download(artifact, useOrigin);
+        Message.deprecated(
+            "using cache and useOrigin when calling download is not supported anymore");
+        return ivy.getResolveEngine().download(artifact, new DownloadOptions());
     }
 
     public ResolvedModuleRevision findModule(ModuleRevisionId id) {

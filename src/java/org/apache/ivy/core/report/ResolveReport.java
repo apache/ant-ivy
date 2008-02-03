@@ -92,10 +92,11 @@ public class ResolveReport {
         return hasError;
     }
 
-    public void output(ReportOutputter[] outputters, ResolutionCacheManager cacheMgr)
+    public void output(
+            ReportOutputter[] outputters, ResolutionCacheManager cacheMgr, ResolveOptions options)
             throws IOException {
         for (int i = 0; i < outputters.length; i++) {
-            outputters[i].output(this, cacheMgr);
+            outputters[i].output(this, cacheMgr, options);
         }
     }
 

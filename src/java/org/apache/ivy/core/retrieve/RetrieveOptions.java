@@ -17,6 +17,7 @@
  */
 package org.apache.ivy.core.retrieve;
 
+import org.apache.ivy.core.LogOptions;
 import org.apache.ivy.util.filter.Filter;
 import org.apache.ivy.util.filter.FilterHelper;
 
@@ -25,7 +26,7 @@ import org.apache.ivy.util.filter.FilterHelper;
  * 
  * @see RetrieveEngine
  */
-public class RetrieveOptions {
+public class RetrieveOptions extends LogOptions {
     /**
      * The names of configurations to retrieve. If the array consists only of '*', then all
      * configurations of the module will be retrieved.

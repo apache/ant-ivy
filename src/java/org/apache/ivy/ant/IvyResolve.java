@@ -20,8 +20,11 @@ package org.apache.ivy.ant;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.text.ParseException;
+import java.util.Arrays;
+import java.util.Collection;
 
 import org.apache.ivy.Ivy;
+import org.apache.ivy.core.LogOptions;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.report.ResolveReport;
@@ -70,6 +73,8 @@ public class IvyResolve extends IvyTask {
     private boolean useOrigin = false;
 
     private String resolveId = null;
+    
+    private String log = ResolveOptions.LOG_DEFAULT;
 
     public boolean isUseOrigin() {
         return useOrigin;
@@ -150,6 +155,14 @@ public class IvyResolve extends IvyTask {
     public void setRefresh(boolean refresh) {
         this.refresh = refresh;
     }
+    
+    public String getLog() {
+        return log;
+    }
+
+    public void setLog(String log) {
+        this.log = log;
+    }
 
     /**
      * @deprecated Use {@link #setFailureProperty(String)} instead
@@ -186,6 +199,10 @@ public class IvyResolve extends IvyTask {
                 }
                 if (file != null) {
                     throw new BuildException("'file' not allowed when using inline mode");
+                }
+                if (!getAllowedLogOptions().contains(log)) {
+                    throw new BuildException("invalid option for 'log': " + log 
+                        + ". Available options are " + getAllowedLogOptions());
                 }
                 for (int i = 0; i < confs.length; i++) {
                     if ("*".equals(confs[i])) {
@@ -299,11 +316,17 @@ public class IvyResolve extends IvyTask {
         }
     }
 
+    protected Collection/*<String>*/ getAllowedLogOptions() {
+        return Arrays.asList(new String [] {
+                LogOptions.LOG_DEFAULT, LogOptions.LOG_DOWNLOAD_ONLY, LogOptions.LOG_QUIET});
+    }
+
     private ResolveOptions getResolveOptions(Ivy ivy, String[] confs, IvySettings settings) {
         if (useOrigin) {
             settings.useDeprecatedUseOrigin();
         }
-        return new ResolveOptions()
+        return ((ResolveOptions) new ResolveOptions()
+                .setLog(log))
                 .setConfs(confs)
                 .setValidate(doValidate(settings))
                 .setArtifactFilter(FilterHelper.getArtifactTypeFilter(type))

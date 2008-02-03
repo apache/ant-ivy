@@ -17,6 +17,10 @@
  */
 package org.apache.ivy.ant;
 
+import java.util.Arrays;
+import java.util.Collection;
+
+import org.apache.ivy.core.LogOptions;
 import org.apache.ivy.core.retrieve.RetrieveOptions;
 import org.apache.ivy.util.filter.Filter;
 import org.apache.tools.ant.BuildException;
@@ -44,13 +48,19 @@ public class IvyRetrieve extends IvyPostResolveTask {
     public void doExecute() throws BuildException {
         prepareAndCheck();
 
+        if (!getAllowedLogOptions().contains(getLog())) {
+            throw new BuildException("invalid option for 'log': " + getLog() 
+                + ". Available options are " + getAllowedLogOptions());
+        }
+
         pattern = getProperty(pattern, getSettings(), "ivy.retrieve.pattern");
         try {
             Filter artifactFilter = getArtifactFilter();
             int targetsCopied = getIvyInstance().retrieve(
                 getResolvedMrid(),
                 pattern,
-                new RetrieveOptions()
+                ((RetrieveOptions) new RetrieveOptions()
+                    .setLog(getLog()))
                     .setConfs(splitConfs(getConf()))
                     .setDestIvyPattern(ivypattern)
                     .setArtifactFilter(artifactFilter)
@@ -64,6 +74,11 @@ public class IvyRetrieve extends IvyPostResolveTask {
         } catch (Exception ex) {
             throw new BuildException("impossible to ivy retrieve: " + ex, ex);
         }
+    }
+
+    protected Collection/*<String>*/ getAllowedLogOptions() {
+        return Arrays.asList(new String [] {
+                LogOptions.LOG_DEFAULT, LogOptions.LOG_DOWNLOAD_ONLY, LogOptions.LOG_QUIET});
     }
 
     public String getIvypattern() {

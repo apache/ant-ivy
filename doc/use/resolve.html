@@ -126,6 +126,13 @@ After the call to this task, a reference to the module descriptor resolved is pu
 
     <tr><td>resolveId</td><td>An id which can be used later to refer to the results of this resolve <span class="since">(since 2.0)</span></td><td>No, defaults to '[org]-[module]'.</td></tr>
 
+    <tr><td>log</td><td>the log setting to use during the resolve process. <span class="since">(since 2.0)</span><br/>
+Available options are:
+<ul><li>default</li> the default log settings, where all usual messages are output to the console
+<li>download-only</li> disable all usual messages but download ones. A resolve with everything in cache won't output any message.
+<li>quiet</li> disable all usual messages, making the whole resolve process quiet unless errors occur
+</ul></td><td>No, defaults to 'default'.</td></tr>
+
 </tbody>
 </table>
 <h1>Examples</h1>

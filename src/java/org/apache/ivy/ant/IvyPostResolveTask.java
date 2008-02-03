@@ -26,6 +26,7 @@ import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleId;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.report.ResolveReport;
+import org.apache.ivy.core.resolve.ResolveOptions;
 import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.util.Message;
 import org.apache.ivy.util.StringUtils;
@@ -62,6 +63,8 @@ public abstract class IvyPostResolveTask extends IvyTask {
     private boolean useOrigin = false;
 
     private Boolean keep = null;
+    
+    private String log = ResolveOptions.LOG_DEFAULT;
 
     public boolean isUseOrigin() {
         return useOrigin;
@@ -69,6 +72,14 @@ public abstract class IvyPostResolveTask extends IvyTask {
 
     public void setUseOrigin(boolean useOrigin) {
         this.useOrigin = useOrigin;
+    }
+    
+    public String getLog() {
+        return log;
+    }
+
+    public void setLog(String log) {
+        this.log = log;
     }
 
     protected void prepareAndCheck() {
@@ -257,6 +268,7 @@ public abstract class IvyPostResolveTask extends IvyTask {
         resolve.setUseOrigin(useOrigin);
         resolve.setValidate(isValidate());
         resolve.setKeep(isKeep());
+        resolve.setLog(getLog());
         return resolve;
     }
 

@@ -30,6 +30,7 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.apache.ivy.core.IvyContext;
+import org.apache.ivy.core.LogOptions;
 import org.apache.ivy.core.cache.DefaultResolutionCacheManager;
 import org.apache.ivy.core.cache.RepositoryCacheManager;
 import org.apache.ivy.core.cache.ResolutionCacheManager;
@@ -45,6 +46,7 @@ import org.apache.ivy.core.publish.PublishEngine;
 import org.apache.ivy.core.publish.PublishOptions;
 import org.apache.ivy.core.report.ResolveReport;
 import org.apache.ivy.core.repository.RepositoryManagementEngine;
+import org.apache.ivy.core.resolve.ResolveData;
 import org.apache.ivy.core.resolve.ResolveEngine;
 import org.apache.ivy.core.resolve.ResolveOptions;
 import org.apache.ivy.core.resolve.ResolvedModuleRevision;
@@ -304,12 +306,21 @@ public class Ivy {
     
             eventManager.addTransferListener(new TransferListener() {
                 public void transferProgress(TransferEvent evt) {
+                    ResolveData resolve;
                     switch (evt.getEventType()) {
                         case TransferEvent.TRANSFER_PROGRESS:
-                            Message.progress();
+                            resolve = IvyContext.getContext().getResolveData();
+                            if (resolve == null || !LogOptions.LOG_QUIET.equals(
+                                    resolve.getOptions().getLog())) {
+                                Message.progress();
+                            }
                             break;
                         case TransferEvent.TRANSFER_COMPLETED:
-                            Message.endProgress(" (" + (evt.getTotalLength() / KILO) + "kB)");
+                            resolve = IvyContext.getContext().getResolveData();
+                            if (resolve == null || !LogOptions.LOG_QUIET.equals(
+                                    resolve.getOptions().getLog())) {
+                                Message.endProgress(" (" + (evt.getTotalLength() / KILO) + "kB)");
+                            }
                             break;
                         default:
                             break;

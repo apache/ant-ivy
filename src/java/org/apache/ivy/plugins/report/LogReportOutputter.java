@@ -30,6 +30,7 @@ import org.apache.ivy.core.report.ArtifactDownloadReport;
 import org.apache.ivy.core.report.ConfigurationResolveReport;
 import org.apache.ivy.core.report.ResolveReport;
 import org.apache.ivy.core.resolve.IvyNode;
+import org.apache.ivy.core.resolve.ResolveOptions;
 import org.apache.ivy.core.resolve.IvyNodeEviction.EvictionData;
 import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.util.Message;
@@ -43,9 +44,11 @@ public class LogReportOutputter implements ReportOutputter {
         return CONSOLE;
     }
 
-    public void output(ResolveReport report, ResolutionCacheManager cacheMgr) throws IOException {
+    public void output(
+            ResolveReport report, ResolutionCacheManager cacheMgr, ResolveOptions options) 
+            throws IOException {
         IvySettings settings = IvyContext.getContext().getSettings();
-        if (settings.logModulesInUse()) {
+        if (settings.logModulesInUse() && ResolveOptions.LOG_DEFAULT.equals(options.getLog())) {
             Message.info("\t:: modules in use:");
             List dependencies = new ArrayList(report.getDependencies());
             Collections.sort(dependencies);
@@ -74,7 +77,7 @@ public class LogReportOutputter implements ReportOutputter {
 
         IvyNode[] evicted = report.getEvictedNodes();
 
-        if (evicted.length > 0) {
+        if (evicted.length > 0 && ResolveOptions.LOG_DEFAULT.equals(options.getLog())) {
             Message.info("\t:: evicted modules:");
             for (int i = 0; i < evicted.length; i++) {
                 Collection allEvictingNodes = evicted[i].getAllEvictingNodesDetails();
@@ -100,37 +103,39 @@ public class LogReportOutputter implements ReportOutputter {
             }
         }
 
-        //CheckStyle:MagicNumber| OFF
-        char[] sep = new char[69];
-        Arrays.fill(sep, '-');
-        Message.rawinfo("\t" + new String(sep));
-        StringBuffer line = new StringBuffer("\t");
-        append(line, "", 18);
-        append(line, "modules", 31);
-        line.append("|");
-        append(line, "artifacts", 15);
-        line.append("|");
-        Message.rawinfo(line.toString());
-
-        line = new StringBuffer("\t");
-        append(line, "conf", 18);
-        append(line, "number", 7);
-        append(line, "search", 7);
-        append(line, "dwnlded", 7);
-        append(line, "evicted", 7);
-        line.append("|");
-        append(line, "number", 7);
-        append(line, "dwnlded", 7);
-        //CheckStyle:MagicNumber| ON
-        line.append("|");
-        Message.rawinfo(line.toString());
-        Message.rawinfo("\t" + new String(sep));
-
-        String[] confs = report.getConfigurations();
-        for (int i = 0; i < confs.length; i++) {
-            output(report.getConfigurationReport(confs[i]));
+        if (ResolveOptions.LOG_DEFAULT.equals(options.getLog())) {
+            //CheckStyle:MagicNumber| OFF
+            char[] sep = new char[69];
+            Arrays.fill(sep, '-');
+            Message.rawinfo("\t" + new String(sep));
+            StringBuffer line = new StringBuffer("\t");
+            append(line, "", 18);
+            append(line, "modules", 31);
+            line.append("|");
+            append(line, "artifacts", 15);
+            line.append("|");
+            Message.rawinfo(line.toString());
+    
+            line = new StringBuffer("\t");
+            append(line, "conf", 18);
+            append(line, "number", 7);
+            append(line, "search", 7);
+            append(line, "dwnlded", 7);
+            append(line, "evicted", 7);
+            line.append("|");
+            append(line, "number", 7);
+            append(line, "dwnlded", 7);
+            //CheckStyle:MagicNumber| ON
+            line.append("|");
+            Message.rawinfo(line.toString());
+            Message.rawinfo("\t" + new String(sep));
+    
+            String[] confs = report.getConfigurations();
+            for (int i = 0; i < confs.length; i++) {
+                output(report.getConfigurationReport(confs[i]));
+            }
+            Message.rawinfo("\t" + new String(sep));
         }
-        Message.rawinfo("\t" + new String(sep));
 
         IvyNode[] unresolved = report.getUnresolvedDependencies();
         if (unresolved.length > 0) {

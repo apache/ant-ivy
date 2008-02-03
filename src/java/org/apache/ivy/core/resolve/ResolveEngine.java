@@ -201,6 +201,7 @@ public class ResolveEngine {
     public ResolveReport resolve(ModuleDescriptor md, ResolveOptions options)
             throws ParseException, IOException {
         DependencyResolver oldDictator = getDictatorResolver();
+        IvyContext context = IvyContext.getContext();
         if (options.isUseCacheOnly()) {
             setDictatorResolver(new CacheResolver(settings));
         }
@@ -215,13 +216,23 @@ public class ResolveEngine {
             eventManager.fireIvyEvent(new StartResolveEvent(md, confs));
 
             long start = System.currentTimeMillis();
-            Message.info(":: resolving dependencies :: " + md.getResolvedModuleRevisionId()
+            if (ResolveOptions.LOG_DEFAULT.equals(options.getLog())) {
+                Message.info(":: resolving dependencies :: " + md.getResolvedModuleRevisionId()
+                        + (options.isTransitive() ? "" : " [not transitive]"));
+                Message.info("\tconfs: " + Arrays.asList(confs));
+            } else {
+                Message.verbose(":: resolving dependencies :: " + md.getResolvedModuleRevisionId()
                     + (options.isTransitive() ? "" : " [not transitive]"));
-            Message.info("\tconfs: " + Arrays.asList(confs));
+                Message.verbose("\tconfs: " + Arrays.asList(confs));
+            }
             Message.verbose("\tvalidate = " + options.isValidate());
             Message.verbose("\trefresh = " + options.isRefresh());
+            
             ResolveReport report = new ResolveReport(md, options.getResolveId());
 
+            ResolveData data = new ResolveData(this, options);
+            context.setResolveData(data);
+            
             // resolve dependencies
             IvyNode[] dependencies = getDependencies(md, options, report);
             report.setDependencies(Arrays.asList(dependencies), options.getArtifactFilter());
@@ -275,11 +286,12 @@ public class ResolveEngine {
             if (options.isDownload()) {
                 Message.verbose(":: downloading artifacts ::");
 
-                downloadArtifacts(report, options.getArtifactFilter());
+                downloadArtifacts(report, options.getArtifactFilter(), 
+                    (DownloadOptions) new DownloadOptions().setLog(options.getLog()));
             }
 
             if (options.isOutputReport()) {
-                outputReport(report, cacheManager);
+                outputReport(report, cacheManager, options);
             }
 
             Message.verbose("\tresolve done (" + report.getResolveTime() + "ms resolve - "
@@ -293,20 +305,28 @@ public class ResolveEngine {
             Message.sumupProblems();
             throw ex;
         } finally {
+            context.setResolveData(null);
             setDictatorResolver(oldDictator);
         }
     }
 
-    public void outputReport(ResolveReport report, ResolutionCacheManager cacheMgr) 
+    public void outputReport(
+            ResolveReport report, ResolutionCacheManager cacheMgr, ResolveOptions options) 
             throws IOException {
-        Message.info(":: resolution report :: resolve " + report.getResolveTime() + "ms"
-            + " :: artifacts dl " + report.getDownloadTime() + "ms");
+        if (ResolveOptions.LOG_DEFAULT.equals(options.getLog())) {
+            Message.info(":: resolution report :: resolve " + report.getResolveTime() + "ms"
+                + " :: artifacts dl " + report.getDownloadTime() + "ms");
+        } else {
+            Message.verbose(":: resolution report :: resolve " + report.getResolveTime() + "ms"
+                + " :: artifacts dl " + report.getDownloadTime() + "ms");
+        }
         report.setProblemMessages(Message.getProblems());
         // output report
-        report.output(settings.getReportOutputters(), cacheMgr);
+        report.output(settings.getReportOutputters(), cacheMgr, options);
     }
 
-    public void downloadArtifacts(ResolveReport report, Filter artifactFilter) {
+    public void downloadArtifacts(
+            ResolveReport report, Filter artifactFilter, DownloadOptions options) {
         long start = System.currentTimeMillis();
         IvyNode[] dependencies = (IvyNode[]) report.getDependencies().toArray(
             new IvyNode[report.getDependencies().size()]);
@@ -322,8 +342,7 @@ public class ResolveEngine {
                 DependencyResolver resolver = dependencies[i].getModuleRevision()
                         .getArtifactResolver();
                 Artifact[] selectedArtifacts = dependencies[i].getSelectedArtifacts(artifactFilter);
-                DownloadReport dReport = resolver.download(selectedArtifacts, 
-                    new DownloadOptions());
+                DownloadReport dReport = resolver.download(selectedArtifacts, options);
                 ArtifactDownloadReport[] adrs = dReport.getArtifactsReports();
                 for (int j = 0; j < adrs.length; j++) {
                     if (adrs[j].getDownloadStatus() == DownloadStatus.FAILED) {
@@ -368,10 +387,9 @@ public class ResolveEngine {
      *            the artifact to download
      * @return a report concerning the download
      */
-    public ArtifactDownloadReport download(Artifact artifact, boolean useOrigin) {
+    public ArtifactDownloadReport download(Artifact artifact, DownloadOptions options) {
         DependencyResolver resolver = settings.getResolver(artifact.getModuleRevisionId());
-        DownloadReport r = resolver.download(new Artifact[] {artifact}, 
-            new DownloadOptions());
+        DownloadReport r = resolver.download(new Artifact[] {artifact}, options);
         return r.getArtifactReport(artifact);
     }
 
@@ -419,139 +437,144 @@ public class ResolveEngine {
         if (md == null) {
             throw new NullPointerException("module descriptor must not be null");
         }
-        IvyContext context = IvyContext.getContext();
+        IvyContext context = IvyContext.pushNewCopyContext();
 
-        String[] confs = options.getConfs(md);
-        options.setConfs(confs);
-
-        Date reportDate = new Date();
-        ResolveData data = new ResolveData(this, options);
-        context.setResolveData(data);
-        IvyNode rootNode = new IvyNode(data, md);
-
-        for (int i = 0; i < confs.length; i++) {
-            if (confs[i] == null) {
-                throw new NullPointerException("null conf not allowed: confs where: "
-                        + Arrays.asList(confs));
+        try {
+            String[] confs = options.getConfs(md);
+            options.setConfs(confs);
+    
+            Date reportDate = new Date();
+            ResolveData data = context.getResolveData();
+            if (data == null) {
+                data = new ResolveData(this, options);
+                context.setResolveData(data);
             }
-
-            Message.verbose("resolving dependencies for configuration '" + confs[i] + "'");
-            // for each configuration we clear the cache of what's been fetched
-            fetchedSet.clear();
-
-            Configuration configuration = md.getConfiguration(confs[i]);
-            if (configuration == null) {
-                Message.error("asked configuration not found in " + md.getModuleRevisionId() + ": "
-                        + confs[i]);
-            } else {
-                ConfigurationResolveReport confReport = null;
-                if (report != null) {
-                    confReport = report.getConfigurationReport(confs[i]);
-                    if (confReport == null) {
-                        confReport = new ConfigurationResolveReport(this, md, confs[i], reportDate,
-                                options);
-                        report.addReport(confs[i], confReport);
+            IvyNode rootNode = new IvyNode(data, md);
+    
+            for (int i = 0; i < confs.length; i++) {
+                if (confs[i] == null) {
+                    throw new NullPointerException("null conf not allowed: confs where: "
+                            + Arrays.asList(confs));
+                }
+    
+                Message.verbose("resolving dependencies for configuration '" + confs[i] + "'");
+                // for each configuration we clear the cache of what's been fetched
+                fetchedSet.clear();
+    
+                Configuration configuration = md.getConfiguration(confs[i]);
+                if (configuration == null) {
+                    Message.error("asked configuration not found in " 
+                        + md.getModuleRevisionId() + ": " + confs[i]);
+                } else {
+                    ConfigurationResolveReport confReport = null;
+                    if (report != null) {
+                        confReport = report.getConfigurationReport(confs[i]);
+                        if (confReport == null) {
+                            confReport = new ConfigurationResolveReport(
+                                this, md, confs[i], reportDate, options);
+                            report.addReport(confs[i], confReport);
+                        }
+                    }
+                    // we reuse the same resolve data with a new report for each conf
+                    data.setReport(confReport);
+    
+                    // update the root module conf we are about to fetch
+                    VisitNode root = new VisitNode(data, rootNode, null, confs[i], null);
+                    root.setRequestedConf(confs[i]);
+                    rootNode.updateConfsToFetch(Collections.singleton(confs[i]));
+    
+                    // go fetch !
+                    boolean fetched = false;
+                    while (!fetched) {
+                        try {
+                            fetchDependencies(root, confs[i], false);
+                            fetched = true;
+                        } catch (RestartResolveProcess restart) {
+                            Message.verbose("====================================================");
+                            Message.verbose("=           RESTARTING RESOLVE PROCESS");
+                            Message.verbose("= " + restart.getMessage());
+                            Message.verbose("====================================================");
+                            fetchedSet.clear();
+                        }
+                    }
+    
+                    // clean data
+                    for (Iterator iter = data.getNodes().iterator(); iter.hasNext();) {
+                        IvyNode dep = (IvyNode) iter.next();
+                        dep.clean();
                     }
                 }
-                // we reuse the same resolve data with a new report for each conf
-                data.setReport(confReport);
-
-                // update the root module conf we are about to fetch
-                VisitNode root = new VisitNode(data, rootNode, null, confs[i], null);
-                root.setRequestedConf(confs[i]);
-                rootNode.updateConfsToFetch(Collections.singleton(confs[i]));
-
-                // go fetch !
-                boolean fetched = false;
-                while (!fetched) {
-                    try {
-                        fetchDependencies(root, confs[i], false);
-                        fetched = true;
-                    } catch (RestartResolveProcess restart) {
-                        Message.verbose("=======================================================");
-                        Message.verbose("=           RESTARTING RESOLVE PROCESS");
-                        Message.verbose("= " + restart.getMessage());
-                        Message.verbose("=======================================================");
-                        fetchedSet.clear();
-                    }
-                }
-
-                // clean data
-                for (Iterator iter = data.getNodes().iterator(); iter.hasNext();) {
-                    IvyNode dep = (IvyNode) iter.next();
-                    dep.clean();
+            }
+    
+            // prune and reverse sort fectched dependencies
+            Collection nodes = data.getNodes();
+            // use a Set to avoid duplicates, linked to preserve order
+            Collection dependencies = new LinkedHashSet(nodes.size()); 
+            for (Iterator iter = nodes.iterator(); iter.hasNext();) {
+                IvyNode node = (IvyNode) iter.next();
+                if (node != null && !node.isRoot() && !node.isCompletelyBlacklisted()) {
+                    dependencies.add(node);
                 }
             }
-        }
-
-        // prune and reverse sort fectched dependencies
-        Collection nodes = data.getNodes();
-        // use a Set to avoid duplicates, linked to preserve order
-        Collection dependencies = new LinkedHashSet(nodes.size()); 
-        for (Iterator iter = nodes.iterator(); iter.hasNext();) {
-            IvyNode node = (IvyNode) iter.next();
-            if (node != null && !node.isRoot() && !node.isCompletelyBlacklisted()) {
-                dependencies.add(node);
-            }
-        }
-        List sortedDependencies = sortEngine.sortNodes(dependencies);
-        Collections.reverse(sortedDependencies);
-
-        // handle transitive eviction now:
-        // if a module has been evicted then all its dependencies required
-        // only by it should be evicted too. Since nodes are now sorted from the more dependent to
-        // the less one, we can traverse the list and check only the direct parent and not all
-        // the ancestors
-        for (ListIterator iter = sortedDependencies.listIterator(); iter.hasNext();) {
-            IvyNode node = (IvyNode) iter.next();
-            if (!node.isCompletelyEvicted()) {
-                for (int i = 0; i < confs.length; i++) {
-                    IvyNodeCallers.Caller[] callers = node.getCallers(confs[i]);
-                    if (settings.debugConflictResolution()) {
-                        Message.debug("checking if " + node.getId()
-                                + " is transitively evicted in " + confs[i]);
-                    }
-                    boolean allEvicted = callers.length > 0;
-                    for (int j = 0; j < callers.length; j++) {
-                        if (callers[j].getModuleRevisionId().equals(md.getModuleRevisionId())) {
-                            // the caller is the root module itself, it can't be evicted
-                            allEvicted = false;
-                            break;
-                        } else {
-                            IvyNode callerNode = data.getNode(callers[j].getModuleRevisionId());
-                            if (callerNode == null) {
-                                Message.warn("ivy internal error: no node found for "
-                                        + callers[j].getModuleRevisionId() + ": looked in "
-                                        + data.getNodeIds() + " and root module id was "
-                                        + md.getModuleRevisionId());
-                            } else if (!callerNode.isEvicted(confs[i])) {
+            List sortedDependencies = sortEngine.sortNodes(dependencies);
+            Collections.reverse(sortedDependencies);
+    
+            // handle transitive eviction now:
+            // if a module has been evicted then all its dependencies required only by it should be
+            // evicted too. Since nodes are now sorted from the more dependent to the less one, we
+            // can traverse the list and check only the direct parent and not all the ancestors
+            for (ListIterator iter = sortedDependencies.listIterator(); iter.hasNext();) {
+                IvyNode node = (IvyNode) iter.next();
+                if (!node.isCompletelyEvicted()) {
+                    for (int i = 0; i < confs.length; i++) {
+                        IvyNodeCallers.Caller[] callers = node.getCallers(confs[i]);
+                        if (settings.debugConflictResolution()) {
+                            Message.debug("checking if " + node.getId()
+                                    + " is transitively evicted in " + confs[i]);
+                        }
+                        boolean allEvicted = callers.length > 0;
+                        for (int j = 0; j < callers.length; j++) {
+                            if (callers[j].getModuleRevisionId().equals(md.getModuleRevisionId())) {
+                                // the caller is the root module itself, it can't be evicted
                                 allEvicted = false;
                                 break;
                             } else {
-                                if (settings.debugConflictResolution()) {
-                                    Message.debug("caller " + callerNode.getId() + " of "
-                                            + node.getId() + " is evicted");
+                                IvyNode callerNode = data.getNode(callers[j].getModuleRevisionId());
+                                if (callerNode == null) {
+                                    Message.warn("ivy internal error: no node found for "
+                                            + callers[j].getModuleRevisionId() + ": looked in "
+                                            + data.getNodeIds() + " and root module id was "
+                                            + md.getModuleRevisionId());
+                                } else if (!callerNode.isEvicted(confs[i])) {
+                                    allEvicted = false;
+                                    break;
+                                } else {
+                                    if (settings.debugConflictResolution()) {
+                                        Message.debug("caller " + callerNode.getId() + " of "
+                                                + node.getId() + " is evicted");
+                                    }
                                 }
                             }
                         }
-                    }
-                    if (allEvicted) {
-                        Message.verbose("all callers are evicted for " + node + ": evicting too");
-                        node.markEvicted(confs[i], null, null, null);
-                    } else {
-                        if (settings.debugConflictResolution()) {
-                            Message.debug(node.getId()
-                                  + " isn't transitively evicted, at least one caller was" 
-                                  + " not evicted");
+                        if (allEvicted) {
+                            Message.verbose("all callers are evicted for " 
+                                + node + ": evicting too");
+                            node.markEvicted(confs[i], null, null, null);
+                        } else {
+                            if (settings.debugConflictResolution()) {
+                                Message.debug(node.getId()
+                                      + " isn't transitively evicted, at least one caller was" 
+                                      + " not evicted");
+                            }
                         }
                     }
                 }
             }
+    
+            return (IvyNode[]) dependencies.toArray(new IvyNode[dependencies.size()]);
+        } finally {
+            IvyContext.popContext();
         }
-
-        context.setResolveData(null);
-        
-        return (IvyNode[]) dependencies.toArray(new IvyNode[dependencies.size()]);
     }
 
     private void fetchDependencies(VisitNode node, String conf, boolean shouldBePublic) {

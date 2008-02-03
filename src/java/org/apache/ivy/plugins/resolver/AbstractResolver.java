@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.util.Map;
 
 import org.apache.ivy.core.IvyContext;
+import org.apache.ivy.core.LogOptions;
 import org.apache.ivy.core.cache.ArtifactOrigin;
 import org.apache.ivy.core.cache.CacheDownloadOptions;
 import org.apache.ivy.core.cache.CacheMetadataOptions;
@@ -41,6 +42,7 @@ import org.apache.ivy.core.report.DownloadStatus;
 import org.apache.ivy.core.resolve.DownloadOptions;
 import org.apache.ivy.core.resolve.IvyNode;
 import org.apache.ivy.core.resolve.ResolveData;
+import org.apache.ivy.core.resolve.ResolveOptions;
 import org.apache.ivy.core.resolve.ResolvedModuleRevision;
 import org.apache.ivy.core.search.ModuleEntry;
 import org.apache.ivy.core.search.OrganisationEntry;
@@ -350,11 +352,15 @@ public abstract class AbstractResolver implements DependencyResolver, HasLatestS
             .setValidate(doValidate(data))
             .setNamespace(getNamespace())
             .setForce(data.getOptions().isRefresh())
-            .setListener(downloadListener);
+            .setListener(getDownloadListener(getDownloadOptions(data.getOptions())));
     }
 
-    protected CacheDownloadOptions getCacheDownloadOptions() {
-        return new CacheDownloadOptions().setListener(downloadListener);
+    protected CacheDownloadOptions getCacheDownloadOptions(DownloadOptions options) {
+        return new CacheDownloadOptions().setListener(getDownloadListener(options));
+    }
+
+    protected DownloadOptions getDownloadOptions(ResolveOptions options) {
+        return (DownloadOptions) new DownloadOptions().setLog(options.getLog());
     }
     
     public void abortPublishTransaction() throws IOException {
@@ -370,35 +376,38 @@ public abstract class AbstractResolver implements DependencyResolver, HasLatestS
         /* Default implementation is a no-op */
     }
 
-    private final DownloadListener downloadListener = new DownloadListener() {
-        public void needArtifact(RepositoryCacheManager cache, Artifact artifact) {
-            if (eventManager != null) {
-                eventManager.fireIvyEvent(new NeedArtifactEvent(AbstractResolver.this, artifact));
+    private DownloadListener getDownloadListener(final DownloadOptions options) {
+        return new DownloadListener() {
+            public void needArtifact(RepositoryCacheManager cache, Artifact artifact) {
+                if (eventManager != null) {
+                    eventManager.fireIvyEvent(
+                        new NeedArtifactEvent(AbstractResolver.this, artifact));
+                }
             }
-        }
-        public void startArtifactDownload(
-                RepositoryCacheManager cache, ResolvedResource rres, 
-                Artifact artifact, ArtifactOrigin origin) {
-            if (artifact.isMetadata()) {
-                Message.verbose("downloading " + rres.getResource() + " ...");
-            } else {
-                Message.info("downloading " + rres.getResource() + " ...");
+            public void startArtifactDownload(
+                    RepositoryCacheManager cache, ResolvedResource rres, 
+                    Artifact artifact, ArtifactOrigin origin) {
+                if (artifact.isMetadata() || LogOptions.LOG_QUIET.equals(options.getLog())) {
+                    Message.verbose("downloading " + rres.getResource() + " ...");
+                } else {
+                    Message.info("downloading " + rres.getResource() + " ...");
+                }
+                if (eventManager != null) {
+                    eventManager.fireIvyEvent(
+                        new StartArtifactDownloadEvent(
+                            AbstractResolver.this, artifact, origin));
+                }            
             }
-            if (eventManager != null) {
-                eventManager.fireIvyEvent(
-                    new StartArtifactDownloadEvent(
-                        AbstractResolver.this, artifact, origin));
-            }            
-        }
-        public void endArtifactDownload(
-                RepositoryCacheManager cache, Artifact artifact, 
-                ArtifactDownloadReport adr, File archiveFile) {
-            if (eventManager != null) {
-                eventManager.fireIvyEvent(
-                    new EndArtifactDownloadEvent(
-                        AbstractResolver.this, artifact, adr, archiveFile));
+            public void endArtifactDownload(
+                    RepositoryCacheManager cache, Artifact artifact, 
+                    ArtifactDownloadReport adr, File archiveFile) {
+                if (eventManager != null) {
+                    eventManager.fireIvyEvent(
+                        new EndArtifactDownloadEvent(
+                            AbstractResolver.this, artifact, adr, archiveFile));
+                }
             }
-        }
-    };
+        };
+    }
 
 }

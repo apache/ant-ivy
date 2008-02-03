@@ -19,6 +19,7 @@ package org.apache.ivy.core.resolve;
 
 import java.util.Date;
 
+import org.apache.ivy.core.LogOptions;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleId;
 import org.apache.ivy.util.ConfigurationUtils;
@@ -30,7 +31,8 @@ import org.apache.ivy.util.filter.FilterHelper;
  * 
  * @see ResolveEngine
  */
-public class ResolveOptions {
+public class ResolveOptions extends LogOptions {
+    
     /**
      * an array of configuration names to resolve - must not be null nor empty
      */
@@ -95,6 +97,7 @@ public class ResolveOptions {
     }
 
     public ResolveOptions(ResolveOptions options) {
+        super(options);
         confs = options.confs;
         revision = options.revision;
         date = options.date;

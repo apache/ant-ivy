@@ -38,12 +38,6 @@ Example:
 pattern: lib/[conf]/[artifact].[ext]
 root: lib
 
-<span class="since">since 1.4</span> The behaviour is like this when 'useOrigin=true':
-<ul>
-<li>if the artifact is not local, the location from within the cache is used</li>
-<li>if the artifact is a local artifact, it's original location is used</li>
-</ul>
-Note that if resolve has been called separately, the copy to the cache may have occur normally if useOrigin was not set when calling [[ant:resolve]]. If resolve has not been called, it will be called automatically with useOrigin set to the value specified on this task.
 
 <table class="ant">
 <thead>
@@ -62,6 +56,11 @@ Note that if resolve has been called separately, the copy to the cache may have 
         <td>No. All artifact types are accepted by default.</td></tr>
     <tr><td>symlink</td><td>true to create symbolic links, false to copy the artifacts. The destination of the symbolic links depends on the value of the useOrigin attribute <span class="since">(since 2.0)</span></td><td>No. Defaults to false</td></tr>
     <tr><td>settingsRef</td><td>A reference to the ivy settings that must be used by this task <span class="since">(since 2.0)</span></td><td>No, 'ivy.instance' is taken by default.</td></tr></tbody>
+    <tr><td>log</td><td>the log setting to use during the resolve and retrieve process. <span class="since">(since 2.0)</span><br/>
+Available options are the same as for [[ant:resolve]] when used to trigger resolve automatically (see [[ant:postresolvetask]]), or the following for the retrieve process only:
+<ul><li>default</li> the default log settings, where all usual messages are output to the console
+<li>quiet</li> disable all usual messages, making the whole retrieve process quiet unless errors occur
+</ul></td><td>No, defaults to 'default'.</td></tr>
 </table>
 <h1>Examples</h1>
 <code type="xml">

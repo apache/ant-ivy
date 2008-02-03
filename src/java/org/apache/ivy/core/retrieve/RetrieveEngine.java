@@ -35,6 +35,7 @@ import java.util.Set;
 
 import org.apache.ivy.core.IvyContext;
 import org.apache.ivy.core.IvyPatternHelper;
+import org.apache.ivy.core.LogOptions;
 import org.apache.ivy.core.cache.ResolutionCacheManager;
 import org.apache.ivy.core.event.EventManager;
 import org.apache.ivy.core.event.retrieve.EndRetrieveEvent;
@@ -74,7 +75,11 @@ public class RetrieveEngine {
     public int retrieve(ModuleRevisionId mrid, String destFilePattern, RetrieveOptions options)
             throws IOException {
         ModuleId moduleId = mrid.getModuleId();
-        Message.info(":: retrieving :: " + moduleId + (options.isSync() ? " [sync]" : ""));
+        if (LogOptions.LOG_DEFAULT.equals(options.getLog())) {
+            Message.info(":: retrieving :: " + moduleId + (options.isSync() ? " [sync]" : ""));
+        } else {
+            Message.verbose(":: retrieving :: " + moduleId + (options.isSync() ? " [sync]" : ""));
+        }
         Message.verbose("\tcheckUpToDate=" + settings.isCheckUpToDate());
         long start = System.currentTimeMillis();
 
@@ -84,7 +89,11 @@ public class RetrieveEngine {
             settings.getVariables());
 
         String[] confs = getConfs(mrid, options);
-        Message.info("\tconfs: " + Arrays.asList(confs));
+        if (LogOptions.LOG_DEFAULT.equals(options.getLog())) {
+            Message.info("\tconfs: " + Arrays.asList(confs));
+        } else {
+            Message.verbose("\tconfs: " + Arrays.asList(confs));
+        }
         if (this.eventManager != null) {
             this.eventManager.fireIvyEvent(new StartRetrieveEvent(mrid, confs, options));
         }
@@ -159,12 +168,17 @@ public class RetrieveEngine {
                 }
             }
             long elapsedTime = System.currentTimeMillis() - start;
-            Message.info("\t"
-                    + targetsCopied
-                    + " artifacts copied"
-                    + (settings.isCheckUpToDate() ? (", " + targetsUpToDate + " already retrieved")
-                            : "")
-                    + " (" + (totalCopiedSize / KILO) + "kB/" + elapsedTime + "ms)");
+            String msg = "\t"
+                + targetsCopied
+                + " artifacts copied"
+                + (settings.isCheckUpToDate() ? (", " + targetsUpToDate + " already retrieved")
+                        : "")
+                + " (" + (totalCopiedSize / KILO) + "kB/" + elapsedTime + "ms)";
+            if (LogOptions.LOG_DEFAULT.equals(options.getLog())) {
+                Message.info(msg);
+            } else {
+                Message.verbose(msg);
+            }
             Message.verbose("\tretrieve done (" + (elapsedTime) + "ms)");
             if (this.eventManager != null) {
                 this.eventManager.fireIvyEvent(new EndRetrieveEvent(
