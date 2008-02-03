@@ -366,7 +366,8 @@ public final class XmlModuleDescriptorUpdater {
             ExtendedBuffer buffer = new ExtendedBuffer(getContext());
             buffers.push(buffer);
             confAttributeBuffers.push(buffer);
-            buffer.setDefaultPrint(attributes.getValue("conf") == null);
+            buffer.setDefaultPrint(attributes.getValue("conf") == null
+                || attributes.getValue("conf").trim().length() == 0);
             write("<dependency");
             String org = substitute(settings, attributes.getValue("org"));
             org = org == null ? organisation : org;
