@@ -15,7 +15,7 @@
  *  limitations under the License.
  *
  */
-package org.apache.ivy.util.url;
+package org.apache.ivy.util;
 
 import java.util.Iterator;
 import java.util.Stack;
