@@ -45,9 +45,9 @@ import org.apache.ivy.core.search.RevisionEntry;
 import org.apache.ivy.plugins.repository.Repository;
 import org.apache.ivy.plugins.repository.Resource;
 import org.apache.ivy.plugins.resolver.util.ResolvedResource;
+import org.apache.ivy.util.ContextualSAXHandler;
 import org.apache.ivy.util.Message;
 import org.apache.ivy.util.XMLHelper;
-import org.apache.ivy.util.url.ContextualSAXHandler;
 import org.xml.sax.SAXException;
 
 /**
