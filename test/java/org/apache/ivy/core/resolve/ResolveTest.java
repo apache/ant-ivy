@@ -2573,9 +2573,13 @@ public class ResolveTest extends TestCase {
         Ivy ivy = new Ivy();
         ivy.configure(new File("test/repositories/bugIVY-56/ivysettings.xml"));
 
-        ResolveReport report = ivy.resolve(ResolveTest.class.getResource("ivy-56.xml"),
-            getResolveOptions(new String[] {"default"}));
-        assertNotNull(report);
+        try {
+            ResolveReport report = ivy.resolve(ResolveTest.class.getResource("ivy-56.xml"),
+                getResolveOptions(new String[] {"default"}));
+            assertNotNull(report);
+        } finally {
+            FileUtil.forceDelete(ivy.getSettings().getDefaultCache());
+        }
     }
 
     public void testIVY214() throws Exception {
