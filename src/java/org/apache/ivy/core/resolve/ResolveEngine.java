@@ -148,6 +148,7 @@ public class ResolveEngine {
             // (which will be a resolve of a newCallerInstance module)
             ResolvedModuleRevision rmr = findModule(mrid, new ResolveOptions(options));
             if (rmr == null) {
+                Message.verbose("module not found " + mrid);
                 md = DefaultModuleDescriptor.newCallerInstance(mrid, 
                     options.getConfs(rmr.getDescriptor()), options.isTransitive(), changing);
                 return new ResolveReport(md, options.getResolveId()) {
