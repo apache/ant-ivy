@@ -18,7 +18,6 @@
 package org.apache.ivy.core.settings;
 
 import java.io.File;
-import java.text.ParseException;
 import java.util.List;
 
 import junit.framework.TestCase;
@@ -29,6 +28,7 @@ import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.id.ModuleId;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.report.ResolveReport;
+import org.apache.ivy.core.resolve.ResolveOptions;
 import org.apache.ivy.plugins.latest.LatestRevisionStrategy;
 import org.apache.ivy.plugins.latest.LatestStrategy;
 import org.apache.ivy.plugins.latest.LatestTimeStrategy;
@@ -421,7 +421,8 @@ public class XmlSettingsParserTest extends TestCase {
     }
 
     public static class MyOutputter implements ReportOutputter {
-        public void output(ResolveReport report, ResolutionCacheManager cacheMgr) {
+        public void output(
+                ResolveReport report, ResolutionCacheManager cacheMgr, ResolveOptions options) {
         }
 
         public String getName() {
