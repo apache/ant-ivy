@@ -77,6 +77,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - IMPROVEMENT: Downgrade Ant version requirement to 1.6 to build Ivy (IVY-687)
 - IMPROVEMENT: In the ResolveReport class, add the possibility to filter the evicted module while getting the list of DownloadArtifact (IVY-704) (thanks to Nicolas Lalevée)
 
+- FIX: NullPointerException reported instead of error in ivy:cachepath (IVY-690)
 - FIX: NPE when calling retrieve if some artifacts are not available locally (IVY-712)
 - FIX: When in ssh plugin we does not set username in scheme, Ivy always try to connect with guest username, even if we change one in panel. (IVY-710) (thanks to Ruslan Shevchenko)
 - FIX: NPE in SshCache during publish with ssh resolver without passFile (IVY-709) (thanks to Ruslan Shevchenko)

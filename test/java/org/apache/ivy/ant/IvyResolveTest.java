@@ -116,6 +116,20 @@ public class IvyResolveTest extends TestCase {
         assertTrue(getArchiveFileInCache("org1", "mod1.2", "2.0", "mod1.2", "jar", "jar").exists());
     }
 
+    public void testInlineForNonExistingModule() throws Exception {
+        resolve.setOrganisation("org1XX");
+        resolve.setModule("mod1.2");
+        resolve.setRevision("2.0");
+        resolve.setInline(true);
+        resolve.setHaltonfailure(false);
+        resolve.setFailureProperty("failure.property");
+        resolve.execute();
+
+        // the resolve must have failed -> the failure property must be set
+        String failure = resolve.getProject().getProperty("failure.property");
+        assertTrue("Failure property must have been specified!", Boolean.valueOf(failure).booleanValue());
+    }
+
     public void testWithSlashes() throws Exception {
         resolve.setFile(new File("test/java/org/apache/ivy/core/resolve/ivy-198.xml"));
         resolve.execute();

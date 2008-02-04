@@ -36,6 +36,7 @@ import java.util.Set;
 
 import org.apache.ivy.Ivy;
 import org.apache.ivy.core.IvyContext;
+import org.apache.ivy.core.LogOptions;
 import org.apache.ivy.core.cache.ResolutionCacheManager;
 import org.apache.ivy.core.event.EventManager;
 import org.apache.ivy.core.event.download.PrepareDownloadEvent;
@@ -142,6 +143,7 @@ public class ResolveEngine {
     public ResolveReport resolve(final ModuleRevisionId mrid, ResolveOptions options,
             boolean changing) throws ParseException, IOException {
         DefaultModuleDescriptor md;
+        ResolveOptions optionsToUse = new ResolveOptions(options);
 
         if (options.useSpecialConfs()) {
             // create new resolve options because this is a different resolve than the real resolve
@@ -149,17 +151,12 @@ public class ResolveEngine {
             ResolvedModuleRevision rmr = findModule(mrid, new ResolveOptions(options));
             if (rmr == null) {
                 Message.verbose("module not found " + mrid);
+                
+                // we will continue the resolve anyway to get a nice error message back
+                // to the user, however reduce the amount of logging in this case
+                optionsToUse.setLog(LogOptions.LOG_DOWNLOAD_ONLY);
                 md = DefaultModuleDescriptor.newCallerInstance(mrid, 
-                    options.getConfs(rmr.getDescriptor()), options.isTransitive(), changing);
-                return new ResolveReport(md, options.getResolveId()) {
-                    public boolean hasError() {
-                        return true;
-                    }
-
-                    public List getProblemMessages() {
-                        return Arrays.asList(new String[] {"module not found: " + mrid});
-                    }
-                };
+                    new String[] {"default"}, options.isTransitive(), changing);
             } else {
                 String[] confs = options.getConfs(rmr.getDescriptor());
                 md = DefaultModuleDescriptor.newCallerInstance(ModuleRevisionId.newInstance(mrid,
@@ -170,7 +167,7 @@ public class ResolveEngine {
                 , options.isTransitive(), changing);
         }
 
-        return resolve(md, options);
+        return resolve(md, optionsToUse);
     }
 
     /**
