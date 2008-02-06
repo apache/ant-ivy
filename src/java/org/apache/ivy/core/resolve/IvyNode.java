@@ -53,6 +53,7 @@ import org.apache.ivy.plugins.conflict.ConflictManager;
 import org.apache.ivy.plugins.matcher.MatcherHelper;
 import org.apache.ivy.plugins.resolver.DependencyResolver;
 import org.apache.ivy.util.Message;
+import org.apache.ivy.util.StringUtils;
 import org.apache.ivy.util.filter.Filter;
 import org.apache.ivy.util.filter.FilterHelper;
 
@@ -903,15 +904,7 @@ public class IvyNode implements Comparable {
     }
 
     public String getProblemMessage() {
-        Exception e = problem;
-        if (e == null) {
-            return "";
-        }
-        String errMsg = e instanceof RuntimeException ? e.getMessage() : e.toString();
-        if (errMsg == null || errMsg.length() == 0 || "null".equals(errMsg)) {
-            errMsg = e.getClass().getName() + " at " + e.getStackTrace()[0].toString();
-        }
-        return errMsg;
+        return StringUtils.getErrorMessage(problem);
     }
 
     public boolean isDownloaded() {

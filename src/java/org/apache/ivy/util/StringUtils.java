@@ -17,6 +17,8 @@
  */
 package org.apache.ivy.util;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintWriter;
 import java.util.Locale;
 
 /**
@@ -37,6 +39,46 @@ public final class StringUtils {
             return string.toLowerCase(Locale.US);
         }
         return string.substring(0, 1).toLowerCase(Locale.US) + string.substring(1);
+    }
+    
+    /**
+     * Returns the error message associated with the given exception. Th error message returned will
+     * try to be as precise as possible, handling cases where e.getMessage() is not meaningful, like
+     * {@link NullPointerException} for instance.
+     * 
+     * @param e
+     *            the exception to get the error message from
+     * @return the error message of the given exception
+     */
+    public static String getErrorMessage(Exception e) {
+        if (e == null) {
+            return "";
+        }
+        String errMsg = e instanceof RuntimeException ? e.getMessage() : e.toString();
+        if (errMsg == null || errMsg.length() == 0 || "null".equals(errMsg)) {
+            errMsg = e.getClass().getName() + " at " + e.getStackTrace()[0].toString();
+        }
+        return errMsg;
+    }
+    
+    /**
+     * Returns the exception stack trace as a String.
+     * 
+     * @param e
+     *            the exception to get the stack trace from.
+     * @return the exception stack trace
+     */
+    public static String getStackTrace(Exception e) {
+        if (e == null) {
+            return "";
+        }
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        PrintWriter printWriter = new PrintWriter(baos);
+        e.printStackTrace(printWriter);
+        printWriter.flush();
+        String stackTrace = new String(baos.toByteArray());
+        printWriter.close();
+        return stackTrace;
     }
 
     /**

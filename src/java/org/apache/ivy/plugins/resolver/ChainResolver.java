@@ -40,6 +40,7 @@ import org.apache.ivy.plugins.latest.LatestStrategy;
 import org.apache.ivy.plugins.resolver.util.HasLatestStrategy;
 import org.apache.ivy.plugins.resolver.util.ResolvedResource;
 import org.apache.ivy.util.Message;
+import org.apache.ivy.util.StringUtils;
 
 /**
  *
@@ -123,7 +124,7 @@ public class ChainResolver extends AbstractResolver {
                 mr = resolver.getDependency(dd, data);
             } catch (Exception ex) {
                 Message.verbose("problem occured while resolving " + dd + " with " + resolver
-                        + ": " + ex);
+                        + ": " + StringUtils.getStackTrace(ex));
                 errors.add(ex);
             } finally {
                 if (oldLatest != null) {
@@ -178,7 +179,7 @@ public class ChainResolver extends AbstractResolver {
                 StringBuffer err = new StringBuffer();
                 for (Iterator iter = errors.iterator(); iter.hasNext();) {
                     Exception ex = (Exception) iter.next();
-                    err.append(ex).append("\n");
+                    err.append("\t").append(StringUtils.getErrorMessage(ex)).append("\n");
                 }
                 err.setLength(err.length() - 1);
                 throw new RuntimeException("several problems occured while resolving " + dd + ":\n"
