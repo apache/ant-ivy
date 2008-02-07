@@ -42,8 +42,10 @@ import java.util.StringTokenizer;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.ivy.Ivy;
+import org.apache.ivy.core.module.id.ModuleId;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.settings.IvySettings;
+import org.apache.ivy.plugins.namespace.NameSpaceHelper;
 import org.apache.ivy.plugins.namespace.Namespace;
 import org.apache.ivy.plugins.parser.ParserSettings;
 import org.apache.ivy.plugins.repository.Resource;
@@ -373,28 +375,44 @@ public final class XmlModuleDescriptorUpdater {
             org = org == null ? organisation : org;
             String module = substitute(settings, attributes.getValue("name"));
             String branch = substitute(settings, attributes.getValue("branch"));
+            
+            // look for the branch used in resolved revisions
+            if (branch == null) {
+                ModuleId mid = ModuleId.newInstance(org, module);
+                if (ns != null) {
+                    mid = NameSpaceHelper.transform(mid, ns.getToSystemTransformer());
+                }
+                for (Iterator iter = resolvedRevisions.keySet().iterator(); iter.hasNext();) {
+                    ModuleRevisionId mrid = (ModuleRevisionId) iter.next();
+                    if (mrid.getModuleId().equals(mid)) {
+                        branch = mrid.getBranch();
+                        break;
+                    }
+                }
+            }
+            
             String revision = substitute(settings, attributes.getValue("rev"));
-            ModuleRevisionId localMid = ModuleRevisionId.newInstance(org, module, branch,
+            ModuleRevisionId localMrid = ModuleRevisionId.newInstance(org, module, branch,
                 revision, ExtendableItemHelper.getExtraAttributes(attributes,
                     XmlModuleDescriptorParser.DEPENDENCY_REGULAR_ATTRIBUTES));
-            ModuleRevisionId systemMid = ns == null ? localMid : ns.getToSystemTransformer()
-                    .transform(localMid);
+            ModuleRevisionId systemMrid = ns == null ? localMrid : ns.getToSystemTransformer()
+                    .transform(localMrid);
 
             for (int i = 0; i < attributes.getLength(); i++) {
                 String attName = attributes.getQName(i);
                 if ("rev".equals(attName)) {
-                    String rev = (String) resolvedRevisions.get(systemMid);
+                    String rev = (String) resolvedRevisions.get(systemMrid);
                     if (rev != null) {
                         write(" rev=\"" + rev + "\"");
                     } else {
-                        write(" rev=\"" + systemMid.getRevision() + "\"");
+                        write(" rev=\"" + systemMrid.getRevision() + "\"");
                     }
                 } else if ("org".equals(attName)) {
-                    write(" org=\"" + systemMid.getOrganisation() + "\"");
+                    write(" org=\"" + systemMrid.getOrganisation() + "\"");
                 } else if ("name".equals(attName)) {
-                    write(" name=\"" + systemMid.getName() + "\"");
+                    write(" name=\"" + systemMrid.getName() + "\"");
                 } else if ("branch".equals(attName)) {
-                    write(" branch=\"" + systemMid.getBranch() + "\"");
+                    write(" branch=\"" + systemMrid.getBranch() + "\"");
                 } else if ("conf".equals(attName)) {
                     String oldMapping = substitute(settings, attributes.getValue("conf"));
                     if (oldMapping.length() > 0) {
@@ -408,6 +426,11 @@ public final class XmlModuleDescriptorUpdater {
                     write(" " + attName + "=\""
                             + substitute(settings, attributes.getValue(attName)) + "\"");
                 }
+            }
+            
+            if (systemMrid.getBranch() != null && attributes.getIndex("branch") == -1) {
+                // this dependency is on a specific branch, we set it explicitly in the updated file
+                write(" branch=\"" + systemMrid.getBranch() + "\"");
             }
         }
 

@@ -202,6 +202,38 @@ public class IvyDeliverTest extends TestCase {
                 .getDependencyRevisionId());
     }
 
+    public void testReplaceBranch() throws Exception {
+        IvyAntSettings settings = new IvyAntSettings();
+        settings.setProject(project);
+        settings.execute();
+        // change the default branch to use
+        settings.getConfiguredIvyInstance().getSettings().setDefaultBranch("BRANCH1");
+        
+        // resolve a module dependencies
+        project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-latest.xml");
+        IvyResolve res = new IvyResolve();
+        res.setProject(project);
+        res.execute();
+
+        // deliver this module
+        deliver.setPubrevision("1.2");
+        deliver.setDeliverpattern("build/test/deliver/ivy-[revision].xml");
+        deliver.execute();
+
+        // should have done the ivy delivering, including setting the branch according to the 
+        // configured default
+        File deliveredIvyFile = new File("build/test/deliver/ivy-1.2.xml");
+        assertTrue(deliveredIvyFile.exists());
+        ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(
+            new IvySettings(), deliveredIvyFile.toURL(), true);
+        assertEquals(ModuleRevisionId.newInstance("apache", "resolve-latest", "1.2"), md
+                .getModuleRevisionId());
+        DependencyDescriptor[] dds = md.getDependencies();
+        assertEquals(1, dds.length);
+        assertEquals(ModuleRevisionId.newInstance("org1", "mod1.2", "BRANCH1", "2.2"), dds[0]
+                .getDependencyRevisionId());
+    }
+
     public void testWithExtraAttributes() throws Exception {
         // test case for IVY-415
         project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-latest-extra.xml");
