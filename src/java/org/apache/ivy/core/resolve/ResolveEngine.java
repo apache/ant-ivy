@@ -57,7 +57,6 @@ import org.apache.ivy.core.report.DownloadReport;
 import org.apache.ivy.core.report.DownloadStatus;
 import org.apache.ivy.core.report.ResolveReport;
 import org.apache.ivy.core.resolve.IvyNodeEviction.EvictionData;
-import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.core.sort.SortEngine;
 import org.apache.ivy.plugins.conflict.ConflictManager;
 import org.apache.ivy.plugins.parser.ModuleDescriptorParser;
@@ -432,13 +431,31 @@ public class ResolveEngine {
      */
     public IvyNode[] getDependencies(ModuleDescriptor md, ResolveOptions options,
             ResolveReport report) {
+        // check parameters
         if (md == null) {
             throw new NullPointerException("module descriptor must not be null");
         }
-        IvyContext context = IvyContext.pushNewCopyContext();
+        String[] confs = options.getConfs(md);
+        Collection missingConfs = new ArrayList();
+        for (int i = 0; i < confs.length; i++) {
+            if (confs[i] == null) {
+                throw new NullPointerException("null conf not allowed: confs where: "
+                        + Arrays.asList(confs));
+            }
 
+            if (md.getConfiguration(confs[i]) == null) {
+                missingConfs.add(" '" + confs[i] + "' ");
+            }
+        }
+        if (!missingConfs.isEmpty()) {
+            throw new IllegalArgumentException(
+                "requested configuration" + (missingConfs.size() > 1 ? "s" : "") 
+                + " not found in " 
+                + md.getModuleRevisionId() + ": " + missingConfs);
+        }
+
+        IvyContext context = IvyContext.pushNewCopyContext();
         try {
-            String[] confs = options.getConfs(md);
             options.setConfs(confs);
     
             Date reportDate = new Date();
@@ -450,64 +467,46 @@ public class ResolveEngine {
             IvyNode rootNode = new IvyNode(data, md);
             
             for (int i = 0; i < confs.length; i++) {
-                if (confs[i] == null) {
-                    throw new NullPointerException("null conf not allowed: confs where: "
-                            + Arrays.asList(confs));
-                }
-    
                 Message.verbose("resolving dependencies for configuration '" + confs[i] + "'");
                 // for each configuration we clear the cache of what's been fetched
                 fetchedSet.clear();
     
-                Configuration configuration = md.getConfiguration(confs[i]);
-                if (configuration == null) {
-                    Collection missingConfs = new ArrayList();
-                    missingConfs.add(" '" + confs[i] + "' ");
-                    for (i++; i < confs.length; i++) {
-                        if (md.getConfiguration(confs[i]) == null) {
-                            missingConfs.add(" '" + confs[i] + "' ");
-                        }
+                ConfigurationResolveReport confReport = null;
+                if (report != null) {
+                    confReport = report.getConfigurationReport(confs[i]);
+                    if (confReport == null) {
+                        confReport = new ConfigurationResolveReport(
+                            this, md, confs[i], reportDate, options);
+                        report.addReport(confs[i], confReport);
                     }
-                    throw new IllegalArgumentException("asked configuration(s) not found in " 
-                        + md.getModuleRevisionId() + ": " + missingConfs);
-                } else {
-                    ConfigurationResolveReport confReport = null;
-                    if (report != null) {
-                        confReport = report.getConfigurationReport(confs[i]);
-                        if (confReport == null) {
-                            confReport = new ConfigurationResolveReport(
-                                this, md, confs[i], reportDate, options);
-                            report.addReport(confs[i], confReport);
-                        }
+                }
+                // we reuse the same resolve data with a new report for each conf
+                data.setReport(confReport);
+
+                // update the root module conf we are about to fetch
+                VisitNode root = new VisitNode(data, rootNode, null, confs[i], null);
+                root.setRequestedConf(confs[i]);
+                rootNode.updateConfsToFetch(Collections.singleton(confs[i]));
+
+                // go fetch !
+                boolean fetched = false;
+                while (!fetched) {
+                    try {
+                        fetchDependencies(root, confs[i], false);
+                        fetched = true;
+                    } catch (RestartResolveProcess restart) {
+                        Message.verbose("====================================================");
+                        Message.verbose("=           RESTARTING RESOLVE PROCESS");
+                        Message.verbose("= " + restart.getMessage());
+                        Message.verbose("====================================================");
+                        fetchedSet.clear();
                     }
-                    // we reuse the same resolve data with a new report for each conf
-                    data.setReport(confReport);
-    
-                    // update the root module conf we are about to fetch
-                    VisitNode root = new VisitNode(data, rootNode, null, confs[i], null);
-                    root.setRequestedConf(confs[i]);
-                    rootNode.updateConfsToFetch(Collections.singleton(confs[i]));
-    
-                    // go fetch !
-                    boolean fetched = false;
-                    while (!fetched) {
-                        try {
-                            fetchDependencies(root, confs[i], false);
-                            fetched = true;
-                        } catch (RestartResolveProcess restart) {
-                            Message.verbose("====================================================");
-                            Message.verbose("=           RESTARTING RESOLVE PROCESS");
-                            Message.verbose("= " + restart.getMessage());
-                            Message.verbose("====================================================");
-                            fetchedSet.clear();
-                        }
-                    }
-    
-                    // clean data
-                    for (Iterator iter = data.getNodes().iterator(); iter.hasNext();) {
-                        IvyNode dep = (IvyNode) iter.next();
-                        dep.clean();
-                    }
+                }
+
+                // clean data
+                for (Iterator iter = data.getNodes().iterator(); iter.hasNext();) {
+                    IvyNode dep = (IvyNode) iter.next();
+                    dep.clean();
                 }
             }
     
@@ -524,61 +523,66 @@ public class ResolveEngine {
             List sortedDependencies = sortEngine.sortNodes(dependencies);
             Collections.reverse(sortedDependencies);
     
-            // handle transitive eviction now:
-            // if a module has been evicted then all its dependencies required only by it should be
-            // evicted too. Since nodes are now sorted from the more dependent to the less one, we
-            // can traverse the list and check only the direct parent and not all the ancestors
-            for (ListIterator iter = sortedDependencies.listIterator(); iter.hasNext();) {
-                IvyNode node = (IvyNode) iter.next();
-                if (!node.isCompletelyEvicted()) {
-                    for (int i = 0; i < confs.length; i++) {
-                        IvyNodeCallers.Caller[] callers = node.getCallers(confs[i]);
-                        if (settings.debugConflictResolution()) {
-                            Message.debug("checking if " + node.getId()
-                                    + " is transitively evicted in " + confs[i]);
-                        }
-                        boolean allEvicted = callers.length > 0;
-                        for (int j = 0; j < callers.length; j++) {
-                            if (callers[j].getModuleRevisionId().equals(md.getModuleRevisionId())) {
-                                // the caller is the root module itself, it can't be evicted
-                                allEvicted = false;
-                                break;
-                            } else {
-                                IvyNode callerNode = data.getNode(callers[j].getModuleRevisionId());
-                                if (callerNode == null) {
-                                    Message.warn("ivy internal error: no node found for "
-                                            + callers[j].getModuleRevisionId() + ": looked in "
-                                            + data.getNodeIds() + " and root module id was "
-                                            + md.getModuleRevisionId());
-                                } else if (!callerNode.isEvicted(confs[i])) {
-                                    allEvicted = false;
-                                    break;
-                                } else {
-                                    if (settings.debugConflictResolution()) {
-                                        Message.debug("caller " + callerNode.getId() + " of "
-                                                + node.getId() + " is evicted");
-                                    }
-                                }
-                            }
-                        }
-                        if (allEvicted) {
-                            Message.verbose("all callers are evicted for " 
-                                + node + ": evicting too");
-                            node.markEvicted(confs[i], null, null, null);
-                        } else {
-                            if (settings.debugConflictResolution()) {
-                                Message.debug(node.getId()
-                                      + " isn't transitively evicted, at least one caller was" 
-                                      + " not evicted");
-                            }
-                        }
-                    }
-                }
-            }
+            handleTransiviteEviction(md, confs, data, sortedDependencies);
     
             return (IvyNode[]) dependencies.toArray(new IvyNode[dependencies.size()]);
         } finally {
             IvyContext.popContext();
+        }
+    }
+
+    private void handleTransiviteEviction(
+            ModuleDescriptor md, String[] confs, ResolveData data, List sortedDependencies) {
+        // handle transitive eviction now:
+        // if a module has been evicted then all its dependencies required only by it should be
+        // evicted too. Since nodes are now sorted from the more dependent to the less one, we
+        // can traverse the list and check only the direct parent and not all the ancestors
+        for (ListIterator iter = sortedDependencies.listIterator(); iter.hasNext();) {
+            IvyNode node = (IvyNode) iter.next();
+            if (!node.isCompletelyEvicted()) {
+                for (int i = 0; i < confs.length; i++) {
+                    IvyNodeCallers.Caller[] callers = node.getCallers(confs[i]);
+                    if (settings.debugConflictResolution()) {
+                        Message.debug("checking if " + node.getId()
+                                + " is transitively evicted in " + confs[i]);
+                    }
+                    boolean allEvicted = callers.length > 0;
+                    for (int j = 0; j < callers.length; j++) {
+                        if (callers[j].getModuleRevisionId().equals(md.getModuleRevisionId())) {
+                            // the caller is the root module itself, it can't be evicted
+                            allEvicted = false;
+                            break;
+                        } else {
+                            IvyNode callerNode = data.getNode(callers[j].getModuleRevisionId());
+                            if (callerNode == null) {
+                                Message.warn("ivy internal error: no node found for "
+                                        + callers[j].getModuleRevisionId() + ": looked in "
+                                        + data.getNodeIds() + " and root module id was "
+                                        + md.getModuleRevisionId());
+                            } else if (!callerNode.isEvicted(confs[i])) {
+                                allEvicted = false;
+                                break;
+                            } else {
+                                if (settings.debugConflictResolution()) {
+                                    Message.debug("caller " + callerNode.getId() + " of "
+                                            + node.getId() + " is evicted");
+                                }
+                            }
+                        }
+                    }
+                    if (allEvicted) {
+                        Message.verbose("all callers are evicted for " 
+                            + node + ": evicting too");
+                        node.markEvicted(confs[i], null, null, null);
+                    } else {
+                        if (settings.debugConflictResolution()) {
+                            Message.debug(node.getId()
+                                  + " isn't transitively evicted, at least one caller was" 
+                                  + " not evicted");
+                        }
+                    }
+                }
+            }
         }
     }
 
