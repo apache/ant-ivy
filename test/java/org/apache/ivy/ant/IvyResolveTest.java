@@ -23,7 +23,6 @@ import junit.framework.TestCase;
 
 import org.apache.ivy.Ivy;
 import org.apache.ivy.TestHelper;
-import org.apache.ivy.core.cache.RepositoryCacheManager;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
@@ -192,6 +191,17 @@ public class IvyResolveTest extends TestCase {
             fail("failure didn't raised an exception with default haltonfailure setting");
         } catch (BuildException ex) {
             // ok => should raise an exception
+        }
+    }
+
+    public void testFailureWithMissingConfigurations() throws Exception {
+        try {
+            resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-simple.xml"));
+            resolve.setConf("default,unknown");
+            resolve.execute();
+            fail("missing configurations didn't raised an exception");
+        } catch (BuildException ex) {
+            assertTrue(ex.getMessage().indexOf("unknown") != -1);
         }
     }
 

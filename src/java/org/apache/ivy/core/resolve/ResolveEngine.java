@@ -22,6 +22,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -447,7 +448,7 @@ public class ResolveEngine {
                 context.setResolveData(data);
             }
             IvyNode rootNode = new IvyNode(data, md);
-    
+            
             for (int i = 0; i < confs.length; i++) {
                 if (confs[i] == null) {
                     throw new NullPointerException("null conf not allowed: confs where: "
@@ -460,8 +461,15 @@ public class ResolveEngine {
     
                 Configuration configuration = md.getConfiguration(confs[i]);
                 if (configuration == null) {
-                    Message.error("asked configuration not found in " 
-                        + md.getModuleRevisionId() + ": " + confs[i]);
+                    Collection missingConfs = new ArrayList();
+                    missingConfs.add(" '" + confs[i] + "' ");
+                    for (i++; i < confs.length; i++) {
+                        if (md.getConfiguration(confs[i]) == null) {
+                            missingConfs.add(" '" + confs[i] + "' ");
+                        }
+                    }
+                    throw new IllegalArgumentException("asked configuration(s) not found in " 
+                        + md.getModuleRevisionId() + ": " + missingConfs);
                 } else {
                     ConfigurationResolveReport confReport = null;
                     if (report != null) {
