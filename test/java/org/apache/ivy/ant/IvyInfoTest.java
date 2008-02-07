@@ -58,4 +58,11 @@ public class IvyInfoTest extends TestCase {
         assertEquals("myvalue", info.getProject().getProperty("ivy.extra.myextraatt"));
     }
 
+    public void testIVY726() throws Exception {
+        info.setFile(new File("test/java/org/apache/ivy/ant/ivy-info-all.xml"));
+        info.execute();
+        
+        assertTrue(info.getProject().getProperty("ivy.extra.branch") == null);
+    }
+
 }

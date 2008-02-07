@@ -533,7 +533,7 @@ public final class XmlModuleDescriptorParser extends AbstractModuleDescriptorPar
             md.setModuleRevisionId(ModuleRevisionId.newInstance(org, module, branch,
                 revision, ExtendableItemHelper.getExtraAttributes(attributes, new String[] {
                         "organisation", "module", "revision", "status", "publication",
-                        "namespace", "default", "resolver"})));
+                        "branch", "namespace", "default", "resolver"})));
 
             String namespace = ivy.substitute(attributes.getValue("namespace"));
             if (namespace != null) {
