@@ -21,12 +21,16 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.ivy.Ivy;
 import org.apache.ivy.core.module.descriptor.Configuration;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.descriptor.Configuration.Visibility;
+import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.plugins.parser.ModuleDescriptorParserRegistry;
 import org.apache.tools.ant.BuildException;
@@ -56,10 +60,21 @@ public class IvyInfo extends IvyTask {
         try {
             ModuleDescriptor md = ModuleDescriptorParserRegistry.getInstance().parseDescriptor(
                 settings, file.toURL(), doValidate(settings));
-            getProject()
-                    .setProperty("ivy.organisation", md.getModuleRevisionId().getOrganisation());
-            getProject().setProperty("ivy.module", md.getModuleRevisionId().getName());
-            getProject().setProperty("ivy.revision", md.getModuleRevisionId().getRevision());
+            ModuleRevisionId mrid = md.getModuleRevisionId();
+            getProject().setProperty("ivy.organisation", mrid.getOrganisation());
+            getProject().setProperty("ivy.module", mrid.getName());
+            if (mrid.getBranch() != null) {
+                getProject().setProperty("ivy.branch", mrid.getBranch());
+            }
+            getProject().setProperty("ivy.revision", mrid.getRevision());
+            getProject().setProperty("ivy.status", md.getStatus());
+            
+            Map extra = mrid.getExtraAttributes();
+            for (Iterator iter = extra.entrySet().iterator(); iter.hasNext();) {
+                Entry entry = (Entry) iter.next();
+                getProject().setProperty("ivy.extra." + entry.getKey(), (String) entry.getValue());
+            }
+            
             getProject().setProperty("ivy.configurations", mergeConfs(md.getConfigurationsNames()));
 
             // store the public configurations in a separate property

@@ -67,6 +67,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - NEW: Cache dynamic revision resolution (IVY-694)
 - NEW: Make resolve console output configurable per resolve (IVY-715)
 
+- IMPROVEMENT: branch and extra attributes missing from info Ant task (IVY-721)
 - IMPROVEMENT: Review settings loading in Ant (IVY-703)
 - IMPROVEMENT: Move useOrigin to repository cache manager (IVY-700)
 - IMPROVEMENT: Make IBiblio resolver compatible with maven proxy (IVY-466)

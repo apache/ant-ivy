@@ -32,7 +32,10 @@ The information is retrieved by setting ant properties:
 <table>
 <tr><td>ivy.organisation</td><td>The organisation of the module, as found in the <a href="../ivyfile/info.html">info</a> tag of the ivy file parsed</td></tr>
 <tr><td>ivy.module</td><td>The name of the module, as found in the <a href="../ivyfile/info.html">info</a> tag of the ivy file parsed</td></tr>
+<tr><td>ivy.branch</td><td>The branch of the module if any, as found in the <a href="../ivyfile/info.html">info</a> tag of the ivy file parsed</td></tr>
 <tr><td>ivy.revision</td><td>The revision of the module, as found in the <a href="../ivyfile/info.html">info</a> tag of the ivy file parsed</td></tr>
+<tr><td>ivy.status</td><td>The status of the module, as found in the <a href="../ivyfile/info.html">info</a> tag of the ivy file parsed</td></tr>
+<tr><td>ivy.extra.<i>[any extra attribute]</i></td><td>Corresponding extra attribute value, as found in the <a href="../ivyfile/info.html">info</a> tag of the ivy file parsed</td></tr>
 <tr><td>ivy.configurations</td><td>A comma separated list of configurations of the module, as declared in the <a href="../ivyfile/configurations.html">configurations</a> section</td></tr>
 <tr><td>ivy.public.configurations</td><td>A comma separated list of public configurations of the module, as declared in the <a href="../ivyfile/configurations.html">configurations</a> section</td></tr>
 </table>
@@ -48,10 +51,40 @@ The information is retrieved by setting ant properties:
 <tr><td>settingsRef</td><td>A reference to the ivy settings that must be used by this task <span class="since">(since 2.0)</span></td><td>No, 'ivy.instance' is taken by default.</td></tr></tbody>
 </table>
 <h1>Examples</h1>
+Given this ivy.xml file:
+<code>
+<ivy-module version="1.0" xmlns:e="http://ant.apache.org/ivy/extra"> 
+	<info organisation="apache"
+	       module="info-all"
+	       branch="trunk"
+	       revision="1.0"
+	       status="release"
+	       e:myextraatt="myvalue"
+	/>
+	<configurations>
+		<conf name="default" />
+		<conf name="test" />
+		<conf name="private" visibility="private"/>
+	</configurations>
+	<dependencies>
+		<dependency org="org1" name="mod1.2" rev="2.0"/>
+	</dependencies>
+</ivy-module>
+</code>
 <code type="xml">
 <ivy:info file="${basedir}/path/to/ivy.xml" />
 </code>
-Parses ${basedir}/path/to/ivy.xml and set properties as described above accordingly.
+Parses ${basedir}/path/to/ivy.xml and set properties as described above accordingly:
+<code>
+ivy.organisation=apache
+ivy.module=info-all
+ivy.branch=trunk
+ivy.revision=1.0
+ivy.status=release
+ivy.extra.myextraatt=myvalue
+ivy.configurations=default, test, private
+ivy.public.configurations=default, test
+</code>
 
 	</textarea>
 <script type="text/javascript">xooki.postProcess();</script>
