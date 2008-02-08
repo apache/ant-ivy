@@ -78,6 +78,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - IMPROVEMENT: Downgrade Ant version requirement to 1.6 to build Ivy (IVY-687)
 - IMPROVEMENT: In the ResolveReport class, add the possibility to filter the evicted module while getting the list of DownloadArtifact (IVY-704) (thanks to Nicolas Lalevée)
 
+- FIX: Bad conflict resolution leads to bad "configuration(s) not found" error (IVY-729)
 - FIX: Resolving for muyltiple configurations when one is not in the list of available configurations does not abort the build (IVY-720)
 - FIX: Branch attribute considered as both a standard and extra attribute on module info (IVY-726)
 - FIX: Branch attribute not set on deliver when using a non default branch (IVY-724)

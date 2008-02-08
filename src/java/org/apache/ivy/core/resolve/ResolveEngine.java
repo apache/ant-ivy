@@ -908,7 +908,8 @@ public class ResolveEngine {
         } else if (resolvedNodes.isEmpty() && node.getParent() != ancestor) {
             //Conflict must only be computed per root configuration at this step.
             Collection ancestorDepIvyNodes = node.getParent().getNode()
-                        .getDependencies(node.getRootModuleConf(), new String[] {conf});
+                        .getDependencies(node.getRootModuleConf(), 
+                            new String[] {node.getParentConf()});
             for (Iterator it = ancestorDepIvyNodes.iterator(); it.hasNext();) {
                 IvyNode ancestorDep = (IvyNode) it.next();
                 if (ancestorDep.getModuleId().equals(node.getModuleId())) {

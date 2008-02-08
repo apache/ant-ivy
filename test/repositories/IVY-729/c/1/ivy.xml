@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ivy-module version="2.0">
+	<info organisation="test" module="c" revision="1" status="release"/>
+	<configurations>
+		<conf name="compile"/>
+	</configurations>
+	<publications>
+		<artifact name="c" type="jar" conf="compile"/>
+	</publications>
+	<dependencies>
+		<dependency org="test" name="a" rev="1" conf="compile->*"/>
+		<dependency org="test" name="b" rev="1" conf="%->@"/>
+	</dependencies>
+</ivy-module>

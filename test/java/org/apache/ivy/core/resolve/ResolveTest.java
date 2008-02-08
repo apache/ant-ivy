@@ -2604,6 +2604,16 @@ public class ResolveTest extends TestCase {
                 .getArtifactsNumber());
     }
 
+    public void testIVY729() throws Exception {
+        Ivy ivy = new Ivy();
+        ivy.configure(new File("test/repositories/IVY-729/ivysettings.xml"));
+
+        ResolveReport report = ivy.resolve(new File(
+                "test/repositories/IVY-729/ivy.xml").toURL(), 
+                getResolveOptions(new String[] {"*"}));
+        assertFalse(report.hasError());
+    }
+
     public void testCircular() throws Exception {
         // mod6.3 depends on mod6.2, which itself depends on mod6.3
 
