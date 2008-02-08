@@ -41,6 +41,30 @@ public class InstallTest extends TestCase {
         assertTrue(new File("build/test/install/org1/mod1.2/mod1.2-2.0.jar").exists());
     }
 
+    public void testValidate() throws Exception {
+        Ivy ivy = Ivy.newInstance();
+        ivy.configure(new File("test/repositories/ivysettings.xml"));
+
+        ivy.install(ModuleRevisionId.newInstance("orgfailure", "modfailure", "1.0"), ivy.getSettings()
+                .getDefaultResolver().getName(), "install", true, true, true, null,
+            PatternMatcher.EXACT);
+
+        assertFalse(new File("build/test/install/orgfailure/modfailure/ivy-1.0.xml").exists());
+        assertFalse(new File("build/test/install/orgfailure/modfailure/modfailure-1.0.jar").exists());
+    }
+
+    public void testNoValidate() throws Exception {
+        Ivy ivy = Ivy.newInstance();
+        ivy.configure(new File("test/repositories/ivysettings.xml"));
+
+        ivy.install(ModuleRevisionId.newInstance("orgfailure", "modfailure", "1.0"), ivy.getSettings()
+                .getDefaultResolver().getName(), "install", true, false, true, null,
+            PatternMatcher.EXACT);
+
+        assertTrue(new File("build/test/install/orgfailure/modfailure/ivy-1.0.xml").exists());
+        assertTrue(new File("build/test/install/orgfailure/modfailure/modfailure-1.0.jar").exists());
+    }
+
     public void testSimpleWithoutDefaultResolver() throws Exception {
         Ivy ivy = Ivy.newInstance();
         ivy.configure(new File("test/repositories/ivysettings-nodefaultresolver.xml"));

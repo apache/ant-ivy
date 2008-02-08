@@ -126,7 +126,9 @@ public class InstallEngine {
 
             Message.info(":: resolving dependencies ::");
             ResolveOptions options = new ResolveOptions()
-                                .setResolveId(resolveId).setConfs(new String[] {"default"});
+                                .setResolveId(resolveId)
+                                .setConfs(new String[] {"default"})
+                                .setValidate(validate);
             IvyNode[] dependencies = resolveEngine.getDependencies(md, options, report);
             report.setDependencies(Arrays.asList(dependencies), artifactFilter);
 
