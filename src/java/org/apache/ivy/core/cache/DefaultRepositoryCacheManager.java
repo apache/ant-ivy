@@ -890,6 +890,14 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
             try {
                 ModuleDescriptor md = parser.parseDescriptor(
                     settings, cachedMDURL, mdRef.getResource(), options.isValidate());
+                if (md == null) {
+                    throw new IllegalStateException(
+                        "module descriptor parser returned a null module descriptor, " 
+                        + "which is not allowed. "
+                        + "parser=" + parser 
+                        + "; parser class=" + parser.getClass().getName()
+                        + "; module descriptor resource=" + mdRef.getResource());
+                }
                 Message.debug("\t" + getName() + ": parsed downloaded md file for " + mrid 
                     + "; parsed=" + md.getModuleRevisionId());
 
