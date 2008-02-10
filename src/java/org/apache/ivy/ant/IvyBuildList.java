@@ -219,12 +219,12 @@ public class IvyBuildList extends IvyTask {
             }
         }
 
-        List leafModuleDescriptors = convertModuleNamesToModuleDescriptors(mdsMap, leafModuleNames,
-            "leaf");
-        List rootModuleDescriptors = convertModuleNamesToModuleDescriptors(mdsMap, rootModuleNames,
-            "root");
-        List restartFromModuleDescriptors = convertModuleNamesToModuleDescriptors(mdsMap, restartFromModuleNames,
-            "restartFrom");
+        List leafModuleDescriptors = 
+            convertModuleNamesToModuleDescriptors(mdsMap, leafModuleNames, "leaf");
+        List rootModuleDescriptors = 
+            convertModuleNamesToModuleDescriptors(mdsMap, rootModuleNames, "root");
+        List restartFromModuleDescriptors = 
+            convertModuleNamesToModuleDescriptors(mdsMap, restartFromModuleNames, "restartFrom");
 
         Collection mds = new ArrayList(mdsMap.values());
         if (!rootModuleDescriptors.isEmpty()) {
@@ -253,7 +253,8 @@ public class IvyBuildList extends IvyTask {
         if (!restartFromModuleDescriptors.isEmpty()) {
             boolean foundRestartFrom = false;
             List keptModules = new ArrayList();
-            ModuleDescriptor restartFromModuleDescriptor = (ModuleDescriptor)restartFromModuleDescriptors.get(0);
+            ModuleDescriptor restartFromModuleDescriptor = 
+                (ModuleDescriptor) restartFromModuleDescriptors.get(0);
             for (ListIterator iter = sortedModules.listIterator(); iter.hasNext();) {
                 ModuleDescriptor md = (ModuleDescriptor) iter.next();
                 if (md.equals(restartFromModuleDescriptor)) {
