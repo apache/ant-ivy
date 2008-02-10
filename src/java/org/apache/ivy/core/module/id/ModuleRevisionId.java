@@ -178,8 +178,12 @@ public class ModuleRevisionId extends UnmodifiableExtendableItem {
             Map extraAttributes) {
         super(null, extraAttributes);
         this.moduleId = moduleId;
-        this.branch = branch == null ? IvyContext.getContext().getSettings().getDefaultBranch(
-            moduleId) : branch;
+        IvyContext context = IvyContext.getContext();
+        this.branch = branch == null 
+            // we test if there's already an Ivy instance loaded, to avoid loading a default one 
+            // just to get the default branch
+            ? (context.peekIvy() == null ? null : context.getSettings().getDefaultBranch(moduleId)) 
+            : branch;
         this.revision = revision == null ? Ivy.getWorkingRevision() : revision;
         setStandardAttribute(IvyPatternHelper.ORGANISATION_KEY, this.moduleId.getOrganisation());
         setStandardAttribute(IvyPatternHelper.MODULE_KEY, this.moduleId.getName());
