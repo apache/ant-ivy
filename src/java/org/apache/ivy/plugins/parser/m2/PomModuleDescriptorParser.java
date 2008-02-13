@@ -507,10 +507,6 @@ public final class PomModuleDescriptorParser extends AbstractModuleDescriptorPar
         }
 
         public ModuleDescriptor getDescriptor() {
-            if (md.getModuleRevisionId() == null) {
-                return null;
-            }
-            
             return md;
         }
         
@@ -621,7 +617,13 @@ public final class PomModuleDescriptorParser extends AbstractModuleDescriptorPar
             ise.initCause(ex);
             throw ise;
         }
-        return parser.getDescriptor();
+        ModuleDescriptor md = parser.getDescriptor();
+        if (md.getModuleRevisionId() == null) {
+            throw new ParseException("invalid pom " + res 
+                + ": no module revision id found. "
+                + "Check that this pom has a groupId, artifactId and version.", 0);
+        }
+        return md;
     }
 
     public void toIvyFile(InputStream is, Resource res, File destFile, ModuleDescriptor md)
