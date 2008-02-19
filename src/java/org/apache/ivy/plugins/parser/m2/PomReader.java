@@ -20,7 +20,10 @@ package org.apache.ivy.plugins.parser.m2;
 import java.io.IOException;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.ivy.core.IvyPatternHelper;
 import org.apache.ivy.core.module.id.ModuleId;
@@ -58,6 +61,7 @@ public class PomReader {
     private static final String EXCLUSION = "exclusion";
     private static final String DISTRIBUTION_MGT = "distributionManagement";
     private static final String RELOCATION = "relocation";
+    private static final String PROPERTIES = "properties";
     
     
     
@@ -275,12 +279,23 @@ public class PomReader {
 
     }
     
-    
+    /**
+     * @return the content of the properties tag into the pom.
+     */
+    public Map/* <String,String> */getPomProperties() {
+        Map pomProperties = new HashMap();
+        Element propsEl = getFirstChildElement(projectElement, PROPERTIES);
+        if (propsEl != null) {
+            propsEl.normalize();
+        }
+        for (Iterator it = getAllChilds(propsEl).iterator(); it.hasNext();) {
+            Element prop = (Element) it.next();
+            pomProperties.put(prop.getNodeName(), prop.getTextContent());
+        }
+        return pomProperties;
+    }
     
    
-    
-    
-    
     private String replaceProps(String val) {
         if (val == null) {
             return null;
@@ -315,6 +330,21 @@ public class PomReader {
         }
         return null;
     }
+    
+    private static List/* <Element> */getAllChilds(Element parent) {
+        List r = new LinkedList();
+        if (parent != null) {
+            NodeList childs = parent.getChildNodes();
+            for (int i = 0; i < childs.getLength(); i++) {
+                Node node = childs.item(i);
+                if (node instanceof Element) {
+                    r.add(node);
+                }
+            }
+        }
+        return r;
+    }
+
 
 
 

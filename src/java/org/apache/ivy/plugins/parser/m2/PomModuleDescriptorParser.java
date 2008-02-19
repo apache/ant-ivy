@@ -24,6 +24,7 @@ import java.net.URL;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.Map;
 
 import org.apache.ivy.core.IvyContext;
 import org.apache.ivy.core.module.descriptor.Artifact;
@@ -172,6 +173,14 @@ public final class PomModuleDescriptorParser implements ModuleDescriptorParser {
                         parentModRevID);
                     parentDescr = parentModule.getDescriptor();
                 }
+                                
+                Map pomProperties = domReader.getPomProperties();
+                for (Iterator iter = pomProperties.entrySet().iterator(); iter.hasNext();) {
+                    Map.Entry prop = (Map.Entry) iter.next();
+                    domReader.setProperty((String) prop.getKey(), (String) prop.getValue());
+                }
+                //TODO add also the properties to the moduleDescriptor so that it can be inherited
+                //mdBuilder.addProperty(pomProperties);
                 
                 for (Iterator it = domReader.getDependencyMgt().iterator(); it.hasNext();) {
                     PomReader.PomDependencyMgt dep = (PomReader.PomDependencyMgt) it.next();

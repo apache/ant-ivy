@@ -225,8 +225,10 @@ public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParse
 
         DependencyDescriptor[] dds = md.getDependencies();
         assertNotNull(dds);
-        assertEquals(1, dds.length);
+        assertEquals(2, dds.length);
         assertEquals(ModuleRevisionId.newInstance("org.apache", "test-other", "1.0"), dds[0]
+                .getDependencyRevisionId());
+        assertEquals(ModuleRevisionId.newInstance("org.apache", "test-yet-other", "5.76"), dds[1]
                 .getDependencyRevisionId());
     }
 

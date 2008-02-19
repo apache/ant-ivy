@@ -34,5 +34,13 @@
       <artifactId>test-other</artifactId>
       <version>${version}</version>
     </dependency>
+    <dependency>
+      <groupId>org.apache</groupId>
+      <artifactId>test-yet-other</artifactId>
+      <version>${test-yet-other-version}</version>
+    </dependency>
   </dependencies>
+  <properties>
+  	<test-yet-other-version>5.76</test-yet-other-version>
+  </properties>
 </project>
