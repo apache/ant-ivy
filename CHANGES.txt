@@ -100,6 +100,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - FIX: NPE in namespace transformation during the ivy:findrevision and ivy:resolve task execution (IVY-659) (thanks to Andrea Bernardo Ciddio)
 - FIX: Maven test scope includes all runtime dependencies (IVY-682)
 - FIX: Inherit depedencies defined in parent pom (IVY-683)
+- FIX: Incorrect ivy from maven pom generation when classifier are user (IVY-714) (thanks to Ruslan Shevchenko)
 
 - TASK: Remove cache attribute on Ant tasks (IVY-685)
 
