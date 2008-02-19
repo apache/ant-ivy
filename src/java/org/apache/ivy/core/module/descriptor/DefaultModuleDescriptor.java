@@ -166,6 +166,8 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
         nmd.licenses.addAll(Arrays.asList(md.getLicenses()));
         nmd.homePage = md.getHomePage();
         nmd.lastModified = md.getLastModified();
+        nmd.extraAttributesNamespaces = md.getExtraAttributesNamespaces();
+        nmd.extraInfo = md.getExtraInfo();
         nmd.namespace = ns;
 
         return nmd;
@@ -215,7 +217,7 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
     
     private Map/*<String,String>*/ extraAttributesNamespaces = new LinkedHashMap();
 
-    private Map/*<String,String>*/ extraDescription = new HashMap();
+    private Map/*<String,String>*/ extraInfo = new HashMap();
 
     public DefaultModuleDescriptor(ModuleRevisionId id, String status, Date pubDate) {
         this(id, status, pubDate, false);
@@ -624,10 +626,10 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
    
     
     public void addExtraInfo(String infoKey, String value) {
-        extraDescription.put(infoKey, value);
+        extraInfo.put(infoKey, value);
     }
     
     public Map getExtraInfo() {
-        return extraDescription;
+        return extraInfo;
     }
 }
