@@ -37,4 +37,11 @@
         </dependency>
     </dependencies>
   </dependencyManagement>
+   <dependencies>
+    <dependency>
+      <groupId>org.apache.dm</groupId>
+      <artifactId>test3</artifactId>
+    </dependency>
+  </dependencies>
+  
 </project>

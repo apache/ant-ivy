@@ -3396,8 +3396,8 @@ public class ResolveTest extends TestCase {
         // test has a dependency on test2 but there is no version listed. test has a parent of parent(2.0) 
         // then parent2. Both parents have a dependencyManagement element for test2, and each list the version as
         // ${pom.version}. The parent version should take precidence over parent2, 
-        // so the version should be test2 version 2.0. Test3 is also a dependency, and it's version is listed
-        // as 1.0 in parent2.
+        // so the version should be test2 version 2.0. Test3 is also a dependency of parent, and it's version is listed
+        // as 1.0 in parent2 (dependencies inherited from parent comes after).
         Ivy ivy = new Ivy();
         ivy.configure(new File("test/repositories/parentPom/ivysettings.xml"));
         ivy.getSettings().setDefaultResolver("parentChain");
@@ -3443,8 +3443,8 @@ public class ResolveTest extends TestCase {
         // test has a dependency on test2 but there is no version listed. test has a parent of parent(2.0) 
         // then parent2. Both parents have a dependencyManagement element for test2, and each list the version as
         // ${pom.version}. The parent version should take precidence over parent2, 
-        // so the version should be test2 version 2.0. Test3 is also a dependency, and it's version is listed
-        // as 1.0 in parent2.
+        // so the version should be test2 version 2.0. Test3 is also a dependency of parent, and it's version is listed
+        // as 1.0 in parent2. (dependencies inherited from parent comes after)
 
         // now run tests with dual resolver
         Ivy ivy = new Ivy();

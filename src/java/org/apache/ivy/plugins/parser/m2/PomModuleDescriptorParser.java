@@ -159,9 +159,18 @@ public final class PomModuleDescriptorParser implements ModuleDescriptorParser {
                 domReader.setProperty("pom.version", version);
                 domReader.setProperty("version", version);
 
+                ModuleDescriptor parentDescr = null;
                 if (domReader.hasParent()) {
                     domReader.setProperty("parent.version", domReader.getParentVersion());
                     //Is there any other parent properties?
+                    
+                    ModuleRevisionId parentModRevID = ModuleRevisionId.newInstance(
+                        domReader.getParentGroupId(), 
+                        domReader.getParentArtifactId(), 
+                        domReader.getParentVersion());
+                    ResolvedModuleRevision parentModule = parseOtherPom(ivySettings, 
+                        parentModRevID);
+                    parentDescr = parentModule.getDescriptor();
                 }
                 
                 for (Iterator it = domReader.getDependencyMgt().iterator(); it.hasNext();) {
@@ -169,24 +178,21 @@ public final class PomModuleDescriptorParser implements ModuleDescriptorParser {
                     mdBuilder.addDependencyMgt(dep);
                 }
                 
-                if (domReader.hasParent()) {
-                    ModuleRevisionId parentModRevID = ModuleRevisionId.newInstance(
-                        domReader.getParentGroupId(), 
-                        domReader.getParentArtifactId(), 
-                        domReader.getParentVersion());
-                    ResolvedModuleRevision parentModule = parseOtherPom(ivySettings, 
-                        parentModRevID);
-                    ModuleDescriptor parentDescr = parentModule.getDescriptor();
+                if (parentDescr != null) {
                     mdBuilder.addExtraDescription(parentDescr.getExtraInfo());
-                    for (int i = 0; i < parentDescr.getDependencies().length; i++) {
-                        mdBuilder.addDependency(parentDescr.getDependencies()[i]);
-                    }
-                }                
-                
+                }
+
                 for (Iterator it = domReader.getDependencies().iterator(); it.hasNext();) {
                     PomReader.PomDependencyData dep = (PomReader.PomDependencyData) it.next();
                     mdBuilder.addDependency(res, dep);
                 }
+
+                if (parentDescr != null) {
+                    for (int i = 0; i < parentDescr.getDependencies().length; i++) {
+                        mdBuilder.addDependency(parentDescr.getDependencies()[i]);
+                    }
+                }
+                
                 mdBuilder.addArtifact(artifactId , domReader.getPackaging());
             }            
         } catch (SAXException e) {

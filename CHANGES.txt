@@ -77,6 +77,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - IMPROVEMENT: Decrease memory footprint (IVY-662)
 - IMPROVEMENT: Downgrade Ant version requirement to 1.6 to build Ivy (IVY-687)
 - IMPROVEMENT: In the ResolveReport class, add the possibility to filter the evicted module while getting the list of DownloadArtifact (IVY-704) (thanks to Nicolas Lalevée)
+- IMPORVEMENT: Refactor the PomModuleDescriptorParser in order to allow easier integration of maven pom 	 
 
 - FIX: ivy:install task not using validate attribute (IVY-728)
 - FIX: Bad conflict resolution leads to bad "configuration(s) not found" error (IVY-729)
@@ -98,6 +99,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - FIX: Strict conflictmanager seems to not support dynamic revisions (IVY-474)
 - FIX: NPE in namespace transformation during the ivy:findrevision and ivy:resolve task execution (IVY-659) (thanks to Andrea Bernardo Ciddio)
 - FIX: Maven test scope includes all runtime dependencies (IVY-682)
+- FIX: Inherit depedencies defined in parent pom (IVY-683)
 
 - TASK: Remove cache attribute on Ant tasks (IVY-685)
 
@@ -125,7 +127,6 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - IMPROVEMENT: Improvements on hello ivy example (IVY-626) (with contribution from Jacob Grydholt Jensen)
 - IMPROVEMENT: Make the root attribute in the ivyrep resolver mandatory (IVY-625)
 - IMPROVEMENT: New text representation for main module metadata concepts (IVY-649)
-- IMPORVEMENT: Refactor the PomModuleDescriptorParser in order to allow easier integration of maven pom
 
 - FIX: m2 incompatibility - IVY does not recognize property section (IVY-637)
 - FIX: m2 incompatibility - IVY does not recognize parent pom (IVY-636)

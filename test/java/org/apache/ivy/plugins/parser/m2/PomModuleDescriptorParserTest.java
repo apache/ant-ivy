@@ -503,9 +503,9 @@ public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         DependencyDescriptor[] dds = md.getDependencies();
         assertNotNull(dds);
         assertEquals(2, dds.length);
-        assertEquals(ModuleRevisionId.newInstance("commons-logging", "commons-logging", "1.0.4"),
-            dds[0].getDependencyRevisionId());
         assertEquals(ModuleRevisionId.newInstance("commons-collection", "commons-collection", "1.0.5"),
+            dds[0].getDependencyRevisionId());
+        assertEquals(ModuleRevisionId.newInstance("commons-logging", "commons-logging", "1.0.4"),
             dds[1].getDependencyRevisionId());
     }
 }
