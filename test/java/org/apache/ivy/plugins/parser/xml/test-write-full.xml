@@ -24,7 +24,9 @@
 		status="integration"
 		publication="20041101110000"
 		e:attr1="value1"
-	/>
+	>
+		<e:someExtra>56576</e:someExtra>
+	</info>
 	<configurations>
 		<conf name="myconf1" visibility="public" description="desc 1" e:attr2="value2"/>
 		<conf name="myconf2" visibility="public" description="desc 2"/>

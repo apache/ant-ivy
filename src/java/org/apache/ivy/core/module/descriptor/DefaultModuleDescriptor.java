@@ -215,6 +215,8 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
     
     private Map/*<String,String>*/ extraAttributesNamespaces = new LinkedHashMap();
 
+    private Map/*<String,String>*/ extraDescription = new HashMap();
+
     public DefaultModuleDescriptor(ModuleRevisionId id, String status, Date pubDate) {
         this(id, status, pubDate, false);
     }
@@ -617,5 +619,15 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
 
     public void addExtraAttributeNamespace(String prefix, String namespace) {
         extraAttributesNamespaces.put(prefix, namespace);
+    }
+
+   
+    
+    public void addExtraInfo(String infoKey, String value) {
+        extraDescription.put(infoKey, value);
+    }
+    
+    public Map getExtraInfo() {
+        return extraDescription;
     }
 }

@@ -230,4 +230,13 @@ public interface ModuleDescriptor extends ExtendableItem, ArtifactInfo {
      *         URIs.
      */
     Map/*<String,String>*/ getExtraAttributesNamespaces();
+    
+    
+    /**
+     * Returns the custom info provided in the info tag.
+     * All the tags except the description are given.
+     * The key is the name of the tag, the value is its content.
+     * @return
+     */
+    Map/*<String,String>*/ getExtraInfo();
 }

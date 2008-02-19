@@ -71,6 +71,7 @@
 					            <xs:attribute name="homepage" type="xs:string"/>
 			            	</xs:complexType>
 			      		</xs:element>
+			      		<xs:any minOccurs="0" maxOccurs="unbounded" processContents="lax"/>
 			        </xs:sequence>
 		            <xs:attribute name="organisation" type="xs:string" use="required"/>
 		            <xs:attribute name="module" type="xs:string" use="required"/>

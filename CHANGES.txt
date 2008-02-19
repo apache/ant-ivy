@@ -125,6 +125,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - IMPROVEMENT: Improvements on hello ivy example (IVY-626) (with contribution from Jacob Grydholt Jensen)
 - IMPROVEMENT: Make the root attribute in the ivyrep resolver mandatory (IVY-625)
 - IMPROVEMENT: New text representation for main module metadata concepts (IVY-649)
+- IMPORVEMENT: Refactor the PomModuleDescriptorParser in order to allow easier integration of maven pom
 
 - FIX: m2 incompatibility - IVY does not recognize property section (IVY-637)
 - FIX: m2 incompatibility - IVY does not recognize parent pom (IVY-636)

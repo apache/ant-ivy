@@ -183,7 +183,8 @@ Here is an ivy file with the attribute 'color' set to blue:
 	/>
 </ivy-module>
 </code>
-Then you can use the extra attribute when you declare a dependency on foo:
+Then you must use the extra attribute when you declare a dependency on foo.  Those extra attributes 
+will indeed be used as identifier for the module like the org the name and the revision:
 <code>
 <dependency org="apache" name="foo" e:color="blue" rev="1.5+" />
 </code>

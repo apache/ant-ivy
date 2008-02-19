@@ -21,11 +21,15 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
+import org.apache.ivy.plugins.repository.Resource;
 import org.apache.ivy.util.url.URLHandlerRegistry;
+import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXNotRecognizedException;
 import org.xml.sax.ext.LexicalHandler;
@@ -49,6 +53,8 @@ public abstract class XMLHelper {
 
     private static boolean canUseSchemaValidation = true;
 
+    private static DocumentBuilder docBuilder;
+    
     static {
         VALIDATING_FACTORY.setNamespaceAware(true);
         VALIDATING_FACTORY.setValidating(true);
@@ -177,6 +183,33 @@ public abstract class XMLHelper {
         return result.toString();
     }
 
+    
+    public static Document parseToDom(URL descriptorURL, Resource res) throws IOException,
+            SAXException {
+        DocumentBuilder docBuilder = getDocBuilder();
+        InputStream pomStream = res.openStream();
+        Document pomDomDoc;
+        try {
+            pomDomDoc = docBuilder.parse(pomStream, res.getName());
+        } finally {
+            pomStream.close();
+        } 
+        return pomDomDoc;
+    }
+
+    public static DocumentBuilder getDocBuilder() {
+        if (docBuilder == null) {
+            try {
+                docBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+            } catch (ParserConfigurationException e) {
+                throw new RuntimeException(e);
+            }        
+        }
+        return docBuilder;
+    }
+
+
     private XMLHelper() {
     }
+
 }

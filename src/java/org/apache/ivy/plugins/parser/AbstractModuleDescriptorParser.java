@@ -35,6 +35,7 @@ import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.plugins.repository.Resource;
+import org.apache.ivy.plugins.repository.ResourceHelper;
 import org.apache.ivy.plugins.repository.url.URLResource;
 import org.apache.ivy.util.Message;
 import org.xml.sax.SAXException;
@@ -92,7 +93,7 @@ public abstract class AbstractModuleDescriptorParser implements ModuleDescriptor
         protected void setResource(Resource res) {
             this.res = res; // used for log and date only
             md = new DefaultModuleDescriptor(parser, res);
-            md.setLastModified(getLastModified());
+            md.setLastModified(ResourceHelper.getLastModifiedOrDefault(res));
         }
 
         protected Resource getResource() {
@@ -346,22 +347,12 @@ public abstract class AbstractModuleDescriptorParser implements ModuleDescriptor
             return new Date(md.getLastModified());
         }
 
-        protected long getLastModified() {
-            long last = getResource().getLastModified();
-            if (last > 0) {
-                return last;
-            } else {
-                Message.debug("impossible to get date for " + getResource() + ": using 'now'");
-                return System.currentTimeMillis();
-            }
-        }
-
         private void replaceConfigurationWildcards(ModuleDescriptor md) {
             Configuration[] configs = md.getConfigurations();
             for (int i = 0; i < configs.length; i++) {
                 configs[i].replaceWildcards(md);
             }
         }
-
     }
+
 }

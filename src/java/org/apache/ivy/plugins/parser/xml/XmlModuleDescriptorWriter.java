@@ -382,7 +382,26 @@ public final class XmlModuleDescriptorWriter {
             printExtraAttributes(md, out, "\t\t");
             out.println();
         }
-        out.println("\t/>");
+        if (md.getExtraInfo().size()>0) {
+            out.println("\t>");
+            for (Iterator it = md.getExtraInfo().entrySet().iterator(); it.hasNext();) {
+                Map.Entry extraDescr = (Map.Entry) it.next();
+                if (extraDescr.getValue()==null || ((String)extraDescr.getValue()).length()==0) {
+                    continue;
+                }
+                out.print("\t\t<");
+                out.print(extraDescr.getKey());
+                out.print(">");
+                out.print(XMLHelper.escape((String) extraDescr.getValue()));
+                out.print("</");
+                out.print(extraDescr.getKey());
+                out.println(">");
+            }
+            out.println("\t</info>");
+        } else {
+            out.println("\t/>");            
+        }
+
     }
 
     private static String getConfs(ModuleDescriptor md, Artifact artifact) {

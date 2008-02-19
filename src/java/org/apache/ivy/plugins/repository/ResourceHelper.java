@@ -22,8 +22,14 @@ import java.net.MalformedURLException;
 
 import org.apache.ivy.plugins.repository.file.FileResource;
 import org.apache.ivy.plugins.repository.url.URLResource;
+import org.apache.ivy.util.Message;
 
-public class ResourceHelper {
+public final class ResourceHelper {
+    
+    private ResourceHelper() {
+        
+    }
+    
     public static boolean equals(Resource res, File f) {
         if (res == null && f == null) {
             return true;
@@ -41,5 +47,15 @@ public class ResourceHelper {
             }
         }
         return false;
+    }
+
+    public static long getLastModifiedOrDefault(Resource res) {
+        long last = res.getLastModified();
+        if (last > 0) {
+            return last;
+        } else {
+            Message.debug("impossible to get date for " + res + ": using 'now'");
+            return System.currentTimeMillis();
+        }
     }
 }

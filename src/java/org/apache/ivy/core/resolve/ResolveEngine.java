@@ -171,8 +171,7 @@ public class ResolveEngine {
     }
 
     /**
-     * Resolve dependencies of a module described by an ivy file. Note: the method signature is way
-     * too long, we should use a class to store the settings of the resolve.
+     * Resolve dependencies of a module described by an ivy file.
      */
     public ResolveReport resolve(URL ivySource, ResolveOptions options) throws ParseException,
             IOException {

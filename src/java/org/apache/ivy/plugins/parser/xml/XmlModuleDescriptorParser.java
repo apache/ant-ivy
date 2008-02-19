@@ -177,10 +177,16 @@ public final class XmlModuleDescriptorParser extends AbstractModuleDescriptorPar
         private static final int EXCLUDE = 9;
 
         private static final int DEPS = 10;
-
+        
+        private static final int DESCRIPTION = 11;
+        
         private int state = NONE;
 
         private final URL xmlURL;
+
+        private StringBuffer buffer;
+        
+        
 
         public Parser(ModuleDescriptorParser parser, ParserSettings ivySettings, boolean validate,
                 URL xmlURL) {
@@ -257,11 +263,14 @@ public final class XmlModuleDescriptorParser extends AbstractModuleDescriptorPar
                     ivyModuleStarted(attributes);
                 } else if ("info".equals(qName)) {
                     infoStarted(attributes);
-                } else if ("license".equals(qName)) {
+                } else if (state == INFO && "license".equals(qName)) {
                     md.addLicense(new License(ivy.substitute(attributes.getValue("name")), ivy
                             .substitute(attributes.getValue("url"))));
-                } else if ("description".equals(qName)) {
+                } else if (state == INFO && "description".equals(qName)) {
                     md.setHomePage(ivy.substitute(attributes.getValue("homepage")));
+                    state = DESCRIPTION;
+                } else if (state == INFO) {
+                    buffer = new StringBuffer();
                 } else if ("configurations".equals(qName)) {
                     configurationStarted(attributes);
                 } else if ("publications".equals(qName)) {
@@ -292,7 +301,7 @@ public final class XmlModuleDescriptorParser extends AbstractModuleDescriptorPar
                             .getValue("name")));
                 } else if ("manager".equals(qName) && state == CONFLICT) {
                     managerStarted(attributes);
-                 } else if ("include".equals(qName) && state == CONF) {
+                } else if ("include".equals(qName) && state == CONF) {
                     includeConfStarted(attributes);
                 } else if (validate && state != INFO) {
                     addError("unknwon tag " + qName);
@@ -698,6 +707,14 @@ public final class XmlModuleDescriptorParser extends AbstractModuleDescriptorPar
             return matcher;
         }
 
+        
+        public void characters(char[] ch, int start, int length) throws SAXException {
+            if (buffer != null) {
+                buffer.append(ch, start, length);
+            }            
+        }
+
+        
         public void endElement(String uri, String localName, String qName) throws SAXException {
             if (state == PUB && "artifact".equals(qName)
                     && artifact.getConfigurations().length == 0) {
@@ -735,6 +752,13 @@ public final class XmlModuleDescriptorParser extends AbstractModuleDescriptorPar
                 state = DEPS;
             } else if ("dependencies".equals(qName)) {
                 state = NONE;
+            } else if (state == INFO && "info".equals(qName)) {
+                state = NONE;
+            } else if (state == INFO && "description".equals(qName)) {
+                state = INFO;
+            } else if (state == INFO) {
+                md.addExtraInfo(qName, buffer==null?"":buffer.toString());
+                buffer = null;
             }
         }
 
