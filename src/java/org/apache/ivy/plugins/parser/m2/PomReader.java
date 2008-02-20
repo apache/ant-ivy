@@ -177,7 +177,7 @@ public class PomReader {
         }
     }
     
-    public Iterable/* <PomDependencyData> */ getDependencies() {
+    public List /* <PomDependencyData> */ getDependencies() {
         Element dependenciesElement = getFirstChildElement(projectElement, DEPENDENCIES);
         LinkedList dependencies = new LinkedList();
         if (dependenciesElement != null) {
@@ -193,7 +193,7 @@ public class PomReader {
     }
     
 
-    public Iterable/* <PomDependencyMgt> */ getDependencyMgt() {
+    public List /* <PomDependencyMgt> */ getDependencyMgt() {
         Element dependenciesElement = getFirstChildElement(projectElement, DEPENDENCY_MGT);
         dependenciesElement = getFirstChildElement(dependenciesElement, DEPENDENCIES);
         LinkedList dependencies = new LinkedList();
@@ -260,7 +260,7 @@ public class PomReader {
             return getFirstChildElement(depElement, OPTIONAL) != null;
         }
         
-        public Iterable/*<ModuleId>*/ getExcludedModules() {
+        public List /*<ModuleId>*/ getExcludedModules() {
             Element exclusionsElement = getFirstChildElement(depElement, EXCLUSIONS);
             LinkedList exclusions = new LinkedList();
             if (exclusionsElement != null) {
@@ -290,7 +290,7 @@ public class PomReader {
         }
         for (Iterator it = getAllChilds(propsEl).iterator(); it.hasNext();) {
             Element prop = (Element) it.next();
-            pomProperties.put(prop.getNodeName(), prop.getTextContent());
+            pomProperties.put(prop.getNodeName(), getTextContent(prop));
         }
         return pomProperties;
     }
@@ -304,18 +304,32 @@ public class PomReader {
         }
     }
 
-    
+    private static String getTextContent(Element element) {
+        StringBuffer result = new StringBuffer();
+        
+        NodeList childNodes = element.getChildNodes();
+        for (int i = 0; i < childNodes.getLength(); i++) {
+            Node child = childNodes.item(i);
+            
+            switch (child.getNodeType()) {
+                case Node.CDATA_SECTION_NODE:
+                case Node.TEXT_NODE:
+                    result.append(child.getNodeValue());
+                    break;
+            }
+        }
+        
+        return result.toString();
+    }
     
     private static String getFirstChildText(Element parentElem, String name) {
         Element node = getFirstChildElement(parentElem, name);
         if (node != null) {
-            node.normalize();
-            return node.getTextContent();
+            return getTextContent(node);
         } else {
             return null;
         }
     }
-
 
     private static Element getFirstChildElement(Element parentElem, String name) {
         if (parentElem == null) {
