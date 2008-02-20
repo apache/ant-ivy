@@ -218,7 +218,7 @@ public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         assertEquals(extraAtt, dds[0].getAllDependencyArtifacts()[0].getExtraAttributes());
     }
 
-    public void testWithVersionProperty() throws Exception {
+    public void testWithVersionPropertyAndPropertiesTag() throws Exception {
         ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(
             settings, getClass().getResource("test-version.pom"), false);
         assertNotNull(md);
@@ -510,4 +510,35 @@ public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         assertEquals(ModuleRevisionId.newInstance("commons-logging", "commons-logging", "1.0.4"),
             dds[1].getDependencyRevisionId());
     }
+
+    public void testParentProperties() throws ParseException, IOException {
+        settings.setDictatorResolver(new MockResolver() {
+            public ResolvedModuleRevision getDependency(DependencyDescriptor dd, ResolveData data) throws ParseException {
+                try {
+                    ModuleDescriptor moduleDescriptor = PomModuleDescriptorParser.getInstance().parseDescriptor(
+                                            settings, getClass().getResource("test-version.pom"), false);
+                    return new ResolvedModuleRevision(null,null,moduleDescriptor,null);
+                } catch (IOException e) {
+                    throw new AssertionError(e);
+                }
+            }
+        });
+
+        ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(
+            settings, getClass().getResource("test-parent-properties.pom"), false);
+        assertNotNull(md);
+
+        DependencyDescriptor[] dds = md.getDependencies();
+        assertNotNull(dds);
+        assertEquals(3, dds.length); 
+        //2 are inherited from parent.  Only the first one is important for this test
+        
+        assertEquals(ModuleRevisionId.newInstance("org.apache", "test-version-other", "5.76"), dds[0]
+                .getDependencyRevisionId());//present in the pom using a property defined in the parent
+
+        
+    }
+    
+
+
 }

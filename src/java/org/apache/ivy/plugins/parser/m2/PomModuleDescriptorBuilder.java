@@ -91,7 +91,8 @@ public class PomModuleDescriptorBuilder {
     static final Map MAVEN2_CONF_MAPPING = new HashMap();
 
     private static final String DEPENDENCY_MANAGEMENT = "m:dependency.management";        
-    private static final String DEPENDENCY_MANAGEMENT_DELIMITER = "__";
+    private static final String PROPERTIES = "m:properties";
+    private static final String EXTRA_INFO_DELIMITER = "__";
 
     
     static interface ConfMapper {
@@ -247,29 +248,61 @@ public class PomModuleDescriptorBuilder {
 
 
     public void addDependencyMgt(PomDependencyMgt dep) {
-        String key = getDependencyMgtExtraDataKey(dep.getGroupId(), dep.getArtifaceId());
+        String key = getDependencyMgtExtraInfoKey(dep.getGroupId(), dep.getArtifaceId());
         ivyModuleDescriptor.addExtraInfo(key, dep.getVersion());
     }
 
     private String getDefaultVersion(PomDependencyData dep) {
-        String key = getDependencyMgtExtraDataKey(dep.getGroupId(), dep.getArtifaceId());        
+        String key = getDependencyMgtExtraInfoKey(dep.getGroupId(), dep.getArtifaceId());        
         return (String) ivyModuleDescriptor.getExtraInfo().get(key);
     }
 
 
-    public static String getDependencyMgtExtraDataKey(String groupId, String artifaceId) {
-        return DEPENDENCY_MANAGEMENT + DEPENDENCY_MANAGEMENT_DELIMITER + groupId
-                + DEPENDENCY_MANAGEMENT_DELIMITER + artifaceId;
+    private static String getDependencyMgtExtraInfoKey(String groupId, String artifaceId) {
+        return DEPENDENCY_MANAGEMENT + EXTRA_INFO_DELIMITER + groupId
+                + EXTRA_INFO_DELIMITER + artifaceId;
+    }
+    
+    private static String getPropertyExtraInfoKey(String propertyName) {
+        return PROPERTIES + EXTRA_INFO_DELIMITER + propertyName;
+    }
+
+    
+
+    public void addExtraInfos(Map extraAttributes) {
+        for (Iterator it = extraAttributes.entrySet().iterator(); it.hasNext();) {
+            Map.Entry entry = (Entry) it.next();
+            String key = (String) entry.getKey();
+            String value = (String) entry.getValue();
+            addExtraInfo(key, value);
+        }
     }
 
 
-    public void addExtraDescription(Map extraAttributes) {
-        for (Iterator it = extraAttributes.entrySet().iterator(); it.hasNext();) {
-            Map.Entry entry =  (Entry) it.next();
-            if (!ivyModuleDescriptor.getExtraInfo().containsKey(entry.getKey())) {
-                ivyModuleDescriptor.addExtraInfo((String)entry.getKey(), (String)entry.getValue());
+    private void addExtraInfo(String key, String value) {
+        if (!ivyModuleDescriptor.getExtraInfo().containsKey(key)) {
+            ivyModuleDescriptor.addExtraInfo(key, value);
+        }
+    }
+
+    
+    
+    public static Map extractPomProperties(Map extraInfo) {
+        Map r = new HashMap();
+        for (Iterator it = extraInfo.entrySet().iterator(); it.hasNext();) {
+            Map.Entry extraInfoEntry = (Map.Entry) it.next();
+            if (((String) extraInfoEntry.getKey()).startsWith(PROPERTIES)) {
+                String prop = ((String) extraInfoEntry.getKey()).substring(PROPERTIES.length()
+                        + EXTRA_INFO_DELIMITER.length());
+                r.put(prop, extraInfoEntry.getValue());
             }
         }
+        return r;
+    }
+
+
+    public void addProperty(String propertyName, String value) {
+        addExtraInfo(getPropertyExtraInfoKey(propertyName), value);
     }
 
     

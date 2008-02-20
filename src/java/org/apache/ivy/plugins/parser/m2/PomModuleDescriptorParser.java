@@ -178,9 +178,16 @@ public final class PomModuleDescriptorParser implements ModuleDescriptorParser {
                 for (Iterator iter = pomProperties.entrySet().iterator(); iter.hasNext();) {
                     Map.Entry prop = (Map.Entry) iter.next();
                     domReader.setProperty((String) prop.getKey(), (String) prop.getValue());
+                    mdBuilder.addProperty((String) prop.getKey(), (String) prop.getValue());
                 }
-                //TODO add also the properties to the moduleDescriptor so that it can be inherited
-                //mdBuilder.addProperty(pomProperties);
+                
+                if (parentDescr != null) {
+                    Map parentPomProps = mdBuilder.extractPomProperties(parentDescr.getExtraInfo());
+                    for (Iterator iter = parentPomProps.entrySet().iterator(); iter.hasNext();) {
+                        Map.Entry prop = (Map.Entry) iter.next();
+                        domReader.setProperty((String) prop.getKey(), (String) prop.getValue());
+                    }                    
+                }
                 
                 for (Iterator it = domReader.getDependencyMgt().iterator(); it.hasNext();) {
                     PomReader.PomDependencyMgt dep = (PomReader.PomDependencyMgt) it.next();
@@ -188,7 +195,7 @@ public final class PomModuleDescriptorParser implements ModuleDescriptorParser {
                 }
                 
                 if (parentDescr != null) {
-                    mdBuilder.addExtraDescription(parentDescr.getExtraInfo());
+                    mdBuilder.addExtraInfos(parentDescr.getExtraInfo());
                 }
 
                 for (Iterator it = domReader.getDependencies().iterator(); it.hasNext();) {
