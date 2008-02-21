@@ -287,6 +287,8 @@ public class XmlSettingsParser extends DefaultHandler {
                 }
                 String cache = (String) attributes.get("defaultCache");
                 if (cache != null) {
+                    Message.deprecated("'defaultCache' is deprecated, "
+                        + "use 'caches[@defaultCacheDir]' instead (" + settings + ")");
                     ivy.setDefaultCache(new File(cache));
                 }
                 String defaultBranch = (String) attributes.get("defaultBranch");
@@ -299,16 +301,14 @@ public class XmlSettingsParser extends DefaultHandler {
                 }
                 String up2d = (String) attributes.get("checkUpToDate");
                 if (up2d != null) {
+                    Message.deprecated("'checkUpToDate' is deprecated, "
+                        + "use 'caches[@checkUpToDate]' instead (" + settings + ")");
                     ivy.setCheckUpToDate(Boolean.valueOf(up2d).booleanValue());
                 }
                 String useRemoteConfig = (String) attributes.get("useRemoteConfig");
                 if (useRemoteConfig != null) {
                     ivy.setUseRemoteConfig(Boolean.valueOf(useRemoteConfig)
                             .booleanValue());
-                }
-                String resolutionDir = (String) attributes.get("resolutionCacheDir");
-                if (resolutionDir != null) {
-                    ivy.setDefaultResolutionCacheBasedir(resolutionDir);
                 }
                 String cacheIvyPattern = (String) attributes.get("cacheIvyPattern");
                 if (cacheIvyPattern != null) {
@@ -337,6 +337,18 @@ public class XmlSettingsParser extends DefaultHandler {
                 defaultLock = (String) attributes.get("lockStrategy");
                 defaultCacheManager = (String) attributes.get("default");
                 
+                String cache = (String) attributes.get("defaultCacheDir");
+                if (cache != null) {
+                    ivy.setDefaultCache(new File(cache));
+                }
+                String up2d = (String) attributes.get("checkUpToDate");
+                if (up2d != null) {
+                    ivy.setCheckUpToDate(Boolean.valueOf(up2d).booleanValue());
+                }
+                String resolutionDir = (String) attributes.get("resolutionCacheDir");
+                if (resolutionDir != null) {
+                    ivy.setDefaultResolutionCacheBasedir(resolutionDir);
+                }
                 String useOrigin = (String) attributes.get("useOrigin");
                 if (useOrigin != null) {
                     ivy.setDefaultUseOrigin(Boolean.valueOf(useOrigin).booleanValue());
@@ -349,7 +361,7 @@ public class XmlSettingsParser extends DefaultHandler {
                 if (cacheArtPattern != null) {
                     ivy.setDefaultCacheArtifactPattern(cacheArtPattern);
                 }
-                String repositoryDir = (String) attributes.get("basedir");
+                String repositoryDir = (String) attributes.get("repositoryCacheDir");
                 if (repositoryDir != null) {
                     ivy.setDefaultRepositoryCacheBasedir(repositoryDir); 
                 }

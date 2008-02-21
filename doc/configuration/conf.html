@@ -27,22 +27,16 @@
 	<textarea id="xooki-source">
 <b>Tag:</b> settings
 
-Configures some important ivy info: default cache, default resolver, ...
+Configures some important ivy info: default resolver, latest strategy, conflict manager...
 
-Default cache is the default directory used for both the resolution and repository cache(s). It usually points to a directory in your filesystem. If you want to isolate resolution cache from repository cache, we recommend setting both the resolutionCacheDir attribute on this tag and the basedir attribute on [[configuration/caches]] instead of using defaultCache.
-See [[concept cache concept]] for details on Ivy cache concept.
-
-Default resolver is used whenever nothing else is configured in the modules section of the configuration file. It should give the name of a dependency resolver defined in the resolvers section of the configuration file.
+Default resolver is used whenever nothing else is configured in the modules section of the settings file. It should give the name of a dependency resolver defined in the [[configuration/resolvers]] section of the settings file.
 
 Default latest strategy and conflict manager can also be configured here.
 
-validate indicates if ivy files should generally be validate against xsd or not. This setting is only a default value, and can be overriden :
+<em>validate</em> indicates if ivy files should generally be validated against the xsd or not. This setting is only a default value, and can be overridden:
 1) in ant tasks
 2) in resolvers
-So if there is a setting in the resolver, it always win against all other settings.
-
-checkUpToDate indicates to ivy if it must check date of artifacts before retrieving them (i.e. copying them from
-cache to another place in your filesystem). Usually it is a good thing to check date to avoid unnecessary copy, even if it's most of the time a local copy.
+So if there is a setting in the resolver, it always wins against all other settings.
 
 <h1>Attributes</h1>
 <table class="ivy-attributes">
@@ -50,10 +44,6 @@ cache to another place in your filesystem). Usually it is a good thing to check 
     <tr><th class="ivy-att">Attribute</th><th class="ivy-att-desc">Description</th><th class="ivy-att-req">Required</th></tr>
 </thead>
 <tbody>
-    <tr><td>defaultCache</td><td>a path to a directory to use as default basedir for both resolution and repository cache(s)</td>
-        <td>No, defaults to .ivy2/cache in user home</td></tr>
-    <tr><td>resolutionCacheDir</td><td>the path of the directory to use to put all resolution cache data <span class="since">since 2.0</span></td>
-        <td>No, defaults to defaultCache</td></tr>
     <tr><td>defaultResolver</td><td>the name of the default resolver to use</td>
         <td>No, but all modules should be configured in the modules section if not provided</td></tr>
     <tr><td>defaultLatestStrategy</td><td>the name of the default latest strategy to use</td>
@@ -66,14 +56,20 @@ cache to another place in your filesystem). Usually it is a good thing to check 
         <td>No, defaults to warn</td></tr>
     <tr><td>validate</td><td>Indicates if ivy files should be validated against ivy.xsd or not.</td>
         <td>No, defaults to true</td></tr>
-    <tr><td>checkUpToDate</td><td>Indicates if date should be checked before retrieving artifacts from cache</td>
-        <td>No, defaults to true</td></tr>
-    <tr><td>cacheIvyPattern</td><td>a pattern to indicate where ivy files should be put in cache. <i>We recommend using the repositoryIvyPattern on the [[configuration/cache]] tag instead</i></td>
-        <td>No, defaults to [organisation]/[module]/ivy-[revision].xml</td></tr>
-    <tr><td>cacheArtifactPattern</td><td>a pattern to indicate where artifact files should be put in cache. <i>We recommend using the repositoryArtifactPattern on the [[configuration/cache]] tag instead</i></td>
-        <td>No, defaults to [organisation]/[module]/[type]s/[artifact]-[revision].[ext]</td></tr>
     <tr><td>useRemoteConfig</td><td>true to configure ivyrep and ibiblio resolver from a remote configuration file (updated with changes in those repository structure if any) (<span class="since">since 1.2</span>)</td>
         <td>No, defaults to false</td></tr>
+    <tr><td><s>defaultCache</s></td><td>a path to a directory to use as default basedir for both resolution and repository cache(s).
+	    <i>Deprecated, we recommend using defaultCacheDir on the [[configuration/caches]] tag instead</i></td>
+        <td>No, defaults to .ivy2/cache in user home</td></tr>
+    <tr><td><s>checkUpToDate</s></td><td>Indicates if date should be checked before retrieving artifacts from cache.
+    	<i>Deprecated, we recommend using checkUpToDate on the [[configuration/caches]] tag instead</i></td>
+        <td>No, defaults to true</td></tr>
+    <tr><td><s>cacheIvyPattern</s></td><td>a pattern to indicate where ivy files should be put in cache.
+    	<i>Deprecated, we recommend using ivyPattern on the [[configuration/caches]] tag instead</i></td>
+        <td>No, defaults to [organisation]/[module]/ivy-[revision].xml</td></tr>
+    <tr><td><s>cacheArtifactPattern</s></td><td>a pattern to indicate where artifact files should be put in cache.
+    	<i>Deprecated, we recommend using artifactPattern on the [[configuration/caches]] tag instead</i></td>
+        <td>No, defaults to [organisation]/[module]/[type]s/[artifact]-[revision].[ext]</td></tr>
 </tbody>
 </table>
 </textarea>

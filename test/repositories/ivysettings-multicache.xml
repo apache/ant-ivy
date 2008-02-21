@@ -18,8 +18,8 @@
 -->
 <ivysettings>
 	<properties file="${ivy.settings.dir}/ivysettings.properties" />
-	<settings defaultResolver="test" resolutionCacheDir="${cache.dir}/wkspace"/>
-	<caches basedir="${cache.dir}/repo1"  
+	<settings defaultResolver="test"/>
+	<caches resolutionCacheDir="${cache.dir}/wkspace" repositoryCacheDir="${cache.dir}/repo1"  
 	        ivyPattern="[module]/ivy-[revision].xml">
 		
 		<cache name="cache2" basedir="${cache.dir}/repo2" 

@@ -17,11 +17,8 @@
    under the License.    
 -->
 <ivysettings>
-   <settings 
-     defaultCache="${ivy.settings.dir}/cache" 
-	 defaultResolver="default" 
-	 />
-   <caches      
+   <settings defaultResolver="default" />
+   <caches defaultCacheDir="${ivy.settings.dir}/cache" 
    	 ivyPattern="[organisation]/[module]/[eatt]/[revision]/ivy.xml"
      artifactPattern="[organisation]/[module]/[eatt]/[revision]/[artifact]-[platform].[ext]"
    />

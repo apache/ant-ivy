@@ -19,12 +19,9 @@
 <ivysettings>
 	<property name="shared" value="sharedrep"/>
 	<properties file="test/java/org/apache/ivy/core/settings/ivysettings.properties"/>
-	<settings   defaultCache="mycache" 
-	        defaultResolver="libraries" 
-			validate="false"
-			checkUpToDate="false"
-			/>
-	<caches ivyPattern="[module]/ivys/ivy-[revision].xml" 
+	<settings defaultResolver="libraries" validate="false" />
+	<caches defaultCacheDir="mycache" checkUpToDate="false"
+			ivyPattern="[module]/ivys/ivy-[revision].xml" 
 			artifactPattern="[module]/[type]s/[artifact]-[revision].[ext]" />
 	<latest-strategies>
 	    <latest-revision name="mylatest-revision">

@@ -9,7 +9,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
  	Maarteen Coene
  	Xavier Hanin
  	Gilles Scokart
- 
+  
  Contributors
  	Ingo Adler
 	Stephane Bailliez
@@ -51,6 +51,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 	Geoff Reedy
 	Christian Riege
 	Andreas Sahlbach
+	Adrian Sandor 	
 	Ruslan Shevchenko
 	John Shields
 	Johan Stuyts
@@ -73,7 +74,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - IMPROVEMENT: Make IBiblio resolver compatible with maven proxy (IVY-466)
 - IMPROVEMENT: Use namespace aware validation (IVY-553)
 - IMPROVEMENT: use ModuleRevisionId instead of ModuleId in IvySettings#getResolver (IVY-691)
-- IMPROVEMENT: Flexible cache management (IVY-399 - not completed yet)
+- IMPROVEMENT: Flexible cache management (IVY-399) (With contribution of Adrian Sandor)
 - IMPROVEMENT: Decrease memory footprint (IVY-662)
 - IMPROVEMENT: Downgrade Ant version requirement to 1.6 to build Ivy (IVY-687)
 - IMPROVEMENT: In the ResolveReport class, add the possibility to filter the evicted module while getting the list of DownloadArtifact (IVY-704) (thanks to Nicolas Lalevée)

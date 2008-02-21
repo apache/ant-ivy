@@ -17,10 +17,9 @@
    under the License.    
 -->
 <ivysettings>
-	<settings resolutionCacheDir="${cache}/resolution" />
-	<caches basedir="${cache}/repository">
+	<caches resolutionCacheDir="${cache}/resolution" repositoryCacheDir="${cache}/repository">
 		<cache name="mycache" />
-		<cache name="mycache2" 
+		<cache name="mycache2"
 				basedir="${cache}/repository2"
 		/>
 	</caches>

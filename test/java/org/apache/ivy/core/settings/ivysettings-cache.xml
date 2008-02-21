@@ -17,9 +17,8 @@
    under the License.    
 -->
 <ivysettings>
-	<settings resolutionCacheDir="resolution" />
-	<caches default="mycache2" 
-	        basedir="repository" 
+	<caches default="mycache2" resolutionCacheDir="resolution"
+	        repositoryCacheDir="repository" 
 	        ivyPattern="[module]/ivys/ivy-[revision].xml" 
 	        artifactPattern="[module]/[type]s/[artifact]-[revision].[ext]"
 	        useOrigin="true"
