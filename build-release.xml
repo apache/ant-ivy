@@ -71,7 +71,7 @@
 			<zipfileset dir="${basedir}/test/triggers" prefix="${snapshot.full.name}/test/triggers" excludes="**/cache/**"/>
 			<zipfileset dir="${basedir}/test/xsl" prefix="${snapshot.full.name}/test/xsl"/>
 			<zipfileset dir="${src.dir}/org/apache/ivy/plugins/parser/xml" includes="ivy.xsd" fullpath="${snapshot.full.name}/ivy.xsd"/>
-			<zipfileset dir="${basedir}" includes="MANIFEST.MF" fullpath="${snapshot.full.name}/MANIFEST.MF"/>
+			<zipfileset dir="${basedir}" includes="META-INF/MANIFEST.MF" fullpath="${snapshot.full.name}/META-INF/MANIFEST.MF"/>
 			<zipfileset dir="${basedir}" includes="NOTICE" fullpath="${snapshot.full.name}/NOTICE"/>
 			<zipfileset dir="${basedir}" includes="README" prefix="${snapshot.full.name}"/>
 			<zipfileset dir="${basedir}" includes="LICENSE*" prefix="${snapshot.full.name}"/>
@@ -163,8 +163,7 @@
 		<copy file="${artifacts.build.dir}/jars/${final.name}" 
 				tofile="${m2.distrib.dir}/ivy-${build.version}.jar" />
 		<!-- jar javadocs -->
-	    <jar destfile="${m2.distrib.dir}/ivy-${build.version}-javadoc.jar"
-	            manifest="${basedir}/MANIFEST.MF">
+	    <jar destfile="${m2.distrib.dir}/ivy-${build.version}-javadoc.jar">
 	        <fileset dir="${javadoc.build.dir}" />
 	    </jar>
 		<!-- copy sources jar -->
