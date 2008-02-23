@@ -60,9 +60,9 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 	John Williams
 	Jaroslaw Wypychowski
 
-   version in SVN
+   2.0.0-beta2
 =====================================
-- NEW: Introduce RepositoryManagementEngine (IVY-665 - not completed yet)
+- NEW: Introduce RepositoryManagementEngine (IVY-665)
 - NEW: Add support for importing environment variables (IVY-608)
 - NEW: Add ability for buildlist task to start build from specified module in the list (IVY-697) (thanks to Mirko Bulovic)
 - NEW: Cache dynamic revision resolution (IVY-694)
@@ -78,7 +78,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - IMPROVEMENT: Decrease memory footprint (IVY-662)
 - IMPROVEMENT: Downgrade Ant version requirement to 1.6 to build Ivy (IVY-687)
 - IMPROVEMENT: In the ResolveReport class, add the possibility to filter the evicted module while getting the list of DownloadArtifact (IVY-704) (thanks to Nicolas Lalevée)
-- IMPORVEMENT: Refactor the PomModuleDescriptorParser in order to allow easier integration of maven pom 	 
+- IMPROVEMENT: Refactor the PomModuleDescriptorParser in order to allow easier integration of maven pom 	 
 
 - FIX: ivy:install task not using validate attribute (IVY-728)
 - FIX: Bad conflict resolution leads to bad "configuration(s) not found" error (IVY-729)
