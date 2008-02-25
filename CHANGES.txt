@@ -21,7 +21,8 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 	Mirko Bulovic
 	Kristian Cibulskis
 	Andrea Bernardo Ciddio
-	Benjamin Francisoud
+	Danno Ferrin
+	Benjamin Francisoud	
 	Jacob Grydholt Jensen
 	Scott Goldstein
 	Pierre Hägnestrand
@@ -103,6 +104,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - FIX: Inherit depedencies defined in parent pom (IVY-683)
 - FIX: Incorrect ivy from maven pom generation when classifier are user (IVY-714) (thanks to Ruslan Shevchenko)
 - FIX: m2 incompatibility - IVY does not recognize property section(IVY-637)
+- FIX: Maven test scope not mapped to test conf (IVY-744) (thanks to Danno Ferrin)
 
 - TASK: Remove cache attribute on Ant tasks (IVY-685)
 
