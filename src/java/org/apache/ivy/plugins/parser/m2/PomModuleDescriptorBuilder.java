@@ -146,15 +146,14 @@ public class PomModuleDescriptorBuilder {
         });
         MAVEN2_CONF_MAPPING.put("test", new ConfMapper() {
             public void addMappingConfs(DefaultDependencyDescriptor dd, boolean isOptional) {
-                //optional/test doesn't make sense
-                dd.addDependencyConfiguration("runtime", "compile(*)");
-                dd.addDependencyConfiguration("runtime", "runtime(*)");
-                dd.addDependencyConfiguration("runtime", "master(*)");
+                //optional doesn't make sense in the test scope
+                dd.addDependencyConfiguration("test", "runtime(*)");
+                dd.addDependencyConfiguration("test", "master(*)");
             }
         });
         MAVEN2_CONF_MAPPING.put("system", new ConfMapper() {
             public void addMappingConfs(DefaultDependencyDescriptor dd, boolean isOptional) {
-                //optional/system doesn't make sense
+                //optional doesn't make sense in the system scope
                 dd.addDependencyConfiguration("system", "master(*)");
             }
         });

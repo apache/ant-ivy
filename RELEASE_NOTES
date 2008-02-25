@@ -160,6 +160,7 @@ long, but Ivy couldn't be what it is without you!
     Andrea Bernardo Ciddio
     Mikkel Bjerg
     Mirko Bulovic
+    Danno Ferrin
     Benjamin Francisoud
 	Nicolas Lalevée
     Markus M. May
@@ -216,6 +217,7 @@ List of changes since Ivy 2.0.0-beta1:
 - FIX: Inherit depedencies defined in parent pom (IVY-683)
 - FIX: Incorrect ivy from maven pom generation when classifier are user (IVY-714) (thanks to Ruslan Shevchenko)
 - FIX: m2 incompatibility - IVY does not recognize property section(IVY-637)
+- FIX: Maven test scope not mapped to test conf (IVY-744) (thanks to Danno Ferrin)
 
 - TASK: Remove cache attribute on Ant tasks (IVY-685)
 
