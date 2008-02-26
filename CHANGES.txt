@@ -6,7 +6,7 @@
 for detailed view of each issue, please consult http://issues.apache.org/jira/browse/IVY
 
  Committers
- 	Maarteen Coene
+ 	Maarten Coene
  	Xavier Hanin
  	Gilles Scokart
   
