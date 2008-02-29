@@ -1,4 +1,5 @@
 Manifest-Version: 1.0
+Main-Class: org.apache.ivy.Main
 Bundle-Version: 0.0.0
 Bundle-Name: Ivy
 Bundle-ManifestVersion: 2
@@ -15,7 +16,6 @@ Import-Package: javax.xml.parsers,
  com.jcraft.jsch;resolution:=optional, 
  javax.swing;resolution:=optional,
  javax.swing.event;resolution:=optional,
- org.apache.commons.cli;resolution:=optional,
  org.apache.commons.httpclient;resolution:=optional,
  org.apache.commons.httpclient.methods;resolution:=optional,
  org.apache.commons.httpclient.params;resolution:=optional,

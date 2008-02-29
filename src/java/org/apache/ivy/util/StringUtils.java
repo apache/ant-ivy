@@ -176,4 +176,12 @@ public final class StringUtils {
                 + "'. Unhandled character.");
     }
 
+    public static String repeat(String str, int count) {
+        StringBuffer sb = new StringBuffer();
+        for (int i = 0; i < count; i++) {
+            sb.append(str);
+        }
+        return sb.toString();
+    }
+
 }

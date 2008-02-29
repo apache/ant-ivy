@@ -35,14 +35,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.StringTokenizer;
 
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.GnuParser;
-import org.apache.commons.cli.HelpFormatter;
-import org.apache.commons.cli.Option;
-import org.apache.commons.cli.OptionBuilder;
-import org.apache.commons.cli.Options;
-import org.apache.commons.cli.ParseException;
 import org.apache.ivy.core.cache.ResolutionCacheManager;
 import org.apache.ivy.core.deliver.DeliverOptions;
 import org.apache.ivy.core.module.descriptor.DefaultDependencyDescriptor;
@@ -59,6 +51,10 @@ import org.apache.ivy.plugins.parser.xml.XmlModuleDescriptorWriter;
 import org.apache.ivy.plugins.report.XmlReportParser;
 import org.apache.ivy.util.DefaultMessageLogger;
 import org.apache.ivy.util.Message;
+import org.apache.ivy.util.cli.CommandLine;
+import org.apache.ivy.util.cli.CommandLineParser;
+import org.apache.ivy.util.cli.OptionBuilder;
+import org.apache.ivy.util.cli.ParseException;
 import org.apache.ivy.util.url.CredentialsStore;
 import org.apache.ivy.util.url.URLHandler;
 import org.apache.ivy.util.url.URLHandlerDispatcher;
@@ -70,108 +66,114 @@ import org.apache.ivy.util.url.URLHandlerRegistry;
  * Valid arguments can be obtained with the -? argument. 
  */
 public final class Main {
-    private static final int DEPENDENCY_ARG_COUNT = 3;
+    private static final int HELP_WIDTH = 80;
+    private static PrintWriter out = new PrintWriter(System.out);
 
-    private static Options getOptions() {
-        Option settings = OptionBuilder.withArgName("settingsfile").hasArg().withDescription(
-            "use given file for settings").create("settings");
-        Option conf = OptionBuilder.withArgName("settingsfile").hasArg().withDescription(
-            "DEPRECATED - use given file for settings").create("conf");
-        Option cache = OptionBuilder.withArgName("cachedir").hasArg().withDescription(
-            "use given directory for cache").create("cache");
-        Option ivyfile = OptionBuilder.withArgName("ivyfile").hasArg().withDescription(
-            "use given file as ivy file").create("ivy");
-        Option dependency = OptionBuilder
-                .withArgName("organisation module revision")
-                .hasArgs()
-                .withDescription(
-                    "use this instead of ivy file to do the rest "
-                    + "of the work with this as a dependency.")
-                .create("dependency");
-        Option confs = OptionBuilder.withArgName("configurations").hasArgs().withDescription(
-            "resolve given configurations").create("confs");
-        Option retrieve = OptionBuilder.withArgName("retrievepattern").hasArg().withDescription(
-            "use given pattern as retrieve pattern").create("retrieve");
-        Option cachepath = OptionBuilder
-                .withArgName("cachepathfile")
-                .hasArg()
-                .withDescription(
-                    "outputs a classpath consisting of all dependencies in cache "
+    static CommandLineParser getParser() {
+        return new CommandLineParser()
+            .addCategory("settings options")
+            .addOption(new OptionBuilder("settings").arg("settingsfile")
+                .description("use given file for settings").create())
+            .addOption(new OptionBuilder("cache").arg("cachedir")
+                .description("use given directory for cache").create())
+            .addOption(new OptionBuilder("novalidate")
+                .description("do not validate ivy files against xsd").create())
+            .addOption(new OptionBuilder("m2compatible")
+                .description("use maven2 compatibility").create())
+            .addOption(new OptionBuilder("conf").arg("settingsfile").deprecated()
+                .description("use given file for settings").create())
+            .addOption(new OptionBuilder("useOrigin").deprecated()
+                .description("use original artifact location "
+                    + "with local resolvers instead of copying to the cache").create())
+
+            .addCategory("resolve options")
+            .addOption(new OptionBuilder("ivy").arg("ivyfile")
+                .description("use given file as ivy file").create())
+            .addOption(new OptionBuilder("dependency")
+                .arg("organisation").arg("module").arg("revision")
+                .description("use this instead of ivy file to do the rest "
+                    + "of the work with this as a dependency.").create())
+            .addOption(new OptionBuilder("confs").arg("configurations").countArgs(false)
+                .description("resolve given configurations").create())
+                
+            .addCategory("retrieve options")
+            .addOption(new OptionBuilder("retrieve").arg("retrievepattern")
+                .description("use given pattern as retrieve pattern").create())
+            .addOption(new OptionBuilder("sync")
+                .description("use sync mode for retrieve").create())
+            
+            .addCategory("cache path options")
+            .addOption(new OptionBuilder("cachepath").arg("cachepathfile")
+                .description("outputs a classpath consisting of all dependencies in cache "
                     + "(including transitive ones) "
-                    + "of the given ivy file to the given cachepathfile")
-                .create("cachepath");
-        Option revision = OptionBuilder.withArgName("revision").hasArg().withDescription(
-            "use given revision to publish the module").create("revision");
-        Option status = OptionBuilder.withArgName("status").hasArg().withDescription(
-            "use given status to publish the module").create("status");
-        Option deliver = OptionBuilder.withArgName("ivypattern").hasArg().withDescription(
-            "use given pattern as resolved ivy file pattern").create("deliverto");
-        Option publishResolver = OptionBuilder.withArgName("resolvername").hasArg()
-                .withDescription("use given resolver to publish to").create("publish");
-        Option publishPattern = OptionBuilder.withArgName("artpattern").hasArg().withDescription(
-            "use given pattern to find artifacts to publish").create("publishpattern");
-        Option realm = OptionBuilder.withArgName("realm").hasArg().withDescription(
-            "use given realm for HTTP AUTH").create("realm");
-        Option host = OptionBuilder.withArgName("host").hasArg().withDescription(
-            "use given host for HTTP AUTH").create("host");
-        Option username = OptionBuilder.withArgName("username").hasArg().withDescription(
-            "use given username for HTTP AUTH").create("username");
-        Option passwd = OptionBuilder.withArgName("passwd").hasArg().withDescription(
-            "use given password for HTTP AUTH").create("passwd");
-        Option main = OptionBuilder.withArgName("main").hasArg().withDescription(
-            "the main class to runtime process").create("main");
-        Option args = OptionBuilder.withArgName("args").hasArgs().withDescription(
-            "the arguments to runtime process").create("args");
-        Option cp = OptionBuilder.withArgName("cp").hasArg().withDescription(
-            "extra classpath, used only in combination with option main").create("cp");
+                    + "of the given ivy file to the given cachepathfile").create())
+                    
+            .addCategory("deliver options")
+            .addOption(new OptionBuilder("deliverto").arg("ivypattern")
+                .description("use given pattern as resolved ivy file pattern").create())
 
-        Options options = new Options();
+            .addCategory("publish options")
+            .addOption(new OptionBuilder("publish").arg("resolvername")
+                .description("use given resolver to publish to").create())
+            .addOption(new OptionBuilder("publishpattern").arg("artpattern")
+                .description("use given pattern to find artifacts to publish").create())
+            .addOption(new OptionBuilder("revision").arg("revision")
+                .description("use given revision to publish the module").create())
+            .addOption(new OptionBuilder("status").arg("status")
+                .description("use given status to publish the module").create())
 
-        options.addOption("debug", false, "set message level to debug");
-        options.addOption("verbose", false, "set message level to verbose");
-        options.addOption("warn", false, "set message level to warn");
-        options.addOption("error", false, "set message level to error");
-        options.addOption("novalidate", false, "do not validate ivy files against xsd");
-        options.addOption("useOrigin", false,
-            "DEPRECATED: use original artifact location "
-            + "with local resolvers instead of copying to the cache");
-        options.addOption("sync", false, "in conjonction with -retrieve, does a synced retrieve");
-        options.addOption("m2compatible", false, "use maven2 compatibility");
-        options.addOption("?", false, "display this help");
-        options.addOption(conf);
-        options.addOption(settings);
-        options.addOption(confs);
-        options.addOption(cache);
-        options.addOption(ivyfile);
-        options.addOption(dependency);
-        options.addOption(retrieve);
-        options.addOption(cachepath);
-        options.addOption(revision);
-        options.addOption(status);
-        options.addOption(deliver);
-        options.addOption(publishResolver);
-        options.addOption(publishPattern);
-        options.addOption(realm);
-        options.addOption(host);
-        options.addOption(username);
-        options.addOption(passwd);
-        options.addOption(main);
-        options.addOption(args);
-        options.addOption(cp);
+            .addCategory("http auth options")
+            .addOption(new OptionBuilder("realm").arg("realm")
+                .description("use given realm for HTTP AUTH").create())
+            .addOption(new OptionBuilder("host").arg("host")
+                .description("use given host for HTTP AUTH").create())
+            .addOption(new OptionBuilder("username").arg("username")
+                .description("use given username for HTTP AUTH").create())
+            .addOption(new OptionBuilder("passwd").arg("passwd")
+                .description("use given password for HTTP AUTH").create())
 
-        return options;
+            .addCategory("launcher options")
+            .addOption(new OptionBuilder("main").arg("main")
+                .description("the FQCN of the main class to launch").create())
+            .addOption(new OptionBuilder("args").arg("args").countArgs(false)
+                .description("the arguments to give to the launched process").create())
+            .addOption(new OptionBuilder("cp").arg("cp")
+                .description("extra classpath to use when launching process").create())
+
+            .addCategory("message options")
+            .addOption(new OptionBuilder("debug")
+                .description("set message level to debug").create())
+            .addOption(new OptionBuilder("verbose")
+                .description("set message level to verbose").create())
+            .addOption(new OptionBuilder("warn")
+                .description("set message level to warn").create())
+            .addOption(new OptionBuilder("error")
+                .description("set message level to error").create())
+
+            .addCategory("help options")
+            .addOption(new OptionBuilder("?")
+                .description("display this help").create())
+            .addOption(new OptionBuilder("deprecated")
+                .description("show deprecated options").create());
     }
 
     public static void main(String[] args) throws Exception {
-        Options options = getOptions();
-
-        CommandLineParser parser = new GnuParser();
+        CommandLineParser parser = getParser();
         try {
+            run(parser, args);
+        } catch (ParseException ex) {
+            System.err.println(ex.getMessage());
+            usage(parser, false);
+            System.exit(1);
+        }
+    }
+    
+    static void run(CommandLineParser parser, String[] args) throws Exception {
             // parse the command line arguments
-            CommandLine line = parser.parse(options, args);
+            CommandLine line = parser.parse(args);
 
             if (line.hasOption("?")) {
-                usage(options);
+                usage(parser, line.hasOption("deprecated"));
                 return;
             }
 
@@ -180,14 +182,14 @@ public final class Main {
 
             Ivy ivy = Ivy.newInstance();
             initMessage(line, ivy);
-            IvySettings settings = initSettings(line, options, ivy);
+            IvySettings settings = initSettings(line, ivy);
 
             File cache = new File(settings.substitute(line.getOptionValue("cache", settings
                     .getDefaultCache().getAbsolutePath())));
             if (!cache.exists()) {
                 cache.mkdirs();
             } else if (!cache.isDirectory()) {
-                error(options, cache + " is not a directory");
+                error(cache + " is not a directory");
             }
 
             String[] confs;
@@ -200,11 +202,6 @@ public final class Main {
             File ivyfile;
             if (line.hasOption("dependency")) {
                 String[] dep = line.getOptionValues("dependency");
-                if (dep.length != DEPENDENCY_ARG_COUNT) {
-                    error(options,
-                        "dependency should be expressed with exactly 3 arguments: "
-                        + "organisation module revision");
-                }
                 ivyfile = File.createTempFile("ivy", ".xml");
                 ivyfile.deleteOnExit();
                 DefaultModuleDescriptor md = DefaultModuleDescriptor
@@ -221,9 +218,9 @@ public final class Main {
             } else {
                 ivyfile = new File(settings.substitute(line.getOptionValue("ivy", "ivy.xml")));
                 if (!ivyfile.exists()) {
-                    error(options, "ivy file not found: " + ivyfile);
+                    error("ivy file not found: " + ivyfile);
                 } else if (ivyfile.isDirectory()) {
-                    error(options, "ivy file is not a file: " + ivyfile);
+                    error("ivy file is not a file: " + ivyfile);
                 }
             }
 
@@ -281,7 +278,7 @@ public final class Main {
                 if (fargs == null) {
                     fargs = new String[0];
                 }
-                String[] extra = line.getArgs();
+                String[] extra = line.getLeftOverArgs();
                 if (extra == null) {
                     extra = new String[0];
                 }
@@ -292,12 +289,6 @@ public final class Main {
                 invoke(ivy, cache, md, confs, fileList, line.getOptionValue("main"), params);
             }
             ivy.getLoggerEngine().popLogger();
-        } catch (ParseException exp) {
-            // oops, something went wrong
-            System.err.println("Parsing failed.  Reason: " + exp.getMessage());
-
-            usage(options);
-        }
     }
 
     /**
@@ -335,8 +326,8 @@ public final class Main {
         return fileList;
     }
 
-    private static IvySettings initSettings(CommandLine line, Options options, Ivy ivy) 
-            throws java.text.ParseException, IOException {
+    private static IvySettings initSettings(CommandLine line, Ivy ivy) 
+            throws java.text.ParseException, IOException, ParseException {
         IvySettings settings = ivy.getSettings();
         settings.addAllVariables(System.getProperties());
         if (line.hasOption("m2compatible")) {
@@ -358,9 +349,9 @@ public final class Main {
         } else {
             File conffile = new File(settingsPath);
             if (!conffile.exists()) {
-                error(options, "ivy configuration file not found: " + conffile);
+                error("ivy configuration file not found: " + conffile);
             } else if (conffile.isDirectory()) {
-                error(options, "ivy configuration file is not a file: " + conffile);
+                error("ivy configuration file is not a file: " + conffile);
             }
             ivy.configure(conffile);
         }
@@ -491,16 +482,15 @@ public final class Main {
         URLHandlerRegistry.setDefault(dispatcher);
     }
 
-    private static void error(Options options, String msg) {
-        System.err.println(msg);
-        usage(options);
-        System.exit(1);
+    private static void error(String msg) throws ParseException {
+        throw new ParseException(msg);
     }
 
-    private static void usage(Options options) {
+    private static void usage(CommandLineParser parser, boolean showDeprecated) {
         // automatically generate the help statement
-        HelpFormatter formatter = new HelpFormatter();
-        formatter.printHelp("ivy", options);
+        PrintWriter pw = new PrintWriter(System.out);
+        parser.printHelp(pw, HELP_WIDTH, "ivy", showDeprecated);
+        pw.flush();
     }
 
     private Main() {
