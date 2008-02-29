@@ -38,10 +38,13 @@ public class BasicURLHandler extends AbstractURLHandler {
 
     private static final int BUFFER_SIZE = 64 * 1024;
 
-    private static class HttpStatus {
+    private static final class HttpStatus {
         static final int SC_OK = 200;
 
         static final int SC_PROXY_AUTHENTICATION_REQUIRED = 407;
+        
+        private HttpStatus() {
+        }
     }
 
     public BasicURLHandler() {

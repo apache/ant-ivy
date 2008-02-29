@@ -110,7 +110,7 @@ public abstract class XMLHelper {
     public static void parse(
             InputStream xmlStream, URL schema, DefaultHandler handler, LexicalHandler lHandler) 
             throws SAXException, IOException, ParserConfigurationException {
-        parse(new InputSource(xmlStream), schema, handler, lHandler );
+        parse(new InputSource(xmlStream), schema, handler, lHandler);
     }
 
     public static void parse(
