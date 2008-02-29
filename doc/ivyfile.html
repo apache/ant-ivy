@@ -29,29 +29,21 @@ Ivy use is entirely based on what is called ivy files. Ivy files are xml files, 
 
 Here is the simplest ivy file you can write:
 <code type="xml">
-<ivy-module version="1.3">
+<ivy-module version="2.0">
   <info organisation="myorg"
         module="mymodule"
         />
 </ivy-module>
 </code>
 
-Since version 0.8, ivy publishes an xslt which help make ivy files more readable. You just have to add
-a line like this one in your ivy file:
-<code>
-<?xml-stylesheet type="text/xsl" href="http://ivyrep.jayasoft.org/ivy-doc.xsl"?>
-</code>
-However, all information is not presented with the xslt (dependency configurations, in particular).
-And due to security issues, it only works if the ivy file is in the same domain as the xsl... But they are particularly useful to browse the <a href="http://ivyrep.jayasoft.org/">ivy repository</a>.
-
 If you want to see a sample file using almost all possibilities of ivy files, check this one, <a href="samples/ivy-sample-xslt.xml">with</a> or <a href="samples/ivy-sample.xml">without</a> xslt.
 
 Before beginning the reference itself, it is required to have in mind the terminology defined in the <a href="reference.html">main page</a> of this reference documentation.
 
-For those familiar with xml schema, the schema used to validate ivy files can be found <a href="http://ant.apache.org/schemas/ivy.xsd">here</a>. For those using xsd aware IDE, you can declare the xsd in your ivy files to benefit from code completion / validation:
+For those familiar with xml schema, the schema used to validate ivy files can be found <a href="http://ant.apache.org/ivy/schemas/ivy.xsd">here</a>. For those using xsd aware IDE, you can declare the xsd in your ivy files to benefit from code completion / validation:
 <code type="xml">
 <?xml version="1.0" encoding="UTF-8"?>
-<ivy-module version="1.3" 
+<ivy-module version="2.0" 
             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
             xsi:noNamespaceSchemaLocation=
                    "http://ant.apache.org/ivy/schemas/ivy.xsd">
@@ -98,7 +90,7 @@ Root tag of any ivy-file.
     <tr><th class="ivy-att">Attribute</th><th class="ivy-att-desc">Description</th><th class="ivy-att-req">Required</th></tr>
 </thead>
 <tbody>
-    <tr><td>version</td><td>the version of the ivy file specification - should be '1.3' with current version of ivy</td>
+    <tr><td>version</td><td>the version of the ivy file specification - should be '2.0' with current version of ivy</td>
         <td>Yes</td></tr>
 </tbody>
 </table>
