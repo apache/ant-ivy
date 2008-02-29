@@ -1,0 +1,205 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<!--
+   Licensed to the Apache Software Foundation (ASF) under one
+   or more contributor license agreements.  See the NOTICE file
+   distributed with this work for additional information
+   regarding copyright ownership.  The ASF licenses this file
+   to you under the Apache License, Version 2.0 (the
+   "License"); you may not use this file except in compliance
+   with the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing,
+   software distributed under the License is distributed on an
+   "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+   KIND, either express or implied.  See the License for the
+   specific language governing permissions and limitations
+   under the License.    
+-->
+<html>
+<head>
+	<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
+	<script type="text/javascript">var xookiConfig = {level: 1};</script>	
+	<script type="text/javascript" src="../xooki/xooki.js"></script>
+</head>
+<body>
+	<textarea id="xooki-source">
+<h1>Making a release</h1>
+<h2>Requirements</h2>
+Requirements for making a release are similar to the requirements for building from source, except that sun jdk 1.6 and ant 1.7 are required.
+<h2>Procedure</h2>
+<h3>1. Check the files which needs to be updated for the release.</h3>
+On the trunk, check that files which require update for the release are up to date.
+This includes particularly:
+RELEASE_NOTES
+CHANGES
+README
+<h3>2. Create a release branch</h3>
+This will allow to work separately from other developers, in case you need any last modification.
+<code>
+svn copy https://svn.apache.org/repos/asf/ant/ivy/core/trunk \
+           https://svn.apache.org/repos/asf/ant/ivy/core/branches/2.0.0-beta1 \
+      -m "Creating a release branch for 2.0.0-beta1."
+</code>
+<h3>3. Check out the branch</h3>
+<code>
+svn co https://svn.apache.org/repos/asf/ant/ivy/core/branches/2.0.0-alpha1 ivy-2.0.0-beta1
+</code>
+<h3>4. Double check the files which need to be updated for the release.</h3>
+Check again that files have proper revision information.
+It's also time to update the documentation template files which will be used for doc generation to include the version information in the page title.
+For instance in
+<code>
+doc/template.html
+doc/printTemplate.html
+</code>
+replace
+<code>
+<title>${title} | Ivy Documentation</title>
+</code>
+by
+<code>
+<title>${title} | Ivy 2.0.0-beta1 Documentation</title>
+</code>
+<h3>5. Add release note page in the documentation.</h3>
+Open the file doc/index.html with your favorite browser, and click on the plus button in the upper right. Choose "Release Notes" as title, and "release-notes" as page id. 
+
+Then edit the page (hit the first button at the upper right), and copy the content of the RELEASE_NOTES file.
+
+You can also add the announcement for the release if it's already ready. If this is an incubator version, add the usual incubator disclaimer too.
+
+Move the page up in the TOC using the arrow button in the toolbar at the upper right, so that it's the first child page under the "Documentation" page.
+
+If you take the time to make the content of the release notes more "xooki compliant" (by removing unnecessary end of lines and adding h2 h3 and h4 tags), the page could then look like something like that:
+http://ant.apache.org/ivy/history/2.0.0-alpha-1.html
+
+<h3>6. Commit your changes</h3>
+<code>
+svn add doc/release-notes.html
+svn ci -m "update templates and add release notes in documentation."
+</code>
+<h3>7. Check that you have no pending modifications</h3>
+<code>
+svn status
+</code>
+If your working copy is clean, you can launch the release script. If it isn't, make sure to clean it properly. Sometimes you may need to call ant clean-all if you have started to work with ant builds. If you are confused about your working copy state, delete it and check it out again.
+<h3>8. Launch the release script</h3>
+<code>
+ant -Dbuild.version=2.0.0-beta1 -Dstatus=milestone -f build-release.xml release
+</code>
+The status should be release only for final releases, and milestone for any other intermediate release.
+If anything is wrong, fix and go back to step 4.
+If the release script is successful, release artifacts will be waiting for you in the build/distrib directory.
+<h3>9. Verify the release</h3>
+Check that all zips can be opened correctly, and that running 'ant' after unzipping the source distribution works properly.
+You can also do a smoke test with the generated ivy.jar , to see if it is able to resolve properly a basic module (for instance you can run some tutorials provided in the src/example directory in all distributions).
+<h3>10. Sign and upload the artifacts</h3>
+It's now time to sign the release artifacts and upload them to a location accessible by other Apache commiters.
+
+Here is a simple way to sign the files using gnupg:
+<code>
+gpg --armor --output file.zip.asc --detach-sig file.zip
+</code>
+
+Here is a ruby script you can use to sign the files:
+<code>
+require 'find'
+
+Find.find('build/distrib') do |f| 
+    `gpg --armor --output #{f}.asc --detach-sig #{f}` if File.file?(f) && ['.zip', '.gz', '.jar', '.pom'].include?(File.extname(f))
+end
+</code>
+Be prepared to enter your passphrase several times if you use this script, gpg will ask for your passphrase for each file to sign.
+
+When you're done upload the content of the distrib directory to a publicly accessible web site, your apache personal site being a good location for this. Make sure you include some kind of disclaimer somewhere to inform people the release is not approved yet.
+
+You can for example add a HEADER.html like this:
+<code>
+<h2>WARNING: files available here are NOT an Apache approved release yet.</h2>
+</code>
+
+<h3>11. Call for a vote to approve the release</h3>
+Cast a vote to approve the release on the dev@ant.apache.org mailing list.
+
+Here is an example:
+<code>
+Subject: [VOTE] Ivy ${version} Release
+
+I have built a release candidate for Ivy ${version}
+
+You can download it from this URL: ${url}
+
+Do you vote for the release of these binaries?
+
+[ ] Yes
+[ ] No
+
+Regards,
+
+${me}, Ivy ${version} release manager
+</code>
+<h3>12. Tag the svn repository</h3>
+Now that the release is approved, it is time to tag the svn repo
+<code>
+svn copy https://svn.apache.org/repos/asf/ant/ivy/core/branches/2.0.0-beta1 \
+           https://svn.apache.org/repos/asf/ant/ivy/core/tags/2.0.0-beta1 \
+      -m "Tag release 2.0.0-beta1."
+</code>
+<h3>13. Upload to public repository</h3>
+If the release is approved, it's now time to make it public by uploading it to the public Apache distrib repository (i.e. /www/www.apache.org/dist/ant/ivy/[version] on people.a.o).
+
+Copy also the staging maven 2 repository to apache maven 2 rsync repo:
+/www/people.apache.org/repo/m2-ibiblio-rsync-repository
+
+<h3>14. Update the web site</h3>
+Add a link to the released version documentation in the web site. 
+
+To do so, you need to:
+<ol>
+<li>add a svn externals reference to the documentation</li>
+edit the svn properties of site/history, and in the svn:externals property, add a line like this one:
+<code>
+2.0.0-beta1 https://svn.apache.org/repos/asf/ant/ivy/core/branches/2.0.0-beta1/doc
+</code>
+<li>edit the toc.json file in the site component of Ivy</li>
+and add something like that:
+<code>
+{
+   "title":"2.0.0-beta1",
+   "importRoot":"history/2.0.0-beta1",
+   "importNode":"index"      
+}
+</code>
+<li>Add a call to init-imported-version in site/build.xml</li>
+In the init-imported-history target, add a task call like this one:
+<code>
+<init-imported-version version="2.0.0-beta1" />
+</code>
+</ol>
+Then launch "ant init-imported-history" in the site directory, and check the documentation now has the released version in the history, and that this documentation can be accessed with no problem with a unified TOC.
+
+Then you can update the release notes page of the imported documentation if necessary, to include the announcement for example.
+
+It's time to update the download image used on the home page and the download page. Use site/images/ivy-dl.xcf as a basis if you have <a href="http://www.gimp.org/">gimp</a> installed. Then you can update the home page to refer to this image, and add a news item announcing the new version. Update also the download page with the new image and update the links to the download location.
+
+You are now ready to commit your changes (make sure to commit changes in imported locations too), and update the online site:
+<code>
+ant clean publish-site
+</code>
+
+<h3>15. Announce</h3>
+Announce the release on the dev@ant.a.o, ivy-user@ant.a.o, user@ant.apache.org and announce@apache.org mailing lists.
+Announce also the release on Ivy web site by editing the doc/index.html on the trunk.
+You can also announce the release on popular web sites, like freshmeat.net (xavier is the owner of the Ivy project on freshmeat), javalobby.org, theserverside.com, dzone.com, ...
+<h3>16. Update this doc</h3>
+If you feel like anything is missing or misleading in this release doc, update it as soon as you encounter the problem.
+<h3>17. Merge your modifications back to the trunk if necessary.</h3>
+Modifications on the template files do not need to be merged, but if you had troubles during your release you may want to merge your fixes back to the trunk.
+<h3>18. Prepare next release</h3>
+Update the file version.properties with the version of the next release so that anyone building from the trunk will obtain jar with the correct version number.
+
+Release the version in <a href="https://issues.apache.org/jira/browse/IVY">jira</a>, and create a new unreleased version for the next planned version.</textarea>
+<script type="text/javascript">xooki.postProcess();</script>
+</body>
+</html>

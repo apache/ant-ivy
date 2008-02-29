@@ -749,6 +749,13 @@
                     "children": [
 
                       ]
+                  },
+                  {
+                    "id":"dev/makerelease",
+                    "title":"Making a release",
+                    "children": [
+
+                      ]
                   }
                 ]
             }
