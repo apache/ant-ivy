@@ -57,6 +57,14 @@ public class TestHelper {
     }
     
 
+    public static File getArchiveFileInCache(Ivy ivy, String mrid, 
+            String artifactName, String type, String ext) {
+        DefaultArtifact artifact = new DefaultArtifact(ModuleRevisionId.parse(mrid), 
+            new Date(), artifactName, type, ext);
+        return getRepositoryCacheManager(ivy, artifact.getModuleRevisionId())
+            .getArchiveFileInCache(artifact);
+    }
+
     public static File getArchiveFileInCache(Ivy ivy, String organisation, String module, 
             String revision, String artifactName, String type, String ext) {
         DefaultArtifact artifact = newArtifact(organisation, module, revision,

@@ -66,6 +66,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 =====================================
 - IMPROVEMENT: Make Ivy standalone runnable with no required dependencies (IVY-757)
 
+- FIX: ivy-resolve fails when a project has different dependencies in different branches (IVY-717)
 - FIX: PublishEventsTest fails when Ivy sources are located in a directory with a + (IVY-755)
 - FIX: XML entity parsing does not work properly (IVY-737) (thanks to Patrick Woodworth)
 - FIX: Cachefileset task silently fails with parent dir ".." construct (IVY-638)

@@ -3706,7 +3706,7 @@ public class ResolveTest extends TestCase {
             new String[] {"*"}).setValidate(false));
         assertFalse(report.hasError());
 
-        assertTrue(getArchiveFileInCache(ivy, "foo", "foo1", "3", "foo1", "jar", "jar").exists());
+        assertTrue(getArchiveFileInCache(ivy, "foo#foo1#trunk;3", "foo1", "jar", "jar").exists());
     }
 
     public void testBranches2() throws Exception {
@@ -3718,7 +3718,7 @@ public class ResolveTest extends TestCase {
             new String[] {"*"}).setValidate(false));
         assertFalse(report.hasError());
 
-        assertTrue(getArchiveFileInCache(ivy, "foo", "foo1", "4", "foo1", "jar", "jar").exists());
+        assertTrue(getArchiveFileInCache(ivy, "foo#foo1#branch1;4", "foo1", "jar", "jar").exists());
     }
 
     public void testBranches3() throws Exception {
@@ -3730,7 +3730,7 @@ public class ResolveTest extends TestCase {
             new String[] {"*"}).setValidate(false));
         assertFalse(report.hasError());
 
-        assertTrue(getArchiveFileInCache(ivy, "foo", "foo1", "4", "foo1", "jar", "jar").exists());
+        assertTrue(getArchiveFileInCache(ivy, "foo#foo1#branch1;4", "foo1", "jar", "jar").exists());
     }
 
     public void testBranches4() throws Exception {
@@ -3742,8 +3742,8 @@ public class ResolveTest extends TestCase {
             new String[] {"*"}).setValidate(false));
         assertFalse(report.hasError());
 
-        assertTrue(getArchiveFileInCache(ivy, "foo", "foo1", "3", "foo1", "jar", "jar").exists());
-        assertTrue(getArchiveFileInCache(ivy, "bar", "bar2", "2", "bar2", "jar", "jar").exists());
+        assertTrue(getArchiveFileInCache(ivy, "foo#foo1#trunk;3", "foo1", "jar", "jar").exists());
+        assertTrue(getArchiveFileInCache(ivy, "bar#bar2#trunk;2", "bar2", "jar", "jar").exists());
     }
 
     public void testBranches5() throws Exception {
@@ -3755,8 +3755,36 @@ public class ResolveTest extends TestCase {
             new String[] {"*"}).setValidate(false));
         assertFalse(report.hasError());
 
-        assertTrue(getArchiveFileInCache(ivy, "foo", "foo1", "4", "foo1", "jar", "jar").exists());
-        assertTrue(getArchiveFileInCache(ivy, "bar", "bar2", "2", "bar2", "jar", "jar").exists());
+        assertTrue(getArchiveFileInCache(ivy, "foo#foo1#branch1;4", "foo1", "jar", "jar").exists());
+        assertTrue(getArchiveFileInCache(ivy, "bar#bar2#trunk;2", "bar2", "jar", "jar").exists());
+    }
+
+    public void testBranches6() throws Exception {
+        // test case for IVY-717
+        
+        // bar1;4 -> foo#foo1#${ivy.branch};5
+        // foo#foo1#branch1;5 -> foo#foo2#${ivy.branch};1
+        // foo#foo1#trunk;5 -> {}
+        
+        Ivy ivy = new Ivy();
+        ivy.configure(new File("test/repositories/branches/ivysettings.xml"));
+
+        ivy.setVariable("ivy.branch", "branch1");
+        ResolveReport report = ivy.resolve(new File(
+                "test/repositories/branches/bar/bar1/trunk/4/ivy.xml").toURL(), 
+                getResolveOptions(new String[] {"*"}).setValidate(false));
+        assertFalse(report.hasError());
+
+        assertTrue(getArchiveFileInCache(ivy, "foo#foo1#branch1;5", "foo1", "jar", "jar").exists());
+        assertTrue(getArchiveFileInCache(ivy, "foo#foo2#branch1;1", "foo2", "jar", "jar").exists());
+
+        ivy.setVariable("ivy.branch", "trunk");
+        report = ivy.resolve(new File(
+                "test/repositories/branches/bar/bar1/trunk/4/ivy.xml").toURL(), 
+                getResolveOptions(new String[] {"*"}).setValidate(false));
+        assertFalse(report.hasError());
+        assertEquals(1, report.getConfigurationReport("default").getNodesNumber());
+        assertTrue(getArchiveFileInCache(ivy, "foo#foo1#trunk;5", "foo1", "jar", "jar").exists());
     }
 
     public void testExternalArtifacts() throws Exception {
@@ -3902,6 +3930,12 @@ public class ResolveTest extends TestCase {
             String artifactName, String type, String ext) {
         return TestHelper.getArchiveFileInCache(
             ivy, organisation, module, revision, artifactName, type, ext);
+    }
+
+    private File getArchiveFileInCache(Ivy ivy, String mrid,
+            String artifactName, String type, String ext) {
+        return TestHelper.getArchiveFileInCache(
+            ivy, mrid, artifactName, type, ext);
     }
 
     private ResolveOptions getResolveOptions(String[] confs) {

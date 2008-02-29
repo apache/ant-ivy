@@ -17,8 +17,8 @@
    under the License.    
 -->
 <ivy-module version="1.4">
-	<info organisation="bar" module="bar1" revision="1"/>
+	<info organisation="bar" module="bar1" revision="2"/>
 	<dependencies>
-		<dependency org="foo" name="foo1" rev="[0,4]" />
+		<dependency org="foo" name="foo1" branch="${ivy.branch}" rev="5" />
 	</dependencies>
 </ivy-module>
