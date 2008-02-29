@@ -112,6 +112,19 @@ public class IvyCacheFilesetTest extends TestCase {
         }
     }
 
+    public void testInvalidPattern() throws Exception {
+        try {
+            project.setProperty("ivy.settings.file", 
+                "test/repositories/ivysettings-invalidcachepattern.xml");
+            project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-simple.xml");
+            fileset.setSetid("simple-setid");
+            fileset.execute();
+            fail("failure didn't raised an exception with default haltonfailure setting");
+        } catch (BuildException ex) {
+            // ok => should raise an exception
+        }
+    }
+
     public void testHaltOnFailure() throws Exception {
         try {
             project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-failure.xml");

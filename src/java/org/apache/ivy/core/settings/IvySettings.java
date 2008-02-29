@@ -39,6 +39,7 @@ import org.apache.ivy.Ivy;
 import org.apache.ivy.core.IvyPatternHelper;
 import org.apache.ivy.core.NormalRelativeUrlResolver;
 import org.apache.ivy.core.RelativeUrlResolver;
+import org.apache.ivy.core.cache.CacheUtil;
 import org.apache.ivy.core.cache.DefaultRepositoryCacheManager;
 import org.apache.ivy.core.cache.DefaultResolutionCacheManager;
 import org.apache.ivy.core.cache.RepositoryCacheManager;
@@ -1278,6 +1279,7 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
     }
 
     public void setDefaultCacheIvyPattern(String defaultCacheIvyPattern) {
+        CacheUtil.checkCachePattern(defaultCacheIvyPattern);
         this.defaultCacheIvyPattern = defaultCacheIvyPattern;
     }
     
@@ -1286,6 +1288,7 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
     }
 
     public void setDefaultCacheArtifactPattern(String defaultCacheArtifactPattern) {
+        CacheUtil.checkCachePattern(defaultCacheIvyPattern);
         this.defaultCacheArtifactPattern = defaultCacheArtifactPattern;
     }
     

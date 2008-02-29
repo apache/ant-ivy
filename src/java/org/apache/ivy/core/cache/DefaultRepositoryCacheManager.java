@@ -144,6 +144,7 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
     }
 
     public void setArtifactPattern(String artifactPattern) {
+        CacheUtil.checkCachePattern(artifactPattern);
         this.artifactPattern = artifactPattern;
     }
 
@@ -178,10 +179,12 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
     }
 
     public void setDataFilePattern(String dataFilePattern) {
+        CacheUtil.checkCachePattern(dataFilePattern);
         this.dataFilePattern = dataFilePattern;
     }
 
     public void setIvyPattern(String ivyPattern) {
+        CacheUtil.checkCachePattern(ivyPattern);
         this.ivyPattern = ivyPattern;
     }
 
