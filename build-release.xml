@@ -129,7 +129,7 @@
 			<zipfileset dir="${artifacts.build.dir}/jars" includes="${final.name}" fullpath="${snapshot.full.name}/ivy-${build.version}.jar"/>
 			<zipfileset dir="${artifacts.build.dir}/jars" includes="${final.core.name}" fullpath="${snapshot.full.name}/ivy-core-${build.version}.jar"/>
 
-			<zipfileset dir="${build.dir}/lib" prefix="${snapshot.full.name}/lib"/>
+			<zipfileset dir="${build.dir}/lib" prefix="${snapshot.full.name}/lib" excludes="ant-*.jar" />
 		</zip>
 		<tar destfile="${distrib.dir}/${snapshot.full.name}-bin-with-deps.tar.gz" 
 			compression="gzip" longfile="gnu">
