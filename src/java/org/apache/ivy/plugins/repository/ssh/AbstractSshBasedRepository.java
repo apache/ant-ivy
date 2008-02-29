@@ -91,6 +91,11 @@ public abstract class AbstractSshBasedRepository extends AbstractRepository {
                 }
             }
         }
+        if (host == null) {
+            throw new IllegalArgumentException(
+                "missing host information. host should be provided either "
+                + "directly on the repository or in the connection URI");
+        }
         if (user == null) {
              Credentials c = requestCredentials(host);
              if (c != null) {

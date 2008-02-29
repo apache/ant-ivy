@@ -27,6 +27,7 @@ import org.apache.ivy.core.IvyContext;
 import org.apache.ivy.core.event.IvyEvent;
 import org.apache.ivy.core.event.IvyListener;
 import org.apache.ivy.core.event.resolve.EndResolveEvent;
+import org.apache.ivy.util.Checks;
 import org.apache.ivy.util.Credentials;
 import org.apache.ivy.util.CredentialsUtil;
 import org.apache.ivy.util.Message;
@@ -304,6 +305,8 @@ public final class SshCache {
      */
     public Session getSession(String host, int port, String username, String userPassword,
             File pemFile, String pemPassword, File passFile) throws IOException {
+        Checks.checkNotNull(host, "host");
+        Checks.checkNotNull(username, "user");
         Entry entry = getCacheEntry(username, host, port);
         Session session = null;
         if (entry != null) {
