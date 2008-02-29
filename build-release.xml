@@ -25,7 +25,7 @@
 
 	<target name="generate-doc">
         <copy todir="${doc.build.dir}">
-	        <fileset dir="${doc.src.dir}" includes="images/**,style/**,samples/**,js/**" />
+	        <fileset dir="${doc.src.dir}" includes="images/**,style/**,samples/**,js/**,ivy.xsd" />
         </copy>
 		<!-- requires java 6 jdk in path and Apache Ant 1.7 -->
         <xooki:generate destDir="${doc.build.dir}" checkUpToDate="true">
@@ -163,6 +163,19 @@
 		<!-- copy sources jar -->
 		<copy file="${artifacts.build.dir}/sources/${final.name}" 
 				tofile="${m2.distrib.dir}/ivy-${build.version}-sources.jar" />
+
+		<checksum algorithm="md5">
+			<fileset dir="${m2.distrib.dir}">
+				<include name="*.pom"/>
+				<include name="*.jar"/>
+			</fileset>
+		</checksum>
+		<checksum algorithm="sha1">
+			<fileset dir="${m2.distrib.dir}">
+				<include name="*.pom"/>
+				<include name="*.jar"/>
+			</fileset>
+		</checksum>
 	</target>
 	
 
@@ -200,20 +213,5 @@
 			depends="prepare-snapshot, snapshot-src, snapshot-bin, snapshot-maven2, snapshot-checksums" 
 			description="used for nightly and integration builds"/>
 	<target name="release" depends="release-version, snapshot" description="make a new release of Ivy"/>
-
-	<!-- 
-		publication on ivy web site
-		requires to be logged in on people.apache.org 
-	-->
-	<available property="loggedin" file="/www/incubator.apache.org/ivy/index.html"/>
-	<target name="publish-latest" if="loggedin" description="publishes the last snapshot done to ivy web site">
-	   <property name="html.dir" value="/www/incubator.apache.org/ivy/downloads/latest/"/>
-	   <delete>
-	       <fileset dir="${html.dir}"/>
-	   </delete>
-	   <copy todir="${html.dir}">
-	       <fileset dir="${distrib.dir}"/>
-	   </copy>
-	</target>
 
 </project>
