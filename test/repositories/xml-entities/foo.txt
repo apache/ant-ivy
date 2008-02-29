@@ -1,0 +1,3 @@
+    <dependencies>
+        <dependency conf="myconf->*" org="myorg" name="module2" rev="latest.integration" />
+    </dependencies>

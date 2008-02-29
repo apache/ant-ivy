@@ -57,6 +57,7 @@ import org.apache.ivy.util.extendable.ExtendableItemHelper;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
+import org.xml.sax.InputSource;
 import org.xml.sax.ext.LexicalHandler;
 import org.xml.sax.helpers.DefaultHandler;
 
@@ -738,7 +739,10 @@ public final class XmlModuleDescriptorUpdater {
         try {
             UpdaterHandler updaterHandler = new UpdaterHandler(settings, out, resolvedRevisions,
                     status, revision, pubdate, ns, replaceInclude, confsToExclude, inStreamCtx);
-            XMLHelper.parse(in, null, updaterHandler, updaterHandler);
+            InputSource inSrc = new InputSource(in);
+            if (inStreamCtx != null)
+                inSrc.setSystemId(inStreamCtx.toExternalForm());
+            XMLHelper.parse(inSrc, null, updaterHandler, updaterHandler);
         } catch (ParserConfigurationException e) {
             IllegalStateException ise = new IllegalStateException(
                     "impossible to update Ivy files: parser problem");

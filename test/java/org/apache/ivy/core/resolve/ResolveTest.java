@@ -235,6 +235,21 @@ public class ResolveTest extends TestCase {
         assertTrue(report.hasError());
     }
 
+    public void testResolveWithXmlEntities() throws Exception {
+        Ivy ivy = new Ivy();
+        Throwable th = null;
+        try {
+            ivy.configure(new File("test/repositories/xml-entities/ivysettings.xml").toURL());
+            ResolveReport report = ivy.resolve(new File("test/repositories/xml-entities/ivy.xml").toURL(),
+                getResolveOptions(new String[] {"*"}));
+            assertNotNull(report);
+            assertFalse(report.hasError());
+        } catch(Throwable e) {
+            th = e;
+        }
+        assertNull(th);
+    }
+
     public void testResolveNoRevisionInPattern() throws Exception {
         // module1 depends on latest version of module2, for which there is no revision in the
         // pattern

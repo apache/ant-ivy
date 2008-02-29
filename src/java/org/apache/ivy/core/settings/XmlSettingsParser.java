@@ -43,6 +43,7 @@ import org.apache.ivy.util.Message;
 import org.apache.ivy.util.url.URLHandlerRegistry;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
+import org.xml.sax.InputSource;
 import org.xml.sax.helpers.DefaultHandler;
 
 /**
@@ -96,7 +97,9 @@ public class XmlSettingsParser extends DefaultHandler {
         InputStream stream = null;
         try {
             stream = URLHandlerRegistry.getDefault().openStream(settingsUrl);
-            SAXParserFactory.newInstance().newSAXParser().parse(stream, this);
+            InputSource inSrc = new InputSource(stream);
+            inSrc.setSystemId(settingsUrl.toExternalForm());
+            SAXParserFactory.newInstance().newSAXParser().parse(settingsUrl.toExternalForm(), this);
         } catch (IOException e) {
             throw e;
         } catch (Exception e) {

@@ -32,6 +32,7 @@ import org.apache.ivy.util.url.URLHandlerRegistry;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXNotRecognizedException;
+import org.xml.sax.InputSource;
 import org.xml.sax.ext.LexicalHandler;
 import org.xml.sax.helpers.DefaultHandler;
 
@@ -94,7 +95,9 @@ public abstract class XMLHelper {
             throws SAXException, IOException, ParserConfigurationException {
         InputStream xmlStream = URLHandlerRegistry.getDefault().openStream(xmlURL);
         try {
-            parse(xmlStream, schema, handler, lHandler);
+            InputSource inSrc = new InputSource(xmlStream);
+            inSrc.setSystemId(xmlURL.toExternalForm());
+            parse(inSrc, schema, handler, lHandler);
         } finally {
             try {
                 xmlStream.close();
@@ -106,6 +109,12 @@ public abstract class XMLHelper {
 
     public static void parse(
             InputStream xmlStream, URL schema, DefaultHandler handler, LexicalHandler lHandler) 
+            throws SAXException, IOException, ParserConfigurationException {
+        parse(new InputSource(xmlStream), schema, handler, lHandler );
+    }
+
+    public static void parse(
+            InputSource xmlStream, URL schema, DefaultHandler handler, LexicalHandler lHandler)
             throws SAXException, IOException, ParserConfigurationException {
         InputStream schemaStream = null;
         try {

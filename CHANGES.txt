@@ -59,11 +59,13 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 	Jason Trump
 	Tjeerd Verhagen
 	John Williams
+	Patrick Woodworth
 	Jaroslaw Wypychowski
 
    trunk version
 =====================================
 - FIX: PublishEventsTest fails when Ivy sources are located in a directory with a + (IVY-755)
+- FIX: XML entity parsing does not work properly (IVY-737) (thanks to Patrick Woodworth)
 
    2.0.0-beta2
 =====================================
