@@ -46,7 +46,7 @@ svn copy https://svn.apache.org/repos/asf/ant/ivy/core/trunk \
 <code>
 svn co https://svn.apache.org/repos/asf/ant/ivy/core/branches/2.0.0-alpha1 ivy-2.0.0-beta1
 </code>
-<h3>4. Double check the files which need to be updated for the release.</h3>
+<h3>4. Prepare the files which need to be updated for the release.</h3>
 Check again that files have proper revision information.
 It's also time to update the documentation template files which will be used for doc generation to include the version information in the page title.
 For instance in
@@ -62,6 +62,12 @@ by
 <code>
 <title>${title} | Ivy 2.0.0-beta1 Documentation</title>
 </code>
+
+You also need to store the current ivy xml schema in the documentation, so that it will later be accessible on public web site. To do so, run the following command in the directory in which you checked out the release branch:
+<code>
+ant -f build-release.xml release-xsd
+</code>
+
 <h3>5. Add release note page in the documentation.</h3>
 Open the file doc/index.html with your favorite browser, and click on the plus button in the upper right. Choose "Release Notes" as title, and "release-notes" as page id. 
 
@@ -76,8 +82,10 @@ http://ant.apache.org/ivy/history/2.0.0-alpha-1.html
 
 <h3>6. Commit your changes</h3>
 <code>
+svn status
+svn add doc/ivy.xsd
 svn add doc/release-notes.html
-svn ci -m "update templates and add release notes in documentation."
+svn ci -m "update templates, add release notes and ivy.xsd in documentation."
 </code>
 <h3>7. Check that you have no pending modifications</h3>
 <code>
