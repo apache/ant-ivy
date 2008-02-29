@@ -307,7 +307,7 @@
         <!-- package the two ivy jars -->
         <jar destfile="${artifacts.build.dir}/jars/${final.name}"
                 manifest="${artifacts.build.dir}/MANIFEST.MF">
-            <metainf dir="${basedir}" includes="LICENSE,DISCLAIMER,NOTICE" />
+            <metainf dir="${basedir}" includes="LICENSE,NOTICE" />
             <manifest>
                 <attribute name="Specification-Title" value="Apache Ivy with Ant tasks" />
                 <attribute name="Specification-Version" value="${build.version}" />
@@ -325,7 +325,7 @@
             <fileset dir="${optional.classes.build.dir}" />
         </jar>
         <jar destfile="${artifacts.build.dir}/jars/${final.core.name}">
-            <metainf dir="${basedir}" includes="LICENSE,DISCLAIMER,NOTICE" />
+            <metainf dir="${basedir}" includes="LICENSE,NOTICE" />
             <manifest>
                 <attribute name="Specification-Title" value="Apache Ivy Core (without Ant tasks)" />
                 <attribute name="Specification-Version" value="${build.version}" />
@@ -520,13 +520,23 @@ ${final.core.name}    The Ivy core, eg everything but classes dependent on Ant.$
 	
     <target name="sources" depends="default-version" description="Create source archive files">
     	<mkdir dir="${artifacts.build.dir}/sources/"/>
-        <jar destfile="${artifacts.build.dir}/sources/${final.name}"
-                manifest="${basedir}/MANIFEST.MF">
+        <jar destfile="${artifacts.build.dir}/sources/${final.name}">
+            <metainf dir="${basedir}" includes="LICENSE,NOTICE" />
+            <manifest>
+                <attribute name="Specification-Title" value="Apache Ivy Sources" />
+                <attribute name="Specification-Version" value="${build.version}" />
+                <attribute name="Specification-Vendor" value="Apache Software Foundation" />
+            </manifest>
             <fileset dir="${src.dir}" />
         </jar>
     	<!-- TODO : we should restrict sources files to the core only -->
-        <jar destfile="${artifacts.build.dir}/sources/${final.core.name}"
-                manifest="${basedir}/MANIFEST.MF">
+        <jar destfile="${artifacts.build.dir}/sources/${final.core.name}">
+            <metainf dir="${basedir}" includes="LICENSE,NOTICE" />
+            <manifest>
+                <attribute name="Specification-Title" value="Apache Ivy Sources" />
+                <attribute name="Specification-Version" value="${build.version}" />
+                <attribute name="Specification-Vendor" value="Apache Software Foundation" />
+            </manifest>
             <fileset dir="${src.dir}" />
         </jar>
 	</target>
