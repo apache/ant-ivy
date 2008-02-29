@@ -179,6 +179,8 @@ public final class XmlModuleDescriptorParser extends AbstractModuleDescriptorPar
         private static final int DEPS = 10;
         
         private static final int DESCRIPTION = 11;
+
+        private static final int EXTRA_INFO = 12;
         
         private int state = NONE;
 
@@ -259,7 +261,10 @@ public final class XmlModuleDescriptorParser extends AbstractModuleDescriptorPar
         public void startElement(String uri, String localName, String qName, Attributes attributes)
                 throws SAXException {
             try {
-                if ("ivy-module".equals(qName)) {
+                if (state == DESCRIPTION) {
+                    //make sure we don't interpret any tag while in description tag 
+                    return;
+                } else if ("ivy-module".equals(qName)) {
                     ivyModuleStarted(attributes);
                 } else if ("info".equals(qName)) {
                     infoStarted(attributes);
@@ -269,8 +274,13 @@ public final class XmlModuleDescriptorParser extends AbstractModuleDescriptorPar
                 } else if (state == INFO && "description".equals(qName)) {
                     md.setHomePage(ivy.substitute(attributes.getValue("homepage")));
                     state = DESCRIPTION;
-                } else if (state == INFO) {
+                } else if (state == INFO && "ivyauthor".equals(qName)) {
+                    // nothing to do, we don't store this
+                } else if (state == INFO && "repository".equals(qName)) {
+                    // nothing to do, we don't store this
+                } else if (state == INFO && isOtherNamespace(qName)) {
                     buffer = new StringBuffer();
+                    state = EXTRA_INFO;
                 } else if ("configurations".equals(qName)) {
                     configurationStarted(attributes);
                 } else if ("publications".equals(qName)) {
@@ -303,8 +313,8 @@ public final class XmlModuleDescriptorParser extends AbstractModuleDescriptorPar
                     managerStarted(attributes);
                 } else if ("include".equals(qName) && state == CONF) {
                     includeConfStarted(attributes);
-                } else if (validate && state != INFO) {
-                    addError("unknwon tag " + qName);
+                } else if (validate && state != EXTRA_INFO && state != DESCRIPTION) {
+                    addError("unknown tag " + qName);
                 }
             } catch (Exception ex) {
                 if (ex instanceof SAXException) {
@@ -313,6 +323,10 @@ public final class XmlModuleDescriptorParser extends AbstractModuleDescriptorPar
                 throw new SAXException("problem occured while parsing ivy file. message: "
                         + ex.getMessage(), ex);
             }
+        }
+
+        private boolean isOtherNamespace(String qName) {
+            return qName.indexOf(':') != -1;
         }
 
         private void managerStarted(Attributes attributes) {
@@ -745,20 +759,21 @@ public final class XmlModuleDescriptorParser extends AbstractModuleDescriptorPar
                 }
                 confAware = null;
                 state = DEPS;
-            } else if ("dependency".equals(qName)) {
+            } else if ("dependency".equals(qName) && state == DEP) {
                 if (dd.getModuleConfigurations().length == 0) {
                     parseDepsConfs(getDefaultConf(), dd);
                 }
                 state = DEPS;
-            } else if ("dependencies".equals(qName)) {
+            } else if ("dependencies".equals(qName) && state == DEPS) {
                 state = NONE;
             } else if (state == INFO && "info".equals(qName)) {
                 state = NONE;
-            } else if (state == INFO && "description".equals(qName)) {
+            } else if (state == DESCRIPTION && "description".equals(qName)) {
                 state = INFO;
-            } else if (state == INFO) {
-                md.addExtraInfo(qName, buffer==null?"":buffer.toString());
+            } else if (state == EXTRA_INFO) {
+                md.addExtraInfo(qName, buffer == null ? "" : buffer.toString());
                 buffer = null;
+                state = INFO;
             }
         }
 

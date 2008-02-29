@@ -184,6 +184,9 @@ public class XmlModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         assertEquals("http://www.my.org/mymodule/mylicense.html", licenses[0].getUrl());
 
         assertEquals("http://www.my.org/mymodule/", md.getHomePage());
+        
+        assertEquals(1, md.getExtraInfo().size());
+        assertEquals("56576", md.getExtraInfo().get("e:someExtra"));
 
         Configuration[] confs = md.getConfigurations();
         assertNotNull(confs);
@@ -434,7 +437,15 @@ public class XmlModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         assertEquals(Arrays.asList(new String[] {"myconf1", "myconf2", "myconf3", "myconf4",
                 "myoldconf"}), Arrays.asList(rules[1].getConfigurations()));
     }
-
+    
+    public void testFullNoValidation() throws Exception {
+        ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(settings,
+            getClass().getResource("test.xml"), false);
+        assertNotNull(md);
+        assertEquals(1, md.getExtraInfo().size());
+        assertEquals("56576", md.getExtraInfo().get("e:someExtra"));
+    }
+    
     public void testBug60() throws Exception {
         ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(settings,
             getClass().getResource("test-bug60.xml"), true);

@@ -382,11 +382,12 @@ public final class XmlModuleDescriptorWriter {
             printExtraAttributes(md, out, "\t\t");
             out.println();
         }
-        if (md.getExtraInfo().size()>0) {
+        if (md.getExtraInfo().size() > 0) {
             out.println("\t>");
             for (Iterator it = md.getExtraInfo().entrySet().iterator(); it.hasNext();) {
                 Map.Entry extraDescr = (Map.Entry) it.next();
-                if (extraDescr.getValue()==null || ((String)extraDescr.getValue()).length()==0) {
+                if (extraDescr.getValue() == null 
+                        || ((String) extraDescr.getValue()).length() == 0) {
                     continue;
                 }
                 out.print("\t\t<");

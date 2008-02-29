@@ -32,12 +32,12 @@
 
 		<repository name="ivyrep" url="http://www.jayasoft.fr/org/ivyrep/" pattern="[organisation]/[module]/ivy-[revision].xml" ivys="true" artifacts="false"/>
 
-		<e:someExtra>56576</e:someExtra>
-
 		<description homepage="http://www.my.org/mymodule/">			
 	This module is <b>great</b> !<br/>
 	You can use it especially with myconf1 and myconf2, and myconf4 is not too bad too.
 		</description>
+
+		<e:someExtra>56576</e:someExtra>
 	</info>
 	<configurations>
 		<conf name="myconf1" description="desc 1" e:attr2="value2"/>
