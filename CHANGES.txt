@@ -61,6 +61,10 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 	John Williams
 	Jaroslaw Wypychowski
 
+   trunk version
+=====================================
+- FIX: PublishEventsTest fails when Ivy sources are located in a directory with a + (IVY-755)
+
    2.0.0-beta2
 =====================================
 - NEW: Introduce RepositoryManagementEngine (IVY-665)

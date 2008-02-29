@@ -89,10 +89,8 @@ public class PublishEventsTest extends TestCase {
         //setup dummy ivy and data files to test publishing.  since we're testing the engine and not the resolver,
         //we don't really care whether the file actually gets published.  we just want to make sure
         //that the engine calls the correct methods in the correct order, and fires required events.
-        String resourcePath = PublishEventsTest.class.getResource("ivy-1.0-dev.xml").getPath();
-        resourcePath = URLDecoder.decode(resourcePath, System.getProperty("file.encoding"));
-        ivyFile = new File(resourcePath);
-        assertTrue("path to ivy file found in test environment", ivyFile.exists());
+        ivyFile = new File("test/java/org/apache/ivy/core/publish/ivy-1.0-dev.xml");
+        assertTrue("path to ivy file not found in test environment", ivyFile.exists());
         //the contents of the data file don't matter.
         dataFile = File.createTempFile("ivydata", ".jar");
         dataFile.deleteOnExit();
