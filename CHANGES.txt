@@ -65,6 +65,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
    trunk version
 =====================================
 - IMPROVEMENT: Make Ivy standalone runnable with no required dependencies (IVY-757)
+- IMPROVEMENT: add branch attribute in ivy:install task (IVY-727)
 
 - FIX: XML schema ambiguity (IVY-750)
 - FIX: ivy-resolve fails when a project has different dependencies in different branches (IVY-717)

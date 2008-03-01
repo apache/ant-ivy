@@ -21,9 +21,9 @@ import java.io.File;
 
 import junit.framework.TestCase;
 
+import org.apache.ivy.util.FileUtil;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
-import org.apache.tools.ant.taskdefs.Delete;
 
 public class IvyInstallTest extends TestCase {
     private File cache;
@@ -34,7 +34,7 @@ public class IvyInstallTest extends TestCase {
 
     protected void setUp() throws Exception {
         createCache();
-        cleanTestLib();
+        cleanInstall();
         project = new Project();
         project.setProperty("ivy.settings.file", "test/repositories/ivysettings.xml");
 
@@ -50,21 +50,29 @@ public class IvyInstallTest extends TestCase {
 
     protected void tearDown() throws Exception {
         cleanCache();
-        cleanTestLib();
+        cleanInstall();
     }
 
     private void cleanCache() {
-        Delete del = new Delete();
-        del.setProject(new Project());
-        del.setDir(cache);
-        del.execute();
+        FileUtil.forceDelete(cache);
     }
 
-    private void cleanTestLib() {
-        Delete del = new Delete();
-        del.setProject(new Project());
-        del.setDir(new File("build/test/lib"));
-        del.execute();
+    private void cleanInstall() {
+        FileUtil.forceDelete(new File("build/test/install"));
+    }
+
+    public void testInstallWithBranch() {
+        project.setProperty("ivy.settings.file", "test/repositories/branches/ivysettings.xml");
+        install.setOrganisation("foo");
+        install.setModule("foo1");
+        install.setBranch("branch1");
+        install.setRevision("2");
+        install.setFrom("default");
+        install.setTo("install");
+
+        install.execute();
+
+        assertTrue(new File("build/test/install/foo/foo1/branch1/ivy-2.xml").exists());
     }
 
     public void testDependencyNotFoundFailure() {
@@ -72,11 +80,11 @@ public class IvyInstallTest extends TestCase {
         install.setModule("yyy");
         install.setRevision("zzz");
         install.setFrom("test");
-        install.setTo("1");
+        install.setTo("install");
 
         try {
             install.execute();
-            fail("unknown dependency, failure expected (haltunresolved=true)");
+            fail("unknown dependency, failure expected (haltonfailure=true)");
         } catch (BuildException be) {
             // success
         }
@@ -93,7 +101,7 @@ public class IvyInstallTest extends TestCase {
         try {
             install.execute();
         } catch (BuildException be) {
-            fail("unknown dependency, failure unexepected (haltunresolved=false)");
+            fail("unknown dependency, failure unexpected (haltonfailure=false). Failure: " + be);
         }
     }
 }

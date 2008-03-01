@@ -20,6 +20,7 @@ package org.apache.ivy.ant;
 import java.io.File;
 
 import org.apache.ivy.Ivy;
+import org.apache.ivy.core.module.id.ModuleId;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.report.ResolveReport;
 import org.apache.ivy.core.settings.IvySettings;
@@ -36,6 +37,8 @@ public class IvyInstall extends IvyTask {
     private String module;
 
     private String revision;
+
+    private String branch;
 
     private boolean overwrite = false;
 
@@ -76,6 +79,11 @@ public class IvyInstall extends IvyTask {
         } else if (revision == null && !PatternMatcher.EXACT.equals(matcher)) {
             revision = PatternMatcher.ANY_EXPRESSION;
         }
+      if (branch == null && PatternMatcher.EXACT.equals(matcher)) {
+          branch = settings.getDefaultBranch(ModuleId.newInstance(organisation, module));
+      } else if (branch == null && !PatternMatcher.EXACT.equals(matcher)) {
+          branch = PatternMatcher.ANY_EXPRESSION;
+      }
         if (from == null) {
             throw new BuildException(
                     "no from resolver name: please provide it through parameter 'from'");
@@ -84,7 +92,9 @@ public class IvyInstall extends IvyTask {
             throw new BuildException(
                     "no to resolver name: please provide it through parameter 'to'");
         }
-        ModuleRevisionId mrid = ModuleRevisionId.newInstance(organisation, module, revision);
+        ModuleRevisionId mrid = 
+            ModuleRevisionId.newInstance(organisation, module, branch, revision);
+        
         ResolveReport report;
         try {
             report = ivy.install(mrid, from, to, transitive, doValidate(settings), overwrite,
@@ -118,6 +128,14 @@ public class IvyInstall extends IvyTask {
     public void setModule(String module) {
         this.module = module;
     }
+
+  public String getBranch() {
+      return branch;
+  }
+
+  public void setBranch(String branch) {
+      this.branch = branch;
+  }
 
     public String getOrganisation() {
         return organisation;
