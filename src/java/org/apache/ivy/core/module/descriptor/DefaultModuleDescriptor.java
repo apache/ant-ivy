@@ -43,6 +43,7 @@ import org.apache.ivy.plugins.namespace.NameSpaceHelper;
 import org.apache.ivy.plugins.namespace.Namespace;
 import org.apache.ivy.plugins.namespace.NamespaceTransformer;
 import org.apache.ivy.plugins.parser.ModuleDescriptorParser;
+import org.apache.ivy.plugins.parser.xml.XmlModuleDescriptorParser;
 import org.apache.ivy.plugins.parser.xml.XmlModuleDescriptorWriter;
 import org.apache.ivy.plugins.repository.Resource;
 import org.apache.ivy.plugins.version.VersionMatcher;
@@ -231,12 +232,13 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
         if (status == null) {
             throw new NullPointerException("null status not allowed");
         }
-        revId = id;
-        resolvedRevId = id;
+        this.revId = id;
+        this.resolvedRevId = id;
         this.status = status;
-        publicationDate = pubDate;
-        resolvedPublicationDate = publicationDate == null ? new Date() : publicationDate;
+        this.publicationDate = pubDate;
+        this.resolvedPublicationDate = publicationDate == null ? new Date() : publicationDate;
         this.isDefault = isDefault;
+        this.parser = XmlModuleDescriptorParser.getInstance();
     }
 
     /**
