@@ -25,16 +25,16 @@ import org.apache.ivy.plugins.repository.Resource;
 import org.apache.ivy.util.Message;
 
 public class VsftpResource extends LazyResource {
-    private VsftpRepository _repository;
+    private VsftpRepository repository;
 
     public VsftpResource(VsftpRepository repository, String file) {
         super(file);
-        _repository = repository;
+        this.repository = repository;
     }
 
     protected void init() {
         try {
-            init(_repository.getInitResource(getName()));
+            init(repository.getInitResource(getName()));
         } catch (IOException e) {
             Message.verbose(e.toString());
         }
@@ -47,7 +47,7 @@ public class VsftpResource extends LazyResource {
 
     public Resource clone(String cloneName) {
         try {
-            return _repository.getResource(cloneName);
+            return repository.getResource(cloneName);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

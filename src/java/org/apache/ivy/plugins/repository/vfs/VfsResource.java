@@ -35,46 +35,46 @@ import org.apache.ivy.util.Message;
  * VFS implementation of the Resource interface
  */
 public class VfsResource implements Resource {
-    private String _vfsURI;
+    private String vfsURI;
 
-    private FileSystemManager _fsManager;
+    private FileSystemManager fsManager;
 
-    private transient boolean _init = false;
+    private transient boolean init = false;
 
-    private transient boolean _exists;
+    private transient boolean exists;
 
-    private transient long _lastModified;
+    private transient long lastModified;
 
-    private transient long _contentLength;
+    private transient long contentLength;
 
-    private transient FileContent _content = null;
+    private transient FileContent content = null;
 
-    private transient FileObject _resourceImpl;
+    private transient FileObject resourceImpl;
 
     // Constructor
     public VfsResource(String vfsURI, FileSystemManager fsManager) {
-        this._vfsURI = vfsURI;
-        this._fsManager = fsManager;
-        this._init = false;
+        this.vfsURI = vfsURI;
+        this.fsManager = fsManager;
+        this.init = false;
     }
 
     private void init() {
-        if (!_init) {
+        if (!init) {
             try {
-                _resourceImpl = _fsManager.resolveFile(_vfsURI);
-                _content = _resourceImpl.getContent();
+                resourceImpl = fsManager.resolveFile(vfsURI);
+                content = resourceImpl.getContent();
 
-                _exists = _resourceImpl.exists();
-                _lastModified = _content.getLastModifiedTime();
-                _contentLength = _content.getSize();
+                exists = resourceImpl.exists();
+                lastModified = content.getLastModifiedTime();
+                contentLength = content.getSize();
             } catch (FileSystemException e) {
                 Message.verbose(e.getLocalizedMessage());
-                _exists = false;
-                _lastModified = 0;
-                _contentLength = 0;
+                exists = false;
+                lastModified = 0;
+                contentLength = 0;
             }
 
-            _init = true;
+            init = true;
         }
     }
 
@@ -89,9 +89,9 @@ public class VfsResource implements Resource {
         init();
         ArrayList list = new ArrayList();
         try {
-            if ((_resourceImpl != null) && _resourceImpl.exists()
-                    && (_resourceImpl.getType() == FileType.FOLDER)) {
-                FileObject[] children = _resourceImpl.getChildren();
+            if ((resourceImpl != null) && resourceImpl.exists()
+                    && (resourceImpl.getType() == FileType.FOLDER)) {
+                FileObject[] children = resourceImpl.getChildren();
                 for (int i = 0; i < children.length; i++) {
                     FileObject child = children[i];
                     list.add(normalize(child.getName().getURI()));
@@ -105,7 +105,7 @@ public class VfsResource implements Resource {
 
     public FileContent getContent() {
         init();
-        return _content;
+        return content;
     }
 
     /**
@@ -114,11 +114,11 @@ public class VfsResource implements Resource {
      * @return a <code>String</code> representing the Resource URL.
      */
     public String getName() {
-        return normalize(_vfsURI);
+        return normalize(vfsURI);
     }
 
     public Resource clone(String cloneName) {
-        return new VfsResource(cloneName, _fsManager);
+        return new VfsResource(cloneName, fsManager);
     }
 
     /**
@@ -146,7 +146,7 @@ public class VfsResource implements Resource {
      */
     public long getLastModified() {
         init();
-        return _lastModified;
+        return lastModified;
     }
 
     /**
@@ -156,7 +156,7 @@ public class VfsResource implements Resource {
      */
     public long getContentLength() {
         init();
-        return _contentLength;
+        return contentLength;
     }
 
     /**
@@ -167,7 +167,7 @@ public class VfsResource implements Resource {
      */
     public boolean exists() {
         init();
-        return _exists;
+        return exists;
     }
 
     /**
@@ -181,7 +181,7 @@ public class VfsResource implements Resource {
         init();
 
         try {
-            return _resourceImpl.exists();
+            return resourceImpl.exists();
             // originally I only checked for a FileSystemException. I expanded it to
             // include all exceptions when I found it would throw a NPE exception when the query was
             // run on non-wellformed VFS URI.

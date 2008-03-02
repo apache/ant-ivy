@@ -44,6 +44,22 @@ import com.jcraft.jsch.Session;
  * Nevertheless credit should go to the original author.
  */
 public class Scp {
+    private static final int MODE_LENGTH = 4;
+
+    private static final int SEND_FILE_BUFFER_LENGTH = 40000;
+
+    private static final int SEND_BYTES_BUFFER_LENGTH = 512;
+
+    private static final int MIN_TLINE_LENGTH = 8;
+
+    private static final int CLINE_SPACE_INDEX2 = 5;
+
+    private static final int CLINE_SPACE_INDEX1 = 4;
+
+    private static final int MIN_C_LINE_LENGTH = 8;
+
+    private static final int DEFAULT_LINE_BUFFER_LENGTH = 30;
+
     private static final int BUFFER_SIZE = 64 * 1024;
 
     /*
@@ -138,7 +154,7 @@ public class Scp {
     }
 
     private String receiveLine(InputStream is) throws IOException, RemoteScpException {
-        StringBuffer sb = new StringBuffer(30);
+        StringBuffer sb = new StringBuffer(DEFAULT_LINE_BUFFER_LENGTH);
 
         while (true) {
 
@@ -167,29 +183,31 @@ public class Scp {
 
         long len;
 
-        if (line.length() < 8) {
+        if (line.length() < MIN_C_LINE_LENGTH) {
             throw new RemoteScpException(
                     "Malformed C line sent by remote SCP binary, line too short.");
         }
 
-        if ((line.charAt(4) != ' ') || (line.charAt(5) == ' ')) {
+        if ((line.charAt(CLINE_SPACE_INDEX1) != ' ') 
+                || (line.charAt(CLINE_SPACE_INDEX2) == ' ')) {
             throw new RemoteScpException("Malformed C line sent by remote SCP binary.");
         }
 
-        int lengthNameSep = line.indexOf(' ', 5);
+        int lengthNameSep = line.indexOf(' ', CLINE_SPACE_INDEX2);
 
         if (lengthNameSep == -1) {
             throw new RemoteScpException("Malformed C line sent by remote SCP binary.");
         }
 
-        String lengthSubstring = line.substring(5, lengthNameSep);
+        String lengthSubstring = line.substring(CLINE_SPACE_INDEX2, lengthNameSep);
         String nameSubstring = line.substring(lengthNameSep + 1);
 
         if ((lengthSubstring.length() <= 0) || (nameSubstring.length() <= 0)) {
             throw new RemoteScpException("Malformed C line sent by remote SCP binary.");
         }
 
-        if ((6 + lengthSubstring.length() + nameSubstring.length()) != line.length()) {
+        if ((CLINE_SPACE_INDEX2 + 1 + lengthSubstring.length() + nameSubstring.length()) 
+                != line.length()) {
             throw new RemoteScpException("Malformed C line sent by remote SCP binary.");
         }
 
@@ -217,7 +235,7 @@ public class Scp {
         long atime;
         long secondMsec;
 
-        if (line.length() < 8) {
+        if (line.length() < MIN_TLINE_LENGTH) {
             throw new RemoteScpException(
                     "Malformed T line sent by remote SCP binary, line too short.");
         }
@@ -261,7 +279,8 @@ public class Scp {
     private void sendBytes(Channel channel, byte[] data, String fileName, String mode)
             throws IOException, RemoteScpException {
         OutputStream os = channel.getOutputStream();
-        InputStream is = new BufferedInputStream(channel.getInputStream(), 512);
+        InputStream is = new BufferedInputStream(
+            channel.getInputStream(), SEND_BYTES_BUFFER_LENGTH);
 
         try {
             if (channel.isConnected()) {
@@ -296,8 +315,10 @@ public class Scp {
             throws IOException, RemoteScpException {
         byte[] buffer = new byte[BUFFER_SIZE];
 
-        OutputStream os = new BufferedOutputStream(channel.getOutputStream(), 40000);
-        InputStream is = new BufferedInputStream(channel.getInputStream(), 512);
+        OutputStream os = new BufferedOutputStream(
+            channel.getOutputStream(), SEND_FILE_BUFFER_LENGTH);
+        InputStream is = new BufferedInputStream(
+            channel.getInputStream(), SEND_BYTES_BUFFER_LENGTH);
 
         try {
             if (channel.isConnected()) {
@@ -527,7 +548,7 @@ public class Scp {
             throw new IllegalArgumentException("Null argument.");
         }
 
-        if (mode.length() != 4) {
+        if (mode.length() != MODE_LENGTH) {
             throw new IllegalArgumentException("Invalid mode.");
         }
 
@@ -591,7 +612,7 @@ public class Scp {
             throw new IllegalArgumentException("Null argument.");
         }
 
-        if (mode.length() != 4) {
+        if (mode.length() != MODE_LENGTH) {
             throw new IllegalArgumentException("Invalid mode.");
         }
 

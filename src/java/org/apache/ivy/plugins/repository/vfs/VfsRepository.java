@@ -48,9 +48,9 @@ public class VfsRepository extends AbstractRepository {
      */
     private static final String IVY_VFS_CONFIG = "ivy_vfs.xml";
 
-    private StandardFileSystemManager _manager = null;
+    private StandardFileSystemManager manager = null;
 
-    private final CopyProgressListener _progress = new RepositoryCopyProgressListener(this);
+    private final CopyProgressListener progress = new RepositoryCopyProgressListener(this);
 
     /**
      * Create a new Ivy VFS Repository Instance
@@ -60,11 +60,11 @@ public class VfsRepository extends AbstractRepository {
 
     private FileSystemManager getVFSManager() throws IOException {
         synchronized (this) {
-            if (_manager == null) {
-                _manager = createVFSManager();
+            if (manager == null) {
+                manager = createVFSManager();
             }
         }
-        return _manager;
+        return manager;
     }
 
     private StandardFileSystemManager createVFSManager() throws IOException {
@@ -109,9 +109,9 @@ public class VfsRepository extends AbstractRepository {
     }
 
     protected void finalize() {
-        if (_manager != null) {
-            _manager.close();
-            _manager = null;
+        if (manager != null) {
+            manager.close();
+            manager = null;
         }
     }
 
@@ -146,7 +146,7 @@ public class VfsRepository extends AbstractRepository {
                 throw new IllegalArgumentException("invalid vfs uri " + srcVfsURI
                         + ": no content found");
             }
-            FileUtil.copy(content.getInputStream(), destination, _progress);
+            FileUtil.copy(content.getInputStream(), destination, progress);
         } catch (IOException ex) {
             fireTransferError(ex);
             throw ex;
@@ -210,7 +210,7 @@ public class VfsRepository extends AbstractRepository {
                     + " to put data to: resource has no content");
         }
 
-        FileUtil.copy(new FileInputStream(source), dest.getContent().getOutputStream(), _progress);
+        FileUtil.copy(new FileInputStream(source), dest.getContent().getOutputStream(), progress);
     }
 
 }

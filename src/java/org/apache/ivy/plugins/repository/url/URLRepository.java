@@ -35,15 +35,15 @@ import org.apache.ivy.util.FileUtil;
 import org.apache.ivy.util.url.ApacheURLLister;
 
 public class URLRepository extends AbstractRepository {
-    private RepositoryCopyProgressListener _progress = new RepositoryCopyProgressListener(this);
+    private RepositoryCopyProgressListener progress = new RepositoryCopyProgressListener(this);
 
-    private Map _resourcesCache = new HashMap();
+    private Map resourcesCache = new HashMap();
 
     public Resource getResource(String source) throws IOException {
-        Resource res = (Resource) _resourcesCache.get(source);
+        Resource res = (Resource) resourcesCache.get(source);
         if (res == null) {
             res = new URLResource(new URL(source));
-            _resourcesCache.put(source, res);
+            resourcesCache.put(source, res);
         }
         return res;
     }
@@ -54,9 +54,9 @@ public class URLRepository extends AbstractRepository {
             Resource res = getResource(source);
             long totalLength = res.getContentLength();
             if (totalLength > 0) {
-                _progress.setTotalLength(new Long(totalLength));
+                progress.setTotalLength(new Long(totalLength));
             }
-            FileUtil.copy(new URL(source), destination, _progress);
+            FileUtil.copy(new URL(source), destination, progress);
         } catch (IOException ex) {
             fireTransferError(ex);
             throw ex;
@@ -64,7 +64,7 @@ public class URLRepository extends AbstractRepository {
             fireTransferError(ex);
             throw ex;
         } finally {
-            _progress.setTotalLength(null);
+            progress.setTotalLength(null);
         }
     }
 
@@ -73,11 +73,11 @@ public class URLRepository extends AbstractRepository {
                 "URL repository is not able to put files for the moment");
     }
 
-    private ApacheURLLister _lister = new ApacheURLLister();
+    private ApacheURLLister lister = new ApacheURLLister();
 
     public List list(String parent) throws IOException {
         if (parent.startsWith("http")) {
-            List urls = _lister.listAll(new URL(parent));
+            List urls = lister.listAll(new URL(parent));
             if (urls != null) {
                 List ret = new ArrayList(urls.size());
                 for (ListIterator iter = urls.listIterator(); iter.hasNext();) {

@@ -18,53 +18,53 @@
 package org.apache.ivy.plugins.repository;
 
 public abstract class LazyResource implements Resource {
-    private boolean _init = false;
+    private boolean init = false;
 
-    private boolean _local;
+    private boolean local;
 
-    private String _name;
+    private String name;
 
-    private long _lastModified;
+    private long lastModified;
 
-    private long _contentLength;
+    private long contentLength;
 
-    private boolean _exists;
+    private boolean exists;
 
     public LazyResource(String name) {
-        _name = name;
+        this.name = name;
     }
 
     protected abstract void init();
 
     private void checkInit() {
-        if (!_init) {
+        if (!init) {
             init();
-            _init = true;
+            init = true;
         }
     }
 
     public boolean exists() {
         checkInit();
-        return _exists;
+        return exists;
     }
 
     public long getContentLength() {
         checkInit();
-        return _contentLength;
+        return contentLength;
     }
 
     public long getLastModified() {
         checkInit();
-        return _lastModified;
+        return lastModified;
     }
 
     public String getName() {
-        return _name;
+        return name;
     }
 
     public boolean isLocal() {
         checkInit();
-        return _local;
+        return local;
     }
 
     public String toString() {
@@ -72,19 +72,19 @@ public abstract class LazyResource implements Resource {
     }
 
     protected void setContentLength(long contentLength) {
-        _contentLength = contentLength;
+        this.contentLength = contentLength;
     }
 
     protected void setExists(boolean exists) {
-        _exists = exists;
+        this.exists = exists;
     }
 
     protected void setLastModified(long lastModified) {
-        _lastModified = lastModified;
+        this.lastModified = lastModified;
     }
 
     protected void setLocal(boolean local) {
-        _local = local;
+        this.local = local;
     }
 
     protected void init(Resource r) {

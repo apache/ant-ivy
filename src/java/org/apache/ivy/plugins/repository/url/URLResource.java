@@ -27,22 +27,22 @@ import org.apache.ivy.util.url.URLHandlerRegistry;
 import org.apache.ivy.util.url.URLHandler.URLInfo;
 
 public class URLResource implements Resource {
-    private URL _url;
+    private URL url;
 
-    private boolean _init = false;
+    private boolean init = false;
 
-    private long _lastModified;
+    private long lastModified;
 
-    private long _contentLength;
+    private long contentLength;
 
-    private boolean _exists;
+    private boolean exists;
 
     public URLResource(URL url) {
-        _url = url;
+        this.url = url;
     }
 
     public String getName() {
-        return _url.toExternalForm();
+        return url.toExternalForm();
     }
 
     public Resource clone(String cloneName) {
@@ -55,36 +55,36 @@ public class URLResource implements Resource {
     }
 
     public long getLastModified() {
-        if (!_init) {
+        if (!init) {
             init();
         }
-        return _lastModified;
+        return lastModified;
     }
 
     private void init() {
-        URLInfo info = URLHandlerRegistry.getDefault().getURLInfo(_url);
-        _contentLength = info.getContentLength();
-        _lastModified = info.getLastModified();
-        _exists = info.isReachable();
-        _init = true;
+        URLInfo info = URLHandlerRegistry.getDefault().getURLInfo(url);
+        contentLength = info.getContentLength();
+        lastModified = info.getLastModified();
+        exists = info.isReachable();
+        init = true;
     }
 
     public long getContentLength() {
-        if (!_init) {
+        if (!init) {
             init();
         }
-        return _contentLength;
+        return contentLength;
     }
 
     public boolean exists() {
-        if (!_init) {
+        if (!init) {
             init();
         }
-        return _exists;
+        return exists;
     }
 
     public URL getURL() {
-        return _url;
+        return url;
     }
 
     public String toString() {
@@ -96,6 +96,6 @@ public class URLResource implements Resource {
     }
 
     public InputStream openStream() throws IOException {
-        return _url.openStream();
+        return url.openStream();
     }
 }

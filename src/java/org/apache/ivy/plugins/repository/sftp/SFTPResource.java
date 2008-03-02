@@ -23,53 +23,53 @@ import java.io.InputStream;
 import org.apache.ivy.plugins.repository.Resource;
 
 public class SFTPResource implements Resource {
-    private SFTPRepository _repository;
+    private SFTPRepository repository;
 
-    private String _path;
+    private String path;
 
-    private transient boolean _init = false;
+    private transient boolean init = false;
 
-    private transient boolean _exists;
+    private transient boolean exists;
 
-    private transient long _lastModified;
+    private transient long lastModified;
 
-    private transient long _contentLength;
+    private transient long contentLength;
 
     public SFTPResource(SFTPRepository repository, String path) {
-        _repository = repository;
-        _path = path;
+        this.repository = repository;
+        this.path = path;
     }
 
     public String getName() {
-        return _path;
+        return path;
     }
 
     public Resource clone(String cloneName) {
-        return new SFTPResource(_repository, cloneName);
+        return new SFTPResource(repository, cloneName);
     }
 
     public long getLastModified() {
         init();
-        return _lastModified;
+        return lastModified;
     }
 
     public long getContentLength() {
         init();
-        return _contentLength;
+        return contentLength;
     }
 
     public boolean exists() {
         init();
-        return _exists;
+        return exists;
     }
 
     private void init() {
-        if (!_init) {
-            Resource r = _repository.resolveResource(_path);
-            _contentLength = r.getContentLength();
-            _lastModified = r.getLastModified();
-            _exists = r.exists();
-            _init = true;
+        if (!init) {
+            Resource r = repository.resolveResource(path);
+            contentLength = r.getContentLength();
+            lastModified = r.getLastModified();
+            exists = r.exists();
+            init = true;
         }
     }
 
@@ -82,6 +82,6 @@ public class SFTPResource implements Resource {
     }
 
     public InputStream openStream() throws IOException {
-        return _repository.openStream(this);
+        return repository.openStream(this);
     }
 }
