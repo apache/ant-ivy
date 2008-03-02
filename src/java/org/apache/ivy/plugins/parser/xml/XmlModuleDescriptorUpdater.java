@@ -44,7 +44,6 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.apache.ivy.Ivy;
 import org.apache.ivy.core.module.id.ModuleId;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
-import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.plugins.namespace.NameSpaceHelper;
 import org.apache.ivy.plugins.namespace.Namespace;
 import org.apache.ivy.plugins.parser.ParserSettings;
@@ -83,31 +82,15 @@ public final class XmlModuleDescriptorUpdater {
      *            the url of the source module descriptor file
      * @param destFile
      *            The file to which the updated module descriptor should be output
-     * @param resolvedRevisions
-     *            Map from ModuleId of dependencies to new revision (as String)
-     * @param status
-     *            the new status, null to keep the old one
-     * @param revision
-     *            the new revision, null to keep the old one
      */
-    public static void update(URL srcURL, File destFile, final Map resolvedRevisions,
-            final String status, final String revision, final Date pubdate, String[] confsToExclude)
+    public static void update(URL srcURL, File destFile, UpdateOptions options) 
             throws IOException, SAXException {
-        update(null, srcURL, destFile, resolvedRevisions, status, revision, pubdate, null, false,
-            confsToExclude);
-    }
-
-    public static void update(final ParserSettings settings, URL srcURL, File destFile,
-            final Map resolvedRevisions, final String status, final String revision,
-            final Date pubdate, final Namespace ns, final boolean replaceInclude,
-            String[] confsToExclude) throws IOException, SAXException {
         if (destFile.getParentFile() != null) {
             destFile.getParentFile().mkdirs();
         }
         OutputStream destStream = new FileOutputStream(destFile);
         try {
-            update(settings, srcURL, destStream, resolvedRevisions, status, revision,
-                pubdate, ns, replaceInclude, confsToExclude);
+            update(srcURL, destStream, options);
         } finally {
             try {
                 destStream.close();
@@ -117,14 +100,11 @@ public final class XmlModuleDescriptorUpdater {
         }
     }
 
-    public static void update(final ParserSettings settings, URL srcURL, OutputStream destFile,
-            final Map resolvedRevisions, final String status, final String revision,
-            final Date pubdate, final Namespace ns, final boolean replaceInclude,
-            String[] confsToExclude) throws IOException, SAXException {
+    public static void update(URL srcURL, OutputStream destFile, UpdateOptions options) 
+            throws IOException, SAXException {
         InputStream in = srcURL.openStream();
         try {
-            update(settings, srcURL, in, destFile, resolvedRevisions, status, revision,
-                pubdate, ns, replaceInclude, confsToExclude);
+            update(srcURL, in, destFile, options);
         } finally {
             try {
                 in.close();
@@ -141,11 +121,8 @@ public final class XmlModuleDescriptorUpdater {
     }
 
     
-    public static void update(
-            final IvySettings settings, InputStream in, Resource res, 
-            File destFile, final Map resolvedRevisions, final String status, final String revision,
-            final Date pubdate, final Namespace ns, final boolean replaceInclude,
-            String[] confsToExclude) throws IOException, SAXException {
+    public static void update(InputStream in, Resource res, 
+            File destFile, UpdateOptions options) throws IOException, SAXException {
         if (destFile.getParentFile() != null) {
             destFile.getParentFile().mkdirs();
         }
@@ -158,8 +135,7 @@ public final class XmlModuleDescriptorUpdater {
             } else if (res instanceof FileResource) {
                 inputStreamContext = ((FileResource) res).getFile().toURL();
             }
-            update(settings, inputStreamContext, in, fos, resolvedRevisions, status, revision, 
-                pubdate, ns, replaceInclude, confsToExclude);
+            update(inputStreamContext, in, fos, options);
         } finally {
             try {
                 in.close();
@@ -198,21 +174,18 @@ public final class XmlModuleDescriptorUpdater {
 
         private final URL relativePathCtx;
 
-        public UpdaterHandler(final ParserSettings settings, final PrintWriter out,
-                final Map resolvedRevisions, final String status, final String revision,
-                final Date pubdate, final Namespace ns, final boolean replaceInclude,
-                final String[] confs, final URL relativePathCtx) {
-            this.settings = settings;
+        public UpdaterHandler(URL relativePathCtx, PrintWriter out, final UpdateOptions options) {
+            this.settings = options.getSettings();
             this.out = out;
-            this.resolvedRevisions = resolvedRevisions;
-            this.status = status;
-            this.revision = revision;
-            this.pubdate = pubdate;
-            this.ns = ns;
-            this.replaceInclude = replaceInclude;
+            this.resolvedRevisions = options.getResolvedRevisions();
+            this.status = options.getStatus();
+            this.revision = options.getRevision();
+            this.pubdate = options.getPubdate();
+            this.ns = options.getNamespace();
+            this.replaceInclude = options.isReplaceInclude();
             this.relativePathCtx = relativePathCtx;
-            if (confs != null) {
-                this.confs = Arrays.asList(confs);
+            if (options.getConfsToExclude() != null) {
+                this.confs = Arrays.asList(options.getConfsToExclude());
             } else {
                 this.confs = Collections.EMPTY_LIST;
             }
@@ -735,10 +708,8 @@ public final class XmlModuleDescriptorUpdater {
 
     }
 
-    public static void update(final ParserSettings settings, URL inStreamCtx, InputStream inStream,
-            OutputStream outStream, final Map resolvedRevisions, final String status,
-            final String revision, final Date pubdate, final Namespace ns,
-            final boolean replaceInclude, String[] confsToExclude) 
+    public static void update(URL inStreamCtx, InputStream inStream,
+            OutputStream outStream, final UpdateOptions options) 
             throws IOException, SAXException {
         final PrintWriter out = new PrintWriter(new OutputStreamWriter(outStream, "UTF-8"));
         final BufferedInputStream in = new BufferedInputStream(inStream);
@@ -748,8 +719,7 @@ public final class XmlModuleDescriptorUpdater {
         in.reset(); // reposition the stream at the beginning
 
         try {
-            UpdaterHandler updaterHandler = new UpdaterHandler(settings, out, resolvedRevisions,
-                    status, revision, pubdate, ns, replaceInclude, confsToExclude, inStreamCtx);
+            UpdaterHandler updaterHandler = new UpdaterHandler(inStreamCtx, out, options);
             InputSource inSrc = new InputSource(in);
             if (inStreamCtx != null) {
                 inSrc.setSystemId(inStreamCtx.toExternalForm());

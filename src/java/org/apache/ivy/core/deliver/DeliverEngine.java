@@ -36,6 +36,7 @@ import org.apache.ivy.core.cache.ResolutionCacheManager;
 import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
+import org.apache.ivy.plugins.parser.xml.UpdateOptions;
 import org.apache.ivy.plugins.parser.xml.XmlModuleDescriptorParser;
 import org.apache.ivy.plugins.parser.xml.XmlModuleDescriptorUpdater;
 import org.apache.ivy.plugins.report.XmlReportParser;
@@ -180,9 +181,15 @@ public class DeliverEngine {
         confsToRemove.removeAll(Arrays.asList(confs));
 
         try {
-            XmlModuleDescriptorUpdater.update(settings, ivyFileURL, new File(publishedIvy),
-                resolvedDependencies, options.getStatus(), revision, options.getPubdate(), null,
-                true, (String[]) confsToRemove.toArray(new String[confsToRemove.size()]));
+            XmlModuleDescriptorUpdater.update(ivyFileURL, new File(publishedIvy),
+                    new UpdateOptions()
+                        .setSettings(settings)
+                        .setResolvedRevisions(resolvedDependencies)
+                        .setStatus(options.getStatus())
+                        .setRevision(revision)
+                        .setPubdate(options.getPubdate())
+                        .setConfsToExclude((String[]) confsToRemove
+                            .toArray(new String[confsToRemove.size()])));
         } catch (SAXException ex) {
             throw new RuntimeException("bad ivy file in cache for " + mrid
                     + ": please clean and resolve again", ex);

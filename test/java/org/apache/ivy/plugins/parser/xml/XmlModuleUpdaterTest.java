@@ -44,6 +44,8 @@ import org.apache.ivy.plugins.repository.BasicResource;
 import org.apache.ivy.util.FileUtil;
 import org.xml.sax.SAXParseException;
 
+import sun.reflect.ReflectionFactory.GetReflectionFactoryAction;
+
 public class XmlModuleUpdaterTest extends TestCase {
 
     public void testUpdate() throws Exception {
@@ -65,9 +67,10 @@ public class XmlModuleUpdaterTest extends TestCase {
 
         Ivy ivy = Ivy.newInstance();
         ivy.setVariable("myvar", "myconf1");
-        XmlModuleDescriptorUpdater.update(ivy.getSettings(), XmlModuleUpdaterTest.class
-                .getResource("test-update.xml"), dest, resolvedRevisions, "release", "mynewrev",
-            cal.getTime(), null, true, null);
+        XmlModuleDescriptorUpdater.update(
+            XmlModuleUpdaterTest.class.getResource("test-update.xml"), dest, 
+            getUpdateOptions(ivy.getSettings(), resolvedRevisions, 
+                "release", "mynewrev", cal.getTime()));
 
         assertTrue(dest.exists());
         String expected = FileUtil.readEntirely(new BufferedReader(new InputStreamReader(
@@ -136,9 +139,10 @@ public class XmlModuleUpdaterTest extends TestCase {
         ivy.setVariable("regexp", "regexp");
         ivy.setVariable("theirrev", "1.0, 1.1");
         
-        XmlModuleDescriptorUpdater.update(ivy.getSettings(), XmlModuleUpdaterTest.class
-                .getResource("test-update-withvar.xml"), dest, resolvedRevisions, "release", "mynewrev",
-            cal.getTime(), null, true, null);
+        XmlModuleDescriptorUpdater.update(
+            XmlModuleUpdaterTest.class.getResource("test-update-withvar.xml"), dest, 
+            getUpdateOptions(ivy.getSettings(), resolvedRevisions, 
+                "release", "mynewrev", cal.getTime()));
 
         assertTrue(dest.exists());
         String expected = FileUtil.readEntirely(new BufferedReader(new InputStreamReader(
@@ -151,9 +155,8 @@ public class XmlModuleUpdaterTest extends TestCase {
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
         URL settingsUrl = new File("test/java/org/apache/ivy/plugins/parser/xml/" 
             + "test-configurations-import4.xml").toURL();
-        XmlModuleDescriptorUpdater.update(new IvySettings(), settingsUrl, buffer, new HashMap(),
-            "release", "mynewrev", new Date(), null,
-        true, null);
+        XmlModuleDescriptorUpdater.update(settingsUrl, buffer, 
+            getUpdateOptions("release", "mynewrev"));
 
         String updatedXml = buffer.toString();
 
@@ -166,9 +169,8 @@ public class XmlModuleUpdaterTest extends TestCase {
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
         URL settingsUrl = new File("test/java/org/apache/ivy/plugins/parser/xml/" 
                 + "test-update-excludedconfs1.xml").toURL();
-        XmlModuleDescriptorUpdater.update(new IvySettings(), settingsUrl, 
-            buffer, new HashMap(), "release", "mynewrev", new Date(), null, true, 
-            new String[] {"myconf2"});
+        XmlModuleDescriptorUpdater.update(settingsUrl, buffer, 
+            getUpdateOptions("release", "mynewrev").setConfsToExclude(new String[] {"myconf2"}));
 
         XmlModuleDescriptorParser parser = XmlModuleDescriptorParser.getInstance();
         ModuleDescriptor updatedMd = parser.parseDescriptor(new IvySettings(),
@@ -194,9 +196,9 @@ public class XmlModuleUpdaterTest extends TestCase {
         URL settingFile = new File("test/java/org/apache/ivy/plugins/parser/xml/" 
             + "test-update-excludedconfs2.xml").toURL();
         try {
-            XmlModuleDescriptorUpdater.update(new IvySettings(), settingFile, buffer,
-                new HashMap(), "release", "mynewrev", new Date(), null, true,
-                new String[] {"myconf2"});
+            XmlModuleDescriptorUpdater.update(settingFile, buffer,
+                getUpdateOptions("release", "mynewrev")
+                    .setConfsToExclude(new String[] {"myconf2"}));
             fail("IllegalArgumentException hasn't been thrown");
         } catch (IllegalArgumentException e) {
             // this is ok
@@ -210,8 +212,9 @@ public class XmlModuleUpdaterTest extends TestCase {
         URL settingsUrl = new File("test/java/org/apache/ivy/plugins/parser/xml/" 
             + "test-update-excludedconfs3.xml").toURL();
 
-        XmlModuleDescriptorUpdater.update(new IvySettings(), settingsUrl, buffer, new HashMap(),
-            "release", "mynewrev", new Date(), null, true, new String[] {"myconf2", "conf2"});
+        XmlModuleDescriptorUpdater.update(settingsUrl, buffer, 
+            getUpdateOptions("release", "mynewrev")
+                .setConfsToExclude(new String[] {"myconf2", "conf2"}));
 
         XmlModuleDescriptorParser parser = XmlModuleDescriptorParser.getInstance();
         ModuleDescriptor updatedMd = parser.parseDescriptor(new IvySettings(),
@@ -238,8 +241,8 @@ public class XmlModuleUpdaterTest extends TestCase {
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
         URL settingsUrl = new File("test/java/org/apache/ivy/plugins/parser/xml/" 
             + "test-update-excludedconfs4.xml").toURL();
-        XmlModuleDescriptorUpdater.update(new IvySettings(), settingsUrl, buffer, new HashMap(),
-            "release", "mynewrev", new Date(), null, true, new String[] {"myconf2"});
+        XmlModuleDescriptorUpdater.update(settingsUrl, buffer, 
+            getUpdateOptions("release", "mynewrev").setConfsToExclude(new String[] {"myconf2"}));
 
         XmlModuleDescriptorParser parser = XmlModuleDescriptorParser.getInstance();
         ModuleDescriptor updatedMd = parser.parseDescriptor(new IvySettings(),
@@ -264,8 +267,9 @@ public class XmlModuleUpdaterTest extends TestCase {
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
         URL settingsUrl = new File("test/java/org/apache/ivy/plugins/parser/xml/" 
             + "test-update-excludedconfs5.xml").toURL();
-        XmlModuleDescriptorUpdater.update(new IvySettings(), settingsUrl, buffer, new HashMap(),
-            "release", "mynewrev", new Date(), null, true, new String[] {"myconf2"});
+        XmlModuleDescriptorUpdater.update(settingsUrl, buffer, 
+            getUpdateOptions("release", "mynewrev")
+                .setConfsToExclude(new String[] {"myconf2"}));
 
         XmlModuleDescriptorParser parser = XmlModuleDescriptorParser.getInstance();
         ModuleDescriptor updatedMd = parser.parseDescriptor(new IvySettings(),
@@ -285,5 +289,19 @@ public class XmlModuleUpdaterTest extends TestCase {
                     + " shouldn't have a dependency artifact for configuration myconf2", 0, deps[i]
                     .getDependencyArtifacts("myconf2").length);
         }
+    }
+
+    private UpdateOptions getUpdateOptions(String status, String revision) {
+        return getUpdateOptions(new IvySettings(), new HashMap(), status, revision, new Date());
+    }
+
+    private UpdateOptions getUpdateOptions(IvySettings settings, Map resolvedRevisions, 
+            String status, String revision, Date pubdate) {
+        return new UpdateOptions()
+            .setSettings(settings)
+            .setResolvedRevisions(resolvedRevisions)
+            .setStatus(status)
+            .setRevision(revision)
+            .setPubdate(pubdate);
     }
 }

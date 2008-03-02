@@ -26,7 +26,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -42,6 +41,7 @@ import org.apache.ivy.core.module.descriptor.DefaultArtifact;
 import org.apache.ivy.core.module.descriptor.MDArtifact;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
+import org.apache.ivy.plugins.parser.xml.UpdateOptions;
 import org.apache.ivy.plugins.parser.xml.XmlModuleDescriptorParser;
 import org.apache.ivy.plugins.parser.xml.XmlModuleDescriptorUpdater;
 import org.apache.ivy.plugins.resolver.DependencyResolver;
@@ -116,11 +116,16 @@ public class PublishEngine {
                     confsToRemove.removeAll(Arrays.asList(confs));
 
                     try {
-                        XmlModuleDescriptorUpdater.update(settings, ivyFileURL, tmp, new HashMap(),
-                            options.getStatus() == null ? md.getStatus() : options.getStatus(),
-                            options.getPubrevision(), options.getPubdate() == null ? new Date()
-                                    : options.getPubdate(), null, true, (String[]) confsToRemove
-                                    .toArray(new String[confsToRemove.size()]));
+                        XmlModuleDescriptorUpdater.update(ivyFileURL, tmp, 
+                            new UpdateOptions()
+                                .setSettings(settings)
+                                .setStatus(options.getStatus() == null 
+                                    ? md.getStatus() : options.getStatus())
+                                .setRevision(options.getPubrevision())
+                                .setPubdate(options.getPubdate() == null ? new Date()
+                                    : options.getPubdate())
+                                .setConfsToExclude((String[]) confsToRemove
+                                    .toArray(new String[confsToRemove.size()])));
                         ivyFile = tmp;
                         // we parse the new file to get updated module descriptor
                         md = XmlModuleDescriptorParser.getInstance().parseDescriptor(settings,

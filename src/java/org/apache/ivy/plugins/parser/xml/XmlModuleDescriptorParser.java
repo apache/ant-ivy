@@ -24,7 +24,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.ParseException;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -120,10 +119,13 @@ public final class XmlModuleDescriptorParser extends AbstractModuleDescriptorPar
                 DefaultModuleDescriptor dmd = (DefaultModuleDescriptor) md;
                 ns = dmd.getNamespace();
             }
-            XmlModuleDescriptorUpdater.update(IvyContext.getContext().getSettings(), is, res, 
-                    destFile, Collections.EMPTY_MAP, md.getStatus(), 
-                    md.getResolvedModuleRevisionId().getRevision(), 
-                    md.getResolvedPublicationDate(), ns, true, null);
+            XmlModuleDescriptorUpdater.update(is, res, destFile, 
+                    new UpdateOptions()
+                        .setSettings(IvyContext.getContext().getSettings())
+                        .setStatus(md.getStatus()) 
+                        .setRevision(md.getResolvedModuleRevisionId().getRevision()) 
+                        .setPubdate(md.getResolvedPublicationDate())
+                        .setNamespace(ns));
         } catch (SAXException e) {
             ParseException ex = new ParseException("exception occured while parsing " + res, 0);
             ex.initCause(e);
