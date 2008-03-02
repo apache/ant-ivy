@@ -44,8 +44,6 @@ import org.apache.ivy.plugins.matcher.MatcherHelper;
 import org.apache.ivy.plugins.matcher.PatternMatcher;
 import org.apache.ivy.plugins.resolver.DependencyResolver;
 import org.apache.ivy.util.Message;
-import org.apache.ivy.util.filter.Filter;
-import org.apache.ivy.util.filter.FilterHelper;
 
 public class InstallEngine {
     private InstallEngineSettings settings;
@@ -64,12 +62,8 @@ public class InstallEngine {
         this.publishEngine = publishEngine;
     }
 
-    public ResolveReport install(ModuleRevisionId mrid, String from, String to, boolean transitive,
-            boolean validate, boolean overwrite, Filter artifactFilter, 
-            String matcherName) throws IOException {
-        if (artifactFilter == null) {
-            artifactFilter = FilterHelper.NO_FILTER;
-        }
+    public ResolveReport install(ModuleRevisionId mrid, String from, String to, 
+            InstallOptions options) throws IOException {
         DependencyResolver fromResolver = settings.getResolver(from);
         DependencyResolver toResolver = settings.getResolver(to);
         if (fromResolver == null) {
@@ -80,9 +74,9 @@ public class InstallEngine {
             throw new IllegalArgumentException("unknown resolver " + to
                     + ". Available resolvers are: " + settings.getResolverNames());
         }
-        PatternMatcher matcher = settings.getMatcher(matcherName);
+        PatternMatcher matcher = settings.getMatcher(options.getMatcherName());
         if (matcher == null) {
-            throw new IllegalArgumentException("unknown matcher " + matcherName
+            throw new IllegalArgumentException("unknown matcher " + options.getMatcherName()
                     + ". Available matchers are: " + settings.getMatcherNames());
         }
 
@@ -105,7 +99,7 @@ public class InstallEngine {
 
             if (MatcherHelper.isExact(matcher, mrid)) {
                 DefaultDependencyDescriptor dd = new DefaultDependencyDescriptor(md, mrid, false,
-                        false, transitive);
+                        false, options.isTransitive());
                 dd.addDependencyConfiguration("default", "*");
                 md.addDependency(dd);
             } else {
@@ -115,7 +109,7 @@ public class InstallEngine {
                     ModuleRevisionId foundMrid = (ModuleRevisionId) iter.next();
                     Message.info("\tfound " + foundMrid + " to install: adding to the list");
                     DefaultDependencyDescriptor dd = new DefaultDependencyDescriptor(md, foundMrid,
-                            false, false, transitive);
+                            false, false, options.isTransitive());
                     dd.addDependencyConfiguration("default", "*");
                     md.addDependency(dd);
                 }
@@ -125,15 +119,16 @@ public class InstallEngine {
             ResolveReport report = new ResolveReport(md, resolveId);
 
             Message.info(":: resolving dependencies ::");
-            ResolveOptions options = new ResolveOptions()
+            ResolveOptions resolveOptions = new ResolveOptions()
                                 .setResolveId(resolveId)
                                 .setConfs(new String[] {"default"})
-                                .setValidate(validate);
-            IvyNode[] dependencies = resolveEngine.getDependencies(md, options, report);
-            report.setDependencies(Arrays.asList(dependencies), artifactFilter);
+                                .setValidate(options.isValidate());
+            IvyNode[] dependencies = resolveEngine.getDependencies(md, resolveOptions, report);
+            report.setDependencies(Arrays.asList(dependencies), options.getArtifactFilter());
 
             Message.info(":: downloading artifacts to cache ::");
-            resolveEngine.downloadArtifacts(report, artifactFilter, new DownloadOptions());
+            resolveEngine.downloadArtifacts(
+                report, options.getArtifactFilter(), new DownloadOptions());
 
             // now that everything is in cache, we can publish all these modules
             Message.info(":: installing in " + to + " ::");
@@ -144,7 +139,7 @@ public class InstallEngine {
                     Message.verbose("installing " + depMrid);
                     boolean successfullyPublished = false;
                     try {
-                        toResolver.beginPublishTransaction(depMrid, overwrite);
+                        toResolver.beginPublishTransaction(depMrid, options.isOverwrite());
                         
                         // publish artifacts
                         ArtifactDownloadReport[] artifacts = 
@@ -152,14 +147,15 @@ public class InstallEngine {
                         for (int j = 0; j < artifacts.length; j++) {
                             if (artifacts[j].getLocalFile() != null) {
                                 toResolver.publish(artifacts[j].getArtifact(), 
-                                    artifacts[j].getLocalFile(), overwrite);
+                                    artifacts[j].getLocalFile(), options.isOverwrite());
                             }
                         }
                         
                         // publish metadata
                         File localIvyFile = dependencies[i]
                                                     .getModuleRevision().getReport().getLocalFile();
-                        toResolver.publish(depmd.getMetadataArtifact(), localIvyFile, overwrite);
+                        toResolver.publish(
+                            depmd.getMetadataArtifact(), localIvyFile, options.isOverwrite());
                         
                         // end module publish
                         toResolver.commitPublishTransaction();
@@ -175,7 +171,8 @@ public class InstallEngine {
             Message.info(":: install resolution report ::");
 
             // output report
-            resolveEngine.outputReport(report, settings.getResolutionCacheManager(), options);
+            resolveEngine.outputReport(
+                report, settings.getResolutionCacheManager(), resolveOptions);
 
             return report;
         } finally {

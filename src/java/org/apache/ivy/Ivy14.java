@@ -29,6 +29,7 @@ import java.util.Map;
 
 import org.apache.ivy.core.deliver.DeliverOptions;
 import org.apache.ivy.core.deliver.PublishingDependencyRevisionResolver;
+import org.apache.ivy.core.install.InstallOptions;
 import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleId;
@@ -180,8 +181,13 @@ public class Ivy14 {
     public ResolveReport install(ModuleRevisionId mrid, String from, String to, boolean transitive,
             boolean validate, boolean overwrite, Filter artifactFilter, File cache,
             String matcherName) throws IOException {
-        return ivy.install(mrid, from, to, transitive, validate, overwrite, artifactFilter, 
-            matcherName);
+        return ivy.install(mrid, from, to, 
+            new InstallOptions()
+                .setTransitive(transitive)
+                .setValidate(validate)
+                .setOverwrite(overwrite)
+                .setArtifactFilter(artifactFilter)
+                .setMatcherName(matcherName));
     }
 
     public void interrupt() {

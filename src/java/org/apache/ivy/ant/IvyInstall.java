@@ -20,6 +20,7 @@ package org.apache.ivy.ant;
 import java.io.File;
 
 import org.apache.ivy.Ivy;
+import org.apache.ivy.core.install.InstallOptions;
 import org.apache.ivy.core.module.id.ModuleId;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.report.ResolveReport;
@@ -97,8 +98,13 @@ public class IvyInstall extends IvyTask {
         
         ResolveReport report;
         try {
-            report = ivy.install(mrid, from, to, transitive, doValidate(settings), overwrite,
-                FilterHelper.getArtifactTypeFilter(type), matcher);
+            report = ivy.install(mrid, from, to, 
+                new InstallOptions()
+                    .setTransitive(transitive)
+                    .setValidate(doValidate(settings))
+                    .setOverwrite(overwrite)
+                    .setArtifactFilter(FilterHelper.getArtifactTypeFilter(type))
+                    .setMatcherName(matcher));
         } catch (Exception e) {
             throw new BuildException("impossible to install " + mrid + ": " + e, e);
         }

@@ -37,6 +37,7 @@ import org.apache.ivy.core.deliver.DeliverEngine;
 import org.apache.ivy.core.deliver.DeliverOptions;
 import org.apache.ivy.core.event.EventManager;
 import org.apache.ivy.core.install.InstallEngine;
+import org.apache.ivy.core.install.InstallOptions;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleId;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
@@ -66,7 +67,6 @@ import org.apache.ivy.plugins.trigger.Trigger;
 import org.apache.ivy.util.HostUtil;
 import org.apache.ivy.util.Message;
 import org.apache.ivy.util.MessageLoggerEngine;
-import org.apache.ivy.util.filter.Filter;
 
 /**
  * <a href="http://incubator.apache.org/ivy/">Ivy</a> is a free java based dependency manager.
@@ -521,13 +521,11 @@ public class Ivy {
     // INSTALL
     // ///////////////////////////////////////////////////////////////////////
 
-    public ResolveReport install(ModuleRevisionId mrid, String from, String to, boolean transitive,
-            boolean validate, boolean overwrite, Filter artifactFilter, String matcherName) 
-            throws IOException {
+    public ResolveReport install(ModuleRevisionId mrid, String from, String to, 
+            InstallOptions options) throws IOException {
         pushContext();
         try {
-            return installEngine.install(mrid, from, to, transitive, validate, overwrite,
-                artifactFilter, matcherName);
+            return installEngine.install(mrid, from, to, options);
         } finally {
             popContext();
         }
