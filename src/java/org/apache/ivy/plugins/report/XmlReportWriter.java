@@ -171,6 +171,29 @@ public class XmlReportWriter {
                         + lurl + "/>");
             }
         }
+        outputMetadataArtifact(out, dep);
+        outputEvictionInformation(report, out, dep);
+        outputCallers(report, out, dep);
+        outputArtifacts(report, out, dep);
+        out.println("\t\t\t</revision>");
+    }
+
+    private void outputEvictionInformation(ConfigurationResolveReport report, PrintWriter out,
+            IvyNode dep) {
+        if (dep.isEvicted(report.getConfiguration())) {
+            EvictionData ed = dep.getEvictedData(report.getConfiguration());
+            Collection selected = ed.getSelected();
+            if (selected != null) {
+                for (Iterator it3 = selected.iterator(); it3.hasNext();) {
+                    IvyNode sel = (IvyNode) it3.next();
+                    out.println("\t\t\t\t<evicted-by rev=\""
+                            + XMLHelper.escape(sel.getResolvedId().getRevision()) + "\"/>");
+                }
+            }
+        }
+    }
+
+    private void outputMetadataArtifact(PrintWriter out, IvyNode dep) {
         if (dep.getModuleRevision() != null) {
             MetadataArtifactDownloadReport madr = dep.getModuleRevision().getReport();
             out.print("\t\t\t\t<metadata-artifact");
@@ -198,17 +221,9 @@ public class XmlReportWriter {
             out.println("/>");
             
         }
-        if (dep.isEvicted(report.getConfiguration())) {
-            EvictionData ed = dep.getEvictedData(report.getConfiguration());
-            Collection selected = ed.getSelected();
-            if (selected != null) {
-                for (Iterator it3 = selected.iterator(); it3.hasNext();) {
-                    IvyNode sel = (IvyNode) it3.next();
-                    out.println("\t\t\t\t<evicted-by rev=\""
-                            + XMLHelper.escape(sel.getResolvedId().getRevision()) + "\"/>");
-                }
-            }
-        }
+    }
+
+    private void outputCallers(ConfigurationResolveReport report, PrintWriter out, IvyNode dep) {
         Caller[] callers = dep.getCallers(report.getConfiguration());
         for (int i = 0; i < callers.length; i++) {
             StringBuffer callerDetails = new StringBuffer();
@@ -247,6 +262,10 @@ public class XmlReportWriter {
                         callers[i].getModuleRevisionId().getRevision()) + "\""
                     + callerDetails + "/>");
         }
+    }
+
+    private void outputArtifacts(ConfigurationResolveReport report, PrintWriter out, IvyNode dep) {
+        Map extraAttributes;
         ArtifactDownloadReport[] adr = report.getDownloadReports(dep.getResolvedId());
         out.println("\t\t\t\t<artifacts>");
         for (int i = 0; i < adr.length; i++) {
@@ -284,7 +303,6 @@ public class XmlReportWriter {
             }
         }
         out.println("\t\t\t\t</artifacts>");
-        out.println("\t\t\t</revision>");
     }
 
     private String toString(String[] strs) {
