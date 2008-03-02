@@ -20,6 +20,7 @@ package org.apache.ivy.core.settings;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.ParseException;
 import java.util.Arrays;
@@ -112,6 +113,7 @@ public class XmlSettingsParser extends DefaultHandler {
                 try {
                     stream.close();
                 } catch (IOException e) {
+                    // ingnored
                 }
             }
         }
@@ -138,274 +140,323 @@ public class XmlSettingsParser extends DefaultHandler {
                         + settings + ")");
             }
             if (configurator.getCurrent() != null) {
-                if ("macrodef".equals(currentConfiguratorTag)
-                        && configurator.getTypeDef(qName) != null) {
-                    String name = (String) attributes.get("name");
-                    if (name == null) {
-                        attributes.put("name", "@{name}");
-                    } else if (configurator.isTopLevelMacroRecord()
-                            && name.indexOf("@{name}") != -1) {
-                        attributes.put("name", name);
-                    } else {
-                        attributes.put("name", "@{name}-" + name);
-                    }
-                }
-                if (attributes.get("ref") != null) {
-                    if (attributes.size() != 1) {
-                        throw new IllegalArgumentException(
-                                "ref attribute should be the only one ! found " + attributes.size()
-                                        + " in " + qName);
-                    }
-                    String name = (String) attributes.get("ref");
-                    Object child = null;
-                    if ("resolvers".equals(currentConfiguratorTag)) {
-                        child = ivy.getResolver(name);
-                        if (child == null) {
-                            throw new IllegalArgumentException("unknown resolver " + name
-                                    + ": resolver should be defined before being referenced");
-                        }
-                    } else if ("latest-strategies".equals(currentConfiguratorTag)) {
-                        child = ivy.getLatestStrategy(name);
-                        if (child == null) {
-                            throw new IllegalArgumentException("unknown latest strategy " + name
-                                   + ": latest strategy should be defined before being referenced");
-                        }
-                    } else if ("conflict-managers".equals(currentConfiguratorTag)) {
-                        child = ivy.getConflictManager(name);
-                        if (child == null) {
-                            throw new IllegalArgumentException(
-                                 "unknown conflict manager " + name
-                                 + ": conflict manager should be defined before being referenced");
-                        }
-                    }
-                    if (child == null) {
-                        throw new IllegalArgumentException("bad reference " + name);
-                    }
-                    configurator.addChild(qName, child);
-                } else {
-                    configurator.startCreateChild(qName);
-                    for (Iterator iter = attributes.keySet().iterator(); iter.hasNext();) {
-                        String attName = (String) iter.next();
-                        configurator.setAttribute(attName, (String) attributes
-                                .get(attName));
-                    }
-                }
+                inConfiguratorStarted(qName, attributes);
             } else if ("classpath".equals(qName)) {
-                String urlStr = (String) attributes.get("url");
-                URL url = null;
-                if (urlStr == null) {
-                    String file = (String) attributes.get("file");
-                    if (file == null) {
-                        throw new IllegalArgumentException(
-                                "either url or file should be given for classpath element");
-                    } else {
-                        url = new File(file).toURL();
-                    }
-                } else {
-                    url = new URL(urlStr);
-                }
-                ivy.addClasspathURL(url);
+                classpathStarted(attributes);
             } else if ("typedef".equals(qName)) {
-                String name = (String) attributes.get("name");
-                String className = (String) attributes.get("classname");
-                Class clazz = ivy.typeDef(name, className);
-                configurator.typeDef(name, clazz);
+                typedefStarted(attributes);
             } else if ("property".equals(qName)) {
-                String name = (String) attributes.get("name");
-                String value = (String) attributes.get("value");
-                String override = (String) attributes.get("override");
-                if (name == null) {
-                    throw new IllegalArgumentException("missing attribute name on property tag");
-                }
-                if (value == null) {
-                    throw new IllegalArgumentException("missing attribute value on property tag");
-                }
-                ivy.setVariable(name, value, override == null ? true : Boolean.valueOf(override)
-                        .booleanValue());
+                propertyStarted(attributes);
             } else if ("properties".equals(qName)) {
-                String propFilePath = (String) attributes.get("file");
-                String environmentPrefix = (String) attributes.get("environment");
-                if (propFilePath != null) {
-                    String override = (String) attributes.get("override");
-                    try {
-                        Message.verbose("loading properties: " + propFilePath);
-                        ivy.loadProperties(new File(propFilePath), override == null ? true : Boolean
-                                .valueOf(override).booleanValue());
-                    } catch (Exception fileEx) {
-                        Message.verbose("failed to load properties as file: trying as url: "
-                                + propFilePath);
-                        try {
-                            ivy.loadProperties(new URL(propFilePath), override == null ? true : Boolean
-                                    .valueOf(override).booleanValue());
-                        } catch (Exception urlEx) {
-                            throw new IllegalArgumentException(
-                                    "unable to load properties from "
-                                            + propFilePath
-                                            + ". Tried both as an url and a file, with no success. File exception: "
-                                            + fileEx + ". URL exception: " + urlEx);
-                        }
-                    }
-                } else if (environmentPrefix != null) {
-                    ivy.getVariableContainer().setEnvironmentPrefix(environmentPrefix);
-                } else {
-                    throw new IllegalArgumentException("Didn't find a 'file' or 'environment' attribute " +
-                    		"on the 'properties' element");
-                }
+                propertiesStarted(attributes);
             } else if ("include".equals(qName)) {
-                IvyVariableContainer variables = (IvyVariableContainer) ivy.getVariableContainer()
-                        .clone();
-                try {
-                    String propFilePath = (String) attributes.get("file");
-                    URL settingsURL = null;
-                    if (propFilePath == null) {
-                        propFilePath = (String) attributes.get("url");
-                        if (propFilePath == null) {
-                            Message.error("bad include tag: specify file or url to include");
-                            return;
-                        } else {
-                            Message.verbose("including url: " + propFilePath);
-                            settingsURL = new URL(propFilePath);
-                            ivy.setSettingsVariables(settingsURL);
-                        }
-                    } else {
-                        File incFile = new File(propFilePath);
-                        if (!incFile.exists()) {
-                            Message.error("impossible to include " + incFile
-                                    + ": file does not exist");
-                            return;
-                        } else {
-                            Message.verbose("including file: " + propFilePath);
-                            ivy.setSettingsVariables(incFile);
-                            settingsURL = incFile.toURL();
-                        }
-                    }
-                    new XmlSettingsParser(ivy).parse(configurator, settingsURL);
-                } finally {
-                    ivy.setVariableContainer(variables);
-                }
+                includeStarted(attributes);
             } else if ("settings".equals(qName) || "conf".equals(qName)) {
-                if ("conf".equals(qName) && !deprecatedMessagePrinted) {
-                    Message.deprecated(
-                        "'conf' is deprecated, use 'settings' instead (" + settings + ")");
-                }
-                String cache = (String) attributes.get("defaultCache");
-                if (cache != null) {
-                    Message.deprecated("'defaultCache' is deprecated, "
-                        + "use 'caches[@defaultCacheDir]' instead (" + settings + ")");
-                    ivy.setDefaultCache(new File(cache));
-                }
-                String defaultBranch = (String) attributes.get("defaultBranch");
-                if (defaultBranch != null) {
-                    ivy.setDefaultBranch(defaultBranch);
-                }
-                String validate = (String) attributes.get("validate");
-                if (validate != null) {
-                    ivy.setValidate(Boolean.valueOf(validate).booleanValue());
-                }
-                String up2d = (String) attributes.get("checkUpToDate");
-                if (up2d != null) {
-                    Message.deprecated("'checkUpToDate' is deprecated, "
-                        + "use 'caches[@checkUpToDate]' instead (" + settings + ")");
-                    ivy.setCheckUpToDate(Boolean.valueOf(up2d).booleanValue());
-                }
-                String useRemoteConfig = (String) attributes.get("useRemoteConfig");
-                if (useRemoteConfig != null) {
-                    ivy.setUseRemoteConfig(Boolean.valueOf(useRemoteConfig)
-                            .booleanValue());
-                }
-                String cacheIvyPattern = (String) attributes.get("cacheIvyPattern");
-                if (cacheIvyPattern != null) {
-                    Message.deprecated(
-                        "'cacheIvyPattern' is deprecated, use 'caches[@ivyPattern]' instead"
-                        + " (" + settings + ")");
-                    ivy.setDefaultCacheIvyPattern(cacheIvyPattern);
-                }
-                String cacheArtPattern = (String) attributes.get("cacheArtifactPattern");
-                if (cacheArtPattern != null) {
-                    Message.deprecated(
-                        "'cacheArtifactPattern' is deprecated, "
-                        + "use 'caches[@artifactPattern]' instead (" + settings + ")");
-                    ivy.setDefaultCacheArtifactPattern(cacheArtPattern);
-                }
-
-                // we do not set following defaults here since no instances has been registered yet
-                defaultResolver = (String) attributes.get("defaultResolver");
-                defaultCM = (String) attributes.get("defaultConflictManager");
-                defaultLatest = (String) attributes.get("defaultLatestStrategy");
-                defaultCircular = (String) attributes.get("circularDependencyStrategy");
-
+                settingsStarted(qName, attributes);
             } else if ("caches".equals(qName)) {
-                currentConfiguratorTag = qName;
-                configurator.setRoot(ivy);
-                defaultLock = (String) attributes.get("lockStrategy");
-                defaultCacheManager = (String) attributes.get("default");
-                
-                String cache = (String) attributes.get("defaultCacheDir");
-                if (cache != null) {
-                    ivy.setDefaultCache(new File(cache));
-                }
-                String up2d = (String) attributes.get("checkUpToDate");
-                if (up2d != null) {
-                    ivy.setCheckUpToDate(Boolean.valueOf(up2d).booleanValue());
-                }
-                String resolutionDir = (String) attributes.get("resolutionCacheDir");
-                if (resolutionDir != null) {
-                    ivy.setDefaultResolutionCacheBasedir(resolutionDir);
-                }
-                String useOrigin = (String) attributes.get("useOrigin");
-                if (useOrigin != null) {
-                    ivy.setDefaultUseOrigin(Boolean.valueOf(useOrigin).booleanValue());
-                }
-                String cacheIvyPattern = (String) attributes.get("ivyPattern");
-                if (cacheIvyPattern != null) {
-                    ivy.setDefaultCacheIvyPattern(cacheIvyPattern);
-                }
-                String cacheArtPattern = (String) attributes.get("artifactPattern");
-                if (cacheArtPattern != null) {
-                    ivy.setDefaultCacheArtifactPattern(cacheArtPattern);
-                }
-                String repositoryDir = (String) attributes.get("repositoryCacheDir");
-                if (repositoryDir != null) {
-                    ivy.setDefaultRepositoryCacheBasedir(repositoryDir); 
-                }
-           } else if ("version-matchers".equals(qName)) {
-                currentConfiguratorTag = qName;
-                configurator.setRoot(ivy);
-                if ("true".equals((String) attributes.get("usedefaults"))) {
-                    ivy.configureDefaultVersionMatcher();
-                }
+                cachesStarted(qName, attributes);
+            } else if ("version-matchers".equals(qName)) {
+                versionMatchersStarted(qName, attributes);
             } else if ("statuses".equals(qName)) {
-                currentConfiguratorTag = qName;
-                StatusManager m = new StatusManager();
-                String defaultStatus = (String) attributes.get("default");
-                if (defaultStatus != null) {
-                    m.setDefaultStatus(defaultStatus);
-                }
-                ivy.setStatusManager(m);
-                configurator.setRoot(m);
+                statusesStarted(qName, attributes);
             } else if (configuratorTags.contains(qName)) {
-                currentConfiguratorTag = qName;
-                configurator.setRoot(ivy);
+                anyConfiguratorStarted(qName);
             } else if ("macrodef".equals(qName)) {
-                currentConfiguratorTag = qName;
-                Configurator.MacroDef macrodef = configurator.startMacroDef((String) attributes
-                        .get("name"));
-                macrodef.addAttribute("name", null);
+                macrodefStarted(qName, attributes);
             } else if ("module".equals(qName)) {
-                attributes.put(IvyPatternHelper.MODULE_KEY, attributes.remove("name"));
-                String resolver = (String) attributes.remove("resolver");
-                String branch = (String) attributes.remove("branch");
-                String cm = (String) attributes.remove("conflict-manager");
-                String resolveMode = (String) attributes.remove("resolveMode");
-                String matcher = (String) attributes.remove("matcher");
-                matcher = matcher == null ? PatternMatcher.EXACT_OR_REGEXP : matcher;
-                ivy.addModuleConfiguration(attributes, ivy
-                        .getMatcher(matcher), resolver, branch, cm, resolveMode);
+                moduleStarted(attributes);
             }
         } catch (ParseException ex) {
             throw new SAXException("problem in config file: " + ex.getMessage(), ex);
         } catch (IOException ex) {
             throw new SAXException("io problem while parsing config file: " + ex.getMessage(), ex);
+        }
+    }
+
+    private void moduleStarted(Map attributes) {
+        attributes.put(IvyPatternHelper.MODULE_KEY, attributes.remove("name"));
+        String resolver = (String) attributes.remove("resolver");
+        String branch = (String) attributes.remove("branch");
+        String cm = (String) attributes.remove("conflict-manager");
+        String resolveMode = (String) attributes.remove("resolveMode");
+        String matcher = (String) attributes.remove("matcher");
+        matcher = matcher == null ? PatternMatcher.EXACT_OR_REGEXP : matcher;
+        ivy.addModuleConfiguration(attributes, ivy
+                .getMatcher(matcher), resolver, branch, cm, resolveMode);
+    }
+
+    private void macrodefStarted(String qName, Map attributes) {
+        currentConfiguratorTag = qName;
+        Configurator.MacroDef macrodef = configurator.startMacroDef((String) attributes
+                .get("name"));
+        macrodef.addAttribute("name", null);
+    }
+
+    private void anyConfiguratorStarted(String qName) {
+        currentConfiguratorTag = qName;
+        configurator.setRoot(ivy);
+    }
+
+    private void statusesStarted(String qName, Map attributes) {
+        currentConfiguratorTag = qName;
+        StatusManager m = new StatusManager();
+        String defaultStatus = (String) attributes.get("default");
+        if (defaultStatus != null) {
+            m.setDefaultStatus(defaultStatus);
+        }
+        ivy.setStatusManager(m);
+        configurator.setRoot(m);
+    }
+
+    private void versionMatchersStarted(String qName, Map attributes) {
+        anyConfiguratorStarted(qName);
+        if ("true".equals((String) attributes.get("usedefaults"))) {
+            ivy.configureDefaultVersionMatcher();
+        }
+    }
+
+    private void cachesStarted(String qName, Map attributes) {
+        anyConfiguratorStarted(qName);
+        defaultLock = (String) attributes.get("lockStrategy");
+        defaultCacheManager = (String) attributes.get("default");
+        
+        String cache = (String) attributes.get("defaultCacheDir");
+        if (cache != null) {
+            ivy.setDefaultCache(new File(cache));
+        }
+        String up2d = (String) attributes.get("checkUpToDate");
+        if (up2d != null) {
+            ivy.setCheckUpToDate(Boolean.valueOf(up2d).booleanValue());
+        }
+        String resolutionDir = (String) attributes.get("resolutionCacheDir");
+        if (resolutionDir != null) {
+            ivy.setDefaultResolutionCacheBasedir(resolutionDir);
+        }
+        String useOrigin = (String) attributes.get("useOrigin");
+        if (useOrigin != null) {
+            ivy.setDefaultUseOrigin(Boolean.valueOf(useOrigin).booleanValue());
+        }
+        String cacheIvyPattern = (String) attributes.get("ivyPattern");
+        if (cacheIvyPattern != null) {
+            ivy.setDefaultCacheIvyPattern(cacheIvyPattern);
+        }
+        String cacheArtPattern = (String) attributes.get("artifactPattern");
+        if (cacheArtPattern != null) {
+            ivy.setDefaultCacheArtifactPattern(cacheArtPattern);
+        }
+        String repositoryDir = (String) attributes.get("repositoryCacheDir");
+        if (repositoryDir != null) {
+            ivy.setDefaultRepositoryCacheBasedir(repositoryDir); 
+        }
+    }
+
+    private void settingsStarted(String qName, Map attributes) {
+        if ("conf".equals(qName) && !deprecatedMessagePrinted) {
+            Message.deprecated(
+                "'conf' is deprecated, use 'settings' instead (" + settings + ")");
+        }
+        String cache = (String) attributes.get("defaultCache");
+        if (cache != null) {
+            Message.deprecated("'defaultCache' is deprecated, "
+                + "use 'caches[@defaultCacheDir]' instead (" + settings + ")");
+            ivy.setDefaultCache(new File(cache));
+        }
+        String defaultBranch = (String) attributes.get("defaultBranch");
+        if (defaultBranch != null) {
+            ivy.setDefaultBranch(defaultBranch);
+        }
+        String validate = (String) attributes.get("validate");
+        if (validate != null) {
+            ivy.setValidate(Boolean.valueOf(validate).booleanValue());
+        }
+        String up2d = (String) attributes.get("checkUpToDate");
+        if (up2d != null) {
+            Message.deprecated("'checkUpToDate' is deprecated, "
+                + "use 'caches[@checkUpToDate]' instead (" + settings + ")");
+            ivy.setCheckUpToDate(Boolean.valueOf(up2d).booleanValue());
+        }
+        String useRemoteConfig = (String) attributes.get("useRemoteConfig");
+        if (useRemoteConfig != null) {
+            ivy.setUseRemoteConfig(Boolean.valueOf(useRemoteConfig)
+                    .booleanValue());
+        }
+        String cacheIvyPattern = (String) attributes.get("cacheIvyPattern");
+        if (cacheIvyPattern != null) {
+            Message.deprecated(
+                "'cacheIvyPattern' is deprecated, use 'caches[@ivyPattern]' instead"
+                + " (" + settings + ")");
+            ivy.setDefaultCacheIvyPattern(cacheIvyPattern);
+        }
+        String cacheArtPattern = (String) attributes.get("cacheArtifactPattern");
+        if (cacheArtPattern != null) {
+            Message.deprecated(
+                "'cacheArtifactPattern' is deprecated, "
+                + "use 'caches[@artifactPattern]' instead (" + settings + ")");
+            ivy.setDefaultCacheArtifactPattern(cacheArtPattern);
+        }
+
+        // we do not set following defaults here since no instances has been registered yet
+        defaultResolver = (String) attributes.get("defaultResolver");
+        defaultCM = (String) attributes.get("defaultConflictManager");
+        defaultLatest = (String) attributes.get("defaultLatestStrategy");
+        defaultCircular = (String) attributes.get("circularDependencyStrategy");
+    }
+
+    private void includeStarted(Map attributes) throws IOException, ParseException {
+        IvyVariableContainer variables = (IvyVariableContainer) ivy.getVariableContainer()
+                .clone();
+        try {
+            String propFilePath = (String) attributes.get("file");
+            URL settingsURL = null;
+            if (propFilePath == null) {
+                propFilePath = (String) attributes.get("url");
+                if (propFilePath == null) {
+                    throw new IllegalArgumentException(
+                        "bad include tag: specify file or url to include");
+                } else {
+                    Message.verbose("including url: " + propFilePath);
+                    settingsURL = new URL(propFilePath);
+                    ivy.setSettingsVariables(settingsURL);
+                }
+            } else {
+                File incFile = new File(propFilePath);
+                if (!incFile.exists()) {
+                    throw new IllegalArgumentException(
+                        "impossible to include " + incFile + ": file does not exist");
+                } else {
+                    Message.verbose("including file: " + propFilePath);
+                    ivy.setSettingsVariables(incFile);
+                    settingsURL = incFile.toURL();
+                }
+            }
+            new XmlSettingsParser(ivy).parse(configurator, settingsURL);
+        } finally {
+            ivy.setVariableContainer(variables);
+        }
+    }
+
+    private void propertiesStarted(Map attributes) {
+        String propFilePath = (String) attributes.get("file");
+        String environmentPrefix = (String) attributes.get("environment");
+        if (propFilePath != null) {
+            String override = (String) attributes.get("override");
+            try {
+                Message.verbose("loading properties: " + propFilePath);
+                ivy.loadProperties(new File(propFilePath), override == null ? true : Boolean
+                        .valueOf(override).booleanValue());
+            } catch (Exception fileEx) {
+                Message.verbose("failed to load properties as file: trying as url: "
+                        + propFilePath);
+                try {
+                    ivy.loadProperties(
+                        new URL(propFilePath), override == null ? true : Boolean
+                            .valueOf(override).booleanValue());
+                } catch (Exception urlEx) {
+                    throw new IllegalArgumentException(
+                        "unable to load properties from " + propFilePath
+                        + ". Tried both as an url and a file, with no success. "
+                        + "File exception: " + fileEx + ". URL exception: " + urlEx);
+                }
+            }
+        } else if (environmentPrefix != null) {
+            ivy.getVariableContainer().setEnvironmentPrefix(environmentPrefix);
+        } else {
+            throw new IllegalArgumentException(
+                "Didn't find a 'file' or 'environment' attribute " 
+                + "on the 'properties' element");
+        }
+    }
+
+    private void propertyStarted(Map attributes) {
+        String name = (String) attributes.get("name");
+        String value = (String) attributes.get("value");
+        String override = (String) attributes.get("override");
+        if (name == null) {
+            throw new IllegalArgumentException("missing attribute name on property tag");
+        }
+        if (value == null) {
+            throw new IllegalArgumentException("missing attribute value on property tag");
+        }
+        ivy.setVariable(name, value, override == null ? true : Boolean.valueOf(override)
+                .booleanValue());
+    }
+
+    private void typedefStarted(Map attributes) {
+        String name = (String) attributes.get("name");
+        String className = (String) attributes.get("classname");
+        Class clazz = ivy.typeDef(name, className);
+        configurator.typeDef(name, clazz);
+    }
+
+    private void classpathStarted(Map attributes) throws MalformedURLException {
+        String urlStr = (String) attributes.get("url");
+        URL url = null;
+        if (urlStr == null) {
+            String file = (String) attributes.get("file");
+            if (file == null) {
+                throw new IllegalArgumentException(
+                        "either url or file should be given for classpath element");
+            } else {
+                url = new File(file).toURL();
+            }
+        } else {
+            url = new URL(urlStr);
+        }
+        ivy.addClasspathURL(url);
+    }
+
+    private void inConfiguratorStarted(String qName, Map attributes) {
+        if ("macrodef".equals(currentConfiguratorTag)
+                && configurator.getTypeDef(qName) != null) {
+            String name = (String) attributes.get("name");
+            if (name == null) {
+                attributes.put("name", "@{name}");
+            } else if (configurator.isTopLevelMacroRecord()
+                    && name.indexOf("@{name}") != -1) {
+                attributes.put("name", name);
+            } else {
+                attributes.put("name", "@{name}-" + name);
+            }
+        }
+        if (attributes.get("ref") != null) {
+            if (attributes.size() != 1) {
+                throw new IllegalArgumentException(
+                        "ref attribute should be the only one ! found " + attributes.size()
+                                + " in " + qName);
+            }
+            String name = (String) attributes.get("ref");
+            Object child = null;
+            if ("resolvers".equals(currentConfiguratorTag)) {
+                child = ivy.getResolver(name);
+                if (child == null) {
+                    throw new IllegalArgumentException("unknown resolver " + name
+                            + ": resolver should be defined before being referenced");
+                }
+            } else if ("latest-strategies".equals(currentConfiguratorTag)) {
+                child = ivy.getLatestStrategy(name);
+                if (child == null) {
+                    throw new IllegalArgumentException("unknown latest strategy " + name
+                           + ": latest strategy should be defined before being referenced");
+                }
+            } else if ("conflict-managers".equals(currentConfiguratorTag)) {
+                child = ivy.getConflictManager(name);
+                if (child == null) {
+                    throw new IllegalArgumentException(
+                         "unknown conflict manager " + name
+                         + ": conflict manager should be defined before being referenced");
+                }
+            }
+            if (child == null) {
+                throw new IllegalArgumentException("bad reference " + name);
+            }
+            configurator.addChild(qName, child);
+        } else {
+            configurator.startCreateChild(qName);
+            for (Iterator iter = attributes.keySet().iterator(); iter.hasNext();) {
+                String attName = (String) iter.next();
+                configurator.setAttribute(attName, (String) attributes
+                        .get(attName));
+            }
         }
     }
 
