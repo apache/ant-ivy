@@ -28,20 +28,24 @@ import org.apache.commons.lang.WordUtils;
 /**
  * Simple example to show how easy it is to retrieve transitive libs with ivy !!! 
  */
-public class Hello {
+public final class Hello {
     public static void main(String[] args) throws Exception {
-        Option msg = OptionBuilder.withArgName( "msg" )
-        .hasArg()
-        .withDescription(  "the message to capitalize" )
-        .create( "message" );
+        Option msg = OptionBuilder.withArgName("msg")
+            .hasArg()
+            .withDescription("the message to capitalize")
+            .create("message");
         Options options = new Options();
         options.addOption(msg);
         
         CommandLineParser parser = new GnuParser();
-        CommandLine line = parser.parse( options, args );
+        CommandLine line = parser.parse(options, args);
         
         String  message = line.getOptionValue("message", "hello ivy !");
         System.out.println("standard message : " + message);
-        System.out.println("capitalized by " + WordUtils.class.getName() + " : " + WordUtils.capitalizeFully(message));
+        System.out.println("capitalized by " + WordUtils.class.getName() 
+            + " : " + WordUtils.capitalizeFully(message));
+    }
+    
+    private Hello() {
     }
 }

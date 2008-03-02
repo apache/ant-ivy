@@ -22,7 +22,7 @@ import java.util.Collection;
 import java.util.ArrayList;
 import java.io.File;
 
-public class ListFile {
+public final class ListFile {
   static {
     Version.register("list");
   }
@@ -36,12 +36,15 @@ public class ListFile {
   private static Collection list(File file, Collection files) {
     if (file.isDirectory()) {
       File[] f = file.listFiles();
-      for (int i=0; i<f.length; i++) {
+      for (int i = 0; i < f.length; i++) {
         list(f[i], files);
       }
     } else {
       files.add(file);
     }
     return files;
+  }
+  
+  private ListFile() {
   }
 }

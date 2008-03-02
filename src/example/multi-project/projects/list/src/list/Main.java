@@ -30,12 +30,12 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-public class Main {
+public final class Main {
     private static Options getOptions() {
-        Option dir = OptionBuilder.withArgName( "dir" )
+        Option dir = OptionBuilder.withArgName("dir")
             .hasArg()
-            .withDescription(  "list files in given dir" )
-            .create( "dir" );
+            .withDescription("list files in given dir")
+            .create("dir");
         Options options = new Options();
 
         options.addOption(dir);
@@ -49,20 +49,23 @@ public class Main {
         
         CommandLineParser parser = new GnuParser();
 
-        CommandLine line = parser.parse( options, args );
+        CommandLine line = parser.parse(options, args);
         File dir = new File(line.getOptionValue("dir", "."));
         Collection files = ListFile.list(dir);
-        System.out.println("listing files in "+dir);
-        for (Iterator it = files.iterator(); it.hasNext(); ) {
-          System.out.println("\t"+it.next()+"\n");
+        System.out.println("listing files in " + dir);
+        for (Iterator it = files.iterator(); it.hasNext();) {
+          System.out.println("\t" + it.next() + "\n");
         }
-      } catch( ParseException exp ) {
+      } catch (ParseException exp) {
           // oops, something went wrong
-          System.err.println( "Parsing failed.  Reason: " + exp.getMessage() );
+          System.err.println("Parsing failed.  Reason: " + exp.getMessage());
           
         HelpFormatter formatter = new HelpFormatter();
-        formatter.printHelp( "list", options );
+        formatter.printHelp("list", options);
       }        
+    }
+    
+    private Main() {
     }
             
 }

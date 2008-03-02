@@ -18,7 +18,7 @@
 package filter;
 
 
-public class FilterProvider {
+public final class FilterProvider {
     
     public static IFilter getFilter() {
         try {
@@ -33,5 +33,8 @@ public class FilterProvider {
             }
             return null;
         }
+    }
+    
+    private FilterProvider() {
     }
 }

@@ -24,16 +24,16 @@ import filter.IFilter;
 public class HMFilter implements IFilter {
     
     public String[] filter(String[] values, String prefix) {
-        if(values == null) {
+        if (values == null) {
             return null;
         }
-        if(prefix == null) {
+        if (prefix == null) {
             return values;
         }
         List result = new ArrayList();
         for (int i = 0; i < values.length; i++) {
             String string = values[i];
-            if(string != null && string.startsWith(prefix)) {
+            if (string != null && string.startsWith(prefix)) {
                 result.add(string);
             }
         }

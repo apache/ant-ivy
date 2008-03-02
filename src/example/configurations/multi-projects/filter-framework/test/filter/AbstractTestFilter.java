@@ -34,7 +34,7 @@ public abstract class AbstractTestFilter extends TestCase {
     /**
      * @return
      */
-    public abstract IFilter getIFilter() ;
+    public abstract IFilter getIFilter();
     
     public void testFilterNullValues() {
         Exception err = null;
@@ -57,7 +57,8 @@ public abstract class AbstractTestFilter extends TestCase {
     } 
     
     public void testFilter() {
-        String[] result = getIFilter().filter(new String[]{"test", "nogood", "mustbe filtered"}, "t");
+        String[] result = getIFilter().filter(
+            new String[]{"test", "nogood", "mustbe filtered"}, "t");
         assertNotNull(result);
         assertEquals(result.length, 1);
     }    

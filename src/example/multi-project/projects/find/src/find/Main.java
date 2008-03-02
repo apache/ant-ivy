@@ -30,7 +30,7 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-public class Main {
+public final class Main {
     private static Options getOptions() {
         Option dir = OptionBuilder.withArgName("dir")
             .hasArg()
@@ -62,7 +62,7 @@ public class Main {
             for (Iterator it = files.iterator(); it.hasNext();) {
                 System.out.println("\t" + it.next() + "\n");
             }
-        } catch(ParseException exp) {
+        } catch (ParseException exp) {
             // oops, something went wrong
             System.err.println("Parsing failed.  Reason: " + exp.getMessage());
               
@@ -70,5 +70,7 @@ public class Main {
             formatter.printHelp("find", options);
         }        
     }
-            
+    
+    private Main() {
+    }
 }

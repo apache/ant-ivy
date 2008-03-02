@@ -27,17 +27,17 @@ import filter.IFilter;
 public class CCFilter implements IFilter {
     
     public String[] filter(String[] values, final String prefix) {
-        if(values == null) {
+        if (values == null) {
             return null;
         }
-        if(prefix == null) {
+        if (prefix == null) {
             return values;
         }
 
         List result = new ArrayList(Arrays.asList(values));
         CollectionUtils.filter(result, new Predicate() {
             public boolean evaluate(Object o) {
-                return o!= null && o.toString().startsWith(prefix);
+                return o != null && o.toString().startsWith(prefix);
             }
         });
         return (String[]) result.toArray(new String[result.size()]);
