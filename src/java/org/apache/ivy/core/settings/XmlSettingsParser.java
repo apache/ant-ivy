@@ -265,6 +265,10 @@ public class XmlSettingsParser extends DefaultHandler {
         if (defaultBranch != null) {
             ivy.setDefaultBranch(defaultBranch);
         }
+        String defaultResolveMode = (String) attributes.get("defaultResolveMode");
+        if (defaultResolveMode != null) {
+            ivy.setDefaultResolveMode(defaultResolveMode);
+        }
         String validate = (String) attributes.get("validate");
         if (validate != null) {
             ivy.setValidate(Boolean.valueOf(validate).booleanValue());

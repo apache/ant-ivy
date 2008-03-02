@@ -17,6 +17,7 @@
    under the License.    
 -->
 <ivysettings>
+	<settings defaultResolveMode="dynamic" />
 	<modules>
 		<module organisation="apache" name="ivy*" matcher="glob" resolveMode="dynamic"/>
 		<module organisation="apache" name=".*" resolveMode="default"/>
