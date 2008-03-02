@@ -22,25 +22,25 @@ import java.io.File;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 
 public class JarModule {
-    private ModuleRevisionId _mrid;
+    private ModuleRevisionId mrid;
 
-    private File _jar;
+    private File jar;
 
     public JarModule(ModuleRevisionId mrid, File jar) {
-        _mrid = mrid;
-        _jar = jar;
+        this.mrid = mrid;
+        this.jar = jar;
     }
 
     public File getJar() {
-        return _jar;
+        return jar;
     }
 
     public ModuleRevisionId getMrid() {
-        return _mrid;
+        return mrid;
     }
 
     public String toString() {
-        return _jar + " " + _mrid;
+        return jar + " " + mrid;
     }
 
 }

@@ -545,8 +545,8 @@ public final class XmlModuleDescriptorUpdater {
             ModuleRevisionId systemMid = ns == null ? localMid : ns.getToSystemTransformer()
                     .transform(localMid);
 
-            write("<info organisation=\"" + XMLHelper.escape(systemMid.getOrganisation()) + "\" module=\""
-                    + XMLHelper.escape(systemMid.getName()) + "\"");
+            write("<info organisation=\"" + XMLHelper.escape(systemMid.getOrganisation()) 
+                + "\" module=\"" + XMLHelper.escape(systemMid.getName()) + "\"");
             if (systemMid.getRevision() != null) {
                 write(" revision=\"" + XMLHelper.escape(systemMid.getRevision()) + "\"");
             }
@@ -751,8 +751,9 @@ public final class XmlModuleDescriptorUpdater {
             UpdaterHandler updaterHandler = new UpdaterHandler(settings, out, resolvedRevisions,
                     status, revision, pubdate, ns, replaceInclude, confsToExclude, inStreamCtx);
             InputSource inSrc = new InputSource(in);
-            if (inStreamCtx != null)
+            if (inStreamCtx != null) {
                 inSrc.setSystemId(inStreamCtx.toExternalForm());
+            }
             XMLHelper.parse(inSrc, null, updaterHandler, updaterHandler);
         } catch (ParserConfigurationException e) {
             IllegalStateException ise = new IllegalStateException(

@@ -27,7 +27,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.ivy.core.cache.DefaultResolutionCacheManager;
 import org.apache.ivy.core.deliver.DeliverOptions;
 import org.apache.ivy.core.deliver.PublishingDependencyRevisionResolver;
 import org.apache.ivy.core.module.descriptor.Artifact;

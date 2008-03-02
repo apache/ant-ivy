@@ -316,6 +316,8 @@ public class PomReader {
                 case Node.TEXT_NODE:
                     result.append(child.getNodeValue());
                     break;
+                default:
+                    break;
             }
         }
         

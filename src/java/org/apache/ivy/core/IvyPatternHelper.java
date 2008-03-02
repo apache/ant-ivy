@@ -160,7 +160,8 @@ public final class IvyPatternHelper {
         return substituteVariables(pattern, variables, new Stack());
     }
 
-    private static String substituteVariables(String pattern, IvyVariableContainer variables, Stack substituting) {
+    private static String substituteVariables(
+            String pattern, IvyVariableContainer variables, Stack substituting) {
         // if you supply null, null is what you get
         if (pattern == null) {
             return null;
@@ -329,7 +330,8 @@ public final class IvyPatternHelper {
         return substituteParams(pattern, new IvyVariableContainerImpl(params), new Stack());
     }
 
-    private static String substituteParams(String pattern, IvyVariableContainer params, Stack substituting) {
+    private static String substituteParams(
+            String pattern, IvyVariableContainer params, Stack substituting) {
         // TODO : refactor this with substituteVariables
         // if you supply null, null is what you get
         if (pattern == null) {

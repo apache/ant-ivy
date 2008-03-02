@@ -31,8 +31,6 @@ import java.util.Properties;
 
 import org.apache.ivy.core.IvyContext;
 import org.apache.ivy.core.LogOptions;
-import org.apache.ivy.core.cache.DefaultResolutionCacheManager;
-import org.apache.ivy.core.cache.RepositoryCacheManager;
 import org.apache.ivy.core.cache.ResolutionCacheManager;
 import org.apache.ivy.core.check.CheckEngine;
 import org.apache.ivy.core.deliver.DeliverEngine;

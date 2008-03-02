@@ -72,7 +72,7 @@ public abstract class AbstractModuleDescriptorParser implements ModuleDescriptor
 
         private List errors = new ArrayList();
 
-        protected DefaultModuleDescriptor md;
+        private DefaultModuleDescriptor md;
 
         private ModuleDescriptorParser parser;
 
@@ -352,6 +352,14 @@ public abstract class AbstractModuleDescriptorParser implements ModuleDescriptor
             for (int i = 0; i < configs.length; i++) {
                 configs[i].replaceWildcards(md);
             }
+        }
+
+        protected void setMd(DefaultModuleDescriptor md) {
+            this.md = md;
+        }
+
+        protected DefaultModuleDescriptor getMd() {
+            return md;
         }
     }
 

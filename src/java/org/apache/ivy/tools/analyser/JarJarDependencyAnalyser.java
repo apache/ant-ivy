@@ -31,16 +31,16 @@ import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.util.Message;
 
 public class JarJarDependencyAnalyser implements DependencyAnalyser {
-    private File _jarjarjarLocation;
+    private File jarjarjarLocation;
 
     public JarJarDependencyAnalyser(File jarjarjarLocation) {
-        _jarjarjarLocation = jarjarjarLocation;
+        this.jarjarjarLocation = jarjarjarLocation;
     }
 
     public ModuleDescriptor[] analyze(JarModule[] modules) {
 
         StringBuffer jarjarCmd = new StringBuffer("java -jar \"").append(
-            _jarjarjarLocation.getAbsolutePath()).append("\" --find --level=jar ");
+            jarjarjarLocation.getAbsolutePath()).append("\" --find --level=jar ");
         Map jarModulesMap = new HashMap();
         Map mds = new HashMap();
 

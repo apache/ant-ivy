@@ -46,8 +46,8 @@ public class RepositoryAnalyser {
 
     public static void main(String[] args) {
         if (args.length != 2) {
-            System.out
-                    .println("usage: ivyanalyser path/to/jarjar.jar absolute-ivy-repository-pattern");
+            System.out.println(
+                "usage: ivyanalyser path/to/jarjar.jar absolute-ivy-repository-pattern");
             return;
         }
         String jarjarLocation = args[0];

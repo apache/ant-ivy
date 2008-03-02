@@ -20,7 +20,6 @@ package org.apache.ivy.core.event.resolve;
 import org.apache.ivy.core.event.IvyEvent;
 import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
-import org.apache.ivy.core.resolve.ResolveData;
 import org.apache.ivy.plugins.resolver.DependencyResolver;
 
 public class ResolveDependencyEvent extends IvyEvent {

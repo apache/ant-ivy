@@ -93,8 +93,8 @@ public class RepositoryResolver extends AbstractResourceResolver {
                 Resource res = repository.getResource(resourceName);
                 boolean reachable = res.exists();
                 if (reachable) {
-                    String revision = pattern.indexOf(IvyPatternHelper.REVISION_KEY) == -1 ?
-                            "working@" + name : mrid.getRevision();
+                    String revision = pattern.indexOf(IvyPatternHelper.REVISION_KEY) == -1 
+                        ? "working@" + name : mrid.getRevision();
                     return new ResolvedResource(res, revision);
                 } else if (versionMatcher.isDynamic(mrid)) {
                     return findDynamicResourceUsingPattern(name, repository, strategy,

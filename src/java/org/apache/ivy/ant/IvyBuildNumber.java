@@ -121,10 +121,10 @@ public class IvyBuildNumber extends IvyTask {
             module, branch, revision));
         String revision = rmr == null ? null : rmr.getId().getRevision();
         NewRevision newRevision = computeNewRevision(revision);
-        setProperty("revision", newRevision.revision);
-        setProperty("new.revision", newRevision.newRevision);
-        setProperty("build.number", newRevision.buildNumber);
-        setProperty("new.build.number", newRevision.newBuildNumber);
+        setProperty("revision", newRevision.getRevision());
+        setProperty("new.revision", newRevision.getNewRevision());
+        setProperty("build.number", newRevision.getBuildNumber());
+        setProperty("new.build.number", newRevision.getNewBuildNumber());
     }
 
     private void setProperty(String propertyName, String value) {
@@ -150,7 +150,8 @@ public class IvyBuildNumber extends IvyTask {
                 if (r == null) { // no number found
                     return new NewRevision(revision, defaultValue, null, null);
                 } else {
-                    long n = Long.parseLong(defaultValue.substring(r.startIndex, r.endIndex));
+                    long n = Long.parseLong(
+                        defaultValue.substring(r.getStartIndex(), r.getEndIndex()));
                     return new NewRevision(revision, defaultValue, null, String.valueOf(n));
                 }
             }
@@ -169,8 +170,8 @@ public class IvyBuildNumber extends IvyTask {
                         + (revPrefix.endsWith(revSep) ? "1" : revSep + "1"), null, "1");
             }
         }
-        long n = Long.parseLong(revision.substring(r.startIndex, r.endIndex)) + 1;
-        return new NewRevision(revision, revision.substring(0, r.startIndex) + n, String
+        long n = Long.parseLong(revision.substring(r.getStartIndex(), r.getEndIndex())) + 1;
+        return new NewRevision(revision, revision.substring(0, r.getStartIndex()) + n, String
                 .valueOf(n - 1), String.valueOf(n));
     }
 
@@ -219,6 +220,14 @@ public class IvyBuildNumber extends IvyTask {
             this.startIndex = startIndex;
             this.endIndex = endIndex;
         }
+
+        public int getStartIndex() {
+            return startIndex;
+        }
+
+        public int getEndIndex() {
+            return endIndex;
+        }
     }
 
     private static class NewRevision {
@@ -236,6 +245,22 @@ public class IvyBuildNumber extends IvyTask {
             this.newRevision = newRevision;
             this.buildNumber = buildNumber;
             this.newBuildNumber = newBuildNumber;
+        }
+
+        public String getRevision() {
+            return revision;
+        }
+
+        public String getNewRevision() {
+            return newRevision;
+        }
+
+        public String getBuildNumber() {
+            return buildNumber;
+        }
+
+        public String getNewBuildNumber() {
+            return newBuildNumber;
         }
     }
 

@@ -206,17 +206,18 @@ public final class XmlModuleDescriptorParser extends AbstractModuleDescriptorPar
                 XMLHelper.parse(xmlURL, schemaURL, this);
                 checkConfigurations();
                 replaceConfigurationWildcards();
-                md.setModuleArtifact(
+                getMd().setModuleArtifact(
                     DefaultArtifact.newIvyArtifact(
-                        md.getResolvedModuleRevisionId(), md.getPublicationDate()));
+                        getMd().getResolvedModuleRevisionId(), getMd().getPublicationDate()));
                 if (!artifactsDeclared) {
-                    String[] confs = md.getConfigurationsNames();
+                    String[] confs = getMd().getConfigurationsNames();
                     for (int i = 0; i < confs.length; i++) {
-                        md.addArtifact(confs[i], new MDArtifact(md, md.getModuleRevisionId()
-                                .getName(), "jar", "jar"));
+                        getMd().addArtifact(confs[i], 
+                            new MDArtifact(getMd(), getMd().getModuleRevisionId().getName(), 
+                                "jar", "jar"));
                     }
                 }
-                md.check();
+                getMd().check();
             } catch (ParserConfigurationException ex) {
                 IllegalStateException ise = new IllegalStateException(ex.getMessage() + " in "
                         + xmlURL);
@@ -239,13 +240,14 @@ public final class XmlModuleDescriptorParser extends AbstractModuleDescriptorPar
                 checkConfigurations();
                 replaceConfigurationWildcards();
                 if (!artifactsDeclared) {
-                    String[] confs = md.getConfigurationsNames();
+                    String[] confs = getMd().getConfigurationsNames();
                     for (int i = 0; i < confs.length; i++) {
-                        md.addArtifact(confs[i], new MDArtifact(md, md.getModuleRevisionId()
-                                .getName(), "jar", "jar"));
+                        getMd().addArtifact(confs[i], 
+                            new MDArtifact(getMd(), getMd().getModuleRevisionId().getName(), 
+                                "jar", "jar"));
                     }
                 }
-                md.check();
+                getMd().check();
             } catch (ParserConfigurationException ex) {
                 IllegalStateException ise = new IllegalStateException(ex.getMessage());
                 ise.initCause(ex);
@@ -269,10 +271,10 @@ public final class XmlModuleDescriptorParser extends AbstractModuleDescriptorPar
                 } else if ("info".equals(qName)) {
                     infoStarted(attributes);
                 } else if (state == INFO && "license".equals(qName)) {
-                    md.addLicense(new License(ivy.substitute(attributes.getValue("name")), ivy
+                    getMd().addLicense(new License(ivy.substitute(attributes.getValue("name")), ivy
                             .substitute(attributes.getValue("url"))));
                 } else if (state == INFO && "description".equals(qName)) {
-                    md.setHomePage(ivy.substitute(attributes.getValue("homepage")));
+                    getMd().setHomePage(ivy.substitute(attributes.getValue("homepage")));
                     state = DESCRIPTION;
                 } else if (state == INFO && "ivyauthor".equals(qName)) {
                     // nothing to do, we don't store this
@@ -301,7 +303,7 @@ public final class XmlModuleDescriptorParser extends AbstractModuleDescriptorPar
                 } else if ("exclude".equals(qName) && state == DEPS) {
                     state = EXCLUDE;
                     parseRule(qName, attributes);
-                    md.addExcludeRule((ExcludeRule) confAware);
+                    getMd().addExcludeRule((ExcludeRule) confAware);
                 } else if ("dependency".equals(qName)) {
                     dependencyStarted(attributes);
                 } else if ("conf".equals(qName)) {
@@ -360,7 +362,7 @@ public final class XmlModuleDescriptorParser extends AbstractModuleDescriptorPar
                 addError("unknown matcher: " + matcherName);
                 return;
             }
-            md.addConflictManager(new ModuleId(org, mod), matcher, cm);
+            getMd().addConflictManager(new ModuleId(org, mod), matcher, cm);
         }
 
         private void includeConfStarted(Attributes attributes) 
@@ -376,24 +378,24 @@ public final class XmlModuleDescriptorParser extends AbstractModuleDescriptorPar
             // create a new temporary parser to read the configurations from
             // the specified file.
             Parser parser = new Parser(getModuleDescriptorParser(), ivy, false, url);
-            parser.md = new DefaultModuleDescriptor(getModuleDescriptorParser(),
-                    new URLResource(url));
+            parser.setMd(new DefaultModuleDescriptor(getModuleDescriptorParser(),
+                    new URLResource(url)));
             XMLHelper.parse(url , null, parser);
 
             // add the configurations from this temporary parser to this module descriptor
             Configuration[] configs = parser.getModuleDescriptor().getConfigurations();
             for (int i = 0; i < configs.length; i++) {
-                md.addConfiguration(configs[i]);
+                getMd().addConfiguration(configs[i]);
             }
             if (parser.getDefaultConfMapping() != null) {
                 Message.debug("setting default conf from imported configurations file: "
                         + parser.getDefaultConfMapping());
                 setDefaultConfMapping(parser.getDefaultConfMapping());
             }
-            if (parser.md.isMappingOverride()) {
+            if (parser.getMd().isMappingOverride()) {
                 Message.debug("enabling mapping-override from imported configurations" 
                         + " file");
-                md.setMappingOverride(true);
+                getMd().setMappingOverride(true);
             }
         }
 
@@ -416,18 +418,18 @@ public final class XmlModuleDescriptorParser extends AbstractModuleDescriptorPar
                     ExtendableItemHelper.fillExtraAttributes(configuration, attributes,
                         new String[] {"name", "visibility", "extends", "transitive",
                                 "description", "deprecated"});
-                    md.addConfiguration(configuration);
+                    getMd().addConfiguration(configuration);
                     break;
                 case PUB:
                     if ("*".equals(conf)) {
-                        String[] confs = md.getConfigurationsNames();
+                        String[] confs = getMd().getConfigurationsNames();
                         for (int i = 0; i < confs.length; i++) {
                             artifact.addConfiguration(confs[i]);
-                            md.addArtifact(confs[i], artifact);
+                            getMd().addArtifact(confs[i], artifact);
                         }
                     } else {
                         artifact.addConfiguration(conf);
-                        md.addArtifact(conf, artifact);
+                        getMd().addArtifact(conf, artifact);
                     }
                     break;
                 case DEP:
@@ -457,7 +459,7 @@ public final class XmlModuleDescriptorParser extends AbstractModuleDescriptorPar
             state = DEP;
             String org = ivy.substitute(attributes.getValue("org"));
             if (org == null) {
-                org = md.getModuleRevisionId().getOrganisation();
+                org = getMd().getModuleRevisionId().getOrganisation();
             }
             boolean force = Boolean.valueOf(ivy.substitute(attributes.getValue("force")))
                     .booleanValue();
@@ -476,11 +478,11 @@ public final class XmlModuleDescriptorParser extends AbstractModuleDescriptorPar
             Map extraAttributes = ExtendableItemHelper.getExtraAttributes(
                 attributes, DEPENDENCY_REGULAR_ATTRIBUTES);
             dd = new DefaultDependencyDescriptor(
-                md, 
+                getMd(), 
                 ModuleRevisionId.newInstance(org, name, branch, rev, extraAttributes), 
                 ModuleRevisionId.newInstance(org, name, branch, revConstraint, extraAttributes), 
                 force, changing, transitive);
-            md.addDependency(dd);
+            getMd().addDependency(dd);
             String confs = ivy.substitute(attributes.getValue("conf"));
             if (confs != null && confs.length() > 0) {
                 parseDepsConfs(confs, dd);
@@ -492,13 +494,13 @@ public final class XmlModuleDescriptorParser extends AbstractModuleDescriptorPar
             if (state == PUB) {
                 // this is a published artifact
                 String artName = ivy.substitute(attributes.getValue("name"));
-                artName = artName == null ? md.getModuleRevisionId().getName() : artName;
+                artName = artName == null ? getMd().getModuleRevisionId().getName() : artName;
                 String type = ivy.substitute(attributes.getValue("type"));
                 type = type == null ? "jar" : type;
                 String ext = ivy.substitute(attributes.getValue("ext"));
                 ext = ext != null ? ext : type;
                 String url = ivy.substitute(attributes.getValue("url"));
-                artifact = new MDArtifact(md, artName, type, ext, url == null ? null
+                artifact = new MDArtifact(getMd(), artName, type, ext, url == null ? null
                         : new URL(url), ExtendableItemHelper.getExtraAttributes(attributes,
                     new String[] {"ext", "type", "name", "conf"}));
                 String confs = ivy.substitute(attributes.getValue("conf"));
@@ -508,13 +510,13 @@ public final class XmlModuleDescriptorParser extends AbstractModuleDescriptorPar
                 if (confs != null && confs.length() > 0) {
                     String[] conf;
                     if ("*".equals(confs)) {
-                        conf = md.getConfigurationsNames();
+                        conf = getMd().getConfigurationsNames();
                     } else {
                         conf = confs.split(",");
                     }
                     for (int i = 0; i < conf.length; i++) {
                         artifact.addConfiguration(conf[i].trim());
-                        md.addArtifact(conf[i].trim(), artifact);
+                        getMd().addArtifact(conf[i].trim(), artifact);
                     }
                 }
             } else if (state == DEP) {
@@ -538,7 +540,7 @@ public final class XmlModuleDescriptorParser extends AbstractModuleDescriptorPar
             String confMappingOverride = ivy.substitute(attributes
                     .getValue("confmappingoverride"));
             if (confMappingOverride != null) {
-                md.setMappingOverride(Boolean.valueOf(confMappingOverride).booleanValue());
+                getMd().setMappingOverride(Boolean.valueOf(confMappingOverride).booleanValue());
             }
             checkConfigurations();
         }
@@ -547,7 +549,7 @@ public final class XmlModuleDescriptorParser extends AbstractModuleDescriptorPar
             state = CONF;
             setDefaultConfMapping(ivy
                     .substitute(attributes.getValue("defaultconfmapping")));
-            md
+            getMd()
                     .setMappingOverride(Boolean.valueOf(
                         ivy.substitute(attributes.getValue("confmappingoverride")))
                             .booleanValue());
@@ -559,7 +561,7 @@ public final class XmlModuleDescriptorParser extends AbstractModuleDescriptorPar
             String module = ivy.substitute(attributes.getValue("module"));
             String revision = ivy.substitute(attributes.getValue("revision"));
             String branch = ivy.substitute(attributes.getValue("branch"));
-            md.setModuleRevisionId(ModuleRevisionId.newInstance(org, module, branch,
+            getMd().setModuleRevisionId(ModuleRevisionId.newInstance(org, module, branch,
                 revision, ExtendableItemHelper.getExtraAttributes(attributes, new String[] {
                         "organisation", "module", "revision", "status", "publication",
                         "branch", "namespace", "default", "resolver"})));
@@ -568,28 +570,28 @@ public final class XmlModuleDescriptorParser extends AbstractModuleDescriptorPar
             if (namespace != null) {
                 Namespace ns = ivy.getNamespace(namespace);
                 if (ns == null) {
-                    Message.warn("namespace not found for " + md.getModuleRevisionId()
+                    Message.warn("namespace not found for " + getMd().getModuleRevisionId()
                             + ": " + namespace);
                 } else {
-                    md.setNamespace(ns);
+                    getMd().setNamespace(ns);
                 }
             }
 
             String status = ivy.substitute(attributes.getValue("status"));
-            md.setStatus(status == null ? ivy.getStatusManager().getDefaultStatus()
+            getMd().setStatus(status == null ? ivy.getStatusManager().getDefaultStatus()
                     : status);
-            md.setDefault(Boolean.valueOf(ivy.substitute(attributes.getValue("default")))
+            getMd().setDefault(Boolean.valueOf(ivy.substitute(attributes.getValue("default")))
                     .booleanValue());
             String pubDate = ivy.substitute(attributes.getValue("publication"));
             if (pubDate != null && pubDate.length() > 0) {
                 try {
-                    md.setPublicationDate(Ivy.DATE_FORMAT.parse(pubDate));
+                    getMd().setPublicationDate(Ivy.DATE_FORMAT.parse(pubDate));
                 } catch (ParseException e) {
                     addError("invalid publication date format: " + pubDate);
-                    md.setPublicationDate(getDefaultPubDate());
+                    getMd().setPublicationDate(getDefaultPubDate());
                 }
             } else {
-                md.setPublicationDate(getDefaultPubDate());
+                getMd().setPublicationDate(getDefaultPubDate());
             }
         }
 
@@ -612,7 +614,7 @@ public final class XmlModuleDescriptorParser extends AbstractModuleDescriptorPar
             
             for (int i = 0; i < attributes.getLength(); i++) {
                 if (attributes.getQName(i).startsWith("xmlns:")) {
-                    md.addExtraAttributeNamespace(
+                    getMd().addExtraAttributeNamespace(
                         attributes.getQName(i).substring("xmlns:".length()), 
                         attributes.getValue(i));
                 }
@@ -685,7 +687,7 @@ public final class XmlModuleDescriptorParser extends AbstractModuleDescriptorPar
             if (confs != null && confs.length() > 0) {
                 String[] conf;
                 if ("*".equals(confs)) {
-                    conf = md.getConfigurationsNames();
+                    conf = getMd().getConfigurationsNames();
                 } else {
                     conf = confs.split(",");
                 }
@@ -738,10 +740,10 @@ public final class XmlModuleDescriptorParser extends AbstractModuleDescriptorPar
         public void endElement(String uri, String localName, String qName) throws SAXException {
             if (state == PUB && "artifact".equals(qName)
                     && artifact.getConfigurations().length == 0) {
-                String[] confs = md.getConfigurationsNames();
+                String[] confs = getMd().getConfigurationsNames();
                 for (int i = 0; i < confs.length; i++) {
                     artifact.addConfiguration(confs[i]);
-                    md.addArtifact(confs[i], artifact);
+                    getMd().addArtifact(confs[i], artifact);
                 }
             } else if ("configurations".equals(qName)) {
                 checkConfigurations();
@@ -750,7 +752,7 @@ public final class XmlModuleDescriptorParser extends AbstractModuleDescriptorPar
                     || (state == ARTIFACT_EXCLUDE && "exclude".equals(qName))) {
                 state = DEP;
                 if (confAware.getConfigurations().length == 0) {
-                    String[] confs = md.getConfigurationsNames();
+                    String[] confs = getMd().getConfigurationsNames();
                     for (int i = 0; i < confs.length; i++) {
                         addConfiguration(confs[i]);
                     }
@@ -758,7 +760,7 @@ public final class XmlModuleDescriptorParser extends AbstractModuleDescriptorPar
                 confAware = null;
             } else if (state == EXCLUDE) {
                 if (confAware.getConfigurations().length == 0) {
-                    String[] confs = md.getConfigurationsNames();
+                    String[] confs = getMd().getConfigurationsNames();
                     for (int i = 0; i < confs.length; i++) {
                         addConfiguration(confs[i]);
                     }
@@ -777,22 +779,22 @@ public final class XmlModuleDescriptorParser extends AbstractModuleDescriptorPar
             } else if (state == DESCRIPTION && "description".equals(qName)) {
                 state = INFO;
             } else if (state == EXTRA_INFO) {
-                md.addExtraInfo(qName, buffer == null ? "" : buffer.toString());
+                getMd().addExtraInfo(qName, buffer == null ? "" : buffer.toString());
                 buffer = null;
                 state = INFO;
             }
         }
 
         private void checkConfigurations() {
-            if (md.getConfigurations().length == 0) {
-                md.addConfiguration(new Configuration("default"));
+            if (getMd().getConfigurations().length == 0) {
+                getMd().addConfiguration(new Configuration("default"));
             }
         }
 
         private void replaceConfigurationWildcards() {
-            Configuration[] configs = md.getConfigurations();
+            Configuration[] configs = getMd().getConfigurations();
             for (int i = 0; i < configs.length; i++) {
-                configs[i].replaceWildcards(md);
+                configs[i].replaceWildcards(getMd());
             }
         }
 

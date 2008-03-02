@@ -28,22 +28,22 @@ import org.apache.ivy.plugins.resolver.util.ResolverHelper;
 import org.apache.ivy.plugins.resolver.util.URLLister;
 
 public class JarModuleFinder {
-    private String _pattern;
+    private String pattern;
 
-    private String _filePattern;
+    private String filePattern;
 
     public JarModuleFinder(String pattern) {
-        _pattern = "file:///" + pattern;
-        _filePattern = pattern;
+        this.pattern = "file:///" + pattern;
+        this.filePattern = pattern;
     }
 
     public JarModule[] findJarModules() {
         List ret = new ArrayList();
         URLLister lister = new FileURLLister();
         try {
-            String[] orgs = ResolverHelper.listTokenValues(lister, _pattern, "organisation");
+            String[] orgs = ResolverHelper.listTokenValues(lister, pattern, "organisation");
             for (int i = 0; i < orgs.length; i++) {
-                String orgPattern = IvyPatternHelper.substituteToken(_pattern,
+                String orgPattern = IvyPatternHelper.substituteToken(pattern,
                     IvyPatternHelper.ORGANISATION_KEY, orgs[i]);
                 String[] modules = ResolverHelper.listTokenValues(lister, orgPattern, "module");
                 for (int j = 0; j < modules.length; j++) {
@@ -51,7 +51,7 @@ public class JarModuleFinder {
                         IvyPatternHelper.MODULE_KEY, modules[j]);
                     String[] revs = ResolverHelper.listTokenValues(lister, modPattern, "revision");
                     for (int k = 0; k < revs.length; k++) {
-                        File jar = new File(IvyPatternHelper.substitute(_filePattern, orgs[i],
+                        File jar = new File(IvyPatternHelper.substitute(filePattern, orgs[i],
                             modules[j], revs[k], modules[j], "jar", "jar"));
                         if (jar.exists()) {
                             ret.add(new JarModule(ModuleRevisionId.newInstance(orgs[i], modules[j],
