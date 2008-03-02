@@ -377,9 +377,11 @@
     
     <target name="emma" depends="jar" unless="skip.test">
         <ivy:cachepath organisation="emma" module="emma" revision="2.0.5312" 
-                       inline="true" conf="default" pathid="emma.classpath" /> 
+                       inline="true" conf="default" pathid="emma.classpath" 
+                       log="download-only" /> 
         <ivy:cachepath organisation="emma" module="emma_ant" revision="2.0.5312" 
-                       inline="true" conf="default" pathid="emma.ant.classpath" transitive="false" /> 
+                       inline="true" conf="default" pathid="emma.ant.classpath" transitive="false" 
+                       log="download-only" /> 
         <taskdef resource="emma_ant.properties">
             <classpath refid="emma.classpath" />
             <classpath refid="emma.ant.classpath" />
@@ -534,11 +536,16 @@
     
     <target name="checkstyle" depends="jar" description="checks Ivy codebase according to ${checkstyle.src.dir}/checkstyle-config">
         <ivy:cachepath organisation="checkstyle" module="checkstyle" revision="4.3"
-                inline="true" conf="default" pathid="checkstyle.classpath" transitive="true" />
+                inline="true" conf="default" pathid="checkstyle.classpath" transitive="true" 
+        		log="download-only"/>
         <taskdef resource="checkstyletask.properties" classpathref="checkstyle.classpath" />
 
         <mkdir dir="${checkstyle.report.dir}" />
-        <checkstyle config="${checkstyle.src.dir}/checkstyle-config" failOnViolation="false">
+        <checkstyle config="${checkstyle.src.dir}/checkstyle-config" 
+        	failOnViolation="false" failureProperty="checkstyle.failed">
+        	<classpath>
+	        	<path refid="run.classpath" />
+        	</classpath>
             <formatter type="xml" toFile="${checkstyle.report.dir}/checkstyle.xml" />
             <fileset dir="${src.dir}">
                 <include name="**/*.java" />
@@ -547,6 +554,8 @@
                 <include name="**/*.java" />
             </fileset>
         </checkstyle>
+    	<fail if="checkstyle.failed"
+    		message="Checkstyle has errors. See report in ${checkstyle.report.dir}" />
     </target>
 
     <target name="checkstyle-report" depends="checkstyle">
