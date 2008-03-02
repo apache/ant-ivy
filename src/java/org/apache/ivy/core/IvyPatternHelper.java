@@ -115,6 +115,7 @@ public final class IvyPatternHelper {
         return substitute(pattern, org, module, revision, artifact, type, ext, null);
     }
 
+    // CheckStyle:ParameterNumber OFF
     public static String substitute(String pattern, String org, String module, String revision,
             String artifact, String type, String ext, String conf) {
         return substitute(pattern, org, module, revision, artifact, type, ext, conf, null);
@@ -151,6 +152,7 @@ public final class IvyPatternHelper {
                 origin));
         return substituteTokens(pattern, tokens);
     }
+    // CheckStyle:ParameterNumber ON
 
     public static String substituteVariables(String pattern, Map variables) {
         return substituteVariables(pattern, new IvyVariableContainerImpl(variables), new Stack());
