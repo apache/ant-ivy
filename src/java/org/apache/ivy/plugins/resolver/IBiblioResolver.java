@@ -80,7 +80,7 @@ public class IBiblioResolver extends URLResolver {
 
     public ResolvedResource findIvyFileRef(DependencyDescriptor dd, ResolveData data) {
         if (isM2compatible() && isUsepoms()) {
-            ModuleRevisionId mrid = dd.getDependencyRevisionId();
+            ModuleRevisionId mrid = data.getRequestedDependencyRevisionId(dd);
             mrid = convertM2IdForResourceSearch(mrid);
             ResolvedResource rres = findResourceUsingPatterns(mrid, getIvyPatterns(),
                 DefaultArtifact.newPomArtifact(mrid, data.getDate()), getRMDParser(dd, data), data

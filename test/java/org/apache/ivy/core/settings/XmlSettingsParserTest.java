@@ -163,6 +163,15 @@ public class XmlSettingsParserTest extends TestCase {
         assertEquals("all", settings.getConflictManager(new ModuleId("apache", "ant")).getName());
     }
 
+    public void testResolveMode() throws Exception {
+        IvySettings settings = new IvySettings();
+        XmlSettingsParser parser = new XmlSettingsParser(settings);
+        parser.parse(XmlSettingsParserTest.class.getResource("ivysettings-resolveMode.xml"));
+
+        assertEquals("dynamic", settings.getResolveMode(new ModuleId("apache", "ivyde")));
+        assertEquals("default", settings.getResolveMode(new ModuleId("apache", "ant")));
+    }
+
     public void testCache() throws Exception {
         IvySettings settings = new IvySettings();
         XmlSettingsParser parser = new XmlSettingsParser(settings);

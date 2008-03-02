@@ -94,6 +94,11 @@ public final class XmlModuleDescriptorWriter {
                     + XMLHelper.escape(dds[i].getDependencyRevisionId().getName()) + "\"");
                 out.print(" rev=\"" 
                     + XMLHelper.escape(dds[i].getDependencyRevisionId().getRevision()) + "\"");
+                if (!dds[i].getDynamicConstraintDependencyRevisionId()
+                        .equals(dds[i].getDependencyRevisionId())) {
+                    out.print(" revConstraint=\"" + XMLHelper.escape(
+                        dds[i].getDynamicConstraintDependencyRevisionId().getRevision()) + "\"");
+                }
                 if (dds[i].isForce()) {
                     out.print(" force=\"" + dds[i].isForce() + "\"");
                 }

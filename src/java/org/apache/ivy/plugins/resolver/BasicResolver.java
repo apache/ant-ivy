@@ -138,8 +138,8 @@ public abstract class BasicResolver extends AbstractResolver {
         try {
             clearIvyAttempts();
             clearArtifactAttempts();
-            ModuleRevisionId systemMrid = systemDd.getDependencyRevisionId();
-            ModuleRevisionId  nsMrid = nsDd.getDependencyRevisionId();
+            ModuleRevisionId systemMrid = data.getRequestedDependencyRevisionId(systemDd);
+            ModuleRevisionId nsMrid = data.getRequestedDependencyRevisionId(nsDd);
             
             // check revision
             int index = systemMrid.getRevision().indexOf("@");
@@ -159,7 +159,7 @@ public abstract class BasicResolver extends AbstractResolver {
 
             // we first search for the dependency in cache
             ResolvedModuleRevision rmr = null;
-            rmr = findModuleInCache(systemDd, getCacheOptions(data));
+            rmr = findModuleInCache(systemDd, data);
             if (rmr != null) {
                 if (rmr.getDescriptor().isDefault() && rmr.getResolver() != this) {
                     Message.verbose("\t" + getName() + ": found revision in cache: " 
@@ -383,7 +383,7 @@ public abstract class BasicResolver extends AbstractResolver {
         DependencyDescriptor nsDd = dd;
         dd = toSystem(nsDd);
         
-        ModuleRevisionId mrid = dd.getDependencyRevisionId();
+        ModuleRevisionId mrid = data.getRequestedDependencyRevisionId(dd);
         ModuleDescriptorParser parser = ModuleDescriptorParserRegistry
                 .getInstance().getParser(mdRef.getResource());
         if (parser == null) {

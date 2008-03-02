@@ -22,8 +22,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
@@ -2520,6 +2522,66 @@ public class ResolveTest extends TestCase {
         assertFalse(report.hasError());
 
         assertTrue(getArchiveFileInCache("org6", "mod6.2", "2.0", "mod6.2", "jar", "jar").exists());
+    }
+
+    public void testResolveModeDynamic1() throws Exception {
+        // mod1.1;1.0.1 -> mod1.2;2.0|latest.integration
+        ResolveReport report = ivy.resolve(new File(
+                "test/repositories/1/org1/mod1.1/ivys/ivy-1.0.1.xml").toURL(),
+            getResolveOptions(new String[] {"default"})
+            .setResolveMode(ResolveOptions.RESOLVEMODE_DYNAMIC));
+        assertNotNull(report);
+
+        ModuleRevisionId depId = ModuleRevisionId.newInstance("org1", "mod1.2", "2.2");
+
+        ConfigurationResolveReport crr = report.getConfigurationReport("default");
+        assertEquals(1, crr.getDownloadReports(depId).length);
+
+        assertTrue(getIvyFileInCache(depId).exists());
+        assertTrue(getArchiveFileInCache("org1", "mod1.2", "2.2", "mod1.2", "jar", "jar").exists());
+    }
+
+    public void testResolveModeDynamic2() throws Exception {
+        // same as ResolveModeDynamic1, but resolve mode is set in settings
+        Map attributes = new HashMap();
+        attributes.put("organisation", "org1");
+        attributes.put("module", "mod1.2");
+        ivy.getSettings().addModuleConfiguration(
+            attributes, ExactPatternMatcher.INSTANCE, null, null, null, ResolveOptions.RESOLVEMODE_DYNAMIC);
+        ResolveReport report = ivy.resolve(new File(
+                "test/repositories/1/org1/mod1.1/ivys/ivy-1.0.1.xml").toURL(),
+            getResolveOptions(new String[] {"default"}));
+        assertNotNull(report);
+
+        ModuleRevisionId depId = ModuleRevisionId.newInstance("org1", "mod1.2", "2.2");
+
+        ConfigurationResolveReport crr = report.getConfigurationReport("default");
+        assertEquals(1, crr.getDownloadReports(depId).length);
+
+        assertTrue(getIvyFileInCache(depId).exists());
+        assertTrue(getArchiveFileInCache("org1", "mod1.2", "2.2", "mod1.2", "jar", "jar").exists());
+    }
+
+    public void testResolveModeDefaultOverrideSettings() throws Exception {
+        // same as ResolveModeDynamic2, but resolve mode is set in settings, and overriden when calling resolve
+        Map attributes = new HashMap();
+        attributes.put("organisation", "org1");
+        attributes.put("module", "mod1.2");
+        ivy.getSettings().addModuleConfiguration(
+            attributes, ExactPatternMatcher.INSTANCE, null, null, null, ResolveOptions.RESOLVEMODE_DYNAMIC);
+        ResolveReport report = ivy.resolve(new File(
+                "test/repositories/1/org1/mod1.1/ivys/ivy-1.0.1.xml").toURL(),
+            getResolveOptions(new String[] {"default"})
+            .setResolveMode(ResolveOptions.RESOLVEMODE_DEFAULT));
+        assertNotNull(report);
+
+        ModuleRevisionId depId = ModuleRevisionId.newInstance("org1", "mod1.2", "2.0");
+
+        ConfigurationResolveReport crr = report.getConfigurationReport("default");
+        assertEquals(1, crr.getDownloadReports(depId).length);
+
+        assertTrue(getIvyFileInCache(depId).exists());
+        assertTrue(getArchiveFileInCache("org1", "mod1.2", "2.0", "mod1.2", "jar", "jar").exists());
     }
 
     public void testVersionRange1() throws Exception {

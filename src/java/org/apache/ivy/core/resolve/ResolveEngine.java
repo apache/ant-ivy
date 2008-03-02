@@ -254,7 +254,8 @@ public class ResolveEngine {
                         if (dd != null) {
                             ModuleRevisionId depResolvedId = dependencies[i].getResolvedId();
                             ModuleDescriptor depDescriptor = dependencies[i].getDescriptor();
-                            ModuleRevisionId depRevisionId = dd.getDependencyRevisionId();
+                            ModuleRevisionId depRevisionId = 
+                                getRequestedDependencyRevisionId(dd, options);
                             if (depResolvedId == null) {
                                 throw new NullPointerException("getResolvedId() is null for " 
                                     + dependencies[i].toString());
@@ -962,6 +963,30 @@ public class ResolveEngine {
             throw new RuntimeException("problem while parsing repository module descriptor for "
                     + id + ": " + e, e);
         }
+    }
+
+    /**
+     * Returns the module revision id constraint requested by the given dependency descriptor,
+     * according to the given resolve options.
+     * 
+     * @param dd
+     *            the dependency descriptor for which the requested module revision id should be
+     *            returned
+     * @param options
+     *            the resolve options to use
+     * @return the {@link ModuleRevisionId} corresponding to the requested dependency constraint
+     */
+    public ModuleRevisionId getRequestedDependencyRevisionId(
+            DependencyDescriptor dd, ResolveOptions options) {
+        if (dd == null) {
+            return null;
+        }
+        String resolveMode = options.getResolveMode() == null 
+            ? settings.getResolveMode(dd.getDependencyId())
+                    : options.getResolveMode();
+        return ResolveOptions.RESOLVEMODE_DYNAMIC.equals(resolveMode) 
+            ? dd.getDynamicConstraintDependencyRevisionId() 
+            : dd.getDependencyRevisionId();
     }
 
     public EventManager getEventManager() {

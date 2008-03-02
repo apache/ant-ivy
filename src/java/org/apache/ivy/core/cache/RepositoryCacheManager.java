@@ -22,6 +22,7 @@ import java.text.ParseException;
 import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
+import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.report.ArtifactDownloadReport;
 import org.apache.ivy.core.resolve.ResolvedModuleRevision;
 import org.apache.ivy.plugins.repository.ArtifactResourceResolver;
@@ -67,6 +68,8 @@ public interface RepositoryCacheManager {
      * 
      * @param dd
      *            the dependency descriptor identifying the module to search
+     * @param requestedRevisionId
+     *            the requested dependency module revision id identifying the module to search
      * @param options
      *            options on how caching should be handled
      * @param expectedResolver
@@ -76,7 +79,8 @@ public interface RepositoryCacheManager {
      *         has been found in cache
      */
     public abstract ResolvedModuleRevision findModuleInCache(
-            DependencyDescriptor dd, CacheMetadataOptions options, String expectedResolver);
+            DependencyDescriptor dd, ModuleRevisionId requestedRevisionId, 
+            CacheMetadataOptions options, String expectedResolver);
     
     /**
      * Downloads an artifact to this cache.

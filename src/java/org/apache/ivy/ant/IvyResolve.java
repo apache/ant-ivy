@@ -71,6 +71,8 @@ public class IvyResolve extends IvyTask {
     private String failureProperty = null;
 
     private boolean useOrigin = false;
+    
+    private String resolveMode = null;
 
     private String resolveId = null;
     
@@ -335,6 +337,7 @@ public class IvyResolve extends IvyTask {
                 .setUseCacheOnly(useCacheOnly)
                 .setRefresh(refresh)
                 .setTransitive(transitive)
+                .setResolveMode(resolveMode)
                 .setResolveId(resolveId);
     }
 
@@ -392,5 +395,13 @@ public class IvyResolve extends IvyTask {
 
     public void setResolveId(String resolveId) {
         this.resolveId = resolveId;
+    }
+
+    public String getResolveMode() {
+        return resolveMode;
+    }
+
+    public void setResolveMode(String resolveMode) {
+        this.resolveMode = resolveMode;
     }
 }

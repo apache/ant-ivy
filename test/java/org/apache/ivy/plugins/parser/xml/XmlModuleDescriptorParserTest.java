@@ -239,6 +239,9 @@ public class XmlModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         assertNotNull(dd);
         assertEquals("yourorg", dd.getDependencyId().getOrganisation());
         assertEquals("1.1", dd.getDependencyRevisionId().getRevision());
+        assertEquals("1+", dd.getDynamicConstraintDependencyRevisionId().getRevision());
+        assertEquals("yourorg#yourmodule1;1+", dd.getDynamicConstraintDependencyRevisionId().toString());
+        
         assertEquals(Arrays.asList(new String[] {"myconf1"}), Arrays.asList(dd
                 .getModuleConfigurations()));
         assertEquals(Arrays.asList(new String[] {"myconf1"}), Arrays.asList(dd

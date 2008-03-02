@@ -64,6 +64,9 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 
    trunk version
 =====================================
+- NEW: Retain original dependency constraint rules in resolved ivy file (IVY-739)
+- NEW: Add a new resolve mode (optionally per module) to utilize dynamic constraint rule metadata (IVY-740)
+
 - IMPROVEMENT: Make Ivy standalone runnable with no required dependencies (IVY-757)
 - IMPROVEMENT: add branch attribute in ivy:install task (IVY-727)
 

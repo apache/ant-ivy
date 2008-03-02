@@ -52,6 +52,11 @@ Examples:
 <span class="since">since 1.4</span> If you don't find a way to expression your dependency version constraint among these, you can <a href="../configuration/version-matchers.html">plug your own</a>.
 The way to determine which revision is the "latest" between two is configurable through the use of pluggable LatestStrategy. See <a href="../reference.html">ivy main concepts</a> for details about this.
 
+<h2><a name="revision-constraint">Revision constraint</a></h2>
+<span class="since">since 2.0</span> The dependency tag supports two revision attributes: rev, corresponding to the default required dependency revision, and revConstraint, corresponding to a dynamic revision constraint applied on this dependency. 
+
+Depending on the [[ant:resolve resolve mode]] used, the actual revision used during dependency resolution may vary. These revisions usually differ only for modules published in a repository. When [[ant:deliver]] is used, dynamic version constraints are replaced by a stic version constraint, to help build reproducibility. However, the information of the original version constraint is not lost, but rather put in the revConstraint attribute. This both ensure better metadata in the repository while still allowing easier build reproducibility. 
+
 <h2>Configurations mapping</h2>
 This mapping indicates which configurations of the dependency are required in which configurations of the current module, also called master configurations.
 
@@ -136,6 +141,8 @@ See <a href="../ivyfile/conflicts.html">conflicts manager</a> for details.
         <td>No, defaults to the default branch <a href="../configuration/conf.html">configured</a> for the dependency.</td></tr>
     <tr><td>rev</td><td>the revision of the dependency. See <a href="#revision">above</a> for details.</td>
         <td>Yes</td></tr>
+    <tr><td>revConstraint</td><td>the dynamic revision constraint originally used for this dependency. See <a href="#revision-constraint">above</a> for details.</td>
+        <td>No, defaults to the value of rev</td></tr>
     <tr><td>force</td><td>a boolean to give an indication to conflict manager that this dependency 
      should be forced to this revision (see <a href="../ivyfile/conflicts.html">conflicts manager</a>)</td>
         <td>No, defaults to false</td></tr>

@@ -167,7 +167,7 @@ public class IvyNode implements Comparable {
     private Map blacklisted = new HashMap();
 
     public IvyNode(ResolveData data, IvyNode parent, DependencyDescriptor dd) {
-        id = dd.getDependencyRevisionId();
+        id = data.getEngine().getRequestedDependencyRevisionId(dd, data.getOptions());
         dds.put(parent, dd);
         root = parent.getRoot();
         init(data);
@@ -220,12 +220,15 @@ public class IvyNode implements Comparable {
                     Message.debug("\tusing " + resolver + " to resolve " + getId());
                     DependencyDescriptor dependencyDescriptor = getDependencyDescriptor(parent);
                     long start = System.currentTimeMillis();
+                    ModuleRevisionId requestedRevisionId = 
+                        data.getRequestedDependencyRevisionId(dependencyDescriptor);
                     data.getEventManager().fireIvyEvent(
-                        new StartResolveDependencyEvent(resolver, dependencyDescriptor));
+                        new StartResolveDependencyEvent(resolver, dependencyDescriptor, requestedRevisionId));
                     module = resolver.getDependency(dependencyDescriptor, data);
                     data.getEventManager().fireIvyEvent(
-                        new EndResolveDependencyEvent(resolver, dependencyDescriptor, module,
-                            System.currentTimeMillis() - start));
+                        new EndResolveDependencyEvent(resolver, dependencyDescriptor, requestedRevisionId, 
+                            module, System.currentTimeMillis() - start));
+                    
                     if (module != null) {
                         module.getResolver().getRepositoryCacheManager().saveResolvers(
                             module.getDescriptor(),
@@ -374,13 +377,17 @@ public class IvyNode implements Comparable {
                 // it is exactly the same as if there was no dependency at all on it
                 continue;
             }
-            if (isDependencyModuleExcluded(rootModuleConf, dd.getDependencyRevisionId(), conf)) {
+            ModuleRevisionId requestedDependencyRevisionId = 
+                data.getEngine().getRequestedDependencyRevisionId(dd, data.getOptions());
+            if (isDependencyModuleExcluded(rootModuleConf, requestedDependencyRevisionId, conf)) {
                 // the whole module is excluded, it is considered as not being part of dependencies
                 // at all
-                Message.verbose("excluding " + dd.getDependencyRevisionId() + " in " + conf);
+                Message.verbose("excluding " + dd + " in " + conf);
                 continue;
             }
-            IvyNode depNode = data.getNode(dd.getDependencyRevisionId());
+            IvyNode depNode = data.getNode(
+                requestedDependencyRevisionId);
+            
             if (depNode == null) {
                 depNode = new IvyNode(data, this, dd);
             } else {

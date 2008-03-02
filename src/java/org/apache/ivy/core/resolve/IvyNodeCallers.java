@@ -95,8 +95,8 @@ public class IvyNodeCallers {
             return mrid.toString();
         }
 
-        public ModuleRevisionId getAskedDependencyId() {
-            return dd.getDependencyRevisionId();
+        public ModuleRevisionId getAskedDependencyId(ResolveData resolveData) {
+            return resolveData.getRequestedDependencyRevisionId(dd);
         }
 
         public ModuleDescriptor getModuleDescriptor() {

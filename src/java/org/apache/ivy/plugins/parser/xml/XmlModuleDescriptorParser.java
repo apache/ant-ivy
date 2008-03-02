@@ -70,7 +70,7 @@ import org.xml.sax.SAXException;
  */
 public final class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
     static final String[] DEPENDENCY_REGULAR_ATTRIBUTES = new String[] {"org", "name", "branch",
-            "rev", "force", "transitive", "changing", "conf"};
+            "rev", "revConstraint", "force", "transitive", "changing", "conf"};
 
     private static final XmlModuleDescriptorParser INSTANCE = new XmlModuleDescriptorParser();
 
@@ -471,9 +471,15 @@ public final class XmlModuleDescriptorParser extends AbstractModuleDescriptorPar
             String name = ivy.substitute(attributes.getValue("name"));
             String branch = ivy.substitute(attributes.getValue("branch"));
             String rev = ivy.substitute(attributes.getValue("rev"));
-            dd = new DefaultDependencyDescriptor(md, ModuleRevisionId.newInstance(org,
-                name, branch, rev, ExtendableItemHelper.getExtraAttributes(attributes,
-                    DEPENDENCY_REGULAR_ATTRIBUTES)), force, changing, transitive);
+            String revConstraint = ivy.substitute(attributes.getValue("revConstraint"));
+            revConstraint = revConstraint == null ? rev : revConstraint;
+            Map extraAttributes = ExtendableItemHelper.getExtraAttributes(
+                attributes, DEPENDENCY_REGULAR_ATTRIBUTES);
+            dd = new DefaultDependencyDescriptor(
+                md, 
+                ModuleRevisionId.newInstance(org, name, branch, rev, extraAttributes), 
+                ModuleRevisionId.newInstance(org, name, branch, revConstraint, extraAttributes), 
+                force, changing, transitive);
             md.addDependency(dd);
             String confs = ivy.substitute(attributes.getValue("conf"));
             if (confs != null && confs.length() > 0) {

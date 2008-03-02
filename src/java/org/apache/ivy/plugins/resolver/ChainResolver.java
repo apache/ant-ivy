@@ -106,11 +106,11 @@ public class ChainResolver extends AbstractResolver {
 
         ResolvedModuleRevision mr = null;
 
-        ModuleRevisionId mrid = dd.getDependencyRevisionId();
+        ModuleRevisionId mrid = data.getRequestedDependencyRevisionId(dd);
 
 
         Message.verbose(getName() + ": Checking cache for: " + dd);
-        mr = findModuleInCache(dd, getCacheOptions(data), true);
+        mr = findModuleInCache(dd, data, true);
         if (mr != null) {
             Message.verbose(getName() + ": module revision found in cache: " + mr.getId());
             return resolvedRevision(mr);

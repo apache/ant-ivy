@@ -178,7 +178,7 @@ public abstract class AbstractModuleDescriptorParser implements ModuleDescriptor
                         }
                     }
                 } else {
-                    addError("invalid conf " + conf[i] + " for " + dd.getDependencyRevisionId());
+                    addError("invalid conf " + conf[i] + " for " + dd);
                 }
             }
 
@@ -206,7 +206,7 @@ public abstract class AbstractModuleDescriptorParser implements ModuleDescriptor
 
             int endConditionIndex = conf.indexOf(']');
             if (endConditionIndex == -1) {
-                addError("invalid conf " + conf + " for " + dd.getDependencyRevisionId());
+                addError("invalid conf " + conf + " for " + dd);
                 return null;
             }
 

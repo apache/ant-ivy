@@ -202,6 +202,7 @@
 						            <xs:attribute name="name" type="xs:string" use="required"/>
 						            <xs:attribute name="branch" type="xs:string"/>
 						            <xs:attribute name="rev" type="xs:string" use="required"/>
+						            <xs:attribute name="revConstraint" type="xs:string"/>
 						            <xs:attribute name="force" type="xs:boolean"/>
 						            <xs:attribute name="changing" type="xs:boolean" default="false"/>
 						            <xs:attribute name="transitive" type="xs:boolean" default="true"/>

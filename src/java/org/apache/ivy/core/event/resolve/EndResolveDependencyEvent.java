@@ -18,6 +18,7 @@
 package org.apache.ivy.core.event.resolve;
 
 import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
+import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.resolve.ResolvedModuleRevision;
 import org.apache.ivy.plugins.resolver.DependencyResolver;
 
@@ -28,9 +29,9 @@ public class EndResolveDependencyEvent extends ResolveDependencyEvent {
 
     private long duration;
 
-    public EndResolveDependencyEvent(DependencyResolver resolver, DependencyDescriptor dd,
-            ResolvedModuleRevision module, long duration) {
-        super(NAME, resolver, dd);
+    public EndResolveDependencyEvent(DependencyResolver resolver, DependencyDescriptor dd, 
+            ModuleRevisionId requestedRevisionId, ResolvedModuleRevision module, long duration) {
+        super(NAME, resolver, dd, requestedRevisionId);
         this.module = module;
         this.duration = duration;
         addAttribute("duration", String.valueOf(duration));

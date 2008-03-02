@@ -502,13 +502,14 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
     }
 
     public ResolvedModuleRevision findModuleInCache(
-            DependencyDescriptor dd, CacheMetadataOptions options, String expectedResolver) {
-        ModuleRevisionId mrid = dd.getDependencyRevisionId();
-        if (isCheckmodified(dd, options)) {
+            DependencyDescriptor dd, ModuleRevisionId requestedRevisionId, 
+            CacheMetadataOptions options, String expectedResolver) {
+        ModuleRevisionId mrid = requestedRevisionId;
+        if (isCheckmodified(dd, requestedRevisionId, options)) {
             Message.verbose("don't use cache for " + mrid + ": checkModified=true");
             return null;
         }
-        if (isChanging(dd, options)) {
+        if (isChanging(dd, requestedRevisionId, options)) {
             Message.verbose("don't use cache for " + mrid + ": changing=true");
             return null;
         }
@@ -838,7 +839,7 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
                         + " (resolved by " + rmr.getResolver().getName()
                         + "): but it's a default one, maybe we can find a better one");
                 } else {
-                    if (!isCheckmodified(dd, options) && !isChanging(dd, options)) {
+                    if (!isCheckmodified(dd, mrid, options) && !isChanging(dd, mrid, options)) {
                         Message.verbose("\t" + getName() + ": revision in cache: " + mrid);
                         rmr.getReport().setSearched(true);
                         return rmr;
@@ -853,7 +854,7 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
                     } else {
                         Message.verbose("\t" + getName() + ": revision in cache is not up to date: "
                             + mrid);
-                        if (isChanging(dd, options)) {
+                        if (isChanging(dd, mrid, options)) {
                             // ivy file has been updated, we should see if it has a new publication
                             // date to see if a new download is required (in case the dependency is
                             // a changing one)
@@ -930,7 +931,7 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
                             removeSavedArtifactOrigin(transformedArtifact);
                         }
                     }
-                } else if (isChanging(dd, options)) {
+                } else if (isChanging(dd, mrid, options)) {
                     Message.verbose(mrid
                         + " is changing, but has not changed: will trust cached artifacts if any");
                 }
@@ -1011,9 +1012,11 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
     }
     
 
-    private boolean isChanging(DependencyDescriptor dd, CacheMetadataOptions options) {
+    private boolean isChanging(
+            DependencyDescriptor dd, ModuleRevisionId requestedRevisionId, 
+            CacheMetadataOptions options) {
         return dd.isChanging() 
-            || getChangingMatcher(options).matches(dd.getDependencyRevisionId().getRevision());
+            || getChangingMatcher(options).matches(requestedRevisionId.getRevision());
     }
 
     private Matcher getChangingMatcher(CacheMetadataOptions options) {
@@ -1032,7 +1035,9 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
         return matcher.getMatcher(changingPattern);
     }
 
-    private boolean isCheckmodified(DependencyDescriptor dd, CacheMetadataOptions options) {
+    private boolean isCheckmodified(
+            DependencyDescriptor dd, ModuleRevisionId requestedRevisionId, 
+            CacheMetadataOptions options) {
         if (options.isCheckmodified() != null) {
             return options.isCheckmodified().booleanValue();
         }

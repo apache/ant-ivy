@@ -70,7 +70,7 @@ public class DualResolver extends AbstractResolver {
         if (mr == null) {
             checkInterrupted();
             if (isAllownomd()) {
-                Message.verbose("ivy resolver didn't find " + dd.getDependencyRevisionId()
+                Message.verbose("ivy resolver didn't find " + dd
                         + ": trying with artifact resolver");
                 return artifactResolver.getDependency(dd, data);
             } else {

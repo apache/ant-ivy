@@ -287,14 +287,15 @@ public abstract class AbstractResolver implements DependencyResolver, HasLatestS
     }
 
     protected ResolvedModuleRevision findModuleInCache(
-            DependencyDescriptor dd, CacheMetadataOptions options) {
-        return findModuleInCache(dd, options, false);
+            DependencyDescriptor dd, ResolveData data) {
+        return findModuleInCache(dd, data, false);
     }
 
     protected ResolvedModuleRevision findModuleInCache(
-            DependencyDescriptor dd, CacheMetadataOptions options, boolean anyResolver) {
+            DependencyDescriptor dd, ResolveData data, boolean anyResolver) {
         return getRepositoryCacheManager().findModuleInCache(
-            dd, options, anyResolver ? null : getName());
+            dd, data.getRequestedDependencyRevisionId(dd), 
+            getCacheOptions(data), anyResolver ? null : getName());
     }
 
     public void setChangingMatcher(String changingMatcherName) {

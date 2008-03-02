@@ -26,6 +26,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.ivy.core.event.EventManager;
+import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.report.ConfigurationResolveReport;
 
@@ -179,4 +180,7 @@ public class ResolveData {
         return node != null && node.isBlacklisted(rootModuleConf);
     }
 
+    public ModuleRevisionId getRequestedDependencyRevisionId(DependencyDescriptor dd) {
+        return getEngine().getRequestedDependencyRevisionId(dd, getOptions());
+    }
 }

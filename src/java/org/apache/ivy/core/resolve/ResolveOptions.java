@@ -34,6 +34,20 @@ import org.apache.ivy.util.filter.FilterHelper;
 public class ResolveOptions extends LogOptions {
     
     /**
+     * Default resolve mode, using default revision constraints in dependency descriptors.
+     */
+    public static final String RESOLVEMODE_DEFAULT = "default";
+    /**
+     * Dynamic resolve mode, using dynamic revision constraints in dependency descriptors.
+     */
+    public static final String RESOLVEMODE_DYNAMIC = "dynamic";
+    /**
+     * Array of all available resolve modes.
+     */
+    public static final String[] RESOLVEMODES = 
+        new String[] {RESOLVEMODE_DEFAULT, RESOLVEMODE_DYNAMIC};
+
+    /**
      * an array of configuration names to resolve - must not be null nor empty
      */
     private String[] confs = new String[] {"*"};
@@ -85,6 +99,12 @@ public class ResolveOptions extends LogOptions {
      * A filter to use to avoid downloading all artifacts.
      */
     private Filter artifactFilter = FilterHelper.NO_FILTER;
+    
+    /**
+     * The resolve mode to use. Should be one of {@link #RESOLVEMODES}, or <code>null</code> to
+     * use settings configured resolve mode.
+     */
+    private String resolveMode;
 
     /**
      * The id used to store the resolve information.
@@ -107,6 +127,7 @@ public class ResolveOptions extends LogOptions {
         transitive = options.transitive;
         download = options.download;
         outputReport = options.outputReport;
+        resolveMode = options.resolveMode;
         artifactFilter = options.artifactFilter;
         resolveId = options.resolveId;
     }
@@ -117,6 +138,21 @@ public class ResolveOptions extends LogOptions {
 
     public ResolveOptions setArtifactFilter(Filter artifactFilter) {
         this.artifactFilter = artifactFilter;
+        return this;
+    }
+    
+    /**
+     * Returns the resolve mode to use, or <code>null</code> to use settings configured resolve
+     * mode.
+     * 
+     * @return the resolve mode to use.
+     */
+    public String getResolveMode() {
+        return resolveMode;
+    }
+    
+    public ResolveOptions setResolveMode(String resolveMode) {
+        this.resolveMode = resolveMode;
         return this;
     }
 

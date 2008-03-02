@@ -19,6 +19,8 @@ package org.apache.ivy.core.event.resolve;
 
 import org.apache.ivy.core.event.IvyEvent;
 import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
+import org.apache.ivy.core.module.id.ModuleRevisionId;
+import org.apache.ivy.core.resolve.ResolveData;
 import org.apache.ivy.plugins.resolver.DependencyResolver;
 
 public class ResolveDependencyEvent extends IvyEvent {
@@ -27,14 +29,18 @@ public class ResolveDependencyEvent extends IvyEvent {
     private DependencyDescriptor dd;
 
     protected ResolveDependencyEvent(String name, DependencyResolver resolver,
-            DependencyDescriptor dd) {
+            DependencyDescriptor dd, ModuleRevisionId requestedRevisionId) {
         super(name);
         this.resolver = resolver;
         this.dd = dd;
         addAttribute("resolver", this.resolver.getName());
         addMridAttributes(this.dd.getDependencyRevisionId());
         addAttributes(this.dd.getExtraAttributes());
-        addAttribute("req-revision", dd.getDependencyRevisionId().getRevision());
+        addAttribute("req-revision", requestedRevisionId.getRevision());
+        addAttribute("req-revision-default", 
+            dd.getDependencyRevisionId().getRevision());
+        addAttribute("req-revision-dynamic", 
+            dd.getDynamicConstraintDependencyRevisionId().getRevision());
     }
 
     public DependencyDescriptor getDependencyDescriptor() {

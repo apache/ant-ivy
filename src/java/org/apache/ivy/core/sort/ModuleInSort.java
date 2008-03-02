@@ -179,7 +179,7 @@ class ModuleInSort {
         ModuleDescriptor md = module;
         return md.getResolvedModuleRevisionId().getRevision() == null
                 || md.getResolvedModuleRevisionId().getRevision().equals(Ivy.getWorkingRevision())
-                || versionMatcher.accept(descriptor.getDependencyRevisionId(), md);
+                || versionMatcher.accept(descriptor.getDynamicConstraintDependencyRevisionId(), md);
         // Checking md.getResolvedModuleRevisionId().getRevision().equals(Ivy.getWorkingRevision()
         // allow to consider any local non resolved ivy.xml
         // as a valid module.

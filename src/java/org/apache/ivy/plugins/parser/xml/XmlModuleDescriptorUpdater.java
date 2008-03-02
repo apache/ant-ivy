@@ -393,11 +393,17 @@ public final class XmlModuleDescriptorUpdater {
             }
             
             String revision = substitute(settings, attributes.getValue("rev"));
+            String revisionConstraint = substitute(settings, attributes.getValue("revConstraint"));
+            Map extraAttributes = ExtendableItemHelper.getExtraAttributes(attributes,
+                XmlModuleDescriptorParser.DEPENDENCY_REGULAR_ATTRIBUTES);
             ModuleRevisionId localMrid = ModuleRevisionId.newInstance(org, module, branch,
-                revision, ExtendableItemHelper.getExtraAttributes(attributes,
-                    XmlModuleDescriptorParser.DEPENDENCY_REGULAR_ATTRIBUTES));
+                revision, extraAttributes);
+            ModuleRevisionId localConstraintMrid = ModuleRevisionId.newInstance(org, module, branch,
+                revisionConstraint, extraAttributes);
             ModuleRevisionId systemMrid = ns == null ? localMrid : ns.getToSystemTransformer()
                     .transform(localMrid);
+            ModuleRevisionId systemConstraintMrid = ns == null ? localConstraintMrid 
+                    : ns.getToSystemTransformer().transform(localConstraintMrid);
 
             for (int i = 0; i < attributes.getLength(); i++) {
                 String attName = attributes.getQName(i);
@@ -405,9 +411,14 @@ public final class XmlModuleDescriptorUpdater {
                     String rev = (String) resolvedRevisions.get(systemMrid);
                     if (rev != null) {
                         write(" rev=\"" + rev + "\"");
+                        if (attributes.getIndex("revConstraint") == -1) {
+                            write(" revConstraint=\"" + systemMrid.getRevision() + "\"");
+                        }
                     } else {
                         write(" rev=\"" + systemMrid.getRevision() + "\"");
                     }
+                } else if ("revConstraint".equals(attName)) {
+                    write(" revConstraint=\"" + revisionConstraint + "\"");
                 } else if ("org".equals(attName)) {
                     write(" org=\"" + systemMrid.getOrganisation() + "\"");
                 } else if ("name".equals(attName)) {

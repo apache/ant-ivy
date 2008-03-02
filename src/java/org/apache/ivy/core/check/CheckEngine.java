@@ -87,7 +87,7 @@ public class CheckEngine {
                     if (!"*".equals(masterConfs[j].trim())
                             && md.getConfiguration(masterConfs[j]) == null) {
                         Message.info("dependency required in non existing conf for " + ivyFile
-                                + " \n\tin " + dds[i].getDependencyRevisionId() + ": "
+                                + " \n\tin " + dds[i] + ": "
                                 + masterConfs[j]);
                         result = false;
                     }
@@ -106,7 +106,7 @@ public class CheckEngine {
                         if (!Arrays.asList(rmr.getDescriptor().getConfigurationsNames()).contains(
                             depConfs[j])) {
                             Message.info("dependency configuration is missing for " + ivyFile
-                                    + "\n\tin " + dds[i].getDependencyRevisionId() + ": "
+                                    + "\n\tin " + dds[i] + ": "
                                     + depConfs[j]);
                             result = false;
                         }
@@ -114,7 +114,7 @@ public class CheckEngine {
                         for (int k = 0; k < arts.length; k++) {
                             if (!resolver.exists(arts[k])) {
                                 Message.info("dependency artifact is missing for " + ivyFile
-                                        + "\n\t in " + dds[i].getDependencyRevisionId() + ": "
+                                        + "\n\t in " + dds[i] + ": "
                                         + arts[k]);
                                 result = false;
                             }

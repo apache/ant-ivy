@@ -54,6 +54,7 @@ import org.apache.ivy.core.module.status.StatusManager;
 import org.apache.ivy.core.publish.PublishEngineSettings;
 import org.apache.ivy.core.repository.RepositoryManagementEngineSettings;
 import org.apache.ivy.core.resolve.ResolveEngineSettings;
+import org.apache.ivy.core.resolve.ResolveOptions;
 import org.apache.ivy.core.retrieve.RetrieveEngineSettings;
 import org.apache.ivy.core.sort.SortEngineSettings;
 import org.apache.ivy.plugins.IvySettingsAware;
@@ -199,6 +200,8 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
     private String defaultCacheArtifactPattern;
 
     private boolean defaultUseOrigin;
+
+    private String defaultResolveMode = ResolveOptions.RESOLVEMODE_DEFAULT;
 
     public IvySettings() {
         this(new IvyVariableContainerImpl());
@@ -689,12 +692,12 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
     /**
      * regular expressions as explained in Pattern class may be used in attributes
      */
-    public void addModuleConfiguration(Map attributes, PatternMatcher matcher, String resolverName,
-            String branch, String conflictManager) {
+    public void addModuleConfiguration(Map attributes, PatternMatcher matcher, 
+            String resolverName, String branch, String conflictManager, String resolveMode) {
         checkResolverName(resolverName);
         moduleSettings.defineRule(
             new MapMatcher(attributes, matcher), 
-            new ModuleSettings(resolverName, branch, conflictManager));
+            new ModuleSettings(resolverName, branch, conflictManager, resolveMode));
     }
 
     public File getDefaultIvyUserDir() {
@@ -832,6 +835,23 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
             }
             return cm;
         }
+    }
+
+    public String getResolveMode(ModuleId moduleId) {
+        ModuleSettings ms = (ModuleSettings) moduleSettings.getRule(moduleId, new Filter() {
+            public boolean accept(Object o) {
+                return ((ModuleSettings) o).getResolveMode() != null;
+            }
+        });
+        return ms == null ? getDefaultResolveMode() : ms.getResolveMode();
+    }
+
+    public String getDefaultResolveMode() {
+        return defaultResolveMode;
+    }
+    
+    public void setDefaultResolveMode(String defaultResolveMode) {
+        this.defaultResolveMode = defaultResolveMode;
     }
 
     public void addConfigured(ConflictManager cm) {
@@ -1220,15 +1240,21 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
 
         private String conflictManager;
 
-        public ModuleSettings(String resolver, String branchName, String conflictMgr) {
-            resolverName = resolver;
-            branch = branchName;
-            conflictManager = conflictMgr;
+        private String resolveMode;
+
+        public ModuleSettings(
+                String resolver, String branchName, String conflictMgr, String resolveMode) {
+            this.resolverName = resolver;
+            this.branch = branchName;
+            this.conflictManager = conflictMgr;
+            this.resolveMode = resolveMode;
         }
 
         public String toString() {
-            return resolverName != null ? "resolver: " + resolverName
-                    : "" + branch != null ? "branch: " + branch : "";
+            return (resolverName != null ? "resolver: " + resolverName : "")
+                + (branch != null ? "branch: " + branch : "")
+                + (conflictManager != null ? "conflictManager: " + conflictManager : "")
+                + (resolveMode != null ? "resolveMode: " + resolveMode : "");
         }
 
         public String getBranch() {
@@ -1239,8 +1265,12 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
             return resolverName;
         }
 
-        protected String getConflictManager() {
+        public String getConflictManager() {
             return conflictManager;
+        }
+
+        public String getResolveMode() {
+            return resolveMode;
         }
     }
 

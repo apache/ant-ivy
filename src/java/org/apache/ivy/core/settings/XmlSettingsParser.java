@@ -396,10 +396,11 @@ public class XmlSettingsParser extends DefaultHandler {
                 String resolver = (String) attributes.remove("resolver");
                 String branch = (String) attributes.remove("branch");
                 String cm = (String) attributes.remove("conflict-manager");
+                String resolveMode = (String) attributes.remove("resolveMode");
                 String matcher = (String) attributes.remove("matcher");
                 matcher = matcher == null ? PatternMatcher.EXACT_OR_REGEXP : matcher;
                 ivy.addModuleConfiguration(attributes, ivy
-                        .getMatcher(matcher), resolver, branch, cm);
+                        .getMatcher(matcher), resolver, branch, cm, resolveMode);
             }
         } catch (ParseException ex) {
             throw new SAXException("problem in config file: " + ex.getMessage(), ex);

@@ -81,8 +81,11 @@ public class DefaultDependencyDescriptor implements DependencyDescriptor {
             NamespaceTransformer t, boolean fromSystem) {
         ModuleRevisionId transformParentId = t.transform(dd.getParentRevisionId());
         ModuleRevisionId transformMrid = t.transform(dd.getDependencyRevisionId());
-        DefaultDependencyDescriptor newdd = new DefaultDependencyDescriptor(null, transformMrid, dd
-                .isForce(), dd.isChanging(), dd.isTransitive());
+        ModuleRevisionId transformDynamicMrid = 
+            t.transform(dd.getDynamicConstraintDependencyRevisionId());
+        DefaultDependencyDescriptor newdd = new DefaultDependencyDescriptor(
+            null, transformMrid, transformDynamicMrid, 
+            dd.isForce(), dd.isChanging(), dd.isTransitive());
         newdd.parentId = transformParentId;
         String[] moduleConfs = dd.getModuleConfigurations();
         if (moduleConfs.length == 1 && "*".equals(moduleConfs[0])) {
@@ -116,6 +119,8 @@ public class DefaultDependencyDescriptor implements DependencyDescriptor {
     }
 
     private ModuleRevisionId revId;
+
+    private ModuleRevisionId dynamicRevId;
 
     private Map confs = new LinkedHashMap();
 
@@ -157,6 +162,7 @@ public class DefaultDependencyDescriptor implements DependencyDescriptor {
         md = null;
         parentId = dd.getParentRevisionId();
         revId = ModuleRevisionId.newInstance(dd.getDependencyRevisionId(), revision);
+        dynamicRevId = dd.getDynamicConstraintDependencyRevisionId();
         isForce = dd.isForce();
         isChanging = dd.isChanging();
         isTransitive = dd.isTransitive();
@@ -173,10 +179,18 @@ public class DefaultDependencyDescriptor implements DependencyDescriptor {
         }
     }
 
-    public DefaultDependencyDescriptor(ModuleDescriptor md, ModuleRevisionId mrid, boolean force,
+    public DefaultDependencyDescriptor(
+            ModuleDescriptor md, ModuleRevisionId mrid, boolean force,
             boolean changing, boolean transitive) {
+        this(md, mrid, mrid, force, changing, transitive);
+    }
+
+    public DefaultDependencyDescriptor(
+            ModuleDescriptor md, ModuleRevisionId mrid, ModuleRevisionId dynamicConstraint, 
+            boolean force, boolean changing, boolean transitive) {
         this.md = md;
         revId = mrid;
+        dynamicRevId = dynamicConstraint;
         isForce = force;
         isChanging = changing;
         isTransitive = transitive;
@@ -199,6 +213,10 @@ public class DefaultDependencyDescriptor implements DependencyDescriptor {
 
     public ModuleRevisionId getDependencyRevisionId() {
         return revId;
+    }
+    
+    public ModuleRevisionId getDynamicConstraintDependencyRevisionId() {
+        return dynamicRevId;
     }
 
     public String[] getModuleConfigurations() {

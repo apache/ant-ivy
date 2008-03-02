@@ -56,11 +56,11 @@ public class CacheResolver extends FileSystemResolver {
             throws ParseException {
         clearIvyAttempts();
 
-        ModuleRevisionId mrid = dd.getDependencyRevisionId();
+        ModuleRevisionId mrid = data.getRequestedDependencyRevisionId(dd);
         // check revision
 
         ResolvedModuleRevision rmr = getRepositoryCacheManager()
-            .findModuleInCache(dd, getCacheOptions(data), null);
+            .findModuleInCache(dd, mrid, getCacheOptions(data), null);
         if (rmr != null) {
             Message.verbose("\t" + getName() + ": revision in cache: " + mrid);
             return rmr;
@@ -84,7 +84,8 @@ public class CacheResolver extends FileSystemResolver {
                     return node.getModuleRevision();
                 }
                 rmr = getRepositoryCacheManager().findModuleInCache(
-                        new DefaultDependencyDescriptor(dd, ivyRef.getRevision()), 
+                        new DefaultDependencyDescriptor(dd, ivyRef.getRevision()),
+                        dd.getDependencyRevisionId(),
                         getCacheOptions(data), null);
                 if (rmr != null) {
                     Message.verbose("\t" + getName() + ": revision in cache: " + resolvedMrid);

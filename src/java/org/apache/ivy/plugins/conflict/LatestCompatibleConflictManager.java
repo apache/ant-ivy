@@ -244,7 +244,7 @@ public class LatestCompatibleConflictManager extends LatestConflictManager {
             if (callerNode.isBlacklisted(rootModuleConf)) {
                 continue;
             }
-            if (versionMatcher.isDynamic(callers[i].getAskedDependencyId())) {
+            if (versionMatcher.isDynamic(callers[i].getAskedDependencyId(node.getData()))) {
                 blacklisted.add(new IvyNodeBlacklist(
                     conflictParent, selectedNode, evictedNode, node, rootModuleConf));
             } else {

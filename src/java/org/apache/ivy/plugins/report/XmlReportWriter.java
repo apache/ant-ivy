@@ -233,7 +233,15 @@ public class XmlReportWriter {
                         toString(callers[i].getCallerConfigurations())) + "\""
                     + " rev=\"" 
                     + XMLHelper.escape(
-                        callers[i].getAskedDependencyId().getRevision()) + "\""
+                        callers[i].getAskedDependencyId(dep.getData()).getRevision()) + "\""
+                    + " rev-constraint-default=\"" 
+                    + XMLHelper.escape(
+                        callers[i].getDependencyDescriptor()
+                            .getDependencyRevisionId().getRevision()) + "\""
+                    + " rev-constraint-dynamic=\"" 
+                    + XMLHelper.escape(
+                        callers[i].getDependencyDescriptor()
+                            .getDynamicConstraintDependencyRevisionId().getRevision()) + "\""
                     + " callerrev=\"" 
                     + XMLHelper.escape(
                         callers[i].getModuleRevisionId().getRevision()) + "\""

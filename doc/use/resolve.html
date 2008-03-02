@@ -83,7 +83,17 @@ This is the number of artifacts actually downloaded from the repository.
 </ul>
 </ul>
 
-<span class="since">since 1.4</span> A new inline mode allow to call a resolve without an ivy file, by setting directly the module which should be resolved from the repository. It is particularly useful to install released software, like an ant task for example. When inline is set to true, the organisation module and revision attributes are used to specify which module should be resolved from the repository.
+<h2>Inline mode</h2>
+<span class="since">since 1.4</span> The inline mode allow to call a resolve without an ivy file, by setting directly the module which should be resolved from the repository. It is particularly useful to install released software, like an ant task for example. When inline is set to true, the organisation module and revision attributes are used to specify which module should be resolved from the repository.
+
+<h2>Resolve mode</h2>
+<span class="since">since 2.0</span> The resolve mode allows to define how Ivy should use dependency revision constraints when performing the resolution.
+
+Two modes are available:
+<ul>
+<li>default</li> In this mode the default revision constraint (expressed with the rev attribute in the [[ivyfile/dependency]] element) is used.
+<li>dynamic</li> In this mode the dynamic revision constraint (expressed with the revConstraint attribute in the [[ivyfile/dependency]] element) is used.
+</ul>
 
 <i>Note for developers:
 After the call to this task, a reference to the module descriptor resolved is put in the ant project under the id <code>"ivy.resolved.descriptor"</code>.</i>
@@ -101,6 +111,8 @@ After the call to this task, a reference to the module descriptor resolved is pu
 <span class="since">Since 2.0</span>, you can also use '*(private)', '*(public)'.  Note that when inline is true, the configuration '*' is equivalent as '*(public)'.</td><td>No. Defaults to ${ivy.configurations}</td></tr>
 
     <tr><td>refresh</td><td>true to force Ivy to resolve dynamic revision in this resolve process, false to use cached resolved revision <span class="since">since 2.0</span></td><td>No. defaults to false</td></tr>
+
+    <tr><td>resolveMode</td><td>the resolve mode to use for this dependency resolution process <span class="since">since 2.0</span></td><td>No. defaults to using the resolve mode set in the [[configuration settings]]</td></tr>
 
     <tr><td>inline</td><td>true to use inline mode, false to resolve an ivy file <span class="since">since 1.4</span></td><td>No. defaults to false</td></tr>
 
