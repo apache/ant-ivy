@@ -35,7 +35,6 @@ import org.apache.ivy.core.module.descriptor.DefaultArtifact;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.report.DownloadReport;
 import org.apache.ivy.core.resolve.DownloadOptions;
-import org.apache.ivy.plugins.latest.LatestStrategy;
 import org.apache.ivy.plugins.repository.AbstractRepository;
 import org.apache.ivy.plugins.repository.Repository;
 import org.apache.ivy.plugins.repository.Resource;
@@ -76,17 +75,10 @@ public class RepositoryResolver extends AbstractResourceResolver {
 
     protected ResolvedResource findResourceUsingPattern(ModuleRevisionId mrid, String pattern,
             Artifact artifact, ResourceMDParser rmdparser, Date date) {
-        return findResourceUsingPattern(getName(), getRepository(), getLatestStrategy(),
-            getSettings().getVersionMatcher(), rmdparser, mrid, pattern, artifact, date,
-            isAlwaysCheckExactRevision());
-    }
-
-    public ResolvedResource findResourceUsingPattern(String name, Repository repository,
-            LatestStrategy strategy, VersionMatcher versionMatcher, ResourceMDParser rmdparser,
-            ModuleRevisionId mrid, String pattern, Artifact artifact, Date date,
-            boolean alwaysCheckExactRevision) {
+        String name = getName();
+        VersionMatcher versionMatcher = getSettings().getVersionMatcher();
         try {
-            if (!versionMatcher.isDynamic(mrid) || alwaysCheckExactRevision) {
+            if (!versionMatcher.isDynamic(mrid) || isAlwaysCheckExactRevision()) {
                 String resourceName = IvyPatternHelper.substitute(pattern, mrid, artifact);
                 Message.debug("\t trying " + resourceName);
                 logAttempt(resourceName);
@@ -97,16 +89,15 @@ public class RepositoryResolver extends AbstractResourceResolver {
                         ? "working@" + name : mrid.getRevision();
                     return new ResolvedResource(res, revision);
                 } else if (versionMatcher.isDynamic(mrid)) {
-                    return findDynamicResourceUsingPattern(name, repository, strategy,
-                        versionMatcher, rmdparser, mrid, pattern, artifact, date);
+                    return findDynamicResourceUsingPattern(
+                        rmdparser, mrid, pattern, artifact, date);
                 } else {
                     Message.debug("\t" + name + ": resource not reachable for " + mrid + ": res="
                             + res);
                     return null;
                 }
             } else {
-                return findDynamicResourceUsingPattern(name, repository, strategy, versionMatcher,
-                    rmdparser, mrid, pattern, artifact, date);
+                return findDynamicResourceUsingPattern(rmdparser, mrid, pattern, artifact, date);
             }
         } catch (IOException ex) {
             throw new RuntimeException(name + ": unable to get resource for " + mrid + ": res="
@@ -114,10 +105,10 @@ public class RepositoryResolver extends AbstractResourceResolver {
         }
     }
 
-    private ResolvedResource findDynamicResourceUsingPattern(String name,
-            Repository repository, LatestStrategy strategy, VersionMatcher versionMatcher,
+    private ResolvedResource findDynamicResourceUsingPattern(
             ResourceMDParser rmdparser, ModuleRevisionId mrid, String pattern, Artifact artifact,
             Date date) {
+        String name = getName();
         logAttempt(IvyPatternHelper.substitute(pattern, ModuleRevisionId.newInstance(mrid,
             IvyPatternHelper.getTokenString(IvyPatternHelper.REVISION_KEY)), artifact));
         ResolvedResource[] rress = listResources(repository, mrid, pattern, artifact);
@@ -126,8 +117,7 @@ public class RepositoryResolver extends AbstractResourceResolver {
                     + pattern);
             return null;
         } else {
-            ResolvedResource found = findResource(rress, name, strategy, versionMatcher, rmdparser,
-                mrid, date);
+            ResolvedResource found = findResource(rress, rmdparser, mrid, date);
             if (found == null) {
                 Message.debug("\t" + name + ": no resource found for " + mrid + ": pattern="
                         + pattern);

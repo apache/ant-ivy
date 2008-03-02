@@ -40,7 +40,6 @@ import org.apache.ivy.core.resolve.IvyNode;
 import org.apache.ivy.core.resolve.ResolveData;
 import org.apache.ivy.core.settings.IvyPattern;
 import org.apache.ivy.plugins.conflict.ConflictManager;
-import org.apache.ivy.plugins.latest.LatestStrategy;
 import org.apache.ivy.plugins.resolver.util.MDResolvedResource;
 import org.apache.ivy.plugins.resolver.util.ResolvedResource;
 import org.apache.ivy.plugins.resolver.util.ResourceMDParser;
@@ -107,8 +106,7 @@ public abstract class AbstractResourceResolver extends BasicResolver {
         if (resolvedResources.size() > 1) {
             ResolvedResource[] rress = (ResolvedResource[]) resolvedResources
                     .toArray(new ResolvedResource[resolvedResources.size()]);
-            return findResource(rress, getName(), getLatestStrategy(), getSettings()
-                    .getVersionMatcher(), rmdparser, moduleRevision, date);
+            return findResource(rress, rmdparser, moduleRevision, date);
         } else if (resolvedResources.size() == 1) {
             return (ResolvedResource) resolvedResources.get(0);
         } else {
@@ -119,11 +117,13 @@ public abstract class AbstractResourceResolver extends BasicResolver {
     protected abstract ResolvedResource findResourceUsingPattern(ModuleRevisionId mrid,
             String pattern, Artifact artifact, ResourceMDParser rmdparser, Date date);
 
-    public ResolvedResource findResource(ResolvedResource[] rress, String name,
-            LatestStrategy strategy, VersionMatcher versionMatcher, ResourceMDParser rmdparser,
+    public ResolvedResource findResource(ResolvedResource[] rress, ResourceMDParser rmdparser,
             ModuleRevisionId mrid, Date date) {
+        String name = getName();
+        VersionMatcher versionMatcher = getSettings().getVersionMatcher();
+        
         ResolvedResource found = null;
-        List sorted = strategy.sort(rress);
+        List sorted = getLatestStrategy().sort(rress);
         List rejected = new ArrayList();
         List foundBlacklisted = new ArrayList();
         IvyContext context = IvyContext.getContext();
