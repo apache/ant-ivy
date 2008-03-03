@@ -44,8 +44,6 @@ import org.apache.ivy.plugins.repository.BasicResource;
 import org.apache.ivy.util.FileUtil;
 import org.xml.sax.SAXParseException;
 
-import sun.reflect.ReflectionFactory.GetReflectionFactoryAction;
-
 public class XmlModuleUpdaterTest extends TestCase {
 
     public void testUpdate() throws Exception {
