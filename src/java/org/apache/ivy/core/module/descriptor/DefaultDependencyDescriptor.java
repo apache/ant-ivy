@@ -203,6 +203,7 @@ public class DefaultDependencyDescriptor implements DependencyDescriptor {
     public DefaultDependencyDescriptor(ModuleRevisionId mrid, boolean force, boolean changing) {
         md = null;
         revId = mrid;
+        dynamicRevId = mrid;
         isForce = force;
         isChanging = changing;
     }

@@ -384,7 +384,8 @@ public final class XmlModuleDescriptorUpdater {
                     String rev = (String) resolvedRevisions.get(systemMrid);
                     if (rev != null) {
                         write(" rev=\"" + rev + "\"");
-                        if (attributes.getIndex("revConstraint") == -1) {
+                        if (attributes.getIndex("revConstraint") == -1 
+                                && !rev.equals(systemMrid.getRevision())) {
                             write(" revConstraint=\"" + systemMrid.getRevision() + "\"");
                         }
                     } else {
