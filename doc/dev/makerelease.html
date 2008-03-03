@@ -170,6 +170,11 @@ edit the svn properties of site/history, and in the svn:externals property, add 
 <code>
 2.0.0-beta1 https://svn.apache.org/repos/asf/ant/ivy/core/branches/2.0.0-beta1/doc
 </code>
+You can also change the latest-milestone and/or latest-release if necessary.
+
+You can use "svn propedit svn:externals path/to/history" to do so.
+
+Once you've changed the property, use "svn up" to checkout the proper documentation.
 <li>edit the toc.json file in the site component of Ivy</li>
 and add something like that:
 <code>
@@ -179,6 +184,8 @@ and add something like that:
    "importNode":"index"      
 }
 </code>
+You can also edit the title of the main documentation node pointing to latest-milestone / latest-release if necessary.
+
 <li>Add a call to init-imported-version in site/build.xml</li>
 In the init-imported-history target, add a task call like this one:
 <code>
@@ -189,7 +196,7 @@ Then launch "ant init-imported-history" in the site directory, and check the doc
 
 Then you can update the release notes page of the imported documentation if necessary, to include the announcement for example.
 
-It's time to update the download image used on the home page and the download page. Use site/images/ivy-dl.xcf as a basis if you have <a href="http://www.gimp.org/">gimp</a> installed. Then you can update the home page to refer to this image, and add a news item announcing the new version. Update also the download page with the new image and update the links to the download location.
+It's time to update the download image used on the home page and the download page. Use site/images/ivy-dl.xcf as a basis if you have <a href="http://www.gimp.org/">gimp</a> installed. Then you can update the home page to refer to this image, and add a news item announcing the new version. Update also the download page with the new image and update the links to the download location (using a search/replace on the html source is recommended for this).
 
 You are now ready to commit your changes (make sure to commit changes in imported locations too), and update the online site:
 <code>
@@ -198,7 +205,6 @@ ant clean publish-site
 
 <h3>15. Announce</h3>
 Announce the release on the dev@ant.a.o, ivy-user@ant.a.o, user@ant.apache.org and announce@apache.org mailing lists.
-Announce also the release on Ivy web site by editing the doc/index.html on the trunk.
 You can also announce the release on popular web sites, like freshmeat.net (xavier is the owner of the Ivy project on freshmeat), javalobby.org, theserverside.com, dzone.com, ...
 <h3>16. Update this doc</h3>
 If you feel like anything is missing or misleading in this release doc, update it as soon as you encounter the problem.
