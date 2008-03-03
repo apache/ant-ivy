@@ -437,6 +437,7 @@
            showoutput="no"
            printsummary="yes"
            includeantruntime="yes"
+           dir="${basedir}"
            fork="true">
             <classpath>
                 <path refid="test.classpath" />
