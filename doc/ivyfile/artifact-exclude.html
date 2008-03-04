@@ -31,7 +31,7 @@ This feature gives you more control on a dependency for which you do not control
 It enables to restrict the artifacts required, by excluding artifacts being published by the dependency or any of its transitive dependencies, 
 even if configuration does not a good separation of published artifacts
 
-The same principle concerning configuration as for include applies to this exclude feature (see above the include feature).
+The same principle concerning configuration as for include applies to this exclude feature (see the [[ivyfile/dependency-include include]] feature).
 
 Note that exclusion is always done AFTER inclusion has been done.
 
@@ -61,7 +61,7 @@ Note that exclusion is always done AFTER inclusion has been done.
         <td>No, defaults to type</td></tr>
     <tr><td>matcher</td><td>the <a href="../concept.html#matcher">matcher</a> to use to match the modules to excludes <span class="since">since 1.3</span></td>
         <td>No, defaults to exactOrRegexp in pre 1.3 ivy files, and exact in 1.3 and superior</td></tr>
-    <tr><td>conf</td><td>comma separated list of the master configurations in which this artifact should be included.
+    <tr><td>conf</td><td>comma separated list of the master configurations in which this artifact should be excluded.
     '*' wildcard can be used to designate all configurations of this module</td>
         <td>No, defaults to '*', unless nested conf are specified</td></tr>
 </tbody>
@@ -72,7 +72,7 @@ Note that exclusion is always done AFTER inclusion has been done.
     <tr><th class="ivy-chld">Element</th><th class="ivy-chld-desc">Description</th><th class="ivy-chld-card">Cardinality</th></tr>
 </thead>
 <tbody>
-    <tr><td><a href="../ivyfile/artifact-exclude-conf.html">conf</a></td><td>configuration in which the artifact should be included</td>
+    <tr><td><a href="../ivyfile/artifact-exclude-conf.html">conf</a></td><td>configuration in which the artifact should be excluded</td>
         <td>0..n</td></tr>
 </tbody>
 </table>
