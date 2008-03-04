@@ -31,6 +31,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Stack;
 
 import org.apache.ivy.core.module.id.ArtifactId;
 import org.apache.ivy.core.module.id.ModuleId;
@@ -511,19 +512,43 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
     }
 
     /**
-     * Throws an exception if the module descriptor is inconsistent For the moment, only extended
-     * configurations existence is checked
+     * Throws an exception if the module descriptor is inconsistent 
+     * For the moment, only extended configurations existence and cycles are checked
      */
     public void check() {
+        Stack confs = new Stack();
         for (Iterator iter = configurations.values().iterator(); iter.hasNext();) {
             Configuration conf = (Configuration) iter.next();
             String[] ext = conf.getExtends();
             for (int i = 0; i < ext.length; i++) {
-                if (!configurations.containsKey(ext[i].trim())) {
-                    throw new IllegalStateException("unknown configuration '" + ext[i]
-                            + "'. It is extended by " + conf.getName());
-                }
+                confs.push(conf.getName());
+                checkConf(confs, ext[i].trim());
+                confs.pop();
             }
+        }
+    }
+
+    private void checkConf(Stack confs, String confName) {
+        int index = confs.indexOf(confName);
+        if (index != -1) {
+            StringBuffer cycle = new StringBuffer();
+            for (; index < confs.size(); index++) {
+                cycle.append(confs.get(index)).append(" => ");
+            }
+            cycle.append(confName);
+            throw new IllegalStateException(
+                "illegal cycle detected in configuration extension: " + cycle);
+        }
+        Configuration conf = getConfiguration(confName);
+        if (conf == null) {
+            throw new IllegalStateException("unknown configuration '" + confName
+                    + "'. It is extended by " + confs.get(confs.size() - 1));
+        }
+        String[] ext = conf.getExtends();
+        for (int i = 0; i < ext.length; i++) {
+            confs.push(conf.getName());
+            checkConf(confs, ext[i].trim());
+            confs.pop();
         }
     }
 

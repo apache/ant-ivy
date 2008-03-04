@@ -147,8 +147,28 @@ public class XmlModuleDescriptorParserTest extends AbstractModuleDescriptorParse
                 getClass().getResource("test-bad-confs.xml"), true);
             fail("bad ivy file raised no error");
         } catch (ParseException ex) {
+            ex.printStackTrace();
             assertTrue("invalid exception: " + ex.getMessage(), ex.getMessage().indexOf(
                 "invalidConf") != -1);
+        }
+    }
+
+    public void testCyclicConfs() throws IOException {
+        try {
+            XmlModuleDescriptorParser.getInstance().parseDescriptor(settings,
+                getClass().getResource("test-cyclic-confs1.xml"), true);
+            fail("bad ivy file raised no error");
+        } catch (ParseException ex) {
+            assertTrue("invalid exception: " + ex.getMessage(), ex.getMessage().indexOf(
+                "A => B => A") != -1);
+        }
+        try {
+            XmlModuleDescriptorParser.getInstance().parseDescriptor(settings,
+                getClass().getResource("test-cyclic-confs2.xml"), true);
+            fail("bad ivy file raised no error");
+        } catch (ParseException ex) {
+            assertTrue("invalid exception: " + ex.getMessage(), ex.getMessage().indexOf(
+                "A => C => B => A") != -1);
         }
     }
 
