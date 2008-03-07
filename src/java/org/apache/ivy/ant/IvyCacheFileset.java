@@ -19,6 +19,7 @@ package org.apache.ivy.ant;
 
 import java.io.File;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.ivy.core.report.ArtifactDownloadReport;
@@ -110,22 +111,35 @@ public class IvyCacheFileset extends IvyCacheTask {
      *            the file for which the new base directory should be returned.
      * @return the common base directory between a current base directory and a given file.
      */
-    private File getBaseDir(File base, File file) {
+    File getBaseDir(File base, File file) {
         if (base == null) {
-            return file.getParentFile();
+            return file.getParentFile().getAbsoluteFile();
         } else {
-            String basePath = base.getAbsolutePath();
-            String filePath = file.getAbsolutePath();
-            for (int i = 0; i < basePath.length(); i++) {
-                if (i >= filePath.length()) {
-                    return file.getParentFile();
-                }
-                if (basePath.charAt(i) != filePath.charAt(i)) {
-                    return new File(basePath.substring(0, i));
+            Iterator bases = getParents(base).iterator();
+            Iterator fileParents = getParents(file.getAbsoluteFile()).iterator();
+            File result = null;
+            while (bases.hasNext() && fileParents.hasNext()) {
+                File next = (File) bases.next();
+                if (next.equals(fileParents.next())) {
+                    result = next; 
+                } else {
+                    break;
                 }
             }
-            return base;
+            return result;
         }
+    }
+
+    /**
+     * @return a list of files, starting with the root and ending with the file itself
+     */
+    private LinkedList/*<File>*/ getParents(File file) {
+        LinkedList r = new LinkedList();
+        while (file != null) {
+            r.addFirst(file);
+            file = file.getParentFile();
+        }
+        return r;
     }
 
 }

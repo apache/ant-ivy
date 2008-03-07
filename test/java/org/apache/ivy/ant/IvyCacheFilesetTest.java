@@ -162,4 +162,16 @@ public class IvyCacheFilesetTest extends TestCase {
         }
     }
 
+    
+    public void testGetBaseDir() {
+        File base = null;
+        base = fileset.getBaseDir(base, new File("x/aa/b/c"));
+        assertEquals(new File("x/aa/b").getAbsoluteFile(), base);
+        
+        base = fileset.getBaseDir(base, new File("x/aa/b/d/e"));
+        assertEquals(new File("x/aa/b").getAbsoluteFile(), base);
+        
+        base = fileset.getBaseDir(base, new File("x/ab/b/d"));
+        assertEquals(new File("x").getAbsoluteFile(), base);
+    }
 }
