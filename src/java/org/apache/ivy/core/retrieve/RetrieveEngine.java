@@ -257,8 +257,10 @@ public class RetrieveEngine {
 
         // ArtifactDownloadReport source -> Set (String copyDestAbsolutePath)
         final Map artifactsToCopy = new HashMap();
-        // String copyDestAbsolutePath -> Set (ArtifactDownloadReport source)
+        // String copyDestAbsolutePath -> Set (ArtifactRevisionId source)
         final Map conflictsMap = new HashMap(); 
+        // String copyDestAbsolutePath -> Set (ArtifactDownloadReport source)
+        final Map conflictsReportsMap = new HashMap(); 
         // String copyDestAbsolutePath -> Set (String conf)
         final Map conflictsConfMap = new HashMap(); 
         
@@ -299,17 +301,24 @@ public class RetrieveEngine {
                 dest.add(copyDest);
 
                 Set conflicts = (Set) conflictsMap.get(copyDest);
+                Set conflictsReports = (Set) conflictsReportsMap.get(copyDest);
                 Set conflictsConf = (Set) conflictsConfMap.get(copyDest);
                 if (conflicts == null) {
                     conflicts = new HashSet();
                     conflictsMap.put(copyDest, conflicts);
                 }
+                if (conflictsReports == null) {
+                    conflictsReports = new HashSet();
+                    conflictsReportsMap.put(copyDest, conflictsReports);
+                }
                 if (conflictsConf == null) {
                     conflictsConf = new HashSet();
                     conflictsConfMap.put(copyDest, conflictsConf);
                 }
-                conflicts.add(artifact);
-                conflictsConf.add(conf);
+                if (conflicts.add(artifact.getArtifact().getId())) {
+                    conflictsReports.add(artifact);
+                    conflictsConf.add(conf);
+                }
             }
         }
 
@@ -319,7 +328,7 @@ public class RetrieveEngine {
             Set artifacts = (Set) conflictsMap.get(copyDest);
             Set conflictsConfs = (Set) conflictsConfMap.get(copyDest);
             if (artifacts.size() > 1) {
-                List artifactsList = new ArrayList(artifacts);
+                List artifactsList = new ArrayList((Collection) conflictsReportsMap.get(copyDest));
                 // conflicts battle is resolved by a sort using a conflict resolving policy
                 // comparator
                 // which consider as greater a winning artifact

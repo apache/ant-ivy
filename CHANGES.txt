@@ -70,6 +70,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - IMPROVEMENT: Make Ivy standalone runnable with no required dependencies (IVY-757)
 - IMPROVEMENT: add branch attribute in ivy:install task (IVY-727)
 
+- FIX: Ivy reports a conflict when the same file is supposed to be retrieved at the same location twice (or more) (IVY-743)
 - FIX: StackOverflowError when configuration extends itself (IVY-696)
 - FIX: XML schema ambiguity (IVY-750)
 - FIX: ivy-resolve fails when a project has different dependencies in different branches (IVY-717)

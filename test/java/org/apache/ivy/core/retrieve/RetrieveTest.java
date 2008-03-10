@@ -33,6 +33,8 @@ import org.apache.ivy.core.event.retrieve.StartRetrieveEvent;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.report.ResolveReport;
 import org.apache.ivy.core.resolve.ResolveOptions;
+import org.apache.ivy.util.Message;
+import org.apache.ivy.util.MockMessageLogger;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.Delete;
 
@@ -85,6 +87,24 @@ public class RetrieveTest extends TestCase {
         ivy.retrieve(md.getModuleRevisionId(), pattern, getRetrieveOptions());
         assertTrue(new File(IvyPatternHelper.substitute(pattern, "org1", "mod1.2", "2.0", "mod1.2",
             "jar", "jar", "default")).exists());
+    }
+
+    public void testRetrieveSameFileConflict() throws Exception {
+        // mod1.1 depends on mod1.2
+        ResolveReport report = ivy.resolve(new File(
+                "test/repositories/1/org1/mod1.4/ivys/ivy-1.0.1.xml").toURL(),
+            getResolveOptions(new String[] {"*"}));
+        assertNotNull(report);
+        ModuleDescriptor md = report.getModuleDescriptor();
+        assertNotNull(md);
+
+        String pattern = "build/test/retrieve/[module]/[artifact]-[revision].[ext]";
+        MockMessageLogger mockLogger = new MockMessageLogger();
+        Message.setDefaultLogger(mockLogger);
+        ivy.retrieve(md.getModuleRevisionId(), pattern, getRetrieveOptions());
+        assertTrue(new File(IvyPatternHelper.substitute(pattern, "org1", "mod1.2", "2.2", "mod1.2",
+            "jar", "jar", "default")).exists());
+        mockLogger.assertLogDoesntContain("conflict on");
     }
 
     public void testEvent() throws Exception {
