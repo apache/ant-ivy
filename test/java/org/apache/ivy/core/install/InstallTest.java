@@ -88,6 +88,38 @@ public class InstallTest extends TestCase {
         assertTrue(new File("build/test/install/org1/mod1.2/mod1.2-2.0.jar").exists());
     }
 
+    public void testLatestDependenciesNoDefaultResolver() throws Exception {
+        Ivy ivy = Ivy.newInstance();
+        ivy.configure(new File("test/repositories/ivysettings-nodefaultresolver.xml"));
+
+        ivy.install(ModuleRevisionId.newInstance("org1", "mod1.4", "1.0.1"), 
+            "test", "install", new InstallOptions());
+
+        assertTrue(new File("build/test/install/org1/mod1.4/ivy-1.0.1.xml").exists());
+
+        assertTrue(new File("build/test/install/org1/mod1.1/ivy-2.0.xml").exists());
+        assertTrue(new File("build/test/install/org1/mod1.1/mod1.1-2.0.jar").exists());
+
+        assertTrue(new File("build/test/install/org1/mod1.2/ivy-2.2.xml").exists());
+        assertTrue(new File("build/test/install/org1/mod1.2/mod1.2-2.2.jar").exists());
+    }
+
+    public void testLatestDependenciesDummyDefaultResolver() throws Exception {
+        Ivy ivy = Ivy.newInstance();
+        ivy.configure(new File("test/repositories/ivysettings-dummydefaultresolver.xml"));
+
+        ivy.install(ModuleRevisionId.newInstance("org1", "mod1.4", "1.0.1"), 
+            "test", "install", new InstallOptions());
+
+        assertTrue(new File("build/test/install/org1/mod1.4/ivy-1.0.1.xml").exists());
+
+        assertTrue(new File("build/test/install/org1/mod1.1/ivy-2.0.xml").exists());
+        assertTrue(new File("build/test/install/org1/mod1.1/mod1.1-2.0.jar").exists());
+
+        assertTrue(new File("build/test/install/org1/mod1.2/ivy-2.2.xml").exists());
+        assertTrue(new File("build/test/install/org1/mod1.2/mod1.2-2.2.jar").exists());
+    }
+
     public void testNotTransitive() throws Exception {
         Ivy ivy = Ivy.newInstance();
         ivy.configure(new File("test/repositories/ivysettings.xml"));

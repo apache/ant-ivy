@@ -61,6 +61,26 @@ public class IvyInstallTest extends TestCase {
         FileUtil.forceDelete(new File("build/test/install"));
     }
 
+    public void testInstallDummyDefault() {
+        project.setProperty("ivy.settings.file", "test/repositories/ivysettings-dummydefaultresolver.xml");
+        install.setOrganisation("org1");
+        install.setModule("mod1.4");
+        install.setRevision("1.0.1");
+        install.setFrom("test");
+        install.setTo("install");
+        install.setTransitive(true);
+
+        install.execute();
+
+        assertTrue(new File("build/test/install/org1/mod1.4/ivy-1.0.1.xml").exists());
+
+        assertTrue(new File("build/test/install/org1/mod1.1/ivy-2.0.xml").exists());
+        assertTrue(new File("build/test/install/org1/mod1.1/mod1.1-2.0.jar").exists());
+
+        assertTrue(new File("build/test/install/org1/mod1.2/ivy-2.2.xml").exists());
+        assertTrue(new File("build/test/install/org1/mod1.2/mod1.2-2.2.jar").exists());
+    }
+
     public void testInstallWithBranch() {
         project.setProperty("ivy.settings.file", "test/repositories/branches/ivysettings.xml");
         install.setOrganisation("foo");
