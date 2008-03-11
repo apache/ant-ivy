@@ -171,7 +171,12 @@ public final class PomModuleDescriptorParser implements ModuleDescriptorParser {
                         domReader.getParentVersion());
                     ResolvedModuleRevision parentModule = parseOtherPom(ivySettings, 
                         parentModRevID);
-                    parentDescr = parentModule.getDescriptor();
+                    if (parentModule != null) {
+                        parentDescr = parentModule.getDescriptor();
+                    } else {
+                       Message.warn("impossible to load parent for " + descriptorURL + "."
+                           + " Parent=" + parentModRevID); 
+                    }
                 }
                                 
                 Map pomProperties = domReader.getPomProperties();
