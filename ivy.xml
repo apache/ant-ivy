@@ -19,8 +19,11 @@
 <ivy-module version="1.0"> 
 	<info organisation="org.apache.ivy"
 	       module="ivy"
-	       status="integration"
-	/>
+	       status="integration">
+		<description homepage="http://ant.apache.org/ivy/">
+		Apache Ivy is a tool for managing (recording, tracking, resolving and reporting) project dependencies.
+		</description>
+	</info>
 	<configurations>
 		<conf name="core" description="only ivy jar, without any dependencies"/>
 		<conf name="httpclient" extends="core" description="core + optional httpclient for better http handling"/>
