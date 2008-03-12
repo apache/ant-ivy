@@ -134,6 +134,12 @@ public final class PomModuleDescriptorParser implements ModuleDescriptorParser {
                     Message.warn("Resolution will only pick dependencies of the relocated element."
                             + "  Artefact and other metadata will be ignored.");
                     ResolvedModuleRevision relocatedModule = parseOtherPom(ivySettings, relocation);
+                    if (relocatedModule == null) {
+                        throw new ParseException("impossible to load module "
+                            + relocation + " to which " 
+                            + mdBuilder.getModuleDescriptor().getModuleRevisionId()
+                            + " has been relocated", 0);
+                    }
                     DependencyDescriptor[] dds = relocatedModule.getDescriptor().getDependencies();
                     for (int i = 0; i < dds.length; i++) {
                         mdBuilder.addDependency(dds[i]);
