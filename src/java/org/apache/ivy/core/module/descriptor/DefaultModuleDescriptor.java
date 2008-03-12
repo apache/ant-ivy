@@ -167,6 +167,7 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
         }
         nmd.licenses.addAll(Arrays.asList(md.getLicenses()));
         nmd.homePage = md.getHomePage();
+        nmd.description = md.getDescription();
         nmd.lastModified = md.getLastModified();
         nmd.extraAttributesNamespaces = md.getExtraAttributesNamespaces();
         nmd.extraInfo = md.getExtraInfo();
@@ -202,6 +203,8 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
     private List licenses = new ArrayList(); // List(License)
 
     private String homePage;
+
+    private String description = "";
 
     private long lastModified = 0;
 
@@ -483,6 +486,14 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
 
     public void setHomePage(String homePage) {
         this.homePage = homePage;
+    }
+    
+    public String getDescription() {
+        return description;
+    }
+    
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public long getLastModified() {

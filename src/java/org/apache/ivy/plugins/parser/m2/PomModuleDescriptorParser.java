@@ -117,6 +117,9 @@ public final class PomModuleDescriptorParser implements ModuleDescriptorParser {
             String artifactId = domReader.getArtifactId();
             String version = domReader.getVersion();
             mdBuilder.setModuleRevId(groupId , artifactId , version);
+            
+            mdBuilder.setHomePage(domReader.getHomePage());
+            mdBuilder.setDescription(domReader.getDescription());
 
             ModuleRevisionId relocation = domReader.getRelocation();
             

@@ -204,6 +204,10 @@ public class XmlModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         assertEquals("http://www.my.org/mymodule/mylicense.html", licenses[0].getUrl());
 
         assertEquals("http://www.my.org/mymodule/", md.getHomePage());
+        assertEquals("This module is <b>great</b> !<br/>\n\t"
+        		+ "You can use it especially with myconf1 and myconf2, "
+        		+ "and myconf4 is not too bad too.", 
+        		md.getDescription().replace("\n\r", "\n").replace("\r", "\n"));
         
         assertEquals(1, md.getExtraInfo().size());
         assertEquals("56576", md.getExtraInfo().get("e:someExtra"));

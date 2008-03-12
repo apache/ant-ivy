@@ -187,6 +187,14 @@ public class PomModuleDescriptorBuilder {
         mrid = ModuleRevisionId.newInstance(groupId, artifactId, version);
         ivyModuleDescriptor.setModuleRevisionId(mrid);
      }
+    
+    public void setHomePage(String homePage) {
+        ivyModuleDescriptor.setHomePage(homePage);
+    }
+
+    public void setDescription(String description) {
+        ivyModuleDescriptor.setDescription(description);
+    }
 
 
     public void addArtifact(String artifactId, String packaging) {

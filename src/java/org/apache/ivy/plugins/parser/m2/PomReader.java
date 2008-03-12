@@ -53,6 +53,8 @@ public class PomReader {
     private static final String GROUP_ID = "groupId";
     private static final String ARTIFACT_ID = "artifactId";
     private static final String VERSION = "version";
+    private static final String DESCRIPTION = "description";
+    private static final String HOMEPAGE = "url";
     private static final String PARENT = "parent";
     private static final String SCOPE = "scope";
     private static final String CLASSIFIER = "classifier";
@@ -158,6 +160,22 @@ public class PomReader {
             val = "jar";
         }
         return val;
+    }
+    
+    public String getHomePage() {
+        String val = getFirstChildText(projectElement , HOMEPAGE);
+        if (val == null) {
+            val = "";
+        }
+        return val;
+    }
+
+    public String getDescription() {
+        String val = getFirstChildText(projectElement , DESCRIPTION);
+        if (val == null) {
+            val = "";
+        }
+        return val.trim();
     }
 
     

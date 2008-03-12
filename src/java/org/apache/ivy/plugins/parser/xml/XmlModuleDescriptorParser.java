@@ -267,6 +267,7 @@ public final class XmlModuleDescriptorParser extends AbstractModuleDescriptorPar
             try {
                 if (state == DESCRIPTION) {
                     //make sure we don't interpret any tag while in description tag 
+                    buffer.append("<" + qName + ">");
                     return;
                 } else if ("ivy-module".equals(qName)) {
                     ivyModuleStarted(attributes);
@@ -278,6 +279,7 @@ public final class XmlModuleDescriptorParser extends AbstractModuleDescriptorPar
                 } else if (state == INFO && "description".equals(qName)) {
                     getMd().setHomePage(ivy.substitute(attributes.getValue("homepage")));
                     state = DESCRIPTION;
+                    buffer = new StringBuffer();
                 } else if (state == INFO && "ivyauthor".equals(qName)) {
                     // nothing to do, we don't store this
                 } else if (state == INFO && "repository".equals(qName)) {
@@ -779,11 +781,20 @@ public final class XmlModuleDescriptorParser extends AbstractModuleDescriptorPar
             } else if (state == INFO && "info".equals(qName)) {
                 state = NONE;
             } else if (state == DESCRIPTION && "description".equals(qName)) {
+                getMd().setDescription(buffer == null ? "" : buffer.toString().trim());
+                buffer = null;
                 state = INFO;
             } else if (state == EXTRA_INFO) {
                 getMd().addExtraInfo(qName, buffer == null ? "" : buffer.toString());
                 buffer = null;
                 state = INFO;
+            } else if (state == DESCRIPTION) {
+                if (buffer.toString().endsWith("<" + qName + ">")) {
+                    buffer.deleteCharAt(buffer.length() - 1);
+                    buffer.append("/>");
+                } else {
+                    buffer.append("</" + qName + ">");
+                }
             }
         }
 

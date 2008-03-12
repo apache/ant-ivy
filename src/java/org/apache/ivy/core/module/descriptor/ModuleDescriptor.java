@@ -151,6 +151,8 @@ public interface ModuleDescriptor extends ExtendableItem, ArtifactInfo {
     License[] getLicenses();
 
     String getHomePage();
+    
+    String getDescription();
 
     long getLastModified();
 

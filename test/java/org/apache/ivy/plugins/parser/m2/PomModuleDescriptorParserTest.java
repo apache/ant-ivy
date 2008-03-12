@@ -465,6 +465,22 @@ public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         assertEquals(0, dds.length);
     }
 
+    public void testHomeAndDescription() throws Exception {
+        ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(
+            settings, getClass().getResource("mule-1.3.3.pom"), false);
+        assertNotNull(md);
+
+        assertEquals(ModuleRevisionId.newInstance("org.mule", "mule", "1.3.3"), md
+                .getModuleRevisionId());
+
+        assertEquals("http://mule.mulesource.org", md.getHomePage());
+        assertEquals("Mule is a simple yet robust and highly scalable Integration and ESB services "
+        		+ "framework. It is designed\n        as a light-weight, event-driven component " 
+        		+ "technology that handles communication with disparate systems\n        " 
+        		+ "transparently providing a simple component interface.", 
+        		md.getDescription().replace("\n\r", "\n").replace("\r", "\n"));
+    }
+
     
     public void testDependencyManagment() throws ParseException, IOException {
         ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(
