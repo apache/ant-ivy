@@ -56,7 +56,7 @@ public/* @Immutable */final class ExactOrRegexpPatternMatcher extends AbstractPa
         }
 
         public boolean isExact() {
-            return false;
+            return regexp.isExact(); // && exact.isExact();
         }
     }
 }

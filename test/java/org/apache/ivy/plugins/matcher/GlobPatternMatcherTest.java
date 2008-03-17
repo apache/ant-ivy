@@ -25,11 +25,20 @@ import java.util.regex.PatternSyntaxException;
 public class GlobPatternMatcherTest extends AbstractPatternMatcherTest {
 
     protected void setUp() throws Exception {
-        setUp(new GlobPatternMatcher(), false);
+        setUp(new GlobPatternMatcher());
+    }
+
+    protected String[] getExactExpressions() {
+        return new String[] {"abc", "123", "abc-123", "abc_123"};
+    }
+
+    protected String[] getInexactExpressions() {
+        return new String[] {"abc*", "12?3", "abc[123]"};
     }
 
     public void testValidRegexpSyntaxAsNormalCharacter() {
         Matcher matcher = patternMatcher.getMatcher(".");
+        assertTrue(matcher.isExact());
         assertFalse(matcher.matches(""));
         assertTrue(matcher.matches("."));
         assertFalse(matcher.matches("a"));
@@ -38,6 +47,7 @@ public class GlobPatternMatcherTest extends AbstractPatternMatcherTest {
 
     public void testRegexpSyntaxAndGlob() {
         Matcher matcher = patternMatcher.getMatcher(".*");
+        assertFalse(matcher.isExact());
         assertTrue(matcher.matches(".*"));
         assertFalse(matcher.matches(""));
         assertFalse(matcher.matches("a"));
@@ -47,6 +57,8 @@ public class GlobPatternMatcherTest extends AbstractPatternMatcherTest {
     }
 
     public void testImplementation() {
+        Matcher matcher = patternMatcher.getMatcher("abc-123_ABC");
+        assertTrue(matcher.isExact());
     }
 
     public void testQuoteMeta() {

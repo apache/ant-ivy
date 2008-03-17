@@ -56,8 +56,12 @@ public/* @Immutable */final class GlobPatternMatcher extends AbstractPatternMatc
 
     private static class GlobMatcher implements Matcher {
         private Pattern pattern;
+        private String expression;
 
+        private Boolean exact;
+        
         public GlobMatcher(String expression) throws PatternSyntaxException {
+            this.expression = expression;
             try {
                 pattern = new GlobCompiler().compile(expression);
             } catch (MalformedPatternException e) {
@@ -73,7 +77,25 @@ public/* @Immutable */final class GlobPatternMatcher extends AbstractPatternMatc
         }
 
         public boolean isExact() {
-            return false;
+            if (exact == null) {
+                exact = calculateExact();
+            }
+            return exact.booleanValue();
+        }
+        
+        private Boolean calculateExact() {
+            Boolean result = Boolean.TRUE;
+            
+            char[] expressionChars = expression.toCharArray();
+            for (int i = 0; i < expressionChars.length; i++) {
+                char ch = expressionChars[i];
+                if (ch == '*' || ch == '?' || ch == '[' || ch == ']') {
+                    result = Boolean.FALSE;
+                    break;
+                }
+            }
+            
+            return result;
         }
     }
 

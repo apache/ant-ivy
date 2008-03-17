@@ -23,7 +23,15 @@ package org.apache.ivy.plugins.matcher;
 public class ExactPatternMatcherTest extends AbstractPatternMatcherTest {
 
     protected void setUp() throws Exception {
-        setUp(new ExactPatternMatcher(), true);
+        setUp(new ExactPatternMatcher());
+    }
+
+    protected String[] getExactExpressions() {
+        return new String[] {"abc", "123", "abc-123", "abc_123"};
+    }
+
+    protected String[] getInexactExpressions() {
+        return new String[0]; // there are no inexact expressions possible
     }
 
     public void testImplementation() {

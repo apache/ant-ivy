@@ -25,22 +25,35 @@ import java.util.regex.PatternSyntaxException;
 public class ExactOrRegexpPatternMatcherTest extends AbstractPatternMatcherTest {
 
     protected void setUp() throws Exception {
-        setUp(new ExactOrRegexpPatternMatcher(), false);
+        setUp(new ExactOrRegexpPatternMatcher());
+    }
+
+    protected String[] getExactExpressions() {
+        return new String[] {"abc", "123", "abc-123", "abc_123"};
+    }
+
+    protected String[] getInexactExpressions() {
+        return new String[] {"abc+", "12.3", "abc-123*", "abc_123\\d"};
     }
 
     public void testImplementation() {
         Matcher matcher = patternMatcher.getMatcher(".");
+        assertFalse(matcher.isExact());
         assertFalse(matcher.matches(""));
         assertTrue("Exact match failed", matcher.matches("."));
         assertTrue("Regexp match failed", matcher.matches("a"));
         assertFalse(matcher.matches("aa"));
 
         matcher = patternMatcher.getMatcher(".*");
+        assertFalse(matcher.isExact());
         assertTrue("Exact match failed", matcher.matches(".*"));
         assertTrue("Regexp match failed", matcher.matches(""));
         assertTrue(matcher.matches("a"));
         assertTrue(matcher.matches("aa"));
 
+        matcher = patternMatcher.getMatcher("abc-123_ABC");
+        assertTrue(matcher.isExact());
+        
         try {
             matcher = patternMatcher.getMatcher("(");
             fail("Should fail on invalid regexp syntax");

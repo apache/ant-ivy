@@ -25,13 +25,10 @@ import junit.framework.TestCase;
 public abstract class AbstractPatternMatcherTest extends TestCase {
     protected PatternMatcher patternMatcher;
 
-    protected boolean exact;
-
     protected abstract void setUp() throws Exception;
 
-    protected void setUp(PatternMatcher matcher, boolean exact) {
+    protected void setUp(PatternMatcher matcher) {
         this.patternMatcher = matcher;
-        this.exact = exact;
     }
 
     public void testAnyExpression() {
@@ -42,16 +39,34 @@ public abstract class AbstractPatternMatcherTest extends TestCase {
     }
 
     public void testIsExact() {
+        // '*' is a special matcher
         Matcher matcher = patternMatcher.getMatcher("*");
         assertEquals(false, matcher.isExact());
         matcher.matches("The words aren't what they were.");
         assertEquals(false, matcher.isExact());
 
-        matcher = patternMatcher.getMatcher("some expression");
-        assertEquals(exact, matcher.isExact());
-        matcher.matches("The words aren't what they were.");
-        assertEquals(exact, matcher.isExact());
+        // test some exact patterns for this matcher
+        String[] expressions = getExactExpressions();
+        for (int i = 0; i < expressions.length; i++) {
+            matcher = patternMatcher.getMatcher(expressions[i]);
+            assertTrue("Expression '" + expressions[i] + "' should be exact", matcher.isExact());
+            matcher.matches("The words aren't what they were.");
+            assertTrue("Expression '" + expressions[i] + "' should be exact", matcher.isExact());
+        }
+        
+        // test some inexact patterns for this matcher
+        expressions = getInexactExpressions();
+        for (int i = 0; i < expressions.length; i++) {
+            matcher = patternMatcher.getMatcher(expressions[i]);
+            assertFalse("Expression '" + expressions[i] + "' should be inexact", matcher.isExact());
+            matcher.matches("The words aren't what they were.");
+            assertFalse("Expression '" + expressions[i] + "' should be inexact", matcher.isExact());
+        }
+        
     }
+
+    protected abstract String[] getExactExpressions();
+    protected abstract String[] getInexactExpressions();
 
     public void testNullInput() {
         Matcher matcher = patternMatcher.getMatcher("some expression");

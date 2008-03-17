@@ -27,7 +27,7 @@ import java.util.regex.PatternSyntaxException;
  */
 public final/* @Immutable */class RegexpPatternMatcher extends AbstractPatternMatcher {
     public static final RegexpPatternMatcher INSTANCE = new RegexpPatternMatcher();
-
+    
     /*
      * NOTE: Regexp compiler does ~200K compilation/s - If necessary look into using ThreadLocal
      * Pattern to cut on useless object creation - If expression are reused over and over a LRU
@@ -44,11 +44,15 @@ public final/* @Immutable */class RegexpPatternMatcher extends AbstractPatternMa
 
     private static/* @Immutable */class RegexpMatcher implements Matcher {
         private Pattern pattern;
+        private String expression;
+        
+        private Boolean exact;
 
         public RegexpMatcher(String expression) throws PatternSyntaxException {
             if (expression == null) {
                 throw new NullPointerException();
             }
+            this.expression = expression;
             pattern = Pattern.compile(expression);
         }
 
@@ -60,7 +64,25 @@ public final/* @Immutable */class RegexpPatternMatcher extends AbstractPatternMa
         }
 
         public boolean isExact() {
-            return false;
+            if (exact == null) {
+                exact = calculateExact();
+            }
+            return exact.booleanValue();
+        }
+        
+        private Boolean calculateExact() {
+            Boolean result = Boolean.TRUE;
+            
+            char[] expressionChars = expression.toCharArray();
+            for (int i = 0; i < expressionChars.length; i++) {
+                char ch = expressionChars[i];
+                if (!Character.isLetterOrDigit(ch) && !Character.isWhitespace(ch) && ('-' != ch) && ('_' != ch)) {
+                    result = Boolean.FALSE;
+                    break;
+                }
+            }
+            
+            return result;
         }
     }
 }

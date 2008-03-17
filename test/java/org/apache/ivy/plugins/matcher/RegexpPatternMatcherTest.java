@@ -25,7 +25,15 @@ import java.util.regex.PatternSyntaxException;
 public class RegexpPatternMatcherTest extends AbstractPatternMatcherTest {
 
     protected void setUp() throws Exception {
-        setUp(new RegexpPatternMatcher(), false);
+        setUp(new RegexpPatternMatcher());
+    }
+
+    protected String[] getExactExpressions() {
+        return new String[] {"abc", "123", "abc-123", "abc_123"};
+    }
+
+    protected String[] getInexactExpressions() {
+        return new String[] {"abc+", "12.3", "abc-123*", "abc_123\\d"};
     }
 
     public void testImplementation() {
