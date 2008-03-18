@@ -115,6 +115,22 @@ public class IvyResolveTest extends TestCase {
         assertTrue(getArchiveFileInCache("org1", "mod1.2", "2.0", "mod1.2", "jar", "jar").exists());
     }
 
+    public void testInlineWithResolveId() throws Exception {
+        // same as before, but expressing dependency directly without ivy file
+        resolve.setOrganisation("org1");
+        resolve.setModule("mod1.2");
+        resolve.setRevision("2.0");
+        resolve.setInline(true);
+        resolve.setResolveId("testInlineWithResolveId");
+        resolve.setKeep(true);
+        resolve.execute();
+
+        // dependencies
+        assertTrue(getIvyFileInCache(ModuleRevisionId.newInstance("org1", "mod1.2", "2.0"))
+                .exists());
+        assertTrue(getArchiveFileInCache("org1", "mod1.2", "2.0", "mod1.2", "jar", "jar").exists());
+    }
+
     public void testInlineForNonExistingModule() throws Exception {
         resolve.setOrganisation("org1XX");
         resolve.setModule("mod1.2");

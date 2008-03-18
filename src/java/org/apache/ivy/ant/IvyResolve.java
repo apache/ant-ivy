@@ -299,10 +299,12 @@ public class IvyResolve extends IvyTask {
                                 .setProperty("ivy.resolved.configurations." + resolveId, conf);
                         settings.setVariable("ivy.resolved.configurations." + resolveId, conf);
                     }
-                    getProject().setProperty("ivy.resolved.file." + resolveId,
-                        file.getAbsolutePath());
-                    settings
-                            .setVariable("ivy.resolved.file." + resolveId, file.getAbsolutePath());
+                    if (file != null) {
+                        getProject().setProperty("ivy.resolved.file." + resolveId,
+                            file.getAbsolutePath());
+                        settings
+                                .setVariable("ivy.resolved.file." + resolveId, file.getAbsolutePath());
+                    }
                 }
             }
         } catch (MalformedURLException e) {

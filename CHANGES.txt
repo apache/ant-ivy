@@ -73,6 +73,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - IMPROVEMENT: Parse description and home page from poms (IVY-767)
 - IMPROVEMENT: Smarter determination if an expression is exact or not for RegexpPatternMatcher and GlobPatternMatcher
 
+- FIX: NPE when specifying both resolveId and inline in an Ivy:Resolve (IVY-776)
 - FIX: repreport task not working against a repository structured by branches (IVY-716)
 - FIX: Ivy reports a conflict when the same file is supposed to be retrieved at the same location twice (or more) (IVY-743)
 - FIX: StackOverflowError when configuration extends itself (IVY-696)
