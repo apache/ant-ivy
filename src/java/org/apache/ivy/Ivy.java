@@ -295,7 +295,7 @@ public class Ivy {
             }
             if (installEngine == null) {
                 installEngine = new InstallEngine(
-                    settings, searchEngine, resolveEngine, publishEngine);
+                    settings, searchEngine, resolveEngine);
             }
             if (repositoryEngine == null) {
                 repositoryEngine = new RepositoryManagementEngine(

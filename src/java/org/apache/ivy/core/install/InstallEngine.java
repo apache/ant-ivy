@@ -20,9 +20,7 @@ package org.apache.ivy.core.install;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Date;
-import java.util.Iterator;
 
 import org.apache.ivy.core.module.descriptor.Configuration;
 import org.apache.ivy.core.module.descriptor.DefaultDependencyDescriptor;
@@ -30,7 +28,6 @@ import org.apache.ivy.core.module.descriptor.DefaultModuleDescriptor;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleId;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
-import org.apache.ivy.core.publish.PublishEngine;
 import org.apache.ivy.core.report.ArtifactDownloadReport;
 import org.apache.ivy.core.report.ResolveReport;
 import org.apache.ivy.core.resolve.DownloadOptions;
@@ -50,16 +47,13 @@ public class InstallEngine {
 
     private ResolveEngine resolveEngine;
 
-    private PublishEngine publishEngine;
-
     private SearchEngine searchEngine;
 
     public InstallEngine(InstallEngineSettings settings, SearchEngine searchEngine,
-            ResolveEngine resolveEngine, PublishEngine publishEngine) {
+            ResolveEngine resolveEngine) {
         this.settings = settings;
         this.searchEngine = searchEngine;
         this.resolveEngine = resolveEngine;
-        this.publishEngine = publishEngine;
     }
 
     public ResolveReport install(ModuleRevisionId mrid, String from, String to, 
