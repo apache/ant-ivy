@@ -20,12 +20,15 @@ package org.apache.ivy.ant;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.ivy.Ivy;
 import org.apache.ivy.core.cache.ResolutionCacheManager;
 import org.apache.ivy.core.module.descriptor.DefaultModuleDescriptor;
+import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleId;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.report.ResolveReport;
@@ -87,18 +90,24 @@ public class IvyRepositoryReport extends IvyTask {
         ModuleRevisionId mrid = ModuleRevisionId.newInstance(organisation, module, revision);
 
         try {
-            ModuleId[] mids = ivy.listModules(new ModuleId(organisation, module), settings
-                    .getMatcher(matcher));
-            ModuleRevisionId[] mrids = new ModuleRevisionId[mids.length];
-            for (int i = 0; i < mrids.length; i++) {
-                if (branch != null) {
-                    mrids[i] = new ModuleRevisionId(mids[i], branch, revision);
-                } else {
-                    mrids[i] = new ModuleRevisionId(mids[i], revision);
-                }
+            ModuleRevisionId criteria = null;
+            
+            if ((revision == null) || settings.getVersionMatcher().isDynamic(mrid)) {
+                criteria = new ModuleRevisionId(new ModuleId(organisation, module), branch, "*");
+            } else {
+                criteria = new ModuleRevisionId(new ModuleId(organisation, module), branch, revision);
             }
-            DefaultModuleDescriptor md = DefaultModuleDescriptor.newCallerInstance(mrids, true,
-                false);
+            
+            ModuleRevisionId[] mrids = ivy.listModules(criteria, settings.getMatcher(matcher));
+            
+            // replace all found revisions with the original requested revision
+            Set modules = new HashSet();
+            for (int i = 0; i < mrids.length; i++) {
+                modules.add(ModuleRevisionId.newInstance(mrids[i], revision));
+            }
+            
+            mrids = (ModuleRevisionId[]) modules.toArray(new ModuleRevisionId[modules.size()]);
+            ModuleDescriptor md = DefaultModuleDescriptor.newCallerInstance(mrids, true, false);
             String resolveId = ResolveOptions.getDefaultResolveId(md);
             ResolveReport report = ivy.resolve(md, 
                 new ResolveOptions()

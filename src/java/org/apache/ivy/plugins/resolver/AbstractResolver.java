@@ -155,6 +155,10 @@ public abstract class AbstractResolver implements DependencyResolver, HasLatestS
         return new String[0];
     }
 
+    public Map[] listTokenValues(String[] tokens, Map criteria) {
+        return new Map[0];
+    }
+    
     public OrganisationEntry[] listOrganisations() {
         return new OrganisationEntry[0];
     }

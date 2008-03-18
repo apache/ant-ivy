@@ -17,10 +17,13 @@
  */
 package org.apache.ivy.ant;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 
 import junit.framework.TestCase;
 
+import org.apache.ivy.util.FileUtil;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.Delete;
 
@@ -55,36 +58,56 @@ public class IvyRepositoryReportTest extends TestCase {
         del.execute();
     }
 
-    public void test() {
-    }
+    public void testSimple() throws Exception {
+        report.setOrganisation("org1");
+        report.setOutputname("testsimple");
+        report.setTodir(cache);
+        report.execute();
 
-    // no xslt transformation is possible in the junit test on our continuous integration server for
-    // the moment...
-    // public void testGraph() throws Exception {
-    // _report.setOrganisation("org1");
-    // _report.setXml(false);
-    // _report.setGraph(true);
-    // _report.setTodir(_cache);
-    // _report.setOutputname("test-graph");
-    // _report.execute();
-    // File graphml = new File(_cache, "test-graph.graphml");
-    // assertTrue(graphml.exists());
-    // String g = FileUtil.readEntirely(new BufferedReader(new FileReader(graphml)));
-    // assertFalse(g.indexOf("caller") != -1);
-    // assertTrue(g.indexOf("mod1.1") != -1);
-    // }
-    //
-    // public void testDot() throws Exception {
-    // _report.setOrganisation("org1");
-    // _report.setXml(false);
-    // _report.setDot(true);
-    // _report.setTodir(_cache);
-    // _report.setOutputname("test-graph");
-    // _report.execute();
-    // File dot = new File(_cache, "test-graph.dot");
-    // assertTrue(dot.exists());
-    // String g = FileUtil.readEntirely(new BufferedReader(new FileReader(dot)));
-    // assertFalse(g.indexOf("caller") != -1);
-    // assertTrue(g.indexOf("mod1.1") != -1);
-    // }
+        File reportFile = new File(cache, "testsimple.xml");
+        assertTrue(reportFile.exists());
+        String g = FileUtil.readEntirely(new BufferedReader(new FileReader(reportFile)));
+        
+        // check presence of the modules
+        assertTrue(g.indexOf("<module organisation=\"org1\" name=\"mod1.1\"") != -1);
+        assertTrue(g.indexOf("<module organisation=\"org1\" name=\"mod1.2\"") != -1);
+        assertTrue(g.indexOf("<module organisation=\"org1\" name=\"mod1.3\"") != -1);
+        assertTrue(g.indexOf("<module organisation=\"org1\" name=\"mod1.4\"") != -1);
+        assertTrue(g.indexOf("<module organisation=\"org1\" name=\"mod1.5\"") != -1);
+        assertTrue(g.indexOf("<module organisation=\"org1\" name=\"mod1.6\"") != -1);
+    }
+    
+    public void testBranchBeforeModule() throws Exception {
+        report.getProject().setProperty("ivy.settings.file", "test/repositories/IVY-716/ivysettings.xml");
+        report.setOutputname("testbranch");
+        report.setTodir(cache);
+        report.execute();
+
+        File reportFile = new File(cache, "testbranch.xml");
+        assertTrue(reportFile.exists());
+        String g = FileUtil.readEntirely(new BufferedReader(new FileReader(reportFile)));
+        
+        // check presence of the modules
+        assertTrue(g.indexOf("<module organisation=\"org1\" name=\"mod1.1\"") != -1);
+        
+        // check presence of the branches
+        assertTrue(g.indexOf("<revision name=\"1.0\" branch=\"branch1\"") != -1);
+        assertTrue(g.indexOf("<revision name=\"1.0\" branch=\"branch2\"") != -1);
+    }
+    
+    public void testPatternWithoutOrganisation() throws Exception {
+        report.getProject().setProperty("ivy.settings.file", "test/repositories/IVY-729/ivysettings.xml");
+        report.setOutputname("test-no-org");
+        report.setTodir(cache);
+        report.execute();
+
+        File reportFile = new File(cache, "test-no-org.xml");
+        assertTrue(reportFile.exists());
+        String g = FileUtil.readEntirely(new BufferedReader(new FileReader(reportFile)));
+        
+        // check presence of the modules
+        assertTrue(g.indexOf("<module organisation=\"null\" name=\"a\"") != -1);
+        assertTrue(g.indexOf("<module organisation=\"null\" name=\"b\"") != -1);
+        assertTrue(g.indexOf("<module organisation=\"null\" name=\"c\"") != -1);
+    }
 }

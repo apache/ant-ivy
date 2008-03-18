@@ -457,4 +457,19 @@ public final class IvyPatternHelper {
             return pattern.substring(0, index);
         }
     }
+    
+    public static String getFirstToken(String pattern) {
+        if (pattern == null) {
+            return null;
+        }
+        int startIndex = pattern.indexOf('[');
+        if (startIndex == -1) {
+            return null;
+        }
+        int endIndex = pattern.indexOf(']', startIndex);
+        if (endIndex == -1) {
+            return null;
+        }
+        return pattern.substring(startIndex + 1, endIndex);
+    }
 }

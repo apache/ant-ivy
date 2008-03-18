@@ -18,6 +18,7 @@
 package org.apache.ivy.plugins.resolver;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -28,6 +29,7 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.Map.Entry;
 
 import org.apache.ivy.core.IvyContext;
 import org.apache.ivy.core.IvyPatternHelper;
@@ -40,6 +42,7 @@ import org.apache.ivy.core.resolve.IvyNode;
 import org.apache.ivy.core.resolve.ResolveData;
 import org.apache.ivy.core.settings.IvyPattern;
 import org.apache.ivy.plugins.conflict.ConflictManager;
+import org.apache.ivy.plugins.matcher.Matcher;
 import org.apache.ivy.plugins.resolver.util.MDResolvedResource;
 import org.apache.ivy.plugins.resolver.util.ResolvedResource;
 import org.apache.ivy.plugins.resolver.util.ResourceMDParser;
@@ -238,6 +241,99 @@ public abstract class AbstractResourceResolver extends BasicResolver {
         filterNames(names);
         return names;
     }
+
+    public Map[] listTokenValues(String[] tokens, Map criteria) {
+        Set result = new HashSet();
+        
+        // use ivy patterns
+        List ivyPatterns = getIvyPatterns();
+        Map tokenValues = new HashMap(criteria);
+        tokenValues.put(IvyPatternHelper.TYPE_KEY, "ivy");
+        tokenValues.put(IvyPatternHelper.EXT_KEY, "xml");
+        for (Iterator it = ivyPatterns.iterator(); it.hasNext(); ) {
+            String ivyPattern = (String) it.next();
+            result.addAll(resolveTokenValues(tokens, ivyPattern, tokenValues, false));
+        }
+        
+        if (isAllownomd()) {
+            List artifactPatterns = getArtifactPatterns();
+            tokenValues = new HashMap(criteria);
+            tokenValues.put(IvyPatternHelper.TYPE_KEY, "jar");
+            tokenValues.put(IvyPatternHelper.EXT_KEY, "jar");
+            for (Iterator it = artifactPatterns.iterator(); it.hasNext(); ) {
+                String artifactPattern = (String) it.next();
+                result.addAll(resolveTokenValues(tokens, artifactPattern, tokenValues, true));
+            }
+        }
+        
+        return (Map[]) result.toArray(new Map[result.size()]);
+    }
+    
+    private Set resolveTokenValues(String[] tokens, String pattern, Map criteria, boolean noMd) {
+        Set result = new HashSet();
+        Set tokenSet = new HashSet(Arrays.asList(tokens));
+        
+        Map tokenValues = new HashMap();
+        for (Iterator it = criteria.entrySet().iterator(); it.hasNext(); ) {
+            Map.Entry entry = (Entry) it.next();
+            Object key = entry.getKey();
+            Object value = entry.getValue();
+            if (value instanceof String) {
+                tokenValues.put(key, value);
+            }
+        }
+        
+        if (tokenSet.isEmpty()) {
+            // no more tokens to resolve
+            result.add(tokenValues);
+            return result;
+        }
+        
+        String partiallyResolvedPattern = IvyPatternHelper.substituteTokens(pattern, tokenValues);
+        String token = IvyPatternHelper.getFirstToken(partiallyResolvedPattern);
+        if ((token == null) && exist(partiallyResolvedPattern)) {
+            // no more tokens to resolve
+            result.add(tokenValues);
+            return result;
+        }
+        
+        tokenSet.remove(token);
+
+        Matcher matcher = null;
+        Object criteriaForToken = criteria.get(token);
+        if (criteriaForToken instanceof Matcher) {
+            matcher = (Matcher) criteriaForToken;
+        }
+
+        String[] values = listTokenValues(partiallyResolvedPattern, token);
+        if (values == null) {
+            return result;
+        }
+
+        for (int i = 0; i < values.length; i++) {
+            if ((matcher != null) && !matcher.matches(values[i])) {
+                continue;
+            }
+            
+            tokenValues.put(token, values[i]);
+            String moreResolvedPattern = IvyPatternHelper.substituteTokens(partiallyResolvedPattern, tokenValues);
+
+            Map newCriteria = new HashMap(criteria);
+            newCriteria.put(token, values[i]);
+            if (noMd && "artifact".equals(token)) {
+                newCriteria.put("module", values[i]);
+            } else if (noMd && "module".equals(token)) {
+                newCriteria.put("artifact", values[i]);
+            }
+            result.addAll(resolveTokenValues((String[]) tokenSet.toArray(new String[tokenSet.size()]), moreResolvedPattern, newCriteria, noMd));
+        }
+
+        return result;
+    }
+    
+    protected abstract String[] listTokenValues(String pattern, String token);
+    
+    protected abstract boolean exist(String path);
 
     /**
      * Filters names before returning them in the findXXXNames or findTokenValues method.

@@ -230,6 +230,19 @@ public class RepositoryResolver extends AbstractResourceResolver {
             }
         }
     }
+
+    protected String[] listTokenValues(String pattern, String token) {
+        return ResolverHelper.listTokenValues(repository, pattern, token);
+    }
+    
+    protected boolean exist(String path) {
+        try {
+            Resource resource = repository.getResource(path);
+            return resource.exists();
+        } catch (IOException e) {
+            return false;
+        }
+    }
     
     public String getTypeName() {
         return "repository";

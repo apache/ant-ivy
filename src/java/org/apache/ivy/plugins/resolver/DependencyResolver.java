@@ -104,13 +104,15 @@ public interface DependencyResolver {
      * bar from the org foo.
      */
     String[] listTokenValues(String token, Map otherTokenValues);
+    
+    Map[] listTokenValues(String[] tokens, Map criteria);
 
     OrganisationEntry[] listOrganisations();
 
     ModuleEntry[] listModules(OrganisationEntry org);
 
     RevisionEntry[] listRevisions(ModuleEntry module);
-
+    
     void dumpSettings();
     
     void setSettings(ResolverSettings settings);

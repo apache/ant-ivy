@@ -103,12 +103,11 @@ public class InstallEngine {
                 dd.addDependencyConfiguration("default", "*");
                 md.addDependency(dd);
             } else {
-                Collection mrids = searchEngine.findModuleRevisionIds(fromResolver, mrid, matcher);
+                ModuleRevisionId[] mrids = searchEngine.listModules(fromResolver, mrid, matcher);
 
-                for (Iterator iter = mrids.iterator(); iter.hasNext();) {
-                    ModuleRevisionId foundMrid = (ModuleRevisionId) iter.next();
-                    Message.info("\tfound " + foundMrid + " to install: adding to the list");
-                    DefaultDependencyDescriptor dd = new DefaultDependencyDescriptor(md, foundMrid,
+                for (int i = 0; i < mrids.length; i++) {
+                    Message.info("\tfound " + mrids[i] + " to install: adding to the list");
+                    DefaultDependencyDescriptor dd = new DefaultDependencyDescriptor(md, mrids[i],
                             false, false, options.isTransitive());
                     dd.addDependencyConfiguration("default", "*");
                     md.addDependency(dd);

@@ -23,9 +23,9 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.ivy.core.IvyPatternHelper;
 import org.apache.ivy.core.module.id.ModuleId;
@@ -55,90 +55,120 @@ public class SearchEngine {
      * @return
      */
     public String[] listTokenValues(String token, Map otherTokenValues) {
-        Collection r = new LinkedHashSet();
+        Set entries = new HashSet();
+        
         for (Iterator iter = settings.getResolvers().iterator(); iter.hasNext();) {
             DependencyResolver resolver = (DependencyResolver) iter.next();
-            r.addAll(Arrays.asList(resolver.listTokenValues(token, otherTokenValues)));
+            Map[] values = resolver.listTokenValues(new String[] {token}, new HashMap());
+            for (int i = 0; i < values.length; i++) {
+                entries.add(values[i].get(token));
+            }
         }
-        return (String[]) r.toArray(new String[r.size()]);
+        
+        return (String[]) entries.toArray(new String[entries.size()]);
     }
 
     public OrganisationEntry[] listOrganisationEntries() {
-        List entries = new ArrayList();
+        Set entries = new HashSet();
+
         for (Iterator iter = settings.getResolvers().iterator(); iter.hasNext();) {
             DependencyResolver resolver = (DependencyResolver) iter.next();
-            entries.addAll(Arrays.asList(resolver.listOrganisations()));
+            Map[] orgs = resolver.listTokenValues(new String[] {IvyPatternHelper.ORGANISATION_KEY}, new HashMap());
+            for (int i = 0; i < orgs.length; i++) {
+                String org = (String) orgs[i].get(IvyPatternHelper.ORGANISATION_KEY);
+                entries.add(new OrganisationEntry(resolver, org));
+            }
         }
+
         return (OrganisationEntry[]) entries.toArray(new OrganisationEntry[entries.size()]);
     }
 
     public String[] listOrganisations() {
-        Collection orgs = new HashSet();
+        Set entries = new HashSet();
+
         for (Iterator iter = settings.getResolvers().iterator(); iter.hasNext();) {
             DependencyResolver resolver = (DependencyResolver) iter.next();
-            OrganisationEntry[] entries = resolver.listOrganisations();
-            if (entries != null) {
-                for (int i = 0; i < entries.length; i++) {
-                    if (entries[i] != null) {
-                        orgs.add(entries[i].getOrganisation());
-                    }
-                }
+            Map[] orgs = resolver.listTokenValues(new String[] {IvyPatternHelper.ORGANISATION_KEY}, new HashMap());
+            for (int i = 0; i < orgs.length; i++) {
+                entries.add(orgs[i].get(IvyPatternHelper.ORGANISATION_KEY));
             }
         }
-        return (String[]) orgs.toArray(new String[orgs.size()]);
+
+        return (String[]) entries.toArray(new String[entries.size()]);
     }
 
     public ModuleEntry[] listModuleEntries(OrganisationEntry org) {
-        List entries = new ArrayList();
+        Set entries = new HashSet();
+
+        Map tokenValues = new HashMap();
+        tokenValues.put(IvyPatternHelper.ORGANISATION_KEY, org.getOrganisation());
+        
         for (Iterator iter = settings.getResolvers().iterator(); iter.hasNext();) {
             DependencyResolver resolver = (DependencyResolver) iter.next();
-            entries.addAll(Arrays.asList(resolver.listModules(org)));
+            Map[] modules = resolver.listTokenValues(new String[] {IvyPatternHelper.MODULE_KEY}, tokenValues);
+            for (int i = 0; i < modules.length; i++) {
+                String module = (String) modules[i].get(IvyPatternHelper.MODULE_KEY);
+                entries.add(new ModuleEntry(org, module));
+            }
         }
+
         return (ModuleEntry[]) entries.toArray(new ModuleEntry[entries.size()]);
     }
 
     public String[] listModules(String org) {
-        List mods = new ArrayList();
+        Set entries = new HashSet();
+
+        Map tokenValues = new HashMap();
+        tokenValues.put(IvyPatternHelper.ORGANISATION_KEY, org);
+        
         for (Iterator iter = settings.getResolvers().iterator(); iter.hasNext();) {
             DependencyResolver resolver = (DependencyResolver) iter.next();
-            ModuleEntry[] entries = resolver.listModules(new OrganisationEntry(resolver, org));
-            if (entries != null) {
-                for (int i = 0; i < entries.length; i++) {
-                    if (entries[i] != null) {
-                        mods.add(entries[i].getModule());
-                    }
-                }
+            Map[] modules = resolver.listTokenValues(new String[] {IvyPatternHelper.MODULE_KEY}, tokenValues);
+            for (int i = 0; i < modules.length; i++) {
+                entries.add(modules[i].get(IvyPatternHelper.MODULE_KEY));
             }
         }
-        return (String[]) mods.toArray(new String[mods.size()]);
-    }
 
+        return (String[]) entries.toArray(new String[entries.size()]);
+    }
+    
     public RevisionEntry[] listRevisionEntries(ModuleEntry module) {
-        List entries = new ArrayList();
+        Set entries = new HashSet();
+
+        Map tokenValues = new HashMap();
+        tokenValues.put(IvyPatternHelper.ORGANISATION_KEY, module.getOrganisation());
+        tokenValues.put(IvyPatternHelper.MODULE_KEY, module.getModule());
+        
         for (Iterator iter = settings.getResolvers().iterator(); iter.hasNext();) {
             DependencyResolver resolver = (DependencyResolver) iter.next();
-            entries.addAll(Arrays.asList(resolver.listRevisions(module)));
+            Map[] revisions = resolver.listTokenValues(new String[] {IvyPatternHelper.REVISION_KEY}, tokenValues);
+            for (int i = 0; i < revisions.length; i++) {
+                String revision = (String) revisions[i].get(IvyPatternHelper.REVISION_KEY);
+                entries.add(new RevisionEntry(module, revision));
+            }
         }
+
         return (RevisionEntry[]) entries.toArray(new RevisionEntry[entries.size()]);
     }
 
     public String[] listRevisions(String org, String module) {
-        List revs = new ArrayList();
+        Set entries = new HashSet();
+
+        Map tokenValues = new HashMap();
+        tokenValues.put(IvyPatternHelper.ORGANISATION_KEY, org);
+        tokenValues.put(IvyPatternHelper.MODULE_KEY, module);
+        
         for (Iterator iter = settings.getResolvers().iterator(); iter.hasNext();) {
             DependencyResolver resolver = (DependencyResolver) iter.next();
-            RevisionEntry[] entries = resolver.listRevisions(new ModuleEntry(new OrganisationEntry(
-                    resolver, org), module));
-            if (entries != null) {
-                for (int i = 0; i < entries.length; i++) {
-                    if (entries[i] != null) {
-                        revs.add(entries[i].getRevision());
-                    }
-                }
+            Map[] revisions = resolver.listTokenValues(new String[] {IvyPatternHelper.REVISION_KEY}, tokenValues);
+            for (int i = 0; i < revisions.length; i++) {
+                entries.add(revisions[i].get(IvyPatternHelper.REVISION_KEY));
             }
         }
-        return (String[]) revs.toArray(new String[revs.size()]);
-    }
 
+        return (String[]) entries.toArray(new String[entries.size()]);
+    }
+    
     /**
      * List module ids of the module accessible through the current resolvers matching the given mid
      * criteria according to the given matcher.
@@ -147,23 +177,26 @@ public class SearchEngine {
      * @param matcher
      * @return
      */
-    public ModuleId[] listModules(ModuleId criteria, PatternMatcher matcher) {
+    public ModuleId[] listModules(ModuleId moduleCrit, PatternMatcher matcher) {
         List ret = new ArrayList();
-        Matcher orgMatcher = matcher.getMatcher(criteria.getOrganisation());
-        Matcher modMatcher = matcher.getMatcher(criteria.getName());
-        Map tokenValues = new HashMap();
-        String[] orgs = listTokenValues(IvyPatternHelper.ORGANISATION_KEY, tokenValues);
-        for (int i = 0; i < orgs.length; i++) {
-            if (orgMatcher.matches(orgs[i])) {
-                tokenValues.put(IvyPatternHelper.ORGANISATION_KEY, orgs[i]);
-                String[] mods = listTokenValues(IvyPatternHelper.MODULE_KEY, tokenValues);
-                for (int j = 0; j < mods.length; j++) {
-                    if (modMatcher.matches(mods[j])) {
-                        ret.add(new ModuleId(orgs[i], mods[j]));
-                    }
-                }
+
+        Map criteria = new HashMap();
+        addMatcher(matcher, moduleCrit.getOrganisation(), criteria, IvyPatternHelper.ORGANISATION_KEY);
+        addMatcher(matcher, moduleCrit.getName(), criteria, IvyPatternHelper.MODULE_KEY);
+        
+        String[] tokensToList = new String[] {IvyPatternHelper.ORGANISATION_KEY, IvyPatternHelper.MODULE_KEY};
+
+        for (Iterator iter = settings.getResolvers().iterator(); iter.hasNext();) {
+            DependencyResolver resolver = (DependencyResolver) iter.next();
+            Map[] moduleIdAsMap = resolver.listTokenValues(tokensToList, criteria);
+            for (int i = 0; i < moduleIdAsMap.length; i++) {
+                String org = (String) moduleIdAsMap[i].get(IvyPatternHelper.ORGANISATION_KEY);
+                String name = (String) moduleIdAsMap[i].get(IvyPatternHelper.MODULE_KEY);
+                ModuleId modId = ModuleId.newInstance(org, name);
+                ret.add(modId);
             }
         }
+
         return (ModuleId[]) ret.toArray(new ModuleId[ret.size()]);
     }
 
@@ -175,50 +208,68 @@ public class SearchEngine {
      * @param matcher
      * @return
      */
-    public ModuleRevisionId[] listModules(ModuleRevisionId criteria, PatternMatcher matcher) {
+    public ModuleRevisionId[] listModules(ModuleRevisionId moduleCrit, PatternMatcher matcher) {
         List ret = new ArrayList();
-        Matcher orgMatcher = matcher.getMatcher(criteria.getOrganisation());
-        Matcher modMatcher = matcher.getMatcher(criteria.getName());
-        Matcher branchMatcher = matcher.getMatcher(criteria.getBranch());
-        Matcher revMatcher = matcher.getMatcher(criteria.getRevision());
-        Map tokenValues = new HashMap();
-        String[] orgs = listTokenValues(IvyPatternHelper.ORGANISATION_KEY, tokenValues);
-        for (int i = 0; i < orgs.length; i++) {
-            if (orgMatcher.matches(orgs[i])) {
-                tokenValues.put(IvyPatternHelper.ORGANISATION_KEY, orgs[i]);
-                String[] mods = listTokenValues(IvyPatternHelper.MODULE_KEY, tokenValues);
-                for (int j = 0; j < mods.length; j++) {
-                    if (modMatcher.matches(mods[j])) {
-                        tokenValues.put(IvyPatternHelper.MODULE_KEY, mods[j]);
-                        String[] branches = listTokenValues(IvyPatternHelper.BRANCH_KEY,
-                            tokenValues);
-                        if (branches == null || branches.length == 0) {
-                            branches = new String[] {settings.getDefaultBranch(new ModuleId(
-                                    orgs[i], mods[j]))};
-                        }
-                        for (int k = 0; k < branches.length; k++) {
-                            if (branches[k] == null || branchMatcher.matches(branches[k])) {
-                                tokenValues.put(IvyPatternHelper.BRANCH_KEY, tokenValues);
-                                String[] revs = listTokenValues(IvyPatternHelper.REVISION_KEY,
-                                    tokenValues);
-                                for (int l = 0; l < revs.length; l++) {
-                                    if (revMatcher.matches(revs[l])) {
-                                        ret.add(ModuleRevisionId.newInstance(orgs[i], mods[j],
-                                            branches[k], revs[l]));
-                                    }
-                                }
-                                tokenValues.remove(IvyPatternHelper.REVISION_KEY);
-                            }
-                        }
-                        tokenValues.remove(IvyPatternHelper.BRANCH_KEY);
-                    }
-                }
-                tokenValues.remove(IvyPatternHelper.MODULE_KEY);
+
+        Map criteria = new HashMap();
+        addMatcher(matcher, moduleCrit.getOrganisation(), criteria, IvyPatternHelper.ORGANISATION_KEY);
+        addMatcher(matcher, moduleCrit.getName(), criteria, IvyPatternHelper.MODULE_KEY);
+        addMatcher(matcher, moduleCrit.getBranch(), criteria, IvyPatternHelper.BRANCH_KEY);
+        addMatcher(matcher, moduleCrit.getRevision(), criteria, IvyPatternHelper.REVISION_KEY);
+        
+        String[] tokensToList = new String[] {IvyPatternHelper.ORGANISATION_KEY, IvyPatternHelper.MODULE_KEY, IvyPatternHelper.BRANCH_KEY, IvyPatternHelper.REVISION_KEY};
+
+        for (Iterator iter = settings.getResolvers().iterator(); iter.hasNext();) {
+            DependencyResolver resolver = (DependencyResolver) iter.next();
+            Map[] moduleIdAsMap = resolver.listTokenValues(tokensToList, criteria);
+            for (int i = 0; i < moduleIdAsMap.length; i++) {
+                String org = (String) moduleIdAsMap[i].get(IvyPatternHelper.ORGANISATION_KEY);
+                String name = (String) moduleIdAsMap[i].get(IvyPatternHelper.MODULE_KEY);
+                String branch = (String) moduleIdAsMap[i].get(IvyPatternHelper.BRANCH_KEY);
+                String rev = (String) moduleIdAsMap[i].get(IvyPatternHelper.REVISION_KEY);
+                ModuleRevisionId modRevId = ModuleRevisionId.newInstance(org, name, branch, rev);
+                ret.add(modRevId);
             }
         }
+
         return (ModuleRevisionId[]) ret.toArray(new ModuleRevisionId[ret.size()]);
     }
 
+    public ModuleRevisionId[] listModules(DependencyResolver resolver, ModuleRevisionId moduleCrit, PatternMatcher matcher) {
+        Map criteria = new HashMap();
+        addMatcher(matcher, moduleCrit.getOrganisation(), criteria, IvyPatternHelper.ORGANISATION_KEY);
+        addMatcher(matcher, moduleCrit.getName(), criteria, IvyPatternHelper.MODULE_KEY);
+        addMatcher(matcher, moduleCrit.getBranch(), criteria, IvyPatternHelper.BRANCH_KEY);
+        addMatcher(matcher, moduleCrit.getRevision(), criteria, IvyPatternHelper.REVISION_KEY);
+        
+        String[] tokensToList = new String[] {IvyPatternHelper.ORGANISATION_KEY, IvyPatternHelper.MODULE_KEY, IvyPatternHelper.BRANCH_KEY, IvyPatternHelper.REVISION_KEY};
+
+        Map[] moduleIdAsMap = resolver.listTokenValues(tokensToList, criteria);
+        ModuleRevisionId[] result = new ModuleRevisionId[moduleIdAsMap.length];
+        for (int i = 0; i < moduleIdAsMap.length; i++) {
+            String org = (String) moduleIdAsMap[i].get(IvyPatternHelper.ORGANISATION_KEY);
+            String name = (String) moduleIdAsMap[i].get(IvyPatternHelper.MODULE_KEY);
+            String branch = (String) moduleIdAsMap[i].get(IvyPatternHelper.BRANCH_KEY);
+            String rev = (String) moduleIdAsMap[i].get(IvyPatternHelper.REVISION_KEY);
+            result[i] = ModuleRevisionId.newInstance(org, name, branch, rev);
+        }
+        
+        return result;
+    }
+    
+    private void addMatcher(PatternMatcher patternMatcher, String expression, Map criteria, String key) {
+        if (expression == null) {
+            return;
+        }
+        
+        Matcher matcher = patternMatcher.getMatcher(expression);
+        if (matcher.isExact()) {
+            criteria.put(key, expression);
+        } else {
+            criteria.put(key, matcher);
+        }
+    }
+    
     public Collection findModuleRevisionIds(DependencyResolver resolver, ModuleRevisionId pattern,
             PatternMatcher matcher) {
         Collection mrids = new ArrayList();
