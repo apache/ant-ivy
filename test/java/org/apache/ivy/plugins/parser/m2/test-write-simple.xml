@@ -29,4 +29,5 @@
   <artifactId>test</artifactId>
   <packaging>jar</packaging>
   <version>1.0</version>
+  <url>http://ant.apache.org/ivy</url>
 </project>

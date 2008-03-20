@@ -29,6 +29,7 @@
   <artifactId>test</artifactId>
   <packaging>jar</packaging>
   <version>1.0</version>
+  <url>http://ant.apache.org/ivy</url>
   <dependencies>
     <dependency>
       <groupId>commons-logging</groupId>
