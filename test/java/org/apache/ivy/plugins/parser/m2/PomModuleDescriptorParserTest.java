@@ -478,7 +478,7 @@ public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         		+ "framework. It is designed\n        as a light-weight, event-driven component " 
         		+ "technology that handles communication with disparate systems\n        " 
         		+ "transparently providing a simple component interface.", 
-        		convertEOL(md.getDescription()));
+        		md.getDescription().replaceAll("\r\n", "\n").replace('\r', '\n'));
     }
     
     public void testDependencyManagment() throws ParseException, IOException {

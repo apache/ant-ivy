@@ -57,30 +57,6 @@ public abstract class AbstractModuleDescriptorParserTester extends TestCase {
             assertTrue("artifact not found: " + artifactsNames[i], found);
         }
     }
-    
-    
-    protected static String convertEOL(String str) {
-        StringBuffer buffer = new StringBuffer();
-
-        char[] chars = str.toCharArray();
-        char last = ' ';
-        for (int i = 0; i < chars.length; i++) {
-            if ((chars[i] == '\r') && (last == '\n')) {
-                last = '\r';
-                continue; 
-            }
-            if (chars[i] == '\r') {
-                buffer.append('\n');
-            } else {
-                buffer.append(chars[i]);
-            }
-            last = chars[i];
-        }
-        
-        return buffer.toString();
-    }
-
-
 
     protected void assertDependencyArtifacts(DependencyDescriptor dd, String[] confs,
             String[] artifactsNames) {

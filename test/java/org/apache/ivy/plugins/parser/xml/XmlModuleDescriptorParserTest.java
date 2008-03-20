@@ -207,7 +207,7 @@ public class XmlModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         assertEquals("This module is <b>great</b> !<br/>\n\t"
         		+ "You can use it especially with myconf1 and myconf2, "
         		+ "and myconf4 is not too bad too.", 
-        		convertEOL(md.getDescription()));
+        		md.getDescription().replaceAll("\r\n", "\n").replace('\r', '\n'));
         
         assertEquals(1, md.getExtraInfo().size());
         assertEquals("56576", md.getExtraInfo().get("e:someExtra"));
