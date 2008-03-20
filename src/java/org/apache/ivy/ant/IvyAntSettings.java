@@ -253,7 +253,8 @@ public class IvyAntSettings extends Task {
 
     public void execute() throws BuildException {
         if (!OVERRIDE_TRUE.equals(override)) {
-            if (getProject().getReference(id) != null) {
+            Object otherRef = getProject().getReference(id);
+            if ((otherRef != null) && (otherRef != this)) {
                 if (OVERRIDE_FALSE.equals(override)) {
                     verbose("a settings definition is already available for " + id + ": skipping");
                     return;
