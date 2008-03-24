@@ -135,13 +135,18 @@ All resolvers of the same type share some common attributes detailed here:
         <td>Yes</td>
         <td>Yes</td>
     </tr>
+    <tr><td>cache</td><td>The name of the cache manager to use.</td>
+        <td>No, defaults to the value of the default attribute of caches</td>
+        <td>No</td>
+        <td>Yes</td>
+    </tr>
 </tbody>
 </table>
 
 <h1>Examples</h1>
 <code type="xml">
 <resolvers>
-  <filesystem name="1">
+  <filesystem name="1" cache="cache-1">
     <ivy pattern="${ivy.settings.dir}/1/[organisation]/[module]/ivys/ivy-[revision].xml"/>
     <artifact pattern="${ivy.settings.dir}/1/[organisation]/[module]/[type]s/[artifact]-[revision].[ext]"/>
   </filesystem>
@@ -155,7 +160,7 @@ All resolvers of the same type share some common attributes detailed here:
   </chain>
 </resolvers>
 </code>
-Defines a filesystem resolver, named '1', which is then used in two chains, the first which seconds the filesystem resolver with an ivyrep resolver, and second which seconds the filesystem resolver with an ibiblio resolver, and which returns the first module found, and uses the whole chain to download artifacts (see corresponding resolvers documentation for details about them).
+Defines a filesystem resolver, named '1', which is then used in two chains, the first which seconds the filesystem resolver with an ivyrep resolver, and second which seconds the filesystem resolver with an ibiblio resolver, and which returns the first module found, and uses the whole chain to download artifacts (see corresponding resolvers documentation for details about them).   Resolver 1 will use a cache named 'cache-1' which should have been defined under the caches element.
 	</textarea>
 <script type="text/javascript">xooki.postProcess();</script>
 </body>
