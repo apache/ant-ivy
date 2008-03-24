@@ -95,7 +95,8 @@ public class IvyRepositoryReport extends IvyTask {
             if ((revision == null) || settings.getVersionMatcher().isDynamic(mrid)) {
                 criteria = new ModuleRevisionId(new ModuleId(organisation, module), branch, "*");
             } else {
-                criteria = new ModuleRevisionId(new ModuleId(organisation, module), branch, revision);
+                criteria = new ModuleRevisionId(
+                    new ModuleId(organisation, module), branch, revision);
             }
             
             ModuleRevisionId[] mrids = ivy.listModules(criteria, settings.getMatcher(matcher));

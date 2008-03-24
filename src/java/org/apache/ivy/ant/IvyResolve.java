@@ -302,8 +302,8 @@ public class IvyResolve extends IvyTask {
                     if (file != null) {
                         getProject().setProperty("ivy.resolved.file." + resolveId,
                             file.getAbsolutePath());
-                        settings
-                                .setVariable("ivy.resolved.file." + resolveId, file.getAbsolutePath());
+                        settings.setVariable(
+                            "ivy.resolved.file." + resolveId, file.getAbsolutePath());
                     }
                 }
             }

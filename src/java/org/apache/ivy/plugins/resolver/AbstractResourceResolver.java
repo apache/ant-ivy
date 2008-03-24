@@ -250,7 +250,7 @@ public abstract class AbstractResourceResolver extends BasicResolver {
         Map tokenValues = new HashMap(criteria);
         tokenValues.put(IvyPatternHelper.TYPE_KEY, "ivy");
         tokenValues.put(IvyPatternHelper.EXT_KEY, "xml");
-        for (Iterator it = ivyPatterns.iterator(); it.hasNext(); ) {
+        for (Iterator it = ivyPatterns.iterator(); it.hasNext();) {
             String ivyPattern = (String) it.next();
             result.addAll(resolveTokenValues(tokens, ivyPattern, tokenValues, false));
         }
@@ -260,7 +260,7 @@ public abstract class AbstractResourceResolver extends BasicResolver {
             tokenValues = new HashMap(criteria);
             tokenValues.put(IvyPatternHelper.TYPE_KEY, "jar");
             tokenValues.put(IvyPatternHelper.EXT_KEY, "jar");
-            for (Iterator it = artifactPatterns.iterator(); it.hasNext(); ) {
+            for (Iterator it = artifactPatterns.iterator(); it.hasNext();) {
                 String artifactPattern = (String) it.next();
                 result.addAll(resolveTokenValues(tokens, artifactPattern, tokenValues, true));
             }
@@ -274,7 +274,7 @@ public abstract class AbstractResourceResolver extends BasicResolver {
         Set tokenSet = new HashSet(Arrays.asList(tokens));
         
         Map tokenValues = new HashMap();
-        for (Iterator it = criteria.entrySet().iterator(); it.hasNext(); ) {
+        for (Iterator it = criteria.entrySet().iterator(); it.hasNext();) {
             Map.Entry entry = (Entry) it.next();
             Object key = entry.getKey();
             Object value = entry.getValue();
@@ -316,7 +316,8 @@ public abstract class AbstractResourceResolver extends BasicResolver {
             }
             
             tokenValues.put(token, values[i]);
-            String moreResolvedPattern = IvyPatternHelper.substituteTokens(partiallyResolvedPattern, tokenValues);
+            String moreResolvedPattern = IvyPatternHelper.substituteTokens(
+                partiallyResolvedPattern, tokenValues);
 
             Map newCriteria = new HashMap(criteria);
             newCriteria.put(token, values[i]);
@@ -325,7 +326,9 @@ public abstract class AbstractResourceResolver extends BasicResolver {
             } else if (noMd && "module".equals(token)) {
                 newCriteria.put("artifact", values[i]);
             }
-            result.addAll(resolveTokenValues((String[]) tokenSet.toArray(new String[tokenSet.size()]), moreResolvedPattern, newCriteria, noMd));
+            result.addAll(resolveTokenValues(
+                (String[]) tokenSet.toArray(new String[tokenSet.size()]), 
+                moreResolvedPattern, newCriteria, noMd));
         }
 
         return result;

@@ -76,7 +76,8 @@ public final/* @Immutable */class RegexpPatternMatcher extends AbstractPatternMa
             char[] expressionChars = expression.toCharArray();
             for (int i = 0; i < expressionChars.length; i++) {
                 char ch = expressionChars[i];
-                if (!Character.isLetterOrDigit(ch) && !Character.isWhitespace(ch) && ('-' != ch) && ('_' != ch)) {
+                if (!Character.isLetterOrDigit(ch) && !Character.isWhitespace(ch) 
+                        && ('-' != ch) && ('_' != ch)) {
                     result = Boolean.FALSE;
                     break;
                 }
