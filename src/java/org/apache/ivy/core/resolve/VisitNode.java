@@ -140,14 +140,14 @@ public class VisitNode {
         return root;
     }
 
-    public Collection getPath() {
+    public Collection/*<VisitNode>*/ getPath() {
         if (path == null) {
             path = computePath();
         }
         return path;
     }
 
-    private Collection computePath() {
+    private Collection/*<VisitNode>*/ computePath() {
         if (parent != null) {
             Collection p = new LinkedHashSet(parent.getPath());
             p.add(this);

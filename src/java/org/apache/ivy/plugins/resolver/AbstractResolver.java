@@ -298,7 +298,7 @@ public abstract class AbstractResolver implements DependencyResolver, HasLatestS
     protected ResolvedModuleRevision findModuleInCache(
             DependencyDescriptor dd, ResolveData data, boolean anyResolver) {
         return getRepositoryCacheManager().findModuleInCache(
-            dd, data.getRequestedDependencyRevisionId(dd), 
+            dd, dd.getDependencyRevisionId(), 
             getCacheOptions(data), anyResolver ? null : getName());
     }
 

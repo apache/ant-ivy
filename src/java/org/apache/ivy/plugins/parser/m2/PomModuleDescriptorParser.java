@@ -32,6 +32,7 @@ import org.apache.ivy.core.module.descriptor.DefaultArtifact;
 import org.apache.ivy.core.module.descriptor.DefaultDependencyDescriptor;
 import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
+import org.apache.ivy.core.module.id.ModuleId;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.resolve.ResolveData;
 import org.apache.ivy.core.resolve.ResolveEngine;
@@ -196,22 +197,31 @@ public final class PomModuleDescriptorParser implements ModuleDescriptorParser {
                 }
                 
                 if (parentDescr != null) {
-                    Map parentPomProps = mdBuilder.extractPomProperties(parentDescr.getExtraInfo());
+                    Map parentPomProps = PomModuleDescriptorBuilder
+                            .extractPomProperties(parentDescr.getExtraInfo());
                     for (Iterator iter = parentPomProps.entrySet().iterator(); iter.hasNext();) {
                         Map.Entry prop = (Map.Entry) iter.next();
                         domReader.setProperty((String) prop.getKey(), (String) prop.getValue());
                     }                    
+
+                    mdBuilder.addExtraInfos(parentDescr.getExtraInfo());
+                    
+                    // add dependency management info from parent
+                    Map depMgt = PomModuleDescriptorBuilder.getDependencyManagementMap(parentDescr);
+                    for (Iterator iterator = depMgt.entrySet().iterator(); iterator.hasNext();) {
+                        Map.Entry entry = (Map.Entry) iterator.next();
+                        ModuleId mid = (ModuleId) entry.getKey();
+                        String v = (String) entry.getValue();
+                        mdBuilder.addDependencyMgt(
+                            new DefaultPomDependencyMgt(mid.getOrganisation(), mid.getName(), v));
+                    }
                 }
                 
                 for (Iterator it = domReader.getDependencyMgt().iterator(); it.hasNext();) {
-                    PomReader.PomDependencyMgt dep = (PomReader.PomDependencyMgt) it.next();
+                    PomDependencyMgt dep = (PomDependencyMgt) it.next();
                     mdBuilder.addDependencyMgt(dep);
                 }
                 
-                if (parentDescr != null) {
-                    mdBuilder.addExtraInfos(parentDescr.getExtraInfo());
-                }
-
                 for (Iterator it = domReader.getDependencies().iterator(); it.hasNext();) {
                     PomReader.PomDependencyData dep = (PomReader.PomDependencyData) it.next();
                     mdBuilder.addDependency(res, dep);

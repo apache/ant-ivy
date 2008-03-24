@@ -45,6 +45,7 @@ import org.apache.ivy.core.module.descriptor.IncludeRule;
 import org.apache.ivy.core.module.descriptor.License;
 import org.apache.ivy.core.module.descriptor.MDArtifact;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
+import org.apache.ivy.core.module.descriptor.OverrideDependencyDescriptorMediator;
 import org.apache.ivy.core.module.id.ArtifactId;
 import org.apache.ivy.core.module.id.ModuleId;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
@@ -184,6 +185,10 @@ public final class XmlModuleDescriptorParser extends AbstractModuleDescriptorPar
 
         private static final int EXTRA_INFO = 12;
         
+        private static final int ENGINE_HINTS = 13;
+        
+        private static final int MEDIATION = 14;
+        
         private int state = NONE;
 
         private final URL xmlURL;
@@ -298,6 +303,11 @@ public final class XmlModuleDescriptorParser extends AbstractModuleDescriptorPar
                 } else if ("conflicts".equals(qName)) {
                     state = CONFLICT;
                     checkConfigurations();
+                } else if ("engine-hints".equals(qName)) {
+                    state = ENGINE_HINTS;
+                    checkConfigurations();
+                } else if ("mediation".equals(qName)) {
+                    state = MEDIATION;
                 } else if ("artifact".equals(qName)) {
                     artifactStarted(qName, attributes);
                 } else if ("include".equals(qName) && state == DEP) {
@@ -317,6 +327,8 @@ public final class XmlModuleDescriptorParser extends AbstractModuleDescriptorPar
                             .getValue("name")));
                 } else if ("manager".equals(qName) && state == CONFLICT) {
                     managerStarted(attributes);
+                } else if ("override".equals(qName) && state == MEDIATION) {
+                    mediationOverrideStarted(attributes);
                 } else if ("include".equals(qName) && state == CONF) {
                     includeConfStarted(attributes);
                 } else if (validate && state != EXTRA_INFO && state != DESCRIPTION) {
@@ -367,6 +379,25 @@ public final class XmlModuleDescriptorParser extends AbstractModuleDescriptorPar
                 return;
             }
             getMd().addConflictManager(new ModuleId(org, mod), matcher, cm);
+        }
+
+        private void mediationOverrideStarted(Attributes attributes) {
+            String org = ivy.substitute(attributes.getValue("org"));
+            org = org == null ? PatternMatcher.ANY_EXPRESSION : org;
+            String mod = ivy.substitute(attributes.getValue("module"));
+            mod = mod == null ? PatternMatcher.ANY_EXPRESSION : mod;
+            String rev = ivy.substitute(attributes.getValue("rev"));
+            String branch = ivy.substitute(attributes.getValue("branch"));
+            String matcherName = ivy.substitute(attributes.getValue("matcher"));
+            PatternMatcher matcher = matcherName == null ? defaultMatcher : ivy
+                    .getMatcher(matcherName);
+            if (matcher == null) {
+                addError("unknown matcher: " + matcherName);
+                return;
+            }
+            getMd().addDependencyDescriptorMediator(
+                new ModuleId(org, mod), matcher, 
+                new OverrideDependencyDescriptorMediator(branch, rev));
         }
 
         private void includeConfStarted(Attributes attributes) 

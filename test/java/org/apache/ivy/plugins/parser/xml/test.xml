@@ -106,4 +106,9 @@
 		<manager org="yourorg" module=".*" name="all" matcher="regexp"/>
 		<manager org="theirorg" module="theirmodule1" rev="1.0, 1.1"/>
 	</conflicts>
+	<engine-hints>
+	    <mediation>
+	        <override org="yourorg" module=".*1" matcher="regexp" branch="BRANCH" rev="1.0" /> 
+	    </mediation>
+	</engine-hints>
 </ivy-module>

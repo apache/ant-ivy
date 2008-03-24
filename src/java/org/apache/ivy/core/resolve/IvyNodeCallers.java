@@ -96,7 +96,7 @@ public class IvyNodeCallers {
         }
 
         public ModuleRevisionId getAskedDependencyId(ResolveData resolveData) {
-            return resolveData.getRequestedDependencyRevisionId(dd);
+            return dd.getDependencyRevisionId();
         }
 
         public ModuleDescriptor getModuleDescriptor() {

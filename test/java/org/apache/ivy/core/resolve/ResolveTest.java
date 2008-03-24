@@ -3564,7 +3564,50 @@ public class ResolveTest extends TestCase {
         assertTrue(getArchiveFileInCache(ivy, "org.apache.dm", "test3", "1.0",
             "test3", "jar", "jar").exists());
     }
+
+    public void testResolveMaven2ParentPomDependencyManagementOverrideTransitiveVersion() throws Exception {
+        // test;2.0 has a dependency on test2;3.0. 
+        // test has a parent of parent(2.0) then parent2. 
+        // Both parents have a dependencyManagement element for test2, and each list the version as
+        // ${pom.version}. The version for test2 in test should take precedance, 
+        // so the version should be test2 version 3.0. 
+        // test2;3.0 -> test4;2.0, but parent has a dependencyManagement section specifying test4;1.0.
+        // since maven 2.0.6, the information in parent should override transitive dependency version,
+        // and thus we should get test4;1.0
+        Ivy ivy = new Ivy();
+        ivy.configure(new File("test/repositories/parentPom/ivysettings.xml"));
+        ivy.getSettings().setDefaultResolver("parentChain");
         
+        ResolveReport report = ivy.resolve(new File(
+                "test/repositories/parentPom/org/apache/dm/test/2.0/test-2.0.pom").toURL(),
+            getResolveOptions(new String[] {"*"}));
+        assertNotNull(report);
+
+        //test the report to make sure the right dependencies are listed
+        List dependencies = report.getDependencies();
+        assertEquals(3, dependencies.size());
+        
+        IvyNode ivyNode;
+        ivyNode = (IvyNode) dependencies.get(0);
+        assertNotNull(ivyNode);
+        ModuleRevisionId mrid = ModuleRevisionId.newInstance("org.apache.dm", "test2", "3.0");
+        assertEquals(mrid, ivyNode.getId());
+        assertTrue(getIvyFileInCache(
+            ModuleRevisionId.newInstance("org.apache.dm", "test2", "3.0")).exists());
+        assertTrue(getArchiveFileInCache(ivy, "org.apache.dm", "test2", "3.0",
+            "test2", "jar", "jar").exists());
+        
+        ivyNode = (IvyNode) dependencies.get(2);
+        assertNotNull(ivyNode);
+        mrid = ModuleRevisionId.newInstance("org.apache.dm", "test4", "1.0");
+        assertEquals(mrid, ivyNode.getId());
+        assertTrue(getIvyFileInCache(
+            ModuleRevisionId.newInstance("org.apache.dm", "test4", "1.0")).exists());
+        assertTrue(getArchiveFileInCache(ivy, "org.apache.dm", "test4", "1.0",
+            "test4", "jar", "jar").exists());
+    }
+    
+
     public void testNamespaceMapping() throws Exception {
         // the dependency is in another namespace
         Ivy ivy = new Ivy();

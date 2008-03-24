@@ -167,7 +167,7 @@ public class IvyNode implements Comparable {
     private Map blacklisted = new HashMap();
 
     public IvyNode(ResolveData data, IvyNode parent, DependencyDescriptor dd) {
-        id = data.getEngine().getRequestedDependencyRevisionId(dd, data.getOptions());
+        id = dd.getDependencyRevisionId();
         dds.put(parent, dd);
         root = parent.getRoot();
         init(data);
@@ -220,8 +220,8 @@ public class IvyNode implements Comparable {
                     Message.debug("\tusing " + resolver + " to resolve " + getId());
                     DependencyDescriptor dependencyDescriptor = getDependencyDescriptor(parent);
                     long start = System.currentTimeMillis();
-                    ModuleRevisionId requestedRevisionId = 
-                        data.getRequestedDependencyRevisionId(dependencyDescriptor);
+                    ModuleRevisionId requestedRevisionId 
+                        = dependencyDescriptor.getDependencyRevisionId();
                     data.getEventManager().fireIvyEvent(
                         new StartResolveDependencyEvent(resolver, dependencyDescriptor, requestedRevisionId));
                     module = resolver.getDependency(dependencyDescriptor, data);
@@ -370,15 +370,14 @@ public class IvyNode implements Comparable {
         DependencyDescriptor[] dds = md.getDependencies();
         Collection dependencies = new LinkedHashSet(); // it's important to respect order
         for (int i = 0; i < dds.length; i++) {
-            DependencyDescriptor dd = dds[i];
+            DependencyDescriptor dd = data.mediate(dds[i]);
             String[] dependencyConfigurations = dd.getDependencyConfigurations(conf, requestedConf);
             if (dependencyConfigurations.length == 0) {
                 // no configuration of the dependency is required for current confs :
                 // it is exactly the same as if there was no dependency at all on it
                 continue;
             }
-            ModuleRevisionId requestedDependencyRevisionId = 
-                data.getEngine().getRequestedDependencyRevisionId(dd, data.getOptions());
+            ModuleRevisionId requestedDependencyRevisionId = dd.getDependencyRevisionId();
             if (isDependencyModuleExcluded(rootModuleConf, requestedDependencyRevisionId, conf)) {
                 // the whole module is excluded, it is considered as not being part of dependencies
                 // at all

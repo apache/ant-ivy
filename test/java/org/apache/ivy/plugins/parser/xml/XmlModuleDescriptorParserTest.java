@@ -29,7 +29,9 @@ import java.util.HashSet;
 import org.apache.ivy.Ivy;
 import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.Configuration;
+import org.apache.ivy.core.module.descriptor.DefaultDependencyDescriptor;
 import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
+import org.apache.ivy.core.module.descriptor.DependencyDescriptorMediator;
 import org.apache.ivy.core.module.descriptor.ExcludeRule;
 import org.apache.ivy.core.module.descriptor.License;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
@@ -453,6 +455,12 @@ public class XmlModuleDescriptorParserTest extends AbstractModuleDescriptorParse
 
         cm = md.getConflictManager(new ModuleId("theirorg", "theirmodule2"));
         assertNull(cm);
+        
+        assertEquals(
+            ModuleRevisionId.parse("yourorg#yourmodule1#BRANCH;1.0"),
+            md.mediate(new DefaultDependencyDescriptor(
+                    ModuleRevisionId.parse("yourorg#yourmodule1;2.0"), false))
+                .getDependencyRevisionId());
 
         ExcludeRule[] rules = md.getAllExcludeRules();
         assertNotNull(rules);

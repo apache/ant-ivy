@@ -37,6 +37,7 @@ import org.apache.ivy.plugins.matcher.MatcherHelper;
 import org.apache.ivy.plugins.namespace.NameSpaceHelper;
 import org.apache.ivy.plugins.namespace.Namespace;
 import org.apache.ivy.plugins.namespace.NamespaceTransformer;
+import org.apache.ivy.util.Checks;
 
 /**
  * This class can be used as the default implementation for DependencyDescriptor. It implements
@@ -118,7 +119,7 @@ public class DefaultDependencyDescriptor implements DependencyDescriptor {
         return newdd;
     }
 
-    private ModuleRevisionId revId;
+    private final ModuleRevisionId revId;
 
     private ModuleRevisionId dynamicRevId;
 
@@ -158,10 +159,19 @@ public class DefaultDependencyDescriptor implements DependencyDescriptor {
 
     private DependencyDescriptor asSystem = this;
 
-    public DefaultDependencyDescriptor(DependencyDescriptor dd, String revision) {
+    public DefaultDependencyDescriptor(DependencyDescriptor dd, ModuleRevisionId revision) {
+        Checks.checkNotNull(dd, "dd");
+        Checks.checkNotNull(revision, "revision");
+        
+        if (!revision.getModuleId().equals(dd.getDependencyId())) {
+            throw new IllegalArgumentException(
+                "new ModuleRevisionId MUST have the same ModuleId as original one."
+                + " original = " + dd.getDependencyId()
+                + " new = " + revision.getModuleId());
+        }
         md = null;
         parentId = dd.getParentRevisionId();
-        revId = ModuleRevisionId.newInstance(dd.getDependencyRevisionId(), revision);
+        revId = revision;
         dynamicRevId = dd.getDynamicConstraintDependencyRevisionId();
         isForce = dd.isForce();
         isChanging = dd.isChanging();
@@ -185,27 +195,26 @@ public class DefaultDependencyDescriptor implements DependencyDescriptor {
         this(md, mrid, mrid, force, changing, transitive);
     }
 
+    public DefaultDependencyDescriptor(ModuleRevisionId mrid, boolean force) {
+        this(mrid, force, false);
+    }
+
+    public DefaultDependencyDescriptor(ModuleRevisionId mrid, boolean force, boolean changing) {
+        this(null, mrid, mrid, force, changing, true);
+    }
+
     public DefaultDependencyDescriptor(
             ModuleDescriptor md, ModuleRevisionId mrid, ModuleRevisionId dynamicConstraint, 
             boolean force, boolean changing, boolean transitive) {
+        Checks.checkNotNull(mrid, "mrid");
+        Checks.checkNotNull(dynamicConstraint, "dynamicConstraint");
+        
         this.md = md;
         revId = mrid;
         dynamicRevId = dynamicConstraint;
         isForce = force;
         isChanging = changing;
         isTransitive = transitive;
-    }
-
-    public DefaultDependencyDescriptor(ModuleRevisionId mrid, boolean force) {
-        this(mrid, force, false);
-    }
-
-    public DefaultDependencyDescriptor(ModuleRevisionId mrid, boolean force, boolean changing) {
-        md = null;
-        revId = mrid;
-        dynamicRevId = mrid;
-        isForce = force;
-        isChanging = changing;
     }
 
     public ModuleId getDependencyId() {
@@ -576,4 +585,7 @@ public class DefaultDependencyDescriptor implements DependencyDescriptor {
         return excludeRules;
     }
 
+    public DependencyDescriptor clone(ModuleRevisionId revision) {
+        return new DefaultDependencyDescriptor(this, revision);
+    }
 }

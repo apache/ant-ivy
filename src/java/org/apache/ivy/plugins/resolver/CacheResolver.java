@@ -26,7 +26,6 @@ import org.apache.ivy.core.cache.ArtifactOrigin;
 import org.apache.ivy.core.cache.DefaultRepositoryCacheManager;
 import org.apache.ivy.core.cache.RepositoryCacheManager;
 import org.apache.ivy.core.module.descriptor.Artifact;
-import org.apache.ivy.core.module.descriptor.DefaultDependencyDescriptor;
 import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.report.ArtifactDownloadReport;
@@ -56,7 +55,7 @@ public class CacheResolver extends FileSystemResolver {
             throws ParseException {
         clearIvyAttempts();
 
-        ModuleRevisionId mrid = data.getRequestedDependencyRevisionId(dd);
+        ModuleRevisionId mrid = dd.getDependencyRevisionId();
         // check revision
 
         ResolvedModuleRevision rmr = getRepositoryCacheManager()
@@ -84,7 +83,8 @@ public class CacheResolver extends FileSystemResolver {
                     return node.getModuleRevision();
                 }
                 rmr = getRepositoryCacheManager().findModuleInCache(
-                        new DefaultDependencyDescriptor(dd, ivyRef.getRevision()),
+                        dd.clone(ModuleRevisionId.newInstance(
+                            dd.getDependencyRevisionId(), ivyRef.getRevision())),
                         dd.getDependencyRevisionId(),
                         getCacheOptions(data), null);
                 if (rmr != null) {

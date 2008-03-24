@@ -251,6 +251,27 @@
 				        </xs:sequence>
 			      </xs:complexType>
       		</xs:element>
+      		<xs:element name="engine" minOccurs="0">
+			      <xs:complexType>
+				        <xs:sequence>
+				      		<xs:element name="mediation" minOccurs="0">
+							      <xs:complexType>
+								        <xs:sequence>
+								      		<xs:element name="override" minOccurs="0" maxOccurs="unbounded">
+								            	<xs:complexType>
+										            <xs:attribute name="org" type="xs:string"/>
+										            <xs:attribute name="module" type="xs:string"/>
+										            <xs:attribute name="matcher" type="xs:string"/>
+										            <xs:attribute name="rev" type="xs:string"/>
+										            <xs:attribute name="branch" type="xs:string"/>
+								            	</xs:complexType>
+								      		</xs:element>
+								        </xs:sequence>
+							      </xs:complexType>
+				      		</xs:element>
+				        </xs:sequence>
+			      </xs:complexType>
+      		</xs:element>
         </xs:sequence>
         <xs:attribute name="version" type="xs:string" use="required"/>
       </xs:complexType>

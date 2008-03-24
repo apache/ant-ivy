@@ -106,7 +106,7 @@ public class ChainResolver extends AbstractResolver {
 
         ResolvedModuleRevision mr = null;
 
-        ModuleRevisionId mrid = data.getRequestedDependencyRevisionId(dd);
+        ModuleRevisionId mrid = dd.getDependencyRevisionId();
 
 
         Message.verbose(getName() + ": Checking cache for: " + dd);

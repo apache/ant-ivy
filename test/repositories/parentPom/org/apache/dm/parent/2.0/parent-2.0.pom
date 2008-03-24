@@ -35,6 +35,11 @@
           <artifactId>test2</artifactId>
           <version>${pom.version}</version>
         </dependency>
+    <dependency>
+          <groupId>org.apache.dm</groupId>
+          <artifactId>test4</artifactId>
+          <version>1.0</version>
+        </dependency>
     </dependencies>
   </dependencyManagement>
    <dependencies>

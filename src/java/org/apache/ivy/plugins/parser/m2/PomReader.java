@@ -220,7 +220,7 @@ public class PomReader {
             for (int i = 0; i < childs.getLength(); i++) {
                 Node node = childs.item(i);
                 if (node instanceof Element && DEPENDENCY.equals(node.getNodeName())) {
-                    dependencies.add(new PomDependencyMgt((Element) node));
+                    dependencies.add(new PomDependencyMgtElement((Element) node));
                 }
             }
         }
@@ -228,23 +228,32 @@ public class PomReader {
     }
 
     
-    public class PomDependencyMgt {
+    public class PomDependencyMgtElement implements PomDependencyMgt {
         private final Element depElement;
         
-        PomDependencyMgt(Element depElement) {
+        PomDependencyMgtElement(Element depElement) {
             this.depElement = depElement; 
         }
         
+        /* (non-Javadoc)
+         * @see org.apache.ivy.plugins.parser.m2.PomDependencyMgt#getGroupId()
+         */
         public String getGroupId() {
             String val = getFirstChildText(depElement , GROUP_ID);
             return replaceProps(val);
         }
 
+        /* (non-Javadoc)
+         * @see org.apache.ivy.plugins.parser.m2.PomDependencyMgt#getArtifaceId()
+         */
         public String getArtifaceId() {
             String val = getFirstChildText(depElement , ARTIFACT_ID);
             return replaceProps(val);
         }
 
+        /* (non-Javadoc)
+         * @see org.apache.ivy.plugins.parser.m2.PomDependencyMgt#getVersion()
+         */
         public String getVersion() {
             String val = getFirstChildText(depElement , VERSION);
             return replaceProps(val);
@@ -253,7 +262,7 @@ public class PomReader {
     }
     
     
-    public class PomDependencyData extends PomDependencyMgt {
+    public class PomDependencyData extends PomDependencyMgtElement {
         private final Element depElement;
         PomDependencyData(Element depElement) {
             super(depElement);

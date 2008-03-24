@@ -254,8 +254,7 @@ public class ResolveEngine {
                         if (dd != null) {
                             ModuleRevisionId depResolvedId = dependencies[i].getResolvedId();
                             ModuleDescriptor depDescriptor = dependencies[i].getDescriptor();
-                            ModuleRevisionId depRevisionId = 
-                                getRequestedDependencyRevisionId(dd, options);
+                            ModuleRevisionId depRevisionId = dd.getDependencyRevisionId();
                             if (depResolvedId == null) {
                                 throw new NullPointerException("getResolvedId() is null for " 
                                     + dependencies[i].toString());
@@ -595,6 +594,10 @@ public class ResolveEngine {
         } else {
             Message.verbose("== resolving dependencies for " + node.getId() + " [" + conf + "]");
         }
+        ResolveData data = node.getNode().getData();
+        VisitNode parentVisitNode = data.getCurrentVisitNode();
+        
+        data.setCurrentVisitNode(node);
         resolveConflict(node, conf);
 
         if (node.loadData(conf, shouldBePublic)) {
@@ -640,6 +643,7 @@ public class ResolveEngine {
             Message.debug(node.getId() + " => dependencies resolved in " + conf + " ("
                     + (System.currentTimeMillis() - start) + "ms)");
         }
+        data.setCurrentVisitNode(parentVisitNode);
     }
 
     private void doFetchDependencies(VisitNode node, String conf) {
@@ -966,17 +970,20 @@ public class ResolveEngine {
     }
 
     /**
-     * Returns the module revision id constraint requested by the given dependency descriptor,
-     * according to the given resolve options.
+     * Mediates the given dependency descriptor according to given options.
+     * <p>
+     * The mediated dependency descriptor must return the actually requested module revision id when
+     * the method {@link DependencyDescriptor#getDependencyRevisionId()} is called.
+     * </p>
      * 
      * @param dd
      *            the dependency descriptor for which the requested module revision id should be
      *            returned
      * @param options
      *            the resolve options to use
-     * @return the {@link ModuleRevisionId} corresponding to the requested dependency constraint
+     * @return the mediated {@link DependencyDescriptor}.
      */
-    public ModuleRevisionId getRequestedDependencyRevisionId(
+    public DependencyDescriptor mediate(
             DependencyDescriptor dd, ResolveOptions options) {
         if (dd == null) {
             return null;
@@ -984,9 +991,13 @@ public class ResolveEngine {
         String resolveMode = options.getResolveMode() == null 
             ? settings.getResolveMode(dd.getDependencyId())
                     : options.getResolveMode();
-        return ResolveOptions.RESOLVEMODE_DYNAMIC.equals(resolveMode) 
-            ? dd.getDynamicConstraintDependencyRevisionId() 
-            : dd.getDependencyRevisionId();
+        if (ResolveOptions.RESOLVEMODE_DYNAMIC.equals(resolveMode)
+                && !dd.getDynamicConstraintDependencyRevisionId()
+                        .equals(dd.getDependencyRevisionId())) {
+            return dd.clone(dd.getDynamicConstraintDependencyRevisionId());
+        } else {
+            return dd;
+        }
     }
 
     public EventManager getEventManager() {

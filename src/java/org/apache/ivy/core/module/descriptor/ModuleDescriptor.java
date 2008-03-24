@@ -36,7 +36,9 @@ import org.apache.ivy.util.extendable.ExtendableItem;
 /**
  * Decriptor of a module. This is the Java representation of an ivy.xml
  */
-public interface ModuleDescriptor extends ExtendableItem, ArtifactInfo {
+public interface ModuleDescriptor 
+        extends ExtendableItem, ArtifactInfo, DependencyDescriptorMediator {
+    
     public static final String DEFAULT_CONFIGURATION = "default";
 
     public static final String CALLER_ALL_CONFIGURATION = "all";
@@ -136,7 +138,8 @@ public interface ModuleDescriptor extends ExtendableItem, ArtifactInfo {
     Configuration getConfiguration(String confName);
 
     /**
-     * Returns the conflict manager to use for the given ModuleId
+     * Returns the conflict manager to use for the given ModuleId, or <code>null</code> if no
+     * specific conflict manager is associated with the given module id in this module descriptor.
      * 
      * @param id
      * @return

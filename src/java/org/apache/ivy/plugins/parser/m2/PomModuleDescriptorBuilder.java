@@ -21,6 +21,7 @@ import java.text.ParseException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -33,6 +34,7 @@ import org.apache.ivy.core.module.descriptor.DefaultExcludeRule;
 import org.apache.ivy.core.module.descriptor.DefaultModuleDescriptor;
 import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
+import org.apache.ivy.core.module.descriptor.OverrideDependencyDescriptorMediator;
 import org.apache.ivy.core.module.descriptor.Configuration.Visibility;
 import org.apache.ivy.core.module.id.ArtifactId;
 import org.apache.ivy.core.module.id.ModuleId;
@@ -41,8 +43,8 @@ import org.apache.ivy.plugins.matcher.ExactPatternMatcher;
 import org.apache.ivy.plugins.matcher.PatternMatcher;
 import org.apache.ivy.plugins.parser.ModuleDescriptorParser;
 import org.apache.ivy.plugins.parser.m2.PomReader.PomDependencyData;
-import org.apache.ivy.plugins.parser.m2.PomReader.PomDependencyMgt;
 import org.apache.ivy.plugins.repository.Resource;
+import org.apache.ivy.util.Message;
 
 
 /**
@@ -52,6 +54,8 @@ import org.apache.ivy.plugins.repository.Resource;
 public class PomModuleDescriptorBuilder {
 
     
+    private static final int DEPENDENCY_MANAGEMENT_KEY_PARTS_COUNT = 3;
+
     public static final Configuration[] MAVEN2_CONFIGURATIONS = new Configuration[] {
         new Configuration("default", Visibility.PUBLIC,
                 "runtime dependencies and master artifact can be used with this conf",
@@ -257,6 +261,11 @@ public class PomModuleDescriptorBuilder {
     public void addDependencyMgt(PomDependencyMgt dep) {
         String key = getDependencyMgtExtraInfoKey(dep.getGroupId(), dep.getArtifaceId());
         ivyModuleDescriptor.addExtraInfo(key, dep.getVersion());
+        // dependency management info is also used for version mediation of transitive dependencies
+        ivyModuleDescriptor.addDependencyDescriptorMediator(
+            ModuleId.newInstance(dep.getGroupId(), dep.getArtifaceId()), 
+            ExactPatternMatcher.INSTANCE,
+            new OverrideDependencyDescriptorMediator(null, dep.getVersion()));
     }
 
     private String getDefaultVersion(PomDependencyData dep) {
@@ -274,6 +283,24 @@ public class PomModuleDescriptorBuilder {
         return PROPERTIES + EXTRA_INFO_DELIMITER + propertyName;
     }
 
+    public static Map/*<ModuleId, String version>*/ 
+            getDependencyManagementMap(ModuleDescriptor md) {
+        Map ret = new LinkedHashMap();
+        for (Iterator iterator = md.getExtraInfo().entrySet().iterator(); iterator.hasNext();) {
+            Map.Entry entry = (Map.Entry) iterator.next();
+            String key = (String) entry.getKey();
+            if ((key).startsWith(DEPENDENCY_MANAGEMENT)) {
+                String[] parts = key.split(EXTRA_INFO_DELIMITER);
+                if (parts.length != DEPENDENCY_MANAGEMENT_KEY_PARTS_COUNT) {
+                    Message.warn("what seem to be a dependency management extra info "
+                        + "doesn't match expected pattern: " + key);
+                } else {
+                    ret.put(ModuleId.newInstance(parts[1], parts[2]), entry.getValue());
+                }
+            }
+        }
+        return ret;
+    }
     
 
     public void addExtraInfos(Map extraAttributes) {

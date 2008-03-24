@@ -19,16 +19,20 @@ package org.apache.ivy.core.resolve;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.ivy.core.event.EventManager;
 import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
+import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.report.ConfigurationResolveReport;
+import org.apache.ivy.util.Message;
 
 public class ResolveData {
     private ResolveEngine engine;
@@ -39,9 +43,12 @@ public class ResolveData {
 
     private ResolveOptions options;
 
+    private VisitNode currentVisitNode = null;
+
     public ResolveData(ResolveData data, boolean validate) {
-        this(data.engine, new ResolveOptions(data.options).setValidate(validate), data.report,
-                data.visitData);
+        this(data.engine, new ResolveOptions(data.options).setValidate(validate), 
+            data.report, data.visitData);
+        setCurrentVisitNode(currentVisitNode);
     }
 
     public ResolveData(ResolveEngine engine, ResolveOptions options) {
@@ -85,6 +92,26 @@ public class ResolveData {
 
     public VisitData getVisitData(ModuleRevisionId mrid) {
         return (VisitData) visitData.get(mrid);
+    }
+    
+    /**
+     * Returns the VisitNode currently visited, or <code>null</code> if there is no node currently
+     * visited in this context.
+     * 
+     * @return the VisitNode currently visited
+     */
+    public VisitNode getCurrentVisitNode() {
+        return currentVisitNode;
+    }
+    
+    /**
+     * Sets the currently visited node. 
+     * WARNING: This should only be called by Ivy core ResolveEngine!
+     * 
+     * @param currentVisitNode
+     */
+    void setCurrentVisitNode(VisitNode currentVisitNode) {
+        this.currentVisitNode = currentVisitNode;
     }
 
     public void register(VisitNode node) {
@@ -180,7 +207,30 @@ public class ResolveData {
         return node != null && node.isBlacklisted(rootModuleConf);
     }
 
-    public ModuleRevisionId getRequestedDependencyRevisionId(DependencyDescriptor dd) {
-        return getEngine().getRequestedDependencyRevisionId(dd, getOptions());
+
+    public DependencyDescriptor mediate(DependencyDescriptor dd) {
+        VisitNode current = getCurrentVisitNode();
+        if (current != null) {
+            // mediating dd through dependers stack
+            DependencyDescriptor originalDD = dd;
+            List dependers = new ArrayList(current.getPath());
+            // the returned path contains the currently visited node, we are only interested in
+            // the dependers, so we remove the currently visted node from the end
+            dependers.remove(dependers.size() - 1);
+            // we want to apply mediation going up in the dependers stack, not the opposite
+            Collections.reverse(dependers);
+            for (Iterator iterator = dependers.iterator(); iterator.hasNext();) {
+                VisitNode n = (VisitNode) iterator.next();
+                ModuleDescriptor md = n.getDescriptor();
+                if (md != null) {
+                    dd = md.mediate(dd);
+                }
+            }
+            if (originalDD != dd) {
+                Message.verbose("dependency descriptor has been mediated: " 
+                    + originalDD + " => " + dd);
+            }
+        }
+        return getEngine().mediate(dd, getOptions());
     }
 }

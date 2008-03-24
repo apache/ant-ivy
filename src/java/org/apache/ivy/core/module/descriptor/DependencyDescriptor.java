@@ -125,4 +125,16 @@ public interface DependencyDescriptor extends ExtendableItem {
     public boolean canExclude();
 
     DependencyDescriptor asSystem();
+    
+    /**
+     * Clones current dependency descriptor with another revision.
+     * 
+     * @param revision
+     *            the revision of the cloned dependency descriptor
+     * @return the cloned dependency descriptor
+     * @throws IllegalArgumentException
+     *             if the given {@link ModuleRevisionId} has not the same {@link ModuleId} as the
+     *             {@link ModuleRevisionId} of this descriptor.
+     */
+    DependencyDescriptor clone(ModuleRevisionId revision);
 }

@@ -166,8 +166,8 @@ public abstract class BasicResolver extends AbstractResolver {
         try {
             clearIvyAttempts();
             clearArtifactAttempts();
-            ModuleRevisionId systemMrid = data.getRequestedDependencyRevisionId(systemDd);
-            ModuleRevisionId nsMrid = data.getRequestedDependencyRevisionId(nsDd);
+            ModuleRevisionId systemMrid = systemDd.getDependencyRevisionId();
+            ModuleRevisionId nsMrid = nsDd.getDependencyRevisionId();
             
             checkRevision(systemMrid);
 
@@ -444,7 +444,7 @@ public abstract class BasicResolver extends AbstractResolver {
         DependencyDescriptor nsDd = dd;
         dd = toSystem(nsDd);
         
-        ModuleRevisionId mrid = data.getRequestedDependencyRevisionId(dd);
+        ModuleRevisionId mrid = dd.getDependencyRevisionId();
         ModuleDescriptorParser parser = ModuleDescriptorParserRegistry
                 .getInstance().getParser(mdRef.getResource());
         if (parser == null) {

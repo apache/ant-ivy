@@ -160,10 +160,11 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
         if (md instanceof DefaultModuleDescriptor) {
             DefaultModuleDescriptor dmd = (DefaultModuleDescriptor) md;
             nmd.conflictManagers.putAll(dmd.conflictManagers);
+            nmd.dependencyDescriptorMediators.putAll(dmd.dependencyDescriptorMediators);
         } else {
             Message.warn(
                 "transformed module descriptor is not a default module descriptor: "
-                + "impossible to copy conflict manager configuration: " + md);
+                + "impossible to copy conflict manager and version mediation configuration: " + md);
         }
         nmd.licenses.addAll(Arrays.asList(md.getLicenses()));
         nmd.homePage = md.getHomePage();
@@ -199,6 +200,9 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
     private boolean isDefault = false;
 
     private Map conflictManagers = new LinkedHashMap(); // Map (ModuleId -> )
+    
+    private Map/*<ModuleId, DependencyDescriptorMediator>*/ dependencyDescriptorMediators 
+        = new LinkedHashMap(); 
 
     private List licenses = new ArrayList(); // List(License)
 
@@ -470,6 +474,22 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
             }
         }
         return null;
+    }
+    
+    public void addDependencyDescriptorMediator(ModuleId moduleId, PatternMatcher matcher,
+            DependencyDescriptorMediator ddm) {
+        dependencyDescriptorMediators.put(new ModuleIdMatcher(matcher, moduleId), ddm);
+    }
+    
+    public DependencyDescriptor mediate(DependencyDescriptor dd) {
+        for (Iterator iter = dependencyDescriptorMediators.keySet().iterator(); iter.hasNext();) {
+            ModuleIdMatcher matcher = (ModuleIdMatcher) iter.next();
+            if (matcher.matches(dd.getDependencyId())) {
+                dd = ((DependencyDescriptorMediator) dependencyDescriptorMediators.get(matcher))
+                        .mediate(dd);
+            }
+        }
+        return dd;
     }
 
     public void addLicense(License license) {

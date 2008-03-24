@@ -71,7 +71,7 @@ public abstract class AbstractResourceResolver extends BasicResolver {
     }
 
     public ResolvedResource findIvyFileRef(DependencyDescriptor dd, ResolveData data) {
-        ModuleRevisionId mrid = data.getRequestedDependencyRevisionId(dd);
+        ModuleRevisionId mrid = dd.getDependencyRevisionId();
         if (isM2compatible()) {
             mrid = convertM2IdForResourceSearch(mrid);
         }
