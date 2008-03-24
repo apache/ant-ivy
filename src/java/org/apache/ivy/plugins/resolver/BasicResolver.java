@@ -397,25 +397,29 @@ public abstract class BasicResolver extends AbstractResolver {
     }
 
     private void resolveAndCheckRevision(ModuleDescriptor systemMd,
-            ModuleRevisionId systemMrid, ResolvedResource ivyRef, boolean isDynamic) {
-        ModuleRevisionId resolvedMrid = systemMrid;
-        if (isDynamic) {
-            resolvedMrid = systemMd.getResolvedModuleRevisionId();
-            if (resolvedMrid.getRevision() == null 
-                    || resolvedMrid.getRevision().length() == 0) {
-                if (ivyRef.getRevision() == null || ivyRef.getRevision().length() == 0) {
-                    resolvedMrid = ModuleRevisionId.newInstance(resolvedMrid, "working@"
-                        + getName());
-                } else {
-                    resolvedMrid = ModuleRevisionId.newInstance(resolvedMrid, ivyRef
-                        .getRevision());
-                }
+            ModuleRevisionId dependencyConstraint, ResolvedResource ivyRef, boolean isDynamic) {
+        // we get the resolved module revision id from the descriptor: it may contain extra
+        // attributes that were not included in the dependency constraint
+        ModuleRevisionId resolvedMrid = systemMd.getResolvedModuleRevisionId();
+        if (resolvedMrid.getRevision() == null 
+                || resolvedMrid.getRevision().length() == 0) {
+            if (!isDynamic) {
+                resolvedMrid = ModuleRevisionId.newInstance(
+                    resolvedMrid, dependencyConstraint.getRevision());
+            } else if (ivyRef.getRevision() == null || ivyRef.getRevision().length() == 0) {
+                resolvedMrid = ModuleRevisionId.newInstance(resolvedMrid, "working@"
+                    + getName());
+            } else {
+                resolvedMrid = ModuleRevisionId.newInstance(resolvedMrid, ivyRef
+                    .getRevision());
             }
+        }
+        if (isDynamic) {
             Message.verbose("\t\t[" + toSystem(resolvedMrid).getRevision() + "] " 
-                + systemMrid.getModuleId());
+                + dependencyConstraint.getModuleId());
         }
         systemMd.setResolvedModuleRevisionId(resolvedMrid); 
-        checkModuleDescriptorRevision(systemMd, systemMrid);
+        checkModuleDescriptorRevision(systemMd, dependencyConstraint);
     }
 
     private String getRevision(ResolvedResource ivyRef, ModuleRevisionId askedMrid,
