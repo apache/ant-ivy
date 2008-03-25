@@ -8,7 +8,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
  Committers
  	Maarten Coene
  	Xavier Hanin
-	Nicolas LalevÃ©e
+	Nicolas Lalevée
  	Gilles Scokart
   
  Contributors
