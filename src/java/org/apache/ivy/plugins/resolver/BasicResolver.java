@@ -371,7 +371,7 @@ public abstract class BasicResolver extends AbstractResolver {
         if (!getSettings().getVersionMatcher().accept(systemMrid, systemMd)) {
             throw new UnresolvedDependencyException(
                 "\t" + getName() + ": unacceptable revision => was="
-                + systemMd.getModuleRevisionId().getRevision() + " required="
+                + systemMd.getResolvedModuleRevisionId().getRevision() + " required="
                 + systemMrid.getRevision());
         }
     }
@@ -402,7 +402,8 @@ public abstract class BasicResolver extends AbstractResolver {
         // attributes that were not included in the dependency constraint
         ModuleRevisionId resolvedMrid = systemMd.getResolvedModuleRevisionId();
         if (resolvedMrid.getRevision() == null 
-                || resolvedMrid.getRevision().length() == 0) {
+                || resolvedMrid.getRevision().length() == 0
+                || resolvedMrid.getRevision().startsWith("working@")) {
             if (!isDynamic) {
                 resolvedMrid = ModuleRevisionId.newInstance(
                     resolvedMrid, dependencyConstraint.getRevision());
