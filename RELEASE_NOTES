@@ -154,20 +154,20 @@ long, but Ivy couldn't be what it is without you!
  Committers
 	Maarten Coene
 	Xavier Hanin
+	Nicolas LalevÃ©e
 	Gilles Scokart
 
  Contributors
-    Andrea Bernardo Ciddio
-    Mikkel Bjerg
-    Mirko Bulovic
-    Danno Ferrin
-    Benjamin Francisoud
-	Nicolas Lalevée
-    Markus M. May
-    Adrian Sandor
-    Ruslan Shevchenko
-    Johan Stuyts
-    
+	Andrea Bernardo Ciddio
+	Mikkel Bjerg
+	Mirko Bulovic
+	Danno Ferrin
+	Benjamin Francisoud
+	Markus M. May
+	Adrian Sandor
+	Ruslan Shevchenko
+	Johan Stuyts
+
 8. List of Changes in this Release
 
 For a full release history of Ivy see the file CHANGES.txt

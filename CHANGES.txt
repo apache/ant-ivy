@@ -8,6 +8,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
  Committers
  	Maarten Coene
  	Xavier Hanin
+	Nicolas LalevÃ©e
  	Gilles Scokart
   
  Contributors
@@ -33,7 +34,6 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 	Christer Jonsson
 	Matthias Kilian
 	Gregory Kisling
-	Nicolas Lalevée
 	Tat Leung
 	Costin Leau
 	Antoine Levy-Lambert
