@@ -3788,6 +3788,25 @@ public class ResolveTest extends TestCase {
         assertTrue(new File(cache, "apache/mymodule/task1/1854/mymodule-linux.jar").exists());
     }
 
+    public void testExtraAttributes2() throws Exception {
+        // test case for IVY-773
+        Ivy ivy = new Ivy();
+        ivy.configure(new File("test/repositories/extra-attributes/ivysettings.xml"));
+        ivy.getSettings().setDefaultCache(cache);
+
+        ResolveReport report = ivy.resolve(ResolveTest.class.getResource("ivy-extra-att2.xml"),
+            getResolveOptions(ivy.getSettings(), new String[] {"*"}).setValidate(false));
+        assertFalse(report.hasError());
+
+        assertTrue(new File(cache, "apache/mymodule/task2/1748/ivy.xml").exists());
+        assertTrue(new File(cache, "apache/mymodule/task2/1748/mymodule-windows.jar").exists());
+        assertTrue(new File(cache, "apache/mymodule/task2/1748/mymodule-linux.jar").exists());
+
+        assertTrue(new File(cache, "apache/module2/task2/1976/ivy.xml").exists());
+        assertTrue(new File(cache, "apache/module2/task2/1976/module2-windows.jar").exists());
+        assertTrue(new File(cache, "apache/module2/task2/1976/module2-linux.jar").exists());
+    }
+
     public void testNamespaceExtraAttributes() throws Exception {
         Ivy ivy = new Ivy();
         ivy.configure(new File("test/repositories/extra-attributes/ivysettings.xml"));

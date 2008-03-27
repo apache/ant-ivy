@@ -259,9 +259,13 @@ public class VisitNode {
         if (loaded) {
             useRealNode();
 
-            // if the revision was a dynamic one (which has now be resolved)
-            // we now register this node on the resolved id
-            if (data.getSettings().getVersionMatcher().isDynamic(getId())) {
+            // if the loaded revision is different from original one
+            // we now register this node on the new resolved id
+            // this includes two cases:
+            // - the id refers to a dynamic revision, which has been resolved by loadData
+            // - the loaded module descriptor has extra attributes in his info tag which are not 
+            //   used when declaring the dependency
+            if (!getId().equals(node.getResolvedId())) {
                 data.register(node.getResolvedId(), this);
             }
         }
