@@ -357,10 +357,13 @@ public class IvyBuildList extends IvyTask {
         DependencyDescriptor[] deps = node.getDependencies();
         for (int i = 0; i < deps.length; i++) {
             ModuleId id = deps[i].getDependencyId();
-            if (moduleIdMap.get(id) != null) {
-                toKeep.add(moduleIdMap.get(id));
+            ModuleDescriptor md = (ModuleDescriptor) moduleIdMap.get(id);
+            // we test if this module id has a module descriptor, and if it isn't already in the 
+            // toKeep Set, in which there's probably a circular dependency
+            if (md != null && !toKeep.contains(md)) { 
+                toKeep.add(md);
                 if (!getOnlydirectdep()) {
-                    processFilterNodeFromRoot((ModuleDescriptor) moduleIdMap.get(id), toKeep,
+                    processFilterNodeFromRoot(md, toKeep,
                         moduleIdMap);
                 }
             }

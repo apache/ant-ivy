@@ -35,6 +35,8 @@ public class IvyBuildListTest extends TestCase {
      * C -> B
      * D -> A , B
      * E has no dependency
+     * F -> G
+     * G -> F
      */
 
     //CheckStyle:MagicNumber| OFF   
@@ -50,6 +52,7 @@ public class IvyBuildListTest extends TestCase {
         FileSet fs = new FileSet();
         fs.setDir(new File("test/buildlist"));
         fs.setIncludes("**/build.xml");
+        fs.setExcludes("F/build.xml,G/build.xml");
         buildlist.addFileset(fs);
 
         buildlist.setReference("ordered.build.files");
@@ -88,6 +91,7 @@ public class IvyBuildListTest extends TestCase {
         FileSet fs = new FileSet();
         fs.setDir(new File("test/buildlist"));
         fs.setIncludes("**/build.xml");
+        fs.setExcludes("F/build.xml,G/build.xml");
         buildlist.addFileset(fs);
 
         buildlist.setReference("reverse.ordered.build.files");
@@ -146,6 +150,32 @@ public class IvyBuildListTest extends TestCase {
                 .getAbsolutePath());
         assertEquals(new File("test/buildlist/C/build.xml").getAbsolutePath(), new File(files[1])
                 .getAbsolutePath());
+    }
+
+    public void testWithRootCircular() {
+        Project p = new Project();
+
+        IvyBuildList buildlist = new IvyBuildList();
+        buildlist.setProject(p);
+        buildlist.setRoot("F");
+
+        FileSet fs = new FileSet();
+        fs.setDir(new File("test/buildlist"));
+        fs.setIncludes("**/build.xml");
+        buildlist.addFileset(fs);
+
+        buildlist.setReference("ordered.build.files");
+
+        buildlist.execute();
+
+        Object o = p.getReference("ordered.build.files");
+        assertNotNull(o);
+        assertTrue(o instanceof Path);
+
+        Path path = (Path) o;
+        String[] files = path.list();
+        assertNotNull(files);
+        assertEquals(2, files.length); // F and G should be in the list
     }
 
     public void testWithTwoRoots() {
@@ -282,6 +312,33 @@ public class IvyBuildListTest extends TestCase {
                 .getAbsolutePath());
     }
 
+    public void testWithLeafCircular() {
+        Project p = new Project();
+
+        IvyBuildList buildlist = new IvyBuildList();
+        buildlist.setProject(p);
+        buildlist.setLeaf("F");
+
+        FileSet fs = new FileSet();
+        fs.setDir(new File("test/buildlist"));
+        fs.setIncludes("**/build.xml");
+        buildlist.addFileset(fs);
+
+        buildlist.setReference("ordered.build.files");
+
+        buildlist.execute();
+
+        Object o = p.getReference("ordered.build.files");
+        assertNotNull(o);
+        assertTrue(o instanceof Path);
+
+        Path path = (Path) o;
+        String[] files = path.list();
+        assertNotNull(files);
+        
+        assertEquals(2, files.length); 
+    }
+
     public void testWithTwoLeafs() {
         Project p = new Project();
 
@@ -395,6 +452,7 @@ public class IvyBuildListTest extends TestCase {
         FileSet fs = new FileSet();
         fs.setDir(new File("test/buildlist"));
         fs.setIncludes("**/build.xml");
+        fs.setExcludes("F/build.xml,G/build.xml");
         buildlist.addFileset(fs);
 
         buildlist.setReference("ordered.build.files");
