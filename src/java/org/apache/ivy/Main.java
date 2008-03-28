@@ -67,7 +67,6 @@ import org.apache.ivy.util.url.URLHandlerRegistry;
  */
 public final class Main {
     private static final int HELP_WIDTH = 80;
-    private static PrintWriter out = new PrintWriter(System.out);
 
     static CommandLineParser getParser() {
         return new CommandLineParser()
