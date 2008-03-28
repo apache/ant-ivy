@@ -20,8 +20,10 @@ package org.apache.ivy.ant;
 import java.io.File;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Iterator;
 
 import org.apache.ivy.Ivy;
+import org.apache.ivy.core.cache.ResolutionCacheManager;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleId;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
@@ -245,7 +247,24 @@ public abstract class IvyPostResolveTask extends IvyTask {
             } else {
                 confs = splitConfs(conf);
             }
+            
             HashSet rconfsSet = new HashSet(Arrays.asList(rconfs));
+            
+            // for each resolved configuration, check if the report still exists
+            ResolutionCacheManager cache = getSettings().getResolutionCacheManager();
+            for (Iterator it = rconfsSet.iterator(); it.hasNext(); ) {
+                String resolvedConf = (String) it.next();
+                String resolveId = getResolveId();
+                if (resolveId == null) {
+                    resolveId = ResolveOptions.getDefaultResolveId(reference);
+                }
+                File report = cache.getConfigurationResolveReportInCache(resolveId, resolvedConf);
+                if (!report.exists()) {
+                    // the report doesn't exist any longer, we have to recreate it...
+                    it.remove();
+                }
+            }
+            
             HashSet confsSet = new HashSet(Arrays.asList(confs));
             Message.debug("resolved configurations:   " + rconfsSet);
             Message.debug("asked configurations:      " + confsSet);
