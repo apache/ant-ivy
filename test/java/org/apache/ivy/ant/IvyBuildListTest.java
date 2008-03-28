@@ -40,7 +40,7 @@ public class IvyBuildListTest extends TestCase {
      */
 
     //CheckStyle:MagicNumber| OFF   
-    //The test very often use MagicNumber.  Using a constant is less expessif.
+    //The test very often use MagicNumber.  Using a constant is less expressive.
 
     
     public void testSimple() {
@@ -52,7 +52,7 @@ public class IvyBuildListTest extends TestCase {
         FileSet fs = new FileSet();
         fs.setDir(new File("test/buildlist"));
         fs.setIncludes("**/build.xml");
-        fs.setExcludes("F/build.xml,G/build.xml");
+        fs.setExcludes("E2/build.xml,F/build.xml,G/build.xml");
         buildlist.addFileset(fs);
 
         buildlist.setReference("ordered.build.files");
@@ -91,7 +91,7 @@ public class IvyBuildListTest extends TestCase {
         FileSet fs = new FileSet();
         fs.setDir(new File("test/buildlist"));
         fs.setIncludes("**/build.xml");
-        fs.setExcludes("F/build.xml,G/build.xml");
+        fs.setExcludes("E2/build.xml,F/build.xml,G/build.xml");
         buildlist.addFileset(fs);
 
         buildlist.setReference("reverse.ordered.build.files");
@@ -131,6 +131,7 @@ public class IvyBuildListTest extends TestCase {
         FileSet fs = new FileSet();
         fs.setDir(new File("test/buildlist"));
         fs.setIncludes("**/build.xml");
+        fs.setExcludes("E2/**");
         buildlist.addFileset(fs);
 
         buildlist.setReference("ordered.build.files");
@@ -188,6 +189,7 @@ public class IvyBuildListTest extends TestCase {
         FileSet fs = new FileSet();
         fs.setDir(new File("test/buildlist"));
         fs.setIncludes("**/build.xml");
+        fs.setExcludes("E2/**");
         buildlist.addFileset(fs);
 
         buildlist.setReference("ordered.build.files");
@@ -224,6 +226,7 @@ public class IvyBuildListTest extends TestCase {
         FileSet fs = new FileSet();
         fs.setDir(new File("test/buildlist"));
         fs.setIncludes("**/build.xml");
+        fs.setExcludes("E2/**");
         buildlist.addFileset(fs);
 
         buildlist.setReference("ordered.build.files");
@@ -255,6 +258,7 @@ public class IvyBuildListTest extends TestCase {
         FileSet fs = new FileSet();
         fs.setDir(new File("test/buildlist"));
         fs.setIncludes("**/build.xml");
+        fs.setExcludes("E2/**");
         buildlist.addFileset(fs);
 
         buildlist.setReference("ordered.build.files");
@@ -287,6 +291,7 @@ public class IvyBuildListTest extends TestCase {
         FileSet fs = new FileSet();
         fs.setDir(new File("test/buildlist"));
         fs.setIncludes("**/build.xml");
+        fs.setExcludes("E2/**");
         buildlist.addFileset(fs);
 
         buildlist.setReference("ordered.build.files");
@@ -349,6 +354,7 @@ public class IvyBuildListTest extends TestCase {
         FileSet fs = new FileSet();
         fs.setDir(new File("test/buildlist"));
         fs.setIncludes("**/build.xml");
+        fs.setExcludes("E2/**");
         buildlist.addFileset(fs);
 
         buildlist.setReference("ordered.build.files");
@@ -387,6 +393,7 @@ public class IvyBuildListTest extends TestCase {
         FileSet fs = new FileSet();
         fs.setDir(new File("test/buildlist"));
         fs.setIncludes("**/build.xml");
+        fs.setExcludes("E2/**");
         buildlist.addFileset(fs);
 
         buildlist.setReference("ordered.build.files");
@@ -420,6 +427,7 @@ public class IvyBuildListTest extends TestCase {
         FileSet fs = new FileSet();
         fs.setDir(new File("test/buildlist"));
         fs.setIncludes("**/build.xml");
+        fs.setExcludes("E2/**");
         buildlist.addFileset(fs);
 
         buildlist.setReference("ordered.build.files");
@@ -452,7 +460,7 @@ public class IvyBuildListTest extends TestCase {
         FileSet fs = new FileSet();
         fs.setDir(new File("test/buildlist"));
         fs.setIncludes("**/build.xml");
-        fs.setExcludes("F/build.xml,G/build.xml");
+        fs.setExcludes("E2/build.xml,F/build.xml,G/build.xml");
         buildlist.addFileset(fs);
 
         buildlist.setReference("ordered.build.files");
@@ -479,7 +487,45 @@ public class IvyBuildListTest extends TestCase {
                 .getAbsolutePath());
     }
 
+    public void testWithModuleWithSameNameAndDifferentOrg() {
+        Project p = new Project();
 
+        IvyBuildList buildlist = new IvyBuildList();
+        buildlist.setProject(p);
+
+        FileSet fs = new FileSet();
+        fs.setDir(new File("test/buildlist"));
+        fs.setIncludes("**/build.xml");
+        fs.setExcludes("F/build.xml,G/build.xml");
+        buildlist.addFileset(fs);
+
+        buildlist.setReference("ordered.build.files");
+
+        buildlist.execute();
+
+        Object o = p.getReference("ordered.build.files");
+        assertNotNull(o);
+        assertTrue(o instanceof Path);
+
+        Path path = (Path) o;
+        String[] files = path.list();
+        assertNotNull(files);
+        
+        assertEquals(6, files.length);
+
+        assertEquals(new File("test/buildlist/B/build.xml").getAbsolutePath(), new File(files[0])
+                .getAbsolutePath());
+        assertEquals(new File("test/buildlist/C/build.xml").getAbsolutePath(), new File(files[1])
+                .getAbsolutePath());
+        assertEquals(new File("test/buildlist/A/build.xml").getAbsolutePath(), new File(files[2])
+                .getAbsolutePath());
+        assertEquals(new File("test/buildlist/D/build.xml").getAbsolutePath(), new File(files[3])
+                .getAbsolutePath());
+        assertEquals(new File("test/buildlist/E2/build.xml").getAbsolutePath(), new File(files[4])
+                .getAbsolutePath());
+        assertEquals(new File("test/buildlist/E/build.xml").getAbsolutePath(), new File(files[5])
+                .getAbsolutePath());
+    }
     
 }
 //CheckStyle:MagicNumber| ON

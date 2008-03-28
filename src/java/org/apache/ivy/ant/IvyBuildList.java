@@ -22,8 +22,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.ListIterator;
@@ -153,8 +153,8 @@ public class IvyBuildList extends IvyTask {
         Path path = new Path(getProject());
 
         Map buildFiles = new HashMap(); // Map (ModuleDescriptor -> File buildFile)
-        Map mdsMap = new LinkedHashMap(); // Map (String moduleName -> ModuleDescriptor)
         List independent = new ArrayList();
+        Collection mds = new ArrayList();
 
         Set rootModuleNames = new LinkedHashSet();
         if (!"*".equals(root)) {
@@ -202,7 +202,7 @@ public class IvyBuildList extends IvyTask {
                         ModuleDescriptor md = ModuleDescriptorParserRegistry.getInstance()
                                 .parseDescriptor(settings, ivyFile.toURL(), doValidate(settings));
                         buildFiles.put(md, buildFile);
-                        mdsMap.put(md.getModuleRevisionId().getModuleId().getName(), md);
+                        mds.add(md);
                         Message.debug("Add " + md.getModuleRevisionId().getModuleId());
                     } catch (Exception ex) {
                         if (haltOnError) {
@@ -220,13 +220,12 @@ public class IvyBuildList extends IvyTask {
         }
 
         List leafModuleDescriptors = 
-            convertModuleNamesToModuleDescriptors(mdsMap, leafModuleNames, "leaf");
+            convertModuleNamesToModuleDescriptors(mds, leafModuleNames, "leaf");
         List rootModuleDescriptors = 
-            convertModuleNamesToModuleDescriptors(mdsMap, rootModuleNames, "root");
+            convertModuleNamesToModuleDescriptors(mds, rootModuleNames, "root");
         List restartFromModuleDescriptors = 
-            convertModuleNamesToModuleDescriptors(mdsMap, restartFromModuleNames, "restartFrom");
+            convertModuleNamesToModuleDescriptors(mds, restartFromModuleNames, "restartFrom");
 
-        Collection mds = new ArrayList(mdsMap.values());
         if (!rootModuleDescriptors.isEmpty()) {
             Message.info("Filtering modules based on roots " + rootModuleNames);
             mds = filterModulesFromRoot(mds, rootModuleDescriptors);
@@ -248,7 +247,7 @@ public class IvyBuildList extends IvyTask {
             Collections.reverse(sortedModules);
         }
         // Remove modules that are before the restartFrom point
-        // Independant modules (without valid ivy file) can not be addressed
+        // Independent modules (without valid ivy file) can not be addressed
         // so they are not removed from build path.
         if (!restartFromModuleDescriptors.isEmpty()) {
             boolean foundRestartFrom = false;
@@ -280,19 +279,37 @@ public class IvyBuildList extends IvyTask {
         getProject().addReference(getReference(), path);
         getProject().setProperty("ivy.sorted.modules", order.toString());
     }
-
-    private List convertModuleNamesToModuleDescriptors(Map mdsMap, Set moduleNames, String kind) {
-        List mds = new ArrayList();
-        for (Iterator iter = moduleNames.iterator(); iter.hasNext();) {
-            String name = (String) iter.next();
-            ModuleDescriptor md = (ModuleDescriptor) mdsMap.get(name);
-            if (md == null) {
-                throw new BuildException("unable to find " + kind + " module " + name
-                        + " in build fileset");
+    
+    private List convertModuleNamesToModuleDescriptors(Collection mds, Set moduleNames, String kind) {
+        List result = new ArrayList();
+        Set foundModuleNames = new HashSet();
+        
+        for (Iterator it = mds.iterator(); it.hasNext(); ) {
+            ModuleDescriptor md = (ModuleDescriptor) it.next();
+            String name = md.getModuleRevisionId().getModuleId().getName();
+            if (moduleNames.contains(name)) {
+                foundModuleNames.add(name);
+                result.add(md);
             }
-            mds.add(md);
         }
-        return mds;
+
+        if (foundModuleNames.size() < moduleNames.size()) {
+            Set missingModules = new HashSet(moduleNames);
+            missingModules.removeAll(foundModuleNames);
+            
+            StringBuffer missingNames = new StringBuffer();
+            String sep = "";
+            for (Iterator it = missingModules.iterator(); it.hasNext(); ) {
+                missingNames.append(sep);
+                missingNames.append(it.next());
+                sep = ", ";
+            }
+            
+            throw new BuildException("unable to find " + kind + " module(s) " + missingNames.toString()
+                + " in build fileset");
+        }
+
+        return result;
     }
 
     /**

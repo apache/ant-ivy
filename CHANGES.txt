@@ -75,6 +75,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - IMPROVEMENT: Parse description and home page from poms (IVY-767)
 - IMPROVEMENT: Smarter determination if an expression is exact or not for RegexpPatternMatcher and GlobPatternMatcher
 
+- FIX: buildlist evicts modules with the same name, but different organisation (IVY-731)
 - FIX: Out of memory/Stack overflow for new highly coupled project (IVY-595)
 - FIX: Compatibility with maven's dependencyMangement (IVY-753) (not completed yet)
 - FIX: ivy:settings fails when override is not set to 'true' (IVY-771)
