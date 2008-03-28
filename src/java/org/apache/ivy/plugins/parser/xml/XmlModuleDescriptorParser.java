@@ -185,15 +185,15 @@ public final class XmlModuleDescriptorParser extends AbstractModuleDescriptorPar
 
         private static final int EXTRA_INFO = 12;
         
-        private static final int ENGINE_HINTS = 13;
-        
-        private static final int MEDIATION = 14;
+        private static final int HINTS = 13;
         
         private int state = NONE;
 
         private final URL xmlURL;
 
         private StringBuffer buffer;
+
+        private String descriptorVersion;
         
         
 
@@ -301,20 +301,26 @@ public final class XmlModuleDescriptorParser extends AbstractModuleDescriptorPar
                 } else if ("dependencies".equals(qName)) {
                     dependenciesStarted(attributes);
                 } else if ("conflicts".equals(qName)) {
+                    if (!descriptorVersion.startsWith("1.")) {
+                        Message.deprecated("using conflicts section is deprecated: "
+                            + "please use hints section instead. Ivy file URL: " + xmlURL);
+                    }
                     state = CONFLICT;
                     checkConfigurations();
-                } else if ("engine-hints".equals(qName)) {
-                    state = ENGINE_HINTS;
-                    checkConfigurations();
-                } else if ("mediation".equals(qName)) {
-                    state = MEDIATION;
+                } else if ("hints".equals(qName)) {
+                    state = HINTS;
                 } else if ("artifact".equals(qName)) {
                     artifactStarted(qName, attributes);
                 } else if ("include".equals(qName) && state == DEP) {
                     addIncludeRule(qName, attributes);
                 } else if ("exclude".equals(qName) && state == DEP) {
                     addExcludeRule(qName, attributes);
-                } else if ("exclude".equals(qName) && state == DEPS) {
+                } else if ("exclude".equals(qName) && (state == DEPS || state == HINTS)) {
+                    if (state == DEPS) {
+                        Message.deprecated(
+                            "using exclude directly under dependencies is deprecated: "
+                            + "please use hints section. Ivy file URL: " + xmlURL);
+                    }
                     state = EXCLUDE;
                     parseRule(qName, attributes);
                     getMd().addExcludeRule((ExcludeRule) confAware);
@@ -325,9 +331,10 @@ public final class XmlModuleDescriptorParser extends AbstractModuleDescriptorPar
                 } else if ("mapped".equals(qName)) {
                     dd.addDependencyConfiguration(conf, ivy.substitute(attributes
                             .getValue("name")));
-                } else if ("manager".equals(qName) && state == CONFLICT) {
-                    managerStarted(attributes);
-                } else if ("override".equals(qName) && state == MEDIATION) {
+                } else if (("conflict".equals(qName) && state == HINTS)
+                        || "manager".equals(qName) && state == CONFLICT) {
+                    managerStarted(attributes, state == CONFLICT ? "name" : "manager");
+                } else if ("override".equals(qName) && state == HINTS) {
                     mediationOverrideStarted(attributes);
                 } else if ("include".equals(qName) && state == CONF) {
                     includeConfStarted(attributes);
@@ -347,13 +354,13 @@ public final class XmlModuleDescriptorParser extends AbstractModuleDescriptorPar
             return qName.indexOf(':') != -1;
         }
 
-        private void managerStarted(Attributes attributes) {
+        private void managerStarted(Attributes attributes, String managerAtt) {
             String org = ivy.substitute(attributes.getValue("org"));
             org = org == null ? PatternMatcher.ANY_EXPRESSION : org;
             String mod = ivy.substitute(attributes.getValue("module"));
             mod = mod == null ? PatternMatcher.ANY_EXPRESSION : mod;
             ConflictManager cm;
-            String name = ivy.substitute(attributes.getValue("name"));
+            String name = ivy.substitute(attributes.getValue(managerAtt));
             String rev = ivy.substitute(attributes.getValue("rev"));
             if (rev != null) {
                 String[] revs = rev.split(",");
@@ -368,7 +375,7 @@ public final class XmlModuleDescriptorParser extends AbstractModuleDescriptorPar
                     return;
                 }
             } else {
-                addError("bad conflict manager: no name nor rev");
+                addError("bad conflict manager: no manager nor rev");
                 return;
             }
             String matcherName = ivy.substitute(attributes.getValue("matcher"));
@@ -631,11 +638,11 @@ public final class XmlModuleDescriptorParser extends AbstractModuleDescriptorPar
         }
 
         private void ivyModuleStarted(Attributes attributes) throws SAXException {
-            String version = attributes.getValue("version");
-            int versionIndex = ALLOWED_VERSIONS.indexOf(version);
+            descriptorVersion = attributes.getValue("version");
+            int versionIndex = ALLOWED_VERSIONS.indexOf(descriptorVersion);
             if (versionIndex == -1) {
-                addError("invalid version " + version);
-                throw new SAXException("invalid version " + version);
+                addError("invalid version " + descriptorVersion);
+                throw new SAXException("invalid version " + descriptorVersion);
             }
             if (versionIndex >= ALLOWED_VERSIONS.indexOf("1.3")) {
                 Message.debug("post 1.3 ivy file: using " + PatternMatcher.EXACT
@@ -793,7 +800,7 @@ public final class XmlModuleDescriptorParser extends AbstractModuleDescriptorPar
                     }
                 }
                 confAware = null;
-            } else if (state == EXCLUDE) {
+            } else if ("exclude".equals(qName) && state == EXCLUDE) {
                 if (confAware.getConfigurations().length == 0) {
                     String[] confs = getMd().getConfigurationsNames();
                     for (int i = 0; i < confs.length; i++) {
@@ -801,6 +808,8 @@ public final class XmlModuleDescriptorParser extends AbstractModuleDescriptorPar
                     }
                 }
                 confAware = null;
+                state = HINTS;
+            } else if ("hints".equals(qName) && state == HINTS) {
                 state = DEPS;
             } else if ("dependency".equals(qName) && state == DEP) {
                 if (dd.getModuleConfigurations().length == 0) {

@@ -150,7 +150,15 @@ public final class XmlModuleDescriptorWriter {
                     out.println("\t\t</dependency>");
                 }
             }
+            boolean hasHints = md.getAllExcludeRules().length > 0;
+            if (hasHints) {
+                out.println("\t\t<hints>");
+            }
             printAllExcludes(md, out);
+            if (hasHints) {
+                out.println("\t\t</hints>");
+            }
+            out.println("\t</dependencies>");
         }
     }
 
@@ -158,7 +166,7 @@ public final class XmlModuleDescriptorWriter {
         ExcludeRule[] excludes = md.getAllExcludeRules();
         if (excludes.length > 0) {
             for (int j = 0; j < excludes.length; j++) {
-                out.print("\t\t<exclude");
+                out.print("\t\t\t<exclude");
                 out.print(" org=\""
                         + XMLHelper.escape(excludes[j].getId().getModuleId().getOrganisation()) 
                         + "\"");
@@ -185,7 +193,6 @@ public final class XmlModuleDescriptorWriter {
                 out.println("/>");
             }
         }
-        out.println("\t</dependencies>");
     }
 
     private static void printDependencyExcludeRules(ModuleDescriptor md, PrintWriter out,

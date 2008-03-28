@@ -64,7 +64,9 @@
 			<exclude org="*" module="*" name="toexclude" type="*" ext="*" matcher="exact"/>
 		</dependency>
 		<dependency org="yourorg" name="yourmodule11" rev="11.1" conf="*->*"/>
-		<exclude org="*" module="*servlet*" artifact="*" type="*" ext="*" conf="myconf1" matcher="glob"/>
-		<exclude org="acme" module="test" artifact="test" type="source" ext="jar" matcher="exact"/>
+		<hints>
+			<exclude org="*" module="*servlet*" artifact="*" type="*" ext="*" conf="myconf1" matcher="glob"/>
+			<exclude org="acme" module="test" artifact="test" type="source" ext="jar" matcher="exact"/>
+		</hints>
 	</dependencies>
 </ivy-module>

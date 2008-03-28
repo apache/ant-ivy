@@ -97,11 +97,12 @@
 		</dependency>
 		<dependency org="yourorg" name="yourmodule11" rev="11.1" conf="*->@"/>
 
-		<exclude module="*servlet*" matcher="glob" conf="myconf1"/> 
-		<exclude org="acme" module="test" artifact="test" type="source" ext="jar"/> 
+		<hints>
+			<exclude module="*servlet*" matcher="glob" conf="myconf1"/>
+			<exclude org="acme" module="test" artifact="test" type="source" ext="jar"/>
+			<conflict org="yourorg" module=".*" matcher="regexp" manager="all"/>
+			<conflict org="theirorg" module="theirmodule1" rev="1.0, 1.1"/>
+	        <override org="yourorg" module=".*1" matcher="regexp" branch="BRANCH" rev="1.0"/>
+		</hints>
 	</dependencies>
-	<conflicts>
-		<manager org="yourorg" module=".*" name="all" matcher="regexp"/>
-		<manager org="theirorg" module="theirmodule1" rev="1.0, 1.1"/>
-	</conflicts>
 </ivy-module>
