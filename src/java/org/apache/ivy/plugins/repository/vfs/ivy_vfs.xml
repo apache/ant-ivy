@@ -29,10 +29,12 @@
         <scheme name="ftp"/>
         <if-available class-name="org.apache.commons.net.ftp.FTPFile"/>
     </provider>
+    <!-- FIXME: not available anymore in commons-vfs but in commons-vfs-sandbox
     <provider class-name="org.apache.commons.vfs.provider.smb.SmbFileProvider">
         <scheme name="smb"/>
         <if-available class-name="jcifs.smb.SmbFile"/>
     </provider>
+    -->
     <!--
     <provider class-name="org.apache.commons.vfs.provider.http.HttpFileProvider">
         <scheme name="http"/>

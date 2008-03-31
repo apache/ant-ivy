@@ -90,6 +90,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - FIX: XML entity parsing does not work properly (IVY-737) (thanks to Patrick Woodworth)
 - FIX: Cachefileset task silently fails with parent dir ".." construct (IVY-638)
 - FIX: SFTP should verify input parameter for hostname (IVY-734)
+- FIX: Classpath issues with vfs ftp while being used as a bundle (IVY-785)
 
 - DOCUMENTATION: Add new cache information to resolver doc (IVY-772) (thanks to Carlton Brown)
 
