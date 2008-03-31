@@ -18,6 +18,9 @@
 package org.apache.ivy.ant;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import junit.framework.TestCase;
 
@@ -521,10 +524,15 @@ public class IvyBuildListTest extends TestCase {
                 .getAbsolutePath());
         assertEquals(new File("test/buildlist/D/build.xml").getAbsolutePath(), new File(files[3])
                 .getAbsolutePath());
-        assertEquals(new File("test/buildlist/E2/build.xml").getAbsolutePath(), new File(files[4])
-                .getAbsolutePath());
-        assertEquals(new File("test/buildlist/E/build.xml").getAbsolutePath(), new File(files[5])
-                .getAbsolutePath());
+        
+        // the order of E and E2 is undefined
+        List other = new ArrayList();
+        other.add(new File(files[4]).getAbsoluteFile().toURI());
+        other.add(new File(files[5]).getAbsoluteFile().toURI());
+        Collections.sort(other);
+        
+        assertEquals(new File("test/buildlist/E/build.xml").getAbsoluteFile().toURI(), other.get(0));
+        assertEquals(new File("test/buildlist/E2/build.xml").getAbsoluteFile().toURI(), other.get(1));
     }
     
 }
