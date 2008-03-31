@@ -19,8 +19,6 @@ package org.apache.ivy;
 
 import java.io.File;
 
-import org.apache.ivy.core.cache.DefaultRepositoryCacheManager;
-import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.util.CacheCleaner;
 import org.apache.ivy.util.cli.ParseException;
 

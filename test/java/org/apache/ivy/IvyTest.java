@@ -20,12 +20,9 @@ package org.apache.ivy;
 import java.io.File;
 
 import org.apache.ivy.core.IvyContext;
-import org.apache.ivy.core.cache.DefaultResolutionCacheManager;
 import org.apache.ivy.core.report.ResolveReport;
 import org.apache.ivy.core.resolve.ResolveOptions;
-import org.apache.ivy.core.resolve.ResolveTest;
 import org.apache.ivy.core.settings.IvySettings;
-import org.apache.ivy.util.Message;
 import org.apache.ivy.util.MockMessageLogger;
 
 import junit.framework.TestCase;
@@ -43,7 +40,6 @@ public class IvyTest extends TestCase {
         assertFalse("IvyContext should be cleared and return a default Ivy instance", 
             IvyContext.getContext().getIvy() == ivy);
         
-        File cache = new File("build/cache");
         ResolveReport report = ivy.resolve(new File(
             "test/repositories/1/org1/mod1.1/ivys/ivy-1.0.xml").toURL(),
             getResolveOptions(ivy, new String[] {"*"}));
