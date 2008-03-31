@@ -22,6 +22,6 @@
     	<conf name="myconf"/>
     </configurations>
     <dependencies>
-        <dependency conf="myconf -> *" org="myorg" name="module2" rev="latest.integration" />
+        <dependency conf="myconf -> *" org="myorg" name="module2" rev="2.0" />
 	</dependencies>
 </ivy-module>

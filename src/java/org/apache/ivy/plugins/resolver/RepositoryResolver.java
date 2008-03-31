@@ -20,6 +20,7 @@ package org.apache.ivy.plugins.resolver;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -32,9 +33,12 @@ import org.apache.ivy.core.IvyPatternHelper;
 import org.apache.ivy.core.event.EventManager;
 import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.DefaultArtifact;
+import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.report.DownloadReport;
 import org.apache.ivy.core.resolve.DownloadOptions;
+import org.apache.ivy.plugins.parser.ModuleDescriptorParser;
+import org.apache.ivy.plugins.parser.ModuleDescriptorParserRegistry;
 import org.apache.ivy.plugins.repository.AbstractRepository;
 import org.apache.ivy.plugins.repository.Repository;
 import org.apache.ivy.plugins.repository.Resource;
@@ -85,8 +89,26 @@ public class RepositoryResolver extends AbstractResourceResolver {
                 Resource res = repository.getResource(resourceName);
                 boolean reachable = res.exists();
                 if (reachable) {
-                    String revision = pattern.indexOf(IvyPatternHelper.REVISION_KEY) == -1 
-                        ? "working@" + name : mrid.getRevision();
+                    String revision;
+                    if (pattern.indexOf(IvyPatternHelper.REVISION_KEY) == -1) {
+                        if ("ivy".equals(artifact.getType()) || "pom".equals(artifact.getType())) {
+                            // we can't determine the revision from the pattern, get it
+                            // from the moduledescriptor itself
+                            File temp = File.createTempFile("ivy", artifact.getExt());
+                            temp.deleteOnExit();
+                            repository.get(res.getName(), temp);
+                            ModuleDescriptorParser parser = ModuleDescriptorParserRegistry.getInstance().getParser(res);
+                            ModuleDescriptor md = parser.parseDescriptor(getSettings(), temp.toURL(), res, false);
+                            revision = md.getRevision();
+                            if ((revision == null) || (revision.length() == 0)) {
+                                revision = "working@" + name;
+                            }
+                        } else {
+                            revision = "working@" + name;
+                        }
+                    } else {
+                        revision = mrid.getRevision();
+                    }
                     return new ResolvedResource(res, revision);
                 } else if (versionMatcher.isDynamic(mrid)) {
                     return findDynamicResourceUsingPattern(
@@ -100,6 +122,9 @@ public class RepositoryResolver extends AbstractResourceResolver {
                 return findDynamicResourceUsingPattern(rmdparser, mrid, pattern, artifact, date);
             }
         } catch (IOException ex) {
+            throw new RuntimeException(name + ": unable to get resource for " + mrid + ": res="
+                    + IvyPatternHelper.substitute(pattern, mrid, artifact) + ": " + ex, ex);
+        } catch (ParseException ex) {
             throw new RuntimeException(name + ": unable to get resource for " + mrid + ": res="
                     + IvyPatternHelper.substitute(pattern, mrid, artifact) + ": " + ex, ex);
         }

@@ -75,6 +75,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - IMPROVEMENT: Parse description and home page from poms (IVY-767)
 - IMPROVEMENT: Smarter determination if an expression is exact or not for RegexpPatternMatcher and GlobPatternMatcher
 
+- FIX: resolve fails to put metadata in cache (IVY-779)
 - FIX: multiple cleancache and inline retrieve error (IVY-778)
 - FIX: buildlist evicts modules with the same name, but different organisation (IVY-731)
 - FIX: Out of memory/Stack overflow for new highly coupled project (IVY-595)

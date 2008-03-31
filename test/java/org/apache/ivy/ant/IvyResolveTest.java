@@ -24,6 +24,9 @@ import junit.framework.TestCase;
 import org.apache.ivy.Ivy;
 import org.apache.ivy.TestHelper;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
+import org.apache.ivy.core.report.ResolveReport;
+import org.apache.ivy.util.DefaultMessageLogger;
+import org.apache.ivy.util.Message;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.Delete;
@@ -57,6 +60,24 @@ public class IvyResolveTest extends TestCase {
         del.setProject(new Project());
         del.setDir(cache);
         del.execute();
+    }
+    
+    public void testIVY779() throws Exception {
+        Project project = new Project();
+        project.setProperty("ivy.local.default.root", "test/repositories/norev");
+        project.setProperty("ivy.local.default.ivy.pattern", "[module]/[artifact].[ext]");
+        project.setProperty("ivy.local.default.artifact.pattern", "[module]/[artifact].[ext]");
+
+        resolve.setProject(project);
+        project.setProperty("ivy.cache.dir", cache.getAbsolutePath());
+        resolve.setFile(new File("test/repositories/norev/ivy.xml"));
+        resolve.setKeep(true);
+        resolve.execute();
+        
+        ResolveReport report = (ResolveReport) project.getReference("ivy.resolved.report");
+        assertNotNull(report);
+        assertFalse(report.hasError());
+        assertEquals(1, report.getArtifacts().size());
     }
 
     public void testSimple() throws Exception {
