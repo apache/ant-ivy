@@ -252,7 +252,7 @@ public class SshRepository extends AbstractSshBasedRepository {
             }
             if (!overwrite) {
                 if (checkExistence(filePath, session)) {
-                    throw new IOException("destination file exists and overwrite == true");
+                    throw new IOException("destination file exists and overwrite == false");
                 }
             }
             if (path != null) {

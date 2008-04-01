@@ -136,7 +136,7 @@ public class SFTPRepository extends AbstractSshBasedRepository {
         ChannelSftp c = getSftpChannel(destination);
         try {
             if (!overwrite && checkExistence(destination, c)) {
-                throw new IOException("destination file exists and overwrite == true");
+                throw new IOException("destination file exists and overwrite == false");
             }
             if (destination.indexOf('/') != -1) {
                 mkdirs(destination.substring(0, destination.lastIndexOf('/')), c);
