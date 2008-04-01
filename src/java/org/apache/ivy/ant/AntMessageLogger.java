@@ -72,11 +72,11 @@ public class AntMessageLogger extends AbstractMessageLogger {
                 // with the initial task, except if it was an antcall, ant or subant target
                 // NB2 : Testing the identity of the task is not enought, event.getTask() return
                 // an instance of UnknownElement is wrapping the concrete instance
+                stackDepth--;
                 if (stackDepth == 0) {
                     ivy.getLoggerEngine().popLogger();
                     event.getProject().removeBuildListener(this);
                 }
-                stackDepth--;
             }
 
             public void messageLogged(BuildEvent event) {
