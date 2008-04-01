@@ -109,7 +109,6 @@ public class SFTPRepository extends AbstractSshBasedRepository {
         try {
             return c.get(resource.getName());
         } catch (SftpException e) {
-            e.printStackTrace();
             IOException ex = new IOException("impossible to open stream for " + resource + " on "
                     + getHost() + (e.getMessage() != null ? ": " + e.getMessage() : ""));
             ex.initCause(e);
@@ -123,7 +122,6 @@ public class SFTPRepository extends AbstractSshBasedRepository {
         try {
             c.get(source, destination.getAbsolutePath(), new MyProgressMonitor());
         } catch (SftpException e) {
-            e.printStackTrace();
             IOException ex = new IOException("impossible to get " + source + " on " + getHost()
                     + (e.getMessage() != null ? ": " + e.getMessage() : ""));
             ex.initCause(e);
@@ -186,8 +184,10 @@ public class SFTPRepository extends AbstractSshBasedRepository {
                 }
                 return result;
             }
-        } catch (Exception e) {
-            // silent fail, return null listing
+        } catch (SftpException e) {
+            IOException ex = new IOException("Failed to return a listing for '" + parent + "'");
+            ex.initCause(e);
+            throw ex;
         }
         return null;
     }
