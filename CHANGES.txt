@@ -93,6 +93,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - FIX: SFTP should verify input parameter for hostname (IVY-734)
 - FIX: Classpath issues with vfs ftp while being used as a bundle (IVY-785)
 
+- DOCUMENTATION: Broken link in documentation in Ivy files section, info element page (IVY-788)
 - DOCUMENTATION: Add new cache information to resolver doc (IVY-772) (thanks to Carlton Brown)
 
    2.0.0-beta2
