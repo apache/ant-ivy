@@ -1055,16 +1055,6 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
     }
 
     /**
-     * Returns true if the name should be ignored in listing
-     * 
-     * @param name
-     * @return
-     */
-    public boolean listingIgnore(String name) {
-        return listingIgnore.contains(name);
-    }
-
-    /**
      * Filters the names list by removing all names that should be ignored as defined by the listing
      * ignore list
      * 
