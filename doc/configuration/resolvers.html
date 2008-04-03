@@ -120,7 +120,13 @@ All resolvers of the same type share some common attributes detailed here:
         <td>No</td>
         <td>Yes</td>
     </tr>
-    <tr><td>allownomd</td><td>true if the absence of module descriptor (usually an ivy file) is authorised for this resolver, false to refuse modules without module descriptor <span class="since">since 1.4</span></td>
+    <tr><td>descriptor</td><td>optional if a module descriptor (usually an ivy file) is optional for this resolver, required to refuse modules without module descriptor <span class="since">since 2.0</span></td>
+        <td>No, defaults to optional</td>
+        <td>No (except dual)</td>
+        <td>Yes</td>
+    </tr>
+    <tr><td>allownomd</td><td><em>DEPRECATED. Use descriptor="required | optional" instead.</em>
+    true if the absence of module descriptor (usually an ivy file) is authorised for this resolver, false to refuse modules without module descriptor <span class="since">since 1.4</span></td>
         <td>No, defaults to true</td>
         <td>No (except dual)</td>
         <td>Yes</td>

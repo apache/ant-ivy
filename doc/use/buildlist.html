@@ -66,7 +66,16 @@ This field is ignored when neither root neither leaf is filled.
     <tr><td>delimiter</td><td><span class="since">since 2.0</span> delimiter to use when specifying multiple module names in the root and leaf properties.</td><td>No. Defaults to the comma (,) character.</td></tr>
     <tr><td>excludeleaf</td><td><span class="since">since 1.4.1</span> true if the leaf defined should be excluded from the list</td><td>No. Defaults to false</td></tr>
     <tr><td>haltonerror</td><td>true to halt the build when an invalid ivy file is encountered, false to continue</td><td>No. Defaults to true</td></tr>
-    <tr><td>skipbuildwithoutivy</td><td>true to skip files of the fileset with no corresponding ivy file, false otherwise. If false the file with no corresponding ivy file will be considered as independent of the other and put at the beginning of the built filelist.</td><td>No. Defaults to false</td></tr>
+    <tr><td>skipbuildwithoutivy</td><td>Deprecated, use onMissingDescriptor instead. true to skip files of the fileset with no corresponding ivy file, false otherwise. If false the file with no corresponding ivy file will be considered as independent of the other and put at the beginning of the built filelist.</td><td>No. Defaults to false</td></tr>
+    <tr><td>onMissingDescriptor</td><td>Specify the action to take when no module descriptor file is found for a file of the fileset. Possible values are:
+    <ul>
+    <li>head</li>put at the head of the built filelist.
+    <li>tail</li>put at the tail of the built filelist.
+    <li>skip</li>skip the file, which won't be put in the build filelist at all.
+    <li>warn</li>warn and put at the head of the build filelist.
+    <li>fail</li>halt the build with a failure.
+    </ul>
+    </td><td>No. Defaults to 'head'</td></tr>
     <tr><td>reverse</td><td>true to obtain the list in the reverse order, i.e. from the most dependent to the least one</td><td>No. Defaults to default false</td></tr>
     <tr><td>restartFrom</td><td><span class="since">since 2.0</span> The name of the module which should be considered as the starting point in the buildlist. This allows for the build to be started at any point in the dependency chain. <br/></td><td>No. Defaults to no restart point (all modules are used in the build list).</td></tr>
     <tr><td>settingsRef</td><td><span class="since">since 2.0</span> A reference to the ivy settings that must be used by this task</td><td>No, 'ivy.instance' is taken by default.</td></tr>
