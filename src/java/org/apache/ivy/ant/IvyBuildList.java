@@ -49,13 +49,26 @@ import org.apache.tools.ant.types.Path;
  * declared in ivy files.
  */
 public class IvyBuildList extends IvyTask {
+    public static final class OnMissingDescriptor {
+        public static final String HEAD = "head";
+        public static final String TAIL = "tail";
+        public static final String SKIP = "skip";
+        public static final String FAIL = "fail";
+        public static final String WARN = "warn";
+        
+        private OnMissingDescriptor() {
+        }
+    }
+
+    public static final String DESCRIPTOR_REQUIRED = "required";
+    
     private List buildFileSets = new ArrayList(); // List (FileSet)
 
     private String reference;
 
     private boolean haltOnError = true;
 
-    private boolean skipBuildWithoutIvy = false;
+    private String onMissingDescriptor = OnMissingDescriptor.HEAD;
 
     private boolean reverse = false;
 
@@ -154,6 +167,7 @@ public class IvyBuildList extends IvyTask {
 
         Map buildFiles = new HashMap(); // Map (ModuleDescriptor -> File buildFile)
         List independent = new ArrayList();
+        List noDescriptor = new ArrayList();
         Collection mds = new ArrayList();
 
         Set rootModuleNames = new LinkedHashSet();
@@ -187,16 +201,7 @@ public class IvyBuildList extends IvyTask {
                 File buildFile = new File(ds.getBasedir(), builds[i]);
                 File ivyFile = getIvyFileFor(buildFile);
                 if (!ivyFile.exists()) {
-                    if (skipBuildWithoutIvy) {
-                        Message.debug("skipping " + buildFile + ": ivy file " + ivyFile
-                                + " doesn't exist");
-                    } else {
-                        Message.verbose("no ivy file for " + buildFile + ": ivyfile=" + ivyFile
-                                + ": adding it at the beginning of the path");
-                        Message.verbose("\t(set skipbuildwithoutivy to true if you don't want this"
-                                + " file to be added to the path)");
-                        independent.add(buildFile);
-                    }
+                    onMissingDescriptor(buildFile, ivyFile, noDescriptor);
                 } else {
                     try {
                         ModuleDescriptor md = ModuleDescriptorParserRegistry.getInstance()
@@ -239,6 +244,12 @@ public class IvyBuildList extends IvyTask {
             new WarningNonMatchingVersionReporter();
         List sortedModules = ivy.sortModuleDescriptors(mds, nonMatchingVersionReporter);
 
+        if (onMissingDescriptor != OnMissingDescriptor.TAIL) {
+            for (ListIterator iter = noDescriptor.listIterator(); iter.hasNext();) {
+                File buildFile = (File) iter.next();
+                addBuildFile(path, buildFile);
+            }            
+        }
         for (ListIterator iter = independent.listIterator(); iter.hasNext();) {
             File buildFile = (File) iter.next();
             addBuildFile(path, buildFile);
@@ -275,9 +286,39 @@ public class IvyBuildList extends IvyTask {
             File buildFile = (File) buildFiles.get(md);
             addBuildFile(path, buildFile);
         }
+        if (onMissingDescriptor == OnMissingDescriptor.TAIL) {
+            for (ListIterator iter = noDescriptor.listIterator(); iter.hasNext();) {
+                File buildFile = (File) iter.next();
+                addBuildFile(path, buildFile);
+            }            
+        }
 
         getProject().addReference(getReference(), path);
         getProject().setProperty("ivy.sorted.modules", order.toString());
+    }
+
+    private void onMissingDescriptor(File buildFile, File ivyFile, List noDescriptor) {
+        if (onMissingDescriptor == OnMissingDescriptor.SKIP) {
+            Message.debug("skipping " + buildFile + ": descriptor " + ivyFile
+                    + " doesn't exist");
+        } else if (onMissingDescriptor == OnMissingDescriptor.FAIL) {
+            throw new BuildException(
+                "a module has no module descriptor and onMissingDescriptor=fail. "
+                + "Build file: " + buildFile + ". Expected descriptor: " + ivyFile);
+        } else {
+            if (onMissingDescriptor == OnMissingDescriptor.WARN) {
+                Message.warn(
+                    "a module has no module descriptor. "
+                    + "Build file: " + buildFile + ". Expected descriptor: " + ivyFile);
+            }
+            Message.verbose("no descriptor for " + buildFile + ": descriptor=" + ivyFile
+                    + ": adding it at the " 
+                    + onMissingDescriptor == OnMissingDescriptor.TAIL 
+                    ? "tail" : "head" + " of the path");
+            Message.verbose(
+                "\t(change onMissingDescriptor if you want to take another action");
+            noDescriptor.add(buildFile);
+        }
     }
     
     private List convertModuleNamesToModuleDescriptors(
@@ -483,12 +524,29 @@ public class IvyBuildList extends IvyTask {
         this.ivyFilePath = ivyFilePath;
     }
 
+    public String getOnMissingDescriptor() {
+        return onMissingDescriptor;
+    }
+    
+    public void setOnMissingDescriptor(String onMissingDescriptor) {
+        this.onMissingDescriptor = onMissingDescriptor;
+    }
+    
+    /**
+     * @deprecated use {@link #getOnMissingDescriptor()} instead. 
+     */
     public boolean isSkipbuildwithoutivy() {
-        return skipBuildWithoutIvy;
+        return onMissingDescriptor == OnMissingDescriptor.SKIP;
     }
 
+    /**
+     * @deprecated use {@link #setOnMissingDescriptor(String)} instead. 
+     */
     public void setSkipbuildwithoutivy(boolean skipBuildFilesWithoutIvy) {
-        this.skipBuildWithoutIvy = skipBuildFilesWithoutIvy;
+        Message.deprecated("skipbuildwithoutivy is deprecated, use onMissingDescriptor instead.");
+        this.onMissingDescriptor = skipBuildFilesWithoutIvy
+            ? OnMissingDescriptor.SKIP
+                    : OnMissingDescriptor.FAIL;
     }
 
     public boolean isReverse() {

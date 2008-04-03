@@ -73,6 +73,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - IMPROVEMENT: add branch attribute in ivy:install task (IVY-727)
 - IMPROVEMENT: Parse description information in ivy files (IVY-766)
 - IMPROVEMENT: Parse description and home page from poms (IVY-767)
+- IMPROVEMENT: Change allownomd and skipbuildwithoutivy into a more semantically correct name (IVY-297)
 - IMPROVEMENT: Smarter determination if an expression is exact or not for RegexpPatternMatcher and GlobPatternMatcher
 
 - FIX: SFTPRepository.list(String) hides exceptions (IVY-751)

@@ -24,6 +24,7 @@ import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -74,6 +75,10 @@ import org.apache.ivy.util.Message;
  *
  */
 public abstract class BasicResolver extends AbstractResolver {
+    public static final String DESCRIPTOR_OPTIONAL = "optional";
+
+    public static final String DESCRIPTOR_REQUIRED = "required";
+    
     /**
      * Exception thrown internally in getDependency to indicate a dependency is unresolved.
      * <p>
@@ -831,7 +836,29 @@ public abstract class BasicResolver extends AbstractResolver {
     }
 
     public void setAllownomd(boolean b) {
+        Message.deprecated(
+            "allownomd is deprecated, please use descriptor=\"" 
+            + (b ? DESCRIPTOR_OPTIONAL : DESCRIPTOR_REQUIRED) + "\" instead");
         allownomd = b;
+    }
+    
+    /**
+     * Sets the module descriptor presence rule.
+     * Should be one of {@link #DESCRIPTOR_REQUIRED} or {@link #DESCRIPTOR_OPTIONAL}.
+     *  
+     * @param descriptorRule the descriptor rule to use with this resolver.
+     */
+    public void setDescriptor(String descriptorRule) {
+        if (DESCRIPTOR_REQUIRED.equals(descriptorRule)) {
+          allownomd = false;  
+        } else if (DESCRIPTOR_OPTIONAL.equals(descriptorRule)) {
+          allownomd = true;  
+        } else {
+            throw new IllegalArgumentException(
+                "unknown descriptor rule '" + descriptorRule 
+                + "'. Allowed rules are: " 
+                + Arrays.asList(new String[] {DESCRIPTOR_REQUIRED, DESCRIPTOR_OPTIONAL}));
+        }
     }
 
     public String[] getChecksumAlgorithms() {
