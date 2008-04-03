@@ -164,7 +164,6 @@ public class Ivy {
      * Ivy is initialized.
      * 
      * @return the current version of Ivy
-     * @see #getIvyVersion()
      */
     public static String getIvyVersion() {
         return IVY_VERSION;
@@ -176,7 +175,6 @@ public class Ivy {
      * May be empty if unknown.
      * 
      * @return the date at which this version of Ivy has been built
-     * @see #getIvyVersion()
      */
     public static String getIvyDate() {
         return IVY_DATE;

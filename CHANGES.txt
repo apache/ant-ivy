@@ -69,6 +69,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - NEW: Add a new resolve mode (optionally per module) to utilize dynamic constraint rule metadata (IVY-740)
 - NEW: Add transitive dependency version and branch override mechanism (IVY-784)
 
+- IMPROVEMENT: Load Ivy version number into some Ant property (IVY-790)
 - IMPROVEMENT: Make Ivy standalone runnable with no required dependencies (IVY-757)
 - IMPROVEMENT: add branch attribute in ivy:install task (IVY-727)
 - IMPROVEMENT: Parse description information in ivy files (IVY-766)

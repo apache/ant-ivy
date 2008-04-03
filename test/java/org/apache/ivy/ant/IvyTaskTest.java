@@ -33,7 +33,6 @@ public class IvyTaskTest extends TestCase {
     public void testDefaultSettings() throws MalformedURLException {
         Project p = new Project();
         p.setBasedir("test/repositories");
-        // p.setProperty("ivy.settings.file" , "ivysettings.xml");
         p.setProperty("myproperty", "myvalue");
         IvyTask task = new IvyTask() {
             public void doExecute() throws BuildException {
@@ -61,8 +60,6 @@ public class IvyTaskTest extends TestCase {
 
     public void testReferencedSettings() throws MalformedURLException {
         Project p = new Project();
-        // p.setBasedir("test/repositories");
-        // p.setProperty("ivy.settings.file" , "ivysettings.xml");
         p.setProperty("myproperty", "myvalue");
 
         IvyAntSettings antSettings = new IvyAntSettings();
@@ -90,7 +87,18 @@ public class IvyTaskTest extends TestCase {
         assertEquals(new File("test/repositories").getAbsolutePath(), settings.getVariables().getVariable(
             "ivy.settings.dir"));
         assertEquals("myvalue", settings.getVariables().getVariable("myproperty"));
-
     }
 
+    public void testIvyVersionAsAntProperty() {
+        Project p = new Project();
+        p.setBasedir("test/repositories");
+        IvyTask task = new IvyTask() {
+            public void doExecute() throws BuildException {
+            }
+        };
+        task.setProject(p);
+        task.execute();
+
+        assertNotNull(p.getProperty("ivy.version"));                
+    }
 }

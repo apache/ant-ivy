@@ -249,6 +249,8 @@ public abstract class IvyTask extends Task {
      * Called when task starts its execution.
      */
     protected void prepareTask() {
+        getProject().setProperty("ivy.version", Ivy.getIvyVersion());
+        
         // push current project and Ivy on the stack in context
         IvyContext.pushNewCopyContext();
         IvyContext.getContext().setIvy(getIvyInstance());
