@@ -280,11 +280,12 @@ public class IvyBuildList extends IvyTask {
         getProject().setProperty("ivy.sorted.modules", order.toString());
     }
     
-    private List convertModuleNamesToModuleDescriptors(Collection mds, Set moduleNames, String kind) {
+    private List convertModuleNamesToModuleDescriptors(
+            Collection mds, Set moduleNames, String kind) {
         List result = new ArrayList();
         Set foundModuleNames = new HashSet();
         
-        for (Iterator it = mds.iterator(); it.hasNext(); ) {
+        for (Iterator it = mds.iterator(); it.hasNext();) {
             ModuleDescriptor md = (ModuleDescriptor) it.next();
             String name = md.getModuleRevisionId().getModuleId().getName();
             if (moduleNames.contains(name)) {
@@ -299,14 +300,14 @@ public class IvyBuildList extends IvyTask {
             
             StringBuffer missingNames = new StringBuffer();
             String sep = "";
-            for (Iterator it = missingModules.iterator(); it.hasNext(); ) {
+            for (Iterator it = missingModules.iterator(); it.hasNext();) {
                 missingNames.append(sep);
                 missingNames.append(it.next());
                 sep = ", ";
             }
             
-            throw new BuildException("unable to find " + kind + " module(s) " + missingNames.toString()
-                + " in build fileset");
+            throw new BuildException("unable to find " + kind + " module(s) " 
+                + missingNames.toString() + " in build fileset");
         }
 
         return result;

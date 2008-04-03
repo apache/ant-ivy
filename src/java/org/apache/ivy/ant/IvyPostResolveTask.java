@@ -252,7 +252,7 @@ public abstract class IvyPostResolveTask extends IvyTask {
             
             // for each resolved configuration, check if the report still exists
             ResolutionCacheManager cache = getSettings().getResolutionCacheManager();
-            for (Iterator it = rconfsSet.iterator(); it.hasNext(); ) {
+            for (Iterator it = rconfsSet.iterator(); it.hasNext();) {
                 String resolvedConf = (String) it.next();
                 String resolveId = getResolveId();
                 if (resolveId == null) {

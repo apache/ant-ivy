@@ -97,8 +97,10 @@ public class RepositoryResolver extends AbstractResourceResolver {
                             File temp = File.createTempFile("ivy", artifact.getExt());
                             temp.deleteOnExit();
                             repository.get(res.getName(), temp);
-                            ModuleDescriptorParser parser = ModuleDescriptorParserRegistry.getInstance().getParser(res);
-                            ModuleDescriptor md = parser.parseDescriptor(getSettings(), temp.toURL(), res, false);
+                            ModuleDescriptorParser parser = 
+                                ModuleDescriptorParserRegistry.getInstance().getParser(res);
+                            ModuleDescriptor md = 
+                                parser.parseDescriptor(getSettings(), temp.toURL(), res, false);
                             revision = md.getRevision();
                             if ((revision == null) || (revision.length() == 0)) {
                                 revision = "working@" + name;
