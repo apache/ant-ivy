@@ -23,9 +23,17 @@ import org.apache.ivy.plugins.repository.ssh.SshRepository;
  * Resolver for SSH resolver for ivy
  */
 public class SshResolver extends AbstractSshBasedResolver {
-
+    
     public SshResolver() {
         setRepository(new SshRepository());
+    }
+    
+    /**
+     * A four digit string (e.g., 0644, see "man chmod", "man open") specifying the permissions
+     * of the published files.
+     */
+    public void setPublishMode(String mode) {
+        ((SshRepository) getRepository()).setPublishMode(mode);
     }
 
     /**
