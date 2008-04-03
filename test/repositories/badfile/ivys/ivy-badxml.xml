@@ -16,6 +16,9 @@
    specific language governing permissions and limitations
    under the License.    
 -->
-<ivy-module version="1.1">
-	<info organisation="myorg" module="badmodule" revision="badmodule"/>
+<ivy-module version="1.0">
+    <info organisation="apache" module="test-badxml"/>
+    <dependencies>
+		<dependency org="myorg" name="mymodule" rev="badxml"/>
+    </dependencies>
 </ivy-module>

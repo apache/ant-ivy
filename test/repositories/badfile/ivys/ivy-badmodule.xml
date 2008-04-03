@@ -17,8 +17,8 @@
    under the License.    
 -->
 <ivy-module version="1.0">
-    <info organisation="apache" name="test-badorg"/>
+    <info organisation="apache" module="test-badmodule"/>
     <dependencies>
-		<dependency org="myorg" name="mymodule" rev="badorg"/>
+		<dependency org="myorg" name="mymodule" rev="badmodule"/>
     </dependencies>
 </ivy-module>

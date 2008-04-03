@@ -58,6 +58,7 @@ import org.apache.ivy.plugins.resolver.DualResolver;
 import org.apache.ivy.plugins.resolver.FileSystemResolver;
 import org.apache.ivy.util.CacheCleaner;
 import org.apache.ivy.util.FileUtil;
+import org.apache.ivy.util.StringUtils;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
@@ -2863,27 +2864,26 @@ public class ResolveTest extends TestCase {
         Ivy ivy = new Ivy();
         ivy.configure(new File("test/repositories/badfile/ivysettings.xml"));
 
-        try {
-            ivy.resolve(new File("test/repositories/badfile/ivys/ivy-badorg.xml").toURL(),
-                getResolveOptions(new String[] {"*"}));
-            fail("bad org should have raised an exception !");
-        } catch (Exception ex) {
-            // OK, it raised an exception
-        }
-        try {
-            ivy.resolve(new File("test/repositories/badfile/ivys/ivy-badmodule.xml").toURL(),
-                getResolveOptions(new String[] {"*"}));
-            fail("bad module should have raised an exception !");
-        } catch (Exception ex) {
-            // OK, it raised an exception
-        }
-        try {
-            ivy.resolve(new File("test/repositories/badfile/ivys/ivy-badrevision.xml").toURL(),
-                getResolveOptions(new String[] {"*"}));
-            fail("bad revision should have raised an exception !");
-        } catch (Exception ex) {
-            // OK, it raised an exception
-        }
+        ResolveReport report = ivy.resolve(
+            new File("test/repositories/badfile/ivys/ivy-badorg.xml").toURL(),
+            getResolveOptions(new String[] {"*"}));
+        assertTrue("bad org should have raised an error in report", report.hasError());
+        assertTrue(StringUtils.join(report.getAllProblemMessages().toArray(), "\n").indexOf("'badorg'") != -1);
+        
+        report = ivy.resolve(new File("test/repositories/badfile/ivys/ivy-badmodule.xml").toURL(),
+            getResolveOptions(new String[] {"*"}));
+        assertTrue("bad module should have raised an error in report", report.hasError());
+        assertTrue(StringUtils.join(report.getAllProblemMessages().toArray(), "\n").indexOf("'badmodule'") != -1);
+
+        report = ivy.resolve(new File("test/repositories/badfile/ivys/ivy-badrevision.xml").toURL(),
+            getResolveOptions(new String[] {"*"}));
+        assertTrue("bad revision should have raised an error in report", report.hasError());
+        assertTrue(StringUtils.join(report.getAllProblemMessages().toArray(), "\n").indexOf("'badrevision'") != -1);
+        
+        report = ivy.resolve(new File("test/repositories/badfile/ivys/ivy-badxml.xml").toURL(),
+            getResolveOptions(new String[] {"*"}));
+        assertTrue("bad xml should have raised an error in report", report.hasError());
+        assertTrue(StringUtils.join(report.getAllProblemMessages().toArray(), "\n").indexOf("badatt") != -1);
     }
 
     public void testTransitiveSetting() throws Exception {

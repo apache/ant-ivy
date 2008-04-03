@@ -17,5 +17,5 @@
    under the License.    
 -->
 <ivy-module version="1.1">
-	<info organisation="badorg" name="mymodule" revision="badorg"/>
+	<info organisation="badorg" module="mymodule" revision="badorg"/>
 </ivy-module>
