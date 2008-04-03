@@ -76,6 +76,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - IMPROVEMENT: Change allownomd and skipbuildwithoutivy into a more semantically correct name (IVY-297)
 - IMPROVEMENT: Smarter determination if an expression is exact or not for RegexpPatternMatcher and GlobPatternMatcher
 
+- FIX: No error or warning when a resolver references a non-existent cache (IVY-777)
 - FIX: ivy properties defined in an include file not available in the file that includes it (IVY-780)
 - FIX: SFTPRepository.list(String) hides exceptions (IVY-751)
 - FIX: Wrong error message for republishing a module (IVY-752)

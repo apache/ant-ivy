@@ -18,6 +18,7 @@
 package org.apache.ivy.core.settings;
 
 import java.io.File;
+import java.text.ParseException;
 import java.util.List;
 
 import junit.framework.TestCase;
@@ -219,6 +220,18 @@ public class XmlSettingsParserTest extends TestCase {
         
         assertEquals(c2, settings.getResolver("A").getRepositoryCacheManager());
         assertEquals(c, settings.getResolver("B").getRepositoryCacheManager());
+    }
+
+    public void testInvalidCache() throws Exception {
+        IvySettings settings = new IvySettings();
+        XmlSettingsParser parser = new XmlSettingsParser(settings);
+        
+        try {
+            parser.parse(XmlSettingsParserTest.class.getResource("ivysettings-cache-invalid.xml"));
+            fail("resolver referencing a non existent cache should raise an exception");
+        } catch (ParseException e) {
+            assertTrue(e.getMessage().indexOf("mycache") != -1);
+        }
     }
 
     public void testVersionMatchers1() throws Exception {

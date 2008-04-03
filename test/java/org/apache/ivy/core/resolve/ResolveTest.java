@@ -370,6 +370,7 @@ public class ResolveTest extends TestCase {
         Ivy ivy = new Ivy();
         ivy.configure(new File("test/repositories/bugIVY-56/ivysettings.xml"));
         ivy.getSettings().setDefaultCache(cache);
+        ivy.getSettings().validate();
 
         ResolveReport report = ivy.resolve(new File(
                 "test/repositories/1/org1/mod1.1/ivys/ivy-1.0.xml").toURL(), getResolveOptions(ivy
@@ -682,6 +683,7 @@ public class ResolveTest extends TestCase {
             new File(ivy.getSettings().getDefaultCache(), "repository").getAbsolutePath());
         ivy.getSettings().setDefaultResolutionCacheBasedir(
             new File(ivy.getSettings().getDefaultCache(), "workspace").getAbsolutePath());
+        ivy.getSettings().validate();
         DefaultRepositoryCacheManager cacheMgr = 
             (DefaultRepositoryCacheManager) ivy.getSettings().getDefaultRepositoryCacheManager();
 

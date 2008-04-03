@@ -675,6 +675,13 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
     public void setDefaultCache(File cacheDirectory) {
         setVariable("ivy.cache.dir", cacheDirectory.getAbsolutePath(), false);
         defaultCache = cacheDirectory;
+        if (defaultRepositoryCacheManager != null) {
+            if ("default-cache".equals(defaultRepositoryCacheManager.getName())
+                    && defaultRepositoryCacheManager instanceof DefaultRepositoryCacheManager) {
+                ((DefaultRepositoryCacheManager) defaultRepositoryCacheManager)
+                    .setBasedir(defaultCache);
+            }
+        }
     }
 
     public void setDefaultResolver(String resolverName) {
@@ -735,10 +742,21 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
     
     public void setDefaultRepositoryCacheBasedir(String repositoryCacheRoot) {
         setVariable("ivy.cache.repository", repositoryCacheRoot, true);
+        if (defaultRepositoryCacheManager != null
+                && "default-cache".equals(defaultRepositoryCacheManager.getName())
+                && defaultRepositoryCacheManager instanceof DefaultRepositoryCacheManager) {
+            ((DefaultRepositoryCacheManager) defaultRepositoryCacheManager)
+                .setBasedir(getDefaultRepositoryCacheBasedir());
+        }
     }
     
     public void setDefaultResolutionCacheBasedir(String resolutionCacheRoot) {
         setVariable("ivy.cache.resolution", resolutionCacheRoot, true);
+        if (resolutionCacheManager != null
+                && resolutionCacheManager instanceof DefaultResolutionCacheManager) {
+            ((DefaultResolutionCacheManager) resolutionCacheManager)
+                .setBasedir(getDefaultResolutionCacheBasedir());
+        }
     }
     
     public File getDefaultRepositoryCacheBasedir() {
@@ -1329,5 +1347,41 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
             + " setting on the cache implementation instead");
         setDefaultUseOrigin(true);
         
+    }
+    
+    /**
+     * Validates the settings, throwing an {@link IllegalStateException} if the current state is not
+     * valid.
+     * 
+     * @throws IllegalStateException
+     *             if the settings is not valid.
+     */
+    public void validate() {
+        validateAll(resolversMap.values());
+        validateAll(conflictsManager.values());
+        validateAll(latestStrategies.values());
+        validateAll(lockStrategies.values());
+        validateAll(repositoryCacheManagers.values());
+        validateAll(reportOutputters.values());
+        validateAll(circularDependencyStrategies.values());
+        validateAll(versionMatchers.values());
+        validateAll(namespaces.values());
+    }
+
+    /**
+     * Validates all {@link Validatable} objects in the collection.
+     * 
+     * @param objects
+     *            the collection of objects to validate.
+     * @throws IllegalStateException
+     *             if any of the objects is not valid.
+     */
+    private void validateAll(Collection values) {
+        for (Iterator iterator = values.iterator(); iterator.hasNext();) {
+            Object object = (Object) iterator.next();
+            if (object instanceof Validatable) {
+                ((Validatable) object).validate();
+            }
+        }
     }
 }

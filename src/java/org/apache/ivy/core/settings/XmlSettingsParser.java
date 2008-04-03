@@ -146,6 +146,7 @@ public class XmlSettingsParser extends DefaultHandler {
             InputSource inSrc = new InputSource(stream);
             inSrc.setSystemId(settingsUrl.toExternalForm());
             SAXParserFactory.newInstance().newSAXParser().parse(settingsUrl.toExternalForm(), this);
+            ivy.validate();
         } catch (IOException e) {
             throw e;
         } catch (Exception e) {

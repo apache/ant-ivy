@@ -19,6 +19,7 @@ package org.apache.ivy.plugins.resolver;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Map;
 
 import org.apache.ivy.core.IvyContext;
@@ -47,6 +48,7 @@ import org.apache.ivy.core.resolve.ResolvedModuleRevision;
 import org.apache.ivy.core.search.ModuleEntry;
 import org.apache.ivy.core.search.OrganisationEntry;
 import org.apache.ivy.core.search.RevisionEntry;
+import org.apache.ivy.core.settings.Validatable;
 import org.apache.ivy.plugins.latest.LatestStrategy;
 import org.apache.ivy.plugins.namespace.NameSpaceHelper;
 import org.apache.ivy.plugins.namespace.Namespace;
@@ -57,7 +59,8 @@ import org.apache.ivy.util.Message;
 /**
  * This abstract resolver only provides handling for resolver name
  */
-public abstract class AbstractResolver implements DependencyResolver, HasLatestStrategy {
+public abstract class AbstractResolver 
+        implements DependencyResolver, HasLatestStrategy, Validatable {
 
     /**
      * True if parsed ivy files should be validated against xsd, false if they should not, null if
@@ -196,24 +199,28 @@ public abstract class AbstractResolver implements DependencyResolver, HasLatestS
 
     public LatestStrategy getLatestStrategy() {
         if (latestStrategy == null) {
-            if (getSettings() != null) {
-                if (latestStrategyName != null && !"default".equals(latestStrategyName)) {
-                    latestStrategy = getSettings().getLatestStrategy(latestStrategyName);
-                    if (latestStrategy == null) {
-                        Message.error("unknown latest strategy: " + latestStrategyName);
-                        latestStrategy = getSettings().getDefaultLatestStrategy();
-                    }
-                } else {
-                    latestStrategy = getSettings().getDefaultLatestStrategy();
-                    Message.debug(getName() + ": no latest strategy defined: using default");
-                }
-            } else {
-                throw new IllegalStateException(
-                    "no ivy instance found: "
-                    + "impossible to get a latest strategy without ivy instance");
-            }
+            initLatestStrategyFromSettings();
         }
         return latestStrategy;
+    }
+
+    private void initLatestStrategyFromSettings() {
+        if (getSettings() != null) {
+            if (latestStrategyName != null && !"default".equals(latestStrategyName)) {
+                latestStrategy = getSettings().getLatestStrategy(latestStrategyName);
+                if (latestStrategy == null) {
+                    throw new IllegalStateException(
+                        "unknown latest strategy '" + latestStrategyName + "'");
+                }
+            } else {
+                latestStrategy = getSettings().getDefaultLatestStrategy();
+                Message.debug(getName() + ": no latest strategy defined: using default");
+            }
+        } else {
+            throw new IllegalStateException(
+                "no ivy instance found: "
+                + "impossible to get a latest strategy without ivy instance");
+        }
     }
 
     public void setLatestStrategy(LatestStrategy latestStrategy) {
@@ -233,24 +240,28 @@ public abstract class AbstractResolver implements DependencyResolver, HasLatestS
 
     public Namespace getNamespace() {
         if (namespace == null) {
-            if (getSettings() != null) {
-                if (namespaceName != null) {
-                    namespace = getSettings().getNamespace(namespaceName);
-                    if (namespace == null) {
-                        Message.error("unknown namespace: " + namespaceName);
-                        namespace = getSettings().getSystemNamespace();
-                    }
-                } else {
-                    namespace = getSettings().getSystemNamespace();
-                    Message.debug(getName() + ": no namespace defined: using system");
-                }
-            } else {
-                Message.verbose(getName()
-                        + ": no namespace defined nor ivy instance: using system namespace");
-                namespace = Namespace.SYSTEM_NAMESPACE;
-            }
+            initNamespaceFromSettings();
         }
         return namespace;
+    }
+
+    private void initNamespaceFromSettings() {
+        if (getSettings() != null) {
+            if (namespaceName != null) {
+                namespace = getSettings().getNamespace(namespaceName);
+                if (namespace == null) {
+                    throw new IllegalStateException(
+                        "unknown namespace '" + namespaceName + "'");
+                }
+            } else {
+                namespace = getSettings().getSystemNamespace();
+                Message.debug(getName() + ": no namespace defined: using system");
+            }
+        } else {
+            Message.verbose(getName()
+                    + ": no namespace defined nor ivy instance: using system namespace");
+            namespace = Namespace.SYSTEM_NAMESPACE;
+        }
     }
 
     public void setNamespace(String namespaceName) {
@@ -324,16 +335,31 @@ public abstract class AbstractResolver implements DependencyResolver, HasLatestS
     
     public RepositoryCacheManager getRepositoryCacheManager() {
         if (repositoryCacheManager == null) {
-            if (cacheManagerName == null) {
-                repositoryCacheManager = settings.getDefaultRepositoryCacheManager();
-            } else {
-                repositoryCacheManager = settings.getRepositoryCacheManager(cacheManagerName);
-            }
+            initRepositoryCacheManagerFromSettings();
         }
         return repositoryCacheManager;
     }
+
+    private void initRepositoryCacheManagerFromSettings() {
+        if (cacheManagerName == null) {
+            repositoryCacheManager = settings.getDefaultRepositoryCacheManager();
+            if (repositoryCacheManager == null) {
+                throw new IllegalStateException(
+                    "no default cache manager defined with current settings");
+            }
+        } else {
+            repositoryCacheManager = settings.getRepositoryCacheManager(cacheManagerName);
+            if (repositoryCacheManager == null) {
+                throw new IllegalStateException(
+                    "unknown cache manager '" + cacheManagerName 
+                    + "'. Available caches are " 
+                    + Arrays.asList(settings.getRepositoryCacheManagers()));
+            }
+        }
+    }
     
     public void setRepositoryCacheManager(RepositoryCacheManager repositoryCacheManager) {
+        this.cacheManagerName = repositoryCacheManager.getName();
         this.repositoryCacheManager = repositoryCacheManager;
     }
     
@@ -347,6 +373,12 @@ public abstract class AbstractResolver implements DependencyResolver, HasLatestS
     
     public EventManager getEventManager() {
         return eventManager;
+    }
+    
+    public void validate() {
+        initRepositoryCacheManagerFromSettings();
+        initNamespaceFromSettings();
+        initLatestStrategyFromSettings();
     }
 
     protected CacheMetadataOptions getCacheOptions(ResolveData data) {
