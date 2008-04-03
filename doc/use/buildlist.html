@@ -67,7 +67,7 @@ This field is ignored when neither root neither leaf is filled.
     <tr><td>excludeleaf</td><td><span class="since">since 1.4.1</span> true if the leaf defined should be excluded from the list</td><td>No. Defaults to false</td></tr>
     <tr><td>haltonerror</td><td>true to halt the build when an invalid ivy file is encountered, false to continue</td><td>No. Defaults to true</td></tr>
     <tr><td>skipbuildwithoutivy</td><td>Deprecated, use onMissingDescriptor instead. true to skip files of the fileset with no corresponding ivy file, false otherwise. If false the file with no corresponding ivy file will be considered as independent of the other and put at the beginning of the built filelist.</td><td>No. Defaults to false</td></tr>
-    <tr><td>onMissingDescriptor</td><td>Specify the action to take when no module descriptor file is found for a file of the fileset. Possible values are:
+    <tr><td>onMissingDescriptor</td><td><span class="since">since 2.0</span> Specify the action to take when no module descriptor file is found for a file of the fileset. Possible values are:
     <ul>
     <li>head</li>put at the head of the built filelist.
     <li>tail</li>put at the tail of the built filelist.
