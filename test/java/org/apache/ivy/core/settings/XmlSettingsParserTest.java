@@ -399,6 +399,9 @@ public class XmlSettingsParserTest extends TestCase {
         assertEquals(1, ivyPatterns.size());
         assertEquals("included/myrep/[organisation]/[module]/[type]s/[artifact]-[revision].[ext]",
             ivyPatterns.get(0));
+        
+        // properties defined in included file should be available to including file (IVY-780)
+        assertEquals("myvalue", settings.getVariable("ivy.test.prop"));
     }
 
     public void testParser() throws Exception {

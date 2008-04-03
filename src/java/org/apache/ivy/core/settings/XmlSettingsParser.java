@@ -24,6 +24,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.ParseException;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -50,6 +51,50 @@ import org.xml.sax.helpers.DefaultHandler;
 /**
  */
 public class XmlSettingsParser extends DefaultHandler {
+    /**
+     * Wraps an {@link IvyVariableContainer} delegating most method calls to the wrapped instance,
+     * except for a set of variables which are only stored locally in the wrapper, and not
+     * propagated to the wrapped instance.
+     */
+    private static final class IvyVariableContainerWrapper implements IvyVariableContainer {
+        private static final Collection SETTINGS_VARIABLES = Arrays.asList(new String[] {
+                "ivy.settings.dir", "ivy.settings.url", "ivy.settings.file",
+                "ivy.conf.dir", "ivy.conf.url", "ivy.conf.file"});
+        
+        private final IvyVariableContainer variables;
+
+        private Map localVariables = new HashMap();
+
+        private IvyVariableContainerWrapper(IvyVariableContainer variables) {
+            this.variables = variables;
+        }
+
+        public void setVariable(String varName, String value, boolean overwrite) {
+            if (SETTINGS_VARIABLES.contains(varName)) {
+                if (!localVariables.containsKey(varName) || overwrite) {
+                    localVariables.put(varName, value);
+                }
+            } else {
+                variables.setVariable(varName, value, overwrite);
+            }
+        }
+
+        public void setEnvironmentPrefix(String prefix) {
+            variables.setEnvironmentPrefix(prefix);
+        }
+
+        public String getVariable(String name) {
+            if (localVariables.containsKey(name)) {
+                return (String) localVariables.get(name);
+            }
+            return variables.getVariable(name);
+        }
+
+        public Object clone() {
+            throw new UnsupportedOperationException();
+        }
+    }
+
     private Configurator configurator;
 
     private List configuratorTags = Arrays.asList(new String[] {"resolvers", "namespaces",
@@ -307,8 +352,8 @@ public class XmlSettingsParser extends DefaultHandler {
     }
 
     private void includeStarted(Map attributes) throws IOException, ParseException {
-        IvyVariableContainer variables = (IvyVariableContainer) ivy.getVariableContainer()
-                .clone();
+        final IvyVariableContainer variables = (IvyVariableContainer) ivy.getVariableContainer();
+        ivy.setVariableContainer(new IvyVariableContainerWrapper(variables));
         try {
             String propFilePath = (String) attributes.get("file");
             URL settingsURL = null;

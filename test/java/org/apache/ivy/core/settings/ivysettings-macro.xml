@@ -17,6 +17,7 @@
    under the License.    
 -->
 <ivysettings>
+	<property name="ivy.test.prop" value="myvalue" />
 	<macrodef name="mymacro">
 		<attribute name="mymainrep"/>
 		<attribute name="mysecondrep"/>
