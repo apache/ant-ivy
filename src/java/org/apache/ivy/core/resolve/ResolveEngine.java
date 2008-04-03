@@ -334,7 +334,8 @@ public class ResolveEngine {
         for (int i = 0; i < dependencies.length; i++) {
             checkInterrupted();
             // download artifacts required in all asked configurations
-            if (!dependencies[i].isCompletelyEvicted() && !dependencies[i].hasProblem()) {
+            if (!dependencies[i].isCompletelyEvicted() && !dependencies[i].hasProblem()
+                    && dependencies[i].getModuleRevision() != null) {
                 DependencyResolver resolver = dependencies[i].getModuleRevision()
                         .getArtifactResolver();
                 Artifact[] selectedArtifacts = dependencies[i].getSelectedArtifacts(artifactFilter);

@@ -42,6 +42,7 @@ import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.report.ArtifactDownloadReport;
 import org.apache.ivy.core.resolve.IvyNode;
 import org.apache.ivy.core.resolve.ResolveOptions;
+import org.apache.ivy.core.resolve.ResolvedModuleRevision;
 import org.apache.ivy.core.retrieve.RetrieveOptions;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
@@ -199,9 +200,10 @@ public class IvyArtifactReport extends IvyPostResolveTask {
         moduleAttrs.addAttribute(null, "organisation", "organisation", "CDATA", dependency
                 .getModuleId().getOrganisation());
         moduleAttrs.addAttribute(null, "name", "name", "CDATA", dependency.getModuleId().getName());
-        moduleAttrs.addAttribute(null, "rev", "rev", "CDATA", dependency.getModuleRevision()
+        ResolvedModuleRevision moduleRevision = dependency.getModuleRevision();
+        moduleAttrs.addAttribute(null, "rev", "rev", "CDATA", moduleRevision
                 .getId().getRevision());
-        moduleAttrs.addAttribute(null, "status", "status", "CDATA", dependency.getModuleRevision()
+        moduleAttrs.addAttribute(null, "status", "status", "CDATA", moduleRevision
                 .getDescriptor().getStatus());
         saxHandler.startElement(null, "module", "module", moduleAttrs);
     }
