@@ -3610,6 +3610,44 @@ public class ResolveTest extends TestCase {
             "test4", "jar", "jar").exists());
     }
     
+    public void testResolveMaven2Snapshot1() throws Exception {
+        // test case for IVY-501
+        // here we test maven SNAPSHOT versions handling, 
+        // with m2 snapshotRepository/uniqueVersion set to true
+        Ivy ivy = new Ivy();
+        ivy.configure(new File("test/repositories/m2/ivysettings.xml"));
+        ResolveReport report = ivy.resolve(new File(
+                "test/repositories/m2/org/apache/test4/1.0/test4-1.0.pom")
+                .toURL(), getResolveOptions(new String[] {"*"}));
+        assertNotNull(report);
+        assertFalse(report.hasError());
+
+        // dependencies
+        assertTrue(getIvyFileInCache(
+            ModuleRevisionId.newInstance("org.apache", "test-SNAPSHOT1", "2.0.2-SNAPSHOT")).exists());
+        assertTrue(getArchiveFileInCache(ivy, "org.apache", "test-SNAPSHOT1", "2.0.2-SNAPSHOT",
+            "test-SNAPSHOT1", "jar", "jar").exists());
+    }
+
+    public void testResolveMaven2Snapshot2() throws Exception {
+        // test case for IVY-501
+        // here we test maven SNAPSHOT versions handling, 
+        // without m2 snapshotRepository/uniqueVersion set to true
+        Ivy ivy = new Ivy();
+        ivy.configure(new File("test/repositories/m2/ivysettings.xml"));
+        ResolveReport report = ivy.resolve(new File(
+                "test/repositories/m2/org/apache/test4/1.1/test4-1.1.pom")
+                .toURL(), getResolveOptions(new String[] {"*"}));
+        assertNotNull(report);
+        assertFalse(report.hasError());
+
+        // dependencies
+        assertTrue(getIvyFileInCache(
+            ModuleRevisionId.newInstance("org.apache", "test-SNAPSHOT2", "2.0.2-SNAPSHOT")).exists());
+        assertTrue(getArchiveFileInCache(ivy, "org.apache", "test-SNAPSHOT2", "2.0.2-SNAPSHOT",
+            "test-SNAPSHOT2", "jar", "jar").exists());
+    }
+
 
     public void testNamespaceMapping() throws Exception {
         // the dependency is in another namespace

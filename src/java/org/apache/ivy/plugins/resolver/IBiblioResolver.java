@@ -42,6 +42,7 @@ import org.apache.ivy.core.resolve.ResolvedModuleRevision;
 import org.apache.ivy.core.search.ModuleEntry;
 import org.apache.ivy.core.search.OrganisationEntry;
 import org.apache.ivy.core.search.RevisionEntry;
+import org.apache.ivy.plugins.matcher.PatternMatcher;
 import org.apache.ivy.plugins.repository.Repository;
 import org.apache.ivy.plugins.repository.Resource;
 import org.apache.ivy.plugins.resolver.util.ResolvedResource;
@@ -76,19 +77,137 @@ public class IBiblioResolver extends URLResolver {
     private boolean useMavenMetadata = true;
 
     public IBiblioResolver() {
+        // SNAPSHOT revisions are changing revisions
+        setChangingMatcher(PatternMatcher.REGEXP);
+        setChangingPattern(".*-SNAPSHOT");
     }
 
     public ResolvedResource findIvyFileRef(DependencyDescriptor dd, ResolveData data) {
         if (isM2compatible() && isUsepoms()) {
             ModuleRevisionId mrid = dd.getDependencyRevisionId();
             mrid = convertM2IdForResourceSearch(mrid);
-            ResolvedResource rres = findResourceUsingPatterns(mrid, getIvyPatterns(),
+            
+            ResolvedResource rres = null;
+            if (dd.getDependencyRevisionId().getRevision().endsWith("SNAPSHOT")) {
+                rres = findSnapshotDescriptor(dd, data, mrid);
+                if (rres != null) {
+                    return rres;
+                }
+            }
+            
+            rres = findResourceUsingPatterns(mrid, getIvyPatterns(),
                 DefaultArtifact.newPomArtifact(mrid, data.getDate()), getRMDParser(dd, data), data
                         .getDate());
             return rres;
         } else {
             return null;
         }
+    }
+
+    protected ResolvedResource findArtifactRef(Artifact artifact, Date date) {
+        ensureConfigured(getSettings());
+        ModuleRevisionId mrid = artifact.getModuleRevisionId();
+        if (isM2compatible()) {
+            mrid = convertM2IdForResourceSearch(mrid);
+        }
+        ResolvedResource rres = null;
+        if (artifact.getId().getRevision().endsWith("SNAPSHOT")) {
+            rres = findSnapshotArtifact(artifact, date, mrid);            
+            if (rres != null) {
+                return rres;
+            }
+        }
+        return findResourceUsingPatterns(mrid, getArtifactPatterns(), artifact,
+            getDefaultRMDParser(artifact.getModuleRevisionId().getModuleId()), date);
+    }
+
+    private ResolvedResource findSnapshotArtifact(Artifact artifact, Date date,
+            ModuleRevisionId mrid) {
+        String rev = findSnapshotVersion(mrid);
+        if (rev != null) {
+            // replace the revision token in file name with the resolved revision
+            String pattern = (String) getArtifactPatterns().get(0);
+            pattern = pattern.replaceFirst("\\-\\[revision\\]", "-" + rev);
+            return findResourceUsingPattern(mrid, pattern, artifact,
+                getDefaultRMDParser(artifact.getModuleRevisionId().getModuleId()), date);
+        }
+        return null;
+    }
+
+    private ResolvedResource findSnapshotDescriptor(DependencyDescriptor dd, ResolveData data,
+            ModuleRevisionId mrid) {
+        String rev = findSnapshotVersion(mrid);
+        if (rev != null) {
+            // here it would be nice to be able to store the resolved snapshot version, to avoid
+            // having to follow the same process to download artifacts
+            
+            Message.verbose("[" + rev + "] " + mrid);
+
+            // replace the revision token in file name with the resolved revision
+            String pattern = (String) getIvyPatterns().get(0);
+            pattern = pattern.replaceFirst("\\-\\[revision\\]", "-" + rev);
+            return findResourceUsingPattern(mrid, pattern,
+                DefaultArtifact.newPomArtifact(
+                    mrid, data.getDate()), getRMDParser(dd, data), data.getDate());
+        }
+        return null;
+    }
+    
+    private String findSnapshotVersion(ModuleRevisionId mrid) {
+        String pattern = (String) getIvyPatterns().get(0);
+        if (shouldUseMavenMetadata(pattern)) {
+            InputStream metadataStream = null;
+            try {
+                String metadataLocation = IvyPatternHelper.substitute(
+                    root + "[organisation]/[module]/[revision]/maven-metadata.xml", mrid);
+                Resource metadata = getRepository().getResource(metadataLocation);
+                if (metadata.exists()) {
+                    metadataStream = metadata.openStream();
+                    final StringBuffer snapshotRev = new StringBuffer();
+                    XMLHelper.parse(metadataStream, null, new ContextualSAXHandler() {
+                        public void endElement(String uri, String localName, String qName) 
+                                throws SAXException {
+                            if ("metadata/versioning/snapshot/timestamp".equals(getContext())) {
+                                snapshotRev.append(getText()).append("-");
+                            }
+                            if ("metadata/versioning/snapshot/buildNumber"
+                                    .equals(getContext())) {
+                                snapshotRev.append(getText());
+                            }
+                            super.endElement(uri, localName, qName);
+                        }
+                    }, null);
+                    if (snapshotRev.indexOf("-") != -1) {
+                        // we have found a timestamp, so this is a snapshot unique version
+                        String rev = mrid.getRevision();
+                        rev = rev.substring(0, rev.length() - "SNAPSHOT".length());
+                        rev += snapshotRev;
+                        
+                        return rev;
+                    }
+                } else {
+                    Message.verbose("\tmaven-metadata not available: " + metadata);
+                }
+            } catch (IOException e) {
+                Message.verbose(
+                    "impossible to access maven metadata file, ignored: " + e.getMessage());
+            } catch (SAXException e) {
+                Message.verbose(
+                    "impossible to parse maven metadata file, ignored: " + e.getMessage());
+            } catch (ParserConfigurationException e) {
+                Message.verbose(
+                    "impossible to parse maven metadata file, ignored: " + e.getMessage());
+            } finally {
+                if (metadataStream != null) {
+                    try {
+                        metadataStream.close();
+                    } catch (IOException e) {
+                        // ignored
+                    }
+                }
+            }
+        }
+        return null;
     }
 
     public void setM2compatible(boolean m2compatible) {
@@ -213,7 +332,7 @@ public class IBiblioResolver extends URLResolver {
     
     protected ResolvedResource[] listResources(
             Repository repository, ModuleRevisionId mrid, String pattern, Artifact artifact) {
-        if (isUseMavenMetadata() && isM2compatible() && pattern.endsWith(M2_PATTERN)) {
+        if (shouldUseMavenMetadata(pattern)) {
             // use maven-metadata.xml if it exists
             InputStream metadataStream = null;
             try {
@@ -279,21 +398,22 @@ public class IBiblioResolver extends URLResolver {
         }
     }
 
+    private boolean shouldUseMavenMetadata(String pattern) {
+        return isUseMavenMetadata() && isM2compatible() && pattern.endsWith(M2_PATTERN);
+    }
+
 
     public String getTypeName() {
         return "ibiblio";
     }
+    
+    
 
     // override some methods to ensure configuration
     public ResolvedModuleRevision getDependency(DependencyDescriptor dd, ResolveData data)
             throws ParseException {
         ensureConfigured(data.getSettings());
         return super.getDependency(dd, data);
-    }
-
-    protected ResolvedResource findArtifactRef(Artifact artifact, Date date) {
-        ensureConfigured(getSettings());
-        return super.findArtifactRef(artifact, date);
     }
 
     public DownloadReport download(Artifact[] artifacts, DownloadOptions options) {

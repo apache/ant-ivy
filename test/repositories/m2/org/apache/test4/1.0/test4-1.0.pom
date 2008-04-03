@@ -1,3 +1,4 @@
+<?xml version="1.0"?>
 <!--
    Licensed to the Apache Software Foundation (ASF) under one
    or more contributor license agreements.  See the NOTICE file
@@ -16,10 +17,22 @@
    specific language governing permissions and limitations
    under the License.    
 -->
-<ivysettings>
-	<settings defaultCache="build/cache" defaultResolver="m2"/>
-	<resolvers>
-		<ibiblio name="m2" m2compatible="true" useMavenMetadata="true" 
-		         root="file://${ivy.settings.dir}" />
-	</resolvers>
-</ivysettings>
+<project>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.apache</groupId>
+  <artifactId>test4</artifactId>
+  <name>Test Module for Ivy M2 parsing</name>
+  <version>1.0</version>
+  <url>http://ivy.jayasoft.org/</url>
+  <organization>
+    <name>Jayasoft</name>
+    <url>http://www.jayasoft.org/</url>
+  </organization>
+  <dependencies>
+    <dependency>
+      <groupId>org.apache</groupId>
+      <artifactId>test-SNAPSHOT1</artifactId>
+      <version>2.0.2-SNAPSHOT</version>
+    </dependency>
+  </dependencies>
+</project>
