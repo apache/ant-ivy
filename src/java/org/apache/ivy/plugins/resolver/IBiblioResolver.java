@@ -65,6 +65,7 @@ public class IBiblioResolver extends URLResolver {
     public static final String DEFAULT_PATTERN = "[module]/[type]s/[artifact]-[revision].[ext]";
 
     public static final String DEFAULT_ROOT = "http://www.ibiblio.org/maven/";
+    public static final String DEFAULT_M2_ROOT = "http://repo1.maven.org/maven2/";
 
     private String root = null;
 
@@ -214,7 +215,7 @@ public class IBiblioResolver extends URLResolver {
         super.setM2compatible(m2compatible);
         if (m2compatible) {
             if (root == null) {
-                root = "http://repo1.maven.org/maven2/";
+                root = DEFAULT_M2_ROOT;
             }
             if (pattern == null) {
                 pattern = M2_PATTERN;
@@ -224,8 +225,13 @@ public class IBiblioResolver extends URLResolver {
     }
 
     public void ensureConfigured(ResolverSettings settings) {
-        if (settings != null && (root == null || pattern == null)) {
-            if (root == null) {
+        Message.debug("Current IBIBLIO ROOT: " + root);
+        boolean isDefaultRoot = (root == null 
+                || (!isM2compatible() && root.equalsIgnoreCase(DEFAULT_ROOT))
+                || (isM2compatible() && root.equalsIgnoreCase(DEFAULT_M2_ROOT)));
+        Message.debug("Current settings: " + settings);
+        if (settings != null && (isDefaultRoot || pattern == null)) {
+            if (isDefaultRoot) {
                 String root = settings.getVariable("ivy.ibiblio.default.artifact.root");
                 if (root != null) {
                     this.root = root;
