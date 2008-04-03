@@ -225,13 +225,8 @@ public class IBiblioResolver extends URLResolver {
     }
 
     public void ensureConfigured(ResolverSettings settings) {
-        Message.debug("Current IBIBLIO ROOT: " + root);
-        boolean isDefaultRoot = (root == null 
-                || (!isM2compatible() && root.equalsIgnoreCase(DEFAULT_ROOT))
-                || (isM2compatible() && root.equalsIgnoreCase(DEFAULT_M2_ROOT)));
-        Message.debug("Current settings: " + settings);
-        if (settings != null && (isDefaultRoot || pattern == null)) {
-            if (isDefaultRoot) {
+        if (settings != null && (root == null || pattern == null)) {
+            if (root == null) {
                 String root = settings.getVariable("ivy.ibiblio.default.artifact.root");
                 if (root != null) {
                     this.root = root;
