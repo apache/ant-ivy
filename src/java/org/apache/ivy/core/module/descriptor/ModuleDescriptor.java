@@ -26,6 +26,7 @@ import java.util.Map;
 import org.apache.ivy.core.module.id.ArtifactId;
 import org.apache.ivy.core.module.id.ModuleId;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
+import org.apache.ivy.core.module.id.ModuleRules;
 import org.apache.ivy.plugins.conflict.ConflictManager;
 import org.apache.ivy.plugins.latest.ArtifactInfo;
 import org.apache.ivy.plugins.parser.ModuleDescriptorParser;
@@ -222,6 +223,18 @@ public interface ModuleDescriptor
      * @return an array of {@link ExcludeRule} this module descriptor holds
      */
     public ExcludeRule[] getAllExcludeRules();
+    
+    /**
+     * Returns all the dependency descriptor mediators used by this {@link ModuleDescriptor}, as an
+     * instance of {@link ModuleRules}.
+     * <p>
+     * All rules in the {@link ModuleRules} object returned are 
+     * {@link DependencyDescriptorMediator}.
+     * </p>
+     * 
+     * @return all the dependency descriptor mediators used by this {@link ModuleDescriptor}.
+     */
+    public ModuleRules/*<DependencyDescriptorMediator>*/ getAllDependencyDescriptorMediators();
 
     /**
      * Returns the list of xml namespaces used by extra attributes, as Map from prefix to namespace

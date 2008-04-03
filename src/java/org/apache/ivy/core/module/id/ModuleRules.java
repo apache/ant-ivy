@@ -17,8 +17,11 @@
  */
 package org.apache.ivy.core.module.id;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.ivy.plugins.matcher.MapMatcher;
@@ -50,6 +53,16 @@ public class ModuleRules {
     private Map/*<MapMatcher,Object>*/ rules = new LinkedHashMap();
     
     /**
+     * Constructs an empty ModuleRules.
+     */
+    public ModuleRules() {
+    }
+
+    private ModuleRules(Map/*<MapMatcher,Object>*/ rules) {
+        this.rules = new LinkedHashMap(rules);
+    }
+    
+    /**
      * Defines a new rule for the given condition.
      * 
      * @param condition
@@ -62,6 +75,34 @@ public class ModuleRules {
         Checks.checkNotNull(rule, "rule");
         
         rules.put(condition, rule);
+    }
+
+    /**
+     * Returns the rule object matching the given {@link ModuleId}, or <code>null</code>
+     * if no rule applies.
+     * 
+     * @param mid
+     *            the {@link ModuleId} to search the rule for. 
+     *            Must not be <code>null</code>.
+     * @return the rule object matching the given {@link ModuleId}, or <code>null</code>
+     *         if no rule applies.
+     * @see #getRule(ModuleId, Filter)
+     */
+    public Object getRule(ModuleId mid) {
+        return getRule(mid, NoFilter.INSTANCE);
+    }
+
+    /**
+     * Returns the rules objects matching the given {@link ModuleId}, or an empty array
+     * if no rule applies.
+     * 
+     * @param mid
+     *            the {@link ModuleId} to search the rule for. 
+     *            Must not be <code>null</code>.
+     * @return an array of rule objects matching the given {@link ModuleId}.
+     */
+    public Object[] getRules(ModuleId mid) {
+        return getRules(new ModuleRevisionId(mid, "", ""), NoFilter.INSTANCE);
     }
 
     /**
@@ -133,6 +174,36 @@ public class ModuleRules {
     }
 
     /**
+     * Returns the rules object matching the given {@link ModuleRevisionId} and accepted by the
+     * given {@link Filter}, or an empty array if no rule applies.
+     * 
+     * @param mrid
+     *            the {@link ModuleRevisionId} to search the rule for. 
+     *            Must not be <code>null</code>.
+     * @param filter
+     *            the filter to use to filter the rule to return. The {@link Filter#accept(Object)}
+     *            method will be called only with rule objects matching the given
+     *            {@link ModuleRevisionId}. Must not be <code>null</code>.
+     * @return an array of rule objects matching the given {@link ModuleRevisionId}.
+     */
+    public Object[] getRules(ModuleRevisionId mrid, Filter filter) {
+        Checks.checkNotNull(mrid, "mrid");
+        Checks.checkNotNull(filter, "filter");
+        
+        List matchingRules = new ArrayList();
+        for (Iterator iter = rules.keySet().iterator(); iter.hasNext();) {
+            MapMatcher midm = (MapMatcher) iter.next();
+            if (midm.matches(mrid.getAttributes())) {
+                Object rule = rules.get(midm);
+                if (filter.accept(rule)) {
+                    matchingRules.add(rule);
+                }
+            }
+        }
+        return matchingRules.toArray();
+    }
+
+    /**
      * Dump the list of rules to {@link Message#debug(String)}
      * 
      * @param prefix
@@ -149,5 +220,21 @@ public class ModuleRules {
             }
         }
     }
+    
+    /**
+     * Returns an unmodifiable view of all the rules defined on this ModuleRules.
+     * <p>
+     * The rules are returned in a Map where they keys are the MapMatchers matching the rules
+     * object, and the values are the rules object themselves.
+     * </p>
+     * 
+     * @return an unmodifiable view of all the rules defined on this ModuleRules.
+     */
+    public Map/*<MapMatcher,Object>*/ getAllRules() {
+        return Collections.unmodifiableMap(rules);
+    }
 
+    public Object clone() {
+        return new ModuleRules(rules);
+    }
 }

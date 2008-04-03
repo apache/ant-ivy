@@ -185,8 +185,6 @@ public final class XmlModuleDescriptorParser extends AbstractModuleDescriptorPar
 
         private static final int EXTRA_INFO = 12;
         
-        private static final int HINTS = 13;
-        
         private int state = NONE;
 
         private final URL xmlURL;
@@ -307,20 +305,13 @@ public final class XmlModuleDescriptorParser extends AbstractModuleDescriptorPar
                     }
                     state = CONFLICT;
                     checkConfigurations();
-                } else if ("hints".equals(qName)) {
-                    state = HINTS;
                 } else if ("artifact".equals(qName)) {
                     artifactStarted(qName, attributes);
                 } else if ("include".equals(qName) && state == DEP) {
                     addIncludeRule(qName, attributes);
                 } else if ("exclude".equals(qName) && state == DEP) {
                     addExcludeRule(qName, attributes);
-                } else if ("exclude".equals(qName) && (state == DEPS || state == HINTS)) {
-                    if (state == DEPS) {
-                        Message.deprecated(
-                            "using exclude directly under dependencies is deprecated: "
-                            + "please use hints section. Ivy file URL: " + xmlURL);
-                    }
+                } else if ("exclude".equals(qName) && state == DEPS) {
                     state = EXCLUDE;
                     parseRule(qName, attributes);
                     getMd().addExcludeRule((ExcludeRule) confAware);
@@ -331,10 +322,10 @@ public final class XmlModuleDescriptorParser extends AbstractModuleDescriptorPar
                 } else if ("mapped".equals(qName)) {
                     dd.addDependencyConfiguration(conf, ivy.substitute(attributes
                             .getValue("name")));
-                } else if (("conflict".equals(qName) && state == HINTS)
+                } else if (("conflict".equals(qName) && state == DEPS)
                         || "manager".equals(qName) && state == CONFLICT) {
                     managerStarted(attributes, state == CONFLICT ? "name" : "manager");
-                } else if ("override".equals(qName) && state == HINTS) {
+                } else if ("override".equals(qName) && state == DEPS) {
                     mediationOverrideStarted(attributes);
                 } else if ("include".equals(qName) && state == CONF) {
                     includeConfStarted(attributes);
@@ -808,8 +799,6 @@ public final class XmlModuleDescriptorParser extends AbstractModuleDescriptorPar
                     }
                 }
                 confAware = null;
-                state = HINTS;
-            } else if ("hints".equals(qName) && state == HINTS) {
                 state = DEPS;
             } else if ("dependency".equals(qName) && state == DEP) {
                 if (dd.getModuleConfigurations().length == 0) {

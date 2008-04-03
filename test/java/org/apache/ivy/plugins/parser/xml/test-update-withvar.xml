@@ -101,12 +101,10 @@
 		</dependency>
 		<dependency org="yourorg" name="yourmodule11" rev="11.1" conf="*->@"/>
 
-		<hints>
-			<exclude module="${excludemodule}" matcher="${excludematcher}" conf="${myvar}"/>
-			<exclude org="${excludeorg}" module="test" artifact="${excludeartifact}" type="${excludetype}" ext="jar"/>
-			<conflict org="${yourorg}" module="${yourmodule}" matcher="${regexp}" manager="${all}"/>
-			<conflict org="theirorg" module="theirmodule1" rev="${theirrev}"/>
-	        <override org="yourorg" module=".*1" matcher="regexp" branch="BRANCH" rev="1.0"/>
-		</hints>
+		<exclude module="${excludemodule}" matcher="${excludematcher}" conf="${myvar}"/>
+		<exclude org="${excludeorg}" module="test" artifact="${excludeartifact}" type="${excludetype}" ext="jar"/>
+        <override org="yourorg" module=".*1" matcher="regexp" branch="BRANCH" rev="1.0"/>
+		<conflict org="${yourorg}" module="${yourmodule}" matcher="${regexp}" manager="${all}"/>
+		<conflict org="theirorg" module="theirmodule1" rev="${theirrev}"/>
 	</dependencies>
 </ivy-module>

@@ -36,8 +36,10 @@ import java.util.Stack;
 import org.apache.ivy.core.module.id.ArtifactId;
 import org.apache.ivy.core.module.id.ModuleId;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
+import org.apache.ivy.core.module.id.ModuleRules;
 import org.apache.ivy.core.module.status.StatusManager;
 import org.apache.ivy.plugins.conflict.ConflictManager;
+import org.apache.ivy.plugins.matcher.MapMatcher;
 import org.apache.ivy.plugins.matcher.MatcherHelper;
 import org.apache.ivy.plugins.matcher.PatternMatcher;
 import org.apache.ivy.plugins.namespace.NameSpaceHelper;
@@ -159,8 +161,9 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
         nmd.setDefault(md.isDefault());
         if (md instanceof DefaultModuleDescriptor) {
             DefaultModuleDescriptor dmd = (DefaultModuleDescriptor) md;
-            nmd.conflictManagers.putAll(dmd.conflictManagers);
-            nmd.dependencyDescriptorMediators.putAll(dmd.dependencyDescriptorMediators);
+            nmd.conflictManagers = (ModuleRules) dmd.conflictManagers.clone();
+            nmd.dependencyDescriptorMediators = 
+                (ModuleRules) dmd.dependencyDescriptorMediators.clone();
         } else {
             Message.warn(
                 "transformed module descriptor is not a default module descriptor: "
@@ -199,10 +202,9 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
 
     private boolean isDefault = false;
 
-    private Map conflictManagers = new LinkedHashMap(); // Map (ModuleId -> )
+    private ModuleRules conflictManagers = new ModuleRules(); 
     
-    private Map/*<ModuleId, DependencyDescriptorMediator>*/ dependencyDescriptorMediators 
-        = new LinkedHashMap(); 
+    private ModuleRules dependencyDescriptorMediators = new ModuleRules(); 
 
     private List licenses = new ArrayList(); // List(License)
 
@@ -438,21 +440,6 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
         isDefault = b;
     }
 
-    private static class ModuleIdMatcher {
-        private PatternMatcher matcher;
-
-        private ModuleId mid;
-
-        public ModuleIdMatcher(PatternMatcher matcher, ModuleId mid) {
-            this.matcher = matcher;
-            this.mid = mid;
-        }
-
-        public boolean matches(ModuleId mid) {
-            return MatcherHelper.matches(matcher, this.mid, mid);
-        }
-    }
-
     /**
      * regular expressions as explained in Pattern class may be used in ModuleId organisation and
      * name
@@ -463,33 +450,29 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
      */
     public void addConflictManager(ModuleId moduleId, PatternMatcher matcher,
             ConflictManager manager) {
-        conflictManagers.put(new ModuleIdMatcher(matcher, moduleId), manager);
+        conflictManagers.defineRule(new MapMatcher(moduleId.getAttributes(), matcher), manager);
     }
 
     public ConflictManager getConflictManager(ModuleId moduleId) {
-        for (Iterator iter = conflictManagers.keySet().iterator(); iter.hasNext();) {
-            ModuleIdMatcher matcher = (ModuleIdMatcher) iter.next();
-            if (matcher.matches(moduleId)) {
-                return (ConflictManager) conflictManagers.get(matcher);
-            }
-        }
-        return null;
+        return (ConflictManager) conflictManagers.getRule(moduleId);
     }
     
     public void addDependencyDescriptorMediator(ModuleId moduleId, PatternMatcher matcher,
             DependencyDescriptorMediator ddm) {
-        dependencyDescriptorMediators.put(new ModuleIdMatcher(matcher, moduleId), ddm);
+        dependencyDescriptorMediators.defineRule(
+            new MapMatcher(moduleId.getAttributes(), matcher), ddm);
     }
     
     public DependencyDescriptor mediate(DependencyDescriptor dd) {
-        for (Iterator iter = dependencyDescriptorMediators.keySet().iterator(); iter.hasNext();) {
-            ModuleIdMatcher matcher = (ModuleIdMatcher) iter.next();
-            if (matcher.matches(dd.getDependencyId())) {
-                dd = ((DependencyDescriptorMediator) dependencyDescriptorMediators.get(matcher))
-                        .mediate(dd);
-            }
+        Object[] mediators = dependencyDescriptorMediators.getRules(dd.getDependencyId());
+        for (int i = 0; i < mediators.length; i++) {
+            dd = ((DependencyDescriptorMediator) mediators[i]).mediate(dd);
         }
         return dd;
+    }
+
+    public ModuleRules/*<DependencyDescriptorMediator>*/ getAllDependencyDescriptorMediators() {
+        return (ModuleRules) dependencyDescriptorMediators.clone();
     }
 
     public void addLicense(License license) {

@@ -1,0 +1,61 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<!--
+   Licensed to the Apache Software Foundation (ASF) under one
+   or more contributor license agreements.  See the NOTICE file
+   distributed with this work for additional information
+   regarding copyright ownership.  The ASF licenses this file
+   to you under the Apache License, Version 2.0 (the
+   "License"); you may not use this file except in compliance
+   with the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing,
+   software distributed under the License is distributed on an
+   "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+   KIND, either express or implied.  See the License for the
+   specific language governing permissions and limitations
+   under the License.    
+-->
+<html>
+<head>
+	<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
+	<script type="text/javascript">var xookiConfig = {level: 1};</script>	
+	<script type="text/javascript" src="../xooki/xooki.js"></script>
+</head>
+<body>
+	<textarea id="xooki-source">
+<b>Tag:</b> override <b>Parent:</b> <a href="../ivyfile/dependencies.html">dependencies</a><br/>
+<br/>
+<span class="since">(since 2.0)</span>
+
+Specify an override mediation rule, overriding the revision and/or branch requested for a transitive dependency.
+
+This can be useful when a direct dependency is bringing a transitive dependency for which you want to change the revision, without actually declaring a dependency on it (because the module doesn't actually depend on it) and without using conflict management for this purpose (maybe because there is no conflict at all, or because you want to by pass conflict management for this particular transitive dependency).
+
+Overriding is done before any else, in a phase called dependency descriptor mediation. The transitive dependency then behave exactly as if it were declared with the new value.
+
+Note that even though no attribute is required, it makes no sense to set no attributes at all. It would mean that overriding is triggered for all transitive dependencies, but doesn't override anything. Most of the time, at least org or module should be set to override only a subset of transitive dependencies, and at least branch or rev should be set to actually override something.
+
+<h1>Attributes</h1>
+<table class="ivy-attributes">
+<thead>
+    <tr><th class="ivy-att">Attribute</th><th class="ivy-att-desc">Description</th><th class="ivy-att-req">Required</th></tr>
+</thead>
+<tbody>
+    <tr><td>org</td><td>the name, or an expression matching the name of organisation to which overriding should be applied (see matcher attribute below)</td>
+        <td>No, defaults to * (match all)</td></tr>
+    <tr><td>module</td><td>the name, or an expression matching the name of module to which overriding should be applied (see matcher attribute below)</td>
+        <td>No, defaults to * (match all)</td></tr>
+    <tr><td>branch</td><td>the branch to set for all the overriden dependency descriptors</td>
+        <td>No, by default branch is not overriden</td></tr>
+    <tr><td>rev</td><td>the revision to set for all the overriden dependency descriptors</td>
+        <td>No, by default revision is not overriden</td></tr>
+    <tr><td>matcher</td><td>the <a href="../concept.html#matcher">matcher</a> to use to match the modules for which the conflict manager should be used</td>
+        <td>No, defaults to exact</td></tr>
+</tbody>
+</table>
+</textarea>
+<script type="text/javascript">xooki.postProcess();</script>
+</body>
+</html>

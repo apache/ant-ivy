@@ -546,6 +546,20 @@
                                 "children": [
 
                                   ]
+                              },
+                              {
+                                "id":"ivyfile/override",
+                                "title":"override",
+                                "children": [
+
+                                  ]
+                              },
+                              {
+                                "id":"ivyfile/conflict",
+                                "title":"conflict",
+                                "children": [
+
+                                  ]
                               }
                             ]
                         },

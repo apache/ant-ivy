@@ -17,6 +17,7 @@
  */
 package org.apache.ivy.plugins.matcher;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -54,5 +55,13 @@ public class MapMatcher {
 
     public String toString() {
         return attributes + " (" + pm.getName() + ")";
+    }
+
+    public Map getAttributes() {
+        return Collections.unmodifiableMap(attributes);
+    }
+    
+    public PatternMatcher getPatternMatcher() {
+        return pm;
     }
 }

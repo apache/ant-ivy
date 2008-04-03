@@ -67,7 +67,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 =====================================
 - NEW: Retain original dependency constraint rules in resolved ivy file (IVY-739)
 - NEW: Add a new resolve mode (optionally per module) to utilize dynamic constraint rule metadata (IVY-740)
-- NEW: Add transitive dependency version and branch override mechanism (IVY-784) (not completed yet)
+- NEW: Add transitive dependency version and branch override mechanism (IVY-784)
 
 - IMPROVEMENT: Make Ivy standalone runnable with no required dependencies (IVY-757)
 - IMPROVEMENT: add branch attribute in ivy:install task (IVY-727)
@@ -81,7 +81,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - FIX: multiple cleancache and inline retrieve error (IVY-778)
 - FIX: buildlist evicts modules with the same name, but different organisation (IVY-731)
 - FIX: Out of memory/Stack overflow for new highly coupled project (IVY-595)
-- FIX: Compatibility with maven's dependencyMangement (IVY-753) (not completed yet)
+- FIX: Compatibility with maven's dependencyMangement (IVY-753)
 - FIX: ivy:settings fails when override is not set to 'true' (IVY-771)
 - FIX: NPE when specifying both resolveId and inline in an Ivy:Resolve (IVY-776)
 - FIX: repreport task not working against a repository structured by branches (IVY-716)

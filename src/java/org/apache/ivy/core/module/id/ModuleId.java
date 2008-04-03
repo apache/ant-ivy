@@ -17,10 +17,13 @@
  */
 package org.apache.ivy.core.module.id;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.WeakHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.apache.ivy.core.IvyPatternHelper;
 
 /**
  * Identifies a module, without revision information
@@ -70,6 +73,8 @@ public class ModuleId implements Comparable {
     private String name;
 
     private int hash;
+    
+    private Map/*<String, String>*/ attributes = new HashMap();
 
     /**
      * Constructor.
@@ -82,6 +87,8 @@ public class ModuleId implements Comparable {
         }
         this.organisation = organisation;
         this.name = name;
+        attributes.put(IvyPatternHelper.ORGANISATION_KEY, organisation);
+        attributes.put(IvyPatternHelper.MODULE_KEY, name);
     }
 
     /**
@@ -146,6 +153,17 @@ public class ModuleId implements Comparable {
      */
     public String encodeToString() {
         return getOrganisation() + ENCODE_SEPARATOR + getName();
+    }
+    
+    /**
+     * Returns a Map of all attributes of this module id.
+     * The Map keys are attribute names as Strings, and values are corresponding attribute values
+     * (as String too). 
+     * 
+     * @return A Map instance containing all the attributes and their values.
+     */
+    public Map getAttributes() {
+        return attributes;
     }
 
     /**

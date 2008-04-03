@@ -229,31 +229,24 @@
 				            	</xs:complexType>
 				      		</xs:element>
 				      		<xs:element name="exclude" type="global-exclude" minOccurs="0" maxOccurs="unbounded" />
-				      		<xs:element name="hints" minOccurs="0">
-							      <xs:complexType>
-								        <xs:sequence>
-									      		<xs:element name="exclude" type="global-exclude" minOccurs="0" maxOccurs="unbounded" />
-									      		<xs:element name="conflict" minOccurs="0" maxOccurs="unbounded">
-									            	<xs:complexType>
-											            <xs:attribute name="org" type="xs:string"/>
-											            <xs:attribute name="module" type="xs:string"/>
-											            <xs:attribute name="manager" type="xs:string"/>
-											            <xs:attribute name="rev" type="xs:string"/>
-											            <xs:attribute name="matcher" type="xs:string"/>
-											            <xs:anyAttribute namespace="##other" processContents="lax" />
-									            	</xs:complexType>
-									      		</xs:element>
-									      		<xs:element name="override" minOccurs="0" maxOccurs="unbounded">
-									            	<xs:complexType>
-											            <xs:attribute name="org" type="xs:string"/>
-											            <xs:attribute name="module" type="xs:string"/>
-											            <xs:attribute name="matcher" type="xs:string"/>
-											            <xs:attribute name="rev" type="xs:string"/>
-											            <xs:attribute name="branch" type="xs:string"/>
-									            	</xs:complexType>
-									      		</xs:element>
-								        </xs:sequence>
-							      </xs:complexType>
+				      		<xs:element name="override" minOccurs="0" maxOccurs="unbounded">
+				            	<xs:complexType>
+						            <xs:attribute name="org" type="xs:string"/>
+						            <xs:attribute name="module" type="xs:string"/>
+						            <xs:attribute name="matcher" type="xs:string"/>
+						            <xs:attribute name="rev" type="xs:string"/>
+						            <xs:attribute name="branch" type="xs:string"/>
+				            	</xs:complexType>
+				      		</xs:element>
+				      		<xs:element name="conflict" minOccurs="0" maxOccurs="unbounded">
+				            	<xs:complexType>
+						            <xs:attribute name="org" type="xs:string"/>
+						            <xs:attribute name="module" type="xs:string"/>
+						            <xs:attribute name="manager" type="xs:string"/>
+						            <xs:attribute name="rev" type="xs:string"/>
+						            <xs:attribute name="matcher" type="xs:string"/>
+						            <xs:anyAttribute namespace="##other" processContents="lax" />
+				            	</xs:complexType>
 				      		</xs:element>
 				        </xs:sequence>
 						<xs:attribute name="defaultconf" type="xs:string"/>				        

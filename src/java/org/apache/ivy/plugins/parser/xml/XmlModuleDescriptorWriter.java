@@ -28,14 +28,19 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.ivy.Ivy;
+import org.apache.ivy.core.IvyPatternHelper;
 import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.Configuration;
 import org.apache.ivy.core.module.descriptor.DefaultModuleDescriptor;
 import org.apache.ivy.core.module.descriptor.DependencyArtifactDescriptor;
 import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
+import org.apache.ivy.core.module.descriptor.DependencyDescriptorMediator;
 import org.apache.ivy.core.module.descriptor.ExcludeRule;
 import org.apache.ivy.core.module.descriptor.IncludeRule;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
+import org.apache.ivy.core.module.descriptor.OverrideDependencyDescriptorMediator;
+import org.apache.ivy.plugins.matcher.MapMatcher;
+import org.apache.ivy.util.Message;
 import org.apache.ivy.util.XMLHelper;
 import org.apache.ivy.util.extendable.ExtendableItem;
 
@@ -150,15 +155,47 @@ public final class XmlModuleDescriptorWriter {
                     out.println("\t\t</dependency>");
                 }
             }
-            boolean hasHints = md.getAllExcludeRules().length > 0;
-            if (hasHints) {
-                out.println("\t\t<hints>");
-            }
             printAllExcludes(md, out);
-            if (hasHints) {
-                out.println("\t\t</hints>");
-            }
+            printAllMediators(md, out);
             out.println("\t</dependencies>");
+        }
+    }
+
+    private static void printAllMediators(ModuleDescriptor md, PrintWriter out) {
+        Map/*<MapMatcher, DependencyDescriptorMediator>*/ mediators 
+            = md.getAllDependencyDescriptorMediators().getAllRules();
+        
+        for (Iterator iterator = mediators.entrySet().iterator(); iterator.hasNext();) {
+            Map.Entry mediatorRule = (Map.Entry) iterator.next();
+            MapMatcher matcher = (MapMatcher) mediatorRule.getKey();
+            DependencyDescriptorMediator mediator = 
+                (DependencyDescriptorMediator) mediatorRule.getValue();
+            
+            if (mediator instanceof OverrideDependencyDescriptorMediator) {
+                OverrideDependencyDescriptorMediator oddm = 
+                    (OverrideDependencyDescriptorMediator) mediator;
+                
+                out.print("\t\t<override");
+                out.print(" org=\"" + XMLHelper.escape(
+                    (String) matcher.getAttributes().get(IvyPatternHelper.ORGANISATION_KEY)) 
+                    + "\"");
+                out.print(" module=\"" + XMLHelper.escape(
+                    (String) matcher.getAttributes().get(IvyPatternHelper.MODULE_KEY)) 
+                    + "\"");
+                out.print(" matcher=\"" + XMLHelper.escape(
+                    matcher.getPatternMatcher().getName()) 
+                    + "\"");
+                if (oddm.getBranch() != null) {
+                    out.print(" branch=\"" + XMLHelper.escape(oddm.getBranch()) + "\"");
+                }
+                if (oddm.getVersion() != null) {
+                    out.print(" rev=\"" + XMLHelper.escape(oddm.getVersion()) + "\"");
+                }
+                out.println("/>");
+            } else {
+                Message.verbose("ignoring unhandled DependencyDescriptorMediator: " 
+                    + mediator.getClass());
+            }
         }
     }
 
@@ -166,7 +203,7 @@ public final class XmlModuleDescriptorWriter {
         ExcludeRule[] excludes = md.getAllExcludeRules();
         if (excludes.length > 0) {
             for (int j = 0; j < excludes.length; j++) {
-                out.print("\t\t\t<exclude");
+                out.print("\t\t<exclude");
                 out.print(" org=\""
                         + XMLHelper.escape(excludes[j].getId().getModuleId().getOrganisation()) 
                         + "\"");
