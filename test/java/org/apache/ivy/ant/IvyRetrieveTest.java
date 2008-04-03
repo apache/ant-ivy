@@ -142,6 +142,19 @@ public class IvyRetrieveTest extends TestCase {
         assertFalse(new File("build/test/lib/unknown").exists()); // even conf directory should
         // have been deleted
     }
+    
+    public void testSyncWithIgnoreList() throws Exception {
+        project.setProperty("ivy.dep.file", "test/repositories/1/org6/mod6.2/ivys/ivy-0.4.xml");
+        retrieve.setSync(true);
+        
+        new File("build/test/lib/.svn").mkdirs();
+        new File("build/test/lib/.svn/test.txt").createNewFile();
+        assertTrue(new File("build/test/lib/.svn/test.txt").exists());
+        
+        retrieve.execute();
+
+        assertTrue(new File("build/test/lib/.svn/test.txt").exists());
+    }
 
     public void testWithAPreviousResolve() throws Exception {
         // first we do a resolve in another project

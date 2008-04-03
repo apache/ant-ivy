@@ -304,21 +304,26 @@ public final class FileUtil {
      * 
      * @param  dir  The directory from which all files, including files in subdirectory)
      *              are extracted.
+     * @param ignore a Collection of filenames which must be excluded from listing
      * @return  A collectoin containing all the files of the given directory and it's
      *              subdirectories.
      */
-    public static Collection listAll(File dir) {
-        return listAll(dir, new ArrayList());
+    public static Collection listAll(File dir, Collection ignore) {
+        return listAll(dir, new ArrayList(), ignore);
     }
 
-    private static Collection listAll(File file, Collection list) {
+    private static Collection listAll(File file, Collection list, Collection ignore) {
+        if (ignore.contains(file.getName())) {
+            return list;
+        }
+        
         if (file.exists()) {
             list.add(file);
         }
         if (file.isDirectory()) {
             File[] files = file.listFiles();
             for (int i = 0; i < files.length; i++) {
-                listAll(files[i], list);
+                listAll(files[i], list, ignore);
             }
         }
         return list;

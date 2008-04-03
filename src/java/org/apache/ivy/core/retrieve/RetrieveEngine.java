@@ -150,9 +150,13 @@ public class RetrieveEngine {
 
             if (options.isSync()) {
                 Message.verbose("\tsyncing...");
-                Collection existingArtifacts = FileUtil.listAll(fileRetrieveRoot);
+                
+                String[] ignorableFilenames = settings.getIgnorableFilenames();
+                Collection ignoreList = Arrays.asList(ignorableFilenames);
+                
+                Collection existingArtifacts = FileUtil.listAll(fileRetrieveRoot, ignoreList);
                 Collection existingIvys = ivyRetrieveRoot == null ? null : FileUtil
-                        .listAll(ivyRetrieveRoot);
+                        .listAll(ivyRetrieveRoot, ignoreList);
 
                 if (fileRetrieveRoot.equals(ivyRetrieveRoot)) {
                     Collection target = targetArtifactsStructure;

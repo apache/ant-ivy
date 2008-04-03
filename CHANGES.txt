@@ -77,6 +77,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - IMPROVEMENT: Change allownomd and skipbuildwithoutivy into a more semantically correct name (IVY-297)
 - IMPROVEMENT: Smarter determination if an expression is exact or not for RegexpPatternMatcher and GlobPatternMatcher
 
+- FIX: ivy:retrieve with sync="true" removes the .svn directory (IVY-763)
 - FIX: Ivy silently fails XML errors in ivyrep (IVY-579)
 - FIX: Extra Attributes are not available to resolver after resolve if cache was empty (IVY-773)
 - FIX: NullPointerException during ResovleEngine.downloadArtifacts. (IVY-592)

@@ -1073,6 +1073,14 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
     }
 
     /**
+     * Returns the file names of the files that should be ignored when 
+     * creating a file listing.
+     */
+    public String[] getIgnorableFilenames() {
+        return (String[]) listingIgnore.toArray(new String[listingIgnore.size()]);
+    }
+    
+    /**
      * Filters the names list by removing all names that should be ignored as defined by the listing
      * ignore list
      * 
@@ -1081,7 +1089,7 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
     public void filterIgnore(Collection names) {
         names.removeAll(listingIgnore);
     }
-
+    
     public boolean isCheckUpToDate() {
         return checkUpToDate;
     }
