@@ -54,6 +54,8 @@ public class SshRepository extends AbstractSshBasedRepository {
     private String existCommand = "ls";
 
     private String createDirCommand = "mkdir";
+    
+    private String publishMode = "0600";
 
     /**
      * create a new resource with lazy initializing
@@ -259,7 +261,7 @@ public class SshRepository extends AbstractSshBasedRepository {
                 makePath(path, session);
             }
             Scp myCopy = new Scp(session);
-            myCopy.put(source.getCanonicalPath(), path, name);
+            myCopy.put(source.getCanonicalPath(), path, name, publishMode);
         } catch (IOException e) {
             if (session != null) {
                 releaseSession(session, destination);
@@ -421,6 +423,14 @@ public class SshRepository extends AbstractSshBasedRepository {
      */
     public void setFileSeparator(char fileSeparator) {
         this.fileSeparator = fileSeparator;
+    }
+    
+    /**
+     * A four digit string (e.g., 0644, see "man chmod", "man open") specifying the permissions
+     * of the published files.
+     */
+    public void setPublishMode(String mode) {
+        this.publishMode = mode;
     }
 
     /**
