@@ -356,7 +356,11 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
     }
 
     public String getArchivePathInCache(Artifact artifact, ArtifactOrigin origin) {
-        return IvyPatternHelper.substitute(getArtifactPattern(), artifact, origin);
+        if (isOriginalMetadataArtifact(artifact)) {
+            return IvyPatternHelper.substitute(getIvyPattern() + ".original", artifact, origin);
+        } else {
+            return IvyPatternHelper.substitute(getArtifactPattern(), artifact, origin);
+        }
     }
 
     /**
@@ -1007,10 +1011,15 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
 //    }
     
     public Artifact getOriginalMetadataArtifact(Artifact moduleArtifact) {
-        return DefaultArtifact.cloneWithAnotherName(moduleArtifact, 
-            moduleArtifact.getName() + ".original");
+        return DefaultArtifact.cloneWithAnotherType(
+            moduleArtifact, moduleArtifact.getType() + ".original");
     }
     
+
+    private boolean isOriginalMetadataArtifact(Artifact artifact) {
+        return artifact.isMetadata() 
+            && artifact.getType().endsWith(".original");
+    }
 
     private boolean isChanging(
             DependencyDescriptor dd, ModuleRevisionId requestedRevisionId, 

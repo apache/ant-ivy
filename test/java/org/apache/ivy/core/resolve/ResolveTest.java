@@ -3834,12 +3834,14 @@ public class ResolveTest extends TestCase {
         Ivy ivy = new Ivy();
         ivy.configure(new File("test/repositories/extra-attributes/ivysettings.xml"));
         ivy.getSettings().setDefaultCache(cache);
+        ivy.getSettings().validate();
 
         ResolveReport report = ivy.resolve(ResolveTest.class.getResource("ivy-extra-att2.xml"),
             getResolveOptions(ivy.getSettings(), new String[] {"*"}).setValidate(false));
         assertFalse(report.hasError());
 
         assertTrue(new File(cache, "apache/mymodule/task2/1748/ivy.xml").exists());
+        assertTrue(new File(cache, "apache/mymodule/task2/1748/ivy.xml.original").exists());
         assertTrue(new File(cache, "apache/mymodule/task2/1748/mymodule-windows.jar").exists());
         assertTrue(new File(cache, "apache/mymodule/task2/1748/mymodule-linux.jar").exists());
 
