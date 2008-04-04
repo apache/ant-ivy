@@ -1,0 +1,245 @@
+/*
+ *  Licensed to the Apache Software Foundation (ASF) under one or more
+ *  contributor license agreements.  See the NOTICE file distributed with
+ *  this work for additional information regarding copyright ownership.
+ *  The ASF licenses this file to You under the Apache License, Version 2.0
+ *  (the "License"); you may not use this file except in compliance with
+ *  the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *
+ */
+package org.apache.ivy.core.resolve;
+
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
+
+import org.apache.ivy.core.module.descriptor.DependencyArtifactDescriptor;
+import org.apache.ivy.core.module.descriptor.IncludeRule;
+
+/**
+ * Class collecting usage data for an IvyNode.
+ * <p>
+ * Usage data contains the configurations required by callers for each root module configuration,
+ * the configurations required by caller node and caller configuration, dependency artifacts
+ * descriptors declared by callers, include rules declared by callers, and blacklisted data by root
+ * module conf.
+ * </p>
+ */
+public class IvyNodeUsage {
+
+    private static final class NodeConf {
+        private IvyNode node;
+
+        private String conf;
+
+        public NodeConf(IvyNode node, String conf) {
+            if (node == null) {
+                throw new NullPointerException("node must not null");
+            }
+            if (conf == null) {
+                throw new NullPointerException("conf must not null");
+            }
+            this.node = node;
+            this.conf = conf;
+        }
+
+        public final String getConf() {
+            return conf;
+        }
+
+        public final IvyNode getNode() {
+            return node;
+        }
+
+        public boolean equals(Object obj) {
+            if (!(obj instanceof NodeConf)) {
+                return false;
+            }
+            return getNode().equals(((NodeConf) obj).getNode())
+                    && getConf().equals(((NodeConf) obj).getConf());
+        }
+
+        public int hashCode() {
+            //CheckStyle:MagicNumber| OFF
+            int hash = 33;
+            hash += getNode().hashCode() * 17;
+            hash += getConf().hashCode() * 17;
+            //CheckStyle:MagicNumber| OFF
+            return hash;
+        }
+        
+        public String toString() {
+            return "NodeConf(" + conf + ")";
+        }
+    }
+
+    // Map (String rootConfName -> Set(String confName))
+    // used to know which configurations of the dependency are required
+    // for each root module configuration
+    private Map rootModuleConfs = new HashMap();
+
+    // Map (NodeConf in -> Set(String conf))
+    private Map requiredConfs = new HashMap();
+
+    // Map (String rootModuleConf -> Set(DependencyArtifactDescriptor))
+    private Map dependencyArtifacts = new HashMap();
+
+    // Map (String rootModuleConf -> Set(IncludeRule))
+    private Map dependencyIncludes = new HashMap();
+    
+    // Map (String rootModuleConf -> IvyNodeBlacklist)
+    private Map blacklisted = new HashMap();
+    
+    protected String[] getRequiredConfigurations(IvyNode in, String inConf) {
+        Collection req = (Collection) requiredConfs.get(new NodeConf(in, inConf));
+        return req == null ? new String[0] : (String[]) req.toArray(new String[req.size()]);
+    }
+
+    protected void setRequiredConfs(IvyNode parent, String parentConf, Collection confs) {
+        requiredConfs.put(new NodeConf(parent, parentConf), new HashSet(confs));
+    }
+    
+    /**
+     * Returns the configurations of the dependency required in a given root module configuration.
+     * 
+     * @param rootModuleConf
+     * @return
+     */
+    protected String[] getConfigurations(String rootModuleConf) {
+        Set depConfs = (Set) rootModuleConfs.get(rootModuleConf);
+        if (depConfs == null) {
+            return new String[0];
+        }
+        return (String[]) depConfs.toArray(new String[depConfs.size()]);
+    }
+    
+    protected Set getConfigurationsSet(String rootModuleConf) {
+        Set depConfs = (Set) rootModuleConfs.get(rootModuleConf);
+        if (depConfs == null) {
+            depConfs = new HashSet();
+            rootModuleConfs.put(rootModuleConf, depConfs);
+        }
+        return depConfs;
+    }
+    
+    /**
+     * Returns the root module configurations in which this dependency is required
+     * 
+     * @return
+     */
+    protected String[] getRootModuleConfigurations() {
+        return (String[]) rootModuleConfs.keySet().toArray(new String[rootModuleConfs.size()]);
+    }
+    
+    protected Set /*<String>*/ getRootModuleConfigurationsSet() {
+        return rootModuleConfs.keySet();
+    }
+
+    public void updateDataFrom(IvyNodeUsage usage, String rootModuleConf, boolean real) {
+        // update requiredConfs
+        updateMapOfSet(usage.requiredConfs, requiredConfs);
+
+        // update rootModuleConfs
+        updateMapOfSetForKey(usage.rootModuleConfs, rootModuleConfs, rootModuleConf);
+
+        // update dependencyArtifacts
+        updateMapOfSetForKey(usage.dependencyArtifacts, dependencyArtifacts, rootModuleConf);
+    }
+
+    private void updateMapOfSet(Map from, Map to) {
+        for (Iterator iter = from.keySet().iterator(); iter.hasNext();) {
+            Object key = iter.next();
+            updateMapOfSetForKey(from, to, key);
+        }
+    }
+
+    private void updateMapOfSetForKey(Map from, Map to, Object key) {
+        Set set = (Set) from.get(key);
+        if (set != null) {
+            Set toupdate = (Set) to.get(key);
+            if (toupdate != null) {
+                toupdate.addAll(set);
+            } else {
+                to.put(key, new HashSet(set));
+            }
+        }
+    }
+
+    protected void addDependencyArtifacts(String rootModuleConf,
+            DependencyArtifactDescriptor[] dependencyArtifacts) {
+        addObjectsForConf(rootModuleConf, Arrays.asList(dependencyArtifacts),
+            this.dependencyArtifacts);
+    }
+
+    protected void addDependencyIncludes(String rootModuleConf, IncludeRule[] rules) {
+        addObjectsForConf(rootModuleConf, Arrays.asList(rules), dependencyIncludes);
+    }
+
+    private void addObjectsForConf(String rootModuleConf, Collection objectsToAdd, Map map) {
+        Set set = (Set) map.get(rootModuleConf);
+        if (set == null) {
+            set = new HashSet();
+            map.put(rootModuleConf, set);
+        }
+        set.addAll(objectsToAdd);
+    }
+
+    protected Set getDependencyArtifactsSet(String rootModuleConf) {
+        return (Set) dependencyArtifacts.get(rootModuleConf);
+    }
+
+    protected Set getDependencyIncludesSet(String rootModuleConf) {
+        return (Set) dependencyIncludes.get(rootModuleConf);
+    }
+
+    protected void removeRootModuleConf(String rootModuleConf) {
+        if (!rootModuleConfs.keySet().contains(rootModuleConf)) {
+            rootModuleConfs.put(rootModuleConf, null);
+        }
+    }
+
+    protected void blacklist(IvyNodeBlacklist bdata) {
+        blacklisted.put(bdata.getRootModuleConf(), bdata);
+    }
+    
+    /**
+     * Indicates if this node has been blacklisted in the given root module conf.
+     * <p>
+     * A blacklisted node should be considered as if it doesn't even exist on the repository.
+     * </p>
+     * 
+     * @param rootModuleConf
+     *            the root module conf for which we'd like to know if the node is blacklisted
+     * 
+     * @return true if this node is blacklisted int he given root module conf, false otherwise
+     * @see #blacklist(String)
+     */
+    protected boolean isBlacklisted(String rootModuleConf) {
+        return blacklisted.containsKey(rootModuleConf);
+    }
+
+    /**
+     * Returns the blacklist data of this node in the given root module conf, or <code>null</code>
+     * if this node is not blacklisted in this root module conf.
+     * 
+     * @param rootModuleConf
+     *            the root module configuration to consider
+     * @return the blacklist data if any
+     */
+    protected IvyNodeBlacklist getBlacklistData(String rootModuleConf) {
+        return (IvyNodeBlacklist) blacklisted.get(rootModuleConf);
+    }
+    
+}

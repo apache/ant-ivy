@@ -60,54 +60,6 @@ import org.apache.ivy.util.filter.FilterHelper;
 public class IvyNode implements Comparable {
     private static final Pattern FALLBACK_CONF_PATTERN = Pattern.compile("(.+)\\((.*)\\)");
 
-    private static final class NodeConf {
-        private IvyNode node;
-
-        private String conf;
-
-        public NodeConf(IvyNode node, String conf) {
-            if (node == null) {
-                throw new NullPointerException("node must not null");
-            }
-            if (conf == null) {
-                throw new NullPointerException("conf must not null");
-            }
-            this.node = node;
-            this.conf = conf;
-        }
-
-        public final String getConf() {
-            return conf;
-        }
-
-        public final IvyNode getNode() {
-            return node;
-        }
-
-        public boolean equals(Object obj) {
-            if (!(obj instanceof NodeConf)) {
-                return false;
-            }
-            return getNode().equals(((NodeConf) obj).getNode())
-                    && getConf().equals(((NodeConf) obj).getConf());
-        }
-
-        public int hashCode() {
-            //CheckStyle:MagicNumber| OFF
-            int hash = 33;
-            hash += getNode().hashCode() * 17;
-            hash += getConf().hashCode() * 17;
-            //CheckStyle:MagicNumber| OFF
-            return hash;
-        }
-        
-        public String toString() {
-            return "NodeConf(" + conf + ")";
-        }
-    }
-    
-    
-
     // //////// CONTEXT
     private ResolveData data;
 
@@ -149,22 +101,7 @@ public class IvyNode implements Comparable {
 
     // //////// USAGE DATA
 
-    // Map (String rootConfName -> Set(String confName))
-    // used to know which configurations of the dependency are required
-    // for each root module configuration
-    private Map rootModuleConfs = new HashMap();
-
-    // Map (NodeConf in -> Set(String conf))
-    private Map requiredConfs = new HashMap();
-
-    // Map (String rootModuleConf -> Set(DependencyArtifactDescriptor))
-    private Map dependencyArtifacts = new HashMap();
-
-    // Map (String rootModuleConf -> Set(IncludeRule))
-    private Map dependencyIncludes = new HashMap();
-    
-    // Map (String rootModuleConf -> IvyNodeBlacklist)
-    private Map blacklisted = new HashMap();
+    private IvyNodeUsage usage = new IvyNodeUsage();
 
     public IvyNode(ResolveData data, IvyNode parent, DependencyDescriptor dd) {
         id = dd.getDependencyRevisionId();
@@ -185,6 +122,10 @@ public class IvyNode implements Comparable {
         settings = data.getSettings();
         eviction = new IvyNodeEviction(this);
         callers = new IvyNodeCallers(this);
+    }
+    
+    protected IvyNodeUsage getUsage() {
+        return usage;
     }
 
     /**
@@ -223,10 +164,12 @@ public class IvyNode implements Comparable {
                     ModuleRevisionId requestedRevisionId 
                         = dependencyDescriptor.getDependencyRevisionId();
                     data.getEventManager().fireIvyEvent(
-                        new StartResolveDependencyEvent(resolver, dependencyDescriptor, requestedRevisionId));
+                        new StartResolveDependencyEvent(
+                            resolver, dependencyDescriptor, requestedRevisionId));
                     module = resolver.getDependency(dependencyDescriptor, data);
                     data.getEventManager().fireIvyEvent(
-                        new EndResolveDependencyEvent(resolver, dependencyDescriptor, requestedRevisionId, 
+                        new EndResolveDependencyEvent(
+                            resolver, dependencyDescriptor, requestedRevisionId, 
                             module, System.currentTimeMillis() - start));
                     
                     if (module != null) {
@@ -246,10 +189,9 @@ public class IvyNode implements Comparable {
                         if (settings.getVersionMatcher().isDynamic(getId())) {
                             // IVY-56: check if revision has actually been resolved
                             if (settings.getVersionMatcher().isDynamic(module.getId())) {
-                                Message
-                                        .error("impossible to resolve dynamic revision for "
-                                                + getId()
-                                                + ": check your configuration and make sure revision is part of your pattern");
+                                Message.error("impossible to resolve dynamic revision for "
+                                    + getId() + ": check your configuration and "
+                                    + "make sure revision is part of your pattern");
                                 problem = new RuntimeException(
                                         "impossible to resolve dynamic revision");
                                 return false;
@@ -264,36 +206,8 @@ public class IvyNode implements Comparable {
                                     return false;
                                 }
 
-                                if (resolved.md == null) {
-                                    resolved.md = md;
-                                }
-                                if (resolved.module == null) {
-                                    resolved.module = module;
-                                }
-                                resolved.downloaded |= module.getReport().isDownloaded();
-                                resolved.searched |= module.getReport().isSearched();
-                                resolved.dds.putAll(dds);
-                                resolved.updateDataFrom(this, rootModuleConf, true);
-                                resolved.loadData(rootModuleConf, parent, parentConf, conf,
-                                    shouldBePublic);
-                                DependencyDescriptor dd = dependencyDescriptor;
-                                if (dd != null) {
-                                    resolved.addDependencyArtifacts(rootModuleConf, dd
-                                            .getDependencyArtifacts(parentConf));
-                                    resolved.addDependencyIncludes(rootModuleConf, dd
-                                            .getIncludeRules(parentConf));
-                                }
-                                
-                                data.replaceNode(getId(), resolved, rootModuleConf); 
-                                // this actually discards the node
-
-                                if (settings.logResolvedRevision()) {
-                                    Message.info("\t[" + module.getId().getRevision() + "] "
-                                            + getId());
-                                } else {
-                                    Message.verbose("\t[" + module.getId().getRevision() + "] "
-                                            + getId());
-                                }
+                                moveToRealNode(rootModuleConf, parent, parentConf, conf,
+                                    shouldBePublic, resolved);
 
                                 return true;
                             }
@@ -340,10 +254,40 @@ public class IvyNode implements Comparable {
         } else {
             DependencyDescriptor dd = getDependencyDescriptor(parent);
             if (dd != null) {
-                addDependencyArtifacts(rootModuleConf, dd.getDependencyArtifacts(parentConf));
-                addDependencyIncludes(rootModuleConf, dd.getIncludeRules(parentConf));
+                usage.addDependencyArtifacts(rootModuleConf, dd.getDependencyArtifacts(parentConf));
+                usage.addDependencyIncludes(rootModuleConf, dd.getIncludeRules(parentConf));
             }
             return loaded;
+        }
+    }
+
+    private void moveToRealNode(String rootModuleConf, IvyNode parent, String parentConf,
+            String conf, boolean shouldBePublic, IvyNode resolved) {
+        if (resolved.md == null) {
+            resolved.md = md;
+        }
+        if (resolved.module == null) {
+            resolved.module = module;
+        }
+        resolved.downloaded |= module.getReport().isDownloaded();
+        resolved.searched |= module.getReport().isSearched();
+        resolved.dds.putAll(dds);
+        resolved.updateDataFrom(this, rootModuleConf, true);
+        resolved.loadData(rootModuleConf, parent, parentConf, conf, shouldBePublic);
+        DependencyDescriptor dd = getDependencyDescriptor(parent);
+        if (dd != null) {
+            resolved.usage.addDependencyArtifacts(rootModuleConf, dd
+                    .getDependencyArtifacts(parentConf));
+            resolved.usage.addDependencyIncludes(rootModuleConf, dd
+                    .getIncludeRules(parentConf));
+        }
+        
+        data.replaceNode(getId(), resolved, rootModuleConf); // this actually discards the node
+
+        if (settings.logResolvedRevision()) {
+            Message.info("\t[" + module.getId().getRevision() + "] " + getId());
+        } else {
+            Message.verbose("\t[" + module.getId().getRevision() + "] " + getId());
         }
     }
 
@@ -400,7 +344,7 @@ public class IvyNode implements Comparable {
             Collection confs = Arrays.asList(resolveSpecialConfigurations(dependencyConfigurations,
                 depNode));
             depNode.updateConfsToFetch(confs);
-            depNode.setRequiredConfs(this, conf, confs);
+            depNode.usage.setRequiredConfs(this, conf, confs);
 
             depNode.addCaller(rootModuleConf, this, conf, dependencyConfigurations, dd);
             dependencies.add(depNode);
@@ -522,8 +466,7 @@ public class IvyNode implements Comparable {
      * @return
      */
     public String[] getRequiredConfigurations(IvyNode in, String inConf) {
-        Collection req = (Collection) requiredConfs.get(new NodeConf(in, inConf));
-        return req == null ? new String[0] : (String[]) req.toArray(new String[req.size()]);
+        return usage.getRequiredConfigurations(in, inConf);
     }
 
     /**
@@ -536,10 +479,6 @@ public class IvyNode implements Comparable {
         required.addAll(fetchedConfigurations);
         required.addAll(confsToFetch);
         return (String[]) required.toArray(new String[required.size()]);
-    }
-
-    private void setRequiredConfs(IvyNode parent, String parentConf, Collection confs) {
-        requiredConfs.put(new NodeConf(parent, parentConf), new HashSet(confs));
     }
 
     public Configuration getConfiguration(String conf) {
@@ -563,20 +502,12 @@ public class IvyNode implements Comparable {
      * @return
      */
     public String[] getConfigurations(String rootModuleConf) {
-        Set depConfs = (Set) rootModuleConfs.get(rootModuleConf);
-        if (depConfs == null) {
-            return new String[0];
-        }
-        return (String[]) depConfs.toArray(new String[depConfs.size()]);
+        return usage.getConfigurations(rootModuleConf);
     }
 
     //This is never called.  Could we remove it?
     public void discardConf(String rootModuleConf, String conf) {
-        Set depConfs = (Set) rootModuleConfs.get(rootModuleConf);
-        if (depConfs == null) {
-            depConfs = new HashSet();
-            rootModuleConfs.put(rootModuleConf, depConfs);
-        }
+        Set depConfs = usage.getConfigurationsSet(rootModuleConf);
         if (md != null) {
             // remove all given dependency configurations to the set + extended ones
             Configuration c = md.getConfiguration(conf);
@@ -596,11 +527,7 @@ public class IvyNode implements Comparable {
     }
 
     private void addRootModuleConfigurations(String rootModuleConf, String[] dependencyConfs) {
-        Set depConfs = (Set) rootModuleConfs.get(rootModuleConf);
-        if (depConfs == null) {
-            depConfs = new HashSet();
-            rootModuleConfs.put(rootModuleConf, depConfs);
-        }
+        Set depConfs = usage.getConfigurationsSet(rootModuleConf);
         if (md != null) {
             // add all given dependency configurations to the set + extended ones
             for (int i = 0; i < dependencyConfs.length; i++) {
@@ -627,7 +554,7 @@ public class IvyNode implements Comparable {
      * @return
      */
     public String[] getRootModuleConfigurations() {
-        return (String[]) rootModuleConfs.keySet().toArray(new String[rootModuleConfs.size()]);
+        return usage.getRootModuleConfigurations();
     }
 
     public String[] getConfsToFetch() {
@@ -673,13 +600,14 @@ public class IvyNode implements Comparable {
     private Collection findPath(ModuleId from, IvyNode node, List path) {
         IvyNode parent = (IvyNode) node.getDirectCallerFor(from);
         if (parent == null) {
-            throw new IllegalArgumentException("no path from " + from + " to " + getId() + " found");
+            throw new IllegalArgumentException(
+                "no path from " + from + " to " + getId() + " found");
         }
         if (path.contains(parent)) {
             path.add(0, parent);
-            Message
-                    .verbose("circular dependency found while looking for the path for another one: was looking for "
-                            + from + " as a caller of " + path.get(path.size() - 1));
+            Message.verbose(
+                "circular dependency found while looking for the path for another one: "
+                + "was looking for " + from + " as a caller of " + path.get(path.size() - 1));
             return path;
         }
         path.add(0, parent);
@@ -706,37 +634,11 @@ public class IvyNode implements Comparable {
         // update callers
         callers.updateFrom(node.callers, rootModuleConf, real);
 
-        // update requiredConfs
-        updateMapOfSet(node.requiredConfs, requiredConfs);
-
-        // update rootModuleConfs
-        updateMapOfSetForKey(node.rootModuleConfs, rootModuleConfs, rootModuleConf);
-
-        // update dependencyArtifactsIncludes
-        updateMapOfSetForKey(node.dependencyArtifacts, dependencyArtifacts, rootModuleConf);
+        usage.updateDataFrom(node.usage, rootModuleConf, real);
 
         // update confsToFetch
         updateConfsToFetch(node.fetchedConfigurations);
         updateConfsToFetch(node.confsToFetch);
-    }
-
-    private void updateMapOfSet(Map from, Map to) {
-        for (Iterator iter = from.keySet().iterator(); iter.hasNext();) {
-            Object key = iter.next();
-            updateMapOfSetForKey(from, to, key);
-        }
-    }
-
-    private void updateMapOfSetForKey(Map from, Map to, Object key) {
-        Set set = (Set) from.get(key);
-        if (set != null) {
-            Set toupdate = (Set) to.get(key);
-            if (toupdate != null) {
-                toupdate.addAll(set);
-            } else {
-                to.put(key, new HashSet(set));
-            }
-        }
     }
 
     /**
@@ -746,7 +648,7 @@ public class IvyNode implements Comparable {
      */
     public Artifact[] getAllArtifacts() {
         Set ret = new HashSet();
-        for (Iterator it = rootModuleConfs.keySet().iterator(); it.hasNext();) {
+        for (Iterator it = usage.getRootModuleConfigurationsSet().iterator(); it.hasNext();) {
             String rootModuleConf = (String) it.next();
             ret.addAll(Arrays.asList(getArtifacts(rootModuleConf)));
         }
@@ -762,7 +664,7 @@ public class IvyNode implements Comparable {
      */
     public Artifact[] getSelectedArtifacts(Filter artifactFilter) {
         Collection ret = new HashSet();
-        for (Iterator it = rootModuleConfs.keySet().iterator(); it.hasNext();) {
+        for (Iterator it = usage.getRootModuleConfigurationsSet().iterator(); it.hasNext();) {
             String rootModuleConf = (String) it.next();
             if (!isEvicted(rootModuleConf) && !isBlacklisted(rootModuleConf)) {
                 ret.addAll(Arrays.asList(getArtifacts(rootModuleConf)));
@@ -782,8 +684,8 @@ public class IvyNode implements Comparable {
     public Artifact[] getArtifacts(String rootModuleConf) {
         // first we look for the dependency configurations required
         // in the given root module configuration
-        Set confs = (Set) rootModuleConfs.get(rootModuleConf);
-        if (confs == null) {
+        Set confs = usage.getConfigurationsSet(rootModuleConf);
+        if (confs == null || confs.isEmpty()) {
             // no configuration required => no artifact required
             return new Artifact[0];
         }
@@ -797,7 +699,7 @@ public class IvyNode implements Comparable {
         Set artifacts = new HashSet(); // the set we fill before returning
 
         // we check if we have dependencyArtifacts includes description for this rootModuleConf
-        Set dependencyArtifacts = (Set) this.dependencyArtifacts.get(rootModuleConf);
+        Set dependencyArtifacts = usage.getDependencyArtifactsSet(rootModuleConf);
 
         if (md.isDefault() && dependencyArtifacts != null && !dependencyArtifacts.isEmpty()) {
             // the descriptor is a default one: it has been generated from nothing
@@ -811,7 +713,7 @@ public class IvyNode implements Comparable {
                         .getUrl(), dad.getExtraAttributes()));
             }
         } else {
-            Set includes = (Set) dependencyIncludes.get(rootModuleConf);
+            Set includes = usage.getDependencyIncludesSet(rootModuleConf);
 
             if ((dependencyArtifacts == null || dependencyArtifacts.isEmpty())
                     && (includes == null || includes.isEmpty())) {
@@ -880,25 +782,6 @@ public class IvyNode implements Comparable {
             }
         }
         return ret;
-    }
-
-    private void addDependencyArtifacts(String rootModuleConf,
-            DependencyArtifactDescriptor[] dependencyArtifacts) {
-        addObjectsForConf(rootModuleConf, Arrays.asList(dependencyArtifacts),
-            this.dependencyArtifacts);
-    }
-
-    private void addDependencyIncludes(String rootModuleConf, IncludeRule[] rules) {
-        addObjectsForConf(rootModuleConf, Arrays.asList(rules), dependencyIncludes);
-    }
-
-    private void addObjectsForConf(String rootModuleConf, Collection objectsToAdd, Map map) {
-        Set set = (Set) map.get(rootModuleConf);
-        if (set == null) {
-            set = new HashSet();
-            map.put(rootModuleConf, set);
-        }
-        set.addAll(objectsToAdd);
     }
 
     public boolean hasProblem() {
@@ -1057,7 +940,8 @@ public class IvyNode implements Comparable {
         }
     }
 
-    public boolean doesCallersExclude(String rootModuleConf, Artifact artifact, Stack callersStack) {
+    public boolean doesCallersExclude(
+            String rootModuleConf, Artifact artifact, Stack callersStack) {
         return callers.doesCallersExclude(rootModuleConf, artifact, callersStack);
     }
 
@@ -1086,15 +970,14 @@ public class IvyNode implements Comparable {
 
     public void markEvicted(EvictionData evictionData) {
         eviction.markEvicted(evictionData);
-        if (!rootModuleConfs.keySet().contains(evictionData.getRootModuleConf())) {
-            rootModuleConfs.put(evictionData.getRootModuleConf(), null);
-        }
+        String rootModuleConf = evictionData.getRootModuleConf();
+        usage.removeRootModuleConf(rootModuleConf);
 
         // bug 105: update selected data with evicted one
         if (evictionData.getSelected() != null) {
             for (Iterator iter = evictionData.getSelected().iterator(); iter.hasNext();) {
                 IvyNode selected = (IvyNode) iter.next();
-                selected.updateDataFrom(this, evictionData.getRootModuleConf(), false);
+                selected.updateDataFrom(this, rootModuleConf, false);
             }
         }
     }
@@ -1188,7 +1071,8 @@ public class IvyNode implements Comparable {
         return eviction.getPendingConflicts(rootModuleConf, mid);
     }
 
-    public void setPendingConflicts(ModuleId moduleId, String rootModuleConf, Collection conflicts) {
+    public void setPendingConflicts(
+            ModuleId moduleId, String rootModuleConf, Collection conflicts) {
         eviction.setPendingConflicts(moduleId, rootModuleConf, conflicts);
     }
 
@@ -1218,12 +1102,13 @@ public class IvyNode implements Comparable {
         callerStack.push(this);
         clearEvictionDataInAllCallers(bdata.getRootModuleConf(), callerStack);
         
-        blacklisted.put(bdata.getRootModuleConf(), bdata);
+        usage.blacklist(bdata);
         data.blacklist(this);
     }
 
 
-    private void clearEvictionDataInAllCallers(String rootModuleConf, Stack/*<IvyNode>*/ callerStack) {
+    private void clearEvictionDataInAllCallers(
+            String rootModuleConf, Stack/*<IvyNode>*/ callerStack) {
         IvyNode node = (IvyNode) callerStack.peek();
         Caller[] callers = node.getCallers(rootModuleConf);
         for (int i = 0; i < callers.length; i++) {
@@ -1252,7 +1137,7 @@ public class IvyNode implements Comparable {
      * @see #blacklist(String)
      */
     public boolean isBlacklisted(String rootModuleConf) {
-        return blacklisted.containsKey(rootModuleConf);
+        return usage.isBlacklisted(rootModuleConf);
     }
     
     /**
@@ -1283,7 +1168,7 @@ public class IvyNode implements Comparable {
      * @return the blacklist data if any
      */
     public IvyNodeBlacklist getBlacklistData(String rootModuleConf) {
-        return (IvyNodeBlacklist) blacklisted.get(rootModuleConf);
+        return usage.getBlacklistData(rootModuleConf);
     }
 
 }
