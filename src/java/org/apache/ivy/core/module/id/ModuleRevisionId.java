@@ -17,6 +17,7 @@
  */
 package org.apache.ivy.core.module.id;
 
+import java.lang.ref.WeakReference;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -143,12 +144,19 @@ public class ModuleRevisionId extends UnmodifiableExtendableItem {
      * @return an interned ModuleRevisionId
      */
     public static ModuleRevisionId intern(ModuleRevisionId moduleRevisionId) {
-        ModuleRevisionId r = (ModuleRevisionId) CACHE.get(moduleRevisionId);
-        if (r == null) {
-            r = moduleRevisionId;
-            CACHE.put(r, r);
+        ModuleRevisionId r = null;
 
+        synchronized (CACHE) {
+            WeakReference ref = (WeakReference) CACHE.get(moduleRevisionId);
+            if (ref != null) {
+                r = (ModuleRevisionId) ref.get();
+            }
+            if (r == null) {
+                r = moduleRevisionId;
+                CACHE.put(r, new WeakReference(r));
+            }
         }
+     
         return r;
     }
 
