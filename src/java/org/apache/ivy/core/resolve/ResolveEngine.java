@@ -790,13 +790,9 @@ public class ResolveEngine {
             node.getModuleId()));
         Collection conflicts = computeConflicts(node, ancestor, conf, toevict, resolvedNodes);
 
-        if (settings.debugConflictResolution()) {
-            Message.debug("found conflicting revisions for " + node + " in " + ancestor + ": "
-                    + conflicts);
-        }
-
         ConflictManager conflictManager = ancestor.getNode().getConflictManager(node.getModuleId());
-        Collection resolved = conflictManager.resolveConflicts(ancestor.getNode(), conflicts);
+        
+        Collection resolved = resolveConflicts(node, ancestor, conflicts, conflictManager);
 
         if (resolved == null) {
             if (settings.debugConflictResolution()) {
@@ -893,6 +889,36 @@ public class ResolveEngine {
         }
     }
 
+    private Collection resolveConflicts(VisitNode node, VisitNode ancestor, Collection conflicts,
+            ConflictManager conflictManager) {
+        if (node.getParent() != ancestor 
+                // we are not handling the direct parent
+                
+                && conflictManager == settings.getConflictManager(node.getModuleId())
+                // the conflict manager is the default one
+                
+                && node.getParent().getNode().getResolvedNodes(
+                    node.getModuleId(), node.getRootModuleConf()).equals(conflicts)
+                // there is no new conflict in this ancestor
+                    
+                ) {
+            // IVY-465 case
+            if (settings.debugConflictResolution()) {
+                Message.debug("no new conflicting revisions for " + node + " in " + ancestor + ": "
+                        + conflicts);
+            }
+            
+            return conflicts;
+        } else {
+            if (settings.debugConflictResolution()) {
+                Message.debug("found conflicting revisions for " + node + " in " + ancestor + ": "
+                        + conflicts);
+            }
+
+            return conflictManager.resolveConflicts(ancestor.getNode(), conflicts);
+        }
+    }
+
     private Collection computeConflicts(VisitNode node, VisitNode ancestor, String conf,
             Collection toevict, Collection resolvedNodes) {
         Collection conflicts = new LinkedHashSet();
@@ -910,15 +936,15 @@ public class ResolveEngine {
                 conflicts
                         .addAll(dep.getResolvedNodes(node.getModuleId(), node.getRootModuleConf()));
             }
-        } else if (resolvedNodes.isEmpty() && node.getParent() != ancestor) {
+        } else if (resolvedNodes.isEmpty()) {
             //Conflict must only be computed per root configuration at this step.
-            Collection ancestorDepIvyNodes = node.getParent().getNode()
+            Collection parentDepIvyNodes = node.getParent().getNode()
                         .getDependencies(node.getRootModuleConf(), 
                             new String[] {node.getParentConf()});
-            for (Iterator it = ancestorDepIvyNodes.iterator(); it.hasNext();) {
-                IvyNode ancestorDep = (IvyNode) it.next();
-                if (ancestorDep.getModuleId().equals(node.getModuleId())) {
-                    conflicts.add(ancestorDep);
+            for (Iterator it = parentDepIvyNodes.iterator(); it.hasNext();) {
+                IvyNode parentDep = (IvyNode) it.next();
+                if (parentDep.getModuleId().equals(node.getModuleId())) {
+                    conflicts.add(parentDep);
                 }
             }
         } else {
