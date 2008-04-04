@@ -18,7 +18,7 @@
    specific language governing permissions and limitations
    under the License.    
 -->
-<ivy-module version="1.0">
+<ivy-module version="2.0">
 	<info organisation="myorg"
 	       module="mymodule"
 	       revision="myrev"
@@ -93,10 +93,9 @@
 			<include name="your.*" type="jar"/>
 			<include ext="xml"/>
 			<exclude name="toexclude"/>
-		</dependency>		
+		</dependency>
+				
+		<conflict org="yourorg" module=".*" manager="all"/>
+		<conflict org="theirorg" module="theirmodule1" rev="1.0, 1.1"/>
 	</dependencies>
-	<conflicts>
-		<manager org="yourorg" module=".*" name="all"/>
-		<manager org="theirorg" module="theirmodule1" rev="1.0, 1.1"/>
-	</conflicts>
 </ivy-module>

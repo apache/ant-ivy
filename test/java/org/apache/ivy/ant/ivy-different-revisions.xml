@@ -16,7 +16,7 @@
    specific language governing permissions and limitations
    under the License.    
 -->
-<ivy-module version="1.0"> 
+<ivy-module version="2.0"> 
 	<info organisation="apache"
 	       module="different-revs"
 	       revision="1.0"
@@ -26,8 +26,7 @@
 		<dependency org="org1" name="mod1.2" rev="2.0"/>
 		<dependency org="org1" name="mod1.1" rev="1.0"/>
 		<dependency org="org1" name="mod1.2" rev="1.+"/>
+
+		<conflict manager="all" />
 	</dependencies>
-	<conflicts>
-		<manager name="all" />
-	</conflicts>
 </ivy-module>
