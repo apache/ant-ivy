@@ -343,8 +343,14 @@ public class ResolveEngine {
                 ArtifactDownloadReport[] adrs = dReport.getArtifactsReports();
                 for (int j = 0; j < adrs.length; j++) {
                     if (adrs[j].getDownloadStatus() == DownloadStatus.FAILED) {
-                        Message.warn("\t" + adrs[j]);
-                        resolver.reportFailure(adrs[j].getArtifact());
+                        if (adrs[j].getArtifact().getExtraAttribute("ivy:merged") != null) {
+                            Message.warn("\tmerged artifact not found: " + adrs[j].getArtifact()
+                                + ". It was required in " 
+                                + adrs[j].getArtifact().getExtraAttribute("ivy:merged"));
+                        } else {
+                            Message.warn("\t" + adrs[j]);
+                            resolver.reportFailure(adrs[j].getArtifact());
+                        }
                     } else if (adrs[j].getDownloadStatus() == DownloadStatus.SUCCESSFUL) {
                         totalSize += adrs[j].getSize();
                     }

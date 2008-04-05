@@ -78,6 +78,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - IMPROVEMENT: Change allownomd and skipbuildwithoutivy into a more semantically correct name (IVY-297)
 - IMPROVEMENT: Smarter determination if an expression is exact or not for RegexpPatternMatcher and GlobPatternMatcher
 
+- FIX: Eviction fails for libs not providing their ivy configuration and providing artifacts named different between lib versions (IVY-537)
 - FIX: Memory leak in ModuleRevisionId.java (IVY-791)
 - FIX: conflict manager scoping does not work as expected (IVY-465)
 - FIX: ivy.original.xml file using artifact pattern in cache and causing problems (IVY-787)

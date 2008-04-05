@@ -23,6 +23,7 @@ import java.util.Collection;
 import java.util.Map;
 
 import org.apache.ivy.core.IvyPatternHelper;
+import org.apache.ivy.util.Checks;
 import org.apache.ivy.util.extendable.UnmodifiableExtendableItem;
 
 public class DefaultDependencyArtifactDescriptor extends UnmodifiableExtendableItem implements
@@ -38,24 +39,22 @@ public class DefaultDependencyArtifactDescriptor extends UnmodifiableExtendableI
 
     private String ext;
 
+    private DependencyDescriptor dd;
+
     /**
      * @param dd
      * @param name
      * @param type
      * @param url
      */
-    public DefaultDependencyArtifactDescriptor(String name, String type, String ext, URL url,
-            Map extraAttributes) {
+    public DefaultDependencyArtifactDescriptor(DependencyDescriptor dd, 
+            String name, String type, String ext, URL url, Map extraAttributes) {
         super(null, extraAttributes);
-        if (name == null) {
-            throw new NullPointerException("name must not be null");
-        }
-        if (type == null) {
-            throw new NullPointerException("type must not be null");
-        }
-        if (ext == null) {
-            throw new NullPointerException("ext must not be null");
-        }
+        Checks.checkNotNull(dd, "dd");
+        Checks.checkNotNull(name, "name");
+        Checks.checkNotNull(type, "type");
+        Checks.checkNotNull(ext, "ext");
+        this.dd = dd;
         this.name = name;
         this.type = type;
         this.ext = ext;
@@ -89,6 +88,10 @@ public class DefaultDependencyArtifactDescriptor extends UnmodifiableExtendableI
      */
     public void addConfiguration(String conf) {
         confs.add(conf);
+    }
+    
+    public DependencyDescriptor getDependencyDescriptor() {
+        return dd;
     }
 
     public String getName() {

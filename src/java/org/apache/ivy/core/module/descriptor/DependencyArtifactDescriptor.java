@@ -27,6 +27,12 @@ import org.apache.ivy.util.extendable.ExtendableItem;
  */
 public interface DependencyArtifactDescriptor extends ExtendableItem {
     /**
+     * Returns the dependency descriptor in which this dependency artifact descriptor is declared.
+     * 
+     * @return the dependency descriptor in which this dependency artifact descriptor is declared.
+     */
+    public DependencyDescriptor getDependencyDescriptor();
+    /**
      * Returns the name of the artifact asked
      * 
      * @return

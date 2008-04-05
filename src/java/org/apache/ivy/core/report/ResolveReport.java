@@ -128,7 +128,8 @@ public class ResolveReport {
      * @return the list of reports, never <code>null</code>
      */
     public ArtifactDownloadReport[] getFailedArtifactsReports() {
-        return getArtifactsReports(DownloadStatus.FAILED, true);
+        return ConfigurationResolveReport.filterOutMergedArtifacts(
+            getArtifactsReports(DownloadStatus.FAILED, true));
     }
 
     /**

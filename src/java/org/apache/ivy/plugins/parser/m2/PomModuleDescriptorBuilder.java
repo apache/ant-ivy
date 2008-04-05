@@ -229,7 +229,7 @@ public class PomModuleDescriptorBuilder {
             // dependency to assume such an artifact is published
             extraAtt.put("m:classifier", dep.getClassifier());
             DefaultDependencyArtifactDescriptor depArtifact = 
-                    new DefaultDependencyArtifactDescriptor(dd.getDependencyId().getName(),
+                    new DefaultDependencyArtifactDescriptor(dd, dd.getDependencyId().getName(),
                         "jar", "jar", null, extraAtt);
             // here we have to assume a type and ext for the artifact, so this is a limitation
             // compared to how m2 behave with classifiers

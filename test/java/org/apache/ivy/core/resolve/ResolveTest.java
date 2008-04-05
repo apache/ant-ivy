@@ -1029,6 +1029,25 @@ public class ResolveTest extends TestCase {
                 .exists());
     }
 
+    public void testResolveConflictsWithArtifacts() throws Exception {
+        // test case for IVY-537
+        // #mod2.6;0.12 -> {#mod1.6;1.0.4 #mod2.5;0.6.2 }
+        // #mod1.6;1.0.4 -> #mod1.3;3.0 artifacts A and B
+        // #mod2.5;0.6.2 -> #mod1.3;3.1 artifact C
+        // #mod1.3;3.1 has only A and C artifacts, not B. 
+        // Both A and C should be downloaded, and a message should tell that B was not available.
+        ResolveReport report = ivy.resolve(new File(
+                "test/repositories/1/org2/mod2.6/ivys/ivy-0.12.xml").toURL(),
+            getResolveOptions(new String[] {"*"}));
+        assertFalse(report.hasError());
+
+        // dependencies
+        assertTrue(getArchiveFileInCache("org1", "mod1.3", "3.1", "mod1.3-A", "jar", "jar")
+                .exists());
+        assertTrue(getArchiveFileInCache("org1", "mod1.3", "3.1", "mod1.3-C", "jar", "jar")
+                .exists());
+    }
+
     public void testResolveSeveralDefaultWithArtifactsAndConfs() throws Exception {
         // test case for IVY-283
         Ivy ivy = new Ivy();
@@ -2192,7 +2211,7 @@ public class ResolveTest extends TestCase {
     }
 
     public void testResolveForceWithDynamicRevisionsAndSeveralConfs() throws Exception {
-        // mod4.1 v 4.6 (conf compile, test extends compile) depends on
+        // mod4.1 v 4.6 (conf compile, runtime extends compile, test extends runtime) depends on
         // - mod1.2 v 1+ and forces it in conf compile
         // - mod3.1 v 1.2 in conf test which depends on mod1.2 v 2+
         ResolveReport report = ivy.resolve(new File("test/repositories/2/mod4.1/ivy-4.6.xml")

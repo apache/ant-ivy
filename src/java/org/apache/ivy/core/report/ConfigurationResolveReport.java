@@ -323,7 +323,9 @@ public class ConfigurationResolveReport {
      * @return the list of reports, never <code>null</code>
      */
     public ArtifactDownloadReport[] getFailedArtifactsReports() {
-        return getArtifactsReports(DownloadStatus.FAILED, true);
+        ArtifactDownloadReport[] allFailedReports 
+            = getArtifactsReports(DownloadStatus.FAILED, true);
+        return filterOutMergedArtifacts(allFailedReports);
     }
 
     public boolean hasError() {
@@ -332,6 +334,19 @@ public class ConfigurationResolveReport {
 
     public int getNodesNumber() {
         return getDependencies().size();
+    }
+
+    public static ArtifactDownloadReport[] filterOutMergedArtifacts(
+            ArtifactDownloadReport[] allFailedReports) {
+        Collection adrs = new ArrayList(Arrays.asList(allFailedReports));
+        for (Iterator iterator = adrs.iterator(); iterator.hasNext();) {
+            ArtifactDownloadReport adr = (ArtifactDownloadReport) iterator.next();
+            
+            if (adr.getArtifact().getExtraAttribute("ivy:merged") != null) {
+                iterator.remove();
+            }
+        }
+        return (ArtifactDownloadReport[]) adrs.toArray(new ArtifactDownloadReport[adrs.size()]);
     }
 
 }

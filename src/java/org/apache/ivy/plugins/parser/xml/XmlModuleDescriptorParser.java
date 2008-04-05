@@ -691,7 +691,7 @@ public final class XmlModuleDescriptorParser extends AbstractModuleDescriptorPar
                 String url = ivy.substitute(attributes.getValue("url"));
                 Map extraAtt = ExtendableItemHelper.getExtraAttributes(attributes, new String[] {
                         "name", "type", "ext", "url", "conf"});
-                confAware = new DefaultDependencyArtifactDescriptor(name, type, ext,
+                confAware = new DefaultDependencyArtifactDescriptor(dd, name, type, ext,
                         url == null ? null : new URL(url), extraAtt);
             } else if (state == ARTIFACT_INCLUDE) {
                 PatternMatcher matcher = getPatternMatcher(attributes.getValue("matcher"));

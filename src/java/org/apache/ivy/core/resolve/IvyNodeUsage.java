@@ -84,6 +84,8 @@ public class IvyNodeUsage {
             return "NodeConf(" + conf + ")";
         }
     }
+    
+    private IvyNode node;
 
     // Map (String rootConfName -> Set(String confName))
     // used to know which configurations of the dependency are required
@@ -102,9 +104,12 @@ public class IvyNodeUsage {
     // Map (String rootModuleConf -> IvyNodeBlacklist)
     private Map blacklisted = new HashMap();
     
-    protected String[] getRequiredConfigurations(IvyNode in, String inConf) {
-        Collection req = (Collection) requiredConfs.get(new NodeConf(in, inConf));
-        return req == null ? new String[0] : (String[]) req.toArray(new String[req.size()]);
+    public IvyNodeUsage(IvyNode node) {
+        this.node = node;
+    }
+
+    protected Collection getRequiredConfigurations(IvyNode in, String inConf) {
+        return (Collection) requiredConfs.get(new NodeConf(in, inConf));
     }
 
     protected void setRequiredConfs(IvyNode parent, String parentConf, Collection confs) {
@@ -117,15 +122,11 @@ public class IvyNodeUsage {
      * @param rootModuleConf
      * @return
      */
-    protected String[] getConfigurations(String rootModuleConf) {
-        Set depConfs = (Set) rootModuleConfs.get(rootModuleConf);
-        if (depConfs == null) {
-            return new String[0];
-        }
-        return (String[]) depConfs.toArray(new String[depConfs.size()]);
+    protected Set getConfigurations(String rootModuleConf) {
+        return (Set) rootModuleConfs.get(rootModuleConf);
     }
     
-    protected Set getConfigurationsSet(String rootModuleConf) {
+    protected Set addAndGetConfigurations(String rootModuleConf) {
         Set depConfs = (Set) rootModuleConfs.get(rootModuleConf);
         if (depConfs == null) {
             depConfs = new HashSet();
@@ -134,20 +135,11 @@ public class IvyNodeUsage {
         return depConfs;
     }
     
-    /**
-     * Returns the root module configurations in which this dependency is required
-     * 
-     * @return
-     */
-    protected String[] getRootModuleConfigurations() {
-        return (String[]) rootModuleConfs.keySet().toArray(new String[rootModuleConfs.size()]);
-    }
-    
-    protected Set /*<String>*/ getRootModuleConfigurationsSet() {
+    protected Set /*<String>*/ getRootModuleConfigurations() {
         return rootModuleConfs.keySet();
     }
 
-    public void updateDataFrom(IvyNodeUsage usage, String rootModuleConf, boolean real) {
+    public void updateDataFrom(IvyNodeUsage usage, String rootModuleConf) {
         // update requiredConfs
         updateMapOfSet(usage.requiredConfs, requiredConfs);
 
@@ -240,6 +232,10 @@ public class IvyNodeUsage {
      */
     protected IvyNodeBlacklist getBlacklistData(String rootModuleConf) {
         return (IvyNodeBlacklist) blacklisted.get(rootModuleConf);
+    }
+
+    protected IvyNode getNode() {
+        return node;
     }
     
 }
