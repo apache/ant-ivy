@@ -473,4 +473,8 @@ public class VisitNode {
         return node.toString();
     }
 
+    public boolean isConfRequiredByMergedUsageOnly(String conf) {
+        return node.isConfRequiredByMergedUsageOnly(rootModuleConf, conf);
+    }
+
 }

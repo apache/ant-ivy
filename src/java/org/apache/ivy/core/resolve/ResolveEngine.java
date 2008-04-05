@@ -656,10 +656,12 @@ public class ResolveEngine {
     private void doFetchDependencies(VisitNode node, String conf) {
         Configuration c = node.getConfiguration(conf);
         if (c == null) {
-            Message.warn("configuration not found '" + conf + "' in " + node.getResolvedId()
-                    + ": ignoring");
-            if (node.getParent() != null) {
-                Message.warn("it was required from " + node.getParent().getResolvedId());
+            if (!node.isConfRequiredByMergedUsageOnly(conf)) {
+                Message.warn("configuration not found '" + conf + "' in " + node.getResolvedId()
+                        + ": ignoring");
+                if (node.getParent() != null) {
+                    Message.warn("it was required from " + node.getParent().getResolvedId());
+                }
             }
             return;
         }

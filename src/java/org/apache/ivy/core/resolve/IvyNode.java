@@ -386,7 +386,11 @@ public class IvyNode implements Comparable {
                 Configuration c = md.getConfiguration(confs[i]);
                 if (c == null) {
                     confsToFetch.remove(conf);
-                    if (!conf.equals(confs[i])) {
+                    if (isConfRequiredByMergedUsageOnly(rootModuleConf, conf)) {
+                        Message.verbose(
+                            "configuration required by evicted revision is not available in "
+                            + "selected revision. skipping " + conf + " in " + this);
+                    } else if (!conf.equals(confs[i])) {
                         problem = new RuntimeException("configuration(s) not found in " + this
                                 + ": " + conf + ". Missing configuration: " + confs[i]
                                 + ". It was required from " + parent + " " + parentConf);
@@ -399,8 +403,14 @@ public class IvyNode implements Comparable {
                 } else if (shouldBePublic && !isRoot()
                         && c.getVisibility() != Configuration.Visibility.PUBLIC) {
                     confsToFetch.remove(conf);
-                    problem = new RuntimeException("configuration not public in " + this + ": " + c
-                            + ". It was required from " + parent + " " + parentConf);
+                    if (isConfRequiredByMergedUsageOnly(rootModuleConf, conf)) {
+                        Message.verbose(
+                            "configuration required by evicted revision is not visible in "
+                            + "selected revision. skipping " + conf + " in " + this);
+                    } else {
+                        problem = new RuntimeException("configuration not public in " + this + ": " 
+                            + c + ". It was required from " + parent + " " + parentConf);
+                    }
                     return false;
                 }
                 if (loaded) {
@@ -521,6 +531,11 @@ public class IvyNode implements Comparable {
             addAllIfNotNull(depConfs, usage.getConfigurations(rootModuleConf));
         }
         return (String[]) depConfs.toArray(new String[depConfs.size()]);
+    }
+    
+    protected boolean isConfRequiredByMergedUsageOnly(String rootModuleConf, String conf) {
+        Set confs = usage.getConfigurations(rootModuleConf);
+        return confs == null || !confs.contains(conf);
     }
 
     //This is never called.  Could we remove it?

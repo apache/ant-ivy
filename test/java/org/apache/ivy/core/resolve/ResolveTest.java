@@ -1958,6 +1958,33 @@ public class ResolveTest extends TestCase {
         assertFalse(getArchiveFileInCache("org5", "mod5.1", "4.0", "art51B", "jar", "jar").exists());
     }
 
+    public void testEvictWithConf3() throws Exception {
+        // same as first one but the conf requested in evicted module is no longer present in
+        // selected revision
+        // test case for IVY-681
+
+        // mod6.1 r1.4 depends on
+        // mod5.1 r4.3 conf A
+        // mod5.2 r1.0 which depends on mod5.1 r4.0 conf B
+        //
+        // mod5.1 r4.3 has only conf A, not B
+        ResolveReport report = ivy.resolve(new File("test/repositories/2/mod6.1/ivy-1.4.xml")
+                .toURL(), getResolveOptions(new String[] {"*"}));
+        assertFalse(report.hasError());
+
+        // dependencies
+        assertTrue(getIvyFileInCache(
+            ModuleRevisionId.newInstance("org5", "mod5.1", "4.3")).exists());
+        assertTrue(getArchiveFileInCache("org5", "mod5.1", "4.3", "art51A", "jar", "jar").exists());
+
+        assertTrue(getIvyFileInCache(
+            ModuleRevisionId.newInstance("org5", "mod5.2", "1.0")).exists());
+        assertTrue(getArchiveFileInCache("org5", "mod5.2", "1.0", "mod5.2", "jar", "jar").exists());
+
+        assertFalse(getArchiveFileInCache("org5", "mod5.1", "4.0", "art51A", "jar", "jar").exists());
+        assertFalse(getArchiveFileInCache("org5", "mod5.1", "4.0", "art51B", "jar", "jar").exists());
+    }
+
     public void testEvictWithConfInMultiConf() throws Exception {
         // same as preceding ones but the conflict appears in several root confs
         // bug 105 - test #3
