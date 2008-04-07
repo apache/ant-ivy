@@ -20,6 +20,6 @@
 	<settings defaultCache="build/cache" defaultResolver="m2"/>
 	<resolvers>
 		<ibiblio name="m2" m2compatible="true" useMavenMetadata="true" 
-		         root="file://${ivy.settings.dir}" />
+		         root="file:/${ivy.settings.dir}" />
 	</resolvers>
 </ivysettings>
