@@ -213,9 +213,14 @@ public class XmlSettingsParser extends DefaultHandler {
                 moduleStarted(attributes);
             }
         } catch (ParseException ex) {
-            throw new SAXException("problem in config file: " + ex.getMessage(), ex);
+            SAXException sax = new SAXException("problem in config file: " + ex.getMessage(), ex);
+            sax.initCause(ex);
+            throw sax;
         } catch (IOException ex) {
-            throw new SAXException("io problem while parsing config file: " + ex.getMessage(), ex);
+            SAXException sax = new SAXException("io problem while parsing config file: " 
+                        + ex.getMessage(), ex);
+            sax.initCause(ex);
+            throw sax;
         }
     }
 

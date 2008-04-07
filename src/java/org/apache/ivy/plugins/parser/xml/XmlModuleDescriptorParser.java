@@ -336,8 +336,10 @@ public final class XmlModuleDescriptorParser extends AbstractModuleDescriptorPar
                 if (ex instanceof SAXException) {
                     throw (SAXException) ex;
                 }
-                throw new SAXException("problem occured while parsing ivy file. message: "
+                SAXException sax = new SAXException("Problem occured while parsing ivy file: "
                         + ex.getMessage(), ex);
+                sax.initCause(ex);
+                throw sax;
             }
         }
 
