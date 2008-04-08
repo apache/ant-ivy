@@ -3332,7 +3332,7 @@ public class ResolveTest extends TestCase {
     public void testResolveMaven2() throws Exception {
         // test3 depends on test2 which depends on test
         Ivy ivy = new Ivy();
-        ivy.configure(new File("test/repositories/m2/ivysettings.xml"));
+        ivy.configure(new File("test/repositories/m2/ivysettings.xml").toURL());
         ResolveReport report = ivy.resolve(new File(
                 "test/repositories/m2/org/apache/test3/1.0/test3-1.0.pom").toURL(),
             getResolveOptions(new String[] {"test"}));
@@ -3360,7 +3360,7 @@ public class ResolveTest extends TestCase {
         //Same as testResolveMaven2 but with a relocated module pointing to the module
         //used in testResolveMaven2.
         ivy = new Ivy();
-        ivy.configure(new File("test/repositories/m2/ivysettings.xml"));
+        ivy.configure(new File("test/repositories/m2/ivysettings.xml").toURL());
         ivy.pushContext();
         try {        
             ResolveReport report = ivy.resolve(new File(
@@ -3388,7 +3388,7 @@ public class ResolveTest extends TestCase {
         //Same as testResolveMaven2 but with a relocated module pointing to the module
         //used in testResolveMaven2.
         ivy = new Ivy();
-        ivy.configure(new File("test/repositories/m2/ivysettings.xml"));
+        ivy.configure(new File("test/repositories/m2/ivysettings.xml").toURL());
         ivy.pushContext();
         try {        
             ResolveReport report = ivy.resolve(new File(
@@ -3414,7 +3414,7 @@ public class ResolveTest extends TestCase {
 
     public void testResolveVesionRelocationChainedWithGroupRelocation() throws Exception {
         ivy = new Ivy();
-        ivy.configure(new File("test/repositories/m2/ivysettings.xml"));
+        ivy.configure(new File("test/repositories/m2/ivysettings.xml").toURL());
         ivy.pushContext();
         try {        
             ResolveReport report = ivy.resolve(new File(
@@ -3440,7 +3440,7 @@ public class ResolveTest extends TestCase {
 
     public void testResolveTransitivelyToRelocatedPom() throws Exception {
         ivy = new Ivy();
-        ivy.configure(new File("test/repositories/m2/ivysettings.xml"));
+        ivy.configure(new File("test/repositories/m2/ivysettings.xml").toURL());
         ivy.pushContext();
         try {        
             ResolveReport report = ivy.resolve(new File(
@@ -3466,7 +3466,7 @@ public class ResolveTest extends TestCase {
 
     public void testResolveTransitivelyToPomRelocatedToNewVersion() throws Exception {
         ivy = new Ivy();
-        ivy.configure(new File("test/repositories/m2/ivysettings.xml"));
+        ivy.configure(new File("test/repositories/m2/ivysettings.xml").toURL());
         ivy.pushContext();
         try {        
             ResolveReport report = ivy.resolve(new File(
@@ -3495,7 +3495,7 @@ public class ResolveTest extends TestCase {
         // test case for IVY-418
         // test-classifier depends on test-classified with classifier asl
         Ivy ivy = new Ivy();
-        ivy.configure(new File("test/repositories/m2/ivysettings.xml"));
+        ivy.configure(new File("test/repositories/m2/ivysettings.xml").toURL());
         ResolveReport report = ivy.resolve(new File(
                 "test/repositories/m2/org/apache/test-classifier/1.0/test-classifier-1.0.pom")
                 .toURL(), getResolveOptions(new String[] {"*"}));
@@ -3517,7 +3517,7 @@ public class ResolveTest extends TestCase {
 
     public void testResolveMaven2WithVersionProperty() throws Exception {
         Ivy ivy = new Ivy();
-        ivy.configure(new File("test/repositories/m2/ivysettings.xml"));
+        ivy.configure(new File("test/repositories/m2/ivysettings.xml").toURL());
         ResolveReport report = ivy.resolve(new File(
                 "test/repositories/m2/org/apache/test-version/1.0/test-version-1.0.pom").toURL(),
             getResolveOptions(new String[] {"*"}));
@@ -3679,7 +3679,7 @@ public class ResolveTest extends TestCase {
         // here we test maven SNAPSHOT versions handling, 
         // with m2 snapshotRepository/uniqueVersion set to true
         Ivy ivy = new Ivy();
-        ivy.configure(new File("test/repositories/m2/ivysettings.xml"));
+        ivy.configure(new File("test/repositories/m2/ivysettings.xml").toURL());
         ResolveReport report = ivy.resolve(new File(
                 "test/repositories/m2/org/apache/test4/1.0/test4-1.0.pom")
                 .toURL(), getResolveOptions(new String[] {"*"}));
@@ -3698,7 +3698,7 @@ public class ResolveTest extends TestCase {
         // here we test maven SNAPSHOT versions handling, 
         // without m2 snapshotRepository/uniqueVersion set to true
         Ivy ivy = new Ivy();
-        ivy.configure(new File("test/repositories/m2/ivysettings.xml"));
+        ivy.configure(new File("test/repositories/m2/ivysettings.xml").toURL());
         ResolveReport report = ivy.resolve(new File(
                 "test/repositories/m2/org/apache/test4/1.1/test4-1.1.pom")
                 .toURL(), getResolveOptions(new String[] {"*"}));
