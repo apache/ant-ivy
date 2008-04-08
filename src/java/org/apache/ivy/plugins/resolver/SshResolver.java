@@ -32,8 +32,8 @@ public class SshResolver extends AbstractSshBasedResolver {
      * A four digit string (e.g., 0644, see "man chmod", "man open") specifying the permissions
      * of the published files.
      */
-    public void setPublishMode(String mode) {
-        ((SshRepository) getRepository()).setPublishMode(mode);
+    public void setPublishPermissions(String permissions) {
+        ((SshRepository) getRepository()).setPublishPermissions(permissions);
     }
 
     /**
