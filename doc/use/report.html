@@ -56,14 +56,16 @@ Then following a few <a href="../yed.html">simple steps</a> you can obtain a gra
     <tr><td>conf</td><td>a comma separated list of the configurations for which a report should be generated</td>
         <td>No. Defaults to the configurations resolved by the last resolve call (during same ant build), or ${ivy.resolved.configurations} if no resolve was called</td></tr>
     <tr><td>organisation</td><td>the name of the organisation of the module for which report should be generated</td>
-        <td>No, unless no resolve was called during the build. Defaults to last resolved module organisation.</td></tr>
+        <td>No, unless resolveId has not been specified and no resolve was called during the build. Defaults to last resolved module organisation.</td></tr>
     <tr><td>module</td><td>the name of the module for which report should be generated</td>
-        <td>No, unless no resolve was called during the build. Defaults to last resolved module.</td></tr>
+        <td>No, unless resolveId has not been specified and no resolve was called during the build. Defaults to last resolved module.</td></tr>
     <tr><td>validate</td><td>true to force ivy files validation against ivy.xsd, false to force no validation</td>
         <td>No. Defaults to default ivy value (as configured in configuration file)</td></tr>
     <tr><td>xslfile</td><td>indicates which xsl file should be used to generate the report</td>
         <td>No, defaults to ivy provided xsl which generates html report</td></tr>
-    <tr><td>settingsRef</td><td>A reference to the ivy settings that must be used by this task <span class="since">(since 2.0)</span></td><td>No, 'ivy.instance' is taken by default.</td></tr></tbody>
+    <tr><td>settingsRef</td><td>A reference to the ivy settings that must be used by this task <span class="since">(since 2.0)</span></td><td>No, 'ivy.instance' is taken by default.</td></tr>
+    <tr><td>resolveId</td><td>The id which was used for a previous resolve <span class="since">(since 2.0)</span></td><td>No, defaults to '[org]-[module]'.</td></tr>
+</tbody>
 </table>
 
 <h1>Examples</h1>

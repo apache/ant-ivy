@@ -81,6 +81,30 @@ public class IvyReportTest extends TestCase {
         }
     }
 
+    public void testNoRevisionInOutputPattern() throws Exception {
+        Locale oldLocale = Locale.getDefault();
+        
+        try {
+            // set the locale to UK as workaround for SUN bug 6240963
+            Locale.setDefault(Locale.UK);
+
+            IvyResolve res = new IvyResolve();
+            res.setProject(project);
+            res.setFile(new File("test/java/org/apache/ivy/ant/ivy-simple.xml"));
+            res.execute();
+    
+            report.setTodir(new File(cache, "report"));
+            report.setOutputpattern("[organisation]-[module]-[revision].[ext]");
+            report.setConf("default");
+            report.execute();
+            
+            assertTrue(new File(cache, "report/apache-resolve-simple-1.0.html").exists());
+            assertTrue(new File(cache, "report/apache-resolve-simple-1.0.graphml").exists());
+        } finally {
+            Locale.setDefault(oldLocale);
+        }
+    }
+
     public void testMultipleConfigurations() throws Exception {
         Locale oldLocale = Locale.getDefault();
         
