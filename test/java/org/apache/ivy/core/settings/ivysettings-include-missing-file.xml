@@ -17,8 +17,5 @@
    under the License.    
 -->
 <ivysettings>
-	<include file="ivysettings-macro.xml"/>
-	<resolvers>
-		<mymacro name="includeworks" mymainrep="included/myrep" mysecondrep="included/secondrep"/>
-	</resolvers>
+	<include file="missing-file.xml"/>
 </ivysettings>

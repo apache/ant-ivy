@@ -417,6 +417,34 @@ public class XmlSettingsParserTest extends TestCase {
         assertEquals("myvalue", settings.getVariable("ivy.test.prop"));
     }
 
+
+    public void testIncludeAbsoluteFile() throws Exception {
+        //WARNING : this test will only work if the test are launched from the project root 
+        //directory
+        IvySettings settings = new IvySettings();
+        XmlSettingsParser parser = new XmlSettingsParser(settings);
+        parser.parse(XmlSettingsParserTest.class.getResource(
+                                                "ivysettings-include-absolute-file.xml"));
+
+        DependencyResolver inc = settings.getResolver("includeworks");
+        assertNotNull(inc);
+        assertTrue(inc instanceof ChainResolver);
+    }
+
+
+    public void testIncludeMissingFile() throws Exception {
+        IvySettings settings = new IvySettings();
+        XmlSettingsParser parser = new XmlSettingsParser(settings);
+        try {
+            parser.parse(XmlSettingsParserTest.class.getResource(
+                                                "ivysettings-include-missing-file.xml"));
+            fail("An exception must be throwed");
+        } catch (Exception e) {
+            //An exception must be throwed
+        }
+    }
+
+    
     public void testParser() throws Exception {
         IvySettings settings = new IvySettings();
         XmlSettingsParser parser = new XmlSettingsParser(settings);

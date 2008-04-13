@@ -17,7 +17,7 @@
    under the License.    
 -->
 <ivysettings>
-	<include file="ivysettings-macro.xml"/>
+	<include file="${user.dir}/test/java/org/apache/ivy/core/settings/ivysettings-macro.xml"/>
 	<resolvers>
 		<mymacro name="includeworks" mymainrep="included/myrep" mysecondrep="included/secondrep"/>
 	</resolvers>

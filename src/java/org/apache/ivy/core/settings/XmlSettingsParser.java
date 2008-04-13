@@ -369,20 +369,19 @@ public class XmlSettingsParser extends DefaultHandler {
                     throw new IllegalArgumentException(
                         "bad include tag: specify file or url to include");
                 } else {
-                    Message.verbose("including url: " + propFilePath);
-                    settingsURL = new URL(propFilePath);
+                    settingsURL = new URL(this.settings , propFilePath);
+                    Message.verbose("including url: " + settingsURL.toString());
                     ivy.setSettingsVariables(settingsURL);
                 }
             } else {
                 File incFile = new File(propFilePath);
-                if (!incFile.exists()) {
-                    throw new IllegalArgumentException(
-                        "impossible to include " + incFile + ": file does not exist");
+                if (incFile.isAbsolute()) {
+                    settingsURL = incFile.toURI().toURL();
                 } else {
-                    Message.verbose("including file: " + propFilePath);
-                    ivy.setSettingsVariables(incFile);
-                    settingsURL = incFile.toURL();
+                    settingsURL = new URL(this.settings , propFilePath);
                 }
+                Message.verbose("including file: " + settingsURL);
+                ivy.setSettingsVariables(incFile);
             }
             new XmlSettingsParser(ivy).parse(configurator, settingsURL);
         } finally {
