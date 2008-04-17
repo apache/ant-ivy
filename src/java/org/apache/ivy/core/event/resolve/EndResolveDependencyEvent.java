@@ -39,6 +39,11 @@ public class EndResolveDependencyEvent extends ResolveDependencyEvent {
             // override revision from the dependency descriptor
             addAttribute("revision", this.module.getDescriptor().getResolvedModuleRevisionId()
                     .getRevision());
+            // now that we have loaded the dependency descriptor, we can put the extra attributes
+            // contained in the descriptor too
+            addAttributes(
+                this.module.getDescriptor().getResolvedModuleRevisionId().getExtraAttributes());
+            
             addAttribute("resolved", "true");
         } else {
             addAttribute("resolved", "false");
