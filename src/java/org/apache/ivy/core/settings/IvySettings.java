@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -575,6 +576,24 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
      */
     public String substitute(String str) {
         return IvyPatternHelper.substituteVariables(str, variableContainer);
+    }
+
+    /**
+     * Substitute variables in the given map values by their value found in the current set of
+     * variables
+     * 
+     * @param strings
+     *            the map of strings in which substitution should be made
+     * @return a new map of strings in which all current ivy variables in values have been
+     *         substituted by their value
+     */
+    public Map/*<String, String>*/ substitute(Map/*<String, String>*/ strings) {
+        Map substituted = new LinkedHashMap();
+        for (Iterator it = strings.entrySet().iterator(); it.hasNext();) {
+            Map.Entry entry = (Map.Entry) it.next();
+            substituted.put(entry.getKey(), substitute((String) entry.getValue()));
+        }
+        return substituted;
     }
 
     /**

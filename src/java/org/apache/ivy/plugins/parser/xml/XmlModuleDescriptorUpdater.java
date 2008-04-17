@@ -367,7 +367,7 @@ public final class XmlModuleDescriptorUpdater {
             
             String revision = substitute(settings, attributes.getValue("rev"));
             String revisionConstraint = substitute(settings, attributes.getValue("revConstraint"));
-            Map extraAttributes = ExtendableItemHelper.getExtraAttributes(attributes,
+            Map extraAttributes = ExtendableItemHelper.getExtraAttributes(settings, attributes,
                 XmlModuleDescriptorParser.DEPENDENCY_REGULAR_ATTRIBUTES);
             ModuleRevisionId localMrid = ModuleRevisionId.newInstance(org, module, branch,
                 revision, extraAttributes);
@@ -513,7 +513,7 @@ public final class XmlModuleDescriptorUpdater {
                 rev = substitute(settings, attributes.getValue("revision"));
             }
             ModuleRevisionId localMid = ModuleRevisionId.newInstance(organisation, module, null,
-                rev, ExtendableItemHelper.getExtraAttributes(attributes,
+                rev, ExtendableItemHelper.getExtraAttributes(settings, attributes,
                     new String[] {"organisation", "module", "revision", "status", "publication",
                         "namespace"}));
             ModuleRevisionId systemMid = ns == null ? localMid : ns.getToSystemTransformer()

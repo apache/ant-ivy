@@ -17,6 +17,8 @@
  */
 package org.apache.ivy.plugins.parser;
 
+import java.util.Map;
+
 import org.apache.ivy.core.RelativeUrlResolver;
 import org.apache.ivy.core.cache.ResolutionCacheManager;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
@@ -29,6 +31,8 @@ import org.apache.ivy.plugins.resolver.DependencyResolver;
 public interface ParserSettings {
 
     String substitute(String value);
+    
+    Map/*<String, String>*/ substitute(Map/*<String, String>*/ strings);
     
     ResolutionCacheManager getResolutionCacheManager();
 

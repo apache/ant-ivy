@@ -450,7 +450,7 @@ public final class XmlModuleDescriptorParser extends AbstractModuleDescriptorPar
                                             : visibility), ivy.substitute(attributes
                                     .getValue("description")), ext == null ? null : ext
                                     .split(","), transitive, deprecated);
-                    ExtendableItemHelper.fillExtraAttributes(configuration, attributes,
+                    ExtendableItemHelper.fillExtraAttributes(ivy, configuration, attributes,
                         new String[] {"name", "visibility", "extends", "transitive",
                                 "description", "deprecated"});
                     getMd().addConfiguration(configuration);
@@ -511,7 +511,7 @@ public final class XmlModuleDescriptorParser extends AbstractModuleDescriptorPar
             String revConstraint = ivy.substitute(attributes.getValue("revConstraint"));
             revConstraint = revConstraint == null ? rev : revConstraint;
             Map extraAttributes = ExtendableItemHelper.getExtraAttributes(
-                attributes, DEPENDENCY_REGULAR_ATTRIBUTES);
+                ivy, attributes, DEPENDENCY_REGULAR_ATTRIBUTES);
             dd = new DefaultDependencyDescriptor(
                 getMd(), 
                 ModuleRevisionId.newInstance(org, name, branch, rev, extraAttributes), 
@@ -536,7 +536,7 @@ public final class XmlModuleDescriptorParser extends AbstractModuleDescriptorPar
                 ext = ext != null ? ext : type;
                 String url = ivy.substitute(attributes.getValue("url"));
                 artifact = new MDArtifact(getMd(), artName, type, ext, url == null ? null
-                        : new URL(url), ExtendableItemHelper.getExtraAttributes(attributes,
+                        : new URL(url), ExtendableItemHelper.getExtraAttributes(ivy, attributes,
                     new String[] {"ext", "type", "name", "conf"}));
                 String confs = ivy.substitute(attributes.getValue("conf"));
                 // only add confs if they are specified. if they aren't, endElement will
@@ -597,7 +597,7 @@ public final class XmlModuleDescriptorParser extends AbstractModuleDescriptorPar
             String revision = ivy.substitute(attributes.getValue("revision"));
             String branch = ivy.substitute(attributes.getValue("branch"));
             getMd().setModuleRevisionId(ModuleRevisionId.newInstance(org, module, branch,
-                revision, ExtendableItemHelper.getExtraAttributes(attributes, new String[] {
+                revision, ExtendableItemHelper.getExtraAttributes(ivy, attributes, new String[] {
                         "organisation", "module", "revision", "status", "publication",
                         "branch", "namespace", "default", "resolver"})));
 
@@ -691,8 +691,8 @@ public final class XmlModuleDescriptorParser extends AbstractModuleDescriptorPar
             ext = ext != null ? ext : type;
             if (state == DEP_ARTIFACT) {
                 String url = ivy.substitute(attributes.getValue("url"));
-                Map extraAtt = ExtendableItemHelper.getExtraAttributes(attributes, new String[] {
-                        "name", "type", "ext", "url", "conf"});
+                Map extraAtt = ExtendableItemHelper.getExtraAttributes(ivy, attributes, 
+                    new String[] {"name", "type", "ext", "url", "conf"});
                 confAware = new DefaultDependencyArtifactDescriptor(dd, name, type, ext,
                         url == null ? null : new URL(url), extraAtt);
             } else if (state == ARTIFACT_INCLUDE) {
@@ -702,8 +702,8 @@ public final class XmlModuleDescriptorParser extends AbstractModuleDescriptorPar
                 String module = ivy.substitute(attributes.getValue("module"));
                 module = module == null ? PatternMatcher.ANY_EXPRESSION : module;
                 ArtifactId aid = new ArtifactId(new ModuleId(org, module), name, type, ext);
-                Map extraAtt = ExtendableItemHelper.getExtraAttributes(attributes, new String[] {
-                        "org", "module", "name", "type", "ext", "matcher", "conf"});
+                Map extraAtt = ExtendableItemHelper.getExtraAttributes(ivy, attributes, 
+                    new String[] {"org", "module", "name", "type", "ext", "matcher", "conf"});
                 confAware = new DefaultIncludeRule(aid, matcher, extraAtt);
             } else { // _state == ARTIFACT_EXCLUDE || EXCLUDE
                 PatternMatcher matcher = getPatternMatcher(attributes.getValue("matcher"));
@@ -712,8 +712,8 @@ public final class XmlModuleDescriptorParser extends AbstractModuleDescriptorPar
                 String module = ivy.substitute(attributes.getValue("module"));
                 module = module == null ? PatternMatcher.ANY_EXPRESSION : module;
                 ArtifactId aid = new ArtifactId(new ModuleId(org, module), name, type, ext);
-                Map extraAtt = ExtendableItemHelper.getExtraAttributes(attributes, new String[] {
-                        "org", "module", "name", "type", "ext", "matcher", "conf"});
+                Map extraAtt = ExtendableItemHelper.getExtraAttributes(ivy, attributes, 
+                    new String[] {"org", "module", "name", "type", "ext", "matcher", "conf"});
                 confAware = new DefaultExcludeRule(aid, matcher, extraAtt);
             }
             String confs = ivy.substitute(attributes.getValue("conf"));
