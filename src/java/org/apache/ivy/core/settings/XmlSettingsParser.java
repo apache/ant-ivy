@@ -372,7 +372,7 @@ public class XmlSettingsParser extends DefaultHandler {
                     try {
                         //First asume that it is an absolute URL
                         settingsURL = new URL(propFilePath);
-                    } catch(MalformedURLException e) {
+                    } catch (MalformedURLException e) {
                         //If that fail, it may be because it is a relative one.
                         settingsURL = new URL(this.settings , propFilePath);
                     }

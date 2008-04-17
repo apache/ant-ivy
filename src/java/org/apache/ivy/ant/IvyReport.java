@@ -280,14 +280,17 @@ public class IvyReport extends IvyTask {
             try {
                 parser.parse(reportFile);
             } catch (ParseException e) {
-                throw new BuildException("Error occurred while parsing reportfile '" + reportFile.getAbsolutePath() + "'", e);
+                throw new BuildException(
+                    "Error occurred while parsing reportfile '" 
+                    + reportFile.getAbsolutePath() + "'", e);
             }
             
             // get the resolve module
             mRevId = parser.getResolvedModule();
         }
         
-        return IvyPatternHelper.substitute(outputpattern, mRevId.getOrganisation(), mRevId.getName(),
+        return IvyPatternHelper.substitute(
+            outputpattern, mRevId.getOrganisation(), mRevId.getName(),
             mRevId.getRevision(), "", "", ext, conf, mRevId.getAttributes());
     }
 
