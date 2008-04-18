@@ -292,14 +292,7 @@
     	-->
     	<copy file="${basedir}/META-INF/MANIFEST.MF" tofile="${artifacts.build.dir}/MANIFEST.MF">
     		<filterchain>
-    			<!-- with Ant 1.7 excluding the line would be:
-    			<linecontains negate="true">
-    				<contains value="Bundle-Version"/>
-    			</linecontains>
-    			-->
-    			<linecontainsregexp>
-    			  <regexp pattern="[^B][^u][^n][^d][^l][^e][^\-][^V][^e][^r][^s][^i][^o][^n].*"/>
-    			</linecontainsregexp>
+    			<replaceregex pattern="Bundle-Version:.*" replace="Bundle-Version: ${bundle.version}" byline="true" />
     		</filterchain>
     	</copy>
 
@@ -317,7 +310,6 @@
                 <attribute name="Implementation-Vendor-Id" value="org.apache" />
                 <attribute name="Extension-name" value="org.apache.ivy" />
                 <attribute name="Build-Version" value="${build.version}" />
-                <attribute name="Bundle-Version" value="${bundle.version}" />
             </manifest>
             <fileset dir="${core.classes.build.dir}" />
             <fileset dir="${ant.classes.build.dir}" />
