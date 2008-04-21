@@ -57,7 +57,7 @@ public class IvyBuildListTest extends TestCase {
         fs.setIncludes("**/build.xml");
         fs.setExcludes("E2/build.xml,F/build.xml,G/build.xml");
         buildlist.addFileset(fs);
-
+        buildlist.setOnMissingDescriptor("skip");
         buildlist.setReference("ordered.build.files");
 
         buildlist.execute();
@@ -96,7 +96,7 @@ public class IvyBuildListTest extends TestCase {
         fs.setIncludes("**/build.xml");
         fs.setExcludes("E2/build.xml,F/build.xml,G/build.xml");
         buildlist.addFileset(fs);
-
+        buildlist.setOnMissingDescriptor("skip");
         buildlist.setReference("reverse.ordered.build.files");
 
         buildlist.execute();
@@ -136,7 +136,7 @@ public class IvyBuildListTest extends TestCase {
         fs.setIncludes("**/build.xml");
         fs.setExcludes("E2/**");
         buildlist.addFileset(fs);
-
+        buildlist.setOnMissingDescriptor("skip");
         buildlist.setReference("ordered.build.files");
 
         buildlist.execute();
@@ -167,7 +167,7 @@ public class IvyBuildListTest extends TestCase {
         fs.setDir(new File("test/buildlist"));
         fs.setIncludes("**/build.xml");
         buildlist.addFileset(fs);
-
+        buildlist.setOnMissingDescriptor("skip");
         buildlist.setReference("ordered.build.files");
 
         buildlist.execute();
@@ -194,7 +194,7 @@ public class IvyBuildListTest extends TestCase {
         fs.setIncludes("**/build.xml");
         fs.setExcludes("E2/**");
         buildlist.addFileset(fs);
-
+        buildlist.setOnMissingDescriptor("skip");
         buildlist.setReference("ordered.build.files");
 
         buildlist.execute();
@@ -231,7 +231,7 @@ public class IvyBuildListTest extends TestCase {
         fs.setIncludes("**/build.xml");
         fs.setExcludes("E2/**");
         buildlist.addFileset(fs);
-
+        buildlist.setOnMissingDescriptor("skip");
         buildlist.setReference("ordered.build.files");
 
         buildlist.execute();
@@ -263,7 +263,7 @@ public class IvyBuildListTest extends TestCase {
         fs.setIncludes("**/build.xml");
         fs.setExcludes("E2/**");
         buildlist.addFileset(fs);
-
+        buildlist.setOnMissingDescriptor("skip");
         buildlist.setReference("ordered.build.files");
 
         buildlist.execute();
@@ -296,7 +296,7 @@ public class IvyBuildListTest extends TestCase {
         fs.setIncludes("**/build.xml");
         fs.setExcludes("E2/**");
         buildlist.addFileset(fs);
-
+        buildlist.setOnMissingDescriptor("skip");
         buildlist.setReference("ordered.build.files");
 
         buildlist.execute();
@@ -331,7 +331,7 @@ public class IvyBuildListTest extends TestCase {
         fs.setDir(new File("test/buildlist"));
         fs.setIncludes("**/build.xml");
         buildlist.addFileset(fs);
-
+        buildlist.setOnMissingDescriptor("skip");
         buildlist.setReference("ordered.build.files");
 
         buildlist.execute();
@@ -359,7 +359,7 @@ public class IvyBuildListTest extends TestCase {
         fs.setIncludes("**/build.xml");
         fs.setExcludes("E2/**");
         buildlist.addFileset(fs);
-
+        buildlist.setOnMissingDescriptor("skip");
         buildlist.setReference("ordered.build.files");
 
         buildlist.execute();
@@ -398,7 +398,7 @@ public class IvyBuildListTest extends TestCase {
         fs.setIncludes("**/build.xml");
         fs.setExcludes("E2/**");
         buildlist.addFileset(fs);
-
+        buildlist.setOnMissingDescriptor("skip");
         buildlist.setReference("ordered.build.files");
 
         buildlist.execute();
@@ -432,7 +432,7 @@ public class IvyBuildListTest extends TestCase {
         fs.setIncludes("**/build.xml");
         fs.setExcludes("E2/**");
         buildlist.addFileset(fs);
-
+        buildlist.setOnMissingDescriptor("skip");
         buildlist.setReference("ordered.build.files");
 
         buildlist.execute();
@@ -465,7 +465,7 @@ public class IvyBuildListTest extends TestCase {
         fs.setIncludes("**/build.xml");
         fs.setExcludes("E2/build.xml,F/build.xml,G/build.xml");
         buildlist.addFileset(fs);
-
+        buildlist.setOnMissingDescriptor("skip");
         buildlist.setReference("ordered.build.files");
 
         buildlist.execute();
@@ -489,6 +489,69 @@ public class IvyBuildListTest extends TestCase {
         assertEquals(new File("test/buildlist/E/build.xml").getAbsolutePath(), new File(files[3])
                 .getAbsolutePath());
     }
+    
+    public void testOnMissingDescriptor() {
+        Project p = new Project();
+
+        IvyBuildList buildlist = new IvyBuildList();
+        buildlist.setProject(p);
+
+        FileSet fs = new FileSet();
+        fs.setDir(new File("test/buildlist"));
+        fs.setIncludes("**/build.xml");
+        fs.setExcludes("E2/build.xml,F/build.xml,G/build.xml");
+        buildlist.addFileset(fs);
+        buildlist.setOnMissingDescriptor(new String("tail")); // IVY-805: new String instance
+        buildlist.setReference("ordered.build.files");
+        buildlist.execute();
+
+        Object o = p.getReference("ordered.build.files");
+        assertNotNull(o);
+        assertTrue(o instanceof Path);
+
+        Path path = (Path) o;
+        String[] files = path.list();
+        assertNotNull(files);
+        
+        assertEquals(6, files.length);
+
+        assertEquals(new File("test/buildlist/B/build.xml").getAbsolutePath(), new File(files[0])
+                .getAbsolutePath());
+        assertEquals(new File("test/buildlist/C/build.xml").getAbsolutePath(), new File(files[1])
+                .getAbsolutePath());
+        assertEquals(new File("test/buildlist/A/build.xml").getAbsolutePath(), new File(files[2])
+                .getAbsolutePath());
+        assertEquals(new File("test/buildlist/D/build.xml").getAbsolutePath(), new File(files[3])
+                .getAbsolutePath());
+        assertEquals(new File("test/buildlist/E/build.xml").getAbsolutePath(), new File(files[4])
+                .getAbsolutePath());
+        assertEquals(new File("test/buildlist/H/build.xml").getAbsolutePath(), new File(files[5])
+                .getAbsolutePath());
+        
+        buildlist.setOnMissingDescriptor(new String("skip")); // IVY-805: new String instance
+        buildlist.execute();
+
+        o = p.getReference("ordered.build.files");
+        assertNotNull(o);
+        assertTrue(o instanceof Path);
+
+        path = (Path) o;
+        files = path.list();
+        assertNotNull(files);
+        
+        assertEquals(5, files.length);
+
+        assertEquals(new File("test/buildlist/B/build.xml").getAbsolutePath(), new File(files[0])
+                .getAbsolutePath());
+        assertEquals(new File("test/buildlist/C/build.xml").getAbsolutePath(), new File(files[1])
+                .getAbsolutePath());
+        assertEquals(new File("test/buildlist/A/build.xml").getAbsolutePath(), new File(files[2])
+                .getAbsolutePath());
+        assertEquals(new File("test/buildlist/D/build.xml").getAbsolutePath(), new File(files[3])
+                .getAbsolutePath());
+        assertEquals(new File("test/buildlist/E/build.xml").getAbsolutePath(), new File(files[4])
+                .getAbsolutePath());
+    }
 
     public void testWithModuleWithSameNameAndDifferentOrg() {
         Project p = new Project();
@@ -501,7 +564,7 @@ public class IvyBuildListTest extends TestCase {
         fs.setIncludes("**/build.xml");
         fs.setExcludes("F/build.xml,G/build.xml");
         buildlist.addFileset(fs);
-
+        buildlist.setOnMissingDescriptor("skip");
         buildlist.setReference("ordered.build.files");
 
         buildlist.execute();

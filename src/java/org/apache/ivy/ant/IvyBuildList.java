@@ -244,7 +244,7 @@ public class IvyBuildList extends IvyTask {
             new WarningNonMatchingVersionReporter();
         List sortedModules = ivy.sortModuleDescriptors(mds, nonMatchingVersionReporter);
 
-        if (onMissingDescriptor != OnMissingDescriptor.TAIL) {
+        if (!OnMissingDescriptor.TAIL.equals(onMissingDescriptor)) {
             for (ListIterator iter = noDescriptor.listIterator(); iter.hasNext();) {
                 File buildFile = (File) iter.next();
                 addBuildFile(path, buildFile);
@@ -286,7 +286,7 @@ public class IvyBuildList extends IvyTask {
             File buildFile = (File) buildFiles.get(md);
             addBuildFile(path, buildFile);
         }
-        if (onMissingDescriptor == OnMissingDescriptor.TAIL) {
+        if (OnMissingDescriptor.TAIL.equals(onMissingDescriptor)) {
             for (ListIterator iter = noDescriptor.listIterator(); iter.hasNext();) {
                 File buildFile = (File) iter.next();
                 addBuildFile(path, buildFile);
@@ -298,23 +298,23 @@ public class IvyBuildList extends IvyTask {
     }
 
     private void onMissingDescriptor(File buildFile, File ivyFile, List noDescriptor) {
-        if (onMissingDescriptor == OnMissingDescriptor.SKIP) {
+        if (OnMissingDescriptor.SKIP.equals(onMissingDescriptor)) {
             Message.debug("skipping " + buildFile + ": descriptor " + ivyFile
                     + " doesn't exist");
-        } else if (onMissingDescriptor == OnMissingDescriptor.FAIL) {
+        } else if (OnMissingDescriptor.FAIL.equals(onMissingDescriptor)) {
             throw new BuildException(
                 "a module has no module descriptor and onMissingDescriptor=fail. "
                 + "Build file: " + buildFile + ". Expected descriptor: " + ivyFile);
         } else {
-            if (onMissingDescriptor == OnMissingDescriptor.WARN) {
+            if (OnMissingDescriptor.WARN.equals(onMissingDescriptor)) {
                 Message.warn(
                     "a module has no module descriptor. "
                     + "Build file: " + buildFile + ". Expected descriptor: " + ivyFile);
             }
             Message.verbose("no descriptor for " + buildFile + ": descriptor=" + ivyFile
                     + ": adding it at the " 
-                    + onMissingDescriptor == OnMissingDescriptor.TAIL 
-                    ? "tail" : "head" + " of the path");
+                    + (OnMissingDescriptor.TAIL.equals(onMissingDescriptor) 
+                    ? "tail" : "head" + " of the path"));
             Message.verbose(
                 "\t(change onMissingDescriptor if you want to take another action");
             noDescriptor.add(buildFile);
