@@ -288,6 +288,7 @@ public abstract class IvyPostResolveTask extends IvyTask {
         resolve.setValidate(isValidate());
         resolve.setKeep(isKeep());
         resolve.setLog(getLog());
+        resolve.setSettingsRef(getSettingsRef());
         return resolve;
     }
 

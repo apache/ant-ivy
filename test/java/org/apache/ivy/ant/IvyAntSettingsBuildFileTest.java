@@ -41,5 +41,10 @@ public class IvyAntSettingsBuildFileTest extends BuildFileTest {
         assertFalse(report.hasError());
         assertEquals(1, report.getDependencies().size());
     }
-
+    
+    public void testUnnecessaryDefaultIvyInstance() {
+        executeTarget("testUnnecessaryDefaultIvyInstance");
+        assertNull("Default ivy.instance settings shouldn't have been loaded", 
+                getProject().getReference("ivy.instance"));
+    }
 }

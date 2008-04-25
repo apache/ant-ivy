@@ -79,6 +79,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - IMPROVEMENT: Change allownomd and skipbuildwithoutivy into a more semantically correct name (IVY-297)
 - IMPROVEMENT: Smarter determination if an expression is exact or not for RegexpPatternMatcher and GlobPatternMatcher
 
+- FIX: Using ivy:settings with the "id" attribute not behaving as expected (IVY-809)
 - FIX: onMissingDescriptor doesn't work due to == comparison (IVY-805) (thanks to Ben Hale)
 - FIX: revision token is not set in report outputpattern (IVY-272)
 - FIX: Ivy uses the first set of configurations it sees when resolving multiple versions of a module (IVY-681)
