@@ -633,6 +633,45 @@ public class FileSystemResolverTest extends AbstractDependencyResolverTest {
         }
     }
 
+    public void testPublishTransactionWithBranch() throws Exception {
+        try {
+            FileSystemResolver resolver = new FileSystemResolver();
+            resolver.setName("test");
+            resolver.setSettings(settings);
+
+            resolver.addIvyPattern(
+                "test/repositories/1/[organisation]/[module]/[branch]/[revision]/[artifact].[ext]");
+            resolver.addArtifactPattern(
+                 "test/repositories/1/[organisation]/[module]/[branch]/[revision]/[artifact]-[revision].[ext]");
+
+            ModuleRevisionId mrid = ModuleRevisionId.newInstance("myorg", "mymodule", "mybranch", "myrevision");
+            Artifact ivyArtifact = new DefaultArtifact(mrid, new Date(), "ivy", "ivy", "xml");
+            Artifact artifact = new DefaultArtifact(mrid, new Date(), "myartifact", "mytype",
+                    "myext");
+            File src = new File("test/repositories/ivysettings.xml");
+            
+            resolver.beginPublishTransaction(mrid, false);
+            
+            // files should not be available until the transaction is committed
+            resolver.publish(ivyArtifact, src, false);
+            assertFalse(new File("test/repositories/1/myorg/mymodule/mybranch/myrevision/ivy.xml").exists());
+
+            resolver.publish(artifact, src, false);
+            assertFalse(new File(
+                "test/repositories/1/myorg/mymodule/mybranch/myrevision/myartifact-myrevision.myext")
+                .exists());
+
+            resolver.commitPublishTransaction();
+
+            assertTrue(new File("test/repositories/1/myorg/mymodule/mybranch/myrevision/ivy.xml").exists());
+            assertTrue(new File(
+                    "test/repositories/1/myorg/mymodule/mybranch/myrevision/myartifact-myrevision.myext")
+                    .exists());
+        } finally {
+            FileUtil.forceDelete(new File("test/repositories/1/myorg"));
+        }
+    }
+
     public void testAbortTransaction() throws Exception {
         try {
             FileSystemResolver resolver = new FileSystemResolver();

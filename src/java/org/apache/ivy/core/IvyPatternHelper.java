@@ -69,8 +69,8 @@ public final class IvyPatternHelper {
 
     public static String substitute(String pattern, ModuleRevisionId moduleRevision) {
         return substitute(pattern, moduleRevision.getOrganisation(), moduleRevision.getName(),
-            moduleRevision.getRevision(), "ivy", "ivy", "xml", null,
-            moduleRevision.getAttributes());
+            moduleRevision.getBranch(), moduleRevision.getRevision(), "ivy", "ivy", "xml", null,
+            null, moduleRevision.getAttributes());
     }
 
     public static String substitute(String pattern, ModuleRevisionId moduleRevision,
