@@ -46,7 +46,9 @@ import com.jcraft.jsch.ChannelSftp.LsEntry;
  * 0, 1, 2 and 3
  */
 public class SFTPRepository extends AbstractSshBasedRepository {
-    private static final int MILLIS_PER_SECOND = 1000;
+    // this must be a long to ensure the multiplication done below uses longs
+    // instead of ints which are not big enough to hold the result
+    private static final long MILLIS_PER_SECOND = 1000;
 
     private final class MyProgressMonitor implements SftpProgressMonitor {
         private long totalLength;
@@ -92,8 +94,8 @@ public class SFTPRepository extends AbstractSshBasedRepository {
                     if (obj instanceof LsEntry) {
                         LsEntry entry = (LsEntry) obj;
                         SftpATTRS attrs = entry.getAttrs();
-                        return new BasicResource(path, true, attrs.getSize(),
-                                attrs.getMTime() * MILLIS_PER_SECOND, false);
+                        return new BasicResource(path, true, attrs.getSize(), attrs.getMTime()
+                                * MILLIS_PER_SECOND, false);
                     }
                 }
             }
