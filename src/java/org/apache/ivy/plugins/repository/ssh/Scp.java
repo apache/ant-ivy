@@ -492,7 +492,7 @@ public class Scp {
             }
         }
 
-        String cmd = "scp -t ";
+        String cmd = "scp -tp ";
         if (remoteTargetDir != null && remoteTargetDir.length() > 0) {
             cmd = cmd + "-d " + remoteTargetDir;
         }
