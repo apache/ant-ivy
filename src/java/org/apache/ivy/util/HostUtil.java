@@ -25,6 +25,9 @@ import java.net.UnknownHostException;
  * 
  */
 public final class HostUtil {
+    
+    private static String localHostName = null;
+    
     /**
      * This default constructor is to hide this class from initialization through other classes.
      */
@@ -38,10 +41,13 @@ public final class HostUtil {
      * @return The name of the current "local" Host.
      */
     public static String getLocalHostName() {
-        try {
-            return InetAddress.getLocalHost().getHostName();
-        } catch (UnknownHostException e) {
-            return "localhost";
+        if (localHostName == null) {
+            try {
+                localHostName = InetAddress.getLocalHost().getHostName();
+            } catch (UnknownHostException e) {
+                localHostName = "localhost";
+            }
         }
+        return localHostName;
     }
 }
