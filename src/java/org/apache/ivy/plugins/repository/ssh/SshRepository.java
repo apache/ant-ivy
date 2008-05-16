@@ -55,7 +55,7 @@ public class SshRepository extends AbstractSshBasedRepository {
 
     private String createDirCommand = "mkdir";
     
-    private String publishPermissions = "0600";
+    private String publishPermissions = null;
 
     /**
      * create a new resource with lazy initializing

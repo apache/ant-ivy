@@ -300,7 +300,11 @@ public class Scp {
         File f = new File(localFile);
         long remain = f.length();
 
-        String cline = "C" + mode + " " + remain + " " + remoteName + "\n";
+        String cMode = mode;
+        if (cMode == null) {
+            cMode = "0600";
+        }
+        String cline = "C" + cMode + " " + remain + " " + remoteName + "\n";
 
         os.write(cline.getBytes());
         os.flush();
@@ -492,7 +496,10 @@ public class Scp {
             }
         }
 
-        String cmd = "scp -tp ";
+        String cmd = "scp -t ";
+        if (mode != null) {
+            cmd = cmd + "-p ";
+        }        
         if (remoteTargetDir != null && remoteTargetDir.length() > 0) {
             cmd = cmd + "-d " + remoteTargetDir;
         }
