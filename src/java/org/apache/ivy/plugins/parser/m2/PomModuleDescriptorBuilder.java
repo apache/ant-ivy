@@ -18,11 +18,14 @@
 package org.apache.ivy.plugins.parser.m2;
 
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.StringTokenizer;
 import java.util.Map.Entry;
 
 import org.apache.ivy.Ivy;
@@ -43,8 +46,10 @@ import org.apache.ivy.plugins.matcher.ExactPatternMatcher;
 import org.apache.ivy.plugins.matcher.PatternMatcher;
 import org.apache.ivy.plugins.parser.ModuleDescriptorParser;
 import org.apache.ivy.plugins.parser.m2.PomReader.PomDependencyData;
+import org.apache.ivy.plugins.parser.m2.PomReader.PomPluginElement;
 import org.apache.ivy.plugins.repository.Resource;
 import org.apache.ivy.util.Message;
+import org.w3c.dom.Element;
 
 
 /**
@@ -202,8 +207,25 @@ public class PomModuleDescriptorBuilder {
 
 
     public void addArtifact(String artifactId, String packaging) {
+        String ext = packaging;
+
+        // TODO: we should refactor the following code into something more configurable
+
+        // if 'packaging == bundle' and if we use the 'maven-bundle-plugin', the
+        // type must be 'jar'
+        if ("bundle".equals(packaging)) {
+            for (Iterator it = getPlugins(ivyModuleDescriptor).iterator(); it.hasNext();) {
+                PomDependencyMgt plugin = (PomDependencyMgt) it.next();
+                if ("org.apache.felix".equals(plugin.getGroupId())
+                        && "maven-bundle-plugin".equals(plugin.getArtifaceId())) {
+                    ext = "jar";
+                    break;
+                }
+            }
+        }
+
         ivyModuleDescriptor.addArtifact("master", 
-                new DefaultArtifact(mrid, new Date(), artifactId, packaging, packaging));
+                new DefaultArtifact(mrid, new Date(), artifactId, ext, ext));
     }
 
 
@@ -266,6 +288,57 @@ public class PomModuleDescriptorBuilder {
             ModuleId.newInstance(dep.getGroupId(), dep.getArtifaceId()), 
             ExactPatternMatcher.INSTANCE,
             new OverrideDependencyDescriptorMediator(null, dep.getVersion()));
+    }
+    
+    public void addPlugin(PomDependencyMgt plugin) {
+        String pluginValue = plugin.getGroupId() + EXTRA_INFO_DELIMITER + plugin.getArtifaceId() 
+                + EXTRA_INFO_DELIMITER + plugin.getVersion();
+        String pluginExtraInfo = (String) ivyModuleDescriptor.getExtraInfo().get("maven.plugins");
+        if (pluginExtraInfo == null) {
+            pluginExtraInfo = pluginValue;
+        } else {
+            pluginExtraInfo = pluginExtraInfo + "|" + pluginValue;
+        }
+        ivyModuleDescriptor.getExtraInfo().put("m:maven.plugins", pluginExtraInfo);
+    }
+    
+    public static List /*<PomDependencyMgt>*/ getPlugins(ModuleDescriptor md) {
+        List result = new ArrayList();
+        String plugins = (String) md.getExtraInfo().get("m:maven.plugins");
+        if (plugins == null) {
+            return new ArrayList();
+        }
+        String[] pluginsArray = plugins.split("\\|");
+        for (int i = 0; i < pluginsArray.length; i++) {
+            String[] parts = pluginsArray[i].split(EXTRA_INFO_DELIMITER);
+            result.add(new PomPluginElement(parts[0], parts[1], parts[2]));
+        }
+        
+        return result;
+    }
+    
+    private static class PomPluginElement implements PomDependencyMgt {
+        private String groupId;
+        private String artifactId;
+        private String version;
+        
+        public PomPluginElement(String groupId, String artifactId, String version) {
+            this.groupId = groupId;
+            this.artifactId = artifactId;
+            this.version = version;
+        }
+        
+        public String getGroupId() {
+            return groupId;
+        }
+
+        public String getArtifaceId() {
+            return artifactId;
+        }
+
+        public String getVersion() {
+            return version;
+        }
     }
 
     private String getDefaultVersion(PomDependencyData dep) {

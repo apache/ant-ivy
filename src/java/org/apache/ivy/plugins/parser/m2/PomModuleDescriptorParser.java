@@ -24,6 +24,7 @@ import java.net.URL;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.ivy.core.IvyContext;
@@ -215,6 +216,12 @@ public final class PomModuleDescriptorParser implements ModuleDescriptorParser {
                         mdBuilder.addDependencyMgt(
                             new DefaultPomDependencyMgt(mid.getOrganisation(), mid.getName(), v));
                     }
+                    
+                    // add plugins from parent
+                    List /*<PomDependencyMgt>*/ plugins = PomModuleDescriptorBuilder.getPlugins(parentDescr);
+                    for (Iterator it = plugins.iterator(); it.hasNext();) {
+                        mdBuilder.addPlugin((PomDependencyMgt) it.next());
+                    }
                 }
                 
                 for (Iterator it = domReader.getDependencyMgt().iterator(); it.hasNext();) {
@@ -231,6 +238,11 @@ public final class PomModuleDescriptorParser implements ModuleDescriptorParser {
                     for (int i = 0; i < parentDescr.getDependencies().length; i++) {
                         mdBuilder.addDependency(parentDescr.getDependencies()[i]);
                     }
+                }
+                
+                for (Iterator it = domReader.getPlugins().iterator(); it.hasNext();) {
+                    PomReader.PomPluginElement plugin = (PomReader.PomPluginElement) it.next();
+                    mdBuilder.addPlugin(plugin);
                 }
                 
                 mdBuilder.addArtifact(artifactId , domReader.getPackaging());

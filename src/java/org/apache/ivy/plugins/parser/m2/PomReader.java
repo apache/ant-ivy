@@ -64,8 +64,8 @@ public class PomReader {
     private static final String DISTRIBUTION_MGT = "distributionManagement";
     private static final String RELOCATION = "relocation";
     private static final String PROPERTIES = "properties";
-    
-    
+    private static final String PLUGINS = "plugins";
+    private static final String PLUGIN = "plugin";
     
 
     private HashMap properties = new HashMap();
@@ -227,7 +227,6 @@ public class PomReader {
         return dependencies;
     }
 
-    
     public class PomDependencyMgtElement implements PomDependencyMgt {
         private final Element depElement;
         
@@ -256,6 +255,51 @@ public class PomReader {
          */
         public String getVersion() {
             String val = getFirstChildText(depElement , VERSION);
+            return replaceProps(val);
+        }
+        
+    }
+    
+    public List /* <PomPluginElement> */ getPlugins() {
+        LinkedList plugins = new LinkedList();
+
+        Element buildElement = getFirstChildElement(projectElement, "build");
+        if (buildElement == null) {
+            return plugins;
+        }
+        
+        Element pluginsElement = getFirstChildElement(buildElement, PLUGINS);
+        if (pluginsElement != null) {
+            NodeList childs = pluginsElement.getChildNodes();
+            for (int i = 0; i < childs.getLength(); i++) {
+                Node node = childs.item(i);
+                if (node instanceof Element && PLUGIN.equals(node.getNodeName())) {
+                    plugins.add(new PomPluginElement((Element) node));
+                }
+            }
+        }
+        return plugins;
+    }
+
+    public class PomPluginElement implements PomDependencyMgt {
+        private Element pluginElement;
+        
+        PomPluginElement(Element pluginElement) {
+            this.pluginElement = pluginElement; 
+        }
+        
+        public String getGroupId() {
+            String val = getFirstChildText(pluginElement , GROUP_ID);
+            return replaceProps(val);
+        }
+
+        public String getArtifaceId() {
+            String val = getFirstChildText(pluginElement , ARTIFACT_ID);
+            return replaceProps(val);
+        }
+
+        public String getVersion() {
+            String val = getFirstChildText(pluginElement , VERSION);
             return replaceProps(val);
         }
         
