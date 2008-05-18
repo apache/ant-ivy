@@ -25,7 +25,6 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.StringTokenizer;
 import java.util.Map.Entry;
 
 import org.apache.ivy.Ivy;
@@ -46,10 +45,8 @@ import org.apache.ivy.plugins.matcher.ExactPatternMatcher;
 import org.apache.ivy.plugins.matcher.PatternMatcher;
 import org.apache.ivy.plugins.parser.ModuleDescriptorParser;
 import org.apache.ivy.plugins.parser.m2.PomReader.PomDependencyData;
-import org.apache.ivy.plugins.parser.m2.PomReader.PomPluginElement;
 import org.apache.ivy.plugins.repository.Resource;
 import org.apache.ivy.util.Message;
-import org.w3c.dom.Element;
 
 
 /**
