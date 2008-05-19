@@ -214,7 +214,7 @@ public class PomModuleDescriptorBuilder {
             for (Iterator it = getPlugins(ivyModuleDescriptor).iterator(); it.hasNext();) {
                 PomDependencyMgt plugin = (PomDependencyMgt) it.next();
                 if ("org.apache.felix".equals(plugin.getGroupId())
-                        && "maven-bundle-plugin".equals(plugin.getArtifaceId())) {
+                        && "maven-bundle-plugin".equals(plugin.getArtifactId())) {
                     ext = "jar";
                     break;
                 }
@@ -229,7 +229,7 @@ public class PomModuleDescriptorBuilder {
     public void addDependency(Resource res, PomDependencyData dep) throws ParseException {
         if (!MAVEN2_CONF_MAPPING.containsKey(dep.getScope())) {
             String msg = "Unknown scope " + dep.getScope() + " for dependency "
-                    + ModuleId.newInstance(dep.getGroupId(), dep.getArtifaceId()) + " in "
+                    + ModuleId.newInstance(dep.getGroupId(), dep.getArtifactId()) + " in "
                     + res.getName();
             throw new ParseException(msg, 0);
         }
@@ -237,7 +237,7 @@ public class PomModuleDescriptorBuilder {
         String version = dep.getVersion();
         version = (version == null || version.length() == 0) ? getDefaultVersion(dep) : version;
         ModuleRevisionId moduleRevId = ModuleRevisionId.newInstance(dep.getGroupId(), dep
-                .getArtifaceId(), version);
+                .getArtifactId(), version);
         DefaultDependencyDescriptor dd = new DefaultDependencyDescriptor(ivyModuleDescriptor,
                 moduleRevId, true, false, true);
         ConfMapper mapping = (ConfMapper) MAVEN2_CONF_MAPPING.get(dep.getScope());
@@ -278,17 +278,17 @@ public class PomModuleDescriptorBuilder {
 
 
     public void addDependencyMgt(PomDependencyMgt dep) {
-        String key = getDependencyMgtExtraInfoKey(dep.getGroupId(), dep.getArtifaceId());
+        String key = getDependencyMgtExtraInfoKey(dep.getGroupId(), dep.getArtifactId());
         ivyModuleDescriptor.addExtraInfo(key, dep.getVersion());
         // dependency management info is also used for version mediation of transitive dependencies
         ivyModuleDescriptor.addDependencyDescriptorMediator(
-            ModuleId.newInstance(dep.getGroupId(), dep.getArtifaceId()), 
+            ModuleId.newInstance(dep.getGroupId(), dep.getArtifactId()), 
             ExactPatternMatcher.INSTANCE,
             new OverrideDependencyDescriptorMediator(null, dep.getVersion()));
     }
     
     public void addPlugin(PomDependencyMgt plugin) {
-        String pluginValue = plugin.getGroupId() + EXTRA_INFO_DELIMITER + plugin.getArtifaceId() 
+        String pluginValue = plugin.getGroupId() + EXTRA_INFO_DELIMITER + plugin.getArtifactId() 
                 + EXTRA_INFO_DELIMITER + plugin.getVersion();
         String pluginExtraInfo = (String) ivyModuleDescriptor.getExtraInfo().get("maven.plugins");
         if (pluginExtraInfo == null) {
@@ -329,7 +329,7 @@ public class PomModuleDescriptorBuilder {
             return groupId;
         }
 
-        public String getArtifaceId() {
+        public String getArtifactId() {
             return artifactId;
         }
 
@@ -339,7 +339,7 @@ public class PomModuleDescriptorBuilder {
     }
 
     private String getDefaultVersion(PomDependencyData dep) {
-        String key = getDependencyMgtExtraInfoKey(dep.getGroupId(), dep.getArtifaceId());        
+        String key = getDependencyMgtExtraInfoKey(dep.getGroupId(), dep.getArtifactId());        
         return (String) ivyModuleDescriptor.getExtraInfo().get(key);
     }
 

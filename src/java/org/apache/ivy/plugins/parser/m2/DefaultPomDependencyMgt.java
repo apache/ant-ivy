@@ -31,7 +31,7 @@ public class DefaultPomDependencyMgt implements PomDependencyMgt {
     public String getGroupId() {
         return groupId;
     }
-    public String getArtifaceId() {
+    public String getArtifactId() {
         return artifactId;
     }
     public String getVersion() {

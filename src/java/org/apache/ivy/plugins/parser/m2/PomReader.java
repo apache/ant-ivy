@@ -245,7 +245,7 @@ public class PomReader {
         /* (non-Javadoc)
          * @see org.apache.ivy.plugins.parser.m2.PomDependencyMgt#getArtifaceId()
          */
-        public String getArtifaceId() {
+        public String getArtifactId() {
             String val = getFirstChildText(depElement , ARTIFACT_ID);
             return replaceProps(val);
         }
@@ -293,7 +293,7 @@ public class PomReader {
             return replaceProps(val);
         }
 
-        public String getArtifaceId() {
+        public String getArtifactId() {
             String val = getFirstChildText(pluginElement , ARTIFACT_ID);
             return replaceProps(val);
         }
