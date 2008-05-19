@@ -71,6 +71,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - NEW: Add a new resolve mode (optionally per module) to utilize dynamic constraint rule metadata (IVY-740)
 - NEW: Add transitive dependency version and branch override mechanism (IVY-784)
 
+- IMPROVEMENT: If DNS is playing up, Ivy takes a lot longer to sort project dependencies (IVY-817)
 - IMPROVEMENT: make it possible to specify permissions of published files for the SSH resolver (IVY-764)
 - IMPROVEMENT: Load Ivy version number into some Ant property (IVY-790)
 - IMPROVEMENT: Make Ivy standalone runnable with no required dependencies (IVY-757)
