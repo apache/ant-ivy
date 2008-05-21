@@ -24,5 +24,7 @@ public interface PomDependencyMgt {
     public abstract String getArtifactId();
 
     public abstract String getVersion();
+    
+    public abstract String getScope();
 
 }

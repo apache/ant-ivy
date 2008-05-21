@@ -33,7 +33,6 @@ import org.apache.ivy.core.module.descriptor.DefaultArtifact;
 import org.apache.ivy.core.module.descriptor.DefaultDependencyDescriptor;
 import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
-import org.apache.ivy.core.module.id.ModuleId;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.resolve.ResolveData;
 import org.apache.ivy.core.resolve.ResolveEngine;
@@ -41,6 +40,7 @@ import org.apache.ivy.core.resolve.ResolveOptions;
 import org.apache.ivy.core.resolve.ResolvedModuleRevision;
 import org.apache.ivy.plugins.parser.ModuleDescriptorParser;
 import org.apache.ivy.plugins.parser.ParserSettings;
+import org.apache.ivy.plugins.parser.m2.PomReader.PomPluginElement;
 import org.apache.ivy.plugins.parser.xml.XmlModuleDescriptorWriter;
 import org.apache.ivy.plugins.repository.Resource;
 import org.apache.ivy.plugins.repository.url.URLResource;
@@ -208,13 +208,9 @@ public final class PomModuleDescriptorParser implements ModuleDescriptorParser {
                     mdBuilder.addExtraInfos(parentDescr.getExtraInfo());
                     
                     // add dependency management info from parent
-                    Map depMgt = PomModuleDescriptorBuilder.getDependencyManagementMap(parentDescr);
-                    for (Iterator iterator = depMgt.entrySet().iterator(); iterator.hasNext();) {
-                        Map.Entry entry = (Map.Entry) iterator.next();
-                        ModuleId mid = (ModuleId) entry.getKey();
-                        String v = (String) entry.getValue();
-                        mdBuilder.addDependencyMgt(
-                            new DefaultPomDependencyMgt(mid.getOrganisation(), mid.getName(), v));
+                    List depMgt = PomModuleDescriptorBuilder.getDependencyManagements(parentDescr);
+                    for (Iterator it = depMgt.iterator(); it.hasNext();) {
+                        mdBuilder.addDependencyMgt((PomDependencyMgt) it.next());
                     }
                     
                     // add plugins from parent

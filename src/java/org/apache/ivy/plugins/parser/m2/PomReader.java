@@ -258,6 +258,11 @@ public class PomReader {
             return replaceProps(val);
         }
         
+        public String getScope() {
+            String val = getFirstChildText(depElement , SCOPE);
+            return replaceProps(val);
+        }
+        
     }
     
     public List /* <PomPluginElement> */ getPlugins() {
@@ -303,6 +308,10 @@ public class PomReader {
             return replaceProps(val);
         }
         
+        public String getScope() {
+            return null; // not used
+        }
+        
     }
     
     
@@ -315,11 +324,7 @@ public class PomReader {
         
         public String getScope() {
             String val = getFirstChildText(depElement , SCOPE);
-            if (val == null) {
-                return "compile";
-            } else {
-                return replaceProps(val);
-            }
+            return replaceProps(val);
         }
         
         public String getClassifier() {
