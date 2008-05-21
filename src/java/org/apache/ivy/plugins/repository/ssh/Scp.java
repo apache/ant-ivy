@@ -482,20 +482,22 @@ public class Scp {
             throws IOException, RemoteScpException {
         ChannelExec channel = null;
 
-        if ((localFile == null) || (remoteTargetName == null) || (mode == null)) {
+        if ((localFile == null) || (remoteTargetName == null)) {
             throw new IllegalArgumentException("Null argument.");
         }
 
-        if (mode.length() != MODE_LENGTH) {
-            throw new IllegalArgumentException("Invalid mode.");
-        }
-
-        for (int i = 0; i < mode.length(); i++) {
-            if (!Character.isDigit(mode.charAt(i))) {
+        if (mode != null) {
+            if (mode.length() != MODE_LENGTH) {
                 throw new IllegalArgumentException("Invalid mode.");
             }
+    
+            for (int i = 0; i < mode.length(); i++) {
+                if (!Character.isDigit(mode.charAt(i))) {
+                    throw new IllegalArgumentException("Invalid mode.");
+                }
+            }
         }
-
+        
         String cmd = "scp -t ";
         if (mode != null) {
             cmd = cmd + "-p ";
