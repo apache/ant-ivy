@@ -495,7 +495,24 @@ public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParse
             dds[0].getDependencyRevisionId());
         assertEquals("There is no special artifact when there is no classifier", 
                      0, dds[0].getAllDependencyArtifacts().length);
-        
+    }
+    
+    public void testDependencyManagmentWithScope() throws ParseException, IOException {
+        ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(
+            settings, getClass().getResource("test-dependencyMgt-with-scope.pom"), false);
+        assertNotNull(md);
+        assertEquals(ModuleRevisionId.newInstance("org.apache", "test-depMgt", "1.1"), 
+                md.getModuleRevisionId());
+
+        DependencyDescriptor[] dds = md.getDependencies();
+        assertNotNull(dds);
+        assertEquals(1, dds.length);
+        assertEquals(ModuleRevisionId.newInstance("commons-logging", "commons-logging", "1.0.4"),
+            dds[0].getDependencyRevisionId());
+        assertEquals("There is no special artifact when there is no classifier", 
+                     0, dds[0].getAllDependencyArtifacts().length);
+        assertEquals("The number of configurations is incorrect", 1, dds[0].getModuleConfigurations().length);
+        assertEquals("The configuration must be test", "test", dds[0].getModuleConfigurations()[0]);
     }
     
     public void testParentDependencyMgt() throws ParseException, IOException {        
