@@ -483,7 +483,7 @@ public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParse
     
     public void testDependencyManagment() throws ParseException, IOException {
         ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(
-            settings, getClass().getResource("test-dependencieMgt.pom"), false);
+            settings, getClass().getResource("test-dependencyMgt.pom"), false);
         assertNotNull(md);
         assertEquals(ModuleRevisionId.newInstance("org.apache", "test-depMgt", "1.0"), 
                 md.getModuleRevisionId());
@@ -520,7 +520,7 @@ public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParse
             public ResolvedModuleRevision getDependency(DependencyDescriptor dd, ResolveData data) throws ParseException {
                 try {
                     ModuleDescriptor moduleDescriptor = PomModuleDescriptorParser.getInstance().parseDescriptor(
-                                            settings, getClass().getResource("test-dependencieMgt.pom"), false);
+                                            settings, getClass().getResource("test-dependencyMgt.pom"), false);
                     return new ResolvedModuleRevision(null,null,moduleDescriptor,null);
                 } catch (IOException e) {
                     throw new AssertionError(e);
@@ -529,7 +529,7 @@ public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         });
         
         ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(
-            settings, getClass().getResource("test-parentDependencieMgt.pom"), false);
+            settings, getClass().getResource("test-parentDependencyMgt.pom"), false);
         assertNotNull(md);        
         assertEquals(ModuleRevisionId.newInstance("org.apache", "test-parentdep", "1.0"), md
                 .getModuleRevisionId());
