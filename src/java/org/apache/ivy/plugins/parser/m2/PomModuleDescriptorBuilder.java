@@ -228,7 +228,6 @@ public class PomModuleDescriptorBuilder {
 
     public void addDependency(Resource res, PomDependencyData dep) throws ParseException {
         String scope = dep.getScope();
-        System.out.println("*** scope = " + scope);
         if ((scope != null) && (scope.length() > 0) && !MAVEN2_CONF_MAPPING.containsKey(scope)) {
             String msg = "Unknown scope '" + scope + "' for dependency "
                     + ModuleId.newInstance(dep.getGroupId(), dep.getArtifactId()) + " in "
