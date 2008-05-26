@@ -218,6 +218,25 @@ public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         assertEquals(extraAtt, dds[0].getAllDependencyArtifacts()[0].getExtraAttributes());
     }
 
+    public void testDependenciesWithType() throws Exception {
+        ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(
+            settings, getClass().getResource("test-dependencies-with-type.pom"),
+            true);
+        assertNotNull(md);
+
+        assertEquals(ModuleRevisionId.newInstance("org.apache", "test", "1.0"), md
+                .getModuleRevisionId());
+
+        DependencyDescriptor[] dds = md.getDependencies();
+        assertNotNull(dds);
+        assertEquals(1, dds.length);
+        assertEquals(ModuleRevisionId.newInstance("commons-logging", "commons-logging", "1.0.4"),
+            dds[0].getDependencyRevisionId());
+        assertEquals(1, dds[0].getAllDependencyArtifacts().length);
+        assertEquals("dll", dds[0].getAllDependencyArtifacts()[0].getExt());
+        assertEquals("dll", dds[0].getAllDependencyArtifacts()[0].getType());
+    }
+
     public void testWithVersionPropertyAndPropertiesTag() throws Exception {
         ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(
             settings, getClass().getResource("test-version.pom"), false);

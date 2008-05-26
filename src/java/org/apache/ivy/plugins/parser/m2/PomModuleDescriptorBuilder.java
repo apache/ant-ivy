@@ -245,13 +245,19 @@ public class PomModuleDescriptorBuilder {
         ConfMapper mapping = (ConfMapper) MAVEN2_CONF_MAPPING.get(scope);
         mapping.addMappingConfs(dd, dep.isOptional());
         Map extraAtt = new HashMap();
-        if (dep.getClassifier() != null) {
+        if ((dep.getClassifier() != null) || (dep.getType() != null)) {
+            String type = "jar";
+            if (dep.getType() != null) {
+                type = dep.getType();
+            }
             // we deal with classifiers by setting an extra attribute and forcing the
             // dependency to assume such an artifact is published
-            extraAtt.put("m:classifier", dep.getClassifier());
+            if (dep.getClassifier() != null) {
+                extraAtt.put("m:classifier", dep.getClassifier());
+            }
             DefaultDependencyArtifactDescriptor depArtifact = 
                     new DefaultDependencyArtifactDescriptor(dd, dd.getDependencyId().getName(),
-                        "jar", "jar", null, extraAtt);
+                        type, type, null, extraAtt);
             // here we have to assume a type and ext for the artifact, so this is a limitation
             // compared to how m2 behave with classifiers
             String optionalizedScope = dep.isOptional() ? "optional" : scope;

@@ -66,7 +66,7 @@ public class PomReader {
     private static final String PROPERTIES = "properties";
     private static final String PLUGINS = "plugins";
     private static final String PLUGIN = "plugin";
-    
+    private static final String TYPE = "type";
 
     private HashMap properties = new HashMap();
     
@@ -329,6 +329,11 @@ public class PomReader {
         
         public String getClassifier() {
             String val = getFirstChildText(depElement , CLASSIFIER);
+            return replaceProps(val);
+        }
+        
+        public String getType() {
+            String val = getFirstChildText(depElement, TYPE);
             return replaceProps(val);
         }
 
