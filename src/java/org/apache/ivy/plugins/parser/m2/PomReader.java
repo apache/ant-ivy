@@ -345,8 +345,10 @@ public class PomReader {
                     Node node = childs.item(i);
                     if (node instanceof Element && EXCLUSION.equals(node.getNodeName())) {
                         String groupId = getFirstChildText((Element) node, GROUP_ID);
-                        String arteficatId = getFirstChildText((Element) node, ARTIFACT_ID);
-                        exclusions.add(ModuleId.newInstance(groupId, arteficatId));
+                        String artifactId = getFirstChildText((Element) node, ARTIFACT_ID);
+                        if ((groupId != null) && (artifactId != null)) {
+                            exclusions.add(ModuleId.newInstance(groupId, artifactId));
+                        }
                     }
                 }
             }
