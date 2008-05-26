@@ -22,7 +22,7 @@ import org.apache.ivy.plugins.matcher.PatternMatcher;
 import org.apache.ivy.util.extendable.ExtendableItem;
 
 /**
- * This describes a rule of exclusion. It is used to resctrict the artifacts asked for a dependency,
+ * This describes a rule of exclusion. It is used to restrict the artifacts asked for a dependency,
  * by excluding a whole module or some artifacts of a dependency.
  */
 public interface ExcludeRule extends ExtendableItem {
