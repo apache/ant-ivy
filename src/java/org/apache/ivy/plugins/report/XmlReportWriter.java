@@ -50,7 +50,7 @@ import org.apache.ivy.util.XMLHelper;
  */
 public class XmlReportWriter {
     
-    static final String REPORT_ENCODING = "ISO-8859-1";
+    static final String REPORT_ENCODING = "UTF-8";
 
     public void output(ConfigurationResolveReport report, OutputStream stream) {
         output(report, new String[] {report.getConfiguration()}, stream);
