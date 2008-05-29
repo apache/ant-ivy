@@ -81,6 +81,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - IMPROVEMENT: Change allownomd and skipbuildwithoutivy into a more semantically correct name (IVY-297)
 - IMPROVEMENT: Smarter determination if an expression is exact or not for RegexpPatternMatcher and GlobPatternMatcher
 
+- FIX: Filesystem repositories can not have () in the path (IVY-797)
 - FIX: Type tag in poms not supported (IVY-762)
 - FIX: An empty exclusion tag results in an IllegalArgumentException (IVY-821)
 - FIX: Maven scope defined in POM dependencyManagement section not honoured (IVY-811)

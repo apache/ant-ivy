@@ -62,5 +62,11 @@ public class IvyPatternHelperTest extends TestCase {
         assertEquals("apache/Test/build/archives/jars/test-1.0.jar", IvyPatternHelper.substitute(
             pattern, "apache", "Test", "1.0", "test", "jar", "jar"));
     }
+    
+    public void testSpecialCharsInsidePattern() {
+        String pattern = "[organization]/[module]/build/archives (x86)/[type]s/[artifact]-[revision].[ext]";
+        assertEquals("apache/Test/build/archives (x86)/jars/test-1.0.jar", IvyPatternHelper.substitute(
+            pattern, "apache", "Test", "1.0", "test", "jar", "jar"));
+    }
 
 }

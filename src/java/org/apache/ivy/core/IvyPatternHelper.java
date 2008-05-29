@@ -207,6 +207,7 @@ public final class IvyPatternHelper {
         StringBuffer tokenBuffer = null;
         boolean insideOptionalPart = false;
         boolean insideToken = false;
+        boolean tokenSeen = false;
         boolean tokenHadValue = false;
 
         for (int i = 0; i < chars.length; i++) {
@@ -220,6 +221,7 @@ public final class IvyPatternHelper {
 
                     optionalPart = new StringBuffer();
                     insideOptionalPart = true;
+                    tokenSeen = false;
                     tokenHadValue = false;
                     break;
 
@@ -232,6 +234,8 @@ public final class IvyPatternHelper {
 
                     if (tokenHadValue) {
                         buffer.append(optionalPart.toString());
+                    } else if (!tokenSeen) {
+                        buffer.append('(').append(optionalPart.toString()).append(')');
                     }
 
                     insideOptionalPart = false;
@@ -268,6 +272,7 @@ public final class IvyPatternHelper {
                     }
 
                     insideToken = false;
+                    tokenSeen = true;
                     break;
 
                 default:
