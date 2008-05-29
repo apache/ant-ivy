@@ -17,8 +17,11 @@
  */
 package org.apache.ivy.plugins.report;
 
+import java.io.BufferedWriter;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -46,6 +49,8 @@ import org.apache.ivy.util.XMLHelper;
  * XmlReportWriter allows to write ResolveReport in an xml format. 
  */
 public class XmlReportWriter {
+    
+    static final String REPORT_ENCODING = "ISO-8859-1";
 
     public void output(ConfigurationResolveReport report, OutputStream stream) {
         output(report, new String[] {report.getConfiguration()}, stream);
@@ -53,9 +58,16 @@ public class XmlReportWriter {
 
     public void output(
             ConfigurationResolveReport report, String[] confs, OutputStream stream) {
-        PrintWriter out = new PrintWriter(stream);
+        OutputStreamWriter encodedOutStream;
+        try {
+            encodedOutStream = new OutputStreamWriter(stream , REPORT_ENCODING);
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(REPORT_ENCODING + " is not known on your jvm" , e);
+        }
+        PrintWriter out = new PrintWriter(new BufferedWriter(encodedOutStream));
         ModuleRevisionId mrid = report.getModuleDescriptor().getModuleRevisionId();
-        out.println("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>");
+        //out.println("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>");
+        out.println("<?xml version=\"1.0\" encoding=\"" + REPORT_ENCODING + "\"?>");
         out.println("<?xml-stylesheet type=\"text/xsl\" href=\"ivy-report.xsl\"?>");
         out.println("<ivy-report version=\"1.0\">");
         out.println("\t<info");

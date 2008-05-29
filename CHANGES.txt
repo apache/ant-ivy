@@ -123,6 +123,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - FIX: Classpath issues with vfs ftp while being used as a bundle (IVY-785)
 - FIX: Relative include in a settings must be evaluated relatively to the settings file (IVY-372)
 - FIX: The Bundle-Version is 0.0.0 in the build artifacts (IVY-802)
+- FIX: Fix the encoding used in XML reports (IVY-816)
 
 - DOCUMENTATION: Broken link in documentation in Ivy files section, info element page (IVY-788)
 - DOCUMENTATION: Add new cache information to resolver doc (IVY-772) (thanks to Carlton Brown)

@@ -17,6 +17,7 @@
  */
 package org.apache.ivy.plugins.report;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 
@@ -27,6 +28,8 @@ import org.apache.ivy.core.cache.DefaultResolutionCacheManager;
 import org.apache.ivy.core.report.ResolveReport;
 import org.apache.ivy.core.resolve.ResolveOptions;
 import org.apache.ivy.util.CacheCleaner;
+import org.apache.ivy.util.XMLHelper;
+import org.xml.sax.helpers.DefaultHandler;
 
 public class XmlReportWriterTest extends TestCase {
     private Ivy _ivy;
@@ -54,7 +57,7 @@ public class XmlReportWriterTest extends TestCase {
 
     public void testWriteOrigin() throws Exception {
         ResolveReport report = _ivy.resolve(new File(
-                "test/repositories/1/org1/mod1.1/ivys/ivy-1.0.xml").toURL(),
+                "test/repositories/1/special-encoding-root-ivy.xml").toURL(),
             getResolveOptions(new String[] {"default"}));
         assertNotNull(report);
 
@@ -62,17 +65,24 @@ public class XmlReportWriterTest extends TestCase {
         XmlReportWriter writer = new XmlReportWriter();
         writer.output(report.getConfigurationReport("default"), buffer);
         buffer.flush();
-        String xml = buffer.toString();
+        String xml = buffer.toString(XmlReportWriter.REPORT_ENCODING);
 
         String expectedLocation = "location=\""
                 + new File("test/repositories/1/org1/mod1.2/jars/mod1.2-2.0.jar").getAbsolutePath()
                 + "\"";
         String expectedIsLocal = "is-local=\"true\"";
+        String expectedOrg = "organisation=\"spécial\"";
 
         assertTrue("XML doesn't contain artifact location attribute",
             xml.indexOf(expectedLocation) != -1);
         assertTrue("XML doesn't contain artifact is-local attribute",
             xml.indexOf(expectedIsLocal) != -1);
+        assertTrue("XML doesn't contain the organisation",
+            xml.indexOf(expectedOrg) != -1);
+        
+        //check that the XML is valid
+        XMLHelper.parse(new ByteArrayInputStream(buffer.toByteArray()), null,
+            new DefaultHandler(), null);
     }
 
     public void testEscapeXml() throws Exception {
