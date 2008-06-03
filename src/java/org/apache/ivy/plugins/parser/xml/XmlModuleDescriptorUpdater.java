@@ -349,6 +349,8 @@ public final class XmlModuleDescriptorUpdater {
             org = org == null ? organisation : org;
             String module = substitute(settings, attributes.getValue("name"));
             String branch = substitute(settings, attributes.getValue("branch"));
+            String branchConstraint = substitute(settings, attributes.getValue("branchConstraint"));
+            branchConstraint = branchConstraint == null ? branch : branchConstraint;
             
             // look for the branch used in resolved revisions
             if (branch == null) {
@@ -371,12 +373,8 @@ public final class XmlModuleDescriptorUpdater {
                 XmlModuleDescriptorParser.DEPENDENCY_REGULAR_ATTRIBUTES);
             ModuleRevisionId localMrid = ModuleRevisionId.newInstance(org, module, branch,
                 revision, extraAttributes);
-            ModuleRevisionId localConstraintMrid = ModuleRevisionId.newInstance(org, module, branch,
-                revisionConstraint, extraAttributes);
             ModuleRevisionId systemMrid = ns == null ? localMrid : ns.getToSystemTransformer()
                     .transform(localMrid);
-            ModuleRevisionId systemConstraintMrid = ns == null ? localConstraintMrid 
-                    : ns.getToSystemTransformer().transform(localConstraintMrid);
 
             for (int i = 0; i < attributes.getLength(); i++) {
                 String attName = attributes.getQName(i);
@@ -384,6 +382,10 @@ public final class XmlModuleDescriptorUpdater {
                     String rev = (String) resolvedRevisions.get(systemMrid);
                     if (rev != null) {
                         write(" rev=\"" + rev + "\"");
+                        if (attributes.getIndex("branchConstraint") == -1 
+                                && branchConstraint != null) {
+                            write(" branchConstraint=\"" + branchConstraint + "\"");
+                        }
                         if (attributes.getIndex("revConstraint") == -1 
                                 && !rev.equals(systemMrid.getRevision())) {
                             write(" revConstraint=\"" + systemMrid.getRevision() + "\"");
@@ -399,6 +401,8 @@ public final class XmlModuleDescriptorUpdater {
                     write(" name=\"" + systemMrid.getName() + "\"");
                 } else if ("branch".equals(attName)) {
                     write(" branch=\"" + systemMrid.getBranch() + "\"");
+                } else if ("branchConstraint".equals(attName)) {
+                    write(" branchConstraint=\"" + branchConstraint + "\"");
                 } else if ("conf".equals(attName)) {
                     String oldMapping = substitute(settings, attributes.getValue("conf"));
                     if (oldMapping.length() > 0) {

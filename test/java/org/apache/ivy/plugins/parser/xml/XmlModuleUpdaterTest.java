@@ -56,8 +56,9 @@ public class XmlModuleUpdaterTest extends TestCase {
         File dest = new File("build/updated-test.xml");
         dest.deleteOnExit();
         Map resolvedRevisions = new HashMap();
-        resolvedRevisions.put(ModuleRevisionId.newInstance("yourorg", "yourmodule2", "2+"), "2.5");
-        resolvedRevisions.put(ModuleRevisionId.newInstance("yourorg", "yourmodule6",
+        resolvedRevisions.put(ModuleRevisionId.newInstance(
+            "yourorg", "yourmodule2", "branch1", "2+"), "2.5");
+        resolvedRevisions.put(ModuleRevisionId.newInstance("yourorg", "yourmodule6", 
             "latest.integration"), "6.3");
 
         GregorianCalendar cal = new GregorianCalendar();
@@ -87,7 +88,8 @@ public class XmlModuleUpdaterTest extends TestCase {
         File dest = new File("build/updated-test2.xml");
         dest.deleteOnExit();
         Map resolvedRevisions = new HashMap();
-        resolvedRevisions.put(ModuleRevisionId.newInstance("yourorg", "yourmodule2", "2+"), "2.5");
+        resolvedRevisions.put(ModuleRevisionId.newInstance(
+            "yourorg", "yourmodule2", "branch1", "2+"), "2.5");
         resolvedRevisions.put(ModuleRevisionId.newInstance("yourorg", "yourmodule6",
             "latest.integration"), "6.3");
 

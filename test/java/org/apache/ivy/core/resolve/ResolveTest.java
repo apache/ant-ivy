@@ -2630,6 +2630,34 @@ public class ResolveTest extends TestCase {
         assertTrue(getArchiveFileInCache("org1", "mod1.2", "2.2", "mod1.2", "jar", "jar").exists());
     }
 
+    public void testResolveModeDynamicWithBranch1() throws Exception {
+        // bar1;5 -> foo1#branch1|;2|[0,4]
+        Ivy ivy = new Ivy();
+        ivy.configure(new File("test/repositories/branches/ivysettings.xml"));
+
+        ResolveReport report = ivy.resolve(new File(
+                "test/repositories/branches/bar/bar1/trunk/5/ivy.xml").toURL(), 
+                getResolveOptions(new String[] {"*"})
+                .setResolveMode(ResolveOptions.RESOLVEMODE_DYNAMIC));
+        assertFalse(report.hasError());
+
+        assertTrue(getArchiveFileInCache(ivy, "foo#foo1#trunk;3", "foo1", "jar", "jar").exists());
+    }
+
+    public void testResolveModeDynamicWithBranch2() throws Exception {
+        // bar1;5 -> foo1#trunk|branch1;3|[0,4]
+        Ivy ivy = new Ivy();
+        ivy.configure(new File("test/repositories/branches/ivysettings.xml"));
+
+        ResolveReport report = ivy.resolve(new File(
+                "test/repositories/branches/bar/bar1/trunk/6/ivy.xml").toURL(), 
+                getResolveOptions(new String[] {"*"})
+                .setResolveMode(ResolveOptions.RESOLVEMODE_DYNAMIC));
+        assertFalse(report.hasError());
+
+        assertTrue(getArchiveFileInCache(ivy, "foo#foo1#branch1;4", "foo1", "jar", "jar").exists());
+    }
+
     public void testResolveModeDefaultOverrideSettings() throws Exception {
         // same as ResolveModeDynamic2, but resolve mode is set in settings, and overriden when calling resolve
         Map attributes = new HashMap();

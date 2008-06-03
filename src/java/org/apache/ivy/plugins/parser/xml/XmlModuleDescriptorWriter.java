@@ -97,10 +97,18 @@ public final class XmlModuleDescriptorWriter {
                     + XMLHelper.escape(dds[i].getDependencyRevisionId().getOrganisation()) + "\"");
                 out.print(" name=\"" 
                     + XMLHelper.escape(dds[i].getDependencyRevisionId().getName()) + "\"");
+                if (dds[i].getDependencyRevisionId().getBranch() != null) {
+                    out.print(" branch=\"" 
+                        + XMLHelper.escape(dds[i].getDependencyRevisionId().getBranch()) + "\"");
+                }
                 out.print(" rev=\"" 
                     + XMLHelper.escape(dds[i].getDependencyRevisionId().getRevision()) + "\"");
                 if (!dds[i].getDynamicConstraintDependencyRevisionId()
                         .equals(dds[i].getDependencyRevisionId())) {
+                    if (dds[i].getDynamicConstraintDependencyRevisionId().getBranch() != null) {
+                        out.print(" branchConstraint=\"" + XMLHelper.escape(
+                             dds[i].getDynamicConstraintDependencyRevisionId().getBranch()) + "\"");
+                    }
                     out.print(" revConstraint=\"" + XMLHelper.escape(
                         dds[i].getDynamicConstraintDependencyRevisionId().getRevision()) + "\"");
                 }

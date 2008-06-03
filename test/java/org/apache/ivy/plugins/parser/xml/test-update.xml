@@ -60,8 +60,8 @@
 	<dependencies>
 		<dependency name="mymodule2" rev="2.0"/>
 		<dependency name="mymodule3" rev="2.0" changing="true" transitive="false"/>
-		<dependency org="yourorg" name="yourmodule1" rev="1.1" revConstraint="1+" conf="myconf1"/>
-		<dependency org="yourorg" name="yourmodule2" rev="2+" conf="myconf1->yourconf1"/>
+		<dependency org="yourorg" name="yourmodule1" branch="trunk" rev="1.1" branchConstraint="branch1" revConstraint="1+" conf="myconf1"/>
+		<dependency org="yourorg" name="yourmodule2" branch="branch1" rev="2+" conf="myconf1->yourconf1"/>
 		<dependency org="yourorg" name="yourmodule3" rev="3.1" conf="myconf1->yourconf1, yourconf2"/>
 		<dependency org="yourorg" name="yourmodule4" rev="4.1" conf="myconf1, myconf2->yourconf1, yourconf2"/>
 		<dependency org="yourorg" name="yourmodule5" rev="5.1" conf="myconf1->yourconf1;myconf2->yourconf1, yourconf2"/>

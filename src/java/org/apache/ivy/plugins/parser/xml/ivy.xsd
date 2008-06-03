@@ -219,6 +219,7 @@
 						            <xs:attribute name="org" type="xs:string"/>
 						            <xs:attribute name="name" type="xs:string" use="required"/>
 						            <xs:attribute name="branch" type="xs:string"/>
+						            <xs:attribute name="branchConstraint" type="xs:string"/>
 						            <xs:attribute name="rev" type="xs:string" use="required"/>
 						            <xs:attribute name="revConstraint" type="xs:string"/>
 						            <xs:attribute name="force" type="xs:boolean"/>
