@@ -213,7 +213,8 @@ public final class PomModuleDescriptorParser implements ModuleDescriptorParser {
                     }
                     
                     // add plugins from parent
-                    List /*<PomDependencyMgt>*/ plugins = PomModuleDescriptorBuilder.getPlugins(parentDescr);
+                    List /*<PomDependencyMgt>*/ plugins = 
+                                    PomModuleDescriptorBuilder.getPlugins(parentDescr);
                     for (Iterator it = plugins.iterator(); it.hasNext();) {
                         mdBuilder.addPlugin((PomDependencyMgt) it.next());
                     }

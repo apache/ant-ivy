@@ -241,7 +241,7 @@ public class PomModuleDescriptorBuilder {
                 .getArtifactId(), version);
         DefaultDependencyDescriptor dd = new DefaultDependencyDescriptor(ivyModuleDescriptor,
                 moduleRevId, true, false, true);
-        scope = (scope == null || scope.length() == 0) ? getDefaultScope(dep): scope;
+        scope = (scope == null || scope.length() == 0) ? getDefaultScope(dep) : scope;
         ConfMapper mapping = (ConfMapper) MAVEN2_CONF_MAPPING.get(scope);
         mapping.addMappingConfs(dd, dep.isOptional());
         Map extraAtt = new HashMap();
@@ -289,7 +289,8 @@ public class PomModuleDescriptorBuilder {
         String key = getDependencyMgtExtraInfoKeyForVersion(dep.getGroupId(), dep.getArtifactId());
         ivyModuleDescriptor.addExtraInfo(key, dep.getVersion());
         if (dep.getScope() != null) {
-            String scopeKey = getDependencyMgtExtraInfoKeyForScope(dep.getGroupId(), dep.getArtifactId());
+            String scopeKey = getDependencyMgtExtraInfoKeyForScope(
+                                    dep.getGroupId(), dep.getArtifactId());
             ivyModuleDescriptor.addExtraInfo(scopeKey, dep.getScope());
         }
         // dependency management info is also used for version mediation of transitive dependencies
@@ -355,12 +356,12 @@ public class PomModuleDescriptorBuilder {
     }
 
     private String getDefaultVersion(PomDependencyData dep) {
-        String key = getDependencyMgtExtraInfoKeyForVersion(dep.getGroupId(), dep.getArtifactId());        
+        String key = getDependencyMgtExtraInfoKeyForVersion(dep.getGroupId(), dep.getArtifactId());
         return (String) ivyModuleDescriptor.getExtraInfo().get(key);
     }
 
     private String getDefaultScope(PomDependencyData dep) {
-        String key = getDependencyMgtExtraInfoKeyForScope(dep.getGroupId(), dep.getArtifactId());        
+        String key = getDependencyMgtExtraInfoKeyForScope(dep.getGroupId(), dep.getArtifactId());
         String result = (String) ivyModuleDescriptor.getExtraInfo().get(key);
         if (result == null) {
             result = "compile";
@@ -368,7 +369,8 @@ public class PomModuleDescriptorBuilder {
         return result;
     }
 
-    private static String getDependencyMgtExtraInfoKeyForVersion(String groupId, String artifaceId) {
+    private static String getDependencyMgtExtraInfoKeyForVersion(
+                                String groupId, String artifaceId) {
         return DEPENDENCY_MANAGEMENT + EXTRA_INFO_DELIMITER + groupId
                 + EXTRA_INFO_DELIMITER + artifaceId + EXTRA_INFO_DELIMITER + "version";
     }
@@ -413,8 +415,12 @@ public class PomModuleDescriptorBuilder {
                     Message.warn("what seem to be a dependency management extra info "
                         + "doesn't match expected pattern: " + key);
                 } else {
-                    String versionKey = DEPENDENCY_MANAGEMENT + EXTRA_INFO_DELIMITER + parts[1] + EXTRA_INFO_DELIMITER + parts[2] + EXTRA_INFO_DELIMITER + "version";
-                    String scopeKey = DEPENDENCY_MANAGEMENT + EXTRA_INFO_DELIMITER + parts[1] + EXTRA_INFO_DELIMITER + parts[2] + EXTRA_INFO_DELIMITER + "scope";
+                    String versionKey = DEPENDENCY_MANAGEMENT + EXTRA_INFO_DELIMITER + parts[1] 
+                                        + EXTRA_INFO_DELIMITER + parts[2] 
+                                        + EXTRA_INFO_DELIMITER + "version";
+                    String scopeKey = DEPENDENCY_MANAGEMENT + EXTRA_INFO_DELIMITER + parts[1] 
+                                        + EXTRA_INFO_DELIMITER + parts[2] 
+                                        + EXTRA_INFO_DELIMITER + "scope";
 
                     String version = (String) md.getExtraInfo().get(versionKey);
                     String scope = (String) md.getExtraInfo().get(scopeKey);

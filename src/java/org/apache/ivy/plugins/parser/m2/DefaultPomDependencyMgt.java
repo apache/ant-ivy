@@ -23,7 +23,8 @@ public class DefaultPomDependencyMgt implements PomDependencyMgt {
     private String version;
     private String scope;
     
-    public DefaultPomDependencyMgt(String groupId, String artifactId, String version, String scope) {
+    public DefaultPomDependencyMgt(
+            String groupId, String artifactId, String version, String scope) {
         this.groupId = groupId;
         this.artifactId = artifactId;
         this.version = version;
