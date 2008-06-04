@@ -257,7 +257,7 @@ public class IvyReport extends IvyTask {
             }
             
             if (!css.exists()) {
-                Message.debug("copying report css to " + todir);
+                Message.debug("copying report css to " + css.getAbsolutePath());
                 FileUtil.copy(XmlReportOutputter.class.getResourceAsStream("ivy-report.css"), css,
                     null);
             }
