@@ -94,8 +94,8 @@ public class IvyReportTest extends TestCase {
             res.setFile(new File("test/java/org/apache/ivy/ant/ivy-simple.xml"));
             res.execute();
     
-            report.execute();
             report.setGraph(false);
+            report.execute();
             
             assertTrue(new File("apache-resolve-simple-default.html").exists());
             assertTrue(new File("ivy-report.css").exists()); // IVY-826
