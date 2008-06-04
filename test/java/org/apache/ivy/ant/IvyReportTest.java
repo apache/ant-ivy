@@ -75,9 +75,34 @@ public class IvyReportTest extends TestCase {
             report.execute();
             
             assertTrue(new File(cache, "report/apache-resolve-simple-default.html").exists());
+            assertTrue(new File(cache, "report/ivy-report.css").exists()); // IVY-826
             assertTrue(new File(cache, "report/apache-resolve-simple-default.graphml").exists());
         } finally {
             Locale.setDefault(oldLocale);
+        }
+    }
+    
+    public void testCopyCssIfTodirNotSet() {
+        Locale oldLocale = Locale.getDefault();
+        
+        try {
+            // set the locale to UK as workaround for SUN bug 6240963
+            Locale.setDefault(Locale.UK);
+
+            IvyResolve res = new IvyResolve();
+            res.setProject(project);
+            res.setFile(new File("test/java/org/apache/ivy/ant/ivy-simple.xml"));
+            res.execute();
+    
+            report.execute();
+            report.setGraph(false);
+            
+            assertTrue(new File("apache-resolve-simple-default.html").exists());
+            assertTrue(new File("ivy-report.css").exists()); // IVY-826
+        } finally {
+            Locale.setDefault(oldLocale);
+            new File("apache-resolve-simple-default.html").delete();
+            new File("ivy-report.css").delete();
         }
     }
 

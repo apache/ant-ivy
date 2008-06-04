@@ -248,8 +248,14 @@ public class IvyReport extends IvyTask {
         genStyled(confs, getReportStylePath(), xslext);
 
         // copy the css if required
-        if (todir != null && xslFile == null) {
-            File css = new File(todir, "ivy-report.css");
+        if (xslFile == null) {
+            File css;
+            if (todir != null) {
+                css = new File(todir, "ivy-report.css");
+            } else {
+                css = new File("ivy-report.css");
+            }
+            
             if (!css.exists()) {
                 Message.debug("copying report css to " + todir);
                 FileUtil.copy(XmlReportOutputter.class.getResourceAsStream("ivy-report.css"), css,
