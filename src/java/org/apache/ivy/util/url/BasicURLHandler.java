@@ -134,6 +134,10 @@ public class BasicURLHandler extends AbstractURLHandler {
                         "Downloaded file size doesn't match expected Content Length for " + src
                                 + ". Please retry.");
             }
+            long lastModified = srcConn.getLastModified();
+            if (lastModified > 0) {
+                dest.setLastModified(lastModified);
+            }
         } finally {
             disconnect(srcConn);
         }

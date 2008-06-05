@@ -92,6 +92,7 @@ public class HttpClientHandler extends AbstractURLHandler {
     public void download(URL src, File dest, CopyProgressListener l) throws IOException {
         GetMethod get = doGet(src);
         FileUtil.copy(get.getResponseBodyAsStream(), dest, l);
+        dest.setLastModified(getLastModified(get));
         get.releaseConnection();
     }
 
@@ -137,8 +138,8 @@ public class HttpClientHandler extends AbstractURLHandler {
         return UNAVAILABLE;
     }
 
-    private long getLastModified(HeadMethod head) {
-        Header header = head.getResponseHeader("last-modified");
+    private long getLastModified(HttpMethodBase method) {
+        Header header = method.getResponseHeader("last-modified");
         if (header != null) {
             String lastModified = header.getValue();
             try {
