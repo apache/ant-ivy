@@ -3563,6 +3563,30 @@ public class ResolveTest extends TestCase {
         assertTrue(jarFileInCache.length() != sourceFileInCache.length());
     }
 
+    public void testResolveMaven2GetSourcesAndJavadocAuto() throws Exception {
+        Ivy ivy = new Ivy();
+        ivy.configure(new File("test/repositories/m2/ivysettings.xml").toURL());
+        ResolveReport report = ivy.resolve(
+            ResolveTest.class.getResource("ivy-m2-with-sources-and-javadoc-auto.xml"), 
+            getResolveOptions(new String[] {"*"}));
+        assertNotNull(report);
+        assertFalse(report.hasError());
+
+        assertTrue(getIvyFileInCache(
+            ModuleRevisionId.newInstance("org.apache", "test-sources", "1.0")).exists());
+        File jarFileInCache = getArchiveFileInCache(ivy, "org.apache", "test-sources",
+            "1.0", "test-sources", "jar", "jar");
+        assertTrue(jarFileInCache.exists());
+        File sourceFileInCache = getArchiveFileInCache(ivy, "org.apache", "test-sources",
+            "1.0", "test-sources", "source", "jar");
+        assertTrue(sourceFileInCache.exists());
+        assertTrue(jarFileInCache.length() != sourceFileInCache.length());
+        File javadocFileInCache = getArchiveFileInCache(ivy, "org.apache", "test-sources",
+            "1.0", "test-sources", "javadoc", "jar");
+        assertTrue(javadocFileInCache.exists());
+        assertTrue(jarFileInCache.length() != javadocFileInCache.length());
+    }
+
     public void testResolveMaven2WithVersionProperty() throws Exception {
         Ivy ivy = new Ivy();
         ivy.configure(new File("test/repositories/m2/ivysettings.xml").toURL());

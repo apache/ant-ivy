@@ -242,12 +242,42 @@ public final class PomModuleDescriptorParser implements ModuleDescriptorParser {
                 }
                 
                 mdBuilder.addArtifact(artifactId , domReader.getPackaging());
+                
+                addSourcesAndJavadocArtifactsIfPresent(mdBuilder, ivySettings);
             }            
         } catch (SAXException e) {
             throw newParserException(e);
         }
         
         return mdBuilder.getModuleDescriptor();
+    }
+
+    private void addSourcesAndJavadocArtifactsIfPresent(
+            PomModuleDescriptorBuilder mdBuilder, ParserSettings ivySettings) {
+        ModuleDescriptor md = mdBuilder.getModuleDescriptor();
+        ModuleRevisionId mrid = md.getModuleRevisionId();
+        DependencyResolver resolver = ivySettings.getResolver(
+            mrid);
+        
+        if (resolver == null) {
+            Message.debug("no resolver found for " + mrid 
+                             + ": no source or javadoc artifact lookup");
+        } else {
+            Artifact sourceArtifact = mdBuilder.getSourceArtifact();
+            if (resolver.exists(sourceArtifact)) {
+                Message.debug("source artifact found for " + mrid);
+                mdBuilder.addSourceArtifact();
+            } else {
+                Message.debug("no source artifact found for " + mrid);
+            }
+            Artifact javadocArtifact = mdBuilder.getJavadocArtifact();
+            if (resolver.exists(javadocArtifact)) {
+                Message.debug("javadoc artifact found for " + mrid);
+                mdBuilder.addJavadocArtifact();
+            } else {
+                Message.debug("no javadoc artifact found for " + mrid);
+            }
+        }
     }
 
     private ResolvedModuleRevision parseOtherPom(ParserSettings ivySettings,

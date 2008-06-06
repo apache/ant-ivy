@@ -19,6 +19,7 @@ package org.apache.ivy.plugins.parser.m2;
 
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -28,6 +29,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.ivy.Ivy;
+import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.Configuration;
 import org.apache.ivy.core.module.descriptor.DefaultArtifact;
 import org.apache.ivy.core.module.descriptor.DefaultDependencyArtifactDescriptor;
@@ -35,6 +37,7 @@ import org.apache.ivy.core.module.descriptor.DefaultDependencyDescriptor;
 import org.apache.ivy.core.module.descriptor.DefaultExcludeRule;
 import org.apache.ivy.core.module.descriptor.DefaultModuleDescriptor;
 import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
+import org.apache.ivy.core.module.descriptor.MDArtifact;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.descriptor.OverrideDependencyDescriptorMediator;
 import org.apache.ivy.core.module.descriptor.Configuration.Visibility;
@@ -90,6 +93,12 @@ public class PomModuleDescriptorBuilder {
                 + "which contains it explicitly. The artifact is always available and is not "
                 + "looked up in a repository.",
                 new String[0], true, null),
+        new Configuration("sources", Visibility.PUBLIC,
+            "this configuration contains the source artifact of this module, if any.",
+            new String[0], true, null),
+        new Configuration("javadoc", Visibility.PUBLIC,
+            "this configuration contains the javadoc artifact of this module, if any.",
+            new String[0], true, null),
         new Configuration("optional", Visibility.PUBLIC, 
                 "contains all optional dependencies", new String[0], true, null)
                 };
@@ -470,5 +479,25 @@ public class PomModuleDescriptorBuilder {
         addExtraInfo(getPropertyExtraInfoKey(propertyName), value);
     }
 
+
+    public Artifact getSourceArtifact() {
+        return new MDArtifact(
+            ivyModuleDescriptor, mrid.getName(), "source", "jar", 
+            null, Collections.singletonMap("classifier", "sources"));
+    }
+
+    public Artifact getJavadocArtifact() {
+        return new MDArtifact(
+            ivyModuleDescriptor, mrid.getName(), "javadoc", "jar", 
+            null, Collections.singletonMap("classifier", "javadoc"));
+    }
+
+    public void addSourceArtifact() {
+        ivyModuleDescriptor.addArtifact("sources", getSourceArtifact());
+    }
+    
+    public void addJavadocArtifact() {
+        ivyModuleDescriptor.addArtifact("javadoc", getJavadocArtifact());
+    }
     
 }
