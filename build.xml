@@ -105,6 +105,7 @@
     	<mkdir dir="${bootstrap.classes.build.dir}" />
         <mkdir dir="${ant.classes.build.dir}" />
         <mkdir dir="${optional.classes.build.dir}" />
+        <mkdir dir="${all.classes.build.dir}" />
         <mkdir dir="${test.build.dir}" />
         <mkdir dir="${artifacts.build.dir}" />
         <mkdir dir="${test.report.dir}" />
@@ -296,7 +297,12 @@
     		</filterchain>
     	</copy>
 
-        <!-- package the two ivy jars -->
+        <copy todir="${all.classes.build.dir}">
+            <fileset dir="${core.classes.build.dir}" />
+            <fileset dir="${ant.classes.build.dir}" />
+            <fileset dir="${optional.classes.build.dir}" />
+        </copy>
+
         <jar destfile="${artifacts.build.dir}/jars/${final.name}"
                 manifest="${artifacts.build.dir}/MANIFEST.MF">
             <metainf dir="${basedir}" includes="LICENSE,NOTICE" />
@@ -311,9 +317,7 @@
                 <attribute name="Extension-name" value="org.apache.ivy" />
                 <attribute name="Build-Version" value="${build.version}" />
             </manifest>
-            <fileset dir="${core.classes.build.dir}" />
-            <fileset dir="${ant.classes.build.dir}" />
-            <fileset dir="${optional.classes.build.dir}" />
+            <fileset dir="${all.classes.build.dir}" />
         </jar>
     	<!-- copy main jar to ease its use as an OSGi bundle -->
     	<copy file="${artifacts.build.dir}/jars/${final.name}" 

@@ -83,6 +83,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - IMPROVEMENT: Change allownomd and skipbuildwithoutivy into a more semantically correct name (IVY-297)
 - IMPROVEMENT: Smarter determination if an expression is exact or not for RegexpPatternMatcher and GlobPatternMatcher
 
+- FIX: Ivy distribution jars contains duplicate entries (IVY-828)
 - FIX: ivy:report will generate an HTML file that references non-existent ivy-report.css (IVY-826)
 - FIX: dynamic resolveMode not being dynamic on branch (IVY-825)
 - FIX: Filesystem repositories can not have () in the path (IVY-797)
