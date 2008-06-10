@@ -199,7 +199,7 @@ public abstract class AbstractResolver
              * of DependencyResolver says that it should never return null
              */
             throw new IllegalStateException(
-                "null download report returned by " + getName() 
+                "null download report returned by " + getName() + " (" + getClass().getName() + ")" 
                 + " when trying to download " + artifact);
         }
         ArtifactDownloadReport adr = dr.getArtifactReport(artifact);

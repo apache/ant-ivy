@@ -29,6 +29,7 @@ import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.DefaultModuleDescriptor;
 import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
+import org.apache.ivy.core.report.ArtifactDownloadReport;
 import org.apache.ivy.core.report.DownloadReport;
 import org.apache.ivy.core.report.MetadataArtifactDownloadReport;
 import org.apache.ivy.core.resolve.DownloadOptions;
@@ -72,7 +73,11 @@ public class MockResolver extends AbstractResolver {
     }
 
     public DownloadReport download(Artifact[] artifacts, DownloadOptions options) {
-        return null;
+        DownloadReport dr = new DownloadReport();
+        for (int i = 0; i < artifacts.length; i++) {
+            dr.addArtifactReport(new ArtifactDownloadReport(artifacts[i]));
+        }
+        return dr;
     }
 
     public void publish(Artifact artifact, File src, boolean overwrite) throws IOException {
