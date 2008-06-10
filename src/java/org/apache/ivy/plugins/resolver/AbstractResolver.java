@@ -193,6 +193,15 @@ public abstract class AbstractResolver
      */
     public boolean exists(Artifact artifact) {
         DownloadReport dr = download(new Artifact[] {artifact}, new DownloadOptions());
+        if (dr == null) {
+            /*
+             * according to IVY-831, it seems that this actually happen sometime, while the contract
+             * of DependencyResolver says that it should never return null
+             */
+            throw new IllegalStateException(
+                "null download report returned by " + getName() 
+                + " when trying to download " + artifact);
+        }
         ArtifactDownloadReport adr = dr.getArtifactReport(artifact);
         return adr.getDownloadStatus() != DownloadStatus.FAILED;
     }
