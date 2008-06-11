@@ -335,8 +335,8 @@
             artifactsPattern="${artifacts.build.dir}/[type]s/[artifact].[ext]" 
             forcedeliver="true" />
     </target>
-    
-    <!-- =================================================================
+
+	<!-- =================================================================
          TESTS
          ================================================================= -->
     <target name="build-custom-resolver-jar" depends="jar">
@@ -438,6 +438,11 @@
             <classpath>
                 <path refid="test.classpath" />
             </classpath>
+        	
+        	<!-- pass the proxy properties to the forked junit process to use correct proxy -->
+        	<syspropertyset>
+        		<propertyref prefix="http" />
+       		</syspropertyset>
             <jvmarg value="-Demma.coverage.out.file=${coverage.dir}/coverage.emma" />
             <jvmarg value="-Demma.coverage.out.merge=true" />
             

@@ -85,6 +85,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - IMPROVEMENT: Change allownomd and skipbuildwithoutivy into a more semantically correct name (IVY-297)
 - IMPROVEMENT: Smarter determination if an expression is exact or not for RegexpPatternMatcher and GlobPatternMatcher
 
+- FIX: Ivy build system: fix build.xml to allow "ant coverage-report" behind a proxy (IVY-832)
 - FIX: NPE in AbstractResolver.exists() if a resource cannot be found (IVY-831)
 - FIX: Ivy distribution jars contains duplicate entries (IVY-828)
 - FIX: ivy:report will generate an HTML file that references non-existent ivy-report.css (IVY-826)
