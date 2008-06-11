@@ -122,7 +122,7 @@ public class InstallEngine {
             Message.info(":: downloading artifacts to cache ::");
             resolveEngine.downloadArtifacts(
                 report, options.getArtifactFilter(), new DownloadOptions());
-
+            
             // now that everything is in cache, we can publish all these modules
             Message.info(":: installing in " + to + " ::");
             for (int i = 0; i < dependencies.length; i++) {
@@ -169,6 +169,9 @@ public class InstallEngine {
 
             return report;
         } finally {
+            // IVY-834: log the problems if there were any...
+            Message.sumupProblems();
+
             resolveEngine.setDictatorResolver(oldDicator);
             settings.setLogNotConvertedExclusionRule(log);
         }
