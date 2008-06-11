@@ -36,6 +36,7 @@ import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
+import com.jcraft.jsch.UIKeyboardInteractive;
 import com.jcraft.jsch.UserInfo;
 
 /**
@@ -344,7 +345,7 @@ public final class SshCache {
     /**
      * feeds in password silently into JSch
      */
-    private static class CfUserInfo implements UserInfo {
+    private static class CfUserInfo implements UserInfo, UIKeyboardInteractive {
 
         private String userPassword;
 
@@ -406,6 +407,11 @@ public final class SshCache {
                 }
             }
             return pemPassword;
+        }
+
+        public String[] promptKeyboardInteractive(String destination, String name, 
+                String instruction, String[] prompt, boolean[] echo) {
+            return new String[] {getPassword()};
         }
     }
 }

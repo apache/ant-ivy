@@ -28,6 +28,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 	Jacob Grydholt Jensen
 	Scott Goldstein
 	Pierre Hägnestrand
+	Tobias Himstedt
 	Ben Hale
 	Peter Hayes
 	Matt Inger
@@ -71,6 +72,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - NEW: Add a new resolve mode (optionally per module) to utilize dynamic constraint rule metadata (IVY-740)
 - NEW: Add transitive dependency version and branch override mechanism (IVY-784)
 
+- IMPROVEMENT: SSH resolver doesn't support keyboard-interactive authentication (IVY-836) (thanks to Tobias Himstedt)
 - IMPROVEMENT: declare source and javadoc artifacts in maven2 modules (IVY-325)
 - IMPROVEMENT: Set the last modified attribute of files downloaded from repositories (IVY-823)
 - IMPROVEMENT: If DNS is playing up, Ivy takes a lot longer to sort project dependencies (IVY-817)
