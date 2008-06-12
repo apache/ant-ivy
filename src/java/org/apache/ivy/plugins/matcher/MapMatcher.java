@@ -45,11 +45,14 @@ public class MapMatcher {
     public boolean matches(Map/*<String,String>*/ m) {
         for (Iterator iter = matchers.entrySet().iterator(); iter.hasNext();) {
             Entry entry = (Entry) iter.next();
-            if (!((Matcher) entry.getValue())
-                    .matches((String) m.get(entry.getKey()))) {
+            
+            Matcher matcher = (Matcher) entry.getValue();
+            String value = (String) m.get(entry.getKey());
+            if ((value == null) || !matcher.matches(value)) {
                 return false;
             }
         }
+        
         return true;
     }
 

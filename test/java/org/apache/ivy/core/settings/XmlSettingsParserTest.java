@@ -174,6 +174,14 @@ public class XmlSettingsParserTest extends TestCase {
         assertEquals("dynamic", settings.getResolveMode(new ModuleId("apache", "ivyde")));
         assertEquals("default", settings.getResolveMode(new ModuleId("apache", "ant")));
     }
+    
+    public void testExtraModuleAttribute() throws Exception {
+        IvySettings settings = new IvySettings();
+        XmlSettingsParser parser = new XmlSettingsParser(settings);
+        parser.parse(XmlSettingsParserTest.class.getResource("ivysettings-extra-module-attribute.xml"));
+
+        assertEquals("default", settings.getResolveMode(new ModuleId("foo", "bar")));
+    }
 
     public void testCache() throws Exception {
         IvySettings settings = new IvySettings();
