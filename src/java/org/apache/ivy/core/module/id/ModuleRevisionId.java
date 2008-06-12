@@ -125,7 +125,7 @@ public class ModuleRevisionId extends UnmodifiableExtendableItem {
     public static ModuleRevisionId newInstance(ModuleRevisionId mrid, String rev) {
         return intern(
             new ModuleRevisionId(mrid.getModuleId(), 
-                mrid.getBranch(), rev, mrid.getExtraAttributes()));
+                mrid.getBranch(), rev, mrid.getQualifiedExtraAttributes()));
     }
     
     /**
@@ -230,7 +230,7 @@ public class ModuleRevisionId extends UnmodifiableExtendableItem {
         } else if (!other.getModuleId().equals(getModuleId())) {
             return false;
         } else {
-            return other.getExtraAttributes().equals(getExtraAttributes());
+            return other.getQualifiedExtraAttributes().equals(getQualifiedExtraAttributes());
         }
     }
 
@@ -241,7 +241,7 @@ public class ModuleRevisionId extends UnmodifiableExtendableItem {
             hash = hash * 13 + (getBranch() == null ? 0 : getBranch().hashCode());
             hash = hash * 13 + getRevision().hashCode();
             hash = hash * 13 + getModuleId().hashCode();
-            hash = hash * 13 + getAttributes().hashCode();
+            hash = hash * 13 + getQualifiedExtraAttributes().hashCode();
             //CheckStyle:MagicNumber| ON
         }
         return hash;

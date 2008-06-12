@@ -183,7 +183,7 @@ public class PublishEngine {
             for (int i = 0; i < extraArtifacts.length; i++) {
                 artifactsSet.add(new MDArtifact(md, extraArtifacts[i].getName(), extraArtifacts[i]
                         .getType(), extraArtifacts[i].getExt(), extraArtifacts[i].getUrl(),
-                        extraArtifacts[i].getExtraAttributes()));
+                        extraArtifacts[i].getQualifiedExtraAttributes()));
             }
         }
         boolean successfullyPublished = false;

@@ -68,7 +68,7 @@ public class ArtifactRevisionId extends UnmodifiableExtendableItem {
         ArtifactRevisionId arid = (ArtifactRevisionId) obj;
         return getArtifactId().equals(arid.getArtifactId())
                 && getModuleRevisionId().equals(arid.getModuleRevisionId())
-                && getExtraAttributes().equals(arid.getExtraAttributes());
+                && getQualifiedExtraAttributes().equals(arid.getQualifiedExtraAttributes());
     }
 
     public int hashCode() {
@@ -77,7 +77,7 @@ public class ArtifactRevisionId extends UnmodifiableExtendableItem {
         int hash = 17;
         hash += getArtifactId().hashCode() * 37;
         hash += getModuleRevisionId().hashCode() * 37;
-        hash += getExtraAttributes().hashCode() * 37;
+        hash += getQualifiedExtraAttributes().hashCode() * 37;
         //CheckStyle:MagicNumber| ON
         
         return hash;

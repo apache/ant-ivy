@@ -424,8 +424,9 @@ public abstract class AbstractResourceResolver extends BasicResolver {
         if (mrid.getOrganisation().indexOf('.') == -1) {
             return mrid;
         }
-        return ModuleRevisionId.newInstance(mrid.getOrganisation().replace('.', '/'), mrid
-                .getName(), mrid.getBranch(), mrid.getRevision(), mrid.getExtraAttributes());
+        return ModuleRevisionId.newInstance(mrid.getOrganisation().replace('.', '/'), 
+            mrid.getName(), mrid.getBranch(), mrid.getRevision(), 
+            mrid.getQualifiedExtraAttributes());
     }
 
 }

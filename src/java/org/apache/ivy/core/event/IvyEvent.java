@@ -66,6 +66,7 @@ public class IvyEvent {
     protected void addMridAttributes(ModuleRevisionId mrid) {
         addModuleIdAttributes(mrid.getModuleId());
         addAttribute("revision", mrid.getRevision());
+        addAttributes(mrid.getQualifiedExtraAttributes());
         addAttributes(mrid.getExtraAttributes());
     }
 

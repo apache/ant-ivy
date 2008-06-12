@@ -42,6 +42,9 @@ public class EndResolveDependencyEvent extends ResolveDependencyEvent {
             // now that we have loaded the dependency descriptor, we can put the extra attributes
             // contained in the descriptor too
             addAttributes(
+                this.module.getDescriptor().getResolvedModuleRevisionId()
+                                                .getQualifiedExtraAttributes());
+            addAttributes(
                 this.module.getDescriptor().getResolvedModuleRevisionId().getExtraAttributes());
             
             addAttribute("resolved", "true");

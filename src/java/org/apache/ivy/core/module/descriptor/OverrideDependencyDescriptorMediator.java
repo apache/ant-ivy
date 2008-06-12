@@ -73,6 +73,7 @@ public class OverrideDependencyDescriptorMediator implements DependencyDescripto
         String branch = this.branch == null ? mrid.getBranch() : this.branch;
         
         return dd.clone(ModuleRevisionId.newInstance(
-            mrid.getOrganisation(), mrid.getName(), branch, version, mrid.getExtraAttributes()));
+            mrid.getOrganisation(), mrid.getName(), branch, version, 
+            mrid.getQualifiedExtraAttributes()));
     }
 }

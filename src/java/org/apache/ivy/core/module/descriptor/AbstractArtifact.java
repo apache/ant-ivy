@@ -37,7 +37,7 @@ public abstract class AbstractArtifact implements Artifact {
                 && getName().equals(art.getName())
                 && getExt().equals(art.getExt())
                 && getType().equals(art.getType())
-                && getExtraAttributes().equals(art.getExtraAttributes());
+                && getQualifiedExtraAttributes().equals(art.getQualifiedExtraAttributes());
     }
 
     public int hashCode() {
@@ -50,7 +50,7 @@ public abstract class AbstractArtifact implements Artifact {
         hash = hash * 17 + getName().hashCode();
         hash = hash * 17 + getExt().hashCode();
         hash = hash * 17 + getType().hashCode();
-        hash = hash * 17 + getExtraAttributes().hashCode();
+        hash = hash * 17 + getQualifiedExtraAttributes().hashCode();
         //CheckStyle:MagicNumber| ON
         return hash;
     }

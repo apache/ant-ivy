@@ -51,7 +51,7 @@ public class DefaultArtifact extends AbstractArtifact {
             ArtifactRevisionId.newInstance(
                 artifact.getModuleRevisionId(), 
                 artifact.getName(), newType, newExt, 
-                artifact.getExtraAttributes()), 
+                artifact.getQualifiedExtraAttributes()), 
             artifact.getPublicationDate(), 
             artifact.getUrl(), artifact.isMetadata());
     }
@@ -61,7 +61,7 @@ public class DefaultArtifact extends AbstractArtifact {
             ArtifactRevisionId.newInstance(
                 artifact.getModuleRevisionId(), 
                 name, artifact.getType(), artifact.getExt(), 
-                artifact.getExtraAttributes()), 
+                artifact.getQualifiedExtraAttributes()), 
             artifact.getPublicationDate(), 
             artifact.getUrl(), artifact.isMetadata());
     }
@@ -71,7 +71,7 @@ public class DefaultArtifact extends AbstractArtifact {
             ArtifactRevisionId.newInstance(
                 mrid, 
                 artifact.getName(), artifact.getType(), artifact.getExt(), 
-                artifact.getExtraAttributes()), 
+                artifact.getQualifiedExtraAttributes()), 
             artifact.getPublicationDate(), 
             artifact.getUrl(), artifact.isMetadata());
     }

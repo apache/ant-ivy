@@ -67,7 +67,7 @@ public final class NameSpaceHelper {
         }
         return new DefaultArtifact(mrid, artifact.getPublicationDate(), artifact.getName(),
                 artifact.getType(), artifact.getExt(), artifact.getUrl(), artifact
-                        .getExtraAttributes());
+                        .getQualifiedExtraAttributes());
     }
 
     public static ArtifactId transform(ArtifactId artifactId, NamespaceTransformer t) {
