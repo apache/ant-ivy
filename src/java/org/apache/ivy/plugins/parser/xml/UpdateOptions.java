@@ -57,6 +57,11 @@ public class UpdateOptions {
      * Configurations to exclude during update, or <code>null</code> to keep all confs.
      */
     private String[] confsToExclude = null;
+    /**
+     * True to set branch information on dependencies to default branch when omitted, false to keep 
+     * it as is.
+     */
+    private boolean updateBranch = true;
     
     public ParserSettings getSettings() {
         return settings;
@@ -112,6 +117,13 @@ public class UpdateOptions {
     }
     public UpdateOptions setConfsToExclude(String[] confsToExclude) {
         this.confsToExclude = confsToExclude;
+        return this;
+    }
+    public boolean isUpdateBranch() {
+        return updateBranch;
+    }
+    public UpdateOptions setUpdateBranch(boolean updateBranch) {
+        this.updateBranch = updateBranch;
         return this;
     }
 }

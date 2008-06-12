@@ -173,8 +173,11 @@ public final class XmlModuleDescriptorUpdater {
         private final List confs;
 
         private final URL relativePathCtx;
+        
+        private final UpdateOptions options;
 
         public UpdaterHandler(URL relativePathCtx, PrintWriter out, final UpdateOptions options) {
+            this.options = options;
             this.settings = options.getSettings();
             this.out = out;
             this.resolvedRevisions = options.getResolvedRevisions();
@@ -418,7 +421,8 @@ public final class XmlModuleDescriptorUpdater {
                 }
             }
             
-            if (systemMrid.getBranch() != null && attributes.getIndex("branch") == -1) {
+            if (options.isUpdateBranch() 
+                    && systemMrid.getBranch() != null && attributes.getIndex("branch") == -1) {
                 // this dependency is on a specific branch, we set it explicitly in the updated file
                 write(" branch=\"" + systemMrid.getBranch() + "\"");
             }

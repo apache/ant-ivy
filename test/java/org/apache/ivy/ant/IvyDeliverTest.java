@@ -232,8 +232,10 @@ public class IvyDeliverTest extends TestCase {
                 .getModuleRevisionId());
         DependencyDescriptor[] dds = md.getDependencies();
         assertEquals(1, dds.length);
-        assertEquals(ModuleRevisionId.newInstance("org1", "mod1.2", "BRANCH1", "2.2"), dds[0]
-                .getDependencyRevisionId());
+        assertEquals(ModuleRevisionId.newInstance("org1", "mod1.2", "BRANCH1", "2.2"), 
+            dds[0].getDependencyRevisionId());
+        assertEquals(ModuleRevisionId.newInstance("org1", "mod1.2", "latest.integration"), 
+            dds[0].getDynamicConstraintDependencyRevisionId());
     }
 
     public void testWithExtraAttributes() throws Exception {

@@ -126,6 +126,7 @@ public final class XmlModuleDescriptorParser extends AbstractModuleDescriptorPar
                         .setStatus(md.getStatus()) 
                         .setRevision(md.getResolvedModuleRevisionId().getRevision()) 
                         .setPubdate(md.getResolvedPublicationDate())
+                        .setUpdateBranch(false)
                         .setNamespace(ns));
         } catch (SAXException e) {
             ParseException ex = new ParseException("exception occured while parsing " + res, 0);
