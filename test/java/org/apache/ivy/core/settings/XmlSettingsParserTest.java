@@ -180,7 +180,7 @@ public class XmlSettingsParserTest extends TestCase {
         XmlSettingsParser parser = new XmlSettingsParser(settings);
         parser.parse(XmlSettingsParserTest.class.getResource("ivysettings-extra-module-attribute.xml"));
 
-        assertEquals("default", settings.getResolveMode(new ModuleId("foo", "bar")));
+        assertEquals("default", settings.getResolveMode(new ModuleId("apache", "ivy")));
     }
 
     public void testCache() throws Exception {
