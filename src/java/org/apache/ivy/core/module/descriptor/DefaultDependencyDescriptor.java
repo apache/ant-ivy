@@ -159,7 +159,7 @@ public class DefaultDependencyDescriptor implements DependencyDescriptor {
 
     private DependencyDescriptor asSystem = this;
 
-    public DefaultDependencyDescriptor(DependencyDescriptor dd, ModuleRevisionId revision) {
+    private DefaultDependencyDescriptor(DefaultDependencyDescriptor dd, ModuleRevisionId revision) {
         Checks.checkNotNull(dd, "dd");
         Checks.checkNotNull(revision, "revision");
         
@@ -169,24 +169,19 @@ public class DefaultDependencyDescriptor implements DependencyDescriptor {
                 + " original = " + dd.getDependencyId()
                 + " new = " + revision.getModuleId());
         }
-        md = null;
-        parentId = dd.getParentRevisionId();
+        md = dd.md;
+        parentId = dd.parentId;
         revId = revision;
-        dynamicRevId = dd.getDynamicConstraintDependencyRevisionId();
-        isForce = dd.isForce();
-        isChanging = dd.isChanging();
-        isTransitive = dd.isTransitive();
-        String[] moduleConfs = dd.getModuleConfigurations();
-        Map excludeRules = getExcludeRules();
-        Map includeRules = getIncludeRules();
-        for (int i = 0; i < moduleConfs.length; i++) {
-            confs.put(moduleConfs[i], new ArrayList(Arrays.asList(dd
-                    .getDependencyConfigurations(moduleConfs[i]))));
-            excludeRules.put(moduleConfs[i], new ArrayList(Arrays.asList(dd
-                    .getExcludeRules(moduleConfs[i]))));
-            includeRules.put(moduleConfs[i], new ArrayList(Arrays.asList(dd
-                    .getIncludeRules(moduleConfs[i]))));
-        }
+        dynamicRevId = dd.dynamicRevId;
+        isForce = dd.isForce;
+        isChanging = dd.isChanging;
+        isTransitive = dd.isTransitive;
+        namespace = dd.namespace;
+        confs.putAll(dd.confs);
+        excludeRules = dd.excludeRules == null ? null : new LinkedHashMap(dd.excludeRules); 
+        includeRules = dd.includeRules == null ? null : new LinkedHashMap(dd.includeRules); 
+        dependencyArtifacts = dd.dependencyArtifacts == null 
+                                ? null : new LinkedHashMap(dd.dependencyArtifacts);
     }
 
     public DefaultDependencyDescriptor(
