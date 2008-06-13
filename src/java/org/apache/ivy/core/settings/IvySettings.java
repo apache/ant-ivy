@@ -1353,7 +1353,7 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
     }
 
     public void setDefaultCacheArtifactPattern(String defaultCacheArtifactPattern) {
-        CacheUtil.checkCachePattern(defaultCacheIvyPattern);
+        CacheUtil.checkCachePattern(defaultCacheArtifactPattern);
         this.defaultCacheArtifactPattern = defaultCacheArtifactPattern;
     }
     

@@ -86,6 +86,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - IMPROVEMENT: Change allownomd and skipbuildwithoutivy into a more semantically correct name (IVY-297)
 - IMPROVEMENT: Smarter determination if an expression is exact or not for RegexpPatternMatcher and GlobPatternMatcher
 
+- FIX: Wrong check for defaultCacheArtifactPattern (IVY-840)
 - FIX: NPE in ivy:install if ivy.settings.xml contains custom attribute for a module (IVY-838)
 - FIX: Ivy unit tests fail because 'classifier' attribute of 'artifacts' element is missing in ivy.xsd (IVY-837)
 - FIX: Ivy build system: fix build.xml to allow "ant coverage-report" behind a proxy (IVY-832)
