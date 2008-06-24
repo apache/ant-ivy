@@ -30,7 +30,9 @@ import org.apache.ivy.Ivy;
 import org.apache.ivy.core.module.descriptor.Configuration;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.descriptor.Configuration.Visibility;
+import org.apache.ivy.core.module.id.ModuleId;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
+import org.apache.ivy.core.resolve.ResolvedModuleRevision;
 import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.plugins.parser.ModuleDescriptorParserRegistry;
 import org.apache.tools.ant.BuildException;
@@ -42,6 +44,16 @@ import org.apache.tools.ant.Project;
 public class IvyInfo extends IvyTask {
     private File file = null;
 
+    private String organisation;
+
+    private String module;
+
+    private String branch;
+
+    private String revision;
+
+    private String property = "ivy";
+
     public File getFile() {
         return file;
     }
@@ -50,44 +62,81 @@ public class IvyInfo extends IvyTask {
         this.file = file;
     }
 
+    public String getModule() {
+        return module;
+    }
+
+    public void setModule(String module) {
+        this.module = module;
+    }
+
+    public String getOrganisation() {
+        return organisation;
+    }
+
+    public void setOrganisation(String organisation) {
+        this.organisation = organisation;
+    }
+
+    public String getRevision() {
+        return revision;
+    }
+
+    public void setRevision(String revision) {
+        this.revision = revision;
+    }
+
+    public String getBranch() {
+        return branch;
+    }
+
+    public void setBranch(String branch) {
+        this.branch = branch;
+    }
+
+    public String getProperty() {
+        return property;
+    }
+
+    public void setProperty(String prefix) {
+        this.property = prefix;
+    }
+
     public void doExecute() throws BuildException {
         Ivy ivy = getIvyInstance();
         IvySettings settings = ivy.getSettings();
-        if (file == null) {
-            file = getProject().resolveFile(getProperty(settings, "ivy.dep.file"));
-        }
 
         try {
-            ModuleDescriptor md = ModuleDescriptorParserRegistry.getInstance().parseDescriptor(
-                settings, file.toURL(), doValidate(settings));
-            ModuleRevisionId mrid = md.getModuleRevisionId();
-            getProject().setProperty("ivy.organisation", mrid.getOrganisation());
-            getProject().setProperty("ivy.module", mrid.getName());
-            if (mrid.getBranch() != null) {
-                getProject().setProperty("ivy.branch", mrid.getBranch());
-            }
-            getProject().setProperty("ivy.revision", mrid.getRevision());
-            getProject().setProperty("ivy.status", md.getStatus());
-            
-            Map extra = mrid.getExtraAttributes();
-            for (Iterator iter = extra.entrySet().iterator(); iter.hasNext();) {
-                Entry entry = (Entry) iter.next();
-                getProject().setProperty("ivy.extra." + entry.getKey(), (String) entry.getValue());
-            }
-            
-            getProject().setProperty("ivy.configurations", mergeConfs(md.getConfigurationsNames()));
-
-            // store the public configurations in a separate property
-            Configuration[] configs = md.getConfigurations();
-            List publicConfigsList = new ArrayList();
-            for (int i = 0; i < configs.length; i++) {
-                if (Visibility.PUBLIC.equals(configs[i].getVisibility())) {
-                    publicConfigsList.add(configs[i].getName());
+            if(organisation != null || module != null || revision != null || branch != null) {
+                if (organisation == null) {
+                    throw new BuildException("no organisation provided for ivy findmodules");
                 }
+                if (module == null) {
+                    throw new BuildException("no module name provided for ivy findmodules");
+                }
+                if (revision == null) {
+                    throw new BuildException("no revision provided for ivy findmodules");
+                }
+
+                if (branch == null) {
+                    settings.getDefaultBranch(new ModuleId(organisation, module));
+                }
+                ResolvedModuleRevision rmr = ivy.findModule(ModuleRevisionId.newInstance(organisation,
+                    module, branch, revision));
+                if (rmr != null) {
+                    ModuleDescriptor md = rmr.getDescriptor();
+                    ModuleRevisionId mrid = rmr.getId();
+                    setProperties(md, mrid);
+                }
+            } else {
+                if (file == null) {
+                    file = getProject().resolveFile(getProperty(settings, "ivy.dep.file"));
+                }
+                ModuleDescriptor md = ModuleDescriptorParserRegistry.getInstance().parseDescriptor(
+                    settings, file.toURL(), doValidate(settings));
+                ModuleRevisionId mrid = md.getModuleRevisionId();
+                setProperties(md, mrid);
             }
-            String[] publicConfigs = (String[]) publicConfigsList
-                    .toArray(new String[publicConfigsList.size()]);
-            getProject().setProperty("ivy.public.configurations", mergeConfs(publicConfigs));
         } catch (MalformedURLException e) {
             throw new BuildException(
                     "unable to convert given ivy file to url: " + file + ": " + e, e);
@@ -97,5 +146,35 @@ public class IvyInfo extends IvyTask {
         } catch (Exception e) {
             throw new BuildException("impossible to resolve dependencies: " + e, e);
         }
+    }
+    
+    private void setProperties(ModuleDescriptor md, ModuleRevisionId mrid) {        
+        getProject().setProperty(property + ".organisation", mrid.getOrganisation());
+        getProject().setProperty(property + ".module", mrid.getName());
+        if (mrid.getBranch() != null) {
+            getProject().setProperty(property + ".branch", mrid.getBranch());
+        }
+        getProject().setProperty(property + ".revision", mrid.getRevision());
+        getProject().setProperty(property + ".status", md.getStatus());
+        
+        Map extra = mrid.getExtraAttributes();
+        for (Iterator iter = extra.entrySet().iterator(); iter.hasNext();) {
+            Entry entry = (Entry) iter.next();
+            getProject().setProperty(property + ".extra." + entry.getKey(), (String) entry.getValue());
+        }
+        
+        getProject().setProperty(property + ".configurations", mergeConfs(md.getConfigurationsNames()));
+
+        // store the public configurations in a separate property
+        Configuration[] configs = md.getConfigurations();
+        List publicConfigsList = new ArrayList();
+        for (int i = 0; i < configs.length; i++) {
+            if (Visibility.PUBLIC.equals(configs[i].getVisibility())) {
+                publicConfigsList.add(configs[i].getName());
+            }
+        }
+        String[] publicConfigs = (String[]) publicConfigsList
+                .toArray(new String[publicConfigsList.size()]);
+        getProject().setProperty(property + ".public.configurations", mergeConfs(publicConfigs));
     }
 }

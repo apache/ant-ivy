@@ -39,6 +39,16 @@ The information is retrieved by setting ant properties:
 <tr><td>ivy.configurations</td><td>A comma separated list of configurations of the module, as declared in the <a href="../ivyfile/configurations.html">configurations</a> section</td></tr>
 <tr><td>ivy.public.configurations</td><td>A comma separated list of public configurations of the module, as declared in the <a href="../ivyfile/configurations.html">configurations</a> section</td></tr>
 </table>
+<br/>
+<span class="since">since 2.0</span>
+
+Since Ivy 2.0 this task has been enhanced to allow you to retrieve information about ivy modules in a repository.  Instead of specifying a local ivy file you may specify the organisation, module, revision pattern and (optionally) the branch of the ivy module in the repository you wish to retrieve the information for.
+
+The revision pattern is what is used when declaring a <a href="../ivyfile/dependency.html">dependency</a> on a module, identical to how the <a href="findrevision.html">findrevision</a> task works.  In fact this task can now be used in place of the findrevision task.
+
+If no matching module is found then no property values are set.
+
+You may now also set the property attribute to change the first part of the property names that are set by this task e.g. if you set the property attribute to 'mymodule' this task will set the ant properties <i>mymodule.organisation</i>, <i>mymodule.module</i>, <i>mymodule.revision</i> etc.
 
 <h1>Attributes</h1>
 <table class="ant">
@@ -47,8 +57,18 @@ The information is retrieved by setting ant properties:
 </thead>
 <tbody>
     <tr><td>file</td><td>the ivy file to parse</td>
-        <td>Yes</td></tr>
-<tr><td>settingsRef</td><td>A reference to the ivy settings that must be used by this task <span class="since">(since 2.0)</span></td><td>No, 'ivy.instance' is taken by default.</td></tr></tbody>
+        <td>Yes, if you wish to parse an ivy file.<br/>No, if you are retrieving information about a module from an ivy repository.</td></tr>
+    <tr><td>organisation</td><td>the organisation of the module to find <span class="since">(since 2.0)</span></td>
+        <td>No, if you wish to parse an ivy file.<br/>Yes, if you are retrieving information about a module from an ivy repository.</td></tr>
+    <tr><td>module</td><td>the the name of the module to find <span class="since">(since 2.0)</span></td>
+        <td>No, if you wish to parse an ivy file.<br/>Yes, if you are retrieving information about a module from an ivy repository.</td></tr>
+    <tr><td>branch</td><td>the branch of the module to find <span class="since">(since 2.0)</span></td>
+        <td>No, defaults to the default branch for the given module if you are retrieving information about a module from an ivy repository.</td></tr>
+    <tr><td>revision</td><td>the revision constraint to apply <span class="since">(since 2.0)</span></td>
+        <td>No, if you wish to parse an ivy file.<br/>Yes, if you are retrieving information about a module from an ivy repository.</td></tr>
+    <tr><td>property</td><td>the name to use as the base of the property names set by this task <span class="since">(since 2.0)</span></td>
+        <td>No, will default to 'ivy' if not set.</td></tr>
+	<tr><td>settingsRef</td><td>A reference to the ivy settings that must be used by this task <span class="since">(since 2.0)</span></td><td>No, 'ivy.instance' is taken by default.</td></tr></tbody>
 </table>
 <h1>Examples</h1>
 Given this ivy.xml file:
@@ -84,6 +104,25 @@ ivy.status=release
 ivy.extra.myextraatt=myvalue
 ivy.configurations=default, test, private
 ivy.public.configurations=default, test
+</code>
+Given the same ivy module in a repository:
+<code>
+<ivy:info organisation="apache" module="info-all" revision="1.0" />
+</code>
+will set the exact same set of properties as above.  Using:
+<code>
+<ivy:info organisation="apache" module="info-all" revision="1.0" property="infotest"/>
+</code>
+will set:
+<code>
+infotest.organisation=apache
+infotest.module=info-all
+infotest.branch=trunk
+infotest.revision=1.0
+infotest.status=release
+infotest.extra.myextraatt=myvalue
+infotest.configurations=default, test, private
+infotest.public.configurations=default, test
 </code>
 
 	</textarea>
