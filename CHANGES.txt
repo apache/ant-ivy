@@ -40,6 +40,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 	Costin Leau
 	Antoine Levy-Lambert
 	William Lyvers
+	Sakari Maaranen
 	Jan Materne
 	Markus M. May
 	Stephen Nesbitt
