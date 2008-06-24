@@ -107,7 +107,7 @@ public class IvyInfo extends IvyTask {
         IvySettings settings = ivy.getSettings();
 
         try {
-            if(organisation != null || module != null || revision != null || branch != null) {
+            if (organisation != null || module != null || revision != null || branch != null) {
                 if (organisation == null) {
                     throw new BuildException("no organisation provided for ivy findmodules");
                 }
@@ -121,8 +121,8 @@ public class IvyInfo extends IvyTask {
                 if (branch == null) {
                     settings.getDefaultBranch(new ModuleId(organisation, module));
                 }
-                ResolvedModuleRevision rmr = ivy.findModule(ModuleRevisionId.newInstance(organisation,
-                    module, branch, revision));
+                ResolvedModuleRevision rmr = ivy.findModule(ModuleRevisionId.newInstance(
+                    organisation, module, branch, revision));
                 if (rmr != null) {
                     ModuleDescriptor md = rmr.getDescriptor();
                     ModuleRevisionId mrid = rmr.getId();
@@ -160,10 +160,12 @@ public class IvyInfo extends IvyTask {
         Map extra = mrid.getExtraAttributes();
         for (Iterator iter = extra.entrySet().iterator(); iter.hasNext();) {
             Entry entry = (Entry) iter.next();
-            getProject().setProperty(property + ".extra." + entry.getKey(), (String) entry.getValue());
+            getProject().setProperty(
+                property + ".extra." + entry.getKey(), (String) entry.getValue());
         }
         
-        getProject().setProperty(property + ".configurations", mergeConfs(md.getConfigurationsNames()));
+        getProject().setProperty(
+            property + ".configurations", mergeConfs(md.getConfigurationsNames()));
 
         // store the public configurations in a separate property
         Configuration[] configs = md.getConfigurations();
