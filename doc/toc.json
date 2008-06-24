@@ -295,6 +295,13 @@
                                   ]
                               },
                               {
+                                "id":"resolver/packager",
+                                "title":"Packager resolver",
+                                "children": [
+
+                                  ]
+                              },
+                              {
                                 "id":"resolver/filesystem",
                                 "title":"File System resolver",
                                 "children": [

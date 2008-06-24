@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+    Licensed under the Apache License, Version 2.0 (the "License"); you may
+    not use this file except in compliance with the License. You may obtain
+    a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+    License for the specific language governing permissions and limitations
+    under the License.
+-->
+
+<!-- $Id$ -->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+
+    <xsd:element name="packager-module">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:choice maxOccurs="unbounded">
+                    <xsd:element name="property">
+                        <xsd:complexType>
+                            <xsd:attribute name="name" type="xsd:string" use="required"/>
+                            <xsd:attribute name="value" type="xsd:string" use="required"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="resource">
+                        <xsd:complexType>
+                            <xsd:sequence minOccurs="0" maxOccurs="unbounded">
+                                <xsd:any processContents="lax"/>    <!-- XXX refine me -->
+                            </xsd:sequence>
+                            <xsd:attribute name="url" type="xsd:anyURI" use="required"/>
+                            <xsd:attribute name="sha1" type="sha1Type" use="required"/>
+                            <xsd:attribute name="dest" type="xsd:string"/>
+                            <xsd:attribute name="tofile" type="xsd:string"/>
+                            <xsd:attribute name="type" type="archiveType"/>
+                            <xsd:attribute name="filename" type="xsd:string"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="m2resource">
+                        <xsd:complexType>
+                            <xsd:sequence minOccurs="0" maxOccurs="unbounded">
+                                <xsd:element name="artifact">
+                                    <xsd:complexType>
+                                        <xsd:attribute name="ext" type="xsd:string"/>
+                                        <xsd:attribute name="classifier" type="xsd:string"/>
+                                        <xsd:attribute name="sha1" type="sha1Type" use="required"/>
+                                        <xsd:attribute name="dest" type="xsd:string"/>
+                                        <xsd:attribute name="tofile" type="xsd:string"/>
+                                        <xsd:attribute name="type" type="archiveType"/>
+                                    </xsd:complexType>
+                                </xsd:element>
+                            </xsd:sequence>
+                            <xsd:attribute name="groupId" type="xsd:string"/>
+                            <xsd:attribute name="artifactId" type="xsd:string"/>
+                            <xsd:attribute name="version" type="xsd:string"/>
+                            <xsd:attribute name="repo" type="xsd:anyURI"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="build">
+                        <xsd:complexType>
+                            <xsd:sequence minOccurs="0" maxOccurs="unbounded">
+                                <xsd:any processContents="lax"/>    <!-- XXX refine me -->
+                            </xsd:sequence>
+                        </xsd:complexType>
+                    </xsd:element>
+                </xsd:choice>
+            </xsd:sequence>
+            <xsd:attribute name="version" type="versionType" use="required"/>
+        </xsd:complexType>
+    </xsd:element>
+
+    <xsd:simpleType name="sha1Type">
+        <xsd:restriction base="xsd:string">
+            <xsd:pattern value="[0-9a-f]{40}"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="versionType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="1.0"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="archiveType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="zip"/>
+            <xsd:enumeration value="war"/>
+            <xsd:enumeration value="jar"/>
+            <xsd:enumeration value="tar"/>
+            <xsd:enumeration value="tgz"/>
+            <xsd:enumeration value="tar.gz"/>
+            <xsd:enumeration value="tar.bz2"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+</xsd:schema>

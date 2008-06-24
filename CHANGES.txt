@@ -23,6 +23,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 	Mirko Bulovic
 	Kristian Cibulskis
 	Andrea Bernardo Ciddio
+	Archie Cobbs
 	Danno Ferrin
 	Benjamin Francisoud	
 	Jacob Grydholt Jensen
@@ -72,6 +73,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - NEW: Retain original dependency constraint rules in resolved ivy file (IVY-739)
 - NEW: Add a new resolve mode (optionally per module) to utilize dynamic constraint rule metadata (IVY-740)
 - NEW: Add transitive dependency version and branch override mechanism (IVY-784)
+- NEW: Add new packager resolver (IVY-829) (thanks to Archie Cobbs)
 
 - IMPROVEMENT: Install task fails but reason is not displayed without using -debug or -verbose (IVY-834)
 - IMPROVEMENT: SSH resolver doesn't support keyboard-interactive authentication (IVY-836) (thanks to Tobias Himstedt)

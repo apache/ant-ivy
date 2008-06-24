@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!--
+    Licensed under the Apache License, Version 2.0 (the "License"); you may
+    not use this file except in compliance with the License. You may obtain
+    a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+    License for the specific language governing permissions and limitations
+    under the License.
+-->
+
+<!-- $Id$ -->
+<packager-module version="1.0">
+
+    <property name="name" value="${ivy.packager.module}"/>
+    <property name="version" value="${ivy.packager.revision}"/>
+    <property name="archive" value="${name}-${version}"/>
+
+    <resource dest="extract" url="file://${java.io.tmpdir}/PackagerResolverTest/website/dist/${archive}.tar.gz"
+      sha1="40c80c1c5d7db0038f396f2393885d2e8c74270d">
+        <include name="${archive}/${name}.jar"/>
+    </resource>
+
+    <m2resource repo="file://${java.io.tmpdir}/PackagerResolverTest/website/m2repo" groupId="org.apache.ivy" artifactId="foobar">
+        <artifact classifier="janfu" sha1="da39a3ee5e6b4b0d3255bfef95601890afd80709" tofile="artifacts/jars/foobar-janfu.jar"/>
+    </m2resource>
+
+    <build>
+        <move file="extract/${archive}/${name}.jar" todir="artifacts/jars"/>
+    </build>
+
+</packager-module>

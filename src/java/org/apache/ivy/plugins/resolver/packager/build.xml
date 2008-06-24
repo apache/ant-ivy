@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+    Licensed under the Apache License, Version 2.0 (the "License"); you may
+    not use this file except in compliance with the License. You may obtain
+    a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+    License for the specific language governing permissions and limitations
+    under the License.
+-->
+
+<!-- $Id$ -->
+<project name="packager" default="build">
+
+    <!-- Validate packager.xml -->
+    <target name="validate" if="ivy.packager.validate">
+        <xmlvalidate failonerror="true" warn="yes" lenient="no">
+            <attribute name="http://xml.org/sax/features/namespaces" value="true"/>
+            <attribute name="http://apache.org/xml/features/validation/schema" value="true"/>
+            <attribute name="http://apache.org/xml/features/validation/schema-full-checking" value="true"/>
+            <property name="http://apache.org/xml/properties/schema/external-noNamespaceSchemaLocation" value="packager-1.0.xsd"/>
+            <fileset dir=".">
+                <include name="packager.xml"/>
+            </fileset>
+        </xmlvalidate>
+    </target>
+
+    <!-- Set ${resourceURL} (case 1) -->
+    <target name="setResourceURL1" if="ivy.packager.resourceURL">
+        <property name="resourceURL" value="${ivy.packager.resourceURL}"/>
+    </target>
+
+    <!-- Set ${resourceURL} (case 2) -->
+    <target name="setResourceURL2" unless="ivy.packager.resourceURL">
+        <property name="resourceURL" value=""/>
+    </target>
+
+    <!-- Apply XSLT to generate ant build file -->
+    <target name="style">
+        <xslt style="packager.xsl" in="packager.xml" out="packager-output.xml">
+            <param name="resourceURL" expression="${resourceURL}"/>
+        </xslt>
+    </target>
+
+    <!-- Main build target: invoke generated build file -->
+    <target name="build" depends="validate, setResourceURL1, setResourceURL2, style">
+        <ant antfile="packager-output.xml"/>
+    </target>
+
+</project>
