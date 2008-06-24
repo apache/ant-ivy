@@ -29,6 +29,7 @@ import org.apache.ivy.core.IvyPatternHelper;
 import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.plugins.resolver.util.ResolvedResource;
+import org.apache.ivy.util.FileUtil;
 
 /**
  * Represents one entry in the cache of a {@link PackagerResolver}.
@@ -161,7 +162,7 @@ public class PackagerCacheEntry {
 
     public synchronized boolean cleanup() {
         this.built = false;
-        return PackagerResolver.deleteRecursive(this.dir);
+        return FileUtil.forceDelete(this.dir);
     }
 
     protected void saveFile(String name, InputStream input) throws IOException {

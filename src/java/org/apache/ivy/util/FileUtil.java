@@ -268,14 +268,27 @@ public final class FileUtil {
         return dir + "/" + file;
     }
 
-    public static void forceDelete(File f) {
-        if (f.isDirectory()) {
-            File[] sub = f.listFiles();
-            for (int i = 0; i < sub.length; i++) {
-                forceDelete(sub[i]);
+    /**
+     * Recursively delete file
+     * 
+     * @param file
+     *            the file to delete
+     * @return true if the deletion completed successfully (ie if the file does not exist on the
+     *         filesystem after this call), false if a deletion was not performed successfully.
+     */
+    public static boolean forceDelete(File file) {
+        if (!file.exists()) {
+            return true;
+        }
+        if (file.isDirectory()) {
+            File[] files = file.listFiles();
+            for (int i = 0; i < files.length; i++) {
+                if (!forceDelete(files[i])) {
+                    return false;
+                }
             }
         }
-        f.delete();
+        return file.delete();
     }
 
     /**

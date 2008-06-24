@@ -29,6 +29,7 @@ import org.apache.ivy.core.module.descriptor.DefaultArtifact;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.plugins.resolver.URLResolver;
 import org.apache.ivy.plugins.resolver.util.ResolvedResource;
+import org.apache.ivy.util.FileUtil;
 import org.apache.ivy.util.Message;
 
 /**
@@ -73,7 +74,7 @@ public class PackagerResolver extends URLResolver {
         }
         packagerCache.clear();
         if (this.buildRoot != null) {
-            deleteRecursive(this.buildRoot);
+            FileUtil.forceDelete(this.buildRoot);
         }
     }
 
@@ -202,21 +203,6 @@ public class PackagerResolver extends URLResolver {
 
     public String getTypeName() {
         return "packager";
-    }
-
-    public static boolean deleteRecursive(File file) {
-        if (!file.exists()) {
-            return true;
-        }
-        if (file.isDirectory()) {
-            File[] files = file.listFiles();
-            for (int i = 0; i < files.length; i++) {
-                if (!deleteRecursive(files[i])) {
-                    return false;
-                }
-            }
-        }
-        return file.delete();
     }
 }
 
