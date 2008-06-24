@@ -25,12 +25,17 @@
 </head>
 <body>
 	<textarea id="xooki-source">
-Publishes the current modules artifacts.
+Publishes the current module's <a href="../ivyfile/publications.html">artifacts</a> and the <a href="../ivyfile.html#resolved">resolved descriptor</a> (delivered ivy file).
 
-This task is meant to publish the declared published artifacts of the current module to a repository.
+This task is meant to publish the current module descriptor together with its declared publication artifacts to a repository.
 
-The repository is given through the name of a resolver declared in current ivy configuration. See <a href="../configuration.html">configuration</a> for details about resolver supporting artifact publishing.
-It also publishes the delivered ivy file (except if you don't want), and even deliver it if it has not been done with a previous deliver call or if forcedeliver is set to true. That's why this task takes some parameters useful only for delivery.
+All the artifacts must have been created <em>before</em> calling this task. It does not create the artifacts themselves, but expects to find them at the location indicated by the artifacts pattern.
+
+The target repository is given through the name of a resolver declared in current ivy settings. See <a href="../configuration.html">settings</a> for details about resolver supporting artifact publishing.
+
+It also publishes the delivered ivy file (except if you don't want), and even deliver it, if it has not been done with a previous deliver call or if forcedeliver is set to true. That's why this task takes some parameters useful only for delivery. See the illustration below:
+
+<p><img alt="publish flowchart" src="../images/ivy-publish-fc.png" width="360" height="473"/></p>
 
 <span class="since">since 1.4.1</span>
 The source artifact pattern can be specified either as an attribute on the task (artifactspattern) or using a list of nested artifacts element (see examples below).

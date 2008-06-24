@@ -25,16 +25,18 @@
 </head>
 <body>
 	<textarea id="xooki-source">
-Delivers a resolved ivy file of the current module, and possibly do recursive delivery of dependencies. 
+Deliver a resolved descriptor of the current module, and possibly perform a recursive delivery of dependencies.
+
 This task does two main things:
 <h2>Generate a resolved ivy file</h2>
-This task generates a resolved ivy file of the current module, based upon the last resolve done. The resolved ivy file contains updated information about the delivered module, such as revision and status.
+This task generates a resolved descriptor of the current module, based upon the last resolve done. The resolved ivy file contains updated information about the delivered module, such as revision and status.
 
-Moreover, all included configurations files are included in the ivy file, and variables are replaced by their values.
+Moreover, all included configurations' files are included in the ivy file, and variables are replaced by their values.
 
 Finally, in the resolved ivy file, dynamic revisions are replaced by the static ones that have been found during the resolve step, so the ivy file can be used later safely to obtain the same dependencies (providing that a revision uniquely identifies a module, which should be the case for proper ivy use).
 
-<span class="since">since 1.3</span> The replacement of dynamic revisions by static ones can be turned off, so that dynamic revisions are kept in the ivy file.
+<span class="since">since 1.3</span> The replacement of dynamic revisions by static ones can be turned off, so that dynamic revisions are kept in the ivy file. This is an exception to the recommended standard that published module descriptors be fully resolved, so use it with caution.
+
 <h2>do recursive delivery</h2>
 This is done only if a deliver target is given to the deliver task.
 
