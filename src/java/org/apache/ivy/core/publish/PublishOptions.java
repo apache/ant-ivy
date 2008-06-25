@@ -55,6 +55,8 @@ public class PublishOptions {
 
     private String[] confs;
 
+    private boolean haltonmissing;
+
     public String[] getConfs() {
         return confs;
     }
@@ -133,6 +135,15 @@ public class PublishOptions {
 
     public PublishOptions setValidate(boolean validate) {
         this.validate = validate;
+        return this;
+    }
+
+    public boolean isHaltOnMissing() {
+        return haltonmissing;
+    }
+
+    public PublishOptions setHaltOnMissing(boolean haltonmissing) {
+        this.haltonmissing = haltonmissing;
         return this;
     }
 

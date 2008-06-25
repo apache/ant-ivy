@@ -294,20 +294,21 @@ public class IvyPublish extends IvyTask {
                     .setPubdate(pubdate)
                     .setExtraArtifacts(
                         (Artifact[]) artifacts.toArray(new Artifact[artifacts.size()]))
-                    .setValidate(doValidate(settings)).setOverwrite(overwrite).setUpdate(
-                        update).setConfs(splitConfs(conf)));
+                    .setValidate(doValidate(settings))
+                    .setOverwrite(overwrite)
+                    .setUpdate(update)
+                    .setHaltOnMissing(haltonmissing)
+                    .setConfs(splitConfs(conf)));
             if (warnonmissing) {
                 for (Iterator iter = missing.iterator(); iter.hasNext();) {
                     Artifact artifact = (Artifact) iter.next();
                     Message.warn("missing artifact: " + artifact);
                 }
             }
-            if (haltonmissing && !missing.isEmpty()) {
-                throw new BuildException(
-                    "missing published artifacts for " + mrid + ": " + missing);
-            }
-
         } catch (Exception e) {
+            if (e instanceof BuildException) {
+                throw (BuildException) e;
+            }
             throw new BuildException("impossible to publish artifacts for " + mrid + ": " + e, e);
         }
     }

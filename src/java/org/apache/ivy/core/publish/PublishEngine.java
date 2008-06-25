@@ -28,6 +28,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.apache.ivy.core.IvyContext;
@@ -166,7 +167,7 @@ public class PublishEngine {
     public Collection publish(ModuleDescriptor md, Collection srcArtifactPattern,
             DependencyResolver resolver, PublishOptions options) throws IOException {
         Collection missing = new ArrayList();
-        Set artifactsSet = new HashSet();
+        Set artifactsSet = new LinkedHashSet();
         String[] confs = options.getConfs();
         if (confs == null || (confs.length == 1 && "*".equals(confs[0]))) {
             confs = md.getConfigurationsNames();
@@ -208,6 +209,9 @@ public class PublishEngine {
                                 + new File(IvyPatternHelper.substitute(pattern, artifact))
                                 + " file does not exist");
                     }
+                    if (options.isHaltOnMissing()) {
+                        throw new IOException("missing artifact " + artifact);
+                    }
                     missing.add(artifact);
                 }
             }
@@ -220,6 +224,9 @@ public class PublishEngine {
                             + ": "
                             + new File(IvyPatternHelper.substitute(options.getSrcIvyPattern(),
                                 artifact)) + " file does not exist");
+                    if (options.isHaltOnMissing()) {
+                        throw new IOException("missing ivy artifact " + artifact);
+                    }
                     missing.add(artifact);
                 }
             }

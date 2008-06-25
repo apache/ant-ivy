@@ -70,17 +70,12 @@ public class IvyPublishTest extends TestCase {
     }
 
     private void cleanCache() {
-        Delete del = new Delete();
-        del.setProject(new Project());
-        del.setDir(cache);
-        del.execute();
+        FileUtil.forceDelete(cache);
     }
 
     private void cleanTestDir() {
-        Delete del = new Delete();
-        del.setProject(new Project());
-        del.setDir(new File("build/test/publish"));
-        del.execute();
+        FileUtil.forceDelete(new File("build/test/publish"));
+        FileUtil.forceDelete(new File("build/test/transactional"));
     }
 
     private void cleanRep() {
@@ -115,6 +110,58 @@ public class IvyPublishTest extends TestCase {
             new IvySettings(),
             new File("test/repositories/1/apache/resolve-simple/ivys/ivy-1.2.xml").toURL(), false);
         assertEquals("1.2", md.getModuleRevisionId().getRevision());
+    }
+
+    public void testHaltOnMissing() throws Exception {
+        project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-multiconf.xml");
+        IvyResolve res = new IvyResolve();
+        res.setProject(project);
+        res.execute();
+
+        publish.setPubrevision("1.2");
+        publish.setResolver("1");
+        publish.setHaltonmissing(true);
+        try {
+            publish.execute();
+            fail("publish with haltonmissing and a missing artifact should raise an exception");
+        } catch (BuildException ex) {
+            assertTrue(ex.getMessage().indexOf("missing") != -1);
+            assertTrue(ex.getMessage().indexOf("resolve-simple.jar") != -1);
+            // should have do the ivy delivering
+            assertTrue(new File("build/test/publish/ivy-1.2.xml").exists());
+            
+            // should not have published the files with "1" resolver
+            assertFalse(new File("test/repositories/1/apache/resolve-simple/ivys/ivy-1.2.xml").exists());
+            assertFalse(new File("test/repositories/1/apache/resolve-simple/jars/resolve-simple-1.2.jar").exists());
+        }
+    }
+
+    public void testHaltOnMissing2() throws Exception {
+        project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-publish-multi.xml");
+        IvyResolve res = new IvyResolve();
+        res.setProject(project);
+        res.execute();
+
+        // in this test case one artifact is available, and the other one is missing
+        // since we use a transactional resolver, no file should be published at all 
+        File art = new File("build/test/publish/multi1-1.2.jar");
+        FileUtil.copy(new File("test/repositories/1/org1/mod1.1/jars/mod1.1-1.0.jar"), art, null);
+        publish.setPubrevision("1.2");
+        publish.setResolver("transactional");
+        publish.setHaltonmissing(true);
+        try {
+            publish.execute();
+            fail("publish with haltonmissing and a missing artifact should raise an exception");
+        } catch (BuildException ex) {
+            assertTrue(ex.getMessage().indexOf("missing") != -1);
+            assertTrue(ex.getMessage().indexOf("multi2.jar") != -1);
+
+            // should have do the ivy delivering
+            assertTrue(new File("build/test/publish/ivy-1.2.xml").exists());
+
+            // should not have published the files with "transactional" resolver
+            assertFalse(new File("build/test/transactional/apache/multi/1.2").exists());
+        }
     }
 
     public void testPublishNotAllConfigs() throws Exception {

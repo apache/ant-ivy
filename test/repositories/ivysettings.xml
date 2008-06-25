@@ -39,5 +39,9 @@
 			<ivy pattern="build/test/install/[organisation]/[module]/[artifact]-[revision].[ext]"/>
 			<artifact pattern="build/test/install/[organisation]/[module]/[artifact]-[revision].[ext]"/>
 		</filesystem>
+		<filesystem name="transactional">
+			<ivy pattern="build/test/transactional/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]"/>
+			<artifact pattern="build/test/transactional/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]"/>
+		</filesystem>
 	</resolvers>
 </ivysettings>
