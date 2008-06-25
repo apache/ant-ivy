@@ -95,6 +95,9 @@ Two modes are available:
 <li>dynamic</li> In this mode the dynamic revision constraint (expressed with the revConstraint attribute in the [[ivyfile/dependency]] element) is used.
 </ul>
 
+<h2>Concurrency</h2>
+During resolve, Ivy creates a file in the [[configuration/caches resolution cache]]. The creation of this file is not aimed to support concurrency, meaning that you can't have two concurrent resolve of the same module, in the same resolution cache, with the same resolveId. 
+
 <i>Note for developers:
 After the call to this task, a reference to the module descriptor resolved is put in the ant project under the id <code>"ivy.resolved.descriptor"</code>.</i>
 
