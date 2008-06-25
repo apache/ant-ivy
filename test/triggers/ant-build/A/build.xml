@@ -21,12 +21,14 @@
               uri="antlib:org.apache.ivy.ant" />
 
     <target name="publish">
+        <delete dir="build" />
         <tstamp><format property="tstamp" pattern="yyyyMMDDHHmmss"/></tstamp>
         <mkdir dir="${basedir}/build"/>
         <echo message="${tstamp}" file="${basedir}/build/A.jar"/>
         <ivy:configure file="${basedir}/../ivysettings.xml"/>
         <ivy:resolve file="${basedir}/ivy.xml" />
-        <ivy:publish resolver="local" artifactspattern="${basedir}/build/[artifact].[ext]" pubrevision="${tstamp}" />
+        <ivy:publish resolver="local" artifactspattern="${basedir}/build/[artifact].[ext]" 
+        	         pubrevision="${tstamp}" overwrite="true"/>
         <delete dir="build" />
      
     </target>
