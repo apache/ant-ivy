@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
@@ -334,69 +335,94 @@ public class IBiblioResolver extends URLResolver {
     protected ResolvedResource[] listResources(
             Repository repository, ModuleRevisionId mrid, String pattern, Artifact artifact) {
         if (shouldUseMavenMetadata(pattern)) {
-            // use maven-metadata.xml if it exists
-            InputStream metadataStream = null;
-            try {
-                String metadataLocation = IvyPatternHelper.substitute(
-                    root + "[organisation]/[module]/maven-metadata.xml", mrid);
-                Resource metadata = repository.getResource(metadataLocation);
-                if (metadata.exists()) {
-                    Message.verbose("\tlisting revisions from maven-metadata: " + metadata);
-                    final List revs = new ArrayList();
-                    metadataStream = metadata.openStream();
-                    XMLHelper.parse(metadataStream, null, new ContextualSAXHandler() {
-                        public void endElement(String uri, String localName, String qName) 
-                                throws SAXException {
-                            if ("metadata/versioning/versions/version".equals(getContext())) {
-                                revs.add(getText().trim());
-                            }
-                            super.endElement(uri, localName, qName);
-                        }
-                    }, null);
-                    Message.debug("\tfound revs: " + revs);
-                    List rres = new ArrayList();
-                    for (Iterator iter = revs.iterator(); iter.hasNext();) {
-                        String rev = (String) iter.next();
-                        String resolvedPattern = IvyPatternHelper.substitute(
-                            pattern, ModuleRevisionId.newInstance(mrid, rev), artifact);
-                        try {
-                            Resource res = repository.getResource(resolvedPattern);
-                            if ((res != null) && res.exists()) {
-                                rres.add(new ResolvedResource(res, rev));
-                            }
-                        } catch (IOException e) {
-                            Message.warn(
-                                "impossible to get resource from name listed by maven-metadata.xml:"
-                                    + rres + ": " + e.getMessage());
-                        }
-                    }
-                    return (ResolvedResource[]) rres.toArray(new ResolvedResource[rres.size()]);
-                } else {
-                    Message.verbose("\tmaven-metadata not available: " + metadata);
-                }
-            } catch (IOException e) {
-                Message.verbose(
-                    "impossible to access maven metadata file, ignored: " + e.getMessage());
-            } catch (SAXException e) {
-                Message.verbose(
-                    "impossible to parse maven metadata file, ignored: " + e.getMessage());
-            } catch (ParserConfigurationException e) {
-                Message.verbose(
-                    "impossible to parse maven metadata file, ignored: " + e.getMessage());
-            } finally {
-                if (metadataStream != null) {
+            List revs = listRevisionsWithMavenMetadata(
+                repository, mrid.getModuleId().getAttributes());
+            if (revs != null) {
+                Message.debug("\tfound revs: " + revs);
+                List rres = new ArrayList();
+                for (Iterator iter = revs.iterator(); iter.hasNext();) {
+                    String rev = (String) iter.next();
+                    String resolvedPattern = IvyPatternHelper.substitute(
+                        pattern, ModuleRevisionId.newInstance(mrid, rev), artifact);
                     try {
-                        metadataStream.close();
+                        Resource res = repository.getResource(resolvedPattern);
+                        if ((res != null) && res.exists()) {
+                            rres.add(new ResolvedResource(res, rev));
+                        }
                     } catch (IOException e) {
-                        // ignored
+                        Message.warn(
+                            "impossible to get resource from name listed by maven-metadata.xml:"
+                            + rres + ": " + e.getMessage());
                     }
                 }
+                return (ResolvedResource[]) rres.toArray(new ResolvedResource[rres.size()]);
+            } else {
+                // maven metadata not available or something went wrong, 
+                // use default listing capability
+                return super.listResources(repository, mrid, pattern, artifact);
             }
-            // maven metadata not available or something went wrong, use default listing capability
-            return super.listResources(repository, mrid, pattern, artifact);
         } else {
             return super.listResources(repository, mrid, pattern, artifact);
         }
+    }
+
+    private List listRevisionsWithMavenMetadata(Repository repository, Map tokenValues) {
+        List revs = null;
+        InputStream metadataStream = null;
+        try {
+            String metadataLocation = IvyPatternHelper.substituteTokens(
+                root + "[organisation]/[module]/maven-metadata.xml", tokenValues);
+            Resource metadata = repository.getResource(metadataLocation);
+            if (metadata.exists()) {
+                Message.verbose("\tlisting revisions from maven-metadata: " + metadata);
+                final List metadataRevs = new ArrayList();
+                metadataStream = metadata.openStream();
+                XMLHelper.parse(metadataStream, null, new ContextualSAXHandler() {
+                    public void endElement(String uri, String localName, String qName) 
+                            throws SAXException {
+                        if ("metadata/versioning/versions/version".equals(getContext())) {
+                            metadataRevs.add(getText().trim());
+                        }
+                        super.endElement(uri, localName, qName);
+                    }
+                }, null);
+                revs = metadataRevs;
+            } else {
+                Message.verbose("\tmaven-metadata not available: " + metadata);
+            }
+        } catch (IOException e) {
+            Message.verbose(
+                "impossible to access maven metadata file, ignored: " + e.getMessage());
+        } catch (SAXException e) {
+            Message.verbose(
+                "impossible to parse maven metadata file, ignored: " + e.getMessage());
+        } catch (ParserConfigurationException e) {
+            Message.verbose(
+                "impossible to parse maven metadata file, ignored: " + e.getMessage());
+        } finally {
+            if (metadataStream != null) {
+                try {
+                    metadataStream.close();
+                } catch (IOException e) {
+                    // ignored
+                }
+            }
+        }
+        return revs;
+    }
+    
+    protected void findTokenValues(Collection names, List patterns, Map tokenValues, String token) {
+        if (IvyPatternHelper.REVISION_KEY.equals(token)) {
+            String pattern = (String) patterns.get(0);
+            if (shouldUseMavenMetadata(pattern)) {
+                List revs = listRevisionsWithMavenMetadata(getRepository(), tokenValues);
+                if (revs != null) {
+                    names.addAll(filterNames(revs));
+                    return;
+                }
+            }
+        }
+        super.findTokenValues(names, patterns, tokenValues, token);
     }
 
     private boolean shouldUseMavenMetadata(String pattern) {
