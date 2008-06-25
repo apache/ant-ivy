@@ -277,6 +277,9 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
         listingIgnore.add(".cvsignore");
         listingIgnore.add("CVS");
         listingIgnore.add(".svn");
+        listingIgnore.add("maven-metadata.xml");
+        listingIgnore.add("maven-metadata.xml.md5");
+        listingIgnore.add("maven-metadata.xml.sha1");
 
         addSystemProperties();
     }
