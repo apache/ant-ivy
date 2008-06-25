@@ -57,12 +57,16 @@ public class FileRepository extends AbstractRepository {
         copy(source, getFile(destination), overwrite);
     }
     
-    public void move(File src, File dest) {
-        src.renameTo(dest);
+    public void move(File src, File dest) throws IOException {
+        if (!src.renameTo(dest)) {
+            throw new IOException("impossible to move '" + src + "' to '" + dest + "'");
+        }
     }
 
-    public void delete(File f) {
-        FileUtil.forceDelete(f);
+    public void delete(File f) throws IOException {
+        if (!FileUtil.forceDelete(f)) {
+            throw new IOException("impossible to delete '" + f + "'");
+        }
     }
 
     private void copy(File src, File destination, boolean overwrite) throws IOException {

@@ -20,6 +20,7 @@ package org.apache.ivy.plugins.resolver;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.io.IOException;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
@@ -594,6 +595,46 @@ public class FileSystemResolverTest extends AbstractDependencyResolverTest {
         }
     }
 
+    public void testPublishOverwrite() throws Exception {
+        try {
+            FileSystemResolver resolver = new FileSystemResolver();
+            resolver.setName("test");
+            resolver.setSettings(settings);
+            assertEquals("test", resolver.getName());
+
+            resolver.addIvyPattern(
+                "test/repositories/1/[organisation]/[module]/[revision]/[artifact].[ext]");
+            resolver.addArtifactPattern(
+                 "test/repositories/1/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]");
+
+            File ivyFile = new File("test/repositories/1/myorg/mymodule/myrevision/ivy.xml");
+            File artifactFile = new File("test/repositories/1/myorg/mymodule/myrevision/myartifact-myrevision.myext");
+            touch(ivyFile);
+            touch(artifactFile);
+            
+            ModuleRevisionId mrid = ModuleRevisionId.newInstance("myorg", "mymodule", "myrevision");
+            Artifact ivyArtifact = new DefaultArtifact(mrid, new Date(), "ivy", "ivy", "xml");
+            Artifact artifact = new DefaultArtifact(mrid, new Date(), "myartifact", "mytype",
+                    "myext");
+            File src = new File("test/repositories/ivysettings.xml");
+            resolver.beginPublishTransaction(mrid, true);
+            resolver.publish(ivyArtifact, src, true);
+            resolver.publish(artifact, src, true);
+            resolver.commitPublishTransaction();
+
+            long length = src.length();
+            assertEquals(length, ivyFile.length());
+            assertEquals(length, artifactFile.length());
+        } finally {
+            FileUtil.forceDelete(new File("test/repositories/1/myorg"));
+        }
+    }
+
+    private void touch(File file) throws IOException {
+        file.getParentFile().mkdirs();
+        file.createNewFile();
+    }
+
     public void testPublishTransaction() throws Exception {
         try {
             FileSystemResolver resolver = new FileSystemResolver();
@@ -780,7 +821,7 @@ public class FileSystemResolverTest extends AbstractDependencyResolverTest {
                 resolver.beginPublishTransaction(mrid, true);
                 
                 resolver.publish(artifact, src, true);
-                fail("publishing with transaction=true and overzrite mode should raise an exception");
+                fail("publishing with transaction=true and overwrite mode should raise an exception");
             } catch (IllegalStateException ex) {
                 assertTrue(ex.getMessage().indexOf("transactional") != -1);
             }

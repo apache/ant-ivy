@@ -66,10 +66,6 @@ public class FileSystemResolver extends RepositoryResolver {
     private Map/*<String,String>*/ fullTransactionPatterns = new HashMap();
 
     /**
-     * Is the current transaction open in overwrite mode?
-     */
-    private boolean overwriteTransaction = false;
-    /**
      * Location where files are published during the transaction
      */
     private File transactionTempDir;
@@ -100,7 +96,7 @@ public class FileSystemResolver extends RepositoryResolver {
     
 
     protected String getDestination(String pattern, Artifact artifact, ModuleRevisionId mrid) {
-        if (supportTransaction() && !overwriteTransaction) {
+        if (supportTransaction() && isTransactionStarted()) {
             
             String destPattern = (String) fullTransactionPatterns.get(pattern);
             if (destPattern == null) {
@@ -117,40 +113,69 @@ public class FileSystemResolver extends RepositoryResolver {
         }
     }
 
+    private boolean isTransactionStarted() {
+        return transactionTempDir != null;
+    }
+
     public void abortPublishTransaction() throws IOException {
-        if (supportTransaction() && !overwriteTransaction) {
-            if (transactionTempDir == null) {
+        if (supportTransaction()) {
+            if (!isTransactionStarted()) {
                 throw new IllegalStateException("no current transaction!");
             }
-            getFileRepository().delete(transactionTempDir);
-            Message.info("\tpublish aborted: deleted " + transactionTempDir);
-            closeTransaction();
+            try {
+                getFileRepository().delete(transactionTempDir);
+                Message.info("\tpublish aborted: deleted " + transactionTempDir);
+            } finally {
+                closeTransaction();
+            }
         }
     }
 
     public void commitPublishTransaction() throws IOException {
-        if (supportTransaction() && !overwriteTransaction) {
-            if (transactionTempDir == null) {
+        if (supportTransaction()) {
+            if (!isTransactionStarted()) {
                 throw new IllegalStateException("no current transaction!");
             }
-            getFileRepository().move(transactionTempDir, transactionDestDir);
-            Message.info("\tpublish commited: moved " + transactionTempDir 
-                + " \n\t\tto " + transactionDestDir);
-            closeTransaction();
+            try {
+                getFileRepository().move(transactionTempDir, transactionDestDir);
+                
+                Message.info("\tpublish commited: moved " + transactionTempDir 
+                    + " \n\t\tto " + transactionDestDir);
+            } catch (IOException ex) {
+                IOException commitEx;
+                try {
+                    getFileRepository().delete(transactionTempDir);
+                    commitEx = new IOException(
+                        "publish transaction commit error for " + transactionDestDir 
+                        + ": rolled back");
+                } catch (IOException deleteEx) {
+                    commitEx = new IOException(
+                        "publish transaction commit error for " + transactionDestDir 
+                        + ": rollback impossible either, "
+                        + "please remove " + transactionTempDir + " manually");
+                }
+                commitEx.initCause(ex);
+                throw commitEx;
+            } finally {
+                closeTransaction();
+            }
         }
     }
 
     public void beginPublishTransaction(
             ModuleRevisionId module, boolean overwrite) throws IOException {
         if (supportTransaction()) {
-            if (transactionTempDir != null) {
+            if (isTransactionStarted()) {
                 throw new IllegalStateException("a transaction is already started and not closed!");
             }
-            overwriteTransaction = overwrite;
-            if (overwriteTransaction) {
+            if (overwrite) {
                 unsupportedTransaction("overwrite transaction not supported yet");
             } else {
                 initTransaction(module);
+                Message.verbose(
+                    "\tstarting transaction: publish during transaction will be done in \n\t\t" 
+                    + transactionTempDir 
+                    + "\n\t\tand on commit moved to \n\t\t" + transactionDestDir);
             }
         }
     }
@@ -185,6 +210,7 @@ public class FileSystemResolver extends RepositoryResolver {
     
     private void checkSupportTransaction() {
         if (supportTransaction == null) {
+            supportTransaction = Boolean.FALSE;
             List ivyPatterns = getIvyPatterns();
             List artifactPatterns = getArtifactPatterns();
             
