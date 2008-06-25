@@ -1281,6 +1281,21 @@ public class ResolveTest extends TestCase {
         assertTrue(!getArchiveFileInCache("org2", "mod2.1", "0.3", "mod2.1", "jar", "jar").exists());
     }
 
+    public void testResolveWithIncludeArtifactsTransitive() throws Exception {
+        // test case for IVY-541
+        // mod2.6 depends on mod2.3 and mod2.1
+        // mod2.3 depends on mod2.1 and selects its artifacts
+        ResolveReport report = ivy.resolve(new File(
+                "test/repositories/1/org2/mod2.6/ivys/ivy-0.5.xml").toURL(),
+            getResolveOptions(new String[] {"*"}));
+        assertFalse(report.hasError());
+
+        assertTrue(getIvyFileInCache(
+            ModuleRevisionId.newInstance("org2", "mod2.1", "0.3")).exists());
+        assertTrue(getArchiveFileInCache("org2", "mod2.1", "0.3", "art21A", "jar", "jar").exists());
+        assertTrue(getArchiveFileInCache("org2", "mod2.1", "0.3", "art21B", "jar", "jar").exists());
+    }
+
     public void testResolveWithExcludesArtifacts() throws Exception {
         // mod2.3 depends on mod2.1 and selects its artifacts
         ResolveReport report = ivy.resolve(new File(

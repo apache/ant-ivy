@@ -90,6 +90,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - IMPROVEMENT: Change allownomd and skipbuildwithoutivy into a more semantically correct name (IVY-297)
 - IMPROVEMENT: Smarter determination if an expression is exact or not for RegexpPatternMatcher and GlobPatternMatcher
 
+- FIX: Transitive dependencies resolves incorrectly when different modules uses the same dependency with different configurations in the same build (IVY-541)
 - FIX: transitive attribute set to false because of dependency (IVY-105)
 - FIX: Wrong check for defaultCacheArtifactPattern (IVY-840)
 - FIX: NPE in ivy:install if ivy.settings.xml contains custom attribute for a module (IVY-838)

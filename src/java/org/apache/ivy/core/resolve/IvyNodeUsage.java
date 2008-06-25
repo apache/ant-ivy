@@ -26,6 +26,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.ivy.core.module.descriptor.DependencyArtifactDescriptor;
+import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
 import org.apache.ivy.core.module.descriptor.IncludeRule;
 
 /**
@@ -85,6 +86,16 @@ public class IvyNodeUsage {
         }
     }
     
+    private static final class Depender {
+        private DependencyDescriptor dd;
+        private String dependerConf;
+        
+        public Depender(DependencyDescriptor dd, String dependerConf) {
+            this.dd = dd;
+            this.dependerConf = dependerConf;
+        }
+    }
+    
     private IvyNode node;
 
     // Map (String rootConfName -> Set(String confName))
@@ -94,12 +105,8 @@ public class IvyNodeUsage {
 
     // Map (NodeConf in -> Set(String conf))
     private Map requiredConfs = new HashMap();
-
-    // Map (String rootModuleConf -> Set(DependencyArtifactDescriptor))
-    private Map dependencyArtifacts = new HashMap();
-
-    // Map (String rootModuleConf -> Set(IncludeRule))
-    private Map dependencyIncludes = new HashMap();
+    
+    private Map /*<String, Set<Depender>>*/ dependers = new HashMap();
     
     // Map (String rootModuleConf -> IvyNodeBlacklist)
     private Map blacklisted = new HashMap();
@@ -147,7 +154,7 @@ public class IvyNodeUsage {
         updateMapOfSetForKey(usage.rootModuleConfs, rootModuleConfs, rootModuleConf);
 
         // update dependencyArtifacts
-        updateMapOfSetForKey(usage.dependencyArtifacts, dependencyArtifacts, rootModuleConf);
+        updateMapOfSetForKey(usage.dependers, dependers, rootModuleConf);
     }
 
     private void updateMapOfSet(Map from, Map to) {
@@ -169,31 +176,62 @@ public class IvyNodeUsage {
         }
     }
 
-    protected void addDependencyArtifacts(String rootModuleConf,
-            DependencyArtifactDescriptor[] dependencyArtifacts) {
-        addObjectsForConf(rootModuleConf, Arrays.asList(dependencyArtifacts),
-            this.dependencyArtifacts);
-    }
-
-    protected void addDependencyIncludes(String rootModuleConf, IncludeRule[] rules) {
-        addObjectsForConf(rootModuleConf, Arrays.asList(rules), dependencyIncludes);
-    }
-
-    private void addObjectsForConf(String rootModuleConf, Collection objectsToAdd, Map map) {
+//    protected void addDependencyArtifacts(String rootModuleConf,
+//            DependencyArtifactDescriptor[] dependencyArtifacts) {
+//        addObjectsForConf(rootModuleConf, Arrays.asList(dependencyArtifacts),
+//            this.dependencyArtifacts);
+//    }
+//
+//    protected void addDependencyIncludes(String rootModuleConf, IncludeRule[] rules) {
+//        addObjectsForConf(rootModuleConf, Arrays.asList(rules), dependencyIncludes);
+//    }
+//
+    private void addObjectsForConf(String rootModuleConf, Object objectToAdd, Map map) {
         Set set = (Set) map.get(rootModuleConf);
         if (set == null) {
             set = new HashSet();
             map.put(rootModuleConf, set);
         }
-        set.addAll(objectsToAdd);
+        set.add(objectToAdd);
+    }
+
+    public void addUsage(String rootModuleConf, DependencyDescriptor dd, String parentConf) {
+        addObjectsForConf(rootModuleConf, new Depender(dd, parentConf), dependers);
     }
 
     protected Set getDependencyArtifactsSet(String rootModuleConf) {
-        return (Set) dependencyArtifacts.get(rootModuleConf);
+        Collection dependersInConf = (Collection) dependers.get(rootModuleConf);
+        if (dependersInConf == null) {
+            return null;
+        }
+        Set dependencyArtifacts = new HashSet();
+        for (Iterator iterator = dependersInConf.iterator(); iterator.hasNext();) {
+            Depender depender = (Depender) iterator.next();
+            DependencyArtifactDescriptor[] dads = 
+                depender.dd.getDependencyArtifacts(depender.dependerConf);
+            dependencyArtifacts.addAll(Arrays.asList(dads));
+        }
+        return dependencyArtifacts;
     }
 
     protected Set getDependencyIncludesSet(String rootModuleConf) {
-        return (Set) dependencyIncludes.get(rootModuleConf);
+        Collection dependersInConf = (Collection) dependers.get(rootModuleConf);
+        if (dependersInConf == null) {
+            return null;
+        }
+        Set dependencyIncludes = new HashSet();
+        for (Iterator iterator = dependersInConf.iterator(); iterator.hasNext();) {
+            Depender depender = (Depender) iterator.next();
+            IncludeRule[] rules = 
+                depender.dd.getIncludeRules(depender.dependerConf);
+            if (rules == null || rules.length == 0) {
+                // no include rule in at least one depender -> we must include everything, 
+                // and so return no include rule at all
+                return null;
+            }
+            dependencyIncludes.addAll(Arrays.asList(rules));
+        }
+        return dependencyIncludes;
     }
 
     protected void removeRootModuleConf(String rootModuleConf) {

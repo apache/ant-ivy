@@ -254,8 +254,7 @@ public class IvyNode implements Comparable {
         } else {
             DependencyDescriptor dd = getDependencyDescriptor(parent);
             if (dd != null) {
-                usage.addDependencyArtifacts(rootModuleConf, dd.getDependencyArtifacts(parentConf));
-                usage.addDependencyIncludes(rootModuleConf, dd.getIncludeRules(parentConf));
+                usage.addUsage(rootModuleConf, dd, parentConf);
             }
             return loaded;
         }
@@ -276,10 +275,7 @@ public class IvyNode implements Comparable {
         resolved.loadData(rootModuleConf, parent, parentConf, conf, shouldBePublic);
         DependencyDescriptor dd = getDependencyDescriptor(parent);
         if (dd != null) {
-            resolved.usage.addDependencyArtifacts(rootModuleConf, dd
-                    .getDependencyArtifacts(parentConf));
-            resolved.usage.addDependencyIncludes(rootModuleConf, dd
-                    .getIncludeRules(parentConf));
+            resolved.usage.addUsage(rootModuleConf, dd, parentConf);
         }
         
         data.replaceNode(getId(), resolved, rootModuleConf); // this actually discards the node
