@@ -136,6 +136,11 @@ public class FileSystemResolver extends RepositoryResolver {
             if (!isTransactionStarted()) {
                 throw new IllegalStateException("no current transaction!");
             }
+            if (transactionDestDir.exists()) {
+                throw new IOException(
+                    "impossible to commit transaction: transaction destination directory "
+                    + "already exists: " + transactionDestDir);
+            }
             try {
                 getFileRepository().move(transactionTempDir, transactionDestDir);
                 
@@ -172,10 +177,16 @@ public class FileSystemResolver extends RepositoryResolver {
                 unsupportedTransaction("overwrite transaction not supported yet");
             } else {
                 initTransaction(module);
-                Message.verbose(
-                    "\tstarting transaction: publish during transaction will be done in \n\t\t" 
-                    + transactionTempDir 
-                    + "\n\t\tand on commit moved to \n\t\t" + transactionDestDir);
+                if (transactionDestDir.exists()) {
+                    unsupportedTransaction(
+                        "transaction destination directory already exists: " + transactionDestDir);
+                    closeTransaction();
+                } else {
+                    Message.verbose(
+                        "\tstarting transaction: publish during transaction will be done in \n\t\t" 
+                        + transactionTempDir 
+                        + "\n\t\tand on commit moved to \n\t\t" + transactionDestDir);
+                }
             }
         }
     }
