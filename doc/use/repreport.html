@@ -33,6 +33,8 @@ Note that the set of modules for which you generate the report is determined by 
 
 Usually the most useful report is a graph, you can generate either a graphml file that you can then easily <a href="../yed.html">layout using yEd</a>, or a dot file which is the format recognized by graphviz, which is a free tool which does automatic graph layout, and can thus be used to generate automatically a GIF or PNG of the dependencies between all your modules.
 
+<strong>Limitation</strong>: this task requires to be able to browse the repository, and is thus limited to resolvers supporting repository listing. In particular, it means it doesn't work to report all organizations in a repository using m2compatible mode.
+
 <table class="ant">
 <thead>
     <tr><th class="ant-att">Attribute</th><th class="ant-desc">Description</th><th class="ant-req">Required</th></tr>

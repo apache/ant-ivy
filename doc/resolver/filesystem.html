@@ -36,6 +36,7 @@ This resolver uses the file system to resolve ivy files and artifacts. It presen
 The configuration of such a resolver is mainly done through ivy and artifact patterns, indicating where ivy files and artifacts can be found in the file system. You can indicate a list of pattern which will be checked one after the other.
 
 <span class="since">since 1.3</span> Using the m2compatible attribute, this resolver will convert dots found in organisation in slashes like maven2 does for groupId. For instance, it will transform the organisation from 'com.company' into 'com/company' when replacing the token [organisation] in your pattern.
+<strong>Limitation</strong>: in m2compatible mode, this resolver is not able list available organizations. It means some features like [[ant:repreport]] are not available.
 
 <h2>Atomic publish support</h2>
 <span class="since">since 2.0</span> This resolver supports atomic publish, which is very suitable for environments with a lot of concurrent publish and resolve. The atomic publish relies on the atomicity of the rename operation in the underlying filesystem (which includes NTFS and POSIX based filesystems).

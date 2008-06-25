@@ -44,6 +44,8 @@ This resolver usually uses ibiblio to find artifacts.
 
 <span class="since">since 2.0</span> When used in m2compatible mode with the default pattern, this resolver uses maven-metadata.xml files if present to list the revisions available on the repository. This is especially useful when using a maven specific proxy, which does not serve directory listing. This can be disable by using the useMavenMetadata flag.
 
+<strong>Limitation</strong>: in m2compatible mode, this resolver is not able list available organizations. It means some features like [[ant:repreport]] are not available.
+
 <h1>Attributes</h1>
 This resolver shares the <a href="../configuration/resolvers.html#common">common attributes</a> of standard resolvers.
 <table class="ivy-attributes">
