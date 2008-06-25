@@ -77,7 +77,6 @@ public class LatestCompatibleConflictManagerTest extends TestCase {
             .addMD("#B;2.3-> { #D;1.5 #E;1.0 }")
             .addMD("#B;2.4-> { #D;1.5 #E;2.0 }")
             .addMD("#B;2.5-> { #D;2.0 }")
-            .addMD("#B;2.5-> { #D;2.0 }")
             .addMD("#C;3.4-> { #D;[1.0,1.6] #E;1.0 }")
             .addMD("#C;3.5-> { #D;[1.0,1.6] #E;1.9 }")
             .addMD("#D;1.5").addMD("#D;1.6").addMD("#D;2.0")
@@ -129,7 +128,6 @@ public class LatestCompatibleConflictManagerTest extends TestCase {
             .addMD("#C;4.6->#D;2.5")
             .addMD("#D;3.0->#B;3.5") // circular dependency
             .addMD("#D;2.5->#B;3.4") // circular dependency
-            .addMD("#D;2.5").addMD("#D;3.0")
             .init();
         resolveAndAssert("#A;6", "#B;3.4, #C;4.6, #D;2.5");
     }
