@@ -3002,6 +3002,26 @@ public class ResolveTest extends TestCase {
         assertTrue(!getArchiveFileInCache("org1", "mod1.2", "2.0", "mod1.2", "jar", "jar").exists());
     }
 
+    public void testTransitiveSetting2() throws Exception {
+        // test case for IVY-105
+        // mod2.7 depends on mod1.1 and mod2.4
+        // mod2.4 depends on mod1.1 with transitive set to false
+        // mod1.1 depends on mod1.2
+        ResolveReport report = ivy.resolve(new File(
+                "test/repositories/1/org2/mod2.7/ivys/ivy-0.6.xml").toURL(),
+            getResolveOptions(new String[] {"*"}));
+        assertFalse(report.hasError());
+
+        // dependencies
+        assertTrue(getIvyFileInCache(
+            ModuleRevisionId.newInstance("org1", "mod1.1", "1.0")).exists());
+        assertTrue(getArchiveFileInCache("org1", "mod1.1", "1.0", "mod1.1", "jar", "jar").exists());
+
+        assertTrue(getIvyFileInCache(
+            ModuleRevisionId.newInstance("org1", "mod1.2", "2.0")).exists());
+        assertTrue(getArchiveFileInCache("org1", "mod1.2", "2.0", "mod1.2", "jar", "jar").exists());
+    }
+
     public void testResolverDirectlyUsingCache() throws Exception {
         Ivy ivy = new Ivy();
         ivy.configure(ResolveTest.class.getResource("badcacheconf.xml"));

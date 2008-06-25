@@ -49,7 +49,6 @@ import org.apache.ivy.core.module.descriptor.DefaultDependencyDescriptor;
 import org.apache.ivy.core.module.descriptor.DefaultModuleDescriptor;
 import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
-import org.apache.ivy.core.module.id.ModuleId;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.report.ArtifactDownloadReport;
 import org.apache.ivy.core.report.ConfigurationResolveReport;
@@ -707,6 +706,7 @@ public class ResolveEngine {
                     fetchDependencies(dep, confs[i], false);
                 }
             }
+            markDependenciesFetched(node.getNode(), conf);
         }
         // we have finiched with this configuration, if it was the original requested conf
         // we can clean it now
@@ -726,15 +726,20 @@ public class ResolveEngine {
      * @return true if we've already fetched this dependency
      */
     private boolean isDependenciesFetched(IvyNode node, String conf) {
-        ModuleId moduleId = node.getModuleId();
-        ModuleRevisionId moduleRevisionId = node.getResolvedId();
-        String key = moduleId.getOrganisation() + "|" + moduleId.getName() + "|"
-                + moduleRevisionId.getRevision() + "|" + conf;
-        if (fetchedSet.contains(key)) {
-            return true;
-        }
+        String key = getDependenciesFetchedKey(node, conf);
+        return fetchedSet.contains(key);
+    }
+    
+    private void markDependenciesFetched(IvyNode node, String conf) {
+        String key = getDependenciesFetchedKey(node, conf);
         fetchedSet.add(key);
-        return false;
+    }
+
+    private String getDependenciesFetchedKey(IvyNode node, String conf) {
+        ModuleRevisionId moduleRevisionId = node.getResolvedId();
+        String key = moduleRevisionId.getOrganisation() + "|" + moduleRevisionId.getName() + "|"
+                + moduleRevisionId.getRevision() + "|" + conf;
+        return key;
     }
 
     private void resolveConflict(VisitNode node, String conf) {
