@@ -73,9 +73,9 @@ public class FileRepository extends AbstractRepository {
         try {
             getProgressListener().setTotalLength(new Long(src.length()));
             if (!FileUtil.copy(src, destination, getProgressListener(), overwrite)) {
-                if (!overwrite) {
+                if (!overwrite && destination.exists()) {
                     throw new IOException("file copy not done from " + src + " to " + destination
-                            + ": destination probably already exists and overwrite is false");
+                            + ": destination already exists and overwrite is false");
                 } else {
                     throw new IOException("file copy not done from " + src + " to " + destination);
                 }
