@@ -26,11 +26,9 @@
         <include name="${archive}/${name}.jar"/>
     </resource>
 
-	<!-- 
     <m2resource repo="file://${user.dir}/../../../../website/m2repo" groupId="org.apache.ivy" artifactId="foobar">
         <artifact classifier="janfu" sha1="da39a3ee5e6b4b0d3255bfef95601890afd80709" tofile="artifacts/jars/foobar-janfu.jar"/>
     </m2resource>
- 	-->
 
     <build>
         <move file="extract/${archive}/${name}.jar" todir="artifacts/jars"/>

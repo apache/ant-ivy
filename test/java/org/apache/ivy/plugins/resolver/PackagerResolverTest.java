@@ -36,7 +36,6 @@ import org.apache.ivy.core.resolve.ResolvedModuleRevision;
 import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.core.sort.SortEngine;
 import org.apache.ivy.plugins.resolver.packager.PackagerResolver;
-import org.apache.ivy.plugins.resolver.packager.SubProcess;
 import org.apache.ivy.util.FileUtil;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.Copy;
@@ -154,7 +153,6 @@ public class PackagerResolverTest extends AbstractDependencyResolverTest {
         assertEquals(DownloadStatus.NO, ar.getDownloadStatus());
 
         // Now download the maven2 artifact
-        /*
         artifact = DefaultArtifact.cloneWithAnotherName(artifact, "foobar-janfu");
         report = resolver.download(new Artifact[] {artifact}, downloadOptions());
         assertNotNull(report);
@@ -166,6 +164,5 @@ public class PackagerResolverTest extends AbstractDependencyResolverTest {
 
         assertEquals(artifact, ar.getArtifact());
         assertEquals(DownloadStatus.SUCCESSFUL, ar.getDownloadStatus());
-        */
     }
 }
