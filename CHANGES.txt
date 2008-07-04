@@ -35,6 +35,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 	Matt Inger
 	Anders Janmyr
 	Christer Jonsson
+	Michael Kebe
 	Matthias Kilian
 	Gregory Kisling
 	Tat Leung
@@ -90,6 +91,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - IMPROVEMENT: Change allownomd and skipbuildwithoutivy into a more semantically correct name (IVY-297)
 - IMPROVEMENT: Smarter determination if an expression is exact or not for RegexpPatternMatcher and GlobPatternMatcher
 
+- FIX: Maven version ranges with ( ) are not supported (IVY-678) (thanks to Michael Kebe)
 - FIX: Ignore maven metadata files when listing revisions (IVY-765)
 - FIX: haltonmissing on publish task does not prevent the other files to be published, even with an atomic publisher (IVY-656)
 - FIX: Transitive dependencies resolves incorrectly when different modules uses the same dependency with different configurations in the same build (IVY-541)

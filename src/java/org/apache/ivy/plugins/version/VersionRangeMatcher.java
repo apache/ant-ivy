@@ -42,10 +42,12 @@ public class VersionRangeMatcher extends AbstractVersionMatcher {
     private static final String OPEN_INC = "[";
 
     private static final String OPEN_EXC = "]";
+    private static final String OPEN_EXC_MAVEN = "(";
 
     private static final String CLOSE_INC = "]";
 
     private static final String CLOSE_EXC = "[";
+    private static final String CLOSE_EXC_MAVEN = ")";
 
     private static final String LOWER_INFINITE = "(";
 
@@ -56,11 +58,13 @@ public class VersionRangeMatcher extends AbstractVersionMatcher {
     // following patterns are built upon constants above and should not be modified
     private static final String OPEN_INC_PATTERN = "\\" + OPEN_INC;
 
-    private static final String OPEN_EXC_PATTERN = "\\" + OPEN_EXC;
+    private static final String OPEN_EXC_PATTERN = "[" + "\\" + OPEN_EXC 
+                                                        + "\\" + OPEN_EXC_MAVEN + "]";
 
     private static final String CLOSE_INC_PATTERN = "\\" + CLOSE_INC;
 
-    private static final String CLOSE_EXC_PATTERN = "\\" + CLOSE_EXC;
+    private static final String CLOSE_EXC_PATTERN = "[" + "\\" + CLOSE_EXC 
+                                                        + "\\" + CLOSE_EXC_MAVEN + "]";
 
     private static final String LI_PATTERN = "\\" + LOWER_INFINITE;
 

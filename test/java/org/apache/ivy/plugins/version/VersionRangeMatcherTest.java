@@ -27,12 +27,31 @@ public class VersionRangeMatcherTest extends TestCase {
 
     public VersionRangeMatcherTest() {
     }
+    
+    public void testMavenExcludeParenthesis() throws Exception {
+        assertAccept("[3.8,4.0)", "3.7", false);
+        assertAccept("[3.8,4.0)", "3.8", true);
+        assertAccept("[3.8,4.0)", "3.9", true);
+        assertAccept("[3.8,4.0)", "4.0", false);
+        assertAccept("[3.8,4.0)", "4.1", false);
+        
+        assertAccept("(3.8,4.0]", "3.7", false);
+        assertAccept("(3.8,4.0]", "3.8", false);
+        assertAccept("(3.8,4.0]", "3.9", true);
+        assertAccept("(3.8,4.0]", "4.0", true);
+        assertAccept("(3.8,4.0]", "4.1", false);
+        
+        assertAccept("(3.8,4.0)", "3.7", false);
+        assertAccept("(3.8,4.0)", "3.8", false);
+        assertAccept("(3.8,4.0)", "3.9", true);
+        assertAccept("(3.8,4.0)", "4.0", false);
+        assertAccept("(3.8,4.0)", "4.1", false);
+    }
 
     public void testDynamic() {
         assertDynamic("lastest.integration", false);
         assertDynamic("[1.0]", false);
         assertDynamic("(1.0)", false);
-        assertDynamic("(1.0,2.0)", false);
         assertDynamic("[1.0;2.0]", false);
 
         assertDynamic("[1.0,2.0]", true);
@@ -42,6 +61,9 @@ public class VersionRangeMatcherTest extends TestCase {
         assertDynamic("[1.0,)", true);
         assertDynamic("(,1.0]", true);
 
+        assertDynamic("(1.0, 2.0)", true);
+        assertDynamic("(1.0, 2.0]", true);
+        assertDynamic("[1.0, 2.0)", true);
         assertDynamic("[1.0, 2.0]", true);
         assertDynamic("[ 1.0, 2.0]", true);
         assertDynamic("[1.0, 2.0 ]", true);
