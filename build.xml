@@ -414,6 +414,7 @@
                 source="${ivy.minimum.javaversion}"
                 target="${ivy.minimum.javaversion}"
                 debug="${debug.mode}"
+                encoding="ISO-8859-1"
                 includeantruntime="no" />
         <copy todir="${test.build.dir}">
             <fileset dir="${test.dir}">
