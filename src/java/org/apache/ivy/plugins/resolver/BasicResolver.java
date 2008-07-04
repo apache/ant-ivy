@@ -241,7 +241,8 @@ public abstract class BasicResolver extends AbstractResolver {
                         throw new UnresolvedDependencyException();
                     }
                 }
-                if (!rmr.getReport().isDownloaded()) {
+                if (!rmr.getReport().isDownloaded() 
+                        && rmr.getReport().getLocalFile() != null) {
                     return toSystem(rmr);
                 } else {
                     nsMd = rmr.getDescriptor();
@@ -264,16 +265,8 @@ public abstract class BasicResolver extends AbstractResolver {
                             checkDescriptorConsistency(systemMrid, systemMd, ivyRef);
                         }
                     }
-                    MetadataArtifactDownloadReport madr = 
-                        new MetadataArtifactDownloadReport(systemMd.getMetadataArtifact());
-                    madr.setDownloadStatus(rmr.getReport().getDownloadStatus());
-                    madr.setDownloadDetails(rmr.getReport().getDownloadDetails());
-                    madr.setArtifactOrigin(rmr.getReport().getArtifactOrigin());
-                    madr.setDownloadTimeMillis(rmr.getReport().getDownloadTimeMillis());
-                    madr.setSize(rmr.getReport().getSize());
-                    madr.setOriginalLocalFile(rmr.getReport().getOriginalLocalFile());
-                    madr.setSearched(true);
-                    rmr = new ResolvedModuleRevision(this, this, systemMd, madr);
+                    rmr = new ResolvedModuleRevision(
+                        this, this, systemMd, toSystem(rmr.getReport()));
                 }
             }
 

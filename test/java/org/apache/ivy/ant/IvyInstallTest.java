@@ -59,6 +59,7 @@ public class IvyInstallTest extends TestCase {
 
     private void cleanInstall() {
         FileUtil.forceDelete(new File("build/test/install"));
+        FileUtil.forceDelete(new File("build/test/install2"));
     }
 
     public void testInstallDummyDefault() {
@@ -79,6 +80,25 @@ public class IvyInstallTest extends TestCase {
 
         assertTrue(new File("build/test/install/org1/mod1.2/ivy-2.2.xml").exists());
         assertTrue(new File("build/test/install/org1/mod1.2/mod1.2-2.2.jar").exists());
+    }
+
+    public void testIVY843() {
+        project.setProperty("ivy.settings.file", "test/repositories/ivysettings-IVY843.xml");
+        install.setOrganisation("org1");
+        install.setModule("mod1.4");
+        install.setRevision("1.0.1");
+        install.setFrom("test");
+        install.setTo("install");
+
+        install.execute();
+        
+        cleanCache();
+        
+        install.setFrom("install");
+        install.setTo("install2");
+        install.execute();
+
+        assertTrue(new File("build/test/install2/org1/mod1.4/ivy-1.0.1.xml").exists());
     }
 
     public void testInstallWithBranch() {

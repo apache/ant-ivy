@@ -26,6 +26,7 @@ import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ArtifactId;
 import org.apache.ivy.core.module.id.ModuleId;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
+import org.apache.ivy.core.report.MetadataArtifactDownloadReport;
 import org.apache.ivy.core.resolve.ResolvedModuleRevision;
 
 public final class NameSpaceHelper {
@@ -54,7 +55,8 @@ public final class NameSpaceHelper {
             return rmr;
         }
         return new ResolvedModuleRevision(
-            rmr.getResolver(), rmr.getArtifactResolver(), md, rmr.getReport());
+            rmr.getResolver(), rmr.getArtifactResolver(), md, 
+            transform(rmr.getReport(), ns.getToSystemTransformer()));
     }
 
     public static Artifact transform(Artifact artifact, NamespaceTransformer t) {
@@ -68,6 +70,24 @@ public final class NameSpaceHelper {
         return new DefaultArtifact(mrid, artifact.getPublicationDate(), artifact.getName(),
                 artifact.getType(), artifact.getExt(), artifact.getUrl(), artifact
                         .getQualifiedExtraAttributes());
+    }
+
+    public static MetadataArtifactDownloadReport transform(
+            MetadataArtifactDownloadReport report, NamespaceTransformer t) {
+        if (t.isIdentity()) {
+            return report;
+        }
+        MetadataArtifactDownloadReport madr = 
+            new MetadataArtifactDownloadReport(transform(report.getArtifact(), t));
+        madr.setSearched(report.isSearched());
+        madr.setDownloadStatus(report.getDownloadStatus());
+        madr.setDownloadDetails(report.getDownloadDetails());
+        madr.setArtifactOrigin(report.getArtifactOrigin());
+        madr.setDownloadTimeMillis(report.getDownloadTimeMillis());
+        madr.setOriginalLocalFile(report.getOriginalLocalFile());
+        madr.setLocalFile(report.getLocalFile());
+        madr.setSize(report.getSize());
+        return madr;
     }
 
     public static ArtifactId transform(ArtifactId artifactId, NamespaceTransformer t) {

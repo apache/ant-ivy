@@ -40,6 +40,7 @@ import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.report.ArtifactDownloadReport;
 import org.apache.ivy.core.report.DownloadReport;
 import org.apache.ivy.core.report.DownloadStatus;
+import org.apache.ivy.core.report.MetadataArtifactDownloadReport;
 import org.apache.ivy.core.resolve.DownloadOptions;
 import org.apache.ivy.core.resolve.IvyNode;
 import org.apache.ivy.core.resolve.ResolveData;
@@ -288,6 +289,10 @@ public abstract class AbstractResolver
 
     protected Artifact toSystem(Artifact artifact) {
         return NameSpaceHelper.transform(artifact, getNamespace().getToSystemTransformer());
+    }
+
+    protected MetadataArtifactDownloadReport toSystem(MetadataArtifactDownloadReport report) {
+        return NameSpaceHelper.transform(report, getNamespace().getToSystemTransformer());
     }
 
     protected ResolvedModuleRevision toSystem(ResolvedModuleRevision rmr) {
