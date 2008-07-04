@@ -218,6 +218,27 @@ public class IvyRetrieveTest extends TestCase {
             "mod1.2", "jar", "jar")).exists());
     }
     
+    public void testUseOriginWithIvyPattern() throws Exception {
+        // mod2.5 depends on virtual mod2.3 which depends on mod2.1 which depends on mod1.1 which
+        // depends on mod1.2
+        project.setProperty("ivy.dep.file", "test/repositories/1/org2/mod2.5/ivys/ivy-0.6.1.xml");
+
+        String ivyPattern = IVY_RETRIEVE_PATTERN;
+
+        retrieve.setIvypattern(ivyPattern);
+        retrieve.setUseOrigin(true);
+        retrieve.execute();
+
+        assertTrue(new File(IvyPatternHelper.substitute(ivyPattern, "org2", "mod2.3", "0.4.1",
+            "ivy", "ivy", "xml")).exists());
+        assertTrue(new File(IvyPatternHelper.substitute(ivyPattern, "org2", "mod2.1", "0.3", "ivy",
+            "ivy", "xml")).exists());
+        assertTrue(new File(IvyPatternHelper.substitute(ivyPattern, "org1", "mod1.1", "1.0", "ivy",
+            "ivy", "xml")).exists());
+        assertFalse(new File(IvyPatternHelper.substitute(ivyPattern, "org1", "mod1.2", "2.0",
+            "ivy", "ivy", "xml")).exists());
+    }
+    
     public void testRetrieveWithOriginalNamePattern() throws Exception {
         retrieve.setFile(new File("test/java/org/apache/ivy/ant/ivy-631.xml"));
         retrieve.setConf("default");
