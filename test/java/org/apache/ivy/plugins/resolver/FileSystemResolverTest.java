@@ -660,7 +660,7 @@ public class FileSystemResolverTest extends AbstractDependencyResolverTest {
 
             resolver.publish(artifact, src, false);
             assertFalse(new File(
-                "test/repositories/1/myorg/mymodule/mytypes/myartifact-myrevision.myext")
+                "test/repositories/1/myorg/mymodule/myrevision/myartifact-myrevision.myext")
                 .exists());
 
             resolver.commitPublishTransaction();
@@ -712,6 +712,45 @@ public class FileSystemResolverTest extends AbstractDependencyResolverTest {
             FileUtil.forceDelete(new File("test/repositories/1/myorg"));
         }
     }
+    
+    public void testPublishTransactionWithSubDirectories() throws Exception {
+        try {
+            FileSystemResolver resolver = new FileSystemResolver();
+            resolver.setName("test");
+            resolver.setSettings(settings);
+
+            resolver.addIvyPattern(
+                "test/repositories/1/[organisation]/[module]/[revision]/[type]/[artifact].[ext]");
+            resolver.addArtifactPattern(
+                 "test/repositories/1/[organisation]/[module]/[revision]/[type]/[artifact]-[revision].[ext]");
+
+            ModuleRevisionId mrid = ModuleRevisionId.newInstance("myorg", "mymodule", "myrevision");
+            Artifact ivyArtifact = new DefaultArtifact(mrid, new Date(), "ivy", "ivy", "xml");
+            Artifact artifact = new DefaultArtifact(mrid, new Date(), "myartifact", "mytype",
+                    "myext");
+            File src = new File("test/repositories/ivysettings.xml");
+            
+            resolver.beginPublishTransaction(mrid, false);
+            
+            // files should not be available until the transaction is committed
+            resolver.publish(ivyArtifact, src, false);
+            assertFalse(new File("test/repositories/1/myorg/mymodule/myrevision/ivy/ivy.xml").exists());
+
+            resolver.publish(artifact, src, false);
+            assertFalse(new File(
+                "test/repositories/1/myorg/mymodule/myrevision/mytype/myartifact-myrevision.myext")
+                .exists());
+
+            resolver.commitPublishTransaction();
+
+            assertTrue(new File("test/repositories/1/myorg/mymodule/myrevision/ivy/ivy.xml").exists());
+            assertTrue(
+                new File("test/repositories/1/myorg/mymodule/myrevision/mytype/myartifact-myrevision.myext").exists());
+        } finally {
+            FileUtil.forceDelete(new File("test/repositories/1/myorg"));
+        }
+    }
+
 
     public void testAbortTransaction() throws Exception {
         try {

@@ -39,7 +39,7 @@ public class FileSystemResolver extends RepositoryResolver {
 
     private static final String TRANSACTION_DESTINATION_SUFFIX = ".part";
     private static final Pattern TRANSACTION_PATTERN = 
-        Pattern.compile("(.*\\[revision\\])([/\\\\][^/\\\\]+)");
+        Pattern.compile("(.*[/\\\\]\\[revision\\])([/\\\\].+)");
     
     /**
      * Transactional mode.
@@ -139,7 +139,8 @@ public class FileSystemResolver extends RepositoryResolver {
             if (transactionDestDir.exists()) {
                 throw new IOException(
                     "impossible to commit transaction: transaction destination directory "
-                    + "already exists: " + transactionDestDir);
+                    + "already exists: " + transactionDestDir
+                    + "\npossible cause: usage of identifying tokens after the revision token");
             }
             try {
                 getFileRepository().move(transactionTempDir, transactionDestDir);
@@ -179,13 +180,14 @@ public class FileSystemResolver extends RepositoryResolver {
                 initTransaction(module);
                 if (transactionDestDir.exists()) {
                     unsupportedTransaction(
-                        "transaction destination directory already exists: " + transactionDestDir);
+                        "transaction destination directory already exists: " + transactionDestDir
+                        + "\npossible cause: usage of identifying tokens after the revision token");
                     closeTransaction();
                 } else {
                     Message.verbose(
                         "\tstarting transaction: publish during transaction will be done in \n\t\t" 
                         + transactionTempDir 
-                        + "\n\t\tand on commit moved to \n\t\t" + transactionDestDir);
+                        + "\n\tand on commit moved to \n\t\t" + transactionDestDir);
                 }
             }
         }
@@ -229,7 +231,7 @@ public class FileSystemResolver extends RepositoryResolver {
                 String pattern = (String) ivyPatterns.get(0);
                 Matcher m = TRANSACTION_PATTERN.matcher(pattern);
                 if (!m.matches()) {
-                    unsupportedTransaction("ivy pattern does not use revision as last directory");
+                    unsupportedTransaction("ivy pattern does not use revision as a directory");
                     return;
                 } else {
                     baseTransactionPattern = m.group(1);
@@ -241,7 +243,7 @@ public class FileSystemResolver extends RepositoryResolver {
                 String pattern = (String) artifactPatterns.get(0);
                 Matcher m = TRANSACTION_PATTERN.matcher(pattern);
                 if (!m.matches()) {
-                    unsupportedTransaction("ivy pattern does not use revision as last directory");
+                    unsupportedTransaction("artifact pattern does not use revision as a directory");
                     return;
                 } else if (baseTransactionPattern != null) {
                     if (!baseTransactionPattern.equals(m.group(1))) {
