@@ -78,7 +78,7 @@ public class DualResolver extends AbstractResolver {
             }
         } else {
             return new ResolvedModuleRevision(
-                mr.getResolver(), this, mr.getDescriptor(), mr.getReport());
+                mr.getResolver(), this, mr.getDescriptor(), mr.getReport(), mr.isForce());
         }
     }
 

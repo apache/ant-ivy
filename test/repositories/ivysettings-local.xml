@@ -22,6 +22,10 @@
 	<caches defaultCacheDir="${cache.dir}" />
 	<resolvers>
 		<chain name="test">
+			<filesystem name="local" force="true">
+				<ivy pattern="${ivy.settings.dir}/local/[module]/[revision]/ivy.xml"/>
+				<artifact pattern="${ivy.settings.dir}/local/[module]/[revision]/[artifact].[ext]"/>
+			</filesystem>
 			<filesystem name="1">
 				<ivy pattern="${ivy.settings.dir}/1/[organisation]/[module]/ivys/ivy-[revision].xml"/>
 				<artifact pattern="${ivy.settings.dir}/1/[organisation]/[module]/[type]s/[artifact]-[revision].[ext]"/>
@@ -36,13 +40,5 @@
 				</filesystem>
 			</dual>
 		</chain>
-		<filesystem name="install">
-			<ivy pattern="build/test/install/[organisation]/[module]/[artifact]-[revision].[ext]"/>
-			<artifact pattern="build/test/install/[organisation]/[module]/[artifact]-[revision].[ext]"/>
-		</filesystem>
-		<filesystem name="transactional">
-			<ivy pattern="build/test/transactional/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]"/>
-			<artifact pattern="build/test/transactional/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]"/>
-		</filesystem>
 	</resolvers>
 </ivysettings>

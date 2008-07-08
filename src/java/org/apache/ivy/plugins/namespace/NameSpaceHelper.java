@@ -56,7 +56,8 @@ public final class NameSpaceHelper {
         }
         return new ResolvedModuleRevision(
             rmr.getResolver(), rmr.getArtifactResolver(), md, 
-            transform(rmr.getReport(), ns.getToSystemTransformer()));
+            transform(rmr.getReport(), ns.getToSystemTransformer()),
+            rmr.isForce());
     }
 
     public static Artifact transform(Artifact artifact, NamespaceTransformer t) {

@@ -186,19 +186,20 @@ public class IvyNode implements Comparable {
                                     + module.getResolver().getName());
                         }
 
-                        if (settings.getVersionMatcher().isDynamic(getId())) {
-                            // IVY-56: check if revision has actually been resolved
-                            if (settings.getVersionMatcher().isDynamic(module.getId())) {
-                                Message.error("impossible to resolve dynamic revision for "
-                                    + getId() + ": check your configuration and "
-                                    + "make sure revision is part of your pattern");
-                                problem = new RuntimeException(
-                                        "impossible to resolve dynamic revision");
-                                return false;
-                            }
+                        // IVY-56: check if revision has actually been resolved
+                        if (settings.getVersionMatcher().isDynamic(getId()) 
+                                && settings.getVersionMatcher().isDynamic(module.getId())) {
+                            Message.error("impossible to resolve dynamic revision for "
+                                + getId() + ": check your configuration and "
+                                + "make sure revision is part of your pattern");
+                            problem = new RuntimeException(
+                            "impossible to resolve dynamic revision");
+                            return false;
+                        }
+                        if (!getId().equals(module.getId())) {
                             IvyNode resolved = data.getNode(module.getId());
                             if (resolved != null) {
-                                // exact revision has already been resolved
+                                // found revision has already been resolved
                                 // => update it and discard this node
                                 md = module.getDescriptor(); // needed for handleConfiguration
                                 if (!handleConfiguration(loaded, rootModuleConf, parent,
@@ -211,37 +212,35 @@ public class IvyNode implements Comparable {
 
                                 return true;
                             }
+                            String log = "\t[" + module.getId().getRevision() + "] " + getId();
+                            if (!settings.getVersionMatcher().isDynamic(getId())) {
+                                log += " (forced)";
+                            }
+                            if (settings.logResolvedRevision()) {
+                                Message.info(log);
+                            } else {
+                                Message.verbose(log);
+                            }
                         }
                         downloaded = module.getReport().isDownloaded();
                         searched = module.getReport().isSearched();
+                        loaded = true;
+                        
+                        md = module.getDescriptor();
+                        confsToFetch.remove("*");
+                        updateConfsToFetch(Arrays.asList(resolveSpecialConfigurations(
+                            getRequiredConfigurations(parent, parentConf), this)));
                     } else {
                         Message.warn("\tmodule not found: " + getId());
                         resolver.reportFailure();
                         problem = new RuntimeException("not found");
+                        return false;
                     }
                 } catch (ResolveProcessException e) {
                     throw e;
                 } catch (Exception e) {
-                    e.printStackTrace();
                     problem = e;
-                }
-
-                // still not resolved, report error
-                if (module == null) {
                     return false;
-                } else {
-                    loaded = true;
-                    if (settings.getVersionMatcher().isDynamic(getId())) {
-                        if (settings.logResolvedRevision()) {
-                            Message.info("\t[" + module.getId().getRevision() + "] " + getId());
-                        } else {
-                            Message.verbose("\t[" + module.getId().getRevision() + "] " + getId());
-                        }
-                    }
-                    md = module.getDescriptor();
-                    confsToFetch.remove("*");
-                    updateConfsToFetch(Arrays.asList(resolveSpecialConfigurations(
-                        getRequiredConfigurations(parent, parentConf), this)));
                 }
             } else {
                 loaded = true;

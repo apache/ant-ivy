@@ -74,8 +74,26 @@ Here is the list of built-in resolvers:
 </tbody>
 </table>
 
-<h1><a name="common">Common attributes</a></h1>
-All resolvers of the same type share some common attributes detailed here:
+<h1><a name="common">Common features and attributes</a></h1>
+All resolvers of the same type share some common features and attributes detailed here.
+<h2>Features</h2>
+<h3>validation</h3>
+All standard resolvers support several options for validation.
+
+The validate attribute is used to configure if Ivy files should be checked against the Ivy file xml schema.
+
+The checkconsistency attribute allow to enable or disable consistency checking between what is expected by Ivy when it finds a module descriptor, and what the module descriptor actually contains.
+
+The descriptor attribute let one define if module descriptors are mandatory or optional.
+
+The checksums attribute is used to define the list of checksums files to use to check the content of downloaded files has not been corrupted (eg during transfer).
+<h3>force</h3>
+Any standard resolver can be used in force mode, which is used mainly to handle local development builds. In force mode, the resolver attempts to find a dependency whatever the requested revision is (internally it replace the requested revision by 'latest.integration'), and if it finds one, it forces this revision to be returned, even when used in a chain with returnFirst=false.
+
+By using such a resolver at the beginning of a chain, you can be sure that Ivy will pick up whatever module is available in this resolver (usually a private local build) instead of the real requested revision. This allows to handle use case like a developer working on modules A and C, where A -> B -> C, and pick up the local build for C without having to publish a local version of B.
+<span class="since">since 2.0</span>
+
+<h2>Attributes</h2>
 <table class="ivy-attributes">
 <thead>
     <tr><th class="ivy-att">Attribute</th><th class="ivy-att-desc">Description</th><th class="ivy-att-req">Required</th><th>Composite</th><th>Standard</th></tr>
@@ -89,6 +107,11 @@ All resolvers of the same type share some common attributes detailed here:
     <tr><td>validate</td><td>indicates if resolved ivy files should be validated against ivy xsd</td>
         <td>No, defaults to call setting</td>
         <td>Yes</td>
+        <td>Yes</td>
+    </tr>
+    <tr><td>force</td><td>Indicates if this resolver should be used in force mode (see above). <span class="since">since 2.0</span></td>
+        <td>No, defaults to false</td>
+        <td>No</td>
         <td>Yes</td>
     </tr>
     <tr><td>checkmodified</td><td>Indicates if this resolver should check lastmodified date to know if an ivy file is up to date.</td>
@@ -121,8 +144,8 @@ All resolvers of the same type share some common attributes detailed here:
         <td>No</td>
         <td>Yes</td>
     </tr>
-    <tr><td>descriptor</td><td>optional if a module descriptor (usually an ivy file) is optional for this resolver, required to refuse modules without module descriptor <span class="since">since 2.0</span></td>
-        <td>No, defaults to optional</td>
+    <tr><td>descriptor</td><td>'optional' if a module descriptor (usually an ivy file) is optional for this resolver, 'required' to refuse modules without module descriptor <span class="since">since 2.0</span></td>
+        <td>No, defaults to 'optional'</td>
         <td>No (except dual)</td>
         <td>Yes</td>
     </tr>

@@ -768,6 +768,102 @@ public class ResolveTest extends TestCase {
             cacheMgr2.getArchiveFileInCache(depArtifact));
     }
 
+    public void testForceLocal() throws Exception {
+        // mod2.1 depends on mod1.1 which depends on mod1.2
+        // a local build for mod1.2 is available
+        Ivy ivy = new Ivy();
+        ivy.configure(new File("test/repositories/ivysettings-local.xml"));
+        ResolveReport report = ivy.resolve(new File(
+                "test/repositories/1/org2/mod2.1/ivys/ivy-0.3.xml").toURL(),
+            getResolveOptions(new String[] {"*"}));
+        assertFalse(report.hasError());
+
+        // dependencies
+        assertTrue(getIvyFileInCache(
+            ModuleRevisionId.newInstance("org1", "mod1.1", "1.0")).exists());
+        assertTrue(getArchiveFileInCache("org1", "mod1.1", "1.0", "mod1.1", "jar", "jar").exists());
+
+        assertTrue(getIvyFileInCache(
+            ModuleRevisionId.newInstance("org1", "mod1.2", "local-20080708091023")).exists());
+        assertTrue(getArchiveFileInCache("org1", "mod1.2", "local-20080708091023", 
+                                         "mod1.2", "jar", "jar").exists());
+
+        assertTrue(getArchiveFileInCache("org1", "mod1.3", "3.0", "mod1.3-A", "jar", "jar")
+            .exists());
+
+        assertFalse(getIvyFileInCache(
+            ModuleRevisionId.newInstance("org1", "mod1.2", "2.0")).exists());
+        assertFalse(getArchiveFileInCache("org1", "mod1.2", "2.0", "mod1.2", "jar", "jar").exists());
+    }
+
+    public void testForceLocal2() throws Exception {
+        // mod2.3 -> mod2.1;[0.0,0.4] -> mod1.1 -> mod1.2
+        // a local build for mod2.1 and mod1.2 is available
+        Ivy ivy = new Ivy();
+        ivy.configure(new File("test/repositories/ivysettings-local.xml"));
+        ResolveReport report = ivy.resolve(new File(
+                "test/repositories/1/org2/mod2.3/ivys/ivy-0.8.xml").toURL(),
+            getResolveOptions(new String[] {"*"}));
+        assertFalse(report.hasError());
+
+        // dependencies
+        assertTrue(getIvyFileInCache(
+            ModuleRevisionId.newInstance("org2", "mod2.1", "0.3-local-20050213110000")).exists());
+        assertTrue(getArchiveFileInCache("org2", "mod2.1", "0.3-local-20050213110000", 
+                                         "mod2.1", "jar", "jar").exists());
+
+        assertTrue(getIvyFileInCache(
+            ModuleRevisionId.newInstance("org1", "mod1.1", "1.1")).exists());
+        assertTrue(getArchiveFileInCache("org1", "mod1.1", "1.1", "mod1.1", "jar", "jar").exists());
+
+        assertTrue(getIvyFileInCache(
+            ModuleRevisionId.newInstance("org1", "mod1.2", "local-20080708091023")).exists());
+        assertTrue(getArchiveFileInCache("org1", "mod1.2", "local-20080708091023", 
+                                         "mod1.2", "jar", "jar").exists());
+
+        assertTrue(getArchiveFileInCache("org1", "mod1.3", "3.0", "mod1.3-A", "jar", "jar")
+            .exists());
+
+        assertFalse(getIvyFileInCache(
+            ModuleRevisionId.newInstance("org2", "mod2.1", "0.4")).exists());
+        assertFalse(getIvyFileInCache(
+            ModuleRevisionId.newInstance("org1", "mod1.2", "2.0")).exists());
+        assertFalse(getArchiveFileInCache("org1", "mod1.2", "2.0", "mod1.2", "jar", "jar").exists());
+    }
+
+    public void testForceLocal3() throws Exception {
+        // mod2.1 depends on mod1.1 which depends on mod1.2
+        // a local build for mod1.2 is available
+        // we do a first resolve without local build so that cache contains mod1.2;2.0 module
+        ivy.resolve(new File(
+                "test/repositories/1/org2/mod2.1/ivys/ivy-0.3.xml").toURL(),
+            getResolveOptions(new String[] {"*"}));
+
+        assertTrue(getIvyFileInCache(
+            ModuleRevisionId.newInstance("org1", "mod1.2", "2.0")).exists());
+        assertTrue(getArchiveFileInCache("org1", "mod1.2", "2.0", "mod1.2", "jar", "jar").exists());
+        
+        Ivy ivy = new Ivy();
+        ivy.configure(new File("test/repositories/ivysettings-local.xml"));
+        ResolveReport report = ivy.resolve(new File(
+                "test/repositories/1/org2/mod2.1/ivys/ivy-0.3.xml").toURL(),
+            getResolveOptions(new String[] {"*"}));
+        assertFalse(report.hasError());
+
+        // dependencies
+        assertTrue(getIvyFileInCache(
+            ModuleRevisionId.newInstance("org1", "mod1.1", "1.0")).exists());
+        assertTrue(getArchiveFileInCache("org1", "mod1.1", "1.0", "mod1.1", "jar", "jar").exists());
+
+        assertTrue(getIvyFileInCache(
+            ModuleRevisionId.newInstance("org1", "mod1.2", "local-20080708091023")).exists());
+        assertTrue(getArchiveFileInCache("org1", "mod1.2", "local-20080708091023", 
+                                         "mod1.2", "jar", "jar").exists());
+
+        assertTrue(getArchiveFileInCache("org1", "mod1.3", "3.0", "mod1.3-A", "jar", "jar")
+            .exists());
+    }
+
     public void testResolveExtends() throws Exception {
         // mod6.1 depends on mod1.2 2.0 in conf default, and conf extension extends default
         ResolveReport report = ivy.resolve(new File(

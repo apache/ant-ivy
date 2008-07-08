@@ -135,6 +135,8 @@ public abstract class BasicResolver extends AbstractResolver {
 
     private boolean allownomd = true;
 
+    private boolean force = false;
+
     private String checksums = null;
 
     private URLRepository extartifactrep = new URLRepository(); // used only to download
@@ -161,11 +163,15 @@ public abstract class BasicResolver extends AbstractResolver {
         this.envDependent = envDependent;
     }
 
-    public ResolvedModuleRevision getDependency(DependencyDescriptor dde, ResolveData data)
+    public ResolvedModuleRevision getDependency(DependencyDescriptor dd, ResolveData data)
             throws ParseException {
         IvyContext context = IvyContext.pushNewCopyContext();
-        DependencyDescriptor systemDd = dde;
-        DependencyDescriptor nsDd = fromSystem(dde);
+        if (isForce()) {
+            dd = dd.clone(ModuleRevisionId.newInstance(
+                dd.getDependencyRevisionId(), "latest.integration"));
+        }
+        DependencyDescriptor systemDd = dd;
+        DependencyDescriptor nsDd = fromSystem(dd);
         context.setDependencyDescriptor(systemDd);
         context.setResolveData(data);
         try {
@@ -187,9 +193,14 @@ public abstract class BasicResolver extends AbstractResolver {
                         + systemMrid
                         + " (resolved by " + rmr.getResolver().getName()
                         + "): but it's a default one, maybe we can find a better one");
+                } else if (isForce() && rmr.getResolver() != this) {
+                    Message.verbose("\t" + getName() + ": found revision in cache: " 
+                        + systemMrid
+                        + " (resolved by " + rmr.getResolver().getName()
+                        + "): but we are in force mode, let's try to find one ourself");
                 } else {
                     Message.verbose("\t" + getName() + ": revision in cache: " + systemMrid);
-                    return rmr;
+                    return checkForcedResolvedModuleRevision(rmr);
                 }
             }
             
@@ -229,7 +240,7 @@ public abstract class BasicResolver extends AbstractResolver {
                         new MetadataArtifactDownloadReport(systemMd.getMetadataArtifact());
                     madr.setDownloadStatus(DownloadStatus.NO);
                     madr.setSearched(true);
-                    rmr = new ResolvedModuleRevision(this, this, systemMd, madr);
+                    rmr = new ResolvedModuleRevision(this, this, systemMd, madr, isForce());
                 }
             } else {
                 if (ivyRef instanceof MDResolvedResource) {
@@ -243,13 +254,13 @@ public abstract class BasicResolver extends AbstractResolver {
                 }
                 if (!rmr.getReport().isDownloaded() 
                         && rmr.getReport().getLocalFile() != null) {
-                    return toSystem(rmr);
+                    return checkForcedResolvedModuleRevision(toSystem(rmr));
                 } else {
                     nsMd = rmr.getDescriptor();
 
                     // check descriptor data is in sync with resource revision and names
                     systemMd = toSystem(nsMd);
-                    if (checkconsistency) {
+                    if (isCheckconsistency()) {
                         checkDescriptorConsistency(systemMrid, systemMd, ivyRef);
                         checkDescriptorConsistency(nsMrid, nsMd, ivyRef);
                     } else {
@@ -266,7 +277,7 @@ public abstract class BasicResolver extends AbstractResolver {
                         }
                     }
                     rmr = new ResolvedModuleRevision(
-                        this, this, systemMd, toSystem(rmr.getReport()));
+                        this, this, systemMd, toSystem(rmr.getReport()), isForce());
                 }
             }
 
@@ -276,7 +287,7 @@ public abstract class BasicResolver extends AbstractResolver {
 
             cacheModuleDescriptor(systemMd, systemMrid, ivyRef, rmr);            
             
-            return rmr;
+            return checkForcedResolvedModuleRevision(rmr);
         } catch (UnresolvedDependencyException ex) {
             if (ex.getMessage().length() > 0) {
                 if (ex.isError()) {
@@ -289,6 +300,18 @@ public abstract class BasicResolver extends AbstractResolver {
         } finally {
             IvyContext.popContext();
         }
+    }
+
+    private ResolvedModuleRevision checkForcedResolvedModuleRevision(ResolvedModuleRevision rmr) {
+        if (rmr == null) {
+            return null;
+        }
+        if (!isForce() || rmr.isForce()) {
+            return rmr;
+        }
+        return new ResolvedModuleRevision(
+            rmr.getResolver(), rmr.getArtifactResolver(), 
+            rmr.getDescriptor(), rmr.getReport(), true);
     }
 
     private void cacheModuleDescriptor(ModuleDescriptor systemMd, ModuleRevisionId systemMrid,
@@ -516,7 +539,7 @@ public abstract class BasicResolver extends AbstractResolver {
                 madr.setDownloadStatus(DownloadStatus.NO);
                 madr.setSearched(true);
                 return new MDResolvedResource(resource, rev, new ResolvedModuleRevision(
-                        BasicResolver.this, BasicResolver.this, md, madr));
+                        BasicResolver.this, BasicResolver.this, md, madr, isForce()));
             }
         };
     }
@@ -822,6 +845,14 @@ public abstract class BasicResolver extends AbstractResolver {
 
     public void setCheckconsistency(boolean checkConsitency) {
         checkconsistency = checkConsitency;
+    }
+    
+    public void setForce(boolean force) {
+        this.force = force;
+    }
+    
+    public boolean isForce() {
+        return force;
     }
 
     public boolean isAllownomd() {

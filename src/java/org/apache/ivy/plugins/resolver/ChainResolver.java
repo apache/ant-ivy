@@ -108,14 +108,6 @@ public class ChainResolver extends AbstractResolver {
 
         ModuleRevisionId mrid = dd.getDependencyRevisionId();
 
-
-        Message.verbose(getName() + ": Checking cache for: " + dd);
-        mr = findModuleInCache(dd, data, true);
-        if (mr != null) {
-            Message.verbose(getName() + ": module revision found in cache: " + mr.getId());
-            return resolvedRevision(mr);
-        }
-
         boolean isDynamic = getSettings().getVersionMatcher().isDynamic(mrid);
         for (Iterator iter = chain.iterator(); iter.hasNext();) {
             DependencyResolver resolver = (DependencyResolver) iter.next();
@@ -136,6 +128,7 @@ public class ChainResolver extends AbstractResolver {
                 boolean shouldReturn = returnFirst;
                 shouldReturn |= !isDynamic
                         && ret != null && !ret.getDescriptor().isDefault();
+                shouldReturn |= mr.isForce();
                 if (!shouldReturn) {
                     // check if latest is asked and compare to return the most recent
                     String mrDesc = mr.getId()
@@ -192,7 +185,7 @@ public class ChainResolver extends AbstractResolver {
     private ResolvedModuleRevision resolvedRevision(ResolvedModuleRevision mr) {
         if (isDual() && mr != null) {
             return new ResolvedModuleRevision(
-                mr.getResolver(), this, mr.getDescriptor(), mr.getReport());
+                mr.getResolver(), this, mr.getDescriptor(), mr.getReport(), mr.isForce());
         } else {
             return mr;
         }

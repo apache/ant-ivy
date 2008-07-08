@@ -71,6 +71,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 
    trunk version
 =====================================
+- NEW: Better support for local builds (IVY-857)
 - NEW: Retain original dependency constraint rules in resolved ivy file (IVY-739)
 - NEW: Add a new resolve mode (optionally per module) to utilize dynamic constraint rule metadata (IVY-740)
 - NEW: Add transitive dependency version and branch override mechanism (IVY-784)

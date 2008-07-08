@@ -36,6 +36,8 @@ public class ResolvedModuleRevision {
     private ModuleDescriptor descriptor;
 
     private MetadataArtifactDownloadReport report;
+    
+    private boolean force = false;
 
     public ResolvedModuleRevision(DependencyResolver resolver, DependencyResolver artifactResolver,
             ModuleDescriptor descriptor, MetadataArtifactDownloadReport report) {
@@ -43,6 +45,15 @@ public class ResolvedModuleRevision {
         this.artifactResolver = artifactResolver;
         this.descriptor = descriptor;
         this.report = report;
+    }
+
+    public ResolvedModuleRevision(DependencyResolver resolver, DependencyResolver artifactResolver,
+            ModuleDescriptor descriptor, MetadataArtifactDownloadReport report, boolean force) {
+        this.resolver = resolver;
+        this.artifactResolver = artifactResolver;
+        this.descriptor = descriptor;
+        this.report = report;
+        this.force = force;
     }
 
     /**
@@ -102,7 +113,21 @@ public class ResolvedModuleRevision {
     public MetadataArtifactDownloadReport getReport() {
         return report;
     }
-
+    
+    /**
+     * Returns <code>true</code> if this resolved module revision should be forced as the one
+     * being returned.
+     * <p>
+     * This is used as an indication for CompositeResolver, to know if they should continue to look
+     * for a better ResolvedModuleRevision if possible, or stop with this instance.
+     * </p>
+     * 
+     * @return <code>true</code> if this resolved module revision should be forced as the one
+     *         being returned.
+     */
+    public boolean isForce() {
+        return force;
+    }
 
     public boolean equals(Object obj) {
         if (!(obj instanceof ResolvedModuleRevision)) {
