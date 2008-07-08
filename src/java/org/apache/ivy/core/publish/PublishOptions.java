@@ -57,6 +57,8 @@ public class PublishOptions {
 
     private boolean haltonmissing;
 
+    private String pubBranch;
+
     public String[] getConfs() {
         return confs;
     }
@@ -144,6 +146,15 @@ public class PublishOptions {
 
     public PublishOptions setHaltOnMissing(boolean haltonmissing) {
         this.haltonmissing = haltonmissing;
+        return this;
+    }
+
+    public String getPubBranch() {
+        return pubBranch;
+    }
+    
+    public PublishOptions setPubbranch(String pubbranch) {
+        this.pubBranch = pubbranch;
         return this;
     }
 

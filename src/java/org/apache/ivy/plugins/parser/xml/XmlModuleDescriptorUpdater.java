@@ -520,7 +520,11 @@ public final class XmlModuleDescriptorUpdater {
             if (rev == null) {
                 rev = substitute(settings, attributes.getValue("revision"));
             }
-            ModuleRevisionId localMid = ModuleRevisionId.newInstance(organisation, module, null,
+            String branch = options.getBranch();
+            if (branch == null) {
+                branch = substitute(settings, attributes.getValue("branch"));
+            }
+            ModuleRevisionId localMid = ModuleRevisionId.newInstance(organisation, module, branch,
                 rev, ExtendableItemHelper.getExtraAttributes(settings, attributes,
                     new String[] {"organisation", "module", "revision", "status", "publication",
                         "namespace"}));
@@ -529,6 +533,9 @@ public final class XmlModuleDescriptorUpdater {
 
             write("<info organisation=\"" + XMLHelper.escape(systemMid.getOrganisation()) 
                 + "\" module=\"" + XMLHelper.escape(systemMid.getName()) + "\"");
+            if (systemMid.getBranch() != null) {
+                write(" branch=\"" + XMLHelper.escape(systemMid.getBranch()) + "\"");
+            }
             if (systemMid.getRevision() != null) {
                 write(" revision=\"" + XMLHelper.escape(systemMid.getRevision()) + "\"");
             }
@@ -543,7 +550,7 @@ public final class XmlModuleDescriptorUpdater {
                 write(" publication=\""
                         + substitute(settings, attributes.getValue("publication")) + "\"");
             }
-            Collection stdAtts = Arrays.asList(new String[] {"organisation", "module",
+            Collection stdAtts = Arrays.asList(new String[] {"organisation", "module", "branch",
                     "revision", "status", "publication", "namespace"});
             if (attributes.getValue("namespace") != null) {
                 write(" namespace=\"" + substitute(settings, attributes.getValue("namespace"))

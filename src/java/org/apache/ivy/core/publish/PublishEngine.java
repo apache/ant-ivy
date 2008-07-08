@@ -79,10 +79,14 @@ public class PublishEngine {
         long start = System.currentTimeMillis();
 
         options.setSrcIvyPattern(settings.substitute(options.getSrcIvyPattern()));
+        if (options.getPubBranch() == null) {
+            options.setPubbranch(mrid.getBranch());
+        }
         if (options.getPubrevision() == null) {
             options.setPubrevision(mrid.getRevision());
         }
-        ModuleRevisionId pubmrid = ModuleRevisionId.newInstance(mrid, options.getPubrevision());
+        ModuleRevisionId pubmrid = ModuleRevisionId.newInstance(
+            mrid, options.getPubBranch(), options.getPubrevision());
         File ivyFile;
         if (options.getSrcIvyPattern() != null) {
             ivyFile = new File(IvyPatternHelper.substitute(options.getSrcIvyPattern(),
@@ -123,6 +127,7 @@ public class PublishEngine {
                                 .setStatus(options.getStatus() == null 
                                     ? md.getStatus() : options.getStatus())
                                 .setRevision(options.getPubrevision())
+                                .setBranch(options.getPubBranch())
                                 .setPubdate(options.getPubdate() == null ? new Date()
                                     : options.getPubdate())
                                 .setConfsToExclude((String[]) confsToRemove

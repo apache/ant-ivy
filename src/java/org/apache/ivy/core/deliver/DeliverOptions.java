@@ -39,6 +39,8 @@ public class DeliverOptions {
 
     private String[] confs;
 
+    private String pubBranch;
+
     /**
      * Returns an instance of DeliverOptions with options corresponding to default values taken from
      * the given settings.
@@ -197,10 +199,34 @@ public class DeliverOptions {
         return this;
     }
 
+    /**
+     * Returns the branch with which the Ivy file should be delivered, or <code>null</code> if
+     * branch info shouldn't be changed.
+     * 
+     * @return the branch with which the Ivy file should be delivered
+     */
+    public String getPubBranch() {
+        return pubBranch;
+    }
+
+    /**
+     * Sets the branch with which the Ivy file should be delivered.
+     * 
+     * @param pubBranch
+     *            the branch with which the Ivy file should be delivered
+     * @return the instance of DeliverOptions on which the method has been called, for easy method
+     *         chaining
+     */
+    public DeliverOptions setPubBranch(String pubBranch) {
+        this.pubBranch = pubBranch;
+        return this;
+    }
+    
     public String toString() {
         return "status=" + status + " pubdate=" + pubdate + " validate=" + validate
                 + " resolveDynamicRevisions=" + resolveDynamicRevisions
-                + " resolveId=" + resolveId;
+                + " resolveId=" + resolveId
+                + " pubBranch=" + pubBranch;
 
     }
 

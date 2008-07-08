@@ -298,6 +298,42 @@ public class IvyPublishTest extends TestCase {
                 .getRevision());
     }
 
+    public void testNoDeliverWithBranch() throws Exception {
+        project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-latest.xml");
+        IvyResolve res = new IvyResolve();
+        res.setProject(project);
+        res.execute();
+
+        publish.setUpdate(true);
+        publish.setPubrevision("1.3");
+        publish.setPubbranch("BRANCH1");
+        publish.setResolver("1");
+        publish.setSrcivypattern("build/test/publish/ivy-1.3.xml");
+
+        FileUtil.copy(new File("test/java/org/apache/ivy/ant/ivy-publish.xml"), new File(
+                "build/test/publish/ivy-1.3.xml"), null);
+
+        File art = new File("build/test/publish/resolve-latest-1.3.jar");
+        FileUtil.copy(new File("test/repositories/1/org1/mod1.1/jars/mod1.1-1.0.jar"), art, null);
+        publish.execute();
+
+        // should have published the files with "1" resolver
+        assertTrue(new File("test/repositories/1/apache/resolve-latest/ivys/ivy-1.3.xml").exists());
+        assertTrue(new File("test/repositories/1/apache/resolve-latest/jars/resolve-latest-1.3.jar")
+                .exists());
+
+        // the published ivy version should be ok (ok in ivy-publish file)
+        ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(
+            new IvySettings(),
+            new File("test/repositories/1/apache/resolve-latest/ivys/ivy-1.3.xml").toURL(), false);
+        assertEquals("BRANCH1", md.getModuleRevisionId().getBranch());
+        assertEquals("1.3", md.getModuleRevisionId().getRevision());
+
+        // should not have done delivery (replace dynamic revisions with static ones)
+        assertEquals("latest.integration", md.getDependencies()[0].getDependencyRevisionId()
+                .getRevision());
+    }
+
     public void testForceDeliver() throws Exception {
         project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-latest.xml");
         IvyResolve res = new IvyResolve();

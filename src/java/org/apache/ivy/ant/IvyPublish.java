@@ -81,6 +81,8 @@ public class IvyPublish extends IvyTask {
 
     private Collection artifacts = new ArrayList();
 
+    private String pubBranch;
+
     public void setCache(File cache) {
         cacheAttributeNotSupported();
     }
@@ -137,6 +139,14 @@ public class IvyPublish extends IvyTask {
 
     public void setPubrevision(String pubRevision) {
         this.pubRevision = pubRevision;
+    }
+
+    public String getPubbranch() {
+        return pubBranch;
+    }
+    
+    public void setPubbranch(String pubBranch) {
+        this.pubBranch = pubBranch;
     }
 
     public String getRevision() {
@@ -207,6 +217,7 @@ public class IvyPublish extends IvyTask {
         organisation = getProperty(organisation, settings, "ivy.organisation");
         module = getProperty(module, settings, "ivy.module");
         revision = getProperty(revision, settings, "ivy.revision");
+        pubBranch = getProperty(pubBranch, settings, "ivy.deliver.branch");
         pubRevision = getProperty(pubRevision, settings, "ivy.deliver.revision");
         if (artifactspattern.isEmpty()) {
             String p = getProperty(null, settings, "ivy.publish.src.artifacts.pattern");
@@ -277,6 +288,7 @@ public class IvyPublish extends IvyTask {
                 deliver.setOrganisation(getOrganisation());
                 deliver.setPubdate(Ivy.DATE_FORMAT.format(pubdate));
                 deliver.setPubrevision(getPubrevision());
+                deliver.setPubbranch(getPubbranch());
                 deliver.setRevision(getRevision());
                 deliver.setStatus(getStatus());
                 deliver.setValidate(doValidate(settings));
@@ -289,6 +301,7 @@ public class IvyPublish extends IvyTask {
             Collection missing = ivy.publish(mrid, artifactspattern, publishResolverName,
                 new PublishOptions()
                     .setPubrevision(getPubrevision())
+                    .setPubbranch(getPubbranch())
                     .setSrcIvyPattern(publishivy ? srcivypattern : null)
                     .setStatus(getStatus())
                     .setPubdate(pubdate)

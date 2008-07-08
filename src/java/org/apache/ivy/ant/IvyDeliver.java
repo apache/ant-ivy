@@ -203,6 +203,8 @@ public class IvyDeliver extends IvyTask {
 
     private String conf;
 
+    private String pubBranch;
+
     public void setCache(File cache) {
         cacheAttributeNotSupported();
     }
@@ -245,6 +247,14 @@ public class IvyDeliver extends IvyTask {
 
     public void setPubrevision(String pubRevision) {
         this.pubRevision = pubRevision;
+    }
+
+    public String getPubbranch() {
+        return pubBranch;
+    }
+    
+    public void setPubbranch(String pubBranch) {
+        this.pubBranch = pubBranch;
     }
 
     public String getRevision() {
@@ -302,6 +312,7 @@ public class IvyDeliver extends IvyTask {
         organisation = getProperty(organisation, settings, "ivy.organisation", resolveId);
         module = getProperty(module, settings, "ivy.module", resolveId);
         revision = getProperty(revision, settings, "ivy.revision", resolveId);
+        pubBranch = getProperty(pubBranch, settings, "ivy.deliver.branch");
         pubRevision = getProperty(pubRevision, settings, "ivy.deliver.revision");
         deliverpattern = getProperty(deliverpattern, settings, "ivy.deliver.ivy.pattern");
         status = getProperty(status, settings, "ivy.status");
@@ -370,8 +381,9 @@ public class IvyDeliver extends IvyTask {
             }
 
             DeliverOptions options = new DeliverOptions(status, pubdate, 
-                drResolver, doValidate(settings), replacedynamicrev,
-                    splitConfs(conf)).setResolveId(resolveId);
+                drResolver, doValidate(settings), replacedynamicrev, splitConfs(conf))
+                .setResolveId(resolveId)
+                .setPubBranch(pubBranch);
             if (mrid == null) {
                 ivy.deliver(pubRevision, deliverpattern, options);
             } else {

@@ -127,6 +127,12 @@ public class ModuleRevisionId extends UnmodifiableExtendableItem {
             new ModuleRevisionId(mrid.getModuleId(), 
                 mrid.getBranch(), rev, mrid.getQualifiedExtraAttributes()));
     }
+
+    public static ModuleRevisionId newInstance(ModuleRevisionId mrid, String branch, String rev) {
+        return intern(
+            new ModuleRevisionId(mrid.getModuleId(), 
+                branch, rev, mrid.getQualifiedExtraAttributes()));
+    }
     
     /**
      * Returns an intern instance of the given ModuleRevisionId if any, or put the given

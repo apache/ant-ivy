@@ -51,9 +51,11 @@ The source artifact pattern can be specified either as an attribute on the task 
         <td>Yes</td></tr>
     <tr><td>pubrevision</td><td>the revision to use for the publication</td>
         <td>No. Defaults to the ${ivy.deliver.revision}</td></tr>
+    <tr><td>pubbranch</td><td>the branch to use for the publication</td>
+        <td>No. Defaults to the ${ivy.deliver.branch}</td></tr>
     <tr><td>forcedeliver</td><td>true to force the implicit call to deliver, false to do it only if the ivy file to publish doesn't exist yet <span class="since">since 1.4</span></td>
         <td>No. Defaults to false</td></tr>
-    <tr><td>update</td><td>true to update ivy file metadata (revision, publication date and status) before publishing, false otherwise. This is usually not necessary when using deliver before publish.</td>
+    <tr><td>update</td><td>true to update ivy file metadata (revision, branch, publication date and status) before publishing, false otherwise. This is usually not necessary when using deliver before publish.</td>
         <td>No. Defaults to false</td></tr>
     <tr><td>validate</td><td>true to force ivy files validation against ivy.xsd, false to force no validation</td>
         <td>No. Defaults to default ivy value (as configured in [[configuration settings file]])</td></tr>

@@ -118,7 +118,9 @@ public class DeliverEngine {
             ivyFileURL = ivyFile.toURL();
             md = XmlModuleDescriptorParser.getInstance().parseDescriptor(settings, ivyFileURL,
                 options.isValidate());
-            md.setResolvedModuleRevisionId(ModuleRevisionId.newInstance(mrid, revision));
+            md.setResolvedModuleRevisionId(ModuleRevisionId.newInstance(mrid, 
+                options.getPubBranch() == null ? mrid.getBranch() : options.getPubBranch(), 
+                revision));
             md.setResolvedPublicationDate(options.getPubdate());
         } catch (MalformedURLException e) {
             throw new RuntimeException("malformed url obtained for file " + ivyFile, e);
@@ -187,6 +189,7 @@ public class DeliverEngine {
                         .setResolvedRevisions(resolvedDependencies)
                         .setStatus(options.getStatus())
                         .setRevision(revision)
+                        .setBranch(options.getPubBranch())
                         .setPubdate(options.getPubdate())
                         .setConfsToExclude((String[]) confsToRemove
                             .toArray(new String[confsToRemove.size()])));

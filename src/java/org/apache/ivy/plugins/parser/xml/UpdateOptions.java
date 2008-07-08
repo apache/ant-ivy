@@ -62,6 +62,7 @@ public class UpdateOptions {
      * it as is.
      */
     private boolean updateBranch = true;
+    private String branch;
     
     public ParserSettings getSettings() {
         return settings;
@@ -124,6 +125,13 @@ public class UpdateOptions {
     }
     public UpdateOptions setUpdateBranch(boolean updateBranch) {
         this.updateBranch = updateBranch;
+        return this;
+    }
+    public String getBranch() {
+        return branch;
+    }
+    public UpdateOptions setBranch(String pubBranch) {
+        this.branch = pubBranch;
         return this;
     }
 }
