@@ -141,6 +141,7 @@
 				            	</xs:complexType>
 				      		</xs:element>
 				        </xs:sequence>
+						<xs:attribute name="defaultconf" type="xs:string"/>				  
 			      </xs:complexType>
       		</xs:element>
       		<xs:element name="dependencies" minOccurs="0">

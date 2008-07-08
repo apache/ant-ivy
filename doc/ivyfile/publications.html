@@ -28,18 +28,28 @@
 <b>Tag:</b> publications <b>Parent:</b> <a href="../ivyfile.html">ivy-module</a><br/><br/>
 
 Container for artifact elements, used to describe the artifacts published by this module. 
-If this container is not present, it is assumed that the module has one artifact, with the same name
-as the module, and published in all module configurations.<br/>
-Thus if you have a module which publishes no artifacts (a sort of virtual module, 
-made only to integrate several other modules as a whole), you have to include
-a publications element with no artifact sub element.
+
+If this container is not present, it is assumed that the module has one artifact, with the same name as the module, and published in all module configurations.<br/>
+
+Thus if you have a module which publishes no artifacts (a sort of virtual module, made only to integrate several other modules as a whole), you have to include a publications element with no artifact sub element.
+<h1>Attributes</h1>
+<table class="ivy-attributes">
+<thead>
+    <tr><th class="ivy-att">Attribute</th><th class="ivy-att-desc">Description</th><th class="ivy-att-req">Required</th></tr>
+</thead>
+<tbody>
+    <tr><td>defaultconf</td><td>comma separated list of public configurations in which artifacts are published by default (when no specific configurations are set on the artifact element).
+    	'*' wildcard can be used to designate all public configurations of this module. <span class="since">since 2.0</span></td>
+        <td>No, defaults to '*'</td></tr>
+</tbody>
+</table>
 <h1>Child elements</h1>
 <table class="ivy-children">
 <thead>
     <tr><th class="ivy-chld">Element</th><th class="ivy-chld-desc">Description</th><th class="ivy-chld-card">Cardinality</th></tr>
 </thead>
 <tbody>
-    <tr><td>artifact</td><td>declares a published artifact for this module</td>
+    <tr><td>[[ivyfile/artifact]]</td><td>declares a published artifact for this module</td>
         <td>0..n</td></tr>
 </tbody>
 </table>

@@ -193,6 +193,8 @@ public final class XmlModuleDescriptorParser extends AbstractModuleDescriptorPar
         private StringBuffer buffer;
 
         private String descriptorVersion;
+
+        private String[] publicationsDefaultConf;
         
         
 
@@ -294,9 +296,7 @@ public final class XmlModuleDescriptorParser extends AbstractModuleDescriptorPar
                 } else if ("configurations".equals(qName)) {
                     configurationStarted(attributes);
                 } else if ("publications".equals(qName)) {
-                    state = PUB;
-                    artifactsDeclared = true;
-                    checkConfigurations();
+                    publicationsStarted(attributes);
                 } else if ("dependencies".equals(qName)) {
                     dependenciesStarted(attributes);
                 } else if ("conflicts".equals(qName)) {
@@ -342,6 +342,20 @@ public final class XmlModuleDescriptorParser extends AbstractModuleDescriptorPar
                 sax.initCause(ex);
                 throw sax;
             }
+        }
+
+        private void publicationsStarted(Attributes attributes) {
+            state = PUB;
+            artifactsDeclared = true;
+            checkConfigurations();
+            String defaultConf = ivy.substitute(attributes.getValue("defaultconf"));
+            if (defaultConf != null) {
+                setPublicationsDefaultConf(defaultConf);
+            }
+        }
+
+        private void setPublicationsDefaultConf(String defaultConf) {
+            this.publicationsDefaultConf = defaultConf == null ? null : defaultConf.split(",");
         }
 
         private boolean isOtherNamespace(String qName) {
@@ -778,10 +792,12 @@ public final class XmlModuleDescriptorParser extends AbstractModuleDescriptorPar
         public void endElement(String uri, String localName, String qName) throws SAXException {
             if (state == PUB && "artifact".equals(qName)
                     && artifact.getConfigurations().length == 0) {
-                String[] confs = getMd().getConfigurationsNames();
+                String[] confs = publicationsDefaultConf == null 
+                    ? getMd().getConfigurationsNames()
+                    : publicationsDefaultConf;
                 for (int i = 0; i < confs.length; i++) {
-                    artifact.addConfiguration(confs[i]);
-                    getMd().addArtifact(confs[i], artifact);
+                    artifact.addConfiguration(confs[i].trim());
+                    getMd().addArtifact(confs[i].trim(), artifact);
                 }
             } else if ("configurations".equals(qName)) {
                 checkConfigurations();

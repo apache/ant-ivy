@@ -623,6 +623,24 @@ public class XmlModuleDescriptorParserTest extends AbstractModuleDescriptorParse
                 .getDependencyConfigurations("test")));
     }
 
+    public void testPublicationDefaultConf() throws Exception {
+        ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(settings,
+            getClass().getResource("test-publication-defaultconf.xml"), true);
+        assertNotNull(md);
+
+        Artifact[] artifacts = md.getArtifacts("default");
+        assertNotNull(artifacts);
+        assertEquals(3, artifacts.length);
+
+        artifacts = md.getArtifacts("test");
+        assertNotNull(artifacts);
+        assertEquals(2, artifacts.length);
+        
+        artifacts = md.getArtifacts("other");
+        assertNotNull(artifacts);
+        assertEquals(1, artifacts.length);
+    }
+
     public void testDefaultConfMapping() throws Exception {
         ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(settings,
             getClass().getResource("test-defaultconfmapping.xml"), true);
