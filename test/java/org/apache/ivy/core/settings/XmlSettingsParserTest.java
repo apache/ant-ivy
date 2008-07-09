@@ -41,6 +41,7 @@ import org.apache.ivy.plugins.report.ReportOutputter;
 import org.apache.ivy.plugins.resolver.ChainResolver;
 import org.apache.ivy.plugins.resolver.DependencyResolver;
 import org.apache.ivy.plugins.resolver.FileSystemResolver;
+import org.apache.ivy.plugins.resolver.IBiblioResolver;
 import org.apache.ivy.plugins.resolver.MockResolver;
 import org.apache.ivy.plugins.version.ChainVersionMatcher;
 import org.apache.ivy.plugins.version.MockVersionMatcher;
@@ -381,6 +382,27 @@ public class XmlSettingsParserTest extends TestCase {
         shared = (DependencyResolver) subresolvers.get(0);
         assertEquals("shared", shared.getName());
         assertTrue(shared instanceof FileSystemResolver);
+    }
+
+    public void testMacroAndRef2() throws Exception {
+        // test case for IVY-860
+        IvySettings settings = new IvySettings();
+        XmlSettingsParser parser = new XmlSettingsParser(settings);
+        parser.parse(XmlSettingsParserTest.class.getResource("ivysettings-macro+ref2.xml"));
+
+        DependencyResolver macrores = settings.getResolver("macroresolver");
+        assertNotNull(macrores);
+        assertTrue(macrores instanceof ChainResolver);
+
+        DependencyResolver testResolver = settings.getResolver("test");
+        assertNotNull(testResolver);
+        assertTrue(testResolver instanceof IBiblioResolver);
+        
+        ChainResolver chain = (ChainResolver) macrores;
+        List subresolvers = chain.getResolvers();
+        assertNotNull(subresolvers);
+        assertEquals(1, subresolvers.size());
+        assertEquals(testResolver, subresolvers.get(0));
     }
 
     public void testInclude() throws Exception {

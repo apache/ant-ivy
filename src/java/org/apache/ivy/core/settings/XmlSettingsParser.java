@@ -471,8 +471,7 @@ public class XmlSettingsParser extends DefaultHandler {
             String name = (String) attributes.get("name");
             if (name == null) {
                 attributes.put("name", "@{name}");
-            } else if (configurator.isTopLevelMacroRecord()
-                    && name.indexOf("@{name}") != -1) {
+            } else if (name.indexOf("@{name}") != -1) {
                 attributes.put("name", name);
             } else {
                 attributes.put("name", "@{name}-" + name);
@@ -486,7 +485,7 @@ public class XmlSettingsParser extends DefaultHandler {
             }
             String name = (String) attributes.get("ref");
             Object child = null;
-            if ("resolvers".equals(currentConfiguratorTag)) {
+            if ("resolvers".equals(currentConfiguratorTag) || "resolver".equals(qName)) {
                 child = ivy.getResolver(name);
                 if (child == null) {
                     throw new IllegalArgumentException("unknown resolver " + name

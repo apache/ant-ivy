@@ -142,6 +142,8 @@ public class Configurator {
 
         private List children = new ArrayList();
 
+        private Object object;
+
         public MacroRecord(String name) {
             this.name = name;
         }
@@ -159,6 +161,12 @@ public class Configurator {
             children.add(child);
             return child;
         }
+        
+        public MacroRecord recordChild(String name, Object object) {
+            MacroRecord child = recordChild(name);
+            child.object = object;
+            return child;
+        }
 
         public Map getAttributes() {
             return attributes;
@@ -166,6 +174,10 @@ public class Configurator {
 
         public List getChildren() {
             return children;
+        }
+
+        public Object getObject() {
+            return object;
         }
     }
 
@@ -204,6 +216,12 @@ public class Configurator {
 
         private Object play(Configurator conf, MacroRecord macroRecord, Map attValues,
                 Map childrenRecords) {
+            if (macroRecord.getObject() != null) {
+                // this is a recorded reference, we can add the referenced object directly
+                conf.addChild(macroRecord.getName(), macroRecord.getObject());
+                conf.endCreateChild();
+                return macroRecord.getObject();
+            }
             conf.startCreateChild(macroRecord.getName());
             Map attributes = macroRecord.getAttributes();
             for (Iterator iter = attributes.keySet().iterator(); iter.hasNext();) {
@@ -541,8 +559,13 @@ public class Configurator {
     private Object addChild(ObjectDescriptor parentOD, Class childClass, String name, Object child)
             throws InstantiationException, IllegalAccessException, InvocationTargetException {
         Object parent = parentOD.getObject();
-        Method addChild;
-        addChild = parentOD.getAddMethod(childClass);
+        if (parent instanceof MacroRecord) {
+            MacroRecord record = (MacroRecord) parent;
+            MacroRecord recordChild = record.recordChild(name, child);
+            setCurrent(recordChild, name);
+            return recordChild;
+        }
+        Method addChild = parentOD.getAddMethod(childClass);
         if (addChild != null) {
             if (child == null) {
                 child = childClass.newInstance();
