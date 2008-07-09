@@ -694,16 +694,18 @@ public class ResolveEngine {
                 for (int i = 0; i < confs.length; i++) {
                     fetchDependencies(dep, confs[i], true);
                 }
-                // if there are still confs to fetch (usually because they have
-                // been updated when evicting another module), we fetch them now
-                confs = dep.getConfsToFetch();
-                for (int i = 0; i < confs.length; i++) {
-                    //shouldBeFixed=false to because some of those dependencies might
-                    //be private when they were actually extending public conf.
-                    //Should we keep two list of confs to fetch (private&public)?
-                    //I don't think, visibility is already checked, and a change in the 
-                    //configuration between version might anyway have worse problems.
-                    fetchDependencies(dep, confs[i], false);
+                if (!dep.isEvicted() && !dep.hasProblem()) {
+                    // if there are still confs to fetch (usually because they have
+                    // been updated when evicting another module), we fetch them now
+                    confs = dep.getConfsToFetch();
+                    for (int i = 0; i < confs.length; i++) {
+                        //shouldBeFixed=false to because some of those dependencies might
+                        //be private when they were actually extending public conf.
+                        //Should we keep two list of confs to fetch (private&public)?
+                        //I don't think, visibility is already checked, and a change in the 
+                        //configuration between version might anyway have worse problems.
+                        fetchDependencies(dep, confs[i], false);
+                    }
                 }
             }
             markDependenciesFetched(node.getNode(), conf);

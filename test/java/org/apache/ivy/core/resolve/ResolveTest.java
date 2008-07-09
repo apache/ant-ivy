@@ -2096,6 +2096,17 @@ public class ResolveTest extends TestCase {
         assertFalse(getArchiveFileInCache("org5", "mod5.1", "4.0", "art51B", "jar", "jar").exists());
     }
 
+    public void testFailWithMissingConf() throws Exception {
+        // test case for IVY-861
+
+        // mod6.1 r1.5 depends on
+        // mod5.1 [1.0,4.3] conf unknown which doesn't exist in mod5.1;4.3
+        ResolveReport report = ivy.resolve(new File("test/repositories/2/mod6.1/ivy-1.5.xml")
+                .toURL(), getResolveOptions(new String[] {"*"}));
+        assertTrue("missing conf should have raised an error in report", report.hasError());
+        assertTrue(StringUtils.join(report.getAllProblemMessages().toArray(), "\n").indexOf("'unknown'") != -1);
+    }
+
     public void testEvictWithConfInMultiConf() throws Exception {
         // same as preceding ones but the conflict appears in several root confs
         // bug 105 - test #3

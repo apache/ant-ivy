@@ -133,7 +133,7 @@ public class IvyNode implements Comparable {
      * real node after the call IvyNode node = ... node.loadData(); node = node.getRealNode(); ...
      */
     public boolean loadData(String rootModuleConf, IvyNode parent, String parentConf, String conf,
-            boolean shouldBePublic) {
+            boolean shouldBePublic, IvyNodeUsage usage) {
         Message.debug("loadData of " + this.toString() + " of rootConf=" + rootModuleConf);
         if (!isRoot() && (data.getReport() != null)) {
             data.getReport().addDependency(this);
@@ -203,7 +203,7 @@ public class IvyNode implements Comparable {
                                 // => update it and discard this node
                                 md = module.getDescriptor(); // needed for handleConfiguration
                                 if (!handleConfiguration(loaded, rootModuleConf, parent,
-                                    parentConf, conf, shouldBePublic)) {
+                                    parentConf, conf, shouldBePublic, usage)) {
                                     return false;
                                 }
 
@@ -246,7 +246,8 @@ public class IvyNode implements Comparable {
                 loaded = true;
             }
         }
-        handleConfiguration(loaded, rootModuleConf, parent, parentConf, conf, shouldBePublic);
+        handleConfiguration(
+            loaded, rootModuleConf, parent, parentConf, conf, shouldBePublic, usage);
         if (hasProblem()) {
             Message.debug("problem : " + problem.getMessage());
             return false;
@@ -271,11 +272,10 @@ public class IvyNode implements Comparable {
         resolved.searched |= module.getReport().isSearched();
         resolved.dds.putAll(dds);
         resolved.updateDataFrom(this, rootModuleConf, true);
-        resolved.loadData(rootModuleConf, parent, parentConf, conf, shouldBePublic);
+        resolved.loadData(rootModuleConf, parent, parentConf, conf, shouldBePublic, usage);
         DependencyDescriptor dd = getDependencyDescriptor(parent);
-        if (dd != null) {
-            resolved.usage.addUsage(rootModuleConf, dd, parentConf);
-        }
+        resolved.usage.updateDataFrom(getAllUsages(), rootModuleConf);
+        usage = resolved.usage;
         
         data.replaceNode(getId(), resolved, rootModuleConf); // this actually discards the node
 
@@ -336,9 +336,11 @@ public class IvyNode implements Comparable {
                 }
 
             }
-            Collection confs = Arrays.asList(resolveSpecialConfigurations(dependencyConfigurations,
-                depNode));
+            String[] confsArray = resolveSpecialConfigurations(dependencyConfigurations,
+                depNode);
+            Collection confs = Arrays.asList(confsArray);
             depNode.updateConfsToFetch(confs);
+            depNode.addRootModuleConfigurations(depNode.usage, rootModuleConf, confsArray);
             depNode.usage.setRequiredConfs(this, conf, confs);
 
             depNode.addCaller(rootModuleConf, this, conf, dependencyConfigurations, dd);
@@ -374,24 +376,25 @@ public class IvyNode implements Comparable {
     }
 
     private boolean handleConfiguration(boolean loaded, String rootModuleConf, IvyNode parent,
-            String parentConf, String conf, boolean shouldBePublic) {
+            String parentConf, String conf, boolean shouldBePublic, IvyNodeUsage usage) {
         if (md != null) {
             String[] confs = getRealConfs(conf);
+            addRootModuleConfigurations(usage, rootModuleConf, confs);
             for (int i = 0; i < confs.length; i++) {
                 Configuration c = md.getConfiguration(confs[i]);
                 if (c == null) {
                     confsToFetch.remove(conf);
                     if (isConfRequiredByMergedUsageOnly(rootModuleConf, conf)) {
-                        Message.verbose(
+                        Message.info(
                             "configuration required by evicted revision is not available in "
                             + "selected revision. skipping " + conf + " in " + this);
                     } else if (!conf.equals(confs[i])) {
-                        problem = new RuntimeException("configuration(s) not found in " + this
-                                + ": " + conf + ". Missing configuration: " + confs[i]
-                                + ". It was required from " + parent + " " + parentConf);
+                        problem = new RuntimeException("configuration not found in " + this
+                                + ": '" + conf + "'. Missing configuration: '" + confs[i]
+                                + "'. It was required from " + parent + " " + parentConf);
                     } else {
-                        problem = new RuntimeException("configuration(s) not found in " + this
-                                + ": " + confs[i] + ". It was required from " + parent + " "
+                        problem = new RuntimeException("configuration not found in " + this
+                                + ": '" + confs[i] + "'. It was required from " + parent + " "
                                 + parentConf);
                     }
                     return false;
@@ -399,21 +402,20 @@ public class IvyNode implements Comparable {
                         && c.getVisibility() != Configuration.Visibility.PUBLIC) {
                     confsToFetch.remove(conf);
                     if (isConfRequiredByMergedUsageOnly(rootModuleConf, conf)) {
-                        Message.verbose(
+                        Message.info(
                             "configuration required by evicted revision is not visible in "
                             + "selected revision. skipping " + conf + " in " + this);
                     } else {
-                        problem = new RuntimeException("configuration not public in " + this + ": " 
-                            + c + ". It was required from " + parent + " " + parentConf);
+                        problem = new RuntimeException("configuration not public in " + this + ": '"
+                            + c + "'. It was required from " + parent + " " + parentConf);
                     }
                     return false;
                 }
-                if (loaded) {
-                    fetchedConfigurations.add(conf);
-                    confsToFetch.removeAll(Arrays.asList(confs));
-                    confsToFetch.remove(conf);
-                }
-                addRootModuleConfigurations(rootModuleConf, confs);
+            }
+            if (loaded) {
+                fetchedConfigurations.add(conf);
+                confsToFetch.removeAll(Arrays.asList(confs));
+                confsToFetch.remove(conf);
             }
         }
         return true;
@@ -554,19 +556,18 @@ public class IvyNode implements Comparable {
         }
     }
 
-    private void addRootModuleConfigurations(String rootModuleConf, String[] dependencyConfs) {
+    private void addRootModuleConfigurations(
+            IvyNodeUsage usage, String rootModuleConf, String[] dependencyConfs) {
         Set depConfs = usage.addAndGetConfigurations(rootModuleConf);
         if (md != null) {
             // add all given dependency configurations to the set + extended ones
             for (int i = 0; i < dependencyConfs.length; i++) {
+                depConfs.add(dependencyConfs[i]);
                 Configuration conf = md.getConfiguration(dependencyConfs[i]);
                 if (conf != null) {
                     String[] exts = conf.getExtends();
-                    addRootModuleConfigurations(rootModuleConf, exts); // recursive add of extended
-                    // configurations
-                    depConfs.add(conf.getName());
-                } else {
-                    Message.warn("unknown configuration in " + getId() + ": " + dependencyConfs[i]);
+                    // recursive add of extended
+                    addRootModuleConfigurations(usage, rootModuleConf, exts); 
                 }
             }
         } else {
@@ -679,7 +680,7 @@ public class IvyNode implements Comparable {
         callers.updateFrom(node.callers, rootModuleConf, real);
 
         if (real) {
-            usage.updateDataFrom(node.usage, rootModuleConf);
+            usage.updateDataFrom(node.getAllUsages(), rootModuleConf);
         } else {
             // let's copy usage information for the given rootModuleConf, into a separate usage
             // object to keep detailed data about where usage comes from
@@ -688,12 +689,19 @@ public class IvyNode implements Comparable {
                 mergedUsage = new IvyNodeUsage(node);
                 mergedUsages.put(node.getId(), mergedUsage);
             }
-            mergedUsage.updateDataFrom(node.usage, rootModuleConf);
+            mergedUsage.updateDataFrom(node.getAllUsages(), rootModuleConf);
         }
 
         // update confsToFetch
         updateConfsToFetch(node.fetchedConfigurations);
         updateConfsToFetch(node.confsToFetch);
+    }
+    
+    private Collection/*<IvyNodeUsage>*/ getAllUsages() {
+        Collection usages = new ArrayList();
+        usages.add(usage);
+        usages.addAll(mergedUsages.values());
+        return usages;
     }
 
     /**
@@ -1048,11 +1056,6 @@ public class IvyNode implements Comparable {
     public void markEvicted(EvictionData evictionData) {
         eviction.markEvicted(evictionData);
         String rootModuleConf = evictionData.getRootModuleConf();
-        usage.removeRootModuleConf(rootModuleConf);
-        for (Iterator iterator = mergedUsages.values().iterator(); iterator.hasNext();) {
-            IvyNodeUsage usage = (IvyNodeUsage) iterator.next();
-            usage.removeRootModuleConf(rootModuleConf);
-        }
 
         // bug 105: update selected data with evicted one
         if (evictionData.getSelected() != null) {
@@ -1250,6 +1253,10 @@ public class IvyNode implements Comparable {
      */
     public IvyNodeBlacklist getBlacklistData(String rootModuleConf) {
         return usage.getBlacklistData(rootModuleConf);
+    }
+
+    public IvyNodeUsage getMainUsage() {
+        return usage;
     }
 
 }

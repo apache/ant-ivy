@@ -94,6 +94,24 @@ public class IvyNodeUsage {
             this.dd = dd;
             this.dependerConf = dependerConf;
         }
+        
+        public String toString() {
+            return dd + " [" + dependerConf + "]";
+        }
+        
+        public boolean equals(Object obj) {
+            if (! (obj  instanceof Depender)) {
+                return false;
+            }
+            Depender other = (Depender) obj;
+            return other.dd == dd && other.dependerConf.equals(dependerConf);
+        }
+        public int hashCode() {
+            int hash = 33;
+            hash += dd.hashCode() * 13;
+            hash += dependerConf.hashCode() * 13;
+            return hash;
+        }
     }
     
     private IvyNode node;
@@ -146,7 +164,15 @@ public class IvyNodeUsage {
         return rootModuleConfs.keySet();
     }
 
-    public void updateDataFrom(IvyNodeUsage usage, String rootModuleConf) {
+
+    public void updateDataFrom(Collection/*<IvyNodeUsage>*/ usages, String rootModuleConf) {
+        for (Iterator iterator = usages.iterator(); iterator.hasNext();) {
+            IvyNodeUsage usage = (IvyNodeUsage) iterator.next();
+            updateDataFrom(usage, rootModuleConf);
+        }
+    }
+    
+    private void updateDataFrom(IvyNodeUsage usage, String rootModuleConf) {
         // update requiredConfs
         updateMapOfSet(usage.requiredConfs, requiredConfs);
 

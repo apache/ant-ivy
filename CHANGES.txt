@@ -95,6 +95,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - IMPROVEMENT: Change allownomd and skipbuildwithoutivy into a more semantically correct name (IVY-297)
 - IMPROVEMENT: Smarter determination if an expression is exact or not for RegexpPatternMatcher and GlobPatternMatcher
 
+- FIX: dynamic revision resolve does not throw error when configuration is missing (IVY-861)
 - FIX: Referenced resolver not found in macro (IVY-860)
 - FIX: Ivy files are not retrieved when using useOrigin=true (IVY-713)
 - FIX: NPE in Ivy:install task if the repository cache dir has been cleared (IVY-843)

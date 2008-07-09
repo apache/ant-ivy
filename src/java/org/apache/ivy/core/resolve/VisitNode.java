@@ -98,9 +98,21 @@ public class VisitNode {
      * the current path. null if not computed yet Boolean.FALSE otherwise
      */
     private Boolean isCircular;
+    
+    /**
+     * IvyNode usage information to update when visiting the underlying IvyNode.
+     * This is usually the main IvyNodeUsage of the underlying node, except when we are visiting it
+     * coming from an evicted node replaced by the other one.
+     */
+    private IvyNodeUsage usage;
 
     public VisitNode(ResolveData data, IvyNode node, VisitNode parent, String rootModuleConf,
             String parentConf) {
+        this(data, node, parent, rootModuleConf, parentConf, null);
+    }
+
+    public VisitNode(ResolveData data, IvyNode node, VisitNode parent, String rootModuleConf,
+            String parentConf, IvyNodeUsage usage) {
         Checks.checkNotNull(data, "data");
         Checks.checkNotNull(node, "node");
         Checks.checkNotNull(rootModuleConf, "rootModuleConf");
@@ -110,6 +122,7 @@ public class VisitNode {
         this.parent = parent;
         this.rootModuleConf = rootModuleConf;
         this.parentConf = parentConf;
+        this.usage = usage;
 
         this.data.register(this);
     }
@@ -254,8 +267,8 @@ public class VisitNode {
     }
 
     public boolean loadData(String conf, boolean shouldBePublic) {
-        boolean loaded = node.loadData(rootModuleConf, getParentNode(), parentConf, conf,
-            shouldBePublic);
+        boolean loaded = node.loadData(
+            rootModuleConf, getParentNode(), parentConf, conf, shouldBePublic, getUsage());
         if (loaded) {
             useRealNode();
 
@@ -265,7 +278,8 @@ public class VisitNode {
             // - the id refers to a dynamic revision, which has been resolved by loadData
             // - the loaded module descriptor has extra attributes in his info tag which are not 
             //   used when declaring the dependency
-            if (!getId().equals(node.getResolvedId())) {
+            if (data.getNode(node.getResolvedId()) == null 
+                    || !data.getNode(node.getResolvedId()).getId().equals(node.getResolvedId())) {
                 data.register(node.getResolvedId(), this);
             }
         }
@@ -309,19 +323,26 @@ public class VisitNode {
             VisitNode vnode = (VisitNode) iter.next();
             if ((parent == null && vnode.getParent() == null)
                     || (parent != null && parent.getId().equals(vnode.getParent().getId()))) {
+                vnode.parentConf = parentConf;
+                vnode.usage = getUsage();
                 return vnode;
             }
         }
         // the node has not yet been visited from the current parent, we create a new visit node
-        return traverse(parent, parentConf, node);
+        return traverse(parent, parentConf, node, getUsage());
+    }
+
+    private IvyNodeUsage getUsage() {
+        return usage == null ? node.getMainUsage() : usage;
     }
 
     private VisitNode traverseChild(String parentConf, IvyNode child) {
         VisitNode parent = this;
-        return traverse(parent, parentConf, child);
+        return traverse(parent, parentConf, child, null);
     }
 
-    private VisitNode traverse(VisitNode parent, String parentConf, IvyNode node) {
+    private VisitNode traverse(
+            VisitNode parent, String parentConf, IvyNode node, IvyNodeUsage usage) {
         if (getPath().contains(node)) {
             IvyContext.getContext().getCircularDependencyStrategy().handleCircularDependency(
                 toMrids(getPath(), node.getId()));
@@ -329,7 +350,7 @@ public class VisitNode {
             // root
             // parent = getVisitNode(depNode).getParent();
         }
-        return new VisitNode(data, node, parent, rootModuleConf, parentConf);
+        return new VisitNode(data, node, parent, rootModuleConf, parentConf, usage);
     }
 
     private ModuleRevisionId[] toMrids(Collection path, ModuleRevisionId last) {
