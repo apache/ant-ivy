@@ -569,6 +569,15 @@ public abstract class BasicResolver extends AbstractResolver {
                     + md.getModuleRevisionId().getName() + "'; ");
             ok = false;
         }
+        if (mrid.getBranch() != null 
+                && !mrid.getBranch().equals(md.getModuleRevisionId().getBranch())) {
+            Message.error("\t" + getName() + ": bad branch name found in " + ivyRef.getResource()
+                    + ": expected='" + mrid.getBranch() + " found='"
+                    + md.getModuleRevisionId().getBranch() + "'");
+            errors.append("bad module name: expected='" + mrid.getBranch() + "' found='"
+                    + md.getModuleRevisionId().getBranch() + "'; ");
+            ok = false;
+        }
         if (ivyRef.getRevision() != null && !ivyRef.getRevision().startsWith("working@")) {
             ModuleRevisionId expectedMrid = ModuleRevisionId
                     .newInstance(mrid, ivyRef.getRevision());

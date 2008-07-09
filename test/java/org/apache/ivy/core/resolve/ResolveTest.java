@@ -3089,6 +3089,11 @@ public class ResolveTest extends TestCase {
         assertTrue("bad module should have raised an error in report", report.hasError());
         assertTrue(StringUtils.join(report.getAllProblemMessages().toArray(), "\n").indexOf("'badmodule'") != -1);
 
+        report = ivy.resolve(new File("test/repositories/badfile/ivys/ivy-badbranch.xml").toURL(),
+            getResolveOptions(new String[] {"*"}));
+        assertTrue("bad branch should have raised an error in report", report.hasError());
+        assertTrue(StringUtils.join(report.getAllProblemMessages().toArray(), "\n").indexOf("'badbranch'") != -1);
+        
         report = ivy.resolve(new File("test/repositories/badfile/ivys/ivy-badrevision.xml").toURL(),
             getResolveOptions(new String[] {"*"}));
         assertTrue("bad revision should have raised an error in report", report.hasError());
