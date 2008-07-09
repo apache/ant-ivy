@@ -33,7 +33,50 @@ This task eases the lot the process of creating new dependency resolver, because
 
 It is generally used in combination with the <a href="../configuration/include.html">include</a> feature to help reusing macro at several places.
 
-A macro is defined by writing the resolver it is equivalent to as if it were written in the resolver place, except that you can use attributes to pass parameters to the newly defined resolver type. Attributes are defined with a name and sometimes a default value, and are used using the following syntax: <code>@{attributename}</code>.
+A macro is defined by writing the resolver it is equivalent to as if it were written in the resolver place, except that you can use attributes to pass parameters to the newly defined resolver type. Attributes are defined with a name and sometimes a default value, and are used using the following syntax: 
+<code>@{attributename}</code>
+<h2>Resolvers names</h2>
+Since you can use the same macro several times, and that your macro may define several resolvers (in a chain for instance), resolvers names need to be chosen carefully to avoid name conflicts (a resolver must have a unique name).
+
+Therefore here is how Ivy deals with the names of the resolvers defined in a macro:
+<ul>
+<li>if there is no name attribute on a resolver in the macrodef, then Ivy will use the name given when using the macro. This usually what should be done for the main resolver defined in the macro</li>
+<li>if there is a name attribute on a resolver in the macrodef, but this name doesn't contain a @{name} inside, then Ivy will use the provided name prefixed with the name of the macro separated by a dash</li>
+<li>if there is a name attribute on a resolver in the macrodef, and this name contains @{name} somewhere, then Ivy will use this name, and replace @{name} with the name provided when using the macro.
+</ul>
+
+Example:
+<code type="xml">
+<ivysettings>
+  <macrodef name="mymacro">
+    <chain>
+      <ibiblio name="ex1" />
+      <ibiblio name="ex2.@{name}" m2compatible="true" />
+    </chain>
+  </macrodef>
+	
+  <resolvers>
+    <mymacro name="default" />
+    <mymacro name="other" />
+   </resolvers>
+</ivysettings>
+</code>
+This is equivalent to:
+<code type="xml">
+<ivysettings>
+  <resolvers>
+    <chain name="default">
+      <ibiblio name="default-ex1" />
+      <ibiblio name="ex2.default" m2compatible="true" />
+    </chain>
+    <chain name="other">
+      <ibiblio name="other-ex1" />
+      <ibiblio name="ex2.other" m2compatible="true" />
+    </chain>
+   </resolvers>
+</ivysettings>
+</code>
+
 <h1>Attributes</h1>
 <table class="ivy-attributes">
 <thead>
