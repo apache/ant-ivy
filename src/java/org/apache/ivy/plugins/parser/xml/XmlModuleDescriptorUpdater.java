@@ -533,7 +533,7 @@ public final class XmlModuleDescriptorUpdater {
 
             write("<info organisation=\"" + XMLHelper.escape(systemMid.getOrganisation()) 
                 + "\" module=\"" + XMLHelper.escape(systemMid.getName()) + "\"");
-            if (systemMid.getBranch() != null) {
+            if (branch != null) {
                 write(" branch=\"" + XMLHelper.escape(systemMid.getBranch()) + "\"");
             }
             if (systemMid.getRevision() != null) {
