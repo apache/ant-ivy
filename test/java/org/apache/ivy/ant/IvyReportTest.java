@@ -22,6 +22,7 @@ import java.util.Locale;
 
 import junit.framework.TestCase;
 
+import org.apache.ivy.util.FileUtil;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.Delete;
 
@@ -77,6 +78,35 @@ public class IvyReportTest extends TestCase {
             assertTrue(new File(cache, "report/apache-resolve-simple-default.html").exists());
             assertTrue(new File(cache, "report/ivy-report.css").exists()); // IVY-826
             assertTrue(new File(cache, "report/apache-resolve-simple-default.graphml").exists());
+        } finally {
+            Locale.setDefault(oldLocale);
+        }
+    }
+    
+    public void testWithLatest() throws Exception {
+        Locale oldLocale = Locale.getDefault();
+        
+        try {
+            // set the locale to UK as workaround for SUN bug 6240963
+            Locale.setDefault(Locale.UK);
+
+            IvyResolve res = new IvyResolve();
+            res.setProject(project);
+            res.setFile(new File("test/repositories/1/org6/mod6.2/ivys/ivy-0.7.xml"));
+            res.execute();
+    
+            report.setTodir(new File(cache, "report"));
+            report.setXml(true);
+            report.execute();
+            
+            File xmlReport = new File(cache, "report/org6-mod6.2-default.xml");
+            assertTrue(xmlReport.exists());
+            // check that revision 2.2 of mod1.2 is only present once
+            String reportContent = FileUtil.readEntirely(xmlReport);
+            int index = reportContent.indexOf("<revision name=\"2.2\"");
+            assertTrue(index != -1);
+            index = reportContent.indexOf("<revision name=\"2.2\"", index + 1);
+            assertTrue(index == -1);
         } finally {
             Locale.setDefault(oldLocale);
         }

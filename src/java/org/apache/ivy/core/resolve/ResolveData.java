@@ -156,6 +156,8 @@ public class ResolveData {
         this.visitData.put(mrid, keptVisitData);
         // update visit data with discarde visit nodes
         keptVisitData.addVisitNodes(rootModuleConf, visitData.getVisitNodes(rootModuleConf));
+        
+        report.updateDependency(mrid, node);
     }
 
     public void setReport(ConfigurationResolveReport report) {

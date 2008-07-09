@@ -57,7 +57,6 @@ public class ResolveEngineTest extends TestCase {
         
         assertNotNull("The ResolveReport may never be null", report);
         assertTrue(report.hasError());
-        assertTrue(report.getModuleIds().isEmpty());
     }
 
     private void createCache() {

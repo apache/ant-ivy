@@ -122,6 +122,10 @@ public class ConfigurationResolveReport {
         dependencyReports.put(node, Collections.EMPTY_LIST);
     }
 
+    public void updateDependency(ModuleRevisionId mrid, IvyNode node) {
+        dependencies.put(mrid, node);
+    }
+
     public void addDependency(IvyNode node, DownloadReport report) {
         dependencies.put(node.getId(), node);
         dependencies.put(node.getResolvedId(), node);
