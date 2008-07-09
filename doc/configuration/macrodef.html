@@ -40,7 +40,7 @@ Since you can use the same macro several times, and that your macro may define s
 
 Therefore here is how Ivy deals with the names of the resolvers defined in a macro:
 <ul>
-<li>if there is no name attribute on a resolver in the macrodef, then Ivy will use the name given when using the macro. This usually what should be done for the main resolver defined in the macro</li>
+<li>if there is no name attribute on a resolver in the macrodef, then Ivy will use the name given when using the macro. This is what usually should be done for the main resolver defined in the macro</li>
 <li>if there is a name attribute on a resolver in the macrodef, but this name doesn't contain a @{name} inside, then Ivy will use the provided name prefixed with the name of the macro separated by a dash</li>
 <li>if there is a name attribute on a resolver in the macrodef, and this name contains @{name} somewhere, then Ivy will use this name, and replace @{name} with the name provided when using the macro.
 </ul>
