@@ -192,7 +192,7 @@ public class PublishEventsTest extends TestCase {
      * Test an attempted publish with an invalid data file path.
      */
     public void testPublishMissingFile() throws IOException {
-        //delete the datafile.  the publish should fail, but all events should still be fired,
+        //delete the datafile.  the publish should fail
         //and the ivy artifact should still publish successfully.
         assertTrue("datafile has been destroyed", dataFile.delete());
         PublishTestCase dataPublish = (PublishTestCase)expectedPublications.get(dataArtifact.getId());
@@ -202,10 +202,10 @@ public class PublishEventsTest extends TestCase {
         assertSameArtifact("missing artifact was returned", dataArtifact, (Artifact)missing.iterator().next());
         
         //if all tests passed, all of our counter variables should have been updated.
-        assertEquals("pre-publish trigger fired and passed all tests", 2, preTriggers);
-        assertEquals("post-publish trigger fired and passed all tests", 2, postTriggers);
+        assertEquals("pre-publish trigger fired and passed all tests", 1, preTriggers);
+        assertEquals("post-publish trigger fired and passed all tests", 1, postTriggers);
         assertEquals("only the ivy file published successfully", 1, publications);
-        assertEquals("publish of all expected artifacts has been attempted", 0, expectedPublications.size());
+        assertEquals("publish of all expected artifacts has been attempted", 1, expectedPublications.size());
     }
 
     /**

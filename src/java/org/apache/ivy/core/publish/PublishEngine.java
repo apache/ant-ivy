@@ -28,8 +28,11 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.Map;
 import java.util.Set;
+import java.util.Map.Entry;
 
 import org.apache.ivy.core.IvyContext;
 import org.apache.ivy.core.IvyPatternHelper;
@@ -192,48 +195,61 @@ public class PublishEngine {
                         extraArtifacts[i].getQualifiedExtraAttributes()));
             }
         }
+        // now collects artifacts files
+        Map/*<Artifact,File>*/ artifactsFiles = new LinkedHashMap();
+        for (Iterator iter = artifactsSet.iterator(); iter.hasNext();) {
+            Artifact artifact = (Artifact) iter.next();
+            for (Iterator iterator = srcArtifactPattern.iterator(); iterator.hasNext();) {
+                String pattern = (String) iterator.next();
+                File artifactFile = new File(
+                    IvyPatternHelper.substitute(settings.substitute(pattern), artifact));
+                if (artifactFile.exists()) {
+                    artifactsFiles.put(artifact, artifactFile);
+                    break;
+                }
+            }
+            if (!artifactsFiles.containsKey(artifact)) {
+                Message.info("missing artifact " + artifact + ":");
+                for (Iterator iterator = srcArtifactPattern.iterator(); iterator.hasNext();) {
+                    String pattern = (String) iterator.next();
+                    Message.info("\t"
+                            + new File(IvyPatternHelper.substitute(pattern, artifact))
+                            + " file does not exist");
+                }
+                if (options.isHaltOnMissing()) {
+                    throw new IOException("missing artifact " + artifact);
+                }
+                missing.add(artifact);
+            }
+        }
+        if (options.getSrcIvyPattern() != null) {
+            Artifact artifact = MDArtifact.newIvyArtifact(md);
+            File artifactFile = new File(
+                IvyPatternHelper.substitute(options.getSrcIvyPattern(), artifact));
+            if (!artifactFile.exists()) {
+                Message.info("missing ivy file for "
+                        + md.getModuleRevisionId()
+                        + ": "
+                        + artifactFile + " file does not exist");
+                if (options.isHaltOnMissing()) {
+                    throw new IOException("missing ivy artifact " + artifact);
+                }
+                missing.add(artifact);
+            } else {
+                artifactsFiles.put(artifact, artifactFile);
+            }
+        }
+        
+        // and now do actual publishing
         boolean successfullyPublished = false;
         try {
             resolver.beginPublishTransaction(md.getModuleRevisionId(), options.isOverwrite());
             // for each declared published artifact in this descriptor, do:
-            for (Iterator iter = artifactsSet.iterator(); iter.hasNext();) {
-                Artifact artifact = (Artifact) iter.next();
-                // copy the artifact using src patterns and resolver
-                boolean published = false;
-                for (Iterator iterator = srcArtifactPattern.iterator(); iterator.hasNext()
-                        && !published;) {
-                    String pattern = (String) iterator.next();
-                    published = publish(
-                        artifact, settings.substitute(pattern), resolver, options.isOverwrite());
-                }
-                if (!published) {
-                    Message.info("missing artifact " + artifact + ":");
-                    for (Iterator iterator = srcArtifactPattern.iterator(); iterator.hasNext();) {
-                        String pattern = (String) iterator.next();
-                        Message.info("\t"
-                                + new File(IvyPatternHelper.substitute(pattern, artifact))
-                                + " file does not exist");
-                    }
-                    if (options.isHaltOnMissing()) {
-                        throw new IOException("missing artifact " + artifact);
-                    }
-                    missing.add(artifact);
-                }
-            }
-            if (options.getSrcIvyPattern() != null) {
-                Artifact artifact = MDArtifact.newIvyArtifact(md);
-                if (!publish(
-                        artifact, options.getSrcIvyPattern(), resolver, options.isOverwrite())) {
-                    Message.info("missing ivy file for "
-                            + md.getModuleRevisionId()
-                            + ": "
-                            + new File(IvyPatternHelper.substitute(options.getSrcIvyPattern(),
-                                artifact)) + " file does not exist");
-                    if (options.isHaltOnMissing()) {
-                        throw new IOException("missing ivy artifact " + artifact);
-                    }
-                    missing.add(artifact);
-                }
+            for (Iterator iter = artifactsFiles.entrySet().iterator(); iter.hasNext();) {
+                Map.Entry entry = (Entry) iter.next();
+                Artifact artifact = (Artifact) entry.getKey();
+                File artifactFile = (File) entry.getValue();
+                publish(artifact, artifactFile, resolver, options.isOverwrite());
             }
             resolver.commitPublishTransaction();
             successfullyPublished = true;
@@ -245,10 +261,8 @@ public class PublishEngine {
         return missing;
     }
 
-    private boolean publish(Artifact artifact, String srcArtifactPattern,
+    private void publish(Artifact artifact, File src,
             DependencyResolver resolver, boolean overwrite) throws IOException {
-        File src = new File(IvyPatternHelper.substitute(srcArtifactPattern, artifact));
-        
         IvyContext.getContext().checkInterrupted();
         //notify triggers that an artifact is about to be published
         eventManager.fireIvyEvent(
@@ -259,7 +273,6 @@ public class PublishEngine {
                 resolver.publish(artifact, src, overwrite);
                 successful = true;
             }
-            return successful;
         } finally {
             //notify triggers that the publish is finished, successfully or not.
             eventManager.fireIvyEvent(
