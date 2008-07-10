@@ -209,7 +209,7 @@ public class RepositoryResolver extends AbstractResourceResolver {
         return IvyPatternHelper.substitute(pattern, mrid, artifact);
     }
 
-    private void put(Artifact artifact, File src, String dest, boolean overwrite)
+    protected void put(Artifact artifact, File src, String dest, boolean overwrite)
             throws IOException {
         repository.put(artifact, src, dest, overwrite);
         String[] checksums = getChecksumAlgorithms();
@@ -218,7 +218,7 @@ public class RepositoryResolver extends AbstractResourceResolver {
         }
     }
 
-    private void putChecksum(Artifact artifact, File src, String dest, boolean overwrite,
+    protected void putChecksum(Artifact artifact, File src, String dest, boolean overwrite,
             String algorithm) throws IOException {
         File csFile = File.createTempFile("ivytemp", algorithm);
         try {
