@@ -26,23 +26,33 @@ import org.apache.ivy.plugins.resolver.IBiblioResolver;
 import org.apache.ivy.plugins.resolver.IvyRepResolver;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
+import org.apache.tools.ant.types.Reference;
 
 import junit.framework.TestCase;
 
 public class IvyAntSettingsTest extends TestCase {
-    private IvyAntSettings antSettings;
+    private IvyConfigure antSettings;
     private Project project;
 
     protected void setUp() throws Exception {
         project = new Project();
         project.setProperty("myproperty", "myvalue");
 
-        antSettings = new IvyAntSettings();
+        antSettings = new IvyConfigure();
         antSettings.setProject(project);
     }
     
     private Ivy getIvyInstance() {
-        return antSettings.getConfiguredIvyInstance();
+        IvyTask task = new IvyTask() {
+            public void doExecute() throws BuildException {
+            }};
+        task.setProject(project);
+        task.init();
+        
+        Reference ref = new Reference(antSettings.getSettingsId());
+//        ref.setProject(project);
+        task.setSettingsRef(ref);
+        return task.getIvyInstance();
     }
 
     public void testDefault() throws Exception {
@@ -147,7 +157,7 @@ public class IvyAntSettingsTest extends TestCase {
         String confUrl = IvyConfigureTest.class.getResource("ivysettings-props.xml")
                 .toExternalForm();
         antSettings.setUrl(confUrl);
-        antSettings.setId("this.id");
+        antSettings.setSettingsId("this.id");
         
         antSettings.execute();
 
@@ -175,9 +185,9 @@ public class IvyAntSettingsTest extends TestCase {
         Ivy ivy = getIvyInstance();
         assertNotNull(ivy);
 
-        antSettings = new IvyAntSettings();
+        antSettings = new IvyConfigure();
         antSettings.setProject(project);
-        antSettings.setOverride(IvyAntSettings.OVERRIDE_TRUE);
+        antSettings.setOverride("true");
         antSettings.setFile(new File("test/repositories/ivysettings.xml"));
         antSettings.execute();
         assertNotNull(getIvyInstance());
@@ -192,13 +202,13 @@ public class IvyAntSettingsTest extends TestCase {
         Ivy ivy = getIvyInstance();
         assertNotNull(ivy);
 
-        IvyAntSettings newAntSettings = new IvyAntSettings();
+        IvyConfigure newAntSettings = new IvyConfigure();
         newAntSettings.setProject(project);
-        newAntSettings.setOverride(IvyAntSettings.OVERRIDE_FALSE);
+        newAntSettings.setOverride("false");
         newAntSettings.setFile(new File("test/repositories/ivysettings.xml"));
         newAntSettings.execute();
         
-        assertTrue(antSettings == project.getReference(newAntSettings.getId()));
+        assertTrue(ivy == getIvyInstance());
     }
 
     public void testOverrideNotAllowed() throws Exception {
@@ -208,9 +218,9 @@ public class IvyAntSettingsTest extends TestCase {
         Ivy ivy = getIvyInstance();
         assertNotNull(ivy);
 
-        antSettings = new IvyAntSettings();
+        antSettings = new IvyConfigure();
         antSettings.setProject(project);
-        antSettings.setOverride(IvyAntSettings.OVERRIDE_NOT_ALLOWED);
+        antSettings.setOverride("notallowed");
         antSettings.setFile(new File("test/repositories/ivysettings.xml"));
         
         try {
@@ -219,7 +229,7 @@ public class IvyAntSettingsTest extends TestCase {
                     + "override=notallowed should raise an exception");
         } catch (BuildException e) {
             assertTrue(e.getMessage().indexOf("notallowed") != -1);
-            assertTrue(e.getMessage().indexOf(antSettings.getId()) != -1);
+            assertTrue(e.getMessage().indexOf(antSettings.getSettingsId()) != -1);
         }
     }
 

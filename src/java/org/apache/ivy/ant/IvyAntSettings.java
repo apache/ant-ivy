@@ -23,8 +23,6 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.ParseException;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Properties;
 
 import org.apache.ivy.Ivy;
@@ -37,10 +35,10 @@ import org.apache.ivy.util.url.URLHandlerDispatcher;
 import org.apache.ivy.util.url.URLHandlerRegistry;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
-import org.apache.tools.ant.Task;
 import org.apache.tools.ant.taskdefs.Property;
+import org.apache.tools.ant.types.DataType;
 
-public class IvyAntSettings extends Task {
+public class IvyAntSettings extends DataType {
 
     public static class Credentials {
         private String realm;
@@ -84,24 +82,6 @@ public class IvyAntSettings extends Task {
         }
     }
 
-    /**
-     * Use to override a previous definition of settings with the same id 
-     */
-    public static final String OVERRIDE_TRUE = "true";
-    /**
-     * Use to avoid overriding a previous definition of settings with the same id
-     */
-    public static final String OVERRIDE_FALSE = "false";
-    /**
-     * Use to raise an error if attempting to override a previous definition of settings with the
-     * same id
-     */
-    public static final String OVERRIDE_NOT_ALLOWED = "notallowed";
-
-    private static final Collection OVERRIDE_VALUES = Arrays.asList(new String[] {
-            OVERRIDE_TRUE, OVERRIDE_FALSE, OVERRIDE_NOT_ALLOWED
-    });
-
     private Ivy ivyEngine = null;
 
     private File file = null;
@@ -117,8 +97,8 @@ public class IvyAntSettings extends Task {
     private String passwd = null;
     
     private String id = "ivy.instance";
-
-    private String override = OVERRIDE_NOT_ALLOWED;
+    
+    private boolean autoRegistered = false;
 
     /**
      * Returns the default ivy settings of this classloader. If it doesn't exist yet, a new one is
@@ -144,10 +124,12 @@ public class IvyAntSettings extends Task {
         if (defaultInstanceObj == null) {
             project.log("No ivy:settings found for the default reference 'ivy.instance'.  " 
                     + "A default instance will be used", Project.MSG_INFO);
-            IvyAntSettings defaultInstance = new IvyAntSettings();
-            defaultInstance.setProject(project);
-            defaultInstance.perform();
-            return defaultInstance;
+            
+            IvyAntSettings settings = new IvyAntSettings();
+            settings.setProject(project);
+            project.addReference("ivy.instance", settings);        
+            settings.createIvyEngine();
+            return settings;
         } else {
             return (IvyAntSettings) defaultInstanceObj;
         }
@@ -193,7 +175,16 @@ public class IvyAntSettings extends Task {
         userName = format(aUserName);
     }
 
-
+    public void setProject(Project p) {
+        super.setProject(p);
+        
+        if ("ivy.instance".equals(id) && getProject().getReference(id) == null) {
+            // register ourselfs as default settings, just in case the id attribute is not set
+            getProject().addReference("ivy.instance", this);
+            autoRegistered = true;
+        }
+    }
+    
     private static String format(String str) {
         return str == null ? str : (str.trim().length() == 0 ? null : str.trim());
     }
@@ -211,19 +202,15 @@ public class IvyAntSettings extends Task {
         this.url = new URL(confUrl);
     }
 
-    public void setOverride(String override) {
-        if (!OVERRIDE_VALUES.contains(override)) {
-            throw new IllegalArgumentException("invalid override value '" + override + "'. "
-                + "Valid values are " + OVERRIDE_VALUES);
-        }
-        this.override = override;
-    }
-    
     /*
      * This is usually not necessary to define a reference in Ant, but it's the only
      * way to know the id of the settings, which we use to set ant properties.
      */
     public void setId(String id) {
+        if (autoRegistered && getProject().getReference(this.id) == this) {
+            getProject().getReferences().remove(this.id);
+            autoRegistered = false;
+        }
         this.id = id;
     }
     
@@ -231,53 +218,28 @@ public class IvyAntSettings extends Task {
         return id;
     }
 
-    /*
-     * public void execute() throws BuildException { 
-     * ensureMessageInitialised(); 
-     * if (getId()==null) {
-     * log("No id specified for the ivy:settings, set the instance as the default one",
-     * Project.MSG_DEBUG); getProject().addReference("ivy.instance", this); } else {
-     * getProject().addReference(id, this); } }
-     */
-
     /**
      * Return the configured Ivy instance.
      * @return Returns the configured Ivy instance.
      */
     public Ivy getConfiguredIvyInstance() {
         if (ivyEngine == null) {
-            perform();
+            createIvyEngine();
         }
         return ivyEngine;
     }
 
-    public void execute() throws BuildException {
-        if (!OVERRIDE_TRUE.equals(override)) {
-            Object otherRef = getProject().getReference(id);
-            if ((otherRef != null) && (otherRef != this)) {
-                if (OVERRIDE_FALSE.equals(override)) {
-                    verbose("a settings definition is already available for " + id + ": skipping");
-                    return;
-                } else {
-                    // OVERRIDE_NOT_ALLOWED
-                    throw new BuildException(
-                        "overriding a previous definition of ivy:settings with the id '" + id + "'" 
-                        + " is not allowed when using override='" + OVERRIDE_NOT_ALLOWED + "'.");
-                }
-            }
-        }
-        getProject().addReference(id, this);
+    void createIvyEngine() {
         Property prop = new Property() {
             public void execute() throws BuildException {
                 addProperties(getDefaultProperties());
             }
         };
         prop.setProject(getProject());
+        prop.init();
         prop.execute();
-        createIvyEngine();
-    }
 
-    private void createIvyEngine() {
+        
         IvyAntVariableContainer ivyAntVariableContainer = new IvyAntVariableContainer(getProject());
 
         IvySettings settings = new IvySettings(ivyAntVariableContainer);
@@ -382,10 +344,6 @@ public class IvyAntSettings extends Task {
 
     private void info(String msg) {
         log(msg, Project.MSG_INFO);
-    }
-
-    private void warn(String msg) {
-        log(msg, Project.MSG_WARN);
     }
 
     private void configureURLHandler() {

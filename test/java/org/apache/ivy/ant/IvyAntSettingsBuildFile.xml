@@ -26,17 +26,17 @@
   </target>
 
   <target name="testOverrideNotSpecified">
-  	<ivy:settings id="test1" file="test/repositories/ivysettings.xml" />
+  	<ivy:configure settingsId="test1" file="test/repositories/ivysettings.xml" />
   	<ivy:resolve settingsRef="test1" file="test/java/org/apache/ivy/ant/ivy-simple.xml" />
   </target>
 
   <target name="testOverrideSetToFalse">
-  	<ivy:settings id="test2" file="test/repositories/ivysettings.xml" override="false" />
+  	<ivy:configure settingsId="test2" file="test/repositories/ivysettings.xml" override="false" />
   	<ivy:resolve settingsRef="test2" file="test/java/org/apache/ivy/ant/ivy-simple.xml" />
   </target>
 	  
   <target name="testUnnecessaryDefaultIvyInstance">
-	  	<ivy:settings id="testUnnecessaryDefaultIvyInstance" file="test/repositories/ivysettings.xml" override="true" />
+	  	<ivy:configure settingsId="testUnnecessaryDefaultIvyInstance" file="test/repositories/ivysettings.xml" override="true" />
 	  	<ivy:cachepath settingsRef="testUnnecessaryDefaultIvyInstance" file="test/java/org/apache/ivy/ant/ivy-simple.xml" pathid="ptest" />
 	  </target>
 </project>

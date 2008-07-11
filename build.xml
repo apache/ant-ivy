@@ -46,7 +46,7 @@
             </classpath>
         </taskdef>
     	
-        <ivy:settings id="ivy.instance" override="true"/>
+        <ivy:configure id="ivy.instance" override="true" />
     </target>
     
     <target name="install" depends="init-ivy-home, jar" 
@@ -90,7 +90,7 @@
             <fileset dir="${lib.dir}">
                 <include name="*.jar" />
                 <exclude name="ant.jar" />
-                <exclude name="ant-*.jar" />
+                <exclude name="ant-launcher.jar" />
             </fileset>
             <pathelement location="${core.classes.build.dir}" />
             <pathelement location="${ant.classes.build.dir}" />

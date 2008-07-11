@@ -26,25 +26,36 @@ import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.plugins.resolver.DependencyResolver;
 import org.apache.ivy.plugins.resolver.IBiblioResolver;
 import org.apache.ivy.plugins.resolver.IvyRepResolver;
+import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
+import org.apache.tools.ant.types.Reference;
 
 /**
  * Test the deprecated IvyConfigureTest and the underlying implementation AntIvySettings. When
  * IvyConfigure will be removed, this class should be renamed AntIvySettingsTest
  */
 public class IvyConfigureTest extends TestCase {
-    private IvyAntSettings antSettings;
+    private IvyConfigure antSettings;
 
     protected void setUp() throws Exception {
         Project project = new Project();
         project.setProperty("myproperty", "myvalue");
 
-        antSettings = new IvyAntSettings();
+        antSettings = new IvyConfigure();
         antSettings.setProject(project);
     }
 
     private Ivy getIvyInstance() {
-        return antSettings.getConfiguredIvyInstance();
+        IvyTask task = new IvyTask() {
+            public void doExecute() throws BuildException {
+            }};
+        task.setProject(antSettings.getProject());
+        task.init();
+        
+        Reference ref = new Reference(antSettings.getSettingsId());
+//        ref.setProject(antSettings.getProject());
+        task.setSettingsRef(ref);
+        return task.getIvyInstance();
     }
 
     public void testDefault() throws Exception {

@@ -225,11 +225,11 @@ public class IvyDeliverTest extends TestCase {
     }
 
     public void testReplaceBranch() throws Exception {
-        IvyAntSettings settings = new IvyAntSettings();
+        IvyConfigure settings = new IvyConfigure();
         settings.setProject(project);
         settings.execute();
         // change the default branch to use
-        settings.getConfiguredIvyInstance().getSettings().setDefaultBranch("BRANCH1");
+        IvyAntSettings.getDefaultInstance(project).getConfiguredIvyInstance().getSettings().setDefaultBranch("BRANCH1");
         
         // resolve a module dependencies
         project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-latest.xml");

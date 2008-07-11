@@ -37,7 +37,7 @@ public class IvyCleanCacheTest extends TestCase {
         p.setProperty("cache", cacheDir.getAbsolutePath());
         cleanCache = new IvyCleanCache();
         cleanCache.setProject(p);
-        IvyAntSettings settings = new IvyAntSettings();
+        IvyConfigure settings = new IvyConfigure();
         settings.setProject(p);
         settings.setUrl(
             IvyCleanCacheTest.class.getResource("ivysettings-cleancache.xml").toExternalForm());
