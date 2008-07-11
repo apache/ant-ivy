@@ -160,6 +160,9 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - FIX: The Bundle-Version is 0.0.0 in the build artifacts (IVY-802)
 - FIX: Fix the encoding used in XML reports (IVY-816)
 
+- DOCUMENTATION: Fixed more than a hundred (100+) obsolete "configuration" references; replaced with "settings" (IVY-863) (thanks to Sakari Maaranen)
+- DOCUMENTATION: Elaborated documentation of ivy files and deliver/publish tasks (IVY-847) (thanks to Sakari Maaranen)
+- DOCUMENTATION: Ivy terminology elaboration and illustration (IVY-852) (thanks to Sakari Maaranen)
 - DOCUMENTATION: Broken link in documentation in Ivy files section, info element page (IVY-788)
 - DOCUMENTATION: Add new cache information to resolver doc (IVY-772) (thanks to Carlton Brown)
 
