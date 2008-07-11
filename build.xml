@@ -55,9 +55,13 @@
         <copy file="${artifacts.build.dir}/jars/${final.name}" tofile="${ivy.jar.file}" />
     </target>
 
-    <target name="install-ant" depends="init-ivy-home, jar" 
+    <target name="install-ant" depends="init-ivy-home, jar"
     	description="build Ivy and install it in Ant home lib">
-        <copy file="${artifacts.build.dir}/jars/${final.name}" tofile="${env.ANT_HOME}/lib/ivy.jar" />
+        <condition property="ant.home" value="${env.ANT_HOME}">
+          <isset property="env.ANT_HOME" />
+        </condition>
+        <fail unless="ant.home" message="ANT_HOME environment variable or ant.home property required" />
+        <copy file="${artifacts.build.dir}/jars/${final.name}" tofile="${ant.home}/lib/ivy.jar" />
     </target>
 
     <!-- =================================================================
