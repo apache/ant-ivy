@@ -22,69 +22,12 @@
 	<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
 	<script type="text/javascript">var xookiConfig = {level: 1};</script>	
 	<script type="text/javascript" src="../xooki/xooki.js"></script>
+	<meta HTTP-EQUIV="REFRESH" content="3; url=../settings/latest-strategies.html">
 </head>
 <body>
-	<textarea id="xooki-source">
-<b>Tag:</b> latest-strategies
-
-Defines a list of <a href="../concept.html#latest">latest strategies</a> usable in ivy. Each latest strategy is identified by its name, given as an attribute.
-The child tag used for the latest strategy must be equal to a name of a latest strategy type (usually added with the typedef tag).
-
-The latest strategies which are always included in ivy (and do not require anything in the configuration file) are:
-<ul>
-<li>latest-time</li> compares the revisions date to know which is the latest. While this is often a good 
-strategy in terms of pertinence, it has the drawback to be costful to compute with distant repositories. If you use ivyrep, 
-for example, ivy has to ask the http server what is the date of each ivy file before knowing which is the latest.
-<li>latest-revision</li> compares the revisions as string, using an algorithm close to the one used in the php version_compare function.
-This algorithm takes into account special meaning of some text. For instance, with this strategy, 1.0-dev1 is considered
-before 1.0-alpha1, which in turn is before 1.0-rc1, which is before 1.0, which is before 1.0.1.
-<li>latest-lexico</li> compares the revisions as string, using lexicographic order (the one used by java string comparison).
-</ul>
-
-<h1>Child elements</h1>
-<table class="ivy-children">
-<thead>
-    <tr><th class="ivy-chld">Element</th><th class="ivy-chld-desc">Description</th><th class="ivy-chld-card">Cardinality</th></tr>
-</thead>
-<tbody>
-    <tr><td>any latest strategy</td><td>adds a latest strategy to the list of available strategies</td>
-        <td>0..n</td></tr>
-</tbody>
-</table>
-
-<h1>latest-revision</h1>
-<span class="since">since 1.4</span> The latest-revision can now be configured to handle more words with special meanings than the one defined in php version_compare function.
-
-Here is an example of how you can do so:
-<code type="xml">
-<latest-strategies>
-  <latest-revision name="mylatest-revision">
-    <specialMeaning name="PRE" value="-2"/>
-    <specialMeaning name="QA" value="4"/>
-    <specialMeaning name="PROD" value="5"/>
-  </latest-revision>
-</latest-strategies> 
-</code>
-Knowing that the default special meaning words are the following:
-<code type="xml">
-    <specialMeaning name="dev" value="-1"/>
-    <specialMeaning name="rc" value="1"/>
-    <specialMeaning name="final" value="2"/>
-</code>
-You can even get rid or redefine the default special meanings by setting usedefaultspecialmeanings="false" on the latest-revision tag.
-Example:
-<code type="xml">
-<latest-strategies>
-  <latest-revision name="mylatest-revision" usedefaultspecialmeanings="false">
-    <specialMeaning name="pre" value="-2"/>
-    <specialMeaning name="m" value="1"/>
-    <specialMeaning name="rc" value="2"/>
-    <specialMeaning name="prod" value="3"/>
-  </latest-revision>
-</latest-strategies> 
-</code>
-
-
+<textarea id="xooki-source">
+This page has moved. If your browser doesn't automatically redirect to its new location, click
+<a href="../settings/latest-strategies.html">here</a>.
 	</textarea>
 <script type="text/javascript">xooki.postProcess();</script>
 </body>

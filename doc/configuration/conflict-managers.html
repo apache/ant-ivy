@@ -22,46 +22,12 @@
 	<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
 	<script type="text/javascript">var xookiConfig = {level: 1};</script>	
 	<script type="text/javascript" src="../xooki/xooki.js"></script>
+	<meta HTTP-EQUIV="REFRESH" content="3; url=../settings/conflict-managers.html">
 </head>
 <body>
-	<textarea id="xooki-source">
-<b>Tag:</b> conflict-managers
-
-Defines a list of <a href="../concept.html#conflict">conflicts managers</a> usable in ivy. Each conflict manager is identified by its name, given as an attribute.
-The child tag used for the conflict manager must be equal to a name of a conflict manager type (either built-in
-or added with the typedef tag).
-
-Here is a list of predefined conflicts managers (which do not require anything in the configuration file):
-<ul>
-<li>all</li> this conflicts manager resolve conflicts by selecting all revisions. Also called NoConflictManager, it does evict any module.
-<li>latest-time</li> this conflict manager selects only the 'latest' revision, latest being defined as the latest in time. Note that latest in time is costly to compute, so prefer latest-revision if you can.
-<li>latest-revision</li> this conflict manager selects only the 'latest' revision, latest being defined by a string comparison of revisions.
-<li>latest-compatible</li> this conflict manager selects the latest version in the conflicts which can result in a compatible set of dependencies. This means that in the end this conflict manager does not allow any conflict (like the strict conflict manager), except that it follows a best effort strategy to try to find a set of compatible modules (according to the version constraints)
-<li>strict</li> this conflict manager throws an exception (i.e. causes a build failure) whenever a conflict is found.
-</ul>
-The two "latest" conflict managers also take into account the force attribute of the dependencies.
-Indeed direct dependencies can declare a force attribute (see <a href="../ivyfile/dependency.html">dependency</a>), which indicates the the revision given in the direct dependency should be prefered over indirect dependencies.
-
-Here is a list of conflict manager types available, which can be used to define your own custom conflict managers:
-<ul>
-<li>latest-cm</li>The latest conflict manager uses a latest strategy to select the latest revision among several ones. Both latest-time and latest-revision conflict managers are based on this conflict manager type. It takes 'latest' as attribute to define which latest strategy should be used. Example:
-<code><latest-cm name="mylatest-conflict-manager" latest="my-latest-strategy"/></code>
-<li>compatible-cm</li>The latest compatible conflict manager uses a latest strategy to select the latest revision among several ones. It takes 'latest' as attribute to define which latest strategy should be used. Example:
-<code><compatible-cm name="my-latest-compatible-conflict-manager" latest="my-latest-strategy"/></code>
-<li>regexp-cm</li>This conflict manager is based on a regular expression and throw an exception (i.e. causes a build failure) when a conflict is found with versions with different matching group. For instance if a conflict is found between 1.2.x and 1.3.y it will throw an exception if the regular exception is (.*)\.\d, because the matching group will match different string (1.2 and 1.3). 1.2.1 and 1.2.2 won't throw an exception with the same regular expression. The regular expression is set using the 'regexp' attribute. A 'ignoreNonMatching' attribute can also be set to simply warrn when a version is found which does not match the regular expression, instead of throwing an exception.
-</ul>
-
-<h3>Child elements</h3>
-<table class="ivy-children">
-<thead>
-    <tr><th class="ivy-chld">Element</th><th class="ivy-chld-desc">Description</th><th class="ivy-chld-card">Cardinality</th></tr>
-</thead>
-<tbody>
-    <tr><td>any conflict manager</td><td>adds a conflict manager to the list of available conflict managers</td>
-        <td>0..n</td></tr>
-</tbody>
-</table>
-
+<textarea id="xooki-source">
+This page has moved. If your browser doesn't automatically redirect to its new location, click
+<a href="../settings/conflict-managers.html">here</a>.
 	</textarea>
 <script type="text/javascript">xooki.postProcess();</script>
 </body>

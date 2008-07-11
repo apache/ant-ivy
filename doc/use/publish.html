@@ -31,7 +31,7 @@ This task is meant to publish the current module descriptor together with its de
 
 All the artifacts must have been created <em>before</em> calling this task. It does not create the artifacts themselves, but expects to find them at the location indicated by the artifacts pattern.
 
-The target repository is given through the name of a resolver declared in current ivy settings. See <a href="../configuration.html">settings</a> for details about resolver supporting artifact publishing.
+The target repository is given through the name of a resolver declared in current ivy settings. See [[settings]] for details about resolver supporting artifact publishing.
 
 It also publishes the delivered ivy file (except if you don't want), and even deliver it, if it has not been done with a previous deliver call or if forcedeliver is set to true. That's why this task takes some parameters useful only for delivery. See the illustration below:
 
@@ -58,7 +58,7 @@ The source artifact pattern can be specified either as an attribute on the task 
     <tr><td>update</td><td>true to update ivy file metadata (revision, branch, publication date and status) before publishing, false otherwise. This is usually not necessary when using deliver before publish.</td>
         <td>No. Defaults to false</td></tr>
     <tr><td>validate</td><td>true to force ivy files validation against ivy.xsd, false to force no validation</td>
-        <td>No. Defaults to default ivy value (as configured in [[configuration settings file]])</td></tr>
+        <td>No. Defaults to default ivy value (as configured in [[settings settings file]])</td></tr>
     <tr><td>replacedynamicrev</td><td>true to replace dynmic revisions by static ones in the delivered file, false to avoid this replacement <span class="since">since 1.3</span></td>
         <td>No. Defaults to true</td></tr>
     <tr><td>publishivy</td><td>True to publish delivered ivy file, false otherwise</td>

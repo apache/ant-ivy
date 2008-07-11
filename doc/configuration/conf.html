@@ -22,58 +22,12 @@
 	<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
 	<script type="text/javascript">var xookiConfig = {level: 1};</script>	
 	<script type="text/javascript" src="../xooki/xooki.js"></script>
+	<meta HTTP-EQUIV="REFRESH" content="3; url=../settings/settings.html">
 </head>
 <body>
-	<textarea id="xooki-source">
-<b>Tag:</b> settings
-
-Configures some important ivy info: default resolver, latest strategy, conflict manager...
-
-Default resolver is used whenever nothing else is configured in the modules section of the settings file. It should give the name of a dependency resolver defined in the [[configuration/resolvers]] section of the settings file.
-
-Default latest strategy and conflict manager can also be configured here.
-
-<em>validate</em> indicates if ivy files should generally be validated against the xsd or not. This setting is only a default value, and can be overridden:
-1) in ant tasks
-2) in resolvers
-So if there is a setting in the resolver, it always wins against all other settings.
-
-<h1>Attributes</h1>
-<table class="ivy-attributes">
-<thead>
-    <tr><th class="ivy-att">Attribute</th><th class="ivy-att-desc">Description</th><th class="ivy-att-req">Required</th></tr>
-</thead>
-<tbody>
-    <tr><td>defaultResolver</td><td>the name of the default resolver to use</td>
-        <td>No, but all modules should be configured in the modules section if not provided</td></tr>
-    <tr><td>defaultLatestStrategy</td><td>the name of the default latest strategy to use</td>
-        <td>No, defaults to latest-revision</td></tr>
-    <tr><td>defaultConflictManager</td><td>the name of the default conflict manager to use</td>
-        <td>No, defaults to latest-revision</td></tr>
-    <tr><td>defaultBranch</td><td>the default branch to use for all modules, except if they have a <a href="../configuration/module.html"> module specific branch setting</a>. <span class="since">since 1.4</span></td>
-        <td>No, defaults to no default branch</td></tr>
-    <tr><td>defaultResolveMode</td><td>the default [[ant:resolve resolve mode]] to use for all modules, except if they have a <a href="../configuration/module.html"> module specific resolve mode setting</a>. <span class="since">since 2.0</span></td>
-        <td>No, defaults to 'default'</td></tr>
-    <tr><td><a name="circularDependencyStrategy"></a>circularDependencyStrategy</td><td>the name of the <a href="../concept.html#circular">circular dependency strategy</a> to use <span class="since">since 1.4</span></td>
-        <td>No, defaults to warn</td></tr>
-    <tr><td>validate</td><td>Indicates if ivy files should be validated against ivy.xsd or not.</td>
-        <td>No, defaults to true</td></tr>
-    <tr><td>useRemoteConfig</td><td>true to configure ivyrep and ibiblio resolver from a remote configuration file (updated with changes in those repository structure if any) (<span class="since">since 1.2</span>)</td>
-        <td>No, defaults to false</td></tr>
-    <tr><td><s>defaultCache</s></td><td>a path to a directory to use as default basedir for both resolution and repository cache(s).
-	    <i>Deprecated, we recommend using defaultCacheDir on the [[configuration/caches]] tag instead</i></td>
-        <td>No, defaults to .ivy2/cache in user home</td></tr>
-    <tr><td><s>checkUpToDate</s></td><td>Indicates if date should be checked before retrieving artifacts from cache.
-    	<i>Deprecated, we recommend using checkUpToDate on the [[configuration/caches]] tag instead</i></td>
-        <td>No, defaults to true</td></tr>
-    <tr><td><s>cacheIvyPattern</s></td><td>a pattern to indicate where ivy files should be put in cache.
-    	<i>Deprecated, we recommend using ivyPattern on the [[configuration/caches]] tag instead</i></td>
-        <td>No, defaults to [organisation]/[module]/ivy-[revision].xml</td></tr>
-    <tr><td><s>cacheArtifactPattern</s></td><td>a pattern to indicate where artifact files should be put in cache.
-    	<i>Deprecated, we recommend using artifactPattern on the [[configuration/caches]] tag instead</i></td>
-        <td>No, defaults to [organisation]/[module]/[type]s/[artifact]-[revision].[ext]</td></tr>
-</tbody>
-</table>
+<textarea id="xooki-source">
+This page has moved. If your browser doesn't automatically redirect to its new location, click
+<a href="../settings/settings.html">here</a>.
 </textarea>
 <script type="text/javascript">xooki.postProcess();</script>
 </body>

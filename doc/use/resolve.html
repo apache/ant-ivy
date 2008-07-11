@@ -96,7 +96,7 @@ Two modes are available:
 </ul>
 
 <h2>Concurrency</h2>
-During resolve, Ivy creates a file in the [[configuration/caches resolution cache]]. The creation of this file is not aimed to support concurrency, meaning that you can't have two concurrent resolve of the same module, in the same resolution cache, with the same resolveId. 
+During resolve, Ivy creates a file in the [[settings/caches resolution cache]]. The creation of this file is not aimed to support concurrency, meaning that you can't have two concurrent resolve of the same module, in the same resolution cache, with the same resolveId. 
 
 <i>Note for developers:
 After the call to this task, a reference to the module descriptor resolved is put in the ant project under the id <code>"ivy.resolved.descriptor"</code>.</i>
@@ -115,7 +115,7 @@ After the call to this task, a reference to the module descriptor resolved is pu
 
     <tr><td>refresh</td><td>true to force Ivy to resolve dynamic revision in this resolve process, false to use cached resolved revision <span class="since">since 2.0</span></td><td>No. defaults to false</td></tr>
 
-    <tr><td>resolveMode</td><td>the resolve mode to use for this dependency resolution process <span class="since">since 2.0</span></td><td>No. defaults to using the resolve mode set in the [[configuration settings]]</td></tr>
+    <tr><td>resolveMode</td><td>the resolve mode to use for this dependency resolution process <span class="since">since 2.0</span></td><td>No. defaults to using the resolve mode set in the [[settings settings]]</td></tr>
 
     <tr><td>inline</td><td>true to use inline mode, false to resolve an ivy file <span class="since">since 1.4</span></td><td>No. defaults to false</td></tr>
 

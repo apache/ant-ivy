@@ -41,7 +41,7 @@ When the ivy.xml of the modules that you want to order contains a <a href="../iv
 <span class="since">since 2.0</span> The root and leaf attributes can be a delimited list of modules to use as roots.  These modules, and all their dependencies will be included in the build list.
 
 <span class="since">since 2.0</span> By default, all the modules included in a circular dependency are grouped together so that any dependency of any module in the loop will apear before the modules in the loop.  This garantee that if there is a depedendency path between a module A and a module B (but no dependency path from B to A), B will alway apear before A even if A is included in a loop in the provided set of modules to sort.
-Note that circular dependency can also trigger a failure depending on the value configured in the circularDependencyStrategy of your <a href="../configuration/conf.html#circularDependencyStrategy">settings</a>
+Note that circular dependency can also trigger a failure depending on the value configured in the circularDependencyStrategy of your <a href="../settings/conf.html#circularDependencyStrategy">settings</a>
 
 <span class="since">since 2.0</span> When you are specifying root or leaf modules you can limit the resulting list to only direct dependencies of the roots modules or to modules that directly depends on your leaf modules.
 

@@ -34,7 +34,7 @@ This container let the possibility to define two very similar things: defaultcon
 
 <code>defaultconf</code> exists since Ivy 1.1 and enables to define the default conf attribute to use when no conf is defined for a dependency in this ivy file. It is only used when no conf mapping is defined, and has no influence in other cases.
 
-<code>defaultconfmapping</code> exists since Ivy 1.3 and enables not only to define the default conf mapping when no conf is specified for a dependency in this ivy file, but it also influence the way conf mapping with no mapped conf are interpreted (see <a href="../ivyfile/configurations.html">configurations doc page</a> for details about this).
+<code>defaultconfmapping</code> exists since Ivy 1.3 and enables not only to define the default conf mapping when no conf is specified for a dependency in this ivy file, but it also influence the way conf mapping with no mapped conf are interpreted (see [[ivyfile/configurations configurations doc page]] for details about this).
 
 Note that if both defaultconf and defaultconfmapping are defined, it's the defaultconfmapping that is used. Note also that if several defaultconfmapping are defined (one in the configurations tag, one or several in included configurations file, and/or one in the dependency tag, then it's only the last which is taken into account, the others will have no effect at all.
 <h1>Attributes</h1>

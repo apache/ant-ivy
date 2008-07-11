@@ -22,48 +22,12 @@
 	<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
 	<script type="text/javascript">var xookiConfig = {level: 2};</script>	
 	<script type="text/javascript" src="../../xooki/xooki.js"></script>
+	<meta HTTP-EQUIV="REFRESH" content="3; url=../../settings/caches/ttl.html">
 </head>
 <body>
-	<textarea id="xooki-source">
-<b>Tag:</b> ttl
-
-<span class="since">Since 2.0</span> Defines a TTL (Time To Live) rule for resolved revision caching.
-
-When Ivy resolves a dynamic version constraint (like latest.integration or a version range), it can store the result of the resolution (like latest.integration=1.5.1) for a given time, called TTL. It means that Ivy will reuse this dynamic revision resolution result without accessing the repositories for the duration of the TTL, unless running [[ant:resolve]] in refresh mode.
-
-This tag let you define a rule to define a TTL specific to a set of dynamic revision, based on the whole module revision information (organization, module name, revision, ...). The revision considered in the rule is the revision before the resolution (for instance 'latest.integration') and not the resolved revision (for instance '1.5.1').
-
-The rules are evaluated in order, the first matching rule being used to define the TTL. If no rule matches, the cache defaultTTL will be used.
-
-The format used to specify the TTL is of the form:
-<code>
-XXd XXh XXm XXs XXXms
-</code>
-Where 'd' stands for days, 'h' for hours, 'm' for minutes, 's' for seconds and 'ms' for milliseconds. Any part of the specification can be omitted, so '12d', '2h 5m' and '1d 5ms' are all valid.
-
-Using a 0ms TTL disable resolved revision caching for the given rule.
-
-<h1>Attributes</h1>
-<table class="ivy-attributes">
-<thead>
-    <tr><th class="ivy-att">Attribute</th><th class="ivy-att-desc">Description</th><th class="ivy-att-req">Required</th></tr>
-</thead>
-<tbody>
-    <tr><td>organisation</td><td>the organisation to match to apply the rule.</td>
-        <td>No, defaults to *</td></tr>
-    <tr><td>module</td><td>the module's name to match to apply the rule.</td>
-        <td>No, defaults to *</td></tr>
-    <tr><td>revision</td><td>the module's revision to match to apply the rule. Note that the version is not resolved when evaluating the rule ('latest.integration' for instance).</td>
-        <td>No, defaults to *</td></tr>
-    <tr><td><em>any extra attribute</em></td><td>an extra attribute to match to apply the rule.</td>
-        <td>No, defaults to *</td></tr>
-    <tr><td>matcher</td><td>the <a href="../../concept.html#matcher">matcher</a> to use to match the modules to which the resolver should be applied</td>
-        <td>No, defaults to exact</td></tr>
-    <tr><td>duration</td><td>the TTL to apply</td>
-        <td>Yes</td></tr>
-</tbody>
-</table>
-
+<textarea id="xooki-source">
+This page has moved. If your browser doesn't automatically redirect to its new location, click
+<a href="../../settings/caches/ttl.html">here</a>.	
 </textarea>
 <script type="text/javascript">xooki.postProcess();</script>
 </body>

@@ -32,7 +32,7 @@
 Specify a a conflict manager for one or several dependencies.
 The way to specify a conflict manager is by giving indication to which dependencies the conflict manager applies (by giving organisation and module names or name regexp), and then specifying the conflict manager, either by giving its name or by specifying a fixed revision list, in which case a fixed conflicts manager is used.
 
-The list of built-in conflict managers available is listed on the <a href="../configuration/conflict-managers.html">conflict manager configuration page</a>.
+The list of built-in conflict managers available is listed on the [[settings/conflict-managers conflict manager configuration page]].
 
 Conflicts manager are used during the resolve operation, i.e. when ivy analyse the graph of dependencies and download corresponding ivy files and artifacts. The fact to manage conflict at resolve time enables to minimize downloads: when a module is evicted by a conflict manager, it is not downloaded.
 

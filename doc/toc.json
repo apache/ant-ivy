@@ -52,7 +52,7 @@
                   },
                   {
                     "id":"tutorial/conf",
-                    "title":"Using Ivy Configurations",
+                    "title":"Using Ivy Module Configurations",
                     "children": [
 
                       ]
@@ -140,68 +140,68 @@
                       ]
                   },
                   {
-                    "id":"configuration",
+                    "id":"settings",
                     "title":"Settings Files",
                     "children": [
                         {
-                          "id":"configuration/property",
+                          "id":"settings/property",
                           "title":"property",
                           "children": [
 
                             ]
                         },
                         {
-                          "id":"configuration/properties",
+                          "id":"settings/properties",
                           "title":"properties",
                           "children": [
 
                             ]
                         },
                         {
-                          "id":"configuration/conf",
+                          "id":"settings/settings",
                           "title":"settings",
                           "children": [
 
                             ]
                         },
                         {
-                          "id":"configuration/include",
+                          "id":"settings/include",
                           "title":"include",
                           "children": [
 
                             ]
                         },
                         {
-                          "id":"configuration/classpath",
+                          "id":"settings/classpath",
                           "title":"classpath",
                           "children": [
 
                             ]
                         },
                         {
-                          "id":"configuration/typedef",
+                          "id":"settings/typedef",
                           "title":"typedef",
                           "children": [
 
                             ]
                         },
                         {
-                          "id":"configuration/lock-strategies",
+                          "id":"settings/lock-strategies",
                           "title":"lock-strategies",
                           "children": [
 
                             ]
                         },
                         {
-                          "id":"configuration/caches",
+                          "id":"settings/caches",
                           "title":"caches",
                           "children": [
                               {
-                                "id":"configuration/caches/cache",
+                                "id":"settings/caches/cache",
                                 "title":"cache",
                                 "children": [
                                     {
-                                      "id":"configuration/caches/ttl",
+                                      "id":"settings/caches/ttl",
                                       "title":"ttl",
                                       "children": [
 
@@ -212,44 +212,44 @@
                             ]
                         },
                         {
-                          "id":"configuration/latest-strategies",
+                          "id":"settings/latest-strategies",
                           "title":"latest-strategies",
                           "children": [
 
                             ]
                         },
                         {
-                          "id":"configuration/parsers",
+                          "id":"settings/parsers",
                           "title":"parsers",
                           "children": [
 
                             ]
                         },
                         {
-                          "id":"configuration/namespaces",
+                          "id":"settings/namespaces",
                           "title":"namespaces",
                           "children": [
                               {
-                                "id":"configuration/namespace",
+                                "id":"settings/namespace",
                                 "title":"namespace",
                                 "children": [
                                     {
-                                      "id":"configuration/namespace/rule",
+                                      "id":"settings/namespace/rule",
                                       "title":"rule",
                                       "children": [
                                           {
-                                            "id":"configuration/namespace/fromtosystem",
+                                            "id":"settings/namespace/fromtosystem",
                                             "title":"fromsystem / tosystem",
                                             "children": [
                                                 {
-                                                  "id":"configuration/namespace/src",
+                                                  "id":"settings/namespace/src",
                                                   "title":"src",
                                                   "children": [
 
                                                     ]
                                                 },
                                                 {
-                                                  "id":"configuration/namespace/dest",
+                                                  "id":"settings/namespace/dest",
                                                   "title":"dest",
                                                   "children": [
 
@@ -264,11 +264,11 @@
                             ]
                         },
                         {
-                          "id":"configuration/macrodef",
+                          "id":"settings/macrodef",
                           "title":"macrodef",
                           "children": [
                               {
-                                "id":"configuration/macrodef/attribute",
+                                "id":"settings/macrodef/attribute",
                                 "title":"attribute",
                                 "children": [
 
@@ -277,7 +277,7 @@
                             ]
                         },
                         {
-                          "id":"configuration/resolvers",
+                          "id":"settings/resolvers",
                           "title":"resolvers",
                           "children": [
                               {
@@ -353,18 +353,18 @@
                             ]
                         },
                         {
-                          "id":"configuration/conflict-managers",
+                          "id":"settings/conflict-managers",
                           "title":"conflict-managers",
                           "children": [
 
                             ]
                         },
                         {
-                          "id":"configuration/modules",
+                          "id":"settings/modules",
                           "title":"modules",
                           "children": [
                               {
-                                "id":"configuration/module",
+                                "id":"settings/module",
                                 "title":"module",
                                 "children": [
 
@@ -373,18 +373,18 @@
                             ]
                         },
                         {
-                          "id":"configuration/outputters",
+                          "id":"settings/outputters",
                           "title":"outputters",
                           "children": [
 
                             ]
                         },
                         {
-                          "id":"configuration/statuses",
+                          "id":"settings/statuses",
                           "title":"statuses",
                           "children": [
                               {
-                                "id":"configuration/status",
+                                "id":"settings/status",
                                 "title":"status",
                                 "children": [
 
@@ -393,14 +393,14 @@
                             ]
                         },
                         {
-                          "id":"configuration/triggers",
+                          "id":"settings/triggers",
                           "title":"triggers",
                           "children": [
 
                             ]
                         },
                         {
-                          "id":"configuration/version-matchers",
+                          "id":"settings/version-matchers",
                           "title":"version-matchers",
                           "children": [
 

@@ -117,7 +117,7 @@ Three statuses are defined by default in Ivy:
 A <em>module configuration</em> is a way to use or construct a module. If the same module has different dependencies based on how it's used, those distinct dependency-sets are called its configurations in Ivy.
 
 Some modules may be used in different ways (think about hibernate which can be used inside or outside an application server), and this way may alter the artifacts you need (in the case of hibernate, jta.jar is needed only if it is used outside an application server).
-Moreover, a module may need some other modules and artifacts only at build time, and some others at runtime. All those differents ways to use or build a module are called in ivy configurations. 
+Moreover, a module may need some other modules and artifacts only at build time, and some others at runtime. All those differents ways to use or build a module are called module configurations in ivy. 
 
 For more details on configurations and how they are used in ivy, please refer to the <a href="concept.html">main concepts page</a>.
 <h1><a name="settings">Ivy Settings</a></h1>

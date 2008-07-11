@@ -245,13 +245,13 @@ Ivy cache is composed of two different parts:
 <ul>
 <li>the repository cache</li>
 The repository cache is where Ivy stores data downloaded from module repositories, along with some meta information concerning these artifacts, like their original location.
-This part of the cache can be shared if you use a well suited [[configuration/lock-strategies lock strategy]]. 
+This part of the cache can be shared if you use a well suited [[settings/lock-strategies lock strategy]]. 
 <li>the resolution cache</li>
 This part of the cache is used to store resolution data, which is used by Ivy to reuse the results of a resolve process.
 This part of the cache is overwritten each time a new resolve is performed, and should never be used by multiple processes at the same time.
 </ul>
 
-While there is always only one resolution cache, you can [[configuration/caches define multiple repository caches]], each [[configuration/resolvers resolver]] being able to use a separate cache.
+While there is always only one resolution cache, you can [[settings/caches define multiple repository caches]], each [[settings/resolvers resolver]] being able to use a separate cache.
 
 <h2><a name="change">Change management</a></h2>
 To optimize the dependency resolution and the way the cache is used, Ivy assumes by default that a revision never changes. So once Ivy has a module in its cache (metadata and artifacts), it trusts the cache and do not even query the repository. This optimization is very useful in most cases, and causes no problem as long as you respect this paradigm: a revision never changes. Besides performance, there are several [[bestpractices good reasons]] to follow this principle.	
@@ -264,7 +264,7 @@ In this case, setting checkModified="true" on your dependency resolver will be t
 <h3>Changes in artifacts</h3>
 Some people, especially those coming from maven 2 land, like to use one special revision to handle often updated modules. In maven 2 this is called a SNAPSHOT version, and some argue that it helps saves disk space to keep only one version for the high number of intermediary builds you can make whilst developing.
 
-Ivy supports this kind of approach with the notion of changing revision. A changing revision is just that: a revision for which Ivy should consider that the artifacts may change over time. To handle this, you can either specify a dependency as changing on the [[ivyfile/dependency]] tag, or use the changingPattern and changingMatcher attributes on your [[configuration/resolvers]] to indicate which revision or group of revisions should be considered as changing.
+Ivy supports this kind of approach with the notion of changing revision. A changing revision is just that: a revision for which Ivy should consider that the artifacts may change over time. To handle this, you can either specify a dependency as changing on the [[ivyfile/dependency]] tag, or use the changingPattern and changingMatcher attributes on your [[settings/resolvers]] to indicate which revision or group of revisions should be considered as changing.
 
 Once Ivy knows that a revision is changing, it will follow this principle to avoid checking your repository too often: if the module metadata has not changed, it will considered the whole module (including artifacts) as not changed. Even if the module descriptor file has changed, it will check the publication data of the module to see if this is a new publication of the same revision or not. Then if the publication date has changed, it will check the artifacts last modified timestamps, and download them accordingly.
 

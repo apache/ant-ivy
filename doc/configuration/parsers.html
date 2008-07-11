@@ -22,32 +22,12 @@
 	<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
 	<script type="text/javascript">var xookiConfig = {level: 1};</script>	
 	<script type="text/javascript" src="../xooki/xooki.js"></script>
+	<meta HTTP-EQUIV="REFRESH" content="3; url=../settings/parsers.html">
 </head>
 <body>
-	<textarea id="xooki-source">
-<b>Tag:</b> parsers
-
-Defines a list of module descriptor parsers usable in ivy. Each parser defines which resources (which descriptor file) it accepts.
-The child tag used for the parser must be equal to a name of a parser type (added with the typedef tag).
-
-Note that when looking for a parser, ivy queries the parsers list in the reverse order. So the last parser in the list will be queried first. Consequently, if the last parser accepts all resources, the other parsers will never have a chance to parse the resource.
-
-Two parsers are available by default and thus do not need to be declared in this section:
-<ul>
-<li>ivy file parser</li> this is the parser used for ivy xml files. This parser is used for resources that aren't accepted by any other parser.
-<li>pom parser</li>this parser is able to parse maven2 pom files
-</ul>
-<h1>Child elements</h1>
-<table class="ivy-children">
-<thead>
-    <tr><th class="ivy-chld">Element</th><th class="ivy-chld-desc">Description</th><th class="ivy-chld-card">Cardinality</th></tr>
-</thead>
-<tbody>
-    <tr><td>any module descriptor parser</td><td>adds a module descriptor parser to the list of available parsers</td>
-        <td>0..n</td></tr>
-</tbody>
-</table>
-
+<textarea id="xooki-source">
+This page has moved. If your browser doesn't automatically redirect to its new location, click
+<a href="../settings/parsers.html">here</a>.
 	</textarea>
 <script type="text/javascript">xooki.postProcess();</script>
 </body>

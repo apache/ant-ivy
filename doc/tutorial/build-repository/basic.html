@@ -28,7 +28,7 @@
 In this first step we use the [[ant:install]] task to install modules from the maven 2 repository to a file system based repository. We first install a module with no dependency, then a module with its dependencies.
 
 <h1>Basic: ivysettings.xml file used</h1>
-The ivy settings file that we will use is very simple here. It defines two resolvers, libraries and my-repository. The first one is used as the source, the second one as the destination. In a typical setup the second one would be configured using [[configuration:include included]] settings, used by the development team.
+The ivy settings file that we will use is very simple here. It defines two resolvers, libraries and my-repository. The first one is used as the source, the second one as the destination. In a typical setup the second one would be configured using [[settings/include included]] settings, used by the development team.
 
 <code type="xml">
 <ivysettings>
@@ -95,7 +95,7 @@ If you call this target, you will see that Ivy installs not only the hibernate m
 
 As you can see the installation has failed, if you look at the log you will see that there are missing artifacts on the source repository. This means that you will need to download those artifacts manually, and copy them to your destination repository to complete the installation. Fortunately Ivy use a best effort algorithm during install, so that you have everything installed but the missing artifacts.
 
-You may also have notice that Ivy has installed 2 different revisions of commons-logging (1.0.2, 1.0.4). This is due to the fact that we use the "no conflict" [[configuration/conflict-managers conflict manager]] in the ivysettings file.
+You may also have notice that Ivy has installed 2 different revisions of commons-logging (1.0.2, 1.0.4). This is due to the fact that we use the "no conflict" [[settings/conflict-managers conflict manager]] in the ivysettings file.
 
 We do not want to evict any modules because we are building our own repository. Indeed if we get both commons-logging 1.0.2 and 1.0.4 it's because some modules among the transitive dependencies of hibernate depend on 1.0.2 and other on 1.0.4. If we got only 1.0.4, the module depending on 1.0.2 would be inconsistent in your own repository (depending on a version you don't have installed). Thus developers using this module directly would run into a problem.
 

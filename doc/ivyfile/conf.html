@@ -25,9 +25,9 @@
 </head>
 <body>
 	<textarea id="xooki-source">
-<b>Tag:</b> conf <b>Parent:</b> <a href="../ivyfile/configurations.html">configurations</a>
+<b>Tag:</b> conf <b>Parent:</b> [[ivyfile/configurations]]
 
-Declares a configuration of this module. As described in the reference page, a configuration is a way to use or construct a module. Some modules may be used in different ways (think about hibernate which can be used inside or outside an application server), and this way may alter the artifacts you need (in the case of hibernate, jta.jar is needed only if it is used outside an application server). Moreover, a module may need some other modules and artifacts only at build time, and some others at runtime. All those differents ways to use or build a module are called in ivy configurations.
+Declares a configuration of this module. As described in the reference page, a configuration is a way to use or construct a module. Some modules may be used in different ways (think about hibernate which can be used inside or outside an application server), and this way may alter the artifacts you need (in the case of hibernate, jta.jar is needed only if it is used outside an application server). Moreover, a module may need some other modules and artifacts only at build time, and some others at runtime. All those differents ways to use or build a module are called in Ivy module configurations.
 
 The conf element in the configurations section declares one configuration. This declaration gives the name of the configuration declared, its visibility and the other configurations of the module it extends.
 
