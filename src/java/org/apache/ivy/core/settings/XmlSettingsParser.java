@@ -380,14 +380,11 @@ public class XmlSettingsParser extends DefaultHandler {
                     ivy.setSettingsVariables(settingsURL);
                 }
             } else {
-                File incFile = new File(propFilePath);
-                if (incFile.isAbsolute()) {
-                    settingsURL = incFile.toURI().toURL();
-                } else {
-                    settingsURL = new URL(this.settings , propFilePath);
-                }
+                settingsURL = urlFromFileAttribute(propFilePath);
                 Message.verbose("including file: " + settingsURL);
-                ivy.setSettingsVariables(incFile);
+                ivy.setSettingsVariables(new File(propFilePath));
+                //We can not use the setSettingsVariables(URL) because that would put different
+                //values for the properties.  I'm not sure what would be the regression...
             }
             new XmlSettingsParser(ivy).parse(configurator, settingsURL);
         } finally {
@@ -395,29 +392,29 @@ public class XmlSettingsParser extends DefaultHandler {
         }
     }
 
-    private void propertiesStarted(Map attributes) {
+    /** Provide an URL referencing the given filepath.  If filePath is an absolute path, then
+     * the resulting URL point to a local file, otherwise, the filepath is evaluated relatively
+     * to the URL of the current settings file (can be local file or remote URL).
+     */
+    private URL urlFromFileAttribute(String filePath) throws MalformedURLException {
+        File incFile = new File(filePath);
+        if (incFile.isAbsolute()) {
+            return incFile.toURI().toURL();
+        } else {
+            return new URL(this.settings , filePath);
+        }      
+    }
+
+    private void propertiesStarted(Map attributes) throws IOException {
         String propFilePath = (String) attributes.get("file");
         String environmentPrefix = (String) attributes.get("environment");
         if (propFilePath != null) {
-            String override = (String) attributes.get("override");
-            try {
-                Message.verbose("loading properties: " + propFilePath);
-                ivy.loadProperties(new File(propFilePath), override == null ? true : Boolean
-                        .valueOf(override).booleanValue());
-            } catch (Exception fileEx) {
-                Message.verbose("failed to load properties as file: trying as url: "
-                        + propFilePath);
-                try {
-                    ivy.loadProperties(
-                        new URL(propFilePath), override == null ? true : Boolean
-                            .valueOf(override).booleanValue());
-                } catch (Exception urlEx) {
-                    throw new IllegalArgumentException(
-                        "unable to load properties from " + propFilePath
-                        + ". Tried both as an url and a file, with no success. "
-                        + "File exception: " + fileEx + ". URL exception: " + urlEx);
-                }
-            }
+            String overrideStr = (String) attributes.get("override");
+            boolean override = overrideStr == null ? true 
+                                                   : Boolean.valueOf(overrideStr).booleanValue();
+            Message.verbose("loading properties: " + propFilePath);
+            URL fileUrl = urlFromFileAttribute(propFilePath);
+            ivy.loadProperties(fileUrl, override);
         } else if (environmentPrefix != null) {
             ivy.getVariableContainer().setEnvironmentPrefix(environmentPrefix);
         } else {

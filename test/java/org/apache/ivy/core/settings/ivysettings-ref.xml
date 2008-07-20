@@ -17,7 +17,7 @@
    under the License.    
 -->
 <ivysettings>
-	<properties file="test/java/org/apache/ivy/core/settings/ivysettings.properties"/>
+	<properties file="ivysettings.properties"/>
 	<settings   defaultCache="mycache"/>
 	<resolvers>
 		<filesystem name="fs" latest="latest-time">

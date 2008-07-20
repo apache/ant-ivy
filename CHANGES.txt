@@ -160,6 +160,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - FIX: Relative include in a settings must be evaluated relatively to the settings file (IVY-372)
 - FIX: The Bundle-Version is 0.0.0 in the build artifacts (IVY-802)
 - FIX: Fix the encoding used in XML reports (IVY-816)
+- FIX: Properties tag in ivy conf do not support relative path (IVY-89)
 
 - DOCUMENTATION: Fixed more than a hundred (100+) obsolete "configuration" references; replaced with "settings" (IVY-863) (thanks to Sakari Maaranen)
 - DOCUMENTATION: Elaborated documentation of ivy files and deliver/publish tasks (IVY-847) (thanks to Sakari Maaranen)

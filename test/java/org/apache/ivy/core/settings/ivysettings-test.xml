@@ -18,7 +18,7 @@
 -->
 <ivysettings>
 	<property name="shared" value="sharedrep"/>
-	<properties file="test/java/org/apache/ivy/core/settings/ivysettings.properties"/>
+	<properties file="ivysettings.properties"/>
 	<settings defaultResolver="libraries" validate="false" />
 	<caches defaultCacheDir="mycache" checkUpToDate="false"
 			ivyPattern="[module]/ivys/ivy-[revision].xml" 
