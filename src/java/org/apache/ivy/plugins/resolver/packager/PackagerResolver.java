@@ -55,7 +55,7 @@ public class PackagerResolver extends URLResolver {
     private boolean preserve;
     private boolean verbose;
     private boolean quiet;
-
+    
     public PackagerResolver() {
         Runtime.getRuntime().addShutdownHook(new Thread() {
             public void run() {
@@ -63,7 +63,7 @@ public class PackagerResolver extends URLResolver {
             }
         });
     }
-
+    
     protected synchronized void clearCache() {
         if (this.preserve) {
             return;
@@ -190,7 +190,7 @@ public class PackagerResolver extends URLResolver {
             entry = new PackagerCacheEntry(mr, this.buildRoot, this.resourceCache,
               this.resourceURL, this.validate, this.preserve, this.verbose, this.quiet);
             try {
-                entry.build(packager.getResource().openStream());
+                entry.build(packager.getResource());
             } catch (IOException e) {
                 throw new RuntimeException("can't build artifact " + artifact, e);
             }

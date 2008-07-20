@@ -35,8 +35,11 @@ import org.apache.ivy.core.resolve.ResolveOptions;
 import org.apache.ivy.core.resolve.ResolvedModuleRevision;
 import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.core.sort.SortEngine;
+import org.apache.ivy.plugins.resolver.packager.PackagerProperty;
 import org.apache.ivy.plugins.resolver.packager.PackagerResolver;
+import org.apache.ivy.util.DefaultMessageLogger;
 import org.apache.ivy.util.FileUtil;
+import org.apache.ivy.util.Message;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.Copy;
 import org.apache.tools.ant.types.FileSet;
@@ -61,7 +64,9 @@ public class PackagerResolverTest extends AbstractDependencyResolverTest {
     private File _websitedir;
 
     protected void setUp() throws Exception {
+        
         _settings = new IvySettings();
+        Message.setDefaultLogger(new DefaultMessageLogger(99));
         _engine = new ResolveEngine(_settings, new EventManager(), new SortEngine(_settings));
         _cache = new File("build/cache");
         _data = new ResolveData(_engine, new ResolveOptions());
@@ -104,12 +109,15 @@ public class PackagerResolverTest extends AbstractDependencyResolverTest {
         resolver.setSettings(_settings);
         File repoRoot = new File("test/repositories/packager/repo");
         resolver.addIvyPattern(
-          "" + new File(repoRoot, "[organisation]/[module]/[revision]/ivy.xml").toURL());
+          "" + new File(repoRoot, "[organisation]/[module]/[revision]/ivy.xml").getAbsoluteFile().toURL().toExternalForm());
         resolver.setPackagerPattern(
-          "" + new File(repoRoot, "[organisation]/[module]/[revision]/packager.xml").toURL());
+          "" + new File(repoRoot, "[organisation]/[module]/[revision]/packager.xml").getAbsoluteFile().toURL().toExternalForm());
         resolver.setBuildRoot(_builddir.getAbsolutePath());
         resolver.setResourceCache(_cachedir.getAbsolutePath());
         resolver.setPreserveBuildDirectories(true);
+        resolver.setVerbose(true);
+        
+        System.setProperty("packager.website.url", new File("test/repositories/packager/website").getAbsoluteFile().toURL().toExternalForm());
 
         resolver.setName("packager");
         assertEquals("packager", resolver.getName());
@@ -132,6 +140,7 @@ public class PackagerResolverTest extends AbstractDependencyResolverTest {
         assertEquals(1, report.getArtifactsReports().length);
 
         ArtifactDownloadReport ar = report.getArtifactReport(artifact);
+        System.out.println("downloaddetails: " + ar.getDownloadDetails());
         assertNotNull(ar);
 
         assertEquals(artifact, ar.getArtifact());

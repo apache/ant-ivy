@@ -21,12 +21,12 @@
     <property name="version" value="${ivy.packager.revision}"/>
     <property name="archive" value="${name}-${version}"/>
 
-    <resource dest="extract" url="file://${user.dir}/../../../../website/dist/${archive}.tar.gz"
+    <resource dest="extract" url="${packager.website.url}/dist/${archive}.tar.gz"
       sha1="40c80c1c5d7db0038f396f2393885d2e8c74270d">
         <include name="${archive}/${name}.jar"/>
     </resource>
 
-    <m2resource repo="file://${user.dir}/../../../../website/m2repo" groupId="org.apache.ivy" artifactId="foobar">
+    <m2resource repo="${packager.website.url}/m2repo" groupId="org.apache.ivy" artifactId="foobar">
         <artifact classifier="janfu" sha1="da39a3ee5e6b4b0d3255bfef95601890afd80709" tofile="artifacts/jars/foobar-janfu.jar"/>
     </m2resource>
 

@@ -126,7 +126,7 @@
                 <path location="{$groupId}"/>
                 <mapper type="unpackage" to="*">
                     <xsl:attribute name="from">
-                        <xsl:value-of select="'${basedir}/*'"/>
+                        <xsl:value-of select="'${basedir}${file.separator}*'"/>
                     </xsl:attribute>
                 </mapper>
             </pathconvert>
