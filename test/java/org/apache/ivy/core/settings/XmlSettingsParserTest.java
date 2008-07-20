@@ -475,6 +475,15 @@ public class XmlSettingsParserTest extends TestCase {
     }
 
     
+    public void testRelativePropertiesFile() throws Exception {
+        IvySettings settings = new IvySettings();
+        XmlSettingsParser parser = new XmlSettingsParser(settings);
+        parser.parse(XmlSettingsParser.class
+                .getResource("ivyconf-properties-relative-to-ivyconf.xml"));
+
+        assertEquals("lib", settings.getVariable("libraries.dir"));
+    }
+    
     public void testParser() throws Exception {
         IvySettings settings = new IvySettings();
         XmlSettingsParser parser = new XmlSettingsParser(settings);
