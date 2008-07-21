@@ -20,6 +20,7 @@ package org.apache.ivy.plugins.resolver;
 import java.io.File;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.Locale;
 
 import org.apache.ivy.core.event.EventManager;
 import org.apache.ivy.core.module.descriptor.Artifact;
@@ -63,7 +64,6 @@ public class PackagerResolverTest extends AbstractDependencyResolverTest {
     private File _websitedir;
 
     protected void setUp() throws Exception {
-        
         _settings = new IvySettings();
         Message.setDefaultLogger(new DefaultMessageLogger(99));
         _engine = new ResolveEngine(_settings, new EventManager(), new SortEngine(_settings));
@@ -102,75 +102,84 @@ public class PackagerResolverTest extends AbstractDependencyResolverTest {
     }
 
     public void testFile() throws Exception {
-
-        // Create and configure resolver
-        PackagerResolver resolver = new PackagerResolver();
-        resolver.setSettings(_settings);
-        File repoRoot = new File("test/repositories/packager/repo");
-        resolver.addIvyPattern(
-          "" + new File(repoRoot, "[organisation]/[module]/[revision]/ivy.xml").getAbsoluteFile().toURL().toExternalForm());
-        resolver.setPackagerPattern(
-          "" + new File(repoRoot, "[organisation]/[module]/[revision]/packager.xml").getAbsoluteFile().toURL().toExternalForm());
-        resolver.setBuildRoot(_builddir.getAbsolutePath());
-        resolver.setResourceCache(_cachedir.getAbsolutePath());
-        resolver.setPreserveBuildDirectories(true);
-        resolver.setVerbose(true);
+        Locale oldLocale = Locale.getDefault();
         
-        System.setProperty("packager.website.url", new File("test/repositories/packager/website").getAbsoluteFile().toURL().toExternalForm());
+        try {
+            // set the locale to UK as workaround for SUN bug 6240963
+            Locale.setDefault(Locale.UK);
 
-        resolver.setName("packager");
-        assertEquals("packager", resolver.getName());
-
-        // Get module descriptor
-        ModuleRevisionId mrid = ModuleRevisionId.newInstance("org", "mod", "1.0");
-        ResolvedModuleRevision rmr = resolver.getDependency(
-          new DefaultDependencyDescriptor(mrid, false), _data);
-        assertNotNull(rmr);
-
-        assertEquals(mrid, rmr.getId());
-        Date pubdate = new GregorianCalendar(2004, 10, 1, 11, 0, 0).getTime();
-        assertEquals(pubdate, rmr.getPublicationDate());
-
-        // Download artifact
-        Artifact artifact = new DefaultArtifact(mrid, pubdate, "mod", "jar", "jar");
-        DownloadReport report = resolver.download(new Artifact[] {artifact}, downloadOptions());
-        assertNotNull(report);
-
-        assertEquals(1, report.getArtifactsReports().length);
-
-        ArtifactDownloadReport ar = report.getArtifactReport(artifact);
-        System.out.println("downloaddetails: " + ar.getDownloadDetails());
-        assertNotNull(ar);
-
-        assertEquals(artifact, ar.getArtifact());
-        assertEquals(DownloadStatus.SUCCESSFUL, ar.getDownloadStatus());
-
-        // Verify resource cache now contains the distribution archive
-        assertTrue(new File(_cachedir, "mod-1.0.tar.gz").exists());
-
-        // Download again, should use Ivy cache this time
-        report = resolver.download(new Artifact[] {artifact}, downloadOptions());
-        assertNotNull(report);
-
-        assertEquals(1, report.getArtifactsReports().length);
-
-        ar = report.getArtifactReport(artifact);
-        assertNotNull(ar);
-
-        assertEquals(artifact, ar.getArtifact());
-        assertEquals(DownloadStatus.NO, ar.getDownloadStatus());
-
-        // Now download the maven2 artifact
-        artifact = DefaultArtifact.cloneWithAnotherName(artifact, "foobar-janfu");
-        report = resolver.download(new Artifact[] {artifact}, downloadOptions());
-        assertNotNull(report);
-
-        assertEquals(1, report.getArtifactsReports().length);
-
-        ar = report.getArtifactReport(artifact);
-        assertNotNull(ar);
-
-        assertEquals(artifact, ar.getArtifact());
-        assertEquals(DownloadStatus.SUCCESSFUL, ar.getDownloadStatus());
+    
+            // Create and configure resolver
+            PackagerResolver resolver = new PackagerResolver();
+            resolver.setSettings(_settings);
+            File repoRoot = new File("test/repositories/packager/repo");
+            resolver.addIvyPattern(
+              "" + new File(repoRoot, "[organisation]/[module]/[revision]/ivy.xml").getAbsoluteFile().toURL().toExternalForm());
+            resolver.setPackagerPattern(
+              "" + new File(repoRoot, "[organisation]/[module]/[revision]/packager.xml").getAbsoluteFile().toURL().toExternalForm());
+            resolver.setBuildRoot(_builddir.getAbsolutePath());
+            resolver.setResourceCache(_cachedir.getAbsolutePath());
+            resolver.setPreserveBuildDirectories(true);
+            resolver.setVerbose(true);
+            
+            System.setProperty("packager.website.url", new File("test/repositories/packager/website").getAbsoluteFile().toURL().toExternalForm());
+    
+            resolver.setName("packager");
+            assertEquals("packager", resolver.getName());
+    
+            // Get module descriptor
+            ModuleRevisionId mrid = ModuleRevisionId.newInstance("org", "mod", "1.0");
+            ResolvedModuleRevision rmr = resolver.getDependency(
+              new DefaultDependencyDescriptor(mrid, false), _data);
+            assertNotNull(rmr);
+    
+            assertEquals(mrid, rmr.getId());
+            Date pubdate = new GregorianCalendar(2004, 10, 1, 11, 0, 0).getTime();
+            assertEquals(pubdate, rmr.getPublicationDate());
+    
+            // Download artifact
+            Artifact artifact = new DefaultArtifact(mrid, pubdate, "mod", "jar", "jar");
+            DownloadReport report = resolver.download(new Artifact[] {artifact}, downloadOptions());
+            assertNotNull(report);
+    
+            assertEquals(1, report.getArtifactsReports().length);
+    
+            ArtifactDownloadReport ar = report.getArtifactReport(artifact);
+            System.out.println("downloaddetails: " + ar.getDownloadDetails());
+            assertNotNull(ar);
+    
+            assertEquals(artifact, ar.getArtifact());
+            assertEquals(DownloadStatus.SUCCESSFUL, ar.getDownloadStatus());
+    
+            // Verify resource cache now contains the distribution archive
+            assertTrue(new File(_cachedir, "mod-1.0.tar.gz").exists());
+    
+            // Download again, should use Ivy cache this time
+            report = resolver.download(new Artifact[] {artifact}, downloadOptions());
+            assertNotNull(report);
+    
+            assertEquals(1, report.getArtifactsReports().length);
+    
+            ar = report.getArtifactReport(artifact);
+            assertNotNull(ar);
+    
+            assertEquals(artifact, ar.getArtifact());
+            assertEquals(DownloadStatus.NO, ar.getDownloadStatus());
+    
+            // Now download the maven2 artifact
+            artifact = DefaultArtifact.cloneWithAnotherName(artifact, "foobar-janfu");
+            report = resolver.download(new Artifact[] {artifact}, downloadOptions());
+            assertNotNull(report);
+    
+            assertEquals(1, report.getArtifactsReports().length);
+    
+            ar = report.getArtifactReport(artifact);
+            assertNotNull(ar);
+    
+            assertEquals(artifact, ar.getArtifact());
+            assertEquals(DownloadStatus.SUCCESSFUL, ar.getDownloadStatus());
+        } finally {
+            Locale.setDefault(oldLocale);
+        }
     }
 }
