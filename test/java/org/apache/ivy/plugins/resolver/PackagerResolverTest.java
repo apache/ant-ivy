@@ -35,7 +35,6 @@ import org.apache.ivy.core.resolve.ResolveOptions;
 import org.apache.ivy.core.resolve.ResolvedModuleRevision;
 import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.core.sort.SortEngine;
-import org.apache.ivy.plugins.resolver.packager.PackagerProperty;
 import org.apache.ivy.plugins.resolver.packager.PackagerResolver;
 import org.apache.ivy.util.DefaultMessageLogger;
 import org.apache.ivy.util.FileUtil;
