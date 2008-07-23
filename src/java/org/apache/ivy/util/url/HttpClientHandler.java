@@ -33,6 +33,7 @@ import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.HttpMethodBase;
 import org.apache.commons.httpclient.HttpStatus;
+import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
 import org.apache.commons.httpclient.UsernamePasswordCredentials;
 import org.apache.commons.httpclient.auth.AuthPolicy;
 import org.apache.commons.httpclient.methods.GetMethod;
@@ -61,6 +62,8 @@ public class HttpClientHandler extends AbstractURLHandler {
     private String proxyPasswd = null;
 
     private HttpClientHelper httpClientHelper;
+    
+    private static HttpClient httpClient;
 
     public HttpClientHandler() {
         configureProxy();
@@ -204,28 +207,39 @@ public class HttpClientHandler extends AbstractURLHandler {
     }
 
     private HttpClient getClient(URL url) {
-        HttpClient client = new HttpClient();
-
-        List authPrefs = new ArrayList(2);
-        authPrefs.add(AuthPolicy.DIGEST);
-        authPrefs.add(AuthPolicy.BASIC);
-        // Exclude the NTLM authentication scheme because it is not supported by this class
-        client.getParams().setParameter(AuthPolicy.AUTH_SCHEME_PRIORITY, authPrefs);
-
-        if (useProxy()) {
-            client.getHostConfiguration().setProxy(proxyHost, proxyPort);
-            if (useProxyAuthentication()) {
-                client.getState().setProxyCredentials(proxyRealm, proxyHost,
-                    new UsernamePasswordCredentials(proxyUserName, proxyPasswd));
+        if (httpClient == null) {
+            final MultiThreadedHttpConnectionManager connManager = new MultiThreadedHttpConnectionManager();
+            httpClient = new HttpClient(connManager);
+            
+            Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
+                public void run() {
+                    connManager.shutdown();
+                }
+            }));
+        
+            List authPrefs = new ArrayList(2);
+            authPrefs.add(AuthPolicy.DIGEST);
+            authPrefs.add(AuthPolicy.BASIC);
+            // Exclude the NTLM authentication scheme because it is not supported by this class
+            httpClient.getParams().setParameter(AuthPolicy.AUTH_SCHEME_PRIORITY, authPrefs);
+    
+            if (useProxy()) {
+                httpClient.getHostConfiguration().setProxy(proxyHost, proxyPort);
+                if (useProxyAuthentication()) {
+                    httpClient.getState().setProxyCredentials(proxyRealm, proxyHost,
+                        new UsernamePasswordCredentials(proxyUserName, proxyPasswd));
+                }
             }
         }
+        
         Credentials c = getCredentials(url);
         if (c != null) {
             Message.debug("found credentials for " + url + ": " + c);
-            client.getState().setCredentials(c.getRealm(), c.getHost(),
+            httpClient.getState().setCredentials(c.getRealm(), c.getHost(),
                 new UsernamePasswordCredentials(c.getUserName(), c.getPasswd()));
         }
-        return client;
+        
+        return httpClient;
     }
 
     private boolean useProxy() {
@@ -243,7 +257,7 @@ public class HttpClientHandler extends AbstractURLHandler {
     private boolean useProxyAuthentication() {
         return (proxyUserName != null && proxyUserName.trim().length() > 0);
     }
-
+    
     private static final class GETInputStream extends InputStream {
         private InputStream is;
 
