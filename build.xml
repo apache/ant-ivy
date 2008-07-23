@@ -369,7 +369,6 @@
             <fileset id="test.fileset" dir="${test.dir}">
                 <include name="**/${test.class.pattern}.java" />
                 <exclude name="**/Abstract*Test.java" />
-                <contains text="junit" />
             </fileset>
     </target>
     
