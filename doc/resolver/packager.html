@@ -19,7 +19,6 @@
 -->
 <html>
 <head>
-	<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
 	<script type="text/javascript">var xookiConfig = {level: 1};</script>	
 	<script type="text/javascript" src="../xooki/xooki.js"></script>
 </head>
@@ -37,7 +36,7 @@
 </p>
 
 <p>
-This resolver accesses ivy files and "packaging instructions" from an online "packager" repository. "Packager" repositories contain no actual artifacts. To get the artifacts, the packaging instructions are downloaded from the repository and executed locally. These instructions specify additional resource(s) to download and how to create the artifacts from them, for example, by downloading a project's original distribution archive directly from their web site and extracting the desired artifacts.
+<span class="tagdoc" id="ivysettings.resolvers.packager">This resolver accesses ivy files and "packaging instructions" from an online "packager" repository.</span> "Packager" repositories contain no actual artifacts. To get the artifacts, the packaging instructions are downloaded from the repository and executed locally. These instructions specify additional resource(s) to download and how to create the artifacts from them, for example, by downloading a project's original distribution archive directly from their web site and extracting the desired artifacts.
 </p>
 
 <p>
@@ -202,7 +201,7 @@ Of course, packaging instructions must produce artifacts consistent with those l
 This resolver ensures following ant properties are defined when it executes the ant build task.
 <table class="ivy-attributes">
 <thead>
-    <tr><th class="ivy-att">Property</th><th class="ivy-att-desc">Description</th>
+    <tr><th class="ivy-att">Property</th><th class="ivy-att-desc">Description</th></tr>
 </thead>
 <tbody>
   <tr>
@@ -388,7 +387,6 @@ Below is an example of packaging instructions for the <a href="http://commons.ap
     </m2resource>
 </packager-module>
 </code>
-</p>
 
 	</textarea>
 <script type="text/javascript">xooki.postProcess();</script>

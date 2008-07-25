@@ -19,7 +19,6 @@
 -->
 <html>
 <head>
-	<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
 	<script type="text/javascript">var xookiConfig = {level: 2};</script>	
 	<script type="text/javascript" src="../../xooki/xooki.js"></script>
 </head>
@@ -27,7 +26,7 @@
 	<textarea id="xooki-source">
 <b>Tag:</b> ttl
 
-<span class="since">Since 2.0</span> Defines a TTL (Time To Live) rule for resolved revision caching.
+<span class="since">Since 2.0</span> <span class="tagdoc" id="ivysettings.caches.cache.TTL">Defines a TTL (Time To Live) rule for resolved revision caching.</span>
 
 When Ivy resolves a dynamic version constraint (like latest.integration or a version range), it can store the result of the resolution (like latest.integration=1.5.1) for a given time, called TTL. It means that Ivy will reuse this dynamic revision resolution result without accessing the repositories for the duration of the TTL, unless running [[ant:resolve]] in refresh mode.
 

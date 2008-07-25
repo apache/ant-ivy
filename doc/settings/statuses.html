@@ -19,7 +19,6 @@
 -->
 <html>
 <head>
-	<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
 	<script type="text/javascript">var xookiConfig = {level: 1};</script>	
 	<script type="text/javascript" src="../xooki/xooki.js"></script>
 </head>
@@ -27,7 +26,7 @@
 	<textarea id="xooki-source">
 <b>Tag:</b> statuses
 
-Defines the list of available statuses. <span class="since">since 1.4</span>
+<span class="tagdoc" id="ivysettings.statuses">Defines the list of available statuses.</span> <span class="since">since 1.4</span>
 
 By default, ivy has 3 statuses: release, milestone and integration. By adding a statuses section to your ivysettings file, you define the statuses you want to use. Note that in this case if you still want to have ivy default statuses you will have to declare them.
 
@@ -35,7 +34,7 @@ The integration property on each status is only used for recursive delivery, an 
 
 The default status is the one used when none is defined in a module descriptor. If not specified, it defaults to the last defined status.
 
-The statuses order is important, the first is considered the more mature, the last the less mature. This is used to know if a status is compatible with a latest.<status> version matcher.
+The statuses order is important, the first is considered the more mature, the last the less mature. This is used to know if a status is compatible with a latest.<em>&lt;status&gt;</em> version matcher.
 
 <h1>Attributes</h1>
 <table class="ivy-attributes">

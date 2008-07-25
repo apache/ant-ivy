@@ -19,7 +19,6 @@
 -->
 <html>
 <head>
-	<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
 	<script type="text/javascript">var xookiConfig = {level: 1};</script>	
 	<script type="text/javascript" src="../xooki/xooki.js"></script>
 </head>
@@ -27,7 +26,7 @@
 	<textarea id="xooki-source">
 <b>Tag:</b> macrodef
 
-Defines a new dependency resolver type based upon an other one. This definition is very similar to the macrodef feature of ant for defining macro tasks. <span class="since">since 1.3</span>
+<span class="tagdoc" id="ivysettings.macrodef">Defines a new dependency resolver type based upon an other one.</span> This definition is very similar to the macrodef feature of ant for defining macro tasks. <span class="since">since 1.3</span>
 
 This task eases the lot the process of creating new dependency resolver, because it avoid writing java code.
 
@@ -42,7 +41,7 @@ Therefore here is how Ivy deals with the names of the resolvers defined in a mac
 <ul>
 <li>if there is no name attribute on a resolver in the macrodef, then Ivy will use the name given when using the macro. This is what usually should be done for the main resolver defined in the macro</li>
 <li>if there is a name attribute on a resolver in the macrodef, but this name doesn't contain a @{name} inside, then Ivy will use the provided name prefixed with the name of the macro separated by a dash</li>
-<li>if there is a name attribute on a resolver in the macrodef, and this name contains @{name} somewhere, then Ivy will use this name, and replace @{name} with the name provided when using the macro.
+<li>if there is a name attribute on a resolver in the macrodef, and this name contains @{name} somewhere, then Ivy will use this name, and replace @{name} with the name provided when using the macro.</li>
 </ul>
 
 Example:

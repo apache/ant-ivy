@@ -19,7 +19,6 @@
 -->
 <html>
 <head>
-	<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
 	<script type="text/javascript">var xookiConfig = {level: 1};</script>	
 	<script type="text/javascript" src="../xooki/xooki.js"></script>
 </head>
@@ -27,7 +26,7 @@
 	<textarea id="xooki-source">
 <b>Tag:</b> parsers
 
-Defines a list of module descriptor parsers usable in ivy. Each parser defines which resources (which descriptor file) it accepts.
+<span class="tagdoc" id="ivysettings.parsers">Defines a list of module descriptor parsers usable in ivy.</span> Each parser defines which resources (which descriptor file) it accepts.
 The child tag used for the parser must be equal to a name of a parser type (added with the typedef tag).
 
 Note that when looking for a parser, ivy queries the parsers list in the reverse order. So the last parser in the list will be queried first. Consequently, if the last parser accepts all resources, the other parsers will never have a chance to parse the resource.

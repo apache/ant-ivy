@@ -19,7 +19,6 @@
 -->
 <html>
 <head>
-	<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
 	<script type="text/javascript">var xookiConfig = {level: 1};</script>	
 	<script type="text/javascript" src="../xooki/xooki.js"></script>
 </head>
@@ -31,7 +30,7 @@
 <tr><td class="title">Handle publish</td><td class="value">delegates to first sub resolver in chain</td></tr>
 </table>
 
-This resolver is only a container of a chain of other resolvers. The sub resolvers can be any resolver, including a chain. An attribute enable to indicate if the chain must be iterated after the first found or not (at least when asking for a latest revision). If the chain is iterated, then it's the latest among the ones found that is returned. If the chain is not iterated, then it's the first found which is returned.
+<span class="tagdoc" id="ivysettings.resolvers.chain">This resolver is only a container of a chain of other resolvers.</span> The sub resolvers can be any resolver, including a chain. An attribute enable to indicate if the chain must be iterated after the first found or not (at least when asking for a latest revision). If the chain is iterated, then it's the latest among the ones found that is returned. If the chain is not iterated, then it's the first found which is returned.
 <h1>Attributes</h1>
 This resolver shares the <a href="../settings/resolvers.html#common">common attributes</a> of composite resolvers.
 <table class="ivy-attributes">

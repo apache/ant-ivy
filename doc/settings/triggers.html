@@ -19,7 +19,6 @@
 -->
 <html>
 <head>
-	<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
 	<script type="text/javascript">var xookiConfig = {level: 1};</script>	
 	<script type="text/javascript" src="../xooki/xooki.js"></script>
 </head>
@@ -28,7 +27,7 @@
 <b>Tag:</b> triggers
 <span class="since">since 1.4</span>
 
-Defines a list of triggers to activate on some Ivy events.
+<span class="tagdoc" id="ivysettings.triggers">Defines a list of triggers to activate on some Ivy events.</span>
 
 A trigger is an action which is performed whenever a particular event occurs.
 Ivy supports two type of triggers out of the box: ant-call and ant-build. The first calls a target in the same build as the original one whenever a particular event occurs, the second call an ant build which may be in another ant build script.
@@ -137,7 +136,7 @@ The event available in Ivy are the following ones:
         </td>
         <td>Fired after an artifact has been downloaded from a repository to the cache</td>
     </tr>
-    <tr><td>pre-retrieve <br><span class="since">since 2.0</span></td>
+    <tr><td>pre-retrieve <br/><span class="since">since 2.0</span></td>
         <td>
           <ul>
             <li>organisation</li>the organisation of the module for which the dependencies will be retrieved
@@ -150,7 +149,7 @@ The event available in Ivy are the following ones:
         </td>
         <td>Fired at the beginning of the retrieve process.</td>
     </tr>
-    <tr><td>post-retrieve <br><span class="since">since 2.0</span></td>
+    <tr><td>post-retrieve <br/><span class="since">since 2.0</span></td>
         <td>
           <ul>
             <li>organisation</li>the organisation of the module for which the dependencies have been retrieved
@@ -167,7 +166,7 @@ The event available in Ivy are the following ones:
         </td>
         <td>Fired at the end of the retrieve process.</td>
     </tr>
-    <tr><td>pre-publish-artifact <br><span class="since">since 2.0</span></td>
+    <tr><td>pre-publish-artifact <br/><span class="since">since 2.0</span></td>
         <td>
           <ul>
             <li>organisation</li>the organisation of the artifact which is about to be published
@@ -183,7 +182,7 @@ The event available in Ivy are the following ones:
         </td>
         <td>Fired before an artifact is published into a repository</td>
     </tr>
-    <tr><td>post-publish-artifact <br><span class="since">since 2.0</span></td>
+    <tr><td>post-publish-artifact <br/><span class="since">since 2.0</span></td>
         <td>
           <ul>
             <li>organisation</li>the organisation of the artifact that was published
