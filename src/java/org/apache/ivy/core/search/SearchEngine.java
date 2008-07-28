@@ -59,7 +59,7 @@ public class SearchEngine {
         
         for (Iterator iter = settings.getResolvers().iterator(); iter.hasNext();) {
             DependencyResolver resolver = (DependencyResolver) iter.next();
-            Map[] values = resolver.listTokenValues(new String[] {token}, new HashMap());
+            Map[] values = resolver.listTokenValues(new String[] {token}, otherTokenValues);
             for (int i = 0; i < values.length; i++) {
                 entries.add(values[i].get(token));
             }
