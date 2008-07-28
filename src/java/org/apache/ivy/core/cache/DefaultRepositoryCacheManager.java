@@ -60,7 +60,7 @@ import org.apache.ivy.util.PropertiesFile;
 
 public class DefaultRepositoryCacheManager implements RepositoryCacheManager, IvySettingsAware {
     private static final String DEFAULT_ARTIFACT_PATTERN =
-        "[organisation]/[module](/[branch])/[type]s/[artifact]-[revision](.[ext])";
+        "[organisation]/[module](/[branch])/[type]s/[artifact]-[revision](-[classifier])(.[ext])";
 
     private static final String DEFAULT_DATA_FILE_PATTERN = 
         "[organisation]/[module](/[branch])/ivydata-[revision].properties";

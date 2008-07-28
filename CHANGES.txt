@@ -66,6 +66,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 	Johan Stuyts
 	Jason Trump
 	Tjeerd Verhagen
+	James P. White
 	John Williams
 	Patrick Woodworth
 	Jaroslaw Wypychowski
@@ -99,6 +100,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - IMPROVEMENT: Smarter determination if an expression is exact or not for RegexpPatternMatcher and GlobPatternMatcher
 - IMPROVEMENT: Check branch consistency during resolve (IVY-858)
 
+- FIX: Cache can't distinguish artifacts with classifiers (IVY-803) (thanks to James P. White)
 - FIX: Reports showing double dependencies in certain cases (IVY-578)
 - FIX: Dynamic revision resolve does not throw error when configuration is missing (IVY-861)
 - FIX: Referenced resolver not found in macro (IVY-860)

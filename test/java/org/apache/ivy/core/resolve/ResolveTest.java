@@ -21,6 +21,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -3686,8 +3687,11 @@ public class ResolveTest extends TestCase {
         // dependencies
         assertTrue(getIvyFileInCache(
             ModuleRevisionId.newInstance("org.apache", "test-classified", "1.0")).exists());
-        assertTrue(getArchiveFileInCache(ivy, "org.apache", "test-classified",
-            "1.0", "test-classified", "jar", "jar").exists());
+        
+        Map cmap = new HashMap();
+        cmap.put("classifier", "asl");
+        assertTrue(getArchiveFileInCache(ivy, "org.apache", "test-classified", null /* branch */
+                    , "1.0", "test-classified", "jar", "jar", cmap).exists());
     }
 
     public void testResolveMaven2GetSources() throws Exception {
@@ -3704,8 +3708,8 @@ public class ResolveTest extends TestCase {
         File jarFileInCache = getArchiveFileInCache(ivy, "org.apache", "test-sources",
             "1.0", "test-sources", "jar", "jar");
         assertTrue(jarFileInCache.exists());
-        File sourceFileInCache = getArchiveFileInCache(ivy, "org.apache", "test-sources",
-            "1.0", "test-sources", "source", "jar");
+        File sourceFileInCache = getArchiveFileInCache(ivy, "org.apache", "test-sources", null,
+            "1.0", "test-sources", "source", "jar", Collections.singletonMap("classifier", "sources"));
         assertTrue(sourceFileInCache.exists());
         assertTrue(jarFileInCache.length() != sourceFileInCache.length());
     }
@@ -3724,12 +3728,12 @@ public class ResolveTest extends TestCase {
         File jarFileInCache = getArchiveFileInCache(ivy, "org.apache", "test-sources",
             "1.0", "test-sources", "jar", "jar");
         assertTrue(jarFileInCache.exists());
-        File sourceFileInCache = getArchiveFileInCache(ivy, "org.apache", "test-sources",
-            "1.0", "test-sources", "source", "jar");
+        File sourceFileInCache = getArchiveFileInCache(ivy, "org.apache", "test-sources", null,
+            "1.0", "test-sources", "source", "jar", Collections.singletonMap("classifier", "sources"));
         assertTrue(sourceFileInCache.exists());
         assertTrue(jarFileInCache.length() != sourceFileInCache.length());
-        File javadocFileInCache = getArchiveFileInCache(ivy, "org.apache", "test-sources",
-            "1.0", "test-sources", "javadoc", "jar");
+        File javadocFileInCache = getArchiveFileInCache(ivy, "org.apache", "test-sources", null,
+            "1.0", "test-sources", "javadoc", "jar", Collections.singletonMap("classifier", "javadoc"));
         assertTrue(javadocFileInCache.exists());
         assertTrue(jarFileInCache.length() != javadocFileInCache.length());
     }
@@ -4375,6 +4379,15 @@ public class ResolveTest extends TestCase {
             String artifactName, String type, String ext) {
         return getArchiveFileInCache(ivy, organisation, module, revision, artifactName, type, ext);
     }
+    
+    private File getArchiveFileInCache(Ivy ivy, String organisation, String module, String branch, String revision,
+            String artifactName, String type, String ext, Map extraAttrs) {
+        ModuleRevisionId mrid = ModuleRevisionId.newInstance(organisation, module,
+            branch, revision);
+        DefaultArtifact artifact = new DefaultArtifact(mrid, new Date(), artifactName, type, ext, extraAttrs);
+        return TestHelper.getRepositoryCacheManager(ivy, mrid).getArchiveFileInCache(artifact);
+    }
+        
 
     private File getArchiveFileInCache(Ivy ivy, String organisation, String module, String revision,
             String artifactName, String type, String ext) {
