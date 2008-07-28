@@ -208,7 +208,8 @@ public class HttpClientHandler extends AbstractURLHandler {
 
     private HttpClient getClient(URL url) {
         if (httpClient == null) {
-            final MultiThreadedHttpConnectionManager connManager = new MultiThreadedHttpConnectionManager();
+            final MultiThreadedHttpConnectionManager connManager 
+                                                    = new MultiThreadedHttpConnectionManager();
             httpClient = new HttpClient(connManager);
             
             Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
