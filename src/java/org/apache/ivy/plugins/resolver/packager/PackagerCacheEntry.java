@@ -112,19 +112,21 @@ public class PackagerCacheEntry {
             
         // Configure logging verbosity
         BuildLogger logger = new DefaultLogger();
-        logger.setMessageOutputLevel(this.verbose ? Project.MSG_VERBOSE :
-          this.quiet ? Project.MSG_WARN : Project.MSG_INFO);
+        logger.setMessageOutputLevel(this.verbose ? Project.MSG_VERBOSE 
+                : this.quiet ? Project.MSG_WARN : Project.MSG_INFO);
         logger.setOutputPrintStream(System.out);
         logger.setErrorPrintStream(System.err);
         project.addBuildListener(logger);
 
         // Set properties
-        project.setUserProperty("ivy.packager.organisation", "" + this.mr.getModuleId().getOrganisation());
+        project.setUserProperty("ivy.packager.organisation", 
+                                        "" + this.mr.getModuleId().getOrganisation());
         project.setUserProperty("ivy.packager.module", "" + this.mr.getModuleId().getName());
         project.setUserProperty("ivy.packager.revision", "" + this.mr.getRevision());
         project.setUserProperty("ivy.packager.branch", "" + this.mr.getBranch());
         if (this.resourceCache != null) {
-            project.setUserProperty("ivy.packager.resourceCache", "" + this.resourceCache.getCanonicalPath());
+            project.setUserProperty("ivy.packager.resourceCache", 
+                                        "" + this.resourceCache.getCanonicalPath());
         }
         if (this.resourceURL != null) {
             project.setUserProperty("ivy.packager.resourceURL", "" + getResourceURL());
