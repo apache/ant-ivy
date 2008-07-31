@@ -21,6 +21,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.text.ParseException;
 import java.util.Arrays;
@@ -397,12 +399,25 @@ public class XmlSettingsParser extends DefaultHandler {
      * to the URL of the current settings file (can be local file or remote URL).
      */
     private URL urlFromFileAttribute(String filePath) throws MalformedURLException {
+        try {
+            return new URL(filePath);
+        } catch (MalformedURLException e) {
+            // ignore, we'll try to create a correct URL below
+        }
+        
         File incFile = new File(filePath);
         if (incFile.isAbsolute()) {
             return incFile.toURI().toURL();
+        } else if ("file".equals(this.settings.getProtocol())) {
+            try {
+                File settingsFile = new File(new URI(this.settings.toExternalForm()));
+                return new File(settingsFile.getParentFile(), filePath).toURI().toURL();
+            } catch (URISyntaxException e) {
+                return new URL(this.settings , filePath);
+            }
         } else {
             return new URL(this.settings , filePath);
-        }      
+        }
     }
 
     private void propertiesStarted(Map attributes) throws IOException {
@@ -454,7 +469,7 @@ public class XmlSettingsParser extends DefaultHandler {
                 throw new IllegalArgumentException(
                         "either url or file should be given for classpath element");
             } else {
-                url = new File(file).toURL();
+                url = new File(file).toURI().toURL();
             }
         } else {
             url = new URL(urlStr);

@@ -41,7 +41,7 @@ public final class ResourceHelper {
             return new File(res.getName()).equals(f);
         } else if (res instanceof URLResource) {
             try {
-                return f.toURL().toExternalForm().equals(res.getName());
+                return f.toURI().toURL().toExternalForm().equals(res.getName());
             } catch (MalformedURLException e) {
                 return false;
             }

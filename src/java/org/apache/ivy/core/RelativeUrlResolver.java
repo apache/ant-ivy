@@ -47,7 +47,7 @@ public abstract class RelativeUrlResolver {
         if (file != null) {
             File f = new File(file);
             if (f.isAbsolute()) {
-                return f.toURL();
+                return f.toURI().toURL();
             } else {
                 return getURL(context, file);
             }

@@ -229,7 +229,7 @@ public class IvyResolve extends IvyTask {
                 if (file == null) {
                     file = getProject().resolveFile(getProperty(settings, "ivy.dep.file"));
                 }
-                report = ivy.resolve(file.toURL(), getResolveOptions(ivy, confs, settings));
+                report = ivy.resolve(file.toURI().toURL(), getResolveOptions(ivy, confs, settings));
             }
             if (report.hasError()) {
                 if (failureProperty != null) {

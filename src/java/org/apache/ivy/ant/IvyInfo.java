@@ -133,7 +133,7 @@ public class IvyInfo extends IvyTask {
                     file = getProject().resolveFile(getProperty(settings, "ivy.dep.file"));
                 }
                 ModuleDescriptor md = ModuleDescriptorParserRegistry.getInstance().parseDescriptor(
-                    settings, file.toURL(), doValidate(settings));
+                    settings, file.toURI().toURL(), doValidate(settings));
                 ModuleRevisionId mrid = md.getModuleRevisionId();
                 setProperties(md, mrid);
             }

@@ -128,7 +128,7 @@ public class ResolveEngine {
     }
 
     public ResolveReport resolve(File ivySource) throws ParseException, IOException {
-        return resolve(ivySource.toURL());
+        return resolve(ivySource.toURI().toURL());
     }
 
     public ResolveReport resolve(URL ivySource) throws ParseException, IOException {

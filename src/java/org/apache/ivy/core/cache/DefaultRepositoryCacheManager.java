@@ -543,7 +543,7 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
                 // found in cache !
                 try {
                     ModuleDescriptor depMD = XmlModuleDescriptorParser.getInstance()
-                    .parseDescriptor(settings, ivyFile.toURL(), options.isValidate());
+                    .parseDescriptor(settings, ivyFile.toURI().toURL(), options.isValidate());
                     String resolverName = getSavedResolverName(depMD);
                     String artResolverName = getSavedArtResolverName(depMD);
                     DependencyResolver resolver = settings.getResolver(resolverName);
@@ -889,7 +889,7 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
 
             URL cachedMDURL = null;
             try {
-                cachedMDURL = report.getLocalFile().toURL();
+                cachedMDURL = report.getLocalFile().toURI().toURL();
             } catch (MalformedURLException ex) {
                 Message.warn("malformed url exception for original in cache file: " 
                     + report.getLocalFile() + ": " + ex.getMessage());

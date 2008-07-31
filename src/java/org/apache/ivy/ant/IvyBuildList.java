@@ -205,7 +205,7 @@ public class IvyBuildList extends IvyTask {
                 } else {
                     try {
                         ModuleDescriptor md = ModuleDescriptorParserRegistry.getInstance()
-                                .parseDescriptor(settings, ivyFile.toURL(), doValidate(settings));
+                                .parseDescriptor(settings, ivyFile.toURI().toURL(), doValidate(settings));
                         buildFiles.put(md, buildFile);
                         mds.add(md);
                         Message.debug("Add " + md.getModuleRevisionId().getModuleId());

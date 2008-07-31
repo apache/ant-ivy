@@ -368,7 +368,7 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
 
         loadDefaultProperties();
         try {
-            new XmlSettingsParser(this).parse(settingsFile.toURL());
+            new XmlSettingsParser(this).parse(settingsFile.toURI().toURL());
         } catch (MalformedURLException e) {
             IllegalArgumentException iae = new IllegalArgumentException(
                     "given file cannot be transformed to url: " + settingsFile);
@@ -458,7 +458,7 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
             setDeprecatedVariable("ivy.conf.dir", "ivy.settings.dir");
             setVariable("ivy.settings.file", settingsFile.getAbsolutePath());
             setDeprecatedVariable("ivy.conf.file", "ivy.settings.file");
-            setVariable("ivy.settings.url", settingsFile.toURL().toExternalForm());
+            setVariable("ivy.settings.url", settingsFile.toURI().toURL().toExternalForm());
             setDeprecatedVariable("ivy.conf.url", "ivy.settings.url");
         } catch (MalformedURLException e) {
             IllegalArgumentException iae = new IllegalArgumentException(

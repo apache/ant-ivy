@@ -115,7 +115,7 @@ public class DeliverEngine {
         ModuleDescriptor md = null;
         URL ivyFileURL = null;
         try {
-            ivyFileURL = ivyFile.toURL();
+            ivyFileURL = ivyFile.toURI().toURL();
             md = XmlModuleDescriptorParser.getInstance().parseDescriptor(settings, ivyFileURL,
                 options.isValidate());
             md.setResolvedModuleRevisionId(ModuleRevisionId.newInstance(mrid, 

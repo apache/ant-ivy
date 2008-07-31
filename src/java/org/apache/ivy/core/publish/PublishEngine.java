@@ -111,7 +111,7 @@ public class PublishEngine {
         ModuleDescriptor md = null;
         URL ivyFileURL = null;
         try {
-            ivyFileURL = ivyFile.toURL();
+            ivyFileURL = ivyFile.toURI().toURL();
             md = XmlModuleDescriptorParser.getInstance().parseDescriptor(settings, ivyFileURL,
                 false);
             if (options.getSrcIvyPattern() != null) {
@@ -138,7 +138,7 @@ public class PublishEngine {
                         ivyFile = tmp;
                         // we parse the new file to get updated module descriptor
                         md = XmlModuleDescriptorParser.getInstance().parseDescriptor(settings,
-                            ivyFile.toURL(), false);
+                            ivyFile.toURI().toURL(), false);
                         options.setSrcIvyPattern(ivyFile.getAbsolutePath());
                     } catch (SAXException e) {
                         throw new IllegalStateException("bad ivy file for " + mrid + ": " + ivyFile

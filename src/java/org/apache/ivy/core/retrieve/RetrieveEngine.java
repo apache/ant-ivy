@@ -202,7 +202,7 @@ public class RetrieveEngine {
             try {
                 File ivyFile = getCache().getResolvedIvyFileInCache(mrid);
                 Message.verbose("no explicit confs given for retrieve, using ivy file: " + ivyFile);
-                URL ivySource = ivyFile.toURL();
+                URL ivySource = ivyFile.toURI().toURL();
                 URLResource res = new URLResource(ivySource);
                 ModuleDescriptorParser parser = ModuleDescriptorParserRegistry.getInstance()
                         .getParser(res);

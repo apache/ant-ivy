@@ -133,7 +133,7 @@ public final class XmlModuleDescriptorUpdater {
             if (res instanceof URLResource) {
                 inputStreamContext = ((URLResource) res).getURL();
             } else if (res instanceof FileResource) {
-                inputStreamContext = ((FileResource) res).getFile().toURL();
+                inputStreamContext = ((FileResource) res).getFile().toURI().toURL();
             }
             update(inputStreamContext, in, fos, options);
         } finally {
@@ -445,7 +445,7 @@ public final class XmlModuleDescriptorUpdater {
                         String urlStr = attributes.getValue("url");
                         url = new URL(urlStr);
                     } else {
-                        url = new File(fileName).toURL();
+                        url = new File(fileName).toURI().toURL();
                     }
                 }
                 XMLHelper.parse(url, null, new DefaultHandler() {

@@ -72,7 +72,7 @@ public class IvyCheck extends IvyTask {
         try {
             Ivy ivy = getIvyInstance();
             if (file != null) {
-                if (ivy.check(file.toURL(), resolvername)) {
+                if (ivy.check(file.toURI().toURL(), resolvername)) {
                     Message.verbose("checked " + file + ": OK");
                 }
             }
@@ -85,7 +85,7 @@ public class IvyCheck extends IvyTask {
                 String[] srcFiles = ds.getIncludedFiles();
                 for (int j = 0; j < srcFiles.length; j++) {
                     File file = new File(fromDir, srcFiles[j]);
-                    if (ivy.check(file.toURL(), resolvername)) {
+                    if (ivy.check(file.toURI().toURL(), resolvername)) {
                         Message.verbose("checked " + file + ": OK");
                     }
                 }

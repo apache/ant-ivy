@@ -473,7 +473,48 @@ public class XmlSettingsParserTest extends TestCase {
             //An exception must be throwed
         }
     }
+    
+    public void testIncludeSpecialCharInName() throws Exception {
+        IvySettings settings = new IvySettings();
+        XmlSettingsParser parser = new XmlSettingsParser(settings);
+        parser.parse(XmlSettingsParserTest.class.getResource("ivysettings-include-special.xml"));
 
+        DependencyResolver def = settings.getResolver("default");
+        assertNotNull(def);
+        assertTrue(def instanceof ChainResolver);
+        ChainResolver chain = (ChainResolver) def;
+        List subresolvers = chain.getResolvers();
+        assertNotNull(subresolvers);
+        assertEquals(2, subresolvers.size());
+        FileSystemResolver fsInt1 = (FileSystemResolver) subresolvers.get(0);
+        assertEquals("default-fs1", fsInt1.getName());
+
+        List ivyPatterns = fsInt1.getIvyPatterns();
+        assertNotNull(ivyPatterns);
+        assertEquals(1, ivyPatterns.size());
+        assertEquals("path/to/myrep/[organisation]/[module]/[type]s/[artifact]-[revision].[ext]",
+            ivyPatterns.get(0));
+
+        DependencyResolver inc = settings.getResolver("includeworks");
+        assertNotNull(inc);
+        assertTrue(inc instanceof ChainResolver);
+        chain = (ChainResolver) inc;
+        subresolvers = chain.getResolvers();
+        assertNotNull(subresolvers);
+        assertEquals(2, subresolvers.size());
+
+        fsInt1 = (FileSystemResolver) subresolvers.get(0);
+        assertEquals("includeworks-fs1", fsInt1.getName());
+
+        ivyPatterns = fsInt1.getIvyPatterns();
+        assertNotNull(ivyPatterns);
+        assertEquals(1, ivyPatterns.size());
+        assertEquals("included/myrep/[organisation]/[module]/[type]s/[artifact]-[revision].[ext]",
+            ivyPatterns.get(0));
+        
+        // properties defined in included file should be available to including file (IVY-780)
+        assertEquals("myvalue", settings.getVariable("ivy.test.prop"));
+    }
     
     public void testRelativePropertiesFile() throws Exception {
         IvySettings settings = new IvySettings();

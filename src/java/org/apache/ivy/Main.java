@@ -228,7 +228,7 @@ public final class Main {
             }
             ResolveOptions resolveOptions = new ResolveOptions().setConfs(confs)
                 .setValidate(validate);
-            ResolveReport report = ivy.resolve(ivyfile.toURL(), resolveOptions);
+            ResolveReport report = ivy.resolve(ivyfile.toURI().toURL(), resolveOptions);
             if (report.hasError()) {
                 System.exit(1);
             }
@@ -416,7 +416,7 @@ public final class Main {
             for (Iterator iter = fileList.iterator(); iter.hasNext();) {
                 File file = (File) iter.next();
                 try {
-                    urls.add(file.toURL());
+                    urls.add(file.toURI().toURL());
                 } catch (MalformedURLException e) {
                     // Should not happen, just ignore.
                 } 
@@ -438,7 +438,7 @@ public final class Main {
                 ArtifactDownloadReport artifact = (ArtifactDownloadReport) iter.next();
 
                 if (artifact.getLocalFile() != null) {
-                    urls.add(artifact.getLocalFile().toURL());
+                    urls.add(artifact.getLocalFile().toURI().toURL());
                 }
             }
         } catch (Exception ex) {

@@ -60,9 +60,9 @@ public class IvyConvertPom extends IvyTask {
                 throw new BuildException("destination ivy file is required for convertpom task");
             }
             ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(
-                getSettings(), pomFile.toURL(), false);
-            PomModuleDescriptorParser.getInstance().toIvyFile(pomFile.toURL().openStream(),
-                new URLResource(pomFile.toURL()), getIvyFile(), md);
+                getSettings(), pomFile.toURI().toURL(), false);
+            PomModuleDescriptorParser.getInstance().toIvyFile(pomFile.toURI().toURL().openStream(),
+                new URLResource(pomFile.toURI().toURL()), getIvyFile(), md);
         } catch (MalformedURLException e) {
             throw new BuildException("unable to convert given pom file to url: " + pomFile + ": "
                     + e, e);
