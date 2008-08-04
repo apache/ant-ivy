@@ -25,8 +25,7 @@ import org.apache.ivy.core.module.id.ModuleRevisionId;
 abstract class MessageBasedNonMatchingVersionReporter implements NonMatchingVersionReporter {
 
     public void reportNonMatchingVersion(DependencyDescriptor descriptor, ModuleDescriptor md) {
-        ModuleRevisionId dependencyRevisionId = 
-            descriptor.getDynamicConstraintDependencyRevisionId();
+        ModuleRevisionId dependencyRevisionId = descriptor.getDependencyRevisionId();
         ModuleRevisionId parentRevisionId = descriptor.getParentRevisionId();
         if (parentRevisionId == null) {
             // There are some rare case where DependencyDescriptor have no parent.
