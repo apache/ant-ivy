@@ -121,6 +121,22 @@ public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         assertEquals("war", artifact[0].getType());
     }
 
+    public void testEjbPackaging() throws Exception {
+        ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(
+            settings, getClass().getResource("test-ejb-packaging.pom"), false);
+        assertNotNull(md);
+
+        ModuleRevisionId mrid = ModuleRevisionId.newInstance("org.apache", "test", "1.0");
+        assertEquals(mrid, md.getModuleRevisionId());
+
+        Artifact[] artifact = md.getArtifacts("master");
+        assertEquals(1, artifact.length);
+        assertEquals(mrid, artifact[0].getModuleRevisionId());
+        assertEquals("test", artifact[0].getName());
+        assertEquals("jar", artifact[0].getExt());
+        assertEquals("ejb", artifact[0].getType());
+    }
+
     
     public void testParent() throws Exception {
         ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(

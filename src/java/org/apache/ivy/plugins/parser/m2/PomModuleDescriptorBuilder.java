@@ -213,7 +213,15 @@ public class PomModuleDescriptorBuilder {
 
 
     public void addArtifact(String artifactId, String packaging) {
-        String ext = packaging;
+        String ext;
+        if ("pom".equals(packaging)) {
+            // no artifact defined!
+            return;
+        } else if ("ejb".equals(packaging)) {
+            ext = "jar";
+        } else {
+            ext = packaging;
+        }
 
         // TODO: we should refactor the following code into something more configurable
 
@@ -231,7 +239,7 @@ public class PomModuleDescriptorBuilder {
         }
 
         ivyModuleDescriptor.addArtifact("master", 
-                new DefaultArtifact(mrid, new Date(), artifactId, ext, ext));
+                new DefaultArtifact(mrid, new Date(), artifactId, packaging, ext));
     }
 
 
