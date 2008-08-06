@@ -45,9 +45,9 @@ public class NormalRelativeUrlResolverTest extends TestCase {
     public void testFileAndUrlWithAbsoluteFile() throws MalformedURLException {
         URL base = new URL("file://xxx/file.txt");
         File absFile = new File(".").getAbsoluteFile();
-        assertEquals(absFile.toURL(), t.getURL(base , absFile.toString() , null));
-        assertEquals(absFile.toURL(), t.getURL(base , absFile.toString() , ""));
-        assertEquals(absFile.toURL(), t.getURL(base , absFile.toString() , "somthing.txt"));
+        assertEquals(absFile.toURI().toURL(), t.getURL(base , absFile.toString() , null));
+        assertEquals(absFile.toURI().toURL(), t.getURL(base , absFile.toString() , ""));
+        assertEquals(absFile.toURI().toURL(), t.getURL(base , absFile.toString() , "somthing.txt"));
     }
 
     public void testFileAndUrlWithRelativeFile() throws MalformedURLException {

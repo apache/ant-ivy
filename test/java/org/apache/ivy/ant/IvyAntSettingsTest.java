@@ -100,7 +100,7 @@ public class IvyAntSettingsTest extends TestCase {
         assertEquals(new File("build/cache"), settings.getDefaultCache());
         assertEquals(new File("test/repositories/ivysettings.xml").getAbsolutePath(), settings
                 .getVariables().getVariable("ivy.settings.file"));
-        assertEquals(new File("test/repositories/ivysettings.xml").toURL().toExternalForm(),
+        assertEquals(new File("test/repositories/ivysettings.xml").toURI().toURL().toExternalForm(),
             settings.getVariables().getVariable("ivy.settings.url"));
         assertEquals(new File("test/repositories").getAbsolutePath(), settings.getVariables().getVariable(
             "ivy.settings.dir"));
