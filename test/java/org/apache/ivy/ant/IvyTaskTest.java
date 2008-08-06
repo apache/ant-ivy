@@ -50,7 +50,7 @@ public class IvyTaskTest extends TestCase {
         assertEquals(new File("test/repositories/ivysettings.xml").getAbsolutePath().toUpperCase(),
             new File((String) settings.getVariables().getVariable("ivy.settings.file")).getAbsolutePath()
                     .toUpperCase());
-        assertEquals(new File("test/repositories/ivysettings.xml").toURL().toExternalForm()
+        assertEquals(new File("test/repositories/ivysettings.xml").toURI().toURL().toExternalForm()
                 .toUpperCase(), ((String) settings.getVariables().getVariable("ivy.settings.url"))
                 .toUpperCase());
         assertEquals(new File("test/repositories").getAbsolutePath().toUpperCase(),
@@ -82,7 +82,7 @@ public class IvyTaskTest extends TestCase {
         assertEquals(new File("build/cache"), settings.getDefaultCache());
         assertEquals(new File("test/repositories/ivysettings.xml").getAbsolutePath(), settings
                 .getVariables().getVariable("ivy.settings.file"));
-        assertEquals(new File("test/repositories/ivysettings.xml").toURL().toExternalForm(),
+        assertEquals(new File("test/repositories/ivysettings.xml").toURI().toURL().toExternalForm(),
             settings.getVariables().getVariable("ivy.settings.url"));
         assertEquals(new File("test/repositories").getAbsolutePath(), settings.getVariables().getVariable(
             "ivy.settings.dir"));
