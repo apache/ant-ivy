@@ -38,6 +38,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 	Christer Jonsson
 	Michael Kebe
 	Matthias Kilian
+	Alexey Kiselev
 	Gregory Kisling
 	Tat Leung
 	Costin Leau
@@ -101,6 +102,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - IMPROVEMENT: Smarter determination if an expression is exact or not for RegexpPatternMatcher and GlobPatternMatcher
 - IMPROVEMENT: Check branch consistency during resolve (IVY-858)
 
+- FIX: Incorrect parsing artifactPattern attribute in a sftp resolver (IVY-661) (thanks to Alexey Kiselev)
 - FIX: Maven2 "ejb" packaging is not supported (IVY-873)
 - FIX: Config files with # in path can't be read (IVY-868) (thanks to Simon Steiner)
 - FIX: Cache can't distinguish artifacts with classifiers (IVY-803) (thanks to James P. White)

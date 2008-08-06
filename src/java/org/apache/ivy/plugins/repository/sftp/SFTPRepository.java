@@ -20,6 +20,8 @@ package org.apache.ivy.plugins.repository.sftp;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -87,7 +89,9 @@ public class SFTPRepository extends AbstractSshBasedRepository {
     public Resource resolveResource(String path) {
         try {
             ChannelSftp c = getSftpChannel(path);
-            Collection r = c.ls(path);
+			
+            Collection r = c.ls(getPath(path));
+			
             if (r != null) {
                 for (Iterator iter = r.iterator(); iter.hasNext();) {
                     Object obj = iter.next();
@@ -103,29 +107,42 @@ public class SFTPRepository extends AbstractSshBasedRepository {
             Message.debug("reolving resource error: " + e.getMessage());
             // silent fail, return unexisting resource
         }
+		
         return new BasicResource(path, false, 0, 0, false);
     }
 
     public InputStream openStream(SFTPResource resource) throws IOException {
         ChannelSftp c = getSftpChannel(resource.getName());
         try {
-            return c.get(resource.getName());
+            String path = getPath(resource.getName());
+            return c.get(path);
         } catch (SftpException e) {
             IOException ex = new IOException("impossible to open stream for " + resource + " on "
                     + getHost() + (e.getMessage() != null ? ": " + e.getMessage() : ""));
             ex.initCause(e);
             throw ex;
-        }
+        } catch (URISyntaxException e) {
+            IOException ex = new IOException("impossible to open stream for " + resource + " on "
+                + getHost() + (e.getMessage() != null ? ": " + e.getMessage() : ""));
+            ex.initCause(e);
+            throw ex;
+        } 
     }
 
     public void get(String source, File destination) throws IOException {
         fireTransferInitiated(getResource(source), TransferEvent.REQUEST_GET);
         ChannelSftp c = getSftpChannel(source);
         try {
-            c.get(source, destination.getAbsolutePath(), new MyProgressMonitor());
+            String path = getPath(source);
+            c.get(path, destination.getAbsolutePath(), new MyProgressMonitor());
         } catch (SftpException e) {
             IOException ex = new IOException("impossible to get " + source + " on " + getHost()
                     + (e.getMessage() != null ? ": " + e.getMessage() : ""));
+            ex.initCause(e);
+            throw ex;
+        } catch (URISyntaxException e) {
+            IOException ex = new IOException("impossible to get " + source + " on " + getHost()
+                + (e.getMessage() != null ? ": " + e.getMessage() : ""));
             ex.initCause(e);
             throw ex;
         }
@@ -135,14 +152,19 @@ public class SFTPRepository extends AbstractSshBasedRepository {
         fireTransferInitiated(getResource(destination), TransferEvent.REQUEST_PUT);
         ChannelSftp c = getSftpChannel(destination);
         try {
-            if (!overwrite && checkExistence(destination, c)) {
+            String path = getPath(destination);
+            if (!overwrite && checkExistence(path, c)) {
                 throw new IOException("destination file exists and overwrite == false");
             }
-            if (destination.indexOf('/') != -1) {
-                mkdirs(destination.substring(0, destination.lastIndexOf('/')), c);
+            if (path.indexOf('/') != -1) {
+                mkdirs(path.substring(0, path.lastIndexOf('/')), c);
             }
-            c.put(source.getAbsolutePath(), destination, new MyProgressMonitor());
+            c.put(source.getAbsolutePath(), path, new MyProgressMonitor());
         } catch (SftpException e) {
+            IOException ex = new IOException(e.getMessage());
+            ex.initCause(e);
+            throw ex;
+        } catch (URISyntaxException e) {
             IOException ex = new IOException(e.getMessage());
             ex.initCause(e);
             throw ex;
@@ -164,6 +186,18 @@ public class SFTPRepository extends AbstractSshBasedRepository {
             c.mkdir(directory);
         }
     }
+	
+	private String getPath(String sftpURI) throws URISyntaxException {
+		String result = null;
+		URI uri = new URI(sftpURI);
+		result = uri.getPath();
+		
+		if (result == null) {
+			throw new URISyntaxException(sftpURI, "Missing path in URI.");
+		}
+		
+		return result;
+	}
 
     public List list(String parent) throws IOException {
         try {
