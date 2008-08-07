@@ -139,4 +139,6 @@ public interface URLHandler {
     public InputStream openStream(URL url) throws IOException;
 
     public void download(URL src, File dest, CopyProgressListener l) throws IOException;
+
+    public void upload(File src, URL dest, CopyProgressListener l) throws IOException;
 }

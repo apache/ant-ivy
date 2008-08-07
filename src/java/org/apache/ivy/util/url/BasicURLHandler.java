@@ -17,11 +17,7 @@
  */
 package org.apache.ivy.util.url;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
@@ -140,6 +136,39 @@ public class BasicURLHandler extends AbstractURLHandler {
             }
         } finally {
             disconnect(srcConn);
+        }
+    }
+
+    public void upload(File source, URL dest, CopyProgressListener l) throws IOException {
+        if (!"http".equals(dest.getProtocol()) && !"https".equals(dest.getProtocol())) {
+            throw new UnsupportedOperationException(
+                    "URL repository only support HTTP PUT at the moment");
+        }
+
+        HttpURLConnection conn = null;
+        try {
+            conn = (HttpURLConnection) dest.openConnection();
+            conn.setDoOutput(true);
+            conn.setRequestMethod("PUT");
+            conn.setRequestProperty("User-Agent", "Apache Ivy");
+            conn.setRequestProperty("Content-type", "application/octet-stream");
+            conn.setRequestProperty("Content-length", Long.toString(source.length()));
+            conn.setInstanceFollowRedirects(true);
+
+            InputStream in = new FileInputStream(source);
+            try {
+                OutputStream os = conn.getOutputStream();
+                FileUtil.copy(in, os, l);
+            } finally {
+                try {
+                    in.close();
+                } catch (IOException e) {
+                    /* ignored */
+                }
+            }
+            validatePutStatusCode(dest, conn.getResponseCode(), conn.getResponseMessage());
+        } finally {
+            disconnect(conn);
         }
     }
 

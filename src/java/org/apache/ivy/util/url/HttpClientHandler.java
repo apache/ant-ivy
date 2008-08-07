@@ -20,6 +20,7 @@ package org.apache.ivy.util.url;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.FileInputStream;
 import java.net.URL;
 import java.net.UnknownHostException;
 import java.text.ParseException;
@@ -38,6 +39,8 @@ import org.apache.commons.httpclient.UsernamePasswordCredentials;
 import org.apache.commons.httpclient.auth.AuthPolicy;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.HeadMethod;
+import org.apache.commons.httpclient.methods.PutMethod;
+import org.apache.commons.httpclient.methods.InputStreamRequestEntity;
 import org.apache.ivy.util.CopyProgressListener;
 import org.apache.ivy.util.Credentials;
 import org.apache.ivy.util.FileUtil;
@@ -97,6 +100,28 @@ public class HttpClientHandler extends AbstractURLHandler {
         FileUtil.copy(get.getResponseBodyAsStream(), dest, l);
         dest.setLastModified(getLastModified(get));
         get.releaseConnection();
+    }
+
+    public void upload(File src, URL dest, CopyProgressListener l) throws IOException {
+        HttpClient client = getClient(dest);
+
+        PutMethod put = new PutMethod(dest.toExternalForm());
+        put.setDoAuthentication(useAuthentication(dest) || useProxyAuthentication());
+        FileInputStream fileStream = null;
+        try {
+            fileStream = new FileInputStream(src);
+            put.setRequestEntity(new InputStreamRequestEntity(fileStream));
+            int statusCode = client.executeMethod(put);
+            validatePutStatusCode(dest, statusCode, null);
+        } finally {
+            if (fileStream != null) {
+                try {
+                    fileStream.close();
+                } catch (IOException e) {
+                    /* ignored */
+                }
+            }
+        }
     }
 
     public URLInfo getURLInfo(URL url) {

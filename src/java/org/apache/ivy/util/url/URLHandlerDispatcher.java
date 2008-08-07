@@ -77,6 +77,10 @@ public class URLHandlerDispatcher implements URLHandler {
         getHandler(src.getProtocol()).download(src, dest, l);
     }
 
+    public void upload(File src, URL dest, CopyProgressListener l) throws IOException {
+        getHandler(dest.getProtocol()).upload(src, dest, l);
+    }
+
     public void setDownloader(String protocol, URLHandler downloader) {
         handlers.put(protocol, downloader);
     }

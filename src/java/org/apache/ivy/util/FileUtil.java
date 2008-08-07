@@ -136,6 +136,10 @@ public final class FileUtil {
         URLHandlerRegistry.getDefault().download(src, dest, l);
     }
 
+    public static void copy(File src, URL dest, CopyProgressListener l) throws IOException {
+        URLHandlerRegistry.getDefault().upload(src, dest, l);
+    }
+
     public static void copy(InputStream src, File dest, CopyProgressListener l) throws IOException {
         if (dest.getParentFile() != null) {
             dest.getParentFile().mkdirs();
@@ -170,6 +174,12 @@ public final class FileUtil {
 
             if (l != null) {
                 evt.update(EMPTY_BUFFER, 0, total);
+            }
+
+            try {
+                dest.flush();
+            } catch (IOException ex) {
+                // ignore
             }
 
             // close the streams

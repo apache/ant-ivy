@@ -20,13 +20,7 @@ package org.apache.ivy.plugins.repository.url;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Map;
-
+import java.util.*;
 import org.apache.ivy.plugins.repository.AbstractRepository;
 import org.apache.ivy.plugins.repository.RepositoryCopyProgressListener;
 import org.apache.ivy.plugins.repository.Resource;
@@ -75,8 +69,27 @@ public class URLRepository extends AbstractRepository {
     }
 
     public void put(File source, String destination, boolean overwrite) throws IOException {
-        throw new UnsupportedOperationException(
-                "URL repository is not able to put files for the moment");
+        if (!overwrite) {
+            throw new UnsupportedOperationException(
+                    "URL repository do not support append operations at the moment");
+        }
+
+        fireTransferInitiated(getResource(destination), TransferEvent.REQUEST_PUT);
+        try {
+            long totalLength = source.length();
+            if (totalLength > 0) {
+                progress.setTotalLength(new Long(totalLength));
+            }
+            FileUtil.copy(source, new URL(destination), progress);
+        } catch (IOException ex) {
+            fireTransferError(ex);
+            throw ex;
+        } catch (RuntimeException ex) {
+            fireTransferError(ex);
+            throw ex;
+        } finally {
+            progress.setTotalLength(null);
+        }
     }
 
     private ApacheURLLister lister = new ApacheURLLister();

@@ -18,6 +18,8 @@
 package org.apache.ivy.util.url;
 
 import java.net.URL;
+import java.net.HttpURLConnection;
+import java.io.IOException;
 
 public abstract class AbstractURLHandler implements URLHandler {
     public boolean isReachable(URL url) {
@@ -42,5 +44,24 @@ public abstract class AbstractURLHandler implements URLHandler {
 
     public long getLastModified(URL url, int timeout) {
         return getURLInfo(url, timeout).getLastModified();
+    }
+
+    protected void validatePutStatusCode(URL dest, int statusCode, String statusMessage) throws IOException {
+        switch (statusCode) {
+            case HttpURLConnection.HTTP_OK:
+                /* intentional fallthrough */
+            case HttpURLConnection.HTTP_CREATED:
+                /* intentional fallthrough */
+            case HttpURLConnection.HTTP_ACCEPTED:
+                /* intentional fallthrough */
+            case HttpURLConnection.HTTP_NO_CONTENT:
+                break;
+            case HttpURLConnection.HTTP_UNAUTHORIZED:
+                /* intentional fallthrough */
+            case HttpURLConnection.HTTP_FORBIDDEN:
+                throw new IOException("Access to URL " + dest + " was refused by the server" + (statusMessage == null ? "" : ": " + statusMessage));
+            default:
+                throw new IOException("PUT operation to URL " + dest + " failed with status code " + statusCode + (statusMessage == null ? "" : ": " + statusMessage));
+        }
     }
 }
