@@ -112,6 +112,11 @@ public class ResolveOptions extends LogOptions {
     private String resolveId;
 
     private boolean refresh;
+    
+    /**
+     *  True if the resolve should compare the new resolution against the previous report 
+     **/  
+    private boolean checkIfChanged = false;
 
     public ResolveOptions() {
     }
@@ -130,6 +135,7 @@ public class ResolveOptions extends LogOptions {
         resolveMode = options.resolveMode;
         artifactFilter = options.artifactFilter;
         resolveId = options.resolveId;
+        checkIfChanged = options.checkIfChanged;
     }
 
     public Filter getArtifactFilter() {
@@ -281,6 +287,15 @@ public class ResolveOptions extends LogOptions {
         return refresh;
     }
 
+    public ResolveOptions setCheckIfChanged(boolean checkIfChanged) {
+        this.checkIfChanged = checkIfChanged;
+        return this;
+    }
+    
+    public boolean getCheckIfChanged() {
+        return checkIfChanged;
+    }
+
 
     public static String getDefaultResolveId(ModuleDescriptor md) {
         ModuleId module = md.getModuleRevisionId().getModuleId();
@@ -290,5 +305,7 @@ public class ResolveOptions extends LogOptions {
     public static String getDefaultResolveId(ModuleId moduleId) {
         return moduleId.getOrganisation() + "-" + moduleId.getName();
     }
+
+
 
 }

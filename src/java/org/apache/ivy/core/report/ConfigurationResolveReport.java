@@ -47,23 +47,25 @@ import org.apache.ivy.util.Message;
  */
 public class ConfigurationResolveReport {
 
-    private ModuleDescriptor md;
+    private final ModuleDescriptor md;
 
-    private String conf;
+    private final String conf;
 
-    private Date date;
+    private final Date date;
+
+    private final ResolveOptions options;
 
     private Map dependencyReports = new LinkedHashMap();
 
     private Map dependencies = new LinkedHashMap();
 
-    private ResolveEngine resolveEngine;
+    private final ResolveEngine resolveEngine;
 
     private Map modulesIdsMap = new LinkedHashMap();
 
     private List modulesIds;
 
-    private List previousDeps;
+    private Boolean hasChanged = null;
 
     public ConfigurationResolveReport(ResolveEngine resolveEngine, ModuleDescriptor md,
             String conf, Date date, ResolveOptions options) {
@@ -71,8 +73,21 @@ public class ConfigurationResolveReport {
         this.md = md;
         this.conf = conf;
         this.date = date;
+        this.options = options;
+    }
 
-        // parse previous deps from previous report file if any
+    
+    /**
+     * Check if the set of dependencies has changed since the previous execution 
+     * of a resolution.<br/>
+     * This function use the report file found in the cache.  So the function must be called
+     * before the new report is serialized there.</br>
+     * This function also use the internal dependencies that must already be filled.
+     * This function might be 'heavy' because it may have to parse the previous 
+     * report.
+     * @return
+     */
+    public void checkIfChanged() {
         ResolutionCacheManager cache = resolveEngine.getSettings().getResolutionCacheManager();
         String resolveId = options.getResolveId();
         File previousReportFile = cache.getConfigurationResolveReportInCache(resolveId, conf);
@@ -80,23 +95,25 @@ public class ConfigurationResolveReport {
             try {
                 XmlReportParser parser = new XmlReportParser();
                 parser.parse(previousReportFile);
-                previousDeps = Arrays.asList(parser.getDependencyRevisionIds());
+                List previousDeps = Arrays.asList(parser.getDependencyRevisionIds());
+                HashSet previousDepSet = new HashSet(previousDeps);
+                hasChanged = Boolean.valueOf(!previousDepSet.equals(getModuleRevisionIds()));
             } catch (Exception e) {
                 Message.warn("Error while parsing configuration resolve report "
                         + previousReportFile.getAbsolutePath());
                 e.printStackTrace();
-                previousDeps = null;
+                hasChanged = Boolean.TRUE;
             }
         } else {
-            previousDeps = null;
+            hasChanged = Boolean.TRUE;
         }
     }
-
-    public boolean hasChanged() {
-        if (previousDeps == null) {
-            return true;
-        }
-        return !new HashSet(previousDeps).equals(getModuleRevisionIds());
+    
+    /**
+     * @pre checkIfChanged has been called.
+     */
+    public boolean hasChanged() {        
+        return hasChanged.booleanValue();
     }
 
     /**

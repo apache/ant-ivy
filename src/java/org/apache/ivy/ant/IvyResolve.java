@@ -77,6 +77,8 @@ public class IvyResolve extends IvyTask {
     private String resolveId = null;
     
     private String log = ResolveOptions.LOG_DEFAULT;
+    
+    private boolean checkIfChanged = true; //for backward compatibility
 
     public boolean isUseOrigin() {
         return useOrigin;
@@ -256,9 +258,12 @@ public class IvyResolve extends IvyTask {
                     md.getResolvedModuleRevisionId().getRevision());
                 settings.setVariable(
                     "ivy.revision", md.getResolvedModuleRevisionId().getRevision());
-                boolean hasChanged = report.hasChanged();
-                getProject().setProperty("ivy.deps.changed", String.valueOf(hasChanged));
-                settings.setVariable("ivy.deps.changed", String.valueOf(hasChanged));
+                Boolean hasChanged = null;
+                if (getCheckIfChanged()) {
+                    hasChanged = Boolean.valueOf(report.hasChanged());
+                    getProject().setProperty("ivy.deps.changed", hasChanged.toString());
+                    settings.setVariable("ivy.deps.changed", hasChanged.toString());
+                }
                 if (conf.trim().equals("*")) {
                     getProject().setProperty("ivy.resolved.configurations",
                         mergeConfs(md.getConfigurationsNames()));
@@ -285,10 +290,13 @@ public class IvyResolve extends IvyTask {
                         md.getResolvedModuleRevisionId().getRevision());
                     settings.setVariable("ivy.revision." + resolveId, md
                             .getResolvedModuleRevisionId().getRevision());
-                    getProject().setProperty("ivy.deps.changed." + resolveId,
-                        String.valueOf(hasChanged));
-                    settings.setVariable("ivy.deps.changed." + resolveId, String
-                            .valueOf(hasChanged));
+                    if (getCheckIfChanged()) {
+                        //hasChanged has already been set earlier
+                        getProject().setProperty("ivy.deps.changed." + resolveId,
+                            hasChanged.toString());
+                        settings.setVariable("ivy.deps.changed." + resolveId, 
+                            hasChanged.toString());
+                    }
                     if (conf.trim().equals("*")) {
                         getProject().setProperty("ivy.resolved.configurations." + resolveId,
                             mergeConfs(md.getConfigurationsNames()));
@@ -340,7 +348,8 @@ public class IvyResolve extends IvyTask {
                 .setRefresh(refresh)
                 .setTransitive(transitive)
                 .setResolveMode(resolveMode)
-                .setResolveId(resolveId);
+                .setResolveId(resolveId)
+                .setCheckIfChanged(checkIfChanged);
     }
 
     public String getModule() {
@@ -405,5 +414,13 @@ public class IvyResolve extends IvyTask {
 
     public void setResolveMode(String resolveMode) {
         this.resolveMode = resolveMode;
+    }
+
+    public boolean getCheckIfChanged() {
+        return checkIfChanged;
+    }
+
+    public void setCheckIfChanged(boolean checkIfChanged) {
+        this.checkIfChanged = checkIfChanged;
     }
 }

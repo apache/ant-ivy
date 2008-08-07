@@ -231,6 +231,10 @@ public class ResolveEngine {
             // resolve dependencies
             IvyNode[] dependencies = getDependencies(md, options, report);
             report.setDependencies(Arrays.asList(dependencies), options.getArtifactFilter());
+            
+            if (options.getCheckIfChanged()) {
+                report.checkIfChanged();
+            }
 
             // produce resolved ivy file and ivy properties in cache
             ResolutionCacheManager cacheManager = settings.getResolutionCacheManager();
@@ -528,8 +532,8 @@ public class ResolveEngine {
             List sortedDependencies = sortEngine.sortNodes(dependencies);
             Collections.reverse(sortedDependencies);
     
-            handleTransiviteEviction(md, confs, data, sortedDependencies);
-    
+            handleTransiviteEviction(md, confs, data, sortedDependencies);    
+            
             return (IvyNode[]) dependencies.toArray(new IvyNode[dependencies.size()]);
         } finally {
             IvyContext.popContext();

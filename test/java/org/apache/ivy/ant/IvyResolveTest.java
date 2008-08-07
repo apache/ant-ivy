@@ -194,6 +194,18 @@ public class IvyResolveTest extends TestCase {
         assertEquals("false", getIvy().getVariable("ivy.deps.changed"));
     }
 
+    public void testDontCheckIfChanged() throws Exception {
+        resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-simple.xml"));
+        resolve.setCheckIfChanged(false);
+        resolve.execute();
+        assertNull(getIvy().getVariable("ivy.deps.changed"));
+        resolve.execute();
+        assertNull(getIvy().getVariable("ivy.deps.changed"));
+        //To be complete, we should also check that the XmlReportParser is not invoked
+        //but this would require a too big refactoring to inject a mock object   
+    }
+
+    
     public void testConflictingDepsChanged() throws Exception {
         resolve.setFile(new File("test/repositories/2/mod4.1/ivy-4.1.xml"));
         resolve.execute();

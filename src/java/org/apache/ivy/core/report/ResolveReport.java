@@ -176,6 +176,16 @@ public class ResolveReport {
         return (ArtifactDownloadReport[]) all.toArray(new ArtifactDownloadReport[all.size()]);
     }
 
+    
+    public void checkIfChanged() {
+        for (Iterator iter = confReports.values().iterator(); iter.hasNext();) {
+            ConfigurationResolveReport report = (ConfigurationResolveReport) iter.next();
+            report.checkIfChanged();
+        }
+    }
+
+    
+    /** Can only be called if checkIfChanged has been called */
     public boolean hasChanged() {
         for (Iterator iter = confReports.values().iterator(); iter.hasNext();) {
             ConfigurationResolveReport report = (ConfigurationResolveReport) iter.next();
@@ -310,4 +320,5 @@ public class ResolveReport {
     public String getResolveId() {
         return resolveId;
     }
+
 }

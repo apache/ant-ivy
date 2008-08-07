@@ -41,6 +41,8 @@ set to the comma separated list of configurations resolved
 </ul>
 <b>Since 1.2:</b>
 An additional property is set to true if the resolved dependencies are changes since the last resolve, and to false otherwise: <code>ivy.deps.changed</code>
+<b>Since 2.0:</b>
+The property ivy.deps.changed will not be set (and not be computed) if you set the parameter <i>checkIfCompiled</i> to false. (by default it is true to keep backward compatibility).  This allow to optimize your build when you have multi-module build with multiple configurations.
 
 <b>Since 2.0:</b>
 In addition, if the <i>resolveId</i> attribute has been set, the following properties are set as well:
@@ -147,6 +149,9 @@ Available options are:
 <li>download-only</li> disable all usual messages but download ones. A resolve with everything in cache won't output any message.
 <li>quiet</li> disable all usual messages, making the whole resolve process quiet unless errors occur
 </ul></td><td>No, defaults to 'default'.</td></tr>
+
+     <tr><td>checkIfChanged</td><td>When set to true, the resolve will compare the result with the last resolution done on this module, with those configurations</td><td>No, default to 'true'</td></tr>
+
 
 </tbody>
 </table>
