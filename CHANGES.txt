@@ -102,6 +102,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - IMPROVEMENT: Smarter determination if an expression is exact or not for RegexpPatternMatcher and GlobPatternMatcher
 - IMPROVEMENT: Check branch consistency during resolve (IVY-858)
 - IMPROVEMENT: Give the possibility to not compute ivy.deps.changed (IVY-876)
+- IMPROVEMENT: Improve performance (IVY-872)
 
 - FIX: Incorrect parsing artifactPattern attribute in a sftp resolver (IVY-661) (thanks to Alexey Kiselev)
 - FIX: Maven2 "ejb" packaging is not supported (IVY-873)

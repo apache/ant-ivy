@@ -23,6 +23,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.ivy.plugins.matcher.MapMatcher;
 import org.apache.ivy.util.Checks;
@@ -102,7 +103,7 @@ public class ModuleRules {
      * @return an array of rule objects matching the given {@link ModuleId}.
      */
     public Object[] getRules(ModuleId mid) {
-        return getRules(new ModuleRevisionId(mid, "", ""), NoFilter.INSTANCE);
+        return getRules(mid.getAttributes(), NoFilter.INSTANCE);
     }
 
     /**
@@ -138,7 +139,7 @@ public class ModuleRules {
      */
     public Object getRule(ModuleId mid, Filter filter) {
         Checks.checkNotNull(mid, "mid");
-        return getRule(new ModuleRevisionId(mid, "", ""), filter);
+        return getRule(mid.getAttributes(), filter);
     }
     
     /**
@@ -159,12 +160,17 @@ public class ModuleRules {
      */
     public Object getRule(ModuleRevisionId mrid, Filter filter) {
         Checks.checkNotNull(mrid, "mrid");
-        Checks.checkNotNull(filter, "filter");
-        
-        for (Iterator iter = rules.keySet().iterator(); iter.hasNext();) {
-            MapMatcher midm = (MapMatcher) iter.next();
-            if (midm.matches(mrid.getAttributes())) {
-                Object rule = rules.get(midm);
+        Checks.checkNotNull(filter, "filter");        
+        Map moduleAttributes = mrid.getAttributes();       
+        return getRule(moduleAttributes, filter);
+    }
+
+    private Object getRule(Map moduleAttributes, Filter filter) {
+        for (Iterator iter = rules.entrySet().iterator(); iter.hasNext();) {
+            Map.Entry ruleEntry = (Entry) iter.next();
+            MapMatcher midm = (MapMatcher) ruleEntry.getKey();            
+            if (midm.matches(moduleAttributes)) {
+                Object rule = ruleEntry.getValue();
                 if (filter.accept(rule)) {
                     return rule;
                 }
@@ -173,6 +179,9 @@ public class ModuleRules {
         return null;
     }
 
+    
+    
+    
     /**
      * Returns the rules object matching the given {@link ModuleRevisionId} and accepted by the
      * given {@link Filter}, or an empty array if no rule applies.
@@ -188,13 +197,19 @@ public class ModuleRules {
      */
     public Object[] getRules(ModuleRevisionId mrid, Filter filter) {
         Checks.checkNotNull(mrid, "mrid");
-        Checks.checkNotNull(filter, "filter");
-        
+        Checks.checkNotNull(filter, "filter");      
+        Map moduleAttributes = mrid.getAttributes();
+        return getRules(moduleAttributes, filter);
+    }
+
+    
+    private Object[] getRules(Map moduleAttributes, Filter filter) {
         List matchingRules = new ArrayList();
-        for (Iterator iter = rules.keySet().iterator(); iter.hasNext();) {
-            MapMatcher midm = (MapMatcher) iter.next();
-            if (midm.matches(mrid.getAttributes())) {
-                Object rule = rules.get(midm);
+        for (Iterator iter = rules.entrySet().iterator(); iter.hasNext();) {
+            Map.Entry ruleEntry = (Entry) iter.next();
+            MapMatcher midm = (MapMatcher) ruleEntry.getKey();            
+            if (midm.matches(moduleAttributes)) {
+                Object rule = ruleEntry.getValue();
                 if (filter.accept(rule)) {
                     matchingRules.add(rule);
                 }
