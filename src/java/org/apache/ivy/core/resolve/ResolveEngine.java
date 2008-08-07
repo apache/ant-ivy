@@ -791,7 +791,6 @@ public class ResolveEngine {
                         Message.debug(node + " was previously evicted in root module conf "
                                 + node.getRootModuleConf());
                     }
-
                     node.markEvicted(evictionData);
                     if (debugConflictResolution) {
                         Message.debug("evicting " + node + " by " + evictionData);
@@ -804,8 +803,8 @@ public class ResolveEngine {
         }
 
         // compute conflicts
-        Collection resolvedNodes = new HashSet(ancestor.getNode().getResolvedNodes(
-            node.getModuleId(), node.getRootModuleConf()));
+        Set resolvedNodes = ancestor.getNode().getResolvedNodes(node.getModuleId(), 
+                                                                node.getRootModuleConf());
         resolvedNodes.addAll(ancestor.getNode().getPendingConflicts(node.getRootModuleConf(),
             node.getModuleId()));
         Collection conflicts = computeConflicts(node, ancestor, conf, toevict, resolvedNodes);
