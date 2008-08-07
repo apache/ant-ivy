@@ -594,13 +594,7 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
         return resolvedRevId.getQualifiedExtraAttributes();
     }
 
-    public String getStandardAttribute(String attName) {
-        return resolvedRevId.getStandardAttribute(attName);
-    }
 
-    public Map getStandardAttributes() {
-        return resolvedRevId.getStandardAttributes();
-    }
 
     public ModuleDescriptorParser getParser() {
         return parser;

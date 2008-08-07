@@ -28,10 +28,6 @@ public class UnmodifiableExtendableItem implements ExtendableItem {
 
     private final Map unmodifiableAttributesView = Collections.unmodifiableMap(attributes);
 
-    private final Map stdAttributes = new HashMap();
-
-    private final Map unmodifiableStdAttributesView = Collections.unmodifiableMap(stdAttributes);
-
     private final Map extraAttributes = new HashMap();
 
     private final Map unmodifiableExtraAttributesView = 
@@ -49,7 +45,6 @@ public class UnmodifiableExtendableItem implements ExtendableItem {
     public UnmodifiableExtendableItem(Map stdAttributes, Map extraAttributes) {
         if (stdAttributes != null) {
             this.attributes.putAll(stdAttributes);
-            this.stdAttributes.putAll(stdAttributes);
         }
         if (extraAttributes != null) {
             for (Iterator iter = extraAttributes.entrySet().iterator(); iter.hasNext();) {
@@ -71,31 +66,20 @@ public class UnmodifiableExtendableItem implements ExtendableItem {
         return v;
     }
 
-    public String getStandardAttribute(String attName) {
-        return (String) stdAttributes.get(attName);
-    }
 
     protected void setExtraAttribute(String attName, String attValue) {
-        setAttribute(attName, attValue, true);
+        qualifiedExtraAttributes.put(attName, attValue);
+        
+        // unqualify att name if required
+        int index = attName.indexOf(':');
+        if (index != -1) {
+            attName = attName.substring(index + 1);
+        }
+        extraAttributes.put(attName, attValue);
+        attributes.put(attName, attValue);
     }
 
     protected void setStandardAttribute(String attName, String attValue) {
-        setAttribute(attName, attValue, false);
-    }
-
-    protected void setAttribute(String attName, String attValue, boolean extra) {
-        if (extra) {
-            qualifiedExtraAttributes.put(attName, attValue);
-            
-            // unqualify att name if required
-            int index = attName.indexOf(':');
-            if (index != -1) {
-                attName = attName.substring(index + 1);
-            }
-            extraAttributes.put(attName, attValue);
-        } else {
-            stdAttributes.put(attName, attValue);
-        }
         attributes.put(attName, attValue);
     }
 
@@ -103,9 +87,6 @@ public class UnmodifiableExtendableItem implements ExtendableItem {
         return unmodifiableAttributesView;
     }
 
-    public Map getStandardAttributes() {
-        return unmodifiableStdAttributesView;
-    }
 
     public Map getExtraAttributes() {
         return unmodifiableExtraAttributesView;

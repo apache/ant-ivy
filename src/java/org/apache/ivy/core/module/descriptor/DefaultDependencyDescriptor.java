@@ -535,14 +535,6 @@ public class DefaultDependencyDescriptor implements DependencyDescriptor {
         return revId.getQualifiedExtraAttributes();
     }
 
-    public String getStandardAttribute(String attName) {
-        return revId.getStandardAttribute(attName);
-    }
-
-    public Map getStandardAttributes() {
-        return revId.getStandardAttributes();
-    }
-
     public DependencyDescriptor asSystem() {
         return asSystem;
     }

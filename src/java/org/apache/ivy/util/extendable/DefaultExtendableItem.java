@@ -35,11 +35,5 @@ public class DefaultExtendableItem extends UnmodifiableExtendableItem {
         super.setExtraAttribute(attName, attValue);
     }
 
-    public void setStandardAttribute(String attName, String attValue) {
-        super.setStandardAttribute(attName, attValue);
-    }
 
-    public void setAttribute(String attName, String attValue, boolean extra) {
-        super.setAttribute(attName, attValue, extra);
-    }
 }
