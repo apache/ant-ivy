@@ -204,7 +204,10 @@ public class IvyNodeEviction {
         this.node = node;
     }
 
-    public Collection getResolvedNodes(ModuleId mid, String rootModuleConf) {
+    /**
+     * @return A copy of the set of resolved nodes (real nodes)
+     */
+    public Set getResolvedNodes(ModuleId mid, String rootModuleConf) {
         Collection resolved = (Collection) selectedDeps.get(new ModuleIdConf(mid, rootModuleConf));
         Set ret = new HashSet();
         if (resolved != null) {

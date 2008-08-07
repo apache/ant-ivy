@@ -1044,7 +1044,8 @@ public class IvyNode implements Comparable {
     // EVICTION MANAGEMENT
     // /////////////////////////////////////////////////////////////////////////////
 
-    public Collection getResolvedNodes(ModuleId moduleId, String rootModuleConf) {
+    /** A copy of the set of resolved nodes (real nodes) */
+    public Set getResolvedNodes(ModuleId moduleId, String rootModuleConf) {
         return eviction.getResolvedNodes(moduleId, rootModuleConf);
     }
 

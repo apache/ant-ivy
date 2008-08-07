@@ -775,6 +775,7 @@ public class ResolveEngine {
             // job is done and node is evicted, nothing to do
             return true;
         }
+        boolean debugConflictResolution = settings.debugConflictResolution();
         if (checkConflictSolvedSelected(node, ancestor)) {
             // job is done and node is selected, nothing to do for this ancestor, but we still have
             // to check higher levels, for which conflict resolution might have been impossible
@@ -786,13 +787,13 @@ public class ResolveEngine {
                     ancestor);
                 if (evictionData != null) {
                     // node has been previously evicted in an ancestor: we mark it as evicted
-                    if (settings.debugConflictResolution()) {
+                    if (debugConflictResolution) {
                         Message.debug(node + " was previously evicted in root module conf "
                                 + node.getRootModuleConf());
                     }
 
                     node.markEvicted(evictionData);
-                    if (settings.debugConflictResolution()) {
+                    if (debugConflictResolution) {
                         Message.debug("evicting " + node + " by " + evictionData);
                     }
                 }
@@ -814,7 +815,7 @@ public class ResolveEngine {
         Collection resolved = resolveConflicts(node, ancestor, conflicts, conflictManager);
 
         if (resolved == null) {
-            if (settings.debugConflictResolution()) {
+            if (debugConflictResolution) {
                 Message.debug("impossible to resolve conflicts for " + node + " in " + ancestor
                         + " yet");
                 Message.debug("setting all nodes as pending conflicts for later conflict" 
@@ -825,7 +826,7 @@ public class ResolveEngine {
             return false;
         }
 
-        if (settings.debugConflictResolution()) {
+        if (debugConflictResolution) {
             Message.debug("selected revisions for " + node + " in " + ancestor + ": " + resolved);
         }
         if (resolved.contains(node.getNode())) {
@@ -840,7 +841,7 @@ public class ResolveEngine {
                 te.markEvicted(node.getRootModuleConf(), ancestor.getNode(), conflictManager,
                     resolved);
 
-                if (settings.debugConflictResolution()) {
+                if (debugConflictResolution) {
                     Message.debug("evicting " + te + " by "
                             + te.getEvictedData(node.getRootModuleConf()));
                 }
@@ -865,7 +866,7 @@ public class ResolveEngine {
         } else {
             // node has been evicted for the current parent
             if (resolved.isEmpty()) {
-                if (settings.debugConflictResolution()) {
+                if (debugConflictResolution) {
                     Message.verbose("conflict manager '" + conflictManager
                             + "' evicted all revisions among " + conflicts);
                 }
@@ -885,7 +886,7 @@ public class ResolveEngine {
                 Collections.EMPTY_SET);
 
             node.markEvicted(ancestor, conflictManager, resolved);
-            if (settings.debugConflictResolution()) {
+            if (debugConflictResolution) {
                 Message.debug("evicting " + node + " by " + node.getEvictedData());
             }
 
