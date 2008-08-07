@@ -273,7 +273,6 @@ public class IvyNode implements Comparable {
         resolved.dds.putAll(dds);
         resolved.updateDataFrom(this, rootModuleConf, true);
         resolved.loadData(rootModuleConf, parent, parentConf, conf, shouldBePublic, usage);
-        DependencyDescriptor dd = getDependencyDescriptor(parent);
         resolved.usage.updateDataFrom(getAllUsages(), rootModuleConf);
         usage = resolved.usage;
         
