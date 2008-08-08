@@ -76,6 +76,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 
    trunk version
 =====================================
+- NEW: Report version of Ivy in HTTP headers (user-agent?) when Ivy downloads artifacts (IVY-878)
 - NEW: Add publish support to URL resolver (IVY-848) (thanks to Brian Sanders)
 - NEW: Better support for local builds (IVY-857)
 - NEW: Retain original dependency constraint rules in resolved ivy file (IVY-739)

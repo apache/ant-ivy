@@ -41,6 +41,8 @@ import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.HeadMethod;
 import org.apache.commons.httpclient.methods.PutMethod;
 import org.apache.commons.httpclient.methods.InputStreamRequestEntity;
+import org.apache.commons.httpclient.params.HttpMethodParams;
+import org.apache.ivy.Ivy;
 import org.apache.ivy.util.CopyProgressListener;
 import org.apache.ivy.util.Credentials;
 import org.apache.ivy.util.FileUtil;
@@ -256,6 +258,9 @@ public class HttpClientHandler extends AbstractURLHandler {
                         new UsernamePasswordCredentials(proxyUserName, proxyPasswd));
                 }
             }
+            
+            // user-agent
+            httpClient.getParams().setParameter("http.useragent", "Apache Ivy/" + Ivy.getIvyVersion());
         }
         
         Credentials c = getCredentials(url);
