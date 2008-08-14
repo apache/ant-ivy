@@ -171,8 +171,13 @@ public final class IvyPatternHelper {
 
         Matcher m = VAR_PATTERN.matcher(pattern);
 
-        StringBuffer sb = new StringBuffer();
+        boolean useVariables = false;
+        StringBuffer sb = null;
         while (m.find()) {
+            if (!useVariables) {
+                useVariables = true;
+                sb = new StringBuffer();
+            }
             String var = m.group(1);
             String val = (String) variables.getVariable(var);
             if (val != null) {
@@ -189,13 +194,15 @@ public final class IvyPatternHelper {
             } else {
                 val = m.group();
             }
-            m
-                    .appendReplacement(sb, val.replaceAll("\\\\", "\\\\\\\\").replaceAll("\\$",
-                        "\\\\\\$"));
+            m.appendReplacement(sb, val.replaceAll("\\\\", "\\\\\\\\")
+                .replaceAll("\\$","\\\\\\$"));
         }
-        m.appendTail(sb);
-
-        return sb.toString();
+        if (useVariables) {
+            m.appendTail(sb);
+            return sb.toString();
+        } else {
+            return pattern;
+        }
     }
 
     public static String substituteTokens(String pattern, Map tokens) {

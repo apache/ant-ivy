@@ -20,7 +20,6 @@ package org.apache.ivy.core.cache;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.net.URL;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.Map;
@@ -48,6 +47,7 @@ import org.apache.ivy.plugins.matcher.PatternMatcher;
 import org.apache.ivy.plugins.namespace.NameSpaceHelper;
 import org.apache.ivy.plugins.parser.ModuleDescriptorParser;
 import org.apache.ivy.plugins.parser.ModuleDescriptorParserRegistry;
+import org.apache.ivy.plugins.parser.ParserSettings;
 import org.apache.ivy.plugins.parser.xml.XmlModuleDescriptorParser;
 import org.apache.ivy.plugins.repository.ArtifactResourceResolver;
 import org.apache.ivy.plugins.repository.ResourceDownloader;
@@ -67,6 +67,8 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
 
     private static final String DEFAULT_IVY_PATTERN = 
         "[organisation]/[module](/[branch])/ivy-[revision].xml";
+    
+    private static final int DEFAULT_MEMORY_CACHE_SIZE = 150;
     
     private IvySettings settings;
     
@@ -95,6 +97,8 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
     private ModuleRules/*<Long>*/ ttlRules = new ModuleRules();
 
     private Long defaultTTL = null;
+
+    private ModuleDescriptorMemoryCache memoryModuleDescrCache;
 
     public DefaultRepositoryCacheManager() {
     }
@@ -228,7 +232,18 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
                     parseDuration(duration));
     }
 
-
+    public void setMemorySize(int size) {
+        memoryModuleDescrCache = new ModuleDescriptorMemoryCache(size);
+    }
+    
+    public ModuleDescriptorMemoryCache getMemoryCache() {
+        if (memoryModuleDescrCache==null) {
+            memoryModuleDescrCache = new ModuleDescriptorMemoryCache(DEFAULT_MEMORY_CACHE_SIZE);
+        }
+        return memoryModuleDescrCache;
+    }
+    
+    
     private static final Pattern DURATION_PATTERN 
         = Pattern.compile("(?:(\\d+)d)? ?(?:(\\d+)h)? ?(?:(\\d+)m)? ?(?:(\\d+)s)? ?(?:(\\d+)ms)?");
 
@@ -542,8 +557,8 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
             if (ivyFile.exists()) {
                 // found in cache !
                 try {
-                    ModuleDescriptor depMD = XmlModuleDescriptorParser.getInstance()
-                    .parseDescriptor(settings, ivyFile.toURI().toURL(), options.isValidate());
+                    XmlModuleDescriptorParser parser = XmlModuleDescriptorParser.getInstance();
+                    ModuleDescriptor depMD = getMdFromCache(parser, options, ivyFile);
                     String resolverName = getSavedResolverName(depMD);
                     String artResolverName = getSavedArtResolverName(depMD);
                     DependencyResolver resolver = settings.getResolver(resolverName);
@@ -603,6 +618,38 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
         return null;
     }
 
+    
+    private class MyModuleDescriptorProvider implements ModuleDescriptorProvider {
+        
+        private final ModuleDescriptorParser mdParser;
+
+        public MyModuleDescriptorProvider(ModuleDescriptorParser mdParser) {
+            this.mdParser = mdParser;            
+        }
+        
+        public ModuleDescriptor provideModule(ParserSettings ivySettings, 
+                File descriptorURL, boolean validate) throws ParseException, IOException {
+            return mdParser.parseDescriptor(ivySettings, descriptorURL.toURI().toURL(), validate);
+        }
+    }
+    
+    private ModuleDescriptor getMdFromCache(XmlModuleDescriptorParser mdParser, 
+            CacheMetadataOptions options, File ivyFile) 
+            throws ParseException, IOException, MalformedURLException {
+        ModuleDescriptorMemoryCache cache = getMemoryCache();
+        ModuleDescriptorProvider mdProvider = new MyModuleDescriptorProvider(mdParser); 
+        return cache.get(ivyFile, settings, options.isValidate(), mdProvider);
+    }
+
+    private ModuleDescriptor getStaledMd(ModuleDescriptorParser mdParser, 
+            CacheMetadataOptions options, File ivyFile) 
+            throws ParseException, IOException, MalformedURLException {
+        ModuleDescriptorMemoryCache cache = getMemoryCache();
+        ModuleDescriptorProvider mdProvider = new MyModuleDescriptorProvider(mdParser); 
+        return cache.getStale(ivyFile, settings, options.isValidate(), mdProvider);
+    }
+
+    
     private String getResolvedRevision(ModuleRevisionId mrid, CacheMetadataOptions options) {
         if (!lockMetadataArtifact(mrid)) {
             Message.error("impossible to acquire lock for " + mrid);
@@ -887,17 +934,8 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
                 return null;
             }
 
-            URL cachedMDURL = null;
             try {
-                cachedMDURL = report.getLocalFile().toURI().toURL();
-            } catch (MalformedURLException ex) {
-                Message.warn("malformed url exception for original in cache file: " 
-                    + report.getLocalFile() + ": " + ex.getMessage());
-                return null;
-            }
-            try {
-                ModuleDescriptor md = parser.parseDescriptor(
-                    settings, cachedMDURL, mdRef.getResource(), options.isValidate());
+                ModuleDescriptor md = getStaledMd(parser, options, report.getLocalFile()); 
                 if (md == null) {
                     throw new IllegalStateException(
                         "module descriptor parser returned a null module descriptor, " 

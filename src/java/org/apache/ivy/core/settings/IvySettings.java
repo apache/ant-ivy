@@ -576,6 +576,7 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
      * @param str
      *            the string in which substitution should be made
      * @return the string where all current ivy variables have been substituted by their value
+     *         If the input str doesn't use any variable, the same object is returned
      */
     public String substitute(String str) {
         return IvyPatternHelper.substituteVariables(str, variableContainer);
