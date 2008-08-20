@@ -108,6 +108,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - IMPROVEMENT: Add a memory cache for the module descriptor that are parsed from the cache (IVY-883)
 - IMPROVEMENT: Improve performance (IVY-872)
 
+- FIX: URLRepository does not allow some valid file scheme uri's (IVY-884)
 - FIX: Incorrect parsing artifactPattern attribute in a sftp resolver (IVY-661) (thanks to Alexey Kiselev)
 - FIX: Maven2 "ejb" packaging is not supported (IVY-873)
 - FIX: Config files with # in path can't be read (IVY-868) (thanks to Simon Steiner)

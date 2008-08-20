@@ -19,6 +19,8 @@ package org.apache.ivy.plugins.repository.url;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.*;
 import org.apache.ivy.plugins.repository.AbstractRepository;
@@ -106,7 +108,15 @@ public class URLRepository extends AbstractRepository {
                 return ret;
             }
         } else if (parent.startsWith("file")) {
-            String path = new URL(parent).getPath();
+            String path;
+            try {
+                path = new URI(parent).getPath();
+            } catch (URISyntaxException e) {
+                IOException ioe = new IOException("Couldn't list content of '" + parent + "'");
+                ioe.initCause(e);
+                throw ioe;
+            }
+            
             File file = new File(path);
             if (file.exists() && file.isDirectory()) {
                 String[] files = file.list();

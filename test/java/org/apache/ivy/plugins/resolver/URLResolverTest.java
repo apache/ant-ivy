@@ -121,11 +121,9 @@ public class URLResolverTest extends AbstractDependencyResolverTest {
     public void testLatestFile() throws Exception {
         URLResolver resolver = new URLResolver();
         resolver.setSettings(_settings);
-        String rootpath = new File("test/repositories/1").getAbsolutePath().replaceAll("\\\\", "/");
-        resolver.addIvyPattern("file:" + rootpath
-                + "/[organisation]/[module]/ivys/ivy-[revision].xml");
-        resolver.addArtifactPattern("file:" + rootpath
-                + "/[organisation]/[module]/[type]s/[artifact]-[revision].[type]");
+        String rootpath = new File("test/repositories/1").toURI().toURL().toExternalForm();
+        resolver.addIvyPattern(rootpath + "[organisation]/[module]/ivys/ivy-[revision].xml");
+        resolver.addArtifactPattern(rootpath + "[organisation]/[module]/[type]s/[artifact]-[revision].[type]");
         resolver.setName("test");
         assertEquals("test", resolver.getName());
 
