@@ -65,6 +65,8 @@ public class DualResolver extends AbstractResolver {
             throw new IllegalStateException(
                     "exactly two resolvers must be added: ivy(1) and artifact(2) one");
         }
+        ResolvedModuleRevision resolved = data.getCurrentResolvedModuleRevision();
+        
         data = new ResolveData(data, doValidate(data));
         final ResolvedModuleRevision mr = ivyResolver.getDependency(dd, data);
         if (mr == null) {
@@ -77,6 +79,10 @@ public class DualResolver extends AbstractResolver {
                 return null;
             }
         } else {
+            if (mr == resolved) {
+                // nothing has actually been resolved here, we don't need to touch the returned rmr
+                return mr;
+            }
             return new ResolvedModuleRevision(
                 mr.getResolver(), this, mr.getDescriptor(), mr.getReport(), mr.isForce());
         }

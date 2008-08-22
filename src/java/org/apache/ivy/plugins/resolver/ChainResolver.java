@@ -22,7 +22,6 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -100,20 +99,33 @@ public class ChainResolver extends AbstractResolver {
     public ResolvedModuleRevision getDependency(DependencyDescriptor dd, ResolveData data)
             throws ParseException {
         data = new ResolveData(data, doValidate(data));
-        ResolvedModuleRevision ret = null;
 
         List errors = new ArrayList();
 
-        ResolvedModuleRevision mr = null;
+        ResolvedModuleRevision resolved = data.getCurrentResolvedModuleRevision();
+        ResolvedModuleRevision mr = resolved;
 
-        ModuleRevisionId mrid = dd.getDependencyRevisionId();
-
-        boolean isDynamic = getSettings().getVersionMatcher().isDynamic(mrid);
+        if (mr == null) {
+            Message.verbose(getName() + ": Checking cache for: " + dd);
+            mr = findModuleInCache(dd, data, true);
+            if (mr != null) {
+                Message.verbose(getName() + ": module revision found in cache: " + mr.getId());
+                if (!isCheckmodified()) {
+                    mr = forcedRevision(mr);
+                }
+            }
+        }
+        
         for (Iterator iter = chain.iterator(); iter.hasNext();) {
             DependencyResolver resolver = (DependencyResolver) iter.next();
             LatestStrategy oldLatest = setLatestIfRequired(resolver, getLatestStrategy());
             try {
+                ResolvedModuleRevision previouslyResolved = mr;
+                data.setCurrentResolvedModuleRevision(previouslyResolved);
                 mr = resolver.getDependency(dd, data);
+                if (mr != previouslyResolved && isReturnFirst()) {
+                    mr = forcedRevision(mr);
+                }
             } catch (Exception ex) {
                 Message.verbose("problem occured while resolving " + dd + " with " + resolver
                         + ": " + StringUtils.getStackTrace(ex));
@@ -124,41 +136,8 @@ public class ChainResolver extends AbstractResolver {
                 }
             }
             checkInterrupted();
-            if (mr != null) {
-                boolean shouldReturn = returnFirst;
-                shouldReturn |= !isDynamic
-                        && ret != null && !ret.getDescriptor().isDefault();
-                shouldReturn |= mr.isForce();
-                if (!shouldReturn) {
-                    // check if latest is asked and compare to return the most recent
-                    String mrDesc = mr.getId()
-                            + (mr.getDescriptor().isDefault() ? "[default]" : "") + " from "
-                            + mr.getResolver().getName();
-                    Message.debug("\tchecking " + mrDesc + " against " + ret);
-                    if (ret == null) {
-                        Message.debug("\tmodule revision kept as first found: " + mrDesc);
-                        ret = mr;
-                    } else if (isAfter(mr, ret, data.getDate())) {
-                        Message.debug("\tmodule revision kept as younger: " + mrDesc);
-                        ret = mr;
-                    } else if (!mr.getDescriptor().isDefault() && ret.getDescriptor().isDefault()) {
-                        Message.debug("\tmodule revision kept as better (not default): " + mrDesc);
-                        ret = mr;
-                    } else {
-                        Message.debug("\tmodule revision discarded as older: " + mrDesc);
-                    }
-                    if (!isDynamic
-                            && !ret.getDescriptor().isDefault()) {
-                        Message.debug("\tmodule revision found and is not default: returning "
-                                + mrDesc);
-                        return resolvedRevision(mr);
-                    }
-                } else {
-                    return resolvedRevision(mr);
-                }
-            }
         }
-        if (ret == null && !errors.isEmpty()) {
+        if (mr == null && !errors.isEmpty()) {
             if (errors.size() == 1) {
                 Exception ex = (Exception) errors.get(0);
                 if (ex instanceof RuntimeException) {
@@ -179,7 +158,11 @@ public class ChainResolver extends AbstractResolver {
                         + err);
             }
         }
-        return resolvedRevision(ret);
+        if (resolved == mr) {
+            // nothing has actually been resolved here, we don't need to touch the returned rmr
+            return resolved;
+        }
+        return resolvedRevision(mr);
     }
 
     private ResolvedModuleRevision resolvedRevision(ResolvedModuleRevision mr) {
@@ -189,6 +172,15 @@ public class ChainResolver extends AbstractResolver {
         } else {
             return mr;
         }
+    }
+    
+    private ResolvedModuleRevision forcedRevision(ResolvedModuleRevision rmr) {
+        if (rmr == null) {
+            return null;
+        }
+        return new ResolvedModuleRevision(
+            rmr.getResolver(), rmr.getArtifactResolver(), 
+            rmr.getDescriptor(), rmr.getReport(), true);
     }
 
     private LatestStrategy setLatestIfRequired(DependencyResolver resolver,
@@ -201,20 +193,6 @@ public class ChainResolver extends AbstractResolver {
         } else {
             return null;
         }
-    }
-
-    /**
-     * Returns true if rmr1 is after rmr2, using the latest strategy to determine which is the
-     * latest
-     * 
-     * @param rmr1
-     * @param rmr2
-     * @return
-     */
-    private boolean isAfter(ResolvedModuleRevision rmr1, ResolvedModuleRevision rmr2, Date date) {
-        ArtifactInfo[] ais = new ArtifactInfo[] {new ResolvedModuleRevisionArtifactInfo(rmr2),
-                new ResolvedModuleRevisionArtifactInfo(rmr1)};
-        return getLatestStrategy().findLatest(ais, date) != ais[0];
     }
 
     public ResolvedResource findIvyFileRef(DependencyDescriptor dd, ResolveData data) {

@@ -20,6 +20,7 @@ package org.apache.ivy.plugins.resolver;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.Map;
 
 import org.apache.ivy.core.IvyContext;
@@ -50,9 +51,11 @@ import org.apache.ivy.core.search.ModuleEntry;
 import org.apache.ivy.core.search.OrganisationEntry;
 import org.apache.ivy.core.search.RevisionEntry;
 import org.apache.ivy.core.settings.Validatable;
+import org.apache.ivy.plugins.latest.ArtifactInfo;
 import org.apache.ivy.plugins.latest.LatestStrategy;
 import org.apache.ivy.plugins.namespace.NameSpaceHelper;
 import org.apache.ivy.plugins.namespace.Namespace;
+import org.apache.ivy.plugins.resolver.ChainResolver.ResolvedModuleRevisionArtifactInfo;
 import org.apache.ivy.plugins.resolver.util.HasLatestStrategy;
 import org.apache.ivy.plugins.resolver.util.ResolvedResource;
 import org.apache.ivy.util.Message;
@@ -459,6 +462,54 @@ public abstract class AbstractResolver
                 }
             }
         };
+    }
+
+
+    /**
+     * Returns true if rmr1 is after rmr2, using the latest strategy to determine which is the
+     * latest
+     * 
+     * @param rmr1
+     * @param rmr2
+     * @return
+     */
+    protected boolean isAfter(ResolvedModuleRevision rmr1, ResolvedModuleRevision rmr2, Date date) {
+        ArtifactInfo[] ais = new ArtifactInfo[] {
+                new ResolvedModuleRevisionArtifactInfo(rmr1),
+                new ResolvedModuleRevisionArtifactInfo(rmr2)};
+        return getLatestStrategy().findLatest(ais, date) == ais[0];
+    }
+
+    protected ResolvedModuleRevision checkLatest(
+            ResolvedModuleRevision newModuleFound,
+            ResolveData data) {
+        // check if latest is asked and compare to return the most recent
+        ResolvedModuleRevision previousModuleFound = data.getCurrentResolvedModuleRevision();
+        String newModuleDesc = describe(newModuleFound);
+        Message.debug("\tchecking " + newModuleDesc + " against " + describe(previousModuleFound));
+        if (previousModuleFound == null) {
+            Message.debug("\tmodule revision kept as first found: " + newModuleDesc);
+            return newModuleFound;
+        } else if (isAfter(newModuleFound, previousModuleFound, data.getDate())) {
+            Message.debug("\tmodule revision kept as younger: " + newModuleDesc);
+            return newModuleFound;
+        } else if (!newModuleFound.getDescriptor().isDefault() 
+                && previousModuleFound.getDescriptor().isDefault()) {
+            Message.debug("\tmodule revision kept as better (not default): " + newModuleDesc);
+            return newModuleFound;
+        } else {
+            Message.debug("\tmodule revision discarded as older: " + newModuleDesc);
+            return previousModuleFound;
+        }
+    }
+
+    private String describe(ResolvedModuleRevision rmr) {
+        if (rmr == null) {
+            return "[none]";
+        }
+        return rmr.getId()
+            + (rmr.getDescriptor().isDefault() ? "[default]" : "") + " from "
+            + rmr.getResolver().getName();
     }
 
 }

@@ -18,9 +18,15 @@
 package org.apache.ivy.plugins.resolver;
 
 import java.io.File;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.apache.ivy.core.IvyContext;
+import org.apache.ivy.core.IvyPatternHelper;
 import org.apache.ivy.core.event.EventManager;
 import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.DefaultArtifact;
@@ -35,6 +41,9 @@ import org.apache.ivy.core.resolve.ResolveData;
 import org.apache.ivy.core.resolve.ResolveEngine;
 import org.apache.ivy.core.resolve.ResolveOptions;
 import org.apache.ivy.core.resolve.ResolvedModuleRevision;
+import org.apache.ivy.core.search.ModuleEntry;
+import org.apache.ivy.core.search.OrganisationEntry;
+import org.apache.ivy.core.search.RevisionEntry;
 import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.core.sort.SortEngine;
 import org.apache.ivy.plugins.matcher.ExactPatternMatcher;
@@ -192,6 +201,38 @@ public class IBiblioResolverTest extends AbstractDependencyResolverTest {
 
         assertEquals(artifact, ar.getArtifact());
         assertEquals(DownloadStatus.NO, ar.getDownloadStatus());
+    }
+
+    public void testMaven2Listing() throws Exception {
+        IBiblioResolver resolver = new IBiblioResolver();
+        resolver.setName("test");
+        resolver.setSettings(_settings);
+        resolver.setM2compatible(true);
+        assertEquals("test", resolver.getName());
+
+        ModuleEntry[] modules = resolver.listModules(new OrganisationEntry(resolver, "commons-lang"));
+        assertNotNull(modules);
+        assertEquals(1, modules.length);
+        assertEquals("commons-lang", modules[0].getModule());
+        
+        RevisionEntry[] revisions = resolver.listRevisions(modules[0]);
+        assertTrue(revisions.length > 0);
+        
+        Map otherTokenValues = new HashMap();
+        otherTokenValues.put(IvyPatternHelper.ORGANISATION_KEY, "commons-lang");
+        String[] values = resolver.listTokenValues(IvyPatternHelper.MODULE_KEY, otherTokenValues);
+        assertNotNull(values);
+        assertEquals(1, values.length);
+        assertEquals("commons-lang", values[0]);
+        
+        Map[] valuesMaps = resolver.listTokenValues(new String[] {IvyPatternHelper.MODULE_KEY}, otherTokenValues);
+        Set vals = new HashSet();
+        for (int i = 0; i < valuesMaps.length; i++) {
+            vals.add(valuesMaps[i].get(IvyPatternHelper.MODULE_KEY));
+        }
+        values = (String[]) vals.toArray(new String[vals.size()]);
+        assertEquals(1, values.length);
+        assertEquals("commons-lang", values[0]);
     }
 
     public void testErrorReport() throws Exception {

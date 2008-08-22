@@ -166,15 +166,23 @@ public abstract class BasicResolver extends AbstractResolver {
     public ResolvedModuleRevision getDependency(DependencyDescriptor dd, ResolveData data)
             throws ParseException {
         IvyContext context = IvyContext.pushNewCopyContext();
-        if (isForce()) {
-            dd = dd.clone(ModuleRevisionId.newInstance(
-                dd.getDependencyRevisionId(), "latest.integration"));
-        }
-        DependencyDescriptor systemDd = dd;
-        DependencyDescriptor nsDd = fromSystem(dd);
-        context.setDependencyDescriptor(systemDd);
-        context.setResolveData(data);
         try {
+            ResolvedModuleRevision mr = data.getCurrentResolvedModuleRevision();
+            if (mr != null) {
+                if (shouldReturnResolvedModule(dd, mr)) {
+                    return mr;
+                }
+            }
+            
+            if (isForce()) {
+                dd = dd.clone(ModuleRevisionId.newInstance(
+                    dd.getDependencyRevisionId(), "latest.integration"));
+            }
+            DependencyDescriptor systemDd = dd;
+            DependencyDescriptor nsDd = fromSystem(dd);
+            context.setDependencyDescriptor(systemDd);
+            context.setResolveData(data);
+            
             clearIvyAttempts();
             clearArtifactAttempts();
             ModuleRevisionId systemMrid = systemDd.getDependencyRevisionId();
@@ -200,7 +208,7 @@ public abstract class BasicResolver extends AbstractResolver {
                         + "): but we are in force mode, let's try to find one ourself");
                 } else {
                     Message.verbose("\t" + getName() + ": revision in cache: " + systemMrid);
-                    return checkForcedResolvedModuleRevision(rmr);
+                    return checkLatest(checkForcedResolvedModuleRevision(rmr), data);
                 }
             }
             
@@ -254,7 +262,7 @@ public abstract class BasicResolver extends AbstractResolver {
                 }
                 if (!rmr.getReport().isDownloaded() 
                         && rmr.getReport().getLocalFile() != null) {
-                    return checkForcedResolvedModuleRevision(toSystem(rmr));
+                    return checkLatest(checkForcedResolvedModuleRevision(rmr), data);
                 } else {
                     nsMd = rmr.getDescriptor();
 
@@ -287,7 +295,7 @@ public abstract class BasicResolver extends AbstractResolver {
 
             cacheModuleDescriptor(systemMd, systemMrid, ivyRef, rmr);            
             
-            return checkForcedResolvedModuleRevision(rmr);
+            return checkLatest(checkForcedResolvedModuleRevision(rmr), data);
         } catch (UnresolvedDependencyException ex) {
             if (ex.getMessage().length() > 0) {
                 if (ex.isError()) {
@@ -296,10 +304,24 @@ public abstract class BasicResolver extends AbstractResolver {
                     Message.verbose(ex.getMessage());
                 }
             }
-            return null;
+            return data.getCurrentResolvedModuleRevision();
         } finally {
             IvyContext.popContext();
         }
+    }
+
+    protected boolean shouldReturnResolvedModule(
+                            DependencyDescriptor dd, ResolvedModuleRevision mr) {
+        // a resolved module revision has already been found by a prior dependency resolver
+        // let's see if it should be returned and bypass this resolver
+        
+        ModuleRevisionId mrid = dd.getDependencyRevisionId();
+        boolean isDynamic = getSettings().getVersionMatcher().isDynamic(mrid);
+        boolean shouldReturn = mr.isForce();
+        shouldReturn |= !isDynamic && !mr.getDescriptor().isDefault();
+        shouldReturn &= !isForce();
+        
+        return shouldReturn;
     }
 
     private ResolvedModuleRevision checkForcedResolvedModuleRevision(ResolvedModuleRevision rmr) {

@@ -103,9 +103,9 @@ public class DualResolverTest extends AbstractDependencyResolverTest {
 
     public void testResolve() throws Exception {
         DualResolver dual = new DualResolver();
-        MockResolver ivyResolver = MockResolver.buildMockResolver("ivy", true,
+        MockResolver ivyResolver = MockResolver.buildMockResolver(_settings, "ivy", true,
             new GregorianCalendar(2005, 1, 20).getTime());
-        MockResolver artifactResolver = MockResolver.buildMockResolver("artifact", false,
+        MockResolver artifactResolver = MockResolver.buildMockResolver(_settings, "artifact", false,
             new GregorianCalendar(2005, 1, 20).getTime());
         dual.setIvyResolver(ivyResolver);
         dual.setArtifactResolver(artifactResolver);
@@ -121,9 +121,9 @@ public class DualResolverTest extends AbstractDependencyResolverTest {
 
     public void testResolveFromArtifact() throws Exception {
         DualResolver dual = new DualResolver();
-        MockResolver ivyResolver = MockResolver.buildMockResolver("ivy", false,
+        MockResolver ivyResolver = MockResolver.buildMockResolver(_settings, "ivy", false,
             new GregorianCalendar(2005, 1, 20).getTime());
-        MockResolver artifactResolver = MockResolver.buildMockResolver("artifact", true,
+        MockResolver artifactResolver = MockResolver.buildMockResolver(_settings, "artifact", true,
             new GregorianCalendar(2005, 1, 20).getTime());
         dual.setIvyResolver(ivyResolver);
         dual.setArtifactResolver(artifactResolver);
@@ -139,9 +139,9 @@ public class DualResolverTest extends AbstractDependencyResolverTest {
 
     public void testResolveFail() throws Exception {
         DualResolver dual = new DualResolver();
-        MockResolver ivyResolver = MockResolver.buildMockResolver("ivy", false,
+        MockResolver ivyResolver = MockResolver.buildMockResolver(_settings, "ivy", false,
             new GregorianCalendar(2005, 1, 20).getTime());
-        MockResolver artifactResolver = MockResolver.buildMockResolver("artifact", false,
+        MockResolver artifactResolver = MockResolver.buildMockResolver(_settings, "artifact", false,
             new GregorianCalendar(2005, 1, 20).getTime());
         dual.setIvyResolver(ivyResolver);
         dual.setArtifactResolver(artifactResolver);

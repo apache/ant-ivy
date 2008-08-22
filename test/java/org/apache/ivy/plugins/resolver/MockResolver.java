@@ -38,21 +38,23 @@ import org.apache.ivy.core.resolve.ResolvedModuleRevision;
 import org.apache.ivy.plugins.resolver.util.ResolvedResource;
 
 public class MockResolver extends AbstractResolver {
-    static MockResolver buildMockResolver(String name, boolean findRevision,
-            final Date publicationDate) {
-        return buildMockResolver(name, findRevision, ModuleRevisionId.newInstance("test", "test",
-            "test"), publicationDate);
+    static MockResolver buildMockResolver(ResolverSettings settings, String name,
+            boolean findRevision, final Date publicationDate) {
+        return buildMockResolver(settings, name, findRevision, ModuleRevisionId.newInstance("test",
+            "test", "test"), publicationDate);
     }
 
-    static MockResolver buildMockResolver(String name, boolean findRevision,
-            final ModuleRevisionId mrid, final Date publicationDate) {
-        return buildMockResolver(name, findRevision, mrid, publicationDate, false);
+    static MockResolver buildMockResolver(ResolverSettings settings, String name,
+            boolean findRevision, final ModuleRevisionId mrid, final Date publicationDate) {
+        return buildMockResolver(settings, name, findRevision, mrid, publicationDate, false);
     }
 
-    static MockResolver buildMockResolver(String name, boolean findRevision,
-            final ModuleRevisionId mrid, final Date publicationDate, final boolean isdefault) {
+    static MockResolver buildMockResolver(ResolverSettings settings, String name,
+            boolean findRevision, final ModuleRevisionId mrid, final Date publicationDate,
+            final boolean isdefault) {
         final MockResolver r = new MockResolver();
         r.setName(name);
+        r.setSettings(settings);
         if (findRevision) {
             DefaultModuleDescriptor md = new DefaultModuleDescriptor(
                 mrid, "integration", publicationDate, isdefault);
@@ -68,8 +70,26 @@ public class MockResolver extends AbstractResolver {
 
     public ResolvedModuleRevision getDependency(DependencyDescriptor dd, ResolveData data)
             throws ParseException {
+        ResolvedModuleRevision mr = data.getCurrentResolvedModuleRevision();
+        if (mr != null) {
+            if (shouldReturnResolvedModule(dd, mr)) {
+                return mr;
+            }
+        }
         askedDeps.add(dd);
-        return rmr;
+        return checkLatest(rmr, data);
+    }
+    
+    private boolean shouldReturnResolvedModule(DependencyDescriptor dd, ResolvedModuleRevision mr) {
+        // a resolved module revision has already been found by a prior dependency resolver
+        // let's see if it should be returned and bypass this resolver
+        
+        ModuleRevisionId mrid = dd.getDependencyRevisionId();
+        boolean isDynamic = getSettings().getVersionMatcher().isDynamic(mrid);
+        boolean shouldReturn = mr.isForce();
+        shouldReturn |= !isDynamic && !mr.getDescriptor().isDefault();
+        
+        return shouldReturn;
     }
 
     public DownloadReport download(Artifact[] artifacts, DownloadOptions options) {
