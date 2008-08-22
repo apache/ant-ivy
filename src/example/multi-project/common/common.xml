@@ -50,6 +50,7 @@
     	      it into ant's lib dir (note that the latter copy will always take precedence).
     	      We will not fail as long as ivy home lib dir exists (it may be empty) and
     	      ivy is in at least one of ant's lib dir or the ivy home lib dir. -->
+    	<mkdir dir="${ivy.jar.dir}" />
     	<path id="ivy.lib.path">
     	    <fileset dir="${ivy.jar.dir}" includes="*.jar"/>
     	</path>
@@ -177,8 +178,10 @@
 	<!-- ================================= 
           target: clean-local              
          ================================= -->
-	<target name="clean-local" description="--> cleans the local repository for the current module">
-	   <delete dir="${ivy.local.default.root}/${ant.project.name}"/>
+	<target name="clean-local" depends="load-ivy" 
+		description="--> cleans the local repository for the current module">
+		<ivy:info file="${ivy.file}" />
+	   <delete dir="${ivy.local.default.root}/${ivy.organisation}/${ivy.module}"/>
 	</target>
 
 	<!-- ================================= 
