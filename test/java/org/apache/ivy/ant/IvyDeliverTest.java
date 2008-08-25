@@ -302,13 +302,40 @@ public class IvyDeliverTest extends TestCase {
         File deliveredIvyFile = new File("build/test/deliver/ivy-1.2.xml");
         assertTrue(deliveredIvyFile.exists()); 
         ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(
-	    new IvySettings(), deliveredIvyFile.toURL(), false);
+        new IvySettings(), deliveredIvyFile.toURL(), false);
         assertEquals(ModuleRevisionId.newInstance("apache", "resolve-latest", "1.2"), 
             md.getModuleRevisionId());
         DependencyDescriptor[] dds = md.getDependencies();
         assertEquals(2, dds.length);
         assertEquals(ModuleRevisionId.newInstance("org1", "mod1.2", "1.1"), 
             dds[0].getDependencyRevisionId());
+    }
+
+    public void testWithDynEvicted2() throws Exception {
+        // same as previous but dynamic dependency is placed after the one causing the conflict
+        // test case for IVY-707
+        project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-dyn-evicted2.xml");
+        IvyResolve res = new IvyResolve();
+        res.setValidate(false);
+        res.setProject(project);
+        res.execute();
+        
+        deliver.setPubrevision("1.2");
+        deliver.setDeliverpattern("build/test/deliver/ivy-[revision].xml");
+        deliver.setValidate(false);
+        deliver.execute();
+        
+        // should have done the ivy delivering
+        File deliveredIvyFile = new File("build/test/deliver/ivy-1.2.xml");
+        assertTrue(deliveredIvyFile.exists()); 
+        ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(
+        new IvySettings(), deliveredIvyFile.toURL(), false);
+        assertEquals(ModuleRevisionId.newInstance("apache", "resolve-latest", "1.2"), 
+            md.getModuleRevisionId());
+        DependencyDescriptor[] dds = md.getDependencies();
+        assertEquals(2, dds.length);
+        assertEquals(ModuleRevisionId.newInstance("org1", "mod1.2", "1.1"), 
+            dds[1].getDependencyRevisionId());
     }
 
     public void testReplaceImportedConfigurations() throws Exception {

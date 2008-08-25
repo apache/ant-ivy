@@ -63,6 +63,7 @@ import org.apache.ivy.plugins.parser.ModuleDescriptorParserRegistry;
 import org.apache.ivy.plugins.repository.url.URLResource;
 import org.apache.ivy.plugins.resolver.CacheResolver;
 import org.apache.ivy.plugins.resolver.DependencyResolver;
+import org.apache.ivy.plugins.version.VersionMatcher;
 import org.apache.ivy.util.Message;
 import org.apache.ivy.util.filter.Filter;
 
@@ -608,7 +609,18 @@ public class ResolveEngine {
         VisitNode parentVisitNode = data.getCurrentVisitNode();
         
         data.setCurrentVisitNode(node);
-        resolveConflict(node, conf);
+        DependencyDescriptor dd = node.getDependencyDescriptor();
+        VersionMatcher versionMatcher = node.getNode().getData().getSettings().getVersionMatcher();
+        if (dd != null 
+                && !(node.getRoot() == node.getParent() 
+                        && versionMatcher.isDynamic(dd.getDependencyRevisionId()))) {
+            /*
+             * we don't resolve conflicts before loading data for direct dependencies on dynamic
+             * revisions, so that direct dynamic revisions are always resolved, which is mandatory
+             * for proper replacement of dynamic revisions during 'deliver'
+             */
+            resolveConflict(node, conf);
+        }
 
         if (node.loadData(conf, shouldBePublic)) {
             // we resolve conflict again now that we have all information loaded
