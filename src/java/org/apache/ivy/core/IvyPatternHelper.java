@@ -195,7 +195,7 @@ public final class IvyPatternHelper {
                 val = m.group();
             }
             m.appendReplacement(sb, val.replaceAll("\\\\", "\\\\\\\\")
-                .replaceAll("\\$","\\\\\\$"));
+                .replaceAll("\\$", "\\\\\\$"));
         }
         if (useVariables) {
             m.appendTail(sb);
