@@ -21,6 +21,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.FileInputStream;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.UnknownHostException;
 import java.text.ParseException;
@@ -94,11 +95,22 @@ public class HttpClientHandler extends AbstractURLHandler {
 
     public InputStream openStream(URL url) throws IOException {
         GetMethod get = doGet(url);
+        if (!checkStatusCode(url, get)) {
+            throw new IOException(
+                    "The HTTP response code for " + url + " did not indicate a success."
+                            + " See log for more detail.");
+        }
         return new GETInputStream(get);
     }
 
     public void download(URL src, File dest, CopyProgressListener l) throws IOException {
         GetMethod get = doGet(src);
+        // We can only figure the content we got is want we want if the status is success.
+        if (!checkStatusCode(src, get)) {
+            throw new IOException(
+                    "The HTTP response code for " + src + " did not indicate a success."
+                            + " See log for more detail.");
+        }
         FileUtil.copy(get.getResponseBodyAsStream(), dest, l);
         dest.setLastModified(getLastModified(get));
         get.releaseConnection();
@@ -134,20 +146,9 @@ public class HttpClientHandler extends AbstractURLHandler {
         HeadMethod head = null;
         try {
             head = doHead(url, timeout);
-            int status = head.getStatusCode();
-            head.releaseConnection();
-            if (status == HttpStatus.SC_OK) {
+            if (checkStatusCode(url, head)) {
                 return new URLInfo(true, getResponseContentLength(head), getLastModified(head));
             }
-            if (status == HttpStatus.SC_PROXY_AUTHENTICATION_REQUIRED) {
-                Message.error("Your proxy requires authentication.");
-            } else if (String.valueOf(status).startsWith("4")) {
-                Message.verbose("CLIENT ERROR: " + head.getStatusText() + " url=" + url);
-            } else if (String.valueOf(status).startsWith("5")) {
-                Message.warn("SERVER ERROR: " + head.getStatusText() + " url=" + url);
-            }
-            Message.debug("HTTP response status: " + status + "=" + head.getStatusText() + " url="
-                    + url);
         } catch (HttpException e) {
             Message.error("HttpClientHandler: " + e.getMessage() + ":" + e.getReasonCode() + "="
                     + e.getReason() + " url=" + url);
@@ -166,6 +167,23 @@ public class HttpClientHandler extends AbstractURLHandler {
             }
         }
         return UNAVAILABLE;
+    }
+    
+    private boolean checkStatusCode(URL url, HttpMethodBase method) throws IOException {
+        int status = method.getStatusCode();
+        if (status == HttpStatus.SC_OK) {
+            return true;
+        }
+        Message.debug("HTTP response status: " + status + " url=" + url);
+        if (status == HttpStatus.SC_PROXY_AUTHENTICATION_REQUIRED) {
+            Message.warn("Your proxy requires authentication.");
+        } else if (String.valueOf(status).startsWith("4")) {
+            Message.verbose("CLIENT ERROR: " + method.getStatusText() + " url=" + url);
+        } else if (String.valueOf(status).startsWith("5")) {
+            Message.error("SERVER ERROR: " + method.getStatusText() + " url=" + url);
+        }
+        
+        return false;
     }
 
     private long getLastModified(HttpMethodBase method) {

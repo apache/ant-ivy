@@ -61,22 +61,11 @@ public class BasicURLHandler extends AbstractURLHandler {
             con = url.openConnection();
             con.setRequestProperty("User-Agent", "Apache Ivy/" + Ivy.getIvyVersion());
             if (con instanceof HttpURLConnection) {
-                ((HttpURLConnection) con).setRequestMethod("HEAD");
-                int status = ((HttpURLConnection) con).getResponseCode();
-                if (status == HttpStatus.SC_OK) {
-                    return new URLInfo(true, ((HttpURLConnection) con).getContentLength(), con
-                            .getLastModified());
+                HttpURLConnection httpCon = (HttpURLConnection) con;
+                httpCon.setRequestMethod("HEAD");
+                if (checkStatusCode(url, httpCon)) {
+                    return new URLInfo(true, httpCon.getContentLength(), con.getLastModified());
                 }
-                if (status == HttpStatus.SC_PROXY_AUTHENTICATION_REQUIRED) {
-                    Message.warn("Your proxy requires authentication.");
-                } else if (String.valueOf(status).startsWith("4")) {
-                    Message.verbose("CLIENT ERROR: "
-                            + ((HttpURLConnection) con).getResponseMessage() + " url=" + url);
-                } else if (String.valueOf(status).startsWith("5")) {
-                    Message.error("SERVER ERROR: " + ((HttpURLConnection) con).getResponseMessage()
-                            + " url=" + url);
-                }
-                Message.debug("HTTP response status: " + status + " url=" + url);
             } else {
                 int contentLength = con.getContentLength();
                 if (contentLength <= 0) {
@@ -97,12 +86,38 @@ public class BasicURLHandler extends AbstractURLHandler {
         return UNAVAILABLE;
     }
 
+    private boolean checkStatusCode(URL url, HttpURLConnection con) throws IOException {
+        int status = con.getResponseCode();
+        if (status == HttpStatus.SC_OK) {
+            return true;
+        }
+        Message.debug("HTTP response status: " + status + " url=" + url);
+        if (status == HttpStatus.SC_PROXY_AUTHENTICATION_REQUIRED) {
+            Message.warn("Your proxy requires authentication.");
+        } else if (String.valueOf(status).startsWith("4")) {
+            Message.verbose("CLIENT ERROR: "
+                    + ((HttpURLConnection) con).getResponseMessage() + " url=" + url);
+        } else if (String.valueOf(status).startsWith("5")) {
+            Message.error("SERVER ERROR: " + ((HttpURLConnection) con).getResponseMessage()
+                    + " url=" + url);
+        }
+        return false;
+    }
+
     public InputStream openStream(URL url) throws IOException {
         URLConnection conn = null;
         InputStream inStream = null;
         try {
             conn = url.openConnection();
             conn.setRequestProperty("User-Agent", "Apache Ivy/" + Ivy.getIvyVersion());
+            if (conn instanceof HttpURLConnection) {
+                HttpURLConnection httpCon = (HttpURLConnection) conn;
+                if (!checkStatusCode(url, httpCon)) {
+                    throw new IOException(
+                        "The HTTP response code for " + url + " did not indicate a success."
+                                + " See log for more detail.");
+                }
+            }
             inStream = conn.getInputStream();
             ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 
@@ -126,6 +141,14 @@ public class BasicURLHandler extends AbstractURLHandler {
         try {
             srcConn = src.openConnection();
             srcConn.setRequestProperty("User-Agent", "Apache Ivy/" + Ivy.getIvyVersion());
+            if (srcConn instanceof HttpURLConnection) {
+                HttpURLConnection httpCon = (HttpURLConnection) srcConn;
+                if (!checkStatusCode(src, httpCon)) {
+                    throw new IOException(
+                        "The HTTP response code for " + src + " did not indicate a success."
+                                + " See log for more detail.");
+                }
+            }
             int contentLength = srcConn.getContentLength();
             FileUtil.copy(srcConn.getInputStream(), dest, l);
             if (dest.length() != contentLength && contentLength != -1) {
