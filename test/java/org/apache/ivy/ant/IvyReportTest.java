@@ -185,21 +185,26 @@ public class IvyReportTest extends TestCase {
     }
 
     public void testRegularCircular() throws Exception {
-        project.setProperty("ivy.dep.file", "test/repositories/2/mod11.1/ivy-1.0.xml");
-        IvyResolve res = new IvyResolve();
-        res.setProject(project);
-        res.execute();
+        Locale oldLocale = Locale.getDefault();
+        
+        try {
+            // set the locale to UK as workaround for SUN bug 6240963
+            Locale.setDefault(Locale.UK);
 
-        report.setTodir(new File(cache, "report"));
-        report.setXml(true);
-
-        // do not test any xsl transformation here, because of problems of build in our continuous
-        // integration server
-        report.setXsl(false);
-        report.setGraph(false);
-
-        report.execute();
-
-        assertTrue(new File(cache, "report/org11-mod11.1-compile.xml").exists());
+            project.setProperty("ivy.dep.file", "test/repositories/2/mod11.1/ivy-1.0.xml");
+            IvyResolve res = new IvyResolve();
+            res.setProject(project);
+            res.execute();
+    
+            report.setTodir(new File(cache, "report"));
+            report.setXml(true);
+    
+            report.execute();
+    
+            assertTrue(new File(cache, "report/org11-mod11.1-compile.xml").exists());
+            assertTrue(new File(cache, "report/org11-mod11.1-compile.html").exists());
+        } finally {
+            Locale.setDefault(oldLocale);
+        }
     }
 }
