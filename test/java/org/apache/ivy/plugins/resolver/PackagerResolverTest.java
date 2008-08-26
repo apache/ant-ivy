@@ -122,7 +122,8 @@ public class PackagerResolverTest extends AbstractDependencyResolverTest {
             resolver.setPreserveBuildDirectories(true);
             resolver.setVerbose(true);
             
-            System.setProperty("packager.website.url", new File("test/repositories/packager/website").getAbsoluteFile().toURL().toExternalForm());
+            resolver.setProperty("packager.website.url", 
+                new File("test/repositories/packager/website").getAbsoluteFile().toURL().toExternalForm());
     
             resolver.setName("packager");
             assertEquals("packager", resolver.getName());

@@ -20,6 +20,9 @@ package org.apache.ivy.plugins.resolver.packager;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.ivy.core.IvyPatternHelper;
 import org.apache.ivy.core.module.descriptor.Artifact;
@@ -67,11 +70,17 @@ public class PackagerCacheEntry {
 
     /**
      * Attempt to build this entry.
-     *
-     * @param packagerXML packager XML input stream
-     * @throws IllegalStateException if this entry has already been built
+     * 
+     * @param packagerResource
+     *            packager metadata resource
+     * @param properties
+     *            a map of properties to pass to the child Ant build responsible for dependency
+     *            packaging
+     * 
+     * @throws IllegalStateException
+     *             if this entry has already been built
      */
-    public synchronized void build(Resource packagerResource) throws IOException {
+    public synchronized void build(Resource packagerResource, Map properties) throws IOException {
         // Sanity check
         if (this.built) {
             throw new IllegalStateException("build in directory `"
@@ -133,6 +142,12 @@ public class PackagerCacheEntry {
         }
         if (this.validate) {
             project.setUserProperty("ivy.packager.validate", "true");
+        }
+        if (properties != null) {
+            for (Iterator it = properties.entrySet().iterator(); it.hasNext();) {
+                Entry entry = (Entry) it.next();
+                project.setUserProperty((String) entry.getKey(), (String) entry.getValue());
+            }
         }
         
         // Execute task

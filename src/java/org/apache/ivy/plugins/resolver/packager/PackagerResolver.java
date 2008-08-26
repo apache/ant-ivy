@@ -23,6 +23,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.DefaultArtifact;
@@ -51,6 +53,8 @@ public class PackagerResolver extends URLResolver {
     private File buildRoot;
     private File resourceCache;
     private String resourceURL;
+    private Map/*<String,String>*/ properties = new LinkedHashMap();
+    
     private boolean validate = true;
     private boolean preserve;
     private boolean verbose;
@@ -147,6 +151,16 @@ public class PackagerResolver extends URLResolver {
         }
         super.setDescriptor(rule);
     }
+    
+    /**
+     * Sets a property to be passed to the child Ant build responsible for packaging the dependency.
+     * 
+     * @param propertyKey the property to pass
+     * @param propertyValue the value of the property to pass
+     */
+    public void setProperty(String propertyKey, String propertyValue) {
+        properties.put(propertyKey, propertyValue);
+    }
 
     // @Override
     public void validate() {
@@ -190,7 +204,7 @@ public class PackagerResolver extends URLResolver {
             entry = new PackagerCacheEntry(mr, this.buildRoot, this.resourceCache,
               this.resourceURL, this.validate, this.preserve, this.verbose, this.quiet);
             try {
-                entry.build(packager.getResource());
+                entry.build(packager.getResource(), properties);
             } catch (IOException e) {
                 throw new RuntimeException("can't build artifact " + artifact, e);
             }
