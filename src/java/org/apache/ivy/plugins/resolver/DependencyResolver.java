@@ -33,6 +33,7 @@ import org.apache.ivy.core.resolve.ResolvedModuleRevision;
 import org.apache.ivy.core.search.ModuleEntry;
 import org.apache.ivy.core.search.OrganisationEntry;
 import org.apache.ivy.core.search.RevisionEntry;
+import org.apache.ivy.plugins.namespace.Namespace;
 import org.apache.ivy.plugins.resolver.util.ResolvedResource;
 
 /**
@@ -120,6 +121,11 @@ public interface DependencyResolver {
      * otherTokenValues map. For instance, if token = "revision" and the map contains
      * "organisation"->"foo" "module"->"bar" The results will be the list of revisions of the module
      * bar from the org foo.
+     * <p>
+     * Note that listing does not take into account namespaces, and return raw 
+     * information without any namespace transformation. The caller is responsible for calling 
+     * namespace transformation with the Namespace returned by {@link #getNamespace()}.
+     * </p>
      */
     String[] listTokenValues(String token, Map otherTokenValues);
     
@@ -130,6 +136,12 @@ public interface DependencyResolver {
     ModuleEntry[] listModules(OrganisationEntry org);
 
     RevisionEntry[] listRevisions(ModuleEntry module);
+    
+    /**
+     * Returns the namespace associated with this resolver.
+     * @return the namespace associated with this resolver.
+     */
+    Namespace getNamespace();
     
     void dumpSettings();
     

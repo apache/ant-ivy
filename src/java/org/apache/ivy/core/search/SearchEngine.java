@@ -23,6 +23,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -178,6 +179,9 @@ public class SearchEngine {
     /**
      * List module ids of the module accessible through the current resolvers matching the given mid
      * criteria according to the given matcher.
+     * <p>
+     * ModuleId are returned in the system namespace.
+     * </p>
      * 
      * @param criteria
      * @param matcher
@@ -201,7 +205,8 @@ public class SearchEngine {
                 String org = (String) moduleIdAsMap[i].get(IvyPatternHelper.ORGANISATION_KEY);
                 String name = (String) moduleIdAsMap[i].get(IvyPatternHelper.MODULE_KEY);
                 ModuleId modId = ModuleId.newInstance(org, name);
-                ret.add(modId);
+                ret.add(NameSpaceHelper.transform(
+                    modId, resolver.getNamespace().getToSystemTransformer()));
             }
         }
 
@@ -211,6 +216,9 @@ public class SearchEngine {
     /**
      * List module revision ids of the module accessible through the current resolvers matching the
      * given mrid criteria according to the given matcher.
+     * <p>
+     * ModuleRevisionId are returned in the system namespace.
+     * </p>
      * 
      * @param criteria
      * @param matcher
@@ -239,13 +247,24 @@ public class SearchEngine {
                 String branch = (String) moduleIdAsMap[i].get(IvyPatternHelper.BRANCH_KEY);
                 String rev = (String) moduleIdAsMap[i].get(IvyPatternHelper.REVISION_KEY);
                 ModuleRevisionId modRevId = ModuleRevisionId.newInstance(org, name, branch, rev);
-                ret.add(modRevId);
+                ret.add(resolver.getNamespace().getToSystemTransformer().transform(modRevId));
             }
         }
 
         return (ModuleRevisionId[]) ret.toArray(new ModuleRevisionId[ret.size()]);
     }
 
+    /**
+     * List modules matching a given criteria, available in the given dependency resolver.
+     * <p>
+     * ModuleRevisionId are returned in the system namespace.
+     * </p>
+     *  
+     * @param resolver the resolver in which modules should looked up
+     * @param moduleCrit the criteria to match
+     * @param matcher the matcher to use to match criteria
+     * @return an array of matching module revision ids
+     */
     public ModuleRevisionId[] listModules(
             DependencyResolver resolver, ModuleRevisionId moduleCrit, PatternMatcher matcher) {
         Map criteria = new HashMap();
@@ -260,16 +279,17 @@ public class SearchEngine {
                 IvyPatternHelper.BRANCH_KEY, IvyPatternHelper.REVISION_KEY};
 
         Map[] moduleIdAsMap = resolver.listTokenValues(tokensToList, criteria);
-        ModuleRevisionId[] result = new ModuleRevisionId[moduleIdAsMap.length];
+        Set result = new LinkedHashSet(); // we use a Set to remove duplicates
         for (int i = 0; i < moduleIdAsMap.length; i++) {
             String org = (String) moduleIdAsMap[i].get(IvyPatternHelper.ORGANISATION_KEY);
             String name = (String) moduleIdAsMap[i].get(IvyPatternHelper.MODULE_KEY);
             String branch = (String) moduleIdAsMap[i].get(IvyPatternHelper.BRANCH_KEY);
             String rev = (String) moduleIdAsMap[i].get(IvyPatternHelper.REVISION_KEY);
-            result[i] = ModuleRevisionId.newInstance(org, name, branch, rev);
+            result.add(resolver.getNamespace().getToSystemTransformer().transform(
+                ModuleRevisionId.newInstance(org, name, branch, rev)));
         }
         
-        return result;
+        return (ModuleRevisionId[]) result.toArray(new ModuleRevisionId[result.size()]);
     }
     
     private void addMatcher(

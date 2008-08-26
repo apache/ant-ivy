@@ -66,7 +66,11 @@
 		<filesystem name="ns" namespace="test" m2compatible="true">
 			<ivy pattern="${ivy.settings.dir}/[organisation]/[module]/[revision]/ivy.xml"/>
 			<ivy pattern="${ivy.settings.dir}/[organisation]/[module]/[revision]/[module]-[revision].pom"/>
-			<artifact pattern="${ivy.settings.dir}/[organisation]/[module]/[revision]/[artifact].[ext]"/>
+			<artifact pattern="${ivy.settings.dir}/[organisation]/[module]/[revision]/[artifact](-[classifier]).[ext]"/>
+		</filesystem>
+		<filesystem name="install">
+			<ivy pattern="build/test/install/[organisation]/[module]/[artifact]-[revision].[ext]"/>
+			<artifact pattern="build/test/install/[organisation]/[module]/[artifact](-[classifier])-[revision].[ext]"/>
 		</filesystem>
 	</resolvers>
 </ivysettings>

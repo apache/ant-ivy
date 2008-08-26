@@ -23,6 +23,7 @@ import junit.framework.TestCase;
 
 import org.apache.ivy.util.FileUtil;
 import org.apache.tools.ant.BuildException;
+import org.apache.tools.ant.DefaultLogger;
 import org.apache.tools.ant.Project;
 
 public class IvyInstallTest extends TestCase {
@@ -35,7 +36,9 @@ public class IvyInstallTest extends TestCase {
     protected void setUp() throws Exception {
         createCache();
         cleanInstall();
-        project = new Project();
+        
+        project = AntTestHelper.newProject();
+        
         project.setProperty("ivy.settings.file", "test/repositories/ivysettings.xml");
 
         install = new IvyInstall();
@@ -113,6 +116,53 @@ public class IvyInstallTest extends TestCase {
         install.execute();
 
         assertTrue(new File("build/test/install/foo/foo1/branch1/ivy-2.xml").exists());
+    }
+
+    public void testInstallWithNamespace() {
+        project.setProperty("ivy.settings.file", "test/repositories/namespace/ivysettings.xml");
+        install.setOrganisation("systemorg");
+        install.setModule("systemmod2");
+        install.setRevision("1.0");
+        install.setTransitive(true);
+        install.setFrom("ns");
+        install.setTo("install");
+
+        install.execute();
+
+        assertTrue(new File("build/test/install/systemorg/systemmod2/ivy-1.0.xml").exists());
+        assertTrue(new File("build/test/install/systemorg/systemmod/ivy-1.0.xml").exists());
+    }
+
+    public void testInstallWithNamespace2() {
+        project.setProperty("ivy.settings.file", "test/repositories/namespace/ivysettings.xml");
+        install.setOrganisation("A");
+        install.setModule("B");
+        install.setRevision("1.0");
+        install.setTransitive(true);
+        install.setFrom("ns");
+        install.setTo("install");
+
+        try {
+            install.execute();
+            fail("installing module with namespace coordinates instead of system one should fail");
+        } catch (BuildException ex) {
+            // expected
+        }
+    }
+
+    public void testInstallWithNamespace3() {
+        project.setProperty("ivy.settings.file", "test/repositories/namespace/ivysettings.xml");
+        install.setOrganisation("*");
+        install.setModule("*");
+        install.setRevision("*");
+        install.setTransitive(true);
+        install.setFrom("ns");
+        install.setTo("install");
+
+        install.execute();
+
+        assertTrue(new File("build/test/install/systemorg/systemmod2/ivy-1.0.xml").exists());
+        assertTrue(new File("build/test/install/systemorg/systemmod/ivy-1.0.xml").exists());
     }
 
     public void testDependencyNotFoundFailure() {

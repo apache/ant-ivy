@@ -108,6 +108,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - IMPROVEMENT: Add a memory cache for the module descriptor that are parsed from the cache (IVY-883)
 - IMPROVEMENT: Improve performance (IVY-872)
 
+- FIX: Failure to transitively install Maven2 artifacts with namespace (IVY-440)
 - FIX: Unwanted eviction of dependencies when optional attributes in dependency and info tags are in consistent (IVY-745)
 - FIX: HTTP Handlers ignore unsuccessful response codes (IVY-864) (thanks to James P. White)
 - FIX: Deliver delivers the wrong version when a dynamic revision is evicted before being resolved (IVY-707)
