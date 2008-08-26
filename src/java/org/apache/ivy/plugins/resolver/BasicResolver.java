@@ -33,6 +33,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.ivy.core.IvyContext;
 import org.apache.ivy.core.IvyPatternHelper;
@@ -273,9 +274,10 @@ public abstract class BasicResolver extends AbstractResolver {
                         checkDescriptorConsistency(nsMrid, nsMd, ivyRef);
                     } else {
                         if (systemMd instanceof DefaultModuleDescriptor) {
-                            String revision = getRevision(ivyRef, systemMrid, systemMd);
-                            ((DefaultModuleDescriptor) systemMd).setModuleRevisionId(
-                                ModuleRevisionId.newInstance(systemMrid, revision));
+                            DefaultModuleDescriptor defaultMd = (DefaultModuleDescriptor) systemMd;
+                            ModuleRevisionId revision = getRevision(ivyRef, systemMrid, systemMd);
+                            defaultMd.setModuleRevisionId(revision);
+                            defaultMd.setResolvedModuleRevisionId(revision);
                         } else {
                             Message.warn(
                               "consistency disabled with instance of non DefaultModuleDescriptor..."
@@ -466,24 +468,25 @@ public abstract class BasicResolver extends AbstractResolver {
         checkModuleDescriptorRevision(systemMd, dependencyConstraint);
     }
 
-    private String getRevision(ResolvedResource ivyRef, ModuleRevisionId askedMrid,
+    private ModuleRevisionId getRevision(ResolvedResource ivyRef, ModuleRevisionId askedMrid,
             ModuleDescriptor md) throws ParseException {
         String revision = ivyRef.getRevision();
         if (revision == null) {
             Message.debug("no revision found in reference for " + askedMrid);
             if (getSettings().getVersionMatcher().isDynamic(askedMrid)) {
                 if (md.getModuleRevisionId().getRevision() == null) {
-                    return "working@" + getName();
+                    return ModuleRevisionId.newInstance(askedMrid, "working@" + getName());
                 } else {
                     Message.debug("using  " + askedMrid);
-                    revision = md.getModuleRevisionId().getRevision();
+                    return askedMrid;
                 }
             } else {
                 Message.debug("using  " + askedMrid);
-                revision = askedMrid.getRevision();
+                return askedMrid;
             }
+        } else {
+            return ModuleRevisionId.newInstance(askedMrid, revision);
         }
-        return revision;
     }
 
     public ResolvedModuleRevision parse(final ResolvedResource mdRef, DependencyDescriptor dd,
@@ -596,7 +599,7 @@ public abstract class BasicResolver extends AbstractResolver {
             Message.error("\t" + getName() + ": bad branch name found in " + ivyRef.getResource()
                     + ": expected='" + mrid.getBranch() + " found='"
                     + md.getModuleRevisionId().getBranch() + "'");
-            errors.append("bad module name: expected='" + mrid.getBranch() + "' found='"
+            errors.append("bad branch name: expected='" + mrid.getBranch() + "' found='"
                     + md.getModuleRevisionId().getBranch() + "'; ");
             ok = false;
         }
@@ -617,6 +620,18 @@ public abstract class BasicResolver extends AbstractResolver {
                     + ": '" + md.getStatus() + "'");
             errors.append("bad status: '" + md.getStatus() + "'; ");
             ok = false;
+        }
+        for (Iterator it = mrid.getExtraAttributes().entrySet().iterator(); it.hasNext();) {
+            Entry extra = (Entry) it.next();
+            if (extra.getValue() != null && !extra.getValue().equals(
+                                                md.getExtraAttribute((String) extra.getKey()))) {
+                String errorMsg = "bad " + extra.getKey() + " found in " + ivyRef.getResource()
+                                        + ": expected='" + extra.getValue() + "' found='"
+                                        + md.getExtraAttribute((String) extra.getKey()) + "'";
+                Message.error("\t" + getName() + ": " + errorMsg);
+                errors.append(errorMsg + ";");
+                ok = false;
+            }
         }
         if (!ok) {
             throw new ParseException("inconsistent module descriptor file found in '"

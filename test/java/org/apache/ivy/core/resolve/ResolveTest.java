@@ -59,6 +59,7 @@ import org.apache.ivy.plugins.resolver.DualResolver;
 import org.apache.ivy.plugins.resolver.FileSystemResolver;
 import org.apache.ivy.util.CacheCleaner;
 import org.apache.ivy.util.FileUtil;
+import org.apache.ivy.util.MockMessageLogger;
 import org.apache.ivy.util.StringUtils;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -4135,6 +4136,42 @@ public class ResolveTest extends TestCase {
         assertTrue(new File(cache, "apache/module2/task2/1976/ivy.xml").exists());
         assertTrue(new File(cache, "apache/module2/task2/1976/module2-windows.jar").exists());
         assertTrue(new File(cache, "apache/module2/task2/1976/module2-linux.jar").exists());
+    }
+
+    public void testExtraAttributes3() throws Exception {
+        // test case for IVY-745
+        MockMessageLogger mockLogger = new MockMessageLogger();
+        Ivy ivy = new Ivy();
+        ivy.getLoggerEngine().setDefaultLogger(mockLogger);
+        ivy.configure(new File("test/repositories/extra-attributes/ivysettings.xml"));
+        ivy.getSettings().setDefaultCache(cache);
+        ivy.getSettings().validate();
+
+        ResolveReport report = ivy.resolve(ResolveTest.class.getResource("ivy-extra-att3.xml"),
+            getResolveOptions(ivy.getSettings(), new String[] {"*"}).setValidate(false));
+        
+        assertTrue(report.hasError());
+        // should report error about missing extra attribute in dependency module descriptor
+        mockLogger.assertLogContains("expected='task2' found='null'");
+    }
+
+    public void testExtraAttributes4() throws Exception {
+        // second test case for IVY-745: now we disable consistency checking, everything should work fine
+        Ivy ivy = new Ivy();
+        ivy.configure(new File("test/repositories/extra-attributes/ivysettings.xml"));
+        ivy.getSettings().setDefaultCache(cache);
+        ((FileSystemResolver) ivy.getSettings().getResolver("default")).setCheckconsistency(false);
+        ivy.getSettings().validate();
+
+        ResolveReport report = ivy.resolve(ResolveTest.class.getResource("ivy-extra-att3.xml"),
+            getResolveOptions(ivy.getSettings(), new String[] {"*"}).setValidate(false));
+        
+        assertFalse(report.hasError());
+
+        assertTrue(new File(cache, "apache/mymodule/task2/1749/ivy.xml").exists());
+        assertTrue(new File(cache, "apache/mymodule/task2/1749/ivy.xml.original").exists());
+        assertTrue(new File(cache, "apache/mymodule/task2/1749/mymodule-windows.jar").exists());
+        assertTrue(new File(cache, "apache/mymodule/task2/1749/mymodule-linux.jar").exists());
     }
 
     public void testNamespaceExtraAttributes() throws Exception {
