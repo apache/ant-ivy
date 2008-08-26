@@ -57,6 +57,7 @@ import org.apache.ivy.core.report.DownloadStatus;
 import org.apache.ivy.core.report.ResolveReport;
 import org.apache.ivy.core.resolve.IvyNodeEviction.EvictionData;
 import org.apache.ivy.core.sort.SortEngine;
+import org.apache.ivy.core.sort.SortOptions;
 import org.apache.ivy.plugins.conflict.ConflictManager;
 import org.apache.ivy.plugins.parser.ModuleDescriptorParser;
 import org.apache.ivy.plugins.parser.ModuleDescriptorParserRegistry;
@@ -530,7 +531,7 @@ public class ResolveEngine {
                     dependencies.add(node);
                 }
             }
-            List sortedDependencies = sortEngine.sortNodes(dependencies);
+            List sortedDependencies = sortEngine.sortNodes(dependencies, SortOptions.SILENT);
             Collections.reverse(sortedDependencies);
     
             handleTransiviteEviction(md, confs, data, sortedDependencies);    

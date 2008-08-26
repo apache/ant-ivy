@@ -87,7 +87,7 @@ public class SortTest extends TestCase {
         Collection permutations = getAllLists(md1, md3, md2, md4);
         for (Iterator it = permutations.iterator(); it.hasNext();) {
             List toSort = (List) it.next();
-            assertSorted(expectedOrder, sortEngine.sortModuleDescriptors(toSort, nonMatchReporter));
+            assertSorted(expectedOrder, sortModuleDescriptors(toSort, nonMatchReporter));
         }
     }
 
@@ -109,7 +109,7 @@ public class SortTest extends TestCase {
         Collection permutations = getAllLists(md1, md3, md2, md4);
         for (Iterator it = permutations.iterator(); it.hasNext();) {
             List toSort = (List) it.next();
-            assertSorted(possibleOrder, sortEngine.sortModuleDescriptors(toSort, nonMatchReporter));
+            assertSorted(possibleOrder, sortModuleDescriptors(toSort, nonMatchReporter));
         }
     }
 
@@ -126,7 +126,7 @@ public class SortTest extends TestCase {
         Collection permutations = getAllLists(md1, md3, md2, md4);
         for (Iterator it = permutations.iterator(); it.hasNext();) {
             List toSort = (List) it.next();
-            assertSorted(possibleOrder, sortEngine.sortModuleDescriptors(toSort, nonMatchReporter));
+            assertSorted(possibleOrder, sortModuleDescriptors(toSort, nonMatchReporter));
         }
     }
 
@@ -139,7 +139,7 @@ public class SortTest extends TestCase {
         addDependency(md4, "md1", "rev1");
         addDependency(md4, "md2", "rev2");
         List toSort = Arrays.asList(new Object[] {md1, md2, md3, md4});
-        sortEngine.sortModuleDescriptors(toSort, nonMatchReporter);
+        sortModuleDescriptors(toSort, nonMatchReporter);
         //If it ends, it's ok.
     }
     
@@ -186,7 +186,7 @@ public class SortTest extends TestCase {
         settings.setCircularDependencyStrategy(circularDepReportMock);
 
         List toSort = Arrays.asList(new ModuleDescriptor[] {md4, md3, md2, md1});
-        sortEngine.sortModuleDescriptors(toSort, nonMatchReporter);
+        sortModuleDescriptors(toSort, nonMatchReporter);
 
         circularDepReportMock.validate();
     }
@@ -209,7 +209,7 @@ public class SortTest extends TestCase {
         Collection permutations = getAllLists(md1, md3, md2, md4);
         for (Iterator it = permutations.iterator(); it.hasNext();) {
             List toSort = (List) it.next();
-            assertSorted(expectedOrder, sortEngine.sortModuleDescriptors(toSort, nonMatchReporter));
+            assertSorted(expectedOrder, sortModuleDescriptors(toSort, nonMatchReporter));
         }
 
     }
@@ -235,7 +235,7 @@ public class SortTest extends TestCase {
         Collection permutations = getAllLists(md1, md3, md2, md4);
         for (Iterator it = permutations.iterator(); it.hasNext();) {
             List toSort = (List) it.next();
-            assertSorted(possibleOrder, sortEngine.sortModuleDescriptors(toSort, nonMatchReporter));
+            assertSorted(possibleOrder, sortModuleDescriptors(toSort, nonMatchReporter));
         }
 
     }
@@ -269,8 +269,14 @@ public class SortTest extends TestCase {
         NonMatchingVersionReporterMock nonMatchingVersionReporterMock = 
             new NonMatchingVersionReporterMock();
         List toSort = Arrays.asList(new ModuleDescriptor[] {md4, md3, md2, md1});
-        sortEngine.sortModuleDescriptors(toSort, nonMatchingVersionReporterMock);
+        sortModuleDescriptors(toSort, nonMatchingVersionReporterMock);
         nonMatchingVersionReporterMock.validate();
+    }
+
+    private List sortModuleDescriptors(List toSort,
+            NonMatchingVersionReporter nonMatchingVersionReporter) {
+        return sortEngine.sortModuleDescriptors(toSort, 
+            new SortOptions().setNonMatchingVersionReporter(nonMatchingVersionReporter));
     }
 
     private DefaultModuleDescriptor createModuleDescriptorToSort(String moduleName,

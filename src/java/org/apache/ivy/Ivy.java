@@ -56,8 +56,8 @@ import org.apache.ivy.core.search.OrganisationEntry;
 import org.apache.ivy.core.search.RevisionEntry;
 import org.apache.ivy.core.search.SearchEngine;
 import org.apache.ivy.core.settings.IvySettings;
-import org.apache.ivy.core.sort.NonMatchingVersionReporter;
 import org.apache.ivy.core.sort.SortEngine;
+import org.apache.ivy.core.sort.SortOptions;
 import org.apache.ivy.plugins.matcher.PatternMatcher;
 import org.apache.ivy.plugins.repository.TransferEvent;
 import org.apache.ivy.plugins.repository.TransferListener;
@@ -610,10 +610,10 @@ public class Ivy {
     /**
      * Sorts the collection of IvyNode from the less dependent to the more dependent
      */
-    public List sortNodes(Collection nodes) {
+    public List sortNodes(Collection nodes, SortOptions options) {
         pushContext();
         try {
-            return getSortEngine().sortNodes(nodes);
+            return getSortEngine().sortNodes(nodes, options);
         } finally {
             popContext();
         }
@@ -626,18 +626,17 @@ public class Ivy {
      * 
      * @param moduleDescriptors
      *            a Collection of ModuleDescriptor to sort
-     * @param nonMatchingVersionReporter
-     *            Used to report some non matching version (when a modules depends on a specific
-     *            revision of an other modules present in the of modules to sort with a different
-     *            revision.
+     * @param options
+     *            Options to use to sort the descriptors.
      * @return a List of sorted ModuleDescriptors
+     * @throws CircularDependencyException
+     *             if a circular dependency exists and circular dependency strategy decide to throw
+     *             an exception
      */
-    public List sortModuleDescriptors(Collection moduleDescriptors,
-            NonMatchingVersionReporter nonMatchingVersionReporter) {
+    public List sortModuleDescriptors(Collection moduleDescriptors, SortOptions options) {
         pushContext();
         try {
-            return getSortEngine().sortModuleDescriptors(
-                moduleDescriptors, nonMatchingVersionReporter);
+            return getSortEngine().sortModuleDescriptors(moduleDescriptors, options);
         } finally {
             popContext();
         }

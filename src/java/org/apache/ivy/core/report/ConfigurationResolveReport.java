@@ -39,6 +39,7 @@ import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.resolve.IvyNode;
 import org.apache.ivy.core.resolve.ResolveEngine;
 import org.apache.ivy.core.resolve.ResolveOptions;
+import org.apache.ivy.core.sort.SortOptions;
 import org.apache.ivy.plugins.report.XmlReportParser;
 import org.apache.ivy.util.Message;
 
@@ -247,7 +248,8 @@ public class ConfigurationResolveReport {
      */
     public List getModuleIds() {
         if (modulesIds == null) {
-            List sortedDependencies = resolveEngine.getSortEngine().sortNodes(getDependencies());
+            List sortedDependencies = resolveEngine.getSortEngine().sortNodes(
+                getDependencies(), SortOptions.SILENT);
             Collections.reverse(sortedDependencies);
             for (Iterator iter = sortedDependencies.iterator(); iter.hasNext();) {
                 IvyNode dependency = (IvyNode) iter.next();

@@ -36,7 +36,7 @@ import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleId;
 import org.apache.ivy.core.settings.IvySettings;
-import org.apache.ivy.core.sort.WarningNonMatchingVersionReporter;
+import org.apache.ivy.core.sort.SortOptions;
 import org.apache.ivy.plugins.parser.ModuleDescriptorParserRegistry;
 import org.apache.ivy.util.Message;
 import org.apache.tools.ant.BuildException;
@@ -205,7 +205,8 @@ public class IvyBuildList extends IvyTask {
                 } else {
                     try {
                         ModuleDescriptor md = ModuleDescriptorParserRegistry.getInstance()
-                                .parseDescriptor(settings, ivyFile.toURI().toURL(), doValidate(settings));
+                                .parseDescriptor(
+                                    settings, ivyFile.toURI().toURL(), doValidate(settings));
                         buildFiles.put(md, buildFile);
                         mds.add(md);
                         Message.debug("Add " + md.getModuleRevisionId().getModuleId());
@@ -240,9 +241,7 @@ public class IvyBuildList extends IvyTask {
             mds = filterModulesFromLeaf(mds, leafModuleDescriptors);
         }
 
-        WarningNonMatchingVersionReporter nonMatchingVersionReporter =
-            new WarningNonMatchingVersionReporter();
-        List sortedModules = ivy.sortModuleDescriptors(mds, nonMatchingVersionReporter);
+        List sortedModules = ivy.sortModuleDescriptors(mds, SortOptions.DEFAULT);
 
         if (!OnMissingDescriptor.TAIL.equals(onMissingDescriptor)) {
             for (ListIterator iter = noDescriptor.listIterator(); iter.hasNext();) {

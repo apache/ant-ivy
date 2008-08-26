@@ -46,6 +46,7 @@ import org.apache.ivy.core.search.ModuleEntry;
 import org.apache.ivy.core.search.OrganisationEntry;
 import org.apache.ivy.core.search.RevisionEntry;
 import org.apache.ivy.core.sort.SilentNonMatchingVersionReporter;
+import org.apache.ivy.core.sort.SortOptions;
 import org.apache.ivy.plugins.matcher.PatternMatcher;
 import org.apache.ivy.plugins.resolver.DependencyResolver;
 import org.apache.ivy.util.Message;
@@ -454,11 +455,14 @@ public class Ivy14 {
     }
 
     public List sortModuleDescriptors(Collection moduleDescriptors) {
-        return ivy.sortModuleDescriptors(moduleDescriptors, new SilentNonMatchingVersionReporter());
+        return ivy.sortModuleDescriptors(moduleDescriptors, 
+            new SortOptions()
+                .setNonMatchingVersionReporter(new SilentNonMatchingVersionReporter()));
     }
 
     public List sortNodes(Collection nodes) {
-        return ivy.sortNodes(nodes);
+        return ivy.sortNodes(nodes, new SortOptions()
+                .setNonMatchingVersionReporter(new SilentNonMatchingVersionReporter()));
     }
 
     public String substitute(String str) {
