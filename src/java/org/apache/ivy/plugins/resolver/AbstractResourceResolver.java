@@ -25,6 +25,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
@@ -225,6 +226,9 @@ public abstract class AbstractResourceResolver extends BasicResolver {
         tokenValues.put(IvyPatternHelper.ARTIFACT_KEY, "ivy");
         tokenValues.put(IvyPatternHelper.TYPE_KEY, "ivy");
         tokenValues.put(IvyPatternHelper.EXT_KEY, "xml");
+        if (isM2compatible()) {
+            convertM2TokenValuesForResourceSearch(tokenValues);
+        }
         findTokenValues(names, getIvyPatterns(), tokenValues, token);
         filterNames(names);
         return names;
@@ -237,19 +241,24 @@ public abstract class AbstractResourceResolver extends BasicResolver {
                 .put(IvyPatternHelper.ARTIFACT_KEY, tokenValues.get(IvyPatternHelper.MODULE_KEY));
         tokenValues.put(IvyPatternHelper.TYPE_KEY, "jar");
         tokenValues.put(IvyPatternHelper.EXT_KEY, "jar");
+        if (isM2compatible()) {
+            convertM2TokenValuesForResourceSearch(tokenValues);
+        }
         findTokenValues(names, getArtifactPatterns(), tokenValues, token);
         filterNames(names);
         return names;
     }
 
     public Map[] listTokenValues(String[] tokens, Map criteria) {
-        Set result = new HashSet();
+        Set result = new LinkedHashSet();
         
         // use ivy patterns
         List ivyPatterns = getIvyPatterns();
         Map tokenValues = new HashMap(criteria);
         tokenValues.put(IvyPatternHelper.TYPE_KEY, "ivy");
-        tokenValues.put(IvyPatternHelper.EXT_KEY, "xml");
+        if (isM2compatible()) {
+            convertM2TokenValuesForResourceSearch(tokenValues);
+        }
         for (Iterator it = ivyPatterns.iterator(); it.hasNext();) {
             String ivyPattern = (String) it.next();
             result.addAll(resolveTokenValues(tokens, ivyPattern, tokenValues, false));
@@ -259,7 +268,9 @@ public abstract class AbstractResourceResolver extends BasicResolver {
             List artifactPatterns = getArtifactPatterns();
             tokenValues = new HashMap(criteria);
             tokenValues.put(IvyPatternHelper.TYPE_KEY, "jar");
-            tokenValues.put(IvyPatternHelper.EXT_KEY, "jar");
+            if (isM2compatible()) {
+                convertM2TokenValuesForResourceSearch(tokenValues);
+            }
             for (Iterator it = artifactPatterns.iterator(); it.hasNext();) {
                 String artifactPattern = (String) it.next();
                 result.addAll(resolveTokenValues(tokens, artifactPattern, tokenValues, true));
@@ -270,7 +281,7 @@ public abstract class AbstractResourceResolver extends BasicResolver {
     }
     
     private Set resolveTokenValues(String[] tokens, String pattern, Map criteria, boolean noMd) {
-        Set result = new HashSet();
+        Set result = new LinkedHashSet();
         Set tokenSet = new HashSet(Arrays.asList(tokens));
         
         Map tokenValues = new HashMap();
@@ -310,21 +321,25 @@ public abstract class AbstractResourceResolver extends BasicResolver {
             return result;
         }
 
-        for (int i = 0; i < values.length; i++) {
-            if ((matcher != null) && !matcher.matches(values[i])) {
+        List vals = new ArrayList(Arrays.asList(values));
+        filterNames(vals);
+        
+        for (Iterator it = vals.iterator(); it.hasNext();) {
+            String value = (String) it.next();
+            if ((matcher != null) && !matcher.matches(value)) {
                 continue;
             }
             
-            tokenValues.put(token, values[i]);
+            tokenValues.put(token, value);
             String moreResolvedPattern = IvyPatternHelper.substituteTokens(
                 partiallyResolvedPattern, tokenValues);
 
             Map newCriteria = new HashMap(criteria);
-            newCriteria.put(token, values[i]);
+            newCriteria.put(token, value);
             if (noMd && "artifact".equals(token)) {
-                newCriteria.put("module", values[i]);
+                newCriteria.put("module", value);
             } else if (noMd && "module".equals(token)) {
-                newCriteria.put("artifact", values[i]);
+                newCriteria.put("artifact", value);
             }
             result.addAll(resolveTokenValues(
                 (String[]) tokenSet.toArray(new String[tokenSet.size()]), 
@@ -427,6 +442,18 @@ public abstract class AbstractResourceResolver extends BasicResolver {
         return ModuleRevisionId.newInstance(mrid.getOrganisation().replace('.', '/'), 
             mrid.getName(), mrid.getBranch(), mrid.getRevision(), 
             mrid.getQualifiedExtraAttributes());
+    }
+
+    protected String convertM2OrganizationForResourceSearch(String org) {
+        return org.replace('.', '/');
+    }
+
+    protected void convertM2TokenValuesForResourceSearch(Map tokenValues) {
+        if (tokenValues.containsKey(IvyPatternHelper.ORGANISATION_KEY)) {
+            tokenValues.put(IvyPatternHelper.ORGANISATION_KEY, 
+                convertM2OrganizationForResourceSearch(
+                    (String) tokenValues.get(IvyPatternHelper.ORGANISATION_KEY)));
+        }
     }
 
 }

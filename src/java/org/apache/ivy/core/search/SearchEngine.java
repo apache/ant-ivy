@@ -56,7 +56,7 @@ public class SearchEngine {
      * @return
      */
     public String[] listTokenValues(String token, Map otherTokenValues) {
-        Set entries = new HashSet();
+        Set entries = new LinkedHashSet();
         
         for (Iterator iter = settings.getResolvers().iterator(); iter.hasNext();) {
             DependencyResolver resolver = (DependencyResolver) iter.next();

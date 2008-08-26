@@ -60,8 +60,9 @@ import org.xml.sax.SAXException;
  * {@link org.apache.ivy.plugins.resolver.URLResolver}.
  */
 public class IBiblioResolver extends URLResolver {
-    private static final String M2_PATTERN 
-        = "[organisation]/[module]/[revision]/[artifact]-[revision](-[classifier]).[ext]";
+    private static final String M2_PER_MODULE_PATTERN 
+                                    = "[revision]/[artifact]-[revision](-[classifier]).[ext]";
+    private static final String M2_PATTERN  = "[organisation]/[module]/" + M2_PER_MODULE_PATTERN;
 
     public static final String DEFAULT_PATTERN = "[module]/[type]s/[artifact]-[revision].[ext]";
 
@@ -314,7 +315,45 @@ public class IBiblioResolver extends URLResolver {
         ensureConfigured(getSettings());
         return super.listTokenValues(token, otherTokenValues);
     }
-
+    
+    protected String[] listTokenValues(String pattern, String token) {
+        if (IvyPatternHelper.ORGANISATION_KEY.equals(token)) {
+            return new String[0];
+        }
+        if (IvyPatternHelper.MODULE_KEY.equals(token) && !isM2compatible()) {
+            return new String[0];
+        }
+        ensureConfigured(getSettings());
+        
+        // let's see if we should use maven metadata for this listing...
+        if (IvyPatternHelper.REVISION_KEY.equals(token) 
+                && isM2compatible()
+                && isUseMavenMetadata()) {
+            /*
+             * we substitute tokens with no token at all with the m2 per module pattern, to remove
+             * optional tokens as it has been done in the given pattern which itself has gone
+             * through a partial substitute tokens
+             */
+            String partiallyResolvedM2PerModulePattern = IvyPatternHelper.substituteTokens(
+                M2_PER_MODULE_PATTERN, Collections.EMPTY_MAP);
+            if (pattern.endsWith(partiallyResolvedM2PerModulePattern)) {
+                /*
+                 * the given pattern already contain resolved org and module, we just have to
+                 * replace the per module pattern at the end by 'maven-metadata.xml' to have the
+                 * maven metadata file location
+                 */
+                String metadataLocation = pattern.substring(0, pattern
+                        .lastIndexOf(partiallyResolvedM2PerModulePattern))
+                        + "maven-metadata.xml";
+                List revs = listRevisionsWithMavenMetadata(getRepository(), metadataLocation);
+                if (revs != null) {
+                    return (String[]) revs.toArray(new String[revs.size()]);
+                }
+            }
+        }
+        return super.listTokenValues(pattern, token);
+    }
+    
     public OrganisationEntry[] listOrganisations() {
         return new OrganisationEntry[0];
     }
@@ -367,11 +406,15 @@ public class IBiblioResolver extends URLResolver {
     }
 
     private List listRevisionsWithMavenMetadata(Repository repository, Map tokenValues) {
+        String metadataLocation = IvyPatternHelper.substituteTokens(
+            root + "[organisation]/[module]/maven-metadata.xml", tokenValues);
+        return listRevisionsWithMavenMetadata(repository, metadataLocation);
+    }
+
+    private List listRevisionsWithMavenMetadata(Repository repository, String metadataLocation) {
         List revs = null;
         InputStream metadataStream = null;
         try {
-            String metadataLocation = IvyPatternHelper.substituteTokens(
-                root + "[organisation]/[module]/maven-metadata.xml", tokenValues);
             Resource metadata = repository.getResource(metadataLocation);
             if (metadata.exists()) {
                 Message.verbose("\tlisting revisions from maven-metadata: " + metadata);
