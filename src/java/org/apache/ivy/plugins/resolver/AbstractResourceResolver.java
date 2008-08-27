@@ -256,6 +256,7 @@ public abstract class AbstractResourceResolver extends BasicResolver {
         List ivyPatterns = getIvyPatterns();
         Map tokenValues = new HashMap(criteria);
         tokenValues.put(IvyPatternHelper.TYPE_KEY, "ivy");
+        tokenValues.put(IvyPatternHelper.EXT_KEY, "xml");
         if (isM2compatible()) {
             convertM2TokenValuesForResourceSearch(tokenValues);
         }
@@ -268,6 +269,7 @@ public abstract class AbstractResourceResolver extends BasicResolver {
             List artifactPatterns = getArtifactPatterns();
             tokenValues = new HashMap(criteria);
             tokenValues.put(IvyPatternHelper.TYPE_KEY, "jar");
+            tokenValues.put(IvyPatternHelper.EXT_KEY, "jar");
             if (isM2compatible()) {
                 convertM2TokenValuesForResourceSearch(tokenValues);
             }

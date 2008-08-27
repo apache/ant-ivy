@@ -329,25 +329,37 @@ public class IBiblioResolver extends URLResolver {
         if (IvyPatternHelper.REVISION_KEY.equals(token) 
                 && isM2compatible()
                 && isUseMavenMetadata()) {
-            /*
-             * we substitute tokens with no token at all with the m2 per module pattern, to remove
-             * optional tokens as it has been done in the given pattern which itself has gone
-             * through a partial substitute tokens
-             */
-            String partiallyResolvedM2PerModulePattern = IvyPatternHelper.substituteTokens(
-                M2_PER_MODULE_PATTERN, Collections.EMPTY_MAP);
-            if (pattern.endsWith(partiallyResolvedM2PerModulePattern)) {
+            if (((String) getIvyPatterns().get(0)).endsWith(M2_PER_MODULE_PATTERN)) {
+                // now we must use metadata if available
                 /*
-                 * the given pattern already contain resolved org and module, we just have to
-                 * replace the per module pattern at the end by 'maven-metadata.xml' to have the
-                 * maven metadata file location
+                 * we substitute tokens with ext token only in the m2 per module pattern, to match
+                 * has has been done in the given pattern
                  */
-                String metadataLocation = pattern.substring(0, pattern
+                String partiallyResolvedM2PerModulePattern = IvyPatternHelper.substituteTokens(
+                    M2_PER_MODULE_PATTERN, 
+                    Collections.singletonMap(IvyPatternHelper.EXT_KEY, "xml"));
+                if (pattern.endsWith(partiallyResolvedM2PerModulePattern)) {
+                    /*
+                     * the given pattern already contain resolved org and module, we just have to
+                     * replace the per module pattern at the end by 'maven-metadata.xml' to have the
+                     * maven metadata file location
+                     */
+                    String metadataLocation = pattern.substring(0, pattern
                         .lastIndexOf(partiallyResolvedM2PerModulePattern))
                         + "maven-metadata.xml";
-                List revs = listRevisionsWithMavenMetadata(getRepository(), metadataLocation);
-                if (revs != null) {
-                    return (String[]) revs.toArray(new String[revs.size()]);
+                    List revs = listRevisionsWithMavenMetadata(getRepository(), metadataLocation);
+                    if (revs != null) {
+                        return (String[]) revs.toArray(new String[revs.size()]);
+                    }
+                } else {
+                    /*
+                     * this is probably because the given pattern has been substituted with jar ext,
+                     * if this resolver has optional module descriptors. But since we have to use
+                     * maven metadata, we don't care about this case, maven metadata has already
+                     * been used when looking for revisions with the pattern substituted with
+                     * ext=xml for the "ivy" pattern.
+                     */  
+                    return new String[0];
                 }
             }
         }
