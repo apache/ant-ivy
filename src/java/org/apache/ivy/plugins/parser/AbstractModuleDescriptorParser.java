@@ -90,7 +90,7 @@ public abstract class AbstractModuleDescriptorParser implements ModuleDescriptor
             }
         }
 
-        protected void setResource(Resource res) {
+        public void setResource(Resource res) {
             this.res = res; // used for log and date only
             md = new DefaultModuleDescriptor(parser, res);
             md.setLastModified(ResourceHelper.getLastModifiedOrDefault(res));
