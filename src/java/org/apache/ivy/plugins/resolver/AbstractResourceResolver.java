@@ -451,7 +451,7 @@ public abstract class AbstractResourceResolver extends BasicResolver {
     }
 
     protected void convertM2TokenValuesForResourceSearch(Map tokenValues) {
-        if (tokenValues.containsKey(IvyPatternHelper.ORGANISATION_KEY)) {
+        if (tokenValues.get(IvyPatternHelper.ORGANISATION_KEY) instanceof String) {
             tokenValues.put(IvyPatternHelper.ORGANISATION_KEY, 
                 convertM2OrganizationForResourceSearch(
                     (String) tokenValues.get(IvyPatternHelper.ORGANISATION_KEY)));
