@@ -53,7 +53,7 @@ import org.apache.ivy.util.Message;
 /**
  *
  */
-public class RepositoryResolver extends AbstractResourceResolver {
+public class RepositoryResolver extends AbstractPatternsBasedResolver {
 
     private Repository repository;
 

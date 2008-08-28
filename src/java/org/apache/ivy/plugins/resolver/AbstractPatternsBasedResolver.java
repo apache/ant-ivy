@@ -53,7 +53,7 @@ import org.apache.ivy.util.Message;
 /**
  *
  */
-public abstract class AbstractResourceResolver extends BasicResolver {
+public abstract class AbstractPatternsBasedResolver extends BasicResolver {
 
     private static final Map IVY_ARTIFACT_ATTRIBUTES = new HashMap();
     static {
@@ -68,7 +68,7 @@ public abstract class AbstractResourceResolver extends BasicResolver {
 
     private boolean m2compatible = false;
 
-    public AbstractResourceResolver() {
+    public AbstractPatternsBasedResolver() {
     }
 
     public ResolvedResource findIvyFileRef(DependencyDescriptor dd, ResolveData data) {
