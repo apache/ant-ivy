@@ -17,6 +17,9 @@
  */
 package org.apache.ivy.core.cache;
 
+import org.apache.ivy.core.module.descriptor.Artifact;
+import org.apache.ivy.util.Checks;
+
 /**
  * This class contains information about the origin of an artifact.
  * 
@@ -24,10 +27,22 @@ package org.apache.ivy.core.cache;
  * @see org.apache.ivy.plugins.resolver.util.ResolvedResource
  */
 public class ArtifactOrigin {
+    private static final String UNKNOWN = "UNKNOWN";
+
     /**
      * ArtifactOrigin instance used when the origin is unknown.
      */
-    public static final ArtifactOrigin UNKNOWN = new ArtifactOrigin(false, "UNKNOWN");
+    public static final ArtifactOrigin unkwnown(Artifact artifact) {
+        return new ArtifactOrigin(artifact, false, UNKNOWN);
+    }
+    
+    public static final boolean isUnknown(ArtifactOrigin artifact) {
+        return artifact == null || UNKNOWN.equals(artifact.getLocation());
+    }
+    
+    public static final boolean isUnknown(String location) {
+        return location == null || UNKNOWN.equals(location);
+    }
     
     private static final int MAGIC_HASH_VALUE = 31;
 
@@ -35,16 +50,23 @@ public class ArtifactOrigin {
 
     private String location;
 
+    private Artifact artifact;
+
     /**
      * Create a new instance
      * 
+     * @param artifact
+     *            the artifact pointed by this location. Must not be <code>null</code>.
      * @param isLocal
      *            <code>boolean</code> value indicating if the resource is local (on the
      *            filesystem).
      * @param location
-     *            the location of the resource (normally a url)
+     *            the location of the resource (normally a url). Must not be <code>null</code>.
      */
-    public ArtifactOrigin(boolean isLocal, String location) {
+    public ArtifactOrigin(Artifact artifact, boolean isLocal, String location) {
+        Checks.checkNotNull(artifact, "artifact");
+        Checks.checkNotNull(location, "location");
+        this.artifact = artifact;
         this.isLocal = isLocal;
         this.location = location;
     }
@@ -65,6 +87,15 @@ public class ArtifactOrigin {
      */
     public String getLocation() {
         return location;
+    }
+    
+    /**
+     * Return the artifact that this location is pointing at.
+     * 
+     * @return the artifact that this location is pointing at.
+     */
+    public Artifact getArtifact() {
+        return artifact;
     }
 
     public String toString() {

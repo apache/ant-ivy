@@ -18,11 +18,17 @@
 package org.apache.ivy.core.resolve;
 
 import java.io.File;
+import java.util.Date;
 
 import junit.framework.TestCase;
 
 import org.apache.ivy.Ivy;
+import org.apache.ivy.core.cache.ArtifactOrigin;
+import org.apache.ivy.core.module.descriptor.Artifact;
+import org.apache.ivy.core.module.descriptor.DefaultArtifact;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
+import org.apache.ivy.core.report.ArtifactDownloadReport;
+import org.apache.ivy.core.report.DownloadStatus;
 import org.apache.ivy.core.report.ResolveReport;
 import org.apache.ivy.util.CacheCleaner;
 
@@ -57,6 +63,35 @@ public class ResolveEngineTest extends TestCase {
         
         assertNotNull("The ResolveReport may never be null", report);
         assertTrue(report.hasError());
+    }
+    
+    public void testLocateThenDownload() throws Exception {
+        ResolveEngine engine = new ResolveEngine(ivy.getSettings(), 
+            ivy.getEventManager(), ivy.getSortEngine());
+        
+        testLocateThenDownload(
+            engine, 
+            DefaultArtifact.newIvyArtifact(ModuleRevisionId.parse("org1#mod1.1;1.0"), new Date()), 
+            new File("test/repositories/1/org1/mod1.1/ivys/ivy-1.0.xml"));
+        testLocateThenDownload(
+            engine, 
+            new DefaultArtifact(ModuleRevisionId.parse("org1#mod1.1;1.0"), new Date(), "mod1.1", "jar", "jar"), 
+            new File("test/repositories/1/org1/mod1.1/jars/mod1.1-1.0.jar"));
+    }
+
+    private void testLocateThenDownload(ResolveEngine engine, Artifact artifact, File artifactFile) {
+        ArtifactOrigin origin = engine.locate(artifact);
+        assertNotNull(origin);
+        assertTrue(origin.isLocal());
+        assertEquals(
+            artifactFile.getAbsolutePath(), 
+            new File(origin.getLocation()).getAbsolutePath());
+        
+        ArtifactDownloadReport r = engine.download(origin, new DownloadOptions());
+        assertNotNull(r);
+        assertEquals(DownloadStatus.SUCCESSFUL, r.getDownloadStatus());
+        assertNotNull(r.getLocalFile());
+        assertTrue(r.getLocalFile().exists());
     }
 
     private void createCache() {

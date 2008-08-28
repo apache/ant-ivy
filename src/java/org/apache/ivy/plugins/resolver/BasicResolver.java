@@ -38,6 +38,7 @@ import java.util.Map.Entry;
 import org.apache.ivy.core.IvyContext;
 import org.apache.ivy.core.IvyPatternHelper;
 import org.apache.ivy.core.LogOptions;
+import org.apache.ivy.core.cache.ArtifactOrigin;
 import org.apache.ivy.core.cache.ModuleDescriptorWriter;
 import org.apache.ivy.core.cache.RepositoryCacheManager;
 import org.apache.ivy.core.module.descriptor.Artifact;
@@ -68,6 +69,7 @@ import org.apache.ivy.plugins.repository.url.URLResource;
 import org.apache.ivy.plugins.resolver.util.MDResolvedResource;
 import org.apache.ivy.plugins.resolver.util.ResolvedResource;
 import org.apache.ivy.plugins.resolver.util.ResourceMDParser;
+import org.apache.ivy.util.Checks;
 import org.apache.ivy.util.ChecksumHelper;
 import org.apache.ivy.util.HostUtil;
 import org.apache.ivy.util.Message;
@@ -731,6 +733,30 @@ public abstract class BasicResolver extends AbstractResolver {
     protected void clearArtifactAttempts() {
         artattempts.clear();
     }
+    
+    public ArtifactDownloadReport download(final ArtifactOrigin origin, DownloadOptions options) {
+        Checks.checkNotNull(origin, "origin");
+        return getRepositoryCacheManager().download(
+            origin.getArtifact(), 
+            new ArtifactResourceResolver() {
+                public ResolvedResource resolve(Artifact artifact) {
+                    try {
+                        Resource resource = getResource(origin.getLocation());
+                        if (resource == null) {
+                            return null;
+                        }
+                        String revision = origin.getArtifact().getModuleRevisionId().getRevision();
+                        return new ResolvedResource(resource, revision);
+                    } catch (IOException e) {
+                        return null;
+                    }
+                }
+            }, 
+            downloader, 
+            getCacheDownloadOptions(options));
+    }
+    
+    protected abstract Resource getResource(String source) throws IOException;
 
     public boolean exists(Artifact artifact) {
         ResolvedResource artifactRef = getArtifactRef(artifact, null);
@@ -740,10 +766,17 @@ public abstract class BasicResolver extends AbstractResolver {
         return false;
     }
     
-    public String locate(Artifact artifact) {
+    public ArtifactOrigin locate(Artifact artifact) {
+        ArtifactOrigin origin = getRepositoryCacheManager().getSavedArtifactOrigin(artifact);
+        if (!ArtifactOrigin.isUnknown(origin)) {
+            return origin;
+        }
         ResolvedResource artifactRef = getArtifactRef(artifact, null);
         if (artifactRef != null && artifactRef.getResource().exists()) {
-            return artifactRef.getResource().getName();
+            return new ArtifactOrigin(
+                artifact, 
+                artifactRef.getResource().isLocal(), 
+                artifactRef.getResource().getName());
         }
         return null;
     }

@@ -54,8 +54,10 @@ public interface RepositoryCacheManager {
             ModuleDescriptor descriptor, String metadataResolverName, String artifactResolverName);
 
     /**
-     * Returns the artifact origin of the given artifact as saved in this cache, or
-     * {@link ArtifactOrigin#UNKNOWN} if the origin is unknown.
+     * Returns the artifact origin of the given artifact as saved in this cache.
+     * <p>
+     * If the origin is unknown, the returned ArtifactOrigin instance will return true when 
+     * {@link ArtifactOrigin#isUnknown(ArtifactOrigin)} is called.
      * 
      * @param artifact
      *            the artifact for which the saved artifact origin should be returned.

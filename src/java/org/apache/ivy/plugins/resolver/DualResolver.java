@@ -21,9 +21,11 @@ import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
 
+import org.apache.ivy.core.cache.ArtifactOrigin;
 import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
+import org.apache.ivy.core.report.ArtifactDownloadReport;
 import org.apache.ivy.core.report.DownloadReport;
 import org.apache.ivy.core.resolve.DownloadOptions;
 import org.apache.ivy.core.resolve.ResolveData;
@@ -158,11 +160,27 @@ public class DualResolver extends AbstractResolver {
     }
 
     public boolean exists(Artifact artifact) {
-        return artifactResolver.exists(artifact);
+        if (artifact.isMetadata()) {
+            return ivyResolver.exists(artifact);
+        } else {
+            return artifactResolver.exists(artifact);
+        }
     }
     
-    public String locate(Artifact artifact) {
-        return artifactResolver.locate(artifact);
+    public ArtifactOrigin locate(Artifact artifact) {
+        if (artifact.isMetadata()) {
+            return ivyResolver.locate(artifact);
+        } else {
+            return artifactResolver.locate(artifact);
+        }
+    }
+    
+    public ArtifactDownloadReport download(ArtifactOrigin artifact, DownloadOptions options) {
+        if (artifact.getArtifact().isMetadata()) {
+            return ivyResolver.download(artifact, options);
+        } else {
+            return artifactResolver.download(artifact, options);
+        }
     }
 
     public boolean isAllownomd() {

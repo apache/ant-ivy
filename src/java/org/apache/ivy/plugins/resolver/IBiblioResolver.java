@@ -32,6 +32,7 @@ import java.util.Map;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.ivy.core.IvyPatternHelper;
+import org.apache.ivy.core.cache.ArtifactOrigin;
 import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.DefaultArtifact;
 import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
@@ -508,7 +509,7 @@ public class IBiblioResolver extends URLResolver {
         return super.exists(artifact);
     }
     
-    public String locate(Artifact artifact) {
+    public ArtifactOrigin locate(Artifact artifact) {
         ensureConfigured(getSettings());
         return super.locate(artifact);
     }

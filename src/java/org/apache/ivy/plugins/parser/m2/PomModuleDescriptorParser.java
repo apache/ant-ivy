@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.ivy.core.IvyContext;
+import org.apache.ivy.core.cache.ArtifactOrigin;
 import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.DefaultArtifact;
 import org.apache.ivy.core.module.descriptor.DefaultDependencyDescriptor;
@@ -263,21 +264,27 @@ public final class PomModuleDescriptorParser implements ModuleDescriptorParser {
             Message.debug("no resolver found for " + mrid 
                              + ": no source or javadoc artifact lookup");
         } else {
-            String mainArtifact = resolver.locate(mdBuilder.getMainArtifact());
+            ArtifactOrigin mainArtifact = resolver.locate(mdBuilder.getMainArtifact());
             
-            String sourceArtifact = resolver.locate(mdBuilder.getSourceArtifact());
-            if (sourceArtifact != null && !sourceArtifact.equals(mainArtifact)) {
-                Message.debug("source artifact found for " + mrid);
-                mdBuilder.addSourceArtifact();
-            } else {
-                Message.debug("no source artifact found for " + mrid);
-            }
-            String javadocArtifact = resolver.locate(mdBuilder.getJavadocArtifact());
-            if (javadocArtifact != null && !javadocArtifact.equals(mainArtifact)) {
-                Message.debug("javadoc artifact found for " + mrid);
-                mdBuilder.addJavadocArtifact();
-            } else {
-                Message.debug("no javadoc artifact found for " + mrid);
+            if (!ArtifactOrigin.isUnknown(mainArtifact)) {
+                String mainArtifactLocation = mainArtifact.getLocation();
+
+                ArtifactOrigin sourceArtifact = resolver.locate(mdBuilder.getSourceArtifact());
+                if (!ArtifactOrigin.isUnknown(sourceArtifact)
+                        && !sourceArtifact.getLocation().equals(mainArtifactLocation)) {
+                    Message.debug("source artifact found for " + mrid);
+                    mdBuilder.addSourceArtifact();
+                } else {
+                    Message.debug("no source artifact found for " + mrid);
+                }
+                ArtifactOrigin javadocArtifact = resolver.locate(mdBuilder.getJavadocArtifact());
+                if (!ArtifactOrigin.isUnknown(javadocArtifact) 
+                        && !javadocArtifact.getLocation().equals(mainArtifactLocation)) {
+                    Message.debug("javadoc artifact found for " + mrid);
+                    mdBuilder.addJavadocArtifact();
+                } else {
+                    Message.debug("no javadoc artifact found for " + mrid);
+                }
             }
         }
     }

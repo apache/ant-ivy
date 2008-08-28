@@ -22,10 +22,12 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.util.Map;
 
+import org.apache.ivy.core.cache.ArtifactOrigin;
 import org.apache.ivy.core.cache.RepositoryCacheManager;
 import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
+import org.apache.ivy.core.report.ArtifactDownloadReport;
 import org.apache.ivy.core.report.DownloadReport;
 import org.apache.ivy.core.resolve.DownloadOptions;
 import org.apache.ivy.core.resolve.ResolveData;
@@ -84,12 +86,29 @@ public interface DependencyResolver {
      * </p>
      * 
      * @param artifacts
-     *            an array of artifacts to download
+     *            an array of artifacts to download. Must not be <code>null</code>.
      * @param options
-     *            options to apply for this download
+     *            options to apply for this download. Must not be <code>null</code>.
      * @return a DownloadReport with details about each Artifact download.
      */
     DownloadReport download(Artifact[] artifacts, DownloadOptions options);
+    
+    /**
+     * Download an artifact according to the given DownloadOptions.
+     * <p>
+     * This methods is an alternative to {@link #download(Artifact[], DownloadOptions)}, which
+     * locates and downloads a set of artifacts. This method uses an {@link ArtifactOrigin}, and as
+     * such is only used to materialize an already located Artifact.
+     * </p>
+     * 
+     * @param artifact
+     *            the location of the artifact to download. Must not be <code>null</code>.
+     * @param options
+     *            options to apply for this download. Must not be <code>null</code>.
+     * @return a report detailing how the download has gone, is never <code>null</code>.
+     */
+    ArtifactDownloadReport download(ArtifactOrigin artifact, DownloadOptions options);
+    
 
     /**
      * Returns <code>true</code> if the given artifact can be located by this resolver and
@@ -103,15 +122,15 @@ public interface DependencyResolver {
     boolean exists(Artifact artifact);
 
     /**
-     * Locates the given artifact and returns a String identifying its location if it can be located
-     * by this resolver and if it actually exists, or <code>null</code> in other cases.
+     * Locates the given artifact and returns its location if it can be located by this resolver and
+     * if it actually exists, or <code>null</code> in other cases.
      * 
      * @param artifact
      *            the artifact which should be located
-     * @return a String identifying the artifact location, or <code>null</code> if it can't be
-     *         located or doesn't exist.
+     * @return the artifact location, or <code>null</code> if it can't be located by this resolver
+     *         or doesn't exist.
      */
-    String locate(Artifact artifact);
+    ArtifactOrigin locate(Artifact artifact);
 
     void publish(Artifact artifact, File src, boolean overwrite) throws IOException;
     

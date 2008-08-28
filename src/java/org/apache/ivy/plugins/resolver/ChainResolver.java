@@ -25,6 +25,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.ivy.core.cache.ArtifactOrigin;
 import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
@@ -300,6 +301,30 @@ public class ChainResolver extends AbstractResolver {
             }
         }
         return false;
+    }
+    
+    public ArtifactOrigin locate(Artifact artifact) {
+        for (Iterator iter = chain.iterator(); iter.hasNext();) {
+            DependencyResolver resolver = (DependencyResolver) iter.next();
+            ArtifactOrigin origin = resolver.locate(artifact);
+            if (!ArtifactOrigin.isUnknown(origin)) {
+                return origin;
+            }
+        }
+        return ArtifactOrigin.unkwnown(artifact);
+    }
+    
+    public ArtifactDownloadReport download(ArtifactOrigin artifact, DownloadOptions options) {
+        for (Iterator iter = chain.iterator(); iter.hasNext();) {
+            DependencyResolver resolver = (DependencyResolver) iter.next();
+            ArtifactDownloadReport adr = resolver.download(artifact, options);
+            if (adr.getDownloadStatus() != DownloadStatus.FAILED) {
+                return adr;
+            }
+        }
+        ArtifactDownloadReport adr = new ArtifactDownloadReport(artifact.getArtifact());
+        adr.setDownloadStatus(DownloadStatus.FAILED);
+        return adr;
     }
     
     private static void setLatest(DependencyResolver resolver, LatestStrategy latest) {

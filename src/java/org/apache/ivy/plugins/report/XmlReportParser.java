@@ -133,12 +133,12 @@ public class XmlReportParser {
                                 new File(attributes.getValue("original-local-location")));
                         }
                         if (attributes.getValue("origin-location") != null) {
-                            if (ArtifactOrigin.UNKNOWN.getLocation().equals(
-                                    attributes.getValue("origin-location"))) {
-                                madr.setArtifactOrigin(ArtifactOrigin.UNKNOWN);
+                            if (ArtifactOrigin.isUnknown(attributes.getValue("origin-location"))) {
+                                madr.setArtifactOrigin(ArtifactOrigin.unkwnown(madr.getArtifact()));
                             } else {
                                 madr.setArtifactOrigin(
                                     new ArtifactOrigin(
+                                        madr.getArtifact(),
                                         parseBoolean(attributes.getValue("origin-is-local")),
                                         attributes.getValue("origin-location")));
                             }
@@ -171,12 +171,12 @@ public class XmlReportParser {
                     ArtifactDownloadReport aReport = (ArtifactDownloadReport) 
                         revisionArtifacts.get(revisionArtifacts.size() - 1);
                     
-                    if (ArtifactOrigin.UNKNOWN.getLocation().equals(
-                        attributes.getValue("location"))) {
-                        aReport.setArtifactOrigin(ArtifactOrigin.UNKNOWN);
+                    if (ArtifactOrigin.isUnknown(attributes.getValue("location"))) {
+                        aReport.setArtifactOrigin(ArtifactOrigin.unkwnown(aReport.getArtifact()));
                     } else {
                         aReport.setArtifactOrigin(
                             new ArtifactOrigin(
+                                aReport.getArtifact(),
                                 parseBoolean(attributes.getValue("is-local")),
                                 attributes.getValue("location")));
                     }

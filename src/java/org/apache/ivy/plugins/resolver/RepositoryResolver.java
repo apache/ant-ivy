@@ -152,6 +152,10 @@ public class RepositoryResolver extends AbstractPatternsBasedResolver {
             return found;
         }
     }
+    
+    protected Resource getResource(String source) throws IOException {
+        return repository.getResource(source);
+    }
 
     /**
      * List all revisions as resolved resources for the given artifact in the given repository using

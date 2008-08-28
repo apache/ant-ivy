@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.ivy.core.IvyPatternHelper;
+import org.apache.ivy.core.cache.ArtifactOrigin;
 import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
 import org.apache.ivy.core.report.DownloadReport;
@@ -291,7 +292,7 @@ public class IvyRepResolver extends URLResolver {
         return super.exists(artifact);
     }
     
-    public String locate(Artifact artifact) {
+    public ArtifactOrigin locate(Artifact artifact) {
         ensureArtifactConfigured(getSettings());
         return super.locate(artifact);
     }

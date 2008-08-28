@@ -342,7 +342,7 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
     public File getArchiveFileInCache(Artifact artifact, ArtifactOrigin origin) {
         File archive = new File(getRepositoryCacheRoot(), getArchivePathInCache(artifact, origin));
         if (!archive.exists() 
-                && origin != null && origin != ArtifactOrigin.UNKNOWN && origin.isLocal()) {
+                && !ArtifactOrigin.isUnknown(origin) && origin.isLocal()) {
             File original = new File(origin.getLocation());
             if (original.exists()) {
                 return original;
@@ -359,7 +359,7 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
      */
     private File getArchiveFileInCache(
             Artifact artifact, ArtifactOrigin origin, boolean useOrigin) {
-        if (useOrigin && origin != null && origin != ArtifactOrigin.UNKNOWN && origin.isLocal()) {
+        if (useOrigin && !ArtifactOrigin.isUnknown(origin) && origin.isLocal()) {
             return new File(origin.getLocation());
         } else {
             return new File(getRepositoryCacheRoot(), getArchivePathInCache(artifact, origin));
@@ -452,7 +452,7 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
         ModuleRevisionId mrid = artifact.getModuleRevisionId();
         if (!lockMetadataArtifact(mrid)) {
             Message.error("impossible to acquire lock for " + mrid);
-            return ArtifactOrigin.UNKNOWN;
+            return ArtifactOrigin.unkwnown(artifact);
         }
         try {
             PropertiesFile cdf = getCachedDataFile(artifact.getModuleRevisionId());
@@ -462,10 +462,10 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
 
             if (location == null) {
                 // origin has not been specified, return null
-                return ArtifactOrigin.UNKNOWN;
+                return ArtifactOrigin.unkwnown(artifact);
             }
 
-            return new ArtifactOrigin(isLocal, location);
+            return new ArtifactOrigin(artifact, isLocal, location);
         } finally {
             unlockMetadataArtifact(mrid);
         }
@@ -772,20 +772,20 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
                 try {
                     ResolvedResource artifactRef = resourceResolver.resolve(artifact);
                     if (artifactRef != null) {
-                        origin = new ArtifactOrigin(artifactRef.getResource().isLocal(),
+                        origin = new ArtifactOrigin(
+                            artifact,
+                            artifactRef.getResource().isLocal(),
                             artifactRef.getResource().getName());
                         if (useOrigin && artifactRef.getResource().isLocal()) {
                             saveArtifactOrigin(artifact, origin);
-                            archiveFile = getArchiveFileInCache(artifact,
-                                origin);
+                            archiveFile = getArchiveFileInCache(artifact, origin);
                             adr.setDownloadStatus(DownloadStatus.NO);
                             adr.setSize(archiveFile.length());
                             adr.setArtifactOrigin(origin);
                             adr.setLocalFile(archiveFile);
                         } else {
                             // refresh archive file now that we better now its origin
-                            archiveFile = getArchiveFileInCache(artifact,
-                                origin, useOrigin);
+                            archiveFile = getArchiveFileInCache(artifact, origin, useOrigin);
                             if (ResourceHelper.equals(artifactRef.getResource(), archiveFile)) {
                                 throw new IllegalStateException("invalid settings for '"
                                     + resourceResolver
@@ -1026,7 +1026,8 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
     private ArtifactOrigin getDefaultMetadataArtifactOrigin(ModuleRevisionId mrid) {
         // it's important to say the origin is not local to make sure it won't ever be used for
         // anything else than original token
-        return new ArtifactOrigin(false, getIvyFileInCache(mrid).getPath());
+        return new ArtifactOrigin(
+            DefaultArtifact.newIvyArtifact(mrid, null), false, getIvyFileInCache(mrid).getPath());
     }
     
     private Artifact getDefaultMetadataArtifact(ModuleRevisionId mrid) {

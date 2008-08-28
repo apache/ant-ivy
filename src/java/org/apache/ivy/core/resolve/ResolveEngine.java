@@ -38,6 +38,7 @@ import java.util.Set;
 import org.apache.ivy.Ivy;
 import org.apache.ivy.core.IvyContext;
 import org.apache.ivy.core.LogOptions;
+import org.apache.ivy.core.cache.ArtifactOrigin;
 import org.apache.ivy.core.cache.ResolutionCacheManager;
 import org.apache.ivy.core.event.EventManager;
 import org.apache.ivy.core.event.download.PrepareDownloadEvent;
@@ -394,12 +395,56 @@ public class ResolveEngine {
      * @param artifact
      *            the artifact to download
      * @return a report concerning the download
+     * @see #download(ArtifactOrigin, DownloadOptions)
      */
     public ArtifactDownloadReport download(Artifact artifact, DownloadOptions options) {
         DependencyResolver resolver = settings.getResolver(artifact.getModuleRevisionId());
         DownloadReport r = resolver.download(new Artifact[] {artifact}, options);
         return r.getArtifactReport(artifact);
     }
+    
+    /**
+     * Locates an artifact in dependency resolvers, and return its location if it can be located and
+     * actually exists, or an unknown {@link ArtifactOrigin} in other cases.
+     * 
+     * @param artifact
+     *            the artifact to locate.
+     * @return the artifact location, should be tested with
+     *         {@link ArtifactOrigin#isUnknown(ArtifactOrigin)} to check if the artifact has
+     *         actually been located.
+     */
+    public ArtifactOrigin locate(Artifact artifact) {
+        DependencyResolver resolver = settings.getResolver(artifact.getModuleRevisionId());
+        return resolver.locate(artifact);
+    }
+    
+    /**
+     * Materialize an artifact already located.
+     * <p>
+     * Not used internally, useful especially for IDE plugins needing to download artifact one by
+     * one (for source or javadoc artifact, for instance).
+     * </p>
+     * <p>
+     * Materialized artifact file can be accessed using
+     * {@link ArtifactDownloadReport#getLocalFile()}.
+     * </p>
+     * <p>
+     * It is possible to track the progression of the download using classical ivy progress
+     * monitoring feature (see addTransferListener).
+     * </p>
+     * 
+     * @param origin
+     *            the artifact origin to materialize
+     * @return a report concerning the download
+     * @see #download(Artifact, DownloadOptions)
+     * @see #locate(Artifact)
+     */
+    public ArtifactDownloadReport download(ArtifactOrigin origin, DownloadOptions options) {
+        DependencyResolver resolver = settings.getResolver(
+            origin.getArtifact().getModuleRevisionId());
+        return resolver.download(origin, options);
+    }
+    
 
     /**
      * Resolve the dependencies of a module without downloading corresponding artifacts. The module

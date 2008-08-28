@@ -222,7 +222,7 @@ public class IvyArtifactReport extends IvyPostResolveTask {
             ArtifactDownloadReport artifact) 
             throws IOException, SAXException {
         ArtifactOrigin origin = artifact.getArtifactOrigin();
-        if (origin != ArtifactOrigin.UNKNOWN && origin != null) {
+        if (!ArtifactOrigin.isUnknown(origin)) {
             String originName = origin.getLocation();
             boolean isOriginLocal = origin.isLocal();
 

@@ -438,14 +438,14 @@ public final class IvyPatternHelper {
 
                 origin = cacheManager.getSavedArtifactOrigin(artifact);
 
-                if (origin == ArtifactOrigin.UNKNOWN) {
+                if (ArtifactOrigin.isUnknown(origin)) {
                     Message.debug("no artifact origin found for " + artifact + " in "
                             + cacheManager);
                     return null;
                 }
             }
 
-            if (origin == ArtifactOrigin.UNKNOWN) {
+            if (ArtifactOrigin.isUnknown(origin)) {
                 return null;
             }
 

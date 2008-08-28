@@ -112,7 +112,7 @@ public class CacheResolver extends FileSystemResolver {
             if (artifactRef != null) {
                 Message.verbose("\t[NOT REQUIRED] " + artifacts[i]);
                 ArtifactOrigin origin = new ArtifactOrigin(
-                    true, artifactRef.getResource().getName());
+                    artifacts[i], true, artifactRef.getResource().getName());
                 File archiveFile = ((FileResource) artifactRef.getResource()).getFile();
                 adr.setDownloadStatus(DownloadStatus.NO);
                 adr.setSize(archiveFile.length());
@@ -130,7 +130,7 @@ public class CacheResolver extends FileSystemResolver {
         return super.exists(artifact);
     }
     
-    public String locate(Artifact artifact) {
+    public ArtifactOrigin locate(Artifact artifact) {
         ensureConfigured();
         return super.locate(artifact);
     }

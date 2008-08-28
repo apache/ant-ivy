@@ -52,7 +52,7 @@ public class DefaultRepositoryCacheManagerTest extends TestCase {
         cacheManager.setBasedir(f);
 
         artifact = createArtifact("org", "module", "rev", "name", "type", "ext");
-        origin = new ArtifactOrigin(true, "/some/where");
+        origin = new ArtifactOrigin(artifact, true, "/some/where");
         cacheManager.saveArtifactOrigin(artifact, origin);
     }
 
@@ -69,7 +69,7 @@ public class DefaultRepositoryCacheManagerTest extends TestCase {
 
         artifact = createArtifact("org", "module", "rev", "name", "type2", "ext");
         found = cacheManager.getSavedArtifactOrigin(artifact);
-        assertEquals(ArtifactOrigin.UNKNOWN, found);
+        assertTrue(ArtifactOrigin.isUnknown(found));
     }
 
     public void testUniqueness() {
@@ -77,27 +77,27 @@ public class DefaultRepositoryCacheManagerTest extends TestCase {
 
         artifact = createArtifact("org1", "module", "rev", "name", "type", "ext");
         ArtifactOrigin found = cacheManager.getSavedArtifactOrigin(artifact);
-        assertEquals(ArtifactOrigin.UNKNOWN, found);
+        assertTrue(ArtifactOrigin.isUnknown(found));
 
         artifact = createArtifact("org", "module1", "rev", "name", "type", "ext");
         found = cacheManager.getSavedArtifactOrigin(artifact);
-        assertEquals(ArtifactOrigin.UNKNOWN, found);
+        assertTrue(ArtifactOrigin.isUnknown(found));
 
         artifact = createArtifact("org", "module", "rev1", "name", "type", "ext");
         found = cacheManager.getSavedArtifactOrigin(artifact);
-        assertEquals(ArtifactOrigin.UNKNOWN, found);
+        assertTrue(ArtifactOrigin.isUnknown(found));
 
         artifact = createArtifact("org", "module", "rev", "name1", "type", "ext");
         found = cacheManager.getSavedArtifactOrigin(artifact);
-        assertEquals(ArtifactOrigin.UNKNOWN, found);
+        assertTrue(ArtifactOrigin.isUnknown(found));
 
         artifact = createArtifact("org", "module", "rev", "name", "type1", "ext");
         found = cacheManager.getSavedArtifactOrigin(artifact);
-        assertEquals(ArtifactOrigin.UNKNOWN, found);
+        assertTrue(ArtifactOrigin.isUnknown(found));
 
         artifact = createArtifact("org", "module", "rev", "name", "type", "ext1");
         found = cacheManager.getSavedArtifactOrigin(artifact);
-        assertEquals(ArtifactOrigin.UNKNOWN, found);
+        assertTrue(ArtifactOrigin.isUnknown(found));
     }
 
     protected Artifact createArtifact(String org, String module, String rev, String name,
