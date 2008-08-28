@@ -739,6 +739,14 @@ public abstract class BasicResolver extends AbstractResolver {
         }
         return false;
     }
+    
+    public String locate(Artifact artifact) {
+        ResolvedResource artifactRef = getArtifactRef(artifact, null);
+        if (artifactRef != null && artifactRef.getResource().exists()) {
+            return artifactRef.getResource().getName();
+        }
+        return null;
+    }
 
     protected long getPublicationDate(ModuleDescriptor md, DependencyDescriptor dd, 
             ResolveData data) {

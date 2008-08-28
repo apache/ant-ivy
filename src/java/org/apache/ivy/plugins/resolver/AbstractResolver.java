@@ -191,11 +191,15 @@ public abstract class AbstractResolver
         return getClass().getName();
     }
 
+    public boolean exists(Artifact artifact) {
+        return locate(artifact) != null;
+    }
+
     /**
      * Default implementation actually download the artifact Subclasses should overwrite this to
      * avoid the download
      */
-    public boolean exists(Artifact artifact) {
+    public String locate(Artifact artifact) {
         DownloadReport dr = download(new Artifact[] {artifact}, new DownloadOptions());
         if (dr == null) {
             /*
@@ -207,7 +211,8 @@ public abstract class AbstractResolver
                 + " when trying to download " + artifact);
         }
         ArtifactDownloadReport adr = dr.getArtifactReport(artifact);
-        return adr.getDownloadStatus() != DownloadStatus.FAILED;
+        return adr.getDownloadStatus() == DownloadStatus.FAILED  || adr.getArtifactOrigin() == null
+                    ? null : adr.getArtifactOrigin().getLocation();
     }
 
     public LatestStrategy getLatestStrategy() {

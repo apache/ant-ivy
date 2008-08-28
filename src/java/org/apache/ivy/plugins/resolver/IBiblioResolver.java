@@ -507,6 +507,11 @@ public class IBiblioResolver extends URLResolver {
         ensureConfigured(getSettings());
         return super.exists(artifact);
     }
+    
+    public String locate(Artifact artifact) {
+        ensureConfigured(getSettings());
+        return super.locate(artifact);
+    }
 
     public List getArtifactPatterns() {
         ensureConfigured(getSettings());

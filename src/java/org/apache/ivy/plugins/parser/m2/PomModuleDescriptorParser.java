@@ -241,7 +241,7 @@ public final class PomModuleDescriptorParser implements ModuleDescriptorParser {
                     mdBuilder.addPlugin(plugin);
                 }
                 
-                mdBuilder.addArtifact(artifactId , domReader.getPackaging());
+                mdBuilder.addMainArtifact(artifactId , domReader.getPackaging());
                 
                 addSourcesAndJavadocArtifactsIfPresent(mdBuilder, ivySettings);
             }            
@@ -263,15 +263,17 @@ public final class PomModuleDescriptorParser implements ModuleDescriptorParser {
             Message.debug("no resolver found for " + mrid 
                              + ": no source or javadoc artifact lookup");
         } else {
-            Artifact sourceArtifact = mdBuilder.getSourceArtifact();
-            if (resolver.exists(sourceArtifact)) {
+            String mainArtifact = resolver.locate(mdBuilder.getMainArtifact());
+            
+            String sourceArtifact = resolver.locate(mdBuilder.getSourceArtifact());
+            if (sourceArtifact != null && !sourceArtifact.equals(mainArtifact)) {
                 Message.debug("source artifact found for " + mrid);
                 mdBuilder.addSourceArtifact();
             } else {
                 Message.debug("no source artifact found for " + mrid);
             }
-            Artifact javadocArtifact = mdBuilder.getJavadocArtifact();
-            if (resolver.exists(javadocArtifact)) {
+            String javadocArtifact = resolver.locate(mdBuilder.getJavadocArtifact());
+            if (javadocArtifact != null && !javadocArtifact.equals(mainArtifact)) {
                 Message.debug("javadoc artifact found for " + mrid);
                 mdBuilder.addJavadocArtifact();
             } else {

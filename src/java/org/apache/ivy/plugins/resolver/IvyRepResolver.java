@@ -290,6 +290,11 @@ public class IvyRepResolver extends URLResolver {
         ensureArtifactConfigured(getSettings());
         return super.exists(artifact);
     }
+    
+    public String locate(Artifact artifact) {
+        ensureArtifactConfigured(getSettings());
+        return super.locate(artifact);
+    }
 
     public List getIvyPatterns() {
         ensureIvyConfigured(getSettings());

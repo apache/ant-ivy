@@ -301,7 +301,7 @@ public class ChainResolver extends AbstractResolver {
         }
         return false;
     }
-
+    
     private static void setLatest(DependencyResolver resolver, LatestStrategy latest) {
         if (resolver instanceof HasLatestStrategy) {
             HasLatestStrategy r = (HasLatestStrategy) resolver;

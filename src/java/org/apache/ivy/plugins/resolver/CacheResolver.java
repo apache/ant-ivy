@@ -129,6 +129,11 @@ public class CacheResolver extends FileSystemResolver {
         ensureConfigured();
         return super.exists(artifact);
     }
+    
+    public String locate(Artifact artifact) {
+        ensureConfigured();
+        return super.locate(artifact);
+    }
 
     public void publish(Artifact artifact, File src, boolean overwrite) throws IOException {
         ensureConfigured();

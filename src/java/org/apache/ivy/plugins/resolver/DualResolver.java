@@ -160,6 +160,10 @@ public class DualResolver extends AbstractResolver {
     public boolean exists(Artifact artifact) {
         return artifactResolver.exists(artifact);
     }
+    
+    public String locate(Artifact artifact) {
+        return artifactResolver.locate(artifact);
+    }
 
     public boolean isAllownomd() {
         return allownomd;

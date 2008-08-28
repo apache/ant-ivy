@@ -181,6 +181,8 @@ public class PomModuleDescriptorBuilder {
 
     private ModuleRevisionId mrid;
 
+    private DefaultArtifact mainArtifact;
+
     
     public PomModuleDescriptorBuilder(ModuleDescriptorParser parser, Resource res) {
         ivyModuleDescriptor = new DefaultModuleDescriptor(parser, res);
@@ -212,7 +214,7 @@ public class PomModuleDescriptorBuilder {
     }
 
 
-    public void addArtifact(String artifactId, String packaging) {
+    public void addMainArtifact(String artifactId, String packaging) {
         String ext;
         if ("pom".equals(packaging)) {
             // no artifact defined!
@@ -238,8 +240,8 @@ public class PomModuleDescriptorBuilder {
             }
         }
 
-        ivyModuleDescriptor.addArtifact("master", 
-                new DefaultArtifact(mrid, new Date(), artifactId, packaging, ext));
+        mainArtifact = new DefaultArtifact(mrid, new Date(), artifactId, packaging, ext);
+        ivyModuleDescriptor.addArtifact("master", mainArtifact);
     }
 
 
@@ -487,6 +489,9 @@ public class PomModuleDescriptorBuilder {
         addExtraInfo(getPropertyExtraInfoKey(propertyName), value);
     }
 
+    public Artifact getMainArtifact() {
+        return mainArtifact;
+    }
 
     public Artifact getSourceArtifact() {
         return new MDArtifact(

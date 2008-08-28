@@ -91,7 +91,27 @@ public interface DependencyResolver {
      */
     DownloadReport download(Artifact[] artifacts, DownloadOptions options);
 
+    /**
+     * Returns <code>true</code> if the given artifact can be located by this resolver and
+     * actually exist.
+     * 
+     * @param artifact
+     *            the artifact which should be tested.
+     * @return <code>true</code> if the given artifact can be located by this resolver and
+     *         actually exist.
+     */
     boolean exists(Artifact artifact);
+
+    /**
+     * Locates the given artifact and returns a String identifying its location if it can be located
+     * by this resolver and if it actually exists, or <code>null</code> in other cases.
+     * 
+     * @param artifact
+     *            the artifact which should be located
+     * @return a String identifying the artifact location, or <code>null</code> if it can't be
+     *         located or doesn't exist.
+     */
+    String locate(Artifact artifact);
 
     void publish(Artifact artifact, File src, boolean overwrite) throws IOException;
     
