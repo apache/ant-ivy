@@ -92,7 +92,7 @@ public class PublishEngine {
             mrid, options.getPubBranch(), options.getPubrevision());
         File ivyFile;
         if (options.getSrcIvyPattern() != null) {
-            ivyFile = new File(IvyPatternHelper.substitute(options.getSrcIvyPattern(),
+            ivyFile = settings.resolveFile(IvyPatternHelper.substitute(options.getSrcIvyPattern(),
                 DefaultArtifact.newIvyArtifact(pubmrid, new Date())));
             if (!ivyFile.exists()) {
                 throw new IllegalArgumentException("ivy file to publish not found for " + mrid
@@ -201,7 +201,7 @@ public class PublishEngine {
             Artifact artifact = (Artifact) iter.next();
             for (Iterator iterator = srcArtifactPattern.iterator(); iterator.hasNext();) {
                 String pattern = (String) iterator.next();
-                File artifactFile = new File(
+                File artifactFile = settings.resolveFile(
                     IvyPatternHelper.substitute(settings.substitute(pattern), artifact));
                 if (artifactFile.exists()) {
                     artifactsFiles.put(artifact, artifactFile);
@@ -213,7 +213,7 @@ public class PublishEngine {
                 for (Iterator iterator = srcArtifactPattern.iterator(); iterator.hasNext();) {
                     String pattern = (String) iterator.next();
                     Message.info("\t"
-                            + new File(IvyPatternHelper.substitute(pattern, artifact))
+                            + settings.resolveFile(IvyPatternHelper.substitute(pattern, artifact))
                             + " file does not exist");
                 }
                 if (options.isHaltOnMissing()) {
@@ -224,7 +224,7 @@ public class PublishEngine {
         }
         if (options.getSrcIvyPattern() != null) {
             Artifact artifact = MDArtifact.newIvyArtifact(md);
-            File artifactFile = new File(
+            File artifactFile = settings.resolveFile(
                 IvyPatternHelper.substitute(options.getSrcIvyPattern(), artifact));
             if (!artifactFile.exists()) {
                 Message.info("missing ivy file for "

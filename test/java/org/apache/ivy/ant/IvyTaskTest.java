@@ -45,7 +45,7 @@ public class IvyTaskTest extends TestCase {
         IvySettings settings = ivy.getSettings();
         assertNotNull(settings);
 
-        assertEquals(new File("build/cache"), settings.getDefaultCache());
+        assertEquals(new File("test/repositories/build/cache").getAbsoluteFile(), settings.getDefaultCache());
         // The next test doesn't always works on windows (mix C: and c: drive)
         assertEquals(new File("test/repositories/ivysettings.xml").getAbsolutePath().toUpperCase(),
             new File((String) settings.getVariables().getVariable("ivy.settings.file")).getAbsolutePath()
@@ -79,7 +79,7 @@ public class IvyTaskTest extends TestCase {
         IvySettings settings = ivy.getSettings();
         assertNotNull(settings);
 
-        assertEquals(new File("build/cache"), settings.getDefaultCache());
+        assertEquals(new File("build/cache").getAbsoluteFile(), settings.getDefaultCache());
         assertEquals(new File("test/repositories/ivysettings.xml").getAbsolutePath(), settings
                 .getVariables().getVariable("ivy.settings.file"));
         assertEquals(new File("test/repositories/ivysettings.xml").toURI().toURL().toExternalForm(),

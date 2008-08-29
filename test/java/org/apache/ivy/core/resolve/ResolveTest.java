@@ -761,13 +761,13 @@ public class ResolveTest extends TestCase {
         // ivy file should be cached in default cache, and artifact in cache2
         assertTrue(cacheMgr1.getIvyFileInCache(depMrid).exists());
         assertFalse(cacheMgr1.getArchiveFileInCache(depArtifact).exists());
-        assertEquals(new File(cache, "repo1/mod1.1/ivy-1.0.xml"), 
-            cacheMgr1.getIvyFileInCache(depMrid));
+        assertEquals(new File(cache, "repo1/mod1.1/ivy-1.0.xml").getCanonicalFile(), 
+            cacheMgr1.getIvyFileInCache(depMrid).getCanonicalFile());
         
         assertFalse(cacheMgr2.getIvyFileInCache(depMrid).exists());
         assertTrue(cacheMgr2.getArchiveFileInCache(depArtifact).exists());
-        assertEquals(new File(cache, "repo2/mod1.1-1.0/mod1.1.jar"), 
-            cacheMgr2.getArchiveFileInCache(depArtifact));
+        assertEquals(new File(cache, "repo2/mod1.1-1.0/mod1.1.jar").getCanonicalFile(), 
+            cacheMgr2.getArchiveFileInCache(depArtifact).getCanonicalFile());
     }
 
     public void testForceLocal() throws Exception {

@@ -183,7 +183,7 @@ public class DeliverEngine {
         confsToRemove.removeAll(Arrays.asList(confs));
 
         try {
-            XmlModuleDescriptorUpdater.update(ivyFileURL, new File(publishedIvy),
+            XmlModuleDescriptorUpdater.update(ivyFileURL, settings.resolveFile(publishedIvy),
                     new UpdateOptions()
                         .setSettings(settings)
                         .setResolvedRevisions(resolvedDependencies)

@@ -243,6 +243,7 @@ public class IvyAntSettings extends DataType {
         IvyAntVariableContainer ivyAntVariableContainer = new IvyAntVariableContainer(getProject());
 
         IvySettings settings = new IvySettings(ivyAntVariableContainer);
+        settings.setBaseDir(getProject().getBaseDir());
         
         if (file == null && url == null) {
             defineDefaultSettingFile(ivyAntVariableContainer);

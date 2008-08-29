@@ -130,6 +130,7 @@ public class XmlSettingsParser extends DefaultHandler {
 
     public void parse(URL settings) throws ParseException, IOException {
         configurator = new Configurator();
+        configurator.setFileResolver(ivy);
         // put every type definition from ivy to configurator
         Map typeDefs = ivy.getTypeDefs();
         for (Iterator iter = typeDefs.keySet().iterator(); iter.hasNext();) {
@@ -275,7 +276,7 @@ public class XmlSettingsParser extends DefaultHandler {
         
         String cache = (String) attributes.get("defaultCacheDir");
         if (cache != null) {
-            ivy.setDefaultCache(new File(cache));
+            ivy.setDefaultCache(resolveFile(cache));
         }
         String up2d = (String) attributes.get("checkUpToDate");
         if (up2d != null) {
@@ -312,7 +313,7 @@ public class XmlSettingsParser extends DefaultHandler {
         if (cache != null) {
             Message.deprecated("'defaultCache' is deprecated, "
                 + "use 'caches[@defaultCacheDir]' instead (" + settings + ")");
-            ivy.setDefaultCache(new File(cache));
+            ivy.setDefaultCache(resolveFile(cache));
         }
         String defaultBranch = (String) attributes.get("defaultBranch");
         if (defaultBranch != null) {
@@ -384,7 +385,7 @@ public class XmlSettingsParser extends DefaultHandler {
             } else {
                 settingsURL = urlFromFileAttribute(propFilePath);
                 Message.verbose("including file: " + settingsURL);
-                ivy.setSettingsVariables(new File(propFilePath));
+                ivy.setSettingsVariables(resolveFile(propFilePath));
                 //We can not use the setSettingsVariables(URL) because that would put different
                 //values for the properties.  I'm not sure what would be the regression...
             }
@@ -469,7 +470,7 @@ public class XmlSettingsParser extends DefaultHandler {
                 throw new IllegalArgumentException(
                         "either url or file should be given for classpath element");
             } else {
-                url = new File(file).toURI().toURL();
+                url = resolveFile(file).toURI().toURL();
             }
         } else {
             url = new URL(urlStr);
@@ -591,5 +592,9 @@ public class XmlSettingsParser extends DefaultHandler {
             }
             ivy.setDefaultLockStrategy(strategy);
         }
+    }
+
+    private File resolveFile(String filePath) {
+        return ivy.resolveFile(filePath);
     }
 }

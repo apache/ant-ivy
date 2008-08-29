@@ -39,7 +39,7 @@ public class FileResource implements Resource {
     }
 
     public Resource clone(String cloneName) {
-        return new FileResource(repository, new File(cloneName));
+        return new FileResource(repository, repository.getFile(cloneName));
     }
 
     public long getLastModified() {

@@ -161,7 +161,7 @@ public class FileSystemResolverTest extends AbstractDependencyResolverTest {
             new DefaultDependencyDescriptor(mrid, false), data);
         
         // check that the found ivy file is the one from the first pattern!
-        assertEquals("test/repositories/multi-ivypattern/ivy1/ivy-1.0.xml", 
+        assertEquals("./test/repositories/multi-ivypattern/ivy1/ivy-1.0.xml", 
             ivyRef.getResource().getName().replace('\\', '/'));
     }
 

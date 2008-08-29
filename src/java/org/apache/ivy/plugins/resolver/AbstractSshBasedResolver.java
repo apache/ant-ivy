@@ -51,8 +51,8 @@ public abstract class AbstractSshBasedResolver extends RepositoryResolver {
      * @param filePath
      *            full file path name
      */
-    public void setKeyFile(String filePath) {
-        getSshBasedRepository().setKeyFile(new File(filePath));
+    public void setKeyFile(File filePath) {
+        getSshBasedRepository().setKeyFile(filePath);
     }
 
     /**
@@ -60,8 +60,8 @@ public abstract class AbstractSshBasedResolver extends RepositoryResolver {
      * load username and passwd entries, and to store them if the user choose to do so. Defaults to
      * user.dir/.ivy/[host].sftp.passwd, set it to null to disable this feature.
      */
-    public void setPassfile(String passfile) {
-        getSshBasedRepository().setPassFile(passfile == null ? null : new File(passfile));
+    public void setPassfile(File passfile) {
+        getSshBasedRepository().setPassFile(passfile);
         passfileSet = true;
     }
 

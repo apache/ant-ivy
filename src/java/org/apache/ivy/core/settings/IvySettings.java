@@ -98,6 +98,8 @@ import org.apache.ivy.plugins.version.LatestVersionMatcher;
 import org.apache.ivy.plugins.version.SubVersionMatcher;
 import org.apache.ivy.plugins.version.VersionMatcher;
 import org.apache.ivy.plugins.version.VersionRangeMatcher;
+import org.apache.ivy.util.FileResolver;
+import org.apache.ivy.util.FileUtil;
 import org.apache.ivy.util.Message;
 import org.apache.ivy.util.filter.Filter;
 import org.apache.ivy.util.url.URLHandlerRegistry;
@@ -105,7 +107,7 @@ import org.apache.ivy.util.url.URLHandlerRegistry;
 public class IvySettings implements SortEngineSettings, PublishEngineSettings, ParserSettings,
         DeliverEngineSettings, CheckEngineSettings, InstallEngineSettings, 
         ResolverSettings, ResolveEngineSettings, RetrieveEngineSettings, 
-        RepositoryManagementEngineSettings {
+        RepositoryManagementEngineSettings, FileResolver {
     private static final long INTERUPT_TIMEOUT = 2000;
 
     private Map typeDefs = new HashMap();
@@ -179,6 +181,8 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
     private boolean useRemoteConfig = false;
 
     private File defaultUserDir;
+    
+    private File baseDir = new File(".");
 
     private List classpathURLs = new ArrayList();
 
@@ -218,7 +222,7 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
             String[] files = ivyTypeDefs.split("\\,");
             for (int i = 0; i < files.length; i++) {
                 try {
-                    typeDefs(new FileInputStream(new File(files[i].trim())), true);
+                    typeDefs(new FileInputStream(resolveFile(files[i].trim())), true);
                 } catch (FileNotFoundException e) {
                     Message.warn("typedefs file not found: " + files[i].trim());
                 } catch (IOException e) {
@@ -360,7 +364,7 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
         long start = System.currentTimeMillis();
         setSettingsVariables(settingsFile);
         if (getVariable("ivy.default.ivy.user.dir") != null) {
-            setDefaultIvyUserDir(new File(getVariable("ivy.default.ivy.user.dir")));
+            setDefaultIvyUserDir(resolveFile(getVariable("ivy.default.ivy.user.dir")));
         } else {
             getDefaultIvyUserDir();
         }
@@ -385,7 +389,7 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
         long start = System.currentTimeMillis();
         setSettingsVariables(settingsURL);
         if (getVariable("ivy.default.ivy.user.dir") != null) {
-            setDefaultIvyUserDir(new File(getVariable("ivy.default.ivy.user.dir")));
+            setDefaultIvyUserDir(resolveFile(getVariable("ivy.default.ivy.user.dir")));
         } else {
             getDefaultIvyUserDir();
         }
@@ -407,7 +411,7 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
      */
     public void defaultInit() throws IOException {
         if (getVariable("ivy.default.ivy.user.dir") != null) {
-            setDefaultIvyUserDir(new File(getVariable("ivy.default.ivy.user.dir")));
+            setDefaultIvyUserDir(resolveFile(getVariable("ivy.default.ivy.user.dir")));
         } else {
             getDefaultIvyUserDir();
         }
@@ -729,11 +733,35 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
             new MapMatcher(attributes, matcher), 
             new ModuleSettings(resolverName, branch, conflictManager, resolveMode));
     }
+    
+    /**
+     * Return the canonical form of a filename.
+     * <p>
+     * If the specified file name is relative it is resolved
+     * with respect to the settings's base directory.
+     *
+     * @param fileName The name of the file to resolve.
+     *                 Must not be <code>null</code>.
+     *
+     * @return the resolved File.
+     *
+     */
+    public File resolveFile(String fileName) {
+        return FileUtil.resolveFile(baseDir, fileName);
+    }
+    
+    public void setBaseDir(File baseDir) {
+        this.baseDir = baseDir;
+    }
+    
+    public File getBaseDir() {
+        return baseDir;
+    }
 
     public File getDefaultIvyUserDir() {
         if (defaultUserDir == null) {
             if (getVariable("ivy.home") != null) {
-                setDefaultIvyUserDir(new File(getVariable("ivy.home")));
+                setDefaultIvyUserDir(resolveFile(getVariable("ivy.home")));
                 Message.verbose("using ivy.default.ivy.user.dir variable for default ivy user dir: "
                                 + defaultUserDir);
             } else {
@@ -754,7 +782,7 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
         if (defaultCache == null) {
             String cache = getVariable("ivy.cache.dir");
             if (cache != null) {
-                defaultCache = new File(cache);
+                defaultCache = resolveFile(cache);
             } else {
                 setDefaultCache(new File(getDefaultIvyUserDir(), "cache"));
                 Message.verbose("no default cache defined: set to " + defaultCache);
@@ -785,7 +813,7 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
     public File getDefaultRepositoryCacheBasedir() {
         String repositoryCacheRoot = getVariable("ivy.cache.repository");
         if (repositoryCacheRoot != null) {
-            return new File(repositoryCacheRoot);
+            return resolveFile(repositoryCacheRoot);
         } else {
             return getDefaultCache();
         }
@@ -794,7 +822,7 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
     public File getDefaultResolutionCacheBasedir() {
         String resolutionCacheRoot = getVariable("ivy.cache.resolution");
         if (resolutionCacheRoot != null) {
-            return new File(resolutionCacheRoot);
+            return resolveFile(resolutionCacheRoot);
         } else {
             return getDefaultCache();
         }
@@ -1415,4 +1443,6 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
             }
         }
     }
+
+    
 }

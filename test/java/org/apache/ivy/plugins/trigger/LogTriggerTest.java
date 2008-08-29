@@ -63,7 +63,7 @@ public class LogTriggerTest extends TestCase {
     public void testFile() throws Exception {
         trigger.setMessage("msg: ${organisation} ${module} ${revision}");
         File f = new File(testDir, "test.log");
-        trigger.setFile(f.getPath());
+        trigger.setFile(f);
         
         trigger.progress(ev);
         
@@ -79,7 +79,7 @@ public class LogTriggerTest extends TestCase {
     public void testFileNoAppend() throws Exception {
         trigger.setMessage("msg: ${organisation} ${module} ${revision}");
         File f = new File(testDir, "test.log");
-        trigger.setFile(f.getPath());
+        trigger.setFile(f);
         trigger.setAppend(false);
         
         trigger.progress(ev);

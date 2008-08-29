@@ -445,7 +445,7 @@ public final class XmlModuleDescriptorUpdater {
                         String urlStr = attributes.getValue("url");
                         url = new URL(urlStr);
                     } else {
-                        url = new File(fileName).toURI().toURL();
+                        url = settings.resolveFile(fileName).toURI().toURL();
                     }
                 }
                 XMLHelper.parse(url, null, new DefaultHandler() {

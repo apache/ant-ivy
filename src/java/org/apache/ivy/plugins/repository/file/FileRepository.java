@@ -110,9 +110,9 @@ public class FileRepository extends AbstractRepository {
         return null;
     }
 
-    private File getFile(String source) {
+    File getFile(String source) {
         if (baseDir != null) {
-            return new File(baseDir, source);
+            return FileUtil.resolveFile(baseDir, source);
         } else {
             return new File(source);
         }
@@ -126,4 +126,11 @@ public class FileRepository extends AbstractRepository {
         this.local = local;
     }
 
+    public File getBaseDir() {
+        return baseDir;
+    }
+    
+    public void setBaseDir(File baseDir) {
+        this.baseDir = baseDir;
+    }
 }

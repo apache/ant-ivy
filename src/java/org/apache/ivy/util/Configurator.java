@@ -17,6 +17,7 @@
  */
 package org.apache.ivy.util;
 
+import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -429,6 +430,8 @@ public class Configurator {
             return objName;
         }
     }
+    
+    private FileResolver fileResolver = FileResolver.DEFAULT;
 
     private Map typedefs = new HashMap();
 
@@ -637,6 +640,8 @@ public class Configurator {
                 convertedValue = Long.valueOf(value);
             } else if (paramClass.equals(Class.class)) {
                 convertedValue = Class.forName(value);
+            } else if (paramClass.equals(File.class)) {
+                convertedValue = fileResolver.resolveFile(value);
             } else {
                 convertedValue = paramClass.getConstructor(new Class[] {String.class}).newInstance(
                     new Object[] {value});
@@ -745,5 +750,14 @@ public class Configurator {
 
     public Class getTypeDef(String name) {
         return (Class) typedefs.get(name);
+    }
+    
+    public FileResolver getFileResolver() {
+        return fileResolver;
+    }
+    
+    public void setFileResolver(FileResolver fileResolver) {
+        Checks.checkNotNull(fileResolver, "fileResolver");
+        this.fileResolver = fileResolver;
     }
 }

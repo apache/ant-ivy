@@ -17,6 +17,7 @@
  */
 package org.apache.ivy.core.cache;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -116,6 +117,14 @@ class ParserSettingsMonitor {
 
         public StatusManager getStatusManager() {
             return delegatedSettings.getStatusManager();
+        }
+        
+        public File getBaseDir() {
+            return delegatedSettings.getBaseDir();
+        }
+        
+        public File resolveFile(String filename) {
+            return delegatedSettings.resolveFile(filename);
         }
 
         public Map substitute(Map strings) {

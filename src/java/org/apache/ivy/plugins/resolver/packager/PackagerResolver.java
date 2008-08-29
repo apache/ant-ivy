@@ -85,15 +85,29 @@ public class PackagerResolver extends URLResolver {
     /**
      * Set root directory under which builds take place.
      */
-    public void setBuildRoot(String buildRoot) {
-        this.buildRoot = new File(buildRoot);
+    public void setBuildRoot(File buildRoot) {
+        this.buildRoot = buildRoot;
+    }
+    
+    /**
+     * Returns root directory under which builds take place. 
+     */
+    public File getBuildRoot() {
+        return buildRoot;
     }
 
     /**
      * Set resource cache directory.
      */
-    public void setResourceCache(String resourceCache) {
-        this.resourceCache = resourceCache != null ? new File(resourceCache) : null;
+    public void setResourceCache(File resourceCache) {
+        this.resourceCache = resourceCache;
+    }
+    
+    /**
+     * Get resource cache directory.
+     */
+    public File getResourceCache() {
+        return resourceCache;
     }
 
     /**

@@ -17,6 +17,7 @@
  */
 package org.apache.ivy.plugins.parser;
 
+import java.io.File;
 import java.util.Map;
 
 import org.apache.ivy.core.RelativeUrlResolver;
@@ -47,5 +48,9 @@ public interface ParserSettings {
     RelativeUrlResolver getRelativeUrlResolver();
     
     DependencyResolver getResolver(ModuleRevisionId mRevId);
+    
+    File resolveFile(String filename);
+    
+    File getBaseDir();
 
 }

@@ -43,6 +43,7 @@ import org.apache.ivy.plugins.resolver.DependencyResolver;
 import org.apache.ivy.plugins.resolver.FileSystemResolver;
 import org.apache.ivy.plugins.resolver.IBiblioResolver;
 import org.apache.ivy.plugins.resolver.MockResolver;
+import org.apache.ivy.plugins.resolver.packager.PackagerResolver;
 import org.apache.ivy.plugins.version.ChainVersionMatcher;
 import org.apache.ivy.plugins.version.MockVersionMatcher;
 import org.apache.ivy.plugins.version.VersionMatcher;
@@ -189,8 +190,10 @@ public class XmlSettingsParserTest extends TestCase {
         XmlSettingsParser parser = new XmlSettingsParser(settings);
         parser.parse(XmlSettingsParserTest.class.getResource("ivysettings-cache.xml"));
 
-        assertEquals(new File("repository"), settings.getDefaultRepositoryCacheBasedir());
-        assertEquals(new File("resolution"), settings.getDefaultResolutionCacheBasedir());
+        assertEquals(new File("repository").getCanonicalFile(), 
+                    settings.getDefaultRepositoryCacheBasedir().getCanonicalFile());
+        assertEquals(new File("resolution").getCanonicalFile(), 
+                    settings.getDefaultResolutionCacheBasedir().getCanonicalFile());
         assertEquals("artifact-lock", settings.getDefaultLockStrategy().getName());
 
         assertEquals("[module]/ivys/ivy-[revision].xml", settings.getDefaultCacheIvyPattern());
@@ -209,7 +212,7 @@ public class XmlSettingsParserTest extends TestCase {
             c.getTTL(ModuleRevisionId.newInstance("org2", "A", "A")));
         assertEquals(60 * 3600 * 1000, // 2d 12h = 60h 
             c.getTTL(ModuleRevisionId.newInstance("org3", "A", "A")));
-        assertEquals(new File("mycache"), c.getBasedir());
+        assertEquals(new File("mycache").getCanonicalFile(), c.getBasedir().getCanonicalFile());
         assertEquals(false, c.isUseOrigin());
         assertEquals("no-lock", c.getLockStrategy().getName());
 
@@ -219,7 +222,7 @@ public class XmlSettingsParserTest extends TestCase {
         DefaultRepositoryCacheManager c2 = (DefaultRepositoryCacheManager) settings.getRepositoryCacheManager("mycache2");
         assertNotNull(c2);
         assertEquals("mycache2", c2.getName());
-        assertEquals(new File("repository"), c2.getBasedir());
+        assertEquals(new File("repository").getCanonicalFile(), c2.getBasedir().getCanonicalFile());
         assertEquals("artifact-lock", c2.getLockStrategy().getName());
 
         assertEquals("[module]/ivys/ivy-[revision].xml", c2.getIvyPattern());
@@ -553,6 +556,21 @@ public class XmlSettingsParserTest extends TestCase {
         LockStrategy lockStrategy = settings.getLockStrategy("test");
         assertNotNull(lockStrategy);
         assertTrue(lockStrategy instanceof MyLockStrategy);
+    }
+
+    public void testFileAttribute() throws Exception {
+        IvySettings settings = new IvySettings();
+        File basedir = new File("test").getAbsoluteFile();
+        settings.setBaseDir(basedir);
+        XmlSettingsParser parser = new XmlSettingsParser(settings);
+        parser.parse(XmlSettingsParserTest.class.getResource("ivysettings-packager.xml"));
+
+        DependencyResolver r = settings.getResolver("packager");
+        assertNotNull(r);
+        assertTrue(r instanceof PackagerResolver);
+        PackagerResolver packager = (PackagerResolver) r;
+        assertEquals(new File(basedir, "packager/build"), packager.getBuildRoot());
+        assertEquals(new File(basedir, "packager/cache"), packager.getResourceCache());
     }
 
     public static class MyOutputter implements ReportOutputter {

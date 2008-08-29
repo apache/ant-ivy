@@ -117,8 +117,8 @@ public class PackagerResolverTest extends AbstractDependencyResolverTest {
               "" + new File(repoRoot, "[organisation]/[module]/[revision]/ivy.xml").getAbsoluteFile().toURL().toExternalForm());
             resolver.setPackagerPattern(
               "" + new File(repoRoot, "[organisation]/[module]/[revision]/packager.xml").getAbsoluteFile().toURL().toExternalForm());
-            resolver.setBuildRoot(_builddir.getAbsolutePath());
-            resolver.setResourceCache(_cachedir.getAbsolutePath());
+            resolver.setBuildRoot(_builddir);
+            resolver.setResourceCache(_cachedir);
             resolver.setPreserveBuildDirectories(true);
             resolver.setVerbose(true);
             

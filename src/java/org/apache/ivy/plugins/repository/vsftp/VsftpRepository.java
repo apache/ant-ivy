@@ -151,7 +151,8 @@ public class VsftpRepository extends AbstractRepository {
 
             int index = source.lastIndexOf('/');
             String srcName = index == -1 ? source : source.substring(index + 1);
-            final File to = destDir == null ? new File(srcName) : new File(destDir, srcName);
+            final File to = destDir == null 
+                    ? ivy.getSettings().resolveFile(srcName) : new File(destDir, srcName);
 
             final IOException[] ex = new IOException[1];
             Thread get = new IvyThread() {

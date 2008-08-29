@@ -55,7 +55,7 @@ public class IvyRepositoryReport extends IvyTask {
 
     private String matcher = PatternMatcher.EXACT_OR_REGEXP;
 
-    private File todir = new File(".");
+    private File todir;
 
     private boolean graph = false;
 
@@ -128,7 +128,7 @@ public class IvyRepositoryReport extends IvyTask {
             if (xml) {
 
                 FileUtil.copy(cacheMgr.getConfigurationResolveReportInCache(resolveId, "default"),
-                    new File(todir, outputname + ".xml"), null);
+                    new File(getTodir(), outputname + ".xml"), null);
             }
             if (xsl) {
                 genreport(cacheMgr, md.getModuleRevisionId().getOrganisation(), md
@@ -149,7 +149,7 @@ public class IvyRepositoryReport extends IvyTask {
 
         String resolveId = ResolveOptions.getDefaultResolveId(new ModuleId(organisation, module));
         xslt.setIn(cache.getConfigurationResolveReportInCache(resolveId, "default"));
-        xslt.setOut(new File(todir, outputname + "." + xslext));
+        xslt.setOut(new File(getTodir(), outputname + "." + xslext));
 
         xslt.setStyle(xslFile);
 
@@ -206,13 +206,16 @@ public class IvyRepositoryReport extends IvyTask {
 
         String resolveId = ResolveOptions.getDefaultResolveId(new ModuleId(organisation, module));
         xslt.setIn(cache.getConfigurationResolveReportInCache(resolveId, "default"));
-        xslt.setOut(new File(todir, outputname + "." + ext));
+        xslt.setOut(new File(getTodir(), outputname + "." + ext));
         xslt.setBasedir(cache.getResolutionCacheRoot());
         xslt.setStyle(style);
         xslt.execute();
     }
 
     public File getTodir() {
+        if (todir == null && getProject() != null) {
+            return getProject().getBaseDir();
+        }
         return todir;
     }
 

@@ -77,6 +77,14 @@ public class FileSystemResolver extends RepositoryResolver {
     public FileSystemResolver() {
         setRepository(new FileRepository());
     }
+    
+    public void setSettings(ResolverSettings settings) {
+        super.setSettings(settings);
+        FileRepository fileRepository = getFileRepository();
+        if (fileRepository.getBaseDir() == null) {
+            fileRepository.setBaseDir(settings.getBaseDir());
+        }
+    }
 
     public String getTypeName() {
         return "file";
@@ -276,11 +284,11 @@ public class FileSystemResolver extends RepositoryResolver {
     }
 
     private void initTransaction(ModuleRevisionId module) {
-        transactionTempDir = new File(IvyPatternHelper.substitute(
+        transactionTempDir = getSettings().resolveFile(IvyPatternHelper.substitute(
             baseTransactionPattern, 
             ModuleRevisionId.newInstance(
                 module, module.getRevision() + TRANSACTION_DESTINATION_SUFFIX)));
-        transactionDestDir = new File(IvyPatternHelper.substitute(
+        transactionDestDir = getSettings().resolveFile(IvyPatternHelper.substitute(
             baseTransactionPattern, 
             module));
     }

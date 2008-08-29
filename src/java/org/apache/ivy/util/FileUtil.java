@@ -352,4 +352,16 @@ public final class FileUtil {
         return list;
     }
 
+    public static File resolveFile(File file, String filename) {
+        /*
+         * very simple resolveFile algorithm compared to what is done in Ant. It must be enough in
+         * most common cases though.
+         */
+        File f = new File(filename);
+        if (f.isAbsolute()) {
+            return f;
+        }
+        return new File(file, filename);
+    }
+
 }

@@ -170,7 +170,7 @@ public class IvyReport extends IvyTask {
         if (todir == null) {
             String t = getProperty(settings, "ivy.report.todir");
             if (t != null) {
-                todir = new File(t);
+                todir = getProject().resolveFile(t);
             }
         }
         if (todir != null && todir.exists()) {
@@ -236,7 +236,7 @@ public class IvyReport extends IvyTask {
             if (todir != null) {
                 out = new File(todir, getOutputPattern(confs[i], "xml"));
             } else {
-                out = new File(getOutputPattern(confs[i], "xml"));
+                out = getProject().resolveFile(getOutputPattern(confs[i], "xml"));
             }
 
             FileUtil.copy(xml, out, null);
@@ -253,7 +253,7 @@ public class IvyReport extends IvyTask {
             if (todir != null) {
                 css = new File(todir, "ivy-report.css");
             } else {
-                css = new File("ivy-report.css");
+                css = getProject().resolveFile("ivy-report.css");
             }
             
             if (!css.exists()) {
@@ -308,7 +308,7 @@ public class IvyReport extends IvyTask {
         if (todir != null) {
             out = todir;
         } else {
-            out = new File(".");
+            out = getProject().getBaseDir();
         }
         
         InputStream xsltStream = null;

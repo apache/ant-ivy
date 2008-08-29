@@ -96,7 +96,7 @@ public abstract class IvyPostResolveTask extends IvyTask {
         if (file == null) {
             String fileName = getProperty(settings, "ivy.resolved.file", resolveId);
             if (fileName != null) {
-                file = new File(fileName);
+                file = getProject().resolveFile(fileName);
             }
         }
 

@@ -466,7 +466,7 @@ public class Scp {
      * remote side.
      * 
      * @param localFile
-     *            Path and name of local file.
+     *            Path and name of local file. Must be absolute.
      * @param remoteTargetDir
      *            Remote target directory where the file has to end up (optional)
      * @param remoteTargetName
@@ -526,7 +526,7 @@ public class Scp {
      * @param remoteFile
      *            Path and name of the remote file.
      * @param localTarget
-     *            Local file where to store the data.
+     *            Local file where to store the data. Must be absolute.
      * @throws IOException
      *             in case of network problems
      * @throws RemoteScpException

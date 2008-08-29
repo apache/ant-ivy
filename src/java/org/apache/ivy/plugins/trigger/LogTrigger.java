@@ -100,17 +100,15 @@ public class LogTrigger extends AbstractTrigger {
 
     /**
      * File to write to.
-     * @param file the file to write to, if not set, echo to
-     *             standard Ivy logging
+     * @param file the file to write to, if not set, echo to standard Ivy logging
      */
-    public void setFile(String file) {
-        this.file = new File(file);
+    public void setFile(File file) {
+        this.file = file;
     }
 
     /**
      * If true, append to existing file.
-     * @param append if true, append to existing file, default
-     *               is false.
+     * @param append if true, append to existing file, default is false.
      */
     public void setAppend(boolean append) {
         this.append = append;

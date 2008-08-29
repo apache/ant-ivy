@@ -122,8 +122,8 @@ public class AntBuildTrigger extends AbstractTrigger implements Trigger {
     }
 
     private File getBuildFile(IvyEvent event) {
-        return new File(IvyPatternHelper.substituteTokens(getBuildFilePattern(), event
-                .getAttributes()));
+        return IvyContext.getContext().getSettings().resolveFile(
+            IvyPatternHelper.substituteTokens(getBuildFilePattern(), event.getAttributes()));
     }
 
     public String getBuildFilePattern() {

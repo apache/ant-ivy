@@ -100,9 +100,10 @@ public class RetrieveEngine {
 
         try {
             Map artifactsToCopy = determineArtifactsToCopy(mrid, destFilePattern, options);
-            File fileRetrieveRoot = new File(IvyPatternHelper.getTokenRoot(destFilePattern));
-            File ivyRetrieveRoot = destIvyPattern == null ? null : new File(IvyPatternHelper
-                    .getTokenRoot(destIvyPattern));
+            File fileRetrieveRoot = settings.resolveFile(
+                IvyPatternHelper.getTokenRoot(destFilePattern));
+            File ivyRetrieveRoot = destIvyPattern == null 
+                ? null : settings.resolveFile(IvyPatternHelper.getTokenRoot(destIvyPattern));
             Collection targetArtifactsStructure = new HashSet(); // Set(File) set of all paths
             // which should be present at
             // then end of retrieve (useful
@@ -124,7 +125,7 @@ public class RetrieveEngine {
                 Message.verbose("\tretrieving " + archive);
                 for (Iterator it2 = dest.iterator(); it2.hasNext();) {
                     IvyContext.getContext().checkInterrupted();
-                    File destFile = new File((String) it2.next());
+                    File destFile = settings.resolveFile((String) it2.next());
                     if (!settings.isCheckUpToDate() || !upToDate(archive, destFile)) {
                         Message.verbose("\t\tto " + destFile);
                         if (options.isMakeSymlinks()) {
@@ -301,7 +302,7 @@ public class RetrieveEngine {
                     dest = new HashSet();
                     artifactsToCopy.put(artifact, dest);
                 }
-                String copyDest = new File(destFileName).getAbsolutePath();
+                String copyDest = settings.resolveFile(destFileName).getAbsolutePath();
                 dest.add(copyDest);
 
                 Set conflicts = (Set) conflictsMap.get(copyDest);
