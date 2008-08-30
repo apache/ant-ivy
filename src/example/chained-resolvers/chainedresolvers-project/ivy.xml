@@ -19,7 +19,7 @@
 <ivy-module version="1.0">
     <info organisation="org.apache" module="chained-resolvers"/>
     <dependencies>
-        <dependency org="commons-lang" name="commons-lang" rev="2.0"/>
+        <dependency org="commons-lang" name="commons-lang" rev="2.0" conf="default"/>
         <dependency name="test" rev="1.0"/>
     </dependencies>
 </ivy-module>
