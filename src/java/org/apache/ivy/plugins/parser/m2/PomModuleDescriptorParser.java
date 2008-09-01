@@ -255,6 +255,10 @@ public final class PomModuleDescriptorParser implements ModuleDescriptorParser {
 
     private void addSourcesAndJavadocArtifactsIfPresent(
             PomModuleDescriptorBuilder mdBuilder, ParserSettings ivySettings) {
+        if (mdBuilder.getMainArtifact() == null) {
+            // no main artifact in pom, we don't need to search for meta artifacts
+            return;
+        }
         ModuleDescriptor md = mdBuilder.getModuleDescriptor();
         ModuleRevisionId mrid = md.getModuleRevisionId();
         DependencyResolver resolver = ivySettings.getResolver(
