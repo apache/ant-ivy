@@ -17,6 +17,7 @@
  */
 package org.apache.ivy.plugins.parser.xml;
 
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -76,6 +77,23 @@ public class XmlModuleUpdaterTest extends TestCase {
                 XmlModuleUpdaterTest.class.getResourceAsStream("updated.xml"))));
         String updated = FileUtil.readEntirely(new BufferedReader(new FileReader(dest)));
         assertEquals(expected, updated);
+    }
+
+    public void testUpdateWithComments() throws Exception {
+        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+        URL settingsUrl = new File("test/java/org/apache/ivy/plugins/parser/xml/" 
+            + "test-with-comments.xml").toURL();
+        XmlModuleDescriptorUpdater.update(settingsUrl, new BufferedOutputStream(buffer, 1024), 
+            getUpdateOptions("release", "mynewrev"));
+
+        XmlModuleDescriptorParser parser = XmlModuleDescriptorParser.getInstance();
+        ModuleDescriptor updatedMd = parser.parseDescriptor(new IvySettings(),
+            new ByteArrayInputStream(buffer.toByteArray()), new BasicResource("test", false, 0, 0,
+                    false), true);
+
+        DependencyDescriptor[] dependencies = updatedMd.getDependencies();
+        assertNotNull(dependencies);
+        assertEquals(3, dependencies.length);
     }
 
     public void testVariableReplacement() throws Exception {

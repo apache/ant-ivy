@@ -108,6 +108,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - IMPROVEMENT: Add a memory cache for the module descriptor that are parsed from the cache (IVY-883)
 - IMPROVEMENT: Improve performance (IVY-872)
 
+- FIX: Ivy Publish Task Fails When XML Comments Exist Next to Dependency Declarations (IVY-888)
 - FIX: Incorrect directory path resolve when running from a different directory (IVY-232)
 - FIX: Ivy#listTokenValues(String, Map) does not filter returned values, and does not use maven-metadata.xml files with IBiblio resolver (IVY-886)
 - FIX: Circular Dependency messages in a resolve do not reflect the configuration used during the resolve (IVY-708)

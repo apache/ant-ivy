@@ -704,6 +704,10 @@ public final class XmlModuleDescriptorUpdater {
         }
 
         public void comment(char[] ch, int start, int length) throws SAXException {
+            if (justOpen != null) {
+                write(">");
+                justOpen = null;
+            }
             if (!inHeader) {
                 StringBuffer comment = new StringBuffer();
                 comment.append(ch, start, length);
