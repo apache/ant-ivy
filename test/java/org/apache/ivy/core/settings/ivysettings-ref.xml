@@ -18,11 +18,11 @@
 -->
 <ivysettings>
 	<properties file="ivysettings.properties"/>
-	<settings   defaultCache="mycache"/>
+	<settings   defaultCache="${ivy.basedir}/mycache"/>
 	<resolvers>
 		<filesystem name="fs" latest="latest-time">
-			<ivy pattern="sharedrep/[organisation]/[module]/ivys/ivy-[revision].xml"/>
-			<artifact pattern="sharedrep/[organisation]/[module]/[type]s/[artifact]-[revision].[type]"/>
+			<ivy pattern="${ivy.basedir}/sharedrep/[organisation]/[module]/ivys/ivy-[revision].xml"/>
+			<artifact pattern="${ivy.basedir}/sharedrep/[organisation]/[module]/[type]s/[artifact]-[revision].[type]"/>
 		</filesystem>
 		<chain name="internal">
 			<filesystem ref="fs"/>

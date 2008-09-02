@@ -18,13 +18,13 @@
 -->
 <ivysettings>
 
-    <settings defaultCache="build/cache" defaultResolver="test" defaultConflictManager="latest-compatible" />
+    <settings defaultCache="${ivy.basedir}/build/cache" defaultResolver="test" defaultConflictManager="latest-compatible" />
 
     <resolvers>
         <filesystem name="test">
-            <ivy pattern="test/repositories/latest-compatible/[module]/[revision]/[artifact].[ext]"/>
+            <ivy pattern="${ivy.basedir}/test/repositories/latest-compatible/[module]/[revision]/[artifact].[ext]"/>
             <artifact
-                    pattern="test/repositories/latest-compatible/[module]/[revision]/[artifact].[ext]"/>
+                    pattern="${ivy.basedir}/test/repositories/latest-compatible/[module]/[revision]/[artifact].[ext]"/>
         </filesystem>
     </resolvers>
 </ivysettings>

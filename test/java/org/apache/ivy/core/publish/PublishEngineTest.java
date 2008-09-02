@@ -24,7 +24,6 @@ import java.util.Arrays;
 
 import junit.framework.TestCase;
 
-import org.apache.ivy.core.cache.DefaultResolutionCacheManager;
 import org.apache.ivy.core.event.EventManager;
 import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.DefaultDependencyDescriptor;
@@ -70,8 +69,9 @@ public class PublishEngineTest extends TestCase {
         };
         resolver.setName("test");
         resolver.setSettings(settings);
-        resolver.addIvyPattern("build/test/publish/repo/[module]/[revision]/[artifact].[ext]");
-        resolver.addArtifactPattern("build/test/publish/repo/[module]/[revision]/[artifact].[ext]");
+        String publishRepoDir = new File("build/test/publish/repo").getAbsolutePath();
+        resolver.addIvyPattern(publishRepoDir + "/[module]/[revision]/[artifact].[ext]");
+        resolver.addArtifactPattern(publishRepoDir + "/[module]/[revision]/[artifact].[ext]");
         
         FileUtil.copy(
             new File("test/repositories/1/org1/mod1.1/jars/mod1.1-1.0.jar"), 

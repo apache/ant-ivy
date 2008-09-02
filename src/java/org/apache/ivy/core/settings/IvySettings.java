@@ -98,7 +98,7 @@ import org.apache.ivy.plugins.version.LatestVersionMatcher;
 import org.apache.ivy.plugins.version.SubVersionMatcher;
 import org.apache.ivy.plugins.version.VersionMatcher;
 import org.apache.ivy.plugins.version.VersionRangeMatcher;
-import org.apache.ivy.util.FileResolver;
+import org.apache.ivy.util.Checks;
 import org.apache.ivy.util.FileUtil;
 import org.apache.ivy.util.Message;
 import org.apache.ivy.util.filter.Filter;
@@ -107,7 +107,7 @@ import org.apache.ivy.util.url.URLHandlerRegistry;
 public class IvySettings implements SortEngineSettings, PublishEngineSettings, ParserSettings,
         DeliverEngineSettings, CheckEngineSettings, InstallEngineSettings, 
         ResolverSettings, ResolveEngineSettings, RetrieveEngineSettings, 
-        RepositoryManagementEngineSettings, FileResolver {
+        RepositoryManagementEngineSettings {
     private static final long INTERUPT_TIMEOUT = 2000;
 
     private Map typeDefs = new HashMap();
@@ -182,7 +182,7 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
 
     private File defaultUserDir;
     
-    private File baseDir = new File(".");
+    private File baseDir = new File(".").getAbsoluteFile();
 
     private List classpathURLs = new ArrayList();
 
@@ -215,6 +215,7 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
     public IvySettings(IvyVariableContainer variableContainer) {
         setVariableContainer(variableContainer);
         setVariable("ivy.default.settings.dir", getDefaultSettingsDir(), true);
+        setVariable("ivy.basedir", getBaseDir().getAbsolutePath());
         setDeprecatedVariable("ivy.default.conf.dir", "ivy.default.settings.dir");
 
         String ivyTypeDefs = System.getProperty("ivy.typedef.files");
@@ -222,7 +223,8 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
             String[] files = ivyTypeDefs.split("\\,");
             for (int i = 0; i < files.length; i++) {
                 try {
-                    typeDefs(new FileInputStream(resolveFile(files[i].trim())), true);
+                    typeDefs(new FileInputStream(
+                        Checks.checkAbsolute(files[i].trim(), "ivy.typedef.files")), true);
                 } catch (FileNotFoundException e) {
                     Message.warn("typedefs file not found: " + files[i].trim());
                 } catch (IOException e) {
@@ -364,7 +366,8 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
         long start = System.currentTimeMillis();
         setSettingsVariables(settingsFile);
         if (getVariable("ivy.default.ivy.user.dir") != null) {
-            setDefaultIvyUserDir(resolveFile(getVariable("ivy.default.ivy.user.dir")));
+            setDefaultIvyUserDir(Checks.checkAbsolute(
+                getVariable("ivy.default.ivy.user.dir"), "ivy.default.ivy.user.dir"));
         } else {
             getDefaultIvyUserDir();
         }
@@ -389,7 +392,8 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
         long start = System.currentTimeMillis();
         setSettingsVariables(settingsURL);
         if (getVariable("ivy.default.ivy.user.dir") != null) {
-            setDefaultIvyUserDir(resolveFile(getVariable("ivy.default.ivy.user.dir")));
+            setDefaultIvyUserDir(Checks.checkAbsolute(
+                getVariable("ivy.default.ivy.user.dir"), "ivy.default.ivy.user.dir"));
         } else {
             getDefaultIvyUserDir();
         }
@@ -411,7 +415,8 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
      */
     public void defaultInit() throws IOException {
         if (getVariable("ivy.default.ivy.user.dir") != null) {
-            setDefaultIvyUserDir(resolveFile(getVariable("ivy.default.ivy.user.dir")));
+            setDefaultIvyUserDir(Checks.checkAbsolute(
+                    getVariable("ivy.default.ivy.user.dir"), "ivy.default.ivy.user.dir"));
         } else {
             getDefaultIvyUserDir();
         }
@@ -751,7 +756,8 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
     }
     
     public void setBaseDir(File baseDir) {
-        this.baseDir = baseDir;
+        this.baseDir = baseDir.getAbsoluteFile();
+        setVariable("ivy.basedir", this.baseDir.getAbsolutePath());
     }
     
     public File getBaseDir() {
@@ -761,7 +767,7 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
     public File getDefaultIvyUserDir() {
         if (defaultUserDir == null) {
             if (getVariable("ivy.home") != null) {
-                setDefaultIvyUserDir(resolveFile(getVariable("ivy.home")));
+                setDefaultIvyUserDir(Checks.checkAbsolute(getVariable("ivy.home"), "ivy.home"));
                 Message.verbose("using ivy.default.ivy.user.dir variable for default ivy user dir: "
                                 + defaultUserDir);
             } else {
@@ -782,7 +788,7 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
         if (defaultCache == null) {
             String cache = getVariable("ivy.cache.dir");
             if (cache != null) {
-                defaultCache = resolveFile(cache);
+                defaultCache = Checks.checkAbsolute(cache, "ivy.cache.dir");
             } else {
                 setDefaultCache(new File(getDefaultIvyUserDir(), "cache"));
                 Message.verbose("no default cache defined: set to " + defaultCache);
@@ -813,7 +819,7 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
     public File getDefaultRepositoryCacheBasedir() {
         String repositoryCacheRoot = getVariable("ivy.cache.repository");
         if (repositoryCacheRoot != null) {
-            return resolveFile(repositoryCacheRoot);
+            return Checks.checkAbsolute(repositoryCacheRoot, "ivy.cache.repository");
         } else {
             return getDefaultCache();
         }
@@ -822,7 +828,7 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
     public File getDefaultResolutionCacheBasedir() {
         String resolutionCacheRoot = getVariable("ivy.cache.resolution");
         if (resolutionCacheRoot != null) {
-            return resolveFile(resolutionCacheRoot);
+            return Checks.checkAbsolute(resolutionCacheRoot, "ivy.cache.resolution");
         } else {
             return getDefaultCache();
         }

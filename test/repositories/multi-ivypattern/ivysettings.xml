@@ -17,12 +17,12 @@
    under the License.    
 -->
 <ivysettings>
-  <settings defaultCache="build/cache" defaultResolver="multi-ivy"/>
+  <settings defaultCache="${ivy.basedir}/build/cache" defaultResolver="multi-ivy"/>
   <resolvers>
 	<filesystem name="multi-ivy">
-		<ivy pattern="test/repositories/multi-ivypattern/ivy1/ivy-[revision].xml" />
-		<ivy pattern="test/repositories/multi-ivypattern/ivy2/ivy-[revision].xml" />
-		<artifact pattern="test/repositories/multi-ivypattern/jars/mod-[revision].jar" />
+		<ivy pattern="${ivy.basedir}/test/repositories/multi-ivypattern/ivy1/ivy-[revision].xml" />
+		<ivy pattern="${ivy.basedir}/test/repositories/multi-ivypattern/ivy2/ivy-[revision].xml" />
+		<artifact pattern="${ivy.basedir}/test/repositories/multi-ivypattern/jars/mod-[revision].jar" />
 	</filesystem>
   </resolvers>
 </ivysettings>

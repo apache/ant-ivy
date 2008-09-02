@@ -268,7 +268,18 @@ Ivy supports this kind of approach with the notion of changing revision. A chang
 
 Once Ivy knows that a revision is changing, it will follow this principle to avoid checking your repository too often: if the module metadata has not changed, it will considered the whole module (including artifacts) as not changed. Even if the module descriptor file has changed, it will check the publication data of the module to see if this is a new publication of the same revision or not. Then if the publication date has changed, it will check the artifacts last modified timestamps, and download them accordingly.
 
-So if you want to use changing revisions, use the [[ant:publish]] task to publish your modules, it will take care of updating the publication date, and everything will work fine. And remember to set checkModified=true" on your resolver too!</textarea>
+So if you want to use changing revisions, use the [[ant:publish]] task to publish your modules, it will take care of updating the publication date, and everything will work fine. And remember to set checkModified=true" on your resolver too!
+<h1><a name="paths">Paths handling</a></h1>
+As a dependency manager, Ivy has a lot of file related operations, which most of the time use paths or path patterns to locate the file on the filesystem.
+
+These paths can obviously be relative or absolute. We recommend to always use absolute paths, so that you don't have to worry about what is the base of your relative paths. Ivy provides some variables which can be used as the base of your absolute paths. For instance, Ivy has a concept of base directory, which is basically the same as for Ant. You have access to this base directory with the ivy.basedir variable. So if you have a path like <code>${ivy.basedir}/ivy.xml</code>, you have an absolute path. In [[settings settings files]], you also have a variable called ivy.settings.dir which points to the directory in which your settings file is located, which makes defining paths relative to this directory very easy.
+
+If you really want to use relative paths, the base directory used to actually locate the file depends on where the relative path is defined:
+<ul>
+<li>In an Ivy file, paths are relative to the Ivy file itself (the only possible path in an Ivy file is for configurations declaration inclusion)</li>
+<li>In settings files, paths for file inclusion (namely properties file loading and settings inclusion) are relative to the directory in which the settings file is located. All other paths must be absolute unless explicitly noted.</li>
+<li>In Ivy Ant tasks and Ivy parameters or options, paths are relative to Ivy base directory, which when called from Ant is the same as your Ant basedir.</li>
+</ul></textarea>
 <script type="text/javascript">xooki.postProcess();</script>
 </body>
 </html>

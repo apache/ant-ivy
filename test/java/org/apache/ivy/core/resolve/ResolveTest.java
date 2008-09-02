@@ -632,11 +632,13 @@ public class ResolveTest extends TestCase {
         resolver.setName("dual");
         FileSystemResolver r = new FileSystemResolver();
         r.setName("1");
-        r.addArtifactPattern("build/testCache2/[artifact]-[revision].[ext]");
+        r.addArtifactPattern(settings.getBaseDir().getPath() 
+            + "/build/testCache2/[artifact]-[revision].[ext]");
         resolver.add(r);
         r = new FileSystemResolver();
         r.setName("2");
-        r.addArtifactPattern("build/testCache2/[artifact]-[revision].[ext]");
+        r.addArtifactPattern(settings.getBaseDir().getPath() 
+            + "/build/testCache2/[artifact]-[revision].[ext]");
         resolver.add(r);
         ivy.getSettings().addResolver(resolver);
         ivy.getSettings().setDefaultResolver("dual");

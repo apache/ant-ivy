@@ -104,9 +104,9 @@ public class ArtifactLockStrategyTest extends TestCase {
         resolver.setName("test");
         resolver.setSettings(settings);
         resolver.addIvyPattern(
-            "test/repositories/1/[organisation]/[module]/[type]s/[artifact]-[revision].[ext]");
+            settings.getBaseDir() + "/test/repositories/1/[organisation]/[module]/[type]s/[artifact]-[revision].[ext]");
         resolver.addArtifactPattern(
-            "test/repositories/1/[organisation]/[module]/[type]s/[artifact]-[revision].[ext]");
+            settings.getBaseDir() + "/test/repositories/1/[organisation]/[module]/[type]s/[artifact]-[revision].[ext]");
         return resolver;
     }
 

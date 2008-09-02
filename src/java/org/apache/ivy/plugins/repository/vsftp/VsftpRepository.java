@@ -38,6 +38,7 @@ import org.apache.ivy.plugins.repository.AbstractRepository;
 import org.apache.ivy.plugins.repository.BasicResource;
 import org.apache.ivy.plugins.repository.Resource;
 import org.apache.ivy.plugins.repository.TransferEvent;
+import org.apache.ivy.util.Checks;
 import org.apache.ivy.util.Message;
 
 /**
@@ -152,7 +153,7 @@ public class VsftpRepository extends AbstractRepository {
             int index = source.lastIndexOf('/');
             String srcName = index == -1 ? source : source.substring(index + 1);
             final File to = destDir == null 
-                    ? ivy.getSettings().resolveFile(srcName) : new File(destDir, srcName);
+                    ? Checks.checkAbsolute(srcName, "source") : new File(destDir, srcName);
 
             final IOException[] ex = new IOException[1];
             Thread get = new IvyThread() {

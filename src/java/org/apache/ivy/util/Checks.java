@@ -17,6 +17,8 @@
  */
 package org.apache.ivy.util;
 
+import java.io.File;
+
 /**
  * Utility class used to perform some checks.
  */
@@ -40,4 +42,20 @@ public final class Checks {
         }
     }
 
+    public static File checkAbsolute(File f, String fileName) {
+        checkNotNull(f, fileName);
+        if (!f.isAbsolute()) {
+            throw new IllegalArgumentException(fileName + " must be absolute: " + f.getPath());
+        }
+        return f;
+    }
+    
+    public static File checkAbsolute(String path, String fileName) {
+        checkNotNull(path, fileName);
+        File f = new File(path);
+        if (!f.isAbsolute()) {
+            throw new IllegalArgumentException(fileName + " must be absolute: " + path);
+        }
+        return f;
+    }
 }

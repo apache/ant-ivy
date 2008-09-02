@@ -42,7 +42,9 @@ import org.apache.ivy.plugins.conflict.ConflictManager;
 import org.apache.ivy.plugins.latest.LatestStrategy;
 import org.apache.ivy.plugins.lock.LockStrategy;
 import org.apache.ivy.plugins.matcher.PatternMatcher;
+import org.apache.ivy.util.Checks;
 import org.apache.ivy.util.Configurator;
+import org.apache.ivy.util.FileResolver;
 import org.apache.ivy.util.Message;
 import org.apache.ivy.util.url.URLHandlerRegistry;
 import org.xml.sax.Attributes;
@@ -130,7 +132,11 @@ public class XmlSettingsParser extends DefaultHandler {
 
     public void parse(URL settings) throws ParseException, IOException {
         configurator = new Configurator();
-        configurator.setFileResolver(ivy);
+        configurator.setFileResolver(new FileResolver() {
+            public File resolveFile(String path, String filename) {
+                return Checks.checkAbsolute(path, filename);
+            }
+        });
         // put every type definition from ivy to configurator
         Map typeDefs = ivy.getTypeDefs();
         for (Iterator iter = typeDefs.keySet().iterator(); iter.hasNext();) {
@@ -276,7 +282,7 @@ public class XmlSettingsParser extends DefaultHandler {
         
         String cache = (String) attributes.get("defaultCacheDir");
         if (cache != null) {
-            ivy.setDefaultCache(resolveFile(cache));
+            ivy.setDefaultCache(Checks.checkAbsolute(cache, "defaultCacheDir"));
         }
         String up2d = (String) attributes.get("checkUpToDate");
         if (up2d != null) {
@@ -313,7 +319,7 @@ public class XmlSettingsParser extends DefaultHandler {
         if (cache != null) {
             Message.deprecated("'defaultCache' is deprecated, "
                 + "use 'caches[@defaultCacheDir]' instead (" + settings + ")");
-            ivy.setDefaultCache(resolveFile(cache));
+            ivy.setDefaultCache(Checks.checkAbsolute(cache, "defaultCache"));
         }
         String defaultBranch = (String) attributes.get("defaultBranch");
         if (defaultBranch != null) {
@@ -385,9 +391,13 @@ public class XmlSettingsParser extends DefaultHandler {
             } else {
                 settingsURL = urlFromFileAttribute(propFilePath);
                 Message.verbose("including file: " + settingsURL);
-                ivy.setSettingsVariables(resolveFile(propFilePath));
-                //We can not use the setSettingsVariables(URL) because that would put different
-                //values for the properties.  I'm not sure what would be the regression...
+                if ("file".equals(settingsURL.getProtocol())) {
+                    ivy.setSettingsVariables(
+                        Checks.checkAbsolute(settingsURL.getPath(), 
+                        "settings include path"));
+                } else {
+                    ivy.setSettingsVariables(settingsURL);
+                }
             }
             new XmlSettingsParser(ivy).parse(configurator, settingsURL);
         } finally {
@@ -470,7 +480,7 @@ public class XmlSettingsParser extends DefaultHandler {
                 throw new IllegalArgumentException(
                         "either url or file should be given for classpath element");
             } else {
-                url = resolveFile(file).toURI().toURL();
+                url = Checks.checkAbsolute(file, "classpath").toURI().toURL();
             }
         } else {
             url = new URL(urlStr);
@@ -592,9 +602,5 @@ public class XmlSettingsParser extends DefaultHandler {
             }
             ivy.setDefaultLockStrategy(strategy);
         }
-    }
-
-    private File resolveFile(String filePath) {
-        return ivy.resolveFile(filePath);
     }
 }

@@ -20,7 +20,7 @@
 	<!-- properties file is relative to ivyconf.xml - ie this file -->
 	<properties file="ivysettings.properties"/>
 	
-	<conf defaultCache="mycache" defaultResolver="libraries"	validate="false"
+	<conf defaultCache="${ivy.basedir}/mycache" defaultResolver="libraries"	validate="false"
 	   checkUpToDate="false" cacheIvyPattern="[module]/ivys/ivy-[revision].xml"
 	   cacheArtifactPattern="[module]/[type]s/[artifact]-[revision].[ext]"/>
 	   

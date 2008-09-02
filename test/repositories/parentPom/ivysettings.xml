@@ -17,7 +17,7 @@
    under the License.    
 -->
 <ivysettings>
-	<settings defaultCache="build/cache"/>
+	<settings defaultCache="${ivy.basedir}/build/cache"/>
 	<resolvers>
 		<filesystem name="m2" m2compatible="true">
 			<ivy pattern="${ivy.settings.dir}/[organisation]/[module]/[revision]/[module]-[revision].pom"/>

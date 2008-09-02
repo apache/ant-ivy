@@ -17,7 +17,7 @@
    under the License.    
 -->
 <ivysettings>
-	<settings defaultCache="build/cache" defaultResolver="m2"/>
+	<settings defaultCache="${ivy.basedir}/build/cache" defaultResolver="m2"/>
 	<resolvers>
 		<ibiblio name="m2" m2compatible="true" useMavenMetadata="true" 
 		         root="${ivy.settings.dir}" />

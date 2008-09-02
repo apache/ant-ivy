@@ -24,8 +24,8 @@
 			<artifact pattern="${ivy.settings.dir}/[organisation]/[module]/[branch]/[revision]/[artifact].[ext]" />
 		</filesystem>
 		<filesystem name="install">
-			<ivy pattern="build/test/install/[organisation]/[module]/[branch]/[artifact]-[revision].[ext]"/>
-			<artifact pattern="build/test/install/[organisation]/[module]/[branch]/[artifact]-[revision].[ext]"/>
+			<ivy pattern="${ivy.basedir}/build/test/install/[organisation]/[module]/[branch]/[artifact]-[revision].[ext]"/>
+			<artifact pattern="${ivy.basedir}/build/test/install/[organisation]/[module]/[branch]/[artifact]-[revision].[ext]"/>
 		</filesystem>
     </resolvers>
 </ivysettings>

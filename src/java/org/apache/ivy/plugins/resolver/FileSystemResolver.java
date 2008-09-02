@@ -30,7 +30,9 @@ import java.util.regex.Pattern;
 import org.apache.ivy.core.IvyPatternHelper;
 import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
+import org.apache.ivy.core.settings.IvyPattern;
 import org.apache.ivy.plugins.repository.file.FileRepository;
+import org.apache.ivy.util.Checks;
 import org.apache.ivy.util.Message;
 
 /**
@@ -78,14 +80,6 @@ public class FileSystemResolver extends RepositoryResolver {
         setRepository(new FileRepository());
     }
     
-    public void setSettings(ResolverSettings settings) {
-        super.setSettings(settings);
-        FileRepository fileRepository = getFileRepository();
-        if (fileRepository.getBaseDir() == null) {
-            fileRepository.setBaseDir(settings.getBaseDir());
-        }
-    }
-
     public String getTypeName() {
         return "file";
     }
@@ -284,13 +278,13 @@ public class FileSystemResolver extends RepositoryResolver {
     }
 
     private void initTransaction(ModuleRevisionId module) {
-        transactionTempDir = getSettings().resolveFile(IvyPatternHelper.substitute(
+        transactionTempDir = Checks.checkAbsolute(IvyPatternHelper.substitute(
             baseTransactionPattern, 
             ModuleRevisionId.newInstance(
-                module, module.getRevision() + TRANSACTION_DESTINATION_SUFFIX)));
-        transactionDestDir = getSettings().resolveFile(IvyPatternHelper.substitute(
-            baseTransactionPattern, 
-            module));
+                module, module.getRevision() + TRANSACTION_DESTINATION_SUFFIX)),
+                "baseTransactionPattern");
+        transactionDestDir = Checks.checkAbsolute(IvyPatternHelper.substitute(
+            baseTransactionPattern, module), "baseTransactionPattern");
     }
 
     public String getTransactional() {
@@ -301,4 +295,23 @@ public class FileSystemResolver extends RepositoryResolver {
         this.transactional = transactional;
     }
 
+    public void addConfiguredIvy(IvyPattern p) {
+        Checks.checkAbsolute(p.getPattern(), "ivy pattern");
+        super.addConfiguredIvy(p);
+    }
+    
+    public void addIvyPattern(String pattern) {
+        Checks.checkAbsolute(pattern, "ivy pattern");
+        super.addIvyPattern(pattern);
+    }
+    
+    public void addConfiguredArtifact(IvyPattern p) {
+        Checks.checkAbsolute(p.getPattern(), "artifact pattern");
+        super.addConfiguredArtifact(p);
+    }
+    
+    public void addArtifactPattern(String pattern) {
+        Checks.checkAbsolute(pattern, "artifact pattern");
+        super.addArtifactPattern(pattern);
+    }
 }

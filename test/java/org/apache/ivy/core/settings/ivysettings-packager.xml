@@ -19,8 +19,8 @@
 <ivysettings>
 	<resolvers>
 		<packager name="packager"
-		         buildRoot="packager/build"
-		         resourceCache="packager/cache"
+		         buildRoot="${ivy.basedir}/packager/build"
+		         resourceCache="${ivy.basedir}/packager/cache"
 		         resourceURL="ftp://mirror.example.com/pub/resources/[organisation]/[module]/">
 		    <ivy pattern="http://ivyroundup.googlecode.com/svn/trunk/repo/modules/[organisation]/[module]/[revision]/ivy.xml"/>
 		    <artifact pattern="http://ivyroundup.googlecode.com/svn/trunk/repo/modules/[organisation]/[module]/[revision]/packager.xml"/>

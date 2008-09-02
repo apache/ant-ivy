@@ -19,6 +19,7 @@ package org.apache.ivy.util;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintWriter;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Locale;
 
 /**
@@ -42,21 +43,25 @@ public final class StringUtils {
     }
     
     /**
-     * Returns the error message associated with the given exception. Th error message returned will
-     * try to be as precise as possible, handling cases where e.getMessage() is not meaningful, like
-     * {@link NullPointerException} for instance.
+     * Returns the error message associated with the given Throwable. The error message returned
+     * will try to be as precise as possible, handling cases where e.getMessage() is not meaningful,
+     * like {@link NullPointerException} for instance.
      * 
-     * @param e
-     *            the exception to get the error message from
+     * @param t
+     *            the throwable to get the error message from
      * @return the error message of the given exception
      */
-    public static String getErrorMessage(Exception e) {
-        if (e == null) {
+    public static String getErrorMessage(Throwable t) {
+        if (t == null) {
             return "";
         }
-        String errMsg = e instanceof RuntimeException ? e.getMessage() : e.toString();
+        if (t instanceof InvocationTargetException) {
+            InvocationTargetException ex = (InvocationTargetException) t;
+            t = ex.getTargetException();
+        }
+        String errMsg = t instanceof RuntimeException ? t.getMessage() : t.toString();
         if (errMsg == null || errMsg.length() == 0 || "null".equals(errMsg)) {
-            errMsg = e.getClass().getName() + " at " + e.getStackTrace()[0].toString();
+            errMsg = t.getClass().getName() + " at " + t.getStackTrace()[0].toString();
         }
         return errMsg;
     }

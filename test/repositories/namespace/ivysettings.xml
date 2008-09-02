@@ -17,7 +17,7 @@
    under the License.    
 -->
 <ivysettings>
-	<settings defaultCache="build/cache" defaultResolver="ns"/>
+	<settings defaultCache="${ivy.basedir}/build/cache" defaultResolver="ns"/>
 	<namespaces>
 		<namespace name="test" chainrules="true">
 			<rule>
@@ -69,8 +69,8 @@
 			<artifact pattern="${ivy.settings.dir}/[organisation]/[module]/[revision]/[artifact](-[classifier]).[ext]"/>
 		</filesystem>
 		<filesystem name="install">
-			<ivy pattern="build/test/install/[organisation]/[module]/[artifact]-[revision].[ext]"/>
-			<artifact pattern="build/test/install/[organisation]/[module]/[artifact](-[classifier])-[revision].[ext]"/>
+			<ivy pattern="${ivy.basedir}/build/test/install/[organisation]/[module]/[artifact]-[revision].[ext]"/>
+			<artifact pattern="${ivy.basedir}/build/test/install/[organisation]/[module]/[artifact](-[classifier])-[revision].[ext]"/>
 		</filesystem>
 	</resolvers>
 </ivysettings>

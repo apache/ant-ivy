@@ -17,10 +17,10 @@
    under the License.    
 -->
 <ivysettings>
-	<property name="shared" value="sharedrep"/>
-	<properties file="ivysettings.properties"/>
+	<property name="shared" value="${ivy.basedir}/sharedrep"/>
+	<properties file="ivysettings.properties" override="false" />
 	<settings defaultResolver="libraries" validate="false" />
-	<caches defaultCacheDir="mycache" checkUpToDate="false"
+	<caches defaultCacheDir="${ivy.basedir}/mycache" checkUpToDate="false"
 			ivyPattern="[module]/ivys/ivy-[revision].xml" 
 			artifactPattern="[module]/[type]s/[artifact]-[revision].[ext]" />
 	<latest-strategies>

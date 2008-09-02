@@ -35,10 +35,11 @@
 	</macrodef>
 	
 	<resolvers>
-		<mymacro name="default" mymainrep="path/to/myrep" mysecondrep="path/to/secondrep"/>
+		<mymacro name="default" mymainrep="${ivy.basedir}/path/to/myrep" 
+		                        mysecondrep="${ivy.basedir}/path/to/secondrep"/>
 		<mymacro name="other" 
-					mymainrep="path/to/myrep" 
-					mysecondrep="path/to/secondrep" 
+					mymainrep="${ivy.basedir}/path/to/myrep" 
+					mysecondrep="${ivy.basedir}/path/to/secondrep" 
 					myseconddirlayout="[module]/[type]s"/>
 	</resolvers>
 </ivysettings>

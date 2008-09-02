@@ -26,6 +26,7 @@ import org.apache.ivy.plugins.repository.AbstractRepository;
 import org.apache.ivy.plugins.repository.RepositoryCopyProgressListener;
 import org.apache.ivy.plugins.repository.Resource;
 import org.apache.ivy.plugins.repository.TransferEvent;
+import org.apache.ivy.util.Checks;
 import org.apache.ivy.util.FileUtil;
 
 public class FileRepository extends AbstractRepository {
@@ -40,7 +41,7 @@ public class FileRepository extends AbstractRepository {
     }
 
     public FileRepository(File basedir) {
-        this.baseDir = basedir;
+        setBaseDir(basedir);
     }
 
     public Resource getResource(String source) throws IOException {
@@ -114,7 +115,7 @@ public class FileRepository extends AbstractRepository {
         if (baseDir != null) {
             return FileUtil.resolveFile(baseDir, source);
         } else {
-            return new File(source);
+            return Checks.checkAbsolute(source, "source");
         }
     }
 
@@ -130,7 +131,8 @@ public class FileRepository extends AbstractRepository {
         return baseDir;
     }
     
-    public void setBaseDir(File baseDir) {
+    public final void setBaseDir(File baseDir) {
+        Checks.checkAbsolute(baseDir, "basedir");
         this.baseDir = baseDir;
     }
 }

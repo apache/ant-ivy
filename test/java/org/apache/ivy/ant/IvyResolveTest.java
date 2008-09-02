@@ -62,7 +62,7 @@ public class IvyResolveTest extends TestCase {
     
     public void testIVY779() throws Exception {
         Project project = new Project();
-        project.setProperty("ivy.local.default.root", "test/repositories/norev");
+        project.setProperty("ivy.local.default.root", new File("test/repositories/norev").getAbsolutePath());
         project.setProperty("ivy.local.default.ivy.pattern", "[module]/[artifact].[ext]");
         project.setProperty("ivy.local.default.artifact.pattern", "[module]/[artifact].[ext]");
 

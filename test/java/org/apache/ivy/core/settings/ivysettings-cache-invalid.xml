@@ -17,6 +17,7 @@
    under the License.    
 -->
 <ivysettings>
+	<properties file="ivysettings.properties"/>
 	<caches default="mycache2">
 		<cache name="mycache2" />
 	</caches>

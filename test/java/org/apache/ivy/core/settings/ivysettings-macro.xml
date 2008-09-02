@@ -24,12 +24,12 @@
 		<attribute name="myseconddirlayout" default="[organisation]/[module]/[type]s"/>
 		<chain>
 			<filesystem name="fs1">
-				<ivy pattern="@{mymainrep}/[organisation]/[module]/[type]s/[artifact]-[revision].[ext]"/>
-				<artifact pattern="@{mymainrep}/[organisation]/[module]/[type]s/[artifact]-[revision].[ext]"/>
+				<ivy pattern="${ivy.basedir}/@{mymainrep}/[organisation]/[module]/[type]s/[artifact]-[revision].[ext]"/>
+				<artifact pattern="${ivy.basedir}/@{mymainrep}/[organisation]/[module]/[type]s/[artifact]-[revision].[ext]"/>
 			</filesystem>
 			<filesystem name="fs2" latest="latest-time">
-				<ivy pattern="@{mysecondrep}/@{myseconddirlayout}/ivy-[revision].xml"/>
-				<artifact pattern="@{mysecondrep}/@{myseconddirlayout}/[artifact]-[revision].[ext]"/>
+				<ivy pattern="${ivy.basedir}/@{mysecondrep}/@{myseconddirlayout}/ivy-[revision].xml"/>
+				<artifact pattern="${ivy.basedir}/@{mysecondrep}/@{myseconddirlayout}/[artifact]-[revision].[ext]"/>
 			</filesystem>
 		</chain>
 	</macrodef>

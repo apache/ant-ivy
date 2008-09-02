@@ -50,6 +50,7 @@ import org.apache.ivy.plugins.parser.ParserSettings;
 import org.apache.ivy.plugins.repository.Resource;
 import org.apache.ivy.plugins.repository.file.FileResource;
 import org.apache.ivy.plugins.repository.url.URLResource;
+import org.apache.ivy.util.Checks;
 import org.apache.ivy.util.Message;
 import org.apache.ivy.util.XMLHelper;
 import org.apache.ivy.util.extendable.ExtendableItemHelper;
@@ -445,7 +446,7 @@ public final class XmlModuleDescriptorUpdater {
                         String urlStr = attributes.getValue("url");
                         url = new URL(urlStr);
                     } else {
-                        url = settings.resolveFile(fileName).toURI().toURL();
+                        url = Checks.checkAbsolute(fileName, "settings.include").toURI().toURL();
                     }
                 }
                 XMLHelper.parse(url, null, new DefaultHandler() {

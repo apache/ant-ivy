@@ -17,14 +17,15 @@
    under the License.    
 -->
 <ivysettings>
-	<caches default="mycache2" resolutionCacheDir="resolution"
-	        repositoryCacheDir="repository" 
+	<properties file="ivysettings.properties"/>
+	<caches default="mycache2" resolutionCacheDir="${ivy.basedir}/resolution"
+	        repositoryCacheDir="${ivy.basedir}/repository" 
 	        ivyPattern="[module]/ivys/ivy-[revision].xml" 
 	        artifactPattern="[module]/[type]s/[artifact]-[revision].[ext]"
 	        useOrigin="true"
 			lockStrategy="artifact-lock">
 		<cache name="mycache" 
-				basedir="mycache"
+				basedir="${ivy.basedir}/mycache"
 				ivyPattern="[module]/ivy-[revision].xml" 
 				artifactPattern="[module]/[artifact]-[revision].[ext]"
 				useOrigin="false"

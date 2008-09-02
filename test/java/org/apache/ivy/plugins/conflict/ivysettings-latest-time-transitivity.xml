@@ -18,12 +18,12 @@
 -->
 <ivysettings>
 
-    <settings defaultCache="build/cache" defaultResolver="test" defaultConflictManager="latest-time" />
+    <settings defaultCache="${ivy.basedir}/build/cache" defaultResolver="test" defaultConflictManager="latest-time" />
 
     <resolvers>
        <filesystem name="test" latest="latest-time" checkmodified="true">
-        <artifact pattern="test/repositories/IVY-407/[organisation]/[module]/[type]/[artifact]-[revision].[ext]" />
-        <ivy pattern="test/repositories/IVY-407/[organisation]/[module]/ivy-[revision].xml" />
+        <artifact pattern="${ivy.basedir}/test/repositories/IVY-407/[organisation]/[module]/[type]/[artifact]-[revision].[ext]" />
+        <ivy pattern="${ivy.basedir}/test/repositories/IVY-407/[organisation]/[module]/ivy-[revision].xml" />
       </filesystem>
    </resolvers>
 

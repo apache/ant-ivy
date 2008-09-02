@@ -174,8 +174,8 @@ public class DeliverEngine {
         // 4) copy the source resolved ivy to the destination specified,
         // updating status, revision and dependency revisions obtained by
         // PublishingDependencyRevisionResolver
-        String publishedIvy = IvyPatternHelper.substitute(destIvyPattern, md
-                .getResolvedModuleRevisionId());
+        File publishedIvy = settings.resolveFile(
+                    IvyPatternHelper.substitute(destIvyPattern, md.getResolvedModuleRevisionId()));
         Message.info("\tdelivering ivy file to " + publishedIvy);
 
         String[] confs = ConfigurationUtils.replaceWildcards(options.getConfs(), md);
@@ -183,7 +183,7 @@ public class DeliverEngine {
         confsToRemove.removeAll(Arrays.asList(confs));
 
         try {
-            XmlModuleDescriptorUpdater.update(ivyFileURL, settings.resolveFile(publishedIvy),
+            XmlModuleDescriptorUpdater.update(ivyFileURL, publishedIvy,
                     new UpdateOptions()
                         .setSettings(settings)
                         .setResolvedRevisions(resolvedDependencies)

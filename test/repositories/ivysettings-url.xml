@@ -17,9 +17,17 @@
    under the License.    
 -->
 <ivysettings>
-	<include file="ivysettings-macro#2.xml"/>
+	<properties file="${ivy.settings.dir}/ivysettings.properties" />
+	<settings defaultResolver="install"/>
+	<caches defaultCacheDir="${cache.dir}" />
 	<resolvers>
-		<mymacro name="includeworks" mymainrep="${ivy.basedir}/included/myrep" 
-		                             mysecondrep="${ivy.basedir}/included/secondrep"/>
+		<filesystem name="install">
+			<ivy pattern="${ivy.basedir}/build/test/install/[organisation]/[module]/[artifact]-[revision].[ext]"/>
+			<artifact pattern="${ivy.basedir}/build/test/install/[organisation]/[module]/[artifact]-[revision].[ext]"/>
+		</filesystem>
+		<filesystem name="transactional">
+			<ivy pattern="${ivy.basedir}/build/test/transactional/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]"/>
+			<artifact pattern="${ivy.basedir}/build/test/transactional/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]"/>
+		</filesystem>
 	</resolvers>
 </ivysettings>

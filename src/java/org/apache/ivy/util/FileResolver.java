@@ -21,22 +21,24 @@ import java.io.File;
 
 public interface FileResolver {
     public static final FileResolver DEFAULT = new FileResolver() {
-        public File resolveFile(String filename) {
+        public File resolveFile(String path, String filename) {
             return new File(filename);
         }
     };
     
     /**
-     * Return the canonical form of a filename.
+     * Return the canonical form of a path, or raise an {@link IllegalArgumentException} if the path
+     * is not valid for this {@link FileResolver}.
      * <p>
-     * If the specified file name is relative it is resolved
-     * with respect to the settings's base directory.
-     *
-     * @param fileName The name of the file to resolve.
-     *                 Must not be <code>null</code>.
-     *
+     * 
+     * @param path
+     *            The path of the file to resolve. Must not be <code>null</code>.
+     * @param fileName
+     *            The name of the file to resolve. This is used only for exception message if any.
+     *            Must not be <code>null</code>.
+     * 
      * @return the resolved File.
-     *
+     * 
      */
-    File resolveFile(String filename);
+    File resolveFile(String path, String filename);
 }

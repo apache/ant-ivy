@@ -641,7 +641,8 @@ public class Configurator {
             } else if (paramClass.equals(Class.class)) {
                 convertedValue = Class.forName(value);
             } else if (paramClass.equals(File.class)) {
-                convertedValue = fileResolver.resolveFile(value);
+                convertedValue = fileResolver.resolveFile(
+                                        value, od.getObjectName() + "." + attributeName);
             } else {
                 convertedValue = paramClass.getConstructor(new Class[] {String.class}).newInstance(
                     new Object[] {value});
@@ -711,7 +712,8 @@ public class Configurator {
         } catch (Exception ex) {
             IllegalArgumentException iae = new IllegalArgumentException(
                     "impossible to add configured child for " + name + " on "
-                            + parentOD.getObject().getClass());
+                            + parentOD.getObject().getClass() 
+                            + ": " + StringUtils.getErrorMessage(ex));
             iae.initCause(ex);
             throw iae;
         }

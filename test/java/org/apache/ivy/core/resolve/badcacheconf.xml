@@ -17,11 +17,11 @@
    under the License.    
 -->
 <ivysettings>
-  <conf defaultCache="build/cache" defaultResolver="default"/>
+  <conf defaultCache="${ivy.basedir}/build/cache" defaultResolver="default"/>
   <resolvers>
 	<filesystem name="default">
-		<ivy pattern="build/cache/[organisation]/[module]/ivy-[revision].xml" />
-		<artifact pattern="[organisation]/[module]/[type]s/[artifact]-[revision].[ext]" />
+		<ivy pattern="${ivy.basedir}/build/cache/[organisation]/[module]/ivy-[revision].xml" />
+		<artifact pattern="${ivy.basedir}/[organisation]/[module]/[type]s/[artifact]-[revision].[ext]" />
 	</filesystem>
   </resolvers>
 </ivysettings>

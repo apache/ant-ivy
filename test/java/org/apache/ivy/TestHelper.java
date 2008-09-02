@@ -254,10 +254,11 @@ public class TestHelper {
     public static FileSystemResolver newTestRepository() {
         FileSystemResolver testRepository = new FileSystemResolver();
         testRepository.setName("test");
+        String testRepoDir = new File("build/test/test-repo").getAbsolutePath();
         testRepository.addIvyPattern(
-            "build/test/test-repo/[organisation]/[module]/[revision]/[artifact].[ext]");
+            testRepoDir + "/[organisation]/[module]/[revision]/[artifact].[ext]");
         testRepository.addArtifactPattern(
-            "build/test/test-repo/[organisation]/[module]/[revision]/[artifact].[ext]");
+            testRepoDir + "/[organisation]/[module]/[revision]/[artifact].[ext]");
         return testRepository;
     }
 

@@ -317,8 +317,8 @@ public class ChainResolverTest extends AbstractDependencyResolverTest {
         resolver.setName("1");
         resolver.setSettings(settings);
 
-        resolver
-                .addArtifactPattern("test/repositories/1/[organisation]/[module]/[type]s/[artifact]-[revision].[type]");
+        resolver.addArtifactPattern(
+            settings.getBaseDir() + "/test/repositories/1/[organisation]/[module]/[type]s/[artifact]-[revision].[type]");
         chain.add(resolver);
 
         // second resolver has an ivy pattern and will thus find the real module, which should be
@@ -328,9 +328,9 @@ public class ChainResolverTest extends AbstractDependencyResolverTest {
         resolver.setSettings(settings);
 
         resolver
-                .addIvyPattern("test/repositories/1/[organisation]/[module]/ivys/ivy-[revision].xml");
+                .addIvyPattern(settings.getBaseDir() + "/test/repositories/1/[organisation]/[module]/ivys/ivy-[revision].xml");
         resolver
-                .addArtifactPattern("test/repositories/1/[organisation]/[module]/[type]s/[artifact]-[revision].[type]");
+                .addArtifactPattern(settings.getBaseDir() + "/test/repositories/1/[organisation]/[module]/[type]s/[artifact]-[revision].[type]");
         chain.add(resolver);
 
         settings.addResolver(chain);
@@ -453,9 +453,9 @@ public class ChainResolverTest extends AbstractDependencyResolverTest {
         resolver.setSettings(settings);
 
         resolver.addIvyPattern(
-            "test/repositories/1/[organisation]/[module]/ivys/ivy-[revision].xml");
+            settings.getBaseDir() + "/test/repositories/1/[organisation]/[module]/ivys/ivy-[revision].xml");
         resolver.addArtifactPattern(
-            "test/repositories/1/[organisation]/[module]/[type]s/[artifact]-[revision].[type]");
+            settings.getBaseDir() + "/test/repositories/1/[organisation]/[module]/[type]s/[artifact]-[revision].[type]");
         chain.add(resolver);
 
         settings.addResolver(chain);
@@ -473,7 +473,7 @@ public class ChainResolverTest extends AbstractDependencyResolverTest {
         resolver.setSettings(settings);
 
         resolver.addArtifactPattern(
-            "test/repositories/1/[organisation]/[module]/[type]s/[artifact]-[revision].[type]");
+            settings.getBaseDir() + "/test/repositories/1/[organisation]/[module]/[type]s/[artifact]-[revision].[type]");
         chain.add(resolver);
 
         settings.addResolver(chain);
@@ -513,7 +513,7 @@ public class ChainResolverTest extends AbstractDependencyResolverTest {
         resolver.setName("1");
         resolver.setSettings(settings);
         resolver.addArtifactPattern(
-            "test/repositories/nowhere/[organisation]/[module]/[type]s/[artifact]-[revision].[type]");
+            settings.getBaseDir() + "/test/repositories/nowhere/[organisation]/[module]/[type]s/[artifact]-[revision].[type]");
 
         chain.add(resolver);
 
@@ -522,9 +522,9 @@ public class ChainResolverTest extends AbstractDependencyResolverTest {
         resolver.setSettings(settings);
 
         resolver.addIvyPattern(
-            "test/repositories/1/[organisation]/[module]/ivys/ivy-[revision].xml");
+            settings.getBaseDir() + "/test/repositories/1/[organisation]/[module]/ivys/ivy-[revision].xml");
         resolver.addArtifactPattern(
-            "test/repositories/1/[organisation]/[module]/[type]s/[artifact]-[revision].[type]");
+            settings.getBaseDir() + "/test/repositories/1/[organisation]/[module]/[type]s/[artifact]-[revision].[type]");
         chain.add(resolver);
 
         settings.addResolver(chain);

@@ -37,12 +37,12 @@
 			</dual>
 		</chain>
 		<filesystem name="dummy">
-			<ivy pattern="dummy/[organisation]/[module]/[artifact]-[revision].[ext]"/>
-			<artifact pattern="dummy/[organisation]/[module]/[artifact]-[revision].[ext]"/>
+			<ivy pattern="${ivy.basedir}/dummy/[organisation]/[module]/[artifact]-[revision].[ext]"/>
+			<artifact pattern="${ivy.basedir}/dummy/[organisation]/[module]/[artifact]-[revision].[ext]"/>
 		</filesystem>
 		<filesystem name="install">
-			<ivy pattern="build/test/install/[organisation]/[module]/[artifact]-[revision].[ext]"/>
-			<artifact pattern="build/test/install/[organisation]/[module]/[artifact]-[revision].[ext]"/>
+			<ivy pattern="${ivy.basedir}/build/test/install/[organisation]/[module]/[artifact]-[revision].[ext]"/>
+			<artifact pattern="${ivy.basedir}/build/test/install/[organisation]/[module]/[artifact]-[revision].[ext]"/>
 		</filesystem>
 	</resolvers>
 </ivysettings>

@@ -18,6 +18,7 @@
 package org.apache.ivy.core.settings;
 
 import java.io.File;
+import java.io.IOException;
 import java.text.ParseException;
 import java.util.List;
 
@@ -83,7 +84,7 @@ public class XmlSettingsParserTest extends TestCase {
         List ivyPatterns = fsres.getIvyPatterns();
         assertNotNull(ivyPatterns);
         assertEquals(1, ivyPatterns.size());
-        assertEquals("lib/[organisation]/[module]/ivys/ivy-[revision].xml", ivyPatterns.get(0));
+        assertLocationEquals("lib/[organisation]/[module]/ivys/ivy-[revision].xml", ivyPatterns.get(0));
 
         LatestStrategy strategy = fsres.getLatestStrategy();
         assertNotNull(strategy);
@@ -99,7 +100,7 @@ public class XmlSettingsParserTest extends TestCase {
         FileSystemResolver fsInt1 = (FileSystemResolver) subresolvers.get(0);
         assertEquals("int1", fsInt1.getName());
         assertEquals(1, fsInt1.getIvyPatterns().size());
-        assertEquals("sharedrep/[organisation]/[module]/ivys/ivy-[revision].xml", fsInt1
+        assertLocationEquals("sharedrep/[organisation]/[module]/ivys/ivy-[revision].xml", fsInt1
                 .getIvyPatterns().get(0));
         assertEquals("int2", ((DependencyResolver) subresolvers.get(1)).getName());
 
@@ -298,8 +299,7 @@ public class XmlSettingsParserTest extends TestCase {
         List ivyPatterns = fsInt1.getIvyPatterns();
         assertNotNull(ivyPatterns);
         assertEquals(1, ivyPatterns.size());
-        assertEquals("sharedrep/[organisation]/[module]/ivys/ivy-[revision].xml", ivyPatterns
-                .get(0));
+        assertLocationEquals("sharedrep/[organisation]/[module]/ivys/ivy-[revision].xml", ivyPatterns.get(0));
 
         DependencyResolver external = settings.getResolver("external");
         assertNotNull(external);
@@ -314,8 +314,7 @@ public class XmlSettingsParserTest extends TestCase {
         ivyPatterns = fsInt2.getIvyPatterns();
         assertNotNull(ivyPatterns);
         assertEquals(1, ivyPatterns.size());
-        assertEquals("sharedrep/[organisation]/[module]/ivys/ivy-[revision].xml", ivyPatterns
-                .get(0));
+        assertLocationEquals("sharedrep/[organisation]/[module]/ivys/ivy-[revision].xml", ivyPatterns.get(0));
     }
 
     public void testMacro() throws Exception {
@@ -336,7 +335,7 @@ public class XmlSettingsParserTest extends TestCase {
         List ivyPatterns = fsInt1.getIvyPatterns();
         assertNotNull(ivyPatterns);
         assertEquals(1, ivyPatterns.size());
-        assertEquals("path/to/myrep/[organisation]/[module]/[type]s/[artifact]-[revision].[ext]",
+        assertLocationEquals("path/to/myrep/[organisation]/[module]/[type]s/[artifact]-[revision].[ext]",
             ivyPatterns.get(0));
 
         FileSystemResolver fsInt2 = (FileSystemResolver) subresolvers.get(1);
@@ -345,7 +344,7 @@ public class XmlSettingsParserTest extends TestCase {
         ivyPatterns = fsInt2.getIvyPatterns();
         assertNotNull(ivyPatterns);
         assertEquals(1, ivyPatterns.size());
-        assertEquals("path/to/secondrep/[organisation]/[module]/[type]s/ivy-[revision].xml",
+        assertLocationEquals("path/to/secondrep/[organisation]/[module]/[type]s/ivy-[revision].xml",
             ivyPatterns.get(0));
 
         DependencyResolver other = settings.getResolver("other");
@@ -362,7 +361,7 @@ public class XmlSettingsParserTest extends TestCase {
         ivyPatterns = fsInt2.getIvyPatterns();
         assertNotNull(ivyPatterns);
         assertEquals(1, ivyPatterns.size());
-        assertEquals("path/to/secondrep/[module]/[type]s/ivy-[revision].xml", ivyPatterns.get(0));
+        assertLocationEquals("path/to/secondrep/[module]/[type]s/ivy-[revision].xml", ivyPatterns.get(0));
     }
 
     public void testMacroAndRef() throws Exception {
@@ -426,7 +425,7 @@ public class XmlSettingsParserTest extends TestCase {
         List ivyPatterns = fsInt1.getIvyPatterns();
         assertNotNull(ivyPatterns);
         assertEquals(1, ivyPatterns.size());
-        assertEquals("path/to/myrep/[organisation]/[module]/[type]s/[artifact]-[revision].[ext]",
+        assertLocationEquals("path/to/myrep/[organisation]/[module]/[type]s/[artifact]-[revision].[ext]",
             ivyPatterns.get(0));
 
         DependencyResolver inc = settings.getResolver("includeworks");
@@ -443,7 +442,7 @@ public class XmlSettingsParserTest extends TestCase {
         ivyPatterns = fsInt1.getIvyPatterns();
         assertNotNull(ivyPatterns);
         assertEquals(1, ivyPatterns.size());
-        assertEquals("included/myrep/[organisation]/[module]/[type]s/[artifact]-[revision].[ext]",
+        assertLocationEquals("included/myrep/[organisation]/[module]/[type]s/[artifact]-[revision].[ext]",
             ivyPatterns.get(0));
         
         // properties defined in included file should be available to including file (IVY-780)
@@ -495,7 +494,7 @@ public class XmlSettingsParserTest extends TestCase {
         List ivyPatterns = fsInt1.getIvyPatterns();
         assertNotNull(ivyPatterns);
         assertEquals(1, ivyPatterns.size());
-        assertEquals("path/to/myrep/[organisation]/[module]/[type]s/[artifact]-[revision].[ext]",
+        assertLocationEquals("path/to/myrep/[organisation]/[module]/[type]s/[artifact]-[revision].[ext]",
             ivyPatterns.get(0));
 
         DependencyResolver inc = settings.getResolver("includeworks");
@@ -512,7 +511,7 @@ public class XmlSettingsParserTest extends TestCase {
         ivyPatterns = fsInt1.getIvyPatterns();
         assertNotNull(ivyPatterns);
         assertEquals(1, ivyPatterns.size());
-        assertEquals("included/myrep/[organisation]/[module]/[type]s/[artifact]-[revision].[ext]",
+        assertLocationEquals("included/myrep/[organisation]/[module]/[type]s/[artifact]-[revision].[ext]",
             ivyPatterns.get(0));
         
         // properties defined in included file should be available to including file (IVY-780)
@@ -525,7 +524,7 @@ public class XmlSettingsParserTest extends TestCase {
         parser.parse(XmlSettingsParser.class
                 .getResource("ivyconf-properties-relative-to-ivyconf.xml"));
 
-        assertEquals("lib", settings.getVariable("libraries.dir"));
+        assertLocationEquals("lib", settings.getVariable("libraries.dir"));
     }
     
     public void testParser() throws Exception {
@@ -591,5 +590,10 @@ public class XmlSettingsParserTest extends TestCase {
 
         public void unlockArtifact(Artifact artifact, File artifactFileToDownload) {
         }
+    }
+
+    private void assertLocationEquals(String expected, Object pattern) throws IOException {
+        assertEquals(new File(expected).getCanonicalFile(), 
+                    new File((String) pattern).getCanonicalFile());
     }
 }

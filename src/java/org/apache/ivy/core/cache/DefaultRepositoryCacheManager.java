@@ -54,6 +54,7 @@ import org.apache.ivy.plugins.repository.ResourceDownloader;
 import org.apache.ivy.plugins.repository.ResourceHelper;
 import org.apache.ivy.plugins.resolver.DependencyResolver;
 import org.apache.ivy.plugins.resolver.util.ResolvedResource;
+import org.apache.ivy.util.Checks;
 import org.apache.ivy.util.FileUtil;
 import org.apache.ivy.util.Message;
 import org.apache.ivy.util.PropertiesFile;
@@ -343,7 +344,8 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
         File archive = new File(getRepositoryCacheRoot(), getArchivePathInCache(artifact, origin));
         if (!archive.exists() 
                 && !ArtifactOrigin.isUnknown(origin) && origin.isLocal()) {
-            File original = settings.resolveFile(origin.getLocation());
+            File original = Checks.checkAbsolute(
+                origin.getLocation(), artifact + " origin location");
             if (original.exists()) {
                 return original;
             }
@@ -360,7 +362,7 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
     private File getArchiveFileInCache(
             Artifact artifact, ArtifactOrigin origin, boolean useOrigin) {
         if (useOrigin && !ArtifactOrigin.isUnknown(origin) && origin.isLocal()) {
-            return settings.resolveFile(origin.getLocation());
+            return Checks.checkAbsolute(origin.getLocation(), artifact + " origin location");
         } else {
             return new File(getRepositoryCacheRoot(), getArchivePathInCache(artifact, origin));
         }
