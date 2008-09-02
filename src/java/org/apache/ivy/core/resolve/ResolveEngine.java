@@ -996,25 +996,58 @@ public class ResolveEngine {
         }
     }
 
+    /**
+     * Compute possible conflicts for a node, in the context of an ancestor (a node which has a
+     * dependency - direct or indirect - on the node for which conflicts should be computed.
+     * 
+     * @param node
+     *            the node for which conflicts should be computed
+     * @param ancestor
+     *            the ancestor in which conflicts should be computed
+     * @param conf
+     *            the configuration of the node in which conflicts should be computed
+     * @param toevict
+     *            a collection of nodes which have been evicted during conflict resolution at lower
+     *            level. It may be empty if no conflict resolution has occured for this node yet, or
+     *            if no node has been evicted.
+     * @param selectedNodes
+     *            a collection of nodes selected during previous conflict resolution for the given
+     *            node and ancestor. This collection is updated by this call, removing nodes which
+     *            should be evicted.
+     * @return a collection of IvyNode which may be in conflict with the given node in the given
+     *         ancestor. This collection always contain at least the given node.
+     */
     private Collection computeConflicts(VisitNode node, VisitNode ancestor, String conf,
-            Collection toevict, Collection resolvedNodes) {
+            Collection toevict, Collection selectedNodes) {
         Collection conflicts = new LinkedHashSet();
         conflicts.add(node.getNode());
-        if (resolvedNodes.removeAll(toevict)) {
-            // parent.resolved(node.mid) is not up to date:
-            // recompute resolved from all sub nodes
-            Collection deps = ancestor.getNode().getDependencies(node.getRootModuleConf(),
-                ancestor.getRequiredConfigurations());
+        /*
+         * We first try to remove all evicted nodes from the collection of selected nodes to update
+         * this collection. If the collection changes, it means that it contained evicted nodes, and
+         * thus is not up to date. In this case we need to compute selected nodes again. Another
+         * case where we need to deeply compute selected nodes is when selectedNodes is empty (not
+         * computed yet) and we aren't in the context of the direct parent of the node.
+         */
+        if (selectedNodes.removeAll(toevict) 
+                || (selectedNodes.isEmpty() 
+                        && !node.getParent().getNode().equals(ancestor.getNode()))) {
+            Collection deps = ancestor.getNode().getDependencies(
+                node.getRootModuleConf(), 
+                ancestor.getNode().getConfigurations(node.getRootModuleConf()));
             for (Iterator iter = deps.iterator(); iter.hasNext();) {
                 IvyNode dep = (IvyNode) iter.next();
                 if (dep.getModuleId().equals(node.getModuleId())) {
                     conflicts.add(dep);
                 }
-                conflicts
-                        .addAll(dep.getResolvedNodes(node.getModuleId(), node.getRootModuleConf()));
+                conflicts.addAll(
+                    dep.getResolvedNodes(node.getModuleId(), node.getRootModuleConf()));
             }
-        } else if (resolvedNodes.isEmpty()) {
-            //Conflict must only be computed per root configuration at this step.
+        } else if (selectedNodes.isEmpty()) {
+            /*
+             * No selected nodes at all yet, and we are in the context of the direct parent
+             * (otherwise previous block would have been reached). We can compute conflicts based on
+             * the parent direct dependencies in current root module conf.
+             */
             Collection parentDepIvyNodes = node.getParent().getNode()
                         .getDependencies(node.getRootModuleConf(), 
                             new String[] {node.getParentConf()});
@@ -1025,7 +1058,7 @@ public class ResolveEngine {
                 }
             }
         } else {
-            conflicts.addAll(resolvedNodes);
+            conflicts.addAll(selectedNodes);
         }
         return conflicts;
     }

@@ -3535,6 +3535,45 @@ public class ResolveTest extends TestCase {
             "test", "jar", "jar").exists());        
     }
 
+    public void testResolveMaven2WithConflict() throws Exception {
+        Ivy ivy = new Ivy();
+        ivy.configure(new File("test/repositories/m2/ivysettings.xml").toURL());
+        ResolveReport report = ivy.resolve(new File(
+                "test/repositories/m2/org/apache/test3/1.1/test3-1.1.pom").toURL(),
+            getResolveOptions(new String[] {"default"}));
+        assertFalse(report.hasError());
+
+        assertTrue(getIvyFileInCache(
+            ModuleRevisionId.newInstance("org.apache", "test2", "1.1")).exists());
+        assertTrue(getArchiveFileInCache(ivy, "org.apache", "test2", "1.1",
+            "test2", "jar", "jar").exists());
+
+        assertTrue(getIvyFileInCache(
+            ModuleRevisionId.newInstance("org.apache", "test", "1.1")).exists());
+        assertTrue(getArchiveFileInCache(ivy, "org.apache", "test", "1.1",
+            "test", "jar", "jar").exists());   
+        
+        assertContainsArtifact(report.getConfigurationReport("default"), 
+            getArtifact("org.apache", "test2", "1.1", "test2", "jar", "jar"));
+        assertContainsArtifact(report.getConfigurationReport("default"), 
+            getArtifact("org.apache", "test", "1.1", "test", "jar", "jar"));
+    }
+
+    public void testResolveMaven2WithConflict2() throws Exception {
+        Ivy ivy = new Ivy();
+        ivy.configure(new File("test/repositories/m2/ivysettings.xml").toURL());
+        ResolveReport report = ivy.resolve(ResolveTest.class.getResource("ivy-874.xml"),
+            getResolveOptions(new String[] {"default"}));
+        assertFalse(report.hasError());
+        
+        assertContainsArtifact(report.getConfigurationReport("default"), 
+            getArtifact("org.apache", "test3", "1.1", "test3", "jar", "jar"));
+        assertContainsArtifact(report.getConfigurationReport("default"), 
+            getArtifact("org.apache", "test2", "1.1", "test2", "jar", "jar"));
+        assertContainsArtifact(report.getConfigurationReport("default"), 
+            getArtifact("org.apache", "test", "1.2", "test", "jar", "jar"));
+    }
+
     public void testResolveMaven2RelocationOfGroupId() throws Exception {
         //Same as testResolveMaven2 but with a relocated module pointing to the module
         //used in testResolveMaven2.
@@ -4331,6 +4370,10 @@ public class ResolveTest extends TestCase {
     private void assertContainsArtifact(String org, String module, String rev, String artName,
             String type, String ext, ConfigurationResolveReport conf) {
         Artifact art = getArtifact(org, module, rev, artName, type, ext);
+        assertContainsArtifact(conf, art);
+    }
+
+    private void assertContainsArtifact(ConfigurationResolveReport conf, Artifact art) {
         if (!containsArtifact(art, conf.getDownloadedArtifactsReports())) {
             fail("artifact " + art + " should be part of " + conf.getConfiguration() + " from "
                     + conf.getModuleDescriptor().getModuleRevisionId());

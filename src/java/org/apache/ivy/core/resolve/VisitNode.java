@@ -23,6 +23,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
+import java.util.List;
 
 import org.apache.ivy.core.IvyContext;
 import org.apache.ivy.core.module.descriptor.Configuration;
@@ -299,8 +300,7 @@ public class VisitNode {
 
     /**
      * Returns a VisitNode for the given node. The given node must be a representation of the same
-     * module (usually in another revision) as the one visited by this node. The given node must
-     * also have been already visited.
+     * module (usually in another revision) as the one visited by this node. 
      * 
      * @param node
      *            the node to visit
@@ -314,18 +314,16 @@ public class VisitNode {
                             + getModuleId() + " Given node module id=" + node.getModuleId());
         }
         VisitData visitData = data.getVisitData(node.getId());
-        if (visitData == null) {
-            throw new IllegalArgumentException(
-                    "You can't use gotoNode with a node which has not been visited yet.\n"
-                    + "Given node id=" + node.getId());
-        }
-        for (Iterator iter = visitData.getVisitNodes(rootModuleConf).iterator(); iter.hasNext();) {
-            VisitNode vnode = (VisitNode) iter.next();
-            if ((parent == null && vnode.getParent() == null)
-                    || (parent != null && parent.getId().equals(vnode.getParent().getId()))) {
-                vnode.parentConf = parentConf;
-                vnode.usage = getUsage();
-                return vnode;
+        if (visitData != null) {
+            List visitNodes = visitData.getVisitNodes(rootModuleConf);
+            for (Iterator iter = visitNodes.iterator(); iter.hasNext();) {
+                VisitNode vnode = (VisitNode) iter.next();
+                if ((parent == null && vnode.getParent() == null)
+                        || (parent != null && parent.getId().equals(vnode.getParent().getId()))) {
+                    vnode.parentConf = parentConf;
+                    vnode.usage = getUsage();
+                    return vnode;
+                }
             }
         }
         // the node has not yet been visited from the current parent, we create a new visit node

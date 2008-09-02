@@ -261,9 +261,7 @@ public class IvyNodeUsage {
     }
 
     protected void removeRootModuleConf(String rootModuleConf) {
-        if (!rootModuleConfs.keySet().contains(rootModuleConf)) {
-            rootModuleConfs.put(rootModuleConf, null);
-        }
+        rootModuleConfs.remove(rootModuleConf);
     }
 
     protected void blacklist(IvyNodeBlacklist bdata) {
