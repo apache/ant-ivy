@@ -36,7 +36,6 @@ public class URLRepository extends AbstractRepository {
     private Map resourcesCache = new HashMap();
 
     public Resource getResource(String source) throws IOException {
-        source = encode(source);
         Resource res = (Resource) resourcesCache.get(source);
         if (res == null) {
             res = new URLResource(new URL(source));
@@ -45,11 +44,6 @@ public class URLRepository extends AbstractRepository {
         return res;
     }
     
-    private static String encode(String source) {
-        // TODO: add some more URL encodings here
-        return source.trim().replaceAll(" ", "%20");
-    }
-
     public void get(String source, File destination) throws IOException {
         fireTransferInitiated(getResource(source), TransferEvent.REQUEST_GET);
         try {
