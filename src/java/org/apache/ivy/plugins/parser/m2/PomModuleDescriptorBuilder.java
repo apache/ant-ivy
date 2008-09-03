@@ -37,6 +37,7 @@ import org.apache.ivy.core.module.descriptor.DefaultDependencyDescriptor;
 import org.apache.ivy.core.module.descriptor.DefaultExcludeRule;
 import org.apache.ivy.core.module.descriptor.DefaultModuleDescriptor;
 import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
+import org.apache.ivy.core.module.descriptor.License;
 import org.apache.ivy.core.module.descriptor.MDArtifact;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.descriptor.OverrideDependencyDescriptorMediator;
@@ -213,6 +214,11 @@ public class PomModuleDescriptorBuilder {
         ivyModuleDescriptor.setDescription(description);
     }
 
+    public void setLicenses(License[] licenses) {
+        for (int i = 0; i < licenses.length; i++) {
+            ivyModuleDescriptor.addLicense(licenses[i]);
+        }
+    }
 
     public void addMainArtifact(String artifactId, String packaging) {
         String ext;

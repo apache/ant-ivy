@@ -122,6 +122,7 @@ public final class PomModuleDescriptorParser implements ModuleDescriptorParser {
             
             mdBuilder.setHomePage(domReader.getHomePage());
             mdBuilder.setDescription(domReader.getDescription());
+            mdBuilder.setLicenses(domReader.getLicenses());
 
             ModuleRevisionId relocation = domReader.getRelocation();
             

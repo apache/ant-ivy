@@ -84,6 +84,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - NEW: Add transitive dependency version and branch override mechanism (IVY-784)
 - NEW: Add new packager resolver (IVY-829) (thanks to Archie Cobbs)
 
+- IMPROVEMENT: Parse license information in poms (IVY-892)
 - IMPROVEMENT: Change 'alwaysUseExactRevision' default value to false (IVY-891)
 - IMPROVEMENT: Better and more homogeneous relative paths handling (IVY-387) 
 - IMPROVEMENT: undeprecate configure task (IVY-849)

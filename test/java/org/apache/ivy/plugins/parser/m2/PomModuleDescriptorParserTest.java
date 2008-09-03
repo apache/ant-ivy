@@ -28,6 +28,7 @@ import java.util.Map;
 import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.DefaultModuleDescriptor;
 import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
+import org.apache.ivy.core.module.descriptor.License;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleId;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
@@ -510,10 +511,21 @@ public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParse
 
         assertEquals("http://mule.mulesource.org", md.getHomePage());
         assertEquals("Mule is a simple yet robust and highly scalable Integration and ESB services "
-        		+ "framework. It is designed\n        as a light-weight, event-driven component " 
-        		+ "technology that handles communication with disparate systems\n        " 
-        		+ "transparently providing a simple component interface.", 
-        		md.getDescription().replaceAll("\r\n", "\n").replace('\r', '\n'));
+                + "framework. It is designed\n        as a light-weight, event-driven component " 
+                + "technology that handles communication with disparate systems\n        " 
+                + "transparently providing a simple component interface.", 
+                md.getDescription().replaceAll("\r\n", "\n").replace('\r', '\n'));
+    }
+    
+    public void testLicense() throws Exception {
+        ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(
+            settings, getClass().getResource("spring-hibernate3-2.0.2.pom"), false);
+
+        License[] licenses = md.getLicenses();
+        assertNotNull(licenses);
+        assertEquals(1, licenses.length);
+        assertEquals("The Apache Software License, Version 2.0", licenses[0].getName());
+        assertEquals("http://www.apache.org/licenses/LICENSE-2.0.txt", licenses[0].getUrl());
     }
     
     public void testDependencyManagment() throws ParseException, IOException {

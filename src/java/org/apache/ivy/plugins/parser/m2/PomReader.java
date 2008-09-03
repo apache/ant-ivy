@@ -19,6 +19,7 @@ package org.apache.ivy.plugins.parser.m2;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -26,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.ivy.core.IvyPatternHelper;
+import org.apache.ivy.core.module.descriptor.License;
 import org.apache.ivy.core.module.id.ModuleId;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.plugins.repository.Resource;
@@ -55,6 +57,10 @@ public class PomReader {
     private static final String VERSION = "version";
     private static final String DESCRIPTION = "description";
     private static final String HOMEPAGE = "url";
+    private static final String LICENSES = "licenses";
+    private static final String LICENSE = "license";
+    private static final String LICENSE_NAME = "name";
+    private static final String LICENSE_URL = "url";
     private static final String PARENT = "parent";
     private static final String SCOPE = "scope";
     private static final String CLASSIFIER = "classifier";
@@ -176,6 +182,26 @@ public class PomReader {
             val = "";
         }
         return val.trim();
+    }
+
+    public License[] getLicenses() {
+        Element licenses = getFirstChildElement(projectElement, LICENSES);
+        if (licenses == null) {
+            return new License[0];
+        }
+        licenses.normalize();
+        List/*<License>*/ lics = new ArrayList();
+        for (Iterator it = getAllChilds(licenses).iterator(); it.hasNext();) {
+            Element license = (Element) it.next();
+            if (LICENSE.equals(license.getNodeName())) {
+                String name = getFirstChildText(license, LICENSE_NAME);
+                String url = getFirstChildText(license, LICENSE_URL);
+                if (name != null || url != null) {
+                    lics.add(new License(name, url));
+                }
+            }
+        }
+        return (License[]) lics.toArray(new License[lics.size()]);
     }
 
     
