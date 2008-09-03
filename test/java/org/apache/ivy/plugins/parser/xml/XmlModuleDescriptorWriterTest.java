@@ -62,6 +62,23 @@ public class XmlModuleDescriptorWriterTest extends TestCase {
         assertEquals(expected, wrote);
     }
 
+    public void testInfo() throws Exception {
+        DefaultModuleDescriptor md = (DefaultModuleDescriptor) XmlModuleDescriptorParser
+                .getInstance().parseDescriptor(new IvySettings(),
+                    XmlModuleDescriptorWriterTest.class.getResource("test-info.xml"), true);
+        md.setResolvedPublicationDate(new GregorianCalendar(2005, 4, 1, 11, 0, 0).getTime());
+        md.setResolvedModuleRevisionId(new ModuleRevisionId(md.getModuleRevisionId().getModuleId(),
+                "NONE"));
+        XmlModuleDescriptorWriter.write(md, LICENSE, _dest);
+
+        assertTrue(_dest.exists());
+        String wrote = FileUtil.readEntirely(new BufferedReader(new FileReader(_dest))).replaceAll(
+            "\r\n", "\n").replace('\r', '\n');
+        String expected = readEntirely("test-write-info.xml").replaceAll("\r\n", "\n").replace(
+            '\r', '\n');
+        assertEquals(expected, wrote);
+    }
+
     public void testDependencies() throws Exception {
         ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(
             new IvySettings(),

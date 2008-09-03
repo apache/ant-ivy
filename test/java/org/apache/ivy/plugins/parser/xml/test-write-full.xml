@@ -25,6 +25,11 @@
 		publication="20041101110000"
 		e:attr1="value1"
 	>
+		<license name="MyLicense" url="http://www.my.org/mymodule/mylicense.html" />
+		<description homepage="http://www.my.org/mymodule/">
+		This module is <b>great</b> !<br/>
+	You can use it especially with myconf1 and myconf2, and myconf4 is not too bad too.
+		</description>
 		<e:someExtra>56576</e:someExtra>
 	</info>
 	<configurations>

@@ -37,6 +37,7 @@ import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
 import org.apache.ivy.core.module.descriptor.DependencyDescriptorMediator;
 import org.apache.ivy.core.module.descriptor.ExcludeRule;
 import org.apache.ivy.core.module.descriptor.IncludeRule;
+import org.apache.ivy.core.module.descriptor.License;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.descriptor.OverrideDependencyDescriptorMediator;
 import org.apache.ivy.plugins.matcher.MapMatcher;
@@ -439,8 +440,33 @@ public final class XmlModuleDescriptorWriter {
             printExtraAttributes(md, out, "\t\t");
             out.println();
         }
-        if (md.getExtraInfo().size() > 0) {
+        if (requireInnerInfoElement(md)) {
             out.println("\t>");
+            License[] licenses = md.getLicenses();
+            for (int i = 0; i < licenses.length; i++) {
+                License license = licenses[i];
+                out.print("\t\t<license ");
+                if (license.getName() != null) {
+                    out.print("name=\"" + license.getName() + "\" ");
+                }
+                if (license.getUrl() != null) {
+                    out.print("url=\"" + license.getUrl() + "\" ");
+                }
+                out.println("/>");
+            }
+            if (md.getHomePage() != null || md.getDescription() != null) {
+                out.print("\t\t<description");
+                if (md.getHomePage() != null) {
+                    out.print(" homepage=\"" + md.getHomePage() + "\"");
+                }
+                if (md.getDescription() != null && md.getDescription().trim().length() > 0) {
+                    out.println(">");
+                    out.println("\t\t" + md.getDescription());
+                    out.println("\t\t</description>");
+                } else {
+                    out.println(" />");
+                }
+            }
             for (Iterator it = md.getExtraInfo().entrySet().iterator(); it.hasNext();) {
                 Map.Entry extraDescr = (Map.Entry) it.next();
                 if (extraDescr.getValue() == null 
@@ -460,6 +486,13 @@ public final class XmlModuleDescriptorWriter {
             out.println("\t/>");            
         }
 
+    }
+
+    private static boolean requireInnerInfoElement(ModuleDescriptor md) {
+        return md.getExtraInfo().size() > 0 
+                || md.getHomePage() != null 
+                || (md.getDescription() != null && md.getDescription().trim().length() > 0) 
+                || md.getLicenses().length > 0;
     }
 
     private static String getConfs(ModuleDescriptor md, Artifact artifact) {
