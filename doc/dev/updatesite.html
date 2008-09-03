@@ -1,0 +1,85 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<!--
+   Licensed to the Apache Software Foundation (ASF) under one
+   or more contributor license agreements.  See the NOTICE file
+   distributed with this work for additional information
+   regarding copyright ownership.  The ASF licenses this file
+   to you under the Apache License, Version 2.0 (the
+   "License"); you may not use this file except in compliance
+   with the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing,
+   software distributed under the License is distributed on an
+   "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+   KIND, either express or implied.  See the License for the
+   specific language governing permissions and limitations
+   under the License.    
+-->
+<html>
+<head>
+	<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
+	<script type="text/javascript">var xookiConfig = {level: 1};</script>	
+	<script type="text/javascript" src="../xooki/xooki.js"></script>
+</head>
+<body>
+	<textarea id="xooki-source">
+Once a release have been build for Ivy or IvyDE, they should be push to the Eclipse updatesite so that Eclipse users will be able to update automatically their installed version of Ivy or IvyDE.
+
+<h1>Push the new version</h1>
+
+The update site svn location is there: https://svn.apache.org/repos/asf/ant/ivy/site/ivyde/updatesite/
+
+<ul>
+<li>For an <u>Ivy release</u>:
+the new ivy bundle have to be placed in the plugins directory of the updatesite. The convention is to name the bundle org.apache.ivy_${BUNDLE-VERSION}.jar.
+Eclipse needs a feature, it can be generated at the right place with an ant target. From the <a href="https://svn.apache.org/repos/asf/ant/ivy/site/build.xml">build file of the site</a>, run: <pre>ant updatesite:generate-ivy-feature -Divy.version=${BUNDLE-VERSION}</pre>
+</li>
+<li>For an <u>IvyDE release</u>:
+it contains a plugin and a feature, so they have to be place respectivly in the plugins directory and in the features directory. </li>
+</ul>
+
+Then the deprecated versions of the plugins and the features should be removed.
+
+And the site.xml file should be edited. The version number should be updated accordingly to the release.
+
+<h1>Prepare the update site</h1>
+
+The update site is optimized: the metadata of the features are aggregated into the digest.zip, and the jar of the plugins are compressed with a better algorithm.
+
+To accomplish this task, from the <a href="https://svn.apache.org/repos/asf/ant/ivy/site/build.xml">build file of the site</a>, run:
+<pre>ant updatesite:optimize</pre>
+
+The binary files then need to be signed and their checksum computed. For the checksums, run:
+<pre>ant updatesite:checksum</pre>
+To sign the binaries, you can use the signArtifacts.sh scripts which is in the updatesite directory.
+
+<h1>Test the updatesite</h1>
+
+The updatesite is ready to be tested. In order to test the new artifacts, as they are not yet deployed on Apache mirrors, the updatesite mirroring have to be disable. Basically it is just about not deploying the eclipse-update--xml files.
+
+If you are willing to just test yourself, you can setup in Eclipse a local updatesite. Wherever you want on your local filesystem, make a clone of you working copy of the updatesite directory, but <u>without</u> the eclipse-update--xml files.
+
+To let the developper community test the updatesite, you can copy the new local updatesite <u>without</u> the eclipse-update--xml files to your public_html directory on people.apache.org:
+<pre>scp -r digest.zip features plugins site.xml LOGIN@people.apache.org:/home/LOGIN/public_html/updatesite</pre>
+
+<h1>Deployment</h1>
+
+Two deployments are needed. One will be part of the website deployment, it will deploy the main updatesite, where there are only the metadata. The second is about pushing the binaries in the Apache dist directory.
+
+To deploy the main updatesite, juste regenerate the IvyDE site:
+<pre>ant generate-site-ivyde</pre>
+and commit the changes of the "target" directory.
+
+For the mirrors udpate site which contains the actual binaries, every binaries have to be copied, with their signatures and checksums, and the site.xml. So on people.apache.org, first do a backup of the current updatesite
+<pre>mv /www/www.apache.org/dist/ant/ivyde/updatesite /www/www.apache.org/dist/ant/ivyde/updatesite.bak</pre>
+Then we recreate the updatesite:
+<pre>mkdir /www/www.apache.org/dist/ant/ivyde/updatesite</pre>
+And publish the new updatesite:
+<pre>cd site/ivyde/updatesite
+scp -r digest* plugins features site.xml LOGIN@people.apache.org:/www/www.apache.org/dist/ant/ivyde/updatesite</pre>
+</textarea>
+<script type="text/javascript">xooki.postProcess();</script>
+</body>
+</html>

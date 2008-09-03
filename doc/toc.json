@@ -777,6 +777,13 @@
                     "children": [
 
                       ]
+                  },
+                  {
+                    "id":"dev/updatesite",
+                    "title":"Updating the updatesite",
+                    "children": [
+
+                      ]
                   }
                 ]
             }

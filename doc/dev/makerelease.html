@@ -127,7 +127,11 @@ You can for example add a HEADER.html like this:
 <h2>WARNING: files available here are NOT an Apache approved release yet.</h2>
 </code>
 
-<h3>11. Call for a vote to approve the release</h3>
+<h3>11. Prepare the Eclipse update site</h3>
+
+To be able to test the release within IvyDE, it can be deployed in the IvyDE update site. See <a href="updatesite.html">that page</a> to know how to process.
+
+<h3>12. Call for a vote to approve the release</h3>
 Cast a vote to approve the release on the dev@ant.apache.org mailing list.
 
 Here is an example:
@@ -147,20 +151,20 @@ Regards,
 
 ${me}, Ivy ${version} release manager
 </code>
-<h3>12. Tag the svn repository</h3>
+<h3>13. Tag the svn repository</h3>
 Now that the release is approved, it is time to tag the svn repo
 <code>
 svn copy https://svn.apache.org/repos/asf/ant/ivy/core/branches/2.0.0-beta1 \
            https://svn.apache.org/repos/asf/ant/ivy/core/tags/2.0.0-beta1 \
       -m "Tag release 2.0.0-beta1."
 </code>
-<h3>13. Upload to public repository</h3>
+<h3>14. Upload to public repository</h3>
 If the release is approved, it's now time to make it public by uploading it to the public Apache distrib repository (i.e. /www/www.apache.org/dist/ant/ivy/[version] on people.a.o).
 
 Copy also the staging maven 2 repository to apache maven 2 rsync repo:
 /www/people.apache.org/repo/m2-ibiblio-rsync-repository
 
-<h3>14. Update the web site</h3>
+<h3>15. Update the web site</h3>
 Add a link to the released version documentation in the web site. 
 
 To do so, you need to:
@@ -203,7 +207,11 @@ You are now ready to commit your changes (make sure to commit changes in importe
 ant clean publish-site
 </code>
 
-<h3>15. Announce</h3>
+<h3>16. Deploy the Eclipse updatesite</h3>
+
+If the Eclipse update site has already been prepared to include that new Ivy release, it is now needed to be deployed. Then follow the deployment instruction on <a href="updatesite.html">that page<a>.
+
+<h3>17. Announce</h3>
 Announce the release on the dev@ant.a.o, ivy-user@ant.a.o, user@ant.apache.org and announce@apache.org mailing lists.
 You can also announce the release on popular web sites, like freshmeat.net (xavier is the owner of the Ivy project on freshmeat), javalobby.org, theserverside.com, dzone.com, ...
 <h3>16. Update this doc</h3>
