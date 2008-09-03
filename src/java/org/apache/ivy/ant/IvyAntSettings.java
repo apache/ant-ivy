@@ -271,10 +271,10 @@ public class IvyAntSettings extends DataType {
             ivyEngine = ivy;
         } catch (ParseException e) {
             throw new BuildException("impossible to configure ivy:settings with given "
-                    + (file != null ? "file: " + file : "url :" + url) + " :" + e, e);
+                    + (file != null ? "file: " + file : "url: " + url) + " : " + e, e);
         } catch (IOException e) {
             throw new BuildException("impossible to configure ivy:settings with given "
-                    + (file != null ? "file: " + file : "url :" + url) + " :" + e, e);
+                    + (file != null ? "file: " + file : "url: " + url) + " : " + e, e);
         } finally {
             ivy.getLoggerEngine().popLogger();
         }
