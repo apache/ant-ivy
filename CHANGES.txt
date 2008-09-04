@@ -111,6 +111,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - IMPROVEMENT: Add a memory cache for the module descriptor that are parsed from the cache (IVY-883)
 - IMPROVEMENT: Improve performance (IVY-872)
 
+- FIX: Enable consistent support of the configuration negation operator (IVY-894)
 - FIX: add variable expansion in extra attributes (IVY-798)
 - FIX: Invalid URL when using dynamic ranges (IVY-885)
 - FIX: can't use gotoNode with a node which has not been visited yet (IVY-874)

@@ -388,6 +388,17 @@ public class IvyResolveTest extends TestCase {
         assertNotNull(project.getReference("ivy.resolved.configurations.ref.testWithResolveId"));
     }
 
+    public void testExcludedConf() throws Exception {
+        resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-multiconf.xml"));
+        resolve.setConf("*,!default");
+        resolve.execute();
+
+        assertTrue(getIvyFileInCache(
+            ModuleRevisionId.newInstance("org1", "mod1.1", "2.0")).exists());
+        assertFalse(getIvyFileInCache(
+            ModuleRevisionId.newInstance("org1", "mod1.2", "2.0")).exists());
+    }
+
     public void testResolveWithAbsoluteFile() {
         // IVY-396
         File ivyFile = new File("test/java/org/apache/ivy/ant/ivy-simple.xml");

@@ -20,6 +20,7 @@ package org.apache.ivy.util;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.Set;
+import java.util.Iterator;
 
 import org.apache.ivy.core.module.descriptor.Configuration;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
@@ -61,6 +62,7 @@ public final class ConfigurationUtils {
         }
 
         Set result = new LinkedHashSet();
+        Set excluded = new LinkedHashSet();
         for (int i = 0; i < confs.length; i++) {
             if ("*".equals(confs[i])) {
                 result.addAll(Arrays.asList(md.getConfigurationsNames()));
@@ -78,9 +80,14 @@ public final class ConfigurationUtils {
                         result.add(all[j].getName());
                     }
                 }
+            } else if (confs[i].startsWith("!")) {
+                excluded.add(confs[i].substring( 1 ));
             } else {
                 result.add(confs[i]);
             }
+        }
+        for (Iterator iter = excluded.iterator(); iter.hasNext();) {
+            result.remove(iter.next());
         }
 
         return (String[]) result.toArray(new String[result.size()]);
