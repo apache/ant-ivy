@@ -111,10 +111,33 @@ public final class PomModuleDescriptorParser implements ModuleDescriptorParser {
         PomModuleDescriptorBuilder mdBuilder = new PomModuleDescriptorBuilder(this, res);
         
         try {           
-            PomReader domReader = new PomReader(descriptorURL, res);
-            
+            PomReader domReader = new PomReader(descriptorURL, res);            
             domReader.setProperty("parent.version", domReader.getParentVersion());
             
+            ModuleDescriptor parentDescr = null;
+            if (domReader.hasParent()) {
+                //Is there any other parent properties?
+                
+                ModuleRevisionId parentModRevID = ModuleRevisionId.newInstance(
+                    domReader.getParentGroupId(), 
+                    domReader.getParentArtifactId(), 
+                    domReader.getParentVersion());
+                ResolvedModuleRevision parentModule = parseOtherPom(ivySettings, 
+                    parentModRevID);
+                if (parentModule != null) {
+                    parentDescr = parentModule.getDescriptor();
+                } else {
+                   Message.warn("impossible to load parent for " + descriptorURL + "."
+                       + " Parent=" + parentModRevID); 
+                }
+                
+                Map parentPomProps = PomModuleDescriptorBuilder.extractPomProperties(parentDescr.getExtraInfo());
+                for (Iterator iter = parentPomProps.entrySet().iterator(); iter.hasNext();) {
+                    Map.Entry prop = (Map.Entry) iter.next();
+                    domReader.setProperty((String) prop.getKey(), (String) prop.getValue());
+                }                    
+            }
+                            
             String groupId = domReader.getGroupId();
             String artifactId = domReader.getArtifactId();
             String version = domReader.getVersion();
@@ -172,25 +195,6 @@ public final class PomModuleDescriptorParser implements ModuleDescriptorParser {
                 domReader.setProperty("pom.version", version);
                 domReader.setProperty("version", version);
 
-                ModuleDescriptor parentDescr = null;
-                if (domReader.hasParent()) {
-                    domReader.setProperty("parent.version", domReader.getParentVersion());
-                    //Is there any other parent properties?
-                    
-                    ModuleRevisionId parentModRevID = ModuleRevisionId.newInstance(
-                        domReader.getParentGroupId(), 
-                        domReader.getParentArtifactId(), 
-                        domReader.getParentVersion());
-                    ResolvedModuleRevision parentModule = parseOtherPom(ivySettings, 
-                        parentModRevID);
-                    if (parentModule != null) {
-                        parentDescr = parentModule.getDescriptor();
-                    } else {
-                       Message.warn("impossible to load parent for " + descriptorURL + "."
-                           + " Parent=" + parentModRevID); 
-                    }
-                }
-                                
                 Map pomProperties = domReader.getPomProperties();
                 for (Iterator iter = pomProperties.entrySet().iterator(); iter.hasNext();) {
                     Map.Entry prop = (Map.Entry) iter.next();
@@ -199,13 +203,6 @@ public final class PomModuleDescriptorParser implements ModuleDescriptorParser {
                 }
                 
                 if (parentDescr != null) {
-                    Map parentPomProps = PomModuleDescriptorBuilder
-                            .extractPomProperties(parentDescr.getExtraInfo());
-                    for (Iterator iter = parentPomProps.entrySet().iterator(); iter.hasNext();) {
-                        Map.Entry prop = (Map.Entry) iter.next();
-                        domReader.setProperty((String) prop.getKey(), (String) prop.getValue());
-                    }                    
-
                     mdBuilder.addExtraInfos(parentDescr.getExtraInfo());
                     
                     // add dependency management info from parent

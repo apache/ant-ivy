@@ -606,7 +606,8 @@ public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(
             settings, getClass().getResource("test-parent-properties.pom"), false);
         assertNotNull(md);
-
+        assertEquals("1.0", md.getRevision());
+        
         DependencyDescriptor[] dds = md.getDependencies();
         assertNotNull(dds);
         assertEquals(3, dds.length); 

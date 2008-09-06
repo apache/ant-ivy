@@ -328,7 +328,7 @@ public class PomModuleDescriptorBuilder {
     public void addPlugin(PomDependencyMgt plugin) {
         String pluginValue = plugin.getGroupId() + EXTRA_INFO_DELIMITER + plugin.getArtifactId() 
                 + EXTRA_INFO_DELIMITER + plugin.getVersion();
-        String pluginExtraInfo = (String) ivyModuleDescriptor.getExtraInfo().get("maven.plugins");
+        String pluginExtraInfo = (String) ivyModuleDescriptor.getExtraInfo().get("m:maven.plugins");
         if (pluginExtraInfo == null) {
             pluginExtraInfo = pluginValue;
         } else {

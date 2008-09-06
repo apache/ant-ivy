@@ -42,5 +42,6 @@
   </dependencies>
   <properties>
   	<test-yet-other-version>5.76</test-yet-other-version>
+        <test-version-version>1.0</test-version-version>
   </properties>
 </project>
