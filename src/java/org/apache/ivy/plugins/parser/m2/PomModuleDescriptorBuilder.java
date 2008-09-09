@@ -19,6 +19,8 @@ package org.apache.ivy.plugins.parser.m2;
 
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -109,6 +111,8 @@ public class PomModuleDescriptorBuilder {
     private static final String DEPENDENCY_MANAGEMENT = "m:dependency.management";        
     private static final String PROPERTIES = "m:properties";
     private static final String EXTRA_INFO_DELIMITER = "__";
+    private static final Collection/*<String>*/ JAR_PACKAGINGS = Arrays.asList(
+                new String[] {"ejb", "bundle", "maven-plugin"});
 
     
     static interface ConfMapper {
@@ -222,28 +226,18 @@ public class PomModuleDescriptorBuilder {
 
     public void addMainArtifact(String artifactId, String packaging) {
         String ext;
+        
+        /*
+         * TODO: we should make packaging to ext mapping configurable, since it's not possible to
+         * cover all cases.
+         */
         if ("pom".equals(packaging)) {
             // no artifact defined!
             return;
-        } else if ("ejb".equals(packaging)) {
+        } else if (JAR_PACKAGINGS.contains(packaging)) {
             ext = "jar";
         } else {
             ext = packaging;
-        }
-
-        // TODO: we should refactor the following code into something more configurable
-
-        // if 'packaging == bundle' and if we use the 'maven-bundle-plugin', the
-        // type must be 'jar'
-        if ("bundle".equals(packaging)) {
-            for (Iterator it = getPlugins(ivyModuleDescriptor).iterator(); it.hasNext();) {
-                PomDependencyMgt plugin = (PomDependencyMgt) it.next();
-                if ("org.apache.felix".equals(plugin.getGroupId())
-                        && "maven-bundle-plugin".equals(plugin.getArtifactId())) {
-                    ext = "jar";
-                    break;
-                }
-            }
         }
 
         mainArtifact = new DefaultArtifact(mrid, new Date(), artifactId, packaging, ext);
