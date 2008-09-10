@@ -54,6 +54,35 @@ public class IvyConfigureTest extends TestCase {
         task.setSettingsRef(ref);
         return task.getIvyInstance();
     }
+    
+    public void testDefaultCacheDir() {
+        // test with an URL
+        configure.setUrl(getClass().getResource("ivysettings-defaultCacheDir.xml"));
+        configure.setSettingsId("test");
+        configure.execute();
+        
+        assertEquals(new File("mycache").getAbsolutePath(), project.getProperty("ivy.cache.dir.test"));
+        
+        // test with a File
+        project = new Project();
+        configure = new IvyConfigure();
+        configure.setProject(project);
+        configure.setFile(new File("test/java/org/apache/ivy/ant/ivysettings-defaultCacheDir.xml"));
+        configure.setSettingsId("test2");
+        configure.execute();
+
+        assertEquals(new File("mycache").getAbsolutePath(), project.getProperty("ivy.cache.dir.test2"));
+        
+        // test if no defaultCacheDir is specified
+        project = new Project();
+        configure = new IvyConfigure();
+        configure.setProject(project);
+        configure.setFile(new File("test/java/org/apache/ivy/ant/ivysettings-noDefaultCacheDir.xml"));
+        configure.setSettingsId("test3");
+        configure.execute();
+
+        assertNotNull(project.getProperty("ivy.cache.dir.test3"));
+    }
 
     public void testDefault() throws Exception {
         // by default settings look in the current directory for an ivysettings.xml file...

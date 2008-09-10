@@ -371,7 +371,6 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
         } else {
             getDefaultIvyUserDir();
         }
-        getDefaultCache();
 
         loadDefaultProperties();
         try {
@@ -397,7 +396,6 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
         } else {
             getDefaultIvyUserDir();
         }
-        getDefaultCache();
 
         loadDefaultProperties();
         new XmlSettingsParser(this).parse(settingsURL);

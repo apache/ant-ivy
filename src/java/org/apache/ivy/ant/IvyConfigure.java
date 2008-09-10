@@ -89,6 +89,13 @@ public class IvyConfigure extends Task {
     public void setUrl(String url) throws MalformedURLException {
         settings.setUrl(url);
     }
+    
+    public void setUrl(URL url) {
+        if (url == null) {
+            throw new NullPointerException("Cannot set a null URL");
+        }
+        settings.setUrl(url);
+    }
 
     public String getRealm() {
         return settings.getRealm();

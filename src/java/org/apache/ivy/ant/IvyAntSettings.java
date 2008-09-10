@@ -201,6 +201,10 @@ public class IvyAntSettings extends DataType {
     public void setUrl(String confUrl) throws MalformedURLException {
         this.url = new URL(confUrl);
     }
+    
+    public void setUrl(URL url) {
+        this.url = url;
+    }
 
     /*
      * This is usually not necessary to define a reference in Ant, but it's the only

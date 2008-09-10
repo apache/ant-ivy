@@ -111,6 +111,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - IMPROVEMENT: Add a memory cache for the module descriptor that are parsed from the cache (IVY-883)
 - IMPROVEMENT: Improve performance (IVY-872)
 
+- FIX: ivy.cache.dir.${settingsRef} is set to default instead of the defaultCacheDir from the ivysettings.xml after ivy:resolve (IVY-898)
 - FIX: Ivy ibiblio resolver chokes on variables while checking descriptor consistency (IVY-818)
 - FIX: Enable consistent support of the configuration negation operator (IVY-894) (thanks to Patrick Woodworth)
 - FIX: add variable expansion in extra attributes (IVY-798)
