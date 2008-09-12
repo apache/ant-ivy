@@ -185,6 +185,12 @@ public final class Main {
 
             File cache = new File(settings.substitute(line.getOptionValue("cache", settings
                     .getDefaultCache().getAbsolutePath())));
+
+            if (line.hasOption("cache")) {
+                //override default cache path with user supplied cache path
+                settings.setDefaultCache(cache);
+            }
+
             if (!cache.exists()) {
                 cache.mkdirs();
             } else if (!cache.isDirectory()) {
