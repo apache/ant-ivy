@@ -20,6 +20,7 @@ package org.apache.ivy.plugins.resolver;
 import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
+import java.util.Arrays;
 
 import org.apache.ivy.core.cache.ArtifactOrigin;
 import org.apache.ivy.core.module.descriptor.Artifact;
@@ -44,6 +45,9 @@ import org.apache.ivy.util.Message;
  * first resolver added if the ivy resolver, the second is the artifact one.
  */
 public class DualResolver extends AbstractResolver {
+    public static final String DESCRIPTOR_OPTIONAL = "optional";
+    public static final String DESCRIPTOR_REQUIRED = "required";
+
     private DependencyResolver ivyResolver;
 
     private DependencyResolver artifactResolver;
@@ -188,7 +192,29 @@ public class DualResolver extends AbstractResolver {
     }
 
     public void setAllownomd(boolean allownomd) {
+        Message.deprecated(
+            "allownomd is deprecated, please use descriptor=\"" 
+            + (allownomd ? DESCRIPTOR_OPTIONAL : DESCRIPTOR_REQUIRED) + "\" instead");
         this.allownomd = allownomd;
+    }
+
+    /**
+     * Sets the module descriptor presence rule.
+     * Should be one of {@link #DESCRIPTOR_REQUIRED} or {@link #DESCRIPTOR_OPTIONAL}.
+     *  
+     * @param descriptorRule the descriptor rule to use with this resolver.
+     */
+    public void setDescriptor(String descriptorRule) {
+        if (DESCRIPTOR_REQUIRED.equals(descriptorRule)) {
+          allownomd = false;  
+        } else if (DESCRIPTOR_OPTIONAL.equals(descriptorRule)) {
+          allownomd = true;  
+        } else {
+            throw new IllegalArgumentException(
+                "unknown descriptor rule '" + descriptorRule 
+                + "'. Allowed rules are: " 
+                + Arrays.asList(new String[] {DESCRIPTOR_REQUIRED, DESCRIPTOR_OPTIONAL}));
+        }
     }
 
 }
