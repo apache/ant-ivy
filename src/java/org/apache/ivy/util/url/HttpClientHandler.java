@@ -18,10 +18,9 @@
 package org.apache.ivy.util.url;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.FileInputStream;
-import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.UnknownHostException;
 import java.text.ParseException;
@@ -40,9 +39,8 @@ import org.apache.commons.httpclient.UsernamePasswordCredentials;
 import org.apache.commons.httpclient.auth.AuthPolicy;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.HeadMethod;
-import org.apache.commons.httpclient.methods.PutMethod;
 import org.apache.commons.httpclient.methods.InputStreamRequestEntity;
-import org.apache.commons.httpclient.params.HttpMethodParams;
+import org.apache.commons.httpclient.methods.PutMethod;
 import org.apache.ivy.Ivy;
 import org.apache.ivy.util.CopyProgressListener;
 import org.apache.ivy.util.Credentials;
@@ -278,7 +276,8 @@ public class HttpClientHandler extends AbstractURLHandler {
             }
             
             // user-agent
-            httpClient.getParams().setParameter("http.useragent", "Apache Ivy/" + Ivy.getIvyVersion());
+            httpClient.getParams().setParameter(
+                "http.useragent", "Apache Ivy/" + Ivy.getIvyVersion());
         }
         
         Credentials c = getCredentials(url);

@@ -131,7 +131,8 @@ public final class PomModuleDescriptorParser implements ModuleDescriptorParser {
                        + " Parent=" + parentModRevID); 
                 }
                 
-                Map parentPomProps = PomModuleDescriptorBuilder.extractPomProperties(parentDescr.getExtraInfo());
+                Map parentPomProps = PomModuleDescriptorBuilder.extractPomProperties(
+                                                                parentDescr.getExtraInfo());
                 for (Iterator iter = parentPomProps.entrySet().iterator(); iter.hasNext();) {
                     Map.Entry prop = (Map.Entry) iter.next();
                     domReader.setProperty((String) prop.getKey(), (String) prop.getValue());

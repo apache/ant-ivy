@@ -53,7 +53,7 @@ class ModuleDescriptorMemoryCache {
             ModuleDescriptorProvider mdProvider) throws ParseException, IOException {
         
         ModuleDescriptor descriptor = getFromCache(ivyFile, ivySettings, validated);
-        if (descriptor==null) {
+        if (descriptor == null) {
             descriptor = getStale(ivyFile, ivySettings, validated, mdProvider);
         }
         return descriptor;
@@ -72,15 +72,15 @@ class ModuleDescriptorMemoryCache {
     }
 
     ModuleDescriptor getFromCache(File ivyFile, ParserSettings ivySettings, boolean validated) {
-        if (maxSize<=0) {
+        if (maxSize <= 0) {
             //cache is disbaled
             return null;
         }
         CacheEntry entry = (CacheEntry) valueMap.get(ivyFile);
-        if (entry!=null) {
+        if (entry != null) {
             if (entry.isStale(validated, ivySettings)) {
-                Message.debug("Entry is found in the ModuleDescriptorCache but entry should be " +
-                        "reevaluated : " + ivyFile);
+                Message.debug("Entry is found in the ModuleDescriptorCache but entry should be " 
+                    + "reevaluated : " + ivyFile);
                 valueMap.remove(ivyFile);
                 return null;
             } else {
@@ -90,8 +90,7 @@ class ModuleDescriptorMemoryCache {
                 Message.debug("Entry is found in the ModuleDescriptorCache : " + ivyFile);
                 return entry.md;
             }
-        }
-        else {
+        } else {
             Message.debug("No entry is found in the ModuleDescriptorCache : " + ivyFile);
             return null;
         }        
@@ -101,11 +100,11 @@ class ModuleDescriptorMemoryCache {
  
     void putInCache(File url, ParserSettingsMonitor ivySettingsMonitor, boolean validated, 
             ModuleDescriptor descriptor) {
-        if (maxSize<=0) {
+        if (maxSize <= 0) {
             //cache is disabled
             return;
         }
-        if (valueMap.size()>=maxSize) {
+        if (valueMap.size() >= maxSize) {
             Message.debug("ModuleDescriptorCache is full, remove one entry");
             Iterator it = valueMap.values().iterator();
             it.next();
@@ -116,18 +115,20 @@ class ModuleDescriptorMemoryCache {
 
     
     private static class CacheEntry {
-        final ModuleDescriptor md;
-        final boolean validated;
-        final ParserSettingsMonitor parserSettingsMonitor;
+        private final ModuleDescriptor md;
+        private final boolean validated;
+        private final ParserSettingsMonitor parserSettingsMonitor;
 
-        CacheEntry(ModuleDescriptor md ,boolean validated, ParserSettingsMonitor parserSettingsMonitor ) {
+        CacheEntry(ModuleDescriptor md , boolean validated, 
+                        ParserSettingsMonitor parserSettingsMonitor) {
             this.md = md;
             this.validated = validated;
             this.parserSettingsMonitor = parserSettingsMonitor;
         }
         
         boolean isStale(boolean validated, ParserSettings newParserSettings) {
-            return (validated && !this.validated) || parserSettingsMonitor.hasChanged(newParserSettings);
+            return (validated && !this.validated) 
+                    || parserSettingsMonitor.hasChanged(newParserSettings);
         }
     }
     

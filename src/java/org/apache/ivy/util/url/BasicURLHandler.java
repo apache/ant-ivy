@@ -17,7 +17,13 @@
  */
 package org.apache.ivy.util.url;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -25,7 +31,6 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.UnknownHostException;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.ivy.Ivy;
@@ -105,8 +110,8 @@ public class BasicURLHandler extends AbstractURLHandler {
                 String uriString = uri.toString();
                 url = new URL(ESCAPE_PATTERN.matcher(uriString).replaceAll("%$1"));
             } catch (URISyntaxException e) {
-                IOException ioe = new MalformedURLException("Couldn't convert '" + 
-                    url.toString() + "' to a valid URI"); 
+                IOException ioe = new MalformedURLException("Couldn't convert '" 
+                    + url.toString() + "' to a valid URI"); 
                 ioe.initCause(e); 
                 throw ioe;
             }

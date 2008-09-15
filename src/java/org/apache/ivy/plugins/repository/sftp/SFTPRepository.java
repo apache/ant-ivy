@@ -89,9 +89,9 @@ public class SFTPRepository extends AbstractSshBasedRepository {
     public Resource resolveResource(String path) {
         try {
             ChannelSftp c = getSftpChannel(path);
-			
+
             Collection r = c.ls(getPath(path));
-			
+
             if (r != null) {
                 for (Iterator iter = r.iterator(); iter.hasNext();) {
                     Object obj = iter.next();
@@ -107,7 +107,7 @@ public class SFTPRepository extends AbstractSshBasedRepository {
             Message.debug("reolving resource error: " + e.getMessage());
             // silent fail, return unexisting resource
         }
-		
+
         return new BasicResource(path, false, 0, 0, false);
     }
 
@@ -186,18 +186,18 @@ public class SFTPRepository extends AbstractSshBasedRepository {
             c.mkdir(directory);
         }
     }
-	
-	private String getPath(String sftpURI) throws URISyntaxException {
-		String result = null;
-		URI uri = new URI(sftpURI);
-		result = uri.getPath();
-		
-		if (result == null) {
-			throw new URISyntaxException(sftpURI, "Missing path in URI.");
-		}
-		
-		return result;
-	}
+
+    private String getPath(String sftpURI) throws URISyntaxException {
+        String result = null;
+        URI uri = new URI(sftpURI);
+        result = uri.getPath();
+
+        if (result == null) {
+            throw new URISyntaxException(sftpURI, "Missing path in URI.");
+        }
+
+        return result;
+    }
 
     public List list(String parent) throws IOException {
         try {

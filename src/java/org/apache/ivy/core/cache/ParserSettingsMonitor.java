@@ -34,13 +34,16 @@ import org.apache.ivy.plugins.parser.ParserSettings;
 import org.apache.ivy.plugins.resolver.DependencyResolver;
 import org.apache.ivy.util.Message;
 
-
 /**
- * Keep traces of the usage of a ParserSettings in order to check afterwards that
- * the relevant settings didn't changed.
- * A ParserSettingsMonitor provide a ParserSettings that must be used in place of the
- * orignal one.
- * The current implementation consider that a settings changed iff one of the used variable has changed.
+ * Keep traces of the usage of a ParserSettings in order to check afterwards that the relevant
+ * settings didn't changed.
+ * <p>
+ * A ParserSettingsMonitor provide a ParserSettings that must be used in place of the orignal one.
+ * </p>
+ * <p>
+ * The current implementation consider that a settings changed iff one of the used variable has
+ * changed.
+ * </p>
  */
 class ParserSettingsMonitor {
 
@@ -75,12 +78,12 @@ class ParserSettingsMonitor {
      * has been monitored.  Only the info that was actually used is compared.
      */
     public boolean hasChanged(ParserSettings newSettings) {
-        for(Iterator it = substitutes.entrySet().iterator() ; it.hasNext() ;) {
+        for (Iterator it = substitutes.entrySet().iterator(); it.hasNext();) {
             Map.Entry entry = (Entry) it.next();
             String key = (String) entry.getKey();
             Object oldValue = entry.getValue();                
             String newValue = newSettings.substitute(key);
-            if (! oldValue.equals(newValue)) {
+            if (!oldValue.equals(newValue)) {
                 Message.debug("settings variable has changed for : " + entry.getKey());
                 return true;
             }
@@ -138,7 +141,7 @@ class ParserSettingsMonitor {
 
         public String substitute(String value) {
             String r = delegatedSettings.substitute(value);
-            if (value!=null && value!=r) {
+            if (value != null && value != r) {
                 substitutes.put(value, r);
             }
             return r;

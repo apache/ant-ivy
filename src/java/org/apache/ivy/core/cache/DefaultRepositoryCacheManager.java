@@ -19,7 +19,6 @@ package org.apache.ivy.core.cache;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.Map;
@@ -238,7 +237,7 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
     }
     
     public ModuleDescriptorMemoryCache getMemoryCache() {
-        if (memoryModuleDescrCache==null) {
+        if (memoryModuleDescrCache == null) {
             memoryModuleDescrCache = new ModuleDescriptorMemoryCache(DEFAULT_MEMORY_CACHE_SIZE);
         }
         return memoryModuleDescrCache;
@@ -637,7 +636,7 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
     
     private ModuleDescriptor getMdFromCache(XmlModuleDescriptorParser mdParser, 
             CacheMetadataOptions options, File ivyFile) 
-            throws ParseException, IOException, MalformedURLException {
+            throws ParseException, IOException {
         ModuleDescriptorMemoryCache cache = getMemoryCache();
         ModuleDescriptorProvider mdProvider = new MyModuleDescriptorProvider(mdParser); 
         return cache.get(ivyFile, settings, options.isValidate(), mdProvider);
@@ -645,7 +644,7 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
 
     private ModuleDescriptor getStaledMd(ModuleDescriptorParser mdParser, 
             CacheMetadataOptions options, File ivyFile) 
-            throws ParseException, IOException, MalformedURLException {
+            throws ParseException, IOException {
         ModuleDescriptorMemoryCache cache = getMemoryCache();
         ModuleDescriptorProvider mdProvider = new MyModuleDescriptorProvider(mdParser); 
         return cache.getStale(ivyFile, settings, options.isValidate(), mdProvider);

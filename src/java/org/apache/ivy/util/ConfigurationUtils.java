@@ -81,7 +81,7 @@ public final class ConfigurationUtils {
                     }
                 }
             } else if (confs[i].startsWith("!")) {
-                excluded.add(confs[i].substring( 1 ));
+                excluded.add(confs[i].substring(1));
             } else {
                 result.add(confs[i]);
             }

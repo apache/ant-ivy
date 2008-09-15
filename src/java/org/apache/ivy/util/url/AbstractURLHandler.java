@@ -46,7 +46,8 @@ public abstract class AbstractURLHandler implements URLHandler {
         return getURLInfo(url, timeout).getLastModified();
     }
 
-    protected void validatePutStatusCode(URL dest, int statusCode, String statusMessage) throws IOException {
+    protected void validatePutStatusCode(
+            URL dest, int statusCode, String statusMessage) throws IOException {
         switch (statusCode) {
             case HttpURLConnection.HTTP_OK:
                 /* intentional fallthrough */
@@ -59,9 +60,11 @@ public abstract class AbstractURLHandler implements URLHandler {
             case HttpURLConnection.HTTP_UNAUTHORIZED:
                 /* intentional fallthrough */
             case HttpURLConnection.HTTP_FORBIDDEN:
-                throw new IOException("Access to URL " + dest + " was refused by the server" + (statusMessage == null ? "" : ": " + statusMessage));
+                throw new IOException("Access to URL " + dest + " was refused by the server" 
+                    + (statusMessage == null ? "" : ": " + statusMessage));
             default:
-                throw new IOException("PUT operation to URL " + dest + " failed with status code " + statusCode + (statusMessage == null ? "" : ": " + statusMessage));
+                throw new IOException("PUT operation to URL " + dest + " failed with status code " 
+                    + statusCode + (statusMessage == null ? "" : ": " + statusMessage));
         }
     }
 }
