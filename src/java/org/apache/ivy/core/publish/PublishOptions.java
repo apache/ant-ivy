@@ -59,6 +59,8 @@ public class PublishOptions {
 
     private String pubBranch;
 
+    private boolean warnonmissing;
+
     public String[] getConfs() {
         return confs;
     }
@@ -155,6 +157,15 @@ public class PublishOptions {
     
     public PublishOptions setPubbranch(String pubbranch) {
         this.pubBranch = pubbranch;
+        return this;
+    }
+
+    public boolean isWarnOnMissing() {
+        return warnonmissing;
+    }
+    
+    public PublishOptions setWarnOnMissing(boolean warnonmissing) {
+        this.warnonmissing = warnonmissing;
         return this;
     }
 

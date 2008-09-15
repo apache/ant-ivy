@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -34,7 +33,6 @@ import org.apache.ivy.core.module.id.ArtifactRevisionId;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.publish.PublishOptions;
 import org.apache.ivy.core.settings.IvySettings;
-import org.apache.ivy.util.Message;
 import org.apache.tools.ant.BuildException;
 
 /**
@@ -298,7 +296,7 @@ public class IvyPublish extends IvyTask {
                 deliver.execute();
             }
 
-            Collection missing = ivy.publish(mrid, artifactspattern, publishResolverName,
+            ivy.publish(mrid, artifactspattern, publishResolverName,
                 new PublishOptions()
                     .setPubrevision(getPubrevision())
                     .setPubbranch(getPubbranch())
@@ -310,14 +308,9 @@ public class IvyPublish extends IvyTask {
                     .setValidate(doValidate(settings))
                     .setOverwrite(overwrite)
                     .setUpdate(update)
+                    .setWarnOnMissing(warnonmissing)
                     .setHaltOnMissing(haltonmissing)
                     .setConfs(splitConfs(conf)));
-            if (warnonmissing) {
-                for (Iterator iter = missing.iterator(); iter.hasNext();) {
-                    Artifact artifact = (Artifact) iter.next();
-                    Message.warn("missing artifact: " + artifact);
-                }
-            }
         } catch (Exception e) {
             if (e instanceof BuildException) {
                 throw (BuildException) e;

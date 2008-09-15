@@ -209,12 +209,18 @@ public class PublishEngine {
                 }
             }
             if (!artifactsFiles.containsKey(artifact)) {
-                Message.info("missing artifact " + artifact + ":");
+                StringBuffer sb = new StringBuffer();
+                sb.append("missing artifact " + artifact + ":\n");
                 for (Iterator iterator = srcArtifactPattern.iterator(); iterator.hasNext();) {
                     String pattern = (String) iterator.next();
-                    Message.info("\t"
-                            + settings.resolveFile(IvyPatternHelper.substitute(pattern, artifact))
-                            + " file does not exist");
+                    sb.append("\t"
+                          + settings.resolveFile(IvyPatternHelper.substitute(pattern, artifact))
+                          + " file does not exist\n");
+                }
+                if (options.isWarnOnMissing() || options.isHaltOnMissing()) {
+                    Message.warn(sb.toString());
+                } else {
+                    Message.verbose(sb.toString());
                 }
                 if (options.isHaltOnMissing()) {
                     throw new IOException("missing artifact " + artifact);
@@ -227,10 +233,13 @@ public class PublishEngine {
             File artifactFile = settings.resolveFile(
                 IvyPatternHelper.substitute(options.getSrcIvyPattern(), artifact));
             if (!artifactFile.exists()) {
-                Message.info("missing ivy file for "
-                        + md.getModuleRevisionId()
-                        + ": "
-                        + artifactFile + " file does not exist");
+                String msg = "missing ivy file for " + md.getModuleRevisionId() + ": \n"
+                                + artifactFile + " file does not exist";
+                if (options.isWarnOnMissing() || options.isHaltOnMissing()) {
+                    Message.warn(msg);
+                } else {
+                    Message.verbose(msg);
+                }
                 if (options.isHaltOnMissing()) {
                     throw new IOException("missing ivy artifact " + artifact);
                 }
