@@ -30,7 +30,12 @@
 <span class="tagdoc" id="ivysettings.triggers">Defines a list of triggers to activate on some Ivy events.</span>
 
 A trigger is an action which is performed whenever a particular event occurs.
-Ivy supports two type of triggers out of the box: ant-call and ant-build. The first calls a target in the same build as the original one whenever a particular event occurs, the second call an ant build which may be in another ant build script.
+Ivy supports 3 type of triggers out of the box: 
+<ul>
+<li>ant-call</li> calls a target in the same build as the original one whenever a particular event occurs. 
+<li>ant-build</li> calls an ant build which may be in another ant build script. 
+<li>log</li> echo a message, usually in a file
+</ul>
 
 If you want to use a different trigger, you can <a href="../extend.html">implement your own</a>.
 
@@ -219,14 +224,14 @@ The child tag used for the dependency resolver must be equal to a name of a trig
 </table>
 
 <h1>Built-in Triggers</h1>
-Ivy comes with two built-in triggers: 
+Ivy comes with 3 built-in triggers: 
 
 <table class="ivy-attributes">
 <thead>
     <tr><th>Name</th><th>Description</th></tr>
 </thead>
 <tbody>
-<tr><td>ant-build</td><td>Triggers an ant build.</td></tr>
+<tr><td>ant-build</td><td>Triggers an ant build. Note that by default the ant build is triggered only once per build file, the property onlyonce can be set to false to change this.</td></tr>
 <tr><td>ant-call</td><td>Calls a target in the current ant build.</td></tr>
 <tr><td>log</td><td>Logs a message on the console or in a log file.</td></tr>
 </tbody>
@@ -266,6 +271,16 @@ you cannot use parenthesis to change the precedence
 </triggers>
 </code>
 Triggers an ant build of the ant file ${ivy.settings.dir}/[module]/build.xml (where [module] is replaced by the name of the dependency resolved) with the target "publish", just before resolving a dependency with a latest.integration revision.
+Note that by default the ant build is triggered only once per build file. See below to see how to trigger the build more than once.
+<hr/>
+<code type="xml">
+<triggers>
+    <ant-build antfile="${ivy.settings.dir}/[module]/build.xml" target="publish"
+           event="pre-resolve-dependency" filter="revision=latest.integration"
+           onlyonce="false" />
+</triggers>
+</code>
+Same as before, but this time the builds will be triggered as many time as the dependency is resolved, instead of only once.
 <hr/>
 <code type="xml">
 <triggers>

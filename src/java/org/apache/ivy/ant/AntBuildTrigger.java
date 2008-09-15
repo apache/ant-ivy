@@ -48,6 +48,11 @@ import org.apache.tools.ant.taskdefs.Property;
  * 
  * Triggers an ant build for any dependency in asked in latest.integration, just before resolving
  * the dependency.
+ * </p>
+ * <p>
+ * The onlyonce property is used to tell if the ant build should be triggered only once, or several
+ * times in the same build.
+ * </p>
  * 
  * @see AntCallTrigger
  * @since 1.4
