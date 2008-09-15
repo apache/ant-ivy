@@ -116,7 +116,7 @@
     	<mkdir dir="${ivy.report.dir}" />
     </target>
     
-    <target name="clean">
+    <target name="clean" description="delete all generated files keeping sources only">
         <delete dir="${classes.build.dir}" />
         <delete dir="${test.build.dir}" />
         <delete dir="${artifacts.build.dir}" />
