@@ -55,6 +55,8 @@ The binary files then need to be signed and their checksum computed. For the che
 <pre>ant updatesite:checksum</pre>
 To sign the binaries, you can use the signArtifacts.sh scripts which is in the updatesite directory.
 
+<b>Note:</b> these previous tasks may optimize, checksum and sign already released artifacts. Just so a "svn status" to check the modified artifacts; the only modified files should be the digest.zip (with its signature and checksum) and the site.xml. Then do some "svn revert <i>file</i>" to revert the unexpected changes.
+
 <h1>Test the updatesite</h1>
 
 The updatesite is ready to be tested. In order to test the new artifacts, as they are not yet deployed on Apache mirrors, the updatesite mirroring have to be disable. Basically it is just about not deploying the eclipse-update--xml files.
