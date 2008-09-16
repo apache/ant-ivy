@@ -5,6 +5,13 @@
         "title":"Documentation",
         "children": [
             {
+              "id":"release-notes",
+              "title":"Release Notes",
+              "children": [
+
+                ]
+            },
+            {
               "id":"tutorial",
               "title":"Tutorials",
               "children": [
