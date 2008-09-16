@@ -168,7 +168,7 @@ long, but Ivy couldn't be what it is without you!
 
  Contributors
  	Carlton Brown
- 	Chris
+ 	Chris Chilvers
 	Archie Cobbs
 	Ben Hale
 	Tobias Himstedt
@@ -230,7 +230,7 @@ List of changes since Ivy 2.0.0-beta2:
 - IMPROVEMENT: Additional descriptions of build.xml targets (IVY-499)
 
 - FIX: Publish Ant Task 'warnonmissing' ignored (IVY-867)
-- FIX: Ivy stand-alone ignores -cache argument (IVY-901) (thanks to Chris)
+- FIX: Ivy stand-alone ignores -cache argument (IVY-901) (thanks to Chris Chilvers)
 - FIX: ivy.cache.dir.${settingsRef} is set to default instead of the defaultCacheDir from the ivysettings.xml after ivy:resolve (IVY-898)
 - FIX: Ivy ibiblio resolver chokes on variables while checking descriptor consistency (IVY-818)
 - FIX: Enable consistent support of the configuration negation operator (IVY-894) (thanks to Patrick Woodworth)
