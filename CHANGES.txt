@@ -22,6 +22,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 	Carlton Brown
 	Mirko Bulovic
 	Jamie Burns
+	Chris Chilvers
 	Kristian Cibulskis
 	Andrea Bernardo Ciddio
 	Archie Cobbs
@@ -114,7 +115,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - IMPROVEMENT: Additional descriptions of build.xml targets (IVY-499)
 
 - FIX: Publish Ant Task 'warnonmissing' ignored (IVY-867)
-- FIX: Ivy stand-alone ignores -cache argument (IVY-901) (thanks to Chris)
+- FIX: Ivy stand-alone ignores -cache argument (IVY-901) (thanks to Chris Chilvers)
 - FIX: ivy.cache.dir.${settingsRef} is set to default instead of the defaultCacheDir from the ivysettings.xml after ivy:resolve (IVY-898)
 - FIX: Ivy ibiblio resolver chokes on variables while checking descriptor consistency (IVY-818)
 - FIX: Enable consistent support of the configuration negation operator (IVY-894) (thanks to Patrick Woodworth)
