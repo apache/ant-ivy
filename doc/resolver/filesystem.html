@@ -32,7 +32,7 @@
 
 <span class="tagdoc" id="ivysettings.resolvers.filesystem">This resolver uses the file system to resolve ivy files and artifacts.</span> It presents the advantage to usually have very good performances. Moreover, it is easy to setup using basic OS file sharing mechanism.
 
-The configuration of such a resolver is mainly done through ivy and artifact patterns, indicating where ivy files and artifacts can be found in the file system. You can indicate a list of pattern which will be checked one after the other.
+The configuration of such a resolver is mainly done through ivy and artifact patterns, indicating where ivy files and artifacts can be found in the file system. These patterns must be absolute paths (<span class="since">since 2.0</span>). You can indicate a list of pattern which will be checked one after the other.
 
 <span class="since">since 1.3</span> Using the m2compatible attribute, this resolver will convert dots found in organisation in slashes like maven2 does for groupId. For instance, it will transform the organisation from 'com.company' into 'com/company' when replacing the token [organisation] in your pattern.
 <strong>Limitation</strong>: in m2compatible mode, this resolver is not able list available organizations. It means some features like [[ant:repreport]] are not available.
@@ -44,7 +44,7 @@ In this case the resolver starts by publishing the module according to the patte
 <b>Limitations</b>
 Atomic publish is currently limited in several ways:
 <ul>
-<li>you need to use a pattern for both the artifact and the ivy files which uses the revision as a directory. For instance [module]/[revision]/[artifact].[ext] works, [module]/[artifact]-[revision].[ext] doesn't</li>
+<li>you need to use a pattern for both the artifact and the ivy files which uses the revision as a directory. For instance "${repository.dir}/[module]/[revision]/[artifact].[ext]" works, "${repository.dir}/[module]/[artifact]-[revision].[ext]" doesn't</li>
 <li>both the artifact and ivy pattern should have the same prefix until the [revision] token.</li>
 <li>overwrite during publish is not supported</li>
 <li>you should not use revision names ending with '.part'</li>
