@@ -22,7 +22,7 @@ import java.io.File;
 public interface FileResolver {
     public static final FileResolver DEFAULT = new FileResolver() {
         public File resolveFile(String path, String filename) {
-            return new File(filename);
+            return new File(path);
         }
     };
     

@@ -17,6 +17,7 @@
  */
 package org.apache.ivy.util;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -27,6 +28,19 @@ import junit.framework.TestCase;
  *
  */
 public class ConfiguratorTest extends TestCase {
+    
+    public static class FileTester {
+        private File file;
+        
+        public void setFile(File file) {
+            this.file = file;
+        }
+        
+        public File getFile() {
+            return file;
+        }
+    }
+    
     public static class City {
         private List _housings = new ArrayList();
 
@@ -356,5 +370,16 @@ public class ConfiguratorTest extends TestCase {
                 .getSurface());
         assertEquals(20, ((Room) ((Housing) city.getHousings().get(1)).getRooms().get(2))
                 .getSurface());
+    }
+    
+    public void testFileAttribute() {
+        FileTester root = new FileTester();
+        _conf.setRoot(root);
+        _conf.setAttribute("file", "path/to/file.txt");
+        
+        String filePath = root.getFile().getPath();
+        filePath = filePath.replace('\\', '/');
+        
+        assertEquals("path/to/file.txt", filePath);
     }
 }
