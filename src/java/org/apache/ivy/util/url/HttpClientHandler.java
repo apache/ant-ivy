@@ -92,7 +92,7 @@ public class HttpClientHandler extends AbstractURLHandler {
     }
 
     public InputStream openStream(URL url) throws IOException {
-        GetMethod get = doGet(url);
+        GetMethod get = doGet(url, 0);
         if (!checkStatusCode(url, get)) {
             throw new IOException(
                     "The HTTP response code for " + url + " did not indicate a success."
@@ -102,7 +102,7 @@ public class HttpClientHandler extends AbstractURLHandler {
     }
 
     public void download(URL src, File dest, CopyProgressListener l) throws IOException {
-        GetMethod get = doGet(src);
+        GetMethod get = doGet(src, 0);
         // We can only figure the content we got is want we want if the status is success.
         if (!checkStatusCode(src, get)) {
             throw new IOException(
@@ -141,11 +141,15 @@ public class HttpClientHandler extends AbstractURLHandler {
     }
 
     public URLInfo getURLInfo(URL url, int timeout) {
-        HeadMethod head = null;
+        HttpMethodBase method = null;
         try {
-            head = doHead(url, timeout);
-            if (checkStatusCode(url, head)) {
-                return new URLInfo(true, getResponseContentLength(head), getLastModified(head));
+            if (getRequestMethod() == URLHandler.REQUEST_METHOD_HEAD) {
+                method = doHead(url, timeout);
+            } else {
+                method = doGet(url, timeout);
+            }
+            if (checkStatusCode(url, method)) {
+                return new URLInfo(true, getResponseContentLength(method), getLastModified(method));
             }
         } catch (HttpException e) {
             Message.error("HttpClientHandler: " + e.getMessage() + ":" + e.getReasonCode() + "="
@@ -160,8 +164,8 @@ public class HttpClientHandler extends AbstractURLHandler {
             // thrown by HttpClient to indicate the URL is not valid, this happens for instance
             // when trying to download a dynamic version (cfr IVY-390)
         } finally {
-            if (head != null) {
-                head.releaseConnection();
+            if (method != null) {
+                method.releaseConnection();
             }
         }
         return UNAVAILABLE;
@@ -199,7 +203,7 @@ public class HttpClientHandler extends AbstractURLHandler {
         }
     }
 
-    private long getResponseContentLength(HeadMethod head) {
+    private long getResponseContentLength(HttpMethodBase head) {
         return getHttpClientHelper().getResponseContentLength(head);
     }
 
@@ -230,8 +234,9 @@ public class HttpClientHandler extends AbstractURLHandler {
         return helper.getHttpClientMajorVersion();
     }
 
-    private GetMethod doGet(URL url) throws IOException {
+    private GetMethod doGet(URL url, int timeout) throws IOException {
         HttpClient client = getClient(url);
+        client.setTimeout(timeout);
 
         GetMethod get = new GetMethod(url.toExternalForm());
         get.setDoAuthentication(useAuthentication(url) || useProxyAuthentication());
@@ -372,8 +377,8 @@ public class HttpClientHandler extends AbstractURLHandler {
         private HttpClientHelper3x() {
         }
 
-        public long getResponseContentLength(HeadMethod head) {
-            return head.getResponseContentLength();
+        public long getResponseContentLength(HttpMethodBase method) {
+            return method.getResponseContentLength();
         }
 
         /**
@@ -390,8 +395,8 @@ public class HttpClientHandler extends AbstractURLHandler {
         private HttpClientHelper2x() {
         }
 
-        public long getResponseContentLength(HeadMethod head) {
-            Header header = head.getResponseHeader("Content-Length");
+        public long getResponseContentLength(HttpMethodBase method) {
+            Header header = method.getResponseHeader("Content-Length");
             if (header != null) {
                 try {
                     return Integer.parseInt(header.getValue());
@@ -411,7 +416,7 @@ public class HttpClientHandler extends AbstractURLHandler {
     }
 
     public interface HttpClientHelper {
-        long getResponseContentLength(HeadMethod head);
+        long getResponseContentLength(HttpMethodBase method);
 
         int getHttpClientMajorVersion();
     }

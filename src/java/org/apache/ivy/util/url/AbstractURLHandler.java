@@ -22,6 +22,10 @@ import java.net.HttpURLConnection;
 import java.io.IOException;
 
 public abstract class AbstractURLHandler implements URLHandler {
+    
+    // the request method to use. TODO: don't use a static here
+    private static int requestMethod = REQUEST_METHOD_HEAD;
+
     public boolean isReachable(URL url) {
         return getURLInfo(url).isReachable();
     }
@@ -66,5 +70,13 @@ public abstract class AbstractURLHandler implements URLHandler {
                 throw new IOException("PUT operation to URL " + dest + " failed with status code " 
                     + statusCode + (statusMessage == null ? "" : ": " + statusMessage));
         }
+    }
+    
+    public void setRequestMethod(int requestMethod) {
+        AbstractURLHandler.requestMethod = requestMethod;
+    }
+    
+    public int getRequestMethod() {
+        return requestMethod;
     }
 }

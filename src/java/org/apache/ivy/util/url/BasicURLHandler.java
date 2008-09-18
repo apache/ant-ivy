@@ -75,7 +75,9 @@ public class BasicURLHandler extends AbstractURLHandler {
             con.setRequestProperty("User-Agent", "Apache Ivy/" + Ivy.getIvyVersion());
             if (con instanceof HttpURLConnection) {
                 HttpURLConnection httpCon = (HttpURLConnection) con;
-                httpCon.setRequestMethod("HEAD");
+                if (getRequestMethod() == URLHandler.REQUEST_METHOD_HEAD) {
+                    httpCon.setRequestMethod("HEAD");
+                }
                 if (checkStatusCode(url, httpCon)) {
                     return new URLInfo(true, httpCon.getContentLength(), con.getLastModified());
                 }

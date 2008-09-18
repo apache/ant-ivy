@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import org.apache.ivy.util.CopyProgressListener;
@@ -79,6 +80,14 @@ public class URLHandlerDispatcher implements URLHandler {
 
     public void upload(File src, URL dest, CopyProgressListener l) throws IOException {
         getHandler(dest.getProtocol()).upload(src, dest, l);
+    }
+    
+    public void setRequestMethod(int requestMethod) {
+        defaultHandler.setRequestMethod(requestMethod);
+        for (Iterator it = handlers.values().iterator(); it.hasNext(); ) {
+            URLHandler handler = (URLHandler) it.next();
+            handler.setRequestMethod(requestMethod);
+        }
     }
 
     public void setDownloader(String protocol, URLHandler downloader) {

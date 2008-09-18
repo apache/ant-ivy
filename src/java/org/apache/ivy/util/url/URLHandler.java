@@ -29,6 +29,18 @@ import org.apache.ivy.util.CopyProgressListener;
  * check reachability, ...).
  */
 public interface URLHandler {
+    
+    /**
+     * Using the slower REQUEST method for getting the basic URL infos. Use this when getting errors
+     * behind a problematic/special proxy or firewall chain.
+     */
+    public static final int REQUEST_METHOD_GET = 1;
+
+    /**
+     * Using the faster HEAD method for getting the basic URL infos. Works for most common networks.
+     */
+    public static final int REQUEST_METHOD_HEAD = 2;
+
     public static class URLInfo {
         private long contentLength;
 
@@ -141,4 +153,6 @@ public interface URLHandler {
     public void download(URL src, File dest, CopyProgressListener l) throws IOException;
 
     public void upload(File src, URL dest, CopyProgressListener l) throws IOException;
+    
+    public void setRequestMethod(int requestMethod);
 }
