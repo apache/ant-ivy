@@ -650,7 +650,7 @@ public class Configurator {
         } catch (Exception ex) {
             IllegalArgumentException iae = new IllegalArgumentException("impossible to convert "
                     + value + " to " + paramClass + " for setting " + attributeName + " on "
-                    + od.getObject().getClass());
+                    + od.getObject().getClass() + ": " + ex.getMessage());
             iae.initCause(ex);
             throw iae;
         }
