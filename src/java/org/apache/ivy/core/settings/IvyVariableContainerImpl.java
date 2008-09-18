@@ -59,7 +59,7 @@ public class IvyVariableContainerImpl implements IvyVariableContainer {
         }
     }
 
-    private String substitute(String value) {
+    protected String substitute(String value) {
         return IvyPatternHelper.substituteVariables(value, this);
     }
 

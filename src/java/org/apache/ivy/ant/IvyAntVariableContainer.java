@@ -52,7 +52,7 @@ class IvyAntVariableContainer extends IvyVariableContainerImpl implements IvyVar
     public void setVariable(String varName, String value, boolean overwrite) {
         if (overwrite) {
             Message.debug("setting '" + varName + "' to '" + value + "'");
-            overwrittenProperties.put(varName, value);
+            overwrittenProperties.put(varName, substitute(value));
         } else {
             super.setVariable(varName, value, overwrite);
         }

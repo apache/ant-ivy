@@ -80,6 +80,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - DOCUMENTATION: Filesystem resolver: talks about "patterns" but does not mention these must become absolute file paths (IVY-910)
 
 - FIX: Cannot configure items with java.io.File attributes (IVY-905)
+- FIX: Environment properties in ivy settings are no longer resolved (IVY-907)
 
 
    2.0.0-rc1
