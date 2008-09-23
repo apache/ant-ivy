@@ -113,6 +113,13 @@ public final class PomModuleDescriptorParser implements ModuleDescriptorParser {
         try {           
             PomReader domReader = new PomReader(descriptorURL, res);            
             domReader.setProperty("parent.version", domReader.getParentVersion());
+
+            Map pomProperties = domReader.getPomProperties();
+            for (Iterator iter = pomProperties.entrySet().iterator(); iter.hasNext();) {
+                Map.Entry prop = (Map.Entry) iter.next();
+                domReader.setProperty((String) prop.getKey(), (String) prop.getValue());
+                mdBuilder.addProperty((String) prop.getKey(), (String) prop.getValue());
+            }
             
             ModuleDescriptor parentDescr = null;
             if (domReader.hasParent()) {
@@ -198,13 +205,6 @@ public final class PomModuleDescriptorParser implements ModuleDescriptorParser {
                 domReader.setProperty("pom.version", version);
                 domReader.setProperty("version", version);
 
-                Map pomProperties = domReader.getPomProperties();
-                for (Iterator iter = pomProperties.entrySet().iterator(); iter.hasNext();) {
-                    Map.Entry prop = (Map.Entry) iter.next();
-                    domReader.setProperty((String) prop.getKey(), (String) prop.getValue());
-                    mdBuilder.addProperty((String) prop.getKey(), (String) prop.getValue());
-                }
-                
                 if (parentDescr != null) {
                     mdBuilder.addExtraInfos(parentDescr.getExtraInfo());
                     

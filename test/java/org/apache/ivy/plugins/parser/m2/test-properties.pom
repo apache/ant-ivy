@@ -21,7 +21,7 @@
   <groupId>drools</groupId>
   <artifactId>drools-smf</artifactId>
   <name>Drools :: Semantics Module Framework</name>
-  <version>2.0-beta-18</version>
+  <version>${my-version}</version>
   <dependencies>
     <dependency>
       <groupId>${pom.groupId}</groupId>
@@ -29,4 +29,7 @@
       <version>${pom.version}</version>
     </dependency>
   </dependencies>
+  <properties>
+    <my-version>2.0-beta-18</my-version>
+  </properties>
 </project>
