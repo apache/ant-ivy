@@ -190,8 +190,10 @@ public final class PomModuleDescriptorParser implements ModuleDescriptorParser {
             } else {                            
                 domReader.setProperty("project.groupId", groupId);
                 domReader.setProperty("pom.groupId", groupId);
+                domReader.setProperty("groupId", groupId);
                 domReader.setProperty("project.artifactId", artifactId);
                 domReader.setProperty("pom.artifactId", artifactId);
+                domReader.setProperty("artifactId", artifactId);
                 domReader.setProperty("project.version", version);
                 domReader.setProperty("pom.version", version);
                 domReader.setProperty("version", version);

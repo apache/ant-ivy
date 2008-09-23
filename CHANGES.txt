@@ -71,6 +71,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 	Jason Trump
 	Tjeerd Verhagen
 	James P. White
+	Tom Widmer
 	John Williams
 	Patrick Woodworth
 	Jaroslaw Wypychowski
@@ -84,6 +85,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - FIX: Cannot configure items with java.io.File attributes (IVY-905)
 - FIX: Environment properties in ivy settings are no longer resolved (IVY-907)
 - FIX: Resolve failed on certain proxy environment (IVY-911)
+- FIX: Ivy can't handle bare POM ${groupId} property (IVY-913) (thanks to Tom Widmer)
 
 
    2.0.0-rc1
