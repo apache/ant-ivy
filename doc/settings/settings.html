@@ -59,6 +59,8 @@ So if there is a setting in the resolver, it always wins against all other setti
         <td>No, defaults to true</td></tr>
     <tr><td>useRemoteConfig</td><td>true to configure ivyrep and ibiblio resolver from a remote configuration file (updated with changes in those repository structure if any) (<span class="since">since 1.2</span>)</td>
         <td>No, defaults to false</td></tr>
+    <tr><td>httpRequestMethod</td><td>specifies the HTTP method to use to retrieve information about an URL. Possible values are 'GET' and 'HEAD'. This setting can be used to solve problems with firewalls and proxies. (<span class="since">since 2.0</span>)</td>
+        <td>No, defaults to 'HEAD'</td></tr>
     <tr><td><s>defaultCache</s></td><td>a path to a directory to use as default basedir for both resolution and repository cache(s).
 	    <i>Deprecated, we recommend using defaultCacheDir on the [[settings/caches]] tag instead</i></td>
         <td>No, defaults to .ivy2/cache in user home</td></tr>
