@@ -46,6 +46,7 @@ import org.apache.ivy.util.Checks;
 import org.apache.ivy.util.Configurator;
 import org.apache.ivy.util.FileResolver;
 import org.apache.ivy.util.Message;
+import org.apache.ivy.util.url.URLHandler;
 import org.apache.ivy.util.url.URLHandlerRegistry;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -364,6 +365,16 @@ public class XmlSettingsParser extends DefaultHandler {
         defaultCM = (String) attributes.get("defaultConflictManager");
         defaultLatest = (String) attributes.get("defaultLatestStrategy");
         defaultCircular = (String) attributes.get("circularDependencyStrategy");
+        
+        String requestMethod = (String) attributes.get("httpRequestMethod");
+        if ("head".equalsIgnoreCase(requestMethod)) {
+            URLHandlerRegistry.getHttp().setRequestMethod(URLHandler.REQUEST_METHOD_HEAD);
+        } else if ("get".equalsIgnoreCase(requestMethod)) {
+            URLHandlerRegistry.getHttp().setRequestMethod(URLHandler.REQUEST_METHOD_GET);
+        } else if ((requestMethod != null) && (requestMethod.trim().length() > 0)) {
+            throw new IllegalArgumentException("Invalid httpRequestMethod specified, must be " +
+            		"one of {'HEAD', 'GET'}");
+        }
     }
 
     private void includeStarted(Map attributes) throws IOException, ParseException {
@@ -561,7 +572,7 @@ public class XmlSettingsParser extends DefaultHandler {
             ivy.setDefaultResolver(ivy.substitute(defaultResolver));
         }
         if (defaultCM != null) {
-            ConflictManager conflictManager = ivy.getConflictManager(defaultCM);
+            ConflictManager conflictManager = ivy.getConflictManager(ivy.substitute(defaultCM));
             if (conflictManager == null) {
                 throw new IllegalArgumentException("unknown conflict manager "
                         + ivy.substitute(defaultCM));
