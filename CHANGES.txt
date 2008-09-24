@@ -87,6 +87,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - FIX: Resolve failed on certain proxy environment (IVY-911)
 - FIX: Ivy can't handle bare POM ${groupId} property (IVY-913) (thanks to Tom Widmer)
 - FIX: Properties needed to parse version in POM (IVY-914) (thanks to Tom Widmer)
+- FIX: build.xml: checkstyle + checkstyle-report dont work together (IVY-919)
 
    2.0.0-rc1
 =====================================

@@ -540,7 +540,7 @@
         </apply>
     </target>
     
-    <target name="checkstyle" depends="jar" description="checks Ivy codebase according to ${checkstyle.src.dir}/checkstyle-config">
+    <target name="checkstyle-internal" depends="jar" description="checks Ivy codebase according to ${checkstyle.src.dir}/checkstyle-config">
         <ivy:cachepath organisation="checkstyle" module="checkstyle" revision="4.3"
                 inline="true" conf="default" pathid="checkstyle.classpath" transitive="true" 
         		log="download-only"/>
@@ -560,11 +560,14 @@
                 <include name="**/*.java" />
             </fileset>
         </checkstyle>
+  	</target>
+	
+    <target name="checkstyle" depends="checkstyle-internal" description="checks Ivy codebase according to ${checkstyle.src.dir}/checkstyle-config">
     	<fail if="checkstyle.failed"
     		message="Checkstyle has errors. See report in ${checkstyle.report.dir}" />
     </target>
 
-    <target name="checkstyle-report" depends="checkstyle">
+    <target name="checkstyle-report" depends="checkstyle-internal">
         <property name="checkstyle.basedir" location="${src.dir}" />
         <xslt in="${checkstyle.report.dir}/checkstyle.xml"
                 style="${checkstyle.src.dir}/checkstyle-frames.xsl"
