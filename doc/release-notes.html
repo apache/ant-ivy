@@ -25,7 +25,41 @@
 </head>
 <body>
 	<textarea id="xooki-source">
-<h2>Release Notes</h2>
+<h2>Announcement</h2>
+<pre>
+Sep 26, 2008 - The Apache Ivy project is pleased to announce its
+2.0.0 rc 1 version, the first release candidate for 2.0.0 final release.
+
+Ivy is a tool for managing (recording, tracking, resolving and
+reporting) project dependencies, characterized by flexibility,
+configurability, and tight integration with Apache Ant.
+
+This is a release candidate for 2.0.0 final, meaning that no changes 
+except bug fixes will occur before this release candidate and 2.0.0 final.
+Problems found at this phase can be fixed in the final release, so now 
+is a good time to download and use it. If no outstanding bugs are reported
+in the coming weeks, this release candidate will be promoted as 2.0.0 final.
+
+Key changes in this 2.0.0-rc1 version are
+* enhanced Maven2 compatibility, with several bug fixes and more 
+  pom features covered
+* better and more homogeneous relative paths handling
+* better support for local builds
+* 80+ bug fixes as documented in Jira and in the release notes
+
+Issues should be reported to:
+https://issues.apache.org/jira/browse/IVY
+
+Download the 2.0.0-rc1 release files at:
+http://ant.apache.org/ivy/download.cgi
+
+More information can be found on the Ivy website:
+http://ant.apache.org/ivy/
+
+Regards,
+Xavier Hanin (2.0.0-rc1 release mgr) 
+</pre>
+<h2>2.0.0-rc1 Release Notes</h2>
 
 CONTENTS
 1. What is Apache Ivy?
@@ -320,6 +354,7 @@ List of changes since Ivy 2.0.0-beta2:
 - FIX: Wrong error message for republishing a module (IVY-752)
 - FIX: resolve fails to put metadata in cache (IVY-779)
 - FIX: multiple cleancache and inline retrieve error (IVY-778)
+
 - FIX: buildlist evicts modules with the same name, but different organisation (IVY-731)
 - FIX: Out of memory/Stack overflow for new highly coupled project (IVY-595)
 - FIX: Compatibility with maven's dependencyMangement (IVY-753)
