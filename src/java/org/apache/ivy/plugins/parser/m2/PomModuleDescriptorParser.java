@@ -108,7 +108,7 @@ public final class PomModuleDescriptorParser implements ModuleDescriptorParser {
     public ModuleDescriptor parseDescriptor(ParserSettings ivySettings, URL descriptorURL, 
             Resource res, boolean validate) throws ParseException, IOException {
         
-        PomModuleDescriptorBuilder mdBuilder = new PomModuleDescriptorBuilder(this, res);
+        PomModuleDescriptorBuilder mdBuilder = new PomModuleDescriptorBuilder(this, res, ivySettings);
         
         try {           
             PomReader domReader = new PomReader(descriptorURL, res);            
