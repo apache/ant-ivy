@@ -178,7 +178,7 @@ public class IvyAntSettings extends DataType {
     public void setProject(Project p) {
         super.setProject(p);
         
-        if ("ivy.instance".equals(id) && getProject().getReference(id) == null) {
+        if ("ivy.instance".equals(id) && getProject().getReferences().get(id) == null) {
             // register ourselfs as default settings, just in case the id attribute is not set
             getProject().addReference("ivy.instance", this);
             autoRegistered = true;

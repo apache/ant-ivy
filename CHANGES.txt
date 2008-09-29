@@ -89,6 +89,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - FIX: Properties needed to parse version in POM (IVY-914) (thanks to Tom Widmer)
 - FIX: build.xml: checkstyle + checkstyle-report dont work together (IVY-919)
 - FIX: Maven packaging of "pom" should add a "jar" artifact if present (IVY-920)
+- FIX: StackOverflow when using ivy:settings with "ivy.instance" as id (IVY-924)
 
    2.0.0-rc1
 =====================================
