@@ -53,6 +53,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 	Bernard Niset
 	David Maplesden
 	Glen Marchesani
+	Phil Messenger
 	Mathias Muller
 	Peter Oxenham
 	Emmanuel Pellereau
@@ -90,6 +91,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - FIX: build.xml: checkstyle + checkstyle-report dont work together (IVY-919)
 - FIX: Maven packaging of "pom" should add a "jar" artifact if present (IVY-920)
 - FIX: StackOverflow when using ivy:settings with "ivy.instance" as id (IVY-924)
+- FIX: Maven Pom reader doesn't handle optional dependencies correctly in some instances (IVY-926) (thanks to Phil Messenger)
 
    2.0.0-rc1
 =====================================

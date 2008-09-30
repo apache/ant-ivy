@@ -364,7 +364,8 @@ public class PomReader {
         }
 
         public boolean isOptional() {
-            return getFirstChildElement(depElement, OPTIONAL) != null;
+            Element e = getFirstChildElement(depElement, OPTIONAL); 
+            return (e != null) && "true".equalsIgnoreCase(getTextContent(e));
         }
         
         public List /*<ModuleId>*/ getExcludedModules() {
