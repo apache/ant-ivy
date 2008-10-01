@@ -137,13 +137,14 @@ public final class PomModuleDescriptorParser implements ModuleDescriptorParser {
                    Message.warn("impossible to load parent for " + descriptorURL + "."
                        + " Parent=" + parentModRevID); 
                 }
-                
-                Map parentPomProps = PomModuleDescriptorBuilder.extractPomProperties(
-                                                                parentDescr.getExtraInfo());
-                for (Iterator iter = parentPomProps.entrySet().iterator(); iter.hasNext();) {
-                    Map.Entry prop = (Map.Entry) iter.next();
-                    domReader.setProperty((String) prop.getKey(), (String) prop.getValue());
-                }                    
+                if (parentDescr != null) {
+                    Map parentPomProps = PomModuleDescriptorBuilder.extractPomProperties(
+                        parentDescr.getExtraInfo());
+                    for (Iterator iter = parentPomProps.entrySet().iterator(); iter.hasNext();) {
+                        Map.Entry prop = (Map.Entry) iter.next();
+                        domReader.setProperty((String) prop.getKey(), (String) prop.getValue());
+                    }                    
+                }
             }
                             
             String groupId = domReader.getGroupId();

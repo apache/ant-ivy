@@ -84,6 +84,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - IMPROVEMENT: Error messages on use of relative paths can be cyrptic (IVY-909)
 - IMPROVEMENT: Maven accepts illegal XML for its pom's, Ivy not (IVY-921)
 
+- FIX: NullPointerException when Ivy cannot locate pom parent (IVY-927)
 - FIX: Cannot configure items with java.io.File attributes (IVY-905)
 - FIX: Environment properties in ivy settings are no longer resolved (IVY-907)
 - FIX: Resolve failed on certain proxy environment (IVY-911)
