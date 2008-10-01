@@ -95,6 +95,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - FIX: Maven packaging of "pom" should add a "jar" artifact if present (IVY-920)
 - FIX: StackOverflow when using ivy:settings with "ivy.instance" as id (IVY-924)
 - FIX: Maven Pom reader doesn't handle optional dependencies correctly in some instances (IVY-926) (thanks to Phil Messenger)
+- FIX: ivy:settings doesn't work if id is a property (IVY-925)
 
    2.0.0-rc1
 =====================================
