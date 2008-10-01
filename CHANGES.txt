@@ -34,6 +34,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 	Tobias Himstedt
 	Ben Hale
 	Peter Hayes
+	Scott Hebert
 	Matt Inger
 	Anders Janmyr
 	Christer Jonsson
@@ -96,6 +97,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - FIX: StackOverflow when using ivy:settings with "ivy.instance" as id (IVY-924)
 - FIX: Maven Pom reader doesn't handle optional dependencies correctly in some instances (IVY-926) (thanks to Phil Messenger)
 - FIX: ivy:settings doesn't work if id is a property (IVY-925)
+- FIX: HttpClientHandler hanging in certain cases (IVY-930) (thanks to Scott Hebert)
 
    2.0.0-rc1
 =====================================

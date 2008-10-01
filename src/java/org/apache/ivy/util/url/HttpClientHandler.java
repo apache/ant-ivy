@@ -94,6 +94,7 @@ public class HttpClientHandler extends AbstractURLHandler {
     public InputStream openStream(URL url) throws IOException {
         GetMethod get = doGet(url, 0);
         if (!checkStatusCode(url, get)) {
+            get.releaseConnection();
             throw new IOException(
                     "The HTTP response code for " + url + " did not indicate a success."
                             + " See log for more detail.");
@@ -103,15 +104,18 @@ public class HttpClientHandler extends AbstractURLHandler {
 
     public void download(URL src, File dest, CopyProgressListener l) throws IOException {
         GetMethod get = doGet(src, 0);
-        // We can only figure the content we got is want we want if the status is success.
-        if (!checkStatusCode(src, get)) {
-            throw new IOException(
-                    "The HTTP response code for " + src + " did not indicate a success."
-                            + " See log for more detail.");
+        try {
+            // We can only figure the content we got is want we want if the status is success.
+            if (!checkStatusCode(src, get)) {
+                throw new IOException(
+                        "The HTTP response code for " + src + " did not indicate a success."
+                                + " See log for more detail.");
+            }
+            FileUtil.copy(get.getResponseBodyAsStream(), dest, l);
+            dest.setLastModified(getLastModified(get));
+        } finally {
+            get.releaseConnection();
         }
-        FileUtil.copy(get.getResponseBodyAsStream(), dest, l);
-        dest.setLastModified(getLastModified(get));
-        get.releaseConnection();
     }
 
     public void upload(File src, URL dest, CopyProgressListener l) throws IOException {
@@ -133,6 +137,7 @@ public class HttpClientHandler extends AbstractURLHandler {
                     /* ignored */
                 }
             }
+            put.releaseConnection();
         }
     }
 
