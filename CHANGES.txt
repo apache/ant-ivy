@@ -98,6 +98,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - FIX: Maven Pom reader doesn't handle optional dependencies correctly in some instances (IVY-926) (thanks to Phil Messenger)
 - FIX: ivy:settings doesn't work if id is a property (IVY-925)
 - FIX: HttpClientHandler hanging in certain cases (IVY-930) (thanks to Scott Hebert)
+- FIX: Can't download files containing space or + in their names by HTTP (IVY-923)
 
    2.0.0-rc1
 =====================================

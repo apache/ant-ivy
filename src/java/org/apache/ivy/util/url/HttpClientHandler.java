@@ -121,7 +121,7 @@ public class HttpClientHandler extends AbstractURLHandler {
     public void upload(File src, URL dest, CopyProgressListener l) throws IOException {
         HttpClient client = getClient(dest);
 
-        PutMethod put = new PutMethod(dest.toExternalForm());
+        PutMethod put = new PutMethod(normalizeToString(dest));
         put.setDoAuthentication(useAuthentication(dest) || useProxyAuthentication());
         FileInputStream fileStream = null;
         try {
@@ -243,7 +243,7 @@ public class HttpClientHandler extends AbstractURLHandler {
         HttpClient client = getClient(url);
         client.setTimeout(timeout);
 
-        GetMethod get = new GetMethod(url.toExternalForm());
+        GetMethod get = new GetMethod(normalizeToString(url));
         get.setDoAuthentication(useAuthentication(url) || useProxyAuthentication());
         client.executeMethod(get);
         return get;
@@ -253,7 +253,7 @@ public class HttpClientHandler extends AbstractURLHandler {
         HttpClient client = getClient(url);
         client.setTimeout(timeout);
 
-        HeadMethod head = new HeadMethod(url.toExternalForm());
+        HeadMethod head = new HeadMethod(normalizeToString(url));
         head.setDoAuthentication(useAuthentication(url) || useProxyAuthentication());
         client.executeMethod(head);
         return head;

@@ -17,12 +17,18 @@
  */
 package org.apache.ivy.util.url;
 
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.HttpURLConnection;
+import java.util.regex.Pattern;
 import java.io.IOException;
 
 public abstract class AbstractURLHandler implements URLHandler {
     
+    private static final Pattern ESCAPE_PATTERN = Pattern.compile("%25([0-9a-fA-F][0-9a-fA-F])");
+
     // the request method to use. TODO: don't use a static here
     private static int requestMethod = REQUEST_METHOD_HEAD;
 
@@ -79,4 +85,38 @@ public abstract class AbstractURLHandler implements URLHandler {
     public int getRequestMethod() {
         return requestMethod;
     }
+    
+    protected String normalizeToString(URL url) throws IOException {
+        if (!"http".equals(url.getProtocol()) && !"https".equals(url.getProtocol())) {
+            return url.toExternalForm();
+        }
+        
+        try {
+            URI uri = new URI(url.getProtocol(), url.getUserInfo(), url.getHost(), 
+                    url.getPort(), url.getPath(), url.getQuery(), url.getRef());
+            
+            // it is possible that the original url was already (partial) escaped,
+            // so we must unescape all '%' followed by 2 hexadecimals...
+            String uriString = uri.toString();
+            
+            // manually escape the '+' character
+            uriString = uriString.replaceAll("\\+", "%2B");
+            
+            return ESCAPE_PATTERN.matcher(uriString).replaceAll("%$1");
+        } catch (URISyntaxException e) {
+            IOException ioe = new MalformedURLException("Couldn't convert '" 
+                + url.toString() + "' to a valid URI"); 
+            ioe.initCause(e); 
+            throw ioe;
+        }
+    }
+    
+    protected URL normalizeToURL(URL url) throws IOException {
+        if (!"http".equals(url.getProtocol()) && !"https".equals(url.getProtocol())) {
+            return url;
+        }
+        
+        return new URL(normalizeToString(url));
+    }
+
 }
