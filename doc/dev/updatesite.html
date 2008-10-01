@@ -65,9 +65,17 @@ The site.xml file should be edited so it will reference the new artifacts. You s
 The update site is optimized: the metadata of the features are aggregated into the digest.zip, and the jar of the plugins are compressed with a better algorithm.
 
 To accomplish this task, just run an ant task at the root of your working copy of the updatesite:
+<ul>
+<li>For an <u>Ivy</u> release
 <pre>
-ant optimize
-</pre>
+ant optimize-ivy
+</pre></li>
+<li>
+For an <u>IvyDE</u> release
+<pre>
+ant optimize-ivyde
+</pre></li>
+</ul>
 
 The binary files then need to be signed and their checksum computed. For the checksums, run:
 <pre>ant checksum</pre>
