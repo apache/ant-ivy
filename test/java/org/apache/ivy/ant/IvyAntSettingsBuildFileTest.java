@@ -49,7 +49,18 @@ public class IvyAntSettingsBuildFileTest extends BuildFileTest {
     }
     
     public void testSettingsWithIdIvyInstance() {
+        // IVY-925
         executeTarget("testSettingsWithPropertyAsId");
+        ResolveReport report = (ResolveReport) getProject().getReference("ivy.resolved.report");
+        assertNotNull(report);
+        assertFalse(report.hasError());
+        assertEquals(1, report.getDependencies().size());
+    }
+    
+    public void testStackOverflow() {
+        // IVY-924
+        configureProject("test/java/org/apache/ivy/ant/IvyAntSettingsBuildFileStackOverflow.xml");
+        executeTarget("testStackOverflow");
         ResolveReport report = (ResolveReport) getProject().getReference("ivy.resolved.report");
         assertNotNull(report);
         assertFalse(report.hasError());
