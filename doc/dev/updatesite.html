@@ -25,62 +25,152 @@
 </head>
 <body>
 	<textarea id="xooki-source">
-Once a release have been build for Ivy or IvyDE, they should be push to the Eclipse updatesite so that Eclipse users will be able to update automatically their installed version of Ivy or IvyDE.
+Once a release have been build for Ivy or IvyDE, they should be pushed to the Eclipse updatesite so that Eclipse users will be able to update automatically their installed version of Ivy or IvyDE.
 
-<h1>Push the new version</h1>
+This doc is in two parts, the <a href="#setup">setup</a> of the updatesite which will be the candidate for the vote of the Ivy or IvyDE release, and the <a href="#deployment">final deployment</a> once the release is accepted.
 
-The update site svn location is there: https://svn.apache.org/repos/asf/ant/ivy/site/ivyde/updatesite/
+<u>Important note:</u> in this doc, the released version is denoted as $VERSION (and have to be replaced accordingly in every commands), but this is the OSGi one, not the usually shown one, in particular for release candidate versions. For instance an Ivy version can be <tt>2.0.0-RC1</tt> but the OSGi one, and the one to use here is <tt>2.0.0.cr1</tt>.
 
-<ul>
-<li>For an <u>Ivy release</u>:
-the new ivy bundle have to be placed in the plugins directory of the updatesite. The convention is to name the bundle org.apache.ivy_${BUNDLE-VERSION}.jar.
-Eclipse needs a feature, it can be generated at the right place with an ant target. From the <a href="https://svn.apache.org/repos/asf/ant/ivy/site/build.xml">build file of the site</a>, run: <pre>ant updatesite:generate-ivy-feature -Divy.version=${BUNDLE-VERSION}</pre>
+<h1><a name="setup"></a>Build the updatesite</h1>
+
+<h2>Push the new version</h2>
+
+The update site svn location is there: https://svn.apache.org/repos/asf/ant/ivy/site/ivyde/updatesite/ . You will update it so it will contain the new artifacts.
+
+<ul><li>For an <u>Ivy release</u>:
+The new ivy bundle have to be placed in the plugins directory of the updatesite. So you should do something like:
+<code>cp folder/ivy.jar dist/plugins/org.apache.ivy_$VERSION.jar</code>
+
+Then Eclipse needs a feature, which will be generated at the right place with an ant target. At the root of your working copy of the website, run:
+<pre>
+ant generate-ivy-feature -Divy.version=$VERSION</pre>
+</li><li>
+For an <u>IvyDE release:</u>
+The zip distribution needs to be unpacked into the updatesite directory:
+<pre>
+cd dist
+unzip ..../org.apache.ivyde.feature-$VERSION.zip
+</pre>
 </li>
-<li>For an <u>IvyDE release</u>:
-it contains a plugin and a feature, so they have to be place respectivly in the plugins directory and in the features directory. </li>
 </ul>
 
 Then the deprecated versions of the plugins and the features should be removed.
 
-And the site.xml file should be edited. The version number should be updated accordingly to the release.
+<h2>Update the site.xml</h2>
 
-<h1>Prepare the update site</h1>
+The site.xml file should be edited so it will reference the new artifacts. You should just change the version number accordingly to the release.
+
+<h2>Prepare the update site</h2>
 
 The update site is optimized: the metadata of the features are aggregated into the digest.zip, and the jar of the plugins are compressed with a better algorithm.
 
-To accomplish this task, from the <a href="https://svn.apache.org/repos/asf/ant/ivy/site/build.xml">build file of the site</a>, run:
-<pre>ant updatesite:optimize</pre>
+To accomplish this task, just run an ant task at the root of your working copy of the updatesite:
+<pre>
+ant optimize
+</pre>
 
 The binary files then need to be signed and their checksum computed. For the checksums, run:
-<pre>ant updatesite:checksum</pre>
-To sign the binaries, you can use the signArtifacts.sh scripts which is in the updatesite directory.
+<pre>ant checksum</pre>
+And sign the binaries:
+<pre>./signArtifacts.sh</pre>
 
-<b>Note:</b> these previous tasks may optimize, checksum and sign already released artifacts. Just so a "svn status" to check the modified artifacts; the only modified files should be the digest.zip (with its signature and checksum) and the site.xml. Then do some "svn revert <i>file</i>" to revert the unexpected changes.
+<b>Note:</b> these previous tasks may optimize, checksum and sign already released artifacts. Just so a <tt>svn status</tt> to check the modified artifacts; the only modified files should be the digest.zip (with its signature and checksum) and the site.xml. Then do some <tt>svn revert <i>file</i></tt> to revert the unexpected changes.
 
-<h1>Test the updatesite</h1>
+<h2>Test the updatesite</h2>
 
-The updatesite is ready to be tested. In order to test the new artifacts, as they are not yet deployed on Apache mirrors, the updatesite mirroring have to be disable. Basically it is just about not deploying the eclipse-update--xml files.
+The updatesite is ready to be tested.
 
-If you are willing to just test yourself, you can setup in Eclipse a local updatesite. Wherever you want on your local filesystem, make a clone of you working copy of the updatesite directory, but <u>without</u> the eclipse-update--xml files.
+<h3>Local test:</h3>
 
-To let the developper community test the updatesite, you can copy the new local updatesite <u>without</u> the eclipse-update--xml files to your public_html directory on people.apache.org:
-<pre>scp -r digest.zip features plugins site.xml LOGIN@people.apache.org:/home/LOGIN/public_html/updatesite</pre>
+If you are willing to just test yourself, you can setup in Eclipse a local updatesite. Wherever you want on your local filesystem, make a clone of you working copy of the updatesite directory.
 
-<h1>Deployment</h1>
+<h3>On people.apache.org</h3>
 
-Two deployments are needed. One will be part of the website deployment, it will deploy the main updatesite, where there are only the metadata. The second is about pushing the binaries in the Apache dist directory.
+To let the developper community test the updatesite, you can copy the new local updatesite to your public_html directory on people.apache.org. You should also avoid copying the .svn directories. So on people.apache.org:
+<pre>mkdir ~/public_html/staging-updatesite ~/public_html/staging-updatesite/plugins ~/public_html/staging-updatesite/features</pre>
+And then in your working copy:
+<pre>
+scp dist/digest.zip* dist/site.xml $LOGIN@people.apache.org:/home/$LOGIN/public_html/staging-updatesite
+scp dist/features/org.apache.ivy* $LOGIN@people.apache.org:/home/$LOGIN/public_html/staging-updatesite/features
+scp dist/plugins/org.apache.ivy* $LOGIN@people.apache.org:/home/$LOGIN/public_html/staging-updatesite/plugins
+</pre>
 
-To deploy the main updatesite, juste regenerate the IvyDE site:
-<pre>ant generate-site-ivyde</pre>
-and commit the changes of the "target" directory.
+<h3>Disable mirrors</h3>
 
-For the mirrors udpate site which contains the actual binaries, every binaries have to be copied, with their signatures and checksums, and the site.xml. So on people.apache.org, first do a backup of the current updatesite
-<pre>mv /www/www.apache.org/dist/ant/ivyde/updatesite /www/www.apache.org/dist/ant/ivyde/updatesite.bak</pre>
-Then we recreate the updatesite:
-<pre>mkdir /www/www.apache.org/dist/ant/ivyde/updatesite</pre>
-And publish the new updatesite:
-<pre>cd site/ivyde/updatesite
-scp -r digest* plugins features site.xml LOGIN@people.apache.org:/www/www.apache.org/dist/ant/ivyde/updatesite</pre>
+For both local and remote testing, as the new jars are not yet deployed on Apache mirrors, the updatesite mirroring have to be disable.
+Basically it is just about modifying the site.xml and remove the reference to the eclipse-update--xml files:
+<code>
+Index: site.xml
+===================================================================
+--- site.xml    (révision 700482)
++++ site.xml    (copie de travail)
+@@ -18,7 +18,6 @@
+    under the License.
+ -->
+ <site pack200="true"
+-      mirrorsURL="http://ant.apache.org/ivy/ivyde/updatesite/eclipse-update--xml.cgi"
+       digestURL="./">
+    <description url="http://ant.apache.org/ivy/ivyde/updatesite">
+       Eclipse update site for Apache IvyDE.
+</code>
+
+<h1><a name="deployment"></a>Deployment of a release</h1>
+
+The release is accepeted, so we can tag the updatesite:
+<pre>
+svn cp https://svn.apache.org/repos/asf/ant/ivy/updatesite/trunk https://svn.apache.org/repos/asf/ant/ivy/updatesite/tags/$TAGNAME
+</pre>
+with $TAGNAME the name of the release, so it would be either ivy-$VERSION or ivyde-$VERSION
+
+First backup the current updatesite. On people.apache.org:
+<pre>
+mkdir ~/updatesite.backup
+cp -R /www/ant.apache.org/ivy/ivyde/updatesite ~/updatesite.backup
+</pre>
+
+Then, upload the new updatesite from your working copy to people.apache.org. On people.apache.org
+<pre>
+mkdir ~/updatesite ~/updatesite/features ~/updatesite/plugins
+</pre>
+And then the copy (it basically copies every file in dist without the .svn directories):
+<pre>
+scp dist/digest.zip* dist/site.xml $LOGIN@people.apache.org:/home/$LOGIN/updatesite
+scp dist/features/org.apache.ivy* $LOGIN@people.apache.org:/home/$LOGIN/updatesite/features
+scp dist/plugins/org.apache.ivy* $LOGIN@people.apache.org:/home/$LOGIN/updatesite/plugins
+</pre>
+
+Once you checked that the copy in your home directory is OK (basically check that every file is here), deploy it in dist. On people.apache.org:
+<pre>
+rm -rf /www/ant.apache.org/ivy/ivyde/updatesite
+cp -R ~/updatesite /www/ant.apache.org/ivy/ivyde/
+</pre>
+
+And finally you might want to make it writable for the ant group:
+<pre>
+chown -R $LOGIN:ant /www/ant.apache.org/ivy/ivyde/updatesite
+chmod -R g+w /www/ant.apache.org/ivy/ivyde/updatesite
+</pre>
+
+<h2>Deprecated updatesite</h2>
+
+The updatesite needs to be also deployed in its deprecated location, in the IvyDE website.
+
+In your local svn working copy do:
+<pre>
+cp updatesite/trunk/dist/digest.zip* site/ivyde/updatesite/
+cp updatesite/trunk/dist/site.xml site/ivyde/updatesite/
+</pre>
+And commit the changes of the website.
+Next is the usual IvyDE website deployment:
+<pre>
+ant generate-site-ivyde
+svn ci target/ivyde/updatesite
+</pre>
+And on people.apache.org:
+<pre>
+svn up /www/ant.apache.org/ivy/ivyde/updatesite
+chmod -R g+w /www/ant.apache.org/ivy/ivyde/updatesite
+</pre>
 </textarea>
 <script type="text/javascript">xooki.postProcess();</script>
 </body>
