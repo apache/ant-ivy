@@ -135,12 +135,6 @@ public class IvyAntSettings extends DataType {
         }
     }
     
-    public IvyAntSettings() {
-        super();
-        System.out.println(this);
-        Thread.dumpStack();
-    }
-
     public File getFile() {
         return file;
     }
