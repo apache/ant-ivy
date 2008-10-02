@@ -195,13 +195,14 @@ public abstract class XMLHelper {
     }
 
     
-    public static Document parseToDom(InputStream stream, Resource res, EntityResolver entityResolver) throws IOException,
-            SAXException {
+    public static Document parseToDom(
+            InputStream stream, Resource res, EntityResolver entityResolver) 
+                throws IOException, SAXException {
         DocumentBuilder docBuilder = getDocBuilder(entityResolver);
         Document pomDomDoc;
         try {
             pomDomDoc = docBuilder.parse(stream, res.getName());
-        } catch (SAXException e ) {
+        } catch (SAXException e) {
             e.printStackTrace();
             throw e;
         } finally {

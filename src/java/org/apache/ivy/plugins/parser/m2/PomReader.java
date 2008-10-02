@@ -89,10 +89,11 @@ public class PomReader {
         InputStream stream = new AddDTDFilterInputStream(descriptorURL.openStream());
         try {
             Document pomDomDoc = XMLHelper.parseToDom(stream, res, new EntityResolver() {
-                public InputSource resolveEntity(String publicId, String systemId) throws SAXException,
-                        IOException {
+                public InputSource resolveEntity(String publicId, String systemId) 
+                                throws SAXException, IOException {
                     if ((systemId != null) && systemId.endsWith("m2-entities.ent")) {
-                        return new InputSource(PomReader.class.getResourceAsStream("m2-entities.ent"));
+                        return new InputSource(
+                                        PomReader.class.getResourceAsStream("m2-entities.ent"));
                     }
                     return null;
                 }
@@ -496,7 +497,8 @@ public class PomReader {
     }
 
     private static final class AddDTDFilterInputStream extends FilterInputStream {
-        private static String DOCTYPE = "<!DOCTYPE project SYSTEM \"m2-entities.ent\">\n";
+        private static final int MARK = 10000;
+        private static final String DOCTYPE = "<!DOCTYPE project SYSTEM \"m2-entities.ent\">\n";
 
         private int count;
         private byte[] prefix = DOCTYPE.getBytes();
@@ -508,7 +510,7 @@ public class PomReader {
                 throw new IllegalArgumentException("The inputstream doesn't support mark");
             }
             
-            in.mark(10000);
+            in.mark(MARK);
             
             int bytesToSkip = 0;
             LineNumberReader reader = new LineNumberReader(new InputStreamReader(in, "UTF-8"));
@@ -541,8 +543,8 @@ public class PomReader {
         public int read(byte[] b, int off, int len) throws IOException {
             if (b == null) {
                 throw new NullPointerException();
-            } else if ((off < 0) || (off > b.length) || (len < 0) ||
-                   ((off + len) > b.length) || ((off + len) < 0)) {
+            } else if ((off < 0) || (off > b.length) || (len < 0) 
+                    || ((off + len) > b.length) || ((off + len) < 0)) {
                 throw new IndexOutOfBoundsException();
             } else if (len == 0) {
                 return 0;

@@ -194,7 +194,8 @@ public class PomModuleDescriptorBuilder {
     private ParserSettings parserSettings;
 
     
-    public PomModuleDescriptorBuilder(ModuleDescriptorParser parser, Resource res, ParserSettings ivySettings) {
+    public PomModuleDescriptorBuilder(
+            ModuleDescriptorParser parser, Resource res, ParserSettings ivySettings) {
         ivyModuleDescriptor = new DefaultModuleDescriptor(parser, res);
         ivyModuleDescriptor.setResolvedPublicationDate(new Date(res.getLastModified()));
         for (int i = 0; i < MAVEN2_CONFIGURATIONS.length; i++) {
@@ -242,7 +243,8 @@ public class PomModuleDescriptorBuilder {
             DependencyResolver resolver = parserSettings.getResolver(mrid);
             
             if (resolver != null) {
-                DefaultArtifact artifact = new DefaultArtifact(mrid, new Date(), artifactId, "jar", "jar");
+                DefaultArtifact artifact = new DefaultArtifact(
+                                    mrid, new Date(), artifactId, "jar", "jar");
                 ArtifactOrigin artifactOrigin = resolver.locate(artifact);
                 
                 if (!ArtifactOrigin.isUnknown(artifactOrigin)) {
