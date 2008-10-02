@@ -46,7 +46,7 @@
             </classpath>
         </taskdef>
     	
-        <ivy:configure id="ivy.instance" override="true" />
+        <ivy:configure override="true" />
     </target>
     
     <target name="install" depends="init-ivy-home, jar" 
