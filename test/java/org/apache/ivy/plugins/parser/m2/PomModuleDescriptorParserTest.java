@@ -624,10 +624,12 @@ public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         
         assertEquals(ModuleRevisionId.newInstance("org.apache", "test-version-other", "5.76"), dds[0]
                 .getDependencyRevisionId());//present in the pom using a property defined in the parent
-
-        
     }
     
-
+    public void testPomWithEntity() throws Exception {
+        ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(
+            settings, getClass().getResource("test-entity.pom"), true);
+        assertNotNull(md);        
+    }
 
 }
