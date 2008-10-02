@@ -631,5 +631,25 @@ public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParse
             settings, getClass().getResource("test-entity.pom"), true);
         assertNotNull(md);        
     }
+    
+    public void testModel() throws Exception {
+        ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(
+            settings, getClass().getResource("test-model.pom"), false);
+        assertNotNull(md);
+
+        ModuleRevisionId mrid = ModuleRevisionId.newInstance("org.apache", "test", "1.0");
+        assertEquals(mrid, md.getModuleRevisionId());
+
+        assertNotNull(md.getConfigurations());
+        assertEquals(Arrays.asList(PomModuleDescriptorBuilder.MAVEN2_CONFIGURATIONS), Arrays
+                .asList(md.getConfigurations()));
+
+        Artifact[] artifact = md.getArtifacts("master");
+        assertEquals(1, artifact.length);
+        assertEquals(mrid, artifact[0].getModuleRevisionId());
+        assertEquals("test", artifact[0].getName());
+        assertEquals("jar", artifact[0].getExt());
+        assertEquals("jar", artifact[0].getType());
+    }
 
 }

@@ -58,6 +58,7 @@ public class PomReader {
     private static final String DEPENDENCIES = "dependencies";
     private static final String DEPENDENCY_MGT = "dependencyManagement";
     private static final String PROJECT = "project";
+    private static final String MODEL = "model";
     private static final String GROUP_ID = "groupId";
     private static final String ARTIFACT_ID = "artifactId";
     private static final String VERSION = "version";
@@ -99,7 +100,7 @@ public class PomReader {
                 }
             });
             projectElement = pomDomDoc.getDocumentElement();
-            if (!PROJECT.equals(projectElement.getNodeName())) {
+            if (!PROJECT.equals(projectElement.getNodeName()) && !MODEL.equals(projectElement.getNodeName())) {
                 throw new SAXParseException("project must be the root tag" , res.getName() , 
                                             res.getName(), 0, 0);
             }

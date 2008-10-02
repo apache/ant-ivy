@@ -99,6 +99,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - FIX: ivy:settings doesn't work if id is a property (IVY-925)
 - FIX: HttpClientHandler hanging in certain cases (IVY-930) (thanks to Scott Hebert)
 - FIX: Can't download files containing space or + in their names by HTTP (IVY-923)
+- FIX: Maven2 parser doesn't support POMs with <model> as root (IVY-932)
 
    2.0.0-rc1
 =====================================
