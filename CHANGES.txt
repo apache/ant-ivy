@@ -100,6 +100,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - FIX: HttpClientHandler hanging in certain cases (IVY-930) (thanks to Scott Hebert)
 - FIX: Can't download files containing space or + in their names by HTTP (IVY-923)
 - FIX: Maven2 parser doesn't support POMs with <model> as root (IVY-932)
+- FIX: Default retrieve, publish and deliver patterns doesn't include the [classifier] token (IVY-935)
 
    2.0.0-rc1
 =====================================
