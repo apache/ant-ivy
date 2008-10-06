@@ -215,6 +215,12 @@ public class PomModuleDescriptorBuilder {
     public void setModuleRevId(String groupId, String artifactId, String version) {
         mrid = ModuleRevisionId.newInstance(groupId, artifactId, version);
         ivyModuleDescriptor.setModuleRevisionId(mrid);
+        
+        if ((version == null) || version.endsWith("SNAPSHOT")) {
+            ivyModuleDescriptor.setStatus("integration");
+        } else {
+            ivyModuleDescriptor.setStatus("release");
+        }
      }
     
     public void setHomePage(String homePage) {
