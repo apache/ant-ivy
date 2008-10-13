@@ -167,25 +167,26 @@ public class IBiblioResolver extends URLResolver {
                 Resource metadata = getRepository().getResource(metadataLocation);
                 if (metadata.exists()) {
                     metadataStream = metadata.openStream();
-                    final StringBuffer snapshotRev = new StringBuffer();
+                    final StringBuffer timestamp = new StringBuffer();
+                    final StringBuffer buildNumer = new StringBuffer();
                     XMLHelper.parse(metadataStream, null, new ContextualSAXHandler() {
                         public void endElement(String uri, String localName, String qName) 
                                 throws SAXException {
                             if ("metadata/versioning/snapshot/timestamp".equals(getContext())) {
-                                snapshotRev.append(getText()).append("-");
+                                timestamp.append(getText());
                             }
                             if ("metadata/versioning/snapshot/buildNumber"
                                     .equals(getContext())) {
-                                snapshotRev.append(getText());
+                                buildNumer.append(getText());
                             }
                             super.endElement(uri, localName, qName);
                         }
                     }, null);
-                    if (snapshotRev.indexOf("-") != -1) {
+                    if (timestamp.length() > 0) {
                         // we have found a timestamp, so this is a snapshot unique version
                         String rev = mrid.getRevision();
                         rev = rev.substring(0, rev.length() - "SNAPSHOT".length());
-                        rev += snapshotRev;
+                        rev = rev + timestamp.toString() + "-" + buildNumer.toString();
                         
                         return rev;
                     }

@@ -102,6 +102,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - FIX: Maven2 parser doesn't support POMs with <model> as root (IVY-932)
 - FIX: Default retrieve, publish and deliver patterns doesn't include the [classifier] token (IVY-935)
 - FIX: Can't use latest.release for pom dependencies (IVY-936)
+- FIX: Unable to resolve snapshot versions depending on xml elements order (IVY-940)
 
    2.0.0-rc1
 =====================================
