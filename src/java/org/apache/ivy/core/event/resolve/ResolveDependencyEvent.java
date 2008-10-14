@@ -41,6 +41,8 @@ public class ResolveDependencyEvent extends IvyEvent {
             dd.getDependencyRevisionId().getRevision());
         addAttribute("req-revision-dynamic", 
             dd.getDynamicConstraintDependencyRevisionId().getRevision());
+        addAttribute("req-branch", requestedRevisionId.getBranch());
+        addAttribute("req-branch-default", dd.getDependencyRevisionId().getBranch());
     }
 
     public DependencyDescriptor getDependencyDescriptor() {
