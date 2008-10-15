@@ -95,9 +95,11 @@ public class AntBuildTrigger extends AbstractTrigger implements Trigger {
                 for (Iterator iter = atts.keySet().iterator(); iter.hasNext();) {
                     String key = (String) iter.next();
                     String value = (String) atts.get(key);
-                    Property p = ant.createProperty();
-                    p.setName(prefix == null ? key : prefix + key);
-                    p.setValue(value);
+                    if (value != null) {
+                        Property p = ant.createProperty();
+                        p.setName(prefix == null ? key : prefix + key);
+                        p.setValue(value);
+                    }
                 }
 
                 Message.verbose("triggering build: " + f + " target=" + target + " for " + event);
