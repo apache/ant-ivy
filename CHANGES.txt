@@ -75,6 +75,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 	James P. White
 	Tom Widmer
 	John Williams
+    Chris Wood
 	Patrick Woodworth
 	Jaroslaw Wypychowski
 	
@@ -104,6 +105,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - FIX: Can't use latest.release for pom dependencies (IVY-936)
 - FIX: Unable to resolve snapshot versions depending on xml elements order (IVY-940)
 - FIX: pre-resolve-dependency event doesn't export branch information (IVY-941) (thanks to Jaroslaw Wypychowski)
+- FIX: cachefileset produces an empty fileset when the cache refers to libs in directories that only have the root directory in common (IVY-948) (thanks to Chris Wood)
 
    2.0.0-rc1
 =====================================

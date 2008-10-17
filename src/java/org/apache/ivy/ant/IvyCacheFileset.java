@@ -78,7 +78,7 @@ public class IvyCacheFileset extends IvyCacheTask {
                 for (Iterator iter = paths.iterator(); iter.hasNext();) {
                     ArtifactDownloadReport a = (ArtifactDownloadReport) iter.next();
                     if (a.getLocalFile() != null) {
-                        NameEntry ne = fileset.createInclude();
+                        NameEntry ne = fileset. createInclude();
                         ne.setName(getPath(base, a.getLocalFile()));
                     }
                 }
@@ -93,10 +93,20 @@ public class IvyCacheFileset extends IvyCacheTask {
      * 
      * @param base the parent directory to which the file must be evaluated.
      * @param file the file for which the path should be returned
-     * @returnthe path of the file relative to the given base directory.
+     * @return the path of the file relative to the given base directory.
      */
     private String getPath(File base, File file) {
-        return file.getAbsolutePath().substring(base.getAbsolutePath().length() + 1);
+        String absoluteBasePath = base.getAbsolutePath();
+        
+        int beginIndex = absoluteBasePath.length();
+        
+        // checks if the basePath ends with the file separator (which can for instance
+        // happen if the basePath is the root on unix)
+        if (!absoluteBasePath.endsWith(File.separator)) {
+            beginIndex++; // skip the seperator char as well
+        }
+        
+        return file.getAbsolutePath().substring(beginIndex);
     }
 
     /**
