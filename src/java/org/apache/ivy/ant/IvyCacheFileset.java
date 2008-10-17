@@ -78,7 +78,7 @@ public class IvyCacheFileset extends IvyCacheTask {
                 for (Iterator iter = paths.iterator(); iter.hasNext();) {
                     ArtifactDownloadReport a = (ArtifactDownloadReport) iter.next();
                     if (a.getLocalFile() != null) {
-                        NameEntry ne = fileset. createInclude();
+                        NameEntry ne = fileset.createInclude();
                         ne.setName(getPath(base, a.getLocalFile()));
                     }
                 }
