@@ -242,6 +242,7 @@ public class IvyResolve extends IvyTask {
                 }
             }
             setResolved(report, resolveId, isKeep());
+            confs = report.getConfigurations();
 
             if (isKeep()) {
                 ModuleDescriptor md = report.getModuleDescriptor();
@@ -264,15 +265,8 @@ public class IvyResolve extends IvyTask {
                     getProject().setProperty("ivy.deps.changed", hasChanged.toString());
                     settings.setVariable("ivy.deps.changed", hasChanged.toString());
                 }
-                if (conf.trim().equals("*")) {
-                    getProject().setProperty("ivy.resolved.configurations",
-                        mergeConfs(md.getConfigurationsNames()));
-                    settings.setVariable("ivy.resolved.configurations", mergeConfs(md
-                            .getConfigurationsNames()));
-                } else {
-                    getProject().setProperty("ivy.resolved.configurations", conf);
-                    settings.setVariable("ivy.resolved.configurations", conf);
-                }
+                getProject().setProperty("ivy.resolved.configurations", mergeConfs(confs));
+                settings.setVariable("ivy.resolved.configurations", mergeConfs(confs));
                 if (file != null) {
                     getProject().setProperty("ivy.resolved.file", file.getAbsolutePath());
                     settings.setVariable("ivy.resolved.file", file.getAbsolutePath());
@@ -297,16 +291,10 @@ public class IvyResolve extends IvyTask {
                         settings.setVariable("ivy.deps.changed." + resolveId, 
                             hasChanged.toString());
                     }
-                    if (conf.trim().equals("*")) {
-                        getProject().setProperty("ivy.resolved.configurations." + resolveId,
-                            mergeConfs(md.getConfigurationsNames()));
-                        settings.setVariable("ivy.resolved.configurations." + resolveId,
-                            mergeConfs(md.getConfigurationsNames()));
-                    } else {
-                        getProject()
-                                .setProperty("ivy.resolved.configurations." + resolveId, conf);
-                        settings.setVariable("ivy.resolved.configurations." + resolveId, conf);
-                    }
+                    getProject().setProperty("ivy.resolved.configurations." + resolveId,
+                        mergeConfs(confs));
+                    settings.setVariable("ivy.resolved.configurations." + resolveId,
+                        mergeConfs(confs));
                     if (file != null) {
                         getProject().setProperty("ivy.resolved.file." + resolveId,
                             file.getAbsolutePath());

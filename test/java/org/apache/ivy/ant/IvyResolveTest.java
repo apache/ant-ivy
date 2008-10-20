@@ -397,6 +397,10 @@ public class IvyResolveTest extends TestCase {
             ModuleRevisionId.newInstance("org1", "mod1.1", "2.0")).exists());
         assertFalse(getIvyFileInCache(
             ModuleRevisionId.newInstance("org1", "mod1.2", "2.0")).exists());
+
+        // test the properties
+        Project project = resolve.getProject();
+        assertFalse(project.getProperty("ivy.resolved.configurations").indexOf("default") > -1);
     }
 
     public void testResolveWithAbsoluteFile() {

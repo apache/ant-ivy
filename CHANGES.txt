@@ -109,6 +109,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - FIX: cachefileset produces an empty fileset when the cache refers to libs in directories that only have the root directory in common (IVY-948) (thanks to Chris Wood)
 - FIX: Extra Attributes specified in the Dependency's Module Descriptor are not available to resolvers (IVY-929) (thanks to Scott Hebert)
 - FIX: Support for passing arbitrary arguments to the -main invoked class when using the standalone mode is severely limited (IVY-952) (thanks to Patrick Woodworth)
+- FIX: Correctly set ivy.resolved.configurations property when the conf string includes a negation operator (IVY-951) (thanks to Patrick Woodworth)
 
    2.0.0-rc1
 =====================================
