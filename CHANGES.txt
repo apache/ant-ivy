@@ -31,6 +31,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 	Jacob Grydholt Jensen
 	Scott Goldstein
 	Pierre Hägnestrand
+	Scott Hebert
 	Tobias Himstedt
 	Ben Hale
 	Peter Hayes
@@ -106,6 +107,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - FIX: Unable to resolve snapshot versions depending on xml elements order (IVY-940)
 - FIX: pre-resolve-dependency event doesn't export branch information (IVY-941) (thanks to Jaroslaw Wypychowski)
 - FIX: cachefileset produces an empty fileset when the cache refers to libs in directories that only have the root directory in common (IVY-948) (thanks to Chris Wood)
+- FIX: Extra Attributes specified in the Dependency's Module Descriptor are not available to resolvers (IVY-929) (thanks to Scott Hebert)
 
    2.0.0-rc1
 =====================================

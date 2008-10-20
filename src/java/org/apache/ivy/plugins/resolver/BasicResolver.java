@@ -472,23 +472,28 @@ public abstract class BasicResolver extends AbstractResolver {
 
     private ModuleRevisionId getRevision(ResolvedResource ivyRef, ModuleRevisionId askedMrid,
             ModuleDescriptor md) throws ParseException {
+        Map allAttributes = new HashMap();
+        allAttributes.putAll(md.getQualifiedExtraAttributes());
+        allAttributes.putAll(askedMrid.getQualifiedExtraAttributes());
+        
         String revision = ivyRef.getRevision();
         if (revision == null) {
             Message.debug("no revision found in reference for " + askedMrid);
             if (getSettings().getVersionMatcher().isDynamic(askedMrid)) {
                 if (md.getModuleRevisionId().getRevision() == null) {
-                    return ModuleRevisionId.newInstance(askedMrid, "working@" + getName());
+                    revision = "working@" + getName();
                 } else {
-                    Message.debug("using  " + askedMrid);
-                    return askedMrid;
+                    Message.debug("using " + askedMrid);
+                    revision = askedMrid.getRevision();
                 }
             } else {
-                Message.debug("using  " + askedMrid);
-                return askedMrid;
+                Message.debug("using " + askedMrid);
+                revision = askedMrid.getRevision();
             }
-        } else {
-            return ModuleRevisionId.newInstance(askedMrid, revision);
         }
+        
+        return ModuleRevisionId.newInstance(askedMrid.getOrganisation(), askedMrid.getName(),
+                    askedMrid.getBranch(), revision, allAttributes);
     }
 
     public ResolvedModuleRevision parse(final ResolvedResource mdRef, DependencyDescriptor dd,
