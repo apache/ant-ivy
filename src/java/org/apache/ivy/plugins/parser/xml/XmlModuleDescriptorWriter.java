@@ -447,21 +447,21 @@ public final class XmlModuleDescriptorWriter {
                 License license = licenses[i];
                 out.print("\t\t<license ");
                 if (license.getName() != null) {
-                    out.print("name=\"" + license.getName() + "\" ");
+                    out.print("name=\"" + XMLHelper.escape(license.getName()) + "\" ");
                 }
                 if (license.getUrl() != null) {
-                    out.print("url=\"" + license.getUrl() + "\" ");
+                    out.print("url=\"" + XMLHelper.escape(license.getUrl()) + "\" ");
                 }
                 out.println("/>");
             }
             if (md.getHomePage() != null || md.getDescription() != null) {
                 out.print("\t\t<description");
                 if (md.getHomePage() != null) {
-                    out.print(" homepage=\"" + md.getHomePage() + "\"");
+                    out.print(" homepage=\"" + XMLHelper.escape(md.getHomePage()) + "\"");
                 }
                 if (md.getDescription() != null && md.getDescription().trim().length() > 0) {
                     out.println(">");
-                    out.println("\t\t" + md.getDescription());
+                    out.println("\t\t" + XMLHelper.escape(md.getDescription()));
                     out.println("\t\t</description>");
                 } else {
                     out.println(" />");
