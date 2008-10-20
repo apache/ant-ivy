@@ -54,22 +54,34 @@ public class CommandLineParser {
     
     public CommandLine parse(String[] args) throws ParseException {
         CommandLine line = new CommandLine();
-        for (ListIterator iterator = Arrays.asList(args).listIterator(); iterator.hasNext();) {
+        
+        int index = args.length;
+        ListIterator iterator = Arrays.asList(args).listIterator();
+        while (iterator.hasNext()) {
             String arg = (String) iterator.next();
-            if (arg.startsWith("-")) {
-                Option option = (Option) options.get(arg.substring(1));
-                if (option == null) {
-                    throw new ParseException("Unrecognized option: " + arg);
-                }
-                line.addOptionValues(arg.substring(1), option.parse(iterator));
-            } else {
-                // left over args
-                int index = iterator.previousIndex() + 1;
-                String[] leftOverArgs = new String[args.length - index];
-                System.arraycopy(args, index, leftOverArgs, 0, leftOverArgs.length);
-                line.setLeftOverArgs(leftOverArgs);
+            if ("--".equals(arg)) {
+                // skip this argument and stop looping
+                index = iterator.nextIndex();
+                break;
             }
+
+            if (!arg.startsWith("-")) {
+                index = iterator.previousIndex();
+                break;
+            }
+            
+            Option option = (Option) options.get(arg.substring(1));
+            if (option == null) {
+                throw new ParseException("Unrecognized option: " + arg);
+            }
+            line.addOptionValues(arg.substring(1), option.parse(iterator));
         }
+        
+        // left over args
+        String[] leftOverArgs = new String[args.length - index];
+        System.arraycopy(args, index, leftOverArgs, 0, leftOverArgs.length);
+        line.setLeftOverArgs(leftOverArgs);
+
         return line;
     }
 
