@@ -135,8 +135,8 @@ public final class PomModuleDescriptorParser implements ModuleDescriptorParser {
                 if (parentModule != null) {
                     parentDescr = parentModule.getDescriptor();
                 } else {
-                   Message.warn("impossible to load parent for " + descriptorURL + "."
-                       + " Parent=" + parentModRevID); 
+                    throw new IOException("Impossible to load parent for " + descriptorURL + "."
+                       + " Parent=" + parentModRevID);
                 }
                 if (parentDescr != null) {
                     Map parentPomProps = PomModuleDescriptorBuilder.extractPomProperties(

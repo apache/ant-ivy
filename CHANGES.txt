@@ -115,6 +115,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - FIX: Correctly set ivy.resolved.configurations property when the conf string includes a negation operator (IVY-951) (thanks to Patrick Woodworth)
 - FIX: Maven pom license url can contain xml entities (IVY-950)
 - FIX: Maven pom license has name as optional element (IVY-949)
+- FIX: Ivy doesn't throw an error when the parent POM cannot be loaded (IVY-931)
 
    2.0.0-rc1
 =====================================

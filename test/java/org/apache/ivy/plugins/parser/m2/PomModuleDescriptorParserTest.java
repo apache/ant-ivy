@@ -138,7 +138,6 @@ public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         assertEquals("ejb", artifact[0].getType());
     }
 
-    
     public void testParent() throws Exception {
         ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(
             settings, getClass().getResource("test-parent.pom"), false);
@@ -152,7 +151,17 @@ public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         assertEquals(mrid, artifact[0].getModuleRevisionId());
         assertEquals("test", artifact[0].getName());
     }
-
+    
+    public void testParentNotFound() throws Exception {
+        try {
+            PomModuleDescriptorParser.getInstance().parseDescriptor(
+                new IvySettings(), getClass().getResource("test-parent-not-found.pom"), false);
+            fail("IOException should have been thrown!");
+        } catch (IOException e) {
+            assertTrue(e.getMessage().indexOf("Impossible to load parent") != -1);
+        }
+    }
+    
     public void testParent2() throws Exception {
         ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(
             settings, getClass().getResource("test-parent2.pom"), false);
