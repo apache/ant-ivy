@@ -222,9 +222,18 @@ public class PomReader {
             if (LICENSE.equals(license.getNodeName())) {
                 String name = getFirstChildText(license, LICENSE_NAME);
                 String url = getFirstChildText(license, LICENSE_URL);
-                if (name != null || url != null) {
-                    lics.add(new License(name, url));
+                
+                if ((name == null) && (url == null)) {
+                    // move to next license
+                    continue;
                 }
+                
+                if (name == null) {
+                    // The license name is required in Ivy but not in a POM!
+                    name = "Unknown License";
+                }
+                
+                lics.add(new License(name, url));
             }
         }
         return (License[]) lics.toArray(new License[lics.size()]);
