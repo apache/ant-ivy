@@ -57,6 +57,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 	Glen Marchesani
 	Phil Messenger
 	Mathias Muller
+	Randy Nott
 	Peter Oxenham
 	Emmanuel Pellereau
 	Roshan Punnoose
@@ -83,6 +84,8 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
    trunk
 =====================================
 - DOCUMENTATION: Filesystem resolver: talks about "patterns" but does not mention these must become absolute file paths (IVY-910)
+
+- NEW: Allow authentication credentials to be specified in settings file (IVY-943) (thanks to Randy Nott)
 
 - IMPROVEMENT: Error messages on use of relative paths can be cyrptic (IVY-909)
 - IMPROVEMENT: Maven accepts illegal XML for its pom's, Ivy not (IVY-921)

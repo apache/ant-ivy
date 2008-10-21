@@ -46,6 +46,7 @@ import org.apache.ivy.util.Checks;
 import org.apache.ivy.util.Configurator;
 import org.apache.ivy.util.FileResolver;
 import org.apache.ivy.util.Message;
+import org.apache.ivy.util.url.CredentialsStore;
 import org.apache.ivy.util.url.URLHandler;
 import org.apache.ivy.util.url.URLHandlerRegistry;
 import org.xml.sax.Attributes;
@@ -221,6 +222,8 @@ public class XmlSettingsParser extends DefaultHandler {
                 macrodefStarted(qName, attributes);
             } else if ("module".equals(qName)) {
                 moduleStarted(attributes);
+            } else if ("credentials".equals(qName)) {
+                credentialsStarted(attributes);
             }
         } catch (ParseException ex) {
             SAXException sax = new SAXException("problem in config file: " + ex.getMessage(), ex);
@@ -232,6 +235,14 @@ public class XmlSettingsParser extends DefaultHandler {
             sax.initCause(ex);
             throw sax;
         }
+    }
+
+    private void credentialsStarted(Map attributes) {
+        String realm = (String) attributes.remove("realm");
+        String host = (String) attributes.remove("host");
+        String userName = (String) attributes.remove("username");
+        String passwd = (String) attributes.remove("passwd");
+        CredentialsStore.INSTANCE.addCredentials(realm, host, userName, passwd);
     }
 
     private void moduleStarted(Map attributes) {

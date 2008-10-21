@@ -186,6 +186,13 @@
                             ]
                         },
                         {
+                          "id":"settings/credentials",
+                          "title":"credentials",
+                          "children": [
+
+                            ]
+                        },
+                        {
                           "id":"settings/lock-strategies",
                           "title":"lock-strategies",
                           "children": [
