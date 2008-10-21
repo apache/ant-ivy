@@ -31,9 +31,11 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 	Jacob Grydholt Jensen
 	Scott Goldstein
 	Pierre Hägnestrand
+	Scott Hebert
 	Tobias Himstedt
 	Ben Hale
 	Peter Hayes
+	Scott Hebert
 	Matt Inger
 	Anders Janmyr
 	Christer Jonsson
@@ -53,7 +55,9 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 	Bernard Niset
 	David Maplesden
 	Glen Marchesani
+	Phil Messenger
 	Mathias Muller
+	Randy Nott
 	Peter Oxenham
 	Emmanuel Pellereau
 	Roshan Punnoose
@@ -73,6 +77,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 	James P. White
 	Tom Widmer
 	John Williams
+    Chris Wood
 	Patrick Woodworth
 	Jaroslaw Wypychowski
 	
@@ -80,14 +85,37 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 =====================================
 - DOCUMENTATION: Filesystem resolver: talks about "patterns" but does not mention these must become absolute file paths (IVY-910)
 
-- IMPROVEMENT: Error messages on use of relative paths can be cyrptic (IVY-909)
+- NEW: Allow authentication credentials to be specified in settings file (IVY-943) (thanks to Randy Nott)
 
+- IMPROVEMENT: Error messages on use of relative paths can be cyrptic (IVY-909)
+- IMPROVEMENT: Maven accepts illegal XML for its pom's, Ivy not (IVY-921)
+
+- FIX: NullPointerException in AbstractPatternsBasedResolver when organization is null (IVY-928)
+- FIX: NullPointerException when Ivy cannot locate pom parent (IVY-927)
 - FIX: Cannot configure items with java.io.File attributes (IVY-905)
 - FIX: Environment properties in ivy settings are no longer resolved (IVY-907)
 - FIX: Resolve failed on certain proxy environment (IVY-911)
 - FIX: Ivy can't handle bare POM ${groupId} property (IVY-913) (thanks to Tom Widmer)
 - FIX: Properties needed to parse version in POM (IVY-914) (thanks to Tom Widmer)
-
+- FIX: build.xml: checkstyle + checkstyle-report dont work together (IVY-919)
+- FIX: Maven packaging of "pom" should add a "jar" artifact if present (IVY-920)
+- FIX: StackOverflow when using ivy:settings with "ivy.instance" as id (IVY-924)
+- FIX: Maven Pom reader doesn't handle optional dependencies correctly in some instances (IVY-926) (thanks to Phil Messenger)
+- FIX: ivy:settings doesn't work if id is a property (IVY-925)
+- FIX: HttpClientHandler hanging in certain cases (IVY-930) (thanks to Scott Hebert)
+- FIX: Can't download files containing space or + in their names by HTTP (IVY-923)
+- FIX: Maven2 parser doesn't support POMs with <model> as root (IVY-932)
+- FIX: Default retrieve, publish and deliver patterns doesn't include the [classifier] token (IVY-935)
+- FIX: Can't use latest.release for pom dependencies (IVY-936)
+- FIX: Unable to resolve snapshot versions depending on xml elements order (IVY-940)
+- FIX: pre-resolve-dependency event doesn't export branch information (IVY-941) (thanks to Jaroslaw Wypychowski)
+- FIX: cachefileset produces an empty fileset when the cache refers to libs in directories that only have the root directory in common (IVY-948) (thanks to Chris Wood)
+- FIX: Extra Attributes specified in the Dependency's Module Descriptor are not available to resolvers (IVY-929) (thanks to Scott Hebert)
+- FIX: Support for passing arbitrary arguments to the -main invoked class when using the standalone mode is severely limited (IVY-952) (thanks to Patrick Woodworth)
+- FIX: Correctly set ivy.resolved.configurations property when the conf string includes a negation operator (IVY-951) (thanks to Patrick Woodworth)
+- FIX: Maven pom license url can contain xml entities (IVY-950)
+- FIX: Maven pom license has name as optional element (IVY-949)
+- FIX: Ivy doesn't throw an error when the parent POM cannot be loaded (IVY-931)
 
    2.0.0-rc1
 =====================================

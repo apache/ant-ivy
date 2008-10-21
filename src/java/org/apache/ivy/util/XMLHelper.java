@@ -30,13 +30,15 @@ import javax.xml.parsers.SAXParserFactory;
 import org.apache.ivy.plugins.repository.Resource;
 import org.apache.ivy.util.url.URLHandlerRegistry;
 import org.w3c.dom.Document;
+import org.xml.sax.EntityResolver;
+import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXNotRecognizedException;
-import org.xml.sax.InputSource;
 import org.xml.sax.ext.LexicalHandler;
 import org.xml.sax.helpers.DefaultHandler;
 
 public abstract class XMLHelper {
+
     private static final SAXParserFactory VALIDATING_FACTORY = SAXParserFactory.newInstance();
 
     private static final SAXParserFactory FACTORY = SAXParserFactory.newInstance();
@@ -193,23 +195,31 @@ public abstract class XMLHelper {
     }
 
     
-    public static Document parseToDom(URL descriptorURL, Resource res) throws IOException,
-            SAXException {
-        DocumentBuilder docBuilder = getDocBuilder();
-        InputStream pomStream = res.openStream();
+    public static Document parseToDom(
+            InputStream stream, Resource res, EntityResolver entityResolver) 
+                throws IOException, SAXException {
+        DocumentBuilder docBuilder = getDocBuilder(entityResolver);
         Document pomDomDoc;
         try {
-            pomDomDoc = docBuilder.parse(pomStream, res.getName());
+            pomDomDoc = docBuilder.parse(stream, res.getName());
+        } catch (SAXException e) {
+            e.printStackTrace();
+            throw e;
         } finally {
-            pomStream.close();
+            stream.close();
         } 
         return pomDomDoc;
     }
 
-    public static DocumentBuilder getDocBuilder() {
+    public static DocumentBuilder getDocBuilder(EntityResolver entityResolver) {
         if (docBuilder == null) {
             try {
-                docBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+                DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+                factory.setValidating(false);
+                docBuilder = factory.newDocumentBuilder();
+                if (entityResolver != null) {
+                    docBuilder.setEntityResolver(entityResolver);
+                }
             } catch (ParserConfigurationException e) {
                 throw new RuntimeException(e);
             }        

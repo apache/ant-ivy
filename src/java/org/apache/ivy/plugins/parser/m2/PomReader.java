@@ -17,7 +17,11 @@
  */
 package org.apache.ivy.plugins.parser.m2;
 
+import java.io.FilterInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.LineNumberReader;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -36,6 +40,8 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.EntityResolver;
+import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
@@ -52,6 +58,7 @@ public class PomReader {
     private static final String DEPENDENCIES = "dependencies";
     private static final String DEPENDENCY_MGT = "dependencyManagement";
     private static final String PROJECT = "project";
+    private static final String MODEL = "model";
     private static final String GROUP_ID = "groupId";
     private static final String ARTIFACT_ID = "artifactId";
     private static final String VERSION = "version";
@@ -80,14 +87,33 @@ public class PomReader {
     private final Element parentElement;
     
     public PomReader(URL descriptorURL, Resource res) throws IOException, SAXException {
-        Document pomDomDoc = XMLHelper.parseToDom(descriptorURL, res);
-        projectElement = pomDomDoc.getDocumentElement();
-        if (!PROJECT.equals(projectElement.getNodeName())) {
-            throw new SAXParseException("project must be the root tag" , res.getName() , 
-                                        res.getName(), 0, 0);
+        InputStream stream = new AddDTDFilterInputStream(descriptorURL.openStream());
+        try {
+            Document pomDomDoc = XMLHelper.parseToDom(stream, res, new EntityResolver() {
+                public InputSource resolveEntity(String publicId, String systemId) 
+                                throws SAXException, IOException {
+                    if ((systemId != null) && systemId.endsWith("m2-entities.ent")) {
+                        return new InputSource(
+                                        PomReader.class.getResourceAsStream("m2-entities.ent"));
+                    }
+                    return null;
+                }
+            });
+            projectElement = pomDomDoc.getDocumentElement();
+            if (!PROJECT.equals(projectElement.getNodeName()) && !MODEL.equals(projectElement.getNodeName())) {
+                throw new SAXParseException("project must be the root tag" , res.getName() , 
+                                            res.getName(), 0, 0);
+            }
+            parentElement = getFirstChildElement(projectElement , PARENT);
+        } finally {
+            if (stream != null) {
+                try {
+                    stream.close();
+                } catch (IOException e) {
+                    // ignore
+                }
+            }
         }
-        parentElement = getFirstChildElement(projectElement , PARENT);
-        //TODO read the properties because it must be used to interpret every other field
     }
 
 
@@ -196,9 +222,18 @@ public class PomReader {
             if (LICENSE.equals(license.getNodeName())) {
                 String name = getFirstChildText(license, LICENSE_NAME);
                 String url = getFirstChildText(license, LICENSE_URL);
-                if (name != null || url != null) {
-                    lics.add(new License(name, url));
+                
+                if ((name == null) && (url == null)) {
+                    // move to next license
+                    continue;
                 }
+                
+                if (name == null) {
+                    // The license name is required in Ivy but not in a POM!
+                    name = "Unknown License";
+                }
+                
+                lics.add(new License(name, url));
             }
         }
         return (License[]) lics.toArray(new License[lics.size()]);
@@ -364,7 +399,8 @@ public class PomReader {
         }
 
         public boolean isOptional() {
-            return getFirstChildElement(depElement, OPTIONAL) != null;
+            Element e = getFirstChildElement(depElement, OPTIONAL); 
+            return (e != null) && "true".equalsIgnoreCase(getTextContent(e));
         }
         
         public List /*<ModuleId>*/ getExcludedModules() {
@@ -470,8 +506,75 @@ public class PomReader {
         return r;
     }
 
+    private static final class AddDTDFilterInputStream extends FilterInputStream {
+        private static final int MARK = 10000;
+        private static final String DOCTYPE = "<!DOCTYPE project SYSTEM \"m2-entities.ent\">\n";
 
+        private int count;
+        private byte[] prefix = DOCTYPE.getBytes();
+        
+        private AddDTDFilterInputStream(InputStream in) throws IOException {
+            super(in);
+            
+            if (!in.markSupported()) {
+                throw new IllegalArgumentException("The inputstream doesn't support mark");
+            }
+            
+            in.mark(MARK);
+            
+            int bytesToSkip = 0;
+            LineNumberReader reader = new LineNumberReader(new InputStreamReader(in, "UTF-8"));
+            String firstLine = reader.readLine();
+            if (firstLine != null) {
+                String trimmed = firstLine.trim();
+                if (trimmed.startsWith("<?xml ")) {
+                    int endIndex = trimmed.indexOf("?>");
+                    String xmlDecl = trimmed.substring(0, endIndex + 2);
+                    prefix = (xmlDecl + "\n" + DOCTYPE).getBytes();
+                    bytesToSkip = xmlDecl.getBytes().length;
+                }
+            }
+            
+            in.reset();
+            for (int i = 0; i < bytesToSkip; i++) {
+                in.read();
+            }
+        }
 
+        public int read() throws IOException {
+            if (count < prefix.length) {
+                return prefix[count++];
+            }
+            
+            int result = super.read();
+            return result;
+        }
+        
+        public int read(byte[] b, int off, int len) throws IOException {
+            if (b == null) {
+                throw new NullPointerException();
+            } else if ((off < 0) || (off > b.length) || (len < 0) 
+                    || ((off + len) > b.length) || ((off + len) < 0)) {
+                throw new IndexOutOfBoundsException();
+            } else if (len == 0) {
+                return 0;
+            }
 
+            int nbrBytesCopied = 0;
+            
+            if (count < prefix.length) {
+                int nbrBytesFromPrefix = Math.min(prefix.length - count, len);
+                System.arraycopy(prefix, count, b, off, nbrBytesFromPrefix);
+                nbrBytesCopied = nbrBytesFromPrefix;
+            }
+            
+            if (nbrBytesCopied < len) {
+                nbrBytesCopied += in.read(b, off + nbrBytesCopied, len - nbrBytesCopied);
+            }
+            
+            count += nbrBytesCopied;
+            return nbrBytesCopied;
+        }
+    }
 
 }

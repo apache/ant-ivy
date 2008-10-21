@@ -27,6 +27,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
@@ -4148,6 +4149,9 @@ public class ResolveTest extends TestCase {
         Ivy ivy = new Ivy();
         ivy.configure(new File("test/repositories/extra-attributes/ivysettings.xml"));
         ivy.getSettings().setDefaultCache(cache);
+        
+        FileSystemResolver fResolver = (FileSystemResolver) ivy.getSettings().getDefaultResolver();
+        fResolver.setCheckconsistency(false); // important for testing IVY-929
 
         ResolveReport report = ivy.resolve(ResolveTest.class.getResource("ivy-extra-att.xml"),
             getResolveOptions(ivy.getSettings(), new String[] {"*"}).setValidate(false));
@@ -4156,6 +4160,15 @@ public class ResolveTest extends TestCase {
         assertTrue(new File(cache, "apache/mymodule/task1/1854/ivy.xml").exists());
         assertTrue(new File(cache, "apache/mymodule/task1/1854/mymodule-windows.jar").exists());
         assertTrue(new File(cache, "apache/mymodule/task1/1854/mymodule-linux.jar").exists());
+        
+        Set moduleRevisions = report.getConfigurationReport("default").getModuleRevisionIds();
+        assertEquals(1, moduleRevisions.size());
+        ModuleRevisionId resolveModRevId = (ModuleRevisionId) moduleRevisions.iterator().next();
+        assertEquals("apache", resolveModRevId.getOrganisation());
+        assertEquals("mymodule", resolveModRevId.getName());
+        assertEquals("1854", resolveModRevId.getRevision());
+        assertEquals("task1", resolveModRevId.getExtraAttribute("eatt"));
+        assertEquals("another", resolveModRevId.getExtraAttribute("eatt2"));
     }
 
     public void testExtraAttributes2() throws Exception {

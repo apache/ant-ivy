@@ -108,7 +108,8 @@ public final class PomModuleDescriptorParser implements ModuleDescriptorParser {
     public ModuleDescriptor parseDescriptor(ParserSettings ivySettings, URL descriptorURL, 
             Resource res, boolean validate) throws ParseException, IOException {
         
-        PomModuleDescriptorBuilder mdBuilder = new PomModuleDescriptorBuilder(this, res);
+        PomModuleDescriptorBuilder mdBuilder = new PomModuleDescriptorBuilder(
+                                                                    this, res, ivySettings);
         
         try {           
             PomReader domReader = new PomReader(descriptorURL, res);            
@@ -134,16 +135,17 @@ public final class PomModuleDescriptorParser implements ModuleDescriptorParser {
                 if (parentModule != null) {
                     parentDescr = parentModule.getDescriptor();
                 } else {
-                   Message.warn("impossible to load parent for " + descriptorURL + "."
-                       + " Parent=" + parentModRevID); 
+                    throw new IOException("Impossible to load parent for " + descriptorURL + "."
+                       + " Parent=" + parentModRevID);
                 }
-                
-                Map parentPomProps = PomModuleDescriptorBuilder.extractPomProperties(
-                                                                parentDescr.getExtraInfo());
-                for (Iterator iter = parentPomProps.entrySet().iterator(); iter.hasNext();) {
-                    Map.Entry prop = (Map.Entry) iter.next();
-                    domReader.setProperty((String) prop.getKey(), (String) prop.getValue());
-                }                    
+                if (parentDescr != null) {
+                    Map parentPomProps = PomModuleDescriptorBuilder.extractPomProperties(
+                        parentDescr.getExtraInfo());
+                    for (Iterator iter = parentPomProps.entrySet().iterator(); iter.hasNext();) {
+                        Map.Entry prop = (Map.Entry) iter.next();
+                        domReader.setProperty((String) prop.getKey(), (String) prop.getValue());
+                    }                    
+                }
             }
                             
             String groupId = domReader.getGroupId();

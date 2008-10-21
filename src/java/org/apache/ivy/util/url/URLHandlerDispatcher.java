@@ -84,7 +84,7 @@ public class URLHandlerDispatcher implements URLHandler {
     
     public void setRequestMethod(int requestMethod) {
         defaultHandler.setRequestMethod(requestMethod);
-        for (Iterator it = handlers.values().iterator(); it.hasNext(); ) {
+        for (Iterator it = handlers.values().iterator(); it.hasNext();) {
             URLHandler handler = (URLHandler) it.next();
             handler.setRequestMethod(requestMethod);
         }

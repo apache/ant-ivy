@@ -20,6 +20,7 @@ package org.apache.ivy;
 import java.io.File;
 
 import org.apache.ivy.util.CacheCleaner;
+import org.apache.ivy.util.cli.CommandLine;
 import org.apache.ivy.util.cli.ParseException;
 
 import junit.framework.TestCase;
@@ -83,6 +84,48 @@ public class MainTest extends TestCase {
                 "-ivy", "test/repositories/1/org1/mod1.1/ivys/ivy-1.0.xml"
         });
         assertTrue(new File("build/cache/org1/mod1.2/ivy-2.0.xml").exists());
+    }
+    
+    public void testExtraParams1() throws Exception {
+        String[] params = new String[] {
+                "-settings", "test/repositories/ivysettings.xml",
+                "-confs", "default",
+                "-ivy", "test/repositories/1/org1/mod1.1/ivys/ivy-1.0.xml",
+                "foo1", "foo2"
+        };
+        CommandLine line = Main.getParser().parse(params);
+        String[] leftOver = line.getLeftOverArgs();
+        assertNotNull(leftOver);
+        assertEquals(2, leftOver.length);
+        assertEquals("foo1", leftOver[0]);
+        assertEquals("foo2", leftOver[1]);
+    }
+
+    public void testExtraParams2() throws Exception {
+        String[] params = new String[] {
+                "-settings", "test/repositories/ivysettings.xml",
+                "-confs", "default",
+                "-ivy", "test/repositories/1/org1/mod1.1/ivys/ivy-1.0.xml",
+                "--", "foo1", "foo2"
+        };
+        CommandLine line = Main.getParser().parse(params);
+        String[] leftOver = line.getLeftOverArgs();
+        assertNotNull(leftOver);
+        assertEquals(2, leftOver.length);
+        assertEquals("foo1", leftOver[0]);
+        assertEquals("foo2", leftOver[1]);
+    }
+
+    public void testExtraParams3() throws Exception {
+        String[] params = new String[] {
+                "-settings", "test/repositories/ivysettings.xml",
+                "-confs", "default",
+                "-ivy", "test/repositories/1/org1/mod1.1/ivys/ivy-1.0.xml"
+        };
+        CommandLine line = Main.getParser().parse(params);
+        String[] leftOver = line.getLeftOverArgs();
+        assertNotNull(leftOver);
+        assertEquals(0, leftOver.length);
     }
 
     private void run(String[] args) throws Exception {

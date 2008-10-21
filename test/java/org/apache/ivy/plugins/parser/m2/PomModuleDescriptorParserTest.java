@@ -138,7 +138,6 @@ public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         assertEquals("ejb", artifact[0].getType());
     }
 
-    
     public void testParent() throws Exception {
         ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(
             settings, getClass().getResource("test-parent.pom"), false);
@@ -152,7 +151,17 @@ public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         assertEquals(mrid, artifact[0].getModuleRevisionId());
         assertEquals("test", artifact[0].getName());
     }
-
+    
+    public void testParentNotFound() throws Exception {
+        try {
+            PomModuleDescriptorParser.getInstance().parseDescriptor(
+                new IvySettings(), getClass().getResource("test-parent-not-found.pom"), false);
+            fail("IOException should have been thrown!");
+        } catch (IOException e) {
+            assertTrue(e.getMessage().indexOf("Impossible to load parent") != -1);
+        }
+    }
+    
     public void testParent2() throws Exception {
         ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(
             settings, getClass().getResource("test-parent2.pom"), false);
@@ -384,7 +393,7 @@ public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParse
 
         DependencyDescriptor[] dds = md.getDependencies();
         assertNotNull(dds);
-        assertEquals(2, dds.length);
+        assertEquals(3, dds.length);
         assertEquals(ModuleRevisionId.newInstance("commons-logging", "commons-logging", "1.0.4"),
             dds[0].getDependencyRevisionId());
         assertEquals(new HashSet(Arrays.asList(new String[] {"optional"})), new HashSet(Arrays
@@ -402,6 +411,15 @@ public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParse
             new HashSet(Arrays.asList(dds[1].getDependencyConfigurations("compile"))));
         assertEquals(new HashSet(Arrays.asList(new String[] {"runtime(*)"})), new HashSet(Arrays
                 .asList(dds[1].getDependencyConfigurations("runtime"))));
+
+        assertEquals(ModuleRevisionId.newInstance("cglib", "cglib-extra", "2.0.2"), dds[2]
+                .getDependencyRevisionId());
+        assertEquals(new HashSet(Arrays.asList(new String[] {"compile", "runtime"})), new HashSet(
+                Arrays.asList(dds[2].getModuleConfigurations())));
+        assertEquals(new HashSet(Arrays.asList(new String[] {"master(*)", "compile(*)"})),
+            new HashSet(Arrays.asList(dds[2].getDependencyConfigurations("compile"))));
+        assertEquals(new HashSet(Arrays.asList(new String[] {"runtime(*)"})), new HashSet(Arrays
+                .asList(dds[2].getDependencyConfigurations("runtime"))));
     }
 
     public void testDependenciesWithScope() throws Exception {
@@ -615,10 +633,32 @@ public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         
         assertEquals(ModuleRevisionId.newInstance("org.apache", "test-version-other", "5.76"), dds[0]
                 .getDependencyRevisionId());//present in the pom using a property defined in the parent
-
-        
     }
     
+    public void testPomWithEntity() throws Exception {
+        ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(
+            settings, getClass().getResource("test-entity.pom"), true);
+        assertNotNull(md);        
+    }
+    
+    public void testModel() throws Exception {
+        ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(
+            settings, getClass().getResource("test-model.pom"), false);
+        assertNotNull(md);
 
+        ModuleRevisionId mrid = ModuleRevisionId.newInstance("org.apache", "test", "1.0");
+        assertEquals(mrid, md.getModuleRevisionId());
+
+        assertNotNull(md.getConfigurations());
+        assertEquals(Arrays.asList(PomModuleDescriptorBuilder.MAVEN2_CONFIGURATIONS), Arrays
+                .asList(md.getConfigurations()));
+
+        Artifact[] artifact = md.getArtifacts("master");
+        assertEquals(1, artifact.length);
+        assertEquals(mrid, artifact[0].getModuleRevisionId());
+        assertEquals("test", artifact[0].getName());
+        assertEquals("jar", artifact[0].getExt());
+        assertEquals("jar", artifact[0].getType());
+    }
 
 }

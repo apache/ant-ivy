@@ -31,6 +31,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.ivy.Ivy;
+import org.apache.ivy.core.cache.ArtifactOrigin;
 import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.Configuration;
 import org.apache.ivy.core.module.descriptor.DefaultArtifact;
@@ -50,8 +51,10 @@ import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.plugins.matcher.ExactPatternMatcher;
 import org.apache.ivy.plugins.matcher.PatternMatcher;
 import org.apache.ivy.plugins.parser.ModuleDescriptorParser;
+import org.apache.ivy.plugins.parser.ParserSettings;
 import org.apache.ivy.plugins.parser.m2.PomReader.PomDependencyData;
 import org.apache.ivy.plugins.repository.Resource;
+import org.apache.ivy.plugins.resolver.DependencyResolver;
 import org.apache.ivy.util.Message;
 
 
@@ -187,9 +190,12 @@ public class PomModuleDescriptorBuilder {
     private ModuleRevisionId mrid;
 
     private DefaultArtifact mainArtifact;
+    
+    private ParserSettings parserSettings;
 
     
-    public PomModuleDescriptorBuilder(ModuleDescriptorParser parser, Resource res) {
+    public PomModuleDescriptorBuilder(
+            ModuleDescriptorParser parser, Resource res, ParserSettings ivySettings) {
         ivyModuleDescriptor = new DefaultModuleDescriptor(parser, res);
         ivyModuleDescriptor.setResolvedPublicationDate(new Date(res.getLastModified()));
         for (int i = 0; i < MAVEN2_CONFIGURATIONS.length; i++) {
@@ -197,6 +203,7 @@ public class PomModuleDescriptorBuilder {
         }
         ivyModuleDescriptor.setMappingOverride(true);
         ivyModuleDescriptor.addExtraAttributeNamespace("m", Ivy.getIvyHomeURL() + "maven");
+        parserSettings = ivySettings;
     }
 
 
@@ -208,6 +215,12 @@ public class PomModuleDescriptorBuilder {
     public void setModuleRevId(String groupId, String artifactId, String version) {
         mrid = ModuleRevisionId.newInstance(groupId, artifactId, version);
         ivyModuleDescriptor.setModuleRevisionId(mrid);
+        
+        if ((version == null) || version.endsWith("SNAPSHOT")) {
+            ivyModuleDescriptor.setStatus("integration");
+        } else {
+            ivyModuleDescriptor.setStatus("release");
+        }
      }
     
     public void setHomePage(String homePage) {
@@ -232,7 +245,20 @@ public class PomModuleDescriptorBuilder {
          * cover all cases.
          */
         if ("pom".equals(packaging)) {
-            // no artifact defined!
+            // no artifact defined! Add the default artifact if it exist.
+            DependencyResolver resolver = parserSettings.getResolver(mrid);
+            
+            if (resolver != null) {
+                DefaultArtifact artifact = new DefaultArtifact(
+                                    mrid, new Date(), artifactId, "jar", "jar");
+                ArtifactOrigin artifactOrigin = resolver.locate(artifact);
+                
+                if (!ArtifactOrigin.isUnknown(artifactOrigin)) {
+                    mainArtifact = artifact;
+                    ivyModuleDescriptor.addArtifact("master", mainArtifact);
+                }
+            }
+
             return;
         } else if (JAR_PACKAGINGS.contains(packaging)) {
             ext = "jar";

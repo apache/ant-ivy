@@ -25,24 +25,9 @@
   	<delete dir="build/cache" />
   </target>
 
-  <target name="testOverrideNotSpecified">
-  	<ivy:configure settingsId="test1" file="test/repositories/ivysettings.xml" />
-  	<ivy:resolve settingsRef="test1" file="test/java/org/apache/ivy/ant/ivy-simple.xml" />
+  <target name="testStackOverflow">
+  	<ivy:settings id="ivy.instance" file="test/repositories/ivysettings.xml" />
+  	<ivy:resolve settingsRef="ivy.instance" file="test/java/org/apache/ivy/ant/ivy-simple.xml" />
   </target>
 
-  <target name="testOverrideSetToFalse">
-  	<ivy:configure settingsId="test2" file="test/repositories/ivysettings.xml" override="false" />
-  	<ivy:resolve settingsRef="test2" file="test/java/org/apache/ivy/ant/ivy-simple.xml" />
-  </target>
-	  
-  <target name="testUnnecessaryDefaultIvyInstance">
-	  	<ivy:configure settingsId="testUnnecessaryDefaultIvyInstance" file="test/repositories/ivysettings.xml" override="true" />
-	  	<ivy:cachepath settingsRef="testUnnecessaryDefaultIvyInstance" file="test/java/org/apache/ivy/ant/ivy-simple.xml" pathid="ptest" />
-	  </target>
-	
-  <target name="testSettingsWithPropertyAsId">
-  	<property name="my.property" value="whatever" />
-  	<ivy:settings id="${my.property}" file="test/repositories/ivysettings.xml" />
-  	<ivy:resolve settingsRef="${my.property}" file="test/java/org/apache/ivy/ant/ivy-simple.xml" />
-  </target>
 </project>

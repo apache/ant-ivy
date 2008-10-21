@@ -134,7 +134,7 @@ public class IvyAntSettings extends DataType {
             return (IvyAntSettings) defaultInstanceObj;
         }
     }
-
+    
     public File getFile() {
         return file;
     }
@@ -178,7 +178,7 @@ public class IvyAntSettings extends DataType {
     public void setProject(Project p) {
         super.setProject(p);
         
-        if ("ivy.instance".equals(id) && getProject().getReference(id) == null) {
+        if ("ivy.instance".equals(id) && !getProject().getReferences().containsKey(id)) {
             // register ourselfs as default settings, just in case the id attribute is not set
             getProject().addReference("ivy.instance", this);
             autoRegistered = true;
@@ -216,6 +216,10 @@ public class IvyAntSettings extends DataType {
             autoRegistered = false;
         }
         this.id = id;
+        
+        if (getProject() != null) {
+            getProject().addReference(this.id, this);
+        }
     }
     
     public String getId() {

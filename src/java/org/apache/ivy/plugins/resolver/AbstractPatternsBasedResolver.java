@@ -438,7 +438,7 @@ public abstract class AbstractPatternsBasedResolver extends BasicResolver {
     }
 
     protected ModuleRevisionId convertM2IdForResourceSearch(ModuleRevisionId mrid) {
-        if (mrid.getOrganisation().indexOf('.') == -1) {
+        if (mrid.getOrganisation() == null || mrid.getOrganisation().indexOf('.') == -1) {
             return mrid;
         }
         return ModuleRevisionId.newInstance(mrid.getOrganisation().replace('.', '/'), 

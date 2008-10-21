@@ -33,12 +33,18 @@
       <groupId>commons-logging</groupId>
       <artifactId>commons-logging</artifactId>
       <version>1.0.4</version>
-      <optional/>
+      <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>cglib</groupId>
       <artifactId>cglib</artifactId>
       <version>2.0.2</version>
+    </dependency>
+    <dependency>
+      <groupId>cglib</groupId>
+      <artifactId>cglib-extra</artifactId>
+      <version>2.0.2</version>
+      <optional>false</optional>
     </dependency>
   </dependencies>
 </project>
