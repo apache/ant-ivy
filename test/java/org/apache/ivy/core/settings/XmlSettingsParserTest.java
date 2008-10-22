@@ -574,15 +574,15 @@ public class XmlSettingsParserTest extends TestCase {
 
     public void testBaseDirVariables() throws Exception {
         IvySettings settings = new IvySettings();
-        settings.setBaseDir(new File("/test/base/dir"));
-        assertEquals("/test/base/dir", settings.getVariable("basedir"));
-        assertEquals("/test/base/dir", settings.getVariable("ivy.basedir"));
+        settings.setBaseDir(new File("test/base/dir"));
+        assertEquals(new File("test/base/dir").getAbsolutePath(), settings.getVariable("basedir"));
+        assertEquals(new File("test/base/dir").getAbsolutePath(), settings.getVariable("ivy.basedir"));
 
         settings = new IvySettings();
-        settings.setVariable("basedir", "/other/base/dir");
-        settings.setBaseDir(new File("/test/base/dir"));
-        assertEquals("/other/base/dir", settings.getVariable("basedir"));
-        assertEquals("/test/base/dir", settings.getVariable("ivy.basedir"));
+        settings.setVariable("basedir", new File("other/base/dir").getAbsolutePath());
+        settings.setBaseDir(new File("test/base/dir"));
+        assertEquals(new File("other/base/dir").getAbsolutePath(), settings.getVariable("basedir"));
+        assertEquals(new File("test/base/dir").getAbsolutePath(), settings.getVariable("ivy.basedir"));
     }
 
     public static class MyOutputter implements ReportOutputter {
