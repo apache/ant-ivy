@@ -81,7 +81,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 	Patrick Woodworth
 	Jaroslaw Wypychowski
 	
-   2.0.x branch
+   2.0.0-rc2
 =====================================
 - DOCUMENTATION: Filesystem resolver: talks about "patterns" but does not mention these must become absolute file paths (IVY-910)
 
