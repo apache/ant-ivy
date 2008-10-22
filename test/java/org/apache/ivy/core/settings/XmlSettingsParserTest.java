@@ -572,6 +572,19 @@ public class XmlSettingsParserTest extends TestCase {
         assertEquals(new File(basedir, "packager/cache"), packager.getResourceCache());
     }
 
+    public void testBaseDirVariables() throws Exception {
+        IvySettings settings = new IvySettings();
+        settings.setBaseDir(new File("test/base/dir"));
+        assertEquals(new File("test/base/dir").getAbsolutePath(), settings.getVariable("basedir"));
+        assertEquals(new File("test/base/dir").getAbsolutePath(), settings.getVariable("ivy.basedir"));
+
+        settings = new IvySettings();
+        settings.setVariable("basedir", new File("other/base/dir").getAbsolutePath());
+        settings.setBaseDir(new File("test/base/dir"));
+        assertEquals(new File("other/base/dir").getAbsolutePath(), settings.getVariable("basedir"));
+        assertEquals(new File("test/base/dir").getAbsolutePath(), settings.getVariable("ivy.basedir"));
+    }
+
     public static class MyOutputter implements ReportOutputter {
         public void output(
                 ResolveReport report, ResolutionCacheManager cacheMgr, ResolveOptions options) {

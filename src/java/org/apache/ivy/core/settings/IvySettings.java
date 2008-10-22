@@ -756,6 +756,7 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
     public void setBaseDir(File baseDir) {
         this.baseDir = baseDir.getAbsoluteFile();
         setVariable("ivy.basedir", this.baseDir.getAbsolutePath());
+        setVariable("basedir", this.baseDir.getAbsolutePath(), false);
     }
     
     public File getBaseDir() {
