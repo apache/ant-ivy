@@ -89,6 +89,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 
 - IMPROVEMENT: Error messages on use of relative paths can be cyrptic (IVY-909)
 - IMPROVEMENT: Maven accepts illegal XML for its pom's, Ivy not (IVY-921)
+- IMPROVEMENT: Ivy should set the ${basedir} property (IVY-953)
 
 - FIX: NullPointerException in AbstractPatternsBasedResolver when organization is null (IVY-928)
 - FIX: NullPointerException when Ivy cannot locate pom parent (IVY-927)
