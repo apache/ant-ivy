@@ -117,6 +117,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - FIX: Maven pom license url can contain xml entities (IVY-950)
 - FIX: Maven pom license has name as optional element (IVY-949)
 - FIX: Ivy doesn't throw an error when the parent POM cannot be loaded (IVY-931)
+- FIX: Maven pom parser is not handling pom property ${project.parent.version} (IVY-955)
 
    2.0.0-rc1
 =====================================

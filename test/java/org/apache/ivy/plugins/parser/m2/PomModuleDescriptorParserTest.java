@@ -190,6 +190,20 @@ public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         assertEquals("test", artifact[0].getName());
     }
 
+    public void testProjectParentVersion() throws Exception {
+        ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(
+            settings, getClass().getResource("test-project.parent.version.pom"), false);
+        assertNotNull(md);
+
+        ModuleRevisionId mrid = ModuleRevisionId.newInstance("org.apache", "test", "1.0");
+        assertEquals(mrid, md.getModuleRevisionId());
+
+        Artifact[] artifact = md.getArtifacts("master");
+        assertEquals(1, artifact.length);
+        assertEquals(mrid, artifact[0].getModuleRevisionId());
+        assertEquals("test", artifact[0].getName());
+    }
+
     public void testDependencies() throws Exception {
         ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(
             settings, getClass().getResource("test-dependencies.pom"), false);
