@@ -202,8 +202,16 @@
 	</target>
 	
 	<target name="release-version">
-		<input message="please enter version: " addproperty="build.version"/>
-		<input message="please enter status: (integration,milestone,release)" addproperty="status"/>
+		<property name="build.version" value="${target.ivy.version}" />
+		<echo>Setting version to ${build.version}</echo>
+		<condition property="status" value="release">
+			<matches pattern="^\d+\.\d+\.\d+$" string="${build.version}"/>
+		</condition>
+		<condition property="status" value="milestone">
+			<matches pattern="^\d+\.\d+\.\d+-(alpha|beta|rc)\d+$" string="${build.version}"/>
+		</condition>
+		<property name="status" value="integration" />
+		<echo>Setting status to ${status}</echo>
 	</target>
 	
 	<target name="sign" depends="init-ivy">
