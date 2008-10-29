@@ -133,6 +133,7 @@ public abstract class IvyPostResolveTask extends IvyTask {
                 resolve.setInline(true);
                 resolve.setConf(conf);
                 resolve.setResolveId(resolveId);
+                resolve.setTransitive(isTransitive());
                 resolve.execute();
             } else {
                 Message.verbose("inline resolve already done for " + getOrganisation() + " "

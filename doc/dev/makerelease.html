@@ -94,7 +94,7 @@ svn status
 If your working copy is clean, you can launch the release script. If it isn't, make sure to clean it properly. Sometimes you may need to call ant clean-all if you have started to work with ant builds. If you are confused about your working copy state, delete it and check it out again.
 <h3>8. Launch the release script</h3>
 <code>
-ant -Dbuild.version=2.0.0-beta1 -Dstatus=milestone -f build-release.xml release
+ant -f build-release.xml release
 </code>
 The status should be release only for final releases, and milestone for any other intermediate release.
 If anything is wrong, fix and go back to step 4.
