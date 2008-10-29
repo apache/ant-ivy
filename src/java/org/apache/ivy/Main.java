@@ -182,6 +182,7 @@ public final class Main {
             Ivy ivy = Ivy.newInstance();
             initMessage(line, ivy);
             IvySettings settings = initSettings(line, ivy);
+            ivy.pushContext();
 
             File cache = new File(settings.substitute(line.getOptionValue("cache", settings
                     .getDefaultCache().getAbsolutePath())));
@@ -294,6 +295,7 @@ public final class Main {
                 invoke(ivy, cache, md, confs, fileList, line.getOptionValue("main"), params);
             }
             ivy.getLoggerEngine().popLogger();
+            ivy.popContext();
     }
 
     /**

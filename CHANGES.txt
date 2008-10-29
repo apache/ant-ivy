@@ -83,6 +83,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 	
    trunk
 =====================================
+- FIX: Log levels aren't respected in certain cases using the standalone functionality (IVY-960) (thanks to Patrick Woodworth)
 
    2.0.0-rc2
 =====================================
