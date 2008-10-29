@@ -83,6 +83,9 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 	
    trunk
 =====================================
+
+   2.0.0-rc2
+=====================================
 - DOCUMENTATION: Filesystem resolver: talks about "patterns" but does not mention these must become absolute file paths (IVY-910)
 
 - NEW: Allow authentication credentials to be specified in settings file (IVY-943) (thanks to Randy Nott)
