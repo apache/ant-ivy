@@ -126,11 +126,26 @@ public class ApacheURLLister {
 
             text = text.trim();
             
+            // handle complete URL listings
+            if (href.startsWith("http:") || href.startsWith("https:")) {
+                try {
+                    href = new URL(href).getPath();
+                    if (!href.startsWith(url.getPath())) {
+                        // ignore URLs which aren't children of the base URL
+                        continue;
+                    }
+                    href = href.substring(url.getPath().length());
+                } catch (Exception ignore) {
+                    // incorrect URL, ignore
+                    continue;
+                }
+            }
+
             if (href.startsWith("../")) {
                 // we are only interested in sub-URLs, not parent URLs, so skip this one
                 continue;
             }
-
+            
             // absolute href: convert to relative one
             if (href.startsWith("/")) {
                 int slashIndex = href.substring(0, href.length() - 1).lastIndexOf('/');
