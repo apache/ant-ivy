@@ -97,7 +97,7 @@ public abstract class AbstractURLHandler implements URLHandler {
             
             // it is possible that the original url was already (partial) escaped,
             // so we must unescape all '%' followed by 2 hexadecimals...
-            String uriString = uri.toString();
+            String uriString = uri.toASCIIString();
             
             // manually escape the '+' character
             uriString = uriString.replaceAll("\\+", "%2B");
