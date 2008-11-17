@@ -64,6 +64,8 @@ import org.apache.ivy.plugins.parser.xml.XmlModuleDescriptorWriter;
 import org.apache.ivy.plugins.repository.ArtifactResourceResolver;
 import org.apache.ivy.plugins.repository.Resource;
 import org.apache.ivy.plugins.repository.ResourceDownloader;
+import org.apache.ivy.plugins.repository.file.FileRepository;
+import org.apache.ivy.plugins.repository.file.FileResource;
 import org.apache.ivy.plugins.repository.url.URLRepository;
 import org.apache.ivy.plugins.repository.url.URLResource;
 import org.apache.ivy.plugins.resolver.util.MDResolvedResource;
@@ -918,7 +920,13 @@ public abstract class BasicResolver extends AbstractResolver {
                 URL url = artifact.getUrl();
                 Message.verbose("\tusing url for " + artifact + ": " + url);
                 logArtifactAttempt(artifact, url.toExternalForm());
-                ret = new ResolvedResource(new URLResource(url), artifact.getModuleRevisionId()
+                Resource resource;
+                if ("file".equals(url.getProtocol())) {
+                    resource = new FileResource(new FileRepository(), new File(url.getPath()));
+                } else {
+                    resource = new URLResource(url);
+                }
+                ret = new ResolvedResource(resource, artifact.getModuleRevisionId()
                         .getRevision());
             }
             return ret;
