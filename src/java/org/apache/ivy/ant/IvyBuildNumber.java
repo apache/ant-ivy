@@ -17,11 +17,19 @@
  */
 package org.apache.ivy.ant;
 
+import java.util.List;
+import java.util.ListIterator;
+
 import org.apache.ivy.Ivy;
 import org.apache.ivy.core.module.id.ModuleId;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.resolve.ResolvedModuleRevision;
+import org.apache.ivy.core.search.SearchEngine;
 import org.apache.ivy.core.settings.IvySettings;
+import org.apache.ivy.plugins.latest.ArtifactInfo;
+import org.apache.ivy.plugins.latest.LatestStrategy;
+import org.apache.ivy.plugins.matcher.PatternMatcher;
+import org.apache.ivy.plugins.version.VersionMatcher;
 import org.apache.tools.ant.BuildException;
 
 /**
@@ -29,6 +37,24 @@ import org.apache.tools.ant.BuildException;
  * properties according to what was found.
  */
 public class IvyBuildNumber extends IvyTask {
+    
+    public static class ResolvedModuleRevisionArtifactInfo implements ArtifactInfo {
+        private ModuleRevisionId rmr;
+
+        public ResolvedModuleRevisionArtifactInfo(ModuleRevisionId rmr) {
+            this.rmr = rmr;
+        }
+
+        public String getRevision() {
+            return rmr.getRevision();
+        }
+
+        public long getLastModified() {
+            return -1;
+        }
+
+    }
+
     private String organisation;
 
     private String module;
@@ -117,10 +143,47 @@ public class IvyBuildNumber extends IvyTask {
         if (!prefix.endsWith(".") && prefix.length() > 0) {
             prefix = prefix + ".";
         }
-        ResolvedModuleRevision rmr = ivy.findModule(ModuleRevisionId.newInstance(organisation,
-            module, branch, revision));
-        String revision = rmr == null ? null : rmr.getId().getRevision();
-        NewRevision newRevision = computeNewRevision(revision);
+        
+        
+        SearchEngine searcher = new SearchEngine(settings);
+        ModuleRevisionId[] revisions = searcher.listModules(ModuleRevisionId.newInstance(organisation,
+            module, branch, ".*"), settings.getMatcher(PatternMatcher.EXACT_OR_REGEXP));
+        
+        ArtifactInfo[] infos = new ArtifactInfo[revisions.length];
+        for (int i = 0; i < revisions.length; i++) {
+            infos[i] = new ResolvedModuleRevisionArtifactInfo(revisions[i]);
+        }
+        
+        VersionMatcher matcher = settings.getVersionMatcher();
+        LatestStrategy latestStrategy = settings.getLatestStrategy("latest-revision");
+        List sorted = latestStrategy.sort(infos);
+
+        ModuleRevisionId askedMrid = ModuleRevisionId.newInstance(organisation,
+            module, branch, revision);
+
+        String foundRevision = null;
+        for (ListIterator iter = sorted.listIterator(sorted.size()); iter.hasPrevious();) {
+            ResolvedModuleRevisionArtifactInfo info = (ResolvedModuleRevisionArtifactInfo) iter.previous();
+            
+            if (!matcher.accept(askedMrid, info.rmr)) {
+                continue;
+            }
+            
+            if (matcher.needModuleDescriptor(askedMrid, info.rmr)) {
+                ResolvedModuleRevision rmr = ivy.findModule(info.rmr);
+                if (matcher.accept(askedMrid, rmr.getDescriptor())) {
+                    foundRevision = info.rmr.getRevision();
+                }
+            } else {
+                foundRevision = info.rmr.getRevision();
+            }
+            
+            if (foundRevision != null) {
+                break;
+            }
+        }
+        
+        NewRevision newRevision = computeNewRevision(foundRevision);
         setProperty("revision", newRevision.getRevision());
         setProperty("new.revision", newRevision.getNewRevision());
         setProperty("build.number", newRevision.getBuildNumber());

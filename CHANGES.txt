@@ -88,6 +88,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - FIX: Log levels aren't respected in certain cases using the standalone functionality (IVY-960) (thanks to Patrick Woodworth)
 - FIX: Listing of URL's under a given URL does not handle fully specified URL's (IVY-959) (thanks to Randy Nott)
 - FIX: NPE in LogReportOutputter (IVY-961)
+- FIX: <ivy:buildnumber> returns wrong result when resolve fails (IVY-970)
 
    2.0.0-rc2
 =====================================

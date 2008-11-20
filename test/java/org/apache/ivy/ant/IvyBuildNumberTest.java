@@ -160,5 +160,21 @@ public class IvyBuildNumberTest extends TestCase {
         assertEquals(null, buildNumber.getProject().getProperty("ivy.build.number"));
         assertEquals("0", buildNumber.getProject().getProperty("ivy.new.build.number"));
     }
+    
+    public void testWithBadChecksum() throws Exception {
+        Project project = new Project();
+        project.setProperty("ivy.settings.file", "test/repositories/ivysettings-checksums.xml");
+
+        buildNumber = new IvyBuildNumber();
+        buildNumber.setProject(project);
+        buildNumber.setOrganisation("org1");
+        buildNumber.setModule("badivycs");
+        buildNumber.setRevision("1.");
+        buildNumber.execute();
+        assertEquals("1.0", buildNumber.getProject().getProperty("ivy.revision"));
+        assertEquals("1.1", buildNumber.getProject().getProperty("ivy.new.revision"));
+        assertEquals("0", buildNumber.getProject().getProperty("ivy.build.number"));
+        assertEquals("1", buildNumber.getProject().getProperty("ivy.new.build.number"));
+    }
 
 }
