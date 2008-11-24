@@ -106,6 +106,15 @@ public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         assertEquals("jar", artifact[0].getType());
     }
 
+    public void testLargePom() throws Exception {
+        ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(
+            settings, getClass().getResource("test-large-pom.pom"), false);
+        assertNotNull(md);
+
+        ModuleRevisionId mrid = ModuleRevisionId.newInstance("org.apache.myfaces", "myfaces", "6");
+        assertEquals(mrid, md.getModuleRevisionId());
+    }
+
     public void testPackaging() throws Exception {
         ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(
             settings, getClass().getResource("test-packaging.pom"), false);
