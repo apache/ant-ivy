@@ -28,7 +28,11 @@ import org.apache.ivy.core.search.SearchEngine;
 import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.plugins.latest.ArtifactInfo;
 import org.apache.ivy.plugins.latest.LatestStrategy;
+import org.apache.ivy.plugins.matcher.ExactOrRegexpPatternMatcher;
+import org.apache.ivy.plugins.matcher.ExactPatternMatcher;
+import org.apache.ivy.plugins.matcher.Matcher;
 import org.apache.ivy.plugins.matcher.PatternMatcher;
+import org.apache.ivy.plugins.matcher.RegexpPatternMatcher;
 import org.apache.ivy.plugins.version.VersionMatcher;
 import org.apache.tools.ant.BuildException;
 
@@ -144,10 +148,25 @@ public class IvyBuildNumber extends IvyTask {
             prefix = prefix + ".";
         }
         
-        
         SearchEngine searcher = new SearchEngine(settings);
         ModuleRevisionId[] revisions = searcher.listModules(ModuleRevisionId.newInstance(organisation,
-            module, branch, ".*"), settings.getMatcher(PatternMatcher.EXACT_OR_REGEXP));
+            module, branch, ".*"), new PatternMatcher() {
+                private PatternMatcher exact = new ExactPatternMatcher();
+                private PatternMatcher regexp = new ExactOrRegexpPatternMatcher();
+            
+                public Matcher getMatcher(String expression) {
+                    if ((expression == organisation)
+                            || (expression == module)
+                            || (expression == branch)) {
+                        return exact.getMatcher(expression);
+                    }
+                    return regexp.getMatcher(expression);
+                }
+
+                public String getName() {
+                    return "buildnumber-matcher";
+                }
+            });
         
         ArtifactInfo[] infos = new ArtifactInfo[revisions.length];
         for (int i = 0; i < revisions.length; i++) {
