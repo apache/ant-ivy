@@ -32,7 +32,6 @@ import org.apache.ivy.plugins.matcher.ExactOrRegexpPatternMatcher;
 import org.apache.ivy.plugins.matcher.ExactPatternMatcher;
 import org.apache.ivy.plugins.matcher.Matcher;
 import org.apache.ivy.plugins.matcher.PatternMatcher;
-import org.apache.ivy.plugins.matcher.RegexpPatternMatcher;
 import org.apache.ivy.plugins.version.VersionMatcher;
 import org.apache.tools.ant.BuildException;
 
