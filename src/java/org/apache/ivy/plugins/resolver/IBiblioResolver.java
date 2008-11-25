@@ -252,6 +252,10 @@ public class IBiblioResolver extends URLResolver {
         }
     }
 
+    protected String getModuleDescriptorExtension() {
+        return "pom";
+    }
+    
     private String getWholePattern() {
         return root + pattern;
     }
@@ -339,7 +343,7 @@ public class IBiblioResolver extends URLResolver {
                  */
                 String partiallyResolvedM2PerModulePattern = IvyPatternHelper.substituteTokens(
                     M2_PER_MODULE_PATTERN, 
-                    Collections.singletonMap(IvyPatternHelper.EXT_KEY, "xml"));
+                    Collections.singletonMap(IvyPatternHelper.EXT_KEY, "pom"));
                 if (pattern.endsWith(partiallyResolvedM2PerModulePattern)) {
                     /*
                      * the given pattern already contain resolved org and module, we just have to

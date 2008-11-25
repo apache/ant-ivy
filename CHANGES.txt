@@ -92,6 +92,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - FIX: <ivy:buildnumber> returns wrong result when resolve fails (IVY-970)
 - FIX: IO problem while parsing ivy file (Resetting to invalid mark) (IVY-975)
 - FIX: Cannot parse maven2 poms containing an UTF-8 BOM
+- FIX: listing possible token values doesn't work properly for the ibiblio resolver
 
    2.0.0-rc2
 =====================================

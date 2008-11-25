@@ -55,13 +55,6 @@ import org.apache.ivy.util.Message;
  */
 public abstract class AbstractPatternsBasedResolver extends BasicResolver {
 
-    private static final Map IVY_ARTIFACT_ATTRIBUTES = new HashMap();
-    static {
-        IVY_ARTIFACT_ATTRIBUTES.put(IvyPatternHelper.ARTIFACT_KEY, "ivy");
-        IVY_ARTIFACT_ATTRIBUTES.put(IvyPatternHelper.TYPE_KEY, "ivy");
-        IVY_ARTIFACT_ATTRIBUTES.put(IvyPatternHelper.EXT_KEY, "xml");
-    }
-
     private List ivyPatterns = new ArrayList(); // List (String pattern)
 
     private List artifactPatterns = new ArrayList(); // List (String pattern)
@@ -256,7 +249,7 @@ public abstract class AbstractPatternsBasedResolver extends BasicResolver {
         List ivyPatterns = getIvyPatterns();
         Map tokenValues = new HashMap(criteria);
         tokenValues.put(IvyPatternHelper.TYPE_KEY, "ivy");
-        tokenValues.put(IvyPatternHelper.EXT_KEY, "xml");
+        tokenValues.put(IvyPatternHelper.EXT_KEY, getModuleDescriptorExtension());
         if (isM2compatible()) {
             convertM2TokenValuesForResourceSearch(tokenValues);
         }
@@ -280,6 +273,10 @@ public abstract class AbstractPatternsBasedResolver extends BasicResolver {
         }
         
         return (Map[]) result.toArray(new Map[result.size()]);
+    }
+    
+    protected String getModuleDescriptorExtension() {
+        return "xml";
     }
     
     private Set resolveTokenValues(String[] tokens, String pattern, Map criteria, boolean noMd) {
