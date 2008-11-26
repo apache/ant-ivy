@@ -91,6 +91,10 @@ public final class ChecksumHelper {
         }
     }
 
+    public static boolean isKnownAlgorithm(String algorithm) {
+        return algorithms.containsKey(algorithm);
+    }
+    
     private static MessageDigest getMessageDigest(String algorithm) {
         String mdAlgorithm = (String) algorithms.get(algorithm);
         if (mdAlgorithm == null) {

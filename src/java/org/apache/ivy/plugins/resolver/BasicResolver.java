@@ -890,6 +890,10 @@ public abstract class BasicResolver extends AbstractResolver {
      *             if a checksum exist but do not match the downloaded file checksum
      */
     private boolean check(Resource resource, File dest, String algorithm) throws IOException {
+        if (!ChecksumHelper.isKnownAlgorithm(algorithm)) {
+            throw new IllegalArgumentException("Unknown checksum algorithm: " + algorithm);
+        }
+        
         Resource csRes = resource.clone(resource.getName() + "." + algorithm);
         if (csRes.exists()) {
             Message.debug(algorithm + " file found for " + resource + ": checking...");
