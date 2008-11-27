@@ -64,6 +64,8 @@ The <tt>site.xml</tt> file in the <tt>dist</tt> directory should be edited so it
 
 The update site is optimized: the metadata of the features are aggregated into the digest.zip, and the jar of the plugins are compressed with a better algorithm.
 
+<b>Important note:</b> the following optimize tasks need to be run in <b>java 5 jre</b>. The pack200 didn't existed before java 5 and the jar compressed with java 6 can not be uncompressed by some java 5 jre (at least the IBM one).
+
 To accomplish this task, just run at the root of your working copy of the updatesite:
 <ul>
 <li>For an <u>Ivy</u> release:
