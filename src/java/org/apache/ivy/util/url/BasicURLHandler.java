@@ -104,11 +104,9 @@ public class BasicURLHandler extends AbstractURLHandler {
         if (status == HttpStatus.SC_PROXY_AUTHENTICATION_REQUIRED) {
             Message.warn("Your proxy requires authentication.");
         } else if (String.valueOf(status).startsWith("4")) {
-            Message.verbose("CLIENT ERROR: "
-                    + ((HttpURLConnection) con).getResponseMessage() + " url=" + url);
+            Message.verbose("CLIENT ERROR: " + con.getResponseMessage() + " url=" + url);
         } else if (String.valueOf(status).startsWith("5")) {
-            Message.error("SERVER ERROR: " + ((HttpURLConnection) con).getResponseMessage()
-                    + " url=" + url);
+            Message.error("SERVER ERROR: " + con.getResponseMessage() + " url=" + url);
         }
         return false;
     }
