@@ -216,8 +216,14 @@ public class RepositoryResolver extends AbstractPatternsBasedResolver {
 
     protected void put(Artifact artifact, File src, String dest, boolean overwrite)
             throws IOException {
-        repository.put(artifact, src, dest, overwrite);
+        // verify the checksum algorithms before uploading artifacts!
         String[] checksums = getChecksumAlgorithms();
+        for (int i = 0; i < checksums.length; i++) {
+            if (!ChecksumHelper.isKnownAlgorithm(checksums[i])) {
+                throw new IllegalArgumentException("Unknown checksum algorithm: " + checksums[i]);            }
+        }
+        
+        repository.put(artifact, src, dest, overwrite);
         for (int i = 0; i < checksums.length; i++) {
             putChecksum(artifact, src, dest, overwrite, checksums[i]);
         }
