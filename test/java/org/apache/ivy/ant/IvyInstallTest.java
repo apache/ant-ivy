@@ -23,7 +23,6 @@ import junit.framework.TestCase;
 
 import org.apache.ivy.util.FileUtil;
 import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.DefaultLogger;
 import org.apache.tools.ant.Project;
 
 public class IvyInstallTest extends TestCase {
