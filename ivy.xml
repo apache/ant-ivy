@@ -60,6 +60,6 @@
 		<dependency org="xerces" name="xmlParserAPIs" rev="2.6.2" conf="test->default" />
 		
 		<!-- Global exclude for junit -->
-		<exclude org="junit" module="junit" conf="core,default" />
+		<exclude org="junit" module="junit" conf="core,default,httpclient,oro,vfs,sftp,standalone,ant" />
 	</dependencies>
 </ivy-module>
