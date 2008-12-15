@@ -48,6 +48,7 @@ public class LogReportOutputter implements ReportOutputter {
             ResolveReport report, ResolutionCacheManager cacheMgr, ResolveOptions options) 
             throws IOException {
         IvySettings settings = IvyContext.getContext().getSettings();
+
         if (settings.logModulesInUse() && ResolveOptions.LOG_DEFAULT.equals(options.getLog())) {
             Message.info("\t:: modules in use:");
             List dependencies = new ArrayList(report.getDependencies());
@@ -56,7 +57,7 @@ public class LogReportOutputter implements ReportOutputter {
                 String[] confs = report.getConfigurations();
                 for (int i = 0; i < dependencies.size(); i++) {
                     IvyNode node = (IvyNode) dependencies.get(i);
-                    if (node.isCompletelyEvicted()) {
+                    if (node.isCompletelyEvicted() || node.hasProblem()) {
                         continue;
                     }
                     List nodeConfs = new ArrayList(confs.length);

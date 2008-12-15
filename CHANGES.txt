@@ -86,6 +86,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - IMPROVEMENT: Ivy Standalone setting to overwrite publications (IVY-976)
 
 - FIX: Log levels aren't respected in certain cases using the standalone functionality (IVY-960) (thanks to Patrick Woodworth)
+- FIX: NPE in LogReportOutputter (IVY-961)
 
    2.0.0-rc2
 =====================================

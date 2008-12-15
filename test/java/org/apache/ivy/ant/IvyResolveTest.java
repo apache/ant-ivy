@@ -241,6 +241,16 @@ public class IvyResolveTest extends TestCase {
         }
     }
 
+    public void testIvyLogModulesInUseWithFailure() throws Exception {
+        resolve.getProject().setProperty("ivy.log.modules.in.use", "true");
+        resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-failure.xml"));
+        resolve.setHaltonfailure(false);
+        resolve.execute();
+        
+        // we did manage to get here, so no NPE has been thrown (IVY-961)
+    }
+
+    
     public void testFailureWithMissingConfigurations() throws Exception {
         try {
             resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-simple.xml"));
