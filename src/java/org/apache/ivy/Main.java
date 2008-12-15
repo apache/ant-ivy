@@ -120,6 +120,8 @@ public final class Main {
                 .description("use given revision to publish the module").create())
             .addOption(new OptionBuilder("status").arg("status")
                 .description("use given status to publish the module").create())
+            .addOption(new OptionBuilder("overwrite")
+                .description("overwrite files in the repository if they exist").create())
 
             .addCategory("http auth options")
             .addOption(new OptionBuilder("realm").arg("realm")
@@ -271,7 +273,7 @@ public final class Main {
                             .setPubrevision(settings.substitute(line.getOptionValue("revision")))
                             .setValidate(validate).setSrcIvyPattern(
                                 settings.substitute(line.getOptionValue("deliverto",
-                                    "ivy-[revision].xml"))));
+                                    "ivy-[revision].xml"))).setOverwrite(line.hasOption("overwrite")));
                 }
             }
             if (line.hasOption("main")) {
