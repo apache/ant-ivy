@@ -17,6 +17,7 @@
  */
 package org.apache.ivy.plugins.parser.m2;
 
+import java.io.BufferedInputStream;
 import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -514,16 +515,25 @@ public class PomReader {
         private byte[] prefix = DOCTYPE.getBytes();
         
         private AddDTDFilterInputStream(InputStream in) throws IOException {
-            super(in);
+            super(new BufferedInputStream(in));
             
-            if (!in.markSupported()) {
-                throw new IllegalArgumentException("The inputstream doesn't support mark");
+            this.in.mark(MARK);
+
+            // TODO: we should really find a better solution for this...
+            // maybe we could use a FilterReader instead of a FilterInputStream?
+            int byte1 = this.in.read();
+            int byte2 = this.in.read();
+            int byte3 = this.in.read();
+            
+            if (byte1 == 239 && byte2 == 187 && byte3 == 191) {
+                // skip the UTF-8 BOM
+                this.in.mark(MARK);
+            } else {
+                this.in.reset();
             }
             
-            in.mark(MARK);
-            
             int bytesToSkip = 0;
-            LineNumberReader reader = new LineNumberReader(new InputStreamReader(in, "UTF-8"));
+            LineNumberReader reader = new LineNumberReader(new InputStreamReader(this.in, "UTF-8"), 100);
             String firstLine = reader.readLine();
             if (firstLine != null) {
                 String trimmed = firstLine.trim();
@@ -535,9 +545,9 @@ public class PomReader {
                 }
             }
             
-            in.reset();
+            this.in.reset();
             for (int i = 0; i < bytesToSkip; i++) {
-                in.read();
+                this.in.read();
             }
         }
 
