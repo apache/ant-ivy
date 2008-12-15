@@ -454,6 +454,8 @@ public abstract class BasicResolver extends AbstractResolver {
             if (!isDynamic) {
                 resolvedMrid = ModuleRevisionId.newInstance(
                     resolvedMrid, dependencyConstraint.getRevision());
+            } else if (ivyRef == null) {
+                resolvedMrid = systemMd.getMetadataArtifact().getModuleRevisionId();
             } else if (ivyRef.getRevision() == null || ivyRef.getRevision().length() == 0) {
                 resolvedMrid = ModuleRevisionId.newInstance(resolvedMrid, "working@"
                     + getName());

@@ -267,6 +267,15 @@ public class ResolveTest extends TestCase {
         assertFalse(report.hasError());
     }
 
+    public void testResolveLatestWithNoRevisionInPattern() throws Exception {
+        Ivy ivy = new Ivy();
+        ivy.configure(new File("test/repositories/norev/ivysettings.xml").toURL());
+        ResolveReport report = ivy.resolve(new File("test/repositories/norev/ivy-latest.xml").toURL(),
+            getResolveOptions(new String[] {"*"}));
+        assertNotNull(report);
+        assertFalse(report.hasError());
+     }
+
     public void testResolveNoRevisionInDep() throws Exception {
         // mod1.4 depends on mod1.6, in which the ivy file has no revision
         ResolveReport report = ivy.resolve(new File(
