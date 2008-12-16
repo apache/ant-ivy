@@ -91,6 +91,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - FIX: NullPointerException when resolving module wihout revision in the pattern (IVY-980)
 - FIX: IO problem while parsing ivy file (Resetting to invalid mark) (IVY-975)
 - FIX: Cannot parse maven2 poms containing an UTF-8 BOM
+- FIX: Files with non-latin symbols fail to download (IVY-962)
 
    2.0.0-rc2
 =====================================
