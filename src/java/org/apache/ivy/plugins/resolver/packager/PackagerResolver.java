@@ -57,6 +57,7 @@ public class PackagerResolver extends URLResolver {
     
     private boolean validate = true;
     private boolean preserve;
+    private boolean restricted = true;
     private boolean verbose;
     private boolean quiet;
     
@@ -131,6 +132,13 @@ public class PackagerResolver extends URLResolver {
      */
     public void setPreserveBuildDirectories(boolean preserve) {
         this.preserve = preserve;
+    }
+
+    /**
+     * Set whether to enable restricted mode. Default is true.
+     */
+    public void setRestricted(boolean restricted) {
+        this.restricted = restricted;
     }
 
     /**
@@ -216,7 +224,8 @@ public class PackagerResolver extends URLResolver {
                 return null;
             }
             entry = new PackagerCacheEntry(mr, this.buildRoot, this.resourceCache,
-              this.resourceURL, this.validate, this.preserve, this.verbose, this.quiet);
+              this.resourceURL, this.validate, this.preserve, this.restricted,
+              this.verbose, this.quiet);
             try {
                 entry.build(packager.getResource(), properties);
             } catch (IOException e) {

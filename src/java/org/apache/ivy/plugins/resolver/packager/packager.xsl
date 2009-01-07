@@ -20,6 +20,7 @@
     <xsl:output encoding="UTF-8" method="xml" indent="yes" media-type="text/xml"/>
 
     <xsl:param name="resourceURL"/>
+    <xsl:param name="restricted"/>
 
     <xsl:variable name="maven2repo" select="'http://repo1.maven.org/maven2/'"/>
 
@@ -59,7 +60,7 @@
         <xsl:copy-of select="."/>
     </xsl:template>
 
-    <!-- The allowed build actions -->
+    <!-- The allowed build actions in restricted mode -->
     <xsl:template match="/packager-module/build/copy"><xsl:copy-of select="."/></xsl:template>
     <xsl:template match="/packager-module/build/jar"><xsl:copy-of select="."/></xsl:template>
     <xsl:template match="/packager-module/build/mkdir"><xsl:copy-of select="."/></xsl:template>
@@ -71,6 +72,18 @@
     <xsl:template match="/packager-module/build/unzip"><xsl:copy-of select="."/></xsl:template>
     <xsl:template match="/packager-module/build/war"><xsl:copy-of select="."/></xsl:template>
     <xsl:template match="/packager-module/build/zip"><xsl:copy-of select="."/></xsl:template>
+
+    <!-- Allow other build actions when restricted="false", otherwise generate error -->
+    <xsl:template match="/packager-module/build/*">
+        <xsl:choose>
+            <xsl:when test="$restricted = 'false'">
+                <xsl:copy-of select="."/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:message terminate="yes">build tag &lt;<xsl:value-of select="name()"/>&gt; not allowed in restricted mode</xsl:message>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:template>
 
     <!-- Resource definitions -->
     <xsl:template match="/packager-module/resource">
