@@ -61,17 +61,17 @@
     </xsl:template>
 
     <!-- The allowed build actions in restricted mode -->
-    <xsl:template match="/packager-module/build/copy"><xsl:copy-of select="."/></xsl:template>
-    <xsl:template match="/packager-module/build/jar"><xsl:copy-of select="."/></xsl:template>
-    <xsl:template match="/packager-module/build/mkdir"><xsl:copy-of select="."/></xsl:template>
-    <xsl:template match="/packager-module/build/move"><xsl:copy-of select="."/></xsl:template>
-    <xsl:template match="/packager-module/build/tar"><xsl:copy-of select="."/></xsl:template>
-    <xsl:template match="/packager-module/build/unjar"><xsl:copy-of select="."/></xsl:template>
-    <xsl:template match="/packager-module/build/untar"><xsl:copy-of select="."/></xsl:template>
-    <xsl:template match="/packager-module/build/unwar"><xsl:copy-of select="."/></xsl:template>
-    <xsl:template match="/packager-module/build/unzip"><xsl:copy-of select="."/></xsl:template>
-    <xsl:template match="/packager-module/build/war"><xsl:copy-of select="."/></xsl:template>
-    <xsl:template match="/packager-module/build/zip"><xsl:copy-of select="."/></xsl:template>
+    <xsl:template match="/packager-module/build/copy" priority="1"><xsl:copy-of select="."/></xsl:template>
+    <xsl:template match="/packager-module/build/jar" priority="1"><xsl:copy-of select="."/></xsl:template>
+    <xsl:template match="/packager-module/build/mkdir" priority="1"><xsl:copy-of select="."/></xsl:template>
+    <xsl:template match="/packager-module/build/move" priority="1"><xsl:copy-of select="."/></xsl:template>
+    <xsl:template match="/packager-module/build/tar" priority="1"><xsl:copy-of select="."/></xsl:template>
+    <xsl:template match="/packager-module/build/unjar" priority="1"><xsl:copy-of select="."/></xsl:template>
+    <xsl:template match="/packager-module/build/untar" priority="1"><xsl:copy-of select="."/></xsl:template>
+    <xsl:template match="/packager-module/build/unwar" priority="1"><xsl:copy-of select="."/></xsl:template>
+    <xsl:template match="/packager-module/build/unzip" priority="1"><xsl:copy-of select="."/></xsl:template>
+    <xsl:template match="/packager-module/build/war" priority="1"><xsl:copy-of select="."/></xsl:template>
+    <xsl:template match="/packager-module/build/zip" priority="1"><xsl:copy-of select="."/></xsl:template>
 
     <!-- Allow other build actions when restricted="false", otherwise generate error -->
     <xsl:template match="/packager-module/build/*">
