@@ -17,7 +17,6 @@
  */
 package org.apache.ivy.plugins.parser.m2;
 
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -270,14 +269,11 @@ public class PomModuleDescriptorBuilder {
         ivyModuleDescriptor.addArtifact("master", mainArtifact);
     }
 
-
-    public void addDependency(Resource res, PomDependencyData dep) throws ParseException {
+    public void addDependency(Resource res, PomDependencyData dep) {
         String scope = dep.getScope();
         if ((scope != null) && (scope.length() > 0) && !MAVEN2_CONF_MAPPING.containsKey(scope)) {
-            String msg = "Unknown scope '" + scope + "' for dependency "
-                    + ModuleId.newInstance(dep.getGroupId(), dep.getArtifactId()) + " in "
-                    + res.getName();
-            throw new ParseException(msg, 0);
+            // unknown scope, defaulting to 'compile'
+            scope = "compile";
         }
         
         String version = dep.getVersion();
@@ -408,7 +404,7 @@ public class PomModuleDescriptorBuilder {
     private String getDefaultScope(PomDependencyData dep) {
         String key = getDependencyMgtExtraInfoKeyForScope(dep.getGroupId(), dep.getArtifactId());
         String result = (String) ivyModuleDescriptor.getExtraInfo().get(key);
-        if (result == null) {
+        if ((result == null) || !MAVEN2_CONF_MAPPING.containsKey(result)) {
             result = "compile";
         }
         return result;
