@@ -13,6 +13,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
   
  Contributors
  	Ingo Adler
+ 	alex322
 	Stephane Bailliez
 	Karl Baum
 	Mikkel Bjerg
@@ -83,18 +84,25 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 	
    trunk
 =====================================
-- IMPROVEMENT: Support useOrigin for artifacts with a set url attribute (IVY-965) (thanks to alex322)
-- IMPROVEMENT: Ivy Standalone setting to overwrite publications (IVY-976)
 - IMPROVEMENT: Error message is not clear when specifying an invalid value for checksums (IVY-977)
 
-- FIX: Log levels aren't respected in certain cases using the standalone functionality (IVY-960) (thanks to Patrick Woodworth)
 - FIX: Listing of URL's under a given URL does not handle fully specified URL's (IVY-959) (thanks to Randy Nott)
-- FIX: NPE in LogReportOutputter (IVY-961)
 - FIX: <ivy:buildnumber> returns wrong result when resolve fails (IVY-970)
+- FIX: listing possible token values doesn't work properly for the ibiblio resolver
+
+   2.0.0
+=====================================
+- IMPROVEMENT: Extend packager resolver to allow arbitrary ant tasks in build instructions (IVY-994) (thanks to Archie Cobbs)
+- IMPROVEMENT: Ivy Standalone setting to overwrite publications (IVY-976)
+- IMPROVEMENT: Support useOrigin for artifacts with a set url attribute (IVY-965) (thanks to alex322)
+
+- FIX: NullPointerException at PomModuleDescriptorBuilder.addDependency (IVY-995)
+- FIX: Log levels aren't respected in certain cases using the standalone functionality (IVY-960) (thanks to Patrick Woodworth)
+- FIX: NPE in LogReportOutputter (IVY-961)
+- FIX: NullPointerException when resolving module wihout revision in the pattern (IVY-980)
 - FIX: IO problem while parsing ivy file (Resetting to invalid mark) (IVY-975)
 - FIX: Cannot parse maven2 poms containing an UTF-8 BOM
-- FIX: listing possible token values doesn't work properly for the ibiblio resolver
-- FIX: NullPointerException when resolving module without revision in the pattern (IVY-980)
+- FIX: Files with non-latin symbols fail to download (IVY-962)
 
    2.0.0-rc2
 =====================================
