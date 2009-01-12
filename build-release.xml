@@ -22,9 +22,9 @@
 		xmlns:openpgp="antlib:org.apache.commons.openpgp.ant">
 	<import file="build.xml"/>
 	
-	<taskdef uri="antlib:xooki" file="${doc.src.dir}/xooki/antlib.xml" />
-
 	<target name="generate-doc">
+		<taskdef uri="antlib:xooki" file="${doc.src.dir}/xooki/antlib.xml" />
+
         <copy todir="${doc.build.dir}">
 	        <fileset dir="${doc.src.dir}" includes="images/**,style/**,samples/**,js/**,ivy.xsd" />
         </copy>
