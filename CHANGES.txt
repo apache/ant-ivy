@@ -27,6 +27,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 	Kristian Cibulskis
 	Andrea Bernardo Ciddio
 	Archie Cobbs
+	Martin Eigenbrodt
 	Danno Ferrin
 	Benjamin Francisoud	
 	Jacob Grydholt Jensen
@@ -89,6 +90,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - FIX: Listing of URL's under a given URL does not handle fully specified URL's (IVY-959) (thanks to Randy Nott)
 - FIX: <ivy:buildnumber> returns wrong result when resolve fails (IVY-970)
 - FIX: listing possible token values doesn't work properly for the ibiblio resolver
+- FIX: Ivy deliver fails to replace dynamic revision (IVY-999) (thanks to Martin Eigenbrodt)
 
    2.0.0
 =====================================

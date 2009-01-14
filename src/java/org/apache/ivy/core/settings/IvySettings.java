@@ -1169,6 +1169,7 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
     public ConflictManager getDefaultConflictManager() {
         if (defaultConflictManager == null) {
             defaultConflictManager = new LatestConflictManager(getDefaultLatestStrategy());
+            ((LatestConflictManager) defaultConflictManager).setSettings(this);
         }
         return defaultConflictManager;
     }

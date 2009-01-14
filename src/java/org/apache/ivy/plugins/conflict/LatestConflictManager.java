@@ -24,6 +24,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
+import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.resolve.IvyNode;
 import org.apache.ivy.plugins.latest.ArtifactInfo;
 import org.apache.ivy.plugins.latest.LatestStrategy;
@@ -89,6 +90,20 @@ public class LatestConflictManager extends AbstractConflictManager {
                 return Collections.singleton(node);
             }
         }
+        
+        /*
+         * If the list of conflicts contains dynamic revisions, delay the conflict
+         * calculation until they are resolved.
+         * TODO: we probably could already evict some of the dynamic revisions!
+         */
+        for (Iterator iter = conflicts.iterator(); iter.hasNext();) {
+            IvyNode node = (IvyNode) iter.next();
+            ModuleRevisionId modRev = node.getResolvedId();
+            if (getSettings().getVersionMatcher().isDynamic(modRev)) {
+                return null;
+            }
+        }
+        
         try {
             IvyNodeArtifactInfo latest = (IvyNodeArtifactInfo) 
                 getStrategy().findLatest(toArtifactInfo(conflicts), null);

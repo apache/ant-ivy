@@ -18,6 +18,7 @@
 package org.apache.ivy.core.resolve;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -25,8 +26,10 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 
 import javax.xml.parsers.SAXParser;
@@ -3086,6 +3089,19 @@ public class ResolveTest extends TestCase {
         assertTrue(new File("build/cache/idautomation/barcode/ivy-4.10.xml").exists());
         assertTrue(new File("build/cache/idautomation/barcode/jars/LinearBarCode-4.10.jar")
                 .exists());
+    }
+
+    public void testIVY999() throws Exception {
+        Ivy ivy = new Ivy();
+        ivy.configure(new File("test/repositories/ivy-999/ivysettings.xml"));
+        ivy.getSettings().setDefaultCache(cache);
+
+        ResolveReport rr = ivy.resolve(ResolveTest.class.getResource("ivy-999.xml"), getResolveOptions(new String[] {"*"}));
+        ConfigurationResolveReport crr = rr.getConfigurationReport("default");
+        Set modRevIds = crr.getModuleRevisionIds();
+
+        assertTrue(modRevIds.contains(ModuleRevisionId.newInstance("junit", "junit", "4.4")));
+        assertFalse(modRevIds.contains(ModuleRevisionId.newInstance("junit", "junit", "3.8")));
     }
 
     public void testBadFiles() throws Exception {
