@@ -3093,7 +3093,7 @@ public class ResolveTest extends TestCase {
 
     public void testIVY999() throws Exception {
         Ivy ivy = new Ivy();
-        ivy.configure(new File("test/repositories/ivy-999/ivysettings.xml"));
+        ivy.configure(new File("test/repositories/IVY-999/ivysettings.xml"));
         ivy.getSettings().setDefaultCache(cache);
 
         ResolveReport rr = ivy.resolve(ResolveTest.class.getResource("ivy-999.xml"), getResolveOptions(new String[] {"*"}));
