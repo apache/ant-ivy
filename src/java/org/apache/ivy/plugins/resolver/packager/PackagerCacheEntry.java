@@ -48,6 +48,7 @@ public class PackagerCacheEntry {
     private final String resourceURL;
     private final boolean validate;
     private final boolean preserve;
+    private final boolean restricted;
     private final boolean verbose;
     private final boolean quiet;
 
@@ -56,13 +57,14 @@ public class PackagerCacheEntry {
     // CheckStyle:ParameterNumber OFF
     public PackagerCacheEntry(ModuleRevisionId mr, File rootDir,
       File resourceCache, String resourceURL, boolean validate,
-      boolean preserve, boolean verbose, boolean quiet) {
+      boolean preserve, boolean restricted, boolean verbose, boolean quiet) {
         this.mr = mr;
         this.dir = getSubdir(rootDir, this.mr);
         this.resourceCache = resourceCache;
         this.resourceURL = resourceURL;
         this.validate = validate;
         this.preserve = preserve;
+        this.restricted = restricted;
         this.verbose = verbose;
         this.quiet = quiet;
     }
@@ -143,6 +145,7 @@ public class PackagerCacheEntry {
         if (this.validate) {
             project.setUserProperty("ivy.packager.validate", "true");
         }
+        project.setUserProperty("ivy.packager.restricted", "" + this.restricted);
         if (properties != null) {
             for (Iterator it = properties.entrySet().iterator(); it.hasNext();) {
                 Entry entry = (Entry) it.next();

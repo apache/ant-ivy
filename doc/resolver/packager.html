@@ -40,10 +40,6 @@
 </p>
 
 <p>
-The only packaging operations currently supported are downloading files, extracting files from archives, packaging files into archives, and moving and copying files. In the future more general operations may be supported, once appropriate security controls are in place.
-</p>
-
-<p>
 Packager repositories allow the creation of Ivy repositories that require neither the participation of any of the modules' creators nor setting up a huge mirror site. One such repository on the web is <a href="http://ivyroundup.googlecode.com/">Ivy RoundUp</a>. Of course, private packager repositories are feasible as well.
 </p>
 
@@ -52,11 +48,11 @@ The Packager resolver supports a "resource cache", where downloaded archives can
 </p>
 
 <p>
-The packaging instructions are contained in "packager.xml" in a simple XML format. At resolve time this file gets converted into a "build.xml" file via XSLT and then executed using <a href="http://ant.apache.org/">ant</a>. Therefore, ant must be available as an executable on the platform. The ant task executes in a separate process and so is not affected by properties, etc. that may be set in any existing ant environment in which Ivy is running. However, Ivy will define a few properties for convenience; see the "Properties" listed below.
+The packaging instructions are contained in "packager.xml" in a simple XML format. At resolve time this file gets converted into a "build.xml" file via XSLT and then executed using <a href="http://ant.apache.org/">ant</a>. Therefore, ant must be available as an executable on the platform. The ant task executes in a separate ant project and so is not affected by properties, etc. that may be set in any existing ant environment in which Ivy is running. However, Ivy will define a few properties for convenience; see the "Properties" listed below.
 </p>
 
 <p>
-For security reasons, the XSLT transform ensures that (a) all downloaded archives have verified SHA1 checksums (including cached resources); and (b) only a very limited set of ant tasks can be performed during the artifact "build" phase; currently these include move, copy, mkdir, zip, unzip, tar, and untar.
+For security reasons, the XSLT transform ensures that (a) all downloaded archives have verified SHA1 checksums (including cached resources); and (b) only a very limited set of ant tasks can be performed during the artifact "build" phase; currently these include move, copy, mkdir, zip, unzip, tar, and untar (this restriction may be overridden however; see below).
 </p>
 
 <p>
@@ -64,11 +60,11 @@ The Packager resolver is based on the <a href="url.html">URL resolver</a> and is
 </p>
 
 <p>
-Because the downloading and packaging process is relatively slow, it is important to use <a href="../concept.html#cache">Ivy's caching support</a> to avoid repeated execution of the packaging instructions.
+Because the packaging process is relatively slow, it is important to use <a href="../concept.html#cache">Ivy's caching support</a> to avoid repeated execution of the packaging instructions.
 </p>
 
 <h1>Attributes</h1>
-This resolver shares the <a href="../settings/resolvers.html#common">common attributes</a> of standard resolvers.
+This resolver shares the <a href="../settings/resolvers.html#common">common attributes</a> of standard resolvers, plus the following:
 <table class="ivy-attributes">
 <thead>
     <tr><th class="ivy-att">Attribute</th><th class="ivy-att-desc">Description</th><th class="ivy-att-req">Required</th></tr>
@@ -88,6 +84,11 @@ This resolver shares the <a href="../settings/resolvers.html#common">common attr
     <td>resourceURL</td>
     <td>Ivy pattern that specifies a base URL to use for downloading <i>all</i> resources; overrides the URLs in the packaging instructions</td>
     <td>No; defaults to none</td>
+  </tr>
+  <tr>
+    <td>restricted</td>
+    <td>True if this resolver should only allow "safe" ant tasks in the packaging instructions. <strong>Warning:</strong> setting <span class="ivy-att">restricted</span> to false creates a security problem due to ant tasks like delete, exec, etc. Do not use this setting when your configuration points to an untrusted repository.</td>
+    <td>No; defaults to true</td>
   </tr>
   <tr>
     <td>verbose</td>
@@ -255,11 +256,17 @@ The packager.xml document element can contain the following child tags.
   </tr>
   <tr>
     <td>build</td>
-    <td>Specify move, copy, and/or archiving ant tasks that ultimately result in each artifact being placed into artifacts/[type]s/[artifact].[ext]</td>
+    <td>Specify ant tasks that ultimately result in each artifact being placed into artifacts/[type]s/[artifact].[ext]</td>
     <td>0..1</td>
   </tr>
 </tbody>
 </table>
+<br />
+Which ant tasks are allowed within the build tag is controlled by the <span class="ivy-att">restricted</span> configuration attribute. When true (the default), only the following ant tasks are allowed: copy, jar, mkdir, move, tar, unjar, untar, unwar, unzip, war, and zip. When false, all ant tasks are allowed.
+
+<p>
+<strong>Warning:</strong> setting <span class="ivy-att">restricted</span> to false creates a security problem due to ant tasks like delete, exec, etc. Do not use this setting when your configuration points to an untrusted repository.
+</p>
 
 <h1>Resource XML Elements</h1>
 The resource XML tag supports the following attributes:
