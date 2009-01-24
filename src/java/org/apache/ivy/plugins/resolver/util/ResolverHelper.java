@@ -153,7 +153,10 @@ public final class ResolverHelper {
                     IvyPatternHelper.REVISION_KEY, revs[i]);
                 try {
                     Resource res = rep.getResource(rres);
-                    if ((res != null) && res.exists()) {
+                    if (res != null) {
+                        // we do not test if the resource actually exist here, it would cause
+                        // a lot of checks which are not always necessary depending on the usage
+                        // which is done of the returned ResolvedResource array
                         ret.add(new ResolvedResource(res, revs[i]));
                     }
                 } catch (IOException e) {

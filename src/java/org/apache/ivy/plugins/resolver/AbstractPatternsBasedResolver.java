@@ -127,13 +127,12 @@ public abstract class AbstractPatternsBasedResolver extends BasicResolver {
         
         for (ListIterator iter = sorted.listIterator(sorted.size()); iter.hasPrevious();) {
             ResolvedResource rres = (ResolvedResource) iter.previous();
+            // we start by filtering based on information already available,
+            // even though we don't even know if the resource actually exist.
+            // But checking for existence is most of the time more costly than checking 
+            // name, blacklisting and first level version matching
             if (filterNames(new ArrayList(Collections.singleton(rres.getRevision()))).isEmpty()) {
                 Message.debug("\t" + name + ": filtered by name: " + rres);
-                continue;
-            }
-            if ((date != null && rres.getLastModified() > date.getTime())) {
-                Message.verbose("\t" + name + ": too young: " + rres);
-                rejected.add(rres.getRevision() + " (" + rres.getLastModified() + ")");
                 continue;
             }
             ModuleRevisionId foundMrid = ModuleRevisionId.newInstance(mrid, rres.getRevision());
@@ -151,6 +150,17 @@ public abstract class AbstractPatternsBasedResolver extends BasicResolver {
             if (!versionMatcher.accept(mrid, foundMrid)) {
                 Message.debug("\t" + name + ": rejected by version matcher: " + rres);
                 rejected.add(rres.getRevision());
+                continue;
+            }
+            if (!rres.getResource().exists()) {
+                Message.debug("\t" + name + ": unreachable: " + rres 
+                    + "; res=" + rres.getResource());
+                rejected.add(rres.getRevision() + " (unreachable)");
+                continue;
+            }
+            if ((date != null && rres.getLastModified() > date.getTime())) {
+                Message.verbose("\t" + name + ": too young: " + rres);
+                rejected.add(rres.getRevision() + " (" + rres.getLastModified() + ")");
                 continue;
             }
             if (versionMatcher.needModuleDescriptor(mrid, foundMrid)) {
@@ -180,12 +190,6 @@ public abstract class AbstractPatternsBasedResolver extends BasicResolver {
             }
 
             if (found != null) {
-                if (!found.getResource().exists()) {
-                    Message.debug("\t" + name + ": resource not reachable for " + mrid + ": res="
-                            + found.getResource());
-                    logAttempt(found.getResource().toString());
-                    continue;
-                }
                 break;
             }
         }
