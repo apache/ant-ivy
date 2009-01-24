@@ -87,6 +87,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 =====================================
 - IMPROVEMENT: Error message is not clear when specifying an invalid value for checksums (IVY-977)
 
+- FIX: TTL does not work as expected (IVY-1012)
 - FIX: Listing of URL's under a given URL does not handle fully specified URL's (IVY-959) (thanks to Randy Nott)
 - FIX: <ivy:buildnumber> returns wrong result when resolve fails (IVY-970)
 - FIX: listing possible token values doesn't work properly for the ibiblio resolver

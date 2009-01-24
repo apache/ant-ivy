@@ -156,5 +156,13 @@ public interface RepositoryCacheManager {
      * Cleans the whole cache.
      */
     public void clean();
+
+    /**
+     * Caches a dynamic revision constraint resolution.
+     * 
+     * @param dynamicMrid the dynamic module revision id
+     * @param revision the resolved revision
+     */
+    public void saveResolvedRevision(ModuleRevisionId dynamicMrid, String revision);
     
 }

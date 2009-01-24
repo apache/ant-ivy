@@ -493,6 +493,7 @@ public abstract class AbstractResolver
     }
 
     protected ResolvedModuleRevision checkLatest(
+            DependencyDescriptor dd,
             ResolvedModuleRevision newModuleFound,
             ResolveData data) {
         // check if latest is asked and compare to return the most recent
@@ -501,13 +502,19 @@ public abstract class AbstractResolver
         Message.debug("\tchecking " + newModuleDesc + " against " + describe(previousModuleFound));
         if (previousModuleFound == null) {
             Message.debug("\tmodule revision kept as first found: " + newModuleDesc);
+            getRepositoryCacheManager().saveResolvedRevision(
+                dd.getDependencyRevisionId(), newModuleFound.getId().getRevision());
             return newModuleFound;
         } else if (isAfter(newModuleFound, previousModuleFound, data.getDate())) {
             Message.debug("\tmodule revision kept as younger: " + newModuleDesc);
+            getRepositoryCacheManager().saveResolvedRevision(
+                dd.getDependencyRevisionId(), newModuleFound.getId().getRevision());
             return newModuleFound;
         } else if (!newModuleFound.getDescriptor().isDefault() 
                 && previousModuleFound.getDescriptor().isDefault()) {
             Message.debug("\tmodule revision kept as better (not default): " + newModuleDesc);
+            getRepositoryCacheManager().saveResolvedRevision(
+                dd.getDependencyRevisionId(), newModuleFound.getId().getRevision());
             return newModuleFound;
         } else {
             Message.debug("\tmodule revision discarded as older: " + newModuleDesc);

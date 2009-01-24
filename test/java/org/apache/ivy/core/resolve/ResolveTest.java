@@ -498,6 +498,102 @@ public class ResolveTest extends TestCase {
             report.getConfigurationReport("default").getModuleRevisionIds());
     }
 
+    public void testDynamicFromCacheWithMD() throws Exception {
+        // same as above, but this time the dependency has a module descriptor
+        // mod1.4;1.0.2 depends on mod1.2;[1.0,2.0[
+
+        Ivy ivy = ivyTestCache();
+        ivy.getSettings().setVariable("ivy.cache.ttl.default", "10s", true);
+
+        // set up repository
+        FileUtil.forceDelete(new File("build/testCache2"));
+        FileUtil.copy(
+            ResolveTest.class.getResourceAsStream("ivy-mod1.2-1.5.xml"), 
+            new File("build/testCache2/ivy-mod1.2-1.5.xml"), null);
+        FileUtil.copy(
+            new File("test/repositories/1/org1/mod1.2/jars/mod1.2-2.0.jar"), 
+            new File("build/testCache2/mod1.2-1.5.jar"), null);
+
+        // we first do a simple resolve so that module is in cache
+        ResolveReport report = ivy.resolve(new File(
+                "test/repositories/1/org1/mod1.4/ivys/ivy-1.0.2.xml").toURL(),
+            getResolveOptions(new String[] {"*"}));
+        assertFalse(report.hasError());
+
+        assertEquals(
+            new HashSet(Arrays.asList(new ModuleRevisionId[] {
+                    ModuleRevisionId.newInstance("org1", "mod1.2", "1.5")})), 
+            report.getConfigurationReport("default").getModuleRevisionIds());
+
+        // now we clean the repository to simulate repo not available (network pb for instance)
+        FileUtil.forceDelete(new File("build/testCache2"));
+
+        // now do a new resolve: it should use cached data
+        report = ivy.resolve(new File("test/repositories/1/org1/mod1.4/ivys/ivy-1.0.2.xml").toURL(),
+            getResolveOptions(new String[] {"*"}));
+        assertFalse(report.hasError());
+        
+        assertEquals(
+            new HashSet(Arrays.asList(new ModuleRevisionId[] {
+                    ModuleRevisionId.newInstance("org1", "mod1.2", "1.5")})), 
+            report.getConfigurationReport("default").getModuleRevisionIds());
+    }
+
+    public void testDynamicFromCacheWithMDAfterOneTTLExpiration() throws Exception {
+        // same as above, but this time we make a second resolve after ttl expiration before trying
+        // to use the cached resolved information
+        // mod1.4;1.0.2 depends on mod1.2;[1.0,2.0[
+
+        Ivy ivy = ivyTestCache();
+        ivy.getSettings().setVariable("ivy.cache.ttl.default", "500ms", true);
+
+        // set up repository
+        FileUtil.forceDelete(new File("build/testCache2"));
+        FileUtil.copy(
+            ResolveTest.class.getResourceAsStream("ivy-mod1.2-1.5.xml"), 
+            new File("build/testCache2/ivy-mod1.2-1.5.xml"), null);
+        FileUtil.copy(
+            new File("test/repositories/1/org1/mod1.2/jars/mod1.2-2.0.jar"), 
+            new File("build/testCache2/mod1.2-1.5.jar"), null);
+
+        // we first do a simple resolve so that module is in cache
+        ResolveReport report = ivy.resolve(new File(
+                "test/repositories/1/org1/mod1.4/ivys/ivy-1.0.2.xml").toURL(),
+            getResolveOptions(new String[] {"*"}));
+        assertFalse(report.hasError());
+
+        assertEquals(
+            new HashSet(Arrays.asList(new ModuleRevisionId[] {
+                    ModuleRevisionId.newInstance("org1", "mod1.2", "1.5")})), 
+            report.getConfigurationReport("default").getModuleRevisionIds());
+
+        // now we wait for ttl expiration
+        Thread.sleep(700);
+        
+        // we resolve again, it should work fine
+        report = ivy.resolve(new File("test/repositories/1/org1/mod1.4/ivys/ivy-1.0.2.xml").toURL(),
+            getResolveOptions(new String[] {"*"}));
+        assertFalse(report.hasError());
+        
+        assertEquals(
+            new HashSet(Arrays.asList(new ModuleRevisionId[] {
+                    ModuleRevisionId.newInstance("org1", "mod1.2", "1.5")})), 
+            report.getConfigurationReport("default").getModuleRevisionIds());
+        
+        // now we clean the repository to simulate repo not available (network pb for instance)
+        FileUtil.forceDelete(new File("build/testCache2"));
+
+        // now do a new resolve: it should use cached data
+        report = ivy.resolve(new File("test/repositories/1/org1/mod1.4/ivys/ivy-1.0.2.xml").toURL(),
+            getResolveOptions(new String[] {"*"}));
+        assertFalse(report.hasError());
+        
+        assertEquals(
+            new HashSet(Arrays.asList(new ModuleRevisionId[] {
+                    ModuleRevisionId.newInstance("org1", "mod1.2", "1.5")})), 
+            report.getConfigurationReport("default").getModuleRevisionIds());
+    }
+
     public void testDynamicFromCacheWithTTL0() throws Exception {
         // mod1.4;1.0.2 depends on mod1.2;[1.0,2.0[
 
@@ -645,8 +741,8 @@ public class ResolveTest extends TestCase {
         resolver.setName("dual");
         FileSystemResolver r = new FileSystemResolver();
         r.setName("1");
-        r.addArtifactPattern(settings.getBaseDir().getPath() 
-            + "/build/testCache2/[artifact]-[revision].[ext]");
+        r.addIvyPattern(settings.getBaseDir().getPath() 
+            + "/build/testCache2/ivy-[module]-[revision].xml");
         resolver.add(r);
         r = new FileSystemResolver();
         r.setName("2");

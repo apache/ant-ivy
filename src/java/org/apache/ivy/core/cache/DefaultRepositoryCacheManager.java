@@ -24,6 +24,7 @@ import java.util.Date;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import org.apache.ivy.core.IvyContext;
 import org.apache.ivy.core.IvyPatternHelper;
 import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.DefaultArtifact;
@@ -683,7 +684,7 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
         }
     }
 
-    private void saveResolvedRevision(ModuleRevisionId mrid, String revision) {
+    public void saveResolvedRevision(ModuleRevisionId mrid, String revision) {
         if (!lockMetadataArtifact(mrid)) {
             Message.error("impossible to acquire lock for " + mrid);
             return;
@@ -846,11 +847,6 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
 
             saveResolvers(md, resolver.getName(), resolver.getName());
             
-            if (getSettings().getVersionMatcher().isDynamic(md.getModuleRevisionId())
-                    && getTTL(md.getModuleRevisionId()) > 0) {
-                saveResolvedRevision(md.getModuleRevisionId(), rmr.getId().getRevision());
-            }
-                
             if (!md.isDefault()) {
                 rmr.getReport().setOriginalLocalFile(originalFileInCache);
             }

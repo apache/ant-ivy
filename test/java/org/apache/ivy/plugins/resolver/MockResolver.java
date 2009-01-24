@@ -77,7 +77,7 @@ public class MockResolver extends AbstractResolver {
             }
         }
         askedDeps.add(dd);
-        return checkLatest(rmr, data);
+        return checkLatest(dd, rmr, data);
     }
     
     private boolean shouldReturnResolvedModule(DependencyDescriptor dd, ResolvedModuleRevision mr) {

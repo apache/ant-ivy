@@ -213,7 +213,7 @@ public abstract class BasicResolver extends AbstractResolver {
                         + "): but we are in force mode, let's try to find one ourself");
                 } else {
                     Message.verbose("\t" + getName() + ": revision in cache: " + systemMrid);
-                    return checkLatest(checkForcedResolvedModuleRevision(rmr), data);
+                    return checkLatest(systemDd, checkForcedResolvedModuleRevision(rmr), data);
                 }
             }
             
@@ -267,7 +267,7 @@ public abstract class BasicResolver extends AbstractResolver {
                 }
                 if (!rmr.getReport().isDownloaded() 
                         && rmr.getReport().getLocalFile() != null) {
-                    return checkLatest(checkForcedResolvedModuleRevision(rmr), data);
+                    return checkLatest(systemDd, checkForcedResolvedModuleRevision(rmr), data);
                 } else {
                     nsMd = rmr.getDescriptor();
 
@@ -301,7 +301,7 @@ public abstract class BasicResolver extends AbstractResolver {
 
             cacheModuleDescriptor(systemMd, systemMrid, ivyRef, rmr);            
             
-            return checkLatest(checkForcedResolvedModuleRevision(rmr), data);
+            return checkLatest(systemDd, checkForcedResolvedModuleRevision(rmr), data);
         } catch (UnresolvedDependencyException ex) {
             if (ex.getMessage().length() > 0) {
                 if (ex.isError()) {
