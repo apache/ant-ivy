@@ -257,6 +257,9 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
         if (duration == null) {
             return 0;
         }
+        if ("eternal".equals(duration)) {
+            return Long.MAX_VALUE;
+        }
         java.util.regex.Matcher m = DURATION_PATTERN.matcher(duration);
         if (m.matches()) {
             //CheckStyle:MagicNumber| OFF
@@ -274,7 +277,8 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
             + millis;
         } else {
             throw new IllegalArgumentException("invalid duration '" 
-                + duration + "': it must match " + DURATION_PATTERN.pattern());
+                + duration + "': it must match " + DURATION_PATTERN.pattern()
+                + " or 'eternal'");
         }
     }
 
@@ -664,18 +668,23 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
                 return null;
             }
             PropertiesFile cachedResolvedRevision = getCachedDataFile(mrid);
-            String expiration = cachedResolvedRevision.getProperty("expiration.time");
-            if (expiration == null) {
-                Message.verbose("no cached resolved revision for " + mrid);
-                return null;
-            } 
-            if (System.currentTimeMillis() > Long.parseLong(expiration)) {
-                Message.verbose("cached resolved revision expired for " + mrid);
-                return null;
-            }
             resolvedRevision = cachedResolvedRevision.getProperty("resolved.revision");
             if (resolvedRevision == null) {
-                Message.verbose("no cached resolved revision value for " + mrid);
+                Message.verbose(getName() + ": no cached resolved revision for " + mrid);
+                return null;
+            }
+            
+            String resolvedTime = cachedResolvedRevision.getProperty("resolved.time");
+            if (resolvedTime == null) {
+                Message.verbose(getName() 
+                    + ": inconsistent or old cache: no cached resolved time for " + mrid);
+                saveResolvedRevision(mrid, resolvedRevision);
+                return resolvedRevision;
+            } 
+            long expiration = Long.parseLong(resolvedTime) + getTTL(mrid);
+            if (expiration > 0 // negative expiration means that Long.MAX_VALUE has been exceeded
+                    && System.currentTimeMillis() > expiration) {
+                Message.verbose(getName() + ": cached resolved revision expired for " + mrid);
                 return null;
             }
             return resolvedRevision;
@@ -691,16 +700,13 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
         }
         try {
             PropertiesFile cachedResolvedRevision = getCachedDataFile(mrid);
-            cachedResolvedRevision.setProperty("expiration.time", getExpiration(mrid));
+            cachedResolvedRevision.setProperty(
+                "resolved.time", String.valueOf(System.currentTimeMillis()));
             cachedResolvedRevision.setProperty("resolved.revision", revision);
             cachedResolvedRevision.save();
         } finally {
             unlockMetadataArtifact(mrid);
         }
-    }
-
-    private String getExpiration(ModuleRevisionId mrid) {
-        return String.valueOf(System.currentTimeMillis() + getTTL(mrid));
     }
 
     public long getTTL(ModuleRevisionId mrid) {

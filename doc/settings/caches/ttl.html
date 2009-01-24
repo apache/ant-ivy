@@ -40,6 +40,8 @@ XXd XXh XXm XXs XXXms
 </code>
 Where 'd' stands for days, 'h' for hours, 'm' for minutes, 's' for seconds and 'ms' for milliseconds. Any part of the specification can be omitted, so '12d', '2h 5m' and '1d 5ms' are all valid.
 
+The TTL duration can also be set to 'eternal', in which case once resolved the revision is always use, except when resolving in refresh mode. 
+
 Using a 0ms TTL disable resolved revision caching for the given rule.
 
 <h1>Attributes</h1>
@@ -58,7 +60,7 @@ Using a 0ms TTL disable resolved revision caching for the given rule.
         <td>No, defaults to *</td></tr>
     <tr><td>matcher</td><td>the <a href="../../concept.html#matcher">matcher</a> to use to match the modules to which the resolver should be applied</td>
         <td>No, defaults to exact</td></tr>
-    <tr><td>duration</td><td>the TTL to apply</td>
+    <tr><td>duration</td><td>the TTL to apply (see above for format)</td>
         <td>Yes</td></tr>
 </tbody>
 </table>
