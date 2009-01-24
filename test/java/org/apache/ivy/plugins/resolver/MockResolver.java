@@ -111,4 +111,7 @@ public class MockResolver extends AbstractResolver {
         return null;
     }
 
+    protected void saveModuleRevisionIfNeeded(DependencyDescriptor dd,
+            ResolvedModuleRevision newModuleFound) {
+    }
 }

@@ -58,6 +58,7 @@ import org.apache.ivy.plugins.namespace.Namespace;
 import org.apache.ivy.plugins.resolver.ChainResolver.ResolvedModuleRevisionArtifactInfo;
 import org.apache.ivy.plugins.resolver.util.HasLatestStrategy;
 import org.apache.ivy.plugins.resolver.util.ResolvedResource;
+import org.apache.ivy.util.Checks;
 import org.apache.ivy.util.Message;
 
 /**
@@ -337,9 +338,19 @@ public abstract class AbstractResolver
 
     protected ResolvedModuleRevision findModuleInCache(
             DependencyDescriptor dd, ResolveData data, boolean anyResolver) {
-        return getRepositoryCacheManager().findModuleInCache(
-            dd, dd.getDependencyRevisionId(), 
-            getCacheOptions(data), anyResolver ? null : getName());
+        ResolvedModuleRevision rmr = getRepositoryCacheManager().findModuleInCache(
+                    dd, dd.getDependencyRevisionId(), 
+                    getCacheOptions(data), anyResolver ? null : getName());
+        if (rmr == null) {
+            return null;
+        }
+        if (data.getReport() != null 
+                && data.isBlacklisted(data.getReport().getConfiguration(), rmr.getId())) {
+            Message.verbose("\t" + getName() + ": found revision in cache: " 
+                        + rmr.getId() + " for " + dd + ", but it is blacklisted");
+            return null;
+        }
+        return rmr;
     }
 
     public void setChangingMatcher(String changingMatcherName) {
@@ -496,29 +507,38 @@ public abstract class AbstractResolver
             DependencyDescriptor dd,
             ResolvedModuleRevision newModuleFound,
             ResolveData data) {
+        Checks.checkNotNull(dd, "dd");
+        Checks.checkNotNull(data, "data");
+        
         // check if latest is asked and compare to return the most recent
         ResolvedModuleRevision previousModuleFound = data.getCurrentResolvedModuleRevision();
         String newModuleDesc = describe(newModuleFound);
         Message.debug("\tchecking " + newModuleDesc + " against " + describe(previousModuleFound));
         if (previousModuleFound == null) {
             Message.debug("\tmodule revision kept as first found: " + newModuleDesc);
-            getRepositoryCacheManager().saveResolvedRevision(
-                dd.getDependencyRevisionId(), newModuleFound.getId().getRevision());
+            saveModuleRevisionIfNeeded(dd, newModuleFound);
             return newModuleFound;
         } else if (isAfter(newModuleFound, previousModuleFound, data.getDate())) {
             Message.debug("\tmodule revision kept as younger: " + newModuleDesc);
-            getRepositoryCacheManager().saveResolvedRevision(
-                dd.getDependencyRevisionId(), newModuleFound.getId().getRevision());
+            saveModuleRevisionIfNeeded(dd, newModuleFound);
             return newModuleFound;
         } else if (!newModuleFound.getDescriptor().isDefault() 
                 && previousModuleFound.getDescriptor().isDefault()) {
             Message.debug("\tmodule revision kept as better (not default): " + newModuleDesc);
-            getRepositoryCacheManager().saveResolvedRevision(
-                dd.getDependencyRevisionId(), newModuleFound.getId().getRevision());
+            saveModuleRevisionIfNeeded(dd, newModuleFound);
             return newModuleFound;
         } else {
             Message.debug("\tmodule revision discarded as older: " + newModuleDesc);
             return previousModuleFound;
+        }
+    }
+
+    protected void saveModuleRevisionIfNeeded(DependencyDescriptor dd,
+            ResolvedModuleRevision newModuleFound) {
+        if (newModuleFound != null 
+                && getSettings().getVersionMatcher().isDynamic(dd.getDependencyRevisionId())) {
+            getRepositoryCacheManager().saveResolvedRevision(
+                dd.getDependencyRevisionId(), newModuleFound.getId().getRevision());
         }
     }
 
