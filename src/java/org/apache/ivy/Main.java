@@ -88,6 +88,8 @@ public final class Main {
             .addCategory("resolve options")
             .addOption(new OptionBuilder("ivy").arg("ivyfile")
                 .description("use given file as ivy file").create())
+            .addOption(new OptionBuilder("refresh")
+                .description("refresh dynamic resolved revisions").create())
             .addOption(new OptionBuilder("dependency")
                 .arg("organisation").arg("module").arg("revision")
                 .description("use this instead of ivy file to do the rest "
@@ -237,6 +239,9 @@ public final class Main {
             }
             ResolveOptions resolveOptions = new ResolveOptions().setConfs(confs)
                 .setValidate(validate);
+            if (line.hasOption("refresh")) {
+                resolveOptions.setRefresh(true);
+            }
             ResolveReport report = ivy.resolve(ivyfile.toURI().toURL(), resolveOptions);
             if (report.hasError()) {
                 System.exit(1);
