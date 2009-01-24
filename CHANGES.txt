@@ -85,6 +85,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 	
    trunk
 =====================================
+- IMPROVEMENT: add -version option on command line (IVY-1014)
 - IMPROVEMENT: support resolve refresh in command line (IVY-1013)
 - IMPROVEMENT: Error message is not clear when specifying an invalid value for checksums (IVY-977)
 

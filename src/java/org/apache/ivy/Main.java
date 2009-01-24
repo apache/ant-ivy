@@ -157,7 +157,9 @@ public final class Main {
             .addOption(new OptionBuilder("?")
                 .description("display this help").create())
             .addOption(new OptionBuilder("deprecated")
-                .description("show deprecated options").create());
+                .description("show deprecated options").create())
+            .addOption(new OptionBuilder("version")
+                .description("displays version information").create());
     }
 
     public static void main(String[] args) throws Exception {
@@ -177,6 +179,12 @@ public final class Main {
 
             if (line.hasOption("?")) {
                 usage(parser, line.hasOption("deprecated"));
+                return;
+            }
+            
+            if (line.hasOption("version")) {
+                System.out.println("Ivy " + Ivy.getIvyVersion() + " - "
+                    + Ivy.getIvyDate() + " :: " + Ivy.getIvyHomeURL());
                 return;
             }
 
