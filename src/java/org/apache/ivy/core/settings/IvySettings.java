@@ -26,6 +26,7 @@ import java.lang.reflect.Field;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.security.AccessControlException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -291,7 +292,13 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
     }
 
     private void addSystemProperties() {
-        addAllVariables(System.getProperties());
+        try {
+            addAllVariables(System.getProperties());
+        } catch (AccessControlException ex) {
+            Message.verbose(
+                "access denied to getting all system properties: they won't be available as Ivy variables."
+                + "\nset " + ex.getPermission() + " permission if you want to access them");
+        }
     }
 
     /**
