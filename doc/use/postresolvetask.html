@@ -66,6 +66,7 @@ The attributes listed are then mostly used only if a resolve is triggered automa
     <tr><td>transitive</td><td>true to resolve dependencies transitively, false otherwise <span class="since">since 1.4</span></td><td>No. Defaults to true</td></tr>
     <tr><td>haltonfailure</td><td>true to halt the build on ivy failure, false to continue</td><td>No. Defaults to true</td></tr>
     <tr><td>validate</td><td>true to force ivy files validation against ivy.xsd, false to force no validation</td><td>No. Defaults to default ivy value (as configured in configuration file)</td></tr>
+    <tr><td>refresh</td><td>true to force Ivy to resolve dynamic revision in this resolve process, false to use cached resolved revision <span class="since">since 2.1</span></td><td>No. defaults to false</td></tr>
     <tr><td>file</td><td>the file to resolve if a resolve is necessary <span class="since">since 2.0</span></td><td>No. Defaults to the previous resolved Ivy file or to ${ivy.dep.file}</td></tr>
 	<tr><td>settingsRef</td><td>A reference to the ivy settings that must be used by this task <span class="since">(since 2.0)</span></td><td>No, 'ivy.instance' is taken by default.</td></tr>
 	<tr><td>resolveId</td><td>The id which was used for a previous resolve, or the resolveId if a new resolve is performed <span class="since">(since 2.0)</span></td><td>No, defaults to '[org]-[module]'.</td></tr>
