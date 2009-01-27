@@ -32,6 +32,7 @@ import org.apache.ivy.plugins.matcher.ExactOrRegexpPatternMatcher;
 import org.apache.ivy.plugins.matcher.ExactPatternMatcher;
 import org.apache.ivy.plugins.matcher.Matcher;
 import org.apache.ivy.plugins.matcher.PatternMatcher;
+import org.apache.ivy.plugins.resolver.DependencyResolver;
 import org.apache.ivy.plugins.version.VersionMatcher;
 import org.apache.tools.ant.BuildException;
 
@@ -74,6 +75,8 @@ public class IvyBuildNumber extends IvyTask {
 
     private String defaultBuildNumber = "0";
 
+    private String resolver = null;
+
     public String getModule() {
         return module;
     }
@@ -114,6 +117,14 @@ public class IvyBuildNumber extends IvyTask {
         defaultValue = default1;
     }
 
+    public String getResolver() {
+        return resolver;
+    }
+
+    public void setResolver(String resolver) {
+        this.resolver = resolver;
+    }
+
     public String getPrefix() {
         return prefix;
     }
@@ -148,25 +159,37 @@ public class IvyBuildNumber extends IvyTask {
         }
         
         SearchEngine searcher = new SearchEngine(settings);
-        ModuleRevisionId[] revisions = searcher.listModules(ModuleRevisionId.newInstance(organisation,
-            module, branch, ".*"), new PatternMatcher() {
-                private PatternMatcher exact = new ExactPatternMatcher();
-                private PatternMatcher regexp = new ExactOrRegexpPatternMatcher();
-            
-                public Matcher getMatcher(String expression) {
-                    if ((expression == organisation)
-                            || (expression == module)
-                            || (expression == branch)) {
-                        return exact.getMatcher(expression);
-                    }
-                    return regexp.getMatcher(expression);
-                }
-
-                public String getName() {
-                    return "buildnumber-matcher";
-                }
-            });
         
+        PatternMatcher patternMatcher = new PatternMatcher() {
+            private PatternMatcher exact = new ExactPatternMatcher();
+            private PatternMatcher regexp = new ExactOrRegexpPatternMatcher();
+        
+            public Matcher getMatcher(String expression) {
+                if ((expression == organisation)
+                        || (expression == module)
+                        || (expression == branch)) {
+                    return exact.getMatcher(expression);
+                }
+                return regexp.getMatcher(expression);
+            }
+
+            public String getName() {
+                return "buildnumber-matcher";
+            }
+        };
+        ModuleRevisionId[] revisions;
+        if (resolver == null) {
+            revisions = searcher.listModules(ModuleRevisionId.newInstance(organisation,
+                module, branch, ".*"), patternMatcher);
+        } else {
+            DependencyResolver depResolver = settings.getResolver(resolver);
+            if (depResolver == null) {
+                throw new BuildException("Unknown resolver: " + resolver);
+            }
+            revisions = searcher.listModules(depResolver, ModuleRevisionId.newInstance(organisation,
+                module, branch, ".*"), patternMatcher);
+        }
+
         ArtifactInfo[] infos = new ArtifactInfo[revisions.length];
         for (int i = 0; i < revisions.length; i++) {
             infos[i] = new ResolvedModuleRevisionArtifactInfo(revisions[i]);

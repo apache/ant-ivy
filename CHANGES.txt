@@ -85,6 +85,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 	
    trunk
 =====================================
+- IMPROVEMENT: resolver attribute for buildnumber task (IVY-1019) (thanks to Martin Eigenbrodt)
 - IMPROVEMENT: add refresh parameter to post resolve tasks (IVY-1017)
 - IMPROVEMENT: Remove excessive HEAD requests for URL repository (IVY-996)
 - IMPROVEMENT: add -version option on command line (IVY-1014)
