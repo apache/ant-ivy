@@ -55,13 +55,19 @@ public final class ChecksumHelper {
         String csFileContent = FileUtil.readEntirely(
             new BufferedReader(new FileReader(checksumFile))).trim().toLowerCase(Locale.US);
         String expected;
-        int spaceIndex = csFileContent.indexOf(' ');
-        if (spaceIndex != -1) {
-            expected = csFileContent.substring(0, spaceIndex);
+        if (csFileContent.indexOf(' ') > -1
+                && (csFileContent.startsWith("md") || csFileContent.startsWith("sha"))) {
+            int lastSpaceIndex = csFileContent.lastIndexOf(' ');
+            expected = csFileContent.substring(lastSpaceIndex + 1);
         } else {
-            expected = csFileContent;
+            int spaceIndex = csFileContent.indexOf(' ');
+            if (spaceIndex != -1) {
+                expected = csFileContent.substring(0, spaceIndex);
+            } else {
+                expected = csFileContent;
+            }
         }
-
+        
         String computed = computeAsString(dest, algorithm).trim().toLowerCase(Locale.US);
         if (!expected.equals(computed)) {
             throw new IOException("invalid " + algorithm + ": expected=" + expected + " computed="

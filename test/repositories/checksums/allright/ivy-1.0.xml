@@ -25,5 +25,6 @@
 	<publications>
 		<artifact />
 		<artifact name="allright-with-path" />
+		<artifact name="allright-with-openssl" />
 	</publications>
 </ivy-module>
