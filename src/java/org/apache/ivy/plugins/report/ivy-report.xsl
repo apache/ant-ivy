@@ -260,13 +260,13 @@
     <link rel="stylesheet" type="text/css" href="ivy-report.css" /> 
   </head>
   <body>
-    <div id="logo"><a href="http://ant.apache.org/ivy/"><img src="http://ant.apache.org/ivy/logo.png"/></a></div>
+    <div id="logo"><a href="http://ant.apache.org/ivy/"><img src="http://ant.apache.org/ivy/images/logo.png"/></a></div>
     <h1>
       <xsl:element name="a">
         <xsl:attribute name="name"><xsl:value-of select="info/@organisation"/>-<xsl:value-of select="info/@module"/></xsl:attribute>
       </xsl:element>
         <span id="module">
-    	        <xsl:value-of select="info/@module"/>
+    	        <xsl:value-of select="concat(info/@module, ' ', info/@revision)"/>
         </span> 
         by 
         <span id="organisation">
