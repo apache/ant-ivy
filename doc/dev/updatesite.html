@@ -38,27 +38,16 @@ This doc is in two parts, the <a href="#setup">setup</a> of the updatesite which
 The update site svn location is there: https://svn.apache.org/repos/asf/ant/ivy/updatesite/trunk . You will update it so it will contain the new artifacts.
 
 <ul><li>For an <u>Ivy</u> release:
-The new ivy bundle have to be placed in the plugins directory of the updatesite. So you should do something like:
-<code>cp ..../ivy.jar dist/plugins/org.apache.ivy_$VERSION.jar</code>
-
-Then Eclipse needs a feature, which will be generated at the right place with an ant target:
-<pre>
-ant generate-ivy-feature -Divy.version=$VERSION</pre>
-</li><li>
+As you have a build jar for Ivy, just do:
+<code>ant install-ivy -Divy.jar=...../path/to/ivy.jar</code>
+<li>
 For an <u>IvyDE</u> release:
 The zip distribution needs to be unpacked into the updatesite directory:
-<pre>
-cd dist
-unzip ..../org.apache.ivyde.feature-$VERSION.zip
-</pre>
+<code>ant install-ivyde -Divyde.zip=...../path/to/org.apache.ivyde.feature-${VERSION}.zip</code>
 </li>
 </ul>
 
-Then the deprecated versions of the plugins and the features should be removed.
-
-<h2>Update the site.xml</h2>
-
-The <tt>site.xml</tt> file in the <tt>dist</tt> directory should be edited so it will reference the new artifacts. You should just change the version number accordingly to the release.
+Those previous tasks should have deleted some files, but not using the svn command: you should see some ! in your svn status log. Then do some <tt>svn rm</tt> on those files.
 
 <h2>Prepare the update site</h2>
 
