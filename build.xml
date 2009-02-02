@@ -172,7 +172,7 @@
         </tstamp>
         <property name="version.prefix" value="${target.ivy.version}-local-" />
         <property name="build.version" value="${version.prefix}${pubdate}" />
-        <property name="bundle.version" value="${target.ivy.bundle.version}_${pubdate}" />
+        <property name="bundle.version" value="${target.ivy.bundle.version}.${target.ivy.bundle.version.qualifier}${pubdate}" />
     </target>
 
     <!-- =================================================================
