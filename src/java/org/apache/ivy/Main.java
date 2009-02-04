@@ -166,6 +166,7 @@ public final class Main {
         CommandLineParser parser = getParser();
         try {
             run(parser, args);
+            System.exit(0);
         } catch (ParseException ex) {
             System.err.println(ex.getMessage());
             usage(parser, false);

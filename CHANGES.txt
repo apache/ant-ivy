@@ -94,6 +94,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - IMPROVEMENT: Error message is not clear when specifying an invalid value for checksums (IVY-977)
 - IMPROVEMENT: catch AccessControlException on System.getProperties() (IVY-1015)
 
+- FIX: Ivy Standalone hangs after publishing to SSH resolver (IVY-1009)
 - FIX: overwrite='false' completely prevents publishing into url repositories (IVY-1007)
 - FIX: Fixed broken logo link in ivy-report.xsl (IVY-1024) (thanks to Carlton Brown)
 - FIX: Support for opensll sha1 and md5 checksum (IVY-1006)
