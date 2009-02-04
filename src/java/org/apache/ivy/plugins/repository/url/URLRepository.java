@@ -71,9 +71,8 @@ public class URLRepository extends AbstractRepository {
     }
 
     public void put(File source, String destination, boolean overwrite) throws IOException {
-        if (!overwrite) {
-            throw new UnsupportedOperationException(
-                    "URL repository do not support append operations at the moment");
+        if (!overwrite && getResource(destination).exists()) {
+            throw new IOException("destination file exists and overwrite == false");
         }
 
         fireTransferInitiated(getResource(destination), TransferEvent.REQUEST_PUT);
