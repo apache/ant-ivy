@@ -214,7 +214,7 @@ public class FileSystemResolverTest extends AbstractDependencyResolverTest {
         assertNotNull(rmr);
         DownloadReport dr = resolver.download(rmr.getDescriptor().getAllArtifacts(),
             getDownloadOptions());
-        assertEquals(2, dr.getArtifactsReports(DownloadStatus.SUCCESSFUL).length);
+        assertEquals(3, dr.getArtifactsReports(DownloadStatus.SUCCESSFUL).length);
 
         resolver.setChecksums("md5");
         mrid = ModuleRevisionId.newInstance("test", "badivycs", "1.0");
