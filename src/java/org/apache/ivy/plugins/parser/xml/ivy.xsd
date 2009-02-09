@@ -274,7 +274,6 @@
       		</xs:element>
         </xs:sequence>
         <xs:attribute name="version" type="xs:string" use="required"/>
-        <xs:anyAttribute namespace="##other" processContents="lax" />
       </xs:complexType>
   </xs:element>
 
