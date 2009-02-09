@@ -16,7 +16,9 @@
    specific language governing permissions and limitations
    under the License.    
 -->
-<ivy-module version="1.0"> 
+<ivy-module version="1.0"
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"            
+            xsi:noNamespaceSchemaLocation="http://ant.apache.org/ivy/schemas/ivy.xsd">
 	<info organisation="org.apache.ivy"
 	       module="ivy"
 	       status="integration">
