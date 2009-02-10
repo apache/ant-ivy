@@ -115,7 +115,7 @@ public class IBiblioResolver extends URLResolver {
             mrid = convertM2IdForResourceSearch(mrid);
         }
         ResolvedResource rres = null;
-        if (artifact.getId().getRevision().endsWith("SNAPSHOT")) {
+        if (artifact.getId().getRevision().endsWith("SNAPSHOT") && isM2compatible()) {
             rres = findSnapshotArtifact(artifact, date, mrid);            
             if (rres != null) {
                 return rres;
@@ -158,6 +158,10 @@ public class IBiblioResolver extends URLResolver {
     }
     
     private String findSnapshotVersion(ModuleRevisionId mrid) {
+        if (!isM2compatible()) {
+            return null;
+        }
+        
         String pattern = (String) getIvyPatterns().get(0);
         if (shouldUseMavenMetadata(pattern)) {
             InputStream metadataStream = null;
