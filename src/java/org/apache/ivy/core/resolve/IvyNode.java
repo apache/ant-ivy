@@ -216,7 +216,8 @@ public class IvyNode implements Comparable {
                             if (!settings.getVersionMatcher().isDynamic(getId())) {
                                 log += " (forced)";
                             }
-                            if (settings.logResolvedRevision()) {
+                            if (settings.logResolvedRevision()
+                                    && LogOptions.LOG_DEFAULT.equals(getData().getOptions().getLog())) {
                                 Message.info(log);
                             } else {
                                 Message.verbose(log);
@@ -278,7 +279,8 @@ public class IvyNode implements Comparable {
         
         data.replaceNode(getId(), resolved, rootModuleConf); // this actually discards the node
 
-        if (settings.logResolvedRevision()) {
+        if (settings.logResolvedRevision()
+                && LogOptions.LOG_DEFAULT.equals(getData().getOptions().getLog())) {
             Message.info("\t[" + module.getId().getRevision() + "] " + getId());
         } else {
             Message.verbose("\t[" + module.getId().getRevision() + "] " + getId());
@@ -384,7 +386,7 @@ public class IvyNode implements Comparable {
                 if (c == null) {
                     confsToFetch.remove(conf);
                     if (isConfRequiredByMergedUsageOnly(rootModuleConf, conf)) {
-                        Message.info(
+                        Message.verbose(
                             "configuration required by evicted revision is not available in "
                             + "selected revision. skipping " + conf + " in " + this);
                     } else if (!conf.equals(confs[i])) {
@@ -401,7 +403,7 @@ public class IvyNode implements Comparable {
                         && c.getVisibility() != Configuration.Visibility.PUBLIC) {
                     confsToFetch.remove(conf);
                     if (isConfRequiredByMergedUsageOnly(rootModuleConf, conf)) {
-                        Message.info(
+                        Message.verbose(
                             "configuration required by evicted revision is not visible in "
                             + "selected revision. skipping " + conf + " in " + this);
                     } else {
