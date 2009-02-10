@@ -338,7 +338,7 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
     public void addArtifact(String conf, Artifact artifact) {
         if (!configurations.containsKey(conf)) {
             throw new IllegalArgumentException("Configuration '" + conf
-                    + "' doesn't exist in module " + this);
+                    + "' doesn't exist in module " + revId);
         }
 
         Collection artifacts = (Collection) artifactsByConf.get(conf);
