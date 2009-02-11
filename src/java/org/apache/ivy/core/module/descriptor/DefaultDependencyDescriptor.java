@@ -428,8 +428,9 @@ public class DefaultDependencyDescriptor implements DependencyDescriptor {
         if ((md != null) && !"*".equals(masterConf) && !"%".equals(masterConf)) {
             Configuration config = md.getConfiguration(masterConf);
             if (config == null) {
-                throw new IllegalArgumentException("Configuration '" + masterConf
-                        + "' does not exist in module " + md);
+                throw new IllegalArgumentException("Cannot add dependency '" + revId
+                    + "' to configuration '" + masterConf + "' of module "
+                    + md.getModuleRevisionId() + " because this configuration doesn't exist!");
             }
         }
 
