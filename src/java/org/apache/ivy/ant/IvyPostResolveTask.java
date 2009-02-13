@@ -288,7 +288,7 @@ public abstract class IvyPostResolveTask extends IvyTask {
         resolve.setProject(getProject());
         resolve.setHaltonfailure(haltOnFailure);
         resolve.setUseOrigin(useOrigin);
-        resolve.setValidate(isValidate());
+        resolve.setValidate(doValidate(getSettings()));
         resolve.setKeep(isKeep());
         resolve.setRefresh(isRefresh());
         resolve.setLog(getLog());

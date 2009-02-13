@@ -80,6 +80,16 @@ public class IvyRetrieveTest extends TestCase {
             "mod3.2", "jar", "jar", "private")).exists());
     }
 
+    public void testValidateInIvySettings() throws Exception {
+        // cfr IVY-992
+        project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-latest-extra.xml");
+        retrieve.getSettings().setValidate(false);
+        retrieve.execute();
+        
+        assertTrue(new File(IvyPatternHelper.substitute(RETRIEVE_PATTERN, "org1", "mod1.2", "2.2",
+            "mod1.2", "jar", "jar", "default")).exists());
+    }
+    
     public void testInline() throws Exception {
         // we first resolve another ivy file
         IvyResolve resolve = new IvyResolve();
