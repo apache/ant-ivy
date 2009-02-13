@@ -95,6 +95,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - IMPROVEMENT: Error message is not clear when specifying an invalid value for checksums (IVY-977)
 - IMPROVEMENT: catch AccessControlException on System.getProperties() (IVY-1015)
 
+- FIX: Dependency Configuration Negation does not work (IVY-982)
 - FIX: Ivy retrieve does not honor validate="false" from ivysettings (IVY-992)
 - FIX: Snapshot issues when using ibiblio resolver with m2compatible is false (IVY-1028)
 - FIX: Ivy Standalone hangs after publishing to SSH resolver (IVY-1009)

@@ -426,7 +426,12 @@ public class DefaultDependencyDescriptor implements DependencyDescriptor {
 
     public void addDependencyConfiguration(String masterConf, String depConf) {
         if ((md != null) && !"*".equals(masterConf) && !"%".equals(masterConf)) {
-            Configuration config = md.getConfiguration(masterConf);
+            Configuration config;
+            if (masterConf.startsWith("!")) {
+                config = md.getConfiguration(masterConf.substring(1));
+            } else {
+                config = md.getConfiguration(masterConf);                
+            }
             if (config == null) {
                 throw new IllegalArgumentException("Cannot add dependency '" + revId
                     + "' to configuration '" + masterConf + "' of module "
