@@ -204,6 +204,8 @@ public class IvyDeliver extends IvyTask {
     private String conf;
 
     private String pubBranch;
+    
+    private boolean generateRevConstraint = true;
 
     public void setCache(File cache) {
         cacheAttributeNotSupported();
@@ -305,6 +307,14 @@ public class IvyDeliver extends IvyTask {
         conf = confs;
     }
 
+    public boolean isGenerateRevConstraint() {
+        return generateRevConstraint;
+    }
+
+    public void setGenerateRevConstraint(boolean generateRevConstraint) {
+        this.generateRevConstraint = generateRevConstraint;
+    }
+
     public void doExecute() throws BuildException {
         Ivy ivy = getIvyInstance();
         IvySettings settings = ivy.getSettings();
@@ -383,6 +393,7 @@ public class IvyDeliver extends IvyTask {
             DeliverOptions options = new DeliverOptions(status, pubdate, 
                 drResolver, doValidate(settings), replacedynamicrev, splitConfs(conf))
                 .setResolveId(resolveId)
+                .setGenerateRevConstraint(generateRevConstraint)
                 .setPubBranch(pubBranch);
             if (mrid == null) {
                 ivy.deliver(pubRevision, deliverpattern, options);

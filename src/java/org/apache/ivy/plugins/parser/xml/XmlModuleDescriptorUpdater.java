@@ -168,6 +168,8 @@ public final class XmlModuleDescriptorUpdater {
         private final Namespace ns;
 
         private final boolean replaceInclude;
+        
+        private final boolean generateRevConstraint;
 
         private boolean inHeader = true;
 
@@ -187,6 +189,7 @@ public final class XmlModuleDescriptorUpdater {
             this.pubdate = options.getPubdate();
             this.ns = options.getNamespace();
             this.replaceInclude = options.isReplaceInclude();
+            this.generateRevConstraint = options.isGenerateRevConstraint();
             this.relativePathCtx = relativePathCtx;
             if (options.getConfsToExclude() != null) {
                 this.confs = Arrays.asList(options.getConfsToExclude());
@@ -390,7 +393,7 @@ public final class XmlModuleDescriptorUpdater {
                                 && branchConstraint != null) {
                             write(" branchConstraint=\"" + branchConstraint + "\"");
                         }
-                        if (attributes.getIndex("revConstraint") == -1 
+                        if (generateRevConstraint && attributes.getIndex("revConstraint") == -1
                                 && !rev.equals(systemMrid.getRevision())) {
                             write(" revConstraint=\"" + systemMrid.getRevision() + "\"");
                         }

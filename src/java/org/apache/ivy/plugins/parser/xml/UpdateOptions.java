@@ -63,6 +63,11 @@ public class UpdateOptions {
      */
     private boolean updateBranch = true;
     private String branch;
+    /**
+     * True to indicate that the revConstraint attribute should be generated if
+     * applicable, false to never generate the revConstraint attribute.
+     */
+    private boolean generateRevConstraint = true;
     
     public ParserSettings getSettings() {
         return settings;
@@ -132,6 +137,13 @@ public class UpdateOptions {
     }
     public UpdateOptions setBranch(String pubBranch) {
         this.branch = pubBranch;
+        return this;
+    }
+    public boolean isGenerateRevConstraint() {
+        return generateRevConstraint;
+    }
+    public UpdateOptions setGenerateRevConstraint(boolean generateRevConstraint) {
+        this.generateRevConstraint = generateRevConstraint;
         return this;
     }
 }

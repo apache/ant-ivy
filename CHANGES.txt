@@ -85,6 +85,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 	
    trunk
 =====================================
+- IMPROVEMENT: Ability to strip revConstraint attribute from delivered Ivy files (IVY-989)
 - IMPROVEMENT: enhanced error message when defining an artifact for an unknown configuration.
 - IMPROVEMENT: display the revision of the resolved module in ivy-report.xsl (IVY-1024) (thanks to Carlton Brown)
 - IMPROVEMENT: resolver attribute for buildnumber task (IVY-1019) (thanks to Martin Eigenbrodt)

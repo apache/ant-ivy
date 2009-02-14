@@ -40,6 +40,13 @@ public class DeliverOptions {
     private String[] confs;
 
     private String pubBranch;
+    
+    /**
+     * True to indicate that the revConstraint attribute should be generated if
+     * applicable, false to never generate the revConstraint attribute.
+     */
+    private boolean generateRevConstraint = true;
+
 
     /**
      * Returns an instance of DeliverOptions with options corresponding to default values taken from
@@ -221,6 +228,15 @@ public class DeliverOptions {
         this.pubBranch = pubBranch;
         return this;
     }
+    
+    public boolean isGenerateRevConstraint() {
+        return generateRevConstraint;
+    }
+    public DeliverOptions setGenerateRevConstraint(boolean generateRevConstraint) {
+        this.generateRevConstraint = generateRevConstraint;
+        return this;
+    }
+
     
     public String toString() {
         return "status=" + status + " pubdate=" + pubdate + " validate=" + validate
