@@ -39,10 +39,6 @@ import org.xml.sax.helpers.DefaultHandler;
 
 public abstract class XMLHelper {
 
-    private static final SAXParserFactory VALIDATING_FACTORY = SAXParserFactory.newInstance();
-
-    private static final SAXParserFactory FACTORY = SAXParserFactory.newInstance();
-
     static final String JAXP_SCHEMA_LANGUAGE 
         = "http://java.sun.com/xml/jaxp/properties/schemaLanguage";
 
@@ -58,18 +54,16 @@ public abstract class XMLHelper {
 
     private static DocumentBuilder docBuilder;
     
-    static {
-        VALIDATING_FACTORY.setNamespaceAware(true);
-        VALIDATING_FACTORY.setValidating(true);
-    }
-
     private static SAXParser newSAXParser(URL schema, InputStream schemaStream)
             throws ParserConfigurationException, SAXException {
         if (!canUseSchemaValidation || schema == null) {
-            return FACTORY.newSAXParser();
+            return SAXParserFactory.newInstance().newSAXParser();
         }
         try {
-            SAXParser parser = VALIDATING_FACTORY.newSAXParser();
+            SAXParserFactory parserFactory = SAXParserFactory.newInstance();
+            parserFactory.setNamespaceAware(true);
+            parserFactory.setValidating(true);
+            SAXParser parser = parserFactory.newSAXParser();
             parser.setProperty(JAXP_SCHEMA_LANGUAGE, W3C_XML_SCHEMA);
             parser.setProperty(JAXP_SCHEMA_SOURCE, schemaStream);
             parser.getXMLReader().setFeature(XML_NAMESPACE_PREFIXES, true);
@@ -79,7 +73,7 @@ public abstract class XMLHelper {
                 "WARNING: problem while setting JAXP validating property on SAXParser... "
                 + "XML validation will not be done: " + ex.getMessage());
             canUseSchemaValidation = false;
-            return FACTORY.newSAXParser();
+            return SAXParserFactory.newInstance().newSAXParser();
         }
     }
 
