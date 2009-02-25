@@ -170,7 +170,7 @@ public class XmlSettingsParser extends DefaultHandler {
                 try {
                     stream.close();
                 } catch (IOException e) {
-                    // ingnored
+                    // ignored
                 }
             }
         }
