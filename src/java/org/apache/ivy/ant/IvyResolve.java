@@ -47,6 +47,8 @@ public class IvyResolve extends IvyTask {
     private String organisation = null;
 
     private String module = null;
+    
+    private String branch = null;
 
     private String revision = null;
 
@@ -102,6 +104,14 @@ public class IvyResolve extends IvyTask {
 
     public void setRevision(String revision) {
         this.revision = revision;
+    }
+    
+    public String getBranch() {
+        return branch;
+    }
+
+    public void setBranch(String branch) {
+        this.branch = branch;
     }
 
     public void setCache(File cache) {
@@ -217,7 +227,7 @@ public class IvyResolve extends IvyTask {
                     revision = "latest.integration";
                 }
                 report = ivy.resolve(ModuleRevisionId
-                        .newInstance(organisation, module, revision), 
+                        .newInstance(organisation, module, branch, revision), 
                         getResolveOptions(ivy, confs, settings), changing);
 
             } else {

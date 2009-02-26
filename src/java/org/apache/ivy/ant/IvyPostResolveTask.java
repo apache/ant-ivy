@@ -49,6 +49,8 @@ public abstract class IvyPostResolveTask extends IvyTask {
     private boolean inline = false;
 
     private String organisation;
+    
+    private String branch = null;
 
     private String module;
 
@@ -131,6 +133,7 @@ public abstract class IvyPostResolveTask extends IvyTask {
                 IvyResolve resolve = createResolve(isHaltonfailure(), isUseOrigin());
                 resolve.setOrganisation(getOrganisation());
                 resolve.setModule(getModule());
+                resolve.setBranch(getBranch());
                 resolve.setRevision(getRevision());
                 resolve.setInline(true);
                 resolve.setConf(conf);
@@ -341,6 +344,14 @@ public abstract class IvyPostResolveTask extends IvyTask {
 
     public void setOrganisation(String organisation) {
         this.organisation = organisation;
+    }
+
+    public String getBranch() {
+        return branch;
+    }
+
+    public void setBranch(String branch) {
+        this.branch = branch;
     }
 
     public boolean isHaltonfailure() {
