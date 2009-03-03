@@ -18,34 +18,44 @@
    under the License.    
 -->
 <project>
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>org.apache</groupId>
-  <artifactId>test-depMgt</artifactId>
-  <name>Test Module for Ivy M2 parsing</name>
-  <version>1.0</version>
-  <url>http://ivy.jayasoft.org/</url>
-  <organization>
-    <name>Jayasoft</name>
-    <url>http://www.jayasoft.org/</url>
-  </organization>
-  <dependencyManagement>
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>org.apache</groupId>
+    <artifactId>test-depMgt</artifactId>
+    <name>Test Module for Ivy M2 parsing</name>
+    <version>1.0</version>
+    <url>http://ivy.jayasoft.org/</url>
+    <organization>
+        <name>Jayasoft</name>
+        <url>http://www.jayasoft.org/</url>
+    </organization>
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>commons-logging</groupId>
+                <artifactId>commons-logging</artifactId>
+                <version>1.0.4</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-collection</groupId>
+                <artifactId>commons-collection</artifactId>
+                <version>1.0.5</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>javax.mail</groupId>
+                        <artifactId>mail</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>javax.jms</groupId>
+                        <artifactId>jms</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
     <dependencies>
-		<dependency>
-          <groupId>commons-logging</groupId>
-          <artifactId>commons-logging</artifactId>
-	      <version>1.0.4</version>
-        </dependency>
-		<dependency>
-          <groupId>commons-collection</groupId>
-          <artifactId>commons-collection</artifactId>
-	      <version>1.0.5</version>
+        <dependency>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
         </dependency>
     </dependencies>
-  </dependencyManagement>
-  <dependencies>
-    <dependency>
-      <groupId>commons-logging</groupId>
-      <artifactId>commons-logging</artifactId>
-    </dependency>
-  </dependencies>
 </project>

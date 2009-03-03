@@ -28,6 +28,7 @@ import java.util.Map;
 import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.DefaultModuleDescriptor;
 import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
+import org.apache.ivy.core.module.descriptor.ExcludeRule;
 import org.apache.ivy.core.module.descriptor.License;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleId;
@@ -629,6 +630,14 @@ public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParse
             dds[0].getDependencyRevisionId());
         assertEquals(ModuleRevisionId.newInstance("commons-logging", "commons-logging", "1.0.4"),
             dds[1].getDependencyRevisionId());
+        
+        ExcludeRule[] excludes = dds[0].getAllExcludeRules();
+        assertNotNull(excludes);
+        assertEquals(2, excludes.length);
+        assertEquals("javax.mail", excludes[0].getId().getModuleId().getOrganisation());
+        assertEquals("mail", excludes[0].getId().getModuleId().getName());
+        assertEquals("javax.jms", excludes[1].getId().getModuleId().getOrganisation());
+        assertEquals("jms", excludes[1].getId().getModuleId().getName());
     }
 
     public void testParentProperties() throws ParseException, IOException {

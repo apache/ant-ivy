@@ -25,6 +25,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -305,7 +306,15 @@ public class PomModuleDescriptorBuilder {
             dd.addDependencyArtifact(optionalizedScope, depArtifact);
         }
         
-        for (Iterator itExcl = dep.getExcludedModules().iterator(); itExcl.hasNext();) {
+        // experimentation shows the following, excluded modules are
+        // inherited from parent POMs if either of the following is true:
+        // the <exclusions> element is missing or the <exclusions> element
+        // is present, but empty.
+        List /*<ModuleId>*/ excluded = dep.getExcludedModules();
+        if (excluded.isEmpty()) {
+            excluded = getDependencyMgtExclusions(ivyModuleDescriptor, dep.getGroupId(), dep.getArtifactId());
+        }
+        for (Iterator itExcl = excluded.iterator(); itExcl.hasNext();) {
             ModuleId excludedModule = (ModuleId) itExcl.next();
             String[] confs = dd.getModuleConfigurations();
             for (int k = 0; k < confs.length; k++) {
@@ -333,6 +342,17 @@ public class PomModuleDescriptorBuilder {
             String scopeKey = getDependencyMgtExtraInfoKeyForScope(
                                     dep.getGroupId(), dep.getArtifactId());
             ivyModuleDescriptor.addExtraInfo(scopeKey, dep.getScope());
+        }
+        if(!dep.getExcludedModules().isEmpty()) {
+            final String exclusionPrefix = getDependencyMgtExtraInfoPrefixForExclusion(
+                    dep.getGroupId(), dep.getArtifactId());
+            int index = 0;
+            for (final Iterator iter = dep.getExcludedModules().iterator(); iter.hasNext();) {
+                final ModuleId excludedModule = (ModuleId) iter.next();
+                ivyModuleDescriptor.addExtraInfo(exclusionPrefix + index,
+                        excludedModule.getOrganisation() + EXTRA_INFO_DELIMITER + excludedModule.getName());
+                index += 1;
+            }
         }
         // dependency management info is also used for version mediation of transitive dependencies
         ivyModuleDescriptor.addDependencyDescriptorMediator(
@@ -394,6 +414,10 @@ public class PomModuleDescriptorBuilder {
         public String getScope() {
             return null;
         }
+
+        public List /*<ModuleId>*/ getExcludedModules() {
+            return Collections.EMPTY_LIST; // probably not used?
+        }
     }
 
     private String getDefaultVersion(PomDependencyData dep) {
@@ -423,6 +447,38 @@ public class PomModuleDescriptorBuilder {
     
     private static String getPropertyExtraInfoKey(String propertyName) {
         return PROPERTIES + EXTRA_INFO_DELIMITER + propertyName;
+    }
+
+    private static String getDependencyMgtExtraInfoPrefixForExclusion(
+                                String groupId, String artifaceId) {
+        return DEPENDENCY_MANAGEMENT + EXTRA_INFO_DELIMITER + groupId
+                + EXTRA_INFO_DELIMITER + artifaceId + EXTRA_INFO_DELIMITER + "exclusion_";
+    }
+
+    private static List /*<ModuleId>*/ getDependencyMgtExclusions(
+                                final ModuleDescriptor descriptor,
+                                final String groupId,
+                                final String artifactId) {
+        final String exclusionPrefix = getDependencyMgtExtraInfoPrefixForExclusion(
+                groupId, artifactId);
+        final List /*<ModuleId>*/ exclusionIds = new LinkedList /*<ModuleId>*/ ();
+        final Map /*<String,String>*/ extras = descriptor.getExtraInfo();
+        for (final Iterator entIter = extras.entrySet().iterator(); entIter.hasNext();) {
+            final Map.Entry /*<String,String>*/ ent = (Map.Entry) entIter.next();
+            final String key = (String) ent.getKey();
+            if (key.startsWith(exclusionPrefix)) {
+                final String full_exclusion = (String) ent.getValue();
+                final String[] exclusion_parts = full_exclusion.split(EXTRA_INFO_DELIMITER);
+                if(exclusion_parts.length != 2) {
+                    Message.error("what seemed to be a dependency management extra info exclusion " +
+                            "had the wrong number of parts (should have 2) " + exclusion_parts.length + " : " + full_exclusion);
+                    continue;
+                }
+                exclusionIds.add(ModuleId.newInstance(exclusion_parts[0], exclusion_parts[1]));
+            }
+        }
+
+        return exclusionIds;
     }
 
     public static Map/*<ModuleId, String version>*/ 
@@ -466,7 +522,8 @@ public class PomModuleDescriptorBuilder {
                     String version = (String) md.getExtraInfo().get(versionKey);
                     String scope = (String) md.getExtraInfo().get(scopeKey);
                     
-                    result.add(new DefaultPomDependencyMgt(parts[1], parts[2], version, scope));
+                    List /*<ModuleId>*/ exclusions = getDependencyMgtExclusions(md, parts[1], parts[2]);
+                    result.add(new DefaultPomDependencyMgt(parts[1], parts[2], version, scope, exclusions));
                 }
             }
         }

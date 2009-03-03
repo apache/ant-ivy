@@ -25,6 +25,7 @@ import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -325,6 +326,24 @@ public class PomReader {
             return replaceProps(val);
         }
         
+        public List /*<ModuleId>*/ getExcludedModules() {
+            Element exclusionsElement = getFirstChildElement(depElement, EXCLUSIONS);
+            LinkedList exclusions = new LinkedList();
+            if (exclusionsElement != null) {
+                NodeList childs = exclusionsElement.getChildNodes();
+                for (int i = 0; i < childs.getLength(); i++) {
+                    Node node = childs.item(i);
+                    if (node instanceof Element && EXCLUSION.equals(node.getNodeName())) {
+                        String groupId = getFirstChildText((Element) node, GROUP_ID);
+                        String artifactId = getFirstChildText((Element) node, ARTIFACT_ID);
+                        if ((groupId != null) && (artifactId != null)) {
+                            exclusions.add(ModuleId.newInstance(groupId, artifactId));
+                        }
+                    }
+                }
+            }
+            return exclusions;
+        }
     }
     
     public List /* <PomPluginElement> */ getPlugins() {
@@ -374,6 +393,9 @@ public class PomReader {
             return null; // not used
         }
         
+        public List /*<ModuleId>*/ getExcludedModules() {
+            return Collections.EMPTY_LIST; // probably not used?
+        }
     }
     
     
@@ -403,26 +425,6 @@ public class PomReader {
             Element e = getFirstChildElement(depElement, OPTIONAL); 
             return (e != null) && "true".equalsIgnoreCase(getTextContent(e));
         }
-        
-        public List /*<ModuleId>*/ getExcludedModules() {
-            Element exclusionsElement = getFirstChildElement(depElement, EXCLUSIONS);
-            LinkedList exclusions = new LinkedList();
-            if (exclusionsElement != null) {
-                NodeList childs = exclusionsElement.getChildNodes();
-                for (int i = 0; i < childs.getLength(); i++) {
-                    Node node = childs.item(i);
-                    if (node instanceof Element && EXCLUSION.equals(node.getNodeName())) {
-                        String groupId = getFirstChildText((Element) node, GROUP_ID);
-                        String artifactId = getFirstChildText((Element) node, ARTIFACT_ID);
-                        if ((groupId != null) && (artifactId != null)) {
-                            exclusions.add(ModuleId.newInstance(groupId, artifactId));
-                        }
-                    }
-                }
-            }
-            return exclusions;            
-        }
-
     }
     
     /**
