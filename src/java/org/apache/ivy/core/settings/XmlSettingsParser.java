@@ -18,6 +18,7 @@
 package org.apache.ivy.core.settings;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -431,7 +432,7 @@ public class XmlSettingsParser extends DefaultHandler {
      * the resulting URL point to a local file, otherwise, the filepath is evaluated relatively
      * to the URL of the current settings file (can be local file or remote URL).
      */
-    private URL urlFromFileAttribute(String filePath) throws MalformedURLException {
+    private URL urlFromFileAttribute(String filePath) throws IOException {
         try {
             return new URL(filePath);
         } catch (MalformedURLException e) {
@@ -440,10 +441,16 @@ public class XmlSettingsParser extends DefaultHandler {
         
         File incFile = new File(filePath);
         if (incFile.isAbsolute()) {
+            if (!incFile.exists()) {
+                throw new FileNotFoundException();
+            }
             return incFile.toURI().toURL();
         } else if ("file".equals(this.settings.getProtocol())) {
             try {
                 File settingsFile = new File(new URI(this.settings.toExternalForm()));
+                if (!settingsFile.exists()) {
+                    throw new FileNotFoundException();
+                }
                 return new File(settingsFile.getParentFile(), filePath).toURI().toURL();
             } catch (URISyntaxException e) {
                 return new URL(this.settings , filePath);
@@ -461,8 +468,12 @@ public class XmlSettingsParser extends DefaultHandler {
             boolean override = overrideStr == null ? true 
                                                    : Boolean.valueOf(overrideStr).booleanValue();
             Message.verbose("loading properties: " + propFilePath);
-            URL fileUrl = urlFromFileAttribute(propFilePath);
-            ivy.loadProperties(fileUrl, override);
+            try {
+                URL fileUrl = urlFromFileAttribute(propFilePath);
+                ivy.loadProperties(fileUrl, override);
+            } catch (FileNotFoundException e) {
+                // ignore...
+            }
         } else if (environmentPrefix != null) {
             ivy.getVariableContainer().setEnvironmentPrefix(environmentPrefix);
         } else {

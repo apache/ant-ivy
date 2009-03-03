@@ -407,6 +407,18 @@ public class XmlSettingsParserTest extends TestCase {
         assertEquals(testResolver, subresolvers.get(0));
     }
 
+    public void testPropertiesMissingFile() throws Exception {
+        IvySettings settings = new IvySettings();
+        XmlSettingsParser parser = new XmlSettingsParser(settings);
+        parser.parse(XmlSettingsParserTest.class.getResource(
+                                                "ivysettings-properties-missing-file.xml"));
+        
+        // no error must have been thrown, check that the parsing didn't stop...
+        DependencyResolver defaultResolver = settings.getDefaultResolver();
+        assertNotNull(defaultResolver);
+        assertEquals("libraries", defaultResolver.getName());
+    }
+    
     public void testInclude() throws Exception {
         IvySettings settings = new IvySettings();
         XmlSettingsParser parser = new XmlSettingsParser(settings);
@@ -462,7 +474,6 @@ public class XmlSettingsParserTest extends TestCase {
         assertNotNull(inc);
         assertTrue(inc instanceof ChainResolver);
     }
-
 
     public void testIncludeMissingFile() throws Exception {
         IvySettings settings = new IvySettings();

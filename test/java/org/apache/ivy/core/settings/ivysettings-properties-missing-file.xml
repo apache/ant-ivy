@@ -1,0 +1,52 @@
+<!--
+   Licensed to the Apache Software Foundation (ASF) under one
+   or more contributor license agreements.  See the NOTICE file
+   distributed with this work for additional information
+   regarding copyright ownership.  The ASF licenses this file
+   to you under the Apache License, Version 2.0 (the
+   "License"); you may not use this file except in compliance
+   with the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing,
+   software distributed under the License is distributed on an
+   "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+   KIND, either express or implied.  See the License for the
+   specific language governing permissions and limitations
+   under the License.    
+-->
+<ivysettings>
+	<properties file="missing-file.xml"/>
+
+    <property name="shared" value="${ivy.basedir}/sharedrep" override="false"/>
+    <properties file="ivysettings.properties" override="false" />
+    <settings defaultResolver="libraries" validate="false" />
+    <caches defaultCacheDir="${ivy.basedir}/mycache" checkUpToDate="false"
+            ivyPattern="[module]/ivys/ivy-[revision].xml" 
+            artifactPattern="[module]/[type]s/[artifact]-[revision].[ext]" />
+    <latest-strategies>
+        <latest-revision name="mylatest-revision">
+            <specialMeaning name="PRE" value="-2"/>
+            <specialMeaning name="QA" value="4"/>
+        </latest-revision>
+    </latest-strategies>
+    <resolvers>
+        <chain name="internal">
+            <filesystem name="int1" latest="latest-time">
+                <ivy pattern="${shared}/[organisation]/[module]/ivys/ivy-[revision].xml"/>
+                <artifact pattern="${shared}/[organisation]/[module]/[type]s/[artifact]-[revision].[type]"/>
+            </filesystem>
+            <ibiblio name="int2"/>
+        </chain>
+        <filesystem name="libraries" latest="latest-revision">
+            <ivy pattern="${libraries.dir}/[organisation]/[module]/ivys/ivy-[revision].xml"/>
+            <artifact pattern="${libraries.dir}/[organisation]/[module]/[type]s/[artifact]-[revision].[type]"/>
+        </filesystem>
+    </resolvers>
+    <modules>
+        <module organisation="apache" name="ivy*" revision="2*" matcher="glob" resolver="int2"/>
+        <module organisation="apache" name="ivy*" matcher="glob" resolver="int1"/>
+        <module organisation="apache" name=".*" resolver="internal"/>
+    </modules>
+</ivysettings>
