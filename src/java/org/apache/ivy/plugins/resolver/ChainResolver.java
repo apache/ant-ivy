@@ -22,8 +22,12 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.apache.ivy.core.cache.ArtifactOrigin;
 import org.apache.ivy.core.module.descriptor.Artifact;
@@ -206,6 +210,17 @@ public class ChainResolver extends AbstractResolver {
         }
         
         return null;
+    }
+    
+    public Map[] listTokenValues(String[] tokens, Map criteria) {
+        Set result = new HashSet();
+        for (Iterator iter = chain.iterator(); iter.hasNext();) {
+            DependencyResolver resolver = (DependencyResolver) iter.next();
+            Map[] temp = resolver.listTokenValues(tokens, new HashMap(criteria));
+            result.addAll(Arrays.asList(temp));
+        }
+        
+        return (Map[]) result.toArray(new Map[result.size()]);
     }
 
     public void reportFailure() {
