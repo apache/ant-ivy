@@ -24,7 +24,6 @@ import java.util.Date;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-import org.apache.ivy.core.IvyContext;
 import org.apache.ivy.core.IvyPatternHelper;
 import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.DefaultArtifact;
