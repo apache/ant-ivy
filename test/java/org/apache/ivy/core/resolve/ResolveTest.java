@@ -3830,7 +3830,6 @@ public class ResolveTest extends TestCase {
         }
     }
 
-    
     public void testResolveMaven2Classifiers() throws Exception {
         // test case for IVY-418
         // test-classifier depends on test-classified with classifier asl
@@ -3856,6 +3855,33 @@ public class ResolveTest extends TestCase {
         cmap.put("classifier", "asl");
         assertTrue(getArchiveFileInCache(ivy, "org.apache", "test-classified", null /* branch */
                     , "1.0", "test-classified", "jar", "jar", cmap).exists());
+    }
+
+    public void testResolveMaven2ClassifiersWithoutPOM() throws Exception {
+        // test case for IVY-1041
+        // test-classifier depends on test-classified with classifier asl
+        Ivy ivy = new Ivy();
+        ivy.configure(new File("test/repositories/m2/ivysettings.xml").toURL());
+        ResolveReport report = ivy.resolve(new File(
+                "test/repositories/m2/org/apache/test-classifier/2.0/test-classifier-2.0.pom")
+                .toURL(), getResolveOptions(new String[] {"*"}));
+        assertNotNull(report);
+        ModuleDescriptor md = report.getModuleDescriptor();
+        assertNotNull(md);
+        ModuleRevisionId mrid = ModuleRevisionId
+                .newInstance("org.apache", "test-classifier", "2.0");
+        assertEquals(mrid, md.getModuleRevisionId());
+
+        assertTrue(getResolvedIvyFileInCache(mrid).exists());
+
+        // dependencies
+        assertTrue(getIvyFileInCache(
+            ModuleRevisionId.newInstance("org.apache", "test-classified", "2.0")).exists());
+        
+        Map cmap = new HashMap();
+        cmap.put("classifier", "asl");
+        assertTrue(getArchiveFileInCache(ivy, "org.apache", "test-classified", null /* branch */
+                    , "2.0", "test-classified", "jar", "jar", cmap).exists());
     }
 
     public void testResolveMaven2GetSources() throws Exception {
