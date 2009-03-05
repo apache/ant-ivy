@@ -176,5 +176,20 @@ public class IvyBuildNumberTest extends TestCase {
         assertEquals("0", buildNumber.getProject().getProperty("ivy.build.number"));
         assertEquals("1", buildNumber.getProject().getProperty("ivy.new.build.number"));
     }
+    
+    public void testChainResolver() throws Exception {
+        // IVY-1037
+        Project project = new Project();
+        project.setProperty("ivy.settings.file", "test/repositories/IVY-1037/ivysettings.xml");
+
+        buildNumber = new IvyBuildNumber();
+        buildNumber.setProject(project);
+        buildNumber.setOrganisation("org");
+        buildNumber.setModule("module");
+        buildNumber.setResolver("chain");
+        buildNumber.execute();
+        assertEquals("3", buildNumber.getProject().getProperty("ivy.new.revision"));
+    }
+
 
 }
