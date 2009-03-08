@@ -293,7 +293,11 @@ public class IvyNode implements Comparable {
                     "impossible to get dependencies when data has not been loaded");
         }
         if (Arrays.asList(confs).contains("*")) {
-            confs = md.getConfigurationsNames();
+            if (isRoot()) {
+                confs = md.getConfigurationsNames();
+            } else {
+                confs = md.getPublicConfigurationsNames();
+            }
         }
         Collection deps = new HashSet();
         for (int i = 0; i < confs.length; i++) {

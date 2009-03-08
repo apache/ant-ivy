@@ -99,6 +99,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 - IMPROVEMENT: Error message is not clear when specifying an invalid value for checksums (IVY-977)
 - IMPROVEMENT: catch AccessControlException on System.getProperties() (IVY-1015)
 
+- FIX: Error message: "impossible to get artifacts when data has not been loaded" , on certain modules only (IVY-987)
 - FIX: Ivy doesn't handle the classifier attribute of artifacts inside dependency elements (IVY-1041)
 - FIX: Buildnumber task does not work for chained resolvers (IVY-1037)
 - FIX: Dependencies don't inherit exclusions from dependencyManagement (IVY-974) (thanks to John Gibson)
