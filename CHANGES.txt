@@ -86,6 +86,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 	
    trunk
 =====================================
+- IMPROVEMENT: Fail the retrieve when multiple artifacts of same module are mapped to same file (IVY-1050)
 - IMPROVEMENT: ivy initialization shouldn't fail if properties file doesn't exist (IVY-1038)
 - IMPROVEMENT: ivy:resolve ant task does not support "branch" attribute (IVY-1035)
 - IMPROVEMENT: Ability to strip revConstraint attribute from delivered Ivy files (IVY-989)

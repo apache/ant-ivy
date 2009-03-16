@@ -326,7 +326,7 @@ public class RetrieveEngine {
                 }
             }
         }
-
+        
         // resolve conflicts if any
         for (Iterator iter = conflictsMap.keySet().iterator(); iter.hasNext();) {
             String copyDest = (String) iter.next();
@@ -335,17 +335,29 @@ public class RetrieveEngine {
             if (artifacts.size() > 1) {
                 List artifactsList = new ArrayList((Collection) conflictsReportsMap.get(copyDest));
                 // conflicts battle is resolved by a sort using a conflict resolving policy
-                // comparator
-                // which consider as greater a winning artifact
+                // comparator which consider as greater a winning artifact
                 Collections.sort(artifactsList, getConflictResolvingPolicy());
+                
                 // after the sort, the winning artifact is the greatest one, i.e. the last one
+                // we fail if different artifacts of the same module are mapped to the same file
+                ArtifactDownloadReport winner = (ArtifactDownloadReport) 
+                        artifactsList.get(artifactsList.size() - 1);
+                ModuleRevisionId winnerMD = winner.getArtifact().getModuleRevisionId();
+                for (int i = artifactsList.size() - 2; i >= 0; i--) {
+                    ArtifactDownloadReport current = (ArtifactDownloadReport) artifactsList.get(i);
+                    if (winnerMD.equals(current.getArtifact().getModuleRevisionId())) {
+                        throw new RuntimeException("Multiple artifacts of the module " + winnerMD +
+                                " are retrieved to the same file! Update the retrieve pattern " +
+                        		" to fix this error.");
+                    }
+                }
+                
                 Message.info("\tconflict on "
                         + copyDest
                         + " in "
                         + conflictsConfs
                         + ": "
-                        + ((ArtifactDownloadReport) artifactsList.get(artifactsList.size() - 1))
-                                .getArtifact().getModuleRevisionId().getRevision() + " won");
+                        + winnerMD.getRevision() + " won");
 
                 // we now iterate over the list beginning with the artifact preceding the winner,
                 // and going backward to the least artifact
