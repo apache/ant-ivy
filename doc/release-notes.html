@@ -1,0 +1,142 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<!--
+   Licensed to the Apache Software Foundation (ASF) under one
+   or more contributor license agreements.  See the NOTICE file
+   distributed with this work for additional information
+   regarding copyright ownership.  The ASF licenses this file
+   to you under the Apache License, Version 2.0 (the
+   "License"); you may not use this file except in compliance
+   with the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing,
+   software distributed under the License is distributed on an
+   "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+   KIND, either express or implied.  See the License for the
+   specific language governing permissions and limitations
+   under the License.    
+-->
+<html>
+<head>
+	<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
+	<script type="text/javascript">var xookiConfig = {level: 0};</script>	
+	<script type="text/javascript" src="xooki/xooki.js"></script>
+</head>
+<body>
+	<textarea id="xooki-source">
+<h2>Announcement</h2>
+
+
+<h2>Release Notes</h2>
+
+CONTENTS
+1. What is Apache Ivy?
+2. Status of this release
+3. How to Get Involved
+4. How to Report Issues
+5. Committers and Contributors for this release
+6. List of Changes in this Release   
+   
+   
+<h3>1. What is Apache Ivy?</h3>
+
+Apache Ivy is a tool for managing (recording, tracking, resolving and reporting) 
+project dependencies. 
+It is characterized by the following:
+
+   1. flexibility and configurability 
+   		Apache Ivy is essentially process agnostic and is not tied to any 
+   		methodology or structure. 
+   		Instead it provides the necessary flexibility and configurability 
+   		to be adapted to a broad range of dependency management and build 
+   		processes.
+   2. tight integration with Apache Ant
+   		while available as a standalone tool, Apache Ivy works particularly well 
+   		with Apache Ant providing a number of powerful Ant tasks ranging 
+   		from dependency resolution to dependency reporting and publication.
+
+<h3>2. Status of this release</h3>
+
+This is the first release candidate of Ivy targetting 2.1.0. 
+
+As a release candidate version, we strongly encourage the use of this version for 
+testing and validation. From now on, features are frozen until final 2.1.0 version, 
+only bug fixes may be applied before 2.1.0. If no outstanding bugs are reported 
+with this release candidate, it will promoted to 2.1.0 about two weeks after this
+release candidate. 
+
+<h3>3. How to Get Involved</h3>
+
+The Apache Ivy project really needs and appreciates any contributions, 
+including documentation help, source code and feedback.  If you are interested
+in contributing, please visit http://ant.apache.org/ivy/get-involved.html.
+
+<h3>4. How to Report Issues</h3>
+
+The Apache Ivy project uses JIRA for issue tracking.  Please report any 
+issues you find at http://issues.apache.org/jira/browse/IVY
+
+<h3>5. Committers and Contributors for this Release</h3>
+
+Here is the list of people who have contributed source code and documentation
+to this release. Many thanks to all of them, and also to the whole Ivy community
+contributing ideas and feedback, and promoting the use of Ivy. The list would be too
+long, but Ivy couldn't be what it is without you!
+
+ Committers
+	Maarten Coene
+	Xavier Hanin
+	Nicolas Lalevee
+	Gilles Scokart
+
+ Contributors
+ 	Carlton Brown
+ 	Martin Eigenbrodt
+ 	John Gibson
+ 	Randy Nott
+
+For the list of people who have contributed since Ivy inception, see CHANGES.txt file.
+
+<h3>6. List of Changes in this Release</h3>
+
+For a full release history of Ivy see the file CHANGES.txt
+
+For details about the following changes, check our JIRA install at 
+http://issues.apache.org/jira/browse/ivy
+
+List of changes since Ivy 2.0.0:
+- IMPROVEMENT: Fail the retrieve when multiple artifacts of same module are mapped to same file (IVY-1050)
+- IMPROVEMENT: ivy initialization shouldn't fail if properties file doesn't exist (IVY-1038)
+- IMPROVEMENT: ivy:resolve ant task does not support "branch" attribute (IVY-1035)
+- IMPROVEMENT: Ability to strip revConstraint attribute from delivered Ivy files (IVY-989)
+- IMPROVEMENT: enhanced error message when defining an artifact for an unknown configuration.
+- IMPROVEMENT: display the revision of the resolved module in ivy-report.xsl (IVY-1024) (thanks to Carlton Brown)
+- IMPROVEMENT: resolver attribute for buildnumber task (IVY-1019) (thanks to Martin Eigenbrodt)
+- IMPROVEMENT: add refresh parameter to post resolve tasks (IVY-1017)
+- IMPROVEMENT: Remove excessive HEAD requests for URL repository (IVY-996)
+- IMPROVEMENT: add -version option on command line (IVY-1014)
+- IMPROVEMENT: support resolve refresh in command line (IVY-1013)
+- IMPROVEMENT: Error message is not clear when specifying an invalid value for checksums (IVY-977)
+- IMPROVEMENT: catch AccessControlException on System.getProperties() (IVY-1015)
+
+- FIX: Error message: "impossible to get artifacts when data has not been loaded" , on certain modules only (IVY-987)
+- FIX: Ivy doesn't handle the classifier attribute of artifacts inside dependency elements (IVY-1041)
+- FIX: Buildnumber task does not work for chained resolvers (IVY-1037)
+- FIX: Dependencies don't inherit exclusions from dependencyManagement (IVY-974) (thanks to John Gibson)
+- FIX: Dependency Configuration Negation does not work (IVY-982)
+- FIX: Ivy retrieve does not honor validate="false" from ivysettings (IVY-992)
+- FIX: Snapshot issues when using ibiblio resolver with m2compatible is false (IVY-1028)
+- FIX: Ivy Standalone hangs after publishing to SSH resolver (IVY-1009)
+- FIX: overwrite='false' completely prevents publishing into url repositories (IVY-1007)
+- FIX: Fixed broken logo link in ivy-report.xsl (IVY-1024) (thanks to Carlton Brown)
+- FIX: Support for opensll sha1 and md5 checksum (IVY-1006)
+- FIX: TTL does not work as expected (IVY-1012)
+- FIX: Listing of URL's under a given URL does not handle fully specified URL's (IVY-959) (thanks to Randy Nott)
+- FIX: <ivy:buildnumber> returns wrong result when resolve fails (IVY-970)
+- FIX: listing possible token values doesn't work properly for the ibiblio resolver
+- FIX: Ivy deliver fails to replace dynamic revision (IVY-999) (thanks to Martin Eigenbrodt)
+</textarea>
+<script type="text/javascript">xooki.postProcess();</script>
+</body>
+</html>
