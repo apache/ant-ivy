@@ -1,4 +1,4 @@
-			Apache Ivy v2.0.0-rc1
+			Apache Ivy 2.1.0-rc1
 		   ------------------------
 
 Supported Platforms
@@ -57,5 +57,3 @@ For the Ivy ssh resolver requires the JSch
 <http://www.jcraft.com/jsch/index.html> library. 
 The sftp and https resolvers requires the Java Cryptography extensions
 <http://java.sun.com/javase/technologies/security/>.
-
-

@@ -84,7 +84,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 	Patrick Woodworth
 	Jaroslaw Wypychowski
 	
-   trunk
+   2.1.0-rc1
 =====================================
 - IMPROVEMENT: Fail the retrieve when multiple artifacts of same module are mapped to same file (IVY-1050)
 - IMPROVEMENT: ivy initialization shouldn't fail if properties file doesn't exist (IVY-1038)
