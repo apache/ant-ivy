@@ -81,13 +81,13 @@ public class IvyFindRevision extends IvyTask {
 
     public void doExecute() throws BuildException {
         if (organisation == null) {
-            throw new BuildException("no organisation provided for ivy findmodules");
+            throw new BuildException("no organisation provided for ivy findrevision task");
         }
         if (module == null) {
-            throw new BuildException("no module name provided for ivy findmodules");
+            throw new BuildException("no module name provided for ivy findrevision task");
         }
         if (revision == null) {
-            throw new BuildException("no revision provided for ivy findmodules");
+            throw new BuildException("no revision provided for ivy findrevision task");
         }
 
         Ivy ivy = getIvyInstance();
