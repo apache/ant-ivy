@@ -49,6 +49,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 	Tat Leung
 	Costin Leau
 	Antoine Levy-Lambert
+	Andrey Lomakin
 	William Lyvers
 	Sakari Maaranen
 	Jan Materne
@@ -86,7 +87,8 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 	
    trunk
 =====================================
-- FIX: Wrong BuildException messages (findmodules) (IVY-1056)   
+- FIX: Wrong BuildException messages (findmodules) (IVY-1056)
+- FIX: PomModuleDescriptorBuilder does not resolve ejb type dependencies to jar extension (IVY-1058) (thanks to Andrey Lomakin)   
 	
    2.1.0-rc1
 =====================================

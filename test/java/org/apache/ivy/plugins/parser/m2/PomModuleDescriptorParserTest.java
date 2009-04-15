@@ -27,6 +27,7 @@ import java.util.Map;
 
 import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.DefaultModuleDescriptor;
+import org.apache.ivy.core.module.descriptor.DependencyArtifactDescriptor;
 import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
 import org.apache.ivy.core.module.descriptor.ExcludeRule;
 import org.apache.ivy.core.module.descriptor.License;
@@ -146,6 +147,26 @@ public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         assertEquals("test", artifact[0].getName());
         assertEquals("jar", artifact[0].getExt());
         assertEquals("ejb", artifact[0].getType());
+    }
+
+    public void testEjbType() throws Exception {
+        ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(
+            settings, getClass().getResource("test-ejb-type.pom"), false);
+        assertNotNull(md);
+
+        ModuleRevisionId mrid = ModuleRevisionId.newInstance("org.apache", "test", "1.0");
+        assertEquals(mrid, md.getModuleRevisionId());
+
+        DependencyDescriptor[] deps = md.getDependencies();
+        assertNotNull(deps);
+        assertEquals(1, deps.length);
+        
+        DependencyArtifactDescriptor[] artifacts = deps[0].getAllDependencyArtifacts();
+        assertNotNull(artifacts);
+        assertEquals(1, artifacts.length);
+        assertEquals("test", artifacts[0].getName());
+        assertEquals("jar", artifacts[0].getExt());
+        assertEquals("ejb", artifacts[0].getType());
     }
 
     public void testParent() throws Exception {
