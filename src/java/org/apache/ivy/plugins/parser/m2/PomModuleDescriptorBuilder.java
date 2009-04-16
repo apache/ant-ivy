@@ -293,9 +293,16 @@ public class PomModuleDescriptorBuilder {
                 type = dep.getType();
             }
             String ext = type;
-            if (JAR_PACKAGINGS.contains(type)) {
+
+            // if type is 'test-jar', the extension is 'jar' and the classifier is 'tests'
+            // Cfr. http://maven.apache.org/guides/mini/guide-attached-tests.html
+            if ("test-jar".equals(type)) {
                 ext = "jar";
-            }
+                extraAtt.put("m:classifier", "tests");
+            } else if (JAR_PACKAGINGS.contains(type)) {
+                ext = "jar";
+            }            
+            
             // we deal with classifiers by setting an extra attribute and forcing the
             // dependency to assume such an artifact is published
             if (dep.getClassifier() != null) {
