@@ -121,14 +121,15 @@ public class FileSystemResolver extends RepositoryResolver {
 
     public void abortPublishTransaction() throws IOException {
         if (supportTransaction()) {
-            if (!isTransactionStarted()) {
-                throw new IllegalStateException("no current transaction!");
-            }
-            try {
-                getFileRepository().delete(transactionTempDir);
-                Message.info("\tpublish aborted: deleted " + transactionTempDir);
-            } finally {
-                closeTransaction();
+            if (isTransactionStarted()) {                
+                try {
+                    getFileRepository().delete(transactionTempDir);
+                    Message.info("\tpublish aborted: deleted " + transactionTempDir);
+                } finally {
+                    closeTransaction();
+                }
+            } else { 
+                Message.info("\tpublish aborted: nothing was started");                
             }
         }
     }
