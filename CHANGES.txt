@@ -87,6 +87,7 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 	
    trunk
 =====================================
+- FIX: Ibiblio resolver throws IndexOutOfBoundsException when using snapshot versions with usepoms='false' (IVY-1028)
 - FIX: Wrong BuildException messages (findmodules) (IVY-1056)
 - FIX: PomModuleDescriptorBuilder does not resolve ejb type dependencies to jar extension (IVY-1058) (thanks to Andrey Lomakin)
 - FIX: Ivy doesn't handle maven dependencies with type 'test-jar' correctly (IVY-1066)
