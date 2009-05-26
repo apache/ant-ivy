@@ -38,7 +38,9 @@ import org.apache.ivy.core.IvyPatternHelper;
 import org.apache.ivy.core.LogOptions;
 import org.apache.ivy.core.cache.ResolutionCacheManager;
 import org.apache.ivy.core.event.EventManager;
+import org.apache.ivy.core.event.retrieve.EndRetrieveArtifactEvent;
 import org.apache.ivy.core.event.retrieve.EndRetrieveEvent;
+import org.apache.ivy.core.event.retrieve.StartRetrieveArtifactEvent;
 import org.apache.ivy.core.event.retrieve.StartRetrieveEvent;
 import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
@@ -128,10 +130,18 @@ public class RetrieveEngine {
                     File destFile = settings.resolveFile((String) it2.next());
                     if (!settings.isCheckUpToDate() || !upToDate(archive, destFile)) {
                         Message.verbose("\t\tto " + destFile);
+                        if (this.eventManager != null) {
+                            this.eventManager.fireIvyEvent(
+                                new StartRetrieveArtifactEvent(artifact, destFile));
+                        }
                         if (options.isMakeSymlinks()) {
                             FileUtil.symlink(archive, destFile, null, true);
                         } else {
                             FileUtil.copy(archive, destFile, null, true);
+                        }
+                        if (this.eventManager != null) {
+                            this.eventManager.fireIvyEvent(
+                                new EndRetrieveArtifactEvent(artifact, destFile));
                         }
                         totalCopiedSize += destFile.length();
                         targetsCopied++;

@@ -87,6 +87,8 @@ for detailed view of each issue, please consult http://issues.apache.org/jira/br
 	
    trunk
 =====================================
+- IMPROVEMENT: Pre and post retrieve artifact events (IVY-1084)
+
 - FIX: Ibiblio resolver throws IndexOutOfBoundsException when using snapshot versions with usepoms='false' (IVY-1028)
 - FIX: Wrong BuildException messages (findmodules) (IVY-1056)
 - FIX: PomModuleDescriptorBuilder does not resolve ejb type dependencies to jar extension (IVY-1058) (thanks to Andrey Lomakin)

@@ -171,6 +171,40 @@ The event available in Ivy are the following ones:
         </td>
         <td>Fired at the end of the retrieve process.</td>
     </tr>
+    <tr><td>pre-retrieve-artifact <br/><span class="since">since 2.1</span></td>
+        <td>
+          <ul>
+            <li>organisation</li>the organisation of the artifact which is about to be retrieved
+            <li>module</li>the name of the module of the artifact which is about to be retrieved
+            <li>revision</li>the revision of the the artifact which is about to be retrieved
+            <li>artifact</li>the name of the the artifact which is about to be retrieved
+            <li>type</li>the type of the the artifact which is about to be retrieved
+            <li>ext</li>the extension of the the artifact which is about to be retrieved
+            <li>metadata</li>true if the retrieved artifact is a metadata artifact, false for published artifacts 
+            <li>size</li>the size in bytes of the retrieved artifact
+            <li>from</li>the absolute path from which it will be retrieved (usually a location in cache)
+            <li>to</li>the absolute path to which it will be retrieved
+          </ul>
+        </td>
+        <td>Fired before an artifact is retrieved from cache to a local location</td>
+    </tr>
+    <tr><td>post-retrieve-artifact <br/><span class="since">since 2.1</span></td>
+        <td>
+          <ul>
+            <li>organisation</li>the organisation of the artifact which has just been retrieved
+            <li>module</li>the name of the module of the artifact which has just been retrieved
+            <li>revision</li>the revision of the the artifact which has just been retrieved
+            <li>artifact</li>the name of the the artifact which has just been retrieved
+            <li>type</li>the type of the the artifact which has just been retrieved
+            <li>ext</li>the extension of the the artifact which has just been retrieved
+            <li>metadata</li>true if the retrieved artifact is a metadata artifact, false for published artifacts 
+            <li>size</li>the size in bytes of the retrieved artifact
+            <li>from</li>the absolute path from which it has just been retrieved (usually a location in cache)
+            <li>to</li>the absolute path to which it has just been retrieved
+          </ul>
+        </td>
+        <td>Fired after an artifact is retrieved from cache to a local location</td>
+    </tr>
     <tr><td>pre-publish-artifact <br/><span class="since">since 2.0</span></td>
         <td>
           <ul>

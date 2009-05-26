@@ -28,7 +28,9 @@ import org.apache.ivy.Ivy;
 import org.apache.ivy.core.IvyPatternHelper;
 import org.apache.ivy.core.event.IvyEvent;
 import org.apache.ivy.core.event.IvyListener;
+import org.apache.ivy.core.event.retrieve.EndRetrieveArtifactEvent;
 import org.apache.ivy.core.event.retrieve.EndRetrieveEvent;
+import org.apache.ivy.core.event.retrieve.StartRetrieveArtifactEvent;
 import org.apache.ivy.core.event.retrieve.StartRetrieveEvent;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.report.ResolveReport;
@@ -141,10 +143,12 @@ public class RetrieveTest extends TestCase {
         ModuleDescriptor md = report.getModuleDescriptor();
         String pattern = "build/test/retrieve/[module]/[conf]/[artifact]-[revision].[ext]";
         ivy.retrieve(md.getModuleRevisionId(), pattern, getRetrieveOptions());
-        assertEquals(2, events.size());
+        assertEquals(4, events.size());
         assertTrue(events.get(0) instanceof StartRetrieveEvent);
-        assertTrue(events.get(1) instanceof EndRetrieveEvent);
-        EndRetrieveEvent ev = (EndRetrieveEvent) events.get(1);
+        assertTrue(events.get(1) instanceof StartRetrieveArtifactEvent);
+        assertTrue(events.get(2) instanceof EndRetrieveArtifactEvent);
+        assertTrue(events.get(3) instanceof EndRetrieveEvent);
+        EndRetrieveEvent ev = (EndRetrieveEvent) events.get(3);
         assertEquals(1, ev.getNbCopied());
         assertEquals(0, ev.getNbUpToDate());
 
