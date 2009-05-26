@@ -1992,6 +1992,26 @@ public class ResolveTest extends TestCase {
             "commons-lang", "jar", "jar").exists());
     }
 
+    public void testResolveMergeTransitiveAfterConflict() throws Exception {
+        // mod20.4 ->  mod20.3;1.0 mod20.2;1.0
+        // mod20.3;1.0 -> mod20.1;1.0
+        // mod20.2;1.0 -> mod20.1;1.1 (transitive false)
+        // mod20.1;1.0 -> mod1.2;1.0
+        // mod20.1;1.1 -> mod1.2;1.0
+        ResolveReport report = ivy.resolve(new File("test/repositories/1/org20/mod20.4/ivys/ivy-1.0.xml")
+                .toURL(), getResolveOptions(new String[] {"*"}));
+
+        // dependencies
+        ConfigurationResolveReport crr = report.getConfigurationReport("default");
+        assertNotNull(crr);
+        assertEquals(1, crr.getDownloadReports(ModuleRevisionId
+                .newInstance("org1", "mod1.2", "1.0")).length);
+
+        assertTrue(getIvyFileInCache(
+            ModuleRevisionId.newInstance("org1", "mod1.2", "1.0")).exists());
+        assertTrue(getArchiveFileInCache("org1", "mod1.2", "1.0", "mod1.2", "jar", "jar").exists());
+    }
+
     /**
      * Test IVY-618. 
      */

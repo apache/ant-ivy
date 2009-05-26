@@ -1265,4 +1265,30 @@ public class IvyNode implements Comparable {
         return usage;
     }
 
+    /**
+     * Indicates if there is any of the merged usages of this node which has a depender with
+     * transitive dependency descriptor.
+     * <p>
+     * If at there is at least one usage from the merged usages for which there is a depender in the
+     * given root module conf which has a dependency descriptor with transitive == true, then it
+     * returns true. Otherwise it returns false.
+     * </p>
+     * 
+     * @param rootModuleConf
+     *            the root module configuration to consider
+     * @return true if there is any merged usage with transitive dd, false otherwise.
+     */
+    public boolean hasAnyMergedUsageWithTransitiveDependency(String rootModuleConf) {
+        if (mergedUsages == null) {
+            return false;
+        }
+        for (Iterator iterator = mergedUsages.values().iterator(); iterator.hasNext();) {
+            IvyNodeUsage usage = (IvyNodeUsage) iterator.next();
+            if (usage.hasTransitiveDepender(rootModuleConf)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 }
