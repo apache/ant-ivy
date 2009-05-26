@@ -22,7 +22,7 @@ import java.io.File;
 import org.apache.ivy.core.report.ArtifactDownloadReport;
 
 public class EndRetrieveArtifactEvent extends RetrieveArtifactEvent {
-    public static final String NAME = "pre-retrieve-artifact";
+    public static final String NAME = "post-retrieve-artifact";
 
     public EndRetrieveArtifactEvent(
             ArtifactDownloadReport report, File destFile) {
