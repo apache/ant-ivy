@@ -327,6 +327,7 @@ public final class SshCache {
                 }
                 session.setUserInfo(new CfUserInfo(host, username, userPassword, pemFile,
                         pemPassword, passFile));
+                session.setDaemonThread(true);
                 session.connect();
                 Message.verbose(":: SSH :: connected to " + host + "!");
                 setSession(username, host, port, session);
